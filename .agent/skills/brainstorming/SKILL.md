@@ -1,163 +1,136 @@
 ---
 name: brainstorming
 description: Socratic questioning protocol + user communication. MANDATORY for complex requests, new features, or unclear requirements. Includes progress reporting and error handling.
-allowed-tools: Read, Glob, Grep
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# Brainstorming & Communication Protocol
+# Brainstorming & Discovery Protocol
 
-> **MANDATORY:** Use for complex/vague requests, new features, updates.
-
----
-
-## 🛑 SOCRATIC GATE (ENFORCEMENT)
-
-### When to Trigger
-
-| Pattern | Action |
-|---------|--------|
-| "Build/Create/Make [thing]" without details | 🛑 ASK 3 questions |
-| Complex feature or architecture | 🛑 Clarify before implementing |
-| Update/change request | 🛑 Confirm scope |
-| Vague requirements | 🛑 Ask purpose, users, constraints |
-
-### 🚫 MANDATORY: 3 Questions Before Implementation
-
-1. **STOP** - Do NOT start coding
-2. **ASK** - Minimum 3 questions:
-   - 🎯 Purpose: What problem are you solving?
-   - 👥 Users: Who will use this?
-   - 📦 Scope: Must-have vs nice-to-have?
-3. **WAIT** - Get response before proceeding
+> The most expensive part of building software is building the wrong thing.
+> Ask the questions that prevent that.
 
 ---
 
-## 🧠 Dynamic Question Generation
+## When This Skill Is Required
 
-**⛔ NEVER use static templates.** Read `dynamic-questioning.md` for principles.
+Activate before generating any implementation plan when:
 
-### Core Principles
-
-| Principle | Meaning |
-|-----------|---------|
-| **Questions Reveal Consequences** | Each question connects to an architectural decision |
-| **Context Before Content** | Understand greenfield/feature/refactor/debug context first |
-| **Minimum Viable Questions** | Each question must eliminate implementation paths |
-| **Generate Data, Not Assumptions** | Don't guess—ask with trade-offs |
-
-### Question Generation Process
-
-```
-1. Parse request → Extract domain, features, scale indicators
-2. Identify decision points → Blocking vs. deferable
-3. Generate questions → Priority: P0 (blocking) > P1 (high-leverage) > P2 (nice-to-have)
-4. Format with trade-offs → What, Why, Options, Default
-```
-
-### Question Format (MANDATORY)
-
-```markdown
-### [PRIORITY] **[DECISION POINT]**
-
-**Question:** [Clear question]
-
-**Why This Matters:**
-- [Architectural consequence]
-- [Affects: cost/complexity/timeline/scale]
-
-**Options:**
-| Option | Pros | Cons | Best For |
-|--------|------|------|----------|
-| A | [+] | [-] | [Use case] |
-
-**If Not Specified:** [Default + rationale]
-```
-
-**For detailed domain-specific question banks and algorithms**, see: `dynamic-questioning.md`
+- A new feature or system is being created
+- The request is vague or uses words like "something like" or "maybe"
+- Multiple valid technical approaches exist and the right one depends on context
+- The user hasn't described their users, scale, or constraints
 
 ---
 
-## Progress Reporting (PRINCIPLE-BASED)
+## The Socratic Method Applied to Software
 
-**PRINCIPLE:** Transparency builds trust. Status must be visible and actionable.
+The goal is not to interrogate. It is to surface hidden assumptions before they become hard-coded decisions.
 
-### Status Board Format
+### Discovery Questions by Layer
 
-| Agent | Status | Current Task | Progress |
-|-------|--------|--------------|----------|
-| [Agent Name] | ✅🔄⏳❌⚠️ | [Task description] | [% or count] |
+**Purpose (What problem does this solve?)**
+- What outcome does the user need — not what feature do they want?
+- What happens today without this?
+- What does success look like in 30 days?
 
-### Status Icons
+**Users (Who is this for?)**
+- Who are the actual end users?
+- What is their technical level?
+- Are there multiple user types with different needs?
 
-| Icon | Meaning | Usage |
-|------|---------|-------|
-| ✅ | Completed | Task finished successfully |
-| 🔄 | Running | Currently executing |
-| ⏳ | Waiting | Blocked, waiting for dependency |
-| ❌ | Error | Failed, needs attention |
-| ⚠️ | Warning | Potential issue, not blocking |
+**Scope (What is and isn't included?)**
+- What is explicitly out of scope for this version?
+- What data already exists vs. what needs to be created?
+- Are there integrations with other systems?
 
----
-
-## Error Handling (PRINCIPLE-BASED)
-
-**PRINCIPLE:** Errors are opportunities for clear communication.
-
-### Error Response Pattern
-
-```
-1. Acknowledge the error
-2. Explain what happened (user-friendly)
-3. Offer specific solutions with trade-offs
-4. Ask user to choose or provide alternative
-```
-
-### Error Categories
-
-| Category | Response Strategy |
-|----------|-------------------|
-| **Port Conflict** | Offer alternative port or close existing |
-| **Dependency Missing** | Auto-install or ask permission |
-| **Build Failure** | Show specific error + suggested fix |
-| **Unclear Error** | Ask for specifics: screenshot, console output |
+**Constraints (What limits the design?)**
+- Existing tech stack?
+- Performance requirements? (users, requests/sec, data volume)
+- Deadline?
+- Budget for paid services?
 
 ---
 
-## Completion Message (PRINCIPLE-BASED)
+## Question Protocol
 
-**PRINCIPLE:** Celebrate success, guide next steps.
+For complex requests: ask **minimum 3 strategic questions** before proposing anything.
 
-### Completion Structure
+For simple but vague requests: ask **1 focused question** on the most blocking unknown.
+
+**Format:**
+```
+Before I propose a solution, a few questions:
+
+1. [Most critical unknown]
+2. [Second most important]
+3. [Clarifies scope or constraints]
+
+[Optional: brief note on why these matter]
+```
+
+**Rules:**
+- Ask about one topic per question — not compound questions (`and`/`or` in a question = split it)
+- Numbered list, not a wall of text
+- Never more than 5 questions at once
+- If answers create new unknowns, ask a follow-up round
+
+---
+
+## Anti-Patterns in Discovery
+
+**What to avoid:**
+
+| Pattern | Why It's Harmful |
+|---|---|
+| Assuming the tech stack | Leads to architecture that fits you, not the project |
+| Solving the stated feature, not the problem | User asks for X but needs Y — you build X |
+| Treating "I want a dashboard" as a spec | Dashboards have hundreds of valid forms |
+| Jumping to implementation to seem helpful | Wastes both parties' time if direction is wrong |
+| Asking leading questions | "Should we use Next.js?" vs "What matters most for deployment?" |
+
+---
+
+## Reporting During Complex Work
+
+When working on multi-step tasks, report progress proactively.
+
+**Status update format:**
+```
+✅ [Completed step]
+🔄 [Current step — what you're doing right now]
+⏳ [Next step]
+```
+
+Report at natural breakpoints — not after every file edit.
+
+---
+
+## Error Handling During Implementation
+
+When something fails or an assumption is proven wrong mid-task:
+
+1. Stop immediately — don't continue building on a broken assumption
+2. State what was expected vs. what was found
+3. Propose 2–3 corrected approaches with trade-offs
+4. Ask which direction to proceed
 
 ```
-1. Success confirmation (celebrate briefly)
-2. Summary of what was done (concrete)
-3. How to verify/test (actionable)
-4. Next steps suggestion (proactive)
+❌ Found an issue:
+   Expected: users table has an `email` column
+   Found: email is in a separate `user_contacts` table
+
+Options:
+   A) Join through user_contacts (correct but slower queries)
+   B) Denormalize email onto users table (faster, requires migration)
+   C) Ask what the schema decision was intended to be
+
+Which should I proceed with?
 ```
 
 ---
 
-## Communication Principles
+## File Index
 
-| Principle | Implementation |
-|-----------|----------------|
-| **Concise** | No unnecessary details, get to point |
-| **Visual** | Use emojis (✅🔄⏳❌) for quick scanning |
-| **Specific** | "~2 minutes" not "wait a bit" |
-| **Alternatives** | Offer multiple paths when stuck |
-| **Proactive** | Suggest next step after completion |
-
----
-
-## Anti-Patterns (AVOID)
-
-| Anti-Pattern | Why |
-|--------------|-----|
-| Jumping to solutions before understanding | Wastes time on wrong problem |
-| Assuming requirements without asking | Creates wrong output |
-| Over-engineering first version | Delays value delivery |
-| Ignoring constraints | Creates unusable solutions |
-| "I think" phrases | Uncertainty → Ask instead |
-
----
+| File | Covers | Load When |
+|---|---|---|
+| `dynamic-questioning.md` | Advanced question frameworks by domain | Discovery for complex systems |

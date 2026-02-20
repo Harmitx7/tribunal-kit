@@ -1,143 +1,134 @@
 ---
 name: performance-profiling
 description: Performance profiling principles. Measurement, analysis, and optimization techniques.
-allowed-tools: Read, Glob, Grep, Bash
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# Performance Profiling
+# Performance Profiling Principles
 
-> Measure, analyze, optimize - in that order.
-
-## 🔧 Runtime Scripts
-
-**Execute these for automated profiling:**
-
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| `scripts/lighthouse_audit.py` | Lighthouse performance audit | `python scripts/lighthouse_audit.py https://example.com` |
+> Never optimize code you haven't measured.
+> The bottleneck is almost never where you expect it to be.
 
 ---
 
-## 1. Core Web Vitals
+## The Measurement-First Rule
 
-### Targets
-
-| Metric | Good | Poor | Measures |
-|--------|------|------|----------|
-| **LCP** | < 2.5s | > 4.0s | Loading |
-| **INP** | < 200ms | > 500ms | Interactivity |
-| **CLS** | < 0.1 | > 0.25 | Stability |
-
-### When to Measure
-
-| Stage | Tool |
-|-------|------|
-| Development | Local Lighthouse |
-| CI/CD | Lighthouse CI |
-| Production | RUM (Real User Monitoring) |
-
----
-
-## 2. Profiling Workflow
-
-### The 4-Step Process
+Every performance investigation follows the same sequence:
 
 ```
-1. BASELINE → Measure current state
-2. IDENTIFY → Find the bottleneck
-3. FIX → Make targeted change
-4. VALIDATE → Confirm improvement
+Measure → Identify hotspot → Form hypothesis → Change one thing → Measure again
 ```
 
-### Profiling Tool Selection
-
-| Problem | Tool |
-|---------|------|
-| Page load | Lighthouse |
-| Bundle size | Bundle analyzer |
-| Runtime | DevTools Performance |
-| Memory | DevTools Memory |
-| Network | DevTools Network |
+Breaking this sequence — jumping straight to "fix" — wastes time and creates new problems.
 
 ---
 
-## 3. Bundle Analysis
+## What to Measure
 
-### What to Look For
+### Backend
 
-| Issue | Indicator |
-|-------|-----------|
-| Large dependencies | Top of bundle |
-| Duplicate code | Multiple chunks |
-| Unused code | Low coverage |
-| Missing splits | Single large chunk |
+| Metric | Tool | Target |
+|---|---|---|
+| Request throughput | ab, k6, wrk | Baseline + stress test |
+| P50/P95/P99 latency | DataDog, Grafana, k6 | P99 < SLA threshold |
+| Memory usage | `process.memoryUsage()`, heap snapshot | Stable under load (no growth) |
+| CPU usage | clinic.js flame chart | Identify blocking operations |
+| Database query time | Query logs, pg_stat_statements | No query > 100ms without index |
 
-### Optimization Actions
+### Frontend
 
-| Finding | Action |
-|---------|--------|
-| Big library | Import specific modules |
-| Duplicate deps | Dedupe, update versions |
-| Route in main | Code split |
-| Unused exports | Tree shake |
-
----
-
-## 4. Runtime Profiling
-
-### Performance Tab Analysis
-
-| Pattern | Meaning |
-|---------|---------|
-| Long tasks (>50ms) | UI blocking |
-| Many small tasks | Possible batching opportunity |
-| Layout/paint | Rendering bottleneck |
-| Script | JavaScript execution |
-
-### Memory Tab Analysis
-
-| Pattern | Meaning |
-|---------|---------|
-| Growing heap | Possible leak |
-| Large retained | Check references |
-| Detached DOM | Not cleaned up |
+| Metric | Tool | Target (2025 Core Web Vitals) |
+|---|---|---|
+| LCP (Largest Contentful Paint) | Lighthouse, CrUX | < 2.5s |
+| INP (Interaction to Next Paint) | Lighthouse, Web Vitals | < 200ms |
+| CLS (Cumulative Layout Shift) | Lighthouse | < 0.1 |
+| Bundle size (JS) | `npm run build` + analyzer | < 200kB initial JS |
 
 ---
 
-## 5. Common Bottlenecks
+## Common Backend Bottlenecks
 
-### By Symptom
+### N+1 Queries (most common)
 
-| Symptom | Likely Cause |
-|---------|--------------|
-| Slow initial load | Large JS, render blocking |
-| Slow interactions | Heavy event handlers |
-| Jank during scroll | Layout thrashing |
-| Growing memory | Leaks, retained refs |
+```ts
+// ❌ 1 + N queries
+const posts = await db.post.findMany();
+for (const post of posts) {
+  post.author = await db.user.findUnique({ where: { id: post.authorId } });
+}
+
+// ✅ 2 queries total
+const posts = await db.post.findMany({ include: { author: true } });
+```
+
+**Detection:** Enable query logging. Repeated identical queries differing only by ID = N+1.
+
+### Missing Database Indexes
+
+```sql
+-- EXPLAIN ANALYZE tells you if a query is doing a sequential scan
+EXPLAIN ANALYZE SELECT * FROM orders WHERE user_id = $1;
+
+-- Sequential scan on large table → add index
+CREATE INDEX idx_orders_user_id ON orders(user_id);
+```
+
+### Blocking the Event Loop (Node.js)
+
+```ts
+// ❌ Synchronous CPU work blocks all requests
+const result = JSON.parse(fs.readFileSync('huge.json', 'utf8'));
+
+// ✅ Non-blocking
+const content = await fs.promises.readFile('huge.json', 'utf8');
+const result = JSON.parse(content);  // still sync but no disk I/O blocking
+```
 
 ---
 
-## 6. Quick Win Priorities
+## Common Frontend Bottlenecks
 
-| Priority | Action | Impact |
-|----------|--------|--------|
-| 1 | Enable compression | High |
-| 2 | Lazy load images | High |
-| 3 | Code split routes | High |
-| 4 | Cache static assets | Medium |
-| 5 | Optimize images | Medium |
+### Bundle Size
+
+- Identify large packages with `npx vite-bundle-visualizer` or `@next/bundle-analyzer`
+- Replace heavy packages with lighter alternatives (e.g., `date-fns` instead of `moment`)
+- Code-split routes — don't ship all JavaScript on first load
+
+### Render Performance
+
+```ts
+// ❌ Recalculates on every render
+function ExpensiveList({ items }) {
+  const sorted = items.sort((a, b) => a.name.localeCompare(b.name));
+  return sorted.map(item => <Item key={item.id} item={item} />);
+}
+
+// ✅ Recalculates only when items change
+function ExpensiveList({ items }) {
+  const sorted = useMemo(
+    () => [...items].sort((a, b) => a.name.localeCompare(b.name)),
+    [items]
+  );
+  return sorted.map(item => <Item key={item.id} item={item} />);
+}
+```
 
 ---
 
-## 7. Anti-Patterns
+## Profiling Tools
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Guess at problems | Profile first |
-| Micro-optimize | Fix biggest issue |
-| Optimize early | Optimize when needed |
-| Ignore real users | Use RUM data |
+| Tool | Platform | Best For |
+|---|---|---|
+| `clinic.js` (`clinic doctor`) | Node.js | CPU flame charts, memory leaks |
+| Chrome DevTools → Performance | Browser | JS execution, paint, layout |
+| `EXPLAIN ANALYZE` | PostgreSQL | Query plan analysis |
+| Lighthouse | Web | Full Core Web Vitals audit |
+| `k6` | Backend load testing | Throughput and latency under load |
 
 ---
 
-> **Remember:** The fastest code is code that doesn't run. Remove before optimizing.
+## Scripts
+
+| Script | Purpose | Run With |
+|---|---|---|
+| `scripts/lighthouse_audit.py` | Lighthouse performance audit | `python scripts/lighthouse_audit.py <url>` |

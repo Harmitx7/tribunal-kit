@@ -1,129 +1,118 @@
 ---
 name: seo-fundamentals
 description: SEO fundamentals, E-E-A-T, Core Web Vitals, and Google algorithm principles.
-allowed-tools: Read, Glob, Grep
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
 # SEO Fundamentals
 
-> Principles for search engine visibility.
+> SEO is not a trick. It is the practice of making content genuinely useful
+> for the people searching for it, and technically accessible to the crawlers that index it.
 
 ---
 
-## 1. E-E-A-T Framework
+## What Search Engines Actually Rank
 
-| Principle | Signals |
-|-----------|---------|
-| **Experience** | First-hand knowledge, real examples |
-| **Expertise** | Credentials, depth of knowledge |
-| **Authoritativeness** | Backlinks, mentions, industry recognition |
-| **Trustworthiness** | HTTPS, transparency, accurate info |
+Google's stated ranking factors, simplified:
 
----
+1. **Relevance** — does the content match the search intent?
+2. **Quality** — is it accurate, original, and valuable?
+3. **Authority** — do other credible sources link to it?
+4. **Experience** — is the page fast and easy to use?
 
-## 2. Core Web Vitals
-
-| Metric | Target | Measures |
-|--------|--------|----------|
-| **LCP** | < 2.5s | Loading performance |
-| **INP** | < 200ms | Interactivity |
-| **CLS** | < 0.1 | Visual stability |
+The manipulation era is over. Keyword stuffing gets pages penalized. Thin AI-generated content is actively filtered. The only reliable long-term SEO is making something worth ranking.
 
 ---
 
-## 3. Technical SEO Principles
+## E-E-A-T Framework
 
-### Site Structure
+Google evaluates content on Experience, Expertise, Authoritativeness, and Trustworthiness.
 
-| Element | Purpose |
-|---------|---------|
-| XML sitemap | Help crawling |
-| robots.txt | Control access |
-| Canonical tags | Prevent duplicates |
-| HTTPS | Security signal |
+| Signal | What It Means | How to Demonstrate |
+|---|---|---|
+| Experience | First-hand use of the topic | Case studies, screenshots, real examples |
+| Expertise | Deep knowledge of the domain | Accurate detail, citations, author credentials |
+| Authoritativeness | Recognized by others in the field | External links, mentions, speaking/publishing |
+| Trustworthiness | Safe and reliable site | HTTPS, privacy policy, correct contact info |
 
-### Performance
-
-| Factor | Impact |
-|--------|--------|
-| Page speed | Core Web Vital |
-| Mobile-friendly | Ranking factor |
-| Clean URLs | Crawlability |
+E-E-A-T matters most for YMYL content (health, finance, legal, safety).
 
 ---
 
-## 4. Content SEO Principles
+## Technical SEO Checklist
 
-### Page Elements
+### Page-Level Requirements
 
-| Element | Best Practice |
-|---------|---------------|
-| Title tag | 50-60 chars, keyword front |
-| Meta description | 150-160 chars, compelling |
-| H1 | One per page, main keyword |
-| H2-H6 | Logical hierarchy |
-| Alt text | Descriptive, not stuffed |
+```html
+<!-- Title: 50–60 chars, includes primary keyword -->
+<title>Tribunal Agent Kit — Anti-Hallucination AI Tools</title>
 
-### Content Quality
+<!-- Description: 120–160 chars, actionable, includes keyword -->
+<meta name="description" content="Install the Tribunal Kit with npx tribunal-kit init. 
+27 specialist agents and 17 slash commands for Cursor, Windsurf, and Antigravity.">
 
-| Factor | Importance |
-|--------|------------|
-| Depth | Comprehensive coverage |
-| Freshness | Regular updates |
-| Uniqueness | Original value |
-| Readability | Clear writing |
+<!-- One H1 per page — matches the title intent -->
+<h1>Anti-Hallucination Agent Kit for AI IDEs</h1>
 
----
+<!-- Canonical — prevent duplicate content -->
+<link rel="canonical" href="https://yoursite.com/page">
 
-## 5. Schema Markup Types
+<!-- Open Graph (social sharing) -->
+<meta property="og:title" content="...">
+<meta property="og:description" content="...">
+<meta property="og:image" content="https://yoursite.com/og-image.jpg">
+```
 
-| Type | Use |
-|------|-----|
-| Article | Blog posts, news |
-| Organization | Company info |
-| Person | Author profiles |
-| FAQPage | Q&A content |
-| Product | E-commerce |
-| Review | Ratings |
-| BreadcrumbList | Navigation |
+### Core Web Vitals (2025 Targets)
 
----
+| Metric | Good | Needs Work | Poor |
+|---|---|---|---|
+| LCP (Largest Contentful Paint) | < 2.5s | 2.5–4s | > 4s |
+| INP (Interaction to Next Paint) | < 200ms | 200–500ms | > 500ms |
+| CLS (Cumulative Layout Shift) | < 0.1 | 0.1–0.25 | > 0.25 |
 
-## 6. AI Content Guidelines
+**Most common LCP fix:** The hero image or heading is the LCP element. Preload it:
+```html
+<link rel="preload" href="/hero.webp" as="image" fetchpriority="high">
+```
 
-### What Google Looks For
-
-| ✅ Do | ❌ Don't |
-|-------|----------|
-| AI draft + human edit | Publish raw AI content |
-| Add original insights | Copy without value |
-| Expert review | Skip fact-checking |
-| Follow E-E-A-T | Keyword stuffing |
+**Most common CLS fix:** Images without explicit width/height cause layout shifts:
+```html
+<img src="..." width="800" height="450" alt="...">
+```
 
 ---
 
-## 7. Ranking Factors (Prioritized)
+## Content Structure
 
-| Priority | Factor |
-|----------|--------|
-| 1 | Quality, relevant content |
-| 2 | Backlinks from authority sites |
-| 3 | Page experience (Core Web Vitals) |
-| 4 | Mobile optimization |
-| 5 | Technical SEO fundamentals |
-
----
-
-## 8. Measurement
-
-| Metric | Tool |
-|--------|------|
-| Rankings | Search Console, Ahrefs |
-| Traffic | Analytics |
-| Core Web Vitals | PageSpeed Insights |
-| Indexing | Search Console |
-| Backlinks | Ahrefs, Semrush |
+```
+Page structure that works:
+  H1: Primary topic (one per page)
+  H2: Major sections
+  H3: Subsections
+  
+Content patterns that help:
+  - Answer the question in the first paragraph
+  - Use tables and lists for comparative or step-by-step info
+  - Add FAQ sections for long-tail queries
+  - Internal links to related content
+  - External links to authoritative sources
+```
 
 ---
 
-> **Remember:** SEO is a long-term game. Quality content + technical excellence + patience = results.
+## What Not to Do
+
+- **Keyword stuffing** — unreadable text written for bots; penalized
+- **Thin content** — pages with nothing to say; filtered
+- **Duplicate content** — same content on multiple URLs without canonical; splits authority
+- **Hidden text** — same color as background, `display:none` with keywords; penalized
+- **Link schemes** — buying links; can result in manual penalty
+
+---
+
+## Scripts
+
+| Script | Purpose | Run With |
+|---|---|---|
+| `scripts/seo_checker.py` | Audits page-level technical SEO | `python scripts/seo_checker.py <url>` |

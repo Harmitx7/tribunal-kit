@@ -1,124 +1,153 @@
 ---
 name: bash-linux
 description: Bash/Linux terminal patterns. Critical commands, piping, error handling, scripting. Use when working on macOS or Linux systems.
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# Bash Linux Patterns
+# Bash & Linux Shell Patterns
 
-> Essential patterns for Bash on Linux/macOS.
-
----
-
-## 1. Operator Syntax
-
-### Chaining Commands
-
-| Operator | Meaning | Example |
-|----------|---------|---------|
-| `;` | Run sequentially | `cmd1; cmd2` |
-| `&&` | Run if previous succeeded | `npm install && npm run dev` |
-| `\|\|` | Run if previous failed | `npm test \|\| echo "Tests failed"` |
-| `\|` | Pipe output | `ls \| grep ".js"` |
+> The terminal is a tool, not a magic box. Understand what a command does before you run it with elevated privileges.
 
 ---
 
-## 2. File Operations
+## Ground Rules
 
-### Essential Commands
-
-| Task | Command |
-|------|---------|
-| List all | `ls -la` |
-| Find files | `find . -name "*.js" -type f` |
-| File content | `cat file.txt` |
-| First N lines | `head -n 20 file.txt` |
-| Last N lines | `tail -n 20 file.txt` |
-| Follow log | `tail -f log.txt` |
-| Search in files | `grep -r "pattern" --include="*.js"` |
-| File size | `du -sh *` |
-| Disk usage | `df -h` |
+1. **Never suggest `sudo` without explaining why it's necessary**
+2. **Test destructive commands with `--dry-run` or `echo` first**
+3. **`rm -rf` on a variable that might be empty = disaster** — guard it
+4. **Pipe chains fail silently unless you use `set -euo pipefail`**
 
 ---
 
-## 3. Process Management
+## Essential Patterns
 
-| Task | Command |
-|------|---------|
-| List processes | `ps aux` |
-| Find by name | `ps aux \| grep node` |
-| Kill by PID | `kill -9 <PID>` |
-| Find port user | `lsof -i :3000` |
-| Kill port | `kill -9 $(lsof -t -i :3000)` |
-| Background | `npm run dev &` |
-| Jobs | `jobs -l` |
-| Bring to front | `fg %1` |
+### Safe Script Header
 
----
-
-## 4. Text Processing
-
-### Core Tools
-
-| Tool | Purpose | Example |
-|------|---------|---------|
-| `grep` | Search | `grep -rn "TODO" src/` |
-| `sed` | Replace | `sed -i 's/old/new/g' file.txt` |
-| `awk` | Extract columns | `awk '{print $1}' file.txt` |
-| `cut` | Cut fields | `cut -d',' -f1 data.csv` |
-| `sort` | Sort lines | `sort -u file.txt` |
-| `uniq` | Unique lines | `sort file.txt \| uniq -c` |
-| `wc` | Count | `wc -l file.txt` |
-
----
-
-## 5. Environment Variables
-
-| Task | Command |
-|------|---------|
-| View all | `env` or `printenv` |
-| View one | `echo $PATH` |
-| Set temporary | `export VAR="value"` |
-| Set in script | `VAR="value" command` |
-| Add to PATH | `export PATH="$PATH:/new/path"` |
-
----
-
-## 6. Network
-
-| Task | Command |
-|------|---------|
-| Download | `curl -O https://example.com/file` |
-| API request | `curl -X GET https://api.example.com` |
-| POST JSON | `curl -X POST -H "Content-Type: application/json" -d '{"key":"value"}' URL` |
-| Check port | `nc -zv localhost 3000` |
-| Network info | `ifconfig` or `ip addr` |
-
----
-
-## 7. Script Template
+Every shell script should start with:
 
 ```bash
-#!/bin/bash
-set -euo pipefail  # Exit on error, undefined var, pipe fail
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+```
 
-# Colors (optional)
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-NC='\033[0m'
+- `set -e` — exit on any error
+- `set -u` — exit on undefined variable
+- `set -o pipefail` — fail if any command in a pipe fails
+- `IFS` — safer word splitting
 
-# Script directory
+### Variable Safety
+
+```bash
+# ❌ Unsafe — if DIR is empty, this deletes /
+rm -rf "$DIR/"
+
+# ✅ Safe — guard before destructive operation
+if [[ -z "$DIR" ]]; then
+  echo "Error: DIR is not set" >&2
+  exit 1
+fi
+rm -rf "$DIR/"
+```
+
+### Testing Conditions
+
+```bash
+# File/directory checks
+[[ -f "$file" ]]    # exists and is a regular file
+[[ -d "$dir" ]]     # exists and is a directory
+[[ -z "$var" ]]     # string is empty
+[[ -n "$var" ]]     # string is not empty
+
+# Numeric comparison (use (( )) for integers)
+(( count > 0 ))
+(( $? == 0 ))
+```
+
+### Error Handling
+
+```bash
+# Trap errors and print context
+trap 'echo "Error on line $LINENO" >&2' ERR
+
+# Run a command and handle failure explicitly
+if ! command_that_might_fail; then
+  echo "Command failed — aborting" >&2
+  exit 1
+fi
+
+# Or with ||
+do_something || { echo "Failed"; exit 1; }
+```
+
+---
+
+## Common Operations
+
+### Find Files
+
+```bash
+# Files modified in last 24h
+find . -mtime -1 -type f
+
+# Files matching pattern, excluding directories
+find . -name "*.log" -not -path "*/node_modules/*"
+
+# Search contents
+grep -r "pattern" . --include="*.ts" -l   # list files
+grep -r "pattern" . --include="*.ts" -n   # with line numbers
+```
+
+### Process & Resource Management
+
+```bash
+# Find process using a port
+lsof -i :3000
+ss -tlnp | grep :3000   # on Linux
+
+# Kill by port
+kill -9 $(lsof -ti :3000)
+
+# Background + disown
+long_running_command &
+disown $!
+```
+
+### Text Processing Pipeline
+
+```bash
+# Count occurrences
+cat file.log | grep "ERROR" | wc -l
+
+# Extract column from CSV
+cut -d',' -f2 data.csv
+
+# Unique sorted values
+sort file.txt | uniq -c | sort -rn
+```
+
+---
+
+## Script Structure Template
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ── Config ──────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TARGET="${1:-}"
 
-# Functions
-log_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
+# ── Validate ────────────────────────────
+if [[ -z "$TARGET" ]]; then
+  echo "Usage: $(basename "$0") <target>" >&2
+  exit 1
+fi
 
-# Main
+# ── Main ────────────────────────────────
 main() {
-    log_info "Starting..."
-    # Your logic here
-    log_info "Done!"
+  echo "Processing: $TARGET"
+  # ... logic here
 }
 
 main "$@"
@@ -126,74 +155,8 @@ main "$@"
 
 ---
 
-## 8. Common Patterns
+## Platform Notes
 
-### Check if command exists
-
-```bash
-if command -v node &> /dev/null; then
-    echo "Node is installed"
-fi
-```
-
-### Default variable value
-
-```bash
-NAME=${1:-"default_value"}
-```
-
-### Read file line by line
-
-```bash
-while IFS= read -r line; do
-    echo "$line"
-done < file.txt
-```
-
-### Loop over files
-
-```bash
-for file in *.js; do
-    echo "Processing $file"
-done
-```
-
----
-
-## 9. Differences from PowerShell
-
-| Task | PowerShell | Bash |
-|------|------------|------|
-| List files | `Get-ChildItem` | `ls -la` |
-| Find files | `Get-ChildItem -Recurse` | `find . -type f` |
-| Environment | `$env:VAR` | `$VAR` |
-| String concat | `"$a$b"` | `"$a$b"` (same) |
-| Null check | `if ($x)` | `if [ -n "$x" ]` |
-| Pipeline | Object-based | Text-based |
-
----
-
-## 10. Error Handling
-
-### Set options
-
-```bash
-set -e          # Exit on error
-set -u          # Exit on undefined variable
-set -o pipefail # Exit on pipe failure
-set -x          # Debug: print commands
-```
-
-### Trap for cleanup
-
-```bash
-cleanup() {
-    echo "Cleaning up..."
-    rm -f /tmp/tempfile
-}
-trap cleanup EXIT
-```
-
----
-
-> **Remember:** Bash is text-based. Use `&&` for success chains, `set -e` for safety, and quote your variables!
+- `date` syntax differs between macOS BSD and Linux GNU — use `python3 -c "..."` for portable date math
+- `sed -i` needs an empty string argument on macOS: `sed -i '' 's/old/new/' file`
+- Prefer `#!/usr/bin/env bash` over `#!/bin/bash` for portability

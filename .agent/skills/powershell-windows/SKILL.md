@@ -1,167 +1,177 @@
 ---
 name: powershell-windows
 description: PowerShell Windows patterns. Critical pitfalls, operator syntax, error handling.
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# PowerShell Windows Patterns
+# PowerShell on Windows
 
-> Critical patterns and pitfalls for Windows PowerShell.
-
----
-
-## 1. Operator Syntax Rules
-
-### CRITICAL: Parentheses Required
-
-| ❌ Wrong | ✅ Correct |
-|----------|-----------|
-| `if (Test-Path "a" -or Test-Path "b")` | `if ((Test-Path "a") -or (Test-Path "b"))` |
-| `if (Get-Item $x -and $y -eq 5)` | `if ((Get-Item $x) -and ($y -eq 5))` |
-
-**Rule:** Each cmdlet call MUST be in parentheses when using logical operators.
+> PowerShell is not bash with a Windows accent.
+> It is object-based, not text-based. That changes everything.
 
 ---
 
-## 2. Unicode/Emoji Restriction
+## Core Difference: Objects, Not Text
 
-### CRITICAL: No Unicode in Scripts
-
-| Purpose | ❌ Don't Use | ✅ Use |
-|---------|-------------|--------|
-| Success | ✅ ✓ | [OK] [+] |
-| Error | ❌ ✗ 🔴 | [!] [X] |
-| Warning | ⚠️ 🟡 | [*] [WARN] |
-| Info | ℹ️ 🔵 | [i] [INFO] |
-| Progress | ⏳ | [...] |
-
-**Rule:** Use ASCII characters only in PowerShell scripts.
-
----
-
-## 3. Null Check Patterns
-
-### Always Check Before Access
-
-| ❌ Wrong | ✅ Correct |
-|----------|-----------|
-| `$array.Count -gt 0` | `$array -and $array.Count -gt 0` |
-| `$text.Length` | `if ($text) { $text.Length }` |
-
----
-
-## 4. String Interpolation
-
-### Complex Expressions
-
-| ❌ Wrong | ✅ Correct |
-|----------|-----------|
-| `"Value: $($obj.prop.sub)"` | Store in variable first |
-
-**Pattern:**
-```
-$value = $obj.prop.sub
-Write-Output "Value: $value"
-```
-
----
-
-## 5. Error Handling
-
-### ErrorActionPreference
-
-| Value | Use |
-|-------|-----|
-| Stop | Development (fail fast) |
-| Continue | Production scripts |
-| SilentlyContinue | When errors expected |
-
-### Try/Catch Pattern
-
-- Don't return inside try block
-- Use finally for cleanup
-- Return after try/catch
-
----
-
-## 6. File Paths
-
-### Windows Path Rules
-
-| Pattern | Use |
-|---------|-----|
-| Literal path | `C:\Users\User\file.txt` |
-| Variable path | `Join-Path $env:USERPROFILE "file.txt"` |
-| Relative | `Join-Path $ScriptDir "data"` |
-
-**Rule:** Use Join-Path for cross-platform safety.
-
----
-
-## 7. Array Operations
-
-### Correct Patterns
-
-| Operation | Syntax |
-|-----------|--------|
-| Empty array | `$array = @()` |
-| Add item | `$array += $item` |
-| ArrayList add | `$list.Add($item) | Out-Null` |
-
----
-
-## 8. JSON Operations
-
-### CRITICAL: Depth Parameter
-
-| ❌ Wrong | ✅ Correct |
-|----------|-----------|
-| `ConvertTo-Json` | `ConvertTo-Json -Depth 10` |
-
-**Rule:** Always specify `-Depth` for nested objects.
-
-### File Operations
-
-| Operation | Pattern |
-|-----------|---------|
-| Read | `Get-Content "file.json" -Raw | ConvertFrom-Json` |
-| Write | `$data | ConvertTo-Json -Depth 10 | Out-File "file.json" -Encoding UTF8` |
-
----
-
-## 9. Common Errors
-
-| Error Message | Cause | Fix |
-|---------------|-------|-----|
-| "parameter 'or'" | Missing parentheses | Wrap cmdlets in () |
-| "Unexpected token" | Unicode character | Use ASCII only |
-| "Cannot find property" | Null object | Check null first |
-| "Cannot convert" | Type mismatch | Use .ToString() |
-
----
-
-## 10. Script Template
+Every PowerShell command returns objects, not strings. This is the foundational difference from bash.
 
 ```powershell
-# Strict mode
-Set-StrictMode -Version Latest
-$ErrorActionPreference = "Continue"
+# bash: 'ls' returns text you parse
+ls -la | awk '{print $9}'
 
-# Paths
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+# PowerShell: Get-ChildItem returns objects you access directly
+Get-ChildItem | Select-Object Name, Length
+(Get-ChildItem ".\src").Count   # count files directly
+```
 
-# Main
+This means string parsing (grep, awk, cut) is often unnecessary in PowerShell.
+
+---
+
+## Critical Operator Pitfalls
+
+PowerShell comparison operators use letters, not symbols:
+
+| Operation | PowerShell | NOT This |
+|---|---|---|
+| Equal | `-eq` | `==` |
+| Not equal | `-ne` | `!=` |
+| Greater than | `-gt` | `>` |
+| Less than | `-lt` | `<` |
+| Like (wildcard) | `-like "*.ts"` | — |
+| Match (regex) | `-match "pattern"` | — |
+| Contains | `-contains "val"` | — |
+
+```powershell
+# ❌ This doesn't compare — it redirects output
+if ($count == 5) { ... }
+
+# ✅ Correct PowerShell comparison
+if ($count -eq 5) { ... }
+```
+
+---
+
+## Path Handling
+
+Windows paths have backslashes but PowerShell handles both:
+
+```powershell
+# Both work in PowerShell
+$path = "C:\Users\username\project"
+$path = "C:/Users/username/project"
+
+# Use Join-Path for safe cross-platform joins
+$full = Join-Path $env:USERPROFILE "Desktop\project"
+
+# Resolve to absolute path
+$abs = Resolve-Path ".\relative\path"
+
+# Test existence before using
+if (Test-Path $path) { ... }
+if (Test-Path $path -PathType Container) { ... }  # is it a directory?
+if (Test-Path $path -PathType Leaf) { ... }        # is it a file?
+```
+
+---
+
+## Error Handling
+
+PowerShell has two error types: terminating and non-terminating.
+
+```powershell
+# Stop on any error (like bash set -e)
+$ErrorActionPreference = 'Stop'
+
+# Try/Catch only catches terminating errors
 try {
-    # Logic here
-    Write-Output "[OK] Done"
-    exit 0
+  Remove-Item "nonexistent.txt" -ErrorAction Stop
+} catch {
+  Write-Host "Error: $_" -ForegroundColor Red
+  exit 1
 }
-catch {
-    Write-Warning "Error: $_"
-    exit 1
+
+# Handle non-terminating errors
+$result = Get-Item "maybe.txt" -ErrorAction SilentlyContinue
+if (-not $result) {
+  Write-Host "File not found"
 }
 ```
 
 ---
 
-> **Remember:** PowerShell has unique syntax rules. Parentheses, ASCII-only, and null checks are non-negotiable.
+## String Handling
+
+```powershell
+# Single quotes = literal (no variable expansion)
+$name = 'world'
+Write-Host 'Hello $name'   # outputs: Hello $name
+
+# Double quotes = interpolation
+Write-Host "Hello $name"   # outputs: Hello world
+
+# Here-string for multiline
+$block = @"
+Line 1
+Line 2
+Value: $name
+"@
+
+# String operations
+$str.ToLower()
+$str.Replace("old", "new")
+$str.Split(",")
+$str.Trim()
+$str -like "*.ts"       # wildcard match
+$str -match "^\d{4}$"   # regex match
+```
+
+---
+
+## Useful Patterns
+
+```powershell
+# Get script directory (equivalent of bash's $SCRIPT_DIR)
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+# Run command and capture output WITH error handling
+$output = & git status 2>&1
+if ($LASTEXITCODE -ne 0) {
+  Write-Error "git failed: $output"
+  exit 1
+}
+
+# Iterate files matching pattern
+Get-ChildItem ".\src" -Recurse -Filter "*.ts" | ForEach-Object {
+    Write-Host $_.FullName
+}
+
+# Create directory if not exists
+New-Item -ItemType Directory -Force ".\output" | Out-Null
+
+# Read/write files
+$content = Get-Content ".\file.txt" -Raw
+Set-Content ".\output.txt" "new content"
+Add-Content ".\log.txt" "append this line"
+
+# Environment variables
+$env:MY_VAR = "value"         # set
+[System.Environment]::GetEnvironmentVariable("PATH")   # read system-level
+```
+
+---
+
+## Execution Policy
+
+Scripts may be blocked by execution policy:
+
+```powershell
+# Check current policy
+Get-ExecutionPolicy
+
+# Allow local scripts (most permissive safe setting)
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Run a specific script bypassing policy (one-time)
+powershell -ExecutionPolicy Bypass -File script.ps1
+```

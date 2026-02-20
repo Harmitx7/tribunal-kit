@@ -1,194 +1,186 @@
 ---
 name: documentation-templates
 description: Documentation templates and structure guidelines. README, API docs, code comments, and AI-friendly documentation.
-allowed-tools: Read, Glob, Grep
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# Documentation Templates
+# Documentation Standards
 
-> Templates and structure guidelines for common documentation types.
+> Documentation is a product. It has users. Those users are often future-you,
+> three months from now, having completely forgotten how this works.
 
 ---
 
-## 1. README Structure
+## Documentation Types and Their Audiences
 
-### Essential Sections (Priority Order)
+| Type | Audience | Goal |
+|---|---|---|
+| README | New developer joining the project | "Get me running in 10 minutes" |
+| API docs | External integrator or frontend dev | "Tell me exactly what I can call and what I'll get back" |
+| Architecture decision (ADR) | Future engineer inheriting the codebase | "Tell me why it works this way, not just how" |
+| Code comment | Reviewer, maintainer | "Explain the non-obvious; skip the obvious" |
+| Runbook | On-call engineer at 2am | "Tell me what to do, not what to think about" |
 
-| Section | Purpose |
-|---------|---------|
-| **Title + One-liner** | What is this? |
-| **Quick Start** | Running in <5 min |
-| **Features** | What can I do? |
-| **Configuration** | How to customize |
-| **API Reference** | Link to detailed docs |
-| **Contributing** | How to help |
-| **License** | Legal |
+---
 
-### README Template
+## README Template
 
 ```markdown
 # Project Name
 
-Brief one-line description.
+One sentence: what this is and what problem it solves.
 
 ## Quick Start
 
-[Minimum steps to run]
+\`\`\`bash
+git clone ...
+cd project
+npm install
+cp .env.example .env
+npm run dev
+\`\`\`
 
-## Features
+Open http://localhost:3000
 
-- Feature 1
-- Feature 2
+## Requirements
 
-## Configuration
+- Node.js 20+
+- PostgreSQL 15+
+- [Any other hard requirements]
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| PORT | Server port | 3000 |
+## Project Structure
 
-## Documentation
+\`\`\`
+src/
+  api/        API routes
+  lib/        Shared utilities
+  services/   Business logic
+\`\`\`
 
-- [API Reference](./docs/api.md)
-- [Architecture](./docs/architecture.md)
+## Environment Variables
 
-## License
+| Variable | Required | Description |
+|---|---|---|
+| DATABASE_URL | Yes | PostgreSQL connection string |
+| JWT_SECRET | Yes | Secret for signing JWTs |
 
-MIT
+## Running Tests
+
+\`\`\`bash
+npm test              # unit tests
+npm run test:e2e      # end-to-end tests
+\`\`\`
+
+## Contributing
+
+[Brief contribution guide or link to CONTRIBUTING.md]
 ```
 
 ---
 
-## 2. API Documentation Structure
+## API Documentation Standards
 
-### Per-Endpoint Template
+For each endpoint, document:
 
 ```markdown
-## GET /users/:id
+### POST /api/users
 
-Get a user by ID.
+Creates a new user account.
 
-**Parameters:**
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| id | string | Yes | User ID |
+**Request Body**
+\`\`\`json
+{
+  "email": "string (required, valid email)",
+  "name": "string (required, 2–100 chars)",
+  "role": "admin | user (optional, default: user)"
+}
+\`\`\`
 
-**Response:**
-- 200: User object
-- 404: User not found
+**Responses**
 
-**Example:**
-[Request and response example]
+| Status | Meaning | Body |
+|---|---|---|
+| 201 | User created | `{ data: User }` |
+| 400 | Validation failed | `{ error: string, details: string[] }` |
+| 409 | Email already exists | `{ error: string }` |
+
+**Example**
+\`\`\`bash
+curl -X POST /api/users \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com", "name": "Jane"}'
+\`\`\`
 ```
 
 ---
 
-## 3. Code Comment Guidelines
+## Code Comment Rules
 
-### JSDoc/TSDoc Template
+**Comment the why, not the what:**
 
-```typescript
-/**
- * Brief description of what the function does.
- * 
- * @param paramName - Description of parameter
- * @returns Description of return value
- * @throws ErrorType - When this error occurs
- * 
- * @example
- * const result = functionName(input);
- */
+```ts
+// ❌ States what the code does (obvious from reading it)
+// Multiply price by tax rate
+const total = price * taxRate;
+
+// ✅ Explains why this specific value exists
+// Vietnamese tax law requires 10% VAT on all digital goods (Circular 92/2015)
+const VN_DIGITAL_TAX_RATE = 1.10;
+const total = price * VN_DIGITAL_TAX_RATE;
 ```
 
-### When to Comment
-
-| ✅ Comment | ❌ Don't Comment |
-|-----------|-----------------|
-| Why (business logic) | What (obvious) |
-| Complex algorithms | Every line |
-| Non-obvious behavior | Self-explanatory code |
-| API contracts | Implementation details |
+**When to always comment:**
+- Non-obvious business rules
+- Workarounds for external library bugs (with issue link if possible)
+- Performance decisions that look like premature optimization but aren't
+- Magic numbers and why they have that value
 
 ---
 
-## 4. Changelog Template (Keep a Changelog)
+## AI-Friendly Documentation
+
+When a codebase will be worked on by AI assistants:
+
+- Keep a `CODEBASE.md` at root with: tech stack, folder structure, key conventions
+- Add a `ARCHITECTURE.md` with: system boundaries, data flow, key decisions
+- Add `// @purpose:` comments on complex functions so AI can understand intent without reading the full implementation
+- Document which files are auto-generated and should not be edited directly
+
+---
+
+## Runbook Template
 
 ```markdown
-# Changelog
+# Runbook: [Service or Incident Type]
 
-## [Unreleased]
-### Added
-- New feature
+## Symptoms
+- [What the user or monitor reports]
 
-## [1.0.0] - 2025-01-01
-### Added
-- Initial release
-### Changed
-- Updated dependency
-### Fixed
-- Bug fix
+## Likely Causes
+1. [Most common cause]
+2. [Second most common]
+
+## Investigation Steps
+\`\`\`bash
+# Check service health
+kubectl get pods -n production
+
+# Check recent errors
+kubectl logs deployment/api --since=15m | grep ERROR
+\`\`\`
+
+## Resolution Steps
+### If Cause 1:
+[Exact steps to resolve]
+
+### If Cause 2:
+[Exact steps to resolve]
+
+## Escalation
+If unresolved after 30 minutes → page @on-call-lead
+
+## Post-Incident
+[ ] Write incident report
+[ ] Add monitoring for this failure mode
+[ ] Update this runbook if steps changed
 ```
-
----
-
-## 5. Architecture Decision Record (ADR)
-
-```markdown
-# ADR-001: [Title]
-
-## Status
-Accepted / Deprecated / Superseded
-
-## Context
-Why are we making this decision?
-
-## Decision
-What did we decide?
-
-## Consequences
-What are the trade-offs?
-```
-
----
-
-## 6. AI-Friendly Documentation (2025)
-
-### llms.txt Template
-
-For AI crawlers and agents:
-
-```markdown
-# Project Name
-> One-line objective.
-
-## Core Files
-- [src/index.ts]: Main entry
-- [src/api/]: API routes
-- [docs/]: Documentation
-
-## Key Concepts
-- Concept 1: Brief explanation
-- Concept 2: Brief explanation
-```
-
-### MCP-Ready Documentation
-
-For RAG indexing:
-- Clear H1-H3 hierarchy
-- JSON/YAML examples for data structures
-- Mermaid diagrams for flows
-- Self-contained sections
-
----
-
-## 7. Structure Principles
-
-| Principle | Why |
-|-----------|-----|
-| **Scannable** | Headers, lists, tables |
-| **Examples first** | Show, don't just tell |
-| **Progressive detail** | Simple → Complex |
-| **Up to date** | Outdated = misleading |
-
----
-
-> **Remember:** Templates are starting points. Adapt to your project's needs.

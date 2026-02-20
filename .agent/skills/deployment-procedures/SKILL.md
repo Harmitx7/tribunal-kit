@@ -1,241 +1,125 @@
 ---
 name: deployment-procedures
 description: Production deployment principles and decision-making. Safe deployment workflows, rollback strategies, and verification. Teaches thinking, not scripts.
-allowed-tools: Read, Glob, Grep, Bash
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# Deployment Procedures
+# Deployment Principles
 
-> Deployment principles and decision-making for safe production releases.
-> **Learn to THINK, not memorize scripts.**
-
----
-
-## ⚠️ How to Use This Skill
-
-This skill teaches **deployment principles**, not bash scripts to copy.
-
-- Every deployment is unique
-- Understand the WHY behind each step
-- Adapt procedures to your platform
+> Deployments are not risky because of the code. They are risky because of all the
+> assumptions that have never been tested in production.
 
 ---
 
-## 1. Platform Selection
+## The Core Tension
 
-### Decision Tree
+Speed vs. safety. Moving fast reduces iteration time. Moving carefully reduces incidents.
+The answer is not "always be careful" — it's **make fast safe**.
+
+That means:
+- Deployments that are reversible
+- Changes that are observable in real time
+- Failures that are isolated to a subset of users
+- State changes that can be undone without code changes
+
+---
+
+## Five Phases of Safe Deployment
+
+### Phase 1 — Pre-Flight
+
+Before touching anything in production:
+
+- [ ] Tests passing on the branch being deployed
+- [ ] No pending schema migrations that will break the current production code
+- [ ] Feature flags in place for any risky changes
+- [ ] Rollback plan confirmed — "delete the feature flag" is a valid plan, "redeploy" is not (too slow)
+- [ ] Team notified if deployment will cause visible disruption
+
+### Phase 2 — Database First
+
+If there are schema changes:
+
+- Deploy the migration **before** the code that depends on it
+- Verify the migration completed and the database is healthy
+- The new code must be backward-compatible with the old schema (for the window during which old pods are still running)
+
+**Never:**
+- Add NOT NULL without a DEFAULT in the migration
+- Drop a column in the same deployment that removes the code referencing it
+- Run a migration that locks the table for more than a few seconds without scheduling a maintenance window
+
+### Phase 3 — Code Deploy
+
+Deploy with traffic distribution:
+
+| Strategy | Risk | When to Use |
+|---|---|---|
+| Direct (all-at-once) | High | Small teams, low traffic, with immediate rollback |
+| Rolling | Medium | Multiple instances, gradual update, auto-rollback on health fail |
+| Blue/Green | Low | Mission-critical services, instant switch and rollback |
+| Canary | Very low | Unknown risk level, expose to 1–5% of traffic first |
+
+### Phase 4 — Verify
+
+After deploying, watch:
+
+- Error rate — compare to pre-deploy baseline, not zero
+- Response time P50, P95, P99 — not just average
+- Business metric if visible (conversion, checkout completion)
+- Key logs for new error patterns
+
+Wait at minimum:
+- 5 minutes for canary verification
+- 15 minutes for a rolling deploy
+- Until traffic covers the full daily pattern for any significant feature
+
+### Phase 5 — Complete or Roll Back
+
+**Roll back when:**
+- Error rate increases by more than 2x pre-deploy baseline
+- P95 latency increases significantly without an expected cause
+- A critical user path stops working
+
+**Complete when:**
+- All metrics stable for the required observation window
+- All instances updated
+- Feature flags cleaned up if used
+
+---
+
+## Rollback vs. Roll Forward
+
+| Scenario | Recommendation |
+|---|---|
+| Bug in new code, no data mutations | Roll back (redeploy previous version) |
+| Bug in new code, data already mutated | Roll forward (fix the mutation in a follow-up deploy) |
+| Schema migration caused the issue | Fix forward — migrations are rarely safely reversible |
+| Feature flag controls the issue | Turn off the flag — fastest rollback possible |
+
+---
+
+## Environment Hierarchy
+
+Code flows one direction: dev → staging → production. Never skip staging for anything non-trivial.
+
+- **Development:** Fast iteration, local data, no external consequences
+- **Staging:** Production-like data (anonymized), used for final verification
+- **Production:** Real users, real consequences, thorough before touching
+
+---
+
+## What a Deployment Runbook Contains
+
+For any significant deployment, document before starting:
 
 ```
-What are you deploying?
-│
-├── Static site / JAMstack
-│   └── Vercel, Netlify, Cloudflare Pages
-│
-├── Simple web app
-│   ├── Managed → Railway, Render, Fly.io
-│   └── Control → VPS + PM2/Docker
-│
-├── Microservices
-│   └── Container orchestration
-│
-└── Serverless
-    └── Edge functions, Lambda
+Date/Time:         
+Engineer:          
+What is changing:  
+Why:               
+Expected behavior: 
+How to verify:     
+Rollback plan:     
+Time to rollback:  
 ```
-
-### Each Platform Has Different Procedures
-
-| Platform | Deployment Method |
-|----------|------------------|
-| **Vercel/Netlify** | Git push, auto-deploy |
-| **Railway/Render** | Git push or CLI |
-| **VPS + PM2** | SSH + manual steps |
-| **Docker** | Image push + orchestration |
-| **Kubernetes** | kubectl apply |
-
----
-
-## 2. Pre-Deployment Principles
-
-### The 4 Verification Categories
-
-| Category | What to Check |
-|----------|--------------|
-| **Code Quality** | Tests passing, linting clean, reviewed |
-| **Build** | Production build works, no warnings |
-| **Environment** | Env vars set, secrets current |
-| **Safety** | Backup done, rollback plan ready |
-
-### Pre-Deployment Checklist
-
-- [ ] All tests passing
-- [ ] Code reviewed and approved
-- [ ] Production build successful
-- [ ] Environment variables verified
-- [ ] Database migrations ready (if any)
-- [ ] Rollback plan documented
-- [ ] Team notified
-- [ ] Monitoring ready
-
----
-
-## 3. Deployment Workflow Principles
-
-### The 5-Phase Process
-
-```
-1. PREPARE
-   └── Verify code, build, env vars
-
-2. BACKUP
-   └── Save current state before changing
-
-3. DEPLOY
-   └── Execute with monitoring open
-
-4. VERIFY
-   └── Health check, logs, key flows
-
-5. CONFIRM or ROLLBACK
-   └── All good? Confirm. Issues? Rollback.
-```
-
-### Phase Principles
-
-| Phase | Principle |
-|-------|-----------|
-| **Prepare** | Never deploy untested code |
-| **Backup** | Can't rollback without backup |
-| **Deploy** | Watch it happen, don't walk away |
-| **Verify** | Trust but verify |
-| **Confirm** | Have rollback trigger ready |
-
----
-
-## 4. Post-Deployment Verification
-
-### What to Verify
-
-| Check | Why |
-|-------|-----|
-| **Health endpoint** | Service is running |
-| **Error logs** | No new errors |
-| **Key user flows** | Critical features work |
-| **Performance** | Response times acceptable |
-
-### Verification Window
-
-- **First 5 minutes**: Active monitoring
-- **15 minutes**: Confirm stable
-- **1 hour**: Final verification
-- **Next day**: Review metrics
-
----
-
-## 5. Rollback Principles
-
-### When to Rollback
-
-| Symptom | Action |
-|---------|--------|
-| Service down | Rollback immediately |
-| Critical errors | Rollback |
-| Performance >50% degraded | Consider rollback |
-| Minor issues | Fix forward if quick |
-
-### Rollback Strategy by Platform
-
-| Platform | Rollback Method |
-|----------|----------------|
-| **Vercel/Netlify** | Redeploy previous commit |
-| **Railway/Render** | Rollback in dashboard |
-| **VPS + PM2** | Restore backup, restart |
-| **Docker** | Previous image tag |
-| **K8s** | kubectl rollout undo |
-
-### Rollback Principles
-
-1. **Speed over perfection**: Rollback first, debug later
-2. **Don't compound errors**: One rollback, not multiple changes
-3. **Communicate**: Tell team what happened
-4. **Post-mortem**: Understand why after stable
-
----
-
-## 6. Zero-Downtime Deployment
-
-### Strategies
-
-| Strategy | How It Works |
-|----------|--------------|
-| **Rolling** | Replace instances one by one |
-| **Blue-Green** | Switch traffic between environments |
-| **Canary** | Gradual traffic shift |
-
-### Selection Principles
-
-| Scenario | Strategy |
-|----------|----------|
-| Standard release | Rolling |
-| High-risk change | Blue-green (easy rollback) |
-| Need validation | Canary (test with real traffic) |
-
----
-
-## 7. Emergency Procedures
-
-### Service Down Priority
-
-1. **Assess**: What's the symptom?
-2. **Quick fix**: Restart if unclear
-3. **Rollback**: If restart doesn't help
-4. **Investigate**: After stable
-
-### Investigation Order
-
-| Check | Common Issues |
-|-------|--------------|
-| **Logs** | Errors, exceptions |
-| **Resources** | Disk full, memory |
-| **Network** | DNS, firewall |
-| **Dependencies** | Database, APIs |
-
----
-
-## 8. Anti-Patterns
-
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Deploy on Friday | Deploy early in week |
-| Rush deployment | Follow the process |
-| Skip staging | Always test first |
-| Deploy without backup | Backup before deploy |
-| Walk away after deploy | Monitor for 15+ min |
-| Multiple changes at once | One change at a time |
-
----
-
-## 9. Decision Checklist
-
-Before deploying:
-
-- [ ] **Platform-appropriate procedure?**
-- [ ] **Backup strategy ready?**
-- [ ] **Rollback plan documented?**
-- [ ] **Monitoring configured?**
-- [ ] **Team notified?**
-- [ ] **Time to monitor after?**
-
----
-
-## 10. Best Practices
-
-1. **Small, frequent deploys** over big releases
-2. **Feature flags** for risky changes
-3. **Automate** repetitive steps
-4. **Document** every deployment
-5. **Review** what went wrong after issues
-6. **Test rollback** before you need it
-
----
-
-> **Remember:** Every deployment is a risk. Minimize risk through preparation, not speed.

@@ -4,173 +4,152 @@ description: MCP (Model Context Protocol) server building principles. Tool desig
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# MCP Builder
+# MCP Server Development
 
-> Principles for building MCP servers.
-
----
-
-## 1. MCP Overview
-
-### What is MCP?
-
-Model Context Protocol - standard for connecting AI systems with external tools and data sources.
-
-### Core Concepts
-
-| Concept | Purpose |
-|---------|---------|
-| **Tools** | Functions AI can call |
-| **Resources** | Data AI can read |
-| **Prompts** | Pre-defined prompt templates |
+> An MCP server exposes capabilities to AI assistants.
+> Design tools the way you design a good API: clear contracts, predictable behavior, honest errors.
 
 ---
 
-## 2. Server Architecture
+## What MCP Servers Do
 
-### Project Structure
+An MCP (Model Context Protocol) server gives an AI assistant structured access to:
 
-```
-my-mcp-server/
-├── src/
-│   └── index.ts      # Main entry
-├── package.json
-└── tsconfig.json
+- **Tools** — actions the AI can invoke (run a query, send a message, fetch data)
+- **Resources** — data the AI can read (files, database records, API responses)
+- **Prompts** — reusable prompt templates with parameters
+
+---
+
+## Tool Design Principles
+
+### 1. One tool, one responsibility
+
+A tool that does two things is a tool that confuses the model. Split tools when they serve different goals.
+
+```ts
+// ❌ Ambiguous — does it list AND filter?
+{ name: "get_users", description: "Get users, optionally filtered by role" }
+
+// ✅ Separate concerns
+{ name: "list_users", description: "List all users with pagination" }
+{ name: "find_users_by_role", description: "Find users matching a specific role" }
 ```
 
-### Transport Types
+### 2. Descriptions are the interface
 
-| Type | Use |
-|------|-----|
-| **Stdio** | Local, CLI-based |
-| **SSE** | Web-based, streaming |
-| **WebSocket** | Real-time, bidirectional |
+The AI reads descriptions to decide which tool to call. Write them for the AI, not for humans.
 
----
+- State exactly what the tool does in plain terms
+- State what the tool returns
+- State when NOT to use it if there's common confusion
 
-## 3. Tool Design Principles
+```ts
+{
+  name: "search_products",
+  description: "Search products by keyword. Returns an array of matching product records " +
+    "with id, name, price, and stock. Use this for keyword search, not for fetching a " +
+    "specific product by ID — use get_product_by_id for that."
+}
+```
 
-### Good Tool Design
+### 3. Input schemas are contracts
 
-| Principle | Description |
-|-----------|-------------|
-| Clear name | Action-oriented (get_weather, create_user) |
-| Single purpose | One thing well |
-| Validated input | Schema with types and descriptions |
-| Structured output | Predictable response format |
+Every tool input must have a JSON Schema definition with:
+- Required vs. optional fields clearly marked
+- Descriptions on each field
+- Sensible defaults on optional fields
 
-### Input Schema Design
+```ts
+inputSchema: {
+  type: "object",
+  required: ["query"],
+  properties: {
+    query: {
+      type: "string",
+      description: "Search keyword. Minimum 2 characters."
+    },
+    limit: {
+      type: "number",
+      description: "Maximum results to return. Default: 10. Max: 100.",
+      default: 10
+    }
+  }
+}
+```
 
-| Field | Required? |
-|-------|-----------|
-| Type | Yes - object |
-| Properties | Define each param |
-| Required | List mandatory params |
-| Description | Human-readable |
+### 4. Errors must be informative
 
----
+When a tool fails, the AI needs to understand what went wrong and whether to retry.
 
-## 4. Resource Patterns
+```ts
+// ❌ Useless error
+throw new Error("Failed");
 
-### Resource Types
-
-| Type | Use |
-|------|-----|
-| Static | Fixed data (config, docs) |
-| Dynamic | Generated on request |
-| Template | URI with parameters |
-
-### URI Patterns
-
-| Pattern | Example |
-|---------|---------|
-| Fixed | `docs://readme` |
-| Parameterized | `users://{userId}` |
-| Collection | `files://project/*` |
-
----
-
-## 5. Error Handling
-
-### Error Types
-
-| Situation | Response |
-|-----------|----------|
-| Invalid params | Validation error message |
-| Not found | Clear "not found" |
-| Server error | Generic error, log details |
-
-### Best Practices
-
-- Return structured errors
-- Don't expose internal details
-- Log for debugging
-- Provide actionable messages
+// ✅ Actionable error
+return {
+  isError: true,
+  content: [{
+    type: "text",
+    text: "Product search failed: the search index is temporarily unavailable. " +
+          "Try again in a few seconds or use list_products for unfiltered results."
+  }]
+};
+```
 
 ---
 
-## 6. Multimodal Handling
+## Resource Design
 
-### Supported Types
+Resources give the AI read-only access to data. Use them for content the AI needs to understand context, not for actions.
 
-| Type | Encoding |
-|------|----------|
-| Text | Plain text |
-| Images | Base64 + MIME type |
-| Files | Base64 + MIME type |
+```ts
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+  const uri = request.params.uri;
 
----
+  if (uri.startsWith("product://")) {
+    const id = uri.replace("product://", "");
+    const product = await db.products.findById(id);
 
-## 7. Security Principles
-
-### Input Validation
-
-- Validate all tool inputs
-- Sanitize user-provided data
-- Limit resource access
-
-### API Keys
-
-- Use environment variables
-- Don't log secrets
-- Validate permissions
+    return {
+      contents: [{
+        uri,
+        mimeType: "application/json",
+        text: JSON.stringify(product, null, 2)
+      }]
+    };
+  }
+});
+```
 
 ---
 
-## 8. Configuration
+## Security Rules
 
-### Claude Desktop Config
+MCP servers execute with user-level permissions and may have access to sensitive systems:
 
-| Field | Purpose |
-|-------|---------|
-| command | Executable to run |
-| args | Command arguments |
-| env | Environment variables |
-
----
-
-## 9. Testing
-
-### Test Categories
-
-| Type | Focus |
-|------|-------|
-| Unit | Tool logic |
-| Integration | Full server |
-| Contract | Schema validation |
+- **Never trust tool arguments without validation** — the AI can be prompted to send malicious input
+- **Parameterize all database queries** — treat tool input as untrusted user input
+- **Scope API keys narrowly** — the MCP server should have the minimum permissions needed
+- **Log tool invocations** — especially for tools that write data or delete records
+- **Rate limit tool calls** — prevent runaway AI loops from hammering backends
 
 ---
 
-## 10. Best Practices Checklist
+## Configuration Template
 
-- [ ] Clear, action-oriented tool names
-- [ ] Complete input schemas with descriptions
-- [ ] Structured JSON output
-- [ ] Error handling for all cases
-- [ ] Input validation
-- [ ] Environment-based configuration
-- [ ] Logging for debugging
+```json
+{
+  "mcpServers": {
+    "your-server": {
+      "command": "npx",
+      "args": ["-y", "your-mcp-package"],
+      "env": {
+        "API_KEY": "${YOUR_API_KEY}"
+      }
+    }
+  }
+}
+```
 
----
-
-> **Remember:** MCP tools should be simple, focused, and well-documented. The AI relies on descriptions to use them correctly.
+Place in `~/.cursor/mcp.json` (Cursor) or `~/.gemini/antigravity/mcp_config.json` (Antigravity).

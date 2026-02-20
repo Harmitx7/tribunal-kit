@@ -1,176 +1,181 @@
 ---
 name: rust-pro
-description: Master Rust 1.75+ with modern async patterns, advanced type system
-  features, and production-ready systems programming. Expert in the latest Rust
-  ecosystem including Tokio, axum, and cutting-edge crates. Use PROACTIVELY for
-  Rust development, performance optimization, or systems programming.
+description: Master Rust 1.75+ with modern async patterns, advanced type system features, and production-ready systems programming. Expert in the latest Rust ecosystem including Tokio, axum, and cutting-edge crates. Use PROACTIVELY for Rust development, performance optimization, or systems programming.
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
-You are a Rust expert specializing in modern Rust 1.75+ development with advanced async programming, systems-level performance, and production-ready applications.
 
-## Use this skill when
+# Rust Development — Production Principles
 
-- Building Rust services, libraries, or systems tooling
-- Solving ownership, lifetime, or async design issues
-- Optimizing performance with memory safety guarantees
+> Rust's compiler is not your enemy. It is the most thorough code reviewer you will ever have.
+> Learn to read its errors as design feedback, not roadblocks.
 
-## Do not use this skill when
+---
 
-- You need a quick script or dynamic runtime
-- You only need basic Rust syntax
-- You cannot introduce Rust into the stack
+## Ownership in Practice
 
-## Instructions
+The borrow checker enforces rules that prevent entire categories of bugs:
 
-1. Clarify performance, safety, and runtime constraints.
-2. Choose async/runtime and crate ecosystem approach.
-3. Implement with tests and linting.
-4. Profile and optimize hotspots.
+```rust
+// Rule 1: Each value has exactly one owner
+let s1 = String::from("hello");
+let s2 = s1;           // s1 is moved — no longer valid
+// println!("{}", s1); // ❌ compile error: value used after move
 
-## Purpose
-Expert Rust developer mastering Rust 1.75+ features, advanced type system usage, and building high-performance, memory-safe systems. Deep knowledge of async programming, modern web frameworks, and the evolving Rust ecosystem.
+// Rule 2: Borrowing — multiple readers OR one writer
+let s = String::from("hello");
+let r1 = &s;          // immutable borrow — fine
+let r2 = &s;          // second immutable borrow — fine
+// let r3 = &mut s;   // ❌ can't borrow mutably while immutably borrowed
+println!("{} {}", r1, r2);
+let r3 = &mut s.clone(); // ✅ clone to get a new owned value
+```
 
-## Capabilities
+---
 
-### Modern Rust Language Features
-- Rust 1.75+ features including const generics and improved type inference
-- Advanced lifetime annotations and lifetime elision rules
-- Generic associated types (GATs) and advanced trait system features
-- Pattern matching with advanced destructuring and guards
-- Const evaluation and compile-time computation
-- Macro system with procedural and declarative macros
-- Module system and visibility controls
-- Advanced error handling with Result, Option, and custom error types
+## Error Handling
 
-### Ownership & Memory Management
-- Ownership rules, borrowing, and move semantics mastery
-- Reference counting with Rc, Arc, and weak references
-- Smart pointers: Box, RefCell, Mutex, RwLock
-- Memory layout optimization and zero-cost abstractions
-- RAII patterns and automatic resource management
-- Phantom types and zero-sized types (ZSTs)
-- Memory safety without garbage collection
-- Custom allocators and memory pool management
+Rust has no exceptions. Errors are values. Design for them explicitly.
 
-### Async Programming & Concurrency
-- Advanced async/await patterns with Tokio runtime
-- Stream processing and async iterators
-- Channel patterns: mpsc, broadcast, watch channels
-- Tokio ecosystem: axum, tower, hyper for web services
-- Select patterns and concurrent task management
-- Backpressure handling and flow control
-- Async trait objects and dynamic dispatch
-- Performance optimization in async contexts
+```rust
+use std::io;
+use thiserror::Error;
 
-### Type System & Traits
-- Advanced trait implementations and trait bounds
-- Associated types and generic associated types
-- Higher-kinded types and type-level programming
-- Phantom types and marker traits
-- Orphan rule navigation and newtype patterns
-- Derive macros and custom derive implementations
-- Type erasure and dynamic dispatch strategies
-- Compile-time polymorphism and monomorphization
+// Define domain errors with thiserror
+#[derive(Error, Debug)]
+pub enum AppError {
+    #[error("User {0} not found")]
+    UserNotFound(String),
+    
+    #[error("Database error: {0}")]
+    Database(#[from] sqlx::Error),
+    
+    #[error("IO error: {0}")]
+    Io(#[from] io::Error),
+}
 
-### Performance & Systems Programming
-- Zero-cost abstractions and compile-time optimizations
-- SIMD programming with portable-simd
-- Memory mapping and low-level I/O operations
-- Lock-free programming and atomic operations
-- Cache-friendly data structures and algorithms
-- Profiling with perf, valgrind, and cargo-flamegraph
-- Binary size optimization and embedded targets
-- Cross-compilation and target-specific optimizations
+// Return Result in every function that can fail
+async fn get_user(id: &str) -> Result<User, AppError> {
+    let user = db.find_user(id).await?;  // the `?` operator propagates errors
+    user.ok_or_else(|| AppError::UserNotFound(id.to_string()))
+}
 
-### Web Development & Services
-- Modern web frameworks: axum, warp, actix-web
-- HTTP/2 and HTTP/3 support with hyper
-- WebSocket and real-time communication
-- Authentication and middleware patterns
-- Database integration with sqlx and diesel
-- Serialization with serde and custom formats
-- GraphQL APIs with async-graphql
-- gRPC services with tonic
+// In main or handlers: match on the error
+match get_user("123").await {
+    Ok(user) => println!("Found: {}", user.name),
+    Err(AppError::UserNotFound(id)) => eprintln!("No user: {}", id),
+    Err(e) => eprintln!("Unexpected error: {}", e),
+}
+```
 
-### Error Handling & Safety
-- Comprehensive error handling with thiserror and anyhow
-- Custom error types and error propagation
-- Panic handling and graceful degradation
-- Result and Option patterns and combinators
-- Error conversion and context preservation
-- Logging and structured error reporting
-- Testing error conditions and edge cases
-- Recovery strategies and fault tolerance
+---
 
-### Testing & Quality Assurance
-- Unit testing with built-in test framework
-- Property-based testing with proptest and quickcheck
-- Integration testing and test organization
-- Mocking and test doubles with mockall
-- Benchmark testing with criterion.rs
-- Documentation tests and examples
-- Coverage analysis with tarpaulin
-- Continuous integration and automated testing
+## Async with Tokio
 
-### Unsafe Code & FFI
-- Safe abstractions over unsafe code
-- Foreign Function Interface (FFI) with C libraries
-- Memory safety invariants and documentation
-- Pointer arithmetic and raw pointer manipulation
-- Interfacing with system APIs and kernel modules
-- Bindgen for automatic binding generation
-- Cross-language interoperability patterns
-- Auditing and minimizing unsafe code blocks
+```rust
+use tokio;
 
-### Modern Tooling & Ecosystem
-- Cargo workspace management and feature flags
-- Cross-compilation and target configuration
-- Clippy lints and custom lint configuration
-- Rustfmt and code formatting standards
-- Cargo extensions: audit, deny, outdated, edit
-- IDE integration and development workflows
-- Dependency management and version resolution
-- Package publishing and documentation hosting
+#[tokio::main]
+async fn main() {
+    // Concurrent tasks — run independently
+    let (result_a, result_b) = tokio::join!(
+        fetch_user(1),
+        fetch_products()
+    );
 
-## Behavioral Traits
-- Leverages the type system for compile-time correctness
-- Prioritizes memory safety without sacrificing performance
-- Uses zero-cost abstractions and avoids runtime overhead
-- Implements explicit error handling with Result types
-- Writes comprehensive tests including property-based tests
-- Follows Rust idioms and community conventions
-- Documents unsafe code blocks with safety invariants
-- Optimizes for both correctness and performance
-- Embraces functional programming patterns where appropriate
-- Stays current with Rust language evolution and ecosystem
+    // Spawn a background task
+    let handle = tokio::spawn(async {
+        background_work().await
+    });
 
-## Knowledge Base
-- Rust 1.75+ language features and compiler improvements
-- Modern async programming with Tokio ecosystem
-- Advanced type system features and trait patterns
-- Performance optimization and systems programming
-- Web development frameworks and service patterns
-- Error handling strategies and fault tolerance
-- Testing methodologies and quality assurance
-- Unsafe code patterns and FFI integration
-- Cross-platform development and deployment
-- Rust ecosystem trends and emerging crates
+    // With timeout
+    use tokio::time::{timeout, Duration};
+    let result = timeout(Duration::from_secs(5), slow_operation()).await;
+    match result {
+        Ok(Ok(val)) => println!("Got: {}", val),
+        Ok(Err(e)) => eprintln!("Operation failed: {}", e),
+        Err(_) => eprintln!("Timed out"),
+    }
+}
+```
 
-## Response Approach
-1. **Analyze requirements** for Rust-specific safety and performance needs
-2. **Design type-safe APIs** with comprehensive error handling
-3. **Implement efficient algorithms** with zero-cost abstractions
-4. **Include extensive testing** with unit, integration, and property-based tests
-5. **Consider async patterns** for concurrent and I/O-bound operations
-6. **Document safety invariants** for any unsafe code blocks
-7. **Optimize for performance** while maintaining memory safety
-8. **Recommend modern ecosystem** crates and patterns
+---
 
-## Example Interactions
-- "Design a high-performance async web service with proper error handling"
-- "Implement a lock-free concurrent data structure with atomic operations"
-- "Optimize this Rust code for better memory usage and cache locality"
-- "Create a safe wrapper around a C library using FFI"
-- "Build a streaming data processor with backpressure handling"
-- "Design a plugin system with dynamic loading and type safety"
-- "Implement a custom allocator for a specific use case"
-- "Debug and fix lifetime issues in this complex generic code"
+## HTTP Server with axum
+
+```rust
+use axum::{Router, routing::get, routing::post, Json, extract::State};
+use std::sync::Arc;
+
+#[derive(Clone)]
+struct AppState {
+    db: Arc<Database>,
+}
+
+#[tokio::main]
+async fn main() {
+    let state = AppState { db: Arc::new(Database::connect().await.unwrap()) };
+
+    let app = Router::new()
+        .route("/users", get(list_users).post(create_user))
+        .route("/users/:id", get(get_user))
+        .with_state(state);
+
+    axum::serve(
+        tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap(),
+        app,
+    ).await.unwrap();
+}
+
+async fn get_user(
+    State(state): State<AppState>,
+    axum::extract::Path(id): axum::extract::Path<String>,
+) -> Result<Json<User>, StatusCode> {
+    state.db.find_user(&id).await
+        .map(Json)
+        .map_err(|_| StatusCode::NOT_FOUND)
+}
+```
+
+---
+
+## Common Pitfalls
+
+| Pitfall | What Happens | Fix |
+|---|---|---|
+| `.clone()` everywhere | Hides ownership problems, creates heap allocations | Use references `&T` where ownership isn't needed |
+| `unwrap()` in production | Panics on None/Err — crashes the process | Use `?` or match and return proper errors |
+| Blocking in async | `std::thread::sleep` blocks the Tokio runtime | Use `tokio::time::sleep().await` |
+| `Arc<Mutex<T>>` contention | Mutex held across await points causes deadlocks | Hold locks for minimum duration, never across `.await` |
+
+---
+
+## Project Structure
+
+```
+src/
+  main.rs         Entry point — thin, just wires up the server
+  lib.rs          Re-exports for library usage
+  handlers/       HTTP request handlers (thin — parse, call service, return response)
+  services/       Business logic (no HTTP awareness)
+  repositories/   Database queries
+  models/         Data structures and validation
+  errors.rs       Unified error type
+  config.rs       Settings loaded from environment
+
+Cargo.toml         Dependencies
+```
+
+---
+
+## Essential Crates
+
+| Crate | Purpose |
+|---|---|
+| `tokio` | Async runtime |
+| `axum` | Web framework |
+| `sqlx` | Async SQL with compile-time query checking |
+| `serde` + `serde_json` | Serialization |
+| `thiserror` | Ergonomic error definitions |
+| `anyhow` | Error handling in binaries/scripts (not libraries) |
+| `tracing` | Structured async-aware logging |
+| `config` | Hierarchical configuration from env/files |

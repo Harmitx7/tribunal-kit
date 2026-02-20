@@ -1,109 +1,104 @@
 ---
 name: code-review-checklist
 description: Code review guidelines covering code quality, security, and best practices.
-allowed-tools: Read, Glob, Grep
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# Code Review Checklist
+# Code Review Standards
 
-## Quick Review Checklist
+> A code review is not a gatekeeping exercise.
+> It is a knowledge transfer session that also catches bugs.
+
+---
+
+## Review Mindset
+
+Reviews are collaborative. The goal is better code — not proof that the reviewer is smarter.
+
+**Before commenting:**
+- Understand what the code is trying to do before judging how it does it
+- Distinguish between personal preference and objective problems
+- Label your findings so the author understands the expected action
+
+**Comment label convention:**
+- `BLOCKER:` — must be fixed before merge (bug, security issue, broken behavior)
+- `CONCERN:` — likely problem that needs discussion before proceeding
+- `SUGGESTION:` — would improve the code but is not required
+- `NOTE:` — observation or question, no action needed
+
+---
+
+## What to Check
 
 ### Correctness
-- [ ] Code does what it's supposed to do
-- [ ] Edge cases handled
-- [ ] Error handling in place
-- [ ] No obvious bugs
+- Does the code do what it claims to do?
+- Are edge cases handled? (empty input, null, max value, concurrent execution)
+- Does error handling cover realistic failure modes?
+- Are there off-by-one errors? Integer overflow risks?
 
 ### Security
-- [ ] Input validated and sanitized
-- [ ] No SQL/NoSQL injection vulnerabilities
-- [ ] No XSS or CSRF vulnerabilities
-- [ ] No hardcoded secrets or sensitive credentials
-- [ ] **AI-Specific:** Protection against Prompt Injection (if applicable)
-- [ ] **AI-Specific:** Outputs are sanitized before being used in critical sinks
+- Is user input validated before it's used?
+- Are SQL queries parameterized — never string-concatenated?
+- Are secrets in environment variables — not in code?
+- Are auth checks happening before business logic executes?
+- Is the OWASP API Top 10 considered for any API routes?
+
+### Readability
+- Can you understand the intent in under 30 seconds per function?
+- Are names self-documenting at the right level of abstraction?
+- Are complex sections commented with *why*, not *what*?
+- Is nesting kept to a manageable depth (≤3 levels)?
+
+### Design
+- Is this code easy to change? Or would changing one thing break five others?
+- Are there clear boundaries between concerns?
+- Is logic duplicated anywhere that should be shared?
+- Is the new code consistent with how the rest of the codebase does similar things?
+
+### Tests
+- Are tests testing behavior or implementation details?
+- Do tests cover the happy path, edge cases, and known failure modes?
+- Do test names describe the expected behavior in plain language?
+- Would these tests catch a regression if someone broke this code?
 
 ### Performance
-- [ ] No N+1 queries
-- [ ] No unnecessary loops
-- [ ] Appropriate caching
-- [ ] Bundle size impact considered
+- Are there database queries inside loops?
+- Are large datasets loaded into memory when they could be streamed?
+- Are expensive operations (network, file I/O) done unnecessarily?
 
-### Code Quality
-- [ ] Clear naming
-- [ ] DRY - no duplicate code
-- [ ] SOLID principles followed
-- [ ] Appropriate abstraction level
+---
 
-### Testing
-- [ ] Unit tests for new code
-- [ ] Edge cases tested
-- [ ] Tests readable and maintainable
+## Review Process
 
-### Documentation
-- [ ] Complex logic commented
-- [ ] Public APIs documented
-- [ ] README updated if needed
+1. **Read the PR description first** — understand intent before reading code
+2. **Read tests first** — they tell you what the code is supposed to do
+3. **Read the implementation** — verify it matches what the tests describe
+4. **Run it locally for significant changes** — static reading misses runtime behavior
 
-## AI & LLM Review Patterns (2025)
+---
 
-### Logic & Hallucinations
-- [ ] **Chain of Thought:** Does the logic follow a verifiable path?
-- [ ] **Edge Cases:** Did the AI account for empty states, timeouts, and partial failures?
-- [ ] **External State:** Is the code making safe assumptions about file systems or networks?
+## Giving Feedback
 
-### Prompt Engineering Review
-```markdown
-// ❌ Vague prompt in code
-const response = await ai.generate(userInput);
-
-// ✅ Structured & Safe prompt
-const response = await ai.generate({
-  system: "You are a specialized parser...",
-  input: sanitize(userInput),
-  schema: ResponseSchema
-});
-```
-
-## Anti-Patterns to Flag
-
-```typescript
-// ❌ Magic numbers
-if (status === 3) { ... }
-
-// ✅ Named constants
-if (status === Status.ACTIVE) { ... }
-
-// ❌ Deep nesting
-if (a) { if (b) { if (c) { ... } } }
-
-// ✅ Early returns
-if (!a) return;
-if (!b) return;
-if (!c) return;
-// do work
-
-// ❌ Long functions (100+ lines)
-// ✅ Small, focused functions
-
-// ❌ any type
-const data: any = ...
-
-// ✅ Proper types
-const data: UserData = ...
-```
-
-## Review Comments Guide
+**Effective feedback is:**
+- Specific — references the exact line and the exact concern
+- Actionable — tells the author what to change, not just that something is wrong
+- Explanatory — gives the reasoning, not just the verdict
 
 ```
-// Blocking issues use 🔴
-🔴 BLOCKING: SQL injection vulnerability here
+# ❌ Unhelpful
+This function is too long.
 
-// Important suggestions use 🟡
-🟡 SUGGESTION: Consider using useMemo for performance
-
-// Minor nits use 🟢
-🟢 NIT: Prefer const over let for immutable variable
-
-// Questions use ❓
-❓ QUESTION: What happens if user is null here?
+# ✅ Helpful
+SUGGESTION: This function handles both data fetching and data transformation.
+Splitting into `fetchUserData()` and `transformUserData()` would make each
+half easier to test independently and reuse elsewhere.
 ```
+
+---
+
+## Receiving Feedback
+
+- "We disagree" is not the same as "they're wrong"
+- If a comment is unclear, ask for clarification before defending
+- BLOCKER and CONCERN comments need resolution, not just a response
+- SUGGESTION and NOTE are optional — you can explain why you're not acting on them

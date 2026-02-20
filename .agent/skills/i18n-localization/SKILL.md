@@ -1,154 +1,153 @@
 ---
 name: i18n-localization
 description: Internationalization and localization patterns. Detecting hardcoded strings, managing translations, locale files, RTL support.
-allowed-tools: Read, Glob, Grep
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# i18n & Localization
+# Internationalization & Localization
 
-> Internationalization (i18n) and Localization (L10n) best practices.
-
----
-
-## 1. Core Concepts
-
-| Term | Meaning |
-|------|---------|
-| **i18n** | Internationalization - making app translatable |
-| **L10n** | Localization - actual translations |
-| **Locale** | Language + Region (en-US, tr-TR) |
-| **RTL** | Right-to-left languages (Arabic, Hebrew) |
+> Internationalization (i18n) is preparing code to support multiple languages.
+> Localization (l10n) is the work of adapting to a specific locale.
+> Do i18n once, properly. Do l10n for each market.
 
 ---
 
-## 2. When to Use i18n
+## The Core Rule: No Hardcoded Strings
 
-| Project Type | i18n Needed? |
-|--------------|--------------|
-| Public web app | ✅ Yes |
-| SaaS product | ✅ Yes |
-| Internal tool | ⚠️ Maybe |
-| Single-region app | ⚠️ Consider future |
-| Personal project | ❌ Optional |
+Every user-visible string in the source code is a localization problem waiting to happen.
+
+```ts
+// ❌ Hardcoded — untranslatable
+<button>Save Changes</button>
+<p>You have {count} messages</p>
+<p>Error: Invalid email address</p>
+
+// ✅ Key-referenced — translatable
+<button>{t('common.save')}</button>
+<p>{t('inbox.messageCount', { count })}</p>
+<p>{t('errors.invalidEmail')}</p>
+```
 
 ---
 
-## 3. Implementation Patterns
+## Translation File Structure
 
-### React (react-i18next)
+Organize translation keys hierarchically — flat files become unmaintainable past ~50 keys:
 
-```tsx
-import { useTranslation } from 'react-i18next';
-
-function Welcome() {
-  const { t } = useTranslation();
-  return <h1>{t('welcome.title')}</h1>;
+```json
+// en.json
+{
+  "common": {
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "loading": "Loading…",
+    "error": "Something went wrong"
+  },
+  "auth": {
+    "login": "Sign In",
+    "logout": "Sign Out",
+    "register": "Create Account",
+    "errors": {
+      "invalidEmail": "Enter a valid email address",
+      "passwordTooShort": "Password must be at least {{min}} characters"
+    }
+  },
+  "inbox": {
+    "messageCount_one": "{{count}} message",
+    "messageCount_other": "{{count}} messages"
+  }
 }
 ```
 
-### Next.js (next-intl)
-
-```tsx
-import { useTranslations } from 'next-intl';
-
-export default function Page() {
-  const t = useTranslations('Home');
-  return <h1>{t('title')}</h1>;
-}
-```
-
-### Python (gettext)
-
-```python
-from gettext import gettext as _
-
-print(_("Welcome to our app"))
-```
+**Key naming conventions:**
+- `feature.element` or `feature.element.state`
+- Error keys under `.errors`
+- Never use the English text as the key (`"Save Changes": "Save Changes"`)
 
 ---
 
-## 4. File Structure
+## Pluralization
 
-```
-locales/
-├── en/
-│   ├── common.json
-│   ├── auth.json
-│   └── errors.json
-├── tr/
-│   ├── common.json
-│   ├── auth.json
-│   └── errors.json
-└── ar/          # RTL
-    └── ...
+Pluralization rules differ per language. Use your i18n library's plural system — never manual `if count > 1`:
+
+```ts
+// ❌ Only works for English
+const label = count === 1 ? 'message' : 'messages';
+
+// ✅ i18next handles per-language plural rules
+t('inbox.messageCount', { count })
+
+// Translation files handle the variants:
+// English: { "messageCount_one": "{{count}} message", "messageCount_other": "{{count}} messages" }
+// Arabic:  6 plural forms (zero, one, two, few, many, other)
+// Russian: 3 plural forms with complex rules
 ```
 
 ---
 
-## 5. Best Practices
+## Date, Number & Currency Formatting
 
-### DO ✅
+Never format these manually. Use the browser's `Intl` API:
 
-- Use translation keys, not raw text
-- Namespace translations by feature
-- Support pluralization
-- Handle date/number formats per locale
-- Plan for RTL from the start
-- Use ICU message format for complex strings
+```ts
+// Date
+const date = new Date();
+new Intl.DateTimeFormat('en-US').format(date);  // "2/20/2026"
+new Intl.DateTimeFormat('de-DE').format(date);  // "20.2.2026"
 
-### DON'T ❌
+// Number
+new Intl.NumberFormat('en-US').format(1234567.89);  // "1,234,567.89"
+new Intl.NumberFormat('de-DE').format(1234567.89);  // "1.234.567,89"
 
-- Hardcode strings in components
-- Concatenate translated strings
-- Assume text length (German is 30% longer)
-- Forget about RTL layout
-- Mix languages in same file
-
----
-
-## 6. Common Issues
-
-| Issue | Solution |
-|-------|----------|
-| Missing translation | Fallback to default language |
-| Hardcoded strings | Use linter/checker script |
-| Date format | Use Intl.DateTimeFormat |
-| Number format | Use Intl.NumberFormat |
-| Pluralization | Use ICU message format |
+// Currency
+new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(99.99);
+// "$99.99"
+new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(99.99);
+// "99,99 €"
+```
 
 ---
 
-## 7. RTL Support
+## RTL (Right-to-Left) Support
+
+Arabic, Hebrew, Persian, Urdu are RTL languages. Supporting them requires more than flipping direction.
+
+```html
+<!-- Set direction on html element based on locale -->
+<html lang="ar" dir="rtl">
+
+<!-- Or dynamically -->
+<html lang={locale} dir={isRTL(locale) ? 'rtl' : 'ltr'}>
+```
 
 ```css
-/* CSS Logical Properties */
-.container {
-  margin-inline-start: 1rem;  /* Not margin-left */
-  padding-inline-end: 1rem;   /* Not padding-right */
-}
+/* Use logical properties — they flip automatically with direction */
+/* ❌ Physical: only works for LTR */
+padding-left: 1rem;
+margin-right: 2rem;
+border-left: 2px solid;
 
-[dir="rtl"] .icon {
-  transform: scaleX(-1);
-}
+/* ✅ Logical: works for both LTR and RTL */
+padding-inline-start: 1rem;
+margin-inline-end: 2rem;
+border-inline-start: 2px solid;
 ```
 
 ---
 
-## 8. Checklist
+## Detecting Hardcoded Strings (Code Audit)
 
-Before shipping:
-
-- [ ] All user-facing strings use translation keys
-- [ ] Locale files exist for all supported languages
-- [ ] Date/number formatting uses Intl API
-- [ ] RTL layout tested (if applicable)
-- [ ] Fallback language configured
-- [ ] No hardcoded strings in components
+Look for:
+- JSX text content directly in tags: `<p>some text</p>` (not `<p>{t(...)}</p>`)
+- Template literals with user-facing copy: `` `Welcome, ${name}!` ``
+- Alert/toast calls with string literals: `toast.success('Saved!')`
+- Error messages: `new Error('Invalid input')` shown to users
+- `placeholder`, `aria-label`, `title` attributes hardcoded
 
 ---
 
-## Script
+## Scripts
 
-| Script | Purpose | Command |
-|--------|---------|---------|
-| `scripts/i18n_checker.py` | Detect hardcoded strings & missing translations | `python scripts/i18n_checker.py <project_path>` |
+| Script | Purpose | Run With |
+|---|---|---|
+| `scripts/i18n_checker.py` | Scans codebase for hardcoded strings | `python scripts/i18n_checker.py <project_path>` |

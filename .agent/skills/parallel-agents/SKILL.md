@@ -1,175 +1,119 @@
 ---
 name: parallel-agents
 description: Multi-agent orchestration patterns. Use when multiple independent tasks can run with different domain expertise or when comprehensive analysis requires multiple perspectives.
-allowed-tools: Read, Glob, Grep
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# Native Parallel Agents
+# Multi-Agent Orchestration
 
-> Orchestration through Antigravity's built-in Agent Tool
-
-## Overview
-
-This skill enables coordinating multiple specialized agents through Antigravity's native agent system. Unlike external scripts, this approach keeps all orchestration within Antigravity's control.
-
-## When to Use Orchestration
-
-✅ **Good for:**
-- Complex tasks requiring multiple expertise domains
-- Code analysis from security, performance, and quality perspectives
-- Comprehensive reviews (architecture + security + testing)
-- Feature implementation needing backend + frontend + database work
-
-❌ **Not for:**
-- Simple, single-domain tasks
-- Quick fixes or small changes
-- Tasks where one agent suffices
+> Parallel agents are faster. They are also harder to keep consistent.
+> Coordinate them — don't just fire them simultaneously and hope for compatible outputs.
 
 ---
 
-## Native Agent Invocation
+## When to Use Parallel Agents
 
-### Single Agent
-```
-Use the security-auditor agent to review authentication
-```
+Use multiple agents when:
+- Tasks are genuinely **independent** (output of A doesn't feed input of B)
+- Different tasks require **different domain expertise**
+- Comprehensive **review** needs multiple specialist perspectives simultaneously
+- Speed matters and tasks can be assigned and awaited independently
 
-### Sequential Chain
-```
-First, use the explorer-agent to discover project structure.
-Then, use the backend-specialist to review API endpoints.
-Finally, use the test-engineer to identify test gaps.
-```
-
-### With Context Passing
-```
-Use the frontend-specialist to analyze React components.
-Based on those findings, have the test-engineer generate component tests.
-```
-
-### Resume Previous Work
-```
-Resume agent [agentId] and continue with additional requirements.
-```
+Do **not** use parallel agents when:
+- Tasks have sequential dependencies (you need the result to start the next)
+- The overhead of coordination exceeds the time saved
 
 ---
 
 ## Orchestration Patterns
 
-### Pattern 1: Comprehensive Analysis
-```
-Agents: explorer-agent → [domain-agents] → synthesis
+### Pattern 1 — Parallel Review (Tribunal)
 
-1. explorer-agent: Map codebase structure
-2. security-auditor: Security posture
-3. backend-specialist: API quality
-4. frontend-specialist: UI/UX patterns
-5. test-engineer: Test coverage
-6. Synthesize all findings
-```
+Multiple reviewers look at the same code simultaneously, each from a different angle.
 
-### Pattern 2: Feature Review
 ```
-Agents: affected-domain-agents → test-engineer
+Code (input)
+    ├── → logic-reviewer      → finds logic errors
+    ├── → security-auditor    → finds vulnerabilities  
+    ├── → type-safety-reviewer → finds type unsafe code
+    └── → performance-reviewer → finds bottlenecks
 
-1. Identify affected domains (backend? frontend? both?)
-2. Invoke relevant domain agents
-3. test-engineer verifies changes
-4. Synthesize recommendations
+All verdicts → synthesize → Human Gate (approve/reject/revise)
 ```
 
-### Pattern 3: Security Audit
+**When:** `/tribunal-*` commands, code review before merge
+
+### Pattern 2 — Domain Specialization
+
+Different specialists handle different parts of the same task simultaneously.
+
 ```
-Agents: security-auditor → penetration-tester → synthesis
+"Build a user auth system" (input)
+    ├── → backend-specialist    → API routes + JWT logic
+    ├── → frontend-specialist   → Login/register UI
+    └── → database-architect    → User schema + sessions table
 
-1. security-auditor: Configuration and code review
-2. penetration-tester: Active vulnerability testing
-3. Synthesize with prioritized remediation
+All outputs → orchestrator synthesizes into coherent system
+(ensures API contract matches what frontend calls,
+ and DB schema matches what backend queries)
 ```
 
----
+**When:** Full-stack feature builds via `/orchestrate`
 
-## Available Agents
+### Pattern 3 — Sequential with Parallel Phases
 
-| Agent | Expertise | Trigger Phrases |
-|-------|-----------|-----------------|
-| `orchestrator` | Coordination | "comprehensive", "multi-perspective" |
-| `security-auditor` | Security | "security", "auth", "vulnerabilities" |
-| `penetration-tester` | Security Testing | "pentest", "red team", "exploit" |
-| `backend-specialist` | Backend | "API", "server", "Node.js", "Express" |
-| `frontend-specialist` | Frontend | "React", "UI", "components", "Next.js" |
-| `test-engineer` | Testing | "tests", "coverage", "TDD" |
-| `devops-engineer` | DevOps | "deploy", "CI/CD", "infrastructure" |
-| `database-architect` | Database | "schema", "Prisma", "migrations" |
-| `mobile-developer` | Mobile | "React Native", "Flutter", "mobile" |
-| `api-designer` | API Design | "REST", "GraphQL", "OpenAPI" |
-| `debugger` | Debugging | "bug", "error", "not working" |
-| `explorer-agent` | Discovery | "explore", "map", "structure" |
-| `documentation-writer` | Documentation | "write docs", "create README", "generate API docs" |
-| `performance-optimizer` | Performance | "slow", "optimize", "profiling" |
-| `project-planner` | Planning | "plan", "roadmap", "milestones" |
-| `seo-specialist` | SEO | "SEO", "meta tags", "search ranking" |
-| `game-developer` | Game Development | "game", "Unity", "Godot", "Phaser" |
+Some tasks are inherently sequential at the macro level but can parallelize within each phase.
 
----
+```
+Phase 1 (sequential):
+  database-architect → schema design
 
-## Antigravity Built-in Agents
+Phase 2 (parallel, after Phase 1):
+  backend-specialist  → API uses schema from Phase 1
+  frontend-specialist → UI uses API contract from Phase 2a (estimated)
 
-These work alongside custom agents:
-
-| Agent | Model | Purpose |
-|-------|-------|---------|
-| **Explore** | Haiku | Fast read-only codebase search |
-| **Plan** | Sonnet | Research during plan mode |
-| **General-purpose** | Sonnet | Complex multi-step modifications |
-
-Use **Explore** for quick searches, **custom agents** for domain expertise.
-
----
-
-## Synthesis Protocol
-
-After all agents complete, synthesize:
-
-```markdown
-## Orchestration Synthesis
-
-### Task Summary
-[What was accomplished]
-
-### Agent Contributions
-| Agent | Finding |
-|-------|---------|
-| security-auditor | Found X |
-| backend-specialist | Identified Y |
-
-### Consolidated Recommendations
-1. **Critical**: [Issue from Agent A]
-2. **Important**: [Issue from Agent B]
-3. **Nice-to-have**: [Enhancement from Agent C]
-
-### Action Items
-- [ ] Fix critical security issue
-- [ ] Refactor API endpoint
-- [ ] Add missing tests
+Phase 3 (sequential, after Phase 2):
+  test-engineer → E2E tests with real API + UI
 ```
 
 ---
 
-## Best Practices
+## Orchestrator Responsibilities
 
-1. **Available agents** - 17 specialized agents can be orchestrated
-2. **Logical order** - Discovery → Analysis → Implementation → Testing
-3. **Share context** - Pass relevant findings to subsequent agents
-4. **Single synthesis** - One unified report, not separate outputs
-5. **Verify changes** - Always include test-engineer for code modifications
+The orchestrator coordinates agents. It:
+
+1. **Assigns scope** — each agent gets exactly what it needs, nothing more
+2. **Manages state** — passes the right outputs from each agent to the next that needs them
+3. **Resolves conflicts** — when two agents propose incompatible solutions, the orchestrator decides or asks the user
+4. **Verifies consistency** — ensures that the API contract the backend builds matches what the frontend calls
 
 ---
 
-## Key Benefits
+## Consistency Rules for Multi-Agent Output
 
-- ✅ **Single session** - All agents share context
-- ✅ **AI-controlled** - Claude orchestrates autonomously
-- ✅ **Native integration** - Works with built-in Explore, Plan agents
-- ✅ **Resume support** - Can continue previous agent work
-- ✅ **Context passing** - Findings flow between agents
+The biggest failure in parallel agent work is **inconsistency at boundaries**:
+
+- Backend generates `userId` but frontend calls it `user_id`
+- Database schema has `user_email` but backend queries `email`
+- Agent A designs one error shape; Agent B assumes a different one
+
+**Prevention:**
+- Establish contracts (types, schemas, API shapes) **before** parallel work begins
+- Each agent receives the shared contract as context
+- Orchestrator reviews all outputs for boundary consistency before presenting to user
+
+---
+
+## Communication Format Between Agents
+
+When one agent's output feeds another:
+
+```
+[AGENT: backend-specialist OUTPUT]
+API Contract:
+  POST /api/users → { id: string, email: string, createdAt: string }
+  POST /api/auth/login → { token: string, expiresAt: string }
+
+[AGENT: frontend-specialist RECEIVES]
+Use the above API contract. Build the UI to match these exact request/response shapes.
+```

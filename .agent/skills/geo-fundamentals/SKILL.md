@@ -1,156 +1,152 @@
 ---
 name: geo-fundamentals
 description: Generative Engine Optimization for AI search engines (ChatGPT, Claude, Perplexity).
-allowed-tools: Read, Glob, Grep
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# GEO Fundamentals
+# Generative Engine Optimization (GEO)
 
-> Optimization for AI-powered search engines.
-
----
-
-## 1. What is GEO?
-
-**GEO** = Generative Engine Optimization
-
-| Goal | Platform |
-|------|----------|
-| Be cited in AI responses | ChatGPT, Claude, Perplexity, Gemini |
-
-### SEO vs GEO
-
-| Aspect | SEO | GEO |
-|--------|-----|-----|
-| Goal | #1 ranking | AI citations |
-| Platform | Google | AI engines |
-| Metrics | Rankings, CTR | Citation rate |
-| Focus | Keywords | Entities, data |
+> Traditional SEO optimizes for keyword ranking in blue links.
+> GEO optimizes for citation and inclusion in AI-generated answers.
 
 ---
 
-## 2. AI Engine Landscape
+## What GEO Is
 
-| Engine | Citation Style | Opportunity |
-|--------|----------------|-------------|
-| **Perplexity** | Numbered [1][2] | Highest citation rate |
-| **ChatGPT** | Inline/footnotes | Custom GPTs |
-| **Claude** | Contextual | Long-form content |
-| **Gemini** | Sources section | SEO crossover |
+When users ask ChatGPT, Claude, Perplexity, or Google SGE a question, an AI synthesizes an answer from sources it considers authoritative. GEO is the practice of making your content the kind that AI systems cite, quote, and summarize.
 
----
-
-## 3. RAG Retrieval Factors
-
-How AI engines select content to cite:
-
-| Factor | Weight |
-|--------|--------|
-| Semantic relevance | ~40% |
-| Keyword match | ~20% |
-| Authority signals | ~15% |
-| Freshness | ~10% |
-| Source diversity | ~15% |
+The mechanisms differ from traditional SEO:
+- AI doesn't rank URLs — it synthesizes information
+- Backlinks matter less than citation-worthiness
+- Content density and factual specificity matter more than keyword density
 
 ---
 
-## 4. Content That Gets Cited
+## How AI Systems Select Content to Cite
 
-| Element | Why It Works |
-|---------|--------------|
-| **Original statistics** | Unique, citable data |
-| **Expert quotes** | Authority transfer |
-| **Clear definitions** | Easy to extract |
-| **Step-by-step guides** | Actionable value |
-| **Comparison tables** | Structured info |
-| **FAQ sections** | Direct answers |
+Based on observable patterns in AI retrieval:
 
----
-
-## 5. GEO Content Checklist
-
-### Content Elements
-
-- [ ] Question-based titles
-- [ ] Summary/TL;DR at top
-- [ ] Original data with sources
-- [ ] Expert quotes (name, title)
-- [ ] FAQ section (3-5 Q&A)
-- [ ] Clear definitions
-- [ ] "Last updated" timestamp
-- [ ] Author with credentials
-
-### Technical Elements
-
-- [ ] Article schema with dates
-- [ ] Person schema for author
-- [ ] FAQPage schema
-- [ ] Fast loading (< 2.5s)
-- [ ] Clean HTML structure
+| Signal | What It Means |
+|---|---|
+| Authoritative domain | .gov, .edu, established publications get higher base trust |
+| Factual specificity | Numbers, dates, named sources > vague descriptions |
+| Structured content | Lists, tables, step-by-step = easier to extract |
+| Complete answers | Content that fully addresses the question in one place |
+| Original research | Data, studies, surveys the AI can't find elsewhere |
+| Freshness | Recently updated content has advantage for time-sensitive topics |
 
 ---
 
-## 6. Entity Building
+## Writing for AI Consumption
 
-| Action | Purpose |
-|--------|---------|
-| Google Knowledge Panel | Entity recognition |
-| Wikipedia (if notable) | Authority source |
-| Consistent info across web | Entity consolidation |
-| Industry mentions | Authority signals |
+### Answer First (Inverted Pyramid)
 
----
+AI models extract answers. Put the answer at the top of the content, not after a 300-word preamble.
 
-## 7. AI Crawler Access
+```
+❌ Old blog pattern:
+   [intro paragraph explaining what the article is about]
+   [background context]
+   [finally... the answer in paragraph 5]
 
-### Key AI User-Agents
+✅ GEO pattern:
+   [Direct answer in first 1–2 sentences]
+   [Supporting evidence, data, explanation]
+   [Deeper context for readers who want more]
+```
 
-| Crawler | Engine |
-|---------|--------|
-| GPTBot | ChatGPT/OpenAI |
-| Claude-Web | Claude |
-| PerplexityBot | Perplexity |
-| Googlebot | Gemini (shared) |
+### Use Citation-Ready Structures
 
-### Access Decision
+```markdown
+# Format that AI can easily extract:
 
-| Strategy | When |
-|----------|------|
-| Allow all | Want AI citations |
-| Block GPTBot | Don't want OpenAI training |
-| Selective | Allow some, block others |
+## Definition
+[Term] is [concise definition]. [Supporting context].
 
----
+## Key Facts
+- [Specific, numbered fact with source]
+- [Specific statistic — "X% of Y according to Z study"]
+- [Named, verifiable claim]
 
-## 8. Measurement
+## Step-by-Step Process
+1. [Precise step]
+2. [Precise step]
+3. [Precise step]
+```
 
-| Metric | How to Track |
-|--------|--------------|
-| AI citations | Manual monitoring |
-| "According to [Brand]" mentions | Search in AI |
-| Competitor citations | Compare share |
-| AI-referred traffic | UTM parameters |
+### Be Specific with Data
 
----
+```
+❌ "Many developers prefer TypeScript"
+✅ "In the 2024 Stack Overflow Developer Survey, 64% of respondents said they used TypeScript"
 
-## 9. Anti-Patterns
-
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Publish without dates | Add timestamps |
-| Vague attributions | Name sources |
-| Skip author info | Show credentials |
-| Thin content | Comprehensive coverage |
+❌ "Deployment takes some time"  
+✅ "Vercel cold-start latency for serverless functions averages 200–400ms for Node.js 20 runtimes"
+```
 
 ---
 
-> **Remember:** AI cites content that's clear, authoritative, and easy to extract. Be the best answer.
+## Content Formats AI Favors
+
+| Format | GEO Value | Why |
+|---|---|---|
+| FAQ pages | High | Matches question-answer format of AI responses |
+| Comparison tables | High | Easily extracted for comparison queries |
+| How-to guides with numbered steps | High | Directly answerable procedural questions |
+| Definition/explanation articles | High | Definitional queries are common AI use cases |
+| Long-form opinion pieces | Low | Hard to extract a clear answer from |
+| News articles | Medium | Good for recency, lower for evergreen queries |
 
 ---
 
-## Script
+## Technical Requirements for AI Indexing
 
-| Script | Purpose | Command |
-|--------|---------|---------|
-| `scripts/geo_checker.py` | GEO audit (AI citation readiness) | `python scripts/geo_checker.py <project_path>` |
+```html
+<!-- Ensure Perplexity and other AI crawlers can access your content -->
+<!-- Check robots.txt — don't accidentally block AI crawlers -->
 
+# robots.txt — allow AI crawlers
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+<!-- Structured data helps AI understand content context -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [{
+    "@type": "Question",
+    "name": "What is tribunal-kit?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "tribunal-kit is an npm package that installs an anti-hallucination agent kit..."
+    }
+  }]
+}
+</script>
+```
+
+---
+
+## Metrics for GEO
+
+Traditional SEO metrics (keyword rank, backlinks) don't fully apply. Track:
+
+- **AI mention rate** — manually query AI systems for your topic and check if your brand/content appears
+- **Citation count** — if identifiable quotes from your content appear in AI outputs
+- **Perplexity source appearances** — Perplexity shows its sources; track mentions
+- **Direct traffic** — users who find AI mentions and navigate directly (not via search)
+
+---
+
+## Scripts
+
+| Script | Purpose | Run With |
+|---|---|---|
+| `scripts/geo_checker.py` | Audits content for GEO best practices | `python scripts/geo_checker.py <url>` |

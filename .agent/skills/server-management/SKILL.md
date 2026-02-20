@@ -1,161 +1,149 @@
 ---
 name: server-management
 description: Server management principles and decision-making. Process management, monitoring strategy, and scaling decisions. Teaches thinking, not commands.
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# Server Management
+# Server Management Principles
 
-> Server management principles for production operations.
-> **Learn to THINK, not memorize commands.**
-
----
-
-## 1. Process Management Principles
-
-### Tool Selection
-
-| Scenario | Tool |
-|----------|------|
-| **Node.js app** | PM2 (clustering, reload) |
-| **Any app** | systemd (Linux native) |
-| **Containers** | Docker/Podman |
-| **Orchestration** | Kubernetes, Docker Swarm |
-
-### Process Management Goals
-
-| Goal | What It Means |
-|------|---------------|
-| **Restart on crash** | Auto-recovery |
-| **Zero-downtime reload** | No service interruption |
-| **Clustering** | Use all CPU cores |
-| **Persistence** | Survive server reboot |
+> A server you can't observe is a server you can't operate.
+> Monitoring is not optional — it is how you find out about problems before your users do.
 
 ---
 
-## 2. Monitoring Principles
+## Process Management
 
-### What to Monitor
+Never run Node.js or Python processes directly in production with `node app.js`. Use a process manager.
 
-| Category | Key Metrics |
-|----------|-------------|
-| **Availability** | Uptime, health checks |
-| **Performance** | Response time, throughput |
-| **Errors** | Error rate, types |
-| **Resources** | CPU, memory, disk |
+| Tool | Best For | Why |
+|---|---|---|
+| PM2 | Single-server Node.js | Auto-restart, log rotation, cluster mode |
+| systemd | Linux servers, any language | Native to most Linux distros, reliable |
+| Supervisor | Python, Ruby, any language | Simple config, battle-tested |
+| Docker (+restart policy) | Containerized apps | Portable, consistent across environments |
 
-### Alert Severity Strategy
+**Core requirement:** If the process crashes, it restarts automatically. If it can't restart, you are alerted.
 
-| Level | Response |
-|-------|----------|
-| **Critical** | Immediate action |
-| **Warning** | Investigate soon |
-| **Info** | Review daily |
-
-### Monitoring Tool Selection
-
-| Need | Options |
-|------|---------|
-| Simple/Free | PM2 metrics, htop |
-| Full observability | Grafana, Datadog |
-| Error tracking | Sentry |
-| Uptime | UptimeRobot, Pingdom |
+```bash
+# PM2 example — stays running, auto-restarts, survives reboots
+pm2 start app.js --name "api" --instances max
+pm2 save
+pm2 startup  # generates the command to run at boot
+```
 
 ---
 
-## 3. Log Management Principles
+## What to Monitor
 
-### Log Strategy
+The minimum viable monitoring stack:
 
-| Log Type | Purpose |
-|----------|---------|
-| **Application logs** | Debug, audit |
-| **Access logs** | Traffic analysis |
-| **Error logs** | Issue detection |
+| Signal | What To Alert On |
+|---|---|
+| Process health | Process is not running |
+| Response time | P95 latency > SLA threshold |
+| Error rate | Error rate > 2x baseline |
+| Disk usage | > 80% full |
+| Memory | Growing without bound (memory leak) |
+| CPU | Sustained > 80% for more than 5 minutes |
 
-### Log Principles
-
-1. **Rotate logs** to prevent disk fill
-2. **Structured logging** (JSON) for parsing
-3. **Appropriate levels** (error/warn/info/debug)
-4. **No sensitive data** in logs
+**Alert on symptoms, not just causes.** "Error rate spiked" is a better alert than "CPU is high" — users don't feel CPU, they feel slow responses and errors.
 
 ---
 
-## 4. Scaling Decisions
+## Log Management
 
-### When to Scale
+Logs are useless without structure. Structured logs can be queried and aggregated.
 
-| Symptom | Solution |
-|---------|----------|
-| High CPU | Add instances (horizontal) |
-| High memory | Increase RAM or fix leak |
-| Slow response | Profile first, then scale |
-| Traffic spikes | Auto-scaling |
+```ts
+// ❌ Unstructured — hard to query
+console.log(`User ${userId} failed to login at ${new Date()}`);
 
-### Scaling Strategy
+// ✅ Structured — can be filtered, aggregated, alerted on
+logger.warn('login_failed', {
+  userId,
+  ip: req.ip,
+  reason: 'invalid_password',
+  timestamp: new Date().toISOString(),
+});
+```
 
-| Type | When to Use |
-|------|-------------|
-| **Vertical** | Quick fix, single instance |
-| **Horizontal** | Sustainable, distributed |
-| **Auto** | Variable traffic |
+**Log levels, used correctly:**
+- `ERROR` — something failed that requires attention
+- `WARN` — something unexpected but non-fatal happened
+- `INFO` — key business events (user registered, payment processed)
+- `DEBUG` — useful for troubleshooting, never on in production by default
 
----
-
-## 5. Health Check Principles
-
-### What Constitutes Healthy
-
-| Check | Meaning |
-|-------|---------|
-| **HTTP 200** | Service responding |
-| **Database connected** | Data accessible |
-| **Dependencies OK** | External services reachable |
-| **Resources OK** | CPU/memory not exhausted |
-
-### Health Check Implementation
-
-- Simple: Just return 200
-- Deep: Check all dependencies
-- Choose based on load balancer needs
+**Never log:**
+- Passwords, tokens, or full credit card numbers
+- PII without a documented retention policy
+- Full request bodies on auth endpoints
 
 ---
 
-## 6. Security Principles
+## Scaling Decision Framework
 
-| Area | Principle |
-|------|-----------|
-| **Access** | SSH keys only, no passwords |
-| **Firewall** | Only needed ports open |
-| **Updates** | Regular security patches |
-| **Secrets** | Environment vars, not files |
-| **Audit** | Log access and changes |
+Before scaling, answer:
 
----
+**Is the bottleneck identified?**
+- Profile first. Is it CPU, memory, database, or network?
+- Scaling horizontally when the bottleneck is a single database query helps nothing.
 
-## 7. Troubleshooting Priority
+| Bottleneck | Scaling Approach |
+|---|---|
+| CPU-bound app logic | Horizontal scale (more instances) |
+| Memory limit | Vertical scale (more RAM per instance) |
+| I/O-bound (DB, external calls) | Connection pooling, caching, async patterns |
+| Database reads | Read replicas, query optimization, caching |
+| Database writes | Sharding, write queuing, schema redesign |
 
-When something's wrong:
-
-1. **Check if running** (process status)
-2. **Check logs** (error messages)
-3. **Check resources** (disk, memory, CPU)
-4. **Check network** (ports, DNS)
-5. **Check dependencies** (database, APIs)
+**Cached responses don't need scaling.** Add caching before adding instances.
 
 ---
 
-## 8. Anti-Patterns
+## Nginx Configuration Essentials
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Run as root | Use non-root user |
-| Ignore logs | Set up log rotation |
-| Skip monitoring | Monitor from day one |
-| Manual restarts | Auto-restart config |
-| No backups | Regular backup schedule |
+```nginx
+server {
+  listen 80;
+  server_name example.com;
+  
+  # Redirect HTTP → HTTPS
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen 443 ssl;
+  server_name example.com;
+
+  # Security headers
+  add_header X-Frame-Options DENY;
+  add_header X-Content-Type-Options nosniff;
+  add_header Strict-Transport-Security "max-age=31536000" always;
+
+  # Proxy to Node.js app
+  location / {
+    proxy_pass http://127.0.0.1:3000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-Proto https;
+  }
+
+  # Serve static files directly (don't proxy to Node)
+  location /static/ {
+    root /var/www/myapp;
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+  }
+}
+```
 
 ---
 
-> **Remember:** A well-managed server is boring. That's the goal.
+## Backup Strategy
+
+The 3-2-1 rule:
+- **3** copies of data
+- **2** on different storage media
+- **1** offsite (different data center, cloud region)
+
+Test restores on a schedule — a backup you've never restored is a backup you don't know works.

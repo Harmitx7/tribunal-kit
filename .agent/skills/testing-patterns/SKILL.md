@@ -1,178 +1,152 @@
 ---
 name: testing-patterns
 description: Testing patterns and principles. Unit, integration, mocking strategies.
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash
+allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
 # Testing Patterns
 
-> Principles for reliable test suites.
+> Tests don't prove code works. They make it safe to change.
+> A codebase without tests is a codebase you're afraid to touch.
 
 ---
 
-## 1. Testing Pyramid
+## Test Pyramid
+
+Write tests at the right level. Most tests should be unit tests. Fewer integration tests. Fewest E2E tests.
 
 ```
-        /\          E2E (Few)
-       /  \         Critical flows
-      /----\
-     /      \       Integration (Some)
-    /--------\      API, DB queries
-   /          \
-  /------------\    Unit (Many)
-                    Functions, classes
+         /\
+        /E2E\         Fewest — expensive to write and run
+       /------\
+      /Integr. \      Some — verify component interactions  
+     /----------\
+    /  Unit Tests \   Most — fast, isolated, focused
+   /--------------\
 ```
 
----
-
-## 2. AAA Pattern
-
-| Step | Purpose |
-|------|---------|
-| **Arrange** | Set up test data |
-| **Act** | Execute code under test |
-| **Assert** | Verify outcome |
+**Why this shape:**
+- Unit tests run in milliseconds — you can have thousands
+- E2E tests take seconds — you want dozens, not hundreds
+- Inverting the pyramid = slow CI, fragile test suite, low confidence
 
 ---
 
-## 3. Test Type Selection
+## AAA Pattern
 
-### When to Use Each
+Every test follows this structure:
 
-| Type | Best For | Speed |
-|------|----------|-------|
-| **Unit** | Pure functions, logic | Fast (<50ms) |
-| **Integration** | API, DB, services | Medium |
-| **E2E** | Critical user flows | Slow |
+```ts
+it('should return 401 when token is expired', async () => {
+  // Arrange — set up the scenario
+  const expiredToken = generateToken({ expiresIn: '-1s' });
+  const request = buildRequest({ authorization: `Bearer ${expiredToken}` });
 
----
+  // Act — do the thing being tested
+  const response = await authMiddleware(request);
 
-## 4. Unit Test Principles
+  // Assert — verify the outcome
+  expect(response.status).toBe(401);
+  expect(response.body.error).toBe('Token expired');
+});
+```
 
-### Good Unit Tests
-
-| Principle | Meaning |
-|-----------|---------|
-| Fast | < 100ms each |
-| Isolated | No external deps |
-| Repeatable | Same result always |
-| Self-checking | No manual verification |
-| Timely | Written with code |
-
-### What to Unit Test
-
-| Test | Don't Test |
-|------|------------|
-| Business logic | Framework code |
-| Edge cases | Third-party libs |
-| Error handling | Simple getters |
+Never combine Arrange and Assert. Never skip Arrange by relying on test state from a previous test.
 
 ---
 
-## 5. Integration Test Principles
+## Unit Tests
 
-### What to Test
+Unit tests test one unit of logic in isolation. Everything external is replaced with a controlled substitute.
 
-| Area | Focus |
-|------|-------|
-| API endpoints | Request/response |
-| Database | Queries, transactions |
-| External services | Contracts |
+```ts
+// Test the function's logic — not the database, not the network
+it('should hash the password before saving', async () => {
+  const mockSave = vi.fn().mockResolvedValue({ id: '1' });
+  const userRepo = { save: mockSave };
 
-### Setup/Teardown
+  await createUser({ email: 'a@b.com', password: 'secret' }, userRepo);
 
-| Phase | Action |
-|-------|--------|
-| Before All | Connect resources |
-| Before Each | Reset state |
-| After Each | Clean up |
-| After All | Disconnect |
+  const savedUser = mockSave.mock.calls[0][0];
+  expect(savedUser.password).not.toBe('secret');          // was hashed
+  expect(savedUser.password).toMatch(/^\$2b\$/);           // bcrypt format
+});
+```
 
----
-
-## 6. Mocking Principles
-
-### When to Mock
-
-| Mock | Don't Mock |
-|------|------------|
-| External APIs | The code under test |
-| Database (unit) | Simple dependencies |
-| Time/random | Pure functions |
-| Network | In-memory stores |
-
-### Mock Types
-
-| Type | Use |
-|------|-----|
-| Stub | Return fixed values |
-| Spy | Track calls |
-| Mock | Set expectations |
-| Fake | Simplified implementation |
+**Rules for unit tests:**
+- One assertion per concept (multiple `expect` calls are fine if they verify the same behavior)
+- No network calls, no file system, no real database
+- Tests are order-independent — they don't rely on state from other tests
+- Test names describe behavior: `should X when Y` or `returns X given Y`
 
 ---
 
-## 7. Test Organization
+## Integration Tests
 
-### Naming
+Integration tests verify that two or more components work together correctly.
 
-| Pattern | Example |
-|---------|---------|
-| Should behavior | "should return error when..." |
-| When condition | "when user not found..." |
-| Given-when-then | "given X, when Y, then Z" |
+```ts
+// Tests the real database interaction
+it('should save and retrieve a user', async () => {
+  const user = await UserService.create({ email: 'test@test.com', name: 'Test' });
+  const found = await UserService.findById(user.id);
 
-### Grouping
+  expect(found.email).toBe('test@test.com');
+});
+```
 
-| Level | Use |
-|-------|-----|
-| describe | Group related tests |
-| it/test | Individual case |
-| beforeEach | Common setup |
-
----
-
-## 8. Test Data
-
-### Strategies
-
-| Approach | Use |
-|----------|-----|
-| Factories | Generate test data |
-| Fixtures | Predefined datasets |
-| Builders | Fluent object creation |
-
-### Principles
-
-- Use realistic data
-- Randomize non-essential values (faker)
-- Share common fixtures
-- Keep data minimal
+**Integration test rules:**
+- Use a real test database — not a mock
+- Clean up data before or after each test (use transactions that rollback, or seed scripts)
+- Slower than unit tests — run on CI but not on every file save
 
 ---
 
-## 9. Best Practices
+## Mocking Principles
 
-| Practice | Why |
-|----------|-----|
-| One assert per test | Clear failure reason |
-| Independent tests | No order dependency |
-| Fast tests | Run frequently |
-| Descriptive names | Self-documenting |
-| Clean up | Avoid side effects |
+Mocks replace external dependencies. Use them accurately.
+
+```ts
+// ❌ Mock that returns nothing useful
+vi.mock('./mailer', () => ({ send: vi.fn() }));
+
+// ✅ Mock that reflects real behavior
+vi.mock('./mailer', () => ({
+  send: vi.fn().mockResolvedValue({ messageId: 'mock-id-123' }),
+}));
+```
+
+**What to mock:**
+- External HTTP calls (payment gateways, third-party APIs)
+- Time (`Date.now()`, `new Date()`) when time-dependent
+- File system in unit tests
+- Email/SMS sending
+
+**What not to mock:**
+- Your own business logic
+- The function being tested
+- Simple pure utility functions
 
 ---
 
-## 10. Anti-Patterns
+## Test Coverage
 
-| ❌ Don't | ✅ Do |
-|----------|-------|
-| Test implementation | Test behavior |
-| Duplicate test code | Use factories |
-| Complex test setup | Simplify or split |
-| Ignore flaky tests | Fix root cause |
-| Skip cleanup | Reset state |
+Coverage measures which lines are executed during tests. 100% coverage does not mean the code is correct.
+
+**Useful coverage:**
+- `> 80%` for business logic modules
+- Focus on statement + branch coverage (not just line coverage)
+- Low coverage on infrastructure/config files is acceptable
+
+**Coverage anti-patterns:**
+- Tests written solely to increase coverage numbers
+- Asserting that mocks were called instead of asserting real outcomes
+- Tautology tests: `expect(result).toBe(result)`
 
 ---
 
-> **Remember:** Tests are documentation. If someone can't understand what the code does from the tests, rewrite them.
+## Scripts
+
+| Script | Purpose | Run With |
+|---|---|---|
+| `scripts/test_runner.py` | Runs test suite and reports results | `python scripts/test_runner.py <project_path>` |
