@@ -1,0 +1,40 @@
+{
+    "mcpServers": {
+        "context7": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@upstash/context7-mcp",
+                "--api-key",
+                "YOUR_CONTEXT7_API_KEY"
+            ]
+        },
+        "shadcn": {
+            "command": "npx",
+            "args": [
+                "shadcn@latest",
+                "mcp"
+            ]
+        }
+    }
+}
+// ━━━ Setup Instructions ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//
+// Copy this file to your Antigravity MCP config location:
+//   Windows: %USERPROFILE%\.gemini\antigravity\mcp_config.json
+//   macOS:   ~/.gemini/antigravity/mcp_config.json
+//
+// Replace YOUR_CONTEXT7_API_KEY with your real key from:
+//   https://upstash.com
+//
+// To add more MCP servers, append entries to "mcpServers":
+// {
+//   "my-server": {
+//     "command": "npx",
+//     "args": ["-y", "my-mcp-package"]
+//   }
+// }
+//
+// What these servers provide:
+//   context7  → Live documentation lookup (framework docs, APIs)
+//   shadcn    → shadcn/ui component integration

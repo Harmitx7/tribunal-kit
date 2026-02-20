@@ -1,0 +1,59 @@
+# Tribunal Anti-Hallucination Agent Kit — Git Ignore
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Node (if used for any tooling)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Session and runtime files
+.agent/scripts/__pycache__/
+.agent/scripts/*.log
+session_state.json
+*.session
+
+# Build artifacts
+dist/
+*.tsbuildinfo
+
+# Environment files — never commit real env values
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Sensitive configs (keep the template, never the real one)
+!.env.example
+!mcp_config.example.json
+
+# Test coverage output
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log

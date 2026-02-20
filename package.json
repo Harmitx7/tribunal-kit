@@ -1,0 +1,38 @@
+{
+    "name": "tribunal-kit",
+    "version": "1.0.0",
+    "description": "Anti-Hallucination AI Agent Kit — 27 specialist agents, 17 slash commands, and Tribunal review pipeline for Cursor, Windsurf, and Antigravity.",
+    "keywords": [
+        "ai",
+        "agent",
+        "hallucination",
+        "cursor",
+        "windsurf",
+        "antigravity",
+        "tribunal",
+        "code-review",
+        "llm"
+    ],
+    "homepage": "https://github.com/Harmitx7/tribunal-kit",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Harmitx7/tribunal-kit.git"
+    },
+    "license": "MIT",
+    "bin": {
+        "tribunal-kit": "bin/tribunal-kit.js",
+        "tk": "bin/tribunal-kit.js"
+    },
+    "files": [
+        "bin/",
+        ".agent/",
+        "README.md",
+        "LICENSE"
+    ],
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "scripts": {
+        "test": "echo \"No tests for CLI\" && exit 0"
+    }
+}
