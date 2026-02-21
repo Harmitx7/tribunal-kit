@@ -68,6 +68,11 @@ Every code response MUST:
 | `/tribunal-database` | Logic + Security + SQL |
 | `/brainstorm` | Explore implementation options before coding |
 | `/debug` | Systematic debugging with root cause analysis |
+| `/refactor` | Dependency-safe code refactoring with behavior preservation |
+| `/migrate` | Framework upgrades, dependency bumps, DB migrations |
+| `/audit` | Full project health audit (security → lint → tests → deps → bundle) |
+| `/fix` | Auto-fix lint, formatting, and import issues (with human gate) |
+| `/changelog` | Generate changelog from git history |
 
 ---
 

@@ -138,6 +138,55 @@ The Human Gate is never skipped. No code is written to a file without explicit u
 
 ---
 
+## Error Recovery Protocol
+
+When an agent or script fails mid-execution:
+
+### Retry Policy
+
+```
+Attempt 1  → Run with original parameters
+Attempt 2  → Run with stricter constraints + specific feedback from failure
+Attempt 3  → Run with maximum constraints + full context dump
+Attempt 4  → HALT. Report to human with full failure history.
+```
+
+**Hard limit: 3 retries.** After the third failure, the agent MUST stop and escalate.
+
+### Failure Report Format (Mandatory)
+
+When reporting a failure to the user:
+
+```
+⚠️ Agent Failure Report
+━━━━━━━━━━━━━━━━━━━━━
+Agent:       [agent name]
+Task:        [what was attempted]
+Attempts:    [N of 3]
+Last Error:  [specific error message or reason]
+Context:     [what was passed to the agent]
+Suggestion:  [what the human should check or try]
+```
+
+### Script Failure Handling
+
+```
+Script exits 0     → Success, continue pipeline
+Script exits 1     → Failure, report and decide: retry or skip?
+Script not found   → Skip with warning, do not block pipeline
+Script times out   → Kill process, report timeout, continue with next check
+Script crashes      → Catch exception, report stack trace, continue
+```
+
+### Cascade Failure Rules
+
+- If a **security scan** fails → HALT all subsequent steps
+- If a **lint check** fails → continue but flag as blocking for deploy
+- If a **test** fails → continue analysis but mark task as incomplete
+- If a **non-critical script** fails → log warning and continue
+
+---
+
 ## Script Reference
 
 These scripts live in `.agent/scripts/`. Agents and skills can invoke them:
@@ -145,14 +194,26 @@ These scripts live in `.agent/scripts/`. Agents and skills can invoke them:
 | Script | Purpose | When |
 |---|---|---|
 | `checklist.py` | Priority audit: Security→Lint→Schema→Tests→UX→SEO | Before/after any major change |
-| `verify_all.py` | Full validation suite | Pre-deploy |
-| `auto_preview.py` | Start local dev server | After /create or /enhance |
+| `verify_all.py` | Full pre-deploy validation suite | Pre-deploy |
+| `auto_preview.py` | Start/stop/restart local dev server | After /create or /enhance |
 | `session_manager.py` | Track session state between conversations | Multi-session work |
+| `lint_runner.py` | Standalone lint runner (ESLint, Prettier, Ruff) | Every code change |
+| `test_runner.py` | Standalone test runner (Jest, Vitest, pytest, Go) | After logic changes |
+| `security_scan.py` | Deep OWASP-aware source code security scan | Always on deploy, /audit |
+| `dependency_analyzer.py` | Unused/phantom deps, npm audit | Weekly, /audit |
+| `schema_validator.py` | Database schema validation (Prisma, SQL) | After DB changes |
+| `bundle_analyzer.py` | JS/TS bundle size analysis | Before deploy |
 
 **Run pattern:**
 ```
 python .agent/scripts/checklist.py .
 python .agent/scripts/verify_all.py
+python .agent/scripts/security_scan.py .
+python .agent/scripts/lint_runner.py . --fix
+python .agent/scripts/test_runner.py . --coverage
+python .agent/scripts/dependency_analyzer.py . --audit
+python .agent/scripts/schema_validator.py .
+python .agent/scripts/bundle_analyzer.py . --build
 ```
 
 ---
