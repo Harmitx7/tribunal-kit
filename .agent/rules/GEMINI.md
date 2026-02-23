@@ -133,8 +133,9 @@ The Human Gate is never skipped. No code is written to a file without explicit u
 | Backend/API | logic + security + dependency + type-safety |
 | Frontend/React | logic + security + frontend + type-safety |
 | Database/SQL | logic + security + sql |
+| Mobile/Cross-platform | logic + security + mobile-reviewer + type-safety |
 | Any domain | + performance (if optimization) |
-| Before merge | /tribunal-full (all 8) |
+| Before merge | /tribunal-full (all 9) |
 
 ---
 
@@ -203,6 +204,7 @@ These scripts live in `.agent/scripts/`. Agents and skills can invoke them:
 | `dependency_analyzer.py` | Unused/phantom deps, npm audit | Weekly, /audit |
 | `schema_validator.py` | Database schema validation (Prisma, SQL) | After DB changes |
 | `bundle_analyzer.py` | JS/TS bundle size analysis | Before deploy |
+| `skill_integrator.py` | Maps active skills to their executable scripts | Automatically when skills are invoked |
 
 **Run pattern:**
 ```
@@ -214,6 +216,7 @@ python .agent/scripts/test_runner.py . --coverage
 python .agent/scripts/dependency_analyzer.py . --audit
 python .agent/scripts/schema_validator.py .
 python .agent/scripts/bundle_analyzer.py . --build
+python .agent/scripts/skill_integrator.py
 ```
 
 ---

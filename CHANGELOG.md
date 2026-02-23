@@ -10,7 +10,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 - **Framework Hardening & Gap Filling**: Implemented missing Python scripts for linting (`lint_runner.py`), testing (`test_runner.py`), security scanning (`security_scan.py`), dependency analysis (`dependency_analyzer.py`), schema validation (`schema_validator.py`), and bundle analysis (`bundle_analyzer.py`).
-- **New Workflows**: Introduced Refactor (`/refactor`), Migrate (`/migrate`), Audit (`/audit`), Fix (`/fix`), and Changelog Generation (`/changelog`).
+- **New Workflows**: Introduced Refactor (`/refactor`), Migrate (`/migrate`), Audit (`/audit`), Fix (`/fix`), Changelog Generation (`/changelog`), and Interactive Session (`/session`).
+- **New Specialist Agent**: Added `mobile-reviewer` for dedicated React Native, Flutter, and mobile web code audits, bringing the total reviewer count to 9.
+- **Skill Integrator**: Added `skill_integrator.py` to automatically detect and map which skills have executable scripts associated with them.
 - **New Skill**: Added `config-validator` skill for self-validation of the `.agent` directory.
 - **Enhanced Frontend Skills**: Upgraded design frameworks including `frontend-design`, `mobile-design`, `web-design-guidelines`, `nextjs-react-expert`, and `tailwind-patterns` to incorporate cutting edge spatial UI, generative UI, and AI-driven interface patterns.
 
