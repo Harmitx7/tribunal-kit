@@ -56,31 +56,29 @@ Approve to start implementation? (Y / N)
 
 **Phase B does NOT start without a Y.**
 
-### Phase B — Implementation (Parallel)
+### Phase B — Implementation (Manager & Micro-Workers)
 
-After approval, specialists activate:
+After approval, the Orchestrator acts as Manager and dispatches Micro-Workers using isolated JSON payloads.
 
 ```
-Foundation tier:  database-architect + security-auditor (run first)
-Core tier:        backend-specialist + frontend-specialist (after foundation)
-Quality tier:     test-engineer + qa-automation-engineer (after core)
+Wave 1:  database-architect + security-auditor (JSON dispatch #1)
+[Wait for completion & Tribunal]
+
+Wave 2:  backend-specialist + frontend-specialist (JSON dispatch #2)
+[Wait for completion & Tribunal]
 ```
 
-Each tier's output goes through its Tribunal gate before the next tier begins.
+Workers execute in parallel within their wave, receiving ONLY their specific file context to minimize tokens and hallucination risk.
 
 ---
 
-## Cross-Agent Context Handoff
+## Hierarchical Context Pruning
 
-When one agent's output feeds the next:
-
-```
-The context passed to Agent B must include:
-  "Agent A produced: [result]
-   Build on this. Do not re-derive it."
-```
-
-Never let Agent B re-invent what Agent A already established.
+When dispatching workers, the Orchestrator MUST use the `dispatch_micro_workers` JSON format.
+The context rule is strict:
+- **No full chat histories** are passed to workers.
+- The `context_summary` injected by the Orchestrator is the ONLY context the worker sees regarding the larger goal.
+- Files attached must be strictly limited to the absolute minimum needed to complete the task.
 
 ---
 

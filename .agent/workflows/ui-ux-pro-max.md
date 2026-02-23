@@ -1,144 +1,140 @@
 ---
-description: Plan and implement UI
+description: Plan and implement cutting-edge advanced UI/UX
 ---
 
-# /ui-ux-pro-max — Advanced UI/UX Design Mode
+# /ui-ux-pro-max — Advanced Cutting-Edge UI/UX Design Mode
 
 $ARGUMENTS
 
 ---
 
-This command activates the highest-fidelity UI/UX workflow. It combines deep design thinking, component architecture, and real-time feedback — not just "generate a pretty layout."
+This command activates the absolute highest-fidelity UI/UX workflow, meant for 2026+ web and mobile standards. It combines deep neuro-inclusive design thinking, spatial UI concepts, advanced component architecture, and generative styling. This is not just "generate a pretty layout" — it is the creation of a responsive, living, and hyper-optimized interface.
 
-> This is not a shortcut. It's a full design session.
+> This is a full state-of-the-art design session. We are pushing pixels, physics, and perceptual psychology.
 
 ---
 
 ## What Makes This Different From `/create`
 
-`/create` builds features. `/ui-ux-pro-max` obsesses over the craft:
+`/create` builds standard features. `/ui-ux-pro-max` obsesses over extreme craft and futuristic patterns:
 
-- Color decisions backed by contrast ratios and optical principles — not "looks nice"
-- Typography choices based on reading distance, weight hierarchy, and scale
-- Layout that solves the actual user flow, not the common template
-- Interaction states for every element (hover, focus, active, loading, error, empty)
-- Accessibility by default — not retrofitted
-
----
-
-## Design Rules (Always Active in This Mode)
-
-### Color
-- No purple/violet as primary color — most overused AI design choice
-- All text must pass WCAG AA contrast (4.5:1 minimum)
-- Color palette derived from a single base hue with rotational logic — not random picks
-- No pure black backgrounds (`#000`) — use `#090909` to `#121212` for perceived depth
-
-### Typography
-- Google Fonts only if you have the `<link>` to prove it exists — no invented font names
-- Minimum 16px body text on mobile
-- Line height between 1.4–1.6 for body, 1.1–1.2 for headings
-- No more than 3 font weights in one component
-
-### Layout
-- No standard hero (left text / right illustration) without a compelling reason
-- Section max-width: 1200px for content, 720px for text-heavy content
-- 8px spacing grid — all padding and margin values are multiples of 8
-
-### Interaction
-- Every interactive element has: default, hover, focus, active, and disabled states
-- Focus rings must be visible — never `outline: none` without a styled alternative
-- Loading states for anything async — no silent spinners
-- Error states with actionable copy — not just "Error occurred"
+- **Generative & Algorithmic Color**: Using OKLCH/LCH for perceptual uniformity, not just picking hex codes that "look nice."
+- **Fluid & Variable Typography**: Designing with `clamp()`, `ch` units, and Variable Fonts for infinite scaling, not fixed breakpoints.
+- **Adaptive Psychology & Neuro-Inclusivity**: Respecting `prefers-reduced-motion`, varying cognitive load based on context, and utilizing OLED battery-saving true black themes.
+- **Advanced Micro-Interactions**: Spring-physics based animations and scroll-driven interactions instead of static, linear CSS transitions.
+- **Spatial & Contextual UI**: Considering z-axis depth (glass, blurs, multi-layered shadows) and contextual adaptation (UI conforming to user behavior).
 
 ---
 
-## The Design Session Protocol
+## Extreme Design Rules (Always Active in This Mode)
 
-### Step 1 — Problem Before Pixels
+### Generative Color & Light
+- **No purple/violet as primary color** — the most overused "AI design" cliché is banned.
+- Color palettes must be derived using algorithmic relationships (e.g., OKLCH lightness/chroma stepping).
+- **True Black & OLED Optimization**: Use `#000000` or `#010101` for deep backgrounds on mobile/PWA to save battery, utilizing high-contrast borders for separation instead of gray backgrounds.
+- Contrast must pass **WCAG 3.0 APCA** (Advanced Perceptual Contrast Algorithm) standards for readability, not just older WCAG 2.1 math.
 
-Answer these before designing anything:
+### Fluid & Variable Typography
+- Use system variable fonts or explicitly loaded modern Variable Fonts to reduce network requests.
+- Body text uses **fluid typography** `clamp(1rem, 0.8rem + 1vw, 1.25rem)` to scale linearly between screen sizes.
+- strict adherence to max line lengths (`max-w-[65ch]`) to prevent cognitive fatigue.
+
+### Spatial & Layout Architecture
+- Standard hero layouts (left text / right image) are prohibited unless explicitly justified. Use asymmetric, dynamic, or scroll-locked interactive hero sections.
+- The Z-axis matters: build depth using multi-layer shadows or contextual background blurs (`backdrop-filter`) carefully applied for performance.
+- Use **Logical Properties** (`margin-inline`, `padding-block`) exclusively to enforce automatic RTL (Right-to-Left) and LTR compatibility.
+
+### Advanced Interaction & Physics
+- Linear easing (`ease`, `linear`) is banned for layout shifts. You must use **spring physics** or custom `cubic-bezier` curves for natural, organic motion.
+- **Scroll-Driven Animations**: UI elements should react to scroll position natively using modern CSS `@scroll-timeline` or performant JS Observers.
+- **Zero-Wait UI**: Streaming UI components (like React Server Components or Optimistic UI updates) must be designed so the user never sees a raw loading spinner for action responses.
+
+---
+
+## The Pro-Max Design Protocol
+
+### Step 1 — Perceptual & Contextual Mapping
+
+Before painting a pixel, determine:
 
 ```
-Who is the user?              (not "general users" — a specific persona)
-What is the one thing this UI must make easy?
-What is the emotional tone?   (serious, playful, professional, urgent)
-What does the user do after this screen?
+Who is the specific user persona?
+What is the cognitive load capacity here? (e.g., dashboard = high data density, landing page = low friction)
+What is the desired emotional & visceral impact?
+How will the UI adapt to user input?
 ```
 
-### Step 2 — Layout Skeleton (No Colors yet)
+### Step 2 — Spatial Layout Skeleton (No Colors yet)
 
-Define the structure:
-- What regions exist? (nav, hero, content, sidebar, footer)
-- What is the visual hierarchy? (#1 most important thing → #2 → #3)
-- What flows from top to bottom when the user scrolls?
+Define the structural architecture with depth in mind:
+- What is the structural grid? (Subgrid, Container Queries)
+- What exists on the Z-axis? (What floats, what is grounded?)
+- How does the layout mutate on scroll?
 
-### Step 3 — Color + Typography System
+### Step 3 — Generative Color + Fluid Typography System
 
-Pick once, use consistently:
+Define the algorithmic base:
 
-```
-Base hue:         [HSL value]
-Primary:          [hue, full saturation]
-Background:       [hue, 2–5% saturation, 6–12% lightness for dark]
-Surface:          [background + 4–6% lightness]
-Text primary:     [96–98% lightness on dark]
-Text secondary:   [65–70% lightness on dark]
-Accent:           [complementary hue, high saturation]
+```css
+/* Example OKLCH System */
+Base hue:         [OKLCH Hue Value]
+Surface (Dark):   oklch(15% 0.02 [Hue])
+Surface (OLED):   oklch(0% 0 0)
+Text Primary:     oklch(96% 0.01 [Hue])
+Accent:           oklch(70% 0.25 [Complementary Hue])
 ```
 
 ### Step 4 — Component Build (Tribunal: logic + frontend)
 
 Every component built goes through `/tribunal-frontend` before being shown.
+Focus on **Container Queries** (`@container`) so components contextualize themselves based on where they map, not window width.
 
-### Step 5 — Interaction Layer
+### Step 5 — Physics & Interaction Layer
 
-Define CSS transitions for every state change:
+Define organic movement:
 ```css
-transition: all 0.15s ease;   /* for micro-interactions */
-transition: all 0.25s ease;   /* for layout transitions */
+/* Spring-like organic transition */
+transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
 ```
+Ensure all interactions check for `@media (prefers-reduced-motion: reduce)`.
 
-### Step 6 — Accessibility Audit
+### Step 6 — Extreme Accessibility Audit
 
 ```
-✅ All images have alt attributes
-✅ Focus order follows visual order
-✅ Color is not the only indicator of state (add icon or text)
-✅ Touch targets minimum 44px × 44px on mobile
-✅ ARIA roles on custom interactive elements
+✅ APCA Contrast verified.
+✅ Logical properties used for full i18n support.
+✅ Touch targets mathematically enforce Fitts' Law (>48px minimum).
+✅ Cognitive boundaries respected (No sudden layout shifts, CLS = 0).
+✅ Screen reader flows tested via semantic HTML5.
 ```
 
 ---
 
 ## 🏛️ Anti-Hallucination Rules for UI
 
-- **No invented Google Fonts** — verify every font name at fonts.google.com before using it
-- **No invented CSS properties** — `backdrop-filter` needs vendor prefix in some browsers; write `// VERIFY: check browser support`
-- **Contrast ratios must be real** — don't claim AA compliance without checking the actual ratio
-- **No placeholder images** — generate real images or use a placeholder service with documented URL format
+- **No invented CSS properties** — Do not guess syntax for scroll timelines or `@property` declarations; write `// VERIFY: check browser compatibility` if using bleach-edge CSS.
+- **No placeholder images** — generate real structural visualizations or use SVG abstractions.
+- **Do not invent React/Next.js features** that don't exist in the current stable or canary builds.
 
 ---
 
 ## Output Format
 
-Each step produces:
+Each step produces a high-fidelity summary:
 
 ```
-📐 Layout skeleton: [description or ASCII diagram]
+📐 Spatial Layout: [description of grid, container queries, and z-axis layers]
 
-🎨 Color system:
-   Background:   #[hex]
-   Surface:      #[hex]
-   Primary text: #[hex]
-   Accent:       #[hex]
-   Contrast:     [ratio]:1 → AA [pass|fail]
+🎨 Generative Color:
+   [OKLCH base mapped variables]
+   APCA Contrast Check: [Pass/Fail for Text/Bg combinations]
 
-🧱 Component: [name]
-   Tribunal: [verdict]
+🧱 Component Schema:
+   [Name] + [State transitions: Hover, Focus, Active, Skeleton]
+   Tribunal: [Verdict]
 
-♿ Accessibility:
-   [checklist result]
+♿ Neuro-Inclusive Audit:
+   [Compliance with cognitive safety, motion reduction, and touch targets]
 ```
 
 ---
@@ -146,8 +142,8 @@ Each step produces:
 ## Usage
 
 ```
-/ui-ux-pro-max design a SaaS dashboard homepage
-/ui-ux-pro-max build a pricing page that converts
-/ui-ux-pro-max create a mobile-first landing page for a productivity app
-/ui-ux-pro-max redesign the login and registration flow
+/ui-ux-pro-max design a generative AI prompt dashboard
+/ui-ux-pro-max build an e-commerce checkout with extreme conversion optimization
+/ui-ux-pro-max create a spatial WebXR-inspired landing page
+/ui-ux-pro-max redesign a high-frequency trading interface for minimum cognitive load
 ```

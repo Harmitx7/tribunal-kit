@@ -160,11 +160,12 @@ def main() -> None:
         passed = run_tests(framework, cmd, project_root)
 
     elif framework == "pytest":
-        cmd = ["pytest", "-v"]
+        cmd = ["python", "-m", "pytest", "-v"]
         if args.coverage:
             cmd.extend(["--cov", "--cov-report=term-missing"])
         if args.watch:
-            cmd = ["ptw", "--", "-v"]  # pytest-watch
+            cmd = ["python", "-m", "pytest-watch", "--", "-v"]  # pytest-watch
+
         if args.file:
             cmd.append(args.file)
         passed = run_tests("pytest", cmd, project_root)

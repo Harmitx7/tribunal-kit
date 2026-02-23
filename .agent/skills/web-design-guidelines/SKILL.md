@@ -1,13 +1,13 @@
 ---
 name: web-design-guidelines
-description: Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my site against best practices".
+description: Review UI code for Next-Generation Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my site against best practices".
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# Web Interface Review Guidelines
+# Next-Gen Web Interface Review Guidelines (Pro-Max Level)
 
 > Good UI is invisible. Users think about their task, not about the interface.
-> Bad UI puts itself in the way.
+> Great UI anticipates the task and reacts at the speed of thought.
 
 ---
 
@@ -15,72 +15,58 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 Load this skill when asked to:
 - Review or audit a UI
-- Check accessibility compliance
-- Improve UX
+- Check accessibility compliance (WCAG 3.0 / APCA)
+- Improve UX & Cognitive Safety
 - Check a site against best practices
 
 ---
 
-## Review Categories
+## Extreme Review Categories
 
-### 1. Accessibility (WCAG 2.2 Level AA)
+### 1. Neuro-Inclusivity & Accessibility (WCAG 3.0 APCA Base)
 
-Non-negotiable baseline for any public interface:
+Non-negotiable baseline for any public interface in 2026+:
 
 | Check | How to Verify |
 |---|---|
-| Color contrast ≥ 4.5:1 for text | Use WebAIM Contrast Checker or axe DevTools |
-| All interactive elements reachable by keyboard | Tab through the page without a mouse |
-| Focus states are visible | Not hidden with `outline: none` without an alternative |
-| Images have alt text (descriptive = informative, empty = decorative) | Inspect `<img>` elements |
-| Form inputs have associated `<label>` | Check for `for` attribute matching input `id` |
-| No content only communicated by color | "Required fields in red" must also say "required" |
-| Page has a document `<title>` and a semantic `<h1>` | Check the DOM |
+| **APCA Contrast** | Ensure Lc (Lightness Contrast) is > 75 for body text, > 60 for large text. (Do not rely solely on old WCAG 2.1 4.5:1 math). |
+| **Cognitive Safety** | Check if `prefers-reduced-motion` is respected. No infinite spinning loaders. |
+| **Keyboard Fluidity** | Tab order must follow visual order. Focus states cannot be just a 1px dotted line; use `outline: 2px solid var(--focus-color); outline-offset: 2px;`. |
+| **Semantic AI Context** | Images must have `alt` tags, but complex charts need full `<details>` breakdowns for screen readers and AI agents crawling the site. |
+| **Interaction Buffers** | Are touch targets mathematically ≥48px (Fitts' Law)? |
 
-### 2. Mobile Responsiveness
+### 2. Extreme Core Web Vitals (CWV)
 
-```css
-/* Minimum viable responsive setup */
-<meta name="viewport" content="width=device-width, initial-scale=1">
+Drop the old 2022 standards. The new baseline for premium web:
 
-/* Touch targets: minimum 44×44px (WCAG), recommended 48×48px (Material) */
-button, a, [role="button"] {
-  min-height: 44px;
-  min-width: 44px;
-}
-```
+| Metric | Premium Target | Common Failures |
+|---|---|---|
+| **LCP** (Largest Contentful Paint) | **< 1.5s** | Missing `fetchpriority="high"` on hero images. Heavy client-side React rendering blocking the paint. |
+| **INP** (Interaction to Next Paint) | **< 100ms** | Main thread blocked by React hydrate. Use `startTransition` or Web Workers for heavy JS. |
+| **CLS** (Cumulative Layout Shift) | **0.00** | Missing `width` and `height` on images. Late-loading web fonts (use `font-display: optional`). |
 
-**Review on:** 375px (iPhone SE) and 390px (iPhone 14). If the layout breaks on these, it will for a significant portion of users.
+### 3. Energy Efficiency & Sustainability
 
-### 3. Performance (Core Web Vitals)
+Code has a carbon footprint and a battery cost.
 
-| Metric | Target |
-|---|---|
-| LCP | < 2.5s |
-| INP | < 200ms |
-| CLS | < 0.1 |
+- **OLED Pure Black:** Does the dark mode use `#000` or `#010101` to physically turn off pixels?
+- **Animation Tax:** Are animations using CPU-heavy properties (`margin`, `width`) instead of GPU-accelerated ones (`transform`, `opacity`)?
+- **Asset Weight:** Are images AVIF/WebP? Are fonts subsetted Variable Fonts?
 
-**CLS common causes:** images without dimensions, web fonts loading (causes text reflow), dynamically injected content above existing content.
+### 4. Visual Design Quality (Pro-Max)
 
-**LCP common fixes:** Preload the hero image, use `loading="eager"` on above-fold images, use `fetchpriority="high"`.
+Evaluate these brutally honestly:
 
-### 4. Visual Design Quality
+- **Mathematical Spacing:** Does spacing follow a strict scale (e.g., 4, 8, 16, 24, 32) or is it a mess of arbitrary pixels?
+- **Fluid Typography:** Is text using `clamp()` to scale, or does it awkwardly jump at breakpoints?
+- **The "Purple Ban":** Is the site heavily relying on deep purple/violet as a primary color? (Flag this as an overused AI-generated cliché).
+- **Z-Axis Depth:** Are shadows realistic (multi-layered CSS shadows) or flat and cheap (`box-shadow: 0 4px 6px #000`)?
+- **Micro-Interactions:** Do buttons scale down slightly on `:active`? Do elements use spring-physics easing (`cubic-bezier(0.34, 1.56, 0.64, 1)`)?
 
-Evaluate these honestly:
+### 5. AI & Streaming UX
 
-- **Contrast between sections** — can users tell where one section ends and another begins?
-- **Typography hierarchy** — is it clear what's a heading vs. body vs. caption?
-- **Spacing consistency** — does spacing follow a scale (4px, 8px, 16px, 24px) or is it arbitrary?
-- **Color palette** — is the palette controlled (3–5 colors) or are there 15 shades of slightly different blue?
-- **Interactive states** — do buttons show hover, focus, active, disabled states?
-
-### 5. Content and Copy
-
-- Does each page have one clear purpose?
-- Does the primary call-to-action stand out visually and verbally?
-- Are error messages specific? ("Email must include @" not "Invalid input")
-- Are loading states shown? Does the user know something is happening?
-- Are empty states designed? (What does the user see when a list has no items?)
+- **Zero-Wait States:** If the app is waiting for an LLM/Server response, does it show a static spinner (BAD) or stream the skeleton/content (GOOD)?
+- **Optimistic UI:** Do likes/saves update the UI *instantly* before the server confirms?
 
 ---
 
@@ -88,36 +74,33 @@ Evaluate these honestly:
 
 | Finding | Severity | Fix |
 |---|---|---|
-| Missing focus styles | High | Add visible `:focus-visible` outline |
-| Images without alt text | High | Add descriptive alt or `alt=""` for decorative |
-| Touch targets under 44px | Medium | Increase button/link padding |
-| No loading states | Medium | Add skeleton or spinner |
-| Inconsistent spacing | Low | Standardize to 4px/8px scale |
-| Purple as primary color | Low | Rethink palette — overused AI design cliché |
+| Missing/Weak focus styles | High | Add visible `:focus-visible` with offset |
+| `margin`/`padding` animated | High | Change to `transform: translate()` |
+| Touch targets under 48px | High | Increase padding/min-height |
+| Layout shifts on load (CLS > 0) | High | Pre-allocate space for async content/images |
+| Linear CSS transitions | Medium | Upgrade to spring-based `cubic-bezier` curves |
+| Purple as primary color | Low/Brand | Rethink palette — overused AI design cliché |
 
 ---
 
 ## Audit Format Template
 
-When reporting a UI review:
+When reporting a UI review, use this exact brutal structure:
 
 ```markdown
-## UI Review: [Component/Page Name]
+## UI/UX Pro-Max Review: [Component/Page Name]
 
-### Accessibility
+### ♿ Neuro-Inclusivity & A11y
 - [BLOCKER] [Finding with specific element and fix]
 - [WARN] [Finding]
 
-### Responsiveness  
+### ⚡ Performance & Energy (CWV)
 - [Finding]
 
-### Performance
+### 🎨 Visual & Spatial Quality
 - [Finding]
 
-### Visual Design
-- [Finding]
-
-### Copy/Content
+### 🛠️ Interaction & Physics
 - [Finding]
 
 ### Summary

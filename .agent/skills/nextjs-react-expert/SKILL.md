@@ -1,74 +1,69 @@
 ---
-name: react-best-practices
-description: React and Next.js performance optimization from Vercel Engineering. Use when building React components, optimizing performance, eliminating waterfalls, reducing bundle size, reviewing code for performance issues, or implementing server/client-side optimizations.
+name: nextjs-react-expert
+description: Next.js App Router and React v19+ performance optimization from Vercel Engineering. Use when building React components, optimizing performance, implementing React Compiler patterns, eliminating waterfalls, reducing JS payload, or implementing Streaming/PPR optimizations.
 allowed-tools: Read, Write, Edit, Glob, Grep
 ---
 
-# React & Next.js Performance Patterns
+# React v19+ & Next.js Pro-Max Performance Patterns
 
 > The fastest code is code that doesn't run.
-> The second fastest is code that runs once and caches the result.
+> The second fastest is code that runs on the edge and streams the result.
 
 ---
 
-## File Index
+## Contemporary Paradigm Shifts
 
-| File | Topic | Load When |
-|---|---|---|
-| `1-async-eliminating-waterfalls.md` | Parallel data fetching, waterfall elimination | Sequential fetches causing slow page loads |
-| `2-bundle-bundle-size-optimization.md` | Code splitting, tree shaking, lazy loading | Bundle is too large, slow initial load |
-| `3-server-server-side-performance.md` | RSC, streaming, server actions | Next.js app router performance |
-| `4-client-client-side-data-fetching.md` | SWR, React Query, client-side patterns | Client-side data management |
-| `5-rerender-re-render-optimization.md` | Memo, useMemo, useCallback, key selection | Expensive re-renders |
-| `6-rendering-rendering-performance.md` | Virtual DOM, reconciliation, React profiler | Profiling slow renders |
-| `7-js-javascript-performance.md` | Event delegation, web workers, micro-optimizations | JS execution bottlenecks |
-| `8-advanced-advanced-patterns.md` | Concurrent features, Suspense, transitions | Complex async UX patterns |
+| Legacy (React 18 / Next.js Pages) | Modern (React 19 / Next.js App Router) |
+|---|---|
+| Manual `useMemo()` / `useCallback()` | **React Compiler** handles memoization natively |
+| `getServerSideProps` / Client Fetching | **React Server Components (RSC)** default |
+| `useActionState` custom hooks | **Server Actions** native mutations |
+| Loading spinners on client | **Streaming UI** & `Suspense` boundaries |
+| Static *or* Dynamic pages | **Partial Prerendering (PPR)** (Static shell, dynamic guts) |
 
 ---
 
-## Core Decision Framework
+## Core Architecture Decision Framework
 
 ### Server vs. Client Component
+By default, everything in Next.js App Router is a Server Component. 
 
 ```
-Default: Server Component
-Switch to Client when:
+Default: Server Component (Zero JS sent to client)
+Switch to Client ('use client') ONLY when:
   - Uses browser APIs (window, localStorage, navigator)
-  - Needs event handlers (onClick, onChange)
-  - Uses React hooks (useState, useEffect, useContext)
-  - Needs real-time updates
+  - Needs DOM event handlers (onClick, onChange)
+  - Needs state/effects (useState, useEffect, useOptimistic)
 ```
+
+**The Interleaved Pattern:** Never make a layout or major shell `'use client'`. 
+Pass Server Components *into* Client components as `children`.
 
 ```tsx
-// ✅ Server Component — data fetches on server, zero JS sent for this component
-async function UserProfile({ id }: { id: string }) {
-  const user = await getUser(id);  // direct DB call — no API round-trip
-  return <div>{user.name}</div>;
-}
-
-// ✅ Client Component — only when interactivity is needed
-'use client';
-function ToggleButton() {
-  const [open, setOpen] = useState(false);
-  return <button onClick={() => setOpen(!open)}>{open ? 'Close' : 'Open'}</button>;
-}
+// ✅ Correct: The heavy static content stays on the server
+<ClientInteractiveDrawer>
+  <ServerHeavyGraph data={dbData} />
+</ClientInteractiveDrawer>
 ```
 
 ---
 
-## Waterfall Elimination
+## Extreme Waterfall Elimination
 
-The most impactful Next.js optimization. Requests that depend on each other are fine. Requests that don't depend on each other must run in parallel.
+The most impactful Next.js optimization is eliminating network waterfalls.
 
 ```tsx
-// ❌ Waterfall — 3 sequential async calls, each waits for the previous
+// ❌ CRITICAL WATERFALL: 3 sequential async calls, each waits for the previous
 async function Dashboard() {
   const user = await getUser();           // 200ms
   const posts = await getPosts();         // 200ms (waits unnecessarily)
   const analytics = await getAnalytics(); // 200ms (waits unnecessarily)
-  // Total: 600ms
+  // Total: 600ms (Blocked UI)
 }
+```
 
+### Fix 1: Parallel Fetching
+```tsx
 // ✅ Parallel — all 3 start at the same time
 async function Dashboard() {
   const [user, posts, analytics] = await Promise.all([
@@ -76,46 +71,70 @@ async function Dashboard() {
     getPosts(),
     getAnalytics(),
   ]);
-  // Total: ~200ms (longest of the three)
+  // Total: ~200ms (Blocked UI, but faster)
 }
 ```
 
----
-
-## Re-render Optimization
-
-Re-renders are not always bad. Unnecessary re-renders are.
+### Fix 2: Streaming UI (The Pro-Max Way)
+Do not await slow data at the page level. Wrap slow components in `<Suspense>`.
 
 ```tsx
-// ❌ New object reference on every render = child always re-renders
-function Parent() {
-  const config = { theme: 'dark' };  // new reference each render
-  return <Child config={config} />;
-}
-
-// ✅ Stable reference
-function Parent() {
-  const config = useMemo(() => ({ theme: 'dark' }), []);
-  return <Child config={config} />;
-}
-
-// ✅ Or move outside component if it never changes
-const CONFIG = { theme: 'dark' };
-function Parent() {
-  return <Child config={CONFIG} />;
+// 🚀 PRO-MAX: Streaming Components
+export default function Dashboard() {
+  return (
+    <main>
+      <FastHeader />
+      <Suspense fallback={<AnalyticsSkeleton />}>
+        {/* React streams this HTML down when the DB resolves */}
+        <SlowAnalyticsComponent />
+      </Suspense>
+    </main>
+  );
 }
 ```
 
-**Measure before optimizing:** Use React DevTools Profiler to confirm a component is actually re-rendering unnecessarily before adding `memo` or `useMemo`.
+---
+
+## Partial Prerendering (PPR)
+
+PPR allows a single route to have both an ultra-fast static edge-cached shell, and dynamic personalized content streamed in instantly after execution.
+
+- Avoid using global `cookies()` or `headers()` high up in the component tree, as this forces the entire route to be dynamic.
+- Isolate dynamic data fetching within a `<Suspense>` boundary so the rest of the page can be statically pre-rendered at build time.
 
 ---
 
-## Bundle Size Principles
+## AI & Streaming UI Responses
 
-- Import only what you use: `import { format } from 'date-fns'` not `import dateFns from 'date-fns'`
-- Code-split at the route level at minimum — Next.js does this automatically
-- Heavy libraries that are only needed on interaction: `const Chart = dynamic(() => import('recharts'), { ssr: false })`
-- Check bundle with `@next/bundle-analyzer` before and after adding large dependencies
+When building GenAI interfaces, waiting for complete API responses breaks the "Doherty Threshold" (400ms).
+
+- **Use the `ai` SDK (`@ai-sdk/react`)** to stream text using `useChat` or `useCompletion`.
+- **Generative UI (RSC streaming):** Stream actual React Server Components back from the LLM, not just strings.
+
+```tsx
+// ✅ AI Generative UI response
+return (
+  <div>
+    Here is the weather:
+    <Suspense fallback={<WeatherSkeleton />}>
+      <WeatherCard promise={llmTools.getWeather(location)} />
+    </Suspense>
+  </div>
+)
+```
+
+---
+
+## Bundle Size & JS Dropping
+
+- **Import strictly:** Use barrel files cautiously. Ensure `package.json` `sideEffects: false` is respected so bundlers can tree-shake.
+- **Client boundaries low:** Push `'use client'` as far down the component tree as mathematically possible.
+- **Lazy loading heavy client deps:**
+```tsx
+import dynamic from 'next/dynamic'
+// Only load D3.js when the user actually opens the modal
+const HeavyChart = dynamic(() => import('./HeavyChart'), { ssr: false })
+```
 
 ---
 
@@ -123,8 +142,8 @@ function Parent() {
 
 | Pattern | Problem | Fix |
 |---|---|---|
-| Fetching in `useEffect` | Client waterfall, no SSR benefit | Fetch in Server Component or use React Query |
-| `useState` for derived data | Unnecessary state, sync bugs | Compute from existing state during render |
-| Missing `key` on list items | React reconciliation fails, wrong elements update | Use stable unique ID as key, never index |
-| Context for frequently-changing state | Every consumer re-renders on every change | Use Zustand or split context by update frequency |
-| `useCallback` on everything | Adds CPU cost without benefit | Profile first — only memoize expensive callbacks passed to memoized children |
+| Fetching via `useEffect` | Client waterfall, huge CLS, breaks SSR | Fetch in RSC or use `SWR`/`React Query` |
+| Manual `useMemo` everywhere | Hurts code readability; React 18 legacy | Trust **React Compiler** to optimize renders automatically |
+| Missing `key` on mapped lists | Complete DOM destruction on update | Use stable unique IDs (never `index`) |
+| Unhandled Server Actions | Silent errors on DB failures | Wrap in `try/catch` and return `{ error }` objects |
+| Client-side secret passing | Exposes API keys | `server-only` package + Server Actions |

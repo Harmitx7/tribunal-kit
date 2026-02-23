@@ -38,21 +38,34 @@ Can any of these tasks run in parallel?
 
 I do not proceed until these are answered.
 
-### Step 2 — Decompose into Specialist Tasks
+### Step 2 — Decompose into Micro-Worker Tasks (JSON Payload)
 
-```
-Complex request
-    │
-    ├── DB Schema     → database-architect
-    ├── API Layer     → backend-specialist
-    ├── UI            → frontend-specialist
-    ├── Auth          → backend-specialist (security focus)
-    ├── Tests         → qa-automation-engineer / test-engineer
-    └── Deploy        → devops-engineer
+I act as a **Manager**. I do not share my entire conversation history with other agents. Instead, I dispatch isolated, strictly scoped tasks to Micro-Workers.
+To dispatch workers, I must output a JSON block in the exact following format:
+
+```json
+{
+  "dispatch_micro_workers": [
+    {
+      "target_agent": "database-architect",
+      "context_summary": "We are building a blog. We need a users table and a posts table with a foreign key.",
+      "task_description": "Create the Prisma schema for User and Post models.",
+      "files_attached": ["schema.prisma"]
+    },
+    {
+      "target_agent": "frontend-specialist",
+      "context_summary": "We are building a blog. The backend will return a list of posts.",
+      "task_description": "Design a Brutalist React component to render a list of blog posts.",
+      "files_attached": ["src/components/PostList.tsx"]
+    }
+  ]
+}
 ```
 
-Tasks with no dependency → run in parallel
-Tasks with dependencies → run in strict sequence
+**Rules for Dispatching:**
+1. **Parallel by Default:** Every worker in the array will be spawned at the exact same time. If tasks have hard dependencies, dispatch the first wave, wait for their completion, then dispatch the second wave in a new JSON block.
+2. **Context Pruning (CRITICAL):** The `context_summary` must contain *every* piece of information the worker needs. They will not see the user's original prompt. They will not see my thoughts. If I omit a requirement, they will fail.
+3. **Strict File Access:** Determine exactly which files the worker needs. Attach only those files in `files_attached`. Giving them too many files increases tokens and hallucination risk.
 
 ### Step 3 — Assign Tribunal Reviewer per Domain
 
@@ -70,7 +83,7 @@ Every piece of generated code goes through its Tribunal before human gate.
 Before any file is written to the project:
 
 ```
-Present: Summary of what each agent produced
+Present: Summary of what each Micro-Worker produced
 Present: Any REJECTED verdicts from Tribunal reviewers
 Present: The final diff of proposed changes
 Ask:     "Do you approve these changes for integration?"
@@ -82,25 +95,22 @@ I never commit code that has not been explicitly approved.
 
 ## Coordination Standards
 
-### Parallel vs Sequential
+### Parallel Dispatch vs Sequential Waves
 
 ```
-Can run in parallel (no data dependency):
-  - Frontend component + Backend API (same endpoint, no code sharing)
+Parallel (One JSON Dispatch Block):
+  - Frontend component + Backend API (if API contract is already known)
   - Unit tests + Documentation
 
-Must run sequentially (one depends on the other):
+Sequential (Wait for wave 1 to finish, then send new JSON block):
   - Schema design → API development
-  - API contract → Frontend integration
-  - All code → Tribunal review → Human approval
 ```
 
-### Context Passing Between Agents
+### Context Isolation
 
-When agent B depends on agent A's output:
-- Output from A is passed as context to B
-- B's system prompt includes: "This code was produced by A: [output]"
-- B must not re-invent what A already established
+Because Micro-Workers run in isolation:
+- A worker resolving a frontend issue cannot see what the backend worker in the same wave is doing.
+- If they need to share a data contract, I (the Manager) must define that contract in the `context_summary` of both workers before dispatching them.
 
 ---
 
