@@ -174,3 +174,29 @@ pre-commit run --all-files
 ```
 
 Configure all tools in `pyproject.toml` — not `.flake8`, `.mypy.ini`, and `.ruff.toml` separately.
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/tribunal-backend`**
+**Active reviewers: `logic` · `security` · `dependency` · `type-safety`**
+
+### ❌ Forbidden AI Tropes in Python
+
+1. **Missing Type Hints** — writing `def func(a, b):` instead of fully typing parameters and return values.
+2. **Bare `except:` blocks** — catching all exceptions blindly without logging or raising `AppError`.
+3. **`requirements.txt` over `pyproject.toml`** — hallucinating outdated dependency management practices.
+4. **Blocking the async event loop** — writing synchronous I/O or `time.sleep()` inside an `async def` FastAPI route.
+5. **Assuming Django for microservices** — defaulting to a massive framework when `FastAPI` or `Flask` fits better.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before generating Python code:
+```
+✅ Are all function parameters and return types strictly typed?
+✅ Did I use the modern toolchain (`uv`/`poetry`, `ruff`, `mypy`)?
+✅ Did I accidentally block the async event loop with sync code?
+✅ Are domain errors properly caught and mapped to HTTP status codes without leaking stack traces?
+✅ Is my dependency selection precise and explicitly declared in `pyproject.toml`?
+```

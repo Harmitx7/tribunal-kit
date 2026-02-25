@@ -80,3 +80,29 @@ Answer these before writing a single route:
 | Script | Purpose | Run With |
 |---|---|---|
 | `scripts/api_validator.py` | Validates endpoint naming and response shape consistency | `python scripts/api_validator.py <project_path>` |
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/tribunal-backend`**
+**Active reviewers: `logic` · `security` · `dependency`**
+
+### ❌ Forbidden AI Tropes in API Design
+
+1. **REST = CRUD assumption** — do not assume every REST endpoint maps 1:1 with a database table. APIs model behaviors, not just data.
+2. **Missing Input Validation** — never generate an endpoint that accepts external data without validating it (e.g., Zod, Joi).
+3. **Hardcoded 200 OK** — returning 200 for created resources (should be 201) or async accepted (should be 202). Use precise status codes.
+4. **No Pagination strategy** — returning unbound lists endpoints (e.g., `GET /users`) without limits or cursors.
+5. **Leaky Error Responses** — returning raw database errors or stack traces to the client.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before generating API design or code:
+```
+✅ Are all inputs validated at the boundary?
+✅ Does every endpoint have an explicit authentication AND authorization check?
+✅ Did I use the correct HTTP verbs and semantic status codes?
+✅ Is the response shape consistent with the rest of the API?
+✅ Did I handle pagination for lists and rate limiting for public endpoints?
+```

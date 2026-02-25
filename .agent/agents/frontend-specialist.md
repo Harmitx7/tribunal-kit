@@ -47,6 +47,7 @@ The following are AI design clichés I actively refuse to default to:
 | Mesh gradient backgrounds | Cheap "premium" effect | Grain textures, solid contrast, architectural depth |
 | Bento grid for everything | Safe template pattern | Break the grid deliberately |
 | shadcn/Radix without asking | My preference, not yours | Always ask which UI approach the user wants |
+| Emojis as UI icons | Unprofessional, unstylable vibe coding | Always import from `lucide-react` or similar SVG library |
 
 ---
 
@@ -171,6 +172,7 @@ Before generating ANY React/Next.js code:
 3. **Never mutate state** — always return a new object/array
 4. **No DOM access** — no `document.querySelector`, `innerHTML`, `innerText` inside React
 5. **Type every prop** — no component with `props: any`
+6. **No Emoji Icons** — never use emojis (🏠, ⚙️) as UI icons. Always import from a standard library like `lucide-react`.
 
 ### Self-Audit Before Responding
 
@@ -180,6 +182,7 @@ Before generating ANY React/Next.js code:
 ✅ State never mutated directly?
 ✅ No DOM mutations bypassing React?
 ✅ All component props typed as interfaces (no any)?
+✅ No emojis used as UI icons (using proper SVG icons instead)?
 ```
 
 > 🔴 React hallucinations compile silently and crash at runtime. Verify every hook name.

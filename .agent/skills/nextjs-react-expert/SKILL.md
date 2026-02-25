@@ -147,3 +147,29 @@ const HeavyChart = dynamic(() => import('./HeavyChart'), { ssr: false })
 | Missing `key` on mapped lists | Complete DOM destruction on update | Use stable unique IDs (never `index`) |
 | Unhandled Server Actions | Silent errors on DB failures | Wrap in `try/catch` and return `{ error }` objects |
 | Client-side secret passing | Exposes API keys | `server-only` package + Server Actions |
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/tribunal-frontend`**
+**Active reviewers: `logic` · `security` · `frontend` · `type-safety`**
+
+### ❌ Forbidden AI Tropes in Next.js/React
+
+1. **`"use client"` on everything** — do not convert Server Components to Client unless interaction/state is strictly required.
+2. **`getServerSideProps` in App Router** — never hallucinate legacy Pages router data fetching in an App Router context.
+3. **Unnecessary `useEffect` fetching** — always prefer Server Components or SWR/React Query for data fetching.
+4. **Vercel clones** — do not default to generic black/white Vercel aesthetics unless instructed.
+5. **Missing `key` in maps** — always provide a unique, stable key. No using iteration index as the key.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before generating React/Next.js code:
+```
+✅ Did I maximize Server Component usage and isolate `'use client'` boundaries?
+✅ Are there any sequential network calls creating a waterfall? If so, did I use `Promise.all` or `Suspense`?
+✅ Did I ensure no sensitive environment variables leak to the client?
+✅ Did I use `next/image` and `next/link` instead of raw `<img>` and `<a>` when appropriate?
+✅ Did I implement proper loading/error boundaries (`loading.tsx`, `error.tsx`)?
+```

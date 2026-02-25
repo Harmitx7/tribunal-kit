@@ -160,3 +160,29 @@ main "$@"
 - `date` syntax differs between macOS BSD and Linux GNU — use `python3 -c "..."` for portable date math
 - `sed -i` needs an empty string argument on macOS: `sed -i '' 's/old/new/' file`
 - Prefer `#!/usr/bin/env bash` over `#!/bin/bash` for portability
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/audit` or `/review`**
+**Active reviewers: `logic` · `security` · `devops`**
+
+### ❌ Forbidden AI Tropes in Bash/Linux
+
+1. **Unjustified `sudo`** — hallucinating `sudo` for scripts or directories owned by the local user.
+2. **Unquoted variables** — using `$CMD` instead of `"$CMD"`, leading to word splitting and globbing disasters.
+3. **Unguarded `rm -rf`** — deleting variables without checking if they are empty first (`[[ -z "$DIR" ]]`).
+4. **Pipe chains without `pipefail`** — writing `cat file | grep X | cut -d` without `set -o pipefail`, hiding failures.
+5. **Parsing `ls`** — scraping `ls` output instead of using `find` or globbing.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before generating Bash scripts or commands:
+```
+✅ Does the script start with `set -euo pipefail`?
+✅ Are all variable expansions wrapped in double quotes to prevent splitting?
+✅ Did I verify that `sudo` is absolutely required for this operation?
+✅ Are destructive operations (`rm`, `mv`) properly guarded with condition checks?
+✅ Did I use the most robust tool (e.g., `find` instead of `ls`) for the job?
+```

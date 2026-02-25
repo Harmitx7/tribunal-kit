@@ -150,3 +150,29 @@ Coverage measures which lines are executed during tests. 100% coverage does not 
 | Script | Purpose | Run With |
 |---|---|---|
 | `scripts/test_runner.py` | Runs test suite and reports results | `python scripts/test_runner.py <project_path>` |
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/test`**
+**Active reviewers: `logic` · `test-coverage-reviewer`**
+
+### ❌ Forbidden AI Tropes in Testing
+
+1. **Tautological Tests** — writing `expect(x).toBe(x)` or testing that a mock returns what it was mocked to return, ignoring actual behavior.
+2. **Missing the "Arrange" Step** — relying on test state leftover from a previous `it()` block.
+3. **Over-mocking** — mocking the system under test or mocking out so much that the test is completely useless.
+4. **Assertions in loops** — writing loops with dynamic assertions instead of explicit, readable test cases.
+5. **Ignoring Async Failures** — forgetting to `await` the assertions or the function under test, leading to false positives.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before generating test code:
+```
+✅ Does each test explicitly follow the Arrange-Act-Assert (AAA) pattern?
+✅ Are external dependencies (DBs, Networks) isolated efficiently using proper mocks?
+✅ Is the test asserting verifying behavioral OUTCOMES rather than internal implementation details?
+✅ Did I properly `await` asynchronous operations to prevent false positives?
+✅ Are test names readable and descriptive of the tested behavior?
+```

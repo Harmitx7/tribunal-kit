@@ -185,3 +185,29 @@ src/
 
 **Dependency direction:** routes → controllers → services → repositories
 **Never:** repositories calling services, or services knowing about HTTP
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/tribunal-backend`**
+**Active reviewers: `logic` · `security` · `dependency` · `type-safety`**
+
+### ❌ Forbidden AI Tropes in Node.js
+
+1. **Blindly mixing `require` and `import`** — pick ESM or CommonJS and stick to it strictly based on `package.json`.
+2. **"Catch-all and ignore" error handling** — e.g., `catch (e) { console.log(e); }` without throwing or returning an error response.
+3. **Assuming Express** — if the project is Next.js, Fastify, or NestJS, do not hallucinate Express code.
+4. **Unparameterized queries** — never interpolate strings into SQL.
+5. **No `any` types** — unless an external library leaves no choice, type all request bodies and responses.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before generating Node.js code:
+```
+✅ Did I use the correct module system (CJS vs ESM) for this context?
+✅ Is every Promise rejection properly handled?
+✅ Did I block the event loop with synchronous FS or Crypto operations?
+✅ Are all inputs validated before business logic runs?
+✅ Is this code safe from memory leaks (e.g., unbounded arrays/maps)?
+```

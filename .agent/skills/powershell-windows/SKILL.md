@@ -175,3 +175,29 @@ Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 # Run a specific script bypassing policy (one-time)
 powershell -ExecutionPolicy Bypass -File script.ps1
 ```
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/audit` or `/review`**
+**Active reviewers: `logic` · `security` · `devops`**
+
+### ❌ Forbidden AI Tropes in PowerShell
+
+1. **Using Bash Operators** — writing `==` or `!=` instead of `-eq` or `-ne`.
+2. **Text Parsing Over Objects** — extracting properties with regex instead of just accessing `$obj.Property`.
+3. **Ignoring Execution Policies** — writing scripts without considering that they might be blocked on the user's machine.
+4. **Silent Failures** — relying on generic `catch` blocks without understanding terminating vs non-terminating errors.
+5. **Path Separator Errors** — failing to wrap path operations in safe cmdlets like `Join-Path` or `Test-Path`.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before generating PowerShell commands:
+```
+✅ Did I use the correct comparison operators (e.g., `-gt`, `-like`)?
+✅ Did I leverage PowerShell's object pipeline instead of parsing text?
+✅ Are paths safely manipulated (e.g., `Join-Path`) to handle Windows backslashes correctly?
+✅ Are potential non-terminating errors handled explicitly?
+✅ Will this script require an execution policy bypass, and did I note that for the user?
+```

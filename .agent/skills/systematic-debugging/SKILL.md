@@ -132,3 +132,29 @@ Keep a running log during complex debugging:
 ```
 
 This prevents circular reasoning and gives you a record if you hand off to someone else.
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/debug`**
+**Active reviewers: `debugger` · `logic-reviewer`**
+
+### ❌ Forbidden AI Tropes in Debugging
+
+1. **"Have you tried turning it off and on again?"** — do not suggest blind restarts without understanding the state.
+2. **Hallucinating stack traces** — never guess the line number or the contents of an error log. Use tools to read it.
+3. **"Rewrite the whole function"** — never suggest rewriting working code just to fix a single bug, unless the structure is the root cause.
+4. **Assuming the fix worked** — always provide a way to verify the fix.
+5. **Changing multiple variables at once** — never provide fixes that change 5 different things simultaneously. Identify ONE root cause.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before proposing a bug fix:
+```
+✅ Do I have the exact error message and stack trace? (If no, ASK the user to provide it or let me look for it).
+✅ Did I isolate the exact line or block of code causing the issue?
+✅ Is my proposed fix addressing the root cause, or just suppressing a symptom?
+✅ Did I only change ONE thing to test the hypothesis?
+✅ Can I explain exactly WHY the code broke in the first place?
+```

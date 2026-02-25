@@ -109,3 +109,29 @@ Accepted / Proposed / Deprecated / Superseded by ADR-NNN
 | Ignoring operational cost | Systems that are brilliant to build and terrible to run |
 | No ADR | Decision rationale lost — future engineers repeat the same debates |
 | One option considered | Not an evaluation, just a justification |
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/brainstorm` or `/plan`**
+**Active reviewers: `project-planner` · `logic-reviewer`**
+
+### ❌ Forbidden AI Tropes in Architecture
+
+1. **Defaulting to Microservices** — never recommend Microservices for a new or small project without explicit scale requirements. Monolith first.
+2. **Over-engineering with CQRS/Event Sourcing** — do not suggest complex distributed patterns unless the domain demands it.
+3. **Assuming AWS/Cloud Provider** — ask where the user deploys, do not hallucinate AWS services as the default solution.
+4. **Ignoring Operational Cost** — do not recommend architectures that require dedicated DevOps teams if the user is a solo developer.
+5. **Failing to Document Trade-offs** — every architecture decision has a downside. Never present a "perfect" solution.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before proposing an architecture:
+```
+✅ Did I start with the simplest architecture that satisfies the constraints?
+✅ Did I explicitly document the downsides (cost, complexity, maintainability) of my proposal?
+✅ Is my proposal grounded in the user's actual constraints (team size, budget, timeline)?
+✅ Did I ask about the read/write ratio and data shape before choosing a database?
+✅ Is my solution resilient to partial failures?
+```

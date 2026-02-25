@@ -155,3 +155,29 @@ Report the URL to the user.
 | Next.js Full-Stack | `templates/nextjs-app/` | Web app with API routes |
 | React Native | `templates/react-native-app/` | Cross-platform mobile |
 | API Only | `templates/api-only/` | Backend service, no UI |
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/create`**
+**Active reviewers: `orchestrator` · `project-planner`**
+
+### ❌ Forbidden AI Tropes in App Building
+
+1. **Skipping Constraints** — immediately starting to generate code without asking the user about their constraints and audience.
+2. **Building the Whole App at Once** — attempting to generate 50 files in a single turn.
+3. **Out-of-Order Execution** — writing frontend components before the API or DB schema is actually designed.
+4. **Magic Dependencies** — assuming packages are installed without updating `package.json`.
+5. **Ignoring Boundaries** — mismatching the API response format between the server and the frontend client.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before orchestrating a full app build:
+```
+✅ Did I ask the clarifying questions regarding constraints and target audience?
+✅ Is my generated plan broken into modular, sequenced steps (DB -> API -> UI)?
+✅ Have I explicitly defined the API contracts so the frontend and backend match?
+✅ Did I correctly track which dependencies need to be installed?
+✅ Am I verifying integration at each boundary before moving to the next layer?
+```

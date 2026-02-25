@@ -179,3 +179,29 @@ Cargo.toml         Dependencies
 | `anyhow` | Error handling in binaries/scripts (not libraries) |
 | `tracing` | Structured async-aware logging |
 | `config` | Hierarchical configuration from env/files |
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/tribunal-backend`**
+**Active reviewers: `logic` · `security` · `memory` · `type-safety`**
+
+### ❌ Forbidden AI Tropes in Rust
+
+1. **`unwrap()`/`expect()` in production code** — hiding errors instead of propagating them with `?`.
+2. **`.clone()` everywhere** — blindly copying data instead of reasoning about lifetimes and borrows.
+3. **`Arc<Mutex<T>>` overuse** — wrapping everything in locks instead of passing ownership or using channels.
+4. **Blocking the Tokio runtime** — using `std::thread::sleep` or sync I/O inside an `async` function.
+5. **Over-complex trait bounds** — creating massive generic trait puzzles instead of concrete types when generics aren't needed.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before generating Rust code:
+```
+✅ Did I properly propagate errors using `Result` and the `?` operator?
+✅ Is the Tokio runtime safe from being blocked by my code?
+✅ Did I avoid unnecessary `.clone()` calls by borrowing (`&T`) appropriately?
+✅ Are my error types properly implemented (e.g., using `thiserror`)?
+✅ Did I keep the lock durations on Mutexes as short as possible and never across `.await` points?
+```

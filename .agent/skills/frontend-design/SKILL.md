@@ -339,6 +339,7 @@ For animation patterns: [animation-guide.md](animation-guide.md), for advanced: 
 - **Mesh Gradients & Glow Effects**
 - **Same layout structure / Vercel clone**
 - **Not asking user preferences**
+- **Emojis for UI icons (BANNED: Use lucide-react/SVGs ✅)**
 
 ### ❌ Dark Patterns (Unethical)
 

@@ -137,3 +137,29 @@ const posts = await Post.findAll({ include: ['author'] });
 | Script | Purpose | Run With |
 |---|---|---|
 | `scripts/schema_validator.py` | Validates schema for missing indexes, naming issues | `python scripts/schema_validator.py <project_path>` |
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/tribunal-database`**
+**Active reviewers: `logic` · `security` · `sql`**
+
+### ❌ Forbidden AI Tropes in Database Design
+
+1. **Blindly guessing column types** — e.g., using `VARCHAR(255)` for everything instead of precise types or `TEXT`.
+2. **Missing `updated_at` triggers** — defining `updated_at` without a mechanism to actually update it.
+3. **N+1 queries by default** — returning code that queries relations in a loop.
+4. **Destructive migrations** — dropping a column in the same migration that drops the code using it.
+5. **Over-indexing** — adding indexes to every single column regardless of cardinality or query patterns.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before generating database schemas or queries:
+```
+✅ Did I design for the queries the application actually runs, rather than theoretical elegance?
+✅ Are my suggested indexes selective and actually used in `WHERE` or `JOIN` clauses?
+✅ Is this code safe from N+1 query performance problems?
+✅ Did I rely on parameterized queries (no string concatenation)?
+✅ Did I use the correct primary key strategy (e.g., UUID vs BIGSERIAL) for the scale?
+```
