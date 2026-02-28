@@ -44,6 +44,18 @@ Flag any variable or property accessed that was not:
 - Circular dependencies without an exit condition
 - Return statements inside `Promise` constructors that affect nothing
 
+### AI/LLM Integration Hallucinations
+
+When reviewing code that calls AI APIs, check for these specific patterns:
+
+| Hallucination | Example | Reality |
+|---|---|---|
+| Fake model name | `model: "gpt-5"` | Does not exist — check provider docs |
+| Wrong param type | `temperature: "low"` | Must be float 0.0–2.0 |
+| Invented param | `max_length: 500` | Not real — use `max_tokens` |
+| Phantom SDK method | `openai.chat.stream()` | Use `.create({ stream: true })` |
+| Sync LLM call | `const res = callLLM()` | All LLM API calls are async |
+
 ---
 
 ## Review Checklist

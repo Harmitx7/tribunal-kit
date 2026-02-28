@@ -55,17 +55,19 @@ Type any of these in your AI IDE chat:
 | `/test` | Test generation and execution | `workflows/test.md` |
 | `/preview` | Start/stop local dev server | `workflows/preview.md` |
 | `/status` | Agent and project status board | `workflows/status.md` |
+| `/session` | Multi-session state tracking | `workflows/session.md` |
 | `/orchestrate` | Multi-agent coordination | `workflows/orchestrate.md` |
-| `/ui-ux-pro-max` | Plan and implement UI | `workflows/ui-ux-pro-max.md` |
+| `/ui-ux-pro-max` | Plan and implement cutting-edge UI/UX | `workflows/ui-ux-pro-max.md` |
 | `/refactor` | Dependency-safe code refactoring | `workflows/refactor.md` |
 | `/migrate` | Framework upgrades, DB migrations | `workflows/migrate.md` |
 | `/audit` | Full project health audit | `workflows/audit.md` |
 | `/fix` | Auto-fix lint, formatting, imports | `workflows/fix.md` |
 | `/changelog` | Generate changelog from git history | `workflows/changelog.md` |
+| `/review-ai` | AI/LLM integration audit | `workflows/review-ai.md` |
 
 ---
 
-## The 8 Tribunal Agents
+## The 11 Tribunal Agents
 
 | Agent | File | Activates When |
 |---|---|---|
@@ -77,6 +79,9 @@ Type any of these in your AI IDE chat:
 | `sql-reviewer` | `agents/sql-reviewer.md` | "query", "database", `/tribunal-full` |
 | `frontend-reviewer` | `agents/frontend-reviewer.md` | "react", "hook", "component", `/tribunal-full` |
 | `test-coverage-reviewer` | `agents/test-coverage-reviewer.md` | "test", "spec", "coverage", `/tribunal-full` |
+| `mobile-reviewer` | `agents/mobile-reviewer.md` | "mobile", "react native", "flutter", `/tribunal-full` |
+| `ai-code-reviewer` | `agents/ai-code-reviewer.md` | "llm", "openai", "anthropic", "ai", `/tribunal-full`, `/review-ai` |
+| `accessibility-reviewer` | `agents/accessibility-reviewer.md` | "a11y", "wcag", "aria", `/tribunal-frontend`, `/tribunal-full` |
 
 ---
 
@@ -166,6 +171,9 @@ All scripts live in `.agent/scripts/`:
 | `dependency_analyzer.py` | Unused/phantom dep checker | `python .agent/scripts/dependency_analyzer.py . --audit` |
 | `schema_validator.py` | DB schema validator | `python .agent/scripts/schema_validator.py .` |
 | `bundle_analyzer.py` | JS/TS bundle size analyzer | `python .agent/scripts/bundle_analyzer.py . --build` |
+| `swarm_dispatcher.py` | Validate Orchestrator micro-worker JSON payloads | `python .agent/scripts/swarm_dispatcher.py --file payload.json` |
+| `skill_integrator.py` | Map active skills to executable scripts | `python .agent/scripts/skill_integrator.py` |
+| `test_swarm_dispatcher.py` | Unit tests for swarm_dispatcher | `python .agent/scripts/test_swarm_dispatcher.py` |
 
 ---
 
@@ -192,9 +200,9 @@ Script failures follow cascade rules:
 .agent/
 ├── ARCHITECTURE.md          ← This file
 ├── GEMINI.md                ← Root behavior config
-├── agents/                  ← 27 specialist + reviewer agents
+├── agents/                  ← 30 specialist + reviewer agents
 ├── rules/GEMINI.md          ← Master rules (P0 priority)
-├── scripts/                 ← 10 Python automation scripts
-├── skills/                  ← 37 modular skill packages
-└── workflows/               ← 22 slash command definitions
+├── scripts/                 ← 13 Python automation scripts
+├── skills/                  ← 44 modular skill packages
+└── workflows/               ← 24 slash command definitions
 ```

@@ -52,6 +52,9 @@ Auto-activated by keywords in your request:
 | component, hook, react | `frontend-reviewer` + `type-safety-reviewer` |
 | test, spec, coverage | `test-coverage-reviewer` |
 | slow, memory, optimize | `performance-reviewer` |
+| mobile, react native, flutter | `mobile-reviewer` |
+| llm, openai, anthropic, gemini, ai, embedding | `ai-code-reviewer` |
+| accessibility, a11y, wcag, aria | `accessibility-reviewer` |
 
 ---
 

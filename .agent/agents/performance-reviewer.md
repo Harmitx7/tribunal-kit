@@ -59,6 +59,42 @@ description: Catches O(n²) loops, synchronous blocking I/O in async contexts, u
 ✅ const results = useMemo(() => items.map(item => expensiveCalc(item)), [items]);
 ```
 
+### Uncontrolled Concurrent Async Floods
+
+```
+❌ await Promise.all(thousandItems.map(item => fetchDataFor(item)));
+   // 1000 simultaneous requests — exhausts connection pool, triggers rate limits
+
+✅ for (const chunk of chunkArray(thousandItems, 10)) {
+     await Promise.all(chunk.map(item => fetchDataFor(item)));
+   }
+```
+
+### Missing Pagination / Unbounded Queries
+
+```
+❌ const allUsers = await db.query('SELECT * FROM users');
+   // Fetches every row — breaks at 100k records
+
+✅ const users = await db.query(
+     'SELECT * FROM users WHERE id > $1 ORDER BY id LIMIT $2',
+     [cursor, pageSize]
+   );
+```
+
+### No Streaming on Large LLM Responses
+
+```
+❌ const response = await openai.chat.completions.create({ ... });
+   res.json(response.choices[0].message.content);
+   // User stares at blank screen for 10+ seconds
+
+✅ const stream = await openai.chat.completions.create({ ..., stream: true });
+   for await (const chunk of stream) {
+     res.write(chunk.choices[0]?.delta?.content ?? '');
+   }
+```
+
 ---
 
 ## Output Format

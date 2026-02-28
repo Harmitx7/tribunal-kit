@@ -97,13 +97,33 @@ I never commit code that has not been explicitly approved.
 
 ### Parallel Dispatch vs Sequential Waves
 
+**Wave Dependency Table — plan this before dispatching any workers:**
+
 ```
-Parallel (One JSON Dispatch Block):
-  - Frontend component + Backend API (if API contract is already known)
+Wave 1 (schema / contracts — everything depends on these):
+  database-architect  →  schema.prisma, API type definitions
+  ↓ WAIT for Wave 1 to complete ↓
+
+Wave 2 (implementation — parallel once contracts are locked):
+  backend-specialist  →  API routes (needs schema from Wave 1)
+  frontend-specialist →  UI components (needs API types from Wave 1)
+  ↓ WAIT for Wave 2 to complete ↓
+
+Wave 3 (validation — parallel once implementation exists):
+  test-engineer       →  Tests (needs implementation from Wave 2)
+  documentation-writer→  Docs (needs implementation from Wave 2)
+```
+
+**Rule:** If Task B reads output from Task A, they are in different waves. If neither reads the other's output, they can be in the same wave.
+
+```
+Parallel (same wave):
+  - Frontend component + Backend API (API contract pre-defined in Wave 1)
   - Unit tests + Documentation
 
-Sequential (Wait for wave 1 to finish, then send new JSON block):
-  - Schema design → API development
+Sequential (new wave required):
+  - Schema design → API development (API needs schema)
+  - API development → Integration tests (tests need a real API)
 ```
 
 ### Context Isolation

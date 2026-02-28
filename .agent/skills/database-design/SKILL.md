@@ -23,8 +23,55 @@ Before schema design, the database type must be justified — not assumed.
 | Full-text search as primary use case | Elasticsearch, Typesense |
 | Serverless, zero-ops, edge-deployable | Turso, PlanetScale, Neon |
 | Time-series events | InfluxDB, TimescaleDB |
+| Semantic / vector similarity search | pgvector (in PostgreSQL), Qdrant, Pinecone |
 
 **Default when uncertain:** PostgreSQL. It handles relational, JSON, full-text, and time-series use cases well enough that you rarely need to deviate for most applications.
+
+---
+
+## Vector Database Patterns
+
+AI applications need semantic search — finding documents by meaning, not keyword. Vector databases store high-dimensional embeddings and search them by similarity.
+
+### pgvector — Stay in PostgreSQL
+
+```sql
+-- Enable extension once
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- Add embedding column to existing table
+ALTER TABLE documents ADD COLUMN embedding vector(1536);  -- 1536 for text-embedding-3-small
+
+-- IVFFlat index for approximate nearest neighbor search
+CREATE INDEX ON documents USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
+-- lists = sqrt(num_rows) is a good starting point
+
+-- Query: find 5 most semantically similar documents
+SELECT id, content, 1 - (embedding <=> $1) AS similarity
+FROM documents
+ORDER BY embedding <=> $1  -- cosine distance operator
+LIMIT 5;
+```
+
+### Dedicated Vector DB: When pgvector Isn't Enough
+
+| Trigger to Upgrade | Recommended |
+|---|---|
+| > 1M vectors + sub-10ms p99 | Qdrant (self-hosted, Rust) or Pinecone (managed) |
+| Multimodal (text + images) | Weaviate |
+| Managed, predictable pricing | Pinecone |
+| Zero-ops prototype | ChromaDB (local) |
+
+### Chunking + Storage Best Practice
+
+```ts
+// Always store both the raw text AND the embedding — embeddings are not reversible
+await db.query(`
+  INSERT INTO documents (content, source_url, chunk_index, embedding)
+  VALUES ($1, $2, $3, $4)
+`, [chunkText, sourceUrl, chunkIndex, JSON.stringify(embedding)]);
+// embedding is float[] — serialize to JSON for parameterized query
+```
 
 ---
 

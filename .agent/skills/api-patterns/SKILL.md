@@ -75,6 +75,92 @@ Answer these before writing a single route:
 
 ---
 
+## AI-Era API Patterns (2025+)
+
+### SSE vs WebSocket for AI Streaming
+
+```
+SSE (Server-Sent Events) — use for AI text streaming:
+  ✅ One-directional: server → client (exactly what LLM streaming is)
+  ✅ HTTP/2-native, works through all proxies
+  ✅ No library needed — native EventSource API in browsers
+  ❌ If the client also needs to send data mid-stream → WebSocket instead
+
+WebSocket — use for bidirectional real-time:
+  ✅ Full-duplex (both directions)
+  ✅ Real-time collaboration, chat, game state
+  ❌ More complex lifecycle management
+```
+
+```ts
+// ✅ SSE endpoint for AI streaming response
+app.get('/api/generate', async (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+
+  const stream = await openai.chat.completions.create({ ..., stream: true });
+
+  for await (const chunk of stream) {
+    const text = chunk.choices[0]?.delta?.content ?? '';
+    if (text) res.write(`data: ${JSON.stringify({ text })}\n\n`);
+  }
+
+  res.write('data: [DONE]\n\n');
+  res.end();
+});
+```
+
+### Model Context Protocol (MCP)
+
+MCP is the emerging standard (2025) for AI models to interface with external tools and data sources:
+
+```ts
+// MCP server — expose your API's capabilities as MCP tools
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+
+const server = new McpServer({ name: 'my-api', version: '1.0.0' });
+
+// Register a tool that AI agents can call
+server.tool(
+  'search_products',
+  'Search the product catalog by keyword and category',
+  {
+    query: z.string().describe('Search terms'),
+    category: z.string().optional().describe('Filter by category'),
+  },
+  async ({ query, category }) => {
+    const results = await db.searchProducts(query, category);
+    return { content: [{ type: 'text', text: JSON.stringify(results) }] };
+  }
+);
+```
+
+### Idempotency Keys for LLM Request Deduplication
+
+LLM requests can be expensive. If a client retries due to a timeout, you may charge twice:
+
+```ts
+// ✅ Idempotency key — same key = return cached response
+app.post('/api/generate', async (req, res) => {
+  const idempotencyKey = req.headers['idempotency-key'];
+
+  if (idempotencyKey) {
+    const cached = await cache.get(`llm:${idempotencyKey}`);
+    if (cached) return res.json(cached);
+  }
+
+  const result = await callLLM(req.body);
+
+  if (idempotencyKey) {
+    await cache.set(`llm:${idempotencyKey}`, result, { ex: 3600 }); // 1hr TTL
+  }
+
+  res.json(result);
+});
+```
+
+---
+
 ## Scripts
 
 | Script | Purpose | Run With |

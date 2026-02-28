@@ -20,13 +20,53 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 | Full-stack React | Next.js API routes | Colocated API and UI, serverless-friendly |
 | REST + tRPC | Next.js + tRPC | Type-safe end-to-end with no code generation |
 | RPC across services | gRPC | Binary protocol, contract-first |
+| Edge function / Cloudflare Worker | Hono | Tiny, Web Platform API-native, zero cold start |
+| Scripts / tooling / bun-native | Bun | Built-in bundler, test runner, near-Node compat |
 
 **Questions to ask before choosing:**
 
 - Is this public-facing or internal?
-- Do we control the deployment environment (server vs. serverless)?
+- Do we control the deployment environment (server vs. serverless vs. edge)?
 - Is the team already familiar with a framework?
 - Does this need to compose with an existing TypeScript frontend?
+
+---
+
+## Modern Runtime Landscape (2025+)
+
+The Node.js monopoly is ending. Understand constraints before picking a runtime:
+
+| Runtime | `fs` | `crypto` | `child_process` | `process.env` | Deploy Target |
+|---|---|---|---|---|---|
+| **Node.js** | ✅ | ✅ | ✅ | ✅ | Server, serverless |
+| **Bun** | ✅ | ✅ | ✅ | ✅ | Server (Node-compatible) |
+| **Deno** | ✅ (explicit perm) | ✅ | ✅ (explicit perm) | ✅ | Server, Deno Deploy |
+| **Edge (Cloudflare Workers)** | ❌ | Web only | ❌ | via `env` binding | Edge (global) |
+
+```ts
+// ❌ Portability anti-pattern — works in Node, breaks at edge
+import { createHash } from 'crypto';      // Node crypto — not available at edge
+import fs from 'fs';                       // No filesystem at edge
+
+// ✅ Web Platform APIs — work everywhere (Node ≥18, Bun, Deno, Edge)
+const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
+const response = await fetch('https://api.example.com/data');
+```
+
+### When to Consider Bun
+
+```ts
+// Bun is Node-compatible but: starts faster, ships a bundler + test runner built-in
+// Use Bun when: scripts, tooling, new greenfield backends, or test-heavy projects
+
+// package.json — identical, works in both
+// bun install  → 10x faster than npm install
+// bun test     → built-in Vitest-compatible runner
+// bun run      → direct TypeScript execution, no transpile step
+
+// Gotcha: some native Node addons (e.g. bcrypt, canvas) need Bun alternatives
+// Use: @node-rs/bcrypt instead of bcrypt (N-API native, works in both)
+```
 
 ---
 

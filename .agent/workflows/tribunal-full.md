@@ -25,9 +25,12 @@ sql-reviewer            → Injection via interpolation, N+1, invented schema
 frontend-reviewer       → Hooks violations, missing dep arrays, state mutation
 performance-reviewer    → O(n²), blocking I/O, memory allocation anti-patterns
 test-coverage-reviewer  → Tautology tests, no-assertion specs, over-mocking
+mobile-reviewer         → Touch targets, safe areas, keyboard avoidance, image memory
+ai-code-reviewer        → Hallucinated model names, fake params, prompt injection, rate limits
+accessibility-reviewer  → WCAG violations, missing ARIA, contrast, keyboard navigation
 ```
 
-All 8 run in parallel. You wait for all verdicts before seeing the result.
+All 11 run in parallel. You wait for all verdicts before seeing the result.
 
 ---
 

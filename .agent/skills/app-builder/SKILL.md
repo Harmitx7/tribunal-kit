@@ -58,8 +58,36 @@ Wait for answers. Stack decisions depend on these answers.
 | Internal dashboard / admin | Next.js | Next.js API routes | Existing |
 | Real-time (chat, collaboration) | Next.js | Fastify + WebSockets | PostgreSQL + Redis |
 | Data-heavy API | — | FastAPI (Python) | PostgreSQL |
+| AI assistant / RAG app | Next.js (streaming) | Fastify + LLM SDK | PostgreSQL + pgvector |
+| Edge-global, latency-critical | Next.js | Hono (Cloudflare Workers) | Turso / Cloudflare KV |
 
 **If unclear:** Next.js + PostgreSQL covers 80% of use cases and is the safest default for web apps.
+
+---
+
+## AI-Native App Orchestration
+
+For RAG apps and AI assistants, the build order changes:
+
+```
+Step 1: vector-database-architect
+  → Design the embedding schema and chunking strategy
+  → Output: schema with vector column + indexing strategy
+
+Step 2: ingest-pipeline (backend-specialist)
+  → Build document ingestion: load → chunk → embed → store
+  → Output: ingest API endpoint
+
+Step 3: retrieval-api (backend-specialist, uses Steps 1+2)
+  → Build: embed query → vector search → rerank → prompt assembly
+  → Output: /api/generate endpoint with SSE streaming
+
+Step 4: streaming-frontend (frontend-specialist, uses Step 3)
+  → Build: EventSource consumer → streaming text UI → loading states
+  → Output: AI chat or search interface
+```
+
+**Never wire the frontend to the LLM directly** — always proxy through your backend to keep API keys server-side.
 
 ---
 
