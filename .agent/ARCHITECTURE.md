@@ -87,15 +87,23 @@ Type any of these in your AI IDE chat:
 
 ## Specialist Agents
 
-| Agent | Domain |
+| Agent / Expert | Domain |
 |---|---|
 | `orchestrator` | Multi-agent coordination |
+| `agent-organizer` | Specialist agent operations |
 | `project-planner` | 4-phase structured planning |
 | `backend-specialist` | API, server, auth |
-| `frontend-specialist` | React, Next.js, UI |
-| `database-architect` | Schema, queries, migrations |
+| `dotnet-core-expert` | C# / .NET architecture |
+| `python-pro` | Python backend development |
+| `frontend-specialist` | Web UI / Components |
+| `react-specialist` | React / Next.js architecture |
+| `vue-expert` | Vue / Nuxt applications |
+| `database-architect` | Schema, migrations |
+| `sql-pro` | Complex queries, optimization |
 | `mobile-developer` | React Native, Flutter |
 | `devops-engineer` | CI/CD, Docker, deployment |
+| `platform-engineer` | Infrastructure, cloud native |
+| `devops-incident-responder` | Production issues |
 | `debugger` | Systematic debugging |
 | `game-developer` | Game development |
 | `security-auditor` | Penetration testing, OWASP |

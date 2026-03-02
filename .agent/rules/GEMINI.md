@@ -30,16 +30,24 @@ Every code or design request activates an agent. This is not optional.
 
 **Auto-routing rules:**
 
-| Domain | Primary Agent |
+| Domain | Primary Agent / Skill |
 |---|---|
 | API / server / backend | `backend-specialist` |
+| C# / .NET / Blazor | `dotnet-core-expert` |
+| Python / FastAPI / Django | `python-pro` |
 | Database / schema / SQL | `database-architect` |
+| Advanced SQL queries | `sql-pro` |
 | React / Next.js / UI | `frontend-specialist` |
+| Advanced React architecture | `react-specialist` |
+| Vue / Nuxt | `vue-expert` |
 | Mobile (RN / Flutter) | `mobile-developer` |
 | Debugging / errors | `debugger` |
 | Security / vulnerabilities | `security-auditor` |
 | Performance / optimization | `performance-optimizer` |
 | DevOps / CI-CD / Docker | `devops-engineer` |
+| Production incidents | `devops-incident-responder` |
+| Platform / Infrastructure | `platform-engineer` |
+| Multi-agent architecture | `agent-organizer` |
 | Multi-domain (2+ areas) | `orchestrator` |
 | Unknown codebase | `explorer-agent` |
 
