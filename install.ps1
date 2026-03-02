@@ -59,7 +59,10 @@ if ((Test-Path $AgentDest) -and -not $Force) {
 
 # Copy
 try {
-    Copy-Item -Path $AgentSource -Destination $AgentDest -Recurse -Force
+    if (-not (Test-Path $AgentDest)) {
+        New-Item -ItemType Directory -Path $AgentDest | Out-Null
+    }
+    Copy-Item -Path "$AgentSource\*" -Destination $AgentDest -Recurse -Force
     Write-Host "  [OK]    .agent/ installed to:" -ForegroundColor Green
     Write-Host "          $AgentDest" -ForegroundColor White
     Write-Host ""

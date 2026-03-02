@@ -6,6 +6,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.2.0] — 2026-03-02
+
+### Added
+- **10 New Specialist Skills**: Added explicitly scoped Tribunal-integrated rulesets for `vue-expert`, `csharp-developer`, `dotnet-core-expert`, `python-pro`, `sql-pro`, `react-specialist`, `devops-engineer`, `devops-incident-responder`, `platform-engineer`, and `agent-organizer`.
+
+---
+
+## [2.1.0] — 2026-02-28
+
+### Added
+- **Demo Video Scripts**: Created the `create_video.py` logic and generated the project demonstration video showcasing CLI features.
+
+---
+
 ## [2.0.0] — 2026-02-23
 
 ### Added

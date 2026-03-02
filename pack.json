@@ -1,0 +1,1116 @@
+﻿[
+  {
+    "id": "tribunal-kit@2.0.1",
+    "name": "tribunal-kit",
+    "version": "2.0.1",
+    "size": 424039,
+    "unpackedSize": 1317589,
+    "shasum": "94d238b8cf4adebb75bd8d47be1c14fe228165e2",
+    "integrity": "sha512-Kmy55btIl8l/nTv3hDBVFh9PMSOJGT2HXfVmNUbu16EHpO3TcojyYSGLNn3qmBHXRpG3TF23X9eBtxMRuRoryA==",
+    "filename": "tribunal-kit-2.0.1.tgz",
+    "files": [
+      {
+        "path": ".agent/.shared/ui-ux-pro-max/README.md",
+        "size": 148,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/backend-specialist.md",
+        "size": 5711,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/code-archaeologist.md",
+        "size": 4196,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/database-architect.md",
+        "size": 5803,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/debugger.md",
+        "size": 5242,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/dependency-reviewer.md",
+        "size": 1862,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/devops-engineer.md",
+        "size": 5246,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/documentation-writer.md",
+        "size": 4354,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/explorer-agent.md",
+        "size": 4293,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/frontend-reviewer.md",
+        "size": 2287,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/frontend-specialist.md",
+        "size": 6549,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/game-developer.md",
+        "size": 5623,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/logic-reviewer.md",
+        "size": 2106,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/mobile-developer.md",
+        "size": 5128,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/mobile-reviewer.md",
+        "size": 2226,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/orchestrator.md",
+        "size": 6011,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/penetration-tester.md",
+        "size": 4871,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/performance-optimizer.md",
+        "size": 4822,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/performance-reviewer.md",
+        "size": 1944,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/product-manager.md",
+        "size": 3734,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/product-owner.md",
+        "size": 3326,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/project-planner.md",
+        "size": 4372,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/qa-automation-engineer.md",
+        "size": 4749,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/security-auditor.md",
+        "size": 4837,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/seo-specialist.md",
+        "size": 4405,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/sql-reviewer.md",
+        "size": 2232,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/test-coverage-reviewer.md",
+        "size": 2359,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/test-engineer.md",
+        "size": 4197,
+        "mode": 420
+      },
+      {
+        "path": ".agent/agents/type-safety-reviewer.md",
+        "size": 1950,
+        "mode": 420
+      },
+      {
+        "path": ".agent/ARCHITECTURE.md",
+        "size": 8169,
+        "mode": 420
+      },
+      {
+        "path": ".agent/GEMINI.md",
+        "size": 3823,
+        "mode": 420
+      },
+      {
+        "path": ".agent/mcp_config.json",
+        "size": 1167,
+        "mode": 420
+      },
+      {
+        "path": ".agent/rules/GEMINI.md",
+        "size": 9302,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/bundle_analyzer.cpython-311.pyc",
+        "size": 14248,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/dependency_analyzer.cpython-311.pyc",
+        "size": 13813,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/infra_validator.cpython-311.pyc",
+        "size": 6039,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/lint_runner.cpython-311.pyc",
+        "size": 9791,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/ml_type_auditor.cpython-311.pyc",
+        "size": 6202,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/schema_validator.cpython-311.pyc",
+        "size": 14205,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/security_scan.cpython-311.pyc",
+        "size": 12666,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/swarm_dispatcher.cpython-311.pyc",
+        "size": 7120,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/test_infra_validator.cpython-311-pytest-9.0.2.pyc",
+        "size": 7747,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/test_ml_type_auditor.cpython-311-pytest-9.0.2.pyc",
+        "size": 7734,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/test_runner.cpython-311-pytest-9.0.2.pyc",
+        "size": 9393,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/test_runner.cpython-311.pyc",
+        "size": 9168,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/__pycache__/test_swarm_dispatcher.cpython-311-pytest-9.0.2.pyc",
+        "size": 22203,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/auto_preview.py",
+        "size": 5025,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/bundle_analyzer.py",
+        "size": 8653,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/checklist.py",
+        "size": 7328,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/dependency_analyzer.py",
+        "size": 8885,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/lint_runner.py",
+        "size": 5857,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/schema_validator.py",
+        "size": 10680,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/security_scan.py",
+        "size": 9164,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/session_manager.py",
+        "size": 3287,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/skill_integrator.py",
+        "size": 4576,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/swarm_dispatcher.py",
+        "size": 4548,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/test_runner.py",
+        "size": 5874,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/test_swarm_dispatcher.py",
+        "size": 4849,
+        "mode": 420
+      },
+      {
+        "path": ".agent/scripts/verify_all.py",
+        "size": 6369,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/api-patterns/api-style.md",
+        "size": 1197,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/api-patterns/auth.md",
+        "size": 600,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/api-patterns/documentation.md",
+        "size": 575,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/api-patterns/graphql.md",
+        "size": 1018,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/api-patterns/rate-limiting.md",
+        "size": 757,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/api-patterns/response.md",
+        "size": 958,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/api-patterns/rest.md",
+        "size": 1320,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/api-patterns/scripts/api_validator.py",
+        "size": 7804,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/api-patterns/security-testing.md",
+        "size": 3014,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/api-patterns/SKILL.md",
+        "size": 4656,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/api-patterns/trpc.md",
+        "size": 842,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/api-patterns/versioning.md",
+        "size": 673,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/agent-coordination.md",
+        "size": 5626,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/feature-building.md",
+        "size": 1176,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/project-detection.md",
+        "size": 1357,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/scaffolding.md",
+        "size": 3727,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/SKILL.md",
+        "size": 5724,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/tech-stack.md",
+        "size": 926,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/astro-static/TEMPLATE.md",
+        "size": 1782,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/chrome-extension/TEMPLATE.md",
+        "size": 2058,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/cli-tool/TEMPLATE.md",
+        "size": 1850,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/electron-desktop/TEMPLATE.md",
+        "size": 1911,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/express-api/TEMPLATE.md",
+        "size": 1842,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/flutter-app/TEMPLATE.md",
+        "size": 1945,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/monorepo-turborepo/TEMPLATE.md",
+        "size": 1970,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/nextjs-fullstack/TEMPLATE.md",
+        "size": 4218,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/nextjs-saas/TEMPLATE.md",
+        "size": 3489,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/nextjs-static/TEMPLATE.md",
+        "size": 5607,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/nuxt-app/TEMPLATE.md",
+        "size": 4200,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/python-fastapi/TEMPLATE.md",
+        "size": 1868,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/react-native-app/TEMPLATE.md",
+        "size": 4390,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/app-builder/templates/SKILL.md",
+        "size": 1624,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/architecture/context-discovery.md",
+        "size": 1634,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/architecture/examples.md",
+        "size": 2524,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/architecture/pattern-selection.md",
+        "size": 2706,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/architecture/patterns-reference.md",
+        "size": 2357,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/architecture/SKILL.md",
+        "size": 5266,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/architecture/trade-off-analysis.md",
+        "size": 1656,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/bash-linux/SKILL.md",
+        "size": 4927,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/behavioral-modes/SKILL.md",
+        "size": 4276,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/brainstorming/dynamic-questioning.md",
+        "size": 11969,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/brainstorming/SKILL.md",
+        "size": 4127,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/clean-code/SKILL.md",
+        "size": 4205,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/code-review-checklist/SKILL.md",
+        "size": 3802,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/config-validator/SKILL.md",
+        "size": 4017,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/database-design/database-selection.md",
+        "size": 1180,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/database-design/indexing.md",
+        "size": 931,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/database-design/migrations.md",
+        "size": 1155,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/database-design/optimization.md",
+        "size": 938,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/database-design/orm-selection.md",
+        "size": 801,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/database-design/schema-design.md",
+        "size": 1526,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/database-design/scripts/schema_validator.py",
+        "size": 5547,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/database-design/SKILL.md",
+        "size": 6148,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/deployment-procedures/SKILL.md",
+        "size": 4208,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/doc.md",
+        "size": 5222,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/documentation-templates/SKILL.md",
+        "size": 4407,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/frontend-design/animation-guide.md",
+        "size": 8366,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/frontend-design/color-system.md",
+        "size": 9942,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/frontend-design/decision-trees.md",
+        "size": 17683,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/frontend-design/motion-graphics.md",
+        "size": 8305,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/frontend-design/scripts/accessibility_checker.py",
+        "size": 6166,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/frontend-design/scripts/ux_audit.py",
+        "size": 40178,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/frontend-design/SKILL.md",
+        "size": 13000,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/frontend-design/typography-system.md",
+        "size": 8868,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/frontend-design/ux-psychology.md",
+        "size": 41109,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/frontend-design/visual-effects.md",
+        "size": 8745,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/game-development/2d-games/SKILL.md",
+        "size": 2309,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/game-development/3d-games/SKILL.md",
+        "size": 2698,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/game-development/game-art/SKILL.md",
+        "size": 5234,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/game-development/game-audio/SKILL.md",
+        "size": 5551,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/game-development/game-design/SKILL.md",
+        "size": 2774,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/game-development/mobile-games/SKILL.md",
+        "size": 2390,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/game-development/multiplayer/SKILL.md",
+        "size": 2945,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/game-development/pc-games/SKILL.md",
+        "size": 3117,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/game-development/SKILL.md",
+        "size": 4849,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/game-development/vr-ar/SKILL.md",
+        "size": 2502,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/game-development/web-games/SKILL.md",
+        "size": 3223,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/geo-fundamentals/scripts/geo_checker.py",
+        "size": 10039,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/geo-fundamentals/SKILL.md",
+        "size": 4685,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/i18n-localization/scripts/i18n_checker.py",
+        "size": 7955,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/i18n-localization/SKILL.md",
+        "size": 4299,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/intelligent-routing/SKILL.md",
+        "size": 4296,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/lint-and-validate/scripts/lint_runner.py",
+        "size": 5605,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/lint-and-validate/scripts/type_coverage.py",
+        "size": 6653,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/lint-and-validate/SKILL.md",
+        "size": 4249,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mcp-builder/SKILL.md",
+        "size": 4328,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/decision-trees.md",
+        "size": 16836,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/mobile-backend.md",
+        "size": 15177,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/mobile-color-system.md",
+        "size": 10631,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/mobile-debugging.md",
+        "size": 4372,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/mobile-design-thinking.md",
+        "size": 17584,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/mobile-navigation.md",
+        "size": 12313,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/mobile-performance.md",
+        "size": 20072,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/mobile-testing.md",
+        "size": 11383,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/mobile-typography.md",
+        "size": 11150,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/platform-android.md",
+        "size": 20207,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/platform-ios.md",
+        "size": 17688,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/scripts/mobile_audit.py",
+        "size": 36646,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/SKILL.md",
+        "size": 6962,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/mobile-design/touch-psychology.md",
+        "size": 17385,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/nextjs-react-expert/1-async-eliminating-waterfalls.md",
+        "size": 8088,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/nextjs-react-expert/2-bundle-bundle-size-optimization.md",
+        "size": 6509,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/nextjs-react-expert/3-server-server-side-performance.md",
+        "size": 13350,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/nextjs-react-expert/4-client-client-side-data-fetching.md",
+        "size": 7082,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/nextjs-react-expert/5-rerender-re-render-optimization.md",
+        "size": 16452,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/nextjs-react-expert/6-rendering-rendering-performance.md",
+        "size": 10785,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/nextjs-react-expert/7-js-javascript-performance.md",
+        "size": 18044,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/nextjs-react-expert/8-advanced-advanced-patterns.md",
+        "size": 3793,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/nextjs-react-expert/scripts/convert_rules.py",
+        "size": 6853,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/nextjs-react-expert/scripts/react_performance_checker.py",
+        "size": 10303,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/nextjs-react-expert/SKILL.md",
+        "size": 6653,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/nodejs-best-practices/SKILL.md",
+        "size": 6484,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/parallel-agents/SKILL.md",
+        "size": 4158,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/performance-profiling/scripts/lighthouse_audit.py",
+        "size": 2733,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/performance-profiling/SKILL.md",
+        "size": 3935,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/plan-writing/SKILL.md",
+        "size": 3392,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/powershell-windows/SKILL.md",
+        "size": 5483,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/python-patterns/SKILL.md",
+        "size": 6183,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/red-team-tactics/SKILL.md",
+        "size": 4577,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/rust-pro/SKILL.md",
+        "size": 6623,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/seo-fundamentals/scripts/seo_checker.py",
+        "size": 6803,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/seo-fundamentals/SKILL.md",
+        "size": 4041,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/server-management/SKILL.md",
+        "size": 4466,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/systematic-debugging/SKILL.md",
+        "size": 5750,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/tailwind-patterns/SKILL.md",
+        "size": 5285,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/tdd-workflow/SKILL.md",
+        "size": 4035,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/testing-patterns/scripts/test_runner.py",
+        "size": 7297,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/testing-patterns/SKILL.md",
+        "size": 5885,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/vulnerability-scanner/checklists.md",
+        "size": 2867,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/vulnerability-scanner/scripts/security_scan.py",
+        "size": 18628,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/vulnerability-scanner/SKILL.md",
+        "size": 6335,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/web-design-guidelines/SKILL.md",
+        "size": 4751,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/webapp-testing/scripts/playwright_runner.py",
+        "size": 6704,
+        "mode": 420
+      },
+      {
+        "path": ".agent/skills/webapp-testing/SKILL.md",
+        "size": 4680,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/audit.md",
+        "size": 2440,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/brainstorm.md",
+        "size": 2892,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/changelog.md",
+        "size": 2984,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/create.md",
+        "size": 2496,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/debug.md",
+        "size": 3201,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/deploy.md",
+        "size": 2624,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/enhance.md",
+        "size": 2750,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/fix.md",
+        "size": 2418,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/generate.md",
+        "size": 2691,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/migrate.md",
+        "size": 3246,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/orchestrate.md",
+        "size": 3295,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/plan.md",
+        "size": 2496,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/preview.md",
+        "size": 1790,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/refactor.md",
+        "size": 2710,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/review.md",
+        "size": 2068,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/session.md",
+        "size": 1597,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/status.md",
+        "size": 2047,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/test.md",
+        "size": 3207,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/tribunal-backend.md",
+        "size": 2043,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/tribunal-database.md",
+        "size": 2431,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/tribunal-frontend.md",
+        "size": 2016,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/tribunal-full.md",
+        "size": 2499,
+        "mode": 420
+      },
+      {
+        "path": ".agent/workflows/ui-ux-pro-max.md",
+        "size": 6658,
+        "mode": 420
+      },
+      {
+        "path": "LICENSE",
+        "size": 1115,
+        "mode": 420
+      },
+      {
+        "path": "README.md",
+        "size": 4233,
+        "mode": 420
+      },
+      {
+        "path": "bin/tribunal-kit.js",
+        "size": 10484,
+        "mode": 420
+      },
+      {
+        "path": "package.json",
+        "size": 981,
+        "mode": 420
+      }
+    ],
+    "entryCount": 220,
+    "bundled": []
+  }
+]

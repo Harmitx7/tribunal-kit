@@ -161,6 +161,16 @@ function cmdInit(flags) {
         process.exit(0);
     }
 
+    if (!dryRun && fs.existsSync(agentDest) && flags.force) {
+        const subdirs = ['agents', 'workflows', 'skills', 'scripts', '.shared'];
+        for (const sub of subdirs) {
+            const subPath = path.join(agentDest, sub);
+            if (fs.existsSync(subPath)) {
+                fs.rmSync(subPath, { recursive: true, force: true });
+            }
+        }
+    }
+
     // Count what we're installing
     const totalFiles = countDir(agentSrc);
     dim(`Installing ${totalFiles} files → ${agentDest}`);
