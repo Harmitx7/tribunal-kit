@@ -46,6 +46,8 @@ Type any of these in your AI IDE chat:
 | `/tribunal-backend` | Logic + Security + Deps + Types | `workflows/tribunal-backend.md` |
 | `/tribunal-frontend` | Logic + Security + Frontend + Types | `workflows/tribunal-frontend.md` |
 | `/tribunal-database` | Logic + Security + SQL | `workflows/tribunal-database.md` |
+| `/tribunal-mobile` | Logic + Security + Mobile | `workflows/tribunal-mobile.md` |
+| `/tribunal-performance` | Logic + Performance | `workflows/tribunal-performance.md` |
 | `/brainstorm` | Exploration mode — no code, just options | `workflows/brainstorm.md` |
 | `/create` | Structured app creation (4-stage) | `workflows/create.md` |
 | `/enhance` | Add/update features in existing apps | `workflows/enhance.md` |
@@ -57,6 +59,7 @@ Type any of these in your AI IDE chat:
 | `/status` | Agent and project status board | `workflows/status.md` |
 | `/session` | Multi-session state tracking | `workflows/session.md` |
 | `/orchestrate` | Multi-agent coordination | `workflows/orchestrate.md` |
+| `/swarm` | Supervisor → specialist Workers → unified synthesis | `workflows/swarm.md` |
 | `/ui-ux-pro-max` | Plan and implement cutting-edge UI/UX | `workflows/ui-ux-pro-max.md` |
 | `/refactor` | Dependency-safe code refactoring | `workflows/refactor.md` |
 | `/migrate` | Framework upgrades, DB migrations | `workflows/migrate.md` |
@@ -85,10 +88,54 @@ Type any of these in your AI IDE chat:
 
 ---
 
+## Swarm / Supervisor Architecture
+
+The Swarm system decomposes complex multi-domain goals into independent sub-tasks dispatched to specialist Workers.
+
+```
+/swarm [complex multi-domain goal]
+        │
+        ▽
+  supervisor-agent (triage)
+  └─ reads: swarm-worker-registry.md
+  └─ emits: WorkerRequest JSON per sub-task
+        │
+        ├───── WorkerRequest ───→ Worker A (e.g. backend-specialist)
+        ├───── WorkerRequest ───→ Worker B (e.g. database-architect)
+        └───── WorkerRequest ───→ Worker C (e.g. documentation-writer)
+                                    │
+                          WorkerResult (success/failure/escalate)
+                                    │
+                         supervisor-agent (synthesize)
+                                    │
+                         ━━━ Swarm Complete ━━━
+                         Human Gate → Y / N / R
+```
+
+**Key files:**
+
+| File | Role |
+|---|---|
+| `agents/supervisor-agent.md` | Triage, dispatch, retry, synthesis logic |
+| `agents/swarm-worker-contracts.md` | WorkerRequest + WorkerResult JSON schemas |
+| `agents/swarm-worker-registry.md` | Maps task types and keywords to specialist agents |
+| `workflows/swarm.md` | `/swarm` slash command procedure |
+| `scripts/swarm_dispatcher.py` | Validates WorkerRequest/WorkerResult JSON (use `--mode swarm`) |
+
+**Constraints:**
+- Maximum 5 Workers per swarm invocation
+- Workers are independent — no Worker depends on another's pending result
+- Failed workers are retried up to 3 times with targeted feedback
+- Workers that fail after 3 retries are escalated, not silently dropped
+- Human Gate is never skipped
+
+---
+
 ## Specialist Agents
 
 | Agent / Expert | Domain |
 |---|---|
+| `supervisor-agent` | Swarm triage, Worker dispatch, result synthesis |
 | `orchestrator` | Multi-agent coordination |
 | `agent-organizer` | Specialist agent operations |
 | `project-planner` | 4-phase structured planning |
@@ -172,7 +219,7 @@ All scripts live in `.agent/scripts/`:
 | `checklist.py` | Priority-ordered project audit | `python .agent/scripts/checklist.py .` |
 | `verify_all.py` | Full pre-deploy validation | `python .agent/scripts/verify_all.py` |
 | `auto_preview.py` | Local dev server management | `python .agent/scripts/auto_preview.py start` |
-| `session_manager.py` | Multi-session state tracking | `python .agent/scripts/session_manager.py save "note"` |
+| `session_manager.py` | Multi-session state tracking | `python .agent/scripts/session_manager.py status` |
 | `lint_runner.py` | Standalone lint runner | `python .agent/scripts/lint_runner.py . --fix` |
 | `test_runner.py` | Auto-detecting test runner | `python .agent/scripts/test_runner.py . --coverage` |
 | `security_scan.py` | OWASP-aware source code scanner | `python .agent/scripts/security_scan.py .` |
@@ -207,10 +254,15 @@ Script failures follow cascade rules:
 ```
 .agent/
 ├── ARCHITECTURE.md          ← This file
-├── GEMINI.md                ← Root behavior config
-├── agents/                  ← 30 specialist + reviewer agents
+├── GEMINI.md                ← Root behavior config (includes /swarm routing)
+├── agents/                  ← 33 specialist + reviewer agents
+│   ├── supervisor-agent.md  ← Swarm triage, dispatch, synthesis
+│   ├── swarm-worker-contracts.md  ← WorkerRequest/WorkerResult schemas
+│   └── swarm-worker-registry.md   ← Task type → agent routing map
 ├── rules/GEMINI.md          ← Master rules (P0 priority)
 ├── scripts/                 ← 13 Python automation scripts
+│   └── swarm_dispatcher.py  ← Validates WorkerRequest/WorkerResult JSON
 ├── skills/                  ← 44 modular skill packages
-└── workflows/               ← 24 slash command definitions
+└── workflows/               ← 25 slash command definitions
+    └── swarm.md             ← /swarm orchestration procedure
 ```

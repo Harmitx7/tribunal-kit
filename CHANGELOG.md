@@ -6,6 +6,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.3.0] — 2026-03-03
+
+### Added
+- **Swarm / Supervisor Orchestration**: Introduced a multi-agent orchestration engine (`/swarm`) that decomposes complex goals into parallel specialist sub-tasks via a strict JSON contract.
+- **Specialized Tribunal Panels**: Added focused workflows for `/tribunal-mobile` (logic + security + mobile UX) and `/tribunal-performance` (algorithmic complexity + memory + I/O).
+- **Interactive Session State**: Enhanced `session_manager.py` with `status`, `tag`, `list`, and `export` commands for persistent task tracking across sessions.
+- **Automated Skill-Script Integration**: Upgraded `skill_integrator.py` with `--report` and `--verify` flags for automated validation of skill-to-script mappings and syntax health.
+
+---
+
 ## [2.2.0] — 2026-03-02
 
 ### Added
@@ -70,11 +80,3 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Master rules file (`.agent/rules/GEMINI.md`)
 - Architecture documentation (`AGENT_FLOW.md`)
 - IDE compatibility: Cursor, Windsurf, Antigravity, GitHub Copilot Agent Mode
-
----
-
-## [Unreleased]
-
-- Additional specialized Tribunal panels (mobile, performance)
-- Interactive session state with `session_manager.py`
-- Automated skill-script integration

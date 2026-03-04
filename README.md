@@ -1,7 +1,8 @@
 # Tribunal Anti-Hallucination Agent Kit
 
 > Plug-in `.agent/` folder that gives your AI IDE (Cursor, Windsurf, Antigravity) a full
-> anti-hallucination system with 27 specialist agents, 17 slash commands, and 8 parallel Tribunal reviewers.
+> anti-hallucination system with 30 specialist agents, 25 slash commands, 8 parallel Tribunal reviewers,
+> and a Swarm/Supervisor multi-agent orchestration engine.
 
 ---
 
@@ -40,10 +41,10 @@ This installs the `.agent/` folder containing all agents, workflows, skills, and
 
 | Component | Count | Description |
 |---|---|---|
-| Agents | 27 | Specialist AI personas (backend, frontend, security, Tribunal reviewers, etc.) |
-| Workflows | 17 | Slash command procedures |
-| Skills | 37 | Domain-specific knowledge modules |
-| Scripts | 4 | Python utility scripts (checklist, verify, preview, session) |
+| Agents | 32 | Specialist AI personas including Supervisor, Worker Registry, and Contract schemas |
+| Workflows | 25 | Slash command procedures including `/swarm` |
+| Skills | 44 | Domain-specific knowledge modules |
+| Scripts | 13 | Python utility scripts (checklist, verify, preview, session, swarm dispatcher, etc.) |
 
 ---
 
@@ -62,6 +63,9 @@ AI:  🤖 Applying @frontend-specialist...
 
 You: "Login returns 500 error"
 AI:  🤖 Applying @debugger for systematic analysis...
+
+You: "/swarm build a REST API, PostgreSQL schema, and documentation"
+AI:  🤖 supervisor-agent → dispatching 3 Workers in parallel...
 ```
 
 ### The Tribunal Pipeline
@@ -87,12 +91,15 @@ You type /generate →
 | `/tribunal-backend` | Logic + Security + Dependency + Types |
 | `/tribunal-frontend` | Logic + Security + Frontend + Types |
 | `/tribunal-database` | Logic + Security + SQL |
+| `/tribunal-mobile` | Logic + Security + Mobile — React Native, Flutter, responsive web |
+| `/tribunal-performance` | Logic + Performance — optimization and bottleneck analysis |
 | `/brainstorm` | Explore options before implementation |
 | `/create` | Build new features or apps |
 | `/debug` | Systematic root-cause investigation |
 | `/plan` | Create structured plan file only |
 | `/enhance` | Improve existing code safely |
 | `/orchestrate` | Multi-agent coordination |
+| `/swarm` | Supervisor decomposes multi-domain goals → parallel specialist Workers → unified output |
 | `/test` | Generate or audit tests |
 | `/deploy` | 3-gate production deployment |
 | `/preview` | Local dev server control |

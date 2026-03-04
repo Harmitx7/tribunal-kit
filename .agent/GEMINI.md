@@ -34,6 +34,7 @@ Before responding to ANY coding request, you MUST:
 | **Mobile** | "mobile", "react native", "flutter" | Logic + Security + Mobile-Reviewer |
 | **All Domains** | "/tribunal-full" or "audit everything" | ALL 11 agents |
 | **Review Only** | "/review", "check this", "audit" | All relevant agents, no Maker |
+| **Swarm / Multi-Domain** | "/swarm", "multiple agents", "parallel tasks" | `supervisor-agent` → dispatches to specialist Workers |
 
 ---
 
@@ -72,6 +73,8 @@ Every code response MUST:
 | `/tribunal-backend` | Logic + Security + Dependency + Types |
 | `/tribunal-frontend` | Logic + Security + Frontend + Types |
 | `/tribunal-database` | Logic + Security + SQL |
+| `/tribunal-mobile` | Logic + Security + Mobile — for React Native, Flutter, responsive web |
+| `/tribunal-performance` | Logic + Performance — for optimization, profiling, bottlenecks |
 | `/brainstorm` | Explore implementation options before coding |
 | `/debug` | Systematic debugging with root cause analysis |
 | `/refactor` | Dependency-safe code refactoring with behavior preservation |
@@ -82,6 +85,7 @@ Every code response MUST:
 | `/status` | Agent and project status board |
 | `/session` | Multi-session state tracking |
 | `/orchestrate` | Coordinate multiple agents for complex tasks |
+| `/swarm` | Supervisor decomposes goal → dispatches to specialist Workers → synthesizes unified output |
 | `/ui-ux-pro-max` | Plan and implement cutting-edge UI/UX |
 | `/audit` | Full project health audit (security → lint → tests → deps → bundle) |
 | `/fix` | Auto-fix lint, formatting, and import issues (with human gate) |
