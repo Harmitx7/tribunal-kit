@@ -10,11 +10,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 - **7 New Skills & Workflows**: `trend-researcher`, `ui-ux-researcher`, `whimsy-injector`, `workflow-optimizer`, `test-result-analyzer` (skills) and `/api-tester`, `/performance-benchmarker` (workflows).
-- **CLI Auto-Update**: `tribunal-kit update` now automatically checks the npm registry and re-invokes with `@latest` when a newer version is available. No more manual cache clearing.
+- **GitHub-Powered Auto-Updater**: The CLI now bypasses npm entirely. `tribunal-kit update` checks the GitHub Releases API and pulls updates directly from the repository, dodging npm authentication and caching issues.
 - **`--skip-update-check` Flag**: Bypass auto-update for CI/CD environments.
+- **LLM Pre-Router (Intelligent Routing)**: Replaced the hardcoded routing table with a dynamic LLM Gateway. The AI now reads a condensed `router-manifest.md` to accurately select specialist agents before generating code.
 
 ### Changed
-- **Enhanced GEMINI.md**: Added 4 new request classification rows (Design/UX, API Testing, Performance, Test Analysis) and 2 new slash commands.
+- **Enhanced Foundational Skills**: Upgraded the oldest skills (`clean-code`, `code-review-checklist`, `behavioral-modes`) with Tribunal Anti-Hallucination guards, strict context window discipline, and mode-leakage prevention.
+- **Enhanced GEMINI.md**: Added 4 new request classification rows and 2 new slash commands. Overhauled the protocol to enforce the `intelligent-routing` Pre-Router over static fallback classification.
 
 ---
 
