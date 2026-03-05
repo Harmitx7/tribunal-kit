@@ -11,15 +11,17 @@ trigger: always_on
 
 ## CRITICAL: AGENT & SKILL PROTOCOL
 
-Before responding to ANY coding request, you MUST:
-1. **Classify the request** using the table below.
-2. **Select the correct reviewer agents** based on the domain.
-3. **Announce** which agents are active.
-4. **Apply** the Tribunal workflow to the output.
+Before responding to ANY complex or ambiguous coding request, you MUST:
+1. **Invoke the Pre-Router:** Read `.agent/skills/intelligent-routing/SKILL.md` to accurately determine the domain and required skills. Do NOT rely on guessing.
+2. **Select the correct reviewer agents** based on the Pre-Router's output.
+3. **Announce** which skills and agents are active.
+4. **Apply** the Tribunal workflow to your code generation.
 
 ---
 
-## REQUEST CLASSIFICATION
+## BASIC REQUEST CLASSIFICATION (Fallback)
+
+If the request is extremely simple, you may use this fallback table. Otherwise, rely on the `intelligent-routing` Pre-Router.
 
 | Request Type | Trigger Words | Tribunal Agents Activated |
 |---|---|---|
