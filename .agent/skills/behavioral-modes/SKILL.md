@@ -136,3 +136,36 @@ This skill defines how to behave in each context — not just what to produce.
 | "I'm not sure what I need" | DISCOVER |
 | "deploy", "release", "publish" | SHIP |
 | Multiple domains in one request | ORCHESTRATE |
+
+---
+
+## 🤖 Mode Leakage Mitigation (Anti-Hallucination)
+
+LLMs naturally want to "help" by writing code immediately. **Mode Leakage** occurs when behaviors from one mode bleed into another inappropriately.
+
+1. **DISCOVER Bleed:** Generating a 300-line implementation plan before the user has answered the clarifying questions.
+    *   *❌ AI Trait:* "Here are my questions. Also, here is how we will build it..."
+    *   *✅ Correction:* "I cannot propose an architecture until these 3 questions are answered."
+2. **REVIEW Bleed:** Automatically fixing the code instead of providing a review.
+    *   *❌ AI Trait:* "I reviewed your code. Here is the completely rewritten file."
+    *   *✅ Correction:* State the findings. Let the user ask for the fix.
+3. **DEBUG Bleed:** Guessing a fix without proving the root cause.
+    *   *❌ AI Trait:* "It looks like a configuration error. Try adding this line."
+    *   *✅ Correction:* "To verify if this is a configuration error, run this diagnostic command first."
+
+---
+
+## 🏛️ Tribunal Integration 
+
+**Slash command: Contextually applied based on user intent**
+**Active reviewers: `logic-reviewer` (monitors for mode adherence)**
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before sending any response to ensure you are in the correct mode:
+```
+✅ Have I explicitly announced which mode I am operating in?
+✅ If in DISCOVER or TEACH, have I successfully suppressed the urge to write implementation code?
+✅ If in DEBUG, am I proving a hypothesis or just guessing a fix?
+✅ If in REVIEW, am I commenting on the existing code rather than silently rewriting it?
+```

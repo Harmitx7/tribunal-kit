@@ -102,3 +102,43 @@ half easier to test independently and reuse elsewhere.
 - If a comment is unclear, ask for clarification before defending
 - BLOCKER and CONCERN comments need resolution, not just a response
 - SUGGESTION and NOTE are optional — you can explain why you're not acting on them
+
+---
+
+## 🛑 Context Window Discipline
+
+When an AI acts as a reviewer, context bloat ruins reasoning:
+
+1. **Never quote massive blocks of code back to the user.** Use line numbers or tiny 1-3 line snippets.
+2. **Never attach the entire project context to a single file review.**
+3. **Keep reviews scoped.** Do not suggest a full architecture rewrite if the PR is fixing a typo in a CSS class.
+
+---
+
+## 🤖 LLM-Specific Review Traps
+
+AI reviewers frequently fail by focusing on the wrong things. Avoid these strict anti-patterns:
+
+1. **Syntax Nitpicking:** Commenting on formatting, semicolons, or line length. Let `eslint` or Prettier handle this. Only comment if logic is affected.
+2. **"Clean Code" Hallucinations:** Telling the author to extract a perfectly readable 10-line function into 3 separate abstract classes.
+3. **Invented Methods:** Suggesting the author use `.toSortedMap()` when that method literally does not exist in the language or framework used.
+4. **False Bottlenecks:** Claiming an `O(n^2)` loop is a performance critical error when `n` is a configuration array guaranteed to be < 10 items.
+5. **The Compliment Sandwich:** You do not need to soften every critique with "Great job on the rest of the code!" Be direct, professional, and concise.
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/review`, `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before submitting your code review findings:
+```
+✅ Did I read the tests to understand the intended behavior before reading the implementation?
+✅ Are my BLOCKER and CONCERN comments actionable and specific?
+✅ Have I verified that any alternative methods or libraries I suggested actually exist?
+✅ Have I refrained from quoting more than 3 lines of code in my response?
+✅ Is my feedback focused on logic, edge cases, and security rather than aesthetic formatting?
+```

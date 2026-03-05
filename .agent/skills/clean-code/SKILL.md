@@ -133,3 +133,41 @@ These are not optional:
 - All SQL queries parameterized — never string-interpolated
 - User input validated at every boundary — never trusted
 - Authentication checked before business logic executes
+
+---
+
+## 🤖 LLM-Specific Clean Code Traps
+
+AI coding assistants (like you) fall into specific bad habits when writing code. These are strictly forbidden under the clean-code standard:
+
+1. **JSDoc/Docstring Spam:** Documenting what a function does when the code is self-evident.
+    *   *❌ AI Trait:* `/** Adds two numbers. @param a First number @param b Second number @returns The sum */ function add(a, b) { return a + b; }`
+    *   *✅ Clean Code:* `function add(a: number, b: number): number { return a + b; }`
+2. **Defensive Programming Overkill:** Adding 15 `null` checks where the TypeScript compiler or the previous tier has already guaranteed validity.
+3. **Premature Abstraction:** Creating an `AbstractDataManager` factory class with interfaces to parse a simple CSV file. Code what is needed *now*.
+4. **Variable Diarrhea:** Extracting every step of a calculation into a separate `const` when a single readable line would suffice.
+5. **Apologetic Comments:** `// TODO: Refactor this later` or `// I assumed this was the right way`. If you write it, own it. If it's incomplete, flag the user.
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/generate`, `/review-types`**
+**Active reviewers: `logic-reviewer` · `type-safety-reviewer`**
+
+### ❌ Forbidden AI Tropes in Code Generation
+
+1. **Over-engineering:** Solving a problem with 3 classes when 1 function works perfectly.
+2. **Commented-out code:** Submitting commented-out dead code, "just in case." Delete it.
+3. **Implicit `any` types:** Failing to strictly type a critical parameter or return value.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before confirming code generation or review:
+```
+✅ Does this function do strictly ONE thing?
+✅ Have I removed all pointless comments explaining *what* the code does?
+✅ Did I use specific, business-logic naming rather than generic abbreviations?
+✅ Are all edge cases and rejections properly handled (no swallowed errors)?
+✅ Did I avoid over-engineering this solution?
+```
