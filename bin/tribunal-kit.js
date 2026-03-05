@@ -19,6 +19,11 @@
 
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
+const { execSync } = require('child_process');
+
+const PKG = require(path.resolve(__dirname, '..', 'package.json'));
+const CURRENT_VERSION = PKG.version;
 
 // ── Colors ───────────────────────────────────────────────
 const C = {
@@ -58,6 +63,7 @@ function parseArgs(argv) {
         if (arg === '--force') { args.flags.force = true; continue; }
         if (arg === '--quiet') { args.flags.quiet = true; continue; }
         if (arg === '--dry-run') { args.flags.dryRun = true; continue; }
+        if (arg === '--skip-update-check') { args.flags.skipUpdateCheck = true; continue; }
         if (arg.startsWith('--path=')) {
             args.flags.path = arg.split('=').slice(1).join('=');
         }
@@ -107,6 +113,99 @@ function countDir(dir) {
         else count++;
     }
     return count;
+}
+
+// ── Version Check & Auto-Update ──────────────────────────
+
+/**
+ * Compare two semver strings. Returns:
+ *   1 if a > b, -1 if a < b, 0 if equal.
+ */
+function compareSemver(a, b) {
+    const pa = a.replace(/^v/, '').split('.').map(Number);
+    const pb = b.replace(/^v/, '').split('.').map(Number);
+    for (let i = 0; i < 3; i++) {
+        const na = pa[i] || 0;
+        const nb = pb[i] || 0;
+        if (na > nb) return 1;
+        if (na < nb) return -1;
+    }
+    return 0;
+}
+
+/**
+ * Fetch the latest version of tribunal-kit from the npm registry.
+ * Returns the version string or null on failure.
+ */
+function fetchLatestVersion() {
+    return new Promise((resolve) => {
+        const req = https.get(
+            'https://registry.npmjs.org/tribunal-kit/latest',
+            { headers: { 'Accept': 'application/json' }, timeout: 5000 },
+            (res) => {
+                let data = '';
+                res.on('data', (chunk) => { data += chunk; });
+                res.on('end', () => {
+                    try {
+                        const json = JSON.parse(data);
+                        resolve(json.version || null);
+                    } catch {
+                        resolve(null);
+                    }
+                });
+            }
+        );
+        req.on('error', () => resolve(null));
+        req.on('timeout', () => { req.destroy(); resolve(null); });
+    });
+}
+
+/**
+ * Check for a newer version and re-invoke with @latest if found.
+ * Uses TK_SKIP_UPDATE_CHECK env var as recursion guard.
+ * Returns true if a re-invoke happened (caller should exit), false otherwise.
+ */
+async function autoUpdateCheck(originalArgs) {
+    // Recursion guard: if we're already a re-invoked process, skip
+    if (process.env.TK_SKIP_UPDATE_CHECK === '1') {
+        return false;
+    }
+
+    const latestVersion = await fetchLatestVersion();
+
+    if (!latestVersion) {
+        // Network fail — proceed silently with current version
+        dim('Could not check for updates (offline?). Using local version.');
+        return false;
+    }
+
+    if (compareSemver(latestVersion, CURRENT_VERSION) <= 0) {
+        // Already up to date
+        dim(`Version ${CURRENT_VERSION} is up to date.`);
+        return false;
+    }
+
+    // Newer version available — re-invoke
+    log('');
+    log(colorize('cyan', `  ⬆ New version available: ${colorize('bold', CURRENT_VERSION)} → ${colorize('bold', latestVersion)}`));
+    log(colorize('gray', '  Re-invoking with latest version...'));
+    log('');
+
+    try {
+        // Build the command with the original user args
+        const args = originalArgs.join(' ');
+        const cmd = `npx -y tribunal-kit@latest ${args}`;
+
+        execSync(cmd, {
+            stdio: 'inherit',
+            env: { ...process.env, TK_SKIP_UPDATE_CHECK: '1' },
+        });
+        return true; // Re-invoke succeeded, caller should exit
+    } catch (e) {
+        warn(`Auto-update failed: ${e.message}`);
+        warn('Continuing with current version...');
+        return false; // Fall through to current version
+    }
 }
 
 // ── Kit Source Location ───────────────────────────────────
@@ -216,6 +315,44 @@ function cmdUpdate(flags) {
     cmdInit(flags);
 }
 
+// ── Async Main Wrapper ───────────────────────────────────
+async function runWithUpdateCheck(command, flags) {
+    const shouldSkip = flags.skipUpdateCheck || process.env.TK_SKIP_UPDATE_CHECK === '1';
+
+    if (!shouldSkip && (command === 'init' || command === 'update')) {
+        // Pass through the original args (minus the node/script path)
+        const originalArgs = process.argv.slice(2);
+        const didReInvoke = await autoUpdateCheck(originalArgs);
+        if (didReInvoke) {
+            process.exit(0); // Latest version handled it
+        }
+    }
+
+    // Proceed with current version
+    switch (command) {
+        case 'init':
+            cmdInit(flags);
+            break;
+        case 'update':
+            cmdUpdate(flags);
+            break;
+        case 'status':
+            cmdStatus(flags);
+            break;
+        case 'help':
+        case '--help':
+        case '-h':
+        case null:
+            cmdHelp();
+            break;
+        default:
+            err(`Unknown command: "${command}"`);
+            console.log();
+            dim('Run tribunal-kit --help for usage');
+            process.exit(1);
+    }
+}
+
 function cmdStatus(flags) {
     const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
     const agentDest = path.join(targetDir, '.agent');
@@ -254,10 +391,11 @@ function cmdHelp() {
     console.log();
     console.log(colorize('bold', '  Options:'));
     console.log();
-    console.log(`    ${colorize('gray', '--force')}       Overwrite existing .agent/ folder`);
-    console.log(`    ${colorize('gray', '--path <dir>')}  Install in specific directory`);
-    console.log(`    ${colorize('gray', '--quiet')}       Suppress all output`);
-    console.log(`    ${colorize('gray', '--dry-run')}     Preview actions without executing`);
+    console.log(`    ${colorize('gray', '--force')}              Overwrite existing .agent/ folder`);
+    console.log(`    ${colorize('gray', '--path <dir>')}         Install in specific directory`);
+    console.log(`    ${colorize('gray', '--quiet')}              Suppress all output`);
+    console.log(`    ${colorize('gray', '--dry-run')}            Preview actions without executing`);
+    console.log(`    ${colorize('gray', '--skip-update-check')}  Skip auto-update version check`);
     console.log();
     console.log(colorize('bold', '  Examples:'));
     console.log();
@@ -275,25 +413,4 @@ const { command, flags } = parseArgs(process.argv);
 
 if (flags.quiet) quiet = true;
 
-switch (command) {
-    case 'init':
-        cmdInit(flags);
-        break;
-    case 'update':
-        cmdUpdate(flags);
-        break;
-    case 'status':
-        cmdStatus(flags);
-        break;
-    case 'help':
-    case '--help':
-    case '-h':
-    case null:
-        cmdHelp();
-        break;
-    default:
-        err(`Unknown command: "${command}"`);
-        console.log();
-        dim('Run tribunal-kit --help for usage');
-        process.exit(1);
-}
+runWithUpdateCheck(command, flags);

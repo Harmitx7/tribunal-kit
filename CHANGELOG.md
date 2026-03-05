@@ -6,6 +6,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.4.0] — 2026-03-05
+
+### Added
+- **7 New Skills & Workflows**: `trend-researcher`, `ui-ux-researcher`, `whimsy-injector`, `workflow-optimizer`, `test-result-analyzer` (skills) and `/api-tester`, `/performance-benchmarker` (workflows).
+- **CLI Auto-Update**: `tribunal-kit update` now automatically checks the npm registry and re-invokes with `@latest` when a newer version is available. No more manual cache clearing.
+- **`--skip-update-check` Flag**: Bypass auto-update for CI/CD environments.
+
+### Changed
+- **Enhanced GEMINI.md**: Added 4 new request classification rows (Design/UX, API Testing, Performance, Test Analysis) and 2 new slash commands.
+
+---
+
 ## [2.3.0] — 2026-03-03
 
 ### Added

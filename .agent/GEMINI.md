@@ -32,6 +32,10 @@ Before responding to ANY coding request, you MUST:
 | **AI / LLM** | "openai", "anthropic", "llm", "embedding", "prompt" | Logic + Security + AI-Code-Reviewer |
 | **Accessibility** | "a11y", "wcag", "aria", "accessibility" | Logic + Accessibility-Reviewer |
 | **Mobile** | "mobile", "react native", "flutter" | Logic + Security + Mobile-Reviewer |
+| **Design / UX** | "design", "trend", "palette", "inspiration", "ux audit" | `trend-researcher` + `ui-ux-researcher` |
+| **API Testing** | "test api", "endpoint test", "api flow" | `api-tester` workflow |
+| **Performance** | "benchmark", "lighthouse", "bundle size", "latency" | `performance-benchmarker` workflow |
+| **Test Analysis** | "test failed", "analyze tests", "what broke" | `test-result-analyzer` |
 | **All Domains** | "/tribunal-full" or "audit everything" | ALL 11 agents |
 | **Review Only** | "/review", "check this", "audit" | All relevant agents, no Maker |
 | **Swarm / Multi-Domain** | "/swarm", "multiple agents", "parallel tasks" | `supervisor-agent` → dispatches to specialist Workers |
@@ -90,6 +94,8 @@ Every code response MUST:
 | `/audit` | Full project health audit (security → lint → tests → deps → bundle) |
 | `/fix` | Auto-fix lint, formatting, and import issues (with human gate) |
 | `/changelog` | Generate changelog from git history |
+| `/api-tester` | Multi-stage API endpoint testing with auth-aware request sequences |
+| `/performance-benchmarker` | Lighthouse, bundle analysis, and API latency benchmarks |
 
 ---
 
