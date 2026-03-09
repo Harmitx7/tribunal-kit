@@ -146,6 +146,23 @@ Lightness (0-100%): Brightness
   100% = White
 ```
 
+### Advanced: OKLCH Color Space (Pro Max Level)
+
+Whenever possible in modern CSS, abandon HSL for **OKLCH**.
+```
+Perceptual Uniformity: OKLCH gradients don't pass through "muddy" zones like RGB/HSL
+Chroma over Saturation: `c` (chroma) allows for impossibly vibrant display P3 colors
+Syntax: `oklch(70% 0.1 250)` reads as Lightness, Chroma, Hue
+```
+
+### Tactile Textures (Grain & Noise)
+
+Flat hex fills feel cheap. Premium aesthetic uses texture:
+```
+SVG Noise: Overlay a 2-4% opacity SVG noise filter on dark backgrounds
+Vignettes: Combine subtle noise with a radial gradient to draw the eye centrally
+```
+
 ### Generating a Full Palette
 
 Given ANY base color, create a scale:
@@ -293,6 +310,7 @@ Before finalizing any color choice, verify:
 - Copy the same hex codes every project
 - Default to purple/violet (AI tendency)
 - Default to dark mode + neon (AI tendency)
+- Generic "Stripe Blur" or arbitrary Aurora blobs without spatial purpose
 - Use pure black (#000000) backgrounds
 - Use pure white (#FFFFFF) text on dark
 - Ignore user's industry context

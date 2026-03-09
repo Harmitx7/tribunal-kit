@@ -94,6 +94,15 @@ When pairing, compare:
 | Neutral sans | Same sans | Minimal, tech |
 | Bold geometric | Light geometric | Contemporary |
 
+### Pro Max Pairing: Extreme Contrast
+
+The highest tier of design deliberately creates aesthetic tension:
+```
+Hyper-Traditional + Brutalist: e.g., Garamond (Display) + Inter (Tiny, uppercase tracking)
+Ultra-Condensed + Ultra-Wide: Mixing opposite widths for structural brutalism
+Variable Font Axis Tuning: Don't just use `font-weight`. Adjust `font-stretch`, `slnt`, or custom axes dynamically based on viewport.
+```
+
 ### Avoid
 
 - ❌ Two decorative fonts together
@@ -316,6 +325,15 @@ Users scan in F-pattern:
 - Familiar fonts = easier reading
 - High contrast = less strain
 - Consistent patterns = predictable
+
+### Kinetic Typography (Motion)
+
+Static type is baseline. Pro Max interfaces animate type:
+```
+Split-Text Staggering: Animating words or characters individually on scroll entry
+Weight Shifting: Variable fonts shifting smoothly from `wght` 300 to 800 on hover
+Masking: Text revealing itself from behind invisible overflow masks
+```
 
 ---
 

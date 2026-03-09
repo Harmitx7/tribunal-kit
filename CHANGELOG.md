@@ -12,6 +12,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 - **Verification-Before-Completion (VBC) Protocol**: Implemented a mandatory evidence-based closeout protocol across 10 core execution, debugging, and building skills (`systematic-debugging`, `tdd-workflow`, `plan-writing`, `python-pro`, `react-specialist`, `rust-pro`, `sql-pro`, `app-builder`, `clean-code`, `devops-incident-responder`). Sub-agents are now explicitly forbidden from declaring a task complete without providing concrete terminal or runtime evidence that their code succeeds.
+- **`frontend-design` Upgrade (Pro Max)**: Enhanced the skill to enforce asymmetric layouts, tactile textures (grain/SVG noise), OKLCH color spaces, and kinetic typography. Stripped out predictable AI defaults and strictly banned clichés like excessive purple, generic glowing blobs, and simple grid layouts.
+- **`brainstorming` Skill Upgrade**: Enhanced the discovery protocol using `skills.sh` paradigms. Added strategic query domains for "Market & Psychology," enforced the inclusion of at least one highly unconventional "Superpower Option" during options generation, and added constraints explicitly preventing assumptions around toolchain selection.
 
 ---
 

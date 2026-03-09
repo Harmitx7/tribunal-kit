@@ -43,6 +43,16 @@ The goal is not to interrogate. It is to surface hidden assumptions before they 
 - What data already exists vs. what needs to be created?
 - Are there integrations with other systems?
 
+**Market & Psychology (Why will they use it?)**
+- Who are the current competitors or alternatives, and how are we different?
+- What is the launch strategy and monetization approach?
+- What emotional state is the user in when they need this product?
+
+**Superpowers & Creative Constraints (Breaking the mold)**
+- If we had to solve this without writing any code, how would we do it?
+- What is the most unconventional, "fun", or high-leverage way to achieve this outcome?
+- Can we leverage existing external super-APIs (LLMs, edge networks, managed integrations) to bypass traditional development?
+
 **Constraints (What limits the design?)**
 - Existing tech stack?
 - Performance requirements? (users, requests/sec, data volume)
@@ -72,6 +82,7 @@ Before I propose a solution, a few questions:
 - Ask about one topic per question — not compound questions (`and`/`or` in a question = split it)
 - Numbered list, not a wall of text
 - Never more than 5 questions at once
+- Always inject at least one highly creative, out-of-the-box alternative approach ("Superpower Option") when proposing paths.
 - If answers create new unknowns, ask a follow-up round
 
 ---

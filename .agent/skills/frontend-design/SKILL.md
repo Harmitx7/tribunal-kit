@@ -128,6 +128,16 @@ REFLECTIVE (memory) → After: "I like what this says about me"
 
 ## 3. Layout Principles
 
+### Spatial & Asymmetric Composition (Pro Max Level)
+
+```
+Break out of basic CSS Grid/Flexbox row mentality. True premium design uses space intentionally:
+├── Overlapping: Let images break out of their containers
+├── Asymmetry: 60/40 or 70/30 splits, not just 50/50
+├── Negative Space as an Object: Whitespace isn't just "gap", it's a structural element
+└── Z-Axis Depth: Layering typography behind or partially over imagery
+```
+
 ### Golden Ratio (φ = 1.618)
 
 ```
@@ -340,6 +350,8 @@ For animation patterns: [animation-guide.md](animation-guide.md), for advanced: 
 - **Same layout structure / Vercel clone**
 - **Not asking user preferences**
 - **Emojis for UI icons (BANNED: Use lucide-react/SVGs ✅)**
+- **Tailwind Defaults**: Using `rounded-md`, `shadow-md`, `text-blue-500` without custom configuration.
+- **Static Dead Zones**: Interfaces with zero micro-interactions. Inject "whimsy" (subtle scale, transform, or opacity shifts on interaction).
 
 ### ❌ Dark Patterns (Unethical)
 

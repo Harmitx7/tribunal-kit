@@ -88,6 +88,7 @@ INPUT: User request + Context (greenfield/feature/refactor/debug)
     ├── What: Clear question
     ├── Why: Impact on implementation
     ├── Options: Trade-offs (not just A vs B)
+    ├── Fun/Superpower Option: Inject at least one highly creative, unconventional approach
     └── Default: What happens if user doesn't answer
 ```
 
@@ -130,6 +131,15 @@ INPUT: User request + Context (greenfield/feature/refactor/debug)
 | **Draft/Publish Workflow?** | Status field, scheduled jobs, versioning | +Control, -Complexity |
 | **Media Handling?** | Upload endpoints, storage, optimization | +Features, -Development time |
 | **Multi-language?** | i18n tables, translation UI, fallback logic | +Reach, -Complexity |
+
+### Business & Product Strategy
+
+| Question | Why It Matters | Trade-offs |
+|----------|----------------|------------|
+| **Monetization Approach?** | Freemium vs. Paywall vs. Ads affects user flow | +Revenue, -User Acquisition |
+| **Onboarding CRO?** | Wizard vs. self-serve dictates state management | +Activation, -Dev Time |
+| **Competitor Differentiator?** | Must highlight this UI feature above all else | +Standout, -Standardization |
+| **Marketing Psychology?** | FOMO (urgency) vs. Trust (social proof) layout | +Conversion, -Aesthetics |
 
 ---
 
