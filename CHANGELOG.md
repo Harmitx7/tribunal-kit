@@ -8,6 +8,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [2.4.0] — 2026-03-05
 
+## [2.4.1] — 2026-03-09
+
+### Changed
+- **Verification-Before-Completion (VBC) Protocol**: Implemented a mandatory evidence-based closeout protocol across 10 core execution, debugging, and building skills (`systematic-debugging`, `tdd-workflow`, `plan-writing`, `python-pro`, `react-specialist`, `rust-pro`, `sql-pro`, `app-builder`, `clean-code`, `devops-incident-responder`). Sub-agents are now explicitly forbidden from declaring a task complete without providing concrete terminal or runtime evidence that their code succeeds.
+
+---
+
+## [2.4.0] — 2026-03-05
+
 ### Added
 - **7 New Skills & Workflows**: `trend-researcher`, `ui-ux-researcher`, `whimsy-injector`, `workflow-optimizer`, `test-result-analyzer` (skills) and `/api-tester`, `/performance-benchmarker` (workflows).
 - **GitHub-Powered Auto-Updater**: The CLI now bypasses npm entirely. `tribunal-kit update` checks the GitHub Releases API and pulls updates directly from the repository, dodging npm authentication and caching issues.
