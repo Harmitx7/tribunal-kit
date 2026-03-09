@@ -130,3 +130,11 @@ TDD's ROI is lower for:
 | Skipping REFACTOR | Code quality degrades with each cycle |
 | Not reaching RED | Writing tests that pass immediately means the implementation already existed |
 | Mocking everything | Tests become coupled to implementation, not behavior |
+
+---
+
+## 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Ending the GREEN or REFACTOR phases based on assumption that the code is correct.
+- ✅ **Required:** You are explicitly forbidden from completing a test cycle or ending your task without providing **concrete terminal evidence** that the test suite actually ran and returned a strictly passing (GREEN) result.

@@ -79,3 +79,9 @@ Review these questions before generating Python code:
 ✅ Is the code strictly PEP 8 / `black` compliant with descriptive docstrings?
 ✅ Did I rely on built-in standard library tools (e.g. `itertools`, `collections`) instead of reinventing the wheel?
 ```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Ending your task or declaring a script complete because the code "looks pythonic" or lacks syntax errors.
+- ✅ **Required:** You are explicitly forbidden from completing your task without providing **concrete terminal/test evidence** that the Python code actually runs successfully (e.g., passing `pytest` logs, `mypy` strict success, or local CLI execution output).

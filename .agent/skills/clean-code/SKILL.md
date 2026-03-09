@@ -171,3 +171,9 @@ Review these questions before confirming code generation or review:
 ✅ Are all edge cases and rejections properly handled (no swallowed errors)?
 ✅ Did I avoid over-engineering this solution?
 ```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Refactoring code or blindly applying "clean code" rules without verifying the code still compiles and works.
+- ✅ **Required:** You are explicitly forbidden from finalizing a refactor without providing **concrete terminal evidence** (e.g., passing unit tests logs, successful linting execution, or type-check success) proving the refactored code maintains the original behavior.

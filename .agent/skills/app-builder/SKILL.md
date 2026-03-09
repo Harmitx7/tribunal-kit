@@ -209,3 +209,9 @@ Review these questions before orchestrating a full app build:
 ✅ Did I correctly track which dependencies need to be installed?
 ✅ Am I verifying integration at each boundary before moving to the next layer?
 ```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring an application architecture or full-stack integration complete without verifying the seams.
+- ✅ **Required:** You are explicitly forbidden from completing an app build or integration phase without providing **concrete terminal evidence** (e.g., successful local dev server start logs, passing build logs, or successful API local test results).

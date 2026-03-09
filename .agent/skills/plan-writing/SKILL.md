@@ -115,3 +115,11 @@ Verification criteria are not optional. For each task:
 ✅ Observable: `POST /api/users` returns 201 with a user ID in the response body
 ✅ Failure mode: `POST /api/users` with a duplicate email returns 409, not 500
 ```
+
+---
+
+## 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** Every plan must integrate a strict "evidence-based closeout" state machine for its tasks.
+- ❌ **Forbidden:** Writing vague verification steps like "Check that it looks right," "Ensure the code makes sense," or "Verify the logic."
+- ✅ **Required:** Verification criteria MUST demand **concrete terminal/compiler evidence** (e.g., test success logs, CLI execution outputs, compiler success states, or network trace results). Explicitly state that an agent CANNOT consider the task complete until it captures this hard evidence.

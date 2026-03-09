@@ -158,3 +158,9 @@ Review these questions before proposing a bug fix:
 ✅ Did I only change ONE thing to test the hypothesis?
 ✅ Can I explain exactly WHY the code broke in the first place?
 ```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a bug "fixed" or completing a task because your updated code "looks correct" to you.
+- ✅ **Required:** You are explicitly forbidden from completing your debug task until you have produced **concrete, observable evidence** (e.g., terminal output, compiler success, passing test logs, network trace results, or CLI execution results) proving the fix works. If you lack a direct test environment, you must attempt to write a focused script to verify the logic.

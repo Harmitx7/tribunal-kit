@@ -75,3 +75,9 @@ Review these questions before generating SQL code:
 ✅ Are there any procedural loops that could be written as a set-based approach?
 ✅ Did I parameterize all data inputs to prevent SQL Injection?
 ```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a query "optimized" or a migration "successful" without executing it.
+- ✅ **Required:** You are explicitly forbidden from completing your SQL task without providing **concrete terminal evidence** (e.g., local database execution outputs, `EXPLAIN ANALYZE` readouts, or successful migration logs) proving the queries are syntactically valid and performant.

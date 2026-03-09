@@ -70,3 +70,9 @@ Review these questions before generating incident response plans or runbooks:
 ✅ Is the response script/automation safe, including a rollback mechanism?
 ✅ Are all communication steps mapped clearly across engineering and stakeholder channels?
 ```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring an incident mitigated or a fix deployed based solely on running a script without checking the aftermath.
+- ✅ **Required:** You are explicitly forbidden from completing an incident response task without providing **concrete terminal/system evidence** (e.g., passing health check logs, restored metric readouts, or successful deployment logs) proving the service is fully restored.

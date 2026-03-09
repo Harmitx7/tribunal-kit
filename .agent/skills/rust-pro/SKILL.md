@@ -205,3 +205,9 @@ Review these questions before generating Rust code:
 ✅ Are my error types properly implemented (e.g., using `thiserror`)?
 ✅ Did I keep the lock durations on Mutexes as short as possible and never across `.await` points?
 ```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Concluding your work because the logic seems sound or assuming `cargo check` is enough for complex runtime logic.
+- ✅ **Required:** You are explicitly forbidden from completing your Rust task without providing **concrete terminal evidence** that `cargo test` passes or the binary runs successfully (`cargo run`) without panics. The Borrow Checker passing is step one; runtime verification is mandatory before completion.

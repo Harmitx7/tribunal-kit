@@ -72,3 +72,9 @@ Review these questions before generating React code:
 ✅ Did I configure proper fallbacks using `<Suspense>` and Error Boundaries?
 ✅ When handling state, did I ensure that mutated state is returned as a deeply cloned or immutable structure?
 ```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Assuming a React component "works" just because it compiles or because the bundler gives no immediate warnings.
+- ✅ **Required:** You are explicitly forbidden from completing your UI assignment without providing **concrete terminal/test evidence** (e.g., passing Jest/Vitest logs, successful build output, or specific CLI execution results) proving the build is error-free.
