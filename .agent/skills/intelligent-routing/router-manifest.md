@@ -55,6 +55,7 @@ This file contains all available skills and workflows as a condensed index for t
 | `test-result-analyzer` | Ingests test logs and identifies root causes across multiple failing test files. Provides actionable fix recommendations. |
 | `testing-patterns` | Testing patterns and principles. Unit, integration, mocking strategies. |
 | `trend-researcher` | Creative muse and design trend analyzer for modern web/mobile interfaces. |
+| `ui-ux-pro-max` | Plan and implement cutting-edge advanced UI/UX. Create distinctive, production-grade frontend interfaces with high design quality. |
 | `ui-ux-researcher` | Expert auditor for accessibility, cognitive load, and premium design heuristics. |
 | `vue-expert` | Vue 3 Composition API and modern Vue ecosystem expert. Use when building Vue applications, optimizing reactivity, component architecture, Nuxt 3 development, performance tuning, and State Management (Pinia). |
 | `vulnerability-scanner` | Advanced vulnerability analysis principles. OWASP 2025, Supply Chain Security, attack surface mapping, risk prioritization. |
