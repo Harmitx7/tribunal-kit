@@ -231,6 +231,33 @@ function getKitAgent() {
     return agentDir;
 }
 
+// ── Self-Install Guard ────────────────────────────────────
+/**
+ * Returns true if the target directory IS the tribunal-kit package itself.
+ * This prevents `init --force` / `update` from deleting the package's own files
+ * when run from inside the project directory.
+ */
+function isSelfInstall(targetDir) {
+    const kitRoot = path.resolve(__dirname, '..');
+    const resolvedTarget = path.resolve(targetDir);
+
+    // Direct path match
+    if (resolvedTarget === kitRoot) return true;
+
+    // Check if the target's package.json is this package
+    const targetPkg = path.join(resolvedTarget, 'package.json');
+    if (fs.existsSync(targetPkg)) {
+        try {
+            const targetName = JSON.parse(fs.readFileSync(targetPkg, 'utf8')).name;
+            if (targetName === PKG.name) return true;
+        } catch {
+            // Unreadable package.json — not a match
+        }
+    }
+
+    return false;
+}
+
 // ── Banner ────────────────────────────────────────────────
 function banner() {
     if (quiet) return;
@@ -246,6 +273,21 @@ function cmdInit(flags) {
     const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
     const agentDest = path.join(targetDir, '.agent');
     const dryRun = flags.dryRun || false;
+
+    // ── Self-install guard ──────────────────────────────────
+    if (isSelfInstall(targetDir)) {
+        err('Cannot run init/update inside the tribunal-kit package itself.');
+        err(`Target: ${targetDir}`);
+        err(`Package: ${path.resolve(__dirname, '..')}`);
+        console.log();
+        dim('This command is designed to install .agent/ into OTHER projects.');
+        dim('Run it from the root of the project you want to set up:');
+        dim('  cd /path/to/your-project');
+        dim('  npx tribunal-kit init');
+        console.log();
+        process.exit(1);
+    }
+    // ────────────────────────────────────────────────────────
 
     banner();
 
@@ -314,6 +356,21 @@ function cmdInit(flags) {
 }
 
 function cmdUpdate(flags) {
+    // ── Self-install guard (early, before banner) ───────────
+    const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
+    if (isSelfInstall(targetDir)) {
+        err('Cannot run update inside the tribunal-kit package itself.');
+        err(`Target: ${targetDir}`);
+        console.log();
+        dim('This command is designed to update .agent/ in OTHER projects.');
+        dim('Run it from the root of the project you want to update:');
+        dim('  cd /path/to/your-project');
+        dim('  npx tribunal-kit update');
+        console.log();
+        process.exit(1);
+    }
+    // ────────────────────────────────────────────────────────
+
     // Update = init with --force
     flags.force = true;
     if (!quiet) {
