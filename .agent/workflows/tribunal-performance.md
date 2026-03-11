@@ -14,29 +14,39 @@ Use this instead of `/tribunal-full` when you specifically need a performance le
 
 ---
 
-## Reviewers Activated
+## When to Use This vs Other Tribunals
+
+| Code type | Right tribunal |
+|---|---|
+| Performance-critical loops, async patterns | `/tribunal-performance` ← you are here |
+| Security vulnerabilities | `/tribunal-backend` or `/tribunal-full` |
+| Mobile-specific performance | `/tribunal-mobile` (includes mobile perf issues) |
+| SQL N+1 or unbounded queries | `/tribunal-database` |
+| Cross-domain or pre-merge | `/tribunal-full` |
+
+---
+
+## Active Reviewers
 
 | Reviewer | What It Catches |
 |---|---|
-| `logic-reviewer` | Hallucinated methods, impossible logic, undefined refs (always active) |
+| `logic-reviewer` | Hallucinated methods, impossible logic, undefined refs |
 | `performance-reviewer` | O(n²) complexity, blocking I/O, memory floods, missing pagination, no streaming |
 
 ---
 
-## When to Use This
+## What Gets Flagged — Real Examples
 
-```
-✅ Data-processing loops (sorting, filtering, transforming large arrays)
-✅ Database query patterns (N+1, unbounded SELECT *, missing indexes)
-✅ Async concurrency (Promise.all floods, uncontrolled batch sizes)
-✅ LLM streaming vs. blocking response patterns
-✅ React renders (missing useMemo/useCallback, expensive re-renders)
-✅ Any function you expect to handle 10x more data than today
-
-❌ Security vulnerabilities → use /tribunal-backend or /tribunal-full
-❌ Mobile-specific issues → use /tribunal-mobile
-❌ SQL injection / parameterization → use /tribunal-database
-```
+| Pattern | Example | Severity |
+|---|---|---|
+| O(n²) complexity | `Array.includes()` inside a `for` loop | ❌ REJECTED |
+| Blocking I/O in async context | `fs.readFileSync()` inside an `async` handler | ❌ REJECTED |
+| Uncontrolled concurrency | `Promise.all(items.map(item => fetchItem(item)))` where `items.length` is unbounded | ❌ REJECTED |
+| Memory flood | Loading entire table into memory: `const all = await db.findMany()` | ❌ REJECTED |
+| Expensive re-renders | Derived value recomputed on every render without `useMemo` | ⚠️ WARNING |
+| No streaming on large responses | Returning full LLM response, not streaming | ⚠️ WARNING |
+| Sort on every render | `items.sort(fn)` inside JSX (mutates original array) | ❌ REJECTED |
+| Regex in hot path | Complex regex compiled on every call (not pre-compiled) | ⚠️ WARNING |
 
 ---
 
@@ -53,7 +63,8 @@ performance-reviewer → O(n²) complexity, Array.includes() in loops,
                        blocking fs.readFileSync() in async contexts,
                        unbounded SELECT *, uncontrolled Promise.all floods,
                        missing useMemo() on expensive derivations,
-                       no streaming on LLM responses
+                       no streaming on LLM responses,
+                       missing pagination on large datasets
     │
     ▼
 Verdict Summary
@@ -74,26 +85,23 @@ Active reviewers: logic · performance
 
 logic-reviewer:       ✅ APPROVED
 performance-reviewer: ❌ REJECTED
-                      - Line 18: O(n²) — Array.includes() inside for loop.
-                        Convert `otherList` to a Set before the loop (O(1) lookup).
-                      - Line 34: fs.readFileSync() inside async handler.
-                        Replace with: await fs.promises.readFile(...)
 
-━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━ Issues ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Address rejections?  Y = fix and re-review | N = accept risk | R = revise manually
-```
+performance-reviewer:
+  ❌ HIGH — Line 18
+     O(n²): Array.includes() inside for loop — O(n) lookup inside O(n) loop
+     Fix: Convert `otherList` to a Set before the loop for O(1) lookup
 
----
+  ❌ HIGH — Line 34
+     Blocking I/O: fs.readFileSync() inside async handler blocks the event loop
+     Fix: await fs.promises.readFile(path, 'utf-8')
 
-## Performance-Specific Anti-Hallucination Rules
+  ⚠️ MEDIUM — Line 52
+     No streaming: LLM response buffered before returning to client
+     Fix: Pipe the stream directly: res.pipe(openaiStream)
 
-```
-❌ Never claim a fix is "faster" without citing the algorithmic reason (O-notation or benchmark)
-❌ Never recommend Promise.all for unbounded arrays — always suggest chunking
-❌ Never mark O(n²) as acceptable without explicit justification tied to data size
-❌ Never suggest caching without identifying the invalidation strategy
-❌ Never recommend premature micro-optimizations over algorithmic improvements
+━━━ Verdict: REJECTED ━━━━━━━━━━━━━━━━━━━━
 ```
 
 ---
@@ -102,9 +110,35 @@ Address rejections?  Y = fix and re-review | N = accept risk | R = revise manual
 
 | Level | Meaning |
 |---|---|
-| ❌ REJECTED | Will degrade under production load — must be fixed |
-| ⚠️ WARNING | Acceptable now, will become a problem at scale — flag for future sprint |
-| ✅ APPROVED | No performance concerns detected at this code level |
+| `❌ REJECTED (HIGH)` | Will cause visible performance degradation under load — fix before merge |
+| `❌ REJECTED (MEDIUM)` | Will become a bottleneck at scale — address before deploy |
+| `⚠️ WARNING` | Acceptable now, will degrade at 10x scale — flag for upcoming sprint |
+| `✅ APPROVED` | No performance concerns detected at this code level |
+
+---
+
+## Performance-Specific Anti-Hallucination Rules
+
+```
+❌ Never claim a fix is "faster" without citing the algorithmic reason (O-notation or benchmark)
+❌ Never recommend Promise.all for unbounded arrays — always suggest chunking with p-limit or similar
+❌ Never mark O(n²) as acceptable without explicit justification tied to data size constraints
+❌ Never suggest caching without identifying the invalidation strategy
+❌ Never recommend premature micro-optimizations over algorithmic improvements
+❌ No invented profiling tools — only documented options for the target runtime
+```
+
+---
+
+## Cross-Workflow Navigation
+
+| Finding type | Next step |
+|---|---|
+| O(n²) pattern found | `/refactor` to extract and fix the algorithm |
+| Memory bloat in data loading | `/enhance` to add pagination or streaming |
+| Promise.all flood | `/enhance` to add concurrency control with `p-limit` |
+| Regex in hot path | `/enhance` to pre-compile and cache |
+| All approved | Human Gate to write to disk |
 
 ---
 
@@ -114,4 +148,5 @@ Address rejections?  Y = fix and re-review | N = accept risk | R = revise manual
 /tribunal-performance the data processing loop in userService.ts
 /tribunal-performance the search filter function that runs on every keystroke
 /tribunal-performance the batch API handler that fetches user data
+/tribunal-performance the LLM response handler
 ```

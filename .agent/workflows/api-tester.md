@@ -12,6 +12,17 @@ This command generates and runs multi-stage API test sequences. It goes beyond s
 
 ---
 
+## When to Use This vs Other Commands
+
+| Use `/api-tester` when... | Use something else when... |
+|---|---|
+| Testing multi-step flows (auth + resource lifecycle) | Unit tests → `/test` |
+| Verifying endpoint contracts before deploy | Logic review → `/review` |
+| Debugging a specific flow returning wrong data | Root cause → `/debug` |
+| Security testing for injection/rate limits | Full security audit → `/audit` |
+
+---
+
 ## When to Use
 
 - After creating or modifying API routes.
@@ -220,6 +231,29 @@ Auth scenarios:  authenticated ✅  unauthenticated ❌  admin ❌
 - **Sanitize test payloads** — no actual SQL injection payloads that could damage data.
 - **Never run destructive tests** against production URLs without explicit user confirmation.
 - **Clean up created resources** at the end of every test flow (DELETE what was POSTed).
+
+---
+
+## Abort Conditions
+
+| Condition | Action |
+|---|---|
+| Server is not running | Prompt to run `/preview start` before continuing |
+| Destructive test (DELETE) on a production URL | Stop and confirm explicitly before executing |
+| Test step fails with 5xx | Halt the flow — server error is not a test assertion failure |
+| Auth step fails | Halt and report — remaining steps are invalid without a token |
+
+---
+
+## Cross-Workflow Navigation
+
+| After /api-tester reveals... | Go to |
+|---|---|
+| Soft-delete returning 200, should be 404 | `/fix` or `/debug` the query filter |
+| Endpoint returns 500 on valid input | `/debug` for root cause |
+| Security test: SQL injection returns 500 with DB error | ❌ CRITICAL → `/audit` immediately |
+| Rate limiting is missing | `/enhance` to add rate-limiting middleware |
+| All tests pass, ready for deploy | `/deploy` following pre-flight checklist |
 
 ---
 

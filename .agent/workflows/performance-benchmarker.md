@@ -258,6 +258,31 @@ If a previous benchmark baseline exists (stored in `perf-baseline.json` or simil
 
 ---
 
+## Baseline Management
+
+After a successful benchmark, save a baseline to detect future regressions:
+
+```bash
+# Save current benchmark as baseline
+python .agent/scripts/bundle_analyzer.py . --save-baseline
+```
+
+The baseline file is `perf-baseline.json` in the project root. Check it into version control so regressions are caught in CI.
+
+---
+
+## Cross-Workflow Navigation
+
+| After /performance-benchmarker shows... | Go to |
+|---|---|
+| Grade D or F | `/tribunal-performance` on the slowest code paths |
+| Bundle regression (+15%) | `/audit` for dependency analysis, then `/fix` |
+| API latency P95 > 500ms | `/debug` to identify the slow query or operation |
+| Web vitals LCP > 4s | `/enhance` to add image preloading and critical CSS |
+| Grade A or B, ready for deploy | `/deploy` following pre-flight checklist |
+
+---
+
 ## Hallucination Guard
 
 - **Only run benchmarks with installed tools** — check with `which` or `npx --dry-run` first.

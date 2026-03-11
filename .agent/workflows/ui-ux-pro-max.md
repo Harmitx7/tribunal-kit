@@ -14,6 +14,17 @@ This command activates the absolute highest-fidelity UI/UX workflow, meant for 2
 
 ---
 
+## When to Use This vs Other Commands
+
+| Use `/ui-ux-pro-max` when... | Use something else when... |
+|---|---|
+| You need pixel-perfect, award-worthy UI craft | Standard UI is acceptable → `/create` |
+| Design system, color system, typography all need definition | Just one component → `/generate` |
+| You want accessibility, motion, and spatial design all considered | Quick functional prototype → `/create` |
+| Neuro-inclusive + APCA contrast standards are required | Speed matters over design quality → `/create` |
+
+---
+
 ## What Makes This Different From `/create`
 
 `/create` builds standard features. `/ui-ux-pro-max` obsesses over extreme craft and futuristic patterns:
@@ -136,6 +147,17 @@ Each step produces a high-fidelity summary:
 ♿ Neuro-Inclusive Audit:
    [Compliance with cognitive safety, motion reduction, and touch targets]
 ```
+
+---
+
+## Cross-Workflow Navigation
+
+| After /ui-ux-pro-max produces output... | Do this |
+|---|---|
+| Component code is ready for merge | `/tribunal-frontend` for React/hooks audit |
+| Performance-critical animations written | `/tribunal-performance` to check for jank |
+| Color + contrast system defined | Document in the design system, then `/create` components |
+| Accessibility audit is required | Additional review with `accessibility-reviewer` via `/review [component]` |
 
 ---
 
