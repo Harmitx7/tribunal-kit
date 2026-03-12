@@ -27,27 +27,35 @@ const CURRENT_VERSION = PKG.version;
 
 // ── Colors ───────────────────────────────────────────────
 const C = {
-    reset: '\x1b[0m',
-    bold: '\x1b[1m',
-    red: '\x1b[91m',
-    green: '\x1b[92m',
-    yellow: '\x1b[93m',
-    cyan: '\x1b[96m',
-    gray: '\x1b[90m',
+    reset:   '\x1b[0m',
+    bold:    '\x1b[1m',
+    dim:     '\x1b[2m',
+    red:     '\x1b[91m',
+    green:   '\x1b[92m',
+    yellow:  '\x1b[93m',
+    blue:    '\x1b[94m',
+    magenta: '\x1b[95m',
+    cyan:    '\x1b[96m',
+    white:   '\x1b[97m',
+    gray:    '\x1b[90m',
+    bgCyan:  '\x1b[46m',
 };
 
 function colorize(color, text) {
     return `${C[color]}${text}${C.reset}`;
 }
 
+function c(color, text) { return `${C[color]}${text}${C.reset}`; }
+function bold(text)     { return `${C.bold}${text}${C.reset}`; }
+
 // ── Logging ──────────────────────────────────────────────
 let quiet = false;
 
-function log(msg) { if (!quiet) console.log(msg); }
-function ok(msg) { if (!quiet) console.log(`  ${colorize('green', '✅')} ${msg}`); }
-function warn(msg) { if (!quiet) console.log(`  ${colorize('yellow', '⚠️ ')} ${msg}`); }
-function err(msg) { console.error(`  ${colorize('red', '❌')} ${msg}`); }
-function dim(msg) { if (!quiet) console.log(`  ${colorize('gray', msg)}`); }
+function log(msg)  { if (!quiet) console.log(msg); }
+function ok(msg)   { if (!quiet) console.log(`  ${c('green',  '✔')} ${msg}`); }
+function warn(msg) { if (!quiet) console.log(`  ${c('yellow', '⚠')}  ${msg}`); }
+function err(msg)  { console.error(`  ${c('red', '✖')} ${msg}`); }
+function dim(msg)  { if (!quiet) console.log(`  ${c('gray', msg)}`); }
 
 // ── Arg Parser ───────────────────────────────────────────
 function parseArgs(argv) {
@@ -261,9 +269,25 @@ function isSelfInstall(targetDir) {
 // ── Banner ────────────────────────────────────────────────
 function banner() {
     if (quiet) return;
+    // Big ASCII art (TRIBUNAL-KIT)
+    const art = String.raw`
+___________      ._____.                       .__             ____  __.__  __   
+\__    ___/______|__\_ |__  __ __  ____ _____  |  |           |    |/ _|__|/  |_ 
+  |    |  \_  __ \  || __ \|  |  \/    \\__  \ |  |    ______ |      < |  \   __\
+  |    |   |  | \/  || \_\ \  |  /   |  \/ __ \|  |__ /_____/ |    |  \|  ||  |  
+  |____|   |__|  |__||___  /____/|___|  (____  /____/         |____|__ \__||__|  
+                         \/           \/     \/                       \/          `.split('\n').filter(Boolean);
     console.log();
-    console.log(colorize('cyan', colorize('bold', '  Tribunal Anti-Hallucination Agent Kit')));
-    console.log(colorize('gray', '  ──────────────────────────────────────'));
+    for (const line of art) log(`  ${c('cyan', bold(line))}`);
+    console.log();
+    // Subtitle strip
+    const W   = 80;
+    const sub = 'Anti-Hallucination Agent System';
+    const sp  = Math.max(0, W - sub.length);
+    const centred = ' '.repeat(Math.floor(sp / 2)) + sub + ' '.repeat(Math.ceil(sp / 2));
+    console.log(`  ${c('cyan', '╔' + '═'.repeat(W) + '╗')}`);
+    console.log(`  ${c('cyan', '║')}${c('gray', centred)}${c('cyan', '║')}`);
+    console.log(`  ${c('cyan', '╚' + '═'.repeat(W) + '╝')}`);
     console.log();
 }
 
@@ -322,30 +346,62 @@ function cmdInit(flags) {
 
     // Count what we're installing
     const totalFiles = countDir(agentSrc);
-    dim(`Installing ${totalFiles} files → ${agentDest}`);
+    log(`  ${c('gray','▸')} Scanning ${c('white', String(totalFiles))} files  ${c('gray','→')}  ${c('gray', agentDest)}`);
 
     try {
         const copied = copyDir(agentSrc, agentDest, dryRun);
 
         console.log();
         if (dryRun) {
-            ok(`DRY RUN complete — would install ${copied} files`);
+            ok(`${bold('DRY RUN')} complete — would install ${c('cyan', String(copied))} files`);
             dim(`Target: ${agentDest}`);
         } else {
-            ok(`Installation complete — ${copied} files installed`);
-            dim(`Location: ${agentDest}`);
-        }
-        console.log();
+            // ── Success card — W=52, rows padded by plain-text length ──
+            const W = 52;
+            const agentsCount    = fs.readdirSync(path.join(agentDest, 'agents')).length;
+            const workflowsCount = fs.readdirSync(path.join(agentDest, 'workflows')).length;
+            const skillsCount    = fs.readdirSync(path.join(agentDest, 'skills')).length;
+            const scriptsCount   = fs.readdirSync(path.join(agentDest, 'scripts')).length;
 
-        if (!dryRun) {
-            log(colorize('bold', '  What was installed:'));
-            dim(`  Agents:    ${fs.readdirSync(path.join(agentDest, 'agents')).length} specialist agents`);
-            dim(`  Workflows: ${fs.readdirSync(path.join(agentDest, 'workflows')).length} slash commands`);
-            dim(`  Skills:    ${fs.readdirSync(path.join(agentDest, 'skills')).length} skill modules`);
-            dim(`  Scripts:   ${fs.readdirSync(path.join(agentDest, 'scripts')).length} utility scripts`);
+            // Stat rows: compute trailing spaces from plain text so right ║ aligns
+            const statRow = (icon, label, val, col) => {
+                // emoji JS .length===2 == terminal display width 2 ✓
+                const plain = `  ${icon}  ${label.padEnd(10)}${String(val).padStart(3)} installed`;
+                const trail = ' '.repeat(Math.max(0, W - plain.length));
+                return `  ${c('cyan','║')}  ${icon}  ${c('white',label.padEnd(10))}${c(col,String(val).padStart(3))} ${c('gray','installed')}${trail}${c('cyan','║')}`;
+            };
+            // Plain-text rows (header / blank)
+            const plainRow = (text, wrapFn) => {
+                const trail = ' '.repeat(Math.max(0, W - text.length));
+                return `  ${c('cyan','║')}${wrapFn(text)}${trail}${c('cyan','║')}`;
+            };
+            // Next-step rows: fixed cmd column + description
+            const stepRow = (cmd, desc) => {
+                const plain = `  ${cmd.padEnd(16)}${desc}`;
+                const trail = ' '.repeat(Math.max(0, W - plain.length));
+                return `  ${c('cyan','║')}  ${c('white',cmd.padEnd(16))}${c('gray',desc)}${trail}${c('cyan','║')}`;
+            };
+
+            console.log(`  ${c('green','✔')} ${bold(c('green','Installation complete'))} ${c('gray','—')} ${c('white',String(copied))} files`);
+            console.log(`  ${c('gray','  ╰─')} ${c('gray', agentDest)}`);
             console.log();
-            log(colorize('gray', '  Your AI IDE will pick this up automatically.'));
-            log(colorize('gray', '  Type /generate, /review, /tribunal-full in the chat.'));
+            console.log(`  ${c('cyan', '╔' + '═'.repeat(W) + '╗')}`);
+            console.log(plainRow(`  What's inside:`, s => c('bold', c('white', s))));
+            console.log(`  ${c('cyan', '╠' + '═'.repeat(W) + '╣')}`);
+            console.log(statRow('🤖', 'Agents',    agentsCount,    'magenta'));
+            console.log(statRow('⚡',  'Workflows', workflowsCount, 'yellow'));
+            console.log(statRow('🧠', 'Skills',    skillsCount,    'blue'));
+            console.log(statRow('🔧', 'Scripts',   scriptsCount,   'green'));
+            console.log(`  ${c('cyan', '╠' + '═'.repeat(W) + '╣')}`);
+            console.log(plainRow('', () => ''));
+            console.log(plainRow(`  Next steps:`, s => c('gray', s)));
+            console.log(stepRow('/generate',      'Generate code with anti-hallucination'));
+            console.log(stepRow('/review',         'Audit existing code for issues'));
+            console.log(stepRow('/tribunal-full',  'Run all 11 reviewers in parallel'));
+            console.log(plainRow('', () => ''));
+            console.log(`  ${c('cyan', '╚' + '═'.repeat(W) + '╝')}`);
+            console.log();
+            log(`  ${c('gray', '✦ Your AI IDE will pick up changes automatically.')}`);
         }
 
         console.log();
@@ -374,7 +430,7 @@ function cmdUpdate(flags) {
     // Update = init with --force
     flags.force = true;
     if (!quiet) {
-        log(colorize('cyan', '  Updating .agent/ to latest version...'));
+        log(`  ${c('cyan','↻')} ${bold('Updating')} ${c('white','.agent/')} to latest version...`);
         console.log();
     }
     cmdInit(flags);
@@ -425,22 +481,24 @@ function cmdStatus(flags) {
     banner();
 
     if (!fs.existsSync(agentDest)) {
-        log(`  ${colorize('red', '🔴')} Not installed in: ${targetDir}`);
+        log(`  ${c('red','✖')} ${bold('Not installed')} in this project`);
         console.log();
-        dim('Run: tribunal-kit init');
+        log(`  ${c('gray','Run:')} ${c('cyan','npx tribunal-kit init')}`);
         console.log();
         return;
     }
 
-    log(`  ${colorize('green', '🟢')} Installed at: ${agentDest}`);
+    log(`  ${c('green','✔')} ${bold(c('green','Installed'))}  ${c('gray','→')}  ${c('gray', agentDest)}`);
     console.log();
 
+    const icons   = { agents: '🤖', workflows: '⚡', skills: '🧠', scripts: '🔧' };
+    const colors  = { agents: 'magenta', workflows: 'yellow', skills: 'blue', scripts: 'green' };
     const subdirs = ['agents', 'workflows', 'skills', 'scripts'];
     for (const sub of subdirs) {
         const subPath = path.join(agentDest, sub);
         if (fs.existsSync(subPath)) {
             const count = fs.readdirSync(subPath).filter(f => !fs.statSync(path.join(subPath, f)).isDirectory()).length;
-            dim(`  ${sub.padEnd(12)} ${count} files`);
+            log(`  ${icons[sub]}  ${c(colors[sub], sub.padEnd(12))}${c('white', String(count).padStart(3))} files`);
         }
     }
     console.log();
@@ -448,28 +506,32 @@ function cmdStatus(flags) {
 
 function cmdHelp() {
     banner();
-    console.log(colorize('bold', '  Commands:'));
+    const cmd  = (name, desc) => `  ${c('cyan', name.padEnd(10))}  ${c('gray', desc)}`;
+    const opt  = (flag, desc) => `  ${c('yellow', flag.padEnd(22))}  ${c('gray', desc)}`;
+    const ex   = (s)          => `  ${c('gray', '▸')} ${c('white', s)}`;
+
+    log(bold('  Commands'));
+    log(`  ${c('gray','─'.repeat(40))}`);
+    log(cmd('init',   'Install .agent/ into current project'));
+    log(cmd('update', 'Re-install to get latest version'));
+    log(cmd('status', 'Check if .agent/ is installed'));
     console.log();
-    console.log(`    ${colorize('cyan', 'init')}      Install .agent/ into current project`);
-    console.log(`    ${colorize('cyan', 'update')}    Re-install to get latest version`);
-    console.log(`    ${colorize('cyan', 'status')}    Check if .agent/ is installed`);
+    log(bold('  Options'));
+    log(`  ${c('gray','─'.repeat(40))}`);
+    log(opt('--force',              'Overwrite existing .agent/ folder'));
+    log(opt('--path <dir>',         'Install in specific directory'));
+    log(opt('--quiet',              'Suppress all output'));
+    log(opt('--dry-run',            'Preview actions without executing'));
+    log(opt('--skip-update-check',  'Skip auto-update version check'));
     console.log();
-    console.log(colorize('bold', '  Options:'));
-    console.log();
-    console.log(`    ${colorize('gray', '--force')}              Overwrite existing .agent/ folder`);
-    console.log(`    ${colorize('gray', '--path <dir>')}         Install in specific directory`);
-    console.log(`    ${colorize('gray', '--quiet')}              Suppress all output`);
-    console.log(`    ${colorize('gray', '--dry-run')}            Preview actions without executing`);
-    console.log(`    ${colorize('gray', '--skip-update-check')}  Skip auto-update version check`);
-    console.log();
-    console.log(colorize('bold', '  Examples:'));
-    console.log();
-    console.log(`    ${colorize('gray', 'npx tribunal-kit init')}`);
-    console.log(`    ${colorize('gray', 'npx tribunal-kit init --force')}`);
-    console.log(`    ${colorize('gray', 'npx tribunal-kit init --path ./my-app')}`);
-    console.log(`    ${colorize('gray', 'npx tribunal-kit init --dry-run')}`);
-    console.log(`    ${colorize('gray', 'npx tribunal-kit update')}`);
-    console.log(`    ${colorize('gray', 'npx tribunal-kit status')}`);
+    log(bold('  Examples'));
+    log(`  ${c('gray','─'.repeat(40))}`);
+    log(ex('npx tribunal-kit init'));
+    log(ex('npx tribunal-kit init --force'));
+    log(ex('npx tribunal-kit init --path ./my-app'));
+    log(ex('npx tribunal-kit init --dry-run'));
+    log(ex('npx tribunal-kit update'));
+    log(ex('npx tribunal-kit status'));
     console.log();
 }
 
