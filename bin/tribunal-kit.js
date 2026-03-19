@@ -356,8 +356,8 @@ function cmdInit(flags) {
             ok(`${bold('DRY RUN')} complete — would install ${c('cyan', String(copied))} files`);
             dim(`Target: ${agentDest}`);
         } else {
-            // ── Success card — W=52, rows padded by plain-text length ──
-            const W = 52;
+            // ── Success card — W=62, rows padded by plain-text length ──
+            const W = 62;
             const agentsCount    = fs.readdirSync(path.join(agentDest, 'agents')).length;
             const workflowsCount = fs.readdirSync(path.join(agentDest, 'workflows')).length;
             const skillsCount    = fs.readdirSync(path.join(agentDest, 'skills')).length;
