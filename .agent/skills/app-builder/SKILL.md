@@ -2,6 +2,9 @@
 name: app-builder
 description: Main application building orchestrator. Creates full-stack applications from natural language requests. Determines project type, selects tech stack, coordinates agents.
 allowed-tools: Read, Write, Edit, Glob, Grep
+version: 1.0.0
+last-updated: 2026-03-12
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # App Builder — Application Orchestrator
@@ -183,6 +186,24 @@ Report the URL to the user.
 | Next.js Full-Stack | `templates/nextjs-app/` | Web app with API routes |
 | React Native | `templates/react-native-app/` | Cross-platform mobile |
 | API Only | `templates/api-only/` | Backend service, no UI |
+
+---
+
+## Output Format
+
+When this skill produces a recommendation or design decision, structure your output as:
+
+```
+━━━ App Builder Recommendation ━━━━━━━━━━━━━━━━
+Decision:    [what was chosen / proposed]
+Rationale:   [why — one concise line]
+Trade-offs:  [what is consciously accepted]
+Next action: [concrete next step for the user]
+─────────────────────────────────────────────────
+Pre-Flight:  ✅ All checks passed
+             or ❌ [blocking item that must be resolved first]
+```
+
 
 ---
 

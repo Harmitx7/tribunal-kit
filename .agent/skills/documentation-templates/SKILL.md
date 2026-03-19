@@ -2,6 +2,9 @@
 name: documentation-templates
 description: Documentation templates and structure guidelines. README, API docs, code comments, and AI-friendly documentation.
 allowed-tools: Read, Write, Edit, Glob, Grep
+version: 1.0.0
+last-updated: 2026-03-12
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # Documentation Standards
@@ -184,3 +187,62 @@ If unresolved after 30 minutes → page @on-call-lead
 [ ] Add monitoring for this failure mode
 [ ] Update this runbook if steps changed
 ```
+
+---
+
+## Output Format
+
+When this skill completes a task, structure your output as:
+
+```
+━━━ Documentation Templates Output ━━━━━━━━━━━━━━━━━━━━━━━━
+Task:        [what was performed]
+Result:      [outcome summary — one line]
+─────────────────────────────────────────────────
+Checks:      ✅ [N passed] · ⚠️  [N warnings] · ❌ [N blocked]
+VBC status:  PENDING → VERIFIED
+Evidence:    [link to terminal output, test result, or file diff]
+```
+
+
+
+---
+
+## 🤖 LLM-Specific Traps
+
+AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
+
+1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
+2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
+3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
+4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
+
+### ❌ Forbidden AI Tropes
+
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before confirming output:
+```
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
+```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

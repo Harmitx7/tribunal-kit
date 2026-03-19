@@ -2,6 +2,9 @@
 name: local-first
 description: Local-first software principles. Offline-capable apps, CRDTs, sync engines (ElectricSQL, Replicache, Zero), conflict resolution, and the migration path from REST-first to local-first architecture. Use when building apps that need offline support, fast UI, or collaborative editing.
 allowed-tools: Read, Write, Edit, Glob, Grep
+version: 1.0.0
+last-updated: 2026-03-12
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # Local-First Software Principles
@@ -150,6 +153,30 @@ Phase 3: CRDT-backed Shared State
   → Full offline + collaboration
   → No more conflicts
 ```
+
+---
+
+## Output Format
+
+When this skill produces or reviews code, structure your output as follows:
+
+```
+━━━ Local First Report ━━━━━━━━━━━━━━━━━━━━━━━━
+Skill:       Local First
+Language:    [detected language / framework]
+Scope:       [N files · N functions]
+─────────────────────────────────────────────────
+✅ Passed:   [checks that passed, or "All clean"]
+⚠️  Warnings: [non-blocking issues, or "None"]
+❌ Blocked:  [blocking issues requiring fix, or "None"]
+─────────────────────────────────────────────────
+VBC status:  PENDING → VERIFIED
+Evidence:    [test output / lint pass / compile success]
+```
+
+**VBC (Verification-Before-Completion) is mandatory.**
+Do not mark status as VERIFIED until concrete terminal evidence is provided.
+
 
 ---
 

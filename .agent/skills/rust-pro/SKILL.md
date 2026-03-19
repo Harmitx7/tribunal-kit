@@ -2,6 +2,9 @@
 name: rust-pro
 description: Master Rust 1.75+ with modern async patterns, advanced type system features, and production-ready systems programming. Expert in the latest Rust ecosystem including Tokio, axum, and cutting-edge crates. Use PROACTIVELY for Rust development, performance optimization, or systems programming.
 allowed-tools: Read, Write, Edit, Glob, Grep
+version: 1.0.0
+last-updated: 2026-03-12
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # Rust Development — Production Principles
@@ -179,6 +182,30 @@ Cargo.toml         Dependencies
 | `anyhow` | Error handling in binaries/scripts (not libraries) |
 | `tracing` | Structured async-aware logging |
 | `config` | Hierarchical configuration from env/files |
+
+---
+
+## Output Format
+
+When this skill produces or reviews code, structure your output as follows:
+
+```
+━━━ Rust Pro Report ━━━━━━━━━━━━━━━━━━━━━━━━
+Skill:       Rust Pro
+Language:    [detected language / framework]
+Scope:       [N files · N functions]
+─────────────────────────────────────────────────
+✅ Passed:   [checks that passed, or "All clean"]
+⚠️  Warnings: [non-blocking issues, or "None"]
+❌ Blocked:  [blocking issues requiring fix, or "None"]
+─────────────────────────────────────────────────
+VBC status:  PENDING → VERIFIED
+Evidence:    [test output / lint pass / compile success]
+```
+
+**VBC (Verification-Before-Completion) is mandatory.**
+Do not mark status as VERIFIED until concrete terminal evidence is provided.
+
 
 ---
 

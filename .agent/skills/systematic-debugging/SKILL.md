@@ -2,6 +2,9 @@
 name: systematic-debugging
 description: 4-phase systematic debugging methodology with root cause analysis and evidence-based verification. Use when debugging complex issues.
 allowed-tools: Read, Write, Edit, Glob, Grep
+version: 1.0.0
+last-updated: 2026-03-12
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # Systematic Debugging
@@ -132,6 +135,23 @@ Keep a running log during complex debugging:
 ```
 
 This prevents circular reasoning and gives you a record if you hand off to someone else.
+
+---
+
+## Output Format
+
+When this skill completes a task, structure your output as:
+
+```
+━━━ Systematic Debugging Output ━━━━━━━━━━━━━━━━━━━━━━━━
+Task:        [what was performed]
+Result:      [outcome summary — one line]
+─────────────────────────────────────────────────
+Checks:      ✅ [N passed] · ⚠️  [N warnings] · ❌ [N blocked]
+VBC status:  PENDING → VERIFIED
+Evidence:    [link to terminal output, test result, or file diff]
+```
+
 
 ---
 

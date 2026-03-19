@@ -16,7 +16,7 @@
     "homepage": "https://github.com/Harmitx7/tribunal-kit",
     "repository": {
         "type": "git",
-        "url": "https://github.com/Harmitx7/tribunal-kit.git"
+        "url": "git+https://github.com/Harmitx7/tribunal-kit.git"
     },
     "license": "MIT",
     "bin": {

@@ -2,6 +2,9 @@
 name: nextjs-react-expert
 description: Next.js App Router and React v19+ performance optimization from Vercel Engineering. Use when building React components, optimizing performance, implementing React Compiler patterns, eliminating waterfalls, reducing JS payload, or implementing Streaming/PPR optimizations.
 allowed-tools: Read, Write, Edit, Glob, Grep
+version: 1.0.0
+last-updated: 2026-03-12
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # React v19+ & Next.js Pro-Max Performance Patterns
@@ -147,6 +150,30 @@ const HeavyChart = dynamic(() => import('./HeavyChart'), { ssr: false })
 | Missing `key` on mapped lists | Complete DOM destruction on update | Use stable unique IDs (never `index`) |
 | Unhandled Server Actions | Silent errors on DB failures | Wrap in `try/catch` and return `{ error }` objects |
 | Client-side secret passing | Exposes API keys | `server-only` package + Server Actions |
+
+---
+
+## Output Format
+
+When this skill produces or reviews code, structure your output as follows:
+
+```
+━━━ Nextjs React Expert Report ━━━━━━━━━━━━━━━━━━━━━━━━
+Skill:       Nextjs React Expert
+Language:    [detected language / framework]
+Scope:       [N files · N functions]
+─────────────────────────────────────────────────
+✅ Passed:   [checks that passed, or "All clean"]
+⚠️  Warnings: [non-blocking issues, or "None"]
+❌ Blocked:  [blocking issues requiring fix, or "None"]
+─────────────────────────────────────────────────
+VBC status:  PENDING → VERIFIED
+Evidence:    [test output / lint pass / compile success]
+```
+
+**VBC (Verification-Before-Completion) is mandatory.**
+Do not mark status as VERIFIED until concrete terminal evidence is provided.
+
 
 ---
 

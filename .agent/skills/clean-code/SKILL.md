@@ -2,6 +2,9 @@
 name: clean-code
 description: Pragmatic coding standards - concise, direct, no over-engineering, no unnecessary comments
 allowed-tools: Read, Write, Edit, Glob, Grep
+version: 1.0.0
+last-updated: 2026-03-12
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # Clean Code Standards
@@ -147,6 +150,30 @@ AI coding assistants (like you) fall into specific bad habits when writing code.
 3. **Premature Abstraction:** Creating an `AbstractDataManager` factory class with interfaces to parse a simple CSV file. Code what is needed *now*.
 4. **Variable Diarrhea:** Extracting every step of a calculation into a separate `const` when a single readable line would suffice.
 5. **Apologetic Comments:** `// TODO: Refactor this later` or `// I assumed this was the right way`. If you write it, own it. If it's incomplete, flag the user.
+
+---
+
+## Output Format
+
+When this skill produces or reviews code, structure your output as follows:
+
+```
+━━━ Clean Code Report ━━━━━━━━━━━━━━━━━━━━━━━━
+Skill:       Clean Code
+Language:    [detected language / framework]
+Scope:       [N files · N functions]
+─────────────────────────────────────────────────
+✅ Passed:   [checks that passed, or "All clean"]
+⚠️  Warnings: [non-blocking issues, or "None"]
+❌ Blocked:  [blocking issues requiring fix, or "None"]
+─────────────────────────────────────────────────
+VBC status:  PENDING → VERIFIED
+Evidence:    [test output / lint pass / compile success]
+```
+
+**VBC (Verification-Before-Completion) is mandatory.**
+Do not mark status as VERIFIED until concrete terminal evidence is provided.
+
 
 ---
 

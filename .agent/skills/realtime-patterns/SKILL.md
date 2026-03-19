@@ -2,6 +2,9 @@
 name: realtime-patterns
 description: Real-time and collaborative application patterns. WebSockets, Server-Sent Events for AI streaming, CRDTs for conflict-free collaboration, presence, and sync engines. Use when building live collaboration, AI streaming UIs, live dashboards, or multiplayer features.
 allowed-tools: Read, Write, Edit, Glob, Grep
+version: 1.0.0
+last-updated: 2026-03-12
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # Real-Time Patterns
@@ -242,6 +245,30 @@ wss.on('connection', (ws, req) => {
 | **Supabase Realtime** | PostgreSQL change streams | Postgres-centric apps |
 | **ElectricSQL** | Local-first sync from Postgres | Offline-first apps |
 | **Replicache** | Client-side mutations + sync | Highly interactive, offline-capable |
+
+---
+
+## Output Format
+
+When this skill produces or reviews code, structure your output as follows:
+
+```
+━━━ Realtime Patterns Report ━━━━━━━━━━━━━━━━━━━━━━━━
+Skill:       Realtime Patterns
+Language:    [detected language / framework]
+Scope:       [N files · N functions]
+─────────────────────────────────────────────────
+✅ Passed:   [checks that passed, or "All clean"]
+⚠️  Warnings: [non-blocking issues, or "None"]
+❌ Blocked:  [blocking issues requiring fix, or "None"]
+─────────────────────────────────────────────────
+VBC status:  PENDING → VERIFIED
+Evidence:    [test output / lint pass / compile success]
+```
+
+**VBC (Verification-Before-Completion) is mandatory.**
+Do not mark status as VERIFIED until concrete terminal evidence is provided.
+
 
 ---
 

@@ -60,6 +60,7 @@ Type any of these in your AI IDE chat:
 | `/session` | Multi-session state tracking | `workflows/session.md` |
 | `/orchestrate` | Multi-agent coordination | `workflows/orchestrate.md` |
 | `/swarm` | Supervisor → specialist Workers → unified synthesis | `workflows/swarm.md` |
+| `/strengthen-skills` | Audit and harden all skills — appends Tribunal guardrails to any SKILL.md missing them | `workflows/strengthen-skills.md` |
 | `/ui-ux-pro-max` | Plan and implement cutting-edge UI/UX | `workflows/ui-ux-pro-max.md` |
 | `/refactor` | Dependency-safe code refactoring | `workflows/refactor.md` |
 | `/migrate` | Framework upgrades, DB migrations | `workflows/migrate.md` |
@@ -226,6 +227,7 @@ All scripts live in `.agent/scripts/`:
 | `dependency_analyzer.py` | Unused/phantom dep checker | `python .agent/scripts/dependency_analyzer.py . --audit` |
 | `schema_validator.py` | DB schema validator | `python .agent/scripts/schema_validator.py .` |
 | `bundle_analyzer.py` | JS/TS bundle size analyzer | `python .agent/scripts/bundle_analyzer.py . --build` |
+| `strengthen_skills.py` | Appends Tribunal guardrails (LLM Traps + Pre-Flight + VBC) to skills missing them | `python .agent/scripts/strengthen_skills.py . --dry-run` |
 | `swarm_dispatcher.py` | Validate Orchestrator micro-worker JSON payloads | `python .agent/scripts/swarm_dispatcher.py --file payload.json` |
 | `skill_integrator.py` | Map active skills to executable scripts | `python .agent/scripts/skill_integrator.py` |
 | `test_swarm_dispatcher.py` | Unit tests for swarm_dispatcher | `python .agent/scripts/test_swarm_dispatcher.py` |

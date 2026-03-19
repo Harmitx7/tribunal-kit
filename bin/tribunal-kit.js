@@ -191,7 +191,6 @@ async function autoUpdateCheck(originalArgs) {
 
     if (!latestVersion) {
         // Network fail — proceed silently with current version
-        dim('Could not check for updates (offline?). Using local version.');
         return false;
     }
 
@@ -329,7 +328,8 @@ function cmdInit(flags) {
     // Check if .agent already exists
     if (fs.existsSync(agentDest) && !flags.force) {
         warn('.agent/ already exists in this project.');
-        dim('Use --force to overwrite:  tribunal-kit init --force');
+        log(`  ${c('gray', '▸')} To refresh or update it, run: ${colorize('white', 'tribunal-kit init --force')}`);
+        log(`  ${c('gray', '▸')} Or check status with:    ${colorize('cyan', 'tribunal-kit status')}`);
         console.log();
         process.exit(0);
     }

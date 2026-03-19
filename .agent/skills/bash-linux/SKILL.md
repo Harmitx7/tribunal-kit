@@ -2,6 +2,9 @@
 name: bash-linux
 description: Bash/Linux terminal patterns. Critical commands, piping, error handling, scripting. Use when working on macOS or Linux systems.
 allowed-tools: Read, Write, Edit, Glob, Grep
+version: 1.0.0
+last-updated: 2026-03-12
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # Bash & Linux Shell Patterns
@@ -160,6 +163,30 @@ main "$@"
 - `date` syntax differs between macOS BSD and Linux GNU — use `python3 -c "..."` for portable date math
 - `sed -i` needs an empty string argument on macOS: `sed -i '' 's/old/new/' file`
 - Prefer `#!/usr/bin/env bash` over `#!/bin/bash` for portability
+
+---
+
+## Output Format
+
+When this skill produces or reviews code, structure your output as follows:
+
+```
+━━━ Bash Linux Report ━━━━━━━━━━━━━━━━━━━━━━━━
+Skill:       Bash Linux
+Language:    [detected language / framework]
+Scope:       [N files · N functions]
+─────────────────────────────────────────────────
+✅ Passed:   [checks that passed, or "All clean"]
+⚠️  Warnings: [non-blocking issues, or "None"]
+❌ Blocked:  [blocking issues requiring fix, or "None"]
+─────────────────────────────────────────────────
+VBC status:  PENDING → VERIFIED
+Evidence:    [test output / lint pass / compile success]
+```
+
+**VBC (Verification-Before-Completion) is mandatory.**
+Do not mark status as VERIFIED until concrete terminal evidence is provided.
+
 
 ---
 

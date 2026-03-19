@@ -2,6 +2,9 @@
 name: testing-patterns
 description: Testing patterns and principles. Unit, integration, mocking strategies.
 allowed-tools: Read, Write, Edit, Glob, Grep
+version: 1.0.0
+last-updated: 2026-03-12
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # Testing Patterns
@@ -150,6 +153,30 @@ Coverage measures which lines are executed during tests. 100% coverage does not 
 | Script | Purpose | Run With |
 |---|---|---|
 | `scripts/test_runner.py` | Runs test suite and reports results | `python scripts/test_runner.py <project_path>` |
+
+---
+
+## Output Format
+
+When this skill produces or reviews code, structure your output as follows:
+
+```
+━━━ Testing Patterns Report ━━━━━━━━━━━━━━━━━━━━━━━━
+Skill:       Testing Patterns
+Language:    [detected language / framework]
+Scope:       [N files · N functions]
+─────────────────────────────────────────────────
+✅ Passed:   [checks that passed, or "All clean"]
+⚠️  Warnings: [non-blocking issues, or "None"]
+❌ Blocked:  [blocking issues requiring fix, or "None"]
+─────────────────────────────────────────────────
+VBC status:  PENDING → VERIFIED
+Evidence:    [test output / lint pass / compile success]
+```
+
+**VBC (Verification-Before-Completion) is mandatory.**
+Do not mark status as VERIFIED until concrete terminal evidence is provided.
+
 
 ---
 
