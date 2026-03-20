@@ -33,6 +33,21 @@
         "node": ">=18.0.0"
     },
     "scripts": {
-        "test": "echo \"No tests for CLI\" && exit 0"
+        "test": "jest --coverage",
+        "test:unit": "jest test/unit --coverage",
+        "test:integration": "jest test/integration --coverage"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0"
+    },
+    "jest": {
+        "testMatch": [
+            "**/test/**/*.test.js"
+        ],
+        "testEnvironment": "node",
+        "coverageDirectory": "coverage",
+        "collectCoverageFrom": [
+            "bin/**/*.js"
+        ]
     }
 }

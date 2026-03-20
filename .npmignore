@@ -1,0 +1,50 @@
+# Tribunal Kit — npm publish rules
+# When .npmignore exists, npm uses THIS file (not .gitignore)
+# The "files" field in package.json acts as an allowlist on top of this.
+
+# Exclude dev/debug files
+*.log
+*.txt
+out.txt
+npm_publish_log.txt
+publish_output.txt
+pack.json
+files_to_rewrite.txt
+files_utf8.txt
+skill-integration-report.md
+
+# Exclude git
+.git/
+.gitignore
+
+# Exclude OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Exclude editor configs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Exclude Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Exclude test/dev
+node_modules/
+coverage/
+.nyc_output/
+dist/
+build/
+
+# Exclude env secrets
+.env
+.env.local
+.env.production
+.env.*.local
+
+# DO NOT exclude .agent/ — it is required for tribunal-kit to function
+# npm's default behavior skips dot-folders, .npmignore overrides that

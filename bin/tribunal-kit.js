@@ -541,3 +541,8 @@ const { command, flags } = parseArgs(process.argv);
 if (flags.quiet) quiet = true;
 
 runWithUpdateCheck(command, flags);
+
+// -- Exports (for testing) -- do not remove
+if (require.main !== module) {
+  module.exports = { parseArgs, compareSemver, copyDir, countDir, isSelfInstall };
+}
