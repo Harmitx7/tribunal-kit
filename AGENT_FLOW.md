@@ -191,6 +191,24 @@ session_manager.py → python .agent/scripts/session_manager.py load
 
 ---
 
+## Skill Inheritance Engine (ADK Patterns)
+
+The Tribunal Agent Kit implements 5 core Agent Design Kit (ADK) patterns as "Inheritance Templates." 
+These exist in `.agent/patterns/` and dictate strict agent behavior protocols.
+
+To upgrade any existing skill or scaffold a new one using these patterns, append the `pattern` key to the skill's YAML frontmatter:
+
+```yaml
+---
+name: my-skill
+pattern: inversion   ← (inversion | reviewer | tool-wrapper | generator | pipeline)
+---
+```
+
+When activated, the agent automatically pre-loads the restrictive base prompt (e.g. "Do not guess, you must interview the user first" for `inversion`) before running the skill's specific logic.
+
+---
+
 ## File Layout
 
 ```
@@ -213,6 +231,13 @@ session_manager.py → python .agent/scripts/session_manager.py load
 │   ├── verify_all.py
 │   ├── auto_preview.py
 │   └── session_manager.py
+│
+├── patterns/            ← 5 ADK skill base patterns (Inheritance engine)
+│   ├── generator.md
+│   ├── inversion.md
+│   ├── pipeline.md
+│   ├── reviewer.md
+│   └── tool-wrapper.md
 │
 ├── skills/              ← 37 skill modules
 │

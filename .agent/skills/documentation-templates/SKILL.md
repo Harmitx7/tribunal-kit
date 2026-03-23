@@ -26,6 +26,23 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 ---
 
+## Skill Pattern Inheritance
+
+The Tribunal Agent Kit supports 5 standard Agent Design Kit (ADK) base patterns. 
+To build a skill using a robust, tested agent behavior model, add `pattern: [pattern-name]` to the YAML frontmatter of your `SKILL.md`.
+
+| Pattern | Value | When to use |
+|---|---|---|
+| **Inversion** | `pattern: inversion` | Forces the agent to interview the user (Socratic Gate) before acting. |
+| **Reviewer** | `pattern: reviewer` | Evaluates artifacts against a checklist and severity levels. |
+| **Tool Wrapper** | `pattern: tool-wrapper` | Strictly executes external CLI tools via provided documentation without guessing. |
+| **Generator** | `pattern: generator` | Produces structured output (docs, boilerplate) by filling a rigid template. |
+| **Pipeline** | `pattern: pipeline` | Executes sequential tasks with strict halting gates between steps. |
+
+*Templates defining the specific rules for these patterns live in `.agent/patterns/`.*
+
+---
+
 ## README Template
 
 ```markdown

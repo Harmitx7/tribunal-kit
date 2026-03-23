@@ -72,7 +72,17 @@ def validate_payload(payload_data: dict, workspace_root: Path, agents_dir: Path)
 
 
 def build_worker_prompts(payload_data: dict, workspace_root: Path) -> list:
+    import subprocess
     prompts = []
+    
+    ast_context = ""
+    try:
+        res = subprocess.run(["python", "-m", "code_review_graph", "review-delta"], cwd=workspace_root, capture_output=True, text=True)
+        if res.returncode == 0 and res.stdout.strip():
+            ast_context = "\n\n[AST Blast Radius Context]:\n" + res.stdout.strip()
+    except Exception as e:
+        logging.warning(f"code-review-graph failed: {e}")
+
     workers = payload_data.get("dispatch_micro_workers", [])
     for worker in workers:
         agent = worker.get("target_agent")
@@ -82,7 +92,7 @@ def build_worker_prompts(payload_data: dict, workspace_root: Path) -> list:
 
         prompt = f"--- MICRO-WORKER DISPATCH ---\n"
         prompt += f"Agent: {agent}\n"
-        prompt += f"Context: {ctx}\n"
+        prompt += f"Context: {ctx}{ast_context}\n"
         prompt += f"Task: {task}\n"
         prompt += f"Attached Files: {', '.join(files) if files else 'None'}\n"
         prompt += "-----------------------------"
@@ -298,7 +308,30 @@ def main():
         if not validate_swarm_payload(payload_data, agents_dir):
             logging.error("Swarm payload validation failed.")
             sys.exit(1)
+        
+        import subprocess
+        ast_context = ""
+        try:
+            res = subprocess.run(["python", "-m", "code_review_graph", "review-delta"], cwd=workspace_root, capture_output=True, text=True)
+            if res.returncode == 0 and res.stdout.strip():
+                ast_context = "\n\n[AST Blast Radius Context]:\n" + res.stdout.strip()
+        except Exception as e:
+            logging.warning(f"code-review-graph hook failed: {e}")
+
+        if ast_context:
+            items = payload_data.get("workers", payload_data) if isinstance(payload_data, dict) else payload_data
+            if isinstance(items, list):
+                for item in items:
+                    if "context" in item:
+                        item["context"] += ast_context
+            elif isinstance(items, dict) and "context" in items:
+                items["context"] += ast_context
+
         logging.info("Swarm payload validation successful.")
+        # Re-emit the enriched payload for downstream
+        if ast_context:
+            print("--- ENRICHED SWARM PAYLOAD ---")
+            print(json.dumps(payload_data, indent=2))
     else:
         # Legacy mode
         if not validate_payload(payload_data, workspace_root, agents_dir):
