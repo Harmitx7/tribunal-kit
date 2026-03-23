@@ -1,191 +1,161 @@
 <div align="center">
+  <picture>
+    <img src="./docs/image.png" alt="Tribunal Kit Logo" width="300">
+  </picture>
 
-# 🏛️ Tribunal Anti-Hallucination Agent Kit
-
-**The ultimate guardrail system for AI IDEs (Cursor, Windsurf, Antigravity)**
-
-[![npm version](https://img.shields.io/npm/v/tribunal-kit.svg?style=flat-square)](https://www.npmjs.com/package/tribunal-kit)
-[![license](https://img.shields.io/npm/l/tribunal-kit.svg?style=flat-square)](https://github.com/your-repo/tribunal-kit/blob/main/LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-
-A plug-in `.agent/` folder that upgrades your AI with **32 specialist agents**, **25 slash commands**, **8 parallel Tribunal reviewers**, and a powerful **Swarm/Supervisor** multi-agent orchestration engine.
-
+  <h1><b>TRIBUNAL—KIT</b></h1>
+  
+  <p><code>&lt; ZERO_HALLUCINATION_PROTOCOL /&gt;</code></p>
+  
+  <p>
+    <b>The ultimate guardrail system for AI-assisted coding.</b><br>
+    Built for <i>Cursor</i>, <i>Windsurf</i>, and <i>Antigravity</i>.
+  </p>
+  
+  [![NPM](https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/tribunal-kit)
+  [![License](https://img.shields.io/badge/License-MIT-8b5cf6?style=for-the-badge)](LICENSE)
 </div>
 
+<br><br>
+
+> 🚨 **AI GENERATES CODE. TRIBUNAL ENSURES IT WORKS.**  
+> A plug-in `.agent/` intelligence payload that upgrades your IDE with **32 specialist agents**, **25 slash commands**, **8 parallel Tribunal reviewers**, and a core **Swarm/Supervisor** engine.
+
 ---
 
-## ⚡ Quick Install
+<br>
 
-Get started in seconds:
+## ▓▒░ INITIATION SEQUENCE
+
+Drop Tribunal into any project. Global or local.
 
 ```bash
+# Pull the intelligence payload into your project
 npx tribunal-kit init
 ```
+*(Installs the `.agent/` architecture directly. No bloat. Pure capability.)*
 
-Or install globally to use on any project:
+> ⚠️ **CRITICAL PATH WARNING:** Do **not** let your IDE ignore the agents. If using Cursor or Windsurf, keep `.agent/` **out** of `.gitignore` so the IDE can index the commands. Use `.git/info/exclude` instead.
 
-```bash
-npm install -g tribunal-kit
-tribunal-kit init
-```
-
-> **Note:** This installs the `.agent/` folder containing all agents, workflows, skills, and scripts directly into your project.
-
----
-
-## ⚠️ Important: `.gitignore` Notice
-
-If you use AI-powered editors like **Cursor** or **Windsurf**, adding `.agent/` to your `.gitignore` may prevent the IDE from indexing the workflows. Slash commands like `/generate` or `/review` won't appear in your chat suggestion dropdown.
-
-💡 **Recommended:** Keep `.agent/` out of `.gitignore`. 
-If you want it to remain local-only, add it to your repo's exclude file instead:
-```bash
-# Add this to .git/info/exclude (not .gitignore)
-.agent/
-```
-
----
-
-## 📦 What's Included
-
-| Component | Count | Description |
-|---|:---:|---|
-| 🤖 **Agents** | **32** | Specialist AI personas including Supervisor, Worker Registry, and Contract schemas |
-| 🔄 **Workflows**| **25** | Slash command procedures including `/swarm` orchestration |
-| 🧠 **Skills** | **44** | Domain-specific knowledge modules for targeted expertise |
-| 🛠️ **Scripts** | **13** | Python utility scripts (checklist, verify, preview, session, swarm dispatcher, etc.) |
-
----
-
-## ⚙️ How It Works
-
-### 🎯 Auto-Agent Routing
-No need to mention agents explicitly. The system automatically detects and summons the right specialist for the job:
-
-> **You:** "Add JWT authentication" <br>
-> **AI:** `🤖 Applying @security-auditor + @backend-specialist...`
->
-> **You:** "Fix the dark mode button" <br>
-> **AI:** `🤖 Applying @frontend-specialist...`
->
-> **You:** "Login returns 500 error" <br>
-> **AI:** `🤖 Applying @debugger for systematic analysis...`
->
-> **You:** "/swarm build a REST API, PostgreSQL schema, and documentation" <br>
-> **AI:** `🤖 supervisor-agent → dispatching 3 Workers in parallel...`
-
-### ⚖️ The Tribunal Pipeline
-Every piece of generated code goes through rigorous, parallel reviewers before you even see it:
-
-```
-You type /generate →
-  Maker generates at low temperature →
-  Reviewers audit in parallel (logic, security, types, ...) →
-  Human Gate: you approve the diff before it writes to disk
-```
-
----
-
-## ⌨️ Slash Commands
-
-Supercharge your workflow with these built-in commands:
-
-<details open>
-<summary><b>🛠️ Core Execution</b></summary>
 <br>
 
-| Command | Description |
-|---|---|
-| `/generate` | Full Tribunal pipeline: generate → review → approve |
-| `/create` | Build new features or apps from scratch |
-| `/enhance` | Improve existing code safely without breaking it |
-| `/deploy` | 3-gate production deployment process |
+## ▓▒░ THE PIPELINE // HOW IT WORKS
+
+**Code generation is solved. Code correctness is the frontier.** We enforce a strict **Evidence-Based Closeout**.
+
+```diff
+- AI Generates -> Commits to Disk -> You Find Bugs Later
++ AI Generates -> Parallel Tribunal Review -> Human Gate -> Commits to Disk
+```
+
+### 🎯 Auto-Routing Intelligence
+No manual tagging required. The system self-organizes.
+
+<p>
+<kbd>User</kbd> "Add JWT authentication" <br>
+<kbd>System</kbd> <code>🤖 Applying @security-auditor + @backend-specialist...</code> <br><br>
+
+<kbd>User</kbd> "Fix the dark mode button" <br>
+<kbd>System</kbd> <code>🤖 Applying @ui-ux-pro-max + @frontend-specialist...</code> <br><br>
+
+<kbd>User</kbd> "/swarm build a API" <br>
+<kbd>System</kbd> <code>🤖 supervisor-agent → Dispatching 3 Workers...</code>
+</p>
+
+<br>
+
+## ▓▒░ CAPABILITY MATRIX
+
+| System Asset | Count | Operational Scope |
+| :--- | :---: | :--- |
+| 🤖 **Agents** | `32` | Specialist personas (Security, DB Architect, DevOps Responder) |
+| 🧠 **Skills** | `44` | Domain modules (Edge Computing, Red Team Tactics, WebXR) |
+| ⚡ **Workflows** | `25` | Slash command procedures including `/swarm` orchestration |
+| 🛠️ **Scripts** | `13` | CI/CD, linting, payload dispatching, test suite runners |
+
+<br>
+
+## ▓▒░ COMMAND TERMINAL
+
+Expand the accordions to view the operational commands at your disposal.
+
+<details open>
+<summary><b>🔥 CORE EXECUTION</b></summary>
+<br>
+
+| Command | Action |
+| :--- | :--- |
+| <code>/generate</code> | Trigger full Tribunal: Generate → Audit → Approve. |
+| <code>/create</code> | Scaffold major features or apps, routed by App Builder. |
+| <code>/enhance</code> | Safely extend existing structures without regression. |
+| <code>/deploy</code> | Force the 3-gate production release sequence. |
 
 </details>
 
-<details open>
-<summary><b>⚖️ Review & Audit</b></summary>
+<details>
+<summary><b>⚖️ THE TRIBUNAL GAUNTLET (REVIEWERS)</b></summary>
 <br>
+Unleash parallel reviewers on existing code.
 
-| Command | Description |
-|---|---|
-| `/review` | Audit existing code — no generation |
-| `/test` | Generate or audit tests |
-| `/tribunal-full` | Run all 8 reviewers simultaneously |
-| `/tribunal-backend` | Logic + Security + Dependency + Types |
-| `/tribunal-frontend` | Logic + Security + Frontend + Types |
-| `/tribunal-database`| Logic + Security + SQL |
-| `/tribunal-mobile` | Logic + Security + Mobile (React Native, Flutter, Web) |
-| `/tribunal-performance`| Logic + Performance (Optimization & bottlenecks) |
+| Command | Action |
+| :--- | :--- |
+| <code>/review</code> | Audit code for silent degradation and logic holes. |
+| <code>/tribunal-full</code> | Unleash **ALL 8** reviewers simultaneously. Maximum scrutiny. |
+| <code>/tribunal-backend</code> | Summons <code>[ Logic + Security + Dependency + Types ]</code> |
+| <code>/tribunal-frontend</code> | Summons <code>[ Logic + Security + Frontend + Types ]</code> |
+| <code>/tribunal-database</code> | Summons <code>[ Logic + Security + SQL ]</code> |
+| <code>/tribunal-mobile</code> | Summons <code>[ Logic + Security + Mobile ]</code> |
 
 </details>
 
-<details open>
-<summary><b>🧠 Planning & Orchestration</b></summary>
+<details>
+<summary><b>🧠 SWARM & ORCHESTRATION</b></summary>
 <br>
 
-| Command | Description |
-|---|---|
-| `/brainstorm` | Explore options before implementation |
-| `/plan` | Create a structured architectural plan file only |
-| `/orchestrate` | Multi-agent coordination for complex tasks |
-| `/swarm` | Supervisor decomposes multi-domain goals → parallel Workers → unified output |
-| `/ui-ux-pro-max` | Advanced UI/UX design workflow |
+| Command | Action |
+| :--- | :--- |
+| <code>/swarm</code> | Supervisor breaks goal → sends to isolated workers → synthesizes. |
+| <code>/orchestrate</code> | Manual multi-agent sync for complex integrations. |
+| <code>/plan</code> | Architectural mapping before a single line is written. |
+| <code>/ui-ux-pro-max</code>| Triggers peak aesthetic frontend design. |
 
 </details>
 
-<details open>
-<summary><b>🔧 Troubleshooting & Ops</b></summary>
+<details>
+<summary><b>🔧 TROUBLESHOOTING & OPS</b></summary>
 <br>
 
-| Command | Description |
-|---|---|
-| `/debug` | Systematic root-cause investigation |
-| `/preview` | Local dev server control |
-| `/status` | Tribunal session dashboard |
+| Command | Action |
+| :--- | :--- |
+| <code>/debug</code> | Systematic root-cause investigation. |
+| <code>/preview</code> | Local development server control. |
+| <code>/status</code> | View Tribunal session status. |
 
 </details>
 
----
+<br>
 
-## 💻 CLI Reference
+## ▓▒░ POST-INSTALL TELEMETRY
 
-Manage your installation directly from the terminal:
+After initialization, utility scripts unlock local ops:
 
 ```bash
-tribunal-kit init                        # Install into current directory
-tribunal-kit init --force                # Overwrite existing .agent/ folder
-tribunal-kit init --path ./my-app        # Install in specific directory
-tribunal-kit init --quiet                # Suppress output (for CI/CD)
-tribunal-kit init --dry-run              # Preview without writing files
-tribunal-kit update                      # Re-install to get latest version
-tribunal-kit status                      # Check installation status
+# 01. Pre-commit audit
+python .agent/scripts/checklist.py .
+
+# 02. Pre-deploy full suite verification
+python .agent/scripts/verify_all.py
+
+# 03. Start local development environment
+python .agent/scripts/auto_preview.py start
 ```
-
----
-
-## 🧰 Utility Scripts *(Post-install)*
-
-```bash
-python .agent/scripts/checklist.py .                  # 📋 Pre-commit audit
-python .agent/scripts/verify_all.py                   # 🚀 Pre-deploy full suite
-python .agent/scripts/auto_preview.py start           # 🌍 Start dev server
-python .agent/scripts/session_manager.py save "note"  # 💾 Save session state
-```
-
----
-
-## 🤝 Compatible IDEs
-
-| IDE | Support Level |
-|---|---|
-| **Cursor** | ✅ Reads `.agent/` automatically |
-| **Windsurf** | ✅ Reads `.agent/` automatically |
-| **Antigravity** | ✅ Native `.agent/` support |
-| **GitHub Copilot** | ✅ Manual setup: Copy `GEMINI.md` to `.github/copilot-instructions.md` |
 
 <br>
 
 <div align="center">
-  <sub>Built with ❤️ for safer, hallucination-free AI coding.</sub>
+  <br>
+  <img src="https://img.shields.io/badge/Status-Active_&_Secured-00e5ff?style=for-the-badge" alt="Status" />
+  <br><br>
+  <i>"Never guess database column names. Error handling on every async function. Evidence-based closeouts. Welcome to the Tribunal."</i><br>
+  <sub><b>MIT Licensed</b> • Hand-forged for high-performance agentic engineering.</sub>
 </div>
