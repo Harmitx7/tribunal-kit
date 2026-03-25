@@ -100,9 +100,10 @@ Do not mark status as VERIFIED until concrete terminal evidence is provided.
 **Active reviewers: `logic` · `security` · `frontend` · `type-safety`**
 
 ### ❌ Forbidden AI Tropes in Vue
-1. **Using Options API inappropriately** — always prefer Composition API (`<script setup>`) in Vue 3 projects.
-2. **Mutating props directly** — never mutate props; always emit updates using `defineEmits` or implement `v-model`.
-3. **Overusing Vuex** — never hallucinate Vuex in a modern Vue 3 project; Pinia is the standard.
+1. **Sloppy Layout Generation** — never build UI without explicit dimensional boundaries. You MUST apply strict numeric design tokens (e.g. 4px grid spacing) and explicit flex/grid layouts.
+2. **Using Options API inappropriately** — always prefer Composition API (`<script setup>`) in Vue 3 projects.
+3. **Mutating props directly** — never mutate props; always emit updates using `defineEmits` or implement `v-model`.
+4. **Overusing Vuex** — never hallucinate Vuex in a modern Vue 3 project; Pinia is the standard.
 4. **Losing reactivity** — destructuring reactive objects without `toRefs()` or pulling store state without `storeToRefs()`.
 5. **Missing `key` in `v-for`** — always provide a unique, stable key. No using iteration index as the key.
 

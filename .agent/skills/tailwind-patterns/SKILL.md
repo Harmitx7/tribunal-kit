@@ -155,6 +155,11 @@ Do not rely on Javascript to toggle simple dark modes if it can be avoided. Medi
 
 ---
 
+## UI Building Accuracy (MANDATORY)
+- **Mathematical Spacing:** Tailwind is a constraint system. You MUST use exact 4px grid steps (`p-4`, `gap-6`, `my-2`) to implement UI. Never guess spacing.
+- **Explicit Layouts:** Every container must have explicit layout boundaries (`flex items-center justify-between` or `grid cols-3 gap-4`).
+- **Boundaries:** Define constraints heavily (`w-full`, `max-w-screen-xl`, `overflow-hidden`).
+
 ## Performance Rules
 - **Layer Splitting:** `@layer components` and `@layer utilities` prevent specificity issues and allow Tailwind's engine to order CSS correctly.
 - **Do not install plugins without measuring:** Heavy plugins (like unpruned icon libraries) destroy CSS parsing times.

@@ -1,0 +1,22 @@
+﻿[1mTribunal ΓÇö security_scan.py[0m
+Project: C:\Users\sunrise\Desktop\pfojects\cli project\tribunal-kit
+Severity filter: low+
+
+  [1mXSS[0m
+    [91m[HIGH][0m coverage\lcov-report\prettify.js:2
+      Direct innerHTML assignment ΓÇö use textContent or a sanitizer
+      [95mΓåÆ window.PR_SHOULD_USE_CONTINUATION=true;(function(){var h=["break,continue,do,else,for,if,return,while"];var u=[h,"auto,c[0m
+    [91m[HIGH][0m coverage\lcov-report\sorter.js:84
+      Direct innerHTML assignment ΓÇö use textContent or a sanitizer
+      [95mΓåÆ colNode.innerHTML =[0m
+
+  [1mInfo Disclosure[0m
+    [93m[MEDIUM][0m coverage\lcov-report\prettify.js:2
+      Sensitive data logged to console
+      [95mΓåÆ window.PR_SHOULD_USE_CONTINUATION=true;(function(){var h=["break,continue,do,else,for,if,return,while"];var u=[h,"auto,c[0m
+
+[1mΓöüΓöüΓöü Security Scan Summary ΓöüΓöüΓöü[0m
+  [91mHIGH: 2[0m
+  [93mMEDIUM: 1[0m
+
+  [91m[1mΓÜá∩╕Å  2 critical/high issue(s) require immediate attention[0m

@@ -1,0 +1,31 @@
+﻿[1mTribunal ΓÇö verify_all.py[0m
+Project: C:\Users\sunrise\Desktop\pfojects\cli project\tribunal-kit
+
+
+[1m[94mΓöüΓöüΓöü 1 ΓÇö Secret Scan ΓöüΓöüΓöü[0m
+  [92mΓ£à Secret scan ΓÇö no hardcoded credentials found[0m
+
+[1m[94mΓöüΓöüΓöü 2 ΓÇö TypeScript ΓöüΓöüΓöü[0m
+  [93mΓÅ¡∩╕Å  tsc --noEmit ΓÇö tool not installed ΓÇö skipping[0m
+
+[1m[94mΓöüΓöüΓöü 3 ΓÇö ESLint ΓöüΓöüΓöü[0m
+  [93mΓÅ¡∩╕Å  ESLint ΓÇö tool not installed ΓÇö skipping[0m
+
+[1m[94mΓöüΓöüΓöü 4 ΓÇö Unit Tests ΓöüΓöüΓöü[0m
+  [93mΓÅ¡∩╕Å  Test suite ΓÇö tool not installed ΓÇö skipping[0m
+
+[1m[94mΓöüΓöüΓöü 5 ΓÇö Build ΓöüΓöüΓöü[0m
+  [93mΓÅ¡∩╕Å  npm run build ΓÇö tool not installed ΓÇö skipping[0m
+
+[1m[94mΓöüΓöüΓöü 6 ΓÇö Dependency Audit ΓöüΓöüΓöü[0m
+  [93mΓÅ¡∩╕Å  npm audit ΓÇö tool not installed ΓÇö skipping[0m
+
+[1mΓöüΓöüΓöü Summary ΓöüΓöüΓöü[0m
+  [92mΓ£à[0m Secret scan ΓÇö no hardcoded credentials found
+  [92mΓ£à[0m tsc --noEmit
+  [92mΓ£à[0m ESLint
+  [92mΓ£à[0m Test suite
+  [92mΓ£à[0m npm run build
+  [92mΓ£à[0m npm audit
+
+[92m[1mAll checks passed ΓÇö safe to deploy.[0m

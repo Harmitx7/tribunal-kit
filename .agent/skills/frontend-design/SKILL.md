@@ -162,7 +162,12 @@ All spacing and sizing in multiples of 8:
 └── Adjust based on content density
 ```
 
-### Key Sizing Principles
+### Key Sizing Principles & UI Building Accuracy
+
+To guarantee pixel-perfect accuracy, you must enforce explicit building rules when passing designs to code:
+1. **Never Hallucinate Spacing:** Use exact numeric styling scales (e.g., a 4px grid: `p-4`, `gap-8`, `m-2`). Do NOT use vague terms like "large padding".
+2. **Explicit Layout Boundaries:** Always define `flex`, `grid`, and strict alignment. Never rely on browser auto-margins to guess structure.
+3. **Dimensions:** Explicitly define bounding boxes where applicable (`w-full`, `max-w-7xl`).
 
 | Element | Consideration |
 |---------|---------------|

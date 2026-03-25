@@ -83,9 +83,10 @@ Do not mark status as VERIFIED until concrete terminal evidence is provided.
 **Active reviewers: `logic` · `security` · `frontend` · `type-safety`**
 
 ### ❌ Forbidden AI Tropes in React
-1. **Unnecessary `useEffect` Data Fetching** — never fetch raw data inside a `useEffect` if a framework pattern (Server Components, SWR, React Query) is available.
-2. **Missing `key` in maps** — always provide a unique, stable key. No using iteration index as the key.
-3. **Prop Drilling Nightmare** — avoid passing props more than 3 levels deep; use Context or atomic stores (Zustand) instead.
+1. **Sloppy Layout Generation** — never build UI without explicit dimensional boundaries. You MUST apply strict numeric design tokens (e.g. 4px grid spacing) and explicit flex/grid layouts.
+2. **Unnecessary `useEffect` Data Fetching** — never fetch raw data inside a `useEffect` if a framework pattern (Server Components, SWR, React Query) is available.
+3. **Missing `key` in maps** — always provide a unique, stable key. No using iteration index as the key.
+4. **Prop Drilling Nightmare** — avoid passing props more than 3 levels deep; use Context or atomic stores (Zustand) instead.
 4. **Over-Memoization** — do not slap `useMemo`/`useCallback` on everything prematurely. Only use it when profiling proves a performance bottleneck.
 5. **Class Components** — never hallucinate class `extends React.Component` or lifecycle methods (`componentDidMount`) in a modern React 18+ app unless explicitly requested for legacy migration.
 

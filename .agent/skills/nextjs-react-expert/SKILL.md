@@ -184,9 +184,10 @@ Do not mark status as VERIFIED until concrete terminal evidence is provided.
 
 ### ❌ Forbidden AI Tropes in Next.js/React
 
-1. **`"use client"` on everything** — do not convert Server Components to Client unless interaction/state is strictly required.
-2. **`getServerSideProps` in App Router** — never hallucinate legacy Pages router data fetching in an App Router context.
-3. **Unnecessary `useEffect` fetching** — always prefer Server Components or SWR/React Query for data fetching.
+1. **Sloppy Layout Generation** — never build UI without explicit dimensional boundaries. You MUST apply strict numeric design tokens (e.g. 4px grid spacing) and explicit flex/grid layouts.
+2. **`"use client"` on everything** — do not convert Server Components to Client unless interaction/state is strictly required.
+3. **`getServerSideProps` in App Router** — never hallucinate legacy Pages router data fetching in an App Router context.
+4. **Unnecessary `useEffect` fetching** — always prefer Server Components or SWR/React Query for data fetching.
 4. **Vercel clones** — do not default to generic black/white Vercel aesthetics unless instructed.
 5. **Missing `key` in maps** — always provide a unique, stable key. No using iteration index as the key.
 

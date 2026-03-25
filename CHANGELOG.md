@@ -6,6 +6,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.4.5] — 2026-03-25
+
+### Added
+- **`appflow-wireframe` Skill**: New skill enabling Mermaid-based logical flow mapping and Tribunal Structural XML for wireframing explicit layout hierarchies.
+
+### Changed
+- **UI Building Accuracy Enforcement**: Injected strict structural constraints and pixel-perfect design token mandates (4px grid) into 7 core frontend/UI skills to eliminate AI spacing hallucinations.
+
+### Documentation
+- Redesigned the main README with the Tribunal-Kit logo and improved UI/UX aesthetics.
+
+---
+
 ## [2.4.0] — 2026-03-05
 
 ## [2.4.1] — 2026-03-09

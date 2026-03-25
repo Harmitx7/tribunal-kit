@@ -113,6 +113,11 @@ Touch screens are wildly imprecise.
 
 ---
 
+## 📏 UI Building Accuracy
+
+- **Mathematical Layouts:** Mobile layouts require mathematical precision to prevent layout shifts. You MUST use exact spacing multiples (e.g., 4px/8px grids).
+- **Strict Containers:** Explicitly define `flex-1`, `align-items`, and `justify-content` on every view layer. Never let RN guess the intrinsic size.
+
 ## ⚡ Performance Extremis (Quick Reference)
 
 ### 120Hz Animation Mandate
