@@ -57,3 +57,6 @@ coverage/
 # Logs
 logs/
 *.log
+
+# Ignore script results
+*_results*.txt
