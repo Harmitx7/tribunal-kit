@@ -1,6 +1,6 @@
 {
     "name": "tribunal-kit",
-    "version": "2.4.5",
+    "version": "2.4.6",
     "description": "Anti-Hallucination AI Agent Kit — 33 specialist agents, 25 slash commands, Swarm/Supervisor engine, and Tribunal review pipeline for Cursor, Windsurf, and Antigravity.",
     "keywords": [
         "ai",

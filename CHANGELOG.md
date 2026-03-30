@@ -6,6 +6,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [2.4.6] — 2026-03-30
+
+### Added
+- **12 New AI Skills**: Added dedicated skill guidelines for `ai-prompt-injection-defense`, `api-security-auditor`, `authentication-best-practices`, `building-native-ui`, `extract-design-system`, `framer-motion-animations`, `playwright-best-practices`, `shadcn-ui-expert`, `skill-creator`, `supabase-postgres-best-practices`, `swiftui-expert`, and `web-accessibility-auditor`.
+
+### Changed
+- **Skill Integrator Compatibility**: Modified `appflow-wireframe` and `readme-builder` to strengthen Tribunal anti-hallucination guards.
+
+---
+
 ## [2.4.5] — 2026-03-25
 
 ### Added

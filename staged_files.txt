@@ -1,0 +1,14 @@
+A	.agent/skills/ai-prompt-injection-defense/SKILL.md
+A	.agent/skills/api-security-auditor/SKILL.md
+M	.agent/skills/appflow-wireframe/SKILL.md
+A	.agent/skills/authentication-best-practices/SKILL.md
+A	.agent/skills/building-native-ui/SKILL.md
+A	.agent/skills/extract-design-system/SKILL.md
+A	.agent/skills/framer-motion-animations/SKILL.md
+A	.agent/skills/playwright-best-practices/SKILL.md
+M	.agent/skills/readme-builder/SKILL.md
+A	.agent/skills/shadcn-ui-expert/SKILL.md
+A	.agent/skills/skill-creator/SKILL.md
+A	.agent/skills/supabase-postgres-best-practices/SKILL.md
+A	.agent/skills/swiftui-expert/SKILL.md
+A	.agent/skills/web-accessibility-auditor/SKILL.md
