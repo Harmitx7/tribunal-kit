@@ -1,20 +1,15 @@
 <div align="center">
   <picture>
-    <img src="./docs/image.png" alt="Tribunal Kit Logo" width="300">
+    <img src="./docs/logo.png" alt="TribunalKit — Code Without Hallucinations" width="480">
   </picture>
 
-  <h1><b>TRIBUNAL—KIT</b></h1>
-  
-  <p><code>&lt; ZERO_HALLUCINATION_PROTOCOL /&gt;</code></p>
-  
-  <p>
-    <b>The ultimate guardrail system for AI-assisted coding.</b><br>
-    Built for <i>Cursor</i>, <i>Windsurf</i>, and <i>Antigravity</i>.
-  </p>
-  
+  <br><br>
+
   [![NPM](https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/tribunal-kit)
   [![License](https://img.shields.io/badge/License-MIT-8b5cf6?style=for-the-badge)](LICENSE)
+  [![Version](https://img.shields.io/badge/Version-3.0.0-black?style=for-the-badge)](CHANGELOG.md)
 </div>
+
 
 <br><br>
 
@@ -68,10 +63,11 @@ No manual tagging required. The system self-organizes.
 
 | System Asset | Count | Operational Scope |
 | :--- | :---: | :--- |
-| 🤖 **Agents** | `32` | Specialist personas (Security, DB Architect, DevOps Responder) |
-| 🧠 **Skills** | `44` | Domain modules (Edge Computing, Red Team Tactics, WebXR) |
-| ⚡ **Workflows** | `25` | Slash command procedures including `/swarm` orchestration |
-| 🛠️ **Scripts** | `13` | CI/CD, linting, payload dispatching, test suite runners |
+| 🤖 **Agents** | `33` | Specialist personas (Security, DB Architect, DevOps Responder, QA Engineer) |
+| 🧠 **Skills** | `77` | Domain modules (Edge Computing, Red Team Tactics, GSAP, Framer Motion) |
+| ⚡ **Workflows** | `30` | Slash command procedures including `/swarm`, `/tribunal-full`, `/ui-ux-pro-max` |
+| 🛠️ **Scripts** | `16` | CI/CD, linting, payload dispatching, security scanning, test suite runners |
+
 
 <br>
 
@@ -100,7 +96,7 @@ Unleash parallel reviewers on existing code.
 | Command | Action |
 | :--- | :--- |
 | <code>/review</code> | Audit code for silent degradation and logic holes. |
-| <code>/tribunal-full</code> | Unleash **ALL 8** reviewers simultaneously. Maximum scrutiny. |
+| <code>/tribunal-full</code> | Unleash **ALL 11** reviewers simultaneously. Maximum scrutiny. |
 | <code>/tribunal-backend</code> | Summons <code>[ Logic + Security + Dependency + Types ]</code> |
 | <code>/tribunal-frontend</code> | Summons <code>[ Logic + Security + Frontend + Types ]</code> |
 | <code>/tribunal-database</code> | Summons <code>[ Logic + Security + SQL ]</code> |
