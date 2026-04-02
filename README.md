@@ -1,6 +1,6 @@
 <div align="center">
   <picture>
-    <img src="./docs/logo.png" alt="TribunalKit — Code Without Hallucinations" width="480">
+    <img src="./docs/tribunalkit_no_bg.png" alt="TribunalKit — Code Without Hallucinations" width="480">
   </picture>
 
   <br><br>
