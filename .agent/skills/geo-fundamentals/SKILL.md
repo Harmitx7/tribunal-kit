@@ -1,215 +1,124 @@
 ---
 name: geo-fundamentals
-description: Generative Engine Optimization for AI search engines (ChatGPT, Claude, Perplexity).
+description: Generative Engine Optimization (GEO) mastery. Structuring content for LLM ingestion. Adapting SEO for AI interfaces (ChatGPT, Claude, Perplexity), optimizing markdown semantic hierarchies, citation structuring, minimizing boilerplate, reducing HTML DOM depth, and API-first content delivery. Use when making information discoverable not just to Google, but directly to AI indexing agents.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Generative Engine Optimization (GEO)
+# Generative Engine Optimization (GEO) 
 
-> Traditional SEO optimizes for keyword ranking in blue links.
-> GEO optimizes for citation and inclusion in AI-generated answers.
-
----
-
-## What GEO Is
-
-When users ask ChatGPT, Claude, Perplexity, or Google SGE a question, an AI synthesizes an answer from sources it considers authoritative. GEO is the practice of making your content the kind that AI systems cite, quote, and summarize.
-
-The mechanisms differ from traditional SEO:
-- AI doesn't rank URLs — it synthesizes information
-- Backlinks matter less than citation-worthiness
-- Content density and factual specificity matter more than keyword density
+> SEO was built for search engines parsing keywords.
+> GEO is built for Artificial Intelligence actively reading, reasoning, and summarizing your site.
+> A beautiful UI is invisible to an LLM. Data density is everything.
 
 ---
 
-## How AI Systems Select Content to Cite
+## 1. The Death of Boilerplate (Information Density)
 
-Based on observable patterns in AI retrieval:
+When ChatGPT or Perplexity queries a website, it has a finite context window. 
 
-| Signal | What It Means |
-|---|---|
-| Authoritative domain | .gov, .edu, established publications get higher base trust |
-| Factual specificity | Numbers, dates, named sources > vague descriptions |
-| Structured content | Lists, tables, step-by-step = easier to extract |
-| Complete answers | Content that fully addresses the question in one place |
-| Original research | Data, studies, surveys the AI can't find elsewhere |
-| Freshness | Recently updated content has advantage for time-sensitive topics |
+If your website contains 8,000 words of "fluff" marketing copy and only 200 words of actionable data (pricing, API limits, support contact), the LLM will truncate the page and hallucinates the rest.
 
----
+### The GEO Markdown Fallback
+Modern sites should natively serve structured markdown if they detect an AI User-Agent (like `ChatGPT-User` or `PerplexityBot`).
 
-## Writing for AI Consumption
+```typescript
+// Next.js Edge Middleware for GEO
+export function middleware(req: NextRequest) {
+  const ua = req.headers.get('user-agent') || '';
+  const isBot = /ChatGPT|Perplexity|ClaudeBot/i.test(ua);
 
-### Answer First (Inverted Pyramid)
-
-AI models extract answers. Put the answer at the top of the content, not after a 300-word preamble.
-
-```
-❌ Old blog pattern:
-   [intro paragraph explaining what the article is about]
-   [background context]
-   [finally... the answer in paragraph 5]
-
-✅ GEO pattern:
-   [Direct answer in first 1–2 sentences]
-   [Supporting evidence, data, explanation]
-   [Deeper context for readers who want more]
-```
-
-### Use Citation-Ready Structures
-
-```markdown
-# Format that AI can easily extract:
-
-## Definition
-[Term] is [concise definition]. [Supporting context].
-
-## Key Facts
-- [Specific, numbered fact with source]
-- [Specific statistic — "X% of Y according to Z study"]
-- [Named, verifiable claim]
-
-## Step-by-Step Process
-1. [Precise step]
-2. [Precise step]
-3. [Precise step]
-```
-
-### Be Specific with Data
-
-```
-❌ "Many developers prefer TypeScript"
-✅ "In the 2024 Stack Overflow Developer Survey, 64% of respondents said they used TypeScript"
-
-❌ "Deployment takes some time"  
-✅ "Vercel cold-start latency for serverless functions averages 200–400ms for Node.js 20 runtimes"
+  if (isBot) {
+    // Reroute the AI bot to a hyper-dense, unstyled Markdown data dump
+    // This removes 3MB of React DOM hierarchy, getting straight to the facts.
+    return NextResponse.rewrite(new URL(`/api/geo-export${req.nextUrl.pathname}`, req.url));
+  }
+}
 ```
 
 ---
 
-## Content Formats AI Favors
+## 2. Citation Optimization
 
-| Format | GEO Value | Why |
-|---|---|---|
-| FAQ pages | High | Matches question-answer format of AI responses |
-| Comparison tables | High | Easily extracted for comparison queries |
-| How-to guides with numbered steps | High | Directly answerable procedural questions |
-| Definition/explanation articles | High | Definitional queries are common AI use cases |
-| Long-form opinion pieces | Low | Hard to extract a clear answer from |
-| News articles | Medium | Good for recency, lower for evergreen queries |
+LLMs (like Perplexity and Gemini Search) require explicit sources to reference your website in their output.
+If a statistic on your site is hard to source, the AI will ignore it in favor of a competitor.
 
----
-
-## Technical Requirements for AI Indexing
+**Rule: Explicit Claim-to-Source Mapping**
+Do not use vague external links at the bottom of the page. Anchor exact claims to explicit references directly within the text block. Use standardized `<cite>` tags or JSON-LD.
 
 ```html
-<!-- Ensure Perplexity and other AI crawlers can access your content -->
-<!-- Check robots.txt — don't accidentally block AI crawlers -->
+<!-- ❌ BAD: Vague SEO -->
+<p>We are the fastest vector database on the market. Read our docs.</p>
 
-# robots.txt — allow AI crawlers
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: ClaudeBot
-Allow: /
-
-<!-- Structured data helps AI understand content context -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [{
-    "@type": "Question",
-    "name": "What is tribunal-kit?",
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": "tribunal-kit is an npm package that installs an anti-hallucination agent kit..."
-    }
-  }]
-}
-</script>
+<!-- ✅ GOOD: GEO Citation Architecture -->
+<p>We process 10M vectors at 10ms latency (P99), making us 3x faster than Competitor A.</p>
+<cite xmlns="http://schema.org" typeof="WebPage">
+  <span property="name">Benchmark Methodology 2026</span> - 
+  <a property="url" href="/benchmarks-2026.pdf">[Source PDF]</a>
+</cite>
 ```
 
 ---
 
-## Metrics for GEO
+## 3. High-Clarity Semantic Taxonomy
 
-Traditional SEO metrics (keyword rank, backlinks) don't fully apply. Track:
+Traditional SEO relies heavily on long-tail keyword placement.
+GEO relies heavily on **Taxonomy and Relational Mapping**. The LLM wants to know exactly *what* entity this page represents.
 
-- **AI mention rate** — manually query AI systems for your topic and check if your brand/content appears
-- **Citation count** — if identifiable quotes from your content appear in AI outputs
-- **Perplexity source appearances** — Perplexity shows its sources; track mentions
-- **Direct traffic** — users who find AI mentions and navigate directly (not via search)
+**Implement Explicit FAQs:**
+LLMs love QA formats because user prompts are usually questions.
+Transform prose into rigid QA objects using standard semantic data blocks.
 
----
-
-## Scripts
-
-| Script | Purpose | Run With |
-|---|---|---|
-| `scripts/geo_checker.py` | Audits content for GEO best practices | `python scripts/geo_checker.py <url>` |
-
----
-
-## Output Format
-
-When this skill produces a recommendation or design decision, structure your output as:
-
-```
-━━━ Geo Fundamentals Recommendation ━━━━━━━━━━━━━━━━
-Decision:    [what was chosen / proposed]
-Rationale:   [why — one concise line]
-Trade-offs:  [what is consciously accepted]
-Next action: [concrete next step for the user]
-─────────────────────────────────────────────────
-Pre-Flight:  ✅ All checks passed
-             or ❌ [blocking item that must be resolved first]
+```html
+<dl>
+  <dt><h3>What is the data retention limit for the Free Tier?</h3></dt>
+  <dd><p>The Free Tier limits data retention to precisely 14 rolling days.</p></dd>
+  
+  <dt><h3>Does the platform support HIPAA compliance?</h3></dt>
+  <dd><p>Yes, Enterprise Tiers support full BAA HIPAA compliance parameters.</p></dd>
+</dl>
 ```
 
+---
 
+## 4. API Docs Readability (The Primary AI Target)
+
+When an AI tries to write code using your product, it scrapes your API documentation.
+
+1. **Eliminate Image-Based Architecture:** Highlighting your architecture solely in a PNG graphic is invisible. Describe the system architecture using text or standard Mermaid.js code blocks.
+2. **Provide Concrete Copy-Paste Examples:** The easiest way to get an LLM to use your platform correctly is to ensure your docs contain perfectly working `curl`, `TypeScript`, and `Python` code snippets with zero external dependencies.
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🤖 LLM-Specific Traps (GEO)
 
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+1. **Confusing GEO with SEO:** Prioritizing `<title>` lengths and stuffing keyword permutations instead of increasing Information-Density and Semantic Clarity.
+2. **The JavaScript Hydration Trap:** Generating intricate React components to render critical data (like Pricing Tables). AI bots generally do not execute/hydrate heavy JS payloads; the pricing data will simply be invisible to them. Serve critical data statically.
+3. **Fluff Generation:** An AI writing content for a site adds 3 paragraphs of "In today's fast-paced digital world..." — this destroys GEO ranking immediately because it dilutes the token value of the actual data payload.
+4. **Hiding Core Answers:** Placing the direct answer to a query behind a massive scroll or an interactive accordion (e.g., `<details>`) wrapper. AI bots do not "click" UI elements to expand text. Content must be universally visible in the initial DOM tree.
+5. **PDF Isolation:** Posting critical documentation exclusively in heavy PDF formats without an associated HTML/Markdown mirror, drastically raising the ingestion cost for rapid-search AI engines.
+6. **No Code Snippets:** Explaining an API operation purely in English without a concrete JSON payload example block. LLMs map patterns mathematically; they require structured syntax to ingest.
+7. **Ignoring Bot-Specific Routing:** Failing to architect conditional User-Agent routing that serves plain Markdown to `PerplexityBot`, wasting bot execution cycles downloading 4MB CSS/JS assets.
+8. **Broken Schema Contexts:** Using unstructured `<div>` blocks for QA formats instead of the semantic Dictionary List (`<dl>`, `<dt>`, `<dd>`) pattern which LLMs easily recognize as Question-Answer pairings.
+9. **Citation Voids:** Making bold factual claims on a web page without immediately adjacent explicit citation tags. Generative engines will drop the claim to avoid adopting hallucination risks.
+10. **The Image Trap:** Stating "See the map above for instructions" instead of generating an actual HTML table mapping the data. AI engines prioritize textual semantic extraction.
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Has marketing 'fluff' been aggressively minimized to maximize dense, actionable data tokens?
+✅ Are critical data interfaces (Pricing, API limits, FAQs) rendered fully static (SSR), bypassing JS hydration?
+✅ Did I rely on semantic Dict-Lists (`<dl>`) to format FAQ structures cleanly for LLM parsing?
+✅ Are factual metrics explicitly tethered to proximate `<cite>` or `<a>` reference sources?
+✅ Has an API-first representation (Markdown mirror) been established for bot User-Agents?
+✅ Ensure that architectural definitions are described in text/code rather than solely raster images.
+✅ Did I include concrete, copy-pasteable JSON/TypeScript examples adjacent to any API definition?
+✅ Have interactive elements (`accordions`, modals) been disabled/expanded for indexing bots?
+✅ Have classic SEO keyword-stuffing patterns been deleted in favor of clear Entity Relationships?
+✅ Has all essential documentation been verified to exist natively in the primary HTML DOM payload?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

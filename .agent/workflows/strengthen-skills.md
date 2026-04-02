@@ -1,99 +1,139 @@
 ---
-description: Strengthen skills by appending Tribunal guardrails (LLM Traps, Pre-Flight checklist, VBC Protocol) to any SKILL.md missing them.
+description: Strengthen skills by appending Tribunal guardrails (LLM Traps, Pre-Flight checklist, VBC Protocol) to any SKILL.md missing them. Reads each skill, checks for guardrails, appends if missing, skips if present.
 ---
 
-# /strengthen-skills Workflow
+# /strengthen-skills — Skill Hardening Pipeline
 
-Use this command to audit and harden all skills in `.agent/skills/` that are missing
-the standard Tribunal guardrails block.
-
----
-
-## What It Does
-
-Runs `strengthen_skills.py` against all skill files.  
-For each skill it checks:
-
-1. **Tribunal Integration section** — does it have `🏛️ Tribunal Integration`?
-2. **VBC Protocol** — does it have `Verification-Before-Completion`?
-
-Skills missing either are strengthened by appending the full canonical block:
-- `## 🤖 LLM-Specific Traps`
-- `## 🏛️ Tribunal Integration (Anti-Hallucination)`
-  - Forbidden AI Tropes
-  - Pre-Flight Self-Audit checklist
-  - VBC Protocol
-
-Skills that already have both sections are skipped automatically.
+$ARGUMENTS
 
 ---
 
-## Steps
+## When to Use /strengthen-skills
 
-### Step 1 — Dry Run (Always First)
-
-```powershell
-python .agent/scripts/strengthen_skills.py . --dry-run
-```
-
-Review the output. All lines prefixed with `⚠️ [DRY RUN]` are skills that would be strengthened.
-
-> **Human Gate:** If the dry-run output looks correct, continue to Step 2.
-> If unexpected skills are listed, investigate before proceeding.
+| Use `/strengthen-skills` when... | |
+|:---|:---|
+| New skills were just created | Append guardrails |
+| Auditing existing skills | Check which are missing guardrails |
+| After adding skills from external sources | Harden before activating |
 
 ---
 
-### Step 2 — Strengthen All Skills
+## Phase 1 — Skill Inventory
 
-```powershell
-python .agent/scripts/strengthen_skills.py .
+```bash
+# Find all SKILL.md files
+find .agent/skills/ -name "SKILL.md" | sort
+
+# Count total
+find .agent/skills/ -name "SKILL.md" | wc -l
 ```
 
 ---
 
-### Step 3 — Verify Summary
+## Phase 2 — Guardrail Check
 
-The script prints a final summary:
-```
-✅ Strengthened: N
-⏭️  Skipped:     N
-❌ Errors:       0
-```
+For each SKILL.md, check if it already has guardrails:
 
-Errors must be zero before proceeding. If any errors appear, fix them and re-run.
+```bash
+# Check which skills are MISSING LLM Trap table
+grep -rL "LLM Trap\|LLM Traps\|\*\*Trap\|TRAP TABLE" .agent/skills/*/SKILL.md
 
----
+# Check which skills are MISSING Pre-Flight checklist
+grep -rL "Pre-Flight\|Pre-flight\|Preflight\|Self-Audit" .agent/skills/*/SKILL.md
 
-### Step 4 — Strengthen a Single Skill (Optional)
-
-To strengthen one specific skill only:
-
-```powershell
-python .agent/scripts/strengthen_skills.py . --skill <skill-name>
-```
-
-Example:
-```powershell
-python .agent/scripts/strengthen_skills.py . --skill brainstorming
+# Check which skills are MISSING VBC Protocol
+grep -rL "VBC\|Verify.*Build.*Confirm\|verify.*build.*confirm" .agent/skills/*/SKILL.md
 ```
 
 ---
 
-### Step 5 — Custom Skills Directory (Optional)
+## Phase 3 — Append Guardrails (For Missing Skills Only)
 
-If skills live in a non-standard location:
+For each skill missing guardrails, append the three sections:
 
-```powershell
-python .agent/scripts/strengthen_skills.py . --skills-path /path/to/skills
+```markdown
+---
+
+## 🚨 LLM Trap Table
+
+| Pattern | What AI Does Wrong | What Is Actually Correct |
+|:---|:---|:---|
+| [domain-specific trap 1] | [hallucination] | [correct behavior] |
+| [domain-specific trap 2] | [hallucination] | [correct behavior] |
+| [domain-specific trap 3] | [hallucination] | [correct behavior] |
+
+---
+
+## ✅ Pre-Flight Self-Audit
+
+Before producing any output, verify:
+```
+✅ Did I read the actual files before making claims about them?
+✅ Did I verify all method names against official documentation?
+✅ Did I add // VERIFY: on any uncertain API calls?
+✅ Are all imports from packages that actually exist in package.json?
+✅ Did I test my logic with edge cases (null, empty, 0, max)?
+✅ Did I avoid generating code for more than one module at a time?
+✅ Am I working from evidence, not assumption?
 ```
 
 ---
 
-## Related Commands
+## 🔁 VBC Protocol (Verify → Build → Confirm)
 
-| Command | Purpose |
-|---|---|
-| `/audit` | Full project health audit (includes skills review) |
-| `python .agent/scripts/patch_skills_meta.py .` | Inject version/freshness metadata into frontmatter |
-| `python .agent/scripts/patch_skills_output.py .` | Add Output Format sections to skills missing them |
-| `python .agent/scripts/config_validator.py .` | Validate all agent config consistency |
+```
+VERIFY:  Read the actual codebase before writing anything
+BUILD:   Generate the smallest meaningful unit of code
+CONFIRM: Verify the output is correct before presenting
+```
+```
+
+---
+
+## Phase 4 — Report
+
+After processing all skills:
+
+```
+━━━ Skill Strengthening Report ━━━━━━━━━━━━
+
+Total skills found:     [N]
+Already have guardrails: [N] (skipped)
+Guardrails added:       [N]
+Failed:                  [N]
+
+━━━ Strengthened Skills ━━━━━━━━━━━━━━━━━━
+✅ [skill-name] — LLM Trap + Pre-Flight + VBC added
+✅ [skill-name] — LLM Trap + Pre-Flight + VBC added
+
+━━━ Already Hardened (Skipped) ━━━━━━━━━━━
+⏭️ [skill-name]
+⏭️ [skill-name]
+```
+
+---
+
+## Guardrail Quality Guidelines
+
+LLM Trap tables should be domain-specific — not generic:
+
+```
+❌ Generic (useless):
+"Don't use wrong method names"
+
+✅ Specific (valuable):
+"React 19: useFormState() was renamed to useActionState(). 
+  AI generates old name — import fails at runtime."
+```
+
+The Pre-Flight checklist should match the skill's specific domain — add domain-specific checks beyond the universal ones.
+
+---
+
+## Usage Examples
+
+```
+/strengthen-skills              → Check and harden all skills
+/strengthen-skills nextjs-react-expert → Harden only this skill
+/strengthen-skills --check-only → Audit without modifying
+```

@@ -10,7 +10,7 @@ description: Electron desktop app template principles. Cross-platform, React, Ty
 | Component | Technology |
 |-----------|------------|
 | Framework | Electron 28+ |
-| UI | React 18 |
+| UI | React 19 |
 | Language | TypeScript |
 | Styling | Tailwind CSS |
 | Bundler | Vite + electron-builder |

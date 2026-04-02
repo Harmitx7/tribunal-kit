@@ -1,163 +1,160 @@
 ---
-description: Migration workflow for framework upgrades, dependency bumps, and database migrations.
+description: Migration workflow for framework upgrades, dependency bumps, and database migrations. Impact analysis first, expand-and-contract for DB, dependency compatibility matrix before upgrading, rollback tested before deploy.
 ---
 
-# /migrate — Version & Schema Migration
+# /migrate — Safe Migration Execution
 
 $ARGUMENTS
 
 ---
 
-This command structures any migration operation — upgrading framework versions, bumping major dependencies, or running database migrations — to minimize breakage and ensure a clear rollback path.
-
----
-
-## When to Use /migrate vs Other Commands
+## When to Use /migrate
 
 | Use `/migrate` when... | Use something else when... |
-|---|---|
-| Upgrading a framework (Next.js 14 → 15) | Minor patch bumps → update `package.json` directly |
-| Bumping dependencies with breaking changes | Bug from a recent upgrade → `/debug` |
-| Creating or running database migrations | Adding a feature to existing schema → `/enhance` |
-| Switching tools entirely (Jest → Vitest) | Code restructuring only → `/refactor` |
+|:---|:---|
+| Upgrading Next.js major version | Adding a feature → `/enhance` |
+| Upgrading React version | Schema change in existing rows → `/migrate` |
+| Database schema structural change | Simple column add → `/enhance` |
+| Changing auth libraries (next-auth v4 → v5) | Dependency patches → `/fix` |
+| Removing deprecated APIs at scale | |
 
 ---
 
 ## Migration Types
 
-| Type | Examples | Key Risk |
-|---|---|---|
-| Framework major version | Next.js 14→15, React 18→19 | Removed APIs, new routing conventions |
-| Dependency breaking change | Lodash 4→5, Axios 1→2 | Changed method signatures |
-| Tool migration | Jest → Vitest, CRA → Vite | Config format, different globals |
-| Database migration | Prisma schema change, SQL column add | Data loss, downtime |
-| Language version | Python 3.10 → 3.12, Node 18 → 22 | Behavior changes, removed builtins |
-
----
-
-## What Happens
-
-### Stage 1 — Inventory Breaking Changes
-
-Before touching any code:
-
 ```
-□ What is the migration? (from X to Y)
-□ Is there an official migration guide? (read it before proceeding)
-□ What are the documented breaking changes? (read the changelog)
-□ Which files in the codebase are affected? (grep for imports, config references)
-□ Is there a rollback path? (git branch, database backup, rollback command)
-□ Is the migration reversible? (some DB migrations are one-way)
-```
+Type A: Framework upgrade (Next.js 14 → 15, React 18 → 19)
+  → Audit breaking changes, update callsites, run Tribunal
+  
+Type B: Dependency major version (Prisma 5 → 6, next-auth 4 → 5)
+  → Check changelog for removed APIs, update all callsites
+  
+Type C: Database schema migration (expand-and-contract)
+  → Always in 3 phases, never destructive in one step
 
-> ⚠️ **Never start a migration without reading the official migration guide first.** If none exists, read the changelog and all GitHub "breaking change" issues.
-
----
-
-### Stage 2 — Plan the Migration Path
-
-Create a sequential checklist ordered by dependency:
-
-```
-1. Update configuration files        (package.json, tsconfig, build config)
-2. Update runtime code               (imports, renamed APIs, new patterns)
-3. Handle deprecated features        (replace deprecated APIs with new equivalents)
-4. Update tests for new behavior     (new patterns, changed mocks)
-5. Run full test suite               (must pass before declaring done)
-6. Update documentation              (README, CHANGELOG)
-```
-
-Each step is a **checkpoint**. If a step fails, stop and resolve before continuing.
-
-### Stage 3 — Execute Incrementally
-
-```
-For each step in the migration plan:
-  1. Make the change
-  2. Run affected tests immediately
-  3. Verify no regressions
-  4. Commit the step (isolated commit)
-  5. Move to next step
-```
-
-**Rules:**
-- **One breaking change at a time** — never batch multiple incompatible changes
-- If a step requires more than **5 file changes**, break it into sub-steps
-- Tests run **after every step**, not just at the end
-- If a step breaks more than 5 tests, stop and reassess scope
-
-### Stage 4 — Verify Complete Migration
-
-```
-□ All tests pass
-□ Build completes without errors
-□ No remaining deprecation warnings
-□ Version updated in package.json
-□ Rollback path documented
-□ Staging environment tested (if applicable)
+Type D: Auth system migration
+  → Dual-write old + new, staged rollout, never big bang
 ```
 
 ---
 
-## Database Migration Specific
+## Phase 1 — Impact Analysis
 
-When running database migrations:
+Before any migration:
 
 ```bash
-# 1. Backup the database FIRST (even in dev)
-pg_dump mydb > backup_before_migration.sql
+# What uses the old API?
+grep -r "getServerSideProps\|getStaticProps" src/ --include="*.ts"  # Next.js pages/ to app/
+grep -r "getServerSession\|NextAuth" src/ --include="*.ts"          # next-auth v4 to v5
+grep -r "from 'next-auth'" src/ --include="*.ts"                    # Count callsites
+grep -r "prisma\.user\.findOne" src/ --include="*.ts"               # Removed Prisma APIs
 
-# 2. Run Prisma schema validation
-// turbo
-python .agent/scripts/schema_validator.py .
-
-# 3. Test migration on shadow/test database first
-npx prisma migrate dev --name [migration-name]
-
-# 4. Verify data integrity after migration
-# Run custom verification queries or check row counts
-
-# 5. Document rollback SQL
-# What command reverses this migration?
-```
-
-**One-way migrations:** If a migration drops data or columns, it may be irreversible. Document this explicitly:
-
-```
-⚠️ IRREVERSIBLE: This migration drops column `users.legacy_auth_token`.
-   Rollback: Requires restoring from backup — not possible via migrate down.
+# How many files will change?
+# Low risk: < 5 files
+# Medium risk: 5-20 files → plan each file explicitly
+# High risk: > 20 files → automate with codemods, not manual
 ```
 
 ---
 
-## Hallucination Guard
-
-- **Never invent migration steps** — only use documented migration guides and official changelogs
-- **Never assume backward compatibility** — verify each changed API against official docs
-- Flag undocumented behavior changes: `// VERIFY: migration guide does not mention this change`
-- **Do not remove deprecated code** until the replacement is verified working
-- **No version guessing** — specify exact versions, not ranges, unless the migration guide specifies
-
----
-
-## Cross-Workflow Navigation
-
-| After /migrate results show... | Go to |
-|---|---|
-| Tests broke after migration | `/debug` to find root cause |
-| Security issues in a new version's patterns | `/audit` for security-focused review |
-| New version uses different patterns everywhere | `/refactor` to bring code in line |
-| All tests pass, ready for deploy | `/deploy` following pre-flight checklist |
-
----
-
-## Usage
+## Phase 2 — Breaking Change Inventory
 
 ```
-/migrate Next.js 14 to 15
-/migrate from Jest to Vitest
-/migrate add a new database column with Prisma
-/migrate upgrade React Router from v5 to v6
-/migrate Python 3.10 to 3.12
-/migrate from REST to tRPC
+Framework Migration Breaking Changes (Next.js 14 → 15 example):
+□ params and searchParams are now Promises — must await
+□ cookies(), headers(), draftMode() are async — must await
+□ fetch() caching defaults changed (now no-store by default)
+□ Turbopack becomes default dev server (may affect custom configs)
+
+Auth Library Breaking Changes (next-auth v4 → v5):
+□ import { getServerSession } from 'next-auth' → import { auth } from './auth'
+□ Configuration file: pages/api/auth/[...nextauth].ts → auth.ts
+□ SessionProvider import path changed
+□ Callbacks API may have changed
+```
+
+---
+
+## Phase 3 — Database Migrate (Expand-and-Contract Pattern)
+
+**NEVER do destructive schema changes in a single step on live data.**
+
+```
+Step 1: EXPAND (add, never remove)
+  - Add new column (nullable)
+  - Add new table
+  - Add new foreign key
+
+Step 2: DUAL-WRITE (write to both old and new)
+  - Application writes to BOTH old_column and new_column
+  - Deploy this code before backfilling
+
+Step 3: BACKFILL (populate new structure)
+  - Fill new_column from old_column in background batches
+  - Verify: SELECT COUNT(*) WHERE new_column IS NULL should = 0
+
+Step 4: READ MIGRATION (switch reads to new)
+  - Application reads from new_column only
+  - Application still writes to both
+
+Step 5: CONTRACT (remove old)
+  - Remove writes to old_column
+  - After 1 deployment cycle → drop old_column
+```
+
+---
+
+## Phase 4 — Migration Execution Order
+
+```
+□ Create git branch: git checkout -b migrate/[description]
+□ Run tests BEFORE migration: npm test (establish baseline)
+□ Apply changes in topological order (foundation files first)
+□ Run: npx tsc --noEmit (no type errors introduced)
+□ Run: npm test (all tests still pass)
+□ Run Tribunal on changed files: /tribunal-full
+□ PR review with explicit diff
+□ Deploy to staging before production
+□ Run tests in staging
+□ Human Gate: approve production deployment
+```
+
+---
+
+## Phase 5 — Rollback Plan
+
+Before migrating production, document the rollback:
+
+```
+Rollback for code migration:
+  git revert [migration-commit]
+  git push origin main --force-with-lease
+
+Rollback for DB migration:
+  Maintain down.sql for every migration
+  Test rollback script on staging before production migration
+```
+
+---
+
+## Migration Guard
+
+```
+❌ Never rename a DB column in a single migration (breaks live app)
+❌ Never DROP a column in the same migration that adds the replacement
+❌ Never migrate production database and application code simultaneously
+❌ Never run a migration without first testing on a restored production backup
+❌ Never skip the backward-compatibility window (keep old code during transition)
+```
+
+---
+
+## Usage Examples
+
+```
+/migrate upgrade Next.js 14 to Next.js 15 App Router
+/migrate upgrade from next-auth v4 to v5 auth.js
+/migrate add a phoneNumber field to the users table
+/migrate remove the deprecated legacy_api_key column from users
+/migrate upgrade Prisma 5 to Prisma 6 and update all breaking API calls
 ```

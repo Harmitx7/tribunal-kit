@@ -1,206 +1,360 @@
 ---
 name: clean-code
-description: Pragmatic coding standards - concise, direct, no over-engineering, no unnecessary comments
+description: Clean code mastery. Naming conventions, function design, DRY vs WET, SOLID principles with code examples, refactoring patterns, code smells detection, error handling philosophy, comments that add value, and the art of simplicity. Use when reviewing code quality, refactoring, or establishing coding standards.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-01
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Clean Code Standards
+# Clean Code — The Art of Readable Software
 
-> Code is read far more than it is written. Write for the next person.
-> That person is often you, six months from now, confused.
-
----
-
-## Core Philosophy
-
-Clean code is not aesthetic. It is functional. Messy code is slow to change, easy to break, and hard to debug. These standards exist to make code **safe to modify** — not to make it look clever.
+> Clean code reads like well-written prose. If you need a comment to explain what it does, rename the function.
+> The ratio of time spent reading code to writing code is 10:1. Optimize for the reader.
 
 ---
 
 ## Naming
 
-Names are the primary documentation. Choose them seriously.
+### Variables & Functions
 
-**Rules:**
-- Variables and functions describe what they hold or do — not how they do it
-- Boolean names start with `is`, `has`, `can`, `should`
-- No single-letter names except loop counters (`i`, `j`) and throwaway lambdas
-- No abbreviations unless they are industry-wide (`url`, `id`, `dto`, `api`)
-- Name at the right level of abstraction — `user` not `userObjectFromDatabase`
-
-```ts
-// ❌ Unclear
+```typescript
+// ❌ BAD: Cryptic, abbreviated, meaningless
 const d = new Date();
-const fn = (x) => x * 1.2;
+const u = getU();
+const flag = true;
+function proc(x: number): number { return x * 1.08; }
 
-// ✅ Self-documenting
-const createdAt = new Date();
-const applyTax = (price: number) => price * 1.2;
+// ✅ GOOD: Self-documenting, reveals intent
+const registrationDate = new Date();
+const currentUser = getCurrentUser();
+const isEligibleForDiscount = true;
+function addSalesTax(price: number): number { return price * 1.08; }
+```
+
+### Booleans
+
+```typescript
+// ❌ BAD                    ✅ GOOD
+const active = true;        const isActive = true;
+const admin = false;        const hasAdminRole = false;
+const loading = true;       const isLoading = true;
+const open = false;         const isModalOpen = false;
+const valid = true;         const canSubmit = true;
+
+// Boolean function names start with is/has/can/should
+function isExpired(token: Token): boolean {}
+function hasPermission(user: User, action: string): boolean {}
+function canRetry(attempt: number): boolean {}
+function shouldNotify(event: Event): boolean {}
+```
+
+### Constants & Enums
+
+```typescript
+// ❌ BAD: Magic numbers and strings
+if (user.role === 3) { ... }
+if (retries > 5) { ... }
+const delay = 86400000;
+
+// ✅ GOOD: Named constants with meaning
+const MAX_RETRY_ATTEMPTS = 5;
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+enum UserRole {
+  VIEWER = "viewer",
+  EDITOR = "editor",
+  ADMIN = "admin",
+}
+
+if (user.role === UserRole.ADMIN) { ... }
+if (retries > MAX_RETRY_ATTEMPTS) { ... }
 ```
 
 ---
 
-## Functions
+## Function Design
 
-A function does one thing. If you need "and" to describe it, split it.
+### Small, Single-Purpose Functions
 
-- Max ~20 lines per function before questioning its scope
-- Arguments: 0–2 preferred, 3 acceptable, 4+ is a signal to use an options object
-- No boolean flags as arguments — they mean the function does two things
-- Return early to avoid nesting — guard clauses before main logic
+```typescript
+// ❌ BAD: Does 5 things in one function
+async function processOrder(order: Order) {
+  // validate
+  if (!order.items.length) throw new Error("Empty");
+  if (order.total < 0) throw new Error("Negative");
+  // calculate
+  const subtotal = order.items.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const tax = subtotal * 0.08;
+  const total = subtotal + tax;
+  // save
+  await db.orders.insert({ ...order, total });
+  // notify
+  await emailService.send(order.userId, "Order placed");
+  // log
+  logger.info("Order processed", { orderId: order.id });
+}
 
-```ts
-// ❌ Flag argument
-function createUser(data: UserData, sendEmail: boolean) { ... }
+// ✅ GOOD: Each function does one thing
+async function processOrder(order: Order): Promise<ProcessedOrder> {
+  validateOrder(order);
+  const totals = calculateTotals(order.items);
+  const savedOrder = await saveOrder(order, totals);
+  await notifyCustomer(savedOrder);
+  return savedOrder;
+}
 
-// ✅ Two clear functions
-function createUser(data: UserData) { ... }
-function createUserAndNotify(data: UserData) { ... }
+function validateOrder(order: Order): void {
+  if (!order.items.length) throw new ValidationError("Order cannot be empty");
+  if (order.total < 0) throw new ValidationError("Total cannot be negative");
+}
+
+function calculateTotals(items: OrderItem[]): OrderTotals {
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const tax = subtotal * TAX_RATE;
+  return { subtotal, tax, total: subtotal + tax };
+}
+```
+
+### Parameter Rules
+
+```typescript
+// ❌ BAD: Too many parameters
+function createUser(
+  name: string, email: string, role: string,
+  isActive: boolean, avatar: string, bio: string
+) { ... }
+
+// ✅ GOOD: Use an object for 3+ parameters
+interface CreateUserInput {
+  name: string;
+  email: string;
+  role?: UserRole;
+  isActive?: boolean;
+  avatar?: string;
+  bio?: string;
+}
+
+function createUser(input: CreateUserInput): User { ... }
+
+// ❌ BAD: Boolean parameter (caller can't read intent)
+setVisible(true);
+
+// ✅ GOOD: Named method instead
+show();
+hide();
 ```
 
 ---
 
-## Comments
+## SOLID Principles (With Code)
 
-Comments explain **why** — not **what**.
+### S — Single Responsibility
 
-- Code explains what it does. A comment explaining what code does means the code is unclear — rewrite the code.
-- Comments explain intent, business rules, non-obvious constraints, and external references
-- Never leave commented-out code in a commit. Use version control.
+```typescript
+// ❌ BAD: UserService does everything
+class UserService {
+  createUser() { ... }
+  sendEmail() { ... }
+  generateReport() { ... }
+  uploadAvatar() { ... }
+}
 
-```ts
-// ❌ Pointless comment
-// Get the user by id
-const user = await getUser(id);
+// ✅ GOOD: Separate concerns
+class UserService { createUser() { ... } }
+class EmailService { sendWelcomeEmail() { ... } }
+class ReportService { generateUserReport() { ... } }
+class AvatarService { upload() { ... } }
+```
 
-// ✅ Useful comment
-// Retry up to 3 times — payment gateway times out under load
-const result = await retry(() => chargeCard(amount), 3);
+### O — Open/Closed
+
+```typescript
+// ❌ BAD: Adding a new type requires modifying existing code
+function calculateDiscount(type: string, amount: number): number {
+  if (type === "student") return amount * 0.20;
+  if (type === "veteran") return amount * 0.15;
+  if (type === "senior") return amount * 0.10; // must modify for every new type
+  return 0;
+}
+
+// ✅ GOOD: Open for extension, closed for modification
+interface DiscountStrategy {
+  calculate(amount: number): number;
+}
+
+class StudentDiscount implements DiscountStrategy {
+  calculate(amount: number) { return amount * 0.20; }
+}
+
+class VeteranDiscount implements DiscountStrategy {
+  calculate(amount: number) { return amount * 0.15; }
+}
+
+// New types = new class, no existing code changes
+class EmployeeDiscount implements DiscountStrategy {
+  calculate(amount: number) { return amount * 0.25; }
+}
+```
+
+### D — Dependency Inversion
+
+```typescript
+// ❌ BAD: High-level module depends on low-level concrete
+class OrderService {
+  private db = new MySQLDatabase();     // coupled to MySQL
+  private mailer = new SendGridMailer(); // coupled to SendGrid
+}
+
+// ✅ GOOD: Depend on abstractions (interfaces)
+interface Database { save(data: unknown): Promise<void>; }
+interface Mailer { send(to: string, body: string): Promise<void>; }
+
+class OrderService {
+  constructor(
+    private db: Database,       // can be MySQL, Postgres, in-memory
+    private mailer: Mailer,     // can be SendGrid, SES, mock
+  ) {}
+}
 ```
 
 ---
 
 ## Error Handling
 
-Errors are part of the contract. Don't hide them.
+```typescript
+// ❌ BAD: Swallowing errors
+try {
+  await saveUser(user);
+} catch (e) {
+  // silence
+}
 
-- Every async function must handle its rejection — `try/catch` or `.catch()`
-- Log full context: what operation failed, with what input, what the error was
-- Never swallow errors silently (`catch (e) {}`)
-- User-facing error messages are different from developer error messages — don't conflate them
+// ❌ BAD: Generic catch-all
+try {
+  await processPayment(order);
+} catch (e) {
+  console.log("Something went wrong");
+}
 
----
-
-## Testing Standards
-
-Tests make refactoring safe. Without them, every change is a gamble.
-
-**AAA Pattern — every test:**
-```
-Arrange  → set up what you need
-Act      → call the thing being tested
-Assert   → verify the outcome
-```
-
-**Test pyramid:**
-- Unit tests: fast, isolated, abundant — test one function
-- Integration tests: slower, test how components interact
-- E2E tests: fewest, test the full user path
-
-**Rules:**
-- One assertion per concept (multiple `expect` calls OK if they verify the same outcome)
-- Tests must pass consistently — a flaky test is a broken test
-- Descriptive test names: `should return 401 when token is expired` not `test auth`
-
----
-
-## Performance
-
-Measure first. Optimize what is actually slow.
-
-- Profile before assuming — perceived slowness is not always where you think
-- O(n²) in a list that never exceeds 10 items is not a problem worth solving
-- Premature optimization adds complexity and creates bugs
-- Core Web Vitals are the standard for frontend performance targets (2025)
-
----
-
-## Security Baseline (Always)
-
-These are not optional:
-
-- Secrets in environment variables — never in code
-- All SQL queries parameterized — never string-interpolated
-- User input validated at every boundary — never trusted
-- Authentication checked before business logic executes
-
----
-
-## 🤖 LLM-Specific Clean Code Traps
-
-AI coding assistants (like you) fall into specific bad habits when writing code. These are strictly forbidden under the clean-code standard:
-
-1. **JSDoc/Docstring Spam:** Documenting what a function does when the code is self-evident.
-    *   *❌ AI Trait:* `/** Adds two numbers. @param a First number @param b Second number @returns The sum */ function add(a, b) { return a + b; }`
-    *   *✅ Clean Code:* `function add(a: number, b: number): number { return a + b; }`
-2. **Defensive Programming Overkill:** Adding 15 `null` checks where the TypeScript compiler or the previous tier has already guaranteed validity.
-3. **Premature Abstraction:** Creating an `AbstractDataManager` factory class with interfaces to parse a simple CSV file. Code what is needed *now*.
-4. **Variable Diarrhea:** Extracting every step of a calculation into a separate `const` when a single readable line would suffice.
-5. **Apologetic Comments:** `// TODO: Refactor this later` or `// I assumed this was the right way`. If you write it, own it. If it's incomplete, flag the user.
-
----
-
-## Output Format
-
-When this skill produces or reviews code, structure your output as follows:
-
-```
-━━━ Clean Code Report ━━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Clean Code
-Language:    [detected language / framework]
-Scope:       [N files · N functions]
-─────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [test output / lint pass / compile success]
+// ✅ GOOD: Handle specific errors, propagate unexpected
+try {
+  await processPayment(order);
+} catch (error) {
+  if (error instanceof InsufficientFundsError) {
+    return { success: false, message: "Insufficient funds" };
+  }
+  if (error instanceof PaymentGatewayError) {
+    logger.warn("Payment gateway unavailable, queuing for retry", { orderId: order.id });
+    await retryQueue.add(order);
+    return { success: false, message: "Payment processing delayed" };
+  }
+  throw error; // unexpected error — let it propagate
+}
 ```
 
-**VBC (Verification-Before-Completion) is mandatory.**
-Do not mark status as VERIFIED until concrete terminal evidence is provided.
+---
 
+## Comments
+
+```typescript
+// ❌ BAD: Comments that restate the code
+// Increment i by 1
+i++;
+
+// Set the user's name
+user.name = newName;
+
+// Check if user is active
+if (user.isActive) { ... }
+
+// ✅ GOOD: Comments that explain WHY, not WHAT
+// Tax exemption expires after 365 days per IRS Publication 334
+const isExempt = daysSinceRegistration < 365;
+
+// Using binary search here because the list is pre-sorted and
+// can contain 100K+ items. Linear search caused P95 > 2s.
+const index = binarySearch(sortedItems, target);
+
+// Retry 3 times because the payment gateway has transient 503s
+// during their daily maintenance window (02:00-02:15 UTC)
+const result = await withRetry(() => chargeCard(amount), { maxRetries: 3 });
+```
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## Code Smells → Refactoring
 
-**Slash command: `/generate`, `/review-types`**
-**Active reviewers: `logic-reviewer` · `type-safety-reviewer`**
+```
+Smell                    → Refactoring
+───────────────────────────────────────
+Long function (>30 lines) → Extract method
+Deep nesting (>3 levels)  → Early return / guard clauses
+Duplicate code            → Extract shared function
+Magic numbers             → Named constants
+Boolean parameters        → Separate methods or options object
+God class (>300 lines)    → Split into focused classes
+Feature envy              → Move method to appropriate class
+Primitive obsession       → Value objects (Email, Money, UserId)
+Long parameter list       → Parameter object
+```
 
-### ❌ Forbidden AI Tropes in Code Generation
+```typescript
+// Deep nesting → Early return
+// ❌ BAD
+function processUser(user: User) {
+  if (user) {
+    if (user.isActive) {
+      if (user.hasPermission("edit")) {
+        // actual logic buried 3 levels deep
+        doStuff();
+      }
+    }
+  }
+}
 
-1. **Over-engineering:** Solving a problem with 3 classes when 1 function works perfectly.
-2. **Commented-out code:** Submitting commented-out dead code, "just in case." Delete it.
-3. **Implicit `any` types:** Failing to strictly type a critical parameter or return value.
+// ✅ GOOD: Guard clauses — fail fast, keep happy path unindented
+function processUser(user: User) {
+  if (!user) return;
+  if (!user.isActive) return;
+  if (!user.hasPermission("edit")) return;
+
+  doStuff(); // happy path at top level
+}
+```
+
+---
+
+## 🤖 LLM-Specific Traps
+
+1. **Comments That Restate Code:** `// Set name to value` above `name = value` adds zero information.
+2. **Abbreviations Without Context:** `usr`, `mgr`, `proc`, `calc` — use full words.
+3. **Giant Functions:** If a function is >30 lines, it's doing too many things. Split it.
+4. **Boolean Parameters:** `setVisible(true)` is unreadable. Use named methods: `show()`, `hide()`.
+5. **Magic Numbers:** `if (retries > 5)` — what's 5? Use `MAX_RETRY_ATTEMPTS`.
+6. **Swallowing Errors:** `catch (e) {}` — silent failures are worse than crashes.
+7. **Generic Error Messages:** `"Something went wrong"` helps no one. Be specific.
+8. **Over-Commenting Obvious Code:** Comments should explain *why*, not *what*.
+9. **Deep Nesting:** 3+ levels of nesting → use guard clauses and early returns.
+10. **Premature Abstraction:** Don't create interfaces/abstractions until you have 2+ implementations.
+
+---
+
+## 🏛️ Tribunal Integration
+
+**Slash command: `/review`**
 
 ### ✅ Pre-Flight Self-Audit
 
-Review these questions before confirming code generation or review:
 ```
-✅ Does this function do strictly ONE thing?
-✅ Have I removed all pointless comments explaining *what* the code does?
-✅ Did I use specific, business-logic naming rather than generic abbreviations?
-✅ Are all edge cases and rejections properly handled (no swallowed errors)?
-✅ Did I avoid over-engineering this solution?
+✅ Are all names self-documenting (no abbreviations)?
+✅ Are all booleans prefixed with is/has/can/should?
+✅ Are functions <30 lines and single-purpose?
+✅ Are magic numbers replaced with named constants?
+✅ Do comments explain WHY, not WHAT?
+✅ Are errors handled specifically (not swallowed or generic)?
+✅ Is nesting ≤3 levels (using guard clauses)?
+✅ Are there no boolean parameters?
+✅ Do functions have ≤3 parameters (or use an object)?
+✅ Is there no duplicated logic?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Refactoring code or blindly applying "clean code" rules without verifying the code still compiles and works.
-- ✅ **Required:** You are explicitly forbidden from finalizing a refactor without providing **concrete terminal evidence** (e.g., passing unit tests logs, successful linting execution, or type-check success) proving the refactored code maintains the original behavior.

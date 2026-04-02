@@ -1,144 +1,112 @@
 ---
-description: Auto-generate changelogs from git history. Categorizes changes by type and follows Keep a Changelog format.
+description: Auto-generate changelogs from git history. Categorizes commits by type (feat/fix/chore/breaking) and follows Keep a Changelog format. Requires conventional commit messages for accurate categorization.
 ---
 
-# /changelog — Generate Change History
+# /changelog — Git History to Changelog
 
 $ARGUMENTS
 
 ---
 
-This command generates a structured changelog from git history. It reads real commits and categorizes them — it never invents changes that don't exist.
+## When to Use /changelog
+
+| Use `/changelog` when... | |
+|:---|:---|
+| Preparing a release | Generate for specific version range |
+| Documenting recent changes | Generate since last tag |
+| Onboarding someone to codebase history | Generate entire history |
 
 ---
 
-## When to Use This
+## Commit Convention (Required for Accuracy)
 
-- Before a release to document what changed
-- When preparing release notes for stakeholders
-- To create or update `CHANGELOG.md`
-- To summarize work completed in a sprint or between two tags
+```
+Format: <type>(<scope>): <description>
 
----
-
-## What Happens
-
-### Stage 1 — Determine Range
-
-Default range: commits since the last tag. Override with:
-
-```bash
-# Default: since last tag
-// turbo
-git log $(git describe --tags --abbrev=0)..HEAD --oneline --format="%h %ad %s" --date=short
-
-# Last N commits
-git log -n 20 --oneline --format="%h %ad %s" --date=short
-
-# Between specific tags
-git log v1.0.0..v2.0.0 --oneline --format="%h %ad %s" --date=short
-
-# Since a date
-git log --since="2025-01-01" --oneline --format="%h %ad %s" --date=short
+Types:
+  feat:     New functionality (appears in "Added")
+  fix:      Bug fix (appears in "Fixed")
+  chore:    Maintenance, deps (appears in "Changed")
+  docs:     Documentation only
+  perf:     Performance improvement (appears in "Changed")
+  refactor: Internal restructuring (appears in "Changed")
+  test:     Test-only changes
+  BREAKING CHANGE: Footer or body annotation (appears in "Breaking Changes")
 ```
 
-If no tags exist: default to last 20 commits and flag no tags found.
+---
 
-### Stage 2 — Collect and Categorize
+## Git Log Commands
 
-Read the git log and categorize each commit by prefix:
+```bash
+# Since last tag
+git log $(git describe --tags --abbrev=0)..HEAD --oneline --no-merges
 
-| Commit Prefix | Category | Icon |
-|---|---|---|
-| `feat:`, `feature:`, `add:` | Features | ✨ |
-| `fix:`, `bugfix:`, `hotfix:` | Fixes | 🐛 |
-| `refactor:`, `cleanup:` | Refactors | ♻️ |
-| `docs:`, `doc:` | Documentation | 📝 |
-| `test:`, `tests:` | Tests | ✅ |
-| `chore:`, `build:`, `ci:` | Maintenance | 🔧 |
-| `perf:`, `performance:` | Performance | ⚡ |
-| `security:`, `sec:` | Security | 🔒 |
-| `BREAKING:`, `breaking:`, `!` after scope | Breaking Changes | 💥 |
-| (no recognized prefix) | Other | 📦 |
+# Since a specific date
+git log --since="2026-01-01" --oneline --no-merges
 
-### Stage 3 — Generate Output
+# Since specific commit
+git log abc123def..HEAD --oneline --no-merges
 
-Output follows [Keep a Changelog](https://keepachangelog.com/) format:
+# With full commit message (for BREAKING CHANGE in body)
+git log $(git describe --tags --abbrev=0)..HEAD --format="%H %s%n%b"
+```
+
+---
+
+## Output Format (Keep a Changelog)
 
 ```markdown
 # Changelog
 
-## [Unreleased] — YYYY-MM-DD
+All notable changes to this project will be documented in this file.
 
-### 💥 Breaking Changes
-- `abc1234` — Description of breaking change
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### ✨ Features
-- `def5678` — Description of new feature
+## [Unreleased]
 
-### 🐛 Fixes
-- `ghi9012` — Description of bug fix
+## [1.2.0] — 2026-04-02
 
-### ⚡ Performance
-- `jkl3456` — Description of performance improvement
+### Breaking Changes
+- **auth**: JWT token format changed — clients must re-authenticate ([abc123](link))
 
-### 🔒 Security
-- `mno7890` — Description of security fix
+### Added
+- User notification system with email and in-app alerts ([def456](link))
+- Pagination on /api/users endpoint with meta.total in response ([ghi789](link))
 
-### ♻️ Refactors
-- `pqr1234` — Description of refactor
+### Fixed
+- JWT verify no longer accepts 'none' algorithm ([jkl012](link))
+- Checkout form no longer loses data on page refresh ([mno345](link))
 
-### 📝 Documentation
-- `stu5678` — Description of docs change
+### Changed
+- Upgraded Prisma 5 to 6 — findOne calls migrated to findUnique ([pqr678](link))
+- Bundle size reduced 64% via dynamic import for chart library ([stu901](link))
 
-### 🔧 Maintenance
-- `vwx9012` — Description of chore/dependency bump
+## [1.1.0] — 2026-03-15
+[...]
+
+[Unreleased]: https://github.com/user/repo/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/user/repo/compare/v1.1.0...v1.2.0
 ```
-
-### Stage 4 — Review and Save
-
-Present the generated summary before writing:
-
-```
-📋 Generated changelog from [range]:
-  💥 1 breaking change
-  ✨ 3 features
-  🐛 5 fixes
-  📦 2 uncategorized commits
-
-Save to CHANGELOG.md? [Y = append | N = cancel | S = stdout only]
-```
-
-> ⏸️ **Human Gate** — CHANGELOG.md is not written without confirmation.
 
 ---
 
-## Hallucination Guard
-
-- **Only include commits that actually exist** in git history — read from `git log`, never invent
-- **Never summarize or paraphrase** ambiguous commit messages — include verbatim if unclear
-- **Always show the commit hash** for traceability beside each entry
-- **Never infer intent** from a commit message — report what was written, not what it "probably meant"
-- Breaking changes need to be explicitly labeled in the commit — never infer breakage from code
-
----
-
-## Cross-Workflow Navigation
-
-| After /changelog reveals... | Go to |
-|---|---|
-| Many uncategorized commits | Enforce commit conventions in the team |
-| Breaking changes need documentation | Update API docs or migration guides |
-| Ready for release | `/deploy` to complete the release pipeline |
-
----
-
-## Usage
+## Semver Decision Guide
 
 ```
-/changelog since the last release
-/changelog for the last 50 commits
-/changelog between v1.0 and v2.0
-/changelog generate and save to CHANGELOG.md
-/changelog sprint summary since 2025-03-01
+MAJOR (1.0.0 → 2.0.0): Any BREAKING CHANGE
+MINOR (1.0.0 → 1.1.0): New features, backward-compatible (feat:)  
+PATCH (1.0.0 → 1.0.1): Bug fixes only (fix:)
+```
+
+---
+
+## Usage Examples
+
+```
+/changelog since last release tag
+/changelog for version 1.2.0 including all commits since v1.1.0
+/changelog since 2026-01-01
+/changelog what changed in the authentication module this month
 ```

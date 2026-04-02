@@ -1,230 +1,146 @@
 ---
 name: powershell-windows
-description: PowerShell Windows patterns. Critical pitfalls, operator syntax, error handling.
+description: PowerShell and Windows environment mastery. Object-oriented piping, strict error handling (ErrorActionPreference), PSProviders, active directory querying, credential management, and execution policies. Use when automating Azure, Windows environments, or writing .ps1 scripts.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# PowerShell on Windows
+# PowerShell — Windows Automation Mastery
 
-> PowerShell is not bash with a Windows accent.
-> It is object-based, not text-based. That changes everything.
-
----
-
-## Core Difference: Objects, Not Text
-
-Every PowerShell command returns objects, not strings. This is the foundational difference from bash.
-
-```powershell
-# bash: 'ls' returns text you parse
-ls -la | awk '{print $9}'
-
-# PowerShell: Get-ChildItem returns objects you access directly
-Get-ChildItem | Select-Object Name, Length
-(Get-ChildItem ".\src").Count   # count files directly
-```
-
-This means string parsing (grep, awk, cut) is often unnecessary in PowerShell.
+> PowerShell does not pipe text. It pipes rich .NET Objects.
+> Your Bash instincts will betray you here. Think in structured data, not regex.
 
 ---
 
-## Critical Operator Pitfalls
+## 1. The Object Pipeline
 
-PowerShell comparison operators use letters, not symbols:
-
-| Operation | PowerShell | NOT This |
-|---|---|---|
-| Equal | `-eq` | `==` |
-| Not equal | `-ne` | `!=` |
-| Greater than | `-gt` | `>` |
-| Less than | `-lt` | `<` |
-| Like (wildcard) | `-like "*.ts"` | — |
-| Match (regex) | `-match "pattern"` | — |
-| Contains | `-contains "val"` | — |
+Unlike Bash where everything is strings (requiring `awk`/`grep`), PowerShell passes structured .NET class instances between commands.
 
 ```powershell
-# ❌ This doesn't compare — it redirects output
-if ($count == 5) { ... }
+# ❌ BAD: Attempting to treat PowerShell like Bash (String Parsing)
+Get-Process | Out-String -Stream | Select-String "node" | ForEach-Object { $id = ($_ -split '\s+')[8]; Stop-Process -Id $id }
 
-# ✅ Correct PowerShell comparison
-if ($count -eq 5) { ... }
+# ✅ GOOD: Accessing Object Properties Directly
+Get-Process -Name "node" | Stop-Process -Force
+
+# Filtering objects (Where-Object)
+Get-Service | Where-Object Status -eq 'Running' | Select-Object Name, DisplayName
+
+# Accessing methods natively on the object
+$files = Get-ChildItem -Path "C:\logs" -Filter "*.log"
+$files | ForEach-Object { $_.Delete() }
 ```
 
 ---
 
-## Path Handling
+## 2. Strict Error Handling (The Windows equivalent of set -e)
 
-Windows paths have backslashes but PowerShell handles both:
-
-```powershell
-# Both work in PowerShell
-$path = "C:\Users\username\project"
-$path = "C:/Users/username/project"
-
-# Use Join-Path for safe cross-platform joins
-$full = Join-Path $env:USERPROFILE "Desktop\project"
-
-# Resolve to absolute path
-$abs = Resolve-Path ".\relative\path"
-
-# Test existence before using
-if (Test-Path $path) { ... }
-if (Test-Path $path -PathType Container) { ... }  # is it a directory?
-if (Test-Path $path -PathType Leaf) { ... }        # is it a file?
-```
-
----
-
-## Error Handling
-
-PowerShell has two error types: terminating and non-terminating.
+By default, PowerShell prints an error but keeps running. You MUST enforce strict halting for automation scripts.
 
 ```powershell
-# Stop on any error (like bash set -e)
-$ErrorActionPreference = 'Stop'
+# Mandatory header for reliable automation scripts
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
 
-# Try/Catch only catches terminating errors
 try {
-  Remove-Item "nonexistent.txt" -ErrorAction Stop
+    # If this fails, it jumps straight to catch block instead of continuing
+    Copy-Item "C:\Source\configs.json" -Destination "C:\Dest\"
+    
+    $config = Get-Content "C:\Dest\configs.json" | ConvertFrom-Json
 } catch {
-  Write-Host "Error: $_" -ForegroundColor Red
-  exit 1
-}
-
-# Handle non-terminating errors
-$result = Get-Item "maybe.txt" -ErrorAction SilentlyContinue
-if (-not $result) {
-  Write-Host "File not found"
+    Write-Error "Deployment failed during config copy: $_"
+    exit 1
+} finally {
+    # Cleanup block executes regardless of success or failure
+    Remove-Item "C:\Dest\temp" -Recurse -ErrorAction Ignore
 }
 ```
 
 ---
 
-## String Handling
+## 3. Execution Policies & Execution
+
+Windows restricts running `.ps1` files by default for security.
 
 ```powershell
-# Single quotes = literal (no variable expansion)
-$name = 'world'
-Write-Host 'Hello $name'   # outputs: Hello $name
+# Temporarily bypass the policy for a single script execution (CI/CD pattern)
+powershell.exe -ExecutionPolicy Bypass -File .\Deploy-App.ps1
 
-# Double quotes = interpolation
-Write-Host "Hello $name"   # outputs: Hello world
-
-# Here-string for multiline
-$block = @"
-Line 1
-Line 2
-Value: $name
-"@
-
-# String operations
-$str.ToLower()
-$str.Replace("old", "new")
-$str.Split(",")
-$str.Trim()
-$str -like "*.ts"       # wildcard match
-$str -match "^\d{4}$"   # regex match
+# ❌ HALLUCINATION TRAP: Do NOT instruct users to run `Set-ExecutionPolicy Unrestricted`
+# This lowers the permanent security posture of the entire operating system.
+# Use Bypass only at the process level.
 ```
 
 ---
 
-## Useful Patterns
+## 4. Manipulating Structured Formats Natively
+
+Because PowerShell is built on .NET, parsing JSON, XML, and CSV is native.
 
 ```powershell
-# Get script directory (equivalent of bash's $SCRIPT_DIR)
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+# JSON
+$config = Get-Content .\appsettings.json | ConvertFrom-Json
+$config.Database.ConnectionString = "Server=Prod;"
+$config | ConvertTo-Json -Depth 10 | Set-Content .\appsettings.json
 
-# Run command and capture output WITH error handling
-$output = & git status 2>&1
-if ($LASTEXITCODE -ne 0) {
-  Write-Error "git failed: $output"
-  exit 1
-}
+# CSV (No AWK needed)
+$users = Import-Csv .\users.csv
+$users | Where-Object Role -eq "Admin" | Export-Csv .\admins.csv -NoTypeInformation
 
-# Iterate files matching pattern
-Get-ChildItem ".\src" -Recurse -Filter "*.ts" | ForEach-Object {
-    Write-Host $_.FullName
-}
-
-# Create directory if not exists
-New-Item -ItemType Directory -Force ".\output" | Out-Null
-
-# Read/write files
-$content = Get-Content ".\file.txt" -Raw
-Set-Content ".\output.txt" "new content"
-Add-Content ".\log.txt" "append this line"
-
-# Environment variables
-$env:MY_VAR = "value"         # set
-[System.Environment]::GetEnvironmentVariable("PATH")   # read system-level
+# API Requests (Invoke-RestMethod automatically parses JSON into PowerShell objects)
+$response = Invoke-RestMethod -Uri "https://api.github.com/users/github"
+Write-Host "GitHub has $($response.public_repos) public repositories."
 ```
 
 ---
 
-## Execution Policy
+## 5. Providers and Drives
 
-Scripts may be blocked by execution policy:
+PowerShell extends the "file system" concept to the Registry, Environment Variables, and Certificates.
 
 ```powershell
-# Check current policy
-Get-ExecutionPolicy
+# Environment variables (Env: drive)
+$env:PATH += ";C:\Custom\Bin"
+Write-Host $env:COMPUTERNAME
 
-# Allow local scripts (most permissive safe setting)
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+# Registry (HKCU: and HKLM: drives)
+Get-ChildItem -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Run"
 
-# Run a specific script bypassing policy (one-time)
-powershell -ExecutionPolicy Bypass -File script.ps1
+# Certificates (Cert: drive)
+Get-ChildItem -Path "Cert:\LocalMachine\My" | Where-Object Subject -match "example.com"
 ```
 
 ---
 
-## Output Format
+## 🤖 LLM-Specific Traps (PowerShell)
 
-When this skill produces or reviews code, structure your output as follows:
-
-```
-━━━ Powershell Windows Report ━━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Powershell Windows
-Language:    [detected language / framework]
-Scope:       [N files · N functions]
-─────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [test output / lint pass / compile success]
-```
-
-**VBC (Verification-Before-Completion) is mandatory.**
-Do not mark status as VERIFIED until concrete terminal evidence is provided.
-
+1. **Bash Equivalencies:** AI writing `Test-Path | regex` instead of dealing with properties. Always use object properties (`$obj.Length`, `$obj.Name`).
+2. **Missing `ErrorActionPreference`:** Continuing execution blindly after a critical `Copy-Item` command fails. Always set preference to "Stop".
+3. **Execution Policy Destruction:** Instructing users to permanently change global machine policy to run a script. Always use `-ExecutionPolicy Bypass` natively.
+4. **JSON Conversion Depth limits:** `ConvertTo-Json` defaults to a depth of only 2. It will ruthlessly truncate your nested API payloads silently unless you append `-Depth 10`.
+5. **Return Types in Functions:** PowerShell returns EVERYTHING that hits the pipeline inside a function, not just the `return` statement. Explicitly cast silent operations to `$null` or pipe to `Out-Null`. (e.g., `$list.Add("item") | Out-Null`).
+6. **Comparison Operators:** AI uses `>` or `==`. PowerShell requires `-gt`, `-eq`, `-ne`, `-lt`.
+7. **Backtick Continuation:** Using the backtick `` ` `` as a line continuation character randomly. It is notoriously hard to read and breaks if there's a trailing space. Use proper pipeline formatting or array declarations.
+8. **Paths with Spaces:** Similar to bash, failing to wrap paths in string quotes when executing. `& "C:\Program Files\Node\npm.cmd" install`.
+9. **`Out-File` vs `Set-Content` Encryption:** AI writing configs using `Out-File` defaults to UTF-16 on older PowerShell versions, breaking Linux/Docker containers. Standardize on `Set-Content` or explicitly declare `-Encoding UTF8`.
+10. **`Write-Host` vs `Write-Output`:** AI uses `Write-Host` to return data from functions. `Write-Host` goes straight to the console display buffer. Always use `Write-Output` if you want another variable or pipe to catch the return data.
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/audit` or `/review`**
-**Active reviewers: `logic` · `security` · `devops`**
-
-### ❌ Forbidden AI Tropes in PowerShell
-
-1. **Using Bash Operators** — writing `==` or `!=` instead of `-eq` or `-ne`.
-2. **Text Parsing Over Objects** — extracting properties with regex instead of just accessing `$obj.Property`.
-3. **Ignoring Execution Policies** — writing scripts without considering that they might be blocked on the user's machine.
-4. **Silent Failures** — relying on generic `catch` blocks without understanding terminating vs non-terminating errors.
-5. **Path Separator Errors** — failing to wrap path operations in safe cmdlets like `Join-Path` or `Test-Path`.
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before generating PowerShell commands:
 ```
-✅ Did I use the correct comparison operators (e.g., `-gt`, `-like`)?
-✅ Did I leverage PowerShell's object pipeline instead of parsing text?
-✅ Are paths safely manipulated (e.g., `Join-Path`) to handle Windows backslashes correctly?
-✅ Are potential non-terminating errors handled explicitly?
-✅ Will this script require an execution policy bypass, and did I note that for the user?
+✅ Have I forced strict error catching via `$ErrorActionPreference = "Stop"`?
+✅ Am I manipulating objects (e.g., `Where-Object`) rather than string parsing?
+✅ If I invoked `ConvertTo-Json`, did I set `-Depth 10` (or higher)?
+✅ Are my comparison operators using PowerShell syntax (`-eq`, `-gt`) instead of (`==`, `>`)?
+✅ Did I use `-ExecutionPolicy Bypass` rather than recommending global registry changes?
+✅ Is text encoded correctly to UTF8 via `Set-Content` instead of `Out-File`?
+✅ Did I return data from my functions via `Write-Output` instead of `Write-Host`?
+✅ Are array modifications piped to `Out-Null` to prevent pipeline pollution?
+✅ Is `Invoke-RestMethod` leveraged for APIs instead of the heavier `Invoke-WebRequest`?
+✅ Are commands with spaces invoked using the call operator `& "Path\To\File"`?
 ```

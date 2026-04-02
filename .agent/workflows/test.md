@@ -1,166 +1,211 @@
 ---
-description: Test generation and test running command. Creates and executes tests for code.
+description: Test generation and test running command. Creates and executes tests for code using the Testing Trophy strategy (unit → integration → E2E). Tests are behavioral (GIVEN/WHEN/THEN), not structural. Tests cannot be approved without covering happy path, error path, and boundary cases.
 ---
 
-# /test — Test Quality Engine
+# /test — Test Generation & Execution
 
 $ARGUMENTS
 
 ---
 
-This command either **generates tests that actually test things**, or **audits existing tests** to find ones that don't. A test that always passes isn't protecting anything.
-
----
-
-## When to Use /test vs Other Commands
+## When to Use /test
 
 | Use `/test` when... | Use something else when... |
-|---|---|
-| No tests exist for working code | Code is broken → `/debug` first, then `/test` |
-| Tests exist but coverage is thin | Quality of test assertions → use `audit` mode |
-| You changed behavior and need regression tests | Full project test health → `/audit` |
-| You want edge case coverage only | Integration tests → specify in the test plan |
+|:---|:---|
+| New code was just generated and needs tests | Tests are failing → `/debug` |
+| After `/debug` to prevent regression | Need a full coverage audit → `/audit` |
+| Test coverage is below threshold | E2E for the whole app → `/performance-benchmarker` |
+| A bug was fixed and needs a regression test | |
 
 ---
 
-## Modes
+## Testing Trophy Strategy (2026 Standard)
 
 ```
-/test [file or function]     → Generate tests for the target
-/test audit                  → Check existing tests for quality issues
-/test coverage               → Identify code paths with no test coverage
-/test edge [function]        → Generate edge-case tests only (null, empty, boundary)
-/test run                    → Run the existing test suite and analyze failures
+             /\
+            /E2E\          ← Small (Playwright): happy paths, auth, critical checkout
+           /──────\
+          /Integr.\        ← Medium (RTL + MSW): component + network behavior  
+         /──────────\
+        /    Unit    \     ← Foundation (Vitest): pure logic + transformations
+       /──────────────\
+      /   Static Types  \  ← Free: TypeScript + ESLint
+     /────────────────────\
+```
+
+When asked to write tests without specifying a level, default to **integration tests** (highest ROI per test).
+
+---
+
+## Phase 1 — Coverage Gap Analysis
+
+Before writing new tests, understand existing coverage:
+
+```bash
+npm run test:coverage  # Generate coverage report
+```
+
+Cover these areas in priority order:
+
+```
+1. Authentication flows (login, logout, session expiry)
+2. Data mutation paths (create, update, delete)
+3. Validation rejection (invalid input → correct error)
+4. Error handling (API failure → correct fallback)
+5. Authorization (wrong role → 403, unauthenticated → 401)
+6. Boundary values (0, null, empty, max)
 ```
 
 ---
 
-## Mode: Generate Tests
+## Phase 2 — Test Design (Behavioral, Not Structural)
 
-### First — Read the Code
-
-Before writing a single test, map:
-
-- Every **execution path** (normal path, error path, edge cases)
-- All **direct external dependencies** (to identify what needs mocking)
-- **Expected inputs and outputs** — derived from the function signature and actual behavior, not assumed
-
-### Then — Write the Test Plan
-
-A plan must be written **before** test code:
+Tests describe **behavior**, not implementation:
 
 ```
-Target: [function or module name]
-Framework: [Jest | Vitest | pytest | Go test]
+✅ Behavioral: "returns 401 when no auth token is provided"
+❌ Structural: "calls validateToken() once"
 
-Path inventory:
-  › Normal path — valid input, expected output
-  › Null / undefined / None input
-  › Empty string / empty array / empty object
-  › Boundary values (0, -1, MAX_INT, max string length)
-  › Async rejection / network failure / timeout
-  › Invalid type input (string where number expected, etc.)
-  › Auth / permission fail path
-  › Concurrent access (if applicable)
-
-Dependencies to mock: [list — minimal, only direct external deps]
+Format every test as:
+GIVEN  [initial state/context]
+WHEN   [action taken]
+THEN   [observable behavior verified]
 ```
-
-**Then tests are written and passed through `test-coverage-reviewer`.**
 
 ---
 
-## Test Structure Standard
+## Phase 3 — Minimum Required Test Coverage
 
-Every generated test file follows this format:
+The Tribunal rejects any test submission that does not cover ALL of:
+
+```
+□ Happy path — does it work correctly with valid input?
+□ Error path — does it fail correctly with invalid/missing input?
+□ Boundary cases — what happens at 0, null, empty, max, limits?
+□ Auth boundary — what happens without auth? With wrong role?
+```
+
+---
+
+## Test Templates by Layer
+
+### Unit Test (Vitest)
 
 ```typescript
-describe('[Unit under test]', () => {
-
-  describe('[scenario group]', () => {
-    it('[specific behavior being tested]', () => {
-      // Arrange
-      const input = [setup value];
-
-      // Act
-      const result = functionUnderTest(input);
-
-      // Assert — specific value, not .toBeDefined()
-      expect(result).toBe([exact expected value]);
-    });
+describe('[functionName]()', () => {
+  it('[happy path description]', () => {
+    expect(fn(validInput)).toBe(expectedResult);
   });
-
-  describe('edge cases', () => {
-    it('throws when input is null', () => {
-      expect(() => functionUnderTest(null)).toThrow('[exact error message]');
-    });
-
-    it('handles empty string without crashing', () => {
-      expect(functionUnderTest('')).toBe([expected fallback value]);
-    });
+  
+  it('returns [expected] when input is [edge case]', () => {
+    expect(fn(boundaryInput)).toBe(expectedBoundaryResult);
   });
+  
+  it('throws [ErrorType] when [invalid condition]', () => {
+    expect(() => fn(invalidInput)).toThrow(ExpectedError);
+  });
+});
+```
 
+### Integration Test (RTL + MSW)
+
+```typescript
+test('[user observable behavior]', async () => {
+  // GIVEN: server mock defined in handlers.ts
+  // WHEN: user action
+  render(<Component />);
+  await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+  // THEN: observable outcome
+  await screen.findByText(/success/i);
+});
+```
+
+### E2E Test (Playwright)
+
+```typescript
+test('[critical user path]', async ({ page }) => {
+  // GIVEN: pre-authenticated (stored session — not login from UI every test)
+  // WHEN: navigate and act
+  await page.goto('/checkout');
+  // THEN: verify final state
+  await expect(page.getByText('Order confirmed')).toBeVisible();
 });
 ```
 
 ---
 
-## Mode: Audit Existing Tests
-
-The `test-coverage-reviewer` flags:
-
-| Problem | What It Looks Like | Why It's Bad |
-|---|---|---|
-| Tautology test | `expect(fn(x)).toBe(fn(x))` | Always passes regardless of fn's behavior |
-| No assertion | `it('works', () => { fn(); })` | Passes even if fn throws wrong output |
-| Missing edge cases | Suite has happy path only | Misses real-world failure modes |
-| Over-mocking | Every dep mocked, nothing real tested | Tests the mocking framework, not the code |
-| Vacuous truthy | `expect(result).toBeTruthy()` | Passes for `1`, `"a"`, `{}`, `[]` |
-
----
-
-## Mode: Run Tests
+## Phase 4 — Test Execution
 
 ```bash
-// turbo
-python .agent/scripts/test_runner.py . --coverage
+# Run tests
+npm test                    # Unit + integration
+npm run test:e2e           # Playwright E2E (CI environment)
+npm run test:coverage      # With coverage report
+
+# target coverage threshold (default 80%)
 ```
 
-After running, the `test-result-analyzer` identifies:
-- Root causes across multiple failing test files
-- Whether failures are from flaky setup or actual code breakage
-- Actionable fix recommendations
+Failed tests halt the workflow. Fix the code or fix the test (not both — understand which first).
 
 ---
 
-## Hallucination Guard
+## Human Gate — Before Writing Test Files
 
-- Only **documented** Vitest/Jest/pytest methods are used — never `test.eventually()`, `expect.when()`, or inventions
-- Assertions test **specific values** — `toBe('exact')`, not `toBeDefined()` or `toBeTruthy()`
-- Mocks are **minimal** — only the direct external dependency, not the whole world
-- All conclusions about existing test quality are backed by **reading the actual test code**
-- `// VERIFY: check this matcher exists` on any assertion method not commonly used
+After the test-coverage-reviewer approves:
+
+```
+━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Generated tests cover:
+  ✅ Happy path
+  ✅ Error path
+  ✅ Boundary cases
+  ✅ Auth boundary
+
+Files to write:
+  [list of .test.ts files]
+
+Write to disk?  Y = write | N = discard | R = revise coverage
+```
+
+No test files are written without explicit approval.
+
+---
+
+## Test Review Verdicts
+
+The `test-coverage-reviewer` is automatically activated and checks:
+
+```
+□ Happy path covered for new function/component
+□ Error/rejection paths covered
+□ Boundary values tested
+□ No brittle CSS selectors — only getByRole/getByLabelText
+□ No implementation details tested (private state, internal calls)
+□ Async assertions use await findBy* (not getBy*)
+□ Mock only at architectural boundaries (MSW for network — not hooks/methods)
+```
 
 ---
 
 ## Cross-Workflow Navigation
 
 | After /test shows... | Go to |
-|---|---|
-| Failures in existing tests after a change | `/debug` to find root cause |
-| Code has no tests and is untested in prod | `/review` first for quality check |
-| Tests pass but logic seems wrong | `/review [file]` for deeper audit |
-| Coverage gaps found in security-sensitive paths | `/audit` for full project security + test sweep |
+|:---|:---|
+| Tests failing — suspected logic bug | `/debug` |
+| Tests failing — suspected security issue | `/tribunal-backend` |
+| Coverage still below threshold | `/audit` for full coverage report |
+| E2E tests failing | Check `/audit` script output |
 
 ---
 
-## Usage
+## Usage Examples
 
 ```
-/test src/services/auth.service.ts
-/test the validateEmail function
-/test audit — check whether my existing tests actually assert anything
-/test coverage — show branches with no test
-/test edge validateInput — generate null, empty, boundary tests only
-/test run — execute the suite and analyze failures
+/test the calculateDiscount function in src/lib/pricing.ts
+/test the POST /api/auth/login route including rate limit behavior
+/test the UserProfile component including loading and error states
+/test the checkout flow E2E with Playwright
+/test add regression test for bug: login fails with uppercase email
+/test the database transaction in createOrder for rollback behavior
 ```

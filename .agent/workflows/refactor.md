@@ -1,153 +1,183 @@
 ---
-description: Structured code refactoring with dependency-safe execution and behavior preservation.
+description: Structured code refactoring with dependency-safe execution and behavior preservation. Maps all dependents before touching any file. Refactoring changes structure without changing observable behavior. Tests must pass before and after every step.
 ---
 
-# /refactor — Safe Code Restructuring
+# /refactor — Dependency-Safe Structural Improvement
 
 $ARGUMENTS
 
 ---
 
-This command structures a refactoring operation to ensure **no behavior changes** while improving code quality, readability, or architecture.
+## The Refactoring Contract
 
-> Refactoring mantra: the tests pass before you start. They all still pass when you're done. If they don't — you changed behavior, not structure.
+> "Refactoring means changing the structure of code without changing its observable behavior."
+> If observable behavior changes, it's an enhancement — use `/enhance`.
 
 ---
 
-## When to Use /refactor vs Other Commands
+## When to Use /refactor
 
 | Use `/refactor` when... | Use something else when... |
-|---|---|
-| Code works but needs structural improvement | Code is broken → `/debug` first |
-| Extracting repeated logic into shared modules | Adding new behavior → `/enhance` |
-| Renaming for clarity across the codebase | Rewriting from scratch → `/create` |
-| Reducing complexity or coupling | Performance is the goal → `/tribunal-performance` |
+|:---|:---|
+| Code structure is hard to understand | Adding new functionality → `/enhance` |
+| Repeated logic should be extracted | Fixing a bug → `/debug` |
+| Naming is unclear or misleading | Performance improvements → `/tribunal-performance` |
+| TypeScript types need tightening | Full rebuild needed → `/create` |
+| Dead code needs removal | |
 
 ---
 
-## When to Use This
+## Phase 1 — Pre-Refactor Checklist (Non-Negotiable)
 
-- Extracting repeated code into shared functions or modules
-- Renaming files, functions, or variables for clarity
-- Splitting large files into smaller, focused modules
-- Reorganizing directory structure
-- Removing dead code
-- Reducing cyclomatic complexity
-- Breaking circular dependencies
+Before touching any file:
+
+```
+□ Tests exist and pass (npm test passes clean)
+□ If no tests exist → write tests FIRST using /test
+□ Impact zone mapped (all importers identified)
+□ Behavior contract documented (what must remain identical)
+□ Rollback plan confirmed (git branch or stash)
+```
+
+**If tests don't exist: STOP. Write tests first. Tests are the safety net for refactoring.**
 
 ---
 
-## What Happens
+## Phase 2 — Impact Zone Mapping
 
-### Stage 1 — Scope the Change
+```bash
+# Map every file that will need to change
+grep -r "from '.*target-module'" src/ --include="*.ts" --include="*.tsx"
 
-Before editing anything, document:
+# Check for dynamic imports that grep might miss
+grep -r "import(" src/ --include="*.ts" --include="*.tsx"
 
-```
-What specifically needs refactoring? (file, function, module, or pattern)
-Why does it need refactoring?        (readability, duplication, complexity, coupling)
-What is the boundary?                (which files are in scope, which are out)
-What must NOT change?                (external behavior, API contracts, test expectations)
-```
-
-> ⚠️ If the refactoring scope is vague ("clean up the codebase"), stop and ask for specifics.
-
-### Stage 2 — Map Dependencies
-
-Run the File Dependency Protocol:
-
-```
-1. Identify all callers of the code being refactored
-2. Identify all imports from the code being refactored
-3. List every file that will need updates after the refactor
-4. Flag any circular dependencies
-5. Note any dynamic imports or string-based requires
+# Check for re-exports
+grep -r "export \* from" src/ --include="*.ts"
 ```
 
-> ⚠️ If the dependency map reveals **more than 10 affected files**, pause and confirm scope with the user before proceeding.
-
-### Stage 3 — Execute Incrementally
-
-Refactoring is done in small, reviewable steps:
+Build the full change list before making any modification:
 
 ```
-Step 1: Create new structure (new files, new functions) — do NOT delete old yet
-Step 2: Update imports and callers one at a time
-Step 3: Run tests after each file is updated
-Step 4: Remove old code only after ALL references point to the new location
-Step 5: Final lint and type check
+Refactoring: rename getUserById → fetchUserById
+
+Files affected:
+- src/lib/users.ts              [RENAME function definition]
+- src/app/api/users/[id]/route.ts [UPDATE callers]
+- src/app/dashboard/page.tsx    [UPDATE callers]
+- src/lib/users.test.ts         [UPDATE test references]
 ```
-
-> ⚠️ Never delete old code in the same step as creating new code. The old code serves as a safety net until all callers are updated.
-
-Each step goes through Tribunal review before proceeding to the next.
-
-### Stage 4 — Verify Zero Behavior Change
-
-```
-□ All existing tests pass without modification
-□ Public API / exports remain identical (same names, same signatures)
-□ TypeScript / linter checks pass
-□ No new runtime errors in manual smoke test
-```
-
-All four must be true. If a test **needed changes** during the refactor, the refactor may have introduced a behavioral change — investigate before finalizing.
 
 ---
 
-## Hallucination Guard
+## Phase 3 — Dependency-Safe Execution Order
 
-- **Never rename an exported symbol** without updating ALL import sites
-- **Never delete a file** without verifying zero remaining imports
-- **Never assume a function is unused** — search all call sites first
-- If unsure whether code is dead: `// VERIFY: appears unused — confirm before removing`
-- **Never add new logic** during a refactor — that belongs in `/enhance`
-- **Don't "clean up while you're in there"** — scope creep is how refactors break things
+Refactoring order must follow the dependency graph:
+
+```
+Rule: Always update the definition FIRST, then update callers.
+      Never update a caller before the definition is updated.
+
+Dependency order (example: extracting a shared utility):
+1. Create src/lib/shared-utility.ts (new definition)
+2. Update the original file to import from shared-utility (definition update)
+3. Update all other callers to import from shared-utility
+4. Run tests — verify all pass
+5. Remove old inline code
+
+Database refactoring order:
+1. Write migration (expand: add new column)
+2. Update ORM schema
+3. Update application code to write to new column
+4. Backfill existing data
+5. Update application code to read from new column
+6. Write second migration (contract: remove old column)
+```
 
 ---
 
-## Refactor Report Format
+## Phase 4 — Behavior Verification After Each Step
+
+After every file change in the refactoring sequence:
+
+```bash
+npx tsc --noEmit   # TypeScript types must remain valid
+npm test           # All tests must still pass
+```
+
+**If any step causes a type error or test failure → STOP and fix before proceeding.**
+
+Rolling forward with broken tests is not refactoring — it's breaking code.
+
+---
+
+## Phase 5 — Common Safe Refactoring Patterns
+
+### Extract Function
+```typescript
+// Before: inline logic in handler
+app.post('/orders', async (req, res) => {
+  const discount = amount > 100 ? amount * 0.9 : amount; // inline
+  // ...
+});
+
+// After: extracted pure function with tests
+const applyDiscount = (amount: number): number => amount > 100 ? amount * 0.9 : amount;
+app.post('/orders', async (req, res) => {
+  const discount = applyDiscount(amount); // single responsibility
+  // ...
+});
+```
+
+### Remove Dead Code
+```bash
+# Verify zero callers BEFORE deleting
+grep -r "OldFunction\|oldFunction" src/ --include="*.ts" # Must return: 0 results
+# Then delete
+```
+
+### Tighten Types
+```typescript
+// Before: any loses all type checking
+function process(data: any) { data.unknownProp; } // No error
+
+// After: explicit interface — all callers must provide correct shape
+function process(data: { id: string; name: string }) { data.id; } // Typed
+```
+
+---
+
+## Refactor Guard
 
 ```
-━━━ Refactor: [what was changed] ━━━━━━━━━━
-
-Scope:
-  Files changed: [N]
-  Functions changed: [list]
-  External behavior change: None (preserved)
-
-Dependency map:
-  Callers updated: [list of files]
-  Circular deps found: Yes / No
-
-Tribunal result:
-  [reviewer]: APPROVED
-
-Zero-behavior verification:
-  ✅ All tests pass
-  ✅ Exports unchanged
-  ✅ TypeScript clean
+❌ Never refactor without tests passing before AND after
+❌ Never rename an exported symbol without updating ALL importers
+❌ Never remove "dead code" without grepping to confirm zero usages
+❌ Never mix refactoring and new feature in the same commit
+❌ Never refactor database columns without expand-and-contract migration
+❌ Never change function signatures without updating all callers simultaneously
 ```
 
 ---
 
 ## Cross-Workflow Navigation
 
-| After /refactor... | Go to |
-|---|---|
-| Code was cleaned — now add feature | `/enhance` |
-| Tests are missing for refactored area | `/test` to add coverage first |
-| Performance improved as side-effect | Verify with `/tribunal-performance` |
-| Security concern spotted during refactor | `/review [file]` |
+| After /refactor shows... | Go to |
+|:---|:---|
+| Tests need writing before refactoring | `/test` |
+| Logic bugs discovered during refactoring | `/debug` |
+| Security patterns need review | `/tribunal-backend` |
+| Large extraction needs planning | `/plan` |
 
 ---
 
-## Usage
+## Usage Examples
 
 ```
-/refactor extract the auth logic from server.ts into a separate module
-/refactor rename all instances of getUserData to fetchUserProfile
-/refactor split utils.ts into validation.ts, formatting.ts, and helpers.ts
-/refactor remove all unused exports from the shared/helpers directory
-/refactor break apart the 800-line UserService class into focused services
+/refactor extract the authentication logic from route handlers into middleware
+/refactor convert the UserCard component from class component to function component
+/refactor consolidate the 3 separate discount calculation functions into one
+/refactor rename ambiguous 'data' variables throughout src/lib/
+/refactor extract the shared validation logic into a reusable Zod schema
+/refactor remove the unused legacy payment functions
 ```

@@ -1,203 +1,154 @@
 ---
 name: local-first
-description: Local-first software principles. Offline-capable apps, CRDTs, sync engines (ElectricSQL, Replicache, Zero), conflict resolution, and the migration path from REST-first to local-first architecture. Use when building apps that need offline support, fast UI, or collaborative editing.
+description: Local-first software architecture mastery. CRDTs (Conflict-free Replicated Data Types), IndexedDB synchronization, sync engines (ElectricSQL, Replicache, PowerSync), offline-capable data fetching, optimistic UI, and SQLite in the browser (WASM). Use when building PWA offline capabilities, rapid UIs, or multiplayer collaborative tools.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Local-First Software Principles
+# Local-First Architecture — Offline-capable Mastery
 
-> In a local-first app, the network is an enhancement, not a requirement.
-> The app works fully offline. Sync happens in the background when possible.
-
----
-
-## The Local-First Promise
-
-Local-first apps satisfy all of these simultaneously — traditional web apps satisfy none:
-
-```
-✅ Fast UI       — reads from local replica, never waits for network
-✅ Offline use   — full functionality without internet
-✅ Collaboration — multiple users edit the same data
-✅ Privacy       — data lives on device by default
-✅ Longevity     — app works even if vendor servers go down
-```
+> The network is the bottleneck. The database should live on the user's device.
+> Traditional SaaS is Cloud-First. The future of UX is Local-First.
 
 ---
 
-## Architecture Spectrum
+## 1. Core Principles of Local-First
 
-```
-REST-First (most apps today):
-  Client → HTTP → Server → DB
-  Offline: ❌  Speed: Network-bound  Collaboration: Manual
+In a Cloud-First app (REST/GraphQL), the UI waits for the server.
+In a Local-First app, the UI talks *only* to a local database. A background engine syncs that database to the cloud when online.
 
-Optimistic UI (halfway):
-  Client → Local cache → HTTP → Server → DB
-  Offline: Partial  Speed: Fast for reads  Collaboration: Conflict-prone
-
-Local-First:
-  Client → Local replica (SQLite/CRDT) → Sync engine ↔ Server → DB
-  Offline: ✅  Speed: Instant  Collaboration: ✅ via CRDTs
-```
+1. **Fast by default**: Zero network latency because reads/writes happen locally.
+2. **Offline works flawlessly**: The app bounds to a local store (SQLite via WASM, IndexedDB).
+3. **Multi-device Sync**: Conflict resolution is handled natively (usually via CRDTs or central conflict ledgers).
 
 ---
 
-## Sync Engine Selection
+## 2. Sync Engines vs traditional fetching
 
-Choose based on your database, team size, and product requirements:
+Do not use React Query / SWR to build local-first. They are HTTP caching mechanisms.
 
-| Engine | Sync Model | Database | Best For |
-|---|---|---|---|
-| **ElectricSQL** | Postgres → SQLite on client | PostgreSQL only | Postgres-native teams |
-| **Replicache** | Mutation log + pull | Any backend | Custom sync logic needed |
-| **Zero (Rocicorp)** | Reactive queries | PostgreSQL | Real-time apps, Figma-speed UIs |
-| **Liveblocks** | CRDT + storage API | Managed | Collaborative SaaS (no own server) |
-| **Yjs + y-indexeddb** | CRDT + local persistence | Any | Text editing, whiteboard |
+```typescript
+// ❌ CLOUD-FIRST (React Query / Fetch)
+// Fails when offline. Subject to UI latency.
+const { data, isLoading } = useQuery({ 
+  queryKey: ['todos'], 
+  queryFn: () => fetch('/api/todos').then(res => res.json()) 
+})
 
----
+// ✅ LOCAL-FIRST (e.g. PowerSync / ElectricSQL / WatermelonDB)
+// Resolves instantly. Data lives locally. Syncs silently in background.
+import { useQuery } from '@powersync/react';
 
-## CRDT Choices
+const { data, isLoading } = useQuery('SELECT * FROM todos ORDER BY created_at DESC');
 
-CRDTs (Conflict-free Replicated Data Types) resolve concurrent edits mathematically — no server arbitration needed:
-
-| CRDT Type | Use For | Library |
-|---|---|---|
-| **LWW Register** | Scalar values (settings, status) | Built-in or custom |
-| **G-Counter** | Incrementing counters (likes, views) | Custom |
-| **OR-Set** | Sets that support add + remove | Yjs `Y.Array` |
-| **Y.Text** | Collaborative rich text | Yjs |
-| **Y.Map** | Shared key-value state | Yjs |
-
-```ts
-import * as Y from 'yjs';
-import { IndexeddbPersistence } from 'y-indexeddb';
-
-const doc = new Y.Doc();
-
-// Persist to IndexedDB — survives page reload, works offline
-new IndexeddbPersistence('my-doc-id', doc);
-
-// Shared text — any concurrent edits from any user auto-merge
-const text = doc.getText('content');
-text.insert(0, 'Hello ');  // User A
-text.insert(6, 'World');   // User B — concurrent, no conflict
-// Result: "Hello World" — always correct, always the same
-```
-
----
-
-## Optimistic UI Patterns
-
-Before full local-first, optimistic UI gives most of the speed benefit:
-
-```ts
-// ❌ Pessimistic — user waits for server response before any UI update
-async function likePost(postId: string) {
-  const updated = await api.likePost(postId);  // 200ms wait → UI freezes
-  setPost(updated);
-}
-
-// ✅ Optimistic — update UI immediately, sync in background
-async function likePost(postId: string) {
-  // 1. Instant UI update
-  setPost(prev => ({ ...prev, likes: prev.likes + 1, liked: true }));
-
-  try {
-    // 2. Sync to server in background
-    await api.likePost(postId);
-  } catch {
-    // 3. Rollback on failure
-    setPost(prev => ({ ...prev, likes: prev.likes - 1, liked: false }));
-    toast.error('Failed to like post');
-  }
+// Writes are also local First
+const addTodo = async (text: string) => {
+  // Written to the local SQLite WASM database instantly.
+  await localDb.execute('INSERT INTO todos (id, text) VALUES (uuid(), ?)', [text]);
+  // Background worker syncs to Postgres later.
 }
 ```
 
 ---
 
-## Conflict Resolution Strategies
+## 3. Conflict Resolution (CRDTs)
 
-When two users edit the same data offline and then sync:
+When two users edit the exact same document offline and then reconnect, how is it resolved?
 
-| Strategy | When to Use | Downside |
-|---|---|---|
-| **Last-Write-Wins (LWW)** | Settings, preferences | Concurrent edits silently overwrite each other |
-| **First-Write-Wins** | Booking/reservation slots | Rejecters unhappy, complex UX |
-| **CRDT merge** | Text, lists, collaborative state | Complex to implement from scratch — use Yjs |
-| **3-way merge** | Code files, configs | Requires common ancestor to compute diff |
-| **User-prompted resolution** | Critical data (contracts) | Adds friction but preserves intent |
+**Conflict-free Replicated Data Types (CRDTs)** automatically merge data without requiring a central server to decide the "winner."
 
----
+```typescript
+// Yjs - The leading CRDT library for collaborative text/state
+import * as Y from 'yjs'
+import { WebsocketProvider } from 'y-websocket'
 
-## Migration Path: REST → Local-First
+const ydoc = new Y.Doc()
+const provider = new WebsocketProvider('wss://sync.example.com', 'room-1', ydoc)
 
-Don't try to go from REST to full local-first in one step:
+// Shared state array
+const yarray = ydoc.getArray('todos')
 
-```
-Phase 1: Optimistic UI
-  → Client mutates locally, syncs async
-  → Easy win: 200ms → 0ms perceived latency
-  → Risk: conflicts on concurrent updates
+// Observe changes (Fires locally and when peers sync)
+yarray.observe(event => {
+  console.log("State updated natively without conflict:", yarray.toArray())
+})
 
-Phase 2: Offline Detection + Queue
-  → Queue mutations when offline
-  → Apply queue on reconnect
-  → Risk: conflict ordering
-
-Phase 3: CRDT-backed Shared State
-  → Replace mutable shared data with CRDTs
-  → Full offline + collaboration
-  → No more conflicts
+// Insert data (Instantly merges cleanly with remote peers)
+yarray.insert(0, ['Buy milk'])
 ```
 
 ---
 
-## Output Format
+## 4. In-Browser Databases
 
-When this skill produces or reviews code, structure your output as follows:
+Storing megabytes of relational data in `localStorage` will crash the browser.
 
+| Technology | Use Case | Pros | Cons |
+|:---|:---|:---|:---|
+| **IndexedDB** | Key-Value | Native to browser | Hideous callback API, weak querying |
+| **Dexie.js** | Key-Value | Wraps IndexedDB with clean Promises | Not relational |
+| **SQLite WASM (OPFS)** | Relational | True SQL in browser | Setup complexity (Origin Private File System) |
+| **RxDB** | NoSQL Offline | Reactive UI out-of-the-box | Requires learning RxJS/Observables |
+| **WatermelonDB** | Relational | Built for React Native & Web | Requires native module setup on mobile |
+
+```typescript
+// Clean IndexedDB Wrapper Example (Dexie)
+import Dexie, { type EntityTable } from 'dexie';
+
+interface Friend {
+  id: number;
+  name: string;
+  age: number;
+}
+
+const db = new Dexie('FriendsDatabase') as Dexie & {
+  friends: EntityTable<Friend, 'id'>;
+};
+
+// Schema configuration
+db.version(1).stores({
+  friends: '++id, name, age' // Primary key and indexed props
+});
+
+// Write to DB instantly
+await db.friends.add({ name: 'Alice', age: 25 });
+
+// Live query natively drives React state without network calls
+import { useLiveQuery } from "dexie-react-hooks";
+const friends = useLiveQuery(() => db.friends.where('age').above(21).toArray());
 ```
-━━━ Local First Report ━━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Local First
-Language:    [detected language / framework]
-Scope:       [N files · N functions]
-─────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [test output / lint pass / compile success]
-```
-
-**VBC (Verification-Before-Completion) is mandatory.**
-Do not mark status as VERIFIED until concrete terminal evidence is provided.
-
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🤖 LLM-Specific Traps (Local-First)
 
-**Slash command: `/tribunal-backend`**
-**Active reviewers: `logic` · `security`**
+1. **`localStorage` Abuse:** Using `localStorage` as a database. It is synchronous, blocking the main UI thread, and limited to 5MB. Use IndexedDB/SQLite WASM.
+2. **Re-inventing Conflict Logic:** Writing manual "last-write-wins" logic using timestamps (`updatedAt`). In distributed systems, clock drift guarantees this will fail and overwrite data corruptly. Use CRDTs (Yjs/Automerge).
+3. **Optimistic UI as Local-First:** Thinking React Query's `onMutate` rollback logic is local-first architecture. It is not. It is a UX trick masking Cloud-First latency.
+4. **Offline Auth Blindness:** Trying to execute local queries while wrapped in an `AuthGuard` that requires a server-side JWT verification on boot. Auth states must be cached locally to allow offline boots.
+5. **Schema Migration Chaos:** Updating cloud schemas without providing local migration scripts. If the local client SQLite DB schema differs from the Postgres cloud schema, the sync engine will crash silently.
+6. **Background Sync Blocking:** Writing custom `setInterval` sync loops on the main JavaScript thread, causing UI stutter. Sync logic must run in a Web Worker (or Service Worker).
+7. **Ignoring IndexedDB Quotas:** Browsers will unpredictably evict IndexedDB data if the user's disk gets full. Architect apps resolving local data as a cache of the cloud, not as the irrevocable source of truth.
+8. **Heavy Client Boot Times:** Bootstrapping a massive 50MB SQLite WASM database onto the client payload, destroying First Contentful Paint. WASM blobs should be pre-fetched/lazy-loaded.
+9. **Eventual Consistency Panic:** Developing UIs that throw errors if a foreign key relation hasn't synced yet. Local-first UIs must defensively handle partial data relationships seamlessly.
+10. **WebSocket vs Local Priority:** Over-relying on WebSockets connected directly to the server. The UI should strictly read from the Local DB; the Local DB gets updated by the WebSocket.
 
-### ❌ Forbidden AI Tropes in Local-First
+---
 
-1. **Treating CRDTs as magic** — CRDTs solve concurrent edits to shared state, not schema migrations or access control.
-2. **Inventing CRDT libraries** — `crdt-js`, `conflict-free`, `local-sync` are not real packages. Yjs, Automerge, and Loro are the real libraries.
-3. **Skipping conflict detection in LWW** — Last-Write-Wins silently drops data. Always make the conflict resolution strategy explicit and communicate it to the user.
-4. **Local storage for everything** — `localStorage` is synchronous, has a 5MB limit, and is not available in workers. Use IndexedDB via Dexie or Origin Private File System.
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is the conflict resolution strategy explicit and documented?
-✅ Are only real CRDT libraries used (Yjs, Automerge, Loro)?
-✅ Is offline state persisted to IndexedDB, not localStorage?
-✅ Is the sync queue replay idempotent (safe to process the same mutation twice)?
-✅ Does the UI clearly communicate offline/syncing/synced state to the user?
+✅ Is the UI strictly reading from a local DB instead of HTTP network calls?
+✅ Are background sync tasks isolated in a Web Worker (or managed Sync Engine)?
+✅ Is complex relational data stored in IndexedDB/SQLite (not `localStorage`)?
+✅ Are conflicts resolved using CRDT structures rather than arbitrary timestamp comparisons?
+✅ Have authentication states been cached locally to permit true offline app launches?
+✅ Does the local database schema precisely mirror the required subset of the cloud database?
+✅ Are writes executed locally first, instantly updating the UI?
+✅ Have I utilized established Local-First sync engines (PowerSync, ElectricSQL, Yjs) instead of manual queuing?
+✅ Is the UI built to degrade gracefully if sync relationships are temporarily shattered?
+✅ Is the app's initial WASM/DB payload lazy-loaded to preserve fast initial page loads?
 ```

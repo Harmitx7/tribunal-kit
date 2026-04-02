@@ -1,146 +1,110 @@
 ---
-description: Structured brainstorming for projects and features. Explores multiple options before implementation.
+description: Structured brainstorming for projects and features. Uses Socratic questioning to explore multiple options before committing to an approach. No implementation during this phase — only exploration.
 ---
 
-# /brainstorm — Idea Space
+# /brainstorm — Structured Idea Exploration
 
 $ARGUMENTS
 
 ---
 
-This command puts the AI into **exploration mode** — no implementation, no code. The goal is to map the problem and surface real alternatives before committing to a path.
+## When to Use /brainstorm
+
+| Use `/brainstorm` when... | Move to... |
+|:---|:---|
+| Multiple valid approaches exist | After decision → `/plan` |
+| You're unsure of the best architecture | After plan approval → `/generate` |
+| Exploring tradeoffs before committing | Confirmed approach → `/create` |
+| Looking for second opinions on design | |
 
 ---
 
-## When to Use This
+## Phase 1 — Question First
 
-Before any `/create` or `/enhance` command when:
-- The problem is not yet well-defined
-- You want to evaluate multiple architectural paths
-- You need an honest assessment of tradeoffs before starting
-- Decision between two tools or approaches is unclear
-- The team needs to align on direction before work begins
-
----
-
-## The Brainstorming Contract
-
-- Minimum **3 distinct approaches** will be surfaced — not variations of one idea, but genuinely different paths
-- Every approach is assessed on **specific tradeoffs**, not vague pros/cons
-- A **clear verdict** is given at the end — not "it depends" as a final answer
-- No code is written during brainstorming
-- Every tool or library named must be **real and documented**
-
----
-
-## What Happens
-
-**First, the problem is clarified:**
-
-> "What specific outcome should exist that doesn't exist today? Who experiences the problem? What constraints are fixed (stack, timeline, team size)?"
-
-If those aren't answered, the session asks before going further.
-
-**Then, at least 3 distinct approaches are surfaced**, each with:
-- How it works (mechanism, not just name)
-- Where it wins (specific advantage)
-- Where it struggles (real tradeoff — not "it can be complex")
-- Realistic effort level
-
-**Finally, one approach is recommended** — not hedged, not "it depends." A clear pick with a clear reason tied to the user's stated constraints.
-
----
-
-## Response Template
+Before generating ideas, ask 3 clarifying questions:
 
 ```
-## Exploration: [Problem Statement]
-
-Why we're looking at this:
-[What's the actual friction or outcome gap being solved]
-
-User context:
-[Stack, constraints, team size, timeline — if known]
-
-────────────────────────────────────────
-
-Approach 1 — [Name]
-[What this is and how it actually works — mechanism, not just label]
-
-Where it wins:
-› [Specific advantage tied to this use case]
-› [Second specific advantage]
-
-Where it struggles:
-› [Real tradeoff — operational cost, learning curve, limitation]
-
-Effort: ◼◽◽◽◽ Low | ◼◼◼◽◽ Medium | ◼◼◼◼◽ High
-
-────────────────────────────────────────
-
-Approach 2 — [Name]
-...
-
-────────────────────────────────────────
-
-Approach 3 — [Name]
-...
-
-────────────────────────────────────────
-
-Verdict:
-Approach [N] — because [specific reason tied to the stated constraints].
-
-[If it truly depends on one variable]: 
-  → If [condition A]: Approach 1
-  → If [condition B]: Approach 2
-
-What direction should we go deeper on?
+1. What constraint is non-negotiable? (timeline, tech stack, cost, performance)
+2. What has already been tried and ruled out?
+3. What does "success" look like for this decision?
 ```
 
 ---
 
-## Questions That Unlock Better Exploration
+## Phase 2 — Generate 3 Distinct Options
 
-The brainstorming agent may ask:
-
-| Question | Why it matters |
-|---|---|
-| What's the scale? (RPS, users, data volume) | Changes which approaches are viable |
-| Is the team familiar with X? | Affects "effort" rating significantly |
-| What's the failure cost? | Changes risk tolerance and complexity budget |
-| Is this greenfield or adding to existing? | Existing constraints eliminate some options |
-| What's the time horizon? (prototype vs 5-year system) | Short-term vs long-term tradeoffs differ |
-
----
-
-## Hallucination Guard
-
-- **No invented libraries or tools** — every named option must be a real, documented choice
-- **No performance claims without a cited benchmark** — "X is faster" requires a source
-- **Every "pro" must be mechanically grounded** — how does this approach actually achieve the advantage?
-- **Assumptions about the user's codebase** are labeled: `[ASSUMPTION — verify before committing to this approach]`
-- **Effort estimates** are ranges, not single values, with a confidence label
-
----
-
-## Cross-Workflow Navigation
-
-| After /brainstorm, the next step is... |
-|---|
-| Decision made → `/plan` to write the formal plan |
-| Decision made, simple task → `/generate` directly |
-| Decision made, large build → `/create` with known approach |
-| Still unclear → ask more Socratic questions before proceeding |
-
----
-
-## Usage
+Present minimum 3 meaningfully different approaches:
 
 ```
-/brainstorm caching layer for a high-traffic API
-/brainstorm auth approach for a multi-tenant SaaS
-/brainstorm how to structure shared state in a large React app
-/brainstorm whether to use a message queue or direct API calls for notifications
-/brainstorm database: PostgreSQL vs MongoDB for our event sourcing system
+Option A: [Conservative approach]
+  Pros: [why this works]
+  Cons: [what it sacrifices]
+  Effort: [Low / Medium / High]
+  Best for: [when this is the right choice]
+
+Option B: [Balanced approach]
+  Pros: [why this works]
+  Cons: [what it sacrifices]
+  Effort: [Low / Medium / High]
+  Best for: [when this is the right choice]
+
+Option C: [Ambitious approach]
+  Pros: [why this works]
+  Cons: [what it sacrifices]
+  Effort: [Low / Medium / High]
+  Best for: [when this is the right choice]
+```
+
+---
+
+## Phase 3 — Socratic Analysis
+
+After presenting options, probe with questions that reveal hidden tradeoffs:
+
+```
+□ What happens when this scales to 10x current load?
+□ What's the maintenance cost 12 months from now?
+□ Which option fails most gracefully under the worst case?
+□ Which option are you most likely to regret?
+□ What's the opportunity cost of each option?
+```
+
+---
+
+## Phase 4 — Recommendation (Evidence-Based)
+
+After exploration, state a recommendation:
+
+```
+Recommended: Option [B]
+
+Reasoning:
+- [specific reason 1 tied to stated constraints]
+- [specific reason 2]
+- [specific tradeoff you're accepting and why]
+
+NOT recommended because [reason Option A/C is worse for this specific context]
+```
+
+---
+
+## Brainstorm Guard
+
+```
+❌ Never present a single option as if it's the only choice
+❌ Never recommend without explaining WHY in terms of the stated constraints
+❌ Never skip the Socratic probing — it surfaces assumptions
+❌ Never proceed to implementation in /brainstorm mode — use /plan after
+```
+
+---
+
+## Usage Examples
+
+```
+/brainstorm real-time collaboration: WebSockets vs Server-Sent Events vs CRDTs
+/brainstorm caching strategy: Redis vs in-memory vs CDN for our API responses
+/brainstorm auth: next-auth vs Clerk vs custom JWT for our SaaS app
+/brainstorm state management: Zustand vs Redux vs TanStack Query
+/brainstorm monolith vs microservices for our current team size
 ```

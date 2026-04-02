@@ -1,188 +1,118 @@
 ---
 name: plan-writing
-description: Structured task planning with clear breakdowns, dependencies, and verification criteria. Use when implementing features, refactoring, or any multi-step work.
+description: Technical design and implementation planning mastery. Writing structured execution checklists, dependency mapping, establishing rollback protocols, segmenting monolithic tasks, writing ADRs (Architecture Decision Records), and defining verification criteria. Use when transitioning from ideation to coordinated execution.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Task Planning Standards
+# Plan Writing — Execution Blueprints Mastery
 
-> A plan is not a promise. It is a map.
-> Maps get updated when the terrain doesn't match them.
-
----
-
-## When to Write a Plan
-
-Write a plan before implementation when:
-- The task touches more than 2 files in non-trivial ways
-- The task has dependencies (thing B can't start until thing A is done)
-- The task involves a risky operation (migration, data transformation, breaking change)
-- The team needs to review the approach before time is spent implementing it
-
-Skip the formal plan for: single-function fixes, typo corrections, config tweaks.
+> A flawless execution of a terrible plan leads to catastrophic success.
+> Write planes with dependencies explicitly mapped. Treat it like a topological sort.
 
 ---
 
-## Plan Structure
+## 1. The Implementation Plan Structure (ADR-Lite)
+
+Before altering multiple files or introducing a new system architecture, a rigid `implementation_plan.md` MUST be generated and approved. 
+
+**Core Sections:**
+1. **Objective Context:** 2-sentence summary of the requested goal.
+2. **Architectural Handoff:** (What stack, what libraries, what constraints).
+3. **Dependency Tree Execution Order:** (Cannot build frontend UI until backend API exists).
+4. **File Blueprint:** Exact files expected to be touched (`[NEW] src/api/user.ts`, `[MODIFY] src/db/schema.prisma`).
+5. **Verification Protocol:** Exactly how the agent/human will prove the task is completed successfully.
+
+---
+
+## 2. Segmenting Monolithic Tasks (Chunking)
+
+LLMs degrade significantly when asked to process >10 file alterations across multiple directories simultaneously. The Plan Writer must break work into logical, isolated "Waves."
 
 ```markdown
-# Plan: [Feature or Task Name]
+### Wave 1: Data Layer (The Foundation)
+1. Add `Subscription` model to Prisma schema.
+2. Generate migration (`npx prisma migrate dev`).
+3. Add mock seed data.
 
-## Goal
-One sentence: what outcome does this achieve?
+### Wave 2: API Layer (The Bridge)
+1. Build `/api/subscriptions/route.ts` with explicit Zod validation.
+2. Write Vitest logic enforcing authorization roles.
 
-## Context
-- Why is this being done?
-- What problem does it solve or what requirement does it satisfy?
-- What exists today that this changes?
-
-## Approach
-High-level strategy. Enough detail for someone unfamiliar with the code to understand the direction.
-Not implementation details — those go in the tasks.
-
-## Tasks
-
-### Phase 1 — [Name] (prerequisite for Phase 2)
-- [ ] Task 1.1: Description
-- [ ] Task 1.2: Description (depends on 1.1)
-
-### Phase 2 — [Name] (can run after Phase 1 is complete)
-- [ ] Task 2.1: Description
-- [ ] Task 2.2: Description
-
-## Verification
-How will we know this is done and working?
-- [ ] Specific behavior that can be tested
-- [ ] Metric or log line that confirms success
-- [ ] Edge case that must not regress
-
-## Risks and Open Questions
-- [Risk]: What might go wrong, and what's the mitigation?
-- [Open]: What decision hasn't been made yet that could change this plan?
-
-## Files That Will Change
-- `path/to/file.ts` — what changes
-- `path/to/schema.sql` — what changes
+### Wave 3: UI Layer (The Implementation)
+1. Build `SubscriptionCard.tsx`.
+2. Connect to API using MSW mocked tests first.
+3. Integrate into main dashboard.
 ```
 
----
-
-## Dependency Notation
-
-When tasks have a strict order, mark it:
-
-```
-Task A — (no dependencies, do first)
-Task B — (requires A complete)
-Task C — (can run parallel with B)
-Task D — (requires B and C complete)
-```
-
-This prevents teams from working on D while B is still broken.
+*Crucial:* Each wave MUST be executable and testable independently. Do not begin Wave 2 until Wave 1 passes Verification Protocols.
 
 ---
 
-## Task Granularity
+## 3. Rollback & Contingency Planning
 
-Each task should be:
-- Completable in one session by one person
-- Independently reviewable (a PR could represent one task)
-- Testable: there is a concrete way to know if it's done
+No plan survives first contact with the compiler. The plan must implicitly include safe-fail procedures.
 
-**Too vague:** "Implement the auth system"
-**Right size:** "Add `POST /api/auth/login` endpoint with JWT issuance and Zod validation"
+- **Non-Destructive Defaults:** If a schema migration fails, how do we revert? (e.g., explicit instruction to backup SQLite DB locally before operations).
+- **Graceful Feature Toggles:** Is the new feature walled behind an environment variable (`ENABLE_NEW_DASHBOARD=true`) so it can be disabled instantly if it crashes in production?
 
 ---
 
-## Updating the Plan
+## 4. The `task.md` Execution Ledger
 
-Plans are living documents:
+Unlike the high-level `implementation_plan.md`, the `task.md` serves as the live, mutating execution state.
 
-- Mark tasks `[x]` when complete, not when started
-- Add `[!]` to blocked tasks with a note on what is blocking
-- When an assumption proves wrong, update the approach section — don't silently deviate from the plan
+```markdown
+# Current Objective: Upgrade Authentication
 
----
+## Pre-Flight
+- [x] Dump existing environment variables locally
+- [x] Verify current tests pass (Baseline health)
 
-## Verification Criteria Rules
+## Wave 1 (OAuth Scaffold)
+- [/] Install auth.js dependencies
+- [ ] Connect Google Provider inside `[...nextauth].ts`
 
-Verification criteria are not optional. For each task:
-
-- At least one must be **observable** (you can see it, not just believe it)
-- At least one must cover a **failure mode** (what should NOT happen)
-
-```
-✅ Observable: `POST /api/users` returns 201 with a user ID in the response body
-✅ Failure mode: `POST /api/users` with a duplicate email returns 409, not 500
+## Wave 2 (Database Mappings)
+- [ ] Update Users table to handle polymorphic OAuth links
 ```
 
----
-
-## 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** Every plan must integrate a strict "evidence-based closeout" state machine for its tasks.
-- ❌ **Forbidden:** Writing vague verification steps like "Check that it looks right," "Ensure the code makes sense," or "Verify the logic."
-- ✅ **Required:** Verification criteria MUST demand **concrete terminal/compiler evidence** (e.g., test success logs, CLI execution outputs, compiler success states, or network trace results). Explicitly state that an agent CANNOT consider the task complete until it captures this hard evidence.
+*Rules:*
+- `[ ]` = Unstarted
+- `[/]` = In Progress (Current Focus)
+- `[x]` = Verified Complete
 
 ---
 
-## Output Format
+## 🤖 LLM-Specific Traps (Plan Writing)
 
-When this skill produces a recommendation or design decision, structure your output as:
-
-```
-━━━ Plan Writing Recommendation ━━━━━━━━━━━━━━━━
-Decision:    [what was chosen / proposed]
-Rationale:   [why — one concise line]
-Trade-offs:  [what is consciously accepted]
-Next action: [concrete next step for the user]
-─────────────────────────────────────────────────
-Pre-Flight:  ✅ All checks passed
-             or ❌ [blocking item that must be resolved first]
-```
-
-
+1. **Topological Chaos:** Recommending the creation of a frontend React component fetching an API endpoint that has not yet been scheduled for creation, resulting in immediate compilation/linting crashes.
+2. **Missing File Paths:** Writing "Update the configuration file" instead of explicitly declaring `[MODIFY] .github/workflows/deploy.yml`. Vague boundaries invite shotgun surgery.
+3. **Execution Masking:** The AI receives the instruction to "Write a plan," but decides to also write 450 lines of execution code spanning 6 files simultaneously in the same reply. Demarcate Planning from Execution permanently.
+4. **Over-Engineering the MVP:** Recommending a 4-wave, 12-step Kubernetes microservice deployment schedule for a localized "Add a 'Contact Us' form" user request.
+5. **No Verification Baseline:** Failing to establish a "Does the code currently work?" baseline constraint before beginning the sequence of alterations.
+6. **Task Blobbing:** Creating a massive, single 25-step list without breaking it up into isolated, independently testable Waves/Phases. If the list is monolithic, the failure debugging will be chaotic.
+7. **Silent Dependencies:** Failing to explicitly list new NPM packages or system libraries required by the plan (e.g., executing Prisma logic without adding a `npm install @prisma/client` step).
+8. **Assumption of Success:** Failing to establish Rollback protocols (e.g., `git reset --hard`) when planning risky, highly destructive file alterations.
+9. **Ignoring the Environment:** Planning major API changes without ensuring the required environment variables (`STRIPE_API_KEY`) are documented for addition.
+10. **Refusal to Update Ledger:** Operating as an autonomous executor but failing to edit the `task.md` tracking ledger synchronously, destroying the system's memory continuity upon suspension.
 
 ---
 
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Are execution sequences strictly ordered by Topological Dependencies (DB → API → UI)?
+✅ Are monolith tasks deliberately chunked into isolated, independently testable Waves?
+✅ Is the `task.md` execution ledger cleanly parameterized with exact file paths `[NEW], [MODIFY]`?
+✅ Have I explicitly separated the Planning Phase response from raw Code Generation?
+✅ Are verification protocols explicitly tied to terminal logs, test results, or manual checks?
+✅ Are required NPM package installations/dependency injections explicitly mapped in Wave 1?
+✅ Is there a defined Rollback/Snapshot strategy to recover from catastrophic compilation failure?
+✅ Are environmental secrets (.env variables) outlined as requirements before execution?
+✅ Has the complexity of the plan been correctly scaled to the simplicity of the user's objective?
+✅ Does the plan establish a baseline system health check before executing destructive mutations?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

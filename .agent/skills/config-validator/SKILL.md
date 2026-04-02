@@ -1,165 +1,141 @@
 ---
 name: config-validator
-description: Self-validation skill for the .agent directory. Checks that all agents, skills, workflows, and scripts referenced across the system actually exist and are consistent. Use after modifying agent configuration files.
-version: 1.0.0
-last-updated: 2026-03-12
+description: Configuration validation and workspace self-auditing mastery. Verifying .agent directory integrity, checking JSON schemas, resolving broken pointers to missing scripts/skills, validating environment states, and enforcing configuration constraints before execution. Use when loading settings, modifying manifests, or diagnosing system configuration rot.
+allowed-tools: Read, Write, Edit, Glob, Grep
+version: 2.0.0
+last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Config Validator — Agent System Self-Check
+# Config Validator — System Integrity Mastery
 
-This skill validates the internal consistency of the `.agent/` directory itself. When the agent system references files that don't exist, behavior becomes unpredictable. This skill catches those gaps.
-
----
-
-## When to Use
-
-- After adding, renaming, or removing any agent, skill, workflow, or script
-- After copying the `.agent/` directory to a new project
-- When something "should work" but the agent seems to ignore it
-- As part of `/audit` to ensure the agent system itself is healthy
+> An invalid configuration is a ticking time bomb.
+> Systems don't fail when the config breaks; they fail when the broken config is executed 3 weeks later.
 
 ---
 
-## What Gets Checked
+## 1. Fail Fast, Fail Loudly
 
-### 1. Agent File Existence
+Never allow a system to boot, run, or proceed into a workflow if the underlying configuration is invalid. Parse configurations at the absolute boundary.
 
-Every agent referenced in `rules/GEMINI.md` routing table must have a corresponding `.md` file in `agents/`.
+```typescript
+import { z } from "zod";
 
-```
-For each agent in the routing table:
-  → Does agents/{agent-name}.md exist?
-  → If not: report as MISSING AGENT
-```
+// ❌ VULNERABLE: Implicit Trust
+// Assumes the JSON file is correct. Will crash randomly deep in the execution stack 
+// if 'maxRetries' is missing or set to a string.
+const config = JSON.parse(fs.readFileSync('./.agent/config.json', 'utf8'));
+runAgent(config.maxRetries); 
 
-### 2. Skill References in Agent Frontmatter
+// ✅ SAFE: Boundary Validation via Zod
+const ConfigSchema = z.object({
+  version: z.string().regex(/^\d+\.\d+\.\d+$/),
+  maxRetries: z.number().min(0).max(10).default(3),
+  enabledSkills: z.array(z.string()),
+  environment: z.enum(["development", "production", "test"]),
+  apiEndpoint: z.string().url().optional()
+});
 
-Every skill listed in an agent's `skills:` frontmatter field must exist as a directory in `skills/` with a `SKILL.md` file.
-
-```
-For each agent file:
-  → Read YAML frontmatter
-  → For each skill in skills: field
-    → Does skills/{skill-name}/SKILL.md exist?
-    → If not: report as MISSING SKILL
-```
-
-### 3. Workflow File Existence
-
-Every slash command listed in `GEMINI.md` or `ARCHITECTURE.md` must have a corresponding `.md` file in `workflows/`.
-
-```
-For each /command referenced:
-  → Does workflows/{command}.md exist?
-  → If not: report as MISSING WORKFLOW
-```
-
-### 4. Script File Existence
-
-Every script referenced in `rules/GEMINI.md` script table must exist in `scripts/`.
-
-```
-For each script in the reference table:
-  → Does scripts/{script-name} exist?
-  → If not: report as MISSING SCRIPT
-```
-
-### 5. Cross-Reference Consistency
-
-- Agent names in the routing table match filenames in `agents/`
-- Workflow names in the command table match filenames in `workflows/`
-- No orphan files (files that exist but are never referenced anywhere)
-
----
-
-## Validation Process
-
-Run this check manually or mentally when modifying the `.agent/` structure:
-
-```
-Step 1: Read rules/GEMINI.md → Extract agent names, script names
-Step 2: Read GEMINI.md → Extract slash command names
-Step 3: Read ARCHITECTURE.md → Extract all references
-Step 4: Read each agent .md → Extract skill references from frontmatter
-Step 5: Cross-check every reference against the filesystem
-Step 6: Report any mismatches
-```
-
-### Report Format
-
-```
-🔧 Config Validation Report
-━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Agents:    27 found, 27 referenced ✅
-Skills:    37 found, 34 referenced ⚠️ (3 unreferenced)
-Workflows: 22 found, 22 referenced ✅
-Scripts:   10 found, 10 referenced ✅
-
-Issues:
-  ❌ MISSING: skills/some-removed-skill/SKILL.md (referenced by agents/backend-specialist.md)
-  ⚠️ ORPHAN: agents/old-unused-agent.md (not referenced in routing table)
+try {
+  const rawData = JSON.parse(fs.readFileSync('./.agent/config.json', 'utf8'));
+  const config = ConfigSchema.parse(rawData); // Throws heavily detailed error instantly
+} catch (err) {
+  logger.fatal("System boot aborted. Invalid config.json:", err.errors);
+  process.exit(1);
+}
 ```
 
 ---
 
-## Fixing Common Issues
+## 2. Directory & Manifest Self-Auditing
 
-| Issue | Fix |
-|---|---|
-| Missing agent file | Create the agent `.md` file or remove from routing table |
-| Missing skill directory | Create `skills/{name}/SKILL.md` or remove from agent `skills:` field |
-| Missing workflow file | Create `workflows/{name}.md` or remove from slash command table |
-| Missing script | Create the script or remove from script reference table |
-| Orphan file | Either reference it somewhere or delete it |
+Configuration files often reference physical system assets (scripts, workflows, other config files). The validator must check referential integrity.
 
----
+If `manifest.json` says `{"workflow": "scripts/deploy.sh"}`, the validator MUST verify that `scripts/deploy.sh` actually exists before the orchestrator tries to run it.
 
-## Hallucination Guard
+```typescript
+// Validating Referential Integrity
+function auditAgentDirectory(config: Config) {
+  const missingFiles = [];
 
-- Never report a file as "existing" without actually checking the filesystem
-- Never report a reference as "valid" without reading the referencing file
-- If a file exists but has different content than expected, flag it rather than assuming it's correct
+  for (const skill of config.enabledSkills) {
+    const skillPath = path.join('.agent/skills', skill, 'SKILL.md');
+    if (!fs.existsSync(skillPath)) {
+      missingFiles.push(`Skill manifest definition missing: ${skillPath}`);
+    }
+  }
 
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+  if (missingFiles.length > 0) {
+    throw new Error(`Referential Integrity Failure:\n${missingFiles.join('\n')}`);
+  }
+}
+```
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 3. Environment Variable Validation
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
+Missing or malformed `.env` files are the #1 cause of deployment failure.
 
-### ❌ Forbidden AI Tropes
+Treat environment variables exactly like JSON configs: apply a rigid schema mapping at boot.
 
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+```typescript
+// Instead of checking process.env.DATABASE_URL throughout the app,
+// export a strictly validated object once.
+
+// src/env.ts
+import { z } from "zod";
+
+const EnvSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  PORT: z.coerce.number().default(3000), // Transforms string "3000" to number 3000
+  NODE_ENV: z.enum(["development", "production"]).default("development"),
+  API_KEY: z.string().min(16), // Ensures keys aren't empty or mock data
+});
+
+export const ENV = EnvSchema.parse(process.env);
+```
+
+---
+
+## 4. Safe Configuration Mutation
+
+When automating updates to a JSON configuration (e.g., adding a new skill to `config.json`), never serialize over the original file blindly.
+
+1. **Read** original JSON.
+2. **Apply** modifications in memory.
+3. **Validate** the new object against the Zod schema.
+4. **Write** atomically (write to `config.json.tmp`, then standard OS file rename to `config.json` to prevent corruption if power dies mid-write).
+
+---
+
+## 🤖 LLM-Specific Traps (Config Validation)
+
+1. **Type Assumptions:** Assuming `JSON.parse` returns reliable data interfaces. It returns `any`. Zod ensures strict types and strips prototype pollution hooks.
+2. **Silent Defaults:** Using `config.maxRetries || 3` logic inside deep functional logic. This scatters the system defaults across 40 files instead of centralizing them in early config validation.
+3. **Broken Manifest Pointers:** Referencing a deleted skill or renamed sub-agent script in a workflow array, resulting in uncatchable OS module resolution crashes downstream. Validation must check `fs.existsSync`.
+4. **Environment Guessing:** An AI script executing `process.env.OPENAI_API_KEY` sequentially without a pre-validation block, executing 10 DB writes successfully but crashing exactly at the AI networking phase.
+5. **Corrupting Serializations:** Directly re-writing JSON using `JSON.stringify` without formatting (e.g., `JSON.stringify(data, null, 2)`), radically destroying human readability of `.json` settings files.
+6. **Trailing Commas:** Generating JSON patches using string regex replacement that leaves dangling commas inside arrays, completely breaking `JSON.parse`.
+7. **Version Blindness:** Running a v2 config schema against a legacy v1 deployment file without executing transformation/upgrade functions first.
+8. **Insecure Path Joining:** Constructing config path validations manually (`dir + '/' + config.path`), opening vectors for basic directory traversal attacks (`../../root/etc`) if the config string is compromised. Use `path.join`.
+9. **Catch-And-Swallow:** Catching a config parsing error and returning an empty fallback object blindly instead of explicitly halting the system and notifying the administrator.
+10. **Regex instead of Zod:** Writing 40 lines of regular expressions to manually check email strings, port bounds, and arrays inside JSON config dumps rather than leveraging built-in schema libraries.
+
+---
+
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Are configurations validated strictly and completely before any further code execution?
+✅ Is there a robust schema engine (e.g., Zod) parsing types and clamping out-of-bound variables?
+✅ Are physical file references inside manifests audited locally using `fs.existsSync`?
+✅ Have process/environment variables (.env) been constrained through strict boot parsing?
+✅ Are JSON mutations serialized with correct formatting (`null, 2`) and semantic integrity?
+✅ Are missing critical properties explicitly causing loud runtime fatal crashes rather than silent fallbacks?
+✅ Does the validation strip unexpected/injected keys from payloads via strict validation?
+✅ Does the config schema accurately validate data types (preventing string "3000" instead of numeric 3000)?
+✅ Are modifications serialized safely using atomic write/rename patterns to prevent corruption?
+✅ Did I ensure the schema library handles URL integrity for connection strings?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

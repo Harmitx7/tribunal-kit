@@ -1,143 +1,135 @@
 ---
-description: Auto-fix known issues with lint, formatting, imports, and TypeScript errors. Human approval required before applying.
+description: Auto-fix known issues with lint, formatting, imports, and TypeScript errors. Runs lint_runner.py and auto-fixers. Human approval required before applying any changes. Shows a diff of what will change before writing to disk.
 ---
 
-# /fix — Automated Issue Resolution
+# /fix — Automated Error Resolution
 
 $ARGUMENTS
 
 ---
 
-This command runs auto-fixable checks and applies corrections. **Every fix requires human approval** — nothing is written to disk without explicit confirmation.
-
----
-
-## When to Use /fix vs Other Commands
+## When to Use /fix
 
 | Use `/fix` when... | Use something else when... |
-|---|---|
-| Lint reports many auto-fixable issues | Logic bugs → `/debug` |
-| Formatting is inconsistent after a merge | Security vulnerabilities → `/audit` |
-| Dependency upgrade changed import paths | TypeScript type errors → `/generate` or manual fix |
-| Quick cleanup before a PR | Full project health check → `/audit` |
+|:---|:---|
+| Lint errors blocking CI | Logic bugs → `/debug` |
+| TypeScript type errors | Feature changes needed → `/enhance` |
+| Formatting inconsistencies | Security vulnerabilities → `/tribunal-backend` |
+| Missing imports auto-detectable | Structural changes → `/refactor` |
+| After a dependency version upgrade breaks types | |
 
 ---
 
-## What Happens
+## What /fix Handles (Auto-Fixable)
 
-### Stage 1 — Dry Run (Always First)
+```
+✅ AUTO-FIXABLE:
+│ ESLint  → eslint --fix (formatting, unused imports, style)
+│ Prettier → prettier --write (spacing, quotes, semicolons)
+│ TypeScript → add missing required imports visible from types
+│ Tailwind → class ordering (prettier-plugin-tailwindcss)
+│ npm audit → npm audit fix (non-breaking dependency patches)
 
-Before fixing anything, show what would change:
+⚠️ REQUIRES HUMAN DECISION:
+│ TypeScript strict mode errors (may require type narrowing by developer)
+│ Breaking API changes after major version bump
+│ Logic errors flagged by ESLint (not just style)
+│ Security vulnerabilities (audit fix --force changes major versions)
+```
+
+---
+
+## Execution Sequence
 
 ```bash
-# Lint auto-fix dry run (show issues without applying)
-// turbo
+# 1. Run lint with auto-fix
 python .agent/scripts/lint_runner.py . --fix
 
-# Prettier check (show files that would be reformatted)
-// turbo
-npx prettier --check .
+# 2. Fix remaining TypeScript errors (auto-detectable only)
+npx tsc --noEmit 2>&1 | grep "error TS"
 
-# TypeScript errors (does not auto-fix — reports only)
-// turbo
-npx tsc --noEmit
+# 3. Format all files
+npx prettier --write "src/**/*.{ts,tsx,js,json,css}"
+
+# 4. Check npm audit (report, don't auto-fix without approval)
+npm audit --audit-level=high
 ```
-
-Present the dry run results to the user before touching anything:
-
-```
-📋 Auto-fixable issues found:
-  - ESLint: 12 fixable issues across 5 files
-  - Prettier: 8 files would be reformatted
-  - TypeScript: 3 unused imports (auto-fixable)
-  - TypeScript: 2 type errors (require manual fix — see below)
-
-⚠️ Manual fixes required (not auto-fixable):
-  - src/auth/jwt.ts line 34: Type 'string | undefined' is not assignable to 'string'
-  - src/db/queries.ts line 12: Property 'userId' does not exist
-
-⏸️ Proceed with auto-fix? [Y = apply | N = cancel]
-```
-
-> ⏸️ **Human Gate** — never apply fixes without explicit user approval.
 
 ---
 
-### Stage 2 — Apply Fixes (After Approval)
+## Human Gate — Review Diff Before Applying
 
-Run fixers in this order (order matters — ESLint first prevents Prettier from undoing logic changes):
+After running fixers:
+
+```
+━━━ Fix Preview ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Files that will change:
+  src/components/Button.tsx        (lint: 3 unused imports removed)
+  src/lib/auth.ts                  (lint: missing semicolons, trailing whitespace)
+  src/app/api/users/route.ts       (prettier: formatting)
+
+Diff preview:
+  --- src/components/Button.tsx
+  +++ src/components/Button.tsx
+  - import { useState, useEffect, useCallback } from 'react'; // useEffect unused
+  + import { useState, useCallback } from 'react';
+
+━━━ Remaining Errors (Need Human Review) ━━━
+
+  src/lib/payment.ts:34 — TS2345: Argument of type 'string | null' not assignable to 'string'
+  → This requires deliberate type narrowing — cannot auto-fix safely
+
+━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Apply auto-fixes?  Y = write to disk | N = discard | S = select specific files
+```
+
+**No files are written without explicit "Y" approval.**
+
+---
+
+## Fix Guard
+
+```
+❌ Never run --force on npm audit fix without human approval (can break major APIs)
+❌ Never auto-fix TypeScript errors that require business logic decisions
+❌ Never apply lint fixes to generated test files without human review
+❌ Never "fix" ESLint disable comments — they may be intentional suppressions
+❌ Never mix fix + refactoring in the same run
+```
+
+---
+
+## After /fix — Verify
 
 ```bash
-# Step 1: ESLint logic fixes
-npx eslint . --fix
-
-# Step 2: Prettier formatting
-npx prettier --write .
-
-# Step 3: Import sorting (if configured)
-npx organize-imports-cli tsconfig.json
+# Verify fixes didn't introduce new errors
+npx tsc --noEmit    # Must be clean
+npm test            # Must still all pass
+npm run lint        # Must be zero errors
 ```
 
----
-
-### Stage 3 — Verify After Fix
-
-```bash
-# Full lint must be clean after auto-fix
-// turbo
-python .agent/scripts/lint_runner.py .
-
-# Tests must still pass (fixes should not change behavior)
-// turbo
-python .agent/scripts/test_runner.py .
-
-# Show git diff of all applied changes
-git diff --stat
-```
-
-If tests fail after auto-fix → **revert immediately** and report which fix caused the failure.
-
----
-
-## What This Does NOT Fix
-
-| Issue type | Handled by |
-|---|---|
-| TypeScript type errors requiring logic changes | Manual fix or `/generate` |
-| Logic bugs | `/debug` |
-| Security vulnerabilities | `/audit` then `/generate` |
-| Test failures | `/debug` then `/test` |
-| Architecture issues | `/refactor` |
-
-These are reported but left for human resolution. Auto-fix never attempts these.
-
----
-
-## Safety Rules
-
-1. **Never auto-fix without showing the diff first**
-2. **Never fix and commit in one step** — user reviews the diff before any commit
-3. **If a fix changes behavior** (not just formatting): flag it as `⚠️ This fix may change runtime behavior — review manually`
-4. **Revert on test failure** — if tests fail after fixing, undo the fix and report which change caused it
-5. **Never modify files in `node_modules` or generated output directories**
+If any verification step fails after fixes → report and revert auto-fixes for that file.
 
 ---
 
 ## Cross-Workflow Navigation
 
-| After /fix... | Go to |
-|---|---|
-| Lint is clean, ready for review | `/review [file]` for logic audit |
-| TypeScript errors remain after lint fix | Address manually or use `/generate` for targeted rewrite |
-| Pre-deploy cleanup complete | `/audit` for full project health check |
+| After /fix shows... | Go to |
+|:---|:---|
+| Logic errors remaining after lint | `/debug` |
+| Security issues in audit output | `/tribunal-backend` |
+| Complex type errors needing refactoring | `/refactor` |
+| After all errors fixed | `/deploy` (if pre-deploy fix) or `/generate` (if pre-generation) |
 
 ---
 
-## Usage
+## Usage Examples
 
 ```
-/fix lint errors in this project
-/fix formatting across all files
-/fix unused imports and variables
-/fix all ESLint and Prettier issues before the PR
+/fix all lint errors in src/components/
+/fix TypeScript errors after upgrading to Next.js 15
+/fix unused import warnings blocking CI
+/fix after running npm audit --audit-level=high
+/fix formatting inconsistencies across the entire src/ directory
 ```

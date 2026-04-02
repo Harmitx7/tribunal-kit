@@ -1,215 +1,154 @@
 ---
 name: bash-linux
-description: Bash/Linux terminal patterns. Critical commands, piping, error handling, scripting. Use when working on macOS or Linux systems.
+description: Bash/Linux terminal mastery. Shell scripting, piping, stream redirection, process substitution, strict mode (set -euo pipefail), AWK, ripgrep parsing, and robust error handling. Use when writing CI scripts, debugging POSIX environments, or manipulating text pipelines.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Bash & Linux Shell Patterns
+# Bash & Linux — Shell Scripting Mastery
 
-> The terminal is a tool, not a magic box. Understand what a command does before you run it with elevated privileges.
-
----
-
-## Ground Rules
-
-1. **Never suggest `sudo` without explaining why it's necessary**
-2. **Test destructive commands with `--dry-run` or `echo` first**
-3. **`rm -rf` on a variable that might be empty = disaster** — guard it
-4. **Pipe chains fail silently unless you use `set -euo pipefail`**
+> Bash is powerful but fragile by default.
+> An unchecked failure in a shell script will happily cascade into deleting production.
 
 ---
 
-## Essential Patterns
+## 1. Bash Strict Mode (Mandatory)
 
-### Safe Script Header
-
-Every shell script should start with:
+Always start every single bash script with strict compilation flags.
 
 ```bash
 #!/usr/bin/env bash
+
+# ❌ BAD: Default bash execution
+# - Undefined variables evaluate to empty strings
+# - Failed commands are ignored, execution continues blindly
+# - Piped failures are hidden (only last command exit code matters)
+
+# ✅ GOOD: Strict Mode
 set -euo pipefail
 IFS=$'\n\t'
-```
 
-- `set -e` — exit on any error
-- `set -u` — exit on undefined variable
-- `set -o pipefail` — fail if any command in a pipe fails
-- `IFS` — safer word splitting
+# -e: Exit immediately if a command exits with a non-zero status.
+# -u: Treat unset variables as an error and exit immediately.
+# -o pipefail: Pipeline returns the status of the rightmost command to exit with a non-zero status.
+# IFS: Only split on newlines and tabs, not spaces (prevents terrifying globbing/array bugs).
 
-### Variable Safety
-
-```bash
-# ❌ Unsafe — if DIR is empty, this deletes /
-rm -rf "$DIR/"
-
-# ✅ Safe — guard before destructive operation
-if [[ -z "$DIR" ]]; then
-  echo "Error: DIR is not set" >&2
-  exit 1
-fi
-rm -rf "$DIR/"
-```
-
-### Testing Conditions
-
-```bash
-# File/directory checks
-[[ -f "$file" ]]    # exists and is a regular file
-[[ -d "$dir" ]]     # exists and is a directory
-[[ -z "$var" ]]     # string is empty
-[[ -n "$var" ]]     # string is not empty
-
-# Numeric comparison (use (( )) for integers)
-(( count > 0 ))
-(( $? == 0 ))
-```
-
-### Error Handling
-
-```bash
-# Trap errors and print context
-trap 'echo "Error on line $LINENO" >&2' ERR
-
-# Run a command and handle failure explicitly
-if ! command_that_might_fail; then
-  echo "Command failed — aborting" >&2
-  exit 1
-fi
-
-# Or with ||
-do_something || { echo "Failed"; exit 1; }
+# Example: Catching potential disasters
+unset MY_VAR
+rm -rf "/some/path/${MY_VAR}" # With 'set -u', this throws an error instead of running 'rm -rf /some/path/'
 ```
 
 ---
 
-## Common Operations
+## 2. Advanced Stream Manipulation
 
-### Find Files
-
-```bash
-# Files modified in last 24h
-find . -mtime -1 -type f
-
-# Files matching pattern, excluding directories
-find . -name "*.log" -not -path "*/node_modules/*"
-
-# Search contents
-grep -r "pattern" . --include="*.ts" -l   # list files
-grep -r "pattern" . --include="*.ts" -n   # with line numbers
-```
-
-### Process & Resource Management
+Piping allows passing stdout from one program into stdin of another.
 
 ```bash
-# Find process using a port
-lsof -i :3000
-ss -tlnp | grep :3000   # on Linux
+# ❌ VULNERABLE: Useless Use of Cat (UUOC)
+cat file.txt | grep "error"
 
-# Kill by port
-kill -9 $(lsof -ti :3000)
+# ✅ EFFICIENT: Direct parsing
+grep "error" file.txt
+# Or modern ripgrep for huge repositories:
+rg "error" file.txt
 
-# Background + disown
-long_running_command &
-disown $!
-```
+# Process Substitution: Treating tool outputs as if they were files
+# Compare two remote JSON responses without writing to disk
+diff <(curl -s api.com/v1) <(curl -s api.com/v2)
 
-### Text Processing Pipeline
-
-```bash
-# Count occurrences
-cat file.log | grep "ERROR" | wc -l
-
-# Extract column from CSV
-cut -d',' -f2 data.csv
-
-# Unique sorted values
-sort file.txt | uniq -c | sort -rn
+# Redirection Mastery
+# 1> stdout, 2> stderr
+command > output.txt 2> error.txt   # Split streams
+command > all.txt 2>&1              # Combine streams (POSIX)
+command &> all.txt                  # Combine streams (Bash shortcut)
+command >/dev/null 2>&1             # Subdue all output cleanly
 ```
 
 ---
 
-## Script Structure Template
+## 3. AWK and Stream Formatting
+
+AWK is a complete programming language designed for text processing.
 
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
+# Example: We have a ps aux output and we want the PIDs (column 2) of all Node processes
+ps aux | grep node | awk '{print $2}'
 
-# ── Config ──────────────────────────────
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TARGET="${1:-}"
+# Example: Summing numbers in column 3 from a CSV
+cat data.csv | awk -F ',' '{sum+=$3} END {print sum}'
 
-# ── Validate ────────────────────────────
-if [[ -z "$TARGET" ]]; then
-  echo "Usage: $(basename "$0") <target>" >&2
-  exit 1
-fi
-
-# ── Main ────────────────────────────────
-main() {
-  echo "Processing: $TARGET"
-  # ... logic here
-}
-
-main "$@"
+# Extracting specific lines (e.g. line 5 to 10)
+sed -n '5,10p' file.txt
 ```
 
 ---
 
-## Platform Notes
+## 4. Modern CLI Alternatives (The 2026 Stack)
 
-- `date` syntax differs between macOS BSD and Linux GNU — use `python3 -c "..."` for portable date math
-- `sed -i` needs an empty string argument on macOS: `sed -i '' 's/old/new/' file`
-- Prefer `#!/usr/bin/env bash` over `#!/bin/bash` for portability
+Standard POSIX tools are reliable but slow. Use modern Rust-based alternatives when available in CI/CD.
 
----
-
-## Output Format
-
-When this skill produces or reviews code, structure your output as follows:
-
-```
-━━━ Bash Linux Report ━━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Bash Linux
-Language:    [detected language / framework]
-Scope:       [N files · N functions]
-─────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [test output / lint pass / compile success]
-```
-
-**VBC (Verification-Before-Completion) is mandatory.**
-Do not mark status as VERIFIED until concrete terminal evidence is provided.
-
+| Task | Legacy POSIX | Modern Alternative | Why? |
+|:---|:---|:---|:---|
+| Find files | `find . -name "*.ts"` | `fd -e ts` | Context-aware, respects `.gitignore`, 10x faster. |
+| Search text | `grep -r "auth"` | `rg "auth"` | Ripgrep uses multi-threading and SIMD instructions. |
+| Inspect JSON | `grep / awk` | `jq '.users[].id'` | `jq` explicitly parses and filters valid JSON arrays/objects. |
+| Process monitoring | `top` | `htop` / `btm` | Interactive metrics. |
+| Check curl | `curl -i` | `httpie` / `xh` | Colorized, structured JSON networking. |
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 5. File System Traps & Quoting
 
-**Slash command: `/audit` or `/review`**
-**Active reviewers: `logic` · `security` · `devops`**
+If a filename contains a space and you didn't quote your variable, your script will crash or delete the wrong files.
 
-### ❌ Forbidden AI Tropes in Bash/Linux
+```bash
+# Let FILE="my backup.tar"
 
-1. **Unjustified `sudo`** — hallucinating `sudo` for scripts or directories owned by the local user.
-2. **Unquoted variables** — using `$CMD` instead of `"$CMD"`, leading to word splitting and globbing disasters.
-3. **Unguarded `rm -rf`** — deleting variables without checking if they are empty first (`[[ -z "$DIR" ]]`).
-4. **Pipe chains without `pipefail`** — writing `cat file | grep X | cut -d` without `set -o pipefail`, hiding failures.
-5. **Parsing `ls`** — scraping `ls` output instead of using `find` or globbing.
+# ❌ BAD: Evaluates as `rm my` AND `backup.tar` -> Two different files!
+rm $FILE
+
+# ✅ GOOD: Always quote string variables
+rm "$FILE"
+
+# ✅ GOOD: Array iteration (Using quotes specifically formatted with @)
+FILES=("file 1.txt" "file 2.txt")
+for file in "${FILES[@]}"; do
+  echo "Processing: $file"
+done
+```
+
+---
+
+## 🤖 LLM-Specific Traps (Bash/Linux)
+
+1. **Forgetting Strict Mode:** AI commonly forgets `set -euo pipefail`, creating fragile, dangerous scripts that cascade failures.
+2. **Missing Quotes:** AI writes `echo $USER_INPUT` instead of `echo "$USER_INPUT"`, leading to glob-splitting exploits and file deletion errors.
+3. **Useless Cat:** `cat file.txt | awk ...` instead of `awk ... file.txt`.
+4. **Regex in Grep:** AI attempts complex regex in standard `grep` which often fails due to dialect differences (BSD vs GNU). Use `grep -E` (Extended) or modern `rg`.
+5. **Awkward JSON parsing:** AI writing labyrinthine `sed`/`grep` chains to extract a field from JSON. Always use `jq`.
+6. **Hardcoded Paths:** Using `/home/user/script` instead of dynamic resolutions like `$(dirname "$0")` to find files relative to the script location.
+7. **Dangerous Globbing:** `rm *.txt` will fail if there are too many files ("Arg list too long"). AI fails to use `find . -name "*.txt" -delete` for large ops.
+8. **Silent Failures in Pipes:** AI assumes `command1 | command2` throws an error if `command1` fails. It doesn't, unless `set -o pipefail` is active.
+9. **Environment Pollution:** Executing exports globally (`export VAR=1`) inside utility scripts. Changes pollute the user's active shell.
+10. **Blind Sudo Execution:** Suggesting users pipe curled scripts directly into `sudo bash` (`curl api.com/setup | sudo bash`). Always inspect scripts first.
+
+---
+
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before generating Bash scripts or commands:
 ```
-✅ Does the script start with `set -euo pipefail`?
-✅ Are all variable expansions wrapped in double quotes to prevent splitting?
-✅ Did I verify that `sudo` is absolutely required for this operation?
-✅ Are destructive operations (`rm`, `mv`) properly guarded with condition checks?
-✅ Did I use the most robust tool (e.g., `find` instead of `ls`) for the job?
+✅ Does the script begin with `set -euo pipefail`?
+✅ Are all variable expansions wrapped in double quotes `"$VAR"`?
+✅ Am I using `jq` for handling JSON responses rather than `sed`/`grep`?
+✅ Is the script executing locally relative paths using `$(dirname "$0")`?
+✅ Have I avoided "Useless Use of Cat" (`cat X | Y`)?
+✅ Did I properly manage stderr and stdout streams (`2>&1`)?
+✅ Have I avoided executing destructive wildcard globs (`rm -rf *`)?
+✅ Is my text searching leveraging `-E` for extended regex if I use lookaheads?
+✅ Did I use array expansion strictly as `"${ARRAY[@]}"`?
+✅ If suggesting installation, did I avoid `curl | sudo bash`?
 ```

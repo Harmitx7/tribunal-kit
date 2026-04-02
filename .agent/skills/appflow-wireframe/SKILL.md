@@ -1,114 +1,121 @@
 ---
 name: appflow-wireframe
-description: Skill for the planner agent to generate deterministic application flows (Mermaid) and structural UI wireframes (Pseudo-XML) prior to code execution.
+description: Application flow and wireframing mastery. Mermaid.js flowcharting, state diagrams, user journey mapping, interaction matrices, explicit screen boundary demarcation, and accessibility flow modeling. Use when planning UI architectures, designing user onboarding flows, or visualizing complex state machines before writing code.
+allowed-tools: Read, Write, Edit, Glob, Grep
+version: 2.0.0
+last-updated: 2026-04-02
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Appflow & Wireframing Skill
+# Appflow & Wireframing — Visualization Mastery
 
-This skill empowers the planner agent to outline precise user journeys and screen layouts directly in `PLAN-{slug}.md` files. The output must be perfectly readable by humans and easily parsed by downstream code generation agents (like `frontend-specialist`).
+> You cannot code a cohesive application if you don't know what screens exist.
+> Stop writing components until the user journey graph is mathematically complete.
 
-## Phase 1: App Flow Mapping (Mermaid.js)
+---
 
-Before creating wireframes, you must map the logical user journey using a Mermaid.js flowchart. 
+## 1. The Mermaid Appflow Protocol
 
-### Rules for Flows:
-- Use `mermaid` blocks with `flowchart TD` (Top-to-Down) or `LR` (Left-to-Right).
-- Focus strictly on state transitions, conditional logic, auth barriers, and API boundaries.
-- Label all decision edges clearly.
+When asked to "design the flow", do not write prose. Write deterministic Mermaid diagrams that map state interactions.
 
-**Example:**
+### Example: E-Commerce Checkout Flow
+
 ```mermaid
-flowchart TD
-    Start([User visits /checkout]) --> Auth{Is Logged In?}
-    Auth -- No --> Redirect[Send to /login?return=/checkout]
-    Auth -- Yes --> Validate{Cart Not Empty?}
-    Validate -- No --> ShowEmpty[Render EmptyCart component]
-    Validate -- Yes --> ShowCheckout[Render CheckoutLayout]
+stateDiagram-v2
+    [*] --> CartView
+    
+    state CartView {
+        [*] --> Empty: Load
+        Empty --> Populated: Add Item
+    }
+    
+    CartView --> CheckoutModal: Click Checkout
+    
+    state CheckoutModal {
+        [*] --> AuthCheck
+        AuthCheck --> GuestCheckout: Not Logged In
+        AuthCheck --> ProfilePreFill: Logged In
+        
+        GuestCheckout --> PaymentProcessing: Submit
+        ProfilePreFill --> PaymentProcessing: Submit
+    }
+    
+    PaymentProcessing --> Success: Stripe 200 OK
+    PaymentProcessing --> CheckoutModal: Stripe 402 Error (Retry)
+    
+    Success --> [*]: Redirect Dashboard
 ```
-
-## Phase 2: Semantic Wireframing (Pseudo-XML) & UI Accuracy
-
-For mapping UI elements, NEVER use vague bullet points or basic ASCII art. You must use the **Tribunal Structural XML** format. This enforces a component-thinking mindset and provides 1:1 structural intent for the frontend agent.
-
-### Rules for UI Accuracy & Tokens:
-To ensure the frontend agent translates the wireframe with pixel-perfect accuracy, you must use explicit spacing, typography, and layout generic tokens (based on a 4px grid) rather than vague words like "large" or "small".
-
-- Use PascalCase for components (`<Sidebar>`, `<DataGrid>`, `<MetricCard>`).
-- Define exact layout constraints: `layout="flex-col"`, `flex="1"`, `items="center"`, `justify="between"`.
-- Define spacing using standard numeric scales (1 = 4px): `p="4"`, `gap="2"`, `m="8"`.
-- Define typography explicit roles: `text="xs | sm | base | lg | xl | 2xl"`, `font="bold"`, `text-color="muted"`.
-- Define explicit widths/heights: `w="full"`, `max-w="7xl"`, `h="100vh"`.
-- Provide responsive breakpoints explicitly: `<Grid cols="1" md-cols="3">`.
-
-**Example:**
-```xml
-<Screen name="Checkout" layout="flex-row" max-w="7xl" mx="auto" p="4" md-p="8">
-  <MainColumn layout="flex-col" gap="8" flex="1">
-    <Section title="Shipping Details" text="xl" font="semibold">
-      <AddressForm fields="Name, Street, City, Zip" gap="4" />
-    </Section>
-    <Section title="Payment Method" text="xl" font="semibold">
-      <PaymentElement provider="Stripe" p="4" border="1" radius="md" />
-    </Section>
-  </MainColumn>
-
-  <SidebarColumn layout="sticky" w="full" md-w="96" p="6" bg="surface-variant" radius="lg">
-    <OrderSummary layout="flex-col" gap="4">
-      <CartList items="[CartContext]" />
-      <Divider />
-      <Subtotal layout="flex-row" justify="between" text="sm" text-color="muted" />
-      <Tax calculation="dynamic" layout="flex-row" justify="between" text="sm" text-color="muted" />
-      <Divider />
-      <Total layout="flex-row" justify="between" text="lg" font="bold" />
-      <Button action="submitCheckout" variant="primary" w="full" py="3" radius="md">Pay Now</Button>
-    </OrderSummary>
-  </SidebarColumn>
-</Screen>
-```
-
-## Execution Checklist for the Planner:
-- [ ] Has the logical flow been verified in the Mermaid graph?
-- [ ] Does every screen mentioned in the flow have a corresponding `<Screen>` XML wireframe?
-- [ ] Are the wireframe nodes purely structural (no hallucinated styles)?
-
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 2. Low-Fidelity Wireframe Notation
 
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
+When asked to define the UI layout conceptually before building Shadcn/Tailwind components, use structural ASCII/Markdown notation to establish layout boundaries.
 
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+```text
+[ HEADER: Logo (Left) | Search Bar (Center, expanding) | User Avatar (Right) ]
+-------------------------------------------------------------------------
+[ SIDEBAR (Sticky, W-64) ] |  [ HERO SECTION: H1 Hook | CTA Button Primary ]
+- Dashboard                |  [ .......................................... ]
+- Analytics                |  [ FEATURE GRID (CSS Grid columns-3)        ]
+- Settings                 |  [ [Card 1]     [Card 2]      [Card 3]      ]
+[........................] |  [..........................................]
+```
+
+**Why do this?**
+Because moving an ASCII box takes 3 seconds. Rewriting 4 nested div flexbox tails takes 5 minutes. Secure the approval on the wireframe before touching code.
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 3. The Empty State / Loading State Mandate
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
+When mapping application flows, AI frequently charts the "Happy Path" (User logs in -> User sees 10 items). 
 
-### ❌ Forbidden AI Tropes
+Every single screen designed in an App Flow MUST explicitly define:
+1. **The Loading State:** What does the user see while the network executes? (Skeleton loaders vs Spinners).
+2. **The Empty State:** What does the UI look like on Day 1 when the user has zero data? (An empty white screen is an instant bounce-rate death sentence; use an Empty State CTA).
 
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+---
+
+## 4. Interaction Matrices (Event Mapping)
+
+Before writing React, chart exactly what the user can do on the screen and what the system does in response.
+
+| Interaction | Trigger | System Response Hook | Edge Case |
+|:---|:---|:---|:---|
+| Click `Add to Cart` | `onClick` | Dispatch `Zustand.add(item)` | If out of stock, render Toast |
+| Scroll to Bottom | `IntersectionObserver` | `fetchNextPage()` | Reached max items, show footer |
+| Click outside Modal | `useClickAway` | `setIsOpen(false)` | Prevent close if form is dirty |
+
+---
+
+## 🤖 LLM-Specific Traps (Appflow Wireframing)
+
+1. **Jumping straight to code:** A user asks for app ideas, and the AI replies with `npx create-next-app` instead of laying out the fundamental visual logic diagram.
+2. **Mermaid Syntax Hallucinations:** Writing invalid Mermaid.js schemas (using broken bracket geometries `[->]` instead of `-->`). Always stick to standard `graph TD`, `flowchart`, or `stateDiagram-v2`.
+3. **The Unbroken Happy Path:** Writing user flows that completely ignore form validation errors, network 500 crashes, or rejected authentication logic.
+4. **Desktop Exclusivity:** Creating structural wireframes assuming a 1920x1080 horizontal layout, completely failing to define how the Desktop Sidebar flows into a Mobile Hamburger menu.
+5. **Missing the "Back" Button:** Charting user journeys that drive players deep into settings menus with absolutely no topological path charted back to the dashboard state.
+6. **Abstract Ambiguity:** Plotting a state box named `ProcessData` instead of defining the UI interaction block `PaymentProcessingSpinner`. Keep flows strictly anchored to what the User physically perceives on screen.
+7. **Prose Overloading:** Explaining an application flow with 4 paragraphs of dense text. Visual modeling (Markdown matrices, ASCII grids, Mermaid) is universally superior for architectural consensus.
+8. **Stateless UI Mapping:** Charting wireframes that ignore interactive states (Hover, Active, Focused, Disabled).
+9. **Monolithic Modals:** Planning complex 4-step wizard forms inside a single generic "Modal" state, hiding the fact that internal routing and state-persistence logic is required.
+10. **Refusal to Request Sign-off:** Generating a wireframe structure and then immediately generating the 5 React files underneath it before the user actually approved the structural layout.
+
+---
+
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Are complex multi-screen flows mathematically defined using valid Mermaid.js diagrams?
+✅ Do the state diagrams explicitly account for Loading, Empty, and Error state routing?
+✅ Has the "Happy Path" been broken by deliberately charting network/validation failure loops?
+✅ Are Low-Fi ASCII/Markdown wireframes structurally sound and easy for the user to interpret?
+✅ Were Interaction Matrices used to cleanly map User Triggers to System Hooks?
+✅ Does the architectural design handle responsive degradation (e.g., Desktop Sidebar -> Mobile drawer)?
+✅ Have user escape hatches (e.g., 'Back' buttons, clicking outside modals) been mapped?
+✅ Did I strictly halt execution to wait to secure user approval on the wireframe before writing code?
+✅ Has visual fluff been stripped to focus strictly on constraints, hierarchy, and system flow?
+✅ Did I prevent hiding complex multi-step state machines inside a single vague "Settings" box?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

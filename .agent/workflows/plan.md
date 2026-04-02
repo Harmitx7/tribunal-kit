@@ -1,151 +1,173 @@
 ---
-description: Create project plan using project-planner agent. No code writing — only plan file generation.
+description: Create project plan using project-planner agent. 4-phase approach: Analyze → Research → Plan Document → Human Gate. NO code writing — only plan file generation. Writing begins only after explicit human approval.
 ---
 
-# /plan — Write the Plan First
+# /plan — Strategic Implementation Planning
 
 $ARGUMENTS
 
 ---
 
-This command produces one thing: **a structured plan file**. Nothing is implemented. No code is written. The plan is the output.
+## When to Use /plan
+
+| Use `/plan` when... | Skip plan and go to... |
+|:---|:---|
+| New feature with unclear scope | Simple, well-defined single file edit → just edit |
+| Multi-file change with dependencies | Generating a snippet → `/generate` |
+| Architecture decisions to make | Fixing a bug → `/debug` |
+| Risk needs to be assessed first | Adding to an existing feature → `/enhance` |
+| Stakeholder requirements → technical spec | |
 
 ---
 
-## When to Use /plan vs Other Commands
-
-| Use `/plan` when... | Use something else when... |
-|---|---|
-| Requirements are unclear or large | You already know what to build → `/create` |
-| Multi-agent work needs coordination | Single function needed → `/generate` |
-| You want written scope agreement before coding | Ready to build immediately → `/create` |
-| Stakeholder review is needed before work starts | Just a quick discussion → ask directly |
-
----
-
-## Why Plan Before Building
-
-> Tasks without plans get rebuilt three times.
-> Plans expose ambiguity before it becomes broken code.
-
----
-
-## How It Works
-
-### Gate: Clarify Before You Plan
-
-The `project-planner` agent asks — and gets answers to — these four questions before writing a single line of the plan:
+## The Plan Contract: No Code Before Approval
 
 ```
-1. What outcome needs to exist that doesn't exist today?
-2. What are the hard constraints? (stack, existing code, deadline)
-3. What's explicitly not being built in this version?
-4. How will we confirm it's done? (observable done condition)
-```
-
-If any answer is "I don't know" — those are clarified **before** the plan is written, not after.
-
-> ⚠️ An unclear "done condition" is the most common cause of scope creep. It must be specific and observable.
-
----
-
-### Plan File Creation
-
-```
-Location: docs/PLAN-{task-slug}.md
-
-Slug naming rules:
-  - Pull 2–3 key words from the request
-  - Lowercase + hyphens
-  - Max 30 characters
-  Examples:
-    "build auth with JWT"       → PLAN-auth-jwt.md
-    "shopping cart checkout"    → PLAN-cart-checkout.md
-    "multi-tenant user roles"   → PLAN-user-roles.md
+The project-planner agent is the only agent active in /plan mode.
+It does NOT write code.
+It DOES read existing code to inform the plan.
+No other agents activate, no code is generated.
 ```
 
 ---
 
-## Plan File Structure
+## Phase 1 — Socratic Gate (5 Questions)
+
+```
+1. GOAL: What specific outcome defines success? (not "add a feature" — a measurable outcome)
+2. USERS: Who exactly uses this? What do they currently do without this feature?
+3. SCOPE: What is explicitly OUT of scope for this version/sprint?
+4. RISK: What is the highest-risk assumption this plan rests on?
+5. STACK: Is the technology stack decided? Any constraints?
+```
+
+If any answer is "I don't know" → **ask before writing the plan document.**
+
+---
+
+## Phase 2 — Research (Read Before Planning)
+
+```bash
+# What currently exists?
+ls -la src/      # Understand directory structure
+cat package.json # Understand actual dependencies
+cat tsconfig.json # Understand TypeScript config and path aliases
+git log --oneline -5 # Recent work context
+
+# Domain-specific reads:
+cat prisma/schema.prisma    # If DB changes planned
+cat src/middleware.ts        # If auth changes planned
+cat src/lib/auth.ts          # If auth changes planned
+```
+
+---
+
+## Phase 3 — Wave Decomposition
+
+Plans execute in topological waves:
+
+```
+Wave 1 — Foundation (always first)
+├── Database schema changes (must precede all code)
+├── Shared types and Zod schemas (must precede callers)
+└── Auth/middleware changes (must precede protected routes)
+
+Wave 2 — Core Implementation
+├── API routes / Server Actions (depends on Wave 1 schema)
+├── Business logic layer
+└── Unit tests for Wave 1
+
+Wave 3 — Integration
+├── Frontend components (depends on Wave 2 API)
+├── Integration tests
+└── E2E tests for critical paths
+
+Wave 4 — Polish
+├── Performance optimization
+├── Accessibility audit
+└── Deploy prep
+```
+
+---
+
+## Phase 4 — Implementation Plan Document
 
 ```markdown
-# Plan: [Feature Name]
+# Implementation Plan: [Feature Name]
 
-## What Done Looks Like
-[Observable outcome — one specific, testable sentence]
+## Goal
+[Single sentence: what is true when this is complete]
 
-## Won't Include in This Version
-- [Explicit exclusion 1]
-- [Explicit exclusion 2]
+## User Review Required
+> [!IMPORTANT]
+> [Breaking changes, architectural choices needing approval]
 
-## Unresolved Questions
-- [Item needing external confirmation: VERIFY]
+## Research Findings
+- [what currently exists that's relevant]
+- [constraints discovered]
 
-## Estimates (Ranges + Confidence)
-| Task | Optimistic | Realistic | Pessimistic | Confidence |
-|------|-----------|-----------|-------------|------------|
-| DB schema | 30min | 1h | 2h | High |
-| API layer | 2h | 4h | 8h | Medium |
-| Frontend | 3h | 6h | 12h | Low |
+## Proposed Changes
 
-## Task Table
-| # | Task | Agent | Depends on | Done when |
-|---|------|-------|-----------|-----------| 
-| 1 | DB schema | database-architect | none | migration runs |
-| 2 | API routes | backend-specialist | #1 | returns 201 |
-| 3 | Frontend component | frontend-specialist | #2 | renders without errors |
-| 4 | Tests | test-engineer | #2 | all specs pass |
+### Wave 1 — Foundation
+#### [MODIFY] prisma/schema.prisma
+[What changes and why]
 
-## Review Gates
-| Task | Tribunal |
-|---|---|
-| #1 schema | /tribunal-database |
-| #2 API | /tribunal-backend |
-| #3 UI | /tribunal-frontend |
-| #4 tests | test-coverage-reviewer |
+#### [NEW] src/lib/validators/newFeature.ts
+[What this creates]
+
+### Wave 2 — Core
+#### [NEW] src/app/api/new-feature/route.ts
+[What this creates]
+
+## Out of Scope (This Version)
+- [explicit exclusion]
+
+## Verification Plan
+- [ ] npx tsc --noEmit passes
+- [ ] npm test passes
+- [ ] [specific behavioral assertion]
 ```
 
 ---
 
-### After the File is Written
+## Human Gate — Mandatory Before Execution
+
+After the plan document is written:
 
 ```
-✅ Plan written: docs/PLAN-{slug}.md
+━━━ Plan Ready for Review ━━━━━━━━━━━━━━━━━
 
-Review it, then:
-  /create    → Begin full implementation (uses this plan)
-  /generate  → Implement a single task from the table
-  /orchestrate → Coordinate all agents across the full plan
+[summary of what will change across N files in N waves]
+
+Approve?
+Y = begin execution (proceed to /generate or /enhance)
+N = discard plan
+R = revise with feedback
+```
+
+**Zero code is written until "Y" is received.**
+
+---
+
+## Anti-Pattern Guard
+
+```
+❌ Never write code during /plan mode
+❌ Never assume what the user wants — ask if unclear
+❌ Never plan without reading the existing codebase first
+❌ Never omit the Out of Scope section (it's how scope creep is prevented)
+❌ Never skip the Socratic Gate — even for "simple" features
+❌ Never write a plan that requires understanding unexplored files
 ```
 
 ---
 
-## Hallucination Guard
-
-- Every tool, library, or API mentioned in the plan must be **real and verified** before being listed
-- Time estimates are **ranges with confidence labels** — never single-point guarantees
-- External dependencies that aren't confirmed get a `[VERIFY: check this exists]` tag
-- The done condition is **observable and specific** — "it works" is not a done condition
-
----
-
-## Cross-Workflow Navigation
-
-| After /plan produces the file... | Go to |
-|---|---|
-| Ready to build the full plan | `/create` reads the plan and starts building |
-| Need a single task implemented | `/generate [task description]` |
-| Multi-agent coordination needed | `/orchestrate` to run the plan as a managed build |
-| Need to review existing code first | `explorer-agent` before committing to the plan |
-
----
-
-## Usage
+## Usage Examples
 
 ```
-/plan REST API with user auth
-/plan dark mode toggle for the settings page
-/plan multi-tenant account switching
-/plan event-driven notification system with queues
-/plan admin dashboard with user management and analytics
+/plan a user notification system with email + in-app notifications
+/plan migrate the authentication from next-auth v4 to v5
+/plan add Stripe subscription billing to the existing user model
+/plan refactor the monolithic api.ts into domain-specific route files
+/plan implement real-time collaborative editing using CRDTs
 ```

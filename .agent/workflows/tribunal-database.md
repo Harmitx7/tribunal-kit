@@ -1,132 +1,115 @@
 ---
-description: Database-specific Tribunal. Runs Logic + Security + SQL reviewers. Use for queries, migrations, and ORM code.
+description: Database-specific Tribunal. Runs Logic + Security + SQL reviewers. Use for Prisma queries, raw SQL, schema migrations, ORM operations, and database transaction code.
 ---
 
-# /tribunal-database — Data Layer Audit
+# /tribunal-database — Database Code Audit
 
 $ARGUMENTS
 
 ---
 
-Focused audit for SQL queries, ORM code, schema changes, and migrations. **Provide your schema alongside the code** for the most accurate analysis.
+## When to Use /tribunal-database
+
+| Use `/tribunal-database` when... | Use something else when... |
+|:---|:---|
+| Prisma queries and schema | Frontend queries → `/tribunal-frontend` |
+| Raw SQL with pg/mysql2/better-sqlite3 | API routes calling DB → `/tribunal-backend` |
+| Database migrations | Full audit → `/tribunal-full` |
+| ORM schema changes | |
+| Transaction boundaries | |
 
 ---
 
-## When to Use This vs Other Tribunals
+## 3 Active Reviewers (All Run Simultaneously)
 
-| Code type | Right tribunal |
-|---|---|
-| SQL queries, ORM, migrations | `/tribunal-database` ← you are here |
-| API routes, auth, middleware | `/tribunal-backend` |
-| React components, hooks | `/tribunal-frontend` |
-| Unknown domain or cross-domain | `/tribunal-full` |
+### logic-reviewer
+- Prisma methods that don't exist (`findOne` was removed — use `findUnique`)
+- Transaction that should be `$transaction` but isn't
+- Pagination query missing total count (returns wrong metadata)
+- `.findMany()` with no `take` limit (unbounded query)
 
----
+### security-auditor
+- SQL injection via `$queryRaw` with template literals and user input
+- Row-level security bypass (no WHERE clause on user-scoped query)
+- Mass assignment via `prisma.user.update({ data: req.body })` (unrestricted)
+- Prisma `$executeRaw` with string interpolation
 
-## Active Reviewers
-
-```
-logic-reviewer      → ORM methods that don't exist, impossible WHERE conditions,
-                      chained queries on results that could be null
-security-auditor    → SQL injection surfaces, sensitive data exposed without masking,
-                      missing authorization checks before DB access
-sql-reviewer        → String interpolation in queries, N+1 patterns,
-                      references to tables/columns not in the schema,
-                      unbounded SELECT *, missing WHERE clauses on DELETE/UPDATE
-```
-
----
-
-## Important: Provide Your Schema
-
-The `sql-reviewer` can only validate column/table names if it has the schema:
-
-```
-/tribunal-database
-
-Schema:
-  CREATE TABLE users (id UUID, email TEXT, created_at TIMESTAMPTZ);
-  CREATE TABLE posts (id UUID, user_id UUID REFERENCES users(id), title TEXT);
-
-Code to audit:
-  [paste query or ORM code here]
-```
-
-**Without the schema**, the reviewer flags all table/column references as `[VERIFY — schema not provided]`.
+### sql-reviewer
+- N+1 pattern (loop with prisma query inside)
+- Foreign key columns without `@@index`
+- No index on ORDER BY column for large tables
+- Unscoped UPDATE/DELETE without WHERE clause
+- Missing rollback in raw SQL catch block
+- Expand vs contract migration not followed
 
 ---
 
-## What Gets Flagged — Real Examples
-
-| Reviewer | Example Finding | Severity |
-|---|---|---|
-| logic | `prisma.user.findFirstOrCreate()` — not a real Prisma method | ❌ HIGH |
-| security | `` db.query(`SELECT * WHERE id = ${req.params.id}`) `` — injection | ❌ CRITICAL |
-| security | `SELECT password FROM users` returned to API without masking | ❌ HIGH |
-| sql | `SELECT * FROM payments` when `payments` not in schema | ❌ HIGH |
-| sql | `SELECT` query inside a `for` loop — N+1 pattern | ❌ HIGH |
-| sql | `DELETE FROM sessions` with no `WHERE` clause | ❌ CRITICAL |
-| sql | `SELECT * FROM users` with no pagination — unbounded result | ⚠️ MEDIUM |
-| security | No `LIMIT` on a user-controlled query parameter | ⚠️ MEDIUM |
-
----
-
-## Report Format
+## Verdict System
 
 ```
-━━━ Database Audit ━━━━━━━━━━━━━━━━━━━━━━
-
-  logic-reviewer:    ✅ APPROVED
-  security-auditor:  ❌ REJECTED
-  sql-reviewer:      ❌ REJECTED
-
-━━━ Issues ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-security-auditor:
-  ❌ CRITICAL — Line 6
-     SQL injection: string interpolation in query
-     Code: db.query(`SELECT * WHERE id = ${req.params.id}`)
-     Fix:  db.query('SELECT * WHERE id = $1', [req.params.id])
-
-sql-reviewer:
-  ❌ HIGH — Line 19
-     N+1 detected: SELECT inside for-loop (10 users = 10 queries)
-     Fix:  Batch with WHERE id = ANY($1::uuid[]) or use a JOIN
-
-  ⚠️ MEDIUM — Line 32
-     Unbounded result: SELECT * FROM audit_logs — no LIMIT
-     Fix:  Add LIMIT + OFFSET or use cursor-based pagination
-
-━━━ Verdict: REJECTED — fix CRITICAL and HIGH before merging ━━━
+If ANY reviewer → ❌ REJECTED: fix before Human Gate
+If any reviewer → ⚠️ WARNING:  proceed with flagged items
+If all reviewers → ✅ APPROVED: Human Gate
 ```
 
 ---
 
-## Hallucination Guard
-
-- `sql-reviewer` only references tables and columns **from the provided schema** — no invented schema
-- ORM method names are verified against **the installed ORM version's documented API**
-- Parameterized query fixes show the **exact parameterized form** for the target database driver
-- N+1 fixes must show the **actual batched query**, not just say "use a JOIN"
-
----
-
-## Cross-Workflow Navigation
-
-| Finding type | Next step |
-|---|---|
-| SQL injection CRITICAL | Rotate credentials, then fix with `/generate` using parameterization |
-| N+1 pattern in ORM | `/enhance` the repository method with proper eager loading |
-| Schema references invalid columns | Fix schema first with `/migrate` |
-| All approved | Human Gate to write to disk |
-
----
-
-## Usage
+## Output Format
 
 ```
-/tribunal-database [paste query with schema]
-/tribunal-database src/repositories/userRepo.ts
-/tribunal-database [paste Prisma query]
-/tribunal-database the payment queries in services/billing.ts
+━━━ Tribunal Database ━━━━━━━━━━━━━━━━━━━━
+
+logic-reviewer:   ✅ APPROVED
+security-auditor: ❌ REJECTED
+sql-reviewer:     ⚠️ WARNING
+
+━━━ VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━
+
+Blockers:
+- security-auditor: [CRITICAL] SQL injection via $queryRaw at src/lib/db.ts:34
+  Code: await prisma.$queryRaw`SELECT * WHERE email = '${email}'`
+  Fix:  await prisma.$queryRaw`SELECT * WHERE email = ${email}` (Prisma auto-parameterizes)
+
+Warnings:
+- sql-reviewer: [MEDIUM] N+1 detected — posts fetched inside user loop at src/lib/feed.ts:56
+  Fix: Use include: { posts: true } in findMany() instead of for-loop fetches
+```
+
+---
+
+## Database-Specific Hallucination Traps (Common LLM Mistakes)
+
+```typescript
+// ❌ Prisma: findOne was REMOVED — doesn't exist in any version
+const user = await prisma.user.findOne({ where: { id } });
+// ✅ Correct
+const user = await prisma.user.findUnique({ where: { id } });
+
+// ❌ Prisma: upsertMany doesn't exist
+await prisma.product.upsertMany({ data: products });         // Doesn't exist
+// ✅ Use createMany or transaction with multiple upserts
+await prisma.$transaction(products.map(p => prisma.product.upsert({ ... })));
+
+// ❌ Migration fails silently: adding NOT NULL column to populated table
+ALTER TABLE users ADD COLUMN phone VARCHAR(20) NOT NULL; // Error on existing rows
+// ✅ Always add nullable first, backfill, then add constraint
+
+// ❌ Missing rollback in raw SQL
+try {
+  await db.query('BEGIN');
+  await db.query('UPDATE ...');
+} catch (e) {
+  // Missing: await db.query('ROLLBACK');
+}
+```
+
+---
+
+## Usage Examples
+
+```
+/tribunal-database the createOrder function with Stripe idempotency
+/tribunal-database the user registration with email uniqueness check
+/tribunal-database the migration file adding phoneNumber to users
+/tribunal-database the paginated product query with category filter
 ```

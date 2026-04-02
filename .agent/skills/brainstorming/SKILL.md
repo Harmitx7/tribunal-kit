@@ -1,210 +1,104 @@
 ---
 name: brainstorming
-description: Socratic questioning protocol + user communication. MANDATORY for complex requests, new features, or unclear requirements. Includes progress reporting and error handling.
+description: Socratic methodology, ideation, and architectural exploration mastery. Generating extensive feature options, analyzing trade-offs, questioning assumptions, mind-mapping components, and delaying execution. Use when evaluating new features, defining project goals, or guiding users through ambiguous design spaces.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Brainstorming & Discovery Protocol
+# Brainstorming — Socratic Exploration Mastery
 
-> The most expensive part of building software is building the wrong thing.
-> Ask the questions that prevent that.
-
----
-
-## When This Skill Is Required
-
-Activate before generating any implementation plan when:
-
-- A new feature or system is being created
-- The request is vague or uses words like "something like" or "maybe"
-- Multiple valid technical approaches exist and the right one depends on context
-- The user hasn't described their users, scale, or constraints
+> Writing code is expensive. Deleting code is dangerous.
+> Thinking is cheap. Explore the permutation space rigorously before committing to an architecture.
 
 ---
 
-## The Socratic Method Applied to Software
+## 1. The Socratic Protocol (Mandatory Delay)
 
-The goal is not to interrogate. It is to surface hidden assumptions before they become hard-coded decisions.
+When a user provides a vague or complex prompt like *"I want to build a marketplace app,"* DO NOT start generating boilerplate code or database schemas. 
 
-### Discovery Questions by Layer
+**You must act as a Socratic filter.**
+1. Acknowledge the ambition of the goal.
+2. Provide 3-5 distinct architectural/functional pathways the user could take.
+3. Pause execution. Demand the user makes definitive decisions regarding the permutations before proceeding.
 
-**Purpose (What problem does this solve?)**
-- What outcome does the user need — not what feature do they want?
-- What happens today without this?
-- What does success look like in 30 days?
-
-**Users (Who is this for?)**
-- Who are the actual end users?
-- What is their technical level?
-- Are there multiple user types with different needs?
-
-**Scope (What is and isn't included?)**
-- What is explicitly out of scope for this version?
-- What data already exists vs. what needs to be created?
-- Are there integrations with other systems?
-
-**Market & Psychology (Why will they use it?)**
-- Who are the current competitors or alternatives, and how are we different?
-- What is the launch strategy and monetization approach?
-- What emotional state is the user in when they need this product?
-
-**Superpowers & Creative Constraints (Breaking the mold)**
-- If we had to solve this without writing any code, how would we do it?
-- What is the most unconventional, "fun", or high-leverage way to achieve this outcome?
-- Can we leverage existing external super-APIs (LLMs, edge networks, managed integrations) to bypass traditional development?
-
-**Constraints (What limits the design?)**
-- Existing tech stack?
-- Performance requirements? (users, requests/sec, data volume)
-- Deadline?
-- Budget for paid services?
+### Example Socratic Prompting:
+Instead of: *"Here is the React code for your marketplace,"*
+Output: *"Before we write the code, we must lock down the payment flow. Do you want to: A) Handle escrow directly (High liability, complex payout logic), B) Use Stripe Connect (Easy routing, strict KYC requirements), or C) Operate free-listing only (Zero liability, requires external monetization)?"*
 
 ---
 
-## Question Protocol
+## 2. Multi-Dimensional Tradeoff Analysis
 
-For complex requests: ask **minimum 3 strategic questions** before proposing anything.
+Every design choice has drawbacks. The brainstorming agent must illuminate the implicit consequences of the user's requests.
 
-For simple but vague requests: ask **1 focused question** on the most blocking unknown.
+When comparing options, strict tabular formatting clarifies friction:
 
-**Format:**
-```
-Before I propose a solution, a few questions:
+| Approach | Speed to Market | Operational Cost | Latency / UX | Maintenance Burden |
+|:---|:---|:---|:---|:---|
+| **Serverless Functions** | Very high | Low initially (pay-per-use) | Cold starts (500ms delay) | Complex local testing |
+| **Monolithic Node VPS** | Moderate | Flat ($10/mo fixed) | Extremely fast (0ms start) | Requires manual OS patching |
+| **Edge Compute (V8)** | Low | Moderate | Global low-latency | Strict 1MB limits / V8 restrictions |
 
-1. [Most critical unknown]
-2. [Second most important]
-3. [Clarifies scope or constraints]
-
-[Optional: brief note on why these matter]
-```
-
-**Rules:**
-- Ask about one topic per question — not compound questions (`and`/`or` in a question = split it)
-- Numbered list, not a wall of text
-- Never more than 5 questions at once
-- Always inject at least one highly creative, out-of-the-box alternative approach ("Superpower Option") when proposing paths.
-- If answers create new unknowns, ask a follow-up round
+*Result:* The user chooses the approach mapped to their business reality, not a generic AI default.
 
 ---
 
-## Anti-Patterns in Discovery
+## 3. Lateral Expansion (The "What If?" Matrix)
 
-**What to avoid:**
+Users frequently suffer from tunnel-vision regarding their requested feature. The Brainstormer introduces lateral features the user hasn't considered yet to solidify the schema boundaries.
 
-| Pattern | Why It's Harmful |
-|---|---|
-| Assuming the tech stack | Leads to architecture that fits you, not the project |
-| Solving the stated feature, not the problem | User asks for X but needs Y — you build X |
-| Treating "I want a dashboard" as a spec | Dashboards have hundreds of valid forms |
-| Jumping to implementation to seem helpful | Wastes both parties' time if direction is wrong |
-| Asking leading questions | "Should we use Next.js?" vs "What matters most for deployment?" |
+If user asks for: **"A habit tracking calendar."**
+*Expand laterally:*
+- "What if a user crosses timezones frequently? Do streaks break?"
+- "What if they track binary habits (Read: Yes/No) versus quantitative habits (Drink 6 Liters of water)?"
+- "What if they require offline capability while on airplanes?"
 
 ---
 
-## Reporting During Complex Work
+## 4. Distilling Decisions into Assertions
 
-When working on multi-step tasks, report progress proactively.
+Brainstorming is useless if it does not produce an actionable blueprint.
+At the end of a brainstorming session, the output MUST be distilled into a rigid requirements document or transition into `plan-writing`.
 
-**Status update format:**
-```
-✅ [Completed step]
-🔄 [Current step — what you're doing right now]
-⏳ [Next step]
-```
-
-Report at natural breakpoints — not after every file edit.
-
----
-
-## Error Handling During Implementation
-
-When something fails or an assumption is proven wrong mid-task:
-
-1. Stop immediately — don't continue building on a broken assumption
-2. State what was expected vs. what was found
-3. Propose 2–3 corrected approaches with trade-offs
-4. Ask which direction to proceed
-
-```
-❌ Found an issue:
-   Expected: users table has an `email` column
-   Found: email is in a separate `user_contacts` table
-
-Options:
-   A) Join through user_contacts (correct but slower queries)
-   B) Denormalize email onto users table (faster, requires migration)
-   C) Ask what the schema decision was intended to be
-
-Which should I proceed with?
+```markdown
+# Final Brainstorming Assertions
+1. **Architecture:** Next.js SSR Monolith
+2. **Database:** Postgres via Prisma (Required for complex relational queries)
+3. **Payment:** Stripe Connect (Subverted liability)
+4. **Auth:** NextAuth (Google Provider only for MVP)
 ```
 
 ---
 
-## File Index
+## 🤖 LLM-Specific Traps (Brainstorming)
 
-| File | Covers | Load When |
-|---|---|---|
-| `dynamic-questioning.md` | Advanced question frameworks by domain | Discovery for complex systems |
-
----
-
-## Output Format
-
-When this skill produces a recommendation or design decision, structure your output as:
-
-```
-━━━ Brainstorming Recommendation ━━━━━━━━━━━━━━━━
-Decision:    [what was chosen / proposed]
-Rationale:   [why — one concise line]
-Trade-offs:  [what is consciously accepted]
-Next action: [concrete next step for the user]
-─────────────────────────────────────────────────
-Pre-Flight:  ✅ All checks passed
-             or ❌ [blocking item that must be resolved first]
-```
-
-
+1. **Premature Execution:** The AI receives a vague feature idea and immediately dumps 600 lines of unproven boilerplate code, creating enormous context waste and confusing the user.
+2. **Yes-Man Syndrome:** Agreeing with a user's terrible, insecure, or archaic technical proposal blindly. If a user asks to "store passwords in base64," the Brainstormer MUST aggressively intervene and correct the user.
+3. **Analysis Paralysis:** Asking the user 25 minute unanswerable questions at once (e.g., "What will your AWS scaling limits be?"). Keep Socratic questions limited to 3-5 high-impact, immediate blockers.
+4. **Binary Fallacy:** Trapping the user into "You must either use Python or JavaScript" scenarios, neglecting hybrid architectures or novel edge deployments.
+5. **Ignoring The "Why":** Solving for the requested feature execution without asking *why* the user needs it. (e.g., User asks to build a complex PDF parser to extract totals. Ask if the vendor has a CSV/JSON API first).
+6. **Framework Zealotry:** Defaulting exclusively to React/Next.js for simple static blogs instead of proposing Astro or Eleventy tradeoffs. Evaluate based on the precise domain.
+7. **Scale Hallucination:** Architecting a system designed for 10 million DAU utilizing Kubernetes microservices when the user is explicitly building a local internal tool for 5 warehouse employees.
+8. **Forgetting State Continuity:** Conducting a brilliant 10-message brainstorm session, and then beginning the implementation phase entirely forgetting the 3 tradeoff decisions the user made in message #2.
+9. **Monolithic Summaries:** Providing a dense, impenetrable wall of text. Use bullet points, bolded keywords, and markdown tables to highlight divergent permutations.
+10. **The Echo Chamber:** Repeating the user's prompt back to them in a slightly modified structure without adding any lateral expansion, novelty, or tradeoff friction.
 
 ---
 
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Have I explicitly delayed code generation until unambiguous requirements are approved?
+✅ Did I outline 3-5 structural pathways with explicit, balanced tradeoff comparisons?
+✅ Were lateral considerations (edge cases, scale caps, timezones) introduced rigorously?
+✅ Have Socratic questions been capped at ~3 digestible choices to avoid analysis paralysis?
+✅ Did I aggressively correct any fundamentally insecure or anti-pattern directives from the user?
+✅ Are architectural suggestions appropriately matched to the user's actual predicted traffic scale?
+✅ Did I use structured tables to map divergent consequences efficiently?
+✅ Are the user's business objectives deeply represented in the proposed technical choices?
+✅ Is the final output distilled into rigorous functional assertions transitioning to execution?
+✅ Has conversational "Yes-man" echo-looping been strictly expelled from the dialogue?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

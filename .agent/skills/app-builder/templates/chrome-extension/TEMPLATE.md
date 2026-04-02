@@ -10,7 +10,7 @@ description: Chrome Extension template principles. Manifest V3, React, TypeScrip
 | Component | Technology |
 |-----------|------------|
 | Manifest | V3 |
-| UI | React 18 |
+| UI | React 19 |
 | Language | TypeScript |
 | Styling | Tailwind CSS |
 | Bundler | Vite |

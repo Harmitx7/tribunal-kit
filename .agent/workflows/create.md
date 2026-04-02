@@ -1,139 +1,124 @@
 ---
-description: Create new application command. Triggers App Builder skill and starts interactive dialogue with user.
+description: Create new application command. Triggers full stack creation from requirements gathering → stack selection → scaffolding → Tribunal code generation. Everything through the pipeline before writing a single file.
 ---
 
-# /create — Build Something New
+# /create — Full Application Builder
 
 $ARGUMENTS
 
 ---
 
-This command starts a structured creation process. **Code only appears after requirements are clear and a plan is approved.** Building before understanding is the number one source of wasted work.
-
----
-
-## When to Use /create vs Other Commands
+## When to Use /create
 
 | Use `/create` when... | Use something else when... |
-|---|---|
-| Starting something from scratch | Extending existing code → `/enhance` |
-| Building a complete feature (frontend + backend + DB) | Single function needed → `/generate` |
-| You need a plan before code | Plan only, no code → `/plan` |
-| Multi-domain coordination required | Single domain → `/generate` with right tribunal |
+|:---|:---|
+| Starting a new project from scratch | Adding to an existing project → `/enhance` |
+| No codebase exists yet | Generating a focused code snippet → `/generate` |
+| You need a working scaffold with structure | Planning and understanding → `/plan` |
 
 ---
 
-## The Four Stages
+## Phase 1 — Requirements Gathering (Socratic Gate)
 
-### Stage 1 — Understand (not optional)
-
-Before any planning begins, these four things must be established:
+Before a single line of code is written, the `app-builder` agent asks these questions:
 
 ```
-1. What is the user's actual goal?     (not the feature — the outcome)
-2. What stack are we working in?       (existing project or greenfield?)
-3. What is explicitly out of scope?    (boundary prevents scope creep)
-4. What's the observable done state?   (how do we know it's finished?)
+1. What does this application DO? (one sentence — the core user action)
+2. Who uses it? (end users, internal team, API consumers)
+3. What is the target platform? (web, mobile, server, CLI, desktop)
+4. Are there any tech constraints? (must use X, must run on Y)
+5. What data does it store? (users, products, documents, real-time events)
+6. Is authentication required? (yes/no/type: email, OAuth, API key)
+7. Are there external integrations? (Stripe, OpenAI, Twilio, etc.)
 ```
 
-**If anything is unclear → ask. Do not skip to Stage 2 on assumptions.**
-
-Minimum Socratic gate questions by project type:
-
-| Project type | Questions to ask before planning |
-|---|---|
-| API / backend | Auth strategy? Database? Error format? Rate limiting? |
-| Frontend / UI | Framework? Design system? State management? SSR? |
-| Full-stack | All of the above + deployment target |
-| CLI tool | Target OS? Binary or script? Package manager integration? |
+No scaffolding starts until all questions are answered.
 
 ---
 
-### Stage 2 — Plan
+## Phase 2 — Stack Selection
 
-Engage `project-planner` to write a structured plan:
+Based on the answers, the agent selects the appropriate stack:
 
-```
-Location: docs/PLAN-{task-slug}.md
+| App Type | Recommended Stack |
+|:---|:---|
+| Web app (content + interaction) | Next.js 15, TypeScript, Tailwind v4, Prisma |
+| API server only | Hono on Node 22, Zod, TypeScript |
+| Real-time app | Next.js 15 + WebSocket (Socket.io) or SSE |
+| Mobile app | Expo + React Native, Expo Router v4 |
+| CLI tool | Node 22, Commander.js, TypeScript |
+| E-commerce | Next.js 15 + Stripe + Prisma |
 
-Must contain:
-  - Goal (one sentence)
-  - Out-of-scope list (what we won't build in this version)
-  - Open questions with [VERIFY] tags
-  - Task table: task / agent / dependency / done-condition
-  - Tribunal gate per task
-  - Time estimates: optimistic / realistic / pessimistic + confidence level
-```
-
-**The plan is shown to the user before any code is written.**
-
-> ⏸️ "Here's the plan: `docs/PLAN-{slug}.md` — proceed?"
-> Do not advance until explicitly confirmed with **Y**.
+Stack selection is presented to the user for approval before scaffolding begins.
 
 ---
 
-### Stage 3 — Build (Parallel agents, after approval)
+## Phase 3 — Scaffolding Plan
 
-| Layer | Primary Agent | Review Gate |
-|---|---|---|
-| Data schema / migrations | `database-architect` | `/tribunal-database` |
-| API & server logic | `backend-specialist` | `/tribunal-backend` |
-| UI & components | `frontend-specialist` | `/tribunal-frontend` |
-| Test coverage | `test-engineer` | `logic + test-coverage-reviewer` |
-| DevOps / deploy config | `devops-engineer` | `/tribunal-backend` |
-
-Each agent's code goes through Tribunal before being shown to the user.
-
-**Wave execution (if multiple layers):**
+The agent produces an implementation plan showing:
 
 ```
-Wave 1: database-architect → reviewed → Human Gate
-Wave 2: backend-specialist (uses Wave 1 schema) → reviewed → Human Gate
-Wave 3: frontend-specialist + test-engineer (parallel) → reviewed → Human Gate
+Files to create:
+├── Core structure (package.json, tsconfig, config files)
+├── Database schema (prisma/schema.prisma)
+├── Authentication setup (auth.ts, middleware.ts)
+├── Core API routes or Server Actions
+├── Base UI components and layouts
+└── Initial tests and CI pipeline
+```
+
+> **Human Gate:** User approves the plan before any files are written.
+
+---
+
+## Phase 4 — Tribunal Generation
+
+All generated code runs through the Tribunal pipeline:
+
+```
+Maker generates each module individually
+    → logic-reviewer + security-auditor on every module
+    → domain-specific reviewers activated by module type
+    → Human Gate before each major file group is written
+```
+
+No module is written without passing Tribunal review.
+
+---
+
+## Phase 5 — Verification
+
+After scaffolding:
+
+```
+□ npm install completes without errors
+□ npx tsc --noEmit passes clean
+□ npm run dev starts successfully
+□ npm test runs and passes (for any generated tests)
+□ Linting passes (if configured)
 ```
 
 ---
 
-### Stage 4 — Verify
+## Hallucination Guard (Create-Specific)
 
 ```
-□ Did the code satisfy every done-condition from Stage 1?
-□ Did all Tribunal reviewers return APPROVED?
-□ Are untested paths labeled // TODO with an explanation?
-□ Does the plan file match what was actually built?
+❌ Never generate the entire application as one massive code block
+❌ Never import packages not added to package.json in this session
+❌ Never assume a framework's default file structure — check with --help or docs
+❌ Never hardcode environment variables in generated files
+❌ Never use deprecated Next.js 13/14 patterns (pages/, getServerSideProps)
+❌ Never use React 18 hooks deprecated in React 19
 ```
-
-All four must be checked before the task is declared done.
 
 ---
 
-## Hallucination Rules
-
-- Every import must exist in the project's `package.json` or carry `// VERIFY: add to deps`
-- No invented framework methods — `// VERIFY: check docs for this method` on any uncertain call
-- No agent touches code outside its domain (frontend agent never writes DB migrations)
-- No full-application generation in one shot — build in layers with Human Gates between waves
-
----
-
-## Cross-Workflow Navigation
-
-| If during /create you need to... | Go to |
-|---|---|
-| Understand the existing codebase first | Use `explorer-agent` before Stage 2 |
-| Only write the plan (not build it) | `/plan` |
-| Add to an already built feature | `/enhance` |
-| Debug something during Stage 3 | `/debug` |
-| Run a full safety check before shipping | `/audit` |
-
----
-
-## Usage
+## Usage Examples
 
 ```
-/create a REST API with JWT auth
-/create a React dashboard with real-time chart updates
-/create a complete user onboarding flow (frontend + backend + DB)
-/create a CLI tool that validates JSON schemas against a spec
-/create a scheduled background job for sending email digests
+/create a REST API for a todo app with JWT auth and PostgreSQL
+/create a Next.js 15 e-commerce site with Stripe and Prisma
+/create a CLI tool for generating Tribunal-compliant code reviews
+/create an Expo app for tracking workout sessions with offline support
+/create a real-time chat app using Next.js and Server-Sent Events
 ```

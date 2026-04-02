@@ -1,155 +1,116 @@
 ---
-description: Audit existing code for hallucinations. Runs Logic + Security reviewers on any code without generating anything new.
+description: Audit existing code for hallucinations. Runs Logic + Security reviewers on any code without generating anything new. The pure review mode — read, analyze, and report only.
 ---
 
-# /review — Code Audit (No Generation)
+# /review — Hallucination Audit (Read-Only)
 
 $ARGUMENTS
 
 ---
 
-This command audits code you already have. **Nothing is generated.** The reviewers read, analyze, and report — that's it.
-
-Paste code directly after the command, or point to a file.
-
----
-
-## When to Use /review vs Other Commands
+## When to Use /review
 
 | Use `/review` when... | Use something else when... |
-|---|---|
-| You want to audit code you already wrote | You want to generate new code → `/generate` |
-| You received AI-generated code from another tool | Code needs full pre-merge audit → `/tribunal-full` |
-| You suspect a security issue in one file | Full project security sweep → `/audit` |
-| You want a quick sanity check on a PR | Pre-merge review → `/tribunal-full` |
+|:---|:---|
+| Auditing code you didn't write | AI-specific code review → `/review-ai` |
+| Checking existing code for hallucinations | Need Tribunal with generation → `/generate` |
+| Pre-merge code review | Full pre-deploy audit → `/audit` |
+| Validating AI-generated output | Security only → `/tribunal-backend` |
+| Reviewing code from a junior developer | |
 
 ---
 
-## How to Use It
-
-**Via paste:**
+## The Review Contract
 
 ```
-/review
-
-[paste code here]
-```
-
-**Via file reference:**
-
-```
-/review src/services/auth.service.ts
-/review src/routes/user.ts for injection risks
-```
-
-**With a specific concern:**
-
-```
-/review src/db/queries.ts focus: SQL injection only
-/review the auth middleware focus: auth bypass and secrets
+/review is READ ONLY.
+No files are modified.
+No code is generated.
+Only findings and recommendations are produced.
 ```
 
 ---
 
-## What Always Runs
+## Active Reviewers
 
-```
-logic-reviewer      → Methods that don't exist, conditions that can't be true,
-                      undefined variables used before assignment,
-                      unreachable code, inverted boolean logic
+Logic + Security run on ALL code by default.
 
-security-auditor    → SQL injection, hardcoded credentials, auth bypass,
-                      unvalidated input, exposed stack traces,
-                      insecure defaults, OWASP Top 10
-```
+**Additional reviewers auto-activated by content:**
 
-## What Also Runs (Based on Code Type)
-
-| Code Contains | Additional Reviewer Activated |
-|---|---|
-| `SELECT`, `INSERT`, `UPDATE`, ORM queries | `sql-reviewer` |
-| React hooks, Vue components, JSX | `frontend-reviewer` |
-| TypeScript generics, `any`, type assertions | `type-safety-reviewer` |
-| `import`, `require`, third-party packages | `dependency-reviewer` |
-| `openai`, `anthropic`, `gemini`, LLM SDK calls | `ai-code-reviewer` |
-| Performance-critical loops or async paths | `performance-reviewer` |
+| Code Contains | Additional Reviewers |
+|:---|:---|
+| SQL, Prisma, database operations | `sql-reviewer` |
+| React, hooks, components | `frontend-reviewer` |
+| TypeScript types, generics | `type-safety-reviewer` |
+| npm imports, package.json | `dependency-reviewer` |
+| Tests, specs, describe/it blocks | `test-coverage-reviewer` |
+| LLM API calls (OpenAI, Anthropic) | `ai-code-reviewer` |
+| ARIA, disability, a11y | `accessibility-reviewer` |
 
 ---
 
-## Severity Levels
-
-| Symbol | Level | Meaning |
-|---|---|---|
-| `❌ CRITICAL` | Must Fix | Security vulnerability or data loss risk |
-| `❌ HIGH` | Must Fix | Logic error or likely production bug |
-| `⚠️ MEDIUM` | Should Fix | Non-critical but risky pattern |
-| `💬 LOW` | Advisory | Code smell or style concern |
-
----
-
-## Audit Report Format
+## Review Output Format
 
 ```
-━━━ Audit: [filename or snippet title] ━━━━━━━━━
+━━━ Code Review — [filename or description] ━━━━━
 
-Active reviewers: logic · security · [others]
+Logic Review:   ✅ APPROVED | ⚠️ [N] warnings | ❌ [N] critical
+Security:       ✅ APPROVED | ⚠️ [N] warnings | ❌ [N] critical
 
-logic-reviewer:       ✅ No hallucinated APIs or impossible logic found
-security-auditor:     ❌ REJECTED
+━━━ Findings (sorted by severity) ━━━━━━━━━━━━━━
 
-Findings:
-  ❌ CRITICAL — Line 8
-     Type: SQL injection
-     Code: `db.query(\`SELECT * WHERE id = ${id}\`)`
-     Fix:  db.query('SELECT * WHERE id = $1', [id])
+[CRITICAL] [File:Line] [description] → [specific fix]
+[HIGH]     [File:Line] [description] → [specific fix]
+[MEDIUM]   [File:Line] [description] → [note]
 
-  ⚠️ MEDIUM — Line 22
-     Type: Unguarded optional access
-     Code: `user.profile.name`
-     Fix:  `user?.profile?.name ?? 'Unknown'`
-
-  💬 LOW — Line 34
-     Type: Magic number
-     Code: `setTimeout(fn, 3000)`
-     Fix:  Extract to named constant: `const RETRY_DELAY_MS = 3000`
-
-━━━ Summary ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-1 CRITICAL issue blocking integration.
-1 MEDIUM issue — review before shipping.
-1 LOW advisory — consider addressing.
-
-Verdict: REJECTED — fix CRITICAL issues before merging.
+━━━ Verdict: ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✅ APPROVED — code is production-ready
+⚠️ WARNINGS — [N] items to address before release
+❌ CRITICAL — [N] blockers must be resolved
 ```
 
 ---
 
-## Hallucination Guard
+## What Each Reviewer Looks For
 
-- Reviewers **read the actual code** — they don't assume what it does from function names
-- Every finding includes the **exact line and exact code** — no vague claims
-- Proposed fixes are **real, documented API calls** — not invented alternatives
-- Severity ratings are **evidence-based** — "CRITICAL" is never used for style concerns
+### logic-reviewer
+- Methods called on wrong object types
+- Impossible states that will throw at runtime
+- Functions called before they're defined
+- Missing null checks on potentially-undefined values
 
----
-
-## Cross-Workflow Navigation
-
-| If review reveals... | Go to |
-|---|---|
-| CRITICAL security issues | `/audit` to check if the pattern exists elsewhere |
-| Code needs to be rewritten | `/generate` to regenerate with Tribunal protection |
-| More reviewers needed | `/tribunal-full` for all 11 reviewers |
-| Pattern found across many files | `/refactor` to fix the root abstraction |
+### security-auditor
+- SQL injection (string interpolation in queries)
+- XSS (user content in innerHTML or dangerouslySetInnerHTML)
+- JWT issues (no algorithm enforcement, weak secrets)
+- Auth order (business logic before auth check)
+- Hardcoded secrets
 
 ---
 
-## Usage
+## Hallucination-Specific Checks
+
+The review specifically catches:
 
 ```
-/review the auth middleware
-/review this SQL query [paste]
-/review src/routes/user.ts for injection risks
-/review my React component for hooks violations
-/review src/services/payment.ts focus: error handling and data exposure
+□ Methods imported from packages that don't export them
+□ React hooks that don't exist (fabricated hook names)
+□ Prisma methods removed in current version (findOne, upsertMany)
+□ Next.js 15 dynamic APIs used without await (cookies, headers, params)
+□ React 19 deprecated API usage (useFormState instead of useActionState)
+□ Parameters passed to LLM APIs that don't exist (max_length, format, memory)
+□ Model names that don't exist (gpt-5, claude-4, gemini-ultra)
+```
+
+---
+
+## Usage Examples
+
+```
+/review src/lib/auth.ts
+/review the entire src/app/api/checkout/ directory
+/review the PaymentForm component
+/review this code: [paste code inline]
+/review src/lib/ai-chat.ts for AI API hallucinations
+/review the last generated code before we write it to disk
 ```

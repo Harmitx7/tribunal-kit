@@ -1,212 +1,190 @@
 ---
 name: server-management
-description: Server management principles and decision-making. Process management, monitoring strategy, and scaling decisions. Teaches thinking, not commands.
+description: Production Linux server administration mastery. Systemd services, Nginx reverse proxy architecture, UFW firewalls, SSH key security, cron scheduling, log rotation, and server hardening. Use when configuring bare-metal, VPS instances, or reviewing deployment architecture.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Server Management Principles
+# Server Management — Production Linux Mastery
 
-> A server you can't observe is a server you can't operate.
-> Monitoring is not optional — it is how you find out about problems before your users do.
+> Never run a web server as root. Never expose raw ports securely.
+> A naked Node/Python process dies silently. A systemd service acts as its immortal guardian.
 
 ---
 
-## Process Management
+## 1. Systemd Service Architecture (Process Guard)
 
-Never run Node.js or Python processes directly in production with `node app.js`. Use a process manager.
+Do not use `pm2`, `forever`, or custom `screen` sessions attached to SSH panels for server orchestration. Linux provides an enterprise-grade init system natively: systemd.
 
-| Tool | Best For | Why |
-|---|---|---|
-| PM2 | Single-server Node.js | Auto-restart, log rotation, cluster mode |
-| systemd | Linux servers, any language | Native to most Linux distros, reliable |
-| Supervisor | Python, Ruby, any language | Simple config, battle-tested |
-| Docker (+restart policy) | Containerized apps | Portable, consistent across environments |
+```ini
+# /etc/systemd/system/myapp.service
 
-**Core requirement:** If the process crashes, it restarts automatically. If it can't restart, you are alerted.
+[Unit]
+Description=My Application Node.js Server
+Documentation=https://example.com/docs
+After=network.target postgresql.service # Ensure DB and Network start first
 
-```bash
-# PM2 example — stays running, auto-restarts, survives reboots
-pm2 start app.js --name "api" --instances max
-pm2 save
-pm2 startup  # generates the command to run at boot
+[Service]
+Type=simple
+User=appuser     # NEVER run as root
+Group=appuser
+WorkingDirectory=/var/www/myapp
+
+# Explicitly declare environment limits and variables
+Environment=NODE_ENV=production
+Environment=PORT=3000
+EnvironmentFile=/var/www/myapp/.env
+
+# The execution target
+ExecStart=/usr/bin/node /var/www/myapp/build/index.js
+
+# Immortal behavior: Restart strictly on failure
+Restart=on-failure
+RestartSec=5
+
+# Security Hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+[Install]
+WantedBy=multi-user.target
 ```
 
----
-
-## What to Monitor
-
-The minimum viable monitoring stack:
-
-| Signal | What To Alert On |
-|---|---|
-| Process health | Process is not running |
-| Response time | P95 latency > SLA threshold |
-| Error rate | Error rate > 2x baseline |
-| Disk usage | > 80% full |
-| Memory | Growing without bound (memory leak) |
-| CPU | Sustained > 80% for more than 5 minutes |
-
-**Alert on symptoms, not just causes.** "Error rate spiked" is a better alert than "CPU is high" — users don't feel CPU, they feel slow responses and errors.
+**Commands:**
+`sudo systemctl daemon-reload`
+`sudo systemctl enable myapp`
+`sudo systemctl start myapp`
+`journalctl -u myapp -f` (Follow logs seamlessly)
 
 ---
 
-## Log Management
+## 2. Nginx Reverse Proxy Architecture
 
-Logs are useless without structure. Structured logs can be queried and aggregated.
-
-```ts
-// ❌ Unstructured — hard to query
-console.log(`User ${userId} failed to login at ${new Date()}`);
-
-// ✅ Structured — can be filtered, aggregated, alerted on
-logger.warn('login_failed', {
-  userId,
-  ip: req.ip,
-  reason: 'invalid_password',
-  timestamp: new Date().toISOString(),
-});
-```
-
-**Log levels, used correctly:**
-- `ERROR` — something failed that requires attention
-- `WARN` — something unexpected but non-fatal happened
-- `INFO` — key business events (user registered, payment processed)
-- `DEBUG` — useful for troubleshooting, never on in production by default
-
-**Never log:**
-- Passwords, tokens, or full credit card numbers
-- PII without a documented retention policy
-- Full request bodies on auth endpoints
-
----
-
-## Scaling Decision Framework
-
-Before scaling, answer:
-
-**Is the bottleneck identified?**
-- Profile first. Is it CPU, memory, database, or network?
-- Scaling horizontally when the bottleneck is a single database query helps nothing.
-
-| Bottleneck | Scaling Approach |
-|---|---|
-| CPU-bound app logic | Horizontal scale (more instances) |
-| Memory limit | Vertical scale (more RAM per instance) |
-| I/O-bound (DB, external calls) | Connection pooling, caching, async patterns |
-| Database reads | Read replicas, query optimization, caching |
-| Database writes | Sharding, write queuing, schema redesign |
-
-**Cached responses don't need scaling.** Add caching before adding instances.
-
----
-
-## Nginx Configuration Essentials
+You must shield your internal application framework (Node/Python/Ruby) behind Nginx. Nginx handles SSL termination, static file caching, and DDOS mitigation.
 
 ```nginx
+# /etc/nginx/sites-available/myapp.com
+
 server {
-  listen 80;
-  server_name example.com;
-  
-  # Redirect HTTP → HTTPS
-  return 301 https://$host$request_uri;
+    listen 80;
+    server_name api.myapp.com;
+    
+    # Force SSL Redirect
+    return 301 https://$host$request_uri;
 }
 
 server {
-  listen 443 ssl;
-  server_name example.com;
+    listen 443 ssl http2;
+    server_name api.myapp.com;
 
-  # Security headers
-  add_header X-Frame-Options DENY;
-  add_header X-Content-Type-Options nosniff;
-  add_header Strict-Transport-Security "max-age=31536000" always;
+    # SSL Certs (Let's Encrypt / Certbot)
+    ssl_certificate /etc/letsencrypt/live/api.myapp.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/api.myapp.com/privkey.pem;
 
-  # Proxy to Node.js app
-  location / {
-    proxy_pass http://127.0.0.1:3000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-Proto https;
-  }
+    # Modern Security Headers
+    add_header Strict-Transport-Security "max-age=63072000" always;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-Frame-Options DENY;
 
-  # Serve static files directly (don't proxy to Node)
-  location /static/ {
-    root /var/www/myapp;
-    expires 1y;
-    add_header Cache-Control "public, immutable";
-  }
+    # GZIP Compression
+    gzip on;
+    gzip_types text/plain application/json;
+
+    location / {
+        # Proxy traffic to internal local process
+        proxy_pass http://127.0.0.1:3000;
+        
+        # Forward original IP and Protocol for rate limiters
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # WebSocket support (Required for GraphQL subscriptions, TRPC, Socket.io)
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
 }
 ```
 
 ---
 
-## Backup Strategy
+## 3. Server Hardening Fundamentals
 
-The 3-2-1 rule:
-- **3** copies of data
-- **2** on different storage media
-- **1** offsite (different data center, cloud region)
-
-Test restores on a schedule — a backup you've never restored is a backup you don't know works.
-
----
-
-## Output Format
-
-When this skill produces a recommendation or design decision, structure your output as:
-
-```
-━━━ Server Management Recommendation ━━━━━━━━━━━━━━━━
-Decision:    [what was chosen / proposed]
-Rationale:   [why — one concise line]
-Trade-offs:  [what is consciously accepted]
-Next action: [concrete next step for the user]
-─────────────────────────────────────────────────
-Pre-Flight:  ✅ All checks passed
-             or ❌ [blocking item that must be resolved first]
+### SSH Security (`/etc/ssh/sshd_config`)
+```bash
+PermitRootLogin no           # Kill direct root login attacks immediately
+PasswordAuthentication no    # Enforce SSH key-based login ONLY
+Port 2022                    # (Optional) Obscurity defense against automated script-kiddie scanners
 ```
 
+### Uncomplicated Firewall (UFW)
+A naked server with all ports open is a honeypot.
+```bash
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow 22/tcp      # Allow SSH
+sudo ufw allow 80/tcp      # Allow HTTP
+sudo ufw allow 443/tcp     # Allow HTTPS
+sudo ufw enable
+```
 
+### Fail2Ban
+Automatically bans IPs attempting brute force credential filling after 5 bad attempts.
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 4. Log Rotation (Prevent Disk Full Outages)
 
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
+A server will inevitably crash when `/var/log` consumes 100% of the disk.
 
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+```bash
+# /etc/logrotate.d/myapp
+
+/var/www/myapp/logs/*.log {
+    daily                # Rotate every day
+    missingok            # Ignore if file is missing
+    rotate 14            # Keep 14 days of history
+    compress             # Gzip old logs
+    delaycompress        # Don't compress the one created yesterday
+    notifempty           # Do nothing if log is empty
+    copytruncate         # Copy then clear (avoids disrupting Node's open file handles)
+}
+```
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🤖 LLM-Specific Traps (Server Management)
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
+1. **PM2 Fallacy:** AI frequently defaults to `pm2 start app.js` for production deployments. Demand raw `systemd`. It ensures startup order (Wait for network) and unified journalctl logging.
+2. **Root Execution:** Suggesting `ExecStart=npm start` under the `User=root` directive. The application process should operate under a restricted `appuser` daemon tier.
+3. **Missing Proxy Headers:** AI writing basic Nginx configs but omitting `X-Forwarded-For`. This causes the internal App to log all requests as coming from "127.0.0.1", instantly breaking IP Rate limiters.
+4. **WebSocket Blocking:** Forgetting to pass `Upgrade` headers in Nginx proxy setups, breaking realtime web applications silently.
+5. **Naked Node Ports:** Instructing users to run `node index.js` on `port 80`. Never natively bind unprivileged web processes to port 80. Bind to 3000 locally and use reverse proxy routing.
+6. **Firewall Blindness:** Assuming Docker auto-secures ports. Executing `docker run -p 8080:80` on Ubuntu completely bypasses UFW restrictions through iptables hooks, exposing the database to the internet. Always bind `127.0.0.1:8080:80`.
+7. **Password SSH Prompts:** Creating automation scripts utilizing raw passwords (e.g., `sshpass`). Always assume ed25519 identity keyfiles for automated CI deployments.
+8. **Log Rotation Void:** Neglecting log rotation in custom bash script loops, guaranteeing a 100% disk usage outage 3 months later.
+9. **GZIP Assumption:** Forgetting to enable `gzip on` in Nginx resulting in 10MB JSON payloads saturating the virtual server network adapter.
+10. **In-place Nginx Modding:** Editing `/etc/nginx/nginx.conf` directly instead of writing symlinks between the `sites-available` and `sites-enabled` architecture.
 
-### ❌ Forbidden AI Tropes
+---
 
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Are persistent services orchestrated securely via `systemd` (not PM2)?
+✅ Does the systemd service explicitly execute as a non-root `appuser`?
+✅ Is the internal application shielded by an Nginx/Caddy reverse proxy?
+✅ Does the reverse proxy explicitly forward realtime `Upgrade` (WebSocket) headers?
+✅ Does the reverse proxy forward IP integrity headers (`X-Forwarded-For`)?
+✅ Has SSH `PasswordAuthentication` been disabled defensively?
+✅ Is UFW configured to strictly deny all incoming non-essential ports?
+✅ If suggesting Docker, are database/internal ports scoped to `127.0.0.1:X:Y`?
+✅ Have manual application log files been mapped in `logrotate.d`?
+✅ Has `PermitRootLogin` been set to `no`?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

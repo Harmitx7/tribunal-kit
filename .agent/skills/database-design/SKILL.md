@@ -1,275 +1,455 @@
 ---
 name: database-design
-description: Database design principles and decision-making. Schema design, indexing strategy, ORM selection, serverless databases.
+description: Database design mastery. Schema design with normalization, denormalization strategies, indexing, migration pipelines, ORM selection (Prisma/Drizzle/SQLAlchemy/EF Core), connection pooling, soft deletes, audit trails, multi-tenancy, and serverless database patterns. Use when designing schemas, choosing databases, planning migrations, or architecting data layers.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-01
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Database Design Principles
+# Database Design — Schema & Architecture Mastery
 
-> A schema is cheap to design and expensive to migrate.
-> Design it right for the queries your app actually runs.
-
----
-
-## Core Decision: What Database?
-
-Before schema design, the database type must be justified — not assumed.
-
-| Need | Consider |
-|---|---|
-| Relational data with integrity constraints | PostgreSQL (default choice for most apps) |
-| Horizontal write scaling, flexible schema | MongoDB, DynamoDB |
-| Sub-millisecond reads, ephemeral/session data | Redis, Upstash |
-| Full-text search as primary use case | Elasticsearch, Typesense |
-| Serverless, zero-ops, edge-deployable | Turso, PlanetScale, Neon |
-| Time-series events | InfluxDB, TimescaleDB |
-| Semantic / vector similarity search | pgvector (in PostgreSQL), Qdrant, Pinecone |
-
-**Default when uncertain:** PostgreSQL. It handles relational, JSON, full-text, and time-series use cases well enough that you rarely need to deviate for most applications.
+> A schema is a contract. Every column name is an API. Every missing index is a production incident waiting to happen.
+> Design for reads first. Normalize until it hurts, then denormalize until it works.
 
 ---
 
-## Vector Database Patterns
+## Database Selection Matrix
 
-AI applications need semantic search — finding documents by meaning, not keyword. Vector databases store high-dimensional embeddings and search them by similarity.
-
-### pgvector — Stay in PostgreSQL
-
-```sql
--- Enable extension once
-CREATE EXTENSION IF NOT EXISTS vector;
-
--- Add embedding column to existing table
-ALTER TABLE documents ADD COLUMN embedding vector(1536);  -- 1536 for text-embedding-3-small
-
--- IVFFlat index for approximate nearest neighbor search
-CREATE INDEX ON documents USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
--- lists = sqrt(num_rows) is a good starting point
-
--- Query: find 5 most semantically similar documents
-SELECT id, content, 1 - (embedding <=> $1) AS similarity
-FROM documents
-ORDER BY embedding <=> $1  -- cosine distance operator
-LIMIT 5;
 ```
-
-### Dedicated Vector DB: When pgvector Isn't Enough
-
-| Trigger to Upgrade | Recommended |
-|---|---|
-| > 1M vectors + sub-10ms p99 | Qdrant (self-hosted, Rust) or Pinecone (managed) |
-| Multimodal (text + images) | Weaviate |
-| Managed, predictable pricing | Pinecone |
-| Zero-ops prototype | ChromaDB (local) |
-
-### Chunking + Storage Best Practice
-
-```ts
-// Always store both the raw text AND the embedding — embeddings are not reversible
-await db.query(`
-  INSERT INTO documents (content, source_url, chunk_index, embedding)
-  VALUES ($1, $2, $3, $4)
-`, [chunkText, sourceUrl, chunkIndex, JSON.stringify(embedding)]);
-// embedding is float[] — serialize to JSON for parameterized query
+┌─────────────────────────────────────────────────────────────────────┐
+│                    Which Database Do You Need?                       │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│  What's the primary access pattern?                                 │
+│  ├── Relational queries (JOINs, transactions, reports)              │
+│  │   ├── High consistency + complex queries → PostgreSQL            │
+│  │   ├── Simple CRUD + familiar → MySQL / MariaDB                  │
+│  │   └── Embedded / edge / serverless → SQLite / Turso             │
+│  │                                                                   │
+│  ├── Key-value lookups (cache, sessions, counters)                  │
+│  │   ├── In-memory speed → Redis / Valkey                          │
+│  │   └── Persistent KV → DynamoDB / Upstash                        │
+│  │                                                                   │
+│  ├── Document store (flexible schema, nested objects)               │
+│  │   └── MongoDB / Firestore                                       │
+│  │                                                                   │
+│  ├── Full-text search                                               │
+│  │   ├── Built-in (good enough) → PostgreSQL tsvector              │
+│  │   └── Dedicated search → Elasticsearch / Meilisearch / Typesense│
+│  │                                                                   │
+│  ├── Time-series (metrics, IoT, logs)                               │
+│  │   └── TimescaleDB (PostgreSQL ext) / ClickHouse / InfluxDB      │
+│  │                                                                   │
+│  ├── Graph (relationships, social networks)                         │
+│  │   └── Neo4j / Amazon Neptune                                    │
+│  │                                                                   │
+│  └── Vector (AI embeddings, semantic search)                        │
+│      └── pgvector (PostgreSQL ext) / Pinecone / Weaviate           │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Schema Design Rules
-
-### Model for queries, not for elegance
-
-The most normalized schema is not always the right schema. Ask: **what does the application actually read?**
-
-Design the schema to make the most frequent, performance-critical queries fast — even if that means some denormalization.
+## Schema Design Patterns
 
 ### Naming Conventions
 
 ```sql
--- Tables: plural, snake_case
-CREATE TABLE user_sessions (...);
+-- ✅ RULES:
+-- Tables: plural, snake_case (users, order_items)
+-- Columns: singular, snake_case (first_name, created_at)
+-- Primary key: id (BIGINT or UUID)
+-- Foreign key: {referenced_table_singular}_id (user_id, order_id)
+-- Timestamps: created_at, updated_at (TIMESTAMPTZ, not TIMESTAMP)
+-- Booleans: is_{adjective} or has_{noun} (is_active, has_paid)
+-- Status/enum columns: status, role, type (not state, kind)
 
--- Primary keys: always "id"
-id UUID PRIMARY KEY DEFAULT gen_random_uuid();
+-- ❌ BAD naming:
+-- tbl_Users, UserID, DateCreated, active, isdeleted, userId
+-- ✅ GOOD naming:
+-- users, id, created_at, is_active, is_deleted, user_id
 
--- Foreign keys: {referenced_table_singular}_id
-user_id UUID REFERENCES users(id);
-
--- Timestamps: always include both
-created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
-
--- Booleans: is_ prefix
-is_active BOOLEAN NOT NULL DEFAULT TRUE;
+-- ❌ HALLUCINATION TRAP: Always use TIMESTAMPTZ (with timezone), not TIMESTAMP
+-- TIMESTAMP without timezone is ambiguous and causes bugs across timezones
 ```
 
-### Required on Every Table
+### Standard Table Template
 
 ```sql
-id          UUID PRIMARY KEY    -- or BIGSERIAL for high-insert tables
-created_at  TIMESTAMPTZ         -- immutable creation time
-updated_at  TIMESTAMPTZ         -- changes on every update (trigger or ORM)
+CREATE TABLE users (
+    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    -- OR: id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+
+    -- Core fields
+    email       TEXT NOT NULL UNIQUE,
+    name        TEXT NOT NULL,
+    role        TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('admin', 'user', 'moderator')),
+
+    -- Status fields
+    is_active   BOOLEAN NOT NULL DEFAULT true,
+
+    -- Metadata
+    metadata    JSONB DEFAULT '{}',
+
+    -- Timestamps (ALWAYS include these)
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- Auto-update updated_at trigger
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_users_updated_at
+    BEFORE UPDATE ON users
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at();
+
+-- Essential indexes
+CREATE INDEX idx_users_email ON users (email);
+CREATE INDEX idx_users_role ON users (role) WHERE is_active = true;
+CREATE INDEX idx_users_created_at ON users (created_at DESC);
+```
+
+### ID Strategy
+
+```sql
+-- Option 1: BIGINT auto-increment (recommended for most cases)
+id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY
+-- Pros: compact, sortable, fast joins, natural ordering
+-- Cons: exposes record count, sequential guessing
+
+-- Option 2: UUID v7 (recommended for distributed systems)
+id UUID DEFAULT gen_random_uuid() PRIMARY KEY
+-- Pros: globally unique, no coordination needed, safe to expose
+-- Cons: larger (16 bytes), slower joins, random order (use UUIDv7 for time-ordering)
+
+-- Option 3: ULID / NanoID (application-generated)
+-- Pros: sortable, URL-safe, customizable length
+-- Cons: requires application logic, not DB-native
+
+-- ❌ HALLUCINATION TRAP: UUID v4 is randomly ordered — kills index performance
+-- ✅ Use UUID v7 (time-ordered) if you need UUIDs
+-- UUID v7 has a timestamp prefix → sequential inserts → B-tree friendly
+```
+
+### Relationships
+
+```sql
+-- One-to-Many: foreign key on the "many" side
+CREATE TABLE posts (
+    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    author_id   BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title       TEXT NOT NULL,
+    body        TEXT NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX idx_posts_author_id ON posts (author_id);
+
+-- Many-to-Many: junction table
+CREATE TABLE post_tags (
+    post_id     BIGINT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    tag_id      BIGINT NOT NULL REFERENCES tags(id) ON DELETE CASCADE,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (post_id, tag_id)
+);
+CREATE INDEX idx_post_tags_tag_id ON post_tags (tag_id);
+
+-- ❌ HALLUCINATION TRAP: Every foreign key column MUST have an index
+-- Without it, cascading deletes on the parent do a full table scan on the child
+-- PostgreSQL does NOT auto-index foreign keys (MySQL InnoDB does)
+
+-- Self-referential (tree/hierarchy)
+CREATE TABLE categories (
+    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    parent_id   BIGINT REFERENCES categories(id) ON DELETE SET NULL,
+    name        TEXT NOT NULL,
+    depth       INT NOT NULL DEFAULT 0
+);
+CREATE INDEX idx_categories_parent_id ON categories (parent_id);
 ```
 
 ---
 
-## Indexing Strategy
-
-An index makes reads faster and writes slightly slower. Index on the columns you filter and sort — not every column.
-
-**Index when:**
-- Column appears in `WHERE` clauses frequently
-- Column is used for `JOIN` conditions
-- Column is used in `ORDER BY` on large result sets
-- Column is a foreign key that will be queried by relationship
-
-**Don't index when:**
-- Table has under a few thousand rows — full scan is faster than index lookup overhead
-- Column has very low cardinality (e.g., a boolean field with 95% TRUE)
-- Column is rarely queried
+## Soft Deletes
 
 ```sql
--- Composite index: order matters — most selective first
-CREATE INDEX idx_orders_user_status ON orders(user_id, status);
+-- Soft delete pattern
+ALTER TABLE users ADD COLUMN deleted_at TIMESTAMPTZ;
 
--- Partial index: only index what you query
-CREATE INDEX idx_active_users ON users(email) WHERE is_active = TRUE;
+-- Partial index — queries against active records are fast
+CREATE INDEX idx_users_active ON users (email) WHERE deleted_at IS NULL;
+
+-- "Delete" = set timestamp
+UPDATE users SET deleted_at = now() WHERE id = 42;
+
+-- All queries must filter:
+SELECT * FROM users WHERE deleted_at IS NULL;
+
+-- OR: Use a view for convenience
+CREATE VIEW active_users AS
+    SELECT * FROM users WHERE deleted_at IS NULL;
+
+-- ❌ HALLUCINATION TRAP: Soft deletes add complexity to EVERY query
+-- Every SELECT, JOIN, and COUNT must include WHERE deleted_at IS NULL
+-- Consider using a view or audit_log table instead when possible
 ```
 
 ---
 
-## N+1 Queries
+## Audit Trail
 
-The most common ORM performance failure. N+1 happens when you fetch N records then make a separate query for each one.
+```sql
+-- Append-only audit log
+CREATE TABLE audit_log (
+    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    table_name  TEXT NOT NULL,
+    record_id   BIGINT NOT NULL,
+    action      TEXT NOT NULL CHECK (action IN ('INSERT', 'UPDATE', 'DELETE')),
+    old_data    JSONB,
+    new_data    JSONB,
+    changed_by  BIGINT REFERENCES users(id),
+    changed_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 
-```ts
-// ❌ N+1 — 1 query for posts + N queries for authors
-const posts = await Post.findAll();
-for (const post of posts) {
-  post.author = await User.findById(post.userId); // N queries
+-- Partition by month for performance
+-- CREATE TABLE audit_log (...) PARTITION BY RANGE (changed_at);
+
+CREATE INDEX idx_audit_log_table_record ON audit_log (table_name, record_id);
+CREATE INDEX idx_audit_log_changed_at ON audit_log USING brin (changed_at);
+
+-- Auto-audit trigger
+CREATE OR REPLACE FUNCTION audit_trigger()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO audit_log (table_name, record_id, action, old_data, new_data, changed_by)
+    VALUES (
+        TG_TABLE_NAME,
+        COALESCE(NEW.id, OLD.id),
+        TG_OP,
+        CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN to_jsonb(OLD) END,
+        CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN to_jsonb(NEW) END,
+        current_setting('app.current_user_id', true)::bigint
+    );
+    RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_users_audit
+    AFTER INSERT OR UPDATE OR DELETE ON users
+    FOR EACH ROW EXECUTE FUNCTION audit_trigger();
+```
+
+---
+
+## Multi-Tenancy Patterns
+
+```sql
+-- Pattern 1: Shared table with tenant_id (simplest, most common)
+CREATE TABLE projects (
+    id          BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    tenant_id   BIGINT NOT NULL REFERENCES tenants(id),
+    name        TEXT NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX idx_projects_tenant ON projects (tenant_id, created_at DESC);
+-- ‼️ Every query MUST include WHERE tenant_id = ? — enforce via RLS
+
+-- Row Level Security (PostgreSQL)
+ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY tenant_isolation ON projects
+    USING (tenant_id = current_setting('app.current_tenant_id')::bigint);
+
+-- Pattern 2: Schema per tenant (better isolation)
+CREATE SCHEMA tenant_acme;
+CREATE TABLE tenant_acme.projects (...);
+
+-- Pattern 3: Database per tenant (maximum isolation, hardest to manage)
+-- Only for compliance/regulatory requirements
+```
+
+---
+
+## ORM Selection
+
+### Prisma (TypeScript/Node.js)
+
+```prisma
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
 }
 
-// ✅ Eager load — 2 queries total
-const posts = await Post.findAll({ include: ['author'] });
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String
+  posts     Post[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@map("users")
+}
 ```
 
-**Detection:** Enable query logging in development. If you see repetitive queries differing only by ID, you have N+1.
+```typescript
+// Usage:
+const user = await prisma.user.findUnique({
+  where: { email: "alice@test.com" },
+  include: { posts: { take: 10, orderBy: { createdAt: "desc" } } },
+});
+
+// ❌ HALLUCINATION TRAP: Prisma uses its own query engine
+// It does NOT support raw SQL joins in the standard query API
+// Use prisma.$queryRaw for complex queries Prisma can't express
+```
+
+### Drizzle (TypeScript — SQL-First)
+
+```typescript
+import { pgTable, serial, text, timestamp, integer } from "drizzle-orm/pg-core";
+import { eq, desc, and } from "drizzle-orm";
+
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+// Query (SQL-like, type-safe)
+const result = await db
+  .select({ id: users.id, name: users.name })
+  .from(users)
+  .where(and(eq(users.role, "admin"), eq(users.isActive, true)))
+  .orderBy(desc(users.createdAt))
+  .limit(20);
+```
 
 ---
 
-## Migration Rules
+## Migration Best Practices
 
-- Every schema change is a migration — never modify the database directly in production
-- Migrations are additive first: add the column, deploy code that uses it, then remove the old column later
-- Never drop a column in the same migration that deploys the code removing its references
-- Test migrations on a production-size dataset — a 10-second migration on dev can lock a table for hours on prod
+```
+Migration Rules:
+1. Every migration must be REVERSIBLE (include down/rollback)
+2. Never modify a migration that's been applied to production
+3. Use explicit column types — never rely on ORM defaults
+4. Add indexes in the SAME migration as the column
+5. Large table migrations: add column as NULLABLE first, backfill, then add NOT NULL
+6. Test migrations against a COPY of production data size
+7. Never DROP a column — first remove all code references, deploy, then drop
+```
+
+```sql
+-- Safe column addition (zero-downtime deploy)
+-- Step 1: Add nullable column
+ALTER TABLE users ADD COLUMN phone TEXT;
+
+-- Step 2: Backfill (in batches to avoid locking)
+UPDATE users SET phone = '' WHERE phone IS NULL AND id BETWEEN 1 AND 10000;
+UPDATE users SET phone = '' WHERE phone IS NULL AND id BETWEEN 10001 AND 20000;
+
+-- Step 3: Add constraint (after deploy confirms all code writes phone)
+ALTER TABLE users ALTER COLUMN phone SET NOT NULL;
+ALTER TABLE users ALTER COLUMN phone SET DEFAULT '';
+
+-- ❌ HALLUCINATION TRAP: Adding NOT NULL without a default locks the ENTIRE table
+-- On large tables this can cause downtime. Always add as nullable first.
+```
 
 ---
 
-## File Index
+## Connection Pooling
 
-| File | Covers | Load When |
-|---|---|---|
-| `schema-design.md` | Detailed schema patterns and relationship modeling | Designing or reviewing a schema |
-| `indexing.md` | When and how to index, partial indexes, covering indexes | Performance investigation |
-| `orm-selection.md` | Prisma vs Drizzle vs TypeORM vs raw SQL trade-offs | Choosing ORM |
-| `migrations.md` | Safe migration patterns, rollback strategy | Changing existing schema |
-| `optimization.md` | Query analysis, EXPLAIN output, common fixes | Slow query diagnosis |
-| `database-selection.md` | Detailed database selection framework | Architecture decision |
+```
+Application → Connection Pool → Database
 
----
+Without pooling: 100 requests = 100 DB connections → DB overwhelmed
+With pooling: 100 requests = 10-20 reused connections → DB happy
 
-## Scripts
+Common poolers:
+- PgBouncer (external, most common for PostgreSQL)
+- Prisma Accelerate (managed, for Prisma)
+- Supabase Supavisor (managed, for Supabase)
+- Application-level (SQLAlchemy pool, Drizzle pool)
 
-| Script | Purpose | Run With |
-|---|---|---|
-| `scripts/schema_validator.py` | Validates schema for missing indexes, naming issues | `python scripts/schema_validator.py <project_path>` |
+Sizing formula:
+  max_connections = (num_cpu_cores * 2) + num_disk_spindles
+  Typical: 25-50 connections for most applications
+  
+❌ HALLUCINATION TRAP: Serverless functions need EXTERNAL pooling
+   Each Lambda/Vercel invocation opens a new connection
+   Without PgBouncer/Supavisor, you hit max_connections instantly
+```
 
 ---
 
 ## Output Format
 
-When this skill produces a recommendation or design decision, structure your output as:
-
 ```
-━━━ Database Design Recommendation ━━━━━━━━━━━━━━━━
-Decision:    [what was chosen / proposed]
-Rationale:   [why — one concise line]
-Trade-offs:  [what is consciously accepted]
-Next action: [concrete next step for the user]
+━━━ Database Design Report ━━━━━━━━━━━━━━━━━━━━━━━
+Skill:       Database Design
+Database:    [PostgreSQL/MySQL/SQLite/etc.]
+Scope:       [N tables · N migrations]
 ─────────────────────────────────────────────────
-Pre-Flight:  ✅ All checks passed
-             or ❌ [blocking item that must be resolved first]
+✅ Passed:   [checks that passed, or "All clean"]
+⚠️  Warnings: [non-blocking issues, or "None"]
+❌ Blocked:  [blocking issues requiring fix, or "None"]
+─────────────────────────────────────────────────
+VBC status:  PENDING → VERIFIED
+Evidence:    [migration success / schema validation]
 ```
-
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/tribunal-database`**
-**Active reviewers: `logic` · `security` · `sql`**
-
-### ❌ Forbidden AI Tropes in Database Design
-
-1. **Blindly guessing column types** — e.g., using `VARCHAR(255)` for everything instead of precise types or `TEXT`.
-2. **Missing `updated_at` triggers** — defining `updated_at` without a mechanism to actually update it.
-3. **N+1 queries by default** — returning code that queries relations in a loop.
-4. **Destructive migrations** — dropping a column in the same migration that drops the code using it.
-5. **Over-indexing** — adding indexes to every single column regardless of cardinality or query patterns.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before generating database schemas or queries:
-```
-✅ Did I design for the queries the application actually runs, rather than theoretical elegance?
-✅ Are my suggested indexes selective and actually used in `WHERE` or `JOIN` clauses?
-✅ Is this code safe from N+1 query performance problems?
-✅ Did I rely on parameterized queries (no string concatenation)?
-✅ Did I use the correct primary key strategy (e.g., UUID vs BIGSERIAL) for the scale?
-```
-
 
 ---
 
 ## 🤖 LLM-Specific Traps
 
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+1. **TIMESTAMP vs TIMESTAMPTZ:** Always use TIMESTAMPTZ (with timezone). TIMESTAMP without timezone is ambiguous.
+2. **UUID v4 for Primary Keys:** UUID v4 is randomly ordered — destroys B-tree index performance. Use UUID v7 or BIGINT.
+3. **Missing FK Indexes:** PostgreSQL does NOT auto-create indexes on foreign key columns. Always add them manually.
+4. **NOT NULL on Large Tables:** Adding NOT NULL to an existing column on a large table locks the entire table. Add as nullable first.
+5. **`SELECT *` in Application Code:** Always specify columns. Schema changes + `SELECT *` = broken application.
+6. **Shared Mutable State Without RLS:** Multi-tenant tables without Row Level Security = data leaks between tenants.
+7. **Hardcoded Connection Strings:** Database URLs must come from environment variables, never code.
+8. **Direct Production Writes:** Never run unreviewed SQL against production. Use migrations and review processes.
+9. **Ignoring Query Plans:** Design decisions without EXPLAIN ANALYZE evidence are guesses.
+10. **Serverless Without Pooling:** Every serverless invocation opens a new connection. Always use an external connection pooler.
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Integration
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+**Slash command: `/tribunal-database`**
 
 ### ✅ Pre-Flight Self-Audit
 
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Did I use TIMESTAMPTZ (not TIMESTAMP)?
+✅ Did I add indexes for all foreign keys?
+✅ Did I use BIGINT or UUID v7 for primary keys?
+✅ Are all table/column names snake_case?
+✅ Do all tables have created_at and updated_at?
+✅ Is the migration reversible?
+✅ Did I use parameterized queries (not string interpolation)?
+✅ Is connection pooling configured for serverless?
+✅ Is multi-tenant data isolated (RLS or schema)?
+✅ Did I run EXPLAIN ANALYZE on critical queries?
 ```
 
-### 🛑 Verification-Before-Completion (VBC) Protocol
+### 🛑 VBC Protocol
 
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
+- ❌ **Forbidden:** Declaring a schema "optimized" without migration + EXPLAIN evidence.
+- ✅ **Required:** Provide migration success logs or schema validation output.

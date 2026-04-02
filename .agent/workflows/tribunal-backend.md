@@ -1,111 +1,113 @@
 ---
-description: Backend-specific Tribunal. Runs Logic + Security + Dependency + Types. Use for API routes, server logic, and auth code.
+description: Backend-specific Tribunal. Runs Logic + Security + Dependency + Type Safety reviewers. Use for API routes, server logic, auth code, middleware, Server Actions, and any server-side business logic.
 ---
 
-# /tribunal-backend — Server-Side Audit
+# /tribunal-backend — Backend Code Audit
 
 $ARGUMENTS
 
 ---
 
-Focused audit for backend and API code. Paste server-side code and these four reviewers analyze it simultaneously.
+## When to Use /tribunal-backend
+
+| Use `/tribunal-backend` when... | Use something else when... |
+|:---|:---|
+| Reviewing API routes or middleware | Frontend components → `/tribunal-frontend` |
+| Auth, JWT, session code | Database queries only → `/tribunal-database` |
+| Server Actions | Mobile code → `/tribunal-mobile` |
+| Input validation and Zod schemas | Maximum coverage → `/tribunal-full` |
+| Third-party API integrations | |
 
 ---
 
-## When to Use This vs Other Tribunals
+## 4 Active Reviewers (All Run Simultaneously)
 
-| Code type | Right tribunal |
-|---|---|
-| API routes, auth, middleware | `/tribunal-backend` ← you are here |
-| React components, hooks | `/tribunal-frontend` |
-| SQL queries, ORM, migrations | `/tribunal-database` |
-| Mobile-specific code | `/tribunal-mobile` |
-| Unknown domain or cross-domain | `/tribunal-full` |
+### logic-reviewer
+- Hallucinated Express/Hono/Fastify methods
+- Missing awaits on async operations
+- Unreachable code after return statements
+- Race conditions in sequential state mutations
+
+### security-auditor
+- SQL injection via string interpolation
+- JWT verify missing `{ algorithms: ['HS256'] }` option
+- Auth check after business logic (wrong order)
+- IDOR — resource ownership not verified against session
+- SSRF — user-controlled URLs passed to fetch()
+- Hardcoded secrets / missing env var existence checks
+- CORS wildcard (`*`) in production
+
+### dependency-reviewer
+- Packages not in package.json
+- npm package names matching typosquatting patterns
+- Major version incompatibilities
+- Known CVEs in used packages
+
+### type-safety-reviewer
+- `any` types in request handlers
+- Missing Zod validation before DB access
+- Unsafe type assertions (`as User` without runtime check)
+- Return type mismatches
 
 ---
 
-## Active Reviewers
+## Verdict System
 
 ```
-logic-reviewer          → Invented stdlib methods, impossible conditional branches,
-                          calling .user on a req that wasn't authenticated
-security-auditor        → Auth bypass, SQL injection, secrets in code, rate limiting gaps,
-                          JWT algorithm enforcement, CORS misconfiguration
-dependency-reviewer     → Any import not found in your package.json
-type-safety-reviewer    → Implicit any, unguarded optional access, missing return types,
-                          unsafe casts
-```
-
----
-
-## What Gets Flagged — Real Examples
-
-| Reviewer | Example Finding |
-|---|---|
-| logic | `req.user.id` used after a guard that can pass with null user |
-| security | `jwt.verify(token, secret)` — no `algorithms` option → allows `alg:none` attack |
-| security | `app.use(cors())` with no origin restriction in production |
-| security | `rate-limiter` missing on auth endpoints |
-| dependency | `import { z } from 'zod'` but `zod` not in `package.json` |
-| type-safety | `async function handler(req, res)` — untyped `req` and `res` |
-| type-safety | `const user = await db.findUser(id)` — result typed as `any` |
-
----
-
-## Report Format
-
-```
-━━━ Backend Audit ━━━━━━━━━━━━━━━━━━━━━━━
-
-  logic-reviewer:        ✅ APPROVED
-  security-auditor:      ❌ REJECTED
-  dependency-reviewer:   ✅ APPROVED
-  type-safety-reviewer:  ⚠️  WARNING
-
-━━━ Issues ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-security-auditor:
-  ❌ CRITICAL — Line 44
-     JWT algorithm not enforced: jwt.verify(token, secret)
-     Fix: jwt.verify(token, secret, { algorithms: ['HS256'] })
-
-  ❌ HIGH — Line 12
-     CORS open: app.use(cors()) — allows any origin
-     Fix: app.use(cors({ origin: process.env.ALLOWED_ORIGIN }))
-
-type-safety-reviewer:
-  ⚠️ MEDIUM — Line 10
-     Request body typed as any — use Zod schema parse at the API boundary
-     Fix: const body = schema.parse(req.body)
-
-━━━ Verdict: REJECTED — fix before merging ━━━━━━
+If ANY reviewer → ❌ REJECTED: code must be fixed before Human Gate
+If any reviewer → ⚠️ WARNING:  proceed with flagged items noted
+If all reviewers → ✅ APPROVED: present to Human Gate
 ```
 
 ---
 
-## Hallucination Guard
-
-- Logic findings must cite the **exact line and condition** that creates the problem
-- Security findings must name the **attack class** (not just "this is unsafe")
-- No invented framework methods — only documented Express/Fastify/Hono/etc. APIs
-
----
-
-## Cross-Workflow Navigation
-
-| Finding type | Next step |
-|---|---|
-| Security CRITICAL | `/audit` to scan the whole project |
-| All approved | Human Gate to write to disk |
-| SQL queries also present | Add `/tribunal-database` for those specifically |
-
----
-
-## Usage
+## Output Format
 
 ```
-/tribunal-backend [paste API route code]
-/tribunal-backend [paste auth middleware]
-/tribunal-backend src/routes/user.ts
-/tribunal-backend the JWT verification middleware
+━━━ Tribunal Backend ━━━━━━━━━━━━━━━━━━━━━
+
+logic-reviewer:      ✅ APPROVED
+security-auditor:    ❌ REJECTED
+dependency-reviewer: ✅ APPROVED
+type-safety-reviewer: ⚠️ WARNING
+
+━━━ VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━
+
+Blockers:
+- security-auditor: [CRITICAL] SQL string interpolation on line 23: query = `SELECT * WHERE email = '${email}'`
+  Fix: Use parameterized query: prisma.user.findUnique({ where: { email } })
+
+Warnings:
+- type-safety-reviewer: [MEDIUM] 'req.body' cast as 'any' on line 47 — use Zod parse instead
+```
+
+---
+
+## Backend-Specific Hallucination Traps (Common LLM Mistakes)
+
+```typescript
+// ❌ express.Router() methods that don't exist
+router.middleware(() => {});          // not a method — use app.use()
+router.beforeAll(() => {});           // not a method — use router.use()
+
+// ❌ Hono methods that don't exist
+app.middleware('/path', handler);      // not valid — use app.use('/path', handler)
+
+// ❌ next-auth v4 patterns in v5 projects
+import { getServerSession } from 'next-auth'; // v4 — use auth() from './auth' in v5
+
+// ❌ jwt.verify async form (it's synchronous)
+const payload = await jwt.verify(token, secret); // jwt.verify is NOT async
+const payload = jwt.verify(token, secret);        // Correct
+```
+
+---
+
+## Usage Examples
+
+```
+/tribunal-backend the POST /api/auth/login route with JWT issuance
+/tribunal-backend the createOrder Server Action with Stripe integration
+/tribunal-backend the auth middleware that verifies session on protected routes
+/tribunal-backend the webhook handler for Stripe payment events
 ```

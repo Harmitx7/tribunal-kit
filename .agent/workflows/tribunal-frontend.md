@@ -1,115 +1,118 @@
 ---
-description: Frontend + React specific Tribunal. Runs Logic + Security + Frontend + Types. Use for React components, hooks, and UI code.
+description: Frontend and React specific Tribunal. Runs Logic + Security + Frontend + Type Safety reviewers. Use for React components, hooks, UI code, Next.js pages, Server Components, and Client Components.
 ---
 
-# /tribunal-frontend — UI & React Audit
+# /tribunal-frontend — Frontend Code Audit
 
 $ARGUMENTS
 
 ---
 
-Focused audit for React, Next.js, Vue, and frontend code. Four reviewers analyze it simultaneously for framework-specific issues that generic reviews miss.
+## When to Use /tribunal-frontend
+
+| Use `/tribunal-frontend` when... | Use something else when... |
+|:---|:---|
+| React components (Server or Client) | Backend routes → `/tribunal-backend` |
+| Custom hooks | Database queries → `/tribunal-database` |
+| Next.js pages and layouts | Mobile (React Native) → `/tribunal-mobile` |
+| UI state management | Maximum coverage → `/tribunal-full` |
+| Form handling with Server Actions | |
 
 ---
 
-## When to Use This vs Other Tribunals
+## 4 Active Reviewers (All Run Simultaneously)
 
-| Code type | Right tribunal |
-|---|---|
-| React components, hooks, JSX | `/tribunal-frontend` ← you are here |
-| API routes, auth, middleware | `/tribunal-backend` |
-| SQL queries, ORM | `/tribunal-database` |
-| React Native / mobile UI | `/tribunal-mobile` |
-| Unknown domain or cross-domain | `/tribunal-full` |
+### logic-reviewer
+- Hallucinated React 19 hooks (non-existent hook names)
+- useFormState called instead of useActionState (React 19 rename)
+- useEffect missing dependencies (stale closure)
+- Multiple setStates that should be batched (React 19 auto-batches in most cases)
+
+### security-auditor
+- `dangerouslySetInnerHTML` with user-controlled content (XSS)
+- eval/Function() calls in component code
+- Exposing sensitive data in client-rendered output
+
+### frontend-reviewer
+- useState/useReducer in Server Components (no client runtime!)
+- 'use client' directive missing on components using hooks
+- Missing 'use server' on Server Actions
+- cookies()/headers()/params not awaited in Next.js 15
+- useEffect not cleaned up (subscription leaks)
+- Keys not unique in list rendering (using index as key)
+- Direct DOM mutations (document.querySelector inside React)
+
+### type-safety-reviewer  
+- Props typed as `any`
+- Event handlers typed as `any` (use `React.MouseEvent<HTMLButtonElement>`)
+- Server Component async props typed without Promise<> (Next.js 15 params)
+- No explicit return type on custom hooks
 
 ---
 
-## Active Reviewers
+## Verdict System
 
 ```
-logic-reviewer          → Non-existent React APIs, impossible render conditions,
-                          stale closure patterns, state set during unmounted component
-security-auditor        → XSS via dangerouslySetInnerHTML, exposed tokens or secrets
-                          in component state, unsanitized URL params
-frontend-reviewer       → Hooks violations (rules of hooks), missing dep arrays,
-                          direct state mutation, infinite render loops
-type-safety-reviewer    → Untyped props, any in hooks, unsafe DOM ref usage,
-                          missing generic type parameters
-```
-
----
-
-## What Gets Flagged — Real Examples
-
-| Reviewer | Example Finding |
-|---|---|
-| logic | `useState.useAsync()` — not a real React API |
-| logic | Setting state during render without a guard → infinite loop |
-| security | `dangerouslySetInnerHTML={{ __html: userInput }}` — XSS |
-| security | `localStorage.setItem('token', jwt)` — accessible to XSS |
-| frontend | `useEffect(() => {...}, [])` with a prop used inside — stale closure |
-| frontend | `setCount(count + 1)` inside a stale closure — use functional updater |
-| frontend | Hook called inside a conditional `if (loggedIn) { useData() }` |
-| type-safety | `function Card(props: any)` — no defined prop interface |
-| type-safety | `ref.current.focus()` without null check |
-
----
-
-## Report Format
-
-```
-━━━ Frontend Audit ━━━━━━━━━━━━━━━━━━━━━━
-
-  logic-reviewer:     ✅ APPROVED
-  security-auditor:   ✅ APPROVED
-  frontend-reviewer:  ❌ REJECTED
-  type-safety:        ⚠️  WARNING
-
-━━━ Issues ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-frontend-reviewer:
-  ❌ HIGH — Line 18
-     Missing dep: userId used inside useEffect but not in dep array
-     Code: useEffect(() => fetchUser(userId), [])
-     Fix:  useEffect(() => fetchUser(userId), [userId])
-
-  ❌ HIGH — Line 34
-     Hook called conditionally: if (isAuth) { useDashboardData() }
-     Fix: Move hook to top level, use enabled flag inside hook
-
-type-safety-reviewer:
-  ⚠️ MEDIUM — Line 3
-     props: any — define a typed interface for this component
-     Fix: interface CardProps { title: string; content: React.ReactNode }
-
-━━━ Verdict: REJECTED — fix before merging ━━━━━━
+If ANY reviewer → ❌ REJECTED: fix before Human Gate
+If any reviewer → ⚠️ WARNING:  proceed with flagged items
+If all reviewers → ✅ APPROVED: Human Gate
 ```
 
 ---
 
-## Hallucination Guard
-
-- Only real React/Vue/Next.js APIs are accepted — invented hooks get REJECTED
-- Hook violation findings cite the **specific hooks rule being broken**
-- XSS findings include the **specific input path** that creates the injection
-
----
-
-## Cross-Workflow Navigation
-
-| Finding type | Next step |
-|---|---|
-| XSS finding | Contact security team + `/audit` for project-wide XSS scan |
-| Hooks violations everywhere | `/refactor` to extract to properly structured custom hooks |
-| All approved | Human Gate to write code to disk |
-
----
-
-## Usage
+## Output Format
 
 ```
-/tribunal-frontend [paste component code]
-/tribunal-frontend [paste custom hook]
-/tribunal-frontend src/components/UserCard.tsx
-/tribunal-frontend the usePagination hook
+━━━ Tribunal Frontend ━━━━━━━━━━━━━━━━━━━━━
+
+logic-reviewer:      ✅ APPROVED
+security-auditor:    ✅ APPROVED
+frontend-reviewer:   ❌ REJECTED
+type-safety-reviewer: ⚠️ WARNING
+
+━━━ VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━
+
+Blockers:
+- frontend-reviewer: [HIGH] useState() in Server Component at src/app/dashboard/page.tsx:12
+  Fix: Move state to a Client Component ('use client')
+- frontend-reviewer: [HIGH] cookies() not awaited at src/app/api/auth/route.ts:8
+  Fix: const cookieStore = await cookies();
+
+Warnings:
+- type-safety-reviewer: [MEDIUM] onClick handler typed as 'any' at line 34
+  Fix: onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
+```
+
+---
+
+## Frontend-Specific Hallucination Traps (Common LLM Mistakes)
+
+```typescript
+// ❌ React 19: useFormState renamed to useActionState
+import { useFormState } from 'react';      // useFormState no longer exists in React 19
+import { useActionState } from 'react';    // Correct React 19 name
+
+// ❌ Next.js 15: params and searchParams must be awaited
+const { id } = params;                    // WRONG — params is a Promise in Next.js 15
+const { id } = await params;             // CORRECT
+
+// ❌ Hook not valid in Server Component
+export default async function Page() {
+  const [count, setCount] = useState(0); // Server Components cannot use hooks
+}
+
+// ❌ Server Action missing 'use server'
+async function saveData(formData: FormData) {  // Without 'use server' — not a Server Action
+  'use server';                                // Must be FIRST line
+```
+
+---
+
+## Usage Examples
+
+```
+/tribunal-frontend the ProductCard component with server-fetched data
+/tribunal-frontend the useAuth custom hook implementation
+/tribunal-frontend the checkout page with Server Action form
+/tribunal-frontend the DashboardLayout with Suspense and loading states
 ```

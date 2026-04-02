@@ -1,75 +1,174 @@
 ---
 name: building-native-ui
-description: Cross-platform App UI expert specialized in React Native and Expo. Focuses on safe areas, keyboard handling, layout performance, and platform-specific heuristics.
+description: Cross-platform Native UI mastery (React Native / Expo). Building seamless, 60fps mobile interfaces, handling safe areas, navigation architectures (Expo Router), native modules, gestures/animations (Reanimated), and platform-specific styling. Use when building React Native or Expo mobile apps.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-30
-applies-to-model: claude-3-7-sonnet, gemini-2.5-pro
+version: 2.0.0
+last-updated: 2026-04-02
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Building Native UI (React Native / Expo)
+# Building Native UI — React Native & Expo Mastery
 
-You are an expert Mobile Frontend Engineer. You understand the profound differences between building a website and building a fluid, responsive native application for iOS and Android.
-
-## Core Directives
-
-1. **Environmental Safety First:**
-   - Always wrap root navigational components or edge-touching screens in `SafeAreaView` (from `react-native-safe-area-context`).
-   - Any screen containing text inputs MUST utilize `KeyboardAvoidingView` or `KeyboardAwareScrollView` to prevent the software keyboard from occluding input fields.
-
-2. **Platform Tropes:**
-   - Rely heavily on `Platform.OS` or `Platform.select()` to gracefully adapt UI components. 
-   - Shadows on iOS (`shadowOpacity`, `shadowRadius`) do not work the same stringently on Android (`elevation`). Provide robust fallback implementations to both.
-
-3. **Performance Boundaries:**
-   - Never use deeply generic or unbound nested `.map()` loops for massive UI layouts. Always use `FlatList` or `FlashList` for heavy lists to optimize memory via view recycling.
-   - Avoid massive functional component re-renders. Use standard `useMemo` strictly for expensive list data formatting.
-
-4. **Animations & Gestures:**
-   - Use `react-native-reanimated` instead of standard `Animated` for anything complex. Run animations completely natively on the UI thread without dropping JS bridge frames.
-   - Pair interactive swipes/drags directly with `react-native-gesture-handler`. 
-
-## Execution
-When outputting React Native application markup, always default to importing high-performance primitives (`Pressable` over `TouchableOpacity`, `FlashList` over `ScrollView(map)`).
-
+> A mobile app isn't a website confined to a small screen.
+> 60 FPS is not a goal; it is a rigid requirement. The JS thread is a fragile bottleneck.
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 1. The Expo Router Architecture
 
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
+File-based routing replaces legacy imperative React Navigation boilerplates.
 
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+```typescript
+// Directory structure dictates routes
+// app/
+// ├── _layout.tsx      (Global wrap, e.g. Stack or Tabs)
+// ├── index.tsx        (Matches '/')
+// ├── (auth)/          (Route group, invisible in URL)
+// │   └── login.tsx    (Matches '/login')
+// └── user/
+//     └── [id].tsx     (Dynamic route, matches '/user/123')
+
+// Link navigation (Strongly typed in Expo Router v3+)
+import { Link, router } from 'expo-router';
+
+export default function Home() {
+  return (
+    <View>
+      {/* Declarative */}
+      <Link href="/user/123" asChild>
+        <Pressable><Text>Go to Profile</Text></Pressable>
+      </Link>
+      
+      {/* Imperative */}
+      <Button onPress={() => router.push('/(auth)/login')} title="Login" />
+    </View>
+  );
+}
+```
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 2. Platform Nuances & Safe Areas
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
+Mobile devices have notches, home indicators, and varied status bars.
 
-### ❌ Forbidden AI Tropes
+```typescript
+// ❌ BAD: Ignoring notches
+export const Header = () => <View style={{ paddingTop: 20 }} />
 
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+// ✅ GOOD: react-native-safe-area-context
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+export const Header = () => {
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
+      <Text>Header Content</Text>
+    </View>
+  );
+}
+
+// ✅ Platform-specific logic
+import { Platform, StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  shadow: {
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2 },
+      android: { elevation: 4 }, // Android requires elevation for shadows
+    }),
+  }
+});
+```
+
+---
+
+## 3. High-Performance Animations (Reanimated)
+
+Never animate over the React Native bridge. Keep animations strictly on the native UI thread using `react-native-reanimated`.
+
+```typescript
+// ❌ BAD: Animated.Value across the bridge, or setState driven animations
+// setState -> JS Thread calculate -> Bridge JSON -> Native UI (Drops frames!)
+
+// ✅ GOOD: Reanimated UI thread execution
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+
+export function BouncyBox() {
+  const offset = useSharedValue(0); // Lives natively
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: offset.value }], // Syncs natively
+    };
+  });
+
+  return (
+    <>
+      <Animated.View style={[styles.box, animatedStyles]} />
+      <Button onPress={() => (offset.value = withSpring(Math.random() * 255))} title="Bounce" />
+    </>
+  );
+}
+```
+
+---
+
+## 4. List Performance
+
+FlatList rendering is the #1 cause of React Native app crashes due to OOM (Out of Memory).
+
+```typescript
+import { FlashList } from "@shopify/flash-list";
+
+// ❌ BAD: Standard ScrollView for massive lists
+// Maps every item instantly. Crashes on large data sets.
+
+// ❌ MEDIOCRE: FlatList
+// Blank spaces when scrolling fast due to JS thread bridge bottlenecks.
+
+// ✅ BEST: FlashList (Shopify)
+// Recycles views instantly like native UICollectionView / RecyclerView.
+export function FastList({ data }) {
+  return (
+    <FlashList
+      data={data}
+      renderItem={({ item }) => <Text>{item.title}</Text>}
+      estimatedItemSize={50} // CRUCIAL for performance
+    />
+  );
+}
+```
+
+---
+
+## 🤖 LLM-Specific Traps (React Native UI)
+
+1. **HTML Elements:** AI frequently hallucinates `<div>`, `<span>`, and `<p>` tags inside React Native code. React Native STRICTLY requires `<View>`, `<Text>`, and `<Pressable>`.
+2. **CSS properties:** AI writes `box-shadow` or `border-radius: 10px`. React Native styling uses `shadowColor / elevation` and numeric `borderRadius: 10`.
+3. **Bridge Animations:** AI suggests legacy `Animated.timing` or `setState` loops for animations. Demand `react-native-reanimated` shared values on the UI thread.
+4. **Ignoring Safe Areas:** Bounding UI boxes against the absolute physical screen edge, resulting in text hidden behind iPhone dynamic islands or Android navigation bars.
+5. **ScrollView Data Dumps:** Rendering a `.map()` inside a `<ScrollView>` for 1000 items, crashing the mobile memory constraint.
+6. **`onClick` instead of `onPress`:** Using standard web synthetic events. React Native buttons use `onPress`.
+7. **Absolute SVGs:** Attempting to render standard `<svg>` tags. Requires `react-native-svg` with precise React-friendly props.
+8. **Keyboard Avoidance:** Failing to wrap inputs in `<KeyboardAvoidingView>`, meaning the digital keyboard pops up and permanently obscures the text input.
+9. **Platform Blindness:** Applying `shadowOpacity` expecting it to work on Android (it doesn't, requires `elevation`).
+10. **Legacy Navigation:** Generating sprawling `react-navigation` stack files instead of utilizing modern Expo Router file-based topologies.
+
+---
+
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Did I exclusively use native primitives (<View>, <Text>, <Pressable>) and NO HTML tags?
+✅ Is `react-native-reanimated` handling all physics and animations on the UI thread?
+✅ Are large lists utilizing `<FlashList>` with a declared `estimatedItemSize`?
+✅ Is UI guarded from notches using `useSafeAreaInsets`?
+✅ Are styles written strictly via `StyleSheet.create` with numeric values, not string CSS?
+✅ Are interactive touch points using `onPress`, not `onClick`?
+✅ Is the Keyboard explicitly handled via `KeyboardAvoidingView` or `KeyboardAwareScrollView`?
+✅ Is routing leveraging modern Expo Router file systems?
+✅ Are shadows handled specifically for iOS (shadowProps) and Android (elevation)?
+✅ Have I avoided sending massive state updates back and forth across the JS bridge?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

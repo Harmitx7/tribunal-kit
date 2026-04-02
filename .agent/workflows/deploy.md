@@ -1,153 +1,189 @@
 ---
-description: Deployment command for production releases. Pre-flight checks and deployment execution.
+description: Production deployment command. Runs pre-flight safety checks (tests, type-check, lint, security, build), creates a rollback baseline, confirms Human Gate, then executes deployment. Requires explicit human approval before going live.
 ---
 
-# /deploy — Production Release
+# /deploy — Production Deployment
 
 $ARGUMENTS
 
 ---
 
-This command runs a structured, gate-enforced deployment sequence. **Nothing reaches production without passing all three gates.**
+## The Deployment Contract
+
+> "Production is the only environment that matters. Every deployment is a risk event."
+> Every step is logged. Every step has a rollback path. No surprises.
 
 ---
 
-## The Non-Negotiable Rule
+## When to Use /deploy
 
-> **The Human Gate is never skipped.**
-> Even if every automated gate passes, a human sees the deployment summary and explicitly approves before anything executes.
-
----
-
-## Before Running /deploy
-
-Confirm the following checklist manually:
-
-```
-□ /audit passed with no CRITICAL or HIGH issues
-□ All tests pass on the current commit
-□ CHANGELOG.md is updated
-□ Environment variables are confirmed in the target environment
-□ Database migrations (if any) have a rollback plan
-□ Rollback target (tag or SHA) is documented
-```
+| Use `/deploy` when... | Do NOT deploy when... |
+|:---|:---|
+| All pre-flight checks pass | Any pre-flight check fails |
+| Changes are reviewed and approved | In the middle of a debug session |
+| You have a rollback plan | No tests run since last change |
+| Non-peak traffic hours (if possible) | Security audit shows critical issues |
 
 ---
 
-## Three-Gate Sequence
+## Phase 1 — Pre-Flight Checks (ALL Must Pass)
 
-### Gate 1 — Security Sweep
-
-`security-auditor` scans all files in the deployment diff:
-
-```
-Expected clean state:
-  ✅ No secrets or credentials in any changed file
-  ✅ No unparameterized query introduced
-  ✅ No new CVE-affected dependency
-  ✅ No debug endpoints left active
-  ✅ No `console.log` with sensitive data
-```
+**If ANY check in Phase 1 fails → deployment is BLOCKED.**
 
 ```bash
-// turbo
-python .agent/scripts/security_scan.py .
+# T-minus safety sequence (in exact order)
+
+# 1. Security: halt on critical
+python .agent/scripts/security_scan.py . --level=critical
+
+# 2. Dependencies: no exploitable CVEs
+npm audit --audit-level=high
+
+# 3. Type safety: zero errors allowed
+npx tsc --noEmit
+
+# 4. Tests: all must pass
+npm test
+
+# 5. Build: production build must succeed
+npm run build
+
+# 6. Lint: blocking errors halt deployment
+npm run lint --max-warnings=0
 ```
 
-**If any CRITICAL or HIGH issue → deployment is blocked.** Fix and re-scan before proceeding.
+**Pre-Flight Report:**
 
-### Gate 2 — Tribunal Verification
+```
+━━━ Pre-Flight Status ━━━━━━━━━━━━━━━━━━━━━
 
-Run `/tribunal-full` on all changed code:
+Security:    ✅ CLEAR | ❌ BLOCKED ([finding])
+npm audit:   ✅ CLEAR | ❌ BLOCKED ([CVE])
+TypeScript:  ✅ ZERO ERRORS | ❌ BLOCKED (N errors)
+Tests:       ✅ ALL PASS | ❌ BLOCKED (N failing)
+Build:       ✅ SUCCESS | ❌ BLOCKED (build error)
+Linting:     ✅ CLEAN | ⚠️ WARNINGS (N) | ❌ BLOCKING ERRORS (N)
+```
+
+---
+
+## Phase 2 — Rollback Baseline
+
+Before deployment, capture the rollback state:
 
 ```bash
-# Run full check suite
-// turbo
-python .agent/scripts/verify_all.py
+# Option A: Git baseline
+git rev-parse HEAD  # Record current commit hash
+# Rollback: git revert HEAD or git reset --hard [hash]
+
+# Option B: Tag the current release
+git tag release-$(date +%Y%m%d-%H%M%S)
+git push origin --tags
+
+# Option C: Database snapshot (if schema changed)
+pg_dump $DATABASE_URL > backup-$(date +%Y%m%d-%H%M%S).sql
 ```
 
-```
-✅ logic-reviewer: APPROVED
-✅ security-auditor: APPROVED
-✅ dependency-reviewer: APPROVED
-✅ type-safety-reviewer: APPROVED
-```
+**Rollback baseline must be confirmed before deployment begins.**
 
-**Any REJECTED verdict → deployment blocked.** Fix and re-review.
+---
 
-### Gate 3 — Human Approval
+## Phase 3 — Human Gate (Non-Negotiable)
 
-A deployment summary is shown before execution:
+After pre-flight passes, present to the deployer:
 
 ```
-━━━ Release Summary ━━━━━━━━━━━━━━━━━━━━━━━━
-Target:        [staging | production]
-Commit:        [SHA — first 8 chars]
-Files changed: [N] — view diff?
-Security gate: ✅ Passed (no CRITICAL/HIGH issues)
-Tribunal gate: ✅ All reviewers APPROVED
-Tests:         ✅ [N] passed, [0] failed
+━━━ Deployment Approval Required ━━━━━━━━━━━━━━
 
-Rollback to:   [previous tag or commit SHA]
-Rollback time: [estimate in minutes]
-DB migration:  [None | ⚠️ IRREVERSIBLE | ✅ Reversible]
-DB backup:     [Confirmed | Not confirmed — deployment blocked]
+Target environment:  [production | staging]
+Changes in this deploy:
+  [commit summary: feat/fix/chore + description]
+  [number of files changed]
 
-Proceed with deployment? Y = execute | N = cancel
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Database changes:    [Yes: describe migration | None]
+Breaking changes:    [Yes: describe | None]
+
+Pre-flight:          ✅ ALL CHECKS PASSED
+
+Rollback baseline:   Commit [hash] tagged as [release-name]
+Rollback command:    git reset --hard [hash]
+
+Deploy?  Y = proceed | N = abort | W = wait (deploy later)
+```
+
+**Nothing is deployed without explicit "Y" from the human.**
+
+---
+
+## Phase 4 — Deployment Execution
+
+```bash
+# Deploy (platform-specific — auto-detected from project config)
+
+# → Render + GitHub Actions:
+git push origin main  # CI/CD deploys automatically
+
+# → Manual Fly.io:
+flyctl deploy --strategy rolling
+
+# → Manual Kubernetes:
+kubectl set image deployment/api api=[registry]/app:[commit-sha]
+kubectl rollout status deployment/api
 ```
 
 ---
 
-## Rollback is a Prerequisite
+## Phase 5 — Post-Deploy Verification
 
-Before any deployment executes, a rollback plan must exist:
+Within 5 minutes of deployment completing:
 
+```bash
+# Health check
+curl -f https://api.yoursite.com/health        # Must return 200
+curl -f https://yoursite.com                   # Must load
+curl -f https://yoursite.com/api/auth/session  # Auth must work
+
+# Monitor error rate (5 minutes)
+# If error rate > 1% above baseline → initiate rollback immediately
 ```
-What does this roll back to?     → [tag or SHA]
-How long will rollback take?     → [estimate]
-Is the DB migration reversible?  → Yes | No — if No, is backup confirmed?
-Who gets notified on rollback?   → [name or Slack channel]
-```
-
-**No rollback plan = no deployment.** This is not optional.
 
 ---
 
-## Environment-Specific Rules
+## Rollback Decision Tree
 
-| Target | Extra Requirements |
-|---|---|
-| Staging | Rollback optional, tests required, git tag optional |
-| Production | All requirements above + git tag required |
-| Hotfix | Security gate required, Human Gate required |
+```
+After deploy, within 5 minutes:
+├── Error rate normal + health checks pass → ✅ Deployment successful
+├── Error rate elevated but < 1% above baseline → ⚠️ Monitor for 10 more minutes
+├── Error rate > 1% above baseline → ❌ ROLLBACK IMMEDIATELY
+└── Health check fails → ❌ ROLLBACK IMMEDIATELY
+
+Rollback command:
+  git reset --hard [baseline-commit]
+  git push origin main --force-with-lease
+```
 
 ---
 
-## Hallucination Guard
+## Schema Change Deployment Pattern
 
-- **No invented CLI flags** — `# VERIFY: check docs for this flag` on any uncertain command
-- **All secrets via environment variables** — never hardcoded in deploy configs or scripts
-- **All images tagged with a specific version** — `latest` is forbidden in production configs
-- **Never generate deployment steps without reading the existing deploy scripts** — read before writing
+If this deploy includes database migrations:
+
+```
+1. Deploy migration in isolation (no application code change)
+2. Verify migration succeeded and DB is healthy
+3. THEN deploy application code that uses new schema
+```
+
+**Never deploy application code and schema changes in the same deployment.**
 
 ---
 
 ## Cross-Workflow Navigation
 
-| Before /deploy... | Go to |
-|---|---|
-| Security audit not run yet | `/audit` first |
-| Tests broken | `/debug` to fix, then `/test` to verify |
-| Changelog outdated | `/changelog` to update first |
-| DB migration needed | `/migrate` with rollback plan documented |
-
----
-
-## Usage
-
-```
-/deploy to staging
-/deploy to production after staging validation
-/deploy hotfix for the auth regression
-```
+| Pre-flight finds... | Go to |
+|:---|:---|
+| Security vulnerability | Fix with `/tribunal-backend` first |
+| TypeScript errors | Fix with `/fix` or `/generate` first |
+| Tests failing | Fix with `/debug` and `/test` first |
+| Build failure | Fix with `/debug` first |

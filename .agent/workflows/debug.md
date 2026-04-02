@@ -1,14 +1,10 @@
 ---
-description: Debugging command. Activates DEBUG mode for systematic problem investigation. No fix is suggested until the root cause is confirmed.
+description: Debugging command. Activates DEBUG mode for systematic problem investigation using the 4-phase methodology (Collect → Hypothesize → Test → Fix). No fix is suggested until the root cause is confirmed and tested. No random changes. No guessing.
 ---
 
 # /debug — Root Cause Investigation
 
 $ARGUMENTS
-
----
-
-This command switches the AI into **investigation mode**. No fixes are suggested until the root cause is identified and confirmed. No random changes. No guessing.
 
 ---
 
@@ -18,92 +14,92 @@ This command switches the AI into **investigation mode**. No fixes are suggested
 
 The `debugger` agent follows this sequence **without skipping steps**:
 
-1. Collect evidence
-2. Generate hypotheses
-3. Test hypotheses one at a time
-4. Identify root cause
-5. Apply targeted fix
-6. Verify the fix and prevent recurrence
+1. Collect all evidence first
+2. Generate ranked hypotheses 
+3. Test exactly one hypothesis at a time
+4. Confirm root cause with evidence
+5. Apply the minimum targeted fix
+6. Add a regression test to prevent recurrence
 
 ---
 
-## When to Use /debug vs Other Commands
+## When to Use /debug
 
 | Use `/debug` when... | Use something else when... |
-|---|---|
-| There's a specific error or unexpected behavior | Code needs to be written from scratch → `/generate` |
-| You have a stack trace or error message | Code quality needs improvement → `/refactor` |
-| Production is broken right now | You want to add tests → `/test` |
-| A bug reappears after being "fixed" | You want a full project health check → `/audit` |
+|:---|:---|
+| There's a specific error or unexpected behavior | Code needs to be written → `/generate` |
+| You have a stack trace or error message | Code quality needs improving → `/refactor` |
+| Production is broken right now | Missing test coverage → `/test` |
+| A bug reappears after being "fixed" | Full health check needed → `/audit` |
 
 ---
 
-## Step 1 — Evidence Collection
-
-**Collect these before forming any hypothesis:**
+## Step 1 — Evidence Collection (Collect All Before Hypothesizing)
 
 ```
-□ Exact error text — full stack trace, not a summary
+□ Exact error text — full stack trace, not a paraphrase
 □ Minimum reproduction steps — fewest actions that trigger the bug
 □ Last known-good state — commit hash, date, or config snapshot
-□ Recent changes — code, dependency updates, env vars, infra
-□ Environment — local / staging / production, OS, Node version, etc.
-□ Frequency — always / sometimes / only under load / only in prod
+□ Recent changes — code, deps, env vars, infra, config changes
+□ Environment — local/staging/prod, OS, Node version, browser, runtime
+□ Frequency — always / intermittent / only under load / production only
 ```
 
-> ⚠️ If the error is intermittent, collect timing data before hypothesizing.
+> ⚠️ If the error is intermittent: collect timing patterns before hypothesizing.
+
+### Priority Investigation Order (Most Likely Root Cause First)
+
+```
+1. Recent deployments     — 90% of outages are caused by recent changes
+2. Environment variables  — rotated/missing secrets are common silent failures
+3. Dependency updates     — a package update can break APIs without errors
+4. Infrastructure         — firewall, Security Groups, DB connection limits
+5. Application code       — last to check, easiest to blame prematurely
+```
 
 ---
 
-## Step 2 — Hypothesis Generation
+## Step 2 — Hypothesis Formation
 
-Map possible causes — label each honestly:
+Map all possible causes with explicit likelihood labels:
 
 ```
-Cause A: [what it is] — Likelihood: High / Medium / Low — Evidence: [what points to it]
-Cause B: [what it is] — Likelihood: High / Medium / Low — Evidence: [what points to it]
-Cause C: [what it is] — Likelihood: High / Medium / Low — Evidence: [what points to it]
+ROOT CAUSE CANDIDATES
+━━━━━━━━━━━━━━━━━━━━━
+H1 [High]   — [cause] — Evidence: [what points to this]
+H2 [Medium] — [cause] — Evidence: [what is consistent with this]
+H3 [Low]    — [cause] — Evidence: [theoretically possible]
 ```
 
-Every entry is labeled as a **hypothesis**, never as a confirmed fact.
-
-**Hypothesis ranking rules:**
-- High likelihood: directly supported by evidence or error message
-- Medium likelihood: consistent with the error but no direct evidence
-- Low likelihood: possible but requires unusual conditions
+**Never state a hypothesis as confirmed fact until Step 3 proves it.**
 
 ---
 
 ## Step 3 — Single-Hypothesis Testing
 
-Test causes **one at a time**. Never test two simultaneously — it makes the result ambiguous.
+Test **one at a time**. Never test two simultaneously — results become ambiguous.
 
 ```
-H1 tested: [what was examined + how]
-Result:     ✅ Confirmed root cause | ❌ Ruled out — [reason]
+H1 tested: [how it was investigated]
+Result:    ✅ Confirmed | ❌ Ruled out — [specific evidence against]
 
-H2 tested: [what was examined + how]
-Result:     ✅ Confirmed root cause | ❌ Ruled out — [reason]
+H2 tested: [how it was investigated]
+Result:    ✅ Confirmed | ❌ Ruled out — [reason]
 ```
 
-Stop when the first hypothesis is confirmed. Do not continue testing eliminated causes.
+Stop when the first hypothesis is confirmed. Do not continue investigating eliminated causes.
 
 ---
 
 ## Step 4 — Root Cause Statement
 
-The root cause is the **single thing** that, if changed, prevents the entire failure chain.
-
-Format:
+The root cause is one sentence: **WHY this happened**, not WHAT happened.
 
 ```
-Root Cause: [One sentence — WHY this happened, not WHAT happened]
+✅ "JWT verification was skipped when Authorization header used lowercase 'bearer'
+    because the header check was case-sensitive"
 
-Example:
-✅ "JWT verification was skipped when the Authorization header used 'bearer' (lowercase), 
-    because the header check was case-sensitive."
-
-❌ "The login returned 401." (This is the symptom, not the cause)
+❌ "The API returned 401" — This is the symptom, not the root cause
 ```
 
 ---
@@ -111,86 +107,83 @@ Example:
 ## Step 5 — Fix + Regression Prevention
 
 ```
-Targeted fix:    One change — the minimum required to resolve the root cause
-Regression test: A specific test added to catch this exact failure if it ever returns
-Similar patterns: Any other locations in the codebase where this pattern exists
+Targeted fix:    The minimum change that eliminates the root cause
+Regression test: A specific test that will catch this exact failure if it returns
+Similar patterns: Other locations in the codebase to audit for the same issue
+Debug cleanup:   All console.log/temporary changes removed from proposed fix
 ```
-
-> ⚠️ All debug logging added during investigation must be removed before the fix is presented.
 
 ---
 
 ## Debug Report Format
 
 ```
-━━━ Debug Report ━━━━━━━━━━━━━━━━━━━━━━━
+━━━ Debug Report ━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Symptom:      [what the user sees]
-Error:        [exact message or trace]
+Symptom:      [what the user observes]
+Error:        [exact message / stack trace]
 Reproduced:   Yes | No | Sometimes — [conditions]
-Environment:  [runtime, version, OS]
-Last working: [commit / date / known-good state]
+Environment:  [Node v22, Next.js 15, PostgreSQL 16]
+Last working: [commit hash / date]
 
-━━━ Evidence Collected ━━━━━━━━━━━━━━━━
-
+━━━ Evidence ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 - [specific observation 1]
 - [specific observation 2]
 
-━━━ Hypotheses ━━━━━━━━━━━━━━━━━━━━━━━
+━━━ Hypotheses ━━━━━━━━━━━━━━━━━━━━━━━━━━
+H1 [High]   — [cause and reasoning]
+H2 [Medium] — [cause and reasoning]
 
-H1 [High]   — [cause and why it's likely]
-H2 [Medium] — [cause and why it's possible]
-H3 [Low]    — [cause and why it's a stretch]
+━━━ Investigation ━━━━━━━━━━━━━━━━━━━━━━━
+H1: [what was tested] → ✅ Confirmed root cause
+H2: [what was tested] → ❌ Ruled out — [reason]
 
-━━━ Investigation ━━━━━━━━━━━━━━━━━━━
+━━━ Root Cause ━━━━━━━━━━━━━━━━━━━━━━━━━
+[Single sentence WHY — not WHAT]
 
-H1: checked [what was examined] → ✅ Confirmed root cause
-H2: ruled out — [evidence against it]
+━━━ Fix ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Before: [original code]
+After:  [corrected code]
 
-━━━ Root Cause ━━━━━━━━━━━━━━━━━━━━━
-
-[Single sentence — WHY this happened]
-
-━━━ Fix ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Before:  [original code]
-After:   [corrected code]
-
-Regression test: [what test prevents this from recurring]
-Similar patterns: [any other locations to check in the codebase]
+Regression test: [test preventing recurrence]
+Similar patterns: [other locations to check]
 ```
 
 ---
 
 ## Hallucination Guard
 
-- Every hypothesis is **explicitly labeled as a hypothesis** — never as confirmed fact until evidence backs it
-- Proposed fixes only use **real, documented APIs** — `// VERIFY: check method exists` on any uncertain call
-- **One change per fix** — multi-file rewrites presented as "a debug session" are a red flag
-- Debug logging added during investigation must be **removed** before the fix is presented
-- **Never assume the error message is accurate** — verify it matches actual behavior
+```
+❌ Never propose a fix before root cause is confirmed with evidence
+❌ Never test two hypotheses simultaneously
+❌ Never propose a "rewrite" as a debug session
+❌ Never leave console.log in the proposed fix
+❌ Never assume the error message accurately describes the actual cause
+❌ Never use real API methods without verifying they exist in this version
+```
 
 ---
 
 ## Cross-Workflow Navigation
 
-| After /debug reveals... | Go to |
-|---|---|
-| Root cause confirmed, fix ready | `/generate` to write the fix safely through Tribunal |
-| Multiple files need changing | `/enhance` for impact-zone analysis + callers update |
-| Missing test allowed the bug in | `/test` to add regression coverage |
-| Performance was the root cause | `/tribunal-performance` for full optimization review |
-| Security vulnerability found | `/audit` to check if it exists elsewhere |
+| After /debug shows... | Go to |
+|:---|:---|
+| Root cause confirmed, fix ready | `/generate` to write fix through Tribunal |
+| Multiple files need changing | `/enhance` for impact-zone analysis |
+| Missing test allowed this bug in | `/test` to add regression coverage |
+| Performance was the root cause | `/tribunal-performance` |
+| Security vulnerability found | `/audit` to find other instances |
 
 ---
 
-## Usage
+## Usage Examples
 
 ```
 /debug TypeError: Cannot read properties of undefined reading 'id'
-/debug API returns 500 only in production
-/debug useEffect runs on every render instead of once
-/debug login works locally but fails in CI
-/debug memory usage grows unbounded over 24h in the worker process
-/debug race condition in the payment confirmation handler
+/debug API returns 500 only in production environment
+/debug useEffect fires on every render instead of only once
+/debug login works locally but fails in CI pipeline
+/debug memory usage grows unbounded after 24 hours
+/debug race condition in payment confirmation handler
+/debug Next.js 15 cookies() throws "Dynamic server error"
 ```

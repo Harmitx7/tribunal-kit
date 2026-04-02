@@ -1,73 +1,206 @@
 ---
 name: shadcn-ui-expert
-description: Frontend architect specializing in Shadcn UI, Radix primitives, and headless component composition. Focuses on accessibility, copy-paste consistency, and Tailwind configuration.
+description: shadcn/ui mastery. Installation, customization via tailwind.config, component extraction, state management with Radix Primitives, theme variables (CSS custom properties), dark mode implementations, and overriding default designs. Use when building or modifying shadcn/ui components in React/Next.js projects.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-30
-applies-to-model: claude-3-7-sonnet, gemini-2.5-pro
+version: 2.0.0
+last-updated: 2026-04-02
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Shadcn UI Expert
+# shadcn/ui Expert — Component Architecture Mastery
 
-You are a Frontend Architect that specializes in building clean, decoupled component libraries using the Shadcn UI paradigm and Radix UI primitives.
-
-## Core Directives
-
-1. **Composition Over Configuration:**
-   - Shadcn components are not npm packages; they are raw code installed into the repository.
-   - Do not attempt to dramatically alter a component's internal logic unless explicitly requested. Instead, compose standard components (`<Button>`, `<Dialog>`, `<Popover>`) to achieve complex layouts.
-
-2. **Tailwind Class Merging:**
-   - Always use the `cn()` utility (typically `clsx` and `tailwind-merge`) when allowing custom `className` props to override default Shadcn component styles.
-   - Guard against styling regressions when composing UI components.
-
-3. **Accessibility (a11y) First:**
-   - Radix primitives handle complex WAI-ARIA behavior. Do not try to manually reinvent focus trapping, keyboard navigation, or `aria-*` state logic unless building a component entirely from scratch.
-
-4. **Design Tokens:**
-   - Always adhere to the project's CSS variables (`--primary`, `--muted`, `--ring`). Do not hardcode arbitrary hex values into Tailwind classes (`bg-[#FF5500]`) when Shadcn standardizes colors via tokens (`bg-primary`).
-
-## Execution
-Whenever constructing a new UI feature, declare which Shadcn components are required. If a component is missing, request the user to run the appropriate CLI command (`npx shadcn-ui@latest add <component>`) rather than hallucinating your own inferior baseline component.
-
+> shadcn/ui is NOT a component library. It is a collection of re-usable components that you copy and paste into your apps.
+> You own the code. You own the styling. You own the accessibility.
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 1. Core Architecture
 
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
+shadcn/ui leverages two layers:
+1. **Radix UI Primitives**: Headless, fully accessible functionality (Focus management, ARIA, Keyboard nav).
+2. **Tailwind CSS**: The styling layer mapped over the headless components.
 
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+```typescript
+// ❌ BAD: Re-inventing the wheel for accessibility
+const Select = ({ options }) => {
+  const [open, setOpen] = useState(false)
+  return <div onClick={() => setOpen(!open)}>...</div> // Breaks keyboard/screen readers
+}
+
+// ✅ GOOD: Using shadcn (Radix under the hood)
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
+export function MySelect() {
+  return (
+    <Select>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Theme" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="light">Light</SelectItem>
+        <SelectItem value="dark">Dark</SelectItem>
+      </SelectContent>
+    </Select>
+  )
+}
+```
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 2. Component Modification (You Own The Code)
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
+Do not treat `components/ui/*` as an immutable black box. You are *supposed* to modify them.
 
-### ❌ Forbidden AI Tropes
+### Adding Variants via `cva` (Class Variance Authority)
 
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+```typescript
+import { cva, type VariantProps } from "class-variance-authority"
+
+// Adding a new "ghost-rounded" variant to the Button component
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors...",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+        outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+        // YOUR CUSTOM VARIANT:
+        "ghost-rounded": "bg-transparent hover:bg-accent hover:text-accent-foreground rounded-full px-6",
+      },
+      size: {
+        default: "h-9 px-4 py-2",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-10 rounded-md px-8",
+        icon: "h-9 w-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+```
+
+---
+
+## 3. Theming & Dark Mode (CSS Variables)
+
+shadcn/ui manages themes explicitly through CSS custom properties (variables), not Tailwind config hardcoding.
+
+```css
+/* app/globals.css */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    /* ... */
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --primary: 217.2 91.2% 59.8%;
+    /* ... */
+  }
+}
+```
+
+Implementation with Tailwind v4 CSS-first configuration:
+```css
+/* Note how standard colors map directly to the CSS vars */
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+```
+
+---
+
+## 4. Using the `cn` Utility
+
+The `cn` utility combines `clsx` (conditional classes) and `tailwind-merge` (fixing class conflicts).
+
+```typescript
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+// ❌ BAD: String concatenation breeds conflicts
+// hover:bg-blue-500 will fail if className contains hover:bg-red-500 earlier
+const className = `px-4 py-2 bg-blue-500 hover:bg-blue-600 ${props.className}`
+
+// ✅ GOOD: cn resolves conflicts correctly
+const className = cn("px-4 py-2 bg-blue-500 hover:bg-blue-600", props.className)
+```
+
+---
+
+## 5. Next.js App Router Integration
+
+### Modals / Dialogs inside Server Components
+Radix primitives (Dialog, Select, etc.) utilize React context and side effects. They must be Client Components.
+
+```typescript
+// ❌ BAD: Server Component trying to use a shadcn Dialog directly with state
+export default function Page() {
+  const [open, setOpen] = useState(false); // ERROR
+  return <Dialog open={open}>...</Dialog>
+}
+
+// ✅ GOOD: Extract the interactive part to a Client Component
+import { MyDialogComponent } from "./MyDialogComponent" // "use client" inside
+
+export default async function Page() {
+  const data = await fetchDb(); // Server Component fetches data
+  return <MyDialogComponent data={data} /> // Passes data to interactive client component
+}
+```
+
+---
+
+## 🤖 LLM-Specific Traps (shadcn/ui)
+
+1. **Treating it like an NPM Package:** AI asks to run `npm install shadcn-ui`. It's `npx shadcn@latest add [component]`. Components live in your tree (`components/ui`), not in `node_modules`.
+2. **Missing the `cn` utility:** AI writes generic template literals for className overrides, guaranteeing Tailwind specificity conflicts. Always import and wrap overrides in `cn()`.
+3. **Hardcoding Colors:** AI writes `bg-blue-500` inside standard components. shadcn demands semantic variables: `bg-primary`, `bg-accent`, `text-muted-foreground`.
+4. **Server Component Conflicts:** AI inserts interactive shadcn components (Dialog, Tabs, Accordion) directly into Next.js Server Components without creating a `"use client"` wrapper boundary.
+5. **Radix Primitive Ignorance:** AI attempts to pass `onClick` or `onChange` to headless wrapper elements like `<Select>` instead of `<SelectValue>` or tracking state properly via the `onValueChange` prop of the root component.
+6. **Forgetting `asChild`:** When wrapping existing buttons or links in shadcn Triggers, AI forgets the `asChild` prop, resulting in invalid HTML (e.g., `<button><button>click</button></button>`).
+7. **Modifying `node_modules/@radix-ui`:** AI tries to fix Radix a11y bugs by editing node_modules. Modify your local wrappers in `components/ui`, never Radix internals.
+8. **Broken Form Integration:** AI tries to manually string together standard React state with shadcn inputs. You MUST use `<Form>`, `<FormField>`, `<FormItem>`, and `react-hook-form` logic for proper shadcn forms.
+9. **Tailwind Class Order:** AI doesn't understand that `tailwind-merge` resolves conflicts from left to right. Overriding classes must be passed at the *end* of the `cn()` arguments.
+10. **Theme Variable Format:** AI writes `--primary: #3b82f6`. shadcn/ui CSS custom properties are strictly HSL scalar values WITHOUT the `hsl()` wrapper inside the root definition: `--primary: 221.2 83.2% 53.3%;`.
+
+---
+
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Are interactive shadcn components safely inside "use client" boundaries?
+✅ Are classes merged dynamically using the `cn()` utility?
+✅ Are colors utilizing standard semantic vars (`bg-primary`) rather than hardcoded colors?
+✅ Did I remember the `asChild` prop when wrapping links/buttons in Triggers?
+✅ Are forms correctly using `react-hook-form` via the `<Form>` and `<FormField>` components?
+✅ Are CSS theme root variables using raw HSL scalar values?
+✅ Am I modifying the local `components/ui/*` files if new variants are needed?
+✅ Have I respected Radix a11y primitives (not inventing my own onClick focus handling)?
+✅ Are component variants properly declared using `cva`?
+✅ Did I pass user-supplied `className` props at the END of the `cn()` function to allow overrides?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

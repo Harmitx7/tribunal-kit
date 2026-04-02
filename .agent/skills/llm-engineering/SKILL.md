@@ -1,258 +1,357 @@
 ---
 name: llm-engineering
-description: LLM engineering principles for production AI systems. RAG pipeline design, vector store selection, prompt engineering, evals, and LLMOps. Use when building AI features, chat interfaces, semantic search, or any system calling an LLM API.
+description: LLM engineering mastery for production AI systems. Prompt engineering, RAG pipeline design, vector store selection, embedding strategies, chunking, reranking, structured output, function calling, streaming, evals, guard-rails, cost optimization, and LLMOps. Use when building AI features, chat interfaces, semantic search, or any system calling an LLM API.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-01
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# LLM Engineering Principles
+# LLM Engineering — Production AI Systems Mastery
 
-> An LLM is a probabilistic function, not a deterministic API.
-> Design your system to be correct despite that — not because you got lucky.
-
----
-
-## When This Skill Activates
-
-- Adding AI chat, completion, or summarization to an app
-- Building a RAG (Retrieval-Augmented Generation) pipeline
-- Integrating with OpenAI, Anthropic, Google Gemini, or local models
-- Designing semantic search
-- Setting up AI evals or monitoring
+> An LLM without guardrails is a liability generator.
+> Every prompt is a contract. Every response is untrusted. Every token costs money.
 
 ---
 
-## Core Architecture Decision: What Pattern?
-
-| Pattern | Use When | Avoid When |
-|---|---|---|
-| **Simple prompt** | Single-turn, no user docs | Needs accuracy on user data |
-| **RAG** | Answers must cite user/company docs | Data changes every second |
-| **Fine-tuning** | Consistent tone/style at scale | You have < 1000 examples |
-| **Agent loop** | Multi-step tasks, tool use | Single-answer questions |
-| **Hybrid** | RAG + agent (most production apps) | Over-engineering simple use case |
-
----
-
-## RAG Pipeline Design
-
-The core pattern for grounding LLMs in real data:
+## Model Selection
 
 ```
-INGEST                    RETRIEVE                  GENERATE
-─────────                 ─────────                 ─────────
-Documents                 User query                Retrieved chunks
-    │                         │                         │
-    ▼                         ▼                         ▼
-Chunk (512 tokens)    Embed query vector     Rerank by relevance
-    │                         │                         │
-    ▼                         ▼                         ▼
-Embed chunks          ANN search in          Build prompt:
-    │                 vector store           [system] + [chunks] + [query]
-    ▼                         │                         │
-Store in vector DB    Top-K results          Call LLM → stream response
+Model                    │ Use Case                              │ Cost Tier
+─────────────────────────┼───────────────────────────────────────┼──────────
+GPT-4o                   │ Complex reasoning, code generation    │ $$$
+GPT-4o-mini              │ Classification, summaries, chat       │ $
+Claude 3.7 Sonnet        │ Long documents, analysis, code        │ $$$
+Claude 3.5 Haiku         │ Fast responses, simple tasks          │ $
+Gemini 2.5 Pro           │ Large context, multimodal, code       │ $$$
+Gemini 2.5 Flash         │ High throughput, cost-efficient       │ $
+Llama 3.3 70B (open)     │ Self-hosted, data privacy             │ Free*
+Mistral Large            │ European data residency, code         │ $$
+
+* = compute costs only
+
+Selection rules:
+1. Start with the cheapest model that works
+2. Upgrade only when eval scores require it
+3. Use large models for complex reasoning, small models for classification
+4. Fine-tune ONLY after prompt engineering and RAG are exhausted
 ```
 
-### Chunking Strategy
+---
 
-```ts
-// ❌ Fixed-size chunks break semantic units
-chunk(document, { size: 512 });  // Splits mid-sentence
+## Prompt Engineering
 
-// ✅ Semantic chunking — split at natural boundaries
-chunk(document, {
-  strategy: 'markdown-headers',   // Or 'sentence', 'paragraph'
-  maxTokens: 512,
-  overlap: 64,                    // Overlap to preserve context at boundaries
+### System Prompt Design
+
+```typescript
+const SYSTEM_PROMPT = `You are a customer support agent for Acme Corp.
+
+## Rules
+1. Answer ONLY questions about Acme products and services.
+2. If you don't know the answer, say "I'll connect you with a specialist."
+3. Never discuss competitors.
+4. Never make up product features or pricing.
+5. Keep responses under 200 words.
+
+## Response Format
+- Use bullet points for lists
+- Include product links when relevant
+- End with a follow-up question
+
+## Context
+Current date: ${new Date().toISOString().split("T")[0]}
+User plan: {{user_plan}}
+`;
+
+// ❌ HALLUCINATION TRAP: System prompts are NOT secrets
+// Users can extract system prompts with jailbreak techniques
+// Never put API keys, internal URLs, or secrets in system prompts
+```
+
+### Structured Output (JSON Mode)
+
+```typescript
+import { z } from "zod";
+import OpenAI from "openai";
+
+const SentimentSchema = z.object({
+  sentiment: z.enum(["positive", "negative", "neutral"]),
+  confidence: z.number().min(0).max(1),
+  reasoning: z.string(),
+  topics: z.array(z.string()),
 });
+
+type Sentiment = z.infer<typeof SentimentSchema>;
+
+async function analyzeSentiment(text: string): Promise<Sentiment> {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    response_format: { type: "json_object" },
+    messages: [
+      {
+        role: "system",
+        content: `Analyze the sentiment of the given text.
+Respond with JSON matching this schema:
+{
+  "sentiment": "positive" | "negative" | "neutral",
+  "confidence": 0-1,
+  "reasoning": "brief explanation",
+  "topics": ["topic1", "topic2"]
+}`,
+      },
+      { role: "user", content: text },
+    ],
+  });
+
+  const raw = JSON.parse(response.choices[0].message.content ?? "{}");
+  return SentimentSchema.parse(raw); // Zod validates the LLM response
+}
+
+// ❌ HALLUCINATION TRAP: Always validate LLM JSON output with Zod/schema
+// LLMs produce malformed JSON, wrong types, missing fields
+// ❌ const result = JSON.parse(response); // trust blindly
+// ✅ const result = Schema.parse(JSON.parse(response)); // validate
 ```
 
-### Embedding Model Selection
+### Function Calling / Tool Use
 
-| Scale | Model | Dimensions | Notes |
-|---|---|---|---|
-| General English | `text-embedding-3-small` | 1536 | Best quality/cost ratio |
-| Multilingual | `multilingual-e5-large` | 1024 | Open source, self-hostable |
-| Code | `text-embedding-3-large` | 3072 | Higher cost, better code retrieval |
-| Local/private | `nomic-embed-text` | 768 | Runs on CPU via Ollama |
-
----
-
-## Vector Store Selection
-
-| Need | Choose | Why |
-|---|---|---|
-| Already on PostgreSQL | `pgvector` | Zero infra, SQL joins with metadata |
-| Managed, billion-scale | Pinecone | Hosted ANN, hybrid search built-in |
-| Open source, self-hosted | Qdrant | Rust-native, fast, rich filtering |
-| Already on Weaviate | Weaviate | GraphQL API, multimodal support |
-| Embedded/local | ChromaDB | Zero infra, great for prototyping |
-
-```ts
-// pgvector — stays inside your existing PostgreSQL
-import { pgvector } from '@pgvector/pg';
-
-// Store
-await db.query(
-  'INSERT INTO documents (content, embedding) VALUES ($1, $2)',
-  [text, JSON.stringify(embedding)]  // embedding is float[]
-);
-
-// Query — cosine similarity
-await db.query(
-  'SELECT content FROM documents ORDER BY embedding <=> $1 LIMIT 5',
-  [JSON.stringify(queryEmbedding)]
-);
-```
-
----
-
-## Prompt Engineering Principles
-
-### Message Structure
-
-```ts
-const messages = [
+```typescript
+const tools: OpenAI.ChatCompletionTool[] = [
   {
-    role: 'system',
-    content: `You are a helpful assistant for [Company].
-You ONLY answer questions based on the provided context.
-If the answer is not in the context, say "I don't have that information."
-Do NOT make up information.`,
+    type: "function",
+    function: {
+      name: "search_products",
+      description: "Search products by name, category, or price range",
+      parameters: {
+        type: "object",
+        properties: {
+          query: { type: "string", description: "Search query" },
+          category: { type: "string", enum: ["electronics", "clothing", "home"] },
+          max_price: { type: "number", description: "Maximum price in USD" },
+        },
+        required: ["query"],
+      },
+    },
   },
   {
-    // Retrieved chunks injected here — NOT into system prompt
-    role: 'user',
-    content: `Context:\n${retrievedChunks.join('\n\n')}\n\nQuestion: ${userQuery}`,
+    type: "function",
+    function: {
+      name: "get_order_status",
+      description: "Get the status of an order by order ID",
+      parameters: {
+        type: "object",
+        properties: {
+          order_id: { type: "string", description: "The order ID (e.g., ORD-12345)" },
+        },
+        required: ["order_id"],
+      },
+    },
   },
 ];
-```
 
-### Few-Shot Examples
+// Tool execution loop
+async function chatWithTools(userMessage: string) {
+  const messages: OpenAI.ChatCompletionMessageParam[] = [
+    { role: "system", content: SYSTEM_PROMPT },
+    { role: "user", content: userMessage },
+  ];
 
-```ts
-// ❌ Zero-shot on complex tasks — model guesses the format
-"Extract entities from: John called Mary at 5pm"
+  let response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages,
+    tools,
+  });
 
-// ✅ Few-shot — show the expected output format
-`Extract entities. Output as JSON array.
+  // Process tool calls
+  while (response.choices[0].finish_reason === "tool_calls") {
+    const toolCalls = response.choices[0].message.tool_calls ?? [];
+    messages.push(response.choices[0].message);
 
-Example:
-Input: "Alice met Bob in London"
-Output: [{"name":"Alice","type":"person"},{"name":"Bob","type":"person"},{"name":"London","type":"location"}]
-
-Input: "${userText}"
-Output:`
-```
-
----
-
-## Evals: How to Know If It's Working
-
-```
-Deterministic evals:   Output matches expected exactly → code comparison
-LLM-as-judge evals:    Another LLM grades the output (1-5 scale)
-Human evals:           Gold standard, expensive, for calibration
-A/B testing:           Compare model/prompt versions on live traffic
-```
-
-### Eval Categories
-
-| Category | What It Measures | Tooling |
-|---|---|---|
-| **Faithfulness** | Does answer match sources? | Ragas, ARES |
-| **Relevance** | Does answer address the question? | LLM-as-judge |
-| **Completeness** | Missing important info? | Human + LLM |
-| **Groundedness** | Hallucination rate | Ragas |
-| **Latency** | p50/p95 response time | OpenTelemetry |
-
----
-
-## LLMOps: Production Concerns
-
-### Cost Control
-
-```ts
-// Track tokens per request
-const response = await openai.chat.completions.create({ ... });
-const { prompt_tokens, completion_tokens } = response.usage;
-logger.info({ prompt_tokens, completion_tokens, model: 'gpt-4o', cost_usd: calcCost() });
-
-// Cache identical prompts — LLMs are deterministic at temp=0
-const cacheKey = hash(systemPrompt + userQuery);
-const cached = await cache.get(cacheKey);
-if (cached) return cached;
-```
-
-### Retry with Exponential Backoff
-
-```ts
-async function callWithRetry(fn: () => Promise<any>, maxRetries = 3) {
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      return await fn();
-    } catch (err: any) {
-      if (err.status === 429 || err.status === 503) {
-        const delay = Math.pow(2, attempt) * 1000 + Math.random() * 500;
-        await sleep(delay);
-        continue;
-      }
-      throw err;  // Non-retryable errors bubble up immediately
+    for (const call of toolCalls) {
+      const args = JSON.parse(call.function.arguments);
+      const result = await executeFunction(call.function.name, args);
+      messages.push({
+        role: "tool",
+        tool_call_id: call.id,
+        content: JSON.stringify(result),
+      });
     }
+
+    response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages,
+      tools,
+    });
   }
-  throw new Error('Max retries exceeded');
+
+  return response.choices[0].message.content;
 }
 ```
 
 ---
 
-## Output Format
+## RAG (Retrieval-Augmented Generation)
 
-When this skill produces or reviews code, structure your output as follows:
+### Pipeline
 
 ```
-━━━ Llm Engineering Report ━━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Llm Engineering
-Language:    [detected language / framework]
-Scope:       [N files · N functions]
-─────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [test output / lint pass / compile success]
+User Query
+    ↓
+[1] Embed query → vector
+    ↓
+[2] Search vector DB → top K chunks
+    ↓
+[3] (Optional) Rerank results → top N
+    ↓
+[4] Build prompt: system + context chunks + query
+    ↓
+[5] LLM generates answer with citations
+    ↓
+[6] Validate response (hallucination check)
 ```
 
-**VBC (Verification-Before-Completion) is mandatory.**
-Do not mark status as VERIFIED until concrete terminal evidence is provided.
+### Chunking Strategy
 
+```typescript
+// ❌ BAD: Arbitrary character splitting
+const chunks = text.match(/.{1,1000}/g); // breaks mid-sentence, mid-word
+
+// ✅ GOOD: Semantic chunking with overlap
+function chunkDocument(text: string, options: ChunkOptions = {}): Chunk[] {
+  const {
+    maxTokens = 512,      // chunk size
+    overlapTokens = 50,    // overlap between chunks
+    separator = "\n\n",    // split on paragraph boundaries first
+  } = options;
+
+  const paragraphs = text.split(separator);
+  const chunks: Chunk[] = [];
+  let current = "";
+
+  for (const para of paragraphs) {
+    if (tokenCount(current + para) > maxTokens && current) {
+      chunks.push({ text: current.trim(), tokens: tokenCount(current) });
+      // Keep overlap from previous chunk
+      const words = current.split(" ");
+      current = words.slice(-overlapTokens).join(" ") + separator + para;
+    } else {
+      current += separator + para;
+    }
+  }
+  if (current.trim()) chunks.push({ text: current.trim(), tokens: tokenCount(current) });
+
+  return chunks;
+}
+
+// Chunk size guidelines:
+// 256-512 tokens → precise retrieval (Q&A, support)
+// 512-1024 tokens → balanced (general RAG)
+// 1024-2048 tokens → broad context (summarization)
+```
+
+### Vector Store Selection
+
+```
+pgvector (PostgreSQL)  → Already using Postgres, <10M vectors, simple
+Pinecone               → Managed, serverless, easy scaling
+Weaviate               → Hybrid search (vector + keyword), multi-model
+Qdrant                 → High performance, Rust-based, self-hostable
+Chroma                 → Local development, prototyping
+Milvus                 → Enterprise scale, GPU acceleration
+
+// ❌ HALLUCINATION TRAP: Vector search is NOT keyword search
+// "Apple CEO" might not find "Tim Cook runs Apple Inc."
+// Use HYBRID search (vector + BM25 keyword) for production
+```
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## Streaming
+
+```typescript
+// Server-Sent Events for AI token streaming
+app.get("/api/chat", async (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  const stream = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [{ role: "user", content: req.query.message as string }],
+    stream: true,
+  });
+
+  for await (const chunk of stream) {
+    const content = chunk.choices[0]?.delta?.content;
+    if (content) {
+      res.write(`data: ${JSON.stringify({ content })}\n\n`);
+    }
+  }
+
+  res.write("data: [DONE]\n\n");
+  res.end();
+});
+
+// Client-side consumption
+const eventSource = new EventSource(`/api/chat?message=${encodeURIComponent(msg)}`);
+eventSource.onmessage = (event) => {
+  if (event.data === "[DONE]") { eventSource.close(); return; }
+  const { content } = JSON.parse(event.data);
+  appendToChat(content);
+};
+```
+
+---
+
+## Cost Optimization
+
+```
+1. Prompt caching        → Cache system prompts (OpenAI, Anthropic support this)
+2. Output token limiting → Set max_tokens to prevent runaway responses
+3. Tiered models         → Use cheap models for classification, expensive for reasoning
+4. Batch processing      → Use batch APIs for offline processing (50% discount)
+5. Chunked context       → Send only relevant chunks, not entire documents
+6. Response streaming    → Stream to reduce TTFT (time to first token)
+7. Structured output     → Shorter JSON responses vs verbose prose
+
+// Cost estimation:
+// GPT-4o: ~$2.50/1M input, ~$10/1M output
+// GPT-4o-mini: ~$0.15/1M input, ~$0.60/1M output
+// 1M tokens ≈ 750,000 words ≈ 3,000 pages
+```
+
+---
+
+## 🤖 LLM-Specific Traps
+
+1. **Trusting LLM JSON Output:** Always validate with Zod/schema. LLMs produce malformed JSON.
+2. **Secrets in System Prompts:** System prompts can be extracted. Never include API keys or internal URLs.
+3. **Fixed Character Chunking:** Splitting at 1000 chars breaks sentences. Use semantic/paragraph chunking.
+4. **Vector-Only Search:** Pure vector search misses exact matches. Use hybrid search for production.
+5. **No Token Limits:** Without `max_tokens`, models can generate 4000+ token responses. Set limits.
+6. **Single Model for Everything:** Use tiered models — cheap for simple tasks, expensive for reasoning.
+7. **No Eval Suite:** Deploying AI without evaluations is deploying untested code. Build evals.
+8. **Prompt Injection Blindness:** User input can override system instructions. Always sanitize and delimit.
+9. **Infinite Tool Loops:** Tool-calling agents can loop forever. Set max iterations (3-5).
+10. **No Rate Limiting:** API calls without rate limiting = surprise $10,000 bill. Set spend limits.
+
+---
+
+## 🏛️ Tribunal Integration
 
 **Slash command: `/review-ai`**
-**Active reviewers: `logic` · `security` · `ai-code-reviewer`**
-
-### ❌ Forbidden AI Tropes in LLM Engineering
-
-1. **Hallucinated model names** — `gpt-5`, `claude-4`, `gemini-ultra-3` — verify against current provider docs.
-2. **Prompt injection via concatenation** — never `systemPrompt + userInput`. Use separate message roles.
-3. **No eval strategy** — shipping LLM features with zero eval coverage is shipping blind.
-4. **Ignoring token limits** — context exceeding `max_tokens` silently fails or truncates unpredictably.
-5. **No cost tracking** — LLM costs compound at scale — always instrument from day one.
-6. **Synchronous LLM calls** — all LLM API calls are async. Never block the event loop waiting for them.
 
 ### ✅ Pre-Flight Self-Audit
 
 ```
-✅ Are all model names verified against current provider documentation?
-✅ Is user input isolated in role:"user" messages, never concatenated into system prompt?
-✅ Is there retry logic with backoff for 429 / 503 errors?
-✅ Is token usage logged per request for cost tracking?
-✅ Is there an eval strategy (even minimal) to detect regressions?
-✅ Are context windows respected — chunked or summarized if approaching limits?
+✅ Am I validating all LLM responses with a schema?
+✅ Are there no secrets in system prompts?
+✅ Is user input delimited from system instructions?
+✅ Did I set max_tokens on all completions?
+✅ Is there rate limiting and cost monitoring?
+✅ Am I using the cheapest model that works?
+✅ Is chunking semantic (not fixed-character)?
+✅ Is search hybrid (vector + keyword)?
+✅ Do tool-calling loops have a max iteration limit?
+✅ Did I build evaluation tests for AI quality?
 ```

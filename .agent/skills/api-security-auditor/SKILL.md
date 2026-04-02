@@ -1,75 +1,177 @@
 ---
 name: api-security-auditor
-description: API Security Expert focusing on REST, GraphQL, and RPC layers. Detects and prevents BOLA/IDOR, enforces rate limiting, and guarantees input sanitization.
+description: API Security auditing mastery. Rate limiting architecture, API key management, payload validation, IDOR (Insecure Direct Object Reference) prevention, mass assignment flaws, GraphQL security, and server-side mitigations. Use when building external APIs, B2B services, or reviewing endpoint security.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-30
-applies-to-model: claude-3-7-sonnet, gemini-2.5-pro
+version: 2.0.0
+last-updated: 2026-04-02
+applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# API Security Auditor
+# API Security Auditor — Endpoint Hardening Mastery
 
-You are a strict API Security Auditor acting purely in the defense of the backend architecture. Your job is to prevent vulnerabilities before they are merged into the application.
-
-## Core Directives
-
-1. **Authorization at the Object Level (BOLA/IDOR):**
-   - NEVER assume that an authenticated user is authorized to access a specific resource.
-   - For every database query involving an ID, you must explicitly check if the requesting user `ID` matches the resource's `owner_id` or that the user has an `Admin` claim.
-
-2. **Input Validation & Sanitization:**
-   - Every single API boundary must have a strict schema validation layer (e.g., Zod, Joi, or Pydantic).
-   - Reject arbitrary payloads. Do not accept `{ ...request.body }` dynamically into database ORMs. Extract explicitly required fields.
-
-3. **Rate Limiting & Abuse Prevention:**
-   - Require rate-limit policies on all public, unauthorized endpoints (especially `/login`, `/register`, `/reset-password`).
-   - Standardize error responses. Do not leak stack traces or internal database column names via 500 errors. Return generic 400/401/403/404 messages.
-
-## Execution
-Whenever you design, write, or review backend API routes, implicitly verify:
-- *"Is this route checking role authorization?"*
-- *"Is the parameter mapped cleanly?"*
-- *"Can this be recursively requested 10,000 times a second?"*
-If any answer leaves the system vulnerable, halt generation and rewrite the code safely.
-
+> If an API endpoint exists, it will be abused.
+> Security is not a perimeter; it is embedded deeply within every individual route controller.
 
 ---
 
-## 🤖 LLM-Specific Traps
+## Insecure Direct Object Reference (IDOR)
 
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
+IDOR occurs when an application provides direct access to objects based on user-supplied input without authorization checks.
 
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+```typescript
+// ❌ VULNERABLE: Trusting the requested ID blindly
+app.get("/api/receipts/:id", async (req, res) => {
+  const receipt = await db.receipts.findById(req.params.id);
+  res.json(receipt); // Attack: Increment ID to view others' receipts
+});
+
+// ✅ SAFE: Verifying ownership
+app.get("/api/receipts/:id", async (req, res) => {
+  const receipt = await db.receipts.findById(req.params.id);
+  if (!receipt) return res.status(404).send();
+
+  // Explicit tenancy check
+  if (receipt.userId !== req.user.id && req.user.role !== "admin") {
+    return res.status(403).json({ error: "Access denied" });
+  }
+
+  res.json(receipt);
+});
+
+// ✅ BEST: Using UUIDv4/CUID/NanoID instead of sequential integers
+// Attackers cannot guess standard UUIDs, heavily mitigating IDOR risks.
+```
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## Mass Assignment (Overposting)
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
+Occurs when web frameworks automatically bind HTTP request parameters to application models without filtering.
 
-### ❌ Forbidden AI Tropes
+```typescript
+// ❌ VULNERABLE: Direct object binding
+app.put("/api/users/:id", async (req, res) => {
+  // Attack: req.body = { name: "Bob", role: "admin", isPaid: true }
+  await db.users.update({ id: req.params.id }, req.body);
+  res.send("Updated");
+});
 
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+// ✅ SAFE: Explicit property selection (DTOs)
+app.put("/api/users/:id", async (req, res) => {
+  // Only extract explicitly allowed fields
+  const { name, email, bio } = req.body;
+  const safeData = { name, email, bio };
+
+  await db.users.update({ id: req.params.id }, safeData);
+  res.send("Updated");
+});
+
+// ✅ BEST: Validation libraries (Zod, Joi) handling stripping
+const UpdateUserSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+}).strict(); // `.strict()` throws if "role" or "isPaid" is passed
+```
+
+---
+
+## Rate Limiting Architecture
+
+```typescript
+// Basic Rate Limiting (Express)
+import rateLimit from "express-rate-limit";
+import RedisStore from "rate-limit-redis";
+
+// Global baseline limit
+export const globalLimiter = rateLimit({
+  store: new RedisStore({ client: redisClient }),
+  windowMs: 15 * 60 * 1000, // 15 min
+  max: 100, // Limit each IP to 100 reqs per window
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+});
+
+// Aggressive endpoint-specific limit (Login, Password Reset)
+export const authLimiter = rateLimit({
+  store: new RedisStore({ client: redisClient }),
+  windowMs: 60 * 60 * 1000, // 1 Hour
+  max: 5, // 5 login attempts per IP per hour
+  message: "Too many login attempts, please try again later"
+});
+
+// ❌ HALLUCINATION TRAP: In-memory rate limiting across multiple server pods
+// If you use basic memory stores in a load-balanced environment (K8s, ECS),
+// an attacker has `limit * num_pods` attempts. Always use a centralized store (Redis).
+```
+
+---
+
+## API Key Management
+
+```
+Best Practices for issuance and storage:
+1. Format: Prefix keys to identify them and allow secret scanners to find them easily.
+   - Example: `pk_live_8a9b...` (Stripe pattern).
+2. Storage: NEVER store plaintext API keys in the DB.
+   - Hash them using SHA-256 (not bcrypt, because API keys are high entropy/long).
+   - Only show the user the plaintext key ONCE upon creation.
+3. Transport: API keys must only be accepted via Headers, never in Query Params.
+   - `Authorization: Bearer pk_live_123`
+   - Query params are logged in server access logs and browser histories.
+```
+
+---
+
+## GraphQL Security Vectors
+
+```typescript
+// GraphQL introduces unique DoS vectors not found in REST
+
+// 1. Query Depth Limiting (Prevent nested joins crushing the DB)
+// User -> Posts -> Comments -> Author -> Posts -> Comments...
+import depthLimit from 'graphql-depth-limit';
+app.use('/graphql', graphqlHTTP({ validationRules: [depthLimit(5)] }));
+
+// 2. Query Cost Analysis
+// Prevent attackers from requesting 100,000 items in a single query
+// Implement cursor pagination and enforce `first: 100` limits.
+
+// 3. Introspection Disabled in Production
+// Introspection allows attackers to download your entire schema.
+const server = new ApolloServer({
+  schema,
+  introspection: process.env.NODE_ENV !== 'production'
+});
+```
+
+---
+
+## 🤖 LLM-Specific Traps (API Security)
+
+1. **Implicit Trust of Query Params:** AI often assumes `?userId=123` is the authenticated user, circumventing the session/JWT entirely.
+2. **Sequential IDs:** AI defaults to `id INT AUTO_INCREMENT`. Demand UUIDs/CUIDs for external facing IDs.
+3. **Mass Assignment via Spread:** `update({...req.body})` is an extremely common AI hallucination that allows role elevation.
+4. **Missing Pagination Bounds:** AI writes `LIMIT ${req.query.limit}`. Attackers send `limit=10000000`. Hard limit the boundaries.
+5. **API Keys in Query Strings:** AI writes `fetch('/api/data?apiKey=123')`. Keys belong in headers.
+6. **In-Memory Rate Limiting:** AI writes simple arrays/memory maps for rate limiting, which fail instantly in multi-pod deployments.
+7. **Returning Stack Traces:** AI error handlers often map `err.message` or `err.stack` straight to the JSON response in production.
+8. **Blind Pagination Links:** Returning exact internal DB IDs in 'next' cursors can leak information.
+9. **CORS Misconfiguration:** Returning `Access-Control-Allow-Origin: *` while also allowing credentials.
+10. **JSON Denial of Service:** AI rarely limits request body sizes. Attackers send 2GB JSON blobs to crash Node.js. Use `express.json({ limit: '100kb' })`.
+
+---
+
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Are resource endpoints strictly verifying ownership (IDOR prevention)?
+✅ Are object updates extracting specific fields instead of `req.body` directly?
+✅ Is pagination hard-capped at a reasonable maximum (e.g., 100)?
+✅ Are API keys heavily hashed in the database?
+✅ Are API keys strictly required via headers, not query parameters?
+✅ Is rate-limiting backed by a centralized store (Redis)?
+✅ Does the server explicitly cap JSON payload sizes (`limit: '100kb'`)?
+✅ Are external-facing resource IDs random/UUID-based, not sequential?
+✅ Have stack traces and verbose errors been disabled for production?
+✅ For GraphQL: Is query depth restricted and introspection turned off?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

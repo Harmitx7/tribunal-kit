@@ -1,136 +1,133 @@
 ---
-description: Run ALL 11 Tribunal reviewer agents simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code.
+description: Run ALL 11 Tribunal reviewer agents simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
 ---
 
-# /tribunal-full — Full Panel Review
+# /tribunal-full — Complete 11-Reviewer Audit
 
 $ARGUMENTS
 
 ---
 
-Paste code. All 11 reviewers analyze it simultaneously. Maximum coverage, no domain gaps.
+## When to Use /tribunal-full
 
-Use this **before merging any AI-generated code**, or when you're not sure which domain a piece of code sits in.
-
----
-
-## When to Use /tribunal-full vs Targeted Tribunals
-
-| Use `/tribunal-full` when... | Use a targeted tribunal when... |
-|---|---|
-| Not sure which domain applies | You know it's backend-only → `/tribunal-backend` |
-| Cross-domain code (API + DB + UI) | Pure frontend → `/tribunal-frontend` |
-| AI-generated code, pre-merge | Pure database queries → `/tribunal-database` |
-| Security-critical code path | Mobile-specific → `/tribunal-mobile` |
-| "Final check" before shipping | Performance concern only → `/tribunal-performance` |
+| Use `/tribunal-full` when... | Use targeted tribunal when... |
+|:---|:---|
+| Before merging any AI-generated code | Backend only → `/tribunal-backend` |
+| Before production deployment | Frontend only → `/tribunal-frontend` |
+| Security-critical feature review | DB only → `/tribunal-database` |
+| Code affects auth, payments, or PII | |
+| Maximum confidence required | |
 
 ---
 
-## Who Runs
+## 11 Reviewers — All Active Simultaneously
 
 ```
-logic-reviewer          → Hallucinated methods, impossible logic, undefined refs
-security-auditor        → OWASP Top 10, injection, secrets, auth bypass
-dependency-reviewer     → Imports not found in package.json
-type-safety-reviewer    → any, unsafe casts, unguarded access
-sql-reviewer            → Injection via interpolation, N+1, invented schema
-frontend-reviewer       → Hooks violations, missing dep arrays, state mutation
-performance-reviewer    → O(n²), blocking I/O, memory allocation anti-patterns
-test-coverage-reviewer  → Tautology tests, no-assertion specs, over-mocking
-mobile-reviewer         → Touch targets, safe areas, keyboard avoidance, image memory
-ai-code-reviewer        → Hallucinated model names, fake params, prompt injection, rate limits
-accessibility-reviewer  → WCAG violations, missing ARIA, contrast, keyboard navigation
-```
+Tier 1: Always active (universal concerns)
+├── logic-reviewer         → Hallucinated methods, impossible logic, undefined refs
+└── security-auditor       → OWASP 2025, injection, JWT, SSRF, IDOR
 
-All 11 run in parallel. You wait for all verdicts before seeing the result.
+Tier 2: Code quality
+├── dependency-reviewer    → Fabricated packages, supply chain, version compatibility
+├── type-safety-reviewer   → 'any' epidemic, Zod parse vs cast, unguarded access
+└── sql-reviewer           → Injection, N+1, missing indexes, unscoped mutations
+
+Tier 3: Domain-specific
+├── frontend-reviewer      → React 19 APIs, RSC violations, hook rules, hydration
+├── performance-reviewer   → 2026 CWV targets, re-render cascades, memory leaks
+├── mobile-reviewer        → Reanimated thread safety, FlashList, safe area insets
+├── ai-code-reviewer       → Model name hallucinations, prompt injection, cost explosion
+├── test-coverage-reviewer → Happy path only, brittle selectors, missing edge cases
+└── accessibility-reviewer → WCAG 2.2 AA, ARIA misuse, focus management, live regions
+```
 
 ---
 
-## Severity Levels
+## Active Reviewers by Code Type
 
-| Symbol | Severity | Meaning |
-|---|---|---|
-| `❌ CRITICAL` | Blocking | Must be fixed before code reaches the codebase |
-| `❌ HIGH` | Blocking | Likely to cause bugs or security issues in production |
-| `⚠️ MEDIUM` | Non-blocking | Should be addressed; review before approving |
-| `💬 LOW` | Advisory | Consider fixing; does not block merge |
+Not all 11 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
 
-**Policy:** Any `CRITICAL` or `HIGH` finding means the verdict is `REJECTED`. Code must be revised.
+| Code Under Review | Critical Reviewers |
+|:---|:---|
+| REST API route | logic, security, dependency, type-safety, sql |
+| React component | logic, frontend, accessibility, type-safety |
+| Database query | logic, security, sql |
+| AI LLM integration | logic, security, ai-code, dependency |
+| Test file | test-coverage, logic |
+| React Native / Expo | mobile, logic, security, performance |
+| Next.js page | logic, frontend, performance, accessibility |
+| Auth/JWT code | security, logic, type-safety |
 
 ---
 
-## Report Format
+## Verdict Aggregation
 
 ```
-━━━ Full Tribunal Audit ━━━━━━━━━━━━━━━━━━━━━
+All 11 verdicts are collected. Aggregated result:
 
-  logic-reviewer:          ✅ APPROVED
-  security-auditor:        ❌ REJECTED
-  dependency-reviewer:     ✅ APPROVED
-  type-safety-reviewer:    ⚠️  WARNING
-  sql-reviewer:            ✅ APPROVED
-  frontend-reviewer:       ✅ APPROVED
-  performance-reviewer:    ✅ APPROVED
-  test-coverage-reviewer:  ❌ REJECTED
-  mobile-reviewer:         ✅ APPROVED (N/A — no mobile code)
-  ai-code-reviewer:        ✅ APPROVED (N/A — no LLM calls)
-  accessibility-reviewer:  ✅ APPROVED
+If ANY reviewer = ❌ REJECTED → Global verdict: ❌ REJECTED (must fix before Human Gate)
+If any reviewer = ⚠️ WARNING  → Global verdict: ⚠️ WARNINGS (proceed with attention)
+If all reviewers = ✅ APPROVED → Global verdict: ✅ APPROVED (proceed to Human Gate)
+```
 
-━━━ Issues ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+---
 
-security-auditor:
-  ❌ CRITICAL — Line 12
-     SQL injection: db.query(`WHERE id = ${id}`)
-     Fix: db.query('WHERE id = $1', [id])
+## Output Format
 
-test-coverage-reviewer:
-  ❌ HIGH — Line 45-60
-     Tautology test: expect(fn(x)).toBe(fn(x)) — always passes regardless of fn's behavior
+```
+━━━ Tribunal Full — All 11 Reviewers ━━━━━━━━━━━━━━
 
-type-safety-reviewer:
-  ⚠️ MEDIUM — Line 7
-     Implicit any in parameter: function (data) — add explicit type annotation
+logic-reviewer:         ✅ APPROVED
+security-auditor:       ❌ REJECTED (1 critical)
+dependency-reviewer:    ⚠️ WARNING (1 medium)
+type-safety-reviewer:   ✅ APPROVED
+sql-reviewer:           ✅ APPROVED
+frontend-reviewer:      ✅ APPROVED
+performance-reviewer:   ⚠️ WARNING (1 low)
+mobile-reviewer:        N/A — no mobile code
+ai-code-reviewer:       N/A — no AI API calls
+test-coverage-reviewer: ❌ REJECTED (missing error path)
+accessibility-reviewer: ⚠️ WARNING (1 medium)
 
-━━━ Verdict ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━ GLOBAL VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━━━
 
-  2 REJECTED. Fix all CRITICAL and HIGH issues before this code reaches your codebase.
-  1 WARNING — review before approving.
-  8 APPROVED.
+Blockers (must fix before Human Gate):
+1. security-auditor: JWT verify missing { algorithms } option in src/lib/auth.ts:45
+2. test-coverage-reviewer: POST /api/orders missing error path test
+
+Warnings (flagged but not blocking):
+- dependency-reviewer: 'zod' version mismatch — package uses 3.22.4, imports from 3.23.0-beta
+- performance-reviewer: LCP image missing priority={true}
+- accessibility-reviewer: icon button at line 67 missing aria-label
+
+━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Approve after blockers resolved?  Y = proceed | N = discard | R = revise
 ```
 
 ---
 
 ## Retry Protocol
 
-If code is rejected:
+When code is rejected:
 
 ```
-Attempt 1 → Fix issues from verdicts and resubmit
-Attempt 2 → Stricter constraints + specific reviewer feedback
-Attempt 3 → Maximum constraints + full context dump
-Attempt 4 → HALT. Escalate to human with full failure history.
-```
+Attempt 1: Maker revises with reviewer feedback
+Attempt 2: Maker revises with stricter constraints + full reviewer context
+Attempt 3: Maker revises with maximum constraints + full context dump
 
-Hard limit: **3 revisions**. After 3 rejections, the agent stops and reports.
+After 3 failed attempts:
+  → HALT
+  → Report to human with full failure history
+  → DO NOT retry silently
+```
 
 ---
 
 ## Cross-Workflow Navigation
 
-| After seeing findings... | Go to |
-|---|---|
-| Security findings need a targeted scan | `/audit` for full project-wide security sweep |
-| Performance issues found | `/tribunal-performance` for deeper profiling |
-| SQL injection pattern found | Check with `/tribunal-database` across all queries |
-| Stale or phantom deps found | `/audit` → dependency scan |
-
----
-
-## Usage
-
-```
-/tribunal-full [paste any code]
-/tribunal-full before merging
-/tribunal-full when you're unsure which domain applies
-/tribunal-full the entire auth service
-```
+| Full Tribunal finds... | Go to |
+|:---|:---|
+| Backend security issues | Also run `/review` for deep pattern analysis |
+| Tests incomplete | `/test` to write missing cases |
+| Performance warnings | `/tribunal-performance` for full analysis |
+| After all blockers resolved | Re-run `/tribunal-full` before Human Gate |

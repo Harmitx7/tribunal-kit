@@ -1,236 +1,145 @@
 ---
 name: webapp-testing
-description: Web application testing principles. E2E, Playwright, deep audit strategies.
+description: Comprehensive Web Application Testing strategy. Test Pyramid, Vitest/Jest for unit logic, React Testing Library for component integrity, MSW (Mock Service Worker) for API layer simulation, and visual regression. Use when setting up testing environments or defining global test strategies across a web stack.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Web Application Testing
+# Webapp Testing — Full Stack Pipeline Mastery
 
-> E2E tests are the most expensive tests to write and maintain.
-> Write them for the flows that would wake someone up at 2am if they broke.
-
----
-
-## What Belongs in E2E Tests
-
-E2E tests simulate a real user in a real browser. Use them selectively:
-
-**Should be E2E:**
-- User can register and log in
-- User can complete a purchase / checkout flow
-- Critical form submission that triggers business logic
-- OAuth login flows
-- File upload and processing
-
-**Should NOT be E2E:**
-- Individual UI component appearance (use unit/visual tests)
-- API data validation (use API/integration tests)
-- Error message text (too brittle, too low value)
-- Every edge case (test edge cases at the service/unit level)
+> Write tests. Not too many. Mostly integration. — Guillermo Rauch
+> A test suite that takes 30 minutes to run is a suite that engineers will actively subvert.
 
 ---
 
-## Playwright Patterns
+## 1. The Strategy (The Testing Trophy)
 
-### Page Object Model
+The traditional "Testing Pyramid" (lots of Unit, little E2E) is outdated for rich UI applications. Use the **Testing Trophy**:
 
-Encapsulate page interactions to keep tests maintainable:
+1. **Static Analysis (10%)**: TypeScript, ESLint, Prettier (Catches typos and type mismatches instantly).
+2. **Unit Tests (20%)**: Vitest (Tests complex pure functions: math, formatting, data mapping).
+3. **Integration Tests (60%)**: React Testing Library + MSW (Tests components and network mock interactions together).
+4. **End-to-End Tests (10%)**: Playwright (Tests the critical path: Login, Checkout, Account Creation on a real browser).
 
-```ts
-// page-objects/LoginPage.ts
-export class LoginPage {
-  constructor(private page: Page) {}
+---
 
-  get emailInput() { return this.page.getByLabel('Email'); }
-  get passwordInput() { return this.page.getByLabel('Password'); }
-  get submitButton() { return this.page.getByRole('button', { name: 'Sign in' }); }
+## 2. Integration Layer (React Testing Library + MSW)
 
-  async login(email: string, password: string) {
-    await this.emailInput.fill(email);
-    await this.passwordInput.fill(password);
-    await this.submitButton.click();
-  }
+Do not mock child components. Render the specific DOM tree and interact with it as a user would. 
+
+To prevent network calls, utilize Mock Service Worker (MSW) which intercepts requests at the network layer natively.
+
+```typescript
+// ❌ BAD: Mocking implementation details
+jest.mock('axios');
+axios.get.mockResolvedValue({ data: { users: [] } });
+
+// ✅ GOOD: MSW (Mock Service Worker) network level interception
+// The component functions EXACTLY as it would in production
+import { http, HttpResponse } from 'msw'
+import { setupServer } from 'msw/node'
+
+export const handlers = [
+  http.get('/api/users', () => {
+    return HttpResponse.json([
+      { id: 1, name: 'John Appleseed' },
+    ])
+  }),
+]
+const server = setupServer(...handlers)
+
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
+```
+
+### Component Testing (RTL)
+
+```typescript
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+test('Should load users and render names', async () => {
+  // userEvent closely replicates real browser physics (focusing, keystrokes)
+  const user = userEvent.setup();
+  
+  render(<UserDashboard />);
+
+  // Initial State
+  expect(screen.getByText('Loading...')).toBeInTheDocument();
+
+  // Async Resolution (Auto-waits for the MSW mock to return)
+  const johnNode = await screen.findByText('John Appleseed');
+  expect(johnNode).toBeInTheDocument();
+
+  // Interaction
+  const deleteBtn = screen.getByRole('button', { name: "Delete John" });
+  await user.click(deleteBtn);
+
+  // Verification 
+  expect(johnNode).not.toBeInTheDocument();
+});
+```
+
+---
+
+## 3. Pure Unit Testing (Vitest)
+
+Isolate business logic entirely from React.
+
+```typescript
+// ✅ Move complex logic OUT of the React component entirely
+export function calculateTax(subtotal: number, state: string): number {
+  if (subtotal < 0) throw new Error("Subtotal cannot be negative");
+  if (state === "CA") return subtotal * 0.0825;
+  return 0; // Default
 }
 
-// tests/auth.spec.ts
-test('user can log in with valid credentials', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  await page.goto('/login');
-  await loginPage.login('user@test.com', 'password123');
-  await expect(page).toHaveURL('/dashboard');
-});
-```
+// ✅ Test with extreme precision and coverage
+import { describe, it, expect } from 'vitest';
 
-### Locator Strategy (Priority Order)
-
-Prefer locators that reflect how the user thinks about the element:
-
-```ts
-// 1. Role (most semantic, most resilient)
-page.getByRole('button', { name: 'Submit' })
-page.getByRole('textbox', { name: 'Email' })
-
-// 2. Label (tied to accessibility — good signal)
-page.getByLabel('Email address')
-
-// 3. Text (works but can be fragile if copy changes)
-page.getByText('Welcome back')
-
-// 4. Test ID (last resort — doesn't break on copy/layout changes)
-page.getByTestId('submit-button')
-
-// ❌ Never (fragile — breaks on any CSS refactor)
-page.locator('.btn.btn-primary.submit')
-page.locator('#form > div:nth-child(2) > input')
-```
-
-### Waiting for State
-
-```ts
-// ✅ Wait for network idle before asserting
-await page.waitForLoadState('networkidle');
-
-// ✅ Wait for a specific element
-await page.waitForSelector('[data-testid="results"]');
-
-// ✅ Assertion-based waiting (Playwright retries automatically)
-await expect(page.getByText('Order confirmed')).toBeVisible();
-
-// ❌ Fixed sleep (brittle — too short in CI, too slow locally)
-await page.waitForTimeout(2000);
-```
-
----
-
-## Test Data Management
-
-Keep test data predictable and isolated:
-
-```ts
-// Seed database before tests that need specific data
-test.beforeEach(async ({ request }) => {
-  await request.post('/api/test/seed', {
-    data: { users: [testUser], products: [testProduct] }
+describe('calculateTax()', () => {
+  it('applies CA tax correctly', () => {
+    expect(calculateTax(100, 'CA')).toBe(8.25);
+  });
+  
+  it('throws on negative input', () => {
+    expect(() => calculateTax(-50, 'CA')).toThrowError('negative');
   });
 });
-
-// Clean up after
-test.afterEach(async ({ request }) => {
-  await request.delete('/api/test/cleanup');
-});
-```
-
-**Rules:**
-- Each test owns its data and cleans up after itself
-- Tests don't share state through the database
-- Test accounts are distinguishable from real accounts (prefix: `test_`)
-
----
-
-## CI/CD Integration
-
-```yaml
-# GitHub Actions example
-playwright-tests:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-    - run: npm ci
-    - run: npx playwright install --with-deps
-    - run: npm run test:e2e
-    - uses: actions/upload-artifact@v4
-      if: failure()
-      with:
-        name: playwright-report
-        path: playwright-report/
-```
-
-**Key configurations:**
-
-```ts
-// playwright.config.ts
-export default defineConfig({
-  testDir: './tests/e2e',
-  fullyParallel: true,
-  retries: process.env.CI ? 2 : 0,  // retry only in CI
-  workers: process.env.CI ? 4 : 1,
-  reporter: [['html'], ['github']],
-  use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    trace: 'on-first-retry',
-  },
-});
 ```
 
 ---
 
-## Scripts
+## 🤖 LLM-Specific Traps (Webapp Testing)
 
-| Script | Purpose | Run With |
-|---|---|---|
-| `scripts/playwright_runner.py` | Runs Playwright test suite and reports | `python scripts/playwright_runner.py <project_path>` |
-
----
-
-## Output Format
-
-When this skill completes a task, structure your output as:
-
-```
-━━━ Webapp Testing Output ━━━━━━━━━━━━━━━━━━━━━━━━
-Task:        [what was performed]
-Result:      [outcome summary — one line]
-─────────────────────────────────────────────────
-Checks:      ✅ [N passed] · ⚠️  [N warnings] · ❌ [N blocked]
-VBC status:  PENDING → VERIFIED
-Evidence:    [link to terminal output, test result, or file diff]
-```
-
-
+1. **Shallow Rendering Illusion:** AI suggests `shallow()` rendering from Enzyme. Enzyme is dead and lacks React 18+ hook visibility. RTL requires full DOM rendering.
+2. **`fireEvent` over `userEvent`:** AI defaults to `fireEvent.click()`. It skips critical browser lifecycle checks. Demand `@testing-library/user-event`.
+3. **Mocking Fear:** Over-mocking `fetch` natively inside unit tests instead of setting up clean HTTP interception layers (MSW).
+4. **Brittle Selectors in RTL:** AI uses `container.querySelector('.my-class')` instead of semantic accessibility queries (`screen.getByRole`). Tests will instantly break on design changes.
+5. **Testing Framework Overhead:** Suggesting Jest in 2026 for generic Vite/Next apps. Vitest is significantly faster, native ESM, and highly compatible.
+6. **`act()` Warning Panic:** Sprinkling `act()` randomly throughout the test code to suppress React warnings, instead of fixing the root async timing issues with `findBy` properly.
+7. **Ignoring Assertions Context:** Forgetting cleanup methodologies leading to state leaking between tests randomly. (Vitest and RTL handle this automatically if configured, but AI often creates weird global singleton state variables).
+8. **Endless Mock Imports:** Trying to `vi.mock` deeply nested dependencies across 4 layers of hooks. This proves the architecture is overly coupled. The test should stimulate a refactor, not a complex mock.
+9. **100% Coverage Addiction:** Recommending strict `coverageThreshold: 100`. The ROI of testing standard UI visual states drops to zero. Focus coverage on algorithms and data mapping functions.
+10. **Skipping Accessibility in Integration:** Forgetting that `getByRole` explicitly verifies the component is rendering accessible a11y boundaries correctly. Using `getByTestId` everywhere skips this verification.
 
 ---
 
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Are complex pure functions isolated from React hooks for high-speed Vitest execution?
+✅ Does the testing suite rely fundamentally heavily on MSW network/API interception instead of `vi.mock`?
+✅ Did I exclusively leverage `screen.getByRole` / `findByRole` instead of CSS selector querying?
+✅ Am I using `@testing-library/user-event` rather than raw `fireEvent` to simulate realistic DOM interaction?
+✅ Has the `act()` wrapper been avoided, in favor of proper async `await screen.findByX` queries?
+✅ Is the coverage optimized for business logic precision, rather than blind 100% coverage chasing?
+✅ Are the React components fully rendered (no shallow mocking)?
+✅ Did I prevent state leakage completely by relying on isolated server handlers per-test where necessary?
+✅ Is the suite configured under Vitest for ESM speed instead of heavier, legacy Jest integrations?
+✅ Are there distinct layers deployed (Unit for logic, RTL for component flow, Playwright for E2E)?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -1,73 +1,59 @@
 ---
-description: Performance-specific Tribunal. Runs Logic + Performance reviewers. Use for optimization, profiling, and bottleneck analysis.
+description: Performance-specific Tribunal. Runs Logic + Performance reviewers. Use when code is slow, for optimization tasks, bundle analysis, Core Web Vitals improvement, memory leak investigation, and before deploying performance-critical features.
 ---
 
-# /tribunal-performance — Performance Code Tribunal
+# /tribunal-performance — Performance Audit
 
 $ARGUMENTS
 
 ---
 
-This command activates the **Performance Tribunal** — a focused panel targeting algorithmic complexity, memory bloat, blocking I/O, and throughput bottlenecks before they hit production.
+## When to Use /tribunal-performance
 
-Use this instead of `/tribunal-full` when you specifically need a performance lens. It avoids noise from unrelated reviewers.
-
----
-
-## When to Use This vs Other Tribunals
-
-| Code type | Right tribunal |
-|---|---|
-| Performance-critical loops, async patterns | `/tribunal-performance` ← you are here |
-| Security vulnerabilities | `/tribunal-backend` or `/tribunal-full` |
-| Mobile-specific performance | `/tribunal-mobile` (includes mobile perf issues) |
-| SQL N+1 or unbounded queries | `/tribunal-database` |
-| Cross-domain or pre-merge | `/tribunal-full` |
+| Use `/tribunal-performance` when... | Use something else when... |
+|:---|:---|
+| LCP, INP, or CLS is above threshold | General code review → `/tribunal-full` |
+| Bundle size is too large | Backend perf only → `/tribunal-backend` |
+| Memory usage grows unbounded | Database perf → `/tribunal-database` |
+| Node.js event loop is saturated | |
+| Optimizing rendering performance | |
 
 ---
 
-## Active Reviewers
+## 2 Active Reviewers (Both Run Simultaneously)
 
-| Reviewer | What It Catches |
-|---|---|
-| `logic-reviewer` | Hallucinated methods, impossible logic, undefined refs |
-| `performance-reviewer` | O(n²) complexity, blocking I/O, memory floods, missing pagination, no streaming |
+### logic-reviewer
+- Expensive computation in render function (runs every render)
+- Missing memoization where React.memo/useMemo would help
+- Infinite re-render loop (effect updates a value that triggers the effect)
 
----
-
-## What Gets Flagged — Real Examples
-
-| Pattern | Example | Severity |
-|---|---|---|
-| O(n²) complexity | `Array.includes()` inside a `for` loop | ❌ REJECTED |
-| Blocking I/O in async context | `fs.readFileSync()` inside an `async` handler | ❌ REJECTED |
-| Uncontrolled concurrency | `Promise.all(items.map(item => fetchItem(item)))` where `items.length` is unbounded | ❌ REJECTED |
-| Memory flood | Loading entire table into memory: `const all = await db.findMany()` | ❌ REJECTED |
-| Expensive re-renders | Derived value recomputed on every render without `useMemo` | ⚠️ WARNING |
-| No streaming on large responses | Returning full LLM response, not streaming | ⚠️ WARNING |
-| Sort on every render | `items.sort(fn)` inside JSX (mutates original array) | ❌ REJECTED |
-| Regex in hot path | Complex regex compiled on every call (not pre-compiled) | ⚠️ WARNING |
+### performance-reviewer
+- INP: expensive synchronous work on user interaction (> 50ms blocking)
+- LCP: hero image without priority={true} or preload hint
+- CLS: missing width/height on images causing layout shift
+- Bundle: large library imported without tree-shaking or dynamic import
+- Memory: event listeners added without cleanup in useEffect
+- N+1: database queries in loop should be batched
+- Cache: expensive DB query without Redis/memory cache
 
 ---
 
-## Pipeline
+## 2026 CWV Targets (Verdict Reference)
+
+| Metric | Good | Needs Work | Poor (REJECTED) |
+|:---|:---|:---|:---|
+| INP | < 200ms | 200–500ms | > 500ms |
+| LCP | < 2.5s | 2.5–4.0s | > 4.0s |
+| CLS | < 0.1 | 0.1–0.25 | > 0.25 |
+
+---
+
+## Verdict System
 
 ```
-Your code
-    │
-    ▼
-logic-reviewer       → Hallucinated methods, undefined refs
-    │
-    ▼
-performance-reviewer → O(n²) complexity, Array.includes() in loops,
-                       blocking fs.readFileSync() in async contexts,
-                       unbounded SELECT *, uncontrolled Promise.all floods,
-                       missing useMemo() on expensive derivations,
-                       no streaming on LLM responses,
-                       missing pagination on large datasets
-    │
-    ▼
-Verdict Summary
+If code contains patterns causing POOR rating → ❌ REJECTED
+If code contains patterns causing NEEDS WORK → ⚠️ WARNING
+If all patterns cause GOOD rating → ✅ APPROVED
 ```
 
 ---
@@ -75,78 +61,73 @@ Verdict Summary
 ## Output Format
 
 ```
-━━━ Tribunal: Performance ━━━━━━━━━━━━━━━━━
-
-Active reviewers: logic · performance
-
-[Your code under review]
-
-━━━ Verdicts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━ Tribunal Performance ━━━━━━━━━━━━━━━━━━
 
 logic-reviewer:       ✅ APPROVED
 performance-reviewer: ❌ REJECTED
 
-━━━ Issues ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━ VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━
 
-performance-reviewer:
-  ❌ HIGH — Line 18
-     O(n²): Array.includes() inside for loop — O(n) lookup inside O(n) loop
-     Fix: Convert `otherList` to a Set before the loop for O(1) lookup
+Blockers:
+- performance-reviewer: [HIGH — INP] Synchronous filterMillion() called in onClick handler
+  Impact: Blocks main thread 200ms+ on each click — INP will be POOR
+  Fix: Wrap in startTransition(() => setResults(filterMillion(items, q)))
 
-  ❌ HIGH — Line 34
-     Blocking I/O: fs.readFileSync() inside async handler blocks the event loop
-     Fix: await fs.promises.readFile(path, 'utf-8')
+- performance-reviewer: [HIGH — LCP] Hero image missing priority
+  Impact: Browser discovers image late — LCP will be POOR (> 4s)
+  Fix: <Image src="/hero.webp" priority={true} ... />
 
-  ⚠️ MEDIUM — Line 52
-     No streaming: LLM response buffered before returning to client
-     Fix: Pipe the stream directly: res.pipe(openaiStream)
-
-━━━ Verdict: REJECTED ━━━━━━━━━━━━━━━━━━━━
+Warnings:
+- performance-reviewer: [MEDIUM — Bundle] lodash imported directly (+67kb unminified)
+  Fix: Replace with native Array methods or specific lodash-es import
 ```
 
 ---
 
-## Severity Levels
+## Performance-Specific Hallucination Traps
 
-| Level | Meaning |
-|---|---|
-| `❌ REJECTED (HIGH)` | Will cause visible performance degradation under load — fix before merge |
-| `❌ REJECTED (MEDIUM)` | Will become a bottleneck at scale — address before deploy |
-| `⚠️ WARNING` | Acceptable now, will degrade at 10x scale — flag for upcoming sprint |
-| `✅ APPROVED` | No performance concerns detected at this code level |
+```typescript
+// ❌ React.memo doesn't help when parent re-renders with new objects every time
+const MemoCard = React.memo(Card);
+<MemoCard style={{ margin: 8 }} /> // New object {} every render → memo has no effect
+
+// ✅ Memoize the object itself
+const cardStyle = useMemo(() => ({ margin: 8 }), []);
+<MemoCard style={cardStyle} />
+
+// ❌ useMemo with no deps array — runs every render (same as no memo)
+const sorted = useMemo(() => items.sort(...)); // Missing deps array!
+
+// ✅ Correct deps array
+const sorted = useMemo(() => [...items].sort(compareFn), [items]);
+
+// ❌ Non-measurement claim
+// "This is fast" — never write this without a Lighthouse score to back it
+```
 
 ---
 
-## Performance-Specific Anti-Hallucination Rules
+## Measurement Protocol
+
+Performance optimization without measurement is guessing:
 
 ```
-❌ Never claim a fix is "faster" without citing the algorithmic reason (O-notation or benchmark)
-❌ Never recommend Promise.all for unbounded arrays — always suggest chunking with p-limit or similar
-❌ Never mark O(n²) as acceptable without explicit justification tied to data size constraints
-❌ Never suggest caching without identifying the invalidation strategy
-❌ Never recommend premature micro-optimizations over algorithmic improvements
-❌ No invented profiling tools — only documented options for the target runtime
+Before optimizing:
+□ Run Lighthouse: record LCP, INP, CLS, bundle size
+□ Profile with Chrome DevTools: identify actual bottleneck
+
+After optimizing:
+□ Run Lighthouse again: confirm improvement
+□ Show before/after scores in audit output
 ```
 
 ---
 
-## Cross-Workflow Navigation
-
-| Finding type | Next step |
-|---|---|
-| O(n²) pattern found | `/refactor` to extract and fix the algorithm |
-| Memory bloat in data loading | `/enhance` to add pagination or streaming |
-| Promise.all flood | `/enhance` to add concurrency control with `p-limit` |
-| Regex in hot path | `/enhance` to pre-compile and cache |
-| All approved | Human Gate to write to disk |
-
----
-
-## Usage
+## Usage Examples
 
 ```
-/tribunal-performance the data processing loop in userService.ts
-/tribunal-performance the search filter function that runs on every keystroke
-/tribunal-performance the batch API handler that fetches user data
-/tribunal-performance the LLM response handler
+/tribunal-performance the product listing page with image grid
+/tribunal-performance the search component with real-time filtering
+/tribunal-performance the checkout flow for CWV compliance
+/tribunal-performance the API route with expensive DB query for caching
 ```

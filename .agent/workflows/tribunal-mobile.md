@@ -1,65 +1,56 @@
 ---
-description: Mobile-specific Tribunal. Runs Logic + Security + Mobile reviewers. Use for React Native, Flutter, and responsive web code.
+description: Mobile-specific Tribunal. Runs Logic + Security + Mobile reviewers. Use for React Native, Expo, gesture handlers, animations, navigation, and any iOS/Android-targeted code.
 ---
 
-# /tribunal-mobile — Mobile Code Tribunal
+# /tribunal-mobile — Mobile Code Audit
 
 $ARGUMENTS
 
 ---
 
-This command activates the **Mobile Tribunal** — a focused panel of reviewers covering the specific failure modes of mobile and responsive application code.
+## When to Use /tribunal-mobile
 
-Use this instead of `/tribunal-full` when your code is specifically mobile-domain. It gives faster, more precise feedback than running all 11 reviewers.
-
----
-
-## When to Use This vs Other Tribunals
-
-| Code type | Right tribunal |
-|---|---|
-| React Native, Flutter, mobile UI | `/tribunal-mobile` ← you are here |
-| Pure React (web) components | `/tribunal-frontend` |
-| API routes, auth, middleware | `/tribunal-backend` |
-| Cross-domain or pre-merge audit | `/tribunal-full` |
+| Use `/tribunal-mobile` when... | Use something else when... |
+|:---|:---|
+| React Native components | Web-only components → `/tribunal-frontend` |
+| Expo Router navigation | API routes → `/tribunal-backend` |
+| Reanimated animations/gestures | Full audit → `/tribunal-full` |
+| FlashList / FlatList code | |
+| Platform-specific (ios/android) code | |
 
 ---
 
-## Active Reviewers
+## 3 Active Reviewers (All Run Simultaneously)
 
-| Reviewer | What It Catches |
-|---|---|
-| `logic-reviewer` | Hallucinated RN/Flutter APIs, impossible logic, undefined refs |
-| `security-auditor` | Hardcoded secrets, insecure storage, OWASP Mobile Top 10 |
-| `mobile-reviewer` | Touch targets, safe areas, keyboard avoidance, gesture handling, image optimization |
+### logic-reviewer
+- `runOnJS` called inside `onUpdate` instead of `onEnd` (runs every frame)
+- Missing `'worklet'` directive on functions called inside Reanimated
+- FlatList inside ScrollView (disables virtualization)
+- `useSharedValue` vs `useState` confusion (SharedValue on wrong thread)
+
+### security-auditor
+- AsyncStorage storing sensitive data (tokens, PII) unencrypted
+- API keys in source code (should be in EAS Secrets)
+- cleartext HTTP traffic (should be HTTPS on all platforms)
+- Deep link not validated before processing URL scheme
+
+### mobile-reviewer
+- `setState` inside Reanimated `onUpdate` (JS bridge crossing = jank)
+- Missing `'worklet'` on custom functions used in Reanimated
+- FlatList for large lists (use FlashList with `estimatedItemSize`)
+- Hardcoded pixel insets instead of `useSafeAreaInsets()`
+- `Platform.OS === 'ios'` inside StyleSheet.create (not evaluated correctly)
+- Missing `AppState` subscription cleanup (`subscription.remove()`)
+- `react-native Image` used instead of `expo-image` (poor caching)
 
 ---
 
-## What Gets Flagged — Real Examples
-
-| Reviewer | Example Finding | Severity |
-|---|---|---|
-| logic | Calling a non-existent `Animated.stagger()` method | ❌ HIGH |
-| security | `AsyncStorage.setItem('token', jwt)` — use `expo-secure-store` instead | ⚠️ MEDIUM |
-| security | Deeplink handler with no validation of `url` param | ❌ HIGH |
-| security | Missing certificate pinning on sensitive API endpoints | ⚠️ MEDIUM |
-| mobile | Button `height: 20` — minimum touch target is 44pt (iOS) / 48dp (Android) | ❌ HIGH |
-| mobile | Missing `<SafeAreaView>` on root screen component | ❌ HIGH |
-| mobile | No `KeyboardAvoidingView` on screen with text inputs | ❌ HIGH |
-| mobile | `<Image source={uri}>` with no width/height bounds — memory risk | ⚠️ MEDIUM |
-| mobile | No `Platform.OS` guard on platform-specific code | ⚠️ MEDIUM |
-
----
-
-## Mobile-Specific Anti-Hallucination Rules
+## Verdict System
 
 ```
-❌ Never reference RN APIs not listed in the installed react-native version
-❌ Never assume iOS and Android behave identically — always check Platform.OS when needed
-❌ Never use AsyncStorage for sensitive data (tokens, passwords, biometrics)
-❌ Never skip keyboard avoidance on screens with text inputs
-❌ Never use hardcoded pixel values — use pt (iOS) or dp (Android) logical units
-❌ Never claim an animation approach is "performant" without mentioning native driver usage
+If ANY reviewer → ❌ REJECTED: fix before Human Gate
+If any reviewer → ⚠️ WARNING:  proceed with flagged items
+If all reviewers → ✅ APPROVED: Human Gate
 ```
 
 ---
@@ -67,57 +58,62 @@ Use this instead of `/tribunal-full` when your code is specifically mobile-domai
 ## Output Format
 
 ```
-━━━ Tribunal: Mobile ━━━━━━━━━━━━━━━━━━━━━
+━━━ Tribunal Mobile ━━━━━━━━━━━━━━━━━━━━━━
 
-Active reviewers: logic · security · mobile
+logic-reviewer:  ✅ APPROVED
+security-auditor: ⚠️ WARNING
+mobile-reviewer: ❌ REJECTED
 
-[Your code under review]
+━━━ VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━
 
-━━━ Verdicts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Blockers:
+- mobile-reviewer: [HIGH] setState inside onUpdate gesture handler — JS bridge crossing every frame
+  Line: onUpdate: (e) => { setState(e.translationX); } // jank at scale
+  Fix:  const tx = useSharedValue(0);
+        onUpdate: (e) => { tx.value = e.translationX; } // pure UI thread
 
-logic-reviewer:    ✅ APPROVED
-security-auditor:  ⚠️  WARNING
-mobile-reviewer:   ❌ REJECTED
+- mobile-reviewer: [HIGH] FlatList with 500+ items — use FlashList
+  Line: <FlatList data={products} renderItem={renderItem} />
+  Fix:  <FlashList data={products} renderItem={renderItem} estimatedItemSize={72} />
 
-━━━ Issues ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-security-auditor:
-  ⚠️ MEDIUM — Line 8
-     AsyncStorage used for auth token storage
-     Fix: Use expo-secure-store or react-native-keychain for sensitive data
-
-mobile-reviewer:
-  ❌ HIGH — Line 12
-     Touch target: Button height is 20pt. Minimum is 44pt (iOS) / 48dp (Android)
-     Fix: style={{ minHeight: 44 }}
-
-  ❌ HIGH — Line 34
-     Missing SafeAreaView wrapping the root view
-     Fix: Wrap with <SafeAreaView style={{ flex: 1 }}>
-
-━━━ Verdict: REJECTED ━━━━━━━━━━━━━━━━━━━━
-
-Address rejections?  Y = fix and re-review | N = accept risk | R = revise manually
+Warnings:
+- security-auditor: [MEDIUM] JWT token stored in AsyncStorage — use expo-secure-store
 ```
 
 ---
 
-## Cross-Workflow Navigation
+## Mobile-Specific Hallucination Traps (Common LLM Mistakes)
 
-| Finding type | Next step |
-|---|---|
-| Insecure storage CRITICAL | Replace storage library via `/enhance` |
-| All touch target issues | `/enhance` to normalize touch targets in shared components |
-| Cross-platform behavior gap | `/refactor` to extract Platform.OS guards into a utility |
-| All approved | Human Gate to write to disk |
+```tsx
+// ❌ Missing 'worklet' — animation function crashes silently
+const clamp = (val: number, min: number, max: number) => Math.min(Math.max(val, min), max);
+// ✅ Must have worklet directive
+const clamp = (val: number, min: number, max: number): number => {
+  'worklet';
+  return Math.min(Math.max(val, min), max);
+};
+
+// ❌ Expo Router: navigate() was refactored in v4 — old API
+import { navigate } from 'expo-router';   // Named export doesn't exist
+// ✅ Current Expo Router v4
+import { router } from 'expo-router';
+router.push('/products/123');
+
+// ❌ React Native: StyleSheet.create doesn't eval functions
+const styles = StyleSheet.create({
+  box: { paddingTop: Platform.OS === 'ios' ? 20 : 0 } // Doesn't work in all contexts
+});
+// ✅ Use Platform.select or dynamic style object
+const boxStyle = Platform.select({ ios: { paddingTop: 20 }, android: { paddingTop: 0 } });
+```
 
 ---
 
-## Usage
+## Usage Examples
 
 ```
-/tribunal-mobile my React Native login screen component
-/tribunal-mobile the Flutter payment form widget
-/tribunal-mobile the responsive mobile nav component with touch gestures
-/tribunal-mobile the biometric authentication flow
+/tribunal-mobile the SwipeToDelete gesture implementation with Reanimated 3
+/tribunal-mobile the ProductList component using FlashList
+/tribunal-mobile the auth token storage and retrieval functions
+/tribunal-mobile the ProfileScreen with safe area insets
 ```

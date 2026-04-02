@@ -6,10 +6,123 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [3.0.0] — 2026-04-02
+
+### 🚨 Breaking Changes
+
+- **Agent behavioral contracts fully rewritten** — all 33 agent `.md` files have been replaced with Pro-Max versions. Any tooling that parses agent YAML frontmatter or depends on specific section names will need to be updated.
+- **All 30 workflows fully rewritten** — section names and phase structures have changed. Existing documentation referencing old workflow step names should be updated.
+- **Human Gate is now mandatory on all write operations** — `/test`, `/refactor`, `/fix`, `/enhance`, and `/debug` now enforce explicit approval before any file is written to disk. Automated scripts that bypassed the gate will need review.
+
+---
+
+### Added
+
+#### Agents — Pro-Max Standard (33 total, all upgraded)
+
+**Reviewer Agents (11)**
+
+- **`logic-reviewer` Pro-Max**: Added 5 language-specific hallucination tables (TypeScript, Python, Rust, SQL, Shell), LLM API trap tables for OpenAI/Anthropic/Google, Prisma/Supabase ORM traps, undefined variable pattern detection, and 2026-standard API verification checks.
+- **`dependency-reviewer` Pro-Max**: Added fabricated package name tables for npm and pip, supply chain risk pattern detection (typosquatting, abandonment signals, scoped package format errors), version compatibility matrix, and `@types/*` mismatch detection.
+- **`type-safety-reviewer` Pro-Max**: Added `any` epidemic detection with epidemic threshold, Zod `.parse()` vs `.safeParse()` vs `.cast()` distinction, discriminated union exhaustiveness checking, generic constraint violations, and unguarded optional chaining patterns — all with code-level examples.
+- **`sql-reviewer` Pro-Max**: Added SQL injection patterns with attack/fix code pairs, N+1 detection with DataLoader fix patterns, missing index analysis for FK columns, transaction boundary errors, and dangerous unscoped `DELETE`/`UPDATE` detection.
+- **`frontend-reviewer` Pro-Max**: Added React 19 API changes (`useFormState` → `useActionState`), RSC boundary violations, full hook rules enforcement, direct state mutation patterns, hydration mismatch detection, and Next.js 15 async `cookies()`/`params()` requirements.
+- **`performance-reviewer` Pro-Max**: Added 2026 Core Web Vitals target table (INP < 200ms, LCP < 2.5s, CLS < 0.1), specific INP/LCP/CLS damage patterns, React re-render cascade detection, memory leak patterns, all with measurable thresholds.
+- **`mobile-reviewer` Pro-Max**: Added Reanimated 3 UI-thread worklet safety rules, FlatList vs FlashList anti-patterns, safe area insets enforcement, `AppState` subscription cleanup, platform-specific API guards.
+- **`test-coverage-reviewer` Pro-Max**: Added happy-path-only detection, behavioral edge case matrix (GIVEN/WHEN/THEN format), brittle CSS selector patterns, MSW vs internal mock logic, implementation detail testing anti-patterns, async assertion gotchas (`getBy*` vs `findBy*`).
+- **`accessibility-reviewer` Pro-Max**: Added WCAG 2.2 AA criteria with criterion numbers, semantic HTML violations, ARIA misuse rules, focus management in modals, form label association, live regions, keyboard navigation completeness.
+- **`ai-code-reviewer` Pro-Max**: Added 2026 model name verification tables (OpenAI/Anthropic/Google), hallucinated API parameter detection (invented `max_length`, `memory`, `format`, `plugins` params), prompt injection pattern library, streaming error handling, cost explosion guards, context window overflow detection.
+- **`security-auditor` Pro-Max** (full rewrite as specialist): Added OWASP 2025 Top 10 table, injection vectors with attack/defense code pairs, JWT algorithm bypass prevention, SSRF with private IP blocking, IDOR protection patterns, CORS misconfiguration detection.
+
+**Specialist Agents (15)**
+
+- **`frontend-specialist` Pro-Max**: Added React 19 Server/Client boundary decision tree, complete hook taxonomy (Server: none, Client: full), `useActionState` patterns, Next.js 15 async API enforcement, WCAG 2.2 AA integration, TypeScript strict mode contracts.
+- **`backend-specialist` Pro-Max**: Added framework selection decision tree, Zod-first validation order, auth-before-logic execution contract, typed error envelopes, SQL injection prevention at the ORM layer, JWT `{ algorithms }` enforcement, rate limiting patterns.
+- **`database-architect` Pro-Max**: Added Prisma v6 schema patterns, expand-and-contract migration protocol, composite index strategy, N+1 prevention with `include`, transaction boundaries, removed API detection (`findOne` → `findUnique`).
+- **`debugger` Pro-Max**: Added 4-phase evidence-based investigation protocol (Collect → Hypothesize → Test → Fix), priority investigation order (deploys first, code last), race condition pattern library, memory leak tooling, structured debug report format.
+- **`orchestrator` Pro-Max**: Added scope classification gate, Fan-Out/Fan-In patterns, sequential wave execution, BLOCKED worker protocol, context discipline rules (context_summary vs full files), structured delegation contract template, agent routing table.
+- **`supervisor-agent` Pro-Max**: Added task decomposition protocol, structured JSON dispatch contracts, `allSettled` vs `all` rationale, BLOCKED/ERROR status protocol, conflict resolution rules, task.md session persistence.
+- **`mobile-developer` Pro-Max**: Added 3-thread model (JS/UI/Native), Reanimated UI-thread safety with `'worklet'` directive requirement, FlashList vs FlatList migration guide, Expo Router v4 file conventions, MMKV storage patterns.
+- **`devops-engineer` Pro-Max**: Added multi-stage Docker build patterns, GitOps (ArgoCD) workflow, GitHub Actions CI pipeline template, Kubernetes liveness/readiness probe specs, resource limits enforcement, Terraform least-privilege IAM, remote state locking.
+- **`penetration-tester` Pro-Max**: Added MITRE ATT&CK phase structure, mandatory scope declaration contract, web/API/infrastructure attack vector checklists, CVSS scoring integration, structured assessment report format.
+- **`performance-optimizer` Pro-Max**: Added 2026 CWV target table, LCP preload patterns, INP `startTransition` patterns, bundle reduction strategies (dynamic import, tree-shaking), multi-layer caching, `EXPLAIN ANALYZE` patterns, mandatory before/after measurement protocol.
+- **`qa-automation-engineer` Pro-Max**: Added Testing Trophy hierarchy (Static → Unit → Integration → E2E), Vitest boundary testing, RTL+MSW integration pattern, Playwright config with retry/trace/CI settings, resilient locator patterns, API route testing with rate-limit verification.
+- **`explorer-agent` Pro-Max**: Added priority-ordered entry point reading protocol, architecture pattern identification, dead code detection, impact zone analysis, git log frequency analysis, structured orientation report format.
+- **`project-planner` Pro-Max**: Added Socratic gate (5 mandatory questions), research-before-planning protocol, risk identification matrix, topological wave decomposition, `implementation_plan.md` template, explicit no-code-before-approval gate.
+- **`seo-specialist` Pro-Max**: Added Next.js 15 `generateMetadata` patterns, dynamic metadata generation, Schema.org JSON-LD templates, `sitemap.ts` generation, H1 hierarchy enforcement, GEO (Generative Engine Optimization) bot middleware patterns.
+- **`documentation-writer`, `code-archaeologist`, `product-manager`, `game-developer` Pro-Max**: Added domain-specific behavioral contracts, JSDoc hierarchy, ADR format, triage levels, clarity gate, route-based delegation.
+
+---
+
+#### Workflows — Pro-Max Standard (30 total, all upgraded)
+
+**Core Generation Workflows**
+
+- **`/generate` Pro-Max**: Added mandatory context scan before first line of code (reads `package.json`, `tsconfig.json`, env files), React 19/Next.js 15 hallucination guards, reviewer auto-selection by keyword table, retry limit spec (3 max), failure escalation path.
+- **`/debug` Pro-Max**: Added priority investigation order (deploys → env vars → deps → infra → code), single-hypothesis testing contract, Root Cause statement format (WHY not WHAT), regression test requirement, hallucination guard.
+- **`/create` Pro-Max**: Added 5-phase pipeline (Requirements → Stack Selection → Scaffolding Plan → Tribunal Generation → Verification), Socratic gate, stack selection table, Human Gate after scaffolding plan.
+- **`/enhance` Pro-Max**: Added mandatory impact analysis with import counting, risk classification by caller count (0-2/3-5/6+), breaking change detection matrix, consistency verification checklist.
+- **`/refactor` Pro-Max**: Added pre-refactor checklist (tests-first mandate), dependency-safe execution order, DB expand-and-contract in ordering, behavior verification step between each change, dead code deletion guard.
+- **`/fix` Pro-Max**: Added auto-fixable vs human-decision matrix, execution sequence, diff preview before applying, post-fix verification step, fix guard anti-patterns.
+- **`/test` Pro-Max**: Added Testing Trophy strategy (2026), GIVEN/WHEN/THEN behavioral format, minimum required coverage matrix (happy/error/boundary/auth), test templates for all 3 layers, Human Gate before test files are written.
+
+**Tribunal Workflows**
+
+- **`/tribunal-full` Pro-Max**: Added active-reviewer-by-code-type table (N/A auto-pass for irrelevant reviewers), verdict aggregation rule, structured output format with blocker/warning separation, retry protocol with hard 3-attempt limit.
+- **`/tribunal-backend` Pro-Max**: Added reviewer detection specifics, backend hallucination trap table (Express/Hono/next-auth v4 vs v5 traps), verdict system with blocker output.
+- **`/tribunal-frontend` Pro-Max**: Added React 19/Next.js 15 specific reviewer detections, frontend hallucination trap table (`useFormState` rename, async `params`, Server Component hook violations), structured output format.
+- **`/tribunal-database` Pro-Max**: Added Prisma hallucination trap table (`findOne` removed, `upsertMany` doesn't exist, NOT NULL migration failure), reviewer detection specifics.
+- **`/tribunal-mobile` Pro-Max**: Added Reanimated worklet trap, Expo Router v4 trap (`navigate` → `router.push`), `Platform.select` vs `StyleSheet.create` issue, structured output format.
+- **`/tribunal-performance` Pro-Max**: Added 2026 CWV targets table for verdict thresholds, `React.memo` anti-pattern (new object as prop), `useMemo` missing deps trap, mandatory measurement protocol before claiming "optimized."
+
+**Process Workflows**
+
+- **`/plan` Pro-Max**: Added explicit no-code contract, 5-question Socratic gate, research phase with specific bash commands, topological wave decomposition, `implementation_plan.md` template, mandatory Human Gate before any execution.
+- **`/audit` Pro-Max**: Added cascade failure rules (security halts, lint continues), script retry protocol with hard limit, structured audit report format, Human Gate before applying any fixes, cross-workflow navigation.
+- **`/deploy` Pro-Max**: Added T-minus pre-flight sequence (6 checks in fixed order), rollback baseline capture (git tag / `pg_dump`), structured Human Gate approval format, post-deploy error rate monitoring window, rollback decision tree, schema change isolation pattern.
+- **`/migrate` Pro-Max**: Added 4 migration type classification, expand-and-contract 5-step DB migration pattern, breaking changes inventory for Next.js 14→15 and next-auth v4→v5, rollback plan requirement, migration guard anti-patterns.
+- **`/review` Pro-Max**: Added explicit read-only contract, hallucination-specific checklist with React 19/Next.js 15/Prisma version traps, reviewer auto-selection table, structured findings output format.
+- **`/review-ai` Pro-Max**: Added 2026 model reference table, reviewer detection items, prompt injection code examples, cost explosion guard output format.
+- **`/swarm` Pro-Max**: Added JSON dispatch contract format, `swarm_dispatcher.py` validation step, `allSettled` vs `Promise.all` rationale, session persistence in `task.md`, structured failure report format.
+- **`/orchestrate` Pro-Max**: Added scope classification gate, worker decomposition rules, Fan-Out/Fan-In pattern specification, BLOCKED worker protocol, sequential wave context discipline.
+- **`/brainstorm` Pro-Max**: Added 4-phase structure, 3-option comparison framework with effort and best-for context, Socratic probing questions, evidence-based recommendation format.
+- **`/session`, `/status` Pro-Max**: Added session file format, 5-data dashboard, sub-command routing.
+
+**Utility Workflows**
+
+- **`/preview` Pro-Max**: Added command table, common issues troubleshooting, when-to-use guide.
+- **`/changelog` Pro-Max**: Added conventional commit type table, git log commands for different date ranges, Keep a Changelog format with all categories, Semver decision guide.
+- **`/strengthen-skills` Pro-Max**: Added bash audit commands, guardrail appendix template with all 3 sections (LLM Traps + Pre-Flight + VBC), guardrail quality guidelines with bad vs good examples.
+- **`/api-tester` Pro-Max**: Added endpoint discovery commands, auth token acquisition pattern, CRUD sequence with chained IDs, error case testing (401/404/400/429), structured test report format.
+- **`/performance-benchmarker` Pro-Max**: Added complete 4-tool benchmark suite (Lighthouse CI + Bundle + autocannon + DB `EXPLAIN ANALYZE`), structured report with comparison to last run, numeric fail/warning gates, historical tracking pattern.
+- **`/ui-ux-pro-max` Pro-Max**: Added design intent questions, forbidden defaults with specific anti-clichés, 4-state interaction design requirement, micro-animation mandate, WCAG 2.2 AA checkpoint, design verification gate.
+
+---
+
+### Changed
+
+- **Standard stack updated to 2026**: All agents and workflows now reference React 19, Next.js 15, Prisma 6, Zod 3.23+, Reanimated 3, Expo Router v4, Playwright 1.49, TypeScript 5.7, Node 22.
+- **Human Gate universally enforced**: Every workflow that produces files now has an explicit `## Human Gate` section. No agent writes to disk without explicit approval.
+- **Version references eliminated**: All outdated version references (React 18, Next.js 13/14 patterns, next-auth v4 in v5 projects) have been replaced with 2026 stable API references across all 63 files.
+- **Cross-workflow navigation added**: All major workflows now include a `## Cross-Workflow Navigation` table routing to the correct next workflow based on what was found.
+
+---
+
+### Infrastructure
+
+- All 16 Python scripts pass `python -m py_compile` syntax validation (zero syntax errors)
+- `verify_all.py` passes: `tsc --noEmit` clean + ESLint clean
+- Integrity check: 33 agents, 30 workflows, 77 skills, 16 scripts — all present and validated
+
+---
+
+
+
 ## [2.4.6] — 2026-03-30
 
 ### Added
 - **12 New AI Skills**: Added dedicated skill guidelines for `ai-prompt-injection-defense`, `api-security-auditor`, `authentication-best-practices`, `building-native-ui`, `extract-design-system`, `framer-motion-animations`, `playwright-best-practices`, `shadcn-ui-expert`, `skill-creator`, `supabase-postgres-best-practices`, `swiftui-expert`, and `web-accessibility-auditor`.
+
 
 ### Changed
 - **Skill Integrator Compatibility**: Modified `appflow-wireframe` and `readme-builder` to strengthen Tribunal anti-hallucination guards.

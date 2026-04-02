@@ -1,280 +1,559 @@
 ---
 name: nodejs-best-practices
-description: Node.js development principles and decision-making. Framework selection, async patterns, security, and architecture. Teaches thinking, not copying.
+description: Node.js 22+ production mastery. ES Modules, async patterns, Express/Fastify/Hono, middleware architecture, error handling, streaming, worker threads, environment config, security hardening, process management, and deployment patterns. Use when building Node.js servers, APIs, CLI tools, or any server-side JavaScript.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-01
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Node.js Development Principles
+# Node.js Best Practices — Node 22+ Production Mastery
 
-> Node.js is not a problem — unpredictable async behavior is.
-> Understand the event loop and half of Node.js "gotchas" disappear.
+> Node.js is not "JavaScript on the server." It is an event-driven, non-blocking I/O runtime.
+> Every callback without error handling is a memory leak waiting to happen.
+> Every unhandled promise rejection is a crashed process in production.
+
+---
+
+## ES Modules (Mandatory)
+
+```json
+// package.json — ALWAYS set type to module
+{
+  "type": "module",
+  "engines": { "node": ">=22" }
+}
+```
+
+```typescript
+// ✅ ESM imports (modern Node.js)
+import { readFile, writeFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
+import { createServer } from "node:http";
+import { EventEmitter } from "node:events";
+
+// ❌ HALLUCINATION TRAP: Use node: protocol prefix for built-in modules
+// ❌ import fs from "fs";       ← ambiguous (could be npm package)
+// ✅ import fs from "node:fs";  ← explicitly a Node.js built-in
+
+// ❌ HALLUCINATION TRAP: Do NOT use require() in ESM projects
+// ❌ const fs = require("fs");  ← CommonJS (legacy)
+// ✅ import fs from "node:fs/promises";  ← ESM
+
+// Dynamic imports (for conditional loading)
+const module = await import("./heavy-module.js");
+```
 
 ---
 
 ## Framework Selection
 
-| Context | Recommended | Why |
-|---|---|---|
-| REST API, standard patterns | Express + TypeScript | Mature, flexible, most hiring knowledge |
-| REST API, speed + TypeScript-first | Fastify | 2x Express throughput, built-in validation |
-| Full-stack React | Next.js API routes | Colocated API and UI, serverless-friendly |
-| REST + tRPC | Next.js + tRPC | Type-safe end-to-end with no code generation |
-| RPC across services | gRPC | Binary protocol, contract-first |
-| Edge function / Cloudflare Worker | Hono | Tiny, Web Platform API-native, zero cold start |
-| Scripts / tooling / bun-native | Bun | Built-in bundler, test runner, near-Node compat |
+```
+┌────────────────────────────────────────────────────────────┐
+│                  When to Use What                           │
+├────────────────────────────────────────────────────────────┤
+│ Express     │ Legacy projects, extensive middleware ecosystem│
+│ Fastify     │ Performance-critical APIs, schema validation  │
+│ Hono        │ Edge/serverless, multi-runtime (Node/Deno/Bun)│
+│ tRPC        │ Full-stack TypeScript (Next.js + React Query) │
+│ Raw http    │ Learning, minimal proxies, health checks      │
+└────────────────────────────────────────────────────────────┘
+```
 
-**Questions to ask before choosing:**
+### Fastify (Recommended)
 
-- Is this public-facing or internal?
-- Do we control the deployment environment (server vs. serverless vs. edge)?
-- Is the team already familiar with a framework?
-- Does this need to compose with an existing TypeScript frontend?
+```typescript
+import Fastify from "fastify";
+import { z } from "zod";
+
+const app = Fastify({
+  logger: {
+    level: process.env.LOG_LEVEL ?? "info",
+    transport: process.env.NODE_ENV === "development"
+      ? { target: "pino-pretty" }
+      : undefined,
+  },
+});
+
+// Schema validation with Zod → Fastify schema
+const CreateUserSchema = z.object({
+  name: z.string().min(2).max(100),
+  email: z.string().email(),
+  role: z.enum(["admin", "user"]).default("user"),
+});
+
+type CreateUserBody = z.infer<typeof CreateUserSchema>;
+
+app.post<{ Body: CreateUserBody }>("/users", {
+  schema: {
+    body: {
+      type: "object",
+      required: ["name", "email"],
+      properties: {
+        name: { type: "string", minLength: 2 },
+        email: { type: "string", format: "email" },
+        role: { type: "string", enum: ["admin", "user"] },
+      },
+    },
+  },
+}, async (request, reply) => {
+  const validated = CreateUserSchema.parse(request.body);
+  const user = await createUser(validated);
+  return reply.status(201).send(user);
+});
+
+// Graceful shutdown
+const start = async () => {
+  try {
+    await app.listen({ port: 3000, host: "0.0.0.0" });
+  } catch (err) {
+    app.log.error(err);
+    process.exit(1);
+  }
+};
+
+start();
+```
+
+### Hono (Edge-First)
+
+```typescript
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { logger } from "hono/logger";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
+
+const app = new Hono();
+
+app.use("*", logger());
+app.use("*", cors({ origin: "https://myapp.com" }));
+
+const createUserSchema = z.object({
+  name: z.string().min(2),
+  email: z.string().email(),
+});
+
+app.post("/users", zValidator("json", createUserSchema), async (c) => {
+  const body = c.req.valid("json");
+  const user = await createUser(body);
+  return c.json(user, 201);
+});
+
+app.get("/health", (c) => c.json({ status: "ok" }));
+
+export default app; // works in Node, Deno, Bun, Cloudflare Workers
+```
 
 ---
 
-## Modern Runtime Landscape (2025+)
+## Error Handling
 
-The Node.js monopoly is ending. Understand constraints before picking a runtime:
+### Global Error Handlers
 
-| Runtime | `fs` | `crypto` | `child_process` | `process.env` | Deploy Target |
-|---|---|---|---|---|---|
-| **Node.js** | ✅ | ✅ | ✅ | ✅ | Server, serverless |
-| **Bun** | ✅ | ✅ | ✅ | ✅ | Server (Node-compatible) |
-| **Deno** | ✅ (explicit perm) | ✅ | ✅ (explicit perm) | ✅ | Server, Deno Deploy |
-| **Edge (Cloudflare Workers)** | ❌ | Web only | ❌ | via `env` binding | Edge (global) |
+```typescript
+// ✅ MANDATORY: Handle unhandled rejections and exceptions
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+  // Log to error tracking service (Sentry, etc.)
+  // Gracefully shutdown
+  process.exit(1);
+});
 
-```ts
-// ❌ Portability anti-pattern — works in Node, breaks at edge
-import { createHash } from 'crypto';      // Node crypto — not available at edge
-import fs from 'fs';                       // No filesystem at edge
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+  // Log to error tracking service
+  process.exit(1);  // MUST exit — state is corrupted
+});
 
-// ✅ Web Platform APIs — work everywhere (Node ≥18, Bun, Deno, Edge)
-const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
-const response = await fetch('https://api.example.com/data');
+// ❌ HALLUCINATION TRAP: After uncaughtException, the process MUST exit
+// The process is in an undefined state — continuing is dangerous
+// ❌ process.on("uncaughtException", (err) => { console.log(err); }); // continues running
+// ✅ process.on("uncaughtException", (err) => { log(err); process.exit(1); });
 ```
 
-### When to Consider Bun
+### Application Error Classes
 
-```ts
-// Bun is Node-compatible but: starts faster, ships a bundler + test runner built-in
-// Use Bun when: scripts, tooling, new greenfield backends, or test-heavy projects
+```typescript
+export class AppError extends Error {
+  constructor(
+    message: string,
+    public statusCode: number = 500,
+    public code: string = "INTERNAL_ERROR",
+    public isOperational: boolean = true,
+  ) {
+    super(message);
+    this.name = "AppError";
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
 
-// package.json — identical, works in both
-// bun install  → 10x faster than npm install
-// bun test     → built-in Vitest-compatible runner
-// bun run      → direct TypeScript execution, no transpile step
+export class NotFoundError extends AppError {
+  constructor(resource: string, id: string) {
+    super(`${resource} '${id}' not found`, 404, "NOT_FOUND");
+  }
+}
 
-// Gotcha: some native Node addons (e.g. bcrypt, canvas) need Bun alternatives
-// Use: @node-rs/bcrypt instead of bcrypt (N-API native, works in both)
+export class ValidationError extends AppError {
+  constructor(message: string, public errors: Record<string, string[]> = {}) {
+    super(message, 400, "VALIDATION_ERROR");
+  }
+}
+
+export class UnauthorizedError extends AppError {
+  constructor(message = "Authentication required") {
+    super(message, 401, "UNAUTHORIZED");
+  }
+}
+
+// Express error middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof AppError && err.isOperational) {
+    res.status(err.statusCode).json({
+      error: { code: err.code, message: err.message },
+    });
+  } else {
+    // Programmer error — log and return generic message
+    console.error("Unexpected error:", err);
+    res.status(500).json({
+      error: { code: "INTERNAL_ERROR", message: "Something went wrong" },
+    });
+  }
+});
 ```
 
 ---
 
 ## Async Patterns
 
-### Always: Handle rejection
+### Parallel vs Sequential
 
-Every Promise needs a rejection handler. Unhandled rejections crash Node.js processes in modern versions.
+```typescript
+// ❌ SEQUENTIAL: Each await blocks the next
+const users = await getUsers();      // 200ms
+const posts = await getPosts();      // 200ms
+const stats = await getStats();      // 200ms
+// Total: 600ms
 
-```ts
-// ❌ Unhandled rejection
-fetchData().then(process);
+// ✅ PARALLEL: All start simultaneously
+const [users, posts, stats] = await Promise.all([
+  getUsers(),   // 200ms
+  getPosts(),   // 200ms (concurrent)
+  getStats(),   // 200ms (concurrent)
+]);
+// Total: ~200ms
 
-// ✅ Handled
-fetchData().then(process).catch(handleError);
+// Promise.allSettled — when some can fail
+const results = await Promise.allSettled([
+  fetchCriticalData(),
+  fetchOptionalData(),
+  fetchAnalytics(),
+]);
 
-// ✅ Or with async/await
-try {
-  const data = await fetchData();
-  process(data);
-} catch (err) {
-  handleError(err);
-}
-```
-
-### Avoid: Blocking the event loop
-
-The event loop is single-threaded. Anything synchronous that takes more than a few ms blocks all other requests.
-
-```ts
-// ❌ Blocks event loop for large files
-const data = fs.readFileSync('huge.csv');
-
-// ✅ Non-blocking
-const data = await fs.promises.readFile('huge.csv');
-
-// ❌ CPU-intensive work on main thread
-const result = computeHuge(dataset);
-
-// ✅ Offload to worker thread
-const { Worker } = require('worker_threads');
-```
-
-### Concurrency vs. Parallelism
-
-```ts
-// Sequential — each awaits the previous (use when order matters or requests are dependent)
-for (const id of ids) {
-  await processItem(id);
-}
-
-// Concurrent — all start immediately, await all completions (use for independent operations)
-await Promise.all(ids.map(id => processItem(id)));
-
-// Concurrent with limit — avoid overwhelming downstream services
-import pLimit from 'p-limit';
-const limit = pLimit(5); // max 5 concurrent
-await Promise.all(ids.map(id => limit(() => processItem(id))));
-```
-
----
-
-## Error Handling Architecture
-
-Structure errors so they carry meaning, not just messages:
-
-```ts
-// Base application error
-class AppError extends Error {
-  constructor(
-    message: string,
-    public code: string,
-    public statusCode: number,
-    public isOperational = true
-  ) {
-    super(message);
-    this.name = this.constructor.name;
-  }
-}
-
-// Domain-specific errors
-class NotFoundError extends AppError {
-  constructor(resource: string, id: string) {
-    super(`${resource} ${id} not found`, 'NOT_FOUND', 404);
-  }
-}
-
-class ValidationError extends AppError {
-  constructor(message: string) {
-    super(message, 'VALIDATION_FAILED', 400);
+for (const result of results) {
+  if (result.status === "fulfilled") {
+    process(result.value);
+  } else {
+    console.error("Failed:", result.reason);
   }
 }
 ```
 
-**Global error handler:**
-```ts
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  if (err instanceof AppError && err.isOperational) {
-    return res.status(err.statusCode).json({
-      error: err.message,
-      code: err.code,
-    });
+### Retry Pattern
+
+```typescript
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  options: { maxRetries?: number; baseDelay?: number; maxDelay?: number } = {},
+): Promise<T> {
+  const { maxRetries = 3, baseDelay = 1000, maxDelay = 10000 } = options;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+
+      const delay = Math.min(baseDelay * 2 ** attempt, maxDelay);
+      const jitter = delay * (0.5 + Math.random() * 0.5);
+      console.warn(`Attempt ${attempt + 1} failed, retrying in ${jitter}ms`);
+      await new Promise((resolve) => setTimeout(resolve, jitter));
+    }
   }
-  // Non-operational errors — log fully, don't expose details
-  logger.error('Unexpected error', { err, url: req.url });
-  res.status(500).json({ error: 'Internal server error' });
+  throw new Error("Unreachable");
+}
+
+// Usage:
+const data = await withRetry(() => fetch("https://api.flaky.com/data"), {
+  maxRetries: 3,
+  baseDelay: 500,
 });
 ```
 
+### AbortController (Timeouts & Cancellation)
+
+```typescript
+async function fetchWithTimeout(url: string, timeoutMs = 5000): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    return response;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error(`Request to ${url} timed out after ${timeoutMs}ms`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+```
+
 ---
 
-## Security Baseline
+## Streaming
 
-```ts
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
+```typescript
+import { Readable, Transform, pipeline } from "node:stream/promises";
+import { createReadStream, createWriteStream } from "node:fs";
+import { createGzip } from "node:zlib";
+
+// Stream large file processing (no memory issues)
+async function processLargeCSV(inputPath: string, outputPath: string) {
+  const transform = new Transform({
+    transform(chunk, encoding, callback) {
+      const processed = chunk.toString().toUpperCase();
+      callback(null, processed);
+    },
+  });
+
+  await pipeline(
+    createReadStream(inputPath),
+    transform,
+    createGzip(),
+    createWriteStream(outputPath),
+  );
+}
+
+// Streaming HTTP response
+app.get("/export", async (req, res) => {
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", "attachment; filename=export.csv");
+
+  const cursor = db.collection("users").find().stream();
+  cursor.on("data", (user) => {
+    res.write(`${user.id},${user.name},${user.email}\n`);
+  });
+  cursor.on("end", () => res.end());
+  cursor.on("error", (err) => {
+    console.error(err);
+    res.status(500).end();
+  });
+});
+
+// ❌ HALLUCINATION TRAP: Use stream/promises (not callbacks)
+// ❌ const { pipeline } = require("stream");  ← callback-based
+// ✅ import { pipeline } from "node:stream/promises";  ← async/await
+```
+
+---
+
+## Environment & Config
+
+```typescript
+// config.ts — centralized, validated configuration
+import { z } from "zod";
+
+const envSchema = z.object({
+  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  PORT: z.coerce.number().default(3000),
+  DATABASE_URL: z.string().url(),
+  REDIS_URL: z.string().url().optional(),
+  JWT_SECRET: z.string().min(32),
+  CORS_ORIGIN: z.string().default("http://localhost:5173"),
+  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+});
+
+export const config = envSchema.parse(process.env);
+
+// ❌ HALLUCINATION TRAP: Validate env vars at startup — fail FAST
+// ❌ process.env.DATABASE_URL!  ← crashes at runtime, not startup
+// ✅ Validate with Zod on app init — crash immediately with clear error
+
+// ❌ HALLUCINATION TRAP: Never hardcode secrets
+// ❌ const JWT_SECRET = "my-secret-key";  ← in source code
+// ✅ const JWT_SECRET = process.env.JWT_SECRET;  ← from environment
+```
+
+---
+
+## Security Hardening
+
+```typescript
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 
 // Security headers
 app.use(helmet());
 
-// Rate limiting — protect all routes
-app.use(rateLimit({
+// Rate limiting
+app.use("/api/", rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,               // requests per window
+  max: 100,                  // 100 requests per window
   standardHeaders: true,
   legacyHeaders: false,
+  message: { error: "Too many requests, try again later" },
 }));
 
-// Body size limit — prevent payload bombs
-app.use(express.json({ limit: '10kb' }));
+// Auth rate limiting (stricter)
+app.use("/api/auth/", rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5, // only 5 login attempts per 15 min
+}));
 
-// Trust proxy correctly for rate limiting behind load balancer
-app.set('trust proxy', 1);
+// Input validation (ALWAYS validate)
+app.post("/api/users", async (req, res, next) => {
+  try {
+    const data = CreateUserSchema.parse(req.body); // Zod validates
+    const user = await createUser(data);
+    res.status(201).json(user);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// SQL injection prevention (covered by parameterized queries)
+// ❌ db.query(`SELECT * FROM users WHERE id = ${req.params.id}`);
+// ✅ db.query("SELECT * FROM users WHERE id = $1", [req.params.id]);
+
+// Path traversal prevention
+import { resolve, normalize } from "node:path";
+
+function safePath(userInput: string, baseDir: string): string {
+  const resolved = resolve(baseDir, normalize(userInput));
+  if (!resolved.startsWith(baseDir)) {
+    throw new Error("Path traversal detected");
+  }
+  return resolved;
+}
 ```
-
-**Never:**
-- Use `eval()` or `new Function()` with user input
-- Pass unvalidated user input to `exec()`, `spawn()`, or `child_process`
-- Log full request bodies (may contain credentials or PII)
 
 ---
 
-## Project Structure
+## Process Management
 
-```
-src/
-  routes/      HTTP route definitions (thin — only parse and delegate)
-  controllers/ Request handling, validation, response formatting
-  services/    Business logic (no HTTP awareness)
-  repositories/ Database access (no business logic)
-  middleware/  Auth, rate limit, logging
-  lib/         Shared utilities (date, crypto, validation)
-  types/       TypeScript interfaces and type exports
-  config/      Environment config with validation
+### Graceful Shutdown
+
+```typescript
+async function gracefulShutdown(signal: string) {
+  console.log(`\n${signal} received — shutting down gracefully`);
+
+  // Stop accepting new connections
+  server.close();
+
+  // Close database connections
+  await db.end();
+
+  // Close Redis
+  await redis.quit();
+
+  // Allow in-flight requests 10s to complete
+  setTimeout(() => {
+    console.error("Forceful shutdown after timeout");
+    process.exit(1);
+  }, 10000);
+
+  process.exit(0);
+}
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 ```
 
-**Dependency direction:** routes → controllers → services → repositories
-**Never:** repositories calling services, or services knowing about HTTP
+### Worker Threads (CPU-Bound)
+
+```typescript
+import { Worker, isMainThread, parentPort, workerData } from "node:worker_threads";
+
+if (isMainThread) {
+  // Main thread — offload CPU work
+  function runWorker(data: unknown): Promise<unknown> {
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(new URL(import.meta.url), { workerData: data });
+      worker.on("message", resolve);
+      worker.on("error", reject);
+    });
+  }
+
+  const result = await runWorker({ input: largeDataSet });
+} else {
+  // Worker thread — CPU-intensive work
+  const result = heavyComputation(workerData.input);
+  parentPort?.postMessage(result);
+}
+
+// ❌ HALLUCINATION TRAP: Worker threads are for CPU-bound tasks
+// For I/O-bound tasks (network, file), use async/await — NOT workers
+// Workers have overhead (serialization, memory) — don't overuse
+```
 
 ---
 
 ## Output Format
 
-When this skill produces or reviews code, structure your output as follows:
-
 ```
-━━━ Nodejs Best Practices Report ━━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Nodejs Best Practices
-Language:    [detected language / framework]
-Scope:       [N files · N functions]
+━━━ Node.js Report ━━━━━━━━━━━━━━━━━━━━━━━━
+Skill:       Node.js Best Practices
+Node Ver:    22+
+Scope:       [N files · N endpoints]
 ─────────────────────────────────────────────────
 ✅ Passed:   [checks that passed, or "All clean"]
 ⚠️  Warnings: [non-blocking issues, or "None"]
 ❌ Blocked:  [blocking issues requiring fix, or "None"]
 ─────────────────────────────────────────────────
 VBC status:  PENDING → VERIFIED
-Evidence:    [test output / lint pass / compile success]
+Evidence:    [test output / server start / build success]
 ```
-
-**VBC (Verification-Before-Completion) is mandatory.**
-Do not mark status as VERIFIED until concrete terminal evidence is provided.
-
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🤖 LLM-Specific Traps
+
+1. **`require()` in ESM:** Never use `require()` in `"type": "module"` projects. Use `import`.
+2. **Missing `node:` Prefix:** Always use `node:fs`, `node:path`, `node:http`, etc. Bare imports are ambiguous.
+3. **Callback-Based APIs:** Use `node:fs/promises`, `node:stream/promises`. Callback APIs are legacy.
+4. **Continuing After `uncaughtException`:** Process MUST exit after uncaughtException. State is corrupted.
+5. **`process.env` Without Validation:** Environment variables are `string | undefined`. Always validate at startup with Zod.
+6. **Hardcoded Secrets:** JWT secrets, API keys, and DB URLs must come from environment, never source code.
+7. **`express()` Without `helmet()`:** Every Express app needs security headers. `helmet()` is non-negotiable.
+8. **SQL String Interpolation:** Never use template literals for SQL. Use parameterized queries.
+9. **Worker Threads for I/O:** Workers are for CPU-bound work. I/O-bound work uses async/await natively.
+10. **Missing Graceful Shutdown:** Servers MUST handle SIGTERM/SIGINT for clean container/PaaS shutdown.
+
+---
+
+## 🏛️ Tribunal Integration
 
 **Slash command: `/tribunal-backend`**
-**Active reviewers: `logic` · `security` · `dependency` · `type-safety`**
-
-### ❌ Forbidden AI Tropes in Node.js
-
-1. **Blindly mixing `require` and `import`** — pick ESM or CommonJS and stick to it strictly based on `package.json`.
-2. **"Catch-all and ignore" error handling** — e.g., `catch (e) { console.log(e); }` without throwing or returning an error response.
-3. **Assuming Express** — if the project is Next.js, Fastify, or NestJS, do not hallucinate Express code.
-4. **Unparameterized queries** — never interpolate strings into SQL.
-5. **No `any` types** — unless an external library leaves no choice, type all request bodies and responses.
 
 ### ✅ Pre-Flight Self-Audit
 
-Review these questions before generating Node.js code:
 ```
-✅ Did I use the correct module system (CJS vs ESM) for this context?
-✅ Is every Promise rejection properly handled?
-✅ Did I block the event loop with synchronous FS or Crypto operations?
-✅ Are all inputs validated before business logic runs?
-✅ Is this code safe from memory leaks (e.g., unbounded arrays/maps)?
+✅ Did I use ESM imports with node: prefix?
+✅ Did I validate all environment variables at startup?
+✅ Are secrets in environment variables (not hardcoded)?
+✅ Did I handle unhandledRejection and uncaughtException?
+✅ Did I implement graceful shutdown (SIGTERM/SIGINT)?
+✅ Did I use parameterized queries (not string interpolation)?
+✅ Did I add rate limiting and security headers?
+✅ Did I validate all request input with Zod?
+✅ Are async errors properly caught and propagated?
+✅ Did I use streams for large data (not loading all into memory)?
 ```
+
+### 🛑 VBC Protocol
+
+- ❌ **Forbidden:** Assuming a server "works" because it starts without errors.
+- ✅ **Required:** Provide test output, health check response, or build success evidence.

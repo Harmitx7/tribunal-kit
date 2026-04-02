@@ -1,5 +1,5 @@
 ---
-description: Coordinate multiple agents for complex tasks. Use for multi-perspective analysis, comprehensive reviews, or tasks requiring different domain expertise.
+description: Coordinate multiple agents for complex tasks. Use for multi-perspective analysis, comprehensive reviews requiring different domain expertise, or tasks where a single agent would miss domain-specific failures. Fan-Out dispatch → parallel execution → Fan-In synthesis → Human Gate.
 ---
 
 # /orchestrate — Multi-Agent Coordination
@@ -8,144 +8,161 @@ $ARGUMENTS
 
 ---
 
-This command coordinates multiple specialists to solve a problem that requires more than one domain. **One agent is not orchestration.**
-
----
-
-## When to Use /orchestrate vs Other Commands
+## When to Use /orchestrate
 
 | Use `/orchestrate` when... | Use something else when... |
-|---|---|
-| Task requires 3+ domain specialists | Single domain → use the right `/tribunal-*` |
-| Sequential work with review gates between waves | Parallel, independent tasks → `/swarm` |
-| Existing codebase with complex dependencies | Greenfield project → `/create` |
-| Human gates required between every wave | Maximum parallel output → `/swarm` |
+|:---|:---|
+| Task spans 2+ technical domains | Single domain → use specialist directly |
+| Multi-perspective review is needed | Simple code generation → `/generate` |
+| Fan-out parallelism would save time | Debugging → `/debug` (sequential by nature) |
+| One agent would miss domain failures | Planning only → `/plan` |
 
 ---
 
-## The Minimum Rule
+## Phase 1 — Scope Classification
 
-> **Fewer than 3 agents = not orchestration.**
->
-> Before marking any orchestration session as complete, count the agents invoked. If the count is less than 3, activate more. A single agent delegated to is just a delegation.
+Before dispatching workers:
+
+```
+1. Is this actually multi-domain? (2+ distinct technical areas)
+   → YES → proceed to Phase 2
+   → NO  → route to the single correct specialist agent
+
+2. Can tasks be parallelized (no dependencies between them)?
+   → YES → Fan-Out dispatch (all workers simultaneous)
+   → NO  → Sequential wave dispatch
+   
+3. Context budget check:
+   □ How many files does each worker need?
+   □ Total context across all workers manageable?
+   □ Can I pass context_summary instead of full file dumps?
+```
 
 ---
 
-## Agent Selection by Task Type
+## Phase 2 — Worker Decomposition
 
-| Task | Required Specialists |
-|---|---|
-| Full-stack feature | `frontend-specialist` + `backend-specialist` + `test-engineer` |
-| API build | `backend-specialist` + `security-auditor` + `test-engineer` |
-| Database-heavy work | `database-architect` + `backend-specialist` + `security-auditor` |
-| Complete product | `project-planner` + `frontend-specialist` + `backend-specialist` + `devops-engineer` |
-| Security investigation | `security-auditor` + `penetration-tester` + `devops-engineer` |
-| Complex bug | `debugger` + `explorer-agent` + `test-engineer` |
-| New codebase or unknown repo | `explorer-agent` + relevant specialists |
+Break the goal into atomic, non-overlapping worker tasks:
+
+```
+Goal: Review the full checkout feature before launch
+
+Decomposed Workers:
+├── Worker A [backend-specialist]: Review API routes for auth and validation
+├── Worker B [database-architect]: Review DB queries for N+1 and transactions
+├── Worker C [frontend-specialist]: Review UI components for RSC compliance
+└── Worker D [security-auditor]: Review the full checkout flow for OWASP issues
+```
+
+**Worker files cannot overlap.** If two workers both need to modify the same file → one worker owns it.
 
 ---
 
-## Two-Phase Protocol (Strict)
+## Fan-Out Pattern (Parallel Dispatch)
 
-### Phase A — Planning Only
-
-Only two agents are allowed during planning:
+When tasks are independent, dispatch all simultaneously:
 
 ```
-project-planner   → writes docs/PLAN-{slug}.md
-explorer-agent    → (if working in existing code) maps the codebase structure
+━━━ Wave 1: Fan-Out ━━━━━━━━━━━━━━━━━━━━━━━
+Worker A (backend)    → RUNNING  (reading: src/app/api/checkout/)
+Worker B (database)   → RUNNING  (reading: prisma/schema.prisma, checkout queries)
+Worker C (frontend)   → RUNNING  (reading: src/app/checkout/page.tsx)
+Worker D (security)   → RUNNING  (reading: all of the above)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Wait for ALL workers (allSettled — single worker failure doesn't cancel siblings)
+
+━━━ Wave 1: Results ━━━━━━━━━━━━━━━━━━━━━━━
+Worker A: ✅ COMPLETE
+Worker B: ✅ COMPLETE
+Worker C: ⚠️ BLOCKED (missing: what state management pattern to assume)
+Worker D: ✅ COMPLETE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Supervisor provides missing info to Worker C → redispatch
 ```
-
-No other agent runs. No code is produced.
-
-After planning, the plan is shown to the user:
-
-```
-✅ Plan ready: docs/PLAN-{slug}.md
-
-Approve to start implementation? (Y / N)
-```
-
-**Phase B does NOT start without a Y.**
-
-### Phase B — Implementation (Manager & Micro-Workers)
-
-After approval, the Orchestrator acts as Manager and dispatches Micro-Workers using **isolated JSON payloads**.
-
-```
-Wave 1:  database-architect + security-auditor (JSON dispatch #1)
-         ↓
-[Wait for completion & Tribunal review]
-         ↓
-Wave 2:  backend-specialist + frontend-specialist (JSON dispatch #2)
-         ↓
-[Wait for completion & Tribunal review]
-         ↓
-Wave 3:  test-engineer (JSON dispatch #3)
-         ↓
-[Wait for completion & Human Gate]
-```
-
-Workers execute in parallel **within** their wave, but waves execute **sequentially**. Each wave waits for the previous wave's Tribunal gate before proceeding.
 
 ---
 
-## Hierarchical Context Pruning
+## BLOCKED Worker Protocol
 
-When dispatching workers, the Orchestrator MUST use the `dispatch_micro_workers` JSON format.
-
-**Context discipline is strictly enforced:**
+When a worker cannot proceed:
 
 ```
-❌ Never pass full chat histories to workers
-❌ Never attach every file — attach only files the worker will actually read
-✅ The context_summary injected by the Orchestrator is the ONLY shared context
-✅ Files attached are strictly limited to what's needed for that specific task
-```
+Status: BLOCKED
+Reason: Missing context — the auth middleware file is not in provided scope
+Unblocked by: Read src/middleware.ts first and pass auth pattern to worker
 
-**Per-worker context limit:** Excerpt only the relevant function or schema section — never the entire file.
+Supervisor action:
+1. Provide the missing context if available
+2. Escalate to human if decision is needed
+3. Never guess — BLOCKED beats hallucinating
+```
 
 ---
 
-## Retry Protocol
+## Sequential Wave Execution
+
+When tasks depend on each other:
 
 ```
-Attempt 1  → Worker runs with original parameters
-Attempt 2  → Worker runs with stricter constraints + failure feedback
-Attempt 3  → Worker runs with max constraints + full context dump
-Attempt 4  → HALT. Report to human with full failure history.
+Wave 1 → Foundation (must complete first)
+Wave 2 → Depends on Wave 1 output (receives context_summary, not full output)
+Wave 3 → Synthesis (combines all wave outputs)
 ```
 
-Hard limit: **3 retries per worker**. After 3 failures, escalate — do not silently proceed.
+**Context discipline between waves:** Summarize Wave N output in 3-5 bullets before passing to Wave N+1.
 
 ---
 
-## Hallucination Guard
+## Fan-In — Synthesis
 
-- Every agent's output goes through Tribunal before it reaches the user
-- The Human Gate fires before any file is written — user sees the diff and approves
-- Per-agent scope is enforced — `frontend-specialist` **never** writes DB migrations
-- Retry limit: 3 Maker revisions per agent; after 3 failures → stop and report
-- `context_summary` is the only mechanism for sharing context across agents — no full dumps
-
----
-
-## Cross-Workflow Navigation
-
-| When /orchestrate reveals... | Go to |
-|---|---|
-| Worker keeps failing after 3 retries | `/debug` the isolated worker task |
-| Plan needed before orchestrating | `/plan` first, then run `/orchestrate` against it |
-| Fully parallel independent sub-tasks | `/swarm` is more efficient |
-| Single domain needs specialist audit | Use the domain-specific `/tribunal-*` |
-
----
-
-## Usage
+After all workers complete:
 
 ```
-/orchestrate build a complete auth system with JWT and refresh tokens
-/orchestrate review the entire API layer for security issues
-/orchestrate build a multi-tenant SaaS onboarding flow
-/orchestrate analyze this repo and implement all security findings
+1. Merge findings by severity
+2. Identify conflicts (Worker A says X, Worker B says Y)
+3. Resolve conflicts with evidence (which worker has specific file evidence?)
+4. Produce unified output sorted by priority
+```
+
+---
+
+## Human Gate
+
+```
+━━━ Orchestration Complete ━━━━━━━━━━━━━━━━━
+
+Workers: 4 dispatched / 4 complete / 0 blocked
+
+━━━ Synthesized Findings ━━━━━━━━━━━━━━━━━━
+[Critical issues first, then high, then medium]
+
+━━━ Required Changes ━━━━━━━━━━━━━━━━━━━━━
+Files to modify: [list]
+Files to create: [list]
+
+━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Approve?  Y = proceed | N = discard | R = revise
+```
+
+---
+
+## Error Recovery
+
+```
+Worker failure (after 3 retries):
+  Report: agent=[name], task=[what], attempts=3, last_error=[error], suggestion=[what to check]
+  Action: continue remaining workers, include failure in final synthesis
+```
+
+---
+
+## Usage Examples
+
+```
+/orchestrate review the entire authentication system for security and correctness
+/orchestrate analyze the payment feature: backend logic + DB queries + frontend UX
+/orchestrate comprehensive code review before launch: security + tests + performance
+/orchestrate compare three different caching strategies and recommend the best fit
 ```

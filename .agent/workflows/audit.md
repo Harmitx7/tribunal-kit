@@ -1,168 +1,138 @@
 ---
-description: Full project audit combining security, lint, schema, tests, dependencies, and bundle analysis
+description: Full project audit combining security scan, lint, schema validation, test coverage, dependency analysis, and bundle analysis. Runs all scripts in priority order. Human review required before applying any fixes.
 ---
 
-# /audit — Comprehensive Project Health Check
+# /audit — Complete Project Health Assessment
 
 $ARGUMENTS
 
 ---
 
-This command runs a full audit of the project, combining all available analysis scripts in priority order. Use it before major releases, after onboarding to a new codebase, or whenever you need a complete health check.
-
----
-
 ## When to Use /audit
 
-| Situation | Recommended |
-|---|---|
-| Before a production deploy | `/audit` (full) |
-| After a dependency upgrade | `/audit` — focus on deps + security |
-| When onboarding to a new codebase | `/audit` — full scan first |
-| Single file just changed | `/review [file]` is faster |
-| Suspected security issue | `/audit` — security runs first |
+| Use `/audit` when... | Use something else when... |
+|:---|:---|
+| Before a major release or launch | Single file review → `/review` |
+| After a security incident | Just lint errors → `/fix` |
+| Onboarding to a new codebase | Performance only → `/performance-benchmarker` |
+| Weekly/monthly health check | Testing only → `/test` |
+| Before major dependency updates | |
 
 ---
 
-## What Happens
+## Execution Order (Fixed — Do Not Reorder)
 
-The audit runs in strict priority order. Critical issues block further checks:
-
-```
-Priority 1 → Security Scan         (CRITICAL: halts on failure)
-Priority 2 → Lint & Type Check     (BLOCKING for deploy on error)
-Priority 3 → Schema Validation     (advisory)
-Priority 4 → Test Suite            (advisory, marks task incomplete)
-Priority 5 → Dependency Analysis   (advisory)
-Priority 6 → Bundle Size Analysis  (advisory)
-```
-
-### Execution Commands
-
-Each priority maps to a script:
-
-```bash
-# Priority 1 — Security
-// turbo
-python .agent/scripts/security_scan.py .
-
-# Priority 2 — Lint
-// turbo
-python .agent/scripts/lint_runner.py .
-
-# Priority 3 — Schema
-// turbo
-python .agent/scripts/schema_validator.py .
-
-# Priority 4 — Tests
-// turbo
-python .agent/scripts/test_runner.py .
-
-# Priority 5 — Dependencies
-// turbo
-python .agent/scripts/dependency_analyzer.py . --audit
-
-# Priority 6 — Bundle
-// turbo
-python .agent/scripts/bundle_analyzer.py .
-```
-
-### Abort Conditions
-
-| Priority | Condition | Action |
-|---|---|---|
-| Security (P1) | CRITICAL findings | **HALT** — report and stop. Do not proceed until resolved. |
-| Lint (P2) | Errors (not warnings) | Continue but flag as **deploy-blocking** |
-| Schema (P3) | Any failure | Continue, report as advisory |
-| Tests (P4) | Failures | Continue, mark task as **incomplete** |
-| Deps (P5) | Vulnerabilities | Continue, flag severity level |
-| Bundle (P6) | Oversized assets | Continue, note thresholds exceeded |
-
-### Script Failure Handling
+Security failures early in the pipeline halt subsequent steps. Lint/test failures continue with flags.
 
 ```
-Script exits 0     → Success, continue pipeline
-Script exits 1     → Failure, report and decide: retry or skip?
-Script not found   → Skip with ⚠️ warning, do not block pipeline
-Script times out   → Kill process, report timeout, continue with next check
+Priority 1 — Security (HALT if critical finding)
+  python .agent/scripts/security_scan.py .
+
+Priority 2 — Dependencies (HALT if exploitable CVE found)
+  python .agent/scripts/dependency_analyzer.py . --audit
+
+Priority 3 — Type Checking (CONTINUE but flag)
+  npx tsc --noEmit
+
+Priority 4 — Lint (CONTINUE but flag as deployment blocker)
+  python .agent/scripts/lint_runner.py .
+
+Priority 5 — Schema Validation (CONTINUE but flag)
+  python .agent/scripts/schema_validator.py .
+
+Priority 6 — Tests (CONTINUE but mark incomplete)
+  python .agent/scripts/test_runner.py . --coverage
+
+Priority 7 — Bundle Analysis (INFORM only)
+  python .agent/scripts/bundle_analyzer.py . --build
 ```
+
+### Cascade Failure Rules
+
+| Check | Failure Behavior |
+|:---|:---|
+| Security scan (critical) | **HALT** — all subsequent steps cancelled |
+| Dependency audit (exploitable CVE) | **HALT** — fix before proceeding |
+| Lint + type errors | **CONTINUE** — flag as deployment blocker |
+| Tests failing | **CONTINUE** — mark task as incomplete |
+| Bundle analysis (large) | **INFORM** — no blocking |
 
 ---
 
-## Scoped Audit (Optional)
+## Script Retry Protocol
 
-To audit a specific concern only, pass a flag:
-
-```bash
-/audit security only          → runs Priority 1 only
-/audit deps                   → runs Priority 5 only
-/audit lint                   → runs Priority 2 only
-/audit before deploy          → runs P1 + P2 + P4 (blocking gates only)
-/audit fresh codebase         → runs full suite and flags all advisory items
 ```
+Script exits 0:     Success — continue pipeline
+Script exits 1:     Failure — report and decide: retry or skip?
+Script not found:   Skip with warning — do not block pipeline
+Script times out:   Kill after 5 min — report timeout — continue
+Script crashes:     Catch exception — report stack trace — continue
+```
+
+**Hard limit: 3 retries per script.** After 3 failures, report to human and continue with remaining scripts.
 
 ---
 
 ## Audit Report Format
 
-After running all checks, produce a structured report:
+```
+━━━ Audit Report: [Project Name] ━━━━━━━━━━━━━━━━━━━━
 
-```markdown
-## 🔍 Project Audit Report — [date]
+Score: [N/7 checks passed]
 
-### Security: [PASS ✅ / FAIL ❌]
-- [findings summary with severity: CRITICAL / HIGH / MEDIUM / LOW]
+1. Security Scan:         ✅ PASSED | ❌ FAILED (CRITICAL — HALTED) | ⚠️ WARNINGS
+2. Dependency Audit:      ✅ PASSED | ❌ FAILED (CVE-XXXX-XXXX found) | ⚠️ WARNINGS
+3. TypeScript:            ✅ PASSED | ❌ FAILED (N errors)
+4. Lint:                  ✅ PASSED | ❌ FAILED (N errors, M warnings)
+5. Schema Validation:     ✅ PASSED | ❌ FAILED | N/A
+6. Test Coverage:         ✅ PASSED | ❌ FAILED (N% — below 80% threshold)
+7. Bundle Size:           ✅ GOOD (310kb) | ⚠️ LARGE (>500kb) | ❌ CRITICAL (>1mb)
 
-### Lint & Types: [PASS ✅ / FAIL ❌]
-- [findings summary — errors vs. warnings distinguished]
+━━━ Critical Issues (Fix Before Deploy) ━━━━━━━━━━━━━
+- [CRITICAL] SQL injection in src/routes/users.ts:47
+- [HIGH] JWT secret from hardcoded fallback in src/lib/auth.ts:12
 
-### Schema: [PASS ✅ / WARN ⚠️ / N/A]
-- [findings summary]
+━━━ Important Issues (Fix Before Release) ━━━━━━━━━━
+- [MEDIUM] 4 TypeScript 'any' types in src/components/
+- [MEDIUM] Test coverage: 58% (target: 80%)
 
-### Tests: [PASS ✅ / FAIL ❌ / N/A]
-- [pass/fail counts + names of failing tests]
+━━━ Recommendations ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Update lodash 4.17.20 → 4.17.21 (Prototype pollution CVE)
+- Add @types/node to devDependencies (missing)
+- Bundle size: chart library causes +240kb — use dynamic import
 
-### Dependencies: [CLEAN ✅ / ISSUES ⚠️]
-- [phantom imports, unused deps, known vulnerabilities with CVE IDs]
-
-### Bundle: [OK ✅ / LARGE ⚠️ / N/A]
-- [total size, heavy deps, suggested optimizations]
-
-### Verdict:
-[DEPLOY-READY ✅ / BLOCKED ❌ — reason]
-[Next recommended action]
+━━━ Suggested Next Steps ━━━━━━━━━━━━━━━━━━━━━━━━━━
+Critical items → /tribunal-backend to fix injection and JWT issues
+Test gaps → /test to add coverage for checkout and auth flows
+Bundle → /enhance to add dynamic import for chart component
 ```
 
 ---
 
-## Quick Audit
+## Human Review Gate
 
-For a faster check that skips bundle and schema:
+After the audit report is produced:
 
-```bash
-// turbo
-python .agent/scripts/checklist.py .
 ```
+Human Gate required before any fixes are applied.
+
+Approve a fix plan?
+Y = proceed with automated fixes where safe
+N = report only, no changes
+S = select specific items to fix
+```
+
+No files are modified without explicit approval.
 
 ---
 
 ## Cross-Workflow Navigation
 
-| If the audit reveals... | Go to |
-|---|---|
-| Security CRITICAL findings | `/review [file]` for targeted analysis, then fix with `/generate` |
-| Many lint errors | `/fix` to auto-resolve lint and formatting issues |
-| Test failures | `/debug` to find root cause, then `/test` to add coverage |
-| Outdated or vulnerable dependencies | `/migrate` for framework/dependency upgrades |
-| Bundle size too large | `/tribunal-performance` for optimization review |
-
----
-
-## Usage
-
-```
-/audit
-/audit this project before we deploy
-/audit focus on security and dependencies only
-/audit after upgrading to Next.js 15
-```
+| Audit finds... | Go to |
+|:---|:---|
+| Security vulnerabilities | `/tribunal-backend` or `/tribunal-full` |
+| TypeScript errors | `/fix` (auto-fixable) or `/generate` (logic errors) |
+| Test coverage gap | `/test` for specific area |
+| Bundle too large | `/tribunal-performance` |
+| DB schema issues | `/tribunal-database` |
+| Dependency vulnerabilities | `/fix` with `npm audit fix` |

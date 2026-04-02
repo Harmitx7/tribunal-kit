@@ -1,91 +1,153 @@
 ---
 name: observability
-description: Production observability principles. OpenTelemetry traces, structured logs, metrics, SLOs/SLIs/error budgets, and AI observability. Use when setting up monitoring, debugging production issues, or designing observable distributed systems.
+description: Production observability mastery. Structured logging (Pino/Winston), OpenTelemetry tracing, metrics (Prometheus/Grafana), SLIs/SLOs/error budgets, distributed tracing, alerting design, health checks, and AI observability. Use when setting up monitoring, debugging production issues, or designing observable distributed systems.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-01
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Observability Principles
+# Observability — Production Monitoring Mastery
 
-> Monitoring tells you when something is broken.
-> Observability tells you why.
+> You can't fix what you can't see. You can't see what you don't measure.
+> Every request gets a trace. Every error gets structured context. Every SLO has an error budget.
 
 ---
 
 ## The Three Pillars
 
 ```
-TRACES    → The journey of a single request across services
-            "Why was THIS request slow?"
+Logs    → WHAT happened (structured events)
+Traces  → WHERE it happened (request flow across services)
+Metrics → HOW MUCH is happening (counters, histograms, gauges)
 
-LOGS      → Discrete events with context
-            "What exactly happened at 14:23:07?"
-
-METRICS   → Aggregated measurements over time
-            "What is our error rate over the last hour?"
+All three are needed. Logs alone are not observability.
 ```
-
-Use all three. They answer different questions. None replaces the others.
 
 ---
 
-## OpenTelemetry: The Standard
+## Structured Logging
 
-OpenTelemetry (OTel) is the vendor-neutral standard for instrumentation. Use it and you can swap backends (Jaeger, Grafana Tempo, Honeycomb, Datadog) without changing application code.
+```typescript
+import pino from "pino";
 
-```ts
-// src/instrumentation.ts — initialize OTel once, before app code
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { Resource } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-
-const sdk = new NodeSDK({
-  resource: new Resource({
-    [SemanticResourceAttributes.SERVICE_NAME]: 'my-api',
-    [SemanticResourceAttributes.SERVICE_VERSION]: '1.0.0',
-  }),
-  traceExporter: new OTLPTraceExporter({
-    url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
+// ✅ Structured JSON logging
+const logger = pino({
+  level: process.env.LOG_LEVEL ?? "info",
+  timestamp: pino.stdTimeFunctions.isoTime,
+  ...(process.env.NODE_ENV === "development" && {
+    transport: { target: "pino-pretty" },
   }),
 });
 
-sdk.start();
-process.on('SIGTERM', () => sdk.shutdown());
+// ✅ GOOD: Structured with context
+logger.info({ userId: user.id, action: "login", ip: req.ip }, "User logged in");
+logger.error({ err, orderId: order.id, paymentGateway: "stripe" }, "Payment failed");
+logger.warn({ queueDepth: 1500, threshold: 1000 }, "Queue depth exceeding threshold");
+
+// ❌ BAD: Unstructured string logging
+console.log("User " + user.id + " logged in from " + req.ip);
+console.log("Error: " + error.message);
+
+// ❌ HALLUCINATION TRAP: console.log is NOT production logging
+// - No severity levels (info/warn/error)
+// - No structured fields (can't search/filter)
+// - No timestamps in ISO format
+// - Can't be collected by log aggregators
+// ✅ Use Pino (Node.js) or structlog (Python) for production
+```
+
+### Log Levels
+
+```
+fatal → App is crashing, immediate attention required
+error → Operation failed, needs investigation
+warn  → Something unexpected, but app continues
+info  → Business events (user login, order placed, deploy)
+debug → Technical details (query timing, cache hit/miss)
+trace → Verbose debugging (only in development)
+
+Rules:
+- Production default: info
+- Never log PII (names, emails, SSNs) at any level
+- Never log secrets (tokens, passwords, API keys)
+- Log request IDs for correlation
+- Log durations for performance tracking
+```
+
+### Request Context / Correlation
+
+```typescript
+import { AsyncLocalStorage } from "node:async_hooks";
+
+const requestContext = new AsyncLocalStorage<{ requestId: string; userId?: string }>();
+
+// Middleware: set context per request
+app.use((req, res, next) => {
+  const requestId = req.headers["x-request-id"]?.toString() ?? crypto.randomUUID();
+  res.setHeader("x-request-id", requestId);
+  requestContext.run({ requestId, userId: req.user?.id }, next);
+});
+
+// Child logger with context
+function getLogger() {
+  const ctx = requestContext.getStore();
+  return logger.child({
+    requestId: ctx?.requestId,
+    userId: ctx?.userId,
+  });
+}
+
+// Every log from this request includes requestId and userId
+const log = getLogger();
+log.info("Processing order");  // { requestId: "abc-123", userId: "42", msg: "Processing order" }
 ```
 
 ---
 
-## Distributed Tracing
+## Distributed Tracing (OpenTelemetry)
 
-Traces connect the dots across microservice boundaries:
+```typescript
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 
-```ts
-import { trace, context, SpanStatusCode } from '@opentelemetry/api';
+// Initialize OpenTelemetry
+const sdk = new NodeSDK({
+  traceExporter: new OTLPTraceExporter({
+    url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? "http://localhost:4318/v1/traces",
+  }),
+  instrumentations: [
+    getNodeAutoInstrumentations({
+      "@opentelemetry/instrumentation-http": { enabled: true },
+      "@opentelemetry/instrumentation-express": { enabled: true },
+      "@opentelemetry/instrumentation-pg": { enabled: true },
+      "@opentelemetry/instrumentation-redis": { enabled: true },
+    }),
+  ],
+});
 
-const tracer = trace.getTracer('payment-service');
+sdk.start();
 
-async function processPayment(orderId: string, amount: number) {
-  return tracer.startActiveSpan('payment.process', async (span) => {
+// Manual span for custom business logic
+import { trace } from "@opentelemetry/api";
+
+const tracer = trace.getTracer("order-service");
+
+async function processOrder(order: Order) {
+  return tracer.startActiveSpan("processOrder", async (span) => {
     try {
-      // Add business context to the span
-      span.setAttributes({
-        'order.id': orderId,
-        'payment.amount': amount,
-        'payment.currency': 'USD',
-      });
+      span.setAttribute("order.id", order.id);
+      span.setAttribute("order.total", order.total);
+      span.setAttribute("order.items.count", order.items.length);
 
-      const result = await chargeCard(orderId, amount);
-
+      const result = await executeOrder(order);
       span.setStatus({ code: SpanStatusCode.OK });
       return result;
-    } catch (err) {
-      // Record the error with full context
-      span.recordException(err as Error);
-      span.setStatus({ code: SpanStatusCode.ERROR, message: (err as Error).message });
-      throw err;
+    } catch (error) {
+      span.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
+      span.recordException(error);
+      throw error;
     } finally {
       span.end();
     }
@@ -95,191 +157,174 @@ async function processPayment(orderId: string, amount: number) {
 
 ---
 
-## Structured Logging
+## Metrics
 
-Logs must be machine-parseable:
+```typescript
+import { metrics } from "@opentelemetry/api";
 
-```ts
-// ❌ Unstructured — impossible to query, filter, or alert on
-console.log(`User ${userId} failed to login at ${new Date()}`);
+const meter = metrics.getMeter("api-server");
 
-// ✅ Structured — every field is queryable
-logger.warn({
-  event: 'auth.login_failed',
-  userId,
-  reason: 'invalid_password',
-  attemptCount: 3,
-  ip: req.ip,
-  timestamp: new Date().toISOString(),
+// Counter — things that only go up
+const requestCounter = meter.createCounter("http.requests.total", {
+  description: "Total HTTP requests",
+});
+
+// Histogram — request durations
+const requestDuration = meter.createHistogram("http.request.duration_ms", {
+  description: "HTTP request duration in milliseconds",
+  unit: "ms",
+});
+
+// Gauge — current values
+const activeConnections = meter.createUpDownCounter("db.connections.active", {
+  description: "Active database connections",
+});
+
+// Middleware to record metrics
+app.use((req, res, next) => {
+  const start = performance.now();
+  res.on("finish", () => {
+    const duration = performance.now() - start;
+    requestCounter.add(1, {
+      method: req.method,
+      path: req.route?.path ?? req.path,
+      status: res.statusCode.toString(),
+    });
+    requestDuration.record(duration, {
+      method: req.method,
+      status: res.statusCode.toString(),
+    });
+  });
+  next();
 });
 ```
 
-### What to Always Log
-
-| Always | Never |
-|---|---|
-| Request ID / trace ID | Passwords or password hashes |
-| User ID (not PII) | Credit card numbers |
-| Error type + message | API keys or tokens |
-| Duration (ms) | Full request bodies (may contain PII) |
-| HTTP status code | |
-
----
-
-## Metrics: What to Measure
-
-The four golden signals (Google SRE):
+### Key Metrics to Track
 
 ```
-1. LATENCY       — How long does serving a request take?
-                   Track p50, p95, p99 — not just average
-                   Average hides the worst-case user experience
+RED method (for services):
+  Rate     → requests per second
+  Errors   → error rate (4xx, 5xx)
+  Duration → latency percentiles (P50, P95, P99)
 
-2. TRAFFIC       — How much demand is there?
-                   requests/sec, messages/sec, bytes/sec
+USE method (for resources):
+  Utilization → CPU %, memory %, disk %
+  Saturation  → queue depth, thread pool saturation
+  Errors      → disk failures, OOM kills
 
-3. ERRORS        — What fraction of requests are failing?
-                   HTTP 5xx rate, exception rate, timeout rate
-
-4. SATURATION    — How "full" is your service?
-                   CPU %, memory %, queue depth
+Business metrics:
+  - Sign-ups per hour
+  - Orders processed per minute
+  - Revenue per day
+  - API calls per customer
 ```
 
 ---
 
-## SLOs / SLIs / Error Budgets
-
-The framework that connects technical work to business reliability:
+## SLIs, SLOs & Error Budgets
 
 ```
-SLI (Service Level Indicator) — a specific, measurable signal:
-  "HTTP 200 responses as % of all responses to /api/checkout"
+SLI (Service Level Indicator) → What you measure
+  "99.2% of requests complete in <500ms"
 
-SLO (Service Level Objective) — your reliability promise:
-  "99.9% of checkout requests succeed over a 30-day window"
+SLO (Service Level Objective) → Your target
+  "99.9% of requests should complete in <500ms"
 
-Error Budget — how much unreliability you can afford:
-  "30 days × 0.1% error tolerance = 43.2 minutes of downtime allowed"
+SLA (Service Level Agreement) → Your contract (with penalties)
+  "99.95% uptime or we refund 10%"
 
-Error Budget Policy:
-  Budget healthy  → ship new features freely
-  Budget depleted → freeze releases, focus only on reliability
+Error Budget = 100% - SLO
+  SLO: 99.9% → Error budget: 0.1% → 43 min downtime/month
+  SLO: 99.5% → Error budget: 0.5% → 3.6 hours downtime/month
+
+Rules:
+- Burn error budget too fast → freeze deployments
+- Error budget remaining → ship features faster
+- Don't set SLOs you can't measure
+- SLOs should be slightly below actual performance
 ```
 
 ---
 
-## AI Observability
+## Health Checks
 
-Standard metrics don't cover AI systems. Add these:
-
-```ts
-// Track every AI call with these dimensions
-logger.info({
-  event: 'ai.completion',
-  model: 'gpt-4o',
-  prompt_tokens: response.usage.prompt_tokens,
-  completion_tokens: response.usage.completion_tokens,
-  total_tokens: response.usage.total_tokens,
-  latency_ms: duration,
-  cost_usd: calculateCost(model, usage),
-  trace_id: currentTraceId(),
-
-  // Eval scores (from async evaluation pipeline)
-  eval_faithfulness: 0.92,    // Did output match sources?
-  eval_relevance: 0.88,       // Did output answer the question?
+```typescript
+// Liveness: Is the process running?
+app.get("/health/live", (req, res) => {
+  res.status(200).json({ status: "ok" });
 });
-```
 
-### AI-Specific Alerts
+// Readiness: Can it accept traffic?
+app.get("/health/ready", async (req, res) => {
+  try {
+    await db.raw("SELECT 1");           // database check
+    await redis.ping();                  // cache check
+    res.status(200).json({
+      status: "ready",
+      checks: { database: "ok", cache: "ok" },
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: "not ready",
+      checks: { database: error.message },
+    });
+  }
+});
 
-```
-🚨 TOKEN COST SPIKE     → cost per request > 2x trailing average → alert
-🚨 LATENCY DEGRADATION  → p95 LLM latency > 5s → alert
-🚨 EVAL SCORE DECLINE   → faithfulness drops below 0.8 (model drift?) → alert
-🚨 ERROR RATE SPIKE     → 429s or context_length errors > 5% → alert
+// ❌ HALLUCINATION TRAP: Liveness ≠ Readiness
+// Liveness fails → container restarts (only for unrecoverable states)
+// Readiness fails → stop sending traffic (temporary — DB down, etc.)
+// Making liveness check the DB → DB outage restarts all containers → cascade failure
 ```
 
 ---
 
-## Output Format
-
-When this skill produces a recommendation or design decision, structure your output as:
+## Alerting
 
 ```
-━━━ Observability Recommendation ━━━━━━━━━━━━━━━━
-Decision:    [what was chosen / proposed]
-Rationale:   [why — one concise line]
-Trade-offs:  [what is consciously accepted]
-Next action: [concrete next step for the user]
-─────────────────────────────────────────────────
-Pre-Flight:  ✅ All checks passed
-             or ❌ [blocking item that must be resolved first]
+Alert design rules:
+1. Alert on SYMPTOMS, not causes (high latency, not "CPU is 80%")
+2. Every alert must have a runbook link
+3. Every alert must be ACTIONABLE — if you can't do anything, it's a notification
+4. Use severity levels:
+   - Critical → page on-call (customer-facing outage)
+   - Warning  → Slack notification (degraded, not broken)
+   - Info     → dashboard only (awareness)
+5. Avoid alert fatigue — fewer, meaningful alerts beat many noisy ones
 ```
-
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/tribunal-backend`**
-**Active reviewers: `logic` · `security` · `performance`**
-
-### ❌ Forbidden AI Tropes in Observability
-
-1. **Logging sensitive data** — never log request bodies wholesale — they contain passwords, tokens, PII. Log only specific, safe fields.
-2. **Tracking averages only** — `avg(latency)` hides the 1% of users who get 10x worse experience. Always use percentiles (p95, p99).
-3. **100% SLO targets** — `99.999%` SLOs are wrong for most services. They consume all error budget instantly and paralyze product velocity.
-4. **Inventing OTel packages** — only use `@opentelemetry/{sdk-node,api,exporter-*}` from the official `@opentelemetry` npm org.
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Are logs structured JSON (not string-interpolated messages)?
-✅ Is no PII or credential data being logged?
-✅ Are latency measurements tracking percentiles (p95/p99), not just averages?
-✅ Does every async operation have a trace span with error recording?
-✅ Are AI calls instrumented with token count + cost + latency tracking?
-✅ Is there an SLO defined with an explicit error budget policy?
-```
-
 
 ---
 
 ## 🤖 LLM-Specific Traps
 
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+1. **`console.log` in Production:** Use structured logging (Pino/Winston). `console.log` can't be searched or filtered.
+2. **Logging PII:** Never log emails, names, passwords, or tokens. Use redaction.
+3. **Liveness Checking Dependencies:** Liveness probes must NOT check DB/Redis. Only readiness probes check dependencies.
+4. **Alerting on Causes:** "CPU is 80%" is not actionable. Alert on "P95 latency > 1s" instead.
+5. **Missing Request IDs:** Without correlation IDs, debugging distributed systems is impossible.
+6. **Percentiles vs Averages:** Average latency hides outliers. Track P50, P95, P99.
+7. **No Error Budgets:** Without SLOs and error budgets, "availability" is subjective.
+8. **Metrics Without Labels:** `requests_total` without `method`, `path`, `status` labels is useless.
+9. **Tracing Without Sampling:** 100% trace collection is expensive. Use head-based or tail-based sampling.
+10. **Log Levels in Code:** Hardcoded `logger.debug()` everywhere. Use configurable log levels via env.
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Integration
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+**Slash command: `/tribunal-backend`**
 
 ### ✅ Pre-Flight Self-Audit
 
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Am I using structured logging (not console.log)?
+✅ Do all logs include requestId for correlation?
+✅ Am I NOT logging PII or secrets?
+✅ Are liveness and readiness checks separate?
+✅ Is OpenTelemetry tracing configured?
+✅ Am I tracking RED metrics (Rate, Errors, Duration)?
+✅ Are SLOs defined with error budgets?
+✅ Do alerts have runbook links?
+✅ Am I alerting on symptoms (not causes)?
+✅ Are log levels configurable via environment variable?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

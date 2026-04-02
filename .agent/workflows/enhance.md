@@ -1,139 +1,151 @@
 ---
-description: Add or update features in existing application. Used for iterative development.
+description: Add or update features in existing applications. Performs impact analysis before any code change — identifies all dependents, detects breaking changes, generates Tribunal-reviewed modifications. No change is written to disk without Human Gate approval.
 ---
 
-# /enhance — Extend What Exists
+# /enhance — Feature Addition & Modification
 
 $ARGUMENTS
 
 ---
 
-This command adds to or improves existing code **without breaking what already works**. Enhancement is not greenfield — the existing system shapes what can be done and how.
-
----
-
-## When to Use /enhance vs Other Commands
+## When to Use /enhance
 
 | Use `/enhance` when... | Use something else when... |
-|---|---|
-| Adding to working, existing code | Building from scratch → `/create` |
-| Extending a function or module | Restructuring without new behavior → `/refactor` |
-| Adding a new endpoint to an existing API | Fixing a broken behavior → `/debug` |
-| Upgrading a component's capabilities | Auditing for problems → `/review` |
+|:---|:---|
+| Adding a feature to an existing codebase | Starting from scratch → `/create` |
+| Changing existing behavior | Fixing a bug → `/debug` |
+| Iterating on a recently created feature | Full architecture review → `/plan` |
+| Extending an existing API or component | Performance problems → `/tribunal-performance` |
 
 ---
 
-## First Rule: Read, Then Write
+## Phase 1 — Impact Analysis (MANDATORY Before Any Change)
 
-> Never modify code you haven't read.
-> Never modify a function without checking what calls it.
+Before writing any code, map what will be affected:
 
-The first step of every enhancement is a **reading pass** — not a writing pass.
+```bash
+# What does the target file import?
+head -30 [target-file]  # Read all imports at the top
+
+# Who imports the target file? (callers)
+grep -r "from '.*target-module'" src/ --include="*.ts" --include="*.tsx"
+
+# Who references the specific function/type being changed?
+grep -r "targetFunction\|TargetType" src/ --include="*.ts" --include="*.tsx"
+```
+
+**Risk Classification:**
+
+| File import count | Risk Level | Required Action |
+|:---|:---|:---|
+| 0–2 importers | Low | Normal Tribunal review |
+| 3–5 importers | Medium | List all affected files in plan |
+| 6+ importers | High | Full dependency map + staged rollout |
 
 ---
 
-## Enhancement Sequence
-
-### Step 1 — Map the Impact Zone
-
-Before touching any file, produce this map:
+## Phase 2 — Breaking Change Detection
 
 ```
-Files to change:      [list — explicit, not "etc."]
-Functions affected:   [list — every function being modified]
-Callers of those:     [list — these must remain unbroken]
-Tests covering them:  [list — these must pass after the change]
-Exported symbols:     [list — any public API that must stay compatible]
+Changes that BREAK existing callers:
+□ Removing or renaming exported function/type/component
+□ Adding required (non-optional) parameter to existing function
+□ Changing a parameter type to incompatible type
+□ Changing return type to incompatible type
+□ Database schema changes (remove column, rename column, change type)
+□ API contract changes (removing fields from response)
+
+Changes that DON'T break callers:
+□ Adding optional parameter with default value
+□ Adding new exported function (existing callers unaffected)
+□ Adding nullable column to DB schema
+□ Widening return type (e.g., T → T | null)
+□ Internal implementation changes with same interface
 ```
 
-> ⚠️ If the impact zone spans more than 10 files, pause and confirm scope with the user before proceeding.
-
-### Step 2 — Define What Changes vs What Stays
-
-```
-Adding:      [new capability being added]
-Modifying:   [existing behavior being changed — explain why]
-Preserving:  [things that must not change — API contracts, test expectations, response formats]
-```
-
-Any change to a **public interface** (function signature, API response shape, exported type) triggers an update of **all callers** — not just the changed file.
-
-### Step 3 — Implement Through Tribunal Gate
-
-| Enhancement Type | Tribunal Gate |
-|---|---|
-| Backend logic / API change | `/tribunal-backend` |
-| Frontend / UI component | `/tribunal-frontend` |
-| DB queries or schema | `/tribunal-database` |
-| Cross-domain change | `/tribunal-full` |
-| Mobile UI component | `/tribunal-mobile` |
-| Performance-critical path | `/tribunal-performance` |
-
-The code goes through Tribunal **before** being shown to the user.
-
-### Step 4 — Regression Safety Check
-
-```
-□ Existing tests: still pass (none were broken by the change)
-□ New tests added: covering the new behavior
-□ Callers updated: if any interface changed, all callers are updated together
-□ TypeScript / lint: check passes after the enhancement
-```
-
-All four must be true before the enhancement is considered complete.
+If any breaking changes are detected → document them in the plan before proceeding.
 
 ---
 
-## Response Template
+## Phase 3 — Enhancement Plan
 
-```
-Enhancement: [What was added or changed, in one sentence]
+```markdown
+## Enhancement: [Feature Name]
 
-Impact Zone:
-  Changed:         [files modified]
-  Callers updated: [files updated, or "none — interface preserved"]
-
-Tribunal result:
-  [reviewer]: [APPROVED | REJECTED — reason]
-
-Regression risk:
-  🟢 Low    — new path only, no existing path changed
-  🟡 Medium — shared code modified, callers reviewed and updated
-  🔴 High   — interface changed, all callers updated and verified
+Scope: [what is changing]
+Impact zone: [N files affected]
+Breaking changes: [Yes: list | None detected]
 
 Changes:
-  [diff or before/after]
+1. [file-a.ts] — [what changes and why]
+2. [file-b.ts] — [downstream update required because...]
+3. [file-c.test.ts] — [test updates required]
+```
+
+> **Human Gate:** Plan presented before any editing begins.
+
+---
+
+## Phase 4 — Tribunal-Reviewed Implementation
+
+Each file change goes through the Tribunal pipeline:
+
+```
+logic-reviewer:      runs on every change
+security-auditor:    runs on every change
+[domain-specific]:   activated based on change type
+```
+
+**NEVER modify files outside the defined impact zone without approval.**
+
+---
+
+## Phase 5 — Consistency Verification
+
+After all changes:
+
+```
+□ npx tsc --noEmit — zero new TypeScript errors
+□ npm test — all existing tests still pass
+□ New tests written for the new behavior
+□ API response contracts verified not to have changed unexpectedly
+□ Database migration (if schema changed) runs cleanly
 ```
 
 ---
 
-## Hallucination Guard
+## Enhancement Guard
 
-- **Read existing code before describing it** — never assume what a function does from its name
-- **Preserved interfaces must stay identical** — adding a required parameter breaks every caller silently
-- **Unknown patterns get `// VERIFY`** — never guess at a codebase convention or framework behavior
-- **Never delete or rename an export** without verifying all import sites are updated
-- **`// VERIFY: check method exists`** on any method call not seen in existing code or official docs
+```
+❌ Never modify files outside the documented impact zone without re-running Impact Analysis
+❌ Never add a required parameter without updating all callers
+❌ Never rename an exported symbol without grepping all callers first
+❌ Never change a DB column without an expand-and-contract migration plan
+❌ Never update package versions silently — show in plan
+❌ Never "fix other things while we're here" — scope creep
+```
 
 ---
 
 ## Cross-Workflow Navigation
 
-| If during /enhance you encounter... | Go to |
-|---|---|
-| Unexpected behavior in existing code | `/debug` to root-cause before changing anything |
-| Code quality so poor it needs restructuring | `/refactor` first, then come back to `/enhance` |
-| Security vulnerability in the code you're reading | `/audit` to determine blast radius |
-| Tests don't exist for the area being changed | `/test` first to establish a baseline |
+| After /enhance shows... | Go to |
+|:---|:---|
+| A breaking change in auth or security code | `/tribunal-backend` |
+| DB schema changes required | `/tribunal-database` |
+| Component redesign needed | `/tribunal-frontend` |
+| New tests required | `/test` |
+| Performance impact suspected | `/tribunal-performance` |
 
 ---
 
-## Usage
+## Usage Examples
 
 ```
-/enhance add pagination to the users list API endpoint
-/enhance add rate limiting to all authentication routes
-/enhance upgrade the search component to support filters
-/enhance add retry logic to the payment service's HTTP client
-/enhance extend the user model to support multiple email addresses
+/enhance add pagination to the /api/users endpoint
+/enhance add server-side error boundary to the dashboard page
+/enhance update the User model to add a phoneNumber field
+/enhance replace useState with useOptimistic for the like button
+/enhance add rate limiting to the POST /auth/login endpoint
+/enhance add dark mode support to the design system
 ```

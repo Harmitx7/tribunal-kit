@@ -1,296 +1,304 @@
 ---
 name: realtime-patterns
-description: Real-time and collaborative application patterns. WebSockets, Server-Sent Events for AI streaming, CRDTs for conflict-free collaboration, presence, and sync engines. Use when building live collaboration, AI streaming UIs, live dashboards, or multiplayer features.
+description: Real-time application mastery. WebSockets, Server-Sent Events (SSE), CRDTs for conflict-free collaboration, presence systems, optimistic updates, live cursors, multiplayer state sync, reconnection strategies, and real-time database patterns (Supabase Realtime, Firebase). Use when building chat, live collaboration, dashboards, or multiplayer features.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-01
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Real-Time Patterns
+# Real-Time Patterns — Live Application Mastery
 
-> The hardest part of real-time systems is not the latency — it's the concurrent state.
-> Two users editing the same document at the same millisecond must both win.
-
----
-
-## Transport Selection
-
-Choose the transport based on what the data flow looks like:
-
-| Transport | Direction | Best For | Avoid When |
-|---|---|---|---|
-| **WebSocket** | Bidirectional | Chat, multiplayer, collaboration | Simple server push |
-| **SSE (Server-Sent Events)** | Server → client only | AI streaming, dashboards, notifications | Client needs to send data |
-| **WebRTC** | Peer-to-peer | Video/audio, P2P file transfer | Server coordination needed |
-| **HTTP Polling** | Client pull | Low-frequency updates, fallback | > 1 update per second |
-| **HTTP Streaming** | Server → client | Large response streaming, AI output | Need bidirectionality |
+> Real-time is a feature, not a technology. Choose the simplest protocol that solves the problem.
+> WebSocket is overused. SSE handles 80% of real-time needs with 20% of the complexity.
 
 ---
 
-## WebSocket Patterns
+## Protocol Selection
 
-### Connection Lifecycle
-
-```ts
-class WebSocketManager {
-  private ws: WebSocket | null = null;
-  private reconnectDelay = 1000;
-  private maxReconnectDelay = 30000;
-
-  connect(url: string) {
-    this.ws = new WebSocket(url);
-
-    this.ws.onopen = () => {
-      this.reconnectDelay = 1000;  // Reset on successful connect
-      this.authenticate();
-    };
-
-    this.ws.onclose = (event) => {
-      if (!event.wasClean) {
-        // Exponential backoff reconnect — never hammer the server
-        setTimeout(() => this.connect(url), this.reconnectDelay);
-        this.reconnectDelay = Math.min(this.reconnectDelay * 2, this.maxReconnectDelay);
-      }
-    };
-
-    this.ws.onerror = (err) => {
-      console.error('WebSocket error:', err);
-      // onclose fires after onerror — let it handle reconnect
-    };
-  }
-
-  private authenticate() {
-    // ✅ Always authenticate AFTER connection — never trust URL params for auth
-    this.ws!.send(JSON.stringify({
-      type: 'auth',
-      token: getAccessToken(),
-    }));
-  }
-}
 ```
+┌─────────────────────────────────────────────────────────────┐
+│              When to Use What                                │
+├─────────────────────────────────────────────────────────────┤
+│ SSE (Server-Sent Events)                                    │
+│   ✅ Server → Client only (one-way)                        │
+│   ✅ AI token streaming                                    │
+│   ✅ Live feeds, notifications, dashboards                  │
+│   ✅ Auto-reconnection built in                             │
+│   ✅ Works through HTTP proxies and CDNs                    │
+│                                                              │
+│ WebSocket                                                    │
+│   ✅ Bidirectional (client ↔ server)                        │
+│   ✅ Chat, gaming, collaborative editing                    │
+│   ✅ High-frequency updates (< 100ms intervals)            │
+│   ❌ Doesn't work through some proxies/CDNs                │
+│   ❌ No auto-reconnection (must implement)                  │
+│                                                              │
+│ HTTP Polling                                                 │
+│   ✅ Simplest implementation                                │
+│   ✅ Works everywhere                                       │
+│   ❌ Latency (poll interval)                                │
+│   ❌ Wasted requests when nothing changed                   │
+│                                                              │
+│ WebTransport (emerging)                                      │
+│   ✅ UDP-based, lowest latency                              │
+│   ✅ Multiplayer gaming, video streaming                    │
+│   ❌ Limited browser support (2024+)                        │
+└─────────────────────────────────────────────────────────────┘
 
-### Backpressure
-
-```ts
-// ❌ Unbounded send — crashes if network is slow
-for (const item of hugeArray) {
-  ws.send(JSON.stringify(item));  // Buffers infinitely if slow
-}
-
-// ✅ Check bufferedAmount before sending
-function sendWhenReady(ws: WebSocket, data: string) {
-  if (ws.bufferedAmount > 65536) {  // 64KB threshold
-    setTimeout(() => sendWhenReady(ws, data), 50);
-    return;
-  }
-  ws.send(data);
-}
+❌ HALLUCINATION TRAP: Don't default to WebSocket for everything
+   AI streaming → SSE (one-way, auto-reconnect)
+   Notifications → SSE (one-way)
+   Chat → WebSocket (bidirectional)
+   Live dashboard → SSE (one-way)
+   Collaborative editing → WebSocket + CRDT
 ```
 
 ---
 
-## SSE for AI Streaming
+## Server-Sent Events (SSE)
 
-The right transport for one-directional AI text streaming:
+```typescript
+// Server (Node.js/Express)
+app.get("/api/events", (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  res.setHeader("X-Accel-Buffering", "no"); // disable nginx buffering
 
-### Server (Node.js / Hono)
+  // Send initial connection event
+  res.write(`data: ${JSON.stringify({ type: "connected" })}\n\n`);
 
-```ts
-app.get('/api/chat/stream', async (c) => {
-  const { message } = c.req.query();
+  // Heartbeat to keep connection alive
+  const heartbeat = setInterval(() => {
+    res.write(": heartbeat\n\n"); // comment line, ignored by client
+  }, 15000);
 
-  // Set SSE headers
-  c.res.headers.set('Content-Type', 'text/event-stream');
-  c.res.headers.set('Cache-Control', 'no-cache');
-  c.res.headers.set('Connection', 'keep-alive');
+  // Subscribe to events
+  const handler = (event: AppEvent) => {
+    res.write(`event: ${event.type}\n`);
+    res.write(`data: ${JSON.stringify(event.data)}\n`);
+    res.write(`id: ${event.id}\n\n`);  // enables auto-resume
+  };
+  eventBus.subscribe(handler);
 
-  const stream = await openai.chat.completions.create({
-    model: 'gpt-4o',
-    messages: [{ role: 'user', content: message }],
-    stream: true,
+  // Cleanup on disconnect
+  req.on("close", () => {
+    clearInterval(heartbeat);
+    eventBus.unsubscribe(handler);
   });
-
-  const encoder = new TextEncoder();
-  const readable = new ReadableStream({
-    async start(controller) {
-      for await (const chunk of stream) {
-        const text = chunk.choices[0]?.delta?.content ?? '';
-        if (text) {
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
-        }
-      }
-      controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-      controller.close();
-    },
-  });
-
-  return new Response(readable);
-});
-```
-
-### Client (React)
-
-```tsx
-function useAIStream(prompt: string) {
-  const [text, setText] = useState('');
-  const [done, setDone] = useState(false);
-
-  useEffect(() => {
-    const source = new EventSource(`/api/chat/stream?message=${encodeURIComponent(prompt)}`);
-
-    source.onmessage = (e) => {
-      if (e.data === '[DONE]') {
-        setDone(true);
-        source.close();
-        return;
-      }
-      const { text: chunk } = JSON.parse(e.data);
-      setText(prev => prev + chunk);
-    };
-
-    source.onerror = () => source.close();
-
-    return () => source.close();  // Cleanup on unmount
-  }, [prompt]);
-
-  return { text, done };
-}
-```
-
----
-
-## CRDTs: Conflict-Free Collaboration
-
-CRDTs (Conflict-free Replicated Data Types) guarantee that concurrent edits from multiple users always merge to the same result, regardless of order or network conditions.
-
-### When to Use CRDTs vs Last-Write-Wins
-
-```
-Last-Write-Wins (LWW):
-  ✅ Settings, preferences, single-value fields
-  ❌ Text editing — loses concurrent edits
-
-Operational Transform (OT):
-  ✅ Google Docs-style (centralized server required)
-  ❌ Peer-to-peer, offline-first (server is the truth arbiter)
-
-CRDTs:
-  ✅ Collaborative text (Yjs), presence, shared lists
-  ✅ Offline-first, peer-to-peer
-  ✅ No central server required for convergence
-```
-
-### Yjs — The Standard CRDT Library
-
-```ts
-import * as Y from 'yjs';
-import { WebsocketProvider } from 'y-websocket';
-
-// Create a shared document
-const doc = new Y.Doc();
-
-// Connect to sync server — providers handle conflict resolution
-const provider = new WebsocketProvider('wss://your-server.com', 'room-id', doc);
-
-// Y.Text — CRDT for collaborative text editing
-const yText = doc.getText('document');
-
-// Bind to a rich text editor (Tiptap, ProseMirror, CodeMirror)
-const editor = new Editor({
-  extensions: [Collaboration.configure({ document: doc })],
 });
 
-// Y.Map — CRDT for key-value shared state
-const awareness = new Y.Map();
-awareness.set('cursor', { userId, position });
+// Client
+const eventSource = new EventSource("/api/events");
+
+eventSource.addEventListener("notification", (e) => {
+  const data = JSON.parse(e.data);
+  showNotification(data);
+});
+
+// Auto-reconnection is built-in!
+// The browser automatically reconnects with Last-Event-ID header
+eventSource.onerror = () => {
+  console.log("Connection lost — auto-reconnecting...");
+};
 ```
 
 ---
 
-## Presence Patterns
+## WebSocket
 
-Presence = "who is online and what are they doing":
+```typescript
+// Server (ws library)
+import { WebSocketServer, WebSocket } from "ws";
 
-```ts
-// Server: track presence via WebSocket lifecycle
-const presence = new Map<string, { userId: string; cursor: Position }>();
+const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
 
-wss.on('connection', (ws, req) => {
-  const userId = authenticate(req);
+// Connection management
+const clients = new Map<string, WebSocket>();
 
-  ws.on('message', (data) => {
-    const msg = JSON.parse(data.toString());
-    if (msg.type === 'cursor') {
-      presence.set(userId, { userId, cursor: msg.position });
-      broadcast({ type: 'presence', users: [...presence.values()] });
+wss.on("connection", (ws, req) => {
+  const userId = authenticateFromHeaders(req);
+  clients.set(userId, ws);
+
+  ws.on("message", (raw) => {
+    try {
+      const message = JSON.parse(raw.toString());
+      handleMessage(userId, message);
+    } catch (e) {
+      ws.send(JSON.stringify({ error: "Invalid message format" }));
     }
   });
 
-  ws.on('close', () => {
-    presence.delete(userId);
-    broadcast({ type: 'presence', users: [...presence.values()] });
+  ws.on("close", () => {
+    clients.delete(userId);
+    broadcastPresence();
   });
+
+  ws.on("pong", () => {
+    // Client is alive
+  });
+});
+
+// Heartbeat — detect dead connections
+const interval = setInterval(() => {
+  wss.clients.forEach((ws) => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.ping();
+    }
+  });
+}, 30000);
+
+// Broadcast to room
+function broadcastToRoom(roomId: string, message: unknown, excludeUser?: string) {
+  const roomMembers = getRoomMembers(roomId);
+  for (const memberId of roomMembers) {
+    if (memberId === excludeUser) continue;
+    const ws = clients.get(memberId);
+    if (ws?.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(message));
+    }
+  }
+}
+
+// Client with reconnection
+class ReconnectingWebSocket {
+  private ws: WebSocket | null = null;
+  private retryCount = 0;
+  private maxRetries = 10;
+
+  connect(url: string) {
+    this.ws = new WebSocket(url);
+    this.ws.onopen = () => { this.retryCount = 0; };
+    this.ws.onclose = () => { this.reconnect(url); };
+    this.ws.onerror = () => { this.ws?.close(); };
+  }
+
+  private reconnect(url: string) {
+    if (this.retryCount >= this.maxRetries) return;
+    const delay = Math.min(1000 * 2 ** this.retryCount, 30000);
+    this.retryCount++;
+    setTimeout(() => this.connect(url), delay);
+  }
+}
+```
+
+---
+
+## Optimistic Updates
+
+```typescript
+// React pattern: update UI immediately, reconcile on server response
+async function toggleLike(postId: string) {
+  // 1. Optimistic update (instant UI feedback)
+  setLiked((prev) => !prev);
+  setLikeCount((prev) => liked ? prev - 1 : prev + 1);
+
+  try {
+    // 2. Server request
+    await api.post(`/posts/${postId}/like`);
+  } catch (error) {
+    // 3. Rollback on failure
+    setLiked((prev) => !prev);
+    setLikeCount((prev) => liked ? prev + 1 : prev - 1);
+    toast.error("Failed to update. Please try again.");
+  }
+}
+
+// With React Query / TanStack Query:
+const likeMutation = useMutation({
+  mutationFn: (postId: string) => api.post(`/posts/${postId}/like`),
+  onMutate: async (postId) => {
+    await queryClient.cancelQueries({ queryKey: ["post", postId] });
+    const previous = queryClient.getQueryData(["post", postId]);
+    queryClient.setQueryData(["post", postId], (old: Post) => ({
+      ...old,
+      liked: !old.liked,
+      likeCount: old.liked ? old.likeCount - 1 : old.likeCount + 1,
+    }));
+    return { previous };
+  },
+  onError: (err, postId, context) => {
+    queryClient.setQueryData(["post", postId], context?.previous);
+  },
+  onSettled: (data, err, postId) => {
+    queryClient.invalidateQueries({ queryKey: ["post", postId] });
+  },
 });
 ```
 
 ---
 
-## Sync Engine Selection
+## Presence System
 
-| Engine | Model | Best For |
-|---|---|---|
-| **PartyKit** | WebSocket-native, Durable Objects | Multiplayer apps, AI + realtime |
-| **Liveblocks** | Managed CRDT + presence | Collaborative SaaS (Figma-style) |
-| **Supabase Realtime** | PostgreSQL change streams | Postgres-centric apps |
-| **ElectricSQL** | Local-first sync from Postgres | Offline-first apps |
-| **Replicache** | Client-side mutations + sync | Highly interactive, offline-capable |
+```typescript
+// Track who's online, typing, viewing
+
+interface PresenceState {
+  userId: string;
+  status: "online" | "away" | "offline";
+  cursor?: { x: number; y: number };
+  lastSeen: number;
+}
+
+// Server-side presence manager
+class PresenceManager {
+  private presence = new Map<string, PresenceState>();
+  private readonly TIMEOUT_MS = 30_000;
+
+  update(userId: string, state: Partial<PresenceState>) {
+    this.presence.set(userId, {
+      ...this.presence.get(userId),
+      userId,
+      status: "online",
+      lastSeen: Date.now(),
+      ...state,
+    } as PresenceState);
+  }
+
+  getActive(): PresenceState[] {
+    const now = Date.now();
+    return [...this.presence.values()].filter(
+      (p) => now - p.lastSeen < this.TIMEOUT_MS,
+    );
+  }
+
+  remove(userId: string) {
+    this.presence.delete(userId);
+  }
+}
+```
 
 ---
 
-## Output Format
+## 🤖 LLM-Specific Traps
 
-When this skill produces or reviews code, structure your output as follows:
-
-```
-━━━ Realtime Patterns Report ━━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Realtime Patterns
-Language:    [detected language / framework]
-Scope:       [N files · N functions]
-─────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [test output / lint pass / compile success]
-```
-
-**VBC (Verification-Before-Completion) is mandatory.**
-Do not mark status as VERIFIED until concrete terminal evidence is provided.
-
+1. **WebSocket for Everything:** SSE handles 80% of real-time needs. Only use WebSocket for bidirectional communication.
+2. **No Reconnection Logic:** WebSocket has NO built-in reconnection. Always implement exponential backoff reconnection.
+3. **Missing Heartbeat:** Without ping/pong, dead connections stay open forever. Implement heartbeat on both sides.
+4. **Unbounded Message Queues:** Queue messages for offline clients, but set a MAX queue size. Memory will explode otherwise.
+5. **No Authentication on WebSocket:** Authenticate during the HTTP upgrade handshake, not after connection.
+6. **Broadcasting to All Clients:** Use rooms/channels. Broadcasting to every connected client doesn't scale.
+7. **Optimistic Updates Without Rollback:** If you update the UI optimistically, you MUST handle rollback on failure.
+8. **SSE Without `X-Accel-Buffering: no`:** Nginx buffers SSE responses by default. Disable buffering.
+9. **No Event ID for Resume:** SSE clients use `Last-Event-ID` to resume after disconnect. Always send event IDs.
+10. **Presence Without Timeout:** Don't rely on `close` events alone. Users can lose connection without triggering close.
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/tribunal-backend`**
-**Active reviewers: `logic` · `security` · `performance`**
-
-### ❌ Forbidden AI Tropes in Real-Time Engineering
-
-1. **Auth in URL params** — `ws://server.com?token=abc123` — tokens in URLs appear in logs and browser history. Authenticate via first message after handshake.
-2. **No reconnect logic** — all WebSocket connections will drop. No reconnect = broken app on any network hiccup.
-3. **Unbounded broadcast** — `wss.clients.forEach(ws => ws.send(data))` with no grouping = O(n) for every event.
-4. **Polling instead of streaming** — `setInterval(() => fetch('/api/ai-status'), 500)` for AI responses = wasteful; use SSE.
-5. **No backpressure handling** — sending data faster than the client can process = WebSocket buffer OOM.
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
 
 ```
-✅ Are WebSocket connections authenticated via first message, not URL params?
-✅ Is there exponential backoff reconnect logic on unexpected disconnect?
-✅ Are broadcasts scoped to rooms/channels — not sent to all connected clients?
-✅ Is backpressure handled (bufferedAmount check before send)?
-✅ Is SSE used for one-directional AI streaming instead of WebSocket?
+✅ Am I using the simplest protocol for my use case (SSE vs WS)?
+✅ Does the WebSocket implementation have reconnection logic?
+✅ Is there heartbeat/ping-pong for connection health?
+✅ Is authentication done during the HTTP upgrade?
+✅ Do SSE events include IDs for auto-resume?
+✅ Is nginx buffering disabled for SSE?
+✅ Do optimistic updates have rollback on failure?
+✅ Are message queues bounded (max size)?
+✅ Does presence have timeout cleanup (not just close events)?
+✅ Are broadcasts scoped to rooms (not all clients)?
 ```

@@ -1,5 +1,5 @@
 ---
-description: Generate code using the full Tribunal Anti-Hallucination pipeline. Maker generates at low temperature → selected reviewers audit in parallel → Human Gate for final approval.
+description: Generate code using the full Tribunal Anti-Hallucination pipeline. Maker generates grounded in real project context at low temperature → domain-selected reviewers audit in parallel → Human Gate for final approval. Nothing is written to disk without explicit approval.
 ---
 
 # /generate — Hallucination-Free Code Generation
@@ -8,18 +8,14 @@ $ARGUMENTS
 
 ---
 
-This command runs code generation through the full Tribunal pipeline. Code reaches you only after being reviewed by the appropriate specialist reviewers. **Nothing is written to disk without your explicit approval.**
-
----
-
-## When to Use /generate vs Other Commands
+## When to Use /generate
 
 | Use `/generate` when... | Use something else when... |
-|---|---|
-| You need new code written | Existing code needs to change → `/enhance` |
-| A single focused piece of code is needed | Multi-domain build → `/swarm` or `/create` |
-| You want a safety-audited code snippet | You need a full project structure → `/create` |
-| You need a quick but safe implementation | You want to understand options first → `/plan` |
+|:---|:---|
+| New code needs to be written from scratch | Existing code needs modification → `/enhance` |
+| A single focused piece of code is needed | Multi-domain build → `/create` or `/swarm` |
+| A safe, reviewed snippet is required | You want to understand options first → `/plan` |
+| You need a quick but Tribunal-reviewed piece | Full project structure needed → `/create` |
 
 ---
 
@@ -29,136 +25,133 @@ This command runs code generation through the full Tribunal pipeline. Code reach
 Your request
     │
     ▼
-Context scan — existing files, schema, package.json read first
+Context scan (MANDATORY before first line of code)
+├── Read package.json → verify all imports exist
+├── Read tsconfig.json → understand strictness, paths aliases
+├── Read referenced files → understand actual data shapes
+└── Read .env.example → know available environment variables
     │
     ▼
 Maker generates at temperature 0.1
-(grounded in real context — never inventing)
+├── Only methods verified in official docs
+├── Only packages in package.json
+├── // VERIFY: [reason] on any uncertain call
+└── No full application generation — modules only
     │
     ▼
-Auto-selected reviewers run in parallel
+Reviewers run in parallel (auto-selected by keyword)
     │
     ▼
-Human Gate — you see all verdicts and the diff
-Only then: write to disk (Y) or discard (N) or revise (R)
+Human Gate — verdicts shown + unified diff
+Y = write to disk | N = discard | R = revise with feedback
 ```
-
----
-
-## Who Reviews It
-
-**Default (always active):**
-
-```
-logic-reviewer     → Hallucinated methods, impossible logic, undefined refs
-security-auditor   → OWASP vulnerabilities, SQL injection, hardcoded secrets
-```
-
-**Auto-activated by keywords in your request:**
-
-| Keyword in request | Additional Reviewers Activated |
-|---|---|
-| `api`, `route`, `endpoint` | `dependency-reviewer` + `type-safety-reviewer` |
-| `sql`, `query`, `database`, `orm` | `sql-reviewer` |
-| `component`, `hook`, `react`, `vue` | `frontend-reviewer` + `type-safety-reviewer` |
-| `test`, `spec`, `coverage`, `jest`, `vitest` | `test-coverage-reviewer` |
-| `slow`, `memory`, `optimize`, `cache` | `performance-reviewer` |
-| `mobile`, `react native`, `flutter` | `mobile-reviewer` |
-| `llm`, `openai`, `anthropic`, `gemini`, `ai`, `embedding` | `ai-code-reviewer` |
-| `a11y`, `wcag`, `aria`, `accessibility` | `accessibility-reviewer` |
-| `import`, `require`, `package` | `dependency-reviewer` |
-
-> If unsure which reviewers to activate, use `/tribunal-full` for maximum coverage.
 
 ---
 
 ## What the Maker Is Not Allowed to Do
 
 ```
-❌ Import a package not verified in the project's package.json
-❌ Call a method it hasn't seen in official documentation
-❌ Use `any` in TypeScript without a comment explaining why
+❌ Import a package not in package.json
+❌ Call a method not verified in official documentation
+❌ Use TypeScript 'any' without an explanation comment
 ❌ Generate an entire application in one shot
-❌ Guess at a database column or table name
-❌ Fabricate API response shapes — read existing types first
-❌ Assume environment variables exist — reference .env.example or documented config
+❌ Guess at database column or table names (read schema first)
+❌ Fabricate API response shapes (read existing types first)
+❌ Assume environment variables exist (read .env.example first)
+❌ Use Next.js 14 patterns in a Next.js 15 project (check version!)
+❌ Use React 18 hooks in a React 19 project (useFormState → useActionState)
 ```
 
-When unsure about any call: the Maker writes `// VERIFY: [reason]` instead of hallucinating.
+When unsure: write `// VERIFY: [specific reason]` instead of hallucinating.
 
 ---
 
-## Reviewer Verdict Meanings
+## Reviewer Auto-Selection
+
+**Always active:**
+```
+logic-reviewer     → Hallucinated methods, undefined refs, impossible logic
+security-auditor   → OWASP vulnerabilities, hardcoded secrets, injection
+```
+
+**Auto-activated by keywords:**
+
+| Keyword in request | Additional Reviewers |
+|:---|:---|
+| `api`, `route`, `endpoint`, `handler` | `dependency-reviewer` + `type-safety-reviewer` |
+| `sql`, `query`, `database`, `prisma`, `drizzle` | `sql-reviewer` |
+| `component`, `hook`, `react`, `vue`, `jsx` | `frontend-reviewer` + `type-safety-reviewer` |
+| `test`, `spec`, `vitest`, `jest`, `playwright` | `test-coverage-reviewer` |
+| `slow`, `optimize`, `cache`, `performance`, `bundle` | `performance-reviewer` |
+| `mobile`, `react native`, `expo` | `mobile-reviewer` |
+| `llm`, `openai`, `anthropic`, `gemini`, `embedding` | `ai-code-reviewer` |
+| `aria`, `wcag`, `a11y`, `accessibility` | `accessibility-reviewer` |
+| `import`, `package`, `npm`, `require` | `dependency-reviewer` |
+
+> For maximum safety on critical code: use `/tribunal-full` for all 11 reviewers simultaneously.
+
+---
+
+## Reviewer Verdicts
 
 | Verdict | Meaning | What Happens |
-|---|---|---|
-| `✅ APPROVED` | No issues found | Code proceeds to Human Gate |
+|:---|:---|:---|
+| `✅ APPROVED` | No issues found | Proceeds to Human Gate |
 | `⚠️ WARNING` | Non-blocking issue | Human Gate shown with warning highlighted |
-| `❌ REJECTED` | Blocking issue found | Code is revised, not shown to human |
+| `❌ REJECTED` | Blocking issue | Maker revises before Human Gate |
 
-**Retry limit:** Maker is revised up to **3 times** per rejection. After 3 failed attempts, the session halts and reports to the user with the full failure history.
+**Retry limit:** Maker is revised up to 3 times per REJECTED verdict. After 3 failures, the session halts and reports to the user with full failure history. No silent failures.
 
 ---
 
 ## Output Format
 
 ```
-━━━ Tribunal: [Domain] ━━━━━━━━━━━━━━━━━━
+━━━ Tribunal: [Domain] ━━━━━━━━━━━━━━━━━━━━━━
 
 Active reviewers: logic · security · [others]
 
-[Generated code with // VERIFY: tags where applicable]
+[Generated code with // VERIFY: tags where uncertain]
 
-━━━ Verdicts ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━ Verdicts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-logic-reviewer:           ✅ APPROVED
-security-auditor:         ✅ APPROVED
-dependency-reviewer:      ⚠️ WARNING — lodash not in package.json
+logic-reviewer:      ✅ APPROVED
+security-auditor:    ✅ APPROVED  
+dependency-reviewer: ⚠️ WARNING — lodash not in package.json
 
-━━━ Warnings ━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━ Warnings ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 dependency-reviewer:
-  ⚠️ Medium — Line 3
-     lodash is imported but not listed in package.json
-     Fix: Run `npm install lodash` or use a built-in alternative
+  ⚠️ Medium — Line 3: 'lodash' imported but not in package.json
+  Fix: npm install lodash  OR  use built-in Array methods
 
-━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━
-
+━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Write to disk?  Y = approve | N = discard | R = revise with feedback
 ```
 
 ---
 
-## Hallucination Guard (Expanded)
-
-- **Context-first**: Maker reads `package.json`, `tsconfig.json`, and any referenced files before writing a single line
-- **No phantom imports**: Every import is verified against the project's dependencies
-- **No invented methods**: Only methods documented in the official library docs are used
-- **`// VERIFY:` on all uncertainty**: Any call that cannot be verified from existing code or official docs gets a `// VERIFY:` comment
-- **No complete app generation**: Large features are broken into reviewable modules, not dumped as a monolith
-- **Secrets stay in env**: No hardcoded credentials, keys, or tokens — ever
-
----
-
 ## Cross-Workflow Navigation
 
-| If the result of /generate shows... | Go to |
-|---|---|
+| After /generate shows... | Go to |
+|:---|:---|
 | Multiple files need changing | `/enhance` for impact-zone analysis |
-| Security-critical code was touched | `/tribunal-full` for maximum coverage |
-| New DB queries are generated | `/tribunal-database` |
-| New API routes are generated | `/tribunal-backend` |
+| Security-critical code was generated | `/tribunal-full` for maximum coverage |
+| DB queries were generated | `/tribunal-database` |
+| New API routes were generated | `/tribunal-backend` |
 | Tests need to be written next | `/test` |
+| Something was rejected 3 times | Escalate to human with failure report |
 
 ---
 
-## Usage
+## Usage Examples
 
 ```
-/generate a JWT middleware for Express with algorithm enforcement
-/generate a Prisma query for users with their posts included
-/generate a debounced search hook in React
-/generate a parameterized SQL query for fetching paginated orders
-/generate a rate-limited fetch wrapper using p-limit
-/generate a zod schema for email + password login input
+/generate a JWT middleware for Express with HS256 algorithm enforcement
+/generate a Prisma query for users with their published posts in last 30 days
+/generate a debounced search hook in React 19 using useDeferredValue
+/generate a parameterized SQL query for paginated order history
+/generate a Zod schema for email + password + role login input
+/generate a Server Action for creating a product with image upload
+/generate a rate-limited fetch wrapper using @upstash/ratelimit
 ```

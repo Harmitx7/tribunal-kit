@@ -1,354 +1,314 @@
 ---
 name: github-operations
-description: Complete Git and GitHub workflow orchestration. Handles branching, committing, pushing, pull requests, conflict resolution, and repository management. Use when working with Git repositories, GitHub Actions, or any version control operations.
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash
-version: 1.0.0
-last-updated: 2026-03-19
+description: Git and GitHub workflow mastery. Branching strategies (Git Flow, trunk-based), commit message conventions, interactive rebase, merge conflict resolution, pull request best practices, GitHub Actions, branch protection rules, monorepo strategies, and git hooks. Use when working with Git, GitHub Actions, or any version control operations.
+allowed-tools: Read, Write, Edit, Glob, Grep
+version: 2.0.0
+last-updated: 2026-04-01
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# GitHub Operations Skill
+# GitHub Operations — Git & CI/CD Workflow Mastery
 
-> Git is a communication tool as much as a version control tool. Commit messages are letters to your future self and your team.
-
----
-
-## Ground Rules
-
-1. **Never force-push to `main` or `master`** — use feature branches
-2. **Always check `git status` before staging** — know what you are committing
-3. **One logical change per commit** — atomic commits are easier to revert
-4. **Pull before push** — always sync with remote first to avoid conflicts
-5. **Never commit secrets** — use `.gitignore` and environment variables
+> Git is not a backup tool. It's a communication system for your team.
+> Every commit tells a story. Every PR is a conversation. Every branch has a purpose.
 
 ---
 
-## Core Workflow Patterns
+## Branching Strategy
 
-### Standard Feature Branch Workflow
-
-```bash
-# 1. Always start from an up-to-date main
-git checkout main
-git pull origin main
-
-# 2. Create a descriptive feature branch
-git checkout -b feat/your-feature-name
-
-# 3. Make changes, then stage selectively
-git add -p                    # Interactive: review each hunk before staging
-git add path/to/specific/file # Or stage specific files
-
-# 4. Commit with a meaningful message
-git commit -m "feat(scope): short summary of change
-
-- Detail 1: what was added/changed and why
-- Detail 2: any side effects or dependencies"
-
-# 5. Push and create PR
-git push -u origin feat/your-feature-name
-```
-
-### Commit Message Convention (Conventional Commits)
+### Trunk-Based Development (Recommended)
 
 ```
-<type>(<scope>): <short summary>
+main ────●────●────●────●────●────●────●──→
+          \  /      \  /      \  /
+           \/        \/        \/
+        feat/auth  fix/typo  feat/dashboard
 
-[optional body: explain WHY, not what]
-
-[optional footer: BREAKING CHANGE, closes #issue]
+Rules:
+- main is always deployable
+- Feature branches live < 2 days
+- Merge via squash PR
+- Deploy on every merge to main
+- Use feature flags for incomplete features
 ```
 
-**Types:**
-| Type | Use When |
-|------|----------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation only |
-| `refactor` | Code restructure, no behavior change |
-| `perf` | Performance improvement |
-| `test` | Adding or fixing tests |
-| `chore` | Build, CI, dependency updates |
-| `style` | Formatting, whitespace (no logic) |
+### Git Flow (For Released Software)
 
-**Example commit messages:**
 ```
-feat(auth): add JWT refresh token rotation
-fix(api): handle null response from external service
-docs(readme): add installation and usage sections
-chore(deps): upgrade typescript to 5.4
+main     ────●──────────────●──────────●──→
+              \            / \        /
+develop  ──●───●──●──●──●───●──●──●──●──→
+            \  / \    /       \  /
+             \/   \  /         \/
+          feature  release   hotfix
+
+Use when:
+- Versioned releases (mobile apps, libraries, SDKs)
+- Multiple environments (staging, production)
+- Long-lived feature development
 ```
 
 ---
 
-## Common Operations
+## Commit Messages
 
-### Fast Git Status Check
+### Conventional Commits
 
-```bash
-git status --short        # Compact view
-git diff --stat           # What changed and how much
-git log --oneline -10     # Last 10 commits, one line each
-git log --oneline --graph --all  # Full branch graph
+```
+type(scope): description
+
+Body (optional): WHY this change was made, not WHAT
+
+Closes #123
+
+Types:
+  feat:     New feature
+  fix:      Bug fix
+  docs:     Documentation only
+  style:    Formatting, whitespace (not CSS)
+  refactor: Code change that neither fixes nor adds
+  perf:     Performance improvement
+  test:     Adding or updating tests
+  chore:    Build process, dependencies
+  ci:       CI/CD changes
+
+Examples:
+✅ feat(auth): add OAuth2 Google login
+✅ fix(cart): prevent negative quantities
+✅ docs(api): add pagination examples to README
+✅ refactor(users): extract validation to separate module
+✅ perf(search): add database index for full-text queries
+✅ chore(deps): upgrade React to v19
+
+❌ BAD:
+❌ "fixed stuff"
+❌ "wip"
+❌ "updates"
+❌ "asdf"
+❌ "final fix (for real this time)"
 ```
 
-### Staging Strategies
+### Breaking Changes
 
-```bash
-# Stage everything (use only when you know all changes are correct)
-git add -A
-
-# Stage interactively — review each change hunk
-git add -p
-
-# Stage a full directory
-git add src/
-
-# Stage individual files
-git add file1.ts file2.ts
-
-# Unstage a file (keep changes, remove from staging)
-git restore --staged file.ts
 ```
+feat(api)!: rename /users endpoint to /accounts
 
-### Undoing Mistakes
+BREAKING CHANGE: The /api/v1/users endpoint has been renamed to
+/api/v1/accounts. All clients must update their API calls.
 
-```bash
-# Undo last commit, keep changes staged
-git reset --soft HEAD~1
-
-# Undo last commit, keep changes unstaged
-git reset HEAD~1
-
-# Discard all local changes (DESTRUCTIVE — cannot undo)
-git restore .
-
-# Revert a commit (creates a new "undo" commit — safe for shared branches)
-git revert <commit-hash>
-
-# Remove a file from git tracking but keep it locally
-git rm --cached file.txt
-echo "file.txt" >> .gitignore
-```
-
-### Resolving Merge Conflicts
-
-```bash
-# Pull with rebase (cleaner history than merge)
-git pull --rebase origin main
-
-# If rebase conflicts occur:
-# 1. Fix conflicts in editor (look for <<<<<<, =======, >>>>>>>)
-# 2. Stage resolved files
-git add resolved-file.ts
-# 3. Continue rebase
-git rebase --continue
-
-# If rebase is a mess, abort and start over
-git rebase --abort
-```
-
-### Working with Remotes
-
-```bash
-# Show all remotes
-git remote -v
-
-# Add a remote
-git remote add origin https://github.com/user/repo.git
-
-# Change remote URL
-git remote set-url origin https://github.com/user/new-repo.git
-
-# Fetch all remotes without merging
-git fetch --all
-
-# Push and set upstream tracking
-git push -u origin branch-name
-
-# Delete a remote branch
-git push origin --delete branch-name
-```
-
-### GitHub CLI (gh) Operations
-
-```bash
-# Create a pull request
-gh pr create --title "feat: my feature" --body "Description of changes" --base main
-
-# List open PRs
-gh pr list
-
-# Check PR status + reviews
-gh pr status
-
-# Merge PR (squash recommended for features)
-gh pr merge --squash
-
-# Create a release
-gh release create v1.0.0 --title "v1.0.0 - Initial Release" --notes "Release notes here"
-
-# Clone a repo
-gh repo clone owner/repo-name
-
-# View repo in browser
-gh repo view --web
+Migration:
+- Replace all /api/v1/users → /api/v1/accounts
+- Update API documentation
 ```
 
 ---
 
-## Advanced Patterns
+## Pull Request Best Practices
 
-### Stashing Work in Progress
+```markdown
+## PR Template
 
-```bash
-# Stash changes with a label
-git stash push -m "WIP: half-done auth feature"
+### What
+Brief description of what this PR does.
 
-# List all stashes
-git stash list
+### Why
+Why is this change needed? Link to issue/ticket.
 
-# Apply most recent stash (keep it in stash list)
-git stash apply
+### How
+Technical approach. What was the design decision?
 
-# Apply a specific stash
-git stash apply stash@{2}
+### Testing
+- [ ] Unit tests added/updated
+- [ ] Manual testing completed
+- [ ] E2E tests passing
 
-# Apply and drop at once
-git stash pop
+### Screenshots (if UI change)
+Before | After
+--- | ---
+![before](url) | ![after](url)
 
-# Drop a specific stash
-git stash drop stash@{0}
+### Checklist
+- [ ] Self-reviewed the diff
+- [ ] No console.log/debugger statements
+- [ ] Types are correct (no `any`)
+- [ ] Error cases handled
+- [ ] Documentation updated (if needed)
 ```
 
-### Tagging Releases
-
-```bash
-# Create an annotated tag (preferred for releases)
-git tag -a v1.2.0 -m "Release version 1.2.0 — added X, fixed Y"
-
-# Push tags to remote
-git push origin --tags
-
-# List existing tags
-git tag -l
-
-# Delete a tag locally and remotely
-git tag -d v1.2.0
-git push origin --delete v1.2.0
+```
+PR Rules:
+1. < 400 lines changed (split larger PRs)
+2. One logical change per PR
+3. Write a clear title (not "fix things")
+4. Link the issue/ticket
+5. Self-review before requesting reviews
+6. Respond to reviews within 24h
+7. Squash merge to main (clean history)
 ```
 
-### Squashing Commits Before PR
+---
+
+## Common Git Operations
+
+### Interactive Rebase
 
 ```bash
-# Interactive rebase to squash last N commits
+# Clean up messy commits before merge
 git rebase -i HEAD~3
 
-# In the editor: change 'pick' to 'squash' (or 's') for commits to merge
-# Keep the first as 'pick', squash the rest into it
+# In the editor:
+pick abc1234 feat(auth): add login endpoint
+squash def5678 fix typo in login
+squash ghi9012 add missing test
+
+# Result: One clean commit instead of three
+
+# ❌ HALLUCINATION TRAP: Never rebase commits that are already pushed/shared
+# Rebasing rewrites history → force push needed → breaks others' branches
+# Only rebase LOCAL, unpushed commits
+```
+
+### Merge Conflict Resolution
+
+```bash
+# Step 1: Update your branch
+git fetch origin
+git rebase origin/main
+
+# Step 2: When conflicts appear
+# Open conflicted files, look for:
+<<<<<<< HEAD
+your changes
+=======
+their changes
+>>>>>>> main
+
+# Step 3: Resolve, stage, continue
+git add resolved-file.ts
+git rebase --continue
+
+# If things go wrong:
+git rebase --abort  # undo everything, back to before rebase
+```
+
+### Stash
+
+```bash
+# Save work without committing
+git stash push -m "WIP: auth feature"
+
+# List stashes
+git stash list
+
+# Apply and remove
+git stash pop
+
+# Apply without removing
+git stash apply stash@{0}
+```
+
+### Undo Mistakes
+
+```bash
+# Undo last commit (keep changes staged)
+git reset --soft HEAD~1
+
+# Undo last commit (keep changes unstaged)
+git reset HEAD~1
+
+# Undo last commit (discard changes) ⚠️ DESTRUCTIVE
+git reset --hard HEAD~1
+
+# Undo a specific commit (creates a new commit)
+git revert abc1234
+
+# Recover deleted branch
+git reflog                    # find the commit
+git checkout -b recovered abc1234
 ```
 
 ---
 
-## README Generation (Quick Pattern)
+## Branch Protection Rules
 
-When adding or updating a README, use this checklist:
+```yaml
+# Recommended rules for main branch:
+Required:
+  - Require pull request before merging
+  - Require at least 1 approval
+  - Dismiss stale reviews on new push
+  - Require status checks to pass (CI)
+  - Require branches to be up to date
+  - Require signed commits (optional, enterprise)
 
-```
-## README Checklist
-- [ ] Project name and one-line description at the top
-- [ ] Badges: build status, version, license
-- [ ] Quick demo or screenshot
-- [ ] Requirements / prerequisites
-- [ ] Installation (copy-paste commands, no ambiguity)
-- [ ] Usage with examples
-- [ ] Configuration / environment variables table
-- [ ] Contributing guidelines link
-- [ ] License declaration
-```
-
----
-
-## .gitignore Templates
-
-### Node.js / TypeScript
-
-```gitignore
-node_modules/
-dist/
-build/
-.env
-.env.local
-.env.*.local
-*.log
-.DS_Store
-Thumbs.db
-coverage/
-.nyc_output/
-```
-
-### Python
-
-```gitignore
-__pycache__/
-*.py[cod]
-*.egg-info/
-dist/
-build/
-.venv/
-venv/
-.env
-*.log
-.pytest_cache/
+Recommended:
+  - Restrict who can push (no direct push to main)
+  - Require linear history (squash merge)
+  - Auto-delete head branches after merge
 ```
 
 ---
 
-## Output Format
+## Git Hooks (Husky + lint-staged)
 
-When this skill produces git operations or reviews them, structure your output as:
-
-```
-━━━ GitHub Operations Report ━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       github-operations
-Scope:       [repo name / branch]
-Operation:   [commit / push / PR / merge / etc.]
-─────────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [git output / push confirmation / PR link]
+```json
+// package.json
+{
+  "scripts": {
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,yml}": ["prettier --write"]
+  }
+}
 ```
 
-**VBC (Verification-Before-Completion) is mandatory.**
-Do not mark status as VERIFIED until concrete terminal evidence (e.g., push success, PR link) is provided.
+```bash
+# .husky/pre-commit
+npx lint-staged
+
+# .husky/commit-msg
+npx commitlint --edit $1
+```
+
+```javascript
+// commitlint.config.js
+export default {
+  extends: ["@commitlint/config-conventional"],
+};
+```
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🤖 LLM-Specific Traps
 
-**Slash command: `/review` or `/audit`**
-**Active reviewers: `logic` · `security` · `devops`**
+1. **Rebasing Shared Branches:** Never rebase commits already pushed to a shared branch. It rewrites history.
+2. **`git add .` Blindly:** Always review what you're staging. Use `git add -p` for selective staging.
+3. **Force Push to Main:** `git push --force` on protected branches destroys history. Use `--force-with-lease` at minimum.
+4. **Committing `.env` Files:** Add `.env` to `.gitignore` BEFORE the first commit. Once committed, secrets are in history forever.
+5. **"WIP" Commit Messages:** Every commit message should follow conventional commits format.
+6. **Giant PRs (>400 lines):** Large PRs get rubber-stamped, not reviewed. Split into logical chunks.
+7. **Merging Without CI:** Never merge a PR that hasn't passed all required checks.
+8. **Deleting Branches Before Merge:** Verify the PR is merged before deleting the branch.
+9. **`git reset --hard` Without Thinking:** This is destructive and discards uncommitted work permanently.
+10. **Secrets in Git History:** Committed secrets need immediate rotation AND history rewriting (BFG/git-filter-repo).
 
-### ❌ Forbidden AI Tropes in GitHub Operations
+---
 
-1. **Inventing commit hashes** — never fabricate SHA hashes; always use `git log` to retrieve real ones.
-2. **Assuming branch names** — always confirm the current branch with `git branch --show-current` before operating.
-3. **Silently force-pushing** — never suggest `git push --force` without explicitly warning about history rewrite risks.
-4. **Hallucinating `gh` subcommands** — only use `gh` commands from the official GitHub CLI docs.
-5. **Skipping `git pull` before push** — always sync with remote first, especially on shared branches.
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
 
-Review these questions before any git operation:
-
 ```
-✅ Did I check `git status` before staging changes?
-✅ Is the commit message following Conventional Commits format?
-✅ Did I verify the correct branch is active with `git branch --show-current`?
-✅ Did I pull from remote before pushing to avoid conflicts?
-✅ Are there any secrets, API keys, or credentials in the staged diff?
-✅ If force-pushing, did I explicitly warn the user about history rewrite?
+✅ Am I using conventional commit messages?
+✅ Is the PR < 400 lines and single-purpose?
+✅ Have I self-reviewed the diff?
+✅ Are all CI checks passing?
+✅ Is .env in .gitignore?
+✅ Am I NOT rebasing shared/pushed commits?
+✅ Did I link the issue/ticket in the PR?
+✅ Am I squash-merging to keep clean history?
+✅ Are branch protection rules configured?
+✅ Are git hooks catching lint/format issues pre-commit?
 ```

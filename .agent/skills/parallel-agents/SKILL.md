@@ -1,181 +1,122 @@
 ---
 name: parallel-agents
-description: Multi-agent orchestration patterns. Use when multiple independent tasks can run with different domain expertise or when comprehensive analysis requires multiple perspectives.
+description: Parallel processing coordination for multi-agent swarms. Asynchronous dispatches, merging divergent logic streams, race conditions in autonomous agents, avoiding Git conflicts in concurrent generation, and fan-out/fan-in processing patterns. Use when orchestrating multiple agents simultaneously.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Multi-Agent Orchestration
+# Parallel Agents — Concurrent Orchestration Mastery
 
-> Parallel agents are faster. They are also harder to keep consistent.
-> Coordinate them — don't just fire them simultaneously and hope for compatible outputs.
-
----
-
-## When to Use Parallel Agents
-
-Use multiple agents when:
-- Tasks are genuinely **independent** (output of A doesn't feed input of B)
-- Different tasks require **different domain expertise**
-- Comprehensive **review** needs multiple specialist perspectives simultaneously
-- Speed matters and tasks can be assigned and awaited independently
-
-Do **not** use parallel agents when:
-- Tasks have sequential dependencies (you need the result to start the next)
-- The overhead of coordination exceeds the time saved
+> Sequential execution is slow but safe.
+> Parallel execution is fast, but invites massive collision risks. Managing the merger is the primary architectural challenge.
 
 ---
 
-## Orchestration Patterns
+## 1. Fan-Out / Fan-In Pattern
 
-### Pattern 1 — Parallel Review (Tribunal)
+The foundation of parallel multi-agent architecture.
 
-Multiple reviewers look at the same code simultaneously, each from a different angle.
+1. **Fan-Out (Scatter):** A central Supervisor breaks an objective into isolated pieces, dispatching them concurrently across multiple independent Worker agents.
+2. **Execute:** The Workers process simultaneously without blocking one another.
+3. **Fan-In (Gather):** The Supervisor waits for ALL promises to resolve, collects the outputs, merges them logically, and assesses the final unified state.
 
-```
-Code (input)
-    ├── → logic-reviewer      → finds logic errors
-    ├── → security-auditor    → finds vulnerabilities  
-    ├── → type-safety-reviewer → finds type unsafe code
-    └── → performance-reviewer → finds bottlenecks
+```typescript
+// Architectural representation (Fan-out/Fan-in)
+async function executeParallelAudit(sourceCode: string) {
+  // Fan-Out
+  const promises = [
+    agentDispatch({ role: 'security-auditor', task: sourceCode }),
+    agentDispatch({ role: 'performance-profiling', task: sourceCode }),
+    agentDispatch({ role: 'web-accessibility-auditor', task: sourceCode })
+  ];
 
-All verdicts → synthesize → Human Gate (approve/reject/revise)
-```
+  // Await concurrent resolution
+  // If one takes 10s and another takes 2s, the total wait is max(10s)
+  const [securityReport, perfReport, a11yReport] = await Promise.all(promises);
 
-**When:** `/tribunal-*` commands, code review before merge
-
-### Pattern 2 — Domain Specialization
-
-Different specialists handle different parts of the same task simultaneously.
-
-```
-"Build a user auth system" (input)
-    ├── → backend-specialist    → API routes + JWT logic
-    ├── → frontend-specialist   → Login/register UI
-    └── → database-architect    → User schema + sessions table
-
-All outputs → orchestrator synthesizes into coherent system
-(ensures API contract matches what frontend calls,
- and DB schema matches what backend queries)
-```
-
-**When:** Full-stack feature builds via `/orchestrate`
-
-### Pattern 3 — Sequential with Parallel Phases
-
-Some tasks are inherently sequential at the macro level but can parallelize within each phase.
-
-```
-Phase 1 (sequential):
-  database-architect → schema design
-
-Phase 2 (parallel, after Phase 1):
-  backend-specialist  → API uses schema from Phase 1
-  frontend-specialist → UI uses API contract from Phase 2a (estimated)
-
-Phase 3 (sequential, after Phase 2):
-  test-engineer → E2E tests with real API + UI
+  // Fan-In Synthesization
+  return synthesizeReports({ securityReport, perfReport, a11yReport });
+}
 ```
 
 ---
 
-## Orchestrator Responsibilities
+## 2. Preventing Workspace Collision Risks
 
-The orchestrator coordinates agents. It:
+When multiple agents write to disk concurrently, catastrophic race conditions occur.
 
-1. **Assigns scope** — each agent gets exactly what it needs, nothing more
-2. **Manages state** — passes the right outputs from each agent to the next that needs them
-3. **Resolves conflicts** — when two agents propose incompatible solutions, the orchestrator decides or asks the user
-4. **Verifies consistency** — ensures that the API contract the backend builds matches what the frontend calls
-
----
-
-## Consistency Rules for Multi-Agent Output
-
-The biggest failure in parallel agent work is **inconsistency at boundaries**:
-
-- Backend generates `userId` but frontend calls it `user_id`
-- Database schema has `user_email` but backend queries `email`
-- Agent A designs one error shape; Agent B assumes a different one
-
-**Prevention:**
-- Establish contracts (types, schemas, API shapes) **before** parallel work begins
-- Each agent receives the shared contract as context
-- Orchestrator reviews all outputs for boundary consistency before presenting to user
+**The Golden Rules of Parallel Agents:**
+1. **Never allow concurrent agents to modify the same file.** Standard Git/File lockers will fail. The last one to save entirely overwrites the changes of the others.
+2. **Read-Only Concurrency:** It is infinitely safe to run 10 agents reading and reviewing the same directory simultaneously.
+3. **Directory Isolation:** If multiple agents MUST generate code simultaneously, enforce strict boundaries. Add boundary guards instructing Agent A to stay out of the directories Agent B is designated to manipulate.
 
 ---
 
-## Communication Format Between Agents
+## 3. Reviewer Swarms (The Tribunal Principle)
 
-When one agent's output feeds another:
+The Tribunal uses parallel processing exclusively for the review phase to drastically speed up output validation without slowing down the user.
 
-```
-[AGENT: backend-specialist OUTPUT]
-API Contract:
-  POST /api/users → { id: string, email: string, createdAt: string }
-  POST /api/auth/login → { token: string, expiresAt: string }
-
-[AGENT: frontend-specialist RECEIVES]
-Use the above API contract. Build the UI to match these exact request/response shapes.
-```
+- **The Maker:** Generates code (Sequential, isolated).
+- **The Reviewers:** 4x Reviewer Agents analyze the Maker's generated code simultaneously from independent angles (Security, Typing, Logic, Performance).
+- **The Gate:** The outputs merge into a synthesis report for human approval.
 
 ---
 
-## Output Format
+## 4. Handling Differential Failures
 
-When this skill completes a task, structure your output as:
+What happens when 4 parallel tasks run, and 1 fails?
+Does the whole pipeline crash?
 
-```
-━━━ Parallel Agents Output ━━━━━━━━━━━━━━━━━━━━━━━━
-Task:        [what was performed]
-Result:      [outcome summary — one line]
-─────────────────────────────────────────────────
-Checks:      ✅ [N passed] · ⚠️  [N warnings] · ❌ [N blocked]
-VBC status:  PENDING → VERIFIED
-Evidence:    [link to terminal output, test result, or file diff]
+```typescript
+// ❌ BAD: Promise.all fails instantly if ANY sub-agent crashes or hallucinates
+const results = await Promise.all(agentJobs);
+
+// ✅ GOOD: Use Promise.allSettled to ensure resilient aggregation
+const results = await Promise.allSettled(agentJobs);
+
+for (const result of results) {
+  if (result.status === 'fulfilled') {
+    aggregatedOutput.push(result.value);
+  } else {
+    // 1 agent failed (e.g. rate limit, or runtime crash)
+    // The supervisor can retry just this branch, or proceed with partial success
+    logger.warn(`Sub-agent sequence failed: ${result.reason}`);
+    flagForHumanReview(result.reason);
+  }
+}
 ```
 
+---
 
+## 🤖 LLM-Specific Traps (Parallel Execution)
+
+1. **The Shared File Massacre:** Dispatching two agents concurrently with edit access, causing Agent B to overwrite Agent A's functions because they were modifying the same file essentially blindly.
+2. **Dependency Deadlocks:** Launching Agent A (Frontend) and Agent B (Backend Database) concurrently, but Agent A fails because it tries to call API routes Agent B hasn't finished writing yet.
+3. **Context Hallucination Splice:** Synthesizing the outputs of three independent reviewers without explicitly formatting the final report, resulting in the Supervisor hallucinating its own separate suggestions layered on top blindly.
+4. **No Timeout Limits:** Allowing a parallel dispatch array to hang infinitely because a single worker hit a silent crash or API rate limit. Always enforce strict timeout wrappers.
+5. **Rate Limiting Suicide:** Spawning 20 worker agents simultaneously against an LLM platform, instantly triggering HTTP 429 Rate Limits and destroying the entire execution pool. Use concurrent batch limiting (e.g., execution pools of max 5).
+6. **Task Bleed:** Failing to strictly scope the parallel instructions, leading two agents to accidentally duplicate the exact same subset of work.
+7. **`Promise.all` Fragility:** The Supervisor crashes the entire session because one single parallel sub-agent threw a syntax error. Use `.allSettled` to isolate catastrophic failures.
+8. **Losing the Thread:** Outputting the raw parallel execution logs chaotically to the user terminal entirely disorganized, making it impossible for the user to understand which agent said what.
+9. **Global State Racing:** Two agents simultaneously reading a `task.md` file, checking different boxes, and saving, fundamentally destroying the tracking ledger. Write actions to a global tracker must be executed synchronously.
+10. **Synchronous Impatience:** Using `await` sequentially in a `for` loop across multiple worker tasks when they have absolutely no strict data dependency on each other, vastly wasting execution time.
 
 ---
 
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Are concurrent write tasks strictly isolated to distinct, separate files or directories?
+✅ Have I utilized `Promise.allSettled` (or architectural equivalents) to survive partial pipeline failures?
+✅ Do the sub-agents operate exclusively on isolated context rather than full shared memories?
+✅ Are shared state modifications (like updating the `task.md` ledger) explicitly queued synchronously?
+✅ Are there constraints applied to prevent API rate-limit exhaustion against the LLM providers?
+✅ Is the Supervisor strictly awaiting the Fan-In consolidation before moving to the next pipeline step?
+✅ Are timeouts strictly enforced around parallel executions to prevent Infinite Hang sequences?
+✅ Are the outputs synthesized cleanly so the human doesn't see overlapping chaotic log streams?
+✅ Did I ensure the parallel agents genuinely have ZERO data dependencies on one another?
+✅ Are reviewer/audit phases favored for parallelism over active code-generation phases?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

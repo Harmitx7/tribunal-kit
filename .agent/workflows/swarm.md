@@ -1,194 +1,179 @@
 ---
-description: Multi-Agent Swarm Orchestration — Supervisor decomposes a goal into sub-tasks, dispatches to specialist Workers, collects results, and synthesizes a unified response.
+description: Multi-Agent Swarm Orchestration. Supervisor decomposes a complex goal into sub-tasks, dispatches to specialist Workers via structured JSON contracts, collects results via allSettled fan-in, and synthesizes a unified deliverable. Validates payloads via swarm_dispatcher.py before dispatch.
 ---
 
-# /swarm — Multi-Agent Swarm Orchestration
+# /swarm — Multi-Agent Swarm Execution
 
 $ARGUMENTS
 
 ---
 
-## What This Does
+## When to Use /swarm Over /orchestrate
 
-`/swarm` is for goals that are **too large or multi-domain for a single agent**.
-
-Instead of one agent trying to do everything (and hallucinating outside its expertise), the Supervisor:
-
-1. **Decomposes** your goal into independent sub-tasks
-2. **Dispatches** each sub-task to the best specialist Worker
-3. **Collects** all results
-4. **Synthesizes** a unified, coherent response
-
-Use `/swarm` when your request spans **2+ domains** (e.g., backend API + database schema + docs) or when you want specialist-quality output for each component.
+| Use `/swarm` when... | Use `/orchestrate` when... |
+|:---|:---|
+| 5+ workers needed simultaneously | 2-4 workers in a review |
+| Tasks are explicitly JSON-contracted | Tasks can be described informally |
+| Supervisor/Worker role separation matters | Simple coordination needed |
+| Wave execution needs session persisting across time | Single-session orchestration |
 
 ---
 
-## When to Use /swarm vs Other Commands
+## Phase 1 — Swarm Initialization
 
-| Use `/swarm` when... | Use something else when... |
-|---|---|
-| Goal spans 2+ specialist domains | Single-domain task → `/generate` |
-| You want parallel specialist output | Simple question → just ask |
-| Task needs backend + DB + docs together | Need a plan only → `/plan` |
-| Complex refactor across multiple files | Debugging one bug → `/debug` |
-| Maximum specialist coverage on large feature | Step-by-step incremental work → `/orchestrate` |
+The Supervisor agent activates and:
 
----
-
-## Pipeline Flow
-
-```
-/swarm [your goal]
-         │
-         ▼
-  supervisor-agent (triage)
-  → Reads: swarm-worker-registry.md
-  → Validates: swarm-worker-contracts.md
-  → Emits: WorkerRequest JSON (validated) for each sub-task
-         │
-         ├─── Worker 1: [agent-name] ──── WorkerResult 1
-         ├─── Worker 2: [agent-name] ──── WorkerResult 2
-         └─── Worker N: [agent-name] ──── WorkerResult N
-                                │
-                                ▼
-                       supervisor-agent (synthesize)
-                                │
-                                ▼
-                       ━━━ Swarm Complete ━━━
-                       Human Gate → Y / N / R
-```
-
-**Constraints:**
-- Maximum **5 Workers** per swarm invocation
-- Workers are **independent** — no Worker depends on another's pending result
-- Workers that fail are **retried up to 3 times** with targeted feedback
-- Workers that still fail after 3 retries are **escalated** (not silently dropped)
-- Tribunal rules apply **inside each Worker** — no invented libraries, guessed columns, or uncited calls
+1. Reads the goal and identifies all atomic sub-tasks
+2. Validates that sub-tasks don't share output files
+3. Estimates context budget per worker
+4. Writes initial state to task.md
 
 ---
 
-## Step 1 — Supervisor Triage
+## Phase 2 — Worker Dispatch Contracts
 
-The `supervisor-agent` reads the goal and produces a dispatch plan.
+Every worker receives a structured JSON contract (not natural language):
 
-**Format:**
-
+```json
+{
+  "task_id": "audit-auth-routes",
+  "worker_type": "backend-specialist",
+  "scope": "Audit all files in src/app/api/auth/ for security and type safety",
+  "files_to_read": [
+    "src/app/api/auth/login/route.ts",
+    "src/app/api/auth/register/route.ts",
+    "src/middleware.ts"
+  ],
+  "files_to_write": [],
+  "context_summary": [
+    "Next.js 15 App Router project",
+    "Auth uses next-auth v5 (auth.ts pattern)",
+    "Database: Prisma 6 on PostgreSQL"
+  ],
+  "constraints": [
+    "Report findings only — do not modify files",
+    "Report BLOCKED if you cannot determine auth pattern from provided files"
+  ],
+  "output_format": {
+    "status": "COMPLETE | BLOCKED | ERROR",
+    "findings": ["list of specific issues found with file+line references"],
+    "summary": "2-3 sentence summary"
+  }
+}
 ```
-━━━ Swarm Triage ━━━━━━━━━━━━━━━━━━━━━━━━
-
-Goal: [restate the user's goal in one sentence]
-
-Workers to dispatch: [N of max 5]
-
-Worker 1
-  task_id: [uuid]
-  type:    [generate_code | research | review_code | write_docs | analyze]
-  agent:   [agent-name from swarm-worker-registry.md]
-  goal:    [single-sentence sub-task]
-  context: [minimal context — only what this worker needs]
-
-Worker 2
-  ...
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
-
-> ⚠️ Workers that share no dependency can run in parallel. Workers that share output must be serialized.
 
 ---
 
-## Step 2 — Worker Dispatch
+## Phase 3 — Payload Validation
 
-Each Worker receives its `WorkerRequest` in **isolation** — no Worker sees another Worker's prompt.
-
-Workers generate their output against the constraints of their specialist agent file (`.agent/agents/{agent}.md`).
-
-**All Tribunal anti-hallucination rules apply inside each Worker:**
-- No invented libraries or non-existent methods
-- No guessed database column names
-- `// VERIFY:` tags on any uncertain call
-- Retry limit: 3 per Worker
-
-Validate WorkerRequest JSON before dispatch:
+Before dispatching, validate all worker contracts:
 
 ```bash
-// turbo
-python .agent/scripts/swarm_dispatcher.py --mode swarm --file worker_request.json
+python .agent/scripts/swarm_dispatcher.py --file payload.json
 ```
 
-A schema validation failure **halts the swarm** — it is not silently ignored.
+If validation passes → dispatch workers in parallel.
+If validation fails → fix payload before dispatch.
 
 ---
 
-## Step 3 — Collect and Validate
-
-After all Workers return a `WorkerResult`:
-
-| Status | Meaning | Action |
-|---|---|---|
-| `status: "success"` | Worker completed | Output included in synthesis |
-| `status: "failure"` | Worker errored | Re-dispatch with failure context (up to 3 retries) |
-| `status: "escalate"` | Worker hit retry limit | Noted as ⚠️ in report, not retried |
-
----
-
-## Step 4 — Synthesis and Human Gate
+## Phase 4 — Fan-Out Execution
 
 ```
-━━━ Swarm Complete ━━━━━━━━━━━━━━━━━━━━━━━━
-
-Workers dispatched: [N]
-Workers succeeded:  [N]
-Workers escalated:  [N]
-
-━━━ [Worker 1 goal] ━━━━━━━━━━━━━━━━━━━━━━
-
-[Worker 1 output — reviewed by Tribunal]
-
-━━━ [Worker 2 goal] ━━━━━━━━━━━━━━━━━━━━━━
-
-[Worker 2 output — reviewed by Tribunal]
-
-━━━ Escalations ━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-⚠️ [task_id] — [agent] — [reason for escalation after 3 retries]
-
-━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Write to disk?  Y = approve | N = discard | R = revise with feedback
+Wave dispatch: POST all contracts simultaneously
+               ↓
+               Wait for completion via allSettled (not Promise.all)
+               ↓
+               Collect ALL results — COMPLETE + BLOCKED + ERROR
+               ↓
+Fan-In:        Supervisor aggregates, resolves conflicts
+               ↓
+               Human Gate before writing anything to disk
 ```
 
-**Human Gate is never skipped.** No files are written without explicit approval.
+**allSettled vs Promise.all:** A single failed worker must NOT cancel all sibling workers. Collect all results, then handle failures.
 
 ---
 
-## Hallucination Guard
+## Phase 5 — Status Protocol
 
-- Supervisor only routes to agents listed in `swarm-worker-registry.md`
-- Each Worker only uses tools, packages, and methods it has seen documented
-- Every `WorkerRequest` is validated against `swarm-worker-contracts.md` before dispatch
-- `swarm_dispatcher.py` exits `1` on any schema violation — swarm halted, not silently degraded
-- Synthesis only combines verified Worker outputs — the Supervisor does not add new logic during synthesis
+Workers report exactly one of three terminal statuses:
+
+```
+COMPLETE: Work done. Include output_format fields.
+
+BLOCKED: Cannot proceed without missing prerequisite.
+  blocked_by: [specific missing information]
+  unblocked_by: [what must happen first]
+  → Supervisor: provide missing input or escalate to human
+
+ERROR: Unrecoverable after 3 attempts.
+  error: [specific message]
+  attempts: 3
+  → Supervisor: report to human with ⚠️ Agent Failure Report
+```
 
 ---
 
-## Cross-Workflow Navigation
+## Phase 6 — Session Persistence
 
-| After /swarm reveals... | Go to |
-|---|---|
-| Security issues in Worker output | `/tribunal-full` to re-audit the flagged code |
-| Worker escalated after 3 retries | `/debug` to investigate what the worker failed on |
-| Need a more sequential approach | `/orchestrate` for wave-based multi-agent execution |
-| Want to verify final synthesized code | `/tribunal-full` before writing to disk |
+Supervisor writes task.md after each wave:
+
+```markdown
+# Swarm Session: [goal-slug]
+
+## Wave 1 — [timestamp]
+- [task-id]: COMPLETE — [2-line summary]
+- [task-id]: BLOCKED — [reason] → redispatched with [context added]
+
+## Issues Carrying Forward
+- [cross-task issue affecting Wave 2]
+
+## Human Gate Status
+- [ ] Pending review
+```
+
+---
+
+## Phase 7 — Human Gate
+
+```
+━━━ Swarm Complete ━━━━━━━━━━━━━━━━━━━━━░░░
+
+Workers: [N dispatched / N complete / N blocked / N error]
+
+━━━ Synthesized Results ━━━━━━━━━━━━━━━━━━
+[Findings by severity — critical → high → medium → low]
+
+━━━ Files to Write ━━━━━━━━━━━━━━━━━━━━━━
+[List all files with change summaries]
+
+━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━━
+Approve?  Y = write to disk | N = discard | R = revise
+```
+
+---
+
+## Failure Report Format
+
+```
+⚠️ Agent Failure Report
+━━━━━━━━━━━━━━━━━━━━━
+Agent:       backend-specialist (Worker A)
+Task:        audit-auth-routes
+Attempts:    3 of 3
+Last Error:  Could not resolve auth.ts import path — tsconfig paths not in scope
+Context:     Files provided: src/app/api/auth/*.ts — missing: tsconfig.json
+Suggestion:  Include tsconfig.json in files_to_read for next dispatch
+```
 
 ---
 
 ## Usage Examples
 
 ```
-/swarm build a REST API with user auth, a PostgreSQL schema, and API documentation
-/swarm analyze this repo, identify security vulnerabilities, and create a remediation plan
-/swarm create a React dashboard component with a backend data endpoint and unit tests
-/swarm refactor the payment module: review the code, optimize the SQL queries, and update the docs
-/swarm generate a full feature: file upload API + storage service + frontend uploader + tests
+/swarm comprehensive pre-launch audit: security + tests + performance + accessibility
+/swarm analyze all API routes for OWASP vulnerabilities simultaneously
+/swarm generate full test suite for auth, checkout, and user management
+/swarm review and optimize all N+1 query patterns across the codebase
 ```

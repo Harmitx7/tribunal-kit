@@ -1,216 +1,138 @@
 ---
 name: i18n-localization
-description: Internationalization and localization patterns. Detecting hardcoded strings, managing translations, locale files, RTL support.
+description: Internationalization (i18n) and localization mastery. Abstracting hardcoded strings, managing JSON/YAML translation dictionaries, bidirectional routing (RTL support for Arabic/Hebrew), Pluralization algorithms, date/currency formatting, and SSR locale detection in Next.js/React. Use when preparing an application for global multilingual scaling.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Internationalization & Localization
+# i18n & Localization — Global Scale Mastery
 
-> Internationalization (i18n) is preparing code to support multiple languages.
-> Localization (l10n) is the work of adapting to a specific locale.
-> Do i18n once, properly. Do l10n for each market.
-
----
-
-## The Core Rule: No Hardcoded Strings
-
-Every user-visible string in the source code is a localization problem waiting to happen.
-
-```ts
-// ❌ Hardcoded — untranslatable
-<button>Save Changes</button>
-<p>You have {count} messages</p>
-<p>Error: Invalid email address</p>
-
-// ✅ Key-referenced — translatable
-<button>{t('common.save')}</button>
-<p>{t('inbox.messageCount', { count })}</p>
-<p>{t('errors.invalidEmail')}</p>
-```
+> Translating text is easy. Localizing variables, dates, plurals, and reading directions is complex.
+> Do not build your own translation hash-map engine. It will break on Arabic plurals.
 
 ---
 
-## Translation File Structure
+## 1. The i18n Architecture (Next.js / React)
 
-Organize translation keys hierarchically — flat files become unmaintainable past ~50 keys:
+Do not hardcode strings inside UI components. Use a standardized library (e.g., `next-intl` or `react-i18next`).
 
+### Step 1: Dictionary Abstraction
 ```json
-// en.json
+// messages/en.json
 {
-  "common": {
-    "save": "Save Changes",
-    "cancel": "Cancel",
-    "loading": "Loading…",
-    "error": "Something went wrong"
-  },
-  "auth": {
-    "login": "Sign In",
-    "logout": "Sign Out",
-    "register": "Create Account",
-    "errors": {
-      "invalidEmail": "Enter a valid email address",
-      "passwordTooShort": "Password must be at least {{min}} characters"
-    }
-  },
-  "inbox": {
-    "messageCount_one": "{{count}} message",
-    "messageCount_other": "{{count}} messages"
+  "Dashboard": {
+    "welcomeMessage": "Welcome back, {name}!",
+    "unreadAlerts": "{count, plural, =0 {No unread alerts} one {You have 1 unread alert} other {You have # unread alerts}}"
   }
 }
 ```
 
-**Key naming conventions:**
-- `feature.element` or `feature.element.state`
-- Error keys under `.errors`
-- Never use the English text as the key (`"Save Changes": "Save Changes"`)
+### Step 2: Component Implementation
+```tsx
+// ❌ BAD: Hardcoded English text and manual variable interpolation
+export function Header({ user, alertCount }) {
+  return <h1>Welcome back, {user.name}! You have {alertCount} alerts.</h1>;
+}
 
----
+// ✅ GOOD: i18n Abstraction (using next-intl)
+import { useTranslations } from 'next-intl';
 
-## Pluralization
-
-Pluralization rules differ per language. Use your i18n library's plural system — never manual `if count > 1`:
-
-```ts
-// ❌ Only works for English
-const label = count === 1 ? 'message' : 'messages';
-
-// ✅ i18next handles per-language plural rules
-t('inbox.messageCount', { count })
-
-// Translation files handle the variants:
-// English: { "messageCount_one": "{{count}} message", "messageCount_other": "{{count}} messages" }
-// Arabic:  6 plural forms (zero, one, two, few, many, other)
-// Russian: 3 plural forms with complex rules
+export function Header({ user, alertCount }) {
+  const t = useTranslations('Dashboard');
+  
+  return (
+    <header>
+      <h1>{t('welcomeMessage', { name: user.name })}</h1>
+      <p>{t('unreadAlerts', { count: alertCount })}</p>
+    </header>
+  );
+}
 ```
 
 ---
 
-## Date, Number & Currency Formatting
+## 2. Advanced Native Formatting (`Intl`)
 
-Never format these manually. Use the browser's `Intl` API:
+Do not install `moment.js` or write massive regex string parsers to format currencies in Euros vs Dollars. The browser handles this natively with the `Intl` API.
 
-```ts
-// Date
-const date = new Date();
-new Intl.DateTimeFormat('en-US').format(date);  // "2/20/2026"
-new Intl.DateTimeFormat('de-DE').format(date);  // "20.2.2026"
+```typescript
+// Data/Currency Formatting correctly tied to the active locale
+const locale = 'de-DE';
 
-// Number
-new Intl.NumberFormat('en-US').format(1234567.89);  // "1,234,567.89"
-new Intl.NumberFormat('de-DE').format(1234567.89);  // "1.234.567,89"
+// ✅ Currency
+const price = new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(1200.50);
+// Output in Germany: "1.200,50 €"
 
-// Currency
-new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(99.99);
-// "$99.99"
-new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(99.99);
-// "99,99 €"
+// ✅ Dates
+const date = new Intl.DateTimeFormat(locale, { dateStyle: 'full' }).format(new Date());
+// Output in Germany: "Freitag, 2. April 2026"
+
+// ✅ Relative Time
+const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+rtf.format(-2, 'day'); // Output: "vorgestern" (the day before yesterday)
 ```
 
 ---
 
-## RTL (Right-to-Left) Support
+## 3. Bidirectional Architecture (RTL)
 
-Arabic, Hebrew, Persian, Urdu are RTL languages. Supporting them requires more than flipping direction.
+For languages like Arabic and Hebrew, the UI must fundamentally flip horizontally. Right-To-Left (RTL) breaks standard CSS `marginLeft` and `marginRight`.
 
-```html
-<!-- Set direction on html element based on locale -->
-<html lang="ar" dir="rtl">
-
-<!-- Or dynamically -->
-<html lang={locale} dir={isRTL(locale) ? 'rtl' : 'ltr'}>
-```
+**The Solution:** Logical CSS Properties.
+Tailwind v4 (and modern CSS) natively supports logical direction.
 
 ```css
-/* Use logical properties — they flip automatically with direction */
-/* ❌ Physical: only works for LTR */
-padding-left: 1rem;
-margin-right: 2rem;
-border-left: 2px solid;
+/* ❌ BAD: Hardcoded physical space */
+.btn { margin-left: 10px; } /* Will break layout in Hebrew */
 
-/* ✅ Logical: works for both LTR and RTL */
-padding-inline-start: 1rem;
-margin-inline-end: 2rem;
-border-inline-start: 2px solid;
+/* ✅ GOOD: Logical spacing (Tailwind: ms-4, me-4) */
+.btn { margin-inline-start: 10px; } /* Automatically flips in RTL mode */
 ```
 
----
-
-## Detecting Hardcoded Strings (Code Audit)
-
-Look for:
-- JSX text content directly in tags: `<p>some text</p>` (not `<p>{t(...)}</p>`)
-- Template literals with user-facing copy: `` `Welcome, ${name}!` ``
-- Alert/toast calls with string literals: `toast.success('Saved!')`
-- Error messages: `new Error('Invalid input')` shown to users
-- `placeholder`, `aria-label`, `title` attributes hardcoded
+*In React HTML tag:* `<html lang="ar" dir="rtl">`
 
 ---
 
-## Scripts
+## 4. Routing and SSR Detection
 
-| Script | Purpose | Run With |
-|---|---|---|
-| `scripts/i18n_checker.py` | Scans codebase for hardcoded strings | `python scripts/i18n_checker.py <project_path>` |
+Users should not face English UI natively in Japan. Detect their browser headers at the edge routing layer.
 
----
-
-## Output Format
-
-When this skill produces a recommendation or design decision, structure your output as:
-
-```
-━━━ I18N Localization Recommendation ━━━━━━━━━━━━━━━━
-Decision:    [what was chosen / proposed]
-Rationale:   [why — one concise line]
-Trade-offs:  [what is consciously accepted]
-Next action: [concrete next step for the user]
-─────────────────────────────────────────────────
-Pre-Flight:  ✅ All checks passed
-             or ❌ [blocking item that must be resolved first]
-```
-
-
+In Next.js Middleware:
+1. Parse the incoming `Accept-Language` header.
+2. Intercept requests to `/dashboard`.
+3. Rewrite URL to the detected locale (e.g., `/ja/dashboard`).
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🤖 LLM-Specific Traps (i18n)
 
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+1. **Building Custom Maps:** AI writes generic `const dict = { en: "Hello", es: "Hola" }` and queries it via `dict[locale]`. This fundamentally fails for plurals, interpolation, and rich text. Use standard libraries.
+2. **Ignoring Plural Rules:** English has 2 plural forms (singular, plural). Arabic has 6 (zero, one, two, few, many, other). Hallucinating `count === 1 ? 'apple' : 'apples'` logic breaks internationally. Ensure ICU message formatting.
+3. **Physical CSS Layouts:** Writing `ml-4` or `pr-2` (margin-left, padding-right) in Tailwind. Standardize exclusively on `ms-4` (margin-start) and `pe-2` (padding-end) to guarantee RTL flip compliance.
+4. **Hardcoded Date Formats:** AI using `date.toLocaleDateString('en-US')` globally inside an i18n abstraction library, overriding the dynamic user locality entirely.
+5. **Component Cracking for Rich Text:** The AI tries to translate "Click *here* to login" by breaking it into 3 separate translation keys (Start, Link, End). This destroys translator context. Modern libraries support `t.rich('key', { span: (chunks) => <span>{chunks}</span> })`.
+6. **Server vs Client Disconnect:** AI suggests using a React Context `LocaleProvider` heavily in Next.js Server Components. SSR apps must extract locale explicitly from the URL route (`params.locale`), not React Context.
+7. **Dictionary Bloat:** Trying to load a massive 5MB `global.json` translation file on initial boot, completely destroying First Contentful Paint. AI must segment routing into domain namespaces (e.g., `Checkout.json`).
+8. **Locale Fallbacks Missing:** Failing to set `en` as the default fallback logic when a key is missing in the requested language, causing catastrophic `undefined` crashes on runtime rendering.
+9. **Translating Variable Identities:** Accidentally translating JSON mapping keys or CSS classes inside the codebase when attempting to internationalize display text.
+10. **Timezone Blindness:** Assuming formatting a DateTime automatically translates the underlying timezone shift. Timezone and Locale are two distinct configurations. Displaying local time requires tracking client offset via timezone context.
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Are strings fully abstracted into standard JSON/YAML dictionaries using ICU format?
+✅ Is variable interpolation utilizing standard library bindings rather than raw string concatenation?
+✅ Have pluralization logic been delegated to the i18n engine to support multi-form languages?
+✅ Are physical CSS layouts stripped in favor of Logical Properties (e.g., `start`, `end`, `margin-inline`)?
+✅ Has the `<html dir="rtl">` tag generation been integrated for Right-To-Left language requests?
+✅ Is data formatting (dates, currency, relative time) natively executed via target-aware `Intl` APIs?
+✅ Did I ensure Rich-Text translations (links within blocks) remain unified in one single translation key?
+✅ Is Next.js routing actively leveraging `[locale]` parameters accurately in SSR domains?
+✅ Are JSON translation files segmented logically by namespace to prevent massive client-side bloat?
+✅ Did I enforce strict error-bypassing fallback logic to default language upon missing translation keys?
 ```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -1,213 +1,157 @@
 ---
 name: edge-computing
-description: Edge function design principles. Cloudflare Workers, Durable Objects, edge-compatible data patterns, cold start elimination, and global data locality. Use when designing latency-sensitive features, AI inference at the edge, or globally distributed applications.
+description: Edge computing mastery. Cloudflare Workers, Vercel Edge Functions, Durable Objects, edge-compatible data patterns, cold start elimination, caching policies (Stale-While-Revalidate), and global data locality. Use when designing globally distributed, extreme low-latency applications architectures.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 2.0.0
+last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
-# Edge Computing Principles
+# Edge Computing — Global Latency Mastery
 
-> Edge is not "just serverless but faster."
-> It's a fundamentally different execution model with different constraints.
-
----
-
-## Edge vs Serverless vs Server
-
-Before choosing edge, understand what you're getting and what you're giving up:
-
-| Property | Traditional Server | Serverless (Lambda) | Edge (Workers) |
-|---|---|---|---|
-| Cold start | None | 100ms–2s | < 5ms (V8 isolates) |
-| Runtime | Full Node.js | Full Node.js | ⚠️ Subset of Web APIs only |
-| Latency to user | One region | One region | < 30ms globally |
-| Max CPU time | Unlimited | 15 min | 30ms–1s per request |
-| `fs` module | ✅ | ✅ | ❌ No filesystem |
-| `child_process` | ✅ | ✅ | ❌ No subprocess |
-| Memory | GB+ | 128MB–3GB | 128MB |
-| Persistent state | DB + disk | DB only | Durable Objects / KV |
-| Cost model | Fixed | Per invocation | Per invocation (cheaper) |
-
-**Rule: Choose edge when latency is the primary constraint and you can work within its API restrictions.**
+> The Edge is not just a faster server. It fundamentally changes the computing model.
+> You cannot put compute on the Edge and leave the database in Virginia. V8 isolates enforce new rules.
 
 ---
 
-## Edge Runtime Constraints
+## 1. The Edge Model (V8 Isolates vs Node.js)
 
-The edge runtime implements **Web Platform APIs**, not Node.js APIs. This causes the most hallucinations:
+Edge functions (Cloudflare Workers, Vercel Edge) run on V8 Isolates, NOT standard Node.js environments.
 
-```ts
-// ❌ Node.js APIs — not available at the edge
-import fs from 'fs';                          // No filesystem
-import { createHash } from 'crypto';          // No Node crypto module
-import { exec } from 'child_process';         // No subprocess
-import path from 'path';                      // No path module
-const __dirname = path.dirname(fileURLToPath(import.meta.url));  // No __dirname
+**What This Means:**
+1. Extremely fast cold starts (< 5ms) because there is no underlying OS process bootup.
+2. Hard memory/time limits per request (e.g., 50ms CPU time max).
+3. **NO NATIVE NODE MODULES.** You cannot use `fs`, `child_process`, or heavy native C++ binaries (e.g., standard `bcrypt`, `sharp`).
 
-// ✅ Web Platform APIs — available everywhere at the edge
-const hash = await crypto.subtle.digest('SHA-256', Buffer.from(input));
-const response = await fetch('https://api.example.com/data');
-const encoded = btoa(jsonString);
-const parsed = JSON.parse(body);
+```typescript
+// ❌ BAD: Attempting to use Node native core modules
+import fs from "fs"; 
+import bcrypt from "bcrypt"; // Has C++ bindings, will instantly crash on V8 edge
+
+// ✅ GOOD: Utilizing standard Web APIs (Fetch, CryptoKey)
+const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password));
 ```
 
 ---
 
-## Cloudflare Workers Patterns
+## 2. Advanced Route Caching (Stale-While-Revalidate)
 
-### Basic Worker Structure
+The highest value proposition of the edge is intercepting requests *before* they cross the ocean.
 
-```ts
-// src/index.ts — Cloudflare Workers (Hono framework recommended)
-import { Hono } from 'hono';
+```typescript
+// Standard Edge Proxy request handling
+export default {
+  async fetch(request, env, ctx) {
+    const url = new URL(request.url);
 
-const app = new Hono<{ Bindings: Env }>();
+    // 1. Cache API responses at the edge
+    const cache = caches.default;
+    let response = await cache.match(request);
 
-app.get('/api/hello', async (c) => {
-  // Access environment variables via c.env — not process.env
-  const apiKey = c.env.API_KEY;
-  return c.json({ message: 'Hello from the edge' });
-});
+    if (!response) {
+      // 2. Fetch Origin (The real server in Virginia)
+      response = await fetch(request);
 
-export default app;
-```
+      // 3. Mutate Headers for SWR (Stale-While-Revalidate)
+      // Instructs the Edge CDN: Serve the stale version instantly to the user,
+      // but fire an async request in the background to update the cache for the next user.
+      response = new Response(response.body, response);
+      response.headers.set('Cache-Control', 's-maxage=60, stale-while-revalidate=86400');
 
-### Durable Objects — Stateful Edge
-
-Durable Objects provide a single-threaded, globally-unique actor model for stateful workloads at the edge (think: per-room chat state, rate limiters, presence):
-
-```ts
-// Durable Object — each instance is a unique stateful actor
-export class RoomState {
-  private state: DurableObjectState;
-  private users = new Set<WebSocket>();
-
-  constructor(state: DurableObjectState) {
-    this.state = state;
-    // Restore state across hibernation
-    this.state.getWebSockets().forEach(ws => this.users.add(ws));
-  }
-
-  async fetch(request: Request): Promise<Response> {
-    if (request.headers.get('Upgrade') === 'websocket') {
-      const [client, server] = Object.values(new WebSocketPair());
-      this.state.acceptWebSocket(server);
-      this.users.add(server);
-      return new Response(null, { status: 101, webSocket: client });
+      // 4. Store in Cache asynchronously (do not block the user response)
+      ctx.waitUntil(cache.put(request, response.clone()));
     }
-    return new Response('Not a WebSocket', { status: 400 });
+
+    return response;
   }
-}
+};
 ```
 
 ---
 
-## Edge-Compatible Data Patterns
+## 3. Edge Data Locality (The Database Problem)
 
-The edge has no local disk. Data access must be network-based and ultra-low-latency:
+Running logic globally while querying a monolithic database in `us-east-1` is counter-productive. The latency of establishing a connection across the Atlantic will negate any Edge benefits.
 
-| Data Type | Edge Solution | Do Not Use |
-|---|---|---|
-| Key-value | Cloudflare KV, Upstash Redis (HTTP) | Redis TCP (not HTTP) |
-| Relational | Turso (libSQL over HTTP), Neon (HTTP) | PostgreSQL TCP connection |
-| Blob / files | Cloudflare R2, S3 (via HTTP) | Local disk |
-| Session / cache | Cloudflare KV | In-memory (dies per request) |
-| Vector search | Vectorize (Cloudflare), Pinecone HTTP | pgvector (TCP) |
+### Solutions:
+1. **Edge KV Stores**: (Cloudflare KV, Vercel KV) Eventually consistent, highly localized read-latency configs suitable for configuration routing, user sessions, or feature flags.
+2. **Distributed SQLite**: (Cloudflare D1, Turso) Replicas distributed to edge nodes automatically.
+3. **Connection Pooling**: Use an HTTP/Connection Pool proxy strictly (e.g., Prisma Accelerate, Supabase Edge Pooler). You cannot establish TCP `pg://` connections directly from millions of spinning V8 isolates, you will OOM crash the database.
 
-```ts
-// ✅ Turso — SQLite at the edge via HTTP API
-import { createClient } from '@libsql/client/http';
+```typescript
+// ✅ Turso / LibSQL (Distributed Edge DB) usage:
+import { createClient } from "@libsql/client/web";
 
-const db = createClient({
+const client = createClient({
   url: env.TURSO_DATABASE_URL,
   authToken: env.TURSO_AUTH_TOKEN,
 });
 
-const { rows } = await db.execute('SELECT * FROM users WHERE id = ?', [userId]);
+const result = await client.execute("SELECT * FROM users WHERE id = ?", [userId]);
 ```
 
 ---
 
-## Cold Start Design
+## 4. WebSockets at the Edge (Durable Objects)
 
-The main advantage of edge (V8 isolates) is cold starts under 5ms vs Lambda's 100ms+. But you can still waste this advantage:
+Standard Edge functions are stateless. To hold persistent state (like a live multiplayer gaming room, or a chat room's WebSocket connections across multiple users), you must funnel those connections into a single point of state: a Durable Object.
 
-```ts
-// ❌ Heavy initialization in module scope — runs on every cold start
-import { HeavyDependency } from 'huge-library';  // 50KB parse time
-const expensiveClient = new HeavyDependency({ ... });  // Slow init
+```typescript
+// A Durable Object serves as a single source of truth that users globally connect into
+export class ChatRoom {
+  constructor(state, env) {
+    this.state = state;
+    this.sessions = [];
+  }
 
-// ✅ Lazy initialization — only create when needed
-let client: HeavyClient | null = null;
-function getClient(env: Env) {
-  if (!client) client = new HeavyClient({ apiKey: env.OPENAI_API_KEY });
-  return client;
+  async fetch(request) {
+    // Upgrade standard HTTP to WebSocket
+    const pair = new WebSocketPair();
+    
+    // Accept connection, store it globally
+    this.sessions.push(pair.server);
+    pair.server.accept();
+    
+    // Handle incoming Chat messages
+    pair.server.addEventListener("message", msg => {
+      // Broadcast to all other connected edge users
+      this.sessions.forEach(session => session.send(msg.data));
+    });
+
+    return new Response(null, { status: 101, webSocket: pair.client });
+  }
 }
 ```
 
 ---
 
-## Data Locality & GDPR Compliance
+## 🤖 LLM-Specific Traps (Edge Computing)
 
-```
-Problem: User in Germany hits edge node in Singapore → data can't leave EU.
-
-Solution: Cloudflare Smart Placement + regional routing
-
-// wrangler.toml — restrict processing to EU jurisdiction
-[placement]
-mode = "smart"
-
-// Or explicit routing: route EU traffic to EU DOs only
-const id = env.ROOM.idFromName(`eu:${roomId}`);
-```
+1. **Node Core Assumption:** The AI imports `fs`, `path`, or `child_process` directly into Cloudflare Workers / Next.js Edge Middleware. V8 isolates lack file system access. Use native Web APIs (`ReadableStream`, `Blob`).
+2. **Heavy Dependency Usage:** The AI imports massive NPM libraries (like `lodash` or `moment`) which crush the 1MB Edge script-size limits. Code for the Edge must be micro-optimized.
+3. **TCP Database Connections:** Generating `const client = new Client({ connectionString: "postgres://..." })` inside an Edge runtime. The edge requires HTTP/WebSocket driven database architectures, or a managed connection pooler to prevent TCP exhaustion.
+4. **State Fallacy:** Designing a global variable `let activeUsers = 0` inside an edge script and assuming it will sync. V8 Isolates boot and die globally in milliseconds. They share no memory.
+5. **Ignoring `ctx.waitUntil`:** Mutating databases or logging metrics synchronously before returning the web response, slowing down the user. All side-effects on the Edge must be deferred via `ctx.waitUntil(promise)`.
+6. **Non-Web Crypto:** Trying to use Node's `crypto` module. Standardize on the universally browser-compatible `crypto.subtle` Web Crypto API.
+7. **Environment Variable Bleed:** Using `process.env.SECRET` instead of passing the standard `env` injection parameter into the V8 fetch handler.
+8. **Missing CORS Origins:** Forgetting to dynamically append heavy CORS allow headers on the outgoing Edge proxy response manipulation.
+9. **Synchronous Loops:** Designing a large `forEach` data map inside the worker request block, tripping the strict 50ms CPU execution limits resulting in generic 1102 Worker Errors.
+10. **WebSocket Orphanages:** Opening a WebSocket inside a standard Edge function without bridging it into a Durable Object, causing the WS connection to terminate immediately when the isolate tears down.
 
 ---
 
-## Output Format
-
-When this skill produces or reviews code, structure your output as follows:
-
-```
-━━━ Edge Computing Report ━━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Edge Computing
-Language:    [detected language / framework]
-Scope:       [N files · N functions]
-─────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [test output / lint pass / compile success]
-```
-
-**VBC (Verification-Before-Completion) is mandatory.**
-Do not mark status as VERIFIED until concrete terminal evidence is provided.
-
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/tribunal-backend`**
-**Active reviewers: `logic` · `security` · `dependency`**
-
-### ❌ Forbidden AI Tropes in Edge Computing
-
-1. **Importing Node.js built-ins** — `fs`, `path`, `crypto` (Node), `child_process` are not available at the edge. The edge runtime is Web Platform APIs only.
-2. **`process.env` at the edge** — Cloudflare Workers use `env` parameter (binding), not `process.env`. Wrangler `vars` are accessed via `c.env.VAR_NAME`.
-3. **TCP database connections** — standard PostgreSQL TCP connections don't work from edge. Use HTTP-based drivers (Neon serverless, Turso libSQL, PlanetScale HTTP).
-4. **Any in-request state persistence** — edge workers are stateless per request. Use Durable Objects for state, KV for cache.
+## 🏛️ Tribunal Integration
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Does this code use only Web Platform APIs (fetch, crypto.subtle, btoa, etc.)?
-✅ Are all database connections via HTTP drivers, not TCP (no pg.Pool at the edge)?
-✅ Are environment variables accessed via the env binding, not process.env?
-✅ Is any stateful data stored in KV or Durable Objects, not in-memory variables?
-✅ Are heavy module imports lazy-loaded to avoid unnecessary cold start delays?
+✅ Have I completely avoided using native Node.js core modules (`fs`, `path`, `crypto`)?
+✅ Am I leveraging standard Web APIs (Fetch, Streams, Web Crypto)?
+✅ Have database interactions utilized HTTP clients (or connection poolers) instead of direct TCP?
+✅ Has `ctx.waitUntil()` been used for all background analytics/caching updates?
+✅ Are environment variables injected via `env.VAR` rather than `process.env`?
+✅ Is localized global state (chat rooms, live editing) explicitly deferred to Durable Objects?
+✅ Did I define strict `s-maxage` and `stale-while-revalidate` directives for caching performance?
+✅ Are third-party library imports audited for their V8 isolate compatibility footprint?
+✅ Is JSON parsing happening inside `try/catch` to avoid 500ing early isolates?
+✅ Did I avoid deploying massive >1MB bundle payloads to the Edge routing layer?
 ```
