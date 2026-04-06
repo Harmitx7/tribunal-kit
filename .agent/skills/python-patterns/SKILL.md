@@ -9,21 +9,18 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Python Development Principles
 
-> Python's flexibility is its greatest weakness.
-> Without conventions, every project ends up with its own unpredictable shape.
-
 ---
 
 ## Framework Selection
 
-| Use Case | Recommended | When to Use |
+|Use Case|Recommended|When to Use|
 |---|---|---|
-| REST API, general-purpose | FastAPI | Type-safe, async, auto-docs via OpenAPI |
-| REST API, batteries-included | Django + DRF | Rapid development, ORM included, admin panel |
-| Microservice / minimal API | Flask | Simple, no overhead, full control |
-| Data pipeline / ETL | No framework | Standard library + pandas/polars as needed |
-| CLI tool | Click or Typer | Better than argparse for complex CLIs |
-| Async task queue | Celery + Redis | Background jobs, scheduled tasks |
+|REST API, general-purpose|FastAPI|Type-safe, async, auto-docs via OpenAPI|
+|REST API, batteries-included|Django + DRF|Rapid development, ORM included, admin panel|
+|Microservice / minimal API|Flask|Simple, no overhead, full control|
+|Data pipeline / ETL|No framework|Standard library + pandas/polars as needed|
+|CLI tool|Click or Typer|Better than argparse for complex CLIs|
+|Async task queue|Celery + Redis|Background jobs, scheduled tasks|
 
 **Decision question:** Does this need an ORM, admin panel, and auth out of the box? → Django. Does it need type-safe inputs with automatic validation? → FastAPI. Is it small and needs nothing? → Flask.
 
@@ -201,29 +198,4 @@ Evidence:    [test output / lint pass / compile success]
 **VBC (Verification-Before-Completion) is mandatory.**
 Do not mark status as VERIFIED until concrete terminal evidence is provided.
 
-
 ---
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/tribunal-backend`**
-**Active reviewers: `logic` · `security` · `dependency` · `type-safety`**
-
-### ❌ Forbidden AI Tropes in Python
-
-1. **Missing Type Hints** — writing `def func(a, b):` instead of fully typing parameters and return values.
-2. **Bare `except:` blocks** — catching all exceptions blindly without logging or raising `AppError`.
-3. **`requirements.txt` over `pyproject.toml`** — hallucinating outdated dependency management practices.
-4. **Blocking the async event loop** — writing synchronous I/O or `time.sleep()` inside an `async def` FastAPI route.
-5. **Assuming Django for microservices** — defaulting to a massive framework when `FastAPI` or `Flask` fits better.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before generating Python code:
-```
-✅ Are all function parameters and return types strictly typed?
-✅ Did I use the modern toolchain (`uv`/`poetry`, `ruff`, `mypy`)?
-✅ Did I accidentally block the async event loop with sync code?
-✅ Are domain errors properly caught and mapped to HTTP status codes without leaking stack traces?
-✅ Is my dependency selection precise and explicitly declared in `pyproject.toml`?
-```

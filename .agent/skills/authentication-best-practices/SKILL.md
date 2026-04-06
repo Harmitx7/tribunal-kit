@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Authentication & Authorization — Identity Mastery
 
-> Identity is the perimeter. If authentication is flawed, the entire system is breached.
-> Never roll your own crypto. Never store plaintext passwords. Secure tokens are not optional.
-
 ---
 
 ## Passwords & Hashing
@@ -140,34 +137,3 @@ function canEditPost(user: User, post: Post): boolean {
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (Authentication)
-
-1. **Building Custom Crypto:** AI often tries to invent hashing algorithms or token generators. Never allow custom crypto. Use established standard libraries.
-2. **`jwt.verify` without `algorithms`:** AI frequently omits the `algorithms: ["HS256"]` array, leaving the app vulnerable to "None" algorithm bypass attacks.
-3. **Storing JWTs in `localStorage`:** Exposes tokens to XSS. Access tokens go in memory, refresh tokens go in `HttpOnly` cookies.
-4. **Using MD5/SHA256 for Passwords:** Hash functions must be slow. Enforce Argon2id or bcrypt.
-5. **Implicit OAuth Flow:** AI trained on legacy code will suggest implicit flow for SPAs. Demand PKCE.
-6. **Stateless Revocation Illusion:** AI will claim you can revoke a JWT without a database. You cannot. Blacklisting requires state.
-7. **Authorization after Logic:** Perm checks must happen *before* database mutations, not after.
-8. **Logging Passwords:** AI error handlers might log the raw `req.body` during a login failure, exposing plaintext passwords to Datadog/CloudWatch.
-9. **Missing Rate Limiting:** Login endpoints without aggressive rate limiting invite brute force attacks.
-10. **Constant Time String Comparison:** Using `a === b` for token/password comparison allows timing attacks. Always use `crypto.timingSafeEqual`.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are passwords hashed using Argon2 or bcrypt?
-✅ Are session cookies marked HttpOnly, Secure, and SameSite?
-✅ Does jwt.verify explicitly specify the allowed algorithms?
-✅ Is token comparison using timingSafeEqual?
-✅ Are we avoiding localStorage for sensitive tokens?
-✅ Is the OAuth implementation using Authorization Code + PKCE?
-✅ Is there aggressive rate limiting on the login/password-reset endpoints?
-✅ Are auth checks performed BEFORE any business logic/DB operations?
-✅ Is req.body explicitly filtered in logs to avoid exposing passwords?
-✅ Did I rely on vetted libraries instead of writing custom auth logic?
-```

@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # C# / .NET Pro — .NET 9+ & C# 13 Mastery
 
-> .NET is not "enterprise Java." It is a high-performance, cross-platform, AOT-capable runtime.
-> Every method gets CancellationToken. Every async method returns Task. Every entity stays out of the API layer. No shortcuts.
-
 ---
 
 ## Modern C# Language Features
@@ -470,59 +467,4 @@ public class UsersApiTests(WebApplicationFactory<Program> factory)
 
 ---
 
-## Output Format
-
-```
-━━━ C#/.NET Report ━━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       C# / .NET Pro
-.NET Ver:    9+
-Scope:       [N files · N endpoints]
-─────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [dotnet build / dotnet test / lint output]
-```
-
 ---
-
-## 🤖 LLM-Specific Traps
-
-1. **`.Result` / `.Wait()` on Async:** Never block on async. It causes deadlocks in ASP.NET Core. Always use `await`.
-2. **Missing `CancellationToken`:** Every async method in ASP.NET Core must accept and pass `CancellationToken`.
-3. **Returning EF Entities from APIs:** Never expose Entity Framework models to the API. Map to DTOs/records.
-4. **`.ToList().Where()`:** Loading all rows then filtering in memory. Use `.Where()` BEFORE `.ToListAsync()`.
-5. **Null-Forgiving Operator (`!`):** Don't suppress nullable warnings. Handle nulls explicitly.
-6. **Hardcoded Connection Strings:** Use `IConfiguration`, `appsettings.json`, or secret managers.
-7. **`ConfigureAwait(false)` in ASP.NET Core:** This is unnecessary in ASP.NET Core (no SynchronizationContext). Only use in libraries.
-8. **Missing `AsNoTracking()`:** Read-only queries must use `.AsNoTracking()` to avoid change tracking overhead.
-9. **Controller-Based APIs in Greenfield:** Minimal APIs are the modern standard. Only use controllers for legacy code.
-10. **Service Locator Anti-Pattern:** Never resolve services with `IServiceProvider.GetService<T>()` inside constructors. Use proper DI.
-
----
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/tribunal-backend`**
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Did I use records/DTOs (not EF entities) in API responses?
-✅ Did I pass CancellationToken through all async methods?
-✅ Did I use await (not .Result or .Wait())?
-✅ Did I use AsNoTracking for read-only queries?
-✅ Did I project with .Select() before .ToListAsync()?
-✅ Are nullable reference types enabled and respected?
-✅ Did I use DI (not Service Locator)?
-✅ Are connection strings in configuration (not hardcoded)?
-✅ Did I use pattern matching and modern C# features?
-✅ Does dotnet build and dotnet test pass?
-```
-
-### 🛑 VBC Protocol
-
-- ❌ **Forbidden:** Declaring .NET code "works" because it compiles.
-- ✅ **Required:** Provide `dotnet build` and `dotnet test` output.

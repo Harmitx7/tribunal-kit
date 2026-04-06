@@ -9,8 +9,8 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Building Native UI — React Native & Expo Mastery
 
-> A mobile app isn't a website confined to a small screen.
-> 60 FPS is not a goal; it is a rigid requirement. The JS thread is a fragile bottleneck.
+A mobile app isn't a website confined to a small screen.
+60 FPS is not a goal; it is a rigid requirement. The JS thread is a fragile bottleneck.
 
 ---
 
@@ -141,34 +141,3 @@ export function FastList({ data }) {
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (React Native UI)
-
-1. **HTML Elements:** AI frequently hallucinates `<div>`, `<span>`, and `<p>` tags inside React Native code. React Native STRICTLY requires `<View>`, `<Text>`, and `<Pressable>`.
-2. **CSS properties:** AI writes `box-shadow` or `border-radius: 10px`. React Native styling uses `shadowColor / elevation` and numeric `borderRadius: 10`.
-3. **Bridge Animations:** AI suggests legacy `Animated.timing` or `setState` loops for animations. Demand `react-native-reanimated` shared values on the UI thread.
-4. **Ignoring Safe Areas:** Bounding UI boxes against the absolute physical screen edge, resulting in text hidden behind iPhone dynamic islands or Android navigation bars.
-5. **ScrollView Data Dumps:** Rendering a `.map()` inside a `<ScrollView>` for 1000 items, crashing the mobile memory constraint.
-6. **`onClick` instead of `onPress`:** Using standard web synthetic events. React Native buttons use `onPress`.
-7. **Absolute SVGs:** Attempting to render standard `<svg>` tags. Requires `react-native-svg` with precise React-friendly props.
-8. **Keyboard Avoidance:** Failing to wrap inputs in `<KeyboardAvoidingView>`, meaning the digital keyboard pops up and permanently obscures the text input.
-9. **Platform Blindness:** Applying `shadowOpacity` expecting it to work on Android (it doesn't, requires `elevation`).
-10. **Legacy Navigation:** Generating sprawling `react-navigation` stack files instead of utilizing modern Expo Router file-based topologies.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Did I exclusively use native primitives (<View>, <Text>, <Pressable>) and NO HTML tags?
-✅ Is `react-native-reanimated` handling all physics and animations on the UI thread?
-✅ Are large lists utilizing `<FlashList>` with a declared `estimatedItemSize`?
-✅ Is UI guarded from notches using `useSafeAreaInsets`?
-✅ Are styles written strictly via `StyleSheet.create` with numeric values, not string CSS?
-✅ Are interactive touch points using `onPress`, not `onClick`?
-✅ Is the Keyboard explicitly handled via `KeyboardAvoidingView` or `KeyboardAwareScrollView`?
-✅ Is routing leveraging modern Expo Router file systems?
-✅ Are shadows handled specifically for iOS (shadowProps) and Android (elevation)?
-✅ Have I avoided sending massive state updates back and forth across the JS bridge?
-```

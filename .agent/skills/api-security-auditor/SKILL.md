@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # API Security Auditor — Endpoint Hardening Mastery
 
-> If an API endpoint exists, it will be abused.
-> Security is not a perimeter; it is embedded deeply within every individual route controller.
-
 ---
 
 ## Insecure Direct Object Reference (IDOR)
@@ -144,34 +141,3 @@ const server = new ApolloServer({
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (API Security)
-
-1. **Implicit Trust of Query Params:** AI often assumes `?userId=123` is the authenticated user, circumventing the session/JWT entirely.
-2. **Sequential IDs:** AI defaults to `id INT AUTO_INCREMENT`. Demand UUIDs/CUIDs for external facing IDs.
-3. **Mass Assignment via Spread:** `update({...req.body})` is an extremely common AI hallucination that allows role elevation.
-4. **Missing Pagination Bounds:** AI writes `LIMIT ${req.query.limit}`. Attackers send `limit=10000000`. Hard limit the boundaries.
-5. **API Keys in Query Strings:** AI writes `fetch('/api/data?apiKey=123')`. Keys belong in headers.
-6. **In-Memory Rate Limiting:** AI writes simple arrays/memory maps for rate limiting, which fail instantly in multi-pod deployments.
-7. **Returning Stack Traces:** AI error handlers often map `err.message` or `err.stack` straight to the JSON response in production.
-8. **Blind Pagination Links:** Returning exact internal DB IDs in 'next' cursors can leak information.
-9. **CORS Misconfiguration:** Returning `Access-Control-Allow-Origin: *` while also allowing credentials.
-10. **JSON Denial of Service:** AI rarely limits request body sizes. Attackers send 2GB JSON blobs to crash Node.js. Use `express.json({ limit: '100kb' })`.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are resource endpoints strictly verifying ownership (IDOR prevention)?
-✅ Are object updates extracting specific fields instead of `req.body` directly?
-✅ Is pagination hard-capped at a reasonable maximum (e.g., 100)?
-✅ Are API keys heavily hashed in the database?
-✅ Are API keys strictly required via headers, not query parameters?
-✅ Is rate-limiting backed by a centralized store (Redis)?
-✅ Does the server explicitly cap JSON payload sizes (`limit: '100kb'`)?
-✅ Are external-facing resource IDs random/UUID-based, not sequential?
-✅ Have stack traces and verbose errors been disabled for production?
-✅ For GraphQL: Is query depth restricted and introspection turned off?
-```

@@ -1,499 +1,151 @@
 ---
 name: frontend-design
-description: Design thinking and decision-making for web UI. Use when designing components, layouts, color schemes, typography, or creating aesthetic interfaces. Teaches principles, not fixed values.
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash
-version: 1.0.0
-last-updated: 2026-03-12
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
+description: Design thinking for web UI. Micro-interactions, visual hierarchy, typography scaling, HSL color palettes, spacing systems, and CSS-first UI logic. Avoid generic AI aesthetics.
+allowed-tools: Read, Write, Edit, Glob, Grep
+version: 3.1.0
+last-updated: 2026-04-06
+applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
 ---
 
-# Frontend Design System
+# Frontend Design — Dense Reference
 
-> **Philosophy:** Every pixel has purpose. Restraint is luxury. User psychology drives decisions.
-> **Core Principle:** THINK, don't memorize. ASK, don't assume.
-
----
-
-## 🎯 Selective Reading Rule (MANDATORY)
-
-**Read REQUIRED files always, OPTIONAL only when needed:**
-
-| File | Status | When to Read |
-|------|--------|--------------|
-| [ux-psychology.md](ux-psychology.md) | 🔴 **REQUIRED** | Always read first! |
-| [color-system.md](color-system.md) | ⚪ Optional | Color/palette decisions |
-| [typography-system.md](typography-system.md) | ⚪ Optional | Font selection/pairing |
-| [visual-effects.md](visual-effects.md) | ⚪ Optional | Glassmorphism, shadows, gradients |
-| [animation-guide.md](animation-guide.md) | ⚪ Optional | Animation needed |
-| [motion-graphics.md](motion-graphics.md) | ⚪ Optional | Lottie, GSAP, 3D |
-| [decision-trees.md](decision-trees.md) | ⚪ Optional | Context templates |
-
-> 🔴 **ux-psychology.md = ALWAYS READ. Others = only if relevant.**
+## Hallucination Traps (Read First)
+- ❌ Purple gradient backgrounds (`from-purple-500 to-blue-500`) → ✅ The worst AI UI cliché. Use high-contrast solid colors, grain, or sophisticated HSL mono-palettes.
+- ❌ Hardcoded pixels (`font-size: 14px`) → ✅ Use `rem` for accessibility and scaling (`1rem = 16px`).
+- ❌ Gray text (`#888`) on white → ✅ Fails WCAG contrast. Text must be `4.5:1` ratio.
+- ❌ Generic sans-serif → ✅ Inter, Geist, Roboto Mono, or system-ui. Typography is 80% of design.
+- ❌ "Bento Box" grids for everything → ✅ Overused pattern. Use directional flow or asymmetric layouts.
+- ❌ Symmetrical layouts out of laziness → ✅ Tension and blank space (negative space) drive premium feel.
+- ❌ Infinite scrolling without context → ✅ Provide clear footers or logical pagination markers.
+- ❌ Over-animating everything (`all elements fade in`) → ✅ Animate state changes (hover, focus, submit), not static entry layout unless scrollytelling.
 
 ---
 
-## 🔧 Runtime Scripts
+## 1. Color Theory (HSL over HEX)
 
-**Execute these for audits (don't read, just run):**
+Never use raw flat HEX colors. Use HSL to build cohesive scales.
 
-| Script | Purpose | Usage |
-|--------|---------|-------|
-| `scripts/ux_audit.py` | UX Psychology & Accessibility Audit | `python scripts/ux_audit.py <project_path>` |
+```css
+:root {
+  /* HSL allows programmatic adjustment of lightness/saturation */
+  --hue: 220; 
+  --sat: 80%;
+  
+  --bg-base: hsl(var(--hue), 15%, 98%);
+  --bg-surface: hsl(var(--hue), 20%, 100%);
+  
+  --text-main: hsl(var(--hue), 40%, 10%);
+  --text-muted: hsl(var(--hue), 20%, 40%);
+  
+  --primary: hsl(var(--hue), var(--sat), 50%);
+  --primary-hover: hsl(var(--hue), var(--sat), 40%); /* Darken via L */
+}
 
----
-
-## ⚠️ CRITICAL: ASK BEFORE ASSUMING (MANDATORY)
-
-> **STOP! If the user's request is open-ended, DO NOT default to your favorites.**
-
-### When User Prompt is Vague, ASK:
-
-**Color not specified?** Ask:
-> "What color palette do you prefer? (blue/green/orange/neutral/other?)"
-
-**Style not specified?** Ask: 
-> "What style are you going for? (minimal/bold/retro/futuristic/organic?)"
-
-**Layout not specified?** Ask:
-> "Do you have a layout preference? (single column/grid/asymmetric/full-width?)"
-
-### ⛔ DEFAULT TENDENCIES TO AVOID (ANTI-SAFE HARBOR):
-
-| AI Default Tendency | Why It's Bad | Think Instead |
-|---------------------|--------------|---------------|
-| **Bento Grids (Modern Cliché)** | Used in every AI design | Why does this content NEED a grid? |
-| **Hero Split (Left/Right)** | Predictable & Boring | How about Massive Typography or Vertical Narrative? |
-| **Mesh/Aurora Gradients** | The "new" lazy background | What's a radical color pairing? |
-| **Glassmorphism** | AI's idea of "premium" | How about solid, high-contrast flat? |
-| **Deep Cyan / Fintech Blue** | Safe harbor from purple ban | Why not Red, Black, or Neon Green? |
-| **"Orchestrate / Empower"** | AI-generated copywriting | How would a human say this? |
-| Dark background + neon glow | Overused, "AI look" | What does the BRAND actually need? |
-| **Rounded everything** | Generic/Safe | Where can I use sharp, brutalist edges? |
-
-> 🔴 **"Every 'safe' structure you choose brings you one step closer to a generic template. TAKE RISKS."**
-
----
-
-## 1. Constraint Analysis (ALWAYS FIRST)
-
-Before any design work, ANSWER THESE or ASK USER:
-
-| Constraint | Question | Why It Matters |
-|------------|----------|----------------|
-| **Timeline** | How much time? | Determines complexity |
-| **Content** | Ready or placeholder? | Affects layout flexibility |
-| **Brand** | Existing guidelines? | May dictate colors/fonts |
-| **Tech** | What stack? | Affects capabilities |
-| **Audience** | Who exactly? | Drives all visual decisions |
-
-### Audience → Design Approach
-
-| Audience | Think About |
-|----------|-------------|
-| **Gen Z** | Bold, fast, mobile-first, authentic |
-| **Millennials** | Clean, minimal, value-driven |
-| **Gen X** | Familiar, trustworthy, clear |
-| **Boomers** | Readable, high contrast, simple |
-| **B2B** | Professional, data-focused, trust |
-| **Luxury** | Restrained elegance, whitespace |
-
----
-
-## 2. UX Psychology Principles
-
-### Core Laws (Internalize These)
-
-| Law | Principle | Application |
-|-----|-----------|-------------|
-| **Hick's Law** | More choices = slower decisions | Limit options, use progressive disclosure |
-| **Fitts' Law** | Bigger + closer = easier to click | Size CTAs appropriately |
-| **Miller's Law** | ~7 items in working memory | Chunk content into groups |
-| **Von Restorff** | Different = memorable | Make CTAs visually distinct |
-| **Serial Position** | First/last remembered most | Key info at start/end |
-
-### Emotional Design Levels
-
-```
-VISCERAL (instant)  → First impression: colors, imagery, overall feel
-BEHAVIORAL (use)    → Using it: speed, feedback, efficiency
-REFLECTIVE (memory) → After: "I like what this says about me"
+/* OLED Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-base: hsl(var(--hue), 10%, 2%);
+    --bg-surface: hsl(var(--hue), 10%, 6%);
+    --text-main: hsl(var(--hue), 20%, 95%);
+    --text-muted: hsl(var(--hue), 10%, 60%);
+  }
+}
 ```
 
-### Trust Building
-
-- Security indicators on sensitive actions
-- Social proof where relevant
-- Clear contact/support access
-- Consistent, professional design
-- Transparent policies
-
----
-
-## 3. Layout Principles
-
-### Spatial & Asymmetric Composition (Pro Max Level)
-
-```
-Break out of basic CSS Grid/Flexbox row mentality. True premium design uses space intentionally:
-├── Overlapping: Let images break out of their containers
-├── Asymmetry: 60/40 or 70/30 splits, not just 50/50
-├── Negative Space as an Object: Whitespace isn't just "gap", it's a structural element
-└── Z-Axis Depth: Layering typography behind or partially over imagery
-```
-
-### Golden Ratio (φ = 1.618)
-
-```
-Use for proportional harmony:
-├── Content : Sidebar = roughly 62% : 38%
-├── Each heading size = previous × 1.618 (for dramatic scale)
-├── Spacing can follow: sm → md → lg (each × 1.618)
-```
-
-### 8-Point Grid Concept
-
-```
-All spacing and sizing in multiples of 8:
-├── Tight: 4px (half-step for micro)
-├── Small: 8px
-├── Medium: 16px
-├── Large: 24px, 32px
-├── XL: 48px, 64px, 80px
-└── Adjust based on content density
-```
-
-### Key Sizing Principles & UI Building Accuracy
-
-To guarantee pixel-perfect accuracy, you must enforce explicit building rules when passing designs to code:
-1. **Never Hallucinate Spacing:** Use exact numeric styling scales (e.g., a 4px grid: `p-4`, `gap-8`, `m-2`). Do NOT use vague terms like "large padding".
-2. **Explicit Layout Boundaries:** Always define `flex`, `grid`, and strict alignment. Never rely on browser auto-margins to guess structure.
-3. **Dimensions:** Explicitly define bounding boxes where applicable (`w-full`, `max-w-7xl`).
-
-| Element | Consideration |
-|---------|---------------|
-| **Touch targets** | Minimum comfortable tap size |
-| **Buttons** | Height based on importance hierarchy |
-| **Inputs** | Match button height for alignment |
-| **Cards** | Consistent padding, breathable |
-| **Reading width** | 45-75 characters optimal |
-
----
-
-## 4. Color Principles
-
-### 60-30-10 Rule
-
-```
-60% → Primary/Background (calm, neutral base)
-30% → Secondary (supporting areas)
-10% → Accent (CTAs, highlights, attention)
-```
-
-### Color Psychology (For Decision Making)
-
-| If You Need... | Consider Hues | Avoid |
-|----------------|---------------|-------|
-| Trust, calm | Blue family | Aggressive reds |
-| Growth, nature | Green family | Industrial grays |
-| Energy, urgency | Orange, red | Passive blues |
-| Luxury, creativity | Deep Teal, Gold, Emerald | Cheap-feeling brights |
-| Clean, minimal | Neutrals | Overwhelming color |
-
-### Selection Process
-
-1. **What's the industry?** (narrows options)
-2. **What's the emotion?** (picks primary)
-3. **Light or dark mode?** (sets foundation)
-4. **ASK USER** if not specified
-
-For detailed color theory: [color-system.md](color-system.md)
-
----
-
-## 5. Typography Principles
-
-### Scale Selection
-
-| Content Type | Scale Ratio | Feel |
-|--------------|-------------|------|
-| Dense UI | 1.125-1.2 | Compact, efficient |
-| General web | 1.25 | Balanced (most common) |
-| Editorial | 1.333 | Readable, spacious |
-| Hero/display | 1.5-1.618 | Dramatic impact |
-
-### Pairing Concept
-
-```
-Contrast + Harmony:
-├── DIFFERENT enough for hierarchy
-├── SIMILAR enough for cohesion
-└── Usually: display + neutral, or serif + sans
-```
-
-### Readability Rules
-
-- **Line length**: 45-75 characters optimal
-- **Line height**: 1.4-1.6 for body text
-- **Contrast**: Check WCAG requirements
-- **Size**: 16px+ for body on web
-
-For detailed typography: [typography-system.md](typography-system.md)
-
----
-
-## 6. Visual Effects Principles
-
-### Glassmorphism (When Appropriate)
-
-```
-Key properties:
-├── Semi-transparent background
-├── Backdrop blur
-├── Subtle border for definition
-└── ⚠️ **WARNING:** Standard blue/white glassmorphism is a modern cliché. Use it radically or not at all.
-```
-
-### Shadow Hierarchy
-
-```
-Elevation concept:
-├── Higher elements = larger shadows
-├── Y-offset > X-offset (light from above)
-├── Multiple layers = more realistic
-└── Dark mode: may need glow instead
-```
-
-### Gradient Usage
-
-```
-Harmonious gradients:
-├── Adjacent colors on wheel (analogous)
-├── OR same hue, different lightness
-├── Avoid harsh complementary pairs
-├── 🚫 **NO Mesh/Aurora Gradients** (floating blobs)
-└── VARY from project to project radically
-```
-
-For complete effects guide: [visual-effects.md](visual-effects.md)
-
----
-
-## 7. Animation Principles
-
-### Timing Concept
-
-```
-Duration based on:
-├── Distance (further = longer)
-├── Size (larger = slower)
-├── Importance (critical = clear)
-└── Context (urgent = fast, luxury = slow)
-```
-
-### Easing Selection
-
-| Action | Easing | Why |
-|--------|--------|-----|
-| Entering | Ease-out | Decelerate, settle in |
-| Leaving | Ease-in | Accelerate, exit |
-| Emphasis | Ease-in-out | Smooth, deliberate |
-| Playful | Bounce | Fun, energetic |
-
-### Performance
-
-- Animate only transform and opacity
-- Respect reduced-motion preference
-- Test on low-end devices
-
-For animation patterns: [animation-guide.md](animation-guide.md), for advanced: [motion-graphics.md](motion-graphics.md)
-
----
-
-## 8. "Wow Factor" Checklist
-
-### Premium Indicators
-
-- [ ] Generous whitespace (luxury = breathing room)
-- [ ] Subtle depth and dimension
-- [ ] Smooth, purposeful animations
-- [ ] Attention to detail (alignment, consistency)
-- [ ] Cohesive visual rhythm
-- [ ] Custom elements (not all defaults)
-
-### Trust Builders
-
-- [ ] Security cues where appropriate
-- [ ] Social proof / testimonials
-- [ ] Clear value proposition
-- [ ] Professional imagery
-- [ ] Consistent design language
-
-### Emotional Triggers
-
-- [ ] Hero that evokes intended emotion
-- [ ] Human elements (faces, stories)
-- [ ] Progress/achievement indicators
-- [ ] Moments of delight
-
----
-
-## 9. Anti-Patterns (What NOT to Do)
-
-### ❌ Lazy Design Indicators
-
-- Default system fonts without consideration
-- Stock imagery that doesn't match
-- Inconsistent spacing
-- Too many competing colors
-- Walls of text without hierarchy
-- Inaccessible contrast
-
-### ❌ AI Tendency Patterns (AVOID!)
-
-- **Same colors every project**
-- **Dark + neon as default**
-- **Purple/violet everything (PURPLE BAN ✅)**
-- **Bento grids for simple landing pages**
-- **Mesh Gradients & Glow Effects**
-- **Same layout structure / Vercel clone**
-- **Not asking user preferences**
-- **Emojis for UI icons (BANNED: Use lucide-react/SVGs ✅)**
-- **Tailwind Defaults**: Using `rounded-md`, `shadow-md`, `text-blue-500` without custom configuration.
-- **Static Dead Zones**: Interfaces with zero micro-interactions. Inject "whimsy" (subtle scale, transform, or opacity shifts on interaction).
-
-### ❌ Dark Patterns (Unethical)
-
-- Hidden costs
-- Fake urgency
-- Forced actions
-- Deceptive UI
-- Confirmshaming
-
----
-
-## 10. Decision Process Summary
-
-```
-For EVERY design task:
-
-1. CONSTRAINTS
-   └── What's the timeline, brand, tech, audience?
-   └── If unclear → ASK
-
-2. CONTENT
-   └── What content exists?
-   └── What's the hierarchy?
-
-3. STYLE DIRECTION
-   └── What's appropriate for context?
-   └── If unclear → ASK (don't default!)
-
-4. EXECUTION
-   └── Apply principles above
-   └── Check against anti-patterns
-
-5. REVIEW
-   └── "Does this serve the user?"
-   └── "Is this different from my defaults?"
-   └── "Would I be proud of this?"
+## 2. Spatial Systems & Grid Mathematics
+
+Design relies on structural rhythm. Use an **8px base system**.
+
+- **Micro padding**: `4px`, `8px` (Tags, List items)
+- **Component padding**: `16px`, `24px` (Cards, Inputs, Modals)
+- **Section spacing**: `48px`, `64px`, `96px` (Page sections)
+- **Line height**: Body `1.5`, Headings `1.1` or `1.2`.
+
+```css
+/* Fluid Typography (Clamp) */
+h1 {
+  /* Min 2rem, fluidly scale between 480px-1200px, Max 4rem */
+  font-size: clamp(2rem, 5vw, 4rem);
+  letter-spacing: -0.02em; /* Tighten large text */
+}
+
+p {
+  font-size: 1rem;
+  max-width: 65ch; /* Optimal reading length */
+}
 ```
 
 ---
 
-## Reference Files
+## 3. Interaction & "Juice" (Micro-interactions)
 
-For deeper guidance on specific areas:
+A premium UI reacts to the user instantly and smoothly. Focus on state transitions.
 
-- [color-system.md](color-system.md) - Color theory and selection process
-- [typography-system.md](typography-system.md) - Font pairing and scale decisions
-- [visual-effects.md](visual-effects.md) - Effects principles and techniques
-- [animation-guide.md](animation-guide.md) - Motion design principles
-- [motion-graphics.md](motion-graphics.md) - Advanced: Lottie, GSAP, SVG, 3D, Particles
-- [decision-trees.md](decision-trees.md) - Context-specific templates
-- [ux-psychology.md](ux-psychology.md) - User psychology deep dive
+```css
+/* Smooth generic transition */
+.btn {
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Active Depth - The physical button push */
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* Hardware-Accelerated Shadows */
+.card {
+  box-shadow: 0 4px 6px -1px rgba(0,0,0, 0.1), 0 2px 4px -1px rgba(0,0,0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-4px); /* Float effect */
+  box-shadow: 0 20px 25px -5px rgba(0,0,0, 0.1), 0 10px 10px -5px rgba(0,0,0, 0.04);
+}
+```
 
 ---
 
-## Related Skills
+## 4. Modern Glassmorphism & Depth
 
-| Skill | When to Use |
-|-------|-------------|
-| **frontend-design** (this) | Before coding - Learn design principles (color, typography, UX psychology) |
-| **[web-design-guidelines](../web-design-guidelines/SKILL.md)** | After coding - Audit for accessibility, performance, and best practices |
+Flat design is dead. Modern UI uses depth, layering, and blur.
 
-## Post-Design Workflow
-
-After implementing your design, run the audit:
-
+```css
+/* Frosted Glass */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+}
 ```
-1. DESIGN   → Read frontend-design principles ← YOU ARE HERE
-2. CODE     → Implement the design
-3. AUDIT    → Run web-design-guidelines review
-4. FIX      → Address findings from audit
-```
-
-> **Next Step:** After coding, use `web-design-guidelines` skill to audit your implementation for accessibility, focus states, animations, and performance issues.
 
 ---
 
-> **Remember:** Design is THINKING, not copying. Every project deserves fresh consideration based on its unique context and users. **Avoid the Modern SaaS Safe Harbor!**
+## 5. Forms and High-Friction UI
+
+Forms are where users drop off. They must be flawless.
+
+- **Auto-focus** the first input on modal open.
+- **Labels** must be visible outside the input (not just placeholders).
+- **Validation** happens `onBlur` (when leaving), NOT `onChange` (typing).
+- **Submit buttons** show loading spinners, disable inputs, and prevent double-clicks.
+
+```css
+/* Focus-visible: Only show ring for keyboard nav, not mouse clicks */
+button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+```
 
 ---
 
-## Output Format
+## 6. Accessibility (WCAG 2.2 AA)
 
-When this skill produces a recommendation or design decision, structure your output as:
+Design is fundamentally broken if it excludes users.
 
-```
-━━━ Frontend Design Recommendation ━━━━━━━━━━━━━━━━
-Decision:    [what was chosen / proposed]
-Rationale:   [why — one concise line]
-Trade-offs:  [what is consciously accepted]
-Next action: [concrete next step for the user]
-─────────────────────────────────────────────────
-Pre-Flight:  ✅ All checks passed
-             or ❌ [blocking item that must be resolved first]
-```
-
-
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
+- ✅ Interactive elements need `aria-label` if not visually labeled.
+- ✅ Custom dropdowns/selects must support Arrow Keys and Escape.
+- ✅ Color alone cannot convey state (Error text must have an icon too `❌ Password invalid`).
+- ✅ Hide decorative SVG/icons from screen readers `aria-hidden="true"`.

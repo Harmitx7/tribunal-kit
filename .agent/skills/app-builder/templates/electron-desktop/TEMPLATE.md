@@ -7,14 +7,14 @@ description: Electron desktop app template principles. Cross-platform, React, Ty
 
 ## Tech Stack
 
-| Component | Technology |
+|Component|Technology|
 |-----------|------------|
-| Framework | Electron 28+ |
-| UI | React 19 |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Bundler | Vite + electron-builder |
-| IPC | Type-safe communication |
+|Framework|Electron 28+|
+|UI|React 19|
+|Language|TypeScript|
+|Styling|Tailwind CSS|
+|Bundler|Vite + electron-builder|
+|IPC|Type-safe communication|
 
 ---
 
@@ -40,22 +40,22 @@ project-name/
 
 ## Process Model
 
-| Process | Role |
+|Process|Role|
 |---------|------|
-| Main | Node.js, system access |
-| Renderer | Chromium, React UI |
-| Preload | Bridge, context isolation |
+|Main|Node.js, system access|
+|Renderer|Chromium, React UI|
+|Preload|Bridge, context isolation|
 
 ---
 
 ## Key Concepts
 
-| Concept | Purpose |
+|Concept|Purpose|
 |---------|---------|
-| contextBridge | Safe API exposure |
-| ipcMain/ipcRenderer | Process communication |
-| nodeIntegration: false | Security |
-| contextIsolation: true | Security |
+|contextBridge|Safe API exposure|
+|ipcMain/ipcRenderer|Process communication|
+|nodeIntegration: false|Security|
+|contextIsolation: true|Security|
 
 ---
 
@@ -71,11 +71,11 @@ project-name/
 
 ## Build Targets
 
-| Platform | Output |
+|Platform|Output|
 |----------|--------|
-| Windows | NSIS, Portable |
-| macOS | DMG, ZIP |
-| Linux | AppImage, DEB |
+|Windows|NSIS, Portable|
+|macOS|DMG, ZIP|
+|Linux|AppImage, DEB|
 
 ---
 

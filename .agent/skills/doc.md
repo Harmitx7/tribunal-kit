@@ -1,6 +1,6 @@
 # Antigravity Skills
 
-> **Guide to creating and using Skills in the Antigravity Kit**
+**Guide to creating and using Skills in the Antigravity Kit**
 
 ---
 
@@ -16,9 +16,9 @@ While Antigravity's base models (like Gemini) are powerful generalists, they don
 
 Skills are folder-based packages. You can define these scopes based on your needs:
 
-| Scope         | Path                              | Description                          |
-| ------------- | --------------------------------- | ------------------------------------ |
-| **Workspace** | `<workspace-root>/.agent/skills/` | Available only in a specific project |
+|Scope|Path|Description|
+|-------------|---------------------------------|------------------------------------|
+|**Workspace**|`<workspace-root>/.agent/skills/`|Available only in a specific project|
 
 ### Skill Directory Structure
 
@@ -68,7 +68,7 @@ When reviewing code, follow these steps:
 - Suggest alternatives when possible
 ```
 
-> **Note**: The `SKILL.md` file contains metadata (name, description) at the top, followed by the instructions. The agent will only read the metadata and load the full instructions only when needed.
+**Note**: The `SKILL.md` file contains metadata (name, description) at the top, followed by the instructions. The agent will only read the metadata and load the full instructions only when needed.
 
 ### Try it out
 

@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # PowerShell — Windows Automation Mastery
 
-> PowerShell does not pipe text. It pipes rich .NET Objects.
-> Your Bash instincts will betray you here. Think in structured data, not regex.
-
 ---
 
 ## 1. The Object Pipeline
@@ -113,34 +110,3 @@ Get-ChildItem -Path "Cert:\LocalMachine\My" | Where-Object Subject -match "examp
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (PowerShell)
-
-1. **Bash Equivalencies:** AI writing `Test-Path | regex` instead of dealing with properties. Always use object properties (`$obj.Length`, `$obj.Name`).
-2. **Missing `ErrorActionPreference`:** Continuing execution blindly after a critical `Copy-Item` command fails. Always set preference to "Stop".
-3. **Execution Policy Destruction:** Instructing users to permanently change global machine policy to run a script. Always use `-ExecutionPolicy Bypass` natively.
-4. **JSON Conversion Depth limits:** `ConvertTo-Json` defaults to a depth of only 2. It will ruthlessly truncate your nested API payloads silently unless you append `-Depth 10`.
-5. **Return Types in Functions:** PowerShell returns EVERYTHING that hits the pipeline inside a function, not just the `return` statement. Explicitly cast silent operations to `$null` or pipe to `Out-Null`. (e.g., `$list.Add("item") | Out-Null`).
-6. **Comparison Operators:** AI uses `>` or `==`. PowerShell requires `-gt`, `-eq`, `-ne`, `-lt`.
-7. **Backtick Continuation:** Using the backtick `` ` `` as a line continuation character randomly. It is notoriously hard to read and breaks if there's a trailing space. Use proper pipeline formatting or array declarations.
-8. **Paths with Spaces:** Similar to bash, failing to wrap paths in string quotes when executing. `& "C:\Program Files\Node\npm.cmd" install`.
-9. **`Out-File` vs `Set-Content` Encryption:** AI writing configs using `Out-File` defaults to UTF-16 on older PowerShell versions, breaking Linux/Docker containers. Standardize on `Set-Content` or explicitly declare `-Encoding UTF8`.
-10. **`Write-Host` vs `Write-Output`:** AI uses `Write-Host` to return data from functions. `Write-Host` goes straight to the console display buffer. Always use `Write-Output` if you want another variable or pipe to catch the return data.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Have I forced strict error catching via `$ErrorActionPreference = "Stop"`?
-✅ Am I manipulating objects (e.g., `Where-Object`) rather than string parsing?
-✅ If I invoked `ConvertTo-Json`, did I set `-Depth 10` (or higher)?
-✅ Are my comparison operators using PowerShell syntax (`-eq`, `-gt`) instead of (`==`, `>`)?
-✅ Did I use `-ExecutionPolicy Bypass` rather than recommending global registry changes?
-✅ Is text encoded correctly to UTF8 via `Set-Content` instead of `Out-File`?
-✅ Did I return data from my functions via `Write-Output` instead of `Write-Host`?
-✅ Are array modifications piped to `Out-Null` to prevent pipeline pollution?
-✅ Is `Invoke-RestMethod` leveraged for APIs instead of the heavier `Invoke-WebRequest`?
-✅ Are commands with spaces invoked using the call operator `& "Path\To\File"`?
-```

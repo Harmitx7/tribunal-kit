@@ -2,15 +2,12 @@
 name: app-builder
 description: Main application building orchestrator. Creates full-stack applications from natural language requests. Determines project type, selects tech stack, coordinates agents.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
+version: 3.1.0
+last-updated: 2026-04-06
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # App Builder — Application Orchestrator
-
-> Building a full application is a coordination problem, not a coding problem.
-> Coordinate the experts. Keep the boundaries clean.
 
 ---
 
@@ -53,16 +50,15 @@ Wait for answers. Stack decisions depend on these answers.
 
 ## Phase 2 — Stack Selection
 
-| App Type | Frontend | Backend | Database |
-|---|---|---|---|
-| Content / marketing site | Next.js | Next.js API routes | PostgreSQL (if dynamic) |
-| SaaS web app | Next.js | Next.js API routes / Fastify | PostgreSQL + Redis |
-| Mobile app (cross-platform) | React Native (Expo) | Node.js API | PostgreSQL |
-| Internal dashboard / admin | Next.js | Next.js API routes | Existing |
-| Real-time (chat, collaboration) | Next.js | Fastify + WebSockets | PostgreSQL + Redis |
-| Data-heavy API | — | FastAPI (Python) | PostgreSQL |
-| AI assistant / RAG app | Next.js (streaming) | Fastify + LLM SDK | PostgreSQL + pgvector |
-| Edge-global, latency-critical | Next.js | Hono (Cloudflare Workers) | Turso / Cloudflare KV |
+|App Type|Frontend|Backend|Database|
+|Content / marketing site|Next.js|Next.js API routes|PostgreSQL (if dynamic)|
+|SaaS web app|Next.js|Next.js API routes / Fastify|PostgreSQL + Redis|
+|Mobile app (cross-platform)|React Native (Expo)|Node.js API|PostgreSQL|
+|Internal dashboard / admin|Next.js|Next.js API routes|Existing|
+|Real-time (chat, collaboration)|Next.js|Fastify + WebSockets|PostgreSQL + Redis|
+|Data-heavy API|—|FastAPI (Python)|PostgreSQL|
+|AI assistant / RAG app|Next.js (streaming)|Fastify + LLM SDK|PostgreSQL + pgvector|
+|Edge-global, latency-critical|Next.js|Hono (Cloudflare Workers)|Turso / Cloudflare KV|
 
 **If unclear:** Next.js + PostgreSQL covers 80% of use cases and is the safest default for web apps.
 
@@ -181,58 +177,338 @@ Report the URL to the user.
 
 ## Template Index
 
-| Template | Path | When to Use |
-|---|---|---|
-| Next.js Full-Stack | `templates/nextjs-app/` | Web app with API routes |
-| React Native | `templates/react-native-app/` | Cross-platform mobile |
-| API Only | `templates/api-only/` | Backend service, no UI |
+|Template|Path|When to Use|
+|Next.js Full-Stack|`templates/nextjs-app/`|Web app with API routes|
+|React Native|`templates/react-native-app/`|Cross-platform mobile|
+|API Only|`templates/api-only/`|Backend service, no UI|
 
 ---
 
-## Output Format
+---
 
-When this skill produces a recommendation or design decision, structure your output as:
+## Agent Coordination
+
+How App Builder orchestrates specialist agents.
+
+### Agent Pipeline
 
 ```
-━━━ App Builder Recommendation ━━━━━━━━━━━━━━━━
-Decision:    [what was chosen / proposed]
-Rationale:   [why — one concise line]
-Trade-offs:  [what is consciously accepted]
-Next action: [concrete next step for the user]
-─────────────────────────────────────────────────
-Pre-Flight:  ✅ All checks passed
-             or ❌ [blocking item that must be resolved first]
+┌─────────────────────────────────────────────────────────────┐
+│                   APP BUILDER (Orchestrator)                 │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     PROJECT PLANNER                          │
+│  • Task breakdown                                            │
+│  • Dependency graph                                          │
+│  • File structure planning                                   │
+│  • Create {task-slug}.md in project root (MANDATORY)             │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│              CHECKPOINT: PLAN VERIFICATION                   │
+│  🔴 VERIFY: Does {task-slug}.md exist in project root?       │
+│  🔴 If NO → STOP → Create plan file first                    │
+│  🔴 If YES → Proceed to specialist agents                    │
+└─────────────────────────────────────────────────────────────┘
+                              │
+          ┌───────────────────┼───────────────────┐
+          ▼                   ▼                   ▼
+┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+│ DATABASE        │ │ BACKEND         │ │ FRONTEND        │
+│ ARCHITECT       │ │ SPECIALIST      │ │ SPECIALIST      │
+│                 │ │                 │ │                 │
+│ • Schema design │ │ • API routes    │ │ • Components    │
+│ • Migrations    │ │ • Controllers   │ │ • Pages         │
+│ • Seed data     │ │ • Middleware    │ │ • Styling       │
+└─────────────────┘ └─────────────────┘ └─────────────────┘
+          │                   │                   │
+          └───────────────────┼───────────────────┘
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 PARALLEL PHASE (Optional)                    │
+│  • Security Auditor → Vulnerability check                   │
+│  • Test Engineer → Unit tests                               │
+│  • Performance Optimizer → Bundle analysis                  │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     DEVOPS ENGINEER                          │
+│  • Environment setup                                         │
+│  • Preview deployment                                        │
+│  • Health check                                              │
+└─────────────────────────────────────────────────────────────┘
 ```
 
+### Execution Order
+
+|Phase|Agent(s)|Parallel?|Prerequisite|CHECKPOINT|
+|-------|----------|-----------|--------------|------------|
+|0|Socratic Gate|❌|-|✅ Ask 3 questions|
+|1|Project Planner|❌|Questions answered|✅ **PLAN.md created**|
+|1.5|**PLAN VERIFICATION**|❌|PLAN.md exists|✅ **File exists in root**|
+|2|Database Architect|❌|Plan ready|Schema defined|
+|3|Backend Specialist|❌|Schema ready|API routes created|
+|4|Frontend Specialist|✅|API ready (partial)|UI components ready|
+|5|Security Auditor, Test Engineer|✅|Code ready|Tests & audit pass|
+|6|DevOps Engineer|❌|All code ready|Deployment ready|
+
+> 🔴 **CRITICAL:** Phase 1.5 is MANDATORY. No specialist agents proceed without PLAN.md verification.
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## Feature Building
 
-**Slash command: `/create`**
-**Active reviewers: `orchestrator` · `project-planner`**
+How to analyze and implement new features.
 
-### ❌ Forbidden AI Tropes in App Building
+### Feature Analysis
 
-1. **Skipping Constraints** — immediately starting to generate code without asking the user about their constraints and audience.
-2. **Building the Whole App at Once** — attempting to generate 50 files in a single turn.
-3. **Out-of-Order Execution** — writing frontend components before the API or DB schema is actually designed.
-4. **Magic Dependencies** — assuming packages are installed without updating `package.json`.
-5. **Ignoring Boundaries** — mismatching the API response format between the server and the frontend client.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before orchestrating a full app build:
 ```
-✅ Did I ask the clarifying questions regarding constraints and target audience?
-✅ Is my generated plan broken into modular, sequenced steps (DB -> API -> UI)?
-✅ Have I explicitly defined the API contracts so the frontend and backend match?
-✅ Did I correctly track which dependencies need to be installed?
-✅ Am I verifying integration at each boundary before moving to the next layer?
+Request: "add payment system"
+
+Analysis:
+├── Required Changes:
+│   ├── Database: orders, payments tables
+│   ├── Backend: /api/checkout, /api/webhooks/stripe
+│   ├── Frontend: CheckoutForm, PaymentSuccess
+│   └── Config: Stripe API keys
+│
+├── Dependencies:
+│   ├── stripe package
+│   └── Existing user authentication
+│
+└── Estimated Time: 15-20 minutes
 ```
 
-### 🛑 Verification-Before-Completion (VBC) Protocol
+### Iterative Enhancement Process
 
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring an application architecture or full-stack integration complete without verifying the seams.
-- ✅ **Required:** You are explicitly forbidden from completing an app build or integration phase without providing **concrete terminal evidence** (e.g., successful local dev server start logs, passing build logs, or successful API local test results).
+```
+1. Analyze existing project
+2. Create change plan
+3. Present plan to user
+4. Get approval
+5. Apply changes
+6. Test
+7. Show preview
+```
+
+### Error Handling
+
+|Error Type|Solution Strategy|
+|------------|-------------------|
+|TypeScript Error|Fix type, add missing import|
+|Missing Dependency|Run npm install|
+|Port Conflict|Suggest alternative port|
+|Database Error|Check migration, validate connection|
+
+### Recovery Strategy
+
+```
+1. Detect error
+2. Try automatic fix
+3. If failed, report to user
+4. Suggest alternative
+5. Rollback if necessary
+```
+
+---
+
+## Project Type Detection
+
+Analyze user requests to determine project type and template.
+
+### Keyword Matrix
+
+|Keywords|Project Type|Template|
+|----------|--------------|----------|
+|blog, post, article|Blog|astro-static|
+|e-commerce, product, cart, payment|E-commerce|nextjs-saas|
+|dashboard, panel, management|Admin Dashboard|nextjs-fullstack|
+|api, backend, service, rest|API Service|express-api|
+|python, fastapi, django|Python API|python-fastapi|
+|mobile, android, ios, react native|Mobile App (RN)|react-native-app|
+|flutter, dart|Mobile App (Flutter)|flutter-app|
+|portfolio, personal, cv|Portfolio|nextjs-static|
+|crm, customer, sales|CRM|nextjs-fullstack|
+|saas, subscription, stripe|SaaS|nextjs-saas|
+|landing, promotional, marketing|Landing Page|nextjs-static|
+|docs, documentation|Documentation|astro-static|
+|extension, plugin, chrome|Browser Extension|chrome-extension|
+|desktop, electron|Desktop App|electron-desktop|
+|cli, command line, terminal|CLI Tool|cli-tool|
+|monorepo, workspace|Monorepo|monorepo-turborepo|
+
+### Detection Process
+
+```
+1. Tokenize user request
+2. Extract keywords
+3. Determine project type
+4. Detect missing information → forward to conversation-manager
+5. Suggest tech stack
+```
+
+---
+
+## Project Scaffolding
+
+---
+
+### Next.js Full-Stack Structure (2025 Optimized)
+
+```
+project-name/
+├── src/
+│   ├── app/                        # Routes only (thin layer)
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   ├── globals.css
+│   │   ├── (auth)/                 # Route group - auth pages
+│   │   │   ├── login/page.tsx
+│   │   │   └── register/page.tsx
+│   │   ├── (dashboard)/            # Route group - dashboard layout
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   └── api/
+│   │       └── [resource]/route.ts
+│   │
+│   ├── features/                   # Feature-based modules
+│   │   ├── auth/
+│   │   │   ├── components/
+│   │   │   ├── hooks/
+│   │   │   ├── actions.ts          # Server Actions
+│   │   │   ├── queries.ts          # Data fetching
+│   │   │   └── types.ts
+│   │   ├── products/
+│   │   │   ├── components/
+│   │   │   ├── actions.ts
+│   │   │   └── queries.ts
+│   │   └── cart/
+│   │       └── ...
+│   │
+│   ├── shared/                     # Shared utilities
+│   │   ├── components/ui/          # Reusable UI components
+│   │   ├── lib/                    # Utils, helpers
+│   │   └── hooks/                  # Global hooks
+│   │
+│   └── server/                     # Server-only code
+│       ├── db/                     # Database client (Prisma)
+│       ├── auth/                   # Auth config
+│       └── services/               # External API integrations
+│
+├── prisma/
+│   ├── schema.prisma
+│   ├── migrations/
+│   └── seed.ts
+│
+├── public/
+├── .env.example
+├── .env.local
+├── package.json
+├── tailwind.config.ts
+├── tsconfig.json
+└── README.md
+```
+
+---
+
+### Structure Principles
+
+|Principle|Implementation|
+|-----------|----------------|
+|**Feature isolation**|Each feature in `features/` with its own components, hooks, actions|
+|**Server/Client separation**|Server-only code in `server/`, prevents accidental client imports|
+|**Thin routes**|`app/` only for routing, logic lives in `features/`|
+|**Route groups**|`(groupName)/` for layout sharing without URL impact|
+|**Shared code**|`shared/` for truly reusable UI and utilities|
+
+---
+
+### Core Files
+
+|File|Purpose|
+|------|---------|
+|`package.json`|Dependencies|
+|`tsconfig.json`|TypeScript + path aliases (`@/features/*`)|
+|`tailwind.config.ts`|Tailwind config|
+|`.env.example`|Environment template|
+|`README.md`|Project documentation|
+|`.gitignore`|Git ignore rules|
+|`prisma/schema.prisma`|Database schema|
+
+---
+
+### Path Aliases (tsconfig.json)
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/features/*": ["./src/features/*"],
+      "@/shared/*": ["./src/shared/*"],
+      "@/server/*": ["./src/server/*"]
+    }
+  }
+}
+```
+
+---
+
+### When to Use What
+
+|Need|Location|
+|------|----------|
+|New page/route|`app/(group)/page.tsx`|
+|Feature component|`features/[name]/components/`|
+|Server action|`features/[name]/actions.ts`|
+|Data fetching|`features/[name]/queries.ts`|
+|Reusable button/input|`shared/components/ui/`|
+|Database query|`server/db/`|
+|External API call|`server/services/`|
+
+---
+
+## Tech Stack Selection (2026)
+
+Default and alternative technology choices for web applications.
+
+### Default Stack (Web App - 2026)
+
+```yaml
+Frontend:
+  framework: Next.js 16 (Stable)
+  language: TypeScript 5.7+
+  styling: Tailwind CSS v4
+  state: React 19 Actions / Server Components
+  bundler: Turbopack (Stable for Dev)
+
+Backend:
+  runtime: Node.js 23
+  framework: Next.js API Routes / Hono (for Edge)
+  validation: Zod / TypeBox
+
+Database:
+  primary: PostgreSQL
+  orm: Prisma / Drizzle
+  hosting: Supabase / Neon
+
+Auth:
+  provider: Auth.js (v5) / Clerk
+
+Monorepo:
+  tool: Turborepo 2.0
+```
+
+### Alternative Options
+
+|Need|Default|Alternative|
+|------|---------|-------------|
+|Real-time|-|Supabase Realtime, Socket.io|
+|File storage|-|Cloudinary, S3|
+|Payment|Stripe|LemonSqueezy, Paddle|
+|Email|-|Resend, SendGrid|
+|Search|-|Algolia, Typesense|

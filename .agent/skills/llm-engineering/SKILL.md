@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # LLM Engineering — Production AI Systems Mastery
 
-> An LLM without guardrails is a liability generator.
-> Every prompt is a contract. Every response is untrusted. Every token costs money.
-
 ---
 
 ## Model Selection
@@ -321,37 +318,3 @@ eventSource.onmessage = (event) => {
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps
-
-1. **Trusting LLM JSON Output:** Always validate with Zod/schema. LLMs produce malformed JSON.
-2. **Secrets in System Prompts:** System prompts can be extracted. Never include API keys or internal URLs.
-3. **Fixed Character Chunking:** Splitting at 1000 chars breaks sentences. Use semantic/paragraph chunking.
-4. **Vector-Only Search:** Pure vector search misses exact matches. Use hybrid search for production.
-5. **No Token Limits:** Without `max_tokens`, models can generate 4000+ token responses. Set limits.
-6. **Single Model for Everything:** Use tiered models — cheap for simple tasks, expensive for reasoning.
-7. **No Eval Suite:** Deploying AI without evaluations is deploying untested code. Build evals.
-8. **Prompt Injection Blindness:** User input can override system instructions. Always sanitize and delimit.
-9. **Infinite Tool Loops:** Tool-calling agents can loop forever. Set max iterations (3-5).
-10. **No Rate Limiting:** API calls without rate limiting = surprise $10,000 bill. Set spend limits.
-
----
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/review-ai`**
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Am I validating all LLM responses with a schema?
-✅ Are there no secrets in system prompts?
-✅ Is user input delimited from system instructions?
-✅ Did I set max_tokens on all completions?
-✅ Is there rate limiting and cost monitoring?
-✅ Am I using the cheapest model that works?
-✅ Is chunking semantic (not fixed-character)?
-✅ Is search hybrid (vector + keyword)?
-✅ Do tool-calling loops have a max iteration limit?
-✅ Did I build evaluation tests for AI quality?
-```

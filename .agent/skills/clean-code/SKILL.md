@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Clean Code — The Art of Readable Software
 
-> Clean code reads like well-written prose. If you need a comment to explain what it does, rename the function.
-> The ratio of time spent reading code to writing code is 10:1. Optimize for the reader.
-
 ---
 
 ## Naming
@@ -324,37 +321,3 @@ function processUser(user: User) {
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps
-
-1. **Comments That Restate Code:** `// Set name to value` above `name = value` adds zero information.
-2. **Abbreviations Without Context:** `usr`, `mgr`, `proc`, `calc` — use full words.
-3. **Giant Functions:** If a function is >30 lines, it's doing too many things. Split it.
-4. **Boolean Parameters:** `setVisible(true)` is unreadable. Use named methods: `show()`, `hide()`.
-5. **Magic Numbers:** `if (retries > 5)` — what's 5? Use `MAX_RETRY_ATTEMPTS`.
-6. **Swallowing Errors:** `catch (e) {}` — silent failures are worse than crashes.
-7. **Generic Error Messages:** `"Something went wrong"` helps no one. Be specific.
-8. **Over-Commenting Obvious Code:** Comments should explain *why*, not *what*.
-9. **Deep Nesting:** 3+ levels of nesting → use guard clauses and early returns.
-10. **Premature Abstraction:** Don't create interfaces/abstractions until you have 2+ implementations.
-
----
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/review`**
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Are all names self-documenting (no abbreviations)?
-✅ Are all booleans prefixed with is/has/can/should?
-✅ Are functions <30 lines and single-purpose?
-✅ Are magic numbers replaced with named constants?
-✅ Do comments explain WHY, not WHAT?
-✅ Are errors handled specifically (not swallowed or generic)?
-✅ Is nesting ≤3 levels (using guard clauses)?
-✅ Are there no boolean parameters?
-✅ Do functions have ≤3 parameters (or use an object)?
-✅ Is there no duplicated logic?
-```

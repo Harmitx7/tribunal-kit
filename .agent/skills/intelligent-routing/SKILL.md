@@ -2,15 +2,12 @@
 name: intelligent-routing
 description: LLM Intent Processing and Gateway Routing mastery. Request classification hierarchies, function routing, confidence scoring, fallback cascades, zero-shot vs few-shot classification patterns, and identifying specialized skills for delegation. Use when parsing raw user input to determine the architectural path of execution.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
+version: 3.1.0
+last-updated: 2026-04-06
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # Intelligent Routing — Intent Gateway Mastery
-
-> Every complex automation starts with a router.
-> If you route the request incorrectly, the subsequent 10 steps of execution will fail flawlessly.
 
 ---
 
@@ -95,33 +92,70 @@ The Router must recognize execution scales. If an execution requires touching >1
 
 ---
 
-## 🤖 LLM-Specific Traps (Intelligent Routing)
-
-1. **Solving in the Router:** An LLM prompted to "Route this coding request" often replies with the actual finalized code rather than selecting the routing node. Stiffly enforce JSON outputs via schema constraint.
-2. **Zero-Shot Halucination:** The router guesses an intent bucket that isn't functionally defined (e.g., returning `classification: "DATABASE_MODE"` when that isn't a valid system enum).
-3. **Skill Name Invention:** Suggesting the invocation of a skill that doesn't exist (`suggestedSkill: "docker-expert"`) instead of matching against the explicitly provided manifest of available internal skills.
-4. **Ignoring Confidence Thresholds:** Proceeding with architectural execution even when the user's prompt is completely ambiguous, resulting in 5 wasted LLM token loops.
-5. **The God-Agent Fallback:** Categorizing complex requests into generic root workflows instead of isolating the exact specialist (e.g., dispatching `app-builder` when `playwright-best-practices` was the explicitly requested optimization).
-6. **No Escapes for Gibberish:** Failing to identify prompt-injections or copy-paste errors, trying to parse random garbled text into a functional execution path instead of instantly rejecting it.
-7. **Scale Blindness:** Treating "Add a console.log" and "Create an authentication system" as identical linear tasks without switching the heavier task into a designated `PLANNING_MODE` phase.
-8. **Missing Reasoning Chain:** Categorizing an intent *before* writing the justification text. Enforcing `reasoning: string` at the *top* of the output schema forces Chain-of-Thought (CoT) and drastically improves routing accuracy.
-9. **Single-Node Assignment:** Assuming a complex goal only requires one skill. High-order tasks require an array of skills (e.g., `[react-specialist, tailwind-patterns, web-accessibility-auditor]`).
-10. **Losing Socratic Contact:** Halting to ask the user a question, but not tracking the context so that when the user replies "Oh I meant the login page", the router forgets the initial objective.
-
 ---
 
-## 🏛️ Tribunal Integration
+## Intelligent Routing: Skill Manifest
+This file contains all available skills and workflows as a condensed index for the pre-router.
 
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are routing outputs strictly constrained to JSON Enums (Zod / Schema validation)?
-✅ Does the schema demand `reasoning` be printed *before* the definitive classification (CoT)?
-✅ Have explicit Few-Shot examples been provided to anchor the categorical definitions?
-✅ Are available skills mapped correctly using a localized manifest provided to the prompt?
-✅ Does the router explicitly reject or ask for clarity against ambiguous requests?
-✅ Is there a confidence threshold (e.g., < 85%) triggering the Socratic Gate yield?
-✅ Does the router correctly identify 'Exploder' tasks scaling >10 files and force `PLANNING_MODE`?
-✅ Did I prevent the LLM from attempting to solve the underlying code problem directly in the routing stage?
-✅ Can the router match a request to *multiple* synergistic skills rather than just one?
-✅ Are unknown/invented skill invocations automatically rejected before downstream execution?
-```
+|Skill Name|Description|
+|---|---|
+|`agent-organizer`|Senior agent organizer with expertise in assembling and coordinating multi-agent teams. Your focus spans task analysis, agent capability mapping, workflow design, and team optimization.|
+|`agentic-patterns`|AI agent design principles. Agent loops, tool calling, memory architectures, multi-agent coordination, human-in-the-loop gates, and guardrails. Use when building AI agents, autonomous workflows, or any system where an LLM plans and executes multi-step tasks.|
+|`api-patterns`|API design principles and decision-making. REST vs GraphQL vs tRPC selection, response formats, versioning, pagination.|
+|`app-builder`|Main application building orchestrator. Creates full-stack applications from natural language requests. Determines project type, selects tech stack, coordinates agents.|
+|`architecture`|Architectural decision-making framework. Requirements analysis, trade-off evaluation, ADR documentation. Use when making architecture decisions or analyzing system design.|
+|`bash-linux`|Bash/Linux terminal patterns. Critical commands, piping, error handling, scripting. Use when working on macOS or Linux systems.|
+|`behavioral-modes`|AI operational modes (brainstorm, implement, debug, review, teach, ship, orchestrate). Use to adapt behavior based on task type.|
+|`brainstorming`|Socratic questioning protocol + user communication. MANDATORY for complex requests, new features, or unclear requirements. Includes progress reporting and error handling.|
+|`clean-code`|Pragmatic coding standards - concise, direct, no over-engineering, no unnecessary comments|
+|`code-review-checklist`|Code review guidelines covering code quality, security, and best practices.|
+|`config-validator`|Self-validation skill for the .agent directory. Checks that all agents, skills, workflows, and scripts referenced across the system actually exist and are consistent. Use after modifying agent configuration files.|
+|`csharp-developer`|Senior C# developer with mastery of .NET 8+ and the Microsoft ecosystem. Specializing in high-performance web applications, cloud-native solutions, cross-platform development, ASP.NET Core, Blazor, and Entity Framework Core.|
+|`database-design`|Database design principles and decision-making. Schema design, indexing strategy, ORM selection, serverless databases.|
+|`deployment-procedures`|Production deployment principles and decision-making. Safe deployment workflows, rollback strategies, and verification. Teaches thinking, not scripts.|
+|`devops-engineer`|Senior DevOps engineer with expertise in building scalable, automated infrastructure and deployment pipelines. Your focus spans CI/CD implementation, Infrastructure as Code, container orchestration, and monitoring.|
+|`devops-incident-responder`|Senior DevOps incident responder with expertise in managing critical production incidents, performing rapid diagnostics, and implementing permanent fixes. Reduces MTTR and builds resilient systems.|
+|`documentation-templates`|Documentation templates and structure guidelines. README, API docs, code comments, and AI-friendly documentation.|
+|`dotnet-core-expert`|Senior .NET Core expert with expertise in .NET 10, C# 14, and modern minimal APIs. Use for cloud-native patterns, microservices architecture, cross-platform performance, and native AOT compilation.|
+|`edge-computing`|Edge function design principles. Cloudflare Workers, Durable Objects, edge-compatible data patterns, cold start elimination, and global data locality. Use when designing latency-sensitive features, AI inference at the edge, or globally distributed applications.|
+|`frontend-design`|Design thinking and decision-making for web UI. Use when designing components, layouts, color schemes, typography, or creating aesthetic interfaces. Teaches principles, not fixed values.|
+|`game-development`|Game development orchestrator. Routes to platform-specific skills based on project needs.|
+|`geo-fundamentals`|Generative Engine Optimization for AI search engines (ChatGPT, Claude, Perplexity).|
+|`i18n-localization`|Internationalization and localization patterns. Detecting hardcoded strings, managing translations, locale files, RTL support.|
+|`intelligent-routing`|Automatic agent selection and intelligent task routing. Analyzes user requests and automatically selects the best specialist agent(s) without requiring explicit user mentions.|
+|`lint-and-validate`|Linting and validation principles for code quality enforcement.|
+|`llm-engineering`|LLM engineering principles for production AI systems. RAG pipeline design, vector store selection, prompt engineering, evals, and LLMOps. Use when building AI features, chat interfaces, semantic search, or any system calling an LLM API.|
+|`local-first`|Local-first software principles. Offline-capable apps, CRDTs, sync engines (ElectricSQL, Replicache, Zero), conflict resolution, and the migration path from REST-first to local-first architecture. Use when building apps that need offline support, fast UI, or collaborative editing.|
+|`mcp-builder`|MCP (Model Context Protocol) server building principles. Tool design, resource patterns, best practices.|
+|`mobile-design`|Mobile-first and Spatial computing design thinking for iOS, Android, Foldables, and WebXR. Touch interaction, advanced haptics, on-device AI patterns, performance extremis. Teaches principles, not fixed values.|
+|`nextjs-react-expert`|Next.js App Router and React v19+ performance optimization from Vercel Engineering. Use when building React components, optimizing performance, implementing React Compiler patterns, eliminating waterfalls, reducing JS payload, or implementing Streaming/PPR optimizations.|
+|`nodejs-best-practices`|Node.js development principles and decision-making. Framework selection, async patterns, security, and architecture. Teaches thinking, not copying.|
+|`observability`|Production observability principles. OpenTelemetry traces, structured logs, metrics, SLOs/SLIs/error budgets, and AI observability. Use when setting up monitoring, debugging production issues, or designing observable distributed systems.|
+|`parallel-agents`|Multi-agent orchestration patterns. Use when multiple independent tasks can run with different domain expertise or when comprehensive analysis requires multiple perspectives.|
+|`performance-profiling`|Performance profiling principles. Measurement, analysis, and optimization techniques.|
+|`plan-writing`|Structured task planning with clear breakdowns, dependencies, and verification criteria. Use when implementing features, refactoring, or any multi-step work.|
+|`platform-engineer`|Senior platform engineer with deep expertise in building internal developer platforms, self-service infrastructure, and developer portals. Reduces cognitive load and accelerates software delivery.|
+|`powershell-windows`|PowerShell Windows patterns. Critical pitfalls, operator syntax, error handling.|
+|`python-patterns`|Python development principles and decision-making. Framework selection, async patterns, type hints, project structure. Teaches thinking, not copying.|
+|`python-pro`|Senior Python developer (3.11+) specializing in idiomatic, type-safe, and performant Python. Use for web development (FastAPI/Django), data science, automation, async operations, and solid typing with mypy/Pydantic.|
+|`react-specialist`|Senior React specialist (React 18+) focusing on advanced patterns, state management, performance optimization, and production architectures (Next.js/Remix).|
+|`realtime-patterns`|Real-time and collaborative application patterns. WebSockets, Server-Sent Events for AI streaming, CRDTs for conflict-free collaboration, presence, and sync engines. Use when building live collaboration, AI streaming UIs, live dashboards, or multiplayer features.|
+|`red-team-tactics`|Red team tactics principles based on MITRE ATT&CK. Attack phases, detection evasion, reporting.|
+|`rust-pro`|Master Rust 1.75+ with modern async patterns, advanced type system features, and production-ready systems programming. Expert in the latest Rust ecosystem including Tokio, axum, and cutting-edge crates. Use PROACTIVELY for Rust development, performance optimization, or systems programming.|
+|`seo-fundamentals`|SEO fundamentals, E-E-A-T, Core Web Vitals, and Google algorithm principles.|
+|`server-management`|Server management principles and decision-making. Process management, monitoring strategy, and scaling decisions. Teaches thinking, not commands.|
+|`sql-pro`|Senior SQL developer across major databases (PostgreSQL, MySQL, SQL Server, Oracle). Use for complex query design, performance optimization, indexing strategies, CTEs, window functions, and schema architecture.|
+|`systematic-debugging`|4-phase systematic debugging methodology with root cause analysis and evidence-based verification. Use when debugging complex issues.|
+|`tailwind-patterns`|Tailwind CSS v4+ principles for extreme frontend engineering. CSS-first configuration, scroll-driven animations, logical properties, advanced container style queries, and `@property` Houdini patterns.|
+|`tdd-workflow`|Test-Driven Development workflow principles. RED-GREEN-REFACTOR cycle.|
+|`test-result-analyzer`|Ingests test logs and identifies root causes across multiple failing test files. Provides actionable fix recommendations.|
+|`testing-patterns`|Testing patterns and principles. Unit, integration, mocking strategies.|
+|`trend-researcher`|Creative muse and design trend analyzer for modern web/mobile interfaces.|
+|`ui-ux-pro-max`|Plan and implement cutting-edge advanced UI/UX. Create distinctive, production-grade frontend interfaces with high design quality.|
+|`ui-ux-researcher`|Expert auditor for accessibility, cognitive load, and premium design heuristics.|
+|`vue-expert`|Vue 3 Composition API and modern Vue ecosystem expert. Use when building Vue applications, optimizing reactivity, component architecture, Nuxt 3 development, performance tuning, and State Management (Pinia).|
+|`vulnerability-scanner`|Advanced vulnerability analysis principles. OWASP 2025, Supply Chain Security, attack surface mapping, risk prioritization.|
+|`web-design-guidelines`|Review UI code for Next-Generation Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", "review UX", or "check my site against best practices".|
+|`webapp-testing`|Web application testing principles. E2E, Playwright, deep audit strategies.|
+|`whimsy-injector`|Micro-delight generator for frontend interfaces. Suggests and implements subtle animations, playful transitions, and interaction polish across any frontend stack.|
+|`workflow-optimizer`|Analyzes agent tool-calling patterns and task execution efficiency to suggest process improvements.|

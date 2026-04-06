@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Bash & Linux — Shell Scripting Mastery
 
-> Bash is powerful but fragile by default.
-> An unchecked failure in a shell script will happily cascade into deleting production.
-
 ---
 
 ## 1. Bash Strict Mode (Mandatory)
@@ -90,13 +87,13 @@ sed -n '5,10p' file.txt
 
 Standard POSIX tools are reliable but slow. Use modern Rust-based alternatives when available in CI/CD.
 
-| Task | Legacy POSIX | Modern Alternative | Why? |
+|Task|Legacy POSIX|Modern Alternative|Why?|
 |:---|:---|:---|:---|
-| Find files | `find . -name "*.ts"` | `fd -e ts` | Context-aware, respects `.gitignore`, 10x faster. |
-| Search text | `grep -r "auth"` | `rg "auth"` | Ripgrep uses multi-threading and SIMD instructions. |
-| Inspect JSON | `grep / awk` | `jq '.users[].id'` | `jq` explicitly parses and filters valid JSON arrays/objects. |
-| Process monitoring | `top` | `htop` / `btm` | Interactive metrics. |
-| Check curl | `curl -i` | `httpie` / `xh` | Colorized, structured JSON networking. |
+|Find files|`find . -name "*.ts"`|`fd -e ts`|Context-aware, respects `.gitignore`, 10x faster.|
+|Search text|`grep -r "auth"`|`rg "auth"`|Ripgrep uses multi-threading and SIMD instructions.|
+|Inspect JSON|`grep / awk`|`jq '.users[].id'`|`jq` explicitly parses and filters valid JSON arrays/objects.|
+|Process monitoring|`top`|`htop` / `btm`|Interactive metrics.|
+|Check curl|`curl -i`|`httpie` / `xh`|Colorized, structured JSON networking.|
 
 ---
 
@@ -121,34 +118,3 @@ done
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (Bash/Linux)
-
-1. **Forgetting Strict Mode:** AI commonly forgets `set -euo pipefail`, creating fragile, dangerous scripts that cascade failures.
-2. **Missing Quotes:** AI writes `echo $USER_INPUT` instead of `echo "$USER_INPUT"`, leading to glob-splitting exploits and file deletion errors.
-3. **Useless Cat:** `cat file.txt | awk ...` instead of `awk ... file.txt`.
-4. **Regex in Grep:** AI attempts complex regex in standard `grep` which often fails due to dialect differences (BSD vs GNU). Use `grep -E` (Extended) or modern `rg`.
-5. **Awkward JSON parsing:** AI writing labyrinthine `sed`/`grep` chains to extract a field from JSON. Always use `jq`.
-6. **Hardcoded Paths:** Using `/home/user/script` instead of dynamic resolutions like `$(dirname "$0")` to find files relative to the script location.
-7. **Dangerous Globbing:** `rm *.txt` will fail if there are too many files ("Arg list too long"). AI fails to use `find . -name "*.txt" -delete` for large ops.
-8. **Silent Failures in Pipes:** AI assumes `command1 | command2` throws an error if `command1` fails. It doesn't, unless `set -o pipefail` is active.
-9. **Environment Pollution:** Executing exports globally (`export VAR=1`) inside utility scripts. Changes pollute the user's active shell.
-10. **Blind Sudo Execution:** Suggesting users pipe curled scripts directly into `sudo bash` (`curl api.com/setup | sudo bash`). Always inspect scripts first.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Does the script begin with `set -euo pipefail`?
-✅ Are all variable expansions wrapped in double quotes `"$VAR"`?
-✅ Am I using `jq` for handling JSON responses rather than `sed`/`grep`?
-✅ Is the script executing locally relative paths using `$(dirname "$0")`?
-✅ Have I avoided "Useless Use of Cat" (`cat X | Y`)?
-✅ Did I properly manage stderr and stdout streams (`2>&1`)?
-✅ Have I avoided executing destructive wildcard globs (`rm -rf *`)?
-✅ Is my text searching leveraging `-E` for extended regex if I use lookaheads?
-✅ Did I use array expansion strictly as `"${ARRAY[@]}"`?
-✅ If suggesting installation, did I avoid `curl | sudo bash`?
-```

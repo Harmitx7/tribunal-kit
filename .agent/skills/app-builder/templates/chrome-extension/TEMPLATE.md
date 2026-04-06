@@ -7,14 +7,14 @@ description: Chrome Extension template principles. Manifest V3, React, TypeScrip
 
 ## Tech Stack
 
-| Component | Technology |
+|Component|Technology|
 |-----------|------------|
-| Manifest | V3 |
-| UI | React 19 |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Bundler | Vite |
-| Storage | Chrome Storage API |
+|Manifest|V3|
+|UI|React 19|
+|Language|TypeScript|
+|Styling|Tailwind CSS|
+|Bundler|Vite|
+|Storage|Chrome Storage API|
 
 ---
 
@@ -42,23 +42,23 @@ project-name/
 
 ## Manifest V3 Concepts
 
-| Component | Purpose |
+|Component|Purpose|
 |-----------|---------|
-| Service Worker | Background processing |
-| Content Scripts | Page injection |
-| Popup | User interface |
-| Options Page | Settings |
+|Service Worker|Background processing|
+|Content Scripts|Page injection|
+|Popup|User interface|
+|Options Page|Settings|
 
 ---
 
 ## Permissions
 
-| Permission | Use |
+|Permission|Use|
 |------------|-----|
-| storage | Save user data |
-| activeTab | Current tab access |
-| scripting | Inject scripts |
-| host_permissions | Site access |
+|storage|Save user data|
+|activeTab|Current tab access|
+|scripting|Inject scripts|
+|host_permissions|Site access|
 
 ---
 
@@ -75,12 +75,12 @@ project-name/
 
 ## Development Tips
 
-| Task | Method |
+|Task|Method|
 |------|--------|
-| Debug Popup | Right-click icon → Inspect |
-| Debug Background | Extensions page → Service worker |
-| Debug Content | DevTools console on page |
-| Hot Reload | `npm run dev` with watch |
+|Debug Popup|Right-click icon → Inspect|
+|Debug Background|Extensions page → Service worker|
+|Debug Content|DevTools console on page|
+|Hot Reload|`npm run dev` with watch|
 
 ---
 

@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Performance Profiling — Measurement-Driven Optimization
 
-> "Premature optimization is the root of all evil" — but premature measurement is the root of all performance.
-> Never optimize without profiling first. The bottleneck is never where you think it is.
-
 ---
 
 ## Core Web Vitals
@@ -218,37 +215,3 @@ Performance budget targets:
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps
-
-1. **FID Instead of INP:** FID is deprecated. Use INP (Interaction to Next Paint) for responsiveness measurement.
-2. **Optimizing Without Profiling:** Never optimize until you've measured. The bottleneck is never obvious.
-3. **`import _ from "lodash"`:** Full lodash import is 72KB. Use specific imports: `lodash/debounce`.
-4. **Images Without Dimensions:** Missing `width`/`height` on images causes CLS (layout shift).
-5. **`loading="lazy"` on LCP Image:** The hero/LCP image must NOT be lazy-loaded. Use `fetchpriority="high"`.
-6. **`SELECT *` on Large Tables:** Always select specific columns. `SELECT *` transfers unnecessary data.
-7. **Missing Cleanup in useEffect:** Event listeners, timers, and fetches without cleanup = memory leaks.
-8. **Average Latency as Metric:** Averages hide outliers. Always track P50, P95, P99.
-9. **No Performance Budget:** Without enforced budgets, performance degrades with every deploy.
-10. **Optimizing Render Before Network:** Network is usually the bottleneck, not render. Optimize TTFB first.
-
----
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/tribunal-performance`**
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Did I measure BEFORE optimizing (Lighthouse, EXPLAIN ANALYZE)?
-✅ Is LCP < 2.5s and INP < 200ms?
-✅ Are images using WebP/AVIF with explicit dimensions?
-✅ Is the JS bundle < 200KB gzipped?
-✅ Are database queries using indexes (no Seq Scan on large tables)?
-✅ Are all useEffect hooks cleaning up subscriptions/timers?
-✅ Am I tracking P95/P99 latency (not just averages)?
-✅ Is there a performance budget enforced in CI?
-✅ Is the LCP image using fetchpriority="high" (not lazy)?
-✅ Are imports tree-shakeable (specific, not barrel imports)?
-```

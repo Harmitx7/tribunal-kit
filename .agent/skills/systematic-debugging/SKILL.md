@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Systematic Debugging — Root Cause Mastery
 
-> A bug is not a mystery; it is a manifestation of misplaced assumptions.
-> Shotgun debugging (changing random things until it works) guarantees that you will introduce two new bugs for every one you "fix."
-
 ---
 
 ## 1. The 4-Phase Debugging Methodology
@@ -85,34 +82,3 @@ Do not skim. Stack traces tell the exact sequence of destruction.
 3. **The Parameter Conclusion:** Therefore, line 45 invoked `.map` on a variable that was `undefined`. Why did the parent layer pass `undefined` instead of `[]`?
 
 ---
-
-## 🤖 LLM-Specific Traps (Systematic Debugging)
-
-1. **Shotgun Surgery:** Hallucinating massive 5-file refactors to "fix" a bug instead of altering the exact single mathematical operator that caused the mathematical flaw.
-2. **Ignoring the Logs:** Assuming the cause based on the user's plain-text description instead of heavily demanding the user provide exact stack traces, HTTP status codes, or container logs.
-3. **Band-Aid Logging:** Replacing the buggy code logic with simple `console.log` arrays instead of using integrated structured loggers, then failing to revert the probe code upon completion.
-4. **Variable Masking:** Attempting to fix "undefined" errors by blindly inserting `?.` (Optional Chaining) everywhere. This hides the error deeper; it does not solve *why* the data was missing.
-5. **Caching Blindness:** Debugging API mismatches for 20 minutes without ever considering that the browser, CDN, Next.js intermediate layer, or Service Worker is serving stale cached iterations of the file.
-6. **Async Assumption:** Believing that writing `console.log(1)` then `await fetch()` then `console.log(2)` guarantees sequential execution if there are unhandled Promise rejections hanging the event loop.
-7. **Environment Sync Decay:** Attempting to debug complex routing flaws without first verifying the `.env` configuration file contains the required `PUBLIC_URL` or `API_ENDPOINT` keys.
-8. **Syntax Tyranny:** Believing an obscure framework configuration bug is actually a typo, wasting tokens tweaking parentheses and brackets instead of reading the framework documentation.
-9. **No Regression Verification:** The AI generates the fix but completely neglects to write the corresponding unit test ensuring the bug is permanently eliminated from future releases.
-10. **The "Everything is Fine" Trap:** Stating "The code looks perfectly correct" because the individual function appears logically sound, entirely ignoring that the *data being passed into it* by the upstream parent component is catastrophically malformed.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Was the bug physically isolated using rigorous replication scenarios before modifying code?
-✅ Has a hypothesis been formulated based on specific log outputs or empirical data traces?
-✅ Were structural boundaries stripped away to test absolute core logic independently?
-✅ Did I rely on analyzing the complete stack trace rather than making "common sense" guesses?
-✅ Was optional chaining (`?.`) avoided as a band-aid if fundamental strict data contracts were broken?
-✅ Have external factors (database latency, browser cache, CORS rules) been evaluated?
-✅ Is the proposed surgical fix absolutely minimized (preventing shotgun surgery)?
-✅ Did I write a deterministic test that permanently flags this specific regression going forward?
-✅ Are environmental configurations (.env variables) synchronized and verified?
-✅ Upon confirming the root cause, were any temporary diagnostic probes cleanly rolled back?
-```

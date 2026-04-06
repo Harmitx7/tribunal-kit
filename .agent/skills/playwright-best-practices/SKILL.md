@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Playwright E2E — Bulletproof Testing Mastery
 
-> E2E tests prove the system works. Flaky tests prove nothing.
-> Never test implementation details. Test what the user experiences.
-
 ---
 
 ## 1. Resilience & Auto-Waiting
@@ -129,34 +126,3 @@ export default defineConfig({
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (Playwright)
-
-1. **WaitTime Hallucinations:** AI constantly suggests `await page.waitForTimeout()` to "fix" failing tests. This is a severe anti-pattern. Rely on Playwright's default auto-waiting, or use `waitForURL / waitForResponse`.
-2. **CSS Selector Blindness:** Relying on `.main > div:nth-child(3)` instead of `getByRole`. Tests will break on the next UI update.
-3. **Cypress Confusions:** Writing Cypress syntax (`cy.get`) in Playwright files. They are fundamentally different frameworks.
-4. **Ignoring Promises:** Playwright actions are async. The AI forgets the `await` keyword, causing the test to complete and close the browser instantly before the assertion happens.
-5. **Slow UI Logins:** Executing full UI visual typing of username/password on *every* test. In an E2E suite of 100 tests, this adds 15 minutes. Use API logins to set browser cookies in `beforeEach` (or `globalSetup`).
-6. **`.only` Commit Pollution:** Leaving `test.only()` in the code. Enable `forbidOnly` in `playwright.config.ts` so the CI catches it immediately.
-7. **Trace Recording Overload:** Using `trace: 'on'` inside the CI. Tracking traces for passes consumes massive disk space. Use `trace: 'on-first-retry'`.
-8. **Soft Assertions Abuse:** AI uses `expect.soft()` to suppress failures. If an assertion is critical, allow it to fail the test entirely.
-9. **Clicking Hidden Elements:** Trying to `click()` elements that are functionally obscured by modals. If Playwright refuses to click, it's a real bug. Bypassing it via `click({ force: true })` ruins the purpose of E2E testing.
-10. **State Leakage:** Failing to realize that tests run completely independently. AI trying to pass variables between `test()` blocks. Variables reset on every definition.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Did I completely eliminate `waitForTimeout` (hard sleep) sleep commands?
-✅ Are selectors relying on semantic meaning (`getByRole`, `getByText`) instead of raw CSS?
-✅ Have I properly awaited all locator actions and expectations (`await expect...`)?
-✅ Are tests completely isolated (no cascading state dependence)?
-✅ Is the test executing an API-level authentication bypass if testing underlying features?
-✅ Are external 3rd-party SaaS integrations defensively mocked via `page.route`?
-✅ Have I respected Playwright's auto-actionability checks (avoiding `{ force: true }`)?
-✅ Did I define multiple targeted viewports/browsers inside the `playwright.config.ts`?
-✅ Is `forbidOnly` enabled for CI pipelines?
-✅ Did I assert user-facing impacts rather than deep implementation variables?
-```

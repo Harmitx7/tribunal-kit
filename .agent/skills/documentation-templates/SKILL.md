@@ -9,20 +9,17 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Documentation Standards
 
-> Documentation is a product. It has users. Those users are often future-you,
-> three months from now, having completely forgotten how this works.
-
 ---
 
 ## Documentation Types and Their Audiences
 
-| Type | Audience | Goal |
+|Type|Audience|Goal|
 |---|---|---|
-| README | New developer joining the project | "Get me running in 10 minutes" |
-| API docs | External integrator or frontend dev | "Tell me exactly what I can call and what I'll get back" |
-| Architecture decision (ADR) | Future engineer inheriting the codebase | "Tell me why it works this way, not just how" |
-| Code comment | Reviewer, maintainer | "Explain the non-obvious; skip the obvious" |
-| Runbook | On-call engineer at 2am | "Tell me what to do, not what to think about" |
+|README|New developer joining the project|"Get me running in 10 minutes"|
+|API docs|External integrator or frontend dev|"Tell me exactly what I can call and what I'll get back"|
+|Architecture decision (ADR)|Future engineer inheriting the codebase|"Tell me why it works this way, not just how"|
+|Code comment|Reviewer, maintainer|"Explain the non-obvious; skip the obvious"|
+|Runbook|On-call engineer at 2am|"Tell me what to do, not what to think about"|
 
 ---
 
@@ -31,13 +28,13 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 The Tribunal Agent Kit supports 5 standard Agent Design Kit (ADK) base patterns. 
 To build a skill using a robust, tested agent behavior model, add `pattern: [pattern-name]` to the YAML frontmatter of your `SKILL.md`.
 
-| Pattern | Value | When to use |
+|Pattern|Value|When to use|
 |---|---|---|
-| **Inversion** | `pattern: inversion` | Forces the agent to interview the user (Socratic Gate) before acting. |
-| **Reviewer** | `pattern: reviewer` | Evaluates artifacts against a checklist and severity levels. |
-| **Tool Wrapper** | `pattern: tool-wrapper` | Strictly executes external CLI tools via provided documentation without guessing. |
-| **Generator** | `pattern: generator` | Produces structured output (docs, boilerplate) by filling a rigid template. |
-| **Pipeline** | `pattern: pipeline` | Executes sequential tasks with strict halting gates between steps. |
+|**Inversion**|`pattern: inversion`|Forces the agent to interview the user (Socratic Gate) before acting.|
+|**Reviewer**|`pattern: reviewer`|Evaluates artifacts against a checklist and severity levels.|
+|**Tool Wrapper**|`pattern: tool-wrapper`|Strictly executes external CLI tools via provided documentation without guessing.|
+|**Generator**|`pattern: generator`|Produces structured output (docs, boilerplate) by filling a rigid template.|
+|**Pipeline**|`pattern: pipeline`|Executes sequential tasks with strict halting gates between steps.|
 
 *Templates defining the specific rules for these patterns live in `.agent/patterns/`.*
 
@@ -79,10 +76,10 @@ src/
 
 ## Environment Variables
 
-| Variable | Required | Description |
+|Variable|Required|Description|
 |---|---|---|
-| DATABASE_URL | Yes | PostgreSQL connection string |
-| JWT_SECRET | Yes | Secret for signing JWTs |
+|DATABASE_URL|Yes|PostgreSQL connection string|
+|JWT_SECRET|Yes|Secret for signing JWTs|
 
 ## Running Tests
 
@@ -118,11 +115,11 @@ Creates a new user account.
 
 **Responses**
 
-| Status | Meaning | Body |
+|Status|Meaning|Body|
 |---|---|---|
-| 201 | User created | `{ data: User }` |
-| 400 | Validation failed | `{ error: string, details: string[] }` |
-| 409 | Email already exists | `{ error: string }` |
+|201|User created|`{ data: User }`|
+|400|Validation failed|`{ error: string, details: string[] }`|
+|409|Email already exists|`{ error: string }`|
 
 **Example**
 \`\`\`bash
@@ -221,45 +218,4 @@ VBC status:  PENDING → VERIFIED
 Evidence:    [link to terminal output, test result, or file diff]
 ```
 
-
-
 ---
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

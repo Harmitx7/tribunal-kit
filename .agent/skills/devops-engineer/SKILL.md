@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # DevOps Engineer — CI/CD & Infrastructure Mastery
 
-> Infrastructure is code. Deployments are automated. Rollbacks are instant.
-> If you can't deploy on Friday afternoon with confidence, your pipeline is broken.
-
 ---
 
 ## Docker
@@ -296,37 +293,3 @@ Security:
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps
-
-1. **`FROM node:22` (Not Alpine):** Base Node image is 1GB+. Use `node:22-alpine` (~150MB).
-2. **`npm install` in Docker:** Use `npm ci` for deterministic, lockfile-based installs.
-3. **Running as Root:** Containers must run as non-root user. Add `USER appuser`.
-4. **Missing `.dockerignore`:** Without it, `COPY . .` includes `node_modules`, `.git`, `.env`.
-5. **Secrets in Docker ENV:** Don't bake secrets into Docker images. Use runtime environment variables.
-6. **Missing `concurrency` in CI:** Without `cancel-in-progress`, every push queues a new CI run.
-7. **`npm audit` Without Level:** `npm audit` returns non-zero for ANY vulnerability. Use `--audit-level=high`.
-8. **No Health Check:** Containers without HEALTHCHECK are assumed healthy even when crashed.
-9. **Deploying Without Rollback Plan:** Every deploy must have a documented rollback procedure.
-10. **Direct Production Database Access:** Never give CI/CD direct production DB access. Use migration-specific credentials.
-
----
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/tribunal-backend`**
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Is the Dockerfile multi-stage with alpine base?
-✅ Does the container run as non-root?
-✅ Is .dockerignore configured?
-✅ Does CI run lint, typecheck, test, and build?
-✅ Are secrets in GitHub Secrets (not hardcoded)?
-✅ Is there a health check endpoint?
-✅ Is there a rollback plan?
-✅ Are database migrations tested before deploy?
-✅ Is concurrency configured in CI (cancel stale runs)?
-✅ Is there monitoring and alerting in production?
-```

@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Agentic Patterns
 
-> An agent is a loop. A good agent is a loop with clear termination conditions and a human override.
-> An agent without guardrails is a liability, not a feature.
-
 ---
 
 ## The Agent Loop
@@ -265,71 +262,4 @@ VBC status:  PENDING → VERIFIED
 Evidence:    [link to terminal output, test result, or file diff]
 ```
 
-
 ---
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review-ai`**
-**Active reviewers: `logic` · `security` · `ai-code-reviewer`**
-
-### ❌ Forbidden AI Tropes in Agentic Systems
-
-1. **Infinite loops** — any agent loop without `MAX_STEPS` will spin until context limit or cost limit is hit. Always define a hard cap.
-2. **No human override** — agents operating on user data with no human gate for destructive or irreversible actions.
-3. **Trusting tool output as ground truth** — tool results can be wrong, stale, or injected. Always validate before acting on them.
-4. **Overly broad tool permissions** — an agent that can "run any shell command" or "access any database table" violates least privilege.
-5. **No cost cap** — `Promise.all(100 tasks × $0.10 each)` = $10 surprise bill per trigger. Set cost limits at the session level.
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Is there a hard MAX_STEPS limit on every agent loop?
-✅ Are irreversible actions gated behind human approval?
-✅ Are tool results validated before being acted upon?
-✅ Does each agent follow least-privilege tool access (not "all tools")?
-✅ Is there a per-session token and cost cap?
-✅ Is there an output guardrail checking for hallucinated citations or schema violations?
-```
-
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

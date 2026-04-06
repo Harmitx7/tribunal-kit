@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Platform Engineering — Developer Experience Mastery
 
-> DevOps is a culture. Platform Engineering is a product.
-> The product's customer is the internal software engineer. The goal is removing friction and standardizing security.
-
 ---
 
 ## 1. The "Golden Path" Architecture
@@ -90,34 +87,3 @@ Platform Engineering hides the Kubernetes complexity behind a portal (e.g., Back
 Ensure your infrastructure proposals abstract away the YAML mechanics. Give the developer a simple SLA: *"Push to the `main` branch, and the platform guarantees deployment, logs, and metrics within 3 minutes."*
 
 ---
-
-## 🤖 LLM-Specific Traps (Platform Engineering)
-
-1. **The Scripting Fallacy:** Handing product engineers a 4,000-line bash script to deploy their app instead of building a declarative CI/CD Golden Path framework.
-2. **Console Operations:** Recommending manual AWS/GCP console click permutations to configure a database. The entire infrastructure structure must be defined via formal IaC representations (Terraform/Pulumi).
-3. **Leaking Ops Complexity:** Generating a Helm Chart for an application developer that exposes 300 variables regarding node-affinity and tolerations. Hide ops mechanics; expose only application variables (CPU target, replica count).
-4. **Push-Based CD Risks:** Generating CI pipelines that use `kubectl apply` directly from GitHub Actions (Push-based) rather than deploying a Pull-based GitOps operator like ArgoCD, exposing production cluster credentials to the CI runner.
-5. **Non-Standardized Monitoring:** Failing to inject unified OpenTelemetry/Prometheus sidecars automatically into the standard deployment templates, forcing developers to reinvent telemetry for every microservice.
-6. **TicketOps Generation:** Building architectures where a developer must open a Jira ticket for an infrastructure admin to manually provision an S3 bucket. Emphasize self-service terraform modules.
-7. **Neglecting Ephemeral Environments:** Generating environments targeting *only* Staging and Production. Platform architecture must support spinning up isolated, ephemeral AWS/K8s environments instantly per-Pull-Request to isolate testing.
-8. **Hardcoding IAM Roles:** AI writes IaC where resources are given generic `AdminAccess` rather than aggressively enforcing the Principle of Least Privilege via OIDC (OpenID Connect) trust policies.
-9. **Missing the "Paved Road":** Ignoring the socio-technical aspect of the job. Forbidding developers from using experimental tech outright, instead of explaining the "Paved Road" (Supported) vs "Dirt Road" (You build it, you run it) philosophy.
-10. **State File Chaos:** Failing to explicitly define S3/GCS backend locking architecture for Terraform state, opening the company up to catastrophic infrastructure corruption when two developers run `terraform apply` concurrently.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are infrastructural patterns provided as automated, self-service "Golden Path" templates?
-✅ Has infrastructure been codified securely in declarative formats (Terraform, Tofu, Pulumi)?
-✅ Is the CI/CD pipeline architected specifically around Pull-based GitOps (e.g., ArgoCD/Flux)?
-✅ Were the complexities of Kubernetes/AWS deliberately abstracted away from the product developers?
-✅ Does the architectural plan integrate telemetry (logs/metrics) seamlessly by default?
-✅ Was the IaC environment actively secured by enforcing an S3/Remote backend state locking mechanism?
-✅ Are IAM and trust boundaries scoped to absolute Least Privilege methodologies?
-✅ Did I reject manual UI configuration (ClickOps) in favor of automated procedural representations?
-✅ Is the pipeline resilient enough to generate ephemeral environments isolated to specific Pull Requests?
-✅ Has the "Platform as a Product" mindset been established, prioritizing high developer UX?
-```

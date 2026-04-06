@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Real-Time Patterns — Live Application Mastery
 
-> Real-time is a feature, not a technology. Choose the simplest protocol that solves the problem.
-> WebSocket is overused. SSE handles 80% of real-time needs with 20% of the complexity.
-
 ---
 
 ## Protocol Selection
@@ -270,35 +267,3 @@ class PresenceManager {
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps
-
-1. **WebSocket for Everything:** SSE handles 80% of real-time needs. Only use WebSocket for bidirectional communication.
-2. **No Reconnection Logic:** WebSocket has NO built-in reconnection. Always implement exponential backoff reconnection.
-3. **Missing Heartbeat:** Without ping/pong, dead connections stay open forever. Implement heartbeat on both sides.
-4. **Unbounded Message Queues:** Queue messages for offline clients, but set a MAX queue size. Memory will explode otherwise.
-5. **No Authentication on WebSocket:** Authenticate during the HTTP upgrade handshake, not after connection.
-6. **Broadcasting to All Clients:** Use rooms/channels. Broadcasting to every connected client doesn't scale.
-7. **Optimistic Updates Without Rollback:** If you update the UI optimistically, you MUST handle rollback on failure.
-8. **SSE Without `X-Accel-Buffering: no`:** Nginx buffers SSE responses by default. Disable buffering.
-9. **No Event ID for Resume:** SSE clients use `Last-Event-ID` to resume after disconnect. Always send event IDs.
-10. **Presence Without Timeout:** Don't rely on `close` events alone. Users can lose connection without triggering close.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Am I using the simplest protocol for my use case (SSE vs WS)?
-✅ Does the WebSocket implementation have reconnection logic?
-✅ Is there heartbeat/ping-pong for connection health?
-✅ Is authentication done during the HTTP upgrade?
-✅ Do SSE events include IDs for auto-resume?
-✅ Is nginx buffering disabled for SSE?
-✅ Do optimistic updates have rollback on failure?
-✅ Are message queues bounded (max size)?
-✅ Does presence have timeout cleanup (not just close events)?
-✅ Are broadcasts scoped to rooms (not all clients)?
-```

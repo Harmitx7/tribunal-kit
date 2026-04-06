@@ -2,15 +2,12 @@
 name: database-design
 description: Database design mastery. Schema design with normalization, denormalization strategies, indexing, migration pipelines, ORM selection (Prisma/Drizzle/SQLAlchemy/EF Core), connection pooling, soft deletes, audit trails, multi-tenancy, and serverless database patterns. Use when designing schemas, choosing databases, planning migrations, or architecting data layers.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-01
+version: 3.1.0
+last-updated: 2026-04-06
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
 # Database Design — Schema & Architecture Mastery
-
-> A schema is a contract. Every column name is an API. Every missing index is a production incident waiting to happen.
-> Design for reads first. Normalize until it hurts, then denormalize until it works.
 
 ---
 
@@ -397,59 +394,274 @@ Sizing formula:
 
 ---
 
-## Output Format
+---
+
+---
+
+## Database Selection (2025)
+
+Choose database based on context, not default.
+
+### Decision Tree
 
 ```
-━━━ Database Design Report ━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Database Design
-Database:    [PostgreSQL/MySQL/SQLite/etc.]
-Scope:       [N tables · N migrations]
-─────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [migration success / schema validation]
+What are your requirements?
+│
+├── Full relational features needed
+│   ├── Self-hosted → PostgreSQL
+│   └── Serverless → Neon, Supabase
+│
+├── Edge deployment / Ultra-low latency
+│   └── Turso (edge SQLite)
+│
+├── AI / Vector search
+│   └── PostgreSQL + pgvector
+│
+├── Simple / Embedded / Local
+│   └── SQLite
+│
+└── Global distribution
+    └── PlanetScale, CockroachDB, Turso
+```
+
+### Comparison
+
+|Database|Best For|Trade-offs|
+|----------|----------|------------|
+|**PostgreSQL**|Full features, complex queries|Needs hosting|
+|**Neon**|Serverless PG, branching|PG complexity|
+|**Turso**|Edge, low latency|SQLite limitations|
+|**SQLite**|Simple, embedded, local|Single-writer|
+|**PlanetScale**|MySQL, global scale|No foreign keys|
+
+### Questions to Ask
+
+1. What's the deployment environment?
+2. How complex are the queries?
+3. Is edge/serverless important?
+4. Vector search needed?
+5. Global distribution required?
+
+---
+
+## Indexing Principles
+
+When and how to create indexes effectively.
+
+### When to Create Indexes
+
+```
+Index these:
+├── Columns in WHERE clauses
+├── Columns in JOIN conditions
+├── Columns in ORDER BY
+├── Foreign key columns
+└── Unique constraints
+
+Don't over-index:
+├── Write-heavy tables (slower inserts)
+├── Low-cardinality columns
+├── Columns rarely queried
+```
+
+### Index Type Selection
+
+|Type|Use For|
+|------|---------|
+|**B-tree**|General purpose, equality & range|
+|**Hash**|Equality only, faster|
+|**GIN**|JSONB, arrays, full-text|
+|**GiST**|Geometric, range types|
+|**HNSW/IVFFlat**|Vector similarity (pgvector)|
+
+### Composite Index Principles
+
+```
+Order matters for composite indexes:
+├── Equality columns first
+├── Range columns last
+├── Most selective first
+└── Match query pattern
 ```
 
 ---
 
-## 🤖 LLM-Specific Traps
+## Migration Principles
 
-1. **TIMESTAMP vs TIMESTAMPTZ:** Always use TIMESTAMPTZ (with timezone). TIMESTAMP without timezone is ambiguous.
-2. **UUID v4 for Primary Keys:** UUID v4 is randomly ordered — destroys B-tree index performance. Use UUID v7 or BIGINT.
-3. **Missing FK Indexes:** PostgreSQL does NOT auto-create indexes on foreign key columns. Always add them manually.
-4. **NOT NULL on Large Tables:** Adding NOT NULL to an existing column on a large table locks the entire table. Add as nullable first.
-5. **`SELECT *` in Application Code:** Always specify columns. Schema changes + `SELECT *` = broken application.
-6. **Shared Mutable State Without RLS:** Multi-tenant tables without Row Level Security = data leaks between tenants.
-7. **Hardcoded Connection Strings:** Database URLs must come from environment variables, never code.
-8. **Direct Production Writes:** Never run unreviewed SQL against production. Use migrations and review processes.
-9. **Ignoring Query Plans:** Design decisions without EXPLAIN ANALYZE evidence are guesses.
-10. **Serverless Without Pooling:** Every serverless invocation opens a new connection. Always use an external connection pooler.
+Safe migration strategy for zero-downtime changes.
+
+### Safe Migration Strategy
+
+```
+For zero-downtime changes:
+│
+├── Adding column
+│   └── Add as nullable → backfill → add NOT NULL
+│
+├── Removing column
+│   └── Stop using → deploy → remove column
+│
+├── Adding index
+│   └── CREATE INDEX CONCURRENTLY (non-blocking)
+│
+└── Renaming column
+    └── Add new → migrate data → deploy → drop old
+```
+
+### Migration Philosophy
+
+- Never make breaking changes in one step
+- Test migrations on data copy first
+- Have rollback plan
+- Run in transaction when possible
+
+### Serverless Databases
+
+#### Neon (Serverless PostgreSQL)
+
+|Feature|Benefit|
+|---------|---------|
+|Scale to zero|Cost savings|
+|Instant branching|Dev/preview|
+|Full PostgreSQL|Compatibility|
+|Autoscaling|Traffic handling|
+
+#### Turso (Edge SQLite)
+
+|Feature|Benefit|
+|---------|---------|
+|Edge locations|Ultra-low latency|
+|SQLite compatible|Simple|
+|Generous free tier|Cost|
+|Global distribution|Performance|
 
 ---
 
-## 🏛️ Tribunal Integration
+## Query Optimization
 
-**Slash command: `/tribunal-database`**
+N+1 problem, EXPLAIN ANALYZE, optimization priorities.
 
-### ✅ Pre-Flight Self-Audit
+### N+1 Problem
 
 ```
-✅ Did I use TIMESTAMPTZ (not TIMESTAMP)?
-✅ Did I add indexes for all foreign keys?
-✅ Did I use BIGINT or UUID v7 for primary keys?
-✅ Are all table/column names snake_case?
-✅ Do all tables have created_at and updated_at?
-✅ Is the migration reversible?
-✅ Did I use parameterized queries (not string interpolation)?
-✅ Is connection pooling configured for serverless?
-✅ Is multi-tenant data isolated (RLS or schema)?
-✅ Did I run EXPLAIN ANALYZE on critical queries?
+What is N+1?
+├── 1 query to get parent records
+├── N queries to get related records
+└── Very slow!
+
+Solutions:
+├── JOIN → Single query with all data
+├── Eager loading → ORM handles JOIN
+├── DataLoader → Batch and cache (GraphQL)
+└── Subquery → Fetch related in one query
 ```
 
-### 🛑 VBC Protocol
+### Query Analysis Mindset
 
-- ❌ **Forbidden:** Declaring a schema "optimized" without migration + EXPLAIN evidence.
-- ✅ **Required:** Provide migration success logs or schema validation output.
+```
+Before optimizing:
+├── EXPLAIN ANALYZE the query
+├── Look for Seq Scan (full table scan)
+├── Check actual vs estimated rows
+└── Identify missing indexes
+```
+
+### Optimization Priorities
+
+1. **Add missing indexes** (most common issue)
+2. **Select only needed columns** (not SELECT *)
+3. **Use proper JOINs** (avoid subqueries when possible)
+4. **Limit early** (pagination at database level)
+5. **Cache** (when appropriate)
+
+---
+
+## ORM Selection (2025)
+
+Choose ORM based on deployment and DX needs.
+
+### Decision Tree
+
+```
+What's the context?
+│
+├── Edge deployment / Bundle size matters
+│   └── Drizzle (smallest, SQL-like)
+│
+├── Best DX / Schema-first
+│   └── Prisma (migrations, studio)
+│
+├── Maximum control
+│   └── Raw SQL with query builder
+│
+└── Python ecosystem
+    └── SQLAlchemy 2.0 (async support)
+```
+
+### Comparison
+
+|ORM|Best For|Trade-offs|
+|-----|----------|------------|
+|**Drizzle**|Edge, TypeScript|Newer, less examples|
+|**Prisma**|DX, schema management|Heavier, not edge-ready|
+|**Kysely**|Type-safe SQL builder|Manual migrations|
+|**Raw SQL**|Complex queries, control|Manual type safety|
+
+---
+
+## Schema Design Principles
+
+Normalization, primary keys, timestamps, relationships.
+
+### Normalization Decision
+
+```
+When to normalize (separate tables):
+├── Data is repeated across rows
+├── Updates would need multiple changes
+├── Relationships are clear
+└── Query patterns benefit
+
+When to denormalize (embed/duplicate):
+├── Read performance critical
+├── Data rarely changes
+├── Always fetched together
+└── Simpler queries needed
+```
+
+### Primary Key Selection
+
+|Type|Use When|
+|------|----------|
+|**UUID**|Distributed systems, security|
+|**ULID**|UUID + sortable by time|
+|**Auto-increment**|Simple apps, single database|
+|**Natural key**|Rarely (business meaning)|
+
+### Timestamp Strategy
+
+```
+For every table:
+├── created_at → When created
+├── updated_at → Last modified
+└── deleted_at → Soft delete (if needed)
+
+Use TIMESTAMPTZ (with timezone) not TIMESTAMP
+```
+
+### Relationship Types
+
+|Type|When|Implementation|
+|------|------|----------------|
+|**One-to-One**|Extension data|Separate table with FK|
+|**One-to-Many**|Parent-children|FK on child table|
+|**Many-to-Many**|Both sides have many|Junction table|
+
+### Foreign Key ON DELETE
+
+```
+├── CASCADE → Delete children with parent
+├── SET NULL → Children become orphans
+├── RESTRICT → Prevent delete if children exist
+└── SET DEFAULT → Children get default value
+```

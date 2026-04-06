@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Observability — Production Monitoring Mastery
 
-> You can't fix what you can't see. You can't see what you don't measure.
-> Every request gets a trace. Every error gets structured context. Every SLO has an error budget.
-
 ---
 
 ## The Three Pillars
@@ -294,37 +291,3 @@ Alert design rules:
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps
-
-1. **`console.log` in Production:** Use structured logging (Pino/Winston). `console.log` can't be searched or filtered.
-2. **Logging PII:** Never log emails, names, passwords, or tokens. Use redaction.
-3. **Liveness Checking Dependencies:** Liveness probes must NOT check DB/Redis. Only readiness probes check dependencies.
-4. **Alerting on Causes:** "CPU is 80%" is not actionable. Alert on "P95 latency > 1s" instead.
-5. **Missing Request IDs:** Without correlation IDs, debugging distributed systems is impossible.
-6. **Percentiles vs Averages:** Average latency hides outliers. Track P50, P95, P99.
-7. **No Error Budgets:** Without SLOs and error budgets, "availability" is subjective.
-8. **Metrics Without Labels:** `requests_total` without `method`, `path`, `status` labels is useless.
-9. **Tracing Without Sampling:** 100% trace collection is expensive. Use head-based or tail-based sampling.
-10. **Log Levels in Code:** Hardcoded `logger.debug()` everywhere. Use configurable log levels via env.
-
----
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/tribunal-backend`**
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Am I using structured logging (not console.log)?
-✅ Do all logs include requestId for correlation?
-✅ Am I NOT logging PII or secrets?
-✅ Are liveness and readiness checks separate?
-✅ Is OpenTelemetry tracing configured?
-✅ Am I tracking RED metrics (Rate, Errors, Duration)?
-✅ Are SLOs defined with error budgets?
-✅ Do alerts have runbook links?
-✅ Am I alerting on symptoms (not causes)?
-✅ Are log levels configurable via environment variable?
-```

@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Tailwind CSS v4+ — CSS-First Mastery
 
-> Tailwind v4 is a ground-up rewrite. The config file is gone. JavaScript is gone.
-> Everything is CSS-first. If you're still writing `tailwind.config.js`, you're writing legacy.
-
 ---
 
 ## v4 Configuration (CSS-First)
@@ -518,59 +515,4 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 ---
 
-## Output Format
-
-```
-━━━ Tailwind Expert Report ━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Tailwind Patterns
-Tailwind:    v4+
-Scope:       [N files · N components]
-─────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [build output / visual verification]
-```
-
 ---
-
-## 🤖 LLM-Specific Traps
-
-1. **`tailwind.config.js` in v4:** There is NO JavaScript config file in Tailwind v4. All configuration is CSS-first with `@theme {}`.
-2. **`@tailwind base/components/utilities`:** Replaced by `@import "tailwindcss"` — a single import.
-3. **`purge:` Configuration:** Tailwind v4 auto-detects content files. No purge config exists.
-4. **`min-h-screen` on Mobile:** 100vh is broken on mobile browsers. Use `min-h-svh` (100svh) or `min-h-dvh` (100dvh).
-5. **`@sm` vs `sm:`:** `@sm` = container query (width of parent). `sm:` = viewport breakpoint. They are NOT interchangeable.
-6. **Arbitrary Value Overuse:** `mt-[13px]` generates a unique CSS rule. Use the spacing scale (`mt-3`) whenever possible.
-7. **`@apply` for Everything:** Over-extracting utilities into `@apply` classes defeats Tailwind's purpose. Only extract highly reused patterns.
-8. **Non-oklch Colors:** Tailwind v4 uses oklch for its default palette. Defining custom colors in hex/rgb limits color manipulation.
-9. **Missing `font-display: swap`:** Custom `@font-face` rules without `font-display: swap` cause FOIT (Flash of Invisible Text).
-10. **Ignoring `forced-colors`:** High-contrast mode overrides all colors. Interactive elements MUST have `forced-colors:` fallbacks.
-
----
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/tribunal-frontend`**
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Did I use @theme {} (not tailwind.config.js)?
-✅ Did I use @import "tailwindcss" (not @tailwind directives)?
-✅ Did I use min-h-svh/dvh (not min-h-screen)?
-✅ Did I use the design scale (not arbitrary values)?
-✅ Did I use oklch for custom colors?
-✅ Did I add focus-visible styles to all interactive elements?
-✅ Did I add sr-only labels to icon-only buttons?
-✅ Did I use motion-safe/motion-reduce for animations?
-✅ Did I use @container/@sm for component-level responsiveness?
-✅ Does the CSS build without warnings?
-```
-
-### 🛑 VBC Protocol
-
-- ❌ **Forbidden:** Assuming Tailwind classes work without building.
-- ✅ **Required:** Provide build output or visual screenshot evidence.

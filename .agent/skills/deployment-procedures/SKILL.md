@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Deployment Procedures — Production Execution Mastery
 
-> Code on a laptop delivers zero value. Shipping is a feature.
-> Deployments should be boring, predictable, and 100% automated. Manual execution is a vulnerability.
-
 ---
 
 ## 1. Zero-Downtime Deployment Strategies
@@ -112,34 +109,3 @@ If the answer relies on "recompiling the old git commit," you have failed.
 3. **Database Integrity:** Migrations are explicitly atomic (`BEGIN; DROP TABLE...; COMMIT;`) so failures roll back seamlessly.
 
 ---
-
-## 🤖 LLM-Specific Traps (Deployments)
-
-1. **The `git pull && pm2 restart` Trap:** AI defaults to suggesting raw SSH into a VPS, running `git pull`, and manually restarting the daemon. This guarantees downtime, unrepeatable builds, and ignores multi-node infrastructure.
-2. **Storing Secrets in GitHub Code:** Embedding `.env.production` heavily into the deployment pipeline instead of exclusively using GitHub Secrets/AWS Parameter Store injection mapping.
-3. **Missing Health Checks:** Deploying containers without explicitly defining a `/healthz` heartbeat, meaning the orchestrator will blindly route traffic to unbooted API instances.
-4. **Destructive Migrations:** Recommending `npx prisma db push` (destructive) in production instead of `npx prisma migrate deploy` (tracked, safe).
-5. **Node Modules Cache Bloat:** Downloading 800MB of `node_modules` repeatedly inside CI jobs without properly leveraging GitHub Actions Cache, doubling execution execution limits.
-6. **Deploying Untested Code:** Writing deployment workflows that jump straight to the build/push phase, skipping the mandatory Lint/TypeCheck/Test safety pipeline sequence.
-7. **Race Conditions:** Failing to enforce `concurrency: cancel-in-progress` in CI strings, resulting in Commit B deploying before Commit A under chaotic PR merging circumstances.
-8. **Blind SSH Keys:** Generating GitHub Action files relying on SSH but forgetting to explicitly add `StrictHostKeyChecking no` configuration, making the pipeline hang forever at the server verification prompt.
-9. **Environment Discrepancy:** Building React/Vite payloads locally on MacOS and `scp`ing the static files via ZIP upload, rather than enforcing isolated Linux Docker builds ensuring identical compilation architecture.
-10. **The Manual Verification Myth:** Generating workflows expecting human "click to deploy" buttons midway through CI loops when true CD should be reliably automated upon merging to target branches.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Does the deployment strategy enforce Zero-Downtime rules (Blue/Green or Rolling)?
-✅ Are database schemas applying the 'Expand-and-Contract' non-destructive methodology?
-✅ Has the deployment architecture entirely eliminated raw `git pull` manual interventions?
-✅ Is the CI pipeline firmly enforcing Linting, Typing, and Testing sequences *prior* to image pushing?
-✅ Have catastrophic rollback pathways (e.g., reverting to explicitly tagged container SHAs) been defined?
-✅ Are production secrets injected dynamically via encrypted vaults/actions rather than statically defined?
-✅ Does the application expose a hardened `/healthz` endpoint for orchestration routers?
-✅ Is CI concurrency restricted to prevent multi-job deployment collision and overlap?
-✅ Has `npm ci` been enforced over the mutable `npm install` for deterministic build resolution?
-✅ Are structural builds occurring solely inside isolated Linux environments/runners (no localized SCPing)?
-```

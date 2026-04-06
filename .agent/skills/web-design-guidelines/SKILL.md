@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Next-Gen Web Interface Review Guidelines (Pro-Max Level)
 
-> Good UI is invisible. Users think about their task, not about the interface.
-> Great UI anticipates the task and reacts at the speed of thought.
-
 ---
 
 ## Review Trigger
@@ -30,23 +27,23 @@ Load this skill when asked to:
 
 Non-negotiable baseline for any public interface in 2026+:
 
-| Check | How to Verify |
+|Check|How to Verify|
 |---|---|
-| **APCA Contrast** | Ensure Lc (Lightness Contrast) is > 75 for body text, > 60 for large text. (Do not rely solely on old WCAG 2.1 4.5:1 math). |
-| **Cognitive Safety** | Check if `prefers-reduced-motion` is respected. No infinite spinning loaders. |
-| **Keyboard Fluidity** | Tab order must follow visual order. Focus states cannot be just a 1px dotted line; use `outline: 2px solid var(--focus-color); outline-offset: 2px;`. |
-| **Semantic AI Context** | Images must have `alt` tags, but complex charts need full `<details>` breakdowns for screen readers and AI agents crawling the site. |
-| **Interaction Buffers** | Are touch targets mathematically ≥48px (Fitts' Law)? |
+|**APCA Contrast**|Ensure Lc (Lightness Contrast) is > 75 for body text, > 60 for large text. (Do not rely solely on old WCAG 2.1 4.5:1 math).|
+|**Cognitive Safety**|Check if `prefers-reduced-motion` is respected. No infinite spinning loaders.|
+|**Keyboard Fluidity**|Tab order must follow visual order. Focus states cannot be just a 1px dotted line; use `outline: 2px solid var(--focus-color); outline-offset: 2px;`.|
+|**Semantic AI Context**|Images must have `alt` tags, but complex charts need full `<details>` breakdowns for screen readers and AI agents crawling the site.|
+|**Interaction Buffers**|Are touch targets mathematically ≥48px (Fitts' Law)?|
 
 ### 2. Extreme Core Web Vitals (CWV)
 
 Drop the old 2022 standards. The new baseline for premium web:
 
-| Metric | Premium Target | Common Failures |
+|Metric|Premium Target|Common Failures|
 |---|---|---|
-| **LCP** (Largest Contentful Paint) | **< 1.5s** | Missing `fetchpriority="high"` on hero images. Heavy client-side React rendering blocking the paint. |
-| **INP** (Interaction to Next Paint) | **< 100ms** | Main thread blocked by React hydrate. Use `startTransition` or Web Workers for heavy JS. |
-| **CLS** (Cumulative Layout Shift) | **0.00** | Missing `width` and `height` on images. Late-loading web fonts (use `font-display: optional`). |
+|**LCP** (Largest Contentful Paint)|**< 1.5s**|Missing `fetchpriority="high"` on hero images. Heavy client-side React rendering blocking the paint.|
+|**INP** (Interaction to Next Paint)|**< 100ms**|Main thread blocked by React hydrate. Use `startTransition` or Web Workers for heavy JS.|
+|**CLS** (Cumulative Layout Shift)|**0.00**|Missing `width` and `height` on images. Late-loading web fonts (use `font-display: optional`).|
 
 ### 3. Energy Efficiency & Sustainability
 
@@ -75,14 +72,14 @@ Evaluate these brutally honestly:
 
 ## Common Review Findings
 
-| Finding | Severity | Fix |
+|Finding|Severity|Fix|
 |---|---|---|
-| Missing/Weak focus styles | High | Add visible `:focus-visible` with offset |
-| `margin`/`padding` animated | High | Change to `transform: translate()` |
-| Touch targets under 48px | High | Increase padding/min-height |
-| Layout shifts on load (CLS > 0) | High | Pre-allocate space for async content/images |
-| Linear CSS transitions | Medium | Upgrade to spring-based `cubic-bezier` curves |
-| Purple as primary color | Low/Brand | Rethink palette — overused AI design cliché |
+|Missing/Weak focus styles|High|Add visible `:focus-visible` with offset|
+|`margin`/`padding` animated|High|Change to `transform: translate()`|
+|Touch targets under 48px|High|Increase padding/min-height|
+|Layout shifts on load (CLS > 0)|High|Pre-allocate space for async content/images|
+|Linear CSS transitions|Medium|Upgrade to spring-based `cubic-bezier` curves|
+|Purple as primary color|Low/Brand|Rethink palette — overused AI design cliché|
 
 ---
 
@@ -128,45 +125,4 @@ Pre-Flight:  ✅ All checks passed
              or ❌ [blocking item that must be resolved first]
 ```
 
-
-
 ---
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

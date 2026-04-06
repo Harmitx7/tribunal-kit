@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Linting & Validation
 
-> A linter is an automated code reviewer that never gets tired, never gets distracted,
-> and catches the same class of problems every single time.
-
 ---
 
 ## Why Linting Matters
@@ -63,12 +60,12 @@ npx prettier --write .
 
 **Key rules explained:**
 
-| Rule | Why It Matters |
+|Rule|Why It Matters|
 |---|---|
-| `no-floating-promises` | Missing `await` on async call = silent bug |
-| `no-explicit-any` | `any` disables TypeScript's only protection |
-| `eqeqeq` | `==` has coercion surprises; `===` is always explicit |
-| `await-thenable` | Prevents `await`-ing non-async functions (always a mistake) |
+|`no-floating-promises`|Missing `await` on async call = silent bug|
+|`no-explicit-any`|`any` disables TypeScript's only protection|
+|`eqeqeq`|`==` has coercion surprises; `===` is always explicit|
+|`await-thenable`|Prevents `await`-ing non-async functions (always a mistake)|
 
 ---
 
@@ -175,10 +172,10 @@ repos:
 
 ## Scripts
 
-| Script | Purpose | Run With |
+|Script|Purpose|Run With|
 |---|---|---|
-| `scripts/lint_runner.py` | Runs project linting and reports findings | `python scripts/lint_runner.py <project_path>` |
-| `scripts/type_coverage.py` | Measures TypeScript type coverage | `python scripts/type_coverage.py <project_path>` |
+|`scripts/lint_runner.py`|Runs project linting and reports findings|`python scripts/lint_runner.py <project_path>`|
+|`scripts/type_coverage.py`|Measures TypeScript type coverage|`python scripts/type_coverage.py <project_path>`|
 
 ---
 
@@ -203,45 +200,4 @@ Evidence:    [test output / lint pass / compile success]
 **VBC (Verification-Before-Completion) is mandatory.**
 Do not mark status as VERIFIED until concrete terminal evidence is provided.
 
-
-
 ---
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

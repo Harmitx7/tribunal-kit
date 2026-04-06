@@ -9,10 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Node.js Best Practices — Node 22+ Production Mastery
 
-> Node.js is not "JavaScript on the server." It is an event-driven, non-blocking I/O runtime.
-> Every callback without error handling is a memory leak waiting to happen.
-> Every unhandled promise rejection is a crashed process in production.
-
 ---
 
 ## ES Modules (Mandatory)
@@ -501,59 +497,4 @@ if (isMainThread) {
 
 ---
 
-## Output Format
-
-```
-━━━ Node.js Report ━━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Node.js Best Practices
-Node Ver:    22+
-Scope:       [N files · N endpoints]
-─────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [test output / server start / build success]
-```
-
 ---
-
-## 🤖 LLM-Specific Traps
-
-1. **`require()` in ESM:** Never use `require()` in `"type": "module"` projects. Use `import`.
-2. **Missing `node:` Prefix:** Always use `node:fs`, `node:path`, `node:http`, etc. Bare imports are ambiguous.
-3. **Callback-Based APIs:** Use `node:fs/promises`, `node:stream/promises`. Callback APIs are legacy.
-4. **Continuing After `uncaughtException`:** Process MUST exit after uncaughtException. State is corrupted.
-5. **`process.env` Without Validation:** Environment variables are `string | undefined`. Always validate at startup with Zod.
-6. **Hardcoded Secrets:** JWT secrets, API keys, and DB URLs must come from environment, never source code.
-7. **`express()` Without `helmet()`:** Every Express app needs security headers. `helmet()` is non-negotiable.
-8. **SQL String Interpolation:** Never use template literals for SQL. Use parameterized queries.
-9. **Worker Threads for I/O:** Workers are for CPU-bound work. I/O-bound work uses async/await natively.
-10. **Missing Graceful Shutdown:** Servers MUST handle SIGTERM/SIGINT for clean container/PaaS shutdown.
-
----
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/tribunal-backend`**
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Did I use ESM imports with node: prefix?
-✅ Did I validate all environment variables at startup?
-✅ Are secrets in environment variables (not hardcoded)?
-✅ Did I handle unhandledRejection and uncaughtException?
-✅ Did I implement graceful shutdown (SIGTERM/SIGINT)?
-✅ Did I use parameterized queries (not string interpolation)?
-✅ Did I add rate limiting and security headers?
-✅ Did I validate all request input with Zod?
-✅ Are async errors properly caught and propagated?
-✅ Did I use streams for large data (not loading all into memory)?
-```
-
-### 🛑 VBC Protocol
-
-- ❌ **Forbidden:** Assuming a server "works" because it starts without errors.
-- ✅ **Required:** Provide test output, health check response, or build success evidence.

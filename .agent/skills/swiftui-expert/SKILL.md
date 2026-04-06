@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # SwiftUI Expert — Native Apple Platforms Mastery
 
-> SwiftUI views are a description of your UI, not the UI itself. They are cheap.
-> State drives the UI. If the UI is wrong, your State is wrong.
-
 ---
 
 ## 1. Modern State Management (iOS 17+ / Swift 5.9+)
@@ -143,34 +140,3 @@ While MVVM is historically popular, SwiftUI natively represents View-as-a-functi
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (SwiftUI)
-
-1. **Using `@StateObject` in new iOS projects:** AI reverts to pre-iOS 17 patterns. Use the `@Observable` macro and standard `@State` going forward.
-2. **Modifier Order Chaos:** AI randomly orders `.frame()`, `.padding()`, `.background()`, leading to clipped layouts. Padding must precede background to expand the fill.
-3. **`ForEach` with `id: \.self` on Objects:** AI uses `\.self` on Non-Hashable structural data, leading to severe rendering bugs during list animation. Use the `Identifiable` protocol.
-4. **Massive View Bodies:** AI writes 300-line `var body: some View` blobs. Extract subviews.
-5. **Ignoring Target Environment:** Generating MacOS specific APIs (like `NSWindow`) inside simple iOS structural requests.
-6. **GeometryReader Abuse:** AI uses `GeometryReader` to set standard widths. `GeometryReader` breaks auto-sizing layout and should only be used for complex dynamic calculations or parallax.
-7. **Implicit Animation Madness:** AI attaches `.animation(.spring())` haphazardly. In modern SwiftUI this is deprecated. Demand `.animation(.spring(), value: observedState)`.
-8. **Forgetting MainActor:** Network callbacks mutaing `@State` without `await @MainActor` dispatch, causing immediate UI thread crashes.
-9. **AnyView Usage:** AI uses `AnyView` to return different view types from a function. `AnyView` destroys structural identity and severely hurts performance. Use `@ViewBuilder`.
-10. **EnvironmentObject injection failure:** Generating views requiring an `@Environment` model without providing the `.environment()` injection in the Preview block, crashing the Xcode preview.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Is state management utilizing the modern `@Observable` macro?
-✅ Are array elements in `ForEach` conforming to `Identifiable`?
-✅ Is UI threading safe (mutating state on `@MainActor`)?
-✅ Are view modifiers logically ordered (e.g., padding before background)?
-✅ Is `GeometryReader` avoided unless strictly necessary for dynamic math?
-✅ Are functions returning dynamic views marked with `@ViewBuilder` (avoiding `AnyView`)?
-✅ Are animations value-bound (`.animation(..., value: x)`)?
-✅ Has the `body` property been kept small and readable via sub-view extraction?
-✅ Are Xcode Previews populated with the necessary Environment mock data?
-✅ Did I use `LazyVStack` appropriately for large scrolling datasets?
-```

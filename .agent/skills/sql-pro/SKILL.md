@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # SQL Pro — Advanced Query & Schema Mastery
 
-> SQL is not "just queries." It is a declarative, set-based computation engine.
-> Every query must be SARGable. Every join must be indexed. Every migration must be reversible. No exceptions.
-
 ---
 
 ## Common Table Expressions (CTEs)
@@ -580,54 +577,3 @@ Evidence:    [EXPLAIN ANALYZE output / migration success / test pass]
 Do not mark status as VERIFIED until concrete terminal evidence is provided.
 
 ---
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when generating SQL. These are strictly forbidden:
-
-1. **`SELECT *` in Production:** Never use `SELECT *`. Always specify exact columns needed. It wastes bandwidth, breaks covering indexes, and hides schema changes.
-2. **String-Interpolated SQL:** Never use f-strings, `.format()`, or string concatenation to build queries. Always use parameterized queries or ORM query builders.
-3. **OFFSET Pagination for Large Tables:** OFFSET scans and discards rows. Use keyset/cursor pagination for tables with >10K rows.
-4. **Missing Index on Foreign Keys:** Every foreign key column MUST have an index. Without it, DELETE on the parent table does a full scan on the child table.
-5. **Functions on Indexed Columns:** `WHERE YEAR(date_col) = 2024` or `WHERE LOWER(email) = 'x'` destroys SARGability. Use range comparisons or functional indexes.
-6. **Cursor Loops:** Never use `WHILE`/cursor loops to process rows individually. Use set-based operations (JOINs, CTEs, window functions).
-7. **LAST_VALUE Without Frame Clause:** `LAST_VALUE() OVER (ORDER BY x)` returns the current row due to default frame. Must specify `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING`.
-8. **EXPLAIN Without ANALYZE:** `EXPLAIN` shows estimates. `EXPLAIN ANALYZE` shows actual execution. Always use ANALYZE for real performance data.
-9. **Confusing PostgreSQL and SQL Server Syntax:** PostgreSQL uses `ON CONFLICT` for upserts, `||` for concatenation, `SERIAL` for auto-increment. SQL Server uses `MERGE`, `+` for concatenation, `IDENTITY`. Never mix them.
-10. **Missing WHERE on UPDATE/DELETE:** Always double-check that UPDATE and DELETE statements have a WHERE clause. A missing WHERE updates/deletes ALL rows.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/tribunal-database`**
-**Active reviewers: `logic` · `security` · `sql`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never assume table/column names. Always `// VERIFY: [check schema]`.
-2. **Silent Degradation:** Writing queries that silently return wrong results due to implicit type casts.
-3. **Context Amnesia:** Forgetting which database engine the project uses (PostgreSQL vs MySQL vs SQL Server).
-4. **Over-Normalization:** Creating 10 tables where 3 with proper JSONB columns would suffice.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-```
-✅ Did I use specific column names (not SELECT *)?
-✅ Is the query SARGable (no functions on indexed columns in WHERE)?
-✅ Did I use parameterized queries (not string interpolation)?
-✅ Did I add indexes for JOIN columns and foreign keys?
-✅ Does UPDATE/DELETE have a proper WHERE clause?
-✅ Did I use keyset pagination (not OFFSET) for large tables?
-✅ Did I specify frame clauses for LAST_VALUE window functions?
-✅ Did I use the correct syntax for the target database engine?
-✅ Did I wrap EXPLAIN ANALYZE of destructive queries in BEGIN/ROLLBACK?
-✅ Did I handle NULL properly (IS NULL, COALESCE, NULLIF)?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a query "optimized" or a migration "successful" without executing it.
-- ✅ **Required:** You are explicitly forbidden from completing your SQL task without providing **concrete terminal evidence** (e.g., `EXPLAIN ANALYZE` output, successful migration logs, or passing integration tests) proving the queries are syntactically valid and performant.

@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Server Management — Production Linux Mastery
 
-> Never run a web server as root. Never expose raw ports securely.
-> A naked Node/Python process dies silently. A systemd service acts as its immortal guardian.
-
 ---
 
 ## 1. Systemd Service Architecture (Process Guard)
@@ -157,34 +154,3 @@ A server will inevitably crash when `/var/log` consumes 100% of the disk.
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (Server Management)
-
-1. **PM2 Fallacy:** AI frequently defaults to `pm2 start app.js` for production deployments. Demand raw `systemd`. It ensures startup order (Wait for network) and unified journalctl logging.
-2. **Root Execution:** Suggesting `ExecStart=npm start` under the `User=root` directive. The application process should operate under a restricted `appuser` daemon tier.
-3. **Missing Proxy Headers:** AI writing basic Nginx configs but omitting `X-Forwarded-For`. This causes the internal App to log all requests as coming from "127.0.0.1", instantly breaking IP Rate limiters.
-4. **WebSocket Blocking:** Forgetting to pass `Upgrade` headers in Nginx proxy setups, breaking realtime web applications silently.
-5. **Naked Node Ports:** Instructing users to run `node index.js` on `port 80`. Never natively bind unprivileged web processes to port 80. Bind to 3000 locally and use reverse proxy routing.
-6. **Firewall Blindness:** Assuming Docker auto-secures ports. Executing `docker run -p 8080:80` on Ubuntu completely bypasses UFW restrictions through iptables hooks, exposing the database to the internet. Always bind `127.0.0.1:8080:80`.
-7. **Password SSH Prompts:** Creating automation scripts utilizing raw passwords (e.g., `sshpass`). Always assume ed25519 identity keyfiles for automated CI deployments.
-8. **Log Rotation Void:** Neglecting log rotation in custom bash script loops, guaranteeing a 100% disk usage outage 3 months later.
-9. **GZIP Assumption:** Forgetting to enable `gzip on` in Nginx resulting in 10MB JSON payloads saturating the virtual server network adapter.
-10. **In-place Nginx Modding:** Editing `/etc/nginx/nginx.conf` directly instead of writing symlinks between the `sites-available` and `sites-enabled` architecture.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are persistent services orchestrated securely via `systemd` (not PM2)?
-✅ Does the systemd service explicitly execute as a non-root `appuser`?
-✅ Is the internal application shielded by an Nginx/Caddy reverse proxy?
-✅ Does the reverse proxy explicitly forward realtime `Upgrade` (WebSocket) headers?
-✅ Does the reverse proxy forward IP integrity headers (`X-Forwarded-For`)?
-✅ Has SSH `PasswordAuthentication` been disabled defensively?
-✅ Is UFW configured to strictly deny all incoming non-essential ports?
-✅ If suggesting Docker, are database/internal ports scoped to `127.0.0.1:X:Y`?
-✅ Have manual application log files been mapped in `logrotate.d`?
-✅ Has `PermitRootLogin` been set to `no`?
-```

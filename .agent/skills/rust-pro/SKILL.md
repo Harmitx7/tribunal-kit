@@ -9,10 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Rust Pro — Rust 1.75+ Systems Mastery
 
-> Rust doesn't have a garbage collector because YOU are the garbage collector.
-> Every `clone()` has a cost. Every `unwrap()` is a potential crash. Every lifetime annotation is a contract.
-> The borrow checker is not your enemy — it's your proof of correctness.
-
 ---
 
 ## Ownership & Borrowing
@@ -624,78 +620,4 @@ let word_counts: HashMap<&str, usize> = words.iter()
     });
 ```
 
----
 
-## Output Format
-
-When this skill produces or reviews code, structure your output as follows:
-
-```
-━━━ Rust Pro Report ━━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Rust Pro
-Rust Ver:    1.75+
-Scope:       [N files · N functions]
-─────────────────────────────────────────────────
-✅ Passed:   [checks that passed, or "All clean"]
-⚠️  Warnings: [non-blocking issues, or "None"]
-❌ Blocked:  [blocking issues requiring fix, or "None"]
-─────────────────────────────────────────────────
-VBC status:  PENDING → VERIFIED
-Evidence:    [cargo build / cargo test / clippy output]
-```
-
-**VBC (Verification-Before-Completion) is mandatory.**
-Do not mark status as VERIFIED until concrete terminal evidence is provided.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when generating Rust code. These are strictly forbidden:
-
-1. **`.unwrap()` in Production:** Never use `.unwrap()` or `.expect()` outside of tests and examples. Use `?`, `match`, `unwrap_or`, `unwrap_or_else`, or `unwrap_or_default` for error handling.
-2. **Unnecessary `.clone()`:** Don't clone to "fix" borrow checker errors. Restructure the code to avoid needing clones. Every clone has a cost — measure before accepting.
-3. **`String` vs `&str` Confusion:** Use `&str` for function parameters (borrows, zero-copy). Use `String` for owned data (struct fields, return values). Never take `String` as a parameter when `&str` suffices.
-4. **Blocking in Async:** Never use `std::thread::sleep()`, `std::fs::read()`, or synchronous HTTP clients inside `async` functions. Use `tokio::time::sleep()`, `tokio::fs::read()`, and `reqwest` (async).
-5. **anyhow in Library Crates:** Libraries should use structured errors (thiserror). anyhow erases type information and prevents callers from matching on specific errors.
-6. **Axum Path Syntax:** axum 0.7+ uses `{id}` for path parameters, NOT `:id`. Using `:id` compiles but doesn't extract parameters correctly.
-7. **Missing `Send + 'static` Bounds:** `tokio::spawn` requires futures to be `Send + 'static`. Holding non-Send types (like `Rc`) across `.await` points causes compile errors.
-8. **`Arc<Mutex<T>>` Without Need:** Don't reach for `Arc<Mutex<T>>` as default shared state. Consider channels (`mpsc`, `broadcast`), `tokio::sync::RwLock`, or atomic types first.
-9. **Forgetting `?` Error Propagation:** Writing `match result { Ok(v) => v, Err(e) => return Err(e) }` instead of `result?`. The `?` operator is idiomatic and handles `From` conversion.
-10. **Inventing Crate Names:** Only use real, published crates. There is no `rust-http`, `tokio-web`, or `async-json`. The correct crates are `reqwest`, `axum`/`actix-web`, and `serde_json`.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/tribunal-backend`**
-**Active reviewers: `logic` · `security` · `dependency` · `type-safety`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never assume crate versions. Always check `Cargo.toml` with `// VERIFY: [crate version]`.
-2. **Silent Degradation:** Using `.unwrap()` to suppress errors silently.
-3. **Context Amnesia:** Forgetting whether the project uses Tokio or async-std, axum or actix-web.
-4. **Over-Engineering:** Creating trait hierarchies and type-level programming where a simple enum suffices.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-```
-✅ Did I avoid .unwrap() in non-test code?
-✅ Did I use &str for function parameters (not String)?
-✅ Did I use thiserror for library errors (not anyhow)?
-✅ Did I use async-compatible I/O (tokio::fs, reqwest)?
-✅ Are spawned tasks Send + 'static?
-✅ Did I use {id} syntax for axum 0.7+ path params?
-✅ Did I derive necessary traits (Debug, Clone, Serialize)?
-✅ Did I handle all Result/Option variants properly?
-✅ Is every .clone() justified with a comment?
-✅ Does cargo clippy pass with no warnings?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring Rust code "correct" because it compiles. Compiling is necessary but not sufficient.
-- ✅ **Required:** You are explicitly forbidden from completing your task without providing **concrete terminal evidence** (e.g., `cargo build` success, `cargo test` pass, `cargo clippy` clean) proving the code is correct and idiomatic.

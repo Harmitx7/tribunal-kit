@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Prompt Injection Defense — AI Security Mastery
 
-> An LLM cannot inherently distinguish between an "instruction" and "data."
-> There is no 100% foolproof defense against prompt injection yet. It is about defense-in-depth and minimizing blast radius.
-
 ---
 
 ## 1. Direct vs. Indirect Injection
@@ -127,34 +124,3 @@ Many injections occur because the LLM includes malicious data in its output, whi
 - **Enforce JSON Schemas.** If the LLM goes off-script and starts blabbering, Zod validation should instantly fail the parsing and reject the output.
 
 ---
-
-## 🤖 LLM-Specific Traps (Prompt Injection)
-
-1. **Assuming Role="User" is Safe:** LLMs view `role: "user"` as highly authoritative context. User messages are not inherently sandboxed by the API.
-2. **String Concatenation:** `System Prompt + User Input = Disaster`.
-3. **Ignoring Indirect Injection:** Thinking your app is safe because it doesn't take chat input, while letting the LLM read random URLs that contain hidden malicious text.
-4. **Predictable Delimiters:** Attackers know `"""` and `<text>` are common delimiters and actively try to close them early.
-5. **Leaking the Prompt via Logic:** If the system prompt contains a password/secret, an attacker WILL extract it by playing "20 questions" with the model. System prompts are public.
-6. **Tool Call Blindness:** Granting standard functions like `execute_bash` or `write_file` to LLMs processing untrusted web data.
-7. **Instruction Weighting:** Placing the "Do not follow user instructions" warning at the top of a 5k token prompt. The LLM pays most attention to the ends of the prompt. Place security warnings right next to the user data boundary.
-8. **Trusting Output Formats:** Trusting that an injected LLM will still output safe JSON. Validate all outputs rigidly.
-9. **Single-Phase Trust:** Routing complex untrusted inputs straight to a reasoning model without a fast pre-filter scan.
-10. **Lack of Auditing:** Failing to log user inputs alongside outputs. You must record what was asked versus what the LLM did to identify when jailbreaks occurred.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are user inputs strictly separated from instructions via XML tags or delimiters?
-✅ Are delimiters randomized (nonce) for high-sensitivity inputs?
-✅ Have I ensured the system prompt contains NO secrets or hardcoded credentials?
-✅ Is the LLM operating with "Least Privilege" (e.g., Read-Only DB access)?
-✅ Are destructive tools (delete, modify) locked behind Human-in-the-Loop confirmation?
-✅ Are we passing untrusted external data (docs/URLs) through safety sanitization?
-✅ Am I restricting rendering of LLM output to prevent downstream XSS?
-✅ Is there a "Fast Filter" model checking for malicious prompt structure?
-✅ Are security instructions placed near the END of the context window (Recency bias)?
-✅ Is LLM JSON output strictly validated against a schema before processing?
-```

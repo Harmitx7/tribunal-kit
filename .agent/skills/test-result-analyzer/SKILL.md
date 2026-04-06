@@ -52,16 +52,16 @@ Report — structured output with confidence levels
 
 Auto-detect the test framework from output patterns:
 
-| Framework | Detection Pattern | Failure Marker |
+|Framework|Detection Pattern|Failure Marker|
 |---|---|---|
-| Jest | `PASS`/`FAIL` with file paths, `●` for test names | `FAIL src/...` |
-| Vitest | `✓`/`×` markers, `FAIL` blocks | `❯ FAIL` or `× test name` |
-| pytest | `PASSED`/`FAILED` with `::` separator | `FAILED tests/...::test_name` |
-| Go test | `ok`/`FAIL` with package paths | `--- FAIL: TestName` |
-| Mocha | `passing`/`failing` counts, indented suites | `N failing` section |
-| JUnit (XML) | `<testsuite>` XML structure | `<failure>` elements |
-| RSpec | `.F` markers, `Failures:` section | `Failure/Error:` |
-| Cargo test | `test result: FAILED` | `---- test_name stdout ----` |
+|Jest|`PASS`/`FAIL` with file paths, `●` for test names|`FAIL src/...`|
+|Vitest|`✓`/`×` markers, `FAIL` blocks|`❯ FAIL` or `× test name`|
+|pytest|`PASSED`/`FAILED` with `::` separator|`FAILED tests/...::test_name`|
+|Go test|`ok`/`FAIL` with package paths|`--- FAIL: TestName`|
+|Mocha|`passing`/`failing` counts, indented suites|`N failing` section|
+|JUnit (XML)|`<testsuite>` XML structure|`<failure>` elements|
+|RSpec|`.F` markers, `Failures:` section|`Failure/Error:`|
+|Cargo test|`test result: FAILED`|`---- test_name stdout ----`|
 
 ## Step 2: Failure Extraction
 
@@ -86,15 +86,15 @@ Group failures into clusters based on shared characteristics:
 
 ### Cluster Types
 
-| Cluster Type | How to Detect | Typical Root Cause |
+|Cluster Type|How to Detect|Typical Root Cause|
 |---|---|---|
-| **Shared Module** | Multiple tests import from the same file that changed | Missing export, type change, API change |
-| **Same Error Type** | All failures throw `TypeError` or `ConnectionError` | Broken dependency, env issue |
-| **Shared Fixture** | Tests using same `beforeEach`/setup fail together | Fixture setup failure cascading |
-| **Import Chain** | Failures follow the import graph | Dependency that fails to resolve |
-| **Environment** | All tests fail with connection/config errors | Missing env var, DB not running |
-| **Timing** | Tests pass individually, fail together | Race condition, shared state |
-| **Snapshot** | Multiple `toMatchSnapshot` failures | Intentional UI change (update snapshots) |
+|**Shared Module**|Multiple tests import from the same file that changed|Missing export, type change, API change|
+|**Same Error Type**|All failures throw `TypeError` or `ConnectionError`|Broken dependency, env issue|
+|**Shared Fixture**|Tests using same `beforeEach`/setup fail together|Fixture setup failure cascading|
+|**Import Chain**|Failures follow the import graph|Dependency that fails to resolve|
+|**Environment**|All tests fail with connection/config errors|Missing env var, DB not running|
+|**Timing**|Tests pass individually, fail together|Race condition, shared state|
+|**Snapshot**|Multiple `toMatchSnapshot` failures|Intentional UI change (update snapshots)|
 
 ### Cascade Detection Algorithm
 
@@ -125,25 +125,25 @@ Example:
 
 **FPF Confidence Levels:**
 
-| Confidence | Criteria |
+|Confidence|Criteria|
 |---|---|
-| **HIGH** | Same source file in >50% of failure stack traces |
-| **MEDIUM** | Same error type across multiple test files |
-| **LOW** | Failures appear independent, multiple root causes likely |
+|**HIGH**|Same source file in >50% of failure stack traces|
+|**MEDIUM**|Same error type across multiple test files|
+|**LOW**|Failures appear independent, multiple root causes likely|
 
 ## Step 5: Fix Recommendations
 
 For each cluster, provide actionable fixes:
 
-| Fix Type | Example | How to Verify |
+|Fix Type|Example|How to Verify|
 |---|---|---|
-| **Missing Export** | `export { fn }` added to module | Re-run failing tests |
-| **Type Mismatch** | Function signature changed, callers need update | Check callers with `grep_search` |
-| **Stale Mock** | Mock doesn't match new interface | Compare mock to actual implementation |
-| **Env Variable** | `.env.test` missing `DATABASE_URL` | Check `.env.example` vs `.env.test` |
-| **Snapshot Update** | Intentional UI change | Run with `--updateSnapshot` flag |
-| **Race Condition** | Tests share global state | Add isolation or `beforeEach` reset |
-| **Dependency Update** | Package API changed after upgrade | Check changelog of updated package |
+|**Missing Export**|`export { fn }` added to module|Re-run failing tests|
+|**Type Mismatch**|Function signature changed, callers need update|Check callers with `grep_search`|
+|**Stale Mock**|Mock doesn't match new interface|Compare mock to actual implementation|
+|**Env Variable**|`.env.test` missing `DATABASE_URL`|Check `.env.example` vs `.env.test`|
+|**Snapshot Update**|Intentional UI change|Run with `--updateSnapshot` flag|
+|**Race Condition**|Tests share global state|Add isolation or `beforeEach` reset|
+|**Dependency Update**|Package API changed after upgrade|Check changelog of updated package|
 
 ### Fix Priority Formula
 ```
@@ -241,11 +241,11 @@ If only snapshot tests fail → likely intentional UI change:
 
 ## Cross-Skill Integration
 
-| Paired Skill | Integration Point |
+|Paired Skill|Integration Point|
 |---|---|
-| `systematic-debugging` | Escalate when FPF is unclear → 4-phase debug methodology |
-| `testing-patterns` | Reference when recommending test structure improvements |
-| `workflow-optimizer` | Flag inefficient test-debug-retest loops |
+|`systematic-debugging`|Escalate when FPF is unclear → 4-phase debug methodology|
+|`testing-patterns`|Reference when recommending test structure improvements|
+|`workflow-optimizer`|Flag inefficient test-debug-retest loops|
 
 ## Anti-Hallucination Guard
 
@@ -256,44 +256,4 @@ If only snapshot tests fail → likely intentional UI change:
 - **Never guess at assertion values** — quote exactly what "Expected" and "Received" say in the output.
 - **Don't assume test runner** — auto-detect from output format, don't assume Jest.
 
-
 ---
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

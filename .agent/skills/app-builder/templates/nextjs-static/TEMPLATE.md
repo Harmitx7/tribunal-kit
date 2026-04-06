@@ -7,15 +7,15 @@ description: Modern template for Next.js 16, React 19 & Tailwind v4. Optimized f
 
 ## Tech Stack
 
-| Component | Technology | Notes |
+|Component|Technology|Notes|
 |-----------|------------|-------|
-| Framework | Next.js 16+ | App Router, Turbopack, Static Exports |
-| Core | React 19 | Server Components, New Hooks, Compiler |
-| Language | TypeScript | Strict Mode |
-| Styling | Tailwind CSS v4 | CSS-first configuration (No js config), Oxide Engine |
-| Animations | Framer Motion | Layout animations & gestures |
-| Icons | Lucide React | Lightweight SVG icons |
-| SEO | Metadata API | Native Next.js API (Replaces next-seo) |
+|Framework|Next.js 16+|App Router, Turbopack, Static Exports|
+|Core|React 19|Server Components, New Hooks, Compiler|
+|Language|TypeScript|Strict Mode|
+|Styling|Tailwind CSS v4|CSS-first configuration (No js config), Oxide Engine|
+|Animations|Framer Motion|Layout animations & gestures|
+|Icons|Lucide React|Lightweight SVG icons|
+|SEO|Metadata API|Native Next.js API (Replaces next-seo)|
 
 ---
 
@@ -95,26 +95,26 @@ export const metadata: Metadata = {
 
 ## Landing Page Sections
 
-| Section | Purpose | Suggested Component |
+|Section|Purpose|Suggested Component|
 |---------|---------|---------------------|
-| Hero | First impression, H1 & Main CTA | `<HeroSection />` |
-| Features | Product benefits (Grid/Bento layout) | `<FeaturesGrid />` |
-| Social Proof | Partner logos, User numbers | `<LogoCloud />` |
-| Testimonials | Customer reviews | `<TestimonialCarousel />` |
-| Pricing | Service plans | `<PricingCards />` |
-| FAQ | Questions & Answers (Good for SEO) | `<Accordion />` |
-| CTA | Final conversion | `<CallToAction />` |
+|Hero|First impression, H1 & Main CTA|`<HeroSection />`|
+|Features|Product benefits (Grid/Bento layout)|`<FeaturesGrid />`|
+|Social Proof|Partner logos, User numbers|`<LogoCloud />`|
+|Testimonials|Customer reviews|`<TestimonialCarousel />`|
+|Pricing|Service plans|`<PricingCards />`|
+|FAQ|Questions & Answers (Good for SEO)|`<Accordion />`|
+|CTA|Final conversion|`<CallToAction />`|
 
 ---
 
 ## Animation Patterns (Framer Motion)
 
-| Pattern | Usage | Implementation |
+|Pattern|Usage|Implementation|
 |---------|-------|----------------|
-| Fade Up | Headlines, paragraphs | `initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}` |
-| Stagger | Lists of Features/Cards | Use variants with `staggerChildren` |
-| Parallax | Background images or floating elements | `useScroll` & `useTransform` |
-| Micro-interactions | Hover buttons, click effects | `whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}` |
+|Fade Up|Headlines, paragraphs|`initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}`|
+|Stagger|Lists of Features/Cards|Use variants with `staggerChildren`|
+|Parallax|Background images or floating elements|`useScroll` & `useTransform`|
+|Micro-interactions|Hover buttons, click effects|`whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}`|
 
 ---
 
@@ -152,12 +152,12 @@ export const metadata: Metadata = {
 
 ## Deployment
 
-| Platform | Method | Important Notes |
+|Platform|Method|Important Notes|
 |----------|--------|-----------------|
-| Vercel | Git Push | Auto-detects Next.js. Best for performance. |
-| GitHub Pages | GitHub Actions | Need to set `basePath` in `next.config.ts` if not using a custom domain. |
-| AWS S3 / CloudFront | Upload out folder | Ensure Error Document is configured to `404.html`. |
-| Netlify | Git Push | Set build command to `npm run build`. |
+|Vercel|Git Push|Auto-detects Next.js. Best for performance.|
+|GitHub Pages|GitHub Actions|Need to set `basePath` in `next.config.ts` if not using a custom domain.|
+|AWS S3 / CloudFront|Upload out folder|Ensure Error Document is configured to `404.html`.|
+|Netlify|Git Push|Set build command to `npm run build`.|
 
 ---
 

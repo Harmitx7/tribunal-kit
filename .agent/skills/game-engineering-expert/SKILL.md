@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Game Engineering Expert — Performance & State Mastery
 
-> A web server processes requests asynchronously. A game engine processes reality 60 times a second.
-> Memory allocation inside the update loop is a death sentence for frame rates.
-
 ---
 
 ## 1. Frame Rate Architecture (The Update Loop)
@@ -89,34 +86,3 @@ Never trust the client. A multiplayer architecture dictates latency fundamentall
    - If the server eventually disagrees, the Client aggressively rewinds and snaps the state to match the Server reality (Rubber-banding).
 
 ---
-
-## 🤖 LLM-Specific Traps (Game Engineering)
-
-1. **Await Inside Update:** AI suggests `await Task.Delay()` inside a Unity `Update()` loop instead of yielding inside a proper Coroutine, causing thousands of tasks to stack and crash the engine memory instantaneously.
-2. **Missing DeltaTime:** The AI forgets to multiply positional vectors by `Time.deltaTime` (or Godot's `delta`), making games function optimally on developer PCs but hyper-speed glitch on high refresh rate monitors.
-3. **Direct String Lookups:** Executing `GameObject.Find("Player")` inside an `Update()` loop. This forces a recursive string-matching crawl across the entire scene hierarchy 60 times a second. Architect via localized caching/Singleton pattern on boot.
-4. **Trusting the Client State:** Architecting a multiplayer route as `emit('playerDead', { id: targetId })`. An exploiter can forge this payload and kill anyone. The client must emit `('fireWeapon', { aimVector })` and the server decides if targetId dies.
-5. **Physics Tunneling:** The AI moves objects by altering `.position` directly instead of manipulating `RigidBody` velocities. If moved directly, the physics engine cannot calculate intermediate collision sweeps, causing bullets to phase through thin walls blindly.
-6. **OOP Hierarchy Hell:** The AI generating deep, brittle C++ inheritance trees for enemies instead of favoring flat Component composition.
-7. **Allocating In Rendering Loops:** Instantiating new Vector3 structs (`new Vector3()`) continuously inside tight algorithmic loops instead of utilizing strict global allocations or structural re-assignment.
-8. **WebGL Threading Illusions:** Suggesting complex C# multi-threading (System.Threading.Tasks) for a Unity WebGL web-game build. WebGL fundamentally executes single-threaded; multi-threading must be emulated or bypassed entirely via Job Systems.
-9. **Event Spillage (Memory Leaks):** Subscribing to strict engine C# Action events ( `GameManager.OnDeath += Explode;` ) but entirely failing to unsubscribe in the `OnDestroy()` hierarchy, creating immortal zombie objects in RAM forever.
-10. **The Canvas Rebuild:** Altering a single Text element in a massive UI grouping, causing Unity to expensively re-rasterize and bake the entire UI canvas mesh. Segment UI into static and dynamic distinct canvases.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are positional equations multiplied universally by `deltaTime` for frame independence?
-✅ Have physics/collision mutations been explicitly restricted to the `FixedUpdate` engine cycles?
-✅ Are memory pools implemented to completely eliminate runtime garbage collection stutter?
-✅ Does the networking architecture explicitly forbid the client from dictating authoritative game state?
-✅ Have `.Find()` string query loops been eliminated from continuous execution pathways?
-✅ Did I rely on Component composition rather than deep, brittle inheritance trees?
-✅ Are `RigidBody` velocities manipulated instead of raw `.position` to prevent quantum wall tunneling?
-✅ Have all event subscriptions (`+=`) been rigidly paired with localized destruction unsubscribe (`-=`) methods?
-✅ Were multi-threading paradigms avoided/recalculated if targeting web browser execution formats?
-✅ Is the UI strictly architected to prevent global canvas rebuilds across minor localized visual changes?
-```

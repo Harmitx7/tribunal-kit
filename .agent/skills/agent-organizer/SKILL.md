@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Agent Organizer — Multi-Agent Orchestration Mastery
 
-> A single monolithic agent degrades as context grows.
-> Multi-agent architectures succeed through strict encapsulation, clear interfaces, and context-budgeting.
-
 ---
 
 ## 1. The Delegation Sub-Agent Pattern
@@ -93,34 +90,3 @@ Automation without oversight is reckless. The Organizer manages when to pause an
 2. **Recovery Gate (After 3 Failures):** "The database migration script has failed 3 times. I am halting. How would you like to proceed?"
 
 ---
-
-## 🤖 LLM-Specific Traps (Agent Organization)
-
-1. **The Context Dump:** Sending highly-specialized worker agents the entire chat transcript. Workers become confused by the broader goals instead of focusing on their localized task.
-2. **Infinite Loops:** Having two agents argue with each other (e.g., Code Generator vs Linter) infinitely. The Organizer MUST implement a hard limit (e.g., max 3 iterations) before halting and escalating to the human.
-3. **God-Agent Regression:** The Organizer attempting to write the code itself instead of actively routing the request to the designated `python-pro` or `react-specialist`.
-4. **Vague Instructions:** Delegating tasks with "Fix the UI" instead of "Review `src/Header.tsx` and adjust padding to standard 4px increments."
-5. **Loss of Task Tracking:** Delegating multiple tasks in parallel and forgetting to update the central tracking `task.md` file, leading to redundant work or dropped constraints.
-6. **Premature Completion:** The Supervisor telling the user the workflow is finished before the individual worker agents have successfully returned positive exit signals.
-7. **Ignoring Worker Feedback:** A worker agent returns `BLOCKED` due to missing dependencies, and the Supervisor blindly continues executing the next dependent step in the workflow.
-8. **Format Mixing:** Expecting natural language responses from a worker, but feeding it into a CLI script that expects structured JSON parameters.
-9. **No Fallback State:** Dispatching a worker to modify files without snapshotting/branching. If the worker hallucinates, there is no easy rollback.
-10. **Bypassing the Socratic Gate:** Autonomous agents deciding on major architectural pivots without seeking explicit human confirmation first.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are instructions sent to worker agents localized, stripped of unnecessary global context?
-✅ Has a strict maximum-iteration limit been defined to prevent infinite agent argument loops?
-✅ Is the global state properly documented and maintained within the `task.md` file?
-✅ Did the Organizer strictly act as a router rather than assuming execution duties?
-✅ Are worker agent responses processed using strict formatting (e.g., JSON schemas)?
-✅ Have human-in-the-loop Approval Gates been enforced prior to destructive actions?
-✅ Are dependencies formally mapped (e.g., Backend Worker must finish before Frontend Worker begins)?
-✅ Are worker failure states (`BLOCKED`, `ERROR`) explicitly caught and handled by the Supervisor?
-✅ Does the system gracefully halt and explicitly prompt the user after 3 sequential execution failures?
-✅ Did I ensure the worker relies on explicitly designated skills/manifests rather than generalized knowledge?
-```

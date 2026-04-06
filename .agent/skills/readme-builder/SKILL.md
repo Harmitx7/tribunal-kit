@@ -9,8 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # README Builder Skill
 
-> A great README is a product pitch, a user manual, and a contributor's welcome — all in one document.
-
 ---
 
 ## Ground Rules
@@ -46,7 +44,7 @@ Before generating any README content, answer these questions by scanning the pro
 ```markdown
 # [Project Name]
 
-> [One-line tagline: what it does and for whom]
+[One-line tagline: what it does and for whom]
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/npm/v/package-name)](https://www.npmjs.com/package/package-name)
@@ -106,10 +104,10 @@ package-name init --config ./config.json --output ./dist
 
 ## ⚙️ Configuration
 
-| Option | Type | Default | Description |
+|Option|Type|Default|Description|
 |--------|------|---------|-------------|
-| `option1` | `string` | `"default"` | What it controls |
-| `option2` | `boolean` | `false` | What it controls |
+|`option1`|`string`|`"default"`|What it controls|
+|`option2`|`boolean`|`false`|What it controls|
 
 ---
 
@@ -185,12 +183,12 @@ Add a dedicated `## Commands` section:
 ```markdown
 ## Commands
 
-| Command | Description |
+|Command|Description|
 |---------|-------------|
-| `tool init` | Initialize a new project |
-| `tool build` | Compile and bundle |
-| `tool deploy` | Deploy to production |
-| `tool --help` | Show all available options |
+|`tool init`|Initialize a new project|
+|`tool build`|Compile and bundle|
+|`tool deploy`|Deploy to production|
+|`tool --help`|Show all available options|
 ```
 
 ### Libraries / SDKs
@@ -203,10 +201,10 @@ Add a `## API Reference` section with function signatures:
 
 Returns: `ReturnType`
 
-| Parameter | Type | Description |
+|Parameter|Type|Description|
 |-----------|------|-------------|
-| `param1` | `string` | Description |
-| `param2` | `options` | Optional config |
+|`param1`|`string`|Description|
+|`param2`|`options`|Optional config|
 ```
 
 ### Monorepos
@@ -215,10 +213,10 @@ Add a `## Packages` table:
 ```markdown
 ## Packages
 
-| Package | Version | Description |
+|Package|Version|Description|
 |---------|---------|-------------|
-| [`@org/core`](packages/core) | [![npm](https://img.shields.io/npm/v/@org/core)](https://npm.im/@org/core) | Core engine |
-| [`@org/cli`](packages/cli) | [![npm](https://img.shields.io/npm/v/@org/cli)](https://npm.im/@org/cli) | CLI interface |
+|[`@org/core`](packages/core)|[![npm](https://img.shields.io/npm/v/@org/core)](https://npm.im/@org/core)|Core engine|
+|[`@org/cli`](packages/cli)|[![npm](https://img.shields.io/npm/v/@org/cli)](https://npm.im/@org/cli)|CLI interface|
 ```
 
 ---
@@ -242,71 +240,3 @@ Evidence:    [file written at path / content reviewed]
 ```
 
 ---
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/generate`**
-**Active reviewers: `logic` · `frontend` · `documentation`**
-
-### ❌ Forbidden AI Tropes in README Generation
-
-1. **Placeholder content** — "Add your description here", "TODO", "Coming soon" are never acceptable.
-2. **Fabricated badges** — never create badge URLs with invented package names or repo paths.
-3. **Untested code blocks** — never write installation or usage commands without verifying them against the actual `package.json` or project config.
-4. **Version number invention** — always read the actual version from `package.json`, `pyproject.toml`, or `Cargo.toml`.
-5. **Generic feature claims** — "fast", "powerful", "easy to use" without concrete evidence or metrics.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before generating README content:
-
-```
-✅ Did I read the actual project files first (package.json, source)?
-✅ Is the project name correct (not a guess)?
-✅ Are all code block commands runnable against this actual project?
-✅ Are badge URLs pointing to the real repo/package?
-✅ Is the version number read from actual project files, not guessed?
-✅ Does every feature bullet describe a concrete, provable capability?
-```
-
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

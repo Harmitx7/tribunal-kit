@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # shadcn/ui Expert — Component Architecture Mastery
 
-> shadcn/ui is NOT a component library. It is a collection of re-usable components that you copy and paste into your apps.
-> You own the code. You own the styling. You own the accessibility.
-
 ---
 
 ## 1. Core Architecture
@@ -173,34 +170,3 @@ export default async function Page() {
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (shadcn/ui)
-
-1. **Treating it like an NPM Package:** AI asks to run `npm install shadcn-ui`. It's `npx shadcn@latest add [component]`. Components live in your tree (`components/ui`), not in `node_modules`.
-2. **Missing the `cn` utility:** AI writes generic template literals for className overrides, guaranteeing Tailwind specificity conflicts. Always import and wrap overrides in `cn()`.
-3. **Hardcoding Colors:** AI writes `bg-blue-500` inside standard components. shadcn demands semantic variables: `bg-primary`, `bg-accent`, `text-muted-foreground`.
-4. **Server Component Conflicts:** AI inserts interactive shadcn components (Dialog, Tabs, Accordion) directly into Next.js Server Components without creating a `"use client"` wrapper boundary.
-5. **Radix Primitive Ignorance:** AI attempts to pass `onClick` or `onChange` to headless wrapper elements like `<Select>` instead of `<SelectValue>` or tracking state properly via the `onValueChange` prop of the root component.
-6. **Forgetting `asChild`:** When wrapping existing buttons or links in shadcn Triggers, AI forgets the `asChild` prop, resulting in invalid HTML (e.g., `<button><button>click</button></button>`).
-7. **Modifying `node_modules/@radix-ui`:** AI tries to fix Radix a11y bugs by editing node_modules. Modify your local wrappers in `components/ui`, never Radix internals.
-8. **Broken Form Integration:** AI tries to manually string together standard React state with shadcn inputs. You MUST use `<Form>`, `<FormField>`, `<FormItem>`, and `react-hook-form` logic for proper shadcn forms.
-9. **Tailwind Class Order:** AI doesn't understand that `tailwind-merge` resolves conflicts from left to right. Overriding classes must be passed at the *end* of the `cn()` arguments.
-10. **Theme Variable Format:** AI writes `--primary: #3b82f6`. shadcn/ui CSS custom properties are strictly HSL scalar values WITHOUT the `hsl()` wrapper inside the root definition: `--primary: 221.2 83.2% 53.3%;`.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are interactive shadcn components safely inside "use client" boundaries?
-✅ Are classes merged dynamically using the `cn()` utility?
-✅ Are colors utilizing standard semantic vars (`bg-primary`) rather than hardcoded colors?
-✅ Did I remember the `asChild` prop when wrapping links/buttons in Triggers?
-✅ Are forms correctly using `react-hook-form` via the `<Form>` and `<FormField>` components?
-✅ Are CSS theme root variables using raw HSL scalar values?
-✅ Am I modifying the local `components/ui/*` files if new variants are needed?
-✅ Have I respected Radix a11y primitives (not inventing my own onClick focus handling)?
-✅ Are component variants properly declared using `cva`?
-✅ Did I pass user-supplied `className` props at the END of the `cn()` function to allow overrides?
-```

@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Parallel Agents — Concurrent Orchestration Mastery
 
-> Sequential execution is slow but safe.
-> Parallel execution is fast, but invites massive collision risks. Managing the merger is the primary architectural challenge.
-
 ---
 
 ## 1. Fan-Out / Fan-In Pattern
@@ -89,34 +86,3 @@ for (const result of results) {
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (Parallel Execution)
-
-1. **The Shared File Massacre:** Dispatching two agents concurrently with edit access, causing Agent B to overwrite Agent A's functions because they were modifying the same file essentially blindly.
-2. **Dependency Deadlocks:** Launching Agent A (Frontend) and Agent B (Backend Database) concurrently, but Agent A fails because it tries to call API routes Agent B hasn't finished writing yet.
-3. **Context Hallucination Splice:** Synthesizing the outputs of three independent reviewers without explicitly formatting the final report, resulting in the Supervisor hallucinating its own separate suggestions layered on top blindly.
-4. **No Timeout Limits:** Allowing a parallel dispatch array to hang infinitely because a single worker hit a silent crash or API rate limit. Always enforce strict timeout wrappers.
-5. **Rate Limiting Suicide:** Spawning 20 worker agents simultaneously against an LLM platform, instantly triggering HTTP 429 Rate Limits and destroying the entire execution pool. Use concurrent batch limiting (e.g., execution pools of max 5).
-6. **Task Bleed:** Failing to strictly scope the parallel instructions, leading two agents to accidentally duplicate the exact same subset of work.
-7. **`Promise.all` Fragility:** The Supervisor crashes the entire session because one single parallel sub-agent threw a syntax error. Use `.allSettled` to isolate catastrophic failures.
-8. **Losing the Thread:** Outputting the raw parallel execution logs chaotically to the user terminal entirely disorganized, making it impossible for the user to understand which agent said what.
-9. **Global State Racing:** Two agents simultaneously reading a `task.md` file, checking different boxes, and saving, fundamentally destroying the tracking ledger. Write actions to a global tracker must be executed synchronously.
-10. **Synchronous Impatience:** Using `await` sequentially in a `for` loop across multiple worker tasks when they have absolutely no strict data dependency on each other, vastly wasting execution time.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are concurrent write tasks strictly isolated to distinct, separate files or directories?
-✅ Have I utilized `Promise.allSettled` (or architectural equivalents) to survive partial pipeline failures?
-✅ Do the sub-agents operate exclusively on isolated context rather than full shared memories?
-✅ Are shared state modifications (like updating the `task.md` ledger) explicitly queued synchronously?
-✅ Are there constraints applied to prevent API rate-limit exhaustion against the LLM providers?
-✅ Is the Supervisor strictly awaiting the Fan-In consolidation before moving to the next pipeline step?
-✅ Are timeouts strictly enforced around parallel executions to prevent Infinite Hang sequences?
-✅ Are the outputs synthesized cleanly so the human doesn't see overlapping chaotic log streams?
-✅ Did I ensure the parallel agents genuinely have ZERO data dependencies on one another?
-✅ Are reviewer/audit phases favored for parallelism over active code-generation phases?
-```

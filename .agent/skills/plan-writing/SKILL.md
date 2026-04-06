@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Plan Writing — Execution Blueprints Mastery
 
-> A flawless execution of a terrible plan leads to catastrophic success.
-> Write planes with dependencies explicitly mapped. Treat it like a topological sort.
-
 ---
 
 ## 1. The Implementation Plan Structure (ADR-Lite)
@@ -85,34 +82,3 @@ Unlike the high-level `implementation_plan.md`, the `task.md` serves as the live
 - `[x]` = Verified Complete
 
 ---
-
-## 🤖 LLM-Specific Traps (Plan Writing)
-
-1. **Topological Chaos:** Recommending the creation of a frontend React component fetching an API endpoint that has not yet been scheduled for creation, resulting in immediate compilation/linting crashes.
-2. **Missing File Paths:** Writing "Update the configuration file" instead of explicitly declaring `[MODIFY] .github/workflows/deploy.yml`. Vague boundaries invite shotgun surgery.
-3. **Execution Masking:** The AI receives the instruction to "Write a plan," but decides to also write 450 lines of execution code spanning 6 files simultaneously in the same reply. Demarcate Planning from Execution permanently.
-4. **Over-Engineering the MVP:** Recommending a 4-wave, 12-step Kubernetes microservice deployment schedule for a localized "Add a 'Contact Us' form" user request.
-5. **No Verification Baseline:** Failing to establish a "Does the code currently work?" baseline constraint before beginning the sequence of alterations.
-6. **Task Blobbing:** Creating a massive, single 25-step list without breaking it up into isolated, independently testable Waves/Phases. If the list is monolithic, the failure debugging will be chaotic.
-7. **Silent Dependencies:** Failing to explicitly list new NPM packages or system libraries required by the plan (e.g., executing Prisma logic without adding a `npm install @prisma/client` step).
-8. **Assumption of Success:** Failing to establish Rollback protocols (e.g., `git reset --hard`) when planning risky, highly destructive file alterations.
-9. **Ignoring the Environment:** Planning major API changes without ensuring the required environment variables (`STRIPE_API_KEY`) are documented for addition.
-10. **Refusal to Update Ledger:** Operating as an autonomous executor but failing to edit the `task.md` tracking ledger synchronously, destroying the system's memory continuity upon suspension.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are execution sequences strictly ordered by Topological Dependencies (DB → API → UI)?
-✅ Are monolith tasks deliberately chunked into isolated, independently testable Waves?
-✅ Is the `task.md` execution ledger cleanly parameterized with exact file paths `[NEW], [MODIFY]`?
-✅ Have I explicitly separated the Planning Phase response from raw Code Generation?
-✅ Are verification protocols explicitly tied to terminal logs, test results, or manual checks?
-✅ Are required NPM package installations/dependency injections explicitly mapped in Wave 1?
-✅ Is there a defined Rollback/Snapshot strategy to recover from catastrophic compilation failure?
-✅ Are environmental secrets (.env variables) outlined as requirements before execution?
-✅ Has the complexity of the plan been correctly scaled to the simplicity of the user's objective?
-✅ Does the plan establish a baseline system health check before executing destructive mutations?
-```

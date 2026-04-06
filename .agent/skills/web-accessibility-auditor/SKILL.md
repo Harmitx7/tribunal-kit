@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Web Accessibility (a11y) — Inclusive UI Mastery
 
-> Semantic HTML solves 80% of accessibility problems before they start.
-> ARIA is a polyfill for bad HTML. No ARIA is better than bad ARIA.
-
 ---
 
 ## 1. Semantic HTML over `<div>` Soup
@@ -139,7 +136,7 @@ When you build complex custom widgets (like tabs or accordions), you must apply 
   id="username" 
   aria-invalid="true" 
   aria-describedby="username-error"
->
+
 <span id="username-error" role="alert" class="error-msg">Username is already taken</span>
 ```
 
@@ -160,34 +157,3 @@ When content changes dynamically without a page reload (e.g., Toast notification
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (Web Accessibility)
-
-1. **The `<div>` Button:** AI loves writing `<div onClick={handleClick}>`. This completely breaks tab navigation. Demand `<button>`.
-2. **Missing Alt Text Analysis:** AI writes `<img src="hero.jpg" alt="hero image" />`. Alt text should describe the *intent/content*, e.g., `alt="Three colleagues discussing a laptop"`. If it's purely decorative, use `alt=""`.
-3. **Removing Focus Rings:** AI often adds CSS `outline: none` to fix visual quirks. Demand `:focus-visible` ring replacements.
-4. **Placeholder as Label:** Relying entirely on `placeholder="Username"`. Screen reader users and cognitive-impaired users lose context once they start typing.
-5. **Over-using ARIA:** Adding `role="button"` to native `<button>` tags, or scattering `aria-*` tags randomly. ARIA overrides native HTML semantics; use it sparingly.
-6. **Form Inputs Without IDs:** Linking labels using `<label for="x">` but forgetting to give the input `id="x"`.
-7. **Color Contrast Failures:** Generating UI designs with light gray text on white backgrounds (`#999` on `#FFF`). Ratios must be minimum 4.5:1 (WCAG AA).
-8. **Missing `aria-expanded`:** Building custom dropdowns without tracking the expanded/collapsed state via ARIA.
-9. **Modal Focus Traps:** Failing to implement `keydown` listeners to trap Tab strokes inside an open modal menu.
-10. **Silent Dynamic Errors:** Showing a red text validation error visually but not applying `aria-invalid` or using an `aria-live` region, rendering it invisible to blind users.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are interactive elements native (<button> and <a>) rather than clickable <div>s?
-✅ Is keyboard focus clearly visible using `:focus-visible`?
-✅ Do images have descriptive `alt` attributes (or `alt=""` if decorative)?
-✅ Are form inputs explicitly paired with `<label>` tags?
-✅ Are error messages linked to inputs via `aria-describedby`?
-✅ Do custom interactive components (dropdowns, accordions) track state with ARIA (e.g., `aria-expanded`)?
-✅ Are dynamic notifications using `aria-live` or `role="alert"` so screen readers see them?
-✅ Is text color contrast at least 4.5:1 against its background?
-✅ Do modals/dialogs trap focus and respond to the Escape key?
-✅ Did I rely on semantic HTML5 regions (<main>, <nav>, <aside>) instead of div soup?
-```

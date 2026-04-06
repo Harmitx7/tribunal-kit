@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Edge Computing — Global Latency Mastery
 
-> The Edge is not just a faster server. It fundamentally changes the computing model.
-> You cannot put compute on the Edge and leave the database in Virginia. V8 isolates enforce new rules.
-
 ---
 
 ## 1. The Edge Model (V8 Isolates vs Node.js)
@@ -124,34 +121,3 @@ export class ChatRoom {
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (Edge Computing)
-
-1. **Node Core Assumption:** The AI imports `fs`, `path`, or `child_process` directly into Cloudflare Workers / Next.js Edge Middleware. V8 isolates lack file system access. Use native Web APIs (`ReadableStream`, `Blob`).
-2. **Heavy Dependency Usage:** The AI imports massive NPM libraries (like `lodash` or `moment`) which crush the 1MB Edge script-size limits. Code for the Edge must be micro-optimized.
-3. **TCP Database Connections:** Generating `const client = new Client({ connectionString: "postgres://..." })` inside an Edge runtime. The edge requires HTTP/WebSocket driven database architectures, or a managed connection pooler to prevent TCP exhaustion.
-4. **State Fallacy:** Designing a global variable `let activeUsers = 0` inside an edge script and assuming it will sync. V8 Isolates boot and die globally in milliseconds. They share no memory.
-5. **Ignoring `ctx.waitUntil`:** Mutating databases or logging metrics synchronously before returning the web response, slowing down the user. All side-effects on the Edge must be deferred via `ctx.waitUntil(promise)`.
-6. **Non-Web Crypto:** Trying to use Node's `crypto` module. Standardize on the universally browser-compatible `crypto.subtle` Web Crypto API.
-7. **Environment Variable Bleed:** Using `process.env.SECRET` instead of passing the standard `env` injection parameter into the V8 fetch handler.
-8. **Missing CORS Origins:** Forgetting to dynamically append heavy CORS allow headers on the outgoing Edge proxy response manipulation.
-9. **Synchronous Loops:** Designing a large `forEach` data map inside the worker request block, tripping the strict 50ms CPU execution limits resulting in generic 1102 Worker Errors.
-10. **WebSocket Orphanages:** Opening a WebSocket inside a standard Edge function without bridging it into a Durable Object, causing the WS connection to terminate immediately when the isolate tears down.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Have I completely avoided using native Node.js core modules (`fs`, `path`, `crypto`)?
-✅ Am I leveraging standard Web APIs (Fetch, Streams, Web Crypto)?
-✅ Have database interactions utilized HTTP clients (or connection poolers) instead of direct TCP?
-✅ Has `ctx.waitUntil()` been used for all background analytics/caching updates?
-✅ Are environment variables injected via `env.VAR` rather than `process.env`?
-✅ Is localized global state (chat rooms, live editing) explicitly deferred to Durable Objects?
-✅ Did I define strict `s-maxage` and `stale-while-revalidate` directives for caching performance?
-✅ Are third-party library imports audited for their V8 isolate compatibility footprint?
-✅ Is JSON parsing happening inside `try/catch` to avoid 500ing early isolates?
-✅ Did I avoid deploying massive >1MB bundle payloads to the Edge routing layer?
-```

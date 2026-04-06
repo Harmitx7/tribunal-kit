@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Webapp Testing — Full Stack Pipeline Mastery
 
-> Write tests. Not too many. Mostly integration. — Guillermo Rauch
-> A test suite that takes 30 minutes to run is a suite that engineers will actively subvert.
-
 ---
 
 ## 1. The Strategy (The Testing Trophy)
@@ -112,34 +109,3 @@ describe('calculateTax()', () => {
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps (Webapp Testing)
-
-1. **Shallow Rendering Illusion:** AI suggests `shallow()` rendering from Enzyme. Enzyme is dead and lacks React 18+ hook visibility. RTL requires full DOM rendering.
-2. **`fireEvent` over `userEvent`:** AI defaults to `fireEvent.click()`. It skips critical browser lifecycle checks. Demand `@testing-library/user-event`.
-3. **Mocking Fear:** Over-mocking `fetch` natively inside unit tests instead of setting up clean HTTP interception layers (MSW).
-4. **Brittle Selectors in RTL:** AI uses `container.querySelector('.my-class')` instead of semantic accessibility queries (`screen.getByRole`). Tests will instantly break on design changes.
-5. **Testing Framework Overhead:** Suggesting Jest in 2026 for generic Vite/Next apps. Vitest is significantly faster, native ESM, and highly compatible.
-6. **`act()` Warning Panic:** Sprinkling `act()` randomly throughout the test code to suppress React warnings, instead of fixing the root async timing issues with `findBy` properly.
-7. **Ignoring Assertions Context:** Forgetting cleanup methodologies leading to state leaking between tests randomly. (Vitest and RTL handle this automatically if configured, but AI often creates weird global singleton state variables).
-8. **Endless Mock Imports:** Trying to `vi.mock` deeply nested dependencies across 4 layers of hooks. This proves the architecture is overly coupled. The test should stimulate a refactor, not a complex mock.
-9. **100% Coverage Addiction:** Recommending strict `coverageThreshold: 100`. The ROI of testing standard UI visual states drops to zero. Focus coverage on algorithms and data mapping functions.
-10. **Skipping Accessibility in Integration:** Forgetting that `getByRole` explicitly verifies the component is rendering accessible a11y boundaries correctly. Using `getByTestId` everywhere skips this verification.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are complex pure functions isolated from React hooks for high-speed Vitest execution?
-✅ Does the testing suite rely fundamentally heavily on MSW network/API interception instead of `vi.mock`?
-✅ Did I exclusively leverage `screen.getByRole` / `findByRole` instead of CSS selector querying?
-✅ Am I using `@testing-library/user-event` rather than raw `fireEvent` to simulate realistic DOM interaction?
-✅ Has the `act()` wrapper been avoided, in favor of proper async `await screen.findByX` queries?
-✅ Is the coverage optimized for business logic precision, rather than blind 100% coverage chasing?
-✅ Are the React components fully rendered (no shallow mocking)?
-✅ Did I prevent state leakage completely by relying on isolated server handlers per-test where necessary?
-✅ Is the suite configured under Vitest for ESM speed instead of heavier, legacy Jest integrations?
-✅ Are there distinct layers deployed (Unit for logic, RTL for component flow, Playwright for E2E)?
-```

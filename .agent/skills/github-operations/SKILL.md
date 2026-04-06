@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # GitHub Operations — Git & CI/CD Workflow Mastery
 
-> Git is not a backup tool. It's a communication system for your team.
-> Every commit tells a story. Every PR is a conversation. Every branch has a purpose.
-
 ---
 
 ## Branching Strategy
@@ -181,7 +178,7 @@ git rebase origin/main
 your changes
 =======
 their changes
->>>>>>> main
+main
 
 # Step 3: Resolve, stage, continue
 git add resolved-file.ts
@@ -280,35 +277,3 @@ export default {
 ```
 
 ---
-
-## 🤖 LLM-Specific Traps
-
-1. **Rebasing Shared Branches:** Never rebase commits already pushed to a shared branch. It rewrites history.
-2. **`git add .` Blindly:** Always review what you're staging. Use `git add -p` for selective staging.
-3. **Force Push to Main:** `git push --force` on protected branches destroys history. Use `--force-with-lease` at minimum.
-4. **Committing `.env` Files:** Add `.env` to `.gitignore` BEFORE the first commit. Once committed, secrets are in history forever.
-5. **"WIP" Commit Messages:** Every commit message should follow conventional commits format.
-6. **Giant PRs (>400 lines):** Large PRs get rubber-stamped, not reviewed. Split into logical chunks.
-7. **Merging Without CI:** Never merge a PR that hasn't passed all required checks.
-8. **Deleting Branches Before Merge:** Verify the PR is merged before deleting the branch.
-9. **`git reset --hard` Without Thinking:** This is destructive and discards uncommitted work permanently.
-10. **Secrets in Git History:** Committed secrets need immediate rotation AND history rewriting (BFG/git-filter-repo).
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Am I using conventional commit messages?
-✅ Is the PR < 400 lines and single-purpose?
-✅ Have I self-reviewed the diff?
-✅ Are all CI checks passing?
-✅ Is .env in .gitignore?
-✅ Am I NOT rebasing shared/pushed commits?
-✅ Did I link the issue/ticket in the PR?
-✅ Am I squash-merging to keep clean history?
-✅ Are branch protection rules configured?
-✅ Are git hooks catching lint/format issues pre-commit?
-```

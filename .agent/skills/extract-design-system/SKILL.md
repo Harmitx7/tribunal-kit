@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Extract Design System — Tokenization Mastery
 
-> Magic numbers in CSS (`padding: 13px`) are technical debt.
-> A Design System is not a component library. It is a mathematical relationship between visual tokens.
-
 ---
 
 ## 1. The Token Extraction Protocol
@@ -101,34 +98,3 @@ A Design System must mandate accessibility at the token level, preventing develo
 2. Focus rings must be decoupled and standardized globally (`ring-2 ring-primary ring-offset-2`).
 
 ---
-
-## 🤖 LLM-Specific Traps (Design System Extraction)
-
-1. **Literal Naming:** Naming variables `--color-light-red` instead of `--color-danger` or `--color-primary`. Literal names break instantly when the dark mode theme flips the palette.
-2. **Ignoring the Spacing Geometry:** Leaving `margin-top: 17px` and `padding-left: 11px` unaddressed instead of mathematically rounding them into a strict 4px/8px geometric scale (`mt-4`, `pl-3`).
-3. **Re-inventing Tailwind:** Extracting 400 CSS utility classes manually into a custom CSS file instead of properly mapping the design tokens into the existing Tailwind `@theme` engine.
-4. **Prop Drilling Hell:** Converting a button to a component, but exposing 15 individual CSS class props (`textColor`, `paddingSize`, `borderR`) instead of grouping them logically into a `Variant` CVA scale.
-5. **Dark Mode Blindness:** Extracting a beautiful Light Mode system and failing to invert the HSL lightness scale for the dark mode `:root` selector, resulting in invisible text.
-6. **Rgb Hex Hardcoding:** Extracting hex codes (`#FFFFFF`) directly instead of defining them as `H S L` variable channels, destroying the ability to inject dynamic `opacity` (e.g., `bg-primary/50`).
-7. **One-Off Snowflake Classes:** Creating a unique component explicitly for one page (e.g., `<CheckoutSubmitButton>`) instead of designing a generic `<Button intent="checkout">`.
-8. **Font Sizing vs Line Height:** Extracting `font-size` tokens, but ignoring the paired `line-height` standardizations, causing typography block rendering to collapse vertically.
-9. **Hover-State Void:** Extracting the static appearance of elements perfectly but entirely ignoring the `hover:`, `focus:`, and `active:` micro-interaction states that defined the original UX.
-10. **The Component Dump:** Scanning a 2,000 line page and trying to extract 15 components simultaneously inside a single LLM response. The extraction must be phased iteratively Component by Component.
-
----
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Are magic numbers strictly eradicated and mapped to a geometric mathematical scale (e.g., 4px grids)?
-✅ Are color tokens named semantically (`--primary`, `--danger`) rather than literally (`--blue`)?
-✅ Have hex codes been transformed to HSL structures to support dynamic opacity modification?
-✅ Is the `[data-theme='dark']` inversion matrix properly established alongside the root tokens?
-✅ Has `class-variance-authority` (cva) been used to cleanly manage component intent states?
-✅ Did I mathematically normalize inconsistent padding (e.g., fixing 11px and 13px both into 12px)?
-✅ Are global focus rings standardized to ensure accessibility consistency across interactive points?
-✅ Did I define the paired line-height geometries alongside the core typography font sizing tokens?
-✅ Have hover and transition states been deeply captured and centralized?
-✅ Did I phase the extraction process component-by-component to avoid hallucinating massive context blocks?
-```

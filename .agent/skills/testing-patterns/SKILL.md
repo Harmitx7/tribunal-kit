@@ -9,9 +9,6 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Testing Patterns — Cross-Stack Testing Mastery
 
-> A test that doesn't fail when the code is wrong is worse than no test at all.
-> Every test must answer: "What behavior am I proving? What would break if I deleted this test?"
-
 ---
 
 ## Test Architecture
@@ -514,60 +511,4 @@ Coverage rules:
 
 ---
 
-## Output Format
-
-```
-━━━ Testing Report ━━━━━━━━━━━━━━━━━━━━━━━━
-Skill:       Testing Patterns
-Framework:   [Vitest/Jest/pytest/Playwright]
-Scope:       [N test files · N test cases]
-─────────────────────────────────────────────────
-✅ Passed:   [N/N tests passing]
-⚠️  Warnings: [flaky tests, slow tests]
-❌ Blocked:  [failing tests]
-─────────────────────────────────────────────────
-Coverage:    [lines/branches/functions %]
-VBC status:  PENDING → VERIFIED
-Evidence:    [test runner output]
-```
-
 ---
-
-## 🤖 LLM-Specific Traps
-
-1. **`getByTestId` as Default:** Testing Library queries should use roles and labels first. `getByTestId` is a last resort.
-2. **Testing Implementation, Not Behavior:** Don't test internal state, private methods, or CSS classes. Test what the user sees and does.
-3. **Missing `userEvent.setup()`:** Always call `userEvent.setup()` before interactions. Direct `userEvent.click()` is deprecated.
-4. **`vi.mock()` Without `vi.clearAllMocks()`:** Mock state leaks between tests without clearing. Always call in `beforeEach`.
-5. **Async Tests Without `await`:** Forgetting `await` in async test assertions silently passes. Always `await expect(fn()).rejects.toThrow()`.
-6. **Snapshot Test Overuse:** Snapshot tests are brittle and low-value for UI. Use them for serialized data structures, not rendered components.
-7. **Missing Error Path Tests:** Only testing the happy path. Every function that can fail needs at least one error test.
-8. **Hardcoded IDs/Dates:** Tests relying on specific database IDs or timestamps are flaky. Use factories and relative assertions.
-9. **`--coverage` Without Thresholds:** Coverage reports without enforced thresholds are useless. Set minimum thresholds in config.
-10. **E2E Tests That Test Implementation:** E2E tests should simulate real user flows, not click through internal implementation details.
-
----
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/test`**
-
-### ✅ Pre-Flight Self-Audit
-
-```
-✅ Does every test follow AAA (Arrange-Act-Assert)?
-✅ Are test names descriptive (unit + scenario + expected)?
-✅ Did I test both happy path AND error cases?
-✅ Am I using Testing Library query priorities correctly?
-✅ Did I use userEvent.setup() for interactions?
-✅ Did I clear mocks in beforeEach?
-✅ Are async assertions properly awaited?
-✅ Is coverage threshold enforced in config?
-✅ Are E2E tests testing user behavior (not implementation)?
-✅ Do all tests pass independently (no shared state)?
-```
-
-### 🛑 VBC Protocol
-
-- ❌ **Forbidden:** Writing tests that aren't run.
-- ✅ **Required:** Provide test runner output showing pass/fail counts.

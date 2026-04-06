@@ -9,8 +9,8 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 
 # Red Team & Penetration Testing Principles
 
-> A red team engagement is a controlled attack.
-> The goal is to find what a real attacker would find — before they do.
+A red team engagement is a controlled attack.
+The goal is to find what a real attacker would find — before they do.
 
 ⚠️ **These techniques are for authorized security testing only. Unauthorized use is illegal.**
 
@@ -80,14 +80,14 @@ Getting data out without triggering alerts:
 
 ## Common Vulnerability Targets
 
-| Target | What to Test |
+|Target|What to Test|
 |---|---|
-| Web applications | OWASP Top 10, auth bypass, IDOR, SSRF |
-| APIs | Object-level authorization, mass assignment, rate limiting |
-| Authentication | Brute force protection, token entropy, password reset flow |
-| Secrets | Exposed env files, git history, CI/CD environment variables |
-| Third-party integrations | Webhook validation, OAuth redirect URI validation |
-| Infrastructure | Open S3 buckets, exposed admin ports, default credentials |
+|Web applications|OWASP Top 10, auth bypass, IDOR, SSRF|
+|APIs|Object-level authorization, mass assignment, rate limiting|
+|Authentication|Brute force protection, token entropy, password reset flow|
+|Secrets|Exposed env files, git history, CI/CD environment variables|
+|Third-party integrations|Webhook validation, OAuth redirect URI validation|
+|Infrastructure|Open S3 buckets, exposed admin ports, default credentials|
 
 ---
 
@@ -127,7 +127,7 @@ When testing detection capabilities:
 [Chronological story of the full attack path from initial access to objective]
 
 ## Remediation Priority
-| Finding | Severity | Fix By |
+|Finding|Severity|Fix By|
 |---|---|---|
 ```
 
@@ -157,45 +157,4 @@ Pre-Flight:  ✅ All checks passed
              or ❌ [blocking item that must be resolved first]
 ```
 
-
-
 ---
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
