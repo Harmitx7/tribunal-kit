@@ -10,13 +10,13 @@ $ARGUMENTS
 
 ## When to Use /tribunal-performance
 
-| Use `/tribunal-performance` when... | Use something else when... |
+|Use `/tribunal-performance` when...|Use something else when...|
 |:---|:---|
-| LCP, INP, or CLS is above threshold | General code review → `/tribunal-full` |
-| Bundle size is too large | Backend perf only → `/tribunal-backend` |
-| Memory usage grows unbounded | Database perf → `/tribunal-database` |
-| Node.js event loop is saturated | |
-| Optimizing rendering performance | |
+|LCP, INP, or CLS is above threshold|General code review → `/tribunal-full`|
+|Bundle size is too large|Backend perf only → `/tribunal-backend`|
+|Memory usage grows unbounded|Database perf → `/tribunal-database`|
+|Node.js event loop is saturated||
+|Optimizing rendering performance||
 
 ---
 
@@ -40,11 +40,11 @@ $ARGUMENTS
 
 ## 2026 CWV Targets (Verdict Reference)
 
-| Metric | Good | Needs Work | Poor (REJECTED) |
+|Metric|Good|Needs Work|Poor (REJECTED)|
 |:---|:---|:---|:---|
-| INP | < 200ms | 200–500ms | > 500ms |
-| LCP | < 2.5s | 2.5–4.0s | > 4.0s |
-| CLS | < 0.1 | 0.1–0.25 | > 0.25 |
+|INP|< 200ms|200–500ms|> 500ms|
+|LCP|< 2.5s|2.5–4.0s|> 4.0s|
+|CLS|< 0.1|0.1–0.25|> 0.25|
 
 ---
 
@@ -57,30 +57,6 @@ If all patterns cause GOOD rating → ✅ APPROVED
 ```
 
 ---
-
-## Output Format
-
-```
-━━━ Tribunal Performance ━━━━━━━━━━━━━━━━━━
-
-logic-reviewer:       ✅ APPROVED
-performance-reviewer: ❌ REJECTED
-
-━━━ VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━
-
-Blockers:
-- performance-reviewer: [HIGH — INP] Synchronous filterMillion() called in onClick handler
-  Impact: Blocks main thread 200ms+ on each click — INP will be POOR
-  Fix: Wrap in startTransition(() => setResults(filterMillion(items, q)))
-
-- performance-reviewer: [HIGH — LCP] Hero image missing priority
-  Impact: Browser discovers image late — LCP will be POOR (> 4s)
-  Fix: <Image src="/hero.webp" priority={true} ... />
-
-Warnings:
-- performance-reviewer: [MEDIUM — Bundle] lodash imported directly (+67kb unminified)
-  Fix: Replace with native Array methods or specific lodash-es import
-```
 
 ---
 

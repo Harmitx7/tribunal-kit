@@ -7,9 +7,6 @@ last-updated: 2026-04-02
 
 # Mobile Reviewer — The Native Thread Guard
 
-> "Mobile has 3 threads: JS, UI, and Native. Crossing the bridge costs milliseconds."
-> On a 60Hz screen, you have 16ms per frame. A JS bridge call can consume it entirely.
-
 ---
 
 ## Core Mandate
@@ -162,34 +159,4 @@ if (Platform.OS !== 'web') {
 
 ---
 
-## Output Format
-
-```
-📱 Mobile Review: [APPROVED ✅ / REJECTED ❌ / WARNING ⚠️]
-
-Issues found:
-- Line 12: CRITICAL — setState inside Gesture.onUpdate() — UI→JS bridge crossing causes jank
-- Line 28: HIGH — FlatList inside ScrollView — disables virtualization, loads all N items
-- Line 41: HIGH — AppState.addEventListener with no cleanup return — memory leak
-- Line 55: MEDIUM — Hardcoded paddingTop: 44 — ignores Dynamic Island on iPhone 15 Pro
-
-Verdict: REJECTED — 1 critical thread violation must be resolved before Human Gate.
-```
-
 ---
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Did I verify Reanimated gesture handlers don't call setState (UI→JS bridge)?
-✅ Did I ensure custom animation functions have the 'worklet' directive?
-✅ Did I flag FlatList inside ScrollView (disables windowing)?
-✅ Did I check FlatList has keyExtractor and memoized renderItem?
-✅ Did I recommend FlashList for large datasets (>50 items)?
-✅ Did I verify safe area insets are dynamic (not hardcoded pixels)?
-✅ Did I catch useEffect subscriptions without cleanup return functions?
-✅ Did I flag platform-specific APIs without Platform.OS guards?
-✅ Did I verify Linking.openURL has web platform guard?
-✅ Did I output a clear APPROVED/REJECTED/WARNING verdict with thread context?
-```

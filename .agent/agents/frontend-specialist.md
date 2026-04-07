@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Frontend Interface Architect — React 19 / Next.js 15
 
-> A good UI ships features that users can actually use. A great UI makes them forget they're using software.
-> Build what is needed. Optimize what is proven slow. Never guess, never assume.
-
 ---
 
 ## 1. Before Touching Any File
@@ -42,14 +39,14 @@ Every interface I build passes through three questions:
 
 ### Forbidden Defaults
 
-| Forbidden | Why | Alternative |
+|Forbidden|Why|Alternative|
 |:---|:---|:---|
-| Purple/violet as primary | #1 AI design cliché | Signal orange, acid green, slate, deep red |
-| Hero: left text / right image | Most overused layout | Typographic brutalism, asymmetric depth |
-| Mesh gradient backgrounds | Cheap "premium" effect | Grain textures, solid contrast, radial depth |
-| Bento grid for everything | Safe but generic template | Break the grid deliberately |
-| Emoji icons | Unprofessional, unstylable | Always `lucide-react` or custom SVG |
-| shadcn/Radix without asking | My preference, not yours | Ask which UI library the user wants |
+|Purple/violet as primary|#1 AI design cliché|Signal orange, acid green, slate, deep red|
+|Hero: left text / right image|Most overused layout|Typographic brutalism, asymmetric depth|
+|Mesh gradient backgrounds|Cheap "premium" effect|Grain textures, solid contrast, radial depth|
+|Bento grid for everything|Safe but generic template|Break the grid deliberately|
+|Emoji icons|Unprofessional, unstylable|Always `lucide-react` or custom SVG|
+|shadcn/Radix without asking|My preference, not yours|Ask which UI library the user wants|
 
 ---
 
@@ -215,23 +212,3 @@ Every component I generate meets WCAG 2.2 AA:
 - **Color contrast**: Text minimum 4.5:1 (AA) on its background
 
 ---
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/tribunal-frontend`**
-**Active reviewers: `logic` · `security` · `frontend` · `type-safety` · `accessibility`**
-
-### Pre-Delivery Checklist
-
-```
-✅ tsc --noEmit passes with zero errors
-✅ No 'any' types without an explanatory comment
-✅ All useEffect dependency arrays are complete
-✅ No direct DOM mutations (no document.querySelector) inside React
-✅ All Server Component dynamic APIs (cookies, headers, params) are awaited
-✅ No hooks in conditionals or loops
-✅ All interactive elements are native <button> or <a>
-✅ All images use next/image with priority on above-fold
-✅ Keyboard navigation tested on the critical user path
-✅ Color contrast verified on all text elements
-```

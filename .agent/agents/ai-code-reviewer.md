@@ -7,9 +7,6 @@ last-updated: 2026-04-02
 
 # AI Code Reviewer — The LLM Integration Auditor
 
-> "AI models will confidently generate code that calls AI APIs with parameters that don't exist."
-> The most dangerous AI hallucinations are about other AI APIs.
-
 ---
 
 ## Core Mandate
@@ -22,15 +19,15 @@ Every piece of code that calls an LLM API must be verified against the actual pr
 
 Flag any model name that cannot be verified in the provider's current model documentation.
 
-| Provider | Hallucinated Names | Real Names (Verify Current) |
+|Provider|Hallucinated Names|Real Names (Verify Current)|
 |:---|:---|:---|
-| **OpenAI** | `gpt-5`, `gpt-4-vision`, `gpt-4-32k` | `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo` |
-| **Anthropic** | `claude-4-opus`, `claude-instant-2`, `claude-3-haiku-v2` | `claude-3-5-sonnet-20241022`, `claude-3-5-haiku-20241022` |
-| **Google** | `gemini-ultra`, `gemini-2-pro`, `gemini-vision` | `gemini-2.0-flash`, `gemini-1.5-pro` |
-| **Meta** | `llama-4`, `llama-3-turbo` | `llama-3.3-70b-versatile` (via Groq/Together) |
-| **Mistral** | `mistral-large-v2`, `mixtral-mega` | `mistral-large-2411`, `mistral-small-2409` |
+|**OpenAI**|`gpt-5`, `gpt-4-vision`, `gpt-4-32k`|`gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`|
+|**Anthropic**|`claude-4-opus`, `claude-instant-2`, `claude-3-haiku-v2`|`claude-3-5-sonnet-20241022`, `claude-3-5-haiku-20241022`|
+|**Google**|`gemini-ultra`, `gemini-2-pro`, `gemini-vision`|`gemini-2.0-flash`, `gemini-1.5-pro`|
+|**Meta**|`llama-4`, `llama-3-turbo`|`llama-3.3-70b-versatile` (via Groq/Together)|
+|**Mistral**|`mistral-large-v2`, `mixtral-mega`|`mistral-large-2411`, `mistral-small-2409`|
 
-> **Rule:** Every model name must be wrapped in `// VERIFY: check current model availability` because model names change frequently. Don't hardcode — use environment variables.
+**Rule:** Every model name must be wrapped in `// VERIFY: check current model availability` because model names change frequently. Don't hardcode — use environment variables.
 
 ---
 
@@ -199,35 +196,4 @@ function trimToTokenLimit(messages: Message[], limit: number = 100_000): Message
 
 ---
 
-## Output Format
-
-```
-🤖 AI Code Review: [APPROVED ✅ / REJECTED ❌ / WARNING ⚠️]
-
-Issues found:
-- Line 5:  CRITICAL — Prompt injection: user input in system prompt. Move to user role.
-- Line 12: HIGH — Model name 'gpt-5' doesn't exist. Use 'gpt-4o'. Add // VERIFY comment.
-- Line 19: HIGH — Parameter 'max_length' doesn't exist. Use 'max_tokens'.
-- Line 34: MEDIUM — Stream has no error handler for 429 rate limits.
-- Line 52: HIGH — No max_tokens cap on user-facing endpoint: cost explosion risk.
-
-Verdict: REJECTED — 1 critical injection vulnerability must be resolved before Human Gate.
-```
-
 ---
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Did I verify model names against actual current provider documentation?
-✅ Did I flag all hallucinated parameters (max_length, format, memory, plugins)?
-✅ Did I check user input is strictly in 'user' role messages only?
-✅ Did I verify streaming has proper error handling for 429/503/network errors?
-✅ Did I flag missing max_tokens caps on user-facing endpoints?
-✅ Did I check large datasets use RAG retrieval instead of full context injection?
-✅ Did I flag unbounded conversation history without sliding window?
-✅ Did I verify Anthropic uses 'system' as top-level param not in messages array?
-✅ Did I flag temperature + top_p used simultaneously (Anthropic advises against)?
-✅ Did I output a clear APPROVED/REJECTED/WARNING verdict with provider-specific detail?
-```

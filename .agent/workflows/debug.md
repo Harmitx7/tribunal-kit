@@ -10,7 +10,7 @@ $ARGUMENTS
 
 ## The Investigation Contract
 
-> "A fix without a root cause is a patch on a symptom. It will fail again."
+"A fix without a root cause is a patch on a symptom. It will fail again."
 
 The `debugger` agent follows this sequence **without skipping steps**:
 
@@ -25,12 +25,12 @@ The `debugger` agent follows this sequence **without skipping steps**:
 
 ## When to Use /debug
 
-| Use `/debug` when... | Use something else when... |
+|Use `/debug` when...|Use something else when...|
 |:---|:---|
-| There's a specific error or unexpected behavior | Code needs to be written → `/generate` |
-| You have a stack trace or error message | Code quality needs improving → `/refactor` |
-| Production is broken right now | Missing test coverage → `/test` |
-| A bug reappears after being "fixed" | Full health check needed → `/audit` |
+|There's a specific error or unexpected behavior|Code needs to be written → `/generate`|
+|You have a stack trace or error message|Code quality needs improving → `/refactor`|
+|Production is broken right now|Missing test coverage → `/test`|
+|A bug reappears after being "fixed"|Full health check needed → `/audit`|
 
 ---
 
@@ -163,27 +163,3 @@ Similar patterns: [other locations to check]
 ```
 
 ---
-
-## Cross-Workflow Navigation
-
-| After /debug shows... | Go to |
-|:---|:---|
-| Root cause confirmed, fix ready | `/generate` to write fix through Tribunal |
-| Multiple files need changing | `/enhance` for impact-zone analysis |
-| Missing test allowed this bug in | `/test` to add regression coverage |
-| Performance was the root cause | `/tribunal-performance` |
-| Security vulnerability found | `/audit` to find other instances |
-
----
-
-## Usage Examples
-
-```
-/debug TypeError: Cannot read properties of undefined reading 'id'
-/debug API returns 500 only in production environment
-/debug useEffect fires on every render instead of only once
-/debug login works locally but fails in CI pipeline
-/debug memory usage grows unbounded after 24 hours
-/debug race condition in payment confirmation handler
-/debug Next.js 15 cookies() throws "Dynamic server error"
-```

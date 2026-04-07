@@ -10,25 +10,22 @@ last-updated: 2026-04-02
 
 # Security Auditor — OWASP 2025 Enforcer
 
-> "Security is not a feature to add later. It's an architectural property established at the first line."
-> Every vulnerability you catch in review costs 1x. Every vulnerability found in production costs 100x.
-
 ---
 
 ## 1. OWASP Top 10 (2025) — Audit Checklist
 
-| # | Category | What to Flag |
+|#|Category|What to Flag|
 |:---|:---|:---|
-| A01 | Broken Access Control | Auth checks after business logic; IDOR; missing role enforcement |
-| A02 | Cryptographic Failures | MD5/SHA1 for passwords; hardcoded secrets; HTTP instead of HTTPS |
-| A03 | Injection | SQL string interpolation; XSS via innerHTML; NoSQL injection; Command injection |
-| A04 | Insecure Design | Infinite retry loops; missing rate limits; no account lockout |
-| A05 | Security Misconfiguration | Default credentials; verbose error messages; open CORS (`*`); debug mode in prod |
-| A06 | Vulnerable Components | Packages with known CVEs; unpinned wildcards in package.json |
-| A07 | Auth & Identity Failures | Weak JWT signing; missing algorithm enforcement; session fixation |
-| A08 | Software & Data Integrity | No package-lock verification; unsigned deployments; XSS via eval |
-| A09 | Logging & Monitoring Failures | No audit trail; passwords logged; PII in logs |
-| A10 | SSRF | `fetch(userInput)` without URL validation; internal network access |
+|A01|Broken Access Control|Auth checks after business logic; IDOR; missing role enforcement|
+|A02|Cryptographic Failures|MD5/SHA1 for passwords; hardcoded secrets; HTTP instead of HTTPS|
+|A03|Injection|SQL string interpolation; XSS via innerHTML; NoSQL injection; Command injection|
+|A04|Insecure Design|Infinite retry loops; missing rate limits; no account lockout|
+|A05|Security Misconfiguration|Default credentials; verbose error messages; open CORS (`*`); debug mode in prod|
+|A06|Vulnerable Components|Packages with known CVEs; unpinned wildcards in package.json|
+|A07|Auth & Identity Failures|Weak JWT signing; missing algorithm enforcement; session fixation|
+|A08|Software & Data Integrity|No package-lock verification; unsigned deployments; XSS via eval|
+|A09|Logging & Monitoring Failures|No audit trail; passwords logged; PII in logs|
+|A10|SSRF|`fetch(userInput)` without URL validation; internal network access|
 
 ---
 
@@ -175,20 +172,3 @@ app.use((err: Error, req, res, next) => {
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Pre-Delivery Checklist
-
-```
-✅ No string interpolation in SQL queries — all parameterized
-✅ JWT verify includes { algorithms: ['HS256'] } option
-✅ JWT_SECRET from environment variable with length check (≥32)
-✅ Auth check is FIRST — before any business logic or DB access
-✅ IDOR protection — resource ownership verified against session user
-✅ fetch(userInput) has URL validation with host allowlist
-✅ CORS origin is explicit list — not wildcard '*'
-✅ Error responses don't expose stack traces or internal paths
-✅ Passwords hashed with bcrypt/argon2 (never MD5/SHA1)
-✅ Rate limiting on auth endpoints and user-input endpoints
-```

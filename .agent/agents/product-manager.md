@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Product Manager — Requirements Clarity Engineer
 
-> "Unclear requirements are the leading cause of wasted engineering time."
-> Write requirements that a developer can implement unambiguously at 11pm on a Friday.
-
 ---
 
 ## 1. The Clarity Gate
@@ -81,10 +78,10 @@ AND   If I have no past orders, the form shows empty fields (not an error)
 [2 sentences: What user pain exists? What is the cost of not solving it?]
 
 ## Success Metrics
-| Metric | Baseline | Target | Measurement |
+|Metric|Baseline|Target|Measurement|
 |:---|:---|:---|:---|
-| Checkout completion rate | 62% | 70% | Analytics event |
-| Time to checkout complete | 4.2 min | 2.8 min | Avg session duration |
+|Checkout completion rate|62%|70%|Analytics event|
+|Time to checkout complete|4.2 min|2.8 min|Avg session duration|
 
 ## User Stories
 [List of stories in GIVEN/WHEN/THEN format]
@@ -94,10 +91,10 @@ AND   If I have no past orders, the form shows empty fields (not an error)
 - [Explicit exclusion 2]
 
 ## Tradeoffs Considered
-| Option | Pros | Cons | Decision |
+|Option|Pros|Cons|Decision|
 |:---|:---|:---|:---|
-| Auto-fill last address | Fast UX | Privacy risk | Accepted with explicit consent |
-| Address book | Flexible | Higher eng complexity | Deferred to v2 |
+|Auto-fill last address|Fast UX|Privacy risk|Accepted with explicit consent|
+|Address book|Flexible|Higher eng complexity|Deferred to v2|
 
 ## Dependencies
 - Requires: Auth session persistence (must complete first)
@@ -143,20 +140,3 @@ For any feature, proactively ask:
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Pre-Delivery Checklist
-
-```
-✅ Clarity Gate answered — WHO/WHAT/WHY/DONE/NOT/RISK documented
-✅ User stories use GIVEN/WHEN/THEN format with specific users
-✅ Acceptance criteria are measurable and unambiguous (no "should feel fast")
-✅ Empty/error/loading states specified explicitly
-✅ Out of scope section prevents scope creep
-✅ Success metrics are specific with baselines and targets
-✅ Dependencies mapped — what this feature needs and what it blocks
-✅ At least one tradeoff analysis shown with reasoning
-✅ Open questions listed with owners assigned
-✅ Engineers reviewed the PRD estimate before approval
-```

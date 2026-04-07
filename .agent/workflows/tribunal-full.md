@@ -10,13 +10,13 @@ $ARGUMENTS
 
 ## When to Use /tribunal-full
 
-| Use `/tribunal-full` when... | Use targeted tribunal when... |
+|Use `/tribunal-full` when...|Use targeted tribunal when...|
 |:---|:---|
-| Before merging any AI-generated code | Backend only → `/tribunal-backend` |
-| Before production deployment | Frontend only → `/tribunal-frontend` |
-| Security-critical feature review | DB only → `/tribunal-database` |
-| Code affects auth, payments, or PII | |
-| Maximum confidence required | |
+|Before merging any AI-generated code|Backend only → `/tribunal-backend`|
+|Before production deployment|Frontend only → `/tribunal-frontend`|
+|Security-critical feature review|DB only → `/tribunal-database`|
+|Code affects auth, payments, or PII||
+|Maximum confidence required||
 
 ---
 
@@ -47,16 +47,16 @@ Tier 3: Domain-specific
 
 Not all 11 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
 
-| Code Under Review | Critical Reviewers |
+|Code Under Review|Critical Reviewers|
 |:---|:---|
-| REST API route | logic, security, dependency, type-safety, sql |
-| React component | logic, frontend, accessibility, type-safety |
-| Database query | logic, security, sql |
-| AI LLM integration | logic, security, ai-code, dependency |
-| Test file | test-coverage, logic |
-| React Native / Expo | mobile, logic, security, performance |
-| Next.js page | logic, frontend, performance, accessibility |
-| Auth/JWT code | security, logic, type-safety |
+|REST API route|logic, security, dependency, type-safety, sql|
+|React component|logic, frontend, accessibility, type-safety|
+|Database query|logic, security, sql|
+|AI LLM integration|logic, security, ai-code, dependency|
+|Test file|test-coverage, logic|
+|React Native / Expo|mobile, logic, security, performance|
+|Next.js page|logic, frontend, performance, accessibility|
+|Auth/JWT code|security, logic, type-safety|
 
 ---
 
@@ -71,38 +71,6 @@ If all reviewers = ✅ APPROVED → Global verdict: ✅ APPROVED (proceed to Hum
 ```
 
 ---
-
-## Output Format
-
-```
-━━━ Tribunal Full — All 11 Reviewers ━━━━━━━━━━━━━━
-
-logic-reviewer:         ✅ APPROVED
-security-auditor:       ❌ REJECTED (1 critical)
-dependency-reviewer:    ⚠️ WARNING (1 medium)
-type-safety-reviewer:   ✅ APPROVED
-sql-reviewer:           ✅ APPROVED
-frontend-reviewer:      ✅ APPROVED
-performance-reviewer:   ⚠️ WARNING (1 low)
-mobile-reviewer:        N/A — no mobile code
-ai-code-reviewer:       N/A — no AI API calls
-test-coverage-reviewer: ❌ REJECTED (missing error path)
-accessibility-reviewer: ⚠️ WARNING (1 medium)
-
-━━━ GLOBAL VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━━━
-
-Blockers (must fix before Human Gate):
-1. security-auditor: JWT verify missing { algorithms } option in src/lib/auth.ts:45
-2. test-coverage-reviewer: POST /api/orders missing error path test
-
-Warnings (flagged but not blocking):
-- dependency-reviewer: 'zod' version mismatch — package uses 3.22.4, imports from 3.23.0-beta
-- performance-reviewer: LCP image missing priority={true}
-- accessibility-reviewer: icon button at line 67 missing aria-label
-
-━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Approve after blockers resolved?  Y = proceed | N = discard | R = revise
-```
 
 ---
 
@@ -122,12 +90,3 @@ After 3 failed attempts:
 ```
 
 ---
-
-## Cross-Workflow Navigation
-
-| Full Tribunal finds... | Go to |
-|:---|:---|
-| Backend security issues | Also run `/review` for deep pattern analysis |
-| Tests incomplete | `/test` to write missing cases |
-| Performance warnings | `/tribunal-performance` for full analysis |
-| After all blockers resolved | Re-run `/tribunal-full` before Human Gate |

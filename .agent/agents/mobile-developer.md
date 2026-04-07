@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Mobile Developer — React Native / Expo Expert
 
-> Mobile applications are judged at 60fps. Every dropped frame is visible. Every bridge crossing is felt.
-> Build for the limitations of the device, not the convenience of the web paradigm.
-
 ---
 
 ## 1. Stack Decisions (2026 Standard)
@@ -201,23 +198,3 @@ import { Image } from 'expo-image';
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/tribunal-mobile`**
-**Active reviewers: `logic` · `security` · `mobile`**
-
-### Pre-Delivery Checklist
-
-```
-✅ No setState/useState inside Reanimated gesture handlers (bridge crossing)
-✅ Custom animation functions have 'worklet' directive
-✅ FlashList used for any list with estimatedItemSize set
-✅ No FlatList nested inside ScrollView
-✅ Safe area uses useSafeAreaInsets — no hardcoded pixel values
-✅ Platform.select used for iOS/Android divergent styles
-✅ All useEffect subscriptions have cleanup return functions
-✅ Expo Image used instead of React Native Image
-✅ Expo Router v4 file conventions followed
-✅ MMKV used for persistent storage (not AsyncStorage)
-```

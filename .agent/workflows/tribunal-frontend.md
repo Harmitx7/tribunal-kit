@@ -10,13 +10,13 @@ $ARGUMENTS
 
 ## When to Use /tribunal-frontend
 
-| Use `/tribunal-frontend` when... | Use something else when... |
+|Use `/tribunal-frontend` when...|Use something else when...|
 |:---|:---|
-| React components (Server or Client) | Backend routes → `/tribunal-backend` |
-| Custom hooks | Database queries → `/tribunal-database` |
-| Next.js pages and layouts | Mobile (React Native) → `/tribunal-mobile` |
-| UI state management | Maximum coverage → `/tribunal-full` |
-| Form handling with Server Actions | |
+|React components (Server or Client)|Backend routes → `/tribunal-backend`|
+|Custom hooks|Database queries → `/tribunal-database`|
+|Next.js pages and layouts|Mobile (React Native) → `/tribunal-mobile`|
+|UI state management|Maximum coverage → `/tribunal-full`|
+|Form handling with Server Actions||
 
 ---
 
@@ -59,29 +59,6 @@ If all reviewers → ✅ APPROVED: Human Gate
 ```
 
 ---
-
-## Output Format
-
-```
-━━━ Tribunal Frontend ━━━━━━━━━━━━━━━━━━━━━
-
-logic-reviewer:      ✅ APPROVED
-security-auditor:    ✅ APPROVED
-frontend-reviewer:   ❌ REJECTED
-type-safety-reviewer: ⚠️ WARNING
-
-━━━ VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━
-
-Blockers:
-- frontend-reviewer: [HIGH] useState() in Server Component at src/app/dashboard/page.tsx:12
-  Fix: Move state to a Client Component ('use client')
-- frontend-reviewer: [HIGH] cookies() not awaited at src/app/api/auth/route.ts:8
-  Fix: const cookieStore = await cookies();
-
-Warnings:
-- type-safety-reviewer: [MEDIUM] onClick handler typed as 'any' at line 34
-  Fix: onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
-```
 
 ---
 

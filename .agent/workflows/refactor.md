@@ -10,20 +10,20 @@ $ARGUMENTS
 
 ## The Refactoring Contract
 
-> "Refactoring means changing the structure of code without changing its observable behavior."
-> If observable behavior changes, it's an enhancement — use `/enhance`.
+"Refactoring means changing the structure of code without changing its observable behavior."
+If observable behavior changes, it's an enhancement — use `/enhance`.
 
 ---
 
 ## When to Use /refactor
 
-| Use `/refactor` when... | Use something else when... |
+|Use `/refactor` when...|Use something else when...|
 |:---|:---|
-| Code structure is hard to understand | Adding new functionality → `/enhance` |
-| Repeated logic should be extracted | Fixing a bug → `/debug` |
-| Naming is unclear or misleading | Performance improvements → `/tribunal-performance` |
-| TypeScript types need tightening | Full rebuild needed → `/create` |
-| Dead code needs removal | |
+|Code structure is hard to understand|Adding new functionality → `/enhance`|
+|Repeated logic should be extracted|Fixing a bug → `/debug`|
+|Naming is unclear or misleading|Performance improvements → `/tribunal-performance`|
+|TypeScript types need tightening|Full rebuild needed → `/create`|
+|Dead code needs removal||
 
 ---
 
@@ -159,25 +159,3 @@ function process(data: { id: string; name: string }) { data.id; } // Typed
 ```
 
 ---
-
-## Cross-Workflow Navigation
-
-| After /refactor shows... | Go to |
-|:---|:---|
-| Tests need writing before refactoring | `/test` |
-| Logic bugs discovered during refactoring | `/debug` |
-| Security patterns need review | `/tribunal-backend` |
-| Large extraction needs planning | `/plan` |
-
----
-
-## Usage Examples
-
-```
-/refactor extract the authentication logic from route handlers into middleware
-/refactor convert the UserCard component from class component to function component
-/refactor consolidate the 3 separate discount calculation functions into one
-/refactor rename ambiguous 'data' variables throughout src/lib/
-/refactor extract the shared validation logic into a reusable Zod schema
-/refactor remove the unused legacy payment functions
-```

@@ -10,13 +10,13 @@ $ARGUMENTS
 
 ## When to Use /audit
 
-| Use `/audit` when... | Use something else when... |
+|Use `/audit` when...|Use something else when...|
 |:---|:---|
-| Before a major release or launch | Single file review → `/review` |
-| After a security incident | Just lint errors → `/fix` |
-| Onboarding to a new codebase | Performance only → `/performance-benchmarker` |
-| Weekly/monthly health check | Testing only → `/test` |
-| Before major dependency updates | |
+|Before a major release or launch|Single file review → `/review`|
+|After a security incident|Just lint errors → `/fix`|
+|Onboarding to a new codebase|Performance only → `/performance-benchmarker`|
+|Weekly/monthly health check|Testing only → `/test`|
+|Before major dependency updates||
 
 ---
 
@@ -49,13 +49,13 @@ Priority 7 — Bundle Analysis (INFORM only)
 
 ### Cascade Failure Rules
 
-| Check | Failure Behavior |
+|Check|Failure Behavior|
 |:---|:---|
-| Security scan (critical) | **HALT** — all subsequent steps cancelled |
-| Dependency audit (exploitable CVE) | **HALT** — fix before proceeding |
-| Lint + type errors | **CONTINUE** — flag as deployment blocker |
-| Tests failing | **CONTINUE** — mark task as incomplete |
-| Bundle analysis (large) | **INFORM** — no blocking |
+|Security scan (critical)|**HALT** — all subsequent steps cancelled|
+|Dependency audit (exploitable CVE)|**HALT** — fix before proceeding|
+|Lint + type errors|**CONTINUE** — flag as deployment blocker|
+|Tests failing|**CONTINUE** — mark task as incomplete|
+|Bundle analysis (large)|**INFORM** — no blocking|
 
 ---
 
@@ -125,14 +125,3 @@ S = select specific items to fix
 No files are modified without explicit approval.
 
 ---
-
-## Cross-Workflow Navigation
-
-| Audit finds... | Go to |
-|:---|:---|
-| Security vulnerabilities | `/tribunal-backend` or `/tribunal-full` |
-| TypeScript errors | `/fix` (auto-fixable) or `/generate` (logic errors) |
-| Test coverage gap | `/test` for specific area |
-| Bundle too large | `/tribunal-performance` |
-| DB schema issues | `/tribunal-database` |
-| Dependency vulnerabilities | `/fix` with `npm audit fix` |

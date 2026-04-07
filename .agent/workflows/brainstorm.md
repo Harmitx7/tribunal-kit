@@ -10,12 +10,12 @@ $ARGUMENTS
 
 ## When to Use /brainstorm
 
-| Use `/brainstorm` when... | Move to... |
+|Use `/brainstorm` when...|Move to...|
 |:---|:---|
-| Multiple valid approaches exist | After decision → `/plan` |
-| You're unsure of the best architecture | After plan approval → `/generate` |
-| Exploring tradeoffs before committing | Confirmed approach → `/create` |
-| Looking for second opinions on design | |
+|Multiple valid approaches exist|After decision → `/plan`|
+|You're unsure of the best architecture|After plan approval → `/generate`|
+|Exploring tradeoffs before committing|Confirmed approach → `/create`|
+|Looking for second opinions on design||
 
 ---
 

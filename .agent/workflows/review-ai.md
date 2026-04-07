@@ -10,13 +10,13 @@ $ARGUMENTS
 
 ## When to Use /review-ai
 
-| Use `/review-ai` when... | Use something else when... |
+|Use `/review-ai` when...|Use something else when...|
 |:---|:---|
-| Code calls OpenAI, Anthropic, or Google AI | General review → `/review` |
-| Building RAG pipelines | Backend security focus → `/tribunal-backend` |
-| LLM streaming implementations | Full audit → `/tribunal-full` |
-| Agent/tool-calling architecture | |
-| Prompt templates with user input | |
+|Code calls OpenAI, Anthropic, or Google AI|General review → `/review`|
+|Building RAG pipelines|Backend security focus → `/tribunal-backend`|
+|LLM streaming implementations|Full audit → `/tribunal-full`|
+|Agent/tool-calling architecture||
+|Prompt templates with user input||
 
 ---
 
@@ -53,34 +53,6 @@ If all reviewers → ✅ APPROVED: Human Gate
 ```
 
 ---
-
-## Output Format
-
-```
-━━━ AI Code Review ━━━━━━━━━━━━━━━━━━━━━━━
-
-logic-reviewer:   ✅ APPROVED
-security-auditor: ❌ REJECTED
-ai-code-reviewer: ❌ REJECTED
-
-━━━ VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━
-
-Blockers:
-- security-auditor: [CRITICAL] User input in system prompt — prompt injection risk
-  Line: system: `You are helpful. Context: ${userInput}` // user can override system behavior
-  Fix:  messages: [{ role: 'system', content: 'fixed instructions' }, { role: 'user', content: userInput }]
-
-- ai-code-reviewer: [HIGH] Model name 'gpt-5' doesn't exist
-  Line: model: 'gpt-5'
-  Fix:  model: 'gpt-4o'  // Add: // VERIFY: confirm model availability
-
-- ai-code-reviewer: [HIGH] No max_tokens set — cost explosion risk
-  Fix:  max_tokens: 500  // Set appropriate limit for your use case
-
-Warnings:
-- ai-code-reviewer: [MEDIUM] No error handling for 429 responses in stream
-  Fix: Add try/catch with specific handling for OpenAI.APIError status 429
-```
 
 ---
 

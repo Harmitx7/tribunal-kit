@@ -10,11 +10,11 @@ $ARGUMENTS
 
 ## When to Use /strengthen-skills
 
-| Use `/strengthen-skills` when... | |
+|Use `/strengthen-skills` when...||
 |:---|:---|
-| New skills were just created | Append guardrails |
-| Auditing existing skills | Check which are missing guardrails |
-| After adding skills from external sources | Harden before activating |
+|New skills were just created|Append guardrails|
+|Auditing existing skills|Check which are missing guardrails|
+|After adding skills from external sources|Harden before activating|
 
 ---
 
@@ -56,11 +56,11 @@ For each skill missing guardrails, append the three sections:
 
 ## 🚨 LLM Trap Table
 
-| Pattern | What AI Does Wrong | What Is Actually Correct |
+|Pattern|What AI Does Wrong|What Is Actually Correct|
 |:---|:---|:---|
-| [domain-specific trap 1] | [hallucination] | [correct behavior] |
-| [domain-specific trap 2] | [hallucination] | [correct behavior] |
-| [domain-specific trap 3] | [hallucination] | [correct behavior] |
+|[domain-specific trap 1]|[hallucination]|[correct behavior]|
+|[domain-specific trap 2]|[hallucination]|[correct behavior]|
+|[domain-specific trap 3]|[hallucination]|[correct behavior]|
 
 ---
 
@@ -103,7 +103,6 @@ Guardrails added:       [N]
 Failed:                  [N]
 
 ━━━ Strengthened Skills ━━━━━━━━━━━━━━━━━━
-✅ [skill-name] — LLM Trap + Pre-Flight + VBC added
 ✅ [skill-name] — LLM Trap + Pre-Flight + VBC added
 
 ━━━ Already Hardened (Skipped) ━━━━━━━━━━━

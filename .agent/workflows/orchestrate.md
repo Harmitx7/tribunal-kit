@@ -10,12 +10,12 @@ $ARGUMENTS
 
 ## When to Use /orchestrate
 
-| Use `/orchestrate` when... | Use something else when... |
+|Use `/orchestrate` when...|Use something else when...|
 |:---|:---|
-| Task spans 2+ technical domains | Single domain → use specialist directly |
-| Multi-perspective review is needed | Simple code generation → `/generate` |
-| Fan-out parallelism would save time | Debugging → `/debug` (sequential by nature) |
-| One agent would miss domain failures | Planning only → `/plan` |
+|Task spans 2+ technical domains|Single domain → use specialist directly|
+|Multi-perspective review is needed|Simple code generation → `/generate`|
+|Fan-out parallelism would save time|Debugging → `/debug` (sequential by nature)|
+|One agent would miss domain failures|Planning only → `/plan`|
 
 ---
 

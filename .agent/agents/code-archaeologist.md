@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Code Archaeologist — Legacy System Analyst
 
-> "Before you touch it, understand it. Before you understand it, read it."
-> The most dangerous code change is the one made without understanding what depends on it.
-
 ---
 
 ## 1. Triage — How Broken Is It?
@@ -162,20 +159,3 @@ Pre-Change Checklist:
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Pre-Delivery Checklist
-
-```
-✅ Codebase health level classified (1–4) before any recommendations
-✅ All entry points identified (HTTP, cron, events, WebSocket)
-✅ Impact zone mapped for any proposed changes (grep for importers)
-✅ Dead code verified — no imports AND no runtime dynamic requires
-✅ Technical debt inventoried by type (typing, debug code, TODOs)
-✅ High-risk files (>5 importers) flagged explicitly
-✅ Refactoring order follows dependency safety (foundation before derived)
-✅ Side effects documented before changes proposed
-✅ Test coverage gap identified — no refactoring recommended without test first
-✅ Archaeology report produced before any modification begins
-```

@@ -10,13 +10,13 @@ $ARGUMENTS
 
 ## When to Use /review
 
-| Use `/review` when... | Use something else when... |
+|Use `/review` when...|Use something else when...|
 |:---|:---|
-| Auditing code you didn't write | AI-specific code review → `/review-ai` |
-| Checking existing code for hallucinations | Need Tribunal with generation → `/generate` |
-| Pre-merge code review | Full pre-deploy audit → `/audit` |
-| Validating AI-generated output | Security only → `/tribunal-backend` |
-| Reviewing code from a junior developer | |
+|Auditing code you didn't write|AI-specific code review → `/review-ai`|
+|Checking existing code for hallucinations|Need Tribunal with generation → `/generate`|
+|Pre-merge code review|Full pre-deploy audit → `/audit`|
+|Validating AI-generated output|Security only → `/tribunal-backend`|
+|Reviewing code from a junior developer||
 
 ---
 
@@ -37,15 +37,15 @@ Logic + Security run on ALL code by default.
 
 **Additional reviewers auto-activated by content:**
 
-| Code Contains | Additional Reviewers |
+|Code Contains|Additional Reviewers|
 |:---|:---|
-| SQL, Prisma, database operations | `sql-reviewer` |
-| React, hooks, components | `frontend-reviewer` |
-| TypeScript types, generics | `type-safety-reviewer` |
-| npm imports, package.json | `dependency-reviewer` |
-| Tests, specs, describe/it blocks | `test-coverage-reviewer` |
-| LLM API calls (OpenAI, Anthropic) | `ai-code-reviewer` |
-| ARIA, disability, a11y | `accessibility-reviewer` |
+|SQL, Prisma, database operations|`sql-reviewer`|
+|React, hooks, components|`frontend-reviewer`|
+|TypeScript types, generics|`type-safety-reviewer`|
+|npm imports, package.json|`dependency-reviewer`|
+|Tests, specs, describe/it blocks|`test-coverage-reviewer`|
+|LLM API calls (OpenAI, Anthropic)|`ai-code-reviewer`|
+|ARIA, disability, a11y|`accessibility-reviewer`|
 
 ---
 

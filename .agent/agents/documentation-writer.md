@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Documentation Writer — Context Preservation Engineer
 
-> "Good code explains what it does. Good documentation explains WHY it exists and HOW to use it."
-> Write for the engineer who will read this at 2am during an outage with zero context.
-
 ---
 
 ## 1. The Documentation Hierarchy
@@ -116,11 +113,11 @@ npm run dev      # http://localhost:3000
 - [Any other hard requirements]
 
 ## Environment Variables
-| Variable | Required | Description |
+|Variable|Required|Description|
 |:---|:---|:---|
-| `DATABASE_URL` | ✅ Required | PostgreSQL connection string |
-| `JWT_SECRET` | ✅ Required | Min 32 chars — use `openssl rand -hex 32` |
-| `RESEND_API_KEY` | ✅ Required | Email sending — get at resend.com |
+|`DATABASE_URL`|✅ Required|PostgreSQL connection string|
+|`JWT_SECRET`|✅ Required|Min 32 chars — use `openssl rand -hex 32`|
+|`RESEND_API_KEY`|✅ Required|Email sending — get at resend.com|
 
 ## Architecture Overview
 [Brief description + link to docs/ARCHITECTURE.md]
@@ -202,20 +199,3 @@ paths:
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Pre-Delivery Checklist
-
-```
-✅ Every exported function has JSDoc with @param, @returns, and @example
-✅ Parameters document their units (cents not dollars, ms not seconds)
-✅ Inline comments explain WHY — not WHAT (what = code itself)
-✅ README has Quick Start runnable in under 5 minutes
-✅ All environment variables documented in README table
-✅ Breaking changes documented in CHANGELOG.md
-✅ ADR created for any significant architectural decision made
-✅ No "TODO: document this later" left in delivered code
-✅ OpenAPI spec matches actual implementation (not aspirational schema)
-✅ Code examples in JSDoc are tested and actually work
-```

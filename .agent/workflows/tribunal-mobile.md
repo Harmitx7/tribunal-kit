@@ -10,13 +10,13 @@ $ARGUMENTS
 
 ## When to Use /tribunal-mobile
 
-| Use `/tribunal-mobile` when... | Use something else when... |
+|Use `/tribunal-mobile` when...|Use something else when...|
 |:---|:---|
-| React Native components | Web-only components → `/tribunal-frontend` |
-| Expo Router navigation | API routes → `/tribunal-backend` |
-| Reanimated animations/gestures | Full audit → `/tribunal-full` |
-| FlashList / FlatList code | |
-| Platform-specific (ios/android) code | |
+|React Native components|Web-only components → `/tribunal-frontend`|
+|Expo Router navigation|API routes → `/tribunal-backend`|
+|Reanimated animations/gestures|Full audit → `/tribunal-full`|
+|FlashList / FlatList code||
+|Platform-specific (ios/android) code||
 
 ---
 
@@ -54,31 +54,6 @@ If all reviewers → ✅ APPROVED: Human Gate
 ```
 
 ---
-
-## Output Format
-
-```
-━━━ Tribunal Mobile ━━━━━━━━━━━━━━━━━━━━━━
-
-logic-reviewer:  ✅ APPROVED
-security-auditor: ⚠️ WARNING
-mobile-reviewer: ❌ REJECTED
-
-━━━ VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━
-
-Blockers:
-- mobile-reviewer: [HIGH] setState inside onUpdate gesture handler — JS bridge crossing every frame
-  Line: onUpdate: (e) => { setState(e.translationX); } // jank at scale
-  Fix:  const tx = useSharedValue(0);
-        onUpdate: (e) => { tx.value = e.translationX; } // pure UI thread
-
-- mobile-reviewer: [HIGH] FlatList with 500+ items — use FlashList
-  Line: <FlatList data={products} renderItem={renderItem} />
-  Fix:  <FlashList data={products} renderItem={renderItem} estimatedItemSize={72} />
-
-Warnings:
-- security-auditor: [MEDIUM] JWT token stored in AsyncStorage — use expo-secure-store
-```
 
 ---
 

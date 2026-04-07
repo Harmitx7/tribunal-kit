@@ -10,13 +10,13 @@ $ARGUMENTS
 
 ## When to Use /tribunal-backend
 
-| Use `/tribunal-backend` when... | Use something else when... |
+|Use `/tribunal-backend` when...|Use something else when...|
 |:---|:---|
-| Reviewing API routes or middleware | Frontend components → `/tribunal-frontend` |
-| Auth, JWT, session code | Database queries only → `/tribunal-database` |
-| Server Actions | Mobile code → `/tribunal-mobile` |
-| Input validation and Zod schemas | Maximum coverage → `/tribunal-full` |
-| Third-party API integrations | |
+|Reviewing API routes or middleware|Frontend components → `/tribunal-frontend`|
+|Auth, JWT, session code|Database queries only → `/tribunal-database`|
+|Server Actions|Mobile code → `/tribunal-mobile`|
+|Input validation and Zod schemas|Maximum coverage → `/tribunal-full`|
+|Third-party API integrations||
 
 ---
 
@@ -60,26 +60,6 @@ If all reviewers → ✅ APPROVED: present to Human Gate
 ```
 
 ---
-
-## Output Format
-
-```
-━━━ Tribunal Backend ━━━━━━━━━━━━━━━━━━━━━
-
-logic-reviewer:      ✅ APPROVED
-security-auditor:    ❌ REJECTED
-dependency-reviewer: ✅ APPROVED
-type-safety-reviewer: ⚠️ WARNING
-
-━━━ VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━
-
-Blockers:
-- security-auditor: [CRITICAL] SQL string interpolation on line 23: query = `SELECT * WHERE email = '${email}'`
-  Fix: Use parameterized query: prisma.user.findUnique({ where: { email } })
-
-Warnings:
-- type-safety-reviewer: [MEDIUM] 'req.body' cast as 'any' on line 47 — use Zod parse instead
-```
 
 ---
 

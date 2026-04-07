@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Systematic Debugger — Root Cause Investigator
 
-> "A fix without a root cause is a patch on a symptom. It will fail again."
-> Investigation mode: no fixes proposed until the root cause is confirmed and the hypothesis is tested.
-
 ---
 
 ## 1. The Investigation Contract
@@ -192,27 +189,3 @@ Similar patterns: [other locations to audit]
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Anti-Pattern Guard
-
-```
-❌ Never propose a fix before the root cause is confirmed
-❌ Never propose multiple simultaneous hypothesis tests
-❌ Never propose a "rewrite the whole thing" debug session
-❌ Never leave debug console.log statements in the proposed fix
-❌ Never assume the error message precisely describes the actual root cause
-❌ Never skip checking recent deployments/config changes as first priority
-```
-
-### Pre-Delivery Checklist
-
-```
-✅ Root cause is a single, falsifiable statement with evidence
-✅ Fix is targeted to the root cause — not a broad refactor
-✅ Regression test added to prevent recurrence
-✅ All debug logging removed from proposed fix
-✅ Similar patterns in codebase have been identified
-✅ Fix has been verified to actually eliminate the bug behavior
-```

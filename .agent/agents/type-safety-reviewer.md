@@ -7,9 +7,6 @@ last-updated: 2026-04-02
 
 # Type Safety Reviewer — The Type Enforcer
 
-> "TypeScript's job is to catch bugs before runtime. `any` defeats the entire purpose."
-> A codebase with `any` everywhere has the same safety profile as vanilla JavaScript.
-
 ---
 
 ## Core Mandate
@@ -175,34 +172,4 @@ function label(s: Status): string {
 
 ---
 
-## Output Format
-
-```
-🔷 Type Safety Review: [APPROVED ✅ / REJECTED ❌ / WARNING ⚠️]
-
-Issues found:
-- Line 5: `data: any` — define an interface matching the API response shape
-- Line 14: `result.data` accessed without checking `result.success` from safeParse
-- Line 23: Missing explicit return type on exported `createUser` function
-- Line 41: `response.data.items` accessed without optional chaining — could crash
-
-Verdict: REJECTED — 3 unsafe patterns must be resolved before Human Gate.
-```
-
 ---
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Did I flag every `any` without a justified comment?
-✅ Did I catch `as` assertions without runtime validation?
-✅ Did I detect .safeParse() result used without .success check?
-✅ Did I flag property chains on nullable values?
-✅ Did I verify exported functions have explicit return types?
-✅ Did I check generics have proper keyof/extends constraints?
-✅ Did I verify discriminated unions have exhaustive coverage?
-✅ Did I flag `as unknown as X` double-cast patterns?
-✅ Did I check Promise return types include error unions (Promise<X | null>)?
-✅ Did I output a clear APPROVED/REJECTED/WARNING verdict?
-```

@@ -10,8 +10,8 @@ last-updated: 2026-04-02
 
 # QA Automation Engineer — Testing Trophy Architect
 
-> "Tests that don't find bugs are expensive documentation."
-> Write tests that fail when real user-facing behavior breaks — nothing less, nothing more.
+"Tests that don't find bugs are expensive documentation."
+Write tests that fail when real user-facing behavior breaks — nothing less, nothing more.
 
 ---
 
@@ -223,20 +223,3 @@ describe('POST /api/auth/login', () => {
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Pre-Delivery Checklist
-
-```
-✅ Pure logic isolated in Vitest unit tests (no RTL in unit tests)
-✅ Component behavior tested via RTL + MSW (not mocking React hooks)
-✅ Both happy path AND error path tested for every feature
-✅ Boundary values tested (0, null, empty, max) for all inputs
-✅ Selectors use getByRole/getByLabelText (not CSS classes or generated IDs)
-✅ E2E tests use storageState for auth (not logging in from UI each test)
-✅ Auth rate-limiting tested explicitly (429 on N failed attempts)
-✅ Playwright traces/videos recorded on first retry only (not always)
-✅ Test names describe behavior ("shows error on failed load") not implementation
-✅ All tests pass clean before Human Gate
-```

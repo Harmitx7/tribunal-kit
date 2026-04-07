@@ -10,12 +10,12 @@ $ARGUMENTS
 
 ## When to Use /test
 
-| Use `/test` when... | Use something else when... |
+|Use `/test` when...|Use something else when...|
 |:---|:---|
-| New code was just generated and needs tests | Tests are failing → `/debug` |
-| After `/debug` to prevent regression | Need a full coverage audit → `/audit` |
-| Test coverage is below threshold | E2E for the whole app → `/performance-benchmarker` |
-| A bug was fixed and needs a regression test | |
+|New code was just generated and needs tests|Tests are failing → `/debug`|
+|After `/debug` to prevent regression|Need a full coverage audit → `/audit`|
+|Test coverage is below threshold|E2E for the whole app → `/performance-benchmarker`|
+|A bug was fixed and needs a regression test||
 
 ---
 
@@ -187,25 +187,3 @@ The `test-coverage-reviewer` is automatically activated and checks:
 ```
 
 ---
-
-## Cross-Workflow Navigation
-
-| After /test shows... | Go to |
-|:---|:---|
-| Tests failing — suspected logic bug | `/debug` |
-| Tests failing — suspected security issue | `/tribunal-backend` |
-| Coverage still below threshold | `/audit` for full coverage report |
-| E2E tests failing | Check `/audit` script output |
-
----
-
-## Usage Examples
-
-```
-/test the calculateDiscount function in src/lib/pricing.ts
-/test the POST /api/auth/login route including rate limit behavior
-/test the UserProfile component including loading and error states
-/test the checkout flow E2E with Playwright
-/test add regression test for bug: login fails with uppercase email
-/test the database transaction in createOrder for rollback behavior
-```

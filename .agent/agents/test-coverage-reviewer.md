@@ -7,9 +7,6 @@ last-updated: 2026-04-02
 
 # Test Coverage Reviewer — The Test Quality Inspector
 
-> "100% line coverage with zero behavior coverage means nothing."
-> A test that only verifies the happy path is a test that will miss 90% of production bugs.
-
 ---
 
 ## Core Mandate
@@ -56,15 +53,15 @@ describe('calculateDiscount()', () => {
 
 For any function being tested, flag if these are missing:
 
-| Category | Edge Cases Required |
+|Category|Edge Cases Required|
 |:---|:---|
-| **Numbers** | 0, negative, MAX_SAFE_INTEGER, NaN, Infinity |
-| **Strings** | empty string `""`, whitespace only, Unicode chars, SQL injection chars |
-| **Arrays** | empty `[]`, single element, duplicate elements, very large arrays |
-| **Objects** | null, undefined, missing required keys, extra unexpected keys |
-| **Async** | resolved, rejected, network timeout, AbortController abort |
-| **Auth** | unauthenticated, wrong role, expired token, valid token |
-| **Pagination** | first page, last page, beyond total count, negative page |
+|**Numbers**|0, negative, MAX_SAFE_INTEGER, NaN, Infinity|
+|**Strings**|empty string `""`, whitespace only, Unicode chars, SQL injection chars|
+|**Arrays**|empty `[]`, single element, duplicate elements, very large arrays|
+|**Objects**|null, undefined, missing required keys, extra unexpected keys|
+|**Async**|resolved, rejected, network timeout, AbortController abort|
+|**Auth**|unauthenticated, wrong role, expired token, valid token|
+|**Pagination**|first page, last page, beyond total count, negative page|
 
 ---
 
@@ -160,34 +157,4 @@ test('shows user name after loading', async () => {
 
 ---
 
-## Output Format
-
-```
-🧪 Test Coverage Review: [APPROVED ✅ / REJECTED ❌ / WARNING ⚠️]
-
-Issues found:
-- calculateDiscount tests: Missing negative input, zero, and boundary ($100 exactly) cases
-- Line 23: Brittle CSS selector — use getByRole() or getByTestId()
-- Line 41: Internal state tested (_cache.has()) — test observable behavior instead
-- Line 67: Async assertion without await findBy* — test passes before component updates
-
-Verdict: REJECTED — 3 behavioral gaps must be tested before Human Gate.
-```
-
 ---
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Did I flag tests that only cover the happy (success) path?
-✅ Did I check for missing boundary edge cases (0, null, empty, MAX)?
-✅ Did I flag brittle CSS/index selectors in RTL tests?
-✅ Did I flag mocking of internal business logic (not boundary mocking)?
-✅ Did I catch tests verifying private state vs observable behavior?
-✅ Did I flag async assertions without await findBy* (false passes)?
-✅ Did I verify error/rejection paths have test coverage?
-✅ Did I flag overly specific mock assertions that break on minor format changes?
-✅ Did I check that auth boundary cases are tested (unauth, wrong role)?
-✅ Did I output a clear APPROVED/REJECTED/WARNING verdict?
-```

@@ -10,12 +10,12 @@ $ARGUMENTS
 
 ## When to Use /api-tester
 
-| Use `/api-tester` when... | Use something else when... |
+|Use `/api-tester` when...|Use something else when...|
 |:---|:---|
-| Testing REST API endpoints manually | Unit tests needed → `/test` |
-| Verifying auth token flows end-to-end | Full security audit → `/audit` |
-| After generating new endpoints | Load testing → `/performance-benchmarker` |
-| Checking response schemas | |
+|Testing REST API endpoints manually|Unit tests needed → `/test`|
+|Verifying auth token flows end-to-end|Full security audit → `/audit`|
+|After generating new endpoints|Load testing → `/performance-benchmarker`|
+|Checking response schemas||
 
 ---
 

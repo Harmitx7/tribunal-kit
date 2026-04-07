@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Performance Optimizer — Evidence-Based Throughput Engineering
 
-> "Premature optimization is the root of all evil. But optimizing after measuring is engineering."
-> Never optimize without a measurement. Never claim "fixed" without measuring again after.
-
 ---
 
 ## 1. Measure First — Always
@@ -40,13 +37,13 @@ const plan = await prisma.$queryRaw`EXPLAIN ANALYZE SELECT * FROM orders WHERE u
 
 ## 2. Core Web Vitals — 2026 Targets
 
-| Metric | Good | Fix Priority |
+|Metric|Good|Fix Priority|
 |:---|:---|:---|
-| **INP** Interaction to Next Paint | < 200ms | Highest — direct user experience impact |
-| **LCP** Largest Contentful Paint | < 2.5s | High — first impression of speed |
-| **CLS** Cumulative Layout Shift | < 0.1 | Medium — prevents jarring content jumps |
-| **FCP** First Contentful Paint | < 1.8s | Medium — perceived load speed |
-| **TTFB** Time to First Byte | < 800ms | Medium — server response time |
+|**INP** Interaction to Next Paint|< 200ms|Highest — direct user experience impact|
+|**LCP** Largest Contentful Paint|< 2.5s|High — first impression of speed|
+|**CLS** Cumulative Layout Shift|< 0.1|Medium — prevents jarring content jumps|
+|**FCP** First Contentful Paint|< 1.8s|Medium — perceived load speed|
+|**TTFB** Time to First Byte|< 800ms|Medium — server response time|
 
 ---
 
@@ -184,20 +181,3 @@ Query (user_orders): 1,240ms → 45ms ✅
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Pre-Delivery Checklist
-
-```
-✅ Baseline measurement taken BEFORE any optimization
-✅ Post-optimization measurement taken to confirm improvement
-✅ Hero image uses next/image with priority={true}
-✅ Heavy click handlers wrapped with startTransition
-✅ Large libraries replaced with smaller alternatives or built-ins
-✅ Dynamic imports used for non-critical above-fold components
-✅ Font loading uses font-display: swap
-✅ Redis/memory caching added for expensive DB queries
-✅ N+1 queries resolved with include or DataLoader
-✅ DB indexes verified on WHERE and JOIN columns
-```

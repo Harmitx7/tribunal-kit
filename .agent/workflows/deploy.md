@@ -10,19 +10,19 @@ $ARGUMENTS
 
 ## The Deployment Contract
 
-> "Production is the only environment that matters. Every deployment is a risk event."
-> Every step is logged. Every step has a rollback path. No surprises.
+"Production is the only environment that matters. Every deployment is a risk event."
+Every step is logged. Every step has a rollback path. No surprises.
 
 ---
 
 ## When to Use /deploy
 
-| Use `/deploy` when... | Do NOT deploy when... |
+|Use `/deploy` when...|Do NOT deploy when...|
 |:---|:---|
-| All pre-flight checks pass | Any pre-flight check fails |
-| Changes are reviewed and approved | In the middle of a debug session |
-| You have a rollback plan | No tests run since last change |
-| Non-peak traffic hours (if possible) | Security audit shows critical issues |
+|All pre-flight checks pass|Any pre-flight check fails|
+|Changes are reviewed and approved|In the middle of a debug session|
+|You have a rollback plan|No tests run since last change|
+|Non-peak traffic hours (if possible)|Security audit shows critical issues|
 
 ---
 
@@ -178,12 +178,3 @@ If this deploy includes database migrations:
 **Never deploy application code and schema changes in the same deployment.**
 
 ---
-
-## Cross-Workflow Navigation
-
-| Pre-flight finds... | Go to |
-|:---|:---|
-| Security vulnerability | Fix with `/tribunal-backend` first |
-| TypeScript errors | Fix with `/fix` or `/generate` first |
-| Tests failing | Fix with `/debug` and `/test` first |
-| Build failure | Fix with `/debug` first |

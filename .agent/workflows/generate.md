@@ -10,12 +10,12 @@ $ARGUMENTS
 
 ## When to Use /generate
 
-| Use `/generate` when... | Use something else when... |
+|Use `/generate` when...|Use something else when...|
 |:---|:---|
-| New code needs to be written from scratch | Existing code needs modification → `/enhance` |
-| A single focused piece of code is needed | Multi-domain build → `/create` or `/swarm` |
-| A safe, reviewed snippet is required | You want to understand options first → `/plan` |
-| You need a quick but Tribunal-reviewed piece | Full project structure needed → `/create` |
+|New code needs to be written from scratch|Existing code needs modification → `/enhance`|
+|A single focused piece of code is needed|Multi-domain build → `/create` or `/swarm`|
+|A safe, reviewed snippet is required|You want to understand options first → `/plan`|
+|You need a quick but Tribunal-reviewed piece|Full project structure needed → `/create`|
 
 ---
 
@@ -47,111 +47,3 @@ Y = write to disk | N = discard | R = revise with feedback
 ```
 
 ---
-
-## What the Maker Is Not Allowed to Do
-
-```
-❌ Import a package not in package.json
-❌ Call a method not verified in official documentation
-❌ Use TypeScript 'any' without an explanation comment
-❌ Generate an entire application in one shot
-❌ Guess at database column or table names (read schema first)
-❌ Fabricate API response shapes (read existing types first)
-❌ Assume environment variables exist (read .env.example first)
-❌ Use Next.js 14 patterns in a Next.js 15 project (check version!)
-❌ Use React 18 hooks in a React 19 project (useFormState → useActionState)
-```
-
-When unsure: write `// VERIFY: [specific reason]` instead of hallucinating.
-
----
-
-## Reviewer Auto-Selection
-
-**Always active:**
-```
-logic-reviewer     → Hallucinated methods, undefined refs, impossible logic
-security-auditor   → OWASP vulnerabilities, hardcoded secrets, injection
-```
-
-**Auto-activated by keywords:**
-
-| Keyword in request | Additional Reviewers |
-|:---|:---|
-| `api`, `route`, `endpoint`, `handler` | `dependency-reviewer` + `type-safety-reviewer` |
-| `sql`, `query`, `database`, `prisma`, `drizzle` | `sql-reviewer` |
-| `component`, `hook`, `react`, `vue`, `jsx` | `frontend-reviewer` + `type-safety-reviewer` |
-| `test`, `spec`, `vitest`, `jest`, `playwright` | `test-coverage-reviewer` |
-| `slow`, `optimize`, `cache`, `performance`, `bundle` | `performance-reviewer` |
-| `mobile`, `react native`, `expo` | `mobile-reviewer` |
-| `llm`, `openai`, `anthropic`, `gemini`, `embedding` | `ai-code-reviewer` |
-| `aria`, `wcag`, `a11y`, `accessibility` | `accessibility-reviewer` |
-| `import`, `package`, `npm`, `require` | `dependency-reviewer` |
-
-> For maximum safety on critical code: use `/tribunal-full` for all 11 reviewers simultaneously.
-
----
-
-## Reviewer Verdicts
-
-| Verdict | Meaning | What Happens |
-|:---|:---|:---|
-| `✅ APPROVED` | No issues found | Proceeds to Human Gate |
-| `⚠️ WARNING` | Non-blocking issue | Human Gate shown with warning highlighted |
-| `❌ REJECTED` | Blocking issue | Maker revises before Human Gate |
-
-**Retry limit:** Maker is revised up to 3 times per REJECTED verdict. After 3 failures, the session halts and reports to the user with full failure history. No silent failures.
-
----
-
-## Output Format
-
-```
-━━━ Tribunal: [Domain] ━━━━━━━━━━━━━━━━━━━━━━
-
-Active reviewers: logic · security · [others]
-
-[Generated code with // VERIFY: tags where uncertain]
-
-━━━ Verdicts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-logic-reviewer:      ✅ APPROVED
-security-auditor:    ✅ APPROVED  
-dependency-reviewer: ⚠️ WARNING — lodash not in package.json
-
-━━━ Warnings ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-dependency-reviewer:
-  ⚠️ Medium — Line 3: 'lodash' imported but not in package.json
-  Fix: npm install lodash  OR  use built-in Array methods
-
-━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Write to disk?  Y = approve | N = discard | R = revise with feedback
-```
-
----
-
-## Cross-Workflow Navigation
-
-| After /generate shows... | Go to |
-|:---|:---|
-| Multiple files need changing | `/enhance` for impact-zone analysis |
-| Security-critical code was generated | `/tribunal-full` for maximum coverage |
-| DB queries were generated | `/tribunal-database` |
-| New API routes were generated | `/tribunal-backend` |
-| Tests need to be written next | `/test` |
-| Something was rejected 3 times | Escalate to human with failure report |
-
----
-
-## Usage Examples
-
-```
-/generate a JWT middleware for Express with HS256 algorithm enforcement
-/generate a Prisma query for users with their published posts in last 30 days
-/generate a debounced search hook in React 19 using useDeferredValue
-/generate a parameterized SQL query for paginated order history
-/generate a Zod schema for email + password + role login input
-/generate a Server Action for creating a product with image upload
-/generate a rate-limited fetch wrapper using @upstash/ratelimit
-```

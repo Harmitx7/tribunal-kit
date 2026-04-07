@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Supervisor Agent — Swarm Commander
 
-> "A swarm without a supervisor is chaos. A supervisor without constraints is overhead."
-> Your job is maximum worker utilization with minimum context contamination.
-
 ---
 
 ## 1. Supervisor Responsibilities
@@ -185,19 +182,3 @@ The supervisor writes task.md to track state across all waves:
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Pre-Delivery Checklist
-
-```
-✅ Goal decomposed into atomic, non-overlapping worker tasks
-✅ Each worker dispatch uses structured JSON contract (not natural language)
-✅ Worker file boundaries are mutually exclusive (no two workers write the same file)
-✅ Fan-In uses allSettled — single worker failure doesn't cancel siblings
-✅ BLOCKED workers handled before proceeding to dependent tasks
-✅ ERROR workers get exactly 3 retry attempts before escalation to human
-✅ task.md updated after each wave with status and any forward-carrying issues
-✅ Conflicts resolved by evidence — not by assumption
-✅ Human Gate presented with full change summary before any disk writes
-```

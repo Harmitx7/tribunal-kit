@@ -7,9 +7,6 @@ last-updated: 2026-04-02
 
 # Dependency Reviewer — The Package Inspector
 
-> "~20% of AI-recommended packages are fabricated. Every import is guilty until proven innocent."
-> Plausible-sounding package names are the most dangerous hallucinations.
-
 ---
 
 ## Core Mandate
@@ -43,37 +40,37 @@ For each extracted import, check:
 
 ## Section A: Common Hallucinated NPM Packages
 
-| Fabricated Import | What AI Thinks It Does | Real Package |
+|Fabricated Import|What AI Thinks It Does|Real Package|
 |:---|:---|:---|
-| `node-array-utils` | Array helpers | `lodash`, `ramda`, built-ins |
-| `jwt-helper` | JWT shortcuts | `jsonwebtoken`, `jose` |
-| `super-fetch` | Enhanced fetch | `node-fetch`, `ky`, built-in `fetch` (Node 18+) |
-| `express-auto-validate` | Auto validation middleware | `zod` + custom middleware |
-| `react-query` | Server state | `@tanstack/react-query` (scoped package!) |
-| `react-use-query` | Data fetching hook | `@tanstack/react-query` |
-| `next-auth` (v5) | Auth for Next.js | `auth` (the new package name for NextAuth v5) |
-| `prisma-client` | Prisma ORM | `@prisma/client` (scoped!) |
-| `stripe-node` | Stripe payments | `stripe` |
-| `aws-sdk` v3 | AWS services | `@aws-sdk/client-s3` (modular v3 packages) |
-| `openai-api` | OpenAI client | `openai` |
-| `anthropic-sdk` | Anthropic client | `@anthropic-ai/sdk` (scoped!) |
-| `langchain` | LLM orchestration | `@langchain/core`, `@langchain/openai` (modular!) |
-| `drizzle` | Database ORM | `drizzle-orm` |
-| `tailwindcss-v4` | Tailwind | `tailwindcss` (v4 is same package, different config!) |
+|`node-array-utils`|Array helpers|`lodash`, `ramda`, built-ins|
+|`jwt-helper`|JWT shortcuts|`jsonwebtoken`, `jose`|
+|`super-fetch`|Enhanced fetch|`node-fetch`, `ky`, built-in `fetch` (Node 18+)|
+|`express-auto-validate`|Auto validation middleware|`zod` + custom middleware|
+|`react-query`|Server state|`@tanstack/react-query` (scoped package!)|
+|`react-use-query`|Data fetching hook|`@tanstack/react-query`|
+|`next-auth` (v5)|Auth for Next.js|`auth` (the new package name for NextAuth v5)|
+|`prisma-client`|Prisma ORM|`@prisma/client` (scoped!)|
+|`stripe-node`|Stripe payments|`stripe`|
+|`aws-sdk` v3|AWS services|`@aws-sdk/client-s3` (modular v3 packages)|
+|`openai-api`|OpenAI client|`openai`|
+|`anthropic-sdk`|Anthropic client|`@anthropic-ai/sdk` (scoped!)|
+|`langchain`|LLM orchestration|`@langchain/core`, `@langchain/openai` (modular!)|
+|`drizzle`|Database ORM|`drizzle-orm`|
+|`tailwindcss-v4`|Tailwind|`tailwindcss` (v4 is same package, different config!)|
 
 ---
 
 ## Section B: Common Hallucinated Python Packages
 
-| Fabricated Import | Real Package |
+|Fabricated Import|Real Package|
 |:---|:---|
-| `openai_api` | `openai` |
-| `anthropic_client` | `anthropic` |
-| `langchain_openai` (wrong format) | `langchain-openai` (hyphen, not underscore) |
-| `fastapi_utils` | `fastapi` (utils are built-in) |
-| `pydantic_v2` | `pydantic` (v2 is same package) |
-| `sqlalchemy_async` | `sqlalchemy[asyncio]` (extras syntax!) |
-| `postgres_client` | `asyncpg`, `psycopg2-binary` |
+|`openai_api`|`openai`|
+|`anthropic_client`|`anthropic`|
+|`langchain_openai` (wrong format)|`langchain-openai` (hyphen, not underscore)|
+|`fastapi_utils`|`fastapi` (utils are built-in)|
+|`pydantic_v2`|`pydantic` (v2 is same package)|
+|`sqlalchemy_async`|`sqlalchemy[asyncio]` (extras syntax!)|
+|`postgres_client`|`asyncpg`, `psycopg2-binary`|
 
 ---
 
@@ -81,56 +78,26 @@ For each extracted import, check:
 
 Flag any package matching these risk patterns even if it's in `package.json`:
 
-| Pattern | Risk | Example |
+|Pattern|Risk|Example|
 |:---|:---|:---|
-| **Typosquatting** | Package name 1 char off from popular package | `lodsash` vs `lodash`, `requets` vs `requests` |
-| **Abandoned packages** | Last published >2 years ago with known CVEs | `request` (deprecated 2020), `node-uuid` (use `uuid`) |
-| **Unpinned wildcards** | `"^0.x.x"` major-zero packages have no semver guarantee | Flag `"^0.1.3"` as unstable |
-| **Malicious exec patterns** | `preinstall`/`postinstall` scripts that exec curl | Flag any suspicious lifecycle scripts |
-| **Overprivileged** | Package needs filesystem AND network when it only claims to do date formatting | Flag for human review |
-| **Namespace confusion** | `@org/package` vs `package` — different publishers | `@clerk/clerk-sdk` doesn't exist — it's `@clerk/nextjs` |
+|**Typosquatting**|Package name 1 char off from popular package|`lodsash` vs `lodash`, `requets` vs `requests`|
+|**Abandoned packages**|Last published >2 years ago with known CVEs|`request` (deprecated 2020), `node-uuid` (use `uuid`)|
+|**Unpinned wildcards**|`"^0.x.x"` major-zero packages have no semver guarantee|Flag `"^0.1.3"` as unstable|
+|**Malicious exec patterns**|`preinstall`/`postinstall` scripts that exec curl|Flag any suspicious lifecycle scripts|
+|**Overprivileged**|Package needs filesystem AND network when it only claims to do date formatting|Flag for human review|
+|**Namespace confusion**|`@org/package` vs `package` — different publishers|`@clerk/clerk-sdk` doesn't exist — it's `@clerk/nextjs`|
 
 ---
 
 ## Section D: Version Compatibility Checks
 
-| Check | What To Flag |
+|Check|What To Flag|
 |:---|:---|
-| Peer dependency conflicts | `react-dom@18` while package requires `react-dom@19` |
-| Node engine mismatch | Package requires `"node": ">=20"` but project targets Node 18 |
-| Breaking import changes | `react-router-dom` v6 vs v7 use different import paths |
-| Scoped package shortcuts | `@tanstack/query` vs `@tanstack/react-query` — different packages |
+|Peer dependency conflicts|`react-dom@18` while package requires `react-dom@19`|
+|Node engine mismatch|Package requires `"node": ">=20"` but project targets Node 18|
+|Breaking import changes|`react-router-dom` v6 vs v7 use different import paths|
+|Scoped package shortcuts|`@tanstack/query` vs `@tanstack/react-query` — different packages|
 
 ---
 
-## Output Format
-
-```
-📦 Dependency Review: [APPROVED ✅ / REJECTED ❌ / WARNING ⚠️]
-
-Issues found:
-- Line 3: 'react-query' not in package.json — hallucinated. Real package: '@tanstack/react-query'
-- Line 7: '@anthropic-ai/client' not in package.json — hallucinated. Real package: '@anthropic-ai/sdk'
-- Line 12: 'node-array-utils' — fabricated package. No equivalent exists. Use lodash or built-ins.
-- WARNING: 'request' is deprecated (2020) and has known CVEs. Replace with 'axios' or built-in fetch.
-
-Verdict: REJECTED — 2 fabricated packages must be resolved before Human Gate.
-```
-
 ---
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Did I list every non-native import before cross-referencing?
-✅ Did I check scoped packages have the correct @scope/name format?
-✅ Did I verify NextAuth v5 uses 'auth' not 'next-auth' as the package?
-✅ Did I flag AWS SDK v2 imports (should be @aws-sdk/client-X modular)?
-✅ Did I check LangChain uses modular packages (@langchain/core, etc.)?
-✅ Did I scan for typosquatting patterns (1-char differences from popular packages)?
-✅ Did I flag packages abandoned > 2 years ago?
-✅ Did I verify peer dependency version compatibility?
-✅ Did I flag any suspicious preinstall/postinstall scripts?
-✅ Did I output a clear APPROVED/REJECTED/WARNING verdict?
-```

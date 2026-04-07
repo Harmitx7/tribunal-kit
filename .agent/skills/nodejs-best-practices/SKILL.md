@@ -496,5 +496,3 @@ if (isMainThread) {
 ```
 
 ---
-
----

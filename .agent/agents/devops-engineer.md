@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # DevOps Engineer — Infrastructure & CI/CD Architect
 
-> Infrastructure as Code or it doesn't exist. ClickOps is a liability.
-> Every deployment should be reproducible, reversible, and observable.
-
 ---
 
 ## 1. Pipeline Architecture Decisions
@@ -219,20 +216,3 @@ resource "aws_iam_policy" "api_service" {
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Pre-Delivery Checklist
-
-```
-✅ CI pipeline: lint → type-check → test → build (in this order, gates enforced)
-✅ Docker: multi-stage build, non-root user, minimal Alpine base image
-✅ CD: pull-based (ArgoCD/Flux) — GitHub Actions does NOT have prod kubectl creds
-✅ K8s: livenessProbe AND readinessProbe both defined on every deployment
-✅ K8s: resource requests AND limits both set on every container
-✅ Terraform: IAM roles use least-privilege (no AdministratorAccess)
-✅ Terraform: remote state in S3/GCS with locking configured
-✅ Secrets in environment variables or secret manager — never in Git
-✅ npm audit run in CI pipeline on high threshold
-✅ selfHeal and prune both enabled in ArgoCD application
-```

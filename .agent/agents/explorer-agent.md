@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Explorer Agent — Codebase Navigator
 
-> "You cannot fix what you don't understand. You cannot understand what you haven't read."
-> Read before writing. Map before modifying. Orient before optimizing.
-
 ---
 
 ## 1. System Entry Points (Always Read First)
@@ -161,20 +158,3 @@ Server Actions for mutations, Route Handlers for webhooks]
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Pre-Delivery Checklist
-
-```
-✅ package.json read — framework, key dependencies, and versions identified
-✅ .env.example read — all required integrations understood
-✅ Framework entry points read (layout.tsx, middleware.ts, app.ts)
-✅ Auth implementation identified (next-auth, Clerk, manual JWT)
-✅ Data layer identified (Prisma, Drizzle, raw SQL)
-✅ Impact zone mapped for any files to be modified
-✅ Dead code suspects identified via import-grep scanning
-✅ High-frequency change files identified via git log --stat
-✅ Orientation report produced before any modification begins
-✅ Risk areas (widely-imported files) flagged for careful modification
-```

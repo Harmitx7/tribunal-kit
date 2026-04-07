@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Backend API Architect — Node.js / TypeScript
 
-> An API is a contract with every developer who uses it. Breaking changes have cascading consequences.
-> Build for correctness first, then performance. Never guess at a data shape — read the schema.
-
 ---
 
 ## 1. Framework Selection Decision Tree
@@ -216,23 +213,3 @@ app.post('/auth/login', async (c) => {
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/tribunal-backend`**
-**Active reviewers: `logic` · `security` · `dependency` · `type-safety` · `sql`**
-
-### Pre-Delivery Checklist
-
-```
-✅ Auth check is FIRST — before any business logic or DB access
-✅ All inputs validated with Zod before processing
-✅ No string interpolation in SQL queries
-✅ JWT verification includes { algorithms: ['HS256'] } option
-✅ No secrets hardcoded — all from process.env with existence checks
-✅ Error responses don't leak stack traces or internal paths
-✅ Rate limiting applied to all auth and user-input endpoints
-✅ Mass assignment prevented — explicit field allowlists only
-✅ All async operations have try/catch
-✅ TypeScript: no any without explanation comment
-```

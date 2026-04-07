@@ -1,6 +1,6 @@
 # 🏛️ Tribunal Anti-Hallucination Kit — Architecture
 
-> Works natively in **Cursor**, **Windsurf**, **Antigravity**, and any AI IDE that indexes `.agent/` folders.
+Works natively in **Cursor**, **Windsurf**, **Antigravity**, and any AI IDE that indexes `.agent/` folders.
 
 ---
 
@@ -38,54 +38,54 @@ flowchart TD
 
 Type any of these in your AI IDE chat:
 
-| Command | Purpose | File |
+|Command|Purpose|File|
 |---|---|---|
-| `/generate` | Full Tribunal: Maker → Parallel Review → Human Gate | `workflows/generate.md` |
-| `/review` | Audit existing code (no generation) | `workflows/review.md` |
-| `/tribunal-full` | ALL 8 agents at once — maximum coverage | `workflows/tribunal-full.md` |
-| `/tribunal-backend` | Logic + Security + Deps + Types | `workflows/tribunal-backend.md` |
-| `/tribunal-frontend` | Logic + Security + Frontend + Types | `workflows/tribunal-frontend.md` |
-| `/tribunal-database` | Logic + Security + SQL | `workflows/tribunal-database.md` |
-| `/tribunal-mobile` | Logic + Security + Mobile | `workflows/tribunal-mobile.md` |
-| `/tribunal-performance` | Logic + Performance | `workflows/tribunal-performance.md` |
-| `/brainstorm` | Exploration mode — no code, just options | `workflows/brainstorm.md` |
-| `/create` | Structured app creation (4-stage) | `workflows/create.md` |
-| `/enhance` | Add/update features in existing apps | `workflows/enhance.md` |
-| `/debug` | Systematic debugging with root cause analysis | `workflows/debug.md` |
-| `/plan` | Project planning only — no code | `workflows/plan.md` |
-| `/deploy` | Pre-flight checks + deployment | `workflows/deploy.md` |
-| `/test` | Test generation and execution | `workflows/test.md` |
-| `/preview` | Start/stop local dev server | `workflows/preview.md` |
-| `/status` | Agent and project status board | `workflows/status.md` |
-| `/session` | Multi-session state tracking | `workflows/session.md` |
-| `/orchestrate` | Multi-agent coordination | `workflows/orchestrate.md` |
-| `/swarm` | Supervisor → specialist Workers → unified synthesis | `workflows/swarm.md` |
-| `/strengthen-skills` | Audit and harden all skills — appends Tribunal guardrails to any SKILL.md missing them | `workflows/strengthen-skills.md` |
-| `/ui-ux-pro-max` | Plan and implement cutting-edge UI/UX | `workflows/ui-ux-pro-max.md` |
-| `/refactor` | Dependency-safe code refactoring | `workflows/refactor.md` |
-| `/migrate` | Framework upgrades, DB migrations | `workflows/migrate.md` |
-| `/audit` | Full project health audit | `workflows/audit.md` |
-| `/fix` | Auto-fix lint, formatting, imports | `workflows/fix.md` |
-| `/changelog` | Generate changelog from git history | `workflows/changelog.md` |
-| `/review-ai` | AI/LLM integration audit | `workflows/review-ai.md` |
+|`/generate`|Full Tribunal: Maker → Parallel Review → Human Gate|`workflows/generate.md`|
+|`/review`|Audit existing code (no generation)|`workflows/review.md`|
+|`/tribunal-full`|ALL 8 agents at once — maximum coverage|`workflows/tribunal-full.md`|
+|`/tribunal-backend`|Logic + Security + Deps + Types|`workflows/tribunal-backend.md`|
+|`/tribunal-frontend`|Logic + Security + Frontend + Types|`workflows/tribunal-frontend.md`|
+|`/tribunal-database`|Logic + Security + SQL|`workflows/tribunal-database.md`|
+|`/tribunal-mobile`|Logic + Security + Mobile|`workflows/tribunal-mobile.md`|
+|`/tribunal-performance`|Logic + Performance|`workflows/tribunal-performance.md`|
+|`/brainstorm`|Exploration mode — no code, just options|`workflows/brainstorm.md`|
+|`/create`|Structured app creation (4-stage)|`workflows/create.md`|
+|`/enhance`|Add/update features in existing apps|`workflows/enhance.md`|
+|`/debug`|Systematic debugging with root cause analysis|`workflows/debug.md`|
+|`/plan`|Project planning only — no code|`workflows/plan.md`|
+|`/deploy`|Pre-flight checks + deployment|`workflows/deploy.md`|
+|`/test`|Test generation and execution|`workflows/test.md`|
+|`/preview`|Start/stop local dev server|`workflows/preview.md`|
+|`/status`|Agent and project status board|`workflows/status.md`|
+|`/session`|Multi-session state tracking|`workflows/session.md`|
+|`/orchestrate`|Multi-agent coordination|`workflows/orchestrate.md`|
+|`/swarm`|Supervisor → specialist Workers → unified synthesis|`workflows/swarm.md`|
+|`/strengthen-skills`|Audit and harden all skills — appends Tribunal guardrails to any SKILL.md missing them|`workflows/strengthen-skills.md`|
+|`/ui-ux-pro-max`|Plan and implement cutting-edge UI/UX|`workflows/ui-ux-pro-max.md`|
+|`/refactor`|Dependency-safe code refactoring|`workflows/refactor.md`|
+|`/migrate`|Framework upgrades, DB migrations|`workflows/migrate.md`|
+|`/audit`|Full project health audit|`workflows/audit.md`|
+|`/fix`|Auto-fix lint, formatting, imports|`workflows/fix.md`|
+|`/changelog`|Generate changelog from git history|`workflows/changelog.md`|
+|`/review-ai`|AI/LLM integration audit|`workflows/review-ai.md`|
 
 ---
 
 ## The 11 Tribunal Agents
 
-| Agent | File | Activates When |
+|Agent|File|Activates When|
 |---|---|---|
-| `logic-reviewer` | `agents/logic-reviewer.md` | All sessions (always on) |
-| `security-auditor` | `agents/security-auditor.md` | All sessions (always on) |
-| `performance-reviewer` | `agents/performance-reviewer.md` | "optimize", "slow", `/tribunal-full` |
-| `dependency-reviewer` | `agents/dependency-reviewer.md` | "api", "backend", `/tribunal-full` |
-| `type-safety-reviewer` | `agents/type-safety-reviewer.md` | "typescript", "api", `/tribunal-full` |
-| `sql-reviewer` | `agents/sql-reviewer.md` | "query", "database", `/tribunal-full` |
-| `frontend-reviewer` | `agents/frontend-reviewer.md` | "react", "hook", "component", `/tribunal-full` |
-| `test-coverage-reviewer` | `agents/test-coverage-reviewer.md` | "test", "spec", "coverage", `/tribunal-full` |
-| `mobile-reviewer` | `agents/mobile-reviewer.md` | "mobile", "react native", "flutter", `/tribunal-full` |
-| `ai-code-reviewer` | `agents/ai-code-reviewer.md` | "llm", "openai", "anthropic", "ai", `/tribunal-full`, `/review-ai` |
-| `accessibility-reviewer` | `agents/accessibility-reviewer.md` | "a11y", "wcag", "aria", `/tribunal-frontend`, `/tribunal-full` |
+|`logic-reviewer`|`agents/logic-reviewer.md`|All sessions (always on)|
+|`security-auditor`|`agents/security-auditor.md`|All sessions (always on)|
+|`performance-reviewer`|`agents/performance-reviewer.md`|"optimize", "slow", `/tribunal-full`|
+|`dependency-reviewer`|`agents/dependency-reviewer.md`|"api", "backend", `/tribunal-full`|
+|`type-safety-reviewer`|`agents/type-safety-reviewer.md`|"typescript", "api", `/tribunal-full`|
+|`sql-reviewer`|`agents/sql-reviewer.md`|"query", "database", `/tribunal-full`|
+|`frontend-reviewer`|`agents/frontend-reviewer.md`|"react", "hook", "component", `/tribunal-full`|
+|`test-coverage-reviewer`|`agents/test-coverage-reviewer.md`|"test", "spec", "coverage", `/tribunal-full`|
+|`mobile-reviewer`|`agents/mobile-reviewer.md`|"mobile", "react native", "flutter", `/tribunal-full`|
+|`ai-code-reviewer`|`agents/ai-code-reviewer.md`|"llm", "openai", "anthropic", "ai", `/tribunal-full`, `/review-ai`|
+|`accessibility-reviewer`|`agents/accessibility-reviewer.md`|"a11y", "wcag", "aria", `/tribunal-frontend`, `/tribunal-full`|
 
 ---
 
@@ -115,13 +115,13 @@ The Swarm system decomposes complex multi-domain goals into independent sub-task
 
 **Key files:**
 
-| File | Role |
+|File|Role|
 |---|---|
-| `agents/supervisor-agent.md` | Triage, dispatch, retry, synthesis logic |
-| `agents/swarm-worker-contracts.md` | WorkerRequest + WorkerResult JSON schemas |
-| `agents/swarm-worker-registry.md` | Maps task types and keywords to specialist agents |
-| `workflows/swarm.md` | `/swarm` slash command procedure |
-| `scripts/swarm_dispatcher.py` | Validates WorkerRequest/WorkerResult JSON (use `--mode swarm`) |
+|`agents/supervisor-agent.md`|Triage, dispatch, retry, synthesis logic|
+|`agents/swarm-worker-contracts.md`|WorkerRequest + WorkerResult JSON schemas|
+|`agents/swarm-worker-registry.md`|Maps task types and keywords to specialist agents|
+|`workflows/swarm.md`|`/swarm` slash command procedure|
+|`scripts/swarm_dispatcher.py`|Validates WorkerRequest/WorkerResult JSON (use `--mode swarm`)|
 
 **Constraints:**
 - Maximum 5 Workers per swarm invocation
@@ -134,37 +134,37 @@ The Swarm system decomposes complex multi-domain goals into independent sub-task
 
 ## Specialist Agents
 
-| Agent / Expert | Domain |
+|Agent / Expert|Domain|
 |---|---|
-| `supervisor-agent` | Swarm triage, Worker dispatch, result synthesis |
-| `orchestrator` | Multi-agent coordination |
-| `agent-organizer` | Specialist agent operations |
-| `project-planner` | 4-phase structured planning |
-| `backend-specialist` | API, server, auth |
-| `dotnet-core-expert` | C# / .NET architecture |
-| `python-pro` | Python backend development |
-| `frontend-specialist` | Web UI / Components |
-| `react-specialist` | React / Next.js architecture |
-| `vue-expert` | Vue / Nuxt applications |
-| `database-architect` | Schema, migrations |
-| `sql-pro` | Complex queries, optimization |
-| `mobile-developer` | React Native, Flutter |
-| `devops-engineer` | CI/CD, Docker, deployment |
-| `platform-engineer` | Infrastructure, cloud native |
-| `devops-incident-responder` | Production issues |
-| `debugger` | Systematic debugging |
-| `game-developer` | Game development |
-| `security-auditor` | Penetration testing, OWASP |
-| `penetration-tester` | Red team tactics |
-| `performance-optimizer` | Profiling, optimization |
-| `code-archaeologist` | Legacy code analysis |
-| `explorer-agent` | Unknown codebase mapping |
-| `documentation-writer` | Docs, READMEs, API docs |
-| `test-engineer` | Test design and strategy |
-| `qa-automation-engineer` | Test automation |
-| `seo-specialist` | SEO auditing |
-| `product-manager` | Feature prioritization |
-| `product-owner` | Requirements, scope |
+|`supervisor-agent`|Swarm triage, Worker dispatch, result synthesis|
+|`orchestrator`|Multi-agent coordination|
+|`agent-organizer`|Specialist agent operations|
+|`project-planner`|4-phase structured planning|
+|`backend-specialist`|API, server, auth|
+|`dotnet-core-expert`|C# / .NET architecture|
+|`python-pro`|Python backend development|
+|`frontend-specialist`|Web UI / Components|
+|`react-specialist`|React / Next.js architecture|
+|`vue-expert`|Vue / Nuxt applications|
+|`database-architect`|Schema, migrations|
+|`sql-pro`|Complex queries, optimization|
+|`mobile-developer`|React Native, Flutter|
+|`devops-engineer`|CI/CD, Docker, deployment|
+|`platform-engineer`|Infrastructure, cloud native|
+|`devops-incident-responder`|Production issues|
+|`debugger`|Systematic debugging|
+|`game-developer`|Game development|
+|`security-auditor`|Penetration testing, OWASP|
+|`penetration-tester`|Red team tactics|
+|`performance-optimizer`|Profiling, optimization|
+|`code-archaeologist`|Legacy code analysis|
+|`explorer-agent`|Unknown codebase mapping|
+|`documentation-writer`|Docs, READMEs, API docs|
+|`test-engineer`|Test design and strategy|
+|`qa-automation-engineer`|Test automation|
+|`seo-specialist`|SEO auditing|
+|`product-manager`|Feature prioritization|
+|`product-owner`|Requirements, scope|
 
 ---
 
@@ -201,13 +201,13 @@ VERDICT: All approved → HUMAN GATE (you approve or reject the diff)
 
 ## Auto Domain Routing (GEMINI.md)
 
-| Keywords in prompt | Extra reviewers added |
+|Keywords in prompt|Extra reviewers added|
 |---|---|
-| api, route, endpoint, server | + Dependency + TypeSafety |
-| sql, query, database, orm | + SQL |
-| component, hook, react, next | + Frontend + TypeSafety |
-| test, spec, coverage, jest | + TestCoverage |
-| optimize, slow, memory, cpu | + Performance |
+|api, route, endpoint, server|+ Dependency + TypeSafety|
+|sql, query, database, orm|+ SQL|
+|component, hook, react, next|+ Frontend + TypeSafety|
+|test, spec, coverage, jest|+ TestCoverage|
+|optimize, slow, memory, cpu|+ Performance|
 
 ---
 
@@ -215,22 +215,22 @@ VERDICT: All approved → HUMAN GATE (you approve or reject the diff)
 
 All scripts live in `.agent/scripts/`:
 
-| Script | Purpose | Usage |
+|Script|Purpose|Usage|
 |---|---|---|
-| `checklist.py` | Priority-ordered project audit | `python .agent/scripts/checklist.py .` |
-| `verify_all.py` | Full pre-deploy validation | `python .agent/scripts/verify_all.py` |
-| `auto_preview.py` | Local dev server management | `python .agent/scripts/auto_preview.py start` |
-| `session_manager.py` | Multi-session state tracking | `python .agent/scripts/session_manager.py status` |
-| `lint_runner.py` | Standalone lint runner | `python .agent/scripts/lint_runner.py . --fix` |
-| `test_runner.py` | Auto-detecting test runner | `python .agent/scripts/test_runner.py . --coverage` |
-| `security_scan.py` | OWASP-aware source code scanner | `python .agent/scripts/security_scan.py .` |
-| `dependency_analyzer.py` | Unused/phantom dep checker | `python .agent/scripts/dependency_analyzer.py . --audit` |
-| `schema_validator.py` | DB schema validator | `python .agent/scripts/schema_validator.py .` |
-| `bundle_analyzer.py` | JS/TS bundle size analyzer | `python .agent/scripts/bundle_analyzer.py . --build` |
-| `strengthen_skills.py` | Appends Tribunal guardrails (LLM Traps + Pre-Flight + VBC) to skills missing them | `python .agent/scripts/strengthen_skills.py . --dry-run` |
-| `swarm_dispatcher.py` | Validate Orchestrator micro-worker JSON payloads | `python .agent/scripts/swarm_dispatcher.py --file payload.json` |
-| `skill_integrator.py` | Map active skills to executable scripts | `python .agent/scripts/skill_integrator.py` |
-| `test_swarm_dispatcher.py` | Unit tests for swarm_dispatcher | `python .agent/scripts/test_swarm_dispatcher.py` |
+|`checklist.py`|Priority-ordered project audit|`python .agent/scripts/checklist.py .`|
+|`verify_all.py`|Full pre-deploy validation|`python .agent/scripts/verify_all.py`|
+|`auto_preview.py`|Local dev server management|`python .agent/scripts/auto_preview.py start`|
+|`session_manager.py`|Multi-session state tracking|`python .agent/scripts/session_manager.py status`|
+|`lint_runner.py`|Standalone lint runner|`python .agent/scripts/lint_runner.py . --fix`|
+|`test_runner.py`|Auto-detecting test runner|`python .agent/scripts/test_runner.py . --coverage`|
+|`security_scan.py`|OWASP-aware source code scanner|`python .agent/scripts/security_scan.py .`|
+|`dependency_analyzer.py`|Unused/phantom dep checker|`python .agent/scripts/dependency_analyzer.py . --audit`|
+|`schema_validator.py`|DB schema validator|`python .agent/scripts/schema_validator.py .`|
+|`bundle_analyzer.py`|JS/TS bundle size analyzer|`python .agent/scripts/bundle_analyzer.py . --build`|
+|`strengthen_skills.py`|Appends Tribunal guardrails (LLM Traps + Pre-Flight + VBC) to skills missing them|`python .agent/scripts/strengthen_skills.py . --dry-run`|
+|`swarm_dispatcher.py`|Validate Orchestrator micro-worker JSON payloads|`python .agent/scripts/swarm_dispatcher.py --file payload.json`|
+|`skill_integrator.py`|Map active skills to executable scripts|`python .agent/scripts/skill_integrator.py`|
+|`test_swarm_dispatcher.py`|Unit tests for swarm_dispatcher|`python .agent/scripts/test_swarm_dispatcher.py`|
 
 ---
 

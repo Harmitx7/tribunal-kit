@@ -10,12 +10,12 @@ $ARGUMENTS
 
 ## When to Use /swarm Over /orchestrate
 
-| Use `/swarm` when... | Use `/orchestrate` when... |
+|Use `/swarm` when...|Use `/orchestrate` when...|
 |:---|:---|
-| 5+ workers needed simultaneously | 2-4 workers in a review |
-| Tasks are explicitly JSON-contracted | Tasks can be described informally |
-| Supervisor/Worker role separation matters | Simple coordination needed |
-| Wave execution needs session persisting across time | Single-session orchestration |
+|5+ workers needed simultaneously|2-4 workers in a review|
+|Tasks are explicitly JSON-contracted|Tasks can be described informally|
+|Supervisor/Worker role separation matters|Simple coordination needed|
+|Wave execution needs session persisting across time|Single-session orchestration|
 
 ---
 

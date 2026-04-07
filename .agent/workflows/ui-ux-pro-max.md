@@ -10,12 +10,12 @@ $ARGUMENTS
 
 ## When to Use /ui-ux-pro-max
 
-| Use `/ui-ux-pro-max` when... | Use instead when... |
+|Use `/ui-ux-pro-max` when...|Use instead when...|
 |:---|:---|
-| Building a visually distinctive interface | Functional-only component → `/generate` |
-| Design quality is the primary goal | Fast page needed → `/enhance` |
-| Creating from a design brief | Bug fix in UI → `/debug` |
-| Mobile + web parity required | |
+|Building a visually distinctive interface|Functional-only component → `/generate`|
+|Design quality is the primary goal|Fast page needed → `/enhance`|
+|Creating from a design brief|Bug fix in UI → `/debug`|
+|Mobile + web parity required||
 
 ---
 
@@ -108,27 +108,6 @@ Before finalizing:
 ```
 
 ---
-
-## Output Format
-
-```
-━━━ UI/UX Design ━━━━━━━━━━━━━━━━━━━━━━━━
-
-Design Identity: [1 sentence describing the visual intent]
-Primary action:  [what the user does most prominently]
-Color palette:   [specific hex values — not color names]
-Motion profile:  [subtle / moderate / expressive]
-
-━━━ Tribunal: Frontend + Accessibility ━━━━━━
-
-frontend-reviewer:    ✅ APPROVED
-accessibility-reviewer: [verdict]
-
-[Generated components]
-
-━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━━
-Approve?  Y = write | N = discard | R = revise design direction
-```
 
 ---
 

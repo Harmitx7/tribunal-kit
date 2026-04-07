@@ -10,12 +10,12 @@ $ARGUMENTS
 
 ## When to Use /enhance
 
-| Use `/enhance` when... | Use something else when... |
+|Use `/enhance` when...|Use something else when...|
 |:---|:---|
-| Adding a feature to an existing codebase | Starting from scratch → `/create` |
-| Changing existing behavior | Fixing a bug → `/debug` |
-| Iterating on a recently created feature | Full architecture review → `/plan` |
-| Extending an existing API or component | Performance problems → `/tribunal-performance` |
+|Adding a feature to an existing codebase|Starting from scratch → `/create`|
+|Changing existing behavior|Fixing a bug → `/debug`|
+|Iterating on a recently created feature|Full architecture review → `/plan`|
+|Extending an existing API or component|Performance problems → `/tribunal-performance`|
 
 ---
 
@@ -36,11 +36,11 @@ grep -r "targetFunction\|TargetType" src/ --include="*.ts" --include="*.tsx"
 
 **Risk Classification:**
 
-| File import count | Risk Level | Required Action |
+|File import count|Risk Level|Required Action|
 |:---|:---|:---|
-| 0–2 importers | Low | Normal Tribunal review |
-| 3–5 importers | Medium | List all affected files in plan |
-| 6+ importers | High | Full dependency map + staged rollout |
+|0–2 importers|Low|Normal Tribunal review|
+|3–5 importers|Medium|List all affected files in plan|
+|6+ importers|High|Full dependency map + staged rollout|
 
 ---
 
@@ -82,7 +82,7 @@ Changes:
 3. [file-c.test.ts] — [test updates required]
 ```
 
-> **Human Gate:** Plan presented before any editing begins.
+**Human Gate:** Plan presented before any editing begins.
 
 ---
 
@@ -126,26 +126,3 @@ After all changes:
 ```
 
 ---
-
-## Cross-Workflow Navigation
-
-| After /enhance shows... | Go to |
-|:---|:---|
-| A breaking change in auth or security code | `/tribunal-backend` |
-| DB schema changes required | `/tribunal-database` |
-| Component redesign needed | `/tribunal-frontend` |
-| New tests required | `/test` |
-| Performance impact suspected | `/tribunal-performance` |
-
----
-
-## Usage Examples
-
-```
-/enhance add pagination to the /api/users endpoint
-/enhance add server-side error boundary to the dashboard page
-/enhance update the User model to add a phoneNumber field
-/enhance replace useState with useOptimistic for the like button
-/enhance add rate limiting to the POST /auth/login endpoint
-/enhance add dark mode support to the design system
-```

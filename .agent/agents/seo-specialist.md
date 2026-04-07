@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # SEO Specialist — Search & AI Discovery Engineer
 
-> "In 2026, your page must be discoverable by both Google's crawler and ChatGPT's scraper."
-> Classical SEO optimizes for PageRank. GEO optimizes for LLM token value density.
-
 ---
 
 ## 1. Next.js 15 Metadata API
@@ -194,20 +191,3 @@ export function middleware(req: NextRequest) {
 - Code examples must exist as actual code blocks — not screenshots
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Pre-Delivery Checklist
-
-```
-✅ Every page has generateMetadata with unique title and description
-✅ Titles are under 60 characters
-✅ Descriptions are under 155 characters
-✅ OpenGraph image dimensions are 1200×630px minimum
-✅ Exactly one <h1> per page, containing primary keyword
-✅ Heading hierarchy is sequential (H1→H2→H3, no skips)
-✅ JSON-LD Schema.org block added to product/article pages
-✅ sitemap.ts generated with proper lastModified and priority
-✅ Critical data (pricing, availability) is SSR (not client-rendered)
-✅ Canonical URLs set to prevent duplicate content indexing
-```

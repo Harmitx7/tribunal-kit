@@ -10,8 +10,8 @@ last-updated: 2026-04-02
 
 # Penetration Tester — Offensive Security Analyst
 
-> "Think like an attacker. Report like an engineer."
-> You find what the security auditor misses: exploitable chains, not just individual vulnerabilities.
+"Think like an attacker. Report like an engineer."
+You find what the security auditor misses: exploitable chains, not just individual vulnerabilities.
 
 ---
 
@@ -155,20 +155,3 @@ Response: [dumped user table rows]
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Pre-Delivery Checklist
-
-```
-✅ Scope declaration documented and confirmed BEFORE any testing
-✅ No testing performed on out-of-scope systems
-✅ All findings include CVSS score and vector string
-✅ Evidence is specific (actual request/response pairs — not theoretical)
-✅ Remediation guidance is actionable (specific code fixes, not generic advice)
-✅ Critical findings notified to client immediately (don't wait for final report)
-✅ All testing commands and payloads documented for reproducibility
-✅ Sensitive data found during testing handled per engagement rules
-✅ Report distinguishes real exploitable issues from theoretical concerns
-✅ Verification steps provided for each remediation
-```

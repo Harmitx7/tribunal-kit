@@ -1,8 +1,8 @@
 # 📋 Swarm Worker Contracts
 
-> Defines the strict JSON schemas for all Swarm dispatch and result payloads.
-> Every `WorkerRequest` and `WorkerResult` MUST conform to these schemas.
-> Used by: `supervisor-agent`, `swarm_dispatcher.py`, `/swarm` workflow.
+Defines the strict JSON schemas for all Swarm dispatch and result payloads.
+Every `WorkerRequest` and `WorkerResult` MUST conform to these schemas.
+Used by: `supervisor-agent`, `swarm_dispatcher.py`, `/swarm` workflow.
 
 ---
 
@@ -52,14 +52,14 @@ interface WorkerRequest {
 
 ### WorkerRequest Validation Rules
 
-| Field | Rules |
+|Field|Rules|
 |---|---|
-| `task_id` | Non-empty string. UUID v4 format preferred. Must be unique per swarm invocation. |
-| `type` | Must be one of the 10 listed enum values exactly. |
-| `agent` | Must match a file that exists at `.agent/agents/{agent}.md`. |
-| `goal` | Non-empty. Single sentence. Max 200 characters. |
-| `context` | Non-empty. Max 800 characters. No full file dumps. |
-| `max_retries` | Integer 1–3 inclusive. |
+|`task_id`|Non-empty string. UUID v4 format preferred. Must be unique per swarm invocation.|
+|`type`|Must be one of the 10 listed enum values exactly.|
+|`agent`|Must match a file that exists at `.agent/agents/{agent}.md`.|
+|`goal`|Non-empty. Single sentence. Max 200 characters.|
+|`context`|Non-empty. Max 800 characters. No full file dumps.|
+|`max_retries`|Integer 1–3 inclusive.|
 
 ---
 
@@ -98,14 +98,14 @@ interface WorkerResult {
 
 ### WorkerResult Validation Rules
 
-| Field | Rules |
+|Field|Rules|
 |---|---|
-| `task_id` | Must match a previously dispatched WorkerRequest task_id. |
-| `agent` | Must match the agent from the originating WorkerRequest. |
-| `status` | Must be exactly: `"success"`, `"failure"`, or `"escalate"`. |
-| `output` | Required if status is `"success"`. Empty string otherwise. |
-| `error` | Required if status is `"failure"` or `"escalate"`. Empty string if success. |
-| `attempts` | Integer ≥ 1. Must not exceed `max_retries` from the WorkerRequest. |
+|`task_id`|Must match a previously dispatched WorkerRequest task_id.|
+|`agent`|Must match the agent from the originating WorkerRequest.|
+|`status`|Must be exactly: `"success"`, `"failure"`, or `"escalate"`.|
+|`output`|Required if status is `"success"`. Empty string otherwise.|
+|`error`|Required if status is `"failure"` or `"escalate"`. Empty string if success.|
+|`attempts`|Integer ≥ 1. Must not exceed `max_retries` from the WorkerRequest.|
 
 ---
 

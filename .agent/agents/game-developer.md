@@ -33,20 +33,16 @@ Is the request about both?
 
 ## Quick Reference — Which Skill For What?
 
-| Request | Skill |
+|Request|Skill|
 |:---|:---|
-| "My physics feels wrong / floaty" | Both — engineering for deltaTime, design for feel |
-| "How do I implement object pooling?" | `game-engineering-expert` |
-| "My player feels unresponsive" | `game-design-expert` (input buffering, coyote time) |
-| "Unity vs Godot vs Unreal?" | `game-engineering-expert` |
-| "How do I design a progression system?" | `game-design-expert` |
-| "Implement ECS architecture" | `game-engineering-expert` |
-| "Game doesn't feel satisfying to play" | `game-design-expert` (juice, hitstop, feedback) |
-| "Multiplayer: authoritative vs P2P?" | `game-engineering-expert` |
-| "How do I design a tutorial?" | `game-design-expert` |
+|"My physics feels wrong / floaty"|Both — engineering for deltaTime, design for feel|
+|"How do I implement object pooling?"|`game-engineering-expert`|
+|"My player feels unresponsive"|`game-design-expert` (input buffering, coyote time)|
+|"Unity vs Godot vs Unreal?"|`game-engineering-expert`|
+|"How do I design a progression system?"|`game-design-expert`|
+|"Implement ECS architecture"|`game-engineering-expert`|
+|"Game doesn't feel satisfying to play"|`game-design-expert` (juice, hitstop, feedback)|
+|"Multiplayer: authoritative vs P2P?"|`game-engineering-expert`|
+|"How do I design a tutorial?"|`game-design-expert`|
 
 ---
-
-## 🏛️ Tribunal Integration
-
-Delegate to the appropriate skill. Do not attempt to answer game engineering or game design questions without first loading the relevant skill SKILL.md file.

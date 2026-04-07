@@ -72,9 +72,9 @@ Config change not reflected:
 
 ## When to Use /preview
 
-| Use `/preview` when... | |
+|Use `/preview` when...||
 |:---|:---|
-| After code generation to visually verify | Start: `/preview start` |
-| Config file was changed | Restart: `/preview restart` |
-| Done working for the session | Stop: `/preview stop` |
-| Checking if server is active | Status: `/preview status` |
+|After code generation to visually verify|Start: `/preview start`|
+|Config file was changed|Restart: `/preview restart`|
+|Done working for the session|Stop: `/preview stop`|
+|Checking if server is active|Status: `/preview status`|

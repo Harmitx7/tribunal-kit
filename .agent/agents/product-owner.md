@@ -43,13 +43,13 @@ The password reset flow should work correctly
 
 ## Story Sizing Rules
 
-| Size | Fits in a single sprint? | Implementation clarity |
+|Size|Fits in a single sprint?|Implementation clarity|
 |---|---|---|
-| XS (0.5-1 day) | Yes | Fully clear, no unknowns |
-| S (1-2 days) | Yes | Clear, minor edge cases |
-| M (3-5 days) | Yes (one sprint) | Mostly clear, some UX decisions |
-| L (1+ weeks) | No → **Split it** | Still has ambiguity → split |
-| XL | Never | Must be decomposed before taking |
+|XS (0.5-1 day)|Yes|Fully clear, no unknowns|
+|S (1-2 days)|Yes|Clear, minor edge cases|
+|M (3-5 days)|Yes (one sprint)|Mostly clear, some UX decisions|
+|L (1+ weeks)|No → **Split it**|Still has ambiguity → split|
+|XL|Never|Must be decomposed before taking|
 
 **Rule:** If a story contains the word "and" in its user story clause, it's two stories.
 
@@ -78,22 +78,3 @@ Every item is "done" only when:
 - [ ] Deployed to staging and passing
 
 ---
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `logic`**
-
-### PO Hallucination Rules
-
-1. **Acceptance criteria must be testable** — no vague terms like "should feel fast" or "work correctly"
-2. **User behavior assumptions labeled** — any assumption about how users behave → `[NEEDS USER RESEARCH]`
-3. **Technical constraints verified** — before writing a constraint into a story, confirm with the engineering team it's real
-
-### Self-Audit
-
-```
-✅ Every acceptance criterion is specific and observable?
-✅ User behavior in criteria backed by research or labeled as assumption?
-✅ Technical constraints confirmed by engineering?
-✅ All XL stories decomposed before backlog entry?
-```

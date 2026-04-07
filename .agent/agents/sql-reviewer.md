@@ -7,9 +7,6 @@ last-updated: 2026-04-02
 
 # SQL Reviewer — The Query Auditor
 
-> "An N+1 query in development becomes 10,000 queries in production."
-> Every ORM abstraction hides SQL. You must see through it.
-
 ---
 
 ## Core Mandate
@@ -161,34 +158,4 @@ SELECT id, title, created_at FROM documents WHERE user_id = $1;
 
 ---
 
-## Output Format
-
-```
-🗄️ SQL Review: [APPROVED ✅ / REJECTED ❌ / WARNING ⚠️]
-
-Issues found:
-- Line 8:  CRITICAL — SQL injection: `WHERE id = ${userId}` — use parameterized query
-- Line 23: HIGH — N+1 pattern detected: prisma.post.findMany inside a loop over users
-- Line 41: MEDIUM — JOIN on orders.user_id with no evidence of index — add CREATE INDEX
-- Line 67: HIGH — Two writes outside transaction: user + account creation not atomic
-
-Verdict: REJECTED — 1 critical injection vulnerability must be resolved before Human Gate.
-```
-
 ---
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Did I flag every string interpolation into a SQL query?
-✅ Did I detect ORM queries inside for/map loops (N+1 pattern)?
-✅ Did I check JOIN columns have corresponding indexes?
-✅ Did I verify WHERE clause columns on large tables are indexed?
-✅ Did I check multi-write operations are wrapped in transactions?
-✅ Did I verify ROLLBACK exists in every transaction catch block?
-✅ Did I flag unscoped DELETE/UPDATE without WHERE clauses?
-✅ Did I flag SELECT * in production queries?
-✅ Did I check GraphQL resolvers for DataLoader usage?
-✅ Did I output a clear APPROVED/REJECTED/WARNING verdict with severity?
-```

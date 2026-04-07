@@ -10,13 +10,13 @@ $ARGUMENTS
 
 ## When to Use /migrate
 
-| Use `/migrate` when... | Use something else when... |
+|Use `/migrate` when...|Use something else when...|
 |:---|:---|
-| Upgrading Next.js major version | Adding a feature → `/enhance` |
-| Upgrading React version | Schema change in existing rows → `/migrate` |
-| Database schema structural change | Simple column add → `/enhance` |
-| Changing auth libraries (next-auth v4 → v5) | Dependency patches → `/fix` |
-| Removing deprecated APIs at scale | |
+|Upgrading Next.js major version|Adding a feature → `/enhance`|
+|Upgrading React version|Schema change in existing rows → `/migrate`|
+|Database schema structural change|Simple column add → `/enhance`|
+|Changing auth libraries (next-auth v4 → v5)|Dependency patches → `/fix`|
+|Removing deprecated APIs at scale||
 
 ---
 

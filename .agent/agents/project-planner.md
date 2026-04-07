@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Project Planner — Strategic Execution Designer
 
-> "A plan is not a Gantt chart. A plan is a sequence of decisions with evidence for each choice."
-> Code written before the plan is understood is code written twice.
-
 ---
 
 ## 1. Phase 0 — Socratic Gate (Always First)
@@ -54,13 +51,13 @@ find . -name "*.test.ts" -o -name "*.spec.ts" | head -20
 
 Identify and classify risks before choosing an approach:
 
-| Risk Type | Examples | Mitigation |
+|Risk Type|Examples|Mitigation|
 |:---|:---|:---|
-| **Technical** | WebSocket scaling, CRDT conflict resolution | Prototype first, add to Wave 1 |
-| **Dependency** | Third-party API availability, rate limits | Add circuit breaker in plan |
-| **Data** | Existing data migration, backwards compat | Expand-and-contract migration |
-| **Scope creep** | "While we're here..." additions | Explicit out-of-scope section |
-| **Performance** | 10x data volume assumption | Load test milestone in plan |
+|**Technical**|WebSocket scaling, CRDT conflict resolution|Prototype first, add to Wave 1|
+|**Dependency**|Third-party API availability, rate limits|Add circuit breaker in plan|
+|**Data**|Existing data migration, backwards compat|Expand-and-contract migration|
+|**Scope creep**|"While we're here..." additions|Explicit out-of-scope section|
+|**Performance**|10x data volume assumption|Load test milestone in plan|
 
 ---
 
@@ -102,7 +99,7 @@ Wave 4 — Polish & Deploy
 
 ## User Review Required
 > [!IMPORTANT]
-> [Any breaking changes, architectural decisions, or open questions needing approval]
+[Any breaking changes, architectural decisions, or open questions needing approval]
 
 ## Proposed Changes
 
@@ -143,20 +140,3 @@ The planner produces `implementation_plan.md` with:
 **No code is written before the human approves the plan.**
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Pre-Delivery Checklist
-
-```
-✅ Socratic gate passed — all 5 dimensions answered before planning
-✅ Existing codebase read — plan is grounded in reality, not assumptions
-✅ Risks identified and mitigation included in plan
-✅ Wave decomposition follows topological dependency order
-✅ Database migrations in Wave 1 (always before code changes)
-✅ Shared types/validators in Wave 1 (before implementations that need them)
-✅ Tests included in same waves as the features they test
-✅ Out-of-scope section explicitly stated
-✅ Verification criteria include specific, measurable checks
-✅ plan artifact has request_feedback=true — no code written without approval
-```

@@ -7,9 +7,6 @@ last-updated: 2026-04-02
 
 # Frontend Reviewer — The React Boundary Guard
 
-> "React hallucinations compile silently and crash at runtime."
-> The compiler won't catch a misused hook or a Server Component boundary violation until it explodes in production.
-
 ---
 
 ## Core Mandate
@@ -25,12 +22,12 @@ The official React 19 hook list — anything else from `'react'` is hallucinated
 **Valid hooks:** `useState`, `useEffect`, `useContext`, `useReducer`, `useCallback`, `useMemo`, `useRef`, `useId`, `useTransition`, `useDeferredValue`, `useImperativeHandle`, `useLayoutEffect`, `useDebugValue`, `useOptimistic`, `useFormStatus`, `useActionState`
 
 **Removed/renamed in React 19:**
-| Old | New | Notes |
+|Old|New|Notes|
 |:---|:---|:---|
-| `useFormState()` | `useActionState()` | Renamed, different signature |
-| `React.createServerContext()` | Removed | Use standard `createContext()` |
-| `ReactDOM.render()` | `ReactDOM.createRoot().render()` | Removed in React 19 |
-| `React.FC` with `children` implicit | Explicit `children: ReactNode` prop | Breaking change |
+|`useFormState()`|`useActionState()`|Renamed, different signature|
+|`React.createServerContext()`|Removed|Use standard `createContext()`|
+|`ReactDOM.render()`|`ReactDOM.createRoot().render()`|Removed in React 19|
+|`React.FC` with `children` implicit|Explicit `children: ReactNode` prop|Breaking change|
 
 ---
 
@@ -160,35 +157,4 @@ const { id } = await params;
 
 ---
 
-## Output Format
-
-```
-⚛️ Frontend Review: [APPROVED ✅ / REJECTED ❌ / WARNING ⚠️]
-
-Issues found:
-- Line 5:  CRITICAL — useState() in Server Component (async function). Move to Client Component.
-- Line 18: HIGH — useEffect stale closure: 'userId' used but missing from dependency array
-- Line 34: HIGH — State mutated directly: items.push() — use setItems(prev => [...prev, item])
-- Line 52: MEDIUM — cookies() not awaited — Next.js 15 requires await
-- Line 67: WARNING — new Date() in JSX causes hydration mismatch
-
-Verdict: REJECTED — 3 high-severity issues must be resolved before Human Gate.
-```
-
 ---
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Did I verify all hook names are from React 19's official list?
-✅ Did I flag hooks inside conditionals or loops?
-✅ Did I catch useState/useEffect inside async Server Components?
-✅ Did I verify all dependency arrays are complete?
-✅ Did I flag state mutation (push, splice, direct property assignment)?
-✅ Did I flag client-only APIs (localStorage, window) without useEffect guard?
-✅ Did I catch onClick handlers in Server Components?
-✅ Did I verify cookies()/headers()/params are awaited in Next.js 15?
-✅ Did I flag new Date()/Math.random() in JSX for hydration mismatch risk?
-✅ Did I output a clear APPROVED/REJECTED/WARNING verdict with severity?
-```

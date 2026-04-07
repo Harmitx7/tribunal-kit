@@ -116,24 +116,3 @@ describe('normalizeEmail', () => {
 ```
 
 ---
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `logic` · `test-coverage`**
-
-### Test Hallucination Rules
-
-1. **Real framework methods only** — check Vitest/Jest docs before using any helper. Never invent `vi.mockReturnPromise()` or `expect.assertions.count()`.
-2. **Assertions must test specific values** — `toBe('exact-value')`, not `toBeDefined()`
-3. **Failure paths must be tested** — every happy-path test needs a corresponding failure/rejection test
-4. **One behavior per test** — if `it()` tests two things, split it
-
-### Self-Audit Before Responding
-
-```
-✅ All matchers and helpers real and documented?
-✅ Assertions test specific values (not just existence)?
-✅ Failure/rejection paths covered?
-✅ Each it() tests exactly one behavior?
-✅ Mocks limited to the direct dependency under isolation?
-```

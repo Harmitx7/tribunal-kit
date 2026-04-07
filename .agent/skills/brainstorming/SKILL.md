@@ -69,8 +69,6 @@ At the end of a brainstorming session, the output MUST be distilled into a rigid
 
 ---
 
----
-
 ## Dynamic Question Generation
 
 **PRINCIPLE:** Questions are not about gathering data—they are about **revealing architectural consequences**.
@@ -105,7 +103,6 @@ First understand **where** this request fits:
 |**Greenfield** (new project)|Foundation decisions: stack, hosting, scale|
 |**Feature Addition**|Integration points, existing patterns, breaking changes|
 |**Refactor**|Why refactor? Performance? Maintainability? What's broken?|
-|**Debug**|Symptoms → Root cause → Reproduction path|
 
 #### 3. Minimum Viable Questions
 
@@ -219,7 +216,6 @@ INPUT: User request + Context (greenfield/feature/refactor/debug)
 ### 📐 Dynamic Question Template
 
 ```markdown
-Based on your request for [DOMAIN] [FEATURE]:
 
 ### 🔴 CRITICAL (Blocking Decisions)
 
@@ -312,7 +308,6 @@ STEP 4: Format Output
 ### 📊 Generated Output (Example)
 
 ```
-Based on your Instagram clone request:
 
 ### 🔴 CRITICAL DECISIONS (Cannot Proceed Without Answers)
 

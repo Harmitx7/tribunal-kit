@@ -10,11 +10,11 @@ $ARGUMENTS
 
 ## When to Use /changelog
 
-| Use `/changelog` when... | |
+|Use `/changelog` when...||
 |:---|:---|
-| Preparing a release | Generate for specific version range |
-| Documenting recent changes | Generate since last tag |
-| Onboarding someone to codebase history | Generate entire history |
+|Preparing a release|Generate for specific version range|
+|Documenting recent changes|Generate since last tag|
+|Onboarding someone to codebase history|Generate entire history|
 
 ---
 

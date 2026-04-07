@@ -10,13 +10,13 @@ $ARGUMENTS
 
 ## When to Use /tribunal-database
 
-| Use `/tribunal-database` when... | Use something else when... |
+|Use `/tribunal-database` when...|Use something else when...|
 |:---|:---|
-| Prisma queries and schema | Frontend queries → `/tribunal-frontend` |
-| Raw SQL with pg/mysql2/better-sqlite3 | API routes calling DB → `/tribunal-backend` |
-| Database migrations | Full audit → `/tribunal-full` |
-| ORM schema changes | |
-| Transaction boundaries | |
+|Prisma queries and schema|Frontend queries → `/tribunal-frontend`|
+|Raw SQL with pg/mysql2/better-sqlite3|API routes calling DB → `/tribunal-backend`|
+|Database migrations|Full audit → `/tribunal-full`|
+|ORM schema changes||
+|Transaction boundaries||
 
 ---
 
@@ -53,27 +53,6 @@ If all reviewers → ✅ APPROVED: Human Gate
 ```
 
 ---
-
-## Output Format
-
-```
-━━━ Tribunal Database ━━━━━━━━━━━━━━━━━━━━
-
-logic-reviewer:   ✅ APPROVED
-security-auditor: ❌ REJECTED
-sql-reviewer:     ⚠️ WARNING
-
-━━━ VERDICT: ❌ REJECTED ━━━━━━━━━━━━━━━━━
-
-Blockers:
-- security-auditor: [CRITICAL] SQL injection via $queryRaw at src/lib/db.ts:34
-  Code: await prisma.$queryRaw`SELECT * WHERE email = '${email}'`
-  Fix:  await prisma.$queryRaw`SELECT * WHERE email = ${email}` (Prisma auto-parameterizes)
-
-Warnings:
-- sql-reviewer: [MEDIUM] N+1 detected — posts fetched inside user loop at src/lib/feed.ts:56
-  Fix: Use include: { posts: true } in findMany() instead of for-loop fetches
-```
 
 ---
 

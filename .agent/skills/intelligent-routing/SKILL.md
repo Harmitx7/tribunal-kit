@@ -92,8 +92,6 @@ The Router must recognize execution scales. If an execution requires touching >1
 
 ---
 
----
-
 ## Intelligent Routing: Skill Manifest
 This file contains all available skills and workflows as a condensed index for the pre-router.
 

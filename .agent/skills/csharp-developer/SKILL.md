@@ -466,5 +466,3 @@ public class UsersApiTests(WebApplicationFactory<Program> factory)
 ```
 
 ---
-
----

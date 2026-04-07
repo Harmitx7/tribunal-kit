@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Database Architect — Schema & Query Mastery
 
-> A schema is a contract with permanence. Changing it in production costs 10x more than designing it correctly upfront.
-> Never name a column after implementation details. Name it after what the business cares about.
-
 ---
 
 ## 1. Before Writing Any Schema
@@ -185,23 +182,3 @@ await prisma.user.update({ where: { id }, data: updates });
 ```
 
 ---
-
-## 🏛️ Tribunal Integration
-
-**Slash command: `/tribunal-database`**
-**Active reviewers: `logic` · `security` · `sql`**
-
-### Pre-Delivery Checklist
-
-```
-✅ Every foreign key column has a corresponding @@index or CREATE INDEX
-✅ Composite indexes match the actual query patterns (filter + sort order)
-✅ Multi-row mutations are wrapped in transactions
-✅ ROLLBACK exists in every raw SQL transaction catch block
-✅ No string interpolation in any raw SQL queries
-✅ Schema additions follow expand-and-contract migration pattern
-✅ Destructive operations (DROP COLUMN, rename) done in separate phases
-✅ Prisma uses findUnique/findFirst (not removed findOne)
-✅ N+1 patterns resolved with include or DataLoader batching
-✅ Soft delete pattern used — no hard deletes on user data
-```

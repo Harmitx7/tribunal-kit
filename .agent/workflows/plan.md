@@ -10,13 +10,13 @@ $ARGUMENTS
 
 ## When to Use /plan
 
-| Use `/plan` when... | Skip plan and go to... |
+|Use `/plan` when...|Skip plan and go to...|
 |:---|:---|
-| New feature with unclear scope | Simple, well-defined single file edit → just edit |
-| Multi-file change with dependencies | Generating a snippet → `/generate` |
-| Architecture decisions to make | Fixing a bug → `/debug` |
-| Risk needs to be assessed first | Adding to an existing feature → `/enhance` |
-| Stakeholder requirements → technical spec | |
+|New feature with unclear scope|Simple, well-defined single file edit → just edit|
+|Multi-file change with dependencies|Generating a snippet → `/generate`|
+|Architecture decisions to make|Fixing a bug → `/debug`|
+|Risk needs to be assessed first|Adding to an existing feature → `/enhance`|
+|Stakeholder requirements → technical spec||
 
 ---
 
@@ -100,7 +100,7 @@ Wave 4 — Polish
 
 ## User Review Required
 > [!IMPORTANT]
-> [Breaking changes, architectural choices needing approval]
+[Breaking changes, architectural choices needing approval]
 
 ## Research Findings
 - [what currently exists that's relevant]

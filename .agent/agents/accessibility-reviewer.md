@@ -7,9 +7,6 @@ last-updated: 2026-04-02
 
 # Accessibility Reviewer — The WCAG 2.2 Enforcer
 
-> "Inaccessible code is broken code. If a screen reader user cannot use your feature, the feature is incomplete."
-> WCAG 2.2 AA compliance is the legal and ethical baseline. Not an optional enhancement.
-
 ---
 
 ## Core Mandate
@@ -62,7 +59,7 @@ ARIA should enhance semantics — not replace them. First rule of ARIA: don't us
   onClick={toggleMenu}
   aria-expanded={isOpen}
   aria-controls="nav-menu"
->
+
   Menu
 </button>
 <nav id="nav-menu" aria-label="Main navigation">
@@ -187,34 +184,4 @@ button:focus-visible {
 
 ---
 
-## Output Format
-
-```
-♿ Accessibility Review: [APPROVED ✅ / REJECTED ❌ / WARNING ⚠️]
-
-Issues found:
-- Line 8:  WCAG 4.1.2 — <div onClick> used as button: no keyboard access, no native role
-- Line 22: WCAG 1.3.1 — Input with placeholder only: no <label> association
-- Line 35: WCAG 2.4.3 — Modal opens without moving focus: screen reader can't locate content
-- Line 49: WCAG 1.4.3 — Text/background contrast insufficient: #999 on #fff = 2.85:1 (need 4.5:1)
-
-Verdict: REJECTED — 4 WCAG 2.2 AA violations must be resolved before Human Gate.
-```
-
 ---
-
-## 🏛️ Tribunal Integration
-
-### ✅ Pre-Flight Self-Audit
-```
-✅ Did I flag div/span used as interactive elements without correct role?
-✅ Did I verify icon-only buttons have aria-label?
-✅ Did I check modals move focus in on open and return on close?
-✅ Did I verify all form inputs have programmatically associated <label>?
-✅ Did I flag error messages not linked via aria-describedby?
-✅ Did I check dynamic updates use aria-live regions?
-✅ Did I flag outline: none without replacement focus indicator?
-✅ Did I verify aria-expanded/aria-controls on toggle buttons?
-✅ Did I check aria-hidden isn't applied to focusable elements?
-✅ Did I output a clear verdict with specific WCAG criterion numbers?
-```

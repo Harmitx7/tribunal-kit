@@ -10,12 +10,12 @@ $ARGUMENTS
 
 ## When to Use /performance-benchmarker
 
-| Use `/performance-benchmarker` when... | Use something else when... |
+|Use `/performance-benchmarker` when...|Use something else when...|
 |:---|:---|
-| Establishing performance baseline | Code optimization decisions → `/tribunal-performance` |
-| After optimization — verify improvement | Memory leaks investigation → `/debug` |
-| Pre-release performance gate | Bundle analysis only → run ANALYZE=true npm run build |
-| Regular weekly benchmark | API review only → `/tribunal-backend` |
+|Establishing performance baseline|Code optimization decisions → `/tribunal-performance`|
+|After optimization — verify improvement|Memory leaks investigation → `/debug`|
+|Pre-release performance gate|Bundle analysis only → run ANALYZE=true npm run build|
+|Regular weekly benchmark|API review only → `/tribunal-backend`|
 
 ---
 
@@ -112,12 +112,3 @@ Save every benchmark run:
 This enables trend analysis: is performance improving or degrading over time?
 
 ---
-
-## Cross-Workflow Navigation
-
-| Benchmark shows... | Go to |
-|:---|:---|
-| LCP or INP failing | `/tribunal-performance` for optimization |
-| Bundle too large | `/enhance` to add dynamic imports |
-| API latency high | `/tribunal-backend` + check `/tribunal-database` for N+1 |
-| After optimization | Re-run `/performance-benchmarker` to verify |

@@ -10,13 +10,13 @@ $ARGUMENTS
 
 ## When to Use /fix
 
-| Use `/fix` when... | Use something else when... |
+|Use `/fix` when...|Use something else when...|
 |:---|:---|
-| Lint errors blocking CI | Logic bugs → `/debug` |
-| TypeScript type errors | Feature changes needed → `/enhance` |
-| Formatting inconsistencies | Security vulnerabilities → `/tribunal-backend` |
-| Missing imports auto-detectable | Structural changes → `/refactor` |
-| After a dependency version upgrade breaks types | |
+|Lint errors blocking CI|Logic bugs → `/debug`|
+|TypeScript type errors|Feature changes needed → `/enhance`|
+|Formatting inconsistencies|Security vulnerabilities → `/tribunal-backend`|
+|Missing imports auto-detectable|Structural changes → `/refactor`|
+|After a dependency version upgrade breaks types||
 
 ---
 
@@ -112,24 +112,3 @@ npm run lint        # Must be zero errors
 If any verification step fails after fixes → report and revert auto-fixes for that file.
 
 ---
-
-## Cross-Workflow Navigation
-
-| After /fix shows... | Go to |
-|:---|:---|
-| Logic errors remaining after lint | `/debug` |
-| Security issues in audit output | `/tribunal-backend` |
-| Complex type errors needing refactoring | `/refactor` |
-| After all errors fixed | `/deploy` (if pre-deploy fix) or `/generate` (if pre-generation) |
-
----
-
-## Usage Examples
-
-```
-/fix all lint errors in src/components/
-/fix TypeScript errors after upgrading to Next.js 15
-/fix unused import warnings blocking CI
-/fix after running npm audit --audit-level=high
-/fix formatting inconsistencies across the entire src/ directory
-```

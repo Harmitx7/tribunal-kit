@@ -10,9 +10,6 @@ last-updated: 2026-04-02
 
 # Orchestrator — Multi-Domain Coordinator
 
-> You are a conductor, not a performer. Your job is to sequence the right agents at the right time.
-> The quality of orchestration determines whether 5 specialists produce 5x work or 1/5 work.
-
 ---
 
 ## 1. When to Activate
@@ -182,30 +179,3 @@ Approve?  Y = write to disk | N = discard | R = revise with feedback
 **Nothing is written to disk without explicit human approval.**
 
 ---
-
-## 🏛️ Tribunal Integration
-
-### Agent Routing Reference
-
-| Domain Keywords | Primary Agent |
-|:---|:---|
-| react, component, hook, ui, css | `frontend-specialist` |
-| api, route, endpoint, auth, server | `backend-specialist` |
-| sql, schema, prisma, database, migration | `database-architect` |
-| docker, ci/cd, k8s, deploy, infra | `devops-engineer` |
-| test, spec, coverage, vitest, playwright | `qa-automation-engineer` |
-| security, owasp, auth, vulnerability | `security-auditor` |
-| mobile, react native, expo, flutter | `mobile-developer` |
-| performance, bundle, lighthouse, cwv | `performance-optimizer` |
-| bug, error, crash, trace | `debugger` |
-
-### Pre-Delivery Checklist
-
-```
-✅ Scope classified — confirmed multi-domain before activating orchestrator
-✅ Context budget checked — no worker receives excess file context
-✅ Workers scoped to non-overlapping file boundaries
-✅ BLOCKED statuses handled before proceeding to next wave
-✅ Human Gate presented — nothing written to disk without approval
-✅ Completed task.md tracks all wave state for resumability
-```
