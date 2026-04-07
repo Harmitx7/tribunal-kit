@@ -32,7 +32,7 @@ BOLD = "\033[1m"
 RESET = "\033[0m"
 
 SOURCE_EXTENSIONS = {".ts", ".tsx", ".js", ".jsx", ".py", ".go", ".java", ".rb"}
-SKIP_DIRS = {"node_modules", ".git", "dist", "build", "__pycache__", ".agent", ".next", "vendor"}
+SKIP_DIRS = {"node_modules", ".git", "dist", "build", "__pycache__", ".agent", ".next", "vendor", "coverage", "lcov-report", ".nyc_output", "test-results", ".jest-cache"}
 
 
 @dataclass

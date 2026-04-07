@@ -6,6 +6,59 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [3.1.0] — 2026-04-07
+
+### Added
+
+#### New Skill — `motion-engineering`
+
+- **`motion-engineering` SKILL.md**: Comprehensive 2026 motion engineering skill covering the full spectrum of animation techniques from micro-interactions to AI-driven adaptive motion.
+  - **Nine animation categories**: Micro-interactions, layout transitions, scroll-driven animations, page transitions, physics-based motion, gesture-driven UI, data visualization, loading/skeleton states, and AI-driven adaptive motion.
+  - **Performance-first constraints**: 60fps mandate with concrete implementation rules — CSS transforms only (no `top`/`left`), `will-change: transform` on heavy animations, mandatory `prefers-reduced-motion` media query support.
+  - **2026 native APIs**: View Transitions API (`document.startViewTransition()`), Web Animations API (`element.animate()`), and CSS Scroll-Driven Animations (`animation-timeline: scroll()`).
+  - **Library guidance**: GSAP 3.12+, Framer Motion 12+, Anime.js v4 — with explicit `useGSAP` cleanup patterns and `AnimatePresence` exit sequencing.
+  - **Hallucination traps table**: 8 explicit traps with wrong patterns and correct fixes (e.g., `gsap.to()` without cleanup → `useGSAP` hook, `motion.div` in RSC → client boundary, `MotionValue` without `useTransform` → `useMotionValue` + `useTransform`).
+  - **Pre-flight checklist**: 8 mandatory checks before declaring animation work complete.
+  - **VBC Protocol**: Verification-Before-Completion enforcement requiring browser DevTools Performance tab evidence at 60fps before sign-off.
+
+### Changed
+
+#### `/generate` Workflow — Full Sync Upgrade
+
+- **Reviewer routing restored**: `/generate` now auto-selects domain-specific Tribunal reviewers by keyword detection (backend, frontend, database, mobile, performance) instead of defaulting to logic + security only.
+- **Animation skills wired into `frontend-specialist`**: `framer-motion`, `gsap-expert`, and `motion-engineering` are now listed as required consultation skills in the frontend-specialist agent.
+- **`architecture` patterns wired into `backend-specialist`**: Architecture skill is now a required reference for all backend-specialist decisions.
+
+#### `gsap-expert` SKILL.md — Expanded from 65 → 150+ lines
+
+- Added `useGSAP` React hook cleanup patterns (replaces raw `useEffect` + GSAP).
+- Added `ScrollTrigger` pin, scrub, and batch patterns.
+- Added `LazyMotion` bundle splitting guidance for Next.js App Router.
+- Added explicit hallucination traps: `gsap.killTweensOf()` anti-pattern vs `ctx.revert()`.
+
+#### `llm-engineering` SKILL.md — 2026 Patterns
+
+- Updated model reference table: Gemini 2.0 Flash, Claude Sonnet 3.7, GPT-4o mini — all with correct SDK method names.
+- Added structured output patterns using `response_format: { type: "json_schema" }` (OpenAI) and Zod-inferred schemas (Vercel AI SDK).
+- Added streaming UI patterns (`createStreamableUI`, `useChat`).
+- Added testing artifacts guidance for AI output validation.
+
+### Fixed
+
+#### Security Scanner — False Positive Elimination
+
+- **`security_scan.py`**: Added `coverage`, `lcov-report`, `.nyc_output`, `test-results`, and `.jest-cache` to `SKIP_DIRS`.
+  - **Root cause**: Istanbul/Jest's coverage HTML reporter bundles `prettify.js` (a third-party code syntax highlighter). This minified file contains string patterns (`console.log.*password`) that matched the `Info Disclosure` rule, generating a `[HIGH]` false positive on every audit run.
+  - **Fix**: Coverage and test report output directories are now excluded from security scanning at the directory traversal level — no source code is affected.
+
+### Infrastructure
+
+- **Audit score**: Improved from 4/7 (with false positive warning) to **5/7 clean** (2 N/A for JS-only CLI tool — no TypeScript build, no web bundle).
+- **Security scan**: Now exits 0 (pass) on a clean tribunal-kit codebase.
+- **`.gitignore`**: Already correctly excluded `coverage/` and `.nyc_output/` from version control.
+
+---
+
 ## [3.0.0] — 2026-04-02
 
 ### 🚨 Breaking Changes

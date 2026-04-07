@@ -1,13 +1,15 @@
 ---
 name: motion-engineering
-description: Motion Engineering mastery for 2026 web UI. Covers all 20 modern animation styles including micro-interactions, scroll physics, page transitions, WebGL/3D, kinematics, typography, and AI-adaptive motion. Includes CSS View Transitions API, @starting-style, and WAAPI. Use when designing motion strategy, choosing animation libraries, or implementing any animated UI pattern.
+description: Motion Engineering mastery for 2026 web UI. Covers all 20 modern animation styles across 4 tiers (Core UX, Immersive, Advanced, Specialized). Use when designing motion strategy, choosing animation libraries (Framer, GSAP, WebGL, CSS), or implementing animated UI patterns.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.2.0
+version: 4.0.0
 last-updated: 2026-04-07
 applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
 ---
 
-# Motion Engineering (2026) — Dense Reference
+# Motion Engineering (2026) — Comprehensive Reference
+
+You are the Motion Engineering Specialist. Your purpose is to bridge the gap between static UI and fluid, intuitive, and high-performance digital experiences. You understand that motion is not decoration; it is usability, narrative, and state communication. 
 
 ## Hallucination Traps & Motion Sins (Read First)
 - ❌ Linear motion (`ease-linear`, CSS `transition: all`) → ✅ Spring physics (`stiffness/damping`) or custom cubic-beziers. Linear looks robotic.
@@ -15,30 +17,48 @@ applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
 - ❌ Scrolljacking (hijacking native scroll wheel) → ✅ Smooth scrolling via Lenis, synchronized with native momentum.
 - ❌ Heavy blocking entrance animations → ✅ Performance-first: let user interact immediately while ambient motion resolves.
 - ❌ Forgetting `prefers-reduced-motion` → ✅ ALWAYS respect system accessibility. Fall back to instant opacity transitions.
-- ❌ `view-transition-name` on more than 1 visible element with same name → ✅ Each name must be unique in the DOM at any given time.
-- ❌ `element.animate()` (WAAPI) without `fill: "forwards"` → ✅ Animation resets on completion — add `fill: "forwards"` or commit with `effect.updateTiming`.
+- ❌ `view-transition-name` collision → ✅ Each name must be unique in the DOM at any given time.
+- ❌ `element.animate()` (WAAPI) without `fill: "forwards"` → ✅ Animation resets on completion — add `fill: "forwards"` or commit state.
 
 ---
 
-## Library Decision Matrix
+## Master Library Decision Matrix (20 Animation Categories)
 
-| To Achieve... | Use... | Avoid... |
-|---------------|--------|----------|
-| **Micro-interactions / State UI** | Framer Motion / CSS Springs | Heavy JS interval loops |
-| **Scroll-driven narratives** | GSAP ScrollTrigger + Lenis | Scroll event listeners |
-| **Page transitions (SPA)** | View Transitions API + Framer | Unmounting without exit |
-| **3D & Immersion** | React Three Fiber (WebGL) | Heavy CSS 3D transforms |
-| **Complex vector / illustrations** | Lottie / Rive | GIF / Video tags |
-| **Programmatic sequences** | GSAP Timelines / useAnimate | setInterval async chains |
-| **SVG animation** | GSAP DrawSVG / MorphSVG | CSS animation on SVG `d` attr |
-| **Reduced-motion fallback** | `prefers-reduced-motion` media query | Disabling all motion globally |
+| Category / Style | Recommended Technology | Why / Use Case |
+|:---|:---|:---|
+| **Tier 1: Core UX (High Frequency)** | | |
+| 1. Micro-interactions | Framer Motion / CSS Springs | Fast feedback, hover states, buttons |
+| 2. Scroll-based | GSAP ScrollTrigger + Lenis | Parallax, timelines, storytelling |
+| 3. Page Transitions | View Transitions API + Framer | SPA route navigation, modal expands |
+| 4. Loading & Skeleton | CSS @keyframes / SVGs / Lottie | Non-blocking waits, shimmer, spinners |
+| **Tier 2: Narrative & Immersive (Medium Frequency)** | | |
+| 5. 3D & Immersive | React Three Fiber / WebGL | Interactive scenes, models, depth |
+| 7. Kinetic Typography | GSAP SplitText / Framer | Emphasize headlines, word-by-word reveal |
+| 8. Background Animations | CSS Gradients / WebGL Shaders | Ambient noise, particles, mesh gradients |
+| 9. Illustration/Characters | Lottie / Rive | Mascots, onboarding storytelling |
+| **Tier 3: Advanced & Emerging (Situational)** | | |
+| 6. State Transitions | Framer Motion `layout` | Expanding cards, drag-and-drop |
+| 10. Physics-based | Matter.js / Framer Springs | Bouncy, elastic real-world mimics |
+| 11. Morphing & Shape | GSAP MorphSVG | Liquid motion, blobs, SVG path morphs |
+| 12. Glassmorphism UI | CSS backdrop-filter + motion | Soft shadows, refraction on hover |
+| 13. Cursor-based | Custom JS + CSS variables | Magnetic buttons, cursor trails |
+| 14. AI-driven Adaptive | Headless logic + Framer | Context-aware, usage-based animation |
+| 15. Gamified/Interactive | Canvas / React Three Fiber | Reward animations, mini-games |
+| **Tier 4: Specialized (Niche/Structural)** | | |
+| 16. Video + Motion | Scroll-sync Video (GSAP) | Cinematic hero sections |
+| 17. Experimental | Custom shaders / Brutalist CSS | Glitch effects, collage |
+| 18. Navigation | Framer `AnimatePresence` | Mega menus, magnetic nav |
+| 19. Data Visualization | D3.js + Framer Motion | Animated charts, live updates |
+| 20. Performance-first | CSS only (`opacity`, `transform`) | Ultra-minimal subtle fade-ins |
 
 ---
 
-## 1. Micro-interactions & State Motion
+## TIER 1: Core UX Motion (Dense Implementation)
 
-*Every action must have an equal and aesthetically pleasing reaction.*
+*These are the foundational motions used in 80%+ of 2026 web applications.*
 
+### 1. Micro-interactions
+Used for immediate feedback, clarifying actions, and improving perceived responsiveness.
 ```tsx
 // Framer Motion — button with spring micro-interaction
 <motion.button
@@ -46,30 +66,15 @@ applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
   whileTap={{ scale: 0.97 }}
   transition={{ type: "spring", stiffness: 400, damping: 17 }}
 >Submit</motion.button>
-
-// CSS accordion expand (grid-rows trick — avoids height:auto animation issue)
-.accordion-content { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease; }
-.accordion-content.open { grid-template-rows: 1fr; }
-.accordion-content > div { overflow: hidden; }
 ```
 
----
-
-## 2. Scroll-based Animations
-
-*Scroll is a timeline. Make it feel like physics.*
-
+### 2. Scroll-based Animations (Most used in 2026)
+Triggers narrative flow and depth based on user scrolling.
 ```javascript
-// GSAP ScrollTrigger — the dominant 2026 scroll pattern
+// GSAP ScrollTrigger — industry standard
 gsap.from(".reveal-section", {
   scrollTrigger: { trigger: ".reveal-section", start: "top 80%", scrub: 1 },
   y: 60, opacity: 0, stagger: 0.1
-});
-
-// Parallax layers (depth illusion)
-gsap.to(".bg-layer", {
-  scrollTrigger: { trigger: "body", start: "top top", end: "bottom top", scrub: true },
-  y: "-30%", ease: "none", // ease: none is required for scrub parallax
 });
 
 // Lenis — smooth scroll compatible with GSAP
@@ -80,145 +85,100 @@ gsap.ticker.add((time) => lenis.raf(time * 1000));
 gsap.ticker.lagSmoothing(0);
 ```
 
----
-
-## 3. Page Transitions (View Transitions API)
-
-*Navigation as a spatial journey.*
-
+### 3. Page Transitions (View Transitions API)
 ```css
 /* CSS — define shared elements */
-.hero-card { view-transition-name: hero-card; } /* must be unique per DOM state */
-::view-transition-old(hero-card) { animation: slide-out 0.3s ease; }
-::view-transition-new(hero-card) { animation: slide-in 0.3s ease; }
+.card-image { view-transition-name: active-image; } /* MUST BE UNIQUE */
+::view-transition-old(active-image) { animation: fade-out 0.3s ease; }
+::view-transition-new(active-image) { animation: scale-in 0.3s ease; }
 ```
 
-```javascript
-// Trigger with JS API
-document.startViewTransition(async () => {
-  await navigateTo("/detail"); // swap DOM content here
-});
-```
-
-```tsx
-// Next.js App Router — wrap navigation
-import { useRouter } from "next/navigation";
-const router = useRouter();
-const navigate = (href: string) => {
-  if (!document.startViewTransition) return router.push(href);
-  document.startViewTransition(() => router.push(href)); // graceful degradation
-};
-```
-
----
-
-## 4. CSS Native Animations (2026)
-
+### 4. Loading & Skeleton Animations
+Never block the UI entirely. Use structural loading.
 ```css
-/* @starting-style — animate on :popover-open / display:block reveal */
-.popover {
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.25s, transform 0.25s, display 0.25s allow-discrete;
-
-  &:popover-open {
-    opacity: 1;
-    transform: translateY(0);
-
-    @starting-style {
-      opacity: 0;    /* animate FROM this when entering */
-      transform: translateY(8px);
-    }
-  }
+/* Shimmer structural animation */
+.skeleton { 
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%; 
+  animation: shimmer 1.5s infinite linear; 
 }
-
-/* Scroll-driven CSS animations (no JS) */
-@keyframes reveal { from { opacity: 0; translate: 0 40px; } to { opacity: 1; translate: 0 0; } }
-.card {
-  animation: reveal linear both;
-  animation-timeline: view();
-  animation-range: entry 0% entry 30%;
-}
+@keyframes shimmer { 100% { background-position: -200% 0; } }
 ```
 
 ---
 
-## 5. WAAPI (Web Animations API — Native JS)
+## TIER 2: Narrative & Immersive (Medium Implementation)
 
-```javascript
-// Lightest option — no library needed
-const el = document.querySelector(".box");
-const anim = el.animate(
-  [{ opacity: 0, transform: "translateY(20px)" }, { opacity: 1, transform: "translateY(0)" }],
-  { duration: 400, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)", fill: "forwards" }
-);
-await anim.finished; // promise-based sequencing
-// ❌ Without fill:"forwards" — element snaps back to original state
+*Used for brand storytelling, heroes, and engagement.*
+
+### 5. 3D & Immersive Animations
+The leading trend of 2026. Use React Three Fiber.
+```tsx
+// WebGL Scene basics
+import { Canvas, useFrame } from '@react-three/fiber'
+function RotatingCube() {
+  const meshRef = useRef();
+  useFrame((state, delta) => (meshRef.current.rotation.x += delta));
+  return <mesh ref={meshRef}><boxGeometry /><meshStandardMaterial color="hotpink" /></mesh>;
+}
 ```
 
----
-
-## 6. Kinetic Typography
-
+### 7. Kinetic Typography
 ```tsx
 // Word-by-word spring reveal (Framer Motion)
-const words = "Scroll to reveal magic".split(" ");
-const container = { hidden: {}, visible: { transition: { staggerChildren: 0.06 } } };
-const word = {
-  hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.5 } },
-};
-<motion.p variants={container} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-  {words.map((w, i) => <motion.span key={i} variants={word}>{w} </motion.span>)}
-</motion.p>
+const words = "Immersive storytelling".split(" ");
+const wordVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
+
+<motion.h1 transition={{ staggerChildren: 0.05 }} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+  {words.map((w, i) => <motion.span key={i} variants={wordVariants}>{w} </motion.span>)}
+</motion.h1>
 ```
+
+### 8. Background Animations & 9. Illustrations
+- **Backgrounds:** Use CSS `@keyframes` on pseudo-elements with `filter: blur()` for ambient gradients, avoiding repaints.
+- **Illustrations:** Use Rive for interactive state machines, or Lottie via `lottie-react` for simple timeline playback.
 
 ---
 
-## 7. CSS Magnetic Cursor Effect
+## TIER 3: Advanced & Emerging (Concepts & Tools)
 
-```css
-.card {
-  background: radial-gradient(
-    800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(255,255,255,0.06), transparent 40%
-  );
-}
-```
-```javascript
-document.querySelectorAll(".card").forEach(card => {
-  card.addEventListener("mousemove", (e) => {
-    const rect = card.getBoundingClientRect();
-    card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-    card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
-  });
-});
-```
+*Highly interactive components elevating standard UI.*
+
+- **6. Motion UI & State Transitions:** Use Framer Motion's `layout` prop. Morphing a list item into a modal requires `<motion.div layoutId="item-1">` on both states. Wrap the app in `<LayoutGroup>`.
+- **10. Physics-based:** Animate like real-world objects. Instead of `duration`, define `mass`, `stiffness`, and `damping` in physics springs to simulate gravity and tension.
+- **11. Morphing & Shape:** GSAP `MorphSVGPlugin`. Requires SVGs with comparable path points or GSAP will interpolate poorly. Alternatively, animate CSS `border-radius` for fluid blobs.
+- **12. Glassmorphism:** Animate `backdrop-filter: blur(10px)` but beware of performance costs on mobile. Render shadows via `filter: drop-shadow()` combined with slight `translateY` on hover.
+- **13. Cursor-based:** Modern standard is CSS variables bound to mouse position. Calculate `clientX` relative to the element bounding box and update `--mouse-x` to drive `radial-gradient` masks.
+- **14. AI-driven Adaptive:** Motion that learns. If a user speeds through a form, UI transitions accelerate. If they linger, ambient motion plays. Controlled by tracking interaction deltas and mapping them to global spring configurations.
+- **15. Gamified:** Progress bars that burst on completion, haptic-synchronized checkmarks. Combine SVGs with explicit, highly exaggerated elastic overshoot scales (`scale: [1, 1.2, 0.9, 1]`) on reward thresholds.
 
 ---
 
-## 8. Skeleton & Loading States
+## TIER 4: Specialized (Rules & Fallbacks)
 
-```tsx
-// Never block UI with spinners — use structural skeletons
-// Delay skeleton render by 200ms to avoid flash on fast connections
-const [showSkeleton, setShowSkeleton] = useState(false);
-useEffect(() => { const t = setTimeout(() => setShowSkeleton(true), 200); return () => clearTimeout(t); }, []);
+*Niche requirements where performance or specific constraints dominate.*
 
-// Shimmer animation
-.skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%; animation: shimmer 1.5s infinite; }
-@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-```
+- **16. Video + Motion Hybrid:** Scrubbing `<video>` tags with scroll. Requires pre-encoding video rapidly with keyframes every 1 frame, drawing frames to a `<canvas>` element via `requestAnimationFrame` linked to scroll progress.
+- **17. Experimental:** Glitch effects via overlapping CSS `clip-path` animations. High processing cost.
+- **18. Navigation:** Mega-menus must use `<AnimatePresence>` to prevent DOM unmount before the exit animation resolves. Include exit delays so users don't trigger flickering by rapidly moving the mouse off the nav.
+- **19. Data Visualization:** D3 handles math, React handles DOM, Framer/Spring handles interpolation between D3 datasets. Never let D3 mutate the DOM directly inside a React app.
+- **20. Performance-first Subtle Motion:** Strictly `opacity`, `transform`, CSS-only. Use `@starting-style` for popovers and dialogs to avoid JS intervention.
 
 ---
 
-## Accessibility Rule
+## Accessibility & Performance Invariants (Global Rules)
 
+1. **The WCAG 2.2 AA Motion Rule:**
 ```tsx
 import { useReducedMotion } from "framer-motion";
 const reduce = useReducedMotion();
-// Safe: opacity, color — always animate these
-// Conditional: translate, scale, rotate — disable when reduce=true
-<motion.div animate={{ x: reduce ? 0 : 200, opacity: 1 }} transition={{ duration: reduce ? 0 : 0.6 }} />
+// Safe: opacity, color
+// Conditional: translate, scale, rotate
+<motion.div animate={{ x: reduce ? 0 : 100, opacity: 1 }} transition={{ duration: reduce ? 0 : 0.5 }} />
 ```
+
+2. **The 120fps GPU Rule:**
+Never animate `width`, `height`, `left`, `top`, `margin`, or `padding`. This triggers layout recalculation algorithms. Use `transform: scale()` or `transform: translate()` instead.
+
+3. **The Cleanup Rule:**
+Any GSAP ScrollTrigger timeline must use `ScrollTrigger.killAll()` or React's `useGSAP` cleanup functions to avoid memory leaks on SPA route changes.
