@@ -2,9 +2,9 @@
 name: llm-engineering
 description: LLM engineering mastery for production AI systems. Prompt engineering, RAG pipeline design, vector store selection, embedding strategies, chunking, reranking, structured output, function calling, streaming, evals, guard-rails, cost optimization, and LLMOps. Use when building AI features, chat interfaces, semantic search, or any system calling an LLM API.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-01
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
+version: 3.2.0
+last-updated: 2026-04-07
+applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
 ---
 
 # LLM Engineering — Production AI Systems Mastery
@@ -16,22 +16,25 @@ applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ```
 Model                    │ Use Case                              │ Cost Tier
 ─────────────────────────┼───────────────────────────────────────┼──────────
-GPT-4o                   │ Complex reasoning, code generation    │ $$$
+GPT-4o                   │ Complex reasoning, vision, code       │ $$$
 GPT-4o-mini              │ Classification, summaries, chat       │ $
+o3-mini                  │ Deep reasoning, math, code review     │ $$
 Claude 3.7 Sonnet        │ Long documents, analysis, code        │ $$$
 Claude 3.5 Haiku         │ Fast responses, simple tasks          │ $
-Gemini 2.5 Pro           │ Large context, multimodal, code       │ $$$
-Gemini 2.5 Flash         │ High throughput, cost-efficient       │ $
+Gemini 3.1 Pro (High)    │ Large context, multimodal, code       │ $$$
+Gemini 3.0 Flash         │ High throughput, cost-efficient       │ $
 Llama 3.3 70B (open)     │ Self-hosted, data privacy             │ Free*
-Mistral Large            │ European data residency, code         │ $$
+Mistral Large 2          │ European data residency, code         │ $$
 
 * = compute costs only
 
 Selection rules:
-1. Start with the cheapest model that works
+1. Start with the cheapest model that passes your evals
 2. Upgrade only when eval scores require it
-3. Use large models for complex reasoning, small models for classification
+3. Use large models for complex reasoning, small for classification/routing
 4. Fine-tune ONLY after prompt engineering and RAG are exhausted
+5. ❌ HALLUCINATION TRAP: Model names change frequently — always verify current names
+   from provider docs before hardcoding (e.g. "gpt-4o" vs "gpt-4o-2024-11-20")
 ```
 
 ---
@@ -78,36 +81,57 @@ const SentimentSchema = z.object({
   topics: z.array(z.string()),
 });
 
-type Sentiment = z.infer<typeof SentimentSchema>;
-
-async function analyzeSentiment(text: string): Promise<Sentiment> {
+// OpenAI — json_schema mode (strict = true enforces schema exactly)
+async function analyzeSentiment(text: string) {
   const response = await openai.chat.completions.create({
     model: "gpt-4o-mini",
-    response_format: { type: "json_object" },
-    messages: [
-      {
-        role: "system",
-        content: `Analyze the sentiment of the given text.
-Respond with JSON matching this schema:
-{
-  "sentiment": "positive" | "negative" | "neutral",
-  "confidence": 0-1,
-  "reasoning": "brief explanation",
-  "topics": ["topic1", "topic2"]
-}`,
+    response_format: {
+      type: "json_schema",
+      json_schema: {
+        name: "sentiment_analysis",
+        strict: true,
+        schema: {
+          type: "object",
+          properties: {
+            sentiment: { type: "string", enum: ["positive", "negative", "neutral"] },
+            confidence: { type: "number" },
+            reasoning: { type: "string" },
+            topics: { type: "array", items: { type: "string" } },
+          },
+          required: ["sentiment", "confidence", "reasoning", "topics"],
+          additionalProperties: false, // required for strict mode
+        },
       },
-      { role: "user", content: text },
-    ],
+    },
+    messages: [{ role: "system", content: "Analyze sentiment." }, { role: "user", content: text }],
   });
-
   const raw = JSON.parse(response.choices[0].message.content ?? "{}");
-  return SentimentSchema.parse(raw); // Zod validates the LLM response
+  return SentimentSchema.parse(raw); // always validate with Zod even in strict mode
 }
 
+// Gemini — response_mime_type + response_schema
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const model = genAI.getGenerativeModel({
+  model: "gemini-2.0-flash",
+  generationConfig: {
+    responseMimeType: "application/json",
+    responseSchema: {
+      type: SchemaType.OBJECT,
+      properties: {
+        sentiment: { type: SchemaType.STRING, enum: ["positive", "negative", "neutral"] },
+        confidence: { type: SchemaType.NUMBER },
+        topics: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+      },
+      required: ["sentiment", "confidence", "topics"],
+    },
+  },
+});
+
 // ❌ HALLUCINATION TRAP: Always validate LLM JSON output with Zod/schema
-// LLMs produce malformed JSON, wrong types, missing fields
+// LLMs produce malformed JSON, wrong types, missing fields even with strict mode
 // ❌ const result = JSON.parse(response); // trust blindly
-// ✅ const result = Schema.parse(JSON.parse(response)); // validate
+// ✅ const result = Schema.parse(JSON.parse(response)); // validate always
 ```
 
 ### Function Calling / Tool Use

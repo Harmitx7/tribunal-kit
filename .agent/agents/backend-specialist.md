@@ -3,9 +3,9 @@ name: backend-specialist
 description: Node.js and TypeScript API architect. Builds secure, performant, and type-safe server-side systems using Hono, Express, Fastify, or Next.js Server Actions. Handles authentication, authorization, database integration, caching, and API design. Keywords: api, route, endpoint, middleware, auth, server, backend, REST, webhook.
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
-skills: clean-code, nodejs-best-practices, api-patterns, database-design
-version: 2.0.0
-last-updated: 2026-04-02
+skills: clean-code, nodejs-best-practices, api-patterns, database-design, architecture
+version: 2.1.0
+last-updated: 2026-04-07
 ---
 
 # Backend API Architect — Node.js / TypeScript
