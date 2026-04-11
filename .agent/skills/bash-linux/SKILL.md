@@ -7,6 +7,15 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Scripts without `set -euo pipefail` -> ✅ Always enable strict mode to catch silent failures
+- ❌ Using `[ ]` instead of `[[ ]]` for conditionals -> ✅ `[[ ]]` handles spaces in variables and supports regex
+- ❌ Parsing `ls` output -> ✅ Use `find` or glob expansion instead; `ls` output is not portable
+- ❌ `cat file | grep` (useless use of cat) -> ✅ `grep pattern file` directly
+
+---
+
+
 # Bash & Linux — Shell Scripting Mastery
 
 ---

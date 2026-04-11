@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Mocking everything in integration tests -> ✅ Integration tests verify real interactions; mock only external services (APIs, DBs)
+- ❌ Testing Library: using `getByTestId` as the primary selector -> ✅ Prefer `getByRole`, `getByLabelText`, `getByText` for user-centric testing
+- ❌ Writing E2E tests that depend on seed data -> ✅ Each test should create its own data in setup and clean up in teardown
+
+---
+
+
 # Webapp Testing — Full Stack Pipeline Mastery
 
 ---

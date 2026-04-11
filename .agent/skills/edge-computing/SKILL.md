@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Importing Node.js-only APIs (fs, net, child_process) in edge functions -> ✅ Edge runtime has NO Node.js APIs; use Web APIs only
+- ❌ Using `global` or module-level mutable state in edge -> ✅ Edge functions are stateless across requests; use KV/Durable Objects for state
+- ❌ Assuming edge functions have unlimited execution time -> ✅ Cloudflare Workers: 30s, Vercel Edge: 25s; design for millisecond responses
+
+---
+
+
 # Edge Computing — Global Latency Mastery
 
 ---

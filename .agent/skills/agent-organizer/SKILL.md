@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Dispatching sub-agents without a context_summary -> ✅ Always send a trimmed context, never the full conversation
+- ❌ Assuming sub-agents share memory -> ✅ Each agent invocation is stateless unless explicitly passed context
+- ❌ Running agents sequentially when they are independent -> ✅ Use fan-out/fan-in for parallelizable work
+
+---
+
+
 # Agent Organizer — Multi-Agent Orchestration Mastery
 
 ---

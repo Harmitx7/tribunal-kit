@@ -7,6 +7,15 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ `import { Button } from 'shadcn-ui'` -> ✅ shadcn/ui is NOT a package; components are copied into YOUR project. Import from `@/components/ui/button`
+- ❌ Using shadcn/ui without initializing it -> ✅ Run `npx shadcn@latest init` first; it generates tailwind config and utils
+- ❌ Assuming all shadcn components are installed -> ✅ Each component must be added separately: `npx shadcn@latest add button`
+- ❌ Overriding Radix primitive props without understanding accessibility -> ✅ Radix handles focus, keyboard, and ARIA; don't break it
+
+---
+
+
 # shadcn/ui Expert — Component Architecture Mastery
 
 ---

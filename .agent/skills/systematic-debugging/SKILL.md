@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Changing multiple things at once to fix a bug -> ✅ Change ONE variable at a time; multiple changes make it impossible to identify the fix
+- ❌ Assuming the bug is where the error message points -> ✅ The error location is often downstream; trace UP the call stack to find root cause
+- ❌ Not reproducing the bug before attempting a fix -> ✅ If you cannot reproduce it reliably, you cannot verify your fix works
+
+---
+
+
 # Systematic Debugging — Root Cause Mastery
 
 ---

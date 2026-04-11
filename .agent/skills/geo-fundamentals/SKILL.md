@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Assuming SEO and GEO are the same -> ✅ GEO optimizes for AI crawlers and LLM ingestion, not just search engine ranking
+- ❌ Using complex nested HTML for content -> ✅ AI parsers prefer flat, semantic HTML with clear heading hierarchies
+- ❌ Ignoring structured data (JSON-LD) -> ✅ LLMs heavily weight structured data for citation and fact extraction
+
+---
+
+
 # Generative Engine Optimization (GEO) 
 
 ---

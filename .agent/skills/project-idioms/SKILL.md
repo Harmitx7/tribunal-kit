@@ -11,6 +11,13 @@ digest-cycles: 0
 pattern: generator
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Overriding project idioms without explicit justification -> ✅ Idioms represent team decisions; flag deviations with reasoning
+- ❌ Applying idioms from one project to a different project -> ✅ Idioms are project-specific; verify they apply to the current codebase
+
+---
+
+
 # Project Idioms — Auto-Evolved Skill
 
 > **Authority Level: ABSOLUTE**

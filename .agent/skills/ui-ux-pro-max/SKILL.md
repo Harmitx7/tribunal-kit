@@ -6,6 +6,14 @@ last-updated: 2026-03-12
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Using purple/violet as primary color -> ✅ #1 AI design cliche; choose signal orange, deep red, teal, or warm neutrals
+- ❌ Default hero layout (left text, right image) without justification -> ✅ Break the template; asymmetry, full-bleed, or typographic approaches
+- ❌ Mesh gradient backgrounds as 'premium' -> ✅ Use grain, solid contrast, or depth instead; mesh gradients are the new stock photo
+
+---
+
+
 # UI/UX Pro Max: Peak Performance Frontend Aesthetics
 
 This skill guides the creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.

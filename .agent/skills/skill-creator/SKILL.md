@@ -7,6 +7,14 @@ last-updated: 2026-03-30
 applies-to-model: claude-3-7-sonnet, gemini-2.5-pro
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Creating skills without frontmatter (name, description, version) -> ✅ Every SKILL.md MUST start with YAML frontmatter
+- ❌ Making skills too broad (covering multiple unrelated domains) -> ✅ One skill = one domain; split if content exceeds 10KB
+- ❌ Creating skills that duplicate existing skills -> ✅ Always check the skills directory before creating a new skill
+
+---
+
+
 # Skill Creator
 
 You are a Meta-Agent tasked with defining the capabilities of future AI agents by creating rigorous `SKILL.md` files.

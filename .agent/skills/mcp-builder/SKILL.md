@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Exposing tools without input validation schemas -> ✅ Every MCP tool MUST have JSON Schema for parameters; the protocol requires it
+- ❌ Returning unstructured strings from tool calls -> ✅ Return structured JSON that the LLM can reliably parse and act on
+- ❌ Not handling tool call timeouts -> ✅ Always set execution timeouts; hanging tools block the entire LLM conversation loop
+
+---
+
+
 # MCP Builder — Context Protocol Mastery
 
 ---

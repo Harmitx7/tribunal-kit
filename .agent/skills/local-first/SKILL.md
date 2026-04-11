@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Assuming server data is always newer than local data -> ✅ Conflicts are inevitable; design merge strategy (LWW, CRDTs) before writing code
+- ❌ Using localStorage for anything beyond 5MB -> ✅ Use IndexedDB (via Dexie or idb) for structured local storage; localStorage is synchronous and tiny
+- ❌ Syncing entire datasets on every connection -> ✅ Use incremental sync with watermarks/timestamps to minimize bandwidth
+
+---
+
+
 # Local-First Architecture — Offline-capable Mastery
 
 ---

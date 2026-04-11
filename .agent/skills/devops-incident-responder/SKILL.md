@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Changing code during an active incident -> ✅ STABILIZE first (rollback, feature flag, traffic shift), investigate AFTER
+- ❌ Assigning blame in post-mortems -> ✅ Blameless post-mortems focus on systemic causes, not individual errors
+- ❌ Skipping the 'what went well' section -> ✅ Understanding what prevented worse outcomes is as valuable as the root cause
+
+---
+
+
 # Incident Responder — Production Stabilization Mastery
 
 ---

@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Silently using default values for missing config -> ✅ Fail fast with a clear error message naming the missing field
+- ❌ Trusting environment variables without validation -> ✅ Validate ALL env vars at startup with Zod or a schema, not at usage time
+- ❌ Mixing config source precedence without documenting it -> ✅ Document: CLI args > env vars > config file > defaults
+
+---
+
+
 # Config Validator — System Integrity Mastery
 
 ---

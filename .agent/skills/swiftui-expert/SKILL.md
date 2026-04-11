@@ -7,6 +7,15 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Using `@State` for shared data between views -> ✅ `@State` is local to a view; use `@Binding`, `@Environment`, or `@Observable` for sharing
+- ❌ Putting heavy computation in the `body` property -> ✅ `body` is called on EVERY re-render; move computation to `.task {}` or `onChange`
+- ❌ `List { ForEach(items) { ... } }` without `id:` parameter -> ✅ Always provide `id:` for `Identifiable` conformance or use `\.self`
+- ❌ Using `NavigationView` -> ✅ Deprecated in iOS 16+; use `NavigationStack` or `NavigationSplitView`
+
+---
+
+
 # SwiftUI Expert — Native Apple Platforms Mastery
 
 ---

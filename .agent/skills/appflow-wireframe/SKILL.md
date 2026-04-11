@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Drawing wireframes without defined user personas -> ✅ Establish WHO uses each screen before designing
+- ❌ Skipping error/empty/loading states in flow diagrams -> ✅ Every screen needs 4 states: loading, empty, populated, error
+- ❌ Assuming linear user journeys -> ✅ Real users jump between screens, go back, and abandon flows mid-way
+
+---
+
+
 # Appflow & Wireframing — Visualization Mastery
 
 ---

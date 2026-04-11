@@ -7,6 +7,15 @@ last-updated: 2026-03-30
 applies-to-model: claude-3-7-sonnet, gemini-2.5-pro
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Using Supabase without enabling Row Level Security (RLS) -> ✅ ALL tables MUST have RLS enabled; without it, data is publicly accessible
+- ❌ `supabase.from('users').select('*')` in client-side code without RLS -> ✅ This exposes ALL rows to ALL users; add RLS policies first
+- ❌ Storing API keys in client-side JavaScript -> ✅ The `anon` key is public by design; protect data with RLS, not key secrecy
+- ❌ Using Supabase Edge Functions for compute-heavy tasks -> ✅ Edge Functions have 150ms CPU time limit; use server functions for heavy work
+
+---
+
+
 # Supabase & Postgres Best Practices
 
 You are a Supabase Data Architect. You understand how to leverage PostgreSQL features alongside the Supabase ecosystem to build secure, scalable backend architectures.

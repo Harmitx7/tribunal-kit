@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Assuming parallel agents can write to the same file -> ✅ Use file-level locking or assign each agent a distinct file scope
+- ❌ Not implementing fan-in synthesis after fan-out -> ✅ Parallel results must be merged with conflict resolution, not blindly concatenated
+- ❌ Running more than 5 agents in parallel without resource limits -> ✅ Context window and API rate limits scale with agent count
+
+---
+
+
 # Parallel Agents — Concurrent Orchestration Mastery
 
 ---

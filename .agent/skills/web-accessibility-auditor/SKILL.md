@@ -7,6 +7,15 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Adding `role='button'` to a `<div>` instead of using `<button>` -> ✅ Native HTML elements have built-in keyboard and screen reader support
+- ❌ Using `aria-label` on elements that already have visible text -> ✅ Redundant ARIA overrides visible text for screen readers; use only when needed
+- ❌ Color as the only indicator of state -> ✅ Always pair color with icon, text, or pattern for colorblind users (1 in 12 males)
+- ❌ Assuming accessibility is a checklist to run at the end -> ✅ Build accessible from the start; retrofitting is 10x more expensive
+
+---
+
+
 # Web Accessibility (a11y) — Inclusive UI Mastery
 
 ---

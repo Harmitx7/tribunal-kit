@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Writing plans without verification criteria -> ✅ Every plan needs a 'How to verify this worked' section
+- ❌ Planning at the wrong granularity (too high or too low) -> ✅ Plans should be at the component/feature level, not line-by-line or system-wide
+- ❌ Skipping the 'What could go wrong' section -> ✅ Identifying failure modes before implementation prevents costly rework
+
+---
+
+
 # Plan Writing — Execution Blueprints Mastery
 
 ---

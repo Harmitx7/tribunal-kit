@@ -7,6 +7,14 @@ last-updated: 2026-03-19
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Starting a README with the project name as the only heading -> ✅ Lead with what the project DOES, not just what it IS
+- ❌ Skipping installation and quick-start sections -> ✅ Users need to run the project in under 60 seconds or they leave
+- ❌ Using screenshots without alt text -> ✅ All images need descriptive alt text for accessibility and broken image fallback
+
+---
+
+
 # README Builder Skill
 
 ---

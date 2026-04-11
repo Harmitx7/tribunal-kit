@@ -7,6 +7,14 @@ last-updated: 2026-04-06
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Generating entire applications in one shot -> ✅ Build one module at a time, verify each
+- ❌ Choosing a tech stack without asking the user -> ✅ Always ask about existing preferences, team skills, and deployment target
+- ❌ Hardcoding API keys or secrets during scaffolding -> ✅ Use .env.example with placeholder values from day one
+
+---
+
+
 # App Builder — Application Orchestrator
 
 ---

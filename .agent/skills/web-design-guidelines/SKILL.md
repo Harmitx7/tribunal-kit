@@ -7,6 +7,14 @@ last-updated: 2026-03-12
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Designing mobile-last (desktop first, then shrinking) -> ✅ Design mobile-first, then enhance for larger screens
+- ❌ Using more than 2-3 font families -> ✅ Stick to 1-2 font families maximum; more creates visual noise
+- ❌ Ignoring touch target sizes on mobile -> ✅ Minimum 44x44px touch targets (Apple HIG) / 48x48dp (Material Design)
+
+---
+
+
 # Next-Gen Web Interface Review Guidelines (Pro-Max Level)
 
 ---

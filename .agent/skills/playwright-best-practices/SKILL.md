@@ -7,6 +7,15 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Using `page.waitForTimeout(3000)` for synchronization -> ✅ Use `page.waitForSelector()`, `expect(locator).toBeVisible()`, or auto-waiting locators
+- ❌ Using CSS selectors or XPath for test locators -> ✅ Use `getByRole()`, `getByLabel()`, `getByTestId()` for resilient selectors
+- ❌ Running tests without `--workers=1` in CI debug mode -> ✅ Parallel tests with shared state cause flaky failures; isolate tests properly
+- ❌ Not using `test.describe.configure({ mode: 'serial' })` when tests have ordering dependencies -> ✅ Explicitly mark serial when needed
+
+---
+
+
 # Playwright E2E — Bulletproof Testing Mastery
 
 ---

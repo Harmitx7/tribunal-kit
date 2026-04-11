@@ -7,6 +7,14 @@ last-updated: 2026-04-06
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Jumping to implementation during brainstorming -> ✅ Brainstorming is exploration only; no code is written in this phase
+- ❌ Presenting only one option -> ✅ Always present 3+ distinct approaches with tradeoffs
+- ❌ Assuming the user's first request is their real need -> ✅ Ask 'what problem does this solve for your users?' before generating ideas
+
+---
+
+
 # Brainstorming — Socratic Exploration Mastery
 
 ---

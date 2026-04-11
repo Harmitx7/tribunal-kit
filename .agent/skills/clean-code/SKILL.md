@@ -7,6 +7,14 @@ last-updated: 2026-04-01
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Over-abstracting code that is used in only one place -> ✅ Don't DRY single-use code; premature abstraction is worse than duplication
+- ❌ Adding comments that restate what the code does -> ✅ Comments explain WHY, not WHAT; the code explains what
+- ❌ Creating utility functions for trivial one-liners -> ✅ Inline is clearer when the operation is self-documenting
+
+---
+
+
 # Clean Code — The Art of Readable Software
 
 ---

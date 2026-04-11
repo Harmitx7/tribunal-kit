@@ -7,6 +7,14 @@ last-updated: 2026-03-12
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Writing documentation that only AI-generated code can understand -> ✅ Docs are for HUMANS; use clear language and real examples
+- ❌ Documenting implementation details instead of behavior -> ✅ Document WHAT it does and WHY, not HOW (code shows how)
+- ❌ Skipping the 'Quick Start' section -> ✅ The first 30 seconds of a README determine if someone uses your project
+
+---
+
+
 # Documentation Standards
 
 ---

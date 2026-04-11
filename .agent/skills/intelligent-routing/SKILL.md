@@ -7,6 +7,14 @@ last-updated: 2026-04-06
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Routing based on exact keyword matching -> ✅ Use intent classification with confidence scores; keywords miss synonyms and context
+- ❌ No fallback for low-confidence classifications -> ✅ Always have a default handler when confidence is below threshold (e.g., 0.7)
+- ❌ Routing to a single agent when the task spans multiple domains -> ✅ Detect multi-domain requests and route to the orchestrator
+
+---
+
+
 # Intelligent Routing — Intent Gateway Mastery
 
 ---

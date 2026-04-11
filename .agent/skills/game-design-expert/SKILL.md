@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Designing reward systems without testing for compulsion loops -> ✅ Playtesting must verify engagement without addiction patterns
+- ❌ Assuming all players have the same skill level -> ✅ Design difficulty curves that adapt or offer accessibility options
+- ❌ Adding mechanics without testing the core loop first -> ✅ Core loop must be fun in isolation before adding complexity
+
+---
+
+
 # Game Design Expert — Player Experience & Flow Mastery
 
 ---

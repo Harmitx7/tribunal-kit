@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Running services as root -> ✅ Create a dedicated service user with minimal permissions; never run as root
+- ❌ Using password-based SSH -> ✅ Disable password auth; use SSH key pairs only with `PermitRootLogin no`
+- ❌ Editing nginx config without testing -> ✅ Always run `nginx -t` before `systemctl reload nginx`; syntax errors take down all sites
+
+---
+
+
 # Server Management — Production Linux Mastery
 
 ---

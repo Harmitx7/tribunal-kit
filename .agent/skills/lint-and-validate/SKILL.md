@@ -7,6 +7,14 @@ last-updated: 2026-03-12
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Auto-fixing lint errors without reviewing the diff -> ✅ Some auto-fixes change logic (e.g., removing 'unused' variables that are side-effects)
+- ❌ Treating warnings as non-blocking in CI -> ✅ Warnings accumulate; enforce zero-warning policy or they become permanent
+- ❌ Running linters only on changed files -> ✅ Run on full codebase periodically; cross-file issues are only caught with full runs
+
+---
+
+
 # Linting & Validation
 
 ---

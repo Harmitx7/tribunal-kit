@@ -7,6 +7,14 @@ last-updated: 2026-03-12
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Using `dict` for structured data when a dataclass/Pydantic model exists -> ✅ Dicts have no type safety; use typed models
+- ❌ Catching bare `except:` or `except Exception:` -> ✅ Catch specific exceptions; bare except swallows KeyboardInterrupt and SystemExit
+- ❌ Using `os.path` for path operations -> ✅ Use `pathlib.Path` for modern, readable path manipulation
+
+---
+
+
 # Python Development Principles
 
 ---

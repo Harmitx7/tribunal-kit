@@ -7,6 +7,15 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Concatenating translated strings (`'Hello ' + name`) -> ✅ Use interpolation: `t('greeting', { name })` to handle word order differences
+- ❌ Hardcoding date/number formats -> ✅ Use `Intl.DateTimeFormat` and `Intl.NumberFormat` with the user's locale
+- ❌ Assuming all languages read left-to-right -> ✅ Arabic, Hebrew, Farsi are RTL; use CSS `dir='auto'` and logical properties
+- ❌ Using string length for validation on translated text -> ✅ Translations can be 30-200% longer than English; design for expansion
+
+---
+
+
 # i18n & Localization — Global Scale Mastery
 
 ---

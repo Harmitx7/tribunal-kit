@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Running database migrations and code deploy in the same step -> ✅ Migrate FIRST, deploy code SECOND (expand-and-contract)
+- ❌ Deploying without a rollback plan -> ✅ Every deploy needs a tested rollback: previous Docker image tag or git revert
+- ❌ Using `latest` tags in production container images -> ✅ Always use specific version tags or SHA digests
+
+---
+
+
 # Deployment Procedures — Production Execution Mastery
 
 ---

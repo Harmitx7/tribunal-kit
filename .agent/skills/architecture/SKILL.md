@@ -7,6 +7,14 @@ last-updated: 2026-04-07
 applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Choosing microservices for a team of 1-3 developers -> ✅ Start monolith, extract services only when team/scale demands it
+- ❌ Using event-driven architecture without understanding eventual consistency -> ✅ Events mean data will be stale; design for it
+- ❌ Skipping ADRs (Architecture Decision Records) -> ✅ Every non-obvious decision needs a written 'why' for future maintainers
+
+---
+
+
 # Architecture — System Design Mastery
 
 ## Architecture Selection

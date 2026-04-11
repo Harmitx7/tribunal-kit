@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Writing tests that test implementation details instead of behavior -> ✅ Test WHAT it does (inputs/outputs), not HOW (internal methods)
+- ❌ Skipping the Red phase (writing a failing test first) -> ✅ If the test passes before you write the code, it tests nothing
+- ❌ Refactoring during the Red or Green phase -> ✅ Red: write failing test. Green: make it pass minimally. THEN refactor. Never mix phases
+
+---
+
+
 # Test-Driven Development (TDD) — Defect-Free Execution Mastery
 
 ---

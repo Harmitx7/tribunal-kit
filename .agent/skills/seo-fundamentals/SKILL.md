@@ -7,6 +7,15 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Using `<div>` for everything instead of semantic HTML -> ✅ Use `<main>`, `<article>`, `<nav>`, `<section>` for crawler comprehension
+- ❌ Multiple `<h1>` tags on a single page -> ✅ One `<h1>` per page; use `<h2>`-`<h6>` for hierarchy
+- ❌ Generating meta descriptions with AI boilerplate -> ✅ Each page needs a unique, specific meta description under 160 characters
+- ❌ Using client-side rendering for content pages -> ✅ SSR/SSG for pages that need to be indexed; CSR is invisible to crawlers without JS rendering
+
+---
+
+
 # SEO Fundamentals — Visibility & Discoverability Mastery
 
 ---

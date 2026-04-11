@@ -7,6 +7,15 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ `SafeAreaView` wrapping everything -> ✅ Use `SafeAreaProvider` + `useSafeAreaInsets()` for granular control
+- ❌ Using `ScrollView` for long lists -> ✅ `FlatList` or `FlashList` for virtualized rendering; ScrollView renders ALL items
+- ❌ `Dimensions.get('window')` for responsive layouts -> ✅ Use `useWindowDimensions()` hook (reactive to rotation/resize)
+- ❌ Animating with `Animated.timing` by default -> ✅ Use `Reanimated 3` with `useSharedValue` for 120fps worklet-based animations
+
+---
+
+
 # Building Native UI — React Native & Expo Mastery
 
 A mobile app isn't a website confined to a small screen.

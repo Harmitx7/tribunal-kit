@@ -7,6 +7,14 @@ last-updated: 2026-03-12
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Testing only happy-path authentication -> ✅ Red teaming must test token reuse, expired tokens, forged tokens, and privilege escalation
+- ❌ Reporting vulnerabilities without proof-of-concept -> ✅ Every finding needs a reproducible PoC and severity rating (CVSS)
+- ❌ Stopping after finding the first vulnerability -> ✅ Real attackers chain multiple low-severity issues; test for escalation paths
+
+---
+
+
 # Red Team & Penetration Testing Principles
 
 A red team engagement is a controlled attack.

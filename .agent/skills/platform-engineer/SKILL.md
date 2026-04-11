@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Building internal platforms without talking to developers -> ✅ Platform engineering exists to reduce developer cognitive load; ask them what hurts
+- ❌ Creating golden paths that are mandatory -> ✅ Golden paths should be the easiest option, not the only option
+- ❌ Over-automating before the process is understood -> ✅ Manual first, then script, then platform; premature automation bakes in bad processes
+
+---
+
+
 # Platform Engineering — Developer Experience Mastery
 
 ---

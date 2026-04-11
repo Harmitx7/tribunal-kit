@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Using deltaTime without clamping -> ✅ Unclamped deltaTime causes physics explosions on frame spikes; clamp to max 0.05s
+- ❌ Allocating memory in the game loop (new objects, arrays) -> ✅ Pre-allocate and pool objects to avoid GC pauses during gameplay
+- ❌ Using floating-point equality checks for game state -> ✅ Use epsilon comparisons or integer-based fixed-point for deterministic logic
+
+---
+
+
 # Game Engineering Expert — Performance & State Mastery
 
 ---

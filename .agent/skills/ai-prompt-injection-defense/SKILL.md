@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Putting user input into role:'system' messages -> ✅ User input MUST go in role:'user' only
+- ❌ Relying on 'ignore previous instructions' disclaimer -> ✅ Delimiters + structural separation are required
+- ❌ Assuming output filtering catches all injection -> ✅ Defense-in-depth: input validation + output validation + structural isolation
+
+---
+
+
 # Prompt Injection Defense — AI Security Mastery
 
 ---

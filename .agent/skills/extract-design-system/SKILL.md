@@ -7,6 +7,14 @@ last-updated: 2026-04-02
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
+## Hallucination Traps (Read First)
+- ❌ Creating CSS variables for every possible value -> ✅ Only tokenize values that appear 3+ times across components
+- ❌ Extracting a design system before the UI is stable -> ✅ Wait until patterns are proven by real usage before standardizing
+- ❌ Naming tokens by appearance (`--blue-500`) instead of purpose (`--color-primary`) -> ✅ Semantic names survive theme changes
+
+---
+
+
 # Extract Design System — Tokenization Mastery
 
 ---
