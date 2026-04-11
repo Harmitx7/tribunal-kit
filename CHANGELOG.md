@@ -6,6 +6,67 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [4.0.0] — 2026-04-10
+
+### Added
+
+#### New CLI Commands — `case` & `hook`
+
+- **`tribunal-kit case`**: Case Law precedent manager for the Supreme Court Tribunal system.
+  - `case add <slug>` — Record a new precedent from real debugging/review sessions.
+  - `case list` — Browse all stored precedents with metadata.
+  - `case search <query>` — Full-text search across case law library.
+  - `case export` — Export precedents as portable JSON.
+- **`tribunal-kit hook`**: Git hook automation for Skill Evolution forge.
+  - `hook install` — Installs a `pre-push` git hook that auto-runs `skill_evolution.py`.
+  - `hook remove` — Cleanly removes the installed hook.
+  - `hook status` — Reports current hook installation state.
+  - Cross-platform compatible (Windows + Unix).
+
+#### New Agent — `precedence-reviewer`
+
+- **`precedence-reviewer.md`**: Tribunal reviewer agent that cross-references generated code against stored Case Law precedents to prevent recurring mistakes.
+
+#### New Scripts
+
+- **`case_law_manager.py`**: Backend for the `case` CLI — manages precedent storage, indexing, and search.
+- **`skill_evolution.py`**: Automated skill improvement engine triggered by git hooks — analyzes recent changes and proposes skill upgrades.
+- **`append_flow.js`**: Utility for programmatic AGENT_FLOW.md updates.
+
+### Changed
+
+#### Hallucination Traps — 100% Skill Coverage (78/78)
+
+- **43 skills upgraded**: Added mandatory LLM Traps, Pre-Flight Checklist, and VBC Protocol sections to every skill that was missing them. Coverage went from 35/78 → **78/78 (100%)**.
+- Skills hardened include: `agent-organizer`, `architecture`, `brainstorming`, `clean-code`, `config-validator`, `deployment-procedures`, `game-design-expert`, `game-engineering-expert`, `geo-fundamentals`, `i18n-localization`, `mcp-builder`, `parallel-agents`, `platform-engineer`, `systematic-debugging`, `tdd-workflow`, `web-accessibility-auditor`, and 27 more.
+
+#### npm Discoverability — Keywords SEO Optimization
+
+- **`package.json` keywords expanded**: From 7 → 25 high-traffic search terms.
+  - Added: `ai-agent`, `multi-agent`, `agentic`, `swarm`, `orchestration`, `anti-hallucination`, `cursor-rules`, `cursorrules`, `copilot`, `cline`, `gemini`, `mcp`, `model-context-protocol`, `cli`, `devtools`, `ai-coding`, `autonomous-agents`, `coding-assistant`, `automation`.
+
+#### Workflow & Tribunal Sync
+
+- **`/generate` workflow**: Added `precedence-reviewer` to reviewer routing.
+- **5 Tribunal workflows updated** (`tribunal-backend`, `tribunal-frontend`, `tribunal-database`, `tribunal-mobile`, `tribunal-performance`): Minor reviewer pipeline fixes.
+
+### Fixed
+
+- **Duplicate `cmdCase` function**: Removed duplicate definition in `bin/tribunal-kit.js` that caused test crashes.
+- **`project-idioms` broken YAML frontmatter**: Fixed malformed frontmatter that prevented skill loading.
+
+### Documentation
+
+- **`AGENT_FLOW.md`**: Added Case Law and Skill Evolution subsystem documentation.
+- **`README.md`**: Updated feature list with `case` and `hook` commands.
+
+### Infrastructure
+
+- Bumped version to **4.0.0** (new CLI surface area = major release).
+- Total asset count: 34 agents, 26 workflows, 78 skills (all hardened), 20 scripts.
+
+---
+
 ## [3.1.0] — 2026-04-07
 
 ### Added
