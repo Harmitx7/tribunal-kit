@@ -270,17 +270,30 @@ function banner() {
     if (quiet) return;
     // Big ASCII art (TRIBUNAL-KIT)
     const art = String.raw`
-___________      ._____.                       .__             ____  __.__  __   
-\__    ___/______|__\_ |__  __ __  ____ _____  |  |           |    |/ _|__|/  |_ 
-  |    |  \_  __ \  || __ \|  |  \/    \\__  \ |  |    ______ |      < |  \   __\
-  |    |   |  | \/  || \_\ \  |  /   |  \/ __ \|  |__ /_____/ |    |  \|  ||  |  
-  |____|   |__|  |__||___  /____/|___|  (____  /____/         |____|__ \__||__|  
-                         \/           \/     \/                       \/          `.split('\n').filter(Boolean);
+████████╗██████╗ ██╗██████╗ ██╗   ██╗███╗   ██╗ █████╗ ██╗      ██╗  ██╗██╗████████╗
+╚══██╔══╝██╔══██╗██║██╔══██╗██║   ██║████╗  ██║██╔══██╗██║      ██║ ██╔╝██║╚══██╔══╝
+   ██║   ██████╔╝██║██████╔╝██║   ██║██╔██╗ ██║███████║██║█████╗█████╔╝ ██║   ██║   
+   ██║   ██╔══██╗██║██╔══██╗██║   ██║██║╚██╗██║██╔══██║██║╚════╝██╔═██╗ ██║   ██║   
+   ██║   ██║  ██║██║██████╔╝╚██████╔╝██║ ╚████║██║  ██║███████╗ ██║  ██╗██║   ██║   
+   ╚═╝   ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝ ╚═╝  ╚═╝╚═╝   ╚═╝   `.split('\n').filter(Boolean);
     console.log();
-    for (const line of art) log(`  ${c('cyan', bold(line))}`);
+    const maxLen = Math.max(...art.map(line => line.length));
+    for (const line of art) {
+        let gradientLine = '  ' + C.bold;
+        for (let i = 0; i < line.length; i++) {
+            const p = maxLen > 1 ? i / (maxLen - 1) : 0;
+            // Coquelicot #FF4000 to Penn Blue #0A1045
+            const r = Math.round(255 + p * (10 - 255));
+            const g = Math.round(64 + p * (16 - 64));
+            const b = Math.round(0 + p * (69 - 0));
+            gradientLine += `\x1b[38;2;${r};${g};${b}m${line[i]}`;
+        }
+        gradientLine += C.reset;
+        log(gradientLine);
+    }
     console.log();
     // Subtitle strip
-    const W   = 80;
+    const W   = 84;
     const sub = 'Anti-Hallucination Agent System';
     const sp  = Math.max(0, W - sub.length);
     const centred = ' '.repeat(Math.floor(sp / 2)) + sub + ' '.repeat(Math.ceil(sp / 2));
@@ -342,6 +355,18 @@ function cmdInit(flags) {
                 fs.rmSync(subPath, { recursive: true, force: true });
             }
         }
+    }
+
+    // Ensure history dirs exist (Case Law + Skill Evolution)
+    if (!dryRun) {
+        const caseDir = path.join(agentDest, 'history', 'case-law', 'cases');
+        const evoDir  = path.join(agentDest, 'history', 'skill-evolution');
+        fs.mkdirSync(caseDir, { recursive: true });
+        fs.mkdirSync(evoDir,  { recursive: true });
+        const gkCase = path.join(caseDir, '.gitkeep');
+        const gkEvo  = path.join(evoDir, '.gitkeep');
+        if (!fs.existsSync(gkCase)) fs.writeFileSync(gkCase, '');
+        if (!fs.existsSync(gkEvo))  fs.writeFileSync(gkEvo,  '');
     }
 
     // Count what we're installing
@@ -436,6 +461,60 @@ function cmdUpdate(flags) {
     cmdInit(flags);
 }
 
+
+function cmdLearn(flags) {
+    const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
+    const agentDest = path.join(targetDir, '.agent');
+
+    if (!fs.existsSync(agentDest)) {
+        err('.agent/ not found. Run: npx tribunal-kit init');
+        process.exit(1);
+    }
+
+    banner();
+
+    const W     = 62;
+    const title = '  Tribunal Learn — Supreme Court Mode';
+    const trail = ' '.repeat(Math.max(0, W - title.length));
+    console.log(`  ${c('cyan', '\u2554' + '\u2550'.repeat(W) + '\u2557')}`);
+    console.log(`  ${c('cyan', '\u2551')}${c('bold', c('white', title))}${trail}${c('cyan', '\u2551')}`);
+    console.log(`  ${c('cyan', '\u255a' + '\u2550'.repeat(W) + '\u255d')}`);
+    console.log();
+
+    const dryRun  = flags.dryRun ? '--dry-run' : '';
+    const useHead = flags.head   ? '--head'    : '';
+    const python  = process.platform === 'win32' ? 'python' : 'python3';
+    const { execSync } = require('child_process');
+
+    // Phase 1: Skill Evolution
+    log(`  ${c('cyan', '\u229b')} ${bold('Phase 1')} \u2014 Skill Evolution Forge (auto-generating project idioms)`);
+    const evoScript = path.join(agentDest, 'scripts', 'skill_evolution.py');
+    if (!fs.existsSync(evoScript)) {
+        warn('skill_evolution.py not found \u2014 run: npx tribunal-kit update');
+    } else {
+        try {
+            const cmd = `${python} "${evoScript}" digest ${dryRun} ${useHead}`.trim();
+            execSync(cmd, { stdio: 'inherit', cwd: targetDir });
+        } catch (e) {
+            warn(`Skill Evolution error: ${e.message}`);
+        }
+    }
+
+    console.log();
+
+    // Phase 2: Case Law prompt
+    log(`  ${c('cyan', '\u229b')} ${bold('Phase 2')} \u2014 Case Law Engine (building precedence record)`);
+    console.log();
+    log(`  ${c('gray','\u25b8')} Record a new rejection precedent:`);
+    log(`    ${c('white', 'npx tribunal-kit case add')}`);
+    console.log();
+    log(`  ${c('gray','\u25b8')} Search existing case law:`);
+    log(`    ${c('white', 'npx tribunal-kit case search "your query"')}`);
+    console.log();
+    log(`  ${c('green', '\u2714')} ${bold('Learn cycle complete.')} Your Tribunal grows smarter with every commit.`);
+    console.log();
+}
+
 // ── Async Main Wrapper ───────────────────────────────────
 async function runWithUpdateCheck(command, flags) {
     const shouldSkip = flags.skipUpdateCheck || process.env.TK_SKIP_UPDATE_CHECK === '1';
@@ -460,6 +539,15 @@ async function runWithUpdateCheck(command, flags) {
         case 'status':
             cmdStatus(flags);
             break;
+        case 'learn':
+            cmdLearn(flags);
+            break;
+        case 'case':
+            cmdCase(flags);
+            break;
+        case 'hook':
+            cmdHook(flags);
+            break;
         case 'help':
         case '--help':
         case '-h':
@@ -472,6 +560,70 @@ async function runWithUpdateCheck(command, flags) {
             dim('Run tribunal-kit --help for usage');
             process.exit(1);
     }
+}
+
+function cmdCase(flags) {
+    const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
+    const agentDest = path.join(targetDir, '.agent');
+
+    if (!fs.existsSync(agentDest)) {
+        err('.agent/ not found. Run: npx tribunal-kit init');
+        process.exit(1);
+    }
+
+    const args = process.argv.slice(3).join(' ');
+    if (!args || args === 'help' || args === '--help' || args === '-h') {
+        banner();
+        log(`  ${c('cyan', '\u2554' + '\u2550'.repeat(60) + '\u2557')}`);
+        log(`  ${c('cyan', '\u2551')}${c('bold', c('white', '  Tribunal Case Law Engine \u2014 Supreme Court             '))}${c('cyan', '\u2551')}`);
+        log(`  ${c('cyan', '\u255a' + '\u2550'.repeat(60) + '\u255d')}`);
+        console.log();
+        log(`  ${c('cyan', 'add'.padEnd(10))}  ${c('gray', 'Record a new Case Law rejection pattern')}`);
+        log(`  ${c('cyan', 'search'.padEnd(10))}  ${c('gray', 'Search existing cases (e.g., search "query")')}`);
+        log(`  ${c('cyan', 'list'.padEnd(10))}  ${c('gray', 'List all recorded case law')}`);
+        console.log();
+        process.exit(1);
+    }
+
+    const python  = process.platform === 'win32' ? 'python' : 'python3';
+    const caseLawScript = path.join(agentDest, 'scripts', 'case_law_manager.py');
+
+    // Make shorthand aliases
+    let pyArgs = args;
+    if (pyArgs.startsWith('add')) pyArgs = pyArgs.replace(/^add/, 'add-case');
+    if (pyArgs.startsWith('search')) pyArgs = pyArgs.replace(/^search/, 'search-cases');
+
+    try {
+        const { execSync } = require('child_process');
+        execSync(`${python} "${caseLawScript}" ${pyArgs}`, { stdio: 'inherit', cwd: targetDir });
+    } catch (e) {
+        process.exit(1); // Script already prints errors
+    }
+}
+
+function cmdHook(flags) {
+    const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
+    const gitDir = path.join(targetDir, '.git');
+    
+    if (!fs.existsSync(gitDir)) {
+        err('Not a git repository. Cannot install git hooks here.');
+        process.exit(1);
+    }
+    
+    const hooksDir = path.join(gitDir, 'hooks');
+    if (!fs.existsSync(hooksDir)) {
+        fs.mkdirSync(hooksDir, { recursive: true });
+    }
+    
+    const prePushPath = path.join(hooksDir, 'pre-push');
+    const hookScript = `#!/bin/sh\n# Supreme Court - Auto Learn on Push\necho "⚖️  Tribunal Supreme Court: Evolving Skills..."\nnpx tribunal-kit learn --head\n`;
+    
+    fs.writeFileSync(prePushPath, hookScript, { mode: 0o755 });
+    
+    console.log();
+    log(`  ${c('green', '✔')} Installed pre-push git hook.`);
+    log(`  ${c('gray', '▸')} Skill Evolution will now run automatically every time you git push.`);
+    console.log();
 }
 
 function cmdStatus(flags) {
@@ -515,6 +667,9 @@ function cmdHelp() {
     log(cmd('init',   'Install .agent/ into current project'));
     log(cmd('update', 'Re-install to get latest version'));
     log(cmd('status', 'Check if .agent/ is installed'));
+    log(cmd('learn',  'Evolve project idioms based on git diffs'));
+    log(cmd('case',   'Manage Case Law precedents (add, search, list)'));
+    log(cmd('hook',   'Install pre-push git hook for auto-learning'));
     console.log();
     log(bold('  Options'));
     log(`  ${c('gray','─'.repeat(40))}`);
@@ -523,6 +678,7 @@ function cmdHelp() {
     log(opt('--quiet',              'Suppress all output'));
     log(opt('--dry-run',            'Preview actions without executing'));
     log(opt('--skip-update-check',  'Skip auto-update version check'));
+    log(opt('--head',               '(learn) Diff against last commit instead of staged'));
     console.log();
     log(bold('  Examples'));
     log(`  ${c('gray','─'.repeat(40))}`);
@@ -532,6 +688,13 @@ function cmdHelp() {
     log(ex('npx tribunal-kit init --dry-run'));
     log(ex('npx tribunal-kit update'));
     log(ex('npx tribunal-kit status'));
+    log(ex('npx tribunal-kit learn'));
+    log(ex('npx tribunal-kit learn --dry-run'));
+    log(ex('npx tribunal-kit learn --head'));
+    log(ex('npx tribunal-kit case add'));
+    log(ex('npx tribunal-kit case search "useEffect"'));
+    log(ex('npx tribunal-kit case list'));
+    log(ex('npx tribunal-kit hook'));
     console.log();
 }
 

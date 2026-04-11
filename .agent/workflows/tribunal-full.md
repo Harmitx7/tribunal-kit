@@ -24,6 +24,7 @@ $ARGUMENTS
 
 ```
 Tier 1: Always active (universal concerns)
+├── precedence-reviewer    → Checks local repo Case Law for past rejections
 ├── logic-reviewer         → Hallucinated methods, impossible logic, undefined refs
 └── security-auditor       → OWASP 2025, injection, JWT, SSRF, IDOR
 

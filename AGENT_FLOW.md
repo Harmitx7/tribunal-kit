@@ -245,3 +245,63 @@ When activated, the agent automatically pre-loads the restrictive base prompt (e
 │
 └── mcp_config.json      ← MCP server configuration
 ```
+---
+
+## Supreme Court Edition — Self-Learning Engine
+
+Tribunal Kit v4.0+ ships two industry-first features that transform the
+agent kit from a reactive reviewer into a **persistent engineering authority**.
+
+### 1 — Case Law Engine
+
+Every rejected pattern becomes binding legal precedent.
+
+| Step | What Happens |
+|:-----|:-------------|
+| 1 | Developer rejects AI proposal |
+| 2 | Runs `case_law_manager.py add-case` |
+| 3 | diff + tags + reason stored in `.agent/history/case-law/` |
+| 4 | `precedence-reviewer` queries index on every future `/generate` or `/review` |
+| 5 | Jaccard tag match score >= 0.4 → PRECEDENCE HOLD |
+
+### 2 — Skill Evolution Forge
+
+The agent kit writes its own skills by learning from your commits.
+
+| Step | What Happens |
+|:-----|:-------------|
+| 1 | Developer commits code different from AI proposal |
+| 2 | `tribunal-kit learn` (or `skill_evolution.py digest`) |
+| 3 | Semantic Delta Filter strips trivial noise (70-90% token reduction) |
+| 4 | Minimal LLM Reflection Prompt (< 500 tokens) |
+| 5 | YAML idioms merged into `.agent/skills/project-idioms/SKILL.md` |
+| 6 | All agents inherit these idioms on next activation |
+
+### CLI Commands (Supreme Court)
+
+| Command | Action |
+|:--------|:-------|
+| `tribunal-kit learn` | Run Skill Evolution + Case Law prompt |
+| `tribunal-kit learn --dry-run` | Preview delta without writing |
+| `tribunal-kit learn --head` | Diff last commit instead of staged |
+| `python .agent/scripts/case_law_manager.py add-case` | Record a rejection |
+| `python .agent/scripts/case_law_manager.py search-cases --query "..."` | Find precedents |
+| `python .agent/scripts/skill_evolution.py digest` | Run evolution cycle |
+| `python .agent/scripts/skill_evolution.py status` | Token savings report |
+
+### Review Order (Updated)
+
+```
+1. precedence-reviewer   <- FIRST (Case Law check, zero LLM tokens)
+2. logic-reviewer
+3. security-auditor
+4. domain-specific reviewers
+5. Human Gate
+```
+
+### New Reviewer
+
+| Reviewer | Activates for | Catches |
+|:---------|:-------------|:--------|
+| `precedence-reviewer` | All domains | Violations of previously rejected patterns |
+

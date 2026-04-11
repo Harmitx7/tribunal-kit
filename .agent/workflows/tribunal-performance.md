@@ -22,7 +22,8 @@ $ARGUMENTS
 
 ## 2 Active Reviewers (Both Run Simultaneously)
 
-### logic-reviewer
+### precedence-reviewer    → Checks local repo Case Law for past rejections
+logic-reviewer
 - Expensive computation in render function (runs every render)
 - Missing memoization where React.memo/useMemo would help
 - Infinite re-render loop (effect updates a value that triggers the effect)

@@ -22,7 +22,8 @@ $ARGUMENTS
 
 ## 4 Active Reviewers (All Run Simultaneously)
 
-### logic-reviewer
+### precedence-reviewer    → Checks local repo Case Law for past rejections
+logic-reviewer
 - Hallucinated React 19 hooks (non-existent hook names)
 - useFormState called instead of useActionState (React 19 rename)
 - useEffect missing dependencies (stale closure)

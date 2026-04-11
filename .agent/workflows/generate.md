@@ -73,6 +73,7 @@ When unsure: write `// VERIFY: [specific reason]` instead of hallucinating.
 
 **Always active:**
 ```
+precedence-reviewer→ Enforces repository Case Law and past rejections (Runs First)
 logic-reviewer     → Hallucinated methods, undefined refs, impossible logic
 security-auditor   → OWASP vulnerabilities, hardcoded secrets, injection
 ```

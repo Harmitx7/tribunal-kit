@@ -22,7 +22,8 @@ $ARGUMENTS
 
 ## 4 Active Reviewers (All Run Simultaneously)
 
-### logic-reviewer
+### precedence-reviewer    → Checks local repo Case Law for past rejections
+logic-reviewer
 - Hallucinated Express/Hono/Fastify methods
 - Missing awaits on async operations
 - Unreachable code after return statements

@@ -22,7 +22,8 @@ $ARGUMENTS
 
 ## 3 Active Reviewers (All Run Simultaneously)
 
-### logic-reviewer
+### precedence-reviewer    → Checks local repo Case Law for past rejections
+logic-reviewer
 - `runOnJS` called inside `onUpdate` instead of `onEnd` (runs every frame)
 - Missing `'worklet'` directive on functions called inside Reanimated
 - FlatList inside ScrollView (disables virtualization)

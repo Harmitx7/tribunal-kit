@@ -7,7 +7,7 @@
 
   [![NPM](https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/tribunal-kit)
   [![License](https://img.shields.io/badge/License-MIT-8b5cf6?style=for-the-badge)](LICENSE)
-  [![Version](https://img.shields.io/badge/Version-3.0.0-black?style=for-the-badge)](CHANGELOG.md)
+  [![Version](https://img.shields.io/badge/Version-4.0.0_Supreme_Court-black?style=for-the-badge)](CHANGELOG.md)
 </div>
 
 
@@ -56,6 +56,22 @@ No manual tagging required. The system self-organizes.
 <kbd>User</kbd> "/swarm build a API" <br>
 <kbd>System</kbd> <code>🤖 supervisor-agent → Dispatching 3 Workers...</code>
 </p>
+
+<br>
+
+## ▓▒░ THE SUPREME COURT (v4.0)
+
+*(New in v4)* The Tribunal Kit now features persistent memory so the AI **never makes the same mistake twice** and automatically learns your team's coding style.
+
+**1. The Case Law Engine (Never repeat mistakes)**
+If an agent makes a mistake, you can record it as a legal precedent. Before writing any future code, the `precedence-reviewer` checks this database locally to forcefully block the AI from repeating that mistake.
+- `npx tribunal-kit case add` *(Record an AI hallucination)*
+- `npx tribunal-kit case search "query"` *(Search your precedents)*
+
+**2. Skill Evolution Forge (Auto-learns your style)**
+You no longer need to write manual rules. The system reads your Git commits, strips out the noise to save tokens, and automatically extracts your project's unique architectural patterns to teach the AI.
+- `npx tribunal-kit learn` *(Run a learning digest on staged files)*
+- `npx tribunal-kit hook` *(Automate learning every time you `git push`)*
 
 <br>
 
@@ -114,6 +130,19 @@ Unleash parallel reviewers on existing code.
 | <code>/orchestrate</code> | Manual multi-agent sync for complex integrations. |
 | <code>/plan</code> | Architectural mapping before a single line is written. |
 | <code>/ui-ux-pro-max</code>| Triggers peak aesthetic frontend design. |
+
+</details>
+
+<details>
+<summary><b>⚖️ SUPREME COURT / MEMORY</b></summary>
+<br>
+
+| Command | Action |
+| :--- | :--- |
+| <code>npx tribunal-kit case add</code> | Record an AI hallucination to ban it forever. |
+| <code>npx tribunal-kit case search</code> | Search your local database of banned code. |
+| <code>npx tribunal-kit learn</code> | Auto-extract project idioms from your git diffs. |
+| <code>npx tribunal-kit hook</code> | Install a git hook to auto-learn the moment you push. |
 
 </details>
 

@@ -22,7 +22,8 @@ $ARGUMENTS
 
 ## 3 Active Reviewers (All Run Simultaneously)
 
-### logic-reviewer
+### precedence-reviewer    → Checks local repo Case Law for past rejections
+logic-reviewer
 - Prisma methods that don't exist (`findOne` was removed — use `findUnique`)
 - Transaction that should be `$transaction` but isn't
 - Pagination query missing total count (returns wrong metadata)
