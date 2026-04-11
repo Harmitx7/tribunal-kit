@@ -142,16 +142,16 @@ function compareSemver(a, b) {
 }
 
 /**
- * Fetch the latest version from GitHub Releases.
- * Returns the version string (e.g. '2.4.0') or null on failure.
+ * Fetch the latest version from npm registry.
+ * Returns the version string (e.g. '4.0.0') or null on failure.
  */
 function fetchLatestVersion() {
     return new Promise((resolve) => {
         const req = https.get(
-            'https://api.github.com/repos/Harmitx7/tribunal-kit/releases/latest',
+            'https://registry.npmjs.org/tribunal-kit/latest',
             {
                 headers: {
-                    'Accept': 'application/vnd.github.v3+json',
+                    'Accept': 'application/json',
                     'User-Agent': `tribunal-kit/${CURRENT_VERSION}`
                 },
                 timeout: 5000
@@ -162,8 +162,7 @@ function fetchLatestVersion() {
                 res.on('end', () => {
                     try {
                         const json = JSON.parse(data);
-                        // GitHub tags usually have a 'v' prefix (e.g., 'v2.4.0')
-                        const version = json.tag_name ? json.tag_name.replace(/^v/, '') : null;
+                        const version = json.version || null;
                         resolve(version);
                     } catch {
                         resolve(null);
@@ -207,9 +206,9 @@ async function autoUpdateCheck(originalArgs) {
     log('');
 
     try {
-        // Build the command pulling directly from GitHub
+        // Build the command pulling from npm registry
         const args = originalArgs.join(' ');
-        const cmd = `npx -y github:Harmitx7/tribunal-kit#v${latestVersion} ${args}`;
+        const cmd = `npx -y tribunal-kit@${latestVersion} ${args}`;
 
         execSync(cmd, {
             stdio: 'inherit',
