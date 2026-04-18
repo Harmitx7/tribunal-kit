@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "cases": [
+    {
+      "id": 1,
+      "fingerprint": "54a75a8b",
+      "domain": "security",
+      "verdict": "REJECTED",
+      "tags": [
+        "systemprompt",
+        "you",
+        "helpful",
+        "assistant",
+        "context",
+        "userinput",
+        "response",
+        "generate",
+        "user",
+        "input",
+        "concatenated",
+        "directly",
+        "into",
+        "system",
+        "prompt",
+        "creating",
+        "critical",
+        "injection",
+        "vulnerability"
+      ],
+      "timestamp": "2026-04-12T00:58:14",
+      "reason_summary": "User input was concatenated directly into the system prompt, creating a critical prompt injection vulnerability."
+    }
+  ],
+  "next_id": 2
+}

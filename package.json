@@ -1,7 +1,7 @@
 {
     "name": "tribunal-kit",
-    "version": "4.0.1",
-    "description": "Anti-Hallucination AI Agent Kit — 34 specialist agents, 26 slash commands, Swarm/Supervisor engine, and Supreme Court Tribunal review pipeline.",
+    "version": "4.2.0",
+    "description": "Anti-Hallucination AI Agent Kit — 37 specialist agents, 31 slash commands, Performance Swarm engine, and Supreme Court Tribunal review pipeline.",
     "keywords": [
         "ai",
         "ai-agent",

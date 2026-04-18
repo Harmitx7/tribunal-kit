@@ -30,6 +30,7 @@ If the request is extremely simple, you may use this fallback table. Otherwise, 
 |**Database / SQL**|"query", "database", "sql", "prisma", "orm"|Logic + Security + SQL|
 |**React / Frontend**|"component", "hook", "react", "next", "ui"|Logic + Security + Frontend + Types|
 |**Performance**|"optimize", "speed", "bottleneck", "slow"|Logic + Performance|
+|**Performance (Full-Stack)**|"latency", "throughput", "end-to-end perf"|vitals-reviewer + db-latency-auditor + throughput-optimizer|
 |**Tests**|"test", "spec", "coverage", "vitest", "jest"|Logic + TestCoverage|
 |**AI / LLM**|"openai", "anthropic", "llm", "embedding", "prompt"|Logic + Security + AI-Code-Reviewer|
 |**Accessibility**|"a11y", "wcag", "aria", "accessibility"|Logic + Accessibility-Reviewer|
@@ -38,7 +39,7 @@ If the request is extremely simple, you may use this fallback table. Otherwise, 
 |**API Testing**|"test api", "endpoint test", "api flow"|`api-tester` workflow|
 |**Performance**|"benchmark", "lighthouse", "bundle size", "latency"|`performance-benchmarker` workflow|
 |**Test Analysis**|"test failed", "analyze tests", "what broke"|`test-result-analyzer`|
-|**All Domains**|"/tribunal-full" or "audit everything"|ALL 11 agents|
+|**All Domains**|"/tribunal-full" or "audit everything"|ALL 14 agents|
 |**Review Only**|"/review", "check this", "audit"|All relevant agents, no Maker|
 |**Swarm / Multi-Domain**|"/swarm", "multiple agents", "parallel tasks"|`supervisor-agent` → dispatches to specialist Workers|
 
@@ -75,12 +76,13 @@ Every code response MUST:
 |`/review-react`|React/Frontend-specific deep audit|
 |`/review-types`|TypeScript type safety audit|
 |`/review-deps`|Dependency hallucination audit (checks against package.json)|
-|`/tribunal-full`|All 8 reviewer agents run in parallel|
+|`/tribunal-full`|All 14 reviewer agents run in parallel|
 |`/tribunal-backend`|Logic + Security + Dependency + Types|
 |`/tribunal-frontend`|Logic + Security + Frontend + Types|
 |`/tribunal-database`|Logic + Security + SQL|
 |`/tribunal-mobile`|Logic + Security + Mobile — for React Native, Flutter, responsive web|
 |`/tribunal-performance`|Logic + Performance — for optimization, profiling, bottlenecks|
+|`/tribunal-speed`|Full-stack parallel performance audit — CWV + DB latency + Node throughput|
 |`/brainstorm`|Explore implementation options before coding|
 |`/debug`|Systematic debugging with root cause analysis|
 |`/refactor`|Dependency-safe code refactoring with behavior preservation|

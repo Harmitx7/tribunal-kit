@@ -1,0 +1,33 @@
+{
+  "id": 1,
+  "fingerprint": "54a75a8b",
+  "timestamp": "2026-04-12T00:58:14",
+  "domain": "security",
+  "verdict": "REJECTED",
+  "reason": "User input was concatenated directly into the system prompt, creating a critical prompt injection vulnerability.",
+  "pr_ref": "PR-1",
+  "reviewer": "security-auditor",
+  "tags": [
+    "systemprompt",
+    "you",
+    "helpful",
+    "assistant",
+    "context",
+    "userinput",
+    "response",
+    "generate",
+    "user",
+    "input",
+    "concatenated",
+    "directly",
+    "into",
+    "system",
+    "prompt",
+    "creating",
+    "critical",
+    "injection",
+    "vulnerability"
+  ],
+  "diff_raw": "const systemPrompt = `You are a helpful assistant. Context: ${userInput}`;\nconst response = await ai.generate(systemPrompt);",
+  "diff_delta": "const systemPrompt = `You are a helpful assistant. Context: ${userInput}`;\nconst response = await ai.generate(systemPrompt);"
+}

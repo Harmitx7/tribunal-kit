@@ -88,7 +88,7 @@
           │                                    │
           │  Database:  logic + security + sql │
           │                                    │
-          │  Full:      all 8 reviewers        │
+          │  Full:      all 16 reviewers        │
           └────────────────┬───────────────────┘
                            │
              ┌─────────────┴─────────────┐
@@ -117,7 +117,7 @@
 
 ---
 
-## The 8 Tribunal Reviewers
+## Tribunal Reviewers
 
 | Reviewer | Activates for | Catches |
 |---|---|---|
@@ -129,6 +129,14 @@
 | `frontend-reviewer` | React/Next.js | Hooks violations, missing deps, state mutation |
 | `performance-reviewer` | All domains | O(n²), blocking I/O, unnecessary allocations |
 | `test-coverage-reviewer` | Test files | Tautology tests, no-assertion specs, over-mocking |
+| `resilience-reviewer` | Backend, full | Swallowed errors, naked Promises, missing retries/timeouts |
+| `schema-reviewer` | Backend, DB, full | Missing Zod/Pydantic validation, `z.any()`, unvalidated inputs |
+| `precedence-reviewer` | All domains | Violations of previously rejected patterns (Case Law) |
+| `ai-code-reviewer` | AI/LLM code | Hallucinated model names, prompt injection, missing rate limits |
+| `accessibility-reviewer` | Frontend | WCAG violations, missing ARIA, focus management |
+| `mobile-reviewer` | Mobile (RN) | Platform-specific issues, gesture/animation problems |
+| `penetration-tester` | Security audits | Attack surface mapping, exploitation paths |
+| `db-latency-auditor` | Database | Slow queries, missing indexes, N+1 patterns |
 
 ---
 
@@ -137,12 +145,15 @@
 | Domain | Auto-Routed Agent | Tribunal |
 |---|---|---|
 | API / server | `backend-specialist` | `/tribunal-backend` |
+| API design / contracts | `api-architect` | `/tribunal-backend` |
 | Database / ORM | `database-architect` | `/tribunal-database` |
 | React / Next.js | `frontend-specialist` | `/tribunal-frontend` |
 | Mobile (RN) | `mobile-developer` | `logic + security` |
 | CI/CD / Docker | `devops-engineer` | `logic + security` |
 | Debugging | `debugger` | — (investigation mode) |
 | Security | `security-auditor` | `/tribunal-full` |
+| Fault tolerance | `resilience-reviewer` | `/tribunal-backend` |
+| Input validation | `schema-reviewer` | `/tribunal-backend` |
 | Performance | `performance-optimizer` | `logic + performance` |
 | Multi-domain | `orchestrator` | per sub-agent |
 | New codebase | `explorer-agent` | — (read-only) |
@@ -151,6 +162,15 @@
 | Documentation | `documentation-writer` | `logic` |
 | Testing | `test-engineer` | `logic + test-coverage` |
 | Full automated QA | `qa-automation-engineer` | `logic + test-coverage` |
+| Game development | `game-developer` | `logic + security` |
+| Product strategy | `product-manager` | — (no code) |
+| User stories / backlog | `product-owner` | — (no code) |
+| SEO / search | `seo-specialist` | `logic` |
+| Throughput / latency | `throughput-optimizer` | `logic + performance` |
+| Core Web Vitals | `vitals-reviewer` | `logic + performance` |
+| Pen testing / red team | `penetration-tester` | `/tribunal-full` |
+| DB performance | `db-latency-auditor` | `/tribunal-database` |
+| AI/LLM code | `ai-code-reviewer` | `logic + security` |
 
 ---
 
@@ -171,7 +191,7 @@
 | `/generate` | Full Tribunal pipeline | Maker | Tribunal + Human |
 | `/review` | Audit existing code | Reviewers | Verdicts only |
 | `/ui-ux-pro-max` | Advanced UI design | `frontend-specialist` | Tribunal |
-| `/tribunal-full` | All 8 reviewers | All reviewers | Human |
+| `/tribunal-full` | All 16 reviewers | All reviewers | Human |
 | `/tribunal-backend` | Backend audit | 4 reviewers | Human |
 | `/tribunal-frontend` | Frontend audit | 4 reviewers | Human |
 | `/tribunal-database` | DB audit | 3 reviewers | Human |
@@ -220,9 +240,9 @@ When activated, the agent automatically pre-loads the restrictive base prompt (e
 ├── rules/
 │   └── GEMINI.md        ← Full master rules (12KB) — P0 priority
 │
-├── agents/              ← 27 specialist agents
-│   ├── [8 Tribunal reviewers]
-│   └── [19 domain specialists]
+├── agents/              ← 40 specialist agents
+│   ├── [16 Tribunal reviewers]
+│   └── [24 domain specialists]
 │
 ├── workflows/           ← 17 slash command definitions
 │
@@ -239,7 +259,7 @@ When activated, the agent automatically pre-loads the restrictive base prompt (e
 │   ├── reviewer.md
 │   └── tool-wrapper.md
 │
-├── skills/              ← 37 skill modules
+├── skills/              ← 89 skill modules
 │
 ├── .shared/             ← Shared assets (ui-ux-pro-max, etc.)
 │

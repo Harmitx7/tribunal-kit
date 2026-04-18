@@ -22,9 +22,11 @@ import os
 import sys
 import json
 import hashlib
+import math
 import re
 from pathlib import Path
 from datetime import datetime
+from collections import Counter
 
 # ── Colours ──────────────────────────────────────────────────────────────────
 GREEN  = "\033[92m"
@@ -59,7 +61,28 @@ VALID_DOMAINS = {
     "performance", "mobile", "testing", "devops", "general"
 }
 
-VALID_VERDICTS = {"REJECTED", "APPROVED_WITH_CONDITIONS", "PRECEDENT_SET"}
+VALID_VERDICTS = {"REJECTED", "APPROVED_WITH_CONDITIONS", "PRECEDENT_SET", "OVERRULED"}
+
+# ── Noise filter (skip trivial rejections during auto-record) ────────────────
+NOISE_PATTERNS = [
+    r"\bformatting\b",
+    r"\bwhitespace\b",
+    r"\bindent(ation)?\b",
+    r"\bimport\s+order\b",
+    r"\btrailing\s+(comma|space|whitespace)\b",
+    r"\bsemicolon\b",
+    r"\bprettier\b",
+    r"\beslint.*fix\b",
+    r"\blint.*only\b",
+]
+
+def is_noise_rejection(reason: str) -> bool:
+    """Return True if the rejection reason is trivial (formatting/lint-only)."""
+    lower = reason.lower()
+    for pattern in NOISE_PATTERNS:
+        if re.search(pattern, lower):
+            return True
+    return False
 
 # ── Trivial-change filter (Semantic Delta) ────────────────────────────────────
 TRIVIAL_PATTERNS = [
@@ -158,9 +181,54 @@ def extract_tags(text: str) -> list[str]:
             break
     return tags
 
-# ── Similarity scoring ────────────────────────────────────────────────────────
+# ── Similarity scoring (TF-IDF Cosine — token-free) ──────────────────────────
+def _build_idf(corpus: list[list[str]]) -> dict[str, float]:
+    """Compute Inverse Document Frequency across all case tag-lists."""
+    n = len(corpus)
+    if n == 0:
+        return {}
+    doc_freq: dict[str, int] = Counter()
+    for tags in corpus:
+        for unique_tag in set(tags):
+            doc_freq[unique_tag] += 1
+    return {term: math.log((n + 1) / (df + 1)) + 1.0 for term, df in doc_freq.items()}
+
+
+def tfidf_cosine_similarity(query_tags: list[str], case_tags: list[str],
+                            idf: dict[str, float]) -> float:
+    """
+    TF-IDF weighted cosine similarity. No LLM required.
+    Significantly more accurate than Jaccard for code pattern matching.
+    """
+    if not query_tags or not case_tags:
+        return 0.0
+
+    # Term frequency vectors
+    tf_q = Counter(query_tags)
+    tf_c = Counter(case_tags)
+
+    # All unique terms
+    all_terms = set(tf_q) | set(tf_c)
+
+    # Weighted vectors
+    dot = 0.0
+    mag_q = 0.0
+    mag_c = 0.0
+    for term in all_terms:
+        w_q = tf_q.get(term, 0) * idf.get(term, 1.0)
+        w_c = tf_c.get(term, 0) * idf.get(term, 1.0)
+        dot   += w_q * w_c
+        mag_q += w_q ** 2
+        mag_c += w_c ** 2
+
+    if mag_q == 0 or mag_c == 0:
+        return 0.0
+    return dot / (math.sqrt(mag_q) * math.sqrt(mag_c))
+
+
+# Backward-compatibility alias
 def jaccard_similarity(tags_a: list[str], tags_b: list[str]) -> float:
-    """Simple token overlap — no LLM required."""
+    """Legacy fallback — kept for compatibility but no longer primary."""
     if not tags_a or not tags_b:
         return 0.0
     set_a, set_b = set(tags_a), set(tags_b)
@@ -271,10 +339,14 @@ def cmd_search_cases(args: list[str]) -> None:
         print(f"{YELLOW}No cases recorded yet. Use 'add-case' to record your first rejection.{RESET}")
         return
 
-    # Score every case
+    # Build corpus IDF from all stored cases
+    corpus = [entry.get("tags", []) for entry in index["cases"]]
+    idf = _build_idf(corpus)
+
+    # Score every case with TF-IDF cosine
     scored = []
     for entry in index["cases"]:
-        score = jaccard_similarity(query_tags, entry.get("tags", []))
+        score = tfidf_cosine_similarity(query_tags, entry.get("tags", []), idf)
         if score > 0.0:
             scored.append((score, entry))
 
@@ -438,6 +510,160 @@ def cmd_stats(args: list[str]) -> None:
     print(f"{CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━{RESET}\n")
 
 
+def cmd_auto_record(args: list[str]) -> None:
+    """
+    Non-interactive auto-recording for AI-driven case creation.
+    Called by the precedence-reviewer after a Tribunal rejection.
+    
+    Usage:
+      python case_law_manager.py auto-record \\
+        --diff "code snippet" \\
+        --reason "why rejected" \\
+        --domain security \\
+        --verdict REJECTED \\
+        --reviewer security-auditor
+    """
+    # Parse flags
+    def get_flag(name: str) -> str:
+        flag = f"--{name}"
+        all_args = sys.argv[1:]
+        if flag in all_args:
+            idx = all_args.index(flag)
+            if idx + 1 < len(all_args):
+                return all_args[idx + 1]
+        return ""
+
+    diff_text = get_flag("diff")
+    reason    = get_flag("reason")
+    domain    = get_flag("domain") or "general"
+    verdict   = get_flag("verdict") or "REJECTED"
+    reviewer  = get_flag("reviewer") or None
+    pr_ref    = get_flag("pr-ref") or None
+
+    if not diff_text or not reason:
+        print(f"{RED}✖ auto-record requires --diff and --reason flags.{RESET}")
+        print(f"  Usage: auto-record --diff \"code\" --reason \"why\" --domain security --reviewer agent-name")
+        sys.exit(1)
+
+    # Noise filter — skip trivial rejections
+    if is_noise_rejection(reason):
+        print(f"{DIM}⊘ Skipped: trivial rejection (noise filter matched).{RESET}")
+        return
+
+    if domain not in VALID_DOMAINS:
+        domain = "general"
+    if verdict not in VALID_VERDICTS:
+        verdict = "REJECTED"
+
+    # Duplicate check: fingerprint match
+    fingerprint = content_hash(diff_text)
+    index = load_index()
+    for existing in index["cases"]:
+        if existing.get("fingerprint") == fingerprint:
+            print(f"{YELLOW}⊘ Duplicate: Case #{existing['id']:04d} already records this pattern.{RESET}")
+            return
+
+    # Build and persist
+    delta = semantic_delta(diff_text)
+    tags = extract_tags(diff_text + " " + reason)
+    case_id = index["next_id"]
+
+    case_record = {
+        "id": case_id,
+        "fingerprint": fingerprint,
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "domain": domain,
+        "verdict": verdict,
+        "reason": reason.strip(),
+        "pr_ref": pr_ref,
+        "reviewer": reviewer,
+        "tags": tags,
+        "diff_raw": diff_text.strip(),
+        "diff_delta": delta,
+        "auto_recorded": True
+    }
+
+    save_case(case_record)
+
+    index["cases"].append({
+        "id": case_id,
+        "fingerprint": fingerprint,
+        "domain": domain,
+        "verdict": verdict,
+        "tags": tags,
+        "timestamp": case_record["timestamp"],
+        "reason_summary": reason.strip()[:120]
+    })
+    index["next_id"] = case_id + 1
+    save_index(index)
+
+    print(f"{GREEN}✔ Auto-recorded Case #{case_id:04d}{RESET} [{verdict}] domain={domain}")
+    print(f"  {DIM}Reason: {reason[:80]}{RESET}")
+
+
+def cmd_overrule(args: list[str]) -> None:
+    """
+    Formally overrule a past precedent. Does NOT delete the case —
+    marks it as OVERRULED with a reason, preserving legal history.
+    """
+    case_id = None
+    if "--id" in args:
+        try:
+            case_id = int(args[args.index("--id") + 1])
+        except (IndexError, ValueError):
+            pass
+
+    if case_id is None:
+        print(f"{RED}✖ Provide a case ID: overrule --id 7{RESET}")
+        sys.exit(1)
+
+    case_record = load_case(case_id)
+    if not case_record:
+        print(f"{RED}✖ Case #{case_id:04d} not found.{RESET}")
+        sys.exit(1)
+
+    if case_record["verdict"] == "OVERRULED":
+        print(f"{YELLOW}Case #{case_id:04d} is already OVERRULED.{RESET}")
+        return
+
+    # Get reason for overruling
+    reason = None
+    if "--reason" in args:
+        try:
+            reason = args[args.index("--reason") + 1]
+        except (IndexError, ValueError):
+            pass
+
+    if not reason:
+        reason = prompt_line("Reason for overruling this precedent:")
+
+    if not reason or not reason.strip():
+        print(f"{RED}✖ An overrule reason is required.{RESET}")
+        sys.exit(1)
+
+    # Preserve history
+    old_verdict = case_record["verdict"]
+    case_record["verdict"] = "OVERRULED"
+    case_record["overruled_at"] = datetime.now().isoformat(timespec="seconds")
+    case_record["overrule_reason"] = reason.strip()
+    case_record["previous_verdict"] = old_verdict
+    save_case(case_record)
+
+    # Update index entry
+    index = load_index()
+    for entry in index["cases"]:
+        if entry["id"] == case_id:
+            entry["verdict"] = "OVERRULED"
+            break
+    save_index(index)
+
+    print(f"\n{GREEN}✔ Case #{case_id:04d} OVERRULED{RESET}")
+    print(f"  {DIM}Previous verdict : {old_verdict}{RESET}")
+    print(f"  {DIM}Overrule reason  : {reason.strip()}{RESET}")
+    print(f"  {DIM}The case is preserved in history but no longer blocks reviews.{RESET}")
+    print()
+
+
 # ── Input helpers ─────────────────────────────────────────────────────────────
 def prompt_multiline(prompt: str, sentinel: str) -> str:
     print(f"  {BOLD}{prompt}{RESET}")
@@ -480,9 +706,11 @@ def prompt_choice(label: str, choices: list[str], default: str) -> str:
 # ── Main ──────────────────────────────────────────────────────────────────────
 COMMANDS = {
     "add-case":     cmd_add_case,
+    "auto-record":  cmd_auto_record,
     "search-cases": cmd_search_cases,
     "list":         cmd_list,
     "show":         cmd_show,
+    "overrule":     cmd_overrule,
     "export":       cmd_export,
     "stats":        cmd_stats,
 }
@@ -498,10 +726,12 @@ def main() -> None:
 {BOLD}case_law_manager.py{RESET} — Tribunal Case Law Engine
 
 {BOLD}Commands:{RESET}
-  add-case                      Record a new rejected pattern
-  search-cases --query <text>   Find relevant precedents (token-free)
+  add-case                      Record a new rejected pattern (interactive)
+  auto-record --diff --reason   Record a rejection (non-interactive, for AI agents)
+  search-cases --query <text>   Find relevant precedents (TF-IDF cosine, token-free)
   list [--domain <domain>]      List all recorded cases
   show --id <N>                 Show full diff for a case
+  overrule --id <N>             Formally overrule a past precedent
   export [--stdout]             Export all cases to Markdown
   stats                         Show breakdown by domain/verdict
 

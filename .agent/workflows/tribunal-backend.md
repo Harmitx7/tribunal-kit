@@ -1,5 +1,5 @@
 ---
-description: Backend-specific Tribunal. Runs Logic + Security + Dependency + Type Safety reviewers. Use for API routes, server logic, auth code, middleware, Server Actions, and any server-side business logic.
+description: Backend-specific Tribunal. Runs Logic + Security + Dependency + Type Safety + Resilience + Schema reviewers. Use for API routes, server logic, auth code, middleware, Server Actions, and any server-side business logic.
 ---
 
 # /tribunal-backend — Backend Code Audit
@@ -20,7 +20,7 @@ $ARGUMENTS
 
 ---
 
-## 4 Active Reviewers (All Run Simultaneously)
+## 6 Active Reviewers (All Run Simultaneously)
 
 ### precedence-reviewer    → Checks local repo Case Law for past rejections
 logic-reviewer
@@ -49,6 +49,17 @@ logic-reviewer
 - Missing Zod validation before DB access
 - Unsafe type assertions (`as User` without runtime check)
 - Return type mismatches
+
+### schema-reviewer
+- Missing input validation on req.body/req.query
+- Validation applied client-side only
+- Loosely defined Zod/Pydantic schemas
+
+### resilience-reviewer
+- Swallowed errors (empty catch blocks)
+- Missing timeouts on network fetches
+- Unhandled Promise rejections
+- Missing retries for temporal network failures
 
 ---
 

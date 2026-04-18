@@ -165,3 +165,74 @@ This file contains all available skills and workflows as a condensed index for t
 |`webapp-testing`|Web application testing principles. E2E, Playwright, deep audit strategies.|
 |`whimsy-injector`|Micro-delight generator for frontend interfaces. Suggests and implements subtle animations, playful transitions, and interaction polish across any frontend stack.|
 |`workflow-optimizer`|Analyzes agent tool-calling patterns and task execution efficiency to suggest process improvements.|
+|`api-architect`|API contract design agent. Builds robust REST/GraphQL/tRPC endpoints with RFC 9457 error formats, idempotency, pagination, and versioning. Use when designing new API routes or reviewing API contracts.|
+|`resilience-reviewer`|Fault tolerance reviewer. Audits for swallowed errors, naked Promises, missing retries/timeouts, absent circuit breakers, and missing React error boundaries. Use when reviewing backend or full-stack code for reliability.|
+|`schema-reviewer`|Input validation reviewer. Enforces strict Zod/Pydantic validation at all trust boundaries (API, env, query params). Catches `z.any()`, missing `.parse()`, and unvalidated external data. Use when reviewing data ingestion or API input handling.|
+|`gsap-core`|GSAP core animation API — gsap.to(), from(), fromTo(), easing, stagger, defaults, matchMedia(). Use for JavaScript animation with GSAP.|
+|`gsap-scrolltrigger`|GSAP ScrollTrigger plugin — scroll-driven animations, pinning, snapping. Use when building scroll-linked animation.|
+|`gsap-timeline`|GSAP timeline sequencing — Timeline API, position parameters, labels, nesting. Use for multi-step animation choreography.|
+|`gsap-react`|GSAP in React — useGSAP hook, ref-based targeting, cleanup, context scoping. Use when animating React components with GSAP.|
+|`gsap-plugins`|GSAP plugins — Flip, Draggable, MorphSVG, SplitText, MotionPath, DrawSVG. Use for advanced GSAP effects.|
+|`gsap-performance`|GSAP performance — will-change, GPU compositing, lazy MediaQuery, reduced motion. Use when optimizing GSAP animations.|
+|`gsap-utils`|GSAP utility methods — toArray, clamp, mapRange, interpolate, distribute. Use for GSAP helper functions.|
+|`gsap-frameworks`|GSAP framework integration — Vue, Svelte, Astro, Angular, Webflow. Use when integrating GSAP outside React.|
+|`error-resilience`|Error resilience patterns. Retry strategies, circuit breakers, graceful degradation, timeout policies.|
+|`data-validation-schemas`|Data validation with Zod, Pydantic, and JSON Schema. Use when building validation layers.|
+|`monorepo-management`|Monorepo tooling and workspace management. Turborepo, Nx, pnpm workspaces.|
+|`typescript-advanced`|Advanced TypeScript patterns. Generics, conditional types, template literals, discriminated unions.|
+|`game-developer`|Game development orchestrator. Routes to platform-specific skills (Unity/C#, Godot/GDScript, WebGL). Use when building games or game engines.|
+|`documentation-writer`|Technical documentation specialist. README files, API docs, code comments, architecture docs, and AI-friendly documentation. Use when writing or reviewing documentation.|
+|`test-engineer`|Test generation and strategy specialist. Creates tests using the Testing Trophy (unit → integration → E2E). Use when generating tests or designing test architecture.|
+|`qa-automation-engineer`|QA automation specialist. End-to-end testing pipelines, Playwright/Cypress configuration, CI test integration, visual regression. Use when building automated QA systems.|
+|`code-archaeologist`|Legacy code exploration specialist. Navigates unfamiliar codebases, identifies patterns, maps dependencies, documents tribal knowledge. Use when exploring or understanding legacy code.|
+|`project-planner`|Project planning specialist. 4-phase methodology (Analyze → Plan → Solution → Implement). Use when planning features, roadmaps, or multi-step implementations.|
+|`product-manager`|Product strategy specialist. Feature prioritization, roadmap planning, stakeholder alignment, competitive analysis. Use when making product decisions or prioritizing features.|
+|`product-owner`|User story and backlog management specialist. Writing acceptance criteria, sprint planning, backlog grooming. Use when defining user stories or managing backlogs.|
+|`seo-specialist`|SEO optimization specialist. Technical SEO, meta tags, structured data (JSON-LD), Core Web Vitals impact on search ranking, sitemap/robots configuration. Use when optimizing search visibility.|
+|`throughput-optimizer`|Throughput and latency optimization specialist. Load testing, connection pooling, queue management, batch processing, caching strategies. Use when optimizing system throughput or reducing latency.|
+|`vitals-reviewer`|Core Web Vitals specialist. LCP, CLS, INP measurement and optimization, Lighthouse auditing, real user monitoring. Use when auditing or improving web performance metrics.|
+|`penetration-tester`|Penetration testing and red team specialist. MITRE ATT&CK mapping, attack surface analysis, exploitation paths, vulnerability chaining. Use when pen testing applications or assessing attack surfaces.|
+|`db-latency-auditor`|Database performance specialist. Slow query analysis, EXPLAIN ANALYZE, index optimization, N+1 detection, connection pool tuning. Use when debugging database performance issues.|
+|`ai-code-reviewer`|AI/LLM integration code reviewer. Hallucinated model names, invented API parameters, prompt injection vulnerabilities, missing rate limits, streaming error handling. Use when reviewing code that calls LLM APIs.|
+
+
+---
+
+## 🤖 LLM-Specific Traps
+
+AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
+
+1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
+2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
+3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
+4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+
+---
+
+## 🏛️ Tribunal Integration (Anti-Hallucination)
+
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
+
+### ❌ Forbidden AI Tropes
+
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+
+### ✅ Pre-Flight Self-Audit
+
+Review these questions before confirming output:
+```
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
+```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -1,8 +1,8 @@
 ---
-description: Run ALL 11 Tribunal reviewer agents simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
+description: Run ALL 16 Tribunal reviewer agents simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
 ---
 
-# /tribunal-full — Complete 11-Reviewer Audit
+# /tribunal-full — Complete 16-Reviewer Audit
 
 $ARGUMENTS
 
@@ -20,17 +20,19 @@ $ARGUMENTS
 
 ---
 
-## 11 Reviewers — All Active Simultaneously
+## 16 Reviewers — All Active Simultaneously
 
 ```
 Tier 1: Always active (universal concerns)
 ├── precedence-reviewer    → Checks local repo Case Law for past rejections
 ├── logic-reviewer         → Hallucinated methods, impossible logic, undefined refs
-└── security-auditor       → OWASP 2025, injection, JWT, SSRF, IDOR
+├── security-auditor       → OWASP 2025, injection, JWT, SSRF, IDOR
+└── resilience-reviewer    → Swallowed errors, unhandled rejections, missing retries
 
 Tier 2: Code quality
 ├── dependency-reviewer    → Fabricated packages, supply chain, version compatibility
 ├── type-safety-reviewer   → 'any' epidemic, Zod parse vs cast, unguarded access
+├── schema-reviewer        → Missing input validation, loose schemas, raw req.body
 └── sql-reviewer           → Injection, N+1, missing indexes, unscoped mutations
 
 Tier 3: Domain-specific
@@ -40,6 +42,11 @@ Tier 3: Domain-specific
 ├── ai-code-reviewer       → Model name hallucinations, prompt injection, cost explosion
 ├── test-coverage-reviewer → Happy path only, brittle selectors, missing edge cases
 └── accessibility-reviewer → WCAG 2.2 AA, ARIA misuse, focus management, live regions
+
+Tier 4: Performance Swarm (token-scoped specialists)
+├── vitals-reviewer        → Frontend CWV depth: Suspense waterfalls, paint jank, animation leaks
+├── db-latency-auditor     → DB layer: N+1, unbounded queries, unindexed WHERE, pool config
+└── throughput-optimizer   → Server runtime: event-loop blocks, serialized awaits, memory leaks
 ```
 
 ---
@@ -50,9 +57,9 @@ Not all 11 reviewers produce meaningful findings on all code types. Active revie
 
 |Code Under Review|Critical Reviewers|
 |:---|:---|
-|REST API route|logic, security, dependency, type-safety, sql|
-|React component|logic, frontend, accessibility, type-safety|
-|Database query|logic, security, sql|
+|REST API route|logic, security, dependency, type-safety, sql, schema, resilience|
+|React component|logic, frontend, accessibility, type-safety, resilience|
+|Database query|logic, security, sql, resilience|
 |AI LLM integration|logic, security, ai-code, dependency|
 |Test file|test-coverage, logic|
 |React Native / Expo|mobile, logic, security, performance|
@@ -64,7 +71,7 @@ Not all 11 reviewers produce meaningful findings on all code types. Active revie
 ## Verdict Aggregation
 
 ```
-All 11 verdicts are collected. Aggregated result:
+All 16 verdicts are collected. Aggregated result:
 
 If ANY reviewer = ❌ REJECTED → Global verdict: ❌ REJECTED (must fix before Human Gate)
 If any reviewer = ⚠️ WARNING  → Global verdict: ⚠️ WARNINGS (proceed with attention)

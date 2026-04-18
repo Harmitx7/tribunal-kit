@@ -6,6 +6,57 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [4.2.0] — 2026-04-18
+
+### Added
+
+#### New Agents (6)
+
+- **`api-architect`**: API contract design agent. Builds robust REST/GraphQL/tRPC endpoints with RFC 9457 error formats, idempotency, pagination, and versioning.
+- **`resilience-reviewer`**: Fault tolerance reviewer. Audits for swallowed errors, naked Promises, missing retries/timeouts, absent circuit breakers, and missing React error boundaries.
+- **`schema-reviewer`**: Input validation reviewer. Enforces strict Zod/Pydantic validation at all trust boundaries. Catches `z.any()`, missing `.parse()`, and unvalidated external data.
+- **`throughput-optimizer`**: Throughput and latency optimization specialist. Load testing, connection pooling, queue management, batch processing.
+- **`vitals-reviewer`**: Core Web Vitals specialist. LCP, CLS, INP measurement, Lighthouse auditing, real user monitoring.
+- **`db-latency-auditor`**: Database performance specialist. Slow query analysis, EXPLAIN ANALYZE, index optimization, N+1 detection.
+
+#### New Skills (12)
+
+- **GSAP Suite (8 skills)**: `gsap-core`, `gsap-scrolltrigger`, `gsap-timeline`, `gsap-react`, `gsap-plugins`, `gsap-performance`, `gsap-utils`, `gsap-frameworks` — replaces the monolithic `gsap-expert` with domain-specific, deeply documented skills covering the full GSAP ecosystem.
+- **`error-resilience`**: Retry strategies, circuit breakers, graceful degradation, timeout policies.
+- **`data-validation-schemas`**: Zod, Pydantic, and JSON Schema validation patterns.
+- **`monorepo-management`**: Turborepo, Nx, pnpm workspaces.
+- **`typescript-advanced`**: Advanced TypeScript patterns — generics, conditional types, template literals, discriminated unions.
+
+### Changed
+
+#### Auto-Routing — 100% Coverage (36 routable agents)
+
+- **`GEMINI.md` Step 2 routing table**: Expanded from 22 → **36 entries**. Every domain specialist is now auto-routable. Added 14 missing agents: `game-developer`, `documentation-writer`, `test-engineer`, `qa-automation-engineer`, `code-archaeologist`, `project-planner`, `product-manager`, `product-owner`, `seo-specialist`, `throughput-optimizer`, `vitals-reviewer`, `penetration-tester`, `db-latency-auditor`, `ai-code-reviewer`.
+- **`AGENT_FLOW.md` Agent Selection Matrix**: Expanded from 18 → **27 entries** with Tribunal pipeline assignments for every routable agent.
+- **`intelligent-routing/SKILL.md` Skill Manifest**: Added 30 new entries (14 agents + 8 GSAP + 4 skills + 4 existing skills that were missing).
+
+#### Tribunal Pipeline — Expanded to 16 Reviewers
+
+- **`tribunal-full.md`**: Now dispatches **16 concurrent reviewers** (up from 9), including `resilience-reviewer`, `schema-reviewer`, `precedence-reviewer`, `ai-code-reviewer`, `accessibility-reviewer`, `mobile-reviewer`, `penetration-tester`, and `db-latency-auditor`.
+- **`tribunal-backend.md`**: Now includes `resilience-reviewer` + `schema-reviewer` in the backend audit pipeline.
+- **`GEMINI.md` Tribunal Gate**: Backend/API reviewer set updated to `logic + security + dependency + type-safety + resilience + schema`. Full pipeline count updated to `all 16`.
+
+#### Skill Hardening — 89/89 (100%)
+
+- **All 89 skills** now contain standardized Tribunal compliance blocks: 🤖 LLM-Specific Traps, 🏛️ Tribunal Integration, ✅ Pre-Flight Self-Audit, and 🛑 VBC Protocol.
+- Hardening executed via `strengthen_skills.py` automation across the entire `.agent/skills/` directory.
+
+### Removed
+
+- **`gsap-expert`**: Replaced by the 8-skill GSAP suite (`gsap-core`, `gsap-scrolltrigger`, etc.) for more granular, domain-specific coverage.
+
+### Infrastructure
+
+- Total asset count: **40 agents** (16 reviewers + 24 domain specialists), 89 skills (all hardened), 26+ workflows.
+- `AGENT_FLOW.md` file layout updated: agents 27 → 40, skills 37 → 89, reviewers 8 → 16.
+
+---
+
 ## [4.0.0] — 2026-04-10
 
 ### Added

@@ -33,6 +33,7 @@ Every code or design request activates an agent. This is not optional.
 |Domain|Primary Agent / Skill|
 |---|---|
 |API / server / backend|`backend-specialist`|
+|API contract design / REST / GraphQL|`api-architect`|
 |C# / .NET / Blazor|`dotnet-core-expert`|
 |Python / FastAPI / Django|`python-pro`|
 |Database / schema / SQL|`database-architect`|
@@ -43,6 +44,8 @@ Every code or design request activates an agent. This is not optional.
 |Mobile (RN / Flutter)|`mobile-developer`|
 |Debugging / errors|`debugger`|
 |Security / vulnerabilities|`security-auditor`|
+|Fault tolerance / retries / error boundaries|`resilience-reviewer`|
+|Input validation / Zod / Pydantic schemas|`schema-reviewer`|
 |Performance / optimization|`performance-optimizer`|
 |DevOps / CI-CD / Docker|`devops-engineer`|
 |Production incidents|`devops-incident-responder`|
@@ -50,6 +53,20 @@ Every code or design request activates an agent. This is not optional.
 |Multi-agent architecture|`agent-organizer`|
 |Multi-domain (2+ areas)|`orchestrator`|
 |Unknown codebase|`explorer-agent`|
+|Legacy code / codebase archaeology|`code-archaeologist`|
+|Game development / Unity / Godot|`game-developer`|
+|Documentation / README / API docs|`documentation-writer`|
+|Test generation / test strategy|`test-engineer`|
+|QA automation / E2E testing|`qa-automation-engineer`|
+|Project planning / roadmaps|`project-planner`|
+|Product strategy / feature prioritization|`product-manager`|
+|User stories / backlog management|`product-owner`|
+|SEO / search optimization|`seo-specialist`|
+|Throughput / latency / load optimization|`throughput-optimizer`|
+|Core Web Vitals / LCP / CLS / INP|`vitals-reviewer`|
+|Pen testing / red team / attack surface|`penetration-tester`|
+|Database performance / slow queries|`db-latency-auditor`|
+|AI/LLM integration code / prompts|`ai-code-reviewer`|
 
 **When activated, announce the agent:**
 
@@ -138,12 +155,12 @@ The Human Gate is never skipped. No code is written to a file without explicit u
 
 |Code type|Reviewers|
 |---|---|
-|Backend/API|logic + security + dependency + type-safety|
+|Backend/API|logic + security + dependency + type-safety + resilience + schema|
 |Frontend/React|logic + security + frontend + type-safety|
-|Database/SQL|logic + security + sql|
+|Database/SQL|logic + security + sql + schema|
 |Mobile/Cross-platform|logic + security + mobile-reviewer + type-safety|
 |Any domain|+ performance (if optimization)|
-|Before merge|/tribunal-full (all 9)|
+|Before merge|/tribunal-full (all 16)|
 
 ---
 

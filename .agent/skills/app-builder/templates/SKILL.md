@@ -35,3 +35,73 @@ allowed-tools: Read, Glob, Grep
 2. Match to appropriate template
 3. Read ONLY that template's TEMPLATE.md
 4. Follow its tech stack and structure
+
+---
+
+## ðŸš¨ LLM Trap Table
+
+|Pattern|What AI Does Wrong|What Is Actually Correct|
+|:---|:---|:---|
+|[domain-specific trap 1]|[hallucination]|[correct behavior]|
+|[domain-specific trap 2]|[hallucination]|[correct behavior]|
+|[domain-specific trap 3]|[hallucination]|[correct behavior]|
+
+---
+
+## âœ… Pre-Flight Self-Audit
+
+Before producing any output, verify:
+``
+âœ… Did I read the actual files before making claims about them?
+âœ… Did I verify all method names against official documentation?
+âœ… Did I add // VERIFY: on any uncertain API calls?
+âœ… Are all imports from packages that actually exist in package.json?
+âœ… Did I test my logic with edge cases (null, empty, 0, max)?
+âœ… Did I avoid generating code for more than one module at a time?
+âœ… Am I working from evidence, not assumption?
+``
+
+---
+
+## ðŸ” VBC Protocol (Verify â†’ Build â†’ Confirm)
+
+``
+VERIFY:  Read the actual codebase before writing anything
+BUILD:   Generate the smallest meaningful unit of code
+CONFIRM: Verify the output is correct before presenting
+``
+
+---
+
+## ðŸš¨ LLM Trap Table
+
+|Pattern|What AI Does Wrong|What Is Actually Correct|
+|:---|:---|:---|
+|[domain-specific trap 1]|[hallucination]|[correct behavior]|
+|[domain-specific trap 2]|[hallucination]|[correct behavior]|
+|[domain-specific trap 3]|[hallucination]|[correct behavior]|
+
+---
+
+## âœ… Pre-Flight Self-Audit
+
+Before producing any output, verify:
+``
+âœ… Did I read the actual files before making claims about them?
+âœ… Did I verify all method names against official documentation?
+âœ… Did I add // VERIFY: on any uncertain API calls?
+âœ… Are all imports from packages that actually exist in package.json?
+âœ… Did I test my logic with edge cases (null, empty, 0, max)?
+âœ… Did I avoid generating code for more than one module at a time?
+âœ… Am I working from evidence, not assumption?
+``
+
+---
+
+## ðŸ” VBC Protocol (Verify â†’ Build â†’ Confirm)
+
+``
+VERIFY:  Read the actual codebase before writing anything
+BUILD:   Generate the smallest meaningful unit of code
+CONFIRM: Verify the output is correct before presenting
+``

@@ -8,7 +8,7 @@ const WORKFLOWS_DIR  = path.join(AGENT_DIR, 'workflows');
 const AGENTS_DIR     = path.join(AGENT_DIR, 'agents');
 const SKILLS_DIR     = path.join(AGENT_DIR, 'skills');
 
-// Expected slash commands per plan (30 workflows)
+// Expected slash commands per plan (31 workflows)
 const EXPECTED_WORKFLOWS = [
     'api-tester', 'audit', 'brainstorm', 'changelog', 'create',
     'debug', 'deploy', 'enhance', 'fix', 'generate', 'migrate',
@@ -16,7 +16,7 @@ const EXPECTED_WORKFLOWS = [
     'refactor', 'review', 'review-ai', 'session', 'status',
     'strengthen-skills', 'swarm', 'test', 'tribunal-backend',
     'tribunal-database', 'tribunal-frontend', 'tribunal-full',
-    'tribunal-mobile', 'tribunal-performance', 'ui-ux-pro-max',
+    'tribunal-mobile', 'tribunal-performance', 'tribunal-speed', 'ui-ux-pro-max',
 ];
 
 describe('Workflow file integrity', () => {
@@ -24,7 +24,7 @@ describe('Workflow file integrity', () => {
         expect(fs.existsSync(WORKFLOWS_DIR)).toBe(true);
     });
 
-    test('all 30 expected workflow files are present and non-empty', () => {
+    test('all 31 expected workflow files are present and non-empty', () => {
         const missing = [];
         const empty   = [];
 

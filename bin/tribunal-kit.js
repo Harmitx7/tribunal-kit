@@ -421,7 +421,7 @@ function cmdInit(flags) {
             console.log(plainRow(`  Next steps:`, s => c('gray', s)));
             console.log(stepRow('/generate',      'Generate code with anti-hallucination'));
             console.log(stepRow('/review',         'Audit existing code for issues'));
-            console.log(stepRow('/tribunal-full',  'Run all 11 reviewers in parallel'));
+            console.log(stepRow('/tribunal-full',  'Run all 14 reviewers in parallel'));
             console.log(plainRow('', () => ''));
             console.log(`  ${c('cyan', '╚' + '═'.repeat(W) + '╝')}`);
             console.log();
@@ -580,6 +580,10 @@ function cmdCase(flags) {
         log(`  ${c('cyan', 'add'.padEnd(10))}  ${c('gray', 'Record a new Case Law rejection pattern')}`);
         log(`  ${c('cyan', 'search'.padEnd(10))}  ${c('gray', 'Search existing cases (e.g., search "query")')}`);
         log(`  ${c('cyan', 'list'.padEnd(10))}  ${c('gray', 'List all recorded case law')}`);
+        log(`  ${c('cyan', 'show'.padEnd(10))}  ${c('gray', 'Show full diff for a case (e.g., show --id 1)')}`);
+        log(`  ${c('cyan', 'stats'.padEnd(10))}  ${c('gray', 'Show case law stats by domain/verdict')}`);
+        log(`  ${c('cyan', 'export'.padEnd(10))}  ${c('gray', 'Export all cases to Markdown')}`);
+        log(`  ${c('cyan', 'overrule'.padEnd(10))}  ${c('gray', 'Overrule a past precedent (e.g., overrule --id 1)')}`);
         console.log();
         process.exit(1);
     }
@@ -667,7 +671,7 @@ function cmdHelp() {
     log(cmd('update', 'Re-install to get latest version'));
     log(cmd('status', 'Check if .agent/ is installed'));
     log(cmd('learn',  'Evolve project idioms based on git diffs'));
-    log(cmd('case',   'Manage Case Law precedents (add, search, list)'));
+    log(cmd('case',   'Manage Case Law precedents (add, search, list, show, stats, overrule)'));
     log(cmd('hook',   'Install pre-push git hook for auto-learning'));
     console.log();
     log(bold('  Options'));
@@ -693,6 +697,10 @@ function cmdHelp() {
     log(ex('npx tribunal-kit case add'));
     log(ex('npx tribunal-kit case search "useEffect"'));
     log(ex('npx tribunal-kit case list'));
+    log(ex('npx tribunal-kit case show --id 1'));
+    log(ex('npx tribunal-kit case stats'));
+    log(ex('npx tribunal-kit case export'));
+    log(ex('npx tribunal-kit case overrule --id 1'));
     log(ex('npx tribunal-kit hook'));
     console.log();
 }

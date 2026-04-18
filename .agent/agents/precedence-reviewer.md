@@ -62,7 +62,7 @@ Run the following command to search for relevant precedents:
 python .agent/scripts/case_law_manager.py search-cases --query "<extracted keywords>"
 ```
 
-This uses **Jaccard tag similarity**. No LLM is called. No tokens consumed.
+This uses **TF-IDF weighted cosine similarity**. No LLM is called. No tokens consumed.
 
 ---
 
@@ -138,6 +138,34 @@ Case Law, prompt the developer:
 
 ---
 
+## Step 5 — Auto-Record New Rejections
+
+When ANY reviewer issues a `❌ REJECTED` verdict, you MUST auto-record the
+rejection as a new case. This is NOT optional — the Supreme Court depends on it.
+
+**Trigger:** A reviewer's output contains `❌ REJECTED` and a specific reason.
+
+**Action:** Run the following command (non-interactive, no human input needed):
+
+```bash
+python .agent/scripts/case_law_manager.py auto-record \
+  --diff "<the rejected code snippet>" \
+  --reason "<the reviewer's rejection reason>" \
+  --domain <domain> \
+  --verdict REJECTED \
+  --reviewer <reviewer-agent-name>
+```
+
+**Safety guards (built into `auto-record`):**
+- **Noise filter:** Trivial rejections (formatting, whitespace, import order) are auto-skipped.
+- **Duplicate check:** If the code fingerprint already exists in case law, it silently skips.
+- No tokens consumed — the command is a direct Python script call.
+
+**Do NOT prompt the developer to manually record.** The Supreme Court must be
+self-populating to be effective.
+
+---
+
 ## Precedence Hierarchy
 
 | Priority | Source | Authority |
@@ -145,7 +173,8 @@ Case Law, prompt the developer:
 | 1 (Highest) | Case with verdict `PRECEDENT_SET` | Absolute — cannot be auto-overridden |
 | 2 | Case with verdict `REJECTED` | Blocking — requires human override |
 | 3 | Case with verdict `APPROVED_WITH_CONDITIONS` | Advisory — highlight conditions |
-| 4 | Score < 0.2 | No action required |
+| 4 | Case with verdict `OVERRULED` | Inactive — no longer blocks, shown as historical context |
+| 5 | Score < 0.2 | No action required |
 
 ---
 
@@ -171,6 +200,8 @@ Always begin your review section with one of these badges:
 ❌ Record vague reasons like "bad practice" — require specificity
 ❌ Allow the Maker agent to see the precedent before it finalizes its proposal
    (Precedent check is done AFTER generation, not before — prevents bias)
+❌ Skip auto-recording after a rejection — every rejection must be recorded
+❌ Treat OVERRULED cases as active blockers — they are historical ONLY
 ```
 
 ---
@@ -196,14 +227,20 @@ Human Gate receives your hold as a hard blocker alongside their verdicts.
 ## Quick Reference
 
 ```bash
-# Search Case Law
+# Search Case Law (TF-IDF cosine — zero tokens)
 python .agent/scripts/case_law_manager.py search-cases --query "useEffect dependency"
 
-# Record a new rejection
+# Record a new rejection (interactive)
 python .agent/scripts/case_law_manager.py add-case
+
+# Auto-record a rejection (non-interactive — for AI agents)
+python .agent/scripts/case_law_manager.py auto-record --diff "code" --reason "why" --domain security
 
 # View full case
 python .agent/scripts/case_law_manager.py show --id 7
+
+# Overrule a past precedent
+python .agent/scripts/case_law_manager.py overrule --id 7 --reason "no longer applicable"
 
 # See all cases
 python .agent/scripts/case_law_manager.py list
