@@ -239,4 +239,4 @@ python .agent/scripts/auto_preview.py start
   <br><br>
   <i>"Never guess database column names. Error handling on every async function. Evidence-based closeouts. Welcome to the Tribunal."</i><br>
   <sub><b>MIT Licensed</b> • Hand-forged for high-performance agentic engineering.</sub>
-</div>
+</div> 
