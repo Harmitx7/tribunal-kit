@@ -56,7 +56,7 @@ function getLatestTag() {
 
 function getCommits(since) {
     const range = since ? `${since}..HEAD` : 'HEAD';
-    const format = '--format=%H||%s||%an||%ai';
+    const format = '--format="%H||%s||%an||%ai"';
     const raw = git(`log ${range} ${format} --no-merges`);
     if (!raw) return [];
 
