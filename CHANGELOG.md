@@ -1,10 +1,26 @@
 # Changelog
 
-All notable changes to the Tribunal Anti-Hallucination Agent Kit are documented here.
+All notable changes to Tribunal Kit are documented here.
+Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+## [4.3.0] — 2026-04-20
 
----
+### ✨ Features
+
+- upgrade inner-loop validator and convert python verification scripts to node.js (`3fdb1fc`)
+
+### 🐛 Bug Fixes
+
+- correct shell escaping bug in changelog generator (`2eeb4b1`)
+- resolve command injection risk in skill integrator (`faa66aa`)
+
+### 📝 Documentation
+
+- update agent counts to 41 for sync-version.js pass (`5fa0db9`)
+
+### 🎨 Style
+
+- change CLI UI banner color to #ff1637 (`7ffe9bc`)
 
 ## [4.2.0] — 2026-04-18
 
