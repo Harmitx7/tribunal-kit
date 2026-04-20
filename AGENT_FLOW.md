@@ -240,7 +240,7 @@ When activated, the agent automatically pre-loads the restrictive base prompt (e
 ├── rules/
 │   └── GEMINI.md        ← Full master rules (12KB) — P0 priority
 │
-├── agents/              ← 40 specialist agents
+├── agents/              ← 41 specialist agents
 │   ├── [16 Tribunal reviewers]
 │   └── [24 domain specialists]
 │
