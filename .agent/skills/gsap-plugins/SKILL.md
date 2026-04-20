@@ -427,8 +427,6 @@ https://gsap.com/docs/v3/Plugins/
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 

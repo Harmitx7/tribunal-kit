@@ -42,7 +42,7 @@ Type any of these in your AI IDE chat:
 |---|---|---|
 |`/generate`|Full Tribunal: Maker → Parallel Review → Human Gate|`workflows/generate.md`|
 |`/review`|Audit existing code (no generation)|`workflows/review.md`|
-|`/tribunal-full`|ALL 8 agents at once — maximum coverage|`workflows/tribunal-full.md`|
+|`/tribunal-full`|ALL 16 reviewers at once — maximum coverage|`workflows/tribunal-full.md`|
 |`/tribunal-backend`|Logic + Security + Deps + Types|`workflows/tribunal-backend.md`|
 |`/tribunal-frontend`|Logic + Security + Frontend + Types|`workflows/tribunal-frontend.md`|
 |`/tribunal-database`|Logic + Security + SQL|`workflows/tribunal-database.md`|
@@ -71,7 +71,7 @@ Type any of these in your AI IDE chat:
 
 ---
 
-## The 11 Tribunal Agents
+## The 16 Tribunal Agents
 
 |Agent|File|Activates When|
 |---|---|---|
@@ -86,6 +86,11 @@ Type any of these in your AI IDE chat:
 |`mobile-reviewer`|`agents/mobile-reviewer.md`|"mobile", "react native", "flutter", `/tribunal-full`|
 |`ai-code-reviewer`|`agents/ai-code-reviewer.md`|"llm", "openai", "anthropic", "ai", `/tribunal-full`, `/review-ai`|
 |`accessibility-reviewer`|`agents/accessibility-reviewer.md`|"a11y", "wcag", "aria", `/tribunal-frontend`, `/tribunal-full`|
+|`resilience-reviewer`|`agents/resilience-reviewer.md`|"retry", "circuit breaker", "error boundary", `/tribunal-backend`, `/tribunal-full`|
+|`schema-reviewer`|`agents/schema-reviewer.md`|"validation", "zod", "pydantic", `/tribunal-backend`, `/tribunal-full`|
+|`precedence-reviewer`|`agents/precedence-reviewer.md`|All sessions — checks Case Law before generation|
+|`penetration-tester`|`agents/penetration-tester.md`|"pentest", "red team", "attack surface", `/tribunal-full`|
+|`db-latency-auditor`|`agents/db-latency-auditor.md`|"slow query", "index", "N+1", `/tribunal-database`, `/tribunal-full`|
 
 ---
 
@@ -121,7 +126,7 @@ The Swarm system decomposes complex multi-domain goals into independent sub-task
 |`agents/swarm-worker-contracts.md`|WorkerRequest + WorkerResult JSON schemas|
 |`agents/swarm-worker-registry.md`|Maps task types and keywords to specialist agents|
 |`workflows/swarm.md`|`/swarm` slash command procedure|
-|`scripts/swarm_dispatcher.py`|Validates WorkerRequest/WorkerResult JSON (use `--mode swarm`)|
+|`scripts/swarm_dispatcher.js`|Validates WorkerRequest/WorkerResult JSON (use `--mode swarm`)|
 
 **Constraints:**
 - Maximum 5 Workers per swarm invocation
@@ -217,20 +222,20 @@ All scripts live in `.agent/scripts/`:
 
 |Script|Purpose|Usage|
 |---|---|---|
-|`checklist.py`|Priority-ordered project audit|`python .agent/scripts/checklist.py .`|
-|`verify_all.py`|Full pre-deploy validation|`python .agent/scripts/verify_all.py`|
+|`checklist.js`|Priority-ordered project audit|`node .agent/scripts/checklist.js .`|
+|`verify_all.js`|Full pre-deploy validation|`node .agent/scripts/verify_all.js`|
 |`auto_preview.py`|Local dev server management|`python .agent/scripts/auto_preview.py start`|
-|`session_manager.py`|Multi-session state tracking|`python .agent/scripts/session_manager.py status`|
+|`session_manager.js`|Multi-session state tracking|`node .agent/scripts/session_manager.js status`|
 |`lint_runner.py`|Standalone lint runner|`python .agent/scripts/lint_runner.py . --fix`|
 |`test_runner.py`|Auto-detecting test runner|`python .agent/scripts/test_runner.py . --coverage`|
-|`security_scan.py`|OWASP-aware source code scanner|`python .agent/scripts/security_scan.py .`|
+|`security_scan.js`|OWASP-aware source code scanner|`node .agent/scripts/security_scan.js .`|
 |`dependency_analyzer.py`|Unused/phantom dep checker|`python .agent/scripts/dependency_analyzer.py . --audit`|
 |`schema_validator.py`|DB schema validator|`python .agent/scripts/schema_validator.py .`|
 |`bundle_analyzer.py`|JS/TS bundle size analyzer|`python .agent/scripts/bundle_analyzer.py . --build`|
 |`strengthen_skills.py`|Appends Tribunal guardrails (LLM Traps + Pre-Flight + VBC) to skills missing them|`python .agent/scripts/strengthen_skills.py . --dry-run`|
-|`swarm_dispatcher.py`|Validate Orchestrator micro-worker JSON payloads|`python .agent/scripts/swarm_dispatcher.py --file payload.json`|
+|`swarm_dispatcher.js`|Validate Orchestrator micro-worker JSON payloads|`node .agent/scripts/swarm_dispatcher.js --file payload.json`|
 |`skill_integrator.py`|Map active skills to executable scripts|`python .agent/scripts/skill_integrator.py`|
-|`test_swarm_dispatcher.py`|Unit tests for swarm_dispatcher|`python .agent/scripts/test_swarm_dispatcher.py`|
+|`test_swarm_dispatcher.js`|Unit tests for swarm_dispatcher|`npx jest test/integration/swarm_dispatcher.test.js`|
 
 ---
 
@@ -257,14 +262,16 @@ Script failures follow cascade rules:
 .agent/
 ├── ARCHITECTURE.md          ← This file
 ├── GEMINI.md                ← Root behavior config (includes /swarm routing)
-├── agents/                  ← 33 specialist + reviewer agents
+├── agents/                  ← 40 specialist + reviewer agents (16 reviewers + 24 domain)
 │   ├── supervisor-agent.md  ← Swarm triage, dispatch, synthesis
 │   ├── swarm-worker-contracts.md  ← WorkerRequest/WorkerResult schemas
 │   └── swarm-worker-registry.md   ← Task type → agent routing map
 ├── rules/GEMINI.md          ← Master rules (P0 priority)
-├── scripts/                 ← 13 Python automation scripts
-│   └── swarm_dispatcher.py  ← Validates WorkerRequest/WorkerResult JSON
-├── skills/                  ← 44 modular skill packages
-└── workflows/               ← 25 slash command definitions
+├── scripts/                 ← 25 Python/JS automation scripts
+│   └── swarm_dispatcher.js  ← Validates WorkerRequest/WorkerResult JSON
+├── skills/                  ← 90 modular skill packages (all hardened)
+├── patterns/                ← 5 ADK skill base patterns
+├── history/                 ← Case Law + Skill Evolution data (user-generated, preserved on update)
+└── workflows/               ← 31 slash command definitions
     └── swarm.md             ← /swarm orchestration procedure
 ```

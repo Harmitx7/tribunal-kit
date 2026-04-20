@@ -1,5 +1,5 @@
 ---
-description: Multi-Agent Swarm Orchestration. Supervisor decomposes a complex goal into sub-tasks, dispatches to specialist Workers via structured JSON contracts, collects results via allSettled fan-in, and synthesizes a unified deliverable. Validates payloads via swarm_dispatcher.py before dispatch.
+description: Multi-Agent Swarm Orchestration. Supervisor decomposes a complex goal into sub-tasks, dispatches to specialist Workers via structured JSON contracts, collects results via allSettled fan-in, and synthesizes a unified deliverable. Validates payloads via swarm_dispatcher.js before dispatch.
 ---
 
 # /swarm — Multi-Agent Swarm Execution
@@ -69,7 +69,7 @@ Every worker receives a structured JSON contract (not natural language):
 Before dispatching, validate all worker contracts:
 
 ```bash
-python .agent/scripts/swarm_dispatcher.py --file payload.json
+node .agent/scripts/swarm_dispatcher.js --file payload.json
 ```
 
 If validation passes → dispatch workers in parallel.

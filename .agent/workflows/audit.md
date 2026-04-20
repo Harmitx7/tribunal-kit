@@ -26,25 +26,25 @@ Security failures early in the pipeline halt subsequent steps. Lint/test failure
 
 ```
 Priority 1 — Security (HALT if critical finding)
-  python .agent/scripts/security_scan.py .
+  node .agent/scripts/security_scan.js .
 
 Priority 2 — Dependencies (HALT if exploitable CVE found)
-  python .agent/scripts/dependency_analyzer.py . --audit
+  node .agent/scripts/dependency_analyzer.js . --audit
 
 Priority 3 — Type Checking (CONTINUE but flag)
   npx tsc --noEmit
 
 Priority 4 — Lint (CONTINUE but flag as deployment blocker)
-  python .agent/scripts/lint_runner.py .
+  node .agent/scripts/lint_runner.js .
 
 Priority 5 — Schema Validation (CONTINUE but flag)
-  python .agent/scripts/schema_validator.py .
+  node .agent/scripts/schema_validator.js .
 
 Priority 6 — Tests (CONTINUE but mark incomplete)
-  python .agent/scripts/test_runner.py . --coverage
+  node .agent/scripts/test_runner.js . --coverage
 
 Priority 7 — Bundle Analysis (INFORM only)
-  python .agent/scripts/bundle_analyzer.py . --build
+  node .agent/scripts/bundle_analyzer.js . --build
 ```
 
 ### Cascade Failure Rules

@@ -2,7 +2,7 @@
 
 Defines the strict JSON schemas for all Swarm dispatch and result payloads.
 Every `WorkerRequest` and `WorkerResult` MUST conform to these schemas.
-Used by: `supervisor-agent`, `swarm_dispatcher.py`, `/swarm` workflow.
+Used by: `supervisor-agent`, `swarm_dispatcher.js`, `/swarm` workflow.
 
 ---
 
@@ -153,14 +153,14 @@ interface WorkerResult {
 
 ---
 
-## swarm_dispatcher.py Integration
+## swarm_dispatcher.js Integration
 
-The `swarm_dispatcher.py` script validates **WorkerRequest** payloads before dispatch.
+The `swarm_dispatcher.js` script validates **WorkerRequest** payloads before dispatch.
 
 **Usage:**
 ```bash
-python .agent/scripts/swarm_dispatcher.py --mode swarm --file worker_request.json
-python .agent/scripts/swarm_dispatcher.py --mode swarm --payload '{"task_id":"...","type":"generate_code","agent":"backend-specialist","goal":"...","context":"...","max_retries":3}'
+node .agent/scripts/swarm_dispatcher.js --mode swarm --file worker_request.json
+node .agent/scripts/swarm_dispatcher.js --mode swarm --payload '{"task_id":"...","type":"generate_code","agent":"backend-specialist","goal":"...","context":"...","max_retries":3}'
 ```
 
 Exits `0` on valid payload. Exits `1` on any schema violation with a specific error message per field.

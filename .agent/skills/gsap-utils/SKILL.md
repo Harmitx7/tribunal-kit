@@ -285,8 +285,6 @@ https://gsap.com/docs/v3/HelperFunctions
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 

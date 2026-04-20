@@ -222,7 +222,7 @@ These scripts live in `.agent/scripts/`. Agents and skills can invoke them:
 |`checklist.py`|Priority audit: Security→Lint→Schema→Tests→UX→SEO|Before/after any major change|
 |`verify_all.py`|Full pre-deploy validation suite|Pre-deploy|
 |`auto_preview.py`|Start/stop/restart local dev server|After /create or /enhance|
-|`session_manager.py`|Track session state between conversations|Multi-session work|
+|`session_manager.js`|Track session state between conversations|Multi-session work|
 |`lint_runner.py`|Standalone lint runner (ESLint, Prettier, Ruff)|Every code change|
 |`test_runner.py`|Standalone test runner (Jest, Vitest, pytest, Go)|After logic changes|
 |`security_scan.py`|Deep OWASP-aware source code security scan|Always on deploy, /audit|
@@ -230,22 +230,22 @@ These scripts live in `.agent/scripts/`. Agents and skills can invoke them:
 |`schema_validator.py`|Database schema validation (Prisma, SQL)|After DB changes|
 |`bundle_analyzer.py`|JS/TS bundle size analysis|Before deploy|
 |`skill_integrator.py`|Maps active skills to their executable scripts|Automatically when skills are invoked|
-|`swarm_dispatcher.py`|Validate Orchestrator micro-worker JSON payloads|After /orchestrate, before dispatching agents|
-|`test_swarm_dispatcher.py`|Unit tests for swarm_dispatcher|After modifying swarm_dispatcher.py|
+|`swarm_dispatcher.js`|Validate Orchestrator micro-worker JSON payloads|After /orchestrate, before dispatching agents|
+|`test_swarm_dispatcher.js`|Unit tests for swarm_dispatcher|After modifying swarm_dispatcher.js|
 
 **Run pattern:**
 ```
-python .agent/scripts/checklist.py .
-python .agent/scripts/verify_all.py
-python .agent/scripts/security_scan.py .
+node .agent/scripts/checklist.js .
+node .agent/scripts/verify_all.js
+node .agent/scripts/security_scan.js .
 python .agent/scripts/lint_runner.py . --fix
 python .agent/scripts/test_runner.py . --coverage
 python .agent/scripts/dependency_analyzer.py . --audit
 python .agent/scripts/schema_validator.py .
 python .agent/scripts/bundle_analyzer.py . --build
 python .agent/scripts/skill_integrator.py
-python .agent/scripts/swarm_dispatcher.py --file payload.json
-python .agent/scripts/test_swarm_dispatcher.py
+node .agent/scripts/swarm_dispatcher.js --file payload.json
+npx jest test/integration/swarm_dispatcher.test.js
 ```
 
 ---

@@ -23,11 +23,11 @@ $ARGUMENTS
 ## Execution
 
 ```bash
-python .agent/scripts/session_manager.py save
-python .agent/scripts/session_manager.py restore
-python .agent/scripts/session_manager.py status
-python .agent/scripts/session_manager.py new
-python .agent/scripts/session_manager.py list
+node .agent/scripts/session_manager.js save
+node .agent/scripts/session_manager.js restore
+node .agent/scripts/session_manager.js status
+node .agent/scripts/session_manager.js new
+node .agent/scripts/session_manager.js list
 ```
 
 ---

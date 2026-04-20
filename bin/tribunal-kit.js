@@ -1,11 +1,15 @@
 #!/usr/bin/env node
 /**
- * tribunal-kit CLI
+ * tribunal-kit CLI (alias: tk)
  * 
  * Commands:
- *   init    — Install .agent/ into target project
- *   update  — Re-install to get latest changes
- *   status  — Check if .agent/ is installed
+ *   init      — Install .agent/ into target project
+ *   update    — Re-install to get latest changes
+ *   status    — Check if .agent/ is installed
+ *   learn     — Evolve project idioms based on git diffs
+ *   case      — Manage Case Law precedents
+ *   hook      — Install pre-push git hook
+ *   uninstall — Remove .agent/ from project
  * 
  * Usage:
  *   npx tribunal-kit init
@@ -15,6 +19,7 @@
  *   npx tribunal-kit init --dry-run
  *   tribunal-kit update
  *   tribunal-kit status
+ *   tribunal-kit uninstall
  */
 
 const fs = require('fs');
@@ -50,12 +55,14 @@ function bold(text)     { return `${C.bold}${text}${C.reset}`; }
 
 // ── Logging ──────────────────────────────────────────────
 let quiet = false;
+let verbose = false;
 
 function log(msg)  { if (!quiet) console.log(msg); }
 function ok(msg)   { if (!quiet) console.log(`  ${c('green',  '✔')} ${msg}`); }
 function warn(msg) { if (!quiet) console.log(`  ${c('yellow', '⚠')}  ${msg}`); }
 function err(msg)  { console.error(`  ${c('red', '✖')} ${msg}`); }
 function dim(msg)  { if (!quiet) console.log(`  ${c('gray', msg)}`); }
+function dbg(msg)  { if (verbose) console.log(`  ${c('gray', '⊡')} ${c('gray', msg)}`); }
 
 // ── Arg Parser ───────────────────────────────────────────
 function parseArgs(argv) {
@@ -70,14 +77,22 @@ function parseArgs(argv) {
         }
         if (arg === '--force') { args.flags.force = true; continue; }
         if (arg === '--quiet') { args.flags.quiet = true; continue; }
+        if (arg === '--verbose') { args.flags.verbose = true; continue; }
         if (arg === '--dry-run') { args.flags.dryRun = true; continue; }
+        if (arg === '--minimal') { args.flags.minimal = true; continue; }
         if (arg === '--skip-update-check') { args.flags.skipUpdateCheck = true; continue; }
+        if (arg === '--head') { args.flags.head = true; continue; }
         if (arg.startsWith('--path=')) {
             args.flags.path = arg.split('=').slice(1).join('=');
         }
         if (arg === '--path') {
             const idx = raw.indexOf('--path');
-            args.flags.path = raw[idx + 1] || null;
+            const nextVal = raw[idx + 1];
+            if (!nextVal || nextVal.startsWith('--')) {
+                console.error(`  \x1b[91m✖ --path requires a directory argument\x1b[0m`);
+                process.exit(1);
+            }
+            args.flags.path = nextVal;
         }
         if (arg.startsWith('--branch=')) {
             args.flags.branch = arg.split('=').slice(1).join('=');
@@ -88,7 +103,33 @@ function parseArgs(argv) {
 }
 
 // ── File Utilities ────────────────────────────────────────
-function copyDir(src, dest, dryRun = false) {
+
+// Core agents to install in --minimal mode
+const CORE_AGENTS = new Set([
+    'backend-specialist.md',
+    'frontend-specialist.md',
+    'database-architect.md',
+    'debugger.md',
+    'security-auditor.md',
+    'logic-reviewer.md',
+    'dependency-reviewer.md',
+    'type-safety-reviewer.md',
+    'performance-reviewer.md',
+    'orchestrator.md',
+    'explorer-agent.md',
+    'project-planner.md',
+    'test-engineer.md',
+]);
+
+// Core skills to install in --minimal mode
+const CORE_SKILLS = new Set([
+    'clean-code', 'architecture', 'testing-patterns', 'systematic-debugging',
+    'frontend-design', 'database-design', 'api-patterns', 'nodejs-best-practices',
+    'vulnerability-scanner', 'typescript-advanced', 'python-pro', 'nextjs-react-expert',
+    'react-specialist', 'performance-profiling', 'lint-and-validate',
+]);
+
+function copyDir(src, dest, dryRun = false, filter = null) {
     if (!dryRun) {
         fs.mkdirSync(dest, { recursive: true });
     }
@@ -97,15 +138,22 @@ function copyDir(src, dest, dryRun = false) {
     let count = 0;
 
     for (const entry of entries) {
+        // Apply filter if provided (for --minimal mode)
+        if (filter && !filter(entry.name, src)) {
+            dbg(`  skip: ${entry.name}`);
+            continue;
+        }
+
         const srcPath = path.join(src, entry.name);
         const destPath = path.join(dest, entry.name);
 
         if (entry.isDirectory()) {
-            count += copyDir(srcPath, destPath, dryRun);
+            count += copyDir(srcPath, destPath, dryRun, filter);
         } else {
             if (!dryRun) {
                 fs.cpSync(srcPath, destPath, { force: true });
             }
+            dbg(`  copy: ${entry.name}`);
             count++;
         }
     }
@@ -281,7 +329,7 @@ function banner() {
         let gradientLine = '  ' + C.bold;
         for (let i = 0; i < line.length; i++) {
             const p = maxLen > 1 ? i / (maxLen - 1) : 0;
-            // Coquelicot #FF4000 to Penn Blue #0A1045
+            // Coquelicot rgba(255, 64, 0, 1) to Penn Blue #0A1045
             const r = Math.round(255 + p * (10 - 255));
             const g = Math.round(64 + p * (16 - 64));
             const b = Math.round(0 + p * (69 - 0));
@@ -347,11 +395,20 @@ function cmdInit(flags) {
     }
 
     if (!dryRun && fs.existsSync(agentDest) && flags.force) {
-        const subdirs = ['agents', 'workflows', 'skills', 'scripts', '.shared'];
+        // PRESERVE_DIRS: user-generated content that must survive updates
+        const PRESERVE_DIRS = ['history', 'patterns', 'mcp_config.json'];
+        const subdirs = ['agents', 'workflows', 'skills', 'scripts', '.shared', 'rules'];
         for (const sub of subdirs) {
             const subPath = path.join(agentDest, sub);
             if (fs.existsSync(subPath)) {
                 fs.rmSync(subPath, { recursive: true, force: true });
+            }
+        }
+        // Verify preserved dirs still exist after cleanup
+        for (const kept of PRESERVE_DIRS) {
+            const keptPath = path.join(agentDest, kept);
+            if (kept.includes('.') ? false : !fs.existsSync(keptPath)) {
+                // It's okay if it doesn't exist yet — it'll be created below
             }
         }
     }
@@ -369,11 +426,27 @@ function cmdInit(flags) {
     }
 
     // Count what we're installing
+    const isMinimal = flags.minimal || false;
+    if (isMinimal) {
+        log(`  ${c('yellow','⚡')} ${bold('Minimal mode')} — installing core agents and skills only`);
+        console.log();
+    }
     const totalFiles = countDir(agentSrc);
+    dbg(`Source: ${agentSrc}`);
+    dbg(`Target: ${agentDest}`);
+    dbg(`Total source files: ${totalFiles}`);
     log(`  ${c('gray','▸')} Scanning ${c('white', String(totalFiles))} files  ${c('gray','→')}  ${c('gray', agentDest)}`);
 
     try {
-        const copied = copyDir(agentSrc, agentDest, dryRun);
+        // Build filter for --minimal mode
+        const minimalFilter = isMinimal ? (name, parentDir) => {
+            const parentName = path.basename(parentDir);
+            if (parentName === 'agents') return CORE_AGENTS.has(name);
+            if (parentName === 'skills') return CORE_SKILLS.has(name);
+            return true; // everything else passes
+        } : null;
+
+        const copied = copyDir(agentSrc, agentDest, dryRun, minimalFilter);
 
         console.log();
         if (dryRun) {
@@ -421,11 +494,12 @@ function cmdInit(flags) {
             console.log(plainRow(`  Next steps:`, s => c('gray', s)));
             console.log(stepRow('/generate',      'Generate code with anti-hallucination'));
             console.log(stepRow('/review',         'Audit existing code for issues'));
-            console.log(stepRow('/tribunal-full',  'Run all 14 reviewers in parallel'));
+            console.log(stepRow('/tribunal-full',  'Run all 16 reviewers in parallel'));
             console.log(plainRow('', () => ''));
             console.log(`  ${c('cyan', '╚' + '═'.repeat(W) + '╝')}`);
             console.log();
-            log(`  ${c('gray', '✦ Your AI IDE will pick up changes automatically.')}`);
+            log(`  ${c('gray', '✦ Generating IDE bridge files...')}`);
+            generateIDEBridges(targetDir, agentDest, dryRun);
         }
 
         console.log();
@@ -433,6 +507,120 @@ function cmdInit(flags) {
         err(`Failed to install: ${e.message}`);
         process.exit(1);
     }
+}
+
+// ── IDE Bridge Files ──────────────────────────────────────
+// Each AI IDE reads rules from a different location.
+// We generate bridge files that point each IDE at .agent/
+function generateIDEBridges(targetDir, agentDest, dryRun = false) {
+    const rulesFile = path.join(agentDest, 'rules', 'GEMINI.md');
+    let rulesContent = '';
+    if (fs.existsSync(rulesFile)) {
+        rulesContent = fs.readFileSync(rulesFile, 'utf8');
+    }
+
+    // Helper: write a bridge file only if it doesn't already exist
+    const writeBridge = (filePath, content, label) => {
+        if (dryRun) {
+            dbg(`  would create: ${filePath}`);
+            return;
+        }
+        const dir = path.dirname(filePath);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        if (fs.existsSync(filePath)) {
+            dbg(`  skip (exists): ${path.basename(filePath)}`);
+            return;
+        }
+        fs.writeFileSync(filePath, content, 'utf8');
+        ok(`${label} → ${c('gray', path.relative(targetDir, filePath))}`);
+    };
+
+    // ── 1. Cursor (.cursorrules) ──────────────────────────
+    const cursorRules = `# Tribunal Kit — Cursor Bridge
+# Auto-generated by tribunal-kit init. Do not edit manually.
+# Source: .agent/rules/GEMINI.md
+
+${rulesContent}
+`;
+    writeBridge(
+        path.join(targetDir, '.cursorrules'),
+        cursorRules,
+        'Cursor'
+    );
+
+    // ── 2. Windsurf (.windsurfrules) ─────────────────────
+    const windsurfRules = `# Tribunal Kit — Windsurf Bridge
+# Auto-generated by tribunal-kit init. Do not edit manually.
+# Source: .agent/rules/GEMINI.md
+
+${rulesContent}
+`;
+    writeBridge(
+        path.join(targetDir, '.windsurfrules'),
+        windsurfRules,
+        'Windsurf'
+    );
+
+    // ── 3. Gemini / Antigravity (.gemini/settings.json) ──
+    const geminiSettings = JSON.stringify({
+        "$schema": "https://raw.githubusercontent.com/anthropics/anthropic-cookbook/main/.gemini/settings.schema.json",
+        "rules": [
+            { "path": "../.agent/rules/GEMINI.md", "trigger": "always_on" }
+        ],
+        "agents": { "directory": "../.agent/agents" },
+        "skills": { "directory": "../.agent/skills" },
+        "workflows": { "directory": "../.agent/workflows" }
+    }, null, 2) + '\n';
+    writeBridge(
+        path.join(targetDir, '.gemini', 'settings.json'),
+        geminiSettings,
+        'Gemini/Antigravity'
+    );
+
+    // ── Also create .gemini/GEMINI.md as a direct rules file ──
+    const geminiRulesBridge = `---
+trigger: always_on
+---
+
+# Tribunal Kit — Gemini Bridge
+# Auto-generated by tribunal-kit init.
+# Full rules: .agent/rules/GEMINI.md
+
+${rulesContent}
+`;
+    writeBridge(
+        path.join(targetDir, '.gemini', 'GEMINI.md'),
+        geminiRulesBridge,
+        'Gemini rules'
+    );
+
+    // ── 4. GitHub Copilot (.github/copilot-instructions.md) ──
+    const copilotInstructions = `# Tribunal Kit — Copilot Bridge
+# Auto-generated by tribunal-kit init. Do not edit manually.
+# Source: .agent/rules/GEMINI.md
+
+${rulesContent}
+`;
+    writeBridge(
+        path.join(targetDir, '.github', 'copilot-instructions.md'),
+        copilotInstructions,
+        'GitHub Copilot'
+    );
+
+    // ── 5. Claude (.claude/CLAUDE.md) ─────────────────────
+    const claudeRules = `# Tribunal Kit — Claude Bridge
+# Auto-generated by tribunal-kit init. Do not edit manually.
+# Source: .agent/rules/GEMINI.md
+
+${rulesContent}
+`;
+    writeBridge(
+        path.join(targetDir, '.claude', 'CLAUDE.md'),
+        claudeRules,
+        'Claude'
+    );
+
+    console.log();
 }
 
 function cmdUpdate(flags) {
@@ -487,12 +675,12 @@ function cmdLearn(flags) {
 
     // Phase 1: Skill Evolution
     log(`  ${c('cyan', '\u229b')} ${bold('Phase 1')} \u2014 Skill Evolution Forge (auto-generating project idioms)`);
-    const evoScript = path.join(agentDest, 'scripts', 'skill_evolution.py');
+    const evoScript = path.join(agentDest, 'scripts', 'skill_evolution.js');
     if (!fs.existsSync(evoScript)) {
-        warn('skill_evolution.py not found \u2014 run: npx tribunal-kit update');
+        warn('skill_evolution.js not found \u2014 run: npx tribunal-kit update');
     } else {
         try {
-            const cmd = `${python} "${evoScript}" digest ${dryRun} ${useHead}`.trim();
+            const cmd = `node "${evoScript}" digest ${dryRun} ${useHead}`.trim();
             execSync(cmd, { stdio: 'inherit', cwd: targetDir });
         } catch (e) {
             warn(`Skill Evolution error: ${e.message}`);
@@ -547,6 +735,9 @@ async function runWithUpdateCheck(command, flags) {
         case 'hook':
             cmdHook(flags);
             break;
+        case 'uninstall':
+            cmdUninstall(flags);
+            break;
         case 'help':
         case '--help':
         case '-h':
@@ -589,7 +780,7 @@ function cmdCase(flags) {
     }
 
     const python  = process.platform === 'win32' ? 'python' : 'python3';
-    const caseLawScript = path.join(agentDest, 'scripts', 'case_law_manager.py');
+    const caseLawScript = path.join(agentDest, 'scripts', 'case_law_manager.js');
 
     // Make shorthand aliases
     let pyArgs = args;
@@ -598,7 +789,7 @@ function cmdCase(flags) {
 
     try {
         const { execSync } = require('child_process');
-        execSync(`${python} "${caseLawScript}" ${pyArgs}`, { stdio: 'inherit', cwd: targetDir });
+        execSync(`node "${caseLawScript}" ${pyArgs}`, { stdio: 'inherit', cwd: targetDir });
     } catch (e) {
         process.exit(1); // Script already prints errors
     }
@@ -627,6 +818,37 @@ function cmdHook(flags) {
     log(`  ${c('green', '✔')} Installed pre-push git hook.`);
     log(`  ${c('gray', '▸')} Skill Evolution will now run automatically every time you git push.`);
     console.log();
+}
+
+function cmdUninstall(flags) {
+    const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
+    const agentDest = path.join(targetDir, '.agent');
+
+    banner();
+
+    if (!fs.existsSync(agentDest)) {
+        log(`  ${c('yellow','⚠')} ${bold('.agent/')} is not installed in this project.`);
+        console.log();
+        return;
+    }
+
+    if (flags.dryRun) {
+        log(colorize('yellow', '  DRY RUN — would remove:'));
+        log(`  ${c('gray','  ╰─')} ${agentDest}`);
+        console.log();
+        return;
+    }
+
+    try {
+        fs.rmSync(agentDest, { recursive: true, force: true });
+        log(`  ${c('green','✔')} ${bold('.agent/')} has been removed from this project.`);
+        console.log();
+        log(`  ${c('gray','▸')} To reinstall: ${c('cyan','npx tribunal-kit init')}`);
+        console.log();
+    } catch (e) {
+        err(`Failed to remove .agent/: ${e.message}`);
+        process.exit(1);
+    }
 }
 
 function cmdStatus(flags) {
@@ -667,41 +889,49 @@ function cmdHelp() {
 
     log(bold('  Commands'));
     log(`  ${c('gray','─'.repeat(40))}`);
-    log(cmd('init',   'Install .agent/ into current project'));
-    log(cmd('update', 'Re-install to get latest version'));
-    log(cmd('status', 'Check if .agent/ is installed'));
-    log(cmd('learn',  'Evolve project idioms based on git diffs'));
-    log(cmd('case',   'Manage Case Law precedents (add, search, list, show, stats, overrule)'));
-    log(cmd('hook',   'Install pre-push git hook for auto-learning'));
+    log(cmd('init',     'Install .agent/ into current project'));
+    log(cmd('update',   'Re-install to get latest version'));
+    log(cmd('status',   'Check if .agent/ is installed'));
+    log(cmd('learn',    'Evolve project idioms based on git diffs'));
+    log(cmd('case',     'Manage Case Law precedents (add, search, list, show, stats, overrule)'));
+    log(cmd('hook',     'Install pre-push git hook for auto-learning'));
+    log(cmd('uninstall','Remove .agent/ folder from project'));
     console.log();
     log(bold('  Options'));
     log(`  ${c('gray','─'.repeat(40))}`);
     log(opt('--force',              'Overwrite existing .agent/ folder'));
     log(opt('--path <dir>',         'Install in specific directory'));
     log(opt('--quiet',              'Suppress all output'));
+    log(opt('--verbose',            'Show detailed debug logging'));
     log(opt('--dry-run',            'Preview actions without executing'));
+    log(opt('--minimal',            'Install core agents/skills only (~13 agents)'));
     log(opt('--skip-update-check',  'Skip auto-update version check'));
     log(opt('--head',               '(learn) Diff against last commit instead of staged'));
+    console.log();
+    log(bold('  Aliases'));
+    log(`  ${c('gray','─'.repeat(40))}`);
+    log(`  ${c('cyan', 'tk')}  ${c('gray', 'Shorthand for tribunal-kit (e.g., tk init, tk status)')}`);
     console.log();
     log(bold('  Examples'));
     log(`  ${c('gray','─'.repeat(40))}`);
     log(ex('npx tribunal-kit init'));
-    log(ex('npx tribunal-kit init --force'));
-    log(ex('npx tribunal-kit init --path ./my-app'));
+    log(ex('tk init --force'));
+    log(ex('tk init --path ./my-app'));
     log(ex('npx tribunal-kit init --dry-run'));
-    log(ex('npx tribunal-kit update'));
-    log(ex('npx tribunal-kit status'));
-    log(ex('npx tribunal-kit learn'));
-    log(ex('npx tribunal-kit learn --dry-run'));
-    log(ex('npx tribunal-kit learn --head'));
-    log(ex('npx tribunal-kit case add'));
-    log(ex('npx tribunal-kit case search "useEffect"'));
-    log(ex('npx tribunal-kit case list'));
-    log(ex('npx tribunal-kit case show --id 1'));
-    log(ex('npx tribunal-kit case stats'));
-    log(ex('npx tribunal-kit case export'));
-    log(ex('npx tribunal-kit case overrule --id 1'));
-    log(ex('npx tribunal-kit hook'));
+    log(ex('tk update'));
+    log(ex('tk status'));
+    log(ex('tk learn'));
+    log(ex('tk learn --dry-run'));
+    log(ex('tk learn --head'));
+    log(ex('tk case add'));
+    log(ex('tk case search "useEffect"'));
+    log(ex('tk case list'));
+    log(ex('tk case show --id 1'));
+    log(ex('tk case stats'));
+    log(ex('tk case export'));
+    log(ex('tk case overrule --id 1'));
+    log(ex('tk hook'));
+    log(ex('tk uninstall'));
     console.log();
 }
 
@@ -709,10 +939,11 @@ function cmdHelp() {
 const { command, flags } = parseArgs(process.argv);
 
 if (flags.quiet) quiet = true;
+if (flags.verbose) verbose = true;
 
 runWithUpdateCheck(command, flags);
 
 // -- Exports (for testing) -- do not remove
 if (require.main !== module) {
-  module.exports = { parseArgs, compareSemver, copyDir, countDir, isSelfInstall };
+  module.exports = { parseArgs, compareSemver, copyDir, countDir, isSelfInstall, CORE_AGENTS, CORE_SKILLS, generateIDEBridges };
 }

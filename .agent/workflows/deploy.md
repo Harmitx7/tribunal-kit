@@ -34,7 +34,7 @@ Every step is logged. Every step has a rollback path. No surprises.
 # T-minus safety sequence (in exact order)
 
 # 1. Security: halt on critical
-python .agent/scripts/security_scan.py . --level=critical
+node .agent/scripts/security_scan.js . --level=critical
 
 # 2. Dependencies: no exploitable CVEs
 npm audit --audit-level=high

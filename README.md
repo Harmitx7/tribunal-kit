@@ -7,14 +7,14 @@
 
   [![NPM](https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/tribunal-kit)
   [![License](https://img.shields.io/badge/License-MIT-8b5cf6?style=for-the-badge)](LICENSE)
-  [![Version](https://img.shields.io/badge/Version-4.0.0_Supreme_Court-black?style=for-the-badge)](CHANGELOG.md)
+  [![Version](https://img.shields.io/badge/Version-4.2.0_Supreme_Court-black?style=for-the-badge)](CHANGELOG.md)
 </div>
 
 
 <br><br>
 
 > 🚨 **AI GENERATES CODE. TRIBUNAL ENSURES IT WORKS.**  
-> A plug-in `.agent/` intelligence payload that upgrades your IDE with **32 specialist agents**, **25 slash commands**, **8 parallel Tribunal reviewers**, and a core **Swarm/Supervisor** engine.
+> A plug-in `.agent/` intelligence payload that upgrades your IDE with **40 specialist agents**, **31 slash commands**, **16 parallel Tribunal reviewers**, and a core **Swarm/Supervisor** engine.
 
 ---
 
@@ -30,7 +30,63 @@ npx tribunal-kit init
 ```
 *(Installs the `.agent/` architecture directly. No bloat. Pure capability.)*
 
-> ⚠️ **CRITICAL PATH WARNING:** Do **not** let your IDE ignore the agents. If using Cursor or Windsurf, keep `.agent/` **out** of `.gitignore` so the IDE can index the commands. Use `.git/info/exclude` instead.
+<details>
+<summary><b>📺 Quick Demo — What happens when you run it</b></summary>
+<br>
+
+```
+$ npx tribunal-kit init
+
+  ████████╗██████╗ ██╗██████╗ ██╗   ██╗███╗   ██╗ █████╗ ██╗
+  ╚══██╔══╝██╔══██╗██║██╔══██╗██║   ██║████╗  ██║██╔══██╗██║
+     ██║   ██████╔╝██║██████╔╝██║   ██║██╔██╗ ██║███████║██║
+     ██║   ██╔══██╗██║██╔══██╗██║   ██║██║╚██╗██║██╔══██║██║
+     ██║   ██║  ██║██║██████╔╝╚██████╔╝██║ ╚████║██║  ██║███████╗
+     ╚═╝   ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝
+
+  ╔══════════════════════════════════════════════════════════════╗
+  ║              Anti-Hallucination Agent System                ║
+  ╚══════════════════════════════════════════════════════════════╝
+
+  ✔ Installed → .agent/
+
+  ╔══════════════════════════════════════════════════════════════╗
+  ║  🤖  Agents         40 installed                            ║
+  ║  ⚡  Workflows       31 installed                            ║
+  ║  🧠  Skills          90 installed                            ║
+  ║  🔧  Scripts         27 installed                            ║
+  ╚══════════════════════════════════════════════════════════════╝
+
+  ✔ 700+ files installed. 16 parallel Tribunal reviewers armed.
+
+$ npx tribunal-kit status
+
+  ✔ Installed at .agent/
+  🤖  agents         40 files
+  ⚡  workflows      31 files
+  🧠  skills         90 files
+  🔧  scripts        27 files
+```
+
+> 💡 **Lighter install?** Use `npx tribunal-kit init --minimal` for just 13 core agents + 15 essential skills.
+
+</details>
+
+> ✅ **IDE Auto-Detection:** `init` automatically generates bridge files for every major AI coding IDE:
+>
+> | IDE | Bridge File Generated |
+> | :--- | :--- |
+> | **Cursor** | `.cursorrules` |
+> | **Windsurf** | `.windsurfrules` |
+> | **Gemini / Antigravity** | `.gemini/settings.json` + `.gemini/GEMINI.md` |
+> | **GitHub Copilot** | `.github/copilot-instructions.md` |
+> | **Claude** | `.claude/CLAUDE.md` |
+>
+> Bridge files are never overwritten on re-init — your customizations are safe.
+
+**Prerequisites:** Node.js ≥ 18 • Python ≥ 3.10 *(optional — required for utility scripts like `checklist.py`, `security_scan.py`)*
+
+> 💡 **Shorthand alias:** You can use `tk` instead of `tribunal-kit` for all commands (e.g., `tk init`, `tk status`).
 
 <br>
 
@@ -79,10 +135,10 @@ You no longer need to write manual rules. The system reads your Git commits, str
 
 | System Asset | Count | Operational Scope |
 | :--- | :---: | :--- |
-| 🤖 **Agents** | `33` | Specialist personas (Security, DB Architect, DevOps Responder, QA Engineer) |
-| 🧠 **Skills** | `77` | Domain modules (Edge Computing, Red Team Tactics, GSAP, Framer Motion) |
-| ⚡ **Workflows** | `30` | Slash command procedures including `/swarm`, `/tribunal-full`, `/ui-ux-pro-max` |
-| 🛠️ **Scripts** | `16` | CI/CD, linting, payload dispatching, security scanning, test suite runners |
+| 🤖 **Agents** | `40` | Specialist personas — 16 reviewers + 24 domain specialists |
+| 🧠 **Skills** | `90` | Domain modules (Edge Computing, Red Team Tactics, GSAP, Framer Motion, TypeScript Advanced) |
+| ⚡ **Workflows** | `31` | Slash command procedures including `/swarm`, `/tribunal-full`, `/ui-ux-pro-max` |
+| 🛠️ **Scripts** | `25` | CI/CD, linting, payload dispatching, security scanning, case law, skill evolution |
 
 
 <br>
@@ -112,7 +168,7 @@ Unleash parallel reviewers on existing code.
 | Command | Action |
 | :--- | :--- |
 | <code>/review</code> | Audit code for silent degradation and logic holes. |
-| <code>/tribunal-full</code> | Unleash **ALL 11** reviewers simultaneously. Maximum scrutiny. |
+| <code>/tribunal-full</code> | Unleash **ALL 16** reviewers simultaneously. Maximum scrutiny. |
 | <code>/tribunal-backend</code> | Summons <code>[ Logic + Security + Dependency + Types ]</code> |
 | <code>/tribunal-frontend</code> | Summons <code>[ Logic + Security + Frontend + Types ]</code> |
 | <code>/tribunal-database</code> | Summons <code>[ Logic + Security + SQL ]</code> |

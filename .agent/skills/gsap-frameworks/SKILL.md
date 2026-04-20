@@ -154,8 +154,6 @@ Do not create GSAP animations in the component’s setup or in a synchronous top
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 

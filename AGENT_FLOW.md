@@ -206,7 +206,7 @@ Scripts in `.agent/scripts/` can be called by any agent:
 checklist.py      → python .agent/scripts/checklist.py .
 verify_all.py     → python .agent/scripts/verify_all.py
 auto_preview.py   → python .agent/scripts/auto_preview.py start
-session_manager.py → python .agent/scripts/session_manager.py load
+session_manager.js → node .agent/scripts/session_manager.js load
 ```
 
 ---
@@ -244,13 +244,14 @@ When activated, the agent automatically pre-loads the restrictive base prompt (e
 │   ├── [16 Tribunal reviewers]
 │   └── [24 domain specialists]
 │
-├── workflows/           ← 17 slash command definitions
+├── workflows/           ← 31 slash command definitions
 │
-├── scripts/             ← 4 Python utility scripts
-│   ├── checklist.py
-│   ├── verify_all.py
-│   ├── auto_preview.py
-│   └── session_manager.py
+├── scripts/             ← 25 Python/JS utility scripts
+│   ├── checklist.py, verify_all.py, auto_preview.py
+│   ├── security_scan.py, lint_runner.py, test_runner.py
+│   ├── case_law_manager.js, skill_evolution.js
+│   ├── swarm_dispatcher.js, session_manager.js
+│   └── ... and 15 more
 │
 ├── patterns/            ← 5 ADK skill base patterns (Inheritance engine)
 │   ├── generator.md
@@ -259,7 +260,11 @@ When activated, the agent automatically pre-loads the restrictive base prompt (e
 │   ├── reviewer.md
 │   └── tool-wrapper.md
 │
-├── skills/              ← 89 skill modules
+├── skills/              ← 90 skill modules (all hardened)
+│
+├── history/             ← User-generated data (preserved on update)
+│   ├── case-law/        ← Rejected pattern precedents
+│   └── skill-evolution/ ← Auto-evolved idiom log
 │
 ├── .shared/             ← Shared assets (ui-ux-pro-max, etc.)
 │
@@ -279,7 +284,7 @@ Every rejected pattern becomes binding legal precedent.
 | Step | What Happens |
 |:-----|:-------------|
 | 1 | Developer rejects AI proposal |
-| 2 | Runs `case_law_manager.py add-case` |
+| 2 | Runs `case_law_manager.js add-case` |
 | 3 | diff + tags + reason stored in `.agent/history/case-law/` |
 | 4 | `precedence-reviewer` queries index on every future `/generate` or `/review` |
 | 5 | Jaccard tag match score >= 0.4 → PRECEDENCE HOLD |
@@ -291,7 +296,7 @@ The agent kit writes its own skills by learning from your commits.
 | Step | What Happens |
 |:-----|:-------------|
 | 1 | Developer commits code different from AI proposal |
-| 2 | `tribunal-kit learn` (or `skill_evolution.py digest`) |
+| 2 | `tribunal-kit learn` (or `skill_evolution.js digest`) |
 | 3 | Semantic Delta Filter strips trivial noise (70-90% token reduction) |
 | 4 | Minimal LLM Reflection Prompt (< 500 tokens) |
 | 5 | YAML idioms merged into `.agent/skills/project-idioms/SKILL.md` |
@@ -304,10 +309,10 @@ The agent kit writes its own skills by learning from your commits.
 | `tribunal-kit learn` | Run Skill Evolution + Case Law prompt |
 | `tribunal-kit learn --dry-run` | Preview delta without writing |
 | `tribunal-kit learn --head` | Diff last commit instead of staged |
-| `python .agent/scripts/case_law_manager.py add-case` | Record a rejection |
-| `python .agent/scripts/case_law_manager.py search-cases --query "..."` | Find precedents |
-| `python .agent/scripts/skill_evolution.py digest` | Run evolution cycle |
-| `python .agent/scripts/skill_evolution.py status` | Token savings report |
+| `node .agent/scripts/case_law_manager.js add-case` | Record a rejection |
+| `node .agent/scripts/case_law_manager.js search-cases --query "..."` | Find precedents |
+| `node .agent/scripts/skill_evolution.js digest` | Run evolution cycle |
+| `node .agent/scripts/skill_evolution.js status` | Token savings report |
 
 ### Review Order (Updated)
 

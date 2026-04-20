@@ -2,16 +2,18 @@
 # When .npmignore exists, npm uses THIS file (not .gitignore)
 # The "files" field in package.json acts as an allowlist on top of this.
 
-# Exclude dev/debug files
+# Exclude dev/test infrastructure
+test/
+tests/
+scratch/
+coverage/
+.nyc_output/
+.pytest_cache/
+__pycache__/
+
+# Exclude dev tooling
 *.log
-*.txt
-out.txt
-npm_publish_log.txt
-publish_output.txt
-pack.json
-files_to_rewrite.txt
-files_utf8.txt
-skill-integration-report.md
+.editorconfig
 
 # Exclude git
 .git/
@@ -29,16 +31,13 @@ desktop.ini
 *.swo
 
 # Exclude Python cache
-__pycache__/
 *.pyc
 *.pyo
 
-# Exclude test/dev
-node_modules/
-coverage/
-.nyc_output/
+# Exclude build artifacts
 dist/
 build/
+node_modules/
 
 # Exclude env secrets
 .env

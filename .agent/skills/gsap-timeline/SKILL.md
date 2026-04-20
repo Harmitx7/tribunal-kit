@@ -108,8 +108,6 @@ master.to(".c", { opacity: 0 }, "+=0.2");
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 

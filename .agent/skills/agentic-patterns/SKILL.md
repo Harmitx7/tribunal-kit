@@ -267,7 +267,7 @@ Evidence:    [link to terminal output, test result, or file diff]
 
 ---
 
-## 🤖 LLM-Specific Traps
+
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -279,7 +279,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
@@ -290,7 +290,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-### ✅ Pre-Flight Self-Audit
+
 
 Review these questions before confirming output:
 ```

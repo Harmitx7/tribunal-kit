@@ -248,7 +248,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **`/migrate` Pro-Max**: Added 4 migration type classification, expand-and-contract 5-step DB migration pattern, breaking changes inventory for Next.js 14→15 and next-auth v4→v5, rollback plan requirement, migration guard anti-patterns.
 - **`/review` Pro-Max**: Added explicit read-only contract, hallucination-specific checklist with React 19/Next.js 15/Prisma version traps, reviewer auto-selection table, structured findings output format.
 - **`/review-ai` Pro-Max**: Added 2026 model reference table, reviewer detection items, prompt injection code examples, cost explosion guard output format.
-- **`/swarm` Pro-Max**: Added JSON dispatch contract format, `swarm_dispatcher.py` validation step, `allSettled` vs `Promise.all` rationale, session persistence in `task.md`, structured failure report format.
+- **`/swarm` Pro-Max**: Added JSON dispatch contract format, `swarm_dispatcher.js` validation step, `allSettled` vs `Promise.all` rationale, session persistence in `task.md`, structured failure report format.
 - **`/orchestrate` Pro-Max**: Added scope classification gate, worker decomposition rules, Fan-Out/Fan-In pattern specification, BLOCKED worker protocol, sequential wave context discipline.
 - **`/brainstorm` Pro-Max**: Added 4-phase structure, 3-option comparison framework with effort and best-for context, Socratic probing questions, evidence-based recommendation format.
 - **`/session`, `/status` Pro-Max**: Added session file format, 5-data dashboard, sub-command routing.
@@ -337,7 +337,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - **Swarm / Supervisor Orchestration**: Introduced a multi-agent orchestration engine (`/swarm`) that decomposes complex goals into parallel specialist sub-tasks via a strict JSON contract.
 - **Specialized Tribunal Panels**: Added focused workflows for `/tribunal-mobile` (logic + security + mobile UX) and `/tribunal-performance` (algorithmic complexity + memory + I/O).
-- **Interactive Session State**: Enhanced `session_manager.py` with `status`, `tag`, `list`, and `export` commands for persistent task tracking across sessions.
+- **Interactive Session State**: Enhanced `session_manager.js` with `status`, `tag`, `list`, and `export` commands for persistent task tracking across sessions.
 - **Automated Skill-Script Integration**: Upgraded `skill_integrator.py` with `--report` and `--verify` flags for automated validation of skill-to-script mappings and syntax health.
 
 ---

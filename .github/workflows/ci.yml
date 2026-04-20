@@ -2,17 +2,18 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   pull_request:
-    branches: [main]
+    branches: [main, master]
 
 jobs:
   test:
-    name: Test (Node ${{ matrix.node-version }})
-    runs-on: ubuntu-latest
+    name: Test (Node ${{ matrix.node-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
+        os: [ubuntu-latest, windows-latest]
         node-version: [18, 20, 22]
 
     steps:
@@ -31,10 +32,77 @@ jobs:
       - name: Run tests with coverage
         run: npm test
 
+      - name: Verify version sync
+        run: node scripts/sync-version.js
+
+      - name: Verify package contents
+        run: |
+          test -d .agent/agents
+          test -d .agent/workflows
+          test -d .agent/skills
+          test -d .agent/scripts
+          test -f .agent/ARCHITECTURE.md
+          test -f bin/tribunal-kit.js
+        shell: bash
+
       - name: Upload coverage report
-        if: matrix.node-version == 22
+        if: matrix.node-version == 22 && matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/
           retention-days: 7
+
+  python-tests:
+    name: Python Tests (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install pytest
+        run: pip install pytest
+
+      - name: Verify Python scripts parse correctly
+        run: |
+          for f in .agent/scripts/*.py; do
+            echo "Checking $f..."
+            python -m py_compile "$f"
+          done
+
+      - name: Run Python unit tests
+        run: python -m pytest tests/python/ -v --tb=short
+
+  release-gate:
+    name: Release Gate
+    needs: [test, python-tests]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate changelog preview
+        run: node scripts/changelog.js --preview
+
+      - name: Verify npm package
+        run: npm pack --dry-run

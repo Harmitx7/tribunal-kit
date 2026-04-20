@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/anthropics/anthropic-cookbook/main/.gemini/settings.schema.json",
+  "rules": [
+    {
+      "path": "../.agent/rules/GEMINI.md",
+      "trigger": "always_on"
+    }
+  ],
+  "agents": {
+    "directory": "../.agent/agents"
+  },
+  "skills": {
+    "directory": "../.agent/skills"
+  },
+  "workflows": {
+    "directory": "../.agent/workflows"
+  }
+}

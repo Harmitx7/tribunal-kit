@@ -255,8 +255,6 @@ Full docs: [gsap.matchMedia()](https://gsap.com/docs/v3/GSAP/gsap.matchMedia/). 
 
 ---
 
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 

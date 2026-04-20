@@ -25,6 +25,14 @@ $ARGUMENTS
 Your request
     │
     ▼
+[Phase 6] Context Broker — Skill Selection
+├── Scores all 90+ skills against your task keywords
+├── Level 0 (Essential): top skills — full content, injected first
+├── Level 1 (Supplementary): medium relevance — key rules only
+├── Level 2 (Available): listed for reference only
+└── Large models: Essential + Supplementary | Small models: Essential only
+    │
+    ▼
 Context scan (MANDATORY before first line of code)
 ├── Read package.json → verify all imports exist
 ├── Read tsconfig.json → understand strictness, paths aliases
@@ -39,7 +47,17 @@ Maker generates at temperature 0.1
 └── No full application generation — modules only
     │
     ▼
-Reviewers run in parallel (auto-selected by keyword)
+[Phase 6] Inner-Loop Validator (AUTO — runs before you see the code)
+├── Scans generated snippet for OWASP patterns (critical/high/medium/low)
+├── Runs structural heuristics (empty catch, throw strings, env without fallback)
+├── Verdict: APPROVED / WARNING / REJECTED
+│   ├── APPROVED → continues to Tribunal Review
+│   ├── WARNING  → noted, continues with flag
+│   └── REJECTED → Maker auto-corrects (up to 2 inner-loop attempts)
+└── Only clean code reaches the Tribunal reviewers
+    │
+    ▼
+Tribunal Reviewers run in parallel (auto-selected by keyword)
     │
     ▼
 Human Gate — verdicts shown + unified diff
@@ -84,13 +102,14 @@ security-auditor   → OWASP vulnerabilities, hardcoded secrets, injection
 |:---|:---|
 | `api`, `route`, `endpoint`, `handler`, `server action` | `dependency-reviewer` + `type-safety-reviewer` |
 | `sql`, `query`, `database`, `prisma`, `drizzle`, `orm` | `sql-reviewer` |
-| `component`, `hook`, `react`, `vue`, `jsx`, `tsx` | `frontend-reviewer` + `type-safety-reviewer` |
-| `animation`, `gsap`, `framer`, `motion`, `scroll` | `frontend-reviewer` + `performance-reviewer` |
+| `component`, `hook`, `react`, `vue`, `jsx`, `tsx` | `frontend-reviewer` + `type-safety-reviewer` + `ui-ux-auditor` |
+| `ui`, `design`, `landing`, `page`, `layout`, `style`, `css` | `ui-ux-auditor` + `accessibility-reviewer` |
+| `animation`, `gsap`, `framer`, `motion`, `scroll` | `frontend-reviewer` + `performance-reviewer` + `ui-ux-auditor` |
 | `test`, `spec`, `vitest`, `jest`, `playwright` | `test-coverage-reviewer` |
 | `slow`, `optimize`, `cache`, `performance`, `bundle` | `performance-reviewer` |
 | `mobile`, `react native`, `expo` | `mobile-reviewer` |
 | `llm`, `openai`, `anthropic`, `gemini`, `embedding`, `ai` | `ai-code-reviewer` |
-| `aria`, `wcag`, `a11y`, `accessibility` | `accessibility-reviewer` |
+| `aria`, `wcag`, `a11y`, `accessibility` | `accessibility-reviewer` + `ui-ux-auditor` |
 | `import`, `package`, `npm`, `require` | `dependency-reviewer` |
 
 > For maximum safety on critical code: use `/tribunal-full` for all 11 reviewers simultaneously.
@@ -135,8 +154,6 @@ Write to disk?  Y = approve | N = discard | R = revise with feedback
 ```
 
 ---
-
-## Cross-Workflow Navigation
 
 | After /generate shows... | Go to |
 |:---|:---|
