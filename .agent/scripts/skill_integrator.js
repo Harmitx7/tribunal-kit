@@ -18,7 +18,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 // Colors for terminal output
 const CYAN   = '\x1b[96m';
@@ -121,10 +121,10 @@ function verifyScript(scriptPathStr, workspaceRoot) {
     try {
         if (fullPath.endsWith('.js')) {
             // use node to syntax check
-            execSync(`node -c "${fullPath}"`, { stdio: 'pipe' });
+            execFileSync('node', ['-c', fullPath], { stdio: 'pipe' });
         } else if (fullPath.endsWith('.py')) {
              // use python to syntax check
-             execSync(`python -m py_compile "${fullPath}"`, { stdio: 'pipe' });
+             execFileSync('python', ['-m', 'py_compile', fullPath], { stdio: 'pipe' });
         }
         return { valid: true, message: 'Syntax OK' };
     } catch (e) {
