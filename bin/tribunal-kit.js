@@ -329,10 +329,10 @@ function banner() {
         let gradientLine = '  ' + C.bold;
         for (let i = 0; i < line.length; i++) {
             const p = maxLen > 1 ? i / (maxLen - 1) : 0;
-            // Coquelicot rgba(255, 64, 0, 1) to Penn Blue #0A1045
-            const r = Math.round(255 + p * (10 - 255));
-            const g = Math.round(64 + p * (16 - 64));
-            const b = Math.round(0 + p * (69 - 0));
+            // Solid #ff1637 (R: 255, G: 22, B: 55)
+            const r = 255;
+            const g = 22;
+            const b = 55;
             gradientLine += `\x1b[38;2;${r};${g};${b}m${line[i]}`;
         }
         gradientLine += C.reset;
@@ -344,9 +344,10 @@ function banner() {
     const sub = 'Anti-Hallucination Agent System';
     const sp  = Math.max(0, W - sub.length);
     const centred = ' '.repeat(Math.floor(sp / 2)) + sub + ' '.repeat(Math.ceil(sp / 2));
-    console.log(`  ${c('cyan', '╔' + '═'.repeat(W) + '╗')}`);
-    console.log(`  ${c('cyan', '║')}${c('gray', centred)}${c('cyan', '║')}`);
-    console.log(`  ${c('cyan', '╚' + '═'.repeat(W) + '╝')}`);
+    const RED_ANSI = '\x1b[38;2;255;22;55m';
+    console.log(`  ${RED_ANSI}╔${'═'.repeat(W)}╗${C.reset}`);
+    console.log(`  ${RED_ANSI}║${C.reset}${c('gray', centred)}${RED_ANSI}║${C.reset}`);
+    console.log(`  ${RED_ANSI}╚${'═'.repeat(W)}╝${C.reset}`);
     console.log();
 }
 
