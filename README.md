@@ -7,14 +7,14 @@
 
   [![NPM](https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/tribunal-kit)
   [![License](https://img.shields.io/badge/License-MIT-8b5cf6?style=for-the-badge)](LICENSE)
-  [![Version](https://img.shields.io/badge/Version-4.2.0_Supreme_Court-black?style=for-the-badge)](CHANGELOG.md)
+  [![Version](https://img.shields.io/badge/Version-4.3.1_Supreme_Court-black?style=for-the-badge)](CHANGELOG.md)
 </div>
 
 
 <br><br>
 
 > 🚨 **AI GENERATES CODE. TRIBUNAL ENSURES IT WORKS.**  
-> A plug-in `.agent/` intelligence payload that upgrades your IDE with **41 specialist agents**, **31 slash commands**, **16 parallel Tribunal reviewers**, and a core **Swarm/Supervisor** engine.
+> A plug-in `.agent/` intelligence payload that upgrades your IDE with **41 specialist agents**, **32 slash commands**, **16 parallel Tribunal reviewers**, and a core **Swarm/Supervisor** engine.
 
 ---
 
@@ -51,9 +51,9 @@ $ npx tribunal-kit init
   ✔ Installed → .agent/
 
   ╔══════════════════════════════════════════════════════════════╗
-  ║  🤖  Agents         40 installed                            ║
-  ║  ⚡  Workflows       31 installed                            ║
-  ║  🧠  Skills          90 installed                            ║
+  ║  🤖  Agents         41 installed                            ║
+  ║  ⚡  Workflows       32 installed                            ║
+  ║  🧠  Skills          91 installed                            ║
   ║  🔧  Scripts         27 installed                            ║
   ╚══════════════════════════════════════════════════════════════╝
 
@@ -84,7 +84,7 @@ $ npx tribunal-kit status
 >
 > Bridge files are never overwritten on re-init — your customizations are safe.
 
-**Prerequisites:** Node.js ≥ 18 • Python ≥ 3.10 *(optional — required for utility scripts like `checklist.py`, `security_scan.py`)*
+**Prerequisites:** Node.js ≥ 18
 
 > 💡 **Shorthand alias:** You can use `tk` instead of `tribunal-kit` for all commands (e.g., `tk init`, `tk status`).
 
@@ -222,13 +222,13 @@ After initialization, utility scripts unlock local ops:
 
 ```bash
 # 01. Pre-commit audit
-python .agent/scripts/checklist.py .
+node .agent/scripts/checklist.js .
 
 # 02. Pre-deploy full suite verification
-python .agent/scripts/verify_all.py
+node .agent/scripts/verify_all.js
 
 # 03. Start local development environment
-python .agent/scripts/auto_preview.py start
+node .agent/scripts/auto_preview.js start
 ```
 
 <br>

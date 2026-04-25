@@ -373,6 +373,35 @@ function cmdInit(flags) {
     }
     // ────────────────────────────────────────────────────────
 
+    // ── Backup / Cleanup ────────────────────────────────────
+    if (!dryRun && fs.existsSync(agentDest) && flags.force) {
+        // Backup the existing subdirectories before overwriting
+        const backupDir = path.join(agentDest, '.backups', `backup-${Date.now()}`);
+        fs.mkdirSync(backupDir, { recursive: true });
+
+        // PRESERVE_DIRS: user-generated content that must survive updates
+        const PRESERVE_DIRS = ['history', 'patterns', 'mcp_config.json'];
+        const subdirs = ['agents', 'workflows', 'skills', 'scripts', '.shared', 'rules'];
+        for (const sub of subdirs) {
+            const subPath = path.join(agentDest, sub);
+            if (fs.existsSync(subPath)) {
+                // Copy to backup dir
+                copyDir(subPath, path.join(backupDir, sub), false);
+                fs.rmSync(subPath, { recursive: true, force: true });
+            }
+        }
+        log(`  ${c('gray', '✦ Backed up existing configurations to .agent/.backups/')}`);
+
+        // Verify preserved dirs still exist after cleanup
+        for (const kept of PRESERVE_DIRS) {
+            const keptPath = path.join(agentDest, kept);
+            if (kept.includes('.') ? false : !fs.existsSync(keptPath)) {
+                // It's okay if it doesn't exist yet — it'll be created below
+            }
+        }
+    }
+    // ────────────────────────────────────────────────────────
+
     banner();
 
     if (dryRun) {
@@ -393,25 +422,6 @@ function cmdInit(flags) {
         log(`  ${c('gray', '▸')} Or check status with:    ${colorize('cyan', 'tribunal-kit status')}`);
         console.log();
         process.exit(0);
-    }
-
-    if (!dryRun && fs.existsSync(agentDest) && flags.force) {
-        // PRESERVE_DIRS: user-generated content that must survive updates
-        const PRESERVE_DIRS = ['history', 'patterns', 'mcp_config.json'];
-        const subdirs = ['agents', 'workflows', 'skills', 'scripts', '.shared', 'rules'];
-        for (const sub of subdirs) {
-            const subPath = path.join(agentDest, sub);
-            if (fs.existsSync(subPath)) {
-                fs.rmSync(subPath, { recursive: true, force: true });
-            }
-        }
-        // Verify preserved dirs still exist after cleanup
-        for (const kept of PRESERVE_DIRS) {
-            const keptPath = path.join(agentDest, kept);
-            if (kept.includes('.') ? false : !fs.existsSync(keptPath)) {
-                // It's okay if it doesn't exist yet — it'll be created below
-            }
-        }
     }
 
     // Ensure history dirs exist (Case Law + Skill Evolution)
@@ -671,7 +681,6 @@ function cmdLearn(flags) {
 
     const dryRun  = flags.dryRun ? '--dry-run' : '';
     const useHead = flags.head   ? '--head'    : '';
-    const python  = process.platform === 'win32' ? 'python' : 'python3';
     const { execSync } = require('child_process');
 
     // Phase 1: Skill Evolution
@@ -780,7 +789,6 @@ function cmdCase(flags) {
         process.exit(1);
     }
 
-    const python  = process.platform === 'win32' ? 'python' : 'python3';
     const caseLawScript = path.join(agentDest, 'scripts', 'case_law_manager.js');
 
     // Make shorthand aliases

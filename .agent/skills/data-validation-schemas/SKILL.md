@@ -318,3 +318,11 @@ Review these questions before confirming output:
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
+
+
+## Pre-Flight Checklist
+- [ ] Have I reviewed the user's specific constraints and requests?
+- [ ] Have I checked the environment for relevant existing implementations?
+
+## VBC Protocol (Verification-Before-Completion)
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.

@@ -74,7 +74,7 @@ const TRIVIAL_PATTERNS = [
     /^\s*\/\/.*$/,                   // comment-only lines
     /^\s*#.*$/,                      // python comments
     /^\s*\*.*$/,                     // JSDoc lines
-    /^\s*(import\s+\{[^}]+\}|from\s+['"])/, // import reorders
+    /^\s*import\b.*$/,               // imports
 ];
 
 function isTrivialLine(line) {
@@ -142,7 +142,7 @@ function saveCase(caseRecord) {
 function extractTags(text) {
     const tokens = text.match(/\b[a-zA-Z_][a-zA-Z0-9_]{2,}\b/g) || [];
     const stopWords = new Set([
-        'the', 'and', 'for', 'was', 'this', 'with', 'that',
+        'the', 'and', 'for', 'was', 'this', 'with', 'that', 'has', 'a', 'an',
         'from', 'are', 'not', 'use', 'but', 'also', 'code',
         'have', 'will', 'should', 'must', 'can', 'may', 'any',
         'all', 'new', 'old', 'add', 'get', 'set', 'var', 'let',

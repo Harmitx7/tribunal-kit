@@ -328,3 +328,11 @@ VERIFY:  Read the actual codebase before writing anything
 BUILD:   Generate the smallest meaningful unit of code
 CONFIRM: Verify the output is correct before presenting
 ```
+
+
+## Pre-Flight Checklist
+- [ ] Have I reviewed the user's specific constraints and requests?
+- [ ] Have I checked the environment for relevant existing implementations?
+
+## VBC Protocol (Verification-Before-Completion)
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.

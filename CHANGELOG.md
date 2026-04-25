@@ -3,6 +3,18 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.3.1] — 2026-04-25
+
+### ✨ Features
+- **`/graph` Knowledge Graph Skill**: Added a new zero-dependency AST extractor for mapping architecture without context bloat.
+  - `graph_builder.js`: The Macro Mapper (incremental cache + `.gitignore` exclusions).
+  - `graph_zoom.js`: The Micro Zoomer (extracts function/class signatures securely).
+- **Mandatory Payload Checks**: Registered `validate-payload.js` into the `npm test` pipeline to enforce `Pre-Flight Checklist` and `VBC Protocol` strictly.
+
+### 🐛 Fixes
+- **Skill Compliance**: Bulk-injected missing validation headers across all 89 core skills.
+- **Regex Edge Cases**: Fixed Semantic Delta import extraction and stop-word rules in `case_law_manager.js`.
+
 ## [4.3.0] — 2026-04-20
 
 ### ✨ Features
