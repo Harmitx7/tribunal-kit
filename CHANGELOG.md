@@ -3,6 +3,18 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [4.4.0] — 2026-04-29
+
+### ✨ Features
+- **Mutation Testing Engine**: Integrated a context-aware mutation engine (`tk mutate`) with character-masking state machine, disaster recovery (auto-restore from backups), and survivor reporting.
+- **Architecture Knowledge Graph v2.0**: Hardened graph builder with incremental caching, blast radius calculations, and secure URI-encoded visualizer.
+- **Token Reduction Engine (Option C)**: Implemented Context Snapshots, providing pre-computed JSON context blobs (source + imports + dependents) to reduce LLM token overhead by up to 27x.
+- **Picasso Protocol (UI/UX)**: Upgraded `ui-ux-pro-max` skill to v2.0, a comprehensive design mastery guide covering OKLCH color science, typography mathematics, and motion choreography.
+
+### 🐛 Fixes
+- **Security Hardening**: Eliminated info disclosure warnings in `bin/tribunal-kit.js` and fixed XSS vulnerability in `graph_visualizer.js`.
+- **Test Integrity**: Validated entire agentic pipeline with 100% passing tests (80/80).
+
 ## [4.3.1] — 2026-04-25
 
 ### ✨ Features

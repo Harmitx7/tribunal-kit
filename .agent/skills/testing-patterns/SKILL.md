@@ -2,8 +2,8 @@
 name: testing-patterns
 description: Testing mastery across stacks. Unit testing with Jest/Vitest/pytest, integration testing, E2E with Playwright, mocking strategies, test architecture (AAA, Given-When-Then), code coverage, snapshot testing, API testing, component testing with Testing Library, and TDD workflow. Use when writing tests, designing test architecture, or improving test coverage.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-01
+version: 2.1.0
+last-updated: 2026-04-26
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
 ---
 
@@ -467,6 +467,23 @@ describe("POST /api/users", () => {
       .expect(409);
   });
 });
+```
+
+---
+
+## Mutation Testing (Tribunal Engine)
+
+```bash
+# Run the Tribunal Mutation Engine
+npx tribunal-kit mutate src/math.js "npx jest src/math.test.js"
+```
+
+```
+Mutation Engine rules:
+- Code coverage only proves code was EXECUTED, not that it was TESTED.
+- The Mutation Engine swaps operators (=== to !==) and verifies the test suite FAILS.
+- If the test passes despite the mutation, the mutant "survives" (false positive test).
+- Use this engine on critical business logic to eradicate LLM "tautological" tests.
 ```
 
 ---

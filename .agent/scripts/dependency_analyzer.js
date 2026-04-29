@@ -23,7 +23,7 @@ const { spawnSync } = require('child_process');
 const { RED, GREEN, YELLOW, BLUE, BOLD, RESET } = require('./colors.js');
 
 const SOURCE_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
-const SKIP_DIRS = new Set(["node_modules", ".git", "dist", "build", ".next", ".agent", "__pycache__"]);
+const SKIP_DIRS = new Set(["node_modules", ".git", "dist", "build", ".next", ".agent", "__pycache__", "test", "tests", "__tests__"]);
 
 const NODE_BUILTINS = new Set([
     "fs", "path", "os", "crypto", "http", "https", "url", "util",

@@ -745,6 +745,15 @@ async function runWithUpdateCheck(command, flags) {
         case 'hook':
             cmdHook(flags);
             break;
+        case 'graph':
+            cmdGraph(flags);
+            break;
+        case 'mutate':
+            cmdMutate(flags);
+            break;
+        case 'context':
+            cmdContext(flags);
+            break;
         case 'uninstall':
             cmdUninstall(flags);
             break;
@@ -804,6 +813,34 @@ function cmdCase(flags) {
     }
 }
 
+function cmdGraph(flags) {
+    const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
+    const agentDest = path.join(targetDir, '.agent');
+
+    if (!fs.existsSync(agentDest)) {
+        err('.agent/ not found. Run: npx tribunal-kit init');
+        process.exit(1);
+    }
+
+    banner();
+    const { execSync } = require('child_process');
+    const builderScript = path.join(agentDest, 'scripts', 'graph_builder.js');
+    const visualizerScript = path.join(agentDest, 'scripts', 'graph_visualizer.js');
+    const htmlFile = path.join(agentDest, 'history', 'architecture-explorer.html');
+
+    try {
+        execSync(`node "${builderScript}"`, { stdio: 'inherit', cwd: targetDir });
+        execSync(`node "${visualizerScript}"`, { stdio: 'inherit', cwd: targetDir });
+        
+        log(`  ${c('cyan', '▸')} Opening visualizer in browser...`);
+        const opener = process.platform === 'win32' ? 'start' : process.platform === 'darwin' ? 'open' : 'xdg-open';
+        execSync(`${opener} "${htmlFile}"`);
+    } catch (e) {
+        err(`Graph generation failed: ${e.message}`);
+        process.exit(1);
+    }
+}
+
 function cmdHook(flags) {
     const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
     const gitDir = path.join(targetDir, '.git');
@@ -827,6 +864,30 @@ function cmdHook(flags) {
     log(`  ${c('green', '✔')} Installed pre-push git hook.`);
     log(`  ${c('gray', '▸')} Skill Evolution will now run automatically every time you git push.`);
     console.log();
+}
+
+function cmdMutate(flags) {
+    const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
+    const agentDest = path.join(targetDir, '.agent');
+
+    if (!fs.existsSync(agentDest)) {
+        err('.agent/ not found. Run: npx tribunal-kit init');
+        process.exit(1);
+    }
+
+    const args = process.argv.slice(3);
+    if (args.length < 2) {
+        err('Usage: npx tribunal-kit mutate <target_file> <test_command>');
+        process.exit(1);
+    }
+
+    const mutateScript = path.join(agentDest, 'scripts', 'mutation_runner.js');
+    const { execSync } = require('child_process');
+    try {
+        execSync(`node "${mutateScript}" ${args.join(' ')}`, { stdio: 'inherit', cwd: targetDir });
+    } catch (e) {
+        process.exit(1);
+    }
 }
 
 function cmdUninstall(flags) {
@@ -903,6 +964,9 @@ function cmdHelp() {
     log(cmd('status',   'Check if .agent/ is installed'));
     log(cmd('learn',    'Evolve project idioms based on git diffs'));
     log(cmd('case',     'Manage Case Law precedents (add, search, list, show, stats, overrule)'));
+    log(cmd('graph',    'Build and visualize the architecture graph'));
+    log(cmd('mutate',   'Run the Mutation Engine to test test-suite reliability'));
+    log(cmd('context',  'Retrieve a highly-optimized Context Snapshot for a file'));
     log(cmd('hook',     'Install pre-push git hook for auto-learning'));
     log(cmd('uninstall','Remove .agent/ folder from project'));
     console.log();
@@ -939,9 +1003,73 @@ function cmdHelp() {
     log(ex('tk case stats'));
     log(ex('tk case export'));
     log(ex('tk case overrule --id 1'));
+    log(ex('tk graph'));
+    log(ex('tk mutate src/utils.js "npm test"'));
     log(ex('tk hook'));
     log(ex('tk uninstall'));
     console.log();
+}
+
+
+function cmdContext(flags) {
+    const targetDir = flags.path ? require('path').resolve(flags.path) : process.cwd();
+    const agentDest = require('path').join(targetDir, '.agent');
+    
+    if (!require('fs').existsSync(agentDest)) {
+        console.error('  \x1b[91m✖\x1b[0m .agent/ not found. Run: npx tribunal-kit init');
+        process.exit(1);
+    }
+
+    const args = process.argv.slice(3);
+    if (args.length === 0 || args[0] === 'help' || args[0] === '--help') {
+        console.error('Usage: npx tribunal-kit context <target_file>');
+        process.exit(1);
+    }
+
+    const targetFile = args[0].replace(/\\/g, '/');
+    const snapshotName = targetFile.replace(/[\\\/]/g, '__') + '.json';
+    const snapshotPath = require('path').join(agentDest, 'history', 'snapshots', snapshotName);
+
+    if (!require('fs').existsSync(snapshotPath)) {
+        console.error('  \x1b[91m✖\x1b[0m Context Snapshot not found for: ' + targetFile);
+        console.log('    Run: npx tribunal-kit graph  (to generate snapshots)');
+        process.exit(1);
+    }
+
+    try {
+        const snapshot = JSON.parse(require('fs').readFileSync(snapshotPath, 'utf8'));
+        
+        console.log('\n# Context Snapshot: ' + snapshot.file);
+        process.stdout.write('> Size Estimate: ' + (snapshot['estimatedTokens'] || 'Unknown') + '\n');
+        console.log('> Risk Score: ' + snapshot.riskScore + ' (Blast Radius: ' + snapshot.blastRadius + ')\n');
+        
+        if (Object.keys(snapshot.imports).length > 0) {
+            console.log('## Imports');
+            for (const [imp, exports] of Object.entries(snapshot.imports)) {
+                if (exports && exports.length > 0) {
+                    console.log('- `' + imp + '` (exports: ' + exports.join(', ') + ')');
+                } else {
+                    console.log('- `' + imp + '`');
+                }
+            }
+            console.log();
+        }
+
+        if (snapshot.dependents && snapshot.dependents.length > 0) {
+            console.log('## Dependents');
+            for (const dep of snapshot.dependents) {
+                console.log('- `' + dep + '`');
+            }
+            console.log();
+        }
+
+        console.log('## Source Code');
+        console.log('```javascript\n' + snapshot.content + '\n```\n');
+        
+    } catch (e) {
+        console.error('Failed to read snapshot: ' + e.message);
+        process.exit(1);
+    }
 }
 
 // ── Main ──────────────────────────────────────────────────

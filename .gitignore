@@ -63,3 +63,8 @@ logs/
 
 # Ignore script results
 *_results*.txt
+
+# Agent history and snapshots
+.agent/history/
+.agent/history/snapshots/
+*.pen
