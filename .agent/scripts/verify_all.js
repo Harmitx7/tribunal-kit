@@ -52,14 +52,14 @@ function skip(label, reason) {
 function run(label, cmd, cwd) {
     try {
         const isWindows = process.platform === 'win32';
-        let bin = cmd[0];
-        if (isWindows && (bin === 'npm' || bin === 'npx')) bin += '.cmd';
+        const bin = cmd[0];
 
         execFileSync(bin, cmd.slice(1), {
             cwd,
             stdio: 'pipe',
             timeout: 120000,
             encoding: 'utf8',
+            shell: isWindows
         });
         ok(label);
         return true;
@@ -138,6 +138,7 @@ function hasNpm(cwd) {
  */
 function verifyAll(cwd, skipped) {
     let failures = 0;
+    RESULTS.length = 0; // Reset for clean runs (prevents accumulation in tests)
 
     section('1 — Secret Scan');
     if (!skipped.includes('secrets')) {

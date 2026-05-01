@@ -14,7 +14,7 @@
 <br><br>
 
 > 🚨 **AI GENERATES CODE. TRIBUNAL ENSURES IT WORKS.**  
-> A plug-in `.agent/` intelligence payload that upgrades your IDE with **41 specialist agents**, **32 slash commands**, **16 parallel Tribunal reviewers**, and a core **Swarm/Supervisor** engine.
+> A plug-in `.agent/` intelligence payload that upgrades your IDE with **41 specialist agents**, **31 slash commands**, **91 hardened skills**, and a **16-reviewer Tribunal pipeline** — zero hallucinations, zero configuration.
 
 ---
 

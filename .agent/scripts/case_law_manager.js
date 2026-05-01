@@ -30,7 +30,6 @@ const GREEN   = '\x1b[92m';
 const YELLOW  = '\x1b[93m';
 const CYAN    = '\x1b[96m';
 const RED     = '\x1b[91m';
-const BLUE    = '\x1b[94m';
 const BOLD    = '\x1b[1m';
 const DIM     = '\x1b[2m';
 const RESET   = '\x1b[0m';
@@ -48,10 +47,17 @@ function findAgentDir() {
     process.exit(1);
 }
 
-const AGENT_DIR   = findAgentDir();
-const HISTORY_DIR = path.join(AGENT_DIR, 'history', 'case-law');
-const CASES_DIR   = path.join(HISTORY_DIR, 'cases');
-const INDEX_FILE  = path.join(HISTORY_DIR, 'index.json');
+// ── Lazy path resolution (avoids side effects at require-time) ───────────────
+let _paths = null;
+function getPaths() {
+    if (_paths) return _paths;
+    const agentDir   = findAgentDir();
+    const historyDir = path.join(agentDir, 'history', 'case-law');
+    const casesDir   = path.join(historyDir, 'cases');
+    const indexFile  = path.join(historyDir, 'index.json');
+    _paths = { AGENT_DIR: agentDir, HISTORY_DIR: historyDir, CASES_DIR: casesDir, INDEX_FILE: indexFile };
+    return _paths;
+}
 
 const VALID_DOMAINS  = new Set(['backend', 'frontend', 'database', 'security', 'performance', 'mobile', 'testing', 'devops', 'general']);
 const VALID_VERDICTS = new Set(['REJECTED', 'APPROVED_WITH_CONDITIONS', 'PRECEDENT_SET', 'OVERRULED']);
@@ -108,12 +114,14 @@ function contentHash(text) {
 
 // ── Index helpers ─────────────────────────────────────────────────────────────
 function ensureDirs() {
+    const { HISTORY_DIR, CASES_DIR } = getPaths();
     fs.mkdirSync(HISTORY_DIR, { recursive: true });
     fs.mkdirSync(CASES_DIR,   { recursive: true });
 }
 
 function loadIndex() {
     ensureDirs();
+    const { INDEX_FILE } = getPaths();
     if (fs.existsSync(INDEX_FILE)) {
         try { return JSON.parse(fs.readFileSync(INDEX_FILE, 'utf8')); } catch { /* fallthrough */ }
     }
@@ -122,18 +130,21 @@ function loadIndex() {
 
 function saveIndex(index) {
     ensureDirs();
+    const { INDEX_FILE } = getPaths();
     const tmp = INDEX_FILE + '.tmp';
     fs.writeFileSync(tmp, JSON.stringify(index, null, 2), 'utf8');
     fs.renameSync(tmp, INDEX_FILE);
 }
 
 function loadCase(caseId) {
+    const { CASES_DIR } = getPaths();
     const p = path.join(CASES_DIR, `case-${String(caseId).padStart(4, '0')}.json`);
     if (!fs.existsSync(p)) return null;
     try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return null; }
 }
 
 function saveCase(caseRecord) {
+    const { CASES_DIR } = getPaths();
     const p = path.join(CASES_DIR, `case-${String(caseRecord.id).padStart(4, '0')}.json`);
     fs.writeFileSync(p, JSON.stringify(caseRecord, null, 2), 'utf8');
 }
@@ -497,7 +508,7 @@ function cmdExport(args) {
     const content = lines.join('\n');
     if (toStdout) { console.log(content); return; }
 
-    const outPath = path.join(HISTORY_DIR, 'case-law-export.md');
+    const outPath = path.join(getPaths().HISTORY_DIR, 'case-law-export.md');
     fs.writeFileSync(outPath, content, 'utf8');
     console.log(`${GREEN}✔ Exported ${cases.length} cases to ${outPath}${RESET}`);
 }

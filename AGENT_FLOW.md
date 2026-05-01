@@ -260,7 +260,7 @@ When activated, the agent automatically pre-loads the restrictive base prompt (e
 │   ├── reviewer.md
 │   └── tool-wrapper.md
 │
-├── skills/              ← 90 skill modules (all hardened)
+├── skills/              ← 91 skill modules (all hardened)
 │
 ├── history/             ← User-generated data (preserved on update)
 │   ├── case-law/        ← Rejected pattern precedents

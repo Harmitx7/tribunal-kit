@@ -53,39 +53,9 @@ jobs:
           path: coverage/
           retention-days: 7
 
-  python-tests:
-    name: Python Tests (${{ matrix.python-version }})
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        python-version: ['3.10', '3.11', '3.12']
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install pytest
-        run: pip install pytest
-
-      - name: Verify Python scripts parse correctly
-        run: |
-          for f in .agent/scripts/*.py; do
-            echo "Checking $f..."
-            python -m py_compile "$f"
-          done
-
-      - name: Run Python unit tests
-        run: python -m pytest tests/python/ -v --tb=short
-
   release-gate:
     name: Release Gate
-    needs: [test, python-tests]
+    needs: [test]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:

@@ -1,6 +1,6 @@
 {
     "name": "tribunal-kit",
-    "version": "4.4.0",
+    "version": "4.4.1",
     "description": "Anti-Hallucination AI Agent Kit — 40 specialist agents, 31 slash commands, 16 parallel Tribunal reviewers, Performance Swarm engine, and Supreme Court case law pipeline.",
     "keywords": [
         "ai",
@@ -63,10 +63,13 @@
         "changelog": "node scripts/changelog.js",
         "changelog:preview": "node scripts/changelog.js --preview",
         "sync": "node scripts/sync-version.js",
-        "validate-payload": "node scripts/validate-payload.js"
+        "validate-payload": "node scripts/validate-payload.js",
+        "build": "echo 'No build step required for this project'"
     },
     "devDependencies": {
-        "jest": "^29.7.0"
+        "jest": "^29.7.0",
+        "typescript": "^5.4.5",
+        "eslint": "^9.1.1"
     },
     "jest": {
         "testMatch": [

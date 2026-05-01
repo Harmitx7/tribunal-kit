@@ -120,14 +120,14 @@ function safeRestore() {
     if (targetFile && originalContent) {
         try {
             fs.writeFileSync(targetFile, originalContent, 'utf-8');
-        } catch (e) {
+        } catch {
             // Last resort: tell user where the backup is
             if (backupPath) {
                 console.error(`[Tribunal] CRITICAL: Could not restore file. Manual backup at: ${backupPath}`);
             }
         }
         if (backupPath && fs.existsSync(backupPath)) {
-            try { fs.unlinkSync(backupPath); } catch (e) {}
+            try { fs.unlinkSync(backupPath); } catch {}
         }
     }
 }

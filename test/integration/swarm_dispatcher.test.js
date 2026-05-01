@@ -4,9 +4,7 @@ const os = require('os');
 const {
     findAgentDir,
     validatePayload,
-    buildWorkerPrompts,
     validateWorkerRequest,
-    validateWorkerResult,
     validateSwarmPayload
 } = require('../../.agent/scripts/swarm_dispatcher.js');
 

@@ -413,7 +413,7 @@ async function callLlmApi(prompt, provider, apiKey) {
             const json = JSON.parse(raw);
             return json?.candidates?.[0]?.content?.parts?.[0]?.text ?? null;
         }
-    } catch (e) {
+    } catch {
         return null; // Network/parse failure — caller falls back to manual mode
     }
     return null;

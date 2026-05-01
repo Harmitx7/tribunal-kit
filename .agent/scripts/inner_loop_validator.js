@@ -37,8 +37,7 @@
 
 const fs   = require('fs');
 const path = require('path');
-const os   = require('os');
-const crypto = require('crypto');
+
 
 // ── Resolve security_scan patterns (reuse — do not duplicate) ─────────────
 const SCRIPT_DIR = __dirname;
@@ -140,7 +139,7 @@ const RESET  = '\x1b[0m';
  * @param {string} [lang]    - Language hint ('js' | 'ts' | 'py' | 'jsx' | 'tsx')
  * @returns {Array<{severity, category, line, message, fix, source}>}
  */
-function scanCode(code, lang = 'js') {
+function scanCode(code, _lang = 'js') {
     const findings = [];
     const lines = code.split('\n');
 
@@ -255,20 +254,7 @@ function buildSelfHealingInstructions(findings) {
     return lines.join('\n');
 }
 
-/**
- * Write code to a temp file, returning its path.
- * Caller must clean up.
- * @param {string} code
- * @param {string} lang
- * @returns {string} temp file path
- */
-function writeTempFile(code, lang = 'js') {
-    const extMap = { ts: '.ts', tsx: '.tsx', jsx: '.jsx', py: '.py', js: '.js' };
-    const ext    = extMap[lang] || '.js';
-    const tmpPath = path.join(os.tmpdir(), `tk_ilv_${crypto.randomBytes(6).toString('hex')}${ext}`);
-    fs.writeFileSync(tmpPath, code, 'utf8');
-    return tmpPath;
-}
+
 
 // ── Output ────────────────────────────────────────────────────────────────
 
@@ -338,7 +324,7 @@ const rand = Math.random() * 1000;
  * @param {object} [opts]    - Options: { timeout: number }
  * @returns {{ verdict, passed, issues, summary, self_healing_instructions }}
  */
-function validate(code, lang = 'js', opts = {}) {
+function validate(code, lang = 'js', _opts = {}) {
     if (!code || typeof code !== 'string') {
         return {
             verdict: 'APPROVED',
@@ -443,8 +429,8 @@ ${BOLD}Verdict:${RESET}
     } else if (snippetIdx !== -1 && argv[snippetIdx + 1]) {
         code = argv[snippetIdx + 1];
     } else if (!process.stdin.isTTY) {
-        // Read from stdin if piped
-        code = fs.readFileSync('/dev/stdin', 'utf8');
+        // Read from stdin if piped (cross-platform, works on Windows)
+        code = fs.readFileSync(0, 'utf8');
     } else {
         console.error(`${RED}✖ Provide --snippet "<code>" or --file <path>${RESET}`);
         process.exit(1);

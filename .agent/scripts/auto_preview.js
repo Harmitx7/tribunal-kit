@@ -13,7 +13,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { spawn, execSync } = require('child_process');
+const { spawn } = require('child_process');
 const net = require('net');
 
 const PID_FILE = ".preview.pid";

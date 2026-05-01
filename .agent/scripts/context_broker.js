@@ -54,7 +54,6 @@ const path = require('path');
 const GREEN  = '\x1b[92m';
 const YELLOW = '\x1b[93m';
 const CYAN   = '\x1b[96m';
-const BLUE   = '\x1b[94m';
 const RED    = '\x1b[91m';
 const BOLD   = '\x1b[1m';
 const DIM    = '\x1b[2m';
@@ -522,7 +521,7 @@ function broker(task, files = [], model = 'large', agentDir = null) {
     return { ...selection, promptText };
 }
 
-module.exports = { broker, selectSkills, loadSkills, scoreSkill, findAgentDir };
+module.exports = { broker, selectSkills, loadSkills, scoreSkill, tokenize, findAgentDir };
 
 // ── CLI Entry ─────────────────────────────────────────────────────────────────
 
@@ -583,27 +582,30 @@ ${BOLD}Examples:${RESET}
         if (argv[i] === '--file' && argv[i + 1]) files.push(argv[i + 1]);
     }
 
+    const validModels = ['large', 'small'];
+    let effectiveModel = model;
+    if (!validModels.includes(model)) {
+        console.error(`${YELLOW}⚠ Unknown model tier "${model}" — defaulting to "large"${RESET}`);
+        effectiveModel = 'large';
+    }
+
     const t0       = Date.now();
     const skills   = loadSkills(agentDir);
-    const selection = selectSkills(task, files, model, skills);
+    const selection = selectSkills(task, files, effectiveModel, skills);
     const elapsed  = Date.now() - t0;
-
-    if (!['large', 'small'].includes(model)) {
-        console.error(`${YELLOW}⚠ Unknown model tier "${model}" — defaulting to "large"${RESET}`);
-    }
 
     switch (output) {
         case 'json':
-            console.log(formatJson(task, model, selection));
+            console.log(formatJson(task, effectiveModel, selection));
             break;
         case 'names':
-            console.log(formatNames(selection, model));
+            console.log(formatNames(selection, effectiveModel));
             break;
         case 'prompt':
-            console.log(formatPrompt(task, model, selection));
+            console.log(formatPrompt(task, effectiveModel, selection));
             break;
         default: // 'report'
-            formatReport(task, model, selection, elapsed);
+            formatReport(task, effectiveModel, selection, elapsed);
             break;
     }
 }

@@ -1,6 +1,6 @@
 const { getAssociatedScript } = require('../../.agent/scripts/skill_integrator.js');
 const { architecturalWeight, semanticDelta } = require('../../.agent/scripts/skill_evolution.js');
-const { parseCaseId, findAgentDir } = require('../../.agent/scripts/case_law_manager.js');
+const { findAgentDir } = require('../../.agent/scripts/case_law_manager.js');
 
 describe('Wave 2 Scripts (Evolving Brain)', () => {
     describe('skill_integrator.js', () => {

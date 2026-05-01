@@ -91,7 +91,7 @@ function findDistDir(projectRoot) {
     return null;
 }
 
-function analyzeDist(distDir, thresholdKb) {
+function analyzeDist(distDir, _thresholdKb) {
     const files = [];
     let total = 0;
 

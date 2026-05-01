@@ -52,7 +52,7 @@ function walkDir(dir, fileList = []) {
     let files;
     try {
         files = fs.readdirSync(dir);
-    } catch (err) {
+    } catch (_err) {
         return fileList;
     }
 
@@ -76,9 +76,7 @@ function parseFile(content) {
     const imports = new Set();
     const exports = new Set();
 
-    const cleanContent = stripStringsAndComments(content);
-
-    const importRegex = /import(?:(?:[\w*\s{},]*)\sfrom\s+)?([^\s;]+)/g; // Match bare specifier if possible, strings are stripped, but wait...
+    // Parse from semi-cleaned content (comments removed)
     // WAIT: If I stripped strings, how do I get the import path?
     // The previous implementation used strings `['"]([^'"]+)['"]`.
     // If I strip strings, the import path is lost! 
@@ -161,7 +159,7 @@ function main() {
 
     let cache = {};
     if (fs.existsSync(CACHE_FILE)) {
-        try { cache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8')); } catch(e) {}
+        try { cache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8')); } catch { /* ignore */ }
     }
 
     console.log('\x1b[96m✦ Building Architecture Graph...\x1b[0m');
@@ -190,12 +188,12 @@ function main() {
                     exports: parsed.exports
                 };
                 parsedCount++;
-            } catch (err) {}
+            } catch { /* ignore */ }
         }
     }
 
     // Compute Dependents
-    for (const [file, info] of Object.entries(graphData)) info.dependents = [];
+    for (const [_file, info] of Object.entries(graphData)) info.dependents = [];
     
     const fileKeys = Object.keys(graphData);
     for (const [file, info] of Object.entries(graphData)) {
@@ -257,8 +255,8 @@ function main() {
         // Clear stale snapshots
         try {
             const oldSnapshots = fs.readdirSync(SNAPSHOTS_DIR);
-            for (const os of oldSnapshots) fs.unlinkSync(path.join(SNAPSHOTS_DIR, os));
-        } catch (e) {}
+            for (const f of oldSnapshots) fs.unlinkSync(path.join(SNAPSHOTS_DIR, f));
+        } catch { /* ignore */ }
     }
 
     console.log('\x1b[96m✦ Generating Context Snapshots...\x1b[0m');
@@ -270,7 +268,7 @@ function main() {
         let content = '';
         try {
             content = fs.readFileSync(path.join(process.cwd(), file), 'utf8');
-        } catch (e) {
+        } catch {
             continue;
         }
 
@@ -307,5 +305,9 @@ function main() {
     console.log(`  \x1b[2mParsed: ${parsedCount} files | Cached: ${cachedCount} files\x1b[0m`);
     console.log(`  \x1b[2mSaved to: ${GRAPH_FILE}\x1b[0m`);
 }
+// ── Exports (for testing & programmatic use) ─────────────────────────────────
+module.exports = { parseFile, generateYAML, walkDir, isExcluded, main };
 
-main();
+if (require.main === module) {
+    main();
+}

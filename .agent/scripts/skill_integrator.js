@@ -71,7 +71,7 @@ function getAssociatedScript(skillDir, scriptsDir) {
                     return scriptMatch[1].trim();
                 }
             }
-        } catch (err) {
+        } catch {
             // ignore
         }
     }

@@ -92,7 +92,7 @@ function buildWorkerPrompts(payloadData, workspaceRoot) {
         if (res) {
             astContext = `\n\n[AST Blast Radius Context]:\n${res}`;
         }
-    } catch (e) {
+    } catch {
         // ignore warning
     }
 
@@ -316,7 +316,7 @@ function main() {
             if (res) {
                 astContext = `\n\n[AST Blast Radius Context]:\n${res}`;
             }
-        } catch (e) {
+        } catch {
             // ignore
         }
 

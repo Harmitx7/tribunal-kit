@@ -324,16 +324,11 @@ function banner() {
    ██║   ██║  ██║██║██████╔╝╚██████╔╝██║ ╚████║██║  ██║███████╗ ██║  ██╗██║   ██║   
    ╚═╝   ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝ ╚═╝  ╚═╝╚═╝   ╚═╝   `.split('\n').filter(Boolean);
     console.log();
-    const maxLen = Math.max(...art.map(line => line.length));
+    const _maxLen = Math.max(...art.map(line => line.length));
     for (const line of art) {
         let gradientLine = '  ' + C.bold;
         for (let i = 0; i < line.length; i++) {
-            const p = maxLen > 1 ? i / (maxLen - 1) : 0;
-            // Solid #ff1637 (R: 255, G: 22, B: 55)
-            const r = 255;
-            const g = 22;
-            const b = 55;
-            gradientLine += `\x1b[38;2;${r};${g};${b}m${line[i]}`;
+            gradientLine += `\x1b[38;2;255;22;55m${line[i]}`;
         }
         gradientLine += C.reset;
         log(gradientLine);
@@ -380,7 +375,7 @@ function cmdInit(flags) {
         fs.mkdirSync(backupDir, { recursive: true });
 
         // PRESERVE_DIRS: user-generated content that must survive updates
-        const PRESERVE_DIRS = ['history', 'patterns', 'mcp_config.json'];
+        const _PRESERVE_DIRS = ['history', 'patterns', 'mcp_config.json'];
         const subdirs = ['agents', 'workflows', 'skills', 'scripts', '.shared', 'rules'];
         for (const sub of subdirs) {
             const subPath = path.join(agentDest, sub);
@@ -392,13 +387,7 @@ function cmdInit(flags) {
         }
         log(`  ${c('gray', '✦ Backed up existing configurations to .agent/.backups/')}`);
 
-        // Verify preserved dirs still exist after cleanup
-        for (const kept of PRESERVE_DIRS) {
-            const keptPath = path.join(agentDest, kept);
-            if (kept.includes('.') ? false : !fs.existsSync(keptPath)) {
-                // It's okay if it doesn't exist yet — it'll be created below
-            }
-        }
+
     }
     // ────────────────────────────────────────────────────────
 
@@ -681,7 +670,7 @@ function cmdLearn(flags) {
 
     const dryRun  = flags.dryRun ? '--dry-run' : '';
     const useHead = flags.head   ? '--head'    : '';
-    const { execSync } = require('child_process');
+
 
     // Phase 1: Skill Evolution
     log(`  ${c('cyan', '\u229b')} ${bold('Phase 1')} \u2014 Skill Evolution Forge (auto-generating project idioms)`);
@@ -808,7 +797,7 @@ function cmdCase(flags) {
     try {
         const { execSync } = require('child_process');
         execSync(`node "${caseLawScript}" ${pyArgs}`, { stdio: 'inherit', cwd: targetDir });
-    } catch (e) {
+    } catch {
         process.exit(1); // Script already prints errors
     }
 }
@@ -885,7 +874,7 @@ function cmdMutate(flags) {
     const { execSync } = require('child_process');
     try {
         execSync(`node "${mutateScript}" ${args.join(' ')}`, { stdio: 'inherit', cwd: targetDir });
-    } catch (e) {
+    } catch {
         process.exit(1);
     }
 }
@@ -1012,11 +1001,11 @@ function cmdHelp() {
 
 
 function cmdContext(flags) {
-    const targetDir = flags.path ? require('path').resolve(flags.path) : process.cwd();
-    const agentDest = require('path').join(targetDir, '.agent');
+    const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
+    const agentDest = path.join(targetDir, '.agent');
     
-    if (!require('fs').existsSync(agentDest)) {
-        console.error('  \x1b[91m✖\x1b[0m .agent/ not found. Run: npx tribunal-kit init');
+    if (!fs.existsSync(agentDest)) {
+        err('.agent/ not found. Run: npx tribunal-kit init');
         process.exit(1);
     }
 
