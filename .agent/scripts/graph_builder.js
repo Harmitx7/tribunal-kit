@@ -10,6 +10,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const AGENT_DIR = path.join(process.cwd(), '.agent');
 const HISTORY_DIR = path.join(AGENT_DIR, 'history');
@@ -43,6 +44,12 @@ function isExcluded(filePath) {
         if (relativePath.includes(pattern)) return true;
     }
     return false;
+}
+
+// ── Content Hashing ───────────────────────────────────────────────────────────
+function getFileHash(filePath) {
+    const content = fs.readFileSync(filePath);
+    return crypto.createHash('sha1').update(content).digest('hex');
 }
 
 // ── Traversal ─────────────────────────────────────────────────────────────────
@@ -168,12 +175,16 @@ function main() {
 
     let parsedCount = 0;
     let cachedCount = 0;
+    const changedFiles = new Set();
 
     for (const file of files) {
-        const stat = fs.statSync(file);
         const relativePath = path.relative(process.cwd(), file).replace(/\\/g, '/');
+        let fileHash;
+        try {
+            fileHash = getFileHash(file);
+        } catch { continue; }
 
-        if (cache[relativePath] && cache[relativePath].mtimeMs === stat.mtimeMs) {
+        if (cache[relativePath] && cache[relativePath].hash === fileHash) {
             graphData[relativePath] = { imports: cache[relativePath].imports, exports: cache[relativePath].exports };
             cachedCount++;
         } else {
@@ -183,11 +194,12 @@ function main() {
                 graphData[relativePath] = parsed;
                 
                 cache[relativePath] = {
-                    mtimeMs: stat.mtimeMs,
+                    hash: fileHash,
                     imports: parsed.imports,
                     exports: parsed.exports
                 };
                 parsedCount++;
+                changedFiles.add(relativePath);
             } catch { /* ignore */ }
         }
     }
@@ -247,23 +259,34 @@ function main() {
     fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2));
     fs.writeFileSync(GRAPH_FILE, generateYAML(graphData));
 
-    // ── Pre-Computed Context Snapshots (Option C) ───────────────────────────
+    // ── Pre-Computed Context Snapshots (Incremental) ─────────────────────────
     const SNAPSHOTS_DIR = path.join(HISTORY_DIR, 'snapshots');
     if (!fs.existsSync(SNAPSHOTS_DIR)) {
         fs.mkdirSync(SNAPSHOTS_DIR, { recursive: true });
-    } else {
-        // Clear stale snapshots
-        try {
-            const oldSnapshots = fs.readdirSync(SNAPSHOTS_DIR);
-            for (const f of oldSnapshots) fs.unlinkSync(path.join(SNAPSHOTS_DIR, f));
-        } catch { /* ignore */ }
     }
 
+    // Clean up snapshots for files that no longer exist
+    try {
+        const existingSnapshots = fs.readdirSync(SNAPSHOTS_DIR);
+        const currentFileSet = new Set(fileKeys.map(f => f.replace(/[\\/]/g, '__') + '.json'));
+        for (const snap of existingSnapshots) {
+            if (!currentFileSet.has(snap)) fs.unlinkSync(path.join(SNAPSHOTS_DIR, snap));
+        }
+    } catch { /* ignore */ }
+
     console.log('\x1b[96m✦ Generating Context Snapshots...\x1b[0m');
+    let snapshotWritten = 0;
+    let snapshotSkipped = 0;
     for (const file of fileKeys) {
         const info = graphData[file];
         const snapshotFile = file.replace(/[\\/]/g, '__') + '.json';
         const snapshotPath = path.join(SNAPSHOTS_DIR, snapshotFile);
+
+        // Skip unchanged files that already have a snapshot
+        if (!changedFiles.has(file) && fs.existsSync(snapshotPath)) {
+            snapshotSkipped++;
+            continue;
+        }
 
         let content = '';
         try {
@@ -298,15 +321,16 @@ function main() {
         }
 
         fs.writeFileSync(snapshotPath, JSON.stringify(snapshot, null, 2));
+        snapshotWritten++;
     }
-    console.log(`  \x1b[2mSaved ${fileKeys.length} snapshots to: ${SNAPSHOTS_DIR}\x1b[0m`);
+    console.log(`  \x1b[2mSnapshots: ${snapshotWritten} written | ${snapshotSkipped} cached\x1b[0m`);
 
     console.log(`\n\x1b[32m✔ Graph successfully built.\x1b[0m`);
     console.log(`  \x1b[2mParsed: ${parsedCount} files | Cached: ${cachedCount} files\x1b[0m`);
     console.log(`  \x1b[2mSaved to: ${GRAPH_FILE}\x1b[0m`);
 }
 // ── Exports (for testing & programmatic use) ─────────────────────────────────
-module.exports = { parseFile, generateYAML, walkDir, isExcluded, main };
+module.exports = { parseFile, generateYAML, walkDir, isExcluded, getFileHash, main };
 
 if (require.main === module) {
     main();

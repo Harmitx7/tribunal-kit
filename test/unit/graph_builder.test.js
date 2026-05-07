@@ -8,8 +8,9 @@
 
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 
-const { parseFile, generateYAML, isExcluded } = require('../../.agent/scripts/graph_builder');
+const { parseFile, generateYAML, isExcluded, getFileHash } = require('../../.agent/scripts/graph_builder');
 
 describe('graph_builder.js', () => {
 
@@ -159,6 +160,44 @@ describe('graph_builder.js', () => {
         it('should NOT exclude regular source files', () => {
             const testPath = path.join(process.cwd(), 'src', 'index.js');
             expect(isExcluded(testPath)).toBe(false);
+        });
+    });
+
+    // ── getFileHash ───────────────────────────────────────────────────────
+
+    describe('getFileHash()', () => {
+        const tmpDir = path.join(os.tmpdir(), 'graph-hash-test-' + Date.now());
+        const tmpFile = path.join(tmpDir, 'test.js');
+
+        beforeAll(() => {
+            fs.mkdirSync(tmpDir, { recursive: true });
+            fs.writeFileSync(tmpFile, 'const x = 1;');
+        });
+        afterAll(() => {
+            try { fs.unlinkSync(tmpFile); fs.rmdirSync(tmpDir); } catch { /* ignore */ }
+        });
+
+        it('should return a 40-char hex SHA-1 hash', () => {
+            const hash = getFileHash(tmpFile);
+            expect(hash).toMatch(/^[a-f0-9]{40}$/);
+        });
+
+        it('should return the same hash for unchanged content', () => {
+            const hash1 = getFileHash(tmpFile);
+            const hash2 = getFileHash(tmpFile);
+            expect(hash1).toBe(hash2);
+        });
+
+        it('should return a different hash when content changes', () => {
+            const hash1 = getFileHash(tmpFile);
+            fs.writeFileSync(tmpFile, 'const x = 2;');
+            const hash2 = getFileHash(tmpFile);
+            expect(hash1).not.toBe(hash2);
+            fs.writeFileSync(tmpFile, 'const x = 1;'); // restore
+        });
+
+        it('should throw on non-existent file', () => {
+            expect(() => getFileHash('/non/existent/file.js')).toThrow();
         });
     });
 
