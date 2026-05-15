@@ -12,6 +12,8 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
+const { RED, GREEN, BOLD, DIM, CYAN, RESET, timer, formatMs } = require('./_colors');
+
 const AGENT_DIR = path.join(process.cwd(), '.agent');
 const HISTORY_DIR = path.join(AGENT_DIR, 'history');
 const CACHE_FILE = path.join(HISTORY_DIR, 'graph-cache.json');
@@ -158,7 +160,7 @@ function generateYAML(data) {
 // ── Main Execution ────────────────────────────────────────────────────────────
 function main() {
     if (!fs.existsSync(AGENT_DIR)) {
-        console.error('\x1b[31m✖ Error: .agent directory not found.\x1b[0m');
+        console.error(`${RED}✖ Error: .agent directory not found.${RESET}`);
         process.exit(1);
     }
 
@@ -169,7 +171,8 @@ function main() {
         try { cache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8')); } catch { /* ignore */ }
     }
 
-    console.log('\x1b[96m✦ Building Architecture Graph...\x1b[0m');
+    const totalTimer = timer();
+    console.log(`${CYAN}✦ Building Architecture Graph...${RESET}`);
     const files = walkDir(process.cwd());
     const graphData = {};
 
@@ -274,7 +277,7 @@ function main() {
         }
     } catch { /* ignore */ }
 
-    console.log('\x1b[96m✦ Generating Context Snapshots...\x1b[0m');
+    console.log(`${CYAN}✦ Generating Context Snapshots...${RESET}`);
     let snapshotWritten = 0;
     let snapshotSkipped = 0;
     for (const file of fileKeys) {
@@ -323,11 +326,12 @@ function main() {
         fs.writeFileSync(snapshotPath, JSON.stringify(snapshot, null, 2));
         snapshotWritten++;
     }
-    console.log(`  \x1b[2mSnapshots: ${snapshotWritten} written | ${snapshotSkipped} cached\x1b[0m`);
+    console.log(`  ${DIM}Snapshots: ${snapshotWritten} written | ${snapshotSkipped} cached${RESET}`);
 
-    console.log(`\n\x1b[32m✔ Graph successfully built.\x1b[0m`);
-    console.log(`  \x1b[2mParsed: ${parsedCount} files | Cached: ${cachedCount} files\x1b[0m`);
-    console.log(`  \x1b[2mSaved to: ${GRAPH_FILE}\x1b[0m`);
+    const totalMs = totalTimer();
+    console.log(`\n${GREEN}${BOLD}✔ Graph successfully built.${RESET}`);
+    console.log(`  ${DIM}Parsed: ${parsedCount} files | Cached: ${cachedCount} files | ${formatMs(totalMs)}${RESET}`);
+    console.log(`  ${DIM}Saved to: ${GRAPH_FILE}${RESET}`);
 }
 // ── Exports (for testing & programmatic use) ─────────────────────────────────
 module.exports = { parseFile, generateYAML, walkDir, isExcluded, getFileHash, main };

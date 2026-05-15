@@ -20,13 +20,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 
-// Colors for terminal output
-const CYAN   = '\x1b[96m';
-const GREEN  = '\x1b[92m';
-const YELLOW = '\x1b[93m';
-const RED    = '\x1b[91m';
-const BOLD   = '\x1b[1m';
-const RESET  = '\x1b[0m';
+const { CYAN, GREEN, YELLOW, RED, BOLD, RESET } = require('./_colors');
 
 const REPORT_FILE = 'skill-integration-report.md';
 

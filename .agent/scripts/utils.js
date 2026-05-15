@@ -1,32 +1,17 @@
 /**
- * utils.js
- * Shared utilities for Tribunal Kit Node scripts.
+ * utils.js — Backward-compatible re-export of _utils.js
+ * ══════════════════════════════════════════════════════
+ * All utilities are defined in _utils.js.
+ * This file re-exports them for scripts that import from './utils.js'.
+ *
+ * New scripts should import from './_utils' directly.
  */
 'use strict';
 
-const path = require('path');
-const fs = require('fs');
-
-function findAgentDir() {
-    let current = path.resolve(process.cwd());
-    const root = path.parse(current).root;
-    while (current !== root) {
-        const candidate = path.join(current, '.agent');
-        if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) {
-            return candidate;
-        }
-        current = path.dirname(current);
-    }
-    console.error("\x1b[91m✖ Error: '.agent' directory not found. Please run 'npx tribunal-kit init' first.\x1b[0m");
-    process.exit(1);
-}
-
-function ensureUtf8Stdout() {
-    // In Node.js, process.stdout is typically already UTF-8 capable,
-    // but this exists for compatibility with legacy python workflows.
-}
+const _utils = require('./_utils');
 
 module.exports = {
-    findAgentDir,
-    ensureUtf8Stdout
+    ..._utils,
+    // Legacy export for compatibility
+    ensureUtf8Stdout: function() {},
 };

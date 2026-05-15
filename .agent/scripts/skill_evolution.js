@@ -31,14 +31,7 @@ const { execSync } = require('child_process');
 const readline = require('readline');
 
 // ── Colours ──────────────────────────────────────────────────────────────────
-const GREEN  = '\x1b[92m';
-const YELLOW = '\x1b[93m';
-const CYAN   = '\x1b[96m';
-const RED    = '\x1b[91m';
-const BLUE   = '\x1b[94m';
-const BOLD   = '\x1b[1m';
-const DIM    = '\x1b[2m';
-const RESET  = '\x1b[0m';
+const { GREEN, YELLOW, CYAN, RED, BLUE, BOLD, DIM, RESET } = require('./_colors');
 
 // ── Find .agent directory ─────────────────────────────────────────────────────
 function findAgentDir() {

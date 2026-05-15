@@ -27,21 +27,15 @@
 const fs   = require('fs');
 const path = require('path');
 
-// ━━━ ANSI colors ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const RED     = '\x1b[91m';
-const GREEN   = '\x1b[92m';
-const YELLOW  = '\x1b[93m';
-const BLUE    = '\x1b[94m';
-const MAGENTA = '\x1b[95m';
-const BOLD    = '\x1b[1m';
-const RESET   = '\x1b[0m';
+const {
+    RED, GREEN, YELLOW, BLUE, MAGENTA, BOLD, DIM, CYAN, RESET,
+    banner, sectionHeader, timer, formatMs,
+} = require('./_colors');
 
-const SOURCE_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.py', '.go', '.java', '.rb']);
-const SKIP_DIRS = new Set([
-    'node_modules', '.git', 'dist', 'build', '__pycache__', '.agent',
-    '.next', 'vendor', 'coverage', 'lcov-report', '.nyc_output',
-    'test-results', '.jest-cache',
-]);
+const { walkDir, SOURCE_EXTENSIONS } = require('./_utils');
+
+// ── Security-specific source extensions (broader than default) ──────────────
+const SCAN_EXTENSIONS = new Set([...SOURCE_EXTENSIONS, '.py', '.go', '.java', '.rb']);
 
 const SEVERITY_COLORS = {
     critical: RED + BOLD,
@@ -136,35 +130,10 @@ function scanFile(filepath, projectRoot) {
 
 
 /**
- * Recursively walk a directory yield file paths.
- * @param {string} dir - Directory to walk.
- * @param {Set<string>} skipDirs - Directory names to skip.
- * @returns {string[]} Array of file paths.
- */
-function walkDir(dir, skipDirs) {
-    const results = [];
-    let entries;
-    try {
-        entries = fs.readdirSync(dir, { withFileTypes: true });
-    } catch {
-        return results;
-    }
-
-    for (const entry of entries) {
-        if (entry.isDirectory()) {
-            if (!skipDirs.has(entry.name)) {
-                results.push(...walkDir(path.join(dir, entry.name), skipDirs));
-            }
-        } else if (entry.isFile()) {
-            results.push(path.join(dir, entry.name));
-        }
-    }
-    return results;
-}
-
-
-/**
  * Scan all source files in a directory.
+ * PERFORMANCE FIX: Uses shared walkDir from _utils.js and pushes findings
+ * individually instead of using spread operator (eliminates O(n²) array growth).
+ *
  * @param {string} projectRoot - Root directory to scan.
  * @param {string[]|null} targetFiles - Specific files to scan, or null for full scan.
  * @returns {Array} Array of finding objects.
@@ -176,17 +145,20 @@ function scanDirectory(projectRoot, targetFiles) {
         for (const fpath of targetFiles) {
             const absPath = path.isAbsolute(fpath) ? fpath : path.join(projectRoot, fpath);
             if (fs.existsSync(absPath) && fs.statSync(absPath).isFile()) {
-                allFindings.push(...scanFile(absPath, projectRoot));
+                // FIX: Push individually instead of spread to avoid O(n²)
+                const fileFindings = scanFile(absPath, projectRoot);
+                for (const f of fileFindings) allFindings.push(f);
             }
         }
         return allFindings;
     }
 
-    const files = walkDir(projectRoot, SKIP_DIRS);
+    const files = walkDir(projectRoot, { extensions: SCAN_EXTENSIONS });
+
     for (const filepath of files) {
-        const ext = path.extname(filepath);
-        if (!SOURCE_EXTENSIONS.has(ext)) continue;
-        allFindings.push(...scanFile(filepath, projectRoot));
+        // FIX: Push individually instead of spread to avoid O(n²)
+        const fileFindings = scanFile(filepath, projectRoot);
+        for (const f of fileFindings) allFindings.push(f);
     }
 
     return allFindings;
@@ -223,12 +195,9 @@ function printFindings(findings, minSeverity) {
 }
 
 
-/**
- * Parse CLI arguments manually (no external dependencies).
- */
-function parseArgs(argv) {
+function main() {
     const args = { path: null, severity: 'low', files: null };
-    const raw = argv.slice(2);
+    const raw = process.argv.slice(2);
 
     for (let i = 0; i < raw.length; i++) {
         if (raw[i] === '--severity' && raw[i + 1]) {
@@ -242,12 +211,6 @@ function parseArgs(argv) {
             args.path = raw[i];
         }
     }
-    return args;
-}
-
-
-function main() {
-    const args = parseArgs(process.argv);
 
     if (!args.path) {
         console.error(`Usage: node security_scan.js <path> [--severity critical|high|medium|low] [--files ...]`);
@@ -260,19 +223,26 @@ function main() {
         process.exit(1);
     }
 
-    console.log(`${BOLD}Tribunal — security_scan.js${RESET}`);
-    console.log(`Project: ${projectRoot}`);
-    console.log(`Severity filter: ${args.severity}+`);
+    console.log(banner('security_scan.js', {
+        Project: projectRoot,
+        Severity: `${args.severity}+`,
+    }));
 
+    const elapsed = timer();
     const findings = scanDirectory(projectRoot, args.files);
+    const scanMs = elapsed();
+
     const count = printFindings(findings, args.severity);
 
-    // Summary
-    console.log(`\n${BOLD}━━━ Security Scan Summary ━━━${RESET}`);
+    // ━━━ Summary ━━━
+    console.log(`\n${BOLD}${CYAN}━━━ Security Scan Summary ━━━${RESET}`);
+
     const bySeverity = {};
     for (const f of findings) {
         bySeverity[f.severity] = (bySeverity[f.severity] || 0) + 1;
     }
+
+    const uniqueFiles = new Set(findings.map(f => f.file)).size;
 
     for (const sev of ['critical', 'high', 'medium', 'low']) {
         const c = bySeverity[sev] || 0;
@@ -282,6 +252,8 @@ function main() {
         }
     }
 
+    console.log(`\n  ${DIM}Scanned in ${formatMs(scanMs)} — ${findings.length} findings across ${uniqueFiles} file(s)${RESET}`);
+
     if (count === 0) {
         console.log(`  ${GREEN}✅ No issues found — scan passed${RESET}`);
     } else {
@@ -290,6 +262,7 @@ function main() {
             console.log(`\n  ${RED}${BOLD}⚠️  ${criticalHigh} critical/high issue(s) require immediate attention${RESET}`);
         }
     }
+    console.log();
 
     process.exit((bySeverity.critical || 0) > 0 ? 1 : 0);
 }

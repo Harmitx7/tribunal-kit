@@ -1,17 +1,11 @@
 /**
- * colors.js
- * Shared ANSI color constants for Tribunal Kit Node scripts.
+ * colors.js — Backward-compatible re-export of _colors.js
+ * ════════════════════════════════════════════════════════
+ * All color constants and helpers are defined in _colors.js.
+ * This file re-exports them for scripts that import from './colors.js'.
+ *
+ * New scripts should import from './_colors' directly.
  */
 'use strict';
 
-module.exports = {
-    GREEN: "\x1b[92m",
-    YELLOW: "\x1b[93m",
-    CYAN: "\x1b[96m",
-    RED: "\x1b[91m",
-    BLUE: "\x1b[94m",
-    MAGENTA: "\x1b[95m",
-    BOLD: "\x1b[1m",
-    DIM: "\x1b[2m",
-    RESET: "\x1b[0m"
-};
+module.exports = require('./_colors');

@@ -20,13 +20,7 @@ const path = require('path');
 
 const STATE_FILE = ".agent_session.json";
 
-const GREEN  = "\x1b[92m";
-const YELLOW = "\x1b[93m";
-const BLUE   = "\x1b[94m";
-const CYAN   = "\x1b[96m";
-const RED    = "\x1b[91m";
-const BOLD   = "\x1b[1m";
-const RESET  = "\x1b[0m";
+const { GREEN, YELLOW, BLUE, CYAN, RED, BOLD, RESET } = require('./_colors');
 
 const VALID_COMMANDS = new Set(["save", "load", "show", "clear", "status", "tag", "list", "export"]);
 const LIST_PAGE_SIZE = 10;

@@ -10,6 +10,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const { RED, CYAN, RESET } = require('./_colors');
+
 function getFlag(name) {
     const idx = process.argv.indexOf(name);
     return (idx !== -1 && process.argv[idx + 1]) ? process.argv[idx + 1] : null;
@@ -18,14 +20,14 @@ function getFlag(name) {
 const targetFile = getFlag('--focus');
 
 if (!targetFile) {
-    console.error('\x1b[31m✖ Error: Provide a file to zoom into. Usage: node graph_zoom.js --focus <filepath>\x1b[0m');
+    console.error(`${RED}✖ Error: Provide a file to zoom into. Usage: node graph_zoom.js --focus <filepath>${RESET}`);
     process.exit(1);
 }
 
 const absolutePath = path.resolve(process.cwd(), targetFile);
 
 if (!fs.existsSync(absolutePath)) {
-    console.error(`\x1b[31m✖ Error: File not found at ${absolutePath}\x1b[0m`);
+    console.error(`${RED}✖ Error: File not found at ${absolutePath}${RESET}`);
     process.exit(1);
 }
 
@@ -119,7 +121,7 @@ function extractSkeleton(content) {
 }
 
 function main() {
-    console.log(`\x1b[96m✦ Zooming into: ${targetFile}\x1b[0m`);
+    console.log(`${CYAN}✦ Zooming into: ${targetFile}${RESET}`);
     
     try {
         const content = fs.readFileSync(absolutePath, 'utf8');
@@ -142,7 +144,7 @@ function main() {
         console.log('--- SKELETON END ---\n');
         
     } catch (e) {
-        console.error(`\x1b[31m✖ Error parsing file: ${e.message}\x1b[0m`);
+        console.error(`${RED}✖ Error parsing file: ${e.message}${RESET}`);
         // Fallback Logic: Return truncated raw on hard failure
         const rawContent = fs.readFileSync(absolutePath, 'utf8').split('\n').slice(0, 100).join('\n');
         console.log('\n--- RAW FILE FALLBACK (100 lines) ---');

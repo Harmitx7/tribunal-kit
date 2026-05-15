@@ -10,6 +10,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const { RED, GREEN, DIM, RESET } = require('./_colors');
+
 const AGENT_DIR = path.join(process.cwd(), '.agent');
 const HISTORY_DIR = path.join(AGENT_DIR, 'history');
 const CACHE_FILE = path.join(HISTORY_DIR, 'graph-cache.json');
@@ -17,7 +19,7 @@ const HTML_FILE = path.join(HISTORY_DIR, 'architecture-explorer.html');
 
 function main() {
     if (!fs.existsSync(CACHE_FILE)) {
-        console.error('\x1b[31m✖ Error: graph-cache.json not found. Run graph_builder.js first.\x1b[0m');
+        console.error(`${RED}✖ Error: graph-cache.json not found. Run graph_builder.js first.${RESET}`);
         process.exit(1);
     }
 
@@ -377,8 +379,12 @@ function main() {
 </html>`;
 
     fs.writeFileSync(HTML_FILE, htmlContent);
-    console.log(`\x1b[32m✔ Interactive visualizer generated.\x1b[0m`);
-    console.log(`  \x1b[2mSaved to: ${HTML_FILE}\x1b[0m`);
+    console.log(`${GREEN}✔ Interactive visualizer generated.${RESET}`);
+    console.log(`  ${DIM}Saved to: ${HTML_FILE}${RESET}`);
 }
 
-main();
+module.exports = { main };
+
+if (require.main === module) {
+    main();
+}

@@ -15,25 +15,16 @@ const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 
-const { RED, GREEN, YELLOW, BLUE, BOLD, RESET } = require('./colors.js');
+const {
+    RED, GREEN, YELLOW, BLUE, BOLD, DIM, CYAN, RESET,
+    banner, sectionHeader, timer, formatMs,
+    ok, fail, skip,
+} = require('./_colors');
 
-function header(title) {
-    console.log(`\n${BOLD}${BLUE}━━━ ${title} ━━━${RESET}`);
-}
-
-function ok(msg) {
-    console.log(`  ${GREEN}✅ ${msg}${RESET}`);
-}
-
-function fail(msg) {
-    console.log(`  ${RED}❌ ${msg}${RESET}`);
-}
-
-function skip(msg) {
-    console.log(`  ${YELLOW}⏭️  ${msg}${RESET}`);
-}
+const { loadJson } = require('./_utils');
 
 function runTests(label, cmd, cwd) {
+    const elapsed = timer();
     try {
         const executable = process.platform === 'win32' && (cmd[0] === 'npx' || cmd[0] === 'npm') ? `${cmd[0]}.cmd` : cmd[0];
         const result = spawnSync(executable, cmd.slice(1), {
@@ -42,6 +33,8 @@ function runTests(label, cmd, cwd) {
             timeout: 300000, // 5m
             shell: process.platform === 'win32'
         });
+
+        const ms = elapsed();
 
         if (result.error && !result.stdout && !result.stderr) {
             console.log(`    Error: ${result.error.message}`);
@@ -56,11 +49,11 @@ function runTests(label, cmd, cwd) {
         }
 
         if (result.status === 0) {
-            ok(`${label} — all tests passed`);
+            ok(`${label} — all tests passed ${DIM}(${formatMs(ms)})${RESET}`);
             return true;
         }
 
-        fail(`${label} — test failures detected`);
+        fail(`${label} — test failures detected ${DIM}(${formatMs(ms)})${RESET}`);
         return false;
     } catch {
         skip(`${label} — tool not installed`);
@@ -69,20 +62,15 @@ function runTests(label, cmd, cwd) {
 }
 
 function detectTestFramework(projectRoot) {
-    const pkgJson = path.join(projectRoot, "package.json");
-    if (fs.existsSync(pkgJson)) {
-        try {
-            const pkg = JSON.parse(fs.readFileSync(pkgJson, 'utf8'));
-            const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
-            const scripts = pkg.scripts || {};
+    const pkg = loadJson(path.join(projectRoot, "package.json"));
+    if (pkg) {
+        const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
+        const scripts = pkg.scripts || {};
 
-            if (deps.vitest) return "vitest";
-            if (deps.jest) return "jest";
-            if (deps.mocha) return "mocha";
-            if (scripts.test) return "npm-test";
-        } catch {
-            if (fs.readFileSync(pkgJson, 'utf8').includes('"test"')) return "npm-test";
-        }
+        if (deps.vitest) return "vitest";
+        if (deps.jest) return "jest";
+        if (deps.mocha) return "mocha";
+        if (scripts.test) return "npm-test";
     }
 
     if (fs.existsSync(path.join(projectRoot, "pytest.ini")) || 
@@ -137,16 +125,18 @@ function main() {
         process.exit(1);
     }
 
-    console.log(`${BOLD}Tribunal — test_runner.js${RESET}`);
-    console.log(`Project: ${projectRoot}`);
-
     const framework = detectTestFramework(projectRoot);
+    console.log(banner('test_runner.js', {
+        Project: projectRoot,
+        Framework: framework || 'none detected',
+    }));
+
     if (!framework) {
         skip("No test framework detected in this project");
         process.exit(0);
     }
 
-    header(`Running tests (${framework})`);
+    console.log(sectionHeader(`Running tests (${framework})`));
 
     let cmd = [];
     let passed = true;
@@ -181,9 +171,12 @@ function main() {
         passed = runTests("go test", cmd, projectRoot);
     }
 
-    console.log(`\n${BOLD}━━━ Test Summary ━━━${RESET}`);
-    if (passed) ok(`Tests passed (${framework})`);
-    else fail(`Tests failed (${framework})`);
+    console.log(`\n${BOLD}${CYAN}━━━ Test Summary ━━━${RESET}`);
+    if (passed) {
+        console.log(`\n${GREEN}${BOLD}  ✔ Tests passed (${framework}).${RESET}\n`);
+    } else {
+        console.log(`\n${RED}${BOLD}  ✖ Tests failed (${framework}).${RESET}\n`);
+    }
 
     process.exit(passed ? 0 : 1);
 }

@@ -15,65 +15,68 @@ const fs   = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 
-// ━━━ ANSI colors ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-const RED    = '\x1b[91m';
-const GREEN  = '\x1b[92m';
-const YELLOW = '\x1b[93m';
-const BLUE   = '\x1b[94m';
-const BOLD   = '\x1b[1m';
-const RESET  = '\x1b[0m';
+const {
+    RED, GREEN, YELLOW, BLUE, BOLD, DIM, CYAN, RESET,
+    banner, sectionHeader, summaryTable, timer, formatMs,
+    ok, fail, skip,
+} = require('./_colors');
+
+const { walkDir, hasNpm, SOURCE_EXTENSIONS } = require('./_utils');
+
+// ── Results Tracking ────────────────────────────────────────────────────────
 
 const RESULTS = [];
 
-function section(title) {
-    console.log(`\n${BOLD}${BLUE}━━━ ${title} ━━━${RESET}`);
+function trackOk(label, ms, note) {
+    const timing = ms != null ? `${DIM}(${formatMs(ms)})${RESET}` : '';
+    const noteStr = note ? `  ${DIM}${note}${RESET}` : '';
+    console.log(`  ${GREEN}✅ ${label}${RESET} ${timing}${noteStr}`);
+    RESULTS.push({ name: label, status: 'pass', ms, note: note || '' });
 }
 
-function ok(label, note) {
-    const msg = `${GREEN}✅ ${label}${RESET}` + (note ? `  ${YELLOW}(${note})${RESET}` : '');
-    console.log(`  ${msg}`);
-    RESULTS.push({ label, passed: true, note: note || '' });
-}
-
-function fail(label, note) {
+function trackFail(label, ms, note) {
+    const timing = ms != null ? `${DIM}(${formatMs(ms)})${RESET}` : '';
     const noteStr = note ? `\n     ${note}` : '';
-    console.log(`  ${RED}❌ ${label}${RESET}${noteStr}`);
-    RESULTS.push({ label, passed: false, note: note || '' });
+    console.log(`  ${RED}❌ ${label}${RESET} ${timing}${noteStr}`);
+    RESULTS.push({ name: label, status: 'fail', ms, note: note || '' });
 }
 
-function skip(label, reason) {
+function trackSkip(label, reason) {
     console.log(`  ${YELLOW}⏭️  ${label} — ${reason}${RESET}`);
-    RESULTS.push({ label, passed: true, note: `skipped: ${reason}` });
+    RESULTS.push({ name: label, status: 'skip', note: `skipped: ${reason}` });
 }
+
+// ── Command Runner ──────────────────────────────────────────────────────────
 
 /**
  * Run a shell command and return true if it exits with code 0.
  */
 function run(label, cmd, cwd) {
+    const elapsed = timer();
     try {
         const isWindows = process.platform === 'win32';
-        const bin = cmd[0];
 
-        execFileSync(bin, cmd.slice(1), {
+        execFileSync(cmd[0], cmd.slice(1), {
             cwd,
             stdio: 'pipe',
             timeout: 120000,
             encoding: 'utf8',
             shell: isWindows
         });
-        ok(label);
+        trackOk(label, elapsed());
         return true;
     } catch (err) {
+        const ms = elapsed();
         if (err.code === 'ENOENT') {
-            skip(label, 'tool not installed — skipping');
+            trackSkip(label, 'tool not installed — skipping');
             return true;
         }
         if (err.killed) {
-            fail(label, 'timed out after 120s');
+            trackFail(label, ms, 'timed out after 120s');
             return false;
         }
         const output = ((err.stdout || '') + (err.stderr || '')).trim();
-        fail(label, output ? output.slice(0, 500) : 'non-zero exit code');
+        trackFail(label, ms, output ? output.slice(0, 500) : 'non-zero exit code');
         return false;
     }
 }
@@ -81,55 +84,38 @@ function run(label, cmd, cwd) {
 
 /**
  * Scan source files for obviously hardcoded credentials.
+ * Uses shared walkDir from _utils.js to eliminate duplicated walker code.
  */
 function scanSecrets(cwd) {
+    const elapsed = timer();
     const patterns = ['password=', 'secret=', 'api_key=', 'private_key=', 'auth_token='];
     const found = [];
-    const skipDirs = new Set(['node_modules', '.git', 'dist', '__pycache__', '.agent']);
 
-    function walk(dir) {
-        let entries;
-        try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch { return; }
+    const sourceExtensions = new Set(['.ts', '.tsx', '.js', '.jsx', '.py']);
+    const files = walkDir(cwd, { extensions: sourceExtensions });
 
-        for (const entry of entries) {
-            const fullPath = path.join(dir, entry.name);
-            if (entry.isDirectory()) {
-                if (!skipDirs.has(entry.name)) walk(fullPath);
-            } else if (entry.isFile()) {
-                if (!/\.(ts|js|tsx|jsx|py)$/.test(entry.name)) continue;
+    for (const fullPath of files) {
+        let content;
+        try { content = fs.readFileSync(fullPath, 'utf8'); } catch { continue; }
 
-                let content;
-                try { content = fs.readFileSync(fullPath, 'utf8'); } catch { continue; }
-
-                const lines = content.split('\n');
-                for (let i = 0; i < lines.length; i++) {
-                    const low = lines[i].toLowerCase().trim();
-                    const hasPattern = patterns.some(p => low.includes(p));
-                    if (hasPattern && !low.startsWith('#') && low.includes('=')) {
-                        const rel = path.relative(cwd, fullPath);
-                        found.push(`${rel}:${i + 1}`);
-                    }
-                }
+        const lines = content.split('\n');
+        for (let i = 0; i < lines.length; i++) {
+            const low = lines[i].toLowerCase().trim();
+            const hasPattern = patterns.some(p => low.includes(p));
+            if (hasPattern && !low.startsWith('#') && low.includes('=')) {
+                const rel = path.relative(cwd, fullPath);
+                found.push(`${rel}:${i + 1}`);
             }
         }
     }
 
-    walk(cwd);
-
+    const ms = elapsed();
     if (found.length > 0) {
-        fail('Secret scan', found.slice(0, 5).join('\n     '));
+        trackFail('Secret scan', ms, found.slice(0, 5).join('\n     '));
         return false;
     }
-    ok('Secret scan — no hardcoded credentials found');
+    trackOk('Secret scan — no hardcoded credentials found', ms, `${files.length} files scanned`);
     return true;
-}
-
-
-/**
- * Check if there's a package.json to run npm commands against.
- */
-function hasNpm(cwd) {
-    return fs.existsSync(path.join(cwd, 'package.json'));
 }
 
 
@@ -139,83 +125,89 @@ function hasNpm(cwd) {
 function verifyAll(cwd, skipped) {
     let failures = 0;
     RESULTS.length = 0; // Reset for clean runs (prevents accumulation in tests)
+    const totalTimer = timer();
 
-    section('1 — Secret Scan');
+    console.log(sectionHeader('Secret Scan', 1));
     if (!skipped.includes('secrets')) {
         if (!scanSecrets(cwd)) failures++;
     } else {
-        skip('Secret scan', 'skipped by flag');
+        trackSkip('Secret scan', 'skipped by flag');
     }
 
-    section('2 — TypeScript');
+    console.log(sectionHeader('TypeScript', 2));
     if (!skipped.includes('typescript')) {
         if (hasNpm(cwd)) {
             if (!run('tsc --noEmit', ['npx', 'tsc', '--noEmit'], cwd)) failures++;
         } else {
-            skip('TypeScript', 'no package.json found in project');
+            trackSkip('TypeScript', 'no package.json found in project');
         }
     } else {
-        skip('TypeScript', 'skipped by flag');
+        trackSkip('TypeScript', 'skipped by flag');
     }
 
-    section('3 — ESLint');
+    console.log(sectionHeader('ESLint', 3));
     if (!skipped.includes('lint')) {
         if (hasNpm(cwd)) {
             if (!run('ESLint', ['npx', 'eslint', '.', '--max-warnings=0'], cwd)) failures++;
         } else {
-            skip('ESLint', 'no package.json found in project');
+            trackSkip('ESLint', 'no package.json found in project');
         }
     } else {
-        skip('ESLint', 'skipped by flag');
+        trackSkip('ESLint', 'skipped by flag');
     }
 
-    section('4 — Unit Tests');
+    console.log(sectionHeader('Unit Tests', 4));
     if (!skipped.includes('tests')) {
         if (hasNpm(cwd)) {
             if (!run('Test suite', ['npm', 'test', '--', '--passWithNoTests'], cwd)) failures++;
         } else {
-            skip('Tests', 'no package.json found in project');
+            trackSkip('Tests', 'no package.json found in project');
         }
     } else {
-        skip('Tests', 'skipped by flag');
+        trackSkip('Tests', 'skipped by flag');
     }
 
-    section('5 — Build');
+    console.log(sectionHeader('Build', 5));
     if (!skipped.includes('build')) {
         if (hasNpm(cwd)) {
             if (!run('npm run build', ['npm', 'run', 'build'], cwd)) failures++;
         } else {
-            skip('Build', 'no package.json found in project');
+            trackSkip('Build', 'no package.json found in project');
         }
     } else {
-        skip('Build', 'skipped by flag');
+        trackSkip('Build', 'skipped by flag');
     }
 
-    section('6 — Dependency Audit');
+    console.log(sectionHeader('Dependency Audit', 6));
     if (!skipped.includes('deps')) {
         if (hasNpm(cwd)) {
             if (!run('npm audit', ['npm', 'audit', '--audit-level=high'], cwd)) failures++;
         } else {
-            skip('Dependency audit', 'no package.json found in project');
+            trackSkip('Dependency audit', 'no package.json found in project');
         }
     } else {
-        skip('Dependency audit', 'skipped by flag');
+        trackSkip('Dependency audit', 'skipped by flag');
     }
 
-    // ━━━ Summary ━━━
-    console.log(`\n${BOLD}━━━ Summary ━━━${RESET}`);
-    for (const { label, passed, note } of RESULTS) {
-        const status = passed ? `${GREEN}✅${RESET}` : `${RED}❌${RESET}`;
-        const noteStr = (!passed && note) ? `  ${YELLOW}(${note})${RESET}` : '';
-        console.log(`  ${status} ${label}${noteStr}`);
-    }
+    // ━━━ Summary Table ━━━
+    const totalMs = totalTimer();
+    console.log(`\n${BOLD}${CYAN}━━━ Verification Summary ━━━${RESET}`);
+    summaryTable(RESULTS);
+
+    const passCount = RESULTS.filter(r => r.status === 'pass').length;
+    const failCount = RESULTS.filter(r => r.status === 'fail').length;
+    const skipCount = RESULTS.filter(r => r.status === 'skip').length;
+
+    console.log(`\n  ${DIM}Total: ${RESULTS.length} checks in ${formatMs(totalMs)}${RESET}`);
+    console.log(`  ${GREEN}${passCount} passed${RESET}  ${failCount > 0 ? `${RED}${failCount} failed${RESET}  ` : ''}${skipCount > 0 ? `${YELLOW}${skipCount} skipped${RESET}` : ''}`);
 
     console.log();
     if (failures === 0) {
-        console.log(`${GREEN}${BOLD}All checks passed — safe to deploy.${RESET}`);
+        console.log(`${GREEN}${BOLD}  ✔ All checks passed — safe to deploy.${RESET}`);
     } else {
-        console.log(`${RED}${BOLD}${failures} check(s) failed — fix before deploying.${RESET}`);
+        console.log(`${RED}${BOLD}  ✖ ${failures} check(s) failed — fix before deploying.${RESET}`);
     }
+    console.log();
 
     return failures;
 }
@@ -241,8 +233,7 @@ function main() {
     const args = parseArgs(process.argv);
     const cwd = process.cwd();
 
-    console.log(`${BOLD}Tribunal — verify_all.js${RESET}`);
-    console.log(`Project: ${cwd}\n`);
+    console.log(banner('verify_all.js', { Project: cwd }));
 
     const failures = verifyAll(cwd, args.skip);
     process.exit(failures > 0 ? 1 : 0);

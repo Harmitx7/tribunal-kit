@@ -13,27 +13,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const { RED, GREEN, YELLOW, BLUE, BOLD, RESET } = require('./colors.js');
-
-function header(title) {
-    console.log(`\n${BOLD}${BLUE}━━━ ${title} ━━━${RESET}`);
-}
-
-function ok(msg) {
-    console.log(`  ${GREEN}✅ ${msg}${RESET}`);
-}
-
-function fail(msg) {
-    console.log(`  ${RED}❌ ${msg}${RESET}`);
-}
-
-function warn(msg) {
-    console.log(`  ${YELLOW}⚠️  ${msg}${RESET}`);
-}
-
-function skip(msg) {
-    console.log(`  ${YELLOW}⏭️  ${msg}${RESET}`);
-}
+const {
+    RED, GREEN, YELLOW, BLUE, BOLD, DIM, CYAN, RESET,
+    sectionHeader: header, ok, fail, warn, skip,
+} = require('./_colors');
 
 function detectOrm(projectRoot) {
     if (fs.existsSync(path.join(projectRoot, "prisma", "schema.prisma"))) {
@@ -221,7 +204,7 @@ function main() {
     let issuesCount = 0;
 
     if (fileArg) {
-        header(`Validating: ${fileArg}`);
+        console.log(header(`Validating: ${fileArg}`));
         const filepath = path.isAbsolute(fileArg) ? fileArg : path.join(projectRoot, fileArg);
         let issues = [];
         if (filepath.endsWith(".prisma")) issues = validatePrisma(filepath);
@@ -239,7 +222,7 @@ function main() {
     } else if (ormType === "prisma") {
         const schemaPath = path.join(projectRoot, "prisma", "schema.prisma");
         if (fs.existsSync(schemaPath)) {
-            header("Prisma Schema Validation");
+            console.log(header("Prisma Schema Validation"));
             const issues = validatePrisma(schemaPath);
             for (const [severity, message, line] of issues) {
                 if (severity === "error") { fail(`L${line}: ${message}`); issuesCount++; }
@@ -250,7 +233,7 @@ function main() {
             skip(`Prisma schema not found at ${schemaPath}`);
         }
     } else if (ormType === "sql") {
-        header("SQL Migration Validation");
+        console.log(header("SQL Migration Validation"));
         // Very basic recursion for migrations dir
         function findMigrations(dir) {
             let res = [];
@@ -281,7 +264,7 @@ function main() {
             }
         }
     } else if (ormType === "drizzle") {
-        header("Drizzle Schema");
+        console.log(header("Drizzle Schema"));
         skip("Drizzle validation not yet implemented — validate manually");
     }
 
