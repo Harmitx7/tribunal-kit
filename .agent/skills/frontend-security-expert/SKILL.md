@@ -1,105 +1,44 @@
 ---
-name: platform-engineer
-description: Platform Engineering and Internal Developer Portal (IDP) mastery. Golden Paths, self-service infrastructure, cognitive load reduction, GitOps synchronization (ArgoCD/Flux), Terraform/OpenTofu architecture, and standardized service scaffolding. Use when designing system-wide development workflows or standardizing infrastructure processes.
+name: frontend-security-expert
+description: Frontend security auditing for modern meta-frameworks. Focuses on React/Next.js UI paradigms, hydration poisoning, third-party script supply chain, local storage security, and XSS prevention in modern environments.
 allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
+version: 1.0.0
+last-updated: 2026-05-22
+applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
 ---
+
+# Frontend Security Expert — Modern Meta-Frameworks
 
 ## Hallucination Traps (Read First)
-- ❌ Building internal platforms without talking to developers -> ✅ Platform engineering exists to reduce developer cognitive load; ask them what hurts
-- ❌ Creating golden paths that are mandatory -> ✅ Golden paths should be the easiest option, not the only option
-- ❌ Over-automating before the process is understood -> ✅ Manual first, then script, then platform; premature automation bakes in bad processes
+- ❌ Focusing on generic OWASP top 10 (SQLi, IDOR) → ✅ This is the *frontend* skill. Focus strictly on client-side boundaries, SSR hydration, and DOM.
+- ❌ Treating React `useEffect` data fetching as secure → ✅ Data fetched client-side can be intercepted or manipulated.
+- ❌ Recommending LocalStorage for JWTs → ✅ JWTs must go in HttpOnly, Secure, SameSite cookies.
+- ❌ Assuming Next.js SSR is immune to XSS → ✅ Hydration mismatch or dangerouslySetInnerHTML can inject payloads.
 
 ---
 
+## 1. React & Next.js Specific Vulnerabilities
+Modern frameworks handle basic XSS by escaping text, but specific APIs bypass this.
 
-# Platform Engineering — Developer Experience Mastery
+- **`dangerouslySetInnerHTML`**: Never use this with unsanitized user input. If required, mandate the use of DOMPurify.
+- **Hydration Poisoning**: Ensure that data rendered on the server matches the client to prevent malicious hydration states.
+- **`javascript:` URIs**: React does not automatically prevent `javascript:` URIs in `href` tags. Audit all dynamic links.
 
----
+## 2. Token & State Storage (Web Storage API)
+- **Local/Session Storage**: Do not store sensitive PII, Auth Tokens (JWTs), or API keys here. They are accessible via any XSS attack.
+- **Cookies**: Use `HttpOnly`, `Secure`, and `SameSite=Strict` (or `Lax`) for all authentication cookies.
+- **In-Memory State**: Store temporary sensitive data in React state/Zustand, recognizing it clears on refresh.
 
-## 1. The "Golden Path" Architecture
+## 3. Third-Party Supply Chain
+- **External Scripts**: Any `<script src="...">` has full access to the DOM and global window. 
+- **Subresource Integrity (SRI)**: Ensure all CDN-loaded scripts use the `integrity` attribute.
+- **Next.js `<Script>` Component**: Use appropriate strategies (`beforeInteractive`, `afterInteractive`) and audit what is loaded.
 
-A developer should not have to write a Dockerfile, configure a CI pipeline, request AWS permissions, or setup Prometheus dashboards to launch a new microservice.
-
-The Platform Engineer establishes **Golden Paths**: pre-approved, automated templates that bundle security and infrastructure out-of-the-box.
-
-**Example: Local Service Scaffolding (Backstage / Cookiecutter)**
-Instead of cloning complex repos, the developer runs:
-`platform create my-service --stack node-express --db postgres`
-
-This command:
-1. Generates the standard Node/Express repo.
-2. Applies the unified corporate CI/CD GitHub Action.
-3. Configures default Datadog/OpenTelemetry observability metrics.
-4. Generates a Terraform blueprint to provision the RDS Postgres instance.
-
----
-
-## 2. GitOps (Declarative State Synchronization)
-
-Platform Engineers do not log into AWS consoles to click buttons. They do not run `kubectl apply` from their laptops.
-
-They push code to Git. A continuous reconciliation loop (e.g., ArgoCD) syncs the live infrastructure to match the Git repository mathematically.
-
-```yaml
-# GitOps standard architecture (ArgoCD)
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: auth-service
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: 'https://github.com/mycorp/infrastructure-ops'
-    path: k8s/auth-service
-    targetRevision: HEAD # Automatically deploys any merge to main
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: auth-prod
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true # If manual changes occur on cluster, force-reverts back to Git state
-```
+## 4. Cross-Origin & PostMessage
+- **`postMessage`**: Never use `targetOrigin: '*'` when sending messages. Always validate `event.origin` when receiving messages.
+- **Iframes**: Use the `sandbox` attribute for any user-generated iframes to restrict script execution and top-level navigation.
 
 ---
-
-## 3. Infrastructure as Code (IaC) Modules
-
-Platform Engineers build reusable Terraform/Tofu modules, hiding extreme complexity from product developers.
-
-```hcl
-# The Platform Engineer writes the complex module (e.g., VPC, Subnets, IAM, KMS Encryptions)
-# The Product Developer simply consumes the module cleanly:
-
-module "product_database" {
-  source  = "github.com/mycorp/tf-modules/secure-rds"
-  version = "v1.2.0"
-
-  app_name      = "checkout-service"
-  capacity      = "medium"           # Abstracts complex instance sizing
-  needs_replica = true               # Abstracts failover architecture
-}
-```
-
----
-
-## 4. Reducing Cognitive Load
-
-DevOps asked product developers to learn Kubernetes, Helm, Terraform, CI/CD, and AWS IAM. The load was too high.
-Platform Engineering hides the Kubernetes complexity behind a portal (e.g., Backstage) or a declarative wrapper (e.g., Score).
-
-Ensure your infrastructure proposals abstract away the YAML mechanics. Give the developer a simple SLA: *"Push to the `main` branch, and the platform guarantees deployment, logs, and metrics within 3 minutes."*
-
----
-
-
----
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -111,8 +50,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -121,8 +58,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-
 
 Review these questions before confirming output:
 ```
@@ -137,7 +72,6 @@ Review these questions before confirming output:
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
 
 ## Pre-Flight Checklist
 - [ ] Have I reviewed the user's specific constraints and requests?
