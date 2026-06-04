@@ -45,5 +45,10 @@ node_modules/
 .env.production
 .env.*.local
 
+# Exclude AI IDE Configuration
+.gemini/
+.cursorrules
+.windsurfrules
+
 # DO NOT exclude .agent/ — it is required for tribunal-kit to function
 # npm's default behavior skips dot-folders, .npmignore overrides that

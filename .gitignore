@@ -68,3 +68,8 @@ logs/
 .agent/history/
 .agent/history/snapshots/
 *.pen
+
+# AI IDE Configuration
+.gemini/
+.cursorrules
+.windsurfrules

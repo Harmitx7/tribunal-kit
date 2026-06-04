@@ -743,6 +743,9 @@ async function runWithUpdateCheck(command, flags) {
         case 'context':
             cmdContext(flags);
             break;
+        case 'marathon':
+            cmdMarathon(flags);
+            break;
         case 'uninstall':
             cmdUninstall(flags);
             break;
@@ -956,6 +959,7 @@ function cmdHelp() {
     log(cmd('graph',    'Build and visualize the architecture graph'));
     log(cmd('mutate',   'Run the Mutation Engine to test test-suite reliability'));
     log(cmd('context',  'Retrieve a highly-optimized Context Snapshot for a file'));
+    log(cmd('marathon', 'Long-running agent harness (init, status, next, mark)'));
     log(cmd('hook',     'Install pre-push git hook for auto-learning'));
     log(cmd('uninstall','Remove .agent/ folder from project'));
     console.log();
@@ -994,11 +998,53 @@ function cmdHelp() {
     log(ex('tk case overrule --id 1'));
     log(ex('tk graph'));
     log(ex('tk mutate src/utils.js "npm test"'));
+    log(ex('tk marathon init "Build a todo app"'));
+    log(ex('tk marathon status'));
+    log(ex('tk marathon next'));
+    log(ex('tk marathon mark 5 pass'));
     log(ex('tk hook'));
     log(ex('tk uninstall'));
     console.log();
 }
 
+
+function cmdMarathon(flags) {
+    const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
+    const agentDest = path.join(targetDir, '.agent');
+
+    if (!fs.existsSync(agentDest)) {
+        err('.agent/ not found. Run: npx tribunal-kit init');
+        process.exit(1);
+    }
+
+    const args = process.argv.slice(3);
+    const argsStr = args.join(' ');
+    if (args.length === 0 || args[0] === 'help' || args[0] === '--help' || args[0] === '-h') {
+        banner();
+        log(`  ${c('cyan', '╔' + '═'.repeat(60) + '╗')}`);
+        log(`  ${c('cyan', '║')}${c('bold', c('white', '  Marathon — Long-Running Agent Harness                  '))}${c('cyan', '║')}`);
+        log(`  ${c('cyan', '╚' + '═'.repeat(60) + '╝')}`);
+        console.log();
+        log(`  ${c('cyan', 'init'.padEnd(16))}  ${c('gray', 'Start a new marathon (init "spec")')}`);
+        log(`  ${c('cyan', 'status'.padEnd(16))}  ${c('gray', 'Show progress dashboard')}`);
+        log(`  ${c('cyan', 'next'.padEnd(16))}  ${c('gray', 'Show next unfinished feature')}`);
+        log(`  ${c('cyan', 'mark'.padEnd(16))}  ${c('gray', 'Mark feature pass/fail (mark <id> pass)')}`);
+        log(`  ${c('cyan', 'log'.padEnd(16))}  ${c('gray', 'Add a progress note')}`);
+        log(`  ${c('cyan', 'session-start'.padEnd(16))}  ${c('gray', 'Begin a new work session')}`);
+        log(`  ${c('cyan', 'session-end'.padEnd(16))}  ${c('gray', 'End session with summary')}`);
+        log(`  ${c('cyan', 'add-feature'.padEnd(16))}  ${c('gray', 'Add feature: "category" "desc" "step1" ...')}`);
+        log(`  ${c('cyan', 'reset'.padEnd(16))}  ${c('gray', 'Archive and start fresh')}`);
+        console.log();
+        return;
+    }
+
+    const marathonScript = path.join(agentDest, 'scripts', 'marathon_harness.js');
+    try {
+        execSync(`node "${marathonScript}" ${argsStr}`, { stdio: 'inherit', cwd: targetDir });
+    } catch {
+        process.exit(1);
+    }
+}
 
 function cmdContext(flags) {
     const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
@@ -1071,5 +1117,5 @@ runWithUpdateCheck(command, flags);
 
 // -- Exports (for testing) -- do not remove
 if (require.main !== module) {
-  module.exports = { parseArgs, compareSemver, copyDir, countDir, isSelfInstall, CORE_AGENTS, CORE_SKILLS, generateIDEBridges };
+  module.exports = { parseArgs, compareSemver, copyDir, countDir, isSelfInstall, CORE_AGENTS, CORE_SKILLS, generateIDEBridges, cmdMarathon };
 }

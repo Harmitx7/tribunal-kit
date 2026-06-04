@@ -39,7 +39,7 @@ const ARCHIVE_DIR = path.join(MARATHON_DIR, 'archive');
 
 const VALID_COMMANDS = new Set([
     'init', 'status', 'next', 'mark', 'log',
-    'session-start', 'session-end', 'reset', 'add-feature'
+    'session-start', 'session-end', 'reset', 'add-feature', 'distill'
 ]);
 
 // ── Schema Defaults ──────────────────────────────────────────────────────────
@@ -153,25 +153,50 @@ function getGitBranch() {
 // ── Progress Helpers ─────────────────────────────────────────────────────────
 
 /**
- * Count passing features.
+ * Count passing features and blocked features.
  * @param {object} featureList
- * @returns {{ total: number, passing: number, failing: number }}
+ * @returns {{ total: number, passing: number, failing: number, blocked: number }}
  */
 function countFeatures(featureList) {
     const features = featureList.features || [];
     const total = features.length;
     const passing = features.filter(f => f.passes === true).length;
-    return { total, passing, failing: total - passing };
+    let blocked = 0;
+    
+    features.forEach(f => {
+        if (!f.passes && f.dependencies && f.dependencies.length > 0) {
+            const allPassed = f.dependencies.every(depId => {
+                const dep = features.find(d => d.id === depId);
+                return dep && dep.passes === true;
+            });
+            if (!allPassed) blocked++;
+        }
+    });
+    
+    return { total, passing, failing: total - passing, blocked };
 }
 
 /**
- * Get the next unfinished feature.
+ * Get the next unfinished, unblocked feature.
  * @param {object} featureList
  * @returns {object|null}
  */
 function getNextFeature(featureList) {
     const features = featureList.features || [];
-    return features.find(f => f.passes !== true) || null;
+    return features.find(f => {
+        if (f.passes === true) return false;
+        
+        // Check dependencies (DAG)
+        if (f.dependencies && f.dependencies.length > 0) {
+            const allPassed = f.dependencies.every(depId => {
+                const dep = features.find(d => d.id === depId);
+                return dep && dep.passes === true;
+            });
+            if (!allPassed) return false; // Feature is blocked
+        }
+        
+        return true;
+    }) || null;
 }
 
 /**
@@ -240,8 +265,9 @@ function cmdInit(spec) {
  * @param {string} category
  * @param {string} description
  * @param {string[]} steps
+ * @param {number[]} deps
  */
-function cmdAddFeature(category, description, steps) {
+function cmdAddFeature(category, description, steps, deps = []) {
     if (!isActive()) {
         console.error(`${RED}❌ No active marathon. Run ${CYAN}init${RED} first.${RESET}`);
         process.exit(1);
@@ -264,6 +290,9 @@ function cmdAddFeature(category, description, steps) {
         category: category.toLowerCase(),
         description,
         steps: steps.length > 0 ? steps : ['Implement and verify'],
+        dependencies: deps,
+        attempts: 0,
+        failureReasons: [],
         passes: false,
         sessionCompleted: null
     };
@@ -289,7 +318,7 @@ function cmdStatus() {
     const progress = readJSON(PROGRESS_FILE);
     if (!featureList || !progress) return;
 
-    const { total, passing, failing } = countFeatures(featureList);
+    const { total, passing, failing, blocked } = countFeatures(featureList);
     const nextFeature = getNextFeature(featureList);
     const sessions = progress.sessions || [];
     const lastSession = sessions[sessions.length - 1] || null;
@@ -303,7 +332,8 @@ function cmdStatus() {
     console.log();
 
     // ── Progress Bar ──
-    console.log(`  ${BOLD}Progress:${RESET} ${progressBar(passing, total)}  ${GREEN}${passing}${RESET}/${total} features`);
+    const blockedInfo = blocked > 0 ? ` (${YELLOW}${blocked} blocked${RESET})` : '';
+    console.log(`  ${BOLD}Progress:${RESET} ${progressBar(passing, total)}  ${GREEN}${passing}${RESET}/${total} features${blockedInfo}`);
     console.log();
 
     // ── Category Breakdown ──
@@ -382,7 +412,12 @@ function cmdNext() {
     const nextFeature = getNextFeature(featureList);
 
     if (!nextFeature) {
-        console.log(`${GREEN}${BOLD}🎉 All ${total} features are passing! Marathon complete.${RESET}`);
+        if (passing === total) {
+            console.log(`${GREEN}${BOLD}🎉 All ${total} features are passing! Marathon complete.${RESET}`);
+        } else {
+            console.log(`${RED}${BOLD}⚠️ Deadlock detected: ${total - passing} features remain, but all are blocked by failing dependencies.${RESET}`);
+            console.log(`   ${DIM}Check 'status' and use 'mark <id> pass' to resolve dependencies.${RESET}`);
+        }
         return;
     }
 
@@ -400,6 +435,14 @@ function cmdNext() {
         console.log();
     }
 
+    if (nextFeature.failureReasons && nextFeature.failureReasons.length > 0) {
+        console.log(`  ${RED}${BOLD}Previous Failures (${nextFeature.attempts} attempts):${RESET}`);
+        for (const reason of nextFeature.failureReasons) {
+            console.log(`    ${DIM}* ${reason}${RESET}`);
+        }
+        console.log();
+    }
+
     console.log(`  ${DIM}When done: marathon_harness.js mark ${nextFeature.id} pass${RESET}`);
     console.log();
 }
@@ -408,8 +451,9 @@ function cmdNext() {
  * Mark a feature as passing or failing.
  * @param {number} id
  * @param {string} verdict - 'pass' or 'fail'
+ * @param {string} [reason] - Reason for failure
  */
-function cmdMark(id, verdict) {
+function cmdMark(id, verdict, reason) {
     if (!isActive()) {
         console.error(`${RED}❌ No active marathon.${RESET}`);
         process.exit(1);
@@ -436,6 +480,14 @@ function cmdMark(id, verdict) {
     // Guard: don't allow editing description or steps
     feature.passes = newPasses;
     feature.sessionCompleted = newPasses ? new Date().toISOString() : null;
+
+    if (!newPasses) {
+        feature.attempts = (feature.attempts || 0) + 1;
+        if (reason) {
+            if (!feature.failureReasons) feature.failureReasons = [];
+            feature.failureReasons.push(`Attempt ${feature.attempts}: ${reason}`);
+        }
+    }
 
     writeJSON(FEATURE_LIST_FILE, featureList);
 
@@ -480,6 +532,30 @@ function cmdLog(message) {
 
     writeJSON(PROGRESS_FILE, progress);
     ok(`Logged: ${message}`);
+}
+
+/**
+ * Distill a lesson learned into memory context.
+ * @param {string} lesson
+ */
+function cmdDistill(lesson) {
+    if (!isActive()) {
+        console.error(`${RED}❌ No active marathon.${RESET}`);
+        process.exit(1);
+    }
+
+    if (!lesson) {
+        console.error(`${RED}❌ Lesson required. Usage: distill "Your architectural lesson"${RESET}`);
+        process.exit(1);
+    }
+
+    ensureDir();
+    const DISTILL_FILE = path.join(MARATHON_DIR, 'distilled_context.md');
+    const timestamp = new Date().toISOString().slice(0, 16);
+    const entry = `- [${timestamp}] ${lesson}\n`;
+
+    fs.appendFileSync(DISTILL_FILE, entry, 'utf8');
+    ok(`Distilled memory saved: ${lesson}`);
 }
 
 /**
@@ -567,7 +643,11 @@ function cmdSessionStart() {
             }
         }
     } else {
-        console.log(`  ${GREEN}${BOLD}🎉 All features passing! Nothing to implement.${RESET}`);
+        if (passing === total) {
+            console.log(`  ${GREEN}${BOLD}🎉 All features passing! Nothing to implement.${RESET}`);
+        } else {
+            console.log(`  ${RED}${BOLD}⚠️ Deadlock: ${total - passing} features are blocked by failing dependencies.${RESET}`);
+        }
     }
     console.log();
 
@@ -717,11 +797,12 @@ function showHelp() {
     cmd('status', 'Show progress dashboard');
     cmd('next', 'Show the next unfinished feature');
     cmd('mark <id> pass', 'Mark a feature as passing');
-    cmd('mark <id> fail', 'Mark a feature as failing');
+    cmd('mark <id> fail', 'Mark a feature as failing (optional: "reason")');
     cmd('log "note"', 'Add a timestamped progress note');
+    cmd('distill "rule"', 'Save an architectural rule or lesson to memory');
     cmd('session-start', 'Begin a new work session (reads state, shows bearings)');
     cmd('session-end', 'End session with optional summary');
-    cmd('add-feature', 'Add a feature: add-feature "category" "description" "step1" ...');
+    cmd('add-feature', 'Add a feature (supports --deps=1,2,3 for DAG dependencies)');
     cmd('reset', 'Archive current marathon and start fresh');
     console.log();
 }
@@ -759,11 +840,12 @@ function main() {
         case 'mark': {
             const id = parseInt(args[1], 10);
             const verdict = (args[2] || '').toLowerCase();
+            const reason = args.slice(3).join(' ').trim();
             if (isNaN(id)) {
-                console.error(`${RED}❌ Feature ID required. Usage: mark <id> pass|fail${RESET}`);
+                console.error(`${RED}❌ Feature ID required. Usage: mark <id> pass|fail "reason"${RESET}`);
                 process.exit(1);
             }
-            cmdMark(id, verdict);
+            cmdMark(id, verdict, reason);
             break;
         }
         case 'log': {
@@ -782,8 +864,23 @@ function main() {
         case 'add-feature': {
             const category = args[1] || '';
             const description = args[2] || '';
-            const steps = args.slice(3);
-            cmdAddFeature(category, description, steps);
+            let steps = args.slice(3);
+            let deps = [];
+            
+            steps = steps.filter(step => {
+                if (step.startsWith('--deps=')) {
+                    deps = step.replace('--deps=', '').split(',').map(Number).filter(n => !isNaN(n));
+                    return false;
+                }
+                return true;
+            });
+            
+            cmdAddFeature(category, description, steps, deps);
+            break;
+        }
+        case 'distill': {
+            const lesson = args.slice(1).join(' ').trim();
+            cmdDistill(lesson);
             break;
         }
         case 'reset':
