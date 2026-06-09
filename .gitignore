@@ -37,6 +37,7 @@ session_state.json
 # Build artifacts
 dist/
 build/
+target/
 *.tsbuildinfo
 
 # Environment files — never commit real env values
