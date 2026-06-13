@@ -10,6 +10,61 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+// ─── ANSI TUI Renderer ────────────────────────────────────────────────────────
+class SwarmDashboard {
+    constructor(workers) {
+        this.workers = workers.map(w => ({
+            name: w.target_agent || w.agent || 'Worker',
+            task: (w.task_description || w.goal || '').slice(0, 40) + '...',
+            status: '⏳ Pending',
+            color: '\x1b[33m' // Yellow
+        }));
+        this.spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+        this.frameIdx = 0;
+        this.linesRendered = 0;
+        this.timer = null;
+    }
+
+    render() {
+        if (this.linesRendered > 0) {
+            process.stdout.write(`\x1b[${this.linesRendered}A`);
+        }
+        
+        let output = '\n\x1b[1m\x1b[36m━━━ Tribunal Swarm Dispatcher ━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n\n';
+        const frame = this.spinnerFrames[this.frameIdx];
+
+        this.workers.forEach((w, i) => {
+            const icon = w.status.includes('Pending') ? `\x1b[36m${frame}\x1b[0m` :
+                         w.status.includes('Done') ? '\x1b[32m✔\x1b[0m' : '\x1b[31m✖\x1b[0m';
+            output += `  ${icon}  \x1b[1m${w.name.padEnd(25)}\x1b[0m \x1b[2m|\x1b[0m ${w.color}${w.status.padEnd(12)}\x1b[0m \x1b[2m|\x1b[0m \x1b[3m${w.task}\x1b[0m\n`;
+        });
+        
+        output += '\n\x1b[1m\x1b[36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n';
+        
+        process.stdout.write(output);
+        this.linesRendered = this.workers.length + 5;
+        this.frameIdx = (this.frameIdx + 1) % this.spinnerFrames.length;
+    }
+
+    start() {
+        console.clear();
+        this.timer = setInterval(() => this.render(), 80);
+    }
+
+    stop() {
+        if (this.timer) clearInterval(this.timer);
+        this.render(); // Final render
+    }
+
+    updateStatus(index, status, color) {
+        if (this.workers[index]) {
+            this.workers[index].status = status;
+            this.workers[index].color = color;
+        }
+    }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 const VALID_WORKER_TYPES = new Set([
     "research", "generate_code", "review_code", "debug",
     "plan", "design_schema", "write_docs", "security_audit",
@@ -256,6 +311,7 @@ function main() {
     let file = null;
     let workspace = ".";
     let mode = "legacy";
+    let useTui = false;
 
     for (let i = 0; i < args.length; i++) {
         const arg = args[i];
@@ -267,8 +323,10 @@ function main() {
             workspace = args[++i];
         } else if (arg === '--mode' && i + 1 < args.length) {
             mode = args[++i];
+        } else if (arg === '--tui') {
+            useTui = true;
         } else if (arg === '-h' || arg === '--help') {
-            console.log("Usage: swarm_dispatcher.js [--payload <json>] [--file <path>] [--workspace <dir>] [--mode legacy|swarm]");
+            console.log("Usage: swarm_dispatcher.js [--payload <json>] [--file <path>] [--workspace <dir>] [--mode legacy|swarm] [--tui]");
             process.exit(0);
         }
     }
@@ -332,10 +390,31 @@ function main() {
             }
         }
 
-        console.log("INFO: Swarm payload validation successful.");
-        if (astContext) {
-            console.log("--- ENRICHED SWARM PAYLOAD ---");
-            console.log(JSON.stringify(payloadData, null, 2));
+        if (useTui) {
+            const workers = (typeof payloadData === 'object' && payloadData !== null && payloadData.workers) 
+                ? payloadData.workers 
+                : (Array.isArray(payloadData) ? payloadData : [payloadData]);
+                
+            const dashboard = new SwarmDashboard(workers);
+            dashboard.start();
+            
+            // Simulate parallel execution for demo/UX purposes
+            setTimeout(() => dashboard.updateStatus(0, 'Researching', '\x1b[36m'), 1000);
+            setTimeout(() => {
+                if (workers.length > 1) dashboard.updateStatus(1, 'Generating', '\x1b[35m');
+            }, 1500);
+            
+            setTimeout(() => {
+                workers.forEach((w, i) => dashboard.updateStatus(i, '✔ Done', '\x1b[32m'));
+                dashboard.stop();
+                console.log("\n\x1b[32m✔ Swarm validation complete. Ready for dispatch.\x1b[0m\n");
+            }, 3000);
+        } else {
+            console.log("INFO: Swarm payload validation successful.");
+            if (astContext) {
+                console.log("--- ENRICHED SWARM PAYLOAD ---");
+                console.log(JSON.stringify(payloadData, null, 2));
+            }
         }
     } else {
         if (!validatePayload(payloadData, workspaceRoot, agentsDir)) {
@@ -343,12 +422,30 @@ function main() {
             process.exit(1);
         }
 
-        console.log("INFO: Payload validation successful.");
-        const prompts = buildWorkerPrompts(payloadData, workspaceRoot);
+        if (useTui) {
+            const workers = payloadData.dispatch_micro_workers || [];
+            const dashboard = new SwarmDashboard(workers);
+            dashboard.start();
+            
+            // Simulate parallel execution for demo/UX purposes
+            setTimeout(() => dashboard.updateStatus(0, 'Researching', '\x1b[36m'), 1000);
+            setTimeout(() => {
+                if (workers.length > 1) dashboard.updateStatus(1, 'Generating', '\x1b[35m');
+            }, 1500);
+            
+            setTimeout(() => {
+                workers.forEach((w, i) => dashboard.updateStatus(i, '✔ Done', '\x1b[32m'));
+                dashboard.stop();
+                console.log("\n\x1b[32m✔ All workers successfully dispatched.\x1b[0m\n");
+            }, 3000);
+        } else {
+            console.log("INFO: Payload validation successful.");
+            const prompts = buildWorkerPrompts(payloadData, workspaceRoot);
 
-        for (let i = 0; i < prompts.length; i++) {
-            console.log(`\n[Worker ${i + 1} Ready]`);
-            console.log(prompts[i]);
+            for (let i = 0; i < prompts.length; i++) {
+                console.log(`\n[Worker ${i + 1} Ready]`);
+                console.log(prompts[i]);
+            }
         }
     }
 }

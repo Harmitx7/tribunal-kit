@@ -26,7 +26,7 @@ enum Commands {
     /// Initialize a new tribunal configuration in the target directory
     Init {
         /// Target directory to initialize (defaults to current directory)
-        #[arg(short, long, default_value = ".")]
+        #[arg(default_value = ".")]
         path: String,
 
         /// Overwrite existing .agent/ directory if present
@@ -64,7 +64,7 @@ enum Commands {
     /// Check installation status
     Status {
         /// Target directory to check (defaults to current directory)
-        #[arg(short, long, default_value = ".")]
+        #[arg(default_value = ".")]
         path: String,
     },
 }

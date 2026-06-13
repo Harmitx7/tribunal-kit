@@ -65,3 +65,9 @@ Before submitting code, ensure:
 1. Devices and adapters are properly null-checked.
 2. WGSL workgroup sizes align with the dispatch sizes dynamically.
 3. GPUBuffers used for compute have `GPUBufferUsage.STORAGE` flags.
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

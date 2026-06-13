@@ -75,3 +75,9 @@ Before submitting code, ensure:
 1. `zod` is used for all tool parameters.
 2. Server Actions are properly annotated with `"use server"`.
 3. The model supports tool calling (e.g., `gpt-4o`, `claude-3-5-sonnet`).
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

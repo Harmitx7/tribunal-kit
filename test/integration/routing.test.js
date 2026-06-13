@@ -8,15 +8,16 @@ const WORKFLOWS_DIR  = path.join(AGENT_DIR, 'workflows');
 const AGENTS_DIR     = path.join(AGENT_DIR, 'agents');
 const SKILLS_DIR     = path.join(AGENT_DIR, 'skills');
 
-// Expected slash commands per plan (31 workflows)
+// Expected slash commands per plan (33 workflows)
 const EXPECTED_WORKFLOWS = [
     'api-tester', 'audit', 'brainstorm', 'changelog', 'create',
-    'debug', 'deploy', 'enhance', 'fix', 'generate', 'migrate',
-    'orchestrate', 'performance-benchmarker', 'plan', 'preview',
-    'refactor', 'review', 'review-ai', 'session', 'status',
-    'strengthen-skills', 'swarm', 'test', 'tribunal-backend',
-    'tribunal-database', 'tribunal-frontend', 'tribunal-full',
-    'tribunal-mobile', 'tribunal-performance', 'tribunal-speed', 'ui-ux-pro-max',
+    'debug', 'deploy', 'enhance', 'fix', 'generate', 'marathon',
+    'migrate', 'orchestrate', 'performance-benchmarker', 'plan',
+    'preview', 'refactor', 'review', 'review-ai', 'session',
+    'status', 'strengthen-skills', 'super-prompt', 'swarm', 'test',
+    'tribunal-backend', 'tribunal-database', 'tribunal-frontend',
+    'tribunal-full', 'tribunal-mobile', 'tribunal-performance',
+    'tribunal-speed', 'ui-ux-pro-max',
 ];
 
 describe('Workflow file integrity', () => {
@@ -24,7 +25,7 @@ describe('Workflow file integrity', () => {
         expect(fs.existsSync(WORKFLOWS_DIR)).toBe(true);
     });
 
-    test('all 31 expected workflow files are present and non-empty', () => {
+    test('all 33 expected workflow files are present and non-empty', () => {
         const missing = [];
         const empty   = [];
 

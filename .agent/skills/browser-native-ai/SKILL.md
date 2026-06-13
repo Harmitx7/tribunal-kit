@@ -50,3 +50,9 @@ Before submitting code, ensure:
 1. `postMessage` architecture is used for non-blocking inference.
 2. WebGPU is requested as the primary execution provider.
 3. Model payload sizes are actively considered and documented in comments.
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

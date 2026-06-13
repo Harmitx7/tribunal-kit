@@ -25,7 +25,18 @@
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
-const { execSync } = require('child_process');
+const { execSync, spawn } = require('child_process');
+
+function runShellAsync(command, options) {
+    return new Promise((resolve, reject) => {
+        const child = spawn(command, [], { ...options, shell: true });
+        child.on('close', code => {
+            if (code !== 0) reject(new Error(`Command failed with exit code ${code}`));
+            else resolve();
+        });
+        child.on('error', reject);
+    });
+}
 
 const PKG = require(path.resolve(__dirname, '..', 'package.json'));
 const CURRENT_VERSION = PKG.version;
@@ -129,12 +140,12 @@ const CORE_SKILLS = new Set([
     'react-specialist', 'performance-profiling', 'lint-and-validate',
 ]);
 
-function copyDir(src, dest, dryRun = false, filter = null) {
+async function copyDir(src, dest, dryRun = false, filter = null) {
     if (!dryRun) {
-        fs.mkdirSync(dest, { recursive: true });
+        await fs.promises.mkdir(dest, { recursive: true });
     }
 
-    const entries = fs.readdirSync(src, { withFileTypes: true });
+    const entries = await fs.promises.readdir(src, { withFileTypes: true });
     let count = 0;
 
     for (const entry of entries) {
@@ -148,10 +159,10 @@ function copyDir(src, dest, dryRun = false, filter = null) {
         const destPath = path.join(dest, entry.name);
 
         if (entry.isDirectory()) {
-            count += copyDir(srcPath, destPath, dryRun, filter);
+            count += await copyDir(srcPath, destPath, dryRun, filter);
         } else {
             if (!dryRun) {
-                fs.cpSync(srcPath, destPath, { force: true });
+                await fs.promises.copyFile(srcPath, destPath);
             }
             dbg(`  copy: ${entry.name}`);
             count++;
@@ -161,11 +172,11 @@ function copyDir(src, dest, dryRun = false, filter = null) {
     return count;
 }
 
-function countDir(dir) {
+async function countDir(dir) {
     let count = 0;
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    const entries = await fs.promises.readdir(dir, { withFileTypes: true });
     for (const e of entries) {
-        if (e.isDirectory()) count += countDir(path.join(dir, e.name));
+        if (e.isDirectory()) count += await countDir(path.join(dir, e.name));
         else count++;
     }
     return count;
@@ -347,7 +358,7 @@ function banner() {
 }
 
 // ── Commands ──────────────────────────────────────────────
-function cmdInit(flags) {
+async function cmdInit(flags) {
     const agentSrc = getKitAgent();
     const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
     const agentDest = path.join(targetDir, '.agent');
@@ -381,8 +392,8 @@ function cmdInit(flags) {
             const subPath = path.join(agentDest, sub);
             if (fs.existsSync(subPath)) {
                 // Copy to backup dir
-                copyDir(subPath, path.join(backupDir, sub), false);
-                fs.rmSync(subPath, { recursive: true, force: true });
+                await copyDir(subPath, path.join(backupDir, sub), false);
+                await fs.promises.rm(subPath, { recursive: true, force: true });
             }
         }
         log(`  ${c('gray', '✦ Backed up existing configurations to .agent/.backups/')}`);
@@ -431,7 +442,7 @@ function cmdInit(flags) {
         log(`  ${c('yellow','⚡')} ${bold('Minimal mode')} — installing core agents and skills only`);
         console.log();
     }
-    const totalFiles = countDir(agentSrc);
+    const totalFiles = await countDir(agentSrc);
     dbg(`Source: ${agentSrc}`);
     dbg(`Target: ${agentDest}`);
     dbg(`Total source files: ${totalFiles}`);
@@ -446,7 +457,7 @@ function cmdInit(flags) {
             return true; // everything else passes
         } : null;
 
-        const copied = copyDir(agentSrc, agentDest, dryRun, minimalFilter);
+        const copied = await copyDir(agentSrc, agentDest, dryRun, minimalFilter);
 
         console.log();
         if (dryRun) {
@@ -499,7 +510,7 @@ function cmdInit(flags) {
             console.log(`  ${c('cyan', '╚' + '═'.repeat(W) + '╝')}`);
             console.log();
             log(`  ${c('gray', '✦ Generating IDE bridge files...')}`);
-            generateIDEBridges(targetDir, agentDest, dryRun);
+            await generateIDEBridges(targetDir, agentDest, dryRun);
         }
 
         console.log();
@@ -512,27 +523,32 @@ function cmdInit(flags) {
 // ── IDE Bridge Files ──────────────────────────────────────
 // Each AI IDE reads rules from a different location.
 // We generate bridge files that point each IDE at .agent/
-function generateIDEBridges(targetDir, agentDest, dryRun = false) {
+async function generateIDEBridges(targetDir, agentDest, dryRun = false) {
     const rulesFile = path.join(agentDest, 'rules', 'GEMINI.md');
     let rulesContent = '';
-    if (fs.existsSync(rulesFile)) {
-        rulesContent = fs.readFileSync(rulesFile, 'utf8');
+    try {
+        rulesContent = await fs.promises.readFile(rulesFile, 'utf8');
+    } catch {
+        // rules file doesn't exist
     }
 
     // Helper: write a bridge file only if it doesn't already exist
-    const writeBridge = (filePath, content, label) => {
+    const writeBridge = async (filePath, content, label) => {
         if (dryRun) {
             dbg(`  would create: ${filePath}`);
             return;
         }
         const dir = path.dirname(filePath);
-        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-        if (fs.existsSync(filePath)) {
+        try {
+            await fs.promises.mkdir(dir, { recursive: true });
+            await fs.promises.stat(filePath);
             dbg(`  skip (exists): ${path.basename(filePath)}`);
-            return;
+        } catch (err) {
+            if (err.code === 'ENOENT') {
+                await fs.promises.writeFile(filePath, content, 'utf8');
+                ok(`${label} → ${c('gray', path.relative(targetDir, filePath))}`);
+            }
         }
-        fs.writeFileSync(filePath, content, 'utf8');
-        ok(`${label} → ${c('gray', path.relative(targetDir, filePath))}`);
     };
 
     // ── 1. Cursor (.cursorrules) ──────────────────────────
@@ -542,7 +558,7 @@ function generateIDEBridges(targetDir, agentDest, dryRun = false) {
 
 ${rulesContent}
 `;
-    writeBridge(
+    await writeBridge(
         path.join(targetDir, '.cursorrules'),
         cursorRules,
         'Cursor'
@@ -555,7 +571,7 @@ ${rulesContent}
 
 ${rulesContent}
 `;
-    writeBridge(
+    await writeBridge(
         path.join(targetDir, '.windsurfrules'),
         windsurfRules,
         'Windsurf'
@@ -571,7 +587,7 @@ ${rulesContent}
         "skills": { "directory": "../.agent/skills" },
         "workflows": { "directory": "../.agent/workflows" }
     }, null, 2) + '\n';
-    writeBridge(
+    await writeBridge(
         path.join(targetDir, '.gemini', 'settings.json'),
         geminiSettings,
         'Gemini/Antigravity'
@@ -588,7 +604,7 @@ trigger: always_on
 
 ${rulesContent}
 `;
-    writeBridge(
+    await writeBridge(
         path.join(targetDir, '.gemini', 'GEMINI.md'),
         geminiRulesBridge,
         'Gemini rules'
@@ -601,7 +617,7 @@ ${rulesContent}
 
 ${rulesContent}
 `;
-    writeBridge(
+    await writeBridge(
         path.join(targetDir, '.github', 'copilot-instructions.md'),
         copilotInstructions,
         'GitHub Copilot'
@@ -614,7 +630,7 @@ ${rulesContent}
 
 ${rulesContent}
 `;
-    writeBridge(
+    await writeBridge(
         path.join(targetDir, '.claude', 'CLAUDE.md'),
         claudeRules,
         'Claude'
@@ -623,7 +639,23 @@ ${rulesContent}
     console.log();
 }
 
-function cmdUpdate(flags) {
+async function cmdSync(args) {
+    console.log(`\n╭─ ${c('bold', 'Tribunal IDE Sync')} ──────────────────`);
+    console.log('│');
+    console.log(`│  ${c('gray', '✦ Regenerating IDE bridge files...')}`);
+    const cwd = process.cwd();
+    const agentDest = path.join(cwd, '.agent');
+    if (!fs.existsSync(agentDest)) {
+        console.error(`│  ${c('red', '✖ Error: .agent/ directory not found.')}`);
+        console.error(`│  ${c('gray', 'Run `tk init` first.')}`);
+        process.exit(1);
+    }
+    await generateIDEBridges(cwd, agentDest, false);
+    console.log(`│  ${c('green', '✔ Sync complete.')}`);
+    console.log('╰────────────────────────────────────────\n');
+}
+
+async function cmdUpdate(flags) {
     // ── Self-install guard (early, before banner) ───────────
     const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
     if (isSelfInstall(targetDir)) {
@@ -645,11 +677,11 @@ function cmdUpdate(flags) {
         log(`  ${c('cyan','↻')} ${bold('Updating')} ${c('white','.agent/')} to latest version...`);
         console.log();
     }
-    cmdInit(flags);
+    await cmdInit(flags);
 }
 
 
-function cmdLearn(flags) {
+async function cmdLearn(flags) {
     const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
     const agentDest = path.join(targetDir, '.agent');
 
@@ -680,7 +712,7 @@ function cmdLearn(flags) {
     } else {
         try {
             const cmd = `node "${evoScript}" digest ${dryRun} ${useHead}`.trim();
-            execSync(cmd, { stdio: 'inherit', cwd: targetDir });
+            await runShellAsync(cmd, { stdio: 'inherit', cwd: targetDir });
         } catch (e) {
             warn(`Skill Evolution error: ${e.message}`);
         }
@@ -717,34 +749,37 @@ async function runWithUpdateCheck(command, flags) {
     // Proceed with current version
     switch (command) {
         case 'init':
-            cmdInit(flags);
+            await cmdInit(flags);
             break;
         case 'update':
-            cmdUpdate(flags);
+            await cmdUpdate(flags);
             break;
         case 'status':
             cmdStatus(flags);
             break;
         case 'learn':
-            cmdLearn(flags);
+            await cmdLearn(flags);
             break;
         case 'case':
-            cmdCase(flags);
+            await cmdCase(flags);
             break;
         case 'hook':
             cmdHook(flags);
             break;
         case 'graph':
-            cmdGraph(flags);
+            await cmdGraph(flags);
             break;
         case 'mutate':
-            cmdMutate(flags);
+            await cmdMutate(flags);
             break;
         case 'context':
             cmdContext(flags);
             break;
+        case 'sync':
+            await cmdSync();
+            break;
         case 'marathon':
-            cmdMarathon(flags);
+            await cmdMarathon(flags);
             break;
         case 'uninstall':
             cmdUninstall(flags);
@@ -763,7 +798,7 @@ async function runWithUpdateCheck(command, flags) {
     }
 }
 
-function cmdCase(flags) {
+async function cmdCase(flags) {
     const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
     const agentDest = path.join(targetDir, '.agent');
 
@@ -798,14 +833,13 @@ function cmdCase(flags) {
     if (pyArgs.startsWith('search')) pyArgs = pyArgs.replace(/^search/, 'search-cases');
 
     try {
-        const { execSync } = require('child_process');
-        execSync(`node "${caseLawScript}" ${pyArgs}`, { stdio: 'inherit', cwd: targetDir });
+        await runShellAsync(`node "${caseLawScript}" ${pyArgs}`, { stdio: 'inherit', cwd: targetDir });
     } catch {
         process.exit(1); // Script already prints errors
     }
 }
 
-function cmdGraph(flags) {
+async function cmdGraph(flags) {
     const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
     const agentDest = path.join(targetDir, '.agent');
 
@@ -815,18 +849,17 @@ function cmdGraph(flags) {
     }
 
     banner();
-    const { execSync } = require('child_process');
     const builderScript = path.join(agentDest, 'scripts', 'graph_builder.js');
     const visualizerScript = path.join(agentDest, 'scripts', 'graph_visualizer.js');
     const htmlFile = path.join(agentDest, 'history', 'architecture-explorer.html');
 
     try {
-        execSync(`node "${builderScript}"`, { stdio: 'inherit', cwd: targetDir });
-        execSync(`node "${visualizerScript}"`, { stdio: 'inherit', cwd: targetDir });
+        await runShellAsync(`node "${builderScript}"`, { stdio: 'inherit', cwd: targetDir });
+        await runShellAsync(`node "${visualizerScript}"`, { stdio: 'inherit', cwd: targetDir });
         
         log(`  ${c('cyan', '▸')} Opening visualizer in browser...`);
         const opener = process.platform === 'win32' ? 'start' : process.platform === 'darwin' ? 'open' : 'xdg-open';
-        execSync(`${opener} "${htmlFile}"`);
+        await runShellAsync(`${opener} "${htmlFile}"`, { stdio: 'ignore' });
     } catch (e) {
         err(`Graph generation failed: ${e.message}`);
         process.exit(1);
@@ -848,17 +881,17 @@ function cmdHook(flags) {
     }
     
     const prePushPath = path.join(hooksDir, 'pre-push');
-    const hookScript = `#!/bin/sh\n# Supreme Court - Auto Learn on Push\necho "⚖️  Tribunal Supreme Court: Evolving Skills..."\nnpx tribunal-kit learn --head\n`;
+    const hookScript = `#!/bin/sh\n# Supreme Court - Auto Learn on Push\necho "⚖️  Tribunal Supreme Court: Evolving Skills..."\nnpx tribunal-kit learn --head\necho "✦ Synchronizing IDE bridges..."\nnpx tribunal-kit sync\n`;
     
     fs.writeFileSync(prePushPath, hookScript, { mode: 0o755 });
     
     console.log();
     log(`  ${c('green', '✔')} Installed pre-push git hook.`);
-    log(`  ${c('gray', '▸')} Skill Evolution will now run automatically every time you git push.`);
+    log(`  ${c('gray', '▸')} Skill Evolution and IDE Sync will now run automatically every time you git push.`);
     console.log();
 }
 
-function cmdMutate(flags) {
+async function cmdMutate(flags) {
     const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
     const agentDest = path.join(targetDir, '.agent');
 
@@ -874,9 +907,8 @@ function cmdMutate(flags) {
     }
 
     const mutateScript = path.join(agentDest, 'scripts', 'mutation_runner.js');
-    const { execSync } = require('child_process');
     try {
-        execSync(`node "${mutateScript}" ${args.join(' ')}`, { stdio: 'inherit', cwd: targetDir });
+        await runShellAsync(`node "${mutateScript}" ${args.join(' ')}`, { stdio: 'inherit', cwd: targetDir });
     } catch {
         process.exit(1);
     }
@@ -959,6 +991,7 @@ function cmdHelp() {
     log(cmd('graph',    'Build and visualize the architecture graph'));
     log(cmd('mutate',   'Run the Mutation Engine to test test-suite reliability'));
     log(cmd('context',  'Retrieve a highly-optimized Context Snapshot for a file'));
+    log(cmd('sync',     'Synchronize IDE bridge files with current rules'));
     log(cmd('marathon', 'Long-running agent harness (init, status, next, mark)'));
     log(cmd('hook',     'Install pre-push git hook for auto-learning'));
     log(cmd('uninstall','Remove .agent/ folder from project'));
@@ -1008,7 +1041,7 @@ function cmdHelp() {
 }
 
 
-function cmdMarathon(flags) {
+async function cmdMarathon(flags) {
     const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
     const agentDest = path.join(targetDir, '.agent');
 
@@ -1040,7 +1073,7 @@ function cmdMarathon(flags) {
 
     const marathonScript = path.join(agentDest, 'scripts', 'marathon_harness.js');
     try {
-        execSync(`node "${marathonScript}" ${argsStr}`, { stdio: 'inherit', cwd: targetDir });
+        await runShellAsync(`node "${marathonScript}" ${argsStr}`, { stdio: 'inherit', cwd: targetDir });
     } catch {
         process.exit(1);
     }

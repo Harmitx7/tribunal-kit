@@ -20,22 +20,22 @@ describe('countDir', () => {
         fs.rmSync(tmpDir, { recursive: true, force: true });
     });
 
-    test('returns 0 for empty directory', () => {
-        expect(countDir(tmpDir)).toBe(0);
+    test('returns 0 for empty directory', async () => {
+        expect(await countDir(tmpDir)).toBe(0);
     });
 
-    test('counts files at top level', () => {
+    test('counts files at top level', async () => {
         fs.writeFileSync(path.join(tmpDir, 'a.txt'), 'a');
         fs.writeFileSync(path.join(tmpDir, 'b.txt'), 'b');
-        expect(countDir(tmpDir)).toBe(2);
+        expect(await countDir(tmpDir)).toBe(2);
     });
 
-    test('counts files recursively in subdirectories', () => {
+    test('counts files recursively in subdirectories', async () => {
         const sub = path.join(tmpDir, 'sub');
         fs.mkdirSync(sub);
         fs.writeFileSync(path.join(tmpDir, 'top.txt'), 'top');
         fs.writeFileSync(path.join(sub, 'nested.txt'), 'nested');
-        expect(countDir(tmpDir)).toBe(2);
+        expect(await countDir(tmpDir)).toBe(2);
     });
 });
 
@@ -55,40 +55,40 @@ describe('copyDir', () => {
         fs.rmSync(destDir, { recursive: true, force: true });
     });
 
-    test('copies files to destination', () => {
+    test('copies files to destination', async () => {
         fs.writeFileSync(path.join(srcDir, 'hello.txt'), 'hello');
-        copyDir(srcDir, destDir);
+        await copyDir(srcDir, destDir);
         expect(fs.existsSync(path.join(destDir, 'hello.txt'))).toBe(true);
         expect(fs.readFileSync(path.join(destDir, 'hello.txt'), 'utf8')).toBe('hello');
     });
 
-    test('copies nested directories recursively', () => {
+    test('copies nested directories recursively', async () => {
         const sub = path.join(srcDir, 'sub');
         fs.mkdirSync(sub);
         fs.writeFileSync(path.join(sub, 'nested.txt'), 'nested');
-        copyDir(srcDir, destDir);
+        await copyDir(srcDir, destDir);
         expect(fs.existsSync(path.join(destDir, 'sub', 'nested.txt'))).toBe(true);
     });
 
-    test('returns total file count copied', () => {
+    test('returns total file count copied', async () => {
         fs.writeFileSync(path.join(srcDir, 'a.txt'), 'a');
         fs.writeFileSync(path.join(srcDir, 'b.txt'), 'b');
-        const count = copyDir(srcDir, destDir);
+        const count = await copyDir(srcDir, destDir);
         expect(count).toBe(2);
     });
 
-    test('dry-run does NOT create destination files', () => {
+    test('dry-run does NOT create destination files', async () => {
         fs.writeFileSync(path.join(srcDir, 'hello.txt'), 'hello');
         const destDryRun = path.join(os.tmpdir(), 'tk-dryrun-' + Date.now());
-        copyDir(srcDir, destDryRun, true);
+        await copyDir(srcDir, destDryRun, true);
         expect(fs.existsSync(destDryRun)).toBe(false);
     });
 
-    test('dry-run still returns correct file count', () => {
+    test('dry-run still returns correct file count', async () => {
         fs.writeFileSync(path.join(srcDir, 'a.txt'), 'a');
         fs.writeFileSync(path.join(srcDir, 'b.txt'), 'b');
         const destDryRun = path.join(os.tmpdir(), 'tk-dryrun2-' + Date.now());
-        const count = copyDir(srcDir, destDryRun, true);
+        const count = await copyDir(srcDir, destDryRun, true);
         expect(count).toBe(2);
     });
 });

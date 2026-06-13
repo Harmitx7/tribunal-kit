@@ -10,7 +10,8 @@
 
   [![NPM](https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/tribunal-kit)
   [![License](https://img.shields.io/badge/License-MIT-8b5cf6?style=for-the-badge)](LICENSE)
-  [![Version](https://img.shields.io/badge/Version-4.4.4_Marathon-black?style=for-the-badge)](CHANGELOG.md)
+  [![Version](https://img.shields.io/badge/Version-4.5.0_Ultimate-black?style=for-the-badge)](CHANGELOG.md)
+  [![MCP](https://img.shields.io/badge/MCP-Ready-00e5ff?style=for-the-badge)](mcp_config.json)
 </div>
 
 ---
@@ -31,6 +32,9 @@ npx tribunal-kit init
 > [!NOTE]
 > `init` automatically generates bridge rules for **Cursor**, **Windsurf**, **Gemini**, **Copilot**, and **Claude**. No configuration required.
 
+### 🔄 Auto-Syncing IDEs
+Keep your entire team aligned. Run `npx tribunal-kit sync` to instantly push the latest `.agent` rules directly into your IDE config files. Use `npx tribunal-kit hook` to install a Git `pre-push` hook that auto-evolves and syncs rules every time you push code.
+
 <br>
 
 ## ▓▒░ THE MARATHON HARNESS (v4.4.4)
@@ -45,6 +49,9 @@ Agents no longer blindly retry failed approaches. When a feature fails, the reas
 
 ### 🔮 Memory Distillation
 Context windows dilute over time. The new `distill` command allows agents to forge crucial architectural decisions into a permanent `distilled_context.md` memory matrix, bridging the amnesia gap between long work sessions.
+
+### 🎨 Native Swarm Dashboard
+When dispatching parallel tasks via `/swarm`, Tribunal now intercepts the noisy terminal output and renders a sleek, zero-dependency **ANSI TUI Dashboard**. Watch multiple agents research, generate, and review in real-time.
 
 <br>
 
@@ -87,6 +94,15 @@ The Tribunal Kit features persistent memory. The AI **never makes the same mista
 > **2. Skill Evolution Forge**
 > Stop writing manual rules. The system reads your Git diffs, strips token bloat, and auto-extracts your project's architectural idioms.
 > - `npx tribunal-kit learn` *(Digest staged files)*
+
+## ▓▒░ NATIVE MCP SERVER
+
+Tribunal-Kit now functions as a standalone **Model Context Protocol (MCP)** server via `stdio`. 
+
+Bind your AI IDE (Cursor, Claude Desktop, etc.) directly to `tribunal-kit` to unlock autonomous tool execution:
+- `run_tribunal_audit`: AI can trigger a full workspace health check.
+- `search_case_law`: AI can query your project's historical code rejections to avoid making mistakes *before* it writes code.
+- `sync_ide_bridges`: Force rule alignment directly from the AI chat.
 
 <br>
 

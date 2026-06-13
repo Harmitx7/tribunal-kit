@@ -45,3 +45,9 @@ Before submitting code, ensure:
 1. Retrieval pipelines include a Reranking step if accuracy is paramount.
 2. BM25 / Sparse search is considered alongside standard dense embeddings.
 3. Chunks are injected into the final LLM prompt with explicit `<context>` XML boundaries to prevent prompt injection.
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
