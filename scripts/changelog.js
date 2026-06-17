@@ -56,13 +56,14 @@ function getLatestTag() {
 
 function getCommits(since) {
     const range = since ? `${since}..HEAD` : 'HEAD';
-    const format = '--format="%H||%s||%an||%ai"';
-    const raw = git(`log ${range} ${format} --no-merges`);
+    const MAX_COMMITS = 500;
+    const format = '--format=%H||%s||%an||%ai';
+    const raw = git(`log ${range} ${format} --no-merges -n ${MAX_COMMITS}`);
     if (!raw) return [];
 
     return raw.split('\n').filter(Boolean).map(line => {
         const [hash, subject, author, date] = line.split('||');
-        return { hash: hash?.slice(0, 7), subject, author, date: date?.slice(0, 10) };
+        return { hash: hash?.replace(/^"/, '').slice(0, 7), subject, author, date: date?.replace(/"$/, '').slice(0, 10) };
     });
 }
 

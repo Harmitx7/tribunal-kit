@@ -50,7 +50,8 @@
         "scripts/",
         ".agent/",
         "README.md",
-        "LICENSE"
+        "LICENSE",
+        "mcp_config.json"
     ],
     "engines": {
         "node": ">=18.0.0"
@@ -65,13 +66,20 @@
         "changelog:preview": "node scripts/changelog.js --preview",
         "sync": "node scripts/sync-version.js",
         "validate-payload": "node scripts/validate-payload.js",
-        "postinstall": "node scripts/postinstall.js",
         "build": "echo 'No build step required for this project'"
     },
     "devDependencies": {
-        "jest": "^29.7.0",
-        "typescript": "^5.4.5",
-        "eslint": "^9.1.1"
+        "eslint": "^9.1.1",
+        "jest": "^25.0.0",
+        "typescript": "^5.4.5"
+    },
+    "optionalDependencies": {
+        "@tribunal-kit/core-darwin-arm64": "^4.5.0",
+        "@tribunal-kit/core-darwin-x64": "^4.5.0",
+        "@tribunal-kit/core-linux-arm64": "^4.5.0",
+        "@tribunal-kit/core-linux-x64": "^4.5.0",
+        "@tribunal-kit/core-win32-arm64": "^4.5.0",
+        "@tribunal-kit/core-win32-x64": "^4.5.0"
     },
     "jest": {
         "testMatch": [

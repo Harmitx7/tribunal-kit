@@ -1,0 +1,14 @@
+{
+  "name": "@tribunal-kit/core-${PLATFORM}-${ARCH}",
+  "version": "4.5.0",
+  "os": [
+    "${PLATFORM}"
+  ],
+  "cpu": [
+    "${ARCH}"
+  ],
+  "main": "bin/tribunal-core${EXT}",
+  "publishConfig": {
+    "access": "public"
+  }
+}

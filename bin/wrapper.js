@@ -21,14 +21,23 @@ const RUST_COMMANDS = new Set(['init', 'validate', 'status']);
 function getBinaryPath() {
     const isWindows = os.platform() === 'win32';
     const ext = isWindows ? '.exe' : '';
+    const platform = os.platform();
+    const arch = os.arch();
     
-    // First, check bin/ directory (postinstall downloaded binary)
-    const binPath = path.resolve(__dirname, `tribunal-core${ext}`);
-    if (fs.existsSync(binPath)) {
-        return binPath;
+    // First, try production resolution (from optionalDependencies)
+    const pkgName = `@tribunal-kit/core-${platform}-${arch}`;
+    try {
+        // Try to resolve the binary from the optional dependency package
+        const pkgPath = require.resolve(`${pkgName}/package.json`);
+        const binPath = path.resolve(path.dirname(pkgPath), `bin/tribunal-core${ext}`);
+        if (fs.existsSync(binPath)) {
+            return binPath;
+        }
+    } catch (e) {
+        // Package not found, ignore and fall back to local dev targets
     }
 
-    // Second, try to find the binary compiled from crates/core/Cargo.toml
+    // Second, try to find the binary compiled from crates/core/Cargo.toml (Local dev)
     const devPath = path.resolve(__dirname, '..', 'target', 'release', `tribunal-core${ext}`);
     if (fs.existsSync(devPath)) {
         return devPath;
@@ -40,13 +49,13 @@ function getBinaryPath() {
         return debugPath;
     }
 
-    // Production resolution (from optionalDependencies) would go here
     return null;
 }
 
 function runRustBinary(binPath, args) {
+    const stdio = ['inherit', process.stdout.isTTY ? 'ignore' : 'inherit', 'inherit'];
     const result = spawnSync(binPath, args, {
-        stdio: 'inherit',
+        stdio: stdio,
         env: process.env
     });
 

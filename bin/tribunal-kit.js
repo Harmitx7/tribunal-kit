@@ -38,6 +38,24 @@ function runShellAsync(command, options) {
     });
 }
 
+/**
+ * Safely run a Node.js script with arguments as an array.
+ * No shell interpolation — immune to injection.
+ */
+function runScriptAsync(scriptPath, args = [], options = {}) {
+    return new Promise((resolve, reject) => {
+        const child = spawn(process.execPath, [scriptPath, ...args], {
+            stdio: 'inherit',
+            ...options,
+        });
+        child.on('close', code => {
+            if (code !== 0) reject(new Error(`Script failed with exit code ${code}`));
+            else resolve();
+        });
+        child.on('error', reject);
+    });
+}
+
 const PKG = require(path.resolve(__dirname, '..', 'package.json'));
 const CURRENT_VERSION = PKG.version;
 
@@ -245,6 +263,7 @@ async function autoUpdateCheck(originalArgs) {
         return false;
     }
 
+    log('  Checking for updates...');
     const latestVersion = await fetchLatestVersion();
 
     if (!latestVersion) {
@@ -385,15 +404,13 @@ async function cmdInit(flags) {
         const backupDir = path.join(agentDest, '.backups', `backup-${Date.now()}`);
         fs.mkdirSync(backupDir, { recursive: true });
 
-        // PRESERVE_DIRS: user-generated content that must survive updates
-        const _PRESERVE_DIRS = ['history', 'patterns', 'mcp_config.json'];
         const subdirs = ['agents', 'workflows', 'skills', 'scripts', '.shared', 'rules'];
         for (const sub of subdirs) {
             const subPath = path.join(agentDest, sub);
             if (fs.existsSync(subPath)) {
                 // Copy to backup dir
                 await copyDir(subPath, path.join(backupDir, sub), false);
-                await fs.promises.rm(subPath, { recursive: true, force: true });
+                // Removed aggressive deletion so user custom files persist
             }
         }
         log(`  ${c('gray', '✦ Backed up existing configurations to .agent/.backups/')}`);
@@ -509,6 +526,8 @@ async function cmdInit(flags) {
             console.log(plainRow('', () => ''));
             console.log(`  ${c('cyan', '╚' + '═'.repeat(W) + '╝')}`);
             console.log();
+            log(`  ${c('gray', '✦ Updating .gitignore...')}`);
+            await updateGitignore(targetDir, dryRun);
             log(`  ${c('gray', '✦ Generating IDE bridge files...')}`);
             await generateIDEBridges(targetDir, agentDest, dryRun);
         }
@@ -517,6 +536,30 @@ async function cmdInit(flags) {
     } catch (e) {
         err(`Failed to install: ${e.message}`);
         process.exit(1);
+    }
+}
+
+// ── Gitignore Management ──────────────────────────────────
+async function updateGitignore(targetDir, dryRun = false) {
+    if (dryRun) return;
+    const gitignorePath = path.join(targetDir, '.gitignore');
+    const entries = ['.agent/.backups/', '.agent/history/'];
+    let content = '';
+    try {
+        content = await fs.promises.readFile(gitignorePath, 'utf8');
+    } catch (err) {
+        if (err.code !== 'ENOENT') throw err;
+    }
+    let appended = false;
+    for (const entry of entries) {
+        if (!content.includes(entry)) {
+            content += (content.length > 0 && !content.endsWith('\n') ? '\n' : '') + entry + '\n';
+            appended = true;
+        }
+    }
+    if (appended) {
+        await fs.promises.writeFile(gitignorePath, content, 'utf8');
+        dbg('  Updated .gitignore');
     }
 }
 
@@ -532,17 +575,46 @@ async function generateIDEBridges(targetDir, agentDest, dryRun = false) {
         // rules file doesn't exist
     }
 
-    // Helper: write a bridge file only if it doesn't already exist
-    const writeBridge = async (filePath, content, label) => {
+    // Helper: write a bridge file or merge it if it exists
+    const writeBridge = async (filePath, content, label, isJson = false) => {
         if (dryRun) {
-            dbg(`  would create: ${filePath}`);
+            dbg(`  would create/update: ${filePath}`);
             return;
         }
         const dir = path.dirname(filePath);
+        await fs.promises.mkdir(dir, { recursive: true });
+
         try {
-            await fs.promises.mkdir(dir, { recursive: true });
-            await fs.promises.stat(filePath);
-            dbg(`  skip (exists): ${path.basename(filePath)}`);
+            const existingContent = await fs.promises.readFile(filePath, 'utf8');
+            if (isJson) {
+                try {
+                    const existingData = JSON.parse(existingContent);
+                    const newData = JSON.parse(content);
+                    
+                    if (!existingData.rules) existingData.rules = [];
+                    const rulePath = newData.rules[0].path;
+                    const ruleExists = existingData.rules.some(r => r.path === rulePath);
+                    if (!ruleExists) {
+                        existingData.rules.push(newData.rules[0]);
+                    }
+
+                    existingData.agents = { ...existingData.agents, ...newData.agents };
+                    existingData.skills = { ...existingData.skills, ...newData.skills };
+                    existingData.workflows = { ...existingData.workflows, ...newData.workflows };
+
+                    await fs.promises.writeFile(filePath, JSON.stringify(existingData, null, 2) + '\n', 'utf8');
+                    ok(`${label} (merged) → ${c('gray', path.relative(targetDir, filePath))}`);
+                } catch (e) {
+                    warn(`Failed to merge ${label}: ${e.message}`);
+                }
+            } else {
+                if (!existingContent.includes('Tribunal Kit') && (!rulesContent || !existingContent.includes(rulesContent.slice(0, 50)))) {
+                    await fs.promises.appendFile(filePath, '\n' + content, 'utf8');
+                    ok(`${label} (appended) → ${c('gray', path.relative(targetDir, filePath))}`);
+                } else {
+                    dbg(`  skip (rules exist): ${path.basename(filePath)}`);
+                }
+            }
         } catch (err) {
             if (err.code === 'ENOENT') {
                 await fs.promises.writeFile(filePath, content, 'utf8');
@@ -579,7 +651,6 @@ ${rulesContent}
 
     // ── 3. Gemini / Antigravity (.gemini/settings.json) ──
     const geminiSettings = JSON.stringify({
-        "$schema": "https://raw.githubusercontent.com/anthropics/anthropic-cookbook/main/.gemini/settings.schema.json",
         "rules": [
             { "path": "../.agent/rules/GEMINI.md", "trigger": "always_on" }
         ],
@@ -590,7 +661,8 @@ ${rulesContent}
     await writeBridge(
         path.join(targetDir, '.gemini', 'settings.json'),
         geminiSettings,
-        'Gemini/Antigravity'
+        'Gemini/Antigravity',
+        true
     );
 
     // ── Also create .gemini/GEMINI.md as a direct rules file ──
@@ -700,8 +772,9 @@ async function cmdLearn(flags) {
     console.log(`  ${c('cyan', '\u255a' + '\u2550'.repeat(W) + '\u255d')}`);
     console.log();
 
-    const dryRun  = flags.dryRun ? '--dry-run' : '';
-    const useHead = flags.head   ? '--head'    : '';
+    const evoArgs = ['digest'];
+    if (flags.dryRun) evoArgs.push('--dry-run');
+    if (flags.head)   evoArgs.push('--head');
 
 
     // Phase 1: Skill Evolution
@@ -711,8 +784,7 @@ async function cmdLearn(flags) {
         warn('skill_evolution.js not found \u2014 run: npx tribunal-kit update');
     } else {
         try {
-            const cmd = `node "${evoScript}" digest ${dryRun} ${useHead}`.trim();
-            await runShellAsync(cmd, { stdio: 'inherit', cwd: targetDir });
+            await runScriptAsync(evoScript, evoArgs, { cwd: targetDir });
         } catch (e) {
             warn(`Skill Evolution error: ${e.message}`);
         }
@@ -807,8 +879,8 @@ async function cmdCase(flags) {
         process.exit(1);
     }
 
-    const args = process.argv.slice(3).join(' ');
-    if (!args || args === 'help' || args === '--help' || args === '-h') {
+    const args = process.argv.slice(3);
+    if (args.length === 0 || args[0] === 'help' || args[0] === '--help' || args[0] === '-h') {
         banner();
         log(`  ${c('cyan', '\u2554' + '\u2550'.repeat(60) + '\u2557')}`);
         log(`  ${c('cyan', '\u2551')}${c('bold', c('white', '  Tribunal Case Law Engine \u2014 Supreme Court             '))}${c('cyan', '\u2551')}`);
@@ -827,13 +899,13 @@ async function cmdCase(flags) {
 
     const caseLawScript = path.join(agentDest, 'scripts', 'case_law_manager.js');
 
-    // Make shorthand aliases
-    let pyArgs = args;
-    if (pyArgs.startsWith('add')) pyArgs = pyArgs.replace(/^add/, 'add-case');
-    if (pyArgs.startsWith('search')) pyArgs = pyArgs.replace(/^search/, 'search-cases');
+    // Make shorthand aliases for the subcommand (first arg only)
+    const caseArgs = [...args];
+    if (caseArgs[0] === 'add') caseArgs[0] = 'add-case';
+    if (caseArgs[0] === 'search') caseArgs[0] = 'search-cases';
 
     try {
-        await runShellAsync(`node "${caseLawScript}" ${pyArgs}`, { stdio: 'inherit', cwd: targetDir });
+        await runScriptAsync(caseLawScript, caseArgs, { cwd: targetDir });
     } catch {
         process.exit(1); // Script already prints errors
     }
@@ -854,12 +926,17 @@ async function cmdGraph(flags) {
     const htmlFile = path.join(agentDest, 'history', 'architecture-explorer.html');
 
     try {
-        await runShellAsync(`node "${builderScript}"`, { stdio: 'inherit', cwd: targetDir });
-        await runShellAsync(`node "${visualizerScript}"`, { stdio: 'inherit', cwd: targetDir });
+        await runScriptAsync(builderScript, [], { cwd: targetDir });
+        await runScriptAsync(visualizerScript, [], { cwd: targetDir });
         
         log(`  ${c('cyan', '▸')} Opening visualizer in browser...`);
-        const opener = process.platform === 'win32' ? 'start' : process.platform === 'darwin' ? 'open' : 'xdg-open';
-        await runShellAsync(`${opener} "${htmlFile}"`, { stdio: 'ignore' });
+        // Open browser safely without shell interpolation
+        const { opener, openerArgs } = (() => {
+            if (process.platform === 'win32') return { opener: 'cmd', openerArgs: ['/c', 'start', '', htmlFile] };
+            if (process.platform === 'darwin') return { opener: 'open', openerArgs: [htmlFile] };
+            return { opener: 'xdg-open', openerArgs: [htmlFile] };
+        })();
+        spawn(opener, openerArgs, { stdio: 'ignore', detached: true }).unref();
     } catch (e) {
         err(`Graph generation failed: ${e.message}`);
         process.exit(1);
@@ -908,7 +985,7 @@ async function cmdMutate(flags) {
 
     const mutateScript = path.join(agentDest, 'scripts', 'mutation_runner.js');
     try {
-        await runShellAsync(`node "${mutateScript}" ${args.join(' ')}`, { stdio: 'inherit', cwd: targetDir });
+        await runScriptAsync(mutateScript, args, { cwd: targetDir });
     } catch {
         process.exit(1);
     }
@@ -1051,7 +1128,6 @@ async function cmdMarathon(flags) {
     }
 
     const args = process.argv.slice(3);
-    const argsStr = args.join(' ');
     if (args.length === 0 || args[0] === 'help' || args[0] === '--help' || args[0] === '-h') {
         banner();
         log(`  ${c('cyan', '╔' + '═'.repeat(60) + '╗')}`);
@@ -1073,7 +1149,7 @@ async function cmdMarathon(flags) {
 
     const marathonScript = path.join(agentDest, 'scripts', 'marathon_harness.js');
     try {
-        await runShellAsync(`node "${marathonScript}" ${argsStr}`, { stdio: 'inherit', cwd: targetDir });
+        await runScriptAsync(marathonScript, args, { cwd: targetDir });
     } catch {
         process.exit(1);
     }

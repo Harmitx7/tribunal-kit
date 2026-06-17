@@ -248,7 +248,7 @@ async fn cmd_init(path: &str, force: bool, dry_run: bool, quiet: bool, _minimal:
     if agent_dest.exists() && force {
         let timestamp = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
+            .unwrap_or_default()
             .as_millis();
         let backup_dir = agent_dest.join(".backups").join(format!("backup-{}", timestamp));
         tokio::fs::create_dir_all(&backup_dir).await?;
@@ -391,7 +391,7 @@ async fn cmd_status(path: &str) -> Result<()> {
 
     // Human-readable output on stderr
     if installed {
-        eprintln!("\n╭─ {} ──────────────────", "Tribunal-Kit v4.4.5".bold());
+        eprintln!("\n╭─ {} ──────────────────", format!("Tribunal-Kit v{}", env!("CARGO_PKG_VERSION")).bold());
         eprintln!("│");
         eprintln!("│  ● {}:    {}", "Status".dimmed(), "Active & Guarded".green().bold());
         eprintln!("│  ● {}:      {}", "Path".dimmed(), agent_dir.display());
@@ -437,12 +437,13 @@ fn count_dir_entries(dir: &PathBuf) -> u32 {
     }
 }
 
-use futures::future::BoxFuture;
+use std::pin::Pin;
+use std::future::Future;
 
-fn copy_dir_all<'a>(src: &'a PathBuf, dst: &'a PathBuf) -> BoxFuture<'a, Result<u32>> {
+fn copy_dir_all<'a>(src: &'a PathBuf, dst: &'a PathBuf) -> Pin<Box<dyn Future<Output = Result<u32>> + Send + 'a>> {
     Box::pin(async move {
         if !src.exists() {
-            return Ok(0);
+            return Err(anyhow::anyhow!("Source directory does not exist: {}", src.display()));
         }
         tokio::fs::create_dir_all(&dst).await?;
         let mut count = 0;
@@ -492,7 +493,6 @@ async fn generate_ide_bridges(target: &PathBuf, agent_dest: &PathBuf) -> Result<
 
     // Gemini
     let gemini_settings = serde_json::json!({
-        "$schema": "https://raw.githubusercontent.com/anthropics/anthropic-cookbook/main/.gemini/settings.schema.json",
         "rules": [
             { "path": "../.agent/rules/GEMINI.md", "trigger": "always_on" }
         ],

@@ -3,7 +3,12 @@ const path = require('path');
 
 // Simple Markdown frontmatter and Tribunal header validator
 function validateMarkdownFile(filePath) {
-    const content = fs.readFileSync(filePath, 'utf8');
+    let content;
+    try {
+        content = fs.readFileSync(filePath, 'utf8');
+    } catch (e) {
+        return [`Failed to read file: ${e.message}`];
+    }
     let errors = [];
 
     // Check for frontmatter
