@@ -10,7 +10,7 @@
 
   [![NPM](https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/tribunal-kit)
   [![License](https://img.shields.io/badge/License-MIT-8b5cf6?style=for-the-badge)](LICENSE)
-  [![Version](https://img.shields.io/badge/Version-4.5.0_Ultimate-black?style=for-the-badge)](CHANGELOG.md)
+  [![Version](https://img.shields.io/badge/Version-4.5.1_Ultimate-black?style=for-the-badge)](CHANGELOG.md)
   [![MCP](https://img.shields.io/badge/MCP-Ready-00e5ff?style=for-the-badge)](mcp_config.json)
 </div>
 
