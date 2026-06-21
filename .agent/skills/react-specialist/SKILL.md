@@ -4,6 +4,9 @@ description: React 19+ specialist. use(), useActionState, useOptimistic, React C
 allowed-tools: Read, Write, Edit, Glob, Grep
 version: 3.1.0
 last-updated: 2026-04-06
+routing:
+  domain: general
+  tier: basic
 ---
 
 # React 19+ — Dense Reference

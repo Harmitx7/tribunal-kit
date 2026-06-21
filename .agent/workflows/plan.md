@@ -1,10 +1,24 @@
 ---
 description: Create project plan using project-planner agent. 4-phase approach: Analyze → Research → Plan Document → Human Gate. NO code writing — only plan file generation. Writing begins only after explicit human approval.
+required-skills: plan-writing, architecture
 ---
 
 # /plan — Strategic Implementation Planning
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE writing the plan:
+□ package.json             → Actual dependencies and scripts
+□ tsconfig.json            → TypeScript config and path aliases
+□ prisma/schema.prisma     → If DB changes planned (skip if not applicable)
+□ src/ directory listing   → Current project structure
+□ git log --oneline -5     → Recent work context
+```
 
 ---
 
@@ -162,12 +176,11 @@ R = revise with feedback
 
 ---
 
-## Usage Examples
+## After /plan — Next Steps
 
-```
-/plan a user notification system with email + in-app notifications
-/plan migrate the authentication from next-auth v4 to v5
-/plan add Stripe subscription billing to the existing user model
-/plan refactor the monolithic api.ts into domain-specific route files
-/plan implement real-time collaborative editing using CRDTs
-```
+|Outcome|Next Command|
+|:---|:---|
+|Plan approved, new code needed|→ `/generate` for Tribunal-reviewed code|
+|Plan approved, existing code changes|→ `/enhance` with impact analysis|
+|Plan approved, full project build|→ `/create` for full scaffolding|
+|Plan needs more brainstorming|→ `/brainstorm` to explore options|

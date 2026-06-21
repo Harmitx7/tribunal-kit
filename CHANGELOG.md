@@ -3,8 +3,16 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [4.4.0] — 2026-04-29
+## [4.6.0] — 2026-06-21
 
+### ✨ Features
+- **Self-Describing Skill Graph**: Migrated the `intelligent-routing` core from a centralized, flat 150-line Markdown manifest to a decentralized YAML frontmatter architecture.
+- **Routing JSON Index Compiler**: Added `compile_router.py` to crawl all 102 skills and generate a compact, structured `routing_index.json` (44KB), significantly reducing LLM token consumption on every routing decision.
+- **Skill Escalation Rules**: The new routing architecture natively supports `supersedes` and `co-requires` signals (e.g., `git-pro` automatically supersedes `github-operations` when strong signals match).
+- **Pro Tier Skills**: Introduced 5 new Enterprise-grade Pro skills: `git-pro`, `containerization-pro`, `cicd-pro`, `system-design-pro`, and `cloud-architect`.
+- **ACF Workflow Synchronization**: Restored the missing `/acf` (Agent Context Format Distiller) workflow into the Tribunal-Kit.
+
+## [4.4.0] — 2026-04-29
 ### ✨ Features
 - **Mutation Testing Engine**: Integrated a context-aware mutation engine (`tk mutate`) with character-masking state machine, disaster recovery (auto-restore from backups), and survivor reporting.
 - **Architecture Knowledge Graph v2.0**: Hardened graph builder with incremental caching, blast radius calculations, and secure URI-encoded visualizer.

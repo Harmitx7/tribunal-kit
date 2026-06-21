@@ -4,6 +4,9 @@ description: Mobile-first design for iOS, Android, Foldables, React Native, Flut
 allowed-tools: Read, Write, Edit, Glob, Grep
 version: 3.1.0
 last-updated: 2026-04-06
+routing:
+  domain: general
+  tier: basic
 ---
 
 # Mobile Design — Dense Reference

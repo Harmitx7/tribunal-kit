@@ -5,6 +5,9 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 version: 2.1.0
 last-updated: 2026-04-26
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
+routing:
+  domain: general
+  tier: basic
 ---
 
 # Testing Patterns — Cross-Stack Testing Mastery

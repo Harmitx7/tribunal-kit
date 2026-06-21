@@ -1,10 +1,21 @@
 ---
 description: Multi-Agent Swarm Orchestration. Supervisor decomposes a complex goal into sub-tasks, dispatches to specialist Workers via structured JSON contracts, collects results via allSettled fan-in, and synthesizes a unified deliverable. Validates payloads via swarm_dispatcher.js before dispatch.
+required-skills: parallel-agents, agent-organizer
 ---
 
 # /swarm — Multi-Agent Swarm Execution
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE swarming:
+□ Target scope                → Ensure tasks are non-overlapping
+□ .agent/scripts/swarm_dispatcher.js → Validate the dispatcher is available
+```
 
 ---
 
@@ -177,3 +188,14 @@ Suggestion:  Include tsconfig.json in files_to_read for next dispatch
 /swarm generate full test suite for auth, checkout, and user management
 /swarm review and optimize all N+1 query patterns across the codebase
 ```
+
+---
+
+## After /swarm — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Findings generated|→ Route to specific `/tribunal-*` to fix issues|
+|Architecture tasks blocked|→ `/plan` to resolve blocked items|
+
+---

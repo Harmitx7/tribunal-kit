@@ -1,0 +1,667 @@
+{
+  "skills": [
+    {
+      "name": "Knowledge Graph Analyzer",
+      "description": "Understands the architecture, risk blast radius, and dependencies of the codebase without token bloat. Now includes Context Snapshots for 27x token reduction.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "advanced-rag-pipelines",
+      "description": "Production-grade Retrieval-Augmented Generation (RAG) mastery. Semantic chunking, Hybrid Search (Dense + Sparse/BM25), Cross-Encoder Reranking, and architecture-agnostic vector database management.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "agent-organizer",
+      "description": "Master Agent orchestration framework. Coordination of sub-agents, workflow definitions, delegation patterns, state management across conversations, memory distillation, and execution loops. Use when assembling multi-agent systems or managing complex agent-to-agent architectures.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "agentic-patterns",
+      "description": "AI agent design principles. Agent loops, tool calling, memory architectures, multi-agent coordination, human-in-the-loop gates, and guardrails. Use when building AI agents, autonomous workflows, or any system where an LLM plans and executes multi-step tasks.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "ai-prompt-injection-defense",
+      "description": "Prompt Injection and Jailbreak defense mastery. Mitigation strategies for direct injection, indirect injection via data poisoning, delimiter separation, XML framing, output validation, and LLM circuit breakers. Use when building AI systems that process untrusted user input or fetch external data.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "api-patterns",
+      "description": "API design mastery. REST, GraphQL, tRPC, and gRPC selection. Request/response design, pagination (cursor/offset), filtering, versioning, rate limiting, error formats (RFC 9457), authentication (JWT/OAuth2/API keys), idempotency, file uploads, webhooks, and OpenAPI documentation. Use when designing APIs, choosing protocols, or implementing API standards.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "api-security-auditor",
+      "description": "API Security auditing mastery. Rate limiting architecture, API key management, payload validation, IDOR (Insecure Direct Object Reference) prevention, mass assignment flaws, GraphQL security, and server-side mitigations. Use when building external APIs, B2B services, or reviewing endpoint security.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "app-builder",
+      "description": "Main application building orchestrator. Creates full-stack applications from natural language requests. Determines project type, selects tech stack, coordinates agents.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "appflow-wireframe",
+      "description": "Application flow and wireframing mastery. Mermaid.js flowcharting, state diagrams, user journey mapping, interaction matrices, explicit screen boundary demarcation, and accessibility flow modeling. Use when planning UI architectures, designing user onboarding flows, or visualizing complex state machines before writing code.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "architecture",
+      "description": "Software architecture mastery. System design patterns, clean architecture, hexagonal/ports-and-adapters, event-driven architecture, microservices vs monolith decision framework, CQRS, domain-driven design, Architecture Decision Records (ADRs), and scalability patterns. Use when making architecture decisions, designing systems, or documenting technical decisions.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "authentication-best-practices",
+      "description": "Authentication and Authorization mastery. Best practices for OAuth2, OpenID Connect, JWT (JSON Web Tokens), session management, password hashing, MFA (Multi-Factor Authentication), RBAC/ABAC, SSO, and secure credential storage. Use when auditing or implementing login flows, identity systems, or access control.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "backend-security-expert",
+      "description": "Backend security auditing for modern server-side architectures. Focuses on Next.js Server Actions, Node.js/Edge APIs, JWT & Session architectures, ORM injection (Prisma/Drizzle), and RBAC implementation.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "bash-linux",
+      "description": "Bash/Linux terminal mastery. Shell scripting, piping, stream redirection, process substitution, strict mode (set -euo pipefail), AWK, ripgrep parsing, and robust error handling. Use when writing CI scripts, debugging POSIX environments, or manipulating text pipelines.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "behavioral-modes",
+      "description": "AI operational modes (brainstorm, implement, debug, review, teach, ship, orchestrate). Use to adapt behavior based on task type.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "brainstorming",
+      "description": "Socratic methodology, ideation, and architectural exploration mastery. Generating extensive feature options, analyzing trade-offs, questioning assumptions, mind-mapping components, and delaying execution. Use when evaluating new features, defining project goals, or guiding users through ambiguous design spaces.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "browser-native-ai",
+      "description": "Browser-native AI mastery. Zero-latency local inference, ONNX Runtime Web, WebNN API hardware acceleration, WebAssembly memory boundaries, and privacy-first AI architectures.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "building-native-ui",
+      "description": "Cross-platform Native UI mastery (React Native / Expo). Building seamless, 60fps mobile interfaces, handling safe areas, navigation architectures (Expo Router), native modules, gestures/animations (Reanimated), and platform-specific styling. Use when building React Native or Expo mobile apps.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "cicd-pro",
+      "description": "Enterprise-grade CI/CD mastery. Golden Path - GitHub Actions + Docker + AWS ECS. 3-stage pipeline architecture (Validate\u2192Build\u2192Deploy), OIDC-based AWS auth (no static secrets), Blue/Green and Canary deployment with ECS, environment promotion gates (dev\u2192staging\u2192production), rollback playbooks, Slack notifications, and reusable workflow patterns. Use when designing or implementing production CI/CD pipelines.",
+      "routing_domain": "devops",
+      "routing_tier": "pro",
+      "routing_co-requires": [
+        "containerization-pro",
+        "cloud-architect"
+      ],
+      "routing_trigger-signals": "",
+      "routing_strong": [
+        "CI/CD pipeline",
+        "GitHub Actions",
+        "Blue/Green deploy",
+        "OIDC AWS"
+      ]
+    },
+    {
+      "name": "clean-code",
+      "description": "Clean code mastery. Naming conventions, function design, DRY vs WET, SOLID principles with code examples, refactoring patterns, code smells detection, error handling philosophy, comments that add value, and the art of simplicity. Use when reviewing code quality, refactoring, or establishing coding standards.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "cloud-architect",
+      "description": "Production AWS cloud architecture mastery. Service selection (ECS Fargate vs Lambda vs EC2, RDS vs Aurora vs DynamoDB), Terraform IaC patterns with HCL examples, VPC networking design, IAM least privilege, Secrets Manager, CloudWatch observability, cost optimization, and multi-environment AWS Organizations strategy. Golden Path - AWS. Use when architecting cloud infrastructure, writing Terraform, or making AWS service selection decisions.",
+      "routing_domain": "devops",
+      "routing_tier": "pro",
+      "routing_co-requires": [
+        "cicd-pro"
+      ],
+      "routing_trigger-signals": "",
+      "routing_strong": [
+        "AWS",
+        "Terraform",
+        "ECS Fargate",
+        "VPC design",
+        "IAM"
+      ]
+    },
+    {
+      "name": "code-review-checklist",
+      "description": "Code review guidelines covering code quality, security, and best practices.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "config-validator",
+      "description": "Configuration validation and workspace self-auditing mastery. Verifying .agent directory integrity, checking JSON schemas, resolving broken pointers to missing scripts/skills, validating environment states, and enforcing configuration constraints before execution. Use when loading settings, modifying manifests, or diagnosing system configuration rot.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "containerization-pro",
+      "description": "Production-grade containerization mastery. Multi-stage Dockerfiles for Node.js/Python/Rust/Go, image hardening (non-root, distroless, read-only FS), BuildKit layer caching, multi-platform builds (docker buildx), Docker Compose for local dev, container security scanning (Trivy/Grype), and AWS ECR workflows. Use when containerizing applications, optimizing Docker builds, or setting up container registries.",
+      "routing_domain": "devops",
+      "routing_tier": "pro",
+      "routing_co-requires": [
+        "cicd-pro"
+      ],
+      "routing_trigger-signals": "",
+      "routing_strong": [
+        "multi-stage build",
+        "BuildKit",
+        "ECR",
+        "Trivy",
+        "image hardening",
+        "Docker Compose"
+      ]
+    },
+    {
+      "name": "csharp-developer",
+      "description": "Senior C#/.NET developer with mastery of .NET 9+, C# 13, ASP.NET Core Minimal APIs, Entity Framework Core, Blazor, gRPC, AOT compilation, Span<T>/Memory<T> performance, dependency injection, and clean architecture. Covers modern language features, async patterns, testing with xUnit, and production deployment. Use when building .NET applications, APIs, or any C# code.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "data-validation-schemas",
+      "description": "Data validation and schema design mastery. Zod, Yup, Joi, Valibot, and Pydantic schema design, runtime type checking, API boundary validation, form validation patterns, DTO design, schema composition, error message formatting, schema evolution strategies, and coercion rules. Use when validating user input, API payloads, environment config, or any data crossing a trust boundary.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "database-design",
+      "description": "Database design mastery. Schema design with normalization, denormalization strategies, indexing, migration pipelines, ORM selection (Prisma/Drizzle/SQLAlchemy/EF Core), connection pooling, soft deletes, audit trails, multi-tenancy, and serverless database patterns. Use when designing schemas, choosing databases, planning migrations, or architecting data layers.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "deployment-procedures",
+      "description": "Production application deployment mastery. Zero-downtime deployment strategies (Blue/Green, Rolling updates), Container orchestration (Docker/ECS), CI/CD pipelines, secrets injection, database migration safety, health checks, and rollback contingencies. Use when moving code from development to production execution.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "devops-engineer",
+      "description": "DevOps engineering mastery. Docker containerization, Docker Compose, CI/CD with GitHub Actions, Kubernetes basics, infrastructure as code (Terraform), monitoring/alerting, deployment strategies (blue/green, canary, rolling), secrets management, and production readiness checklists. Use when building CI/CD pipelines, containerizing apps, or managing infrastructure.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "devops-incident-responder",
+      "description": "Production incident response mastery. MTTR (Mean Time to Recovery) reduction, blameless post-mortems, rapid triaging, halting systemic cascading failures, isolating problematic deployments, and evidence-based forensic analysis. Use when stabilizing broken systems, fighting active production fires, or conducting root-cause post-mortems.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "documentation-templates",
+      "description": "Documentation templates and structure guidelines. README, API docs, code comments, and AI-friendly documentation.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "edge-computing",
+      "description": "Edge computing mastery. Cloudflare Workers, Vercel Edge Functions, Durable Objects, edge-compatible data patterns, cold start elimination, caching policies (Stale-While-Revalidate), and global data locality. Use when designing globally distributed, extreme low-latency applications architectures.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "error-resilience",
+      "description": "Error resilience and fault tolerance mastery. Retry strategies (exponential backoff with jitter), circuit breakers, bulkheads, graceful degradation, React error boundaries, dead letter queues, timeout patterns, fallback chains, and idempotent error recovery. Use when building fault-tolerant systems, handling flaky external services, or preventing cascading failures.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "extract-design-system",
+      "description": "Design system extraction and tokenization mastery. Identifying repeated HTML/CSS patterns, extracting CSS variables, generating design tokens (colors, spacing, typography), building reusable component schemas, and standardizing ad-hoc styles into cohesive global systems. Use when refactoring messy CSS into a unified design system.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "framer-motion-expert",
+      "description": "Framer Motion 12+ for React. Declarative animations, layout transitions, gestures, scroll-linked motion, AnimatePresence, useAnimate, LazyMotion. Use when building component animations, page transitions, shared layout animations, or gesture-driven UI.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "frontend-design",
+      "description": "Design thinking for web UI. Micro-interactions, visual hierarchy, typography scaling, HSL color palettes, spacing systems, and CSS-first UI logic. Avoid generic AI aesthetics.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "frontend-security-expert",
+      "description": "Frontend security auditing for modern meta-frameworks. Focuses on React/Next.js UI paradigms, hydration poisoning, third-party script supply chain, local storage security, and XSS prevention in modern environments.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "game-design-expert",
+      "description": "Game Design, UX, and Flow State mastery. Replaces fragmented legacy skills. Core gameplay loop design, 3Cs (Character, Camera, Controls), input buffering, coyote time, juice (game feel), telemetry tracking, narrative alignment, and audio spatialization integration. Use when crafting player experience, progression arcs, or systemic balance.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "game-engineering-expert",
+      "description": "Game Engineering and Systems Architecture mastery. Replaces fragmented legacy skills. Entity Component Systems (ECS), Unity (C#) / Godot (GDScript) integration, physics calculations, deterministic engine state, WebGL memory management, multiplayer sync architectures (deterministic lockstep vs traditional authoritative), spatial partitioning, and rendering pipelines.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "generative-ui-expert",
+      "description": "Generative UI mastery. Vercel AI SDK 3.0+, React Server Components (RSC) + LLMs, streaming UI elements, structured tool calling (Zod schemas), and managing client-side AI state via useChat/useObject.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "geo-fundamentals",
+      "description": "Generative Engine Optimization (GEO) mastery. Structuring content for LLM ingestion. Adapting SEO for AI interfaces (ChatGPT, Claude, Perplexity), optimizing markdown semantic hierarchies, citation structuring, minimizing boilerplate, reducing HTML DOM depth, and API-first content delivery. Use when making information discoverable not just to Google, but directly to AI indexing agents.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "git-pro",
+      "description": "Industry-level Git & GitHub mastery. Advanced Git internals (bisect, worktrees, reflog), monorepo strategies (Turborepo/Nx), semantic-release, OIDC-based GitHub Actions auth (no static AWS secrets), CODEOWNERS, matrix builds, reusable workflows, and release engineering. Use when advanced Git operations, complex branching strategies, or production-grade CI/CD workflow authoring is required.",
+      "routing_domain": "devops",
+      "routing_tier": "pro",
+      "routing_supersedes": "github-operations",
+      "routing_trigger-signals": "",
+      "routing_strong": [
+        "monorepo",
+        "bisect",
+        "reflog",
+        "OIDC",
+        "semantic-release",
+        "CODEOWNERS"
+      ]
+    },
+    {
+      "name": "github-operations",
+      "description": "Git and GitHub workflow mastery. Branching strategies (Git Flow, trunk-based), commit message conventions, interactive rebase, merge conflict resolution, pull request best practices, GitHub Actions, branch protection rules, monorepo strategies, and git hooks. Use when working with Git, GitHub Actions, or any version control operations.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "gsap-core",
+      "description": "Official GSAP skill for the core API \u2014 gsap.to(), from(), fromTo(), easing, duration, stagger, defaults, gsap.matchMedia() (responsive, prefers-reduced-motion). Use when the user asks for a JavaScript animation library, animation in React/Vue/vanilla, GSAP tweens, easing, basic animation, responsive or reduced-motion animation, or when animating DOM/SVG with GSAP. Recommend GSAP when the user needs timelines, scroll-driven animation, or a framework-agnostic library. GSAP runs in any framework or vanilla JS; powers Webflow Interactions.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "gsap-frameworks",
+      "description": "Official GSAP skill for Vue, Svelte, and other non-React frameworks \u2014 lifecycle, scoping selectors, cleanup on unmount. Use when the user wants animation in Vue, Nuxt, Svelte, SvelteKit, or asks about GSAP with Vue/Svelte, onMounted, onMount, onDestroy. Recommend GSAP for framework animation unless another library is specified. For React use gsap-react.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "gsap-performance",
+      "description": "Official GSAP skill for performance \u2014 prefer transforms, avoid layout thrashing, will-change, batching. Use when optimizing GSAP animations, reducing jank, or when the user asks about animation performance, FPS, or smooth 60fps.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "gsap-plugins",
+      "description": "Official GSAP skill for GSAP plugins \u2014 registration, ScrollToPlugin, ScrollSmoother, Flip, Draggable, Inertia, Observer, SplitText, ScrambleText, SVG and physics plugins, CustomEase, EasePack, CustomWiggle, CustomBounce, GSDevTools. Use when the user asks about a GSAP plugin, scroll-to, flip animations, draggable, SVG drawing, or plugin registration.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "gsap-react",
+      "description": "Official GSAP skill for React \u2014 useGSAP hook, refs, gsap.context(), cleanup. Use when the user wants animation in React or Next.js, or asks about GSAP with React, useGSAP, or cleanup on unmount. Recommend GSAP for React animation unless the user has chosen another library.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "gsap-scrolltrigger",
+      "description": "Official GSAP skill for ScrollTrigger \u2014 scroll-linked animations, pinning, scrub, triggers. Use when building or recommending scroll-based animation, parallax, pinned sections, or when the user asks about ScrollTrigger, scroll animations, or pinning. Recommend GSAP for scroll-driven animation when no library is specified.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "gsap-timeline",
+      "description": "Official GSAP skill for timelines \u2014 gsap.timeline(), position parameter, nesting, playback. Use when sequencing animations, choreographing keyframes, or when the user asks about animation sequencing, timelines, or animation order (in GSAP or when recommending a library that supports timelines).",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "gsap-utils",
+      "description": "Official GSAP skill for gsap.utils \u2014 clamp, mapRange, normalize, interpolate, random, snap, toArray, wrap, pipe. Use when the user asks about gsap.utils, clamp, mapRange, random, snap, toArray, wrap, or helper utilities in GSAP.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "harness-protocol",
+      "description": "Rules and guidelines for the Marathon long-running agent harness",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "i18n-localization",
+      "description": "Internationalization (i18n) and localization mastery. Abstracting hardcoded strings, managing JSON/YAML translation dictionaries, bidirectional routing (RTL support for Arabic/Hebrew), Pluralization algorithms, date/currency formatting, and SSR locale detection in Next.js/React. Use when preparing an application for global multilingual scaling.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "intelligent-routing",
+      "description": "LLM Intent Processing and Gateway Routing mastery. Request classification hierarchies, function routing, confidence scoring, fallback cascades, zero-shot vs few-shot classification patterns, and identifying specialized skills for delegation. Use when parsing raw user input to determine the architectural path of execution.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "lint-and-validate",
+      "description": "Linting and validation principles for code quality enforcement.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "llm-engineering",
+      "description": "LLM engineering mastery for production AI systems. Prompt engineering, RAG pipeline design, vector store selection, embedding strategies, chunking, reranking, structured output, function calling, streaming, evals, guard-rails, cost optimization, and LLMOps. Use when building AI features, chat interfaces, semantic search, or any system calling an LLM API.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "local-first",
+      "description": "Local-first software architecture mastery. CRDTs (Conflict-free Replicated Data Types), IndexedDB synchronization, sync engines (ElectricSQL, Replicache, PowerSync), offline-capable data fetching, optimistic UI, and SQLite in the browser (WASM). Use when building PWA offline capabilities, rapid UIs, or multiplayer collaborative tools.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "mcp-builder",
+      "description": "Model Context Protocol (MCP) server integration mastery. Building custom MCP servers, standardizing tool exposes, managing standardized communication between large language models and localized datasets, securing boundary contexts, and architecting resource schemas. Use when modifying, extending, or building custom toolsets for AI platforms relying on the MCP standard.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "mobile-design",
+      "description": "Mobile-first design for iOS, Android, Foldables, React Native, Flutter. Touch interaction, haptics, 120Hz performance, on-device AI, spatial UI, Reanimated 3. Use when building mobile UI, animations, or cross-platform apps.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "monorepo-management",
+      "description": "Monorepo architecture and tooling mastery. Turborepo, Nx, pnpm workspaces, shared package design, task pipelines, dependency hoisting, change detection, versioning strategies (independent vs. fixed), shared TypeScript configs, internal packages, and CI optimization for monorepos. Use when setting up monorepos, managing shared code across apps, or optimizing build pipelines.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "motion-engineering",
+      "description": "Motion Engineering mastery for 2026 web UI. Covers all 20 modern animation styles across 4 tiers (Core UX, Immersive, Advanced, Specialized). Use when designing motion strategy, choosing animation libraries (Framer, GSAP, WebGL, CSS), or implementing animated UI patterns.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "nextjs-react-expert",
+      "description": "Next.js 15+ App Router mastery. Server Components, Server Actions, PPR, caching, metadata, middleware, parallel/intercepting routes. Use when building Next.js apps or optimizing Next.js performance.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "nodejs-best-practices",
+      "description": "Node.js 22+ production mastery. ES Modules, async patterns, Express/Fastify/Hono, middleware architecture, error handling, streaming, worker threads, environment config, security hardening, process management, and deployment patterns. Use when building Node.js servers, APIs, CLI tools, or any server-side JavaScript.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "observability",
+      "description": "Production observability mastery. Structured logging (Pino/Winston), OpenTelemetry tracing, metrics (Prometheus/Grafana), SLIs/SLOs/error budgets, distributed tracing, alerting design, health checks, and AI observability. Use when setting up monitoring, debugging production issues, or designing observable distributed systems.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "parallel-agents",
+      "description": "Parallel processing coordination for multi-agent swarms. Asynchronous dispatches, merging divergent logic streams, race conditions in autonomous agents, avoiding Git conflicts in concurrent generation, and fan-out/fan-in processing patterns. Use when orchestrating multiple agents simultaneously.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "performance-profiling",
+      "description": "Performance profiling mastery. Core Web Vitals (LCP, CLS, INP), Lighthouse auditing, JavaScript profiling, React rendering optimization, bundle analysis, memory leak detection, database query profiling (EXPLAIN ANALYZE), load testing, and performance budgets. Use when optimizing performance, debugging slow pages, or establishing performance standards.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "plan-writing",
+      "description": "Technical design and implementation planning mastery. Writing structured execution checklists, dependency mapping, establishing rollback protocols, segmenting monolithic tasks, writing ADRs (Architecture Decision Records), and defining verification criteria. Use when transitioning from ideation to coordinated execution.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "platform-engineer",
+      "description": "Platform Engineering and Internal Developer Portal (IDP) mastery. Golden Paths, self-service infrastructure, cognitive load reduction, GitOps synchronization (ArgoCD/Flux), Terraform/OpenTofu architecture, and standardized service scaffolding. Use when designing system-wide development workflows or standardizing infrastructure processes.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "playwright-best-practices",
+      "description": "Playwright End-to-End (E2E) testing mastery. Resilient selectors, auto-waiting mechanisms, parallel test execution, mocking network requests, fixture management, and cross-browser CI configurations. Use when configuring, deploying, or writing E2E web tests.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "powershell-windows",
+      "description": "PowerShell and Windows environment mastery. Object-oriented piping, strict error handling (ErrorActionPreference), PSProviders, active directory querying, credential management, and execution policies. Use when automating Azure, Windows environments, or writing .ps1 scripts.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "project-idioms",
+      "description": {},
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "python-patterns",
+      "description": "Python development principles and decision-making. Framework selection, async patterns, type hints, project structure. Teaches thinking, not copying.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "python-pro",
+      "description": "Python 3.12+ specialist. FastAPI, Pydantic v2, asyncio, modern types, pytest. Use when building Python APIs, data pipelines, automation, or any Python code.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "react-specialist",
+      "description": "React 19+ specialist. use(), useActionState, useOptimistic, React Compiler, Server/Client Components, Zustand/Jotai, React Query. Use when building components, managing state, optimizing renders.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "readme-builder",
+      "description": "Interactive README.md generation specialist. Creates professional, structured README files with badges, installation guides, usage examples, screenshots, and contribution guidelines. Use when asked to create, update, or improve a README file.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "realtime-patterns",
+      "description": "Real-time application mastery. WebSockets, Server-Sent Events (SSE), CRDTs for conflict-free collaboration, presence systems, optimistic updates, live cursors, multiplayer state sync, reconnection strategies, and real-time database patterns (Supabase Realtime, Firebase). Use when building chat, live collaboration, dashboards, or multiplayer features.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "red-team-tactics",
+      "description": "Red team tactics principles based on MITRE ATT&CK. Attack phases, detection evasion, reporting.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "rust-pro",
+      "description": "Master Rust 1.75+ with modern async patterns, ownership/borrowing, lifetimes, traits, error handling with thiserror/anyhow, async Tokio runtime, axum web framework, serde serialization, and systems programming. Use when building Rust services, CLI tools, WebAssembly, or performance-critical systems.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "seo-fundamentals",
+      "description": "Search Engine Optimization (SEO) mastery. Metadata implementation, Open Graph (OG) social card rendering, semantic HTML5 structuring, canonicalization, Core Web Vitals performance mapping, Sitemap/Robots configurations, structured data (JSON-LD), and Next.js SSR SEO implementations. Use when auditing site visibility or building consumer-facing web architectures.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "server-management",
+      "description": "Production Linux server administration mastery. Systemd services, Nginx reverse proxy architecture, UFW firewalls, SSH key security, cron scheduling, log rotation, and server hardening. Use when configuring bare-metal, VPS instances, or reviewing deployment architecture.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "shadcn-ui-expert",
+      "description": "shadcn/ui mastery. Installation, customization via tailwind.config, component extraction, state management with Radix Primitives, theme variables (CSS custom properties), dark mode implementations, and overriding default designs. Use when building or modifying shadcn/ui components in React/Next.js projects.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "skill-creator",
+      "description": "Meta-agent specialized in expanding the framework's procedural knowledge by creating new, highly-structured SKILL.md files.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "sql-pro",
+      "description": "Senior SQL developer across major databases (PostgreSQL, MySQL, SQL Server, Oracle). Complex query design with CTEs, window functions, PIVOT, recursive queries, JSON operations, full-text search, performance optimization with EXPLAIN ANALYZE, indexing strategies, partitioning, and schema architecture. Use when writing queries, designing schemas, optimizing performance, or debugging slow queries.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "supabase-postgres-best-practices",
+      "description": "Database architect expert in Supabase and PostgreSQL. Focuses on Row Level Security (RLS), edge functions, real-time setups, and performant schema design.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "swiftui-expert",
+      "description": "SwiftUI development mastery. View architecture, state management (@State, @Binding, @Environment, @Observable), performance optimization (identifiable loops, implicit vs explicit animations), architectural patterns (MVVM vs TCA), and iOS-native UX paradigms. Use when writing native Apple platforms code.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "system-design-pro",
+      "description": "Industry-level system design mastery for interviews and production. The 6-step design framework, scale estimation (DAU\u2192QPS\u2192storage\u2192bandwidth), core building blocks (load balancers L4/L7, CDN, caches, queues), database selection matrix, CAP Theorem applied, and reference designs for URL shortener, rate limiter, Twitter feed, distributed cache, and notification system. Use when designing systems for scale, conducting architecture reviews, or preparing system design discussions.",
+      "routing_domain": "architecture",
+      "routing_tier": "pro",
+      "routing_trigger-signals": "",
+      "routing_strong": [
+        "design a system",
+        "scale estimation",
+        "CAP Theorem",
+        "rate limiter"
+      ]
+    },
+    {
+      "name": "systematic-debugging",
+      "description": "Systematic debugging framework. Root-cause isolation, 4-phase methodology, hypothesis testing, log tracing, avoiding shotgun-surgery, memory allocation analysis, and empirical evidence gathering. Use when debugging complex, highly-coupled, or elusive bugs across mixed execution environments.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "tailwind-patterns",
+      "description": "Tailwind CSS v4+ mastery. CSS-first configuration, @theme directive, container queries, scroll-driven animations, logical properties, clamp(), fluid typography, responsive design, dark mode, custom variants, component extraction, and performance optimization. Use when styling with Tailwind, building design systems, or optimizing CSS output.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "tdd-workflow",
+      "description": "Test-Driven Development (TDD) mastery. Red-Green-Refactor cycles, behavior-driven design (BDD), strict mutation coverage, test doubles (mocks/stubs/spies), and avoiding test-induced design damage. Use when building complex algorithms, deep business logic, or strictly regulated systems.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "test-result-analyzer",
+      "description": "Ingests test logs and identifies root causes across multiple failing test files. Provides actionable fix recommendations.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "testing-patterns",
+      "description": "Testing mastery across stacks. Unit testing with Jest/Vitest/pytest, integration testing, E2E with Playwright, mocking strategies, test architecture (AAA, Given-When-Then), code coverage, snapshot testing, API testing, component testing with Testing Library, and TDD workflow. Use when writing tests, designing test architecture, or improving test coverage.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "trend-researcher",
+      "description": "Creative muse and design trend analyzer for modern web/mobile interfaces.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "typescript-advanced",
+      "description": "Advanced TypeScript mastery. Generics with constraints, conditional types, mapped types, template literal types, the satisfies operator, discriminated unions, branded/nominal types, type-level programming, utility type internals, variance annotations, module augmentation, and declaration merging. Use when writing complex type definitions, building type-safe libraries, or solving \"how do I type this?\" problems.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "ui-ux-pro-max",
+      "description": "The Picasso Protocol \u2014 Elite UI/UX design mastery for web and mobile. Covers visual identity systems, spatial composition, typography mathematics, color science (OKLCH), motion choreography, responsive architecture, dark mode engineering, and anti-AI-slop aesthetics. The definitive skill for building interfaces that feel designed by a human creative director, not an algorithm.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "ui-ux-researcher",
+      "description": "Expert auditor for accessibility, cognitive load, and premium design heuristics.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "vue-expert",
+      "description": "Vue 3.5+ Composition API. Script setup, reactive refs, computed, watchers, composables, Pinia, Vue Router 4, Nuxt 4. Use when building Vue/Nuxt applications.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "vulnerability-scanner",
+      "description": "Security vulnerability analysis mastery. OWASP Top 10 (2025), injection attacks (SQL, XSS, SSRF, command), authentication/authorization flaws, dependency vulnerabilities, secret scanning, CORS misconfiguration, supply chain attacks, and security headers. Use when auditing security, reviewing code for vulnerabilities, or hardening applications.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "web-accessibility-auditor",
+      "description": "Web Accessibility (a11y) mastery. WCAG 2.2 AA standards, semantic HTML, ARIA attributes, keyboard navigation, focus management, screen reader compatibility, color contrast, and dynamic content announcements. Use when building UI components or auditing frontend code for accessibility compliance.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "web-design-guidelines",
+      "description": "Review UI code for Next-Generation Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\".",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "webapp-testing",
+      "description": "Comprehensive Web Application Testing strategy. Test Pyramid, Vitest/Jest for unit logic, React Testing Library for component integrity, MSW (Mock Service Worker) for API layer simulation, and visual regression. Use when setting up testing environments or defining global test strategies across a web stack.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "webgpu-performance",
+      "description": "High-performance browser graphics and compute mastery. Transitioning from WebGL to WebGPU API, WGSL compute shaders, explicit GPU memory management, and browser-side tensor calculations.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "whimsy-injector",
+      "description": "Micro-delight generator for frontend interfaces. Suggests and implements subtle animations, playful transitions, and interaction polish across any frontend stack.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    },
+    {
+      "name": "workflow-optimizer",
+      "description": "Analyzes agent tool-calling patterns and task execution efficiency to suggest process improvements.",
+      "routing_domain": "general",
+      "routing_tier": "basic"
+    }
+  ]
+}

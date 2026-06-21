@@ -1,10 +1,22 @@
 ---
 description: Mobile-specific Tribunal. Runs Logic + Security + Mobile reviewers. Use for React Native, Expo, gesture handlers, animations, navigation, and any iOS/Android-targeted code.
+required-skills: building-native-ui, mobile-design
 ---
 
 # /tribunal-mobile — Mobile Code Audit
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE mobile review:
+□ Target component files       → The mobile code being audited
+□ package.json                 → Verify versions (expo, react-native-reanimated)
+□ app.json / app.config.js     → Check for correct permissions and plugins
+```
 
 ---
 
@@ -56,8 +68,6 @@ If all reviewers → ✅ APPROVED: Human Gate
 
 ---
 
----
-
 ## Mobile-Specific Hallucination Traps (Common LLM Mistakes)
 
 ```tsx
@@ -93,3 +103,16 @@ const boxStyle = Platform.select({ ios: { paddingTop: 20 }, android: { paddingTo
 /tribunal-mobile the auth token storage and retrieval functions
 /tribunal-mobile the ProfileScreen with safe area insets
 ```
+
+---
+
+## After /tribunal-mobile — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|All checks pass|→ Safe to test on simulator / deploy|
+|Reviewers reject with fixes|→ Apply fixes, then run `/tribunal-mobile` again|
+|Needs advanced mobile UI|→ `/ui-ux-pro-max` for premium app design|
+|Animation drops frames|→ `/tribunal-performance` for JS thread profiling|
+
+---

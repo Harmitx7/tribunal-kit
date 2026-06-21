@@ -1,10 +1,22 @@
 ---
 description: Coordinate multiple agents for complex tasks. Use for multi-perspective analysis, comprehensive reviews requiring different domain expertise, or tasks where a single agent would miss domain-specific failures. Fan-Out dispatch → parallel execution → Fan-In synthesis → Human Gate.
+required-skills: agent-organizer, parallel-agents
 ---
 
 # /orchestrate — Multi-Agent Coordination
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE orchestrating:
+□ Target scope                → Identify the boundaries of the review/task
+□ Agent list                  → Determine which specialist agents are needed
+□ Context budget              → Determine how to split files among agents
+```
 
 ---
 
@@ -166,3 +178,15 @@ Worker failure (after 3 retries):
 /orchestrate comprehensive code review before launch: security + tests + performance
 /orchestrate compare three different caching strategies and recommend the best fit
 ```
+
+---
+
+## After /orchestrate — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Review reveals multiple issues|→ Route to specific `/tribunal-*` or `/fix`|
+|Analysis points to architecture|→ `/plan` to formalize the changes|
+|Analysis needs more data|→ `/performance-benchmarker` or `/debug`|
+
+---

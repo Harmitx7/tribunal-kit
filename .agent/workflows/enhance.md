@@ -1,10 +1,24 @@
 ---
 description: Add or update features in existing applications. Performs impact analysis before any code change — identifies all dependents, detects breaking changes, generates Tribunal-reviewed modifications. No change is written to disk without Human Gate approval.
+required-skills: clean-code
 ---
 
 # /enhance — Feature Addition & Modification
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE any modification:
+□ Target file              → Understand current implementation
+□ Target file's importers  → Map the impact zone (grep callers)
+□ package.json             → Verify dependencies exist
+□ tsconfig.json            → Understand path aliases and strictness
+□ Related test files        → Know what tests exist for this module
+```
 
 ---
 
@@ -124,5 +138,16 @@ After all changes:
 ❌ Never update package versions silently — show in plan
 ❌ Never "fix other things while we're here" — scope creep
 ```
+
+---
+
+## After /enhance — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Enhancement applied, needs tests|→ `/test` for new behavior coverage|
+|Enhancement applied, needs review|→ `/review` or `/tribunal-*` for validation|
+|Enhancement revealed deeper issues|→ `/refactor` for structural improvement|
+|Ready for deployment|→ `/deploy` with pre-flight checks|
 
 ---

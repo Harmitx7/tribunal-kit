@@ -1,10 +1,21 @@
 ---
 description: Display agent and project status. Shows task.md progress, last audit results, CI status, and recently modified files. Read-only — no changes made.
+required-skills: bash-linux
 ---
 
 # /status — Project Health Dashboard
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE checking status:
+□ task.md                     → Get the current active task progress
+□ git status                  → Find recently modified files
+```
 
 ---
 
@@ -77,3 +88,14 @@ Last commit: [hash] — [message] — [time ago]
 /status task         → Active task progress only
 /status recent       → Recently modified files only
 ```
+
+---
+
+## After /status — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Task in progress|→ Continue current work or `/session save`|
+|Status shows errors|→ `/debug` to investigate recent changes|
+
+---

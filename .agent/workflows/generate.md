@@ -1,10 +1,24 @@
 ---
 description: Generate code using the full Tribunal Anti-Hallucination pipeline. Maker generates grounded in real project context at low temperature → domain-selected reviewers audit in parallel → Human Gate for final approval. Nothing is written to disk without explicit approval.
+required-skills: auto-detected from request keywords (see Reviewer Auto-Selection table)
 ---
 
 # /generate — Hallucination-Free Code Generation
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE generating any code (MANDATORY — never skip):
+□ package.json      → Verify all imports exist before using them
+□ tsconfig.json     → Understand strictness, paths aliases, target version
+□ context/*.acf     → Load explicit goals, rules, and boundaries
+□ .env.example      → Know available environment variables
+□ Referenced files   → Understand actual data shapes and types
+```
 
 ---
 

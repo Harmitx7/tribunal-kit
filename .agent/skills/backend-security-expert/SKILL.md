@@ -5,6 +5,9 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 version: 1.0.0
 last-updated: 2026-05-22
 applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
+routing:
+  domain: general
+  tier: basic
 ---
 
 # Backend Security Expert — Modern Server Architectures

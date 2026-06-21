@@ -4,6 +4,9 @@ description: Framer Motion 12+ for React. Declarative animations, layout transit
 allowed-tools: Read, Write, Edit, Glob, Grep
 version: 3.1.0
 last-updated: 2026-04-06
+routing:
+  domain: general
+  tier: basic
 ---
 
 # Framer Motion 12+ — Dense Reference

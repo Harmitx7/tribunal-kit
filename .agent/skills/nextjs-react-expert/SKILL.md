@@ -5,6 +5,9 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 version: 3.1.0
 last-updated: 2026-04-06
 applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
+routing:
+  domain: general
+  tier: basic
 ---
 
 # Next.js 15+ App Router — Dense Reference

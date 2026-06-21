@@ -1,10 +1,22 @@
 ---
 description: Create new application command. Triggers full stack creation from requirements gathering → stack selection → scaffolding → Tribunal code generation. Everything through the pipeline before writing a single file.
+required-skills: app-builder, architecture
 ---
 
 # /create — Full Application Builder
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE scaffolding:
+□ Current directory listing → Ensure target directory is empty or confirm overwrite
+□ .env.example            → Know available environment variables
+□ Node/npm version         → Ensure compatibility with chosen stack
+```
 
 ---
 
@@ -110,6 +122,38 @@ After scaffolding:
 ❌ Never use deprecated Next.js 13/14 patterns (pages/, getServerSideProps)
 ❌ Never use React 18 hooks deprecated in React 19
 ```
+
+---
+
+## Error Recovery
+
+```
+npm install fails:
+  → Check Node.js version compatibility
+  → Clear npm cache: npm cache clean --force
+  → Retry with --legacy-peer-deps if peer conflict
+  → After 3 failures: HALT and report to human
+
+Template/scaffold not found:
+  → Verify npx command with --help first
+  → Fall back to manual file creation
+  → Never silently continue with partial scaffold
+
+Build fails after scaffold:
+  → Run npx tsc --noEmit to identify type errors
+  → Fix errors before proceeding to Phase 4
+```
+
+---
+
+## After /create — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Scaffold created and verified|→ `/preview start` to launch dev server|
+|Code generated, needs tests|→ `/test` to add test coverage|
+|Need to add features|→ `/enhance` for feature additions|
+|Full audit before launch|→ `/audit` for health check|
 
 ---
 

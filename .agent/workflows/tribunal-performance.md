@@ -1,10 +1,22 @@
 ---
 description: Performance-specific Tribunal. Runs Logic + Performance reviewers. Use when code is slow, for optimization tasks, bundle analysis, Core Web Vitals improvement, memory leak investigation, and before deploying performance-critical features.
+required-skills: performance-profiling
 ---
 
 # /tribunal-performance — Performance Audit
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE performance review:
+□ Target code files           → The code being optimized
+□ package.json                → Check for known heavy libraries (e.g. moment, lodash)
+□ Next.js / bundler config    → Check for bundle optimization settings
+```
 
 ---
 
@@ -59,8 +71,6 @@ If all patterns cause GOOD rating → ✅ APPROVED
 
 ---
 
----
-
 ## Performance-Specific Hallucination Traps
 
 ```typescript
@@ -108,3 +118,16 @@ After optimizing:
 /tribunal-performance the checkout flow for CWV compliance
 /tribunal-performance the API route with expensive DB query for caching
 ```
+
+---
+
+## After /tribunal-performance — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Fixes identified|→ `/enhance` to safely apply the optimizations|
+|Before/After comparison needed|→ `/performance-benchmarker` to run Lighthouse|
+|Need to verify full stack perf|→ `/tribunal-speed` for DB and server layers|
+|Issues span multiple layers|→ `/refactor` to restructure efficiently|
+
+---

@@ -1,10 +1,22 @@
 ---
 description: Structured code refactoring with dependency-safe execution and behavior preservation. Maps all dependents before touching any file. Refactoring changes structure without changing observable behavior. Tests must pass before and after every step.
+required-skills: clean-code, architecture
 ---
 
 # /refactor — Dependency-Safe Structural Improvement
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE refactoring:
+□ Target module               → Understand the structure to be extracted or renamed
+□ package.json                → Check test scripts to run after refactor
+□ grep search                 → Locate all importers of the target module
+```
 
 ---
 
@@ -157,5 +169,17 @@ function process(data: { id: string; name: string }) { data.id; } // Typed
 ❌ Never refactor database columns without expand-and-contract migration
 ❌ Never change function signatures without updating all callers simultaneously
 ```
+
+---
+
+## After /refactor — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Refactor complete, tests pass|→ `/tribunal-full` or `/deploy`|
+|Need to improve performance|→ `/tribunal-performance`|
+|Want to add features now|→ `/enhance`|
+
+---
 
 ---

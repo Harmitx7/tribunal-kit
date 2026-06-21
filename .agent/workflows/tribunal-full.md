@@ -1,10 +1,22 @@
 ---
 description: Run ALL 16 Tribunal reviewer agents simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
+required-skills: all domain skills auto-loaded
 ---
 
 # /tribunal-full — Complete 16-Reviewer Audit
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE full review:
+□ All modified files          → Use git diff to see pending changes
+□ package.json                → Verify all dependencies
+□ Config files                 → tsconfig, next.config, tailwind.config
+```
 
 ---
 
@@ -80,8 +92,6 @@ If all reviewers = ✅ APPROVED → Global verdict: ✅ APPROVED (proceed to Hum
 
 ---
 
----
-
 ## Retry Protocol
 
 When code is rejected:
@@ -96,5 +106,24 @@ After 3 failed attempts:
   → Report to human with full failure history
   → DO NOT retry silently
 ```
+
+---
+
+## Usage Examples
+
+```
+/tribunal-full audit all changes since last commit
+```
+
+---
+
+## After /tribunal-full — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|All 16 reviewers approve|→ `/deploy` — highest confidence state|
+|Reject with multiple fixes|→ `/fix` for simple issues, `/debug` for logic|
+|Performance rejection|→ `/tribunal-speed` for granular profiling|
+|Security rejection|→ Immediate `/tribunal-backend` to resolve|
 
 ---

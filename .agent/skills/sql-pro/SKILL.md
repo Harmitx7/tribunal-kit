@@ -5,6 +5,9 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 version: 2.0.0
 last-updated: 2026-03-30
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
+routing:
+  domain: general
+  tier: basic
 ---
 
 # SQL Pro — Advanced Query & Schema Mastery

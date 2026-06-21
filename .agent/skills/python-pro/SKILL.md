@@ -4,6 +4,9 @@ description: Python 3.12+ specialist. FastAPI, Pydantic v2, asyncio, modern type
 allowed-tools: Read, Write, Edit, Glob, Grep
 version: 3.1.0
 last-updated: 2026-04-06
+routing:
+  domain: general
+  tier: basic
 ---
 
 # Python 3.12+ — Dense Reference

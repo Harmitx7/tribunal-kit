@@ -1,10 +1,21 @@
 ---
 description: Plan and implement cutting-edge advanced UI/UX. Creates distinctive, production-grade frontend interfaces with high design quality that avoid generic AI aesthetics — no purple gradients, no bento grids, no mesh backgrounds.
+required-skills: ui-ux-researcher, frontend-design, motion-engineering
 ---
 
 # /ui-ux-pro-max — Advanced UI/UX Design
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE designing:
+□ Current UI components       → Follow project idioms and design systems
+□ .agent/skills/frontend-design/SKILL.md → Refresh UI guidelines
+```
 
 ---
 
@@ -120,3 +131,15 @@ Before finalizing:
 /ui-ux-pro-max design the landing page hero section with distinctive layout
 /ui-ux-pro-max create a data visualization dashboard with real-time updates
 ```
+
+---
+
+## After /ui-ux-pro-max — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Design complete|→ `/preview start` to see it in action|
+|Need responsive checks|→ `/review` or manual viewport testing|
+|Needs backend integration|→ `/tribunal-backend` to hook up APIs|
+
+---

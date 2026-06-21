@@ -1,10 +1,22 @@
 ---
 description: Full-stack parallel performance audit. Runs 3 scoped specialists simultaneously — vitals-reviewer (Frontend CWV), db-latency-auditor (SQL/ORM), throughput-optimizer (Node.js server) — then synthesizes a single ranked report. Maximum 5 AI calls regardless of project size. Use when full-stack performance profiling is needed.
+required-skills: performance-profiling, observability
 ---
 
 # /tribunal-speed — Full-Stack Performance Swarm
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE performance swarm:
+□ Target directory/files      → Determine frontend vs backend vs DB code
+□ package.json                → Identify the full stack architecture
+□ Database schemas            → Needed for the db-latency-auditor
+```
 
 ---
 
@@ -179,5 +191,16 @@ If a specialist fails after 3 retries:
 /tribunal-speed the dashboard page end-to-end (data fetch + render + DB)
 /tribunal-speed the search feature: autocomplete UI + search API + query plan
 ```
+
+---
+
+## After /tribunal-speed — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Bottlenecks identified|→ `/debug` to isolate the worst offender|
+|Schema issues found|→ `/tribunal-database` or `/migrate` to resolve|
+|Fixes proposed|→ `/enhance` to safely apply the fixes|
+|Need measurement proof|→ `/performance-benchmarker` to capture metrics|
 
 ---

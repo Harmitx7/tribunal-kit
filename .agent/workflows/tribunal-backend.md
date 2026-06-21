@@ -1,10 +1,23 @@
 ---
 description: Backend-specific Tribunal. Runs Logic + Security + Dependency + Type Safety + Resilience + Schema reviewers. Use for API routes, server logic, auth code, middleware, Server Actions, and any server-side business logic.
+required-skills: backend-security-expert, nodejs-best-practices, api-patterns
 ---
 
 # /tribunal-backend — Backend Code Audit
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE backend review:
+□ Target backend files         → The code being audited
+□ package.json                 → Verify dependency versions (express, next, etc.)
+□ prisma/schema.prisma         → If ORM is used
+□ .env.example                 → Expected environment variables
+```
 
 ---
 
@@ -73,8 +86,6 @@ If all reviewers → ✅ APPROVED: present to Human Gate
 
 ---
 
----
-
 ## Backend-Specific Hallucination Traps (Common LLM Mistakes)
 
 ```typescript
@@ -103,3 +114,16 @@ const payload = jwt.verify(token, secret);        // Correct
 /tribunal-backend the auth middleware that verifies session on protected routes
 /tribunal-backend the webhook handler for Stripe payment events
 ```
+
+---
+
+## After /tribunal-backend — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|All checks pass|→ `/deploy` or merge code|
+|Reviewers reject with fixes|→ Apply fixes, then run `/tribunal-backend` again|
+|Performance concerns raised|→ `/tribunal-performance` for deep profiling|
+|Need test coverage for logic|→ `/test` to generate backend tests|
+
+---

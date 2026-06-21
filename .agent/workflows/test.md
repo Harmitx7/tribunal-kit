@@ -1,10 +1,22 @@
 ---
 description: Test generation and test running command. Creates and executes tests for code using the Testing Trophy strategy (unit → integration → E2E). Tests are behavioral (GIVEN/WHEN/THEN), not structural. Tests cannot be approved without covering happy path, error path, and boundary cases.
+required-skills: testing-patterns, tdd-workflow
 ---
 
 # /test — Test Generation & Execution
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE testing:
+□ Target files                → Code to be tested
+□ Existing tests              → Understand testing patterns already used
+□ package.json                → Check test frameworks (Jest, Vitest, etc.)
+```
 
 ---
 
@@ -185,5 +197,15 @@ The `test-coverage-reviewer` is automatically activated and checks:
 □ Async assertions use await findBy* (not getBy*)
 □ Mock only at architectural boundaries (MSW for network — not hooks/methods)
 ```
+
+---
+
+## After /test — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Tests pass cleanly|→ `/deploy` or return to `/enhance` for next feature|
+|Tests fail with bugs|→ `/debug` to trace logic errors|
+|Need to improve performance|→ `/performance-benchmarker`|
 
 ---

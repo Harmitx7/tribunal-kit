@@ -1,10 +1,22 @@
 ---
 description: Auto-fix known issues with lint, formatting, imports, and TypeScript errors. Runs lint_runner.py and auto-fixers. Human approval required before applying any changes. Shows a diff of what will change before writing to disk.
+required-skills: lint-and-validate, clean-code
 ---
 
 # /fix — Automated Error Resolution
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE fixing:
+□ package.json                → Identify lint/format tools and scripts
+□ tsconfig.json               → Understand strictness levels
+□ .eslintrc / prettierrc      → Understand code style rules
+```
 
 ---
 
@@ -110,5 +122,15 @@ npm run lint        # Must be zero errors
 ```
 
 If any verification step fails after fixes → report and revert auto-fixes for that file.
+
+---
+
+## After /fix — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|All fixed and clean|→ `/deploy` or commit code|
+|Manual fixes needed|→ Edit files manually or use `/enhance`|
+|Fixes revealed logic errors|→ `/debug` to investigate|
 
 ---

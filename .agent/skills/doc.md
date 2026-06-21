@@ -175,3 +175,34 @@ By creating Skills, you transform a general AI model into an expert for your pro
 - ✅ The Agent automatically knows how to work with your team
 
 Instead of constantly reminding the AI to "remember to add the license" or "fix the commit format," now the Agent will do it automatically!
+
+---
+
+## 🚀 Industry Level 2 — Pro Skills
+
+These advanced skills are automatically loaded by the `system-architect` and `cloud-engineer` agents when the request domain matches. They are NOT loaded by default — only when explicitly needed, preventing context bloat.
+
+| Skill | Activation Trigger | What It Knows |
+|-------|--------------------|---------------|
+| `git-pro` | Advanced Git operations, monorepo, release engineering | Git internals, bisect, worktrees, semantic-release, OIDC GitHub Actions, CODEOWNERS |
+| `containerization-pro` | "containerize", "Dockerfile", "Docker", "ECR" | Multi-stage builds (Node/Python/Rust/Go), image hardening, BuildKit, Trivy scanning, AWS ECR |
+| `cicd-pro` | "CI/CD pipeline", "deploy to", "GitHub Actions" | 3-stage pipeline, OIDC AWS auth, Blue/Green ECS deploy, rollback, Slack notifications |
+| `system-design-pro` | "design a system", "scale this", "N users", "capacity" | 6-step framework, scale estimation, CAP Theorem, database matrix, reference designs |
+| `cloud-architect` | "AWS", "Terraform", "ECS", "VPC", "infrastructure" | AWS service selection, Terraform HCL, VPC design, IAM, Secrets Manager, CloudWatch |
+
+### Golden Path (Decision 2B)
+
+All cloud/infra skills are opinionated toward:
+- **Cloud**: AWS
+- **Containers**: Docker + AWS ECR
+- **CI/CD**: GitHub Actions
+- **Compute**: ECS Fargate (API) / Lambda (events)
+- **IaC**: Terraform
+- **Auth**: OIDC (zero static secrets)
+
+### New Agents
+
+| Agent | Owns | Use When |
+|-------|------|----------|
+| `system-architect` | `system-design-pro` + `architecture` | Designing systems, capacity planning, scale questions |
+| `cloud-engineer` | `cloud-architect` + `cicd-pro` + `containerization-pro` | AWS infra, Dockerfiles, CI/CD pipelines, Terraform |

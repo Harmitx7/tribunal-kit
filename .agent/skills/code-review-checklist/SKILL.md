@@ -5,6 +5,9 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 version: 1.0.0
 last-updated: 2026-03-12
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
+routing:
+  domain: general
+  tier: basic
 ---
 
 # Code Review Standards

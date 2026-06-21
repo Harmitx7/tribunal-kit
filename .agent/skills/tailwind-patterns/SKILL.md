@@ -5,6 +5,9 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 version: 2.0.0
 last-updated: 2026-04-01
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
+routing:
+  domain: general
+  tier: basic
 ---
 
 # Tailwind CSS v4+ — CSS-First Mastery

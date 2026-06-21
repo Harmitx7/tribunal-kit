@@ -1,10 +1,21 @@
 ---
 description: Interactive session state tracking for multi-conversation context continuity. Saves and restores agent context across separate sessions so work can be resumed without losing progress.
+required-skills: behavioral-modes, agent-organizer
 ---
 
 # /session — Session State Management
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE managing session:
+□ .agent/scripts/session_manager.js → Verify script exists and is executable
+□ Existing session files            → Check what previous sessions exist
+```
 
 ---
 
@@ -92,3 +103,14 @@ Context handoff:       /session save → share session file with collaborator
 /session restore (at start of next coding session)
 /session status (check what was accomplished)
 ```
+
+---
+
+## After /session — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Session saved|→ Close workspace, return later|
+|Session restored|→ Continue from task list or `/status`|
+
+---

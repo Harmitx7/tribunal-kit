@@ -4,6 +4,9 @@ description: The Picasso Protocol — Elite UI/UX design mastery for web and mob
 version: 2.0.0
 last-updated: 2026-04-29
 applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
+routing:
+  domain: general
+  tier: basic
 ---
 
 # UI/UX Pro Max v2.0 — The Picasso Protocol

@@ -1,10 +1,22 @@
 ---
 description: Run standardized performance benchmarks including Lighthouse CI, bundle analysis, and API latency checks. Records before/after metrics. No optimization claims without measured evidence.
+required-skills: performance-profiling, vitals-reviewer
 ---
 
 # /performance-benchmarker — Evidence-Based Performance Measurement
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE benchmarking:
+□ package.json                → Identify build/start scripts and profiling tools
+□ Application URL             → Verify the local URL and port
+□ Database connection          → Verify if DB profiling is supported
+```
 
 ---
 
@@ -110,5 +122,14 @@ Save every benchmark run:
 ```
 
 This enables trend analysis: is performance improving or degrading over time?
+
+---
+
+## After /performance-benchmarker — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Performance passes all gates|→ `/deploy` or return to development|
+|Performance degrades/fails gates|→ `/tribunal-speed` to optimize the specific bottleneck|
 
 ---

@@ -1,10 +1,23 @@
 ---
 description: Structured brainstorming for projects and features. Uses Socratic questioning to explore multiple options before committing to an approach. No implementation during this phase — only exploration.
+required-skills: brainstorming
 ---
 
 # /brainstorm — Structured Idea Exploration
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE generating any options:
+□ package.json         → Understand existing stack constraints
+□ tsconfig.json        → Understand language/framework version
+□ Project root listing → Understand project structure and scale
+□ .agent/skills/brainstorming/SKILL.md → Load domain question banks
+```
 
 ---
 
@@ -96,6 +109,17 @@ NOT recommended because [reason Option A/C is worse for this specific context]
 ❌ Never skip the Socratic probing — it surfaces assumptions
 ❌ Never proceed to implementation in /brainstorm mode — use /plan after
 ```
+
+---
+
+## After /brainstorm — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Decision made, ready to plan|→ `/plan` with the Distilled Assertions|
+|Decision made, ready to build from scratch|→ `/create` with chosen stack|
+|Need more exploration in a specific domain|→ `/brainstorm` again with narrower scope|
+|Ready to generate a specific piece|→ `/generate` for a focused snippet|
 
 ---
 

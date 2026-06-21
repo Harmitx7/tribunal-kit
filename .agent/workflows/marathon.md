@@ -1,10 +1,22 @@
 ---
 description: Long-running agent harness for multi-session projects. Decomposes specs into atomic features tracked in JSON, ensures clean handoffs between sessions, and provides structured progress tracking. Based on Anthropic's long-running agent patterns.
+required-skills: harness-protocol, agent-organizer
 ---
 
 # /marathon — Long-Running Agent Harness
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE marathon start/continue:
+□ progress.json               → See current marathon state
+□ feature_list.json           → View remaining tasks
+□ git log --oneline -5        → Check recent commits
+```
 
 ---
 
@@ -245,3 +257,15 @@ node .agent/scripts/marathon_harness.js reset
 /marathon status
 /marathon reset
 ```
+
+---
+
+## After /marathon — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Session completes|→ `/marathon continue` (next session)|
+|Feature done, needs audit|→ `/audit` for project health|
+|Marathon fully completed|→ `/deploy` to ship|
+
+---

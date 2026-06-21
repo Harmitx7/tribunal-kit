@@ -1,10 +1,24 @@
 ---
 description: Debugging command. Activates DEBUG mode for systematic problem investigation using the 4-phase methodology (Collect → Hypothesize → Test → Fix). No fix is suggested until the root cause is confirmed and tested. No random changes. No guessing.
+required-skills: systematic-debugging
 ---
 
 # /debug — Root Cause Investigation
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE hypothesizing:
+□ Error output / stack trace  → Exact error text, not a paraphrase
+□ Target file                → The file referenced in the error
+□ git diff (recent changes)  → What changed since last working state
+□ .env / .env.example        → Check for missing/rotated secrets
+□ package.json               → Check for recent dependency changes
+```
 
 ---
 
@@ -161,5 +175,16 @@ Similar patterns: [other locations to check]
 ❌ Never assume the error message accurately describes the actual cause
 ❌ Never use real API methods without verifying they exist in this version
 ```
+
+---
+
+## After /debug — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Root cause fixed|→ `/test` to add regression test preventing recurrence|
+|Fix applied, needs validation|→ `/review` to verify fix quality|
+|Bug was in generated code|→ `/tribunal-*` to audit related generated code|
+|Systemic issue discovered|→ `/refactor` for structural fix|
 
 ---

@@ -1,10 +1,22 @@
 ---
 description: Auto-generate changelogs from git history. Categorizes commits by type (feat/fix/chore/breaking) and follows Keep a Changelog format. Requires conventional commit messages for accurate categorization.
+required-skills: github-operations
 ---
 
 # /changelog — Git History to Changelog
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE generating changelog:
+□ git log --oneline -20       → Verify commit message format
+□ package.json                → Identify current version
+□ CHANGELOG.md (if exists)    → Understand existing format/history
+```
 
 ---
 
@@ -110,3 +122,14 @@ PATCH (1.0.0 → 1.0.1): Bug fixes only (fix:)
 /changelog since 2026-01-01
 /changelog what changed in the authentication module this month
 ```
+
+---
+
+## After /changelog — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Changelog updated, ready to release|→ `/deploy` or tag version|
+|Need to summarize for non-technical|→ Request PR description generation|
+
+---

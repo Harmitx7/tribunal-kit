@@ -9,6 +9,9 @@ version: auto
 last-updated: 2026-04-09
 digest-cycles: 0
 pattern: generator
+routing:
+  domain: general
+  tier: basic
 ---
 
 ## Hallucination Traps (Read First)

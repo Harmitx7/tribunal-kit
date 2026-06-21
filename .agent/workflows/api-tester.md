@@ -1,10 +1,22 @@
 ---
 description: Automated multi-stage API endpoint testing. Generates and runs auth-aware request sequences (login → use token → test CRUD → verify errors). Reports response codes, schema mismatches, and unexpected data.
+required-skills: testing-patterns, api-patterns
 ---
 
 # /api-tester — Automated API Testing
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE testing:
+□ Target endpoint files       → Understand the expected parameters and auth needs
+□ package.json                → Check testing frameworks available
+□ .env.example / .env.test     → Check for test database or mock API URLs
+```
 
 ---
 
@@ -149,3 +161,16 @@ Error Cases:
 /api-tester verify all auth routes return 401 for unauthenticated requests
 /api-tester test rate limiting on /api/auth/login
 ```
+
+---
+
+## After /api-tester — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Tests fail due to code bugs|→ `/debug` to isolate the fix|
+|Tests pass, coverage needed|→ `/test` to convert to automated Jest/Vitest suite|
+|API is slow|→ `/tribunal-speed` to profile latency|
+|Ready to ship|→ `/deploy` with full pre-flight|
+
+---

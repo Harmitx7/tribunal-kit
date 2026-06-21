@@ -67,6 +67,8 @@ Every code or design request activates an agent. This is not optional.
 |Pen testing / red team / attack surface|`penetration-tester`|
 |Database performance / slow queries|`db-latency-auditor`|
 |AI/LLM integration code / prompts|`ai-code-reviewer`|
+|System design / scale / capacity planning|`system-architect`|
+|Cloud infrastructure / AWS / Terraform / Docker / CI-CD|`cloud-engineer`|
 
 **When activated, announce the agent:**
 

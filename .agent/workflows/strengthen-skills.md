@@ -1,10 +1,20 @@
 ---
 description: Strengthen skills by appending Tribunal guardrails (LLM Traps, Pre-Flight checklist, VBC Protocol) to any SKILL.md missing them. Reads each skill, checks for guardrails, appends if missing, skips if present.
+required-skills: skill-creator, llm-engineering
 ---
 
 # /strengthen-skills — Skill Hardening Pipeline
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE strengthening:
+□ .agent/skills/              → Identify the skills that exist
+```
 
 ---
 
@@ -136,3 +146,14 @@ The Pre-Flight checklist should match the skill's specific domain — add domain
 /strengthen-skills nextjs-react-expert → Harden only this skill
 /strengthen-skills --check-only → Audit without modifying
 ```
+
+---
+
+## After /strengthen-skills — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Skills updated|→ `/status` to confirm readiness|
+|Skill errors|→ Inspect manually or `/debug`|
+
+---

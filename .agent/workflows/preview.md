@@ -1,10 +1,21 @@
 ---
 description: Preview server start, stop, and status check. Local development server management. Uses auto_preview.py for automated lifecycle control. Shows current URL and hot-reload status.
+required-skills: bash-linux, frontend-specialist
 ---
 
 # /preview — Local Development Server
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE managing preview:
+□ package.json                → Check dev script command and environment
+□ .env                        → Verify preview environment keys
+```
 
 ---
 
@@ -78,3 +89,15 @@ Config change not reflected:
 |Config file was changed|Restart: `/preview restart`|
 |Done working for the session|Stop: `/preview stop`|
 |Checking if server is active|Status: `/preview status`|
+
+---
+
+## After /preview — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Preview looks correct|→ `/deploy` or commit code|
+|Preview shows errors|→ `/debug` to analyze console/network logs|
+|Changes not updating|→ `/preview restart` to bust cache|
+
+---

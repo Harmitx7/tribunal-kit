@@ -5,6 +5,9 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 version: 4.0.0
 last-updated: 2026-04-07
 applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
+routing:
+  domain: general
+  tier: basic
 ---
 
 # Motion Engineering (2026) — Comprehensive Reference

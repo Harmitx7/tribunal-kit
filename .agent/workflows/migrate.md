@@ -1,10 +1,22 @@
 ---
 description: Migration workflow for framework upgrades, dependency bumps, and database migrations. Impact analysis first, expand-and-contract for DB, dependency compatibility matrix before upgrading, rollback tested before deploy.
+required-skills: plan-writing, architecture
 ---
 
 # /migrate — Safe Migration Execution
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE migrating:
+□ package.json                → Identify current vs target dependency versions
+□ Target files/schemas         → Understand the exact structural changes needed
+□ Release notes/Changelogs     → Understand breaking changes in the target version
+```
 
 ---
 
@@ -158,3 +170,15 @@ Rollback for DB migration:
 /migrate remove the deprecated legacy_api_key column from users
 /migrate upgrade Prisma 5 to Prisma 6 and update all breaking API calls
 ```
+
+---
+
+## After /migrate — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Migration succeeds locally|→ `/test` to verify all behaviors intact|
+|Tests pass after migration|→ `/tribunal-full` for safety audit|
+|Audit passes|→ `/deploy` with explicit rollback baseline|
+
+---

@@ -1,10 +1,22 @@
 ---
 description: Database-specific Tribunal. Runs Logic + Security + SQL reviewers. Use for Prisma queries, raw SQL, schema migrations, ORM operations, and database transaction code.
+required-skills: database-design
 ---
 
 # /tribunal-database — Database Code Audit
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE database review:
+□ Target query/schema files    → The code being audited
+□ prisma/schema.prisma         → The single source of truth for schema
+□ Database migration files      → History of schema changes
+```
 
 ---
 
@@ -55,8 +67,6 @@ If all reviewers → ✅ APPROVED: Human Gate
 
 ---
 
----
-
 ## Database-Specific Hallucination Traps (Common LLM Mistakes)
 
 ```typescript
@@ -93,3 +103,16 @@ try {
 /tribunal-database the migration file adding phoneNumber to users
 /tribunal-database the paginated product query with category filter
 ```
+
+---
+
+## After /tribunal-database — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|All checks pass|→ Safe to run migrations or deploy|
+|Reviewers reject with fixes|→ Apply fixes, then run `/tribunal-database` again|
+|Slow queries identified|→ `/tribunal-speed` for latency profiling|
+|Major schema changes needed|→ `/migrate` for safe expand-and-contract|
+
+---

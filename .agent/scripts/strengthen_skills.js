@@ -14,7 +14,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { RED, GREEN, YELLOW, BLUE, BOLD, RESET } = require('./colors.js');
+const { RED, GREEN, YELLOW, BLUE, BOLD, RESET } = require('./_colors.js');
 
 const GUARDRAILS_BLOCK = `
 

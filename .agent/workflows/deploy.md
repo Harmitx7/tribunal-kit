@@ -1,10 +1,22 @@
 ---
 description: Production deployment command. Runs pre-flight safety checks (tests, type-check, lint, security, build), creates a rollback baseline, confirms Human Gate, then executes deployment. Requires explicit human approval before going live.
+required-skills: deployment-procedures, devops-engineer
 ---
 
 # /deploy — Production Deployment
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE deploying:
+□ package.json                → Identify build/test scripts
+□ CI/CD configs               → GitHub Actions, render.yaml, fly.toml
+□ Database schema             → Check if migrations are pending
+```
 
 ---
 
@@ -176,5 +188,14 @@ If this deploy includes database migrations:
 ```
 
 **Never deploy application code and schema changes in the same deployment.**
+
+---
+
+## After /deploy — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Deploy succeeds|→ Monitor logs and optionally `/changelog`|
+|Deploy fails or health drops|→ Trigger rollback procedure immediately|
 
 ---

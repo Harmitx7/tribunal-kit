@@ -4,6 +4,9 @@ description: Vue 3.5+ Composition API. Script setup, reactive refs, computed, wa
 allowed-tools: Read, Write, Edit, Glob, Grep
 version: 3.1.0
 last-updated: 2026-04-06
+routing:
+  domain: general
+  tier: basic
 ---
 
 # Vue 3.5+ & Nuxt 4 — Dense Reference

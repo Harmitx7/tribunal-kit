@@ -5,6 +5,9 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 version: 1.0.0
 last-updated: 2026-03-30
 applies-to-model: claude-3-7-sonnet, gemini-2.5-pro
+routing:
+  domain: general
+  tier: basic
 ---
 
 ## Hallucination Traps (Read First)

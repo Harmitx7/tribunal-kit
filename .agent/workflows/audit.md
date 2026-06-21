@@ -1,10 +1,22 @@
 ---
 description: Full project audit combining security scan, lint, schema validation, test coverage, dependency analysis, and bundle analysis. Runs all scripts in priority order. Human review required before applying any fixes.
+required-skills: vulnerability-scanner, clean-code
 ---
 
 # /audit — Complete Project Health Assessment
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE auditing:
+□ package.json                → Identify all configured scripts and dependencies
+□ Config files                 → tsconfig.json, eslint.config.js, jest.config.js
+□ .agent/scripts/              → Check which audit scripts exist and are executable
+```
 
 ---
 
@@ -123,5 +135,16 @@ S = select specific items to fix
 ```
 
 No files are modified without explicit approval.
+
+---
+
+## After /audit — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Security/Dependency failures|→ `/tribunal-backend` to implement secure fixes|
+|Lint/Type errors|→ `/fix` for automated cleanup|
+|Test coverage missing|→ `/test` to generate missing tests|
+|Audit clean|→ `/deploy` if preparing for release|
 
 ---

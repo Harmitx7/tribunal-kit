@@ -1,10 +1,21 @@
 ---
 description: Audit existing code for hallucinations. Runs Logic + Security reviewers on any code without generating anything new. The pure review mode — read, analyze, and report only.
+required-skills: code-review-checklist, vulnerability-scanner
 ---
 
 # /review — Hallucination Audit (Read-Only)
 
 $ARGUMENTS
+
+---
+
+## $CONTEXT_REQUIRED
+
+```
+Read BEFORE reviewing:
+□ Target code files           → The files that need auditing
+□ package.json                → Check dependencies used by target files
+```
 
 ---
 
@@ -114,3 +125,15 @@ The review specifically catches:
 /review src/lib/ai-chat.ts for AI API hallucinations
 /review the last generated code before we write it to disk
 ```
+
+---
+
+## After /review — Next Steps
+
+|Outcome|Next Command|
+|:---|:---|
+|Review reveals bugs|→ `/debug` to isolate and fix|
+|Review reveals security issues|→ `/tribunal-backend` to apply fixes|
+|Review is clean|→ `/deploy` or commit code|
+
+---

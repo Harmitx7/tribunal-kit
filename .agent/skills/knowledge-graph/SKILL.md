@@ -2,6 +2,9 @@
 name: Knowledge Graph Analyzer
 description: Understands the architecture, risk blast radius, and dependencies of the codebase without token bloat. Now includes Context Snapshots for 27x token reduction.
 version: 3.0.0
+routing:
+  domain: general
+  tier: basic
 ---
 
 # /graph — Knowledge Graph Skill v3.0
