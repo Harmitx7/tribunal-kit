@@ -22,12 +22,12 @@ Read BEFORE benchmarking:
 
 ## When to Use /performance-benchmarker
 
-|Use `/performance-benchmarker` when...|Use something else when...|
-|:---|:---|
-|Establishing performance baseline|Code optimization decisions → `/tribunal-performance`|
-|After optimization — verify improvement|Memory leaks investigation → `/debug`|
-|Pre-release performance gate|Bundle analysis only → run ANALYZE=true npm run build|
-|Regular weekly benchmark|API review only → `/tribunal-backend`|
+| Use `/performance-benchmarker` when...  | Use something else when...                            |
+| :-------------------------------------- | :---------------------------------------------------- |
+| Establishing performance baseline       | Code optimization decisions → `/tribunal-performance` |
+| After optimization — verify improvement | Memory leaks investigation → `/debug`                 |
+| Pre-release performance gate            | Bundle analysis only → run ANALYZE=true npm run build |
+| Regular weekly benchmark                | API review only → `/tribunal-backend`                 |
 
 ---
 
@@ -127,9 +127,9 @@ This enables trend analysis: is performance improving or degrading over time?
 
 ## After /performance-benchmarker — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Performance passes all gates|→ `/deploy` or return to development|
-|Performance degrades/fails gates|→ `/tribunal-speed` to optimize the specific bottleneck|
+| Outcome                          | Next Command                                            |
+| :------------------------------- | :------------------------------------------------------ |
+| Performance passes all gates     | → `/deploy` or return to development                    |
+| Performance degrades/fails gates | → `/tribunal-speed` to optimize the specific bottleneck |
 
 ---

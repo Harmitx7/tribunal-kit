@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Designing reward systems without testing for compulsion loops -> ✅ Playtesting must verify engagement without addiction patterns
 - ❌ Assuming all players have the same skill level -> ✅ Design difficulty curves that adapt or offer accessibility options
 - ❌ Adding mechanics without testing the core loop first -> ✅ Core loop must be fun in isolation before adding complexity
 
 ---
-
 
 # Game Design Expert — Player Experience & Flow Mastery
 
@@ -27,32 +27,35 @@ routing:
 Before designing enemies, levels, or UI, the foundation of the player's interaction MUST feel flawless. If the player cannot intrinsically trust the controls, the entire system collapses.
 
 ### Input Buffering
+
 Humans cannot click buttons flawlessly on the exact required frame.
-If a player presses "Jump" 3 frames *before* they hit the ground, a naïve engine ignores it. A designed engine *buffers* the input in memory for 150ms and instantly executes the jump the millisecond the character's feet touch the dirt.
+If a player presses "Jump" 3 frames _before_ they hit the ground, a naïve engine ignores it. A designed engine _buffers_ the input in memory for 150ms and instantly executes the jump the millisecond the character's feet touch the dirt.
 
 ### Coyote Time
+
 Named after Wile E. Coyote hovering off a cliff.
 If a player runs off a ledge, a rigid physics engine drops them instantly.
-A forgiving design allows the player to still press 'Jump' for exactly ~100ms *after* walking off the ledge. It prevents extreme frustration on close platforming jumps.
+A forgiving design allows the player to still press 'Jump' for exactly ~100ms _after_ walking off the ledge. It prevents extreme frustration on close platforming jumps.
 
 ---
 
 ## 2. The Core Gameplay Loop
 
-Every action a player takes must feed into a reinforcing psychological loop. 
+Every action a player takes must feed into a reinforcing psychological loop.
 
 **The Macro Loop (e.g., Destiny, Monster Hunter)**
+
 1. **Action:** Fight complex monsters.
 2. **Reward:** Collect physical parts and resources.
 3. **Pacing:** Return to base.
 4. **Upgrade:** Convert parts into stronger weapons.
 5. **Goal:** Fight stronger, unkillable monsters (Back to Step 1).
 
-*If step 4 (Upgrading) does not heavily alter step 1 (Fights are now faster, visually different, mechanically superior), the loop is broken and players churn.*
+_If step 4 (Upgrading) does not heavily alter step 1 (Fights are now faster, visually different, mechanically superior), the loop is broken and players churn._
 
 ---
 
-## 3. "Juice" and Game Feel 
+## 3. "Juice" and Game Feel
 
 "Juice" is the non-functional audiovisual feedback that makes an interaction feel heavy and satisfying.
 
@@ -77,14 +80,11 @@ Game design is not segregated from Audio. Audio is the primary vector for tempor
 
 Design is hypotheses. Playtests are the reality.
 
-Never rely on developers "feeling" the game. You must systematically log death coordinates (heatmaps). If 80% of players die at Level 2 Trap B, your design intent (teaching the mechanic) has failed. 
+Never rely on developers "feeling" the game. You must systematically log death coordinates (heatmaps). If 80% of players die at Level 2 Trap B, your design intent (teaching the mechanic) has failed.
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -96,8 +96,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -107,9 +105,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -120,17 +117,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -160,6 +158,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -170,5 +169,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

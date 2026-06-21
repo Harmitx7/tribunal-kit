@@ -13,6 +13,7 @@ routing:
 # API Patterns — Design & Protocol Mastery
 
 ## Hallucination Traps (Read First)
+
 - ❌ JWT in URL query params → ✅ `Authorization: Bearer` header only. Query params get logged in server access logs.
 - ❌ Assuming JWT is encrypted → ✅ JWT is base64-encoded (NOT encrypted). Anyone can decode it. Never put secrets/PII in the payload.
 - ❌ Offset pagination on large tables → ✅ `OFFSET 100000` scans and discards 100K rows. Use cursor pagination for tables > 10K rows.
@@ -24,20 +25,21 @@ routing:
 
 ## Protocol Selection Matrix
 
-| Protocol | Use When |
-|----------|----------|
-| **REST** | Public APIs, 3rd-party consumers, standard CRUD, HTTP caching |
-| **GraphQL** | Complex nested data, multiple clients, flexible queries, mobile bandwidth sensitivity |
-| **tRPC** | Full-stack TypeScript (Next.js monorepo), shared types, no codegen |
-| **gRPC** | Internal microservices, high-throughput, streaming, binary protocol |
-| **WebSocket** | Bidirectional real-time (chat, gaming, live collaboration) |
-| **SSE** | Server-to-client streaming only (AI token streaming, live feeds) |
+| Protocol      | Use When                                                                              |
+| ------------- | ------------------------------------------------------------------------------------- |
+| **REST**      | Public APIs, 3rd-party consumers, standard CRUD, HTTP caching                         |
+| **GraphQL**   | Complex nested data, multiple clients, flexible queries, mobile bandwidth sensitivity |
+| **tRPC**      | Full-stack TypeScript (Next.js monorepo), shared types, no codegen                    |
+| **gRPC**      | Internal microservices, high-throughput, streaming, binary protocol                   |
+| **WebSocket** | Bidirectional real-time (chat, gaming, live collaboration)                            |
+| **SSE**       | Server-to-client streaming only (AI token streaming, live feeds)                      |
 
 ---
 
 ## REST Design
 
 ### URL Conventions
+
 ```
 ✅  GET    /api/v1/users              list users
 ✅  GET    /api/v1/users/123          get user by ID
@@ -50,6 +52,7 @@ routing:
 ```
 
 ### HTTP Status Codes
+
 ```
 200 OK             → GET / PUT / PATCH success
 201 Created        → POST success (include Location: /api/v1/users/123 header)
@@ -65,13 +68,17 @@ routing:
 ```
 
 ### Response Envelope
+
 ```typescript
-interface ApiResponse<T> { data: T; meta?: Record<string, unknown>; }
+interface ApiResponse<T> {
+  data: T;
+  meta?: Record<string, unknown>;
+}
 
 interface ApiError {
   error: {
-    code: string;       // machine-readable: "VALIDATION_ERROR"
-    message: string;    // human-readable: "Email is already in use"
+    code: string; // machine-readable: "VALIDATION_ERROR"
+    message: string; // human-readable: "Email is already in use"
     details?: Array<{ field: string; message: string }>; // field-level errors
     requestId?: string; // for support/tracing
   };
@@ -133,8 +140,7 @@ function verify(payload: string, signature: string, secret: string): boolean {
 }
 
 app.post("/webhooks", (req, res) => {
-  if (!verify(JSON.stringify(req.body), req.headers["x-webhook-signature"] as string, WEBHOOK_SECRET))
-    return res.status(401).send("Invalid signature");
+  if (!verify(JSON.stringify(req.body), req.headers["x-webhook-signature"] as string, WEBHOOK_SECRET)) return res.status(401).send("Invalid signature");
   res.status(200).send("OK"); // respond immediately
   processWebhookAsync(req.body); // process asynchronously
 });
@@ -191,18 +197,15 @@ Protect against:
 
 ## Authentication Selection
 
-| Pattern | Best For |
-|---------|----------|
-| **JWT** (short-lived access + httpOnly refresh) | Stateless services, microservices |
-| **Session** | Traditional server-rendered apps |
-| **OAuth 2.0 / OIDC** | Third-party login, delegated access |
-| **API Key** | Server-to-server, public API consumers |
-| **Passkey (WebAuthn)** | Modern passwordless (2026+) |
-
+| Pattern                                         | Best For                               |
+| ----------------------------------------------- | -------------------------------------- |
+| **JWT** (short-lived access + httpOnly refresh) | Stateless services, microservices      |
+| **Session**                                     | Traditional server-rendered apps       |
+| **OAuth 2.0 / OIDC**                            | Third-party login, delegated access    |
+| **API Key**                                     | Server-to-server, public API consumers |
+| **Passkey (WebAuthn)**                          | Modern passwordless (2026+)            |
 
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -214,8 +217,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -225,9 +226,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -238,17 +238,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -278,6 +279,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -288,5 +290,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -14,6 +14,7 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ `FROM node:22` → ✅ `FROM node:22-alpine` (1GB+ vs ~150MB). Always use slim/alpine variants.
 - ❌ `RUN npm install` → ✅ `RUN npm ci --omit=dev` (deterministic, no devDeps, respects lockfile)
 - ❌ `COPY . .` without `.dockerignore` → ✅ Always create `.dockerignore` first. Copies `node_modules`, `.env`, `.git` otherwise.
@@ -214,8 +215,8 @@ RUN --mount=type=cache,target=/app/.next/cache \
     context: .
     push: true
     tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
-    cache-from: type=gha         # GitHub Actions cache
-    cache-to: type=gha,mode=max  # Cache all layers
+    cache-from: type=gha # GitHub Actions cache
+    cache-to: type=gha,mode=max # Cache all layers
     build-args: |
       BUILDKIT_INLINE_CACHE=1
 ```
@@ -260,7 +261,7 @@ services:
   api:
     build:
       context: .
-      target: builder          # use builder stage locally (includes devtools)
+      target: builder # use builder stage locally (includes devtools)
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
@@ -269,8 +270,8 @@ services:
       DATABASE_URL: postgres://postgres:postgres@db:5432/myapp_dev
       REDIS_URL: redis://redis:6379
     volumes:
-      - .:/app                 # mount source for hot-reload
-      - /app/node_modules      # anonymous volume prevents host node_modules overwrite
+      - .:/app # mount source for hot-reload
+      - /app/node_modules # anonymous volume prevents host node_modules overwrite
     depends_on:
       db:
         condition: service_healthy
@@ -292,7 +293,7 @@ services:
       timeout: 3s
       retries: 5
     ports:
-      - "5432:5432"    # expose for local DB clients
+      - "5432:5432" # expose for local DB clients
 
   redis:
     image: redis:7-alpine
@@ -319,7 +320,7 @@ volumes:
     format: sarif
     output: trivy-results.sarif
     severity: CRITICAL,HIGH
-    exit-code: '1'             # fail pipeline on CRITICAL/HIGH vulnerabilities
+    exit-code: "1" # fail pipeline on CRITICAL/HIGH vulnerabilities
 
 - name: Upload Trivy scan results to GitHub Security tab
   uses: github/codeql-action/upload-sarif@v3
@@ -446,5 +447,6 @@ jobs:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden**: Declaring a Dockerfile correct because it "looks valid."
 - ✅ **Required**: Run `docker build .` successfully AND `docker run` the image to verify the health endpoint responds before declaring complete.

@@ -29,12 +29,12 @@ Every step is logged. Every step has a rollback path. No surprises.
 
 ## When to Use /deploy
 
-|Use `/deploy` when...|Do NOT deploy when...|
-|:---|:---|
-|All pre-flight checks pass|Any pre-flight check fails|
-|Changes are reviewed and approved|In the middle of a debug session|
-|You have a rollback plan|No tests run since last change|
-|Non-peak traffic hours (if possible)|Security audit shows critical issues|
+| Use `/deploy` when...                | Do NOT deploy when...                |
+| :----------------------------------- | :----------------------------------- |
+| All pre-flight checks pass           | Any pre-flight check fails           |
+| Changes are reviewed and approved    | In the middle of a debug session     |
+| You have a rollback plan             | No tests run since last change       |
+| Non-peak traffic hours (if possible) | Security audit shows critical issues |
 
 ---
 
@@ -193,9 +193,9 @@ If this deploy includes database migrations:
 
 ## After /deploy — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Deploy succeeds|→ Monitor logs and optionally `/changelog`|
-|Deploy fails or health drops|→ Trigger rollback procedure immediately|
+| Outcome                      | Next Command                               |
+| :--------------------------- | :----------------------------------------- |
+| Deploy succeeds              | → Monitor logs and optionally `/changelog` |
+| Deploy fails or health drops | → Trigger rollback procedure immediately   |
 
 ---

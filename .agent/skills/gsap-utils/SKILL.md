@@ -19,7 +19,7 @@ Apply when writing or reviewing code that uses **gsap.utils** for math, array/co
 
 **gsap.utils** provides pure helpers; no need to register. Use in tween vars (e.g. function-based values), in ScrollTrigger or Observer callbacks, or in any JS that drives GSAP. All are on **gsap.utils** (e.g. `gsap.utils.clamp()`).
 
-**Omitting the value: function form.** Many utils accept the value to transform as the **last** argument. If you omit that argument, the util returns a **function** that accepts the value later. Use the function form when you need to clamp, map, normalize, or snap many values with the same config (e.g. in a mousemove handler or tween callback). **Exception: random()** — pass **true** as the last argument to get a reusable function (do not omit the value); see [random()](https://gsap.com/docs/v3/GSAP/UtilityMethods/random()).
+**Omitting the value: function form.** Many utils accept the value to transform as the **last** argument. If you omit that argument, the util returns a **function** that accepts the value later. Use the function form when you need to clamp, map, normalize, or snap many values with the same config (e.g. in a mousemove handler or tween callback). **Exception: random()** — pass **true** as the last argument to get a reusable function (do not omit the value); see [random()](<https://gsap.com/docs/v3/GSAP/UtilityMethods/random()>).
 
 ```javascript
 // With value: returns the result
@@ -27,8 +27,8 @@ gsap.utils.clamp(0, 100, 150); // 100
 
 // Without value: returns a function you call with the value later
 let c = gsap.utils.clamp(0, 100);
-c(150);  // 100
-c(-10);  // 0
+c(150); // 100
+c(-10); // 0
 ```
 
 ## Clamping and Ranges
@@ -50,11 +50,11 @@ clampFn(150); // 100
 Maps a value from one range to another. Use when converting scroll position, progress (0–1), or input range to an animation range. Omit **value** to get a function: `mapRange(inMin, inMax, outMin, outMax)(value)`.
 
 ```javascript
-gsap.utils.mapRange(0, 100, 0, 500, 50);  // 250
-gsap.utils.mapRange(0, 1, 0, 360, 0.5);   // 180 (progress to degrees)
+gsap.utils.mapRange(0, 100, 0, 500, 50); // 250
+gsap.utils.mapRange(0, 1, 0, 360, 0.5); // 180 (progress to degrees)
 
 let mapFn = gsap.utils.mapRange(0, 100, 0, 500);
-mapFn(50);  // 250
+mapFn(50); // 250
 ```
 
 ### normalize(min, max, value?)
@@ -62,7 +62,7 @@ mapFn(50);  // 250
 Returns a value normalized to 0–1 for the given range. Inverse of mapping when the target range is 0–1. Omit **value** to get a function: `normalize(min, max)(value)`.
 
 ```javascript
-gsap.utils.normalize(0, 100, 50);   // 0.5
+gsap.utils.normalize(0, 100, 50); // 0.5
 gsap.utils.normalize(100, 300, 200); // 0.5
 
 let normFn = gsap.utils.normalize(0, 100);
@@ -74,7 +74,7 @@ normFn(50); // 0.5
 Interpolates between two values at a given progress (0–1). Handles numbers, colors, and objects with matching keys. Omit **progress** to get a function: `interpolate(start, end)(progress)`.
 
 ```javascript
-gsap.utils.interpolate(0, 100, 0.5);       // 50
+gsap.utils.interpolate(0, 100, 0.5); // 50
 gsap.utils.interpolate("#ff0000", "#0000ff", 0.5); // mid color
 gsap.utils.interpolate({ x: 0, y: 0 }, { x: 100, y: 50 }, 0.5); // { x: 50, y: 25 }
 
@@ -90,18 +90,18 @@ Returns a random number in the range **minimum**–**maximum**, or a random elem
 
 ```javascript
 // immediate value: number in range
-gsap.utils.random(-100, 100);        // e.g. 42.7
-gsap.utils.random(0, 500, 5);        // 0–500, snapped to nearest 5
+gsap.utils.random(-100, 100); // e.g. 42.7
+gsap.utils.random(0, 500, 5); // 0–500, snapped to nearest 5
 
 // reusable function: pass true as last argument
 let randomFn = gsap.utils.random(-200, 500, 10, true);
-randomFn();  // random value in range, snapped to 10
-randomFn();  // another random value
+randomFn(); // random value in range, snapped to 10
+randomFn(); // another random value
 
 // array: pick one value at random
-gsap.utils.random(["red", "blue", "green"]);  // "red", "blue", or "green"
+gsap.utils.random(["red", "blue", "green"]); // "red", "blue", or "green"
 let randomFromArray = gsap.utils.random([0, 100, 200], true);
-randomFromArray();  // 0, 100, or 200
+randomFromArray(); // 0, 100, or 200
 ```
 
 **String form in tween vars:** use `"random(-100, 100)"`, `"random(-100, 100, 5)"`, or `"random([0, 100, 200])"`; GSAP evaluates it per target.
@@ -116,8 +116,8 @@ gsap.to(".item", { backgroundColor: "random([red, blue, green])" });
 Snaps a value to the nearest multiple of **snapTo**, or to the nearest value in an array of allowed values. Omit **value** to get a function: `snap(snapTo)(value)` (or `snap(snapArray)(value)`).
 
 ```javascript
-gsap.utils.snap(10, 23);     // 20
-gsap.utils.snap(0.25, 0.7);  // 0.75
+gsap.utils.snap(10, 23); // 20
+gsap.utils.snap(0.25, 0.7); // 0.75
 gsap.utils.snap([0, 100, 200], 150); // 100 or 200 (nearest in array)
 
 let snapFn = gsap.utils.snap(10);
@@ -144,15 +144,15 @@ gsap.utils.shuffle([1, 2, 3, 4]); // e.g. [3, 1, 4, 2]
 
 **Config (all optional):**
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `base` | Number | Starting value. Default `0`. |
-| `amount` | Number | Total to distribute across all targets (added to base). E.g. `amount: 1` with 100 targets → 0.01 between each. Use **each** instead to set a fixed step per target. |
-| `each` | Number | Amount to add between each target (added to base). E.g. `each: 1` with 4 targets → 0, 1, 2, 3. Use **amount** instead to split a total. |
-| `from` | Number \| String \| Array | Where distribution starts: index, or `"start"`, `"center"`, `"edges"`, `"random"`, `"end"`, or ratios like `[0.25, 0.75]`. Default `0`. |
-| `grid` | String \| Array | Use grid position instead of flat index: `[rows, columns]` (e.g. `[5, 10]`) or `"auto"` to detect. Omit for flat array. |
-| `axis` | String | For grid: limit to one axis (`"x"` or `"y"`). |
-| `ease` | Ease | Distribute values along an ease curve (e.g. `"power1.inOut"`). Default `"none"`. |
+| Property | Type                      | Description                                                                                                                                                         |
+| -------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `base`   | Number                    | Starting value. Default `0`.                                                                                                                                        |
+| `amount` | Number                    | Total to distribute across all targets (added to base). E.g. `amount: 1` with 100 targets → 0.01 between each. Use **each** instead to set a fixed step per target. |
+| `each`   | Number                    | Amount to add between each target (added to base). E.g. `each: 1` with 4 targets → 0, 1, 2, 3. Use **amount** instead to split a total.                             |
+| `from`   | Number \| String \| Array | Where distribution starts: index, or `"start"`, `"center"`, `"edges"`, `"random"`, `"end"`, or ratios like `[0.25, 0.75]`. Default `0`.                             |
+| `grid`   | String \| Array           | Use grid position instead of flat index: `[rows, columns]` (e.g. `[5, 10]`) or `"auto"` to detect. Omit for flat array.                                             |
+| `axis`   | String                    | For grid: limit to one axis (`"x"` or `"y"`).                                                                                                                       |
+| `ease`   | Ease                      | Distribute values along an ease curve (e.g. `"power1.inOut"`). Default `"none"`.                                                                                    |
 
 **In a tween:** pass the result of `distribute(config)` as the property value; GSAP calls the function for each target with `(index, target, targets)`.
 
@@ -162,8 +162,8 @@ gsap.to(".class", {
   scale: gsap.utils.distribute({
     base: 0.5,
     amount: 2.5,
-    from: "center"
-  })
+    from: "center",
+  }),
 });
 ```
 
@@ -174,7 +174,7 @@ const distributor = gsap.utils.distribute({
   base: 50,
   amount: 100,
   from: "center",
-  ease: "power1.inOut"
+  ease: "power1.inOut",
 });
 const targets = gsap.utils.toArray(".box");
 const valueForIndex2 = distributor(2, targets[2], targets);
@@ -189,9 +189,9 @@ See [distribute()](https://gsap.com/docs/v3/GSAP/UtilityMethods/distribute/) for
 Returns the unit string of a value (e.g. `"px"`, `"%"`, `"deg"`). Use when normalizing or converting values.
 
 ```javascript
-gsap.utils.getUnit("100px");   // "px"
-gsap.utils.getUnit("50%");     // "%"
-gsap.utils.getUnit(42);        // "" (unitless)
+gsap.utils.getUnit("100px"); // "px"
+gsap.utils.getUnit("50%"); // "%"
+gsap.utils.getUnit(42); // "" (unitless)
 ```
 
 ### unitize(value, unit)
@@ -199,7 +199,7 @@ gsap.utils.getUnit(42);        // "" (unitless)
 Appends a unit to a number, or returns the value as-is if it already has a unit. Use when building CSS values or tween end values.
 
 ```javascript
-gsap.utils.unitize(100, "px");  // "100px"
+gsap.utils.unitize(100, "px"); // "100px"
 gsap.utils.unitize("2rem", "px"); // "2rem" (unchanged)
 ```
 
@@ -208,10 +208,10 @@ gsap.utils.unitize("2rem", "px"); // "2rem" (unchanged)
 Converts a color string into an array: **[red, green, blue]** (0–255), or **[red, green, blue, alpha]** (4 elements for RGBA when alpha is present or required). Pass **true** as the second argument (**returnHSL**) to get **[hue, saturation, lightness]** or **[hue, saturation, lightness, alpha]** (HSL/HSLA) instead. Works with `"rgb()"`, `"rgba()"`, `"hsl()"`, `"hsla()"`, hex, and named colors (e.g. `"red"`). Use when animating color components or building gradients. See [splitColor()](https://gsap.com/docs/v3/GSAP/UtilityMethods/splitColor/).
 
 ```javascript
-gsap.utils.splitColor("red");                    // [255, 0, 0]
-gsap.utils.splitColor("#6fb936");                // [111, 185, 54]
+gsap.utils.splitColor("red"); // [255, 0, 0]
+gsap.utils.splitColor("#6fb936"); // [111, 185, 54]
 gsap.utils.splitColor("rgba(204, 153, 51, 0.5)"); // [204, 153, 51, 0.5] (4 elements)
-gsap.utils.splitColor("#6fb936", true);          // [94, 55, 47] (HSL: hue, saturation, lightness)
+gsap.utils.splitColor("#6fb936", true); // [94, 55, 47] (HSL: hue, saturation, lightness)
 ```
 
 ## Arrays and Collections
@@ -222,7 +222,7 @@ Returns a scoped selector function that finds elements only within the given ele
 
 ```javascript
 const q = gsap.utils.selector(containerRef);
-q(".box");        // array of .box elements inside container
+q(".box"); // array of .box elements inside container
 gsap.to(q(".circle"), { x: 100 });
 ```
 
@@ -231,9 +231,9 @@ gsap.to(q(".circle"), { x: 100 });
 Converts a value to an array: selector string (scoped to element), NodeList, HTMLCollection, single element, or array. Use when passing mixed inputs to GSAP (e.g. targets) and a true array is needed.
 
 ```javascript
-gsap.utils.toArray(".item");           // array of elements
+gsap.utils.toArray(".item"); // array of elements
 gsap.utils.toArray(".item", container); // scoped to container
-gsap.utils.toArray(nodeList);          // [ ... ] from NodeList
+gsap.utils.toArray(nodeList); // [ ... ] from NodeList
 ```
 
 ### pipe(...functions)
@@ -243,7 +243,7 @@ Composes functions: **pipe(f1, f2, f3)(value)** returns f3(f2(f1(value))). Use w
 ```javascript
 const fn = gsap.utils.pipe(
   (v) => gsap.utils.normalize(0, 100, v),
-  (v) => gsap.utils.snap(0.1, v)
+  (v) => gsap.utils.snap(0.1, v),
 );
 fn(50); // normalized then snapped
 ```
@@ -253,8 +253,8 @@ fn(50); // normalized then snapped
 Wraps a value into the range min–max (inclusive min, exclusive max). Use for infinite scroll or cyclic values. Omit **value** to get a function: `wrap(min, max)(value)`.
 
 ```javascript
-gsap.utils.wrap(0, 360, 370);  // 10
-gsap.utils.wrap(0, 360, -10);   // 350
+gsap.utils.wrap(0, 360, 370); // 10
+gsap.utils.wrap(0, 360, -10); // 350
 
 let wrapFn = gsap.utils.wrap(0, 360);
 wrapFn(370); // 10
@@ -301,17 +301,18 @@ https://gsap.com/docs/v3/HelperFunctions
 
 ## 🚨 LLM Trap Table
 
-|Pattern|What AI Does Wrong|What Is Actually Correct|
-|:---|:---|:---|
-|gsap-utils|Using mapRange on units like "100px"|mapRange works only on pure numbers. Use getUnit/unitize|
-|gsap-utils|Re-creating random per frame|Pass true as 4th param: random(-10, 10, 1, true) for a reusable fn|
-|gsap-utils|Scoping global .box|Use gsap.utils.selector(container) inside components|
+| Pattern    | What AI Does Wrong                   | What Is Actually Correct                                           |
+| :--------- | :----------------------------------- | :----------------------------------------------------------------- |
+| gsap-utils | Using mapRange on units like "100px" | mapRange works only on pure numbers. Use getUnit/unitize           |
+| gsap-utils | Re-creating random per frame         | Pass true as 4th param: random(-10, 10, 1, true) for a reusable fn |
+| gsap-utils | Scoping global .box                  | Use gsap.utils.selector(container) inside components               |
 
 ---
 
 ## ✅ Pre-Flight Self-Audit
 
 Before producing any output, verify:
+
 ```
 ✅ Did I read the actual files before making claims about them?
 ✅ Did I verify all method names against official GSAP documentation?
@@ -332,14 +333,14 @@ BUILD:   Generate the smallest meaningful unit of code
 CONFIRM: Verify the output is correct before presenting
 ```
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -369,6 +370,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -379,5 +381,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

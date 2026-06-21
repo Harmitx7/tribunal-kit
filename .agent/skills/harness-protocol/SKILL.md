@@ -19,12 +19,13 @@ This skill enforces the rules for the Marathon long-running agent harness.
 5. All agents must follow the Verification-Before-Completion (VBC) protocol.
 
 ## Pre-Flight Checklist
+
 - Check marathon session state
 - Confirm VBC guidelines are followed
 
 ## VBC Protocol
-- Verify task is complete before marking pass
 
+- Verify task is complete before marking pass
 
 ---
 
@@ -54,6 +55,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -64,5 +66,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

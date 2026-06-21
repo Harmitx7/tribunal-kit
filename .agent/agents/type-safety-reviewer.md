@@ -21,16 +21,20 @@ Flag every `any` that isn't accompanied by a documented justification comment.
 
 ```typescript
 // ❌ REJECTED: Lazy any — the type is knowable
-function process(data: any) { return data.name; }
+function process(data: any) {
+  return data.name;
+}
 
 // ❌ REJECTED: Cast from unknown response — no runtime validation
-const result: any = await fetch('/api').then(r => r.json());
+const result: any = await fetch("/api").then((r) => r.json());
 
 // ✅ APPROVED: Narrow interface defined
-function process(data: { name: string; id: number }) { return data.name; }
+function process(data: { name: string; id: number }) {
+  return data.name;
+}
 
 // ✅ APPROVED: Zod validates at runtime boundary
-const result = UserSchema.parse(await fetch('/api').then(r => r.json()));
+const result = UserSchema.parse(await fetch("/api").then((r) => r.json()));
 
 // ✅ APPROVED with documented justification
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,7 +59,7 @@ const user = UserSchema.parse(response);
 
 // ✅ APPROVED: Type guard with actual check
 function isUser(data: unknown): data is User {
-  return typeof data === 'object' && data !== null && 'id' in data;
+  return typeof data === "object" && data !== null && "id" in data;
 }
 ```
 
@@ -96,7 +100,7 @@ const city = user.address.city;
 const first = arr[0].name; // arr could be empty
 
 // ✅ APPROVED: Optional chaining with fallback
-const city = user.address?.city ?? 'Unknown';
+const city = user.address?.city ?? "Unknown";
 
 // ✅ APPROVED: Guard before access
 if (arr.length > 0) {
@@ -149,19 +153,22 @@ function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
 
 ```typescript
 // ❌ REJECTED: Missing case coverage — new variants break silently
-type Status = 'active' | 'inactive' | 'pending';
+type Status = "active" | "inactive" | "pending";
 function label(s: Status): string {
-  if (s === 'active') return 'Active';
-  if (s === 'inactive') return 'Inactive';
-  return ''; // 'pending' falls through silently
+  if (s === "active") return "Active";
+  if (s === "inactive") return "Inactive";
+  return ""; // 'pending' falls through silently
 }
 
 // ✅ APPROVED: Exhaustive check with never assertion
 function label(s: Status): string {
   switch (s) {
-    case 'active': return 'Active';
-    case 'inactive': return 'Inactive';
-    case 'pending': return 'Pending';
+    case "active":
+      return "Active";
+    case "inactive":
+      return "Inactive";
+    case "pending":
+      return "Pending";
     default: {
       const _exhaustive: never = s; // TypeScript errors if case is missing
       throw new Error(`Unknown status: ${_exhaustive}`);

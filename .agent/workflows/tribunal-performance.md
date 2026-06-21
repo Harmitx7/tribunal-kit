@@ -22,25 +22,28 @@ Read BEFORE performance review:
 
 ## When to Use /tribunal-performance
 
-|Use `/tribunal-performance` when...|Use something else when...|
-|:---|:---|
-|LCP, INP, or CLS is above threshold|General code review → `/tribunal-full`|
-|Bundle size is too large|Backend perf only → `/tribunal-backend`|
-|Memory usage grows unbounded|Database perf → `/tribunal-database`|
-|Node.js event loop is saturated||
-|Optimizing rendering performance||
+| Use `/tribunal-performance` when... | Use something else when...              |
+| :---------------------------------- | :-------------------------------------- |
+| LCP, INP, or CLS is above threshold | General code review → `/tribunal-full`  |
+| Bundle size is too large            | Backend perf only → `/tribunal-backend` |
+| Memory usage grows unbounded        | Database perf → `/tribunal-database`    |
+| Node.js event loop is saturated     |                                         |
+| Optimizing rendering performance    |                                         |
 
 ---
 
 ## 2 Active Reviewers (Both Run Simultaneously)
 
-### precedence-reviewer    → Checks local repo Case Law for past rejections
+### precedence-reviewer → Checks local repo Case Law for past rejections
+
 logic-reviewer
+
 - Expensive computation in render function (runs every render)
 - Missing memoization where React.memo/useMemo would help
 - Infinite re-render loop (effect updates a value that triggers the effect)
 
 ### performance-reviewer
+
 - INP: expensive synchronous work on user interaction (> 50ms blocking)
 - LCP: hero image without priority={true} or preload hint
 - CLS: missing width/height on images causing layout shift
@@ -53,11 +56,11 @@ logic-reviewer
 
 ## 2026 CWV Targets (Verdict Reference)
 
-|Metric|Good|Needs Work|Poor (REJECTED)|
-|:---|:---|:---|:---|
-|INP|< 200ms|200–500ms|> 500ms|
-|LCP|< 2.5s|2.5–4.0s|> 4.0s|
-|CLS|< 0.1|0.1–0.25|> 0.25|
+| Metric | Good    | Needs Work | Poor (REJECTED) |
+| :----- | :------ | :--------- | :-------------- |
+| INP    | < 200ms | 200–500ms  | > 500ms         |
+| LCP    | < 2.5s  | 2.5–4.0s   | > 4.0s          |
+| CLS    | < 0.1   | 0.1–0.25   | > 0.25          |
 
 ---
 
@@ -123,11 +126,11 @@ After optimizing:
 
 ## After /tribunal-performance — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Fixes identified|→ `/enhance` to safely apply the optimizations|
-|Before/After comparison needed|→ `/performance-benchmarker` to run Lighthouse|
-|Need to verify full stack perf|→ `/tribunal-speed` for DB and server layers|
-|Issues span multiple layers|→ `/refactor` to restructure efficiently|
+| Outcome                        | Next Command                                   |
+| :----------------------------- | :--------------------------------------------- |
+| Fixes identified               | → `/enhance` to safely apply the optimizations |
+| Before/After comparison needed | → `/performance-benchmarker` to run Lighthouse |
+| Need to verify full stack perf | → `/tribunal-speed` for DB and server layers   |
+| Issues span multiple layers    | → `/refactor` to restructure efficiently       |
 
 ---

@@ -68,9 +68,7 @@ import { z } from "zod";
 const app = Fastify({
   logger: {
     level: process.env.LOG_LEVEL ?? "info",
-    transport: process.env.NODE_ENV === "development"
-      ? { target: "pino-pretty" }
-      : undefined,
+    transport: process.env.NODE_ENV === "development" ? { target: "pino-pretty" } : undefined,
   },
 });
 
@@ -83,23 +81,27 @@ const CreateUserSchema = z.object({
 
 type CreateUserBody = z.infer<typeof CreateUserSchema>;
 
-app.post<{ Body: CreateUserBody }>("/users", {
-  schema: {
-    body: {
-      type: "object",
-      required: ["name", "email"],
-      properties: {
-        name: { type: "string", minLength: 2 },
-        email: { type: "string", format: "email" },
-        role: { type: "string", enum: ["admin", "user"] },
+app.post<{ Body: CreateUserBody }>(
+  "/users",
+  {
+    schema: {
+      body: {
+        type: "object",
+        required: ["name", "email"],
+        properties: {
+          name: { type: "string", minLength: 2 },
+          email: { type: "string", format: "email" },
+          role: { type: "string", enum: ["admin", "user"] },
+        },
       },
     },
   },
-}, async (request, reply) => {
-  const validated = CreateUserSchema.parse(request.body);
-  const user = await createUser(validated);
-  return reply.status(201).send(user);
-});
+  async (request, reply) => {
+    const validated = CreateUserSchema.parse(request.body);
+    const user = await createUser(validated);
+    return reply.status(201).send(user);
+  },
+);
 
 // Graceful shutdown
 const start = async () => {
@@ -162,7 +164,7 @@ process.on("unhandledRejection", (reason, promise) => {
 process.on("uncaughtException", (error) => {
   console.error("Uncaught Exception:", error);
   // Log to error tracking service
-  process.exit(1);  // MUST exit — state is corrupted
+  process.exit(1); // MUST exit — state is corrupted
 });
 
 // ❌ HALLUCINATION TRAP: After uncaughtException, the process MUST exit
@@ -194,7 +196,10 @@ export class NotFoundError extends AppError {
 }
 
 export class ValidationError extends AppError {
-  constructor(message: string, public errors: Record<string, string[]> = {}) {
+  constructor(
+    message: string,
+    public errors: Record<string, string[]> = {},
+  ) {
     super(message, 400, "VALIDATION_ERROR");
   }
 }
@@ -229,25 +234,21 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 ```typescript
 // ❌ SEQUENTIAL: Each await blocks the next
-const users = await getUsers();      // 200ms
-const posts = await getPosts();      // 200ms
-const stats = await getStats();      // 200ms
+const users = await getUsers(); // 200ms
+const posts = await getPosts(); // 200ms
+const stats = await getStats(); // 200ms
 // Total: 600ms
 
 // ✅ PARALLEL: All start simultaneously
 const [users, posts, stats] = await Promise.all([
-  getUsers(),   // 200ms
-  getPosts(),   // 200ms (concurrent)
-  getStats(),   // 200ms (concurrent)
+  getUsers(), // 200ms
+  getPosts(), // 200ms (concurrent)
+  getStats(), // 200ms (concurrent)
 ]);
 // Total: ~200ms
 
 // Promise.allSettled — when some can fail
-const results = await Promise.allSettled([
-  fetchCriticalData(),
-  fetchOptionalData(),
-  fetchAnalytics(),
-]);
+const results = await Promise.allSettled([fetchCriticalData(), fetchOptionalData(), fetchAnalytics()]);
 
 for (const result of results) {
   if (result.status === "fulfilled") {
@@ -261,10 +262,7 @@ for (const result of results) {
 ### Retry Pattern
 
 ```typescript
-async function withRetry<T>(
-  fn: () => Promise<T>,
-  options: { maxRetries?: number; baseDelay?: number; maxDelay?: number } = {},
-): Promise<T> {
+async function withRetry<T>(fn: () => Promise<T>, options: { maxRetries?: number; baseDelay?: number; maxDelay?: number } = {}): Promise<T> {
   const { maxRetries = 3, baseDelay = 1000, maxDelay = 10000 } = options;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -328,12 +326,7 @@ async function processLargeCSV(inputPath: string, outputPath: string) {
     },
   });
 
-  await pipeline(
-    createReadStream(inputPath),
-    transform,
-    createGzip(),
-    createWriteStream(outputPath),
-  );
+  await pipeline(createReadStream(inputPath), transform, createGzip(), createWriteStream(outputPath));
 }
 
 // Streaming HTTP response
@@ -398,19 +391,25 @@ import rateLimit from "express-rate-limit";
 app.use(helmet());
 
 // Rate limiting
-app.use("/api/", rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,                  // 100 requests per window
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { error: "Too many requests, try again later" },
-}));
+app.use(
+  "/api/",
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // 100 requests per window
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many requests, try again later" },
+  }),
+);
 
 // Auth rate limiting (stricter)
-app.use("/api/auth/", rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5, // only 5 login attempts per 15 min
-}));
+app.use(
+  "/api/auth/",
+  rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5, // only 5 login attempts per 15 min
+  }),
+);
 
 // Input validation (ALWAYS validate)
 app.post("/api/users", async (req, res, next) => {
@@ -500,10 +499,7 @@ if (isMainThread) {
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -515,8 +511,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -526,9 +520,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -539,17 +532,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -579,6 +573,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -589,5 +584,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

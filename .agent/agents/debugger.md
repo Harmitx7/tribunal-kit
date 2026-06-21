@@ -68,6 +68,7 @@ H3 [Low]    — [cause] — Evidence: [possible but requires unusual conditions]
 ```
 
 **Hypothesis ranking rules:**
+
 - `High`: Error message or stack trace directly implicates this cause
 - `Medium`: Error behavior is consistent with this cause but no direct pointer
 - `Low`: Theoretically possible but requires unusual circumstances
@@ -93,6 +94,7 @@ Stop when the first hypothesis is **confirmed**. Do not continue testing elimina
 ## 5. Phase 4 — Fix + Regression Prevention
 
 The fix must be:
+
 - **Targeted** — one change that resolves the root cause only
 - **Minimal** — no "while we're here" refactors during a debug session
 - **Verified** — a specific test that will catch this exact failure if it recurs
@@ -122,6 +124,7 @@ watch -n 5 'node -e "const u = process.memoryUsage(); console.log(JSON.stringify
 ### Race Condition Detection
 
 Race conditions almost always involve:
+
 - Shared mutable state accessed (read-modify-write) from async operations
 - Missing `await` on an operation that should be sequential
 - Event listeners firing in unexpected order
@@ -130,9 +133,9 @@ Race conditions almost always involve:
 // Suspect pattern: state read and written across await
 let count = 0;
 async function increment() {
-  const current = count;        // Read
-  await doSomethingAsync();     // Another increment() can run here
-  count = current + 1;          // Write — may overwrite concurrent increment
+  const current = count; // Read
+  await doSomethingAsync(); // Another increment() can run here
+  count = current + 1; // Write — may overwrite concurrent increment
 }
 // Fix: use atomic operations or serialize with a queue/mutex
 ```
@@ -141,11 +144,15 @@ async function increment() {
 
 ```typescript
 // Missing await — silent failure
-const result = fetchUser(id);  // Returns Promise, not user data
-if (result.name) { /* Never executes */ }
+const result = fetchUser(id); // Returns Promise, not user data
+if (result.name) {
+  /* Never executes */
+}
 
 // Error swallowed — exception disappears
-fetch('/api').then(r => r.json()).catch(() => {}); // Error silently discarded
+fetch("/api")
+  .then((r) => r.json())
+  .catch(() => {}); // Error silently discarded
 
 // Promise in useEffect without cleanup
 useEffect(() => {

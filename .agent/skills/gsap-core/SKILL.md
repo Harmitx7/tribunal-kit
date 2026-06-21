@@ -73,15 +73,15 @@ GSAP’s CSSPlugin (included in core) animates DOM elements. Use **camelCase** f
 
 **Transform aliases (prefer over translateX(), rotate(), etc.):**
 
-| GSAP property | Equivalent CSS / note |
-|---------------|------------------------|
-| `x`, `y`, `z` | translateX/Y/Z (default unit: px) |
-| `xPercent`, `yPercent` | translateX/Y in %; use for percentage-based movement; work on SVG |
-| `scale`, `scaleX`, `scaleY` | scale; `scale` sets both X and Y |
-| `rotation` | rotate (default: deg; or `"1.25rad"`) |
-| `rotationX`, `rotationY` | 3D rotate (rotationZ = rotation) |
-| `skewX`, `skewY` | skew (deg or rad string) |
-| `transformOrigin` | transform-origin (e.g. `"left top"`, `"50% 50%"`) |
+| GSAP property               | Equivalent CSS / note                                             |
+| --------------------------- | ----------------------------------------------------------------- |
+| `x`, `y`, `z`               | translateX/Y/Z (default unit: px)                                 |
+| `xPercent`, `yPercent`      | translateX/Y in %; use for percentage-based movement; work on SVG |
+| `scale`, `scaleX`, `scaleY` | scale; `scale` sets both X and Y                                  |
+| `rotation`                  | rotate (default: deg; or `"1.25rad"`)                             |
+| `rotationX`, `rotationY`    | 3D rotate (rotationZ = rotation)                                  |
+| `skewX`, `skewY`            | skew (deg or rad string)                                          |
+| `transformOrigin`           | transform-origin (e.g. `"left top"`, `"50% 50%"`)                 |
 
 Relative values work: `x: "+=20"`, `rotation: "-=30"`. Default units: x/y in px, rotation in deg.
 
@@ -103,13 +103,15 @@ gsap.to(svgEl, { rotation: 90, svgOrigin: "100 100" });
 
 ## Stagger
 
-Offset the animation of each item by 0.1 second like this: 
-```javascript 
+Offset the animation of each item by 0.1 second like this:
+
+```javascript
 gsap.to(".item", {
   y: -20,
-  stagger: 0.1
+  stagger: 0.1,
 });
 ```
+
 Or use the object syntax for advanced options like how each successive stagger amount is applied to the targets array (`from: "random" | "start" | "center" | "end" | "edges" | (index)`)
 
 ### Learn More
@@ -121,11 +123,11 @@ https://gsap.com/resources/getting-started/Staggers
 Use string eases unless a custom curve is needed:
 
 ```javascript
-ease: "power1.out"     // default feel
-ease: "power3.inOut"
-ease: "back.out(1.7)"  // overshoot
-ease: "elastic.out(1, 0.3)"
-ease: "none"           // linear
+ease: "power1.out"; // default feel
+ease: "power3.inOut";
+ease: "back.out(1.7)"; // overshoot
+ease: "elastic.out(1, 0.3)";
+ease: "none"; // linear
 ```
 
 Built-in eases: base (same as `.out`), `.in`, `.out`, `.inOut` where "power" refers to the strength of the curve (1 is more gradual, 4 is steepest):
@@ -147,20 +149,20 @@ base (out)        .in                .out               .inOut
 
 ### Custom: use CustomEase (plugin)
 
-Simple cubic-bezier values (as used in CSS `cubic-bezier()`): 
+Simple cubic-bezier values (as used in CSS `cubic-bezier()`):
 
 ```javascript
 const myEase = CustomEase.create("my-ease", ".17,.67,.83,.67");
 
-gsap.to(".item", {x: 100, ease: myEase, duration: 1});
+gsap.to(".item", { x: 100, ease: myEase, duration: 1 });
 ```
 
-Complex curve with any number of control points, described as normalized SVG path data: 
+Complex curve with any number of control points, described as normalized SVG path data:
 
 ```javascript
 const myEase = CustomEase.create("hop", "M0,0 C0,0 0.056,0.442 0.175,0.442 0.294,0.442 0.332,0 0.332,0 0.332,0 0.414,1 0.671,1 0.991,1 1,0 1,0");
 
-gsap.to(".item", {x: 100, ease: myEase, duration: 1});
+gsap.to(".item", { x: 100, ease: myEase, duration: 1 });
 ```
 
 ## Returning and Controlling Tweens
@@ -179,12 +181,13 @@ tween.totalTime(1.5);
 ```
 
 ## Function-based values
+
 Use a function for a `vars` value and it will get called **once for each target** the first time the tween renders, and whatever is returned by that function will be used as the animation value.
 
 ```javascript
 gsap.to(".item", {
   x: (i, target, targetsArray) => i * 50, // first item animates to 0, the second to 50, the third to 100, etc.
-  stagger: 0.1
+  stagger: 0.1,
 });
 ```
 
@@ -193,10 +196,10 @@ gsap.to(".item", {
 Use a `+=`, `-=`, `*=`, or `/=` prefix to indicate a **relative** value. For example, the following will animate x to 20 pixels less than whatever it is when the tween renders for the first time.
 
 ```javascript
-gsap.to(".class", {x: "-=20" });
+gsap.to(".class", { x: "-=20" });
 ```
-`x: "+=20"` would add 20 to the current value. `"*=2"` would multiply by 2, and `"/=2"` would divide by 2.
 
+`x: "+=20"` would add 20 to the current value. `"*=2"` would multiply by 2, and `"/=2"` would divide by 2.
 
 ## Defaults
 
@@ -222,16 +225,18 @@ mm.add(
   {
     isDesktop: "(min-width: 800px)",
     isMobile: "(max-width: 799px)",
-    reduceMotion: "(prefers-reduced-motion: reduce)"
+    reduceMotion: "(prefers-reduced-motion: reduce)",
   },
   (context) => {
     const { isDesktop, reduceMotion } = context.conditions;
     gsap.to(".box", {
       rotation: isDesktop ? 360 : 180,
-      duration: reduceMotion ? 0 : 2  // skip animation when user prefers reduced motion
+      duration: reduceMotion ? 0 : 2, // skip animation when user prefers reduced motion
     });
-    return () => { /* optional cleanup when no condition matches */ };
-  }
+    return () => {
+      /* optional cleanup when no condition matches */
+    };
+  },
 );
 ```
 
@@ -271,17 +276,18 @@ Full docs: [gsap.matchMedia()](https://gsap.com/docs/v3/GSAP/gsap.matchMedia/). 
 
 ## 🚨 LLM Trap Table
 
-|Pattern|What AI Does Wrong|What Is Actually Correct|
-|:---|:---|:---|
-|gsap-core|Animate width, height, top, left|x, y, scale, rotation, opacity (GPU composited)|
-|gsap-core|gsap.to(el, 1, {x: 100}) (GSAP 2)|gsap.to(el, {duration: 1, x: 100}) (GSAP 3)|
-|gsap-core|Power2.easeOut (GSAP 2 format)|"power2.out" (GSAP 3 string format)|
+| Pattern   | What AI Does Wrong                | What Is Actually Correct                        |
+| :-------- | :-------------------------------- | :---------------------------------------------- |
+| gsap-core | Animate width, height, top, left  | x, y, scale, rotation, opacity (GPU composited) |
+| gsap-core | gsap.to(el, 1, {x: 100}) (GSAP 2) | gsap.to(el, {duration: 1, x: 100}) (GSAP 3)     |
+| gsap-core | Power2.easeOut (GSAP 2 format)    | "power2.out" (GSAP 3 string format)             |
 
 ---
 
 ## ✅ Pre-Flight Self-Audit
 
 Before producing any output, verify:
+
 ```
 ✅ Did I read the actual files before making claims about them?
 ✅ Did I verify all method names against official GSAP documentation?
@@ -302,14 +308,14 @@ BUILD:   Generate the smallest meaningful unit of code
 CONFIRM: Verify the output is correct before presenting
 ```
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -339,6 +345,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -349,5 +356,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -20,17 +20,17 @@ Read BEFORE distilling:
 
 ## When to Use /acf
 
-| Use `/acf` when... | Move to... |
-|:---|:---|
-| You have a new `PRD.md` or feature spec in markdown | After distillation → `/generate` |
-| The human-written specs have changed and need syncing | After sync → `/plan` |
-| You want to reduce context window token usage | When coding against the spec |
+| Use `/acf` when...                                    | Move to...                       |
+| :---------------------------------------------------- | :------------------------------- |
+| You have a new `PRD.md` or feature spec in markdown   | After distillation → `/generate` |
+| The human-written specs have changed and need syncing | After sync → `/plan`             |
+| You want to reduce context window token usage         | When coding against the spec     |
 
 ---
 
 ## The ACF Philosophy: Semantic Compression
 
-LLMs struggle with long prose, ambiguous requirements, and duplicate information. They perform best with structured data, explicit constraints, and atomic facts. 
+LLMs struggle with long prose, ambiguous requirements, and duplicate information. They perform best with structured data, explicit constraints, and atomic facts.
 
 The `/acf` command acts as a **Semantic Compressor**. It reads human-friendly Markdown and extracts only the deterministic facts into `.acf` files formatted as strict YAML.
 
@@ -41,7 +41,7 @@ The `/acf` command acts as a **Semantic Compressor**. It reads human-friendly Ma
 When the user runs `/acf [filename]`:
 
 1. **Read Target:** Read the target Markdown file.
-2. **Extract Facts:** Ignore all narrative prose, conversational filler, and explanations. 
+2. **Extract Facts:** Ignore all narrative prose, conversational filler, and explanations.
 3. **Map Relationships:** Identify goals, inputs, outputs, constraints, dependencies, and requirements.
 4. **Generate ACF:** Output the atomic `.acf` files into the `context/` directory at the project root. Ensure output is strict YAML.
 
@@ -52,7 +52,9 @@ When the user runs `/acf [filename]`:
 When distilling, categorize the extracted facts into these specific ACF schemas:
 
 ### Feature Nodes (`context/features/[feature_name].acf`)
+
 Describes a specific application capability.
+
 ```yaml
 feature: [name]
 goal: [1-3 word description]
@@ -69,7 +71,9 @@ dependencies:
 ```
 
 ### Context Nodes (`context/context.acf`)
+
 Permanent project truth.
+
 ```yaml
 project:
   name: [name]
@@ -80,7 +84,9 @@ stack:
 ```
 
 ### Rule Nodes (`context/rules.acf`)
+
 Hard constraints for the codebase.
+
 ```yaml
 forbidden:
   - [e.g., any, ts-ignore]
@@ -89,7 +95,9 @@ required:
 ```
 
 ### Memory Nodes (`context/memory.acf`)
+
 Lessons learned from past iterations.
+
 ```yaml
 mistakes:
   [id]:
@@ -124,10 +132,10 @@ decisions:
 
 ## After /acf — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|ACF files generated|→ `/generate` to code against the structured spec|
-|ACF needs a plan first|→ `/plan` to create implementation plan|
-|ACF reveals ambiguity|→ Ask user to clarify the source document|
+| Outcome                | Next Command                                      |
+| :--------------------- | :------------------------------------------------ |
+| ACF files generated    | → `/generate` to code against the structured spec |
+| ACF needs a plan first | → `/plan` to create implementation plan           |
+| ACF reveals ambiguity  | → Ask user to clarify the source document         |
 
 ---

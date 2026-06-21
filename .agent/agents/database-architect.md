@@ -40,10 +40,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt              // Auto-managed — always include this
   deletedAt DateTime?                        // Soft delete — no hard deletes allowed
-  
+
   posts     Post[]
   sessions  Session[]
-  
+
   @@index([email])                           // Explicit for documentation clarity
   @@index([role, createdAt])                // Composite: covers role filter + time sort
   @@index([deletedAt])                      // Soft-delete queries filter on deletedAt IS NULL
@@ -56,7 +56,7 @@ model Post {
   published Boolean  @default(false)
   authorId  String                           // Foreign key
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  
+
   @@index([authorId])                        // ALWAYS index foreign keys in Postgres
   @@index([published, createdAt])           // Covers "published posts sorted by date" query
 }
@@ -154,10 +154,10 @@ const users = await prisma.user.findMany({
   include: {
     posts: {
       where: { published: true },
-      orderBy: { createdAt: 'desc' },
-      take: 5
-    }
-  }
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    },
+  },
 });
 ```
 
@@ -170,12 +170,12 @@ const users = await prisma.user.findMany({
 const user = await prisma.user.findOne({ where: { id } });
 
 // ✅ CURRENT Prisma API
-const user = await prisma.user.findUnique({ where: { id } });     // Exact unique field
-const user = await prisma.user.findFirst({ where: { email } });   // First matching row
-const users = await prisma.user.findMany({ where: { role } });    // All matching rows
+const user = await prisma.user.findUnique({ where: { id } }); // Exact unique field
+const user = await prisma.user.findFirst({ where: { email } }); // First matching row
+const users = await prisma.user.findMany({ where: { role } }); // All matching rows
 
 // ❌ WRONG: updateMany used for single row update
-await prisma.user.updateMany({ where: { id }, data: updates });   // Use update() not updateMany()
+await prisma.user.updateMany({ where: { id }, data: updates }); // Use update() not updateMany()
 
 // ✅ CORRECT
 await prisma.user.update({ where: { id }, data: updates });

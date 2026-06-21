@@ -6,6 +6,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ## [4.6.0] — 2026-06-21
 
 ### ✨ Features
+
 - **Self-Describing Skill Graph**: Migrated the `intelligent-routing` core from a centralized, flat 150-line Markdown manifest to a decentralized YAML frontmatter architecture.
 - **Routing JSON Index Compiler**: Added `compile_router.py` to crawl all 102 skills and generate a compact, structured `routing_index.json` (44KB), significantly reducing LLM token consumption on every routing decision.
 - **Skill Escalation Rules**: The new routing architecture natively supports `supersedes` and `co-requires` signals (e.g., `git-pro` automatically supersedes `github-operations` when strong signals match).
@@ -13,25 +14,30 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **ACF Workflow Synchronization**: Restored the missing `/acf` (Agent Context Format Distiller) workflow into the Tribunal-Kit.
 
 ## [4.4.0] — 2026-04-29
+
 ### ✨ Features
+
 - **Mutation Testing Engine**: Integrated a context-aware mutation engine (`tk mutate`) with character-masking state machine, disaster recovery (auto-restore from backups), and survivor reporting.
 - **Architecture Knowledge Graph v2.0**: Hardened graph builder with incremental caching, blast radius calculations, and secure URI-encoded visualizer.
 - **Token Reduction Engine (Option C)**: Implemented Context Snapshots, providing pre-computed JSON context blobs (source + imports + dependents) to reduce LLM token overhead by up to 27x.
 - **Picasso Protocol (UI/UX)**: Upgraded `ui-ux-pro-max` skill to v2.0, a comprehensive design mastery guide covering OKLCH color science, typography mathematics, and motion choreography.
 
 ### 🐛 Fixes
+
 - **Security Hardening**: Eliminated info disclosure warnings in `bin/tribunal-kit.js` and fixed XSS vulnerability in `graph_visualizer.js`.
 - **Test Integrity**: Validated entire agentic pipeline with 100% passing tests (80/80).
 
 ## [4.3.1] — 2026-04-25
 
 ### ✨ Features
+
 - **`/graph` Knowledge Graph Skill**: Added a new zero-dependency AST extractor for mapping architecture without context bloat.
   - `graph_builder.js`: The Macro Mapper (incremental cache + `.gitignore` exclusions).
   - `graph_zoom.js`: The Micro Zoomer (extracts function/class signatures securely).
 - **Mandatory Payload Checks**: Registered `validate-payload.js` into the `npm test` pipeline to enforce `Pre-Flight Checklist` and `VBC Protocol` strictly.
 
 ### 🐛 Fixes
+
 - **Skill Compliance**: Bulk-injected missing validation headers across all 89 core skills.
 - **Regex Edge Cases**: Fixed Semantic Delta import extraction and stop-word rules in `case_law_manager.js`.
 
@@ -329,15 +335,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
-
-
 ## [2.4.6] — 2026-03-30
 
 ### Added
+
 - **12 New AI Skills**: Added dedicated skill guidelines for `ai-prompt-injection-defense`, `api-security-auditor`, `authentication-best-practices`, `building-native-ui`, `extract-design-system`, `framer-motion-animations`, `playwright-best-practices`, `shadcn-ui-expert`, `skill-creator`, `supabase-postgres-best-practices`, `swiftui-expert`, and `web-accessibility-auditor`.
 
-
 ### Changed
+
 - **Skill Integrator Compatibility**: Modified `appflow-wireframe` and `readme-builder` to strengthen Tribunal anti-hallucination guards.
 
 ---
@@ -345,12 +350,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ## [2.4.5] — 2026-03-25
 
 ### Added
+
 - **`appflow-wireframe` Skill**: New skill enabling Mermaid-based logical flow mapping and Tribunal Structural XML for wireframing explicit layout hierarchies.
 
 ### Changed
+
 - **UI Building Accuracy Enforcement**: Injected strict structural constraints and pixel-perfect design token mandates (4px grid) into 7 core frontend/UI skills to eliminate AI spacing hallucinations.
 
 ### Documentation
+
 - Redesigned the main README with the Tribunal-Kit logo and improved UI/UX aesthetics.
 
 ---
@@ -360,6 +368,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ## [2.4.1] — 2026-03-09
 
 ### Changed
+
 - **Verification-Before-Completion (VBC) Protocol**: Implemented a mandatory evidence-based closeout protocol across 10 core execution, debugging, and building skills (`systematic-debugging`, `tdd-workflow`, `plan-writing`, `python-pro`, `react-specialist`, `rust-pro`, `sql-pro`, `app-builder`, `clean-code`, `devops-incident-responder`). Sub-agents are now explicitly forbidden from declaring a task complete without providing concrete terminal or runtime evidence that their code succeeds.
 - **`frontend-design` Upgrade (Pro Max)**: Enhanced the skill to enforce asymmetric layouts, tactile textures (grain/SVG noise), OKLCH color spaces, and kinetic typography. Stripped out predictable AI defaults and strictly banned clichés like excessive purple, generic glowing blobs, and simple grid layouts.
 - **`brainstorming` Skill Upgrade**: Enhanced the discovery protocol using `skills.sh` paradigms. Added strategic query domains for "Market & Psychology," enforced the inclusion of at least one highly unconventional "Superpower Option" during options generation, and added constraints explicitly preventing assumptions around toolchain selection.
@@ -369,12 +378,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ## [2.4.0] — 2026-03-05
 
 ### Added
+
 - **7 New Skills & Workflows**: `trend-researcher`, `ui-ux-researcher`, `whimsy-injector`, `workflow-optimizer`, `test-result-analyzer` (skills) and `/api-tester`, `/performance-benchmarker` (workflows).
 - **GitHub-Powered Auto-Updater**: The CLI now bypasses npm entirely. `tribunal-kit update` checks the GitHub Releases API and pulls updates directly from the repository, dodging npm authentication and caching issues.
 - **`--skip-update-check` Flag**: Bypass auto-update for CI/CD environments.
 - **LLM Pre-Router (Intelligent Routing)**: Replaced the hardcoded routing table with a dynamic LLM Gateway. The AI now reads a condensed `router-manifest.md` to accurately select specialist agents before generating code.
 
 ### Changed
+
 - **Enhanced Foundational Skills**: Upgraded the oldest skills (`clean-code`, `code-review-checklist`, `behavioral-modes`) with Tribunal Anti-Hallucination guards, strict context window discipline, and mode-leakage prevention.
 - **Enhanced GEMINI.md**: Added 4 new request classification rows and 2 new slash commands. Overhauled the protocol to enforce the `intelligent-routing` Pre-Router over static fallback classification.
 
@@ -383,6 +394,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ## [2.3.0] — 2026-03-03
 
 ### Added
+
 - **Swarm / Supervisor Orchestration**: Introduced a multi-agent orchestration engine (`/swarm`) that decomposes complex goals into parallel specialist sub-tasks via a strict JSON contract.
 - **Specialized Tribunal Panels**: Added focused workflows for `/tribunal-mobile` (logic + security + mobile UX) and `/tribunal-performance` (algorithmic complexity + memory + I/O).
 - **Interactive Session State**: Enhanced `session_manager.js` with `status`, `tag`, `list`, and `export` commands for persistent task tracking across sessions.
@@ -393,15 +405,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ## [2.2.0] — 2026-03-02
 
 ### Added
+
 - **10 New Specialist Skills**: Added explicitly scoped Tribunal-integrated rulesets for `vue-expert`, `csharp-developer`, `dotnet-core-expert`, `python-pro`, `sql-pro`, `react-specialist`, `devops-engineer`, `devops-incident-responder`, `platform-engineer`, and `agent-organizer`.
-
-
 
 ---
 
 ## [2.0.0] — 2026-02-23
 
 ### Added
+
 - **Framework Hardening & Gap Filling**: Implemented missing Python scripts for linting (`lint_runner.py`), testing (`test_runner.py`), security scanning (`security_scan.py`), dependency analysis (`dependency_analyzer.py`), schema validation (`schema_validator.py`), and bundle analysis (`bundle_analyzer.py`).
 - **New Workflows**: Introduced Refactor (`/refactor`), Migrate (`/migrate`), Audit (`/audit`), Fix (`/fix`), Changelog Generation (`/changelog`), and Interactive Session (`/session`).
 - **New Specialist Agent**: Added `mobile-reviewer` for dedicated React Native, Flutter, and mobile web code audits, bringing the total reviewer count to 9.
@@ -410,6 +422,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Enhanced Frontend Skills**: Upgraded design frameworks including `frontend-design`, `mobile-design`, `web-design-guidelines`, `nextjs-react-expert`, and `tailwind-patterns` to incorporate cutting edge spatial UI, generative UI, and AI-driven interface patterns.
 
 ### Changed
+
 - **Skill Files Rewrite**: Systematically completely rewrote all 37 `SKILL.md` files to utilize a new voice, structure, and headers, preventing copyright claims while maintaining original functionality.
 - Upgraded the `/ui-ux-pro-max` workflow to utilize the latest cutting-edge design methodologies.
 
@@ -420,11 +433,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ### Added
 
 #### Core Tribunal System
+
 - 8 specialist reviewer agents running in parallel: `logic-reviewer`, `security-auditor`, `dependency-reviewer`, `type-safety-reviewer`, `sql-reviewer`, `frontend-reviewer`, `performance-reviewer`, `test-coverage-reviewer`
 - Human Gate enforcement — no code writes to disk without explicit user approval
 - Retry limit (max 3 Maker revisions) to prevent infinite generation loops
 
 #### Slash Command Workflows (16 total)
+
 - `/generate` — Full Tribunal pipeline: Maker → reviewers → Human Gate
 - `/review` — Audit-only mode, no generation
 - `/tribunal-full` — All 8 reviewers simultaneously
@@ -444,10 +459,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - `/ui-ux-pro-max` — Advanced UI/UX design workflow with deep design thinking
 
 #### Specialist Agents (27 total)
+
 - 19 domain agents: `backend-specialist`, `database-architect`, `frontend-specialist`, `debugger`, `devops-engineer`, `orchestrator`, `mobile-developer`, `penetration-tester`, `performance-optimizer`, `project-planner`, `product-manager`, `product-owner`, `qa-automation-engineer`, `seo-specialist`, `test-engineer`, `code-archaeologist`, `documentation-writer`, `explorer-agent`, `game-developer`
 - 8 Tribunal reviewer agents (above)
 
 #### Infrastructure
+
 - 37 skill modules in `.agent/skills/`
 - 4 utility scripts in `.agent/scripts/`
 - MCP server configuration (`mcp_config.json`)

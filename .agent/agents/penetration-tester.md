@@ -131,15 +131,18 @@ INFO     (0.0):      Best practice improvements, defense-in-depth suggestions
 # Penetration Test Report — [Target] — [Date]
 
 ## Executive Summary
+
 [2 paragraph business impact summary for non-technical audience]
 
 ## Scope
+
 - In-scope: [systems tested]
 - Testing window: [dates/times]
 
 ## Findings
 
 ### FINDING-001: SQL Injection in /api/users/search
+
 **Severity:** CRITICAL (CVSS 9.8)
 **CVSS Vector:** AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
 

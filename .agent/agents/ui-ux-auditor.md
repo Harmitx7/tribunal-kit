@@ -82,17 +82,18 @@ Required fix: [concrete action the Maker Agent must take]
 
 ### Verdict Definitions
 
-| Verdict | When to Use | Effect |
-|:--------|:-----------|:-------|
-| `✅ APPROVED` | No design anti-patterns. Fully premium-grade. | Passes to Human Gate |
-| `⚠️ WARNING` | UX/a11y issues that don't block render. Requires fix before deploy. | Highlighted at Human Gate |
-| `❌ REJECTED` | Generic AI aesthetic detected. Blocking pattern present. | Maker must revise |
+| Verdict       | When to Use                                                         | Effect                    |
+| :------------ | :------------------------------------------------------------------ | :------------------------ |
+| `✅ APPROVED` | No design anti-patterns. Fully premium-grade.                       | Passes to Human Gate      |
+| `⚠️ WARNING`  | UX/a11y issues that don't block render. Requires fix before deploy. | Highlighted at Human Gate |
+| `❌ REJECTED` | Generic AI aesthetic detected. Blocking pattern present.            | Maker must revise         |
 
 ---
 
 ## Positive Design Standards (What APPROVED Looks Like)
 
 ### Color
+
 ```
 ✅ HSL color system: hsl(220, 90%, 56%) — not hex hacks
 ✅ Custom CSS properties: --color-brand-500: hsl(220, 90%, 56%)
@@ -102,6 +103,7 @@ Required fix: [concrete action the Maker Agent must take]
 ```
 
 ### Typography
+
 ```
 ✅ Type scale using clamp() for fluid sizing:
    font-size: clamp(1rem, 2.5vw, 1.25rem)
@@ -112,6 +114,7 @@ Required fix: [concrete action the Maker Agent must take]
 ```
 
 ### Motion & Animation
+
 ```
 ✅ Entrance animations: translateY(20px) → 0 with opacity 0 → 1
 ✅ Duration: 200ms (micro) → 400ms (standard) → 600ms (page transitions)
@@ -122,6 +125,7 @@ Required fix: [concrete action the Maker Agent must take]
 ```
 
 ### Spacing
+
 ```
 ✅ 8pt grid system: 8px, 16px, 24px, 32px, 48px, 64px, 96px, 128px
 ✅ CSS custom properties: --space-2: 8px, --space-4: 16px, --space-6: 24px
@@ -130,6 +134,7 @@ Required fix: [concrete action the Maker Agent must take]
 ```
 
 ### Texture & Depth
+
 ```
 ✅ Grain overlay: SVG noise filter or CSS noise texture on hero/header backgrounds
 ✅ Box shadows: layered (ambient + key) — not flat Material shadows
@@ -143,26 +148,27 @@ Required fix: [concrete action the Maker Agent must take]
 ## Anti-Pattern Detection Code Examples
 
 ### 🚨 REJECTED: Purple Primary Color
+
 ```css
 /* ❌ REJECTED */
 :root {
-  --color-primary: #7C3AED;  /* violet-600 — AI cliché */
+  --color-primary: #7c3aed; /* violet-600 — AI cliché */
 }
 
 /* ✅ FIX: Use a distinctive, intentional color */
 :root {
-  --color-primary: hsl(212, 96%, 52%);  /* electric blue */
-  --color-primary: hsl(24, 94%, 56%);   /* warm amber */
-  --color-primary: hsl(352, 82%, 52%);  /* vibrant coral */
+  --color-primary: hsl(212, 96%, 52%); /* electric blue */
+  --color-primary: hsl(24, 94%, 56%); /* warm amber */
+  --color-primary: hsl(352, 82%, 52%); /* vibrant coral */
 }
 ```
 
 ### 🚨 REJECTED: Mesh Gradient Background
+
 ```css
 /* ❌ REJECTED */
 .hero {
-  background: radial-gradient(at 20% 80%, #7C3AED 0, transparent 50%),
-              radial-gradient(at 80% 20%, #3B82F6 0, transparent 50%);
+  background: radial-gradient(at 20% 80%, #7c3aed 0, transparent 50%), radial-gradient(at 80% 20%, #3b82f6 0, transparent 50%);
 }
 
 /* ✅ FIX: Use grain texture + solid near-black */
@@ -173,6 +179,7 @@ Required fix: [concrete action the Maker Agent must take]
 ```
 
 ### ⚠️ WARNING: No Hover State
+
 ```jsx
 /* ❌ WARNING */
 <button className="bg-blue-600 text-white px-4 py-2 rounded">
@@ -192,6 +199,7 @@ Required fix: [concrete action the Maker Agent must take]
 ```
 
 ### ⚠️ WARNING: Missing Reduced Motion
+
 ```css
 /* ❌ WARNING */
 .card {

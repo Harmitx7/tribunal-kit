@@ -17,7 +17,7 @@ last-updated: 2026-04-02
 ```
 Is this a simple web app deployment?
   → GitHub Actions → Docker Build → Push to Registry → Deploy (Render/Fly/Railway)
-  
+
 Is this Kubernetes-based?
   → GitHub Actions → Docker Build → Push → ArgoCD GitOps (pull-based) → K8s Cluster
 
@@ -83,24 +83,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
-      
+          node-version: "22"
+          cache: "npm"
+
       - run: npm ci
-      - run: npm run type-check    # tsc --noEmit
-      - run: npm run lint          # ESLint
-      - run: npm run test:ci       # Vitest with coverage
-      
+      - run: npm run type-check # tsc --noEmit
+      - run: npm run lint # ESLint
+      - run: npm run test:ci # Vitest with coverage
+
       # Security scan
       - name: Audit dependencies
         run: npm audit --audit-level=high
-        
+
   build:
-    needs: test  # Only build if tests pass
+    needs: test # Only build if tests pass
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
@@ -128,16 +128,16 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/mycorp/k8s-manifests'
+    repoURL: "https://github.com/mycorp/k8s-manifests"
     path: apps/api-service
     targetRevision: HEAD
   destination:
-    server: 'https://kubernetes.default.svc'
+    server: "https://kubernetes.default.svc"
     namespace: production
   syncPolicy:
     automated:
-      prune: true        # Remove resources deleted from Git
-      selfHeal: true     # Revert manual kubectl changes
+      prune: true # Remove resources deleted from Git
+      selfHeal: true # Revert manual kubectl changes
     syncOptions:
       - CreateNamespace=true
 ```
@@ -154,33 +154,33 @@ spec:
       containers:
         - name: api
           image: ghcr.io/myorg/api:v1.2.3
-          
+
           # Liveness: is the container alive? Restart if fails.
           livenessProbe:
             httpGet:
-              path: /health/live  # Should return 200 quickly — no heavy checks
+              path: /health/live # Should return 200 quickly — no heavy checks
               port: 3000
             initialDelaySeconds: 10
             periodSeconds: 30
             failureThreshold: 3
-          
+
           # Readiness: should traffic be sent here? Remove from LB if fails.
           readinessProbe:
             httpGet:
-              path: /health/ready  # Can include DB connectivity check
+              path: /health/ready # Can include DB connectivity check
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 10
             failureThreshold: 3
-          
+
           # Resource limits — ALWAYS set in production
           resources:
             requests:
-              memory: '128Mi'
-              cpu: '100m'
+              memory: "128Mi"
+              cpu: "100m"
             limits:
-              memory: '512Mi'
-              cpu: '500m'
+              memory: "512Mi"
+              cpu: "500m"
 ```
 
 ---

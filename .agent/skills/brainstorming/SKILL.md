@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Jumping to implementation during brainstorming -> ✅ Brainstorming is exploration only; no code is written in this phase
 - ❌ Presenting only one option -> ✅ Always present 3+ distinct approaches with tradeoffs
 - ❌ Assuming the user's first request is their real need -> ✅ Ask 'what problem does this solve for your users?' before generating ideas
 
 ---
-
 
 # Brainstorming — Socratic Exploration Mastery
 
@@ -24,16 +24,18 @@ routing:
 
 ## 1. The Socratic Protocol (Mandatory Delay)
 
-When a user provides a vague or complex prompt like *"I want to build a marketplace app,"* DO NOT start generating boilerplate code or database schemas. 
+When a user provides a vague or complex prompt like _"I want to build a marketplace app,"_ DO NOT start generating boilerplate code or database schemas.
 
 **You must act as a Socratic filter.**
+
 1. Acknowledge the ambition of the goal.
 2. Provide 3-5 distinct architectural/functional pathways the user could take.
 3. Pause execution. Demand the user makes definitive decisions regarding the permutations before proceeding.
 
 ### Example Socratic Prompting:
-Instead of: *"Here is the React code for your marketplace,"*
-Output: *"Before we write the code, we must lock down the payment flow. Do you want to: A) Handle escrow directly (High liability, complex payout logic), B) Use Stripe Connect (Easy routing, strict KYC requirements), or C) Operate free-listing only (Zero liability, requires external monetization)?"*
+
+Instead of: _"Here is the React code for your marketplace,"_
+Output: _"Before we write the code, we must lock down the payment flow. Do you want to: A) Handle escrow directly (High liability, complex payout logic), B) Use Stripe Connect (Easy routing, strict KYC requirements), or C) Operate free-listing only (Zero liability, requires external monetization)?"_
 
 ---
 
@@ -43,13 +45,13 @@ Every design choice has drawbacks. The brainstorming agent must illuminate the i
 
 When comparing options, strict tabular formatting clarifies friction:
 
-|Approach|Speed to Market|Operational Cost|Latency / UX|Maintenance Burden|
-|:---|:---|:---|:---|:---|
-|**Serverless Functions**|Very high|Low initially (pay-per-use)|Cold starts (500ms delay)|Complex local testing|
-|**Monolithic Node VPS**|Moderate|Flat ($10/mo fixed)|Extremely fast (0ms start)|Requires manual OS patching|
-|**Edge Compute (V8)**|Low|Moderate|Global low-latency|Strict 1MB limits / V8 restrictions|
+| Approach                 | Speed to Market | Operational Cost            | Latency / UX               | Maintenance Burden                  |
+| :----------------------- | :-------------- | :-------------------------- | :------------------------- | :---------------------------------- |
+| **Serverless Functions** | Very high       | Low initially (pay-per-use) | Cold starts (500ms delay)  | Complex local testing               |
+| **Monolithic Node VPS**  | Moderate        | Flat ($10/mo fixed)         | Extremely fast (0ms start) | Requires manual OS patching         |
+| **Edge Compute (V8)**    | Low             | Moderate                    | Global low-latency         | Strict 1MB limits / V8 restrictions |
 
-*Result:* The user chooses the approach mapped to their business reality, not a generic AI default.
+_Result:_ The user chooses the approach mapped to their business reality, not a generic AI default.
 
 ---
 
@@ -58,7 +60,8 @@ When comparing options, strict tabular formatting clarifies friction:
 Users frequently suffer from tunnel-vision regarding their requested feature. The Brainstormer introduces lateral features the user hasn't considered yet to solidify the schema boundaries.
 
 If user asks for: **"A habit tracking calendar."**
-*Expand laterally:*
+_Expand laterally:_
+
 - "What if a user crosses timezones frequently? Do streaks break?"
 - "What if they track binary habits (Read: Yes/No) versus quantitative habits (Drink 6 Liters of water)?"
 - "What if they require offline capability while on airplanes?"
@@ -72,6 +75,7 @@ At the end of a brainstorming session, the output MUST be distilled into a rigid
 
 ```markdown
 # Final Brainstorming Assertions
+
 1. **Architecture:** Next.js SSR Monolith
 2. **Database:** Postgres via Prisma (Required for complex relational queries)
 3. **Payment:** Stripe Connect (Subverted liability)
@@ -98,22 +102,23 @@ A good question is not "What color do you want?" but:
 ❌ BAD: "What authentication method?"
 ✅ GOOD: "Should users sign up with email/password or social login?
 
-   Impact:
-   - Email/Pass → Need password reset, hashing, 2FA infrastructure
-   - Social → OAuth providers, user profile mapping, less control
+Impact:
 
-   Trade-off: Security vs. Development time vs. User friction"
+- Email/Pass → Need password reset, hashing, 2FA infrastructure
+- Social → OAuth providers, user profile mapping, less control
+
+Trade-off: Security vs. Development time vs. User friction"
 ```
 
 #### 2. Context Before Content
 
 First understand **where** this request fits:
 
-|Context|Question Focus|
-|---------|----------------|
-|**Greenfield** (new project)|Foundation decisions: stack, hosting, scale|
-|**Feature Addition**|Integration points, existing patterns, breaking changes|
-|**Refactor**|Why refactor? Performance? Maintainability? What's broken?|
+| Context                      | Question Focus                                             |
+| ---------------------------- | ---------------------------------------------------------- |
+| **Greenfield** (new project) | Foundation decisions: stack, hosting, scale                |
+| **Feature Addition**         | Integration points, existing patterns, breaking changes    |
+| **Refactor**                 | Why refactor? Performance? Maintainability? What's broken? |
 
 #### 3. Minimum Viable Questions
 
@@ -137,9 +142,9 @@ If a question doesn't reduce implementation paths → **DELETE IT**.
 ❌ ASSUMPTION: "User probably wants Stripe for payments"
 ✅ QUESTION: "Which payment provider fits your needs?
 
-   Stripe → Best documentation, 2.9% + $0.30, US-centric
-   LemonSqueezy → Merchant of Record, 5% + $0.50, global taxes
-   Paddle → Complex pricing, handles EU VAT, enterprise focus"
+Stripe → Best documentation, 2.9% + $0.30, US-centric
+LemonSqueezy → Merchant of Record, 5% + $0.50, global taxes
+Paddle → Complex pricing, handles EU VAT, enterprise focus"
 ```
 
 ---
@@ -179,55 +184,54 @@ INPUT: User request + Context (greenfield/feature/refactor/debug)
 
 #### E-Commerce
 
-|Question|Why It Matters|Trade-offs|
-|----------|----------------|------------|
-|**Single or Multi-vendor?**|Multi-vendor → Commission logic, vendor dashboards, split payments|+Revenue, -Complexity|
-|**Inventory Tracking?**|Needs stock tables, reservation logic, low-stock alerts|+Accuracy, -Development time|
-|**Digital or Physical Products?**|Digital → Download links, no shipping|Physical → Shipping APIs, tracking|
-|**Subscription or One-time?**|Subscription → Recurring billing, dunning, proration|+Revenue, -Complexity|
+| Question                          | Why It Matters                                                     | Trade-offs                         |
+| --------------------------------- | ------------------------------------------------------------------ | ---------------------------------- |
+| **Single or Multi-vendor?**       | Multi-vendor → Commission logic, vendor dashboards, split payments | +Revenue, -Complexity              |
+| **Inventory Tracking?**           | Needs stock tables, reservation logic, low-stock alerts            | +Accuracy, -Development time       |
+| **Digital or Physical Products?** | Digital → Download links, no shipping                              | Physical → Shipping APIs, tracking |
+| **Subscription or One-time?**     | Subscription → Recurring billing, dunning, proration               | +Revenue, -Complexity              |
 
 #### Authentication
 
-|Question|Why It Matters|Trade-offs|
-|----------|----------------|------------|
-|**Social Login Needed?**|OAuth providers vs. password reset infrastructure|+UX, -Control|
-|**Role-Based Permissions?**|RBAC tables, policy enforcement, admin UI|+Security, -Development time|
-|**2FA Required?**|TOTP/SMI infrastructure, backup codes, recovery flow|+Security, -UX friction|
-|**Email Verification?**|Verification tokens, email service, resend logic|+Security, -Sign-up friction|
+| Question                    | Why It Matters                                       | Trade-offs                   |
+| --------------------------- | ---------------------------------------------------- | ---------------------------- |
+| **Social Login Needed?**    | OAuth providers vs. password reset infrastructure    | +UX, -Control                |
+| **Role-Based Permissions?** | RBAC tables, policy enforcement, admin UI            | +Security, -Development time |
+| **2FA Required?**           | TOTP/SMI infrastructure, backup codes, recovery flow | +Security, -UX friction      |
+| **Email Verification?**     | Verification tokens, email service, resend logic     | +Security, -Sign-up friction |
 
 #### Real-time
 
-|Question|Why It Matters|Trade-offs|
-|----------|----------------|------------|
-|**WebSocket or Polling?**|WS → Server scaling, connection management|Polling → Simpler, higher latency|
-|**Expected Concurrent Users?**|<100 → Single server, >1000 → Redis pub/sub, >10k → specialized infra|+Scale, -Complexity|
-|**Message Persistence?**|History tables, storage costs, pagination|+UX, -Storage|
-|**Ephemeral or Durable?**|Ephemeral → In-memory, Durable → Database write before emit|+Reliability, -Latency|
+| Question                       | Why It Matters                                                        | Trade-offs                        |
+| ------------------------------ | --------------------------------------------------------------------- | --------------------------------- |
+| **WebSocket or Polling?**      | WS → Server scaling, connection management                            | Polling → Simpler, higher latency |
+| **Expected Concurrent Users?** | <100 → Single server, >1000 → Redis pub/sub, >10k → specialized infra | +Scale, -Complexity               |
+| **Message Persistence?**       | History tables, storage costs, pagination                             | +UX, -Storage                     |
+| **Ephemeral or Durable?**      | Ephemeral → In-memory, Durable → Database write before emit           | +Reliability, -Latency            |
 
 #### Content/CMS
 
-|Question|Why It Matters|Trade-offs|
-|----------|----------------|------------|
-|**Rich Text or Markdown?**|Rich Text → Sanitization, XSS risks|Markdown → Simple, no WYSIWYG|
-|**Draft/Publish Workflow?**|Status field, scheduled jobs, versioning|+Control, -Complexity|
-|**Media Handling?**|Upload endpoints, storage, optimization|+Features, -Development time|
-|**Multi-language?**|i18n tables, translation UI, fallback logic|+Reach, -Complexity|
+| Question                    | Why It Matters                              | Trade-offs                    |
+| --------------------------- | ------------------------------------------- | ----------------------------- |
+| **Rich Text or Markdown?**  | Rich Text → Sanitization, XSS risks         | Markdown → Simple, no WYSIWYG |
+| **Draft/Publish Workflow?** | Status field, scheduled jobs, versioning    | +Control, -Complexity         |
+| **Media Handling?**         | Upload endpoints, storage, optimization     | +Features, -Development time  |
+| **Multi-language?**         | i18n tables, translation UI, fallback logic | +Reach, -Complexity           |
 
 #### Business & Product Strategy
 
-|Question|Why It Matters|Trade-offs|
-|----------|----------------|------------|
-|**Monetization Approach?**|Freemium vs. Paywall vs. Ads affects user flow|+Revenue, -User Acquisition|
-|**Onboarding CRO?**|Wizard vs. self-serve dictates state management|+Activation, -Dev Time|
-|**Competitor Differentiator?**|Must highlight this UI feature above all else|+Standout, -Standardization|
-|**Marketing Psychology?**|FOMO (urgency) vs. Trust (social proof) layout|+Conversion, -Aesthetics|
+| Question                       | Why It Matters                                  | Trade-offs                  |
+| ------------------------------ | ----------------------------------------------- | --------------------------- |
+| **Monetization Approach?**     | Freemium vs. Paywall vs. Ads affects user flow  | +Revenue, -User Acquisition |
+| **Onboarding CRO?**            | Wizard vs. self-serve dictates state management | +Activation, -Dev Time      |
+| **Competitor Differentiator?** | Must highlight this UI feature above all else   | +Standout, -Standardization |
+| **Marketing Psychology?**      | FOMO (urgency) vs. Trust (social proof) layout  | +Conversion, -Aesthetics    |
 
 ---
 
 ### 📐 Dynamic Question Template
 
 ```markdown
-
 ### 🔴 CRITICAL (Blocking Decisions)
 
 #### 1. **[DECISION POINT]**
@@ -235,6 +239,7 @@ INPUT: User request + Context (greenfield/feature/refactor/debug)
 **Question:** [Clear, specific question]
 
 **Why This Matters:**
+
 - [Explain architectural consequence]
 - [Affects: cost / complexity / timeline / scale]
 
@@ -251,6 +256,7 @@ INPUT: User request + Context (greenfield/feature/refactor/debug)
 ### 🟡 HIGH-LEVERAGE (Affects Implementation)
 
 #### 2. **[DECISION POINT]**
+
 [Same format]
 
 ---
@@ -258,6 +264,7 @@ INPUT: User request + Context (greenfield/feature/refactor/debug)
 ### 🟢 NICE-TO-HAVE (Edge Cases)
 
 #### 3. **[DECISION POINT]**
+
 [Same format]
 ```
 
@@ -266,15 +273,20 @@ INPUT: User request + Context (greenfield/feature/refactor/debug)
 ### 🔄 Iterative Questioning
 
 #### First Pass (3-5 Questions)
+
 Focus on **blocking decisions**. Don't proceed without answers.
 
 #### Second Pass (After Initial Implementation)
+
 As patterns emerge, ask:
+
 - "This feature implies [X]. Should we handle [edge case] now or defer?"
 - "We're using [Pattern A]. Should [Feature B] follow the same pattern?"
 
 #### Third Pass (Optimization)
+
 When functionality works:
+
 - "Performance bottleneck at [X]. Optimize now or acceptable for now?"
 - "Refactor [Y] for maintainability or ship as-is?"
 
@@ -438,10 +450,7 @@ STEP 4: Format Output
 5. **Domain-aware** → Ecommerce questions ≠ Auth questions ≠ Real-time questions
 6. **Iterative** → More questions as patterns emerge during implementation
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -453,8 +462,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -464,9 +471,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -477,17 +483,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -517,6 +524,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -527,5 +535,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

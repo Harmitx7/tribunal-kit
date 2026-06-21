@@ -16,43 +16,43 @@ last-updated: 2026-04-02
 
 ```typescript
 // app/products/[slug]/page.tsx
-import { Metadata } from 'next';
+import { Metadata } from "next";
 
 // Static metadata
 export const metadata: Metadata = {
-  title: 'Product Name | Brand',
-  description: 'Compelling 155-character description that matches search intent.',
+  title: "Product Name | Brand",
+  description: "Compelling 155-character description that matches search intent.",
 };
 
 // Dynamic metadata (fetched per-page)
-export async function generateMetadata(
-  { params }: { params: Promise<{ slug: string }> }
-): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProduct(slug);
-  
-  if (!product) return { title: 'Not Found' };
-  
+
+  if (!product) return { title: "Not Found" };
+
   return {
     title: `${product.name} | Brand`,
     description: product.seoDescription,
     canonical: `https://yoursite.com/products/${slug}`,
-    
+
     openGraph: {
       title: product.name,
       description: product.seoDescription,
-      images: [{
-        url: product.imageUrl,
-        width: 1200,
-        height: 630,
-        alt: product.name,
-      }],
-      siteName: 'Your Brand',
-      type: 'website',
+      images: [
+        {
+          url: product.imageUrl,
+          width: 1200,
+          height: 630,
+          alt: product.name,
+        },
+      ],
+      siteName: "Your Brand",
+      type: "website",
     },
-    
+
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: product.name,
       description: product.seoDescription,
       images: [product.imageUrl],
@@ -70,36 +70,31 @@ export async function generateMetadata(
 export default async function ProductPage({ params }) {
   const { slug } = await params;
   const product = await getProduct(slug);
-  
+
   const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
+    "@context": "https://schema.org",
+    "@type": "Product",
     name: product.name,
     image: product.imageUrl,
     description: product.description,
     sku: product.sku,
     offers: {
-      '@type': 'Offer',
+      "@type": "Offer",
       price: product.price,
-      priceCurrency: 'USD',
-      availability: product.inStock 
-        ? 'https://schema.org/InStock' 
-        : 'https://schema.org/OutOfStock',
+      priceCurrency: "USD",
+      availability: product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       url: `https://yoursite.com/products/${slug}`,
     },
     aggregateRating: {
-      '@type': 'AggregateRating',
+      "@type": "AggregateRating",
       ratingValue: product.averageRating,
       reviewCount: product.reviewCount,
     },
   };
-  
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* page content */}
     </>
   );
@@ -112,29 +107,29 @@ export default async function ProductPage({ params }) {
 
 ```typescript
 // app/sitemap.ts
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await getAllProducts();
-  
+
   const productUrls = products.map((product) => ({
     url: `https://yoursite.com/products/${product.slug}`,
     lastModified: product.updatedAt,
-    changeFrequency: 'weekly' as const,
+    changeFrequency: "weekly" as const,
     priority: 0.8,
   }));
-  
+
   return [
     {
-      url: 'https://yoursite.com',
+      url: "https://yoursite.com",
       lastModified: new Date(),
-      changeFrequency: 'daily',
+      changeFrequency: "daily",
       priority: 1.0,
     },
     {
-      url: 'https://yoursite.com/products',
+      url: "https://yoursite.com/products",
       lastModified: new Date(),
-      changeFrequency: 'daily',
+      changeFrequency: "daily",
       priority: 0.9,
     },
     ...productUrls,
@@ -148,13 +143,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
 ```markdown
 RULE: Exactly ONE <h1> per page. It must contain the primary keyword.
-      Headings must be hierarchical: h1 → h2 → h3 (never skip levels)
+Headings must be hierarchical: h1 → h2 → h3 (never skip levels)
 
 ❌ WRONG: Two h1s on the page
 ❌ WRONG: h1 is just the brand name (wastes keyword opportunity)
 ❌ WRONG: h3 directly under h1 (skips h2)
 
 ✅ CORRECT structure:
+
   <h1>Buy Premium Coffee Beans Online</h1>        ← Primary keyword
     <h2>Single Origin Coffees</h2>                ← Category
       <h3>Ethiopian Yirgacheffe</h3>              ← Product
@@ -172,19 +168,18 @@ When AI engines (Perplexity, ChatGPT Search) index your site, they need:
 // Next.js Edge Middleware: serve bare markdown to AI bots
 // middleware.ts
 export function middleware(req: NextRequest) {
-  const ua = req.headers.get('user-agent') ?? '';
+  const ua = req.headers.get("user-agent") ?? "";
   const isAIBot = /ChatGPT-User|PerplexityBot|ClaudeBot|GPTBot/i.test(ua);
-  
+
   if (isAIBot) {
     // Redirect to a markdown-only version (no CSS/JS — pure data)
-    return NextResponse.rewrite(
-      new URL(`/api/geo${req.nextUrl.pathname}`, req.url)
-    );
+    return NextResponse.rewrite(new URL(`/api/geo${req.nextUrl.pathname}`, req.url));
   }
 }
 ```
 
 **GEO Content Rules:**
+
 - Every factual claim must have a `<cite>` tag with a source link
 - Critical data (pricing, specs, limits) must be in static HTML — not JS-rendered
 - Use `<dl>/<dt>/<dd>` for FAQ format — LLMs recognize this as QA pairs

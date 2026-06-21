@@ -18,16 +18,16 @@ interface WorkerRequest {
 
   // The category of work being requested.
   type:
-    | "research"       // Understand or explain something
-    | "generate_code"  // Write new code
-    | "review_code"    // Audit existing code
-    | "debug"          // Find and fix a bug
-    | "plan"           // Produce a structured plan only (no code)
-    | "design_schema"  // Design a database or data schema
-    | "write_docs"     // Write documentation or comments
+    | "research" // Understand or explain something
+    | "generate_code" // Write new code
+    | "review_code" // Audit existing code
+    | "debug" // Find and fix a bug
+    | "plan" // Produce a structured plan only (no code)
+    | "design_schema" // Design a database or data schema
+    | "write_docs" // Write documentation or comments
     | "security_audit" // OWASP security review
-    | "optimize"       // Refactor for performance
-    | "test";          // Write or run tests
+    | "optimize" // Refactor for performance
+    | "test"; // Write or run tests
 
   // The agent to route this WorkerRequest to.
   // MUST match a filename in .agent/agents/ (without the .md extension).
@@ -52,14 +52,14 @@ interface WorkerRequest {
 
 ### WorkerRequest Validation Rules
 
-|Field|Rules|
-|---|---|
-|`task_id`|Non-empty string. UUID v4 format preferred. Must be unique per swarm invocation.|
-|`type`|Must be one of the 10 listed enum values exactly.|
-|`agent`|Must match a file that exists at `.agent/agents/{agent}.md`.|
-|`goal`|Non-empty. Single sentence. Max 200 characters.|
-|`context`|Non-empty. Max 800 characters. No full file dumps.|
-|`max_retries`|Integer 1–3 inclusive.|
+| Field         | Rules                                                                            |
+| ------------- | -------------------------------------------------------------------------------- |
+| `task_id`     | Non-empty string. UUID v4 format preferred. Must be unique per swarm invocation. |
+| `type`        | Must be one of the 10 listed enum values exactly.                                |
+| `agent`       | Must match a file that exists at `.agent/agents/{agent}.md`.                     |
+| `goal`        | Non-empty. Single sentence. Max 200 characters.                                  |
+| `context`     | Non-empty. Max 800 characters. No full file dumps.                               |
+| `max_retries` | Integer 1–3 inclusive.                                                           |
 
 ---
 
@@ -77,8 +77,8 @@ interface WorkerResult {
 
   // Outcome of the Worker's execution.
   status:
-    | "success"   // Task completed. Output is valid.
-    | "failure"   // Task failed but retries remain.
+    | "success" // Task completed. Output is valid.
+    | "failure" // Task failed but retries remain.
     | "escalate"; // Task failed after max_retries. Requires human intervention.
 
   // The agent's output if status is "success".
@@ -98,20 +98,21 @@ interface WorkerResult {
 
 ### WorkerResult Validation Rules
 
-|Field|Rules|
-|---|---|
-|`task_id`|Must match a previously dispatched WorkerRequest task_id.|
-|`agent`|Must match the agent from the originating WorkerRequest.|
-|`status`|Must be exactly: `"success"`, `"failure"`, or `"escalate"`.|
-|`output`|Required if status is `"success"`. Empty string otherwise.|
-|`error`|Required if status is `"failure"` or `"escalate"`. Empty string if success.|
-|`attempts`|Integer ≥ 1. Must not exceed `max_retries` from the WorkerRequest.|
+| Field      | Rules                                                                       |
+| ---------- | --------------------------------------------------------------------------- |
+| `task_id`  | Must match a previously dispatched WorkerRequest task_id.                   |
+| `agent`    | Must match the agent from the originating WorkerRequest.                    |
+| `status`   | Must be exactly: `"success"`, `"failure"`, or `"escalate"`.                 |
+| `output`   | Required if status is `"success"`. Empty string otherwise.                  |
+| `error`    | Required if status is `"failure"` or `"escalate"`. Empty string if success. |
+| `attempts` | Integer ≥ 1. Must not exceed `max_retries` from the WorkerRequest.          |
 
 ---
 
 ## Example: Successful Dispatch/Result Pair
 
 **WorkerRequest:**
+
 ```json
 {
   "task_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
@@ -124,6 +125,7 @@ interface WorkerResult {
 ```
 
 **WorkerResult:**
+
 ```json
 {
   "task_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
@@ -140,6 +142,7 @@ interface WorkerResult {
 ## Example: Escalated Failure
 
 **WorkerResult:**
+
 ```json
 {
   "task_id": "b6a921c9-aa4e-4d1a-9862-d3f0b0e3f101",
@@ -158,6 +161,7 @@ interface WorkerResult {
 The `swarm_dispatcher.js` script validates **WorkerRequest** payloads before dispatch.
 
 **Usage:**
+
 ```bash
 node .agent/scripts/swarm_dispatcher.js --mode swarm --file worker_request.json
 node .agent/scripts/swarm_dispatcher.js --mode swarm --payload '{"task_id":"...","type":"generate_code","agent":"backend-specialist","goal":"...","context":"...","max_retries":3}'

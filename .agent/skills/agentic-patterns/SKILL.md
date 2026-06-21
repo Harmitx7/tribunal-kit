@@ -33,12 +33,12 @@ PERCEIVE → PLAN → ACT → OBSERVE → (repeat or terminate)
 ```ts
 // The three termination conditions — always define all three
 type AgentResult = {
-  reason: 'goal_reached' | 'max_steps_exceeded' | 'human_escalation';
+  reason: "goal_reached" | "max_steps_exceeded" | "human_escalation";
   steps: number;
   result: string;
 };
 
-const MAX_STEPS = 10;  // Hard cap — never let agents loop indefinitely
+const MAX_STEPS = 10; // Hard cap — never let agents loop indefinitely
 ```
 
 ---
@@ -51,23 +51,23 @@ Tools are the agent's interface to the real world. Design them defensively:
 // Tool definition — what the LLM sees and how to call it
 const tools = [
   {
-    type: 'function',
+    type: "function",
     function: {
-      name: 'search_database',
-      description: 'Search the product database. Use this before creating a new record to avoid duplicates.',
+      name: "search_database",
+      description: "Search the product database. Use this before creating a new record to avoid duplicates.",
       parameters: {
-        type: 'object',
+        type: "object",
         properties: {
           query: {
-            type: 'string',
-            description: 'Search terms — be specific',
+            type: "string",
+            description: "Search terms — be specific",
           },
           limit: {
-            type: 'number',
-            description: 'Max results to return. Default: 5, max: 20',
+            type: "number",
+            description: "Max results to return. Default: 5, max: 20",
           },
         },
-        required: ['query'],
+        required: ["query"],
       },
     },
   },
@@ -133,10 +133,10 @@ async function buildContext(userId: string, currentQuery: string) {
   });
 
   return [
-    { role: 'system', content: systemPrompt },
+    { role: "system", content: systemPrompt },
     // Inject relevant past context — NOT entire history
-    { role: 'system', content: `Relevant past context:\n${pastMemories.map(m => m.content).join('\n')}` },
-    { role: 'user', content: currentQuery },
+    { role: "system", content: `Relevant past context:\n${pastMemories.map((m) => m.content).join("\n")}` },
+    { role: "user", content: currentQuery },
   ];
 }
 ```
@@ -163,13 +163,10 @@ Supervisor agent ─→ breaks task into subtasks
 
 ```ts
 // Two independent agents answer the same question — supervisor resolves disagreement
-const [answerA, answerB] = await Promise.all([
-  agentA.complete(question),
-  agentB.complete(question),
-]);
+const [answerA, answerB] = await Promise.all([agentA.complete(question), agentB.complete(question)]);
 
 if (answerA.answer === answerB.answer) {
-  return answerA;  // Agreement — high confidence
+  return answerA; // Agreement — high confidence
 }
 
 // Disagreement — escalate to human or third tiebreaker
@@ -181,6 +178,7 @@ return await supervisor.resolve(question, answerA, answerB);
 ## Human-in-the-Loop Gates
 
 The most important agentic pattern. Agents should request human approval before:
+
 - Deleting data
 - Sending external communications (emails, webhooks)
 - Spending real money (API calls with cost, purchases)
@@ -199,13 +197,13 @@ async function agentLoop(task: string) {
         reason: planned.reasoning,
         confidence: planned.confidence,
       });
-      if (!approved) return { reason: 'human_rejected', step };
+      if (!approved) return { reason: "human_rejected", step };
     }
 
     // ✅ Confidence gate — don't act when uncertain
     if (planned.confidence < 0.7) {
       return {
-        reason: 'human_escalation',
+        reason: "human_escalation",
         message: `Low confidence (${planned.confidence}) on: ${planned.action.description}`,
       };
     }
@@ -228,23 +226,23 @@ Every production agent needs:
 const guardrails = {
   // Input guardrails — reject bad prompts before they reach the agent
   input: [
-    { check: 'no_prompt_injection', action: 'reject' },
-    { check: 'within_scope', action: 'reject' },    // Off-topic requests
-    { check: 'pii_detection', action: 'redact' },   // Redact before processing
+    { check: "no_prompt_injection", action: "reject" },
+    { check: "within_scope", action: "reject" }, // Off-topic requests
+    { check: "pii_detection", action: "redact" }, // Redact before processing
   ],
 
   // Output guardrails — validate before returning
   output: [
-    { check: 'no_hallucinated_citations', action: 'flag' },
-    { check: 'schema_valid', action: 'retry_once' },
-    { check: 'no_pii_leaked', action: 'reject' },
+    { check: "no_hallucinated_citations", action: "flag" },
+    { check: "schema_valid", action: "retry_once" },
+    { check: "no_pii_leaked", action: "reject" },
   ],
 
   // Resource guardrails — prevent runaway cost/loops
   resource: [
-    { check: 'max_tokens_per_session', limit: 100_000 },
-    { check: 'max_tool_calls_per_session', limit: 50 },
-    { check: 'max_cost_per_session_usd', limit: 1.00 },
+    { check: "max_tokens_per_session", limit: 100_000 },
+    { check: "max_tool_calls_per_session", limit: 50 },
+    { check: "max_cost_per_session_usd", limit: 1.0 },
   ],
 };
 ```
@@ -267,10 +265,7 @@ Evidence:    [link to terminal output, test result, or file diff]
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -282,8 +277,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -293,9 +286,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -306,17 +298,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -346,6 +339,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -356,5 +350,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

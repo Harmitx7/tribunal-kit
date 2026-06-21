@@ -22,13 +22,13 @@ Read BEFORE auditing:
 
 ## When to Use /audit
 
-|Use `/audit` when...|Use something else when...|
-|:---|:---|
-|Before a major release or launch|Single file review → `/review`|
-|After a security incident|Just lint errors → `/fix`|
-|Onboarding to a new codebase|Performance only → `/performance-benchmarker`|
-|Weekly/monthly health check|Testing only → `/test`|
-|Before major dependency updates||
+| Use `/audit` when...             | Use something else when...                    |
+| :------------------------------- | :-------------------------------------------- |
+| Before a major release or launch | Single file review → `/review`                |
+| After a security incident        | Just lint errors → `/fix`                     |
+| Onboarding to a new codebase     | Performance only → `/performance-benchmarker` |
+| Weekly/monthly health check      | Testing only → `/test`                        |
+| Before major dependency updates  |                                               |
 
 ---
 
@@ -61,13 +61,13 @@ Priority 7 — Bundle Analysis (INFORM only)
 
 ### Cascade Failure Rules
 
-|Check|Failure Behavior|
-|:---|:---|
-|Security scan (critical)|**HALT** — all subsequent steps cancelled|
-|Dependency audit (exploitable CVE)|**HALT** — fix before proceeding|
-|Lint + type errors|**CONTINUE** — flag as deployment blocker|
-|Tests failing|**CONTINUE** — mark task as incomplete|
-|Bundle analysis (large)|**INFORM** — no blocking|
+| Check                              | Failure Behavior                          |
+| :--------------------------------- | :---------------------------------------- |
+| Security scan (critical)           | **HALT** — all subsequent steps cancelled |
+| Dependency audit (exploitable CVE) | **HALT** — fix before proceeding          |
+| Lint + type errors                 | **CONTINUE** — flag as deployment blocker |
+| Tests failing                      | **CONTINUE** — mark task as incomplete    |
+| Bundle analysis (large)            | **INFORM** — no blocking                  |
 
 ---
 
@@ -140,11 +140,11 @@ No files are modified without explicit approval.
 
 ## After /audit — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Security/Dependency failures|→ `/tribunal-backend` to implement secure fixes|
-|Lint/Type errors|→ `/fix` for automated cleanup|
-|Test coverage missing|→ `/test` to generate missing tests|
-|Audit clean|→ `/deploy` if preparing for release|
+| Outcome                      | Next Command                                    |
+| :--------------------------- | :---------------------------------------------- |
+| Security/Dependency failures | → `/tribunal-backend` to implement secure fixes |
+| Lint/Type errors             | → `/fix` for automated cleanup                  |
+| Test coverage missing        | → `/test` to generate missing tests             |
+| Audit clean                  | → `/deploy` if preparing for release            |
 
 ---

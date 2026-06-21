@@ -39,14 +39,14 @@ Every interface I build passes through three questions:
 
 ### Forbidden Defaults
 
-|Forbidden|Why|Alternative|
-|:---|:---|:---|
-|Purple/violet as primary|#1 AI design cliché|Signal orange, acid green, slate, deep red|
-|Hero: left text / right image|Most overused layout|Typographic brutalism, asymmetric depth|
-|Mesh gradient backgrounds|Cheap "premium" effect|Grain textures, solid contrast, radial depth|
-|Bento grid for everything|Safe but generic template|Break the grid deliberately|
-|Emoji icons|Unprofessional, unstylable|Always `lucide-react` or custom SVG|
-|shadcn/Radix without asking|My preference, not yours|Ask which UI library the user wants|
+| Forbidden                     | Why                        | Alternative                                  |
+| :---------------------------- | :------------------------- | :------------------------------------------- |
+| Purple/violet as primary      | #1 AI design cliché        | Signal orange, acid green, slate, deep red   |
+| Hero: left text / right image | Most overused layout       | Typographic brutalism, asymmetric depth      |
+| Mesh gradient backgrounds     | Cheap "premium" effect     | Grain textures, solid contrast, radial depth |
+| Bento grid for everything     | Safe but generic template  | Break the grid deliberately                  |
+| Emoji icons                   | Unprofessional, unstylable | Always `lucide-react` or custom SVG          |
+| shadcn/Radix without asking   | My preference, not yours   | Ask which UI library the user wants          |
 
 ---
 
@@ -133,16 +133,16 @@ Anything else from `'react'` = hallucinated. Do not generate it.
 
 ```tsx
 // ✅ React 19: Server Actions + useActionState (replaces useFormState)
-'use client';
-import { useActionState } from 'react';
-import { updateProfile } from './actions';
+"use client";
+import { useActionState } from "react";
+import { updateProfile } from "./actions";
 
 export function ProfileForm({ userId }: { userId: string }) {
   const [state, action, isPending] = useActionState(updateProfile, null);
   return (
     <form action={action}>
-      <input name="name" defaultValue={state?.name ?? ''} />
-      <button disabled={isPending}>{isPending ? 'Saving...' : 'Save'}</button>
+      <input name="name" defaultValue={state?.name ?? ""} />
+      <button disabled={isPending}>{isPending ? "Saving..." : "Save"}</button>
       {state?.error && <p role="alert">{state.error}</p>}
     </form>
   );
@@ -153,15 +153,22 @@ export function ProfileForm({ userId }: { userId: string }) {
 
 ```tsx
 // ❌ Stale closure — userId never updates inside the effect
-useEffect(() => { fetchUser(userId); }, []);
+useEffect(() => {
+  fetchUser(userId);
+}, []);
 
 // ✅ All used values declared as deps
-useEffect(() => { fetchUser(userId); }, [userId]);
+useEffect(() => {
+  fetchUser(userId);
+}, [userId]);
 
 // ✅ Stable callbacks via useCallback to keep deps stable
-const handleSubmit = useCallback(async (data: FormData) => {
-  await submitAction(data, userId);
-}, [userId]);
+const handleSubmit = useCallback(
+  async (data: FormData) => {
+    await submitAction(data, userId);
+  },
+  [userId],
+);
 ```
 
 ---
@@ -215,19 +222,21 @@ app/
 ```tsx
 // ✅ ALWAYS: Explicit prop interfaces
 interface ButtonProps {
-  variant: 'primary' | 'secondary' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
+  variant: "primary" | "secondary" | "ghost";
+  size?: "sm" | "md" | "lg";
   isLoading?: boolean;
   children: React.ReactNode;
   onClick?: () => void;
 }
 
 // ❌ NEVER: any props
-function Button(props: any) { /* ... */ }
+function Button(props: any) {
+  /* ... */
+}
 
 // ✅ Server Component typing
 interface PageProps {
-  params: Promise<{ slug: string }>;      // Next.js 15: params is a Promise
+  params: Promise<{ slug: string }>; // Next.js 15: params is a Promise
   searchParams: Promise<{ page?: string }>;
 }
 ```

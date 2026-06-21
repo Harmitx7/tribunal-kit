@@ -12,6 +12,7 @@ routing:
 # Framer Motion 12+ — Dense Reference
 
 ## Hallucination Traps (Read First)
+
 - ❌ `<Motion>` (capital M) → ✅ `motion.div` (lowercase dot notation)
 - ❌ `motion()` wrapper function → ✅ `motion.div`, `motion.span`, etc.
 - ❌ `exitBeforeEnter` prop → ✅ `mode="wait"` on `<AnimatePresence>` (removed in FM7+)
@@ -28,17 +29,14 @@ routing:
 ## Core Primitives
 
 ### `motion.X` / Declarative Animation
+
 ```tsx
 import { motion } from "framer-motion";
-<motion.div
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  exit={{ opacity: 0, y: -20 }}
-  transition={{ duration: 0.3, ease: "easeOut" }}
-/>
+<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3, ease: "easeOut" }} />;
 ```
 
 ### Variants (Stagger / Orchestration)
+
 ```tsx
 const container = {
   hidden: {},
@@ -49,11 +47,16 @@ const item = {
   visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.4 } },
 };
 <motion.ul variants={container} initial="hidden" animate="visible">
-  {list.map(e => <motion.li key={e.id} variants={item}>{e.name}</motion.li>)}
-</motion.ul>
+  {list.map((e) => (
+    <motion.li key={e.id} variants={item}>
+      {e.name}
+    </motion.li>
+  ))}
+</motion.ul>;
 ```
 
 ### Transitions
+
 ```tsx
 // Tween (default)
 transition={{ duration: 0.5, ease: "easeInOut", delay: 0.2, repeat: Infinity, repeatType: "reverse" }}
@@ -112,14 +115,13 @@ import { LayoutGroup } from "framer-motion";
 ```
 
 ### AnimatePresence
+
 ```tsx
-<AnimatePresence mode="sync"> {/* "sync"|"wait"|"popLayout" */}
-  {items.map(item => (
-    <motion.div key={item.id} /* ← REQUIRED */
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: "auto" }}
-      exit={{ opacity: 0, height: 0 }}
-    />
+<AnimatePresence mode="sync">
+  {" "}
+  {/* "sync"|"wait"|"popLayout" */}
+  {items.map((item) => (
+    <motion.div key={item.id} /* ← REQUIRED */ initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} />
   ))}
 </AnimatePresence>
 // mode="wait" — waits for exit before entering
@@ -136,7 +138,7 @@ import { useScroll, useTransform } from "framer-motion";
 const { scrollYProgress } = useScroll();
 const y = useTransform(scrollYProgress, [0, 1], [0, -200]);
 const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-<motion.div style={{ y, opacity }} />
+<motion.div style={{ y, opacity }} />;
 
 // Element-scoped scroll
 const ref = useRef(null);
@@ -148,22 +150,25 @@ const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end 
 ## Hooks
 
 ### `useAnimate` — Imperative sequences
+
 ```tsx
 import { useAnimate, stagger } from "framer-motion";
 const [scope, animate] = useAnimate(); // ← returns [scope, animate] NOT [ref, controls]
 await animate(".item", { opacity: 1 }, { delay: stagger(0.1) });
-<div ref={scope}>...</div>
+<div ref={scope}>...</div>;
 ```
 
 ### `useMotionValue` + `useTransform` — No re-renders
+
 ```tsx
 const x = useMotionValue(0);
 const rotateY = useTransform(x, [-200, 200], [-45, 45]);
 // ✅ useMotionValue does NOT trigger React re-renders — key perf advantage over useState
-<motion.div style={{ x, rotateY }} drag="x" />
+<motion.div style={{ x, rotateY }} drag="x" />;
 ```
 
 ### `useSpring` / `useVelocity`
+
 ```tsx
 const springX = useSpring(x, { stiffness: 300, damping: 30 });
 const xVel = useVelocity(x);
@@ -178,28 +183,29 @@ const skewX = useTransform(xVel, [-1000, 0, 1000], [-15, 0, 15]);
 // LazyMotion — ~5KB vs ~30KB full bundle
 import { LazyMotion, domAnimation, m } from "framer-motion";
 // domAnimation ≈ 5KB | domMax ≈ 20KB (needed for layout/drag)
-<LazyMotion features={domAnimation}><m.div animate={{ opacity: 1 }} /></LazyMotion>
+<LazyMotion features={domAnimation}>
+  <m.div animate={{ opacity: 1 }} />
+</LazyMotion>;
 ```
 
 ### Accessibility
+
 ```tsx
 import { useReducedMotion } from "framer-motion";
 const reduce = useReducedMotion();
 // opacity/color: always safe | position/scale/rotation: must be disabled when reduce=true
-<motion.div animate={{ x: reduce ? 0 : 100, opacity: 1 }} transition={{ duration: reduce ? 0 : 0.5 }} />
+<motion.div animate={{ x: reduce ? 0 : 100, opacity: 1 }} transition={{ duration: reduce ? 0 : 0.5 }} />;
 ```
 
 ### Rules
+
 - ✅ Animate: `x`, `y`, `scale`, `rotation`, `opacity` (GPU composited)
 - ❌ Never animate: `width`, `height`, `top`, `left`, `padding`, `margin` (causes layout thrashing)
 - ✅ `useMotionValue` for animation-driven values — never `useState`
 - ❌ Nest `AnimatePresence` only when necessary — each adds reconciler overhead
 - `"use client"` required in Next.js — `motion.div` cannot run in Server Components
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -211,8 +217,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -222,9 +226,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -235,17 +238,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -275,6 +279,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -285,5 +290,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

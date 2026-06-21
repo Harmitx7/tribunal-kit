@@ -12,6 +12,7 @@ routing:
 # React 19+ — Dense Reference
 
 ## Hallucination Traps (Read First)
+
 - ❌ `useFormState` → ✅ `useActionState` (stable name)
 - ❌ `useContext()` in conditionals → ✅ `use(Context)` CAN be conditional
 - ❌ `useMemo/useCallback/React.memo` in React 19+ projects → ✅ React Compiler handles this
@@ -24,6 +25,7 @@ routing:
 ## React 19 Core APIs
 
 ### `use()` — Replaces many useEffect patterns
+
 ```tsx
 import { use } from "react";
 // Reads promises (suspends until resolved)
@@ -39,6 +41,7 @@ function Admin({ isAdmin }: { isAdmin: boolean }) {
 ```
 
 ### `useActionState` — Form actions with state
+
 ```tsx
 import { useActionState } from "react"; // NOT useFormState
 
@@ -62,26 +65,29 @@ function SignupForm() {
 ```
 
 ### `useOptimistic` — Instant UI feedback
+
 ```tsx
 import { useOptimistic } from "react";
 function TodoList({ todos }: { todos: Todo[] }) {
-  const [optimistic, addOptimistic] = useOptimistic(
-    todos,
-    (current, newTodo: Todo) => [...current, newTodo]
-  );
+  const [optimistic, addOptimistic] = useOptimistic(todos, (current, newTodo: Todo) => [...current, newTodo]);
   async function handleAdd(formData: FormData) {
     addOptimistic({ id: crypto.randomUUID(), title: formData.get("title"), pending: true });
     await saveTodo(formData.get("title") as string);
   }
   return (
     <form action={handleAdd}>
-      {optimistic.map(t => <li key={t.id} style={{ opacity: t.pending ? 0.5 : 1 }}>{t.title}</li>)}
+      {optimistic.map((t) => (
+        <li key={t.id} style={{ opacity: t.pending ? 0.5 : 1 }}>
+          {t.title}
+        </li>
+      ))}
     </form>
   );
 }
 ```
 
 ### `useFormStatus` — Button pending state (must be INSIDE `<form>`)
+
 ```tsx
 import { useFormStatus } from "react-dom";
 // ❌ TRAP: Cannot be called in the same component as <form>
@@ -92,6 +98,7 @@ function SubmitButton() {
 ```
 
 ### `useTransition` — Non-blocking updates (React 19: supports async)
+
 ```tsx
 const [isPending, startTransition] = useTransition();
 startTransition(async () => {
@@ -101,16 +108,22 @@ startTransition(async () => {
 ```
 
 ### `useDeferredValue` — Stale-while-rerender
+
 ```tsx
 const deferredQuery = useDeferredValue(query);
 const isStale = query !== deferredQuery;
-return <div style={{ opacity: isStale ? 0.6 : 1 }}><ExpensiveList query={deferredQuery} /></div>;
+return (
+  <div style={{ opacity: isStale ? 0.6 : 1 }}>
+    <ExpensiveList query={deferredQuery} />
+  </div>
+);
 // React 19: useDeferredValue(value, initialFallback) — 2-arg form
 ```
 
 ---
 
 ## React Compiler (React 19)
+
 - Auto-memoizes components/values/callbacks. **Don't manually memoize in React 19 projects.**
 - ❌ `useMemo(() => calc(a), [a])` / `useCallback(fn, [id])` / `React.memo(Comp)` — legacy
 - ✅ Write plain functions/values. Compiler optimizes automatically.
@@ -121,22 +134,33 @@ return <div style={{ opacity: isStale ? 0.6 : 1 }}><ExpensiveList query={deferre
 ## Component Patterns
 
 ### Compound Components (shared state via context)
+
 ```tsx
 const TabsContext = createContext<{ active: string; setActive: (id: string) => void } | null>(null);
 function Tabs({ children, defaultTab }: { children: ReactNode; defaultTab: string }) {
   const [active, setActive] = useState(defaultTab);
-  return <TabsContext value={{ active, setActive }}><div>{children}</div></TabsContext>;
+  return (
+    <TabsContext value={{ active, setActive }}>
+      <div>{children}</div>
+    </TabsContext>
+  );
 }
 function Tab({ id, children }: { id: string; children: ReactNode }) {
   const ctx = use(TabsContext)!;
-  return <button onClick={() => ctx.setActive(id)} aria-selected={ctx.active === id}>{children}</button>;
+  return (
+    <button onClick={() => ctx.setActive(id)} aria-selected={ctx.active === id}>
+      {children}
+    </button>
+  );
 }
 ```
 
 ### Render Props / Higher Order Hooks
+
 Prefer custom hooks over render props for modern React.
 
 ### Context Performance Pattern
+
 ```tsx
 // Split context — prevents all consumers from re-rendering on every change
 const CountStateCtx = createContext<number>(0);
@@ -148,6 +172,7 @@ const CountDispatchCtx = createContext<Dispatch<Action>>(() => {});
 ## State Management
 
 ### Zustand (preferred for global state)
+
 ```tsx
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -155,26 +180,28 @@ const useStore = create<Store>()(
   persist(
     (set, get) => ({
       count: 0,
-      increment: () => set(s => ({ count: s.count + 1 })),
+      increment: () => set((s) => ({ count: s.count + 1 })),
       getDoubled: () => get().count * 2,
     }),
-    { name: "my-store" }
-  )
+    { name: "my-store" },
+  ),
 );
 // ❌ TRAP: Do NOT destructure the whole store — causes re-render on every change
 // ✅ const count = useStore(s => s.count); // selector
 ```
 
 ### Jotai (preferred for derived/atomic state)
+
 ```tsx
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 const countAtom = atom(0);
-const doubledAtom = atom(get => get(countAtom) * 2); // derived atom
+const doubledAtom = atom((get) => get(countAtom) * 2); // derived atom
 // ❌ TRAP: atomWithStorage is from jotai/utils — NOT from jotai
 import { atomWithStorage } from "jotai/utils";
 ```
 
 ### React Query / TanStack Query
+
 ```tsx
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 const { data, isPending, error } = useQuery({
@@ -201,13 +228,13 @@ const mutation = useMutation({
 
 ## Performance
 
-| Technique | When |
-|-----------|------|
-| `useDeferredValue` | Expensive derived render (charts, filters) |
-| `useTransition` | Page nav, tab switches, data load |
-| `lazy()` + `Suspense` | Code-split heavy components |
-| `<Virtuoso>` / `<WindowVirtualizer>` | Lists > 200 items |
-| Avoid `useEffect` for state transforms | Use `useMemo` or derived atoms |
+| Technique                              | When                                       |
+| -------------------------------------- | ------------------------------------------ |
+| `useDeferredValue`                     | Expensive derived render (charts, filters) |
+| `useTransition`                        | Page nav, tab switches, data load          |
+| `lazy()` + `Suspense`                  | Code-split heavy components                |
+| `<Virtuoso>` / `<WindowVirtualizer>`   | Lists > 200 items                          |
+| Avoid `useEffect` for state transforms | Use `useMemo` or derived atoms             |
 
 ---
 
@@ -224,15 +251,13 @@ function Input({ ref, ...props }: ComponentProps<"input"> & { ref?: Ref<HTMLInpu
 ---
 
 ## Testing Checklist
+
 - ✅ Use React Testing Library — test behavior, not implementation
 - ✅ `userEvent` over `fireEvent` (async, closer to real interaction)
 - ✅ Mock server calls with MSW (Mock Service Worker)
 - ❌ Never test internal state, ref values, or component instances
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -244,8 +269,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -255,9 +278,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -268,17 +290,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -308,6 +331,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -318,5 +342,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

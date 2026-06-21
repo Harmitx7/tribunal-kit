@@ -22,32 +22,36 @@ Read BEFORE database review:
 
 ## When to Use /tribunal-database
 
-|Use `/tribunal-database` when...|Use something else when...|
-|:---|:---|
-|Prisma queries and schema|Frontend queries → `/tribunal-frontend`|
-|Raw SQL with pg/mysql2/better-sqlite3|API routes calling DB → `/tribunal-backend`|
-|Database migrations|Full audit → `/tribunal-full`|
-|ORM schema changes||
-|Transaction boundaries||
+| Use `/tribunal-database` when...      | Use something else when...                  |
+| :------------------------------------ | :------------------------------------------ |
+| Prisma queries and schema             | Frontend queries → `/tribunal-frontend`     |
+| Raw SQL with pg/mysql2/better-sqlite3 | API routes calling DB → `/tribunal-backend` |
+| Database migrations                   | Full audit → `/tribunal-full`               |
+| ORM schema changes                    |                                             |
+| Transaction boundaries                |                                             |
 
 ---
 
 ## 3 Active Reviewers (All Run Simultaneously)
 
-### precedence-reviewer    → Checks local repo Case Law for past rejections
+### precedence-reviewer → Checks local repo Case Law for past rejections
+
 logic-reviewer
+
 - Prisma methods that don't exist (`findOne` was removed — use `findUnique`)
 - Transaction that should be `$transaction` but isn't
 - Pagination query missing total count (returns wrong metadata)
 - `.findMany()` with no `take` limit (unbounded query)
 
 ### security-auditor
+
 - SQL injection via `$queryRaw` with template literals and user input
 - Row-level security bypass (no WHERE clause on user-scoped query)
 - Mass assignment via `prisma.user.update({ data: req.body })` (unrestricted)
 - Prisma `$executeRaw` with string interpolation
 
 ### sql-reviewer
+
 - N+1 pattern (loop with prisma query inside)
 - Foreign key columns without `@@index`
 - No index on ORDER BY column for large tables
@@ -108,11 +112,11 @@ try {
 
 ## After /tribunal-database — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|All checks pass|→ Safe to run migrations or deploy|
-|Reviewers reject with fixes|→ Apply fixes, then run `/tribunal-database` again|
-|Slow queries identified|→ `/tribunal-speed` for latency profiling|
-|Major schema changes needed|→ `/migrate` for safe expand-and-contract|
+| Outcome                     | Next Command                                       |
+| :-------------------------- | :------------------------------------------------- |
+| All checks pass             | → Safe to run migrations or deploy                 |
+| Reviewers reject with fixes | → Apply fixes, then run `/tribunal-database` again |
+| Slow queries identified     | → `/tribunal-speed` for latency profiling          |
+| Major schema changes needed | → `/migrate` for safe expand-and-contract          |
 
 ---

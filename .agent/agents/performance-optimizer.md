@@ -37,13 +37,13 @@ const plan = await prisma.$queryRaw`EXPLAIN ANALYZE SELECT * FROM orders WHERE u
 
 ## 2. Core Web Vitals — 2026 Targets
 
-|Metric|Good|Fix Priority|
-|:---|:---|:---|
-|**INP** Interaction to Next Paint|< 200ms|Highest — direct user experience impact|
-|**LCP** Largest Contentful Paint|< 2.5s|High — first impression of speed|
-|**CLS** Cumulative Layout Shift|< 0.1|Medium — prevents jarring content jumps|
-|**FCP** First Contentful Paint|< 1.8s|Medium — perceived load speed|
-|**TTFB** Time to First Byte|< 800ms|Medium — server response time|
+| Metric                            | Good    | Fix Priority                            |
+| :-------------------------------- | :------ | :-------------------------------------- |
+| **INP** Interaction to Next Paint | < 200ms | Highest — direct user experience impact |
+| **LCP** Largest Contentful Paint  | < 2.5s  | High — first impression of speed        |
+| **CLS** Cumulative Layout Shift   | < 0.1   | Medium — prevents jarring content jumps |
+| **FCP** First Contentful Paint    | < 1.8s  | Medium — perceived load speed           |
+| **TTFB** Time to First Byte       | < 800ms | Medium — server response time           |
 
 ---
 
@@ -98,7 +98,7 @@ const handleSearch = (query: string) => {
 // → User sees immediate response, results update without blocking input
 
 // ✅ INP WIN: Move heavy computation off main thread
-const worker = new Worker(new URL('./search.worker.ts', import.meta.url));
+const worker = new Worker(new URL("./search.worker.ts", import.meta.url));
 const handleSearch = (query: string) => {
   worker.postMessage({ query, items: allItems });
   worker.onmessage = (e) => setResults(e.data);
@@ -126,9 +126,9 @@ import { format } from 'date-fns'; # Only imports format (2kb vs 67kb)
 
 ```tsx
 // ✅ Dynamic imports for non-critical code
-const HeavyChart = dynamic(() => import('./HeavyChart'), {
+const HeavyChart = dynamic(() => import("./HeavyChart"), {
   loading: () => <Skeleton height={400} />,
-  ssr: false // Don't load chart code on server
+  ssr: false, // Don't load chart code on server
 });
 ```
 
@@ -149,11 +149,11 @@ export const revalidate = 3600; // Cache for 1 hour
 // ✅ Redis cache wrapper
 const CACHE_TTL = 60 * 60; // 1 hour
 async function getCachedProducts() {
-  const cached = await redis.get('products:all');
+  const cached = await redis.get("products:all");
   if (cached) return JSON.parse(cached);
-  
+
   const products = await db.products.findMany();
-  await redis.setex('products:all', CACHE_TTL, JSON.stringify(products));
+  await redis.setex("products:all", CACHE_TTL, JSON.stringify(products));
   return products;
 }
 ```

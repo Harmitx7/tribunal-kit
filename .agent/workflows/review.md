@@ -21,13 +21,13 @@ Read BEFORE reviewing:
 
 ## When to Use /review
 
-|Use `/review` when...|Use something else when...|
-|:---|:---|
-|Auditing code you didn't write|AI-specific code review → `/review-ai`|
-|Checking existing code for hallucinations|Need Tribunal with generation → `/generate`|
-|Pre-merge code review|Full pre-deploy audit → `/audit`|
-|Validating AI-generated output|Security only → `/tribunal-backend`|
-|Reviewing code from a junior developer||
+| Use `/review` when...                     | Use something else when...                  |
+| :---------------------------------------- | :------------------------------------------ |
+| Auditing code you didn't write            | AI-specific code review → `/review-ai`      |
+| Checking existing code for hallucinations | Need Tribunal with generation → `/generate` |
+| Pre-merge code review                     | Full pre-deploy audit → `/audit`            |
+| Validating AI-generated output            | Security only → `/tribunal-backend`         |
+| Reviewing code from a junior developer    |                                             |
 
 ---
 
@@ -48,15 +48,15 @@ Logic + Security run on ALL code by default.
 
 **Additional reviewers auto-activated by content:**
 
-|Code Contains|Additional Reviewers|
-|:---|:---|
-|SQL, Prisma, database operations|`sql-reviewer`|
-|React, hooks, components|`frontend-reviewer`|
-|TypeScript types, generics|`type-safety-reviewer`|
-|npm imports, package.json|`dependency-reviewer`|
-|Tests, specs, describe/it blocks|`test-coverage-reviewer`|
-|LLM API calls (OpenAI, Anthropic)|`ai-code-reviewer`|
-|ARIA, disability, a11y|`accessibility-reviewer`|
+| Code Contains                     | Additional Reviewers     |
+| :-------------------------------- | :----------------------- |
+| SQL, Prisma, database operations  | `sql-reviewer`           |
+| React, hooks, components          | `frontend-reviewer`      |
+| TypeScript types, generics        | `type-safety-reviewer`   |
+| npm imports, package.json         | `dependency-reviewer`    |
+| Tests, specs, describe/it blocks  | `test-coverage-reviewer` |
+| LLM API calls (OpenAI, Anthropic) | `ai-code-reviewer`       |
+| ARIA, disability, a11y            | `accessibility-reviewer` |
 
 ---
 
@@ -85,12 +85,14 @@ Security:       ✅ APPROVED | ⚠️ [N] warnings | ❌ [N] critical
 ## What Each Reviewer Looks For
 
 ### logic-reviewer
+
 - Methods called on wrong object types
 - Impossible states that will throw at runtime
 - Functions called before they're defined
 - Missing null checks on potentially-undefined values
 
 ### security-auditor
+
 - SQL injection (string interpolation in queries)
 - XSS (user content in innerHTML or dangerouslySetInnerHTML)
 - JWT issues (no algorithm enforcement, weak secrets)
@@ -130,10 +132,10 @@ The review specifically catches:
 
 ## After /review — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Review reveals bugs|→ `/debug` to isolate and fix|
-|Review reveals security issues|→ `/tribunal-backend` to apply fixes|
-|Review is clean|→ `/deploy` or commit code|
+| Outcome                        | Next Command                         |
+| :----------------------------- | :----------------------------------- |
+| Review reveals bugs            | → `/debug` to isolate and fix        |
+| Review reveals security issues | → `/tribunal-backend` to apply fixes |
+| Review is clean                | → `/deploy` or commit code           |
 
 ---

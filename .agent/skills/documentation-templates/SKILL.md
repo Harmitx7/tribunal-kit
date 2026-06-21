@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Writing documentation that only AI-generated code can understand -> ✅ Docs are for HUMANS; use clear language and real examples
 - ❌ Documenting implementation details instead of behavior -> ✅ Document WHAT it does and WHY, not HOW (code shows how)
 - ❌ Skipping the 'Quick Start' section -> ✅ The first 30 seconds of a README determine if someone uses your project
 
 ---
-
 
 # Documentation Standards
 
@@ -24,30 +24,30 @@ routing:
 
 ## Documentation Types and Their Audiences
 
-|Type|Audience|Goal|
-|---|---|---|
-|README|New developer joining the project|"Get me running in 10 minutes"|
-|API docs|External integrator or frontend dev|"Tell me exactly what I can call and what I'll get back"|
-|Architecture decision (ADR)|Future engineer inheriting the codebase|"Tell me why it works this way, not just how"|
-|Code comment|Reviewer, maintainer|"Explain the non-obvious; skip the obvious"|
-|Runbook|On-call engineer at 2am|"Tell me what to do, not what to think about"|
+| Type                        | Audience                                | Goal                                                     |
+| --------------------------- | --------------------------------------- | -------------------------------------------------------- |
+| README                      | New developer joining the project       | "Get me running in 10 minutes"                           |
+| API docs                    | External integrator or frontend dev     | "Tell me exactly what I can call and what I'll get back" |
+| Architecture decision (ADR) | Future engineer inheriting the codebase | "Tell me why it works this way, not just how"            |
+| Code comment                | Reviewer, maintainer                    | "Explain the non-obvious; skip the obvious"              |
+| Runbook                     | On-call engineer at 2am                 | "Tell me what to do, not what to think about"            |
 
 ---
 
 ## Skill Pattern Inheritance
 
-The Tribunal Agent Kit supports 5 standard Agent Design Kit (ADK) base patterns. 
+The Tribunal Agent Kit supports 5 standard Agent Design Kit (ADK) base patterns.
 To build a skill using a robust, tested agent behavior model, add `pattern: [pattern-name]` to the YAML frontmatter of your `SKILL.md`.
 
-|Pattern|Value|When to use|
-|---|---|---|
-|**Inversion**|`pattern: inversion`|Forces the agent to interview the user (Socratic Gate) before acting.|
-|**Reviewer**|`pattern: reviewer`|Evaluates artifacts against a checklist and severity levels.|
-|**Tool Wrapper**|`pattern: tool-wrapper`|Strictly executes external CLI tools via provided documentation without guessing.|
-|**Generator**|`pattern: generator`|Produces structured output (docs, boilerplate) by filling a rigid template.|
-|**Pipeline**|`pattern: pipeline`|Executes sequential tasks with strict halting gates between steps.|
+| Pattern          | Value                   | When to use                                                                       |
+| ---------------- | ----------------------- | --------------------------------------------------------------------------------- |
+| **Inversion**    | `pattern: inversion`    | Forces the agent to interview the user (Socratic Gate) before acting.             |
+| **Reviewer**     | `pattern: reviewer`     | Evaluates artifacts against a checklist and severity levels.                      |
+| **Tool Wrapper** | `pattern: tool-wrapper` | Strictly executes external CLI tools via provided documentation without guessing. |
+| **Generator**    | `pattern: generator`    | Produces structured output (docs, boilerplate) by filling a rigid template.       |
+| **Pipeline**     | `pattern: pipeline`     | Executes sequential tasks with strict halting gates between steps.                |
 
-*Templates defining the specific rules for these patterns live in `.agent/patterns/`.*
+_Templates defining the specific rules for these patterns live in `.agent/patterns/`._
 
 ---
 
@@ -80,23 +80,23 @@ Open http://localhost:3000
 
 \`\`\`
 src/
-  api/        API routes
-  lib/        Shared utilities
-  services/   Business logic
+api/ API routes
+lib/ Shared utilities
+services/ Business logic
 \`\`\`
 
 ## Environment Variables
 
-|Variable|Required|Description|
-|---|---|---|
-|DATABASE_URL|Yes|PostgreSQL connection string|
-|JWT_SECRET|Yes|Secret for signing JWTs|
+| Variable     | Required | Description                  |
+| ------------ | -------- | ---------------------------- |
+| DATABASE_URL | Yes      | PostgreSQL connection string |
+| JWT_SECRET   | Yes      | Secret for signing JWTs      |
 
 ## Running Tests
 
 \`\`\`bash
-npm test              # unit tests
-npm run test:e2e      # end-to-end tests
+npm test # unit tests
+npm run test:e2e # end-to-end tests
 \`\`\`
 
 ## Contributing
@@ -118,25 +118,25 @@ Creates a new user account.
 **Request Body**
 \`\`\`json
 {
-  "email": "string (required, valid email)",
-  "name": "string (required, 2–100 chars)",
-  "role": "admin | user (optional, default: user)"
+"email": "string (required, valid email)",
+"name": "string (required, 2–100 chars)",
+"role": "admin | user (optional, default: user)"
 }
 \`\`\`
 
 **Responses**
 
-|Status|Meaning|Body|
-|---|---|---|
-|201|User created|`{ data: User }`|
-|400|Validation failed|`{ error: string, details: string[] }`|
-|409|Email already exists|`{ error: string }`|
+| Status | Meaning              | Body                                   |
+| ------ | -------------------- | -------------------------------------- |
+| 201    | User created         | `{ data: User }`                       |
+| 400    | Validation failed    | `{ error: string, details: string[] }` |
+| 409    | Email already exists | `{ error: string }`                    |
 
 **Example**
 \`\`\`bash
 curl -X POST /api/users \
-  -H "Content-Type: application/json" \
-  -d '{"email": "user@example.com", "name": "Jane"}'
+ -H "Content-Type: application/json" \
+ -d '{"email": "user@example.com", "name": "Jane"}'
 \`\`\`
 ```
 
@@ -153,11 +153,12 @@ const total = price * taxRate;
 
 // ✅ Explains why this specific value exists
 // Vietnamese tax law requires 10% VAT on all digital goods (Circular 92/2015)
-const VN_DIGITAL_TAX_RATE = 1.10;
+const VN_DIGITAL_TAX_RATE = 1.1;
 const total = price * VN_DIGITAL_TAX_RATE;
 ```
 
 **When to always comment:**
+
 - Non-obvious business rules
 - Workarounds for external library bugs (with issue link if possible)
 - Performance decisions that look like premature optimization but aren't
@@ -182,32 +183,43 @@ When a codebase will be worked on by AI assistants:
 # Runbook: [Service or Incident Type]
 
 ## Symptoms
+
 - [What the user or monitor reports]
 
 ## Likely Causes
+
 1. [Most common cause]
 2. [Second most common]
 
 ## Investigation Steps
+
 \`\`\`bash
+
 # Check service health
+
 kubectl get pods -n production
 
 # Check recent errors
+
 kubectl logs deployment/api --since=15m | grep ERROR
 \`\`\`
 
 ## Resolution Steps
+
 ### If Cause 1:
+
 [Exact steps to resolve]
 
 ### If Cause 2:
+
 [Exact steps to resolve]
 
 ## Escalation
+
 If unresolved after 30 minutes → page @on-call-lead
 
 ## Post-Incident
+
 [ ] Write incident report
 [ ] Add monitoring for this failure mode
 [ ] Update this runbook if steps changed
@@ -231,10 +243,7 @@ Evidence:    [link to terminal output, test result, or file diff]
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -246,8 +255,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -257,9 +264,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -270,17 +276,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -310,6 +317,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -320,5 +328,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

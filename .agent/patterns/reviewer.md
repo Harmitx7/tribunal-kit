@@ -3,7 +3,9 @@
 **Purpose**: Evaluate code or content against a strict external checklist.
 
 ## Protocol
+
 When a skill inherits this pattern, the agent assumes the role of an evaluator. Do NOT generate novel content or fix the problem automatically unless explicitly instructed.
+
 1. **Checklist Enforcement**: You must read the evaluation checklist provided in the specific skill.
 2. **Review Output**: For every item in the checklist, determine if it passes or fails.
 3. **Severity Grading**: Group all findings by severity:

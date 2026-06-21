@@ -29,7 +29,7 @@ Read BEFORE hypothesizing:
 The `debugger` agent follows this sequence **without skipping steps**:
 
 1. Collect all evidence first
-2. Generate ranked hypotheses 
+2. Generate ranked hypotheses
 3. Test exactly one hypothesis at a time
 4. Confirm root cause with evidence
 5. Apply the minimum targeted fix
@@ -39,12 +39,12 @@ The `debugger` agent follows this sequence **without skipping steps**:
 
 ## When to Use /debug
 
-|Use `/debug` when...|Use something else when...|
-|:---|:---|
-|There's a specific error or unexpected behavior|Code needs to be written → `/generate`|
-|You have a stack trace or error message|Code quality needs improving → `/refactor`|
-|Production is broken right now|Missing test coverage → `/test`|
-|A bug reappears after being "fixed"|Full health check needed → `/audit`|
+| Use `/debug` when...                            | Use something else when...                 |
+| :---------------------------------------------- | :----------------------------------------- |
+| There's a specific error or unexpected behavior | Code needs to be written → `/generate`     |
+| You have a stack trace or error message         | Code quality needs improving → `/refactor` |
+| Production is broken right now                  | Missing test coverage → `/test`            |
+| A bug reappears after being "fixed"             | Full health check needed → `/audit`        |
 
 ---
 
@@ -180,11 +180,11 @@ Similar patterns: [other locations to check]
 
 ## After /debug — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Root cause fixed|→ `/test` to add regression test preventing recurrence|
-|Fix applied, needs validation|→ `/review` to verify fix quality|
-|Bug was in generated code|→ `/tribunal-*` to audit related generated code|
-|Systemic issue discovered|→ `/refactor` for structural fix|
+| Outcome                       | Next Command                                           |
+| :---------------------------- | :----------------------------------------------------- |
+| Root cause fixed              | → `/test` to add regression test preventing recurrence |
+| Fix applied, needs validation | → `/review` to verify fix quality                      |
+| Bug was in generated code     | → `/tribunal-*` to audit related generated code        |
+| Systemic issue discovered     | → `/refactor` for structural fix                       |
 
 ---

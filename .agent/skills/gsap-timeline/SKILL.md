@@ -19,9 +19,7 @@ Apply when building multi-step animations, coordinating several tweens in sequen
 
 ```javascript
 const tl = gsap.timeline();
-tl.to(".a", { x: 100, duration: 1 })
-  .to(".b", { y: 50, duration: 0.5 })
-  .to(".c", { opacity: 0, duration: 0.3 });
+tl.to(".a", { x: 100, duration: 1 }).to(".b", { y: 50, duration: 0.5 }).to(".c", { opacity: 0, duration: 0.3 });
 ```
 
 By default, tweens are **appended** one after another. Use the **position parameter** to place tweens at specific times or relative to other tweens.
@@ -38,10 +36,10 @@ Third argument (or position property in vars) controls placement:
 Examples:
 
 ```javascript
-tl.to(".a", { x: 100 }, 0);           // at 0
-tl.to(".b", { y: 50 }, "+=0.5");      // 0.5s after last end
-tl.to(".c", { opacity: 0 }, "<");     // same start as previous
-tl.to(".d", { scale: 2 }, "<0.2");    // 0.2s after previous start
+tl.to(".a", { x: 100 }, 0); // at 0
+tl.to(".b", { y: 50 }, "+=0.5"); // 0.5s after last end
+tl.to(".c", { opacity: 0 }, "<"); // same start as previous
+tl.to(".d", { scale: 2 }, "<0.2"); // 0.2s after previous start
 ```
 
 ## Timeline Defaults
@@ -69,7 +67,7 @@ tl.addLabel("intro", 0);
 tl.to(".a", { x: 100 }, "intro");
 tl.addLabel("outro", "+=0.5");
 tl.to(".b", { opacity: 0 }, "outro");
-tl.play("outro");  // start from "outro"
+tl.play("outro"); // start from "outro"
 tl.tweenFromTo("intro", "outro"); // pauses the timeline and returns a new Tween that animates the timeline's playhead from intro to outro with no ease.
 ```
 
@@ -124,17 +122,18 @@ master.to(".c", { opacity: 0 }, "+=0.2");
 
 ## 🚨 LLM Trap Table
 
-|Pattern|What AI Does Wrong|What Is Actually Correct|
-|:---|:---|:---|
-|gsap-timeline|Position parameter as 2nd arg|Position parameter is the 3rd arg: tl.to(el, {x: 100}, "<")|
-|gsap-timeline|tl.add(gsap.to(...))|tl.to(...) (just chain the tween directly)|
-|gsap-timeline|Hardcoded delays (delay: 1)|Use position parameter (<, >, +=1) for relative timing|
+| Pattern       | What AI Does Wrong            | What Is Actually Correct                                    |
+| :------------ | :---------------------------- | :---------------------------------------------------------- |
+| gsap-timeline | Position parameter as 2nd arg | Position parameter is the 3rd arg: tl.to(el, {x: 100}, "<") |
+| gsap-timeline | tl.add(gsap.to(...))          | tl.to(...) (just chain the tween directly)                  |
+| gsap-timeline | Hardcoded delays (delay: 1)   | Use position parameter (<, >, +=1) for relative timing      |
 
 ---
 
 ## ✅ Pre-Flight Self-Audit
 
 Before producing any output, verify:
+
 ```
 ✅ Did I read the actual files before making claims about them?
 ✅ Did I verify all method names against official GSAP documentation?
@@ -155,14 +154,14 @@ BUILD:   Generate the smallest meaningful unit of code
 CONFIRM: Verify the output is correct before presenting
 ```
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -192,6 +191,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -202,5 +202,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

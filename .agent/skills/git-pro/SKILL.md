@@ -14,6 +14,7 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ `git push --force` on shared branches → ✅ Always use `git push --force-with-lease` (fails if remote has new commits you haven't seen)
 - ❌ Rebasing already-pushed commits → ✅ Only rebase LOCAL, un-pushed commits. Rebasing rewrites history and breaks teammates.
 - ❌ `git pull` (default merge) on feature branches → ✅ Use `git pull --rebase` to maintain linear history
@@ -104,7 +105,7 @@ git worktree remove ../hotfix-v2.3.1
   "$schema": "https://turbo.build/schema.json",
   "pipeline": {
     "build": {
-      "dependsOn": ["^build"],   // ← ^ means "build dependencies first"
+      "dependsOn": ["^build"], // ← ^ means "build dependencies first"
       "outputs": ["dist/**", ".next/**"]
     },
     "test": {
@@ -154,18 +155,18 @@ git checkout main
 ```javascript
 // release.config.js
 export default {
-  branches: ['main', { name: 'beta', prerelease: true }],
+  branches: ["main", { name: "beta", prerelease: true }],
   plugins: [
-    '@semantic-release/commit-analyzer',       // reads conventional commits
-    '@semantic-release/release-notes-generator',
-    '@semantic-release/changelog',              // updates CHANGELOG.md
-    '@semantic-release/npm',                    // bumps package.json version
-    '@semantic-release/github',                 // creates GitHub Release
+    "@semantic-release/commit-analyzer", // reads conventional commits
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog", // updates CHANGELOG.md
+    "@semantic-release/npm", // bumps package.json version
+    "@semantic-release/github", // creates GitHub Release
     [
-      '@semantic-release/git',
+      "@semantic-release/git",
       {
-        assets: ['CHANGELOG.md', 'package.json'],
-        message: 'chore(release): ${nextRelease.version} [skip ci]',
+        assets: ["CHANGELOG.md", "package.json"],
+        message: "chore(release): ${nextRelease.version} [skip ci]",
       },
     ],
   ],
@@ -182,13 +183,13 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
-      contents: write        # create GitHub releases
-      issues: write          # comment on released issues
-      pull-requests: write   # comment on released PRs
+      contents: write # create GitHub releases
+      issues: write # comment on released issues
+      pull-requests: write # comment on released PRs
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0       # full history required for semantic-release
+          fetch-depth: 0 # full history required for semantic-release
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
@@ -212,26 +213,26 @@ Never store `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` as GitHub secrets. Use
 # Step 1: Create IAM Role in AWS (Terraform)
 # resources.tf
 resource "aws_iam_role" "github_actions" {
-  name = "github-actions-deploy"
+name = "github-actions-deploy"
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Principal = {
-        Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"
-      }
-      Action = "sts:AssumeRoleWithWebIdentity"
-      Condition = {
-        StringEquals = {
-          "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-        }
-        StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:MyOrg/my-repo:*"
-        }
-      }
-    }]
-  })
+assume_role_policy = jsonencode({
+Version = "2012-10-17"
+Statement = [{
+Effect = "Allow"
+Principal = {
+Federated = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:oidc-provider/token.actions.githubusercontent.com"
+}
+Action = "sts:AssumeRoleWithWebIdentity"
+Condition = {
+StringEquals = {
+"token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+}
+StringLike = {
+"token.actions.githubusercontent.com:sub" = "repo:MyOrg/my-repo:*"
+}
+}
+}]
+})
 }
 ```
 
@@ -241,7 +242,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write    # REQUIRED for OIDC
+      id-token: write # REQUIRED for OIDC
       contents: read
     steps:
       - uses: actions/checkout@v4
@@ -326,13 +327,13 @@ jobs:
 jobs:
   test:
     strategy:
-      fail-fast: false   # ← don't cancel other matrix jobs on first failure
+      fail-fast: false # ← don't cancel other matrix jobs on first failure
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node: [20, 22]
         exclude:
           - os: windows-latest
-            node: 20    # skip this combination
+            node: 20 # skip this combination
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -429,5 +430,6 @@ resource "github_branch_protection" "main" {
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden**: Declaring a workflow correct because the YAML "looks right."
 - ✅ **Required**: Verify with `act` locally or confirm CI run passes before declaring success.

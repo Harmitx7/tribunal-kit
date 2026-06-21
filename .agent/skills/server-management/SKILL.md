@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Running services as root -> ✅ Create a dedicated service user with minimal permissions; never run as root
 - ❌ Using password-based SSH -> ✅ Disable password auth; use SSH key pairs only with `PermitRootLogin no`
 - ❌ Editing nginx config without testing -> ✅ Always run `nginx -t` before `systemctl reload nginx`; syntax errors take down all sites
 
 ---
-
 
 # Server Management — Production Linux Mastery
 
@@ -79,7 +79,7 @@ You must shield your internal application framework (Node/Python/Ruby) behind Ng
 server {
     listen 80;
     server_name api.myapp.com;
-    
+
     # Force SSL Redirect
     return 301 https://$host$request_uri;
 }
@@ -104,7 +104,7 @@ server {
     location / {
         # Proxy traffic to internal local process
         proxy_pass http://127.0.0.1:3000;
-        
+
         # Forward original IP and Protocol for rate limiters
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -124,6 +124,7 @@ server {
 ## 3. Server Hardening Fundamentals
 
 ### SSH Security (`/etc/ssh/sshd_config`)
+
 ```bash
 PermitRootLogin no           # Kill direct root login attacks immediately
 PasswordAuthentication no    # Enforce SSH key-based login ONLY
@@ -131,7 +132,9 @@ Port 2022                    # (Optional) Obscurity defense against automated sc
 ```
 
 ### Uncomplicated Firewall (UFW)
+
 A naked server with all ports open is a honeypot.
+
 ```bash
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
@@ -142,6 +145,7 @@ sudo ufw enable
 ```
 
 ### Fail2Ban
+
 Automatically bans IPs attempting brute force credential filling after 5 bad attempts.
 
 ---
@@ -166,10 +170,7 @@ A server will inevitably crash when `/var/log` consumes 100% of the disk.
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -181,8 +182,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -192,9 +191,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -205,17 +203,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -245,6 +244,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -255,5 +255,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -41,7 +41,7 @@ for (const user of users) {
 
 // ✅ APPROVED: Eager loading with include — 1 query total
 const users = await prisma.user.findMany({
-  include: { posts: true }
+  include: { posts: true },
 });
 
 // ✅ APPROVED: Explicit join query — 1 query total
@@ -58,10 +58,7 @@ for (const user of users) {
 }
 
 // ✅ APPROVED: Drizzle with join
-const result = await db
-  .select()
-  .from(usersTable)
-  .leftJoin(ordersTable, eq(usersTable.id, ordersTable.userId));
+const result = await db.select().from(usersTable).leftJoin(ordersTable, eq(usersTable.id, ordersTable.userId));
 ```
 
 ---
@@ -108,7 +105,7 @@ CREATE INDEX idx_orders_customer_email ON orders(customer_email);
 
 ---
 
-## Section 4: SELECT * Over-Fetching
+## Section 4: SELECT \* Over-Fetching
 
 ```typescript
 // ❌ OVER-FETCH: Retrieves all 30 columns when only 3 are needed
@@ -190,14 +187,14 @@ await prisma.order.update({ where: { id: order.id }, data: { paymentId: payment.
 // ❌ MASS ASSIGNMENT: Passing raw request body to ORM
 await prisma.user.update({
   where: { id },
-  data: req.body  // Attacker can set { role: 'admin', verified: true }
+  data: req.body, // Attacker can set { role: 'admin', verified: true }
 });
 
 // ✅ APPROVED: Explicit field extraction
 const { name, bio } = UpdateProfileSchema.parse(req.body);
 await prisma.user.update({
   where: { id },
-  data: { name, bio }
+  data: { name, bio },
 });
 ```
 

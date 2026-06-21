@@ -42,27 +42,29 @@ export default async function Page() {
 
 // ❌ REJECTED: onClick in a Server Component
 export default async function Page() {
-  return <button onClick={() => alert('hi')}>Click</button>; // Serialization error
+  return <button onClick={() => alert("hi")}>Click</button>; // Serialization error
 }
 
 // ❌ REJECTED: Importing a client-only library in RSC
-import { motion } from 'framer-motion'; // framer-motion uses hooks internally
-export default async function Page() { /* ... */ }
+import { motion } from "framer-motion"; // framer-motion uses hooks internally
+export default async function Page() {
+  /* ... */
+}
 
 // ✅ APPROVED: Boundary correctly split
 // app/page.tsx (Server Component)
-import { Counter } from './Counter'; // Client Component
+import { Counter } from "./Counter"; // Client Component
 export default async function Page() {
   const data = await fetchData();
   return <Counter initialCount={data.count} />;
 }
 
 // app/Counter.tsx (Client Component — has 'use client' directive)
-'use client';
-import { useState } from 'react';
+("use client");
+import { useState } from "react";
 export function Counter({ initialCount }: { initialCount: number }) {
   const [count, setCount] = useState(initialCount);
-  return <button onClick={() => setCount(c => c + 1)}>{count}</button>;
+  return <button onClick={() => setCount((c) => c + 1)}>{count}</button>;
 }
 ```
 
@@ -80,7 +82,7 @@ function UserCard({ isAdmin }: { isAdmin: boolean }) {
 
 // ❌ REJECTED: Hook inside loop
 function List({ items }: { items: string[] }) {
-  return items.map(item => {
+  return items.map((item) => {
     const [selected, setSelected] = useState(false); // Order changes with items — crash
     return <div>{item}</div>;
   });
@@ -104,16 +106,16 @@ useEffect(() => {
 ```tsx
 // ❌ REJECTED: Direct mutation — React cannot detect this change
 const [items, setItems] = useState<string[]>([]);
-items.push('new item'); // Mutates existing reference — UI won't update
-setItems(items);        // Same reference = React skips re-render
+items.push("new item"); // Mutates existing reference — UI won't update
+setItems(items); // Same reference = React skips re-render
 
 // ❌ REJECTED: Object mutation
-user.name = 'New Name'; // Mutates object-in-state
-setUser(user);          // Same reference — skipped
+user.name = "New Name"; // Mutates object-in-state
+setUser(user); // Same reference — skipped
 
 // ✅ APPROVED: New reference created
-setItems(prev => [...prev, 'new item']);
-setUser(prev => ({ ...prev, name: 'New Name' }));
+setItems((prev) => [...prev, "new item"]);
+setUser((prev) => ({ ...prev, name: "New Name" }));
 ```
 
 ---

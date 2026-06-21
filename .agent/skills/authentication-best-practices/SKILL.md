@@ -18,7 +18,7 @@ routing:
 
 ```typescript
 // ❌ BAD: md5, sha1, sha256 (too fast, vulnerable to brute force/rainbow tables)
-const hash = crypto.createHash('sha256').update(password).digest('hex');
+const hash = crypto.createHash("sha256").update(password).digest("hex");
 
 // ✅ GOOD: Argon2 (memory-hard, ASIC resistant) or bcrypt
 import * as argon2 from "argon2";
@@ -27,9 +27,9 @@ async function hashPassword(password: string): Promise<string> {
   // Argon2 hashes include the salt inherently in the resulting string
   return await argon2.hash(password, {
     type: argon2.argon2id, // recommended variant
-    memoryCost: 2 ** 16,   // 64 MB
-    timeCost: 3,           // iterations
-    parallelism: 1,        // threads
+    memoryCost: 2 ** 16, // 64 MB
+    timeCost: 3, // iterations
+    parallelism: 1, // threads
   });
 }
 
@@ -39,6 +39,7 @@ async function verifyPassword(hash: string, password: string): Promise<boolean> 
 ```
 
 ### Password Policies
+
 - **Length over complexity**: Require minimum 12 characters. Stop requiring arbitrary symbols (e.g., `!@#`).
 - **Check against breaches**: Use HaveIBeenPwned API or similar to reject compromised passwords during signup.
 - **Never expire passwords arbitrarily**: Only force resets if there is evidence of a breach.
@@ -48,29 +49,34 @@ async function verifyPassword(hash: string, password: string): Promise<boolean> 
 ## Session Management vs. JWT
 
 ### 1. Stateful Sessions (Cookies)
+
 **Best for**: Monolithic web apps, SSR apps (Next.js, Remix).
+
 - Server stores session ID mapped to user data in Redis/DB.
 - Client stores session ID in an `HttpOnly`, `Secure`, `SameSite=Lax/Strict` cookie.
 - **Pros**: Immediate revocation, server-side truth, invisible to XSS.
 - **Cons**: Requires DB lookup per request.
 
 ### 2. Stateless JWT (JSON Web Tokens)
+
 **Best for**: Distributed APIs, Microservices, Native mobile apps.
+
 - Server signs a token containing user claims.
 - Client passes it in `Authorization: Bearer <token>` header.
 - **Pros**: No DB lookup needed, easy cross-origin sharing.
 - **Cons**: Cannot be easily revoked before expiration.
 
 ### The JWT "Refresh Token" Pattern
+
 ```typescript
 // Scenario: API authentication
 // 1. Access Token (Short-lived: 15 mins)
 const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
   expiresIn: "15m",
-  algorithm: "HS256" // ALWAYS explicitly specify
+  algorithm: "HS256", // ALWAYS explicitly specify
 });
 // 2. Refresh Token (Long-lived: 7 days, opaque string in DB)
-const refreshToken = crypto.randomBytes(40).toString('hex');
+const refreshToken = crypto.randomBytes(40).toString("hex");
 await db.refreshTokens.create({ token: refreshToken, userId: user.id, expires: addDays(7) });
 
 // Client flow:
@@ -116,6 +122,7 @@ Flow (Authorization Code + PKCE):
 ## Authorization Models
 
 ### RBAC (Role-Based Access Control)
+
 - Users have Roles (`admin`, `editor`, `viewer`).
 - Roles have Permissions (`create:post`, `delete:user`).
 
@@ -127,6 +134,7 @@ if (!user.permissions.includes("delete:user")) {
 ```
 
 ### ABAC (Attribute-Based Access Control)
+
 - Access based on context (e.g., "User can edit Document if Document.department == User.department").
 
 ```typescript
@@ -141,10 +149,7 @@ function canEditPost(user: User, post: Post): boolean {
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -156,8 +161,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -167,9 +170,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -180,17 +182,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -220,6 +223,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -230,5 +234,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

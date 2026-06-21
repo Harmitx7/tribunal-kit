@@ -11,6 +11,7 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Retrying non-idempotent operations (POST payments) without idempotency keys -> ✅ Always require idempotency keys for non-safe HTTP methods before retrying
 - ❌ Using fixed delay retries instead of exponential backoff -> ✅ Exponential backoff with jitter prevents thundering herd
 - ❌ Catching all errors and swallowing them -> ✅ Only catch recoverable (operational) errors; let programmer errors crash
@@ -87,19 +88,10 @@ const DEFAULT_RETRY: RetryOptions = {
   maxRetries: 3,
   baseDelayMs: 500,
   maxDelayMs: 15_000,
-  retryableErrors: (err) =>
-    err instanceof Error && (
-      err.message.includes("ECONNRESET") ||
-      err.message.includes("ETIMEDOUT") ||
-      err.message.includes("503") ||
-      err.message.includes("429")
-    ),
+  retryableErrors: (err) => err instanceof Error && (err.message.includes("ECONNRESET") || err.message.includes("ETIMEDOUT") || err.message.includes("503") || err.message.includes("429")),
 };
 
-async function withRetry<T>(
-  fn: () => Promise<T>,
-  options: Partial<RetryOptions> = {},
-): Promise<T> {
+async function withRetry<T>(fn: () => Promise<T>, options: Partial<RetryOptions> = {}): Promise<T> {
   const opts = { ...DEFAULT_RETRY, ...options };
 
   for (let attempt = 0; attempt <= opts.maxRetries; attempt++) {
@@ -116,10 +108,7 @@ async function withRetry<T>(
       const capped = Math.min(exponential, opts.maxDelayMs);
       const jitter = Math.random() * capped;
 
-      console.warn(
-        `[RETRY] Attempt ${attempt + 1}/${opts.maxRetries} failed. ` +
-        `Retrying in ${Math.round(jitter)}ms...`
-      );
+      console.warn(`[RETRY] Attempt ${attempt + 1}/${opts.maxRetries} failed. ` + `Retrying in ${Math.round(jitter)}ms...`);
 
       await sleep(jitter);
     }
@@ -142,8 +131,8 @@ function sleep(ms: number): Promise<void> {
 
 ```typescript
 enum CircuitState {
-  CLOSED = "CLOSED",       // Normal — requests pass through
-  OPEN = "OPEN",           // Tripped — requests fail immediately
+  CLOSED = "CLOSED", // Normal — requests pass through
+  OPEN = "OPEN", // Tripped — requests fail immediately
   HALF_OPEN = "HALF_OPEN", // Testing — one request allowed
 }
 
@@ -244,13 +233,13 @@ class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      return this.props.fallback ?? (
-        <div role="alert">
-          <h2>Something went wrong</h2>
-          <button onClick={() => this.setState({ hasError: false, error: null })}>
-            Try Again
-          </button>
-        </div>
+      return (
+        this.props.fallback ?? (
+          <div role="alert">
+            <h2>Something went wrong</h2>
+            <button onClick={() => this.setState({ hasError: false, error: null })}>Try Again</button>
+          </div>
+        )
       );
     }
     return this.props.children;
@@ -270,10 +259,7 @@ class ErrorBoundary extends Component<Props, State> {
 
 ```typescript
 // ✅ AbortController-based timeout (modern, cancellable)
-async function withTimeout<T>(
-  fn: (signal: AbortSignal) => Promise<T>,
-  timeoutMs: number,
-): Promise<T> {
+async function withTimeout<T>(fn: (signal: AbortSignal) => Promise<T>, timeoutMs: number): Promise<T> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -290,10 +276,7 @@ async function withTimeout<T>(
 }
 
 // Usage
-const data = await withTimeout(
-  (signal) => fetch("https://api.example.com/data", { signal }),
-  5000,
-);
+const data = await withTimeout((signal) => fetch("https://api.example.com/data", { signal }), 5000);
 ```
 
 ---
@@ -306,13 +289,17 @@ async function getUserProfile(userId: string): Promise<UserProfile> {
   // Layer 1: Primary source
   try {
     return await api.getUser(userId);
-  } catch { /* fall through */ }
+  } catch {
+    /* fall through */
+  }
 
   // Layer 2: Cache
   try {
     const cached = await cache.get(`user:${userId}`);
     if (cached) return { ...cached, _stale: true };
-  } catch { /* fall through */ }
+  } catch {
+    /* fall through */
+  }
 
   // Layer 3: Default
   return {
@@ -342,11 +329,7 @@ interface DeadLetter<T> {
   originalQueue: string;
 }
 
-async function processWithDLQ<T>(
-  payload: T,
-  processor: (item: T) => Promise<void>,
-  dlqStore: { push: (item: DeadLetter<T>) => Promise<void> },
-): Promise<void> {
+async function processWithDLQ<T>(payload: T, processor: (item: T) => Promise<void>, dlqStore: { push: (item: DeadLetter<T>) => Promise<void> }): Promise<void> {
   try {
     await withRetry(() => processor(payload), { maxRetries: 3 });
   } catch (error) {
@@ -380,10 +363,7 @@ async function processWithDLQ<T>(
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -395,8 +375,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -406,9 +384,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -419,17 +396,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -459,6 +437,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -469,5 +448,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

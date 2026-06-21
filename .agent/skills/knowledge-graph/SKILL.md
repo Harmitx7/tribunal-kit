@@ -17,6 +17,7 @@ Use this skill when the user types `/graph` or when you need to deeply understan
 Reading raw project files wastes up to 50,000 tokens per edit. You must use the pre-computed Context Snapshots instead. These snapshots contain the file's content, resolved imports, dependent files, and risk scores all in one JSON blob.
 
 ## Pre-Flight Checklist
+
 - [ ] Have I run the Macro Mapper to generate the latest Context Snapshots?
 - [ ] Am I reading from `.agent/history/snapshots/` instead of directly grepping the project?
 - [ ] Have I respected the `blastRadius` before modifying a file?
@@ -25,14 +26,15 @@ Reading raw project files wastes up to 50,000 tokens per edit. You must use the 
 
 1. **Step 1: The Macro Map (Blast Radius & Snapshot Engine)**
    Execute the graph builder to map module boundaries and compute downstream risk scores. This also automatically generates a Context Snapshot for every file.
+
    ```bash
    node .agent/scripts/graph_builder.js
    ```
 
 2. **Step 2: Read Context Snapshots (MANDATORY)**
    Instead of using `cat` or `grep` to read a file, read its snapshot. Snapshots are stored in `.agent/history/snapshots/` with slashes replaced by `__`.
-   *Example:* To edit `src/middleware/auth.js`, read `.agent/history/snapshots/src__middleware__auth.js.json`.
-   
+   _Example:_ To edit `src/middleware/auth.js`, read `.agent/history/snapshots/src__middleware__auth.js.json`.
+
    This gives you:
    - The full source code of the target file.
    - The exported symbols of every file it imports.
@@ -41,6 +43,7 @@ Reading raw project files wastes up to 50,000 tokens per edit. You must use the 
 
 3. **Step 3: Interactive Visualization (For Humans)**
    The user can view a sleek, zero-dependency visualizer of the codebase. You can prompt them to run:
+
    ```bash
    npx tribunal-kit graph
    ```
@@ -52,8 +55,8 @@ Reading raw project files wastes up to 50,000 tokens per edit. You must use the 
    ```
 
 ## VBC Protocol (Verification-Before-Completion)
-You are explicitly forbidden from guessing or "hallucinating" what functions, props, or variables exist inside a file. You MUST read the Context Snapshot (or use `graph_zoom.js`) to verify a component's exact signature before you attempt to call it, mock it, or rewrite it. Always respect the Blast Radius Risk Score before deleting or mutating files.
 
+You are explicitly forbidden from guessing or "hallucinating" what functions, props, or variables exist inside a file. You MUST read the Context Snapshot (or use `graph_zoom.js`) to verify a component's exact signature before you attempt to call it, mock it, or rewrite it. Always respect the Blast Radius Risk Score before deleting or mutating files.
 
 ---
 
@@ -83,6 +86,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -93,5 +97,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

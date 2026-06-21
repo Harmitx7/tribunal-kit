@@ -24,12 +24,12 @@ Read BEFORE any modification:
 
 ## When to Use /enhance
 
-|Use `/enhance` when...|Use something else when...|
-|:---|:---|
-|Adding a feature to an existing codebase|Starting from scratch → `/create`|
-|Changing existing behavior|Fixing a bug → `/debug`|
-|Iterating on a recently created feature|Full architecture review → `/plan`|
-|Extending an existing API or component|Performance problems → `/tribunal-performance`|
+| Use `/enhance` when...                   | Use something else when...                     |
+| :--------------------------------------- | :--------------------------------------------- |
+| Adding a feature to an existing codebase | Starting from scratch → `/create`              |
+| Changing existing behavior               | Fixing a bug → `/debug`                        |
+| Iterating on a recently created feature  | Full architecture review → `/plan`             |
+| Extending an existing API or component   | Performance problems → `/tribunal-performance` |
 
 ---
 
@@ -50,11 +50,11 @@ grep -r "targetFunction\|TargetType" src/ --include="*.ts" --include="*.tsx"
 
 **Risk Classification:**
 
-|File import count|Risk Level|Required Action|
-|:---|:---|:---|
-|0–2 importers|Low|Normal Tribunal review|
-|3–5 importers|Medium|List all affected files in plan|
-|6+ importers|High|Full dependency map + staged rollout|
+| File import count | Risk Level | Required Action                      |
+| :---------------- | :--------- | :----------------------------------- |
+| 0–2 importers     | Low        | Normal Tribunal review               |
+| 3–5 importers     | Medium     | List all affected files in plan      |
+| 6+ importers      | High       | Full dependency map + staged rollout |
 
 ---
 
@@ -91,6 +91,7 @@ Impact zone: [N files affected]
 Breaking changes: [Yes: list | None detected]
 
 Changes:
+
 1. [file-a.ts] — [what changes and why]
 2. [file-b.ts] — [downstream update required because...]
 3. [file-c.test.ts] — [test updates required]
@@ -143,11 +144,11 @@ After all changes:
 
 ## After /enhance — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Enhancement applied, needs tests|→ `/test` for new behavior coverage|
-|Enhancement applied, needs review|→ `/review` or `/tribunal-*` for validation|
-|Enhancement revealed deeper issues|→ `/refactor` for structural improvement|
-|Ready for deployment|→ `/deploy` with pre-flight checks|
+| Outcome                            | Next Command                                |
+| :--------------------------------- | :------------------------------------------ |
+| Enhancement applied, needs tests   | → `/test` for new behavior coverage         |
+| Enhancement applied, needs review  | → `/review` or `/tribunal-*` for validation |
+| Enhancement revealed deeper issues | → `/refactor` for structural improvement    |
+| Ready for deployment               | → `/deploy` with pre-flight checks          |
 
 ---

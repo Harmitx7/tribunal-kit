@@ -78,7 +78,7 @@ app.get("/api/events", (req, res) => {
   const handler = (event: AppEvent) => {
     res.write(`event: ${event.type}\n`);
     res.write(`data: ${JSON.stringify(event.data)}\n`);
-    res.write(`id: ${event.id}\n\n`);  // enables auto-resume
+    res.write(`id: ${event.id}\n\n`); // enables auto-resume
   };
   eventBus.subscribe(handler);
 
@@ -169,9 +169,15 @@ class ReconnectingWebSocket {
 
   connect(url: string) {
     this.ws = new WebSocket(url);
-    this.ws.onopen = () => { this.retryCount = 0; };
-    this.ws.onclose = () => { this.reconnect(url); };
-    this.ws.onerror = () => { this.ws?.close(); };
+    this.ws.onopen = () => {
+      this.retryCount = 0;
+    };
+    this.ws.onclose = () => {
+      this.reconnect(url);
+    };
+    this.ws.onerror = () => {
+      this.ws?.close();
+    };
   }
 
   private reconnect(url: string) {
@@ -192,7 +198,7 @@ class ReconnectingWebSocket {
 async function toggleLike(postId: string) {
   // 1. Optimistic update (instant UI feedback)
   setLiked((prev) => !prev);
-  setLikeCount((prev) => liked ? prev - 1 : prev + 1);
+  setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
 
   try {
     // 2. Server request
@@ -200,7 +206,7 @@ async function toggleLike(postId: string) {
   } catch (error) {
     // 3. Rollback on failure
     setLiked((prev) => !prev);
-    setLikeCount((prev) => liked ? prev + 1 : prev - 1);
+    setLikeCount((prev) => (liked ? prev + 1 : prev - 1));
     toast.error("Failed to update. Please try again.");
   }
 }
@@ -258,9 +264,7 @@ class PresenceManager {
 
   getActive(): PresenceState[] {
     const now = Date.now();
-    return [...this.presence.values()].filter(
-      (p) => now - p.lastSeen < this.TIMEOUT_MS,
-    );
+    return [...this.presence.values()].filter((p) => now - p.lastSeen < this.TIMEOUT_MS);
   }
 
   remove(userId: string) {
@@ -271,10 +275,7 @@ class PresenceManager {
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -286,8 +287,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -297,9 +296,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -310,17 +308,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -350,6 +349,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -360,5 +360,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

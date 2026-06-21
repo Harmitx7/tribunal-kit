@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Mocking everything in integration tests -> ✅ Integration tests verify real interactions; mock only external services (APIs, DBs)
 - ❌ Testing Library: using `getByTestId` as the primary selector -> ✅ Prefer `getByRole`, `getByLabelText`, `getByText` for user-centric testing
 - ❌ Writing E2E tests that depend on seed data -> ✅ Each test should create its own data in setup and clean up in teardown
 
 ---
-
 
 # Webapp Testing — Full Stack Pipeline Mastery
 
@@ -35,32 +35,30 @@ The traditional "Testing Pyramid" (lots of Unit, little E2E) is outdated for ric
 
 ## 2. Integration Layer (React Testing Library + MSW)
 
-Do not mock child components. Render the specific DOM tree and interact with it as a user would. 
+Do not mock child components. Render the specific DOM tree and interact with it as a user would.
 
 To prevent network calls, utilize Mock Service Worker (MSW) which intercepts requests at the network layer natively.
 
 ```typescript
 // ❌ BAD: Mocking implementation details
-jest.mock('axios');
+jest.mock("axios");
 axios.get.mockResolvedValue({ data: { users: [] } });
 
 // ✅ GOOD: MSW (Mock Service Worker) network level interception
 // The component functions EXACTLY as it would in production
-import { http, HttpResponse } from 'msw'
-import { setupServer } from 'msw/node'
+import { http, HttpResponse } from "msw";
+import { setupServer } from "msw/node";
 
 export const handlers = [
-  http.get('/api/users', () => {
-    return HttpResponse.json([
-      { id: 1, name: 'John Appleseed' },
-    ])
+  http.get("/api/users", () => {
+    return HttpResponse.json([{ id: 1, name: "John Appleseed" }]);
   }),
-]
-const server = setupServer(...handlers)
+];
+const server = setupServer(...handlers);
 
-beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 ```
 
 ### Component Testing (RTL)
@@ -72,7 +70,7 @@ import userEvent from '@testing-library/user-event';
 test('Should load users and render names', async () => {
   // userEvent closely replicates real browser physics (focusing, keystrokes)
   const user = userEvent.setup();
-  
+
   render(<UserDashboard />);
 
   // Initial State
@@ -86,7 +84,7 @@ test('Should load users and render names', async () => {
   const deleteBtn = screen.getByRole('button', { name: "Delete John" });
   await user.click(deleteBtn);
 
-  // Verification 
+  // Verification
   expect(johnNode).not.toBeInTheDocument();
 });
 ```
@@ -106,25 +104,22 @@ export function calculateTax(subtotal: number, state: string): number {
 }
 
 // ✅ Test with extreme precision and coverage
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect } from "vitest";
 
-describe('calculateTax()', () => {
-  it('applies CA tax correctly', () => {
-    expect(calculateTax(100, 'CA')).toBe(8.25);
+describe("calculateTax()", () => {
+  it("applies CA tax correctly", () => {
+    expect(calculateTax(100, "CA")).toBe(8.25);
   });
-  
-  it('throws on negative input', () => {
-    expect(() => calculateTax(-50, 'CA')).toThrowError('negative');
+
+  it("throws on negative input", () => {
+    expect(() => calculateTax(-50, "CA")).toThrowError("negative");
   });
 });
 ```
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -136,8 +131,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -147,9 +140,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -160,17 +152,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -200,6 +193,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -210,5 +204,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

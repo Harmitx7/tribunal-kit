@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Importing Node.js-only APIs (fs, net, child_process) in edge functions -> ✅ Edge runtime has NO Node.js APIs; use Web APIs only
 - ❌ Using `global` or module-level mutable state in edge -> ✅ Edge functions are stateless across requests; use KV/Durable Objects for state
 - ❌ Assuming edge functions have unlimited execution time -> ✅ Cloudflare Workers: 30s, Vercel Edge: 25s; design for millisecond responses
 
 ---
-
 
 # Edge Computing — Global Latency Mastery
 
@@ -27,24 +27,25 @@ routing:
 Edge functions (Cloudflare Workers, Vercel Edge) run on V8 Isolates, NOT standard Node.js environments.
 
 **What This Means:**
+
 1. Extremely fast cold starts (< 5ms) because there is no underlying OS process bootup.
 2. Hard memory/time limits per request (e.g., 50ms CPU time max).
 3. **NO NATIVE NODE MODULES.** You cannot use `fs`, `child_process`, or heavy native C++ binaries (e.g., standard `bcrypt`, `sharp`).
 
 ```typescript
 // ❌ BAD: Attempting to use Node native core modules
-import fs from "fs"; 
+import fs from "fs";
 import bcrypt from "bcrypt"; // Has C++ bindings, will instantly crash on V8 edge
 
 // ✅ GOOD: Utilizing standard Web APIs (Fetch, CryptoKey)
-const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password));
+const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(password));
 ```
 
 ---
 
 ## 2. Advanced Route Caching (Stale-While-Revalidate)
 
-The highest value proposition of the edge is intercepting requests *before* they cross the ocean.
+The highest value proposition of the edge is intercepting requests _before_ they cross the ocean.
 
 ```typescript
 // Standard Edge Proxy request handling
@@ -64,14 +65,14 @@ export default {
       // Instructs the Edge CDN: Serve the stale version instantly to the user,
       // but fire an async request in the background to update the cache for the next user.
       response = new Response(response.body, response);
-      response.headers.set('Cache-Control', 's-maxage=60, stale-while-revalidate=86400');
+      response.headers.set("Cache-Control", "s-maxage=60, stale-while-revalidate=86400");
 
       // 4. Store in Cache asynchronously (do not block the user response)
       ctx.waitUntil(cache.put(request, response.clone()));
     }
 
     return response;
-  }
+  },
 };
 ```
 
@@ -82,6 +83,7 @@ export default {
 Running logic globally while querying a monolithic database in `us-east-1` is counter-productive. The latency of establishing a connection across the Atlantic will negate any Edge benefits.
 
 ### Solutions:
+
 1. **Edge KV Stores**: (Cloudflare KV, Vercel KV) Eventually consistent, highly localized read-latency configs suitable for configuration routing, user sessions, or feature flags.
 2. **Distributed SQLite**: (Cloudflare D1, Turso) Replicas distributed to edge nodes automatically.
 3. **Connection Pooling**: Use an HTTP/Connection Pool proxy strictly (e.g., Prisma Accelerate, Supabase Edge Pooler). You cannot establish TCP `pg://` connections directly from millions of spinning V8 isolates, you will OOM crash the database.
@@ -115,15 +117,15 @@ export class ChatRoom {
   async fetch(request) {
     // Upgrade standard HTTP to WebSocket
     const pair = new WebSocketPair();
-    
+
     // Accept connection, store it globally
     this.sessions.push(pair.server);
     pair.server.accept();
-    
+
     // Handle incoming Chat messages
-    pair.server.addEventListener("message", msg => {
+    pair.server.addEventListener("message", (msg) => {
       // Broadcast to all other connected edge users
-      this.sessions.forEach(session => session.send(msg.data));
+      this.sessions.forEach((session) => session.send(msg.data));
     });
 
     return new Response(null, { status: 101, webSocket: pair.client });
@@ -133,10 +135,7 @@ export class ChatRoom {
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -148,8 +147,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -159,9 +156,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -172,17 +168,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -212,6 +209,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -222,5 +220,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

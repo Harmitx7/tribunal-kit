@@ -107,10 +107,7 @@
       "description": "Enterprise-grade CI/CD mastery. Golden Path - GitHub Actions + Docker + AWS ECS. 3-stage pipeline architecture (Validate\u2192Build\u2192Deploy), OIDC-based AWS auth (no static secrets), Blue/Green and Canary deployment with ECS, environment promotion gates (dev\u2192staging\u2192production), rollback playbooks, Slack notifications, and reusable workflow patterns. Use when designing or implementing production CI/CD pipelines.",
       "routing_domain": "devops",
       "routing_tier": "pro",
-      "routing_co-requires": [
-        "containerization-pro",
-        "cloud-architect"
-      ],
+      "routing_co-requires": ["containerization-pro", "cloud-architect"],
       "routing_trigger-signals": "",
       "routing_strong": [
         "CI/CD pipeline",
@@ -130,17 +127,9 @@
       "description": "Production AWS cloud architecture mastery. Service selection (ECS Fargate vs Lambda vs EC2, RDS vs Aurora vs DynamoDB), Terraform IaC patterns with HCL examples, VPC networking design, IAM least privilege, Secrets Manager, CloudWatch observability, cost optimization, and multi-environment AWS Organizations strategy. Golden Path - AWS. Use when architecting cloud infrastructure, writing Terraform, or making AWS service selection decisions.",
       "routing_domain": "devops",
       "routing_tier": "pro",
-      "routing_co-requires": [
-        "cicd-pro"
-      ],
+      "routing_co-requires": ["cicd-pro"],
       "routing_trigger-signals": "",
-      "routing_strong": [
-        "AWS",
-        "Terraform",
-        "ECS Fargate",
-        "VPC design",
-        "IAM"
-      ]
+      "routing_strong": ["AWS", "Terraform", "ECS Fargate", "VPC design", "IAM"]
     },
     {
       "name": "code-review-checklist",
@@ -159,9 +148,7 @@
       "description": "Production-grade containerization mastery. Multi-stage Dockerfiles for Node.js/Python/Rust/Go, image hardening (non-root, distroless, read-only FS), BuildKit layer caching, multi-platform builds (docker buildx), Docker Compose for local dev, container security scanning (Trivy/Grype), and AWS ECR workflows. Use when containerizing applications, optimizing Docker builds, or setting up container registries.",
       "routing_domain": "devops",
       "routing_tier": "pro",
-      "routing_co-requires": [
-        "cicd-pro"
-      ],
+      "routing_co-requires": ["cicd-pro"],
       "routing_trigger-signals": "",
       "routing_strong": [
         "multi-stage build",

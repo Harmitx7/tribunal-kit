@@ -42,7 +42,7 @@ Decomposed Tasks:
 │   └── Depends on: [none | Task X output]
 │
 ├── Task B: [atomic, bounded scope — no file overlap with Task A]
-│   ├── Worker: [specialist agent type]  
+│   ├── Worker: [specialist agent type]
 │   ├── Files to read: [max 3 files]
 │   ├── Files to write: [specific output files]
 │   └── Depends on: [none | Task A output]
@@ -64,25 +64,10 @@ Every worker receives a structured JSON dispatch. No unstructured natural langua
   "task_id": "frontend-component-refactor",
   "worker_type": "frontend-specialist",
   "scope": "Refactor the UserCard component to use Server Components and remove client-side state that belongs on the server.",
-  "files_to_read": [
-    "src/components/UserCard.tsx",
-    "src/app/users/[id]/page.tsx"
-  ],
-  "files_to_write": [
-    "src/components/UserCard.tsx",
-    "src/components/UserCardClient.tsx"
-  ],
-  "context_summary": [
-    "The app uses Next.js 15 App Router",
-    "Authentication is handled via next-auth v5 (now 'auth' package)",
-    "Database uses Prisma 6 with PostgreSQL",
-    "No existing tests for this component"
-  ],
-  "constraints": [
-    "Do NOT modify any files outside the listed files_to_write",
-    "Store only interactive state in the Client Component",
-    "Maintain identical visual output — no design changes"
-  ],
+  "files_to_read": ["src/components/UserCard.tsx", "src/app/users/[id]/page.tsx"],
+  "files_to_write": ["src/components/UserCard.tsx", "src/components/UserCardClient.tsx"],
+  "context_summary": ["The app uses Next.js 15 App Router", "Authentication is handled via next-auth v5 (now 'auth' package)", "Database uses Prisma 6 with PostgreSQL", "No existing tests for this component"],
+  "constraints": ["Do NOT modify any files outside the listed files_to_write", "Store only interactive state in the Client Component", "Maintain identical visual output — no design changes"],
   "output_format": {
     "status": "COMPLETE | BLOCKED | ERROR",
     "files_modified": ["list of files actually changed"],
@@ -167,17 +152,21 @@ The supervisor writes task.md to track state across all waves:
 # Swarm Session: [goal-slug]
 
 ## Wave 1 — [timestamp]
+
 - [Task A]: COMPLETE — [2-line summary]
 - [Task B]: COMPLETE — [2-line summary]
 - [Task C]: BLOCKED — [reason] → redispatching with [additional context]
 
 ## Wave 2 — [timestamp]
+
 - [Task C]: COMPLETE — [2-line summary]
 
 ## Issues Carrying Forward
+
 - [any cross-task issue discovered that affects Wave 3]
 
 ## Human Gate Status
+
 - [ ] Pending review
 ```
 

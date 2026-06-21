@@ -19,11 +19,13 @@ routing:
 Reviews are collaborative. The goal is better code — not proof that the reviewer is smarter.
 
 **Before commenting:**
+
 - Understand what the code is trying to do before judging how it does it
 - Distinguish between personal preference and objective problems
 - Label your findings so the author understands the expected action
 
 **Comment label convention:**
+
 - `BLOCKER:` — must be fixed before merge (bug, security issue, broken behavior)
 - `CONCERN:` — likely problem that needs discussion before proceeding
 - `SUGGESTION:` — would improve the code but is not required
@@ -34,12 +36,14 @@ Reviews are collaborative. The goal is better code — not proof that the review
 ## What to Check
 
 ### Correctness
+
 - Does the code do what it claims to do?
 - Are edge cases handled? (empty input, null, max value, concurrent execution)
 - Does error handling cover realistic failure modes?
 - Are there off-by-one errors? Integer overflow risks?
 
 ### Security
+
 - Is user input validated before it's used?
 - Are SQL queries parameterized — never string-concatenated?
 - Are secrets in environment variables — not in code?
@@ -47,24 +51,28 @@ Reviews are collaborative. The goal is better code — not proof that the review
 - Is the OWASP API Top 10 considered for any API routes?
 
 ### Readability
+
 - Can you understand the intent in under 30 seconds per function?
 - Are names self-documenting at the right level of abstraction?
-- Are complex sections commented with *why*, not *what*?
+- Are complex sections commented with _why_, not _what_?
 - Is nesting kept to a manageable depth (≤3 levels)?
 
 ### Design
+
 - Is this code easy to change? Or would changing one thing break five others?
 - Are there clear boundaries between concerns?
 - Is logic duplicated anywhere that should be shared?
 - Is the new code consistent with how the rest of the codebase does similar things?
 
 ### Tests
+
 - Are tests testing behavior or implementation details?
 - Do tests cover the happy path, edge cases, and known failure modes?
 - Do test names describe the expected behavior in plain language?
 - Would these tests catch a regression if someone broke this code?
 
 ### Performance
+
 - Are there database queries inside loops?
 - Are large datasets loaded into memory when they could be streamed?
 - Are expensive operations (network, file I/O) done unnecessarily?
@@ -83,6 +91,7 @@ Reviews are collaborative. The goal is better code — not proof that the review
 ## Giving Feedback
 
 **Effective feedback is:**
+
 - Specific — references the exact line and the exact concern
 - Actionable — tells the author what to change, not just that something is wrong
 - Explanatory — gives the reasoning, not just the verdict
@@ -146,10 +155,7 @@ Evidence:    [link to terminal output, test result, or file diff]
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -161,8 +167,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -172,9 +176,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -185,17 +188,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -225,6 +229,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -235,5 +240,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

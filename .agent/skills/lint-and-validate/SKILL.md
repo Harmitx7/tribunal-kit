@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Auto-fixing lint errors without reviewing the diff -> ✅ Some auto-fixes change logic (e.g., removing 'unused' variables that are side-effects)
 - ❌ Treating warnings as non-blocking in CI -> ✅ Warnings accumulate; enforce zero-warning policy or they become permanent
 - ❌ Running linters only on changed files -> ✅ Run on full codebase periodically; cross-file issues are only caught with full runs
 
 ---
-
 
 # Linting & Validation
 
@@ -25,6 +25,7 @@ routing:
 ## Why Linting Matters
 
 Linting catches problems that code review misses:
+
 - Unused variables left in after refactoring
 - Missing `await` on async functions (silently returns a Promise instead of the value)
 - Inconsistent code style that makes diffs hard to read
@@ -54,11 +55,7 @@ npx prettier --write .
 ```json
 // .eslintrc.json
 {
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking"
-  ],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:@typescript-eslint/recommended-requiring-type-checking"],
   "rules": {
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-floating-promises": "error",
@@ -71,12 +68,12 @@ npx prettier --write .
 
 **Key rules explained:**
 
-|Rule|Why It Matters|
-|---|---|
-|`no-floating-promises`|Missing `await` on async call = silent bug|
-|`no-explicit-any`|`any` disables TypeScript's only protection|
-|`eqeqeq`|`==` has coercion surprises; `===` is always explicit|
-|`await-thenable`|Prevents `await`-ing non-async functions (always a mistake)|
+| Rule                   | Why It Matters                                              |
+| ---------------------- | ----------------------------------------------------------- |
+| `no-floating-promises` | Missing `await` on async call = silent bug                  |
+| `no-explicit-any`      | `any` disables TypeScript's only protection                 |
+| `eqeqeq`               | `==` has coercion surprises; `===` is always explicit       |
+| `await-thenable`       | Prevents `await`-ing non-async functions (always a mistake) |
 
 ---
 
@@ -125,11 +122,13 @@ select = ["E", "F", "I", "N", "UP", "B", "SIM", "ANN"]
 Linting and type checking catch different things. Run both.
 
 **TypeScript:**
+
 ```bash
 npx tsc --noEmit   # type check without emitting files
 ```
 
 **Python:**
+
 ```bash
 mypy src/ --ignore-missing-imports
 # or
@@ -137,12 +136,13 @@ pyright src/
 ```
 
 **Required compiler options (TypeScript):**
+
 ```json
 {
   "compilerOptions": {
-    "strict": true,           // enables all strict checks
-    "noImplicitAny": true,   
-    "noUncheckedIndexedAccess": true,  // index access can be undefined
+    "strict": true, // enables all strict checks
+    "noImplicitAny": true,
+    "noUncheckedIndexedAccess": true, // index access can be undefined
     "exactOptionalPropertyTypes": true
   }
 }
@@ -183,10 +183,10 @@ repos:
 
 ## Scripts
 
-|Script|Purpose|Run With|
-|---|---|---|
-|`scripts/lint_runner.py`|Runs project linting and reports findings|`python scripts/lint_runner.py <project_path>`|
-|`scripts/type_coverage.py`|Measures TypeScript type coverage|`python scripts/type_coverage.py <project_path>`|
+| Script                     | Purpose                                   | Run With                                         |
+| -------------------------- | ----------------------------------------- | ------------------------------------------------ |
+| `scripts/lint_runner.py`   | Runs project linting and reports findings | `python scripts/lint_runner.py <project_path>`   |
+| `scripts/type_coverage.py` | Measures TypeScript type coverage         | `python scripts/type_coverage.py <project_path>` |
 
 ---
 
@@ -213,10 +213,7 @@ Do not mark status as VERIFIED until concrete terminal evidence is provided.
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -228,8 +225,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -239,9 +234,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -252,17 +246,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -292,6 +287,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -302,5 +298,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

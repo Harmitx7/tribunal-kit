@@ -127,32 +127,39 @@ Pre-Change Checklist:
 # Codebase Archaeology Report — [Target Area]
 
 ## Health Classification
+
 **Level 3 — Fragile** (No tests, implicit coupling in auth layer)
 
 ## Entry Points Found
+
 - HTTP: Express routes in src/routes/ (12 route files)
 - Cron: 3 scheduled jobs in src/jobs/ (undocumented schedules!)
 - Events: EventEmitter in src/events/bus.ts (6 event types)
 
 ## Critical Data Flows
+
 - User input enters: src/routes/auth.ts → req.body
 - DB writes: 14 locations use direct pg.query() (no ORM)
-- Data exits: src/routes/*.ts → res.json()
+- Data exits: src/routes/\*.ts → res.json()
 
 ## Dependency Hotspots (High-Risk Files)
+
 - src/lib/db.ts — imported by 23 files. DO NOT refactor without test coverage first.
 - src/middleware/auth.js — imported by all route files. Zero tests exist.
 
 ## Dead Code Found
+
 - src/lib/legacy-payment.js — no imports found. Candidate for deletion.
 - `generateReport()` in src/utils/reports.ts — called 0 times.
 
 ## Technical Debt Inventory
+
 - 47 instances of `any` type (src/routes/)
 - 8 TODO comments in src/jobs/ (oldest: 2023-08-14)
 - 3 hardcoded URLs in src/lib/integrations.ts
 
 ## Safe Refactoring Order
+
 1. Add tests to src/middleware/auth.js (it's untested but imports everything)
 2. Replace pg.query() with Prisma in lowest-traffic routes first
 3. Delete src/lib/legacy-payment.js after confirming no runtime calls

@@ -24,13 +24,13 @@ Read BEFORE writing the plan:
 
 ## When to Use /plan
 
-|Use `/plan` when...|Skip plan and go to...|
-|:---|:---|
-|New feature with unclear scope|Simple, well-defined single file edit → just edit|
-|Multi-file change with dependencies|Generating a snippet → `/generate`|
-|Architecture decisions to make|Fixing a bug → `/debug`|
-|Risk needs to be assessed first|Adding to an existing feature → `/enhance`|
-|Stakeholder requirements → technical spec||
+| Use `/plan` when...                       | Skip plan and go to...                            |
+| :---------------------------------------- | :------------------------------------------------ |
+| New feature with unclear scope            | Simple, well-defined single file edit → just edit |
+| Multi-file change with dependencies       | Generating a snippet → `/generate`                |
+| Architecture decisions to make            | Fixing a bug → `/debug`                           |
+| Risk needs to be assessed first           | Adding to an existing feature → `/enhance`        |
+| Stakeholder requirements → technical spec |                                                   |
 
 ---
 
@@ -110,33 +110,43 @@ Wave 4 — Polish
 # Implementation Plan: [Feature Name]
 
 ## Goal
+
 [Single sentence: what is true when this is complete]
 
 ## User Review Required
+
 > [!IMPORTANT]
-[Breaking changes, architectural choices needing approval]
+> [Breaking changes, architectural choices needing approval]
 
 ## Research Findings
+
 - [what currently exists that's relevant]
 - [constraints discovered]
 
 ## Proposed Changes
 
 ### Wave 1 — Foundation
+
 #### [MODIFY] prisma/schema.prisma
+
 [What changes and why]
 
 #### [NEW] src/lib/validators/newFeature.ts
+
 [What this creates]
 
 ### Wave 2 — Core
+
 #### [NEW] src/app/api/new-feature/route.ts
+
 [What this creates]
 
 ## Out of Scope (This Version)
+
 - [explicit exclusion]
 
 ## Verification Plan
+
 - [ ] npx tsc --noEmit passes
 - [ ] npm test passes
 - [ ] [specific behavioral assertion]
@@ -178,9 +188,9 @@ R = revise with feedback
 
 ## After /plan — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Plan approved, new code needed|→ `/generate` for Tribunal-reviewed code|
-|Plan approved, existing code changes|→ `/enhance` with impact analysis|
-|Plan approved, full project build|→ `/create` for full scaffolding|
-|Plan needs more brainstorming|→ `/brainstorm` to explore options|
+| Outcome                              | Next Command                             |
+| :----------------------------------- | :--------------------------------------- |
+| Plan approved, new code needed       | → `/generate` for Tribunal-reviewed code |
+| Plan approved, existing code changes | → `/enhance` with impact analysis        |
+| Plan approved, full project build    | → `/create` for full scaffolding         |
+| Plan needs more brainstorming        | → `/brainstorm` to explore options       |

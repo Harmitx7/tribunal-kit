@@ -28,14 +28,11 @@ await db.execute(query);
 const result = await db.execute(`SELECT * FROM orders WHERE id = ${orderId}`);
 
 // ✅ SAFE: Parameterized query (Postgres/pg driver)
-const result = await client.query(
-  'SELECT * FROM users WHERE email = $1',
-  [userInput]
-);
+const result = await client.query("SELECT * FROM users WHERE email = $1", [userInput]);
 
 // ✅ SAFE: Prisma — never interpolates user input into SQL
 const user = await prisma.user.findUnique({
-  where: { email: userInput }
+  where: { email: userInput },
 });
 
 // ✅ SAFE: Drizzle — type-safe query builder
@@ -58,20 +55,20 @@ for (const user of users) {
 
 // ✅ FIXED: One query with eager loading
 const users = await prisma.user.findMany({
-  include: { posts: true } // Single JOIN query
+  include: { posts: true }, // Single JOIN query
 });
 
 // ❌ N+1: GraphQL resolver without DataLoader
 const resolver = {
   User: {
-    posts: (parent) => db.posts.findAll({ where: { userId: parent.id } }) // Fires per user!
-  }
-}
+    posts: (parent) => db.posts.findAll({ where: { userId: parent.id } }), // Fires per user!
+  },
+};
 
 // ✅ FIXED: DataLoader batches all requests into one query
 const postsLoader = new DataLoader(async (userIds) => {
   const posts = await db.posts.findAll({ where: { userId: userIds } });
-  return userIds.map(id => posts.filter(p => p.userId === id));
+  return userIds.map((id) => posts.filter((p) => p.userId === id));
 });
 ```
 
@@ -99,6 +96,7 @@ CREATE INDEX idx_orders_user_status ON orders(user_id, status);
 ```
 
 **Flag any query that:**
+
 - Filters by a non-primary-key column with no evidence of an index
 - JOINs on a foreign key column without a corresponding index
 - Uses `ORDER BY` on unindexed columns in high-volume tables

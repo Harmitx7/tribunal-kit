@@ -29,13 +29,13 @@ If observable behavior changes, it's an enhancement — use `/enhance`.
 
 ## When to Use /refactor
 
-|Use `/refactor` when...|Use something else when...|
-|:---|:---|
-|Code structure is hard to understand|Adding new functionality → `/enhance`|
-|Repeated logic should be extracted|Fixing a bug → `/debug`|
-|Naming is unclear or misleading|Performance improvements → `/tribunal-performance`|
-|TypeScript types need tightening|Full rebuild needed → `/create`|
-|Dead code needs removal||
+| Use `/refactor` when...              | Use something else when...                         |
+| :----------------------------------- | :------------------------------------------------- |
+| Code structure is hard to understand | Adding new functionality → `/enhance`              |
+| Repeated logic should be extracted   | Fixing a bug → `/debug`                            |
+| Naming is unclear or misleading      | Performance improvements → `/tribunal-performance` |
+| TypeScript types need tightening     | Full rebuild needed → `/create`                    |
+| Dead code needs removal              |                                                    |
 
 ---
 
@@ -126,22 +126,24 @@ Rolling forward with broken tests is not refactoring — it's breaking code.
 ## Phase 5 — Common Safe Refactoring Patterns
 
 ### Extract Function
+
 ```typescript
 // Before: inline logic in handler
-app.post('/orders', async (req, res) => {
+app.post("/orders", async (req, res) => {
   const discount = amount > 100 ? amount * 0.9 : amount; // inline
   // ...
 });
 
 // After: extracted pure function with tests
-const applyDiscount = (amount: number): number => amount > 100 ? amount * 0.9 : amount;
-app.post('/orders', async (req, res) => {
+const applyDiscount = (amount: number): number => (amount > 100 ? amount * 0.9 : amount);
+app.post("/orders", async (req, res) => {
   const discount = applyDiscount(amount); // single responsibility
   // ...
 });
 ```
 
 ### Remove Dead Code
+
 ```bash
 # Verify zero callers BEFORE deleting
 grep -r "OldFunction\|oldFunction" src/ --include="*.ts" # Must return: 0 results
@@ -149,12 +151,17 @@ grep -r "OldFunction\|oldFunction" src/ --include="*.ts" # Must return: 0 result
 ```
 
 ### Tighten Types
+
 ```typescript
 // Before: any loses all type checking
-function process(data: any) { data.unknownProp; } // No error
+function process(data: any) {
+  data.unknownProp;
+} // No error
 
 // After: explicit interface — all callers must provide correct shape
-function process(data: { id: string; name: string }) { data.id; } // Typed
+function process(data: { id: string; name: string }) {
+  data.id;
+} // Typed
 ```
 
 ---
@@ -174,11 +181,11 @@ function process(data: { id: string; name: string }) { data.id; } // Typed
 
 ## After /refactor — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Refactor complete, tests pass|→ `/tribunal-full` or `/deploy`|
-|Need to improve performance|→ `/tribunal-performance`|
-|Want to add features now|→ `/enhance`|
+| Outcome                       | Next Command                    |
+| :---------------------------- | :------------------------------ |
+| Refactor complete, tests pass | → `/tribunal-full` or `/deploy` |
+| Need to improve performance   | → `/tribunal-performance`       |
+| Want to add features now      | → `/enhance`                    |
 
 ---
 

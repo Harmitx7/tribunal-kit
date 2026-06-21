@@ -62,24 +62,30 @@ Session state includes:
 # Session: [timestamp]
 
 ## Completed This Session
+
 - [task item 1 — completed]
 - [task item 2 — completed]
 
 ## In Progress
+
 - [task item 3 — started but not finished]
 
 ## Blocked
+
 - [item] — blocked by [reason]
 
 ## Files Modified
+
 - src/lib/auth.ts
 - src/app/api/users/route.ts
 
 ## Next Session: Start With
+
 1. [first thing to do in the next session]
 2. [second thing]
 
 ## Open Questions
+
 - [question 1]
 ```
 
@@ -108,9 +114,9 @@ Context handoff:       /session save → share session file with collaborator
 
 ## After /session — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Session saved|→ Close workspace, return later|
-|Session restored|→ Continue from task list or `/status`|
+| Outcome          | Next Command                           |
+| :--------------- | :------------------------------------- |
+| Session saved    | → Close workspace, return later        |
+| Session restored | → Continue from task list or `/status` |
 
 ---

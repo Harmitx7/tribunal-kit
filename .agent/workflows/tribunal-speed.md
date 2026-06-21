@@ -22,13 +22,13 @@ Read BEFORE performance swarm:
 
 ## When to Use /tribunal-speed
 
-|Use `/tribunal-speed` when...|Use something else when...|
-|:---|:---|
-|Full-stack performance audit needed|Frontend only → `/tribunal-performance`|
-|Changes span UI + DB + Server layers|Single file review → `/review`|
-|Pre-deploy performance validation|Security-focused → `/tribunal-full`|
-|Investigating end-to-end latency|Architecture planning → `/plan`|
-|Need scoped specialist depth (not generic)|Quick generic check → `/tribunal-performance`|
+| Use `/tribunal-speed` when...              | Use something else when...                    |
+| :----------------------------------------- | :-------------------------------------------- |
+| Full-stack performance audit needed        | Frontend only → `/tribunal-performance`       |
+| Changes span UI + DB + Server layers       | Single file review → `/review`                |
+| Pre-deploy performance validation          | Security-focused → `/tribunal-full`           |
+| Investigating end-to-end latency           | Architecture planning → `/plan`               |
+| Need scoped specialist depth (not generic) | Quick generic check → `/tribunal-performance` |
 
 ---
 
@@ -95,16 +95,19 @@ Rule 4: Synthesis call receives only verdict summaries, not full file contents
 ## 3 Specialist Agents
 
 ### vitals-reviewer (Frontend)
+
 - **Scope:** `.tsx`, `.jsx`, `.css`, `.module.css`
 - **Metrics:** INP, LCP, CLS, FCP
 - **Key patterns:** React 19 `use()` waterfalls, non-passive listeners, missing `content-visibility`, `useGSAP` leaks, View Transitions jank, Suspense placement
 
 ### db-latency-auditor (Database)
+
 - **Scope:** `.sql`, `schema.prisma`, files with `prisma.`, `db.`, `drizzle(`, `knex(`
 - **Metrics:** Query count, query latency, connection overhead
-- **Key patterns:** N+1 queries, missing LIMIT, unindexed WHERE, SELECT *, no connection pooling, over-scoped transactions, mass assignment
+- **Key patterns:** N+1 queries, missing LIMIT, unindexed WHERE, SELECT \*, no connection pooling, over-scoped transactions, mass assignment
 
 ### throughput-optimizer (Server)
+
 - **Scope:** `.ts/.js` in `/api`, `/server`, `/lib`, `/utils`, `/routes`, `/middleware`
 - **Metrics:** RPS, p95 latency, memory usage
 - **Key patterns:** Sync `fs.*`, serialized `await` loops, global Map without TTL, no Worker Threads for CPU ops, buffer bloat, missing keep-alive
@@ -174,12 +177,12 @@ If a specialist fails after 3 retries:
 
 ## Versus Other Commands
 
-|Command|Agents|Depth|When to Use|
-|:---|:---|:---|:---|
-|`/tribunal-performance`|logic + performance-reviewer|Generic CWV check|Quick single-file perf scan|
-|`/tribunal-speed`|vitals + db-latency + throughput|Deep 3-domain parallel|Full-stack perf audit|
-|`/tribunal-full`|All 14 agents|Everything|Maximum coverage (security + perf + all)|
-|`/performance-benchmarker`|Lighthouse + bundle|Measurement only|Get actual scores, not code review|
+| Command                    | Agents                           | Depth                  | When to Use                              |
+| :------------------------- | :------------------------------- | :--------------------- | :--------------------------------------- |
+| `/tribunal-performance`    | logic + performance-reviewer     | Generic CWV check      | Quick single-file perf scan              |
+| `/tribunal-speed`          | vitals + db-latency + throughput | Deep 3-domain parallel | Full-stack perf audit                    |
+| `/tribunal-full`           | All 14 agents                    | Everything             | Maximum coverage (security + perf + all) |
+| `/performance-benchmarker` | Lighthouse + bundle              | Measurement only       | Get actual scores, not code review       |
 
 ---
 
@@ -196,11 +199,11 @@ If a specialist fails after 3 retries:
 
 ## After /tribunal-speed — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Bottlenecks identified|→ `/debug` to isolate the worst offender|
-|Schema issues found|→ `/tribunal-database` or `/migrate` to resolve|
-|Fixes proposed|→ `/enhance` to safely apply the fixes|
-|Need measurement proof|→ `/performance-benchmarker` to capture metrics|
+| Outcome                | Next Command                                    |
+| :--------------------- | :---------------------------------------------- |
+| Bottlenecks identified | → `/debug` to isolate the worst offender        |
+| Schema issues found    | → `/tribunal-database` or `/migrate` to resolve |
+| Fixes proposed         | → `/enhance` to safely apply the fixes          |
+| Need measurement proof | → `/performance-benchmarker` to capture metrics |
 
 ---

@@ -39,18 +39,23 @@ When designing an API, your designs must demonstrate:
 When instructed to build an API, follow this sequence:
 
 ### 1. Define the URI Space (REST) or Schema (GQL/tRPC)
+
 Identify the exact routes or queries needed. E.g., `GET /v1/organizations/:orgId/members`.
 
 ### 2. Define the Request Schema
+
 Provide the exact Zod/Pydantic schema for the payload or query parameters.
 
 ### 3. Define the Response Structure (Success)
+
 Show the expected JSON response. Include pagination metadata if applicable.
 
 ### 4. Define the Error Scenarios
+
 List the possible error states (400, 401, 403, 404, 409, 429) and what the RFC 9457 response will look like.
 
 ### 5. Implementation Code
+
 Only after the contract is clear do you generate the implementation code (Express, Fastify, FastAPI, etc). Provide the router/controller code wrapping the validation logic.
 
 ---

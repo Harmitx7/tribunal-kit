@@ -28,11 +28,11 @@ This scope is non-negotiable. If a file doesn't match, return `N/A — outside v
 
 ## 2026 CWV Targets
 
-|Metric|Good|Needs Work|Poor (❌ REJECTED)|
-|:---|:---|:---|:---|
-|**INP** Interaction to Next Paint|< 200ms|200–500ms|> 500ms|
-|**LCP** Largest Contentful Paint|< 2.5s|2.5–4.0s|> 4.0s|
-|**CLS** Cumulative Layout Shift|< 0.1|0.1–0.25|> 0.25|
+| Metric                            | Good    | Needs Work | Poor (❌ REJECTED) |
+| :-------------------------------- | :------ | :--------- | :----------------- |
+| **INP** Interaction to Next Paint | < 200ms | 200–500ms  | > 500ms            |
+| **LCP** Largest Contentful Paint  | < 2.5s  | 2.5–4.0s   | > 4.0s             |
+| **CLS** Cumulative Layout Shift   | < 0.1   | 0.1–0.25   | > 0.25             |
 
 ---
 
@@ -78,13 +78,13 @@ function handleSearch(query: string) {
 }
 
 // ❌ INP DAMAGE: Non-passive scroll listener (blocks scroll painting)
-element.addEventListener('scroll', handler); // Missing { passive: true }
+element.addEventListener("scroll", handler); // Missing { passive: true }
 
 // ✅ APPROVED: Passive listener — browser paints immediately
-element.addEventListener('scroll', handler, { passive: true });
+element.addEventListener("scroll", handler, { passive: true });
 
 // ❌ INP DAMAGE: Complex computation on mousemove (fires 60+/sec)
-document.addEventListener('mousemove', (e) => {
+document.addEventListener("mousemove", (e) => {
   renderComplexGradient(e.clientX, e.clientY);
 });
 ```
@@ -95,15 +95,15 @@ document.addEventListener('mousemove', (e) => {
 
 ```tsx
 // ❌ CLS DAMAGE: Image without dimensions — shifts when loaded
-<img src="/photo.jpg" /> // No width/height or aspect-ratio
+<img src="/photo.jpg" />; // No width/height or aspect-ratio
 
 // ❌ CLS DAMAGE: Dynamic content injected above fold
 container.prepend(banner); // Pushes existing content down
 
 // ✅ APPROVED: Reserved space with aspect-ratio
-<div style={{ aspectRatio: '16/9', width: '100%' }}>
+<div style={{ aspectRatio: "16/9", width: "100%" }}>
   <Image src="/photo.jpg" fill alt="Photo" />
-</div>
+</div>;
 
 // ❌ CLS DAMAGE: Async font swap without size-adjust
 // Fallback font metrics differ from web font → text reflows on swap

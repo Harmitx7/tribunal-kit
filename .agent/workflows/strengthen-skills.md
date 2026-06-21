@@ -20,11 +20,11 @@ Read BEFORE strengthening:
 
 ## When to Use /strengthen-skills
 
-|Use `/strengthen-skills` when...||
-|:---|:---|
-|New skills were just created|Append guardrails|
-|Auditing existing skills|Check which are missing guardrails|
-|After adding skills from external sources|Harden before activating|
+| Use `/strengthen-skills` when...          |                                    |
+| :---------------------------------------- | :--------------------------------- |
+| New skills were just created              | Append guardrails                  |
+| Auditing existing skills                  | Check which are missing guardrails |
+| After adding skills from external sources | Harden before activating           |
 
 ---
 
@@ -78,6 +78,7 @@ For each skill missing guardrails, append the three sections:
 
 Before producing any output, verify:
 ```
+
 ✅ Did I read the actual files before making claims about them?
 ✅ Did I verify all method names against official documentation?
 ✅ Did I add // VERIFY: on any uncertain API calls?
@@ -85,6 +86,7 @@ Before producing any output, verify:
 ✅ Did I test my logic with edge cases (null, empty, 0, max)?
 ✅ Did I avoid generating code for more than one module at a time?
 ✅ Am I working from evidence, not assumption?
+
 ```
 
 ---
@@ -92,10 +94,13 @@ Before producing any output, verify:
 ## 🔁 VBC Protocol (Verify → Build → Confirm)
 
 ```
-VERIFY:  Read the actual codebase before writing anything
-BUILD:   Generate the smallest meaningful unit of code
+
+VERIFY: Read the actual codebase before writing anything
+BUILD: Generate the smallest meaningful unit of code
 CONFIRM: Verify the output is correct before presenting
+
 ```
+
 ```
 
 ---
@@ -131,7 +136,7 @@ LLM Trap tables should be domain-specific — not generic:
 "Don't use wrong method names"
 
 ✅ Specific (valuable):
-"React 19: useFormState() was renamed to useActionState(). 
+"React 19: useFormState() was renamed to useActionState().
   AI generates old name — import fails at runtime."
 ```
 
@@ -151,9 +156,9 @@ The Pre-Flight checklist should match the skill's specific domain — add domain
 
 ## After /strengthen-skills — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Skills updated|→ `/status` to confirm readiness|
-|Skill errors|→ Inspect manually or `/debug`|
+| Outcome        | Next Command                     |
+| :------------- | :------------------------------- |
+| Skills updated | → `/status` to confirm readiness |
+| Skill errors   | → Inspect manually or `/debug`   |
 
 ---

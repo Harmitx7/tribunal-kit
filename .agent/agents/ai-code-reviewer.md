@@ -19,13 +19,13 @@ Every piece of code that calls an LLM API must be verified against the actual pr
 
 Flag any model name that cannot be verified in the provider's current model documentation.
 
-|Provider|Hallucinated Names|Real Names (Verify Current)|
-|:---|:---|:---|
-|**OpenAI**|`gpt-5`, `gpt-4-vision`, `gpt-4-32k`|`gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`|
-|**Anthropic**|`claude-4-opus`, `claude-instant-2`, `claude-3-haiku-v2`|`claude-3-5-sonnet-20241022`, `claude-3-5-haiku-20241022`|
-|**Google**|`gemini-ultra`, `gemini-2-pro`, `gemini-vision`|`gemini-2.0-flash`, `gemini-1.5-pro`|
-|**Meta**|`llama-4`, `llama-3-turbo`|`llama-3.3-70b-versatile` (via Groq/Together)|
-|**Mistral**|`mistral-large-v2`, `mixtral-mega`|`mistral-large-2411`, `mistral-small-2409`|
+| Provider      | Hallucinated Names                                       | Real Names (Verify Current)                               |
+| :------------ | :------------------------------------------------------- | :-------------------------------------------------------- |
+| **OpenAI**    | `gpt-5`, `gpt-4-vision`, `gpt-4-32k`                     | `gpt-4o`, `gpt-4o-mini`, `gpt-4-turbo`                    |
+| **Anthropic** | `claude-4-opus`, `claude-instant-2`, `claude-3-haiku-v2` | `claude-3-5-sonnet-20241022`, `claude-3-5-haiku-20241022` |
+| **Google**    | `gemini-ultra`, `gemini-2-pro`, `gemini-vision`          | `gemini-2.0-flash`, `gemini-1.5-pro`                      |
+| **Meta**      | `llama-4`, `llama-3-turbo`                               | `llama-3.3-70b-versatile` (via Groq/Together)             |
+| **Mistral**   | `mistral-large-v2`, `mixtral-mega`                       | `mistral-large-2411`, `mistral-small-2409`                |
 
 **Rule:** Every model name must be wrapped in `// VERIFY: check current model availability` because model names change frequently. Don't hardcode — use environment variables.
 
@@ -36,21 +36,21 @@ Flag any model name that cannot be verified in the provider's current model docu
 ```typescript
 // ❌ HALLUCINATED: Parameters that don't exist in OpenAI SDK
 const response = await openai.chat.completions.create({
-  model: 'gpt-4o',
+  model: "gpt-4o",
   messages,
-  max_length: 1000,          // Hallucinated — use max_tokens
-  format: 'json',            // Hallucinated — use response_format: { type: 'json_object' }
-  memory: true,              // Doesn't exist
-  plugins: ['web-search'],   // Doesn't exist in API
-  instructions: 'Be helpful', // Hallucinated — belongs in system message
+  max_length: 1000, // Hallucinated — use max_tokens
+  format: "json", // Hallucinated — use response_format: { type: 'json_object' }
+  memory: true, // Doesn't exist
+  plugins: ["web-search"], // Doesn't exist in API
+  instructions: "Be helpful", // Hallucinated — belongs in system message
 });
 
 // ✅ REAL OpenAI API parameters
 const response = await openai.chat.completions.create({
-  model: 'gpt-4o',
+  model: "gpt-4o",
   messages,
   max_tokens: 1000,
-  response_format: { type: 'json_object' },
+  response_format: { type: "json_object" },
   temperature: 0.7,
   stream: false,
 });
@@ -59,17 +59,17 @@ const response = await openai.chat.completions.create({
 ```typescript
 // ❌ HALLUCINATED: Anthropic SDK parameters
 const message = await anthropic.messages.create({
-  model: 'claude-3-5-sonnet-20241022',
+  model: "claude-3-5-sonnet-20241022",
   messages,
-  max_response: 1024,         // Hallucinated — use max_tokens
-  system_prompt: '...',       // Hallucinated — 'system' is a top-level param
+  max_response: 1024, // Hallucinated — use max_tokens
+  system_prompt: "...", // Hallucinated — 'system' is a top-level param
 });
 
 // ✅ REAL Anthropic API
 const message = await anthropic.messages.create({
-  model: 'claude-3-5-sonnet-20241022',
+  model: "claude-3-5-sonnet-20241022",
   max_tokens: 1024,
-  system: 'You are a helpful assistant.',
+  system: "You are a helpful assistant.",
   messages,
 });
 ```
@@ -85,13 +85,13 @@ const systemPrompt = `You are a helpful assistant. Context: ${userInput}`;
 
 // ❌ CRITICAL: User content in system role message
 const messages = [
-  { role: 'system', content: userQuery } // User can override system behavior
+  { role: "system", content: userQuery }, // User can override system behavior
 ];
 
 // ✅ SAFE: Strict role separation
 const messages = [
-  { role: 'system', content: 'You are a helpful assistant. Only answer questions about our product.' },
-  { role: 'user', content: userQuery }  // User input isolated to user role
+  { role: "system", content: "You are a helpful assistant. Only answer questions about our product." },
+  { role: "user", content: userQuery }, // User input isolated to user role
 ];
 
 // ✅ SAFE: XML delimiting when injection context unavoidable
@@ -120,7 +120,7 @@ try {
     stream: true,
     ...params,
   }, { signal: controller.signal });
-  
+
   for await (const chunk of stream) {
     const content = chunk.choices[0]?.delta?.content;
     if (content) yield content;
@@ -143,27 +143,27 @@ try {
 const allUsers = await prisma.user.findMany(); // 50,000 users
 const response = await openai.chat.completions.create({
   messages: [
-    { role: 'user', content: `Users: ${JSON.stringify(allUsers)}\n${userQuery}` }
+    { role: "user", content: `Users: ${JSON.stringify(allUsers)}\n${userQuery}` },
     // This could be 200,000 tokens per request!
-  ]
+  ],
 });
 
 // ❌ COST EXPLOSION: No max_tokens limit on user-facing endpoint
 const response = await anthropic.messages.create({
-  model: 'claude-3-5-sonnet-20241022',
+  model: "claude-3-5-sonnet-20241022",
   // Missing max_tokens — model can run indefinitely
-  messages
+  messages,
 });
 
 // ✅ APPROVED: Token budgeting + RAG for large datasets
 const relevantChunks = await vectorStore.similaritySearch(userQuery, 5); // Retrieve top 5
 const response = await openai.chat.completions.create({
-  model: 'gpt-4o-mini',  // Cost-efficient model for routing
-  max_tokens: 500,        // Hard cap prevents runaway responses
+  model: "gpt-4o-mini", // Cost-efficient model for routing
+  max_tokens: 500, // Hard cap prevents runaway responses
   messages: [
-    { role: 'system', content: `Context:\n${relevantChunks.map(c => c.content).join('\n')}` },
-    { role: 'user', content: userQuery }
-  ]
+    { role: "system", content: `Context:\n${relevantChunks.map((c) => c.content).join("\n")}` },
+    { role: "user", content: userQuery },
+  ],
 });
 ```
 
@@ -174,12 +174,12 @@ const response = await openai.chat.completions.create({
 ```typescript
 // ❌ REJECTED: Conversation history appended unbounded — will eventually overflow
 const messages = conversationHistory; // Can grow to 100k+ tokens
-messages.push({ role: 'user', content: newMessage });
+messages.push({ role: "user", content: newMessage });
 const response = await client.chat(messages);
 
 // ✅ APPROVED: Sliding window with token counting
-import { encoding_for_model } from 'tiktoken';
-const enc = encoding_for_model('gpt-4o');
+import { encoding_for_model } from "tiktoken";
+const enc = encoding_for_model("gpt-4o");
 
 function trimToTokenLimit(messages: Message[], limit: number = 100_000): Message[] {
   let totalTokens = 0;

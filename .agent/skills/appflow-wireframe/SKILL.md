@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Drawing wireframes without defined user personas -> ✅ Establish WHO uses each screen before designing
 - ❌ Skipping error/empty/loading states in flow diagrams -> ✅ Every screen needs 4 states: loading, empty, populated, error
 - ❌ Assuming linear user journeys -> ✅ Real users jump between screens, go back, and abandon flows mid-way
 
 ---
-
 
 # Appflow & Wireframing — Visualization Mastery
 
@@ -31,26 +31,26 @@ When asked to "design the flow", do not write prose. Write deterministic Mermaid
 ```mermaid
 stateDiagram-v2
     [*] --> CartView
-    
+
     state CartView {
         [*] --> Empty: Load
         Empty --> Populated: Add Item
     }
-    
+
     CartView --> CheckoutModal: Click Checkout
-    
+
     state CheckoutModal {
         [*] --> AuthCheck
         AuthCheck --> GuestCheckout: Not Logged In
         AuthCheck --> ProfilePreFill: Logged In
-        
+
         GuestCheckout --> PaymentProcessing: Submit
         ProfilePreFill --> PaymentProcessing: Submit
     }
-    
+
     PaymentProcessing --> Success: Stripe 200 OK
     PaymentProcessing --> CheckoutModal: Stripe 402 Error (Retry)
-    
+
     Success --> [*]: Redirect Dashboard
 ```
 
@@ -77,9 +77,10 @@ Because moving an ASCII box takes 3 seconds. Rewriting 4 nested div flexbox tail
 
 ## 3. The Empty State / Loading State Mandate
 
-When mapping application flows, AI frequently charts the "Happy Path" (User logs in -> User sees 10 items). 
+When mapping application flows, AI frequently charts the "Happy Path" (User logs in -> User sees 10 items).
 
 Every single screen designed in an App Flow MUST explicitly define:
+
 1. **The Loading State:** What does the user see while the network executes? (Skeleton loaders vs Spinners).
 2. **The Empty State:** What does the UI look like on Day 1 when the user has zero data? (An empty white screen is an instant bounce-rate death sentence; use an Empty State CTA).
 
@@ -89,18 +90,15 @@ Every single screen designed in an App Flow MUST explicitly define:
 
 Before writing React, chart exactly what the user can do on the screen and what the system does in response.
 
-|Interaction|Trigger|System Response Hook|Edge Case|
-|:---|:---|:---|:---|
-|Click `Add to Cart`|`onClick`|Dispatch `Zustand.add(item)`|If out of stock, render Toast|
-|Scroll to Bottom|`IntersectionObserver`|`fetchNextPage()`|Reached max items, show footer|
-|Click outside Modal|`useClickAway`|`setIsOpen(false)`|Prevent close if form is dirty|
+| Interaction         | Trigger                | System Response Hook         | Edge Case                      |
+| :------------------ | :--------------------- | :--------------------------- | :----------------------------- |
+| Click `Add to Cart` | `onClick`              | Dispatch `Zustand.add(item)` | If out of stock, render Toast  |
+| Scroll to Bottom    | `IntersectionObserver` | `fetchNextPage()`            | Reached max items, show footer |
+| Click outside Modal | `useClickAway`         | `setIsOpen(false)`           | Prevent close if form is dirty |
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -112,8 +110,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -123,9 +119,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -136,17 +131,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -176,6 +172,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -186,5 +183,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

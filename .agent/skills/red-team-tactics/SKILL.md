@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Testing only happy-path authentication -> ✅ Red teaming must test token reuse, expired tokens, forged tokens, and privilege escalation
 - ❌ Reporting vulnerabilities without proof-of-concept -> ✅ Every finding needs a reproducible PoC and severity rating (CVSS)
 - ❌ Stopping after finding the first vulnerability -> ✅ Real attackers chain multiple low-severity issues; test for escalation paths
 
 ---
-
 
 # Red Team & Penetration Testing Principles
 
@@ -44,27 +44,33 @@ No authorization = no testing.
 ## Attack Phases (Based on MITRE ATT&CK)
 
 ### 1. Reconnaissance
+
 Passive and active information gathering before touching the target.
 
 **Passive (no target contact):**
+
 - DNS lookup: `nslookup`, `dig`, certificate transparency logs
 - OSINT: LinkedIn for employee names/roles, GitHub for leaked configs, Shodan for exposed infrastructure
 
 **Active (target is contacted):**
+
 - Port scanning: `nmap -sV -sC <target>`
 - Web tech detection: `whatweb`, `wappalyzer`
 - Subdomain enumeration: `amass`, `subfinder`
 
 ### 2. Initial Access
+
 How does an attacker get their first foothold?
 
 Common vectors:
+
 - Phishing (credential harvest or malicious attachment)
 - Exposed admin interfaces with default or weak credentials
 - Publicly exposed vulnerable services (`searchsploit`, `nuclei`)
 - Supply chain compromise (malicious npm package, CI/CD injection)
 
 ### 3. Persistence
+
 Maintaining access after initial compromise:
 
 - Scheduled tasks / cron jobs
@@ -73,6 +79,7 @@ Maintaining access after initial compromise:
 - SSH authorized_keys injection
 
 ### 4. Lateral Movement
+
 Moving from initial foothold to higher-value targets:
 
 - Pass-the-hash / pass-the-ticket (Active Directory)
@@ -81,6 +88,7 @@ Moving from initial foothold to higher-value targets:
 - Internal network scanning to map new targets
 
 ### 5. Exfiltration
+
 Getting data out without triggering alerts:
 
 - Small, slow transfers to blend with normal traffic
@@ -91,14 +99,14 @@ Getting data out without triggering alerts:
 
 ## Common Vulnerability Targets
 
-|Target|What to Test|
-|---|---|
-|Web applications|OWASP Top 10, auth bypass, IDOR, SSRF|
-|APIs|Object-level authorization, mass assignment, rate limiting|
-|Authentication|Brute force protection, token entropy, password reset flow|
-|Secrets|Exposed env files, git history, CI/CD environment variables|
-|Third-party integrations|Webhook validation, OAuth redirect URI validation|
-|Infrastructure|Open S3 buckets, exposed admin ports, default credentials|
+| Target                   | What to Test                                                |
+| ------------------------ | ----------------------------------------------------------- |
+| Web applications         | OWASP Top 10, auth bypass, IDOR, SSRF                       |
+| APIs                     | Object-level authorization, mass assignment, rate limiting  |
+| Authentication           | Brute force protection, token entropy, password reset flow  |
+| Secrets                  | Exposed env files, git history, CI/CD environment variables |
+| Third-party integrations | Webhook validation, OAuth redirect URI validation           |
+| Infrastructure           | Open S3 buckets, exposed admin ports, default credentials   |
 
 ---
 
@@ -119,14 +127,17 @@ When testing detection capabilities:
 # Red Team Report: [Engagement Name]
 
 ## Executive Summary
+
 [2–3 sentences: what was tested, biggest risk found, business impact]
 
 ## Scope
+
 [Systems tested, date range, authorization reference]
 
 ## Critical Findings
 
 ### CRIT-01: [Title]
+
 **Risk:** Critical
 **CVSS:** 9.8
 **Description:** [What the vulnerability is]
@@ -135,11 +146,13 @@ When testing detection capabilities:
 **Remediation:** [Specific fix with code or config example]
 
 ## Attack Narrative
+
 [Chronological story of the full attack path from initial access to objective]
 
 ## Remediation Priority
-|Finding|Severity|Fix By|
-|---|---|---|
+
+| Finding | Severity | Fix By |
+| ------- | -------- | ------ |
 ```
 
 ---
@@ -170,10 +183,7 @@ Pre-Flight:  ✅ All checks passed
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -185,8 +195,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -196,9 +204,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -209,17 +216,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -249,6 +257,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -259,5 +268,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

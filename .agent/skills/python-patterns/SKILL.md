@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Using `dict` for structured data when a dataclass/Pydantic model exists -> ✅ Dicts have no type safety; use typed models
 - ❌ Catching bare `except:` or `except Exception:` -> ✅ Catch specific exceptions; bare except swallows KeyboardInterrupt and SystemExit
 - ❌ Using `os.path` for path operations -> ✅ Use `pathlib.Path` for modern, readable path manipulation
 
 ---
-
 
 # Python Development Principles
 
@@ -24,14 +24,14 @@ routing:
 
 ## Framework Selection
 
-|Use Case|Recommended|When to Use|
-|---|---|---|
-|REST API, general-purpose|FastAPI|Type-safe, async, auto-docs via OpenAPI|
-|REST API, batteries-included|Django + DRF|Rapid development, ORM included, admin panel|
-|Microservice / minimal API|Flask|Simple, no overhead, full control|
-|Data pipeline / ETL|No framework|Standard library + pandas/polars as needed|
-|CLI tool|Click or Typer|Better than argparse for complex CLIs|
-|Async task queue|Celery + Redis|Background jobs, scheduled tasks|
+| Use Case                     | Recommended    | When to Use                                  |
+| ---------------------------- | -------------- | -------------------------------------------- |
+| REST API, general-purpose    | FastAPI        | Type-safe, async, auto-docs via OpenAPI      |
+| REST API, batteries-included | Django + DRF   | Rapid development, ORM included, admin panel |
+| Microservice / minimal API   | Flask          | Simple, no overhead, full control            |
+| Data pipeline / ETL          | No framework   | Standard library + pandas/polars as needed   |
+| CLI tool                     | Click or Typer | Better than argparse for complex CLIs        |
+| Async task queue             | Celery + Redis | Background jobs, scheduled tasks             |
 
 **Decision question:** Does this need an ORM, admin panel, and auth out of the box? → Django. Does it need type-safe inputs with automatic validation? → FastAPI. Is it small and needs nothing? → Flask.
 
@@ -54,6 +54,7 @@ def create_user(email: str, role: Literal["admin", "user"] = "user") -> dict[str
 ```
 
 **Rules:**
+
 - All function parameters and return values must be typed
 - Use `from __future__ import annotations` for forward references
 - Run `mypy` or `pyright` as part of CI — type errors fail the build
@@ -66,7 +67,7 @@ def create_user(email: str, role: Literal["admin", "user"] = "user") -> dict[str
 src/
   api/          Route definitions (thin — parse and delegate)
   services/     Business logic (no HTTP awareness)
-  repositories/ Database access (no business logic)  
+  repositories/ Database access (no business logic)
   models/       Pydantic models + SQLAlchemy models
   lib/          Shared utilities
   config.py     Settings via pydantic-settings
@@ -211,10 +212,7 @@ Do not mark status as VERIFIED until concrete terminal evidence is provided.
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -226,8 +224,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -237,9 +233,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -250,17 +245,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -290,6 +286,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -300,5 +297,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

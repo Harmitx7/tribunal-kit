@@ -86,16 +86,16 @@ function handleClose() {
 }
 
 // ✅ APPROVED: Focus trap + focus return
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect } from "react";
 function Modal({ isOpen, onClose }) {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const firstFocusRef = useRef<HTMLButtonElement>(null);
-  
+
   useEffect(() => {
-    if (isOpen) firstFocusRef.current?.focus();   // Move focus in on open
-    return () => triggerRef.current?.focus();      // Return focus on close
+    if (isOpen) firstFocusRef.current?.focus(); // Move focus in on open
+    return () => triggerRef.current?.focus(); // Return focus on close
   }, [isOpen]);
-  
+
   // Use headlessui/radix Dialog which handles trap + return natively
 }
 ```

@@ -22,13 +22,13 @@ Read BEFORE migrating:
 
 ## When to Use /migrate
 
-|Use `/migrate` when...|Use something else when...|
-|:---|:---|
-|Upgrading Next.js major version|Adding a feature → `/enhance`|
-|Upgrading React version|Schema change in existing rows → `/migrate`|
-|Database schema structural change|Simple column add → `/enhance`|
-|Changing auth libraries (next-auth v4 → v5)|Dependency patches → `/fix`|
-|Removing deprecated APIs at scale||
+| Use `/migrate` when...                      | Use something else when...                  |
+| :------------------------------------------ | :------------------------------------------ |
+| Upgrading Next.js major version             | Adding a feature → `/enhance`               |
+| Upgrading React version                     | Schema change in existing rows → `/migrate` |
+| Database schema structural change           | Simple column add → `/enhance`              |
+| Changing auth libraries (next-auth v4 → v5) | Dependency patches → `/fix`                 |
+| Removing deprecated APIs at scale           |                                             |
 
 ---
 
@@ -37,10 +37,10 @@ Read BEFORE migrating:
 ```
 Type A: Framework upgrade (Next.js 14 → 15, React 18 → 19)
   → Audit breaking changes, update callsites, run Tribunal
-  
+
 Type B: Dependency major version (Prisma 5 → 6, next-auth 4 → 5)
   → Check changelog for removed APIs, update all callsites
-  
+
 Type C: Database schema migration (expand-and-contract)
   → Always in 3 phases, never destructive in one step
 
@@ -175,10 +175,10 @@ Rollback for DB migration:
 
 ## After /migrate — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Migration succeeds locally|→ `/test` to verify all behaviors intact|
-|Tests pass after migration|→ `/tribunal-full` for safety audit|
-|Audit passes|→ `/deploy` with explicit rollback baseline|
+| Outcome                    | Next Command                                |
+| :------------------------- | :------------------------------------------ |
+| Migration succeeds locally | → `/test` to verify all behaviors intact    |
+| Tests pass after migration | → `/tribunal-full` for safety audit         |
+| Audit passes               | → `/deploy` with explicit rollback baseline |
 
 ---

@@ -35,7 +35,7 @@ The loop repeats per function. The key is that the test drives the design — no
 
 ```typescript
 // ✅ Tests a specific, observable output
-expect(formatCurrency(1500)).toBe('$1,500.00');
+expect(formatCurrency(1500)).toBe("$1,500.00");
 
 // ❌ Tests that the function ran (not what it produced)
 const result = formatCurrency(1500);
@@ -49,16 +49,16 @@ expect(formatCurrency(1500)).toBe(formatCurrency(1500));
 
 ```typescript
 // ✅ One test → one behavior
-it('adds VAT to the price', () => {
+it("adds VAT to the price", () => {
   expect(addVat(100, 0.2)).toBe(120);
 });
 
-it('throws when rate is negative', () => {
-  expect(() => addVat(100, -0.2)).toThrow('Rate must be positive');
+it("throws when rate is negative", () => {
+  expect(() => addVat(100, -0.2)).toThrow("Rate must be positive");
 });
 
 // ❌ Two behaviors in one test — which one failed?
-it('adds VAT correctly', () => {
+it("adds VAT correctly", () => {
   expect(addVat(100, 0.2)).toBe(120);
   expect(() => addVat(100, -0.2)).toThrow();
 });
@@ -72,15 +72,15 @@ it('adds VAT correctly', () => {
 // ✅ Mock only the direct external dependency
 // Testing: userService.create()
 // Mock: the DB layer (because we don't need a real DB for this unit)
-vi.mock('../db', () => ({
-  insert: vi.fn().mockResolvedValue({ id: 'u1', email: 'test@example.com' })
+vi.mock("../db", () => ({
+  insert: vi.fn().mockResolvedValue({ id: "u1", email: "test@example.com" }),
 }));
 
 // ❌ Over-mocking — nothing real is being tested
-vi.mock('../db');
-vi.mock('../logger');
-vi.mock('../validator');
-vi.mock('../emailService');
+vi.mock("../db");
+vi.mock("../logger");
+vi.mock("../validator");
+vi.mock("../emailService");
 // At this point you're testing that mocks return mocks
 ```
 
@@ -89,27 +89,27 @@ vi.mock('../emailService');
 ## Standard Test File Structure
 
 ```typescript
-describe('normalizeEmail', () => {
+describe("normalizeEmail", () => {
   // Group: happy paths
-  describe('with valid input', () => {
-    it('lowercases uppercase domains', () => {
-      expect(normalizeEmail('User@EXAMPLE.com')).toBe('user@example.com');
+  describe("with valid input", () => {
+    it("lowercases uppercase domains", () => {
+      expect(normalizeEmail("User@EXAMPLE.com")).toBe("user@example.com");
     });
-    it('trims surrounding whitespace', () => {
-      expect(normalizeEmail('  user@example.com  ')).toBe('user@example.com');
+    it("trims surrounding whitespace", () => {
+      expect(normalizeEmail("  user@example.com  ")).toBe("user@example.com");
     });
   });
 
   // Group: edge cases
-  describe('with invalid input', () => {
-    it('throws on null input', () => {
-      expect(() => normalizeEmail(null)).toThrow('Email is required');
+  describe("with invalid input", () => {
+    it("throws on null input", () => {
+      expect(() => normalizeEmail(null)).toThrow("Email is required");
     });
-    it('throws on empty string', () => {
-      expect(() => normalizeEmail('')).toThrow('Email is required');
+    it("throws on empty string", () => {
+      expect(() => normalizeEmail("")).toThrow("Email is required");
     });
-    it('throws on malformed email', () => {
-      expect(() => normalizeEmail('not-an-email')).toThrow('Invalid email');
+    it("throws on malformed email", () => {
+      expect(() => normalizeEmail("not-an-email")).toThrow("Invalid email");
     });
   });
 });

@@ -11,30 +11,31 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Assuming SEO and GEO are the same -> ✅ GEO optimizes for AI crawlers and LLM ingestion, not just search engine ranking
 - ❌ Using complex nested HTML for content -> ✅ AI parsers prefer flat, semantic HTML with clear heading hierarchies
 - ❌ Ignoring structured data (JSON-LD) -> ✅ LLMs heavily weight structured data for citation and fact extraction
 
 ---
 
-
-# Generative Engine Optimization (GEO) 
+# Generative Engine Optimization (GEO)
 
 ---
 
 ## 1. The Death of Boilerplate (Information Density)
 
-When ChatGPT or Perplexity queries a website, it has a finite context window. 
+When ChatGPT or Perplexity queries a website, it has a finite context window.
 
 If your website contains 8,000 words of "fluff" marketing copy and only 200 words of actionable data (pricing, API limits, support contact), the LLM will truncate the page and hallucinates the rest.
 
 ### The GEO Markdown Fallback
+
 Modern sites should natively serve structured markdown if they detect an AI User-Agent (like `ChatGPT-User` or `PerplexityBot`).
 
 ```typescript
 // Next.js Edge Middleware for GEO
 export function middleware(req: NextRequest) {
-  const ua = req.headers.get('user-agent') || '';
+  const ua = req.headers.get("user-agent") || "";
   const isBot = /ChatGPT|Perplexity|ClaudeBot/i.test(ua);
 
   if (isBot) {
@@ -62,7 +63,7 @@ Do not use vague external links at the bottom of the page. Anchor exact claims t
 <!-- ✅ GOOD: GEO Citation Architecture -->
 <p>We process 10M vectors at 10ms latency (P99), making us 3x faster than Competitor A.</p>
 <cite xmlns="http://schema.org" typeof="WebPage">
-  <span property="name">Benchmark Methodology 2026</span> - 
+  <span property="name">Benchmark Methodology 2026</span> -
   <a property="url" href="/benchmarks-2026.pdf">[Source PDF]</a>
 </cite>
 ```
@@ -72,7 +73,7 @@ Do not use vague external links at the bottom of the page. Anchor exact claims t
 ## 3. High-Clarity Semantic Taxonomy
 
 Traditional SEO relies heavily on long-tail keyword placement.
-GEO relies heavily on **Taxonomy and Relational Mapping**. The LLM wants to know exactly *what* entity this page represents.
+GEO relies heavily on **Taxonomy and Relational Mapping**. The LLM wants to know exactly _what_ entity this page represents.
 
 **Implement Explicit FAQs:**
 LLMs love QA formats because user prompts are usually questions.
@@ -82,7 +83,7 @@ Transform prose into rigid QA objects using standard semantic data blocks.
 <dl>
   <dt><h3>What is the data retention limit for the Free Tier?</h3></dt>
   <dd><p>The Free Tier limits data retention to precisely 14 rolling days.</p></dd>
-  
+
   <dt><h3>Does the platform support HIPAA compliance?</h3></dt>
   <dd><p>Yes, Enterprise Tiers support full BAA HIPAA compliance parameters.</p></dd>
 </dl>
@@ -99,10 +100,7 @@ When an AI tries to write code using your product, it scrapes your API documenta
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -114,8 +112,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -125,9 +121,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -138,17 +133,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -178,6 +174,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -188,5 +185,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

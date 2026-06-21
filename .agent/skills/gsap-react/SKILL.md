@@ -35,10 +35,13 @@ gsap.registerPlugin(useGSAP); // register before running useGSAP or any GSAP cod
 
 const containerRef = useRef(null);
 
-useGSAP(() => {
-  gsap.to(".box", { x: 100 });
-  gsap.from(".item", { opacity: 0, stagger: 0.1 });
-}, { scope: containerRef });
+useGSAP(
+  () => {
+    gsap.to(".box", { x: 100 });
+    gsap.from(".item", { opacity: 0, stagger: 0.1 });
+  },
+  { scope: containerRef },
+);
 ```
 
 - ✅ Pass a **scope** (ref or element) so selectors like `.box` are scoped to that root.
@@ -54,13 +57,16 @@ Use **refs** so GSAP targets the actual DOM nodes after render. Do not rely on s
 By default, useGSAP() passes an empty dependency array to the internal useEffect()/useLayoutEffect() so that it doesn't get called on every render. The 2nd argument is optional; it can pass either a dependency array (like useEffect()) or a config object for more flexibility:
 
 ```javascript
-useGSAP(() => {
-		// gsap code here, just like in a useEffect()
-},{ 
-  dependencies: [endX], // dependency array (optional)
-  scope: container,     // scope selector text (optional, recommended)
-  revertOnUpdate: true  // causes the context to be reverted and the cleanup function to run every time the hook re-synchronizes (when any dependency changes)
-});
+useGSAP(
+  () => {
+    // gsap code here, just like in a useEffect()
+  },
+  {
+    dependencies: [endX], // dependency array (optional)
+    scope: container, // scope selector text (optional, recommended)
+    revertOnUpdate: true, // causes the context to be reverted and the cleanup function to run every time the hook re-synchronizes (when any dependency changes)
+  },
+);
 ```
 
 ## gsap.context() in useEffect (when useGSAP isn't used)
@@ -89,28 +95,31 @@ const container = useRef();
 const badRef = useRef();
 const goodRef = useRef();
 
-useGSAP((context, contextSafe) => {
-	// ✅ safe, created during execution
-	gsap.to(goodRef.current, { x: 100 });
+useGSAP(
+  (context, contextSafe) => {
+    // ✅ safe, created during execution
+    gsap.to(goodRef.current, { x: 100 });
 
-	// ❌ DANGER! This animation is created in an event handler that executes AFTER useGSAP() executes. It's not added to the context so it won't get cleaned up (reverted). The event listener isn't removed in cleanup function below either, so it persists between component renders (bad).
-	badRef.current.addEventListener('click', () => {
-		gsap.to(badRef.current, { y: 100 });
-	});
+    // ❌ DANGER! This animation is created in an event handler that executes AFTER useGSAP() executes. It's not added to the context so it won't get cleaned up (reverted). The event listener isn't removed in cleanup function below either, so it persists between component renders (bad).
+    badRef.current.addEventListener("click", () => {
+      gsap.to(badRef.current, { y: 100 });
+    });
 
-	// ✅ safe, wrapped in contextSafe() function
-	const onClickGood = contextSafe(() => {
-		gsap.to(goodRef.current, { rotation: 180 });
-	});
+    // ✅ safe, wrapped in contextSafe() function
+    const onClickGood = contextSafe(() => {
+      gsap.to(goodRef.current, { rotation: 180 });
+    });
 
-	goodRef.current.addEventListener('click', onClickGood);
+    goodRef.current.addEventListener("click", onClickGood);
 
-	// 👍 we remove the event listener in the cleanup function below.
-	return () => {
-		// <-- cleanup
-		goodRef.current.removeEventListener('click', onClickGood);
-	};
-},{ scope: container });
+    // 👍 we remove the event listener in the cleanup function below.
+    return () => {
+      // <-- cleanup
+      goodRef.current.removeEventListener("click", onClickGood);
+    };
+  },
+  { scope: container },
+);
 ```
 
 ## Server-Side Rendering (Next.js, etc.)
@@ -118,7 +127,7 @@ useGSAP((context, contextSafe) => {
 GSAP runs in the browser. Do not call gsap or ScrollTrigger during SSR.
 
 - Use **useGSAP** (or useEffect) so all GSAP code runs only on the client.
-- If GSAP is imported at top level, ensure the app does not execute gsap.* or ScrollTrigger.* during server render. Dynamic import inside useEffect is an option if tree-shaking or bundle size is a concern.
+- If GSAP is imported at top level, ensure the app does not execute gsap._ or ScrollTrigger._ during server render. Dynamic import inside useEffect is an option if tree-shaking or bundle size is a concern.
 
 ## Best practices
 
@@ -133,11 +142,9 @@ GSAP runs in the browser. Do not call gsap or ScrollTrigger during SSR.
 - ❌ Skip cleanup; always revert context or kill tweens/ScrollTriggers in the effect return to avoid leaks and updates on unmounted nodes.
 - ❌ Run GSAP or ScrollTrigger during SSR; keep all usage inside client-only lifecycle (e.g. useGSAP).
 
-
 ### Learn More
 
-https://gsap.com/resources/React
----
+## https://gsap.com/resources/React
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
@@ -152,17 +159,18 @@ https://gsap.com/resources/React
 
 ## 🚨 LLM Trap Table
 
-|Pattern|What AI Does Wrong|What Is Actually Correct|
-|:---|:---|:---|
-|gsap-react|useEffect or useLayoutEffect for GSAP|Use useGSAP() Hook from @gsap/react|
-|gsap-react|Forgetting dependencies in useGSAP|Explicitly set { dependencies: [reqs] } if you need reactivity|
-|gsap-react|gsap.context() inside useGSAP|Unnecessary, useGSAP creates a Context implicitly|
+| Pattern    | What AI Does Wrong                    | What Is Actually Correct                                       |
+| :--------- | :------------------------------------ | :------------------------------------------------------------- |
+| gsap-react | useEffect or useLayoutEffect for GSAP | Use useGSAP() Hook from @gsap/react                            |
+| gsap-react | Forgetting dependencies in useGSAP    | Explicitly set { dependencies: [reqs] } if you need reactivity |
+| gsap-react | gsap.context() inside useGSAP         | Unnecessary, useGSAP creates a Context implicitly              |
 
 ---
 
 ## ✅ Pre-Flight Self-Audit
 
 Before producing any output, verify:
+
 ```
 ✅ Did I read the actual files before making claims about them?
 ✅ Did I verify all method names against official GSAP documentation?
@@ -183,14 +191,14 @@ BUILD:   Generate the smallest meaningful unit of code
 CONFIRM: Verify the output is correct before presenting
 ```
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -220,6 +228,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -230,5 +239,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

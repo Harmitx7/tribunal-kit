@@ -22,31 +22,35 @@ Read BEFORE frontend review:
 
 ## When to Use /tribunal-frontend
 
-|Use `/tribunal-frontend` when...|Use something else when...|
-|:---|:---|
-|React components (Server or Client)|Backend routes → `/tribunal-backend`|
-|Custom hooks|Database queries → `/tribunal-database`|
-|Next.js pages and layouts|Mobile (React Native) → `/tribunal-mobile`|
-|UI state management|Maximum coverage → `/tribunal-full`|
-|Form handling with Server Actions||
+| Use `/tribunal-frontend` when...    | Use something else when...                 |
+| :---------------------------------- | :----------------------------------------- |
+| React components (Server or Client) | Backend routes → `/tribunal-backend`       |
+| Custom hooks                        | Database queries → `/tribunal-database`    |
+| Next.js pages and layouts           | Mobile (React Native) → `/tribunal-mobile` |
+| UI state management                 | Maximum coverage → `/tribunal-full`        |
+| Form handling with Server Actions   |                                            |
 
 ---
 
 ## 4 Active Reviewers (All Run Simultaneously)
 
-### precedence-reviewer    → Checks local repo Case Law for past rejections
+### precedence-reviewer → Checks local repo Case Law for past rejections
+
 logic-reviewer
+
 - Hallucinated React 19 hooks (non-existent hook names)
 - useFormState called instead of useActionState (React 19 rename)
 - useEffect missing dependencies (stale closure)
 - Multiple setStates that should be batched (React 19 auto-batches in most cases)
 
 ### security-auditor
+
 - `dangerouslySetInnerHTML` with user-controlled content (XSS)
 - eval/Function() calls in component code
 - Exposing sensitive data in client-rendered output
 
 ### frontend-reviewer
+
 - useState/useReducer in Server Components (no client runtime!)
 - 'use client' directive missing on components using hooks
 - Missing 'use server' on Server Actions
@@ -55,7 +59,8 @@ logic-reviewer
 - Keys not unique in list rendering (using index as key)
 - Direct DOM mutations (document.querySelector inside React)
 
-### type-safety-reviewer  
+### type-safety-reviewer
+
 - Props typed as `any`
 - Event handlers typed as `any` (use `React.MouseEvent<HTMLButtonElement>`)
 - Server Component async props typed without Promise<> (Next.js 15 params)
@@ -104,10 +109,12 @@ $ARGUMENTS
 ## $CONTEXT_REQUIRED
 
 ```
+
 Read BEFORE frontend review:
-□ Target component files       → The UI code being audited
+□ Target component files → The UI code being audited
 □ tailwind.config / globals.css → Understand design tokens
-□ package.json                 → Verify frontend dependencies (framer-motion, radicle, etc.)
+□ package.json → Verify frontend dependencies (framer-motion, radicle, etc.)
+
 ```
 
 ---
@@ -147,7 +154,7 @@ logic-reviewer
 - Keys not unique in list rendering (using index as key)
 - Direct DOM mutations (document.querySelector inside React)
 
-### type-safety-reviewer  
+### type-safety-reviewer
 - Props typed as `any`
 - Event handlers typed as `any` (use `React.MouseEvent<HTMLButtonElement>`)
 - Server Component async props typed without Promise<> (Next.js 15 params)
@@ -158,10 +165,12 @@ logic-reviewer
 ## Verdict System
 
 ```
+
 If ANY reviewer → ❌ REJECTED: fix before Human Gate
-If any reviewer → ⚠️ WARNING:  proceed with flagged items
+If any reviewer → ⚠️ WARNING: proceed with flagged items
 If all reviewers → ✅ APPROVED: Human Gate
-```
+
+````
 
 ---
 
@@ -184,7 +193,7 @@ export default async function Page() {
 // ❌ Server Action missing 'use server'
 async function saveData(formData: FormData) {  // Without 'use server' — not a Server Action
   'use server';                                // Must be FIRST line
-```
+````
 
 ---
 
@@ -202,11 +211,11 @@ async function saveData(formData: FormData) {  // Without 'use server' — not a
 
 ## After /tribunal-frontend — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|All checks pass|→ `/preview start` to visually verify|
-|Reviewers reject with fixes|→ Apply fixes, then run `/tribunal-frontend` again|
-|Needs advanced UI/UX|→ `/ui-ux-pro-max` for premium design pass|
-|Performance concerns|→ `/performance-benchmarker` for Lighthouse/CWV|
+| Outcome                     | Next Command                                       |
+| :-------------------------- | :------------------------------------------------- |
+| All checks pass             | → `/preview start` to visually verify              |
+| Reviewers reject with fixes | → Apply fixes, then run `/tribunal-frontend` again |
+| Needs advanced UI/UX        | → `/ui-ux-pro-max` for premium design pass         |
+| Performance concerns        | → `/performance-benchmarker` for Lighthouse/CWV    |
 
 ---

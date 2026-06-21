@@ -13,6 +13,7 @@ routing:
 # Database Design — Schema & Architecture Mastery
 
 ## Hallucination Traps (Read First)
+
 - ❌ `TIMESTAMP` → ✅ Always `TIMESTAMPTZ` (with timezone). `TIMESTAMP` is ambiguous across timezones.
 - ❌ UUID v4 as primary key → ✅ UUID v7 (time-ordered) or `BIGINT GENERATED ALWAYS AS IDENTITY`. UUID v4 is random — destroys B-tree index performance on high-insert tables.
 - ❌ No index on foreign keys → ✅ PostgreSQL does NOT auto-index FK columns. Cascading deletes cause full table scans without them.
@@ -72,6 +73,7 @@ CREATE INDEX idx_users_created_at ON users (created_at DESC);
 ## Schema Patterns
 
 ### Relationships
+
 ```sql
 -- One-to-Many: FK on the "many" side + INDEX
 CREATE TABLE posts (
@@ -91,6 +93,7 @@ CREATE INDEX idx_post_tags_tag_id ON post_tags (tag_id); -- index the non-PK sid
 ```
 
 ### Multi-Tenancy
+
 ```sql
 -- Pattern 1: tenant_id column (simplest — enforce via RLS)
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
@@ -107,19 +110,22 @@ CREATE POLICY tenant_isolation ON projects
 
 ## ORM Selection
 
-| ORM | Best For | Trade-offs |
-|-----|----------|------------|
-| **Drizzle** | Edge, TypeScript, bundle-size sensitive | Newer, fewer examples |
-| **Prisma** | DX, schema management, Prisma Studio | Heavy, NOT edge-compatible |
-| **Kysely** | Type-safe SQL builder, full control | Manual migrations |
-| **Raw SQL** | Complex queries, performance-critical | Manual type safety |
-| **SQLAlchemy 2.0** | Python async ecosystem | Python only |
+| ORM                | Best For                                | Trade-offs                 |
+| ------------------ | --------------------------------------- | -------------------------- |
+| **Drizzle**        | Edge, TypeScript, bundle-size sensitive | Newer, fewer examples      |
+| **Prisma**         | DX, schema management, Prisma Studio    | Heavy, NOT edge-compatible |
+| **Kysely**         | Type-safe SQL builder, full control     | Manual migrations          |
+| **Raw SQL**        | Complex queries, performance-critical   | Manual type safety         |
+| **SQLAlchemy 2.0** | Python async ecosystem                  | Python only                |
 
 ```typescript
 // Drizzle — SQL-like, edge-compatible
-const result = await db.select({ id: users.id, name: users.name }).from(users)
+const result = await db
+  .select({ id: users.id, name: users.name })
+  .from(users)
   .where(and(eq(users.role, "admin"), eq(users.isActive, true)))
-  .orderBy(desc(users.createdAt)).limit(20);
+  .orderBy(desc(users.createdAt))
+  .limit(20);
 
 // Prisma — ❌ TRAP: can't express complex joins natively → use prisma.$queryRaw<Type>
 const user = await prisma.user.findUnique({ where: { email }, include: { posts: { take: 10 } } });
@@ -140,6 +146,7 @@ ALTER TABLE users ALTER COLUMN phone SET NOT NULL;
 ```
 
 **Migration Rules:**
+
 - Never modify a migration already applied to production — create a new one
 - Remove column in 2 deploys: first remove all code references, then `DROP COLUMN`
 - `CREATE INDEX CONCURRENTLY` to avoid table locks on existing data
@@ -149,13 +156,13 @@ ALTER TABLE users ALTER COLUMN phone SET NOT NULL;
 
 ## Indexing Reference
 
-| Index Type | Use For |
-|------------|---------|
-| **B-tree** | General purpose — equality & range queries (default) |
-| **Hash** | Equality-only lookups (faster than B-tree for =) |
-| **GIN** | JSONB, arrays, full-text (`tsvector`) |
-| **GiST** | Geometric, range types |
-| **HNSW / IVFFlat** | Vector similarity (pgvector) |
+| Index Type         | Use For                                              |
+| ------------------ | ---------------------------------------------------- |
+| **B-tree**         | General purpose — equality & range queries (default) |
+| **Hash**           | Equality-only lookups (faster than B-tree for =)     |
+| **GIN**            | JSONB, arrays, full-text (`tsvector`)                |
+| **GiST**           | Geometric, range types                               |
+| **HNSW / IVFFlat** | Vector similarity (pgvector)                         |
 
 **Composite index column order:** equality columns first → range columns last → most selective first
 
@@ -192,10 +199,7 @@ Poolers:
   Supabase Supavisor → Managed, for Supabase projects
 ```
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -207,8 +211,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -218,9 +220,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -231,17 +232,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -271,6 +273,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -281,5 +284,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -22,12 +22,12 @@ Read BEFORE marathon start/continue:
 
 ## When to Use /marathon
 
-|Use `/marathon` when...|Use something else when...|
-|:---|:---|
-|A project requires multiple sessions to complete|Quick one-shot task → `/generate`|
-|You need structured progress tracking across context windows|Single feature addition → `/enhance`|
-|Building a complex app from a high-level spec|Planning without execution → `/plan`|
-|Previous agent sessions lost context or declared victory too early|Brainstorming options → `/brainstorm`|
+| Use `/marathon` when...                                            | Use something else when...            |
+| :----------------------------------------------------------------- | :------------------------------------ |
+| A project requires multiple sessions to complete                   | Quick one-shot task → `/generate`     |
+| You need structured progress tracking across context windows       | Single feature addition → `/enhance`  |
+| Building a complex app from a high-level spec                      | Planning without execution → `/plan`  |
+| Previous agent sessions lost context or declared victory too early | Brainstorming options → `/brainstorm` |
 
 ---
 
@@ -78,11 +78,7 @@ Features are stored in `.agent/history/marathon/feature_list.json` as structured
   "id": 1,
   "category": "core",
   "description": "User can open a new chat and see a welcome screen",
-  "steps": [
-    "Navigate to main page",
-    "Click 'New Chat' button",
-    "Verify welcome state renders"
-  ],
+  "steps": ["Navigate to main page", "Click 'New Chat' button", "Verify welcome state renders"],
   "passes": false,
   "sessionCompleted": null
 }
@@ -102,9 +98,11 @@ Every new session starts by orienting the agent. This is the **Coding Agent** pa
 ### Steps
 
 1. **Read marathon state:**
+
    ```bash
    node .agent/scripts/marathon_harness.js session-start
    ```
+
    This automatically:
    - Reads `progress.json` and shows what was done in previous sessions
    - Reads `git log --oneline -20` for recent commits
@@ -112,6 +110,7 @@ Every new session starts by orienting the agent. This is the **Coding Agent** pa
    - Records the session start time
 
 2. **Start the dev environment:**
+
    ```bash
    node .agent/scripts/auto_preview.js start
    ```
@@ -159,6 +158,7 @@ Work on exactly **one feature at a time**. This incremental approach prevents th
 ### If a feature cannot be completed
 
 If a feature is blocked or too complex for the current session:
+
 1. Leave it as `passes: false`
 2. Add a log note explaining why:
    ```bash
@@ -181,11 +181,13 @@ Every session MUST leave the codebase in a clean, merge-ready state.
    - If something is half-done, either complete it or revert it
 
 2. **Record session end:**
+
    ```bash
    node .agent/scripts/marathon_harness.js session-end "Implemented dark mode, user settings page, and notification bell"
    ```
 
 3. **Final git commit:**
+
    ```bash
    git commit -m "marathon: session N complete, 15/47 features passing"
    ```
@@ -262,10 +264,10 @@ node .agent/scripts/marathon_harness.js reset
 
 ## After /marathon — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Session completes|→ `/marathon continue` (next session)|
-|Feature done, needs audit|→ `/audit` for project health|
-|Marathon fully completed|→ `/deploy` to ship|
+| Outcome                   | Next Command                          |
+| :------------------------ | :------------------------------------ |
+| Session completes         | → `/marathon continue` (next session) |
+| Feature done, needs audit | → `/audit` for project health         |
+| Marathon fully completed  | → `/deploy` to ship                   |
 
 ---

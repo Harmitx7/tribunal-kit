@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Silently using default values for missing config -> ✅ Fail fast with a clear error message naming the missing field
 - ❌ Trusting environment variables without validation -> ✅ Validate ALL env vars at startup with Zod or a schema, not at usage time
 - ❌ Mixing config source precedence without documenting it -> ✅ Document: CLI args > env vars > config file > defaults
 
 ---
-
 
 # Config Validator — System Integrity Mastery
 
@@ -30,10 +30,10 @@ Never allow a system to boot, run, or proceed into a workflow if the underlying 
 import { z } from "zod";
 
 // ❌ VULNERABLE: Implicit Trust
-// Assumes the JSON file is correct. Will crash randomly deep in the execution stack 
+// Assumes the JSON file is correct. Will crash randomly deep in the execution stack
 // if 'maxRetries' is missing or set to a string.
-const config = JSON.parse(fs.readFileSync('./.agent/config.json', 'utf8'));
-runAgent(config.maxRetries); 
+const config = JSON.parse(fs.readFileSync("./.agent/config.json", "utf8"));
+runAgent(config.maxRetries);
 
 // ✅ SAFE: Boundary Validation via Zod
 const ConfigSchema = z.object({
@@ -41,11 +41,11 @@ const ConfigSchema = z.object({
   maxRetries: z.number().min(0).max(10).default(3),
   enabledSkills: z.array(z.string()),
   environment: z.enum(["development", "production", "test"]),
-  apiEndpoint: z.string().url().optional()
+  apiEndpoint: z.string().url().optional(),
 });
 
 try {
-  const rawData = JSON.parse(fs.readFileSync('./.agent/config.json', 'utf8'));
+  const rawData = JSON.parse(fs.readFileSync("./.agent/config.json", "utf8"));
   const config = ConfigSchema.parse(rawData); // Throws heavily detailed error instantly
 } catch (err) {
   logger.fatal("System boot aborted. Invalid config.json:", err.errors);
@@ -67,14 +67,14 @@ function auditAgentDirectory(config: Config) {
   const missingFiles = [];
 
   for (const skill of config.enabledSkills) {
-    const skillPath = path.join('.agent/skills', skill, 'SKILL.md');
+    const skillPath = path.join(".agent/skills", skill, "SKILL.md");
     if (!fs.existsSync(skillPath)) {
       missingFiles.push(`Skill manifest definition missing: ${skillPath}`);
     }
   }
 
   if (missingFiles.length > 0) {
-    throw new Error(`Referential Integrity Failure:\n${missingFiles.join('\n')}`);
+    throw new Error(`Referential Integrity Failure:\n${missingFiles.join("\n")}`);
   }
 }
 ```
@@ -117,10 +117,7 @@ When automating updates to a JSON configuration (e.g., adding a new skill to `co
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -132,8 +129,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -143,9 +138,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -156,17 +150,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -196,6 +191,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -206,5 +202,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

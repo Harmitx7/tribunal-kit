@@ -23,13 +23,13 @@ If data crosses a trust boundary without validation → flag it.
 
 Flag any code that receives data across these boundaries without validation.
 
-| Boundary | Bad Example (Flag this) | Good Example (Require this) |
-|:---|:---|:---|
-| **API Endpoints** | using `req.body.name` directly | `const body = CreateUserSchema.parse(req.body)` |
-| **URL Params / Queries** | `const id = req.query.id` | `const query = PaginationSchema.parse(req.query)` |
-| **Env Variables** | `const secret = process.env.SECRET` | `const env = EnvSchema.parse(process.env)` |
-| **External APIs** | `const data = await fetch(url).then(r => r.json())` | `const data = ApiSchema.parse(await fetch(url).then(r => r.json()))` |
-| **Form Inputs** | No validation before submit | Zod + React Hook Form validation |
+| Boundary                 | Bad Example (Flag this)                             | Good Example (Require this)                                          |
+| :----------------------- | :-------------------------------------------------- | :------------------------------------------------------------------- |
+| **API Endpoints**        | using `req.body.name` directly                      | `const body = CreateUserSchema.parse(req.body)`                      |
+| **URL Params / Queries** | `const id = req.query.id`                           | `const query = PaginationSchema.parse(req.query)`                    |
+| **Env Variables**        | `const secret = process.env.SECRET`                 | `const env = EnvSchema.parse(process.env)`                           |
+| **External APIs**        | `const data = await fetch(url).then(r => r.json())` | `const data = ApiSchema.parse(await fetch(url).then(r => r.json()))` |
+| **Form Inputs**          | No validation before submit                         | Zod + React Hook Form validation                                     |
 
 ---
 
@@ -37,13 +37,13 @@ Flag any code that receives data across these boundaries without validation.
 
 When reviewing schemas (Zod for TS/JS, Pydantic for Python), check for these exact traps:
 
-| Trap | Why It's Wrong | Required Fix |
-|:---|:---|:---|
-| `z.any()` or `z.unknown()` | Bypasses validation entirely. A schema of `any` is no schema at all. | Define the actual object shape. |
-| Client-side only | Relying on HTML5 required attributes or frontend JS to validate. | Server-side validation is MANDATORY. |
-| Not formatting errors | Returning a raw Zod error object to the client (`res.status(400).json(result.error)`). | Use `.flatten()` or `.format()` for readable errors. |
-| Trusting TS `as` | `const data = req.body as User;` | TypeScript definitions disappear at runtime. Use a runtime validator. |
-| Coercion without fallback | `z.coerce.number()` on `"abc"` creates `NaN` if not checked. | Provide bounds (e.g., `.min(1)`). |
+| Trap                       | Why It's Wrong                                                                         | Required Fix                                                          |
+| :------------------------- | :------------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `z.any()` or `z.unknown()` | Bypasses validation entirely. A schema of `any` is no schema at all.                   | Define the actual object shape.                                       |
+| Client-side only           | Relying on HTML5 required attributes or frontend JS to validate.                       | Server-side validation is MANDATORY.                                  |
+| Not formatting errors      | Returning a raw Zod error object to the client (`res.status(400).json(result.error)`). | Use `.flatten()` or `.format()` for readable errors.                  |
+| Trusting TS `as`           | `const data = req.body as User;`                                                       | TypeScript definitions disappear at runtime. Use a runtime validator. |
+| Coercion without fallback  | `z.coerce.number()` on `"abc"` creates `NaN` if not checked.                           | Provide bounds (e.g., `.min(1)`).                                     |
 
 ---
 

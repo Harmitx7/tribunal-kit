@@ -22,12 +22,12 @@ Read BEFORE orchestrating:
 
 ## When to Use /orchestrate
 
-|Use `/orchestrate` when...|Use something else when...|
-|:---|:---|
-|Task spans 2+ technical domains|Single domain → use specialist directly|
-|Multi-perspective review is needed|Simple code generation → `/generate`|
-|Fan-out parallelism would save time|Debugging → `/debug` (sequential by nature)|
-|One agent would miss domain failures|Planning only → `/plan`|
+| Use `/orchestrate` when...           | Use something else when...                  |
+| :----------------------------------- | :------------------------------------------ |
+| Task spans 2+ technical domains      | Single domain → use specialist directly     |
+| Multi-perspective review is needed   | Simple code generation → `/generate`        |
+| Fan-out parallelism would save time  | Debugging → `/debug` (sequential by nature) |
+| One agent would miss domain failures | Planning only → `/plan`                     |
 
 ---
 
@@ -43,7 +43,7 @@ Before dispatching workers:
 2. Can tasks be parallelized (no dependencies between them)?
    → YES → Fan-Out dispatch (all workers simultaneous)
    → NO  → Sequential wave dispatch
-   
+
 3. Context budget check:
    □ How many files does each worker need?
    □ Total context across all workers manageable?
@@ -183,10 +183,10 @@ Worker failure (after 3 retries):
 
 ## After /orchestrate — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Review reveals multiple issues|→ Route to specific `/tribunal-*` or `/fix`|
-|Analysis points to architecture|→ `/plan` to formalize the changes|
-|Analysis needs more data|→ `/performance-benchmarker` or `/debug`|
+| Outcome                         | Next Command                                |
+| :------------------------------ | :------------------------------------------ |
+| Review reveals multiple issues  | → Route to specific `/tribunal-*` or `/fix` |
+| Analysis points to architecture | → `/plan` to formalize the changes          |
+| Analysis needs more data        | → `/performance-benchmarker` or `/debug`    |
 
 ---

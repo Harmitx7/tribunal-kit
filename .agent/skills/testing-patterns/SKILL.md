@@ -54,11 +54,11 @@ it("calculates total with tax", () => {
 // ❌ BAD: Multiple acts in one test
 it("does too many things", () => {
   cart.addItem({ name: "A", price: 10 });
-  expect(cart.total).toBe(10);        // assert
+  expect(cart.total).toBe(10); // assert
   cart.addItem({ name: "B", price: 20 });
-  expect(cart.total).toBe(30);        // another assert after another act
+  expect(cart.total).toBe(30); // another assert after another act
   cart.removeItem("A");
-  expect(cart.total).toBe(20);        // yet another — split into 3 tests
+  expect(cart.total).toBe(20); // yet another — split into 3 tests
 });
 ```
 
@@ -250,10 +250,7 @@ const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
 await riskyOperation();
 
-expect(consoleSpy).toHaveBeenCalledWith(
-  expect.stringContaining("failed"),
-  expect.any(Error)
-);
+expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("failed"), expect.any(Error));
 
 consoleSpy.mockRestore(); // restore original
 ```
@@ -416,7 +413,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0, // retry in CI only
   use: {
     baseURL: "http://localhost:3000",
-    trace: "on-first-retry",      // save trace on failures
+    trace: "on-first-retry", // save trace on failures
     screenshot: "only-on-failure",
   },
   webServer: {
@@ -443,11 +440,7 @@ import { app } from "./app";
 
 describe("POST /api/users", () => {
   it("creates a user and returns 201", async () => {
-    const response = await request(app)
-      .post("/api/users")
-      .send({ name: "Alice", email: "alice@test.com" })
-      .expect(201)
-      .expect("Content-Type", /json/);
+    const response = await request(app).post("/api/users").send({ name: "Alice", email: "alice@test.com" }).expect(201).expect("Content-Type", /json/);
 
     expect(response.body).toMatchObject({
       id: expect.any(Number),
@@ -457,17 +450,11 @@ describe("POST /api/users", () => {
   });
 
   it("returns 400 for missing required fields", async () => {
-    await request(app)
-      .post("/api/users")
-      .send({ name: "" })
-      .expect(400);
+    await request(app).post("/api/users").send({ name: "" }).expect(400);
   });
 
   it("returns 409 for duplicate email", async () => {
-    await request(app)
-      .post("/api/users")
-      .send({ name: "Alice", email: "existing@test.com" })
-      .expect(409);
+    await request(app).post("/api/users").send({ name: "Alice", email: "existing@test.com" }).expect(409);
   });
 });
 ```
@@ -531,10 +518,7 @@ Coverage rules:
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -546,8 +530,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -557,9 +539,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -570,17 +551,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -610,6 +592,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -620,5 +603,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

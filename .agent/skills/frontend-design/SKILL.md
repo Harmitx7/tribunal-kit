@@ -13,6 +13,7 @@ routing:
 # Frontend Design — Dense Reference
 
 ## Hallucination Traps (Read First)
+
 - ❌ Purple gradient backgrounds (`from-purple-500 to-blue-500`) → ✅ The worst AI UI cliché. Use high-contrast solid colors, grain, or sophisticated HSL mono-palettes.
 - ❌ Hardcoded pixels (`font-size: 14px`) → ✅ Use `rem` for accessibility and scaling (`1rem = 16px`).
 - ❌ Gray text (`#888`) on white → ✅ Fails WCAG contrast. Text must be `4.5:1` ratio.
@@ -31,15 +32,15 @@ Never use raw flat HEX colors. Use HSL to build cohesive scales.
 ```css
 :root {
   /* HSL allows programmatic adjustment of lightness/saturation */
-  --hue: 220; 
+  --hue: 220;
   --sat: 80%;
-  
+
   --bg-base: hsl(var(--hue), 15%, 98%);
   --bg-surface: hsl(var(--hue), 20%, 100%);
-  
+
   --text-main: hsl(var(--hue), 40%, 10%);
   --text-muted: hsl(var(--hue), 20%, 40%);
-  
+
   --primary: hsl(var(--hue), var(--sat), 50%);
   --primary-hover: hsl(var(--hue), var(--sat), 40%); /* Darken via L */
 }
@@ -97,12 +98,18 @@ A premium UI reacts to the user instantly and smoothly. Focus on state transitio
 
 /* Hardware-Accelerated Shadows */
 .card {
-  box-shadow: 0 4px 6px -1px rgba(0,0,0, 0.1), 0 2px 4px -1px rgba(0,0,0, 0.06);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 .card:hover {
   transform: translateY(-4px); /* Float effect */
-  box-shadow: 0 20px 25px -5px rgba(0,0,0, 0.1), 0 10px 10px -5px rgba(0,0,0, 0.04);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 ```
 
@@ -153,10 +160,7 @@ Design is fundamentally broken if it excludes users.
 - ✅ Color alone cannot convey state (Error text must have an icon too `❌ Password invalid`).
 - ✅ Hide decorative SVG/icons from screen readers `aria-hidden="true"`.
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -168,8 +172,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -179,9 +181,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -192,17 +193,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -232,6 +234,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -242,5 +245,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

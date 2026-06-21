@@ -27,17 +27,17 @@ Level 4 — Detail (inline): What is non-obvious about this specific line?
 
 Every exported function must be documented. Private helpers: document only if non-obvious.
 
-```typescript
+````typescript
 /**
  * Calculates the discounted price for an order.
- * 
+ *
  * Applies a 10% discount to orders over $100. The discount boundary
  * is exclusive — a $100 order receives no discount.
- * 
+ *
  * @param orderTotal - The pre-discount total in USD cents (not dollars)
  * @returns The final price after discount in USD cents
  * @throws {RangeError} If orderTotal is negative
- * 
+ *
  * @example
  * ```typescript
  * calculateDiscount(15000) // $150.00 → returns 13500 ($135.00)
@@ -53,7 +53,7 @@ export function calculateDiscount(orderTotal: number): number {
 /**
  * Retrieves a user by their ID with their published posts.
  * Returns null if the user does not exist or has been soft-deleted.
- * 
+ *
  * @param userId - CUID2 user identifier
  * @param options - Query options
  * @param options.includePosts - Whether to include published posts (default: false)
@@ -62,7 +62,7 @@ export async function getUser(
   userId: string,
   options: { includePosts?: boolean } = {}
 ): Promise<User | null> { ... }
-```
+````
 
 ---
 
@@ -90,7 +90,7 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 ## 4. README Structure
 
-```markdown
+````markdown
 # Project Name
 
 [One sentence: what this is and who it's for]
@@ -106,31 +106,39 @@ cp .env.example .env
 npm run db:push  # Set up database
 npm run dev      # http://localhost:3000
 ```
+````
 
 ## Prerequisites
+
 - Node.js 22+
 - PostgreSQL 16+
 - [Any other hard requirements]
 
 ## Environment Variables
-|Variable|Required|Description|
-|:---|:---|:---|
-|`DATABASE_URL`|✅ Required|PostgreSQL connection string|
-|`JWT_SECRET`|✅ Required|Min 32 chars — use `openssl rand -hex 32`|
-|`RESEND_API_KEY`|✅ Required|Email sending — get at resend.com|
+
+| Variable         | Required    | Description                               |
+| :--------------- | :---------- | :---------------------------------------- |
+| `DATABASE_URL`   | ✅ Required | PostgreSQL connection string              |
+| `JWT_SECRET`     | ✅ Required | Min 32 chars — use `openssl rand -hex 32` |
+| `RESEND_API_KEY` | ✅ Required | Email sending — get at resend.com         |
 
 ## Architecture Overview
+
 [Brief description + link to docs/ARCHITECTURE.md]
 
 ## Development
+
 [Key commands: build, test, lint, migrate]
 
 ## Deployment
+
 [Where it can deploy, what's required]
 
 ## License
+
 MIT
-```
+
+````
 
 ---
 
@@ -141,8 +149,8 @@ ADRs document WHY a significant technical decision was made — the context that
 ```markdown
 # ADR-003: Use Prisma Instead of Drizzle
 
-**Status:** Accepted  
-**Date:** 2026-03-15  
+**Status:** Accepted
+**Date:** 2026-03-15
 **Deciders:** Engineering Team
 
 ## Context
@@ -163,7 +171,7 @@ We chose **Prisma 6**.
 
 ## Consequences
 All DB access uses Prisma. If we exceed 50k writes/minute, re-evaluate.
-```
+````
 
 ---
 
@@ -184,17 +192,17 @@ paths:
           description: CUID2 user identifier
           schema:
             type: string
-            pattern: '^[a-z0-9]{24,}$'
+            pattern: "^[a-z0-9]{24,}$"
       responses:
-        '200':
+        "200":
           description: User found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '404':
+                $ref: "#/components/schemas/User"
+        "404":
           description: User not found or deleted
-        '401':
+        "401":
           description: Not authenticated
 ```
 

@@ -13,6 +13,7 @@ routing:
 # Next.js 15+ App Router — Dense Reference
 
 ## Hallucination Traps (Read First)
+
 - ❌ `pages/api/` or `_app.tsx` → ✅ App Router only: `app/api/route.ts`, `app/layout.tsx`
 - ❌ `getServerSideProps` → ✅ `async function Page()` fetches directly
 - ❌ `next/router` → ✅ `next/navigation` (`useRouter`, `usePathname`, `useSearchParams`)
@@ -43,14 +44,16 @@ app/
 
 ## Server vs Client Components
 
-- **Server Components (Default)**: Zero JS. Direct DB access. Secure env vars. 
+- **Server Components (Default)**: Zero JS. Direct DB access. Secure env vars.
 - **Client Components (`"use client"`)**: Lifecycle (`useEffect`), State (`useState`), Browser APIs (`window`), Event listeners (`onClick`).
 
 ```tsx
 // ✅ INTERLEAVING PATTERN: Pass Server Component as children to Client Component
 export default function Page() {
   return (
-    <ClientSidebar> {/* "use client" */}
+    <ClientSidebar>
+      {" "}
+      {/* "use client" */}
       <ServerStats /> {/* Server: zero JS bundle, fetches DB */}
     </ClientSidebar>
   );
@@ -62,7 +65,7 @@ export default function Page() {
 ## Server Actions (Mutations)
 
 ```tsx
-"use server"
+"use server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -72,7 +75,7 @@ export async function createUser(prevState: any, formData: FormData) {
   // ❌ TRAP: ALWAYS validate formData. Never trust client input.
   const parsed = Schema.safeParse({ name: formData.get("name") });
   if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
-  
+
   await db.user.create({ data: parsed.data });
   revalidatePath("/users"); // Clears cache so next render shows new user
   return { success: true };
@@ -80,8 +83,9 @@ export async function createUser(prevState: any, formData: FormData) {
 ```
 
 Client usage (React 19):
+
 ```tsx
-"use client"
+"use client";
 import { useActionState } from "react";
 import { createUser } from "./actions";
 
@@ -93,7 +97,7 @@ export function UserForm() {
       <button disabled={isPending}>Submit</button>
       {state?.errors?.name && <p>{state.errors.name}</p>}
     </form>
-  )
+  );
 }
 ```
 
@@ -103,21 +107,18 @@ export function UserForm() {
 
 ```tsx
 // Next.js 15 caching defaults
-const dynamic = await fetch(url);                                  // 15 default: NO CACHE
-const static = await fetch(url, { cache: "force-cache" });         // Static
-const isr = await fetch(url, { next: { revalidate: 3600 } });      // Revalidate every hour
-const tagged = await fetch(url, { next: { tags: ["user-1"] } });   // On-demand via revalidateTag()
+const dynamic = await fetch(url); // 15 default: NO CACHE
+const static = await fetch(url, { cache: "force-cache" }); // Static
+const isr = await fetch(url, { next: { revalidate: 3600 } }); // Revalidate every hour
+const tagged = await fetch(url, { next: { tags: ["user-1"] } }); // On-demand via revalidateTag()
 
 // DB calls without fetch
 import { unstable_cache } from "next/cache";
-const getCachedUser = unstable_cache(
-  async (id) => db.user.findUnique({ where: { id } }),
-  ["user-cache-key"],
-  { revalidate: 60, tags: ["users"] }
-);
+const getCachedUser = unstable_cache(async (id) => db.user.findUnique({ where: { id } }), ["user-cache-key"], { revalidate: 60, tags: ["users"] });
 ```
 
 ### Waterfall Elimination
+
 ```tsx
 // ✅ Parallel Fetching:
 const [user, posts] = await Promise.all([getUser(), getPosts()]);
@@ -129,7 +130,7 @@ export default function Page() {
       <FastNav />
       {/* Page shell loads instantly, SlowChart streams in when ready */}
       <Suspense fallback={<Skeleton />}>
-        <SlowChart /> 
+        <SlowChart />
       </Suspense>
     </main>
   );
@@ -140,7 +141,8 @@ export default function Page() {
 
 ## Partial Prerendering (PPR)
 
-PPR static-generates the route shell and streams dynamic parts. 
+PPR static-generates the route shell and streams dynamic parts.
+
 ```tsx
 // next.config.ts
 export default { experimental: { ppr: true } };
@@ -161,7 +163,7 @@ export default function Page() {
         <Cart /> {/* Dynamic, streamed at request time */}
       </Suspense>
     </div>
-  )
+  );
 }
 ```
 
@@ -186,10 +188,7 @@ export const config = {
 };
 ```
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -201,8 +200,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -212,9 +209,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -225,17 +221,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -265,6 +262,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -275,5 +273,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

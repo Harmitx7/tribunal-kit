@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Changing code during an active incident -> ✅ STABILIZE first (rollback, feature flag, traffic shift), investigate AFTER
 - ❌ Assigning blame in post-mortems -> ✅ Blameless post-mortems focus on systemic causes, not individual errors
 - ❌ Skipping the 'what went well' section -> ✅ Understanding what prevented worse outcomes is as valuable as the root cause
 
 ---
-
 
 # Incident Responder — Production Stabilization Mastery
 
@@ -27,6 +27,7 @@ routing:
 When an outage is declared (e.g., 502 Bad Gateway across the entire primary cluster), do not ask the developer to check the database logs to figure out why the code crashed.
 
 **Immediate Action Pipeline:**
+
 1. **Identify the Trigger:** What changed in the last 15 minutes? (90% of outages are caused by deployments).
 2. **Revert the Change:** Execute the emergency rollback pipeline instantly. Revert the Git commit, swap the Docker tag, or disable the Feature Flag.
 3. **Verify Stabilization:** Ensure metrics return to healthy thresholds.
@@ -44,22 +45,26 @@ If a downstream dependency is dead, sever it immediately to save the rest of the
 ```javascript
 // ❌ VULNERABLE: Infinite Retry Death Spiral
 async function fetchUser(id) {
-  while(true) {
-    try { return await api.get(`/user/${id}`); }
-    catch { await sleep(100); } // Hundreds of containers doing this will execute a DDoSing attack on the API
+  while (true) {
+    try {
+      return await api.get(`/user/${id}`);
+    } catch {
+      await sleep(100);
+    } // Hundreds of containers doing this will execute a DDoSing attack on the API
   }
 }
 
 // ✅ RESILIENT: Circuit Breaking / Fallbacks
 const breaker = new CircuitBreaker(fetchUser, {
   errorThresholdPercentage: 50, // If 50% of requests fail...
-  resetTimeout: 30000           // Open the circuit (stop sending requests) for 30s
+  resetTimeout: 30000, // Open the circuit (stop sending requests) for 30s
 });
 
 breaker.fallback(() => ({ id: "cached-user", status: "degraded" }));
 ```
 
 **Heavy Mitigation Tactics:**
+
 - **Shed Load:** Aggressively drop non-critical traffic (e.g., disable background syncs, temporarily ban aggressive scraping IPs).
 - **Scale Out (Band-Aid):** If the memory leak is crashing nodes every 10 minutes, scale the nodes up 3x to buy yourself 30 minutes of runway to find the actual bug.
 
@@ -80,19 +85,17 @@ Once the bleeding is stopped (or if you are investigating a non-fatal anomaly), 
 Incident response does not end when the system recovers. It ends when the system is architected to survive the same failure tomorrow automatically.
 
 **A Professional Post-Mortem Must Include:**
+
 1. **The Timeline:** Chronological factual representation of the event to the minute.
 2. **Root Cause Analysis (The 5 Whys):**
-   - *Why did the site go down?* DB exhausted connections.
-   - *Why did it exhaust?* The new background worker didn't pool connections.
-   - *Why did the worker deploy?* It bypassed CI tests for speed.
+   - _Why did the site go down?_ DB exhausted connections.
+   - _Why did it exhaust?_ The new background worker didn't pool connections.
+   - _Why did the worker deploy?_ It bypassed CI tests for speed.
 3. **Action Items:** Tangible Jira tickets preventing recurrence (e.g., "Implement PgBouncer connection limits", "Enforce CI checks block on all branches").
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -104,8 +107,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -115,9 +116,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -128,17 +128,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -168,6 +169,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -178,5 +180,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

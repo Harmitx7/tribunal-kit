@@ -17,13 +17,13 @@ You measure. You don't guess. Flag every pattern that will provably degrade perf
 
 ## 2026 Core Web Vital Targets
 
-|Metric|Good|Needs Improvement|Poor|
-|:---|:---|:---|:---|
-|**INP** (Interaction to Next Paint)|< 200ms|200–500ms|> 500ms|
-|**LCP** (Largest Contentful Paint)|< 2.5s|2.5s–4s|> 4s|
-|**CLS** (Cumulative Layout Shift)|< 0.1|0.1–0.25|> 0.25|
-|**FCP** (First Contentful Paint)|< 1.8s|1.8s–3s|> 3s|
-|**TTFB** (Time to First Byte)|< 800ms|800ms–1.8s|> 1.8s|
+| Metric                              | Good    | Needs Improvement | Poor    |
+| :---------------------------------- | :------ | :---------------- | :------ |
+| **INP** (Interaction to Next Paint) | < 200ms | 200–500ms         | > 500ms |
+| **LCP** (Largest Contentful Paint)  | < 2.5s  | 2.5s–4s           | > 4s    |
+| **CLS** (Cumulative Layout Shift)   | < 0.1   | 0.1–0.25          | > 0.25  |
+| **FCP** (First Contentful Paint)    | < 1.8s  | 1.8s–3s           | > 3s    |
+| **TTFB** (Time to First Byte)       | < 800ms | 800ms–1.8s        | > 1.8s  |
 
 ---
 
@@ -83,12 +83,12 @@ function handleSearch(query: string) {
 }
 
 // ❌ INP DAMAGE: Artificial setTimeout delay on user interaction
-button.addEventListener('click', () => {
+button.addEventListener("click", () => {
   setTimeout(() => processAction(), 300); // Added latency on every click
 });
 
 // ❌ INP DAMAGE: Complex animation on input events (keydown/mousemove)
-document.addEventListener('mousemove', (e) => {
+document.addEventListener("mousemove", (e) => {
   renderComplexGradient(e.clientX, e.clientY); // Fires 60+ times/second
 });
 ```
@@ -99,7 +99,7 @@ document.addEventListener('mousemove', (e) => {
 
 ```tsx
 // ❌ CLS DAMAGE: Image without dimensions — shifts when loaded
-<img src="/photo.jpg" /> // No width/height
+<img src="/photo.jpg" />; // No width/height
 
 // ❌ CLS DAMAGE: Async font loading causes text reflow
 // (Without font-display: swap and size-adjust)
@@ -108,9 +108,9 @@ document.addEventListener('mousemove', (e) => {
 container.prepend(adBanner); // Shifts all existing content down
 
 // ✅ APPROVED: Reserved space prevents CLS
-<div style={{ aspectRatio: '16/9', width: '100%' }}>
+<div style={{ aspectRatio: "16/9", width: "100%" }}>
   <Image src="/photo.jpg" fill alt="Photo" />
-</div>
+</div>;
 ```
 
 ---
@@ -119,12 +119,12 @@ container.prepend(adBanner); // Shifts all existing content down
 
 ```tsx
 // ❌ PERFORMANCE: Object created inline — new reference every render
-<ChildComponent 
+<ChildComponent
   options={{ theme: 'dark' }}  // New object = ChildComponent re-renders always
 />
 
-// ❌ PERFORMANCE: Function created inline without useCallback  
-<ChildComponent 
+// ❌ PERFORMANCE: Function created inline without useCallback
+<ChildComponent
   onClick={() => handleClick(item.id)} // New function ref every render
 />
 
@@ -148,7 +148,7 @@ const CartContext = createContext(cart);     // Changes often — isolated consu
 ```tsx
 // ❌ MEMORY LEAK: Event listener never cleaned up
 useEffect(() => {
-  window.addEventListener('resize', handleResize);
+  window.addEventListener("resize", handleResize);
   // Missing cleanup!
 }, []);
 
@@ -160,13 +160,13 @@ useEffect(() => {
 
 // ❌ MEMORY LEAK: Async operation updates unmounted component
 useEffect(() => {
-  fetchData().then(data => setData(data)); // Can run after unmount
+  fetchData().then((data) => setData(data)); // Can run after unmount
 }, []);
 
 // ✅ APPROVED: AbortController for async + cleanup
 useEffect(() => {
   const controller = new AbortController();
-  fetchData({ signal: controller.signal }).then(data => {
+  fetchData({ signal: controller.signal }).then((data) => {
     if (!controller.signal.aborted) setData(data);
   });
   return () => controller.abort();

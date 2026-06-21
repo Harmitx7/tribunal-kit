@@ -11,13 +11,13 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Using `page.waitForTimeout(3000)` for synchronization -> ✅ Use `page.waitForSelector()`, `expect(locator).toBeVisible()`, or auto-waiting locators
 - ❌ Using CSS selectors or XPath for test locators -> ✅ Use `getByRole()`, `getByLabel()`, `getByTestId()` for resilient selectors
 - ❌ Running tests without `--workers=1` in CI debug mode -> ✅ Parallel tests with shared state cause flaky failures; isolate tests properly
 - ❌ Not using `test.describe.configure({ mode: 'serial' })` when tests have ordering dependencies -> ✅ Explicitly mark serial when needed
 
 ---
-
 
 # Playwright E2E — Bulletproof Testing Mastery
 
@@ -29,19 +29,20 @@ Playwright automatically waits for elements to be actionable (visible, stable, n
 
 ```typescript
 // ❌ FLAKY: Hardcoded sleeps. Fails on slow CI, wastes time on fast local rings.
-await page.waitForTimeout(3000); 
+await page.waitForTimeout(3000);
 
 // ❌ FLAKY: CSS selectors tied to layout/styling changes
-await page.locator('.btn-primary > span').click();
+await page.locator(".btn-primary > span").click();
 
 // ✅ ROBUST: Playwright auto-waits for actionability based on user-centric selectors
-await page.getByRole('button', { name: "Submit Checkout" }).click();
+await page.getByRole("button", { name: "Submit Checkout" }).click();
 
-// ✅ ROBUST: Testing for expected states 
-await expect(page.getByText('Order confirmed')).toBeVisible();
+// ✅ ROBUST: Testing for expected states
+await expect(page.getByText("Order confirmed")).toBeVisible();
 ```
 
 ### The Selector Hierarchy (Best to Worst)
+
 1. `page.getByRole()` — Checks accessibility simultaneously.
 2. `page.getByText()` — Finds elements by raw text values.
 3. `page.getByTestId()` — Resilient to text/translation updates (`data-testid`).
@@ -54,15 +55,15 @@ await expect(page.getByText('Order confirmed')).toBeVisible();
 Do not cascade tests (where Test B requires Test A to pass first). Playwright gives every test a blank browser context isolated from the rest.
 
 ```typescript
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
 // ❌ BAD: Cascading state
-test.describe('Dashboard', () => {
-  test('Login', async ({ page }) => {
+test.describe("Dashboard", () => {
+  test("Login", async ({ page }) => {
     await login(page); // Next test assumes this succeeded
   });
-  test('Action', async ({ page }) => {
-    await page.getByRole('button', { name: 'Save' }).click(); 
+  test("Action", async ({ page }) => {
+    await page.getByRole("button", { name: "Save" }).click();
   });
 });
 
@@ -70,12 +71,12 @@ test.describe('Dashboard', () => {
 test.beforeEach(async ({ page }) => {
   // Login directly via API to bypass slow UI login, seeding cookies
   await performFastApiLogin(page);
-  await page.goto('/dashboard');
+  await page.goto("/dashboard");
 });
 
-test('Should save settings', async ({ page }) => {
-  await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.getByRole('alert')).toHaveText('Saved successfully');
+test("Should save settings", async ({ page }) => {
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByRole("alert")).toHaveText("Saved successfully");
 });
 ```
 
@@ -86,16 +87,16 @@ test('Should save settings', async ({ page }) => {
 E2E tests that rely on external 3rd party APIs (Stripe, SendGrid) will fail randomly due to network latency outside your control.
 
 ```typescript
-test('Should block invalid credit cards', async ({ page }) => {
+test("Should block invalid credit cards", async ({ page }) => {
   // Intercept the outgoing request to the payment processor
-  await page.route('**/api/v1/charge*', async route => {
+  await page.route("**/api/v1/charge*", async (route) => {
     // Return a mocked failure response immediately
-    const json = { status: 'declined', message: 'Insufficient funds' };
+    const json = { status: "declined", message: "Insufficient funds" };
     await route.fulfill({ status: 400, json });
   });
 
-  await page.getByRole('button', { name: 'Purchase' }).click();
-  await expect(page.getByText('Insufficient funds')).toBeVisible();
+  await page.getByRole("button", { name: "Purchase" }).click();
+  await expect(page.getByText("Insufficient funds")).toBeVisible();
 });
 ```
 
@@ -105,33 +106,33 @@ test('Should block invalid credit cards', async ({ page }) => {
 
 ```typescript
 // playwright.config.ts
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './tests/e2e',
-  fullyParallel: true,   // Run tests concurrently
+  testDir: "./tests/e2e",
+  fullyParallel: true, // Run tests concurrently
   forbidOnly: !!process.env.CI, // Fail build if `.only` was left in code
   retries: process.env.CI ? 2 : 0, // Retry flakes on CI only
   workers: process.env.CI ? 1 : undefined, // Reduce CI overload
-  reporter: 'html',
+  reporter: "html",
 
   use: {
-    trace: 'on-first-retry', // Record trace viewer ONLY on failure to save space
-    video: 'retain-on-failure',
-    baseURL: 'http://localhost:3000',
+    trace: "on-first-retry", // Record trace viewer ONLY on failure to save space
+    video: "retain-on-failure",
+    baseURL: "http://localhost:3000",
   },
 
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "webkit", use: { ...devices["Desktop Safari"] } },
     // Mobile Viewport Example
-    { name: 'Mobile Safari', use: { ...devices['iPhone 13'] } },
+    { name: "Mobile Safari", use: { ...devices["iPhone 13"] } },
   ],
 
   // Spin up local server before running tests
   webServer: {
-    command: 'npm run build && npm run start',
-    url: 'http://localhost:3000',
+    command: "npm run build && npm run start",
+    url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
   },
 });
@@ -139,10 +140,7 @@ export default defineConfig({
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -154,8 +152,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -165,9 +161,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -178,17 +173,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -218,6 +214,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -228,5 +225,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

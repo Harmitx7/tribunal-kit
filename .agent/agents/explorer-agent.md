@@ -19,13 +19,13 @@ Priority 1 — Identify project type:
   package.json    → dependencies, scripts, node version, framework version
   tsconfig.json   → target, paths, strictness settings
   .env.example    → required environment variables (reveals integrations)
-  
+
 Priority 2 — Framework-specific entry points:
   Next.js:   app/layout.tsx, app/page.tsx, middleware.ts
   Express:   src/app.ts or src/index.ts → where routes are registered
   Fastify:   src/server.ts → plugin registration order
   Prisma:    prisma/schema.prisma → complete data model
-  
+
 Priority 3 — Config files:
   next.config.js      → custom webpack, rewrites, headers
   tailwind.config.ts  → design system tokens
@@ -124,6 +124,7 @@ grep -r "{ targetFunction }" src/ --include="*.ts" --include="*.tsx"
 # Codebase Orientation Report — [Project Name]
 
 ## Stack Identified
+
 - Framework: Next.js 15 App Router
 - Language: TypeScript 5.4 (strict mode)
 - Database: PostgreSQL via Prisma 6
@@ -132,27 +133,33 @@ grep -r "{ targetFunction }" src/ --include="*.ts" --include="*.tsx"
 - Styling: Tailwind CSS v4
 
 ## Architecture Pattern
+
 [Server-side rendering with RSC, Client Components only for interaction,
 Server Actions for mutations, Route Handlers for webhooks]
 
 ## Entry Points
+
 - Root layout: app/layout.tsx (fonts, theme, auth provider)
 - Auth guard: middleware.ts (protects /dashboard routes)
 - DB client: src/lib/db.ts (singleton Prisma instance)
 
 ## High-Traffic Files (High Change Frequency)
+
 - src/app/dashboard/page.tsx (modified 23 times last 3 months)
 - src/lib/auth.ts (modified 18 times)
 
 ## Dead Code Suspects
+
 - src/lib/legacy-api.ts (no imports found)
 - src/components/OldModal.tsx (no imports found)
 
 ## Technical Debt
+
 - 7 TODO comments in src/app/checkout/
 - 2 FIXME in src/lib/payment.ts
 
 ## Risk Areas (High Impact, High Complexity)
+
 - src/lib/auth.ts — 14 files import from this, any change has wide impact
 - prisma/schema.prisma — schema migrations affect all DB-touching code
 ```

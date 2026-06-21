@@ -23,12 +23,12 @@ Read BEFORE generating any options:
 
 ## When to Use /brainstorm
 
-|Use `/brainstorm` when...|Move to...|
-|:---|:---|
-|Multiple valid approaches exist|After decision → `/plan`|
-|You're unsure of the best architecture|After plan approval → `/generate`|
-|Exploring tradeoffs before committing|Confirmed approach → `/create`|
-|Looking for second opinions on design||
+| Use `/brainstorm` when...              | Move to...                        |
+| :------------------------------------- | :-------------------------------- |
+| Multiple valid approaches exist        | After decision → `/plan`          |
+| You're unsure of the best architecture | After plan approval → `/generate` |
+| Exploring tradeoffs before committing  | Confirmed approach → `/create`    |
+| Looking for second opinions on design  |                                   |
 
 ---
 
@@ -114,12 +114,12 @@ NOT recommended because [reason Option A/C is worse for this specific context]
 
 ## After /brainstorm — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Decision made, ready to plan|→ `/plan` with the Distilled Assertions|
-|Decision made, ready to build from scratch|→ `/create` with chosen stack|
-|Need more exploration in a specific domain|→ `/brainstorm` again with narrower scope|
-|Ready to generate a specific piece|→ `/generate` for a focused snippet|
+| Outcome                                    | Next Command                              |
+| :----------------------------------------- | :---------------------------------------- |
+| Decision made, ready to plan               | → `/plan` with the Distilled Assertions   |
+| Decision made, ready to build from scratch | → `/create` with chosen stack             |
+| Need more exploration in a specific domain | → `/brainstorm` again with narrower scope |
+| Ready to generate a specific piece         | → `/generate` for a focused snippet       |
 
 ---
 

@@ -11,6 +11,7 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Using `z.any()` or `z.unknown()` as a lazy escape hatch -> ✅ Always define the actual shape; `any` defeats the purpose of validation
 - ❌ Validating on the client but not on the server -> ✅ Server validation is NOT optional — client validation is UX, server validation is security
 - ❌ Throwing raw Zod errors to the client -> ✅ Format errors into user-friendly messages with `.flatten()` or `.format()`
@@ -50,7 +51,11 @@ import { z } from "zod";
 // Primitives with constraints
 const Email = z.string().email().toLowerCase().trim();
 const Age = z.number().int().min(0).max(150);
-const Username = z.string().min(3).max(30).regex(/^[a-zA-Z0-9_]+$/);
+const Username = z
+  .string()
+  .min(3)
+  .max(30)
+  .regex(/^[a-zA-Z0-9_]+$/);
 const URL = z.string().url().startsWith("https://");
 
 // Object schema
@@ -228,10 +233,7 @@ import { z } from "zod";
 
 const SignupSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Must contain uppercase letter")
-    .regex(/[0-9]/, "Must contain a number"),
+  password: z.string().min(8, "Password must be at least 8 characters").regex(/[A-Z]/, "Must contain uppercase letter").regex(/[0-9]/, "Must contain a number"),
   terms: z.literal(true, {
     errorMap: () => ({ message: "You must accept the terms" }),
   }),
@@ -240,7 +242,11 @@ const SignupSchema = z.object({
 type SignupData = z.infer<typeof SignupSchema>;
 
 function SignupForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm<SignupData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupData>({
     resolver: zodResolver(SignupSchema),
   });
 
@@ -253,8 +259,7 @@ function SignupForm() {
       {errors.password && <span>{errors.password.message}</span>}
 
       <label>
-        <input type="checkbox" {...register("terms")} />
-        I accept the terms
+        <input type="checkbox" {...register("terms")} />I accept the terms
       </label>
       {errors.terms && <span>{errors.terms.message}</span>}
 
@@ -280,10 +285,7 @@ function SignupForm() {
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -295,8 +297,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -306,9 +306,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -319,17 +318,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -359,6 +359,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -369,5 +370,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

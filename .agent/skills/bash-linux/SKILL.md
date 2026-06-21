@@ -11,13 +11,13 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Scripts without `set -euo pipefail` -> ✅ Always enable strict mode to catch silent failures
 - ❌ Using `[ ]` instead of `[[ ]]` for conditionals -> ✅ `[[ ]]` handles spaces in variables and supports regex
 - ❌ Parsing `ls` output -> ✅ Use `find` or glob expansion instead; `ls` output is not portable
 - ❌ `cat file | grep` (useless use of cat) -> ✅ `grep pattern file` directly
 
 ---
-
 
 # Bash & Linux — Shell Scripting Mastery
 
@@ -99,13 +99,13 @@ sed -n '5,10p' file.txt
 
 Standard POSIX tools are reliable but slow. Use modern Rust-based alternatives when available in CI/CD.
 
-|Task|Legacy POSIX|Modern Alternative|Why?|
-|:---|:---|:---|:---|
-|Find files|`find . -name "*.ts"`|`fd -e ts`|Context-aware, respects `.gitignore`, 10x faster.|
-|Search text|`grep -r "auth"`|`rg "auth"`|Ripgrep uses multi-threading and SIMD instructions.|
-|Inspect JSON|`grep / awk`|`jq '.users[].id'`|`jq` explicitly parses and filters valid JSON arrays/objects.|
-|Process monitoring|`top`|`htop` / `btm`|Interactive metrics.|
-|Check curl|`curl -i`|`httpie` / `xh`|Colorized, structured JSON networking.|
+| Task               | Legacy POSIX          | Modern Alternative | Why?                                                          |
+| :----------------- | :-------------------- | :----------------- | :------------------------------------------------------------ |
+| Find files         | `find . -name "*.ts"` | `fd -e ts`         | Context-aware, respects `.gitignore`, 10x faster.             |
+| Search text        | `grep -r "auth"`      | `rg "auth"`        | Ripgrep uses multi-threading and SIMD instructions.           |
+| Inspect JSON       | `grep / awk`          | `jq '.users[].id'` | `jq` explicitly parses and filters valid JSON arrays/objects. |
+| Process monitoring | `top`                 | `htop` / `btm`     | Interactive metrics.                                          |
+| Check curl         | `curl -i`             | `httpie` / `xh`    | Colorized, structured JSON networking.                        |
 
 ---
 
@@ -131,10 +131,7 @@ done
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -146,8 +143,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -157,9 +152,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -170,17 +164,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -210,6 +205,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -220,5 +216,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

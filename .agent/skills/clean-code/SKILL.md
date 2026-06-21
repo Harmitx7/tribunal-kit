@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Over-abstracting code that is used in only one place -> ✅ Don't DRY single-use code; premature abstraction is worse than duplication
 - ❌ Adding comments that restate what the code does -> ✅ Comments explain WHY, not WHAT; the code explains what
 - ❌ Creating utility functions for trivial one-liners -> ✅ Inline is clearer when the operation is self-documenting
 
 ---
-
 
 # Clean Code — The Art of Readable Software
 
@@ -31,24 +31,33 @@ routing:
 const d = new Date();
 const u = getU();
 const flag = true;
-function proc(x: number): number { return x * 1.08; }
+function proc(x: number): number {
+  return x * 1.08;
+}
 
 // ✅ GOOD: Self-documenting, reveals intent
 const registrationDate = new Date();
 const currentUser = getCurrentUser();
 const isEligibleForDiscount = true;
-function addSalesTax(price: number): number { return price * 1.08; }
+function addSalesTax(price: number): number {
+  return price * 1.08;
+}
 ```
 
 ### Booleans
 
 ```typescript
 // ❌ BAD                    ✅ GOOD
-const active = true;        const isActive = true;
-const admin = false;        const hasAdminRole = false;
-const loading = true;       const isLoading = true;
-const open = false;         const isModalOpen = false;
-const valid = true;         const canSubmit = true;
+const active = true;
+const isActive = true;
+const admin = false;
+const hasAdminRole = false;
+const loading = true;
+const isLoading = true;
+const open = false;
+const isModalOpen = false;
+const valid = true;
+const canSubmit = true;
 
 // Boolean function names start with is/has/can/should
 function isExpired(token: Token): boolean {}
@@ -180,9 +189,9 @@ class AvatarService { upload() { ... } }
 ```typescript
 // ❌ BAD: Adding a new type requires modifying existing code
 function calculateDiscount(type: string, amount: number): number {
-  if (type === "student") return amount * 0.20;
+  if (type === "student") return amount * 0.2;
   if (type === "veteran") return amount * 0.15;
-  if (type === "senior") return amount * 0.10; // must modify for every new type
+  if (type === "senior") return amount * 0.1; // must modify for every new type
   return 0;
 }
 
@@ -192,16 +201,22 @@ interface DiscountStrategy {
 }
 
 class StudentDiscount implements DiscountStrategy {
-  calculate(amount: number) { return amount * 0.20; }
+  calculate(amount: number) {
+    return amount * 0.2;
+  }
 }
 
 class VeteranDiscount implements DiscountStrategy {
-  calculate(amount: number) { return amount * 0.15; }
+  calculate(amount: number) {
+    return amount * 0.15;
+  }
 }
 
 // New types = new class, no existing code changes
 class EmployeeDiscount implements DiscountStrategy {
-  calculate(amount: number) { return amount * 0.25; }
+  calculate(amount: number) {
+    return amount * 0.25;
+  }
 }
 ```
 
@@ -210,18 +225,22 @@ class EmployeeDiscount implements DiscountStrategy {
 ```typescript
 // ❌ BAD: High-level module depends on low-level concrete
 class OrderService {
-  private db = new MySQLDatabase();     // coupled to MySQL
+  private db = new MySQLDatabase(); // coupled to MySQL
   private mailer = new SendGridMailer(); // coupled to SendGrid
 }
 
 // ✅ GOOD: Depend on abstractions (interfaces)
-interface Database { save(data: unknown): Promise<void>; }
-interface Mailer { send(to: string, body: string): Promise<void>; }
+interface Database {
+  save(data: unknown): Promise<void>;
+}
+interface Mailer {
+  send(to: string, body: string): Promise<void>;
+}
 
 class OrderService {
   constructor(
-    private db: Database,       // can be MySQL, Postgres, in-memory
-    private mailer: Mailer,     // can be SendGrid, SES, mock
+    private db: Database, // can be MySQL, Postgres, in-memory
+    private mailer: Mailer, // can be SendGrid, SES, mock
   ) {}
 }
 ```
@@ -333,10 +352,7 @@ function processUser(user: User) {
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -348,8 +364,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -359,9 +373,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -372,17 +385,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -412,6 +426,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -422,5 +437,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

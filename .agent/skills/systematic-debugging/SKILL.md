@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Changing multiple things at once to fix a bug -> ✅ Change ONE variable at a time; multiple changes make it impossible to identify the fix
 - ❌ Assuming the bug is where the error message points -> ✅ The error location is often downstream; trace UP the call stack to find root cause
 - ❌ Not reproducing the bug before attempting a fix -> ✅ If you cannot reproduce it reliably, you cannot verify your fix works
 
 ---
-
 
 # Systematic Debugging — Root Cause Mastery
 
@@ -24,24 +24,32 @@ routing:
 
 ## 1. The 4-Phase Debugging Methodology
 
-Never jump straight into modifying code when a bug is reported. 
+Never jump straight into modifying code when a bug is reported.
 
 ### Phase 1: Replication & Isolation
+
 **Goal:** Prove the bug exists continuously and isolate the execution path.
+
 1. Write a failing deterministic unit/integration test that replicates the exact condition.
 2. Strip away all unnecessary layers (If the UI button fails to delete a user, curl the endpoint directly. Does the API fail? If yes, UI is fine, bug is in the backend/database).
 
 ### Phase 2: Hypothesis Generation
+
 **Goal:** Formulate logical explanations for the anomaly based on data, not guesses.
+
 - "Because the log shows `auth: false` even after successful token parse, the RBAC middleware must be overwriting the session."
 
 ### Phase 3: Evidence-Based Testing (The Probe)
+
 **Goal:** Prove or disprove the hypothesis without mutating the actual program functionality.
+
 - Insert strict logging probes: `logger.debug("Executing line 45. User.permissions:", user.permissions)`.
 - If the logs match your hypothesis, proceed. If they do not, discard the hypothesis.
 
 ### Phase 4: Resolution & Verification
+
 **Goal:** Apply the minimal surgical change required, then verify via tests.
+
 - Re-run the deterministic failing test created in Phase 1. It must now pass.
 
 ---
@@ -51,16 +59,19 @@ Never jump straight into modifying code when a bug is reported.
 When pure logic errors are ruled out, look for environmental factors.
 
 **1. Race Conditions / Timing Bugs**
-- *Symptom:* The bug only happens 30% of the time, or depends on network speed.
-- *Cause:* Missing `await` statements, relying on asynchronous callbacks returning in a specific order, or concurrent database transacting.
+
+- _Symptom:_ The bug only happens 30% of the time, or depends on network speed.
+- _Cause:_ Missing `await` statements, relying on asynchronous callbacks returning in a specific order, or concurrent database transacting.
 
 **2. State Leakage**
-- *Symptom:* The first operation works perfectly. The second consecutive operation fails mysteriously.
-- *Cause:* Global variables, cached HTTP clients, or React state lacking proper cleanup functions between unmounts.
+
+- _Symptom:_ The first operation works perfectly. The second consecutive operation fails mysteriously.
+- _Cause:_ Global variables, cached HTTP clients, or React state lacking proper cleanup functions between unmounts.
 
 **3. Silent Failures (Swallowed Errors)**
-- *Symptom:* The application stops processing midway through an operation, but nothing is in the error logs.
-- *Cause:* Empty `catch (e) {}` blocks, unhandled promise rejections, or frontend elements conditionally rendering `null` on missing datasets.
+
+- _Symptom:_ The application stops processing midway through an operation, but nothing is in the error logs.
+- _Cause:_ Empty `catch (e) {}` blocks, unhandled promise rejections, or frontend elements conditionally rendering `null` on missing datasets.
 
 ---
 
@@ -94,10 +105,7 @@ Do not skim. Stack traces tell the exact sequence of destruction.
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -109,8 +117,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -120,9 +126,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -133,17 +138,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -173,6 +179,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -183,5 +190,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -13,7 +13,7 @@ pattern: reviewer
 
 # Precedence Reviewer — The Case Law Authority
 
-> *"Those who do not learn from rejected code are condemned to repeat it."*
+> _"Those who do not learn from rejected code are condemned to repeat it."_
 
 ---
 
@@ -157,6 +157,7 @@ python .agent/scripts/case_law_manager.py auto-record \
 ```
 
 **Safety guards (built into `auto-record`):**
+
 - **Noise filter:** Trivial rejections (formatting, whitespace, import order) are auto-skipped.
 - **Duplicate check:** If the code fingerprint already exists in case law, it silently skips.
 - No tokens consumed — the command is a direct Python script call.
@@ -168,13 +169,13 @@ self-populating to be effective.
 
 ## Precedence Hierarchy
 
-| Priority | Source | Authority |
-|:---------|:-------|:----------|
-| 1 (Highest) | Case with verdict `PRECEDENT_SET` | Absolute — cannot be auto-overridden |
-| 2 | Case with verdict `REJECTED` | Blocking — requires human override |
-| 3 | Case with verdict `APPROVED_WITH_CONDITIONS` | Advisory — highlight conditions |
-| 4 | Case with verdict `OVERRULED` | Inactive — no longer blocks, shown as historical context |
-| 5 | Score < 0.2 | No action required |
+| Priority    | Source                                       | Authority                                                |
+| :---------- | :------------------------------------------- | :------------------------------------------------------- |
+| 1 (Highest) | Case with verdict `PRECEDENT_SET`            | Absolute — cannot be auto-overridden                     |
+| 2           | Case with verdict `REJECTED`                 | Blocking — requires human override                       |
+| 3           | Case with verdict `APPROVED_WITH_CONDITIONS` | Advisory — highlight conditions                          |
+| 4           | Case with verdict `OVERRULED`                | Inactive — no longer blocks, shown as historical context |
+| 5           | Score < 0.2                                  | No action required                                       |
 
 ---
 

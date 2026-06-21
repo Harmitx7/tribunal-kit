@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Building internal platforms without talking to developers -> ✅ Platform engineering exists to reduce developer cognitive load; ask them what hurts
 - ❌ Creating golden paths that are mandatory -> ✅ Golden paths should be the easiest option, not the only option
 - ❌ Over-automating before the process is understood -> ✅ Manual first, then script, then platform; premature automation bakes in bad processes
 
 ---
-
 
 # Platform Engineering — Developer Experience Mastery
 
@@ -33,6 +33,7 @@ Instead of cloning complex repos, the developer runs:
 `platform create my-service --stack node-express --db postgres`
 
 This command:
+
 1. Generates the standard Node/Express repo.
 2. Applies the unified corporate CI/CD GitHub Action.
 3. Configures default Datadog/OpenTelemetry observability metrics.
@@ -56,11 +57,11 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/mycorp/infrastructure-ops'
+    repoURL: "https://github.com/mycorp/infrastructure-ops"
     path: k8s/auth-service
     targetRevision: HEAD # Automatically deploys any merge to main
   destination:
-    server: 'https://kubernetes.default.svc'
+    server: "https://kubernetes.default.svc"
     namespace: auth-prod
   syncPolicy:
     automated:
@@ -95,14 +96,11 @@ module "product_database" {
 DevOps asked product developers to learn Kubernetes, Helm, Terraform, CI/CD, and AWS IAM. The load was too high.
 Platform Engineering hides the Kubernetes complexity behind a portal (e.g., Backstage) or a declarative wrapper (e.g., Score).
 
-Ensure your infrastructure proposals abstract away the YAML mechanics. Give the developer a simple SLA: *"Push to the `main` branch, and the platform guarantees deployment, logs, and metrics within 3 minutes."*
+Ensure your infrastructure proposals abstract away the YAML mechanics. Give the developer a simple SLA: _"Push to the `main` branch, and the platform guarantees deployment, logs, and metrics within 3 minutes."_
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -114,8 +112,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -125,9 +121,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -138,17 +133,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -178,6 +174,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -188,5 +185,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

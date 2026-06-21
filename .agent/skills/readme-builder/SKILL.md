@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Starting a README with the project name as the only heading -> ✅ Lead with what the project DOES, not just what it IS
 - ❌ Skipping installation and quick-start sections -> ✅ Users need to run the project in under 60 seconds or they leave
 - ❌ Using screenshots without alt text -> ✅ All images need descriptive alt text for accessibility and broken image fallback
 
 ---
-
 
 # README Builder Skill
 
@@ -52,7 +52,7 @@ Before generating any README content, answer these questions by scanning the pro
 
 ## README Structure Template
 
-```markdown
+````markdown
 # [Project Name]
 
 [One-line tagline: what it does and for whom]
@@ -92,6 +92,7 @@ yarn add package-name
 # or global CLI install
 npm install -g package-name
 ```
+````
 
 ---
 
@@ -115,10 +116,10 @@ package-name init --config ./config.json --output ./dist
 
 ## ⚙️ Configuration
 
-|Option|Type|Default|Description|
-|--------|------|---------|-------------|
-|`option1`|`string`|`"default"`|What it controls|
-|`option2`|`boolean`|`false`|What it controls|
+| Option    | Type      | Default     | Description      |
+| --------- | --------- | ----------- | ---------------- |
+| `option1` | `string`  | `"default"` | What it controls |
+| `option2` | `boolean` | `false`     | What it controls |
 
 ---
 
@@ -137,7 +138,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 ## 📄 License
 
 [MIT](LICENSE) © [Author Name]
-```
+
+````
 
 ---
 
@@ -153,33 +155,38 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 [![GitHub issues](https://img.shields.io/github/issues/USER/REPO.svg)](https://github.com/USER/REPO/issues)
 [![CI](https://github.com/USER/REPO/workflows/CI/badge.svg)](https://github.com/USER/REPO/actions)
 [![Coverage](https://img.shields.io/codecov/c/github/USER/REPO)](https://codecov.io/gh/USER/REPO)
-```
+````
 
 ---
 
 ## Section Writing Guidelines
 
 ### Hero Section (Lines 1–5)
+
 - Project name as `# H1` — only one per README
 - Tagline in a `> blockquote` — punchy, one sentence
 - Badges immediately after — visual trust signals
 
 ### Features Section
+
 - Use emoji bullets for scannability
 - Each bullet = one concrete capability, not a vague claim
 - ❌ "Powerful and flexible" → ✅ "Processes 10k records/sec with zero config"
 
 ### Installation Section
+
 - Always show the most direct path first (e.g., `npm install`)
 - Show alternatives (yarn, pnpm, brew) as secondary options
 - If there are post-install steps (env vars, migrations), list them explicitly
 
 ### Usage Section
+
 - Start with the simplest 1-line example
 - Progress to realistic examples with real flag names
 - If it's a library, show import + function call pattern
 
 ### Configuration Table
+
 - Every environment variable or config key goes here
 - Include: name, type, default, description
 - Mark required fields with `*` in the Description column
@@ -189,20 +196,22 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 ## Project-Type Specific Additions
 
 ### CLI Tools
+
 Add a dedicated `## Commands` section:
 
 ```markdown
 ## Commands
 
-|Command|Description|
-|---------|-------------|
-|`tool init`|Initialize a new project|
-|`tool build`|Compile and bundle|
-|`tool deploy`|Deploy to production|
-|`tool --help`|Show all available options|
+| Command       | Description                |
+| ------------- | -------------------------- |
+| `tool init`   | Initialize a new project   |
+| `tool build`  | Compile and bundle         |
+| `tool deploy` | Deploy to production       |
+| `tool --help` | Show all available options |
 ```
 
 ### Libraries / SDKs
+
 Add a `## API Reference` section with function signatures:
 
 ```markdown
@@ -212,22 +221,23 @@ Add a `## API Reference` section with function signatures:
 
 Returns: `ReturnType`
 
-|Parameter|Type|Description|
-|-----------|------|-------------|
-|`param1`|`string`|Description|
-|`param2`|`options`|Optional config|
+| Parameter | Type      | Description     |
+| --------- | --------- | --------------- |
+| `param1`  | `string`  | Description     |
+| `param2`  | `options` | Optional config |
 ```
 
 ### Monorepos
+
 Add a `## Packages` table:
 
 ```markdown
 ## Packages
 
-|Package|Version|Description|
-|---------|---------|-------------|
-|[`@org/core`](packages/core)|[![npm](https://img.shields.io/npm/v/@org/core)](https://npm.im/@org/core)|Core engine|
-|[`@org/cli`](packages/cli)|[![npm](https://img.shields.io/npm/v/@org/cli)](https://npm.im/@org/cli)|CLI interface|
+| Package                      | Version                                                                    | Description   |
+| ---------------------------- | -------------------------------------------------------------------------- | ------------- |
+| [`@org/core`](packages/core) | [![npm](https://img.shields.io/npm/v/@org/core)](https://npm.im/@org/core) | Core engine   |
+| [`@org/cli`](packages/cli)   | [![npm](https://img.shields.io/npm/v/@org/cli)](https://npm.im/@org/cli)   | CLI interface |
 ```
 
 ---
@@ -252,10 +262,7 @@ Evidence:    [file written at path / content reviewed]
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -267,8 +274,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -278,9 +283,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -291,17 +295,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -331,6 +336,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -341,5 +347,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

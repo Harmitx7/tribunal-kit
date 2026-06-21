@@ -22,13 +22,13 @@ Read BEFORE fixing:
 
 ## When to Use /fix
 
-|Use `/fix` when...|Use something else when...|
-|:---|:---|
-|Lint errors blocking CI|Logic bugs → `/debug`|
-|TypeScript type errors|Feature changes needed → `/enhance`|
-|Formatting inconsistencies|Security vulnerabilities → `/tribunal-backend`|
-|Missing imports auto-detectable|Structural changes → `/refactor`|
-|After a dependency version upgrade breaks types||
+| Use `/fix` when...                              | Use something else when...                     |
+| :---------------------------------------------- | :--------------------------------------------- |
+| Lint errors blocking CI                         | Logic bugs → `/debug`                          |
+| TypeScript type errors                          | Feature changes needed → `/enhance`            |
+| Formatting inconsistencies                      | Security vulnerabilities → `/tribunal-backend` |
+| Missing imports auto-detectable                 | Structural changes → `/refactor`               |
+| After a dependency version upgrade breaks types |                                                |
 
 ---
 
@@ -127,10 +127,10 @@ If any verification step fails after fixes → report and revert auto-fixes for 
 
 ## After /fix — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|All fixed and clean|→ `/deploy` or commit code|
-|Manual fixes needed|→ Edit files manually or use `/enhance`|
-|Fixes revealed logic errors|→ `/debug` to investigate|
+| Outcome                     | Next Command                            |
+| :-------------------------- | :-------------------------------------- |
+| All fixed and clean         | → `/deploy` or commit code              |
+| Manual fixes needed         | → Edit files manually or use `/enhance` |
+| Fixes revealed logic errors | → `/debug` to investigate               |
 
 ---

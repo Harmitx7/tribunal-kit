@@ -12,6 +12,7 @@ routing:
 # Mobile Design — Dense Reference
 
 ## Hallucination Traps (Read First)
+
 - ❌ `Animated.View` for any animation → ✅ `Reanimated 3` worklets (Animated API is legacy, runs on JS thread)
 - ❌ `ScrollView` for lists → ✅ `FlashList` (Shopify) — ScrollView renders ALL items at once
 - ❌ `estimatedItemSize` optional in FlashList → ✅ **REQUIRED** or you get 0-height items
@@ -29,22 +30,24 @@ routing:
 ## React Native Performance
 
 ### FlashList (Required for Lists)
+
 ```tsx
 import { FlashList } from "@shopify/flash-list";
 <FlashList
   data={items}
   renderItem={({ item }) => <ItemCard item={item} />}
-  estimatedItemSize={100}          // REQUIRED — measure actual item height first
+  estimatedItemSize={100} // REQUIRED — measure actual item height first
   keyExtractor={(item) => item.id}
   getItemType={(item) => item.type} // multi-type optimization
-/>
+/>;
 // ❌ NEVER: <ScrollView>{items.map(...)}</ScrollView> for lists
 // ❌ NEVER: <FlatList> for perf-critical lists — FlashList is 5-10x faster
 ```
 
 ### Reanimated 3 — Worklet Animations (Required for 120Hz)
+
 ```tsx
-import { useSharedValue, useAnimatedStyle, withSpring, withTiming, runOnJS } from 'react-native-reanimated';
+import { useSharedValue, useAnimatedStyle, withSpring, withTiming, runOnJS } from "react-native-reanimated";
 
 // Shared values run on the UI thread — never on JS thread
 const scale = useSharedValue(1);
@@ -70,6 +73,7 @@ scale.value = withSpring(1, {}, onComplete);
 ```
 
 ### 120Hz Animation Rules
+
 - ✅ Animate ONLY: `transform` (translateX/Y, scale, rotate), `opacity` — all GPU composited
 - ❌ Never animate: `width`, `height`, `margin`, `padding`, `top/left/bottom/right` — causes layout recalc at 60 times per second → janky, battery draining
 - ✅ Use `withSpring` for all UI interactions (feel alive) — `withTiming` only for intentional timed animations
@@ -78,13 +82,14 @@ scale.value = withSpring(1, {}, onComplete);
 ---
 
 ## Haptics
+
 ```tsx
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 // light → switch toggle, tap feedback
 // medium → selection change, confirm
 // heavy → destructive action, strong confirm
 // notificationAsync('success' | 'warning' | 'error') → operation outcomes
-Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);  // tap, toggle
+Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); // tap, toggle
 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); // save complete
 // ❌ Never overuse — haptics must mean something
 // ❌ Haptics not supported on Android emulators — test on device
@@ -93,23 +98,20 @@ Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); // save com
 ---
 
 ## Safe Areas & Platform Layout
+
 ```tsx
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Platform, StatusBar } from 'react-native';
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Platform, StatusBar } from "react-native";
 
 function Screen() {
   const insets = useSafeAreaInsets();
-  return (
-    <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
-      {/* Content safe from Dynamic Island, home indicator, status bar */}
-    </View>
-  );
+  return <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>{/* Content safe from Dynamic Island, home indicator, status bar */}</View>;
 }
 // Android status bar
-const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? StatusBar.currentHeight ?? 24 : 0;
+const STATUS_BAR_HEIGHT = Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 0;
 
 // Foldable/tablet — dual pane
-import { useWindowDimensions } from 'react-native';
+import { useWindowDimensions } from "react-native";
 function AdaptiveLayout() {
   const { width } = useWindowDimensions();
   const isTablet = width >= 600;
@@ -120,6 +122,7 @@ function AdaptiveLayout() {
 ---
 
 ## Touch Psychology & Thumb Zones
+
 - **Thumb zone**: Bottom 40% of screen = primary actions, FABs, CTAs
 - **Dead zone**: Top 25% = destructive/rare actions only
 - **48px minimum hitbox**: Visual icon can be 24px, padding expands hitbox to 48px
@@ -134,6 +137,7 @@ function AdaptiveLayout() {
 ---
 
 ## Navigation (Expo Router / React Navigation)
+
 ```tsx
 // Expo Router v3+ (file-based, recommended)
 // app/(tabs)/_layout.tsx — tab navigator
@@ -141,22 +145,23 @@ function AdaptiveLayout() {
 // app/(modal)/settings.tsx — modal group
 
 // Stack navigation with gesture
-import { Stack } from 'expo-router';
-<Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
+import { Stack } from "expo-router";
+<Stack screenOptions={{ headerShown: false, animation: "slide_from_right" }}>
   <Stack.Screen name="(tabs)" />
-  <Stack.Screen name="[id]" options={{ presentation: 'modal' }} />
-</Stack>
+  <Stack.Screen name="[id]" options={{ presentation: "modal" }} />
+</Stack>;
 
 // Deep linking (Expo Router handles automatically via app.json scheme)
 // ❌ TRAP: Don't use react-navigation Link for deep links in Expo Router — use expo-router Link
-import { Link, useRouter } from 'expo-router';
+import { Link, useRouter } from "expo-router";
 const router = useRouter();
-router.push('/user/42');
+router.push("/user/42");
 ```
 
 ---
 
 ## On-Device AI UX Patterns
+
 - **Zero-wait illusion**: When model runs → immediately show contextual skeleton/partial tokens
 - **Progressive disclosure**: Low confidence → softer UI, soft colors, require confirmation
 - **Streaming UI**: `useEffect` + SSE or `StreamingText` component appending tokens
@@ -165,6 +170,7 @@ router.push('/user/42');
 ---
 
 ## Color & Typography
+
 ```tsx
 // OLED-safe dark mode
 const colors = {
@@ -183,14 +189,15 @@ import { Text } from 'react-native';
 ---
 
 ## Performance Checklist
-| Issue | Fix |
-|-------|-----|
-| JS thread jank | Move ALL animations to Reanimated worklets |
-| Slow list | Replace ScrollView/FlatList with FlashList |
-| Image flicker | `Image` from `expo-image` (faster cache, blurhash) |
+
+| Issue             | Fix                                                 |
+| ----------------- | --------------------------------------------------- |
+| JS thread jank    | Move ALL animations to Reanimated worklets          |
+| Slow list         | Replace ScrollView/FlatList with FlashList          |
+| Image flicker     | `Image` from `expo-image` (faster cache, blurhash)  |
 | Re-render cascade | `React.memo` + stable callbacks + Zustand selectors |
-| Large bundle | Dynamic imports + Metro tree shaking |
-| Memory leak | `useEffect` cleanup + cancel animation on unmount |
+| Large bundle      | Dynamic imports + Metro tree shaking                |
+| Memory leak       | `useEffect` cleanup + cancel animation on unmount   |
 
 ```tsx
 // Cancel animation on unmount
@@ -203,6 +210,7 @@ useEffect(() => {
 ---
 
 ## iOS-Specific
+
 - **BlurView**: Use `@react-native-community/blur` for frosted glass nav bars/modals
 - **SF Symbols**: Use `@expo/vector-icons/Ionicons` for system-native icons
 - **Haptics**: `expo-haptics` — rich feedback on iOS, limited on Android
@@ -210,15 +218,13 @@ useEffect(() => {
 - **Sheet presentations**: `presentation: 'formSheet'` in Expo Router for iOS bottom sheet native feel
 
 ## Android-Specific
+
 - **Material You**: Use `react-native-paper` for M3 dynamic color theming
 - **Edge-to-edge**: Set `android:windowLayoutInDisplayCutoutMode="shortEdges"` in AndroidManifest
 - **Back gesture prediction**: Wrap routes in `GestureHandlerRootView` at root
 - **Splash**: Use `expo-splash-screen` — never hardcode a delay
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -230,8 +236,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -241,9 +245,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -254,17 +257,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -294,6 +298,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -304,5 +309,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

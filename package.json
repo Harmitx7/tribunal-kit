@@ -1,94 +1,94 @@
 {
-    "name": "tribunal-kit",
-    "version": "4.6.0",
-    "description": "Anti-Hallucination AI Agent Kit — 40 specialist agents, 32 slash commands, 16 parallel Tribunal reviewers, Performance Swarm engine, Supreme Court case law pipeline, and long-running agent harness.",
-    "keywords": [
-        "ai",
-        "ai-agent",
-        "long-running-agents",
-        "agent",
-        "agents",
-        "multi-agent",
-        "agentic",
-        "swarm",
-        "orchestration",
-        "llm",
-        "anti-hallucination",
-        "hallucination",
-        "code-review",
-        "code-quality",
-        "cursor",
-        "cursor-rules",
-        "cursorrules",
-        "windsurf",
-        "copilot",
-        "cline",
-        "gemini",
-        "antigravity",
-        "tribunal",
-        "mcp",
-        "model-context-protocol",
-        "cli",
-        "devtools",
-        "ai-coding",
-        "autonomous-agents",
-        "coding-assistant",
-        "automation"
+  "name": "tribunal-kit",
+  "version": "4.6.0",
+  "description": "Anti-Hallucination AI Agent Kit — 40 specialist agents, 32 slash commands, 16 parallel Tribunal reviewers, Performance Swarm engine, Supreme Court case law pipeline, and long-running agent harness.",
+  "keywords": [
+    "ai",
+    "ai-agent",
+    "long-running-agents",
+    "agent",
+    "agents",
+    "multi-agent",
+    "agentic",
+    "swarm",
+    "orchestration",
+    "llm",
+    "anti-hallucination",
+    "hallucination",
+    "code-review",
+    "code-quality",
+    "cursor",
+    "cursor-rules",
+    "cursorrules",
+    "windsurf",
+    "copilot",
+    "cline",
+    "gemini",
+    "antigravity",
+    "tribunal",
+    "mcp",
+    "model-context-protocol",
+    "cli",
+    "devtools",
+    "ai-coding",
+    "autonomous-agents",
+    "coding-assistant",
+    "automation"
+  ],
+  "homepage": "https://github.com/Harmitx7/tribunal-kit",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Harmitx7/tribunal-kit.git"
+  },
+  "license": "MIT",
+  "bin": {
+    "tribunal-kit": "bin/wrapper.js",
+    "tk": "bin/wrapper.js"
+  },
+  "files": [
+    "bin/",
+    "scripts/",
+    ".agent/",
+    "README.md",
+    "LICENSE",
+    "mcp_config.json"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "npm run validate-payload && jest --coverage",
+    "test:unit": "jest test/unit --coverage",
+    "test:integration": "jest test/integration --coverage",
+    "preversion": "node scripts/sync-version.js",
+    "version": "node scripts/changelog.js && git add CHANGELOG.md",
+    "changelog": "node scripts/changelog.js",
+    "changelog:preview": "node scripts/changelog.js --preview",
+    "sync": "node scripts/sync-version.js",
+    "validate-payload": "node scripts/validate-payload.js",
+    "build": "echo 'No build step required for this project'"
+  },
+  "devDependencies": {
+    "eslint": "^9.1.1",
+    "jest": "^25.0.0",
+    "typescript": "^5.4.5"
+  },
+  "optionalDependencies": {
+    "@tribunal-kit/core-darwin-arm64": "^4.5.1",
+    "@tribunal-kit/core-darwin-x64": "^4.5.1",
+    "@tribunal-kit/core-linux-arm64": "^4.5.1",
+    "@tribunal-kit/core-linux-x64": "^4.5.1",
+    "@tribunal-kit/core-win32-arm64": "^4.5.1",
+    "@tribunal-kit/core-win32-x64": "^4.5.1"
+  },
+  "jest": {
+    "testMatch": [
+      "**/test/**/*.test.js"
     ],
-    "homepage": "https://github.com/Harmitx7/tribunal-kit",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/Harmitx7/tribunal-kit.git"
-    },
-    "license": "MIT",
-    "bin": {
-        "tribunal-kit": "bin/wrapper.js",
-        "tk": "bin/wrapper.js"
-    },
-    "files": [
-        "bin/",
-        "scripts/",
-        ".agent/",
-        "README.md",
-        "LICENSE",
-        "mcp_config.json"
-    ],
-    "engines": {
-        "node": ">=18.0.0"
-    },
-    "scripts": {
-        "test": "npm run validate-payload && jest --coverage",
-        "test:unit": "jest test/unit --coverage",
-        "test:integration": "jest test/integration --coverage",
-        "preversion": "node scripts/sync-version.js",
-        "version": "node scripts/changelog.js && git add CHANGELOG.md",
-        "changelog": "node scripts/changelog.js",
-        "changelog:preview": "node scripts/changelog.js --preview",
-        "sync": "node scripts/sync-version.js",
-        "validate-payload": "node scripts/validate-payload.js",
-        "build": "echo 'No build step required for this project'"
-    },
-    "devDependencies": {
-        "eslint": "^9.1.1",
-        "jest": "^25.0.0",
-        "typescript": "^5.4.5"
-    },
-    "optionalDependencies": {
-        "@tribunal-kit/core-darwin-arm64": "^4.5.1",
-        "@tribunal-kit/core-darwin-x64": "^4.5.1",
-        "@tribunal-kit/core-linux-arm64": "^4.5.1",
-        "@tribunal-kit/core-linux-x64": "^4.5.1",
-        "@tribunal-kit/core-win32-arm64": "^4.5.1",
-        "@tribunal-kit/core-win32-x64": "^4.5.1"
-    },
-    "jest": {
-        "testMatch": [
-            "**/test/**/*.test.js"
-        ],
-        "testEnvironment": "node",
-        "coverageDirectory": "coverage",
-        "collectCoverageFrom": [
-            "bin/**/*.js"
-        ]
-    }
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "bin/**/*.js"
+    ]
+  }
 }

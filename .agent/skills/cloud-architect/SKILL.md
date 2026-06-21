@@ -14,6 +14,7 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Confusing availability zones with regions → ✅ `us-east-1` is a region. `us-east-1a` is an AZ within that region. Multi-AZ ≠ multi-region.
 - ❌ `s3:*` or `*:*` IAM policies → ✅ IAM policies must follow least privilege. Enumerate exact actions required.
 - ❌ Hardcoding ARNs, account IDs, or region strings → ✅ Always use `data.aws_caller_identity.current.account_id`, `var.region`, Terraform variables.
@@ -433,5 +434,6 @@ terraform {
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden**: Declaring Terraform configuration correct because it "looks right."
 - ✅ **Required**: Run `terraform plan` with zero unexpected changes AND `terraform apply` successfully completes before marking infrastructure work as done.

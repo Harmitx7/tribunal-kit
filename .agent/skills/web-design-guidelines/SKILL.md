@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Designing mobile-last (desktop first, then shrinking) -> ✅ Design mobile-first, then enhance for larger screens
 - ❌ Using more than 2-3 font families -> ✅ Stick to 1-2 font families maximum; more creates visual noise
 - ❌ Ignoring touch target sizes on mobile -> ✅ Minimum 44x44px touch targets (Apple HIG) / 48x48dp (Material Design)
 
 ---
-
 
 # Next-Gen Web Interface Review Guidelines (Pro-Max Level)
 
@@ -25,6 +25,7 @@ routing:
 ## Review Trigger
 
 Load this skill when asked to:
+
 - Review or audit a UI
 - Check accessibility compliance (WCAG 3.0 / APCA)
 - Improve UX & Cognitive Safety
@@ -38,23 +39,23 @@ Load this skill when asked to:
 
 Non-negotiable baseline for any public interface in 2026+:
 
-|Check|How to Verify|
-|---|---|
-|**APCA Contrast**|Ensure Lc (Lightness Contrast) is > 75 for body text, > 60 for large text. (Do not rely solely on old WCAG 2.1 4.5:1 math).|
-|**Cognitive Safety**|Check if `prefers-reduced-motion` is respected. No infinite spinning loaders.|
-|**Keyboard Fluidity**|Tab order must follow visual order. Focus states cannot be just a 1px dotted line; use `outline: 2px solid var(--focus-color); outline-offset: 2px;`.|
-|**Semantic AI Context**|Images must have `alt` tags, but complex charts need full `<details>` breakdowns for screen readers and AI agents crawling the site.|
-|**Interaction Buffers**|Are touch targets mathematically ≥48px (Fitts' Law)?|
+| Check                   | How to Verify                                                                                                                                         |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **APCA Contrast**       | Ensure Lc (Lightness Contrast) is > 75 for body text, > 60 for large text. (Do not rely solely on old WCAG 2.1 4.5:1 math).                           |
+| **Cognitive Safety**    | Check if `prefers-reduced-motion` is respected. No infinite spinning loaders.                                                                         |
+| **Keyboard Fluidity**   | Tab order must follow visual order. Focus states cannot be just a 1px dotted line; use `outline: 2px solid var(--focus-color); outline-offset: 2px;`. |
+| **Semantic AI Context** | Images must have `alt` tags, but complex charts need full `<details>` breakdowns for screen readers and AI agents crawling the site.                  |
+| **Interaction Buffers** | Are touch targets mathematically ≥48px (Fitts' Law)?                                                                                                  |
 
 ### 2. Extreme Core Web Vitals (CWV)
 
 Drop the old 2022 standards. The new baseline for premium web:
 
-|Metric|Premium Target|Common Failures|
-|---|---|---|
-|**LCP** (Largest Contentful Paint)|**< 1.5s**|Missing `fetchpriority="high"` on hero images. Heavy client-side React rendering blocking the paint.|
-|**INP** (Interaction to Next Paint)|**< 100ms**|Main thread blocked by React hydrate. Use `startTransition` or Web Workers for heavy JS.|
-|**CLS** (Cumulative Layout Shift)|**0.00**|Missing `width` and `height` on images. Late-loading web fonts (use `font-display: optional`).|
+| Metric                              | Premium Target | Common Failures                                                                                      |
+| ----------------------------------- | -------------- | ---------------------------------------------------------------------------------------------------- |
+| **LCP** (Largest Contentful Paint)  | **< 1.5s**     | Missing `fetchpriority="high"` on hero images. Heavy client-side React rendering blocking the paint. |
+| **INP** (Interaction to Next Paint) | **< 100ms**    | Main thread blocked by React hydrate. Use `startTransition` or Web Workers for heavy JS.             |
+| **CLS** (Cumulative Layout Shift)   | **0.00**       | Missing `width` and `height` on images. Late-loading web fonts (use `font-display: optional`).       |
 
 ### 3. Energy Efficiency & Sustainability
 
@@ -77,20 +78,20 @@ Evaluate these brutally honestly:
 ### 5. AI & Streaming UX
 
 - **Zero-Wait States:** If the app is waiting for an LLM/Server response, does it show a static spinner (BAD) or stream the skeleton/content (GOOD)?
-- **Optimistic UI:** Do likes/saves update the UI *instantly* before the server confirms?
+- **Optimistic UI:** Do likes/saves update the UI _instantly_ before the server confirms?
 
 ---
 
 ## Common Review Findings
 
-|Finding|Severity|Fix|
-|---|---|---|
-|Missing/Weak focus styles|High|Add visible `:focus-visible` with offset|
-|`margin`/`padding` animated|High|Change to `transform: translate()`|
-|Touch targets under 48px|High|Increase padding/min-height|
-|Layout shifts on load (CLS > 0)|High|Pre-allocate space for async content/images|
-|Linear CSS transitions|Medium|Upgrade to spring-based `cubic-bezier` curves|
-|Purple as primary color|Low/Brand|Rethink palette — overused AI design cliché|
+| Finding                         | Severity  | Fix                                           |
+| ------------------------------- | --------- | --------------------------------------------- |
+| Missing/Weak focus styles       | High      | Add visible `:focus-visible` with offset      |
+| `margin`/`padding` animated     | High      | Change to `transform: translate()`            |
+| Touch targets under 48px        | High      | Increase padding/min-height                   |
+| Layout shifts on load (CLS > 0) | High      | Pre-allocate space for async content/images   |
+| Linear CSS transitions          | Medium    | Upgrade to spring-based `cubic-bezier` curves |
+| Purple as primary color         | Low/Brand | Rethink palette — overused AI design cliché   |
 
 ---
 
@@ -102,19 +103,24 @@ When reporting a UI review, use this exact brutal structure:
 ## UI/UX Pro-Max Review: [Component/Page Name]
 
 ### ♿ Neuro-Inclusivity & A11y
+
 - [BLOCKER] [Finding with specific element and fix]
 - [WARN] [Finding]
 
 ### ⚡ Performance & Energy (CWV)
+
 - [Finding]
 
 ### 🎨 Visual & Spatial Quality
+
 - [Finding]
 
 ### 🛠️ Interaction & Physics
+
 - [Finding]
 
 ### Summary
+
 X blockers, Y warnings, Z suggestions.
 Recommended action before shipping: [specific steps]
 ```
@@ -138,10 +144,7 @@ Pre-Flight:  ✅ All checks passed
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -153,8 +156,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -164,9 +165,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -177,17 +177,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -217,6 +218,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -227,5 +229,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

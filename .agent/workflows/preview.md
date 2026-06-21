@@ -83,21 +83,21 @@ Config change not reflected:
 
 ## When to Use /preview
 
-|Use `/preview` when...||
-|:---|:---|
-|After code generation to visually verify|Start: `/preview start`|
-|Config file was changed|Restart: `/preview restart`|
-|Done working for the session|Stop: `/preview stop`|
-|Checking if server is active|Status: `/preview status`|
+| Use `/preview` when...                   |                             |
+| :--------------------------------------- | :-------------------------- |
+| After code generation to visually verify | Start: `/preview start`     |
+| Config file was changed                  | Restart: `/preview restart` |
+| Done working for the session             | Stop: `/preview stop`       |
+| Checking if server is active             | Status: `/preview status`   |
 
 ---
 
 ## After /preview — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Preview looks correct|→ `/deploy` or commit code|
-|Preview shows errors|→ `/debug` to analyze console/network logs|
-|Changes not updating|→ `/preview restart` to bust cache|
+| Outcome               | Next Command                               |
+| :-------------------- | :----------------------------------------- |
+| Preview looks correct | → `/deploy` or commit code                 |
+| Preview shows errors  | → `/debug` to analyze console/network logs |
+| Changes not updating  | → `/preview restart` to bust cache         |
 
 ---

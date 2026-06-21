@@ -11,13 +11,13 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ `import { Button } from 'shadcn-ui'` -> ✅ shadcn/ui is NOT a package; components are copied into YOUR project. Import from `@/components/ui/button`
 - ❌ Using shadcn/ui without initializing it -> ✅ Run `npx shadcn@latest init` first; it generates tailwind config and utils
 - ❌ Assuming all shadcn components are installed -> ✅ Each component must be added separately: `npx shadcn@latest add button`
 - ❌ Overriding Radix primitive props without understanding accessibility -> ✅ Radix handles focus, keyboard, and ARIA; don't break it
 
 ---
-
 
 # shadcn/ui Expert — Component Architecture Mastery
 
@@ -26,6 +26,7 @@ routing:
 ## 1. Core Architecture
 
 shadcn/ui leverages two layers:
+
 1. **Radix UI Primitives**: Headless, fully accessible functionality (Focus management, ARIA, Keyboard nav).
 2. **Tailwind CSS**: The styling layer mapped over the headless components.
 
@@ -58,38 +59,35 @@ export function MySelect() {
 
 ## 2. Component Modification (You Own The Code)
 
-Do not treat `components/ui/*` as an immutable black box. You are *supposed* to modify them.
+Do not treat `components/ui/*` as an immutable black box. You are _supposed_ to modify them.
 
 ### Adding Variants via `cva` (Class Variance Authority)
 
 ```typescript
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva, type VariantProps } from "class-variance-authority";
 
 // Adding a new "ghost-rounded" variant to the Button component
-const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors...",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-        outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-        // YOUR CUSTOM VARIANT:
-        "ghost-rounded": "bg-transparent hover:bg-accent hover:text-accent-foreground rounded-full px-6",
-      },
-      size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
-      },
+const buttonVariants = cva("inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors...", {
+  variants: {
+    variant: {
+      default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+      destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+      outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+      // YOUR CUSTOM VARIANT:
+      "ghost-rounded": "bg-transparent hover:bg-accent hover:text-accent-foreground rounded-full px-6",
     },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
+    size: {
+      default: "h-9 px-4 py-2",
+      sm: "h-8 rounded-md px-3 text-xs",
+      lg: "h-10 rounded-md px-8",
+      icon: "h-9 w-9",
     },
-  }
-)
+  },
+  defaultVariants: {
+    variant: "default",
+    size: "default",
+  },
+});
 ```
 
 ---
@@ -123,6 +121,7 @@ shadcn/ui manages themes explicitly through CSS custom properties (variables), n
 ```
 
 Implementation with Tailwind v4 CSS-first configuration:
+
 ```css
 /* Note how standard colors map directly to the CSS vars */
 @theme {
@@ -143,19 +142,19 @@ Implementation with Tailwind v4 CSS-first configuration:
 The `cn` utility combines `clsx` (conditional classes) and `tailwind-merge` (fixing class conflicts).
 
 ```typescript
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 // ❌ BAD: String concatenation breeds conflicts
 // hover:bg-blue-500 will fail if className contains hover:bg-red-500 earlier
-const className = `px-4 py-2 bg-blue-500 hover:bg-blue-600 ${props.className}`
+const className = `px-4 py-2 bg-blue-500 hover:bg-blue-600 ${props.className}`;
 
 // ✅ GOOD: cn resolves conflicts correctly
-const className = cn("px-4 py-2 bg-blue-500 hover:bg-blue-600", props.className)
+const className = cn("px-4 py-2 bg-blue-500 hover:bg-blue-600", props.className);
 ```
 
 ---
@@ -163,6 +162,7 @@ const className = cn("px-4 py-2 bg-blue-500 hover:bg-blue-600", props.className)
 ## 5. Next.js App Router Integration
 
 ### Modals / Dialogs inside Server Components
+
 Radix primitives (Dialog, Select, etc.) utilize React context and side effects. They must be Client Components.
 
 ```typescript
@@ -183,10 +183,7 @@ export default async function Page() {
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -198,8 +195,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -209,9 +204,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -222,17 +216,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -262,6 +257,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -272,5 +268,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

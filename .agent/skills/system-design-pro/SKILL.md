@@ -13,6 +13,7 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ "Just use microservices" for <10K RPM → ✅ Microservices add operational complexity that kills small teams. Start monolith.
 - ❌ Adding database sharding before exhausting vertical scaling → ✅ Sharding is a last resort. Try: connection pooling → read replicas → caching → vertical scaling first.
 - ❌ Applying CQRS to simple CRUD apps → ✅ CQRS is only justified when read and write models genuinely diverge at scale.
@@ -197,16 +198,16 @@ Delivery guarantees:
 
 ## 4. Database Selection Matrix
 
-| Signal | Recommended | Why |
-|--------|-------------|-----|
-| Structured data, ACID, complex queries | **PostgreSQL** | Relational model, joins, transactions |
-| Time-series data (metrics, logs) | **InfluxDB / TimescaleDB** | Optimized for time-ordered data, compression |
-| Document storage, flexible schema | **MongoDB** | Schema-free, embedded documents |
-| Key-value, <1ms latency | **Redis / DynamoDB** | In-memory or single-digit ms |
-| Graph relationships (social, rec) | **Neo4j / Neptune** | Traversal queries 100x faster than SQL joins |
-| Search & full-text | **Elasticsearch / OpenSearch** | Inverted index, relevance scoring |
-| Immutable audit log | **Kafka / Append-only table** | Never update, only append |
-| Multi-region globally distributed | **CockroachDB / DynamoDB Global** | Multi-master, automatic failover |
+| Signal                                 | Recommended                       | Why                                          |
+| -------------------------------------- | --------------------------------- | -------------------------------------------- |
+| Structured data, ACID, complex queries | **PostgreSQL**                    | Relational model, joins, transactions        |
+| Time-series data (metrics, logs)       | **InfluxDB / TimescaleDB**        | Optimized for time-ordered data, compression |
+| Document storage, flexible schema      | **MongoDB**                       | Schema-free, embedded documents              |
+| Key-value, <1ms latency                | **Redis / DynamoDB**              | In-memory or single-digit ms                 |
+| Graph relationships (social, rec)      | **Neo4j / Neptune**               | Traversal queries 100x faster than SQL joins |
+| Search & full-text                     | **Elasticsearch / OpenSearch**    | Inverted index, relevance scoring            |
+| Immutable audit log                    | **Kafka / Append-only table**     | Never update, only append                    |
+| Multi-region globally distributed      | **CockroachDB / DynamoDB Global** | Multi-master, automatic failover             |
 
 ### CAP Theorem Applied
 
@@ -339,5 +340,6 @@ Failure handling:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden**: Recommending an architecture without first establishing scale numbers.
 - ✅ **Required**: Every system design must include: QPS estimates, data model, caching strategy, and at least one identified bottleneck with a scaling plan.

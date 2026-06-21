@@ -12,6 +12,7 @@ routing:
 # Vue 3.5+ & Nuxt 4 — Dense Reference
 
 ## Hallucination Traps (Read First)
+
 - ❌ Options API (`data()`, `methods:`, `computed:`) → ✅ `<script setup lang="ts">`
 - ❌ `defineComponent()` with `<script setup>` → ✅ redundant, skip it
 - ❌ `defineModel` in Vue < 3.4 → ✅ added in 3.4+
@@ -39,8 +40,8 @@ const props = withDefaults(defineProps<{ variant?: "primary" | "secondary" }>(),
 const emit = defineEmits<{ update: [value: string]; delete: [id: number] }>();
 
 // v-model (Vue 3.4+)
-const modelValue = defineModel<string>();          // default model
-const count = defineModel<number>("count");         // named model
+const modelValue = defineModel<string>(); // default model
+const count = defineModel<number>("count"); // named model
 
 // Expose to parent ref
 defineExpose({ reset: () => {}, focus: () => {} });
@@ -65,13 +66,17 @@ const state = reactive({ name: "Alice", age: 25 });
 const doubled = computed(() => count.value * 2);
 const fullName = computed({
   get: () => `${first.value} ${last.value}`,
-  set: (v) => { [first.value, last.value] = v.split(" "); },
+  set: (v) => {
+    [first.value, last.value] = v.split(" ");
+  },
 });
 
 // watch
 watch(count, (newVal, oldVal) => {}); // immediate: false by default
 watch(() => props.id, fetchUser, { immediate: true });
-watchEffect(() => { console.log(count.value); }); // auto-tracks deps
+watchEffect(() => {
+  console.log(count.value);
+}); // auto-tracks deps
 ```
 
 ---
@@ -94,9 +99,13 @@ export function useAsyncData<T>(fn: () => Promise<T>) {
   const loading = ref(false);
   async function execute() {
     loading.value = true;
-    try { data.value = await fn(); }
-    catch (e) { error.value = e as Error; }
-    finally { loading.value = false; }
+    try {
+      data.value = await fn();
+    } catch (e) {
+      error.value = e as Error;
+    } finally {
+      loading.value = false;
+    }
   }
   execute();
   return { data, error, loading, refresh: execute };
@@ -111,9 +120,11 @@ export function useAsyncData<T>(fn: () => Promise<T>) {
 // stores/counter.ts
 import { defineStore } from "pinia";
 export const useCounterStore = defineStore("counter", () => {
-  const count = ref(0);                 // Setup Store (preferred)
+  const count = ref(0); // Setup Store (preferred)
   const doubled = computed(() => count.value * 2);
-  function increment() { count.value++; }
+  function increment() {
+    count.value++;
+  }
   return { count, doubled, increment };
 });
 
@@ -141,8 +152,8 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: "/", component: () => import("./views/Home.vue") }, // lazy-loaded
-    { path: "/user/:id", component: UserView, props: true },    // props:true passes params as props
-    { path: "/:pathMatch(.*)*", component: NotFound },          // 404 catch-all
+    { path: "/user/:id", component: UserView, props: true }, // props:true passes params as props
+    { path: "/:pathMatch(.*)*", component: NotFound }, // 404 catch-all
   ],
 });
 // Route guards
@@ -166,30 +177,37 @@ const userId = route.params.id as string;
 <template>
   <!-- v-model -->
   <input v-model="email" />
-  <MyInput v-model:title="title" v-model:count="count" />  <!-- named model -->
-  
+  <MyInput v-model:title="title" v-model:count="count" />
+  <!-- named model -->
+
   <!-- v-for with key (ALWAYS set key) -->
   <li v-for="item in items" :key="item.id">{{ item.name }}</li>
-  
+
   <!-- Dynamic components -->
   <component :is="currentTab" />
-  
+
   <!-- Teleport — render in a different DOM node -->
   <Teleport to="body"><Modal v-if="showModal" /></Teleport>
-  
+
   <!-- Transition -->
   <Transition name="fade" mode="out-in">
     <component :is="view" :key="view" />
   </Transition>
-  
+
   <!-- Suspense (async components / composables with await) -->
   <Suspense><AsyncComponent /><template #fallback>Loading...</template></Suspense>
 </template>
 
 <style>
 /* Transition CSS */
-.fade-enter-active, .fade-leave-active { transition: opacity 0.3s; }
-.fade-enter-from, .fade-leave-to { opacity: 0; }
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
 ```
 
@@ -208,10 +226,10 @@ middleware/:     route guards
 
 ```ts
 // pages/users/[id].vue
-const { id } = useRoute().params;                       // auto-imported
+const { id } = useRoute().params; // auto-imported
 const { data, error, refresh } = await useFetch(`/api/users/${id}`, {
-  lazy: false,        // SSR: wait for data before rendering
-  server: true,       // fetch on server (default)
+  lazy: false, // SSR: wait for data before rendering
+  server: true, // fetch on server (default)
   transform: (r) => r.user,
 });
 // ❌ TRAP: useFetch in Nuxt ≠ @tanstack/react-query. It's Nuxt-specific.
@@ -221,16 +239,14 @@ const { data, error, refresh } = await useFetch(`/api/users/${id}`, {
 ---
 
 ## Performance
+
 - ✅ Use `v-memo` for expensive list items that rarely change
 - ✅ `defineAsyncComponent(() => import("./Heavy.vue"))` for code splitting
 - ✅ `:key` on `<component :is>` forces re-mount on route change (prevents stale state)
 - ❌ Avoid deeply nested reactive objects — use `shallowRef`/`shallowReactive` for large data
 - ❌ Never mutate props — emit events instead
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -242,8 +258,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -253,9 +267,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -266,17 +279,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -306,6 +320,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -316,5 +331,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

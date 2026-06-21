@@ -75,32 +75,39 @@ AND   If I have no past orders, the form shows empty fields (not an error)
 **Engineering Estimate:** [TBD — filled by engineering]
 
 ## Problem Statement
+
 [2 sentences: What user pain exists? What is the cost of not solving it?]
 
 ## Success Metrics
-|Metric|Baseline|Target|Measurement|
-|:---|:---|:---|:---|
-|Checkout completion rate|62%|70%|Analytics event|
-|Time to checkout complete|4.2 min|2.8 min|Avg session duration|
+
+| Metric                    | Baseline | Target  | Measurement          |
+| :------------------------ | :------- | :------ | :------------------- |
+| Checkout completion rate  | 62%      | 70%     | Analytics event      |
+| Time to checkout complete | 4.2 min  | 2.8 min | Avg session duration |
 
 ## User Stories
+
 [List of stories in GIVEN/WHEN/THEN format]
 
 ## Out of Scope (This Version)
+
 - [Explicit exclusion 1]
 - [Explicit exclusion 2]
 
 ## Tradeoffs Considered
-|Option|Pros|Cons|Decision|
-|:---|:---|:---|:---|
-|Auto-fill last address|Fast UX|Privacy risk|Accepted with explicit consent|
-|Address book|Flexible|Higher eng complexity|Deferred to v2|
+
+| Option                 | Pros     | Cons                  | Decision                       |
+| :--------------------- | :------- | :-------------------- | :----------------------------- |
+| Auto-fill last address | Fast UX  | Privacy risk          | Accepted with explicit consent |
+| Address book           | Flexible | Higher eng complexity | Deferred to v2                 |
 
 ## Dependencies
+
 - Requires: Auth session persistence (must complete first)
 - Blocks: One-click reorder feature (depends on this)
 
 ## Open Questions
+
 - [ ] Do we show billing address separately from shipping? (Legal input needed)
 ```
 

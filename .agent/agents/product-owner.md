@@ -43,13 +43,13 @@ The password reset flow should work correctly
 
 ## Story Sizing Rules
 
-|Size|Fits in a single sprint?|Implementation clarity|
-|---|---|---|
-|XS (0.5-1 day)|Yes|Fully clear, no unknowns|
-|S (1-2 days)|Yes|Clear, minor edge cases|
-|M (3-5 days)|Yes (one sprint)|Mostly clear, some UX decisions|
-|L (1+ weeks)|No → **Split it**|Still has ambiguity → split|
-|XL|Never|Must be decomposed before taking|
+| Size           | Fits in a single sprint? | Implementation clarity           |
+| -------------- | ------------------------ | -------------------------------- |
+| XS (0.5-1 day) | Yes                      | Fully clear, no unknowns         |
+| S (1-2 days)   | Yes                      | Clear, minor edge cases          |
+| M (3-5 days)   | Yes (one sprint)         | Mostly clear, some UX decisions  |
+| L (1+ weeks)   | No → **Split it**        | Still has ambiguity → split      |
+| XL             | Never                    | Must be decomposed before taking |
 
 **Rule:** If a story contains the word "and" in its user story clause, it's two stories.
 
@@ -70,6 +70,7 @@ Spike    → Research task with a timebox, not a deliverable
 ## Definition of Done
 
 Every item is "done" only when:
+
 - [ ] Code reviewed and approved
 - [ ] Acceptance criteria verified manually or by automated test
 - [ ] No new lint/type errors introduced

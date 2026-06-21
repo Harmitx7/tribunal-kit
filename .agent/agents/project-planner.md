@@ -51,13 +51,13 @@ find . -name "*.test.ts" -o -name "*.spec.ts" | head -20
 
 Identify and classify risks before choosing an approach:
 
-|Risk Type|Examples|Mitigation|
-|:---|:---|:---|
-|**Technical**|WebSocket scaling, CRDT conflict resolution|Prototype first, add to Wave 1|
-|**Dependency**|Third-party API availability, rate limits|Add circuit breaker in plan|
-|**Data**|Existing data migration, backwards compat|Expand-and-contract migration|
-|**Scope creep**|"While we're here..." additions|Explicit out-of-scope section|
-|**Performance**|10x data volume assumption|Load test milestone in plan|
+| Risk Type       | Examples                                    | Mitigation                     |
+| :-------------- | :------------------------------------------ | :----------------------------- |
+| **Technical**   | WebSocket scaling, CRDT conflict resolution | Prototype first, add to Wave 1 |
+| **Dependency**  | Third-party API availability, rate limits   | Add circuit breaker in plan    |
+| **Data**        | Existing data migration, backwards compat   | Expand-and-contract migration  |
+| **Scope creep** | "While we're here..." additions             | Explicit out-of-scope section  |
+| **Performance** | 10x data volume assumption                  | Load test milestone in plan    |
 
 ---
 
@@ -95,31 +95,40 @@ Wave 4 — Polish & Deploy
 # Implementation Plan — [Feature Name]
 
 ## Goal
+
 [One sentence: what will be true when this is complete]
 
 ## User Review Required
+
 > [!IMPORTANT]
-[Any breaking changes, architectural decisions, or open questions needing approval]
+> [Any breaking changes, architectural decisions, or open questions needing approval]
 
 ## Proposed Changes
 
 ### Wave 1 — Foundation
+
 #### [MODIFY] prisma/schema.prisma
+
 Add `phoneNumber` column nullable, then make required in Wave 3 after backfill.
 
 #### [NEW] src/lib/validators/user.ts
+
 Zod schema for user input validation — shared by Wave 2 API routes.
 
 ### Wave 2 — API Layer
+
 #### [NEW] src/app/api/users/route.ts
+
 POST endpoint for user creation using Wave 1 schema and validators.
 
 ## Out of Scope (This Phase)
+
 - Email verification flow (separate ticket)
 - Admin user management UI
 - Billing integration
 
 ## Verification Plan
+
 1. Run `npx tsc --noEmit` — zero errors
 2. Run `npm test` — all existing tests pass
 3. New API endpoint returns 201 on valid input, 400 on invalid
@@ -131,6 +140,7 @@ POST endpoint for user creation using Wave 1 schema and validators.
 ## 6. Output Artifact
 
 The planner produces `implementation_plan.md` with:
+
 - `request_feedback = true` (awaiting human approval)
 - Wave decomposition (numbered, with dependencies)
 - Explicit `[NEW]`, `[MODIFY]`, `[DELETE]` file markings

@@ -22,12 +22,12 @@ Read BEFORE testing:
 
 ## When to Use /api-tester
 
-|Use `/api-tester` when...|Use something else when...|
-|:---|:---|
-|Testing REST API endpoints manually|Unit tests needed → `/test`|
-|Verifying auth token flows end-to-end|Full security audit → `/audit`|
-|After generating new endpoints|Load testing → `/performance-benchmarker`|
-|Checking response schemas||
+| Use `/api-tester` when...             | Use something else when...                |
+| :------------------------------------ | :---------------------------------------- |
+| Testing REST API endpoints manually   | Unit tests needed → `/test`               |
+| Verifying auth token flows end-to-end | Full security audit → `/audit`            |
+| After generating new endpoints        | Load testing → `/performance-benchmarker` |
+| Checking response schemas             |                                           |
 
 ---
 
@@ -166,11 +166,11 @@ Error Cases:
 
 ## After /api-tester — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Tests fail due to code bugs|→ `/debug` to isolate the fix|
-|Tests pass, coverage needed|→ `/test` to convert to automated Jest/Vitest suite|
-|API is slow|→ `/tribunal-speed` to profile latency|
-|Ready to ship|→ `/deploy` with full pre-flight|
+| Outcome                     | Next Command                                        |
+| :-------------------------- | :-------------------------------------------------- |
+| Tests fail due to code bugs | → `/debug` to isolate the fix                       |
+| Tests pass, coverage needed | → `/test` to convert to automated Jest/Vitest suite |
+| API is slow                 | → `/tribunal-speed` to profile latency              |
+| Ready to ship               | → `/deploy` with full pre-flight                    |
 
 ---

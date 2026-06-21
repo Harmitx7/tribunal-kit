@@ -22,11 +22,11 @@ Read BEFORE generating changelog:
 
 ## When to Use /changelog
 
-|Use `/changelog` when...||
-|:---|:---|
-|Preparing a release|Generate for specific version range|
-|Documenting recent changes|Generate since last tag|
-|Onboarding someone to codebase history|Generate entire history|
+| Use `/changelog` when...               |                                     |
+| :------------------------------------- | :---------------------------------- |
+| Preparing a release                    | Generate for specific version range |
+| Documenting recent changes             | Generate since last tag             |
+| Onboarding someone to codebase history | Generate entire history             |
 
 ---
 
@@ -81,21 +81,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0] — 2026-04-02
 
 ### Breaking Changes
+
 - **auth**: JWT token format changed — clients must re-authenticate ([abc123](link))
 
 ### Added
+
 - User notification system with email and in-app alerts ([def456](link))
 - Pagination on /api/users endpoint with meta.total in response ([ghi789](link))
 
 ### Fixed
+
 - JWT verify no longer accepts 'none' algorithm ([jkl012](link))
 - Checkout form no longer loses data on page refresh ([mno345](link))
 
 ### Changed
+
 - Upgraded Prisma 5 to 6 — findOne calls migrated to findUnique ([pqr678](link))
 - Bundle size reduced 64% via dynamic import for chart library ([stu901](link))
 
 ## [1.1.0] — 2026-03-15
+
 [...]
 
 [Unreleased]: https://github.com/user/repo/compare/v1.2.0...HEAD
@@ -108,7 +113,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ```
 MAJOR (1.0.0 → 2.0.0): Any BREAKING CHANGE
-MINOR (1.0.0 → 1.1.0): New features, backward-compatible (feat:)  
+MINOR (1.0.0 → 1.1.0): New features, backward-compatible (feat:)
 PATCH (1.0.0 → 1.0.1): Bug fixes only (fix:)
 ```
 
@@ -127,9 +132,9 @@ PATCH (1.0.0 → 1.0.1): Bug fixes only (fix:)
 
 ## After /changelog — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Changelog updated, ready to release|→ `/deploy` or tag version|
-|Need to summarize for non-technical|→ Request PR description generation|
+| Outcome                             | Next Command                        |
+| :---------------------------------- | :---------------------------------- |
+| Changelog updated, ready to release | → `/deploy` or tag version          |
+| Need to summarize for non-technical | → Request PR description generation |
 
 ---

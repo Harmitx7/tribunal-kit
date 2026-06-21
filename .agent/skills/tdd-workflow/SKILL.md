@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Writing tests that test implementation details instead of behavior -> ✅ Test WHAT it does (inputs/outputs), not HOW (internal methods)
 - ❌ Skipping the Red phase (writing a failing test first) -> ✅ If the test passes before you write the code, it tests nothing
 - ❌ Refactoring during the Red or Green phase -> ✅ Red: write failing test. Green: make it pass minimally. THEN refactor. Never mix phases
 
 ---
-
 
 # Test-Driven Development (TDD) — Defect-Free Execution Mastery
 
@@ -27,41 +27,44 @@ routing:
 TDD is a strict, irrevocable discipline. Do not write the implementation first.
 
 ### Step 1: RED (Write the failing test)
-Write the test as if the API already exists exactly how you *wish* it were designed.
+
+Write the test as if the API already exists exactly how you _wish_ it were designed.
 Run the test. It MUST fail (because the function doesn't exist, or returns the wrong value). If it passes, the test is useless.
 
 ```typescript
 // 1. The failing test
-import { calculateDiscount } from './pricing';
+import { calculateDiscount } from "./pricing";
 
-test('Should apply 10% discount for orders over $100', () => {
-    expect(calculateDiscount(150)).toBe(135);
+test("Should apply 10% discount for orders over $100", () => {
+  expect(calculateDiscount(150)).toBe(135);
 });
 // ❌ FAILS: calculateDiscount is not defined
 ```
 
 ### Step 2: GREEN (Make it pass exactly)
+
 Write the absolute minimum, dumbest code required to make the test pass. Do not over-engineer.
 
 ```typescript
 // 2. The minimum implementation
 export function calculateDiscount(subtotal: number): number {
-    if (subtotal >= 100) return subtotal * 0.90;
-    return subtotal;
+  if (subtotal >= 100) return subtotal * 0.9;
+  return subtotal;
 }
 // ✅ PASSES.
 ```
 
 ### Step 3: REFACTOR
+
 Now wrap the implementation in clean architectural principles. The tests guarantee you haven't broken the behavior while you optimize.
 
 ```typescript
 // 3. The Refactor
 const DISCOUNT_THRESHOLD = 100;
-const DISCOUNT_RATE = 0.90;
+const DISCOUNT_RATE = 0.9;
 
 export function calculateDiscount(subtotal: number): number {
-    return subtotal >= DISCOUNT_THRESHOLD ? subtotal * DISCOUNT_RATE : subtotal;
+  return subtotal >= DISCOUNT_THRESHOLD ? subtotal * DISCOUNT_RATE : subtotal;
 }
 // ✅ STILL PASSES. Safe to commit.
 ```
@@ -70,16 +73,17 @@ export function calculateDiscount(subtotal: number): number {
 
 ## 2. Test Doubles (Mocks, Stubs, Spies)
 
-Knowing *how* to mock separates amateurs from professionals. Over-mocking destroys architectural integrity.
+Knowing _how_ to mock separates amateurs from professionals. Over-mocking destroys architectural integrity.
 
-|Type|When to use|Example|
-|:---|:---|:---|
-|**Dummy**|Filler objects passed but never used|`processOrder(new UserDummy(), payload)`|
-|**Stub**|Hardcodes a specific response|`db.getUser.mockResolvedValue({ id: 1 })`|
-|**Spy**|Records how many times a function was called|`expect(emailService.send).toHaveBeenCalledTimes(1)`|
-|**Mock**|A spy with predefined expectations of exact payloads|`expect(logger.info).toHaveBeenCalledWith('Authorized')`|
+| Type      | When to use                                          | Example                                                  |
+| :-------- | :--------------------------------------------------- | :------------------------------------------------------- |
+| **Dummy** | Filler objects passed but never used                 | `processOrder(new UserDummy(), payload)`                 |
+| **Stub**  | Hardcodes a specific response                        | `db.getUser.mockResolvedValue({ id: 1 })`                |
+| **Spy**   | Records how many times a function was called         | `expect(emailService.send).toHaveBeenCalledTimes(1)`     |
+| **Mock**  | A spy with predefined expectations of exact payloads | `expect(logger.info).toHaveBeenCalledWith('Authorized')` |
 
 ### The Mocking Rule
+
 **Only mock at the architectural boundaries (Database, Network, External FileSystem).**
 NEVER mock internal business logic or child pure-functions. If function A calls function B, test A by allowing it to genuinely call B.
 
@@ -87,36 +91,37 @@ NEVER mock internal business logic or child pure-functions. If function A calls 
 
 ## 3. Anti-Pattern: Testing Implementation Details
 
-Tests should verify the *behavior* output, not the underlying code structure.
+Tests should verify the _behavior_ output, not the underlying code structure.
 
 ```typescript
 class Account {
-    private balance = 0;
-    deposit(amount: number) { this.balance += amount; }
-    getBalance() { return this.balance; }
+  private balance = 0;
+  deposit(amount: number) {
+    this.balance += amount;
+  }
+  getBalance() {
+    return this.balance;
+  }
 }
 
 // ❌ BAD: Testing internal state (Fragile)
-test('Deposit updates the internal balance variable', () => {
-    const acc = new Account();
-    acc.deposit(50);
-    expect(acc['balance']).toBe(50); // Intrusive test breaks if variable is renamed
+test("Deposit updates the internal balance variable", () => {
+  const acc = new Account();
+  acc.deposit(50);
+  expect(acc["balance"]).toBe(50); // Intrusive test breaks if variable is renamed
 });
 
 // ✅ GOOD: Testing external behavior contract
-test('Deposit makes the funds available via getBalance', () => {
-    const acc = new Account();
-    acc.deposit(50);
-    expect(acc.getBalance()).toBe(50); // Tests the public API only
+test("Deposit makes the funds available via getBalance", () => {
+  const acc = new Account();
+  acc.deposit(50);
+  expect(acc.getBalance()).toBe(50); // Tests the public API only
 });
 ```
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -128,8 +133,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -139,9 +142,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -152,17 +154,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -192,6 +195,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -202,5 +206,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

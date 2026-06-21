@@ -11,6 +11,7 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Using `as any` to silence type errors -> ✅ Fix the type; `as any` hides bugs that crash at runtime
 - ❌ Using `interface` when `type` is needed (unions, mapped types) -> ✅ `type` for unions/intersections/mapped; `interface` for objects that may be extended
 - ❌ Overcomplicating types — if a type takes 30 seconds to read, simplify it -> ✅ Types serve the developer, not the other way around
@@ -40,14 +41,19 @@ function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
 }
 
 const user = { name: "Alice", age: 30 };
-const name = getProperty(user, "name");  // type: string
-const age = getProperty(user, "age");    // type: number
+const name = getProperty(user, "name"); // type: string
+const age = getProperty(user, "age"); // type: number
 // getProperty(user, "email");           // ❌ Compile error — "email" not in keyof
 
 // ✅ Default generic parameters
 function createState<T = string>(initial: T): { value: T; set: (v: T) => void } {
   let value = initial;
-  return { value, set: (v) => { value = v; } };
+  return {
+    value,
+    set: (v) => {
+      value = v;
+    },
+  };
 }
 ```
 
@@ -99,8 +105,8 @@ function renderUser(state: RequestState<User>) {
 // ✅ Type-level if/else
 type IsString<T> = T extends string ? true : false;
 
-type A = IsString<"hello">;  // true
-type B = IsString<42>;       // false
+type A = IsString<"hello">; // true
+type B = IsString<42>; // false
 
 // ✅ Extract return type of async functions
 type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
@@ -112,12 +118,12 @@ type UserData = UnwrapPromise<Promise<{ name: string }>>;
 type ApiResponse<T> = T extends (...args: any[]) => Promise<infer R> ? R : never;
 
 declare function getUsers(): Promise<User[]>;
-type Users = ApiResponse<typeof getUsers>;  // User[]
+type Users = ApiResponse<typeof getUsers>; // User[]
 
 // ✅ Distributive conditional types
 type NonNullable<T> = T extends null | undefined ? never : T;
 
-type Clean = NonNullable<string | null | undefined>;  // string
+type Clean = NonNullable<string | null | undefined>; // string
 ```
 
 ---
@@ -172,16 +178,11 @@ type EventName = `on${Capitalize<string>}`;
 type CSSUnit = "px" | "rem" | "em" | "vh" | "vw" | "%";
 type CSSValue = `${number}${CSSUnit}`;
 
-const width: CSSValue = "100px";   // ✅
+const width: CSSValue = "100px"; // ✅
 // const bad: CSSValue = "100";     // ❌ Compile error
 
 // ✅ Route parameter extraction
-type ExtractParams<T extends string> =
-  T extends `${string}:${infer Param}/${infer Rest}`
-    ? Param | ExtractParams<Rest>
-    : T extends `${string}:${infer Param}`
-      ? Param
-      : never;
+type ExtractParams<T extends string> = T extends `${string}:${infer Param}/${infer Rest}` ? Param | ExtractParams<Rest> : T extends `${string}:${infer Param}` ? Param : never;
 
 type UserRouteParams = ExtractParams<"/users/:userId/posts/:postId">;
 // → "userId" | "postId"
@@ -200,15 +201,15 @@ const colorsAs = {
   red: [255, 0, 0],
   green: "#00ff00",
 } as ColorMap;
-colorsAs.red.map(x => x);  // ❌ Error: string | number[] has no .map
+colorsAs.red.map((x) => x); // ❌ Error: string | number[] has no .map
 
 // With `satisfies` — keeps literal types
 const colors = {
   red: [255, 0, 0],
   green: "#00ff00",
 } satisfies ColorMap;
-colors.red.map(x => x);     // ✅ TypeScript knows it's a tuple
-colors.green.toUpperCase();  // ✅ TypeScript knows it's a string
+colors.red.map((x) => x); // ✅ TypeScript knows it's a tuple
+colors.green.toUpperCase(); // ✅ TypeScript knows it's a string
 ```
 
 ---
@@ -247,18 +248,18 @@ function centsToDollars(cents: Cents): Dollars {
 ```typescript
 // Don't reimplement what TypeScript provides
 
-Pick<T, K>          // Select specific keys
-Omit<T, K>          // Remove specific keys
-Partial<T>          // All properties optional
-Required<T>         // All properties required
-Readonly<T>         // All properties readonly
-Record<K, V>        // Object with keys K and values V
-Extract<T, U>       // Members of T assignable to U
-Exclude<T, U>       // Members of T NOT assignable to U
-NonNullable<T>      // Remove null and undefined
-ReturnType<T>       // Return type of a function
-Parameters<T>       // Parameter types of a function as tuple
-Awaited<T>          // Unwrap Promise<T> recursively
+Pick<T, K>; // Select specific keys
+Omit<T, K>; // Remove specific keys
+Partial<T>; // All properties optional
+Required<T>; // All properties required
+Readonly<T>; // All properties readonly
+Record<K, V>; // Object with keys K and values V
+Extract<T, U>; // Members of T assignable to U
+Exclude<T, U>; // Members of T NOT assignable to U
+NonNullable<T>; // Remove null and undefined
+ReturnType<T>; // Return type of a function
+Parameters<T>; // Parameter types of a function as tuple
+Awaited<T>; // Unwrap Promise<T> recursively
 ```
 
 ---
@@ -287,10 +288,7 @@ if (!element) throw new Error("Missing #app element");
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -302,8 +300,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -313,9 +309,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -326,17 +321,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -366,6 +362,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -376,5 +373,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

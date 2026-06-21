@@ -50,17 +50,15 @@ Rule: Animations must NEVER cross the bridge during execution
 
 ```tsx
 // ❌ BRIDGE CROSSING: setState inside animation → UI→JS→UI round trip = jank
-const gesture = Gesture.Pan()
-  .onUpdate((e) => {
-    setState(e.translationX); // Crosses to JS thread — destroys 60fps
-  });
+const gesture = Gesture.Pan().onUpdate((e) => {
+  setState(e.translationX); // Crosses to JS thread — destroys 60fps
+});
 
 // ✅ UI THREAD: shared values never cross the bridge
 const translateX = useSharedValue(0);
-const gesture = Gesture.Pan()
-  .onUpdate((e) => {
-    translateX.value = e.translationX; // Pure UI thread
-  });
+const gesture = Gesture.Pan().onUpdate((e) => {
+  translateX.value = e.translationX; // Pure UI thread
+});
 
 const animatedStyle = useAnimatedStyle(() => ({
   transform: [{ translateX: translateX.value }],
@@ -68,17 +66,16 @@ const animatedStyle = useAnimatedStyle(() => ({
 
 // ✅ Custom functions in animations need 'worklet' directive
 const clamp = (val: number, min: number, max: number): number => {
-  'worklet';
+  "worklet";
   return Math.min(Math.max(val, min), max);
 };
 
 // ✅ runOnJS: deliberate bridge crossing after animation completes
-const gesture = Gesture.Pan()
-  .onEnd((e) => {
-    if (e.translationX > 100) {
-      runOnJS(handleDismiss)(); // Explicit bridge crossing — acceptable on end, not onUpdate
-    }
-  });
+const gesture = Gesture.Pan().onEnd((e) => {
+  if (e.translationX > 100) {
+    runOnJS(handleDismiss)(); // Explicit bridge crossing — acceptable on end, not onUpdate
+  }
+});
 ```
 
 ---
@@ -183,18 +180,18 @@ const { id } = useLocalSearchParams<{ id: string }>();
 ```tsx
 // ✅ Always clean up subscriptions
 useEffect(() => {
-  const subscription = AppState.addEventListener('change', handleAppState);
+  const subscription = AppState.addEventListener("change", handleAppState);
   return () => subscription.remove();
 }, []);
 
 // ✅ Expo Image over Image component (automatic memory management)
-import { Image } from 'expo-image';
+import { Image } from "expo-image";
 <Image
   source={{ uri: imageUrl }}
   contentFit="cover"
-  cachePolicy="memory-disk"  // Explicit caching strategy
+  cachePolicy="memory-disk" // Explicit caching strategy
   style={{ width: 200, height: 200 }}
-/>
+/>;
 ```
 
 ---

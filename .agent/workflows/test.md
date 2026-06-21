@@ -22,12 +22,12 @@ Read BEFORE testing:
 
 ## When to Use /test
 
-|Use `/test` when...|Use something else when...|
-|:---|:---|
-|New code was just generated and needs tests|Tests are failing → `/debug`|
-|After `/debug` to prevent regression|Need a full coverage audit → `/audit`|
-|Test coverage is below threshold|E2E for the whole app → `/performance-benchmarker`|
-|A bug was fixed and needs a regression test||
+| Use `/test` when...                         | Use something else when...                         |
+| :------------------------------------------ | :------------------------------------------------- |
+| New code was just generated and needs tests | Tests are failing → `/debug`                       |
+| After `/debug` to prevent regression        | Need a full coverage audit → `/audit`              |
+| Test coverage is below threshold            | E2E for the whole app → `/performance-benchmarker` |
+| A bug was fixed and needs a regression test |                                                    |
 
 ---
 
@@ -37,7 +37,7 @@ Read BEFORE testing:
              /\
             /E2E\          ← Small (Playwright): happy paths, auth, critical checkout
            /──────\
-          /Integr.\        ← Medium (RTL + MSW): component + network behavior  
+          /Integr.\        ← Medium (RTL + MSW): component + network behavior
          /──────────\
         /    Unit    \     ← Foundation (Vitest): pure logic + transformations
        /──────────────\
@@ -104,16 +104,16 @@ The Tribunal rejects any test submission that does not cover ALL of:
 ### Unit Test (Vitest)
 
 ```typescript
-describe('[functionName]()', () => {
-  it('[happy path description]', () => {
+describe("[functionName]()", () => {
+  it("[happy path description]", () => {
     expect(fn(validInput)).toBe(expectedResult);
   });
-  
-  it('returns [expected] when input is [edge case]', () => {
+
+  it("returns [expected] when input is [edge case]", () => {
     expect(fn(boundaryInput)).toBe(expectedBoundaryResult);
   });
-  
-  it('throws [ErrorType] when [invalid condition]', () => {
+
+  it("throws [ErrorType] when [invalid condition]", () => {
     expect(() => fn(invalidInput)).toThrow(ExpectedError);
   });
 });
@@ -135,12 +135,12 @@ test('[user observable behavior]', async () => {
 ### E2E Test (Playwright)
 
 ```typescript
-test('[critical user path]', async ({ page }) => {
+test("[critical user path]", async ({ page }) => {
   // GIVEN: pre-authenticated (stored session — not login from UI every test)
   // WHEN: navigate and act
-  await page.goto('/checkout');
+  await page.goto("/checkout");
   // THEN: verify final state
-  await expect(page.getByText('Order confirmed')).toBeVisible();
+  await expect(page.getByText("Order confirmed")).toBeVisible();
 });
 ```
 
@@ -202,10 +202,10 @@ The `test-coverage-reviewer` is automatically activated and checks:
 
 ## After /test — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Tests pass cleanly|→ `/deploy` or return to `/enhance` for next feature|
-|Tests fail with bugs|→ `/debug` to trace logic errors|
-|Need to improve performance|→ `/performance-benchmarker`|
+| Outcome                     | Next Command                                         |
+| :-------------------------- | :--------------------------------------------------- |
+| Tests pass cleanly          | → `/deploy` or return to `/enhance` for next feature |
+| Tests fail with bugs        | → `/debug` to trace logic errors                     |
+| Need to improve performance | → `/performance-benchmarker`                         |
 
 ---

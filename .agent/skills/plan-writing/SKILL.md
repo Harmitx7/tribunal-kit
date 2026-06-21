@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Writing plans without verification criteria -> ✅ Every plan needs a 'How to verify this worked' section
 - ❌ Planning at the wrong granularity (too high or too low) -> ✅ Plans should be at the component/feature level, not line-by-line or system-wide
 - ❌ Skipping the 'What could go wrong' section -> ✅ Identifying failure modes before implementation prevents costly rework
 
 ---
-
 
 # Plan Writing — Execution Blueprints Mastery
 
@@ -24,9 +24,10 @@ routing:
 
 ## 1. The Implementation Plan Structure (ADR-Lite)
 
-Before altering multiple files or introducing a new system architecture, a rigid `implementation_plan.md` MUST be generated and approved. 
+Before altering multiple files or introducing a new system architecture, a rigid `implementation_plan.md` MUST be generated and approved.
 
 **Core Sections:**
+
 1. **Objective Context:** 2-sentence summary of the requested goal.
 2. **Architectural Handoff:** (What stack, what libraries, what constraints).
 3. **Dependency Tree Execution Order:** (Cannot build frontend UI until backend API exists).
@@ -41,21 +42,24 @@ LLMs degrade significantly when asked to process >10 file alterations across mul
 
 ```markdown
 ### Wave 1: Data Layer (The Foundation)
+
 1. Add `Subscription` model to Prisma schema.
 2. Generate migration (`npx prisma migrate dev`).
 3. Add mock seed data.
 
 ### Wave 2: API Layer (The Bridge)
+
 1. Build `/api/subscriptions/route.ts` with explicit Zod validation.
 2. Write Vitest logic enforcing authorization roles.
 
 ### Wave 3: UI Layer (The Implementation)
+
 1. Build `SubscriptionCard.tsx`.
 2. Connect to API using MSW mocked tests first.
 3. Integrate into main dashboard.
 ```
 
-*Crucial:* Each wave MUST be executable and testable independently. Do not begin Wave 2 until Wave 1 passes Verification Protocols.
+_Crucial:_ Each wave MUST be executable and testable independently. Do not begin Wave 2 until Wave 1 passes Verification Protocols.
 
 ---
 
@@ -76,28 +80,29 @@ Unlike the high-level `implementation_plan.md`, the `task.md` serves as the live
 # Current Objective: Upgrade Authentication
 
 ## Pre-Flight
+
 - [x] Dump existing environment variables locally
 - [x] Verify current tests pass (Baseline health)
 
 ## Wave 1 (OAuth Scaffold)
+
 - [/] Install auth.js dependencies
 - [ ] Connect Google Provider inside `[...nextauth].ts`
 
 ## Wave 2 (Database Mappings)
+
 - [ ] Update Users table to handle polymorphic OAuth links
 ```
 
-*Rules:*
+_Rules:_
+
 - `[ ]` = Unstarted
 - `[/]` = In Progress (Current Focus)
 - `[x]` = Verified Complete
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -109,8 +114,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -120,9 +123,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -133,17 +135,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -173,6 +176,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -183,5 +187,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -21,12 +21,12 @@ Read BEFORE swarming:
 
 ## When to Use /swarm Over /orchestrate
 
-|Use `/swarm` when...|Use `/orchestrate` when...|
-|:---|:---|
-|5+ workers needed simultaneously|2-4 workers in a review|
-|Tasks are explicitly JSON-contracted|Tasks can be described informally|
-|Supervisor/Worker role separation matters|Simple coordination needed|
-|Wave execution needs session persisting across time|Single-session orchestration|
+| Use `/swarm` when...                                | Use `/orchestrate` when...        |
+| :-------------------------------------------------- | :-------------------------------- |
+| 5+ workers needed simultaneously                    | 2-4 workers in a review           |
+| Tasks are explicitly JSON-contracted                | Tasks can be described informally |
+| Supervisor/Worker role separation matters           | Simple coordination needed        |
+| Wave execution needs session persisting across time | Single-session orchestration      |
 
 ---
 
@@ -50,21 +50,10 @@ Every worker receives a structured JSON contract (not natural language):
   "task_id": "audit-auth-routes",
   "worker_type": "backend-specialist",
   "scope": "Audit all files in src/app/api/auth/ for security and type safety",
-  "files_to_read": [
-    "src/app/api/auth/login/route.ts",
-    "src/app/api/auth/register/route.ts",
-    "src/middleware.ts"
-  ],
+  "files_to_read": ["src/app/api/auth/login/route.ts", "src/app/api/auth/register/route.ts", "src/middleware.ts"],
   "files_to_write": [],
-  "context_summary": [
-    "Next.js 15 App Router project",
-    "Auth uses next-auth v5 (auth.ts pattern)",
-    "Database: Prisma 6 on PostgreSQL"
-  ],
-  "constraints": [
-    "Report findings only — do not modify files",
-    "Report BLOCKED if you cannot determine auth pattern from provided files"
-  ],
+  "context_summary": ["Next.js 15 App Router project", "Auth uses next-auth v5 (auth.ts pattern)", "Database: Prisma 6 on PostgreSQL"],
+  "constraints": ["Report findings only — do not modify files", "Report BLOCKED if you cannot determine auth pattern from provided files"],
   "output_format": {
     "status": "COMPLETE | BLOCKED | ERROR",
     "findings": ["list of specific issues found with file+line references"],
@@ -134,13 +123,16 @@ Supervisor writes task.md after each wave:
 # Swarm Session: [goal-slug]
 
 ## Wave 1 — [timestamp]
+
 - [task-id]: COMPLETE — [2-line summary]
 - [task-id]: BLOCKED — [reason] → redispatched with [context added]
 
 ## Issues Carrying Forward
+
 - [cross-task issue affecting Wave 2]
 
 ## Human Gate Status
+
 - [ ] Pending review
 ```
 
@@ -193,9 +185,9 @@ Suggestion:  Include tsconfig.json in files_to_read for next dispatch
 
 ## After /swarm — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Findings generated|→ Route to specific `/tribunal-*` to fix issues|
-|Architecture tasks blocked|→ `/plan` to resolve blocked items|
+| Outcome                    | Next Command                                    |
+| :------------------------- | :---------------------------------------------- |
+| Findings generated         | → Route to specific `/tribunal-*` to fix issues |
+| Architecture tasks blocked | → `/plan` to resolve blocked items              |
 
 ---

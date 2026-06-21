@@ -22,11 +22,11 @@ Read BEFORE scaffolding:
 
 ## When to Use /create
 
-|Use `/create` when...|Use something else when...|
-|:---|:---|
-|Starting a new project from scratch|Adding to an existing project → `/enhance`|
-|No codebase exists yet|Generating a focused code snippet → `/generate`|
-|You need a working scaffold with structure|Planning and understanding → `/plan`|
+| Use `/create` when...                      | Use something else when...                      |
+| :----------------------------------------- | :---------------------------------------------- |
+| Starting a new project from scratch        | Adding to an existing project → `/enhance`      |
+| No codebase exists yet                     | Generating a focused code snippet → `/generate` |
+| You need a working scaffold with structure | Planning and understanding → `/plan`            |
 
 ---
 
@@ -52,14 +52,14 @@ No scaffolding starts until all questions are answered.
 
 Based on the answers, the agent selects the appropriate stack:
 
-|App Type|Recommended Stack|
-|:---|:---|
-|Web app (content + interaction)|Next.js 15, TypeScript, Tailwind v4, Prisma|
-|API server only|Hono on Node 22, Zod, TypeScript|
-|Real-time app|Next.js 15 + WebSocket (Socket.io) or SSE|
-|Mobile app|Expo + React Native, Expo Router v4|
-|CLI tool|Node 22, Commander.js, TypeScript|
-|E-commerce|Next.js 15 + Stripe + Prisma|
+| App Type                        | Recommended Stack                           |
+| :------------------------------ | :------------------------------------------ |
+| Web app (content + interaction) | Next.js 15, TypeScript, Tailwind v4, Prisma |
+| API server only                 | Hono on Node 22, Zod, TypeScript            |
+| Real-time app                   | Next.js 15 + WebSocket (Socket.io) or SSE   |
+| Mobile app                      | Expo + React Native, Expo Router v4         |
+| CLI tool                        | Node 22, Commander.js, TypeScript           |
+| E-commerce                      | Next.js 15 + Stripe + Prisma                |
 
 Stack selection is presented to the user for approval before scaffolding begins.
 
@@ -148,12 +148,12 @@ Build fails after scaffold:
 
 ## After /create — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Scaffold created and verified|→ `/preview start` to launch dev server|
-|Code generated, needs tests|→ `/test` to add test coverage|
-|Need to add features|→ `/enhance` for feature additions|
-|Full audit before launch|→ `/audit` for health check|
+| Outcome                       | Next Command                            |
+| :---------------------------- | :-------------------------------------- |
+| Scaffold created and verified | → `/preview start` to launch dev server |
+| Code generated, needs tests   | → `/test` to add test coverage          |
+| Need to add features          | → `/enhance` for feature additions      |
+| Full audit before launch      | → `/audit` for health check             |
 
 ---
 

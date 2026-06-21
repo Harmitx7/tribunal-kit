@@ -1,11 +1,10 @@
 # /super-prompt — Tokenless Prompt Compiler
 
 ---
-required-skills: llm-engineering
----
+
+## required-skills: llm-engineering
 
 Converts conversational, fluffy requests into hyper-dense YAML structures that LLMs process perfectly, reducing prompt tokens and drastically improving response accuracy. **Zero API tokens are used during compilation.**
-
 
 ## $CONTEXT_REQUIRED
 
@@ -45,8 +44,8 @@ Copy the YAML output and paste it into the AI chat. The LLM will use this struct
 
 ## After /super-prompt — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|YAML generated|→ Paste into chat to trigger `/generate` or similar|
+| Outcome        | Next Command                                        |
+| :------------- | :-------------------------------------------------- |
+| YAML generated | → Paste into chat to trigger `/generate` or similar |
 
 ---

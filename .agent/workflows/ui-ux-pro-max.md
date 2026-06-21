@@ -21,12 +21,12 @@ Read BEFORE designing:
 
 ## When to Use /ui-ux-pro-max
 
-|Use `/ui-ux-pro-max` when...|Use instead when...|
-|:---|:---|
-|Building a visually distinctive interface|Functional-only component → `/generate`|
-|Design quality is the primary goal|Fast page needed → `/enhance`|
-|Creating from a design brief|Bug fix in UI → `/debug`|
-|Mobile + web parity required||
+| Use `/ui-ux-pro-max` when...              | Use instead when...                     |
+| :---------------------------------------- | :-------------------------------------- |
+| Building a visually distinctive interface | Functional-only component → `/generate` |
+| Design quality is the primary goal        | Fast page needed → `/enhance`           |
+| Creating from a design brief              | Bug fix in UI → `/debug`                |
+| Mobile + web parity required              |                                         |
 
 ---
 
@@ -136,10 +136,10 @@ Before finalizing:
 
 ## After /ui-ux-pro-max — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Design complete|→ `/preview start` to see it in action|
-|Need responsive checks|→ `/review` or manual viewport testing|
-|Needs backend integration|→ `/tribunal-backend` to hook up APIs|
+| Outcome                   | Next Command                           |
+| :------------------------ | :------------------------------------- |
+| Design complete           | → `/preview start` to see it in action |
+| Need responsive checks    | → `/review` or manual viewport testing |
+| Needs backend integration | → `/tribunal-backend` to hook up APIs  |
 
 ---

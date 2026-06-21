@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Dispatching sub-agents without a context_summary -> ✅ Always send a trimmed context, never the full conversation
 - ❌ Assuming sub-agents share memory -> ✅ Each agent invocation is stateless unless explicitly passed context
 - ❌ Running agents sequentially when they are independent -> ✅ Use fan-out/fan-in for parallelizable work
 
 ---
-
 
 # Agent Organizer — Multi-Agent Orchestration Mastery
 
@@ -40,6 +40,7 @@ Agents should defer specific domain problems to specialized sub-agents.
 ```
 
 ### Delegation Rules:
+
 1. **Never pass full histories:** Do not pass the entire conversation history to a worker sub-agent. Extract only the exact files and goal context required. (Context Window Budgeting).
 2. **Clear Boundaries:** If the worker is fixing CSS, it must not invent logic for the database.
 3. **Structured Handoff:** The parent agent requests JSON from the worker, parses it, and then acts. Let machines talk to machines through syntax, not prose.
@@ -48,7 +49,7 @@ Agents should defer specific domain problems to specialized sub-agents.
 
 ## 2. Execution Loops (Supervisor Pattern)
 
-A Supervisor decides *who* works and *when*, but does not execute the work.
+A Supervisor decides _who_ works and _when_, but does not execute the work.
 
 ```
 [User Request: "Add OAuth and secure it"]
@@ -67,7 +68,9 @@ A Supervisor decides *who* works and *when*, but does not execute the work.
 ```
 
 ### Handoff Signals
+
 A worker must return definitive state signals when yielding control:
+
 - `COMPLETE`: Goal achieved. Final diff generated.
 - `BLOCKED`: Missing context (e.g., "I need the `.env` schema").
 - `ERROR`: Script failed, requires manual Supervisor intervention.
@@ -84,7 +87,9 @@ Agents lose memory across boundaries. The Organizer must explicitly persist cont
 
 ```markdown
 <!-- task.md (The Global Execution State) -->
+
 # Current Objective: Build Chat Feature
+
 - [x] Initialize websocket connection
 - [/] (Worker: frontend-specialist) Build Chat UI component
 - [ ] (Worker: realtime-patterns) Implement presence sync
@@ -97,15 +102,13 @@ Agents lose memory across boundaries. The Organizer must explicitly persist cont
 Automation without oversight is reckless. The Organizer manages when to pause and query the human.
 
 **Mandatory Gates:**
+
 1. **Approval Gate (Before Execution):** "I have drafted the architecture plan. Do you approve execution?"
 2. **Recovery Gate (After 3 Failures):** "The database migration script has failed 3 times. I am halting. How would you like to proceed?"
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -117,8 +120,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -128,9 +129,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -141,17 +141,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -181,6 +182,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -191,5 +193,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

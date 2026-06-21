@@ -16,9 +16,9 @@ While Antigravity's base models (like Gemini) are powerful generalists, they don
 
 Skills are folder-based packages. You can define these scopes based on your needs:
 
-|Scope|Path|Description|
-|-------------|---------------------------------|------------------------------------|
-|**Workspace**|`<workspace-root>/.agent/skills/`|Available only in a specific project|
+| Scope         | Path                              | Description                          |
+| ------------- | --------------------------------- | ------------------------------------ |
+| **Workspace** | `<workspace-root>/.agent/skills/` | Available only in a specific project |
 
 ### Skill Directory Structure
 
@@ -182,17 +182,18 @@ Instead of constantly reminding the AI to "remember to add the license" or "fix 
 
 These advanced skills are automatically loaded by the `system-architect` and `cloud-engineer` agents when the request domain matches. They are NOT loaded by default — only when explicitly needed, preventing context bloat.
 
-| Skill | Activation Trigger | What It Knows |
-|-------|--------------------|---------------|
-| `git-pro` | Advanced Git operations, monorepo, release engineering | Git internals, bisect, worktrees, semantic-release, OIDC GitHub Actions, CODEOWNERS |
-| `containerization-pro` | "containerize", "Dockerfile", "Docker", "ECR" | Multi-stage builds (Node/Python/Rust/Go), image hardening, BuildKit, Trivy scanning, AWS ECR |
-| `cicd-pro` | "CI/CD pipeline", "deploy to", "GitHub Actions" | 3-stage pipeline, OIDC AWS auth, Blue/Green ECS deploy, rollback, Slack notifications |
-| `system-design-pro` | "design a system", "scale this", "N users", "capacity" | 6-step framework, scale estimation, CAP Theorem, database matrix, reference designs |
-| `cloud-architect` | "AWS", "Terraform", "ECS", "VPC", "infrastructure" | AWS service selection, Terraform HCL, VPC design, IAM, Secrets Manager, CloudWatch |
+| Skill                  | Activation Trigger                                     | What It Knows                                                                                |
+| ---------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| `git-pro`              | Advanced Git operations, monorepo, release engineering | Git internals, bisect, worktrees, semantic-release, OIDC GitHub Actions, CODEOWNERS          |
+| `containerization-pro` | "containerize", "Dockerfile", "Docker", "ECR"          | Multi-stage builds (Node/Python/Rust/Go), image hardening, BuildKit, Trivy scanning, AWS ECR |
+| `cicd-pro`             | "CI/CD pipeline", "deploy to", "GitHub Actions"        | 3-stage pipeline, OIDC AWS auth, Blue/Green ECS deploy, rollback, Slack notifications        |
+| `system-design-pro`    | "design a system", "scale this", "N users", "capacity" | 6-step framework, scale estimation, CAP Theorem, database matrix, reference designs          |
+| `cloud-architect`      | "AWS", "Terraform", "ECS", "VPC", "infrastructure"     | AWS service selection, Terraform HCL, VPC design, IAM, Secrets Manager, CloudWatch           |
 
 ### Golden Path (Decision 2B)
 
 All cloud/infra skills are opinionated toward:
+
 - **Cloud**: AWS
 - **Containers**: Docker + AWS ECR
 - **CI/CD**: GitHub Actions
@@ -202,7 +203,7 @@ All cloud/infra skills are opinionated toward:
 
 ### New Agents
 
-| Agent | Owns | Use When |
-|-------|------|----------|
-| `system-architect` | `system-design-pro` + `architecture` | Designing systems, capacity planning, scale questions |
-| `cloud-engineer` | `cloud-architect` + `cicd-pro` + `containerization-pro` | AWS infra, Dockerfiles, CI/CD pipelines, Terraform |
+| Agent              | Owns                                                    | Use When                                              |
+| ------------------ | ------------------------------------------------------- | ----------------------------------------------------- |
+| `system-architect` | `system-design-pro` + `architecture`                    | Designing systems, capacity planning, scale questions |
+| `cloud-engineer`   | `cloud-architect` + `cicd-pro` + `containerization-pro` | AWS infra, Dockerfiles, CI/CD pipelines, Terraform    |

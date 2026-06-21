@@ -106,7 +106,10 @@ async function analyzeSentiment(text: string) {
         },
       },
     },
-    messages: [{ role: "system", content: "Analyze sentiment." }, { role: "user", content: text }],
+    messages: [
+      { role: "system", content: "Analyze sentiment." },
+      { role: "user", content: text },
+    ],
   });
   const raw = JSON.parse(response.choices[0].message.content ?? "{}");
   return SentimentSchema.parse(raw); // always validate with Zod even in strict mode
@@ -243,9 +246,9 @@ const chunks = text.match(/.{1,1000}/g); // breaks mid-sentence, mid-word
 // ✅ GOOD: Semantic chunking with overlap
 function chunkDocument(text: string, options: ChunkOptions = {}): Chunk[] {
   const {
-    maxTokens = 512,      // chunk size
-    overlapTokens = 50,    // overlap between chunks
-    separator = "\n\n",    // split on paragraph boundaries first
+    maxTokens = 512, // chunk size
+    overlapTokens = 50, // overlap between chunks
+    separator = "\n\n", // split on paragraph boundaries first
   } = options;
 
   const paragraphs = text.split(separator);
@@ -319,7 +322,10 @@ app.get("/api/chat", async (req, res) => {
 // Client-side consumption
 const eventSource = new EventSource(`/api/chat?message=${encodeURIComponent(msg)}`);
 eventSource.onmessage = (event) => {
-  if (event.data === "[DONE]") { eventSource.close(); return; }
+  if (event.data === "[DONE]") {
+    eventSource.close();
+    return;
+  }
   const { content } = JSON.parse(event.data);
   appendToChat(content);
 };
@@ -346,10 +352,7 @@ eventSource.onmessage = (event) => {
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -361,8 +364,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -372,9 +373,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -385,17 +385,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -425,6 +426,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -435,5 +437,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

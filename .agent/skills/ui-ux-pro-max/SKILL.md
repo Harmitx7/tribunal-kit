@@ -41,6 +41,7 @@ This skill transforms AI-generated interfaces from generic "AI slop" into portfo
 Before writing a single `div`, commit to a **visual identity**. This is the most important decision.
 
 ### The Spectrum of Intention
+
 ```
 PICK ONE direction — do NOT blend without purpose:
 
@@ -56,20 +57,21 @@ Retro Analog      → Warm grain, rounded type, muted palettes, physical texture
 ```
 
 ### Identity Lockfile (Define These 7 Tokens)
+
 ```css
 /* EVERY project must define these before any component work */
 :root {
-  --font-display: 'Clash Display', sans-serif;   /* Headlines — characterful */
-  --font-body: 'Satoshi', sans-serif;             /* Body — readable */
-  --font-mono: 'JetBrains Mono', monospace;       /* Code — purposeful */
+  --font-display: "Clash Display", sans-serif; /* Headlines — characterful */
+  --font-body: "Satoshi", sans-serif; /* Body — readable */
+  --font-mono: "JetBrains Mono", monospace; /* Code — purposeful */
 
-  --radius-sharp: 2px;                            /* Tags, badges */
-  --radius-default: 12px;                         /* Cards, inputs */
-  --radius-soft: 24px;                            /* Buttons, pills */
+  --radius-sharp: 2px; /* Tags, badges */
+  --radius-default: 12px; /* Cards, inputs */
+  --radius-soft: 24px; /* Buttons, pills */
 
-  --shadow-subtle: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.04);
-  --shadow-medium: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
-  --shadow-dramatic: 0 24px 48px rgba(0,0,0,0.12), 0 8px 16px rgba(0,0,0,0.06);
+  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.04);
+  --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-dramatic: 0 24px 48px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.06);
 }
 ```
 
@@ -82,13 +84,13 @@ Retro Analog      → Warm grain, rounded type, muted palettes, physical texture
 ```css
 :root {
   /* OKLCH: oklch(lightness% chroma hue) */
-  --primary: oklch(65% 0.25 250);            /* Vivid teal */
-  --primary-hover: oklch(55% 0.25 250);      /* Same hue, darker */
-  --primary-subtle: oklch(95% 0.03 250);     /* Tinted background */
+  --primary: oklch(65% 0.25 250); /* Vivid teal */
+  --primary-hover: oklch(55% 0.25 250); /* Same hue, darker */
+  --primary-subtle: oklch(95% 0.03 250); /* Tinted background */
 
-  --danger: oklch(60% 0.25 25);              /* Warm red */
-  --success: oklch(70% 0.18 155);            /* Natural green */
-  --warning: oklch(80% 0.15 80);             /* Amber */
+  --danger: oklch(60% 0.25 25); /* Warm red */
+  --success: oklch(70% 0.18 155); /* Natural green */
+  --warning: oklch(80% 0.15 80); /* Amber */
 
   /* Neutral scale — tinted with brand hue for cohesion */
   --gray-50: oklch(98% 0.005 250);
@@ -113,6 +115,7 @@ Retro Analog      → Warm grain, rounded type, muted palettes, physical texture
 ```
 
 ### Palette Rules
+
 ```
 1. Primary: ONE dominant hue. Never two competing saturated colors.
 2. Accent: Complementary or analogous to primary, used sparingly (<10% of surface area).
@@ -128,43 +131,48 @@ Retro Analog      → Warm grain, rounded type, muted palettes, physical texture
 Typography is 80% of UI design. Get this right and everything else follows.
 
 ### The Type Scale (Musical Intervals)
+
 ```css
 /* Major Third scale (1.25 ratio) — balanced for UI */
 :root {
-  --text-xs: clamp(0.64rem, 0.5vw + 0.5rem, 0.75rem);    /* 10-12px */
-  --text-sm: clamp(0.8rem, 0.6vw + 0.6rem, 0.875rem);    /* 12-14px */
-  --text-base: clamp(1rem, 0.8vw + 0.7rem, 1.125rem);    /* 16-18px */
-  --text-lg: clamp(1.25rem, 1vw + 0.8rem, 1.5rem);       /* 20-24px */
-  --text-xl: clamp(1.563rem, 1.5vw + 1rem, 2rem);        /* 25-32px */
-  --text-2xl: clamp(1.953rem, 2vw + 1.2rem, 2.5rem);     /* 31-40px */
-  --text-3xl: clamp(2.441rem, 3vw + 1.5rem, 3.5rem);     /* 39-56px */
-  --text-hero: clamp(3.052rem, 5vw + 1.5rem, 6rem);      /* 48-96px */
+  --text-xs: clamp(0.64rem, 0.5vw + 0.5rem, 0.75rem); /* 10-12px */
+  --text-sm: clamp(0.8rem, 0.6vw + 0.6rem, 0.875rem); /* 12-14px */
+  --text-base: clamp(1rem, 0.8vw + 0.7rem, 1.125rem); /* 16-18px */
+  --text-lg: clamp(1.25rem, 1vw + 0.8rem, 1.5rem); /* 20-24px */
+  --text-xl: clamp(1.563rem, 1.5vw + 1rem, 2rem); /* 25-32px */
+  --text-2xl: clamp(1.953rem, 2vw + 1.2rem, 2.5rem); /* 31-40px */
+  --text-3xl: clamp(2.441rem, 3vw + 1.5rem, 3.5rem); /* 39-56px */
+  --text-hero: clamp(3.052rem, 5vw + 1.5rem, 6rem); /* 48-96px */
 }
 
 /* Typographic rules */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;    /* Tighten headlines */
-  line-height: 1.1;           /* Tight leading for large type */
-  text-wrap: balance;         /* CSS native text balancing */
+  letter-spacing: -0.02em; /* Tighten headlines */
+  line-height: 1.1; /* Tight leading for large type */
+  text-wrap: balance; /* CSS native text balancing */
 }
 
-p, li {
+p,
+li {
   font-family: var(--font-body);
-  line-height: 1.6;           /* Generous leading for readability */
-  max-width: 65ch;            /* Optimal reading measure */
+  line-height: 1.6; /* Generous leading for readability */
+  max-width: 65ch; /* Optimal reading measure */
 }
 
 /* Optical kerning for hero text */
 .hero-title {
   font-size: var(--text-hero);
   font-weight: 700;
-  letter-spacing: -0.04em;    /* Aggressive tightening at large sizes */
-  line-height: 0.95;          /* Negative leading for drama */
+  letter-spacing: -0.04em; /* Aggressive tightening at large sizes */
+  line-height: 0.95; /* Negative leading for drama */
 }
 ```
 
 ### Font Pairing Rules
+
 ```
 WINNING PAIRS (character + readability):
   Display: Clash Display     + Body: Satoshi          → Modern editorial
@@ -187,32 +195,34 @@ FORBIDDEN:
 The best designs follow a grid, then intentionally break it at key moments for drama.
 
 ### The 8px Spatial System
+
 ```css
 :root {
-  --space-1: 0.25rem;  /* 4px  — micro: icon gap */
-  --space-2: 0.5rem;   /* 8px  — tight: tag padding */
-  --space-3: 0.75rem;  /* 12px — compact: list item gap */
-  --space-4: 1rem;     /* 16px — default: input padding */
-  --space-5: 1.5rem;   /* 24px — card padding */
-  --space-6: 2rem;     /* 32px — section gap */
-  --space-8: 3rem;     /* 48px — major section break */
-  --space-10: 4rem;    /* 64px — page section */
-  --space-16: 8rem;    /* 128px — hero breathing room */
+  --space-1: 0.25rem; /* 4px  — micro: icon gap */
+  --space-2: 0.5rem; /* 8px  — tight: tag padding */
+  --space-3: 0.75rem; /* 12px — compact: list item gap */
+  --space-4: 1rem; /* 16px — default: input padding */
+  --space-5: 1.5rem; /* 24px — card padding */
+  --space-6: 2rem; /* 32px — section gap */
+  --space-8: 3rem; /* 48px — major section break */
+  --space-10: 4rem; /* 64px — page section */
+  --space-16: 8rem; /* 128px — hero breathing room */
 }
 ```
 
 ### Layout Techniques That Stand Out
+
 ```css
 /* 1. Asymmetric two-column (not 50/50) */
 .layout-asymmetric {
   display: grid;
-  grid-template-columns: 2fr 1fr;   /* 66/33 split — creates visual tension */
+  grid-template-columns: 2fr 1fr; /* 66/33 split — creates visual tension */
   gap: var(--space-8);
 }
 
 /* 2. Overlap / Negative margin (elements bleeding into each other) */
 .card-featured {
-  margin-top: -4rem;                  /* Pull into previous section */
+  margin-top: -4rem; /* Pull into previous section */
   position: relative;
   z-index: 2;
 }
@@ -220,13 +230,13 @@ The best designs follow a grid, then intentionally break it at key moments for d
 /* 3. Full-bleed breakout from container */
 .full-bleed {
   width: 100vw;
-  margin-left: calc(50% - 50vw);     /* Escape any container */
+  margin-left: calc(50% - 50vw); /* Escape any container */
 }
 
 /* 4. Broken grid — one element escapes alignment */
 .grid-broken > :nth-child(3) {
-  grid-column: 1 / -1;               /* Span full width */
-  transform: rotate(-1deg);          /* Subtle tilt = handmade feel */
+  grid-column: 1 / -1; /* Span full width */
+  transform: rotate(-1deg); /* Subtle tilt = handmade feel */
 }
 ```
 
@@ -237,6 +247,7 @@ The best designs follow a grid, then intentionally break it at key moments for d
 Motion should tell a story. Every animation needs a **purpose**: feedback, orientation, or delight.
 
 ### The Motion Hierarchy
+
 ```
 Priority 1: FEEDBACK    — Button press, toggle, form validation (instant, <100ms)
 Priority 2: ORIENTATION — Page transitions, modal open/close (200-400ms)
@@ -246,13 +257,14 @@ NEVER animate for decoration alone. Every motion answers: "What just happened?" 
 ```
 
 ### CSS-First Motion Library
+
 ```css
 /* Custom easing — never use 'ease' or 'linear' */
 :root {
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);    /* Snappy exit */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1); /* Snappy exit */
   --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1); /* Overshoot */
   --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1); /* Dramatic */
-  --spring: cubic-bezier(0.22, 1.2, 0.36, 1);         /* Bounce feel */
+  --spring: cubic-bezier(0.22, 1.2, 0.36, 1); /* Bounce feel */
 }
 
 /* Staggered reveal — the single most impactful animation pattern */
@@ -261,13 +273,24 @@ NEVER animate for decoration alone. Every motion answers: "What just happened?" 
   transform: translateY(20px);
   animation: fadeUp 0.6s var(--ease-out-expo) forwards;
 }
-.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
-.stagger-children > *:nth-child(2) { animation-delay: 80ms; }
-.stagger-children > *:nth-child(3) { animation-delay: 160ms; }
-.stagger-children > *:nth-child(4) { animation-delay: 240ms; }
+.stagger-children > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger-children > *:nth-child(2) {
+  animation-delay: 80ms;
+}
+.stagger-children > *:nth-child(3) {
+  animation-delay: 160ms;
+}
+.stagger-children > *:nth-child(4) {
+  animation-delay: 240ms;
+}
 
 @keyframes fadeUp {
-  to { opacity: 1; transform: translateY(0); }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Clip-path reveal — more sophisticated than fade */
@@ -276,7 +299,9 @@ NEVER animate for decoration alone. Every motion answers: "What just happened?" 
   animation: clipReveal 0.8s var(--ease-out-expo) forwards;
 }
 @keyframes clipReveal {
-  to { clip-path: inset(0 0 0 0); }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
 }
 
 /* Magnetic hover (cursor follows) — for buttons and cards */
@@ -289,7 +314,9 @@ NEVER animate for decoration alone. Every motion answers: "What just happened?" 
 
 /* Reduce motion — MANDATORY accessibility */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -307,32 +334,32 @@ Flat shadows look AI-generated. Real shadows have layers.
 /* Layered shadow system — physics-based */
 .elevation-1 {
   box-shadow:
-    0 1px 2px rgba(0,0,0,0.03),
-    0 2px 4px rgba(0,0,0,0.03),
-    0 4px 8px rgba(0,0,0,0.03);
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    0 2px 4px rgba(0, 0, 0, 0.03),
+    0 4px 8px rgba(0, 0, 0, 0.03);
 }
 
 .elevation-2 {
   box-shadow:
-    0 2px 4px rgba(0,0,0,0.02),
-    0 4px 8px rgba(0,0,0,0.03),
-    0 8px 16px rgba(0,0,0,0.04),
-    0 16px 32px rgba(0,0,0,0.04);
+    0 2px 4px rgba(0, 0, 0, 0.02),
+    0 4px 8px rgba(0, 0, 0, 0.03),
+    0 8px 16px rgba(0, 0, 0, 0.04),
+    0 16px 32px rgba(0, 0, 0, 0.04);
 }
 
 .elevation-3 {
   box-shadow:
-    0 4px 8px rgba(0,0,0,0.02),
-    0 8px 16px rgba(0,0,0,0.04),
-    0 16px 32px rgba(0,0,0,0.06),
-    0 32px 64px rgba(0,0,0,0.08);
+    0 4px 8px rgba(0, 0, 0, 0.02),
+    0 8px 16px rgba(0, 0, 0, 0.04),
+    0 16px 32px rgba(0, 0, 0, 0.06),
+    0 32px 64px rgba(0, 0, 0, 0.08);
 }
 
 /* Colored shadow (matches card content) */
 .card-accent {
   box-shadow:
-    0 8px 24px oklch(65% 0.15 250 / 0.2),  /* Tinted with primary */
-    0 2px 4px rgba(0,0,0,0.04);
+    0 8px 24px oklch(65% 0.15 250 / 0.2),
+    /* Tinted with primary */ 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 ```
 
@@ -347,21 +374,21 @@ Dark mode is a separate design system, not a filter.
 /* Right: Reduce contrast, shift depth model, adjust chroma */
 
 [data-theme="dark"] {
-  --bg-base: oklch(8% 0.005 250);      /* Near-black, not pure #000 */
-  --bg-surface: oklch(13% 0.008 250);  /* Cards — slightly lighter */
-  --bg-elevated: oklch(18% 0.01 250);  /* Modals — even lighter */
+  --bg-base: oklch(8% 0.005 250); /* Near-black, not pure #000 */
+  --bg-surface: oklch(13% 0.008 250); /* Cards — slightly lighter */
+  --bg-elevated: oklch(18% 0.01 250); /* Modals — even lighter */
 
-  --text-primary: oklch(93% 0.005 250);   /* Not pure white — too harsh */
+  --text-primary: oklch(93% 0.005 250); /* Not pure white — too harsh */
   --text-secondary: oklch(65% 0.01 250);
 
   /* Borders become lighter in dark mode, not darker */
   --border: oklch(22% 0.01 250);
 
   /* Shadows become ambient glows or disappear entirely */
-  --shadow-medium: 0 4px 12px rgba(0,0,0,0.4), 0 0 1px rgba(255,255,255,0.05);
+  --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.05);
 
   /* Saturated colors DECREASE chroma in dark mode to avoid eye strain */
-  --primary: oklch(70% 0.18 250);  /* Lower chroma than light mode */
+  --primary: oklch(70% 0.18 250); /* Lower chroma than light mode */
 }
 
 /* Key rules:
@@ -405,8 +432,11 @@ Don't think "desktop then mobile." Think "content then container."
 
 /* Mobile touch targets */
 @media (pointer: coarse) {
-  button, a, input, select {
-    min-height: 48px;   /* Thumb-friendly */
+  button,
+  a,
+  input,
+  select {
+    min-height: 48px; /* Thumb-friendly */
     min-width: 48px;
   }
 }
@@ -421,7 +451,7 @@ The difference between "AI-generated" and "designed" is atmosphere.
 ```css
 /* Noise grain overlay — adds physical texture */
 .grain::after {
-  content: '';
+  content: "";
   position: fixed;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
@@ -432,10 +462,7 @@ The difference between "AI-generated" and "designed" is atmosphere.
 
 /* Gradient mesh — subtle background depth */
 .atmosphere {
-  background:
-    radial-gradient(ellipse at 20% 50%, oklch(95% 0.03 250 / 0.5), transparent 50%),
-    radial-gradient(ellipse at 80% 20%, oklch(95% 0.03 30 / 0.3), transparent 50%),
-    oklch(98% 0.005 250);
+  background: radial-gradient(ellipse at 20% 50%, oklch(95% 0.03 250 / 0.5), transparent 50%), radial-gradient(ellipse at 80% 20%, oklch(95% 0.03 30 / 0.3), transparent 50%), oklch(98% 0.005 250);
 }
 
 /* Glassmorphism — done correctly */
@@ -444,7 +471,7 @@ The difference between "AI-generated" and "designed" is atmosphere.
   backdrop-filter: blur(20px) saturate(1.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.2);
   border: 1px solid oklch(100% 0 0 / 0.15);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
 }
 ```
 
@@ -514,8 +541,6 @@ Anti-Slop:   ✅ Passed (12/12 checks)
 
 ---
 
-
-
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
 1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
@@ -525,8 +550,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
 
 ---
-
-
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor` · `ui-ux-auditor` · `accessibility-reviewer`**
@@ -538,9 +561,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 4. **AI-Slop Convergence:** Producing the same purple-gradient, Inter-font, bento-grid layout that every AI defaults to.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -552,18 +574,19 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 - [ ] Have I verified the design passes the Anti-AI-Slop Checklist?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -593,6 +616,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -603,5 +627,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

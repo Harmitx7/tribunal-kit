@@ -11,13 +11,13 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Using `@State` for shared data between views -> ✅ `@State` is local to a view; use `@Binding`, `@Environment`, or `@Observable` for sharing
 - ❌ Putting heavy computation in the `body` property -> ✅ `body` is called on EVERY re-render; move computation to `.task {}` or `onChange`
 - ❌ `List { ForEach(items) { ... } }` without `id:` parameter -> ✅ Always provide `id:` for `Identifiable` conformance or use `\.self`
 - ❌ Using `NavigationView` -> ✅ Deprecated in iOS 16+; use `NavigationStack` or `NavigationSplitView`
 
 ---
-
 
 # SwiftUI Expert — Native Apple Platforms Mastery
 
@@ -40,18 +40,18 @@ struct ProfileView: View {
 // ✅ NEW WAY (iOS 17+ / @Observable)
 import Observation
 
-@Observable 
+@Observable
 class UserProfile {
     var name: String = "Guest"
     var age: Int = 0
-    // No @Published needed! Only properties that are actually read 
+    // No @Published needed! Only properties that are actually read
     // inside the body will trigger view updates.
 }
 
 struct ProfileView: View {
     // Treat the reference type exactly like a value type!
     @State private var profile = UserProfile()
-    
+
     var body: some View {
         VStack {
             TextField("Name", text: $profile.name)
@@ -62,6 +62,7 @@ struct ProfileView: View {
 ```
 
 ### Property Data Flow Cheat Sheet
+
 - `@State`: The view OWNS value (or reference if `@Observable`).
 - `@Binding`: The view mutates a value OWNED by a parent.
 - `@Environment`: The view reads value injected high up in the view hierarchy.
@@ -88,7 +89,7 @@ struct CleanView: View {
             footerSection
         }
     }
-    
+
     private var headerSection: some View {
         Text("Header").font(.headline)
     }
@@ -96,13 +97,14 @@ struct CleanView: View {
 ```
 
 ### Modifier Ordering Matters
+
 Modifiers wrap views sequentially. The order fundamentally changes the rendering.
 
 ```swift
 // Padding BEFORE Background
 Text("Hello")
     .padding()
-    .background(Color.blue) 
+    .background(Color.blue)
 // Result: A large blue box with text inside.
 
 // Padding AFTER Background
@@ -118,7 +120,7 @@ Text("Hello")
 
 ```swift
 // ❌ BAD: Using indices in ForEach
-// If the array mutates (items injected/deleted), SwiftUI loses 
+// If the array mutates (items injected/deleted), SwiftUI loses
 // track of identity and re-renders EVERYTHING aggressively.
 ForEach(0..<items.count, id: \.self) { index in
     ItemRow(item: items[index])
@@ -136,6 +138,7 @@ ForEach(items) { item in
 ```
 
 ### Avoiding Massive Layout Recalculations
+
 Use `LazyVStack` and `LazyHStack` inside ScrollViews when presenting large lists, but NOT everywhere. Normal `VStack` is faster for < 20 items because it pre-calculates boundaries instantly.
 
 ---
@@ -146,17 +149,14 @@ While MVVM is historically popular, SwiftUI natively represents View-as-a-functi
 
 ```swift
 // ✅ Context-Driven / Feature-Driven
-// The Model handles data fetching/logic. 
+// The Model handles data fetching/logic.
 // The View creates its own local @State and passes @Bindings down.
 // Only use full ViewModels for complex orchestration crossing multiple views.
 ```
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -168,8 +168,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -179,9 +177,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -192,17 +189,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -232,6 +230,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -242,5 +241,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

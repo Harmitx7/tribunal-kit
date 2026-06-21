@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Choosing microservices for a team of 1-3 developers -> ✅ Start monolith, extract services only when team/scale demands it
 - ❌ Using event-driven architecture without understanding eventual consistency -> ✅ Events mean data will be stale; design for it
 - ❌ Skipping ADRs (Architecture Decision Records) -> ✅ Every non-obvious decision needs a written 'why' for future maintainers
 
 ---
-
 
 # Architecture — System Design Mastery
 
@@ -34,6 +34,7 @@ Team size?           Scale?                  Cadence?
 ```
 
 **3 Questions Before Any Pattern:**
+
 1. What SPECIFIC problem does this pattern solve?
 2. Is there a simpler solution?
 3. Can we add this LATER when proven needed?
@@ -52,7 +53,9 @@ Application defines interfaces (ports). Infrastructure implements them (adapters
 
 ```typescript
 // Domain — pure business logic, zero external dependencies
-interface UserRepository { findById(id: string): Promise<User | null>; }
+interface UserRepository {
+  findById(id: string): Promise<User | null>;
+}
 class User {
   promote(): void {
     if (this._role === UserRole.ADMIN) throw new DomainError("Already admin");
@@ -73,7 +76,9 @@ class PromoteUserUseCase {
 
 // Infrastructure — concrete implementations of ports
 class PostgresUserRepository implements UserRepository {
-  async findById(id: string) { /* db.query(...) */ }
+  async findById(id: string) {
+    /* db.query(...) */
+  }
 }
 ```
 
@@ -115,13 +120,13 @@ Outbox Pattern (reliable publishing):
 
 ## Anti-Patterns Reference
 
-| Pattern | When it's an Anti-Pattern | Simpler Alternative |
-|---------|--------------------------|---------------------|
-| Microservices | Before team or scale justifies it | Modular monolith |
-| Clean/Hexagonal | Over-abstraction for simple CRUD | Concrete first, interfaces later |
-| Event Sourcing | No business requirement for audit/replay | Append-only audit log |
-| CQRS | Simple data model, no read/write divergence | Single model |
-| Repository | Simple CRUD, single database | ORM direct access |
+| Pattern         | When it's an Anti-Pattern                   | Simpler Alternative              |
+| --------------- | ------------------------------------------- | -------------------------------- |
+| Microservices   | Before team or scale justifies it           | Modular monolith                 |
+| Clean/Hexagonal | Over-abstraction for simple CRUD            | Concrete first, interfaces later |
+| Event Sourcing  | No business requirement for audit/replay    | Append-only audit log            |
+| CQRS            | Simple data model, no read/write divergence | Single model                     |
+| Repository      | Simple CRUD, single database                | ORM direct access                |
 
 ---
 
@@ -129,6 +134,7 @@ Outbox Pattern (reliable publishing):
 
 ```markdown
 ## ADR-001: [Decision Title]
+
 **Status:** Proposed | Accepted | Deprecated | Superseded by ADR-XXX
 
 **Context:** [Problem + constraints: team, scale, timeline]
@@ -140,6 +146,7 @@ Outbox Pattern (reliable publishing):
 **Trade-offs:** [What we consciously give up]
 
 **Consequences:**
+
 - Positive: [Benefits]
 - Negative: [Costs/Risks]
 - Mitigation: [How to address negatives]
@@ -171,10 +178,7 @@ Architecture:   Simple Mono   Modular Mono  Distributed
 Framework:      Next.js API   NestJS        Microservices
 ```
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -186,8 +190,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -197,9 +199,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -210,17 +211,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -250,6 +252,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -260,5 +263,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

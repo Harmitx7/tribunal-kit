@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Creating CSS variables for every possible value -> ✅ Only tokenize values that appear 3+ times across components
 - ❌ Extracting a design system before the UI is stable -> ✅ Wait until patterns are proven by real usage before standardizing
 - ❌ Naming tokens by appearance (`--blue-500`) instead of purpose (`--color-primary`) -> ✅ Semantic names survive theme changes
 
 ---
-
 
 # Extract Design System — Tokenization Mastery
 
@@ -27,6 +27,7 @@ routing:
 When reviewing a messy, legacy UI file (`<div style="background: #e23e2a; border-radius: 6px; padding: 12px">`), the agent must extract these hardcoded values into Global Tokens.
 
 ### Tier 1: Core Design Tokens (The Foundation)
+
 Tokens should be semantic, not literal. `color-brand` > `color-red`.
 
 ```css
@@ -37,39 +38,40 @@ Tokens should be semantic, not literal. `color-brand` > `color-red`.
   --surface-muted: 210, 40%, 96%;
 
   /* Typography */
-  --font-sans: 'Inter', system-ui, sans-serif;
-  
+  --font-sans: "Inter", system-ui, sans-serif;
+
   /* Space / Geometry (8px grid scale) */
-  --space-1: 0.25rem;  /* 4px */
-  --space-2: 0.5rem;   /* 8px */
-  --space-3: 0.75rem;  /* 12px */
-  --space-4: 1rem;     /* 16px */
-  
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+
   /* Radaii */
   --radius-sm: 4px;
-  --radius-md: 6px;    /* Extracted from the 6px legacy element */
+  --radius-md: 6px; /* Extracted from the 6px legacy element */
 }
 ```
 
-### Tier 2: The Refactor 
+### Tier 2: The Refactor
+
 (Using Tailwind v4 CSS-First as the standard delivery mechanism)
 
 ```css
 @theme {
-    --color-primary: hsl(var(--brand-primary));
-    --spacing-3: var(--space-3);
-    --radius-md: var(--radius-md);
+  --color-primary: hsl(var(--brand-primary));
+  --spacing-3: var(--space-3);
+  --radius-md: var(--radius-md);
 }
 ```
 
 ---
 
-## 2. Standardizing the 3 "C" Configurations 
+## 2. Standardizing the 3 "C" Configurations
 
 If building a design system inside React/Next.js, standardize the system through 3 primary mechanisms.
 
 1. **Colors (Dark Mode First):** Every single color extracted must have an inverse defined for `[data-theme='dark']`.
-2. **Container Queries:** Media queries (`@media (min-width)`) define the *device*. Container queries (`@container (min-width)`) define the *component context*. Always extract component sizing to rely on container-driven layouts for ultimate reusability.
+2. **Container Queries:** Media queries (`@media (min-width)`) define the _device_. Container queries (`@container (min-width)`) define the _component context_. Always extract component sizing to rely on container-driven layouts for ultimate reusability.
 3. **Compound Variants (CVA):** Group extracted CSS classes into logical component states rather than passing 10 boolean props.
 
 ```typescript
@@ -87,7 +89,7 @@ const buttonStyles = cva(
       },
       size: {
         sm: "h-9 px-3 text-sm",
-        default: "h-10 px-4 py-2",     // Extracted standard size
+        default: "h-10 px-4 py-2", // Extracted standard size
         lg: "h-11 px-8",
       },
     },
@@ -95,7 +97,7 @@ const buttonStyles = cva(
       intent: "primary",
       size: "default",
     },
-  }
+  },
 );
 ```
 
@@ -110,10 +112,7 @@ A Design System must mandate accessibility at the token level, preventing develo
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -125,8 +124,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -136,9 +133,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -149,17 +145,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -189,6 +186,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -199,5 +197,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

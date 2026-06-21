@@ -24,12 +24,12 @@ Read BEFORE generating any code (MANDATORY — never skip):
 
 ## When to Use /generate
 
-| Use `/generate` when... | Use something else when... |
-|:---|:---|
-| New code needs to be written from scratch | Existing code needs modification → `/enhance` |
-| A single focused piece of code is needed | Multi-domain build → `/create` or `/swarm` |
-| A safe, reviewed snippet is required | You want to understand options first → `/plan` |
-| You need a quick but Tribunal-reviewed piece | Full project structure needed → `/create` |
+| Use `/generate` when...                      | Use something else when...                     |
+| :------------------------------------------- | :--------------------------------------------- |
+| New code needs to be written from scratch    | Existing code needs modification → `/enhance`  |
+| A single focused piece of code is needed     | Multi-domain build → `/create` or `/swarm`     |
+| A safe, reviewed snippet is required         | You want to understand options first → `/plan` |
+| You need a quick but Tribunal-reviewed piece | Full project structure needed → `/create`      |
 
 ---
 
@@ -104,6 +104,7 @@ When unsure: write `// VERIFY: [specific reason]` instead of hallucinating.
 ## Reviewer Auto-Selection
 
 **Always active:**
+
 ```
 precedence-reviewer→ Enforces repository Case Law and past rejections (Runs First)
 logic-reviewer     → Hallucinated methods, undefined refs, impossible logic
@@ -112,19 +113,19 @@ security-auditor   → OWASP vulnerabilities, hardcoded secrets, injection
 
 **Auto-activated by keywords:**
 
-| Keyword in request | Additional Reviewers |
-|:---|:---|
-| `api`, `route`, `endpoint`, `handler`, `server action` | `dependency-reviewer` + `type-safety-reviewer` |
-| `sql`, `query`, `database`, `prisma`, `drizzle`, `orm` | `sql-reviewer` |
-| `component`, `hook`, `react`, `vue`, `jsx`, `tsx` | `frontend-reviewer` + `type-safety-reviewer` + `ui-ux-auditor` |
-| `ui`, `design`, `landing`, `page`, `layout`, `style`, `css` | `ui-ux-auditor` + `accessibility-reviewer` |
-| `animation`, `gsap`, `framer`, `motion`, `scroll` | `frontend-reviewer` + `performance-reviewer` + `ui-ux-auditor` |
-| `test`, `spec`, `vitest`, `jest`, `playwright` | `test-coverage-reviewer` |
-| `slow`, `optimize`, `cache`, `performance`, `bundle` | `performance-reviewer` |
-| `mobile`, `react native`, `expo` | `mobile-reviewer` |
-| `llm`, `openai`, `anthropic`, `gemini`, `embedding`, `ai` | `ai-code-reviewer` |
-| `aria`, `wcag`, `a11y`, `accessibility` | `accessibility-reviewer` + `ui-ux-auditor` |
-| `import`, `package`, `npm`, `require` | `dependency-reviewer` |
+| Keyword in request                                          | Additional Reviewers                                           |
+| :---------------------------------------------------------- | :------------------------------------------------------------- |
+| `api`, `route`, `endpoint`, `handler`, `server action`      | `dependency-reviewer` + `type-safety-reviewer`                 |
+| `sql`, `query`, `database`, `prisma`, `drizzle`, `orm`      | `sql-reviewer`                                                 |
+| `component`, `hook`, `react`, `vue`, `jsx`, `tsx`           | `frontend-reviewer` + `type-safety-reviewer` + `ui-ux-auditor` |
+| `ui`, `design`, `landing`, `page`, `layout`, `style`, `css` | `ui-ux-auditor` + `accessibility-reviewer`                     |
+| `animation`, `gsap`, `framer`, `motion`, `scroll`           | `frontend-reviewer` + `performance-reviewer` + `ui-ux-auditor` |
+| `test`, `spec`, `vitest`, `jest`, `playwright`              | `test-coverage-reviewer`                                       |
+| `slow`, `optimize`, `cache`, `performance`, `bundle`        | `performance-reviewer`                                         |
+| `mobile`, `react native`, `expo`                            | `mobile-reviewer`                                              |
+| `llm`, `openai`, `anthropic`, `gemini`, `embedding`, `ai`   | `ai-code-reviewer`                                             |
+| `aria`, `wcag`, `a11y`, `accessibility`                     | `accessibility-reviewer` + `ui-ux-auditor`                     |
+| `import`, `package`, `npm`, `require`                       | `dependency-reviewer`                                          |
 
 > For maximum safety on critical code: use `/tribunal-full` for all 11 reviewers simultaneously.
 
@@ -132,11 +133,11 @@ security-auditor   → OWASP vulnerabilities, hardcoded secrets, injection
 
 ## Reviewer Verdicts
 
-| Verdict | Meaning | What Happens |
-|:---|:---|:---|
-| `✅ APPROVED` | No issues found | Proceeds to Human Gate |
-| `⚠️ WARNING` | Non-blocking issue | Human Gate shown with warning highlighted |
-| `❌ REJECTED` | Blocking issue | Maker revises before Human Gate |
+| Verdict       | Meaning            | What Happens                              |
+| :------------ | :----------------- | :---------------------------------------- |
+| `✅ APPROVED` | No issues found    | Proceeds to Human Gate                    |
+| `⚠️ WARNING`  | Non-blocking issue | Human Gate shown with warning highlighted |
+| `❌ REJECTED` | Blocking issue     | Maker revises before Human Gate           |
 
 **Retry limit:** Maker is revised up to 3 times per REJECTED verdict. After 3 failures, the session halts and reports to the user with full failure history. No silent failures.
 
@@ -154,7 +155,7 @@ Active reviewers: logic · security · [others]
 ━━━ Verdicts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 logic-reviewer:      ✅ APPROVED
-security-auditor:    ✅ APPROVED  
+security-auditor:    ✅ APPROVED
 dependency-reviewer: ⚠️ WARNING — lodash not in package.json
 
 ━━━ Warnings ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -169,15 +170,15 @@ Write to disk?  Y = approve | N = discard | R = revise with feedback
 
 ---
 
-| After /generate shows... | Go to |
-|:---|:---|
-| Multiple files need changing | `/enhance` for impact-zone analysis |
+| After /generate shows...             | Go to                                 |
+| :----------------------------------- | :------------------------------------ |
+| Multiple files need changing         | `/enhance` for impact-zone analysis   |
 | Security-critical code was generated | `/tribunal-full` for maximum coverage |
-| DB queries were generated | `/tribunal-database` |
-| New API routes were generated | `/tribunal-backend` |
-| Animation/motion code generated | `/tribunal-frontend` |
-| Tests need to be written next | `/test` |
-| Something was rejected 3 times | Escalate to human with failure report |
+| DB queries were generated            | `/tribunal-database`                  |
+| New API routes were generated        | `/tribunal-backend`                   |
+| Animation/motion code generated      | `/tribunal-frontend`                  |
+| Tests need to be written next        | `/test`                               |
+| Something was rejected 3 times       | Escalate to human with failure report |
 
 ---
 

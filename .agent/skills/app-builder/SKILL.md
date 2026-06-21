@@ -11,12 +11,12 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Generating entire applications in one shot -> ✅ Build one module at a time, verify each
 - ❌ Choosing a tech stack without asking the user -> ✅ Always ask about existing preferences, team skills, and deployment target
 - ❌ Hardcoding API keys or secrets during scaffolding -> ✅ Use .env.example with placeholder values from day one
 
 ---
-
 
 # App Builder — Application Orchestrator
 
@@ -25,6 +25,7 @@ routing:
 ## When This Skill Activates
 
 Activate when the user request involves:
+
 - Creating a new application from scratch
 - Building a major feature that spans frontend + backend + database
 - Bootstrapping a project structure for a new stack
@@ -256,16 +257,16 @@ How App Builder orchestrates specialist agents.
 
 ### Execution Order
 
-|Phase|Agent(s)|Parallel?|Prerequisite|CHECKPOINT|
-|-------|----------|-----------|--------------|------------|
-|0|Socratic Gate|❌|-|✅ Ask 3 questions|
-|1|Project Planner|❌|Questions answered|✅ **PLAN.md created**|
-|1.5|**PLAN VERIFICATION**|❌|PLAN.md exists|✅ **File exists in root**|
-|2|Database Architect|❌|Plan ready|Schema defined|
-|3|Backend Specialist|❌|Schema ready|API routes created|
-|4|Frontend Specialist|✅|API ready (partial)|UI components ready|
-|5|Security Auditor, Test Engineer|✅|Code ready|Tests & audit pass|
-|6|DevOps Engineer|❌|All code ready|Deployment ready|
+| Phase | Agent(s)                        | Parallel? | Prerequisite        | CHECKPOINT                 |
+| ----- | ------------------------------- | --------- | ------------------- | -------------------------- |
+| 0     | Socratic Gate                   | ❌        | -                   | ✅ Ask 3 questions         |
+| 1     | Project Planner                 | ❌        | Questions answered  | ✅ **PLAN.md created**     |
+| 1.5   | **PLAN VERIFICATION**           | ❌        | PLAN.md exists      | ✅ **File exists in root** |
+| 2     | Database Architect              | ❌        | Plan ready          | Schema defined             |
+| 3     | Backend Specialist              | ❌        | Schema ready        | API routes created         |
+| 4     | Frontend Specialist             | ✅        | API ready (partial) | UI components ready        |
+| 5     | Security Auditor, Test Engineer | ✅        | Code ready          | Tests & audit pass         |
+| 6     | DevOps Engineer                 | ❌        | All code ready      | Deployment ready           |
 
 > 🔴 **CRITICAL:** Phase 1.5 is MANDATORY. No specialist agents proceed without PLAN.md verification.
 
@@ -308,12 +309,12 @@ Analysis:
 
 ### Error Handling
 
-|Error Type|Solution Strategy|
-|------------|-------------------|
-|TypeScript Error|Fix type, add missing import|
-|Missing Dependency|Run npm install|
-|Port Conflict|Suggest alternative port|
-|Database Error|Check migration, validate connection|
+| Error Type         | Solution Strategy                    |
+| ------------------ | ------------------------------------ |
+| TypeScript Error   | Fix type, add missing import         |
+| Missing Dependency | Run npm install                      |
+| Port Conflict      | Suggest alternative port             |
+| Database Error     | Check migration, validate connection |
 
 ### Recovery Strategy
 
@@ -333,24 +334,24 @@ Analyze user requests to determine project type and template.
 
 ### Keyword Matrix
 
-|Keywords|Project Type|Template|
-|----------|--------------|----------|
-|blog, post, article|Blog|astro-static|
-|e-commerce, product, cart, payment|E-commerce|nextjs-saas|
-|dashboard, panel, management|Admin Dashboard|nextjs-fullstack|
-|api, backend, service, rest|API Service|express-api|
-|python, fastapi, django|Python API|python-fastapi|
-|mobile, android, ios, react native|Mobile App (RN)|react-native-app|
-|flutter, dart|Mobile App (Flutter)|flutter-app|
-|portfolio, personal, cv|Portfolio|nextjs-static|
-|crm, customer, sales|CRM|nextjs-fullstack|
-|saas, subscription, stripe|SaaS|nextjs-saas|
-|landing, promotional, marketing|Landing Page|nextjs-static|
-|docs, documentation|Documentation|astro-static|
-|extension, plugin, chrome|Browser Extension|chrome-extension|
-|desktop, electron|Desktop App|electron-desktop|
-|cli, command line, terminal|CLI Tool|cli-tool|
-|monorepo, workspace|Monorepo|monorepo-turborepo|
+| Keywords                           | Project Type         | Template           |
+| ---------------------------------- | -------------------- | ------------------ |
+| blog, post, article                | Blog                 | astro-static       |
+| e-commerce, product, cart, payment | E-commerce           | nextjs-saas        |
+| dashboard, panel, management       | Admin Dashboard      | nextjs-fullstack   |
+| api, backend, service, rest        | API Service          | express-api        |
+| python, fastapi, django            | Python API           | python-fastapi     |
+| mobile, android, ios, react native | Mobile App (RN)      | react-native-app   |
+| flutter, dart                      | Mobile App (Flutter) | flutter-app        |
+| portfolio, personal, cv            | Portfolio            | nextjs-static      |
+| crm, customer, sales               | CRM                  | nextjs-fullstack   |
+| saas, subscription, stripe         | SaaS                 | nextjs-saas        |
+| landing, promotional, marketing    | Landing Page         | nextjs-static      |
+| docs, documentation                | Documentation        | astro-static       |
+| extension, plugin, chrome          | Browser Extension    | chrome-extension   |
+| desktop, electron                  | Desktop App          | electron-desktop   |
+| cli, command line, terminal        | CLI Tool             | cli-tool           |
+| monorepo, workspace                | Monorepo             | monorepo-turborepo |
 
 ### Detection Process
 
@@ -428,27 +429,27 @@ project-name/
 
 ### Structure Principles
 
-|Principle|Implementation|
-|-----------|----------------|
-|**Feature isolation**|Each feature in `features/` with its own components, hooks, actions|
-|**Server/Client separation**|Server-only code in `server/`, prevents accidental client imports|
-|**Thin routes**|`app/` only for routing, logic lives in `features/`|
-|**Route groups**|`(groupName)/` for layout sharing without URL impact|
-|**Shared code**|`shared/` for truly reusable UI and utilities|
+| Principle                    | Implementation                                                      |
+| ---------------------------- | ------------------------------------------------------------------- |
+| **Feature isolation**        | Each feature in `features/` with its own components, hooks, actions |
+| **Server/Client separation** | Server-only code in `server/`, prevents accidental client imports   |
+| **Thin routes**              | `app/` only for routing, logic lives in `features/`                 |
+| **Route groups**             | `(groupName)/` for layout sharing without URL impact                |
+| **Shared code**              | `shared/` for truly reusable UI and utilities                       |
 
 ---
 
 ### Core Files
 
-|File|Purpose|
-|------|---------|
-|`package.json`|Dependencies|
-|`tsconfig.json`|TypeScript + path aliases (`@/features/*`)|
-|`tailwind.config.ts`|Tailwind config|
-|`.env.example`|Environment template|
-|`README.md`|Project documentation|
-|`.gitignore`|Git ignore rules|
-|`prisma/schema.prisma`|Database schema|
+| File                   | Purpose                                    |
+| ---------------------- | ------------------------------------------ |
+| `package.json`         | Dependencies                               |
+| `tsconfig.json`        | TypeScript + path aliases (`@/features/*`) |
+| `tailwind.config.ts`   | Tailwind config                            |
+| `.env.example`         | Environment template                       |
+| `README.md`            | Project documentation                      |
+| `.gitignore`           | Git ignore rules                           |
+| `prisma/schema.prisma` | Database schema                            |
 
 ---
 
@@ -471,15 +472,15 @@ project-name/
 
 ### When to Use What
 
-|Need|Location|
-|------|----------|
-|New page/route|`app/(group)/page.tsx`|
-|Feature component|`features/[name]/components/`|
-|Server action|`features/[name]/actions.ts`|
-|Data fetching|`features/[name]/queries.ts`|
-|Reusable button/input|`shared/components/ui/`|
-|Database query|`server/db/`|
-|External API call|`server/services/`|
+| Need                  | Location                      |
+| --------------------- | ----------------------------- |
+| New page/route        | `app/(group)/page.tsx`        |
+| Feature component     | `features/[name]/components/` |
+| Server action         | `features/[name]/actions.ts`  |
+| Data fetching         | `features/[name]/queries.ts`  |
+| Reusable button/input | `shared/components/ui/`       |
+| Database query        | `server/db/`                  |
+| External API call     | `server/services/`            |
 
 ---
 
@@ -516,18 +517,15 @@ Monorepo:
 
 ### Alternative Options
 
-|Need|Default|Alternative|
-|------|---------|-------------|
-|Real-time|-|Supabase Realtime, Socket.io|
-|File storage|-|Cloudinary, S3|
-|Payment|Stripe|LemonSqueezy, Paddle|
-|Email|-|Resend, SendGrid|
-|Search|-|Algolia, Typesense|
-
+| Need         | Default | Alternative                  |
+| ------------ | ------- | ---------------------------- |
+| Real-time    | -       | Supabase Realtime, Socket.io |
+| File storage | -       | Cloudinary, S3               |
+| Payment      | Stripe  | LemonSqueezy, Paddle         |
+| Email        | -       | Resend, SendGrid             |
+| Search       | -       | Algolia, Typesense           |
 
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -539,8 +537,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -550,9 +546,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -563,17 +558,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -603,6 +599,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -613,5 +610,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

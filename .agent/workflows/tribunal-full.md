@@ -22,13 +22,13 @@ Read BEFORE full review:
 
 ## When to Use /tribunal-full
 
-|Use `/tribunal-full` when...|Use targeted tribunal when...|
-|:---|:---|
-|Before merging any AI-generated code|Backend only → `/tribunal-backend`|
-|Before production deployment|Frontend only → `/tribunal-frontend`|
-|Security-critical feature review|DB only → `/tribunal-database`|
-|Code affects auth, payments, or PII||
-|Maximum confidence required||
+| Use `/tribunal-full` when...         | Use targeted tribunal when...        |
+| :----------------------------------- | :----------------------------------- |
+| Before merging any AI-generated code | Backend only → `/tribunal-backend`   |
+| Before production deployment         | Frontend only → `/tribunal-frontend` |
+| Security-critical feature review     | DB only → `/tribunal-database`       |
+| Code affects auth, payments, or PII  |                                      |
+| Maximum confidence required          |                                      |
 
 ---
 
@@ -67,16 +67,16 @@ Tier 4: Performance Swarm (token-scoped specialists)
 
 Not all 11 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
 
-|Code Under Review|Critical Reviewers|
-|:---|:---|
-|REST API route|logic, security, dependency, type-safety, sql, schema, resilience|
-|React component|logic, frontend, accessibility, type-safety, resilience|
-|Database query|logic, security, sql, resilience|
-|AI LLM integration|logic, security, ai-code, dependency|
-|Test file|test-coverage, logic|
-|React Native / Expo|mobile, logic, security, performance|
-|Next.js page|logic, frontend, performance, accessibility|
-|Auth/JWT code|security, logic, type-safety|
+| Code Under Review   | Critical Reviewers                                                |
+| :------------------ | :---------------------------------------------------------------- |
+| REST API route      | logic, security, dependency, type-safety, sql, schema, resilience |
+| React component     | logic, frontend, accessibility, type-safety, resilience           |
+| Database query      | logic, security, sql, resilience                                  |
+| AI LLM integration  | logic, security, ai-code, dependency                              |
+| Test file           | test-coverage, logic                                              |
+| React Native / Expo | mobile, logic, security, performance                              |
+| Next.js page        | logic, frontend, performance, accessibility                       |
+| Auth/JWT code       | security, logic, type-safety                                      |
 
 ---
 
@@ -119,11 +119,11 @@ After 3 failed attempts:
 
 ## After /tribunal-full — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|All 16 reviewers approve|→ `/deploy` — highest confidence state|
-|Reject with multiple fixes|→ `/fix` for simple issues, `/debug` for logic|
-|Performance rejection|→ `/tribunal-speed` for granular profiling|
-|Security rejection|→ Immediate `/tribunal-backend` to resolve|
+| Outcome                    | Next Command                                   |
+| :------------------------- | :--------------------------------------------- |
+| All 16 reviewers approve   | → `/deploy` — highest confidence state         |
+| Reject with multiple fixes | → `/fix` for simple issues, `/debug` for logic |
+| Performance rejection      | → `/tribunal-speed` for granular profiling     |
+| Security rejection         | → Immediate `/tribunal-backend` to resolve     |
 
 ---

@@ -93,9 +93,9 @@ Last commit: [hash] — [message] — [time ago]
 
 ## After /status — Next Steps
 
-|Outcome|Next Command|
-|:---|:---|
-|Task in progress|→ Continue current work or `/session save`|
-|Status shows errors|→ `/debug` to investigate recent changes|
+| Outcome             | Next Command                               |
+| :------------------ | :----------------------------------------- |
+| Task in progress    | → Continue current work or `/session save` |
+| Status shows errors | → `/debug` to investigate recent changes   |
 
 ---

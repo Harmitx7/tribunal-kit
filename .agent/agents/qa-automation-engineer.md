@@ -41,27 +41,27 @@ Write tests that fail when real user-facing behavior breaks — nothing less, no
 // ❌ DON'T unit test: component rendering, API calls, DB queries
 
 // ✅ DO unit test: business logic isolated
-import { describe, it, expect } from 'vitest';
-import { calculateDiscount } from './pricing';
+import { describe, it, expect } from "vitest";
+import { calculateDiscount } from "./pricing";
 
-describe('calculateDiscount()', () => {
+describe("calculateDiscount()", () => {
   // Always test the happy path
-  it('applies 10% to orders over $100', () => {
+  it("applies 10% to orders over $100", () => {
     expect(calculateDiscount(150)).toBe(135);
   });
-  
+
   // Always test all boundary cases
-  it('applies no discount at exactly $100 (exclusive boundary)', () => {
+  it("applies no discount at exactly $100 (exclusive boundary)", () => {
     expect(calculateDiscount(100)).toBe(100);
   });
-  
+
   // Always test error/invalid input
-  it('throws RangeError on negative input', () => {
+  it("throws RangeError on negative input", () => {
     expect(() => calculateDiscount(-50)).toThrow(RangeError);
   });
-  
+
   // Always test zero and extreme values
-  it('returns 0 for $0 order', () => {
+  it("returns 0 for $0 order", () => {
     expect(calculateDiscount(0)).toBe(0);
   });
 });
@@ -106,10 +106,10 @@ import { UserProfile } from './UserProfile';
 test('shows user name after loading', async () => {
   const user = userEvent.setup();
   render(<UserProfile userId="1" />);
-  
+
   // Test loading state
   expect(screen.getByText('Loading...')).toBeInTheDocument();
-  
+
   // Wait for async data
   await screen.findByText('Alice');
   expect(screen.getByRole('heading', { name: 'Alice' })).toBeInTheDocument();
@@ -132,38 +132,38 @@ test('shows error on failed load', async () => {
 
 ```typescript
 // playwright.config.ts
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './e2e',
+  testDir: "./e2e",
   fullyParallel: true,
-  retries: process.env.CI ? 2 : 0,     // Retry in CI for flakiness
-  reporter: [['html'], ['github']],
+  retries: process.env.CI ? 2 : 0, // Retry in CI for flakiness
+  reporter: [["html"], ["github"]],
   use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',            // Record trace only on failure
-    video: 'on-first-retry',            // Record video only on failure
-    screenshot: 'only-on-failure',
+    baseURL: "http://localhost:3000",
+    trace: "on-first-retry", // Record trace only on failure
+    video: "on-first-retry", // Record video only on failure
+    screenshot: "only-on-failure",
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'Mobile Safari', use: { ...devices['iPhone 14'] } },
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "Mobile Safari", use: { ...devices["iPhone 14"] } },
   ],
 });
 
 // e2e/auth.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
 // Store auth state to avoid logging in every test
-test.use({ storageState: 'e2e/auth.json' });
+test.use({ storageState: "e2e/auth.json" });
 
-test('user can complete checkout flow', async ({ page }) => {
-  await page.goto('/products');
-  await page.getByRole('button', { name: 'Add to cart' }).first().click();
-  await page.getByRole('link', { name: 'Cart' }).click();
-  await expect(page.getByText('1 item')).toBeVisible();
-  await page.getByRole('button', { name: 'Checkout' }).click();
-  await expect(page).toHaveURL('/checkout');
+test("user can complete checkout flow", async ({ page }) => {
+  await page.goto("/products");
+  await page.getByRole("button", { name: "Add to cart" }).first().click();
+  await page.getByRole("link", { name: "Cart" }).click();
+  await expect(page.getByText("1 item")).toBeVisible();
+  await page.getByRole("button", { name: "Checkout" }).click();
+  await expect(page).toHaveURL("/checkout");
 });
 ```
 
@@ -173,15 +173,15 @@ test('user can complete checkout flow', async ({ page }) => {
 
 ```typescript
 // ❌ BRITTLE (fails on UI refactor)
-page.locator('.cart-btn > span.label');
-getByTestId('btn-0'); // Index-based
-container.querySelector('#submit-47f3'); // Generated ID
+page.locator(".cart-btn > span.label");
+getByTestId("btn-0"); // Index-based
+container.querySelector("#submit-47f3"); // Generated ID
 
 // ✅ RESILIENT (survives refactoring + validates accessibility)
-getByRole('button', { name: /add to cart/i })  // Role + name
-getByLabelText('Email address')                 // Form label association
-getByPlaceholderText('Search products')         // Input placeholder
-getByText('Free shipping on orders over $50')   // Visible text
+getByRole("button", { name: /add to cart/i }); // Role + name
+getByLabelText("Email address"); // Form label association
+getByPlaceholderText("Search products"); // Input placeholder
+getByText("Free shipping on orders over $50"); // Visible text
 ```
 
 ---
@@ -190,34 +190,25 @@ getByText('Free shipping on orders over $50')   // Visible text
 
 ```typescript
 // Test server routes with supertest — no browser needed
-import request from 'supertest';
-import app from '../src/app';
+import request from "supertest";
+import app from "../src/app";
 
-describe('POST /api/auth/login', () => {
-  it('returns JWT on valid credentials', async () => {
-    const response = await request(app)
-      .post('/api/auth/login')
-      .send({ email: 'alice@example.com', password: 'correct' })
-      .expect(200);
-    
+describe("POST /api/auth/login", () => {
+  it("returns JWT on valid credentials", async () => {
+    const response = await request(app).post("/api/auth/login").send({ email: "alice@example.com", password: "correct" }).expect(200);
+
     expect(response.body).toMatchObject({ token: expect.any(String) });
   });
-  
-  it('returns 401 on invalid credentials', async () => {
-    await request(app)
-      .post('/api/auth/login')
-      .send({ email: 'alice@example.com', password: 'wrong' })
-      .expect(401);
+
+  it("returns 401 on invalid credentials", async () => {
+    await request(app).post("/api/auth/login").send({ email: "alice@example.com", password: "wrong" }).expect(401);
   });
-  
-  it('returns 429 after 10 failed attempts', async () => {
+
+  it("returns 429 after 10 failed attempts", async () => {
     for (let i = 0; i < 10; i++) {
-      await request(app).post('/api/auth/login').send({ password: 'wrong' });
+      await request(app).post("/api/auth/login").send({ password: "wrong" });
     }
-    await request(app)
-      .post('/api/auth/login')
-      .send({ password: 'wrong' })
-      .expect(429); // Rate limit hit
+    await request(app).post("/api/auth/login").send({ password: "wrong" }).expect(429); // Rate limit hit
   });
 });
 ```

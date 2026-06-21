@@ -15,6 +15,7 @@ last-updated: 2026-04-02
 ## 1. When to Activate
 
 Activate this agent when:
+
 - The request spans **2+ technical domains** (e.g., frontend + backend + DB)
 - The task requires **parallel research** from multiple perspectives
 - Individual agents would be **incomplete** without cross-domain synthesis
@@ -86,12 +87,15 @@ Human Gate: Only after all waves complete successfully
 **Blocked Worker Protocol:**
 
 If a worker cannot proceed due to missing information:
+
 ```
 Status: BLOCKED
 Reason: [specific missing input]
 Unblocked by: [what needs to happen first]
 ```
+
 The orchestrator receives BLOCKED status and either:
+
 1. Provides the missing input if available
 2. Escalates to the human for clarification
 
@@ -109,6 +113,7 @@ Every sub-task dispatched to a worker must include:
 **Primary agent:** [which specialist agent to activate]
 
 **Files to read:**
+
 - [file path]: [what specifically to extract from it]
 
 **Context summary from previous waves:**
@@ -118,6 +123,7 @@ Every sub-task dispatched to a worker must include:
 [specific format the orchestrator needs to synthesize results]
 
 **Constraints:**
+
 - Do NOT modify files outside your scope
 - Report BLOCKED status if prerequisite information is missing
 - Report ERROR status with specific details on failure

@@ -23,15 +23,15 @@ If you see an async call without failure handling → flag it.
 
 Flag any code that commits these sins.
 
-| Sin | Description | Required Fix |
-|:---|:---|:---|
-| **Swallowed Errors** | `catch (e) {}` with an empty block or just a `console.log`. | Must throw, return a Result type, or fallback. Logging is not handling. |
-| **Naked Promises** | Async code without `try/catch` or `.catch()`. | Wrap in `try/catch` or attach `.catch()`. |
-| **Infinite Retries** | Retrying an operation without a max attempts limit. | Add a hard limit (e.g., `maxRetries: 3`). |
-| **Thundering Herd** | Retrying immediately on failure without delay or jitter. | Use exponential backoff with jitter. |
-| **Non-Idempotent Retries** | Retrying `POST`/`DELETE` without idempotency keys. | Require an idempotency key or do not retry. |
-| **Missing Timeouts** | `fetch` or DB calls without a timeout. | Add `AbortController` or DB timeout config. |
-| **Generic Catch-All** | Catching `Error` base class instead of operational errors. | Differentiate between operational and programmer errors. |
+| Sin                        | Description                                                 | Required Fix                                                            |
+| :------------------------- | :---------------------------------------------------------- | :---------------------------------------------------------------------- |
+| **Swallowed Errors**       | `catch (e) {}` with an empty block or just a `console.log`. | Must throw, return a Result type, or fallback. Logging is not handling. |
+| **Naked Promises**         | Async code without `try/catch` or `.catch()`.               | Wrap in `try/catch` or attach `.catch()`.                               |
+| **Infinite Retries**       | Retrying an operation without a max attempts limit.         | Add a hard limit (e.g., `maxRetries: 3`).                               |
+| **Thundering Herd**        | Retrying immediately on failure without delay or jitter.    | Use exponential backoff with jitter.                                    |
+| **Non-Idempotent Retries** | Retrying `POST`/`DELETE` without idempotency keys.          | Require an idempotency key or do not retry.                             |
+| **Missing Timeouts**       | `fetch` or DB calls without a timeout.                      | Add `AbortController` or DB timeout config.                             |
+| **Generic Catch-All**      | Catching `Error` base class instead of operational errors.  | Differentiate between operational and programmer errors.                |
 
 ---
 
@@ -39,7 +39,7 @@ Flag any code that commits these sins.
 
 When reviewing code that crosses a network boundary (e.g., `fetch()`, `axios`, DB calls):
 
-1. **Is there a timeout?** 
+1. **Is there a timeout?**
    - If no: ❌ REJECTED. Network calls can hang forever.
 2. **Is it a temporal failure (503, 429, timeout)?**
    - If yes, is there a retry mechanism?

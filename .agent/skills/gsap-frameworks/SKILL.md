@@ -49,7 +49,7 @@ export default {
     });
 
     return { container };
-  }
+  },
 };
 ```
 
@@ -137,9 +137,9 @@ ScrollTrigger instances are created when you use the `scrollTrigger` config on a
 
 ## When to Create vs Kill
 
-| Lifecycle        | Action |
-|-----------------|--------|
-| **Mounted**      | Create tweens and ScrollTriggers inside **gsap.context(scope)**. |
+| Lifecycle             | Action                                                                                                            |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **Mounted**           | Create tweens and ScrollTriggers inside **gsap.context(scope)**.                                                  |
 | **Unmount / Destroy** | Call **ctx.revert()** so all animations and ScrollTriggers in that context are killed and inline styles reverted. |
 
 Do not create GSAP animations in the component’s setup or in a synchronous top-level script that runs before the root element exists. Wait for **onMounted** / **onMount** (or equivalent) so the container ref is in the DOM.
@@ -170,17 +170,18 @@ Do not create GSAP animations in the component’s setup or in a synchronous top
 
 ## 🚨 LLM Trap Table
 
-|Pattern|What AI Does Wrong|What Is Actually Correct|
-|:---|:---|:---|
-|gsap-frameworks|gsap.to() before onMounted/onMount|DOM must exist before GSAP grabs it. Wait for lifecycle hook|
-|gsap-frameworks|Global selection string (".item")|Use scoped context: gsap.context(() => {}, containerRef)|
-|gsap-frameworks|Forgetting to cleanup on unmount|ctx.revert() inside onUnmounted (Vue) or returned cleanup fn (Svelte)|
+| Pattern         | What AI Does Wrong                 | What Is Actually Correct                                              |
+| :-------------- | :--------------------------------- | :-------------------------------------------------------------------- |
+| gsap-frameworks | gsap.to() before onMounted/onMount | DOM must exist before GSAP grabs it. Wait for lifecycle hook          |
+| gsap-frameworks | Global selection string (".item")  | Use scoped context: gsap.context(() => {}, containerRef)              |
+| gsap-frameworks | Forgetting to cleanup on unmount   | ctx.revert() inside onUnmounted (Vue) or returned cleanup fn (Svelte) |
 
 ---
 
 ## ✅ Pre-Flight Self-Audit
 
 Before producing any output, verify:
+
 ```
 ✅ Did I read the actual files before making claims about them?
 ✅ Did I verify all method names against official GSAP documentation?
@@ -201,14 +202,14 @@ BUILD:   Generate the smallest meaningful unit of code
 CONFIRM: Verify the output is correct before presenting
 ```
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -238,6 +239,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -248,5 +250,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

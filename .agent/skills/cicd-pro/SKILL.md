@@ -14,6 +14,7 @@ routing:
 ---
 
 ## Hallucination Traps (Read First)
+
 - ❌ Missing `concurrency:` block → ✅ Without it, parallel deploys collide and corrupt production state
 - ❌ `${{ secrets.GITHUB_TOKEN }}` for cross-repo operations → ✅ GITHUB_TOKEN scope is limited to current repo; use GitHub App token or PAT
 - ❌ Static `AWS_ACCESS_KEY_ID` secrets → ✅ Use OIDC (`id-token: write` permission + `configure-aws-credentials` action)
@@ -117,7 +118,7 @@ jobs:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
     needs: [lint, test, security]
-    if: github.ref == 'refs/heads/main'    # only build on main merge
+    if: github.ref == 'refs/heads/main' # only build on main merge
     permissions:
       id-token: write
       contents: read
@@ -157,14 +158,14 @@ jobs:
         with:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
           severity: CRITICAL
-          exit-code: '1'    # fail on critical vulnerabilities
+          exit-code: "1" # fail on critical vulnerabilities
 
   # ──── STAGE 3: DEPLOY STAGING ────
   deploy-staging:
     name: Deploy to Staging
     runs-on: ubuntu-latest
     needs: build
-    environment: staging     # maps to GitHub Environment (can have protection rules)
+    environment: staging # maps to GitHub Environment (can have protection rules)
     permissions:
       id-token: write
       contents: read
@@ -197,7 +198,7 @@ jobs:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: myapp-staging-api
           cluster: myapp-staging
-          wait-for-service-stability: true    # wait until healthy
+          wait-for-service-stability: true # wait until healthy
 
       - name: Notify Slack — Staging deployed
         uses: slackapi/slack-github-action@v1
@@ -212,7 +213,7 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-latest
     needs: deploy-staging
-    environment: production    # ← requires manual approval in GitHub UI
+    environment: production # ← requires manual approval in GitHub UI
     permissions:
       id-token: write
       contents: read
@@ -246,7 +247,7 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
-          codedeploy-appspec: appspec.yml      # enables Blue/Green via CodeDeploy
+          codedeploy-appspec: appspec.yml # enables Blue/Green via CodeDeploy
 
       - name: Notify Slack — Production deployed
         uses: slackapi/slack-github-action@v1
@@ -283,7 +284,7 @@ Resources:
           ContainerPort: 3000
 
 Hooks:
-  - BeforeAllowTraffic: ValidateDeploymentHook     # run smoke tests before switching traffic
+  - BeforeAllowTraffic: ValidateDeploymentHook # run smoke tests before switching traffic
   - AfterAllowTraffic: PostDeployHook
 ```
 
@@ -436,5 +437,6 @@ resource "github_repository_environment" "production" {
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden**: Declaring a pipeline correct because the YAML is syntactically valid.
 - ✅ **Required**: A real GitHub Actions run must succeed (green checkmarks across all stages) before the pipeline is declared production-ready.

@@ -2,9 +2,7 @@
   "mcpServers": {
     "tribunal-kit": {
       "command": "node",
-      "args": [
-        "bin/mcp-server.js"
-      ],
+      "args": ["bin/mcp-server.js"],
       "env": {}
     }
   }

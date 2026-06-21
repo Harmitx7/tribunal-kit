@@ -28,13 +28,13 @@ routing:
   --color-primary-100: oklch(0.93 0.04 250);
   --color-primary-500: oklch(0.55 0.18 250);
   --color-primary-600: oklch(0.48 0.18 250);
-  --color-primary-700: oklch(0.40 0.16 250);
-  --color-primary-900: oklch(0.25 0.10 250);
+  --color-primary-700: oklch(0.4 0.16 250);
+  --color-primary-900: oklch(0.25 0.1 250);
 
-  --color-surface: oklch(0.99 0.00 0);
-  --color-surface-alt: oklch(0.96 0.00 0);
-  --color-text: oklch(0.15 0.00 0);
-  --color-text-muted: oklch(0.45 0.00 0);
+  --color-surface: oklch(0.99 0 0);
+  --color-surface-alt: oklch(0.96 0 0);
+  --color-text: oklch(0.15 0 0);
+  --color-text-muted: oklch(0.45 0 0);
 
   /* Typography */
   --font-sans: "Inter", "system-ui", sans-serif;
@@ -58,13 +58,23 @@ routing:
 }
 
 @keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ❌ HALLUCINATION TRAP: Tailwind v4 does NOT use tailwind.config.js
@@ -78,15 +88,15 @@ routing:
 ```css
 /* Tailwind v4 dark mode with @theme */
 @theme {
-  --color-surface: oklch(0.99 0.00 0);
-  --color-text: oklch(0.15 0.00 0);
+  --color-surface: oklch(0.99 0 0);
+  --color-text: oklch(0.15 0 0);
 }
 
 /* Dark variant — override variables */
 @variant dark {
   @theme {
     --color-surface: oklch(0.13 0.02 260);
-    --color-text: oklch(0.93 0.00 0);
+    --color-text: oklch(0.93 0 0);
   }
 }
 
@@ -176,7 +186,7 @@ routing:
 <!-- Container queries — component-level responsiveness -->
 <div class="@container">
   <div class="flex flex-col gap-3 @sm:flex-row @sm:items-center @lg:gap-6">
-    <img class="size-16 rounded-full @sm:size-20" src="avatar.jpg" alt="">
+    <img class="size-16 rounded-full @sm:size-20" src="avatar.jpg" alt="" />
     <div>
       <h3 class="text-lg font-semibold @lg:text-xl">User Name</h3>
       <p class="text-sm text-text-muted @lg:text-base">Description</p>
@@ -205,14 +215,10 @@ routing:
 
 ```html
 <!-- Fluid heading — scales smoothly from 2rem to 4rem -->
-<h1 class="text-[clamp(2rem,5vw,4rem)] font-bold leading-tight tracking-tight">
-  Responsive Heading
-</h1>
+<h1 class="text-[clamp(2rem,5vw,4rem)] font-bold leading-tight tracking-tight">Responsive Heading</h1>
 
 <!-- Fluid body text -->
-<p class="text-[clamp(1rem,1.2vw,1.25rem)] leading-relaxed text-text-muted">
-  Body text that scales with viewport
-</p>
+<p class="text-[clamp(1rem,1.2vw,1.25rem)] leading-relaxed text-text-muted">Body text that scales with viewport</p>
 
 <!-- Prose (for long-form content) -->
 <article class="prose prose-lg mx-auto max-w-3xl dark:prose-invert">
@@ -246,10 +252,12 @@ routing:
 
 ```html
 <!-- Base button with variants -->
-<button class="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5
+<button
+  class="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5
                text-sm font-medium transition-all duration-150
                focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500
-               active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50">
+               active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+>
   Button Text
 </button>
 
@@ -263,8 +271,7 @@ routing:
 <button class="... bg-red-600 text-white hover:bg-red-700">Delete</button>
 
 <!-- Icon button -->
-<button class="grid size-10 place-items-center rounded-lg hover:bg-gray-100"
-        aria-label="Settings">
+<button class="grid size-10 place-items-center rounded-lg hover:bg-gray-100" aria-label="Settings">
   <svg class="size-5" ...></svg>
 </button>
 ```
@@ -275,7 +282,10 @@ routing:
 <!-- Text input -->
 <div class="space-y-1.5">
   <label for="email" class="text-sm font-medium text-text">Email</label>
-  <input id="email" type="email" placeholder="you@example.com"
+  <input
+    id="email"
+    type="email"
+    placeholder="you@example.com"
     class="w-full rounded-lg border border-gray-300 bg-surface px-3.5 py-2.5
            text-sm text-text placeholder:text-text-muted
            transition-colors duration-150
@@ -287,9 +297,11 @@ routing:
 
 <!-- Checkbox -->
 <label class="flex items-center gap-2.5 text-sm">
-  <input type="checkbox"
+  <input
+    type="checkbox"
     class="size-4 rounded border-gray-300 text-primary-600
-           focus:ring-2 focus:ring-primary-500/20" />
+           focus:ring-2 focus:ring-primary-500/20"
+  />
   Remember me
 </label>
 ```
@@ -297,16 +309,24 @@ routing:
 ### Card Pattern
 
 ```html
-<div class="group overflow-hidden rounded-card bg-surface shadow-card
-            transition-shadow duration-200 hover:shadow-elevated">
+<div
+  class="group overflow-hidden rounded-card bg-surface shadow-card
+            transition-shadow duration-200 hover:shadow-elevated"
+>
   <div class="aspect-video overflow-hidden bg-gray-100">
-    <img src="cover.jpg" alt="Cover"
+    <img
+      src="cover.jpg"
+      alt="Cover"
       class="size-full object-cover transition-transform duration-300
-             group-hover:scale-105" />
+             group-hover:scale-105"
+    />
   </div>
   <div class="space-y-2 p-5">
-    <span class="inline-block rounded-full bg-primary-100 px-2.5 py-0.5
-                 text-xs font-medium text-primary-700">Category</span>
+    <span
+      class="inline-block rounded-full bg-primary-100 px-2.5 py-0.5
+                 text-xs font-medium text-primary-700"
+      >Category</span
+    >
     <h3 class="text-lg font-semibold text-text line-clamp-2">Card Title</h3>
     <p class="text-sm text-text-muted line-clamp-3">Description text...</p>
   </div>
@@ -317,18 +337,23 @@ routing:
 
 ```html
 <!-- Backdrop -->
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50
-            backdrop-blur-sm animate-fade-in">
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50
+            backdrop-blur-sm animate-fade-in"
+>
   <!-- Modal -->
-  <div class="w-full max-w-md rounded-2xl bg-surface p-6 shadow-elevated animate-slide-up"
-       role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="w-full max-w-md rounded-2xl bg-surface p-6 shadow-elevated animate-slide-up" role="dialog" aria-modal="true" aria-labelledby="modal-title">
     <h2 id="modal-title" class="text-lg font-semibold">Dialog Title</h2>
     <p class="mt-2 text-sm text-text-muted">Dialog description.</p>
 
     <div class="mt-6 flex justify-end gap-3">
       <button class="rounded-lg px-4 py-2 text-sm hover:bg-gray-100">Cancel</button>
-      <button class="rounded-lg bg-primary-600 px-4 py-2 text-sm text-white
-                     hover:bg-primary-700">Confirm</button>
+      <button
+        class="rounded-lg bg-primary-600 px-4 py-2 text-sm text-white
+                     hover:bg-primary-700"
+      >
+        Confirm
+      </button>
     </div>
   </div>
 </div>
@@ -374,15 +399,15 @@ routing:
 <a class="text-text-muted transition-colors duration-150 hover:text-primary-600">Link</a>
 
 <!-- Transform transitions -->
-<div class="transition-transform duration-300 hover:-translate-y-1 hover:scale-105">
-  Hover me
-</div>
+<div class="transition-transform duration-300 hover:-translate-y-1 hover:scale-105">Hover me</div>
 
 <!-- Combined transition -->
-<button class="rounded-lg bg-primary-600 px-4 py-2 text-white
+<button
+  class="rounded-lg bg-primary-600 px-4 py-2 text-white
                transition-all duration-200
                hover:bg-primary-700 hover:shadow-lg
-               active:scale-95">
+               active:scale-95"
+>
   Click me
 </button>
 ```
@@ -397,15 +422,30 @@ routing:
 }
 
 @keyframes bounce-in {
-  0% { opacity: 0; transform: scale(0.3); }
-  50% { transform: scale(1.05); }
-  70% { transform: scale(0.9); }
-  100% { opacity: 1; transform: scale(1); }
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 ```
 
@@ -419,8 +459,12 @@ routing:
 }
 
 @keyframes grow-width {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 ```
 
@@ -494,8 +538,10 @@ routing:
 
 ```html
 <!-- Focus visible (keyboard only, not mouse click) -->
-<a class="rounded-lg focus-visible:outline-2 focus-visible:outline-primary-500
-          focus-visible:outline-offset-2">
+<a
+  class="rounded-lg focus-visible:outline-2 focus-visible:outline-primary-500
+          focus-visible:outline-offset-2"
+>
   Keyboard accessible link
 </a>
 
@@ -511,17 +557,12 @@ routing:
 </div>
 
 <!-- Forced colors mode (high contrast) -->
-<button class="bg-primary-600 forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]">
-  Accessible button
-</button>
+<button class="bg-primary-600 forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]">Accessible button</button>
 ```
 
 ---
 
-
 ---
-
-
 
 AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
 
@@ -533,8 +574,6 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-
-
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
@@ -544,9 +583,8 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-
-
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -557,17 +595,18 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
 
-
 ## Pre-Flight Checklist
+
 - [ ] Have I reviewed the user's specific constraints and requests?
 - [ ] Have I checked the environment for relevant existing implementations?
 
 ## VBC Protocol (Verification-Before-Completion)
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
+You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
 
 ---
 
@@ -597,6 +636,7 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 ### ✅ Pre-Flight Self-Audit
 
 Review these questions before confirming output:
+
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -607,5 +647,6 @@ Review these questions before confirming output:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
