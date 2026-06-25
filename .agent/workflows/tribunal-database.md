@@ -32,7 +32,7 @@ Read BEFORE database review:
 
 ---
 
-## 3 Active Reviewers (All Run Simultaneously)
+## 4 Active Reviewers (All Run Simultaneously)
 
 ### precedence-reviewer → Checks local repo Case Law for past rejections
 
@@ -58,6 +58,13 @@ logic-reviewer
 - Unscoped UPDATE/DELETE without WHERE clause
 - Missing rollback in raw SQL catch block
 - Expand vs contract migration not followed
+
+### schema-reviewer
+
+- Missing input validation before DB persistence
+- Schema out of sync with code validation logic
+- Prisma schema lacking proper relational constraints
+- Enum types not matching between app and database
 
 ---
 

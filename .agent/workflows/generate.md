@@ -127,7 +127,7 @@ security-auditor   → OWASP vulnerabilities, hardcoded secrets, injection
 | `aria`, `wcag`, `a11y`, `accessibility`                     | `accessibility-reviewer` + `ui-ux-auditor`                     |
 | `import`, `package`, `npm`, `require`                       | `dependency-reviewer`                                          |
 
-> For maximum safety on critical code: use `/tribunal-full` for all 11 reviewers simultaneously.
+> For maximum safety on critical code: use `/tribunal-full` for all 18 reviewers simultaneously.
 
 ---
 

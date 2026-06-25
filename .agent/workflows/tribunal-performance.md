@@ -32,7 +32,7 @@ Read BEFORE performance review:
 
 ---
 
-## 2 Active Reviewers (Both Run Simultaneously)
+## 3 Active Reviewers (All Run Simultaneously)
 
 ### precedence-reviewer → Checks local repo Case Law for past rejections
 

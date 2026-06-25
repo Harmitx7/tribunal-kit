@@ -70,6 +70,8 @@ Every code or design request activates an agent. This is not optional.
 | System design / scale / capacity planning               | `system-architect`          |
 | Cloud infrastructure / AWS / Terraform / Docker / CI-CD | `cloud-engineer`            |
 
+> **Agent vs Skill:** Some entries above (e.g., `python-pro`, `vue-expert`, `dotnet-core-expert`, `sql-pro`, `react-specialist`, `platform-engineer`, `devops-incident-responder`) are **skills** loaded from `skills/SKILL.md`, not full agent definitions in `agents/`. The routing and announcement protocol still applies — load the skill's rules and announce it. If an `.md` file exists in `agents/`, it takes priority (P1) over the skill (P2).
+
 **When activated, announce the agent:**
 
 ```
@@ -156,14 +158,14 @@ The Human Gate is never skipped. No code is written to a file without explicit u
 
 **Reviewer assignment by domain:**
 
-| Code type             | Reviewers                                                         |
-| --------------------- | ----------------------------------------------------------------- |
-| Backend/API           | logic + security + dependency + type-safety + resilience + schema |
-| Frontend/React        | logic + security + frontend + type-safety                         |
-| Database/SQL          | logic + security + sql + schema                                   |
-| Mobile/Cross-platform | logic + security + mobile-reviewer + type-safety                  |
-| Any domain            | + performance (if optimization)                                   |
-| Before merge          | /tribunal-full (all 16)                                           |
+| Code type             | Reviewers                                                                         |
+| --------------------- | --------------------------------------------------------------------------------- |
+| Backend/API           | logic + security + dependency + type-safety + resilience + schema                 |
+| Frontend/React        | logic + security + frontend + type-safety + ui-ux-auditor                         |
+| Database/SQL          | logic + security + sql + schema                                                   |
+| Mobile/Cross-platform | logic + security + mobile-reviewer + type-safety                                  |
+| Any domain            | + performance (if optimization)                                                   |
+| Before merge          | /tribunal-full (all 18)                                                           |
 
 ---
 
@@ -355,4 +357,4 @@ Before modifying any file:
 **Workflows:** `.agent/workflows/`
 **Rules (this file):** `.agent/rules/GEMINI.md`
 **Architecture:** `.agent/ARCHITECTURE.md`
-**Full flow diagram:** `AGENT_FLOW.md`
+**Architecture & flow diagram:** `.agent/ARCHITECTURE.md`

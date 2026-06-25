@@ -32,7 +32,7 @@ Read BEFORE mobile review:
 
 ---
 
-## 3 Active Reviewers (All Run Simultaneously)
+## 4 Active Reviewers (All Run Simultaneously)
 
 ### precedence-reviewer → Checks local repo Case Law for past rejections
 
@@ -59,6 +59,13 @@ logic-reviewer
 - `Platform.OS === 'ios'` inside StyleSheet.create (not evaluated correctly)
 - Missing `AppState` subscription cleanup (`subscription.remove()`)
 - `react-native Image` used instead of `expo-image` (poor caching)
+
+### type-safety-reviewer
+
+- React Native components with `any` typed props
+- Navigation route params missing strict types (e.g., React Navigation types)
+- Untyped gesture handler events
+- Unsafe type assertions when bridging native modules
 
 ---
 

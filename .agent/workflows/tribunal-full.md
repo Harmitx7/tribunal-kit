@@ -1,9 +1,9 @@
 ---
-description: Run ALL 16 Tribunal reviewer agents simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
+description: Run ALL 18 Tribunal reviewer agents simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
 required-skills: all domain skills auto-loaded
 ---
 
-# /tribunal-full — Complete 16-Reviewer Audit
+# /tribunal-full — Complete 18-Reviewer Audit
 
 $ARGUMENTS
 
@@ -32,7 +32,7 @@ Read BEFORE full review:
 
 ---
 
-## 16 Reviewers — All Active Simultaneously
+## 18 Reviewers — All Active Simultaneously
 
 ```
 Tier 1: Always active (universal concerns)
@@ -53,7 +53,8 @@ Tier 3: Domain-specific
 ├── mobile-reviewer        → Reanimated thread safety, FlashList, safe area insets
 ├── ai-code-reviewer       → Model name hallucinations, prompt injection, cost explosion
 ├── test-coverage-reviewer → Happy path only, brittle selectors, missing edge cases
-└── accessibility-reviewer → WCAG 2.2 AA, ARIA misuse, focus management, live regions
+├── accessibility-reviewer → WCAG 2.2 AA, ARIA misuse, focus management, live regions
+└── ui-ux-auditor          → Generic AI aesthetics, missing hover states, contrast
 
 Tier 4: Performance Swarm (token-scoped specialists)
 ├── vitals-reviewer        → Frontend CWV depth: Suspense waterfalls, paint jank, animation leaks
@@ -65,17 +66,17 @@ Tier 4: Performance Swarm (token-scoped specialists)
 
 ## Active Reviewers by Code Type
 
-Not all 11 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
+Not all 18 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
 
 | Code Under Review   | Critical Reviewers                                                |
 | :------------------ | :---------------------------------------------------------------- |
 | REST API route      | logic, security, dependency, type-safety, sql, schema, resilience |
-| React component     | logic, frontend, accessibility, type-safety, resilience           |
+| React component     | logic, frontend, accessibility, type-safety, resilience, ui-ux    |
 | Database query      | logic, security, sql, resilience                                  |
 | AI LLM integration  | logic, security, ai-code, dependency                              |
 | Test file           | test-coverage, logic                                              |
-| React Native / Expo | mobile, logic, security, performance                              |
-| Next.js page        | logic, frontend, performance, accessibility                       |
+| React Native / Expo | mobile, logic, security, performance, ui-ux                       |
+| Next.js page        | logic, frontend, performance, accessibility, ui-ux                       |
 | Auth/JWT code       | security, logic, type-safety                                      |
 
 ---
@@ -83,7 +84,7 @@ Not all 11 reviewers produce meaningful findings on all code types. Active revie
 ## Verdict Aggregation
 
 ```
-All 16 verdicts are collected. Aggregated result:
+All 18 verdicts are collected. Aggregated result:
 
 If ANY reviewer = ❌ REJECTED → Global verdict: ❌ REJECTED (must fix before Human Gate)
 If any reviewer = ⚠️ WARNING  → Global verdict: ⚠️ WARNINGS (proceed with attention)
@@ -121,7 +122,7 @@ After 3 failed attempts:
 
 | Outcome                    | Next Command                                   |
 | :------------------------- | :--------------------------------------------- |
-| All 16 reviewers approve   | → `/deploy` — highest confidence state         |
+| All 18 reviewers approve   | → `/deploy` — highest confidence state         |
 | Reject with multiple fixes | → `/fix` for simple issues, `/debug` for logic |
 | Performance rejection      | → `/tribunal-speed` for granular profiling     |
 | Security rejection         | → Immediate `/tribunal-backend` to resolve     |

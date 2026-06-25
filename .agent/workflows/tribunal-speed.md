@@ -181,7 +181,7 @@ If a specialist fails after 3 retries:
 | :------------------------- | :------------------------------- | :--------------------- | :--------------------------------------- |
 | `/tribunal-performance`    | logic + performance-reviewer     | Generic CWV check      | Quick single-file perf scan              |
 | `/tribunal-speed`          | vitals + db-latency + throughput | Deep 3-domain parallel | Full-stack perf audit                    |
-| `/tribunal-full`           | All 14 agents                    | Everything             | Maximum coverage (security + perf + all) |
+| `/tribunal-full`           | All 18 agents                    | Everything             | Maximum coverage (security + perf + all) |
 | `/performance-benchmarker` | Lighthouse + bundle              | Measurement only       | Get actual scores, not code review       |
 
 ---

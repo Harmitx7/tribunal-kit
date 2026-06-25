@@ -1,6 +1,6 @@
 ---
-description: Plan and implement cutting-edge advanced UI/UX. Creates distinctive, production-grade frontend interfaces with high design quality that avoid generic AI aesthetics — no purple gradients, no bento grids, no mesh backgrounds.
-required-skills: ui-ux-researcher, frontend-design, motion-engineering
+description: Plan and implement cutting-edge advanced UI/UX. Creates distinctive, production-grade frontend interfaces with high design quality that avoid generic AI aesthetics. Now uses a modular swarm architecture to decompose layout, styling, and motion tasks.
+required-skills: ui-ux-researcher, frontend-design, motion-engineering, agent-organizer, parallel-agents
 ---
 
 # /ui-ux-pro-max — Advanced UI/UX Design
@@ -91,18 +91,28 @@ Success pulse:     confirmed actions pulse green briefly
 
 ---
 
-## Phase 4 — Implementation (Tribunal-Reviewed)
+## Phase 4 — Swarm Implementation (Modular Generation)
 
-All generated code runs through `/tribunal-frontend` including `accessibility-reviewer`:
+Instead of a single agent generating the entire UI, `/ui-ux-pro-max` leverages a Fan-Out/Fan-In swarm architecture using `.agent/scripts/swarm_dispatcher.js`. The Supervisor decomposes the component into a structured JSON contract for three specialized workers:
 
-```
-WCAG 2.2 AA — Non-negotiable:
-□ Keyboard navigation complete and visible
-□ Screen reader semantics verified (role, label, live region)
-□ Color contrast 4.5:1 minimum on all text
-□ Focus indicator visible (outline: 2px solid, offset: 2px)
-□ Motion respects prefers-reduced-motion
-```
+### Worker 1: Layout Architect (`frontend-specialist`)
+- **Focus**: Semantic HTML, accessibility tree, and component composition.
+- **Rules**: Zero styling, just the raw structure and React state logic.
+- **WCAG Checks**: Keyboard navigation, screen reader semantics (role, label).
+
+### Worker 2: Styling & Token Specialist (`frontend-design`)
+- **Focus**: Applies Tailwind classes and design tokens based on the Phase 2 Identity.
+- **Rules**: Must enforce color contrast (4.5:1 minimum) and spacing scale; strictly avoids generic AI defaults.
+
+### Worker 3: Motion Engineer (`motion-engineering`)
+- **Focus**: Injects GSAP or Framer Motion for micro-interactions (Phase 3).
+- **Rules**: Handles entry animations, hover states, and ensures motion respects `prefers-reduced-motion`.
+
+**Execution Flow**:
+1. Supervisor builds the JSON contract for the 3 workers.
+2. Dispatches workers in parallel via `swarm_dispatcher.js`.
+3. Fan-in synthesis merges the layout, styles, and motion into the final component file.
+4. Final code is routed through `/tribunal-frontend` for the Human Gate.
 
 ---
 

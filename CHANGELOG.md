@@ -3,8 +3,20 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [4.6.0] — 2026-06-21
+## [4.6.1] — 2026-06-25
 
+### ✨ Enhancements & Cleanup
+
+- **Clutter Reduction**: Performed a deep analysis of project artifacts and successfully pruned redundant/orphan files to streamline the `tribunal-kit` repository.
+- **Removed Duplicate Docs**: Deleted `AGENT_FLOW.md` (redundant with `.agent/ARCHITECTURE.md`) and `.agent/GEMINI.md` (duplicate of canonical `.agent/rules/GEMINI.md`).
+- **Removed Dead Code**: Deleted `.agent/skills/doc.md` (orphan tutorial file) and `clean.js` (leftover legacy script referencing non-existent paths).
+
+### 🐛 Fixes
+
+- **Documentation Accuracy**: Updated `package.json` description to accurately reflect 18 parallel Tribunal reviewers and 43 specialist agents.
+- **Reference Integrity**: Fixed a broken reference in `.agent/rules/GEMINI.md` to point to the correct `.agent/ARCHITECTURE.md` instead of the deleted `AGENT_FLOW.md`.
+
+## [4.6.0] — 2026-06-21
 ### ✨ Features
 
 - **Self-Describing Skill Graph**: Migrated the `intelligent-routing` core from a centralized, flat 150-line Markdown manifest to a decentralized YAML frontmatter architecture.

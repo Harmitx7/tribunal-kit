@@ -42,7 +42,7 @@ Type any of these in your AI IDE chat:
 | ----------------------- | -------------------------------------------------------------------------------------- | ----------------------------------- |
 | `/generate`             | Full Tribunal: Maker → Parallel Review → Human Gate                                    | `workflows/generate.md`             |
 | `/review`               | Audit existing code (no generation)                                                    | `workflows/review.md`               |
-| `/tribunal-full`        | ALL 16 reviewers at once — maximum coverage                                            | `workflows/tribunal-full.md`        |
+| `/tribunal-full`        | ALL 18 reviewers at once — maximum coverage                                            | `workflows/tribunal-full.md`        |
 | `/tribunal-backend`     | Logic + Security + Deps + Types                                                        | `workflows/tribunal-backend.md`     |
 | `/tribunal-frontend`    | Logic + Security + Frontend + Types                                                    | `workflows/tribunal-frontend.md`    |
 | `/tribunal-database`    | Logic + Security + SQL                                                                 | `workflows/tribunal-database.md`    |
@@ -71,7 +71,7 @@ Type any of these in your AI IDE chat:
 
 ---
 
-## The 16 Tribunal Agents
+## The 18 Tribunal Agents
 
 | Agent                    | File                               | Activates When                                                                      |
 | ------------------------ | ---------------------------------- | ----------------------------------------------------------------------------------- |
@@ -90,7 +90,10 @@ Type any of these in your AI IDE chat:
 | `schema-reviewer`        | `agents/schema-reviewer.md`        | "validation", "zod", "pydantic", `/tribunal-backend`, `/tribunal-full`              |
 | `precedence-reviewer`    | `agents/precedence-reviewer.md`    | All sessions — checks Case Law before generation                                    |
 | `penetration-tester`     | `agents/penetration-tester.md`     | "pentest", "red team", "attack surface", `/tribunal-full`                           |
-| `db-latency-auditor`     | `agents/db-latency-auditor.md`     | "slow query", "index", "N+1", `/tribunal-database`, `/tribunal-full`                |
+| `ui-ux-auditor`          | `agents/ui-ux-auditor.md`          | "component", "ui", "design", "landing", `/tribunal-frontend`, `/tribunal-full`      |
+| `vitals-reviewer`        | `agents/vitals-reviewer.md`        | Frontend CWV depth, `/tribunal-speed`, `/tribunal-full`                             |
+| `throughput-optimizer`   | `agents/throughput-optimizer.md`   | Server runtime, event-loop, `/tribunal-speed`, `/tribunal-full`                     |
+| `db-latency-auditor`     | `agents/db-latency-auditor.md`     | "slow query", "index", "N+1", `/tribunal-speed`, `/tribunal-full`                   |
 
 ---
 
@@ -264,7 +267,7 @@ Script failures follow cascade rules:
 .agent/
 ├── ARCHITECTURE.md          ← This file
 ├── GEMINI.md                ← Root behavior config (includes /swarm routing)
-├── agents/                  ← 40 specialist + reviewer agents (16 reviewers + 24 domain)
+├── agents/                  ← 43 specialist + reviewer agents (18 reviewers + 25 domain)
 │   ├── supervisor-agent.md  ← Swarm triage, dispatch, synthesis
 │   ├── swarm-worker-contracts.md  ← WorkerRequest/WorkerResult schemas
 │   └── swarm-worker-registry.md   ← Task type → agent routing map
