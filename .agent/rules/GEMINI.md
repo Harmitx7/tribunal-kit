@@ -158,14 +158,14 @@ The Human Gate is never skipped. No code is written to a file without explicit u
 
 **Reviewer assignment by domain:**
 
-| Code type             | Reviewers                                                                         |
-| --------------------- | --------------------------------------------------------------------------------- |
-| Backend/API           | logic + security + dependency + type-safety + resilience + schema                 |
-| Frontend/React        | logic + security + frontend + type-safety + ui-ux-auditor                         |
-| Database/SQL          | logic + security + sql + schema                                                   |
-| Mobile/Cross-platform | logic + security + mobile-reviewer + type-safety                                  |
-| Any domain            | + performance (if optimization)                                                   |
-| Before merge          | /tribunal-full (all 18)                                                           |
+| Code type             | Reviewers                                                                                           |
+| --------------------- | --------------------------------------------------------------------------------------------------- |
+| Backend/API           | logic + security + dependency + type-safety + resilience + schema                                   |
+| Frontend/React        | logic + security + frontend + type-safety + ui-ux-auditor + review-animations                       |
+| Database/SQL          | logic + security + sql + schema                                                                     |
+| Mobile/Cross-platform | logic + security + mobile-reviewer + type-safety                                                    |
+| Any domain            | + performance (if optimization)                                                                     |
+| Before merge          | /tribunal-full (all 19)                                                                             |
 
 ---
 
@@ -357,4 +357,3 @@ Before modifying any file:
 **Workflows:** `.agent/workflows/`
 **Rules (this file):** `.agent/rules/GEMINI.md`
 **Architecture:** `.agent/ARCHITECTURE.md`
-**Architecture & flow diagram:** `.agent/ARCHITECTURE.md`

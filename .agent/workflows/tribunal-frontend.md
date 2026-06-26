@@ -1,6 +1,6 @@
 ---
-description: Frontend and React specific Tribunal. Runs Logic + Security + Frontend + Type Safety + UI/UX reviewers. Use for React components, hooks, UI code, Next.js pages, Server Components, and Client Components.
-required-skills: react-specialist, nextjs-react-expert, frontend-design
+description: Frontend and React specific Tribunal. Runs Logic + Security + Frontend + Type Safety + UI/UX + Motion reviewers. Use for React components, hooks, UI code, Next.js pages, Server Components, and Client Components.
+required-skills: react-specialist, nextjs-react-expert, frontend-design, review-animations, emil-design-eng
 ---
 
 # /tribunal-frontend — Frontend Code Audit
@@ -32,7 +32,7 @@ Read BEFORE frontend review:
 
 ---
 
-## 5 Active Reviewers (All Run Simultaneously)
+## 6 Active Reviewers (All Run Simultaneously)
 
 ### precedence-reviewer → Checks local repo Case Law for past rejections
 
@@ -72,6 +72,13 @@ Read BEFORE frontend review:
 - Missing hover/focus states on interactive elements
 - Color contrast below WCAG AA (4.5:1)
 - Typography and spacing not following design system logic
+
+### review-animations (The Socratic Gate)
+
+- Any UI animation exceeding 300ms budget
+- Use of `ease-in` on entering UI elements instead of `ease-out`
+- Elements appearing from `scale(0)` instead of `0.95`
+- Non-interruptible motion or missing hover/active states
 
 ---
 

@@ -3,12 +3,24 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [4.6.1] — 2026-06-25
+## [4.6.1] — 2026-06-26
 
 ### ✨ Enhancements & Cleanup
 
 - **Clutter Reduction**: Performed a deep analysis of project artifacts and successfully pruned redundant/orphan files to streamline the `tribunal-kit` repository.
 - **Removed Duplicate Docs**: Deleted `AGENT_FLOW.md` (redundant with `.agent/ARCHITECTURE.md`) and `.agent/GEMINI.md` (duplicate of canonical `.agent/rules/GEMINI.md`).
+
+### Added
+- Extracted and integrated UI/UX design engineering philosophy from `emilkowalski/skills`.
+- Added new `emil-design-eng` skill enforcing interface craft and component physical consistency.
+- Added new `review-animations` reviewer enforcing a 10-point non-negotiable standard (interruptibility, GPU-only properties, sub-300ms budgets).
+- Added `.agent/skills/review-animations/STANDARDS.md` referencing exact curves and tables.
+
+### Changed
+- Increased maximum Tribunal coverage (`/tribunal-full`) from 18 to 19 Reviewers.
+- Upgraded `/tribunal-frontend` to include the `review-animations` Socratic gate (now 6 frontend reviewers).
+- Upgraded `/ui-ux-pro-max` swarm constraints to enforce `emil-design-eng` for the Motion Engineer worker.
+- Updated `GEMINI.md` master rules to reflect the exact 19 reviewer count.
 - **Removed Dead Code**: Deleted `.agent/skills/doc.md` (orphan tutorial file) and `clean.js` (leftover legacy script referencing non-existent paths).
 
 ### 🐛 Fixes

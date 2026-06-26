@@ -1,9 +1,9 @@
 ---
-description: Run ALL 18 Tribunal reviewer agents simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
+description: Run ALL 19 Tribunal reviewer agents simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
 required-skills: all domain skills auto-loaded
 ---
 
-# /tribunal-full — Complete 18-Reviewer Audit
+# /tribunal-full — Complete 19-Reviewer Audit
 
 $ARGUMENTS
 
@@ -32,7 +32,7 @@ Read BEFORE full review:
 
 ---
 
-## 18 Reviewers — All Active Simultaneously
+## 19 Reviewers — All Active Simultaneously
 
 ```
 Tier 1: Always active (universal concerns)
@@ -54,7 +54,8 @@ Tier 3: Domain-specific
 ├── ai-code-reviewer       → Model name hallucinations, prompt injection, cost explosion
 ├── test-coverage-reviewer → Happy path only, brittle selectors, missing edge cases
 ├── accessibility-reviewer → WCAG 2.2 AA, ARIA misuse, focus management, live regions
-└── ui-ux-auditor          → Generic AI aesthetics, missing hover states, contrast
+├── ui-ux-auditor          → Generic AI aesthetics, missing hover states, contrast
+└── review-animations      → UI animations >300ms, origin-unaware popovers, ease-in
 
 Tier 4: Performance Swarm (token-scoped specialists)
 ├── vitals-reviewer        → Frontend CWV depth: Suspense waterfalls, paint jank, animation leaks
@@ -66,7 +67,7 @@ Tier 4: Performance Swarm (token-scoped specialists)
 
 ## Active Reviewers by Code Type
 
-Not all 18 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
+Not all 19 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
 
 | Code Under Review   | Critical Reviewers                                                |
 | :------------------ | :---------------------------------------------------------------- |
@@ -84,7 +85,7 @@ Not all 18 reviewers produce meaningful findings on all code types. Active revie
 ## Verdict Aggregation
 
 ```
-All 18 verdicts are collected. Aggregated result:
+All 19 verdicts are collected. Aggregated result:
 
 If ANY reviewer = ❌ REJECTED → Global verdict: ❌ REJECTED (must fix before Human Gate)
 If any reviewer = ⚠️ WARNING  → Global verdict: ⚠️ WARNINGS (proceed with attention)
@@ -122,7 +123,7 @@ After 3 failed attempts:
 
 | Outcome                    | Next Command                                   |
 | :------------------------- | :--------------------------------------------- |
-| All 18 reviewers approve   | → `/deploy` — highest confidence state         |
+| All 19 reviewers approve   | → `/deploy` — highest confidence state         |
 | Reject with multiple fixes | → `/fix` for simple issues, `/debug` for logic |
 | Performance rejection      | → `/tribunal-speed` for granular profiling     |
 | Security rejection         | → Immediate `/tribunal-backend` to resolve     |

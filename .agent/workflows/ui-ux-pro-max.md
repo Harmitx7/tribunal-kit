@@ -1,6 +1,6 @@
 ---
 description: Plan and implement cutting-edge advanced UI/UX. Creates distinctive, production-grade frontend interfaces with high design quality that avoid generic AI aesthetics. Now uses a modular swarm architecture to decompose layout, styling, and motion tasks.
-required-skills: ui-ux-researcher, frontend-design, motion-engineering, agent-organizer, parallel-agents
+required-skills: ui-ux-researcher, frontend-design, emil-design-eng, motion-engineering, agent-organizer, parallel-agents
 ---
 
 # /ui-ux-pro-max — Advanced UI/UX Design
@@ -104,15 +104,15 @@ Instead of a single agent generating the entire UI, `/ui-ux-pro-max` leverages a
 - **Focus**: Applies Tailwind classes and design tokens based on the Phase 2 Identity.
 - **Rules**: Must enforce color contrast (4.5:1 minimum) and spacing scale; strictly avoids generic AI defaults.
 
-### Worker 3: Motion Engineer (`motion-engineering`)
-- **Focus**: Injects GSAP or Framer Motion for micro-interactions (Phase 3).
-- **Rules**: Handles entry animations, hover states, and ensures motion respects `prefers-reduced-motion`.
+### Worker 3: Motion Engineer (`motion-engineering` + `emil-design-eng`)
+- **Focus**: Injects GSAP, Framer Motion, or CSS springs for micro-interactions (Phase 3).
+- **Rules**: Enforces Emil Kowalski's non-negotiable UI standards: all UI animations <300ms, popovers are origin-aware, entering elements strictly use `ease-out`, and `prefers-reduced-motion` is honored.
 
 **Execution Flow**:
 1. Supervisor builds the JSON contract for the 3 workers.
 2. Dispatches workers in parallel via `swarm_dispatcher.js`.
 3. Fan-in synthesis merges the layout, styles, and motion into the final component file.
-4. Final code is routed through `/tribunal-frontend` for the Human Gate.
+4. Final code is routed through `/tribunal-frontend` (which now includes the `review-animations` strict UI constraint gate) for the Human Gate.
 
 ---
 
