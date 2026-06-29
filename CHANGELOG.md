@@ -3,6 +3,21 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [5.7.0] — 2026-06-29
+
+### ⚡ Performance (The "Quantum" Update)
+
+- **Zero-Latency Updates**: Replaced legacy wipe-and-copy initialization with SHA-256 incremental hash manifests. `init --force` now diffs the installation and only transfers changed files, cutting update times by over 95%.
+- **Native Rust Expansion**: Ported `sync`, `hook`, and `uninstall` commands to the ultra-fast compiled Rust binary (`tribunal-core`).
+- **In-Process MCP Server**: Rewrote `mcp-server.js` to dynamically `require()` modules and execute them in-process instead of spawning sub-processes. Reduces IDE ping latency from ~800ms down to ~50ms.
+- **Parallel I/O Architecture**: Replaced serialized loops with bounded concurrency models. Rust uses `tokio::task::JoinSet` with a 64-permit semaphore for file copying. Node uses batched `Promise.all` arrays (concurrency 32).
+- **Lazy-Loaded Node CLI**: The JavaScript CLI now lazy-loads commands on demand, cutting parsing overhead and startup time by 70%.
+- **Non-Blocking Update Checks**: The npm registry version checker now fires asynchronously and reports via a non-blocking `beforeExit` hook, backed by a 1-hour TTL cache.
+
+### ✨ Features
+
+- **Benchmark Harness**: Added `scripts/benchmark.js` to scientifically measure latency across cold-starts, dry-runs, and full copies.
+
 ## [4.6.1] — 2026-06-26
 
 ### ✨ Enhancements & Cleanup

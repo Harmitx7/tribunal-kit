@@ -67,6 +67,39 @@ enum Commands {
         #[arg(default_value = ".")]
         path: String,
     },
+
+    /// Sync IDE bridge configurations
+    Sync {
+        /// Target directory to sync (defaults to current directory)
+        #[arg(default_value = ".")]
+        path: String,
+        
+        /// Suppress output
+        #[arg(long, default_value_t = false)]
+        quiet: bool,
+    },
+
+    /// Manage git hooks
+    Hook {
+        /// Target directory
+        #[arg(default_value = ".")]
+        path: String,
+    },
+
+    /// Uninstall tribunal configuration
+    Uninstall {
+        /// Target directory
+        #[arg(default_value = ".")]
+        path: String,
+        
+        /// Preview actions without writing any files
+        #[arg(long, default_value_t = false)]
+        dry_run: bool,
+        
+        /// Suppress output
+        #[arg(long, default_value_t = false)]
+        quiet: bool,
+    },
 }
 
 // ── Schema Types ────────────────────────────────────────────────────────────
@@ -186,6 +219,12 @@ async fn main() -> Result<()> {
         Commands::Validate { file, schema } => cmd_validate(&file, &schema).await,
 
         Commands::Status { path } => cmd_status(&path).await,
+
+        Commands::Sync { path, quiet } => cmd_sync(&path, quiet).await,
+
+        Commands::Hook { path } => cmd_hook(&path).await,
+
+        Commands::Uninstall { path, dry_run, quiet } => cmd_uninstall(&path, dry_run, quiet).await,
     }
 }
 
@@ -439,59 +478,93 @@ fn count_dir_entries(dir: &PathBuf) -> u32 {
 
 use std::pin::Pin;
 use std::future::Future;
+use std::sync::Arc;
+use tokio::sync::Semaphore;
+
+/// Maximum concurrent file copy operations to avoid fd exhaustion.
+const COPY_CONCURRENCY: usize = 64;
 
 fn copy_dir_all<'a>(src: &'a PathBuf, dst: &'a PathBuf) -> Pin<Box<dyn Future<Output = Result<u32>> + Send + 'a>> {
-    Box::pin(async move {
-        if !src.exists() {
-            return Err(anyhow::anyhow!("Source directory does not exist: {}", src.display()));
-        }
-        tokio::fs::create_dir_all(&dst).await?;
-        let mut count = 0;
-        let mut entries = tokio::fs::read_dir(src).await?;
-        while let Ok(Some(entry)) = entries.next_entry().await {
-            let file_type = entry.file_type().await?;
-            let src_path = entry.path();
-            let dst_path = dst.join(entry.file_name());
+    // Create a shared semaphore for the top-level call
+    let sem = Arc::new(Semaphore::new(COPY_CONCURRENCY));
+    Box::pin(copy_dir_all_inner(src, dst, sem))
+}
 
-            if file_type.is_dir() {
-                count += copy_dir_all(&src_path, &dst_path).await?;
-            } else {
+async fn copy_dir_all_inner(src: &PathBuf, dst: &PathBuf, sem: Arc<Semaphore>) -> Result<u32> {
+    if !src.exists() {
+        return Err(anyhow::anyhow!("Source directory does not exist: {}", src.display()));
+    }
+    tokio::fs::create_dir_all(&dst).await?;
+
+    let mut entries = tokio::fs::read_dir(src).await?;
+    let mut file_tasks = tokio::task::JoinSet::new();
+    let mut dir_tasks = tokio::task::JoinSet::new();
+
+    while let Ok(Some(entry)) = entries.next_entry().await {
+        let file_type = entry.file_type().await?;
+        let src_path = entry.path();
+        let dst_path = dst.join(entry.file_name());
+
+        if file_type.is_dir() {
+            let sem_clone = sem.clone();
+            dir_tasks.spawn(async move {
+                copy_dir_all_inner(&src_path, &dst_path, sem_clone).await
+            });
+        } else {
+            let sem_clone = sem.clone();
+            file_tasks.spawn(async move {
+                let _permit = sem_clone.acquire().await.expect("semaphore closed");
                 tokio::fs::copy(&src_path, &dst_path).await?;
-                count += 1;
-            }
+                Ok::<u32, anyhow::Error>(1)
+            });
         }
-        Ok(count)
-    })
+    }
+
+    let mut count: u32 = 0;
+
+    // Collect file copy results
+    while let Some(result) = file_tasks.join_next().await {
+        count += result??;
+    }
+
+    // Collect directory copy results
+    while let Some(result) = dir_tasks.join_next().await {
+        count += result??;
+    }
+
+    Ok(count)
 }
 
 async fn generate_ide_bridges(target: &PathBuf, agent_dest: &PathBuf) -> Result<()> {
     let rules_file = agent_dest.join("rules").join("GEMINI.md");
     let rules_content = tokio::fs::read_to_string(&rules_file).await.unwrap_or_default();
 
-    let write_bridge = |file_path: PathBuf, content: String| async move {
+    /// Write a bridge file if it doesn't already exist.
+    async fn write_bridge(file_path: PathBuf, content: String) {
         if !file_path.exists() {
             if let Some(p) = file_path.parent() {
                 let _ = tokio::fs::create_dir_all(p).await;
             }
             let _ = tokio::fs::write(file_path, content).await;
         }
-    };
+    }
 
-    // Cursor
+    // Pre-create all parent directories concurrently
+    let _ = tokio::join!(
+        tokio::fs::create_dir_all(target.join(".gemini")),
+        tokio::fs::create_dir_all(target.join(".github")),
+        tokio::fs::create_dir_all(target.join(".claude")),
+    );
+
+    // Build all content strings (zero-cost, just formatting)
     let cursor_rules = format!(
         "# Tribunal Kit — Cursor Bridge\n# Auto-generated by tribunal-kit init. Do not edit manually.\n# Source: .agent/rules/GEMINI.md\n\n{}",
         rules_content
     );
-    write_bridge(target.join(".cursorrules"), cursor_rules).await;
-
-    // Windsurf
     let windsurf_rules = format!(
         "# Tribunal Kit — Windsurf Bridge\n# Auto-generated by tribunal-kit init. Do not edit manually.\n# Source: .agent/rules/GEMINI.md\n\n{}",
         rules_content
     );
-    write_bridge(target.join(".windsurfrules"), windsurf_rules).await;
-
-    // Gemini
     let gemini_settings = serde_json::json!({
         "rules": [
             { "path": "../.agent/rules/GEMINI.md", "trigger": "always_on" }
@@ -500,31 +573,28 @@ async fn generate_ide_bridges(target: &PathBuf, agent_dest: &PathBuf) -> Result<
         "skills": { "directory": "../.agent/skills" },
         "workflows": { "directory": "../.agent/workflows" }
     });
-    write_bridge(
-        target.join(".gemini").join("settings.json"),
-        serde_json::to_string_pretty(&gemini_settings).unwrap(),
-    )
-    .await;
-
     let gemini_md = format!(
         "---\ntrigger: always_on\n---\n\n# Tribunal Kit — Gemini Bridge\n# Auto-generated by tribunal-kit init.\n\n{}",
         rules_content
     );
-    write_bridge(target.join(".gemini").join("GEMINI.md"), gemini_md).await;
-
-    // Copilot
     let copilot_instructions = format!(
         "# Tribunal Kit — Copilot Bridge\n# Auto-generated by tribunal-kit init.\n\n{}",
         rules_content
     );
-    write_bridge(target.join(".github").join("copilot-instructions.md"), copilot_instructions).await;
-
-    // Claude
     let claude_rules = format!(
         "# Tribunal Kit \u{2014} Claude Bridge\n# Auto-generated by tribunal-kit init.\n# Source: .agent/rules/GEMINI.md\n\n{}",
         rules_content
     );
-    write_bridge(target.join(".claude").join("CLAUDE.md"), claude_rules).await;
+
+    // Fire ALL 6 bridge writes concurrently via tokio::join!
+    tokio::join!(
+        write_bridge(target.join(".cursorrules"), cursor_rules),
+        write_bridge(target.join(".windsurfrules"), windsurf_rules),
+        write_bridge(target.join(".gemini").join("settings.json"), serde_json::to_string_pretty(&gemini_settings).unwrap()),
+        write_bridge(target.join(".gemini").join("GEMINI.md"), gemini_md),
+        write_bridge(target.join(".github").join("copilot-instructions.md"), copilot_instructions),
+        write_bridge(target.join(".claude").join("CLAUDE.md"), claude_rules),
+    );
 
     Ok(())
 }

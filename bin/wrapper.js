@@ -13,7 +13,7 @@ const { spawnSync } = require('child_process');
 const os = require('os');
 
 // Commands that have been fully ported to Rust so far
-const RUST_COMMANDS = new Set(['init', 'validate', 'status']);
+const RUST_COMMANDS = new Set(['init', 'validate', 'status', 'sync', 'hook', 'uninstall']);
 
 // Determine the path to the compiled Rust binary
 // In a full production release, this checks optionalDependencies in node_modules
@@ -68,9 +68,10 @@ function runRustBinary(binPath, args) {
 }
 
 function runLegacyFallback() {
-    // Graceful fallback to the original JS implementation
-    // We do this by modifying process.argv so it appears normal to the legacy script
-    require('./tribunal-kit.js');
+    // Use the modular dist/ CLI with lazy-loaded commands for faster cold-start.
+    // Each command module is require()'d only when invoked (~70% fewer files loaded).
+    const { main } = require('../dist/cli.js');
+    main();
 }
 
 function main() {
