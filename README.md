@@ -1,36 +1,33 @@
 <div align="center">
   <picture>
-    <img src="./docs/tribunalkit_no_bg.png" alt="TribunalKit — Code Without Hallucinations" width="500">
+    <img src="./docs/tribunalkit_no_bg.png" alt="TribunalKit — Code Without Hallucinations" width="400">
   </picture>
 
-<br><br>
-
-  <h1 style="font-size: 2.5em; border-bottom: none; margin-bottom: 0;">TRIBUNAL KIT</h1>
-  <p style="font-size: 1.2em; color: #888;">
-    <b>Anti-Hallucination Agent Architecture • Long-Running Autonomy • Pipeline Scrutiny</b>
+  <h1 style="font-size: 3em; font-weight: 800; letter-spacing: -1px; margin-bottom: 0;">TRIBUNAL KIT</h1>
+  <p style="font-size: 1.1em; color: #888; text-transform: uppercase; letter-spacing: 2px;">
+    <b>Anti-Hallucination Pipeline • Long-Running Autonomy • Absolute Control</b>
   </p>
 
   <br>
 
-[![NPM](https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white&color=cb0000)](https://www.npmjs.com/package/tribunal-kit)
-[![License](https://img.shields.io/badge/License-MIT-8b5cf6?style=for-the-badge)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-5.7.0_Quantum-1a1a1a?style=for-the-badge)](CHANGELOG.md)
-[![MCP](https://img.shields.io/badge/MCP-Ready-00e5ff?style=for-the-badge&logo=openai&logoColor=1a1a1a)](mcp_config.json)
+[![NPM](https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white&color=ff1637)](https://www.npmjs.com/package/tribunal-kit)
+[![License](https://img.shields.io/badge/License-MIT-1a1a1a?style=for-the-badge)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-5.8.0-1a1a1a?style=for-the-badge)](CHANGELOG.md)
+[![MCP](https://img.shields.io/badge/MCP-Ready-ccff00?style=for-the-badge&logo=openai&logoColor=1a1a1a)](mcp_config.json)
 [![Code Quality](https://img.shields.io/badge/Zero-Hallucinations-ff1637?style=for-the-badge)](AGENT_FLOW.md)
-
-<br><br>
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Y6C122DUQJ)
 
 </div>
-
-> [!IMPORTANT]
-> **AI GENERATES CODE. TRIBUNAL ENSURES IT WORKS.**  
-> A zero-bloat `.agent/` intelligence payload that upgrades your IDE with **40 specialist agents**, **34 workflows**, and a **16-reviewer Tribunal pipeline**. Zero hallucinations. Absolute execution certainty.
 
 <br>
 
-<div align="center">
-  <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-</div>
+> [!IMPORTANT]
+> **AI GENERATES CODE. TRIBUNAL ENSURES IT WORKS.**  
+> A zero-bloat `.agent/` intelligence payload that upgrades your IDE with **43 specialist agents**, **34 workflows**, and a **19-reviewer Tribunal pipeline**. Zero hallucinations. Absolute execution certainty.
+
+<br>
+<hr style="border: 1px solid #222; margin: 40px 0;">
+<br>
 
 ## 🚀 QUICK START
 
@@ -45,28 +42,30 @@ npx tribunal-kit init
 > <kbd>init</kbd> automatically generates bridge rules for **Cursor**, **Windsurf**, **Gemini**, **Copilot**, and **Claude**. No configuration required.
 
 ### 🔄 Auto-Syncing IDEs
-
 Keep your entire team aligned. Run <kbd>npx tribunal-kit sync</kbd> to instantly push the latest `.agent` rules directly into your IDE config files. Use <kbd>npx tribunal-kit hook</kbd> to install a Git `pre-push` hook that auto-evolves and syncs rules every time you push code.
 
+### 💻 Terminal Agent Support (Claude Code, Aider, OpenCode)
+Tribunal Kit breaks out of the IDE with first-class support for terminal-based AI agents.
+- **Dynamic MCP Integration**: Modern agents can connect to Tribunal via MCP (Model Context Protocol) to dynamically fetch only the specific skills and agents they need without blowing up the context window.
+- **Static Compilation**: Run <kbd>tk compile</kbd> to statically generate a `.tribunal-compiled.md` file for terminal tools that require static context files.
+
+<br>
+<hr style="border: 1px solid #222; margin: 40px 0;">
 <br>
 
 ## ⚡ STATE-OF-THE-ART PERFORMANCE (v5.0)
 
 Tribunal-Kit v5 is rebuilt from the ground up to be blazingly fast. We've eliminated initialization latency and blocking I/O:
 
-- **Native Rust Core Engine**: The CLI parser and critical paths are now powered by a compiled `tokio`-based Rust binary (`tribunal-core`).
+- **Native Rust Core Engine**: The CLI parser and critical paths are powered by a compiled `tokio`-based Rust binary (`tribunal-core`).
 - **Parallel I/O Processing**: File copies and bridge generation run concurrently with bounded thread pools (Semaphore concurrency: 64 in Rust, 32 in JS).
-- **Zero-Latency Updates**: `init --force` now uses SHA-256 hash manifesting. It diffs your current installation and only transfers changed files—reducing 300+ file updates to just a handful.
-- **In-Process MCP Routing**: `mcp-server.js` dynamically `require()`s modules directly instead of spawning blocking sub-processes, reducing IDE ping latency from ~800ms down to ~50ms.
+- **Zero-Latency Updates**: `init --force` uses SHA-256 hash manifesting. It diffs your current installation and only transfers changed files.
+- **In-Process MCP Routing**: `mcp-server.js` dynamically `require()`s modules directly instead of spawning blocking sub-processes.
 - **Lazy-Loaded Architecture**: The JavaScript CLI now lazy-loads commands on demand, cutting parsing overhead by 70%.
 
-With Tribunal-Kit 5.0, your intelligence payload deploys practically instantaneously.
-
 <br>
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-</div>
+<hr style="border: 1px solid #222; margin: 40px 0;">
+<br>
 
 ## ⚔️ THE COMMAND ARSENAL
 
@@ -76,15 +75,13 @@ With Tribunal-Kit 5.0, your intelligence payload deploys practically instantaneo
 | <kbd>/create</kbd>        | Scaffold major applications via App Builder routing.                     |
 | <kbd>/enhance</kbd>       | Safely extend existing codebases with zero regression.                   |
 | <kbd>/swarm</kbd>         | Fan-out orchestrator. Dispatch isolated workers, synthesize output.      |
-| <kbd>/tribunal-full</kbd> | Unleash **ALL 16** domain reviewers simultaneously for maximum scrutiny. |
+| <kbd>/tribunal-full</kbd> | Unleash **ALL 19** domain reviewers simultaneously for maximum scrutiny. |
 | <kbd>/debug</kbd>         | Systematic 4-phase root-cause investigation. No guessing.                |
 | <kbd>/ui-ux-pro-max</kbd> | Advanced visual aesthetic engine. No generic AI slop.                    |
 
 <br>
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-</div>
+<hr style="border: 1px solid #222; margin: 40px 0;">
+<br>
 
 ## ⚖️ THE PIPELINE // EVIDENCE-BASED CLOSEOUT
 
@@ -99,48 +96,38 @@ graph TD
     C -.->|Failed| E[Maker Auto-Correction]
     E -.-> C
 
-    D -->|16 Domain Reviewers| F[Human Gate]
+    D -->|19 Domain Reviewers| F[Human Gate]
     F -->|Approved| G((Committed to Disk))
 
     classDef default fill:#1a1a1a,stroke:#333,stroke-width:2px,color:#fff;
     classDef critical fill:#ff1637,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef success fill:#00e5ff,stroke:#fff,stroke-width:2px,color:#1a1a1a;
+    classDef success fill:#ccff00,stroke:#fff,stroke-width:2px,color:#1a1a1a;
 
     class D critical;
     class G success;
 ```
 
 <br>
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-</div>
+<hr style="border: 1px solid #222; margin: 40px 0;">
+<br>
 
 ## 🏛️ THE SUPREME COURT (CASE LAW ENGINE)
 
 The Tribunal Kit features persistent memory. The AI **never makes the same mistake twice** and auto-learns your engineering culture.
 
 > [!WARNING]
->
 > ### 1. The Case Law Engine
->
 > Record mistakes as legal precedent. The `precedence-reviewer` checks this database locally to forcefully block the AI from repeating banned patterns.
->
 > - <kbd>npx tribunal-kit case add</kbd> _(Record an AI hallucination)_
 
 > [!TIP]
->
 > ### 2. Skill Evolution Forge
->
 > Stop writing manual rules. The system reads your Git diffs, strips token bloat, and auto-extracts your project's architectural idioms.
->
 > - <kbd>npx tribunal-kit learn</kbd> _(Digest staged files)_
 
 <br>
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-</div>
+<hr style="border: 1px solid #222; margin: 40px 0;">
+<br>
 
 ## 🏃 THE MARATHON HARNESS (v4.4+)
 
@@ -170,10 +157,8 @@ The **Marathon Harness** is an engine designed to keep autonomous agents on trac
 </table>
 
 <br>
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png" width="100%">
-</div>
+<hr style="border: 1px solid #222; margin: 40px 0;">
+<br>
 
 ## 🔌 NATIVE MCP SERVER
 
@@ -186,9 +171,10 @@ Bind your AI IDE directly to `tribunal-kit` to unlock autonomous tool execution:
 - `sync_ide_bridges`: Force rule alignment directly from the AI chat.
 
 <br>
+<br>
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Status-Active_&_Secured-00e5ff?style=for-the-badge" alt="Status" />
+  <img src="https://img.shields.io/badge/Status-Active_&_Secured-ccff00?style=for-the-badge&logoColor=1a1a1a" alt="Status" />
   <br><br>
   <i>"Never guess database column names. Error handling on every async function. Evidence-based closeouts. Welcome to the Tribunal."</i><br>
   <sub><b>MIT Licensed</b> • Engineered for maximum autonomy and precision.</sub>

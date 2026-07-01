@@ -2,32 +2,32 @@
 
 /**
  * Tribunal-Kit MCP Server (Performance-Optimized)
- * 
+ *
  * This file exposes tribunal-kit tools via the Model Context Protocol (MCP)
- * over standard I/O, allowing AI clients (Cursor, Windsurf, Claude) to natively 
+ * over standard I/O, allowing AI clients (Cursor, Windsurf, Claude) to natively
  * invoke tribunal checks.
- * 
+ *
  * PERF: Commands are loaded in-process via require() — no child process spawn.
  * This eliminates ~200-500ms overhead per tool call that spawnSync introduced.
- * 
+ *
  * Protocol: MCP 2024-11-05 over JSON-RPC 2.0 / stdio
  */
 
-const path = require('path');
-const { spawnSync } = require('child_process');
+const path = require("path");
+const { spawnSync } = require("child_process");
 
-const PKG = require(path.resolve(__dirname, '../package.json'));
+const PKG = require(path.resolve(__dirname, "../package.json"));
 
 // Timeout for spawned processes (30 seconds) — only used for Rust binary calls
 const SPAWN_TIMEOUT_MS = 30000;
 
 // Minimal JSON-RPC 2.0 over stdio
-const readline = require('readline');
+const readline = require("readline");
 
 const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: false
+  input: process.stdin,
+  output: process.stdout,
+  terminal: false,
 });
 
 /**
@@ -35,195 +35,343 @@ const rl = readline.createInterface({
  * This is the only command that still benefits from process spawn (Rust speed).
  */
 function runValidateCommand() {
-    const os = require('os');
-    const fs = require('fs');
-    const isWindows = os.platform() === 'win32';
-    const ext = isWindows ? '.exe' : '';
-    const platform = os.platform();
-    const arch = os.arch();
+  const os = require("os");
+  const fs = require("fs");
+  const isWindows = os.platform() === "win32";
+  const ext = isWindows ? ".exe" : "";
+  const platform = os.platform();
+  const arch = os.arch();
 
-    // Try Rust binary first
-    const pkgName = `@tribunal-kit/core-${platform}-${arch}`;
-    let binPath = null;
-    try {
-        const pkgPath = require.resolve(`${pkgName}/package.json`);
-        const candidatePath = path.resolve(path.dirname(pkgPath), `bin/tribunal-core${ext}`);
-        if (fs.existsSync(candidatePath)) binPath = candidatePath;
-    } catch (_) {}
-    if (!binPath) {
-        const devPath = path.resolve(__dirname, '..', 'target', 'release', `tribunal-core${ext}`);
-        if (fs.existsSync(devPath)) binPath = devPath;
-    }
+  // Try Rust binary first
+  const pkgName = `@tribunal-kit/core-${platform}-${arch}`;
+  let binPath = null;
+  try {
+    const pkgPath = require.resolve(`${pkgName}/package.json`);
+    const candidatePath = path.resolve(
+      path.dirname(pkgPath),
+      `bin/tribunal-core${ext}`,
+    );
+    if (fs.existsSync(candidatePath)) binPath = candidatePath;
+  } catch (_) {}
+  if (!binPath) {
+    const devPath = path.resolve(
+      __dirname,
+      "..",
+      "target",
+      "release",
+      `tribunal-core${ext}`,
+    );
+    if (fs.existsSync(devPath)) binPath = devPath;
+  }
 
-    if (binPath) {
-        const result = spawnSync(binPath, ['validate'], {
-            encoding: 'utf8',
-            timeout: SPAWN_TIMEOUT_MS,
-        });
-        return result.stdout || result.stderr || "No output";
-    }
+  if (binPath) {
+    const result = spawnSync(binPath, ["validate"], {
+      encoding: "utf8",
+      timeout: SPAWN_TIMEOUT_MS,
+    });
+    return result.stdout || result.stderr || "No output";
+  }
 
-    // JS fallback — in-process
-    return "Validate command requires the Rust binary. Run: cargo build --release";
+  // JS fallback — in-process
+  return "Validate command requires the Rust binary. Run: cargo build --release";
 }
 
 /**
  * Search case law — loaded in-process for zero-spawn latency.
  */
 function searchCaseLaw(query) {
-    const caseLawScript = path.resolve(__dirname, '../.agent/scripts/case_law_manager.js');
-    // We still spawn for case_law_manager since it's a standalone script
-    // that modifies global state, but we use spawn with minimal overhead
-    const result = spawnSync(process.execPath, [caseLawScript, 'search-cases', '--query', query], {
-        encoding: 'utf8',
-        timeout: SPAWN_TIMEOUT_MS,
-    });
-    return result.stdout || result.stderr || "No results";
+  const caseLawScript = path.resolve(
+    __dirname,
+    "../.agent/scripts/case_law_manager.js",
+  );
+  // We still spawn for case_law_manager since it's a standalone script
+  // that modifies global state, but we use spawn with minimal overhead
+  const result = spawnSync(
+    process.execPath,
+    [caseLawScript, "search-cases", "--query", query],
+    {
+      encoding: "utf8",
+      timeout: SPAWN_TIMEOUT_MS,
+    },
+  );
+  return result.stdout || result.stderr || "No results";
 }
 
 /**
  * Sync IDE bridges — loaded in-process for zero-spawn latency.
  */
 async function syncIDEBridges() {
-    try {
-        const { cmdSync } = require('../dist/commands/sync.js');
-        // Capture stdout
-        const originalLog = console.log;
-        let output = '';
-        console.log = (...args) => { output += args.join(' ') + '\n'; };
-        await cmdSync();
-        console.log = originalLog;
-        return output || "Sync complete";
-    } catch (e) {
-        return `Sync failed: ${e.message}`;
-    }
+  try {
+    const { cmdSync } = require("../dist/commands/sync.js");
+    // Capture stdout
+    const originalLog = console.log;
+    let output = "";
+    console.log = (...args) => {
+      output += args.join(" ") + "\n";
+    };
+    await cmdSync();
+    console.log = originalLog;
+    return output || "Sync complete";
+  } catch (e) {
+    return `Sync failed: ${e.message}`;
+  }
 }
 
 function handleRequest(req) {
-    // MCP spec: method names follow path-style convention
-    if (req.method === 'initialize') {
-        return {
-            protocolVersion: "2024-11-05",
-            capabilities: {
-                tools: {}
+  // MCP spec: method names follow path-style convention
+  if (req.method === "initialize") {
+    return {
+      protocolVersion: "2024-11-05",
+      capabilities: {
+        tools: {},
+      },
+      serverInfo: {
+        name: "tribunal-kit-mcp",
+        version: PKG.version,
+      },
+    };
+  }
+
+  if (req.method === "tools/list") {
+    return {
+      tools: [
+        {
+          name: "run_tribunal_audit",
+          description:
+            "Runs a full anti-hallucination audit across the workspace.",
+          inputSchema: {
+            type: "object",
+            properties: {},
+            additionalProperties: false,
+          },
+        },
+        {
+          name: "sync_ide_bridges",
+          description:
+            "Synchronize IDE bridge files with the current GEMINI.md rules.",
+          inputSchema: {
+            type: "object",
+            properties: {},
+            additionalProperties: false,
+          },
+        },
+        {
+          name: "search_case_law",
+          description:
+            "Search historical code rejections and legal precedent. Use this before writing code to avoid past mistakes.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                description: "Search query (e.g. 'useEffect state')",
+              },
             },
-            serverInfo: {
-                name: "tribunal-kit-mcp",
-                version: PKG.version
-            }
-        };
+            required: ["query"],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: "list_tribunal_agents",
+          description: "List all available Tribunal Kit agents.",
+          inputSchema: {
+            type: "object",
+            properties: {},
+            additionalProperties: false,
+          },
+        },
+        {
+          name: "get_tribunal_agent",
+          description: "Get the full markdown rules for a specific Tribunal agent.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              name: { type: "string", description: "The agent name (e.g. 'frontend-specialist')" },
+            },
+            required: ["name"],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: "list_tribunal_skills",
+          description: "List all available Tribunal Kit skills.",
+          inputSchema: {
+            type: "object",
+            properties: {},
+            additionalProperties: false,
+          },
+        },
+        {
+          name: "get_tribunal_skill",
+          description: "Get the full markdown instructions for a specific Tribunal skill.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              name: { type: "string", description: "The skill name (e.g. 'react-specialist')" },
+            },
+            required: ["name"],
+            additionalProperties: false,
+          },
+        },
+      ],
+    };
+  }
+
+  if (req.method === "tools/call") {
+    const toolName = req.params && req.params.name;
+    if (!toolName) {
+      throw {
+        code: -32602,
+        message: "Missing required parameter: params.name",
+      };
     }
-    
-    if (req.method === 'tools/list') {
+
+    if (toolName === "run_tribunal_audit") {
+      const text = runValidateCommand();
+      return { content: [{ type: "text", text }] };
+    }
+
+    if (toolName === "sync_ide_bridges") {
+      // This is async but MCP protocol is request/response,
+      // so we handle it synchronously for now via the dist module
+      const { cmdSync } = require("../dist/commands/sync.js");
+      const fs = require("fs");
+      const cwd = process.cwd();
+      const agentDest = path.join(cwd, ".agent");
+      if (!fs.existsSync(agentDest)) {
         return {
-            tools: [
-                {
-                    name: "run_tribunal_audit",
-                    description: "Runs a full anti-hallucination audit across the workspace.",
-                    inputSchema: { type: "object", properties: {}, additionalProperties: false }
-                },
-                {
-                    name: "sync_ide_bridges",
-                    description: "Synchronize IDE bridge files with the current GEMINI.md rules.",
-                    inputSchema: { type: "object", properties: {}, additionalProperties: false }
-                },
-                {
-                    name: "search_case_law",
-                    description: "Search historical code rejections and legal precedent. Use this before writing code to avoid past mistakes.",
-                    inputSchema: {
-                        type: "object",
-                        properties: {
-                            query: { type: "string", description: "Search query (e.g. 'useEffect state')" }
-                        },
-                        required: ["query"],
-                        additionalProperties: false
-                    }
-                }
-            ]
+          content: [
+            {
+              type: "text",
+              text: "Error: .agent/ directory not found. Run `tk init` first.",
+            },
+          ],
         };
+      }
+      // Direct in-process IDE bridge generation
+      const { generateIDEBridges } = require("../dist/commands/init.js");
+      // Run synchronously by spawning a minimal script
+      const result = spawnSync(
+        process.execPath,
+        [
+          "-e",
+          `
+                const { generateIDEBridges } = require('${path.resolve(__dirname, "../dist/commands/init.js").replace(/\\/g, "\\\\")}');
+                generateIDEBridges('${cwd.replace(/\\/g, "\\\\")}', '${agentDest.replace(/\\/g, "\\\\")}', false).then(() => console.log('Sync complete'));
+            `,
+        ],
+        { encoding: "utf8", timeout: SPAWN_TIMEOUT_MS },
+      );
+      return {
+        content: [
+          {
+            type: "text",
+            text: result.stdout || result.stderr || "Sync complete",
+          },
+        ],
+      };
     }
 
-    if (req.method === 'tools/call') {
-        const toolName = req.params && req.params.name;
-        if (!toolName) {
-            throw { code: -32602, message: "Missing required parameter: params.name" };
-        }
-        
-        if (toolName === 'run_tribunal_audit') {
-            const text = runValidateCommand();
-            return { content: [{ type: "text", text }] };
-        }
-        
-        if (toolName === 'sync_ide_bridges') {
-            // This is async but MCP protocol is request/response,
-            // so we handle it synchronously for now via the dist module
-            const { cmdSync } = require('../dist/commands/sync.js');
-            const fs = require('fs');
-            const cwd = process.cwd();
-            const agentDest = path.join(cwd, '.agent');
-            if (!fs.existsSync(agentDest)) {
-                return { content: [{ type: "text", text: "Error: .agent/ directory not found. Run `tk init` first." }] };
-            }
-            // Direct in-process IDE bridge generation
-            const { generateIDEBridges } = require('../dist/commands/init.js');
-            // Run synchronously by spawning a minimal script
-            const result = spawnSync(process.execPath, ['-e', `
-                const { generateIDEBridges } = require('${path.resolve(__dirname, '../dist/commands/init.js').replace(/\\/g, '\\\\')}');
-                generateIDEBridges('${cwd.replace(/\\/g, '\\\\')}', '${agentDest.replace(/\\/g, '\\\\')}', false).then(() => console.log('Sync complete'));
-            `], { encoding: 'utf8', timeout: SPAWN_TIMEOUT_MS });
-            return { content: [{ type: "text", text: result.stdout || result.stderr || "Sync complete" }] };
-        }
-        
-        if (toolName === 'search_case_law') {
-            const query = req.params && req.params.arguments && req.params.arguments.query;
-            if (!query || typeof query !== 'string') {
-                throw { code: -32602, message: "Missing or invalid required argument: query (string)" };
-            }
-            const text = searchCaseLaw(query);
-            return { content: [{ type: "text", text }] };
-        }
-        
-        throw { code: -32601, message: `Unknown tool: ${toolName}` };
+    if (toolName === "search_case_law") {
+      const query =
+        req.params && req.params.arguments && req.params.arguments.query;
+      if (!query || typeof query !== "string") {
+        throw {
+          code: -32602,
+          message: "Missing or invalid required argument: query (string)",
+        };
+      }
+      const text = searchCaseLaw(query);
+      return { content: [{ type: "text", text }] };
     }
 
-    throw { code: -32601, message: `Unknown method: ${req.method}` };
+    if (toolName === "list_tribunal_agents") {
+      const fs = require("fs");
+      const agentDir = path.join(process.cwd(), ".agent", "agents");
+      if (!fs.existsSync(agentDir)) return { content: [{ type: "text", text: "No agents found or .agent directory missing." }] };
+      const agents = fs.readdirSync(agentDir).filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''));
+      return { content: [{ type: "text", text: "Available Agents:\n- " + agents.join("\n- ") }] };
+    }
+
+    if (toolName === "get_tribunal_agent") {
+      const fs = require("fs");
+      const name = req.params?.arguments?.name;
+      if (!name) throw { code: -32602, message: "Missing argument: name" };
+      const path = require("path");
+      const sanitizedName = path.basename(name);
+      const agentPath = path.join(process.cwd(), ".agent", "agents", `${sanitizedName}.md`);
+      if (!fs.existsSync(agentPath)) return { content: [{ type: "text", text: `Agent '${sanitizedName}' not found.` }] };
+      const text = fs.readFileSync(agentPath, "utf8");
+      return { content: [{ type: "text", text }] };
+    }
+
+    if (toolName === "list_tribunal_skills") {
+      const fs = require("fs");
+      const skillsDir = path.join(process.cwd(), ".agent", "skills");
+      if (!fs.existsSync(skillsDir)) return { content: [{ type: "text", text: "No skills found or .agent directory missing." }] };
+      const skills = fs.readdirSync(skillsDir, { withFileTypes: true }).filter(d => d.isDirectory()).map(d => d.name);
+      return { content: [{ type: "text", text: "Available Skills:\n- " + skills.join("\n- ") }] };
+    }
+
+    if (toolName === "get_tribunal_skill") {
+      const fs = require("fs");
+      const name = req.params?.arguments?.name;
+      if (!name) throw { code: -32602, message: "Missing argument: name" };
+      const path = require("path");
+      const sanitizedName = path.basename(name);
+      const skillPath = path.join(process.cwd(), ".agent", "skills", sanitizedName, "SKILL.md");
+      if (!fs.existsSync(skillPath)) return { content: [{ type: "text", text: `Skill '${sanitizedName}' not found.` }] };
+      const text = fs.readFileSync(skillPath, "utf8");
+      return { content: [{ type: "text", text }] };
+    }
+
+    throw { code: -32601, message: `Unknown tool: ${toolName}` };
+  }
+
+  throw { code: -32601, message: `Unknown method: ${req.method}` };
 }
 
-rl.on('line', (line) => {
-    if (!line.trim()) return;
-    
-    let req;
-    try {
-        req = JSON.parse(line);
-    } catch (parseErr) {
-        // Invalid JSON — send a parse error
-        const errorRes = {
-            jsonrpc: "2.0",
-            id: null,
-            error: { code: -32700, message: "Parse error: " + parseErr.message }
-        };
-        console.log(JSON.stringify(errorRes));
-        return;
+rl.on("line", (line) => {
+  if (!line.trim()) return;
+
+  let req;
+  try {
+    req = JSON.parse(line);
+  } catch (parseErr) {
+    // Invalid JSON — send a parse error
+    const errorRes = {
+      jsonrpc: "2.0",
+      id: null,
+      error: { code: -32700, message: "Parse error: " + parseErr.message },
+    };
+    console.log(JSON.stringify(errorRes));
+    return;
+  }
+
+  try {
+    const result = handleRequest(req);
+    const res = { jsonrpc: "2.0", id: req.id, result };
+    console.log(JSON.stringify(res));
+
+    // After initialize, send the initialized notification per MCP spec
+    if (req.method === "initialize") {
+      console.log(
+        JSON.stringify({
+          jsonrpc: "2.0",
+          method: "notifications/initialized",
+          params: {},
+        }),
+      );
     }
-    
-    try {
-        const result = handleRequest(req);
-        const res = { jsonrpc: "2.0", id: req.id, result };
-        console.log(JSON.stringify(res));
-        
-        // After initialize, send the initialized notification per MCP spec
-        if (req.method === 'initialize') {
-            console.log(JSON.stringify({ jsonrpc: "2.0", method: "notifications/initialized", params: {} }));
-        }
-    } catch (e) {
-        // Send proper JSON-RPC error response
-        const code = (e && typeof e.code === 'number') ? e.code : -32603;
-        const message = (e && e.message) ? e.message : "Internal server error";
-        const errorRes = {
-            jsonrpc: "2.0",
-            id: req.id || null,
-            error: { code, message }
-        };
-        console.log(JSON.stringify(errorRes));
-    }
+  } catch (e) {
+    // Send proper JSON-RPC error response
+    const code = e && typeof e.code === "number" ? e.code : -32603;
+    const message = e && e.message ? e.message : "Internal server error";
+    const errorRes = {
+      jsonrpc: "2.0",
+      id: req.id || null,
+      error: { code, message },
+    };
+    console.log(JSON.stringify(errorRes));
+  }
 });

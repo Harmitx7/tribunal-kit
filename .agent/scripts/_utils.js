@@ -8,24 +8,46 @@
  *   const { findAgentDir, walkDir, loadJson } = require('./_utils');
  */
 
-'use strict';
+"use strict";
 
-const fs   = require('fs');
-const path = require('path');
-const { RED, RESET } = require('./_colors');
+const fs = require("fs");
+const path = require("path");
+const { RED, RESET } = require("./_colors");
 
 // ── Default Skip Directories ────────────────────────────────────────────────
 const DEFAULT_SKIP_DIRS = new Set([
-    'node_modules', '.git', 'dist', 'build', '.next', '.agent',
-    '__pycache__', '.venv', 'venv', 'coverage', '.turbo',
-    '.svelte-kit', '.nuxt', '.output',
+  "node_modules",
+  ".git",
+  "dist",
+  "build",
+  ".next",
+  ".agent",
+  "__pycache__",
+  ".venv",
+  "venv",
+  "coverage",
+  ".turbo",
+  ".svelte-kit",
+  ".nuxt",
+  ".output",
 ]);
 
 // ── Default Source Extensions ───────────────────────────────────────────────
 const SOURCE_EXTENSIONS = new Set([
-    '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs',
-    '.py', '.rs', '.go', '.java', '.cs', '.rb',
-    '.vue', '.svelte',
+  ".ts",
+  ".tsx",
+  ".js",
+  ".jsx",
+  ".mjs",
+  ".cjs",
+  ".py",
+  ".rs",
+  ".go",
+  ".java",
+  ".cs",
+  ".rb",
+  ".vue",
+  ".svelte",
 ]);
 
 // ── Agent Directory Discovery ───────────────────────────────────────────────
@@ -36,19 +58,21 @@ const SOURCE_EXTENSIONS = new Set([
  * @returns {string} Absolute path to the .agent directory.
  */
 function findAgentDir(startDir) {
-    let current = path.resolve(startDir || process.cwd());
-    const root = path.parse(current).root;
+  let current = path.resolve(startDir || process.cwd());
+  const root = path.parse(current).root;
 
-    while (current !== root) {
-        const candidate = path.join(current, '.agent');
-        if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) {
-            return candidate;
-        }
-        current = path.dirname(current);
+  while (current !== root) {
+    const candidate = path.join(current, ".agent");
+    if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) {
+      return candidate;
     }
+    current = path.dirname(current);
+  }
 
-    console.error(`${RED}✖ Error: '.agent' directory not found. Please run 'npx tribunal-kit init' first.${RESET}`);
-    process.exit(1);
+  console.error(
+    `${RED}✖ Error: '.agent' directory not found. Please run 'npx tribunal-kit init' first.${RESET}`,
+  );
+  process.exit(1);
 }
 
 // ── Package.json Helpers ────────────────────────────────────────────────────
@@ -59,7 +83,7 @@ function findAgentDir(startDir) {
  * @returns {boolean}
  */
 function hasNpm(dir) {
-    return fs.existsSync(path.join(dir, 'package.json'));
+  return fs.existsSync(path.join(dir, "package.json"));
 }
 
 /**
@@ -68,11 +92,11 @@ function hasNpm(dir) {
  * @returns {object|null}
  */
 function loadJson(filePath) {
-    try {
-        return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    } catch {
-        return null;
-    }
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch {
+    return null;
+  }
 }
 
 // ── Filesystem Walking ──────────────────────────────────────────────────────
@@ -89,39 +113,39 @@ function loadJson(filePath) {
  * @returns {string[]} Array of absolute file paths.
  */
 function walkDir(dir, opts = {}) {
-    const skipDirs   = opts.skipDirs   || DEFAULT_SKIP_DIRS;
-    const extensions = opts.extensions || null;
-    const filter     = opts.filter     || null;
-    const results = [];
+  const skipDirs = opts.skipDirs || DEFAULT_SKIP_DIRS;
+  const extensions = opts.extensions || null;
+  const filter = opts.filter || null;
+  const results = [];
 
-    function _walk(currentDir) {
-        let entries;
-        try {
-            entries = fs.readdirSync(currentDir, { withFileTypes: true });
-        } catch {
-            return;
-        }
-
-        for (const entry of entries) {
-            const fullPath = path.join(currentDir, entry.name);
-
-            if (entry.isDirectory()) {
-                if (!skipDirs.has(entry.name)) {
-                    _walk(fullPath);
-                }
-            } else if (entry.isFile()) {
-                if (extensions) {
-                    const ext = path.extname(entry.name);
-                    if (!extensions.has(ext)) continue;
-                }
-                if (filter && !filter(fullPath)) continue;
-                results.push(fullPath);
-            }
-        }
+  function _walk(currentDir) {
+    let entries;
+    try {
+      entries = fs.readdirSync(currentDir, { withFileTypes: true });
+    } catch {
+      return;
     }
 
-    _walk(dir);
-    return results;
+    for (const entry of entries) {
+      const fullPath = path.join(currentDir, entry.name);
+
+      if (entry.isDirectory()) {
+        if (!skipDirs.has(entry.name)) {
+          _walk(fullPath);
+        }
+      } else if (entry.isFile()) {
+        if (extensions) {
+          const ext = path.extname(entry.name);
+          if (!extensions.has(ext)) continue;
+        }
+        if (filter && !filter(fullPath)) continue;
+        results.push(fullPath);
+      }
+    }
+  }
+
+  _walk(dir);
+  return results;
 }
 
 /**
@@ -131,17 +155,22 @@ function walkDir(dir, opts = {}) {
  * @returns {number}
  */
 function countFiles(dir, skipDirs = DEFAULT_SKIP_DIRS) {
-    let count = 0;
-    function _count(d) {
-        let entries;
-        try { entries = fs.readdirSync(d, { withFileTypes: true }); } catch { return; }
-        for (const e of entries) {
-            if (e.isDirectory() && !skipDirs.has(e.name)) _count(path.join(d, e.name));
-            else if (e.isFile()) count++;
-        }
+  let count = 0;
+  function _count(d) {
+    let entries;
+    try {
+      entries = fs.readdirSync(d, { withFileTypes: true });
+    } catch {
+      return;
     }
-    _count(dir);
-    return count;
+    for (const e of entries) {
+      if (e.isDirectory() && !skipDirs.has(e.name))
+        _count(path.join(d, e.name));
+      else if (e.isFile()) count++;
+    }
+  }
+  _count(dir);
+  return count;
 }
 
 // ── CLI Argument Parsing ────────────────────────────────────────────────────
@@ -155,44 +184,44 @@ function countFiles(dir, skipDirs = DEFAULT_SKIP_DIRS) {
  * @returns {{ flags: object, positional: string[] }}
  */
 function parseArgs(argv, schema = {}) {
-    const flags = {};
-    const positional = [];
+  const flags = {};
+  const positional = [];
 
-    // Set defaults
-    for (const [key, def] of Object.entries(schema)) {
-        flags[key] = def.default ?? (def.type === 'boolean' ? false : null);
+  // Set defaults
+  for (const [key, def] of Object.entries(schema)) {
+    flags[key] = def.default ?? (def.type === "boolean" ? false : null);
+  }
+
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+
+    if (arg === "-h" || arg === "--help") {
+      flags.help = true;
+      continue;
     }
 
-    for (let i = 0; i < argv.length; i++) {
-        const arg = argv[i];
+    if (arg.startsWith("--")) {
+      const flagName = arg.slice(2);
+      const schemaDef = schema[flagName];
 
-        if (arg === '-h' || arg === '--help') {
-            flags.help = true;
-            continue;
-        }
-
-        if (arg.startsWith('--')) {
-            const flagName = arg.slice(2);
-            const schemaDef = schema[flagName];
-
-            if (schemaDef && schemaDef.type === 'boolean') {
-                flags[flagName] = true;
-            } else if (schemaDef && i + 1 < argv.length) {
-                const val = argv[++i];
-                flags[flagName] = schemaDef.type === 'number' ? Number(val) : val;
-            } else {
-                // Unknown flag, store as boolean
-                flags[flagName] = true;
-            }
-        } else if (arg.startsWith('-') && arg.length === 2) {
-            // Short flag — treat as boolean
-            flags[arg.slice(1)] = true;
-        } else {
-            positional.push(arg);
-        }
+      if (schemaDef && schemaDef.type === "boolean") {
+        flags[flagName] = true;
+      } else if (schemaDef && i + 1 < argv.length) {
+        const val = argv[++i];
+        flags[flagName] = schemaDef.type === "number" ? Number(val) : val;
+      } else {
+        // Unknown flag, store as boolean
+        flags[flagName] = true;
+      }
+    } else if (arg.startsWith("-") && arg.length === 2) {
+      // Short flag — treat as boolean
+      flags[arg.slice(1)] = true;
+    } else {
+      positional.push(arg);
     }
+  }
 
-    return { flags, positional };
+  return { flags, positional };
 }
 
 // ── Command Runner ──────────────────────────────────────────────────────────
@@ -207,38 +236,44 @@ function parseArgs(argv, schema = {}) {
  * @returns {{ status: number, stdout: string, stderr: string, ok: boolean }}
  */
 function runCommand(cmd, args = [], opts = {}) {
-    const { spawnSync } = require('child_process');
-    const executable = process.platform === 'win32' && !cmd.endsWith('.cmd') && !cmd.includes(path.sep)
-        ? `${cmd}.cmd`
-        : cmd;
+  const { spawnSync } = require("child_process");
+  const executable =
+    process.platform === "win32" &&
+    !cmd.endsWith(".cmd") &&
+    !cmd.includes(path.sep)
+      ? `${cmd}.cmd`
+      : cmd;
 
-    const result = spawnSync(executable, args, {
-        encoding: 'utf8',
-        timeout: opts.timeout || 120000,
-        cwd: opts.cwd || process.cwd(),
-        shell: process.platform === 'win32',
-        stdio: opts.stdio || 'pipe',
-        ...opts,
-    });
+  const result = spawnSync(executable, args, {
+    encoding: "utf8",
+    timeout: opts.timeout || 120000,
+    cwd: opts.cwd || process.cwd(),
+    shell: process.platform === "win32",
+    stdio: opts.stdio || "pipe",
+    ...opts,
+  });
 
-    return {
-        status: result.status ?? 1,
-        stdout: (result.stdout || '').toString(),
-        stderr: (result.stderr || '').toString(),
-        ok: result.status === 0,
-    };
+  return {
+    status: result.status ?? 1,
+    stdout: (result.stdout || "").toString(),
+    stderr: (result.stderr || "").toString(),
+    ok: result.status === 0,
+  };
 }
 
 module.exports = {
-    // Agent discovery
-    findAgentDir,
-    // Package.json
-    hasNpm, loadJson,
-    // Filesystem
-    walkDir, countFiles,
-    DEFAULT_SKIP_DIRS, SOURCE_EXTENSIONS,
-    // CLI
-    parseArgs,
-    // Commands
-    runCommand,
+  // Agent discovery
+  findAgentDir,
+  // Package.json
+  hasNpm,
+  loadJson,
+  // Filesystem
+  walkDir,
+  countFiles,
+  DEFAULT_SKIP_DIRS,
+  SOURCE_EXTENSIONS,
+  // CLI
+  parseArgs,
+  // Commands
+  runCommand,
 };

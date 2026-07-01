@@ -3,6 +3,25 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [5.8.0] — 2026-07-01
+
+### ✨ Features
+
+- **Dependency Ladder Framework**: Implemented the `dependency-ladder` skill, defining the 6 Rungs of the Ladder (Existence, Stdlib, Platform, Installed Dep, One Line, Minimum) to systematically prevent over-engineering and architectural bloat.
+- **Complexity Reviewer Tribunal**: Introduced the `complexity-reviewer` agent, integrating it natively into the `/generate` workflow and `project-planner` to enforce the Dependency Ladder automatically.
+- **Skill Eval Generation**: Upgraded `skill-creator` to automatically generate a `tests/` directory alongside every new `SKILL.md`, containing 3 standard benchmark prompts (Edge case, Standard, Malicious) for variance tracking.
+- **Skill Variance Tracking**: `skill-creator` can now benchmark skill performance by analyzing output logs and producing a `performance.md` artifact documenting trigger accuracy and context window impact.
+- **Complex Artifact Protocol**: Upgraded `shadcn-ui-expert` with strict rules forbidding single-file HTML/JSX monoliths for complex artifacts. Agents must now split code into `components/ui`, `components/features`, `hooks`, and `lib`.
+- **Shadcn Composition Rules**: `shadcn-ui-expert` now mandates proper component interplay (e.g., nesting Forms inside Dialogs with Toast feedback) and routing/state conventions.
+- **Generative UI State & Routing Directives**: Upgraded `generative-ui-expert` with explicit rules for URL search param state vs Zustand/Context, and RSC boundary enforcement across multiple files.
+- **Terminal Agent MCP Integration**: Expanded the local MCP Server with `list_tribunal_agents` and `get_tribunal_skill` tools, empowering terminal-based AI agents (like Claude Code) to dynamically fetch rules without overloading their context windows.
+- **Static Compiler Command**: Introduced `tk compile` to bundle Tribunal Kit agents, skills, and workflows into a static `.tribunal-compiled.md` file for agents like Aider and OpenCode that require offline context.
+- **Security Hotfix**: Patched a critical path traversal vulnerability in the MCP Server that allowed un-sanitized JSON-RPC arguments to read arbitrary files outside the project sandbox.
+
+### 🐛 Fixes
+
+- **`windsurfRules is not defined`**: Fixed a critical `ReferenceError` in `dist/commands/init.js` where 5 IDE bridge variables (`windsurfRules`, `geminiSettings`, `geminiRulesBridge`, `copilotInstructions`, `claudeRules`) were referenced but never defined. Ported the missing definitions from `bin/tribunal-kit.js`.
+
 ## [5.7.0] — 2026-06-29
 
 ### ⚡ Performance (The "Quantum" Update)

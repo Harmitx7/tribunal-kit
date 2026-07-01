@@ -9,12 +9,12 @@
  *   node .agent/scripts/strengthen_skills.js . --skills-path /custom/skills/dir
  */
 
-'use strict';
+"use strict";
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-const { RED, GREEN, YELLOW, BLUE, BOLD, RESET } = require('./_colors.js');
+const { RED, GREEN, YELLOW, BLUE, BOLD, RESET } = require("./_colors.js");
 
 const GUARDRAILS_BLOCK = `
 
@@ -61,133 +61,143 @@ Review these questions before confirming output:
 `;
 
 const TRIBUNAL_MARKERS = [
-    "Tribunal Integration",
-    "Tribunal Integration (Anti-Hallucination)",
+  "Tribunal Integration",
+  "Tribunal Integration (Anti-Hallucination)",
 ];
 
-const VBC_MARKERS = [
-    "Verification-Before-Completion",
-    "VBC Protocol",
-];
+const VBC_MARKERS = ["Verification-Before-Completion", "VBC Protocol"];
 
 function hasTribunalBlock(content) {
-    return TRIBUNAL_MARKERS.some(m => content.includes(m));
+  return TRIBUNAL_MARKERS.some((m) => content.includes(m));
 }
 
 function hasVbcBlock(content) {
-    return VBC_MARKERS.some(m => content.includes(m));
+  return VBC_MARKERS.some((m) => content.includes(m));
 }
 
-function header(title) { console.log(`\n${BOLD}${BLUE}━━━ ${title} ━━━${RESET}`); }
-function ok(msg) { console.log(`  ${GREEN}✅ ${msg}${RESET}`); }
-function skip(msg) { console.log(`  ${YELLOW}⏭️  ${msg}${RESET}`); }
-function warn(msg) { console.log(`  ${YELLOW}⚠️  ${msg}${RESET}`); }
-function fail(msg) { console.log(`  ${RED}❌ ${msg}${RESET}`); }
+function header(title) {
+  console.log(`\n${BOLD}${BLUE}━━━ ${title} ━━━${RESET}`);
+}
+function ok(msg) {
+  console.log(`  ${GREEN}✅ ${msg}${RESET}`);
+}
+function skip(msg) {
+  console.log(`  ${YELLOW}⏭️  ${msg}${RESET}`);
+}
+function warn(msg) {
+  console.log(`  ${YELLOW}⚠️  ${msg}${RESET}`);
+}
+function fail(msg) {
+  console.log(`  ${RED}❌ ${msg}${RESET}`);
+}
 
 function processSkill(skillMd, dryRun) {
-    const skillName = path.basename(path.dirname(skillMd));
-    try {
-        const content = fs.readFileSync(skillMd, 'utf8');
-        const hasTribunal = hasTribunalBlock(content);
-        const hasVbc = hasVbcBlock(content);
+  const skillName = path.basename(path.dirname(skillMd));
+  try {
+    const content = fs.readFileSync(skillMd, "utf8");
+    const hasTribunal = hasTribunalBlock(content);
+    const hasVbc = hasVbcBlock(content);
 
-        if (hasTribunal && hasVbc) {
-            skip(`${skillName} — already has Tribunal + VBC blocks`);
-            return "skipped";
-        }
-
-        const missing = [];
-        if (!hasTribunal) missing.push("Tribunal Integration");
-        if (!hasVbc) missing.push("VBC Protocol");
-
-        if (dryRun) {
-            warn(`[DRY RUN] ${skillName} — would add: ${missing.join(', ')}`);
-            return "updated";
-        }
-
-        fs.appendFileSync(skillMd, GUARDRAILS_BLOCK, 'utf8');
-        ok(`${skillName} — strengthened (${missing.join(', ')} added)`);
-        return "updated";
-    } catch (e) {
-        fail(`${skillName} — ${e.message}`);
-        return "error";
+    if (hasTribunal && hasVbc) {
+      skip(`${skillName} — already has Tribunal + VBC blocks`);
+      return "skipped";
     }
+
+    const missing = [];
+    if (!hasTribunal) missing.push("Tribunal Integration");
+    if (!hasVbc) missing.push("VBC Protocol");
+
+    if (dryRun) {
+      warn(`[DRY RUN] ${skillName} — would add: ${missing.join(", ")}`);
+      return "updated";
+    }
+
+    fs.appendFileSync(skillMd, GUARDRAILS_BLOCK, "utf8");
+    ok(`${skillName} — strengthened (${missing.join(", ")} added)`);
+    return "updated";
+  } catch (e) {
+    fail(`${skillName} — ${e.message}`);
+    return "error";
+  }
 }
 
 function main() {
-    const args = process.argv.slice(2);
-    let targetPath = ".";
-    let dryRun = false;
-    let skillArg = null;
-    let skillsPathArg = null;
+  const args = process.argv.slice(2);
+  let targetPath = ".";
+  let dryRun = false;
+  let skillArg = null;
+  let skillsPathArg = null;
 
-    let i = 0;
-    while (i < args.length) {
-        if (args[i] === '--dry-run') {
-            dryRun = true;
-        } else if (args[i] === '--skill' && i + 1 < args.length) {
-            skillArg = args[++i];
-        } else if (args[i] === '--skills-path' && i + 1 < args.length) {
-            skillsPathArg = args[++i];
-        } else if (args[i] === '-h' || args[i] === '--help') {
-            console.log("Usage: node strengthen_skills.js <path> [--dry-run] [--skill <name>] [--skills-path <path>]");
-            process.exit(0);
-        } else if (!args[i].startsWith('-')) {
-            targetPath = args[i];
-        }
-        i++;
+  let i = 0;
+  while (i < args.length) {
+    if (args[i] === "--dry-run") {
+      dryRun = true;
+    } else if (args[i] === "--skill" && i + 1 < args.length) {
+      skillArg = args[++i];
+    } else if (args[i] === "--skills-path" && i + 1 < args.length) {
+      skillsPathArg = args[++i];
+    } else if (args[i] === "-h" || args[i] === "--help") {
+      console.log(
+        "Usage: node strengthen_skills.js <path> [--dry-run] [--skill <name>] [--skills-path <path>]",
+      );
+      process.exit(0);
+    } else if (!args[i].startsWith("-")) {
+      targetPath = args[i];
+    }
+    i++;
+  }
+
+  const projectRoot = path.resolve(targetPath);
+  let skillsDir;
+  if (skillsPathArg) {
+    skillsDir = path.resolve(skillsPathArg);
+  } else {
+    skillsDir = path.join(projectRoot, ".agent", "skills");
+  }
+
+  if (!fs.existsSync(skillsDir) || !fs.statSync(skillsDir).isDirectory()) {
+    fail(`Skills directory not found: ${skillsDir}`);
+    process.exit(1);
+  }
+
+  console.log(`${BOLD}Tribunal — strengthen_skills.js${RESET}`);
+  if (dryRun)
+    console.log(`  ${YELLOW}DRY RUN — no files will be written${RESET}`);
+  console.log(`Skills dir: ${skillsDir}\n`);
+
+  const counts = { updated: 0, skipped: 0, error: 0 };
+  header("Strengthening Skills");
+
+  const dirs = fs.readdirSync(skillsDir, { withFileTypes: true });
+  dirs.sort((a, b) => a.name.localeCompare(b.name));
+
+  for (const dir of dirs) {
+    if (!dir.isDirectory()) continue;
+    if (skillArg && dir.name !== skillArg) continue;
+
+    const skillMd = path.join(skillsDir, dir.name, "SKILL.md");
+    if (!fs.existsSync(skillMd)) {
+      warn(`${dir.name} — no SKILL.md found`);
+      continue;
     }
 
-    const projectRoot = path.resolve(targetPath);
-    let skillsDir;
-    if (skillsPathArg) {
-        skillsDir = path.resolve(skillsPathArg);
-    } else {
-        skillsDir = path.join(projectRoot, ".agent", "skills");
-    }
+    const result = processSkill(skillMd, dryRun);
+    counts[result]++;
+  }
 
-    if (!fs.existsSync(skillsDir) || !fs.statSync(skillsDir).isDirectory()) {
-        fail(`Skills directory not found: ${skillsDir}`);
-        process.exit(1);
-    }
+  console.log(`\n${BOLD}━━━ Summary ━━━${RESET}`);
+  console.log(`  ${GREEN}✅ Strengthened: ${counts.updated}${RESET}`);
+  console.log(`  ${YELLOW}⏭️  Skipped:      ${counts.skipped}${RESET}`);
+  if (counts.error > 0) {
+    console.log(`  ${RED}❌ Errors:       ${counts.error}${RESET}`);
+  }
+  if (dryRun) {
+    console.log(`  ${YELLOW}(dry-run — nothing written)${RESET}`);
+  }
 
-    console.log(`${BOLD}Tribunal — strengthen_skills.js${RESET}`);
-    if (dryRun) console.log(`  ${YELLOW}DRY RUN — no files will be written${RESET}`);
-    console.log(`Skills dir: ${skillsDir}\n`);
-
-    const counts = { updated: 0, skipped: 0, error: 0 };
-    header("Strengthening Skills");
-
-    const dirs = fs.readdirSync(skillsDir, { withFileTypes: true });
-    dirs.sort((a, b) => a.name.localeCompare(b.name));
-
-    for (const dir of dirs) {
-        if (!dir.isDirectory()) continue;
-        if (skillArg && dir.name !== skillArg) continue;
-
-        const skillMd = path.join(skillsDir, dir.name, "SKILL.md");
-        if (!fs.existsSync(skillMd)) {
-            warn(`${dir.name} — no SKILL.md found`);
-            continue;
-        }
-
-        const result = processSkill(skillMd, dryRun);
-        counts[result]++;
-    }
-
-    console.log(`\n${BOLD}━━━ Summary ━━━${RESET}`);
-    console.log(`  ${GREEN}✅ Strengthened: ${counts.updated}${RESET}`);
-    console.log(`  ${YELLOW}⏭️  Skipped:      ${counts.skipped}${RESET}`);
-    if (counts.error > 0) {
-        console.log(`  ${RED}❌ Errors:       ${counts.error}${RESET}`);
-    }
-    if (dryRun) {
-        console.log(`  ${YELLOW}(dry-run — nothing written)${RESET}`);
-    }
-
-    process.exit(counts.error > 0 ? 1 : 0);
+  process.exit(counts.error > 0 ? 1 : 0);
 }
 
 if (require.main === module) {
-    main();
+  main();
 }

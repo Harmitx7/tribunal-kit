@@ -22,69 +22,190 @@
  *   node .agent/scripts/security_scan.js . --files src/auth.ts src/db.ts
  */
 
-'use strict';
+"use strict";
 
-const fs   = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 const {
-    RED, GREEN, YELLOW, BLUE, MAGENTA, BOLD, DIM, CYAN, RESET,
-    banner, sectionHeader, timer, formatMs,
-} = require('./_colors');
+  RED,
+  GREEN,
+  YELLOW,
+  BLUE,
+  MAGENTA,
+  BOLD,
+  DIM,
+  CYAN,
+  RESET,
+  banner,
+  sectionHeader,
+  timer,
+  formatMs,
+} = require("./_colors");
 
-const { walkDir, SOURCE_EXTENSIONS } = require('./_utils');
+const { walkDir, SOURCE_EXTENSIONS } = require("./_utils");
 
 // ── Security-specific source extensions (broader than default) ──────────────
-const SCAN_EXTENSIONS = new Set([...SOURCE_EXTENSIONS, '.py', '.go', '.java', '.rb']);
+const SCAN_EXTENSIONS = new Set([
+  ...SOURCE_EXTENSIONS,
+  ".py",
+  ".go",
+  ".java",
+  ".rb",
+]);
 
 const SEVERITY_COLORS = {
-    critical: RED + BOLD,
-    high:     RED,
-    medium:   YELLOW,
-    low:      BLUE,
+  critical: RED + BOLD,
+  high: RED,
+  medium: YELLOW,
+  low: BLUE,
 };
 
 const SEVERITY_RANK = { critical: 0, high: 1, medium: 2, low: 3 };
 
 // Pattern definitions: [regex, severity, category, message]
 const PATTERNS = [
-    // Secrets
-    [/(?:password|passwd|pwd)\s*=\s*["'][^"']+["']/i, 'critical', 'Hardcoded Secret', 'Hardcoded password detected'],
-    [/(?:api_key|apikey|api_secret)\s*=\s*["'][^"']+["']/i, 'critical', 'Hardcoded Secret', 'Hardcoded API key detected'],
-    [/(?:secret|token|auth_token)\s*=\s*["'][A-Za-z0-9+/=]{16,}["']/i, 'critical', 'Hardcoded Secret', 'Hardcoded secret/token detected'],
-    [/(?:PRIVATE_KEY|private_key)\s*=\s*["']/i, 'critical', 'Hardcoded Secret', 'Hardcoded private key detected'],
+  // Secrets
+  [
+    /(?:password|passwd|pwd)\s*=\s*["'][^"']+["']/i,
+    "critical",
+    "Hardcoded Secret",
+    "Hardcoded password detected",
+  ],
+  [
+    /(?:api_key|apikey|api_secret)\s*=\s*["'][^"']+["']/i,
+    "critical",
+    "Hardcoded Secret",
+    "Hardcoded API key detected",
+  ],
+  [
+    /(?:secret|token|auth_token)\s*=\s*["'][A-Za-z0-9+/=]{16,}["']/i,
+    "critical",
+    "Hardcoded Secret",
+    "Hardcoded secret/token detected",
+  ],
+  [
+    /(?:PRIVATE_KEY|private_key)\s*=\s*["']/i,
+    "critical",
+    "Hardcoded Secret",
+    "Hardcoded private key detected",
+  ],
 
-    // SQL Injection
-    [/(?:query|execute|raw)\s*\(\s*[`"'].*\$\{/i, 'high', 'SQL Injection', 'String interpolation in SQL query — use parameterized queries'],
-    [/(?:query|execute|raw)\s*\(\s*["'].*\+\s*(?:req|input|params|body)/i, 'high', 'SQL Injection', 'String concatenation with user input in SQL'],
-    [/\.raw\s*\(\s*`/, 'medium', 'SQL Injection', 'Raw query with template literal — verify inputs are sanitized'],
+  // SQL Injection
+  [
+    /(?:query|execute|raw)\s*\(\s*[`"'].*\$\{/i,
+    "high",
+    "SQL Injection",
+    "String interpolation in SQL query — use parameterized queries",
+  ],
+  [
+    /(?:query|execute|raw)\s*\(\s*["'].*\+\s*(?:req|input|params|body)/i,
+    "high",
+    "SQL Injection",
+    "String concatenation with user input in SQL",
+  ],
+  [
+    /\.raw\s*\(\s*`/,
+    "medium",
+    "SQL Injection",
+    "Raw query with template literal — verify inputs are sanitized",
+  ],
 
-    // XSS
-    [/\.innerHTML\s*=/, 'high', 'XSS', 'Direct innerHTML assignment — use textContent or a sanitizer'],
-    [/dangerouslySetInnerHTML/, 'medium', 'XSS', 'dangerouslySetInnerHTML used — ensure input is sanitized'],
-    [/document\.write\s*\(/, 'high', 'XSS', 'document.write() is an XSS vector'],
+  // XSS
+  [
+    /\.innerHTML\s*=/,
+    "high",
+    "XSS",
+    "Direct innerHTML assignment — use textContent or a sanitizer",
+  ],
+  [
+    /dangerouslySetInnerHTML/,
+    "medium",
+    "XSS",
+    "dangerouslySetInnerHTML used — ensure input is sanitized",
+  ],
+  [/document\.write\s*\(/, "high", "XSS", "document.write() is an XSS vector"],
 
-    // Insecure Functions
-    [/\beval\s*\(/, 'high', 'Code Injection', 'eval() is a code injection vector — avoid entirely'],
-    [/new\s+Function\s*\(/, 'high', 'Code Injection', 'new Function() is equivalent to eval()'],
-    [/child_process\.exec\s*\(/, 'medium', 'Command Injection', 'exec() with unsanitized input is a command injection vector'],
-    [/subprocess\.call\s*\(\s*[^,\]]*\bshell\s*=\s*True/, 'high', 'Command Injection', 'subprocess with shell=True — use shell=False and pass args as list'],
+  // Insecure Functions
+  [
+    /\beval\s*\(/,
+    "high",
+    "Code Injection",
+    "eval() is a code injection vector — avoid entirely",
+  ],
+  [
+    /new\s+Function\s*\(/,
+    "high",
+    "Code Injection",
+    "new Function() is equivalent to eval()",
+  ],
+  [
+    /child_process\.exec\s*\(/,
+    "medium",
+    "Command Injection",
+    "exec() with unsanitized input is a command injection vector",
+  ],
+  [
+    /subprocess\.call\s*\(\s*[^,\]]*\bshell\s*=\s*True/,
+    "high",
+    "Command Injection",
+    "subprocess with shell=True — use shell=False and pass args as list",
+  ],
 
-    // Crypto
-    [/createHash\s*\(\s*["']md5["']/, 'medium', 'Weak Crypto', 'MD5 is cryptographically broken — use SHA-256+'],
-    [/createHash\s*\(\s*["']sha1["']/, 'medium', 'Weak Crypto', 'SHA-1 is deprecated — use SHA-256+'],
-    [/Math\.random\s*\(/, 'low', 'Weak Randomness', 'Math.random() is not cryptographically secure — use crypto.randomBytes()'],
+  // Crypto
+  [
+    /createHash\s*\(\s*["']md5["']/,
+    "medium",
+    "Weak Crypto",
+    "MD5 is cryptographically broken — use SHA-256+",
+  ],
+  [
+    /createHash\s*\(\s*["']sha1["']/,
+    "medium",
+    "Weak Crypto",
+    "SHA-1 is deprecated — use SHA-256+",
+  ],
+  [
+    /Math\.random\s*\(/,
+    "low",
+    "Weak Randomness",
+    "Math.random() is not cryptographically secure — use crypto.randomBytes()",
+  ],
 
-    // Auth Issues
-    [/algorithms\s*:\s*\[\s*["']none["']/, 'critical', 'Auth Bypass', "JWT 'none' algorithm allows auth bypass"],
-    [/verify\s*:\s*false/, 'high', 'Auth Bypass', 'SSL/TLS verification disabled'],
-    [/rejectUnauthorized\s*:\s*false/, 'high', 'Auth Bypass', 'TLS certificate validation disabled'],
+  // Auth Issues
+  [
+    /algorithms\s*:\s*\[\s*["']none["']/,
+    "critical",
+    "Auth Bypass",
+    "JWT 'none' algorithm allows auth bypass",
+  ],
+  [
+    /verify\s*:\s*false/,
+    "high",
+    "Auth Bypass",
+    "SSL/TLS verification disabled",
+  ],
+  [
+    /rejectUnauthorized\s*:\s*false/,
+    "high",
+    "Auth Bypass",
+    "TLS certificate validation disabled",
+  ],
 
-    // Information Disclosure
-    [/console\.log\s*\(.*(?:password|secret|token|key)/i, 'medium', 'Info Disclosure', 'Sensitive data logged to console'],
-    [/\.env(?:\.local|\.production)/, 'low', 'Info Disclosure', 'Env file reference — ensure not committed to git'],
+  // Information Disclosure
+  [
+    /console\.log\s*\(.*(?:password|secret|token|key)/i,
+    "medium",
+    "Info Disclosure",
+    "Sensitive data logged to console",
+  ],
+  [
+    /\.env(?:\.local|\.production)/,
+    "low",
+    "Info Disclosure",
+    "Env file reference — ensure not committed to git",
+  ],
 ];
-
 
 /**
  * Scan a single file for security patterns.
@@ -93,41 +214,44 @@ const PATTERNS = [
  * @returns {Array<{severity:string, category:string, file:string, line:number, message:string, snippet:string}>}
  */
 function scanFile(filepath, projectRoot) {
-    const findings = [];
-    const relPath = path.relative(projectRoot, filepath);
+  const findings = [];
+  const relPath = path.relative(projectRoot, filepath);
 
-    let content;
-    try {
-        content = fs.readFileSync(filepath, 'utf8');
-    } catch {
-        return findings;
-    }
-
-    const lines = content.split('\n');
-    for (let i = 0; i < lines.length; i++) {
-        const stripped = lines[i].trim();
-        // Skip comments
-        if (stripped.startsWith('//') || stripped.startsWith('#') || stripped.startsWith('*')) {
-            continue;
-        }
-
-        for (const [pattern, severity, category, message] of PATTERNS) {
-            if (pattern.test(stripped)) {
-                findings.push({
-                    severity,
-                    category,
-                    file: relPath,
-                    line: i + 1,
-                    message,
-                    snippet: stripped.slice(0, 120),
-                });
-            }
-        }
-    }
-
+  let content;
+  try {
+    content = fs.readFileSync(filepath, "utf8");
+  } catch {
     return findings;
-}
+  }
 
+  const lines = content.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const stripped = lines[i].trim();
+    // Skip comments
+    if (
+      stripped.startsWith("//") ||
+      stripped.startsWith("#") ||
+      stripped.startsWith("*")
+    ) {
+      continue;
+    }
+
+    for (const [pattern, severity, category, message] of PATTERNS) {
+      if (pattern.test(stripped)) {
+        findings.push({
+          severity,
+          category,
+          file: relPath,
+          line: i + 1,
+          message,
+          snippet: stripped.slice(0, 120),
+        });
+      }
+    }
+  }
+
+  return findings;
+}
 
 /**
  * Scan all source files in a directory.
@@ -139,138 +263,158 @@ function scanFile(filepath, projectRoot) {
  * @returns {Array} Array of finding objects.
  */
 function scanDirectory(projectRoot, targetFiles) {
-    const allFindings = [];
+  const allFindings = [];
 
-    if (targetFiles && targetFiles.length > 0) {
-        for (const fpath of targetFiles) {
-            const absPath = path.isAbsolute(fpath) ? fpath : path.join(projectRoot, fpath);
-            if (fs.existsSync(absPath) && fs.statSync(absPath).isFile()) {
-                // FIX: Push individually instead of spread to avoid O(n²)
-                const fileFindings = scanFile(absPath, projectRoot);
-                for (const f of fileFindings) allFindings.push(f);
-            }
-        }
-        return allFindings;
-    }
-
-    const files = walkDir(projectRoot, { extensions: SCAN_EXTENSIONS });
-
-    for (const filepath of files) {
+  if (targetFiles && targetFiles.length > 0) {
+    for (const fpath of targetFiles) {
+      const absPath = path.isAbsolute(fpath)
+        ? fpath
+        : path.join(projectRoot, fpath);
+      if (fs.existsSync(absPath) && fs.statSync(absPath).isFile()) {
         // FIX: Push individually instead of spread to avoid O(n²)
-        const fileFindings = scanFile(filepath, projectRoot);
+        const fileFindings = scanFile(absPath, projectRoot);
         for (const f of fileFindings) allFindings.push(f);
+      }
     }
-
     return allFindings;
-}
+  }
 
+  const files = walkDir(projectRoot, { extensions: SCAN_EXTENSIONS });
+
+  for (const filepath of files) {
+    // FIX: Push individually instead of spread to avoid O(n²)
+    const fileFindings = scanFile(filepath, projectRoot);
+    for (const f of fileFindings) allFindings.push(f);
+  }
+
+  return allFindings;
+}
 
 /**
  * Print findings filtered by minimum severity. Returns count of displayed findings.
  */
 function printFindings(findings, minSeverity) {
-    const minRank = SEVERITY_RANK[minSeverity] ?? 3;
-    const filtered = findings
-        .filter(f => (SEVERITY_RANK[f.severity] ?? 3) <= minRank)
-        .sort((a, b) => (SEVERITY_RANK[a.severity] ?? 3) - (SEVERITY_RANK[b.severity] ?? 3));
+  const minRank = SEVERITY_RANK[minSeverity] ?? 3;
+  const filtered = findings
+    .filter((f) => (SEVERITY_RANK[f.severity] ?? 3) <= minRank)
+    .sort(
+      (a, b) =>
+        (SEVERITY_RANK[a.severity] ?? 3) - (SEVERITY_RANK[b.severity] ?? 3),
+    );
 
-    if (filtered.length === 0) {
-        console.log(`\n  ${GREEN}✅ No security issues found at severity '${minSeverity}' or above${RESET}`);
-        return 0;
+  if (filtered.length === 0) {
+    console.log(
+      `\n  ${GREEN}✅ No security issues found at severity '${minSeverity}' or above${RESET}`,
+    );
+    return 0;
+  }
+
+  let currentCategory = "";
+  for (const finding of filtered) {
+    if (finding.category !== currentCategory) {
+      currentCategory = finding.category;
+      console.log(`\n  ${BOLD}${currentCategory}${RESET}`);
     }
+    const color = SEVERITY_COLORS[finding.severity] || "";
+    console.log(
+      `    ${color}[${finding.severity.toUpperCase()}]${RESET} ${finding.file}:${finding.line}`,
+    );
+    console.log(`      ${finding.message}`);
+    console.log(`      ${MAGENTA}→ ${finding.snippet}${RESET}`);
+  }
 
-    let currentCategory = '';
-    for (const finding of filtered) {
-        if (finding.category !== currentCategory) {
-            currentCategory = finding.category;
-            console.log(`\n  ${BOLD}${currentCategory}${RESET}`);
-        }
-        const color = SEVERITY_COLORS[finding.severity] || '';
-        console.log(`    ${color}[${finding.severity.toUpperCase()}]${RESET} ${finding.file}:${finding.line}`);
-        console.log(`      ${finding.message}`);
-        console.log(`      ${MAGENTA}→ ${finding.snippet}${RESET}`);
-    }
-
-    return filtered.length;
+  return filtered.length;
 }
-
 
 function main() {
-    const args = { path: null, severity: 'low', files: null };
-    const raw = process.argv.slice(2);
+  const args = { path: null, severity: "low", files: null };
+  const raw = process.argv.slice(2);
 
-    for (let i = 0; i < raw.length; i++) {
-        if (raw[i] === '--severity' && raw[i + 1]) {
-            args.severity = raw[++i];
-        } else if (raw[i] === '--files') {
-            args.files = [];
-            while (i + 1 < raw.length && !raw[i + 1].startsWith('--')) {
-                args.files.push(raw[++i]);
-            }
-        } else if (!raw[i].startsWith('--') && !args.path) {
-            args.path = raw[i];
-        }
+  for (let i = 0; i < raw.length; i++) {
+    if (raw[i] === "--severity" && raw[i + 1]) {
+      args.severity = raw[++i];
+    } else if (raw[i] === "--files") {
+      args.files = [];
+      while (i + 1 < raw.length && !raw[i + 1].startsWith("--")) {
+        args.files.push(raw[++i]);
+      }
+    } else if (!raw[i].startsWith("--") && !args.path) {
+      args.path = raw[i];
     }
+  }
 
-    if (!args.path) {
-        console.error(`Usage: node security_scan.js <path> [--severity critical|high|medium|low] [--files ...]`);
-        process.exit(1);
+  if (!args.path) {
+    console.error(
+      `Usage: node security_scan.js <path> [--severity critical|high|medium|low] [--files ...]`,
+    );
+    process.exit(1);
+  }
+
+  const projectRoot = path.resolve(args.path);
+  if (!fs.existsSync(projectRoot) || !fs.statSync(projectRoot).isDirectory()) {
+    console.error(`  ${RED}❌ Directory not found: ${projectRoot}${RESET}`);
+    process.exit(1);
+  }
+
+  console.log(
+    banner("security_scan.js", {
+      Project: projectRoot,
+      Severity: `${args.severity}+`,
+    }),
+  );
+
+  const elapsed = timer();
+  const findings = scanDirectory(projectRoot, args.files);
+  const scanMs = elapsed();
+
+  const count = printFindings(findings, args.severity);
+
+  // ━━━ Summary ━━━
+  console.log(`\n${BOLD}${CYAN}━━━ Security Scan Summary ━━━${RESET}`);
+
+  const bySeverity = {};
+  for (const f of findings) {
+    bySeverity[f.severity] = (bySeverity[f.severity] || 0) + 1;
+  }
+
+  const uniqueFiles = new Set(findings.map((f) => f.file)).size;
+
+  for (const sev of ["critical", "high", "medium", "low"]) {
+    const c = bySeverity[sev] || 0;
+    if (c > 0) {
+      const color = SEVERITY_COLORS[sev] || "";
+      console.log(`  ${color}${sev.toUpperCase()}: ${c}${RESET}`);
     }
+  }
 
-    const projectRoot = path.resolve(args.path);
-    if (!fs.existsSync(projectRoot) || !fs.statSync(projectRoot).isDirectory()) {
-        console.error(`  ${RED}❌ Directory not found: ${projectRoot}${RESET}`);
-        process.exit(1);
+  console.log(
+    `\n  ${DIM}Scanned in ${formatMs(scanMs)} — ${findings.length} findings across ${uniqueFiles} file(s)${RESET}`,
+  );
+
+  if (count === 0) {
+    console.log(`  ${GREEN}✅ No issues found — scan passed${RESET}`);
+  } else {
+    const criticalHigh = (bySeverity.critical || 0) + (bySeverity.high || 0);
+    if (criticalHigh > 0) {
+      console.log(
+        `\n  ${RED}${BOLD}⚠️  ${criticalHigh} critical/high issue(s) require immediate attention${RESET}`,
+      );
     }
+  }
+  console.log();
 
-    console.log(banner('security_scan.js', {
-        Project: projectRoot,
-        Severity: `${args.severity}+`,
-    }));
-
-    const elapsed = timer();
-    const findings = scanDirectory(projectRoot, args.files);
-    const scanMs = elapsed();
-
-    const count = printFindings(findings, args.severity);
-
-    // ━━━ Summary ━━━
-    console.log(`\n${BOLD}${CYAN}━━━ Security Scan Summary ━━━${RESET}`);
-
-    const bySeverity = {};
-    for (const f of findings) {
-        bySeverity[f.severity] = (bySeverity[f.severity] || 0) + 1;
-    }
-
-    const uniqueFiles = new Set(findings.map(f => f.file)).size;
-
-    for (const sev of ['critical', 'high', 'medium', 'low']) {
-        const c = bySeverity[sev] || 0;
-        if (c > 0) {
-            const color = SEVERITY_COLORS[sev] || '';
-            console.log(`  ${color}${sev.toUpperCase()}: ${c}${RESET}`);
-        }
-    }
-
-    console.log(`\n  ${DIM}Scanned in ${formatMs(scanMs)} — ${findings.length} findings across ${uniqueFiles} file(s)${RESET}`);
-
-    if (count === 0) {
-        console.log(`  ${GREEN}✅ No issues found — scan passed${RESET}`);
-    } else {
-        const criticalHigh = (bySeverity.critical || 0) + (bySeverity.high || 0);
-        if (criticalHigh > 0) {
-            console.log(`\n  ${RED}${BOLD}⚠️  ${criticalHigh} critical/high issue(s) require immediate attention${RESET}`);
-        }
-    }
-    console.log();
-
-    process.exit((bySeverity.critical || 0) > 0 ? 1 : 0);
+  process.exit((bySeverity.critical || 0) > 0 ? 1 : 0);
 }
 
-
 // ━━━ Exports for testing & programmatic use ━━━
-module.exports = { scanFile, scanDirectory, printFindings, PATTERNS, SEVERITY_RANK };
+module.exports = {
+  scanFile,
+  scanDirectory,
+  printFindings,
+  PATTERNS,
+  SEVERITY_RANK,
+};
 
 if (require.main === module) {
-    main();
+  main();
 }

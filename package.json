@@ -1,6 +1,6 @@
 {
   "name": "tribunal-kit",
-  "version": "5.7.0",
+  "version": "5.8.0",
   "description": "Anti-Hallucination AI Agent Kit — 43 specialist agents, 32 slash commands, 19 parallel Tribunal reviewers, Performance Swarm engine, Supreme Court case law pipeline, and long-running agent harness.",
   "keywords": [
     "ai",
@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "eslint": "^9.1.1",
-    "jest": "^25.0.0",
+    "jest": "^30.4.2",
     "typescript": "^5.4.5"
   },
   "optionalDependencies": {
