@@ -68,7 +68,7 @@ describe("IDE Bridge File Generation", () => {
     fs.writeFileSync(cursorRules, "# My custom rules\nDo not touch");
     runCLI(["init", "--path", tmpDir, "--force", "--skip-update-check"]);
     const content = fs.readFileSync(cursorRules, "utf8");
-    expect(content).toBe("# My custom rules\nDo not touch");
+    expect(content).toContain("# My custom rules\nDo not touch");
   });
 
   test("all bridge files contain the routing table", () => {

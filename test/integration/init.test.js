@@ -72,7 +72,7 @@ describe("tribunal-kit init command", () => {
     expect(fs.existsSync(path.join(tmpDir, ".agent"))).toBe(true);
   });
 
-  test("init --force overwrites existing .agent/ and exits 0", () => {
+  test("init --force backs up existing files but does not delete custom files and exits 0", () => {
     // First install
     runCLI(["init", "--path", tmpDir, "--skip-update-check"]);
     // Write a marker inside a known-cleaned subdir (agents/)
@@ -87,8 +87,8 @@ describe("tribunal-kit init command", () => {
       "--skip-update-check",
     ]);
     expect(result.status).toBe(0);
-    // The agents/ subdir is wiped and rebuilt, so the extra marker is gone
-    expect(fs.existsSync(marker)).toBe(false);
+    // The aggressive deletion was removed, so custom files persist
+    expect(fs.existsSync(marker)).toBe(true);
   });
 });
 
