@@ -14,7 +14,7 @@
 [![License](https://img.shields.io/badge/License-MIT-1a1a1a?style=for-the-badge)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-5.8.0-1a1a1a?style=for-the-badge)](CHANGELOG.md)
 [![MCP](https://img.shields.io/badge/MCP-Ready-ccff00?style=for-the-badge&logo=openai&logoColor=1a1a1a)](mcp_config.json)
-[![Code Quality](https://img.shields.io/badge/Zero-Hallucinations-ff1637?style=for-the-badge)](AGENT_FLOW.md)
+[![Code Quality](https://img.shields.io/badge/Hallucination_Mitigation-ff1637?style=for-the-badge)](AGENT_FLOW.md)
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Y6C122DUQJ)
 
 </div>
@@ -23,7 +23,7 @@
 
 > [!IMPORTANT]
 > **AI GENERATES CODE. TRIBUNAL ENSURES IT WORKS.**  
-> A zero-bloat `.agent/` intelligence payload that upgrades your IDE with **43 specialist agents**, **34 workflows**, and a **19-reviewer Tribunal pipeline**. Zero hallucinations. Absolute execution certainty.
+> A zero-bloat `.agent/` intelligence payload that upgrades your IDE with **43 specialist agents**, **34 workflows**, and a **19-reviewer Tribunal pipeline**. Maximizes execution reliability and heavily mitigates hallucinations.
 
 <br>
 <hr style="border: 1px solid #222; margin: 40px 0;">
@@ -160,6 +160,19 @@ The **Marathon Harness** is an engine designed to keep autonomous agents on trac
 <hr style="border: 1px solid #222; margin: 40px 0;">
 <br>
 
+## 🧠 ADVANCED CAPABILITIES (v5.8)
+
+The 5.8 update introduces a massive leap in long-running agent capabilities and code correctness:
+
+- **Persistent Memory Engine (4-Type Taxonomy)**: Agents now categorize memory into Semantic, Procedural, Episodic, and Working memory, using budget-gated recall to completely eliminate context window bloat over multi-day tasks.
+- **Dependency Ladder Enforcement**: Automatically prevents over-engineering and architectural bloat through strict 6-rung dependency analysis before any new packages are introduced.
+- **Skill Variance Tracking**: The system now self-evaluates custom skills by running benchmark prompts (Edge case, Standard, Malicious) and generating performance matrices.
+- **Complex Artifact Protocol**: Upgraded agents with strict rules forbidding single-file monoliths for complex artifacts, enforcing proper component splitting and routing/state conventions.
+
+<br>
+<hr style="border: 1px solid #222; margin: 40px 0;">
+<br>
+
 ## 🔌 NATIVE MCP SERVER
 
 Tribunal-Kit functions as a standalone **Model Context Protocol (MCP)** server via `stdio`.
@@ -169,6 +182,7 @@ Bind your AI IDE directly to `tribunal-kit` to unlock autonomous tool execution:
 - `run_tribunal_audit`: AI can trigger a full workspace health check.
 - `search_case_law`: AI can query your project's historical code rejections to avoid making mistakes _before_ it writes code.
 - `sync_ide_bridges`: Force rule alignment directly from the AI chat.
+- `list_tribunal_agents` & `get_tribunal_skill`: Terminal agents can dynamically fetch specific skills without overloading their context windows.
 
 <br>
 <br>
