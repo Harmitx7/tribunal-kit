@@ -213,6 +213,50 @@ function handleRequest(req) {
             additionalProperties: false,
           },
         },
+        {
+          name: "recall_memory",
+          description: "Budget-constrained memory recall from the 4-Type Taxonomy Persistent Memory Engine. Returns the most relevant memories that fit within the token budget, ranked by relevance × recency × priority. Use this BEFORE writing code to recall project guidelines without bloating context.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              query: {
+                type: "string",
+                description: "Search query (e.g. 'database', 'auth', 'deploy')",
+              },
+              budget: {
+                type: "number",
+                description: "Maximum token budget for recall (default: 2000). Only the top-ranked memories that fit within this budget are returned.",
+              },
+            },
+            required: ["query"],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: "store_memory",
+          description: "Store a new memory entry in the 4-Type Taxonomy Persistent Memory Engine. Memories are schema-validated and persisted across sessions. Types: semantic (permanent facts), procedural (how-to recipes), episodic (30-day TTL events), working (session scratch).",
+          inputSchema: {
+            type: "object",
+            properties: {
+              type: {
+                type: "string",
+                enum: ["semantic", "procedural", "episodic", "working"],
+                description: "Memory type: semantic (facts), procedural (recipes), episodic (events), working (scratch)",
+              },
+              content: {
+                type: "string",
+                description: "The memory content to store",
+              },
+              tags: {
+                type: "array",
+                items: { type: "string" },
+                description: "Searchable tags for this memory",
+              },
+            },
+            required: ["type", "content"],
+            additionalProperties: false,
+          },
+        },
       ],
     };
   }
@@ -323,6 +367,60 @@ function handleRequest(req) {
       if (!fs.existsSync(skillPath)) return { content: [{ type: "text", text: `Skill '${sanitizedName}' not found.` }] };
       const text = fs.readFileSync(skillPath, "utf8");
       return { content: [{ type: "text", text }] };
+    }
+
+    if (toolName === "recall_memory") {
+      const query = req.params?.arguments?.query;
+      if (!query || typeof query !== "string") {
+        throw { code: -32602, message: "Missing or invalid required argument: query (string)" };
+      }
+      const budget = req.params?.arguments?.budget || 2000;
+      const agentDest = path.join(process.cwd(), ".agent");
+      const fs = require("fs");
+      if (!fs.existsSync(agentDest)) {
+        return { content: [{ type: "text", text: "Error: .agent/ directory not found. Run `tk init` first." }] };
+      }
+      try {
+        const { _memoryRecall } = require("../dist/commands/memory.js");
+        const { results, tokens_used } = _memoryRecall(agentDest, query, budget);
+        if (results.length === 0) {
+          return { content: [{ type: "text", text: `No memories match query: "${query}"` }] };
+        }
+        let text = `## Memory Recall (${results.length} results, ~${tokens_used}/${budget} tokens)\n\n`;
+        for (const entry of results) {
+          text += `- **[${entry.memory_type.toUpperCase()}]** #${entry.id}: ${entry.content}`;
+          if (entry.tags.length > 0) text += ` _(${entry.tags.join(", ")})_`;
+          text += `\n`;
+        }
+        return { content: [{ type: "text", text }] };
+      } catch (e) {
+        return { content: [{ type: "text", text: `Memory recall failed: ${e.message}` }] };
+      }
+    }
+
+    if (toolName === "store_memory") {
+      const memType = req.params?.arguments?.type;
+      const content = req.params?.arguments?.content;
+      const tags = req.params?.arguments?.tags || [];
+      if (!memType || !content) {
+        throw { code: -32602, message: "Missing required arguments: type (string), content (string)" };
+      }
+      const validTypes = ["semantic", "procedural", "episodic", "working"];
+      if (!validTypes.includes(memType)) {
+        throw { code: -32602, message: `Invalid memory type: "${memType}". Must be one of: ${validTypes.join(", ")}` };
+      }
+      const agentDest = path.join(process.cwd(), ".agent");
+      const fs = require("fs");
+      if (!fs.existsSync(agentDest)) {
+        return { content: [{ type: "text", text: "Error: .agent/ directory not found. Run `tk init` first." }] };
+      }
+      try {
+        const { _memoryStore } = require("../dist/commands/memory.js");
+        const result = _memoryStore(agentDest, memType, content, tags, null);
+        return { content: [{ type: "text", text: `Memory stored: #${result.id} (${memType}, ~${result.token_estimate} tokens)` }] };
+      } catch (e) {
+        return { content: [{ type: "text", text: `Memory store failed: ${e.message}` }] };
+      }
     }
 
     throw { code: -32601, message: `Unknown tool: ${toolName}` };

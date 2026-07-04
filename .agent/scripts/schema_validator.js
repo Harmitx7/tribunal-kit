@@ -16,8 +16,6 @@ const path = require("path");
 const {
   RED,
   GREEN,
-  YELLOW,
-  BLUE,
   BOLD,
   DIM,
   CYAN,

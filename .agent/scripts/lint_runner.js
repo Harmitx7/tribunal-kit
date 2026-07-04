@@ -17,8 +17,6 @@ const { spawnSync } = require("child_process");
 const {
   RED,
   GREEN,
-  YELLOW,
-  BLUE,
   BOLD,
   DIM,
   CYAN,

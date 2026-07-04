@@ -7,6 +7,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ### ✨ Features
 
+- **Persistent Memory Engine**: Implemented a state-of-the-art memory engine with a 4-Type Taxonomy (Semantic, Procedural, Episodic, Working). Features budget-gated recall to prevent context bloat, integrated seamlessly across the Rust core, Node CLI, and MCP servers.
+
 - **Dependency Ladder Framework**: Implemented the `dependency-ladder` skill, defining the 6 Rungs of the Ladder (Existence, Stdlib, Platform, Installed Dep, One Line, Minimum) to systematically prevent over-engineering and architectural bloat.
 - **Complexity Reviewer Tribunal**: Introduced the `complexity-reviewer` agent, integrating it natively into the `/generate` workflow and `project-planner` to enforce the Dependency Ladder automatically.
 - **Skill Eval Generation**: Upgraded `skill-creator` to automatically generate a `tests/` directory alongside every new `SKILL.md`, containing 3 standard benchmark prompts (Edge case, Standard, Malicious) for variance tracking.

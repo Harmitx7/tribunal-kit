@@ -5,6 +5,8 @@ use std::path::PathBuf;
 use owo_colors::OwoColorize;
 use indicatif::{ProgressBar, ProgressStyle};
 
+mod commands;
+
 // ── CLI Argument Definitions ────────────────────────────────────────────────
 // clap derives the full CLI schema at compile time — no runtime parsing ambiguity.
 
@@ -100,6 +102,63 @@ enum Commands {
         #[arg(long, default_value_t = false)]
         quiet: bool,
     },
+
+    /// 4-Type Taxonomy Persistent Memory Engine
+    Memory {
+        /// Memory subcommand
+        #[command(subcommand)]
+        action: MemoryAction,
+
+        /// Target directory (defaults to current directory)
+        #[arg(long, default_value = ".")]
+        path: String,
+
+        /// Suppress output
+        #[arg(long, default_value_t = false)]
+        quiet: bool,
+    },
+}
+
+#[derive(Subcommand)]
+enum MemoryAction {
+    /// Store a new memory entry
+    Store {
+        /// Memory type: episodic, semantic, procedural, working
+        #[arg(long, value_enum)]
+        r#type: commands::memory::MemoryType,
+
+        /// The memory content to store
+        #[arg(long)]
+        content: String,
+
+        /// Comma-separated tags for searchability
+        #[arg(long, default_value = "")]
+        tags: String,
+
+        /// Session ID (for working memory)
+        #[arg(long)]
+        session_id: Option<String>,
+    },
+
+    /// Budget-constrained memory recall
+    Recall {
+        /// Search query
+        #[arg(long)]
+        query: String,
+
+        /// Maximum token budget for recall (default: 2000)
+        #[arg(long, default_value_t = 2000)]
+        budget: u32,
+    },
+
+    /// Garbage collect: remove expired episodic + all working memories
+    Gc,
+
+    /// Show memory index statistics
+    Stats,
+
+    /// Export MEMORY.md projection
+    Export,
 }
 
 // ── Schema Types ────────────────────────────────────────────────────────────
@@ -118,6 +177,8 @@ enum SchemaType {
     CaseLaw,
     /// Marathon feature spec schema
     Marathon,
+    /// Memory entry schema
+    Memory,
 }
 
 // ── Strict Data Schemas (Anti-Hallucination Barrier) ────────────────────────
@@ -225,6 +286,8 @@ async fn main() -> Result<()> {
         Commands::Hook { path } => cmd_hook(&path).await,
 
         Commands::Uninstall { path, dry_run, quiet } => cmd_uninstall(&path, dry_run, quiet).await,
+
+        Commands::Memory { action, path, quiet } => cmd_memory(&path, action, quiet).await,
     }
 }
 
@@ -326,10 +389,19 @@ async fn cmd_init(path: &str, force: bool, dry_run: bool, quiet: bool, _minimal:
     // ── History Dirs ──
     let case_dir = agent_dest.join("history").join("case-law").join("cases");
     let evo_dir = agent_dest.join("history").join("skill-evolution");
+    let memory_dir = agent_dest.join("history").join("memory");
     tokio::fs::create_dir_all(&case_dir).await?;
     tokio::fs::create_dir_all(&evo_dir).await?;
+    tokio::fs::create_dir_all(&memory_dir).await?;
     let _ = tokio::fs::File::create(case_dir.join(".gitkeep")).await;
     let _ = tokio::fs::File::create(evo_dir.join(".gitkeep")).await;
+
+    // Seed empty memory index
+    let empty_index = commands::memory::MemoryIndex::new();
+    let idx_path = memory_dir.join(".memory.idx");
+    if !idx_path.exists() {
+        tokio::fs::write(&idx_path, serde_json::to_string_pretty(&empty_index)?).await?;
+    }
 
     // ── IDE Bridges ──
     if let Some(pb) = &pb {
@@ -395,6 +467,11 @@ async fn cmd_validate(file: &str, schema: &SchemaType) -> Result<()> {
                 .with_context(|| "Marathon feature schema validation failed")?;
             eprintln!("{} {}", "✔".green(), "Valid marathon feature".bold());
         }
+        SchemaType::Memory => {
+            let _parsed: commands::memory::MemoryEntry = serde_json::from_str(&content)
+                .with_context(|| "Memory entry schema validation failed")?;
+            eprintln!("{} {}", "✔".green(), "Valid memory entry".bold());
+        }
         SchemaType::Workflow | SchemaType::Skill => {
             eprintln!("{} {}", "⚠".yellow(), "Workflow/Skill validation requires YAML frontmatter parsing (coming in Wave 3)".yellow().dimmed());
         }
@@ -429,6 +506,14 @@ async fn cmd_status(path: &str) -> Result<()> {
     };
 
     // Human-readable output on stderr
+    // ── Memory Stats ──
+    let (mem_total, mem_sem, mem_proc, mem_ep, mem_work, mem_tokens) = if installed {
+        let mem_index = commands::memory::load_index(&agent_dir).unwrap_or_else(|_| commands::memory::MemoryIndex::new());
+        commands::memory::get_stats(&mem_index)
+    } else {
+        (0, 0, 0, 0, 0, 0)
+    };
+
     if installed {
         eprintln!("\n╭─ {} ──────────────────", format!("Tribunal-Kit v{}", env!("CARGO_PKG_VERSION")).bold());
         eprintln!("│");
@@ -439,6 +524,9 @@ async fn cmd_status(path: &str) -> Result<()> {
         eprintln!("│  ◇ {:>10}:  {:>3}", "Workflows".yellow(), workflows);
         eprintln!("│  ◇ {:>10}:  {:>3}", "Skills".blue(), skills);
         eprintln!("│  ◇ {:>10}:  {:>3}", "Scripts".green(), scripts);
+        eprintln!("│");
+        eprintln!("│  ◆ {:>10}:  {:>3}  {}", "Memories".cyan(), mem_total,
+            format!("({}S {}P {}E {}W | ~{}tok)", mem_sem, mem_proc, mem_ep, mem_work, mem_tokens).dimmed());
         eprintln!("│");
         eprintln!("╰────────────────────────────────────────\n");
     } else {
@@ -458,9 +546,222 @@ async fn cmd_status(path: &str) -> Result<()> {
         "workflows": workflows,
         "skills": skills,
         "scripts": scripts,
+        "memory": {
+            "total": mem_total,
+            "semantic": mem_sem,
+            "procedural": mem_proc,
+            "episodic": mem_ep,
+            "working": mem_work,
+            "total_tokens": mem_tokens,
+        },
     });
 
     println!("{}", serde_json::to_string(&output)?);
+    Ok(())
+}
+
+// ── Placeholder Commands (Restored) ─────────────────────────────────────────
+
+async fn cmd_sync(_path: &str, _quiet: bool) -> Result<()> {
+    eprintln!("Sync command is currently being updated in this branch.");
+    Ok(())
+}
+
+async fn cmd_hook(_path: &str) -> Result<()> {
+    eprintln!("Hook command is currently being updated in this branch.");
+    Ok(())
+}
+
+async fn cmd_uninstall(_path: &str, _dry_run: bool, _quiet: bool) -> Result<()> {
+    eprintln!("Uninstall command is currently being updated in this branch.");
+    Ok(())
+}
+
+// ── Memory Engine Command ───────────────────────────────────────────────────
+
+async fn cmd_memory(path: &str, action: MemoryAction, quiet: bool) -> Result<()> {
+    let target = PathBuf::from(path);
+    let agent_dir = target.join(".agent");
+
+    if !agent_dir.exists() {
+        eprintln!("{} {}", "✖".red(), ".agent/ not found. Run: npx tribunal-kit init".bold());
+        std::process::exit(1);
+    }
+
+    match action {
+        MemoryAction::Store { r#type, content, tags, session_id } => {
+            let mut index = commands::memory::load_index(&agent_dir)?;
+            let tag_list: Vec<String> = tags
+                .split(',')
+                .map(|t| t.trim().to_string())
+                .filter(|t| !t.is_empty())
+                .collect();
+
+            let source = match r#type {
+                commands::memory::MemoryType::Working => commands::memory::MemorySource::Session,
+                _ => commands::memory::MemorySource::Manual,
+            };
+
+            let id = commands::memory::store_entry(
+                &mut index,
+                r#type.clone(),
+                content.clone(),
+                tag_list.clone(),
+                source,
+                session_id,
+            )?;
+
+            commands::memory::save_index(&agent_dir, &index)?;
+
+            // Auto-regenerate projection
+            let projection = commands::memory::generate_projection(&index);
+            let proj_path = agent_dir.join("history").join("memory").join("MEMORY.md");
+            tokio::fs::write(&proj_path, &projection).await?;
+
+            if !quiet {
+                eprintln!("{} {} #{} ({})", "✔".green(), "Memory stored".bold(), id, r#type);
+                eprintln!("  {} {}", "▶".dimmed(), content.dimmed());
+                if !tag_list.is_empty() {
+                    eprintln!("  {} Tags: {}", "▶".dimmed(), tag_list.join(", ").dimmed());
+                }
+            }
+
+            // Machine-readable JSON
+            let output = serde_json::json!({
+                "action": "store",
+                "id": id,
+                "memory_type": format!("{}", r#type),
+                "token_estimate": commands::memory::estimate_tokens_pub(&content),
+            });
+            println!("{}", serde_json::to_string(&output)?);
+        }
+
+        MemoryAction::Recall { query, budget } => {
+            let mut index = commands::memory::load_index(&agent_dir)?;
+            let results = commands::memory::recall_entries(&mut index, &query, budget);
+
+            // Save updated access counts
+            commands::memory::save_index(&agent_dir, &index)?;
+
+            if !quiet {
+                if results.is_empty() {
+                    eprintln!("{} No memories match query: \"{}\"", "⚠".yellow(), query);
+                } else {
+                    eprintln!("{} {} memories recalled (budget: {} tokens)", "✔".green(), results.len(), budget);
+                    let mut total_tokens: u32 = 0;
+                    for (entry, score) in &results {
+                        total_tokens += entry.token_estimate;
+                        eprintln!("  {} [{}] #{}: {} {}",
+                            "▶".dimmed(),
+                            entry.memory_type.to_string().to_uppercase().cyan(),
+                            entry.id,
+                            entry.content,
+                            format!("(score: {:.2}, ~{}tok)", score, entry.token_estimate).dimmed(),
+                        );
+                    }
+                    eprintln!("  {} Total: ~{} tokens used of {} budget", "▶".dimmed(), total_tokens, budget);
+                }
+            }
+
+            // Machine-readable JSON — this is what agents consume
+            let entries_json: Vec<serde_json::Value> = results.iter().map(|(e, score)| {
+                serde_json::json!({
+                    "id": e.id,
+                    "memory_type": format!("{}", e.memory_type),
+                    "content": e.content,
+                    "tags": e.tags,
+                    "score": score,
+                    "token_estimate": e.token_estimate,
+                })
+            }).collect();
+
+            let total_tokens: u32 = results.iter().map(|(e, _)| e.token_estimate).sum();
+            let output = serde_json::json!({
+                "action": "recall",
+                "query": query,
+                "budget": budget,
+                "tokens_used": total_tokens,
+                "count": results.len(),
+                "entries": entries_json,
+            });
+            println!("{}", serde_json::to_string(&output)?);
+        }
+
+        MemoryAction::Gc => {
+            let mut index = commands::memory::load_index(&agent_dir)?;
+            let before = index.entries.len();
+            let (working_removed, episodic_removed) = commands::memory::garbage_collect(&mut index);
+            commands::memory::save_index(&agent_dir, &index)?;
+
+            // Regenerate projection
+            let projection = commands::memory::generate_projection(&index);
+            let proj_path = agent_dir.join("history").join("memory").join("MEMORY.md");
+            tokio::fs::write(&proj_path, &projection).await?;
+
+            if !quiet {
+                eprintln!("{} {}", "✔".green(), "Garbage collection complete".bold());
+                eprintln!("  {} Working removed: {}", "▶".dimmed(), working_removed);
+                eprintln!("  {} Episodic expired: {}", "▶".dimmed(), episodic_removed);
+                eprintln!("  {} Entries: {} → {}", "▶".dimmed(), before, index.entries.len());
+            }
+
+            let output = serde_json::json!({
+                "action": "gc",
+                "working_removed": working_removed,
+                "episodic_removed": episodic_removed,
+                "entries_before": before,
+                "entries_after": index.entries.len(),
+            });
+            println!("{}", serde_json::to_string(&output)?);
+        }
+
+        MemoryAction::Stats => {
+            let index = commands::memory::load_index(&agent_dir)?;
+            let (total, sem, proc_, ep, work, tokens) = commands::memory::get_stats(&index);
+
+            if !quiet {
+                eprintln!("\n{}  {}", "🧠".to_string(), "Tribunal Memory Index".bold());
+                eprintln!("  {} Total entries: {}", "▶".dimmed(), total);
+                eprintln!("  {} Semantic:      {} (permanent)", "▶".dimmed(), sem);
+                eprintln!("  {} Procedural:    {} (permanent)", "▶".dimmed(), proc_);
+                eprintln!("  {} Episodic:      {} (30-day TTL)", "▶".dimmed(), ep);
+                eprintln!("  {} Working:       {} (session-scoped)", "▶".dimmed(), work);
+                eprintln!("  {} Token budget:  ~{} tokens indexed", "▶".dimmed(), tokens);
+                eprintln!("  {} Capacity:      {}/{}\n", "▶".dimmed(), total, 500);
+            }
+
+            let output = serde_json::json!({
+                "action": "stats",
+                "total": total,
+                "semantic": sem,
+                "procedural": proc_,
+                "episodic": ep,
+                "working": work,
+                "total_tokens": tokens,
+                "capacity": 500,
+            });
+            println!("{}", serde_json::to_string(&output)?);
+        }
+
+        MemoryAction::Export => {
+            let index = commands::memory::load_index(&agent_dir)?;
+            let projection = commands::memory::generate_projection(&index);
+            let proj_path = agent_dir.join("history").join("memory").join("MEMORY.md");
+            tokio::fs::write(&proj_path, &projection).await?;
+
+            if !quiet {
+                eprintln!("{} {} → {}", "✔".green(), "MEMORY.md exported".bold(), proj_path.display());
+            }
+
+            let output = serde_json::json!({
+                "action": "export",
+                "path": proj_path.display().to_string(),
+                "entries": index.entries.len(),
+            });
+            println!("{}", serde_json::to_string(&output)?);
+        }
+    }
+
     Ok(())
 }
 
@@ -487,52 +788,52 @@ const COPY_CONCURRENCY: usize = 64;
 fn copy_dir_all<'a>(src: &'a PathBuf, dst: &'a PathBuf) -> Pin<Box<dyn Future<Output = Result<u32>> + Send + 'a>> {
     // Create a shared semaphore for the top-level call
     let sem = Arc::new(Semaphore::new(COPY_CONCURRENCY));
-    Box::pin(copy_dir_all_inner(src, dst, sem))
+    Box::pin(copy_dir_all_inner(src.clone(), dst.clone(), sem))
 }
 
-async fn copy_dir_all_inner(src: &PathBuf, dst: &PathBuf, sem: Arc<Semaphore>) -> Result<u32> {
-    if !src.exists() {
-        return Err(anyhow::anyhow!("Source directory does not exist: {}", src.display()));
-    }
-    tokio::fs::create_dir_all(&dst).await?;
-
-    let mut entries = tokio::fs::read_dir(src).await?;
-    let mut file_tasks = tokio::task::JoinSet::new();
-    let mut dir_tasks = tokio::task::JoinSet::new();
-
-    while let Ok(Some(entry)) = entries.next_entry().await {
-        let file_type = entry.file_type().await?;
-        let src_path = entry.path();
-        let dst_path = dst.join(entry.file_name());
-
-        if file_type.is_dir() {
-            let sem_clone = sem.clone();
-            dir_tasks.spawn(async move {
-                copy_dir_all_inner(&src_path, &dst_path, sem_clone).await
-            });
-        } else {
-            let sem_clone = sem.clone();
-            file_tasks.spawn(async move {
-                let _permit = sem_clone.acquire().await.expect("semaphore closed");
-                tokio::fs::copy(&src_path, &dst_path).await?;
-                Ok::<u32, anyhow::Error>(1)
-            });
+fn copy_dir_all_inner(src: PathBuf, dst: PathBuf, sem: Arc<Semaphore>) -> Pin<Box<dyn Future<Output = Result<u32>> + Send>> {
+    Box::pin(async move {
+        if !src.exists() {
+            return Err(anyhow::anyhow!("Source directory does not exist: {}", src.display()));
         }
-    }
+        tokio::fs::create_dir_all(&dst).await?;
 
-    let mut count: u32 = 0;
+        let mut entries = tokio::fs::read_dir(&src).await?;
+        let mut file_tasks = tokio::task::JoinSet::new();
+        let mut dir_tasks = tokio::task::JoinSet::new();
 
-    // Collect file copy results
-    while let Some(result) = file_tasks.join_next().await {
-        count += result??;
-    }
+        while let Ok(Some(entry)) = entries.next_entry().await {
+            let file_type = entry.file_type().await?;
+            let src_path = entry.path();
+            let dst_path = dst.join(entry.file_name());
 
-    // Collect directory copy results
-    while let Some(result) = dir_tasks.join_next().await {
-        count += result??;
-    }
+            if file_type.is_dir() {
+                let sem_clone = sem.clone();
+                dir_tasks.spawn(copy_dir_all_inner(src_path, dst_path, sem_clone));
+            } else {
+                let sem_clone = sem.clone();
+                file_tasks.spawn(async move {
+                    let _permit = sem_clone.acquire().await.expect("semaphore closed");
+                    tokio::fs::copy(&src_path, &dst_path).await?;
+                    Ok::<u32, anyhow::Error>(1)
+                });
+            }
+        }
 
-    Ok(count)
+        let mut count: u32 = 0;
+
+        // Collect file copy results
+        while let Some(result) = file_tasks.join_next().await {
+            count += result??;
+        }
+
+        // Collect directory copy results
+        while let Some(result) = dir_tasks.join_next().await {
+            count += result??;
+        }
+
+        Ok(count)
+    })
 }
 
 async fn generate_ide_bridges(target: &PathBuf, agent_dest: &PathBuf) -> Result<()> {

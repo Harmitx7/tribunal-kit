@@ -1,3 +1,1 @@
-pub mod init;
-pub mod validate;
-pub mod status;
+pub mod memory;

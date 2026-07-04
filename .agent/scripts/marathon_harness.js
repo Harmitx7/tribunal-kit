@@ -30,22 +30,15 @@ const {
   YELLOW,
   CYAN,
   RED,
-  BLUE,
   MAGENTA,
-  GRAY,
   BOLD,
   DIM,
   RESET,
   BOX,
   banner,
-  sectionHeader,
-  formatMs,
   ok,
-  fail,
   warn,
   info,
-  summaryTable,
-  timer,
 } = require("./_colors");
 
 // ── Paths ────────────────────────────────────────────────────────────────────
@@ -368,7 +361,7 @@ function cmdStatus() {
   const progress = readJSON(PROGRESS_FILE);
   if (!featureList || !progress) return;
 
-  const { total, passing, failing, blocked } = countFeatures(featureList);
+  const { total, passing, blocked } = countFeatures(featureList);
   const nextFeature = getNextFeature(featureList);
   const sessions = progress.sessions || [];
   const lastSession = sessions[sessions.length - 1] || null;
