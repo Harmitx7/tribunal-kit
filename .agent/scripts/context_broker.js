@@ -430,7 +430,15 @@ function loadSkills(agentDir) {
     if (!fs.existsSync(skillFile)) continue;
 
     try {
-      const content = fs.readFileSync(skillFile, "utf8");
+      let content = fs.readFileSync(skillFile, "utf8");
+      
+      // Strip duplicated global boilerplate sections
+      content = content.replace(/AI coding assistants often fall into specific bad habits[\s\S]*$/g, "");
+      content = content.replace(/## 🤖 LLM-Specific Traps[\s\S]*$/g, "");
+      content = content.replace(/## 🏛️ Tribunal Integration[\s\S]*$/g, "");
+      content = content.replace(/## Pre-Flight Checklist[\s\S]*$/g, "");
+      content = content.trim();
+
       const frontmatter = parseFrontmatter(content) || {};
       const keyRules = extractKeyRules(content);
       skills.push({

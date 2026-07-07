@@ -43,7 +43,7 @@ function getBinaryPath() {
     if (fs.existsSync(binPath)) {
       return binPath;
     }
-  } catch (e) {
+  } catch {
     // Package not found, ignore and fall back to local dev targets
   }
 

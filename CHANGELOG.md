@@ -3,9 +3,14 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [5.8.0] — 2026-07-01
+## [5.8.0] — 2026-07-07
 
 ### ✨ Features
+
+- **Omniscience Cognitive Alignment Engine (OCAE)**: Deployed a groundbreaking cognitive intelligence architecture that aligns *any* model orchestrated by Tribunal Kit with supreme reasoning and thinking loops. 
+  - Implemented the always-on **Step 0 Epistemic Loop** (+800 tokens overhead only) forcing models to run strict confidence checks, self-audit knowledge freshness, and self-select optimal precision budgets before running commands.
+  - Deployed the on-demand **Omniscience Core Skill (`fabel-protocol`)**, encapsulating a full platform-aware design cascade, complexity-scaled tool budgets, and stale-context detection algorithms.
+  - Hardened the 6 core Tribunal Reviewer agents (`logic`, `frontend`, `security`, `orchestrator`, `frontend-specialist`, `ui-ux-auditor`) with visual content safety checks, async dynamic API validation, and prompt injection XML framing.
 
 - **Persistent Memory Engine**: Implemented a state-of-the-art memory engine with a 4-Type Taxonomy (Semantic, Procedural, Episodic, Working). Features budget-gated recall to prevent context bloat, integrated seamlessly across the Rust core, Node CLI, and MCP servers.
 

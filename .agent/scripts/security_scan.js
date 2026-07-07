@@ -38,7 +38,6 @@ const {
   CYAN,
   RESET,
   banner,
-  sectionHeader,
   timer,
   formatMs,
 } = require("./_colors");

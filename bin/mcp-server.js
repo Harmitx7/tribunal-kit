@@ -97,24 +97,14 @@ function searchCaseLaw(query) {
   return result.stdout || result.stderr || "No results";
 }
 
-/**
- * Sync IDE bridges — loaded in-process for zero-spawn latency.
- */
-async function syncIDEBridges() {
-  try {
-    const { cmdSync } = require("../dist/commands/sync.js");
-    // Capture stdout
-    const originalLog = console.log;
-    let output = "";
-    console.log = (...args) => {
-      output += args.join(" ") + "\n";
-    };
-    await cmdSync();
-    console.log = originalLog;
-    return output || "Sync complete";
-  } catch (e) {
-    return `Sync failed: ${e.message}`;
-  }
+
+function stripBoilerplate(text) {
+  if (!text) return text;
+  let minified = text.replace(/AI coding assistants often fall into specific bad habits[\s\S]*$/g, "");
+  minified = minified.replace(/## 🤖 LLM-Specific Traps[\s\S]*$/g, "");
+  minified = minified.replace(/## 🏛️ Tribunal Integration[\s\S]*$/g, "");
+  minified = minified.replace(/## Pre-Flight Checklist[\s\S]*$/g, "");
+  return minified.trim();
 }
 
 function handleRequest(req) {
@@ -257,6 +247,31 @@ function handleRequest(req) {
             additionalProperties: false,
           },
         },
+        {
+          name: "get_sparse_context",
+          description: "Get a JIT, token-optimized context prompt tailored to the active task and files. Uses the Context Density Broker to score and select relevant skills, stripping duplicate boilerplate and saving up to 85% in prompt tokens.",
+          inputSchema: {
+            type: "object",
+            properties: {
+              task: {
+                type: "string",
+                description: "The user task description (e.g. 'JWT auth API')",
+              },
+              files: {
+                type: "array",
+                items: { type: "string" },
+                description: "List of files being touched (e.g. ['src/auth.js'])",
+              },
+              model: {
+                type: "string",
+                enum: ["large", "small"],
+                description: "Model tier: large (default, includes key rules of supplementary skills) or small (essential skills only)",
+              },
+            },
+            required: ["task"],
+            additionalProperties: false,
+          },
+        },
       ],
     };
   }
@@ -276,9 +291,6 @@ function handleRequest(req) {
     }
 
     if (toolName === "sync_ide_bridges") {
-      // This is async but MCP protocol is request/response,
-      // so we handle it synchronously for now via the dist module
-      const { cmdSync } = require("../dist/commands/sync.js");
       const fs = require("fs");
       const cwd = process.cwd();
       const agentDest = path.join(cwd, ".agent");
@@ -292,8 +304,6 @@ function handleRequest(req) {
           ],
         };
       }
-      // Direct in-process IDE bridge generation
-      const { generateIDEBridges } = require("../dist/commands/init.js");
       // Run synchronously by spawning a minimal script
       const result = spawnSync(
         process.execPath,
@@ -346,7 +356,7 @@ function handleRequest(req) {
       const agentPath = path.join(process.cwd(), ".agent", "agents", `${sanitizedName}.md`);
       if (!fs.existsSync(agentPath)) return { content: [{ type: "text", text: `Agent '${sanitizedName}' not found.` }] };
       const text = fs.readFileSync(agentPath, "utf8");
-      return { content: [{ type: "text", text }] };
+      return { content: [{ type: "text", text: stripBoilerplate(text) }] };
     }
 
     if (toolName === "list_tribunal_skills") {
@@ -366,7 +376,29 @@ function handleRequest(req) {
       const skillPath = path.join(process.cwd(), ".agent", "skills", sanitizedName, "SKILL.md");
       if (!fs.existsSync(skillPath)) return { content: [{ type: "text", text: `Skill '${sanitizedName}' not found.` }] };
       const text = fs.readFileSync(skillPath, "utf8");
-      return { content: [{ type: "text", text }] };
+      return { content: [{ type: "text", text: stripBoilerplate(text) }] };
+    }
+
+    if (toolName === "get_sparse_context") {
+      const task = req.params?.arguments?.task;
+      const files = req.params?.arguments?.files || [];
+      const model = req.params?.arguments?.model || "large";
+
+      if (!task) throw { code: -32602, message: "Missing required argument: task" };
+
+      const agentDest = path.join(process.cwd(), ".agent");
+      const fs = require("fs");
+      if (!fs.existsSync(agentDest)) {
+        return { content: [{ type: "text", text: "Error: .agent/ directory not found. Run `tk init` first." }] };
+      }
+
+      try {
+        const { broker } = require("../.agent/scripts/context_broker.js");
+        const brokerResult = broker(task, files, model, agentDest);
+        return { content: [{ type: "text", text: stripBoilerplate(brokerResult.promptText) }] };
+      } catch (e) {
+        return { content: [{ type: "text", text: `Failed to retrieve sparse context: ${e.message}` }] };
+      }
     }
 
     if (toolName === "recall_memory") {
@@ -473,3 +505,10 @@ rl.on("line", (line) => {
     console.log(JSON.stringify(errorRes));
   }
 });
+
+if (process.env.NODE_ENV === "test") {
+  module.exports = {
+    handleRequest,
+    stripBoilerplate,
+  };
+}

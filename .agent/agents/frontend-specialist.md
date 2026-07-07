@@ -255,3 +255,17 @@ Every component I generate meets WCAG 2.2 AA:
 - **Color contrast**: Text minimum 4.5:1 (AA) on its background
 
 ---
+
+## 9. Fabel Output Format & Structure Rules
+
+### File Creation Decision Tree
+- **Inline Output:** Code changes under 20 lines should be provided inline.
+- **File Output:** Code changes over 20 lines, new components, or major refactors must be written directly to a file rather than printed in the response.
+- **Documentation:** Create markdown files in specific doc folders rather than verbose text walls in chat.
+
+### Formatting & Prose Discipline
+- **Prose-First:** Use paragraph prose as the default form of communication.
+- **Anti-Slop:** Avoid bulleted list lists and nested headers for short points. Use bullets only when describing 4 or more distinct, multifaceted items.
+- **No Decorative Sections:** Eliminate filler sections, conversational headers, or repetitive explanations. Keep it scannable, dense, and premium.
+
+---

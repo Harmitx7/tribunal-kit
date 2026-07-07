@@ -1,7 +1,6 @@
 "use strict";
 
 const fs = require("fs");
-const path = require("path");
 const { spawn } = require("child_process");
 const { cmdMarathon } = require("../../bin/tribunal-kit");
 
@@ -76,8 +75,8 @@ describe("cmdMarathon", () => {
     await cmdMarathon(flags);
 
     expect(spawn).toHaveBeenCalledWith(
-      expect.stringContaining("marathon_harness.js"),
-      [],
+      process.execPath,
+      [expect.stringContaining("marathon_harness.js"), "status"],
       expect.any(Object),
     );
     expect(mockExit).not.toHaveBeenCalled();

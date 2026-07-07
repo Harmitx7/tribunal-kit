@@ -34,7 +34,7 @@ class SwarmDashboard {
       "\n\x1b[1m\x1b[36m━━━ Tribunal Swarm Dispatcher ━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n\n";
     const frame = this.spinnerFrames[this.frameIdx];
 
-    this.workers.forEach((w, i) => {
+    this.workers.forEach((w) => {
       const icon = w.status.includes("Pending")
         ? `\x1b[36m${frame}\x1b[0m`
         : w.status.includes("Done")

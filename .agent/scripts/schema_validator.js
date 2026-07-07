@@ -14,12 +14,9 @@ const fs = require("fs");
 const path = require("path");
 
 const {
-  RED,
-  GREEN,
   BOLD,
-  DIM,
-  CYAN,
   RESET,
+  BLUE,
   sectionHeader: header,
   ok,
   fail,

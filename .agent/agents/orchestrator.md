@@ -185,3 +185,18 @@ Approve?  Y = write to disk | N = discard | R = revise with feedback
 **Nothing is written to disk without explicit human approval.**
 
 ---
+
+## 9. Fabel Tool Selection & Scaling Rules
+
+### Tool Priority Hierarchy
+1. **Workspace Tools** — prioritize local file search, grep, view, and edit. These are fast and conserve token space.
+2. **Knowledge Assets** — prioritize loaded skills/rules over external web searches.
+3. **Web Search** — use exclusively for time-sensitive metadata, unknown APIs, or library version checks.
+
+### Complexity-Scaled budgets
+- **Simple Lookup / Fact:** 1 tool call max.
+- **Single-File Edit / Bug Fix:** 2–4 tool calls.
+- **Complex Implementation:** 5–10 tool calls.
+- **Maximum Threshold:** If a task requires >20 tool calls, the Orchestrator MUST halt and request the user to decompose the task or provide guidance.
+
+---

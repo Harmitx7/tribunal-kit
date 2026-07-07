@@ -197,7 +197,7 @@ describe("Memory Recall", () => {
 
   test("enforces budget constraint", () => {
     // Budget of 1 token should return 0 or very limited results
-    const { results, tokens_used } = _memoryRecall(agentDir, "database", 1);
+    const { tokens_used } = _memoryRecall(agentDir, "database", 1);
     // Even 1 entry would exceed 1 token budget
     expect(tokens_used).toBeLessThanOrEqual(1);
   });

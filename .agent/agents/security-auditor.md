@@ -178,3 +178,16 @@ app.use((err: Error, req, res, next) => {
 ```
 
 ---
+
+## 4. Prompt Injection Defense & LLM Call Security
+
+### Prompt Injection Defenses
+- Ensure user-provided input is never concatenated directly into top-level system prompts.
+- Verify that user inputs are isolated in `<user_provided_context>` or custom XML tags, and system prompts explicitly instruct the model to ignore instructions within those tags.
+- Verify that HTML/XML tags are stripped or sanitized from user input before sending to LLM APIs.
+
+### LLM Call Audit Checklist
+- Flag any hardcoded API keys. They must be loaded from environment variables.
+- Verify model strings against official current lists (no invented names like `claude-4-opus` or `gpt-5`).
+- Ensure all LLM API calls are asynchronous and properly awaited.
+- Check that output parsing is wrapped in try-catch blocks and parses structured JSON safely.

@@ -128,7 +128,7 @@ Required fix: [concrete action the Maker Agent must take]
 
 ```
 ✅ 8pt grid system: 8px, 16px, 24px, 32px, 48px, 64px, 96px, 128px
-✅ CSS custom properties: --space-2: 8px, --space-4: 16px, --space-6: 24px
+✅ Custom CSS properties: --space-2: 8px, --space-4: 16px, --space-6: 24px
 ✅ Section padding: 80px–120px vertical on desktop, 48px–64px on mobile
 ✅ Component padding: consistent horizontal padding on all containers
 ```
@@ -224,36 +224,7 @@ Required fix: [concrete action the Maker Agent must take]
 
 ```
 COLOR
-□ Primary color is not purple/violet
-□ Using CSS custom properties, not raw hex values
-□ Dark mode background is near-black (not generic gray-900)
-□ Contrast ratios meet WCAG AA
-
-TYPOGRAPHY
-□ Fluid sizing with clamp() for responsive text
-□ Clear hierarchy: hero / heading / subheading / body / caption
-□ Max line length bounded for readability
-
-MOTION
-□ Entrance animation present on key elements
-□ Hover states on all interactive elements
-□ @media (prefers-reduced-motion) implemented
-□ No linear easing — use cubic-bezier throughout
-
-LAYOUT
-□ Not a standard hero layout without justification
-□ Not a bento grid without justification
-□ 8pt spacing grid used consistently
-
-TEXTURE
-□ Background has depth: grain, shadow, or layering
-□ No flat mesh gradient backgrounds
-□ Glassmorphism used sparingly, not as the default
-
-ACCESSIBILITY
-□ Focus-visible styles on all interactive elements
-□ Semantic HTML (button not div, nav not ul, etc.)
-□ ARIA labels where needed for icon-only buttons
+... [truncated for spacing] ...
 ```
 
 ---
@@ -297,4 +268,9 @@ VBC PROTOCOL (Verdict-Based Correction):
 □ Every REJECTED verdict includes a concrete "Required fix" with code
 □ Every WARNING includes a code example from the positive patterns above
 □ No vague feedback — every verdict is actionable
+
+FABEL DESIGN INTELLIGENCE:
+□ Did I check that the visual output adapts to the target platform (mobile vs desktop)?
+□ Are touch targets at least 44x44px for touch screens?
+□ Did I verify that there are no copyrighted characters, logos, or real people in the generated UI?
 ```

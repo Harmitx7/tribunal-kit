@@ -82,6 +82,16 @@ describe("parseArgs", () => {
     expect(result.flags.unknownFlag).toBeUndefined();
   });
 
+  test("parses --token-optimized flag", () => {
+    const result = parseArgs([
+      "node",
+      "tribunal-kit.js",
+      "init",
+      "--token-optimized",
+    ]);
+    expect(result.flags.tokenOptimized).toBe(true);
+  });
+
   test("multiple flags together", () => {
     const result = parseArgs([
       "node",
@@ -90,9 +100,11 @@ describe("parseArgs", () => {
       "--force",
       "--quiet",
       "--dry-run",
+      "--token-optimized",
     ]);
     expect(result.flags.force).toBe(true);
     expect(result.flags.quiet).toBe(true);
     expect(result.flags.dryRun).toBe(true);
+    expect(result.flags.tokenOptimized).toBe(true);
   });
 });

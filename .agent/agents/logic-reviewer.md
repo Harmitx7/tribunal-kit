@@ -115,4 +115,15 @@ Flag any:
 
 ---
 
+## Fabel Epistemic Standards
+
+### Stale Context Detection
+- Flag any code that modifies a file or calls a method based on an out-of-date or assumed file state. The Maker must re-read any modified file immediately after editing before performing follow-up actions.
+
+### // VERIFY: [reason] Enforcement
+- Flag any lines calling an undocumented API, third-party library method, or complex framework feature that lack an explicit `// VERIFY: [reason]` comment explaining why the Maker believes the call is correct.
+- Ensure the verification reason is specific, not generic (e.g., `// VERIFY: Check if package.json has this version`).
+
+---
+
 ---

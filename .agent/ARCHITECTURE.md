@@ -42,7 +42,7 @@ Type any of these in your AI IDE chat:
 | ----------------------- | -------------------------------------------------------------------------------------- | ----------------------------------- |
 | `/generate`             | Full Tribunal: Maker → Parallel Review → Human Gate                                    | `workflows/generate.md`             |
 | `/review`               | Audit existing code (no generation)                                                    | `workflows/review.md`               |
-| `/tribunal-full`        | ALL 18 reviewers at once — maximum coverage                                            | `workflows/tribunal-full.md`        |
+| `/tribunal-full`        | ALL 19 reviewers at once — maximum coverage                                            | `workflows/tribunal-full.md`        |
 | `/tribunal-backend`     | Logic + Security + Deps + Types                                                        | `workflows/tribunal-backend.md`     |
 | `/tribunal-frontend`    | Logic + Security + Frontend + Types                                                    | `workflows/tribunal-frontend.md`    |
 | `/tribunal-database`    | Logic + Security + SQL                                                                 | `workflows/tribunal-database.md`    |
@@ -71,7 +71,7 @@ Type any of these in your AI IDE chat:
 
 ---
 
-## The 18 Tribunal Agents
+## The 19 Tribunal Agents
 
 | Agent                    | File                               | Activates When                                                                      |
 | ------------------------ | ---------------------------------- | ----------------------------------------------------------------------------------- |
@@ -267,16 +267,15 @@ Script failures follow cascade rules:
 .agent/
 ├── ARCHITECTURE.md          ← This file
 ├── GEMINI.md                ← Root behavior config (includes /swarm routing)
-├── agents/                  ← 43 specialist + reviewer agents (18 reviewers + 25 domain)
+├── agents/                  ← 43 specialist + reviewer agents (19 reviewers + 24 domain)
 │   ├── supervisor-agent.md  ← Swarm triage, dispatch, synthesis
 │   ├── swarm-worker-contracts.md  ← WorkerRequest/WorkerResult schemas
 │   └── swarm-worker-registry.md   ← Task type → agent routing map
 ├── rules/GEMINI.md          ← Master rules (P0 priority)
-├── scripts/                 ← 25 Python/JS automation scripts
-│   └── swarm_dispatcher.js  ← Validates WorkerRequest/WorkerResult JSON
-├── skills/                  ← 90 modular skill packages (all hardened)
+├── scripts/                 ← 28 Python/JS automation scripts
+├── skills/                  ← 106 modular skill packages (all hardened)
 ├── patterns/                ← 5 ADK skill base patterns
 ├── history/                 ← Case Law + Skill Evolution data (user-generated, preserved on update)
-└── workflows/               ← 31 slash command definitions
+└── workflows/               ← 34 slash command definitions
     └── swarm.md             ← /swarm orchestration procedure
 ```

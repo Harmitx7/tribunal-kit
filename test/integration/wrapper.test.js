@@ -2,7 +2,6 @@
 
 const { spawnSync } = require("child_process");
 const path = require("path");
-const fs = require("fs");
 
 const WRAPPER = path.resolve(__dirname, "../../bin/wrapper.js");
 

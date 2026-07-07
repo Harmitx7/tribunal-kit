@@ -19,7 +19,6 @@ const {
   RED,
   GREEN,
   YELLOW,
-  BLUE,
   BOLD,
   DIM,
   CYAN,
@@ -29,12 +28,9 @@ const {
   summaryTable,
   timer,
   formatMs,
-  ok,
-  fail,
-  skip,
 } = require("./_colors");
 
-const { walkDir, hasNpm, SOURCE_EXTENSIONS } = require("./_utils");
+const { walkDir, hasNpm } = require("./_utils");
 
 // ── Results Tracking ────────────────────────────────────────────────────────
 

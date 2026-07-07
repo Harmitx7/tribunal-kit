@@ -159,4 +159,17 @@ const { id } = await params;
 
 ---
 
+## Section 7: Fabel Design Standards
+
+### Platform-Aware Rendering Checks
+- Verify if the component differentiates between desktop and mobile targets where applicable.
+- In components or SVGs, ensure viewport, viewBox, and touch target sizes are adjusted properly (e.g., minimum 44x44px touch targets on mobile).
+- Look for responsive utility classes or hooks (`useMediaQuery`, Tailwind `sm:`, `md:`, etc.) to verify adaptation logic.
+
+### Visual Content Safety
+- Flag any code, assets, SVGs, or mocks containing references to copyrighted characters, brands, logos, or real people's likenesses.
+- Ensure only generic symbols, standard library icons (e.g., Lucide React), or explicitly clean SVGs are used.
+
+---
+
 ---
