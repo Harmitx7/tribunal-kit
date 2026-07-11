@@ -20,12 +20,16 @@ const RUST_COMMANDS = new Set([
   "sync",
   "hook",
   "uninstall",
+  "memory",
 ]);
 
 // Determine the path to the compiled Rust binary
 // In a full production release, this checks optionalDependencies in node_modules
 // For development, it checks the local target/release folder
 function getBinaryPath() {
+  if (process.env.TRIBUNAL_FORCE_JS === "1") {
+    return null;
+  }
   const isWindows = os.platform() === "win32";
   const ext = isWindows ? ".exe" : "";
   const platform = os.platform();
@@ -77,7 +81,7 @@ function getBinaryPath() {
 function runRustBinary(binPath, args) {
   const stdio = [
     "inherit",
-    process.stdout.isTTY ? "ignore" : "inherit",
+    "inherit",
     "inherit",
   ];
   const result = spawnSync(binPath, args, {

@@ -103,6 +103,11 @@ Wave 4 — Polish & Deploy
 > [!IMPORTANT]
 > [Any breaking changes, architectural decisions, or open questions needing approval]
 
+## Dependency Ladder Alignment
+Evaluate proposed changes against the Dependency Ladder (Rungs 1 to 6). Confirm the lowest possible rung is chosen to avoid bloat:
+- **Proposed Rung**: [e.g. Rung 3: Platform / Rung 4: Installed Dep]
+- **Justification**: [Explain why lower rungs are not applicable. If using Rung 6 (custom code/new library), justify with a // VERIFY comment]
+
 ## Proposed Changes
 
 ### Wave 1 — Foundation

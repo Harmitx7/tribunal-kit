@@ -12,7 +12,7 @@
 
 [![NPM](https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white&color=ff1637)](https://www.npmjs.com/package/tribunal-kit)
 [![License](https://img.shields.io/badge/License-MIT-1a1a1a?style=for-the-badge)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-5.8.0-1a1a1a?style=for-the-badge)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/Version-5.8.1-1a1a1a?style=for-the-badge)](CHANGELOG.md)
 [![MCP](https://img.shields.io/badge/MCP-Ready-ccff00?style=for-the-badge&logo=openai&logoColor=1a1a1a)](mcp_config.json)
 [![Code Quality](https://img.shields.io/badge/Hallucination_Mitigation-ff1637?style=for-the-badge)](AGENT_FLOW.md)
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Y6C122DUQJ)
@@ -23,13 +23,30 @@
 
 > [!IMPORTANT]
 > **AI GENERATES CODE. TRIBUNAL ENSURES IT WORKS.**  
-> A zero-bloat `.agent/` intelligence payload that upgrades your IDE with **43 specialist agents**, **34 workflows**, and a **19-reviewer Tribunal pipeline**. Maximizes execution reliability and heavily mitigates hallucinations.
+> A zero-bloat `.agent/` intelligence payload and **Model Context Protocol (MCP) server** that upgrades your IDE (**Cursor**, **VSCode**, **Windsurf**) and terminal AI coding assistants (**Claude Code**, **Aider**) with **43 specialist agents**, **34 workflows**, and a parallel **20-reviewer Tribunal pipeline**. Maximizes execution reliability, optimizes context windows, and heavily mitigates AI code hallucinations.
 
 <br>
 <hr style="border: 1px solid #222; margin: 40px 0;">
 <br>
 
-## 🚀 QUICK START
+## 📋 Table of Contents
+
+- [🚀 Quick Start — Setting Up your AI Agent Code Review Engine](#-quick-start--setting-up-your-ai-agent-code-review-engine)
+- [⚡ State-of-the-Art Performance (Tokio Rust Core)](#-state-of-the-art-performance-tokio-rust-core)
+- [⚔️ The Command Arsenal — Swarms & Agentic Workflows](#️-the-command-arsenal--swarms--agentic-workflows)
+- [💻 CLI Command Reference](#-cli-command-reference)
+- [⚖️ The Tribunal Pipeline — Mitigating AI Code Hallucinations](#️-the-tribunal-pipeline--mitigating-ai-code-hallucinations)
+- [🏛️ The Supreme Court Case Law Engine — Persistent Memory for AI Coding](#️-the-supreme-court-case-law-engine--persistent-memory-for-ai-coding)
+- [🏃 The Marathon Harness — Long-Running Autonomous AI Agents](#-the-marathon-harness--long-running-autonomous-ai-agents)
+- [🧠 Advanced Capabilities & System Prompt Rules (v5.8)](#-advanced-capabilities--system-prompt-rules-v58)
+- [🔌 Model Context Protocol (MCP) Server for Cursor, VSCode & Windsurf](#-model-context-protocol-mcp-server-for-cursor-vscode--windsurf)
+- [❓ Frequently Asked Questions (FAQ)](#-frequently-asked-questions-faq)
+
+<br>
+<hr style="border: 1px solid #222; margin: 40px 0;">
+<br>
+
+## 🚀 Quick Start — Setting Up your AI Agent Code Review Engine
 
 Drop Tribunal into any existing project to instantly weaponize your IDE.
 
@@ -53,7 +70,7 @@ Tribunal Kit breaks out of the IDE with first-class support for terminal-based A
 <hr style="border: 1px solid #222; margin: 40px 0;">
 <br>
 
-## ⚡ STATE-OF-THE-ART PERFORMANCE (v5.0)
+## ⚡ State-of-the-Art Performance (Tokio Rust Core)
 
 Tribunal-Kit v5 is rebuilt from the ground up to be blazingly fast. We've eliminated initialization latency and blocking I/O:
 
@@ -67,7 +84,7 @@ Tribunal-Kit v5 is rebuilt from the ground up to be blazingly fast. We've elimin
 <hr style="border: 1px solid #222; margin: 40px 0;">
 <br>
 
-## ⚔️ THE COMMAND ARSENAL
+## ⚔️ The Command Arsenal — Swarms & Agentic Workflows
 
 | Workflow Command          | Operational Scope                                                        |
 | :------------------------ | :----------------------------------------------------------------------- |
@@ -75,7 +92,7 @@ Tribunal-Kit v5 is rebuilt from the ground up to be blazingly fast. We've elimin
 | <kbd>/create</kbd>        | Scaffold major applications via App Builder routing.                     |
 | <kbd>/enhance</kbd>       | Safely extend existing codebases with zero regression.                   |
 | <kbd>/swarm</kbd>         | Fan-out orchestrator. Dispatch isolated workers, synthesize output.      |
-| <kbd>/tribunal-full</kbd> | Unleash **ALL 19** domain reviewers simultaneously for maximum scrutiny. |
+| <kbd>/tribunal-full</kbd> | Unleash **ALL 20** domain reviewers simultaneously for maximum scrutiny. |
 | <kbd>/debug</kbd>         | Systematic 4-phase root-cause investigation. No guessing.                |
 | <kbd>/ui-ux-pro-max</kbd> | Advanced visual aesthetic engine. No generic AI slop.                    |
 
@@ -83,7 +100,98 @@ Tribunal-Kit v5 is rebuilt from the ground up to be blazingly fast. We've elimin
 <hr style="border: 1px solid #222; margin: 40px 0;">
 <br>
 
-## ⚖️ THE PIPELINE // EVIDENCE-BASED CLOSEOUT
+## 💻 CLI Command Reference
+
+You can run Tribunal commands using `npx tribunal-kit <command>` (or the short alias `tk <command>` if installed globally/locally).
+
+### Core Commands
+*   **`init`**: Initialize the `.agent/` configuration payload in the current directory.
+    ```bash
+    npx tribunal-kit init [--force] [--path <dir>] [--minimal] [--dry-run]
+    ```
+*   **`status`**: Check the status and integrity of the `.agent/` directory.
+    ```bash
+    npx tribunal-kit status
+    ```
+*   **`update`**: Re-install or refresh to pull the latest agent configurations into the project.
+    ```bash
+    npx tribunal-kit update
+    ```
+*   **`sync`**: Instantly synchronize the latest `.agent` rules directly with local IDE config files (Cursor, Windsurf, Copilot, VSCode, Gemini).
+    ```bash
+    npx tribunal-kit sync
+    ```
+*   **`hook`**: Install or configure Git `pre-push` hooks to auto-sync rules on push.
+    ```bash
+    npx tribunal-kit hook
+    ```
+*   **`compile`**: Compile static context rules into a `.tribunal-compiled.md` file for terminal agents.
+    ```bash
+    npx tribunal-kit compile
+    ```
+*   **`uninstall`**: Cleanly remove `.agent/` from the target project.
+    ```bash
+    npx tribunal-kit uninstall [--path <dir>]
+    ```
+
+### Case Law Engine (`case`)
+Manage the Supreme Court Case Law database to prevent AI hallucinations.
+*   **`case add`**: Interactively record a new AI mistake/precedent.
+*   **`case list`**: List all recorded precedence entries.
+*   **`case search "<query>"`**: Search historical cases.
+*   **`case show --id <id>`**: Show details of a specific case.
+*   **`case stats`**: Display statistics on case counts and types.
+*   **`case export`**: Export database to a readable `.agent/history/case-law/CASE_LAW.md`.
+*   **`case overrule --id <id>`**: Remove/overrule a case entry.
+
+### Memory Engine (`memory`)
+Manage the 4-Type Taxonomy Persistent Memory Engine.
+*   **`memory store`**: Store a tagged memory (`semantic`, `procedural`, `episodic`, or `working`).
+    ```bash
+    npx tribunal-kit memory store --type semantic --content "Uses PostgreSQL" --tags "db"
+    ```
+*   **`memory recall`**: Recall budget-gated memories.
+    ```bash
+    npx tribunal-kit memory recall --query "postgres" --budget 1000
+    ```
+*   **`memory gc`**: Garbage collect expired episodic and all working memories.
+*   **`memory stats`**: Show memory index statistics.
+*   **`memory export`**: Export the human-readable `MEMORY.md` index projection.
+
+### Codebase Graphs & Context
+*   **`graph`**: Analyze codebase dependencies, generate architecture graphs, and build context snapshots.
+    ```bash
+    npx tribunal-kit graph
+    ```
+*   **`context <file>`**: Read and inspect a specific context snapshot for a given file.
+    ```bash
+    npx tribunal-kit context src/utils.js
+    ```
+*   **`mutate <file> "<test-cmd>"`**: Run mutation testing on a file to verify test suite robustness.
+    ```bash
+    npx tribunal-kit mutate src/utils.js "npm test"
+    ```
+
+### Learning & Evolving
+*   **`learn`**: Evolve your project's custom skills and architectural idioms by reading git diffs.
+    ```bash
+    npx tribunal-kit learn [--dry-run] [--head]
+    ```
+
+### Marathon Long-Running Harness (`marathon`)
+Run long-running, multi-session tasks tracked inside the feature DAG.
+*   **`marathon init "<spec>"`**: Start a new long-running task.
+*   **`marathon status`**: Show interactive progress dashboard.
+*   **`marathon next`**: Print next incomplete feature task.
+*   **`marathon mark <id> <pass|fail>`**: Mark a specific feature status.
+*   **`marathon log "<note>"`**: Append a progress log.
+*   **`marathon session-start` / `session-end`**: Manage session contexts.
+
+<br>
+<hr style="border: 1px solid #222; margin: 40px 0;">
+<br>
+
+## ⚖️ The Tribunal Pipeline — Mitigating AI Code Hallucinations
 
 Code generation is solved. **Code correctness is the frontier.**
 
@@ -96,7 +204,7 @@ graph TD
     C -.->|Failed| E[Maker Auto-Correction]
     E -.-> C
 
-    D -->|19 Domain Reviewers| F[Human Gate]
+    D -->|20 Domain Reviewers| F[Human Gate]
     F -->|Approved| G((Committed to Disk))
 
     classDef default fill:#1a1a1a,stroke:#333,stroke-width:2px,color:#fff;
@@ -111,7 +219,7 @@ graph TD
 <hr style="border: 1px solid #222; margin: 40px 0;">
 <br>
 
-## 🏛️ THE SUPREME COURT (CASE LAW ENGINE)
+## 🏛️ The Supreme Court Case Law Engine — Persistent Memory for AI Coding
 
 The Tribunal Kit features persistent memory. The AI **never makes the same mistake twice** and auto-learns your engineering culture.
 
@@ -129,7 +237,7 @@ The Tribunal Kit features persistent memory. The AI **never makes the same mista
 <hr style="border: 1px solid #222; margin: 40px 0;">
 <br>
 
-## 🏃 THE MARATHON HARNESS (v4.4+)
+## 🏃 The Marathon Harness — Long-Running Autonomous AI Agents
 
 The **Marathon Harness** is an engine designed to keep autonomous agents on track during long-running, multi-session projects without looping or losing context.
 
@@ -160,7 +268,7 @@ The **Marathon Harness** is an engine designed to keep autonomous agents on trac
 <hr style="border: 1px solid #222; margin: 40px 0;">
 <br>
 
-## 🧠 ADVANCED CAPABILITIES (v5.8)
+## 🧠 Advanced Capabilities & System Prompt Rules (v5.8)
 
 The 5.8 update introduces a massive leap in long-running agent capabilities and code correctness:
 
@@ -173,7 +281,7 @@ The 5.8 update introduces a massive leap in long-running agent capabilities and 
 <hr style="border: 1px solid #222; margin: 40px 0;">
 <br>
 
-## 🔌 NATIVE MCP SERVER
+## 🔌 Model Context Protocol (MCP) Server for Cursor, VSCode & Windsurf
 
 Tribunal-Kit functions as a standalone **Model Context Protocol (MCP)** server via `stdio`.
 
@@ -183,6 +291,24 @@ Bind your AI IDE directly to `tribunal-kit` to unlock autonomous tool execution:
 - `search_case_law`: AI can query your project's historical code rejections to avoid making mistakes _before_ it writes code.
 - `sync_ide_bridges`: Force rule alignment directly from the AI chat.
 - `list_tribunal_agents` & `get_tribunal_skill`: Terminal agents can dynamically fetch specific skills without overloading their context windows.
+
+<br>
+<hr style="border: 1px solid #222; margin: 40px 0;">
+<br>
+
+## ❓ Frequently Asked Questions (FAQ)
+
+### How does Tribunal-Kit prevent AI hallucinations?
+Tribunal-Kit introduces a systematic, multi-reviewer pipeline called the **Tribunal Review**. When an AI agent generates code, it routes that code through up to 20 specialized domain reviewers (e.g., security, logic, schema) and verifies it against local tests and lint rules before presenting it to the developer.
+
+### Which IDEs and AI tools are supported by Tribunal-Kit?
+Tribunal-Kit natively supports and automatically syncs rules with **Cursor**, **Windsurf**, **VSCode**, **Gemini**, **Copilot**, and **Claude Desktop**. It also supports terminal-based agents like **Claude Code**, **Aider**, and **OpenCode** via Model Context Protocol (MCP) or compiled static context files.
+
+### How do I connect Claude Code or Aider to Tribunal-Kit via MCP?
+Tribunal-Kit includes a built-in Model Context Protocol (MCP) server. You can configure your AI assistant (like Claude Desktop or Claude Code) to spawn `node bin/wrapper.js` as an MCP server. This allows the AI agent to dynamically fetch custom skills, search the local case law precedence database, and run audits on demand.
+
+### What is the Supreme Court Case Law Engine?
+It is a local, lightweight database that records past AI mistakes as legal precedent. Before code generation is committed, the `precedence-reviewer` queries this database to prevent the AI from repeating known codebase anti-patterns.
 
 <br>
 <br>

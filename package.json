@@ -1,7 +1,7 @@
 {
   "name": "tribunal-kit",
-  "version": "5.8.0",
-  "description": "Anti-Hallucination AI Agent Kit — 43 specialist agents, 32 slash commands, 19 parallel Tribunal reviewers, Performance Swarm engine, Supreme Court case law pipeline, and long-running agent harness.",
+  "version": "5.8.1",
+  "description": "Anti-Hallucination AI Agent Kit for IDEs (Cursor, VSCode, Windsurf) — 43 specialist agents, 34 workflows, 20 parallel Tribunal code reviewers, Model Context Protocol (MCP) server, and long-running autonomous agent harness.",
   "keywords": [
     "ai",
     "ai-agent",
@@ -33,7 +33,17 @@
     "ai-coding",
     "autonomous-agents",
     "coding-assistant",
-    "automation"
+    "automation",
+    "model-context-protocol-server",
+    "mcp-server",
+    "claude-code",
+    "aider",
+    "cursor-rules-generator",
+    "agentic-ai",
+    "ai-code-reviewer",
+    "hallucination-mitigation",
+    "autonomous-workflows",
+    "code-correctness"
   ],
   "homepage": "https://github.com/Harmitx7/tribunal-kit",
   "repository": {
@@ -67,6 +77,8 @@
     "changelog:preview": "node scripts/changelog.js --preview",
     "sync": "node scripts/sync-version.js",
     "validate-payload": "node scripts/validate-payload.js",
+    "benchmark": "node scripts/benchmark.js",
+    "benchmark:rust": "cargo build --release && node scripts/benchmark.js",
     "build": "echo 'No build step required for this project'"
   },
   "devDependencies": {
@@ -75,12 +87,12 @@
     "typescript": "^5.4.5"
   },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^4.5.1",
-    "@tribunal-kit/core-darwin-x64": "^4.5.1",
-    "@tribunal-kit/core-linux-arm64": "^4.5.1",
-    "@tribunal-kit/core-linux-x64": "^4.5.1",
-    "@tribunal-kit/core-win32-arm64": "^4.5.1",
-    "@tribunal-kit/core-win32-x64": "^4.5.1"
+    "@tribunal-kit/core-darwin-arm64": "^5.8.1",
+    "@tribunal-kit/core-darwin-x64": "^5.8.1",
+    "@tribunal-kit/core-linux-arm64": "^5.8.1",
+    "@tribunal-kit/core-linux-x64": "^5.8.1",
+    "@tribunal-kit/core-win32-arm64": "^5.8.1",
+    "@tribunal-kit/core-win32-x64": "^5.8.1"
   },
   "jest": {
     "testMatch": [

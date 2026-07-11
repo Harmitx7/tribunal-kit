@@ -3,6 +3,23 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [5.8.1] — 2026-07-11
+
+### ✨ Features & Enhancements
+
+- **OCAE Fabel-5 Alignment Engine**: Deployed a programmatic post-processing output alignment pipeline (Option B) via the new `tk align` CLI subcommand and `align_output` MCP tool. Automatically strips conversational introduction and conclusion slop, collapses single/double bullet items to clean prose paragraphs, and validates code blocks against known framework traps (Next.js 15 async cookies/headers, React 19 hooks, Drizzle ORM filter, and invalid model strings).
+- **Compressed Master Rules**: Hardened `GEMINI.md` and the `fabel-protocol` skill with high-density Fabel-5 cognitive boundaries addressing user wellbeing (psychoanalysis/diagnosis, self-harm mimics), political/moral evenhandedness, and invisible memory integration.
+- **Persistent Memory Engine Speedup**: Routed the `memory` CLI subcommand (`store`, `recall`, `gc`, `stats`, `export`) to the compiled Rust core binary (`tribunal-core`) to bypass Node startup latency and run memory operations natively.
+- **Tribunal & Workflow Enhancements**: Native integration of the `complexity-reviewer` agent into the `/generate` and `/tribunal-full` workflows, bringing the total reviewer count to 20 parallel reviewers.
+- **OCAE Cognitive Updates**: Upgraded the `fabel-protocol` skill and master `GEMINI.md` rules with the L1–L5 Epistemic Confidence Leveling hierarchy and Hallucination Heatmaps for modern framework APIs (Next.js 15 route handlers, React 19 action states, Drizzle ORM queries).
+- **Dependency Ladder Planning**: Hardened the `project-planner` rules to mandate verifying and justifying all technical designs against the 6 Rungs of the Dependency Ladder in implementation plans.
+
+### 🐛 Fixes
+
+- **CLI Console Output Suppression**: Fixed a UX and logic bug in `bin/wrapper.js` where standard output from the compiled Rust core binary was suppressed when running in interactive (TTY) terminals.
+- **Dependency Version Mismatch**: Upgraded all native core binary packages in `optionalDependencies` from `^4.5.1` to `^5.8.1` to match the main package release version.
+- **Documentation Consistency**: Aligned references in `README.md` to show the correct `20-reviewer` pipeline instead of `19-reviewer`.
+
 ## [5.8.0] — 2026-07-07
 
 ### ✨ Features

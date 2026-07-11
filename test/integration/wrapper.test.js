@@ -5,11 +5,11 @@ const path = require("path");
 
 const WRAPPER = path.resolve(__dirname, "../../bin/wrapper.js");
 
-function runWrapper(args = []) {
+function runWrapper(args = [], extraEnv = {}) {
   return spawnSync(process.execPath, [WRAPPER, ...args], {
     encoding: "utf8",
     timeout: 5000,
-    env: { ...process.env, TK_SKIP_UPDATE_CHECK: "1" },
+    env: { ...process.env, TK_SKIP_UPDATE_CHECK: "1", ...extraEnv },
   });
 }
 
@@ -21,7 +21,7 @@ describe("wrapper.js fallback routing", () => {
   });
 
   test("warns and falls back to JS when Rust binary is not found for supported command", () => {
-    const result = runWrapper(["status"]);
+    const result = runWrapper(["status"], { TRIBUNAL_FORCE_JS: "1" });
     // Since the binary doesn't exist yet, it should log the warning and then run JS status
     expect(result.stderr).toContain("Rust binary not found");
     // Check that the JS status command actually runs (it usually prints the agent config status)

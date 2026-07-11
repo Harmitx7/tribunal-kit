@@ -1,9 +1,9 @@
 ---
-description: Run ALL 19 Tribunal reviewer agents simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
+description: Run ALL 20 Tribunal reviewer agents simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
 required-skills: all domain skills auto-loaded
 ---
 
-# /tribunal-full — Complete 19-Reviewer Audit
+# /tribunal-full — Complete 20-Reviewer Audit
 
 $ARGUMENTS
 
@@ -32,7 +32,7 @@ Read BEFORE full review:
 
 ---
 
-## 19 Reviewers — All Active Simultaneously
+## 20 Reviewers — All Active Simultaneously
 
 ```
 Tier 1: Always active (universal concerns)
@@ -44,6 +44,7 @@ Tier 1: Always active (universal concerns)
 Tier 2: Code quality
 ├── dependency-reviewer    → Fabricated packages, supply chain, version compatibility
 ├── type-safety-reviewer   → 'any' epidemic, Zod parse vs cast, unguarded access
+├── complexity-reviewer    → Enforces the Dependency Ladder to prevent over-engineering
 ├── schema-reviewer        → Missing input validation, loose schemas, raw req.body
 └── sql-reviewer           → Injection, N+1, missing indexes, unscoped mutations
 

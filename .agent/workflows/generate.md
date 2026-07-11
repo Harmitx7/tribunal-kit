@@ -109,6 +109,7 @@ When unsure: write `// VERIFY: [specific reason]` instead of hallucinating.
 precedence-reviewer→ Enforces repository Case Law and past rejections (Runs First)
 logic-reviewer     → Hallucinated methods, undefined refs, impossible logic
 security-auditor   → OWASP vulnerabilities, hardcoded secrets, injection
+complexity-reviewer→ Enforces the Dependency Ladder to prevent over-engineering
 ```
 
 **Auto-activated by keywords:**

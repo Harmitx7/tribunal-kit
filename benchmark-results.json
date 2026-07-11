@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-07-11T15:09:22.662Z",
+  "platform": "win32-x64",
+  "node": "v22.17.0",
+  "results": [
+    {
+      "label": "CLI cold-start (--help)",
+      "avg_ms": 42,
+      "min_ms": 40,
+      "max_ms": 47,
+      "runs": 5
+    },
+    {
+      "label": "Status check",
+      "avg_ms": 41,
+      "min_ms": 39,
+      "max_ms": 43,
+      "runs": 5
+    },
+    {
+      "label": "Init (dry-run)",
+      "avg_ms": 42,
+      "min_ms": 39,
+      "max_ms": 46,
+      "runs": 3
+    },
+    {
+      "label": "Init (full copy)",
+      "avg_ms": 82,
+      "min_ms": 56,
+      "max_ms": 131,
+      "runs": 3
+    }
+  ]
+}
