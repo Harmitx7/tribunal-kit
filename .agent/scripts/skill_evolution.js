@@ -488,9 +488,112 @@ async function callLlmApi(prompt, provider, apiKey) {
 }
 
 // ── Commands ──────────────────────────────────────────────────────────────────
+// ── Strategy Filtering ────────────────────────────────────────────────────────
+function applyStrategyFilter(signals, strategy) {
+  if (strategy === "repair-only") {
+    return signals.filter((s) => s.type === "log_error");
+  }
+  return signals;
+}
+
+// ── Log Reflection Prompt ─────────────────────────────────────────────────────
+function generateLogReflectionPrompt(delta) {
+  return `You are analyzing runtime log signals (errors, tracebacks, and warnings) from an AI agent's execution.
+Your job is to identify systemic coding issues and extract evolution assets:
+1. **Idioms (Genes)**: Coding rules/conventions to prevent the AI from generating this mistake again.
+2. **Cases (Capsules)**: Rejection precedents (offending code pattern and why it failed) to block reviewers from approving it.
+
+Rules:
+- Return ONLY a YAML structure containing 'idioms:' and 'cases:'. No markdown boxes, no conversational prose.
+- Maximum 3 idioms and 3 cases.
+- If an asset category is not applicable, leave it empty (e.g., 'idioms: []').
+
+Log Signals:
+\`\`\`
+${delta.slice(0, 1800)}
+\`\`\`
+
+Output format (YAML only):
+idioms:
+  - pattern: "<code convention or rule to avoid this error>"
+    reason: "<why it is needed based on the error>"
+    domain: "<backend|frontend|database|security|performance|general>"
+cases:
+  - pattern: "<offending code snippet or error-triggering pattern>"
+    reason: "<specific runtime error / traceback reason>"
+    domain: "<backend|frontend|database|security|performance|general>"
+    verdict: "REJECTED"
+`;
+}
+
+// ── Combined YAML Parser ──────────────────────────────────────────────────────
+function parseEvolutionYaml(response) {
+  const idioms = [];
+  const cases = [];
+  let currentSection = null; // 'idioms' | 'cases'
+  let current = null;
+
+  const lines = response.split("\n");
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed === "idioms:") {
+      if (current) {
+        if (currentSection === "idioms") idioms.push(current);
+        if (currentSection === "cases") cases.push(current);
+      }
+      currentSection = "idioms";
+      current = null;
+      continue;
+    }
+    if (trimmed === "cases:") {
+      if (current) {
+        if (currentSection === "idioms") idioms.push(current);
+        if (currentSection === "cases") cases.push(current);
+      }
+      currentSection = "cases";
+      current = null;
+      continue;
+    }
+
+    if (trimmed.startsWith("- pattern:") || (trimmed.startsWith("- ") && trimmed.includes("pattern:"))) {
+      if (current) {
+        if (currentSection === "idioms") idioms.push(current);
+        if (currentSection === "cases") cases.push(current);
+      }
+      let pat = "";
+      if (trimmed.startsWith("- pattern:")) {
+        pat = trimmed.substring("- pattern:".length).trim();
+      } else {
+        pat = trimmed.split("pattern:", 2)[1].trim();
+      }
+      current = { pattern: pat.replace(/^['"]|['"]$/g, "") };
+    } else if (trimmed.startsWith("reason:") && current) {
+      current.reason = trimmed.substring("reason:".length).trim().replace(/^['"]|['"]$/g, "");
+    } else if (trimmed.startsWith("domain:") && current) {
+      current.domain = trimmed.substring("domain:".length).trim().replace(/^['"]|['"]$/g, "");
+    } else if (trimmed.startsWith("verdict:") && current) {
+      current.verdict = trimmed.substring("verdict:".length).trim().replace(/^['"]|['"]$/g, "");
+    }
+  }
+
+  if (current) {
+    if (currentSection === "idioms") idioms.push(current);
+    if (currentSection === "cases") cases.push(current);
+  }
+
+  return { idioms, cases };
+}
+
+// ── Commands ──────────────────────────────────────────────────────────────────
 async function cmdDigest(args) {
   const dryRun = args.includes("--dry-run");
   const diffMode = args.includes("--head") ? "head" : "staged";
+
+  const logArg = args.find((a) => a.startsWith("--log="));
+  const logFile = logArg ? logArg.split("=").slice(1).join("=") : null;
+
+  const strategyArg = args.find((a) => a.startsWith("--strategy="));
+  const strategy = strategyArg ? strategyArg.split("=").slice(1).join("=") : "balanced";
 
   console.log(
     `\n${BOLD}${CYAN}━━━ Skill Evolution — Digest Cycle ━━━━━━━━━━━━━━━━${RESET}`,
@@ -498,39 +601,95 @@ async function cmdDigest(args) {
   if (dryRun)
     console.log(`  ${YELLOW}DRY RUN — no files will be written${RESET}\n`);
 
-  console.log(`  ${DIM}[1/5] Fetching git diff (${diffMode})...${RESET}`);
-  const rawDiff = getGitDiff(diffMode);
-  if (!rawDiff.trim()) {
+  let rawDiff = "";
+  let delta = "";
+  let rawTokens = 0;
+  let deltaTokens = 0;
+  let logSignals = [];
+  const isLogMode = !!logFile;
+
+  if (isLogMode) {
+    console.log(`  ${DIM}[1/5] Reading log file: ${logFile}...${RESET}`);
+    if (!fs.existsSync(logFile)) {
+      console.log(`  ${RED}✖ Log file not found: ${logFile}${RESET}\n`);
+      return;
+    }
+    const logText = fs.readFileSync(logFile, "utf8");
+    rawTokens = countTokensEstimate(logText);
+
     console.log(
-      `  ${YELLOW}⚠ No diff found. Commit or stage changes first.${RESET}`,
+      `  ${DIM}[2/5] Extracting signals from log (Signal Detector)...${RESET}`,
     );
+    const { detectSignals } = require("./signal_detector");
+    const signals = detectSignals(logText);
+
+    if (signals.length === 0) {
+      console.log(
+        `  ${GREEN}✔ No errors or performance signals found in logs.${RESET}`,
+      );
+      console.log(`  ${DIM}  No self-evolution reflection needed.${RESET}\n`);
+      return;
+    }
+
+    logSignals = applyStrategyFilter(signals, strategy);
+    if (logSignals.length === 0) {
+      console.log(
+        `  ${YELLOW}⚠ Strategy filter [${strategy}] filtered out all signals.${RESET}\n`,
+      );
+      return;
+    }
+
     console.log(
-      `  ${DIM}Tip: Use --head to diff against the last commit.${RESET}\n`,
+      `  ${GREEN}✔ Filtered to ${logSignals.length} signal(s) using [${strategy}] strategy.${RESET}`,
     );
-    return;
+
+    delta = logSignals
+      .map((s) => {
+        let chunk = `--- SIGNAL: ${s.type} ---\n`;
+        if (s.file) chunk += `File: ${s.file}${s.line ? `:${s.line}` : ""}\n`;
+        chunk += `Message: ${s.message}\n`;
+        chunk += `Context:\n${s.context}\n`;
+        return chunk;
+      })
+      .join("\n\n");
+
+    deltaTokens = countTokensEstimate(delta);
+  } else {
+    console.log(`  ${DIM}[1/5] Fetching git diff (${diffMode})...${RESET}`);
+    rawDiff = getGitDiff(diffMode);
+    if (!rawDiff.trim()) {
+      console.log(
+        `  ${YELLOW}⚠ No diff found. Commit or stage changes first.${RESET}`,
+      );
+      console.log(
+        `  ${DIM}Tip: Use --head to diff against the last commit.${RESET}\n`,
+      );
+      return;
+    }
+
+    rawTokens = countTokensEstimate(rawDiff);
+    console.log(
+      `  ${DIM}   Raw diff: ~${rawTokens} tokens (${rawDiff.length} chars)${RESET}`,
+    );
+
+    console.log(
+      `  ${DIM}[2/5] Extracting architectural delta (Semantic Filter)...${RESET}`,
+    );
+    delta = semanticDelta(rawDiff, 2);
+    if (!delta.trim()) {
+      console.log(
+        `  ${GREEN}✔ Delta is 100% trivial (whitespace/comments/imports only).${RESET}`,
+      );
+      console.log(
+        `  ${DIM}  No LLM call needed. Zero tokens consumed.${RESET}\n`,
+      );
+      return;
+    }
+
+    deltaTokens = countTokensEstimate(delta);
   }
 
-  const rawTokens = countTokensEstimate(rawDiff);
-  console.log(
-    `  ${DIM}   Raw diff: ~${rawTokens} tokens (${rawDiff.length} chars)${RESET}`,
-  );
-
-  console.log(
-    `  ${DIM}[2/5] Extracting architectural delta (Semantic Filter)...${RESET}`,
-  );
-  const delta = semanticDelta(rawDiff, 2);
-  if (!delta.trim()) {
-    console.log(
-      `  ${GREEN}✔ Delta is 100% trivial (whitespace/comments/imports only).${RESET}`,
-    );
-    console.log(
-      `  ${DIM}  No LLM call needed. Zero tokens consumed.${RESET}\n`,
-    );
-    return;
-  }
-
-  const deltaTokens = countTokensEstimate(delta);
-  const savedTokens = rawTokens - deltaTokens;
+  const savedTokens = Math.max(0, rawTokens - deltaTokens);
   const savedPct = Math.floor((savedTokens / Math.max(rawTokens, 1)) * 100);
   console.log(
     `  ${GREEN}✔ Filtered to ~${deltaTokens} tokens  (${savedPct}% reduction, saved ~${savedTokens} tokens)${RESET}`,
@@ -546,7 +705,7 @@ async function cmdDigest(args) {
   }
   if (delta.split("\n").length > 20)
     console.log(
-      `    ${DIM}... (${delta.split("\n").length - 20} more lines)${RESET}`,
+      `    ... (${delta.split("\n").length - 20} more lines)`,
     );
 
   if (dryRun) {
@@ -559,8 +718,10 @@ async function cmdDigest(args) {
     return;
   }
 
-  // GENERATE: Auto-LLM call. Tries API first, falls back to manual paste if no key.
-  const reflectionPrompt = generateReflectionPrompt(delta);
+  // GENERATE: Auto-LLM call.
+  const reflectionPrompt = isLogMode
+    ? generateLogReflectionPrompt(delta)
+    : generateReflectionPrompt(delta);
   let llmResponse = "";
 
   let llmCreds = detectLlmProvider();
@@ -582,12 +743,12 @@ async function cmdDigest(args) {
       console.log(
         `  ${YELLOW}⚠ API call failed — falling back to manual mode${RESET}`,
       );
-      llmCreds = null; // triggers manual fallback below
+      llmCreds = null;
     }
   }
 
   if (!llmCreds || !llmResponse) {
-    // Manual fallback: copy-paste mode (no API key configured)
+    // Manual fallback: copy-paste mode
     console.log(
       `\n  ${DIM}[3/5] LLM Reflection — copy the prompt below and paste the response${RESET}`,
     );
@@ -619,21 +780,42 @@ async function cmdDigest(args) {
     llmResponse = responseLines.join("\n");
   }
 
-  console.log(`\n  ${DIM}[4/5] Parsing idioms...${RESET}`);
-  const newIdioms = parseLlmYamlResponse(llmResponse);
-  if (!newIdioms.length) {
-    console.log(`  ${YELLOW}⚠ No idioms extracted from LLM response.${RESET}`);
+  console.log(`\n  ${DIM}[4/5] Parsing idioms/cases...${RESET}`);
+  let newIdioms = [];
+  let newCases = [];
+
+  if (isLogMode) {
+    const parsed = parseEvolutionYaml(llmResponse);
+    newIdioms = parsed.idioms;
+    newCases = parsed.cases;
+  } else {
+    newIdioms = parseLlmYamlResponse(llmResponse);
+  }
+
+  if (!newIdioms.length && !newCases.length) {
     console.log(
-      `  ${DIM}  The LLM may have returned idioms: [] — no architectural pattern detected.${RESET}\n`,
+      `  ${YELLOW}⚠ No idioms or cases extracted from LLM response.${RESET}`,
     );
+    console.log(`\n`);
     return;
   }
 
-  console.log(`  ${GREEN}✔ Extracted ${newIdioms.length} idiom(s)${RESET}`);
-  for (const idiom of newIdioms) {
-    console.log(
-      `    ${CYAN}• ${idiom.pattern || "?"}${RESET}  — ${idiom.reason || ""}`,
-    );
+  if (newIdioms.length > 0) {
+    console.log(`  ${GREEN}✔ Extracted ${newIdioms.length} idiom(s)${RESET}`);
+    for (const idiom of newIdioms) {
+      console.log(
+        `    ${CYAN}• ${idiom.pattern || "?"}${RESET}  — ${idiom.reason || ""}`,
+      );
+    }
+  }
+
+  if (newCases.length > 0) {
+    console.log(`  ${GREEN}✔ Extracted ${newCases.length} case precedent(s)${RESET}`);
+    for (const c of newCases) {
+      console.log(
+        `    ${RED}• ${c.pattern || "?"}${RESET}  — ${c.reason || ""}`,
+      );
+    }
   }
 
   console.log(
@@ -647,10 +829,8 @@ async function cmdDigest(args) {
   let added = 0;
 
   for (const idiom of newIdioms) {
-    // FIX: Use Levenshtein normalised similarity (threshold 0.80) instead of
-    // substring .includes() which was over-aggressive and blocked valid idioms.
     if (isDuplicateIdiom(idiom.pattern || "", existing)) {
-      console.log(`  ${DIM}  Skipped near-duplicate: ${idiom.pattern}${RESET}`);
+      console.log(`  ${DIM}  Skipped near-duplicate idiom: ${idiom.pattern}${RESET}`);
       continue;
     }
     merged.push({
@@ -664,17 +844,86 @@ async function cmdDigest(args) {
     added++;
   }
 
-  if (added === 0) {
-    console.log(
-      `  ${YELLOW}⚠ All extracted idioms were duplicates. SKILL.md unchanged.${RESET}\n`,
-    );
-    return;
+  if (added > 0) {
+    log.total_idioms = merged.length;
+    const skillMd = renderSkillMd(merged, (log.cycles || []).length + 1);
+    fs.mkdirSync(SKILL_DIR, { recursive: true });
+    fs.writeFileSync(SKILL_FILE, skillMd, "utf8");
+    console.log(`  ${GREEN}✔ ${added} new idiom(s) added to SKILL.md${RESET}`);
+  } else {
+    console.log(`  ${DIM}  No new unique idioms added to SKILL.md.${RESET}`);
   }
 
-  log.total_idioms = merged.length;
-  const skillMd = renderSkillMd(merged, (log.cycles || []).length + 1);
-  fs.mkdirSync(SKILL_DIR, { recursive: true });
-  fs.writeFileSync(SKILL_FILE, skillMd, "utf8");
+  // Record Case Precedents if present
+  if (newCases && newCases.length > 0) {
+    console.log(`\n  ${DIM}Merging into Case Law precedents...${RESET}`);
+    const caseLawManager = require("./case_law_manager");
+    const clIndex = caseLawManager.loadIndex();
+    let clNextId = clIndex.next_id;
+    let clAdded = 0;
+
+    for (const c of newCases) {
+      const diffText = c.pattern || "";
+      const reason = c.reason || "";
+      const domain = c.domain || "general";
+      const verdict = c.verdict || "REJECTED";
+      const fingerprint = caseLawManager.contentHash(diffText);
+
+      let isDup = false;
+      for (const existing of clIndex.cases) {
+        if (existing.fingerprint === fingerprint) {
+          isDup = true;
+          break;
+        }
+      }
+      if (isDup) {
+        console.log(
+          `  ${DIM}  Skipped duplicate case: ${reason.slice(0, 50)}...${RESET}`,
+        );
+        continue;
+      }
+
+      const deltaCase = caseLawManager.semanticDelta(diffText);
+      const tags = caseLawManager.extractTags(diffText + " " + reason);
+      const caseRecord = {
+        id: clNextId,
+        fingerprint,
+        timestamp: new Date().toISOString().slice(0, 19),
+        domain,
+        verdict,
+        reason: reason.trim(),
+        pr_ref: "auto-evolution",
+        reviewer: "skill-evolution",
+        tags,
+        stack_version: null,
+        diff_raw: diffText.trim(),
+        diff_delta: deltaCase,
+        auto_recorded: true,
+      };
+
+      caseLawManager.saveCase(caseRecord);
+      clIndex.cases.push({
+        id: clNextId,
+        fingerprint,
+        domain,
+        verdict,
+        tags,
+        timestamp: caseRecord.timestamp,
+        reason_summary: reason.trim().slice(0, 120),
+        stack_version: null,
+      });
+      clNextId++;
+      clAdded++;
+    }
+
+    if (clAdded > 0) {
+      clIndex.next_id = clNextId;
+      caseLawManager.saveIndex(clIndex);
+      console.log(`  ${GREEN}✔ ${clAdded} new Case Law precedent(s) recorded.${RESET}`);
+    } else {
+      console.log(`  ${DIM}  No new unique Case Law precedents recorded.${RESET}`);
+    }
+  }
 
   log.cycles = log.cycles || [];
   log.cycles.push({
@@ -687,14 +936,10 @@ async function cmdDigest(args) {
   log.total_tokens_saved = (log.total_tokens_saved || 0) + savedTokens;
   saveLog(log);
 
-  console.log(`\n  ${GREEN}✔ ${added} new idiom(s) added to SKILL.md${RESET}`);
-  console.log(`  ${DIM}   File: ${SKILL_FILE}${RESET}`);
+  console.log(`\n  ${GREEN}✔ Learn cycle complete.${RESET}`);
   console.log(`  ${DIM}   Total idioms: ${merged.length}${RESET}`);
   console.log(
     `  ${DIM}   Lifetime tokens saved: ${log.total_tokens_saved}${RESET}\n`,
-  );
-  console.log(
-    `  ${CYAN}Commit SKILL.md to share your Engineering Culture with the team.${RESET}\n`,
   );
 }
 

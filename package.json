@@ -1,7 +1,7 @@
 {
   "name": "tribunal-kit",
-  "version": "5.8.1",
-  "description": "Anti-Hallucination AI Agent Kit for IDEs (Cursor, VSCode, Windsurf) — 43 specialist agents, 34 workflows, 20 parallel Tribunal code reviewers, Model Context Protocol (MCP) server, and long-running autonomous agent harness.",
+  "version": "5.8.2",
+  "description": "The operating system for AI software engineering — governance, memory, review pipelines, and reusable skills for every coding agent. 43 specialist agents, 34 workflows, 20 parallel Tribunal code reviewers, MCP server, Rust core engine, and long-running autonomous agent harness for Cursor, VSCode, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
     "ai-agent",
@@ -51,6 +51,16 @@
     "url": "git+https://github.com/Harmitx7/tribunal-kit.git"
   },
   "license": "MIT",
+  "types": "dist/index.d.ts",
+  "main": "dist/cli.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/esm/index.mjs",
+      "require": "./dist/cli.js"
+    },
+    "./package.json": "./package.json"
+  },
   "bin": {
     "tribunal-kit": "bin/wrapper.js",
     "tk": "bin/wrapper.js"
@@ -62,6 +72,8 @@
     ".agent/",
     "README.md",
     "LICENSE",
+    "SECURITY.md",
+    "CONTRIBUTING.md",
     "mcp_config.json"
   ],
   "engines": {
@@ -87,12 +99,12 @@
     "typescript": "^5.4.5"
   },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^5.8.1",
-    "@tribunal-kit/core-darwin-x64": "^5.8.1",
-    "@tribunal-kit/core-linux-arm64": "^5.8.1",
-    "@tribunal-kit/core-linux-x64": "^5.8.1",
-    "@tribunal-kit/core-win32-arm64": "^5.8.1",
-    "@tribunal-kit/core-win32-x64": "^5.8.1"
+    "@tribunal-kit/core-darwin-arm64": "^5.8.2",
+    "@tribunal-kit/core-darwin-x64": "^5.8.2",
+    "@tribunal-kit/core-linux-arm64": "^5.8.2",
+    "@tribunal-kit/core-linux-x64": "^5.8.2",
+    "@tribunal-kit/core-win32-arm64": "^5.8.2",
+    "@tribunal-kit/core-win32-x64": "^5.8.2"
   },
   "jest": {
     "testMatch": [

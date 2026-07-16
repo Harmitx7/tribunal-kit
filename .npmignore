@@ -14,6 +14,8 @@ __pycache__/
 # Exclude dev tooling
 *.log
 .editorconfig
+eslint.config.js
+tsconfig.json
 
 # Exclude git
 .git/
@@ -34,10 +36,14 @@ desktop.ini
 *.pyc
 *.pyo
 
-# Exclude build artifacts
-dist/
-build/
+# Exclude build artifacts & dev-only files
 node_modules/
+target/
+crates/
+Cargo.toml
+Cargo.lock
+benchmark-results.json
+*.tgz
 
 # Exclude env secrets
 .env
@@ -45,10 +51,13 @@ node_modules/
 .env.production
 .env.*.local
 
-# Exclude AI IDE Configuration
+# Exclude AI IDE Configuration (user-project files, not part of the kit)
 .gemini/
 .cursorrules
 .windsurfrules
 
-# DO NOT exclude .agent/ — it is required for tribunal-kit to function
-# npm's default behavior skips dot-folders, .npmignore overrides that
+# DO NOT exclude these — they are required for tribunal-kit to function:
+# .agent/  → intelligence payload
+# bin/     → CLI entry points
+# dist/    → modular CLI + TypeScript types
+# scripts/ → sync/changelog utilities

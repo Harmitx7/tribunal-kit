@@ -158,6 +158,34 @@ function parseArgs(argv) {
     if (arg.startsWith("--branch=")) {
       args.flags.branch = arg.split("=").slice(1).join("=");
     }
+    if (arg.startsWith("--log=")) {
+      args.flags.log = arg.split("=").slice(1).join("=");
+    }
+    if (arg === "--log") {
+      const idx = raw.indexOf("--log");
+      const nextVal = raw[idx + 1];
+      if (!nextVal || nextVal.startsWith("--")) {
+        console.error(
+          `  \x1b[91m✖ --log requires a file path argument\x1b[0m`,
+        );
+        process.exit(1);
+      }
+      args.flags.log = nextVal;
+    }
+    if (arg.startsWith("--strategy=")) {
+      args.flags.strategy = arg.split("=").slice(1).join("=");
+    }
+    if (arg === "--strategy") {
+      const idx = raw.indexOf("--strategy");
+      const nextVal = raw[idx + 1];
+      if (!nextVal || nextVal.startsWith("--")) {
+        console.error(
+          `  \x1b[91m✖ --strategy requires a strategy value (balanced/harden/repair-only)\x1b[0m`,
+        );
+        process.exit(1);
+      }
+      args.flags.strategy = nextVal;
+    }
   }
 
   return args;
@@ -412,8 +440,19 @@ function banner() {
   const _maxLen = Math.max(...art.map((line) => line.length));
   for (const line of art) {
     let gradientLine = "  " + C.bold;
-    for (let i = 0; i < line.length; i++) {
-      gradientLine += `\x1b[38;2;255;22;55m${line[i]}`;
+    const len = line.length;
+    for (let i = 0; i < len; i++) {
+      const char = line[i];
+      if (char === ' ') {
+        gradientLine += ' ';
+        continue;
+      }
+      // Horizontal gradient: flame red (left) to coral/orange (right)
+      const ratio = i / len;
+      const r = 255;
+      const g = Math.floor(30 + ratio * 100);
+      const b = Math.floor(60 - ratio * 40);
+      gradientLine += `\x1b[38;2;${r};${g};${b}m${char}`;
     }
     gradientLine += C.reset;
     log(gradientLine);
@@ -421,16 +460,13 @@ function banner() {
   console.log();
   // Subtitle strip
   const W = 84;
-  const sub = "Anti-Hallucination Agent System";
-  const sp = Math.max(0, W - sub.length);
-  const centred =
-    " ".repeat(Math.floor(sp / 2)) + sub + " ".repeat(Math.ceil(sp / 2));
-  const RED_ANSI = "\x1b[38;2;255;22;55m";
-  console.log(`  ${RED_ANSI}╔${"═".repeat(W)}╗${C.reset}`);
-  console.log(
-    `  ${RED_ANSI}║${C.reset}${c("gray", centred)}${RED_ANSI}║${C.reset}`,
-  );
-  console.log(`  ${RED_ANSI}╚${"═".repeat(W)}╝${C.reset}`);
+  const plainSub = '🛡️  ANTI-HALLUCINATION AGENT SYSTEM';
+  const coloredSub = `${bold(c('white', '🛡️  ANTI-HALLUCINATION AGENT SYSTEM'))}`;
+  const sp = Math.max(0, W - plainSub.length);
+  const centred = ' '.repeat(Math.floor(sp / 2)) + coloredSub + ' '.repeat(Math.ceil(sp / 2));
+  log(`  ${c('gray', `✦  ${'━'.repeat(W - 6)}  ✦`)}`);
+  log(`  ${centred}`);
+  log(`  ${c('gray', `✦  ${'━'.repeat(W - 6)}  ✦`)}`);
   console.log();
 }
 
@@ -560,6 +596,7 @@ async function cmdInit(flags) {
     } else {
       // ── Success card — W=62, rows padded by plain-text length ──
       const W = 62;
+      const borderCol = "red";
       const agentsCount = fs.readdirSync(path.join(agentDest, "agents")).length;
       const workflowsCount = fs.readdirSync(
         path.join(agentDest, "workflows"),
@@ -569,23 +606,28 @@ async function cmdInit(flags) {
         path.join(agentDest, "scripts"),
       ).length;
 
-      // Stat rows: compute trailing spaces from plain text so right ║ aligns
-      const statRow = (icon, label, val, col) => {
-        // emoji JS .length===2 == terminal display width 2 ✓
-        const plain = `  ${icon}  ${label.padEnd(10)}${String(val).padStart(3)} installed`;
-        const trail = " ".repeat(Math.max(0, W - plain.length));
-        return `  ${c("cyan", "║")}  ${icon}  ${c("white", label.padEnd(10))}${c(col, String(val).padStart(3))} ${c("gray", "installed")}${trail}${c("cyan", "║")}`;
+      const drawRow = (plainText, styledText) => {
+        const trail = " ".repeat(Math.max(0, W - plainText.length));
+        return `  ${c(borderCol, "│")}${styledText}${trail}${c(borderCol, "│")}`;
       };
-      // Plain-text rows (header / blank)
-      const plainRow = (text, wrapFn) => {
-        const trail = " ".repeat(Math.max(0, W - text.length));
-        return `  ${c("cyan", "║")}${wrapFn(text)}${trail}${c("cyan", "║")}`;
+
+      const compRow = (icon, label, count, color) => {
+        const leftPlain = `    ${icon}  ${label.padEnd(10)} `;
+        const rightPlain = ` [ ${String(count).padStart(3)} ]`;
+        const numDots = W - leftPlain.length - rightPlain.length - 4; // 4 spaces margin
+        const dots = ".".repeat(Math.max(0, numDots));
+
+        const plain = `${leftPlain}${dots}${rightPlain}`;
+        const styled = `    ${icon}  ${c("white", label.padEnd(10))} ${c("gray", dots)} ${c("gray", "[")} ${c(color, String(count).padStart(3))} ${c("gray", "]")}`;
+        return drawRow(plain, styled);
       };
-      // Next-step rows: fixed cmd column + description
+
       const stepRow = (cmd, desc) => {
-        const plain = `  ${cmd.padEnd(16)}${desc}`;
-        const trail = " ".repeat(Math.max(0, W - plain.length));
-        return `  ${c("cyan", "║")}  ${c("white", cmd.padEnd(16))}${c("gray", desc)}${trail}${c("cyan", "║")}`;
+        const leftPlain = `    ${cmd.padEnd(16)}`;
+        const rightPlain = `▸  ${desc}`;
+        const plain = `${leftPlain}${rightPlain}`;
+        const styled = `    ${c("white", cmd.padEnd(16))}${c("gray", "▸")}  ${c("gray", desc)}`;
+        return drawRow(plain, styled);
       };
 
       console.log(
@@ -593,27 +635,25 @@ async function cmdInit(flags) {
       );
       console.log(`  ${c("gray", "  ╰─")} ${c("gray", agentDest)}`);
       console.log();
-      console.log(`  ${c("cyan", "╔" + "═".repeat(W) + "╗")}`);
-      console.log(
-        plainRow(`  What's inside:`, (s) => c("bold", c("white", s))),
-      );
-      console.log(`  ${c("cyan", "╠" + "═".repeat(W) + "╣")}`);
-      console.log(statRow("🤖", "Agents", agentsCount, "magenta"));
-      console.log(statRow("⚡", "Workflows", workflowsCount, "yellow"));
-      console.log(statRow("🧠", "Skills", skillsCount, "blue"));
-      console.log(statRow("🔧", "Scripts", scriptsCount, "green"));
-      console.log(`  ${c("cyan", "╠" + "═".repeat(W) + "╣")}`);
-      console.log(plainRow("", () => ""));
-      console.log(plainRow(`  Next steps:`, (s) => c("gray", s)));
-      console.log(
-        stepRow("/generate", "Generate code with anti-hallucination"),
-      );
+      console.log(`  ${c(borderCol, "┌" + "─".repeat(W) + "┐")}`);
+      console.log(drawRow("  TRIBUNAL ENVIRONMENT SYNCHRONIZED", `${bold(c("white", "  TRIBUNAL ENVIRONMENT SYNCHRONIZED"))}`));
+      console.log(`  ${c(borderCol, "├" + "─".repeat(W) + "┤")}`);
+      console.log(drawRow("  Guarding:  Active & Enforcing", `${c("gray", "  Guarding:")}  ${c("green", "Active & Enforcing")}`));
+      console.log(drawRow("  Manifest:  Verified", `${c("gray", "  Manifest:")}  ${c("cyan", "Verified")}`));
+      console.log(drawRow("", ""));
+      console.log(drawRow("  Installed Components:", bold(c("white", "  Installed Components:"))));
+      console.log(compRow("🤖", "Agents", agentsCount, "magenta"));
+      console.log(compRow("⚡", "Workflows", workflowsCount, "yellow"));
+      console.log(compRow("🧠", "Skills", skillsCount, "blue"));
+      console.log(compRow("🔧", "Scripts", scriptsCount, "green"));
+      console.log(`  ${c(borderCol, "├" + "─".repeat(W) + "┤")}`);
+      console.log(drawRow("", ""));
+      console.log(drawRow("  Next Steps:", c("gray", "  Next Steps:")));
+      console.log(stepRow("/generate", "Generate code with reviews"));
       console.log(stepRow("/review", "Audit existing code for issues"));
-      console.log(
-        stepRow("/tribunal-full", "Run all 16 reviewers in parallel"),
-      );
-      console.log(plainRow("", () => ""));
-      console.log(`  ${c("cyan", "╚" + "═".repeat(W) + "╝")}`);
+      console.log(stepRow("/tribunal-full", "Run all 20 reviewers in parallel"));
+      console.log(drawRow("", ""));
+      console.log(`  ${c(borderCol, "└" + "─".repeat(W) + "┘")}`);
       console.log();
       log(`  ${c("gray", "✦ Updating .gitignore...")}`);
       await updateGitignore(targetDir, dryRun);
@@ -912,6 +952,8 @@ async function cmdLearn(flags) {
   const evoArgs = ["digest"];
   if (flags.dryRun) evoArgs.push("--dry-run");
   if (flags.head) evoArgs.push("--head");
+  if (flags.log) evoArgs.push(`--log=${flags.log}`);
+  if (flags.strategy) evoArgs.push(`--strategy=${flags.strategy}`);
 
   // Phase 1: Skill Evolution
   log(
@@ -1287,6 +1329,8 @@ function cmdHelp() {
   log(opt("--minimal", "Install core agents/skills only (~13 agents)"));
   log(opt("--skip-update-check", "Skip auto-update version check"));
   log(opt("--head", "(learn) Diff against last commit instead of staged"));
+  log(opt("--log <file>", "(learn) Extract signals and evolve from a log/transcript file"));
+  log(opt("--strategy <val>", "(learn) Evolution strategy: balanced, harden, repair-only"));
   console.log();
   log(bold("  Aliases"));
   log(`  ${c("gray", "─".repeat(40))}`);
@@ -1305,6 +1349,8 @@ function cmdHelp() {
   log(ex("tk learn"));
   log(ex("tk learn --dry-run"));
   log(ex("tk learn --head"));
+  log(ex("tk learn --log=run.log"));
+  log(ex("tk learn --log=eslint.log --strategy=harden"));
   log(ex("tk case add"));
   log(ex('tk case search "useEffect"'));
   log(ex("tk case list"));

@@ -3,6 +3,36 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [5.8.2] — 2026-07-16
+
+### ✨ Features & Enhancements
+
+- **GEP-Inspired Autonomous Self-Evolution**: Integrated a self-evolution loop into the `learn` command (`tk learn`). Supported the `--log=<file>` flag to ingest runtime log outputs and transcripts, and the `--strategy=<val>` option (`balanced`, `harden`, `repair-only`) to govern evolution directives.
+- **Structured Log Signal Detector**: Deployed the new `signal_detector.js` utility, parsing JS/TS stack traces, Python stack trace files, Rust compiler issues, ESLint inline logs, and performance query warnings into typed signals.
+- **Precedent Solidification**: Integrated the Case Law engine programmatically to automatically record new Case Precedents (Capsules) from detected log signals.
+- **CLI Docs & Examples**: Updated CLI help output, commands documentation, and example usages for log-based learning.
+- **First-Class TypeScript Declarations**: Shipped `dist/index.d.ts` with complete type coverage for the public API — CLI flags, all 15 command functions, logger utilities, MCP server types (memory entries, tool inputs, tool names union), and helper functions. Enables IDE autocomplete and the TypeScript badge on npm.
+- **Dual ESM + CommonJS Builds**: Added `dist/esm/index.mjs` as an ESM entry point using `createRequire` wrapper pattern. Modern `import` statements now resolve correctly alongside existing `require()` usage. No breaking changes to CJS consumers.
+- **Package.json Modernization**: Added `"types"`, `"main"`, and conditional `"exports"` fields with `types`/`import`/`require` conditions for proper resolution by modern bundlers (webpack 5, Vite, Rollup, esbuild).
+- **Positioning Pivot**: Rebranded package description from "Anti-Hallucination AI Agent Kit" to "The operating system for AI software engineering" — positioning Tribunal Kit as the governance and orchestration layer for all coding agents.
+
+### 🐛 Fixes
+
+- **JS Stack Trace Path Truncation**: Fixed a greediness bug in the stack trace regex (`jsStackRegex`) of `signal_detector.js` where parenthesized function matching was consuming path segments, returning `/utils.js` instead of `src/utils.js`.
+- **Core Binary Alignment**: Aligned all platform-specific native dependencies in `optionalDependencies` to `^5.8.2`.
+- **Critical `.npmignore` Fix**: Removed the `dist/` exclusion from `.npmignore` that was silently preventing TypeScript declarations and the modular CLI from being published to npm. Added exclusions for Rust build artifacts (`target/`, `crates/`, `Cargo.*`), stale tarballs (`*.tgz`), and dev config files to reduce install size.
+
+### 📦 Infrastructure
+
+- **SECURITY.md**: Added security policy documenting supported versions, private vulnerability reporting via GitHub Security Advisories, response timelines (48h ack, 7-day critical fix), and security design principles (no network at runtime, no eval, zero prod deps).
+- **CONTRIBUTING.md**: Added contributing guide with development setup, project structure overview, contribution workflow for agents/skills, code style conventions, and review process.
+- **Install Size Reduction**: Excluded Rust build artifacts (`target/`, `crates/`), benchmark data, stale tarballs, and dev config files (`eslint.config.js`, `tsconfig.json`) from the npm tarball via `.npmignore` updates.
+
+### ✅ Tests
+
+- **Signal Extraction Suite**: Added `skill_evolution.test.js` covering baseline log signal parser unit tests.
+- **Init Command Test Suite**: Added `test/unit/init.test.js` with 19 new test cases covering `cmdInit` (self-install guard, non-existent target, existing `.agent/` without `--force`, dry-run, full init, `--force` reinit), `isSelfInstall` (path match, package.json name match, invalid JSON), `copyDir` (basic copy, nested dirs, dry-run, filter exclusion), `countDir` (empty, top-level, recursive), and `generateIDEBridges` (bridge file creation). Total test count: 165 → 184.
+
 ## [5.8.1] — 2026-07-11
 
 ### ✨ Features & Enhancements
