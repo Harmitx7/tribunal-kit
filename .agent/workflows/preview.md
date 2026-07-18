@@ -1,5 +1,5 @@
 ---
-description: Preview server start, stop, and status check. Local development server management. Uses auto_preview.py for automated lifecycle control. Shows current URL and hot-reload status.
+description: Preview server start, stop, and status check. Local development server management. Uses auto_preview.js for automated lifecycle control. Shows current URL and hot-reload status.
 required-skills: bash-linux, frontend-specialist
 ---
 
@@ -34,16 +34,16 @@ Read BEFORE managing preview:
 
 ```bash
 # Start
-python .agent/scripts/auto_preview.py start
+node .agent/scripts/auto_preview.js start
 
 # Stop
-python .agent/scripts/auto_preview.py stop
+node .agent/scripts/auto_preview.js stop
 
 # Restart
-python .agent/scripts/auto_preview.py restart
+node .agent/scripts/auto_preview.js restart
 
 # Status
-python .agent/scripts/auto_preview.py status
+node .agent/scripts/auto_preview.js status
 ```
 
 ---

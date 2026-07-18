@@ -21,7 +21,7 @@ You are a specialist in analyzing test output — not writing tests, but _unders
 - After a test run with multiple failures.
 - When the user says "tests are failing", "analyze test results", "what broke?", or "test failed".
 - During CI/CD pipeline debugging.
-- When `test_runner.py` or any test command exits with failures.
+- When `test_runner.js` or any test command exits with failures.
 - When paired with `systematic-debugging` for deep root-cause investigation.
 
 ## Analysis Pipeline

@@ -44,7 +44,7 @@ git log --oneline -5
 find src/ -name "*.ts" -o -name "*.tsx" -newer package.json 2>/dev/null | head -10
 
 # 4. Server status (non-blocking)
-python .agent/scripts/auto_preview.py status 2>/dev/null
+node .agent/scripts/auto_preview.js status 2>/dev/null
 
 # 5. Quick type check
 npx tsc --noEmit 2>&1 | tail -5

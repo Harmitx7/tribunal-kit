@@ -1,5 +1,5 @@
 ---
-description: Auto-fix known issues with lint, formatting, imports, and TypeScript errors. Runs lint_runner.py and auto-fixers. Human approval required before applying any changes. Shows a diff of what will change before writing to disk.
+description: Auto-fix known issues with lint, formatting, imports, and TypeScript errors. Runs lint_runner.js and auto-fixers. Human approval required before applying any changes. Shows a diff of what will change before writing to disk.
 required-skills: lint-and-validate, clean-code
 ---
 
@@ -55,7 +55,7 @@ Read BEFORE fixing:
 
 ```bash
 # 1. Run lint with auto-fix
-python .agent/scripts/lint_runner.py . --fix
+node .agent/scripts/lint_runner.js . --fix
 
 # 2. Fix remaining TypeScript errors (auto-detectable only)
 npx tsc --noEmit 2>&1 | grep "error TS"

@@ -78,7 +78,7 @@ Every code or design request activates an agent. This is not optional.
 | ------------------------------------------------------- | --------------------------- |
 | API / server / backend                                  | `backend-specialist`        |
 | API contract design / REST / GraphQL                    | `api-architect`             |
-| C# / .NET / Blazor                                      | `dotnet-core-expert`        |
+| C# / .NET / Blazor                                      | `csharp-developer`          |
 | Python / FastAPI / Django                               | `python-pro`                |
 | Database / schema / SQL                                 | `database-architect`        |
 | Advanced SQL queries                                    | `sql-pro`                   |
@@ -114,7 +114,7 @@ Every code or design request activates an agent. This is not optional.
 | System design / scale / capacity planning               | `system-architect`          |
 | Cloud infrastructure / AWS / Terraform / Docker / CI-CD | `cloud-engineer`            |
 
-> **Agent vs Skill:** Some entries above (e.g., `python-pro`, `vue-expert`, `dotnet-core-expert`, `sql-pro`, `react-specialist`, `platform-engineer`, `devops-incident-responder`) are **skills** loaded from `skills/SKILL.md`, not full agent definitions in `agents/`. The routing and announcement protocol still applies — load the skill's rules and announce it. If an `.md` file exists in `agents/`, it takes priority (P1) over the skill (P2).
+> **Agent vs Skill:** Some entries above (e.g., `python-pro`, `vue-expert`, `csharp-developer`, `sql-pro`, `react-specialist`, `platform-engineer`, `devops-incident-responder`) are **skills** loaded from `skills/SKILL.md`, not full agent definitions in `agents/`. The routing and announcement protocol still applies — load the skill's rules and announce it. If an `.md` file exists in `agents/`, it takes priority (P1) over the skill (P2).
 
 **When activated, announce the agent:**
 
@@ -215,8 +215,8 @@ The Human Gate is never skipped. No code is written to a file without explicit u
 
 **Reviewer assignment by domain:**
 
-| Code type             | Reviewers                                                                                           |
-| --------------------- | --------------------------------------------------------------------------------------------------- |
+| Code type             | Reviewers                                                                     |
+| --------------------- | ----------------------------------------------------------------------------- |
 | Backend/API           | logic + security + dependency + type-safety + resilience + schema + complexity-reviewer             |
 | Frontend/React        | logic + security + frontend + type-safety + ui-ux-auditor + review-animations + complexity-reviewer |
 | Database/SQL          | logic + security + sql + schema + complexity-reviewer                                               |
@@ -281,17 +281,17 @@ These scripts live in `.agent/scripts/`. Agents and skills can invoke them:
 
 | Script                     | Purpose                                           | When                                          |
 | -------------------------- | ------------------------------------------------- | --------------------------------------------- |
-| `checklist.py`             | Priority audit: Security→Lint→Schema→Tests→UX→SEO | Before/after any major change                 |
-| `verify_all.py`            | Full pre-deploy validation suite                  | Pre-deploy                                    |
-| `auto_preview.py`          | Start/stop/restart local dev server               | After /create or /enhance                     |
+| `checklist.js`             | Priority audit: Security→Lint→Schema→Tests→UX→SEO | Before/after any major change                 |
+| `verify_all.js`            | Full pre-deploy validation suite                  | Pre-deploy                                    |
+| `auto_preview.js`          | Start/stop/restart local dev server               | After /create or /enhance                     |
 | `session_manager.js`       | Track session state between conversations         | Multi-session work                            |
-| `lint_runner.py`           | Standalone lint runner (ESLint, Prettier, Ruff)   | Every code change                             |
-| `test_runner.py`           | Standalone test runner (Jest, Vitest, pytest, Go) | After logic changes                           |
-| `security_scan.py`         | Deep OWASP-aware source code security scan        | Always on deploy, /audit                      |
-| `dependency_analyzer.py`   | Unused/phantom deps, npm audit                    | Weekly, /audit                                |
-| `schema_validator.py`      | Database schema validation (Prisma, SQL)          | After DB changes                              |
-| `bundle_analyzer.py`       | JS/TS bundle size analysis                        | Before deploy                                 |
-| `skill_integrator.py`      | Maps active skills to their executable scripts    | Automatically when skills are invoked         |
+| `lint_runner.js`           | Standalone lint runner (ESLint, Prettier, Ruff)   | Every code change                             |
+| `test_runner.js`           | Standalone test runner (Jest, Vitest, pytest, Go) | After logic changes                           |
+| `security_scan.js`         | Deep OWASP-aware source code security scan        | Always on deploy, /audit                      |
+| `dependency_analyzer.js`   | Unused/phantom deps, npm audit                    | Weekly, /audit                                |
+| `schema_validator.js`      | Database schema validation (Prisma, SQL)          | After DB changes                              |
+| `bundle_analyzer.js`       | JS/TS bundle size analysis                        | Before deploy                                 |
+| `skill_integrator.js`      | Maps active skills to their executable scripts    | Automatically when skills are invoked         |
 | `swarm_dispatcher.js`      | Validate Orchestrator micro-worker JSON payloads  | After /orchestrate, before dispatching agents |
 | `test_swarm_dispatcher.js` | Unit tests for swarm_dispatcher                   | After modifying swarm_dispatcher.js           |
 
@@ -301,12 +301,12 @@ These scripts live in `.agent/scripts/`. Agents and skills can invoke them:
 node .agent/scripts/checklist.js .
 node .agent/scripts/verify_all.js
 node .agent/scripts/security_scan.js .
-python .agent/scripts/lint_runner.py . --fix
-python .agent/scripts/test_runner.py . --coverage
-python .agent/scripts/dependency_analyzer.py . --audit
-python .agent/scripts/schema_validator.py .
-python .agent/scripts/bundle_analyzer.py . --build
-python .agent/scripts/skill_integrator.py
+node .agent/scripts/lint_runner.js . --fix
+node .agent/scripts/test_runner.js . --coverage
+node .agent/scripts/dependency_analyzer.js . --audit
+node .agent/scripts/schema_validator.js .
+node .agent/scripts/bundle_analyzer.js . --build
+node .agent/scripts/skill_integrator.js
 node .agent/scripts/swarm_dispatcher.js --file payload.json
 npx jest test/integration/swarm_dispatcher.test.js
 ```
@@ -409,18 +409,21 @@ Before modifying any file:
 ## Fabel-5 Cognitive Boundaries (Wellbeing, Evenhandedness, Memory)
 
 ### User Wellbeing & Safety
-* **No Psychoanalysis / Diagnosis**: Reflect what is said without diagnosing or assigning psychological narratives (e.g. "you restrict because of trauma"). Suggest professional help without clinical labels.
-* **Self-Harm Interruptions**: Never suggest physical substitutes (holding ice, snapping rubber bands, drawing lines) or mimic self-harm. They reinforce the self-harm loop.
-* **No Over-reliance**: Do not thank the user for reaching out, encourage them to stay, or reiterate willingness to continue. Avoid conversational dependencies.
-* **Positive Paths**: Acknowledge distress without reflective listening that amplifies negative spirals. Keep paths to external help open.
+
+- **No Psychoanalysis / Diagnosis**: Reflect what is said without diagnosing or assigning psychological narratives (e.g. "you restrict because of trauma"). Suggest professional help without clinical labels.
+- **Self-Harm Interruptions**: Never suggest physical substitutes (holding ice, snapping rubber bands, drawing lines) or mimic self-harm. They reinforce the self-harm loop.
+- **No Over-reliance**: Do not thank the user for reaching out, encourage them to stay, or reiterate willingness to continue. Avoid conversational dependencies.
+- **Positive Paths**: Acknowledge distress without reflective listening that amplifies negative spirals. Keep paths to external help open.
 
 ### Moral & Political Evenhandedness
-* **Nuance Over Brevity**: Reject requests for simple yes/no or one-word answers on contested political, ethical, or policy issues. Give a fair, balanced overview of existing positions.
-* **Opposing Perspectives**: Conclude arguments for positions by presenting opposing viewpoints or empirical disputes even if the user/AI agrees with the primary view.
+
+- **Nuance Over Brevity**: Reject requests for simple yes/no or one-word answers on contested political, ethical, or policy issues. Give a fair, balanced overview of existing positions.
+- **Opposing Perspectives**: Conclude arguments for positions by presenting opposing viewpoints or empirical disputes even if the user/AI agrees with the primary view.
 
 ### Memory & Preference Boundaries
-* **Invisible Integration**: Integrate remembered user context silently without attribution or observation verbs ("I notice in your profile...", "Based on your memory...").
-* **Expertise Tuning**: Match language and technical depth to the user's stated background without lecturing.
+
+- **Invisible Integration**: Integrate remembered user context silently without attribution or observation verbs ("I notice in your profile...", "Based on your memory...").
+- **Expertise Tuning**: Match language and technical depth to the user's stated background without lecturing.
 
 ---
 

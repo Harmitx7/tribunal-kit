@@ -16,7 +16,7 @@ All agents listed here MUST exist as `.md` files in `.agent/agents/`.
 | `research`       | performance, profiling, optimization             | `performance-optimizer` |
 | `generate_code`  | api, route, endpoint, server, express, auth, jwt | `backend-specialist`    |
 | `generate_code`  | python, fastapi, django, flask                   | `python-pro`            |
-| `generate_code`  | c#, .net, blazor, aspnet                         | `dotnet-core-expert`    |
+| `generate_code`  | c#, .net, blazor, aspnet                         | `csharp-developer`      |
 | `generate_code`  | component, hook, react, next, ui, css            | `frontend-specialist`   |
 | `generate_code`  | mobile, react native, flutter, ios, android      | `mobile-developer`      |
 | `generate_code`  | docker, ci, cd, deploy, github actions, cloud    | `devops-engineer`       |
@@ -54,7 +54,7 @@ Quick reference for Supervisor triage. Full instructions are in each agent's `.m
 | -------------------------- | ------------------------------------------------ | ----------------------- |
 | `backend-specialist.md`    | REST APIs, auth flows, server logic              | React components        |
 | `python-pro.md`            | FastAPI, Django, data scripts                    | Node/TypeScript code    |
-| `dotnet-core-expert.md`    | .NET 8+, C#, Blazor, AOT                         | Python or Node backends |
+| `csharp-developer`         | .NET 8+, C#, Blazor, AOT                         | Python or Node backends |
 | `frontend-specialist.md`   | Web UI, CSS, components                          | Server code             |
 | `react-specialist.md`      | Advanced React patterns, Next.js architecture    | Vue or mobile           |
 | `vue-expert.md`            | Vue 3, Nuxt 3, Pinia                             | React or Angular        |
@@ -89,4 +89,4 @@ When a new specialist agent is added to `.agent/agents/`, update this registry:
 
 1. Add a row to the **Primary Routing Table** for each `type` and keyword combination it handles
 2. Add a row to the **Agent Capability Summary** with "Best For" and "Do NOT Use For" guidance
-3. Run `python .agent/scripts/config-validator.py` to verify consistency
+3. Run `node .agent/scripts/verify_all.js` to verify consistency

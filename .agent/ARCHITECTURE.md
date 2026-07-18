@@ -42,7 +42,7 @@ Type any of these in your AI IDE chat:
 | ----------------------- | -------------------------------------------------------------------------------------- | ----------------------------------- |
 | `/generate`             | Full Tribunal: Maker → Parallel Review → Human Gate                                    | `workflows/generate.md`             |
 | `/review`               | Audit existing code (no generation)                                                    | `workflows/review.md`               |
-| `/tribunal-full`        | ALL 19 reviewers at once — maximum coverage                                            | `workflows/tribunal-full.md`        |
+| `/tribunal-full`        | ALL 20 reviewers at once — maximum coverage                                            | `workflows/tribunal-full.md`        |
 | `/tribunal-backend`     | Logic + Security + Deps + Types                                                        | `workflows/tribunal-backend.md`     |
 | `/tribunal-frontend`    | Logic + Security + Frontend + Types                                                    | `workflows/tribunal-frontend.md`    |
 | `/tribunal-database`    | Logic + Security + SQL                                                                 | `workflows/tribunal-database.md`    |
@@ -71,7 +71,7 @@ Type any of these in your AI IDE chat:
 
 ---
 
-## The 19 Tribunal Agents
+## The 20 Tribunal Reviewers
 
 | Agent                    | File                               | Activates When                                                                      |
 | ------------------------ | ---------------------------------- | ----------------------------------------------------------------------------------- |
@@ -150,7 +150,7 @@ The Swarm system decomposes complex multi-domain goals into independent sub-task
 | `agent-organizer`           | Specialist agent operations                     |
 | `project-planner`           | 4-phase structured planning                     |
 | `backend-specialist`        | API, server, auth                               |
-| `dotnet-core-expert`        | C# / .NET architecture                          |
+| `csharp-developer`          | C# / .NET architecture                          |
 | `python-pro`                | Python backend development                      |
 | `frontend-specialist`       | Web UI / Components                             |
 | `react-specialist`          | React / Next.js architecture                    |
@@ -228,17 +228,17 @@ All scripts live in `.agent/scripts/`:
 | -------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------- |
 | `checklist.js`             | Priority-ordered project audit                                                    | `node .agent/scripts/checklist.js .`                          |
 | `verify_all.js`            | Full pre-deploy validation                                                        | `node .agent/scripts/verify_all.js`                           |
-| `auto_preview.py`          | Local dev server management                                                       | `python .agent/scripts/auto_preview.py start`                 |
+| `auto_preview.js`          | Local dev server management                                                       | `node .agent/scripts/auto_preview.js start`                   |
 | `session_manager.js`       | Multi-session state tracking                                                      | `node .agent/scripts/session_manager.js status`               |
-| `lint_runner.py`           | Standalone lint runner                                                            | `python .agent/scripts/lint_runner.py . --fix`                |
-| `test_runner.py`           | Auto-detecting test runner                                                        | `python .agent/scripts/test_runner.py . --coverage`           |
+| `lint_runner.js`           | Standalone lint runner                                                            | `node .agent/scripts/lint_runner.js . --fix`                  |
+| `test_runner.js`           | Auto-detecting test runner                                                        | `node .agent/scripts/test_runner.js . --coverage`             |
 | `security_scan.js`         | OWASP-aware source code scanner                                                   | `node .agent/scripts/security_scan.js .`                      |
-| `dependency_analyzer.py`   | Unused/phantom dep checker                                                        | `python .agent/scripts/dependency_analyzer.py . --audit`      |
-| `schema_validator.py`      | DB schema validator                                                               | `python .agent/scripts/schema_validator.py .`                 |
-| `bundle_analyzer.py`       | JS/TS bundle size analyzer                                                        | `python .agent/scripts/bundle_analyzer.py . --build`          |
-| `strengthen_skills.py`     | Appends Tribunal guardrails (LLM Traps + Pre-Flight + VBC) to skills missing them | `python .agent/scripts/strengthen_skills.py . --dry-run`      |
+| `dependency_analyzer.js`   | Unused/phantom dep checker                                                        | `node .agent/scripts/dependency_analyzer.js . --audit`        |
+| `schema_validator.js`      | DB schema validator                                                               | `node .agent/scripts/schema_validator.js .`                   |
+| `bundle_analyzer.js`       | JS/TS bundle size analyzer                                                        | `node .agent/scripts/bundle_analyzer.js . --build`            |
+| `strengthen_skills.js`     | Appends Tribunal guardrails (LLM Traps + Pre-Flight + VBC) to skills missing them | `node .agent/scripts/strengthen_skills.js . --dry-run`        |
 | `swarm_dispatcher.js`      | Validate Orchestrator micro-worker JSON payloads                                  | `node .agent/scripts/swarm_dispatcher.js --file payload.json` |
-| `skill_integrator.py`      | Map active skills to executable scripts                                           | `python .agent/scripts/skill_integrator.py`                   |
+| `skill_integrator.js`      | Map active skills to executable scripts                                           | `node .agent/scripts/skill_integrator.js`                     |
 | `test_swarm_dispatcher.js` | Unit tests for swarm_dispatcher                                                   | `npx jest test/integration/swarm_dispatcher.test.js`          |
 
 ---
@@ -267,12 +267,12 @@ Script failures follow cascade rules:
 .agent/
 ├── ARCHITECTURE.md          ← This file
 ├── GEMINI.md                ← Root behavior config (includes /swarm routing)
-├── agents/                  ← 43 specialist + reviewer agents (19 reviewers + 24 domain)
+├── agents/                  ← 43 specialist + reviewer agents (20 reviewers + 23 domain)
 │   ├── supervisor-agent.md  ← Swarm triage, dispatch, synthesis
 │   ├── swarm-worker-contracts.md  ← WorkerRequest/WorkerResult schemas
 │   └── swarm-worker-registry.md   ← Task type → agent routing map
 ├── rules/GEMINI.md          ← Master rules (P0 priority)
-├── scripts/                 ← 28 Python/JS automation scripts
+├── scripts/                 ← 29 JS automation scripts
 ├── skills/                  ← 106 modular skill packages (all hardened)
 ├── patterns/                ← 5 ADK skill base patterns
 ├── history/                 ← Case Law + Skill Evolution data (user-generated, preserved on update)

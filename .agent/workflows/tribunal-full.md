@@ -68,7 +68,7 @@ Tier 4: Performance Swarm (token-scoped specialists)
 
 ## Active Reviewers by Code Type
 
-Not all 19 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
+Not all 20 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
 
 | Code Under Review   | Critical Reviewers                                                |
 | :------------------ | :---------------------------------------------------------------- |
@@ -86,7 +86,7 @@ Not all 19 reviewers produce meaningful findings on all code types. Active revie
 ## Verdict Aggregation
 
 ```
-All 19 verdicts are collected. Aggregated result:
+All 20 verdicts are collected. Aggregated result:
 
 If ANY reviewer = ❌ REJECTED → Global verdict: ❌ REJECTED (must fix before Human Gate)
 If any reviewer = ⚠️ WARNING  → Global verdict: ⚠️ WARNINGS (proceed with attention)
@@ -124,7 +124,7 @@ After 3 failed attempts:
 
 | Outcome                    | Next Command                                   |
 | :------------------------- | :--------------------------------------------- |
-| All 19 reviewers approve   | → `/deploy` — highest confidence state         |
+| All 20 reviewers approve   | → `/deploy` — highest confidence state         |
 | Reject with multiple fixes | → `/fix` for simple issues, `/debug` for logic |
 | Performance rejection      | → `/tribunal-speed` for granular profiling     |
 | Security rejection         | → Immediate `/tribunal-backend` to resolve     |

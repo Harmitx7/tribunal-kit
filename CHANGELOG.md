@@ -3,6 +3,16 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [5.8.3] — 2026-07-18
+
+### 🐛 Fixes
+
+- **Tribunal-Kit Hallucination Mitigation**: Resolved critical cognitive-load and instruction-drift issues that caused AI agents to hallucinate when executing workflows.
+  - **Script Mismatches**: Fixed 11 script references pointing to non-existent `.py` files instead of their actual `.js` files in rules, architecture documents, skills, and workflows.
+  - **complexity-reviewer Agent**: Created the missing `agents/complexity-reviewer.md` agent definition to enforce the 6 Rungs of the Dependency Ladder and prevent over-engineering.
+  - **csharp-developer Skill**: Fixed references to the non-existent `dotnet-core-expert` to correctly map to the `csharp-developer` skill.
+  - **Reviewer Count Standardisation**: Consolidated contradictory reviewer count references (19 vs 22) to the actual defined count of **20** parallel reviewers.
+
 ## [5.8.2] — 2026-07-16
 
 ### ✨ Features & Enhancements

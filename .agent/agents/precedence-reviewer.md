@@ -59,7 +59,7 @@ Keywords to flag:
 Run the following command to search for relevant precedents:
 
 ```bash
-python .agent/scripts/case_law_manager.py search-cases --query "<extracted keywords>"
+node .agent/scripts/case_law_manager.js search-cases --query "<extracted keywords>"
 ```
 
 This uses **TF-IDF weighted cosine similarity**. No LLM is called. No tokens consumed.
@@ -95,7 +95,7 @@ reviewer delivers a verdict.
   □ Developer explicitly overrides this precedent (requires human approval)
 
   To override, run:
-    python .agent/scripts/case_law_manager.py add-case
+    node .agent/scripts/case_law_manager.js add-case
   And record a new case with verdict: APPROVED_WITH_CONDITIONS
 ```
 
@@ -109,7 +109,7 @@ reviewer delivers a verdict.
   Summary        : [REASON_SUMMARY]
 
   The proposed code may be related to a past decision. Review before approving.
-  Run: python .agent/scripts/case_law_manager.py show --id [ID]
+  Run: node .agent/scripts/case_law_manager.js show --id [ID]
 ```
 
 ### If similarity score < 0.2 → CLEAR
@@ -131,7 +131,7 @@ Case Law, prompt the developer:
   The [reviewer-name] just rejected code for a new reason not in Case Law.
   Record this decision to prevent future repetition:
 
-    python .agent/scripts/case_law_manager.py add-case
+    node .agent/scripts/case_law_manager.js add-case
 
   This takes < 60 seconds and permanently strengthens your Tribunal.
 ```
@@ -148,7 +148,7 @@ rejection as a new case. This is NOT optional — the Supreme Court depends on i
 **Action:** Run the following command (non-interactive, no human input needed):
 
 ```bash
-python .agent/scripts/case_law_manager.py auto-record \
+node .agent/scripts/case_law_manager.js auto-record \
   --diff "<the rejected code snippet>" \
   --reason "<the reviewer's rejection reason>" \
   --domain <domain> \
@@ -229,23 +229,23 @@ Human Gate receives your hold as a hard blocker alongside their verdicts.
 
 ```bash
 # Search Case Law (TF-IDF cosine — zero tokens)
-python .agent/scripts/case_law_manager.py search-cases --query "useEffect dependency"
+node .agent/scripts/case_law_manager.js search-cases --query "useEffect dependency"
 
 # Record a new rejection (interactive)
-python .agent/scripts/case_law_manager.py add-case
+node .agent/scripts/case_law_manager.js add-case
 
 # Auto-record a rejection (non-interactive — for AI agents)
-python .agent/scripts/case_law_manager.py auto-record --diff "code" --reason "why" --domain security
+node .agent/scripts/case_law_manager.js auto-record --diff "code" --reason "why" --domain security
 
 # View full case
-python .agent/scripts/case_law_manager.py show --id 7
+node .agent/scripts/case_law_manager.js show --id 7
 
 # Overrule a past precedent
-python .agent/scripts/case_law_manager.py overrule --id 7 --reason "no longer applicable"
+node .agent/scripts/case_law_manager.js overrule --id 7 --reason "no longer applicable"
 
 # See all cases
-python .agent/scripts/case_law_manager.py list
+node .agent/scripts/case_law_manager.js list
 
 # Export full history
-python .agent/scripts/case_law_manager.py export
+node .agent/scripts/case_law_manager.js export
 ```

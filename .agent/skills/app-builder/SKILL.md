@@ -177,7 +177,7 @@ After integration verification, start the dev server:
 
 ```bash
 # Check for dev script
-python .agent/scripts/auto_preview.py start
+node .agent/scripts/auto_preview.js start
 
 # Or manually
 npm run dev
