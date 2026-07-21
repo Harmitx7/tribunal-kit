@@ -3,6 +3,33 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [5.8.4] — 2026-07-21
+
+### ✨ Features & Enhancements
+
+- **SkillOpt Self-Evolution Engine**: Implemented the full SkillOpt pipeline from the *Automated Skill Optimization for Large Language Models* research paper. A new `optimize-skill` CLI subcommand (`tk optimize-skill --target <skill> "<harness>"`) runs multi-epoch optimization loops that automatically refine any SKILL.md using LLM-proposed patches, harness-evaluated scoring, and Rust-accelerated deduplication — all without external API dependencies beyond the user's existing LLM key.
+- **Hybrid Rust Core + JS Harness Architecture**: The optimization loop is split between a high-performance Rust core (`optimize.rs`) for deterministic patch merging, Levenshtein similarity deduplication, and strict schema validation, and a JS orchestrator (`optimize.js`) for LLM calls, harness execution, and epoch management. This ensures sub-millisecond merge/dedup operations while keeping LLM interaction flexible.
+- **Rust `optimize-step` Subcommand**: Added `OptimizeStep` to the Rust `tribunal-core` binary with `merge-patches` and `dedup-patches` actions. Merge applies multiple text patches sequentially to a base document. Dedup uses normalized Levenshtein similarity (configurable threshold, default 0.85) to eliminate near-duplicate patch proposals.
+- **CLI Routing**: Added `optimize-skill` command to `cli.js` with lazy-loaded `dist/commands/optimize.js` module. Supports `--target`, `--epochs`, `--candidates`, `--threshold`, and `--harness-timeout` flags.
+- **Environment Auto-Detection**: Automatically detects available LLM API keys (`GEMINI_API_KEY`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`) with zero additional configuration required.
+- **Layered Anti-Hallucination Defense**: Implemented a comprehensive neurosymbolic guardrail system to prevent AI hallucination and instruction drift. Added a new `tk guardrail` CLI command to scan the `.agent` context payload against a dynamic `integrity_manifest.js` to detect missing scripts, hallucinated agent names, and unresolved `// VERIFY:` tags.
+- **Guardrail Engine**: Developed `guardrail_engine.js` with 8 strict integrity rules (e.g., `ruleNumericConsistency`, `ruleAgentExists`, `ruleSkillExists`, `ruleScriptExtension`). The engine prevents execution if the AI references non-existent files or hallucinates capability claims.
+- **Pipeline Wiring**: Enforced the new `guardrail` check automatically within the `validate-payload` npm script, `verify_all.js`, and `checklist.js` to guarantee no unverified AI output is deployed.
+
+### 🐛 Fixes
+
+- **Unused Import Warning**: Removed unused `anyhow` import in `optimize.rs` that triggered a compiler warning.
+- **Core Binary Version Alignment**: Aligned all native core binary `optionalDependencies` and `Cargo.toml` to `^5.8.4`.
+- **Security Audit Resolutions**: Fixed High severity DOS vulnerabilities in `js-yaml` and `brace-expansion` dependencies.
+- **ESLint Cleanups**: Resolved 38 `no-unused-vars` warnings across project files using an automated custom script (`fix_eslint.js`) to intelligently prefix unused identifiers with an underscore (`_`).
+- **Unit Test State Leaks**: Handled undefined context (`_ctx`) errors in `guardrail_engine.js` where legacy tests were omitting the newly added third parameter for `ruleNumericConsistency` and `ruleUnresolvedVerify`.
+
+### ✅ Tests
+
+- **Rust Unit Tests**: Added 3 new Rust tests — `test_levenshtein_distance` (exact and partial string edit distance), `test_normalized_similarity` (identical/different string boundary cases), `test_is_duplicate` (threshold-based deduplication logic). Total Rust test count: 20 → 23.
+- **JS Unit Tests**: Added `test/unit/optimize.test.js` with 3 test cases covering command initialization guards (missing `.agent` directory, missing LLM key, missing core binary). Total JS test count: 184 → 187.
+- **Guardrail Unit Tests**: Added comprehensive test suites in `guardrail_engine.test.js` and `integrity_manifest.test.js` covering context serialization, integrity assertions, and numeric inconsistency extraction. Overall test suite expanded to 245 passing tests.
+
 ## [5.8.3] — 2026-07-18
 
 ### 🐛 Fixes

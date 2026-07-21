@@ -14,7 +14,7 @@ routing:
 
 - ❌ Assuming parallel agents can write to the same file -> ✅ Use file-level locking or assign each agent a distinct file scope
 - ❌ Not implementing fan-in synthesis after fan-out -> ✅ Parallel results must be merged with conflict resolution, not blindly concatenated
-- ❌ Running more than 5 agents in parallel without resource limits -> ✅ Context window and API rate limits scale with agent count
+- ❌ Running more than five concurrent agents without resource limits -> ✅ Context window and API rate limits scale with agent count
 
 ---
 
@@ -26,9 +26,9 @@ routing:
 
 The foundation of parallel multi-agent architecture.
 
-1. **Fan-Out (Scatter):** A central Supervisor breaks an objective into isolated pieces, dispatching them concurrently across multiple independent Worker agents.
-2. **Execute:** The Workers process simultaneously without blocking one another.
-3. **Fan-In (Gather):** The Supervisor waits for ALL promises to resolve, collects the outputs, merges them logically, and assesses the final unified state.
+3. **Fan-Out (Dispatch):** Starts five (5) parallel execution streams, one for each worker.
+4. **Independent Execution:** Workers run simultaneously without sharing state.
+5. **Fan-In (Synthesis):** Supervisor uses `Promise.allSettled()` to wait for all ten (10) results. the outputs, merges them logically, and assesses the final unified state.
 
 ```typescript
 // Architectural representation (Fan-out/Fan-in)
@@ -54,7 +54,7 @@ When multiple agents write to disk concurrently, catastrophic race conditions oc
 **The Golden Rules of Parallel Agents:**
 
 1. **Never allow concurrent agents to modify the same file.** Standard Git/File lockers will fail. The last one to save entirely overwrites the changes of the others.
-2. **Read-Only Concurrency:** It is infinitely safe to run 10 agents reading and reviewing the same directory simultaneously.
+2. **Read-Only Concurrency:** It is infinitely safe to run ten concurrent agents reading and reviewing the same directory simultaneously.
 3. **Directory Isolation:** If multiple agents MUST generate code simultaneously, enforce strict boundaries. Add boundary guards instructing Agent A to stay out of the directories Agent B is designated to manipulate.
 
 ---

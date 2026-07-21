@@ -16,7 +16,7 @@ function makeTempDir(prefix = "tk-init-test-") {
  * Create a minimal fake .agent/ source directory that mirrors the real structure.
  * This allows cmdInit to run without needing the full 400+ file payload.
  */
-function createFakeAgentSource(dir) {
+function _createFakeAgentSource(dir) {
   const agentsDir = path.join(dir, "agents");
   const skillsDir = path.join(dir, "skills", "clean-code");
   const workflowsDir = path.join(dir, "workflows");
@@ -72,14 +72,14 @@ function createFakeAgentSource(dir) {
 
 describe("dist/commands/init — cmdInit", () => {
   let tmpTarget;
-  let originalCwd;
+  let _originalCwd;
   let mockConsoleLog;
   let mockConsoleError;
   let mockExit;
 
   beforeEach(() => {
     tmpTarget = makeTempDir();
-    originalCwd = process.cwd();
+    _originalCwd = process.cwd();
     mockConsoleLog = jest.spyOn(console, "log").mockImplementation(() => {});
     mockConsoleError = jest
       .spyOn(console, "error")

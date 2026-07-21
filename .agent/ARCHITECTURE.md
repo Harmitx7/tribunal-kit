@@ -42,7 +42,7 @@ Type any of these in your AI IDE chat:
 | ----------------------- | -------------------------------------------------------------------------------------- | ----------------------------------- |
 | `/generate`             | Full Tribunal: Maker → Parallel Review → Human Gate                                    | `workflows/generate.md`             |
 | `/review`               | Audit existing code (no generation)                                                    | `workflows/review.md`               |
-| `/tribunal-full`        | ALL 20 reviewers at once — maximum coverage                                            | `workflows/tribunal-full.md`        |
+| `/tribunal-full`        | ALL 19 reviewers at once — maximum coverage                                            | `workflows/tribunal-full.md`        |
 | `/tribunal-backend`     | Logic + Security + Deps + Types                                                        | `workflows/tribunal-backend.md`     |
 | `/tribunal-frontend`    | Logic + Security + Frontend + Types                                                    | `workflows/tribunal-frontend.md`    |
 | `/tribunal-database`    | Logic + Security + SQL                                                                 | `workflows/tribunal-database.md`    |
@@ -267,7 +267,7 @@ Script failures follow cascade rules:
 .agent/
 ├── ARCHITECTURE.md          ← This file
 ├── GEMINI.md                ← Root behavior config (includes /swarm routing)
-├── agents/                  ← 43 specialist + reviewer agents (20 reviewers + 23 domain)
+├── agents/                  ← 44 specialist + reviewer agents (19 reviewers + 25 domain)
 │   ├── supervisor-agent.md  ← Swarm triage, dispatch, synthesis
 │   ├── swarm-worker-contracts.md  ← WorkerRequest/WorkerResult schemas
 │   └── swarm-worker-registry.md   ← Task type → agent routing map

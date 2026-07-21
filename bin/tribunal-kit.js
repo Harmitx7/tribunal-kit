@@ -745,7 +745,7 @@ You are running under Tribunal Kit in token-optimized mode. To minimize prompt t
           const newData = JSON.parse(content);
 
           if (!existingData.rules) existingData.rules = [];
-          const rulePath = newData.rules[0].path;
+          const _rulePath = newData.rules[0].path;
           
           // Clear both standard and optimized paths to prevent duplicates/stale paths
           existingData.rules = existingData.rules.filter(

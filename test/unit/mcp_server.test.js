@@ -3,8 +3,8 @@
 // Set environment to test so that mcp-server exports handleRequest and stripBoilerplate
 process.env.NODE_ENV = "test";
 
-const path = require("path");
-const fs = require("fs");
+const _path = require("path");
+const _fs = require("fs");
 const { handleRequest, stripBoilerplate } = require("../../bin/mcp-server");
 
 describe("MCP Server Boilerplate Stripper", () => {

@@ -186,7 +186,6 @@ repos:
 | Script                     | Purpose                                   | Run With                                         |
 | -------------------------- | ----------------------------------------- | ------------------------------------------------ |
 | `.agent/scripts/lint_runner.js`   | Runs project linting and reports findings | `node .agent/scripts/lint_runner.js <project_path>`   |
-| `scripts/type_coverage.py`       | Measures TypeScript type coverage         | `python scripts/type_coverage.py <project_path>` |
 
 ---
 

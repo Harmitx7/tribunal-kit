@@ -1,7 +1,7 @@
 const { detectSignals } = require("../../.agent/scripts/signal_detector");
 const {
-  semanticDelta,
-  architecturalWeight,
+  _semanticDelta,
+  _architecturalWeight,
 } = require("../../.agent/scripts/skill_evolution");
 
 describe("signal_detector.js", () => {

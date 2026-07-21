@@ -128,7 +128,7 @@ complexity-reviewer→ Enforces the Dependency Ladder to prevent over-engineerin
 | `aria`, `wcag`, `a11y`, `accessibility`                     | `accessibility-reviewer` + `ui-ux-auditor`                     |
 | `import`, `package`, `npm`, `require`                       | `dependency-reviewer`                                          |
 
-> For maximum safety on critical code: use `/tribunal-full` for all 20 reviewers simultaneously.
+> For maximum safety on critical code: use `/tribunal-full` for all 19 reviewers simultaneously.
 
 ---
 

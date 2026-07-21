@@ -117,6 +117,21 @@ enum Commands {
         #[arg(long, default_value_t = false)]
         quiet: bool,
     },
+
+    /// Bounded edit step for SkillOpt text-space optimization
+    OptimizeStep {
+        /// Path to the skill file to optimize
+        #[arg(long)]
+        skill_path: String,
+
+        /// JSON string containing the proposed edits
+        #[arg(long)]
+        edits_json: String,
+
+        /// Maximum edit budget L_t
+        #[arg(long, default_value_t = 4)]
+        budget: u32,
+    },
 }
 
 #[derive(Subcommand)]
@@ -288,6 +303,8 @@ async fn main() -> Result<()> {
         Commands::Uninstall { path, dry_run, quiet } => cmd_uninstall(&path, dry_run, quiet).await,
 
         Commands::Memory { action, path, quiet } => cmd_memory(&path, action, quiet).await,
+
+        Commands::OptimizeStep { skill_path, edits_json, budget } => cmd_optimize_step(&skill_path, &edits_json, budget).await,
     }
 }
 
@@ -898,6 +915,23 @@ async fn generate_ide_bridges(target: &PathBuf, agent_dest: &PathBuf) -> Result<
     );
 
     Ok(())
+}
+
+async fn cmd_optimize_step(skill_path: &str, edits_json: &str, budget: u32) -> Result<()> {
+    match commands::optimize::optimize_skill_step(skill_path, edits_json, budget) {
+        Ok(report) => {
+            println!("{}", report);
+            Ok(())
+        }
+        Err(e) => {
+            let error_json = serde_json::json!({
+                "success": false,
+                "error": e.to_string()
+            });
+            println!("{}", serde_json::to_string(&error_json)?);
+            Err(e)
+        }
+    }
 }
 
 // ── Tests ───────────────────────────────────────────────────────────────────
