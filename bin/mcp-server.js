@@ -7,8 +7,8 @@
  * over standard I/O, allowing AI clients (Cursor, Windsurf, Claude) to natively
  * invoke tribunal checks.
  *
- * PERF: Commands are loaded in-process via require() — no child process spawn.
- * This eliminates ~200-500ms overhead per tool call that spawnSync introduced.
+ * In-process tools load reusable modules directly. Commands that depend on a
+ * standalone CLI process remain isolated deliberately.
  *
  * Protocol: MCP 2024-11-05 over JSON-RPC 2.0 / stdio
  */
@@ -18,7 +18,7 @@ const { spawnSync } = require("child_process");
 
 const PKG = require(path.resolve(__dirname, "../package.json"));
 
-// Timeout for spawned processes (30 seconds) — only used for Rust binary calls
+// Timeout for intentionally isolated child processes (30 seconds).
 const SPAWN_TIMEOUT_MS = 30000;
 
 // Minimal JSON-RPC 2.0 over stdio
@@ -31,61 +31,60 @@ const rl = readline.createInterface({
 });
 
 /**
- * Run the validate command via the Rust binary (if available) or JS fallback.
- * This is the only command that still benefits from process spawn (Rust speed).
+ * Run the workspace integrity audit without invoking the CLI schema validator.
+ * The MCP audit is about Tribunal assets, while `tk validate` validates one
+ * explicitly supplied payload and schema.
  */
-function runValidateCommand() {
-  const os = require("os");
+function runTribunalAudit() {
   const fs = require("fs");
-  const isWindows = os.platform() === "win32";
-  const ext = isWindows ? ".exe" : "";
-  const platform = os.platform();
-  const arch = os.arch();
+  const projectRoot = process.cwd();
+  const manifestScript = path.join(
+    projectRoot,
+    ".agent",
+    "scripts",
+    "integrity_manifest.js",
+  );
 
-  // Try Rust binary first
-  const pkgName = `@tribunal-kit/core-${platform}-${arch}`;
-  let binPath = null;
+  if (!fs.existsSync(manifestScript)) {
+    return "Error: .agent/scripts/integrity_manifest.js was not found. Run `tk init` first.";
+  }
+
   try {
-    const pkgPath = require.resolve(`${pkgName}/package.json`);
-    const candidatePath = path.resolve(
-      path.dirname(pkgPath),
-      `bin/tribunal-core${ext}`,
-    );
-    if (fs.existsSync(candidatePath)) binPath = candidatePath;
-  } catch (_) {}
-  if (!binPath) {
-    const devPath = path.resolve(
-      __dirname,
-      "..",
-      "target",
-      "release",
-      `tribunal-core${ext}`,
-    );
-    if (fs.existsSync(devPath)) binPath = devPath;
-  }
+    const { generateManifest } = require(manifestScript);
+    const manifest = generateManifest(projectRoot);
+    if (manifest.error) return `Error: ${manifest.error}`;
 
-  if (binPath) {
-    const result = spawnSync(binPath, ["validate"], {
-      encoding: "utf8",
-      timeout: SPAWN_TIMEOUT_MS,
-    });
-    return result.stdout || result.stderr || "No output";
-  }
+    const { integrity } = manifest;
+    const lines = [
+      "Tribunal audit complete.",
+      `Agents: ${manifest.agents.total} (${manifest.agents.reviewer_count} reviewers)`,
+      `Skills: ${manifest.skills.total}`,
+      `Scripts: ${manifest.scripts.total}`,
+      `Workflows: ${manifest.workflows.total}`,
+      `References: ${integrity.total_references}; phantom references: ${integrity.phantom_references}`,
+      `Count claims: ${integrity.total_claims}; invalid claims: ${integrity.invalid_claims}`,
+    ];
 
-  // JS fallback — in-process
-  return "Validate command requires the Rust binary. Run: cargo build --release";
+    if (integrity.phantom_references > 0 || integrity.invalid_claims > 0) {
+      lines.push("Audit found integrity issues; run `tk guardrail --scan` for remediation details.");
+    } else {
+      lines.push("All discovered references and global asset-count claims are valid.");
+    }
+    return lines.join("\n");
+  } catch (error) {
+    return `Audit failed: ${error.message}`;
+  }
 }
 
 /**
- * Search case law — loaded in-process for zero-spawn latency.
+ * Search case law in an isolated process because its CLI owns persistent state.
  */
 function searchCaseLaw(query) {
   const caseLawScript = path.resolve(
     __dirname,
     "../.agent/scripts/case_law_manager.js",
   );
-  // We still spawn for case_law_manager since it's a standalone script
-  // that modifies global state, but we use spawn with minimal overhead
+  // case_law_manager is a standalone stateful CLI, so retain its process boundary.
   const result = spawnSync(
     process.execPath,
     [caseLawScript, "search-cases", "--query", query],
@@ -301,7 +300,7 @@ function handleRequest(req) {
     }
 
     if (toolName === "run_tribunal_audit") {
-      const text = runValidateCommand();
+      const text = runTribunalAudit();
       return { content: [{ type: "text", text }] };
     }
 
@@ -548,5 +547,6 @@ if (process.env.NODE_ENV === "test") {
   module.exports = {
     handleRequest,
     stripBoilerplate,
+    runTribunalAudit,
   };
 }

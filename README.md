@@ -20,7 +20,7 @@
       <img src="https://img.shields.io/badge/License-MIT-1a1a1f?style=for-the-badge&color=2d2d30" alt="License" />
     </a>
     <a href="CHANGELOG.md">
-      <img src="https://img.shields.io/badge/Release-v5.8.4-ccff00?style=for-the-badge&color=111111&logo=github&logoColor=ccff00" alt="Release Version" />
+      <img src="https://img.shields.io/badge/Release-v5.8.5-ccff00?style=for-the-badge&color=111111&logo=github&logoColor=ccff00" alt="Release Version" />
     </a>
     <a href="mcp_config.json">
       <img src="https://img.shields.io/badge/MCP-Ready-00c2ff?style=for-the-badge&logo=openai&logoColor=111" alt="MCP Server" />
@@ -40,7 +40,7 @@
     <strong style="color: #ffffff; font-size: 1.1em;">AI GENERATES CODE. TRIBUNAL KIT GOVERNS IT.</strong>
   </div>
   <p style="color: #c9c9d1; font-size: 0.95em; line-height: 1.6; margin: 0;">
-    A zero-bloat <strong>.agent/</strong> intelligence payload and <strong>Model Context Protocol (MCP) server</strong> that upgrades your IDEs (<a href="#" style="color: #ccff00; text-decoration: none;">Cursor</a>, <a href="#" style="color: #ccff00; text-decoration: none;">VSCode</a>, <a href="#" style="color: #ccff00; text-decoration: none;">Windsurf</a>) and terminal AI coding assistants (<a href="#" style="color: #ccff00; text-decoration: none;">Claude Code</a>, <a href="#" style="color: #ccff00; text-decoration: none;">Aider</a>) with <strong>44 specialist agents</strong>, <strong>34 workflows</strong>, and a parallel <strong>20-reviewer Tribunal pipeline</strong>. Establishes absolute runtime correctness, optimizes context windows, and heavily mitigates AI code hallucinations.
+    A zero-bloat <strong>.agent/</strong> intelligence payload and <strong>Model Context Protocol (MCP) server</strong> that upgrades your IDEs (<a href="#" style="color: #ccff00; text-decoration: none;">Cursor</a>, <a href="#" style="color: #ccff00; text-decoration: none;">VSCode</a>, <a href="#" style="color: #ccff00; text-decoration: none;">Windsurf</a>) and terminal AI coding assistants (<a href="#" style="color: #ccff00; text-decoration: none;">Claude Code</a>, <a href="#" style="color: #ccff00; text-decoration: none;">Aider</a>) with <strong>44 specialist agents</strong>, <strong>34 workflows</strong>, and a parallel <strong>19-reviewer Tribunal pipeline</strong>. Establishes absolute runtime correctness, optimizes context windows, and heavily mitigates AI code hallucinations.
   </p>
 </div>
 
@@ -210,7 +210,7 @@ npx tribunal-kit status
 
 Code generation is solved. **Code correctness is the frontier.** 
 
-The Tribunal Pipeline intercepts raw agent generation and routes it through a parallel suite of **20 domain-specific reviewers** before presenting changes to the developer:
+The Tribunal Pipeline intercepts raw agent generation and routes it through a parallel suite of **19 domain-specific reviewers** before presenting changes to the developer:
 
 ```mermaid
 graph TD
@@ -221,7 +221,7 @@ graph TD
     C -.->|Failed| E[Maker Auto-Correction]
     E -.-> C
 
-    D -->|20 Domain Reviewers| F[Human Gate]
+    D -->|19 Domain Reviewers| F[Human Gate]
     F -->|Approved| G((Committed to Disk))
 
     classDef default fill:#1a1a1a,stroke:#333,stroke-width:2px,color:#fff;

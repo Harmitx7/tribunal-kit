@@ -1,7 +1,7 @@
 {
   "name": "tribunal-kit",
-  "version": "5.8.4",
-  "description": "The operating system for AI software engineering — governance, memory, review pipelines, and reusable skills for every coding agent. 43 specialist agents, 34 workflows, 20 parallel Tribunal code reviewers, MCP server, Rust core engine, and long-running autonomous agent harness for Cursor, VSCode, Windsurf, Claude Code, and Aider.",
+  "version": "5.8.5",
+  "description": "The operating system for AI software engineering — governance, memory, review pipelines, and reusable skills for every coding agent. 44 specialist agents, 34 workflows, 19 parallel Tribunal code reviewers, MCP server, Rust core engine, and long-running autonomous agent harness for Cursor, VSCode, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
     "ai-agent",
@@ -93,7 +93,7 @@
     "benchmark:rust": "cargo build --release && node scripts/benchmark.js",
     "build:rust": "cargo build --release",
     "test:rust": "cargo test --manifest-path crates/core/Cargo.toml",
-    "build": "echo 'No build step required for this project'"
+    "build": "npm run build:rust"
   },
   "devDependencies": {
     "eslint": "^9.1.1",
@@ -101,12 +101,12 @@
     "typescript": "^5.4.5"
   },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^5.8.4",
-    "@tribunal-kit/core-darwin-x64": "^5.8.4",
-    "@tribunal-kit/core-linux-arm64": "^5.8.4",
-    "@tribunal-kit/core-linux-x64": "^5.8.4",
-    "@tribunal-kit/core-win32-arm64": "^5.8.4",
-    "@tribunal-kit/core-win32-x64": "^5.8.4"
+    "@tribunal-kit/core-darwin-arm64": "^5.8.5",
+    "@tribunal-kit/core-darwin-x64": "^5.8.5",
+    "@tribunal-kit/core-linux-arm64": "^5.8.5",
+    "@tribunal-kit/core-linux-x64": "^5.8.5",
+    "@tribunal-kit/core-win32-arm64": "^5.8.5",
+    "@tribunal-kit/core-win32-x64": "^5.8.5"
   },
   "jest": {
     "testMatch": [
@@ -115,7 +115,8 @@
     "testEnvironment": "node",
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
-      "bin/**/*.js"
+      "bin/**/*.js",
+      ".agent/scripts/**/*.js"
     ]
   }
 }

@@ -10,7 +10,7 @@ const {
   ruleUnresolvedVerify,
   ruleNumericConsistency,
   _ruleImportPhantom,
-} = require("../../../.agent/scripts/guardrail_engine");
+} = require("../../.agent/scripts/guardrail_engine");
 
 describe("ruleScriptExtension", () => {
   const manifest = {
@@ -57,6 +57,17 @@ describe("ruleReviewerCount", () => {
     expect(violations.length).toBe(1);
     expect(violations[0].severity).toBe("warning");
     expect(violations[0].fix.replace).toContain("20 reviewers");
+  });
+
+  test("does not reinterpret an agent total as a reviewer total", () => {
+    const violations = ruleReviewerCount("The payload includes 44 specialist agents.", manifest);
+    expect(violations).toEqual([]);
+  });
+
+  test("recognizes qualified reviewer-count claims", () => {
+    const violations = ruleReviewerCount("The pipeline has 19 parallel Tribunal code reviewers.", manifest);
+    expect(violations).toHaveLength(1);
+    expect(violations[0].message).toContain("Claims 19 reviewers");
   });
 });
 

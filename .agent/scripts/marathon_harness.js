@@ -24,6 +24,7 @@
 const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
+const { findAgentDir } = require("./_utils");
 
 const {
   GREEN,
@@ -42,7 +43,11 @@ const {
 } = require("./_colors");
 
 // ── Paths ────────────────────────────────────────────────────────────────────
-const MARATHON_DIR = path.resolve(".agent", "history", "marathon");
+function getMarathonDir(startDir = process.cwd()) {
+  return path.join(findAgentDir(startDir), "history", "marathon");
+}
+
+const MARATHON_DIR = getMarathonDir();
 const FEATURE_LIST_FILE = path.join(MARATHON_DIR, "feature_list.json");
 const PROGRESS_FILE = path.join(MARATHON_DIR, "progress.json");
 const ARCHIVE_DIR = path.join(MARATHON_DIR, "archive");
@@ -1048,6 +1053,10 @@ function main() {
       showHelp();
   }
 }
+
+module.exports = {
+  getMarathonDir,
+};
 
 if (require.main === module) {
   main();

@@ -106,6 +106,11 @@ function cmdHelp(quiet = false) {
     (0, logger_1.log)(cmd('compile', 'Compile rules into a static instruction file for terminal agents'));
     (0, logger_1.log)(cmd('memory', '4-Type Taxonomy Persistent Memory Engine (store, recall, gc, stats, export)'));
     (0, logger_1.log)(cmd('optimize-skill', 'Optimize project skills actively using SkillOpt validation gates'));
+    (0, logger_1.log)(cmd('validate', 'Validate a JSON payload against a Tribunal schema'));
+    (0, logger_1.log)(cmd('min-context', 'Remove empty lines from a context file'));
+    (0, logger_1.log)(cmd('dag-schedule', 'Compute parallel execution waves from task dependencies'));
+    (0, logger_1.log)(cmd('context-compress', 'Compress a context file while retaining VERIFY comments'));
+    (0, logger_1.log)(cmd('optimize-step', 'Apply bounded SkillOpt edits from a JSON payload'));
     (0, logger_1.log)(cmd('guardrail', 'Validate .agent/ integrity (phantom refs, count mismatches, drift)'));
     (0, logger_1.log)(cmd('uninstall', 'Remove .agent/ folder from project'));
     console.log();
@@ -265,6 +270,31 @@ async function runWithUpdateCheck(command, flags) {
         case 'guardrail': {
             const cmdGuardrail = loadCmd('./commands/guardrail', 'cmdGuardrail');
             await cmdGuardrail(flags, process.argv, quiet);
+            break;
+        }
+        case 'validate': {
+            const cmdValidate = loadCmd('./commands/validate', 'cmdValidate');
+            cmdValidate(flags, process.argv, quiet);
+            break;
+        }
+        case 'min-context': {
+            const cmdMinContext = loadCmd('./commands/native', 'cmdMinContext');
+            cmdMinContext(process.argv, quiet);
+            break;
+        }
+        case 'dag-schedule': {
+            const cmdDagSchedule = loadCmd('./commands/native', 'cmdDagSchedule');
+            cmdDagSchedule(process.argv, quiet);
+            break;
+        }
+        case 'context-compress': {
+            const cmdContextCompress = loadCmd('./commands/native', 'cmdContextCompress');
+            cmdContextCompress(process.argv, quiet);
+            break;
+        }
+        case 'optimize-step': {
+            const cmdOptimizeStep = loadCmd('./commands/native', 'cmdOptimizeStep');
+            cmdOptimizeStep(process.argv, quiet);
             break;
         }
         case 'help':

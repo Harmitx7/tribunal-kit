@@ -75,9 +75,9 @@ describe("cmdMarathon", () => {
     await cmdMarathon(flags);
 
     expect(spawn).toHaveBeenCalledWith(
-      process.execPath,
-      [expect.stringContaining("marathon_harness.js"), "status"],
-      expect.any(Object),
+      expect.stringContaining("marathon_harness.js"),
+      [],
+      expect.objectContaining({ cwd: expect.any(String), shell: true }),
     );
     expect(mockExit).not.toHaveBeenCalled();
 

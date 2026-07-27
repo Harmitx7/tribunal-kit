@@ -82,8 +82,9 @@ function crawlAgents(agentDir) {
     const content = safeReadFile(path.join(agentsDir, file));
     const fm = parseFrontmatter(content);
     const isReviewer =
-      /reviewer|auditor|tester/i.test(name) ||
+      /reviewer|auditor|tester|throughput-optimizer/i.test(name) ||
       (fm.role && /reviewer/i.test(fm.role));
+
 
     if (isReviewer) {
       reviewers.push(name);
@@ -239,7 +240,10 @@ function extractNumericClaims(filePath, content, agentDir, actualCounts) {
   const lines = content.split(/\r?\n/);
 
   const claimPatterns = [
-    { regex: /(\d+)[-\s]+(?:parallel\s+)?(?:reviewers?|agents?)/gi, entity: "reviewers" },
+    {
+      regex: /(\d+)\s*(?:-\s*)?(?:(?:parallel|domain(?:-specific)?|tribunal|code)\s+)*reviewers?\b/gi,
+      entity: "reviewers",
+    },
     { regex: /(\d+)\s*(?:specialist\s+)?agents?\b/gi, entity: "agents" },
     { regex: /(\d+)\s*(?:modular\s+)?skills?\b/gi, entity: "skills" },
     { regex: /(\d+)\s*(?:slash\s+)?workflows?\b/gi, entity: "workflows" },
@@ -253,8 +257,10 @@ function extractNumericClaims(filePath, content, agentDir, actualCounts) {
       let match;
       while ((match = regex.exec(line)) !== null) {
         const claimed = parseInt(match[1], 10);
-        // Skip tiny numbers (likely not count claims) and very large numbers
-        if (claimed < 3 || claimed > 500) continue;
+        // This manifest describes the full Tribunal payload, so small local
+        // counts (for example, "3 skills" in one skill group) are not global
+        // asset claims. Skip them along with implausibly large values.
+        if (claimed < 5 || claimed > 500) continue;
 
         const actual = actualCounts[entity];
         if (actual !== undefined) {

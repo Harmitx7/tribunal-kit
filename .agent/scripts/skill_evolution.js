@@ -42,27 +42,22 @@ const {
   RESET,
 } = require("./_colors");
 
-// ── Find .agent directory ─────────────────────────────────────────────────────
-function findAgentDir() {
-  let current = path.resolve(process.cwd());
-  const root = path.parse(current).root;
-  while (current !== root) {
-    const candidate = path.join(current, ".agent");
-    if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory())
-      return candidate;
-    current = path.dirname(current);
-  }
-  console.error(
-    `${RED}✖ Error: '.agent' directory not found. Please run 'npx tribunal-kit init' first.${RESET}`,
-  );
-  process.exit(1);
-}
+// ── Shared Utilities ──────────────────────────────────────────────────────────
+const { findAgentDir } = require("./_utils");
 
-const AGENT_DIR = findAgentDir();
-const SKILL_DIR = path.join(AGENT_DIR, "skills", "project-idioms");
-const SKILL_FILE = path.join(SKILL_DIR, "SKILL.md");
-const HISTORY_DIR = path.join(AGENT_DIR, "history", "skill-evolution");
-const LOG_FILE = path.join(HISTORY_DIR, "digest-log.json");
+
+function getPaths(startDir = process.cwd()) {
+  const agentDir = findAgentDir(startDir);
+  const skillDir = path.join(agentDir, "skills", "project-idioms");
+  const historyDir = path.join(agentDir, "history", "skill-evolution");
+  return {
+    agentDir,
+    skillDir,
+    skillFile: path.join(skillDir, "SKILL.md"),
+    historyDir,
+    logFile: path.join(historyDir, "digest-log.json"),
+  };
+}
 
 // ── Architectural Weight Patterns ────────────────────────────────────────────
 const HIGH_WEIGHT_PATTERNS = [
@@ -217,8 +212,9 @@ function countTokensEstimate(text) {
 
 // ── Idiom management ──────────────────────────────────────────────────────────
 function loadExistingIdioms() {
-  if (!fs.existsSync(SKILL_FILE)) return [];
-  const content = fs.readFileSync(SKILL_FILE, "utf8");
+  const { skillFile } = getPaths();
+  if (!fs.existsSync(skillFile)) return [];
+  const content = fs.readFileSync(skillFile, "utf8");
   const idioms = [];
   const pattern =
     /\|\s*(\d+)\s*\|\s*`([^`]+)`\s*\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|/g;
@@ -358,10 +354,11 @@ function parseLlmYamlResponse(response) {
 
 // ── Log helpers ────────────────────────────────────────────────────────────────
 function loadLog() {
-  fs.mkdirSync(HISTORY_DIR, { recursive: true });
-  if (fs.existsSync(LOG_FILE)) {
+  const { historyDir, logFile } = getPaths();
+  fs.mkdirSync(historyDir, { recursive: true });
+  if (fs.existsSync(logFile)) {
     try {
-      return JSON.parse(fs.readFileSync(LOG_FILE, "utf8"));
+      return JSON.parse(fs.readFileSync(logFile, "utf8"));
     } catch {
       /* fallthrough */
     }
@@ -370,8 +367,9 @@ function loadLog() {
 }
 
 function saveLog(log) {
-  fs.mkdirSync(HISTORY_DIR, { recursive: true });
-  fs.writeFileSync(LOG_FILE, JSON.stringify(log, null, 2), "utf8");
+  const { historyDir, logFile } = getPaths();
+  fs.mkdirSync(historyDir, { recursive: true });
+  fs.writeFileSync(logFile, JSON.stringify(log, null, 2), "utf8");
 }
 
 // ── Auto-LLM API Integration ─────────────────────────────────────────────────
@@ -847,8 +845,9 @@ async function cmdDigest(args) {
   if (added > 0) {
     log.total_idioms = merged.length;
     const skillMd = renderSkillMd(merged, (log.cycles || []).length + 1);
-    fs.mkdirSync(SKILL_DIR, { recursive: true });
-    fs.writeFileSync(SKILL_FILE, skillMd, "utf8");
+    const { skillDir, skillFile } = getPaths();
+    fs.mkdirSync(skillDir, { recursive: true });
+    fs.writeFileSync(skillFile, skillMd, "utf8");
     console.log(`  ${GREEN}✔ ${added} new idiom(s) added to SKILL.md${RESET}`);
   } else {
     console.log(`  ${DIM}  No new unique idioms added to SKILL.md.${RESET}`);
@@ -944,22 +943,24 @@ async function cmdDigest(args) {
 }
 
 function cmdShow() {
-  if (!fs.existsSync(SKILL_FILE)) {
+  const { skillFile } = getPaths();
+  if (!fs.existsSync(skillFile)) {
     console.log(
       `${YELLOW}No project-idioms skill found. Run 'digest' first.${RESET}`,
     );
     return;
   }
-  console.log(fs.readFileSync(SKILL_FILE, "utf8"));
+  console.log(fs.readFileSync(skillFile, "utf8"));
 }
 
 function cmdReset() {
-  if (fs.existsSync(SKILL_FILE)) {
-    fs.unlinkSync(SKILL_FILE);
+  const { skillFile, logFile } = getPaths();
+  if (fs.existsSync(skillFile)) {
+    fs.unlinkSync(skillFile);
     console.log(`${GREEN}✔ project-idioms/SKILL.md deleted.${RESET}`);
   }
-  if (fs.existsSync(LOG_FILE)) {
-    fs.unlinkSync(LOG_FILE);
+  if (fs.existsSync(logFile)) {
+    fs.unlinkSync(logFile);
     console.log(`${GREEN}✔ Digest log cleared.${RESET}`);
   }
   console.log(`${DIM}Run 'digest' to start a fresh evolution cycle.${RESET}`);
@@ -970,7 +971,8 @@ function cmdStatus() {
   const cycles = log.cycles || [];
   const totalSaved = log.total_tokens_saved || 0;
   const totalIdioms = log.total_idioms || 0;
-  const idiomsExist = fs.existsSync(SKILL_FILE);
+  const { skillFile } = getPaths();
+  const idiomsExist = fs.existsSync(skillFile);
 
   console.log(
     `\n${BOLD}${CYAN}━━━ Skill Evolution Status ━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`,
@@ -1045,6 +1047,7 @@ module.exports = {
   architecturalWeight,
   parseLlmYamlResponse,
   loadExistingIdioms,
+  getPaths,
 };
 
 if (require.main === module) {

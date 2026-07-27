@@ -104,7 +104,7 @@ function ruleReviewerCount(content, manifest, _ctx) {
   const actualCount = manifest.agents ? manifest.agents.reviewer_count : null;
   if (actualCount === null) return violations;
 
-  const countRegex = /(\d+)[-\s]+(?:parallel\s+)?(?:reviewers?|agents?)/gi;
+  const countRegex = /(\d+)\s*(?:-\s*)?(?:(?:parallel|domain(?:-specific)?|tribunal|code)\s+)*reviewers?\b/gi;
   let match;
   while ((match = countRegex.exec(content)) !== null) {
     const claimed = parseInt(match[1], 10);

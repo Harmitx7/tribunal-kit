@@ -21,7 +21,12 @@ const RUST_COMMANDS = new Set([
   "hook",
   "uninstall",
   "memory",
+  "min-context",
+  "dag-schedule",
+  "context-compress",
+  "optimize-step",
 ]);
+
 
 // Determine the path to the compiled Rust binary
 // In a full production release, this checks optionalDependencies in node_modules
@@ -30,6 +35,11 @@ function getBinaryPath() {
   if (process.env.TRIBUNAL_FORCE_JS === "1") {
     return null;
   }
+
+  if (process.env.TRIBUNAL_CORE_PATH && fs.existsSync(process.env.TRIBUNAL_CORE_PATH)) {
+    return process.env.TRIBUNAL_CORE_PATH;
+  }
+
   const isWindows = os.platform() === "win32";
   const ext = isWindows ? ".exe" : "";
   const platform = os.platform();
@@ -38,45 +48,60 @@ function getBinaryPath() {
   // First, try production resolution (from optionalDependencies)
   const pkgName = `@tribunal-kit/core-${platform}-${arch}`;
   try {
-    // Try to resolve the binary from the optional dependency package
     const pkgPath = require.resolve(`${pkgName}/package.json`);
-    const binPath = path.resolve(
-      path.dirname(pkgPath),
-      `bin/tribunal-core${ext}`,
-    );
+    const pkgDir = path.dirname(pkgPath);
+    const binPath = path.resolve(pkgDir, `bin/tribunal-core${ext}`);
     if (fs.existsSync(binPath)) {
       return binPath;
+    }
+    const rootBinPath = path.resolve(pkgDir, `tribunal-core${ext}`);
+    if (fs.existsSync(rootBinPath)) {
+      return rootBinPath;
     }
   } catch {
     // Package not found, ignore and fall back to local dev targets
   }
 
-  // Second, try to find the binary compiled from crates/core/Cargo.toml (Local dev)
-  const devPath = path.resolve(
-    __dirname,
-    "..",
-    "target",
-    "release",
-    `tribunal-core${ext}`,
-  );
-  if (fs.existsSync(devPath)) {
-    return devPath;
+  // Second, try to find the binary in local dev target directories
+  const candidatePaths = [
+    path.resolve(__dirname, "..", "target", "release", `tribunal-core${ext}`),
+    path.resolve(__dirname, "..", "target", "debug", `tribunal-core${ext}`),
+    path.resolve(__dirname, "..", "..", "target", "release", `tribunal-core${ext}`),
+    path.resolve(__dirname, "..", "..", "target", "debug", `tribunal-core${ext}`),
+    path.resolve(process.cwd(), "target", "release", `tribunal-core${ext}`),
+    path.resolve(process.cwd(), "target", "debug", `tribunal-core${ext}`),
+    path.resolve(process.cwd(), "tribunal-kit", "target", "release", `tribunal-core${ext}`),
+    path.resolve(process.cwd(), "tribunal-kit", "target", "debug", `tribunal-core${ext}`),
+  ];
+
+  for (const candidate of candidatePaths) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
   }
 
-  // Third, try target/debug (if they ran `cargo build` instead of `--release`)
-  const debugPath = path.resolve(
-    __dirname,
-    "..",
-    "target",
-    "debug",
-    `tribunal-core${ext}`,
-  );
-  if (fs.existsSync(debugPath)) {
-    return debugPath;
+  // Third, attempt on-demand compilation if Cargo.toml exists locally and cargo is installed
+  const cargoTomlPath = path.resolve(__dirname, "..", "Cargo.toml");
+  if (fs.existsSync(cargoTomlPath)) {
+    try {
+      const buildResult = spawnSync("cargo", ["build", "--release"], {
+        cwd: path.resolve(__dirname, ".."),
+        stdio: "ignore",
+      });
+      if (buildResult.status === 0) {
+        const releasePath = candidatePaths[0];
+        if (fs.existsSync(releasePath)) {
+          return releasePath;
+        }
+      }
+    } catch {
+      // cargo not available or build failed, fallback gracefully
+    }
   }
 
   return null;
 }
+
 
 function runRustBinary(binPath, args) {
   const stdio = [

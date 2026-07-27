@@ -24,18 +24,8 @@ const { CYAN, GREEN, YELLOW, RED, BOLD, RESET } = require("./_colors");
 
 const REPORT_FILE = "skill-integration-report.md";
 
-function findAgentDir(startPathStr) {
-  let current = path.resolve(startPathStr);
-  const root = path.parse(current).root;
-  while (current !== root) {
-    const agentDir = path.join(current, ".agent");
-    if (fs.existsSync(agentDir) && fs.statSync(agentDir).isDirectory()) {
-      return agentDir;
-    }
-    current = path.dirname(current);
-  }
-  return null;
-}
+const { findAgentDir } = require("./_utils");
+
 
 function getAssociatedScript(skillDir, scriptsDir) {
   /** Check if the skill has an explicit frontmatter script or an implicit script file. */

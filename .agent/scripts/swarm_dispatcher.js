@@ -52,7 +52,7 @@ class SwarmDashboard {
   }
 
   start() {
-    console.clear();
+    this.render();
     this.timer = setInterval(() => this.render(), 80);
   }
 
@@ -89,6 +89,40 @@ const MAX_GOAL_LENGTH = 200;
 const MAX_CONTEXT_LENGTH = 800;
 const MAX_WORKERS_PER_SWARM = 5;
 
+function getBinaryPath() {
+  if (process.env.TRIBUNAL_FORCE_JS === "1") return null;
+  const isWindows = process.platform === "win32";
+  const ext = isWindows ? ".exe" : "";
+  const candidates = [
+    process.env.TRIBUNAL_CORE_PATH,
+    path.resolve(__dirname, "..", "..", "tribunal-kit", "target", "release", `tribunal-core${ext}`),
+    path.resolve(__dirname, "..", "..", "target", "release", `tribunal-core${ext}`),
+    path.resolve(process.cwd(), "target", "release", `tribunal-core${ext}`),
+    path.resolve(process.cwd(), "tribunal-kit", "target", "release", `tribunal-core${ext}`),
+  ];
+  for (const c of candidates) {
+    if (c && fs.existsSync(c)) return c;
+  }
+  return null;
+}
+
+function nativeValidate(file, schemaType) {
+  const bin = getBinaryPath();
+  if (!bin || !file || !fs.existsSync(file)) return null;
+  try {
+    const { spawnSync } = require("child_process");
+    const res = spawnSync(bin, ["validate", "--file", file, "--schema", schemaType], {
+      encoding: "utf-8",
+    });
+    if (res.status === 0) {
+      return true;
+    }
+  } catch {
+    // fallback to JS engine
+  }
+  return null;
+}
+
 function findAgentDir(startPath) {
   let current = path.resolve(startPath);
   const root = path.parse(current).root;
@@ -104,7 +138,14 @@ function findAgentDir(startPath) {
 
 // ─── Legacy mode: validate orchestrator micro-worker payloads ──────────────────
 
-function validatePayload(payloadData, workspaceRoot, agentsDir) {
+function validatePayload(payloadData, workspaceRoot, agentsDir, payloadFile = null) {
+  if (payloadFile) {
+    const nativeResult = nativeValidate(payloadFile, "micro-worker");
+    if (nativeResult === true) {
+      return true;
+    }
+  }
+
   if (!payloadData.dispatch_micro_workers) {
     console.error(
       "ERROR: Payload missing required 'dispatch_micro_workers' array.",
@@ -311,7 +352,14 @@ function validateWorkerResult(res, index) {
   return errors;
 }
 
-function validateSwarmPayload(payloadData, agentsDir) {
+function validateSwarmPayload(payloadData, agentsDir, payloadFile = null) {
+  if (payloadFile) {
+    const nativeResult = nativeValidate(payloadFile, "swarm");
+    if (nativeResult === true) {
+      return true;
+    }
+  }
+
   let items;
   if (typeof payloadData === "object" && payloadData !== null) {
     if (Array.isArray(payloadData)) {
@@ -427,7 +475,7 @@ function main() {
   }
 
   if (mode === "swarm") {
-    if (!validateSwarmPayload(payloadData, agentsDir)) {
+    if (!validateSwarmPayload(payloadData, agentsDir, file)) {
       console.error("ERROR: Swarm payload validation failed.");
       process.exit(1);
     }
@@ -504,7 +552,7 @@ function main() {
       }
     }
   } else {
-    if (!validatePayload(payloadData, workspaceRoot, agentsDir)) {
+    if (!validatePayload(payloadData, workspaceRoot, agentsDir, file)) {
       console.error("ERROR: Payload validation failed.");
       process.exit(1);
     }
@@ -546,6 +594,7 @@ function main() {
 }
 
 module.exports = {
+  SwarmDashboard,
   validateWorkerRequest,
   validateWorkerResult,
   validateSwarmPayload,

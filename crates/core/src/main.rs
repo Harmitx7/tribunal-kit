@@ -132,6 +132,35 @@ enum Commands {
         #[arg(long, default_value_t = 4)]
         budget: u32,
     },
+
+    /// Rapid context minification for orchestrator token saving
+    MinContext {
+        /// Path to the file to minify
+        #[arg(short, long)]
+        file: String,
+
+        /// Maximum lines to retain
+        #[arg(long)]
+        max_lines: Option<usize>,
+    },
+
+    /// Compute concurrent execution waves for agent tasks using Kahn's topological sort
+    DagSchedule {
+        /// JSON array string of tasks with id and dependencies
+        #[arg(short, long)]
+        tasks: String,
+    },
+
+    /// Strip redundant comments and whitespace to compress agent context payloads
+    ContextCompress {
+        /// Path to the file to compress
+        #[arg(short, long)]
+        file: String,
+
+        /// Maximum lines to retain
+        #[arg(long)]
+        max_lines: Option<usize>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -194,10 +223,55 @@ enum SchemaType {
     Marathon,
     /// Memory entry schema
     Memory,
+    /// Swarm worker payload schema
+    Swarm,
+    /// Micro-worker dispatch schema
+    MicroWorker,
 }
 
 // ── Strict Data Schemas (Anti-Hallucination Barrier) ────────────────────────
 // serde will REJECT any JSON that doesn't match these exact shapes.
+// This is the mathematical guarantee against internal hallucination.
+
+#[derive(Serialize, Deserialize, Debug)]
+struct MicroWorkerDispatch {
+    target_agent: String,
+    #[serde(default)]
+    task_description: String,
+    #[serde(default)]
+    context_summary: String,
+    #[serde(default)]
+    files_attached: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct MicroWorkerPayload {
+    dispatch_micro_workers: Vec<MicroWorkerDispatch>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct WorkerRequest {
+    #[serde(default)]
+    task_id: String,
+    #[serde(default)]
+    worker_type: String,
+    #[serde(default)]
+    target_agent: String,
+    #[serde(default)]
+    goal: String,
+    #[serde(default)]
+    context: String,
+    #[serde(default)]
+    files: Vec<String>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct SwarmPayload {
+    #[serde(default)]
+    workers: Vec<WorkerRequest>,
+    #[serde(default)]
+    dispatch_micro_workers: Vec<MicroWorkerDispatch>,
+}
 // This is the mathematical guarantee against internal hallucination.
 
 /// The output payload returned by the `init` command.
@@ -305,6 +379,38 @@ async fn main() -> Result<()> {
         Commands::Memory { action, path, quiet } => cmd_memory(&path, action, quiet).await,
 
         Commands::OptimizeStep { skill_path, edits_json, budget } => cmd_optimize_step(&skill_path, &edits_json, budget).await,
+
+        Commands::MinContext { file, max_lines } => cmd_min_context(&file, max_lines).await,
+
+        Commands::DagSchedule { tasks } => cmd_dag_schedule(&tasks).await,
+
+        Commands::ContextCompress { file, max_lines } => cmd_context_compress(&file, max_lines).await,
+    }
+}
+
+async fn cmd_dag_schedule(tasks_json: &str) -> Result<()> {
+    match commands::dag_scheduler::schedule_dag(tasks_json) {
+        Ok(json_output) => {
+            println!("{}", json_output);
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ DAG scheduling failed: {:#}", e);
+            std::process::exit(1);
+        }
+    }
+}
+
+async fn cmd_context_compress(file: &str, max_lines: Option<usize>) -> Result<()> {
+    match commands::context_compress::compress_context(file, max_lines) {
+        Ok(json_output) => {
+            println!("{}", json_output);
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ Context compression failed: {:#}", e);
+            std::process::exit(1);
+        }
     }
 }
 
@@ -489,6 +595,16 @@ async fn cmd_validate(file: &str, schema: &SchemaType) -> Result<()> {
                 .with_context(|| "Memory entry schema validation failed")?;
             eprintln!("{} {}", "✔".green(), "Valid memory entry".bold());
         }
+        SchemaType::Swarm => {
+            let _parsed: SwarmPayload = serde_json::from_str(&content)
+                .with_context(|| "Swarm payload schema validation failed")?;
+            eprintln!("{} {}", "✔".green(), "Valid swarm payload".bold());
+        }
+        SchemaType::MicroWorker => {
+            let _parsed: MicroWorkerPayload = serde_json::from_str(&content)
+                .with_context(|| "MicroWorker payload schema validation failed")?;
+            eprintln!("{} {}", "✔".green(), "Valid micro-worker payload".bold());
+        }
         SchemaType::Workflow | SchemaType::Skill => {
             eprintln!("{} {}", "⚠".yellow(), "Workflow/Skill validation requires YAML frontmatter parsing (coming in Wave 3)".yellow().dimmed());
         }
@@ -502,6 +618,39 @@ async fn cmd_validate(file: &str, schema: &SchemaType) -> Result<()> {
     });
     println!("{}", serde_json::to_string(&output)?);
 
+    Ok(())
+}
+
+async fn cmd_min_context(file: &str, max_lines: Option<usize>) -> Result<()> {
+    let content = tokio::fs::read_to_string(file)
+        .await
+        .with_context(|| format!("Failed to read file for minification: {}", file))?;
+
+    let original_lines = content.lines().count();
+    let mut minified_lines: Vec<&str> = content
+        .lines()
+        .map(|l| l.trim_end())
+        .filter(|l| !l.trim().is_empty())
+        .collect();
+
+    if let Some(limit) = max_lines {
+        if minified_lines.len() > limit {
+            minified_lines.truncate(limit);
+        }
+    }
+
+    let minified_text = minified_lines.join("\n");
+    let result_lines = minified_lines.len();
+
+    let output = serde_json::json!({
+        "file": file,
+        "original_lines": original_lines,
+        "minified_lines": result_lines,
+        "lines_reduced": original_lines.saturating_sub(result_lines),
+        "minified": minified_text
+    });
+
+    println!("{}", serde_json::to_string(&output)?);
     Ok(())
 }
 

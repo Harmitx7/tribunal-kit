@@ -222,7 +222,7 @@ The Human Gate is never skipped. No code is written to a file without explicit u
 | Database/SQL          | logic + security + sql + schema + complexity-reviewer                                               |
 | Mobile/Cross-platform | logic + security + mobile-reviewer + type-safety + complexity-reviewer                              |
 | Any domain            | + performance (if optimization)                                                                     |
-| Before merge          | /tribunal-full (all 20)                                                                             |
+| Before merge          | /tribunal-full (all 19 reviewers)                                                                   |
 
 ---
 

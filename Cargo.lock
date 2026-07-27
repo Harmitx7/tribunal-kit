@@ -362,7 +362,7 @@ dependencies = [
 
 [[package]]
 name = "tribunal-core"
-version = "5.8.1"
+version = "5.8.5"
 dependencies = [
  "anyhow",
  "clap",

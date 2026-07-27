@@ -12,7 +12,7 @@ const {
   crawlWorkflows,
   extractCrossReferences,
   extractNumericClaims,
-} = require("../../../.agent/scripts/integrity_manifest");
+} = require("../../.agent/scripts/integrity_manifest");
 
 function makeTempDir(prefix = "tk-manifest-test-") {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -136,5 +136,17 @@ describe("cross-references and claims extraction", () => {
     expect(claims.length).toBe(2);
     expect(claims.find(c => c.claim.includes("reviewers")).valid).toBe(true);
     expect(claims.find(c => c.claim.includes("agents")).valid).toBe(false);
+  });
+
+  test("keeps agent totals separate and ignores local small skill groups", () => {
+    const content = "The payload has 44 specialist agents. This category has 3 skills.";
+    const claims = extractNumericClaims("test.md", content, "/fake/agent/dir", {
+      agents: 44,
+      reviewers: 19,
+      skills: 168,
+    });
+    expect(claims).toEqual([
+      expect.objectContaining({ claim: "44 agents", actual: 44, valid: true }),
+    ]);
   });
 });

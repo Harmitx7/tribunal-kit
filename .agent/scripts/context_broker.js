@@ -50,8 +50,10 @@
 const fs = require("fs");
 const path = require("path");
 
-// ── Colours ───────────────────────────────────────────────────────────────────
+// ── Colours & Shared Utilities ────────────────────────────────────────────────
 const { GREEN, YELLOW, CYAN, RED, BOLD, DIM, RESET } = require("./_colors");
+const { findAgentDir } = require("./_utils");
+
 
 // ── Domain → Skill affinity map ───────────────────────────────────────────────
 // Keywords in the user's task that strongly indicate specific skills.
@@ -352,25 +354,6 @@ const BASELINE_SKILLS = [
 ];
 
 // ── Skill catalogue (loaded from disk) ───────────────────────────────────────
-
-/**
- * Find the .agent directory by walking up from cwd.
- * @returns {string} path to .agent/
- */
-function findAgentDir() {
-  let current = path.resolve(process.cwd());
-  const root = path.parse(current).root;
-  while (current !== root) {
-    const candidate = path.join(current, ".agent");
-    if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory())
-      return candidate;
-    current = path.dirname(current);
-  }
-  console.error(
-    `${RED}✖ .agent/ not found. Run: npx tribunal-kit init${RESET}`,
-  );
-  process.exit(1);
-}
 
 /**
  * Parse the YAML frontmatter from a SKILL.md file.

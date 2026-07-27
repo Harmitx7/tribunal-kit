@@ -267,12 +267,13 @@ async function cmdInit(flags, quiet = false) {
             console.log(drawRow('  Next Steps:', (0, logger_1.c)('gray', '  Next Steps:')));
             console.log(stepRow('/generate', 'Generate code with reviews'));
             console.log(stepRow('/review', 'Audit existing code for issues'));
-            console.log(stepRow('/tribunal-full', 'Run all 20 reviewers in parallel'));
+            console.log(stepRow('/tribunal-full', 'Run all 19 reviewers in parallel'));
             console.log(drawRow('', ''));
             console.log(`  ${(0, logger_1.c)(borderCol, '└' + '─'.repeat(W) + '┘')}`);
             console.log();
             (0, logger_1.log)(`  ${(0, logger_1.c)('gray', '✦ Generating IDE bridge files...')}`);
             await generateIDEBridges(targetDir, agentDest, dryRun, isMinimal);
+            await scaffoldDesignSystem(targetDir, agentSrc, dryRun);
         }
         console.log();
     }
@@ -374,5 +375,28 @@ ${rulesContent}
     ];
     await Promise.all(bridges.map(b => writeBridge(b.path, b.content, b.label)));
     console.log();
+}
+async function scaffoldDesignSystem(targetDir, agentSrc, dryRun = false) {
+    const designMdSrc = path_1.default.join(agentSrc, 'templates', 'DESIGN.md');
+    const designTokensSrc = path_1.default.join(agentSrc, 'templates', 'design-tokens.json');
+    const designMdDest = path_1.default.join(targetDir, 'DESIGN.md');
+    const designTokensDest = path_1.default.join(targetDir, 'design-tokens.json');
+
+    const copyIfMissing = async (src, dest, label) => {
+        if (!fs_1.default.existsSync(src)) return;
+        if (fs_1.default.existsSync(dest)) {
+            (0, logger_1.dbg)(`  skip (exists): ${path_1.default.basename(dest)}`);
+            return;
+        }
+        if (dryRun) {
+            (0, logger_1.dbg)(`  would create: ${dest}`);
+            return;
+        }
+        await fs_1.default.promises.copyFile(src, dest);
+        (0, logger_1.ok)(`${label} → ${(0, logger_1.c)('gray', path_1.default.relative(targetDir, dest))}`);
+    };
+
+    await copyIfMissing(designMdSrc, designMdDest, 'DESIGN.md System');
+    await copyIfMissing(designTokensSrc, designTokensDest, 'Design Tokens');
 }
 

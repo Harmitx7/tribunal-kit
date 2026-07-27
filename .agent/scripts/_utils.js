@@ -226,9 +226,34 @@ function parseArgs(argv, schema = {}) {
 
 // ── Command Runner ──────────────────────────────────────────────────────────
 
+const WINDOWS_CMD_SHIMS = new Set(["npm", "npx", "pnpm", "yarn", "bun", "bunx"]);
+
+/**
+ * Select the executable that should be passed to spawnSync.
+ * Only package-manager shims need a .cmd suffix on Windows; native executables
+ * such as node, cargo, and git must retain their original names.
+ *
+ * @param {string} cmd - Command to run
+ * @param {string} [platform] - Platform override for deterministic testing
+ * @returns {string}
+ */
+function normalizeCommand(cmd, platform = process.platform) {
+  const lowerCaseCommand = cmd.toLowerCase();
+  const hasPath = cmd.includes("/") || cmd.includes("\\\\");
+  if (
+    platform === "win32" &&
+    !hasPath &&
+    !lowerCaseCommand.endsWith(".cmd") &&
+    WINDOWS_CMD_SHIMS.has(lowerCaseCommand)
+  ) {
+    return `${cmd}.cmd`;
+  }
+  return cmd;
+}
+
 /**
  * Run a command synchronously and return a structured result.
- * Handles Windows .cmd shims automatically.
+ * Handles known Windows package-manager shims without rewriting native tools.
  *
  * @param {string} cmd - Command to run
  * @param {string[]} args - Arguments
@@ -237,12 +262,7 @@ function parseArgs(argv, schema = {}) {
  */
 function runCommand(cmd, args = [], opts = {}) {
   const { spawnSync } = require("child_process");
-  const executable =
-    process.platform === "win32" &&
-    !cmd.endsWith(".cmd") &&
-    !cmd.includes(path.sep)
-      ? `${cmd}.cmd`
-      : cmd;
+  const executable = normalizeCommand(cmd);
 
   const result = spawnSync(executable, args, {
     encoding: "utf8",
@@ -275,5 +295,6 @@ module.exports = {
   // CLI
   parseArgs,
   // Commands
+  normalizeCommand,
   runCommand,
 };

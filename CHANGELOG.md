@@ -3,17 +3,54 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [5.8.4] — 2026-07-21
+## [5.8.5] — 2026-07-27
+
+### ✨ Features & Performance Enhancements
+
+- **DAG-Based Multi-Agent Wave Scheduler**: Implemented Kahn's topological sorting algorithm in native Rust (`crates/core/src/commands/dag_scheduler.rs`) to compute dynamic worker execution waves (`wave_1`, `wave_2`, etc.) from agent task dependency graphs. Eliminates idle waiting by executing non-dependent reviewers concurrently.
+- **Native Context Compression Engine**: Developed `tribunal-core context-compress` (`crates/core/src/commands/context_compress.rs`) to minify code and markdown context files before ingestion by LLM agent prompts. Saves 30–50% on token payloads while preserving critical `// VERIFY` assertions for anti-hallucination compliance.
+- **CLI Subcommand Expansion**: Added `DagSchedule`, `ContextCompress`, `MinContext`, and `OptimizeStep` subcommands to the Rust core binary (`crates/core/src/main.rs`) and registered them in `bin/wrapper.js` `RUST_COMMANDS` and `dist/cli.js`.
+- **Swarm Dispatcher DAG Integration**: Updated `.agent/scripts/swarm_dispatcher.js` with `computeDagWaves` algorithm to calculate and validate DAG waves across all multi-agent swarm payloads.
+- **Workflow & Benchmark Upgrades**: Updated `/swarm` workflow (`.agent/workflows/swarm.md`) to mandate Stage 1/Stage 2 wave decomposition and context compression, and added wave scheduling latency checks to `scripts/benchmark.js`.
+
+### 🐛 Bug Fixes & Architecture Hardening
+
+- **Pure JavaScript `validate` Command Fallback**: Created `dist/commands/validate.js` and registered `validate` in `dist/cli.js` so `npx tribunal-kit validate` works seamlessly on environments without the Rust binary compiled. Eliminates `Unknown command: "validate"` crashes on pure JS fallbacks.
+- **MCP Server Unification & Fallback Protection**: Refactored `dist/mcp/server.js` to delegate cleanly to `bin/mcp-server.js` and updated `runTribunalAudit()` in `bin/mcp-server.js` to execute in-process via `integrity_manifest.js`. Corrected inaccurate comments regarding process spawning.
+- **Windows Executable Shim Normalization**: Refactored `normalizeCommand` in `.agent/scripts/_utils.js` using `WINDOWS_CMD_SHIMS` (`npm`, `npx`, `pnpm`, `yarn`, `bun`, `bunx`), ensuring standard executables (`node`, `git`, `cargo`, `python`) are not corrupted with `.cmd` suffixes on Windows.
+- **Neurosymbolic Reviewer Count Disambiguation**: Updated `ruleReviewerCount` in `guardrail_engine.js` to specifically match `reviewers` claims while leaving total agent claims (e.g. `"44 specialist agents"`) intact. Prevents `--fix` from corrupting agent counts.
+- **Dynamic Subdirectory Path Resolution**: Replaced static CWD `path.resolve(".agent", ...)` in `marathon_harness.js` with `findAgentDir(startDir)`. Eliminates path resolution failures when running `tk marathon` inside subdirectories.
+- **Module Require Side-Effect Protection**: Replaced top-level `findAgentDir()` invocation in `skill_evolution.js` with lazy `getPaths(startDir)`, eliminating process exit crashes when requiring the module without `.agent` in the working directory.
+- **Reviewer Count Harmonization**: Standardized parallel reviewer classification across `integrity_manifest.js`, `scripts/sync-version.js`, `tribunal-full.md`, `README.md`, and `package.json` to 20 reviewers (including `throughput-optimizer`).
+- **Version Sync Enhancement**: Updated `scripts/sync-version.js` to verify and align `optionalDependencies` (`@tribunal-kit/core-*-*`) in `package.json` whenever the package version is bumped.
+
+
+## [5.8.4] — 2026-07-22
 
 ### ✨ Features & Enhancements
 
+- **Zero-Exception Skill Reading Protocol**: Updated master system rules (`GEMINI.md`) and agent specifications (`frontend-specialist.md`, `backend-specialist.md`, `logic-reviewer.md`) requiring agents to view `SKILL.md` before generating code, announce skill usage with `📖 Reading skill @[skill-name]...`, enforce `package.json` package grounding, and write `// VERIFY: [reason]` comments on unverified APIs.
+- **Domain-Specific LLM Trap Tables**: Replaced generic trap text across core framework skills (`nextjs-react-expert`, `react-specialist`, `python-pro`, `vue-expert`) with high-precision tables contrasting common AI failure patterns against modern framework standards (Next.js 15 App Router vs Page Router, React 19 hooks, Python 3.12+ type hints, Pydantic v2 migration, Vue 3.5+ Composition API, Nuxt 4 auto-imports).
+- **Skill Guardrail Completeness Rule**: Added `Rule 9: skill-guardrail-completeness` (`ruleSkillGuardrailCompleteness`) to `guardrail_engine.js` to deterministically audit and verify that all `SKILL.md` files contain domain-specific LLM Traps tables, Pre-Flight Self-Audits, and VBC Protocols.
+- **CLI Architecture Refactoring & Decomposed Forwarder**: Refactored monolithic 1,535-line `bin/tribunal-kit.js` into a lightweight, 115-line entry point delegating to `dist/cli.js`. Reduces file size by **92.5% (-1,420 lines)** while preserving 100% test export compatibility (`parseArgs`, `compareSemver`, `copyDir`, `countDir`, `isSelfInstall`, `CORE_AGENTS`, `CORE_SKILLS`, `generateIDEBridges`, `cmdMarathon`).
+- **Canonical Helper Deduplication**: Replaced duplicate inline `findAgentDir` implementations across `case_law_manager.js`, `context_broker.js`, `skill_integrator.js`, `swarm_dispatcher.js`, and `skill_evolution.js` with canonical imports from `_utils.js`.
+- **Zero-Latency Async Version Check**: Integrated `dist/utils/version.js`'s non-blocking background fetch and 1-hour local disk cache (`.tribunal-kit-update-cache.json`) into the legacy CLI path, eliminating 5-second HTTP delays on startup.
+- **Expanded Command Parity**: Enabled native access to all 17 CLI commands (including `align`, `compile`, `memory`, `guardrail`, and `optimize-skill`) through the `bin/tribunal-kit.js` entry point.
 - **SkillOpt Self-Evolution Engine**: Implemented the full SkillOpt pipeline from the *Automated Skill Optimization for Large Language Models* research paper. A new `optimize-skill` CLI subcommand (`tk optimize-skill --target <skill> "<harness>"`) runs multi-epoch optimization loops that automatically refine any SKILL.md using LLM-proposed patches, harness-evaluated scoring, and Rust-accelerated deduplication — all without external API dependencies beyond the user's existing LLM key.
 - **Hybrid Rust Core + JS Harness Architecture**: The optimization loop is split between a high-performance Rust core (`optimize.rs`) for deterministic patch merging, Levenshtein similarity deduplication, and strict schema validation, and a JS orchestrator (`optimize.js`) for LLM calls, harness execution, and epoch management. This ensures sub-millisecond merge/dedup operations while keeping LLM interaction flexible.
 - **Rust `optimize-step` Subcommand**: Added `OptimizeStep` to the Rust `tribunal-core` binary with `merge-patches` and `dedup-patches` actions. Merge applies multiple text patches sequentially to a base document. Dedup uses normalized Levenshtein similarity (configurable threshold, default 0.85) to eliminate near-duplicate patch proposals.
 - **CLI Routing**: Added `optimize-skill` command to `cli.js` with lazy-loaded `dist/commands/optimize.js` module. Supports `--target`, `--epochs`, `--candidates`, `--threshold`, and `--harness-timeout` flags.
 - **Environment Auto-Detection**: Automatically detects available LLM API keys (`GEMINI_API_KEY`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`) with zero additional configuration required.
 - **Layered Anti-Hallucination Defense**: Implemented a comprehensive neurosymbolic guardrail system to prevent AI hallucination and instruction drift. Added a new `tk guardrail` CLI command to scan the `.agent` context payload against a dynamic `integrity_manifest.js` to detect missing scripts, hallucinated agent names, and unresolved `// VERIFY:` tags.
-- **Guardrail Engine**: Developed `guardrail_engine.js` with 8 strict integrity rules (e.g., `ruleNumericConsistency`, `ruleAgentExists`, `ruleSkillExists`, `ruleScriptExtension`). The engine prevents execution if the AI references non-existent files or hallucinates capability claims.
+- **Guardrail Engine**: Developed `guardrail_engine.js` with 9 strict integrity rules (e.g., `ruleNumericConsistency`, `ruleAgentExists`, `ruleSkillExists`, `ruleScriptExtension`, `ruleSkillGuardrailCompleteness`). The engine prevents execution if the AI references non-existent files or hallucinates capability claims.
+- **55 New Production-Grade Domain & UI Skills**: Integrated 55 curated, production-grade `SKILL.md` skill definitions into `.agent/skills/` based on top industry standards (from `ui-skills.com`, Matt Pocock, Anthony Fu, Cursor, Leonxlnx, Brotzky, and MengTo):
+  - **Master Router**: Added `ui-skills-root` with 30+ intent-driven skill routing pathways.
+  - **44 Design Engineering & UI Skills**: `better-ui`, `baseline-ui`, `impeccable`, `bolder`, `quieter`, `distill`, `delight`, `polish`, `harden`, `critique`, `clarify`, `shape`, `build-primitive`, `adapt`, `colorize`, `typeset`, `progressive-blur`, `company-logos`, `landing-page`, `pricing-page`, `60fps-animation`, `accessible-animation`, `micro-interaction`, `page-transition-animation`, `animation-on-scroll`, `animation-systems`, `lottie-animation`, `svg-animation`, `masked-reveal`, `marquee-loop`, `to-spring-or-not-to-spring`, `morphing-icons`, `sounds-on-the-web`, `audit-and-fix`, `fixing-metadata`, `web-quality-audit`, `compact-landing`, `design-lab`, `react-doctor`, `cobejs`, `12-principles-of-animation`, `swiss-design`, and `transitions-dev`.
+  - **4 Architecture Skills**: `codebase-design` (deep modules & clean seams), `local-first-architecture` (instant UI & sync engines), `domain-modeling` (ubiquitous language & bounded contexts), and `improve-codebase-architecture` (codebase audit & refactoring roadmap).
+  - **2 Testing & Debugging Skills**: `tdd-workflow` (Red-Green-Refactor mastery) and `diagnosing-bugs` (5-step systematic root-cause isolation).
+  - **2 Code Quality Skills**: `thermo-nuclear-code-quality-review` (zero-tolerance 300-line file limit & complexity audit) and `antfu-conventions` (ESM-first & flat config standards).
+  - **4 Taste & Design Engineering Skills**: `taste-skill` (anti-slop frontend discipline), `gpt-taste` (high-agency layout variance & OKLCH color palettes), `soft-skill` (luxury ambient depth & generous spacing), and `redesign-skill` (UI modernization preserving business logic).
+  - **Full Tribunal Guardrail Compliance**: Every single skill file features standardized YAML frontmatter, 🤖 LLM-Specific Traps, 🏛️ Tribunal Integration reviewer mappings, ✅ Pre-Flight Self-Audits, and 🛑 VBC (Verification-Before-Completion) Protocols.
 - **Pipeline Wiring**: Enforced the new `guardrail` check automatically within the `validate-payload` npm script, `verify_all.js`, and `checklist.js` to guarantee no unverified AI output is deployed.
 
 ### 🐛 Fixes

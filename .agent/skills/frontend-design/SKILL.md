@@ -25,140 +25,139 @@ routing:
 
 ---
 
-## 1. Color Theory (HSL over HEX)
+## 1. Modern Color Systems (OKLCH & HSL)
 
-Never use raw flat HEX colors. Use HSL to build cohesive scales.
+Never use raw flat HEX colors. Use OKLCH (perceptually uniform) or HSL to build scalable, harmonic themes.
 
 ```css
 :root {
-  /* HSL allows programmatic adjustment of lightness/saturation */
-  --hue: 220;
-  --sat: 80%;
-
-  --bg-base: hsl(var(--hue), 15%, 98%);
-  --bg-surface: hsl(var(--hue), 20%, 100%);
-
-  --text-main: hsl(var(--hue), 40%, 10%);
-  --text-muted: hsl(var(--hue), 20%, 40%);
-
-  --primary: hsl(var(--hue), var(--sat), 50%);
-  --primary-hover: hsl(var(--hue), var(--sat), 40%); /* Darken via L */
+  /* OKLCH perceptual uniformity: lightness (0-100%), chroma (0-0.37), hue (0-360) */
+  --brand-primary: oklch(62% 0.21 275);
+  --brand-hover: oklch(from var(--brand-primary) calc(l - 0.1) c h); /* Relative Color Syntax */
+  
+  --bg-base: oklch(98% 0.005 240);
+  --bg-surface: oklch(100% 0 0);
+  --text-main: oklch(20% 0.02 240);
+  --text-muted: oklch(50% 0.02 240);
 }
 
-/* OLED Dark Mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-base: hsl(var(--hue), 10%, 2%);
-    --bg-surface: hsl(var(--hue), 10%, 6%);
-    --text-main: hsl(var(--hue), 20%, 95%);
-    --text-muted: hsl(var(--hue), 10%, 60%);
-  }
+/* Light/Dark mode via native light-dark() function or OLED media query */
+:root {
+  color-scheme: light dark;
+  --bg-surface: light-dark(oklch(100% 0 0), oklch(15% 0.01 240));
+  --text-main: light-dark(oklch(20% 0.02 240), oklch(95% 0.01 240));
 }
 ```
 
-## 2. Spatial Systems & Grid Mathematics
+---
 
-Design relies on structural rhythm. Use an **8px base system**.
+## 2. Spatial Systems & Container Queries
 
-- **Micro padding**: `4px`, `8px` (Tags, List items)
-- **Component padding**: `16px`, `24px` (Cards, Inputs, Modals)
-- **Section spacing**: `48px`, `64px`, `96px` (Page sections)
-- **Line height**: Body `1.5`, Headings `1.1` or `1.2`.
+Design relies on structural rhythm and component-level adaptability.
+
+- **Base Spacing Grid (8px)**: Micro `4px`, `8px` | Component `16px`, `24px` | Section `48px`, `64px`, `96px`
+- **Nested Border Radius Formula**: `outer_radius = inner_radius + padding`
+- **Fluid Typography**: Use `clamp()` and `cqi` container units over macro media queries.
 
 ```css
-/* Fluid Typography (Clamp) */
-h1 {
-  /* Min 2rem, fluidly scale between 480px-1200px, Max 4rem */
-  font-size: clamp(2rem, 5vw, 4rem);
-  letter-spacing: -0.02em; /* Tighten large text */
+/* Container Queries for Portable Components */
+.card-container {
+  container-type: inline-size;
+  container-name: card;
+}
+
+@container card (min-width: 400px) {
+  .card-body {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1.5cqi;
+  }
+}
+
+/* Typographic Balance */
+h1, h2, h3 {
+  font-size: clamp(2rem, 4vw + 1rem, 4rem);
+  letter-spacing: -0.02em;
+  text-wrap: balance; /* Prevents awkward multiline headline breaks */
 }
 
 p {
   font-size: 1rem;
-  max-width: 65ch; /* Optimal reading length */
+  max-width: 65ch;
+  text-wrap: pretty; /* Eliminates typographical orphans in body text */
 }
 ```
 
 ---
 
-## 3. Interaction & "Juice" (Micro-interactions)
+## 3. Interaction & Entry Motion (@starting-style)
 
-A premium UI reacts to the user instantly and smoothly. Focus on state transitions.
+A premium UI reacts to user actions instantly and provides smooth DOM mount transitions.
 
 ```css
-/* Smooth generic transition */
+/* Physical press feedback */
 .btn {
-  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.4, 1), box-shadow 0.15s ease;
 }
-
-/* Active Depth - The physical button push */
 .btn:active {
   transform: scale(0.97);
 }
 
-/* Hardware-Accelerated Shadows */
-.card {
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+/* Entry/Exit Animations for DOM Elements (@starting-style) */
+.toast {
+  display: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease, display 0.25s allow-discrete;
 }
-.card:hover {
-  transform: translateY(-4px); /* Float effect */
-  box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+.toast.is-open {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+@starting-style {
+  .toast.is-open {
+    opacity: 0;
+    transform: translateY(8px);
+  }
 }
 ```
 
 ---
 
-## 4. Modern Glassmorphism & Depth
+## 4. Modern Glassmorphism & Multi-Layer Depth
 
-Flat design is dead. Modern UI uses depth, layering, and blur.
+Avoid flat 1px borders and muddy single shadows. Use multi-layered elevation.
 
 ```css
-/* Frosted Glass */
-.glass {
-  background: rgba(255, 255, 255, 0.7);
+.card {
+  background: light-dark(rgba(255, 255, 255, 0.8), rgba(20, 20, 25, 0.8));
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.12));
   border-radius: 16px;
+  box-shadow: 
+    0 1px 2px oklch(0% 0 0 / 0.05),
+    0 4px 12px oklch(0% 0 0 / 0.08);
 }
 ```
 
 ---
 
-## 5. Forms and High-Friction UI
+## 5. Accessibility (WCAG 2.2 AA Standards)
 
-Forms are where users drop off. They must be flawless.
-
-- **Auto-focus** the first input on modal open.
-- **Labels** must be visible outside the input (not just placeholders).
-- **Validation** happens `onBlur` (when leaving), NOT `onChange` (typing).
-- **Submit buttons** show loading spinners, disable inputs, and prevent double-clicks.
+Design is broken if it excludes users.
+- ✅ **SC 2.5.8 Target Size**: Interactive controls must be at least `24x24px` CSS pixels (min `44x44px` for touch targets).
+- ✅ **SC 2.4.11 Focus Not Obscured**: Focused elements must never be completely hidden by sticky headers/footers.
+- ✅ **SC 2.4.13 Focus Appearance**: Visible focus rings must achieve `3:1` contrast ratio with a minimum 2px perimeter offset.
+- ✅ **Color Alone**: Never rely solely on color to convey state (pair error alerts with icons).
 
 ```css
-/* Focus-visible: Only show ring for keyboard nav, not mouse clicks */
-button:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
+button:focus-visible, a:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 3px;
 }
 ```
-
----
-
-## 6. Accessibility (WCAG 2.2 AA)
-
-Design is fundamentally broken if it excludes users.
-
-- ✅ Interactive elements need `aria-label` if not visually labeled.
-- ✅ Custom dropdowns/selects must support Arrow Keys and Escape.
-- ✅ Color alone cannot convey state (Error text must have an icon too `❌ Password invalid`).
-- ✅ Hide decorative SVG/icons from screen readers `aria-hidden="true"`.
 
 ---
 

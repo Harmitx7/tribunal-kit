@@ -28,21 +28,9 @@ const readline = require("readline");
 // ── Colours ──────────────────────────────────────────────────────────────────
 const { GREEN, YELLOW, CYAN, RED, BOLD, DIM, RESET } = require("./_colors");
 
-// ── Find .agent directory ─────────────────────────────────────────────────────
-function findAgentDir() {
-  let current = path.resolve(process.cwd());
-  const root = path.parse(current).root;
-  while (current !== root) {
-    const candidate = path.join(current, ".agent");
-    if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory())
-      return candidate;
-    current = path.dirname(current);
-  }
-  console.error(
-    `${RED}✖ Error: '.agent' directory not found. Please run 'npx tribunal-kit init' first.${RESET}`,
-  );
-  process.exit(1);
-}
+// ── Shared Utilities ──────────────────────────────────────────────────────────
+const { findAgentDir } = require("./_utils");
+
 
 // ── Lazy path resolution (avoids side effects at require-time) ───────────────
 let _paths = null;

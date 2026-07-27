@@ -93,216 +93,118 @@ gsap.ticker.add((time) => lenis.raf(time * 1000));
 gsap.ticker.lagSmoothing(0);
 ```
 
-### 3. Page Transitions (View Transitions API)
+### 3. Page Transitions (Native-First View Transitions API)
 
 ```css
-/* CSS — define shared elements */
+/* CSS — Browser-native page transition (Zero JS runtime cost) */
+@view-transition {
+  navigation: auto;
+}
+
 .card-image {
-  view-transition-name: active-image;
-} /* MUST BE UNIQUE */
+  view-transition-name: active-image; /* MUST BE UNIQUE IN DOM */
+}
 ::view-transition-old(active-image) {
-  animation: fade-out 0.3s ease;
+  animation: fade-out 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 ::view-transition-new(active-image) {
-  animation: scale-in 0.3s ease;
+  animation: scale-in 0.25s cubic-bezier(0, 0, 0.2, 1);
 }
 ```
 
-### 4. Loading & Skeleton Animations
+```tsx
+// SPA Route Navigation Trigger with Fallback
+function navigateWithTransition(url: string, navigate: (path: string) => void) {
+  if (!document.startViewTransition) {
+    navigate(url);
+    return;
+  }
+  document.startViewTransition(() => {
+    navigate(url);
+  });
+}
+```
 
-Never block the UI entirely. Use structural loading.
+### 4. DOM Entry & Exit Animations (@starting-style)
 
 ```css
-/* Shimmer structural animation */
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite linear;
+/* CSS @starting-style allows animating entry from display: none */
+.modal {
+  display: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: 
+    opacity 0.2s ease, 
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.4, 1), 
+    display 0.2s allow-discrete;
 }
-@keyframes shimmer {
-  100% {
-    background-position: -200% 0;
+
+.modal[open] {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+
+@starting-style {
+  .modal[open] {
+    opacity: 0;
+    transform: scale(0.95);
   }
 }
 ```
 
 ---
 
-## TIER 2: Narrative & Immersive (Medium Implementation)
-
-_Used for brand storytelling, heroes, and engagement._
-
-### 5. 3D & Immersive Animations
-
-The leading trend of 2026. Use React Three Fiber.
-
-```tsx
-// WebGL Scene basics
-import { Canvas, useFrame } from "@react-three/fiber";
-function RotatingCube() {
-  const meshRef = useRef();
-  useFrame((state, delta) => (meshRef.current.rotation.x += delta));
-  return (
-    <mesh ref={meshRef}>
-      <boxGeometry />
-      <meshStandardMaterial color="hotpink" />
-    </mesh>
-  );
-}
-```
-
-### 7. Kinetic Typography
-
-```tsx
-// Word-by-word spring reveal (Framer Motion)
-const words = "Immersive storytelling".split(" ");
-const wordVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
-
-<motion.h1 transition={{ staggerChildren: 0.05 }} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-  {words.map((w, i) => (
-    <motion.span key={i} variants={wordVariants}>
-      {w}{" "}
-    </motion.span>
-  ))}
-</motion.h1>;
-```
-
-### 8. Background Animations & 9. Illustrations
-
-- **Backgrounds:** Use CSS `@keyframes` on pseudo-elements with `filter: blur()` for ambient gradients, avoiding repaints.
-- **Illustrations:** Use Rive for interactive state machines, or Lottie via `lottie-react` for simple timeline playback.
-
----
-
-## TIER 3: Advanced & Emerging (Concepts & Tools)
-
-_Highly interactive components elevating standard UI._
-
-- **6. Motion UI & State Transitions:** Use Framer Motion's `layout` prop. Morphing a list item into a modal requires `<motion.div layoutId="item-1">` on both states. Wrap the app in `<LayoutGroup>`.
-- **10. Physics-based:** Animate like real-world objects. Instead of `duration`, define `mass`, `stiffness`, and `damping` in physics springs to simulate gravity and tension.
-- **11. Morphing & Shape:** GSAP `MorphSVGPlugin`. Requires SVGs with comparable path points or GSAP will interpolate poorly. Alternatively, animate CSS `border-radius` for fluid blobs.
-- **12. Glassmorphism:** Animate `backdrop-filter: blur(10px)` but beware of performance costs on mobile. Render shadows via `filter: drop-shadow()` combined with slight `translateY` on hover.
-- **13. Cursor-based:** Modern standard is CSS variables bound to mouse position. Calculate `clientX` relative to the element bounding box and update `--mouse-x` to drive `radial-gradient` masks.
-- **14. AI-driven Adaptive:** Motion that learns. If a user speeds through a form, UI transitions accelerate. If they linger, ambient motion plays. Controlled by tracking interaction deltas and mapping them to global spring configurations.
-- **15. Gamified:** Progress bars that burst on completion, haptic-synchronized checkmarks. Combine SVGs with explicit, highly exaggerated elastic overshoot scales (`scale: [1, 1.2, 0.9, 1]`) on reward thresholds.
-
----
-
-## TIER 4: Specialized (Rules & Fallbacks)
-
-_Niche requirements where performance or specific constraints dominate._
-
-- **16. Video + Motion Hybrid:** Scrubbing `<video>` tags with scroll. Requires pre-encoding video rapidly with keyframes every 1 frame, drawing frames to a `<canvas>` element via `requestAnimationFrame` linked to scroll progress.
-- **17. Experimental:** Glitch effects via overlapping CSS `clip-path` animations. High processing cost.
-- **18. Navigation:** Mega-menus must use `<AnimatePresence>` to prevent DOM unmount before the exit animation resolves. Include exit delays so users don't trigger flickering by rapidly moving the mouse off the nav.
-- **19. Data Visualization:** D3 handles math, React handles DOM, Framer/Spring handles interpolation between D3 datasets. Never let D3 mutate the DOM directly inside a React app.
-- **20. Performance-first Subtle Motion:** Strictly `opacity`, `transform`, CSS-only. Use `@starting-style` for popovers and dialogs to avoid JS intervention.
-
----
-
 ## Accessibility & Performance Invariants (Global Rules)
 
 1. **The WCAG 2.2 AA Motion Rule:**
+   Always respect `prefers-reduced-motion`. Fall back to instant opacity or no-op motion.
 
 ```tsx
-import { useReducedMotion } from "framer-motion";
-const reduce = useReducedMotion();
-// Safe: opacity, color
-// Conditional: translate, scale, rotate
-<motion.div animate={{ x: reduce ? 0 : 100, opacity: 1 }} transition={{ duration: reduce ? 0 : 0.5 }} />;
+import { useReducedMotion } from "motion/react";
+
+function AccessibleComponent() {
+  const shouldReduceMotion = useReducedMotion();
+  
+  return (
+    <motion.div
+      animate={{ 
+        x: shouldReduceMotion ? 0 : 100, 
+        opacity: 1 
+      }}
+      transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
+    />
+  );
+}
 ```
 
 2. **The 120fps GPU Rule:**
    Never animate `width`, `height`, `left`, `top`, `margin`, or `padding`. This triggers layout recalculation algorithms. Use `transform: scale()` or `transform: translate()` instead.
 
-3. **The Cleanup Rule:**
-   Any GSAP ScrollTrigger timeline must use `ScrollTrigger.killAll()` or React's `useGSAP` cleanup functions to avoid memory leaks on SPA route changes.
-
----
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
+3. **The GSAP Memory Cleanup Rule:**
+   Any GSAP ScrollTrigger timeline must use `@gsap/react` `useGSAP` or explicit `tl.kill()` cleanup to avoid memory leaks on SPA route changes.
 
 ---
 
 ## 🤖 LLM-Specific Traps
 
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+1. **Over-animating Static UI:** Animating page titles and static text on simple forms.
+2. **Missing `allow-discrete`:** Animating `display` or `popover` without `transition-behavior: allow-discrete`.
+3. **GSAP Memory Leaks:** Forgetting to kill GSAP timelines on component unmount.
 
 ---
 
 ## 🏛️ Tribunal Integration (Anti-Hallucination)
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
 ### ✅ Pre-Flight Self-Audit
 
-Review these questions before confirming output:
-
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Are all animations constrained to GPU-friendly properties (transform, opacity)?
+✅ Is prefers-reduced-motion handled natively or via hooks?
+✅ Are view-transition-name attributes unique across the entire active DOM?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+Inspect motion frame performance in DevTools Rendering tab to verify 60/120fps compositor execution without layout thrashing.
 
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

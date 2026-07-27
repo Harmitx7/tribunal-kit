@@ -1,5 +1,10 @@
 const path = require("path");
 const fs = require("fs");
+const {
+  validateWorkerRequest,
+  validateWorkerResult,
+  validateSwarmPayload,
+} = require("../../.agent/scripts/swarm_dispatcher.js");
 
 describe("swarm_dispatcher.js", () => {
   it("should be a valid javascript file", () => {
@@ -12,7 +17,32 @@ describe("swarm_dispatcher.js", () => {
     expect(content.includes("module.exports")).toBeTruthy();
   });
 
-  // As swarm_dispatcher heavily relies on filesystem operations and child_process,
-  // we would use jest.mock('child_process') and jest.mock('fs') for deeper testing.
-  // This serves as the foundation for the swarm test suite.
+  it("should validate a valid worker request object", () => {
+    const agentsDir = path.join(__dirname, "../../.agent/agents");
+    const validRequest = {
+      task_id: "task-1",
+      type: "generate_code",
+      agent: "backend-specialist",
+      goal: "Implement authentication route",
+      context: "Minimal required context",
+    };
+    expect(validateWorkerRequest(validRequest, 0, agentsDir)).toEqual([]);
+  });
+
+  it("should reject invalid worker requests missing required fields", () => {
+    const agentsDir = path.join(__dirname, "../../.agent/agents");
+    const invalidRequest = { worker_id: "worker-1" };
+    expect(validateWorkerRequest(invalidRequest, 0, agentsDir).length).toBeGreaterThan(0);
+  });
+
+  it("should validate a valid worker result object", () => {
+    const validResult = {
+      task_id: "task-1",
+      agent: "backend-specialist",
+      status: "success",
+      output: "Created auth handler",
+    };
+    expect(validateWorkerResult(validResult, 0)).toEqual([]);
+  });
 });
+

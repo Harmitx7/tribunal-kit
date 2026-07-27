@@ -71,7 +71,7 @@ Type any of these in your AI IDE chat:
 
 ---
 
-## The 20 Tribunal Reviewers
+## The 19 Tribunal Reviewers
 
 | Agent                    | File                               | Activates When                                                                      |
 | ------------------------ | ---------------------------------- | ----------------------------------------------------------------------------------- |
@@ -272,8 +272,8 @@ Script failures follow cascade rules:
 │   ├── swarm-worker-contracts.md  ← WorkerRequest/WorkerResult schemas
 │   └── swarm-worker-registry.md   ← Task type → agent routing map
 ├── rules/GEMINI.md          ← Master rules (P0 priority)
-├── scripts/                 ← 29 JS automation scripts
-├── skills/                  ← 106 modular skill packages (all hardened)
+├── scripts/                 ← 31 automation scripts
+├── skills/                  ← 168 valid skill packages (all hardened)
 ├── patterns/                ← 5 ADK skill base patterns
 ├── history/                 ← Case Law + Skill Evolution data (user-generated, preserved on update)
 └── workflows/               ← 34 slash command definitions

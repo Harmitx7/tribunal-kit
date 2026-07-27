@@ -5,7 +5,7 @@ process.env.NODE_ENV = "test";
 
 const _path = require("path");
 const _fs = require("fs");
-const { handleRequest, stripBoilerplate } = require("../../bin/mcp-server");
+const { handleRequest, stripBoilerplate, runTribunalAudit } = require("../../bin/mcp-server");
 
 describe("MCP Server Boilerplate Stripper", () => {
   test("strips standard duplicate boilerplate blocks from text", () => {
@@ -69,6 +69,20 @@ describe("MCP Server handleRequest", () => {
     const getSparseContextTool = result.tools.find(t => t.name === "get_sparse_context");
     expect(getSparseContextTool).toBeDefined();
     expect(getSparseContextTool.inputSchema.required).toContain("task");
+  });
+
+  test("uses the in-process manifest audit rather than schema validation", () => {
+    const text = runTribunalAudit();
+    expect(text).toContain("Tribunal audit complete.");
+    expect(text).toMatch(/Agents: 44 \(\d+ reviewers\)/);
+
+    const result = handleRequest({
+      jsonrpc: "2.0",
+      id: 20,
+      method: "tools/call",
+      params: { name: "run_tribunal_audit", arguments: {} },
+    });
+    expect(result.content[0].text).toContain("Tribunal audit");
   });
 
   test("get_sparse_context throws error if task is missing", () => {

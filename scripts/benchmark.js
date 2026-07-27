@@ -142,6 +142,48 @@ async function main() {
   );
   results.push(initRealResult);
 
+  // 5. DAG scheduling benchmark
+  console.log(c("cyan", "  ▸ Benchmarking: DAG scheduling calculation"));
+  const dagResult = await benchmark(
+    "DAG wave scheduling",
+    () => {
+      const workers = [
+        { task_id: "w1", dependencies: [] },
+        { task_id: "w2", dependencies: ["w1"] },
+        { task_id: "w3", dependencies: ["w1"] },
+        { task_id: "w4", dependencies: ["w2", "w3"] },
+      ];
+      const inDegree = {};
+      const adjList = {};
+      workers.forEach((w) => {
+        inDegree[w.task_id] = 0;
+        adjList[w.task_id] = [];
+      });
+      workers.forEach((w) => {
+        w.dependencies.forEach((dep) => {
+          adjList[dep].push(w.task_id);
+          inDegree[w.task_id] += 1;
+        });
+      });
+      let currentWave = Object.keys(inDegree).filter((id) => inDegree[id] === 0);
+      const waves = [];
+      while (currentWave.length > 0) {
+        waves.push(currentWave);
+        const next = [];
+        currentWave.forEach((id) => {
+          adjList[id].forEach((nbr) => {
+            inDegree[nbr] -= 1;
+            if (inDegree[nbr] === 0) next.push(nbr);
+          });
+        });
+        currentWave = next;
+      }
+    },
+    100,
+  );
+  results.push(dagResult);
+
+
   // Print results table
   console.log();
   console.log(bold(`  Results`));

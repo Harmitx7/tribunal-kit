@@ -1,206 +1,77 @@
 ---
 name: tdd-workflow
 description: Test-Driven Development (TDD) mastery. Red-Green-Refactor cycles, behavior-driven design (BDD), strict mutation coverage, test doubles (mocks/stubs/spies), and avoiding test-induced design damage. Use when building complex algorithms, deep business logic, or strictly regulated systems.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
+version: 1.0.0
+last-updated: 2026-07-22
+applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
 routing:
-  domain: general
-  tier: basic
+  domain: Test-Driven Development & Quality Assurance
+  tier: pro
+  co-requires: [webapp-testing, clean-code]
+  trigger-signals:
+    strong: [tdd-workflow, red green refactor, test driven development, TDD, slice by slice testing, write test first]
+    weak: [write test, unit test logic]
 ---
 
-## Hallucination Traps (Read First)
+# TDD Workflow — Red-Green-Refactor Mastery
 
-- ❌ Writing tests that test implementation details instead of behavior -> ✅ Test WHAT it does (inputs/outputs), not HOW (internal methods)
-- ❌ Skipping the Red phase (writing a failing test first) -> ✅ If the test passes before you write the code, it tests nothing
-- ❌ Refactoring during the Red or Green phase -> ✅ Red: write failing test. Green: make it pass minimally. THEN refactor. Never mix phases
+Build features and fixes one slice at a time using strict Test-Driven Development (TDD) discipline.
 
 ---
 
-# Test-Driven Development (TDD) — Defect-Free Execution Mastery
+## The 3-Phase TDD Cycle
+
+```
+[ 1. RED ]    Write a failing behavioral test for the minimal next requirement.
+                  ↓
+[ 2. GREEN ]  Write the simplest production code to make the test pass.
+                  ↓
+[ 3. REFACTOR ] Clean up code & duplicate logic while ensuring tests stay green.
+```
 
 ---
 
-## 1. The Red-Green-Refactor Cycle
+## 4 TDD Rules
 
-TDD is a strict, irrevocable discipline. Do not write the implementation first.
-
-### Step 1: RED (Write the failing test)
-
-Write the test as if the API already exists exactly how you _wish_ it were designed.
-Run the test. It MUST fail (because the function doesn't exist, or returns the wrong value). If it passes, the test is useless.
+### 1. Test Behavior, Not Implementation Details
+- Assert GIVEN / WHEN / THEN behavior results, NOT private class methods or internal variables.
 
 ```typescript
-// 1. The failing test
-import { calculateDiscount } from "./pricing";
+// ❌ BAD: Coupling test to internal state
+expect(calculator._memoryBuffer).toBe(42);
 
-test("Should apply 10% discount for orders over $100", () => {
-  expect(calculateDiscount(150)).toBe(135);
-});
-// ❌ FAILS: calculateDiscount is not defined
+// ✅ GOOD: Asserting public behavior contract
+expect(calculator.add(40, 2)).toBe(42);
 ```
 
-### Step 2: GREEN (Make it pass exactly)
+### 2. The Minimal Green Rule
+- In Step 2 (GREEN), write ONLY the minimal code required to pass the test—even if it's hardcoding a return value initially. This forces you to write the next test that proves the hardcoded value inadequate.
 
-Write the absolute minimum, dumbest code required to make the test pass. Do not over-engineer.
+### 3. Mock Only External Boundaries
+- Never mock internal domain entities or utility functions. Mock ONLY un-owned external boundaries (database IO, network APIs, payment gateways).
 
-```typescript
-// 2. The minimum implementation
-export function calculateDiscount(subtotal: number): number {
-  if (subtotal >= 100) return subtotal * 0.9;
-  return subtotal;
-}
-// ✅ PASSES.
-```
-
-### Step 3: REFACTOR
-
-Now wrap the implementation in clean architectural principles. The tests guarantee you haven't broken the behavior while you optimize.
-
-```typescript
-// 3. The Refactor
-const DISCOUNT_THRESHOLD = 100;
-const DISCOUNT_RATE = 0.9;
-
-export function calculateDiscount(subtotal: number): number {
-  return subtotal >= DISCOUNT_THRESHOLD ? subtotal * DISCOUNT_RATE : subtotal;
-}
-// ✅ STILL PASSES. Safe to commit.
-```
-
----
-
-## 2. Test Doubles (Mocks, Stubs, Spies)
-
-Knowing _how_ to mock separates amateurs from professionals. Over-mocking destroys architectural integrity.
-
-| Type      | When to use                                          | Example                                                  |
-| :-------- | :--------------------------------------------------- | :------------------------------------------------------- |
-| **Dummy** | Filler objects passed but never used                 | `processOrder(new UserDummy(), payload)`                 |
-| **Stub**  | Hardcodes a specific response                        | `db.getUser.mockResolvedValue({ id: 1 })`                |
-| **Spy**   | Records how many times a function was called         | `expect(emailService.send).toHaveBeenCalledTimes(1)`     |
-| **Mock**  | A spy with predefined expectations of exact payloads | `expect(logger.info).toHaveBeenCalledWith('Authorized')` |
-
-### The Mocking Rule
-
-**Only mock at the architectural boundaries (Database, Network, External FileSystem).**
-NEVER mock internal business logic or child pure-functions. If function A calls function B, test A by allowing it to genuinely call B.
-
----
-
-## 3. Anti-Pattern: Testing Implementation Details
-
-Tests should verify the _behavior_ output, not the underlying code structure.
-
-```typescript
-class Account {
-  private balance = 0;
-  deposit(amount: number) {
-    this.balance += amount;
-  }
-  getBalance() {
-    return this.balance;
-  }
-}
-
-// ❌ BAD: Testing internal state (Fragile)
-test("Deposit updates the internal balance variable", () => {
-  const acc = new Account();
-  acc.deposit(50);
-  expect(acc["balance"]).toBe(50); // Intrusive test breaks if variable is renamed
-});
-
-// ✅ GOOD: Testing external behavior contract
-test("Deposit makes the funds available via getBalance", () => {
-  const acc = new Account();
-  acc.deposit(50);
-  expect(acc.getBalance()).toBe(50); // Tests the public API only
-});
-```
-
----
-
----
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
+### 4. Triangulation Strategy
+- When uncertain about algorithm logic, write 2 or more tests with different inputs to force general implementation.
 
 ---
 
 ## 🤖 LLM-Specific Traps
 
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
+1. **Writing Code First, Tests Later**: Generating 200 lines of implementation code and adding tests as an afterthought.
+2. **Fragile Mock Over-use**: Mocking every internal dependency, creating brittle tests that break during refactoring.
 
 ---
 
 ## 🏛️ Tribunal Integration (Anti-Hallucination)
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+**Active reviewers: `test-engineer` · `logic-reviewer`**
 
 ### ✅ Pre-Flight Self-Audit
 
-Review these questions before confirming output:
-
 ```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
+✅ Was the failing test written and verified BEFORE writing implementation code?
+✅ Does the test assert external behavior rather than internal private state?
+✅ Are mocks restricted strictly to external IO boundaries?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol

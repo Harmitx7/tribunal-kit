@@ -97,6 +97,7 @@ struct ScoredEntry {
 
 const MAX_ENTRIES: usize = 500;
 const EPISODIC_TTL_DAYS: i64 = 30;
+#[allow(dead_code)]
 const DEFAULT_BUDGET: u32 = 2000;
 
 // ── Token Estimation ────────────────────────────────────────────────────────
@@ -145,6 +146,7 @@ fn index_path(agent_dir: &PathBuf) -> PathBuf {
     agent_dir.join("history").join("memory").join(".memory.idx")
 }
 
+#[allow(dead_code)]
 fn projection_path(agent_dir: &PathBuf) -> PathBuf {
     agent_dir.join("history").join("memory").join("MEMORY.md")
 }

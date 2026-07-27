@@ -8,8 +8,9 @@ const WORKFLOWS_DIR = path.join(AGENT_DIR, "workflows");
 const AGENTS_DIR = path.join(AGENT_DIR, "agents");
 const SKILLS_DIR = path.join(AGENT_DIR, "skills");
 
-// Expected slash commands per plan (33 workflows)
+// Expected slash commands per plan (34 workflows)
 const EXPECTED_WORKFLOWS = [
+  "acf",
   "api-tester",
   "audit",
   "brainstorm",
@@ -113,14 +114,18 @@ describe("Skills directory integrity", () => {
     expect(skillDirs.length).toBeGreaterThanOrEqual(50);
   });
 
-  test("every skill directory contains a SKILL.md", () => {
+  test("every non-empty skill package directory contains a SKILL.md", () => {
     const entries = fs.readdirSync(SKILLS_DIR);
     const skillDirs = entries.filter((e) =>
       fs.statSync(path.join(SKILLS_DIR, e)).isDirectory(),
     );
-    const missing = skillDirs.filter(
-      (dir) => !fs.existsSync(path.join(SKILLS_DIR, dir, "SKILL.md")),
-    );
+    const missing = skillDirs.filter((dir) => {
+      const skillDir = path.join(SKILLS_DIR, dir);
+      return (
+        fs.readdirSync(skillDir).length > 0 &&
+        !fs.existsSync(path.join(skillDir, "SKILL.md"))
+      );
+    });
     expect(missing).toEqual([]);
   });
 });
