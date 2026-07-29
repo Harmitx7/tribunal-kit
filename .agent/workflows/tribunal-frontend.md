@@ -1,9 +1,9 @@
 ---
-description: Frontend and React specific Tribunal. Runs Logic + Security + Frontend + Type Safety + UI/UX + Motion reviewers. Use for React components, hooks, UI code, Next.js pages, Server Components, and Client Components.
-required-skills: react-specialist, nextjs-react-expert, frontend-design, review-animations, emil-design-eng
+description: Frontend and React specific Tribunal. Runs Logic + Security + Frontend + Type Safety + UI/UX + Motion + Visual Audit reviewers. Use for React components, hooks, UI code, Next.js pages, Server Components, and Client Components.
+required-skills: ui-skill-packs, react-specialist, nextjs-react-expert, frontend-design, review-animations, emil-design-eng
 ---
 
-# /tribunal-frontend — Frontend Code Audit
+# /tribunal-frontend — Frontend Code & Visual Audit
 
 $ARGUMENTS
 
@@ -14,8 +14,9 @@ $ARGUMENTS
 ```
 Read BEFORE frontend review:
 □ Target component files       → The UI code being audited
-□ tailwind.config / globals.css → Understand design tokens
-□ package.json                 → Verify frontend dependencies (framer-motion, radicle, etc.)
+□ tailwind.config / globals.css → Understand design tokens & OKLCH palettes
+□ package.json                 → Verify frontend dependencies (framer-motion, lucide-react, etc.)
+□ .agent/skills/ui-skill-packs/SKILL.md → Bind active UI skill pack
 ```
 
 ---
@@ -32,7 +33,7 @@ Read BEFORE frontend review:
 
 ---
 
-## 6 Active Reviewers (All Run Simultaneously)
+## 7 Active Reviewers (All Run Simultaneously)
 
 ### precedence-reviewer → Checks local repo Case Law for past rejections
 
@@ -72,6 +73,11 @@ Read BEFORE frontend review:
 - Missing hover/focus states on interactive elements
 - Color contrast below WCAG AA (4.5:1)
 - Typography and spacing not following design system logic
+
+### ui-visual-auditor (Closed-Loop Visual Gate)
+
+- Runs `node scripts/visual_audit.js --file <target>` to verify OKLCH color compliance, surface depth layering (hairline borders + ambient shadows), and interactive state polish.
+- Rejects flat card containers lacking depth or hex hacks without design tokens.
 
 ### review-animations (The Socratic Gate)
 

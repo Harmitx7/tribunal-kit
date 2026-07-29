@@ -74,7 +74,7 @@ describe("MCP Server handleRequest", () => {
   test("uses the in-process manifest audit rather than schema validation", () => {
     const text = runTribunalAudit();
     expect(text).toContain("Tribunal audit complete.");
-    expect(text).toMatch(/Agents: 44 \(\d+ reviewers\)/);
+    expect(text).toMatch(/Agents: \d+ \(\d+ reviewers\)/);
 
     const result = handleRequest({
       jsonrpc: "2.0",

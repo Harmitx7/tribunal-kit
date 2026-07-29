@@ -33,6 +33,7 @@ All agents listed here MUST exist as `.md` files in `.agent/agents/`.
 | `security_audit` | any                                              | `security-auditor`      |
 | `optimize`       | any                                              | `performance-optimizer` |
 | `test`           | any                                              | `test-engineer`         |
+| `visual_audit`   | ui, component, visual, screenshot, layout, render| `ui-visual-auditor`     |
 
 ---
 

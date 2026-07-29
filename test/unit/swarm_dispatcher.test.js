@@ -44,5 +44,23 @@ describe("swarm_dispatcher.js", () => {
     };
     expect(validateWorkerResult(validResult, 0)).toEqual([]);
   });
+
+  it("should validate a complete swarm payload object", () => {
+    const payload = {
+      goal: "Build feature",
+      workers: [
+        {
+          task_id: "task-1",
+          type: "generate_code",
+          agent: "backend-specialist",
+          goal: "Build auth route",
+          context: "Context info",
+        },
+      ],
+    };
+    const agentsDir = path.join(__dirname, "../../.agent/agents");
+    expect(validateSwarmPayload(payload, agentsDir)).toBe(true);
+  });
 });
+
 

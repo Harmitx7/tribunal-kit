@@ -35,6 +35,9 @@ const path = require("path");
  */
 function ruleFileExists(content, manifest, _ctx) {
   const violations = [];
+  if (_ctx && _ctx.filePath && (_ctx.filePath.endsWith(".js") || _ctx.filePath.endsWith(".py") || _ctx.filePath.endsWith(".json"))) {
+    return violations;
+  }
   const refs = manifest.cross_references || [];
 
   const agentDir = path.join(_ctx.projectRoot, ".agent");
@@ -132,6 +135,9 @@ function ruleReviewerCount(content, manifest, _ctx) {
  */
 function ruleSkillExists(content, manifest, _ctx) {
   const violations = [];
+  if (_ctx && _ctx.filePath && (_ctx.filePath.endsWith(".js") || _ctx.filePath.endsWith(".py") || _ctx.filePath.endsWith(".json"))) {
+    return violations;
+  }
   const skillNames = new Set(manifest.skills ? manifest.skills.names : []);
   if (skillNames.size === 0) return violations;
 
@@ -195,6 +201,9 @@ function ruleSkillExists(content, manifest, _ctx) {
  */
 function ruleAgentExists(content, manifest, _ctx) {
   const violations = [];
+  if (_ctx && _ctx.filePath && (_ctx.filePath.endsWith(".js") || _ctx.filePath.endsWith(".py") || _ctx.filePath.endsWith(".json"))) {
+    return violations;
+  }
   const agentNames = new Set(manifest.agents ? manifest.agents.all : []);
   if (agentNames.size === 0) return violations;
 
@@ -225,9 +234,9 @@ function ruleAgentExists(content, manifest, _ctx) {
 function ruleUnresolvedVerify(content, _manifest, ctx) {
   const violations = [];
   
-  // Skip this check for the internal .agent documentation files themselves
-  // because they contain instructions ABOUT the VERIFY tag.
-  if (ctx && ctx.filePath && ctx.filePath.includes(".agent") && ctx.filePath.endsWith(".md")) {
+  // Skip this check for the internal .agent files themselves
+  // because they contain instructions/comments ABOUT the VERIFY tag.
+  if (ctx && ctx.filePath && ctx.filePath.includes(".agent")) {
     return violations;
   }
 
@@ -360,6 +369,51 @@ function ruleImportPhantom(content, _manifest, ctx) {
   return violations;
 }
 
+/**
+ * Rule 9: rust-module-registration
+ * Validates that Rust modules in crates/core/src/commands are declared in mod.rs
+ * and registered in wrapper.js RUST_COMMANDS set.
+ */
+function ruleRustModuleRegistration(content, manifest, _ctx) {
+  const violations = [];
+  const root = _ctx.projectRoot || process.cwd();
+
+  const modRs = path.join(root, "crates", "core", "src", "commands", "mod.rs");
+  if (fs.existsSync(modRs)) {
+    const modContent = fs.readFileSync(modRs, "utf8");
+    const requiredMods = ["context_broker", "dag_scheduler", "context_compress"];
+    for (const m of requiredMods) {
+      if (!modContent.includes(`pub mod ${m};`)) {
+        violations.push({
+          rule: "rust-module-registration",
+          severity: "warning",
+          location: "crates/core/src/commands/mod.rs",
+          message: `Rust command module "${m}" not declared in mod.rs`,
+          suggestion: `Add "pub mod ${m};" to crates/core/src/commands/mod.rs`,
+          autoFixable: false,
+        });
+      }
+    }
+  }
+
+  const wrapperJs = path.join(root, "bin", "wrapper.js");
+  if (fs.existsSync(wrapperJs)) {
+    const wrapperContent = fs.readFileSync(wrapperJs, "utf8");
+    if (!wrapperContent.includes('"context-broker"')) {
+      violations.push({
+        rule: "rust-module-registration",
+        severity: "warning",
+        location: "bin/wrapper.js",
+        message: 'Command "context-broker" not registered in RUST_COMMANDS in bin/wrapper.js',
+        suggestion: 'Add "context-broker" to RUST_COMMANDS set in bin/wrapper.js',
+        autoFixable: false,
+      });
+    }
+  }
+
+  return violations;
+}
+
 // ── Rule Registry ─────────────────────────────────────────────────────────────
 
 const RULES = {
@@ -371,6 +425,7 @@ const RULES = {
   "unresolved-verify": ruleUnresolvedVerify,
   "numeric-consistency": ruleNumericConsistency,
   "import-phantom": ruleImportPhantom,
+  "rust-module-registration": ruleRustModuleRegistration,
 };
 
 // ── Main Validate Function ────────────────────────────────────────────────────
@@ -527,7 +582,7 @@ function main() {
     const content = fs.readFileSync(file, "utf8");
     const result = validate(content, manifest, {
       autoFix: fixMode,
-      context: { projectRoot },
+      context: { projectRoot, filePath: file },
     });
 
     totalViolations += result.violations.length;

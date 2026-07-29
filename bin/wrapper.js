@@ -24,6 +24,7 @@ const RUST_COMMANDS = new Set([
   "min-context",
   "dag-schedule",
   "context-compress",
+  "context-broker",
   "optimize-step",
 ]);
 
@@ -87,6 +88,7 @@ function getBinaryPath() {
       const buildResult = spawnSync("cargo", ["build", "--release"], {
         cwd: path.resolve(__dirname, ".."),
         stdio: "ignore",
+        timeout: 60000,
       });
       if (buildResult.status === 0) {
         const releasePath = candidatePaths[0];
@@ -128,7 +130,10 @@ function runLegacyFallback() {
   // Use the modular dist/ CLI with lazy-loaded commands for faster cold-start.
   // Each command module is require()'d only when invoked (~70% fewer files loaded).
   const { main } = require("../dist/cli.js");
-  main();
+  main().catch((err) => {
+    console.error(`\x1b[91m✖ Fatal Error:\x1b[0m ${err.message || err}`);
+    process.exit(1);
+  });
 }
 
 function main() {

@@ -3,6 +3,26 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [6.0.0] — 2026-07-29
+
+### ⚡ Hybrid Rust Core Engine & Multi-IDE Architecture Overhaul
+
+- **Native Rust Context Density Broker (`crates/core/src/commands/context_broker.rs`)**: Implemented sub-15ms native scanning of `.agent` rules, skills, and target files with token footprint estimation. Integrated via `tryNativeContextBroker` in `.agent/scripts/context_broker.js` with zero-crash JS fallback.
+- **Parallel Tribunal Wave Group Engine (`crates/core/src/commands/dag_scheduler.rs`)**: Upgraded Kahn's algorithm DAG scheduler with `WaveGroup` tiering (`fast` vs `deep` tasks), enabling fast lint/type-safety reviewers to execute in parallel before deep security/performance auditors.
+- **Multi-IDE Concurrent Rule Sync Engine (`cmd_sync` in `crates/core/src/main.rs`)**: Built a Rust-native concurrent bridge engine (`sync_ide_bridges`) that force-writes governance rules across 6 major IDE targets (`.cursorrules`, `.windsurfrules`, `.gemini/GEMINI.md`, `.gemini/settings.json`, `.github/copilot-instructions.md`, `.claude/CLAUDE.md`) via `tokio::join!`.
+- **Terminal Status Dashboard (`cmd_status` in `crates/core/src/main.rs`)**: Upgraded terminal status output with real-time bridge freshness tracking (fresh/stale/missing), context token compression stats, and 20-reviewer pipeline readiness indicators in both human-readable ANSI formatting and machine-readable JSON.
+- **Guardrail Engine & Pre-Deploy Integration (`.agent/scripts/verify_all.js`)**: Integrated Step 7 (Rust Core Tests) into `verify_all.js` and added `ruleRustModuleRegistration` to `guardrail_engine.js` for strict binary/wrapper module alignment.
+
+## [5.8.6] — 2026-07-28
+
+### ✨ Features & Architecture Enhancements
+
+- **Hybrid 3-Pass Code Generation Pipeline (`/pipeline`)**: Implemented Option A + Option C hybrid architecture that decouples task planning, code synthesis, and post-generation validation into distinct phases. Reduces prompt tokens by **78–86%** (~18,000 → ~2,500 tokens) while increasing task-focused context from **11% to 75%**.
+- **Pipeline Engine (`.agent/scripts/pipeline_engine.js`)**: Developed a 3-pass orchestrator supporting `planPhase()`, `buildPhase()`, `validatePhase()`, and `fullPipeline()` modes with CLI flags (`--task`, `--file`, `--phase`, `--output`, `--dry-run`, `demo`).
+- **Condensed Planner Rules (`.agent/rules/GEMINI_PLANNER.md`)**: Created an ~80-line planner context containing only task classification, stack detection, skill selection, and JSON spec output schema — saving ~4,800 tokens per planning pass.
+- **Context Broker Extension (`.agent/scripts/context_broker.js`)**: Added `brokerForPipeline()` API and `--output pipeline-plan`/`--output pipeline-build` modes to provide phase-specific context pruning.
+- **Pipeline Workflow & Architecture Docs**: Added `/pipeline` workflow (`.agent/workflows/pipeline.md`) and updated `.agent/ARCHITECTURE.md` with pipeline flow diagrams and token budget comparisons.
+
 ## [5.8.5] — 2026-07-27
 
 ### ✨ Features & Performance Enhancements

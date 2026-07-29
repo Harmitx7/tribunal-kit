@@ -9,7 +9,7 @@ const fs = __importDefault(require("fs"));
 const path = __importDefault(require("path"));
 const os = __importDefault(require("os"));
 const https = __importDefault(require("https"));
-const { execSync } = require("child_process");
+const { execSync, spawnSync } = require("child_process");
 const logger = require("../utils/logger");
 const helpers = require("../utils/helpers");
 
@@ -253,10 +253,20 @@ Each edit must follow this schema:
             const tempFile = path.default.join(os.default.tmpdir(), `edits-${Date.now()}.json`);
             fs.default.writeFileSync(tempFile, cleanedJson, 'utf8');
             
-            optResultStr = execSync(
-                `"${binPath}" optimize-step --skill-path "${skillPath}" --edits-json "${cleanedJson.replace(/"/g, '\\"')}" --budget ${editBudget}`,
-                { encoding: 'utf8', cwd: targetDir, stdio: 'pipe' }
-            );
+            const result = spawnSync(binPath, [
+                "optimize-step",
+                "--skill-path",
+                skillPath,
+                "--edits-json",
+                cleanedJson,
+                "--budget",
+                String(editBudget)
+            ], { encoding: 'utf8', cwd: targetDir, stdio: 'pipe' });
+            
+            if (result.error) {
+                throw result.error;
+            }
+            optResultStr = result.stdout || "";
             
             try { fs.default.unlinkSync(tempFile); } catch {}
         } catch (e) {

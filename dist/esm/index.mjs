@@ -34,83 +34,77 @@ export const runShellAsync = helpers.runShellAsync;
 export const getKitAgent = helpers.getKitAgent;
 export const banner = helpers.banner;
 
+// Helper to wrap CommonJS requires in friendly error diagnostics
+function loadCommand(modulePath, functionName, ...args) {
+  try {
+    const mod = require(modulePath);
+    return mod[functionName](...args);
+  } catch (err) {
+    throw new Error(`Tribunal ESM wrapper failed to load command '${functionName}' from '${modulePath}': ${err.message}`);
+  }
+}
+
 // ── Lazy command loaders (imported on demand) ────────────
 export async function cmdInit(flags, quiet) {
-  const mod = require('../commands/init.js');
-  return mod.cmdInit(flags, quiet);
+  return loadCommand('../commands/init.js', 'cmdInit', flags, quiet);
 }
 
 export async function cmdUpdate(flags) {
-  const mod = require('../commands/update.js');
-  return mod.cmdUpdate(flags);
+  return loadCommand('../commands/update.js', 'cmdUpdate', flags);
 }
 
 export function cmdStatus(flags, quiet) {
-  const mod = require('../commands/status.js');
-  return mod.cmdStatus(flags, quiet);
+  return loadCommand('../commands/status.js', 'cmdStatus', flags, quiet);
 }
 
 export async function cmdLearn(flags, quiet) {
-  const mod = require('../commands/learn.js');
-  return mod.cmdLearn(flags, quiet);
+  return loadCommand('../commands/learn.js', 'cmdLearn', flags, quiet);
 }
 
 export async function cmdCase(flags, argv, quiet) {
-  const mod = require('../commands/case.js');
-  return mod.cmdCase(flags, argv, quiet);
+  return loadCommand('../commands/case.js', 'cmdCase', flags, argv, quiet);
 }
 
 export function cmdHook(flags) {
-  const mod = require('../commands/hook.js');
-  return mod.cmdHook(flags);
+  return loadCommand('../commands/hook.js', 'cmdHook', flags);
 }
 
 export async function cmdGraph(flags, quiet) {
-  const mod = require('../commands/graph.js');
-  return mod.cmdGraph(flags, quiet);
+  return loadCommand('../commands/graph.js', 'cmdGraph', flags, quiet);
 }
 
 export async function cmdMutate(flags, argv) {
-  const mod = require('../commands/mutate.js');
-  return mod.cmdMutate(flags, argv);
+  return loadCommand('../commands/mutate.js', 'cmdMutate', flags, argv);
 }
 
 export function cmdContext(flags, argv) {
-  const mod = require('../commands/context.js');
-  return mod.cmdContext(flags, argv);
+  return loadCommand('../commands/context.js', 'cmdContext', flags, argv);
 }
 
 export async function cmdSync() {
-  const mod = require('../commands/sync.js');
-  return mod.cmdSync();
+  return loadCommand('../commands/sync.js', 'cmdSync');
 }
 
 export async function cmdAlign(flags, argv, quiet) {
-  const mod = require('../commands/align.js');
-  return mod.cmdAlign(flags, argv, quiet);
+  return loadCommand('../commands/align.js', 'cmdAlign', flags, argv, quiet);
 }
 
 export async function cmdMarathon(flags, argv, quiet) {
-  const mod = require('../commands/marathon.js');
-  return mod.cmdMarathon(flags, argv, quiet);
+  return loadCommand('../commands/marathon.js', 'cmdMarathon', flags, argv, quiet);
 }
 
 export async function cmdCompile(flags, quiet) {
-  const mod = require('../commands/compile.js');
-  return mod.cmdCompile(flags, quiet);
+  return loadCommand('../commands/compile.js', 'cmdCompile', flags, quiet);
 }
 
 export async function cmdMemory(flags, argv, quiet) {
-  const mod = require('../commands/memory.js');
-  return mod.cmdMemory(flags, argv, quiet);
+  return loadCommand('../commands/memory.js', 'cmdMemory', flags, argv, quiet);
 }
 
 export function cmdUninstall(flags, quiet) {
-  const mod = require('../commands/uninstall.js');
-  return mod.cmdUninstall(flags, quiet);
+  return loadCommand('../commands/uninstall.js', 'cmdUninstall', flags, quiet);
 }
 
 export async function generateIDEBridges(cwd, agentDest, quiet) {
-  const mod = require('../commands/init.js');
-  return mod.generateIDEBridges(cwd, agentDest, quiet);
+  return loadCommand('../commands/init.js', 'generateIDEBridges', cwd, agentDest, quiet);
 }

@@ -9,12 +9,21 @@ pub struct TaskNode {
     pub tier: Option<String>, // "fast" | "deep"
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct WaveGroup {
+    pub wave_index: usize,
+    pub tasks: Vec<String>,
+    pub fast_tasks: Vec<String>,
+    pub deep_tasks: Vec<String>,
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DagScheduleResult {
     pub success: bool,
     pub total_tasks: usize,
     pub total_waves: usize,
     pub waves: Vec<Vec<String>>,
+    pub wave_groups: Vec<WaveGroup>,
     pub is_cyclic: bool,
 }
 
@@ -23,12 +32,14 @@ pub fn schedule_dag(tasks_json: &str) -> Result<String> {
     let tasks: Vec<TaskNode> = serde_json::from_str(tasks_json)
         .with_context(|| "Failed to parse task nodes JSON for DAG scheduling")?;
 
+    let mut tier_map: HashMap<String, String> = HashMap::new();
     let mut in_degree: HashMap<String, usize> = HashMap::new();
     let mut adj_list: HashMap<String, Vec<String>> = HashMap::new();
     let mut all_ids: HashSet<String> = HashSet::new();
 
     for task in &tasks {
         all_ids.insert(task.id.clone());
+        tier_map.insert(task.id.clone(), task.tier.clone().unwrap_or_else(|| "fast".to_string()));
         in_degree.entry(task.id.clone()).or_insert(0);
         adj_list.entry(task.id.clone()).or_default();
     }
@@ -45,6 +56,7 @@ pub fn schedule_dag(tasks_json: &str) -> Result<String> {
     }
 
     let mut waves: Vec<Vec<String>> = Vec::new();
+    let mut wave_groups: Vec<WaveGroup> = Vec::new();
     let mut current_wave: Vec<String> = in_degree
         .iter()
         .filter(|(_, &deg)| deg == 0)
@@ -55,12 +67,22 @@ pub fn schedule_dag(tasks_json: &str) -> Result<String> {
     current_wave.sort();
 
     let mut processed_count = 0;
+    let mut wave_idx = 0;
 
     while !current_wave.is_empty() {
         processed_count += current_wave.len();
         let mut next_candidates = Vec::new();
 
+        let mut fast_tasks = Vec::new();
+        let mut deep_tasks = Vec::new();
+
         for node_id in &current_wave {
+            if tier_map.get(node_id).map(|s| s.as_str()) == Some("deep") {
+                deep_tasks.push(node_id.clone());
+            } else {
+                fast_tasks.push(node_id.clone());
+            }
+
             if let Some(neighbors) = adj_list.get(node_id) {
                 for neighbor in neighbors {
                     if let Some(deg) = in_degree.get_mut(neighbor) {
@@ -73,10 +95,18 @@ pub fn schedule_dag(tasks_json: &str) -> Result<String> {
             }
         }
 
+        wave_groups.push(WaveGroup {
+            wave_index: wave_idx,
+            tasks: current_wave.clone(),
+            fast_tasks,
+            deep_tasks,
+        });
+
         waves.push(current_wave);
         next_candidates.sort();
         next_candidates.dedup();
         current_wave = next_candidates;
+        wave_idx += 1;
     }
 
     let is_cyclic = processed_count < tasks.len();
@@ -85,6 +115,7 @@ pub fn schedule_dag(tasks_json: &str) -> Result<String> {
         total_tasks: tasks.len(),
         total_waves: waves.len(),
         waves,
+        wave_groups,
         is_cyclic,
     };
 
@@ -116,9 +147,9 @@ mod tests {
     #[test]
     fn test_dag_schedule_parallel() {
         let json = r#"[
-            {"id": "lint-runner", "dependencies": []},
-            {"id": "type-safety", "dependencies": []},
-            {"id": "security-auditor", "dependencies": ["lint-runner", "type-safety"]}
+            {"id": "lint-runner", "dependencies": [], "tier": "fast"},
+            {"id": "type-safety", "dependencies": [], "tier": "fast"},
+            {"id": "security-auditor", "dependencies": ["lint-runner", "type-safety"], "tier": "deep"}
         ]"#;
 
         let res_str = schedule_dag(json).unwrap();
@@ -128,5 +159,35 @@ mod tests {
         assert_eq!(res.total_waves, 2);
         assert_eq!(res.waves[0], vec!["lint-runner", "type-safety"]);
         assert_eq!(res.waves[1], vec!["security-auditor"]);
+        assert_eq!(res.wave_groups[0].fast_tasks, vec!["lint-runner", "type-safety"]);
+        assert_eq!(res.wave_groups[1].deep_tasks, vec!["security-auditor"]);
+    }
+
+    #[test]
+    fn test_dag_schedule_cyclic() {
+        let json = r#"[
+            {"id": "task-a", "dependencies": ["task-b"]},
+            {"id": "task-b", "dependencies": ["task-a"]}
+        ]"#;
+
+        let res_str = schedule_dag(json).unwrap();
+        let res: DagScheduleResult = serde_json::from_str(&res_str).unwrap();
+
+        assert!(!res.success);
+        assert!(res.is_cyclic);
+    }
+
+    #[test]
+    fn test_dag_schedule_single_node() {
+        let json = r#"[
+            {"id": "solo-task", "dependencies": []}
+        ]"#;
+
+        let res_str = schedule_dag(json).unwrap();
+        let res: DagScheduleResult = serde_json::from_str(&res_str).unwrap();
+
+        assert!(res.success);
+        assert_eq!(res.total_waves, 1);
+        assert_eq!(res.waves[0], vec!["solo-task"]);
     }
 }

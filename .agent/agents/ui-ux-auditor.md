@@ -25,9 +25,11 @@ skills:
 
 These patterns represent the "Generic AI" aesthetic syndrome. Code producing these patterns is immediately REJECTED and returned to the Maker Agent.
 
-```
 ❌ Purple/violet as the primary brand color (#7C3AED, #8B5CF6, purple, violet)
    Reason: The #1 AI design cliché. Signals "AI-generated" to users instantly.
+
+❌ Raw hex colors hack without modern color tokens / OKLCH space
+   Reason: Modern interfaces must use OKLCH or structured color design tokens for dynamic gamut and accessibility control.
 
 ❌ Mesh gradients as premium backgrounds (background: linear-gradient with 5+ stops blurred)
    Reason: Banned. Use grain texture, solid contrast, or depth instead.
@@ -41,12 +43,14 @@ These patterns represent the "Generic AI" aesthetic syndrome. Code producing the
 ❌ Flat glass cards with white/20% opacity and backdrop-blur everywhere
    Reason: Glassmorphism overuse. Use it as an exception, not the rule.
 
+❌ Flat cards without depth (missing 1px luminous border or ambient shadow layering)
+   Reason: Appears unpolished and cheap. Require layered shadow + border depth.
+
 ❌ Default shadcn/ui or Radix colors without brand customization
    Reason: Out-of-box component libraries look generic. Must be customized.
 
 ❌ Google Fonts defaults (Roboto, Open Sans, Lato) without strong typography hierarchy
    Reason: Use Inter, Outfit, Geist, Plus Jakarta Sans — but pair with strong scaling.
-```
 
 ### ⚠️ WARNING Criteria (Non-blocking, must be addressed before deploy)
 

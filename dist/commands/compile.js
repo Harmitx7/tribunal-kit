@@ -74,6 +74,13 @@ async function cmdCompile(flags, quiet) {
         if (flags.target === "claude") targetFile = ".claude.json";
     }
     
+    const byteLength = Buffer.byteLength(compiledContext, "utf-8");
+    const mbSize = byteLength / (1024 * 1024);
+    if (mbSize > 5.0 && !quiet) {
+        const { warn } = require("../utils/logger");
+        warn(`Compiled context is very large (~${mbSize.toFixed(2)} MB). This might overload some LLM context windows.`);
+    }
+
     const outputPath = path.join(cwd, targetFile);
     fs.writeFileSync(outputPath, compiledContext, "utf-8");
     

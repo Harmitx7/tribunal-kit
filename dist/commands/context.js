@@ -19,11 +19,16 @@ function cmdContext(flags, processArgs) {
         console.error('Usage: npx tribunal-kit context <target_file>');
         process.exit(1);
     }
-    const targetFile = args[0].replace(/\\/g, '/');
-    const snapshotName = targetFile.replace(/[\\\/]/g, '__') + '.json';
+    const resolvedTarget = path_1.default.resolve(targetDir, args[0]);
+    const relativePath = path_1.default.relative(targetDir, resolvedTarget).replace(/\\/g, '/');
+    if (relativePath.startsWith('../') || relativePath === '..' || path_1.default.isAbsolute(relativePath)) {
+        console.error('  \x1b[91m✖\x1b[0m File must be within the project directory: ' + args[0]);
+        process.exit(1);
+    }
+    const snapshotName = relativePath.replace(/[\\\/]/g, '__') + '.json';
     const snapshotPath = path_1.default.join(agentDest, 'history', 'snapshots', snapshotName);
     if (!fs_1.default.existsSync(snapshotPath)) {
-        console.error('  \x1b[91m✖\x1b[0m Context Snapshot not found for: ' + targetFile);
+        console.error('  \x1b[91m✖\x1b[0m Context Snapshot not found for: ' + args[0]);
         console.log('    Run: npx tribunal-kit graph  (to generate snapshots)');
         process.exit(1);
     }

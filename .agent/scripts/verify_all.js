@@ -213,6 +213,19 @@ function verifyAll(cwd, skipped) {
     trackSkip("Dependency audit", "skipped by flag");
   }
 
+  console.log(sectionHeader("Rust Core Tests", 7));
+  if (!skipped.includes("rust")) {
+    const cargoToml = path.join(cwd, "crates", "core", "Cargo.toml");
+    if (fs.existsSync(cargoToml)) {
+      if (!run("Rust Core Tests", ["cargo", "test", "--manifest-path", "crates/core/Cargo.toml"], cwd))
+        failures++;
+    } else {
+      trackSkip("Rust Core Tests", "crates/core/Cargo.toml not found in project");
+    }
+  } else {
+    trackSkip("Rust Core Tests", "skipped by flag");
+  }
+
   // ━━━ Summary Table ━━━
   const totalMs = totalTimer();
   console.log(`\n${BOLD}${CYAN}━━━ Verification Summary ━━━${RESET}`);

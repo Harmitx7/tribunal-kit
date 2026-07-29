@@ -1,7 +1,7 @@
 {
   "name": "tribunal-kit",
-  "version": "5.8.5",
-  "description": "The operating system for AI software engineering — governance, memory, review pipelines, and reusable skills for every coding agent. 44 specialist agents, 34 workflows, 19 parallel Tribunal code reviewers, MCP server, Rust core engine, and long-running autonomous agent harness for Cursor, VSCode, Windsurf, Claude Code, and Aider.",
+  "version": "6.0.0",
+  "description": "The operating system for AI software engineering — governance, memory, review pipelines, and reusable skills for every coding agent. 45 specialist agents, 35 workflows, 21 parallel Tribunal code reviewers, MCP server, Rust core engine, and long-running autonomous agent harness for Cursor, VSCode, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
     "ai-agent",
@@ -80,7 +80,7 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "test": "npm run validate-payload && jest --coverage",
+    "test": "npm run validate-payload && jest --runInBand --coverage",
     "test:unit": "jest test/unit --coverage",
     "test:integration": "jest test/integration --coverage",
     "preversion": "node scripts/sync-version.js",
@@ -92,21 +92,23 @@
     "benchmark": "node scripts/benchmark.js",
     "benchmark:rust": "cargo build --release && node scripts/benchmark.js",
     "build:rust": "cargo build --release",
+    "build:core": "cargo build --release --manifest-path crates/core/Cargo.toml",
     "test:rust": "cargo test --manifest-path crates/core/Cargo.toml",
+    "test:all": "npm run validate-payload && npm run test:rust && jest --runInBand --coverage",
     "build": "npm run build:rust"
   },
   "devDependencies": {
-    "eslint": "^9.1.1",
-    "jest": "^30.4.2",
-    "typescript": "^5.4.5"
-  },
+    "eslint": "9.1.1",
+    "jest": "30.4.2",
+    "typescript": "5.4.5"
+},
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^5.8.5",
-    "@tribunal-kit/core-darwin-x64": "^5.8.5",
-    "@tribunal-kit/core-linux-arm64": "^5.8.5",
-    "@tribunal-kit/core-linux-x64": "^5.8.5",
-    "@tribunal-kit/core-win32-arm64": "^5.8.5",
-    "@tribunal-kit/core-win32-x64": "^5.8.5"
+    "@tribunal-kit/core-darwin-arm64": "6.0.0",
+    "@tribunal-kit/core-darwin-x64": "6.0.0",
+    "@tribunal-kit/core-linux-arm64": "6.0.0",
+    "@tribunal-kit/core-linux-x64": "6.0.0",
+    "@tribunal-kit/core-win32-arm64": "6.0.0",
+    "@tribunal-kit/core-win32-x64": "6.0.0"
   },
   "jest": {
     "testMatch": [
@@ -116,7 +118,8 @@
     "coverageDirectory": "coverage",
     "collectCoverageFrom": [
       "bin/**/*.js",
-      ".agent/scripts/**/*.js"
+      ".agent/scripts/**/*.js",
+      "dist/**/*.js"
     ]
   }
 }

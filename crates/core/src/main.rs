@@ -161,6 +161,17 @@ enum Commands {
         #[arg(long)]
         max_lines: Option<usize>,
     },
+
+    /// Fast native resolution of agent rules, skills, and context graphs
+    ContextBroker {
+        /// Target repository path
+        #[arg(long, default_value = ".")]
+        repo_path: String,
+
+        /// Target file path to resolve context for
+        #[arg(long)]
+        target_file: Option<String>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -385,6 +396,21 @@ async fn main() -> Result<()> {
         Commands::DagSchedule { tasks } => cmd_dag_schedule(&tasks).await,
 
         Commands::ContextCompress { file, max_lines } => cmd_context_compress(&file, max_lines).await,
+
+        Commands::ContextBroker { repo_path, target_file } => cmd_context_broker(&repo_path, target_file.as_deref()).await,
+    }
+}
+
+async fn cmd_context_broker(repo_path: &str, target_file: Option<&str>) -> Result<()> {
+    match commands::context_broker::resolve_context(repo_path, target_file) {
+        Ok(json_output) => {
+            println!("{}", json_output);
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ Context broker failed: {:#}", e);
+            std::process::exit(1);
+        }
     }
 }
 
@@ -671,7 +697,6 @@ async fn cmd_status(path: &str) -> Result<()> {
         (0, 0, 0, 0)
     };
 
-    // Human-readable output on stderr
     // ── Memory Stats ──
     let (mem_total, mem_sem, mem_proc, mem_ep, mem_work, mem_tokens) = if installed {
         let mem_index = commands::memory::load_index(&agent_dir).unwrap_or_else(|_| commands::memory::MemoryIndex::new());
@@ -680,6 +705,88 @@ async fn cmd_status(path: &str) -> Result<()> {
         (0, 0, 0, 0, 0, 0)
     };
 
+    // ── IDE Bridge Health ──
+    let bridge_defs = vec![
+        ("Cursor", ".cursorrules"),
+        ("Windsurf", ".windsurfrules"),
+        ("Gemini", ".gemini/GEMINI.md"),
+        ("Gemini Cfg", ".gemini/settings.json"),
+        ("Copilot", ".github/copilot-instructions.md"),
+        ("Claude", ".claude/CLAUDE.md"),
+    ];
+
+    let rules_mtime = if installed {
+        let rules_path = agent_dir.join("rules").join("GEMINI.md");
+        tokio::fs::metadata(&rules_path).await.ok().and_then(|m| m.modified().ok())
+    } else {
+        None
+    };
+
+    let mut bridge_statuses: Vec<serde_json::Value> = Vec::new();
+    for (ide_name, rel_path) in &bridge_defs {
+        let bridge_path = target.join(rel_path);
+        let (status_icon, status_label) = if bridge_path.exists() {
+            let bridge_mtime = tokio::fs::metadata(&bridge_path).await.ok().and_then(|m| m.modified().ok());
+            match (bridge_mtime, rules_mtime) {
+                (Some(b), Some(r)) if b >= r => ("✔", "fresh"),
+                (Some(_), Some(_)) => ("⚠", "stale"),
+                _ => ("✔", "exists"),
+            }
+        } else {
+            ("✖", "missing")
+        };
+        bridge_statuses.push(serde_json::json!({
+            "ide": ide_name,
+            "path": rel_path,
+            "status": status_label,
+        }));
+        if installed {
+            let colored_icon = match status_label {
+                "fresh" | "exists" => format!("{}", status_icon.green()),
+                "stale" => format!("{}", status_icon.yellow()),
+                _ => format!("{}", status_icon.red()),
+            };
+            eprintln!("│  {}  {:>10}:  {}", colored_icon, ide_name.dimmed(), rel_path);
+        }
+    }
+
+    // ── Context Token Stats ──
+    let context_tokens: usize = if installed {
+        match commands::context_broker::resolve_context(path, None) {
+            Ok(json_str) => {
+                serde_json::from_str::<serde_json::Value>(&json_str)
+                    .ok()
+                    .and_then(|v| v["total_tokens_estimate"].as_u64())
+                    .unwrap_or(0) as usize
+            }
+            Err(_) => 0,
+        }
+    } else {
+        0
+    };
+
+    // ── Reviewer Readiness ──
+    let known_reviewers = [
+        "logic-reviewer", "security-auditor", "complexity-reviewer",
+        "frontend-specialist", "type-safety-reviewer", "ui-ux-auditor",
+        "resilience-reviewer", "schema-reviewer", "dependency-reviewer",
+        "performance-optimizer", "mobile-reviewer", "review-animations",
+        "ai-code-reviewer", "precedence-reviewer", "ui-visual-auditor",
+        "documentation-writer", "test-engineer", "debugger", "explorer-agent",
+    ];
+    let mut reviewers_ready: u32 = 0;
+    if installed {
+        let agents_dir = agent_dir.join("agents");
+        for reviewer in &known_reviewers {
+            let reviewer_file = agents_dir.join(format!("{}.md", reviewer));
+            if reviewer_file.exists() {
+                reviewers_ready += 1;
+            }
+        }
+    }
+    let total_reviewers = known_reviewers.len() as u32;
+
+    // ── Human-Readable Output ──
     if installed {
         eprintln!("\n╭─ {} ──────────────────", format!("Tribunal-Kit v{}", env!("CARGO_PKG_VERSION")).bold());
         eprintln!("│");
@@ -693,6 +800,17 @@ async fn cmd_status(path: &str) -> Result<()> {
         eprintln!("│");
         eprintln!("│  ◆ {:>10}:  {:>3}  {}", "Memories".cyan(), mem_total,
             format!("({}S {}P {}E {}W | ~{}tok)", mem_sem, mem_proc, mem_ep, mem_work, mem_tokens).dimmed());
+        eprintln!("│");
+        eprintln!("│  ─── IDE Bridges ───");
+        // Bridge statuses already printed above during iteration
+        eprintln!("│");
+        eprintln!("│  ◆ {:>10}:  ~{} tokens", "Context".cyan(), context_tokens);
+        let readiness_color = if reviewers_ready == total_reviewers {
+            format!("{}/{} ready", reviewers_ready, total_reviewers).green().to_string()
+        } else {
+            format!("{}/{} ready", reviewers_ready, total_reviewers).yellow().to_string()
+        };
+        eprintln!("│  ◆ {:>10}:  {}", "Reviewers".magenta(), readiness_color);
         eprintln!("│");
         eprintln!("╰────────────────────────────────────────\n");
     } else {
@@ -720,6 +838,12 @@ async fn cmd_status(path: &str) -> Result<()> {
             "working": mem_work,
             "total_tokens": mem_tokens,
         },
+        "bridges": bridge_statuses,
+        "context_tokens_estimate": context_tokens,
+        "reviewers": {
+            "ready": reviewers_ready,
+            "total": total_reviewers,
+        },
     });
 
     println!("{}", serde_json::to_string(&output)?);
@@ -728,8 +852,146 @@ async fn cmd_status(path: &str) -> Result<()> {
 
 // ── Placeholder Commands (Restored) ─────────────────────────────────────────
 
-async fn cmd_sync(_path: &str, _quiet: bool) -> Result<()> {
-    eprintln!("Sync command is currently being updated in this branch.");
+async fn cmd_sync(path: &str, quiet: bool) -> Result<()> {
+    let target = PathBuf::from(path);
+    let agent_dir = target.join(".agent");
+
+    if !agent_dir.exists() {
+        let error_json = serde_json::json!({
+            "success": false,
+            "error": ".agent/ directory not found. Run: npx tribunal-kit init"
+        });
+        println!("{}", serde_json::to_string(&error_json)?);
+        if !quiet {
+            eprintln!("{} {}", "✖".red(), ".agent/ not found. Run: npx tribunal-kit init".bold());
+        }
+        std::process::exit(1);
+    }
+
+    let rules_file = agent_dir.join("rules").join("GEMINI.md");
+    if !rules_file.exists() {
+        let error_json = serde_json::json!({
+            "success": false,
+            "error": ".agent/rules/GEMINI.md not found. Cannot sync bridges without governance rules."
+        });
+        println!("{}", serde_json::to_string(&error_json)?);
+        if !quiet {
+            eprintln!("{} {}", "✖".red(), ".agent/rules/GEMINI.md not found.".bold());
+        }
+        std::process::exit(1);
+    }
+
+    if !quiet {
+        eprintln!("\n╭─ {} ──────────────────", "Tribunal IDE Sync".bold());
+        eprintln!("│");
+        eprintln!("│  {} Regenerating IDE bridge files...", "✦".dimmed());
+    }
+
+    // Sync bridges (force-overwrite, unlike init which skips existing)
+    sync_ide_bridges(&target, &agent_dir).await?;
+
+    // Collect bridge status for JSON output
+    let bridge_files = vec![
+        (".cursorrules", target.join(".cursorrules")),
+        (".windsurfrules", target.join(".windsurfrules")),
+        (".gemini/settings.json", target.join(".gemini").join("settings.json")),
+        (".gemini/GEMINI.md", target.join(".gemini").join("GEMINI.md")),
+        (".github/copilot-instructions.md", target.join(".github").join("copilot-instructions.md")),
+        (".claude/CLAUDE.md", target.join(".claude").join("CLAUDE.md")),
+    ];
+
+    let mut bridges_written = Vec::new();
+    for (name, path) in &bridge_files {
+        let exists = path.exists();
+        bridges_written.push(serde_json::json!({
+            "bridge": name,
+            "written": exists,
+        }));
+        if !quiet {
+            if exists {
+                eprintln!("│  {} {}", "✔".green(), name);
+            } else {
+                eprintln!("│  {} {} (write failed)", "✖".red(), name);
+            }
+        }
+    }
+
+    if !quiet {
+        eprintln!("│");
+        eprintln!("│  {} {}", "✔".green(), "Sync complete.".bold());
+        eprintln!("╰────────────────────────────────────────\n");
+    }
+
+    let output = serde_json::json!({
+        "success": true,
+        "bridges_synced": bridge_files.len(),
+        "bridges": bridges_written,
+    });
+    println!("{}", serde_json::to_string(&output)?);
+
+    Ok(())
+}
+
+/// Sync IDE bridges by force-writing all 6 bridge files from .agent/rules/GEMINI.md.
+/// Unlike `generate_ide_bridges` (used during init, which skips existing files),
+/// this always overwrites to ensure bridge content stays fresh with the source rules.
+async fn sync_ide_bridges(target: &PathBuf, agent_dir: &PathBuf) -> Result<()> {
+    let rules_file = agent_dir.join("rules").join("GEMINI.md");
+    let rules_content = tokio::fs::read_to_string(&rules_file).await.unwrap_or_default();
+
+    async fn force_write_bridge(file_path: PathBuf, content: String) {
+        if let Some(p) = file_path.parent() {
+            let _ = tokio::fs::create_dir_all(p).await;
+        }
+        let _ = tokio::fs::write(file_path, content).await;
+    }
+
+    // Pre-create parent directories concurrently
+    let _ = tokio::join!(
+        tokio::fs::create_dir_all(target.join(".gemini")),
+        tokio::fs::create_dir_all(target.join(".github")),
+        tokio::fs::create_dir_all(target.join(".claude")),
+    );
+
+    let cursor_rules = format!(
+        "# Tribunal Kit — Cursor Bridge\n# Auto-generated by tribunal-kit sync. Do not edit manually.\n# Source: .agent/rules/GEMINI.md\n\n{}",
+        rules_content
+    );
+    let windsurf_rules = format!(
+        "# Tribunal Kit — Windsurf Bridge\n# Auto-generated by tribunal-kit sync. Do not edit manually.\n# Source: .agent/rules/GEMINI.md\n\n{}",
+        rules_content
+    );
+    let gemini_settings = serde_json::json!({
+        "rules": [
+            { "path": "../.agent/rules/GEMINI.md", "trigger": "always_on" }
+        ],
+        "agents": { "directory": "../.agent/agents" },
+        "skills": { "directory": "../.agent/skills" },
+        "workflows": { "directory": "../.agent/workflows" }
+    });
+    let gemini_md = format!(
+        "---\ntrigger: always_on\n---\n\n# Tribunal Kit — Gemini Bridge\n# Auto-generated by tribunal-kit sync.\n\n{}",
+        rules_content
+    );
+    let copilot_instructions = format!(
+        "# Tribunal Kit — Copilot Bridge\n# Auto-generated by tribunal-kit sync.\n\n{}",
+        rules_content
+    );
+    let claude_rules = format!(
+        "# Tribunal Kit \u{2014} Claude Bridge\n# Auto-generated by tribunal-kit sync.\n# Source: .agent/rules/GEMINI.md\n\n{}",
+        rules_content
+    );
+
+    // Fire ALL 6 bridge writes concurrently
+    tokio::join!(
+        force_write_bridge(target.join(".cursorrules"), cursor_rules),
+        force_write_bridge(target.join(".windsurfrules"), windsurf_rules),
+        force_write_bridge(target.join(".gemini").join("settings.json"), serde_json::to_string_pretty(&gemini_settings).unwrap()),
+        force_write_bridge(target.join(".gemini").join("GEMINI.md"), gemini_md),
+        force_write_bridge(target.join(".github").join("copilot-instructions.md"), copilot_instructions),
+        force_write_bridge(target.join(".claude").join("CLAUDE.md"), claude_rules),
+    );
+
     Ok(())
 }
 

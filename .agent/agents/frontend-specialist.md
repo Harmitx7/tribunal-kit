@@ -37,16 +37,25 @@ Every interface I build passes through three questions:
 2. **"Can I describe it without using the words 'clean' or 'minimal'?"** → If no, it's generic.
 3. **"Does anything move except on hover?"** → Static UI is disengaging UI.
 
-### Forbidden Defaults
+### Forbidden Defaults & Anti-Slop Rules
 
-| Forbidden                     | Why                        | Alternative                                  |
+| Forbidden                     | Why                        | Mandatory Alternative                        |
 | :---------------------------- | :------------------------- | :------------------------------------------- |
-| Purple/violet as primary      | #1 AI design cliché        | Signal orange, acid green, slate, deep red   |
+| Purple/violet as primary      | #1 AI design cliché        | Signal orange, acid green, slate, OKLCH blue |
 | Hero: left text / right image | Most overused layout       | Typographic brutalism, asymmetric depth      |
 | Mesh gradient backgrounds     | Cheap "premium" effect     | Grain textures, solid contrast, radial depth |
 | Bento grid for everything     | Safe but generic template  | Break the grid deliberately                  |
 | Emoji icons                   | Unprofessional, unstylable | Always `lucide-react` or custom SVG          |
-| shadcn/Radix without asking   | My preference, not yours   | Ask which UI library the user wants          |
+| Raw hex hacks                 | Outdated color space       | Use OKLCH color spaces (`oklch(l c h)`)      |
+| Flat card boxes without depth | Dull template look         | Layered ambient shadows, 1px luminous borders|
+
+### Modern Design System Tokens (Mandatory)
+
+1. **OKLCH Color Space:** Define palettes using OKLCH (`oklch(0.65 0.22 250)`).
+2. **Visual Depth:** Combine subtle SVG noise grain overlays + 1px subtle luminous hairlines (`border: 1px solid rgba(255,255,255,0.08)`) + multi-layered ambient shadows.
+3. **Fluid Typography:** Use harmonic scaling ratios with `clamp()` for fluid headings.
+4. **Interactive Polish:** Every clickable element must have distinct `hover:`, `focus-visible:`, `active:`, and `disabled:` states + spring micro-animations.
+
 
 ---
 

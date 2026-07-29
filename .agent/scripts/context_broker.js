@@ -49,10 +49,42 @@
 
 const fs = require("fs");
 const path = require("path");
+const { execFileSync } = require("child_process");
 
 // ── Colours & Shared Utilities ────────────────────────────────────────────────
 const { GREEN, YELLOW, CYAN, RED, BOLD, DIM, RESET } = require("./_colors");
 const { findAgentDir } = require("./_utils");
+
+/**
+ * Attempt native Rust context resolution for sub-15ms execution
+ */
+function tryNativeContextBroker(repoPath, targetFile) {
+  if (process.env.TK_DISABLE_RUST === "1") return null;
+
+  const candidates = [
+    path.join(__dirname, "../../target/release/tribunal-core.exe"),
+    path.join(__dirname, "../../target/release/tribunal-core"),
+    path.join(__dirname, "../../target/debug/tribunal-core.exe"),
+    path.join(__dirname, "../../target/debug/tribunal-core"),
+    "tribunal-core"
+  ];
+
+  for (const bin of candidates) {
+    try {
+      if (bin.includes(path.sep) && !fs.existsSync(bin)) continue;
+      const args = ["context-broker", "--repo-path", repoPath];
+      if (targetFile) args.push("--target-file", targetFile);
+      const out = execFileSync(bin, args, { encoding: "utf8", timeout: 2000, stdio: ["ignore", "pipe", "ignore"] });
+      if (out && out.trim().startsWith("{")) {
+        return JSON.parse(out);
+      }
+    } catch (_) {
+      // Continue to next candidate or fallback
+    }
+  }
+  return null;
+}
+
 
 
 // ── Domain → Skill affinity map ───────────────────────────────────────────────
@@ -812,13 +844,119 @@ function broker(task, files = [], model = "large", agentDir = null) {
   return { ...selection, promptText };
 }
 
+/**
+ * Pipeline-specific broker for the 3-pass hybrid architecture.
+ * Returns context tailored to each pipeline phase:
+ *   - "plan":     Skill names + descriptions only (for task classification)
+ *   - "build":    Top 2-3 essential skills' keyRules only (for code generation)
+ *   - "validate": Validator configuration (which patterns to check)
+ *
+ * @param {string}   task     - User task description
+ * @param {string[]} files    - Files being touched
+ * @param {string}   phase    - 'plan' | 'build' | 'validate'
+ * @param {string}   agentDir - Path to .agent/ directory
+ * @returns {object} Phase-specific context
+ */
+function brokerForPipeline(task, files = [], phase = "build", agentDir = null) {
+  const resolvedAgentDir = agentDir || findAgentDir();
+  const skills = loadSkills(resolvedAgentDir);
+  // Always use "small" model tier for aggressive pruning in pipeline mode
+  const selection = selectSkills(task, files, "small", skills);
+
+  if (phase === "plan") {
+    // Plan phase: skill names and descriptions only — no content, no keyRules
+    return {
+      phase: "plan",
+      skills: selection.essential.slice(0, 6).map(s => ({
+        name: s.name,
+        description: s.description,
+        score: selection.scores.get(s.name) || 0,
+      })),
+      total_matched: selection.essential.length + selection.available.length,
+    };
+  }
+
+  if (phase === "build") {
+    // Build phase: top 3 essential keyRules — maximum density, minimum tokens
+    return {
+      phase: "build",
+      skills: selection.essential.slice(0, 3).map(s => ({
+        name: s.name,
+        keyRules: s.keyRules || "",
+        score: selection.scores.get(s.name) || 0,
+      })),
+    };
+  }
+
+  if (phase === "validate") {
+    // Validate phase: return detected stack for targeted pattern matching
+    const fileExts = files.map(f => path.extname(f).toLowerCase()).filter(Boolean);
+    return {
+      phase: "validate",
+      detectedExtensions: fileExts,
+      essentialSkillNames: selection.essential.slice(0, 3).map(s => s.name),
+    };
+  }
+
+  // Fallback: return full selection
+  return { phase, ...selection };
+}
+
+/**
+ * Format pipeline-plan output: compact skill list for planner context.
+ * @param {string} task
+ * @param {object} pipelineResult - Output of brokerForPipeline(task, files, "plan")
+ * @returns {string}
+ */
+function formatPipelinePlan(task, pipelineResult) {
+  const lines = [
+    "# Pipeline Planner Context",
+    `# Task: ${task}`,
+    "",
+    "## Matched Skills (by relevance)",
+    "",
+  ];
+  for (const s of pipelineResult.skills) {
+    lines.push(`- **${s.name}** (score: ${s.score.toFixed(1)}): ${(s.description || "").slice(0, 120)}`);
+  }
+  lines.push("");
+  lines.push(`Total matched: ${pipelineResult.total_matched}`);
+  return lines.join("\n");
+}
+
+/**
+ * Format pipeline-build output: condensed keyRules for builder prompt injection.
+ * @param {string} task
+ * @param {object} pipelineResult - Output of brokerForPipeline(task, files, "build")
+ * @returns {string}
+ */
+function formatPipelineBuild(task, pipelineResult) {
+  const lines = [
+    "# Builder Context — Essential Rules Only",
+    `# Task: ${task}`,
+    "",
+  ];
+  for (const s of pipelineResult.skills) {
+    lines.push(`## ${s.name}`);
+    lines.push("");
+    lines.push(s.keyRules || "(no key rules extracted)");
+    lines.push("");
+    lines.push("---");
+    lines.push("");
+  }
+  return lines.join("\n");
+}
+
 module.exports = {
   broker,
+  brokerForPipeline,
   selectSkills,
   loadSkills,
   scoreSkill,
   tokenize,
   findAgentDir,
+  extractKeyRules,
+  tryNativeContextBroker,
 };
 
 // ── CLI Entry ─────────────────────────────────────────────────────────────────
@@ -906,8 +1044,22 @@ ${BOLD}Examples:${RESET}
     case "prompt":
       console.log(formatPrompt(task, effectiveModel, selection));
       break;
+    case "pipeline-plan": {
+      const pipelinePlan = brokerForPipeline(task, files, "plan", agentDir);
+      console.log(formatPipelinePlan(task, pipelinePlan));
+      break;
+    }
+    case "pipeline-build": {
+      const pipelineBuild = brokerForPipeline(task, files, "build", agentDir);
+      console.log(formatPipelineBuild(task, pipelineBuild));
+      break;
+    }
     default: // 'report'
       formatReport(task, effectiveModel, selection, elapsed);
       break;
   }
 }
+
+
+
+

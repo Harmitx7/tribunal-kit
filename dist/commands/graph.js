@@ -23,8 +23,14 @@ async function cmdGraph(flags, quiet = false) {
         await (0, helpers_1.runShellAsync)(`node "${builderScript}"`, { stdio: 'inherit', cwd: targetDir });
         await (0, helpers_1.runShellAsync)(`node "${visualizerScript}"`, { stdio: 'inherit', cwd: targetDir });
         (0, logger_1.log)(`  ${(0, logger_1.c)('cyan', '▸')} Opening visualizer in browser...`);
-        const opener = process.platform === 'win32' ? 'start' : process.platform === 'darwin' ? 'open' : 'xdg-open';
-        await (0, helpers_1.runShellAsync)(`${opener} "${htmlFile}"`, { stdio: 'ignore' });
+        const child_process = require('child_process');
+        if (process.platform === 'win32') {
+            child_process.spawn('cmd.exe', ['/c', 'start', '', htmlFile], { stdio: 'ignore', detached: true }).unref();
+        } else if (process.platform === 'darwin') {
+            child_process.spawn('open', [htmlFile], { stdio: 'ignore', detached: true }).unref();
+        } else {
+            child_process.spawn('xdg-open', [htmlFile], { stdio: 'ignore', detached: true }).unref();
+        }
     }
     catch (e) {
         if (e instanceof Error) {

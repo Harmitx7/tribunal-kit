@@ -42,7 +42,7 @@ Type any of these in your AI IDE chat:
 | ----------------------- | -------------------------------------------------------------------------------------- | ----------------------------------- |
 | `/generate`             | Full Tribunal: Maker → Parallel Review → Human Gate                                    | `workflows/generate.md`             |
 | `/review`               | Audit existing code (no generation)                                                    | `workflows/review.md`               |
-| `/tribunal-full`        | ALL 19 reviewers at once — maximum coverage                                            | `workflows/tribunal-full.md`        |
+| `/tribunal-full`        | ALL 21 reviewers at once — maximum coverage                                            | `workflows/tribunal-full.md`        |
 | `/tribunal-backend`     | Logic + Security + Deps + Types                                                        | `workflows/tribunal-backend.md`     |
 | `/tribunal-frontend`    | Logic + Security + Frontend + Types                                                    | `workflows/tribunal-frontend.md`    |
 | `/tribunal-database`    | Logic + Security + SQL                                                                 | `workflows/tribunal-database.md`    |
@@ -71,7 +71,7 @@ Type any of these in your AI IDE chat:
 
 ---
 
-## The 19 Tribunal Reviewers
+## The 21 Tribunal Reviewers
 
 | Agent                    | File                               | Activates When                                                                      |
 | ------------------------ | ---------------------------------- | ----------------------------------------------------------------------------------- |
@@ -220,6 +220,54 @@ VERDICT: All approved → HUMAN GATE (you approve or reject the diff)
 
 ---
 
+## Hybrid Pipeline Architecture
+
+The `/pipeline` command uses a 3-pass decoupled architecture that separates planning, code synthesis, and validation to maximize code generation quality.
+
+```
+User Task
+    │
+    ▼
+Pass 1: Planner (~1,500 tokens)
+  → Classify task, detect stack, select 2-3 essential skills
+  → Output: Structured spec JSON
+    │
+    ▼
+Pass 2: Builder (~2,500 tokens)
+  → Spec + 2-3 skill keyRules + target file context
+  → No GEMINI.md, no agent personas, no tribunal rules
+  → 75% of context devoted to actual task (vs 11% in monolithic)
+    │
+    ▼
+Pass 3: Validator (0 tokens — deterministic)
+  → inner_loop_validator.js + manual pattern checks
+  → OWASP security, type safety, error handling
+  → If fail → structured feedback → retry Pass 2 (max 3)
+    │
+    ▼
+Human Gate → Write to Disk
+```
+
+**When to use `/pipeline` vs `/generate`:**
+
+| Scenario                       | Use              |
+| ------------------------------ | ---------------- |
+| Maximum code quality needed    | `/pipeline`      |
+| Context window is saturated    | `/pipeline`      |
+| Need full tribunal review      | `/generate`      |
+| Quick prototype                | `/pipeline`      |
+| Pre-merge audit                | `/generate`      |
+
+**Key files:**
+
+| File                              | Role                                              |
+| --------------------------------- | ------------------------------------------------- |
+| `scripts/pipeline_engine.js`      | 3-pass pipeline orchestrator                      |
+| `rules/GEMINI_PLANNER.md`         | Condensed planner rules (~80 lines vs 438)        |
+| `workflows/pipeline.md`           | `/pipeline` slash command procedure               |
+
+---
+
 ## Script Inventory
 
 All scripts live in `.agent/scripts/`:
@@ -239,6 +287,7 @@ All scripts live in `.agent/scripts/`:
 | `strengthen_skills.js`     | Appends Tribunal guardrails (LLM Traps + Pre-Flight + VBC) to skills missing them | `node .agent/scripts/strengthen_skills.js . --dry-run`        |
 | `swarm_dispatcher.js`      | Validate Orchestrator micro-worker JSON payloads                                  | `node .agent/scripts/swarm_dispatcher.js --file payload.json` |
 | `skill_integrator.js`      | Map active skills to executable scripts                                           | `node .agent/scripts/skill_integrator.js`                     |
+| `pipeline_engine.js`       | 3-pass hybrid pipeline (Plan → Build → Validate)                                  | `node .agent/scripts/pipeline_engine.js --task "..." --dry-run`|
 | `test_swarm_dispatcher.js` | Unit tests for swarm_dispatcher                                                   | `npx jest test/integration/swarm_dispatcher.test.js`          |
 
 ---
@@ -267,15 +316,19 @@ Script failures follow cascade rules:
 .agent/
 ├── ARCHITECTURE.md          ← This file
 ├── GEMINI.md                ← Root behavior config (includes /swarm routing)
-├── agents/                  ← 44 specialist + reviewer agents (19 reviewers + 25 domain)
+├── agents/                  ← 45 specialist + reviewer agents (21 reviewers + 24 domain)
 │   ├── supervisor-agent.md  ← Swarm triage, dispatch, synthesis
 │   ├── swarm-worker-contracts.md  ← WorkerRequest/WorkerResult schemas
 │   └── swarm-worker-registry.md   ← Task type → agent routing map
-├── rules/GEMINI.md          ← Master rules (P0 priority)
-├── scripts/                 ← 31 automation scripts
-├── skills/                  ← 168 valid skill packages (all hardened)
+├── rules/
+│   ├── GEMINI.md            ← Master rules (P0 priority)
+│   └── GEMINI_PLANNER.md   ← Condensed planner rules for /pipeline Pass 1
+├── scripts/                 ← 32 automation scripts
+│   └── pipeline_engine.js   ← 3-pass hybrid pipeline engine
+├── skills/                  ← 171 valid skill packages (all hardened)
 ├── patterns/                ← 5 ADK skill base patterns
 ├── history/                 ← Case Law + Skill Evolution data (user-generated, preserved on update)
-└── workflows/               ← 34 slash command definitions
-    └── swarm.md             ← /swarm orchestration procedure
+└── workflows/               ← 35 slash command definitions
+    ├── swarm.md             ← /swarm orchestration procedure
+    └── pipeline.md          ← /pipeline hybrid generation procedure
 ```

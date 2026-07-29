@@ -12,7 +12,10 @@ const logger_1 = require("./logger");
 // Concurrency limit for parallel file operations to avoid fd exhaustion
 const COPY_CONCURRENCY = 32;
 
-async function copyDir(src, dest, dryRun = false, filter = null) {
+async function copyDir(src, dest, dryRun = false, filter = null, currentDepth = 0) {
+    if (currentDepth > 20) {
+        throw new Error(`Maximum directory copy depth (20) exceeded at: ${src}`);
+    }
     if (!dryRun) {
         await fs_1.default.promises.mkdir(dest, { recursive: true });
     }
@@ -51,7 +54,7 @@ async function copyDir(src, dest, dryRun = false, filter = null) {
 
     // Recurse into directories in parallel (dirs are I/O-independent)
     const dirResults = await Promise.all(
-        dirs.map(({ srcPath, destPath }) => copyDir(srcPath, destPath, dryRun, filter))
+        dirs.map(({ srcPath, destPath }) => copyDir(srcPath, destPath, dryRun, filter, currentDepth + 1))
     );
     for (const dirCount of dirResults) {
         count += dirCount;
@@ -59,12 +62,15 @@ async function copyDir(src, dest, dryRun = false, filter = null) {
 
     return count;
 }
-async function countDir(dir) {
+async function countDir(dir, currentDepth = 0) {
+    if (currentDepth > 20) {
+        throw new Error(`Maximum directory count depth (20) exceeded at: ${dir}`);
+    }
     let count = 0;
     const entries = await fs_1.default.promises.readdir(dir, { withFileTypes: true });
     for (const e of entries) {
         if (e.isDirectory())
-            count += await countDir(path_1.default.join(dir, e.name));
+            count += await countDir(path_1.default.join(dir, e.name), currentDepth + 1);
         else
             count++;
     }

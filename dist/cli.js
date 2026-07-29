@@ -317,5 +317,8 @@ async function main() {
     await runWithUpdateCheck(command, flags);
 }
 if (require.main === module) {
-    main();
+    main().catch(err => {
+        console.error(`\x1b[91m✖ Fatal Error:\x1b[0m ${err.message || err}`);
+        process.exit(1);
+    });
 }

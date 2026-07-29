@@ -1,9 +1,9 @@
 ---
-description: Runs ALL 20 parallel reviewers simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
+description: Runs ALL 21 parallel reviewers simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
 required-skills: all domain skills auto-loaded
 ---
 
-# /tribunal-full — Complete 20-Reviewer Audit
+# /tribunal-full — Complete 21-Reviewer Audit
 
 $ARGUMENTS
 
@@ -32,7 +32,7 @@ Read BEFORE full review:
 
 ---
 
-## 20 Reviewers — All Active Simultaneously
+## 21 Reviewers — All Active Simultaneously
 
 ```
 Tier 1: Always active (universal concerns)
@@ -68,7 +68,7 @@ Tier 4: Performance Swarm (token-scoped specialists)
 
 ## Active Reviewers by Code Type
 
-Not all 20 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
+Not all 21 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
 
 | Code Under Review   | Critical Reviewers                                                |
 | :------------------ | :---------------------------------------------------------------- |
@@ -86,7 +86,7 @@ Not all 20 reviewers produce meaningful findings on all code types. Active revie
 ## Verdict Aggregation
 
 ```
-All 20 verdicts are collected. Aggregated result:
+All 21 verdicts are collected. Aggregated result:
 
 If ANY reviewer = ❌ REJECTED → Global verdict: ❌ REJECTED (must fix before Human Gate)
 If any reviewer = ⚠️ WARNING  → Global verdict: ⚠️ WARNINGS (proceed with attention)
@@ -124,7 +124,7 @@ After 3 failed attempts:
 
 | Outcome                    | Next Command                                   |
 | :------------------------- | :--------------------------------------------- |
-| All 19 reviewers approve   | → `/deploy` — highest confidence state         |
+| All 21 reviewers approve   | → `/deploy` — highest confidence state         |
 | Reject with multiple fixes | → `/fix` for simple issues, `/debug` for logic |
 | Performance rejection      | → `/tribunal-speed` for granular profiling     |
 | Security rejection         | → Immediate `/tribunal-backend` to resolve     |

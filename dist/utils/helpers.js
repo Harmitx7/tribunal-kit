@@ -12,14 +12,23 @@ const path_1 = __importDefault(require("path"));
 const logger_1 = require("./logger");
 function runShellAsync(command, options) {
     return new Promise((resolve, reject) => {
+        const timeoutMs = (options && options.timeout) || 120000;
         const child = (0, child_process_1.spawn)(command, [], { ...options, shell: true });
+        const timer = setTimeout(() => {
+            child.kill('SIGTERM');
+            reject(new Error(`Command timed out after ${timeoutMs}ms: ${command}`));
+        }, timeoutMs);
         child.on('close', code => {
+            clearTimeout(timer);
             if (code !== 0)
                 reject(new Error(`Command failed with exit code ${code}`));
             else
                 resolve();
         });
-        child.on('error', reject);
+        child.on('error', err => {
+            clearTimeout(timer);
+            reject(err);
+        });
     });
 }
 function getKitAgent() {

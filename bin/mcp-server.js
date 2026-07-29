@@ -107,12 +107,20 @@ function stripBoilerplate(text) {
 }
 
 function handleRequest(req) {
+  if (req.method === "notifications/initialized" || req.method === "notifications/cancelled") {
+    return null;
+  }
+  if (req.method === "ping") {
+    return {};
+  }
+
   // MCP spec: method names follow path-style convention
   if (req.method === "initialize") {
     return {
       protocolVersion: "2024-11-05",
       capabilities: {
         tools: {},
+        resources: { subscribe: false, listChanged: false },
       },
       serverInfo: {
         name: "tribunal-kit-mcp",
@@ -365,7 +373,6 @@ function handleRequest(req) {
       const fs = require("fs");
       const name = req.params?.arguments?.name;
       if (!name) throw { code: -32602, message: "Missing argument: name" };
-      const path = require("path");
       const sanitizedName = path.basename(name);
       const agentPath = path.join(process.cwd(), ".agent", "agents", `${sanitizedName}.md`);
       if (!fs.existsSync(agentPath)) return { content: [{ type: "text", text: `Agent '${sanitizedName}' not found.` }] };
@@ -385,7 +392,6 @@ function handleRequest(req) {
       const fs = require("fs");
       const name = req.params?.arguments?.name;
       if (!name) throw { code: -32602, message: "Missing argument: name" };
-      const path = require("path");
       const sanitizedName = path.basename(name);
       const skillPath = path.join(process.cwd(), ".agent", "skills", sanitizedName, "SKILL.md");
       if (!fs.existsSync(skillPath)) return { content: [{ type: "text", text: `Skill '${sanitizedName}' not found.` }] };
@@ -407,7 +413,8 @@ function handleRequest(req) {
       }
 
       try {
-        const { broker } = require("../.agent/scripts/context_broker.js");
+        const brokerScript = path.join(agentDest, "scripts", "context_broker.js");
+        const { broker } = require(brokerScript);
         const brokerResult = broker(task, files, model, agentDest);
         return { content: [{ type: "text", text: stripBoilerplate(brokerResult.promptText) }] };
       } catch (e) {
@@ -498,7 +505,42 @@ function handleRequest(req) {
   throw { code: -32601, message: `Unknown method: ${req.method}` };
 }
 
+function processSingleRequest(req) {
+  try {
+    const result = handleRequest(req);
+    // If it's a notification, do not send a response
+    if (req.id === undefined || req.id === null) {
+      return null;
+    }
+    return { jsonrpc: "2.0", id: req.id, result };
+  } catch (e) {
+    const code = e && typeof e.code === "number" ? e.code : -32603;
+    const message = e && e.message ? e.message : "Internal server error";
+    if (req.id === undefined || req.id === null) {
+      return {
+        jsonrpc: "2.0",
+        id: null,
+        error: { code, message },
+      };
+    }
+    return {
+      jsonrpc: "2.0",
+      id: req.id,
+      error: { code, message },
+    };
+  }
+}
+
 rl.on("line", (line) => {
+  if (line.length > 1048576) { // 1MB limit
+    const errorRes = {
+      jsonrpc: "2.0",
+      id: null,
+      error: { code: -32700, message: "Parse error: input line too long (exceeds 1MB limit)" },
+    };
+    console.log(JSON.stringify(errorRes));
+    return;
+  }
   if (!line.trim()) return;
 
   let req;
@@ -515,31 +557,22 @@ rl.on("line", (line) => {
     return;
   }
 
-  try {
-    const result = handleRequest(req);
-    const res = { jsonrpc: "2.0", id: req.id, result };
-    console.log(JSON.stringify(res));
-
-    // After initialize, send the initialized notification per MCP spec
-    if (req.method === "initialize") {
-      console.log(
-        JSON.stringify({
-          jsonrpc: "2.0",
-          method: "notifications/initialized",
-          params: {},
-        }),
-      );
+  if (Array.isArray(req)) {
+    const responses = [];
+    for (const singleReq of req) {
+      const response = processSingleRequest(singleReq);
+      if (response) {
+        responses.push(response);
+      }
     }
-  } catch (e) {
-    // Send proper JSON-RPC error response
-    const code = e && typeof e.code === "number" ? e.code : -32603;
-    const message = e && e.message ? e.message : "Internal server error";
-    const errorRes = {
-      jsonrpc: "2.0",
-      id: req.id || null,
-      error: { code, message },
-    };
-    console.log(JSON.stringify(errorRes));
+    if (responses.length > 0) {
+      console.log(JSON.stringify(responses));
+    }
+  } else {
+    const response = processSingleRequest(req);
+    if (response) {
+      console.log(JSON.stringify(response));
+    }
   }
 });
 

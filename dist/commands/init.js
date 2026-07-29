@@ -267,7 +267,7 @@ async function cmdInit(flags, quiet = false) {
             console.log(drawRow('  Next Steps:', (0, logger_1.c)('gray', '  Next Steps:')));
             console.log(stepRow('/generate', 'Generate code with reviews'));
             console.log(stepRow('/review', 'Audit existing code for issues'));
-            console.log(stepRow('/tribunal-full', 'Run all 19 reviewers in parallel'));
+            console.log(stepRow('/tribunal-full', 'Run all 20 reviewers in parallel'));
             console.log(drawRow('', ''));
             console.log(`  ${(0, logger_1.c)(borderCol, '└' + '─'.repeat(W) + '┘')}`);
             console.log();
@@ -399,4 +399,6 @@ async function scaffoldDesignSystem(targetDir, agentSrc, dryRun = false) {
     await copyIfMissing(designMdSrc, designMdDest, 'DESIGN.md System');
     await copyIfMissing(designTokensSrc, designTokensDest, 'Design Tokens');
 }
+exports.CORE_AGENTS = CORE_AGENTS;
+exports.CORE_SKILLS = CORE_SKILLS;
 

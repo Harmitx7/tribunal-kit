@@ -119,18 +119,25 @@ function fetchLatestVersion(currentVersion) {
  * 
  * Returns true if a re-invoke happened (caller should exit), false otherwise.
  */
+let hasRegisteredUpdateNotifier = false;
+
 async function autoUpdateCheck(originalArgs, currentVersion) {
     // Recursion guard: if we're already a re-invoked process, skip
     if (process.env.TK_SKIP_UPDATE_CHECK === '1') {
         return false;
     }
 
+    if (hasRegisteredUpdateNotifier) {
+        return false;
+    }
+    hasRegisteredUpdateNotifier = true;
+
     // Fire the fetch but DON'T await it immediately — let the command run first
     const versionPromise = fetchLatestVersion(currentVersion);
 
-    // Register a process.on('beforeExit') hook to show the update notification
+    // Register a process.once('beforeExit') hook to show the update notification
     // AFTER the command has finished executing
-    process.on('beforeExit', async () => {
+    process.once('beforeExit', async () => {
         try {
             const latestVersion = await versionPromise;
             if (!latestVersion) return;

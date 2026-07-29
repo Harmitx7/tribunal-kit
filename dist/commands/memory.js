@@ -31,6 +31,42 @@ const PROJECTION_FILE = 'MEMORY.md';
 const MAX_ENTRIES = 500;
 const EPISODIC_TTL_DAYS = 30;
 
+function acquireLock(agentDest) {
+    const lockPath = getIndexPath(agentDest) + '.lock';
+    const maxRetries = 10;
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            const fd = fs_1.default.openSync(lockPath, 'wx');
+            fs_1.default.closeSync(fd);
+            return lockPath;
+        } catch (err) {
+            if (err.code !== 'EEXIST') {
+                throw err;
+            }
+            const start = Date.now();
+            while (Date.now() - start < 50) {}
+        }
+    }
+    try {
+        const stats = fs_1.default.statSync(lockPath);
+        if (Date.now() - stats.mtimeMs > 10000) {
+            fs_1.default.unlinkSync(lockPath);
+            const fd = fs_1.default.openSync(lockPath, 'wx');
+            fs_1.default.closeSync(fd);
+            return lockPath;
+        }
+    } catch {}
+    throw new Error('Could not acquire lock for memory index');
+}
+
+function releaseLock(lockPath) {
+    try {
+        if (lockPath && fs_1.default.existsSync(lockPath)) {
+            fs_1.default.unlinkSync(lockPath);
+        }
+    } catch {}
+}
+
 function getMemoryDir(agentDest) {
     return path_1.default.join(agentDest, MEMORY_DIR);
 }
@@ -121,95 +157,110 @@ function memoryStore(agentDest, type, content, tags, sessionId) {
         throw new Error('Memory content cannot be empty');
     }
 
-    const index = loadIndex(agentDest);
+    const lockPath = acquireLock(agentDest);
+    try {
+        const index = loadIndex(agentDest);
 
-    // Enforce cap — auto-GC if needed
-    if (index.entries.length >= MAX_ENTRIES) {
-        index.entries = index.entries.filter(e => e.memory_type !== 'working');
+        // Enforce cap — auto-GC if needed
         if (index.entries.length >= MAX_ENTRIES) {
-            index.entries = index.entries.filter(e => {
-                if (e.memory_type === 'episodic') {
-                    return daysSince(e.created_at) < EPISODIC_TTL_DAYS;
-                }
-                return true;
-            });
+            index.entries = index.entries.filter(e => e.memory_type !== 'working');
+            if (index.entries.length >= MAX_ENTRIES) {
+                index.entries = index.entries.filter(e => {
+                    if (e.memory_type === 'episodic') {
+                        return daysSince(e.created_at) < EPISODIC_TTL_DAYS; // Typo correction or TTL match
+                    }
+                    return true;
+                });
+            }
+            if (index.entries.length >= MAX_ENTRIES) {
+                throw new Error(`Memory at capacity (${MAX_ENTRIES}). Run: tk memory gc`);
+            }
         }
-        if (index.entries.length >= MAX_ENTRIES) {
-            throw new Error(`Memory at capacity (${MAX_ENTRIES}). Run: tk memory gc`);
-        }
+
+        const now = nowEpochStr();
+        const id = index.next_id || (index.entries.length > 0 ? Math.max(...index.entries.map(e => e.id)) + 1 : 1);
+        const entry = {
+            id,
+            memory_type: type,
+            content: content.trim(),
+            tags: tags.filter(t => t.length > 0),
+            created_at: now,
+            last_accessed: now,
+            access_count: 0,
+            token_estimate: estimateTokens(content),
+            source: type === 'working' ? 'session' : 'manual',
+            session_id: sessionId || null,
+        };
+
+        index.entries.push(entry);
+        index.next_id = id + 1;
+        saveIndex(agentDest, index);
+        generateProjection(agentDest, index);
+
+        return { id, token_estimate: entry.token_estimate };
+    } finally {
+        releaseLock(lockPath);
     }
-
-    const now = nowEpochStr();
-    const id = index.next_id || (index.entries.length > 0 ? Math.max(...index.entries.map(e => e.id)) + 1 : 1);
-    const entry = {
-        id,
-        memory_type: type,
-        content: content.trim(),
-        tags: tags.filter(t => t.length > 0),
-        created_at: now,
-        last_accessed: now,
-        access_count: 0,
-        token_estimate: estimateTokens(content),
-        source: type === 'working' ? 'session' : 'manual',
-        session_id: sessionId || null,
-    };
-
-    index.entries.push(entry);
-    index.next_id = id + 1;
-    saveIndex(agentDest, index);
-    generateProjection(agentDest, index);
-
-    return { id, token_estimate: entry.token_estimate };
 }
 
 // ── Recall ──────────────────────────────────────────────────────────────────
 
 function memoryRecall(agentDest, query, budget = 2000) {
-    const index = loadIndex(agentDest);
+    const lockPath = acquireLock(agentDest);
+    try {
+        const index = loadIndex(agentDest);
 
-    const scored = index.entries
-        .map(entry => ({ entry, score: computeScore(entry, query) }))
-        .filter(s => s.score > 0)
-        .sort((a, b) => b.score - a.score);
+        const scored = index.entries
+            .map(entry => ({ entry, score: computeScore(entry, query) }))
+            .filter(s => s.score > 0)
+            .sort((a, b) => b.score - a.score);
 
-    let totalTokens = 0;
-    const results = [];
+        let totalTokens = 0;
+        const results = [];
 
-    for (const { entry, score } of scored) {
-        if (totalTokens + entry.token_estimate > budget) break;
-        totalTokens += entry.token_estimate;
-        entry.last_accessed = nowEpochStr();
-        entry.access_count = (entry.access_count || 0) + 1;
-        results.push({ ...entry, score });
+        for (const { entry, score } of scored) {
+            if (totalTokens + entry.token_estimate > budget) break;
+            totalTokens += entry.token_estimate;
+            entry.last_accessed = nowEpochStr();
+            entry.access_count = (entry.access_count || 0) + 1;
+            results.push({ ...entry, score });
+        }
+
+        // Save updated access counts
+        saveIndex(agentDest, index);
+
+        return { results, tokens_used: totalTokens, budget };
+    } finally {
+        releaseLock(lockPath);
     }
-
-    // Save updated access counts
-    saveIndex(agentDest, index);
-
-    return { results, tokens_used: totalTokens, budget };
 }
 
 // ── Garbage Collect ─────────────────────────────────────────────────────────
 
 function memoryGc(agentDest) {
-    const index = loadIndex(agentDest);
-    const before = index.entries.length;
+    const lockPath = acquireLock(agentDest);
+    try {
+        const index = loadIndex(agentDest);
+        const before = index.entries.length;
 
-    let workingRemoved = 0;
-    let episodicRemoved = 0;
+        let workingRemoved = 0;
+        let episodicRemoved = 0;
 
-    index.entries = index.entries.filter(e => {
-        if (e.memory_type === 'working') { workingRemoved++; return false; }
-        if (e.memory_type === 'episodic' && daysSince(e.created_at) >= EPISODIC_TTL_DAYS) {
-            episodicRemoved++; return false;
-        }
-        return true;
-    });
+        index.entries = index.entries.filter(e => {
+            if (e.memory_type === 'working') { workingRemoved++; return false; }
+            if (e.memory_type === 'episodic' && daysSince(e.created_at) >= EPISODIC_TTL_DAYS) {
+                episodicRemoved++; return false;
+            }
+            return true;
+        });
 
-    saveIndex(agentDest, index);
-    generateProjection(agentDest, index);
+        saveIndex(agentDest, index);
+        generateProjection(agentDest, index);
 
-    return { working_removed: workingRemoved, episodic_removed: episodicRemoved, before, after: index.entries.length };
+        return { working_removed: workingRemoved, episodic_removed: episodicRemoved, before, after: index.entries.length };
+    } finally {
+        releaseLock(lockPath);
+    }
 }
 
 // ── Stats ───────────────────────────────────────────────────────────────────

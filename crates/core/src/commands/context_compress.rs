@@ -102,6 +102,43 @@ mod tests {
         assert!(res.compressed_bytes < res.original_bytes);
         assert!(res.compressed_content.contains("VERIFY"));
         assert!(!res.compressed_content.contains("// Comment to strip"));
-        std::fs::remove_file(file_path).unwrap();
+        let _ = std::fs::remove_file(file_path);
+    }
+
+    #[test]
+    fn test_compress_context_max_lines() {
+        let file_path = std::env::temp_dir().join(format!(
+            "tribunal-compress-maxlines-{}.txt",
+            std::process::id()
+        ));
+        let mut file = File::create(&file_path).unwrap();
+        for i in 1..=20 {
+            writeln!(file, "Line {}", i).unwrap();
+        }
+        drop(file);
+
+        let res_str = compress_context(file_path.to_str().unwrap(), Some(5)).unwrap();
+        let res: CompressResult = serde_json::from_str(&res_str).unwrap();
+
+        assert!(res.success);
+        assert!(res.compressed_content.contains("Truncated 15 lines"));
+        let _ = std::fs::remove_file(file_path);
+    }
+
+    #[test]
+    fn test_compress_context_empty_file() {
+        let file_path = std::env::temp_dir().join(format!(
+            "tribunal-compress-empty-{}.txt",
+            std::process::id()
+        ));
+        let _file = File::create(&file_path).unwrap();
+
+        let res_str = compress_context(file_path.to_str().unwrap(), None).unwrap();
+        let res: CompressResult = serde_json::from_str(&res_str).unwrap();
+
+        assert!(res.success);
+        assert_eq!(res.original_bytes, 0);
+        assert_eq!(res.compression_ratio, 1.0);
+        let _ = std::fs::remove_file(file_path);
     }
 }
