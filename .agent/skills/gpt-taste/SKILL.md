@@ -1,19 +1,28 @@
 ---
 name: gpt-taste
 description: High-agency UX/UI skill with strict layout variance, typography, and GSAP motion engineering constraints for superior visual judgment.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: High-Agency Aesthetic Judgment
-  tier: pro
-  co-requires: [taste-skill, better-ui, frontend-design]
-  trigger-signals:
-    strong: [gpt-taste, high agency UI, visual refinement, layout variance, superior aesthetic judgment]
-    weak: [aesthetic UI, refined visual]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - taste-skill
+  - better-ui
+  - better-colors
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # GPT Taste — High-Agency Visual Refinement & Layout Variance
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before generating UI layouts or visual code, you MUST inspect:
+1. Structural Layout Variance (Section 24) → Vary structural layout across sections; ban uniform 3-card bento grids
+2. OKLCH Perceptual Palette (Section 30) → Declare all color tokens using OKLCH color space for perceptual uniformity
+3. Zero Truncation Rule (Section 39) → Strictly ban `// TODO: add remaining items` placeholder comments; generate complete production-ready code
 
 Inject high-agency visual judgment and layout variance into AI-generated interfaces.
 

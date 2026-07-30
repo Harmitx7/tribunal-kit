@@ -1,14 +1,28 @@
 ---
 name: python-patterns
 description: Python development principles and decision-making. Framework selection, async patterns, type hints, project structure. Teaches thinking, not copying.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - python-pro
+  - clean-code
+  - data-validation-schemas
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Python Development Principles
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before architecting Python projects or selecting frameworks, you MUST inspect:
+1. Typed Data Models over Dicts (Section 15) → Use Pydantic models or `@dataclass` for structured data; ban un-typed `dict` passing
+2. Specific Exception Handling (Section 16) → Catch explicit exceptions (`ValueError`, `AppError`); ban bare `except:` or generic `except Exception:` swallowing
+3. Pathlib Modern API (Section 17) → Use `pathlib.Path` for cross-platform filesystem operations; ban legacy `os.path`
 
 ## Hallucination Traps (Read First)
 

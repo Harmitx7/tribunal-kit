@@ -38,6 +38,7 @@ session_state.json
 build/
 target/
 *.tsbuildinfo
+*.tgz
 
 # Environment files — never commit real env values
 .env

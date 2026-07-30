@@ -1,6 +1,16 @@
 ---
 description: Backend-specific Tribunal. Runs Logic + Security + Dependency + Type Safety + Resilience + Schema reviewers. Use for API routes, server logic, auth code, middleware, Server Actions, and any server-side business logic.
-required-skills: backend-security-expert, nodejs-best-practices, api-patterns
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - backend-security-expert
+  - nodejs-best-practices
+  - api-patterns
+scripts-binding:
+  - .agent/scripts/security_scan.js
+  - .agent/scripts/dependency_analyzer.js
+  - .agent/scripts/schema_validator.js
 ---
 
 # /tribunal-backend — Backend Code Audit
@@ -9,15 +19,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE backend review:
-□ Target backend files         → The code being audited
-□ package.json                 → Verify dependency versions (express, next, etc.)
-□ prisma/schema.prisma         → If ORM is used
-□ .env.example                 → Expected environment variables
-```
+Before auditing backend routes or server logic, you MUST inspect:
+1. Target Backend Source & Contracts → Read target route handlers, Server Actions, or controller methods
+2. Dependencies & Environment (`package.json`, `.env.example`) → Check backend framework versions, secret key placeholders, and ORM schemas
+3. 6-Reviewer Parallel Gate → Execute logic-reviewer, security-auditor, dependency-analyzer, type-safety, resilience-reviewer, and schema-reviewer before approving diffs
 
 ---
 

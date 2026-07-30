@@ -1,6 +1,16 @@
 ---
 description: Generate code using the full Tribunal Anti-Hallucination pipeline. Maker generates grounded in real project context at low temperature → domain-selected reviewers audit in parallel → Human Gate for final approval. Nothing is written to disk without explicit approval.
-required-skills: auto-detected from request keywords (see Reviewer Auto-Selection table)
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - clean-code
+  - codebase-design
+  - lint-and-validate
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/security_scan.js
+  - .agent/scripts/verify_all.js
 ---
 
 # /generate — Hallucination-Free Code Generation
@@ -9,16 +19,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE generating any code (MANDATORY — never skip):
-□ package.json      → Verify all imports exist before using them
-□ tsconfig.json     → Understand strictness, paths aliases, target version
-□ context/*.acf     → Load explicit goals, rules, and boundaries
-□ .env.example      → Know available environment variables
-□ Referenced files   → Understand actual data shapes and types
-```
+Before generating code modules or invoking the Maker pipeline, you MUST inspect:
+1. Workspace Package Dependencies (`package.json`) → Confirm all imported libraries exist; ban unverified phantom imports
+2. Type Definitions & Path Aliases (`tsconfig.json`) → Verify module resolution paths and compiler strictness
+3. Parallel Tribunal Review Assignment → Select relevant domain reviewers (`logic`, `security`, `frontend`, `backend`, `database`, `mobile`) prior to Human Gate submission
 
 ---
 

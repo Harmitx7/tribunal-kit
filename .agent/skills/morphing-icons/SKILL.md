@@ -1,19 +1,28 @@
 ---
 name: morphing-icons
 description: Build morphing SVG icon components that transition smoothly between states (Play <-> Pause, Hamburger Menu <-> Close X, Sun <-> Moon).
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Interactive Vector Icons & State Morphing
-  tier: pro
-  co-requires: [svg-animation, micro-interaction]
-  trigger-signals:
-    strong: [morphing-icons, morphing SVG icon, menu to close icon, play to pause icon, animated icon morph]
-    weak: [icon transition, animated icon]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - svg-animation
+  - micro-interaction
+  - 60fps-animation
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Morphing Icons — Interactive State-Morphing Vector Icons
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing morphing icon components, you MUST inspect:
+1. Target states (e.g. Hamburger Menu <-> Close X, Play <-> Pause) → Verify matching SVG path point count and coordinate bounds
+2. Accessibility (Section 65) → Ensure `aria-label` updates dynamically alongside state changes
+3. Interpolation Curves → Use snappy ease-out curves (`cubic-bezier(0.16, 1, 0.3, 1)`) with duration $\le 200\text{ms}$
 
 Architect crisp, interactive SVG icon components that morph seamlessly between operational states.
 

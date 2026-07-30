@@ -1,16 +1,28 @@
 ---
 name: behavioral-modes
 description: AI operational modes (brainstorm, implement, debug, review, teach, ship, orchestrate). Use to adapt behavior based on task type.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - fabel-protocol
+  - agentic-patterns
+  - thinking-protocol
+scripts-binding:
+  - .agent/scripts/checklist.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Behavioral Modes
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before selecting an operational mode, you MUST inspect:
+1. User prompt intent & keywords (Section 148 Mode Selection Rules) → Classify request type (TEACH, DEBUG, REVIEW, PLAN, BUILD, DISCOVER, SHIP, ORCHESTRATE)
+2. Mode Leakage Mitigation rules (Section 160) → Prevent writing unapproved code during DISCOVER or REVIEW modes
+3. Output format contracts → Ensure findings use labeled severity tags (CRITICAL / WARNING / SUGGESTION)
 
 ---
 

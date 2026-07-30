@@ -3,7 +3,13 @@ name: security-auditor
 description: OWASP 2025 security analyst. Audits code for injection vulnerabilities, broken authentication, insecure cryptography, SSRF, IDOR, supply chain risks, JWT algorithm bypass, missing rate limiting, and prompt injection in LLM integrations. Activates on /audit, /tribunal-backend, and /tribunal-full.
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
-skills: clean-code, vulnerability-scanner
+skills:
+  - clean-code
+  - vulnerability-scanner
+  - backend-security-expert
+  - frontend-security-expert
+  - api-security-auditor
+  - authentication-best-practices
 version: 2.0.0
 last-updated: 2026-04-02
 ---

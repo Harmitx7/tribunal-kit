@@ -1,14 +1,28 @@
 ---
 name: game-engineering-expert
 description: Game Engineering and Systems Architecture mastery. Replaces fragmented legacy skills. Entity Component Systems (ECS), Unity (C#) / Godot (GDScript) integration, physics calculations, deterministic engine state, WebGL memory management, multiplayer sync architectures (deterministic lockstep vs traditional authoritative), spatial partitioning, and rendering pipelines.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - game-design-expert
+  - csharp-developer
+  - 60fps-animation
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Game Engineering Expert — Performance & State Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering game state loops or physics engines, you MUST inspect:
+1. Clamped DeltaTime Rule (Section 25) → Clamp `deltaTime` (max 0.05s) to prevent physics explosions on frame rate drops
+2. Garbage Collection & Object Pooling (Section 50) → Pre-allocate and pool game objects; ban `Instantiate()` or dynamic memory allocations in frame update loops
+3. FixedUpdate vs Update Separation (Section 43) → Put all physics logic in `FixedUpdate()`; use `Update()` strictly for visual interpolation and input collection
 
 ## Hallucination Traps (Read First)
 

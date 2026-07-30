@@ -1,14 +1,28 @@
 ---
 name: config-validator
 description: Configuration validation and workspace self-auditing mastery. Verifying .agent directory integrity, checking JSON schemas, resolving broken pointers to missing scripts/skills, validating environment states, and enforcing configuration constraints before execution. Use when loading settings, modifying manifests, or diagnosing system configuration rot.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - lint-and-validate
+  - backend-security-expert
+  - clean-code
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Config Validator — System Integrity Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before parsing or mutating configuration files or environment variables, you MUST inspect:
+1. Fail-Fast Boundary Parsing (Section 25) → Validate configurations at startup boundary via Zod schema (`ConfigSchema.parse()`); fail fast on invalid configs
+2. Referential Integrity Audit (Section 60) → Audit referenced assets (scripts, SKILL.md, workflow paths) for physical existence before execution
+3. Atomic File Writes (Section 111) → Write updated configs to `.tmp` files and perform OS atomic rename to prevent file corruption during crashes
 
 ## Hallucination Traps (Read First)
 

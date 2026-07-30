@@ -1,19 +1,28 @@
 ---
 name: marquee-loop
 description: Hardware-accelerated, seamless, continuous looping marquees for logo rows, testimonials, and announcements with pause-on-hover accessibility.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Ticker & Continuous Motion
-  tier: pro
-  co-requires: [60fps-animation, company-logos]
-  trigger-signals:
-    strong: [marquee-loop, marquee animation, continuous ticker, looping logo track, seamless marquee]
-    weak: [scrolling logos, ticker]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - 60fps-animation
+  - company-logos
+  - accessible-animation
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Marquee Loop — Hardware-Accelerated Continuous Tickers
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing marquee loop tracks, you MUST inspect:
+1. DOM Structure (Section 24) → Duplicate item tracks MUST be rendered with `aria-hidden="true"` to prevent screen reader redundancy
+2. Hover Accessibility (Section 50) → Enforce `animation-play-state: paused` on `:hover` and `:focus-within`
+3. Reduced Motion Fallback (Section 61) → Collapse marquee into static wrapped flex grid when `prefers-reduced-motion: reduce` is active
 
 Build seamless 60fps infinite marquee tracks that pause on hover and respect accessibility settings.
 

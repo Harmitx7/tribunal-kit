@@ -1,14 +1,28 @@
 ---
 name: frontend-security-expert
 description: Frontend security auditing for modern meta-frameworks. Focuses on React/Next.js UI paradigms, hydration poisoning, third-party script supply chain, local storage security, and XSS prevention in modern environments.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-05-22
-applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - backend-security-expert
+  - api-security-auditor
+  - vulnerability-scanner
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Frontend Security Expert — Modern Meta-Frameworks
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before auditing or writing client-side code, you MUST inspect:
+1. XSS Sanitize Rules (Section 28) → Require DOMPurify for any `dangerouslySetInnerHTML` and audit dynamic `javascript:` URIs
+2. HttpOnly Auth Token Storage (Section 34) → Ban storing JWTs or auth tokens in `localStorage` or `sessionStorage`; use `HttpOnly`, `Secure`, `SameSite` cookies
+3. PostMessage Origin Verification (Section 46) → Never use `targetOrigin: '*'` and always validate `event.origin` on receiving handlers
 
 # Frontend Security Expert — Modern Meta-Frameworks
 

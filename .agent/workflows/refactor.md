@@ -1,6 +1,16 @@
 ---
 description: Structured code refactoring with dependency-safe execution and behavior preservation. Maps all dependents before touching any file. Refactoring changes structure without changing observable behavior. Tests must pass before and after every step.
-required-skills: clean-code, architecture
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - clean-code
+  - architecture
+  - codebase-design
+  - tdd-workflow
+scripts-binding:
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/lint_runner.js
 ---
 
 # /refactor — Dependency-Safe Structural Improvement
@@ -9,14 +19,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE refactoring:
-□ Target module               → Understand the structure to be extracted or renamed
-□ package.json                → Check test scripts to run after refactor
-□ grep search                 → Locate all importers of the target module
-```
+Before executing structural refactoring or extracting interfaces, you MUST inspect:
+1. Complete Dependent Map (Grep Importers) → Identify every file importing the target module before touching a single line
+2. Baseline Test Suite Verification (`test_runner.js`) → Ensure all unit and integration tests pass BEFORE initiating refactor steps
+3. Observable Behavior Preservation → Enforce zero change in public function behavior or API contracts; verify tests pass cleanly after every step
 
 ---
 

@@ -1,14 +1,28 @@
 ---
 name: extract-design-system
 description: Design system extraction and tokenization mastery. Identifying repeated HTML/CSS patterns, extracting CSS variables, generating design tokens (colors, spacing, typography), building reusable component schemas, and standardizing ad-hoc styles into cohesive global systems. Use when refactoring messy CSS into a unified design system.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - create-design-md
+  - tailwind-patterns
+  - baseline-ui
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Extract Design System — Tokenization Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before extracting design systems or tokenizing CSS variables, you MUST inspect:
+1. 3+ Repetition Frequency Rule (Section 15) → Only tokenize values that recur 3+ times across components to prevent variable bloat
+2. Semantic Naming Convention (Section 17) → Use functional/semantic names (`--color-primary`) rather than literal colors (`--red-500`)
+3. Accessibility Token Contract (Section 110) → Ensure extracted text and surface tokens satisfy a min 4.5:1 WCAG AA contrast ratio
 
 ## Hallucination Traps (Read First)
 

@@ -1,17 +1,28 @@
 ---
 name: review-animations
 description: Reviews animation and motion code against a high craft bar derived from Emil Kowalski's design engineering philosophy. Default to flagging; approval is earned.
-version: 1.0.0
-last-updated: 2026-06-26
-applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
-disable-model-invocation: true
-routing:
-  domain: review
-  tier: specialized
-  trigger-signals:
-    strong: [review animations, motion review, ui animation craft, 60fps, animation standards, evaluate motion]
-    weak: [review UI, check transitions, smooth animation]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - emil-design-eng
+  - 60fps-animation
+  - accessible-animation
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Reviewing Animations
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before auditing animation code or reviewing motion diffs, you MUST inspect:
+1. Sub-300ms UI Duration Limit (Section 35) → Enforce maximum 300ms duration for UI element animations; flag any sluggish transitions >300ms
+2. GPU-Only Property Constraint (Section 38) → Flag any animation of layout-heavy properties (`width`/`height`/`top`/`left`); require `transform` and `opacity`
+3. Physical Correctness & Origin (Section 36) → Flag `scale(0)` entrances; require `scale(0.9–0.97)` with `opacity` and accurate `transform-origin`
 
 # Reviewing Animations
 

@@ -1,6 +1,17 @@
 ---
-description: Plan and implement cutting-edge advanced UI/UX. Creates distinctive, production-grade frontend interfaces with high design quality that avoid generic AI aesthetics. Now uses a modular swarm architecture to decompose layout, styling, and motion tasks.
-required-skills: ui-ux-researcher, frontend-design, emil-design-eng, motion-engineering, agent-organizer, parallel-agents
+description: Plan and implement cutting-edge advanced UI/UX. Uses the UI Reasoning Engine to structure layout and styling, and routes through the dedicated `/tribunal-ui` reviewer pipeline.
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - ui-reasoning-engine
+  - product-aware-heuristics
+  - ui-ux-pro-max
+  - frontend-design
+  - web-design-guidelines
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/auto_preview.js
 ---
 
 # /ui-ux-pro-max — Advanced UI/UX Design
@@ -9,126 +20,62 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE designing:
-□ Current UI components       → Follow project idioms and design systems
-□ .agent/skills/frontend-design/SKILL.md → Refresh UI guidelines
-```
+Before designing or implementing advanced UI/UX layouts, you MUST inspect:
+1. Active Design Tokens & System (`DESIGN.md`, CSS custom properties) → Verify OKLCH color palettes, typography scale, and spacing grid
+2. UI Reasoning Engine 16-Step Pipeline (`.agent/skills/ui-reasoning-engine/SKILL.md`) → Structure component layout, micro-interactions, and accessibility before coding
+3. Anti-Generic Aesthetic Rule → Ban plain purple/violet AI gradients and stock hero templates; enforce bespoke visual hierarchy and tactile micro-interactions
 
 ---
 
 ## When to Use /ui-ux-pro-max
 
-| Use `/ui-ux-pro-max` when...              | Use instead when...                     |
-| :---------------------------------------- | :-------------------------------------- |
+| Use `/ui-ux-pro-max` when... | Use instead when... |
+| :--- | :--- |
 | Building a visually distinctive interface | Functional-only component → `/generate` |
-| Design quality is the primary goal        | Fast page needed → `/enhance`           |
-| Creating from a design brief              | Bug fix in UI → `/debug`                |
-| Mobile + web parity required              |                                         |
+| Design quality is the primary goal | Fast page needed → `/enhance` |
+| Creating from a design brief | Bug fix in UI → `/debug` |
+| Mobile + web parity required | |
 
 ---
 
-## Phase 1 — Design Intent (Mandatory)
+## Phase 1 — Design Intent & Product Aware Reasoning (Mandatory)
 
-Answer these before any design work:
+Answer these before writing any code (using the `ui-reasoning-engine` skill):
+1. **Who is the user?** (Casual consumer vs expert operator).
+2. **What is the product category?** (SaaS, DevTool, AI Interface, Landing, Fintech).
+3. **What is the visual direction?** (Brutalist, Editorial, Soft Minimal, Dark Luxury, Swiss).
+4. **What is the primary user goal?** (Optimize the layout and click paths for this action).
+5. **What are the accessibility requirements?** (Focus paths, target size, Lc contrast).
 
-```
-1. Who is the user? (developer tools feel different from consumer apps)
-2. What emotion should the interface evoke? (calm focus, urgent speed, playful delight)
-3. What is the ONE thing users do most? (hero interaction gets maximum design attention)
-4. What existing interfaces does the user love? (don't copy — understand the WHY)
-5. What makes this interface DIFFERENT from every competitor?
-```
-
----
-
-## Phase 2 — Design Identity
-
-Every interface built by /ui-ux-pro-max has a distinct visual identity:
-
-```
-Forbidden defaults (generic AI aesthetics):
-❌ Purple/violet as primary color
-❌ Left text / right image hero section
-❌ Mesh gradient backgrounds
-❌ Bento grid as the only layout
-❌ Emoji as icons
-❌ shadcn without explicit user request
-
-Distinctive alternatives:
-✅ Signal orange, acid green, warm slate, deep red — intentional palettes
-✅ Typographic-first hero sections
-✅ Grain textures, solid contrast, radial depth
-✅ Asymmetric or broken-grid layouts
-✅ SVG icons (lucide-react or custom)
-✅ Motion that communicates meaning (not decoration)
-```
+Write the **🧠 UI Reasoning Engine Trace** in your response as a collapsed markdown block before the code.
 
 ---
 
-## Phase 3 — Interaction Craft
+## Phase 2 — Visual Identity & Design Tokens
 
-Every interactive element has 4 states designed:
-
-```
-1. Default:  The base state
-2. Hover:    Indicates interactability (cursor change, subtle lift, color shift)
-3. Active:   Confirms click/press (scale down, darker, haptic feedback on mobile)
-4. Disabled: Communicates unavailability (reduced opacity, cursor change, tooltip why)
-```
-
-Micro-animations are required, not optional:
-
-```
-Entry animations:  elements fade/slide in on mount
-State transitions: smooth color + scale changes (150–200ms)
-Loading states:    skeleton screens, not spinners (skeleton shows shape)
-Error shake:       invalid form input shakes (4px left-right)
-Success pulse:     confirmed actions pulse green briefly
-```
+Every interface must use custom variables defined in `DESIGN.md` and `design-tokens.json`:
+*   ❌ **Banned Clichés:** Purple/violet accents, mesh gradients, glassmorphism overuse, default library themes.
+*   ✅ **Intentional Styling:** Dynamic OKLCH colors, 8px grid alignment, variable font sizes with CSS `clamp()`, and 1px luminous borders.
 
 ---
 
-## Phase 4 — Swarm Implementation (Modular Generation)
+## Phase 3 — Interaction States & Micro-interactions
 
-Instead of a single agent generating the entire UI, `/ui-ux-pro-max` leverages a Fan-Out/Fan-In swarm architecture using `.agent/scripts/swarm_dispatcher.js`. The Supervisor decomposes the component into a structured JSON contract for three specialized workers:
-
-### Worker 1: Layout Architect (`frontend-specialist`)
-- **Focus**: Semantic HTML, accessibility tree, and component composition.
-- **Rules**: Zero styling, just the raw structure and React state logic.
-- **WCAG Checks**: Keyboard navigation, screen reader semantics (role, label).
-
-### Worker 2: Styling & Token Specialist (`frontend-design`)
-- **Focus**: Applies Tailwind classes and design tokens based on the Phase 2 Identity.
-- **Rules**: Must enforce color contrast (4.5:1 minimum) and spacing scale; strictly avoids generic AI defaults.
-
-### Worker 3: Motion Engineer (`motion-engineering` + `emil-design-eng`)
-- **Focus**: Injects GSAP, Framer Motion, or CSS springs for micro-interactions (Phase 3).
-- **Rules**: Enforces Emil Kowalski's non-negotiable UI standards: all UI animations <300ms, popovers are origin-aware, entering elements strictly use `ease-out`, and `prefers-reduced-motion` is honored.
-
-**Execution Flow**:
-1. Supervisor builds the JSON contract for the 3 workers.
-2. Dispatches workers in parallel via `swarm_dispatcher.js`.
-3. Fan-in synthesis merges the layout, styles, and motion into the final component file.
-4. Final code is routed through `/tribunal-frontend` (which now includes the `review-animations` strict UI constraint gate) for the Human Gate.
+Ensure every interactive element has styling defined for:
+*   `hover`, `focus-visible`, `active`/`pressed`, and `disabled` states.
+*   Confirm clicks with spring scale-down transitions (`active:scale-[0.97]`).
+*   Trap keyboard focus within modals/dialogs and return it to the trigger on close.
 
 ---
 
-## Phase 5 — Design Verification
+## Phase 4 — Swarm Implementation & UI Review Pipeline
 
-Before finalizing:
-
-```
-□ Open in mobile viewport (375px) — does it work?
-□ Open in dark mode — does it look intentional?
-□ Keyboard-navigate through the critical path — is it complete?
-□ Screenshot and ask: "Would I scroll past this on Dribbble?"
-□ Screen reader test with VoiceOver or NVDA
-```
-
----
+1. **Layout Design:** Create the structural grid and semantic accessibility tree.
+2. **Token Application:** Apply Tailwind classes or style blocks using variables.
+3. **Motion Integration:** Add GSAP or Framer Motion transitions (keeping motion <300ms, respecting reduced motion).
+4. **Tribunal Review Gate:** Route the generated component through `/tribunal-ui` for parallel verification.
 
 ---
 
@@ -138,18 +85,15 @@ Before finalizing:
 /ui-ux-pro-max design a SaaS dashboard for an analytics platform
 /ui-ux-pro-max redesign the checkout flow with better conversion UX
 /ui-ux-pro-max create an onboarding flow for a developer tool
-/ui-ux-pro-max design the landing page hero section with distinctive layout
-/ui-ux-pro-max create a data visualization dashboard with real-time updates
+/ui-ux-pro-max design the landing page hero section with a distinctive visual style
 ```
 
 ---
 
 ## After /ui-ux-pro-max — Next Steps
 
-| Outcome                   | Next Command                           |
-| :------------------------ | :------------------------------------- |
-| Design complete           | → `/preview start` to see it in action |
-| Need responsive checks    | → `/review` or manual viewport testing |
-| Needs backend integration | → `/tribunal-backend` to hook up APIs  |
-
----
+| Outcome | Next Command |
+| :--- | :--- |
+| Design complete | → `/preview start` to see it in action |
+| Reviewers reject with fixes | → Apply fixes, then run `/tribunal-ui` again |
+| Performance concerns | → `/performance-benchmarker` for Lighthouse/CWV |

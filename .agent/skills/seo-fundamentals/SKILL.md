@@ -1,14 +1,28 @@
 ---
 name: seo-fundamentals
 description: Search Engine Optimization (SEO) mastery. Metadata implementation, Open Graph (OG) social card rendering, semantic HTML5 structuring, canonicalization, Core Web Vitals performance mapping, Sitemap/Robots configurations, structured data (JSON-LD), and Next.js SSR SEO implementations. Use when auditing site visibility or building consumer-facing web architectures.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - fixing-metadata
+  - web-quality-audit
+  - nextjs-react-expert
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# SEO Fundamentals — Visibility & Discoverability Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing metadata or search optimization, you MUST inspect:
+1. One H1 Heading Law (Section 64) → Ensure exactly ONE `<h1>` per page for document title; ban multiple `<h1>` tags or missing H1s
+2. Server-Side Rendering (SSR/SSG) Rule (Section 18) → Use SSR/SSG for indexable pages; ban client-side-only rendering for public SEO content
+3. JSON-LD Structured Data Injection (Section 86) → Inject Schema.org JSON-LD scripts (`application/ld+json`) for rich entity indexing
 
 ## Hallucination Traps (Read First)
 

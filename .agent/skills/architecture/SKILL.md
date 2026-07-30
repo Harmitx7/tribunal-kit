@@ -1,14 +1,28 @@
 ---
 name: architecture
 description: Software architecture mastery. System design patterns, clean architecture, hexagonal/ports-and-adapters, event-driven architecture, microservices vs monolith decision framework, CQRS, domain-driven design, Architecture Decision Records (ADRs), and scalability patterns. Use when making architecture decisions, designing systems, or documenting technical decisions.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.1.0
-last-updated: 2026-04-07
-applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - domain-modeling
+  - codebase-design
+  - clean-code
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Architecture — System Design Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before selecting architectural patterns or designing systems, you MUST inspect:
+1. Pragmatic Monolith Default (Section 31) → Start with a modular monolith for teams <5 or scale <100K RPM; ban premature microservices
+2. Clean Architecture Dependency Direction (Section 50) → Ensure dependency arrows point strictly inward to Domain; Domain must have zero external infrastructure dependencies
+3. ADR Requirement for Non-Trivial Decisons (Section 135) → Document every major architectural decision with an ADR in `docs/architecture/`
 
 ## Hallucination Traps (Read First)
 

@@ -1,19 +1,28 @@
 ---
 name: better-ui
 description: Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing animations, hover states, shadows, borders, micro-interactions, or visual detail work.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: UI Craft & Design Engineering
-  tier: pro
-  co-requires: [emil-design-eng, baseline-ui]
-  trigger-signals:
-    strong: [better-ui, ui polish, feels off, design details, optical alignment, micro-interactions, stagger animations, box shadows, make-interfaces-feel-better]
-    weak: [polish, refine, clean up ui, border radius]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - baseline-ui
+  - better-colors
+  - micro-interaction
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Better UI — Design Engineering & Polish Rules
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering component polish or micro-interactions, you MUST inspect:
+1. Outer vs Inner Radius Formula (Section 32) → Enforce $\text{Radius}_{\text{outer}} = \text{Radius}_{\text{inner}} + \text{Padding}_{\text{inner}}$
+2. Transition Rules (Section 25) → Strictly prohibit `transition: all`; specify explicit property transitions
+3. Multi-Layer Shadows (Section 42) → Use ambient + direct lighting stacks and dark mode surface elevation highlights
 
 Distilled design engineering principles for transforming functional UIs into polished, state-of-the-art software interfaces, based on Jakub Krehel's *Details that make interfaces feel better*.
 

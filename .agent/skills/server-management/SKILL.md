@@ -1,14 +1,28 @@
 ---
 name: server-management
 description: Production Linux server administration mastery. Systemd services, Nginx reverse proxy architecture, UFW firewalls, SSH key security, cron scheduling, log rotation, and server hardening. Use when configuring bare-metal, VPS instances, or reviewing deployment architecture.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - devops-engineer
+  - backend-security-expert
+  - bash-linux
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Server Management — Production Linux Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before configuring Linux servers, Nginx, or systemd services, you MUST inspect:
+1. Dedicated Non-Root User Execution (Section 39) → Run systemd services strictly under non-root users (`User=appuser`); ban running app services as root
+2. Nginx Syntax Verification (`nginx -t`) (Section 17) → Always verify Nginx configuration (`sudo nginx -t`) BEFORE reloading systemd services
+3. SSH & UFW Hardening Defaults (Section 126) → Disable password auth & root login (`PermitRootLogin no`), and configure UFW default deny incoming
 
 ## Hallucination Traps (Read First)
 

@@ -1,14 +1,26 @@
 ---
 name: intelligent-routing
 description: LLM Intent Processing and Gateway Routing mastery. Request classification hierarchies, function routing, confidence scoring, fallback cascades, zero-shot vs few-shot classification patterns, and identifying specialized skills for delegation. Use when parsing raw user input to determine the architectural path of execution.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 4.0.0
-last-updated: 2026-06-21
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: meta
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - fabel-protocol
+  - agentic-patterns
+  - behavioral-modes
+scripts-binding:
+  - .agent/scripts/compile_router.py
+  - .agent/scripts/verify_all.js
 ---
+
+# Intelligent Routing v4 — Self-Describing Skill Graph
+
+## Mandatory Pre-Flight Context Inspection
+
+Before routing user prompts to specialized skills or agents, you MUST inspect:
+1. `.agent/routing_index.json` → Read pre-compiled skill index instead of loading full skill markdown files into context
+2. Semantic Intent Schema (Section 1) → Classify request type (QUESTION, SURVEY, SIMPLE_EDIT, COMPLEX_BUILD, SECURITY_AUDIT, UNCLEAR_GIBBERISH)
+3. Confidence Threshold (Section 3 Socratic Yield Rule) → Yield back to user with clarifying question if confidence score is < 85s
 
 ## Hallucination Traps (Read First)
 

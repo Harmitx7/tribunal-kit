@@ -1,14 +1,28 @@
 ---
 name: i18n-localization
 description: Internationalization (i18n) and localization mastery. Abstracting hardcoded strings, managing JSON/YAML translation dictionaries, bidirectional routing (RTL support for Arabic/Hebrew), Pluralization algorithms, date/currency formatting, and SSR locale detection in Next.js/React. Use when preparing an application for global multilingual scaling.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - nextjs-react-expert
+  - adapt
+  - baseline-ui
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# i18n & Localization — Global Scale Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering multilingual or i18n features, you MUST inspect:
+1. Dictionary Interpolation (Section 15) → Use ICU parameter interpolation `t('greeting', { name })` instead of string concatenation
+2. Native `Intl` API Formatting (Section 71) → Use native `Intl.NumberFormat` and `Intl.DateTimeFormat` with active locale instead of third-party string parsers
+3. Logical CSS Properties for RTL (Section 94) → Use logical properties (`margin-inline-start`, `ms-4`) instead of physical `marginLeft`/`marginRight` for Arabic/Hebrew support
 
 ## Hallucination Traps (Read First)
 

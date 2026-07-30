@@ -1,19 +1,28 @@
 ---
 name: emil-design-eng
 description: Encodes Emil Kowalski's philosophy on UI polish, component design, animation decisions, and the invisible details that make software feel great. Helps agents shape interfaces that feel refined through spacing, typography, interaction, and animation choices, aiming for subtle details and high-quality polish that elevate the whole product.
-version: 1.0.0
-last-updated: 2026-06-26
-applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
-routing:
-  domain: frontend
-  tier: pro
-  co-requires: [frontend-design, motion-engineering]
-  trigger-signals:
-    strong: [emil, kowalski, design engineering, interface craft, ui polish, micro-interactions, animations.dev, craft sensibility]
-    weak: [animations, feel right, ui polish, subtle details]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - apple-design
+  - motion-engineering
+  - 60fps-animation
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Design Engineering
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing or reviewing UI micro-animations, you MUST inspect:
+1. Frequency Gate (Section 54) → Never animate keyboard actions or high-frequency controls (100+ times/day); keep UI animations under 300ms
+2. Easing Rule (Section 75) → Use strong `ease-out` (`cubic-bezier(0.23, 1, 0.32, 1)`) for entering UI elements; ban `ease-in`
+3. Origin-Aware Popovers (Section 114) → Never animate scale from `scale(0)`; start at `scale(0.95)` with origin bound to trigger coordinates
 
 ## Initial Response
 

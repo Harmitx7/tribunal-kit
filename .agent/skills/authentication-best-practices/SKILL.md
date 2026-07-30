@@ -1,14 +1,28 @@
 ---
 name: authentication-best-practices
 description: Authentication and Authorization mastery. Best practices for OAuth2, OpenID Connect, JWT (JSON Web Tokens), session management, password hashing, MFA (Multi-Factor Authentication), RBAC/ABAC, SSO, and secure credential storage. Use when auditing or implementing login flows, identity systems, or access control.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - backend-security-expert
+  - api-security-auditor
+  - vulnerability-scanner
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Authentication & Authorization — Identity Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing authentication or session flows, you MUST inspect:
+1. Modern Password Hashing (Section 28) → Use Argon2id or bcrypt; ban legacy fast algorithms (`md5`, `sha256`) for credential hashing
+2. Token Storage Separation (Section 83) → Keep short-lived access tokens in JS memory and long-lived refresh tokens in `HttpOnly`, `SameSite=Lax/Strict` cookies
+3. OAuth PKCE Flow Requirement (Section 109) → Enforce Authorization Code Flow with PKCE for all single-page and mobile apps; ban deprecated Implicit Flow
 
 # Authentication & Authorization — Identity Mastery
 

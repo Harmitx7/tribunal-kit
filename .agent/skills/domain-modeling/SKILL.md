@@ -1,17 +1,28 @@
 ---
 name: domain-modeling
 description: Builds and sharpens project domain models, ubiquitous language, entity relationships, and bounded contexts before writing code.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Domain Driven Design & Business Modeling
-  tier: pro
-  co-requires: [architecture, codebase-design]
-  trigger-signals:
-    strong: [domain-modeling, ubiquitous language, bounded context, aggregate root, domain entity, business logic model]
-    weak: [model data, data entities]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - architecture
+  - codebase-design
+  - database-design
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Domain Modeling — Ubiquitous Language & Bounded Contexts
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing domain entities or business modeling, you MUST inspect:
+1. Ubiquitous Language Uniformity (Section 25) → Standardize 1 explicit term across UI, code, and DB (e.g. Customer vs User); ban interchangeable synonyms
+2. Bounded Context Separation (Section 30) → Isolate models per context (e.g. Inventory Product vs Catalog Product); ban 60-column monolithic entities
+3. Aggregate Root Invariants (Section 34) → Mutate child entities strictly through Aggregate Root methods (`order.addItem(...)`); ban direct child mutations
 
 # Domain Modeling — Ubiquitous Language & Bounded Contexts
 

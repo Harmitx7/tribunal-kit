@@ -1,15 +1,28 @@
 ---
 name: framer-motion-expert
 description: Framer Motion 12+ for React. Declarative animations, layout transitions, gestures, scroll-linked motion, AnimatePresence, useAnimate, LazyMotion. Use when building component animations, page transitions, shared layout animations, or gesture-driven UI.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.1.0
-last-updated: 2026-04-06
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - motion-engineering
+  - 60fps-animation
+  - accessible-animation
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Framer Motion 12+ — Dense Reference
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing Framer Motion code in React, you MUST inspect:
+1. `package.json` / Next.js Client Boundaries → Add `"use client"` directive on Next.js App Router files containing `motion.X`
+2. AnimatePresence & layoutId Rules (Section 117) → Enforce `mode="wait"` and ensure every `<AnimatePresence>` child has a unique `key`
+3. Bundle Optimization (Section 182) → Use `<LazyMotion features={domAnimation}>` with `m.div` for lightweight production bundles
 
 ## Hallucination Traps (Read First)
 

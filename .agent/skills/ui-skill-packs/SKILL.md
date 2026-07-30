@@ -1,13 +1,30 @@
 ---
 name: ui-skill-packs
 description: Mandatory skill loading packs for UI generation. Consolidates 42+ individual UI skills into 3 tiered packs (Core Craft, Immersive & System, High-End Design) to guarantee non-generic, high-fidelity UI outputs.
-version: 1.0.0
-last-updated: 2026-07-28
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - taste-skill
+  - better-colors
+  - impeccable
+  - micro-interaction
+  - gpt-taste
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # UI Skill Packs — Master Design Engineering Bundles
 
 ---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before generating UI code, you MUST inspect:
+1. `package.json` / `tailwind.config.ts` / `index.css` → Check UI stack (Tailwind v4, Vanilla CSS, OKLCH, Framer Motion)
+2. `DESIGN.md` / color token definitions → Verify palette rules and dark mode contrast variables
+3. Active UI component target → Assign Pack 1 (Core UI), Pack 2 (System Micro-Interactions), or Pack 3 (Immersive Landing)
 
 ## 1. Pack Definitions
 

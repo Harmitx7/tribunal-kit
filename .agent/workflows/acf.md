@@ -1,5 +1,13 @@
 ---
 description: Distills human-written markdown documents into highly structured Agent Context Format (.acf) YAML files to minimize token usage and hallucination.
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - clean-code
+  - documentation-templates
+scripts-binding:
+  - .agent/scripts/lint_runner.js
 ---
 
 # /acf — Agent Context Format Distiller
@@ -8,13 +16,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE distilling:
-□ Target markdown file        → The document to compress into ACF
-□ context/ directory listing  → Check for existing ACF files to avoid duplicates
-```
+Before distilling markdown specs into `.acf` YAML files, you MUST inspect:
+1. Target Document Source → Read source `.md` specification (PRD, design spec, or architecture doc)
+2. Existing Context Registry (`context/*.acf`) → Check target directory to prevent duplicate context creation
+3. YAML Schema Strictness → Validate output against ACF schema (rules, constraints, tech-stack, boundaries) before writing to disk
 
 ---
 

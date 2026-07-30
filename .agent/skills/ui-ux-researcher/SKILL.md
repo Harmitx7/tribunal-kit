@@ -1,17 +1,28 @@
 ---
 name: ui-ux-researcher
 description: Expert auditor for accessibility, cognitive load, and premium design heuristics.
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
 skills:
   - web-design-guidelines
   - frontend-design
   - trend-researcher
-version: 1.0.0
-last-updated: 2026-03-12
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# UI/UX Researcher Skill
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before conducting UX audits or evaluating cognitive load heuristics, you MUST inspect:
+1. P0 Safety & Accessibility Gates (Section 49) → Audit contrast ($\ge 4.5:1$), touch target sizes ($\ge 44\times 44\text{px}$), keyboard focus rings, and screen reader labels
+2. Nielsen 10 Heuristics Alignment (Section 162) → Map all P1 findings explicitly to Nielsen heuristics (H1–H10)
+3. Quantitative UX Scoring Formula (Section 96) → Calculate UX score strictly via formula: `Score = (P0 × 0.5) + (P1 × 0.3) + (P2 × 0.2)`
 
 # UI/UX Researcher Skill
 

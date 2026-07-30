@@ -1,19 +1,28 @@
 ---
 name: typeset
 description: Professional web typography scaling, font pairing, optical sizing, tracking, line height cadence, text-wrap balance, and OpenType features. Use when refining typography systems or text styling.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Typography & Typesetting
-  tier: pro
-  co-requires: [better-typography, frontend-design]
-  trigger-signals:
-    strong: [typeset, typography scale, font pairing, optical sizing, tracking, line height cadence, text-wrap balance, OpenType features]
-    weak: [text styling, font setup]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - swiss-design
+  - better-ui
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Typeset — Professional Web Typography System
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before refining typography scales or text styles, you MUST inspect:
+1. `DESIGN.md` / `index.css` → Verify typography scale variables, font families, and OpenType settings
+2. Optical Tracking & Line-Height Cadence (Section 24) → Enforce `1.1` line-height for display headings, `1.5` for body text, and `-0.03em` tracking
+3. Modern Text Wrapping (Section 36) → Apply `text-wrap: balance` to headings and limit paragraph line width to `65ch`
 
 Architect disciplined, optically balanced typography systems across web components.
 

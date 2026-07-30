@@ -1,14 +1,28 @@
 ---
 name: powershell-windows
 description: PowerShell and Windows environment mastery. Object-oriented piping, strict error handling (ErrorActionPreference), PSProviders, active directory querying, credential management, and execution policies. Use when automating Azure, Windows environments, or writing .ps1 scripts.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - server-management
+  - devops-engineer
+  - bash-linux
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# PowerShell — Windows Automation Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing PowerShell `.ps1` scripts or Windows automation commands, you MUST inspect:
+1. Object Pipeline vs String Parsing Rule (Section 23) → Operate directly on .NET object properties (`Get-Process | Stop-Process`); ban string splitting/parsing
+2. Mandatory Script Strict Mode Header (Section 43) → Always declare `$ErrorActionPreference = "Stop"` and `Set-StrictMode -Version Latest` at top of automation scripts
+3. Process-Scoped Execution Policy Bypass (Section 68) → Use process-level policy override (`powershell.exe -ExecutionPolicy Bypass -File ...`); ban system-wide `Set-ExecutionPolicy Unrestricted`
 
 # PowerShell — Windows Automation Mastery
 

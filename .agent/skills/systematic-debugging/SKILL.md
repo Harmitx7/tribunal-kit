@@ -1,14 +1,28 @@
 ---
 name: systematic-debugging
 description: Systematic debugging framework. Root-cause isolation, 4-phase methodology, hypothesis testing, log tracing, avoiding shotgun-surgery, memory allocation analysis, and empirical evidence gathering. Use when debugging complex, highly-coupled, or elusive bugs across mixed execution environments.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - diagnosing-bugs
+  - test-result-analyzer
+  - clean-code
+scripts-binding:
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Systematic Debugging — Root Cause Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before debugging issues or analyzing stack traces, you MUST inspect:
+1. Single Variable Isolation (Section 15) → Change ONE variable at a time when debugging; ban shotgun debugging or multi-file edits simultaneously
+2. Deterministic Reproduction Pre-requisite (Section 29) → Write a failing deterministic test/reproduction script FIRST before modifying code logic
+3. Stack Trace Application Line Extraction (Section 98) → Trace up past `node_modules` to locate the top-most application code frame you wrote
 
 ## Hallucination Traps (Read First)
 

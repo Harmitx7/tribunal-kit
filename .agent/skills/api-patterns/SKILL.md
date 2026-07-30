@@ -1,14 +1,28 @@
 ---
 name: api-patterns
 description: API design mastery. REST, GraphQL, tRPC, and gRPC selection. Request/response design, pagination (cursor/offset), filtering, versioning, rate limiting, error formats (RFC 9457), authentication (JWT/OAuth2/API keys), idempotency, file uploads, webhooks, and OpenAPI documentation. Use when designing APIs, choosing protocols, or implementing API standards.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.1.0
-last-updated: 2026-04-07
-applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - api-security-auditor
+  - backend-security-expert
+  - schema-reviewer
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# API Patterns — Design & Protocol Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing or implementing API endpoints, you MUST inspect:
+1. Authorization Header Token Passing (Section 17) → Pass JWTs in `Authorization: Bearer` headers; strictly ban tokens in URL query params
+2. Cursor-Based Pagination (Section 19) → Use cursor pagination for datasets >10K rows to eliminate `OFFSET N` performance degradation
+3. Idempotency Header for Mutations (Section 21) → Require `Idempotency-Key` headers for state-changing `POST` or `PATCH` retry operations
 
 # API Patterns — Design & Protocol Mastery
 

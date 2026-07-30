@@ -1,19 +1,28 @@
 ---
 name: sounds-on-the-web
 description: Web Audio API procedural sound synthesis for tactile micro-interaction feedback (clicks, pops, success chimes) with mute toggles and accessibility awareness.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Audio Feedback & Tactile Sound Synthesis
-  tier: pro
-  co-requires: [delight, micro-interaction]
-  trigger-signals:
-    strong: [sounds-on-the-web, Web Audio API sound, UI sound feedback, procedural audio click, audio feedback toggle]
-    weak: [ui sound, audio click]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - delight
+  - micro-interaction
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Sounds on the Web — Web Audio API Sound Feedback
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing web audio feedback, you MUST inspect:
+1. Autoplay Policy Rules (Section 78) → Initialize `AudioContext` strictly after/inside user gesture interaction handlers
+2. Gain Volume Caps → Keep gain volume subtle ($\le 0.15$ max gain) to prevent user auditory discomfort
+3. Mute Preference Toggle (Section 66) → Provide a persistent sound mute option in settings or local storage
 
 Synthesize lightweight, zero-dependency tactile sound effects for web micro-interactions.
 

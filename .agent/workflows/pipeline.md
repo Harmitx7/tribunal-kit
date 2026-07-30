@@ -1,8 +1,30 @@
+---
+description: Hybrid 3-Pass Code Generation pipeline. Pass 1 (Planner) → Pass 2 (Builder) → Pass 3 (Zero-LLM Deterministic Validator). Maximizes code generation quality while keeping prompt context hyper-efficient.
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - clean-code
+  - codebase-design
+  - lint-and-validate
+scripts-binding:
+  - .agent/scripts/pipeline_engine.js
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/security_scan.js
+---
+
 # /pipeline — Hybrid 3-Pass Code Generation
 
 $ARGUMENTS
 
 ---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before running 3-pass pipeline generation, you MUST inspect:
+1. Pipeline Engine Script (`.agent/scripts/pipeline_engine.js`) → Verify availability and options (`--task`, `--file`, `--phase`)
+2. Context Token Allocation -> Keep Pass 2 builder prompt under 2,500 tokens (loading max 3 essential skill key-rules)
+3. Zero-LLM Pass 3 Validator → Run deterministic security, lint, and type checks on generated code prior to Human Gate submission
 
 ## When to Use /pipeline
 

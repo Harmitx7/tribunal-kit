@@ -1,6 +1,18 @@
 ---
 description: Frontend and React specific Tribunal. Runs Logic + Security + Frontend + Type Safety + UI/UX + Motion + Visual Audit reviewers. Use for React components, hooks, UI code, Next.js pages, Server Components, and Client Components.
-required-skills: ui-skill-packs, react-specialist, nextjs-react-expert, frontend-design, review-animations, emil-design-eng
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - ui-skill-packs
+  - react-specialist
+  - nextjs-react-expert
+  - frontend-design
+  - review-animations
+  - emil-design-eng
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/security_scan.js
 ---
 
 # /tribunal-frontend — Frontend Code & Visual Audit
@@ -9,15 +21,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE frontend review:
-□ Target component files       → The UI code being audited
-□ tailwind.config / globals.css → Understand design tokens & OKLCH palettes
-□ package.json                 → Verify frontend dependencies (framer-motion, lucide-react, etc.)
-□ .agent/skills/ui-skill-packs/SKILL.md → Bind active UI skill pack
-```
+Before auditing React components or frontend UI logic, you MUST inspect:
+1. Design Tokens & Styling Context (`globals.css`, `tailwind.config`) → Verify OKLCH color palettes, typography scale, and dark mode classes
+2. Active UI Skill Pack (`.agent/skills/ui-skill-packs/SKILL.md`) → Load mandatory UI skill pack (Pack 1: Foundations, Pack 2: Motion, Pack 3: Systems)
+3. 7-Reviewer Frontend Gate → Run logic, security, frontend-reviewer, type-safety, ui-ux-auditor, motion-reviewer, and visual-auditor before approving UI diffs
 
 ---
 

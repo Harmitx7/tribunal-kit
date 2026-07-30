@@ -1,13 +1,28 @@
 ---
 name: gsap-performance
 description: Official GSAP skill for performance — prefer transforms, avoid layout thrashing, will-change, batching. Use when optimizing GSAP animations, reducing jank, or when the user asks about animation performance, FPS, or smooth 60fps.
-license: MIT
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - 60fps-animation
+  - fixing-motion-performance
+  - motion-engineering
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
-# GSAP Performance
+# GSAP Performance — 60fps Animation Optimization
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before optimizing GSAP animations for performance, you MUST inspect:
+1. Target properties (Section 18) → Animate Composite properties (`x`, `y`, `scale`, `rotation`, `opacity`) instead of layout properties (`left`, `top`, `width`, `height`)
+2. Frequent Updates (Section 45) → Use `gsap.quickTo()` for mouse followers or rapid pointer movement loops
+3. Batching & Staggering (Section 39) → Use GSAP `stagger` instead of creating multiple individual delayed tweens
 
 ## When to Use This Skill
 

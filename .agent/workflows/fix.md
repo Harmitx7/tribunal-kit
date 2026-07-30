@@ -1,6 +1,15 @@
 ---
 description: Auto-fix known issues with lint, formatting, imports, and TypeScript errors. Runs lint_runner.js and auto-fixers. Human approval required before applying any changes. Shows a diff of what will change before writing to disk.
-required-skills: lint-and-validate, clean-code
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - lint-and-validate
+  - clean-code
+  - typescript-advanced
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # /fix — Automated Error Resolution
@@ -9,14 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE fixing:
-□ package.json                → Identify lint/format tools and scripts
-□ tsconfig.json               → Understand strictness levels
-□ .eslintrc / prettierrc      → Understand code style rules
-```
+Before executing auto-fixers or modifying code files to resolve lint/type issues, you MUST inspect:
+1. Workspace Linter & Compiler Settings (`tsconfig.json`, `.eslintrc`, `biome.json`) → Confirm rule strictness and formatting standards
+2. Target File Lint Output → Execute `node .agent/scripts/lint_runner.js` to gather precise error line numbers and rule IDs
+3. Diff Verification Before Disk Write → Show explicit diff of proposed changes and confirm Human Gate approval before saving
 
 ---
 

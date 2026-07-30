@@ -1,6 +1,15 @@
 ---
 description: Audit AI/LLM integration code for hallucinated model names, invented API parameters, prompt injection vulnerabilities, missing rate-limit handling, streaming error gaps, and cost explosion patterns. Uses ai-code-reviewer + logic + security.
-required-skills: llm-engineering, ai-prompt-injection-defense
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - llm-engineering
+  - ai-prompt-injection-defense
+  - generative-ui-expert
+scripts-binding:
+  - .agent/scripts/security_scan.js
+  - .agent/scripts/lint_runner.js
 ---
 
 # /review-ai — AI Integration Code Audit
@@ -9,13 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE reviewing:
-□ Target AI files             → The LLM integrations or prompts
-□ package.json                → Which SDKs are used (e.g. ai, openai)
-```
+Before auditing LLM integrations, prompt templates, or AI API calls, you MUST inspect:
+1. Target AI Code & SDK Manifests (`package.json`) → Verify official AI SDK versions (Vercel AI SDK `ai`, `@langchain/core`, `openai`, `@google/genai`)
+2. Prompt Injection Boundary Check → Confirm user inputs are strictly passed via message roles or delimited blocks; ban string concatenation into system prompts
+3. 3-Reviewer AI Integration Gate → Run ai-code-reviewer, logic-reviewer, and security-auditor before approving AI code diffs
 
 ---
 

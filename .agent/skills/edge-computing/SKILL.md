@@ -1,14 +1,28 @@
 ---
 name: edge-computing
 description: Edge computing mastery. Cloudflare Workers, Vercel Edge Functions, Durable Objects, edge-compatible data patterns, cold start elimination, caching policies (Stale-While-Revalidate), and global data locality. Use when designing globally distributed, extreme low-latency applications architectures.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - nextjs-react-expert
+  - local-first-architecture
+  - backend-security-expert
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Edge Computing — Global Latency Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering edge computing handlers or Cloudflare Workers, you MUST inspect:
+1. Edge Runtime Restrictions (Section 25) → Strictly ban Node.js native core modules (`fs`, `child_process`, native `bcrypt`); use Web APIs (`fetch`, `crypto.subtle`)
+2. Stale-While-Revalidate Caching (Section 47) → Use `Cache-Control: s-maxage=60, stale-while-revalidate=86400` and asynchronous `ctx.waitUntil()` cache puts
+3. Edge Database Access (Section 81) → Never open direct raw TCP connections to DBs; use HTTP connection poolers (Prisma Accelerate, LibSQL, Supabase Pooler)
 
 ## Hallucination Traps (Read First)
 

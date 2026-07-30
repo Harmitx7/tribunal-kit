@@ -1,16 +1,28 @@
 ---
 name: agentic-patterns
 description: AI agent design principles. Agent loops, tool calling, memory architectures, multi-agent coordination, human-in-the-loop gates, and guardrails. Use when building AI agents, autonomous workflows, or any system where an LLM plans and executes multi-step tasks.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - agent-organizer
+  - fabel-protocol
+  - thinking-protocol
+scripts-binding:
+  - .agent/scripts/swarm_dispatcher.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Agentic Patterns
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing agentic loops, tool schemas, or memory architectures, you MUST inspect:
+1. `package.json` / LLM SDK definitions → Check tool calling syntax (Zod schemas, OpenAI/Anthropic function calling API)
+2. Agent Loop boundaries (Section 1) → Define hard caps on `MAX_STEPS` (default: 10) and explicit termination reasons
+3. Human-in-the-loop gates (Section 5) → Ensure approval gates for destructive, data-deleting, or high-cost API calls
 
 ---
 

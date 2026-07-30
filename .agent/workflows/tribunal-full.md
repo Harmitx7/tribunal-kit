@@ -1,6 +1,23 @@
 ---
 description: Runs ALL 21 parallel reviewers simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
-required-skills: all domain skills auto-loaded
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - clean-code
+  - backend-security-expert
+  - frontend-design
+  - database-design
+  - mobile-design
+  - performance-profiling
+scripts-binding:
+  - .agent/scripts/security_scan.js
+  - .agent/scripts/dependency_analyzer.js
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/schema_validator.js
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/bundle_analyzer.js
+  - .agent/scripts/verify_all.js
 ---
 
 # /tribunal-full — Complete 21-Reviewer Audit
@@ -9,14 +26,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE full review:
-□ All modified files          → Use git diff to see pending changes
-□ package.json                → Verify all dependencies
-□ Config files                 → tsconfig, next.config, tailwind.config
-```
+Before launching the full 21-reviewer audit, you MUST inspect:
+1. Pending Code Modifications (`git diff` / modified files) → Inspect diffs across all domains (frontend, backend, database, mobile)
+2. Workspace Configuration Context (`package.json`, `tsconfig.json`, `tailwind.config`) → Verify project build contracts
+3. 21-Reviewer Synthesis Gate → Execute all 21 specialized reviewers in parallel; halt on any security violation or critical bug before Human Gate approval
 
 ---
 

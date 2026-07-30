@@ -1,19 +1,28 @@
 ---
 name: build-primitive
 description: Build foundational, unstyled, accessible UI primitives from scratch with strong ARIA attributes, keyboard navigation, focus traps, and state management. Use when creating custom Headless UI components (Dialog, Combobox, Accordion, Popover, Menu).
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Headless UI & Accessible Primitives
-  tier: pro
-  co-requires: [web-accessibility-auditor, react-specialist]
-  trigger-signals:
-    strong: [build-primitive, headless UI, custom dialog primitive, custom popover, accessible primitive, ARIA combobox, keyboard navigation primitive]
-    weak: [custom component, headless component]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - react-specialist
+  - baseline-ui
+  - better-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Build Primitive — Headless & Accessible UI Primitives
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before building headless UI primitives, you MUST inspect:
+1. WAI-ARIA Design Patterns (Section 24) → Attach exact roles (`dialog`, `combobox`, `tablist`), `aria-expanded`, and ID associations (`aria-labelledby`, `aria-describedby`)
+2. Focus Traps & Restoration (Section 29) → Trap focus inside modals on open; return focus to trigger on close; dismiss on `Escape`
+3. Data Attributes (Section 41) → Expose clean `data-state="open|closed"` and `data-disabled` attributes for unstyled CSS consumer integration
 
 Build rock-solid, framework-agnostic or React headless UI primitives with complete ARIA pattern compliance, keyboard control, and focus management.
 

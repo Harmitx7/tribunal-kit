@@ -1,19 +1,28 @@
 ---
 name: apple-design
 description: Apple's approach to interface design and fluid, physical motion, translated for the web. Use when building or reviewing gesture-driven UI, spring animations, drag/swipe/sheet interactions, momentum and interruptible transitions, translucent materials and depth, typography (optical sizing, tracking, leading), reduced-motion, or the design foundations behind Apple-style interfaces.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: UI Craft & Design Engineering
-  tier: master
-  co-requires: [emil-design-eng, soft-skill]
-  trigger-signals:
-    strong: [apple-design, apple ui, fluid motion, spring physics, translucency, backdrop blur, gesture driven, sheet interaction, momentum transition]
-    weak: [ios style, macos ui, glassmorphism]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - soft-skill
+  - emil-design-eng
+  - 60fps-animation
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Apple Design — Fluid Motion, Physicality & Translucent Depth
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering Apple-style UIs or gesture-driven components, you MUST inspect:
+1. Interruptible Physics-Based Springs (Section 22) → Use physics springs (`stiffness: 300, damping: 24, mass: 0.8`) instead of fixed-duration CSS cubic-beziers
+2. Translucent Backdrop Blur (Section 44) → Limit `backdrop-filter: blur(20px) saturate(180%)` strictly to sticky headers or modals to avoid GPU scroll jank
+3. Optical Letter-Spacing (Section 72) → Apply inverse tracking (`-0.025em` for titles, `+0.015em` for small captions) based on SF Pro font scaling
 
 Design engineering guidelines for bringing Apple's fluid, physical interface paradigms to modern web applications.
 

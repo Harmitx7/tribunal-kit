@@ -1,6 +1,15 @@
 ---
 description: Add or update features in existing applications. Performs impact analysis before any code change — identifies all dependents, detects breaking changes, generates Tribunal-reviewed modifications. No change is written to disk without Human Gate approval.
-required-skills: clean-code
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - clean-code
+  - codebase-design
+  - test-engineer
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/test_runner.js
 ---
 
 # /enhance — Feature Addition & Modification
@@ -9,16 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE any modification:
-□ Target file              → Understand current implementation
-□ Target file's importers  → Map the impact zone (grep callers)
-□ package.json             → Verify dependencies exist
-□ tsconfig.json            → Understand path aliases and strictness
-□ Related test files        → Know what tests exist for this module
-```
+Before modifying existing features or appending functionality, you MUST inspect:
+1. Impact Zone Identification → Grep for all callers and importers of the target file to map blast radius
+2. Existing Contract & Unit Tests → Inspect existing tests and type signatures for the target module to prevent regression
+3. Breaking Change Detection → Ensure signature changes update all dependent call sites simultaneously before writing to disk
 
 ---
 

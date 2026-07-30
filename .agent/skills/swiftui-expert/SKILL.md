@@ -1,14 +1,28 @@
 ---
 name: swiftui-expert
 description: SwiftUI development mastery. View architecture, state management (@State, @Binding, @Environment, @Observable), performance optimization (identifiable loops, implicit vs explicit animations), architectural patterns (MVVM vs TCA), and iOS-native UX paradigms. Use when writing native Apple platforms code.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - mobile-design
+  - building-native-ui
+  - apple-design
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# SwiftUI Expert — Native Apple Platforms Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing or refactoring SwiftUI components, you MUST inspect:
+1. Modern Observable Macro (iOS 17+) (Section 43) → Use `@Observable` macro for reference types; ban legacy `@StateObject` / `@Published` boilerplate in iOS 17+ code
+2. Identifiable Protocol in ForEach (Section 125) → Conform model types to `Identifiable` for `ForEach`; ban integer index iteration (`0..<items.count`)
+3. NavigationStack Standard (Section 18) → Use `NavigationStack` or `NavigationSplitView`; ban deprecated legacy `NavigationView`
 
 ## Hallucination Traps (Read First)
 

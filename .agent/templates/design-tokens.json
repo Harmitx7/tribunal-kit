@@ -1,0 +1,103 @@
+{
+  "$schema": "https://design-tokens.github.io/community-group/format/",
+  "$description": "Tribunal Kit — Adaptive Design Tokens (W3C Format). Complete 8 Visual Identities.",
+
+  "themes": {
+    "swiss": {
+      "color": {
+        "primary": { "$value": "oklch(0.20 0.01 240)", "$type": "color" },
+        "bg-base": { "$value": "oklch(0.98 0.002 240)", "$type": "color" },
+        "bg-surface": { "$value": "oklch(1.00 0 0)", "$type": "color" }
+      },
+      "radius": {
+        "sm": { "$value": "0px", "$type": "dimension" },
+        "md": { "$value": "0px", "$type": "dimension" }
+      }
+    },
+    "brutalist": {
+      "color": {
+        "primary": { "$value": "oklch(0.60 0.28 140)", "$type": "color" },
+        "bg-base": { "$value": "oklch(1.00 0 0)", "$type": "color" },
+        "bg-surface": { "$value": "oklch(1.00 0 0)", "$type": "color" }
+      },
+      "radius": {
+        "sm": { "$value": "2px", "$type": "dimension" },
+        "md": { "$value": "2px", "$type": "dimension" }
+      }
+    },
+    "editorial": {
+      "color": {
+        "primary": { "$value": "oklch(0.35 0.12 25)", "$type": "color" },
+        "bg-base": { "$value": "oklch(0.97 0.005 60)", "$type": "color" },
+        "bg-surface": { "$value": "oklch(0.99 0.002 60)", "$type": "color" }
+      },
+      "radius": {
+        "sm": { "$value": "4px", "$type": "dimension" },
+        "md": { "$value": "8px", "$type": "dimension" }
+      }
+    },
+    "glassmorphism": {
+      "color": {
+        "primary": { "$value": "oklch(0.70 0.22 200)", "$type": "color" },
+        "bg-base": { "$value": "oklch(0.12 0.01 220)", "$type": "color" },
+        "bg-surface": { "$value": "oklch(100% 0 0 / 0.15)", "$type": "color" }
+      },
+      "radius": {
+        "sm": { "$value": "4px", "$type": "dimension" },
+        "md": { "$value": "16px", "$type": "dimension" }
+      }
+    },
+    "soft-minimal": {
+      "color": {
+        "primary": { "$value": "oklch(0.40 0.06 200)", "$type": "color" },
+        "bg-base": { "$value": "oklch(0.98 0.003 80)", "$type": "color" },
+        "bg-surface": { "$value": "oklch(1.00 0 0)", "$type": "color" }
+      },
+      "radius": {
+        "sm": { "$value": "6px", "$type": "dimension" },
+        "md": { "$value": "12px", "$type": "dimension" }
+      }
+    },
+    "dark-luxury": {
+      "color": {
+        "primary": { "$value": "oklch(0.78 0.12 85)", "$type": "color" },
+        "bg-base": { "$value": "oklch(0.08 0.005 250)", "$type": "color" },
+        "bg-surface": { "$value": "oklch(0.12 0.008 250)", "$type": "color" }
+      },
+      "radius": {
+        "sm": { "$value": "2px", "$type": "dimension" },
+        "md": { "$value": "6px", "$type": "dimension" }
+      }
+    },
+    "cyberpunk": {
+      "color": {
+        "primary": { "$value": "oklch(0.75 0.28 160)", "$type": "color" },
+        "bg-base": { "$value": "oklch(0.05 0.01 280)", "$type": "color" },
+        "bg-surface": { "$value": "oklch(0.08 0.015 280)", "$type": "color" }
+      },
+      "radius": {
+        "sm": { "$value": "0px", "$type": "dimension" },
+        "md": { "$value": "4px", "$type": "dimension" }
+      }
+    },
+    "retro-analog": {
+      "color": {
+        "primary": { "$value": "oklch(0.50 0.18 45)", "$type": "color" },
+        "bg-base": { "$value": "oklch(0.94 0.015 70)", "$type": "color" },
+        "bg-surface": { "$value": "oklch(0.96 0.015 70)", "$type": "color" }
+      },
+      "radius": {
+        "sm": { "$value": "4px", "$type": "dimension" },
+        "md": { "$value": "8px", "$type": "dimension" }
+      }
+    }
+  },
+
+  "spacing": {
+    "xs":  { "$value": "4px",  "$type": "dimension" },
+    "sm":  { "$value": "8px",  "$type": "dimension" },
+    "md":  { "$value": "16px", "$type": "dimension" },
+    "lg":  { "$value": "24px", "$type": "dimension" },
+    "xl":  { "$value": "32px", "$type": "dimension" }
+  }
+}

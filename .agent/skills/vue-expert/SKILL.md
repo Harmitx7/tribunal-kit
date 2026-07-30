@@ -1,15 +1,28 @@
 ---
 name: vue-expert
 description: Vue 3.5+ Composition API. Script setup, reactive refs, computed, watchers, composables, Pinia, Vue Router 4, Nuxt 4. Use when building Vue/Nuxt applications.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.1.0
-last-updated: 2026-04-06
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - baseline-ui
+  - better-ui
+  - 60fps-animation
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Vue 3.5+ & Nuxt 4 — Dense Reference
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing Vue 3.5+ or Nuxt 4 components, you MUST inspect:
+1. Script Setup Architecture → Use `<script setup lang="ts">` exclusively; ban legacy Options API
+2. Pinia & Reactivity Rules (Section 133) → Use `storeToRefs(store)` when destructuring Pinia state to preserve reactivity
+3. Model & Watcher Syntax (Section 42) → Use `defineModel<T>()` (Vue 3.4+) and `watch(() => state.prop, ...)` for primitive watchers
 
 ## Hallucination Traps (Read First)
 

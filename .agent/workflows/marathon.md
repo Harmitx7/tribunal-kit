@@ -1,6 +1,15 @@
 ---
 description: Long-running agent harness for multi-session projects. Decomposes specs into atomic features tracked in JSON, ensures clean handoffs between sessions, and provides structured progress tracking. Based on Anthropic's long-running agent patterns.
-required-skills: harness-protocol, agent-organizer
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - harness-protocol
+  - agent-organizer
+  - project-planner
+scripts-binding:
+  - .agent/scripts/session_manager.js
+  - .agent/scripts/verify_all.js
 ---
 
 # /marathon — Long-Running Agent Harness
@@ -9,14 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE marathon start/continue:
-□ progress.json               → See current marathon state
-□ feature_list.json           → View remaining tasks
-□ git log --oneline -5        → Check recent commits
-```
+Before initiating or resuming a multi-session marathon harness, you MUST inspect:
+1. Marathon State Ledger (`progress.json`, `feature_list.json`) → Verify current session index, completed features, and active task
+2. Session Continuity Manager (`.agent/scripts/session_manager.js`) → Verify state snapshot before context truncation
+3. Atomic Feature Handoff Protocol → Ensure each session completes exactly ONE atomic feature, runs `verify_all.js`, and commits state before handoff
 
 ---
 

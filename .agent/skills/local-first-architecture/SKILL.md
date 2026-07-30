@@ -1,19 +1,28 @@
 ---
 name: local-first-architecture
 description: Local-first architecture guidance for instant-feeling web & desktop apps, optimistic updates, IndexedDB sync engines, offline operation, and Conflict-free Replicated Data Types (CRDTs).
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Local-First Architecture & Sync Engines
-  tier: pro
-  co-requires: [local-first, realtime-patterns, architecture]
-  trigger-signals:
-    strong: [local-first-architecture, Linear architecture, optimistic updates, IndexedDB sync, CRDT, offline-first app, zero-latency UI]
-    weak: [offline sync, optimistic state]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - react-specialist
+  - nextjs-react-expert
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Local-First Architecture — Instant UI & Sync Engines
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing local-first architecture or offline sync engines, you MUST inspect:
+1. Zero Network Latency Rule (Section 24) → Execute reads and writes against local storage (IndexedDB/SQLite) first before queueing outbound sync
+2. Outbound Mutation Queue (Section 28) → Persist mutation logs in IndexedDB with client-generated UUID `idempotencyKey` fields
+3. Conflict Resolution Strategy (Section 33) → Use Last-Write-Wins (LWW) for simple fields or CRDTs (Yjs/Automerge) for collaborative state
 
 Architect software that reads and writes to local storage (SQLite/IndexedDB) first, ensuring instant zero-latency UI mutations with background server synchronization.
 

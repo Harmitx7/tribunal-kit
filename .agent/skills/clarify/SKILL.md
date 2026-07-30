@@ -1,19 +1,28 @@
 ---
 name: clarify
 description: Improve UX microcopy, label optimization, error messages, and cognitive clarity. Use when text in a UI is confusing, wordy, ambiguous, or unhelpful.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: UX Writing & Microcopy
-  tier: pro
-  co-requires: [distill, shape]
-  trigger-signals:
-    strong: [clarify, UX copy, microcopy, error message copy, button labels, cognitive clarity, clear writing]
-    weak: [fix text, rewording, rewrite label]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - distill
+  - shape
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Clarify — UX Microcopy & Cognitive Clarity
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before optimizing UI text or error messages, you MUST inspect:
+1. Target UI labels & modals → Check for vague "Submit" or "OK" buttons and passive corporate jargon
+2. Active Verb Rules (Section 24) → Ensure action buttons start with specific verbs describing outcomes (e.g. *Save changes*, *Download export*)
+3. Actionable Error Messages (Section 30) → Pair error descriptions with explicit resolution steps
 
 Optimize user interface text, button labels, error messaging, and helper copy for maximum clarity and minimum cognitive friction.
 

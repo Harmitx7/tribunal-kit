@@ -1,13 +1,28 @@
 ---
 name: python-pro
 description: Python 3.12+ specialist. FastAPI, Pydantic v2, asyncio, modern types, pytest. Use when building Python APIs, data pipelines, automation, or any Python code.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.1.0
-last-updated: 2026-04-06
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - python-patterns
+  - data-validation-schemas
+  - api-patterns
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Python 3.12+ — Dense Reference
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing Python code or FastAPI endpoints, you MUST inspect:
+1. Pydantic v2 Migration Syntax (Section 17) → Use `model_dump()`, `model_dump_json()`, `model_validate()`, and `@field_validator`; ban v1 `.dict()` and `@validator`
+2. Modern Native Generics (Section 16) → Use native `list[str]`, `dict[k,v]`, and `X | None` (Python 3.10+); ban legacy `typing.List` / `typing.Optional`
+3. Non-Blocking Async Clients (Section 21) → Use `httpx.AsyncClient()` in async code; ban blocking `requests` library inside asyncio event loops
 
 # Python 3.12+ — Dense Reference
 

@@ -1,14 +1,24 @@
 ---
 name: brainstorming
 description: Socratic methodology, ideation, and architectural exploration mastery. Generating extensive feature options, analyzing trade-offs, questioning assumptions, mind-mapping components, and delaying execution. Use when evaluating new features, defining project goals, or guiding users through ambiguous design spaces.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.1.0
-last-updated: 2026-04-06
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - plan-writing
+  - fabel-protocol
+  - behavioral-modes
+scripts-binding:
+  - .agent/scripts/checklist.js
+  - .agent/scripts/verify_all.js
 ---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before initiating ideation sessions or generating architectural options, you MUST inspect:
+1. `package.json` / `ARCHITECTURE.md` → Check existing technology stack, libraries, and architectural boundaries
+2. The Socratic Protocol (Section 1) → Provide 3 distinct options (Conservative, Balanced, Ambitious) with tabular trade-offs
+3. Final Brainstorming Assertions schema (Section 4) → Distill options into actionable requirement items before planning
 
 ## Hallucination Traps (Read First)
 

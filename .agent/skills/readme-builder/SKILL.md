@@ -1,14 +1,28 @@
 ---
 name: readme-builder
 description: Interactive README.md generation specialist. Creates professional, structured README files with badges, installation guides, usage examples, screenshots, and contribution guidelines. Use when asked to create, update, or improve a README file.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-19
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - documentation-templates
+  - geo-fundamentals
+  - github-operations
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# README Builder Skill
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before generating or updating a README file, you MUST inspect:
+1. Mandatory Discovery Phase (Section 34) → Scan `package.json`, `pyproject.toml`, or project files first to collect factual metadata before writing
+2. Zero Placeholder Rule (Section 28) → Ban template placeholders (`[insert here]`); generate copy-paste ready code examples from actual project code
+3. Hero Section Lead-With-Value (Section 164) → Lead with a single-sentence value proposition and visual trust badges; ban starting with just the title
 
 ## Hallucination Traps (Read First)
 

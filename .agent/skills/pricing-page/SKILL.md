@@ -1,19 +1,28 @@
 ---
 name: pricing-page
 description: SaaS pricing table architecture, billing cycle toggles (Monthly/Annual), feature comparison matrices, tier highlighting, and conversion optimization.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Pricing Architecture & SaaS Conversion
-  tier: pro
-  co-requires: [landing-page, frontend-design]
-  trigger-signals:
-    strong: [pricing-page, pricing table, billing toggle, tier comparison, popular tier highlight, SaaS pricing]
-    weak: [pricing UI, plan table]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - landing-page
+  - compact-landing
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Pricing Page — SaaS Pricing Architecture & Comparison Grids
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering SaaS pricing pages or comparison tables, you MUST inspect:
+1. Tabular Price Numbers (Section 27) → Apply `font-variant-numeric: tabular-nums` to price digits to prevent layout jittering during Monthly/Annual toggles
+2. Featured Tier Distinction (Section 31) → Highlight the "Most Popular" plan with distinct accent borders, badge pill, and solid primary CTA
+3. Discount Badge (Section 26) → Display explicit "Save X%" discount badge alongside the Annual billing toggle option
 
 Architect high-converting SaaS pricing tables with clear billing toggles, tier differentiation, and feature comparison matrices.
 

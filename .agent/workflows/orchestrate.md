@@ -1,6 +1,15 @@
 ---
 description: Coordinate multiple agents for complex tasks. Use for multi-perspective analysis, comprehensive reviews requiring different domain expertise, or tasks where a single agent would miss domain-specific failures. Fan-Out dispatch → parallel execution → Fan-In synthesis → Human Gate.
-required-skills: agent-organizer, parallel-agents
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - agent-organizer
+  - parallel-agents
+  - swarm-dispatcher
+scripts-binding:
+  - .agent/scripts/swarm_dispatcher.js
+  - .agent/scripts/verify_all.js
 ---
 
 # /orchestrate — Multi-Agent Coordination
@@ -9,14 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE orchestrating:
-□ Target scope                → Identify the boundaries of the review/task
-□ Agent list                  → Determine which specialist agents are needed
-□ Context budget              → Determine how to split files among agents
-```
+Before dispatching multi-agent orchestrations or parallel sub-task workers, you MUST inspect:
+1. Orchestrator Payload Validator (`swarm_dispatcher.js`) → Validate subagent payload contracts and JSON schema before fan-out
+2. Context Window Budget Allocation → Provide scoped `context_summary` per worker; ban dumping full conversation history to workers
+3. Fan-In Synthesis & Human Gate → Collect all worker outputs via `Promise.allSettled()` pattern and present unified synthesis before writing disk changes
 
 ---
 

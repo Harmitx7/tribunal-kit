@@ -1,15 +1,28 @@
 ---
 name: react-specialist
 description: React 19+ specialist. use(), useActionState, useOptimistic, React Compiler, Server/Client Components, Zustand/Jotai, React Query. Use when building components, managing state, optimizing renders.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.1.0
-last-updated: 2026-04-06
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - nextjs-react-expert
+  - react-doctor
+  - baseline-ui
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # React 19+ — Dense Reference
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing React 19+ components or hooks, you MUST inspect:
+1. React 19 APIs (`useActionState` vs deprecated `useFormState`, `use()` vs `useContext`, `ref` as prop vs deprecated `forwardRef`)
+2. React Compiler Memoization (Section 125) → Avoid manual `useMemo`/`useCallback` unless React Compiler is explicitly disabled
+3. State Destructuring Traps (Section 189) → Never destructure entire Zustand stores; use granular selectors `useStore(s => s.value)`
 
 ## Hallucination Traps (Read First)
 

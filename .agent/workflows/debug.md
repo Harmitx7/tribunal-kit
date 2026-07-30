@@ -1,6 +1,15 @@
 ---
 description: Debugging command. Activates DEBUG mode for systematic problem investigation using the 4-phase methodology (Collect → Hypothesize → Test → Fix). No fix is suggested until the root cause is confirmed and tested. No random changes. No guessing.
-required-skills: systematic-debugging
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - systematic-debugging
+  - test-result-analyzer
+  - clean-code
+scripts-binding:
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/lint_runner.js
 ---
 
 # /debug — Root Cause Investigation
@@ -9,16 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE hypothesizing:
-□ Error output / stack trace  → Exact error text, not a paraphrase
-□ Target file                → The file referenced in the error
-□ git diff (recent changes)  → What changed since last working state
-□ .env / .env.example        → Check for missing/rotated secrets
-□ package.json               → Check for recent dependency changes
-```
+Before investigating or attempting any code modification during a bug report, you MUST inspect:
+1. Exact Error Traceback / Stack Log → Read raw error logs without paraphrasing; ban making diagnostic hypotheses without tracebacks
+2. Target File & Callers → Inspect file referenced in error trace along with its upstream callers
+3. Recent Changes (`git diff`) → Inspect recent edits to identify regressions before mutating code
 
 ---
 

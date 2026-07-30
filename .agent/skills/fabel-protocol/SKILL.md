@@ -1,11 +1,28 @@
 ---
 name: fabel-protocol
 description: Distilled Fabel-5 cognitive intelligence protocol. Injects epistemic reasoning, coding discipline, design evaluation cascades, and orchestration patterns into any AI model. Load this skill to make any model think, reason, code, and design like Fabel-5. Activates for complex builds, code generation, design tasks, and multi-agent orchestration.
-version: 1.0.0
-last-updated: 2026-07-07
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - agentic-patterns
+  - thinking-protocol
+  - knowledge-graph
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/checklist.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Fabel Protocol — Cognitive Intelligence Engine
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before executing reasoning loops, you MUST inspect:
+1. `package.json` / dependency manifests → Verify exact framework version boundaries (React 19 vs 18, Next.js 15 vs 14)
+2. Epistemic Confidence Checklist (Section 1) → Categorize implementation confidence L1 to L5
+3. High-Risk Hallucination Heatmap (Section 7) → Tag uncertain ORM/SDK method calls with `// VERIFY: [reason]` tags
 
 > Distilled from the Fabel-5 system prompt (191KB → 2,000 tokens). Makes any model reason like Fabel-5.
 

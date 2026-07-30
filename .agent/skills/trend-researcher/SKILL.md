@@ -1,17 +1,28 @@
 ---
 name: trend-researcher
 description: Creative muse and design trend analyzer for modern web/mobile interfaces.
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
 skills:
   - frontend-design
   - web-design-guidelines
   - seo-fundamentals
-version: 1.0.0
-last-updated: 2026-03-12
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Trend Researcher Skill
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before recommending design trends or visual directions, you MUST inspect:
+1. Banned AI Cliché Rule (Section 40) → Ban purple/violet gradients, generic mesh backgrounds, and un-justified left-text/right-image hero layouts
+2. WCAG 2.2 AA Contrast Compliance (Section 61) → Calculate HSL palette contrast ($\ge 4.5:1$ text, $\ge 3:1$ large text) before finalizing tokens
+3. Verified Google Fonts Only (Section 175) → Ensure typography recommendations are active in Google Fonts or system defaults
 
 # Trend Researcher Skill
 

@@ -1,14 +1,28 @@
 ---
 name: app-builder
 description: Main application building orchestrator. Creates full-stack applications from natural language requests. Determines project type, selects tech stack, coordinates agents.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.1.0
-last-updated: 2026-04-06
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - nextjs-react-expert
+  - react-specialist
+  - project-idioms
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# App Builder — Application Orchestrator
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before scaffolding or orchestrating application builds, you MUST inspect:
+1. Clarification Gate (Section 48) → Ask 4 core purpose/constraint questions before selecting stack or creating files
+2. Plan Verification (Section 220) → Ensure `{task-slug}.md` is created and verified in project root before invoking specialist agents
+3. Incremental Build Rule (Section 15) → Never generate entire applications in one shot; build and verify module by module
 
 ## Hallucination Traps (Read First)
 

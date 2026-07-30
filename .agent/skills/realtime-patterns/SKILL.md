@@ -1,14 +1,28 @@
 ---
 name: realtime-patterns
 description: Real-time application mastery. WebSockets, Server-Sent Events (SSE), CRDTs for conflict-free collaboration, presence systems, optimistic updates, live cursors, multiplayer state sync, reconnection strategies, and real-time database patterns (Supabase Realtime, Firebase). Use when building chat, live collaboration, dashboards, or multiplayer features.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-01
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - api-patterns
+  - backend-security-expert
+  - nodejs-best-practices
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Real-Time Patterns — Live Application Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before architecting real-time streaming or WebSocket infrastructure, you MUST inspect:
+1. One-Way SSE Selection Rule (Section 49) → Prefer SSE for one-way server-to-client streaming (AI responses, notifications); reserve WebSockets for bidirectional interactive features
+2. WebSocket Exponential Reconnection (Section 183) → Implement exponential backoff with random jitter for client reconnection loops to prevent thundering herd crashes
+3. Optimistic UI Rollback Handler (Section 207) → Capture previous state before optimistic mutations and implement explicit onError rollback logic
 
 # Real-Time Patterns — Live Application Mastery
 

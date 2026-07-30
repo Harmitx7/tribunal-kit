@@ -1,6 +1,16 @@
 ---
 description: Migration workflow for framework upgrades, dependency bumps, and database migrations. Impact analysis first, expand-and-contract for DB, dependency compatibility matrix before upgrading, rollback tested before deploy.
-required-skills: plan-writing, architecture
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - plan-writing
+  - architecture
+  - database-design
+scripts-binding:
+  - .agent/scripts/dependency_analyzer.js
+  - .agent/scripts/schema_validator.js
+  - .agent/scripts/verify_all.js
 ---
 
 # /migrate — Safe Migration Execution
@@ -9,14 +19,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE migrating:
-□ package.json                → Identify current vs target dependency versions
-□ Target files/schemas         → Understand the exact structural changes needed
-□ Release notes/Changelogs     → Understand breaking changes in the target version
-```
+Before running framework upgrades, major dependency bumps, or database migrations, you MUST inspect:
+1. Dependency Compatibility Matrix (`dependency_analyzer.js`) → Verify target version peer dependencies and breaking changes
+2. Database Expand-and-Contract Plan (`schema_validator.js`) → Ensure database column changes add new fields before dropping old ones
+3. Rollback Protocol Verification → Test local rollback procedure (e.g. SQLite backup or DB transaction revert) before applying migration
 
 ---
 

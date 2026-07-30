@@ -1,14 +1,28 @@
 ---
 name: nodejs-best-practices
 description: Node.js 22+ production mastery. ES Modules, async patterns, Express/Fastify/Hono, middleware architecture, error handling, streaming, worker threads, environment config, security hardening, process management, and deployment patterns. Use when building Node.js servers, APIs, CLI tools, or any server-side JavaScript.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-01
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - backend-security-expert
+  - api-patterns
+  - clean-code
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Node.js Best Practices — Node 22+ Production Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before building Node.js services or middleware, you MUST inspect:
+1. Node Built-in Import Protocol (Section 34) → Use explicit `node:` prefix (`import fs from "node:fs/promises"`); ban legacy CommonJS `require()`
+2. Mandatory Process Exit on Uncaught Exception (Section 170) → Ensure process exits (`process.exit(1)`) after `uncaughtException` to prevent running in corrupted state
+3. Startup Environment Validation (Section 373) → Validate environment variables at app startup with Zod; crash immediately if required secrets are missing
 
 # Node.js Best Practices — Node 22+ Production Mastery
 

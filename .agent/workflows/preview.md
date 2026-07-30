@@ -1,6 +1,14 @@
 ---
 description: Preview server start, stop, and status check. Local development server management. Uses auto_preview.js for automated lifecycle control. Shows current URL and hot-reload status.
-required-skills: bash-linux, frontend-specialist
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - bash-linux
+  - frontend-specialist
+  - devops-engineer
+scripts-binding:
+  - .agent/scripts/auto_preview.js
 ---
 
 # /preview — Local Development Server
@@ -9,13 +17,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE managing preview:
-□ package.json                → Check dev script command and environment
-□ .env                        → Verify preview environment keys
-```
+Before managing dev server lifecycle or starting preview servers, you MUST inspect:
+1. Workspace Dev Script Configuration (`package.json`) → Verify `npm run dev` or equivalent start script and framework server port
+2. Environment Configuration (`.env`) → Check port bindings and dev server host configs
+3. Dev Server Lifecycle Script (`.agent/scripts/auto_preview.js`) → Use automated script for process management, port collision detection, and health checks
 
 ---
 

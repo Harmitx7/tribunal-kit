@@ -1,14 +1,28 @@
 ---
 name: building-native-ui
 description: Cross-platform Native UI mastery (React Native / Expo). Building seamless, 60fps mobile interfaces, handling safe areas, navigation architectures (Expo Router), native modules, gestures/animations (Reanimated), and platform-specific styling. Use when building React Native or Expo mobile apps.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - mobile-design
+  - react-specialist
+  - 60fps-animation
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Building Native UI — React Native & Expo Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before building React Native / Expo UI components, you MUST inspect:
+1. Safe Area Setup → Use `SafeAreaProvider` + `useSafeAreaInsets()` for granular notch/inset handling instead of raw `SafeAreaView`
+2. Virtualized List Rendering (Section 130) → Use `FlashList` (Shopify) or `FlatList` with `estimatedItemSize` instead of `ScrollView` for large lists
+3. Native Thread Animations (Section 99) → Use `react-native-reanimated` with `useSharedValue` to keep animations off the JS bridge thread
 
 ## Hallucination Traps (Read First)
 

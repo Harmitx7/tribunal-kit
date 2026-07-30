@@ -1,19 +1,28 @@
 ---
 name: page-transition-animation
 description: Page and route transition patterns using the native View Transitions API, Framer Motion AnimatePresence, and Next.js App Router exit animations.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Route Transitions & Navigation Motion
-  tier: pro
-  co-requires: [framer-motion-expert, 60fps-animation]
-  trigger-signals:
-    strong: [page-transition-animation, View Transitions API, page transition, route transition, Next.js exit animation, shared element transition]
-    weak: [route animation, page animation]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - framer-motion-expert
+  - 60fps-animation
+  - accessible-animation
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Page Transition Animation — Native & Framework Route Motion
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering route or page transitions, you MUST inspect:
+1. Target Framework & API (View Transitions API vs Framer Motion `AnimatePresence`)
+2. `AnimatePresence` Keying (Section 69) → Enforce `key={pathname}` and `mode="wait"` to prevent double-page DOM stacking
+3. Vertical Displacement Cap → Keep route movement under $12\text{px}$ to prevent visual scroll shifts
 
 Architect smooth, seamless page and route transitions without layout jumps or frozen exit states.
 

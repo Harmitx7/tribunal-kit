@@ -1,6 +1,13 @@
 ---
 description: Display agent and project status. Shows task.md progress, last audit results, CI status, and recently modified files. Read-only — no changes made.
-required-skills: bash-linux
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - bash-linux
+  - code-review-checklist
+scripts-binding:
+  - .agent/scripts/verify_all.js
 ---
 
 # /status — Project Health Dashboard
@@ -9,13 +16,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE checking status:
-□ task.md                     → Get the current active task progress
-□ git status                  → Find recently modified files
-```
+Before rendering project status dashboards, you MUST inspect:
+1. Active Execution Ledger (`task.md`) → Read current wave progress, finished tasks, and active in-progress item
+2. Workspace Git Status (`git status`, `git diff --stat`) → List uncommitted edits and modified files
+3. Read-Only Constraint → Ban any file mutations or state updates during status reporting; report status strictly
 
 ---
 

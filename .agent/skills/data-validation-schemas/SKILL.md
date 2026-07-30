@@ -1,14 +1,28 @@
 ---
 name: data-validation-schemas
 description: Data validation and schema design mastery. Zod, Yup, Joi, Valibot, and Pydantic schema design, runtime type checking, API boundary validation, form validation patterns, DTO design, schema composition, error message formatting, schema evolution strategies, and coercion rules. Use when validating user input, API payloads, environment config, or any data crossing a trust boundary.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-04-17
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - api-patterns
+  - backend-security-expert
+  - schema-reviewer
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Data Validation & Schemas — Trust No Input
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing schemas or parsing untrusted data boundaries, you MUST inspect:
+1. Universal Trust Boundary Rule (Section 25) → Enforce explicit Zod/Pydantic schemas on API bodies, query params, env vars, and webhooks
+2. Server-Side Mandatory Validation (Section 16) → Never rely solely on client-side UX validation; execute schema validation on the server
+3. Environment Startup Parse (Section 173) → Parse `process.env` with Zod at app startup to crash immediately on missing keys
 
 ## Hallucination Traps (Read First)
 

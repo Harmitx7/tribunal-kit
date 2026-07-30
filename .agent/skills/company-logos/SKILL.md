@@ -1,19 +1,28 @@
 ---
 name: company-logos
 description: Social proof rows, logo grids, customer carousels, and trust badges layout rules for balanced visual weight and responsive alignment.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Visual Layout & Social Proof
-  tier: pro
-  co-requires: [baseline-ui, landing-page]
-  trigger-signals:
-    strong: [company-logos, logo grid, social proof row, trust badges, customer logos, logo carousel]
-    weak: [logos layout, client logos]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - baseline-ui
+  - landing-page
+  - marquee-loop
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Company Logos — Social Proof & Trust Grids
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing logo grids or trust rows, you MUST inspect:
+1. Optical Weight Normalization rules (Section 24) → Enforce bounding box limits (`max-height: 28px`, `max-width: 120px`) with `object-fit: contain`
+2. Monochromatic Harmonization rules (Section 29) → Render all logos in monochromatic SVG fill (`fill="currentColor"`) matching `--text-muted`
+3. Hover States → Transition opacity to 100% smoothly over `200ms` on hover
 
 Architect balanced, optically aligned logo rows and trust grids that communicate credibility without visual clutter.
 

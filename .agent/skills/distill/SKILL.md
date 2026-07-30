@@ -1,19 +1,28 @@
 ---
 name: distill
 description: Simplify noisy interfaces by removing non-essential visual and operational complexity. Use when a UI has too many options, crowded toolbars, redundant text, or unnecessary visual containers.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: UX Simplification & Reduction
-  tier: pro
-  co-requires: [quieter, clarify, baseline-ui]
-  trigger-signals:
-    strong: [distill, simplify ui, declutter, remove complexity, streamline interface, too crowded]
-    weak: [clean up, simplify options]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - quieter
+  - clarify
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Distill — UX Simplification & Decluttering
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before decluttering UI layouts, you MUST inspect:
+1. Active screen components → Identify core primary user task and secondary/tertiary options
+2. Container Reduction rules (Section 25) → Replace nested card containers and redundant borders with whitespace grid gaps
+3. Progressive Disclosure patterns (Section 30) → Move advanced parameters into collapsible accordions or popovers
 
 Systematically strip away visual clutter, redundant controls, and cognitive friction to reveal the core user task.
 

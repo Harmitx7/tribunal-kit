@@ -1,19 +1,28 @@
 ---
 name: swiss-design
 description: International Typographic Style (Swiss Design) principles for web interfaces. Strict grid discipline, asymmetric layouts, bold typographic contrast, flush-left un-justified text, and mathematical negative space.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Print-Inspired UI & Swiss Typography
-  tier: pro
-  co-requires: [better-typography, baseline-ui, industrial-brutalist-ui]
-  trigger-signals:
-    strong: [swiss-design, Swiss style UI, International Typographic Style, grid discipline, Helvetica layout, print inspired web]
-    weak: [swiss layout, grid UI]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - typeset
+  - baseline-ui
+  - better-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Swiss Design — International Typographic Style for Web
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before applying Swiss Design aesthetics, you MUST inspect:
+1. `DESIGN.md` / `index.css` → Check grid system tokens and grotesque font declarations (Helvetica, Inter, Geist)
+2. Asymmetric Structural Balance (Section 32) → Align headings and content to strong left vertical axes; strictly prohibit `text-align: justify` or centered body paragraphs
+3. Mathematical Section Numbering (Section 35) → Enforce small uppercase badges (`SECTION 01 // OVERVIEW`) with `tabular-nums`
 
 Architect pristine, print-inspired interfaces grounded in grid discipline, objective clarity, and asymmetric typographic hierarchy.
 

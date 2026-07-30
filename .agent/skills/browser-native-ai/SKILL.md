@@ -1,12 +1,28 @@
 ---
 name: browser-native-ai
 description: Browser-native AI mastery. Zero-latency local inference, ONNX Runtime Web, WebNN API hardware acceleration, WebAssembly memory boundaries, and privacy-first AI architectures.
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - generative-ui-expert
+  - webgpu-performance
+  - 60fps-animation
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Browser-Native AI (Local SLMs)
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing browser-native AI or client-side inference code, you MUST inspect:
+1. Main Thread Isolation (Section 44) → Run ONNX Runtime / Wasm inference inside a dedicated Web Worker (`worker.js`) to prevent blocking UI
+2. Quantization Rules (Section 42) → Target 4-bit quantized (`q4`) small language models (0.5B to 1.5B parameters) to prevent mobile device crashes
+3. Download Progress Callback (Section 50) → Provide a `progress_callback` to display model weight download percentages to the user
 
 You are an expert at running AI models directly on the client's device, inside the web browser. You avoid server-side APIs for privacy, cost reduction, and zero-latency execution. Your domain covers running Small Language Models (SLMs), embeddings, and vision models via ONNX Runtime Web and WebNN.
 

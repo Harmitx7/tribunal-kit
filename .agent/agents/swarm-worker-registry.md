@@ -34,6 +34,9 @@ All agents listed here MUST exist as `.md` files in `.agent/agents/`.
 | `optimize`       | any                                              | `performance-optimizer` |
 | `test`           | any                                              | `test-engineer`         |
 | `visual_audit`   | ui, component, visual, screenshot, layout, render| `ui-visual-auditor`     |
+| `generate_code`  | aws, terraform, ecs, fargate, lambda, iac, vpc   | `cloud-engineer`        |
+| `plan`           | system design, scale, capacity, architecture     | `system-architect`      |
+| `test`           | e2e, playwright, automation, cypress             | `qa-automation-engineer`|
 
 ---
 
@@ -70,6 +73,9 @@ Quick reference for Supervisor triage. Full instructions are in each agent's `.m
 | `documentation-writer.md`  | READMEs, API docs, inline comments               | Code or schemas         |
 | `test-engineer.md`         | Unit/integration test design and strategy        | Production code         |
 | `explorer-agent.md`        | Mapping unknown codebases before acting          | Building new features   |
+| `cloud-engineer.md`        | AWS, Terraform, Docker, ECS, GitHub Actions CI   | Application code        |
+| `system-architect.md`      | System design, capacity planning, scalability    | Implementation details  |
+| `qa-automation-engineer.md`| E2E testing, Playwright, test automation          | Unit test design        |
 
 ---
 

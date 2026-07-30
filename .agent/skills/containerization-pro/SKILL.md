@@ -1,17 +1,28 @@
 ---
 name: containerization-pro
 description: Production-grade containerization mastery. Multi-stage Dockerfiles for Node.js/Python/Rust/Go, image hardening (non-root, distroless, read-only FS), BuildKit layer caching, multi-platform builds (docker buildx), Docker Compose for local dev, container security scanning (Trivy/Grype), and AWS ECR workflows. Use when containerizing applications, optimizing Docker builds, or setting up container registries.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-06-21
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: devops
-  tier: pro
-  co-requires: [cicd-pro]
-  trigger-signals:
-    strong: [multi-stage build, BuildKit, ECR, Trivy, image hardening, Docker Compose]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - devops-engineer
+  - cicd-pro
+  - cloud-architect
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Containerization Pro — Production-Grade Docker Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing Dockerfiles or containerizing applications, you MUST inspect:
+1. Dockerignore Prerequisite (Section 29) → Create a strict `.dockerignore` file before writing any Dockerfile to prevent leaking `node_modules`, `.env`, `.git`
+2. Non-Root Security User (Section 81) → Create and switch to a dedicated non-root user (`USER appuser`) in the final runtime stage
+3. Deterministic Dependency Installation (Section 19) → Use `npm ci --omit=dev` (or language lockfile equivalent); ban un-pinned `npm install`
 
 ## Hallucination Traps (Read First)
 

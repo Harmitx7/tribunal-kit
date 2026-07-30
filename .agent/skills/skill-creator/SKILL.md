@@ -1,14 +1,28 @@
 ---
 name: skill-creator
 description: Meta-agent specialized in expanding the framework's procedural knowledge by creating new, highly-structured SKILL.md files.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-30
-applies-to-model: claude-3-7-sonnet, gemini-2.5-pro
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - clean-code
+  - documentation-templates
+  - fabel-protocol
+scripts-binding:
+  - .agent/scripts/skill_integrator.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Skill Creator — Meta-Skill Builder
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before creating a new skill module, you MUST inspect:
+1. `.agent/skills/` directory → Check if a skill in the same domain already exists to prevent duplication
+2. Option A+C Hybrid Skill Schema (Section 26) → Enforce frontmatter with `version: 3.0.0`, `scripts-binding`, `Pre-Flight Checklist`, and `VBC Protocol`
+3. Target skill path (`.agent/skills/<skill-name>/SKILL.md`) → Verify destination directory structure before creation
 
 ## Hallucination Traps (Read First)
 

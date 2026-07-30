@@ -1,14 +1,28 @@
 ---
 name: game-design-expert
 description: Game Design, UX, and Flow State mastery. Replaces fragmented legacy skills. Core gameplay loop design, 3Cs (Character, Camera, Controls), input buffering, coyote time, juice (game feel), telemetry tracking, narrative alignment, and audio spatialization integration. Use when crafting player experience, progression arcs, or systemic balance.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - game-engineering-expert
+  - 12-principles-of-animation
+  - sounds-on-the-web
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Game Design Expert — Player Experience & Flow Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing gameplay systems or controller feel, you MUST inspect:
+1. 3Cs Foundation (Character, Camera, Controls) (Section 25) → Implement input buffering (~150ms) and coyote time (~100ms) before designing enemy AI or progression
+2. Macro Gameplay Loop Validation (Section 42) → Ensure upgrading systems directly alter action and combat feel to prevent player churn
+3. Juicing & Hitstop Feel (Section 58) → Incorporate screen shake, hitstop (3 freeze frames), particle explosions, and squash-and-stretch for impact feedback
 
 ## Hallucination Traps (Read First)
 

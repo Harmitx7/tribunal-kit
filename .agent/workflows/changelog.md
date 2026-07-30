@@ -1,6 +1,14 @@
 ---
 description: Auto-generate changelogs from git history. Categorizes commits by type (feat/fix/chore/breaking) and follows Keep a Changelog format. Requires conventional commit messages for accurate categorization.
-required-skills: github-operations
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - github-operations
+  - git-pro
+  - readme-builder
+scripts-binding:
+  - .agent/scripts/lint_runner.js
 ---
 
 # /changelog — Git History to Changelog
@@ -9,14 +17,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE generating changelog:
-□ git log --oneline -20       → Verify commit message format
-□ package.json                → Identify current version
-□ CHANGELOG.md (if exists)    → Understand existing format/history
-```
+Before generating changelogs or parsing git history, you MUST inspect:
+1. Git Commit Trajectory (`git log --oneline -30`) → Verify presence of conventional commit tags (`feat:`, `fix:`, `chore:`, `BREAKING CHANGE:`)
+2. Package Manifest & Version (`package.json`) → Retrieve current release version and target release tag
+3. Keep a Changelog Formatting Standard → Enforce categories: Added, Changed, Deprecated, Removed, Fixed, Security
 
 ---
 

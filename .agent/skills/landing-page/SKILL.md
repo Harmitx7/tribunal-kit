@@ -1,19 +1,29 @@
 ---
 name: landing-page
 description: High-converting landing page structure, hero section layout variance, CTA hierarchy, visual pacing, feature grid storytelling, and social proof placement.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Landing Page Architecture & Conversion
-  tier: pro
-  co-requires: [compact-landing, company-logos, pricing-page, frontend-design]
-  trigger-signals:
-    strong: [landing-page, hero section, CTA hierarchy, conversion landing page, SaaS landing page, feature grid storytelling]
-    weak: [homepage design, marketing page]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - compact-landing
+  - company-logos
+  - pricing-page
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Landing Page — Conversion Architecture & Visual Pacing
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering full landing pages, you MUST inspect:
+1. Hero Layout Model (Section 50) → Choose appropriate layout variance model (Model A Centered Stacked, Model B Asymmetric Split, Model C Full-Bleed Canvas)
+2. CTA Hierarchy (Section 32) → Ensure exactly ONE primary solid accent button above the fold; pair only with a secondary ghost button
+3. Blueprint Rhythm (Section 22) → Follow the 6-section blueprint (Nav, Hero, Social Proof, Features, Testimonials, Final CTA)
 
 Build high-converting, visually stunning landing pages that guide visitors from curiosity to conversion.
 

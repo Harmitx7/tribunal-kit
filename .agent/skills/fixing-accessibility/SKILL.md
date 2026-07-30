@@ -1,19 +1,28 @@
 ---
 name: fixing-accessibility
 description: Audit and fix HTML accessibility issues including ARIA labels, keyboard navigation, focus management, color contrast, and form errors. Use when adding interactive controls, forms, dialogs, or reviewing WCAG compliance.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: UI Craft & Accessibility
-  tier: pro
-  co-requires: [audit-and-fix, web-accessibility-auditor]
-  trigger-signals:
-    strong: [fixing-accessibility, accessibility audit, WCAG 2.2, aria-label, keyboard navigation, focus trap, color contrast]
-    weak: [a11y, focus ring, screen reader]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - audit-and-fix
+  - build-primitive
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Fixing Accessibility — WCAG 2.2 AA Audit & Remediation
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before remediating HTML accessibility defects, you MUST inspect:
+1. Priority Matrix (Section 22) → Ensure accessible names on icon buttons (P1) and native HTML keyboard controls (P2) before styling
+2. Focus Ring Policy (Section 29) → Ban `outline: none` without providing explicit `:focus-visible` replacement (`2px` ring + offset)
+3. Form Error Association (Section 32) → Attach `aria-invalid="true"` and `aria-describedby` pointing to error text IDs
 
 Guidelines for detecting, prioritizing, and fixing accessibility defects across web interfaces.
 

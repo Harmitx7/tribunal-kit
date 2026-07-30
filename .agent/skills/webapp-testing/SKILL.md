@@ -1,14 +1,28 @@
 ---
 name: webapp-testing
 description: Comprehensive Web Application Testing strategy. Test Pyramid, Vitest/Jest for unit logic, React Testing Library for component integrity, MSW (Mock Service Worker) for API layer simulation, and visual regression. Use when setting up testing environments or defining global test strategies across a web stack.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - testing-patterns
+  - playwright-best-practices
+  - tdd-workflow
+scripts-binding:
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Webapp Testing — Full Stack Pipeline Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before building web application test suites or configuring component mocks, you MUST inspect:
+1. Testing Trophy Allocation (Section 27) → Prioritize Integration tests (60% RTL + MSW) over pure Unit (20%) or E2E (10%)
+2. MSW Network Interception Rule (Section 40) → Intercept HTTP network calls via MSW (`setupServer`); ban mocking library clients like `axios.get.mockResolvedValue`
+3. Decouple Business Logic from React (Section 99) → Extract complex calculations into pure testable functions outside React components
 
 ## Hallucination Traps (Read First)
 

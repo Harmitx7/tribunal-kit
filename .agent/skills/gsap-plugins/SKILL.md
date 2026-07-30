@@ -1,13 +1,28 @@
 ---
 name: gsap-plugins
 description: Official GSAP skill for GSAP plugins — registration, ScrollToPlugin, ScrollSmoother, Flip, Draggable, Inertia, Observer, SplitText, ScrambleText, SVG and physics plugins, CustomEase, EasePack, CustomWiggle, CustomBounce, GSDevTools. Use when the user asks about a GSAP plugin, scroll-to, flip animations, draggable, SVG drawing, or plugin registration.
-license: MIT
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - motion-engineering
+  - gsap-react
+  - 60fps-animation
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
-# GSAP Plugins
+# GSAP Plugins — Complete Reference & Registration
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before invoking GSAP plugins, you MUST inspect:
+1. `package.json` → Verify plugin installation and check for Club GSAP licensing requirements (`MorphSVG`, `SplitText`, `ScrollSmoother`)
+2. Plugin Registration (Section 18) → Always register plugins explicitly via `gsap.registerPlugin(...)` at module root
+3. Revert & Cleanup (Section 418) → Call `.revert()` on SplitText and Flip instances during component unmount
 
 ## When to Use This Skill
 

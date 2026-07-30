@@ -1,14 +1,28 @@
 ---
 name: performance-profiling
 description: Performance profiling mastery. Core Web Vitals (LCP, CLS, INP), Lighthouse auditing, JavaScript profiling, React rendering optimization, bundle analysis, memory leak detection, database query profiling (EXPLAIN ANALYZE), load testing, and performance budgets. Use when optimizing performance, debugging slow pages, or establishing performance standards.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-01
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - 60fps-animation
+  - gsap-performance
+  - web-quality-audit
+scripts-binding:
+  - .agent/scripts/bundle_analyzer.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Performance Profiling — Measurement-Driven Optimization
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before optimizing performance or auditing benchmarks, you MUST inspect:
+1. Core Web Vitals Targets (INP replacing FID) (Section 26) → Target INP $\le 200\text{ms}$, LCP $\le 2.5\text{s}$, CLS $\le 0.1$; ban FID (deprecated)
+2. Bundle Size Limits & Import Tree-Shaking (Section 55) → Enforce total gzipped JS $<200\text{KB}$; use deep imports (`lodash/debounce`) instead of full barrel imports
+3. SQL EXPLAIN ANALYZE Requirement (Section 156) → Profile database queries with `EXPLAIN ANALYZE` before making index or query optimization changes
 
 # Performance Profiling — Measurement-Driven Optimization
 

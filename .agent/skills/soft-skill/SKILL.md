@@ -1,19 +1,28 @@
 ---
 name: soft-skill
 description: High-end visual design guidance for premium typography, spacing, depth, and animation systems.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Luxury Visual Design & Soft Depth
-  tier: pro
-  co-requires: [taste-skill, progressive-blur, impeccable]
-  trigger-signals:
-    strong: [soft-skill, high end visual design, luxury depth, soft UI, elegant spacing system, soft shadow UI]
-    weak: [elegant UI, soft style]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - taste-skill
+  - progressive-blur
+  - impeccable
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Soft Skill — High-End Luxury Visual Design & Depth
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering luxury or soft-depth UI interfaces, you MUST inspect:
+1. Multi-Layer Shadow Recipe (Section 25) → Blend low-opacity multi-layered ambient shadows ($\le 6\%$ opacity per layer) instead of heavy single drop shadows
+2. Spatial Cadence (Section 37) → Increase container padding by $1.5\times$ ($\ge 24\text{px}$) to provide generous negative space
+3. Color Harmonies (Section 40) → Use quiet, low-chroma monochromatic OKLCH palettes for background and typography
 
 Craft high-end, luxury interfaces featuring soft depth, gentle surface transitions, quiet typography, and tactile spatial rhythm.
 

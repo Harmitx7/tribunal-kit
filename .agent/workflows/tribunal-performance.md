@@ -1,6 +1,15 @@
 ---
 description: Performance-specific Tribunal. Runs Logic + Performance reviewers. Use when code is slow, for optimization tasks, bundle analysis, Core Web Vitals improvement, memory leak investigation, and before deploying performance-critical features.
-required-skills: performance-profiling
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - performance-profiling
+  - 60fps-animation
+  - gsap-performance
+scripts-binding:
+  - .agent/scripts/bundle_analyzer.js
+  - .agent/scripts/test_runner.js
 ---
 
 # /tribunal-performance — Performance Audit
@@ -9,14 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE performance review:
-□ Target code files           → The code being optimized
-□ package.json                → Check for known heavy libraries (e.g. moment, lodash)
-□ Next.js / bundler config    → Check for bundle optimization settings
-```
+Before optimizing code or running performance reviews, you MUST inspect:
+1. Target Source & Heavy Import Inspection (`package.json`, `next.config.js`) → Identify heavy library imports (`moment`, full `lodash`) for tree-shaking
+2. Measured Baseline Metrics → Run `bundle_analyzer.js` or latency measurements; ban claiming performance improvements without measured proof
+3. 2-Reviewer Performance Gate → Run logic-reviewer and performance-optimizer before approving optimization diffs
 
 ---
 

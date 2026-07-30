@@ -1,19 +1,28 @@
 ---
 name: critique
 description: Evaluate design quality with structured UX scoring, heuristic analysis, and persona-based usability checks. Use when asked to critique, evaluate, grade, or audit a UI design before implementation.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Design Evaluation & Usability Scoring
-  tier: pro
-  co-requires: [ui-ux-researcher, web-design-guidelines]
-  trigger-signals:
-    strong: [critique, grade UI, evaluate design, UX scoring, heuristic audit, design feedback]
-    weak: [review UI, UX feedback]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - ui-ux-researcher
+  - web-design-guidelines
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/checklist.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Critique — Structured UX & Design Quality Evaluation
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before evaluating UI designs or code, you MUST inspect:
+1. Target UI screen / component → Grade across the 6 UX Critique Heuristics (Clarity, IA, Interactions, Visual Craft, Accessibility, Resilience)
+2. Required Scorecard Format (Section 51) → Output overall quality score (0-10) and tabular domain breakdown
+3. Top 3 Actionable Fixes → Group recommendations by priority (High, Medium, Low) with concrete CSS/JSX fixes
 
 Evaluate interfaces against 6 core usability heuristics and produce an objective design scorecard with prioritized recommendations.
 

@@ -1,19 +1,28 @@
 ---
 name: micro-interaction
 description: Detailed UI motion guidance for hover and press feedback, toggles, checkboxes, toasts, drawers, modals, list transitions, and shared-element interactions.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Micro-Interactions & Component Tactility
-  tier: pro
-  co-requires: [delight, emil-design-eng, better-ui]
-  trigger-signals:
-    strong: [micro-interaction, button press feedback, toggle motion, checkbox animation, toast entrance, drawer interaction]
-    weak: [interactive feedback, hover state animation]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - delight
+  - better-ui
+  - 60fps-animation
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Micro-Interaction — Component Motion & Tactile Feedback
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering component micro-interactions, you MUST inspect:
+1. Duration Caps → Keep interactive component feedback (press/hover/toggle) under 180ms
+2. Popover Origin Rules (Section 60) → Set `transform-origin` dynamically to match trigger button position
+3. SVG Path Draw-on (Section 48) → Use `stroke-dashoffset` transitions for checkboxes and toggle icons
 
 Craft responsive, physically grounded micro-interactions for everyday UI controls.
 

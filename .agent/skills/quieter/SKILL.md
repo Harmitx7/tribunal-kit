@@ -1,19 +1,28 @@
 ---
 name: quieter
 description: Tone down overly loud, noisy, visually aggressive, or distracting designs while maintaining high visual quality. Use when a UI feels cluttered, overwhelming, tacky, or visually hyperactive.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Visual Design & Restraint
-  tier: pro
-  co-requires: [distill, swiss-design, compact-landing]
-  trigger-signals:
-    strong: [quieter, tone down, too loud, visual noise, too aggressive, tacky, calm ui, simplify visual]
-    weak: [subdue, tone down colors, lessen contrast]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - distill
+  - swiss-design
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Quieter — Visual Restraint & Calm Interface Design
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before subduing visual design elements, you MUST inspect:
+1. `DESIGN.md` / `package.json` → Check background surface variables and contrast standards
+2. Palette Subjugation rules (Section 24) → Limit high-saturation colors to single primary actions
+3. Motion Restraint rules (Section 35) → Eliminate looping pulsing badges and restrict motion to user-initiated actions
 
 Reduce visual noise, eliminate unnecessary color competition, and restore calm focus to chaotic interfaces.
 

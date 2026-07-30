@@ -1,13 +1,28 @@
 ---
 name: gsap-utils
 description: Official GSAP skill for gsap.utils — clamp, mapRange, normalize, interpolate, random, snap, toArray, wrap, pipe. Use when the user asks about gsap.utils, clamp, mapRange, random, snap, toArray, wrap, or helper utilities in GSAP.
-license: MIT
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - motion-engineering
+  - gsap-react
+  - 60fps-animation
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
-# gsap.utils
+# gsap.utils — Math & Interpolation Helpers
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before using `gsap.utils`, you MUST inspect:
+1. Pure Number vs Unit strings (Section 306) → `mapRange` and `normalize` work ONLY on numbers; use `getUnit` and `unitize` for string values with units
+2. Reusable Function Form (Section 22) → Omit the value argument (or pass `true` as 4th param for `random()`) to get a reusable function for high-frequency loops
+3. Component Scoping (Section 219) → Use `gsap.utils.selector(containerRef)` inside React components to restrict selector targets
 
 ## When to Use This Skill
 

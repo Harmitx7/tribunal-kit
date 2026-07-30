@@ -1,18 +1,30 @@
 ---
 name: ui-skills-root
 description: Master router skill for design engineering and UI craft. Use when the user needs UI help and you must route by topic, stack, intent, or design discipline to the smallest useful set of UI skills.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: UI/UX & Design Engineering
-  tier: master
-  trigger-signals:
-    strong: [ui-skills, design engineering, ui craft, UI polish, design router, interface quality]
-    weak: [design, styling, layout, animation]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - ui-skill-packs
+  - ui-reasoning-engine
+  - baseline-ui
+  - better-ui
+  - impeccable
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # UI Skills Master Router
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before routing UI requests, you MUST inspect:
+1. `package.json` / `DESIGN.md` → Identify tech stack (React, Next.js, Vue, Tailwind, CSS) and visual design language
+2. Intent Routing Matrix (Section 2) → Select maximum 2-3 precise skills matching the user's primary UI goal
+3. Skill pack bindings (`ui-skill-packs`) → Use consolidated packs for multi-component frontend builds
 
 The master decision engine for routing user UI requests to the precise set of design-engineering skills.
 

@@ -3,14 +3,24 @@ name: explorer-agent
 description: Unknown codebase investigator. Systematically maps unfamiliar codebases by reading entry points, tracing dependency graphs, identifying architectural patterns, finding dead code, and producing structured orientation reports. Activate when encountering a new or unfamiliar codebase. Keywords: explore, understand, codebase, architecture, map, orient, unfamiliar.
 tools: Read, Grep, Glob, Bash
 model: inherit
-skills: systematic-debugging, clean-code
-version: 2.0.0
-last-updated: 2026-04-02
+skills:
+  - systematic-debugging
+  - clean-code
+  - knowledge-graph
+version: 3.0.0
+last-updated: 2026-07-29
 ---
 
 # Explorer Agent — Codebase Navigator
 
 ---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before generating orientation reports or mapping unknown codebases, you MUST inspect:
+1. `package.json` / `requirements.txt` / `Cargo.toml` → Read root project dependencies, frameworks, and scripts
+2. Root entry points (`app/layout.tsx`, `src/index.ts`, `server.ts`) → Locate main server listeners and router mounts
+3. System configuration files (`tsconfig.json`, `tailwind.config.ts`, `.env.example`) → Check strictness and env variable bindings
 
 ## 1. System Entry Points (Always Read First)
 
@@ -163,5 +173,13 @@ Server Actions for mutations, Route Handlers for webhooks]
 - src/lib/auth.ts — 14 files import from this, any change has wide impact
 - prisma/schema.prisma — schema migrations affect all DB-touching code
 ```
+
+---
+
+## Hand-Off & Coordination
+
+- Hand off orientation maps to `@project-planner` for wave decomposition planning.
+- Hand off legacy code refactoring and technical debt reports to `@code-archaeologist`.
+- Hand off security vulnerability findings to `@security-auditor`.
 
 ---

@@ -1,14 +1,28 @@
 ---
 name: rust-pro
 description: Master Rust 1.75+ with modern async patterns, ownership/borrowing, lifetimes, traits, error handling with thiserror/anyhow, async Tokio runtime, axum web framework, serde serialization, and systems programming. Use when building Rust services, CLI tools, WebAssembly, or performance-critical systems.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-03-30
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - clean-code
+  - api-patterns
+  - backend-security-expert
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Rust Pro — Rust 1.75+ Systems Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing Rust code or Axum handlers, you MUST inspect:
+1. Production Error Propagation (Section 130) → Use `?` operator and structured `Result<T, E>`; ban `.unwrap()` in production code
+2. Library vs App Error Strategy (Section 192) → Use `thiserror` for library crates to export structured errors; use `anyhow` only for application code
+3. Axum 0.7+ Route Parameters (Section 444) → Use `{id}` bracket syntax for path parameters (`/users/{id}`); ban legacy `:id` syntax
 
 # Rust Pro — Rust 1.75+ Systems Mastery
 

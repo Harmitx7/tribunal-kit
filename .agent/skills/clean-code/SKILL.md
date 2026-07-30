@@ -1,14 +1,28 @@
 ---
 name: clean-code
 description: Clean code mastery. Naming conventions, function design, DRY vs WET, SOLID principles with code examples, refactoring patterns, code smells detection, error handling philosophy, comments that add value, and the art of simplicity. Use when reviewing code quality, refactoring, or establishing coding standards.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-01
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - codebase-design
+  - code-review-checklist
+  - tdd-workflow
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Clean Code — The Art of Readable Software
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before refactoring code or evaluating clean code standards, you MUST inspect:
+1. Intent-Revealing Naming (Section 25) → Name variables/functions to reveal explicit intent; ban cryptic abbreviations (`d`, `proc`, `u`)
+2. Single-Purpose Functions (Section 95) → Ensure functions perform 1 single task; extract sub-operations if function exceeds ~30 lines
+3. Guard Clause Early Returns (Section 344) → Flatten nested logic (>3 levels) using guard clauses and fail-fast early returns
 
 ## Hallucination Traps (Read First)
 

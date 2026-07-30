@@ -1,19 +1,28 @@
 ---
 name: react-doctor
 description: Scan React and Next.js applications for security, performance, re-render inefficiencies, memory leaks, and correctness issues.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: React Optimization & Code Health
-  tier: pro
-  co-requires: [react-specialist, nextjs-react-expert, performance-profiling]
-  trigger-signals:
-    strong: [react-doctor, React performance scan, fix React re-renders, React memory leak, Million.js audit]
-    weak: [React audit, fix React bugs]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - react-specialist
+  - nextjs-react-expert
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # React Doctor — React Performance & Health Audit
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before auditing React components for performance or health issues, you MUST inspect:
+1. Re-render triggers (Section 24) → Identify inline object/array props and inline callback handlers breaking memoization
+2. `useEffect` Cleanup (Section 31) → Ensure all event listeners, intervals, and subscriptions return explicit cleanup functions
+3. Derived State Anti-Pattern (Section 41) → Ban props duplicated into state (`useState(props.val)`); derive values directly during render
 
 Diagnose and resolve unnecessary re-renders, state synchronization bugs, memory leaks, and hook dependency issues in React applications.
 

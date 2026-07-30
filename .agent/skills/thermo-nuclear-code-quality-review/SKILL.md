@@ -1,17 +1,28 @@
 ---
 name: thermo-nuclear-code-quality-review
 description: Run an extremely strict maintainability review for abstraction quality, giant files, spaghetti-condition growth, and architectural debt.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Ultra-Strict Code Quality Review
-  tier: pro
-  co-requires: [clean-code, codebase-design, code-review-checklist]
-  trigger-signals:
-    strong: [thermo-nuclear-code-quality-review, strict code review, maintainability audit, spaghetti code review, giant file audit, strict maintainability]
-    weak: [deep review, strict audit]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - clean-code
+  - codebase-design
+  - code-review-checklist
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Thermo-Nuclear Code Quality Review — Zero-Tolerance Maintainability Audit
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before performing ultra-strict maintainability code audits, you MUST inspect:
+1. File Size Hard Limit Rule (300 lines max) (Section 24) → Flag any file >300 lines for immediate module decomposition
+2. Cyclomatic Nesting Limit (3 levels max) (Section 27) → Flag nested conditionals >3 levels deep; require early guard clause returns
+3. Direct Dependency Coupling Ban (Section 53) → Flag domain logic directly importing vendor SDKs or DB models instead of interface adapters
 
 # Thermo-Nuclear Code Quality Review — Zero-Tolerance Maintainability Audit
 

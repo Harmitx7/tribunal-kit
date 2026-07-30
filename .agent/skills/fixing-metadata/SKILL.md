@@ -1,19 +1,28 @@
 ---
 name: fixing-metadata
 description: Audit and fix page metadata including page titles, meta descriptions, Open Graph, Twitter cards, canonical URLs, and JSON-LD structured data.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Technical SEO & Metadata Optimization
-  tier: pro
-  co-requires: [seo-fundamentals, web-quality-audit]
-  trigger-signals:
-    strong: [fixing-metadata, Open Graph tags, Twitter card metadata, canonical URL, JSON-LD structured data, meta description fix]
-    weak: [fix metadata, SEO tags]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - nextjs-react-expert
+  - baseline-ui
+  - compact-landing
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Fixing Metadata — Technical SEO & Open Graph Tags
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering metadata or Open Graph tags, you MUST inspect:
+1. Title & Meta Description Caps (Section 24) → Restrict title tags to 50–60 chars and meta descriptions to 140–155 chars
+2. Absolute Image URL Rule (Section 74) → Enforce full absolute HTTPS URLs (`https://domain.com/og.jpg`) for `og:image` and `twitter:image`
+3. Twitter Card Type (Section 39) → Always specify `<meta name="twitter:card" content="summary_large_image" />` for prominent social previews
 
 Audit, generate, and fix page metadata for rich social previews, search engine indexing, and structured data.
 

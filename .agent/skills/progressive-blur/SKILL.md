@@ -1,19 +1,28 @@
 ---
 name: progressive-blur
 description: Smooth progressive backdrop blurs, depth overlays, and modern glassmorphism using CSS mask-image and multi-layered backdrop filters without GPU performance drops.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Glassmorphism & Depth Engineering
-  tier: pro
-  co-requires: [frontend-design, 60fps-animation]
-  trigger-signals:
-    strong: [progressive-blur, backdrop blur, glassmorphism, depth overlay, progressive backdrop, frosted glass]
-    weak: [blur effect, blur background]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - 60fps-animation
+  - better-colors
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Progressive Blur — Multi-Layered Glassmorphism & Depth
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering glassmorphism or backdrop blurs, you MUST inspect:
+1. Vendor prefixes → Enforce `-webkit-backdrop-filter` alongside `backdrop-filter` for Safari support
+2. GPU Protection Rule (Section 70) → Strictly prohibit animating `backdrop-filter: blur()` radius; animate `opacity` of static blurred pseudo-elements instead
+3. Masked Blur Gradient layers (Section 25) → Blend multi-step blur layers with linear gradient masks to avoid harsh edge cutoffs
 
 Architect high-performance, progressive backdrop blurs and frosted glass interfaces that feel tactile and fluid.
 

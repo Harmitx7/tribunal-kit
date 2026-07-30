@@ -1,19 +1,28 @@
 ---
 name: shape
 description: Plan feature UX before writing code via structured Socratic design interviews. Use when a user asks to plan a new screen, onboarding flow, feature UX, or user interaction before implementation.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Pre-Code UX Shaping
-  tier: pro
-  co-requires: [appflow-wireframe, brainstorming, plan-writing]
-  trigger-signals:
-    strong: [shape, UX shaping, feature design, pre-code planning, user flow interview, shape workflow]
-    weak: [plan UI, spec out feature]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - brainstorming
+  - plan-writing
+  - ui-reasoning-engine
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/checklist.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Shape — Pre-Code UX & Feature Shaping
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before generating UI component code for new features, you MUST inspect:
+1. Target feature scope & user goals → Execute the 3-Step Shaping Workflow (Section 22)
+2. State Inventory (Section 29) → Define 5 required component states (Default, Empty, Loading, Error, Success)
+3. Architecture Contract (Section 37) → Draft entry/exit points and primary action contract before coding
 
 Uncover core requirements, define interaction boundaries, and lock down screen flows BEFORE writing frontend code.
 

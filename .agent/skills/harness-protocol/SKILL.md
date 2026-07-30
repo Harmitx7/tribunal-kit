@@ -1,12 +1,28 @@
 ---
 name: harness-protocol
 description: Rules and guidelines for the Marathon long-running agent harness
-routing:
-  domain: general
-  tier: basic
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - agentic-patterns
+  - behavioral-modes
+  - plan-writing
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/session_manager.js
+  - .agent/scripts/verify_all.js
 ---
 
-# Harness Protocol
+# Harness Protocol — Long-Running Agent Harness Rules
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before operating in Marathon long-running harness mode, you MUST inspect:
+1. Active session ledger (`task.md`, `session_manager.js`) → Verify active feature specs and task completion status
+2. Verification-Before-Completion (VBC) Protocol → Provide concrete proof (test run log, compiler pass) before calling `tk marathon mark pass`
+3. Error recovery state machine → Escalate unrecoverable errors after 3 retries via `tk marathon mark fail`
 
 This skill enforces the rules for the Marathon long-running agent harness.
 

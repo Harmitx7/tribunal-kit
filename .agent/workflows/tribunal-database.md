@@ -1,6 +1,15 @@
 ---
 description: Database-specific Tribunal. Runs Logic + Security + SQL reviewers. Use for Prisma queries, raw SQL, schema migrations, ORM operations, and database transaction code.
-required-skills: database-design
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - database-design
+  - sql-pro
+  - supabase-postgres-best-practices
+scripts-binding:
+  - .agent/scripts/schema_validator.js
+  - .agent/scripts/security_scan.js
 ---
 
 # /tribunal-database — Database Code Audit
@@ -9,14 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE database review:
-□ Target query/schema files    → The code being audited
-□ prisma/schema.prisma         → The single source of truth for schema
-□ Database migration files      → History of schema changes
-```
+Before auditing database queries, migrations, or ORM transactions, you MUST inspect:
+1. ORM Schema Source of Truth (`prisma/schema.prisma` or SQL schema) → Verify active table schemas, indexes, and relations
+2. SQL Parameterization Inspection → Flag all raw SQL queries attempting string interpolation; enforce parameterized queries
+3. 3-Reviewer Database Gate → Execute logic-reviewer, security-auditor, and sql-pro before approving database modifications
 
 ---
 

@@ -1,19 +1,28 @@
 ---
 name: animation-on-scroll
 description: Intentional scroll-driven motion using modern CSS scroll-timeline, view-timeline, or GSAP ScrollTrigger without scroll jank or performance degradation.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Scroll-Driven Motion & Storytelling
-  tier: pro
-  co-requires: [gsap-scrolltrigger, 60fps-animation]
-  trigger-signals:
-    strong: [animation-on-scroll, scroll-driven motion, CSS scroll-timeline, view-timeline, GSAP ScrollTrigger, scrollytelling]
-    weak: [scroll animation, scroll effect]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - motion-engineering
+  - 60fps-animation
+  - accessible-animation
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Animation On Scroll — Intentional Scroll Motion
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing scroll-driven animations, you MUST inspect:
+1. Target browser support → Prefer pure CSS `animation-timeline: view()` / `scroll()` when possible
+2. Pinning & Scrubbing rules (Section 45) → Use `scrub: 1` in GSAP ScrollTrigger timelines for smooth inertia
+3. Anti-Scrolljacking rule (Section 88) → Never hijack native scroll wheel momentum or override browser scrolling velocity
 
 Architect performant scroll-linked motion and scrollytelling sequences that feel natural, fluid, and non-intrusive.
 

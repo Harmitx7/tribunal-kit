@@ -1,19 +1,28 @@
 ---
 name: 12-principles-of-animation
 description: Application of Disney's 12 Principles of Animation (Squash & Stretch, Anticipation, Staging, Follow Through, Slow In & Slow Out, Arc, Secondary Action, Timing, Exaggeration, Solid Drawing, Appeal) to modern web UI motion.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: UI Animation Theory & Disney Principles
-  tier: pro
-  co-requires: [emil-design-eng, motion-engineering, 60fps-animation]
-  trigger-signals:
-    strong: [12-principles-of-animation, Disney animation principles, squash and stretch UI, anticipation animation, staging UI motion, follow through web]
-    weak: [animation principles, ui animation theory]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - motion-engineering
+  - 60fps-animation
+  - accessible-animation
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # 12 Principles of Animation — Web UI Motion Theory
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before applying animation principles to web components, you MUST inspect:
+1. Target interaction pattern → Identify applicability of Squash & Stretch, Anticipation, Slow In/Out, or Follow Through
+2. Volume-Preservation Rule (Section 26) → Keep UI squash/stretch subtle (max 2%-4%); if height scales to 0.97, width MUST scale to 1.03
+3. Staging Rules (Section 31) → Direct user focus with sequential motion rather than competing simultaneous animations
 
 Translate Disney's 12 classic principles of animation into modern CSS, Web API, and Framer Motion code patterns.
 

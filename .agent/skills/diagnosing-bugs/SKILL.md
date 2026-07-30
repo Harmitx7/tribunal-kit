@@ -1,17 +1,28 @@
 ---
 name: diagnosing-bugs
 description: Systematic bug diagnosis methodology for hard bugs: Phase 1 (Build feedback loop), Phase 2 (Reproduce + minimise), Phase 3 (Hypothesise), Phase 4 (Instrument), Phase 5 (Fix + regression test), Phase 6 (Cleanup + post-mortem).
-version: 2.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Systematic Debugging & Root Cause Isolation
-  tier: pro
-  co-requires: [systematic-debugging, test-result-analyzer]
-  trigger-signals:
-    strong: [diagnosing-bugs, systematic bug diagnosis, reproduce bug, root cause isolation, intermittent bug, debug protocol, hard bugs]
-    weak: [fix bug, investigate error]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - systematic-debugging
+  - test-result-analyzer
+  - tdd-workflow
+scripts-binding:
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Diagnosing Bugs — A Discipline for Hard Bugs
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before attempting bug diagnostics or proposing code fixes, you MUST inspect:
+1. Red-Capable Feedback Loop Rule (Section 34) → Construct a fast, deterministic, automated feedback loop command that reproduces the bug (goes red) BEFORE making code edits
+2. Falsifiable Hypotheses Formulation (Section 107) → Formulate 3–5 falsifiable hypotheses (`"If X is cause, then Y prediction"`) before testing any single theory
+3. Tagged Debug Logging & Cleanup (Section 123) → Tag debug log instrumentation (`[DEBUG-id]`) and sweep clean before finalizing regression fixes
 
 # Diagnosing Bugs — A Discipline for Hard Bugs
 

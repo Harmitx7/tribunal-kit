@@ -1,19 +1,28 @@
 ---
 name: better-colors
 description: OKLCH color space for web projects. Convert hex/rgb/hsl to oklch, generate palettes, check contrast, handle gamut boundaries, and theme with Tailwind v4. Triggers on oklch, color conversion, palette generation, contrast ratio, gamut, display p3, design tokens, hue drift, chroma, dark mode colors.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: UI Craft & Design Engineering
-  tier: pro
-  co-requires: [colorize, better-ui]
-  trigger-signals:
-    strong: [better-colors, oklch, color palette, contrast ratio, gamut, display p3, hue drift, dark mode colors]
-    weak: [colors, palette, theme, dark mode]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - better-ui
+  - baseline-ui
+  - colorize
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Better Colors — OKLCH & Modern Web Color Systems
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before defining color palettes or CSS theme variables, you MUST inspect:
+1. `DESIGN.md` / `index.css` → Check existing CSS custom properties and color variables
+2. OKLCH Syntax & Relative Color Rules (Section 30) → Use `oklch(L C H)` format with subtle chroma (`C: 0.01-0.02`) for neutrals
+3. WCAG 2.2 AA Contrast Thresholds (Section 82) → Ensure `L ≤ 45%` for text on light background and `L ≥ 70%` on dark background
 
 Design engineering guidelines for building perceptually uniform, WCAG 2.2 AA compliant, P3-gamut color systems using the modern **OKLCH** color space.
 

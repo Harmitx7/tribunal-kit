@@ -1,19 +1,28 @@
 ---
 name: accessible-animation
 description: Tiered reduced-motion patterns for CSS, GSAP, Framer Motion, Lenis, and View Transitions API to ensure full WCAG 2.2 accessibility compliance for motion.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Accessible Motion & Reduced Motion Patterns
-  tier: pro
-  co-requires: [web-accessibility-auditor, framer-motion-expert, 60fps-animation]
-  trigger-signals:
-    strong: [accessible-animation, prefers-reduced-motion, accessible motion, WCAG animation, motion accessibility]
-    weak: [disable animation, reduced motion]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - 60fps-animation
+  - motion-engineering
+  - framer-motion-expert
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Accessible Animation — Tiered Reduced-Motion Patterns
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing UI animation code, you MUST inspect:
+1. CSS stylesheets → Verify presence of `@media (prefers-reduced-motion: reduce)` rules
+2. Framer Motion / GSAP components → Query `useReducedMotion()` or `matchMedia('(prefers-reduced-motion: reduce)')`
+3. Vestibular Trigger Replacement (Section 57) → Replace parallax scroll and 3D rotations with instant opacity cross-fades (`0 -> 1`)
 
 Ensure UI motion respects user accessibility preferences (`prefers-reduced-motion: reduce`) without stripping functional state updates.
 

@@ -1,19 +1,28 @@
 ---
 name: impeccable
 description: Flagship design engineering skill for creating production-grade, anti-generic frontend interfaces with supreme craftsmanship, visual hierarchy, typography, spatial systems, and micro-interactions.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Premium Frontend Craft
-  tier: flagship
-  co-requires: [frontend-design, better-ui, emil-design-eng]
-  trigger-signals:
-    strong: [impeccable, supreme craft, world-class ui, anti-generic design, production-grade interface]
-    weak: [beautiful ui, premium frontend]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - better-ui
+  - better-colors
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Impeccable — Production-Grade Frontend Craft
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing or engineering frontend components, you MUST inspect:
+1. `DESIGN.md` / `package.json` → Verify OKLCH color palettes, font pairings, and responsive container query setups
+2. Core Pillars of Impeccable UI (Section 22) → Enforce `tabular-nums` on digits, `text-wrap: balance` on headings, and strict 8px grid math
+3. Motion & Micro-Interactions (Section 34) → Limit micro-interactions to $\le 160\text{ms}$ and check `prefers-reduced-motion` fallbacks
 
 The gold standard framework for crafting bespoke, world-class web applications that feel custom-built by elite design engineers.
 

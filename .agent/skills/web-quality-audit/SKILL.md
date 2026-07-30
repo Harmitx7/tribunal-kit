@@ -1,19 +1,28 @@
 ---
 name: web-quality-audit
 description: Web quality auditing skill for Lighthouse-style analysis across Performance, Accessibility, Best Practices, and SEO signals.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Full-Stack Web Quality & Lighthouse Signals
-  tier: pro
-  co-requires: [web-accessibility-auditor, fixing-metadata, performance-profiling]
-  trigger-signals:
-    strong: [web-quality-audit, Lighthouse audit, Core Web Vitals audit, web quality report, LCP CLS INP audit]
-    weak: [quality audit, site audit]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - web-design-guidelines
+  - fixing-accessibility
+  - fixing-metadata
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Web Quality Audit — Lighthouse & Core Web Vitals
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before executing web quality audits or Lighthouse-style evaluations, you MUST inspect:
+1. Core Web Vitals Benchmarks (Section 24) → LCP $\le 2.5\text{s}$, INP $\le 200\text{ms}$, CLS $\le 0.1$
+2. Layout Shift Prevention (Section 27) → Enforce explicit `width`/`height` or aspect-ratio declarations on all media tags
+3. Async Script Loading (Section 46) → Enforce `async` or `defer` attributes on all third-party script tags in `<head>`
 
 Conduct a comprehensive multi-pillar web quality audit covering Performance, Accessibility, Best Practices, and SEO signals.
 

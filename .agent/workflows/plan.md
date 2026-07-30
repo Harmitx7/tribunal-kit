@@ -1,6 +1,14 @@
 ---
 description: Create project plan using project-planner agent. 4-phase approach: Analyze → Research → Plan Document → Human Gate. NO code writing — only plan file generation. Writing begins only after explicit human approval.
-required-skills: plan-writing, architecture
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - plan-writing
+  - architecture
+  - project-planner
+scripts-binding:
+  - .agent/scripts/verify_all.js
 ---
 
 # /plan — Strategic Implementation Planning
@@ -9,16 +17,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE writing the plan:
-□ package.json             → Actual dependencies and scripts
-□ tsconfig.json            → TypeScript config and path aliases
-□ prisma/schema.prisma     → If DB changes planned (skip if not applicable)
-□ src/ directory listing   → Current project structure
-□ git log --oneline -5     → Recent work context
-```
+Before drafting implementation plans or technical blueprints, you MUST inspect:
+1. Workspace Context & Dependencies (`package.json`, `tsconfig.json`) → Confirm current stack capabilities and path mappings
+2. Existing Architecture & Directory Layout → Review current module boundaries to prevent redundant architectural patterns
+3. Zero Code Modification Rule → Restrict outputs in `/plan` mode to research, architectural design, and plan artifact generation; ban code generation before Plan approval
 
 ---
 

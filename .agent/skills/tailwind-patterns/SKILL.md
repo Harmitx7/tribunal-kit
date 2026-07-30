@@ -1,14 +1,28 @@
 ---
 name: tailwind-patterns
 description: Tailwind CSS v4+ mastery. CSS-first configuration, @theme directive, container queries, scroll-driven animations, logical properties, clamp(), fluid typography, responsive design, dark mode, custom variants, component extraction, and performance optimization. Use when styling with Tailwind, building design systems, or optimizing CSS output.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-01
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - baseline-ui
+  - better-colors
+  - shadcn-ui-expert
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Tailwind CSS v4+ — CSS-First Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering Tailwind CSS styles or themes, you MUST inspect:
+1. CSS-First v4 Configuration (Section 19) → Use `@import "tailwindcss";` and `@theme { }` in CSS files instead of deprecated `tailwind.config.js`
+2. Viewport Height Units (Section 151) → Use `min-h-svh` (small viewport height) or `min-h-dvh` instead of broken mobile `min-h-screen`
+3. Container Query Prefix (Section 204) → Use `@sm:`, `@md:`, `@lg:` container prefixes for component-level responsiveness rather than viewport `sm:`, `md:`, `lg:`
 
 # Tailwind CSS v4+ — CSS-First Mastery
 

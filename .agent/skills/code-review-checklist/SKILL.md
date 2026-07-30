@@ -1,14 +1,28 @@
 ---
 name: code-review-checklist
 description: Code review guidelines covering code quality, security, and best practices.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - clean-code
+  - lint-and-validate
+  - thermo-nuclear-code-quality-review
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Code Review Standards
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before performing code reviews or writing PR comments, you MUST inspect:
+1. Label Convention Standardization (Section 27) → Categorize all feedback into `BLOCKER:`, `CONCERN:`, `SUGGESTION:`, or `NOTE:`
+2. Context Window Discipline (Section 120) → Quote concise 1-3 line snippets with line numbers; ban pasting massive blocks of unchanged code
+3. Anti-Nitpicking Rule (Section 130) → Delegate syntax/formatting formatting checks to linters (`eslint`/Prettier); focus reviews on logic and security
 
 # Code Review Standards
 

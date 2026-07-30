@@ -1,14 +1,28 @@
 ---
 name: red-team-tactics
 description: Red team tactics principles based on MITRE ATT&CK. Attack phases, detection evasion, reporting.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - vulnerability-scanner
+  - backend-security-expert
+  - api-security-auditor
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Red Team & Penetration Testing Principles
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before performing red team assessments or security testing, you MUST inspect:
+1. Written Authorization Gate (Section 34) → Verify written authorization, defined scope, rules of engagement, and emergency contact before executing tests
+2. Reproducible PoC Rule (Section 16) → Include a reproducible Proof-of-Concept, CVSS risk score, and explicit remediation snippet for every finding
+3. Breach Discovery Halt (Section 162) → Immediately halt security testing and report if evidence of an active real-world breach is discovered
 
 ## Hallucination Traps (Read First)
 

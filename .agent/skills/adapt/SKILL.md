@@ -1,19 +1,28 @@
 ---
 name: adapt
 description: Adapt designs across breakpoints, devices, platform constraints, touch vs mouse input, and container queries. Use when making a UI responsive or optimizing for mobile/tablet.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Responsive Design & Cross-Device Adaptation
-  tier: pro
-  co-requires: [mobile-design, building-native-ui]
-  trigger-signals:
-    strong: [adapt, responsive design, container queries, mobile adaptation, responsive layout, touch target size, responsive breakpoints]
-    weak: [mobile friendly, responsive UI]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - mobile-design
+  - building-native-ui
+  - tailwind-patterns
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Adapt — Responsive Adaptation & Container Queries
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering responsive layouts or cross-device UIs, you MUST inspect:
+1. Container Queries (`@container`) over Viewport Media Queries (Section 24) → Adapt component layouts based on parent container width (`container-type: inline-size`)
+2. Touch Target Sizing (Section 39) → Ensure interactive controls meet min `44x44px` target size on touch devices
+3. Fluid Clamp Scaling (Section 45) → Use `clamp()` for smooth fluid typography and spacing without abrupt media query jumps
 
 Architect UIs that adapt fluidly to screen dimensions, container boundaries, input devices (touch vs pointer), and orientation.
 

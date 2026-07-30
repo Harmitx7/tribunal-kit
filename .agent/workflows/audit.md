@@ -1,6 +1,19 @@
 ---
 description: Full project audit combining security scan, lint, schema validation, test coverage, dependency analysis, and bundle analysis. Runs all scripts in priority order. Human review required before applying any fixes.
-required-skills: vulnerability-scanner, clean-code
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - vulnerability-scanner
+  - clean-code
+  - code-review-checklist
+scripts-binding:
+  - .agent/scripts/security_scan.js
+  - .agent/scripts/dependency_analyzer.js
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/schema_validator.js
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/bundle_analyzer.js
 ---
 
 # /audit — Complete Project Health Assessment
@@ -9,14 +22,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE auditing:
-□ package.json                → Identify all configured scripts and dependencies
-□ Config files                 → tsconfig.json, eslint.config.js, jest.config.js
-□ .agent/scripts/              → Check which audit scripts exist and are executable
-```
+Before triggering a full project audit, you MUST inspect:
+1. Workspace Package Manifest (`package.json`) → Verify installed test frameworks, linters, and dependencies
+2. Executable Scripts Inventory (`.agent/scripts/`) → Verify presence of `security_scan.js`, `lint_runner.js`, and `test_runner.js`
+3. Pipeline Execution Constraints → Confirm fixed execution order (Security → Dependencies → Type Check → Lint → Schema → Tests → Bundle) and HALT rules on critical CVE findings
 
 ---
 

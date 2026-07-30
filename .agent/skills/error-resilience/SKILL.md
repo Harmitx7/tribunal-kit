@@ -1,14 +1,28 @@
 ---
 name: error-resilience
 description: Error resilience and fault tolerance mastery. Retry strategies (exponential backoff with jitter), circuit breakers, bulkheads, graceful degradation, React error boundaries, dead letter queues, timeout patterns, fallback chains, and idempotent error recovery. Use when building fault-tolerant systems, handling flaky external services, or preventing cascading failures.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-04-17
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - devops-incident-responder
+  - backend-security-expert
+  - observability
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Error Resilience — Fault-Tolerant Systems
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing retry logic, circuit breakers, or error handling routines, you MUST inspect:
+1. Idempotency Key Rule for Retries (Section 123) → Require explicit idempotency keys when retrying non-safe operations (POST/PUT); ban un-keyed retries
+2. Exponential Backoff with Jitter (Section 106) → Implement randomized full jitter with capped exponential delays; ban fixed-delay retry loops
+3. Operational vs Programmer Error Split (Section 28) → Catch and recover strictly from `OperationalError` instances; allow programmer bugs (`TypeError`) to crash fast
 
 ## Hallucination Traps (Read First)
 

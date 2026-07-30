@@ -1,17 +1,28 @@
 ---
 name: cicd-pro
 description: Enterprise-grade CI/CD mastery. Golden Path - GitHub Actions + Docker + AWS ECS. 3-stage pipeline architecture (Validate→Build→Deploy), OIDC-based AWS auth (no static secrets), Blue/Green and Canary deployment with ECS, environment promotion gates (dev→staging→production), rollback playbooks, Slack notifications, and reusable workflow patterns. Use when designing or implementing production CI/CD pipelines.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-06-21
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: devops
-  tier: pro
-  co-requires: [containerization-pro, cloud-architect]
-  trigger-signals:
-    strong: [CI/CD pipeline, GitHub Actions, Blue/Green deploy, OIDC AWS]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - containerization-pro
+  - cloud-architect
+  - devops-engineer
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# CI/CD Pro — Enterprise Pipeline Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing CI/CD workflows or deployment scripts, you MUST inspect:
+1. Concurrency Mutex Requirement (Section 18) → Configure top-level `concurrency:` blocks in GitHub Actions workflows to prevent parallel deploy collisions
+2. OIDC Authentication Protocol (Section 20) → Use OIDC (`id-token: write` permission) for AWS/cloud credentials; ban static access keys in secrets
+3. Production Promotion Gates (Section 21) → Enforce environment promotion gates (`staging` → `production` with manual reviewers) before deploying
 
 ## Hallucination Traps (Read First)
 

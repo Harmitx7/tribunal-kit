@@ -1,6 +1,15 @@
 ---
 description: Audit existing code for hallucinations. Runs Logic + Security reviewers on any code without generating anything new. The pure review mode — read, analyze, and report only.
-required-skills: code-review-checklist, vulnerability-scanner
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - code-review-checklist
+  - vulnerability-scanner
+  - clean-code
+scripts-binding:
+  - .agent/scripts/security_scan.js
+  - .agent/scripts/lint_runner.js
 ---
 
 # /review — Hallucination Audit (Read-Only)
@@ -9,13 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE reviewing:
-□ Target code files           → The files that need auditing
-□ package.json                → Check dependencies used by target files
-```
+Before auditing code for hallucinations or structural flaws, you MUST inspect:
+1. Target Source Code & Dependent Modules → Read target files and their import declarations
+2. Package Manifest (`package.json`) → Cross-reference imported packages against installed dependencies
+3. Pure Read-Only Constraint → Prohibit any file mutations or generation; output findings in structured audit tables strictly
 
 ---
 

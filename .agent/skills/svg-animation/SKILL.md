@@ -1,19 +1,28 @@
 ---
 name: svg-animation
 description: SVG stroke draw-on effects, path morphing, animated icons, motion paths, and interactive vector graphics.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Vector SVG Motion & Path Animation
-  tier: pro
-  co-requires: [morphing-icons, 60fps-animation]
-  trigger-signals:
-    strong: [svg-animation, stroke draw-on, path morphing, animated SVG, SVG stroke-dasharray, motion path]
-    weak: [svg motion, animated icon]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - morphing-icons
+  - 60fps-animation
+  - motion-engineering
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # SVG Animation — Stroke Draw-On & Path Morphing
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering SVG path or stroke animations, you MUST inspect:
+1. Target SVG attributes → Ensure `fill="none"` is set on draw-on paths to prevent black fill occlusion
+2. Path Length Calibration (Section 70) → Calculate exact `path.getTotalLength()` instead of guessing `stroke-dasharray` values
+3. Non-scaling Stroke rule (Section 83) → Apply `vector-effect="non-scaling-stroke"` if vector elements scale across responsive viewports
 
 Craft crisp, resolution-independent vector animations using CSS, Framer Motion, or GSAP.
 

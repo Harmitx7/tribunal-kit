@@ -1,19 +1,28 @@
 ---
 name: polish
 description: Final production quality pass for spacing, alignment, visual rhythm, dark mode consistency, and edge states. Use before shipping or merging a feature to ensure 100% UI fidelity.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Pre-Ship Quality Audit
-  tier: pro
-  co-requires: [better-ui, harden, fixing-accessibility]
-  trigger-signals:
-    strong: [polish, pre-ship pass, final UI pass, ship check, interface quality check]
-    weak: [double check ui, final touch]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - better-ui
+  - harden
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Polish — Final Pre-Ship UI Quality Pass
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before running a pre-ship quality pass, you MUST inspect:
+1. Target component / view state → Test across light and dark theme modes
+2. The 10-Point Polish Checklist (Section 22) → Audit 8px grid alignment, tabular numbers, focus rings, press feedback, and CLS loading skeletons
+3. Edge case string truncation → Test long user input strings with `truncate` or `line-clamp` boundaries
 
 The comprehensive pre-ship inspection checklist to verify that code meets top-tier design-engineering standards.
 

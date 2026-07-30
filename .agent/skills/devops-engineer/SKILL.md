@@ -1,14 +1,28 @@
 ---
 name: devops-engineer
 description: DevOps engineering mastery. Docker containerization, Docker Compose, CI/CD with GitHub Actions, Kubernetes basics, infrastructure as code (Terraform), monitoring/alerting, deployment strategies (blue/green, canary, rolling), secrets management, and production readiness checklists. Use when building CI/CD pipelines, containerizing apps, or managing infrastructure.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-01
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - cicd-pro
+  - containerization-pro
+  - cloud-architect
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# DevOps Engineer — CI/CD & Infrastructure Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before building Dockerfiles, Docker Compose, or GitHub Actions pipelines, you MUST inspect:
+1. Non-Root Docker Container Rule (Section 47) → Explicitly specify a non-root user (`USER appuser`) in production Dockerfiles
+2. Deterministic Package Installation (Section 28) → Use `npm ci` (or yarn/pnpm equivalent with lockfiles) in Docker and CI; ban `npm install`
+3. CI/CD Concurrency Group Cancellation (Section 142) → Configure `concurrency.cancel-in-progress: true` on PR workflows to cancel stale builds
 
 # DevOps Engineer — CI/CD & Infrastructure Mastery
 

@@ -3,6 +3,8 @@ name: performance-reviewer
 description: Audits code against 2026 Core Web Vitals targets (INP <200ms, LCP <2.5s, CLS <0.1), identifies render-blocking patterns, JavaScript bundle bloat, unoptimized image loading, excessive re-renders, memory leaks via uncleared side effects, and missing caching strategies. Activates on /tribunal-performance and /tribunal-full.
 version: 2.0.0
 last-updated: 2026-04-02
+skills:
+  - performance-profiling
 ---
 
 # Performance Reviewer — The Throughput Guardian

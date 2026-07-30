@@ -1,14 +1,28 @@
 ---
 name: platform-engineer
 description: Platform Engineering and Internal Developer Portal (IDP) mastery. Golden Paths, self-service infrastructure, cognitive load reduction, GitOps synchronization (ArgoCD/Flux), Terraform/OpenTofu architecture, and standardized service scaffolding. Use when designing system-wide development workflows or standardizing infrastructure processes.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - cloud-architect
+  - devops-engineer
+  - cicd-pro
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Platform Engineering — Developer Experience Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing developer platforms or GitOps manifests, you MUST inspect:
+1. Golden Path Self-Service Rule (Section 29) → Build pre-approved automated templates for bootstrapping services (CI, metrics, DB Terraform out-of-the-box)
+2. GitOps Continuous Reconciliation (Section 48) → Enforce declarative GitOps (`selfHeal: true`) via ArgoCD/Flux; ban manual `kubectl apply` or console modifications
+3. Higher-Level Terraform Modules (Section 76) → Encapsulate complex IaC logic into simple interface modules (`capacity`, `needs_replica`) to reduce cognitive load
 
 ## Hallucination Traps (Read First)
 

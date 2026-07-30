@@ -1,6 +1,16 @@
 ---
 description: Production deployment command. Runs pre-flight safety checks (tests, type-check, lint, security, build), creates a rollback baseline, confirms Human Gate, then executes deployment. Requires explicit human approval before going live.
-required-skills: deployment-procedures, devops-engineer
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - deployment-procedures
+  - devops-engineer
+  - verify_all
+scripts-binding:
+  - .agent/scripts/verify_all.js
+  - .agent/scripts/security_scan.js
+  - .agent/scripts/bundle_analyzer.js
 ---
 
 # /deploy — Production Deployment
@@ -9,14 +19,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE deploying:
-□ package.json                → Identify build/test scripts
-□ CI/CD configs               → GitHub Actions, render.yaml, fly.toml
-□ Database schema             → Check if migrations are pending
-```
+Before triggering production deployment or executing deploy scripts, you MUST inspect:
+1. Full Pre-Flight Verification Suite (`verify_all.js`) → Verify tests, type-checking, lint, security scans, and production build output cleanly
+2. CI/CD Manifests (`.github/workflows`, `fly.toml`, `render.yaml`, etc.) → Check deployment targets and environment variable requirements
+3. Human Gate & Rollback Baseline → Confirm baseline git tag/commit and secure explicit human approval before publishing release
 
 ---
 

@@ -1,19 +1,28 @@
 ---
 name: redesign-skill
 description: Audit and upgrade existing interfaces to premium visual quality while preserving product functionality and business logic.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Interface Redesign & UI Upgrade
-  tier: pro
-  co-requires: [taste-skill, better-ui, baseline-ui]
-  trigger-signals:
-    strong: [redesign-skill, redesign existing project, UI upgrade, overhaul interface, modernize UI, upgrade visual quality]
-    weak: [redesign UI, revamp site]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - taste-skill
+  - better-ui
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Redesign Skill — UI Upgrade Methodology
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before executing interface redesigns, you MUST inspect:
+1. Logic Isolation Rule (Section 24) → Extract and preserve ALL state hooks (`useState`), event handlers (`onClick`), and API props before altering layout
+2. Surface Hierarchy (Section 32) → Upgrade raw hex backgrounds to OKLCH surface levels (`--bg-base`, `--bg-surface`, `--bg-elevated`)
+3. Spatial Grid (Section 28) → Standardize spacing to an 8px system (`gap-4`, `p-6`) with `text-wrap: balance` on headings
 
 Audit legacy or unstyled user interfaces and transform them into modern, production-grade products without breaking underlying business logic.
 

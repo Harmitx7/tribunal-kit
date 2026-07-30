@@ -1,17 +1,28 @@
 ---
 name: improve-codebase-architecture
 description: Scans a codebase for deepening opportunities, architectural bottlenecks, tight coupling, and produces a prioritized visual improvement roadmap.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Codebase Architectural Audit
-  tier: pro
-  co-requires: [codebase-design, clean-code, architecture]
-  trigger-signals:
-    strong: [improve-codebase-architecture, architectural audit, refactor architecture, decouple modules, codebase refactor plan]
-    weak: [architecture check, fix architecture]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - codebase-design
+  - clean-code
+  - architecture
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Improve Codebase Architecture — Architectural Audit & Refactoring
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before refactoring or producing an architectural improvement roadmap, you MUST inspect:
+1. Circular Dependency Breaking Rule (Section 24) → Identify circular imports (`A -> B -> C -> A`) and resolve via event buses or explicit interfaces
+2. Monolithic Controller Line Threshold (500 lines) (Section 27) → Flag any controller/service >500 lines with mixed concerns for immediate decomposition
+3. Incremental Refactoring Rule (Section 46) → Ban shotgun surgery across >5 files simultaneously; enforce phased, test-backed interface extractions
 
 # Improve Codebase Architecture — Architectural Audit & Refactoring
 

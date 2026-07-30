@@ -1,14 +1,28 @@
 ---
 name: llm-engineering
 description: LLM engineering mastery for production AI systems. Prompt engineering, RAG pipeline design, vector store selection, embedding strategies, chunking, reranking, structured output, function calling, streaming, evals, guard-rails, cost optimization, and LLMOps. Use when building AI features, chat interfaces, semantic search, or any system calling an LLM API.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.2.0
-last-updated: 2026-04-07
-applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - ai-prompt-injection-defense
+  - advanced-rag-pipelines
+  - data-validation-schemas
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# LLM Engineering — Production AI Systems Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering LLM integrations or tool calling loops, you MUST inspect:
+1. Zod Schema Validation on JSON Outputs (Section 115) → Always run Zod validation (`Schema.parse(...)`) on LLM JSON responses, even in strict mode
+2. Hybrid Vector + Keyword Search (Section 290) → Use hybrid vector + BM25 keyword search in RAG applications to prevent missing exact identifiers
+3. System Prompt Secret Isolation (Section 69) → Never put private API keys, database credentials, or secret internal URLs into system prompts
 
 # LLM Engineering — Production AI Systems Mastery
 

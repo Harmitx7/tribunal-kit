@@ -1,14 +1,28 @@
 ---
 name: geo-fundamentals
 description: Generative Engine Optimization (GEO) mastery. Structuring content for LLM ingestion. Adapting SEO for AI interfaces (ChatGPT, Claude, Perplexity), optimizing markdown semantic hierarchies, citation structuring, minimizing boilerplate, reducing HTML DOM depth, and API-first content delivery. Use when making information discoverable not just to Google, but directly to AI indexing agents.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - seo-fundamentals
+  - browser-native-ai
+  - readme-builder
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Generative Engine Optimization (GEO)
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before optimizing content for AI engine ingestion, you MUST inspect:
+1. High Information Density Rule (Section 25) → Maximize factual density; eliminate marketing boilerplate so LLM context windows aren't truncated
+2. Explicit Claim-to-Source Mapping (Section 51) → Map stats and claims directly to explicit `<cite>` sources/links; ban vague unanchored assertions
+3. Text-Based Architecture Diagrams (Section 94) → Represent architecture via text/Mermaid.js code blocks; ban image-only architecture diagrams
 
 ## Hallucination Traps (Read First)
 

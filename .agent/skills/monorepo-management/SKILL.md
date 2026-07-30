@@ -1,14 +1,28 @@
 ---
 name: monorepo-management
 description: Monorepo architecture and tooling mastery. Turborepo, Nx, pnpm workspaces, shared package design, task pipelines, dependency hoisting, change detection, versioning strategies (independent vs. fixed), shared TypeScript configs, internal packages, and CI optimization for monorepos. Use when setting up monorepos, managing shared code across apps, or optimizing build pipelines.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-04-17
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - cicd-pro
+  - codebase-design
+  - lint-and-validate
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Monorepo Management — Scaling Multi-Package Projects
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before organizing workspace packages or writing Turborepo/pnpm configs, you MUST inspect:
+1. Internal Package Protocol (Section 128) → Reference internal monorepo dependencies via `"workspace:*"` protocol and mark them `"private": true`
+2. Topological Task Dependencies (Section 146) → Define topological ordering (`"^build"`) in `turbo.json` to ensure dependencies build before consumers
+3. Domain-Focused Package Partitioning (Section 261) → Divide shared code into domain packages (`packages/ui`, `packages/db`, `packages/utils`); ban single monolithic `packages/shared` dumpsters
 
 ## Hallucination Traps (Read First)
 

@@ -1,17 +1,28 @@
 ---
 name: design-lab
 description: Interactive design exploration workflow: conduct interviews, generate variants, and refine UI designs through user feedback loops.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Design Exploration & UI Variants
-  tier: pro
-  co-requires: [brainstorming, shape, frontend-design]
-  trigger-signals:
-    strong: [design-lab, design exploration, generate variants, interactive design workflow, UI experiment]
-    weak: [explore designs, design options]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - brainstorming
+  - shape
+  - frontend-design
+scripts-binding:
+  - .agent/scripts/auto_preview.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Design Lab — Interactive Design Exploration & Variants
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before generating design variants or conducting design experiments, you MUST inspect:
+1. Structural Variant Difference Rule (Section 39) → Ensure generated layout variants are structurally distinct; ban micro-variations (differing only by 1px or hex color)
+2. Interactive Refinement Protocol (Section 32) → Ask targeted constraint questions before outputting final component implementations
+3. Visual Hierarchy Mapping (Section 26) → Map visual hierarchy explicitly to project design tokens before presenting options
 
 # Design Lab — Interactive Design Exploration & Variants
 

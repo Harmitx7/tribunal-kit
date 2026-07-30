@@ -1,6 +1,14 @@
 ---
 description: Structured brainstorming for projects and features. Uses Socratic questioning to explore multiple options before committing to an approach. No implementation during this phase — only exploration.
-required-skills: brainstorming
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - brainstorming
+  - shape
+  - project-planner
+scripts-binding:
+  - .agent/scripts/verify_all.js
 ---
 
 # /brainstorm — Structured Idea Exploration
@@ -9,15 +17,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE generating any options:
-□ package.json         → Understand existing stack constraints
-□ tsconfig.json        → Understand language/framework version
-□ Project root listing → Understand project structure and scale
-□ .agent/skills/brainstorming/SKILL.md → Load domain question banks
-```
+Before generating options or conducting Socratic architectural exploration, you MUST inspect:
+1. Technology Stack Manifest (`package.json`, `tsconfig.json`) → Confirm existing language/framework versions and active library boundaries
+2. Workspace File Layout → Understand current module scale and project structure before proposing architectural shifts
+3. Pure Exploration Constraint → Enforce zero code edits or file creation during brainstorm phase; restrict output to options, tradeoffs, and recommendations
 
 ---
 

@@ -1,16 +1,28 @@
 ---
 name: nextjs-react-expert
 description: Next.js 15+ App Router mastery. Server Components, Server Actions, PPR, caching, metadata, middleware, parallel/intercepting routes. Use when building Next.js apps or optimizing Next.js performance.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.1.0
-last-updated: 2026-04-06
-applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - react-specialist
+  - react-doctor
+  - baseline-ui
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Next.js 15+ App Router — Dense Reference
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering Next.js 15+ App Router code, you MUST inspect:
+1. Client Boundary rules (`"use client"` vs Server Components) → Use Server Components by default; add `"use client"` only for interactivity/hooks
+2. Server Actions Validation (Section 68) → Always include `"use server"` and validate form inputs with Zod (`Schema.safeParse`)
+3. Next.js 15 Caching & Dynamic APIs (Section 106) → `fetch()` is UNCACHED by default in Next.js 15; `cookies()` and `headers()` are `async`
 
 ## Hallucination Traps (Read First)
 

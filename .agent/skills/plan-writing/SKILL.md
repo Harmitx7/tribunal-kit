@@ -1,14 +1,28 @@
 ---
 name: plan-writing
 description: Technical design and implementation planning mastery. Writing structured execution checklists, dependency mapping, establishing rollback protocols, segmenting monolithic tasks, writing ADRs (Architecture Decision Records), and defining verification criteria. Use when transitioning from ideation to coordinated execution.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - project-planner
+  - brainstorming
+  - harness-protocol
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Plan Writing — Execution Blueprints Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing implementation plans or execution blueprints, you MUST inspect:
+1. Verification Criteria Requirement (Section 15) → Include explicit "How to verify" criteria for every wave; ban plan steps without verification
+2. Phased Wave Segmentation (Section 41) → Segment multi-file tasks into testable, independent waves (Wave 1: Data, Wave 2: API, Wave 3: UI)
+3. Non-Destructive Defaults & Rollback Rules (Section 66) → Define fallback feature toggles and database rollback procedures prior to execution
 
 ## Hallucination Traps (Read First)
 

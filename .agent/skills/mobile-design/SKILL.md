@@ -1,13 +1,28 @@
 ---
 name: mobile-design
 description: Mobile-first design for iOS, Android, Foldables, React Native, Flutter. Touch interaction, haptics, 120Hz performance, on-device AI, spatial UI, Reanimated 3. Use when building mobile UI, animations, or cross-platform apps.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.1.0
-last-updated: 2026-04-06
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - building-native-ui
+  - adapt
+  - 60fps-animation
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Mobile Design — Dense Reference
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing mobile interfaces or writing React Native code, you MUST inspect:
+1. Reanimated 3 & Worklet Rules (Section 47) → Execute animations on the UI thread using Reanimated 3 worklets; ban legacy `Animated.View`
+2. List Optimization (Section 32) → Use `@shopify/flash-list` with required `estimatedItemSize` instead of `ScrollView` or `FlatList`
+3. Safe Area Insets (Section 100) → Always wrap content with `useSafeAreaInsets()` to accommodate notch, dynamic island, and home indicators
 
 # Mobile Design — Dense Reference
 

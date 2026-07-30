@@ -1,17 +1,28 @@
 ---
 name: tdd-workflow
 description: Test-Driven Development (TDD) mastery. Red-Green-Refactor cycles, behavior-driven design (BDD), strict mutation coverage, test doubles (mocks/stubs/spies), and avoiding test-induced design damage. Use when building complex algorithms, deep business logic, or strictly regulated systems.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Test-Driven Development & Quality Assurance
-  tier: pro
-  co-requires: [webapp-testing, clean-code]
-  trigger-signals:
-    strong: [tdd-workflow, red green refactor, test driven development, TDD, slice by slice testing, write test first]
-    weak: [write test, unit test logic]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - testing-patterns
+  - clean-code
+  - webapp-testing
+scripts-binding:
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# TDD Workflow — Red-Green-Refactor Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing feature logic or writing unit tests, you MUST inspect:
+1. Red-Green-Refactor Cycle (Section 25) → Write failing test FIRST (Red) → minimal passing code SECOND (Green) → cleanup THIRD (Refactor)
+2. Behavior-First Assertion Rule (Section 36) → Assert public contract results (GIVEN/WHEN/THEN); ban asserting internal private fields or state
+3. IO Boundary-Only Mocking (Section 50) → Mock ONLY un-owned external boundaries (DB IO, network APIs); ban mocking domain entities or pure utils
 
 # TDD Workflow — Red-Green-Refactor Mastery
 

@@ -6,8 +6,8 @@ description: >
   If the proposed code matches a previously rejected pattern, the reviewer VETOES
   the proposal and cites the exact case number, date, and reason.
   Activates automatically on all /generate, /review, and /tribunal-* commands.
-version: 1.0.0
-last-updated: 2026-04-09
+version: 3.0.0
+last-updated: 2026-07-29
 pattern: reviewer
 ---
 
@@ -19,9 +19,16 @@ pattern: reviewer
 
 ## Core Mandate
 
-You are the **repository's living memory**. Your sole purpose is to check every
-proposed change against the project's Case Law record before any Tribunal verdict
-is issued.
+You are the **repository's living memory**. Your sole purpose is to check every proposed change against the project's Case Law record before any Tribunal verdict is issued.
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before checking case law precedents, you MUST inspect:
+1. `.agent/history/case-law/index.json` → Load the active case law index and similarity thresholds
+2. Proposed diff / code snippet → Extract top-10 domain keywords (API names, packages, async patterns)
+3. Active reviewer outputs → Prepare to auto-record new rejections via `auto-record` command if any reviewer issues `❌ REJECTED`
 
 **You operate between the Maker Agent and the Human Gate.**
 No code passes the Tribunal without your clearance first.
@@ -249,3 +256,10 @@ node .agent/scripts/case_law_manager.js list
 # Export full history
 node .agent/scripts/case_law_manager.js export
 ```
+
+---
+
+## Hand-Off & Coordination
+
+- First in the review chain: passes precedence status to `@logic-reviewer` and `@security-auditor`.
+- Auto-records new rejections issued by any downstream Tribunal reviewer.

@@ -1,14 +1,28 @@
 ---
 name: documentation-templates
 description: Documentation templates and structure guidelines. README, API docs, code comments, and AI-friendly documentation.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - readme-builder
+  - geo-fundamentals
+  - clean-code
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Documentation Standards
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before creating or editing documentation, API references, or comments, you MUST inspect:
+1. Target Audience Identification (Section 27) → Match template strictly to audience (README for 10-min quickstart, API docs for payload contracts, Runbook for on-call triage)
+2. Explain "Why", Not "What" in Code Comments (Section 147) → Document non-obvious business rules or bug workarounds; ban restating obvious code syntax
+3. AI-Friendly Documentation Mapping (Section 171) → Maintain `ARCHITECTURE.md` and `@purpose:` annotations for codebase mental models and automated ingestion
 
 ## Hallucination Traps (Read First)
 

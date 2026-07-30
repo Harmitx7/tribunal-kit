@@ -1,14 +1,28 @@
 ---
 name: shadcn-ui-expert
 description: shadcn/ui mastery. Installation, customization via tailwind.config, component extraction, state management with Radix Primitives, theme variables (CSS custom properties), dark mode implementations, and overriding default designs. Use when building or modifying shadcn/ui components in React/Next.js projects.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - build-primitive
+  - react-specialist
+  - baseline-ui
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# shadcn/ui Expert — Component Architecture Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before using or customizing shadcn/ui components, you MUST inspect:
+1. Component Installation State → Check `@/components/ui/` directory for existing components before running `npx shadcn@latest add`
+2. `cn` Utility Usage (Section 144) → Use `cn(...)` (combining `clsx` + `tailwind-merge`) for all conditional and overridden class names
+3. Client Component Boundaries (Section 166) → Add `"use client"` on interactive Radix primitives (Dialog, Select, Popover) before rendering in App Router
 
 ## Hallucination Traps (Read First)
 

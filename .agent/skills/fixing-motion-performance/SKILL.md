@@ -1,19 +1,28 @@
 ---
 name: fixing-motion-performance
 description: Audit and fix animation performance issues including layout thrashing, compositor properties, scroll-linked motion, and blur effects. Use when animations stutter, transitions jank, or reviewing CSS/JS animation performance.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: UI Motion & Performance
-  tier: pro
-  co-requires: [60fps-animation, gsap-performance]
-  trigger-signals:
-    strong: [fixing-motion-performance, layout thrashing, compositor properties, scroll jank, animation stutter, GPU acceleration, will-change]
-    weak: [jank, slow animation, stutter]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - 60fps-animation
+  - motion-engineering
+  - gsap-performance
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Fixing Motion Performance — 60/120fps Jank-Free Animation
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before auditing or fixing animation performance, you MUST inspect:
+1. Browser Rendering Pipeline (Section 22) → Restrict properties to Composite-only (`transform`, `opacity`) and eliminate Layout/Paint animators
+2. Layout Thrashing (Section 33) → Batch all DOM reads (`offsetHeight`, `getBoundingClientRect`) before executing DOM writes (`style.height = ...`)
+3. `will-change` VRAM management (Section 53) → Remove `will-change` hints upon animation completion
 
 Guidelines for auditing and resolving web animation jank, layout thrashing, and GPU rendering bottlenecks.
 

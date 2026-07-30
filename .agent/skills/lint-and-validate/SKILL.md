@@ -1,14 +1,28 @@
 ---
 name: lint-and-validate
 description: Linting and validation principles for code quality enforcement.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-12
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - clean-code
+  - config-validator
+  - code-review-checklist
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Linting & Validation
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before running linting tools or modifying linter rules, you MUST inspect:
+1. Zero-Warning CI Blocking (Section 34) → Enforce zero-warning policy in CI pipelines; ban treating lint warnings as non-blocking
+2. Mandatory Strict Type Checks (Section 121) → Run static type checking (`tsc --noEmit` or `mypy`) alongside linters to catch non-linter type bugs
+3. Diff Review Before Auto-Fixing (Section 15) → Review diffs explicitly after auto-fixing (`eslint --fix`) to prevent accidental removal of side-effect code
 
 ## Hallucination Traps (Read First)
 

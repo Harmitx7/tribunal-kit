@@ -1,6 +1,15 @@
 ---
 description: Mobile-specific Tribunal. Runs Logic + Security + Mobile reviewers. Use for React Native, Expo, gesture handlers, animations, navigation, and any iOS/Android-targeted code.
-required-skills: building-native-ui, mobile-design
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - building-native-ui
+  - mobile-design
+  - swiftui-expert
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/security_scan.js
 ---
 
 # /tribunal-mobile — Mobile Code Audit
@@ -9,14 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE mobile review:
-□ Target component files       → The mobile code being audited
-□ package.json                 → Verify versions (expo, react-native-reanimated)
-□ app.json / app.config.js     → Check for correct permissions and plugins
-```
+Before auditing React Native, Expo, or native mobile code, you MUST inspect:
+1. Native Configuration Manifests (`app.json`, `app.config.js`, `package.json`) → Verify Expo SDK version, Reanimated dependencies, and permissions
+2. Gesture & 60fps Motion Rules → Enforce `react-native-reanimated` worklets on UI thread; ban JavaScript bridge layout thrashing
+3. 3-Reviewer Mobile Gate → Run logic-reviewer, security-auditor, and mobile-reviewer before approving mobile component diffs
 
 ---
 

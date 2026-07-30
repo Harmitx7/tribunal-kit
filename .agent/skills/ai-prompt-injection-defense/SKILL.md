@@ -1,14 +1,28 @@
 ---
 name: ai-prompt-injection-defense
 description: Prompt Injection and Jailbreak defense mastery. Mitigation strategies for direct injection, indirect injection via data poisoning, delimiter separation, XML framing, output validation, and LLM circuit breakers. Use when building AI systems that process untrusted user input or fetch external data.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - backend-security-expert
+  - vulnerability-scanner
+  - llm-engineering
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Prompt Injection Defense — AI Security Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering LLM prompts or processing untrusted user input, you MUST inspect:
+1. Message Role Isolation (Section 15) → Place user input exclusively in `role: "user"` messages; never concatenate user input into `role: "system"`
+2. Delimiter Sandboxing (Section 49) → Frame untrusted input inside XML tags (`<user_input>`) or randomized nonces (`<data_a8b4f1c9>`)
+3. Human-in-the-Loop Gate (Section 119) → Require explicit human approval before executing state-changing tool operations (`delete_user`, `process_payment`)
 
 ## Hallucination Traps (Read First)
 

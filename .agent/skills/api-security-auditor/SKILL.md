@@ -1,14 +1,28 @@
 ---
 name: api-security-auditor
 description: API Security auditing mastery. Rate limiting architecture, API key management, payload validation, IDOR (Insecure Direct Object Reference) prevention, mass assignment flaws, GraphQL security, and server-side mitigations. Use when building external APIs, B2B services, or reviewing endpoint security.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - backend-security-expert
+  - vulnerability-scanner
+  - schema-reviewer
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# API Security Auditor — Endpoint Hardening Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before auditing or hardening API endpoints, you MUST inspect:
+1. IDOR Prevention (Section 17) → Perform explicit tenancy checks (`receipt.userId === req.user.id`) and prefer UUIDv4/CUID over sequential integer IDs
+2. Mass Assignment Mitigations (Section 47) → Enforce strict Zod schemas (`.strict()`) to prevent parameter overposting into DB updates
+3. Distributed Rate Limiting (Section 80) → Store rate limit state in Redis for multi-pod load balanced environments to prevent limit bypasses
 
 # API Security Auditor — Endpoint Hardening Mastery
 

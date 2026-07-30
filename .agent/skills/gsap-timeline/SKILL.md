@@ -1,13 +1,28 @@
 ---
 name: gsap-timeline
 description: Official GSAP skill for timelines — gsap.timeline(), position parameter, nesting, playback. Use when sequencing animations, choreographing keyframes, or when the user asks about animation sequencing, timelines, or animation order (in GSAP or when recommending a library that supports timelines).
-license: MIT
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - motion-engineering
+  - gsap-react
+  - 60fps-animation
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
-# GSAP Timeline
+# GSAP Timeline — Multi-Step Animation Choreography
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before creating GSAP timelines, you MUST inspect:
+1. Position Parameter Syntax (Section 27) → Pass position as the 3rd argument (`"<"`, `">"`, `"+=0.5"`) instead of using hardcoded delays
+2. Timeline Defaults (Section 45) → Pass `{ defaults: { duration, ease } }` into `gsap.timeline()` constructor to avoid repetitive child declarations
+3. ScrollTrigger Placement (Section 101) → Place `scrollTrigger` ONLY on the top-level timeline, never on child tweens inside a timeline
 
 ## When to Use This Skill
 

@@ -1,6 +1,15 @@
 ---
 description: Strengthen skills by appending Tribunal guardrails (LLM Traps, Pre-Flight checklist, VBC Protocol) to any SKILL.md missing them. Reads each skill, checks for guardrails, appends if missing, skips if present.
-required-skills: skill-creator, llm-engineering
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - skill-creator
+  - llm-engineering
+  - clean-code
+scripts-binding:
+  - .agent/scripts/skill_integrator.js
+  - .agent/scripts/lint_runner.js
 ---
 
 # /strengthen-skills — Skill Hardening Pipeline
@@ -9,12 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE strengthening:
-□ .agent/skills/              → Identify the skills that exist
-```
+Before auditing or hardening skill definitions, you MUST inspect:
+1. Target Skill Directory Inventory (`.agent/skills/`) → List all skill folders and inspect `SKILL.md` frontmatter
+2. Guardrail Idempotency Check → Check if target `SKILL.md` already carries `## Mandatory Pre-Flight Context Inspection` or `## 🏛️ Tribunal Integration`; skip if present
+3. Skill Integrator Script (`.agent/scripts/skill_integrator.js`) → Run skill integrator script to update executable script bindings
 
 ---
 

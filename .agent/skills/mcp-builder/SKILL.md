@@ -1,14 +1,28 @@
 ---
 name: mcp-builder
 description: Model Context Protocol (MCP) server integration mastery. Building custom MCP servers, standardizing tool exposes, managing standardized communication between large language models and localized datasets, securing boundary contexts, and architecting resource schemas. Use when modifying, extending, or building custom toolsets for AI platforms relying on the MCP standard.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - backend-security-expert
+  - nodejs-best-practices
+  - agentic-patterns
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# MCP Builder — Context Protocol Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before architecting MCP tools or resource handlers, you MUST inspect:
+1. Strict Zod Input Validation (Section 45) → Enforce explicit JSON Schema parameter validation (Zod) for every tool exposed to the LLM
+2. Resource vs Tool Distinction (Section 68) → Use Resources for static read-only data (`file:///`, `db://schema`), Tools strictly for dynamic parameterized actions
+3. Output Payload Truncation Safeguard (Section 94) → Forcibly truncate large tool response outputs before returning payload to protect LLM context windows
 
 ## Hallucination Traps (Read First)
 

@@ -1,17 +1,28 @@
 ---
 name: cloud-architect
 description: Production AWS cloud architecture mastery. Service selection (ECS Fargate vs Lambda vs EC2, RDS vs Aurora vs DynamoDB), Terraform IaC patterns with HCL examples, VPC networking design, IAM least privilege, Secrets Manager, CloudWatch observability, cost optimization, and multi-environment AWS Organizations strategy. Golden Path - AWS. Use when architecting cloud infrastructure, writing Terraform, or making AWS service selection decisions.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-06-21
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: devops
-  tier: pro
-  co-requires: [cicd-pro]
-  trigger-signals:
-    strong: [AWS, Terraform, ECS Fargate, VPC design, IAM]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - cicd-pro
+  - devops-engineer
+  - platform-engineer
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Cloud Architect — Production AWS Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before architecting AWS cloud infrastructure or writing Terraform HCL, you MUST inspect:
+1. Dynamic Account ID & Region Resolution (Section 20) → Use `data.aws_caller_identity.current.account_id` and `var.region`; ban hardcoded account IDs or ARNs
+2. Private Subnet Application Placement (Section 23) → Place application compute (ECS, Lambda) strictly in private subnets; only ALB and NAT Gateway live in public subnets
+3. Secrets Manager Secret Injection (Section 21) → Reference secret ARNs from AWS Secrets Manager in ECS task definitions; ban plaintext environment variables for passwords/tokens
 
 ## Hallucination Traps (Read First)
 

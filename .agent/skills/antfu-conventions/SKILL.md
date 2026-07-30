@@ -1,17 +1,28 @@
 ---
 name: antfu-conventions
 description: Anthony Fu's opinionated tooling and conventions for JavaScript/TypeScript projects: ESM-first, zero-config, type-safe, and clean tooling standards.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Tooling Conventions & ESM Standards
-  tier: pro
-  co-requires: [clean-code, typescript-advanced]
-  trigger-signals:
-    strong: [antfu-conventions, antfu ESLint, ESM first, zero-config tooling, pnpm catalogs, Anthony Fu tooling]
-    weak: [eslint config, pnpm setup]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - clean-code
+  - typescript-advanced
+  - monorepo-management
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Antfu Conventions — ESM-First & Opinionated Modern Tooling
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before configuring JS/TS tooling or lint rules, you MUST inspect:
+1. Pure ESM-First Requirement (Section 24) → Set `"type": "module"` in `package.json`; ban CommonJS `require()` or `module.exports`
+2. ESLint Flat Config (`eslint.config.js`) (Section 28) → Use `@antfu/eslint-config` with flat config format; ban legacy `.eslintrc.json`
+3. Explicit Type Imports (`import type`) (Section 45) → Enforce `import type` for type-only symbols to allow clean tree-shaking compilation
 
 # Antfu Conventions — ESM-First & Opinionated Modern Tooling
 

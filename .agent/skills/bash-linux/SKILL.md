@@ -1,14 +1,28 @@
 ---
 name: bash-linux
 description: Bash/Linux terminal mastery. Shell scripting, piping, stream redirection, process substitution, strict mode (set -euo pipefail), AWK, ripgrep parsing, and robust error handling. Use when writing CI scripts, debugging POSIX environments, or manipulating text pipelines.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - server-management
+  - devops-engineer
+  - cicd-pro
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Bash & Linux — Shell Scripting Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing Bash scripts or terminal automation pipelines, you MUST inspect:
+1. Strict Mode Flags (`set -euo pipefail`) (Section 39) → Always set `set -euo pipefail` and `IFS=$'\n\t'` at top of every script to fail fast on errors or unset vars
+2. Variable Quoting Safeguards (Section 122) → Double-quote all path and string variables (`"$FILE"`, `"${FILES[@]}"`) to prevent whitespace expansion bugs
+3. Modern CLI Efficiency Rules (Section 102) → Prefer `rg` over `grep`, `fd` over `find`, `jq` over regex JSON parsing for performance and safety
 
 ## Hallucination Traps (Read First)
 

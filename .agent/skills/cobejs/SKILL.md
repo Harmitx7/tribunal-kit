@@ -1,19 +1,28 @@
 ---
 name: cobejs
 description: Build lightweight, hardware-accelerated 3D interactive animated globes and web orbs using Cobe WebGL.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: 3D Graphics & Canvas Visuals
-  tier: pro
-  co-requires: [60fps-animation, threejs-fundamentals]
-  trigger-signals:
-    strong: [cobejs, Cobe globe, 3D animated globe, interactive WebGL globe, Cobe orb]
-    weak: [globe component, 3D globe]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - 60fps-animation
+  - motion-engineering
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Cobe JS — Lightweight 3D WebGL Globe Visuals
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before building WebGL 3D globe components with Cobe, you MUST inspect:
+1. `package.json` → Verify `cobe` dependency exists
+2. WebGL Context Cleanup (Section 59) → Ensure `globe.destroy()` is called in the `useEffect` unmount cleanup to prevent memory leaks
+3. Canvas Sizing (Section 65) → Match `devicePixelRatio` to high-DPI screens and set `aspectRatio: 1` to prevent visual stretching
 
 Integrate ultra-fast, 5KB WebGL interactive globes for landing page hero sections and interactive location maps.
 

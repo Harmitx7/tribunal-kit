@@ -1,18 +1,27 @@
+---
+description: Tokenless Prompt Compiler. Converts conversational requests into hyper-dense YAML structures that LLMs process perfectly, reducing prompt tokens and improving response accuracy. Zero API tokens used during compilation.
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - llm-engineering
+  - clean-code
+scripts-binding:
+  - .agent/scripts/prompt_compiler.js
+---
+
 # /super-prompt — Tokenless Prompt Compiler
+
+$ARGUMENTS
 
 ---
 
-## required-skills: llm-engineering
+## Mandatory Pre-Flight Context Inspection
 
-Converts conversational, fluffy requests into hyper-dense YAML structures that LLMs process perfectly, reducing prompt tokens and drastically improving response accuracy. **Zero API tokens are used during compilation.**
-
-## $CONTEXT_REQUIRED
-
-```
-Read BEFORE super-prompting:
-□ Target prompt               → Determine what the user wants to achieve
-□ .agent/scripts/prompt_compiler.js → Verify script exists
-```
+Before compiling prompts or running prompt compression, you MUST inspect:
+1. Target Input Request Text → Read target user request to strip conversational fillers
+2. Prompt Compiler Script (`.agent/scripts/prompt_compiler.js`) → Verify availability of local prompt compiler script
+3. Zero Token Overhead Principle → Ensure compilation executes locally without invoking LLM API calls
 
 ---
 

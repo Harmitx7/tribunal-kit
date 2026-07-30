@@ -1,19 +1,28 @@
 ---
 name: harden
 description: Make interfaces production-resilient with robust empty states, error boundaries, loading skeletons, offline indicators, and internationalization (i18n) layout support.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: UI Resilience & Production Safety
-  tier: pro
-  co-requires: [error-resilience, polish, web-accessibility-auditor]
-  trigger-signals:
-    strong: [harden, ui resilience, error states, empty states, loading skeletons, offline support, i18n layout]
-    weak: [error handling ui, loading state]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - polish
+  - baseline-ui
+  - resilience-reviewer
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Harden — Production UI Resilience & Edge Case Protection
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing UI component logic, you MUST inspect:
+1. Component state tree → Verify presence of explicit loading skeleton, error boundary fallback, and empty states
+2. CLS Prevention rules (Section 36) → Match skeleton placeholder dimensions exactly to incoming content elements
+3. String Expansion (i18n) rules (Section 40) → Avoid hardcoded pixel widths (`width: 120px`); use `min-width` and flexible auto-layout
 
 Ensure UI components gracefully handle network failures, missing data, slow connections, extreme text lengths, and internationalization.
 

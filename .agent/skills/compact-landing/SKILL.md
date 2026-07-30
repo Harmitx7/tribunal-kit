@@ -1,19 +1,28 @@
 ---
 name: compact-landing
 description: Build compact, premium landing pages with clear CTA hierarchy, quiet typography, restrained visual noise, and high conversion flow.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Compact Landing Page & Minimalist UI
-  tier: pro
-  co-requires: [landing-page, quieter, baseline-ui]
-  trigger-signals:
-    strong: [compact-landing, compact landing page, quiet typography, minimal landing page, restrained UI, high-conversion compact]
-    weak: [simple landing, compact page]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - landing-page
+  - quieter
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Compact Landing — Premium Minimalist Landing Pages
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering compact landing pages, you MUST inspect:
+1. Viewport Fit (Section 24) → Fit hero, preview, and primary CTA inside a single 1080p desktop viewport without initial scrolling
+2. Section Limit (Section 35) → Limit total page structure to max 4 tight sections (Hero, Social Proof, 3-Benefit Grid, Footer Card)
+3. Typography Restraint (Section 30) → Cap display font sizes at `clamp(1.75rem, 4vw, 2.75rem)` and apply `text-wrap: balance`
 
 Build tight, ultra-focused, high-converting landing pages that deliver value quickly without unnecessary multi-scroll filler.
 

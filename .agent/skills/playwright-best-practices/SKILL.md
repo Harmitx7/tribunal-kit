@@ -1,14 +1,28 @@
 ---
 name: playwright-best-practices
 description: Playwright End-to-End (E2E) testing mastery. Resilient selectors, auto-waiting mechanisms, parallel test execution, mocking network requests, fixture management, and cross-browser CI configurations. Use when configuring, deploying, or writing E2E web tests.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - testing-patterns
+  - webapp-testing
+  - qa-automation-engineer
+scripts-binding:
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Playwright E2E — Bulletproof Testing Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing Playwright E2E tests or test fixtures, you MUST inspect:
+1. Auto-Waiting & Resilient Selectors (Section 26) → Use `getByRole()`, `getByLabel()` or `getByTestId()`; ban `page.waitForTimeout()` and CSS layout paths
+2. Complete Test Isolation Rule (Section 53) → Isolate every test in fresh browser context; ban cascading tests dependent on previous test outcomes
+3. External Network Interception (Section 86) → Intercept 3rd party external APIs (`page.route()`) to eliminate flaky network failures in CI
 
 ## Hallucination Traps (Read First)
 

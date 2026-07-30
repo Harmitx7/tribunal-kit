@@ -1,14 +1,28 @@
 ---
 name: testing-patterns
 description: Testing mastery across stacks. Unit testing with Jest/Vitest/pytest, integration testing, E2E with Playwright, mocking strategies, test architecture (AAA, Given-When-Then), code coverage, snapshot testing, API testing, component testing with Testing Library, and TDD workflow. Use when writing tests, designing test architecture, or improving test coverage.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.1.0
-last-updated: 2026-04-26
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - tdd-workflow
+  - test-result-analyzer
+  - playwright-best-practices
+scripts-binding:
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Testing Patterns — Cross-Stack Testing Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing unit, integration, or component tests, you MUST inspect:
+1. AAA Pattern & Single Act Rule (Section 37) → Structure tests strictly as Arrange-Act-Assert; perform only 1 single action per test case
+2. Accessibility-First Query Hierarchy (Section 343) → Query React components by `getByRole` or `getByLabelText`; ban default `getByTestId` queries
+3. Dependency Injection Over Global Mocks (Section 268) → Prefer constructor dependency injection over global `vi.mock()` to prevent cross-test state leakage
 
 # Testing Patterns — Cross-Stack Testing Mastery
 

@@ -1,19 +1,28 @@
 ---
 name: audit-and-fix
 description: Accessibility auditing and remediation workflow combining detection, prioritization, and practical code fixes for WCAG 2.2 AA compliance issues.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Accessibility Auditing & Remediation
-  tier: pro
-  co-requires: [web-accessibility-auditor, fixing-accessibility]
-  trigger-signals:
-    strong: [audit-and-fix, accessibility audit, WCAG remediation, fix accessibility, a11y audit, AccessLint]
-    weak: [a11y check, accessibility fix]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - fixing-accessibility
+  - build-primitive
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Audit and Fix — Accessibility Remediation Workflow
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before performing accessibility audits or fixes, you MUST inspect:
+1. Automated Violation Detection (Section 24) → Audit markup for missing `alt`, un-labeled inputs/buttons, and `onClick` on non-interactive elements
+2. Prioritization Matrix (Section 31) → Fix Level A blockers (forms, focus traps, keyboard access) before addressing contrast or landmark regions
+3. Anti-Redundant ARIA rule (Section 60) → Do NOT add `role="button"` to native `<button>` tags; apply `aria-hidden="true"` to decorative inner SVGs
 
 Systematically audit HTML/JSX markup against WCAG 2.2 AA standards, prioritize accessibility violations, and apply verified code fixes.
 

@@ -1,13 +1,29 @@
 ---
-name: Knowledge Graph Analyzer
+name: knowledge-graph
 description: Understands the architecture, risk blast radius, and dependencies of the codebase without token bloat. Now includes Context Snapshots for 27x token reduction.
 version: 3.0.0
-routing:
-  domain: general
-  tier: basic
+last-updated: 2026-07-30
+skills:
+  - codebase-design
+  - architecture
+  - fabel-protocol
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/graph_builder.js
+  - .agent/scripts/graph_zoom.js
+  - .agent/scripts/verify_all.js
 ---
 
 # /graph — Knowledge Graph Skill v3.0
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before inspecting codebase architecture, you MUST inspect:
+1. Context Snapshots (`.agent/history/snapshots/`) → Read pre-computed JSON snapshots to reduce token overhead by 27x
+2. `graph_builder.js` output → Check downstream dependencies, risk scores, and blast radius before modifying any file
+3. Module boundaries → Identify top imported symbols and high-risk core modules
 
 Use this skill when the user types `/graph` or when you need to deeply understand the architecture of an unfamiliar codebase without suffering from context-window bloat.
 

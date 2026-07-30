@@ -1,19 +1,28 @@
 ---
 name: masked-reveal
 description: CSS clip-path, SVG masking, and layered entrance reveals for images, hero banners, and text blocks.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Visual Masking & Entrance Motion
-  tier: pro
-  co-requires: [60fps-animation, framer-motion-expert]
-  trigger-signals:
-    strong: [masked-reveal, clip-path reveal, SVG mask animation, curtain reveal, text mask reveal]
-    weak: [mask effect, clip path animation]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - 60fps-animation
+  - framer-motion-expert
+  - motion-engineering
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Masked Reveal — Clip-Path & Layered Entrances
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing clip-path or SVG mask reveals, you MUST inspect:
+1. Target DOM elements → Enforce `overflow: hidden` on text line wrappers to prevent unmasked overflow artifacts
+2. `clip-path: inset()` syntax (Section 26) → Prefer CSS `clip-path` over heavy SVG masks for linear curtain wipes
+3. Transition Easing → Use custom ease-out curves (`cubic-bezier(0.16, 1, 0.3, 1)`) for smooth deceleration
 
 Create editorial, high-end visual reveals using CSS `clip-path` and SVG masks.
 

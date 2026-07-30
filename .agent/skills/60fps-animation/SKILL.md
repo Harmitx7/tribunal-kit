@@ -1,19 +1,28 @@
 ---
 name: 60fps-animation
 description: Web animation performance guidance for avoiding layout thrashing, achieving 60/120fps motion, and using GPU compositor-friendly properties (transform, opacity).
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Animation Performance & GPU Hardware Acceleration
-  tier: pro
-  co-requires: [fixing-motion-performance, framer-motion-expert, gsap-performance]
-  trigger-signals:
-    strong: [60fps-animation, animation performance, layout thrashing, compositor properties, GPU acceleration, 120fps animation, smooth motion]
-    weak: [fast animation, fix laggy animation]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - motion-engineering
+  - accessible-animation
+  - fixing-motion-performance
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # 60fps Animation — GPU Compositor & High-Performance Motion
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing animation CSS or JS, you MUST inspect:
+1. Target animated properties → Strictly enforce GPU compositor-only properties (`transform`, `opacity`) and ban layout-triggering properties (`width`, `height`, `top`, `left`)
+2. Scale Math Replacement (Section 29) → Use `transform: scaleX(2)` instead of animating `width`
+3. `will-change` VRAM Management (Section 45) → Apply `will-change` dynamically during active animation and remove upon completion
 
 Eliminate jank, layout thrashing, and frame drops to achieve locked 60fps / 120fps UI animations.
 

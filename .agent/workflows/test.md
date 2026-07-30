@@ -1,6 +1,15 @@
 ---
 description: Test generation and test running command. Creates and executes tests for code using the Testing Trophy strategy (unit → integration → E2E). Tests are behavioral (GIVEN/WHEN/THEN), not structural. Tests cannot be approved without covering happy path, error path, and boundary cases.
-required-skills: testing-patterns, tdd-workflow
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - testing-patterns
+  - tdd-workflow
+  - test-engineer
+scripts-binding:
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # /test — Test Generation & Execution
@@ -9,14 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE testing:
-□ Target files                → Code to be tested
-□ Existing tests              → Understand testing patterns already used
-□ package.json                → Check test frameworks (Jest, Vitest, etc.)
-```
+Before generating test suites or executing test runners, you MUST inspect:
+1. Workspace Test Runner Configuration (`package.json`, `jest.config.js`, `vitest.config.ts`, `pytest.ini`) → Verify installed runner & test environment
+2. Target Module Code & Contracts → Inspect function signatures, parameters, exceptions, and return types
+3. 3-Case Coverage Requirement → Ensure test cases explicitly cover Happy Path, Error Handling Path, and Boundary Conditions before approving test files
 
 ---
 

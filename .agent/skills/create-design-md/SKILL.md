@@ -1,19 +1,28 @@
 ---
 name: create-design-md
 description: Create or update a DESIGN.md from an existing product repository or public website, with evidence-based design tokens and guidance. Use when asked to document an interface's design language, reconstruct its visual system, extract design tokens, or give coding agents persistent UI context.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: UI Craft & Design Engineering
-  tier: pro
-  co-requires: [extract-design-system, frontend-design]
-  trigger-signals:
-    strong: [create-design-md, DESIGN.md, extract design tokens, document design language, visual system documentation]
-    weak: [design tokens, theme docs]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - baseline-ui
+  - better-ui
+  - better-colors
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Create DESIGN.md — Evidence-Based Design System Specification
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before extracting design tokens or authoring `DESIGN.md`, you MUST inspect:
+1. Operating Mode (Section 22) → Choose Repository Mode (scan `globals.css` / `theme.ts` / primitives) or URL Mode (3-proof observation)
+2. Contract Schema (Section 41) → Enforce strict 5-section layout (Identity, Colors, Typography, Spacing/Geometry, Motion)
+3. Read-Only Safety (Section 86) → NEVER mutate product source code while extracting tokens or creating `DESIGN.md`
 
 Generate or update an authoritative `DESIGN.md` file for a product repository or website by extracting verified design tokens, components, and layout guidance.
 

@@ -1,14 +1,28 @@
 ---
 name: database-design
 description: Database design mastery. Schema design with normalization, denormalization strategies, indexing, migration pipelines, ORM selection (Prisma/Drizzle/SQLAlchemy/EF Core), connection pooling, soft deletes, audit trails, multi-tenancy, and serverless database patterns. Use when designing schemas, choosing databases, planning migrations, or architecting data layers.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 3.1.0
-last-updated: 2026-04-07
-applies-to-model: gemini-3-1-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - supabase-postgres-best-practices
+  - sql-pro
+  - db-latency-auditor
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Database Design — Schema & Architecture Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing schemas or writing SQL migrations, you MUST inspect:
+1. Timezone Timestamp Standard (Section 17) → Use `TIMESTAMPTZ` for all timestamp columns; ban bare `TIMESTAMP`
+2. Primary Key Index Performance (Section 18) → Use `BIGINT GENERATED ALWAYS AS IDENTITY` or UUID v7 (time-ordered); ban random UUID v4 as primary key
+3. Foreign Key Indexing (Section 19) → Create explicit indexes on all foreign key columns (`CREATE INDEX idx_... ON table(fk_id)`) to prevent full table scans during cascading deletes
 
 # Database Design — Schema & Architecture Mastery
 

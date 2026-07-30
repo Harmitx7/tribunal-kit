@@ -1,19 +1,28 @@
 ---
 name: improve-ui
 description: Audit an existing product surface against its own design evidence, identify verified UI problems, and write self-contained implementation plans for another agent. Strictly read-only on product source. Use when asked to review, refine, improve, or clean up an interface without replacing its identity.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: UI Craft & Design Audit
-  tier: master
-  co-requires: [better-ui, baseline-ui]
-  trigger-signals:
-    strong: [improve-ui, audit interface, refine UI, UI review, design-system drift, UI cleanup plan]
-    weak: [review layout, UI feedback]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - better-ui
+  - baseline-ui
+  - create-design-md
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Improve UI — Evidence-Based UI Audit & Implementation Planning
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before auditing UI surfaces or writing remediation plans, you MUST inspect:
+1. Read-Only Constraint (Section 24) → Strictly NEVER modify product source code (`src/`, `components/`, `app/`) during an `improve-ui` audit session
+2. 3-Proof Requirement (Section 40) → Every reported defect MUST present Observation (code line/element), Basis (token/grid violation), and Consequence
+3. Plan Artifact Output (Section 25) → Write implementation plans to `design-plans/` or output structured markdown for execution
 
 Audit a specific product surface against its governing design tokens and guidelines, identify verified UI defects, and generate self-contained implementation plans for remediation.
 

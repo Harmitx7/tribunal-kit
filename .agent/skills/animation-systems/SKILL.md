@@ -1,19 +1,28 @@
 ---
 name: animation-systems
 description: Systematize animation tokens (durations, easings, keyframes) across a full codebase for consistent motion design and maintenance.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Motion Systems & Token Design
-  tier: pro
-  co-requires: [motion-engineering, emil-design-eng, 60fps-animation]
-  trigger-signals:
-    strong: [animation-systems, motion tokens, animation design system, easing tokens, duration scale]
-    weak: [motion tokens, animation variables]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - motion-engineering
+  - 60fps-animation
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Animation Systems — Global Motion Tokens & System Architecture
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before defining animation tokens or styling transitions, you MUST inspect:
+1. `index.css` / `DESIGN.md` → Verify presence of centralized `--duration-*` and `--ease-*` CSS custom properties
+2. Centralized Motion Tokens Schema (Section 26) → Enforce standardized duration tiers (80ms instant to 500ms delight)
+3. Anti-Ad-Hoc Easing Rule (Section 48) → Strictly prohibit inline custom cubic-bezier curves; reference motion tokens instead
 
 Architect a unified, scalable motion system with centralized CSS easing curves, duration tiers, and standardized keyframes.
 

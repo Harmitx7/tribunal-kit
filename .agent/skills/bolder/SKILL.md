@@ -1,19 +1,28 @@
 ---
 name: bolder
 description: Increase visual impact, punch, and personality for generic or bland interfaces. Use when the user asks to make the UI pop, stand out, have more character, or feel less template-like.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Visual Design & Brand Identity
-  tier: pro
-  co-requires: [better-colors, better-typography, impeccable]
-  trigger-signals:
-    strong: [bolder, make it pop, more punch, stand out, add character, feel less generic]
-    weak: [bold design, vibrant, striking]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - better-colors
+  - better-ui
+  - impeccable
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Bolder — Injecting Punch & Personality into UI
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before applying bold visual transformations, you MUST inspect:
+1. `DESIGN.md` / `package.json` → Check existing brand color variables and design tokens
+2. Typographic Contrast Scaling rules (Section 24) → Enforce extreme scale jumps (`1.5rem` to `4.5rem`) for display headings
+3. Single Electric Accent System (Section 28) → Use one high-chroma accent color sparingly for primary CTAs and badges
 
 Transform generic, boring template UIs into high-impact, distinctive interfaces with strong visual presence.
 

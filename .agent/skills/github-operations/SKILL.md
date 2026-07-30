@@ -1,14 +1,28 @@
 ---
 name: github-operations
 description: Git and GitHub workflow mastery. Branching strategies (Git Flow, trunk-based), commit message conventions, interactive rebase, merge conflict resolution, pull request best practices, GitHub Actions, branch protection rules, monorepo strategies, and git hooks. Use when working with Git, GitHub Actions, or any version control operations.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-01
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - git-pro
+  - cicd-pro
+  - bash-linux
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# GitHub Operations — Git & CI/CD Workflow Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before running Git commands or writing GitHub workflows, you MUST inspect:
+1. Local-Only Interactive Rebase (Section 172) → Perform interactive rebases (`git rebase -i`) ONLY on local unpushed commits; ban rebasing public/shared history
+2. Conventional Commit Standards (Section 55) → Format commit messages using Conventional Commits (`type(scope): description`) for automated changelogs
+3. Squash Merge Default (Section 146) → Enforce squash merge strategy for feature branches merging into main to keep history linear and clean
 
 # GitHub Operations — Git & CI/CD Workflow Mastery
 

@@ -1,13 +1,29 @@
 ---
 name: parallel-agents
 description: Parallel processing coordination for multi-agent swarms. Asynchronous dispatches, merging divergent logic streams, race conditions in autonomous agents, avoiding Git conflicts in concurrent generation, and fan-out/fan-in processing patterns. Use when orchestrating multiple agents simultaneously.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - agent-organizer
+  - fabel-protocol
+  - workflow-optimizer
+scripts-binding:
+  - .agent/scripts/swarm_dispatcher.js
+  - .agent/scripts/verify_all.js
+---
+
+# Parallel Agents — Concurrent Orchestration Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before executing parallel agent dispatches, you MUST inspect:
+1. Target file paths for concurrent workers → Enforce directory isolation; never allow two parallel workers to edit the same file
+2. `Promise.allSettled()` error handling (Section 77) → Handle partial worker failures gracefully without crashing the pipeline
+3. Context Window Budget → Keep total context across all parallel workers under 80,000 tokens
+
 ---
 
 ## Hallucination Traps (Read First)

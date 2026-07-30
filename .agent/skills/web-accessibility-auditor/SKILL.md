@@ -1,14 +1,28 @@
 ---
 name: web-accessibility-auditor
 description: Web Accessibility (a11y) mastery. WCAG 2.2 AA standards, semantic HTML, ARIA attributes, keyboard navigation, focus management, screen reader compatibility, color contrast, and dynamic content announcements. Use when building UI components or auditing frontend code for accessibility compliance.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - fixing-accessibility
+  - audit-and-fix
+  - build-primitive
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Web Accessibility (a11y) — Inclusive UI Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before auditing accessibility or building UI components, you MUST inspect:
+1. Native Semantic HTML First Rule (Section 28) → Use native `<button>`, `<a>`, `<label>` elements; ban adding `role="button"` to non-interactive `<div>` tags
+2. Keyboard Focus Visibility (Section 61) → Preserve `:focus-visible` outlines; ban global outline removal (`*:focus { outline: none; }`)
+3. Explicit Form Label Linking (Section 129) → Explicitly link inputs to `<label>` via `id`/`for` attributes; ban using `placeholder` as a label replacement
 
 ## Hallucination Traps (Read First)
 

@@ -1,19 +1,28 @@
 ---
 name: delight
 description: Inject micro-moments of delight, subtle surprise interactions, personality, and tactile feedback into user interfaces. Use when building success celebrations, copy-to-clipboard feedback, empty states, or playful UI elements.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Micro-Delight & Interactive Polish
-  tier: pro
-  co-requires: [whimsy-injector, micro-interaction, emil-design-eng]
-  trigger-signals:
-    strong: [delight, micro-delight, make it playful, add personality, surprise animation, tactile feedback]
-    weak: [sparkle, fun ui, success feedback]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - whimsy-injector
+  - micro-interaction
+  - accessible-animation
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Delight — Micro-Moments of Tactile UI Polish
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing micro-delight moments, you MUST inspect:
+1. Action frequency context → Keep high-frequency delight (performed 50+ times/day) under 100ms and non-intrusive
+2. `prefers-reduced-motion` CSS media query → Provide fallback states for particle bursts and spring animations
+3. Morphing State Checkmark rules (Section 24) → Hold confirmation icon for 1.5s before smoothly morphing back
 
 Elevate everyday digital interactions with subtle, memorable details that make software a joy to use.
 

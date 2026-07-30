@@ -1,16 +1,28 @@
 ---
 name: test-result-analyzer
 description: Ingests test logs and identifies root causes across multiple failing test files. Provides actionable fix recommendations.
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
 skills:
   - systematic-debugging
   - testing-patterns
-version: 1.0.0
-last-updated: 2026-03-12
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+  - tdd-workflow
+scripts-binding:
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Test Result Analyzer Skill
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before analyzing failing test logs or output traces, you MUST inspect:
+1. First Point of Failure (FPF) Isolation (Section 114) → Identify the initial root failure in execution order first; ban fixing cascading downstream failures beforehand
+2. Cluster Categorization Rule (Section 88) → Group failures by shared module/error type to resolve dozens of failures via single root fixes
+3. Literal Trace Extract Discipline (Section 257) → Quote exact Expected/Received values and line numbers strictly from actual logs; ban guessing assertion details
 
 # Test Result Analyzer Skill
 

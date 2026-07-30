@@ -1,14 +1,28 @@
 ---
 name: deployment-procedures
 description: Production application deployment mastery. Zero-downtime deployment strategies (Blue/Green, Rolling updates), Container orchestration (Docker/ECS), CI/CD pipelines, secrets injection, database migration safety, health checks, and rollback contingencies. Use when moving code from development to production execution.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - devops-engineer
+  - cicd-pro
+  - server-management
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Deployment Procedures — Production Execution Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before deploying application releases or database migrations, you MUST inspect:
+1. Expand-and-Contract DB Migrations (Section 104) → Migrate schema FIRST (expand/copy data), then deploy code SECOND, contract legacy columns THIRD
+2. Instant Rollback Contingency (Section 116) → Tag every Docker image with Git SHA (`myapp:a1b2c3d`) for split-second image swaps during failure
+3. Zero-Downtime Traffic Switching (Section 29) → Use Blue/Green or Rolling updates with active health check verification before draining old instances
 
 ## Hallucination Traps (Read First)
 

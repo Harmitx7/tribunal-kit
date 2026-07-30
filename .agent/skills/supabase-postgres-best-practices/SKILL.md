@@ -1,14 +1,28 @@
 ---
 name: supabase-postgres-best-practices
 description: Database architect expert in Supabase and PostgreSQL. Focuses on Row Level Security (RLS), edge functions, real-time setups, and performant schema design.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-03-30
-applies-to-model: claude-3-7-sonnet, gemini-2.5-pro
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - database-design
+  - sql-pro
+  - db-latency-auditor
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Supabase & Postgres Best Practices
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before engineering Supabase schemas or writing PostgreSQL migrations, you MUST inspect:
+1. Row Level Security Mandatory Policy (Section 28) → Always enable RLS on every table (`alter table ... enable row level security;`) before deploying
+2. Direct UID Match RLS Rule (Section 30) → Use direct equality (`auth.uid() = user_id`) in RLS policies; avoid slow `IN` subqueries
+3. SQL Migration File Requirement (Section 38) → Write explicit SQL migration files (`supabase/migrations/`) rather than manual GUI operations
 
 ## Hallucination Traps (Read First)
 

@@ -1,10 +1,28 @@
 ---
 name: advanced-rag-pipelines
 description: Production-grade Retrieval-Augmented Generation (RAG) mastery. Semantic chunking, Hybrid Search (Dense + Sparse/BM25), Cross-Encoder Reranking, and architecture-agnostic vector database management.
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - llm-engineering
+  - ai-prompt-injection-defense
+  - database-design
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Advanced RAG Pipelines (Production AI Data)
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before building RAG pipelines or vector search components, you MUST inspect:
+1. Hybrid Search Requirement (Section 16) → Always combine Dense Vector Search with Sparse BM25 Search to catch exact keyword matches (IDs, versions)
+2. Two-Stage Reranking Pipeline (Section 29) → Retrieve top ~50 candidate chunks, then rerank with a Cross-Encoder down to top 3-5 before feeding the LLM
+3. Context XML Framing (Section 59) → Wrap retrieved chunks inside explicit `<context>` XML tags in the prompt to prevent indirect prompt injection
 
 # Advanced RAG Pipelines (Production AI Data)
 

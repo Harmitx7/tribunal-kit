@@ -1,17 +1,28 @@
 ---
 name: git-pro
 description: Industry-level Git & GitHub mastery. Advanced Git internals (bisect, worktrees, reflog), monorepo strategies (Turborepo/Nx), semantic-release, OIDC-based GitHub Actions auth (no static AWS secrets), CODEOWNERS, matrix builds, reusable workflows, and release engineering. Use when advanced Git operations, complex branching strategies, or production-grade CI/CD workflow authoring is required.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-06-21
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: devops
-  tier: pro
-  supersedes: github-operations
-  trigger-signals:
-    strong: [monorepo, bisect, reflog, OIDC, semantic-release, CODEOWNERS]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - github-operations
+  - cicd-pro
+  - bash-linux
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Git Pro — Industry-Level Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before running complex Git operations or writing release workflows, you MUST inspect:
+1. Safe Force Push Rule (Section 18) → Use `--force-with-lease` exclusively; ban raw `git push --force` on shared/remote branches
+2. Reflog Recovery Strategy (Section 30) → Inspect `git reflog` to recover lost commits or bad resets before discarding uncommitted state
+3. OIDC Authentication Protocol (Section 208) → Configure OIDC AWS auth (`id-token: write`) in GitHub Actions workflows; ban static AWS access keys
 
 ## Hallucination Traps (Read First)
 

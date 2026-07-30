@@ -1,19 +1,28 @@
 ---
 name: to-spring-or-not-to-spring
 description: Audit and decide when to use physics-based spring animations (stiffness, damping, mass) vs duration-based cubic-bezier easing curves.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Motion Physics & Animation Decisions
-  tier: pro
-  co-requires: [emil-design-eng, framer-motion-expert]
-  trigger-signals:
-    strong: [to-spring-or-not-to-spring, spring physics, spring animation vs cubic bezier, stiffness damping mass, motion physics decision]
-    weak: [spring animation, spring vs easing]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - motion-engineering
+  - framer-motion-expert
+  - 60fps-animation
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # To Spring or Not to Spring — Motion Physics Decision Matrix
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before selecting animation model (Spring vs Cubic-Bezier), you MUST inspect:
+1. Spring vs Duration Decision Matrix (Section 22) → Use Spring physics ONLY for interruptible gestures, drag, toggles, and playful badges
+2. Modal & Dropdown Rule → Use deterministic cubic-bezier curves (`cubic-bezier(0.16, 1, 0.3, 1)`) for modals, dropdowns, and route transitions
+3. Anti-Conflict Rule (Section 46) → Never specify both `duration` AND spring `stiffness/damping` parameters together in Framer Motion
 
 Decide when to use physics-driven spring models (Framer Motion / Reanimated) vs duration-based cubic-bezier easing curves.
 

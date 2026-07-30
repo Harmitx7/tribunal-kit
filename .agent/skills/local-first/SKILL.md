@@ -1,14 +1,28 @@
 ---
 name: local-first
 description: Local-first software architecture mastery. CRDTs (Conflict-free Replicated Data Types), IndexedDB synchronization, sync engines (ElectricSQL, Replicache, PowerSync), offline-capable data fetching, optimistic UI, and SQLite in the browser (WASM). Use when building PWA offline capabilities, rapid UIs, or multiplayer collaborative tools.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - local-first-architecture
+  - react-specialist
+  - baseline-ui
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Local-First Architecture — Offline-capable Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before implementing local-first storage or CRDT synchronization, you MUST inspect:
+1. Conflict Resolution Strategy (Section 15) → Define explicit conflict resolution (LWW timestamps or Yjs CRDTs) before writing local sync logic
+2. Persistent Storage (Section 16) → Use IndexedDB (via Dexie/idb) or SQLite WASM for local persistence; ban localStorage for >5MB data
+3. Incremental Watermark Sync (Section 17) → Perform delta syncs using timestamps/watermarks rather than re-fetching full datasets
 
 ## Hallucination Traps (Read First)
 

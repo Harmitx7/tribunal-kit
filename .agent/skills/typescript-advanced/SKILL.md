@@ -1,14 +1,28 @@
 ---
 name: typescript-advanced
 description: Advanced TypeScript mastery. Generics with constraints, conditional types, mapped types, template literal types, the satisfies operator, discriminated unions, branded/nominal types, type-level programming, utility type internals, variance annotations, module augmentation, and declaration merging. Use when writing complex type definitions, building type-safe libraries, or solving "how do I type this?" problems.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-04-17
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - clean-code
+  - data-validation-schemas
+  - lint-and-validate
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Advanced TypeScript — Type-Level Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before writing complex TypeScript types or library abstractions, you MUST inspect:
+1. Zero `as any` Cast Rule (Section 15) → Fix the underlying type signature or use `as unknown as T` with explicit reasoning comment; ban `as any`
+2. Discriminated Unions for State Machine Modeling (Section 62) → Model multi-state objects with tagged discriminated unions for compile-time exhaustive checks
+3. The `satisfies` Operator vs Type Assertion (Section 193) → Use `satisfies` to validate types without widening object literals
 
 ## Hallucination Traps (Read First)
 

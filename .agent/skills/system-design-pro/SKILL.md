@@ -1,16 +1,28 @@
 ---
 name: system-design-pro
 description: Industry-level system design mastery for interviews and production. The 6-step design framework, scale estimation (DAU→QPS→storage→bandwidth), core building blocks (load balancers L4/L7, CDN, caches, queues), database selection matrix, CAP Theorem applied, and reference designs for URL shortener, rate limiter, Twitter feed, distributed cache, and notification system. Use when designing systems for scale, conducting architecture reviews, or preparing system design discussions.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 1.0.0
-last-updated: 2026-06-21
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: architecture
-  tier: pro
-  trigger-signals:
-    strong: [design a system, scale estimation, CAP Theorem, rate limiter]
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - architecture
+  - database-design
+  - cloud-architect
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# System Design Pro — Industry-Level Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing system architecture or writing scale proposals, you MUST inspect:
+1. 6-Step Design Framework (Section 27) → Execute Clarify Scope, Scale Estimation, API Definition, Data Model, High-Level Design, and Deep Dive in exact order
+2. Quantified Scale Estimation (Section 65) → Calculate read/write QPS, storage growth, and bandwidth before selecting database or caching tiers
+3. Monolith First Rule (Section 17) → Start with modular monolith for $<10\text{K}$ RPM; ban introducing microservices or sharding prematurely
 
 ## Hallucination Traps (Read First)
 

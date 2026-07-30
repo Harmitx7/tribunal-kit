@@ -1,6 +1,15 @@
 ---
 description: Automated multi-stage API endpoint testing. Generates and runs auth-aware request sequences (login → use token → test CRUD → verify errors). Reports response codes, schema mismatches, and unexpected data.
-required-skills: testing-patterns, api-patterns
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - testing-patterns
+  - api-patterns
+  - backend-security-expert
+scripts-binding:
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/security_scan.js
 ---
 
 # /api-tester — Automated API Testing
@@ -9,14 +18,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE testing:
-□ Target endpoint files       → Understand the expected parameters and auth needs
-□ package.json                → Check testing frameworks available
-□ .env.example / .env.test     → Check for test database or mock API URLs
-```
+Before running automated API endpoint tests or auth-aware request sequences, you MUST inspect:
+1. Target Route Definition & Data Schemas → Inspect route parameters, body validation schemas (Zod/Pydantic), and auth middleware
+2. Test Server URL & Credentials (`.env.test`) → Verify base URL and test token environment variables
+3. Multi-Stage Request Sequence → Enforce sequential execution: Auth Login → Token Capture → CRUD Operations → Error Edge Case Verification
 
 ---
 

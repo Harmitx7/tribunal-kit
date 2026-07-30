@@ -1,14 +1,28 @@
 ---
 name: observability
 description: Production observability mastery. Structured logging (Pino/Winston), OpenTelemetry tracing, metrics (Prometheus/Grafana), SLIs/SLOs/error budgets, distributed tracing, alerting design, health checks, and AI observability. Use when setting up monitoring, debugging production issues, or designing observable distributed systems.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-01
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - devops-incident-responder
+  - nodejs-best-practices
+  - backend-security-expert
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Observability — Production Monitoring Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before instrumenting applications for observability, you MUST inspect:
+1. Structured JSON Logging Rule (Section 34) → Use Pino/structlog for structured JSON logging with ISO timestamps; ban plain `console.log` in production
+2. Separation of Liveness & Readiness Checks (Section 253) → Isolate `/health/live` (process active) from `/health/ready` (DB connected); ban DB calls in liveness checks to prevent restart loops
+3. Correlation Tracking Context (Section 80) → Inject `x-request-id` via AsyncLocalStorage or middleware so every log line is correlated to a specific request
 
 # Observability — Production Monitoring Mastery
 

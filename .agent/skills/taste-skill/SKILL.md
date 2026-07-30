@@ -1,19 +1,28 @@
 ---
 name: taste-skill
 description: Senior UI/UX frontend skill that enforces anti-slop design decisions, motion quality, visual rhythm, micro-craft, and architectural discipline.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Design Taste & Anti-Slop Discipline
-  tier: pro
-  co-requires: [better-ui, impeccable, frontend-design]
-  trigger-signals:
-    strong: [taste-skill, design taste, anti-slop, frontend craft discipline, high taste UI]
-    weak: [taste, good design]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - better-ui
+  - impeccable
+  - baseline-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Taste Skill — Senior Design Taste & Anti-Slop Discipline
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before rendering UI components, you MUST inspect:
+1. Banned AI Clichés (Section 24) → Strictly ban purple/indigo gradients (`from-purple-600 to-indigo-600`), glowing neon borders, and floating 3D spheres
+2. Typography Rules (Section 30) → Apply negative tracking (`-0.025em`) + `text-wrap: balance` to display headings; cap body text at `65ch` max width
+3. Tactile Press Feedback (Section 39) → Enforce `:active` press feedback (`transform: scale(0.97)`) on all interactive buttons/cards
 
 Enforce senior-level design taste, anti-slop constraints, and visual craft across every component.
 

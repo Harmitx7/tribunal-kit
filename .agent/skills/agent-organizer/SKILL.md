@@ -1,14 +1,28 @@
 ---
 name: agent-organizer
 description: Master Agent orchestration framework. Coordination of sub-agents, workflow definitions, delegation patterns, state management across conversations, memory distillation, and execution loops. Use when assembling multi-agent systems or managing complex agent-to-agent architectures.
-allowed-tools: Read, Write, Edit, Glob, Grep
-version: 2.0.0
-last-updated: 2026-04-02
-applies-to-model: gemini-2.5-pro, claude-3-7-sonnet
-routing:
-  domain: general
-  tier: basic
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - parallel-agents
+  - fabel-protocol
+  - agentic-patterns
+scripts-binding:
+  - .agent/scripts/swarm_dispatcher.js
+  - .agent/scripts/verify_all.js
 ---
+
+# Agent Organizer — Multi-Agent Orchestration Mastery
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before dispatching multi-agent tasks, you MUST inspect:
+1. `swarm-worker-registry.md` / `task.md` → Verify target worker agents and global execution state
+2. Context Window Budget rules (Section 1) → Trim worker payload context to max 3 files per dispatch
+3. Handoff state signals (`COMPLETE`, `BLOCKED`, `ERROR`) → Verify terminal status handling rules
 
 ## Hallucination Traps (Read First)
 

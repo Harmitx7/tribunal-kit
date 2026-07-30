@@ -1,6 +1,14 @@
 ---
 description: Interactive session state tracking for multi-conversation context continuity. Saves and restores agent context across separate sessions so work can be resumed without losing progress.
-required-skills: behavioral-modes, agent-organizer
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - behavioral-modes
+  - agent-organizer
+  - harness-protocol
+scripts-binding:
+  - .agent/scripts/session_manager.js
 ---
 
 # /session — Session State Management
@@ -9,13 +17,12 @@ $ARGUMENTS
 
 ---
 
-## $CONTEXT_REQUIRED
+## Mandatory Pre-Flight Context Inspection
 
-```
-Read BEFORE managing session:
-□ .agent/scripts/session_manager.js → Verify script exists and is executable
-□ Existing session files            → Check what previous sessions exist
-```
+Before saving, restoring, or clearing session state snapshots, you MUST inspect:
+1. Session Manager Executable (`.agent/scripts/session_manager.js`) → Confirm script availability and snapshot parameters
+2. Active Session History -> Read latest snapshot metadata (`session_id`, active task, modified files, open decisions)
+3. Zero Context Loss Rule → Verify state snapshot contains explicit next steps and task status prior to terminating conversation
 
 ---
 

@@ -1,19 +1,28 @@
 ---
 name: colorize
 description: Introduce strategic, harmonious, accessible color systems and OKLCH color palettes to visually flat or dull interfaces.
-version: 1.0.0
-last-updated: 2026-07-22
-applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
-routing:
-  domain: Color Systems & Palette Engineering
-  tier: pro
-  co-requires: [better-colors, frontend-design]
-  trigger-signals:
-    strong: [colorize, color system, OKLCH palette, introduce color, color palette generator, UI color tokens]
-    weak: [add color, theme colors]
+version: 3.0.0
+last-updated: 2026-07-30
+skills:
+  - better-colors
+  - baseline-ui
+  - better-ui
+tools: Read, Grep, Glob, Bash, Edit, Write
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Colorize — Color System & OKLCH Palette Design
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before designing color systems or applying color palettes, you MUST inspect:
+1. OKLCH Color Space (Section 24) → Use `oklch(L C H)` custom properties for uniform perceptual lightness across light/dark themes
+2. 60-30-10 Budget Rule (Section 39) → 60% Dominant Neutral (surfaces), 30% Structural Secondary (text/borders), 10% Intentional Accent (actions)
+3. Status Token Uniformity (Section 45) → Keep status color lightness consistent ($L \approx 0.60$–$0.72$) across Success, Warning, Destructive, and Info scales
 
 Architect uniform, perceptually balanced color scales using the modern OKLCH color space for light and dark modes.
 
