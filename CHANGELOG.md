@@ -3,15 +3,43 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [6.0.0] — 2026-07-29
+## [6.0.1] — 2026-08-05
 
-### ⚡ Hybrid Rust Core Engine & Multi-IDE Architecture Overhaul
+### ⚡ HyperSparse Router & Tri-Phase Wave Governance Architecture (183 Skills Expansion)
 
+- **HyperSparse Skill Router (`skill_topic_map.json`)**: Integrated lightweight 2-tier domain routing map indexing all 183 skills across 9 domain routes and file extension affinities (`.tsx`, `.ts`, `.py`, `.sql`, `.prisma`, `.tf`, `.tofu`, `.swift`). Cuts startup context overhead by **95%** (~3,000 tokens vs ~85,000) with **0 skills excluded**.
+- **Tri-Phase Wave Governance (`/tribunal-full`)**: Refactored the 21 parallel reviewers into 3 clean execution waves (Wave 1: Core Integrity, Wave 2: Security & Types, Wave 3: Domain & Performance), eliminating context window saturation and reviewer attention dilution.
+- **12 Essential 2026–2027 Skills Addition (Kit Total 171 → 183)**: Created and enriched 12 high-impact skills across AI, Database, Mobile, DevOps, Security, and Testing domains:
+  - `context-engineering-pro`: Prompt sandboxing, token budget allocation, high-density YAML formats.
+  - `agentic-workflows-2026`: ReAct execution loops, Zod tool schemas, parallel fan-out synthesis.
+  - `vector-search-pgvector`: pgvector 0.8.0+ iterative index scans, `halfvec(1536)` 50% RAM savings, RRF hybrid search SQL.
+  - `duckdb-analytical-sql`: Embedded OLAP queries, Direct Parquet processing, memory limits.
+  - `expo-router-v4`: React Native 0.76+ New Architecture (Fabric/TurboModules), Expo Router v4 typed routes, native haptics.
+  - `edge-ai-mobile`: ONNX Runtime Mobile inference, sub-10ms edge AI, 4-bit quantization.
+  - `platform-engineering-opentofu`: OpenTofu IaC AWS VPC & ECS module blueprints, static security analysis.
+  - `opentelemetry-observability`: OpenTelemetry SDK distributed tracing, W3C context propagation, OTLP exporters.
+  - `zero-trust-passkeys`: SimpleWebAuthn v13+ Passkey Autofill / Conditional UI (`useBrowserAutofill: true`), `AbortController` cancellation.
+  - `ai-app-hardening`: OWASP LLM 2026 risk matrix, indirect prompt injection defense filter (`sanitizeRAGDocument`).
+  - `playwright-ai-e2e`: Playwright 1.45+ ARIA role locators, zero-sleep auto-waiting, API route mocking.
+  - `property-based-testing`: Fast-Check Vitest generative input tuple testing, shrinking counter-example isolation.
+- **Tightly Bound Skill-Script & Co-Requirement Binding Standard**: Configured explicit `script:`, `scripts-binding:`, and `skills:` co-requirement fields in YAML frontmatters of all 183 skills, linking them to `.agent/scripts/` execution scripts (`security_scan.js`, `test_runner.js`, `schema_validator.js`, `lint_runner.js`).
+- **Manifest Synchronization (`.agent/.manifest.json`)**: Updated manifest checksum records for all 183 skills across both root and package workspaces.
+
+## [6.0.0] — 2026-07-30
+
+### ⚡ Hybrid Rust Core Engine & Unified v3.0.0 Payload Release
+
+- **Unified B+C Hybrid Routing Index (`routing_index.json` v3.0.0)**: Indexed 50 Specialist Agents (21 Parallel Reviewers + 29 Domain Specialists), 36 Slash Command Workflows, and 175 Skills categorized across 10 domain taxonomies with compact `trigger_keywords` arrays for instant intent matching without token bloat.
+- **Workflow Standard v3.0.0 Specification**: Upgraded all 36 slash command workflows (`/generate`, `/pipeline`, `/swarm`, `/tribunal-*`, `/audit`, `/debug`, `/plan`, etc.) with mandatory pre-flight context inspection gates, executable script bindings, and explicit YAML metadata (`version: 3.0.0`).
+- **History & Memory Subsystem v3.0.0 (`.agent/history/`)**: Deduplicated memory index (`MEMORY.md` saving ~60% token overhead), created root `history/README.md` architecture guide detailing the 4 pillars (Semantic Memory, Case Law Precedence, Code Snapshots, and Context Graphs), and defined W3C Case Law precedent schemas (`template-case.json`).
+- **21 Parallel Tribunal Reviewers**: Expanded Tribunal review pipeline with `visual-reviewer`, `interaction-reviewer`, `anti-pattern-reviewer`, `ux-reviewer`, `product-reviewer`, and `accessibility-reviewer` for comprehensive full-stack and UI/UX governance.
+- **W3C Design Tokens v3.0.0 (`.agent/templates/design-tokens.json`)**: Enhanced design system templates with 8 visual archetypes in OKLCH color space, typography font family stacks, and ambient elevation shadow tokens.
 - **Native Rust Context Density Broker (`crates/core/src/commands/context_broker.rs`)**: Implemented sub-15ms native scanning of `.agent` rules, skills, and target files with token footprint estimation. Integrated via `tryNativeContextBroker` in `.agent/scripts/context_broker.js` with zero-crash JS fallback.
 - **Parallel Tribunal Wave Group Engine (`crates/core/src/commands/dag_scheduler.rs`)**: Upgraded Kahn's algorithm DAG scheduler with `WaveGroup` tiering (`fast` vs `deep` tasks), enabling fast lint/type-safety reviewers to execute in parallel before deep security/performance auditors.
 - **Multi-IDE Concurrent Rule Sync Engine (`cmd_sync` in `crates/core/src/main.rs`)**: Built a Rust-native concurrent bridge engine (`sync_ide_bridges`) that force-writes governance rules across 6 major IDE targets (`.cursorrules`, `.windsurfrules`, `.gemini/GEMINI.md`, `.gemini/settings.json`, `.github/copilot-instructions.md`, `.claude/CLAUDE.md`) via `tokio::join!`.
-- **Terminal Status Dashboard (`cmd_status` in `crates/core/src/main.rs`)**: Upgraded terminal status output with real-time bridge freshness tracking (fresh/stale/missing), context token compression stats, and 20-reviewer pipeline readiness indicators in both human-readable ANSI formatting and machine-readable JSON.
+- **Terminal Status Dashboard (`cmd_status` in `crates/core/src/main.rs`)**: Upgraded terminal status output with real-time bridge freshness tracking (fresh/stale/missing), context token compression stats, and 21-reviewer pipeline readiness indicators.
 - **Guardrail Engine & Pre-Deploy Integration (`.agent/scripts/verify_all.js`)**: Integrated Step 7 (Rust Core Tests) into `verify_all.js` and added `ruleRustModuleRegistration` to `guardrail_engine.js` for strict binary/wrapper module alignment.
+
 
 ## [5.8.6] — 2026-07-28
 

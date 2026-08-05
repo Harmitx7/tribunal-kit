@@ -1,7 +1,7 @@
 {
   "name": "tribunal-kit",
-  "version": "6.0.0",
-  "description": "The operating system for AI software engineering — governance, memory, review pipelines, and reusable skills for every coding agent. 45 specialist agents, 35 workflows, 21 parallel Tribunal code reviewers, MCP server, Rust core engine, and long-running autonomous agent harness for Cursor, VSCode, Windsurf, Claude Code, and Aider.",
+  "version": "6.0.1",
+  "description": "Your AI writes code that doesn't exist. Tribunal Kit stops it. The governance layer for AI coding agents — 51 specialists, 27 parallel reviewers, 183 skills, Rust core, MCP server. Works with Cursor, VSCode, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
     "ai-agent",
@@ -103,12 +103,12 @@
     "typescript": "5.4.5"
 },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "6.0.0",
-    "@tribunal-kit/core-darwin-x64": "6.0.0",
-    "@tribunal-kit/core-linux-arm64": "6.0.0",
-    "@tribunal-kit/core-linux-x64": "6.0.0",
-    "@tribunal-kit/core-win32-arm64": "6.0.0",
-    "@tribunal-kit/core-win32-x64": "6.0.0"
+    "@tribunal-kit/core-darwin-arm64": "^6.0.1",
+    "@tribunal-kit/core-darwin-x64": "^6.0.1",
+    "@tribunal-kit/core-linux-arm64": "^6.0.1",
+    "@tribunal-kit/core-linux-x64": "^6.0.1",
+    "@tribunal-kit/core-win32-arm64": "^6.0.1",
+    "@tribunal-kit/core-win32-x64": "^6.0.1"
   },
   "jest": {
     "testMatch": [

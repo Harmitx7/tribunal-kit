@@ -2,15 +2,16 @@
   "version": "3.0.0",
   "last_updated": "2026-07-30",
   "summary": {
-    "total_agents": 50,
-    "total_workflows": 36,
-    "total_skills": 175
+    "total_agents": 51,
+    "total_workflows": 37,
+    "total_skills": 183
   },
   "agents": [
     { "name": "logic-reviewer", "file": "agents/logic-reviewer.md", "type": "reviewer", "routing_domain": "general", "routing_tier": "core", "description": "Always active reviewer for logic errors and boundary checks.", "trigger_keywords": ["logic", "bug", "boundary", "condition", "edge case"] },
     { "name": "security-auditor", "file": "agents/security-auditor.md", "type": "reviewer", "routing_domain": "security", "routing_tier": "core", "description": "OWASP Top 10 security scanner and vulnerability auditor.", "trigger_keywords": ["security", "owasp", "injection", "vulnerability", "auth"] },
     { "name": "precedence-reviewer", "file": "agents/precedence-reviewer.md", "type": "reviewer", "routing_domain": "general", "routing_tier": "core", "description": "Checks Case Law and architectural precedence before generation.", "trigger_keywords": ["precedence", "case law", "pattern", "convention"] },
     { "name": "complexity-reviewer", "file": "agents/complexity-reviewer.md", "type": "reviewer", "routing_domain": "general", "routing_tier": "core", "description": "Checks over-engineering and Dependency Ladder compliance.", "trigger_keywords": ["complexity", "ladder", "overengineering", "simplification"] },
+    { "name": "minimalist-reviewer", "file": "agents/minimalist-reviewer.md", "type": "reviewer", "routing_domain": "general", "routing_tier": "core", "description": "Minimal Change Governance reviewer enforcing smallest correct maintainable change.", "trigger_keywords": ["minimal", "change budget", "minimality", "reuse", "abstraction"] },
     { "name": "type-safety-reviewer", "file": "agents/type-safety-reviewer.md", "type": "reviewer", "routing_domain": "general", "routing_tier": "specialized", "description": "TypeScript type safety and strict mode validation.", "trigger_keywords": ["typescript", "type", "any", "generics", "interface"] },
     { "name": "dependency-reviewer", "file": "agents/dependency-reviewer.md", "type": "reviewer", "routing_domain": "backend", "routing_tier": "specialized", "description": "Phantom package and package.json audit.", "trigger_keywords": ["dependency", "npm", "package", "import", "version"] },
     { "name": "resilience-reviewer", "file": "agents/resilience-reviewer.md", "type": "reviewer", "routing_domain": "backend", "routing_tier": "specialized", "description": "Fault tolerance, retries, and error boundaries.", "trigger_keywords": ["resilience", "retry", "circuit breaker", "timeout"] },
