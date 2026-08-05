@@ -172,6 +172,21 @@ enum Commands {
         #[arg(long)]
         target_file: Option<String>,
     },
+
+    /// Fast AST and diff governance impact tiering
+    ImpactTier {
+        /// Comma-separated list of modified files
+        #[arg(long, default_value = "")]
+        files: String,
+
+        /// Number of diff lines
+        #[arg(long, default_value_t = 0)]
+        lines: usize,
+
+        /// Task description
+        #[arg(long, default_value = "")]
+        task: String,
+    },
 }
 
 #[derive(Subcommand)]
@@ -398,7 +413,21 @@ async fn main() -> Result<()> {
         Commands::ContextCompress { file, max_lines } => cmd_context_compress(&file, max_lines).await,
 
         Commands::ContextBroker { repo_path, target_file } => cmd_context_broker(&repo_path, target_file.as_deref()).await,
+
+        Commands::ImpactTier { files, lines, task } => cmd_impact_tier(&files, lines, &task).await,
     }
+}
+
+async fn cmd_impact_tier(files_str: &str, lines: usize, task: &str) -> Result<()> {
+    let files: Vec<String> = if files_str.is_empty() {
+        Vec::new()
+    } else {
+        files_str.split(',').map(|s| s.trim().to_string()).collect()
+    };
+    let res = commands::impact_tier::classify_impact(&files, lines, task);
+    let json = serde_json::to_string_pretty(&res)?;
+    println!("{}", json);
+    Ok(())
 }
 
 async fn cmd_context_broker(repo_path: &str, target_file: Option<&str>) -> Result<()> {

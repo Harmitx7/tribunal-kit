@@ -80,7 +80,7 @@ function checkVersionMetadata() {
   }
 
   const cargoLock = readText("Cargo.lock");
-  const cargoLockVersion = cargoLock.match(/name\s*=\s*"tribunal-core"\s*\nversion\s*=\s*"([^"]+)"/)?.[1];
+  const cargoLockVersion = cargoLock.match(/name\s*=\s*"tribunal-core"\s+version\s*=\s*"([^"]+)"/)?.[1];
   if (cargoLockVersion !== VERSION) {
     fail(`Cargo.lock tribunal-core version is ${cargoLockVersion || "missing"}, expected ${VERSION}`);
   }

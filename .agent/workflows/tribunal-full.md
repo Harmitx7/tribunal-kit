@@ -47,36 +47,36 @@ Before launching the full 21-reviewer audit, you MUST inspect:
 
 ---
 
-## 21 Reviewers — All Active Simultaneously
+## 21 Reviewers — Stage-Partitioned Execution (3 Waves)
+
+To eliminate context window saturation and reviewer attention dilution, the 21 reviewers execute in 3 partitioned passes:
 
 ```
-Tier 1: Always active (universal concerns)
+Wave 1: Core Integrity & Precedences (Pass 1)
 ├── precedence-reviewer    → Checks local repo Case Law for past rejections
 ├── logic-reviewer         → Hallucinated methods, impossible logic, undefined refs
-├── security-auditor       → OWASP 2025, injection, JWT, SSRF, IDOR
+├── schema-reviewer        → Missing input validation, loose schemas, raw req.body
 └── resilience-reviewer    → Swallowed errors, unhandled rejections, missing retries
 
-Tier 2: Code quality
+Wave 2: Security, Types & Code Quality (Pass 2)
+├── security-auditor       → OWASP 2025, injection, JWT, SSRF, IDOR
 ├── dependency-reviewer    → Fabricated packages, supply chain, version compatibility
 ├── type-safety-reviewer   → 'any' epidemic, Zod parse vs cast, unguarded access
 ├── complexity-reviewer    → Enforces the Dependency Ladder to prevent over-engineering
-├── schema-reviewer        → Missing input validation, loose schemas, raw req.body
 └── sql-reviewer           → Injection, N+1, missing indexes, unscoped mutations
 
-Tier 3: Domain-specific
+Wave 3: Domain, UI & Performance (Pass 3)
 ├── frontend-reviewer      → React 19 APIs, RSC violations, hook rules, hydration
-├── performance-reviewer   → 2026 CWV targets, re-render cascades, memory leaks
+├── performance-reviewer   → Core Web Vitals targets, re-render cascades, memory leaks
 ├── mobile-reviewer        → Reanimated thread safety, FlashList, safe area insets
 ├── ai-code-reviewer       → Model name hallucinations, prompt injection, cost explosion
 ├── test-coverage-reviewer → Happy path only, brittle selectors, missing edge cases
 ├── accessibility-reviewer → WCAG 2.2 AA, ARIA misuse, focus management, live regions
 ├── ui-ux-auditor          → Generic AI aesthetics, missing hover states, contrast
-└── review-animations      → UI animations >300ms, origin-unaware popovers, ease-in
-
-Tier 4: Performance Swarm (token-scoped specialists)
-├── vitals-reviewer        → Frontend CWV depth: Suspense waterfalls, paint jank, animation leaks
-├── db-latency-auditor     → DB layer: N+1, unbounded queries, unindexed WHERE, pool config
-└── throughput-optimizer   → Server runtime: event-loop blocks, serialized awaits, memory leaks
+├── review-animations      → UI animations >300ms, origin-unaware popovers, ease-in
+├── vitals-reviewer        → Frontend CWV depth: Suspense waterfalls, paint jank
+├── db-latency-auditor     → DB layer: N+1, unbounded queries, unindexed WHERE
+└── throughput-optimizer   → Server runtime: event-loop blocks, serialized awaits
 ```
 
 ---

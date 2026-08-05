@@ -1,35 +1,49 @@
 {
-  "timestamp": "2026-07-11T15:09:22.662Z",
+  "timestamp": "2026-07-30T06:30:27.446Z",
   "platform": "win32-x64",
   "node": "v22.17.0",
   "results": [
     {
       "label": "CLI cold-start (--help)",
       "avg_ms": 42,
-      "min_ms": 40,
+      "min_ms": 39,
       "max_ms": 47,
       "runs": 5
     },
     {
       "label": "Status check",
-      "avg_ms": 41,
-      "min_ms": 39,
-      "max_ms": 43,
+      "avg_ms": 54,
+      "min_ms": 44,
+      "max_ms": 73,
       "runs": 5
     },
     {
       "label": "Init (dry-run)",
-      "avg_ms": 42,
-      "min_ms": 39,
-      "max_ms": 46,
+      "avg_ms": 43,
+      "min_ms": 40,
+      "max_ms": 48,
       "runs": 3
     },
     {
       "label": "Init (full copy)",
-      "avg_ms": 82,
+      "avg_ms": 84,
       "min_ms": 56,
-      "max_ms": 131,
+      "max_ms": 139,
       "runs": 3
+    },
+    {
+      "label": "DAG wave scheduling",
+      "avg_ms": 0,
+      "min_ms": 0,
+      "max_ms": 0,
+      "runs": 100
+    },
+    {
+      "label": "Minimal Change Audit",
+      "avg_ms": 220,
+      "min_ms": 203,
+      "max_ms": 394,
+      "runs": 20
     }
   ]
 }

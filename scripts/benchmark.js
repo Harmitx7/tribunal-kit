@@ -183,6 +183,22 @@ async function main() {
   );
   results.push(dagResult);
 
+  // 6. Minimal Change Governance Engine benchmark
+  console.log(c("cyan", "  ▸ Benchmarking: Minimal Change Governance Engine"));
+  const minResult = await benchmark(
+    "Minimal Change Audit",
+    () => {
+      const minEngine = require("../.agent/scripts/minimal_change_engine");
+      minEngine.evaluateMinimalChange("add retry logic to API requests", {
+        files_added: 0,
+        files_modified: 1,
+        estimated_lines_added: 15,
+      });
+    },
+    20,
+  );
+  results.push(minResult);
+
 
   // Print results table
   console.log();

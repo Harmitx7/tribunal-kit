@@ -1,6 +1,6 @@
 {
   "$schema": "https://design-tokens.github.io/community-group/format/",
-  "$description": "Tribunal Kit — Adaptive Design Tokens (W3C Format). Complete 8 Visual Identities.",
+  "$description": "Tribunal Kit — Adaptive Design Tokens (W3C Format). Complete 8 Visual Identities with Typography and Elevation.",
 
   "themes": {
     "swiss": {
@@ -12,6 +12,10 @@
       "radius": {
         "sm": { "$value": "0px", "$type": "dimension" },
         "md": { "$value": "0px", "$type": "dimension" }
+      },
+      "typography": {
+        "family-sans": { "$value": "Helvetica Neue, Arial, sans-serif", "$type": "fontFamily" },
+        "family-mono": { "$value": "SFMono-Regular, Consolas, monospace", "$type": "fontFamily" }
       }
     },
     "brutalist": {
@@ -23,6 +27,10 @@
       "radius": {
         "sm": { "$value": "2px", "$type": "dimension" },
         "md": { "$value": "2px", "$type": "dimension" }
+      },
+      "typography": {
+        "family-sans": { "$value": "Space Grotesk, Impact, sans-serif", "$type": "fontFamily" },
+        "family-mono": { "$value": "Space Mono, Courier New, monospace", "$type": "fontFamily" }
       }
     },
     "editorial": {
@@ -34,6 +42,10 @@
       "radius": {
         "sm": { "$value": "4px", "$type": "dimension" },
         "md": { "$value": "8px", "$type": "dimension" }
+      },
+      "typography": {
+        "family-serif": { "$value": "Newsreader, Georgia, serif", "$type": "fontFamily" },
+        "family-sans": { "$value": "Inter, system-ui, sans-serif", "$type": "fontFamily" }
       }
     },
     "glassmorphism": {
@@ -45,6 +57,9 @@
       "radius": {
         "sm": { "$value": "4px", "$type": "dimension" },
         "md": { "$value": "16px", "$type": "dimension" }
+      },
+      "typography": {
+        "family-sans": { "$value": "Plus Jakarta Sans, system-ui, sans-serif", "$type": "fontFamily" }
       }
     },
     "soft-minimal": {
@@ -56,6 +71,9 @@
       "radius": {
         "sm": { "$value": "6px", "$type": "dimension" },
         "md": { "$value": "12px", "$type": "dimension" }
+      },
+      "typography": {
+        "family-sans": { "$value": "Inter, system-ui, sans-serif", "$type": "fontFamily" }
       }
     },
     "dark-luxury": {
@@ -67,6 +85,10 @@
       "radius": {
         "sm": { "$value": "2px", "$type": "dimension" },
         "md": { "$value": "6px", "$type": "dimension" }
+      },
+      "typography": {
+        "family-serif": { "$value": "Cormorant Garamond, serif", "$type": "fontFamily" },
+        "family-sans": { "$value": "Outfit, system-ui, sans-serif", "$type": "fontFamily" }
       }
     },
     "cyberpunk": {
@@ -78,6 +100,9 @@
       "radius": {
         "sm": { "$value": "0px", "$type": "dimension" },
         "md": { "$value": "4px", "$type": "dimension" }
+      },
+      "typography": {
+        "family-mono": { "$value": "JetBrains Mono, Fira Code, monospace", "$type": "fontFamily" }
       }
     },
     "retro-analog": {
@@ -89,6 +114,9 @@
       "radius": {
         "sm": { "$value": "4px", "$type": "dimension" },
         "md": { "$value": "8px", "$type": "dimension" }
+      },
+      "typography": {
+        "family-sans": { "$value": "Courier Prime, Courier, monospace", "$type": "fontFamily" }
       }
     }
   },
@@ -99,5 +127,11 @@
     "md":  { "$value": "16px", "$type": "dimension" },
     "lg":  { "$value": "24px", "$type": "dimension" },
     "xl":  { "$value": "32px", "$type": "dimension" }
+  },
+
+  "shadow": {
+    "sm": { "$value": "0 1px 3px oklch(0 0 0 / 0.08)", "$type": "shadow" },
+    "md": { "$value": "0 4px 12px oklch(0 0 0 / 0.12)", "$type": "shadow" },
+    "lg": { "$value": "0 12px 32px oklch(0 0 0 / 0.20)", "$type": "shadow" }
   }
 }

@@ -247,6 +247,11 @@ async function runWithUpdateCheck(command, flags) {
             await cmdMarathon(flags, process.argv, quiet);
             break;
         }
+        case 'minimal': {
+            const cmdMinimal = loadCmd('./commands/minimal', 'cmdMinimal');
+            cmdMinimal(flags, quiet);
+            break;
+        }
         case 'compile': {
             const cmdCompile = loadCmd('./commands/compile', 'cmdCompile');
             await cmdCompile(flags, quiet);

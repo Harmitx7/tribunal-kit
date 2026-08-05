@@ -117,10 +117,13 @@ function runRustBinary(binPath, args) {
   });
 
   if (result.error) {
-    console.error(
-      `\x1b[91m✖ Failed to execute Rust engine:\x1b[0m ${result.error.message}`,
+    // Graceful degradation: fall back to JS engine instead of hard-crashing.
+    // Spawn errors include missing binaries, permission denied, corrupted
+    // executables, missing shared libraries, and OS-level exec failures.
+    console.warn(
+      `\x1b[93m⚠ Rust engine failed (${result.error.code || result.error.message}). Falling back to JS engine.\x1b[0m`,
     );
-    process.exit(1);
+    return false; // Signal caller to fall back
   }
 
   process.exit(result.status || 0);
@@ -155,8 +158,11 @@ function main() {
 
       // Route to Rust engine
       // console.log('\x1b[90m⚡ Executing via Rust Core Engine\x1b[0m');
-      runRustBinary(binPath, args);
-      return;
+      const rustResult = runRustBinary(binPath, args);
+      if (rustResult !== false) {
+        return; // Rust engine handled it (process.exit was called)
+      }
+      // rustResult === false means spawn error; fall through to JS fallback
     } else {
       // Warn if Rust command was requested but binary is missing
       console.warn(

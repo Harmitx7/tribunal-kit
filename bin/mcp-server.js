@@ -93,6 +93,10 @@ function searchCaseLaw(query) {
       timeout: SPAWN_TIMEOUT_MS,
     },
   );
+  if (result.error) {
+    if (result.error.code === "ETIMEDOUT") return "Error: Case law search timed out (exceeded 30s limit)";
+    return `Error executing case law search: ${result.error.message}`;
+  }
   return result.stdout || result.stderr || "No results";
 }
 
@@ -113,6 +117,12 @@ function handleRequest(req) {
   if (req.method === "ping") {
     return {};
   }
+  if (req.method === "resources/list") {
+    return { resources: [] };
+  }
+  if (req.method === "prompts/list") {
+    return { prompts: [] };
+  }
 
   // MCP spec: method names follow path-style convention
   if (req.method === "initialize") {
@@ -121,6 +131,7 @@ function handleRequest(req) {
       capabilities: {
         tools: {},
         resources: { subscribe: false, listChanged: false },
+        prompts: { listChanged: false },
       },
       serverInfo: {
         name: "tribunal-kit-mcp",
@@ -372,9 +383,12 @@ function handleRequest(req) {
     if (toolName === "get_tribunal_agent") {
       const fs = require("fs");
       const name = req.params?.arguments?.name;
-      if (!name) throw { code: -32602, message: "Missing argument: name" };
+      if (!name || typeof name !== "string") throw { code: -32602, message: "Missing or invalid argument: name (string)" };
       const sanitizedName = path.basename(name);
-      const agentPath = path.join(process.cwd(), ".agent", "agents", `${sanitizedName}.md`);
+      const agentsDir = path.resolve(process.cwd(), ".agent", "agents");
+      const agentPath = path.resolve(agentsDir, `${sanitizedName}.md`);
+      // Path containment: ensure resolved path stays within agents directory
+      if (!agentPath.startsWith(agentsDir)) throw { code: -32602, message: "Invalid agent name: path traversal detected" };
       if (!fs.existsSync(agentPath)) return { content: [{ type: "text", text: `Agent '${sanitizedName}' not found.` }] };
       const text = fs.readFileSync(agentPath, "utf8");
       return { content: [{ type: "text", text: stripBoilerplate(text) }] };
@@ -391,9 +405,12 @@ function handleRequest(req) {
     if (toolName === "get_tribunal_skill") {
       const fs = require("fs");
       const name = req.params?.arguments?.name;
-      if (!name) throw { code: -32602, message: "Missing argument: name" };
+      if (!name || typeof name !== "string") throw { code: -32602, message: "Missing or invalid argument: name (string)" };
       const sanitizedName = path.basename(name);
-      const skillPath = path.join(process.cwd(), ".agent", "skills", sanitizedName, "SKILL.md");
+      const skillsDir = path.resolve(process.cwd(), ".agent", "skills");
+      const skillPath = path.resolve(skillsDir, sanitizedName, "SKILL.md");
+      // Path containment: ensure resolved path stays within skills directory
+      if (!skillPath.startsWith(skillsDir)) throw { code: -32602, message: "Invalid skill name: path traversal detected" };
       if (!fs.existsSync(skillPath)) return { content: [{ type: "text", text: `Skill '${sanitizedName}' not found.` }] };
       const text = fs.readFileSync(skillPath, "utf8");
       return { content: [{ type: "text", text: stripBoilerplate(text) }] };

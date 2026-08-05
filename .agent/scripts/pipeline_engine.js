@@ -68,6 +68,18 @@ function _getGuardrailEngine() {
   return _guardrailEngine;
 }
 
+let _minimalChangeEngine = null;
+function getMinimalChangeEngine() {
+  if (!_minimalChangeEngine) {
+    try {
+      _minimalChangeEngine = require(path.join(__dirname, "minimal_change_engine.js"));
+    } catch {
+      _minimalChangeEngine = null;
+    }
+  }
+  return _minimalChangeEngine;
+}
+
 
 // ── Task Classification ─────────────────────────────────────────────────────
 // Lightweight intent detection — no LLM call needed.
@@ -223,12 +235,55 @@ function planPhase(task, files = [], agentDir = null) {
   // 5. Determine target file
   const targetFile = files.length > 0 ? files[0] : null;
 
+  // 5b. Adaptive Governance Impact Tiering
+  let impactClassification = null;
+  let socraticGatePolicy = null;
+  let tokenBudget = null;
+  try {
+    const { classifyImpact } = require("./impact_classifier.js");
+    const { evaluateSocraticGate } = require("./socratic_gate_policy.js");
+    const { getTokenBudget } = require("./token_budget_broker.js");
+    impactClassification = classifyImpact({ files, task });
+    socraticGatePolicy = evaluateSocraticGate({ tier: impactClassification.tier, ambiguityScore: 0.2 });
+    tokenBudget = getTokenBudget(impactClassification.tier);
+  } catch {
+    impactClassification = { tier: 1, score: 0.2, maxReviewers: 1, requireGate: false, fastPass: false };
+    socraticGatePolicy = { shouldBlock: false, reason: "Fallback evaluation" };
+    tokenBudget = { tier: 1, maxTokens: 2000, maxReviewers: 1 };
+  }
+
+  // 6. Minimal Change Governance Gate
+  const minEngine = getMinimalChangeEngine();
+  let minimalChange = null;
+  if (minEngine) {
+    try {
+      minimalChange = minEngine.evaluateMinimalChange(
+        task,
+        {
+          target_file: targetFile,
+          files_added: targetFile ? 0 : 1,
+          files_modified: targetFile ? 1 : 0,
+          estimated_lines_added: 20,
+        },
+        { cwd: path.dirname(resolvedAgentDir) },
+      );
+    } catch {
+      minimalChange = null;
+    }
+  }
+
   return {
     task_type: bestType,
     stack: detectedStack,
     target_file: targetFile,
     essential_skills: essentialSkills,
     constraints,
+    impact_governance: {
+      impact: impactClassification,
+      socratic_gate: socraticGatePolicy,
+      token_budget: tokenBudget,
+    },
+    minimal_change: minimalChange,
     spec: task,
     timestamp: new Date().toISOString(),
   };

@@ -1,0 +1,90 @@
+name: Bug Report
+description: Report a bug in Tribunal Kit
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Please fill in the details below.
+  - type: input
+    id: version
+    attributes:
+      label: Tribunal Kit Version
+      description: Run `npx tribunal-kit --version` to find out
+      placeholder: "6.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - Windows
+        - macOS (Intel)
+        - macOS (Apple Silicon)
+        - Linux (x64)
+        - Linux (ARM64)
+    validations:
+      required: true
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js Version
+      description: Run `node --version` to find out
+      placeholder: "v22.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: ide
+    attributes:
+      label: IDE / Tool
+      description: Which IDE or terminal tool are you using?
+      options:
+        - Cursor
+        - VSCode
+        - Windsurf
+        - Claude Code
+        - Aider
+        - Terminal (standalone CLI)
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Command That Failed
+      description: Which `tk` / `tribunal-kit` command triggered the issue?
+      placeholder: "npx tribunal-kit init --force"
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What Happened
+      description: A clear description of the bug
+      placeholder: Describe the unexpected behavior...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Minimal steps to trigger the bug
+      value: |
+        1. 
+        2. 
+        3. 
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error Output / Logs
+      description: Paste any error messages or terminal output
+      render: bash

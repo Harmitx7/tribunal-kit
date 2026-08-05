@@ -26,13 +26,22 @@ const CORE_AGENTS = new Set([
     'explorer-agent.md',
     'project-planner.md',
     'test-engineer.md',
+    'ui-ux-auditor.md',
+    'ui-visual-auditor.md',
+    'accessibility-reviewer.md',
+    'ux-reviewer.md',
+    'visual-reviewer.md',
+    'interaction-reviewer.md',
+    'anti-pattern-reviewer.md',
+    'product-reviewer.md',
 ]);
 // Core skills to install in --minimal mode
 const CORE_SKILLS = new Set([
     'clean-code', 'architecture', 'testing-patterns', 'systematic-debugging',
     'frontend-design', 'database-design', 'api-patterns', 'nodejs-best-practices',
     'vulnerability-scanner', 'typescript-advanced', 'python-pro', 'nextjs-react-expert',
-    'react-specialist', 'performance-profiling', 'lint-and-validate',
+    'react-specialist', 'performance-profiling', 'lint-and-validate', 'ui-ux-pro-max',
+    'ui-reasoning-engine', 'product-aware-heuristics', 'web-design-guidelines',
 ]);
 async function cmdInit(flags, quiet = false) {
     const agentSrc = (0, helpers_1.getKitAgent)();
@@ -267,7 +276,7 @@ async function cmdInit(flags, quiet = false) {
             console.log(drawRow('  Next Steps:', (0, logger_1.c)('gray', '  Next Steps:')));
             console.log(stepRow('/generate', 'Generate code with reviews'));
             console.log(stepRow('/review', 'Audit existing code for issues'));
-            console.log(stepRow('/tribunal-full', 'Run all 20 reviewers in parallel'));
+            console.log(stepRow('/tribunal-full', 'Run all 21 reviewers in parallel'));
             console.log(drawRow('', ''));
             console.log(`  ${(0, logger_1.c)(borderCol, '└' + '─'.repeat(W) + '┘')}`);
             console.log();

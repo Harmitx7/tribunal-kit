@@ -7,5 +7,12 @@
         "NODE_ENV": "production"
       }
     }
+  },
+  "minimal_change": {
+    "enabled": true,
+    "mode": "balanced",
+    "repository_search": true,
+    "change_budget": true,
+    "minimality_score": true
   }
 }

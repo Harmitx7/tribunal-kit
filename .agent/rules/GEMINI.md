@@ -114,7 +114,7 @@ Every code or design request activates an agent. This is not optional.
 | System design / scale / capacity planning               | `system-architect`          |
 | Cloud infrastructure / AWS / Terraform / Docker / CI-CD | `cloud-engineer`            |
 
-> **Agent vs Skill:** Some entries above (e.g., `python-pro`, `vue-expert`, `csharp-developer`, `sql-pro`, `react-specialist`, `platform-engineer`, `devops-incident-responder`) are **skills** loaded from `skills/SKILL.md`, not full agent definitions in `agents/`. The routing and announcement protocol still applies — load the skill's rules and announce it. If an `.md` file exists in `agents/`, it takes priority (P1) over the skill (P2).
+> **Agent vs Skill (Lazy Resolution):** Some entries above are **skills** loaded on-demand from `skills/SKILL.md`. To prevent context saturation, skills are resolved via 2-tier lazy routing using `.agent/skill_topic_map.json`. If a required skill's full text is not in current context, fetch it on-demand via `view_file` on `.agent/skills/<skill-name>/SKILL.md`. If an `.md` file exists in `agents/`, it takes priority (P1) over the skill (P2).
 
 **When activated, announce the agent:**
 
@@ -135,25 +135,23 @@ Did I load the agent's required skills?  → If no: check frontmatter skills: fi
 
 ---
 
-## Step 3 — Socratic Gate (Before Complex Work)
+## Step 3 — Socratic Gate (Adaptive Governance Policy)
 
-For any complex build, new feature, or unclear request — stop and ask before writing code.
+The Socratic Gate is **adaptive** based on the task's **Impact Tier** evaluated by `impact_classifier.js`:
 
-**Required questions by type:**
-
-| Request              | Questions                                                    |
-| -------------------- | ------------------------------------------------------------ |
-| New feature or build | 1-2 targeted questions about the highest-ambiguity decisions |
-| Code edit or bug fix | Confirm understanding of the root cause before fixing        |
-| Vague request        | 1 question about the core goal, then infer the rest          |
-| Full orchestration   | Block all subagents until plan is confirmed                  |
+| Impact Tier | Scope | Socratic Gate Policy |
+| ----------- | ----- | --------------------- |
+| **Tier 0 (Fast-Pass)** | Typo, CSS, markdown, formatting | **BYPASS** — 0 questions, 0 LLM calls |
+| **Tier 1 (Express Pass)** | Single-file component or function logic edit | **BYPASS** — 0 questions, single specialist pass |
+| **Tier 2 (Targeted Audit)** | Multi-file feature edit | **CONDITIONAL** — Ask 1 question ONLY if ambiguity score > 0.5 |
+| **Tier 3 (Full Gauntlet)** | Auth, schema, migration, breaking architectural changes | **REQUIRED** — 1-2 targeted questions before execution (bypassable via `--no-gate` / `--express`) |
 
 **Rules:**
 
 - Ask only what you cannot infer from context. Check the conversation first.
 - Max 2 questions per response. If you need more, prioritize the most blocking one.
 - Never ask what the user already told you. Never ask generic "what stack?" if the repo shows it.
-- Do not write a single line of code until the gate is cleared
+- Bypass gate automatically on Tier 0 and Tier 1 tasks to preserve rapid developer flow.
 
 ---
 
@@ -222,7 +220,7 @@ The Human Gate is never skipped. No code is written to a file without explicit u
 | Database/SQL          | logic + security + sql + schema + complexity-reviewer                                               |
 | Mobile/Cross-platform | logic + security + mobile-reviewer + type-safety + complexity-reviewer                              |
 | Any domain            | + performance (if optimization)                                                                     |
-| Before merge          | /tribunal-full (all 21 reviewers)                                                                   |
+| Before merge          | /tribunal-full (all 27 reviewers)                                                                   |
 
 ---
 

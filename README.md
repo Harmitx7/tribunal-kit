@@ -7,8 +7,11 @@
     TRIBUNAL KIT
   </h1>
   
-  <p style="font-size: 1.15em; color: #88888b; font-weight: 500; letter-spacing: 3px; margin: 10px 0 25px 0; text-transform: uppercase;">
-    The Operating System for AI Software Engineering
+  <p style="font-size: 1.35em; color: #ffffff; font-weight: 600; margin: 15px 0 8px 0;">
+    Your AI writes code that doesn't exist. Tribunal Kit stops it.
+  </p>
+  <p style="font-size: 0.95em; color: #88888b; font-weight: 400; letter-spacing: 1px; margin: 0 0 25px 0;">
+    The governance layer for AI coding agents — 51 specialists, 27 reviewers, Rust core.
   </p>
 
   <!-- BADGES -->
@@ -16,6 +19,16 @@
     <a href="https://www.npmjs.com/package/tribunal-kit">
       <img src="https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white&color=ff1637" alt="NPM Version" />
     </a>
+    <a href="https://www.npmjs.com/package/tribunal-kit">
+      <img src="https://img.shields.io/npm/dw/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white&color=1a1a1f&label=Downloads" alt="NPM Downloads" />
+    </a>
+    <a href="https://github.com/Harmitx7/tribunal-kit">
+      <img src="https://img.shields.io/github/stars/Harmitx7/tribunal-kit?style=for-the-badge&logo=github&logoColor=white&color=111111&label=Stars" alt="GitHub Stars" />
+    </a>
+    <a href="https://github.com/Harmitx7/tribunal-kit/actions/workflows/ci.yml">
+      <img src="https://img.shields.io/github/actions/workflow/status/Harmitx7/tribunal-kit/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=CI" alt="CI Status" />
+    </a>
+    <br>
     <a href="LICENSE">
       <img src="https://img.shields.io/badge/License-MIT-1a1a1f?style=for-the-badge&color=2d2d30" alt="License" />
     </a>
@@ -25,6 +38,9 @@
     <a href="mcp_config.json">
       <img src="https://img.shields.io/badge/MCP-Ready-00c2ff?style=for-the-badge&logo=openai&logoColor=111" alt="MCP Server" />
     </a>
+    <a href="package.json">
+      <img src="https://img.shields.io/badge/Dependencies-0-ccff00?style=for-the-badge&color=111111" alt="Zero Dependencies" />
+    </a>
     <a href="SECURITY.md">
       <img src="https://img.shields.io/badge/Security-Strict_Sandbox-ff1637?style=for-the-badge" alt="Security Policy" />
     </a>
@@ -33,17 +49,53 @@
 
 <br>
 
-<!-- INTRO KEYNOTE -->
-<div style="background: linear-gradient(145deg, #111115, #16161c); border: 1px solid #22222a; border-radius: 12px; padding: 24px; margin-bottom: 40px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);">
+<!-- THE PROBLEM -->
+<div style="background: linear-gradient(145deg, #1a0a0a, #16161c); border: 1px solid #3a1a1a; border-radius: 12px; padding: 24px; margin-bottom: 20px;">
   <div style="display: flex; align-items: center; margin-bottom: 12px;">
-    <span style="background-color: #ff1637; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-right: 10px;">Security Envelope</span>
-    <strong style="color: #ffffff; font-size: 1.1em;">AI GENERATES CODE. TRIBUNAL KIT GOVERNS IT.</strong>
+    <span style="background-color: #ff1637; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-right: 10px;">The Problem</span>
+    <strong style="color: #ffffff; font-size: 1.1em;">AI coding agents hallucinate. Constantly.</strong>
   </div>
   <p style="color: #c9c9d1; font-size: 0.95em; line-height: 1.6; margin: 0;">
-    A zero-bloat <strong>.agent/</strong> intelligence payload and <strong>Model Context Protocol (MCP) server</strong> that upgrades your IDEs (<a href="#" style="color: #ccff00; text-decoration: none;">Cursor</a>, <a href="#" style="color: #ccff00; text-decoration: none;">VSCode</a>, <a href="#" style="color: #ccff00; text-decoration: none;">Windsurf</a>) and terminal AI coding assistants (<a href="#" style="color: #ccff00; text-decoration: none;">Claude Code</a>, <a href="#" style="color: #ccff00; text-decoration: none;">Aider</a>) with <strong>50 specialist agents</strong>, <strong>36 workflows</strong>, <strong>175 reusable skills</strong>, and a parallel <strong>21-reviewer Tribunal pipeline</strong>. Establishes absolute runtime correctness, optimizes context windows, and heavily mitigates AI code hallucinations.
+    They import packages that don't exist. They call API methods that were deprecated two versions ago. They forget your project conventions mid-conversation. They generate code that <em>looks</em> right but silently breaks at runtime. <strong>No linter catches this. No type-checker catches this.</strong> The hallucination happens at the semantic layer — and until now, nothing governed it.
   </p>
 </div>
 
+<!-- THE SOLUTION -->
+<div style="background: linear-gradient(145deg, #0a1a0a, #16161c); border: 1px solid #1a3a1a; border-radius: 12px; padding: 24px; margin-bottom: 40px;">
+  <div style="display: flex; align-items: center; margin-bottom: 12px;">
+    <span style="background-color: #ccff00; color: #111; padding: 4px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-right: 10px;">The Solution</span>
+    <strong style="color: #ffffff; font-size: 1.1em;">One command. Your AI stops lying.</strong>
+  </div>
+  <p style="color: #c9c9d1; font-size: 0.95em; line-height: 1.6; margin: 0 0 15px 0;">
+    Tribunal Kit wraps your coding agents in a <strong>neurosymbolic verification envelope</strong> — 51 specialist agents, 27 parallel reviewers, 171 reusable skills, and a compiled Rust core — that intercepts AI output, validates it against your actual codebase, and blocks hallucinated code before it reaches disk. Works with <strong>Cursor</strong>, <strong>VSCode</strong>, <strong>Windsurf</strong>, <strong>Claude Code</strong>, and <strong>Aider</strong>.
+  </p>
+</div>
+
+<!-- QUICK INSTALL -->
+```bash
+npx tribunal-kit init    # Install the governance layer (< 60 seconds)
+npx tribunal-kit sync    # Bridge with Cursor / Windsurf / VSCode
+npx tribunal-kit status  # Verify everything is locked in
+```
+
+<hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
+
+<!-- WHAT YOU GET -->
+
+### What's Inside
+
+| Layer | Count | What It Does |
+|:--|:--|:--|
+| **Specialist Agents** | 51 | Domain-specific reasoning (frontend, backend, security, database, mobile, DevOps) |
+| **Tribunal Reviewers** | 27 | Parallel code review pipeline that catches hallucinations before they ship |
+| **Reusable Skills** | 171 | Deep knowledge packs (React 19, Next.js 15, Rust, Python, Vue, animations, a11y) |
+| **Slash Workflows** | 37 | One-command operations (`/generate`, `/debug`, `/audit`, `/deploy`, `/refactor`) |
+| **Rust Core** | 1 | Native binary for sub-50ms operations (hashing, dedup, DAG scheduling, compression) |
+| **MCP Server** | 1 | Model Context Protocol integration for dynamic tool access |
+| **Persistent Memory** | 4 types | Semantic, Procedural, Episodic, Working — survives across sessions |
+| **Case Law Database** | ∞ | Records past AI mistakes as permanent precedents to prevent recurrence |
+
+<br>
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
 
 <!-- TABLE OF CONTENTS -->
@@ -53,15 +105,14 @@
   </summary>
   <div style="margin-top: 15px; padding-left: 10px;">
     <ul style="list-style-type: none; padding-left: 0; line-height: 1.8;">
-      <li>👉 <a href="#-the-competitive-advantage" style="color: #a0a0a5; text-decoration: none;">Why Tribunal Kit? (The Competitive Advantage)</a></li>
       <li>👉 <a href="#-comparative-analysis" style="color: #a0a0a5; text-decoration: none;">Comparative Analysis: Tribunal Kit vs. Alternatives</a></li>
       <li>👉 <a href="#-state-of-the-art-performance-rust-core" style="color: #a0a0a5; text-decoration: none;">State-of-the-Art Performance (Rust Core)</a></li>
-      <li>👉 <a href="#-quick-start" style="color: #a0a0a5; text-decoration: none;">Quick Start (Set Up in Under 60 Seconds)</a></li>
-      <li>👉 <a href="#-the-tribunal-pipeline" style="color: #a0a0a5; text-decoration: none;">The Tribunal Pipeline — Mitigating AI Code Hallucinations</a></li>
+      <li>👉 <a href="#%EF%B8%8F-advanced-setup" style="color: #a0a0a5; text-decoration: none;">Advanced Setup</a></li>
+      <li>👉 <a href="#%EF%B8%8F-the-tribunal-pipeline--mitigating-ai-code-hallucinations" style="color: #a0a0a5; text-decoration: none;">The Tribunal Pipeline — Mitigating AI Code Hallucinations</a></li>
       <li>👉 <a href="#-omniscience-cognitive-alignment-engine-ocae" style="color: #a0a0a5; text-decoration: none;">Omniscience Cognitive Alignment Engine (OCAE)</a></li>
       <li>👉 <a href="#-skillopt-autonomous-self-evolution-engine" style="color: #a0a0a5; text-decoration: none;">SkillOpt: Autonomous Self-Evolution Engine</a></li>
-      <li>👉 <a href="#-supreme-court-case-law--memory" style="color: #a0a0a5; text-decoration: none;">Supreme Court Case Law & Persistent Memory</a></li>
-      <li>👉 <a href="#-the-marathon-harness" style="color: #a0a0a5; text-decoration: none;">The Marathon Harness — Long-Running Autonomy</a></li>
+      <li>👉 <a href="#%EF%B8%8F-supreme-court-case-law--memory" style="color: #a0a0a5; text-decoration: none;">Supreme Court Case Law & Persistent Memory</a></li>
+      <li>👉 <a href="#-the-marathon-harness--long-running-autonomy" style="color: #a0a0a5; text-decoration: none;">The Marathon Harness — Long-Running Autonomy</a></li>
       <li>👉 <a href="#-mcp-server-integration" style="color: #a0a0a5; text-decoration: none;">Model Context Protocol (MCP) Server Integration</a></li>
       <li>👉 <a href="#-cli-command-reference" style="color: #a0a0a5; text-decoration: none;">CLI Command Reference</a></li>
       <li>👉 <a href="#-contributing--security" style="color: #a0a0a5; text-decoration: none;">Contributing & Security Guidelines</a></li>
@@ -69,42 +120,7 @@
   </div>
 </details>
 
-<!-- SECTION 1 -->
-## 🚀 The Competitive Advantage
 
-Standard AI coding assistants generate code linearly, without validating semantic boundaries or architectural constraints. This leads to **hallucinations, token window inflation, amnesia across sessions, and instruction drift**.
-
-Tribunal Kit wraps your coding agents in a **neurosymbolic verification envelope**. It intercepts agent outputs, runs them through parallel domain-specific reviewer swarms, enforces strict context budgeting, and uses a compiled Rust core to run self-evolution loops directly on your Git changes.
-
-### Key Capabilities
-
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
-  <div style="background: #111115; border: 1px solid #22222a; border-radius: 8px; padding: 20px;">
-    <div style="font-size: 1.5em; margin-bottom: 8px;">🛡️</div>
-    <h3 style="color: #ffffff; margin-top: 0;">Zero-Hallucination Guardrails</h3>
-    <p style="color: #a0a0a5; font-size: 0.9em; margin: 0; line-height: 1.5;">Enforces strict check gates (<kbd>tk guardrail</kbd>) verifying that file links, count metrics, and package imports exist before code reaches disk.</p>
-  </div>
-  <div style="background: #111115; border: 1px solid #22222a; border-radius: 8px; padding: 20px;">
-    <div style="font-size: 1.5em; margin-bottom: 8px;">🧬</div>
-    <h3 style="color: #ffffff; margin-top: 0;">SkillOpt Self-Evolution</h3>
-    <p style="color: #a0a0a5; font-size: 0.9em; margin: 0; line-height: 1.5;">Optimizes your <code>.agent</code> instruction files automatically using a multi-epoch genetic evolution loop with candidate grading and Levenshtein deduplication.</p>
-  </div>
-  <div style="background: #111115; border: 1px solid #22222a; border-radius: 8px; padding: 20px;">
-    <div style="font-size: 1.5em; margin-bottom: 8px;">🎯</div>
-    <h3 style="color: #ffffff; margin-top: 0;">Fabel-5 Output Alignment</h3>
-    <p style="color: #a0a0a5; font-size: 0.9em; margin: 0; line-height: 1.5;">Programmatically aligns AI outputs to clean prose paragraphs, stripping conversational slop and catching known framework traps (Next.js 15 route headers, React 19 hooks, Drizzle ORM filters).</p>
-  </div>
-  <div style="background: #111115; border: 1px solid #22222a; border-radius: 8px; padding: 20px;">
-    <div style="font-size: 1.5em; margin-bottom: 8px;">🧠</div>
-    <h3 style="color: #ffffff; margin-top: 0;">4-Type Persistent Memory</h3>
-    <p style="color: #a0a0a5; font-size: 0.9em; margin: 0; line-height: 1.5;">Separates memory into Semantic, Procedural, Episodic, and Working categories to prevent context decay and model amnesia.</p>
-  </div>
-</div>
-
-<br>
-<hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
-
-<!-- SECTION 2 -->
 ## 📈 Comparative Analysis
 
 AI engineering requires more than static template rules or raw linters. See how Tribunal Kit stacks up against alternatives:
@@ -184,23 +200,29 @@ Tribunal Kit v6 splits heavy computational tasks between a native Rust core and 
 <br>
 
 <!-- SECTION 4 -->
-## 🛠️ Quick Start (Set Up in Under 60 Seconds)
+## 🛠️ Advanced Setup
 
-Get Tribunal Kit up and running in any project instantly:
+Already ran `npx tribunal-kit init`? Here's how to go further:
 
 ```bash
-# 1. Initialize the intelligence payload
-npx tribunal-kit init
+# Install Git pre-push governance hook
+npx tribunal-kit hook
 
-# 2. Synchronize configuration bridges with Cursor / Windsurf / VSCode
-npx tribunal-kit sync
+# Scan your workspace for AI hallucinations (phantom packages, unverified APIs)
+npx tribunal-kit guardrail
 
-# 3. Verify project rule integrity
-npx tribunal-kit status
+# Record an AI coding mistake as permanent precedent (case law)
+npx tribunal-kit case add
+
+# Optimize a skill file using the SkillOpt evolution engine
+tk optimize-skill --target ./skills/auth-security.md "npm run test:auth" --epochs 5
 ```
 
 > [!TIP]
-> Run `npx tribunal-kit hook` to install a Git `pre-push` hook. This ensures your custom rules and agent configurations are auto-evolved and verified before code is pushed to your remote repository.
+> The `tk hook` command installs a Git `pre-push` hook that auto-runs `tk guardrail` before every push — catching hallucinated imports and unverified APIs before they reach your remote.
+
+> [!NOTE]
+> **MCP Server**: To connect Tribunal Kit to Cursor, VSCode, or Claude Desktop as an MCP server, see the [MCP Server Integration](#-mcp-server-integration) section below.
 
 <br>
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
@@ -210,7 +232,7 @@ npx tribunal-kit status
 
 Code generation is solved. **Code correctness is the frontier.** 
 
-The Tribunal Pipeline intercepts raw agent generation and routes it through a parallel suite of **20 domain-specific reviewers** before presenting changes to the developer:
+The Tribunal Pipeline intercepts raw agent generation and routes it through a parallel suite of **27 domain-specific reviewers** before presenting changes to the developer:
 
 ```mermaid
 graph TD
@@ -221,7 +243,7 @@ graph TD
     C -.->|Failed| E[Maker Auto-Correction]
     E -.-> C
 
-    D -->|20 Domain Reviewers| F[Human Gate]
+    D -->|27 Domain Reviewers| F[Human Gate]
     F -->|Approved| G((Committed to Disk))
 
     classDef default fill:#1a1a1a,stroke:#333,stroke-width:2px,color:#fff;

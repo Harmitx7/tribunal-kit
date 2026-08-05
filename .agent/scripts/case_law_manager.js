@@ -58,6 +58,7 @@ const VALID_DOMAINS = new Set([
   "mobile",
   "testing",
   "devops",
+  "minimal_change",
   "general",
 ]);
 const VALID_VERDICTS = new Set([
@@ -65,6 +66,7 @@ const VALID_VERDICTS = new Set([
   "APPROVED_WITH_CONDITIONS",
   "PRECEDENT_SET",
   "OVERRULED",
+  "MINIMALITY_REJECTED",
 ]);
 
 // ── Noise filter ────────────────────────────────────────────────────────────
