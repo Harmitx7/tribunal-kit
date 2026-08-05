@@ -98,10 +98,10 @@
     "build": "npm run build:rust"
   },
   "devDependencies": {
-    "eslint": "9.1.1",
-    "jest": "30.4.2",
-    "typescript": "5.4.5"
-},
+    "eslint": "^9.1.1",
+    "jest": "^30.4.2",
+    "typescript": "^5.4.5"
+  },
   "optionalDependencies": {
     "@tribunal-kit/core-darwin-arm64": "^6.0.1",
     "@tribunal-kit/core-darwin-x64": "^6.0.1",
