@@ -1,4 +1,4 @@
-# 🏛️ Tribunal Anti-Hallucination Kit v3.0.0 — Architecture
+# 🏛️ Tribunal Anti-Hallucination Kit v6.0.1 — Architecture
 
 Works natively in **Antigravity**, **Cursor**, **Windsurf**, and any AI IDE that indexes `.agent/` folders.
 

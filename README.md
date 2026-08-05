@@ -33,7 +33,7 @@
       <img src="https://img.shields.io/badge/License-MIT-1a1a1f?style=for-the-badge&color=2d2d30" alt="License" />
     </a>
     <a href="CHANGELOG.md">
-      <img src="https://img.shields.io/badge/Release-v6.0.0-ccff00?style=for-the-badge&color=111111&logo=github&logoColor=ccff00" alt="Release Version" />
+      <img src="https://img.shields.io/badge/Release-v6.0.1-ccff00?style=for-the-badge&color=111111&logo=github&logoColor=ccff00" alt="Release Version" />
     </a>
     <a href="mcp_config.json">
       <img src="https://img.shields.io/badge/MCP-Ready-00c2ff?style=for-the-badge&logo=openai&logoColor=111" alt="MCP Server" />
@@ -67,7 +67,7 @@
     <strong style="color: #ffffff; font-size: 1.1em;">One command. Your AI stops lying.</strong>
   </div>
   <p style="color: #c9c9d1; font-size: 0.95em; line-height: 1.6; margin: 0 0 15px 0;">
-    Tribunal Kit wraps your coding agents in a <strong>neurosymbolic verification envelope</strong> — 51 specialist agents, 27 parallel reviewers, 171 reusable skills, and a compiled Rust core — that intercepts AI output, validates it against your actual codebase, and blocks hallucinated code before it reaches disk. Works with <strong>Cursor</strong>, <strong>VSCode</strong>, <strong>Windsurf</strong>, <strong>Claude Code</strong>, and <strong>Aider</strong>.
+    Tribunal Kit wraps your coding agents in a <strong>neurosymbolic verification envelope</strong> — 51 specialist agents, 27 parallel reviewers, 183 reusable skills, and a compiled Rust core — that intercepts AI output, validates it against your actual codebase, and blocks hallucinated code before it reaches disk. Works with <strong>Cursor</strong>, <strong>VSCode</strong>, <strong>Windsurf</strong>, <strong>Claude Code</strong>, and <strong>Aider</strong>.
   </p>
 </div>
 
@@ -88,7 +88,7 @@ npx tribunal-kit status  # Verify everything is locked in
 |:--|:--|:--|
 | **Specialist Agents** | 51 | Domain-specific reasoning (frontend, backend, security, database, mobile, DevOps) |
 | **Tribunal Reviewers** | 27 | Parallel code review pipeline that catches hallucinations before they ship |
-| **Reusable Skills** | 171 | Deep knowledge packs (React 19, Next.js 15, Rust, Python, Vue, animations, a11y) |
+| **Reusable Skills** | 183 | Deep knowledge packs (React 19, Next.js 15, Rust, Python, Vue, animations, a11y) |
 | **Slash Workflows** | 37 | One-command operations (`/generate`, `/debug`, `/audit`, `/deploy`, `/refactor`) |
 | **Rust Core** | 1 | Native binary for sub-50ms operations (hashing, dedup, DAG scheduling, compression) |
 | **MCP Server** | 1 | Model Context Protocol integration for dynamic tool access |
