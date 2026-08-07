@@ -9,13 +9,21 @@ scratch/
 coverage/
 .nyc_output/
 .pytest_cache/
-__pycache__/
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
 
-# Exclude dev tooling
+# Exclude dev tooling & scratch scripts
 *.log
+**/*.log
 .editorconfig
 eslint.config.js
 tsconfig.json
+fix_eslint.js
+run_evidence_tests.js
+eslint_report.json
+benchmark-results.json
 
 # Exclude git
 .git/
@@ -23,8 +31,11 @@ tsconfig.json
 
 # Exclude OS files
 .DS_Store
+.DS_Store?
+._*
 Thumbs.db
 desktop.ini
+ehthumbs.db
 
 # Exclude editor configs
 .vscode/
@@ -32,27 +43,26 @@ desktop.ini
 *.swp
 *.swo
 
-# Exclude Python cache
-*.pyc
-*.pyo
-
 # Exclude build artifacts & dev-only files
 node_modules/
 target/
 crates/
 Cargo.toml
 Cargo.lock
-benchmark-results.json
 *.tgz
+*.tar.gz
 
 # Exclude env secrets
 .env
 .env.local
 .env.production
 .env.*.local
+*.pem
+*.key
 
 # Exclude AI IDE Configuration (user-project files, not part of the kit)
 .gemini/
+.claude/
 .cursorrules
 .windsurfrules
 
