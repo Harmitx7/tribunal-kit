@@ -95,11 +95,14 @@
     "build:core": "cargo build --release --manifest-path crates/core/Cargo.toml",
     "test:rust": "cargo test --manifest-path crates/core/Cargo.toml",
     "test:all": "npm run validate-payload && npm run test:rust && jest --runInBand --coverage",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "build": "npm run build:rust"
   },
   "devDependencies": {
     "eslint": "^9.1.1",
     "jest": "^30.4.2",
+    "prettier": "^3.2.5",
     "typescript": "^5.4.5"
   },
   "optionalDependencies": {

@@ -37,8 +37,8 @@ export interface CliFlags {
   log?: string;
   /** Memory mutation strategy: 'balanced' | 'harden' | 'repair-only'. */
   strategy?: string;
-  /** Enable token-optimized output. */
-  tokenOptimized?: boolean;
+  /** Install profile: 'full' | 'minimal' | 'web' | 'mobile' | 'backend' | 'ai'. */
+  profile?: string;
 }
 
 /** Parsed CLI arguments returned by the internal arg parser. */
@@ -144,6 +144,54 @@ export function cmdUninstall(flags: CliFlags, quiet?: boolean): void;
  * Called internally by `cmdInit` but exported for programmatic use.
  */
 export function generateIDEBridges(cwd: string, agentDest: string, quiet?: boolean): Promise<void>;
+
+/**
+ * Validate `.agent/` integrity (phantom refs, count mismatches, drift).
+ * Equivalent to `npx tribunal-kit guardrail`.
+ */
+export function cmdGuardrail(flags: CliFlags, argv: string[], quiet?: boolean): Promise<void>;
+
+/**
+ * Optimize project skills using SkillOpt validation gates.
+ * Equivalent to `npx tribunal-kit optimize-skill`.
+ */
+export function cmdOptimizeSkill(flags: CliFlags, argv: string[], quiet?: boolean): Promise<void>;
+
+/**
+ * Show minimal change analysis for the current project.
+ * Equivalent to `npx tribunal-kit minimal`.
+ */
+export function cmdMinimal(flags: CliFlags, quiet?: boolean): void;
+
+/**
+ * Validate a JSON payload against a Tribunal schema.
+ * Equivalent to `npx tribunal-kit validate`.
+ */
+export function cmdValidate(flags: CliFlags, argv: string[], quiet?: boolean): void;
+
+/**
+ * Remove empty lines from a context file.
+ * Equivalent to `npx tribunal-kit min-context`.
+ */
+export function cmdMinContext(argv: string[], quiet?: boolean): void;
+
+/**
+ * Compute parallel execution waves from task dependencies.
+ * Equivalent to `npx tribunal-kit dag-schedule`.
+ */
+export function cmdDagSchedule(argv: string[], quiet?: boolean): void;
+
+/**
+ * Compress a context file while retaining VERIFY comments.
+ * Equivalent to `npx tribunal-kit context-compress`.
+ */
+export function cmdContextCompress(argv: string[], quiet?: boolean): void;
+
+/**
+ * Apply bounded SkillOpt edits from a JSON payload.
+ * Equivalent to `npx tribunal-kit optimize-step`.
+ */
+export function cmdOptimizeStep(argv: string[], quiet?: boolean): void;
 
 // ── Logger Utilities ─────────────────────────────────────────────────────────
 

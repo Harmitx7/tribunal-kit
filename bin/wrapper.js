@@ -26,6 +26,7 @@ const RUST_COMMANDS = new Set([
   "context-compress",
   "context-broker",
   "optimize-step",
+  "impact-tier",
 ]);
 
 
@@ -164,10 +165,12 @@ function main() {
       }
       // rustResult === false means spawn error; fall through to JS fallback
     } else {
-      // Warn if Rust command was requested but binary is missing
-      console.warn(
-        "\x1b[93m⚠ Rust binary not found in target/. Falling back to JS engine.\x1b[0m",
-      );
+      // Warn if Rust command was requested but binary is missing (in verbose mode)
+      if (process.env.TK_VERBOSE || process.env.VERBOSE) {
+        console.warn(
+          "\x1b[93m⚠ Rust binary not found in target/. Falling back to JS engine.\x1b[0m",
+        );
+      }
     }
   }
 

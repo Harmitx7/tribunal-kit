@@ -42,6 +42,15 @@ function parseArgs(argv) {
             args.flags.minimal = true;
             continue;
         }
+        if (arg.startsWith('--profile=')) {
+            args.flags.profile = arg.split('=').slice(1).join('=');
+            continue;
+        }
+        if (arg === '--profile') {
+            const idx = raw.indexOf('--profile');
+            args.flags.profile = raw[idx + 1] || 'full';
+            continue;
+        }
         if (arg === '--skip-update-check') {
             args.flags.skipUpdateCheck = true;
             continue;
@@ -112,6 +121,7 @@ function cmdHelp(quiet = false) {
     (0, logger_1.log)(cmd('context-compress', 'Compress a context file while retaining VERIFY comments'));
     (0, logger_1.log)(cmd('optimize-step', 'Apply bounded SkillOpt edits from a JSON payload'));
     (0, logger_1.log)(cmd('guardrail', 'Validate .agent/ integrity (phantom refs, count mismatches, drift)'));
+    (0, logger_1.log)(cmd('impact-tier', 'Classify task governance impact tier (0-3)'));
     (0, logger_1.log)(cmd('uninstall', 'Remove .agent/ folder from project'));
     console.log();
     (0, logger_1.log)((0, logger_1.bold)('  Options'));
@@ -126,6 +136,7 @@ function cmdHelp(quiet = false) {
     (0, logger_1.log)(opt('--skip-update-check', 'Skip auto-update version check'));
     (0, logger_1.log)(opt('--head', '(learn) Diff against last commit instead of staged'));
     (0, logger_1.log)(opt('--write', '(align) Write aligned output in-place to the target file'));
+    (0, logger_1.log)(opt('--version, -v', 'Print installed version'));
     console.log();
     (0, logger_1.log)((0, logger_1.bold)('  Aliases'));
     (0, logger_1.log)(`  ${(0, logger_1.c)('gray', '─'.repeat(40))}`);
@@ -302,11 +313,20 @@ async function runWithUpdateCheck(command, flags) {
             cmdOptimizeStep(process.argv, quiet);
             break;
         }
+        case 'impact-tier': {
+            const cmdImpactTier = loadCmd('./commands/native', 'cmdImpactTier');
+            cmdImpactTier(process.argv, quiet);
+            break;
+        }
         case 'help':
         case '--help':
         case '-h':
         case null:
             cmdHelp(quiet);
+            break;
+        case '--version':
+        case '-v':
+            (0, logger_1.log)(CURRENT_VERSION);
             break;
         default:
             (0, logger_1.err)(`Unknown command: "${command}"`);

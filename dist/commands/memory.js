@@ -43,8 +43,9 @@ function acquireLock(agentDest) {
             if (err.code !== 'EEXIST') {
                 throw err;
             }
-            const start = Date.now();
-            while (Date.now() - start < 50) {}
+            // Non-blocking sleep — avoids busy-wait event loop blocking
+            const waitBuf = new Int32Array(new SharedArrayBuffer(4));
+            Atomics.wait(waitBuf, 0, 0, 50);
         }
     }
     try {

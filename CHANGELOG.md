@@ -3,27 +3,22 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [6.0.1] — 2026-08-05
+## [6.0.1] — 2026-08-07
 
-### ⚡ HyperSparse Router & Tri-Phase Wave Governance Architecture (183 Skills Expansion)
+### ⚡ HyperSparse Router, MCP Modernization (2025-03-26) & Governance Architecture
 
-- **HyperSparse Skill Router (`skill_topic_map.json`)**: Integrated lightweight 2-tier domain routing map indexing all 183 skills across 9 domain routes and file extension affinities (`.tsx`, `.ts`, `.py`, `.sql`, `.prisma`, `.tf`, `.tofu`, `.swift`). Cuts startup context overhead by **95%** (~3,000 tokens vs ~85,000) with **0 skills excluded**.
+- **HyperSparse Skill Router (`skill_topic_map.json`)**: Integrated lightweight 2-tier domain routing map indexing all 185 skills across 9 domain routes and file extension affinities (`.tsx`, `.ts`, `.py`, `.sql`, `.prisma`, `.tf`, `.tofu`, `.swift`). Cuts startup context overhead by **95%** (~3,000 tokens vs ~85,000) with **0 skills excluded**.
+- **MCP Server Protocol Modernization (`2025-03-26`)**: Upgraded `bin/mcp-server.js` to protocol 2025-03-26. Exposes dynamic **MCP Resources** (`tribunal://agent/{name}`, `tribunal://skill/{name}`, `tribunal://workflow/{name}`) and **MCP Prompts** for all 36 workflows alongside tools. Replaced fragile shell eval in `sync_ide_bridges` with direct in-process invocation.
+- **ESM Exports & Type Declarations Alignment**: Added missing exports for 8 CLI commands (`cmdGuardrail`, `cmdOptimizeSkill`, `cmdMinimal`, `cmdValidate`, `cmdMinContext`, `cmdDagSchedule`, `cmdContextCompress`, `cmdOptimizeStep`) in `dist/esm/index.mjs` and `dist/index.d.ts`.
+- **Governance Impact Tier Engine (`impact-tier`)**: Fully registered `impact-tier` command across `bin/wrapper.js`, `dist/cli.js`, and `dist/commands/native.js` with JS fallback logic (Tier 0: Fast-Pass, Tier 1: Express Pass, Tier 2: Targeted Audit, Tier 3: Full Gauntlet).
+- **Skill Profiling (`--profile`)**: Added `--profile` support (`full`, `minimal`, `web`, `mobile`, `backend`, `ai`) to CLI argument parsing and TypeScript definitions for profile-scoped asset installation.
 - **Tri-Phase Wave Governance (`/tribunal-full`)**: Refactored the 21 parallel reviewers into 3 clean execution waves (Wave 1: Core Integrity, Wave 2: Security & Types, Wave 3: Domain & Performance), eliminating context window saturation and reviewer attention dilution.
-- **12 Essential 2026–2027 Skills Addition (Kit Total 171 → 183)**: Created and enriched 12 high-impact skills across AI, Database, Mobile, DevOps, Security, and Testing domains:
-  - `context-engineering-pro`: Prompt sandboxing, token budget allocation, high-density YAML formats.
-  - `agentic-workflows-2026`: ReAct execution loops, Zod tool schemas, parallel fan-out synthesis.
-  - `vector-search-pgvector`: pgvector 0.8.0+ iterative index scans, `halfvec(1536)` 50% RAM savings, RRF hybrid search SQL.
-  - `duckdb-analytical-sql`: Embedded OLAP queries, Direct Parquet processing, memory limits.
-  - `expo-router-v4`: React Native 0.76+ New Architecture (Fabric/TurboModules), Expo Router v4 typed routes, native haptics.
-  - `edge-ai-mobile`: ONNX Runtime Mobile inference, sub-10ms edge AI, 4-bit quantization.
-  - `platform-engineering-opentofu`: OpenTofu IaC AWS VPC & ECS module blueprints, static security analysis.
-  - `opentelemetry-observability`: OpenTelemetry SDK distributed tracing, W3C context propagation, OTLP exporters.
-  - `zero-trust-passkeys`: SimpleWebAuthn v13+ Passkey Autofill / Conditional UI (`useBrowserAutofill: true`), `AbortController` cancellation.
-  - `ai-app-hardening`: OWASP LLM 2026 risk matrix, indirect prompt injection defense filter (`sanitizeRAGDocument`).
-  - `playwright-ai-e2e`: Playwright 1.45+ ARIA role locators, zero-sleep auto-waiting, API route mocking.
-  - `property-based-testing`: Fast-Check Vitest generative input tuple testing, shrinking counter-example isolation.
-- **Tightly Bound Skill-Script & Co-Requirement Binding Standard**: Configured explicit `script:`, `scripts-binding:`, and `skills:` co-requirement fields in YAML frontmatters of all 183 skills, linking them to `.agent/scripts/` execution scripts (`security_scan.js`, `test_runner.js`, `schema_validator.js`, `lint_runner.js`).
-- **Manifest Synchronization (`.agent/.manifest.json`)**: Updated manifest checksum records for all 183 skills across both root and package workspaces.
+- **14 Essential 2026–2027 Skills Addition (Kit Total 171 → 185)**: Created and enriched high-impact skills across AI, Database, Mobile, DevOps, Security, and Testing domains (`context-engineering-pro`, `agentic-workflows-2026`, `vector-search-pgvector`, `duckdb-analytical-sql`, `expo-router-v4`, `edge-ai-mobile`, `platform-engineering-opentofu`, `opentelemetry-observability`, `zero-trust-passkeys`, `ai-app-hardening`, `playwright-ai-e2e`, `property-based-testing`, etc.).
+- **Code Quality, Prettier & ESLint Upgrade**: Enabled `"checkJs": true` in `tsconfig.json`, configured Prettier (`.prettierrc`), added `npm run format` & `npm run format:check` scripts, and expanded ESLint rules from 2 to 12 rules.
+- **Non-Blocking Memory Lock**: Replaced event loop spin lock in `dist/commands/memory.js` with non-blocking `Atomics.wait()`.
+- **CI Matrix & Rust Test Automation**: Upgraded `.github/workflows/ci.yml` to 3-platform matrix (Ubuntu, Windows, macOS), added an ESLint step, and added dedicated Rust test execution (`cargo test`).
+- **Comprehensive Documentation Suite**: Created `docs/API_REFERENCE.md`, `docs/MCP_GUIDE.md`, and `docs/AUTHORING_GUIDE.md` covering programmatic imports, MCP server integration, and custom asset authoring.
+- **Unit Test Suite Expansion**: Created unit tests for `learn`, `compile`, and `native` fallback commands (`test/unit/learn.test.js`, `test/unit/compile.test.js`, `test/unit/native.test.js`), achieving 28 passing test suites (313 unit tests).
 
 ## [6.0.0] — 2026-07-30
 

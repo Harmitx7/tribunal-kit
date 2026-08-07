@@ -52,7 +52,7 @@ describe("MCP Server handleRequest", () => {
       params: {}
     };
     const result = handleRequest(req);
-    expect(result.protocolVersion).toBe("2024-11-05");
+    expect(result.protocolVersion).toBe("2025-03-26");
     expect(result.serverInfo.name).toBe("tribunal-kit-mcp");
   });
 

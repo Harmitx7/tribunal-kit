@@ -110,24 +110,26 @@ function stripBoilerplate(text) {
   return minified.trim();
 }
 
+function getAgentDir() {
+  const fs = require("fs");
+  const local = path.join(process.cwd(), ".agent");
+  if (fs.existsSync(local)) return local;
+  return path.resolve(__dirname, "../.agent");
+}
+
 function handleRequest(req) {
+  const fs = require("fs");
   if (req.method === "notifications/initialized" || req.method === "notifications/cancelled") {
     return null;
   }
   if (req.method === "ping") {
     return {};
   }
-  if (req.method === "resources/list") {
-    return { resources: [] };
-  }
-  if (req.method === "prompts/list") {
-    return { prompts: [] };
-  }
 
   // MCP spec: method names follow path-style convention
   if (req.method === "initialize") {
     return {
-      protocolVersion: "2024-11-05",
+      protocolVersion: "2025-03-26",
       capabilities: {
         tools: {},
         resources: { subscribe: false, listChanged: false },
@@ -137,6 +139,148 @@ function handleRequest(req) {
         name: "tribunal-kit-mcp",
         version: PKG.version,
       },
+    };
+  }
+
+  if (req.method === "resources/list") {
+    const agentDir = getAgentDir();
+    const resources = [];
+    
+    // Agents
+    const agentsDir = path.join(agentDir, "agents");
+    if (fs.existsSync(agentsDir)) {
+      const files = fs.readdirSync(agentsDir).filter((f) => f.endsWith(".md"));
+      for (const f of files) {
+        const name = path.basename(f, ".md");
+        resources.push({
+          uri: `tribunal://agent/${name}`,
+          name: `Agent: ${name}`,
+          description: `Tribunal Specialist Agent rule file for ${name}`,
+          mimeType: "text/markdown",
+        });
+      }
+    }
+
+    // Skills
+    const skillsDir = path.join(agentDir, "skills");
+    if (fs.existsSync(skillsDir)) {
+      const dirs = fs.readdirSync(skillsDir, { withFileTypes: true });
+      for (const d of dirs) {
+        if (d.isDirectory()) {
+          const skillFile = path.join(skillsDir, d.name, "SKILL.md");
+          if (fs.existsSync(skillFile)) {
+            resources.push({
+              uri: `tribunal://skill/${d.name}`,
+              name: `Skill: ${d.name}`,
+              description: `Tribunal Skill instruction file for ${d.name}`,
+              mimeType: "text/markdown",
+            });
+          }
+        }
+      }
+    }
+
+    // Workflows
+    const workflowsDir = path.join(agentDir, "workflows");
+    if (fs.existsSync(workflowsDir)) {
+      const files = fs.readdirSync(workflowsDir).filter((f) => f.endsWith(".md"));
+      for (const f of files) {
+        const name = path.basename(f, ".md");
+        resources.push({
+          uri: `tribunal://workflow/${name}`,
+          name: `Workflow: ${name}`,
+          description: `Tribunal Workflow guide for ${name}`,
+          mimeType: "text/markdown",
+        });
+      }
+    }
+
+    return { resources };
+  }
+
+  if (req.method === "resources/read") {
+    const uri = req.params && req.params.uri;
+    if (!uri) throw new Error("Missing uri parameter");
+    const agentDir = getAgentDir();
+    let filePath = null;
+
+    if (uri.startsWith("tribunal://agent/")) {
+      const name = uri.replace("tribunal://agent/", "");
+      filePath = path.join(agentDir, "agents", `${name}.md`);
+    } else if (uri.startsWith("tribunal://skill/")) {
+      const name = uri.replace("tribunal://skill/", "");
+      filePath = path.join(agentDir, "skills", name, "SKILL.md");
+    } else if (uri.startsWith("tribunal://workflow/")) {
+      const name = uri.replace("tribunal://workflow/", "");
+      filePath = path.join(agentDir, "workflows", `${name}.md`);
+    }
+
+    if (!filePath || !fs.existsSync(filePath)) {
+      throw new Error(`Resource not found: ${uri}`);
+    }
+
+    const text = fs.readFileSync(filePath, "utf8");
+    return {
+      contents: [
+        {
+          uri,
+          mimeType: "text/markdown",
+          text,
+        },
+      ],
+    };
+  }
+
+  if (req.method === "prompts/list") {
+    const agentDir = getAgentDir();
+    const prompts = [];
+    const workflowsDir = path.join(agentDir, "workflows");
+
+    if (fs.existsSync(workflowsDir)) {
+      const files = fs.readdirSync(workflowsDir).filter((f) => f.endsWith(".md"));
+      for (const f of files) {
+        const name = path.basename(f, ".md");
+        prompts.push({
+          name,
+          description: `Execute tribunal workflow /${name}`,
+          arguments: [
+            {
+              name: "task",
+              description: "The task or target file to execute the workflow against",
+              required: false,
+            },
+          ],
+        });
+      }
+    }
+
+    return { prompts };
+  }
+
+  if (req.method === "prompts/get") {
+    const name = req.params && req.params.name;
+    const task = (req.params && req.params.arguments && req.params.arguments.task) || "";
+    if (!name) throw new Error("Missing prompt name parameter");
+
+    const agentDir = getAgentDir();
+    const workflowPath = path.join(agentDir, "workflows", `${name}.md`);
+    if (!fs.existsSync(workflowPath)) {
+      throw new Error(`Prompt workflow not found: ${name}`);
+    }
+
+    const content = fs.readFileSync(workflowPath, "utf8");
+    const promptText = task ? `${content}\n\nTarget Task/File: ${task}` : content;
+
+    return {
+      messages: [
+        {
+          role: "user",
+          content: {
+            type: "text",
+            text: promptText,
+          },
+        },
+      ],
     };
   }
 
@@ -337,26 +481,28 @@ function handleRequest(req) {
           ],
         };
       }
-      // Run synchronously by spawning a minimal script
-      const result = spawnSync(
-        process.execPath,
-        [
-          "-e",
-          `
-                const { generateIDEBridges } = require('${path.resolve(__dirname, "../dist/commands/init.js").replace(/\\/g, "\\\\")}');
-                generateIDEBridges('${cwd.replace(/\\/g, "\\\\")}', '${agentDest.replace(/\\/g, "\\\\")}', false).then(() => console.log('Sync complete'));
-            `,
-        ],
-        { encoding: "utf8", timeout: SPAWN_TIMEOUT_MS },
-      );
-      return {
-        content: [
-          {
-            type: "text",
-            text: result.stdout || result.stderr || "Sync complete",
-          },
-        ],
-      };
+      try {
+        const { generateIDEBridges } = require(path.resolve(__dirname, "../dist/commands/init.js"));
+        // generateIDEBridges is async — execute synchronously in MCP context
+        generateIDEBridges(cwd, agentDest, true).then(() => {}).catch(() => {});
+        return {
+          content: [
+            {
+              type: "text",
+              text: "Sync complete",
+            },
+          ],
+        };
+      } catch (e) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Sync failed: ${e.message}`,
+            },
+          ],
+        };
+      }
     }
 
     if (toolName === "search_case_law") {
@@ -374,7 +520,7 @@ function handleRequest(req) {
 
     if (toolName === "list_tribunal_agents") {
       const fs = require("fs");
-      const agentDir = path.join(process.cwd(), ".agent", "agents");
+      const agentDir = path.join(getAgentDir(), "agents");
       if (!fs.existsSync(agentDir)) return { content: [{ type: "text", text: "No agents found or .agent directory missing." }] };
       const agents = fs.readdirSync(agentDir).filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''));
       return { content: [{ type: "text", text: "Available Agents:\n- " + agents.join("\n- ") }] };
@@ -385,7 +531,7 @@ function handleRequest(req) {
       const name = req.params?.arguments?.name;
       if (!name || typeof name !== "string") throw { code: -32602, message: "Missing or invalid argument: name (string)" };
       const sanitizedName = path.basename(name);
-      const agentsDir = path.resolve(process.cwd(), ".agent", "agents");
+      const agentsDir = path.resolve(getAgentDir(), "agents");
       const agentPath = path.resolve(agentsDir, `${sanitizedName}.md`);
       // Path containment: ensure resolved path stays within agents directory
       if (!agentPath.startsWith(agentsDir)) throw { code: -32602, message: "Invalid agent name: path traversal detected" };
@@ -396,7 +542,7 @@ function handleRequest(req) {
 
     if (toolName === "list_tribunal_skills") {
       const fs = require("fs");
-      const skillsDir = path.join(process.cwd(), ".agent", "skills");
+      const skillsDir = path.join(getAgentDir(), "skills");
       if (!fs.existsSync(skillsDir)) return { content: [{ type: "text", text: "No skills found or .agent directory missing." }] };
       const skills = fs.readdirSync(skillsDir, { withFileTypes: true }).filter(d => d.isDirectory()).map(d => d.name);
       return { content: [{ type: "text", text: "Available Skills:\n- " + skills.join("\n- ") }] };
@@ -407,7 +553,7 @@ function handleRequest(req) {
       const name = req.params?.arguments?.name;
       if (!name || typeof name !== "string") throw { code: -32602, message: "Missing or invalid argument: name (string)" };
       const sanitizedName = path.basename(name);
-      const skillsDir = path.resolve(process.cwd(), ".agent", "skills");
+      const skillsDir = path.resolve(getAgentDir(), "skills");
       const skillPath = path.resolve(skillsDir, sanitizedName, "SKILL.md");
       // Path containment: ensure resolved path stays within skills directory
       if (!skillPath.startsWith(skillsDir)) throw { code: -32602, message: "Invalid skill name: path traversal detected" };
@@ -423,7 +569,7 @@ function handleRequest(req) {
 
       if (!task) throw { code: -32602, message: "Missing required argument: task" };
 
-      const agentDest = path.join(process.cwd(), ".agent");
+      const agentDest = getAgentDir();
       const fs = require("fs");
       if (!fs.existsSync(agentDest)) {
         return { content: [{ type: "text", text: "Error: .agent/ directory not found. Run `tk init` first." }] };
@@ -445,7 +591,7 @@ function handleRequest(req) {
         throw { code: -32602, message: "Missing or invalid required argument: query (string)" };
       }
       const budget = req.params?.arguments?.budget || 2000;
-      const agentDest = path.join(process.cwd(), ".agent");
+      const agentDest = getAgentDir();
       const fs = require("fs");
       if (!fs.existsSync(agentDest)) {
         return { content: [{ type: "text", text: "Error: .agent/ directory not found. Run `tk init` first." }] };
@@ -479,7 +625,7 @@ function handleRequest(req) {
       if (!validTypes.includes(memType)) {
         throw { code: -32602, message: `Invalid memory type: "${memType}". Must be one of: ${validTypes.join(", ")}` };
       }
-      const agentDest = path.join(process.cwd(), ".agent");
+      const agentDest = getAgentDir();
       const fs = require("fs");
       if (!fs.existsSync(agentDest)) {
         return { content: [{ type: "text", text: "Error: .agent/ directory not found. Run `tk init` first." }] };

@@ -30,10 +30,12 @@ describe("Release Audit Verification & Counts", () => {
   test("MCP Server handles resources/list and prompts/list correctly according to spec", () => {
     const resListReq = { jsonrpc: "2.0", id: 101, method: "resources/list", params: {} };
     const resListResult = handleRequest(resListReq);
-    expect(resListResult).toEqual({ resources: [] });
+    expect(Array.isArray(resListResult.resources)).toBe(true);
+    expect(resListResult.resources.length).toBeGreaterThan(0);
 
     const promptListReq = { jsonrpc: "2.0", id: 102, method: "prompts/list", params: {} };
     const promptListResult = handleRequest(promptListReq);
-    expect(promptListResult).toEqual({ prompts: [] });
+    expect(Array.isArray(promptListResult.prompts)).toBe(true);
+    expect(promptListResult.prompts.length).toBeGreaterThan(0);
   });
 });

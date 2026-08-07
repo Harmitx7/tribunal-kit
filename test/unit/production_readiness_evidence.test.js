@@ -461,7 +461,7 @@ describe("OBSERVABILITY: Structured Errors & Audit Outputs", () => {
     const req = { jsonrpc: "2.0", id: 1, method: "initialize", params: {} };
     const result = handleRequest(req);
 
-    expect(result.protocolVersion).toBe("2024-11-05");
+    expect(result.protocolVersion).toBe("2025-03-26");
     expect(result.serverInfo.name).toBe("tribunal-kit-mcp");
     expect(typeof result.serverInfo.version).toBe("string");
     expect(result.serverInfo.version).toMatch(/^\d+\.\d+\.\d+$/);

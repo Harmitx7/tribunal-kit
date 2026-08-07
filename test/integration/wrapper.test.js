@@ -23,7 +23,7 @@ describe("wrapper.js fallback routing", () => {
   });
 
   test("warns and falls back to JS when Rust binary is not found for supported command", () => {
-    const result = runWrapper(["status"], { TRIBUNAL_FORCE_JS: "1" });
+    const result = runWrapper(["status"], { TRIBUNAL_FORCE_JS: "1", TK_VERBOSE: "1" });
     // Since the binary doesn't exist yet, it should log the warning and then run JS status
     expect(result.stderr).toContain("Rust binary not found");
     // Check that the JS status command actually runs (it usually prints the agent config status)
@@ -39,7 +39,7 @@ describe("wrapper.js fallback routing", () => {
     try {
       const result = runWrapper(
         ["validate", "--file", payloadPath, "--schema", "micro-worker"],
-        { TRIBUNAL_FORCE_JS: "1" },
+        { TRIBUNAL_FORCE_JS: "1", TK_VERBOSE: "1" },
       );
       expect(result.status).toBe(0);
       expect(result.stderr).toContain("Rust binary not found");

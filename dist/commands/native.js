@@ -219,10 +219,46 @@ function cmdOptimizeStep(processArgs, quiet = false) {
   console.log(JSON.stringify(result));
   return true;
 }
+function cmdImpactTier(processArgs, quiet = false) {
+  const args = processArgs.slice(3);
+  const files = getOption(args, ["--files"]) || "";
+  const lines = parseInt(getOption(args, ["--lines"]) || "0", 10);
+  const task = getOption(args, ["--task"]) || "";
+
+  const fileList = files ? files.split(",").map(f => f.trim()).filter(Boolean) : [];
+  const fileCount = fileList.length;
+
+  // Tier classification heuristics (mirrors Rust ImpactTier logic)
+  let tier = 0;
+  if (fileCount === 0 && lines <= 5) tier = 0;
+  else if (fileCount <= 1 && lines <= 50) tier = 1;
+  else if (fileCount <= 5 && lines <= 200) tier = 2;
+  else tier = 3;
+
+  // Check for high-risk patterns that force Tier 3
+  const highRiskPatterns = /\b(auth|migration|schema|security|password|token|jwt|rbac|permissions)\b/i;
+  const highRiskExtensions = /\.(sql|prisma|tf|tofu)$/i;
+  if (highRiskPatterns.test(task) || fileList.some(f => highRiskExtensions.test(f))) {
+    tier = Math.max(tier, 3);
+  }
+
+  const tierNames = ["Fast-Pass", "Express Pass", "Targeted Audit", "Full Gauntlet"];
+  const result = {
+    tier,
+    tier_name: tierNames[tier],
+    file_count: fileCount,
+    line_count: lines,
+    socratic_gate: tier >= 3 ? "required" : tier >= 2 ? "conditional" : "bypass",
+  };
+  if (!quiet) console.error(`✓ Impact Tier: ${tier} (${tierNames[tier]})`);
+  console.log(JSON.stringify(result));
+  return true;
+}
 
 module.exports = {
   cmdMinContext,
   cmdDagSchedule,
   cmdContextCompress,
   cmdOptimizeStep,
+  cmdImpactTier,
 };

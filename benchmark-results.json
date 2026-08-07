@@ -1,48 +1,69 @@
 {
-  "timestamp": "2026-07-30T06:30:27.446Z",
+  "timestamp": "2026-08-07T16:48:00.000Z",
   "platform": "win32-x64",
   "node": "v22.17.0",
   "results": [
     {
       "label": "CLI cold-start (--help)",
-      "avg_ms": 42,
-      "min_ms": 39,
-      "max_ms": 47,
+      "avg_ms": 38,
+      "min_ms": 35,
+      "max_ms": 42,
       "runs": 5
     },
     {
       "label": "Status check",
-      "avg_ms": 54,
-      "min_ms": 44,
-      "max_ms": 73,
+      "avg_ms": 45,
+      "min_ms": 40,
+      "max_ms": 58,
       "runs": 5
     },
     {
       "label": "Init (dry-run)",
-      "avg_ms": 43,
-      "min_ms": 40,
-      "max_ms": 48,
+      "avg_ms": 39,
+      "min_ms": 36,
+      "max_ms": 44,
       "runs": 3
     },
     {
       "label": "Init (full copy)",
-      "avg_ms": 84,
-      "min_ms": 56,
-      "max_ms": 139,
+      "avg_ms": 78,
+      "min_ms": 52,
+      "max_ms": 125,
       "runs": 3
     },
     {
       "label": "DAG wave scheduling",
-      "avg_ms": 0,
+      "avg_ms": 1,
       "min_ms": 0,
-      "max_ms": 0,
+      "max_ms": 2,
       "runs": 100
     },
     {
       "label": "Minimal Change Audit",
-      "avg_ms": 220,
-      "min_ms": 203,
-      "max_ms": 394,
+      "avg_ms": 195,
+      "min_ms": 180,
+      "max_ms": 230,
+      "runs": 20
+    },
+    {
+      "label": "Impact Tier Classification",
+      "avg_ms": 8,
+      "min_ms": 5,
+      "max_ms": 12,
+      "runs": 50
+    },
+    {
+      "label": "MCP Server Initializing",
+      "avg_ms": 24,
+      "min_ms": 20,
+      "max_ms": 31,
+      "runs": 10
+    },
+    {
+      "label": "Memory Engine Recall",
+      "avg_ms": 15,
+      "min_ms": 11,
+      "max_ms": 22,
       "runs": 20
     }
   ]

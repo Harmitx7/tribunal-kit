@@ -108,3 +108,35 @@ export function cmdUninstall(flags, quiet) {
 export async function generateIDEBridges(cwd, agentDest, quiet) {
   return loadCommand('../commands/init.js', 'generateIDEBridges', cwd, agentDest, quiet);
 }
+
+export async function cmdGuardrail(flags, argv, quiet) {
+  return loadCommand('../commands/guardrail.js', 'cmdGuardrail', flags, argv, quiet);
+}
+
+export async function cmdOptimizeSkill(flags, argv, quiet) {
+  return loadCommand('../commands/optimize.js', 'cmdOptimizeSkill', flags, argv, quiet);
+}
+
+export function cmdMinimal(flags, quiet) {
+  return loadCommand('../commands/minimal.js', 'cmdMinimal', flags, quiet);
+}
+
+export function cmdValidate(flags, argv, quiet) {
+  return loadCommand('../commands/validate.js', 'cmdValidate', flags, argv, quiet);
+}
+
+export function cmdMinContext(argv, quiet) {
+  return loadCommand('../commands/native.js', 'cmdMinContext', argv, quiet);
+}
+
+export function cmdDagSchedule(argv, quiet) {
+  return loadCommand('../commands/native.js', 'cmdDagSchedule', argv, quiet);
+}
+
+export function cmdContextCompress(argv, quiet) {
+  return loadCommand('../commands/native.js', 'cmdContextCompress', argv, quiet);
+}
+
+export function cmdOptimizeStep(argv, quiet) {
+  return loadCommand('../commands/native.js', 'cmdOptimizeStep', argv, quiet);
+}
