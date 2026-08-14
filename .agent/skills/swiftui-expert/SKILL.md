@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing or refactoring SwiftUI components, you MUST inspect:
+
 1. Modern Observable Macro (iOS 17+) (Section 43) → Use `@Observable` macro for reference types; ban legacy `@StateObject` / `@Published` boilerplate in iOS 17+ code
 2. Identifiable Protocol in ForEach (Section 125) → Conform model types to `Identifiable` for `ForEach`; ban integer index iteration (`0..<items.count`)
 3. NavigationStack Standard (Section 18) → Use `NavigationStack` or `NavigationSplitView`; ban deprecated legacy `NavigationView`

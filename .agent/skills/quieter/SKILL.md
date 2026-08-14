@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before subduing visual design elements, you MUST inspect:
+
 1. `DESIGN.md` / `package.json` → Check background surface variables and contrast standards
 2. Palette Subjugation rules (Section 24) → Limit high-saturation colors to single primary actions
 3. Motion Restraint rules (Section 35) → Eliminate looping pulsing badges and restrict motion to user-initiated actions
@@ -31,21 +32,26 @@ Reduce visual noise, eliminate unnecessary color competition, and restore calm f
 ## 5 Restraint Tactics
 
 ### 1. Palette Subjugation
+
 - **Reduce Primary Colors**: Limit saturated colors to a single primary action. Turn secondary accent colors into subtle monochrome tones (`oklch(0.92 0.01 240)`).
 - **Mute Background Surfaces**: Replace multi-colored cards or high-saturation gradient backgrounds with quiet, neutral monochrome surfaces.
 
 ### 2. De-emphasize Borders & Outlines
+
 - **Subtle Surface Elevation**: Replace harsh 100% black/white borders with subtle surface background differences ($L \pm 3\%$) or ultra-light 5% opacity borders.
 
 ### 3. Subdue Typography Scaling
+
 - **Reduce Font Weight Spikes**: Replace heavy 900 bold display headings with refined semibold (`600`) or medium (`500`) typography.
 - **Normalize Font Sizes**: Reduce font size jumps between section headers and subheaders to create smooth visual harmony.
 
 ### 4. Calm Motion & Animations
+
 - **Eliminate Continuous Animations**: Remove spinning gradient borders, pulsing badges, and bouncing icons. Restrict motion exclusively to user-initiated actions.
 - **Shorten Transitions**: Keep hover state transitions subtle and fast ($\le 150\text{ms}$).
 
 ### 5. Expand Negative Space
+
 - **Increase Padding**: Give content room to breathe by increasing section paddings by 25%-50%, reducing cognitive overload.
 
 ---

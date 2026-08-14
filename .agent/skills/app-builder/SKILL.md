@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before scaffolding or orchestrating application builds, you MUST inspect:
+
 1. Clarification Gate (Section 48) → Ask 4 core purpose/constraint questions before selecting stack or creating files
 2. Plan Verification (Section 220) → Ensure `{task-slug}.md` is created and verified in project root before invoking specialist agents
 3. Incremental Build Rule (Section 15) → Never generate entire applications in one shot; build and verify module by module

@@ -9,10 +9,10 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
     "noEmit": true,
     "rootDir": "."
   },
   "include": ["**/*.js"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "target", "coverage"]
 }

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before operating in Marathon long-running harness mode, you MUST inspect:
+
 1. Active session ledger (`task.md`, `session_manager.js`) → Verify active feature specs and task completion status
 2. Verification-Before-Completion (VBC) Protocol → Provide concrete proof (test run log, compiler pass) before calling `tk marathon mark pass`
 3. Error recovery state machine → Escalate unrecoverable errors after 3 retries via `tk marathon mark fail`

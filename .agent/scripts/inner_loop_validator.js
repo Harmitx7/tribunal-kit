@@ -33,10 +33,10 @@
  *   }
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 // ── Resolve security_scan patterns (reuse — do not duplicate) ─────────────
 const SCRIPT_DIR = __dirname;
@@ -44,7 +44,7 @@ let SECURITY_PATTERNS = [];
 let SEVERITY_RANK = {};
 
 try {
-  const secScan = require(path.join(SCRIPT_DIR, "security_scan.js"));
+  const secScan = require(path.join(SCRIPT_DIR, 'security_scan.js'));
   SECURITY_PATTERNS = secScan.PATTERNS || [];
   SEVERITY_RANK = secScan.SEVERITY_RANK || {
     critical: 0,
@@ -57,23 +57,13 @@ try {
   SECURITY_PATTERNS = [
     [
       /(?:password|passwd)\s*=\s*["'][^"']+["']/i,
-      "critical",
-      "Hardcoded Secret",
-      "Hardcoded password",
+      'critical',
+      'Hardcoded Secret',
+      'Hardcoded password',
     ],
-    [
-      /\beval\s*\(/,
-      "high",
-      "Code Injection",
-      "eval() is a code injection vector",
-    ],
-    [/\.innerHTML\s*=/, "high", "XSS", "Direct innerHTML assignment"],
-    [
-      /algorithms\s*:\s*\[\s*["']none["']/,
-      "critical",
-      "Auth Bypass",
-      "JWT 'none' algorithm",
-    ],
+    [/\beval\s*\(/, 'high', 'Code Injection', 'eval() is a code injection vector'],
+    [/\.innerHTML\s*=/, 'high', 'XSS', 'Direct innerHTML assignment'],
+    [/algorithms\s*:\s*\[\s*["']none["']/, 'critical', 'Auth Bypass', "JWT 'none' algorithm"],
   ];
   SEVERITY_RANK = { critical: 0, high: 1, medium: 2, low: 3 };
 }
@@ -83,68 +73,64 @@ try {
 const SYNTAX_HEURISTICS = [
   {
     pattern: /\bconst\s+\w+\s*=\s*require\s*\(\s*["'](?!\.\/|\.\.\/|[a-zA-Z])/,
-    severity: "medium",
-    category: "Hallucination Risk",
-    message: "Suspicious require() path — verify module exists in package.json",
-    fix: "Check that this package is listed in package.json dependencies",
+    severity: 'medium',
+    category: 'Hallucination Risk',
+    message: 'Suspicious require() path — verify module exists in package.json',
+    fix: 'Check that this package is listed in package.json dependencies',
   },
   {
     pattern: /\/\/\s*VERIFY:/,
-    severity: "low",
-    category: "Verification Flag",
-    message:
-      "Maker Agent flagged this line as uncertain — human review required",
-    fix: "The Maker Agent marked this with // VERIFY: — confirm before approving",
+    severity: 'low',
+    category: 'Verification Flag',
+    message: 'Maker Agent flagged this line as uncertain — human review required',
+    fix: 'The Maker Agent marked this with // VERIFY: — confirm before approving',
   },
   {
     pattern: /:\s*any\b(?!\s*=)/,
-    severity: "low",
-    category: "Type Safety",
-    message: "TypeScript `any` type used without explanation comment",
-    fix: "Replace :any with a specific type, or add // any: [reason] comment",
+    severity: 'low',
+    category: 'Type Safety',
+    message: 'TypeScript `any` type used without explanation comment',
+    fix: 'Replace :any with a specific type, or add // any: [reason] comment',
   },
   {
     pattern: /process\.env\.\w+(?!\s*\?\?|\s*\|\|)/,
-    severity: "low",
-    category: "Config Safety",
-    message:
-      "process.env access without nullish fallback — may throw at runtime",
+    severity: 'low',
+    category: 'Config Safety',
+    message: 'process.env access without nullish fallback — may throw at runtime',
     fix: 'Use: process.env.VAR ?? "default" — always guard env var access',
   },
   {
     pattern: /throw\s+["'`]/,
-    severity: "low",
-    category: "Error Quality",
-    message:
-      "Throwing a string instead of an Error object — stack traces will be lost",
+    severity: 'low',
+    category: 'Error Quality',
+    message: 'Throwing a string instead of an Error object — stack traces will be lost',
     fix: 'Use: throw new Error("message") instead of throw "message"',
   },
   {
     pattern: /catch\s*\(\s*\w+\s*\)\s*\{?\s*\}/,
-    severity: "medium",
-    category: "Error Handling",
-    message: "Empty catch block swallows errors silently",
-    fix: "Add at minimum: catch (err) { console.error(err); throw err; }",
+    severity: 'medium',
+    category: 'Error Handling',
+    message: 'Empty catch block swallows errors silently',
+    fix: 'Add at minimum: catch (err) { console.error(err); throw err; }',
   },
   {
     pattern: /\.then\(\s*\)\s*\.catch\s*\(|\.catch\s*\(\s*\)/,
-    severity: "medium",
-    category: "Error Handling",
-    message:
-      "Empty .then() or .catch() handler — Promise errors may be silenced",
-    fix: "Implement proper resolution and rejection handlers",
+    severity: 'medium',
+    category: 'Error Handling',
+    message: 'Empty .then() or .catch() handler — Promise errors may be silenced',
+    fix: 'Implement proper resolution and rejection handlers',
   },
   {
     pattern: /window\.|document\.|navigator\./,
-    severity: "low",
-    category: "Environment Check",
-    message: "Browser global access — may fail in SSR/Node environments",
+    severity: 'low',
+    category: 'Environment Check',
+    message: 'Browser global access — may fail in SSR/Node environments',
     fix: 'Guard with: typeof window !== "undefined" before accessing browser globals',
   },
 ];
 
 // ── ANSI colors (centralized via _colors.js) ─────────────────────────────
-const { GREEN, YELLOW, RED, CYAN, BOLD, DIM, RESET } = require("./_colors");
+const { GREEN, YELLOW, RED, CYAN, BOLD, DIM, RESET } = require('./_colors');
 
 // ── Core scanning ─────────────────────────────────────────────────────────
 
@@ -156,20 +142,16 @@ const { GREEN, YELLOW, RED, CYAN, BOLD, DIM, RESET } = require("./_colors");
  * @param {string} [lang]    - Language hint ('js' | 'ts' | 'py' | 'jsx' | 'tsx')
  * @returns {Array<{severity, category, line, message, fix, source}>}
  */
-function scanCode(code, _lang = "js") {
+function scanCode(code, _lang = 'js') {
   const findings = [];
-  const lines = code.split("\n");
+  const lines = code.split('\n');
 
   for (let i = 0; i < lines.length; i++) {
     const stripped = lines[i].trim();
     const lineNum = i + 1;
 
     // Skip pure comments
-    if (
-      stripped.startsWith("//") ||
-      stripped.startsWith("#") ||
-      stripped.startsWith("*")
-    ) {
+    if (stripped.startsWith('//') || stripped.startsWith('#') || stripped.startsWith('*')) {
       continue;
     }
 
@@ -182,7 +164,7 @@ function scanCode(code, _lang = "js") {
           line: lineNum,
           message,
           fix: buildSecurityFix(category),
-          source: "security_scan",
+          source: 'security_scan',
         });
       }
     }
@@ -196,7 +178,7 @@ function scanCode(code, _lang = "js") {
           line: lineNum,
           message: h.message,
           fix: h.fix,
-          source: "heuristic",
+          source: 'heuristic',
         });
       }
     }
@@ -212,26 +194,18 @@ function scanCode(code, _lang = "js") {
  */
 function buildSecurityFix(category) {
   const fixes = {
-    "Hardcoded Secret": "Move to environment variable: process.env.SECRET_NAME",
-    "SQL Injection":
-      "Use parameterized queries. Never interpolate user input into SQL.",
-    XSS: "Use textContent instead of innerHTML. Sanitize with DOMPurify if HTML is needed.",
-    "Code Injection":
-      "Remove eval()/new Function(). Use a safe alternative or a JSON parser.",
-    "Command Injection":
-      "Use execFile() with an args array instead of exec() with a shell string.",
-    "Weak Crypto":
-      'Use crypto.createHash("sha256") or bcrypt for password hashing.',
-    "Weak Randomness":
-      "Use crypto.randomBytes(n) or crypto.randomUUID() for security-sensitive values.",
-    "Auth Bypass":
-      'Enforce JWT algorithm explicitly: { algorithms: ["HS256"] }',
-    "Info Disclosure":
-      "Remove logging of sensitive values. Use structured logging with redaction.",
+    'Hardcoded Secret': 'Move to environment variable: process.env.SECRET_NAME',
+    'SQL Injection': 'Use parameterized queries. Never interpolate user input into SQL.',
+    XSS: 'Use textContent instead of innerHTML. Sanitize with DOMPurify if HTML is needed.',
+    'Code Injection': 'Remove eval()/new Function(). Use a safe alternative or a JSON parser.',
+    'Command Injection': 'Use execFile() with an args array instead of exec() with a shell string.',
+    'Weak Crypto': 'Use crypto.createHash("sha256") or bcrypt for password hashing.',
+    'Weak Randomness':
+      'Use crypto.randomBytes(n) or crypto.randomUUID() for security-sensitive values.',
+    'Auth Bypass': 'Enforce JWT algorithm explicitly: { algorithms: ["HS256"] }',
+    'Info Disclosure': 'Remove logging of sensitive values. Use structured logging with redaction.',
   };
-  return (
-    fixes[category] || "Review and remediate according to OWASP guidelines."
-  );
+  return fixes[category] || 'Review and remediate according to OWASP guidelines.';
 }
 
 /**
@@ -243,15 +217,15 @@ function buildSecurityFix(category) {
  */
 function computeVerdict(findings) {
   // Filter out VERIFY flags from blocking logic — they are informational
-  const blocking = findings.filter((f) => f.category !== "Verification Flag");
+  const blocking = findings.filter(f => f.category !== 'Verification Flag');
   const maxSeverityRank = blocking.reduce((min, f) => {
     const rank = SEVERITY_RANK[f.severity] ?? 3;
     return rank < min ? rank : min;
   }, 4); // 4 = no findings
 
-  if (maxSeverityRank <= 1) return { verdict: "REJECTED", passed: false }; // critical or high
-  if (maxSeverityRank === 2) return { verdict: "WARNING", passed: true }; // medium
-  return { verdict: "APPROVED", passed: true };
+  if (maxSeverityRank <= 1) return { verdict: 'REJECTED', passed: false }; // critical or high
+  if (maxSeverityRank === 2) return { verdict: 'WARNING', passed: true }; // medium
+  return { verdict: 'APPROVED', passed: true };
 }
 
 /**
@@ -262,7 +236,7 @@ function computeVerdict(findings) {
  * @returns {string|null}
  */
 function buildSelfHealingInstructions(findings) {
-  const blocking = findings.filter((f) => {
+  const blocking = findings.filter(f => {
     const rank = SEVERITY_RANK[f.severity] ?? 3;
     return rank <= 1; // critical + high only
   });
@@ -270,20 +244,18 @@ function buildSelfHealingInstructions(findings) {
   if (!blocking.length) return null;
 
   const lines = [
-    "⚠️ Inner-Loop Validator found blocking issues. Auto-correct the following before writing to disk:\n",
+    '⚠️ Inner-Loop Validator found blocking issues. Auto-correct the following before writing to disk:\n',
   ];
 
   for (const f of blocking) {
     lines.push(`[${f.severity.toUpperCase()}] Line ${f.line} — ${f.category}`);
     lines.push(`  Issue: ${f.message}`);
     lines.push(`  Fix:   ${f.fix}`);
-    lines.push("");
+    lines.push('');
   }
 
-  lines.push(
-    "Re-generate the affected lines only. Do not change unaffected code.",
-  );
-  return lines.join("\n");
+  lines.push('Re-generate the affected lines only. Do not change unaffected code.');
+  return lines.join('\n');
 }
 
 // ── Output ────────────────────────────────────────────────────────────────
@@ -291,26 +263,20 @@ function buildSelfHealingInstructions(findings) {
 function printHumanReport(result) {
   const { verdict, issues, summary, self_healing_instructions } = result;
 
-  const verdictColor =
-    verdict === "APPROVED" ? GREEN : verdict === "WARNING" ? YELLOW : RED;
-  const verdictIcon =
-    verdict === "APPROVED" ? "✅" : verdict === "WARNING" ? "⚠️" : "❌";
+  const verdictColor = verdict === 'APPROVED' ? GREEN : verdict === 'WARNING' ? YELLOW : RED;
+  const verdictIcon = verdict === 'APPROVED' ? '✅' : verdict === 'WARNING' ? '⚠️' : '❌';
 
-  console.error(
-    `\n${BOLD}${CYAN}━━━ Inner-Loop Validator ━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`,
-  );
-  console.error(
-    `  Verdict: ${verdictColor}${BOLD}${verdictIcon} ${verdict}${RESET}`,
-  );
+  console.error(`\n${BOLD}${CYAN}━━━ Inner-Loop Validator ━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`);
+  console.error(`  Verdict: ${verdictColor}${BOLD}${verdictIcon} ${verdict}${RESET}`);
   console.error(`  Summary: ${summary}`);
 
   if (issues.length) {
     console.error(`\n  ${BOLD}Issues found:${RESET}`);
     for (const iss of issues) {
       const color =
-        iss.severity === "critical" || iss.severity === "high"
+        iss.severity === 'critical' || iss.severity === 'high'
           ? RED
-          : iss.severity === "medium"
+          : iss.severity === 'medium'
             ? YELLOW
             : DIM;
       console.error(
@@ -322,28 +288,22 @@ function printHumanReport(result) {
   }
 
   if (self_healing_instructions) {
-    console.error(
-      `\n  ${YELLOW}${BOLD}Self-Healing Instructions (for Maker Agent):${RESET}`,
-    );
+    console.error(`\n  ${YELLOW}${BOLD}Self-Healing Instructions (for Maker Agent):${RESET}`);
     console.error(
       self_healing_instructions
-        .split("\n")
-        .map((l) => `    ${l}`)
-        .join("\n"),
+        .split('\n')
+        .map(l => `    ${l}`)
+        .join('\n'),
     );
   }
 
-  console.error(
-    `${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}\n`,
-  );
+  console.error(`${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}\n`);
 }
 
 // ── Built-in test case ────────────────────────────────────────────────────
 
 function runTestCase() {
-  console.error(
-    `\n${BOLD}${CYAN}━━━ Inner-Loop Validator — Self-Test ━━━━━━━━━━━━━━${RESET}`,
-  );
+  console.error(`\n${BOLD}${CYAN}━━━ Inner-Loop Validator — Self-Test ━━━━━━━━━━━━━━${RESET}`);
 
   const badCode = `
 const password = "supersecret123";
@@ -353,21 +313,17 @@ const token = eval(req.body.expr);
 const rand = Math.random() * 1000;
 `;
 
-  const result = validate(badCode, "js");
+  const result = validate(badCode, 'js');
   printHumanReport(result);
 
-  const hasCritical = result.issues.some(
-    (i) => i.severity === "critical" || i.severity === "high",
-  );
-  if (hasCritical && result.verdict === "REJECTED") {
+  const hasCritical = result.issues.some(i => i.severity === 'critical' || i.severity === 'high');
+  if (hasCritical && result.verdict === 'REJECTED') {
     console.error(
       `${GREEN}✅ Self-test PASSED — validator correctly identified and blocked critical issues${RESET}\n`,
     );
     process.exit(0);
   } else {
-    console.error(
-      `${RED}❌ Self-test FAILED — expected REJECTED verdict for bad code${RESET}\n`,
-    );
+    console.error(`${RED}❌ Self-test FAILED — expected REJECTED verdict for bad code${RESET}\n`);
     process.exit(1);
   }
 }
@@ -383,13 +339,13 @@ const rand = Math.random() * 1000;
  * @param {object} [opts]    - Options: { timeout: number }
  * @returns {{ verdict, passed, issues, summary, self_healing_instructions }}
  */
-function validate(code, lang = "js", _opts = {}) {
-  if (!code || typeof code !== "string") {
+function validate(code, lang = 'js', _opts = {}) {
+  if (!code || typeof code !== 'string') {
     return {
-      verdict: "APPROVED",
+      verdict: 'APPROVED',
       passed: true,
       issues: [],
-      summary: "No code provided — skipped.",
+      summary: 'No code provided — skipped.',
       self_healing_instructions: null,
     };
   }
@@ -397,34 +353,28 @@ function validate(code, lang = "js", _opts = {}) {
   const issues = scanCode(code, lang);
 
   // Sort by severity rank
-  issues.sort(
-    (a, b) =>
-      (SEVERITY_RANK[a.severity] ?? 3) - (SEVERITY_RANK[b.severity] ?? 3),
-  );
+  issues.sort((a, b) => (SEVERITY_RANK[a.severity] ?? 3) - (SEVERITY_RANK[b.severity] ?? 3));
 
   const { verdict, passed } = computeVerdict(issues);
   const healingInstructions = buildSelfHealingInstructions(issues);
 
-  const critCount = issues.filter((i) => i.severity === "critical").length;
-  const highCount = issues.filter((i) => i.severity === "high").length;
-  const medCount = issues.filter((i) => i.severity === "medium").length;
-  const lowCount = issues.filter((i) => i.severity === "low").length;
-  const verifyCount = issues.filter(
-    (i) => i.category === "Verification Flag",
-  ).length;
+  const critCount = issues.filter(i => i.severity === 'critical').length;
+  const highCount = issues.filter(i => i.severity === 'high').length;
+  const medCount = issues.filter(i => i.severity === 'medium').length;
+  const lowCount = issues.filter(i => i.severity === 'low').length;
+  const verifyCount = issues.filter(i => i.category === 'Verification Flag').length;
 
   let summary = `${issues.length} issue(s) found`;
   if (!issues.length) {
-    summary = "No issues detected — code is clean";
+    summary = 'No issues detected — code is clean';
   } else {
     const parts = [];
     if (critCount) parts.push(`${critCount} critical`);
     if (highCount) parts.push(`${highCount} high`);
     if (medCount) parts.push(`${medCount} medium`);
     if (lowCount) parts.push(`${lowCount} low`);
-    if (verifyCount)
-      parts.push(`${verifyCount} VERIFY flag(s) need human review`);
-    summary = parts.join(", ");
+    if (verifyCount) parts.push(`${verifyCount} VERIFY flag(s) need human review`);
+    summary = parts.join(', ');
   }
 
   return {
@@ -434,7 +384,7 @@ function validate(code, lang = "js", _opts = {}) {
     summary,
     self_healing_instructions: healingInstructions,
     meta: {
-      lines_scanned: code.split("\n").length,
+      lines_scanned: code.split('\n').length,
       lang,
       timestamp: new Date().toISOString(),
     },
@@ -443,6 +393,7 @@ function validate(code, lang = "js", _opts = {}) {
 
 module.exports = {
   validate,
+  validateSnippet: validate,
   scanCode,
   computeVerdict,
   buildSelfHealingInstructions,
@@ -453,7 +404,7 @@ module.exports = {
 if (require.main === module) {
   const argv = process.argv.slice(2);
 
-  if (!argv.length || argv.includes("--help") || argv.includes("-h")) {
+  if (!argv.length || argv.includes('--help') || argv.includes('-h')) {
     console.log(`
 ${BOLD}inner_loop_validator.js${RESET} — Tribunal Self-Healing CI
 
@@ -475,19 +426,19 @@ ${BOLD}Verdict:${RESET}
   }
 
   // Built-in self-test
-  if (argv[0] === "test-case") {
+  if (argv[0] === 'test-case') {
     runTestCase();
     process.exit(0);
   }
 
-  const jsonOnly = argv.includes("--json-only");
-  const fileFlagIdx = argv.indexOf("--file");
-  const snippetIdx = argv.indexOf("--snippet");
-  const langIdx = argv.indexOf("--lang");
+  const jsonOnly = argv.includes('--json-only');
+  const fileFlagIdx = argv.indexOf('--file');
+  const snippetIdx = argv.indexOf('--snippet');
+  const langIdx = argv.indexOf('--lang');
 
-  const lang = langIdx !== -1 && argv[langIdx + 1] ? argv[langIdx + 1] : "js";
+  const lang = langIdx !== -1 && argv[langIdx + 1] ? argv[langIdx + 1] : 'js';
 
-  let code = "";
+  let code = '';
 
   if (fileFlagIdx !== -1 && argv[fileFlagIdx + 1]) {
     const filePath = path.resolve(argv[fileFlagIdx + 1]);
@@ -495,16 +446,14 @@ ${BOLD}Verdict:${RESET}
       console.error(`${RED}✖ File not found: ${filePath}${RESET}`);
       process.exit(1);
     }
-    code = fs.readFileSync(filePath, "utf8");
+    code = fs.readFileSync(filePath, 'utf8');
   } else if (snippetIdx !== -1 && argv[snippetIdx + 1]) {
     code = argv[snippetIdx + 1];
   } else if (!process.stdin.isTTY) {
     // Read from stdin if piped (cross-platform, works on Windows)
-    code = fs.readFileSync(0, "utf8");
+    code = fs.readFileSync(0, 'utf8');
   } else {
-    console.error(
-      `${RED}✖ Provide --snippet "<code>" or --file <path>${RESET}`,
-    );
+    console.error(`${RED}✖ Provide --snippet "<code>" or --file <path>${RESET}`);
     process.exit(1);
   }
 

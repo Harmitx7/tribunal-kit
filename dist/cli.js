@@ -121,6 +121,7 @@ function cmdHelp(quiet = false) {
     (0, logger_1.log)(cmd('context-compress', 'Compress a context file while retaining VERIFY comments'));
     (0, logger_1.log)(cmd('optimize-step', 'Apply bounded SkillOpt edits from a JSON payload'));
     (0, logger_1.log)(cmd('guardrail', 'Validate .agent/ integrity (phantom refs, count mismatches, drift)'));
+    (0, logger_1.log)(cmd('contract', 'AI Agent Behavioral Contract Testing (init, verify, list, trace, replay)'));
     (0, logger_1.log)(cmd('impact-tier', 'Classify task governance impact tier (0-3)'));
     (0, logger_1.log)(cmd('uninstall', 'Remove .agent/ folder from project'));
     console.log();
@@ -286,6 +287,11 @@ async function runWithUpdateCheck(command, flags) {
         case 'guardrail': {
             const cmdGuardrail = loadCmd('./commands/guardrail', 'cmdGuardrail');
             await cmdGuardrail(flags, process.argv, quiet);
+            break;
+        }
+        case 'contract': {
+            const cmdContract = loadCmd('./commands/contract', 'cmdContract');
+            await cmdContract(flags, process.argv, quiet);
             break;
         }
         case 'validate': {

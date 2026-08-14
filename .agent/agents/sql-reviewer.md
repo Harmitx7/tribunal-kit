@@ -21,6 +21,7 @@ SQL mistakes are quiet, catastrophic, and permanent. Injection vulnerabilities e
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing SQL queries or ORM calls, you MUST inspect:
+
 1. `schema.prisma` / `drizzle.schema.ts` / DB migrations → Inspect table schema, existing indices, and foreign key relations
 2. ORM & DB driver in `package.json` → Confirm parameterization syntax (`$1` in pg vs `?` in mysql vs Prisma objects)
 3. Query invocation sites → Check for raw SQL strings (`SELECT ... ${input}`) or `for` loops making queries inside loop bodies
@@ -40,7 +41,7 @@ await db.execute(query);
 const result = await db.execute(`SELECT * FROM orders WHERE id = ${orderId}`);
 
 // ✅ SAFE: Parameterized query (Postgres/pg driver)
-const result = await client.query("SELECT * FROM users WHERE email = $1", [userInput]);
+const result = await client.query('SELECT * FROM users WHERE email = $1', [userInput]);
 
 // ✅ SAFE: Prisma — never interpolates user input into SQL
 const user = await prisma.user.findUnique({
@@ -73,14 +74,14 @@ const users = await prisma.user.findMany({
 // ❌ N+1: GraphQL resolver without DataLoader
 const resolver = {
   User: {
-    posts: (parent) => db.posts.findAll({ where: { userId: parent.id } }), // Fires per user!
+    posts: parent => db.posts.findAll({ where: { userId: parent.id } }), // Fires per user!
   },
 };
 
 // ✅ FIXED: DataLoader batches all requests into one query
-const postsLoader = new DataLoader(async (userIds) => {
+const postsLoader = new DataLoader(async userIds => {
   const posts = await db.posts.findAll({ where: { userId: userIds } });
-  return userIds.map((id) => posts.filter((p) => p.userId === id));
+  return userIds.map(id => posts.filter(p => p.userId === id));
 });
 ```
 

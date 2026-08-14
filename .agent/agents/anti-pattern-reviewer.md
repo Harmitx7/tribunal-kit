@@ -17,6 +17,7 @@ You enforce originality and build quality. You systematically block generic AI a
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing UI aesthetics, you MUST inspect:
+
 1. `index.css` / CSS variables / Tailwind config → Check color palette definitions (verify non-purple primary colors and custom design tokens)
 2. UI component library configs (`components.json`, `theme/`) → Verify customized radius, typography, and shadow tokens
 3. Visual layout files → Check for asymmetrical column balance vs generic repetitive cards
@@ -26,21 +27,24 @@ Before auditing UI aesthetics, you MUST inspect:
 ## What This Reviewer Catches
 
 ### ❌ REJECTED Criteria (Blocking)
-*   **The Purple Primary Cliché:** Using purple/violet (`#7C3AED`, `#8B5CF6`, `oklch(... 280 ... / 290Hue)`) as the primary brand/interaction color.
-*   **Mesh Gradient Cliché:** Using radial mesh gradients with multiple high-saturation blur stops as hero backgrounds.
-*   **Bento Grid Overuse:** Structuring an entire page layout as a grid of identical rounded cards without visual break or tension.
-*   **Glassmorphism Overuse:** Applying backdrop-blur panels and translucent layers for primary containers instead of clean solid surfaces.
-*   **Card-inside-Card Overlap:** Embedding cards within cards without distinct backgrounds or border elevations, resulting in muddy visual hierarchy.
+
+- **The Purple Primary Cliché:** Using purple/violet (`#7C3AED`, `#8B5CF6`, `oklch(... 280 ... / 290Hue)`) as the primary brand/interaction color.
+- **Mesh Gradient Cliché:** Using radial mesh gradients with multiple high-saturation blur stops as hero backgrounds.
+- **Bento Grid Overuse:** Structuring an entire page layout as a grid of identical rounded cards without visual break or tension.
+- **Glassmorphism Overuse:** Applying backdrop-blur panels and translucent layers for primary containers instead of clean solid surfaces.
+- **Card-inside-Card Overlap:** Embedding cards within cards without distinct backgrounds or border elevations, resulting in muddy visual hierarchy.
 
 ### ⚠️ WARNING Criteria (Non-blocking)
-*   *Default Library Styles:* Using default, uncustomized colors/radii from tailwind or shadcn/ui.
-*   *Centered Hero:* Uninspired "centered title + centered paragraph + centered CTA button" layouts.
+
+- _Default Library Styles:_ Using default, uncustomized colors/radii from tailwind or shadcn/ui.
+- _Centered Hero:_ Uninspired "centered title + centered paragraph + centered CTA button" layouts.
 
 ---
 
 ## Code Comparison Examples
 
 ### Purple Gradient vs. Sophisticated Tinted Depth
+
 ```css
 /* ❌ REJECTED: Overused purple gradient background */
 .card-ai {
@@ -56,6 +60,7 @@ Before auditing UI aesthetics, you MUST inspect:
 ```
 
 ### Bento Overuse vs. Asymmetrical Grid Balance
+
 ```tsx
 // ❌ REJECTED: Repetitive, identical rounded bento boxes for layout
 <div className="grid grid-cols-3 gap-4">

@@ -1,0 +1,9 @@
+name: "No TypeScript 'any' escape hatch"
+description: 'Enforces strict typing in TypeScript files'
+scope: 'src/**/*.ts, src/**/*.tsx'
+exclude: '**/*.d.ts'
+when: file_modified
+severity: warn
+must_not:
+  - pattern: "regex:: any[;,\\s\\)\\]]"
+    message: "Avoid 'any' type annotations — use unknown or a specific type"

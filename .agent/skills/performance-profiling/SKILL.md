@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before optimizing performance or auditing benchmarks, you MUST inspect:
+
 1. Core Web Vitals Targets (INP replacing FID) (Section 26) → Target INP $\le 200\text{ms}$, LCP $\le 2.5\text{s}$, CLS $\le 0.1$; ban FID (deprecated)
 2. Bundle Size Limits & Import Tree-Shaking (Section 55) → Enforce total gzipped JS $<200\text{KB}$; use deep imports (`lodash/debounce`) instead of full barrel imports
 3. SQL EXPLAIN ANALYZE Requirement (Section 156) → Profile database queries with `EXPLAIN ANALYZE` before making index or query optimization changes
@@ -117,9 +118,9 @@ const sortedItems = useMemo(
 // Common memory leaks in JavaScript:
 // 1. Event listeners not cleaned up
 useEffect(() => {
-  const handler = () => console.log("resize");
-  window.addEventListener("resize", handler);
-  return () => window.removeEventListener("resize", handler); // ✅ cleanup
+  const handler = () => console.log('resize');
+  window.addEventListener('resize', handler);
+  return () => window.removeEventListener('resize', handler); // ✅ cleanup
 }, []);
 
 // 2. Timers not cleared
@@ -131,11 +132,11 @@ useEffect(() => {
 // 3. AbortController not used for fetch
 useEffect(() => {
   const controller = new AbortController();
-  fetch("/api/data", { signal: controller.signal })
-    .then((res) => res.json())
+  fetch('/api/data', { signal: controller.signal })
+    .then(res => res.json())
     .then(setData)
-    .catch((e) => {
-      if (e.name !== "AbortError") throw e;
+    .catch(e => {
+      if (e.name !== 'AbortError') throw e;
     });
   return () => controller.abort(); // ✅ cancel on unmount
 }, []);
@@ -150,7 +151,17 @@ useEffect(() => {
 
 ```html
 <!-- Modern image loading -->
-<img src="hero.webp" srcset="hero-480.webp 480w, hero-768.webp 768w, hero-1200.webp 1200w" sizes="(max-width: 768px) 100vw, 50vw" width="1200" height="800" loading="lazy" decoding="async" alt="Product hero" fetchpriority="high" />
+<img
+  src="hero.webp"
+  srcset="hero-480.webp 480w, hero-768.webp 768w, hero-1200.webp 1200w"
+  sizes="(max-width: 768px) 100vw, 50vw"
+  width="1200"
+  height="800"
+  loading="lazy"
+  decoding="async"
+  alt="Product hero"
+  fetchpriority="high"
+/>
 
 <!-- Rules:
   - ALWAYS set width and height (prevents CLS)
@@ -200,11 +211,11 @@ module.exports = {
   ci: {
     assert: {
       assertions: {
-        "categories:performance": ["error", { minScore: 0.9 }],
-        "first-contentful-paint": ["error", { maxNumericValue: 1500 }],
-        "largest-contentful-paint": ["error", { maxNumericValue: 2500 }],
-        "cumulative-layout-shift": ["error", { maxNumericValue: 0.1 }],
-        "total-byte-weight": ["error", { maxNumericValue: 500000 }],
+        'categories:performance': ['error', { minScore: 0.9 }],
+        'first-contentful-paint': ['error', { maxNumericValue: 1500 }],
+        'largest-contentful-paint': ['error', { maxNumericValue: 2500 }],
+        'cumulative-layout-shift': ['error', { maxNumericValue: 0.1 }],
+        'total-byte-weight': ['error', { maxNumericValue: 500000 }],
       },
     },
   },

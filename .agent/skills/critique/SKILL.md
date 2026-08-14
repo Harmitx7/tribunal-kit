@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before evaluating UI designs or code, you MUST inspect:
+
 1. Target UI screen / component → Grade across the 6 UX Critique Heuristics (Clarity, IA, Interactions, Visual Craft, Accessibility, Resilience)
 2. Required Scorecard Format (Section 51) → Output overall quality score (0-10) and tabular domain breakdown
 3. Top 3 Actionable Fixes → Group recommendations by priority (High, Medium, Low) with concrete CSS/JSX fixes
@@ -66,16 +67,17 @@ Always output the critique as a structured Markdown evaluation:
 
 ### Overall Quality Score: 8.2 / 10
 
-| Heuristic Domain | Score | Critical Observation |
-| --- | --- | --- |
-| Clarity & Cognitive Load | 8/10 | Hero CTA is clear, but subhead copy is verbose. |
-| Information Architecture | 9/10 | Excellent grouping and card rhythm. |
-| Interaction Mechanics | 7/10 | Missing `:active` press state on primary buttons. |
-| Visual Elegance & Craft | 9/10 | Great typography scale and subtle border treatment. |
-| Accessibility | 8/10 | Text contrast passes; dropdown needs ARIA labels. |
-| Edge Case Resilience | 8/10 | Empty state present; needs loading skeleton. |
+| Heuristic Domain         | Score | Critical Observation                                |
+| ------------------------ | ----- | --------------------------------------------------- |
+| Clarity & Cognitive Load | 8/10  | Hero CTA is clear, but subhead copy is verbose.     |
+| Information Architecture | 9/10  | Excellent grouping and card rhythm.                 |
+| Interaction Mechanics    | 7/10  | Missing `:active` press state on primary buttons.   |
+| Visual Elegance & Craft  | 9/10  | Great typography scale and subtle border treatment. |
+| Accessibility            | 8/10  | Text contrast passes; dropdown needs ARIA labels.   |
+| Edge Case Resilience     | 8/10  | Empty state present; needs loading skeleton.        |
 
 ### Top 3 Actionable Fixes
+
 1. **[High Priority]**: Add `:active` scale transform (`scale(0.97)`) to interactive buttons.
 2. **[Medium Priority]**: Add `text-wrap: balance` to display headings to eliminate orphans.
 3. **[Low Priority]**: Truncate secondary card description strings to 2 lines (`line-clamp-2`).

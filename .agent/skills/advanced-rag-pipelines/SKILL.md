@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before building RAG pipelines or vector search components, you MUST inspect:
+
 1. Hybrid Search Requirement (Section 16) → Always combine Dense Vector Search with Sparse BM25 Search to catch exact keyword matches (IDs, versions)
 2. Two-Stage Reranking Pipeline (Section 29) → Retrieve top ~50 candidate chunks, then rerank with a Cross-Encoder down to top 3-5 before feeding the LLM
 3. Context XML Framing (Section 59) → Wrap retrieved chunks inside explicit `<context>` XML tags in the prompt to prevent indirect prompt injection

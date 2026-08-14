@@ -18,16 +18,16 @@ interface WorkerRequest {
 
   // The category of work being requested.
   type:
-    | "research" // Understand or explain something
-    | "generate_code" // Write new code
-    | "review_code" // Audit existing code
-    | "debug" // Find and fix a bug
-    | "plan" // Produce a structured plan only (no code)
-    | "design_schema" // Design a database or data schema
-    | "write_docs" // Write documentation or comments
-    | "security_audit" // OWASP security review
-    | "optimize" // Refactor for performance
-    | "test"; // Write or run tests
+    | 'research' // Understand or explain something
+    | 'generate_code' // Write new code
+    | 'review_code' // Audit existing code
+    | 'debug' // Find and fix a bug
+    | 'plan' // Produce a structured plan only (no code)
+    | 'design_schema' // Design a database or data schema
+    | 'write_docs' // Write documentation or comments
+    | 'security_audit' // OWASP security review
+    | 'optimize' // Refactor for performance
+    | 'test'; // Write or run tests
 
   // The agent to route this WorkerRequest to.
   // MUST match a filename in .agent/agents/ (without the .md extension).
@@ -77,9 +77,9 @@ interface WorkerResult {
 
   // Outcome of the Worker's execution.
   status:
-    | "success" // Task completed. Output is valid.
-    | "failure" // Task failed but retries remain.
-    | "escalate"; // Task failed after max_retries. Requires human intervention.
+    | 'success' // Task completed. Output is valid.
+    | 'failure' // Task failed but retries remain.
+    | 'escalate'; // Task failed after max_retries. Requires human intervention.
 
   // The agent's output if status is "success".
   // Empty string if status is "failure" or "escalate".

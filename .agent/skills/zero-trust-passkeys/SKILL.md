@@ -18,6 +18,7 @@ skills:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing auth flows:
+
 1. Conditional UI (Passkey Autofill) → Use `useBrowserAutofill: true` and `autocomplete="username webauthn"` for seamless form autofill
 2. Feature Detection & Abort Signals → Check `isConditionalMediationAvailable()` and manage cancellation via `AbortController`
 3. Discoverable Credentials → Ensure `userVerification` and resident key options are enabled on registration
@@ -25,10 +26,7 @@ Before implementing auth flows:
 ## Client-Side Passkey Autofill Pattern (SimpleWebAuthn v13 Browser)
 
 ```typescript
-import { 
-  startAuthentication, 
-  isConditionalMediationAvailable 
-} from '@simplewebauthn/browser';
+import { startAuthentication, isConditionalMediationAvailable } from '@simplewebauthn/browser';
 
 export async function initConditionalPasskeyAutofill(abortSignal: AbortSignal) {
   const isAvailable = await isConditionalMediationAvailable();
@@ -60,9 +58,16 @@ export async function initConditionalPasskeyAutofill(abortSignal: AbortSignal) {
 ## Server Verification Pattern (SimpleWebAuthn v13 Server)
 
 ```typescript
-import { verifyAuthenticationResponse, generateAuthenticationOptions } from '@simplewebauthn/server';
+import {
+  verifyAuthenticationResponse,
+  generateAuthenticationOptions,
+} from '@simplewebauthn/server';
 
-export async function verifyPasskeyAuth(body: any, expectedChallenge: string, userPublicKey: Uint8Array) {
+export async function verifyPasskeyAuth(
+  body: any,
+  expectedChallenge: string,
+  userPublicKey: Uint8Array,
+) {
   const verification = await verifyAuthenticationResponse({
     response: body,
     expectedChallenge,

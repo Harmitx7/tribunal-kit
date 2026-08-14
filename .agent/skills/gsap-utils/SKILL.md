@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before using `gsap.utils`, you MUST inspect:
+
 1. Pure Number vs Unit strings (Section 306) → `mapRange` and `normalize` work ONLY on numbers; use `getUnit` and `unitize` for string values with units
 2. Reusable Function Form (Section 22) → Omit the value argument (or pass `true` as 4th param for `random()`) to get a reusable function for high-frequency loops
 3. Component Scoping (Section 219) → Use `gsap.utils.selector(containerRef)` inside React components to restrict selector targets
@@ -90,7 +91,7 @@ Interpolates between two values at a given progress (0–1). Handles numbers, co
 
 ```javascript
 gsap.utils.interpolate(0, 100, 0.5); // 50
-gsap.utils.interpolate("#ff0000", "#0000ff", 0.5); // mid color
+gsap.utils.interpolate('#ff0000', '#0000ff', 0.5); // mid color
 gsap.utils.interpolate({ x: 0, y: 0 }, { x: 100, y: 50 }, 0.5); // { x: 50, y: 25 }
 
 let lerp = gsap.utils.interpolate(0, 100);
@@ -114,7 +115,7 @@ randomFn(); // random value in range, snapped to 10
 randomFn(); // another random value
 
 // array: pick one value at random
-gsap.utils.random(["red", "blue", "green"]); // "red", "blue", or "green"
+gsap.utils.random(['red', 'blue', 'green']); // "red", "blue", or "green"
 let randomFromArray = gsap.utils.random([0, 100, 200], true);
 randomFromArray(); // 0, 100, or 200
 ```
@@ -122,8 +123,8 @@ randomFromArray(); // 0, 100, or 200
 **String form in tween vars:** use `"random(-100, 100)"`, `"random(-100, 100, 5)"`, or `"random([0, 100, 200])"`; GSAP evaluates it per target.
 
 ```javascript
-gsap.to(".box", { x: "random(-100, 100, 5)", duration: 1 });
-gsap.to(".item", { backgroundColor: "random([red, blue, green])" });
+gsap.to('.box', { x: 'random(-100, 100, 5)', duration: 1 });
+gsap.to('.item', { backgroundColor: 'random([red, blue, green])' });
 ```
 
 ### snap(snapTo, value?)
@@ -142,7 +143,7 @@ snapFn(23); // 20
 Use in tweens for grid or step-based animation:
 
 ```javascript
-gsap.to(".x", { x: 200, snap: { x: 20 } });
+gsap.to('.x', { x: 200, snap: { x: 20 } });
 ```
 
 ### shuffle(array)
@@ -173,11 +174,11 @@ gsap.utils.shuffle([1, 2, 3, 4]); // e.g. [3, 1, 4, 2]
 
 ```javascript
 // Scale: middle elements 0.5, outer edges 3 (amount 2.5 distributed from center)
-gsap.to(".class", {
+gsap.to('.class', {
   scale: gsap.utils.distribute({
     base: 0.5,
     amount: 2.5,
-    from: "center",
+    from: 'center',
   }),
 });
 ```
@@ -188,10 +189,10 @@ gsap.to(".class", {
 const distributor = gsap.utils.distribute({
   base: 50,
   amount: 100,
-  from: "center",
-  ease: "power1.inOut",
+  from: 'center',
+  ease: 'power1.inOut',
 });
-const targets = gsap.utils.toArray(".box");
+const targets = gsap.utils.toArray('.box');
 const valueForIndex2 = distributor(2, targets[2], targets);
 ```
 
@@ -204,8 +205,8 @@ See [distribute()](https://gsap.com/docs/v3/GSAP/UtilityMethods/distribute/) for
 Returns the unit string of a value (e.g. `"px"`, `"%"`, `"deg"`). Use when normalizing or converting values.
 
 ```javascript
-gsap.utils.getUnit("100px"); // "px"
-gsap.utils.getUnit("50%"); // "%"
+gsap.utils.getUnit('100px'); // "px"
+gsap.utils.getUnit('50%'); // "%"
 gsap.utils.getUnit(42); // "" (unitless)
 ```
 
@@ -214,8 +215,8 @@ gsap.utils.getUnit(42); // "" (unitless)
 Appends a unit to a number, or returns the value as-is if it already has a unit. Use when building CSS values or tween end values.
 
 ```javascript
-gsap.utils.unitize(100, "px"); // "100px"
-gsap.utils.unitize("2rem", "px"); // "2rem" (unchanged)
+gsap.utils.unitize(100, 'px'); // "100px"
+gsap.utils.unitize('2rem', 'px'); // "2rem" (unchanged)
 ```
 
 ### splitColor(color, returnHSL?)
@@ -223,10 +224,10 @@ gsap.utils.unitize("2rem", "px"); // "2rem" (unchanged)
 Converts a color string into an array: **[red, green, blue]** (0–255), or **[red, green, blue, alpha]** (4 elements for RGBA when alpha is present or required). Pass **true** as the second argument (**returnHSL**) to get **[hue, saturation, lightness]** or **[hue, saturation, lightness, alpha]** (HSL/HSLA) instead. Works with `"rgb()"`, `"rgba()"`, `"hsl()"`, `"hsla()"`, hex, and named colors (e.g. `"red"`). Use when animating color components or building gradients. See [splitColor()](https://gsap.com/docs/v3/GSAP/UtilityMethods/splitColor/).
 
 ```javascript
-gsap.utils.splitColor("red"); // [255, 0, 0]
-gsap.utils.splitColor("#6fb936"); // [111, 185, 54]
-gsap.utils.splitColor("rgba(204, 153, 51, 0.5)"); // [204, 153, 51, 0.5] (4 elements)
-gsap.utils.splitColor("#6fb936", true); // [94, 55, 47] (HSL: hue, saturation, lightness)
+gsap.utils.splitColor('red'); // [255, 0, 0]
+gsap.utils.splitColor('#6fb936'); // [111, 185, 54]
+gsap.utils.splitColor('rgba(204, 153, 51, 0.5)'); // [204, 153, 51, 0.5] (4 elements)
+gsap.utils.splitColor('#6fb936', true); // [94, 55, 47] (HSL: hue, saturation, lightness)
 ```
 
 ## Arrays and Collections
@@ -237,8 +238,8 @@ Returns a scoped selector function that finds elements only within the given ele
 
 ```javascript
 const q = gsap.utils.selector(containerRef);
-q(".box"); // array of .box elements inside container
-gsap.to(q(".circle"), { x: 100 });
+q('.box'); // array of .box elements inside container
+gsap.to(q('.circle'), { x: 100 });
 ```
 
 ### toArray(value, scope?)
@@ -246,8 +247,8 @@ gsap.to(q(".circle"), { x: 100 });
 Converts a value to an array: selector string (scoped to element), NodeList, HTMLCollection, single element, or array. Use when passing mixed inputs to GSAP (e.g. targets) and a true array is needed.
 
 ```javascript
-gsap.utils.toArray(".item"); // array of elements
-gsap.utils.toArray(".item", container); // scoped to container
+gsap.utils.toArray('.item'); // array of elements
+gsap.utils.toArray('.item', container); // scoped to container
 gsap.utils.toArray(nodeList); // [ ... ] from NodeList
 ```
 
@@ -257,8 +258,8 @@ Composes functions: **pipe(f1, f2, f3)(value)** returns f3(f2(f1(value))). Use w
 
 ```javascript
 const fn = gsap.utils.pipe(
-  (v) => gsap.utils.normalize(0, 100, v),
-  (v) => gsap.utils.snap(0.1, v),
+  v => gsap.utils.normalize(0, 100, v),
+  v => gsap.utils.snap(0.1, v),
 );
 fn(50); // normalized then snapped
 ```

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing feature logic or writing unit tests, you MUST inspect:
+
 1. Red-Green-Refactor Cycle (Section 25) → Write failing test FIRST (Red) → minimal passing code SECOND (Green) → cleanup THIRD (Refactor)
 2. Behavior-First Assertion Rule (Section 36) → Assert public contract results (GIVEN/WHEN/THEN); ban asserting internal private fields or state
 3. IO Boundary-Only Mocking (Section 50) → Mock ONLY un-owned external boundaries (DB IO, network APIs); ban mocking domain entities or pure utils
@@ -45,6 +46,7 @@ Build features and fixes one slice at a time using strict Test-Driven Developmen
 ## 4 TDD Rules
 
 ### 1. Test Behavior, Not Implementation Details
+
 - Assert GIVEN / WHEN / THEN behavior results, NOT private class methods or internal variables.
 
 ```typescript
@@ -56,12 +58,15 @@ expect(calculator.add(40, 2)).toBe(42);
 ```
 
 ### 2. The Minimal Green Rule
+
 - In Step 2 (GREEN), write ONLY the minimal code required to pass the test—even if it's hardcoding a return value initially. This forces you to write the next test that proves the hardcoded value inadequate.
 
 ### 3. Mock Only External Boundaries
+
 - Never mock internal domain entities or utility functions. Mock ONLY un-owned external boundaries (database IO, network APIs, payment gateways).
 
 ### 4. Triangulation Strategy
+
 - When uncertain about algorithm logic, write 2 or more tests with different inputs to force general implementation.
 
 ---

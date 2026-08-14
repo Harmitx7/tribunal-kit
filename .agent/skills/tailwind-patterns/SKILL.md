@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering Tailwind CSS styles or themes, you MUST inspect:
+
 1. CSS-First v4 Configuration (Section 19) → Use `@import "tailwindcss";` and `@theme { }` in CSS files instead of deprecated `tailwind.config.js`
 2. Viewport Height Units (Section 151) → Use `min-h-svh` (small viewport height) or `min-h-dvh` instead of broken mobile `min-h-screen`
 3. Container Query Prefix (Section 204) → Use `@sm:`, `@md:`, `@lg:` container prefixes for component-level responsiveness rather than viewport `sm:`, `md:`, `lg:`
@@ -34,7 +35,7 @@ Before engineering Tailwind CSS styles or themes, you MUST inspect:
 
 ```css
 /* app.css — THE configuration file in Tailwind v4 */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* Colors */
@@ -51,8 +52,8 @@ Before engineering Tailwind CSS styles or themes, you MUST inspect:
   --color-text-muted: oklch(0.45 0 0);
 
   /* Typography */
-  --font-sans: "Inter", "system-ui", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-sans: 'Inter', 'system-ui', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 
   /* Spacing (extends the default scale) */
   --spacing-18: 4.5rem;
@@ -152,7 +153,9 @@ Before engineering Tailwind CSS styles or themes, you MUST inspect:
   <p class="max-w-2xl text-center text-lg text-text-muted">Subtitle text</p>
   <div class="flex gap-3">
     <button class="rounded-pill bg-primary-600 px-6 py-3 text-white">Primary</button>
-    <button class="rounded-pill border border-primary-600 px-6 py-3 text-primary-600">Secondary</button>
+    <button class="rounded-pill border border-primary-600 px-6 py-3 text-primary-600">
+      Secondary
+    </button>
   </div>
 </section>
 
@@ -229,10 +232,14 @@ Before engineering Tailwind CSS styles or themes, you MUST inspect:
 
 ```html
 <!-- Fluid heading — scales smoothly from 2rem to 4rem -->
-<h1 class="text-[clamp(2rem,5vw,4rem)] font-bold leading-tight tracking-tight">Responsive Heading</h1>
+<h1 class="text-[clamp(2rem,5vw,4rem)] font-bold leading-tight tracking-tight">
+  Responsive Heading
+</h1>
 
 <!-- Fluid body text -->
-<p class="text-[clamp(1rem,1.2vw,1.25rem)] leading-relaxed text-text-muted">Body text that scales with viewport</p>
+<p class="text-[clamp(1rem,1.2vw,1.25rem)] leading-relaxed text-text-muted">
+  Body text that scales with viewport
+</p>
 
 <!-- Prose (for long-form content) -->
 <article class="prose prose-lg mx-auto max-w-3xl dark:prose-invert">
@@ -247,14 +254,14 @@ Before engineering Tailwind CSS styles or themes, you MUST inspect:
 ```css
 /* @font-face in your CSS (Tailwind v4 approach) */
 @font-face {
-  font-family: "Inter";
+  font-family: 'Inter';
   font-weight: 100 900;
   font-display: swap;
-  src: url("/fonts/inter-variable.woff2") format("woff2");
+  src: url('/fonts/inter-variable.woff2') format('woff2');
 }
 
 @theme {
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
 }
 ```
 
@@ -356,7 +363,12 @@ Before engineering Tailwind CSS styles or themes, you MUST inspect:
             backdrop-blur-sm animate-fade-in"
 >
   <!-- Modal -->
-  <div class="w-full max-w-md rounded-2xl bg-surface p-6 shadow-elevated animate-slide-up" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div
+    class="w-full max-w-md rounded-2xl bg-surface p-6 shadow-elevated animate-slide-up"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+  >
     <h2 id="modal-title" class="text-lg font-semibold">Dialog Title</h2>
     <p class="mt-2 text-sm text-text-muted">Dialog description.</p>
 
@@ -571,7 +583,9 @@ Before engineering Tailwind CSS styles or themes, you MUST inspect:
 </div>
 
 <!-- Forced colors mode (high contrast) -->
-<button class="bg-primary-600 forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]">Accessible button</button>
+<button class="bg-primary-600 forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]">
+  Accessible button
+</button>
 ```
 
 ---

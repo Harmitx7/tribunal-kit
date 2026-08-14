@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering edge computing handlers or Cloudflare Workers, you MUST inspect:
+
 1. Edge Runtime Restrictions (Section 25) → Strictly ban Node.js native core modules (`fs`, `child_process`, native `bcrypt`); use Web APIs (`fetch`, `crypto.subtle`)
 2. Stale-While-Revalidate Caching (Section 47) → Use `Cache-Control: s-maxage=60, stale-while-revalidate=86400` and asynchronous `ctx.waitUntil()` cache puts
 3. Edge Database Access (Section 81) → Never open direct raw TCP connections to DBs; use HTTP connection poolers (Prisma Accelerate, LibSQL, Supabase Pooler)
@@ -48,11 +49,11 @@ Edge functions (Cloudflare Workers, Vercel Edge) run on V8 Isolates, NOT standar
 
 ```typescript
 // ❌ BAD: Attempting to use Node native core modules
-import fs from "fs";
-import bcrypt from "bcrypt"; // Has C++ bindings, will instantly crash on V8 edge
+import fs from 'fs';
+import bcrypt from 'bcrypt'; // Has C++ bindings, will instantly crash on V8 edge
 
 // ✅ GOOD: Utilizing standard Web APIs (Fetch, CryptoKey)
-const hashBuffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(password));
+const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password));
 ```
 
 ---
@@ -79,7 +80,7 @@ export default {
       // Instructs the Edge CDN: Serve the stale version instantly to the user,
       // but fire an async request in the background to update the cache for the next user.
       response = new Response(response.body, response);
-      response.headers.set("Cache-Control", "s-maxage=60, stale-while-revalidate=86400");
+      response.headers.set('Cache-Control', 's-maxage=60, stale-while-revalidate=86400');
 
       // 4. Store in Cache asynchronously (do not block the user response)
       ctx.waitUntil(cache.put(request, response.clone()));
@@ -104,14 +105,14 @@ Running logic globally while querying a monolithic database in `us-east-1` is co
 
 ```typescript
 // ✅ Turso / LibSQL (Distributed Edge DB) usage:
-import { createClient } from "@libsql/client/web";
+import { createClient } from '@libsql/client/web';
 
 const client = createClient({
   url: env.TURSO_DATABASE_URL,
   authToken: env.TURSO_AUTH_TOKEN,
 });
 
-const result = await client.execute("SELECT * FROM users WHERE id = ?", [userId]);
+const result = await client.execute('SELECT * FROM users WHERE id = ?', [userId]);
 ```
 
 ---
@@ -137,9 +138,9 @@ export class ChatRoom {
     pair.server.accept();
 
     // Handle incoming Chat messages
-    pair.server.addEventListener("message", (msg) => {
+    pair.server.addEventListener('message', msg => {
       // Broadcast to all other connected edge users
-      this.sessions.forEach((session) => session.send(msg.data));
+      this.sessions.forEach(session => session.send(msg.data));
     });
 
     return new Response(null, { status: 101, webSocket: pair.client });

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before selecting animation model (Spring vs Cubic-Bezier), you MUST inspect:
+
 1. Spring vs Duration Decision Matrix (Section 22) → Use Spring physics ONLY for interruptible gestures, drag, toggles, and playful badges
 2. Modal & Dropdown Rule → Use deterministic cubic-bezier curves (`cubic-bezier(0.16, 1, 0.3, 1)`) for modals, dropdowns, and route transitions
 3. Anti-Conflict Rule (Section 46) → Never specify both `duration` AND spring `stiffness/damping` parameters together in Framer Motion
@@ -30,14 +31,14 @@ Decide when to use physics-driven spring models (Framer Motion / Reanimated) vs 
 
 ## Spring vs Duration Decision Matrix
 
-| Motion Scenario | Use Spring Physics? | Recommended Parameters / Curve |
-| --- | --- | --- |
-| **Interruptible Gestures** (Drag, Swipe, Sheet pull) | ✅ **ALWAYS** | `type: "spring", stiffness: 300, damping: 30` (adapts to drag velocity) |
-| **Button Press Feedback** (`:active`) | ❌ **NO (Use Curve)** | `transition: transform 120ms cubic-bezier(0.2, 0, 0, 1)` |
-| **Modal / Dialog Entrance** | ❌ **NO (Use Curve)** | `transition: all 220ms cubic-bezier(0.16, 1, 0.3, 1)` |
-| **Badge Bouncing / Celebration** | ✅ **YES** | `type: "spring", stiffness: 400, damping: 15` (intentional overshoot bounce) |
-| **Page / Route Transitions** | ❌ **NO (Use Curve)** | `transition: opacity 200ms ease-out` |
-| **Toggle Switch Flip** | ✅ **YES** | `type: "spring", stiffness: 500, damping: 35` (crisp snap without wobble) |
+| Motion Scenario                                      | Use Spring Physics?   | Recommended Parameters / Curve                                               |
+| ---------------------------------------------------- | --------------------- | ---------------------------------------------------------------------------- |
+| **Interruptible Gestures** (Drag, Swipe, Sheet pull) | ✅ **ALWAYS**         | `type: "spring", stiffness: 300, damping: 30` (adapts to drag velocity)      |
+| **Button Press Feedback** (`:active`)                | ❌ **NO (Use Curve)** | `transition: transform 120ms cubic-bezier(0.2, 0, 0, 1)`                     |
+| **Modal / Dialog Entrance**                          | ❌ **NO (Use Curve)** | `transition: all 220ms cubic-bezier(0.16, 1, 0.3, 1)`                        |
+| **Badge Bouncing / Celebration**                     | ✅ **YES**            | `type: "spring", stiffness: 400, damping: 15` (intentional overshoot bounce) |
+| **Page / Route Transitions**                         | ❌ **NO (Use Curve)** | `transition: opacity 200ms ease-out`                                         |
+| **Toggle Switch Flip**                               | ✅ **YES**            | `type: "spring", stiffness: 500, damping: 35` (crisp snap without wobble)    |
 
 ---
 

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing or fixing animation performance, you MUST inspect:
+
 1. Browser Rendering Pipeline (Section 22) → Restrict properties to Composite-only (`transform`, `opacity`) and eliminate Layout/Paint animators
 2. Layout Thrashing (Section 33) → Batch all DOM reads (`offsetHeight`, `getBoundingClientRect`) before executing DOM writes (`style.height = ...`)
 3. `will-change` VRAM management (Section 53) → Remove `will-change` hints upon animation completion
@@ -31,6 +32,7 @@ Guidelines for auditing and resolving web animation jank, layout thrashing, and 
 ## 1. Browser Rendering Pipeline & Compositor Rules
 
 Animations trigger one of 3 rendering costs:
+
 1. **Layout (Expensive)**: Animating `width`, `height`, `margin`, `padding`, `top`, `left`, `flex`, `grid`. Forces full geometry recalculation across the page.
 2. **Paint (Moderate)**: Animating `color`, `background-color`, `border-color`, `box-shadow`, `filter`. Forces pixel repaint.
 3. **Composite (GPU Fast)**: Animating **`transform`** (`translate`, `scale`, `rotate`) and **`opacity`**. Offloaded entirely to GPU compositor thread!
@@ -75,11 +77,11 @@ elements.forEach((el, i) => {
 
 ## Anti-Slop Table
 
-| Performance Issue | Motion Performance Fix | FPS Gain |
-| --- | --- | --- |
-| Animating `height: 0` to `auto` | FLIP technique or `scaleY` transform animation | 15fps → 60fps |
-| Scroll listener mutating inline CSS | `CSS scroll-timeline` or `IntersectionObserver` | Prevents main-thread scroll jank |
-| `transition: all 0.3s` | `transition: transform 200ms cubic-bezier(0.16,1,0.3,1), opacity 200ms ease` | Eliminates accidental layout/color recalculations |
+| Performance Issue                   | Motion Performance Fix                                                       | FPS Gain                                          |
+| ----------------------------------- | ---------------------------------------------------------------------------- | ------------------------------------------------- |
+| Animating `height: 0` to `auto`     | FLIP technique or `scaleY` transform animation                               | 15fps → 60fps                                     |
+| Scroll listener mutating inline CSS | `CSS scroll-timeline` or `IntersectionObserver`                              | Prevents main-thread scroll jank                  |
+| `transition: all 0.3s`              | `transition: transform 200ms cubic-bezier(0.16,1,0.3,1), opacity 200ms ease` | Eliminates accidental layout/color recalculations |
 
 ---
 

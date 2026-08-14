@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing developer platforms or GitOps manifests, you MUST inspect:
+
 1. Golden Path Self-Service Rule (Section 29) → Build pre-approved automated templates for bootstrapping services (CI, metrics, DB Terraform out-of-the-box)
 2. GitOps Continuous Reconciliation (Section 48) → Enforce declarative GitOps (`selfHeal: true`) via ArgoCD/Flux; ban manual `kubectl apply` or console modifications
 3. Higher-Level Terraform Modules (Section 76) → Encapsulate complex IaC logic into simple interface modules (`capacity`, `needs_replica`) to reduce cognitive load
@@ -71,11 +72,11 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: "https://github.com/mycorp/infrastructure-ops"
+    repoURL: 'https://github.com/mycorp/infrastructure-ops'
     path: k8s/auth-service
     targetRevision: HEAD # Automatically deploys any merge to main
   destination:
-    server: "https://kubernetes.default.svc"
+    server: 'https://kubernetes.default.svc'
     namespace: auth-prod
   syncPolicy:
     automated:

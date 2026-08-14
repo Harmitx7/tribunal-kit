@@ -18,6 +18,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating orientation reports or mapping unknown codebases, you MUST inspect:
+
 1. `package.json` / `requirements.txt` / `Cargo.toml` → Read root project dependencies, frameworks, and scripts
 2. Root entry points (`app/layout.tsx`, `src/index.ts`, `server.ts`) → Locate main server listeners and router mounts
 3. System configuration files (`tsconfig.json`, `tailwind.config.ts`, `.env.example`) → Check strictness and env variable bindings

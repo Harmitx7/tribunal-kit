@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing or hardening skill definitions, you MUST inspect:
+
 1. Target Skill Directory Inventory (`.agent/skills/`) → List all skill folders and inspect `SKILL.md` frontmatter
 2. Guardrail Idempotency Check → Check if target `SKILL.md` already carries `## Mandatory Pre-Flight Context Inspection` or `## 🏛️ Tribunal Integration`; skip if present
 3. Skill Integrator Script (`.agent/scripts/skill_integrator.js`) → Run skill integrator script to update executable script bindings

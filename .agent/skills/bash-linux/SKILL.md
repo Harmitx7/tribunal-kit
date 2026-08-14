@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing Bash scripts or terminal automation pipelines, you MUST inspect:
+
 1. Strict Mode Flags (`set -euo pipefail`) (Section 39) → Always set `set -euo pipefail` and `IFS=$'\n\t'` at top of every script to fail fast on errors or unset vars
 2. Variable Quoting Safeguards (Section 122) → Double-quote all path and string variables (`"$FILE"`, `"${FILES[@]}"`) to prevent whitespace expansion bugs
 3. Modern CLI Efficiency Rules (Section 102) → Prefer `rg` over `grep`, `fd` over `find`, `jq` over regex JSON parsing for performance and safety

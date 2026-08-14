@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before dispatching multi-agent orchestrations or parallel sub-task workers, you MUST inspect:
+
 1. Orchestrator Payload Validator (`swarm_dispatcher.js`) → Validate subagent payload contracts and JSON schema before fan-out
 2. Context Window Budget Allocation → Provide scoped `context_summary` per worker; ban dumping full conversation history to workers
 3. Fan-In Synthesis & Human Gate → Collect all worker outputs via `Promise.allSettled()` pattern and present unified synthesis before writing disk changes

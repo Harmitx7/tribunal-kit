@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing UI surfaces or writing remediation plans, you MUST inspect:
+
 1. Read-Only Constraint (Section 24) → Strictly NEVER modify product source code (`src/`, `components/`, `app/`) during an `improve-ui` audit session
 2. 3-Proof Requirement (Section 40) → Every reported defect MUST present Observation (code line/element), Basis (token/grid violation), and Consequence
 3. Plan Artifact Output (Section 25) → Write implementation plans to `design-plans/` or output structured markdown for execution
@@ -39,21 +40,27 @@ Audit a specific product surface against its governing design tokens and guideli
 ## 2. The 4-Phase Audit Protocol
 
 ### Phase 1: Surface Selection & Path Tracing
+
 1. Focus on one deployable application and one coherent surface family (e.g. `Dashboard / Overview`).
 2. Trace the path from route layout $\rightarrow$ page composition $\rightarrow$ shared UI primitives $\rightarrow$ tokens/CSS variables.
 
 ### Phase 2: Design Language Reconstruction
+
 1. Inspect `DESIGN.md`, `index.css`, Tailwind tokens, or custom properties.
 2. Record active background tokens, typography roles, spatial rules, and border/shadow contracts.
 
 ### Phase 3: Proof-Gated Defect Verification
+
 Before reporting a finding, require 3 explicit proofs:
+
 - **Observation**: Exact code line or rendered element showing the discrepancy.
 - **Basis**: Violation of documented design token or 8px grid baseline.
 - **Consequence**: Measurable degradation of visual hierarchy, readability, or interaction response.
 
 ### Phase 4: Implementation Plan Generation
+
 Write a self-contained plan specifying:
+
 - Files to modify
 - Exact CSS/JSX diffs
 - Verification steps (browser preview, contrast check, visual alignment)
@@ -62,11 +69,11 @@ Write a self-contained plan specifying:
 
 ## Anti-Slop Table
 
-| Audit Pattern | Evidence-Based Rule | Rationale |
-| --- | --- | --- |
-| Rewriting entire components | Targeted visual diff plan | Preserves business logic & state |
-| Guessing design tokens | Citing verified `var(--...)` declarations | Ensures token adherence |
-| Speculative visual preferences | Reporting only verified WCAG/token violations | Prevents arbitrary churn |
+| Audit Pattern                  | Evidence-Based Rule                           | Rationale                        |
+| ------------------------------ | --------------------------------------------- | -------------------------------- |
+| Rewriting entire components    | Targeted visual diff plan                     | Preserves business logic & state |
+| Guessing design tokens         | Citing verified `var(--...)` declarations     | Ensures token adherence          |
+| Speculative visual preferences | Reporting only verified WCAG/token violations | Prevents arbitrary churn         |
 
 ---
 

@@ -19,6 +19,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before compiling prompts or running prompt compression, you MUST inspect:
+
 1. Target Input Request Text → Read target user request to strip conversational fillers
 2. Prompt Compiler Script (`.agent/scripts/prompt_compiler.js`) → Verify availability of local prompt compiler script
 3. Zero Token Overhead Principle → Ensure compilation executes locally without invoking LLM API calls

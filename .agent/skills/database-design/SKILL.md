@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing schemas or writing SQL migrations, you MUST inspect:
+
 1. Timezone Timestamp Standard (Section 17) → Use `TIMESTAMPTZ` for all timestamp columns; ban bare `TIMESTAMP`
 2. Primary Key Index Performance (Section 18) → Use `BIGINT GENERATED ALWAYS AS IDENTITY` or UUID v7 (time-ordered); ban random UUID v4 as primary key
 3. Foreign Key Indexing (Section 19) → Create explicit indexes on all foreign key columns (`CREATE INDEX idx_... ON table(fk_id)`) to prevent full table scans during cascading deletes
@@ -137,7 +138,7 @@ CREATE POLICY tenant_isolation ON projects
 const result = await db
   .select({ id: users.id, name: users.name })
   .from(users)
-  .where(and(eq(users.role, "admin"), eq(users.isActive, true)))
+  .where(and(eq(users.role, 'admin'), eq(users.isActive, true)))
   .orderBy(desc(users.createdAt))
   .limit(20);
 

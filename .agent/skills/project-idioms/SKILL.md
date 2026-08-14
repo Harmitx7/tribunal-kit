@@ -24,6 +24,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating code or suggesting architectural patterns, you MUST inspect:
+
 1. Recorded Idioms table (Section 43) → Check active project-specific architectural overrides
 2. `skill_evolution.js` status → Verify if staged commits contain un-digested architectural deltas
 3. Override protocol (Section 71) → Never contradict a project idiom silently; flag deviations explicitlyrst)

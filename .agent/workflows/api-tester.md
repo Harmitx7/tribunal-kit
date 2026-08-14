@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before running automated API endpoint tests or auth-aware request sequences, you MUST inspect:
+
 1. Target Route Definition & Data Schemas → Inspect route parameters, body validation schemas (Zod/Pydantic), and auth middleware
 2. Test Server URL & Credentials (`.env.test`) → Verify base URL and test token environment variables
 3. Multi-Stage Request Sequence → Enforce sequential execution: Auth Login → Token Capture → CRUD Operations → Error Edge Case Verification

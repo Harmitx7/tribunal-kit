@@ -20,6 +20,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before proposing any code change, you MUST evaluate the **10 Core Governance Questions**:
+
 1. Does anything need to change? (`NO_CHANGE`)
 2. Does the repository already solve this? (`REUSE`)
 3. Does an existing function, component, utility, service, or abstraction solve it? (`REUSE`)
@@ -35,19 +36,20 @@ Before proposing any code change, you MUST evaluate the **10 Core Governance Que
 
 ## Sub-Commands
 
-| Command | Description |
-| :--- | :--- |
-| `/minimal` | Analyze requested implementation and determine smallest viable change footprint |
-| `/minimal-review` | Review proposed change diff for unnecessary complexity and file proliferation |
-| `/change-budget` | Display estimated Change Budget (files added/modified, lines, deps, abstractions) |
-| `/complexity-audit` | Audit proposal for 14 standardized complexity flags and overengineering patterns |
-| `/reuse-check` | Search repository for existing functions, symbols, and utilities before creating code |
+| Command             | Description                                                                           |
+| :------------------ | :------------------------------------------------------------------------------------ |
+| `/minimal`          | Analyze requested implementation and determine smallest viable change footprint       |
+| `/minimal-review`   | Review proposed change diff for unnecessary complexity and file proliferation         |
+| `/change-budget`    | Display estimated Change Budget (files added/modified, lines, deps, abstractions)     |
+| `/complexity-audit` | Audit proposal for 14 standardized complexity flags and overengineering patterns      |
+| `/reuse-check`      | Search repository for existing functions, symbols, and utilities before creating code |
 
 ---
 
 ## Decision Order Hierarchy
 
 Evaluate solutions strictly in this order:
+
 ```
 NO_CHANGE ➔ REUSE ➔ CONFIGURE ➔ DELETE ➔ MODIFY ➔ EXTEND ➔ CREATE
 ```

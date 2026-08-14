@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before running linting tools or modifying linter rules, you MUST inspect:
+
 1. Zero-Warning CI Blocking (Section 34) → Enforce zero-warning policy in CI pipelines; ban treating lint warnings as non-blocking
 2. Mandatory Strict Type Checks (Section 121) → Run static type checking (`tsc --noEmit` or `mypy`) alongside linters to catch non-linter type bugs
 3. Diff Review Before Auto-Fixing (Section 15) → Review diffs explicitly after auto-fixing (`eslint --fix`) to prevent accidental removal of side-effect code
@@ -69,7 +70,11 @@ npx prettier --write .
 ```json
 // .eslintrc.json
 {
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:@typescript-eslint/recommended-requiring-type-checking"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-floating-promises": "error",
@@ -197,9 +202,9 @@ repos:
 
 ## Scripts
 
-| Script                     | Purpose                                   | Run With                                         |
-| -------------------------- | ----------------------------------------- | ------------------------------------------------ |
-| `.agent/scripts/lint_runner.js`   | Runs project linting and reports findings | `node .agent/scripts/lint_runner.js <project_path>`   |
+| Script                          | Purpose                                   | Run With                                            |
+| ------------------------------- | ----------------------------------------- | --------------------------------------------------- |
+| `.agent/scripts/lint_runner.js` | Runs project linting and reports findings | `node .agent/scripts/lint_runner.js <project_path>` |
 
 ---
 

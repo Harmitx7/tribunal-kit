@@ -12,29 +12,29 @@ Full rules (GEMINI.md) are NOT loaded — this saves ~4,800 tokens.
 
 ## Task Classification
 
-| Type           | Signals                                            | Output              |
-| -------------- | -------------------------------------------------- | ------------------- |
-| Question       | "what is", "how does", "explain"                   | Text only — no code |
-| Simple edit    | "fix", "change", "update" (single file)            | Direct edit         |
-| Complex build  | "build", "create", "implement", "design"           | Structured spec     |
-| Refactor       | "refactor", "clean", "extract", "split"            | Structured spec     |
-| Test           | "test", "spec", "e2e"                              | Test spec           |
+| Type          | Signals                                  | Output              |
+| ------------- | ---------------------------------------- | ------------------- |
+| Question      | "what is", "how does", "explain"         | Text only — no code |
+| Simple edit   | "fix", "change", "update" (single file)  | Direct edit         |
+| Complex build | "build", "create", "implement", "design" | Structured spec     |
+| Refactor      | "refactor", "clean", "extract", "split"  | Structured spec     |
+| Test          | "test", "spec", "e2e"                    | Test spec           |
 
 ---
 
 ## Stack Detection
 
-| Keywords                                    | Stack          |
-| ------------------------------------------- | -------------- |
-| react, jsx, tsx, component, hook            | react          |
-| next, nextjs, server component              | nextjs         |
-| vue, nuxt, composition api                  | vue            |
-| typescript, interface, generic              | typescript     |
-| python, fastapi, django, flask              | python         |
-| express, hono, koa, node                    | node           |
-| sql, postgres, prisma, drizzle              | sql            |
-| rust, cargo, tokio, axum                    | rust           |
-| css, tailwind, responsive                   | css            |
+| Keywords                         | Stack      |
+| -------------------------------- | ---------- |
+| react, jsx, tsx, component, hook | react      |
+| next, nextjs, server component   | nextjs     |
+| vue, nuxt, composition api       | vue        |
+| typescript, interface, generic   | typescript |
+| python, fastapi, django, flask   | python     |
+| express, hono, koa, node         | node       |
+| sql, postgres, prisma, drizzle   | sql        |
+| rust, cargo, tokio, axum         | rust       |
+| css, tailwind, responsive        | css        |
 
 ---
 
@@ -56,9 +56,7 @@ The planner MUST output a JSON object matching this schema:
   "task_type": "frontend_component | api_endpoint | database_query | auth_flow | test_suite | refactor | animation | general",
   "stack": ["react", "typescript", "css"],
   "target_file": "path/to/file.tsx",
-  "essential_skills": [
-    { "name": "skill-name", "score": 5.0 }
-  ],
+  "essential_skills": [{ "name": "skill-name", "score": 5.0 }],
   "constraints": {
     "accessibility": true,
     "responsive": true,

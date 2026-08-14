@@ -8,11 +8,11 @@
  *   node .agent/scripts/lint_runner.js . --files src/index.ts src/utils.ts
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
-const { spawnSync } = require("child_process");
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
 
 const {
   RED,
@@ -29,39 +29,38 @@ const {
   ok,
   fail,
   skip,
-} = require("./_colors");
+} = require('./_colors');
 
 const RESULTS = [];
 
 function runLinter(label, cmd, cwd) {
   const elapsed = timer();
   try {
-    const executable =
-      process.platform === "win32" && cmd[0] === "npx" ? "npx.cmd" : cmd[0];
+    const executable = process.platform === 'win32' && cmd[0] === 'npx' ? 'npx.cmd' : cmd[0];
     const result = spawnSync(executable, cmd.slice(1), {
       cwd,
-      encoding: "utf8",
+      encoding: 'utf8',
       timeout: 120000,
-      shell: process.platform === "win32",
+      shell: process.platform === 'win32',
     });
 
     const ms = elapsed();
     if (result.status === 0) {
       ok(`${label} — clean ${DIM}(${formatMs(ms)})${RESET}`);
-      RESULTS.push({ name: label, status: "pass", ms });
+      RESULTS.push({ name: label, status: 'pass', ms });
       return true;
     }
 
     fail(`${label} — issues found ${DIM}(${formatMs(ms)})${RESET}`);
-    RESULTS.push({ name: label, status: "fail", ms });
+    RESULTS.push({ name: label, status: 'fail', ms });
     if (result.error) {
       console.log(`    Error: ${result.error.message}`);
     }
-    const out = result.stdout ? result.stdout.toString() : "";
-    const err = result.stderr ? result.stderr.toString() : "";
-    const output = (out + "\n" + err).trim();
+    const out = result.stdout ? result.stdout.toString() : '';
+    const err = result.stderr ? result.stderr.toString() : '';
+    const output = (out + '\n' + err).trim();
     if (output) {
-      const lines = output.split("\n");
+      const lines = output.split('\n');
       for (const line of lines.slice(0, 15)) {
         console.log(`    ${line}`);
       }
@@ -72,45 +71,41 @@ function runLinter(label, cmd, cwd) {
     return false;
   } catch {
     skip(`${label} — tool not installed`);
-    RESULTS.push({ name: label, status: "skip" });
+    RESULTS.push({ name: label, status: 'skip' });
     return true;
   }
 }
 
 function detectLinters(projectRoot) {
   const available = {};
-  const pkgJson = path.join(projectRoot, "package.json");
+  const pkgJson = path.join(projectRoot, 'package.json');
 
   if (fs.existsSync(pkgJson)) {
     const eslintFiles = [
-      ".eslintrc",
-      ".eslintrc.js",
-      ".eslintrc.json",
-      ".eslintrc.yml",
-      "eslint.config.js",
-      "eslint.config.mjs",
+      '.eslintrc',
+      '.eslintrc.js',
+      '.eslintrc.json',
+      '.eslintrc.yml',
+      'eslint.config.js',
+      'eslint.config.mjs',
     ];
-    available.eslint = eslintFiles.some((f) =>
-      fs.existsSync(path.join(projectRoot, f)),
-    );
+    available.eslint = eslintFiles.some(f => fs.existsSync(path.join(projectRoot, f)));
 
     const prettierFiles = [
-      ".prettierrc",
-      ".prettierrc.js",
-      ".prettierrc.json",
-      "prettier.config.js",
+      '.prettierrc',
+      '.prettierrc.js',
+      '.prettierrc.json',
+      'prettier.config.js',
     ];
-    available.prettier = prettierFiles.some((f) =>
-      fs.existsSync(path.join(projectRoot, f)),
-    );
+    available.prettier = prettierFiles.some(f => fs.existsSync(path.join(projectRoot, f)));
   }
 
   available.ruff =
-    fs.existsSync(path.join(projectRoot, "pyproject.toml")) ||
-    fs.existsSync(path.join(projectRoot, "ruff.toml"));
+    fs.existsSync(path.join(projectRoot, 'pyproject.toml')) ||
+    fs.existsSync(path.join(projectRoot, 'ruff.toml'));
   available.flake8 =
-    fs.existsSync(path.join(projectRoot, ".flake8")) ||
-    fs.existsSync(path.join(projectRoot, "setup.cfg"));
+    fs.existsSync(path.join(projectRoot, '.flake8')) ||
+    fs.existsSync(path.join(projectRoot, 'setup.cfg'));
 
   return available;
 }
@@ -119,27 +114,25 @@ function main() {
   const args = process.argv.slice(2);
   let targetPath = null;
   let fixFlag = false;
-  let fileArgs = [];
+  const fileArgs = [];
 
   let i = 0;
   while (i < args.length) {
-    if (args[i] === "--fix") fixFlag = true;
-    else if (args[i] === "--files") {
+    if (args[i] === '--fix') fixFlag = true;
+    else if (args[i] === '--files') {
       i++;
-      while (i < args.length && !args[i].startsWith("--")) {
+      while (i < args.length && !args[i].startsWith('--')) {
         fileArgs.push(args[i++]);
       }
       continue;
-    } else if (!targetPath && !args[i].startsWith("-")) {
+    } else if (!targetPath && !args[i].startsWith('-')) {
       targetPath = args[i];
     }
     i++;
   }
 
   if (!targetPath) {
-    console.log(
-      "Usage: node lint_runner.js <path> [--fix] [--files <file1> <file2> ...]",
-    );
+    console.log('Usage: node lint_runner.js <path> [--fix] [--files <file1> <file2> ...]');
     process.exit(1);
   }
 
@@ -150,15 +143,15 @@ function main() {
   }
 
   console.log(
-    banner("lint_runner.js", {
+    banner('lint_runner.js', {
       Project: projectRoot,
-      Mode: fixFlag ? "fix" : "check",
+      Mode: fixFlag ? 'fix' : 'check',
     }),
   );
 
   const available = detectLinters(projectRoot);
   if (!Object.values(available).some(Boolean)) {
-    skip("No linter configuration detected in this project");
+    skip('No linter configuration detected in this project');
     process.exit(0);
   }
 
@@ -166,45 +159,44 @@ function main() {
   let failures = 0;
 
   if (available.eslint) {
-    console.log(sectionHeader("ESLint"));
-    const cmd = ["npx", "eslint"];
-    if (fixFlag) cmd.push("--fix");
+    console.log(sectionHeader('ESLint'));
+    const cmd = ['npx', 'eslint'];
+    if (fixFlag) cmd.push('--fix');
     if (fileArgs.length) cmd.push(...fileArgs);
-    else cmd.push(".", "--max-warnings=0");
-    if (!runLinter("ESLint", cmd, projectRoot)) failures++;
+    else cmd.push('.', '--max-warnings=0');
+    if (!runLinter('ESLint', cmd, projectRoot)) failures++;
   }
 
   if (available.prettier) {
-    console.log(sectionHeader("Prettier"));
-    const cmd = ["npx", "prettier"];
-    if (fixFlag) cmd.push("--write");
-    else cmd.push("--check");
+    console.log(sectionHeader('Prettier'));
+    const cmd = ['npx', 'prettier'];
+    if (fixFlag) cmd.push('--write');
+    else cmd.push('--check');
     if (fileArgs.length) cmd.push(...fileArgs);
-    else cmd.push(".");
-    if (!runLinter("Prettier", cmd, projectRoot)) failures++;
+    else cmd.push('.');
+    if (!runLinter('Prettier', cmd, projectRoot)) failures++;
   }
 
   if (available.ruff) {
-    console.log(sectionHeader("Ruff (Python)"));
-    const cmd = ["ruff", "check"];
-    if (fixFlag) cmd.push("--fix");
+    console.log(sectionHeader('Ruff (Python)'));
+    const cmd = ['ruff', 'check'];
+    if (fixFlag) cmd.push('--fix');
     if (fileArgs.length) cmd.push(...fileArgs);
-    else cmd.push(".");
-    if (!runLinter("Ruff", cmd, projectRoot)) failures++;
+    else cmd.push('.');
+    if (!runLinter('Ruff', cmd, projectRoot)) failures++;
   }
 
   if (available.flake8 && !available.ruff) {
-    console.log(sectionHeader("Flake8 (Python)"));
-    const cmd = ["flake8"];
+    console.log(sectionHeader('Flake8 (Python)'));
+    const cmd = ['flake8'];
     if (fileArgs.length) cmd.push(...fileArgs);
-    else cmd.push(".");
-    if (!runLinter("Flake8", cmd, projectRoot)) failures++;
+    else cmd.push('.');
+    if (!runLinter('Flake8', cmd, projectRoot)) failures++;
   }
 
-  if (fs.existsSync(path.join(projectRoot, "tsconfig.json"))) {
-    console.log(sectionHeader("TypeScript"));
-    if (!runLinter("TypeScript", ["npx", "tsc", "--noEmit"], projectRoot))
-      failures++;
+  if (fs.existsSync(path.join(projectRoot, 'tsconfig.json'))) {
+    console.log(sectionHeader('TypeScript'));
+    if (!runLinter('TypeScript', ['npx', 'tsc', '--noEmit'], projectRoot)) failures++;
   }
 
   console.log(`\n${BOLD}${CYAN}━━━ Lint Summary ━━━${RESET}`);
@@ -215,9 +207,7 @@ function main() {
   if (failures === 0) {
     console.log(`\n${GREEN}${BOLD}  ✔ All linters passed.${RESET}\n`);
   } else {
-    console.log(
-      `\n${RED}${BOLD}  ✖ ${failures} linter(s) reported issues.${RESET}\n`,
-    );
+    console.log(`\n${RED}${BOLD}  ✖ ${failures} linter(s) reported issues.${RESET}\n`);
   }
 
   process.exit(failures > 0 ? 1 : 0);

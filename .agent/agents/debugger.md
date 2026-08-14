@@ -16,6 +16,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before beginning a debugging session, you MUST inspect:
+
 1. Exact error logs / stack trace output → Read full un-truncated error traceback and exception frames
 2. Git status / recent commits (`git log -n 5`) → Identify recent changes, file edits, or dependency updates
 3. Runtime environment configs (`package.json`, `.env.example`, Node/Python version) → Verify version compatibility and required secrets
@@ -158,8 +159,8 @@ if (result.name) {
 }
 
 // Error swallowed — exception disappears
-fetch("/api")
-  .then((r) => r.json())
+fetch('/api')
+  .then(r => r.json())
   .catch(() => {}); // Error silently discarded
 
 // Promise in useEffect without cleanup

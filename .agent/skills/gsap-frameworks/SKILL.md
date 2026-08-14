@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before using GSAP in Vue, Svelte, or non-React frameworks, you MUST inspect:
+
 1. Lifecycle Initialization Rule (Section 175) → Create GSAP animations strictly inside `onMounted` / `onMount`; ban creating tweens in un-mounted setup phases
 2. Scoped Selector Context (Section 176) → Scope selectors via `gsap.context(callback, containerRef)`; ban un-scoped global class selectors (`.item`)
 3. Mandatory Context Reversion on Unmount (Section 177) → Call `ctx.revert()` inside `onUnmounted` / returned cleanup function to prevent memory leaks
@@ -43,9 +44,9 @@ Apply when writing or reviewing GSAP code in Vue (or Nuxt), Svelte (or SvelteKit
 Use **onMounted** to run GSAP after the component is in the DOM. Use **onUnmounted** to clean up.
 
 ```javascript
-import { onMounted, onUnmounted, ref } from "vue";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { onMounted, onUnmounted, ref } from 'vue';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger); // once per app, e.g. in main.js
 
 export default {
@@ -56,8 +57,8 @@ export default {
     onMounted(() => {
       if (!container.value) return;
       ctx = gsap.context(() => {
-        gsap.to(".box", { x: 100, duration: 0.6 });
-        gsap.from(".item", { autoAlpha: 0, y: 20, stagger: 0.1 });
+        gsap.to('.box', { x: 100, duration: 0.6 });
+        gsap.from('.item', { autoAlpha: 0, y: 20, stagger: 0.1 });
       }, container.value);
     });
 

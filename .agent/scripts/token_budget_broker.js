@@ -11,15 +11,15 @@
  *   - Tier 3: Full budget (up to model context limit)
  */
 
-"use strict";
+'use strict';
 
-const { parseArgs } = require("./_utils");
+const { parseArgs } = require('./_utils');
 
 const TIER_TOKEN_LIMITS = {
   0: 0,
   1: 2000,
   2: 8000,
-  3: 32000
+  3: 32000,
 };
 
 /**
@@ -29,9 +29,10 @@ const TIER_TOKEN_LIMITS = {
  */
 function getTokenBudget(tier = 1) {
   // Normalize tier to a valid integer in [0, 3]
-  const normalizedTier = (typeof tier === "number" && Number.isFinite(tier))
-    ? Math.max(0, Math.min(3, Math.round(tier)))
-    : 1;
+  const normalizedTier =
+    typeof tier === 'number' && Number.isFinite(tier)
+      ? Math.max(0, Math.min(3, Math.round(tier)))
+      : 1;
   const maxTokens = TIER_TOKEN_LIMITS[normalizedTier];
 
   return {
@@ -39,7 +40,8 @@ function getTokenBudget(tier = 1) {
     maxTokens,
     includeFullRepo: normalizedTier >= 2,
     maxSkills: normalizedTier === 0 ? 0 : normalizedTier === 1 ? 1 : normalizedTier === 2 ? 3 : 10,
-    maxReviewers: normalizedTier === 0 ? 0 : normalizedTier === 1 ? 1 : normalizedTier === 2 ? 2 : 8
+    maxReviewers:
+      normalizedTier === 0 ? 0 : normalizedTier === 1 ? 1 : normalizedTier === 2 ? 2 : 8,
   };
 }
 

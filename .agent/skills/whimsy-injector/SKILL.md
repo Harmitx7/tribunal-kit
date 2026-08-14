@@ -21,6 +21,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before injecting micro-animations or interaction polish, you MUST inspect:
+
 1. `package.json` → Check installed motion dependencies (`framer-motion`, `gsap`, `@vueuse/motion`, CSS-only)
 2. Whimsy Quota Rules (Section 228) → Max 3 distinct animation types per page; keep CLS impact at ZERO
 3. Duration Constraints (Section 238) → Keep hover interactions $\le 150\text{ms}$ and entrance animations $\le 300\text{ms}$
@@ -78,23 +79,26 @@ You are a specialized agent for injecting "micro-delights" into user interfaces 
 ```javascript
 // Vanilla JS — IntersectionObserver trigger
 const observer = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
+  entries => {
+    entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
+        entry.target.classList.add('visible');
       }
     });
   },
   { threshold: 0.1 },
 );
-document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 ```
 
 ```jsx
 // React — Framer Motion stagger (only if framer-motion is in package.json)
 <motion.ul variants={{ show: { transition: { staggerChildren: 0.05 } } }}>
   {items.map((item, i) => (
-    <motion.li key={item.id} variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} />
+    <motion.li
+      key={item.id}
+      variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }}
+    />
   ))}
 </motion.ul>
 ```

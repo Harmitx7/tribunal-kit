@@ -198,15 +198,34 @@
     ]
   },
   "file_extensions": {
-    ".tsx": ["react-specialist", "nextjs-react-expert", "frontend-design", "better-ui", "expo-router-v4", "playwright-ai-e2e"],
-    ".ts": ["typescript-advanced", "clean-code", "lint-and-validate", "opentelemetry-observability", "property-based-testing"],
+    ".tsx": [
+      "react-specialist",
+      "nextjs-react-expert",
+      "frontend-design",
+      "better-ui",
+      "expo-router-v4",
+      "playwright-ai-e2e"
+    ],
+    ".ts": [
+      "typescript-advanced",
+      "clean-code",
+      "lint-and-validate",
+      "opentelemetry-observability",
+      "property-based-testing"
+    ],
     ".jsx": ["react-specialist", "frontend-design"],
     ".js": ["nodejs-best-practices", "clean-code", "opentelemetry-observability"],
     ".vue": ["vue-expert", "frontend-design"],
     ".py": ["python-pro", "python-patterns", "duckdb-analytical-sql", "property-based-testing"],
     ".rs": ["rust-pro"],
     ".cs": ["csharp-developer"],
-    ".sql": ["sql-pro", "database-architect", "supabase-postgres-best-practices", "vector-search-pgvector", "duckdb-analytical-sql"],
+    ".sql": [
+      "sql-pro",
+      "database-architect",
+      "supabase-postgres-best-practices",
+      "vector-search-pgvector",
+      "duckdb-analytical-sql"
+    ],
     ".prisma": ["database-architect", "database-design", "vector-search-pgvector"],
     ".css": ["frontend-design", "better-colors", "better-typography", "swiss-design"],
     ".sh": ["bash-linux"],

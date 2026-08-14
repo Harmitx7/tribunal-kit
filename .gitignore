@@ -75,6 +75,7 @@ coverage/
 .nyc_output/
 *.lcov
 benchmark-results.json
+benchmark-stress-results.json
 eslint_report.json
 
 # Scratch & temporary scripts

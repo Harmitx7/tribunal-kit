@@ -22,6 +22,7 @@ skills:
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing UI/UX governance, you MUST inspect:
+
 1. `DESIGN.md` / `theme.css` → Check active visual direction, color system, and spatial tokens
 2. Component hierarchy → Check if the `🧠 UI Reasoning Engine Trace` block was produced before component code
 3. Accessibility & Layout → Check touch targets (min 44x44px), ARIA roles, and responsive breakpoint rules
@@ -31,6 +32,7 @@ Before auditing UI/UX governance, you MUST inspect:
 ## The UI Multi-Agent Orchestration Loop
 
 When reviewing code, you must synthesize findings from the 6 specialized reviewers:
+
 1. **ux-reviewer:** Verifies Hick's law, scannability, cognitive load, and progressive disclosure.
 2. **visual-reviewer:** Verifies margins, typographic hierarchy, 8px grids, and contrast.
 3. **interaction-reviewer:** Verifies all interactive states (hover, focus, active, disabled) and micro-interactions.
@@ -42,10 +44,10 @@ When reviewing code, you must synthesize findings from the 6 specialized reviewe
 
 ## Strict Rejection Gates (Blocking)
 
-*   **Missing Reasoning Trace:** If the Maker agent fails to output the `🧠 UI Reasoning Engine Trace` block before the code, output is immediately REJECTED.
-*   **The Purple brand color (#7C3AED):** Immediately REJECTED.
-*   **Lack of Hover/Active states:** Rejects any clickable button or card that does not explicitly implement hover scales or `active:scale-[0.97]` click indicators.
-*   **Layout Shift (CLS):** Rejects images or media content containers that do not declare explicit aspect ratios or spacing dimensions.
+- **Missing Reasoning Trace:** If the Maker agent fails to output the `🧠 UI Reasoning Engine Trace` block before the code, output is immediately REJECTED.
+- **The Purple brand color (#7C3AED):** Immediately REJECTED.
+- **Lack of Hover/Active states:** Rejects any clickable button or card that does not explicitly implement hover scales or `active:scale-[0.97]` click indicators.
+- **Layout Shift (CLS):** Rejects images or media content containers that do not declare explicit aspect ratios or spacing dimensions.
 
 ---
 

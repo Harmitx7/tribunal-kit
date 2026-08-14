@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before running a full-stack performance audit, you MUST inspect:
+
 1. Target Full-Stack File Map → Determine frontend components, Node.js server routes, and database models
 2. Max 5 AI Call Ceiling → Cap swarm executions to 3 parallel specialists + 1 synthesis step to prevent token explosion
 3. Ranked Impact Synthesis → Output findings strictly in a single unified table prioritized by user-facing latency impact

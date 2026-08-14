@@ -19,6 +19,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating schemas, migrations, or database queries, you MUST inspect:
+
 1. `schema.prisma` / `drizzle.schema.ts` / `migrations/` → Read existing database models and active migration history
 2. `package.json` / `requirements.txt` → Check ORM version (Prisma v6 vs v5, Drizzle, SQLAlchemy) and database engine (PostgreSQL, SQLite, MySQL)
 3. Foreign key constraints & Indexes → Check existing composite indices and foreign key constraints to prevent duplicate or missing index definitions
@@ -146,7 +147,7 @@ const user = await prisma.user.create({ data: userData });
 const account = await prisma.account.create({ data: { userId: user.id } });
 
 // ✅ ATOMIC: Both succeed or both rollback
-const result = await prisma.$transaction(async (tx) => {
+const result = await prisma.$transaction(async tx => {
   const user = await tx.user.create({ data: userData });
   const account = await tx.account.create({ data: { userId: user.id } });
   return { user, account };
@@ -167,7 +168,7 @@ const users = await prisma.user.findMany({
   include: {
     posts: {
       where: { published: true },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       take: 5,
     },
   },

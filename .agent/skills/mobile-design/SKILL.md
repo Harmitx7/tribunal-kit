@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing mobile interfaces or writing React Native code, you MUST inspect:
+
 1. Reanimated 3 & Worklet Rules (Section 47) → Execute animations on the UI thread using Reanimated 3 worklets; ban legacy `Animated.View`
 2. List Optimization (Section 32) → Use `@shopify/flash-list` with required `estimatedItemSize` instead of `ScrollView` or `FlatList`
 3. Safe Area Insets (Section 100) → Always wrap content with `useSafeAreaInsets()` to accommodate notch, dynamic island, and home indicators
@@ -47,13 +48,13 @@ Before designing mobile interfaces or writing React Native code, you MUST inspec
 ### FlashList (Required for Lists)
 
 ```tsx
-import { FlashList } from "@shopify/flash-list";
+import { FlashList } from '@shopify/flash-list';
 <FlashList
   data={items}
   renderItem={({ item }) => <ItemCard item={item} />}
   estimatedItemSize={100} // REQUIRED — measure actual item height first
-  keyExtractor={(item) => item.id}
-  getItemType={(item) => item.type} // multi-type optimization
+  keyExtractor={item => item.id}
+  getItemType={item => item.type} // multi-type optimization
 />;
 // ❌ NEVER: <ScrollView>{items.map(...)}</ScrollView> for lists
 // ❌ NEVER: <FlatList> for perf-critical lists — FlashList is 5-10x faster
@@ -62,7 +63,13 @@ import { FlashList } from "@shopify/flash-list";
 ### Reanimated 3 — Worklet Animations (Required for 120Hz)
 
 ```tsx
-import { useSharedValue, useAnimatedStyle, withSpring, withTiming, runOnJS } from "react-native-reanimated";
+import {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  runOnJS,
+} from 'react-native-reanimated';
 
 // Shared values run on the UI thread — never on JS thread
 const scale = useSharedValue(1);
@@ -99,7 +106,7 @@ scale.value = withSpring(1, {}, onComplete);
 ## Haptics
 
 ```tsx
-import * as Haptics from "expo-haptics";
+import * as Haptics from 'expo-haptics';
 // light → switch toggle, tap feedback
 // medium → selection change, confirm
 // heavy → destructive action, strong confirm
@@ -115,18 +122,22 @@ Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); // save com
 ## Safe Areas & Platform Layout
 
 ```tsx
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Platform, StatusBar } from "react-native";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Platform, StatusBar } from 'react-native';
 
 function Screen() {
   const insets = useSafeAreaInsets();
-  return <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>{/* Content safe from Dynamic Island, home indicator, status bar */}</View>;
+  return (
+    <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
+      {/* Content safe from Dynamic Island, home indicator, status bar */}
+    </View>
+  );
 }
 // Android status bar
-const STATUS_BAR_HEIGHT = Platform.OS === "android" ? (StatusBar.currentHeight ?? 24) : 0;
+const STATUS_BAR_HEIGHT = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 24) : 0;
 
 // Foldable/tablet — dual pane
-import { useWindowDimensions } from "react-native";
+import { useWindowDimensions } from 'react-native';
 function AdaptiveLayout() {
   const { width } = useWindowDimensions();
   const isTablet = width >= 600;
@@ -160,17 +171,17 @@ function AdaptiveLayout() {
 // app/(modal)/settings.tsx — modal group
 
 // Stack navigation with gesture
-import { Stack } from "expo-router";
-<Stack screenOptions={{ headerShown: false, animation: "slide_from_right" }}>
+import { Stack } from 'expo-router';
+<Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
   <Stack.Screen name="(tabs)" />
-  <Stack.Screen name="[id]" options={{ presentation: "modal" }} />
+  <Stack.Screen name="[id]" options={{ presentation: 'modal' }} />
 </Stack>;
 
 // Deep linking (Expo Router handles automatically via app.json scheme)
 // ❌ TRAP: Don't use react-navigation Link for deep links in Expo Router — use expo-router Link
-import { Link, useRouter } from "expo-router";
+import { Link, useRouter } from 'expo-router';
 const router = useRouter();
-router.push("/user/42");
+router.push('/user/42');
 ```
 
 ---

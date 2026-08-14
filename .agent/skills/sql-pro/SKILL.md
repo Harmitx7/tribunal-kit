@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing complex SQL queries or optimizing database performance, you MUST inspect:
+
 1. SARGability Inspection (Section 328) → Ensure WHERE clauses use SARGable predicates; avoid functions or string operations on indexed columns
 2. Keyset Pagination over OFFSET (Section 74) → Use keyset/cursor pagination (`WHERE (created_at, id) < (...)`) instead of `OFFSET` for large tables (>10K rows)
 3. EXPLAIN ANALYZE Verification (Section 358) → Run `EXPLAIN (ANALYZE, BUFFERS)` to inspect physical query cost, buffer hits, and join algorithms

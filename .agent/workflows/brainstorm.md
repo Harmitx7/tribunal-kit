@@ -20,6 +20,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating options or conducting Socratic architectural exploration, you MUST inspect:
+
 1. Technology Stack Manifest (`package.json`, `tsconfig.json`) → Confirm existing language/framework versions and active library boundaries
 2. Workspace File Layout → Understand current module scale and project structure before proposing architectural shifts
 3. Pure Exploration Constraint → Enforce zero code edits or file creation during brainstorm phase; restrict output to options, tradeoffs, and recommendations

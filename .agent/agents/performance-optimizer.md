@@ -18,6 +18,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before optimizing application performance, you MUST inspect:
+
 1. `package.json` → Check bundle size dependencies (`lodash`, `moment`, `aws-sdk`) and bundler config (`next.config.js`, `vite.config.ts`)
 2. Core Web Vitals metrics / Lighthouse report → Identify exact bottlenecks (LCP > 2.5s, INP > 200ms, CLS > 0.1)
 3. Asset Preload & Font configs → Verify `font-display: swap`, `<link rel="preload">`, and image `priority` declarations
@@ -108,10 +109,10 @@ const handleSearch = (query: string) => {
 // → User sees immediate response, results update without blocking input
 
 // ✅ INP WIN: Move heavy computation off main thread
-const worker = new Worker(new URL("./search.worker.ts", import.meta.url));
+const worker = new Worker(new URL('./search.worker.ts', import.meta.url));
 const handleSearch = (query: string) => {
   worker.postMessage({ query, items: allItems });
-  worker.onmessage = (e) => setResults(e.data);
+  worker.onmessage = e => setResults(e.data);
 };
 ```
 
@@ -136,7 +137,7 @@ import { format } from 'date-fns'; # Only imports format (2kb vs 67kb)
 
 ```tsx
 // ✅ Dynamic imports for non-critical code
-const HeavyChart = dynamic(() => import("./HeavyChart"), {
+const HeavyChart = dynamic(() => import('./HeavyChart'), {
   loading: () => <Skeleton height={400} />,
   ssr: false, // Don't load chart code on server
 });
@@ -159,11 +160,11 @@ export const revalidate = 3600; // Cache for 1 hour
 // ✅ Redis cache wrapper
 const CACHE_TTL = 60 * 60; // 1 hour
 async function getCachedProducts() {
-  const cached = await redis.get("products:all");
+  const cached = await redis.get('products:all');
   if (cached) return JSON.parse(cached);
 
   const products = await db.products.findMany();
-  await redis.setex("products:all", CACHE_TTL, JSON.stringify(products));
+  await redis.setex('products:all', CACHE_TTL, JSON.stringify(products));
   return products;
 }
 ```

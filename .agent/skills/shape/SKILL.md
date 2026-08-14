@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating UI component code for new features, you MUST inspect:
+
 1. Target feature scope & user goals → Execute the 3-Step Shaping Workflow (Section 22)
 2. State Inventory (Section 29) → Define 5 required component states (Default, Empty, Loading, Error, Success)
 3. Architecture Contract (Section 37) → Draft entry/exit points and primary action contract before coding
@@ -31,12 +32,16 @@ Uncover core requirements, define interaction boundaries, and lock down screen f
 ## The 3-Step Shaping Workflow
 
 ### Step 1: High-Ambiguity Socratic Interview
+
 Before designing components, ask 2 targeted questions about high-ambiguity choices:
-1. **Primary User Goal**: *What is the single most important action the user must accomplish on this screen?*
-2. **Context & Entry Point**: *Where does the user arrive from, and where do they expect to go after completing this step?*
+
+1. **Primary User Goal**: _What is the single most important action the user must accomplish on this screen?_
+2. **Context & Entry Point**: _Where does the user arrive from, and where do they expect to go after completing this step?_
 
 ### Step 2: Screen Boundaries & State Inventory
+
 Define the component states before implementation:
+
 - **Default State**: Primary layout with standard populated data.
 - **Empty State**: Zero-data view with creation prompt.
 - **Loading State**: Skeleton placeholders.
@@ -44,7 +49,9 @@ Define the component states before implementation:
 - **Success State**: Instant feedback toast or confirmation view.
 
 ### Step 3: Architecture Contract
+
 Summarize the screen contract in a concise visual outline before coding:
+
 ```
 [Screen Title]
   ├── Entry Point: (e.g. Dashboard -> "New Project" button)

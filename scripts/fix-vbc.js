@@ -7,12 +7,12 @@
  * Dry-run: node scripts/fix-vbc.js --dry-run
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const ROOT = path.resolve(__dirname, "..");
-const SKILLS_DIR = path.join(ROOT, ".agent", "skills");
-const DRY_RUN = process.argv.includes("--dry-run");
+const ROOT = path.resolve(__dirname, '..');
+const SKILLS_DIR = path.join(ROOT, '.agent', 'skills');
+const DRY_RUN = process.argv.includes('--dry-run');
 
 const PRE_FLIGHT_BLOCK = `
 ### ✅ Pre-Flight Self-Audit
@@ -38,34 +38,32 @@ let fixedCount = 0;
 let skippedCount = 0;
 let errorCount = 0;
 
-const skillDirs = fs.readdirSync(SKILLS_DIR).filter((d) => {
+const skillDirs = fs.readdirSync(SKILLS_DIR).filter(d => {
   return fs.statSync(path.join(SKILLS_DIR, d)).isDirectory();
 });
 
 for (const dir of skillDirs) {
-  const skillPath = path.join(SKILLS_DIR, dir, "SKILL.md");
+  const skillPath = path.join(SKILLS_DIR, dir, 'SKILL.md');
   if (!fs.existsSync(skillPath)) continue;
 
   let content;
   try {
-    content = fs.readFileSync(skillPath, "utf8");
+    content = fs.readFileSync(skillPath, 'utf8');
   } catch (e) {
     console.error(`  ❌ Failed to read: ${dir}/SKILL.md — ${e.message}`);
     errorCount++;
     continue;
   }
 
-  const hasPreFlight =
-    content.includes("Pre-Flight Checklist") || content.includes("Pre-Flight");
-  const hasVBC =
-    content.includes("VBC Protocol") || content.includes("VBC");
+  const hasPreFlight = content.includes('Pre-Flight Checklist') || content.includes('Pre-Flight');
+  const hasVBC = content.includes('VBC Protocol') || content.includes('VBC');
 
   if (hasPreFlight && hasVBC) {
     skippedCount++;
     continue;
   }
 
-  let appendText = "";
+  let appendText = '';
 
   if (!hasPreFlight) {
     appendText += PRE_FLIGHT_BLOCK;
@@ -81,7 +79,7 @@ for (const dir of skillDirs) {
     console.log(`  [DRY-RUN] Would append to ${dir}/SKILL.md`);
   } else {
     try {
-      fs.appendFileSync(skillPath, appendText, "utf8");
+      fs.appendFileSync(skillPath, appendText, 'utf8');
       fixedCount++;
     } catch (e) {
       console.error(`  ❌ Failed to write: ${dir}/SKILL.md — ${e.message}`);
@@ -94,5 +92,5 @@ console.log(`\n━━━ VBC Fix Summary ━━━━━━━━━━━━━
 console.log(`  Fixed:   ${fixedCount}`);
 console.log(`  Skipped: ${skippedCount} (already compliant)`);
 console.log(`  Errors:  ${errorCount}`);
-console.log(`  Mode:    ${DRY_RUN ? "DRY-RUN (no changes)" : "LIVE"}`);
+console.log(`  Mode:    ${DRY_RUN ? 'DRY-RUN (no changes)' : 'LIVE'}`);
 console.log();

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before invoking GSAP plugins, you MUST inspect:
+
 1. `package.json` → Verify plugin installation and check for Club GSAP licensing requirements (`MorphSVG`, `SplitText`, `ScrollSmoother`)
 2. Plugin Registration (Section 18) → Always register plugins explicitly via `gsap.registerPlugin(...)` at module root
 3. Revert & Cleanup (Section 418) → Call `.revert()` on SplitText and Flip instances during component unmount
@@ -35,10 +36,10 @@ Apply when using or reviewing code that uses GSAP plugins: registering plugins, 
 Register each plugin once so GSAP (and bundlers) know to include it. Use **gsap.registerPlugin()** with every plugin used in the project:
 
 ```javascript
-import gsap from "gsap";
-import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-import { Flip } from "gsap/Flip";
-import { Draggable } from "gsap/Draggable";
+import gsap from 'gsap';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import { Flip } from 'gsap/Flip';
+import { Draggable } from 'gsap/Draggable';
 
 gsap.registerPlugin(ScrollToPlugin, Flip, Draggable);
 ```
@@ -56,8 +57,8 @@ Animates scroll position (window or a scrollable element). Use for “scroll to 
 gsap.registerPlugin(ScrollToPlugin);
 
 gsap.to(window, { duration: 1, scrollTo: { y: 500 } });
-gsap.to(window, { duration: 1, scrollTo: { y: "#section", offsetY: 50 } });
-gsap.to(scrollContainer, { duration: 1, scrollTo: { x: "max" } });
+gsap.to(window, { duration: 1, scrollTo: { y: '#section', offsetY: 50 } });
+gsap.to(scrollContainer, { duration: 1, scrollTo: { x: 'max' } });
 ```
 
 **ScrollToPlugin — key config (scrollTo object):**
@@ -92,9 +93,9 @@ Capture state with `Flip.getState()`, then apply changes (e.g. layout or class c
 ```javascript
 gsap.registerPlugin(Flip);
 
-const state = Flip.getState(".item");
+const state = Flip.getState('.item');
 // change DOM (reorder, add/remove, change classes)
-Flip.from(state, { duration: 0.5, ease: "power2.inOut" });
+Flip.from(state, { duration: 0.5, ease: 'power2.inOut' });
 ```
 
 **Flip — key config (Flip.from vars):**
@@ -118,8 +119,8 @@ Makes elements draggable, spinnable, or throwable with mouse/touch. Use for slid
 ```javascript
 gsap.registerPlugin(Draggable, InertiaPlugin);
 
-Draggable.create(".box", { type: "x,y", bounds: "#container", inertia: true });
-Draggable.create(".knob", { type: "rotation" });
+Draggable.create('.box', { type: 'x,y', bounds: '#container', inertia: true });
+Draggable.create('.knob', { type: 'rotation' });
 ```
 
 **Draggable — key config options:**
@@ -140,19 +141,19 @@ Works with Draggable for momentum after release, or track the inertia/velocity o
 
 ```javascript
 gsap.registerPlugin(Draggable, InertiaPlugin);
-Draggable.create(".box", { type: "x,y", inertia: true });
+Draggable.create('.box', { type: 'x,y', inertia: true });
 ```
 
 Or track velocity of a property:
 
 ```javascript
-InertiaPlugin.track(".box", "x");
+InertiaPlugin.track('.box', 'x');
 ```
 
 Then use `"auto"` to continue the current velocity and glide to a stop:
 
 ```javascript
-gsap.to(obj, { inertia: { x: "auto" } });
+gsap.to(obj, { inertia: { x: 'auto' } });
 ```
 
 ### Observer
@@ -163,7 +164,7 @@ Normalizes pointer and scroll input across devices. Use for swipe, scroll direct
 gsap.registerPlugin(Observer);
 
 Observer.create({
-  target: "#area",
+  target: '#area',
   onUp: () => {},
   onDown: () => {},
   onLeft: () => {},
@@ -190,7 +191,7 @@ Splits an element’s text into characters, words, and/or lines (each in its own
 ```javascript
 gsap.registerPlugin(SplitText);
 
-const split = SplitText.create(".heading", { type: "words, chars" });
+const split = SplitText.create('.heading', { type: 'words, chars' });
 gsap.from(split.chars, { opacity: 0, y: 20, stagger: 0.03, duration: 0.4 });
 // later: split.revert() or let gsap.context() cleanup revert
 ```
@@ -198,8 +199,8 @@ gsap.from(split.chars, { opacity: 0, y: 20, stagger: 0.03, duration: 0.4 });
 With **onSplit()** (v3.13.0+), animations run on each split and on re-split when **autoSplit** is used; returning a tween/timeline from **onSplit()** lets SplitText clean up and sync progress on re-split:
 
 ```javascript
-SplitText.create(".split", {
-  type: "lines",
+SplitText.create('.split', {
+  type: 'lines',
   autoSplit: true,
   onSplit(self) {
     return gsap.from(self.lines, { y: 100, opacity: 0, stagger: 0.05, duration: 0.5 });
@@ -238,9 +239,9 @@ Animates text with a scramble/glitch effect. Use when revealing or transitioning
 ```javascript
 gsap.registerPlugin(ScrambleTextPlugin);
 
-gsap.to(".text", {
+gsap.to('.text', {
   duration: 1,
-  scrambleText: { text: "New message", chars: "01", revealDelay: 0.5 },
+  scrambleText: { text: 'New message', chars: '01', revealDelay: 0.5 },
 });
 ```
 
@@ -258,11 +259,11 @@ Reveals or hides the stroke of SVG elements by animating `stroke-dashoffset` / `
 gsap.registerPlugin(DrawSVGPlugin);
 
 // draw from nothing to full stroke
-gsap.from("#path", { duration: 1, drawSVG: 0 });
+gsap.from('#path', { duration: 1, drawSVG: 0 });
 // or explicit segment: from 0–0 to 0–100%
-gsap.fromTo("#path", { drawSVG: "0% 0%" }, { drawSVG: "0% 100%", duration: 1 });
+gsap.fromTo('#path', { drawSVG: '0% 0%' }, { drawSVG: '0% 100%', duration: 1 });
 // stroke only in the middle (gaps at ends)
-gsap.to("#path", { duration: 1, drawSVG: "20% 80%" });
+gsap.to('#path', { duration: 1, drawSVG: '20% 80%' });
 ```
 
 **Caveats:** Only affects stroke (not fill). Prefer single-segment `<path>` elements; multi-segment paths can render oddly in some browsers. Contents of `<use>` cannot be visually changed. **DrawSVGPlugin.getLength(element)** and **DrawSVGPlugin.getPosition(element)** return stroke length and current position.
@@ -279,13 +280,13 @@ Morphs one SVG shape into another by animating the `d` attribute (path data). St
 gsap.registerPlugin(MorphSVGPlugin);
 
 // convert primitives to path first if needed:
-MorphSVGPlugin.convertToPath("circle, rect, ellipse, line");
+MorphSVGPlugin.convertToPath('circle, rect, ellipse, line');
 
-gsap.to("#diamond", { duration: 1, morphSVG: "#lightning", ease: "power2.inOut" });
+gsap.to('#diamond', { duration: 1, morphSVG: '#lightning', ease: 'power2.inOut' });
 // object form:
-gsap.to("#diamond", {
+gsap.to('#diamond', {
   duration: 1,
-  morphSVG: { shape: "#lightning", type: "rotational", shapeIndex: 2 },
+  morphSVG: { shape: '#lightning', type: 'rotational', shapeIndex: 2 },
 });
 ```
 
@@ -318,9 +319,9 @@ Animates an element along an SVG path. Use when moving an object along a path (e
 ```javascript
 gsap.registerPlugin(MotionPathPlugin);
 
-gsap.to(".dot", {
+gsap.to('.dot', {
   duration: 2,
-  motionPath: { path: "#path", align: "#path", alignOrigin: [0.5, 0.5] },
+  motionPath: { path: '#path', align: '#path', alignOrigin: [0.5, 0.5] },
 });
 ```
 
@@ -341,7 +342,7 @@ Visual editor for MotionPath (alignment, offset). Use during development to tune
 ```javascript
 gsap.registerPlugin(MotionPathPlugin, MotionPathHelperPlugin);
 
-const helper = MotionPathHelper.create(".dot", "#path", { end: 0.5 });
+const helper = MotionPathHelper.create('.dot', '#path', { end: 0.5 });
 // adjust in UI, then use helper.path or helper.getProgress() in your animation
 ```
 
@@ -353,8 +354,8 @@ Custom easing curves (cubic-bezier or SVG path). Use when a built-in ease is not
 
 ```javascript
 gsap.registerPlugin(CustomEase);
-const ease = CustomEase.create("name", ".17,.67,.83,.67");
-gsap.to(".el", { x: 100, ease: ease, duration: 1 });
+const ease = CustomEase.create('name', '.17,.67,.83,.67');
+gsap.to('.el', { x: 100, ease: ease, duration: 1 });
 ```
 
 ### EasePack
@@ -378,7 +379,7 @@ Bounce-style easing with configurable strength.
 ```javascript
 gsap.registerPlugin(Physics2DPlugin);
 
-gsap.to(".ball", {
+gsap.to('.ball', {
   duration: 2,
   physics2D: {
     velocity: 250,
@@ -395,7 +396,7 @@ Applies physics to property values. Use for physics-driven property animation.
 ```javascript
 gsap.registerPlugin(PhysicsPropsPlugin);
 
-gsap.to(".obj", {
+gsap.to('.obj', {
   duration: 2,
   physicsProps: {
     x: { velocity: 100, end: 300 },

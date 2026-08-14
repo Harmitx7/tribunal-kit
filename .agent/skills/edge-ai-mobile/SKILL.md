@@ -18,6 +18,7 @@ skills:
 ## Mandatory Pre-Flight Context Inspection
 
 Before deploying on-device AI models:
+
 1. Model Quantization → Use 4-bit/8-bit quantized models (GGUF/ONNX) to fit mobile RAM budgets (<500MB)
 2. Hardware Acceleration → Bind inference engine to Apple Neural Engine (ANE) or Android NPU
 3. Fallback Mechanism → Fall back gracefully to cloud LLM API if local inference exceeds latency budget (>200ms)
@@ -32,7 +33,10 @@ export async function runLocalEmbeddings(textTokens: number[]): Promise<Float32A
     executionProviders: ['cpu'], // Accelerates via ANE/NNAPI internally
   });
 
-  const tensor = new ort.Tensor('int64', new BigInt64Array(textTokens.map(BigInt)), [1, textTokens.length]);
+  const tensor = new ort.Tensor('int64', new BigInt64Array(textTokens.map(BigInt)), [
+    1,
+    textTokens.length,
+  ]);
   const feeds = { input_ids: tensor };
 
   const results = await session.run(feeds);

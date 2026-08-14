@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before architecting MCP tools or resource handlers, you MUST inspect:
+
 1. Strict Zod Input Validation (Section 45) → Enforce explicit JSON Schema parameter validation (Zod) for every tool exposed to the LLM
 2. Resource vs Tool Distinction (Section 68) → Use Resources for static read-only data (`file:///`, `db://schema`), Tools strictly for dynamic parameterized actions
 3. Output Payload Truncation Safeguard (Section 94) → Forcibly truncate large tool response outputs before returning payload to protect LLM context windows
@@ -47,27 +48,29 @@ A robust MCP server exposes exactly 3 primary concepts:
 
 ```typescript
 // Standardize exposing a Tool securely via an MCP Server Wrapper
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { z } from "zod";
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { z } from 'zod';
 
 const server = new McpServer({
-  name: "internal-database-auditor",
-  version: "1.0.0",
+  name: 'internal-database-auditor',
+  version: '1.0.0',
 });
 
 // Defining a rigorous tool parameter boundary
 server.tool(
-  "query_production_database",
-  "Executes a read-only sanitized query against the production analytical replica.",
+  'query_production_database',
+  'Executes a read-only sanitized query against the production analytical replica.',
   {
-    table: z.enum(["users", "transactions", "audit_logs"]).describe("The specific table to analyze"),
-    limit: z.number().max(100).default(10).describe("Maximum row returns to prevent context bloat"),
+    table: z
+      .enum(['users', 'transactions', 'audit_logs'])
+      .describe('The specific table to analyze'),
+    limit: z.number().max(100).default(10).describe('Maximum row returns to prevent context bloat'),
   },
   async ({ table, limit }) => {
     // Execution logic
     const data = await secureDatabaseClient.query(`SELECT * FROM ${table} LIMIT ${limit}`);
     return {
-      content: [{ type: "text", text: JSON.stringify(data) }],
+      content: [{ type: 'text', text: JSON.stringify(data) }],
     };
   },
 );
@@ -91,7 +94,7 @@ If your description is vague, the LLM will hallucinate executions unpredictably.
 
 ```typescript
 // ❌ VAGUE (The LLM will guess when to use this, often incorrectly)
-description: "Changes the system status.";
+description: 'Changes the system status.';
 
 // ✅ DETERMINISTIC (The LLM knows the exact boundaries and consequences)
 description: "Transitions the payment processing gateway between 'ACTIVE' and 'MAINTENANCE' modes. Use this ONLY after verifying traffic logs to halt impending queue flooding. Requires Admin clearance.";

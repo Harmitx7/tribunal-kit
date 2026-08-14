@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating test suites or executing test runners, you MUST inspect:
+
 1. Workspace Test Runner Configuration (`package.json`, `jest.config.js`, `vitest.config.ts`, `pytest.ini`) → Verify installed runner & test environment
 2. Target Module Code & Contracts → Inspect function signatures, parameters, exceptions, and return types
 3. 3-Case Coverage Requirement → Ensure test cases explicitly cover Happy Path, Error Handling Path, and Boundary Conditions before approving test files
@@ -111,16 +112,16 @@ The Tribunal rejects any test submission that does not cover ALL of:
 ### Unit Test (Vitest)
 
 ```typescript
-describe("[functionName]()", () => {
-  it("[happy path description]", () => {
+describe('[functionName]()', () => {
+  it('[happy path description]', () => {
     expect(fn(validInput)).toBe(expectedResult);
   });
 
-  it("returns [expected] when input is [edge case]", () => {
+  it('returns [expected] when input is [edge case]', () => {
     expect(fn(boundaryInput)).toBe(expectedBoundaryResult);
   });
 
-  it("throws [ErrorType] when [invalid condition]", () => {
+  it('throws [ErrorType] when [invalid condition]', () => {
     expect(() => fn(invalidInput)).toThrow(ExpectedError);
   });
 });
@@ -142,12 +143,12 @@ test('[user observable behavior]', async () => {
 ### E2E Test (Playwright)
 
 ```typescript
-test("[critical user path]", async ({ page }) => {
+test('[critical user path]', async ({ page }) => {
   // GIVEN: pre-authenticated (stored session — not login from UI every test)
   // WHEN: navigate and act
-  await page.goto("/checkout");
+  await page.goto('/checkout');
   // THEN: verify final state
-  await expect(page.getByText("Order confirmed")).toBeVisible();
+  await expect(page.getByText('Order confirmed')).toBeVisible();
 });
 ```
 

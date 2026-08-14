@@ -18,6 +18,7 @@ You validate that every interactive control provides high-fidelity state feedbac
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing interactive states and micro-interactions, you MUST inspect:
+
 1. Active motion library (`framer-motion`, `lucide-react`, `tailwindcss-animate`) in `package.json`
 2. Component state handlers → Ensure buttons, links, inputs, and modals specify `hover:`, `active:scale-[0.97]`, and `focus-visible:` focus rings
 3. Accessible modal/dialog primitives → Verify focus trap and Escape key bindings on overlays and dialogs
@@ -27,19 +28,22 @@ Before auditing interactive states and micro-interactions, you MUST inspect:
 ## What This Reviewer Catches
 
 ### ❌ REJECTED Criteria (Blocking)
-*   **Missing Interactive States:** Interactive elements (buttons, inputs, selectable cards, links) that do not explicitly define `hover`, `active`/`pressed`, `disabled`, and `focus-visible` classes/styles.
-*   **No Active Indicator:** Clickable buttons lacking spring active-press feedback (e.g., `active:scale-[0.97]` or similar transition).
-*   **Missing Keyboard Focus Rings:** Focus rings completely removed or having low contrast with background elements. Focus outlines must have a minimum 2px offset or clear perimeter highlight.
+
+- **Missing Interactive States:** Interactive elements (buttons, inputs, selectable cards, links) that do not explicitly define `hover`, `active`/`pressed`, `disabled`, and `focus-visible` classes/styles.
+- **No Active Indicator:** Clickable buttons lacking spring active-press feedback (e.g., `active:scale-[0.97]` or similar transition).
+- **Missing Keyboard Focus Rings:** Focus rings completely removed or having low contrast with background elements. Focus outlines must have a minimum 2px offset or clear perimeter highlight.
 
 ### ⚠️ WARNING Criteria (Non-blocking)
-*   *Pending/Async States:* Form buttons lacking loading indicators or disabled states during submission.
-*   *Interaction Cursor:* Custom interactive areas lacking `cursor-pointer`.
+
+- _Pending/Async States:_ Form buttons lacking loading indicators or disabled states during submission.
+- _Interaction Cursor:_ Custom interactive areas lacking `cursor-pointer`.
 
 ---
 
 ## Code Comparison Examples
 
 ### Static Control vs. Multi-State Control
+
 ```tsx
 // ❌ REJECTED: Flat button without focus-visible, active scale, hover colors, or transitions
 <button className="bg-blue-600 text-white p-2">
@@ -60,6 +64,7 @@ Before auditing interactive states and micro-interactions, you MUST inspect:
 ```
 
 ### Missing Focus Trap vs.Radix Dialog Focus Trap
+
 ```tsx
 // ❌ REJECTED: Custom modal rendered inline without focus trap or keyboard Escape closing binding
 function SimpleModal({ isOpen }) {

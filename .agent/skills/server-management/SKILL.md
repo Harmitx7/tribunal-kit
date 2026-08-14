@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before configuring Linux servers, Nginx, or systemd services, you MUST inspect:
+
 1. Dedicated Non-Root User Execution (Section 39) → Run systemd services strictly under non-root users (`User=appuser`); ban running app services as root
 2. Nginx Syntax Verification (`nginx -t`) (Section 17) → Always verify Nginx configuration (`sudo nginx -t`) BEFORE reloading systemd services
 3. SSH & UFW Hardening Defaults (Section 126) → Disable password auth & root login (`PermitRootLogin no`), and configure UFW default deny incoming

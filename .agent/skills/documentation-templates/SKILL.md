@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before creating or editing documentation, API references, or comments, you MUST inspect:
+
 1. Target Audience Identification (Section 27) → Match template strictly to audience (README for 10-min quickstart, API docs for payload contracts, Runbook for on-call triage)
 2. Explain "Why", Not "What" in Code Comments (Section 147) → Document non-obvious business rules or bug workarounds; ban restating obvious code syntax
 3. AI-Friendly Documentation Mapping (Section 171) → Maintain `ARCHITECTURE.md` and `@purpose:` annotations for codebase mental models and automated ingestion
@@ -149,8 +150,8 @@ Creates a new user account.
 **Example**
 \`\`\`bash
 curl -X POST /api/users \
- -H "Content-Type: application/json" \
- -d '{"email": "user@example.com", "name": "Jane"}'
+-H "Content-Type: application/json" \
+-d '{"email": "user@example.com", "name": "Jane"}'
 \`\`\`
 ```
 

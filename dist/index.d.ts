@@ -152,6 +152,12 @@ export function generateIDEBridges(cwd: string, agentDest: string, quiet?: boole
 export function cmdGuardrail(flags: CliFlags, argv: string[], quiet?: boolean): Promise<void>;
 
 /**
+ * AI Agent Behavioral Contract Testing (init, verify, list, trace, replay).
+ * Equivalent to `npx tribunal-kit contract`.
+ */
+export function cmdContract(flags: CliFlags, argv: string[], quiet?: boolean): Promise<void>;
+
+/**
  * Optimize project skills using SkillOpt validation gates.
  * Equivalent to `npx tribunal-kit optimize-skill`.
  */
@@ -325,7 +331,8 @@ export type McpToolName =
   | 'recall_memory'
   | 'store_memory'
   | 'get_sparse_context'
-  | 'align_output';
+  | 'align_output'
+  | 'verify_contracts';
 
 // ── Main Entry Point ─────────────────────────────────────────────────────────
 

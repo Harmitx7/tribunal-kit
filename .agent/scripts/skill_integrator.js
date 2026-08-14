@@ -14,18 +14,17 @@
  *   node .agent/scripts/skill_integrator.js --report --verify
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
-const { execFileSync } = require("child_process");
+const fs = require('fs');
+const path = require('path');
+const { execFileSync } = require('child_process');
 
-const { CYAN, GREEN, YELLOW, RED, BOLD, RESET } = require("./_colors");
+const { CYAN, GREEN, YELLOW, RED, BOLD, RESET } = require('./_colors');
 
-const REPORT_FILE = "skill-integration-report.md";
+const REPORT_FILE = 'skill-integration-report.md';
 
-const { findAgentDir } = require("./_utils");
-
+const { findAgentDir } = require('./_utils');
 
 function getAssociatedScript(skillDir, scriptsDir) {
   /** Check if the skill has an explicit frontmatter script or an implicit script file. */
@@ -43,10 +42,10 @@ function getAssociatedScript(skillDir, scriptsDir) {
   }
 
   // 2. Explicit check: does the SKILL.md define 'script:' in its frontmatter?
-  const skillMd = path.join(skillDir, "SKILL.md");
+  const skillMd = path.join(skillDir, 'SKILL.md');
   if (fs.existsSync(skillMd)) {
     try {
-      const content = fs.readFileSync(skillMd, "utf8");
+      const content = fs.readFileSync(skillMd, 'utf8');
       const match = content.match(/---([\s\S]*?)---/);
       if (match) {
         const frontmatter = match[1];
@@ -64,8 +63,8 @@ function getAssociatedScript(skillDir, scriptsDir) {
 }
 
 function scanAllSkills(agentDir) {
-  const skillsDir = path.join(agentDir, "skills");
-  const scriptsDir = path.join(agentDir, "scripts");
+  const skillsDir = path.join(agentDir, 'skills');
+  const scriptsDir = path.join(agentDir, 'scripts');
 
   if (!fs.existsSync(skillsDir) || !fs.existsSync(scriptsDir)) {
     console.log(
@@ -105,38 +104,36 @@ function verifyScript(scriptPathStr, workspaceRoot) {
   }
 
   try {
-    if (fullPath.endsWith(".js")) {
+    if (fullPath.endsWith('.js')) {
       // use node to syntax check
-      execFileSync("node", ["-c", fullPath], { stdio: "pipe" });
-    } else if (fullPath.endsWith(".py")) {
+      execFileSync('node', ['-c', fullPath], { stdio: 'pipe' });
+    } else if (fullPath.endsWith('.py')) {
       // use python to syntax check
-      execFileSync("python", ["-m", "py_compile", fullPath], { stdio: "pipe" });
+      execFileSync('python', ['-m', 'py_compile', fullPath], { stdio: 'pipe' });
     }
-    return { valid: true, message: "Syntax OK" };
+    return { valid: true, message: 'Syntax OK' };
   } catch (e) {
     let msg = e.message;
     if (e.stderr) {
       msg = e.stderr.toString().trim();
     }
-    return { valid: false, message: `Syntax error: ${msg.split("\n")[0]}` };
+    return { valid: false, message: `Syntax error: ${msg.split('\n')[0]}` };
   }
 }
 
 function checkSkill(skillName, agentDir) {
-  const skillDir = path.join(agentDir, "skills", skillName);
-  const scriptsDir = path.join(agentDir, "scripts");
+  const skillDir = path.join(agentDir, 'skills', skillName);
+  const scriptsDir = path.join(agentDir, 'scripts');
 
   if (!fs.existsSync(skillDir)) {
-    console.log(
-      `${YELLOW}Skill '${skillName}' not found in .agent/skills/${RESET}`,
-    );
+    console.log(`${YELLOW}Skill '${skillName}' not found in .agent/skills/${RESET}`);
     return;
   }
 
   const scriptPath = getAssociatedScript(skillDir, scriptsDir);
   if (scriptPath) {
     console.log(`${GREEN}✓ Associated script found:${RESET} ${scriptPath}`);
-    const runner = scriptPath.endsWith(".py") ? "python" : "node";
+    const runner = scriptPath.endsWith('.py') ? 'python' : 'node';
     console.log(`\nTo execute:\n  ${runner} ${scriptPath}`);
   } else {
     console.log(`No executable script mapped for '${skillName}'.`);
@@ -158,7 +155,7 @@ function cmdReport(integratedSkills, workspaceRoot) {
   for (const skill of keys) {
     const script = integratedSkills[skill];
     const scriptPath = path.resolve(workspaceRoot, script);
-    const exists = fs.existsSync(scriptPath) ? "✅" : "❌ Missing";
+    const exists = fs.existsSync(scriptPath) ? '✅' : '❌ Missing';
     content += `| \`${skill}\` | \`${script}\` | ${exists} |\n`;
   }
 
@@ -166,7 +163,7 @@ function cmdReport(integratedSkills, workspaceRoot) {
   content += `_Run \`node .agent/scripts/skill_integrator.js --verify\` to validate syntax of all mapped scripts._\n`;
 
   const reportPath = path.join(workspaceRoot, REPORT_FILE);
-  fs.writeFileSync(reportPath, content, "utf8");
+  fs.writeFileSync(reportPath, content, 'utf8');
 
   console.log(`${GREEN}✅ Report written to:${RESET} ${reportPath}`);
 }
@@ -193,13 +190,9 @@ function cmdVerify(integratedSkills, workspaceRoot) {
     const script = integratedSkills[skill];
     const res = verifyScript(script, workspaceRoot);
     if (res.valid) {
-      console.log(
-        `  ${GREEN}✅ PASS${RESET}  ${BOLD}${skill}${RESET} → ${script}`,
-      );
+      console.log(`  ${GREEN}✅ PASS${RESET}  ${BOLD}${skill}${RESET} → ${script}`);
     } else {
-      console.log(
-        `  ${RED}❌ FAIL${RESET}  ${BOLD}${skill}${RESET} → ${script}`,
-      );
+      console.log(`  ${RED}❌ FAIL${RESET}  ${BOLD}${skill}${RESET} → ${script}`);
       console.log(`         ${RED}${res.message}${RESET}`);
       allPassed = false;
       failures.push(skill);
@@ -208,9 +201,7 @@ function cmdVerify(integratedSkills, workspaceRoot) {
 
   console.log(`\n${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`);
   if (allPassed) {
-    console.log(
-      `${GREEN}All ${keys.length} mapped scripts passed verification.${RESET}\n`,
-    );
+    console.log(`${GREEN}All ${keys.length} mapped scripts passed verification.${RESET}\n`);
   } else {
     console.log(
       `${RED}${failures.length} script(s) failed verification. Fix before deploying.${RESET}\n`,
@@ -223,7 +214,7 @@ function cmdVerify(integratedSkills, workspaceRoot) {
 function main() {
   const rawArgs = process.argv.slice(2);
 
-  if (rawArgs.length > 0 && ["-h", "--help", "help"].includes(rawArgs[0])) {
+  if (rawArgs.length > 0 && ['-h', '--help', 'help'].includes(rawArgs[0])) {
     console.log(`
 ${BOLD}skill_integrator.js${RESET} — Skill-Script Integrator
 
@@ -245,18 +236,18 @@ ${BOLD}Options:${RESET}
 
   // Parse args
   let skillArg = null;
-  let workspaceArg = ".";
+  let workspaceArg = '.';
   let reportArg = false;
   let verifyArg = false;
 
   for (let i = 0; i < rawArgs.length; i++) {
-    if (rawArgs[i] === "--skill" && i + 1 < rawArgs.length) {
+    if (rawArgs[i] === '--skill' && i + 1 < rawArgs.length) {
       skillArg = rawArgs[++i];
-    } else if (rawArgs[i] === "--workspace" && i + 1 < rawArgs.length) {
+    } else if (rawArgs[i] === '--workspace' && i + 1 < rawArgs.length) {
       workspaceArg = rawArgs[++i];
-    } else if (rawArgs[i] === "--report") {
+    } else if (rawArgs[i] === '--report') {
       reportArg = true;
-    } else if (rawArgs[i] === "--verify") {
+    } else if (rawArgs[i] === '--verify') {
       verifyArg = true;
     }
   }
@@ -293,19 +284,15 @@ ${BOLD}Options:${RESET}
   if (!reportArg && !verifyArg) {
     const keys = Object.keys(integratedSkills).sort();
     if (keys.length === 0) {
-      console.log("No integrated scripts found for any active skills.");
+      console.log('No integrated scripts found for any active skills.');
     } else {
-      console.log(
-        `\n${BOLD}${CYAN}--- Skill-Script Integrations (${keys.length}) ---${RESET}\n`,
-      );
+      console.log(`\n${BOLD}${CYAN}--- Skill-Script Integrations (${keys.length}) ---${RESET}\n`);
       for (const skill of keys) {
         const script = integratedSkills[skill];
         console.log(` ${BOLD}${skill}${RESET}`);
         console.log(`   ↳ ${GREEN}${script}${RESET}\n`);
       }
-      console.log(
-        `${CYAN}To run a skill script, use: python <path> or node <path>${RESET}\n`,
-      );
+      console.log(`${CYAN}To run a skill script, use: python <path> or node <path>${RESET}\n`);
     }
   }
 }

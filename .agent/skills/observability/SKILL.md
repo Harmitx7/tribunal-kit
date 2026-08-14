@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before instrumenting applications for observability, you MUST inspect:
+
 1. Structured JSON Logging Rule (Section 34) → Use Pino/structlog for structured JSON logging with ISO timestamps; ban plain `console.log` in production
 2. Separation of Liveness & Readiness Checks (Section 253) → Isolate `/health/live` (process active) from `/health/ready` (DB connected); ban DB calls in liveness checks to prevent restart loops
 3. Correlation Tracking Context (Section 80) → Inject `x-request-id` via AsyncLocalStorage or middleware so every log line is correlated to a specific request
@@ -43,25 +44,25 @@ All three are needed. Logs alone are not observability.
 ## Structured Logging
 
 ```typescript
-import pino from "pino";
+import pino from 'pino';
 
 // ✅ Structured JSON logging
 const logger = pino({
-  level: process.env.LOG_LEVEL ?? "info",
+  level: process.env.LOG_LEVEL ?? 'info',
   timestamp: pino.stdTimeFunctions.isoTime,
-  ...(process.env.NODE_ENV === "development" && {
-    transport: { target: "pino-pretty" },
+  ...(process.env.NODE_ENV === 'development' && {
+    transport: { target: 'pino-pretty' },
   }),
 });
 
 // ✅ GOOD: Structured with context
-logger.info({ userId: user.id, action: "login", ip: req.ip }, "User logged in");
-logger.error({ err, orderId: order.id, paymentGateway: "stripe" }, "Payment failed");
-logger.warn({ queueDepth: 1500, threshold: 1000 }, "Queue depth exceeding threshold");
+logger.info({ userId: user.id, action: 'login', ip: req.ip }, 'User logged in');
+logger.error({ err, orderId: order.id, paymentGateway: 'stripe' }, 'Payment failed');
+logger.warn({ queueDepth: 1500, threshold: 1000 }, 'Queue depth exceeding threshold');
 
 // ❌ BAD: Unstructured string logging
-console.log("User " + user.id + " logged in from " + req.ip);
-console.log("Error: " + error.message);
+console.log('User ' + user.id + ' logged in from ' + req.ip);
+console.log('Error: ' + error.message);
 
 // ❌ HALLUCINATION TRAP: console.log is NOT production logging
 // - No severity levels (info/warn/error)
@@ -92,14 +93,14 @@ Rules:
 ### Request Context / Correlation
 
 ```typescript
-import { AsyncLocalStorage } from "node:async_hooks";
+import { AsyncLocalStorage } from 'node:async_hooks';
 
 const requestContext = new AsyncLocalStorage<{ requestId: string; userId?: string }>();
 
 // Middleware: set context per request
 app.use((req, res, next) => {
-  const requestId = req.headers["x-request-id"]?.toString() ?? crypto.randomUUID();
-  res.setHeader("x-request-id", requestId);
+  const requestId = req.headers['x-request-id']?.toString() ?? crypto.randomUUID();
+  res.setHeader('x-request-id', requestId);
   requestContext.run({ requestId, userId: req.user?.id }, next);
 });
 
@@ -114,7 +115,7 @@ function getLogger() {
 
 // Every log from this request includes requestId and userId
 const log = getLogger();
-log.info("Processing order"); // { requestId: "abc-123", userId: "42", msg: "Processing order" }
+log.info('Processing order'); // { requestId: "abc-123", userId: "42", msg: "Processing order" }
 ```
 
 ---
@@ -122,21 +123,21 @@ log.info("Processing order"); // { requestId: "abc-123", userId: "42", msg: "Pro
 ## Distributed Tracing (OpenTelemetry)
 
 ```typescript
-import { NodeSDK } from "@opentelemetry/sdk-node";
-import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 
 // Initialize OpenTelemetry
 const sdk = new NodeSDK({
   traceExporter: new OTLPTraceExporter({
-    url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? "http://localhost:4318/v1/traces",
+    url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? 'http://localhost:4318/v1/traces',
   }),
   instrumentations: [
     getNodeAutoInstrumentations({
-      "@opentelemetry/instrumentation-http": { enabled: true },
-      "@opentelemetry/instrumentation-express": { enabled: true },
-      "@opentelemetry/instrumentation-pg": { enabled: true },
-      "@opentelemetry/instrumentation-redis": { enabled: true },
+      '@opentelemetry/instrumentation-http': { enabled: true },
+      '@opentelemetry/instrumentation-express': { enabled: true },
+      '@opentelemetry/instrumentation-pg': { enabled: true },
+      '@opentelemetry/instrumentation-redis': { enabled: true },
     }),
   ],
 });
@@ -144,16 +145,16 @@ const sdk = new NodeSDK({
 sdk.start();
 
 // Manual span for custom business logic
-import { trace } from "@opentelemetry/api";
+import { trace } from '@opentelemetry/api';
 
-const tracer = trace.getTracer("order-service");
+const tracer = trace.getTracer('order-service');
 
 async function processOrder(order: Order) {
-  return tracer.startActiveSpan("processOrder", async (span) => {
+  return tracer.startActiveSpan('processOrder', async span => {
     try {
-      span.setAttribute("order.id", order.id);
-      span.setAttribute("order.total", order.total);
-      span.setAttribute("order.items.count", order.items.length);
+      span.setAttribute('order.id', order.id);
+      span.setAttribute('order.total', order.total);
+      span.setAttribute('order.items.count', order.items.length);
 
       const result = await executeOrder(order);
       span.setStatus({ code: SpanStatusCode.OK });
@@ -174,30 +175,30 @@ async function processOrder(order: Order) {
 ## Metrics
 
 ```typescript
-import { metrics } from "@opentelemetry/api";
+import { metrics } from '@opentelemetry/api';
 
-const meter = metrics.getMeter("api-server");
+const meter = metrics.getMeter('api-server');
 
 // Counter — things that only go up
-const requestCounter = meter.createCounter("http.requests.total", {
-  description: "Total HTTP requests",
+const requestCounter = meter.createCounter('http.requests.total', {
+  description: 'Total HTTP requests',
 });
 
 // Histogram — request durations
-const requestDuration = meter.createHistogram("http.request.duration_ms", {
-  description: "HTTP request duration in milliseconds",
-  unit: "ms",
+const requestDuration = meter.createHistogram('http.request.duration_ms', {
+  description: 'HTTP request duration in milliseconds',
+  unit: 'ms',
 });
 
 // Gauge — current values
-const activeConnections = meter.createUpDownCounter("db.connections.active", {
-  description: "Active database connections",
+const activeConnections = meter.createUpDownCounter('db.connections.active', {
+  description: 'Active database connections',
 });
 
 // Middleware to record metrics
 app.use((req, res, next) => {
   const start = performance.now();
-  res.on("finish", () => {
+  res.on('finish', () => {
     const duration = performance.now() - start;
     requestCounter.add(1, {
       method: req.method,
@@ -264,22 +265,22 @@ Rules:
 
 ```typescript
 // Liveness: Is the process running?
-app.get("/health/live", (req, res) => {
-  res.status(200).json({ status: "ok" });
+app.get('/health/live', (req, res) => {
+  res.status(200).json({ status: 'ok' });
 });
 
 // Readiness: Can it accept traffic?
-app.get("/health/ready", async (req, res) => {
+app.get('/health/ready', async (req, res) => {
   try {
-    await db.raw("SELECT 1"); // database check
+    await db.raw('SELECT 1'); // database check
     await redis.ping(); // cache check
     res.status(200).json({
-      status: "ready",
-      checks: { database: "ok", cache: "ok" },
+      status: 'ready',
+      checks: { database: 'ok', cache: 'ok' },
     });
   } catch (error) {
     res.status(503).json({
-      status: "not ready",
+      status: 'not ready',
       checks: { database: error.message },
     });
   }

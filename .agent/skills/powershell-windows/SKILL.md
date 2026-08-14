@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing PowerShell `.ps1` scripts or Windows automation commands, you MUST inspect:
+
 1. Object Pipeline vs String Parsing Rule (Section 23) → Operate directly on .NET object properties (`Get-Process | Stop-Process`); ban string splitting/parsing
 2. Mandatory Script Strict Mode Header (Section 43) → Always declare `$ErrorActionPreference = "Stop"` and `Set-StrictMode -Version Latest` at top of automation scripts
 3. Process-Scoped Execution Policy Bypass (Section 68) → Use process-level policy override (`powershell.exe -ExecutionPolicy Bypass -File ...`); ban system-wide `Set-ExecutionPolicy Unrestricted`

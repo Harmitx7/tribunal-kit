@@ -9,7 +9,17 @@ routing:
   tier: pro
   co-requires: [typeset, better-ui]
   trigger-signals:
-    strong: [better-typography, typography, type scale, font pairing, tabular numbers, text-wrap balance, line-length, optical sizing]
+    strong:
+      [
+        better-typography,
+        typography,
+        type scale,
+        font pairing,
+        tabular numbers,
+        text-wrap balance,
+        line-length,
+        optical sizing,
+      ]
     weak: [fonts, text style, line height]
 ---
 
@@ -25,14 +35,14 @@ Scale font sizes using a consistent multiplier ($1.25$ Major Third or $1.20$ Min
 
 ```css
 :root {
-  --font-size-xs: 0.75rem;    /* 12px - Labels, Badges */
-  --font-size-sm: 0.875rem;   /* 14px - Meta, Caption */
-  --font-size-base: 1rem;     /* 16px - Body Text */
-  --font-size-lg: 1.125rem;   /* 18px - Lead Body */
-  --font-size-xl: 1.375rem;   /* 22px - Subheadings */
-  --font-size-2xl: 1.75rem;   /* 28px - H3 */
-  --font-size-3xl: 2.25rem;   /* 36px - H2 */
-  --font-size-4xl: 3rem;      /* 48px - H1 Hero */
+  --font-size-xs: 0.75rem; /* 12px - Labels, Badges */
+  --font-size-sm: 0.875rem; /* 14px - Meta, Caption */
+  --font-size-base: 1rem; /* 16px - Body Text */
+  --font-size-lg: 1.125rem; /* 18px - Lead Body */
+  --font-size-xl: 1.375rem; /* 22px - Subheadings */
+  --font-size-2xl: 1.75rem; /* 28px - H3 */
+  --font-size-3xl: 2.25rem; /* 36px - H2 */
+  --font-size-4xl: 3rem; /* 48px - H1 Hero */
 
   /* Line Heights proportional to font size */
   --line-height-heading: 1.15;
@@ -50,7 +60,10 @@ Scale font sizes using a consistent multiplier ($1.25$ Major Third or $1.20$ Min
 - **Paragraph Wrapping**: Use `text-wrap: pretty` for long body paragraphs to prevent awkward line breaks.
 
 ```css
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   text-wrap: balance;
   letter-spacing: -0.025em;
   line-height: var(--line-height-heading);
@@ -69,6 +82,7 @@ p {
 
 - **Tabular Numbers for Data & Timers**: Use `font-variant-numeric: tabular-nums` (or `tnum`) for data tables, counters, prices, and timestamps so numbers align vertically without jumping when values update.
 - **Font Smoothing**: Enable crisp font smoothing on macOS/iOS:
+
 ```css
 body {
   -webkit-font-smoothing: antialiased;
@@ -80,12 +94,12 @@ body {
 
 ## Anti-Slop Table
 
-| Anti-Pattern | Typography Solution | Rationale |
-| --- | --- | --- |
-| Full-width body text (`width: 100%`) | `max-width: 65ch` | Prevents eye fatigue across wide desktop screens |
-| Single-word widows on headings | `text-wrap: balance` | Creates balanced visual hierarchy |
-| Jittering numbers in data tables | `font-variant-numeric: tabular-nums` | Keeps columns strictly aligned |
-| Default browser line-height (`1.2` on body) | `line-height: 1.5` | Improves reading comfort |
+| Anti-Pattern                                | Typography Solution                  | Rationale                                        |
+| ------------------------------------------- | ------------------------------------ | ------------------------------------------------ |
+| Full-width body text (`width: 100%`)        | `max-width: 65ch`                    | Prevents eye fatigue across wide desktop screens |
+| Single-word widows on headings              | `text-wrap: balance`                 | Creates balanced visual hierarchy                |
+| Jittering numbers in data tables            | `font-variant-numeric: tabular-nums` | Keeps columns strictly aligned                   |
+| Default browser line-height (`1.2` on body) | `line-height: 1.5`                   | Improves reading comfort                         |
 
 ---
 

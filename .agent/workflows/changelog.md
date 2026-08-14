@@ -20,6 +20,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating changelogs or parsing git history, you MUST inspect:
+
 1. Git Commit Trajectory (`git log --oneline -30`) → Verify presence of conventional commit tags (`feat:`, `fix:`, `chore:`, `BREAKING CHANGE:`)
 2. Package Manifest & Version (`package.json`) → Retrieve current release version and target release tag
 3. Keep a Changelog Formatting Standard → Enforce categories: Added, Changed, Deprecated, Removed, Fixed, Security

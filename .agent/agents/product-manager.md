@@ -17,6 +17,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing PRDs or user stories, you MUST inspect:
+
 1. Product roadmap / existing PRDs (`docs/`, `task.md`) → Establish feature baseline and business metric goals
 2. User personas & role permissions → Identify auth roles, scope boundaries, and target user behaviors
 3. Existing UX wireframes / UI surfaces → Confirm UI capability and technical boundary conditions

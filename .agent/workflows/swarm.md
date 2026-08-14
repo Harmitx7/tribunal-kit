@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before decomposing goals into worker sub-tasks or triggering swarm execution, you MUST inspect:
+
 1. Swarm Dispatcher Validator (`.agent/scripts/swarm_dispatcher.js`) → Run payload validation script to ensure valid worker JSON payloads
 2. Non-Overlapping File Boundary Rule → Verify worker tasks target disjoint file sets to prevent git write conflicts during parallel execution
 3. `Promise.allSettled()` Fan-In Protocol → Collect all worker status reports and synthesize final deliverable before Human Gate confirmation
@@ -58,10 +59,21 @@ Every worker receives a structured JSON contract (not natural language):
   "task_id": "audit-auth-routes",
   "worker_type": "backend-specialist",
   "scope": "Audit all files in src/app/api/auth/ for security and type safety",
-  "files_to_read": ["src/app/api/auth/login/route.ts", "src/app/api/auth/register/route.ts", "src/middleware.ts"],
+  "files_to_read": [
+    "src/app/api/auth/login/route.ts",
+    "src/app/api/auth/register/route.ts",
+    "src/middleware.ts"
+  ],
   "files_to_write": [],
-  "context_summary": ["Next.js 15 App Router project", "Auth uses next-auth v5 (auth.ts pattern)", "Database: Prisma 6 on PostgreSQL"],
-  "constraints": ["Report findings only — do not modify files", "Report BLOCKED if you cannot determine auth pattern from provided files"],
+  "context_summary": [
+    "Next.js 15 App Router project",
+    "Auth uses next-auth v5 (auth.ts pattern)",
+    "Database: Prisma 6 on PostgreSQL"
+  ],
+  "constraints": [
+    "Report findings only — do not modify files",
+    "Report BLOCKED if you cannot determine auth pattern from provided files"
+  ],
   "output_format": {
     "status": "COMPLETE | BLOCKED | ERROR",
     "findings": ["list of specific issues found with file+line references"],

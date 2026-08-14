@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering glassmorphism or backdrop blurs, you MUST inspect:
+
 1. Vendor prefixes → Enforce `-webkit-backdrop-filter` alongside `backdrop-filter` for Safari support
 2. GPU Protection Rule (Section 70) → Strictly prohibit animating `backdrop-filter: blur()` radius; animate `opacity` of static blurred pseudo-elements instead
 3. Masked Blur Gradient layers (Section 25) → Blend multi-step blur layers with linear gradient masks to avoid harsh edge cutoffs
@@ -31,6 +32,7 @@ Architect high-performance, progressive backdrop blurs and frosted glass interfa
 ## 3 Progressive Blur Techniques
 
 ### 1. Multi-Step Masked Progressive Blur
+
 To prevent harsh edge cutoffs in blurred headers or footers, blend 4 progressive blur layers using linear gradient masks:
 
 ```css
@@ -43,21 +45,22 @@ To prevent harsh edge cutoffs in blurred headers or footers, blend 4 progressive
 
 .blur-layer-1 {
   backdrop-filter: blur(2px);
-  mask: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 25%);
+  mask: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 25%);
 }
 
 .blur-layer-2 {
   backdrop-filter: blur(8px);
-  mask: linear-gradient(to bottom, rgba(0,0,0,1) 25%, rgba(0,0,0,0) 65%);
+  mask: linear-gradient(to bottom, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 0) 65%);
 }
 
 .blur-layer-3 {
   backdrop-filter: blur(16px);
-  mask: linear-gradient(to bottom, rgba(0,0,0,1) 65%, rgba(0,0,0,1) 100%);
+  mask: linear-gradient(to bottom, rgba(0, 0, 0, 1) 65%, rgba(0, 0, 0, 1) 100%);
 }
 ```
 
 ### 2. Glass Card Depth Recipe
+
 ```css
 .glass-card {
   background: rgba(255, 255, 255, 0.65);
@@ -69,7 +72,7 @@ To prevent harsh edge cutoffs in blurred headers or footers, blend 4 progressive
 
 @media (prefers-color-scheme: dark) {
   .glass-card {
-    background: rgba(18, 18, 20, 0.70);
+    background: rgba(18, 18, 20, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   }
@@ -77,7 +80,9 @@ To prevent harsh edge cutoffs in blurred headers or footers, blend 4 progressive
 ```
 
 ### 3. GPU Hardware Acceleration Protection
+
 Backdrop blurs can cause frame drops if animated directly.
+
 - **Rule**: Never animate `backdrop-filter: blur()` properties during scroll or transitions. Animate `opacity` of a static blurred pseudo-element instead!
 
 ---

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating or updating a README file, you MUST inspect:
+
 1. Mandatory Discovery Phase (Section 34) → Scan `package.json`, `pyproject.toml`, or project files first to collect factual metadata before writing
 2. Zero Placeholder Rule (Section 28) → Ban template placeholders (`[insert here]`); generate copy-paste ready code examples from actual project code
 3. Hero Section Lead-With-Value (Section 164) → Lead with a single-sentence value proposition and visual trust badges; ban starting with just the title

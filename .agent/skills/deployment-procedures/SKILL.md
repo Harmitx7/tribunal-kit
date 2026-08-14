@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before deploying application releases or database migrations, you MUST inspect:
+
 1. Expand-and-Contract DB Migrations (Section 104) → Migrate schema FIRST (expand/copy data), then deploy code SECOND, contract legacy columns THIRD
 2. Instant Rollback Contingency (Section 116) → Tag every Docker image with Git SHA (`myapp:a1b2c3d`) for split-second image swaps during failure
 3. Zero-Downtime Traffic Switching (Section 29) → Use Blue/Green or Rolling updates with active health check verification before draining old instances
@@ -71,7 +72,7 @@ name: Production Deploy
 
 on:
   push:
-    branches: ["main"]
+    branches: ['main']
 
 # Concurrency limits prevent race conditions if two commits are pushed rapidly
 concurrency:

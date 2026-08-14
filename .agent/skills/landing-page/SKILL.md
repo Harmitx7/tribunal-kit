@@ -21,6 +21,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering full landing pages, you MUST inspect:
+
 1. Hero Layout Model (Section 50) → Choose appropriate layout variance model (Model A Centered Stacked, Model B Asymmetric Split, Model C Full-Bleed Canvas)
 2. CTA Hierarchy (Section 32) → Ensure exactly ONE primary solid accent button above the fold; pair only with a secondary ghost button
 3. Blueprint Rhythm (Section 22) → Follow the 6-section blueprint (Nav, Hero, Social Proof, Features, Testimonials, Final CTA)

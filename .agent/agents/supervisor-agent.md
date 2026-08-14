@@ -18,6 +18,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before decomposing goals into worker dispatches, you MUST inspect:
+
 1. `swarm-worker-registry.md` → Read the primary routing table and specialist worker capabilities
 2. Active codebase file layout (`task.md`, file structure) → Ensure worker target file paths do not overlap across parallel tasks
 3. System constraints & dependencies (`package.json`, environment variables) → Verify context passed to workers is grounded in current repo state
@@ -78,8 +79,17 @@ Every worker receives a structured JSON dispatch. No unstructured natural langua
   "scope": "Refactor the UserCard component to use Server Components and remove client-side state that belongs on the server.",
   "files_to_read": ["src/components/UserCard.tsx", "src/app/users/[id]/page.tsx"],
   "files_to_write": ["src/components/UserCard.tsx", "src/components/UserCardClient.tsx"],
-  "context_summary": ["The app uses Next.js 15 App Router", "Authentication is handled via next-auth v5 (now 'auth' package)", "Database uses Prisma 6 with PostgreSQL", "No existing tests for this component"],
-  "constraints": ["Do NOT modify any files outside the listed files_to_write", "Store only interactive state in the Client Component", "Maintain identical visual output — no design changes"],
+  "context_summary": [
+    "The app uses Next.js 15 App Router",
+    "Authentication is handled via next-auth v5 (now 'auth' package)",
+    "Database uses Prisma 6 with PostgreSQL",
+    "No existing tests for this component"
+  ],
+  "constraints": [
+    "Do NOT modify any files outside the listed files_to_write",
+    "Store only interactive state in the Client Component",
+    "Maintain identical visual output — no design changes"
+  ],
   "output_format": {
     "status": "COMPLETE | BLOCKED | ERROR",
     "files_modified": ["list of files actually changed"],

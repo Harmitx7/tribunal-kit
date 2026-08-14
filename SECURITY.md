@@ -2,11 +2,11 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 6.x     | ✅ Active support  |
+| Version | Supported              |
+| ------- | ---------------------- |
+| 6.x     | ✅ Active support      |
 | 5.x     | ⚠️ Critical fixes only |
-| < 5.0   | ❌ End of life     |
+| < 5.0   | ❌ End of life         |
 
 ## Reporting a Vulnerability
 
@@ -28,12 +28,12 @@ Instead, please report vulnerabilities privately using one of these methods:
 
 ### Response timeline
 
-| Action | Timeline |
-| --- | --- |
-| Acknowledgment | Within 48 hours |
-| Initial assessment | Within 5 business days |
-| Fix release (critical) | Within 7 days |
-| Fix release (moderate) | Within 30 days |
+| Action                 | Timeline               |
+| ---------------------- | ---------------------- |
+| Acknowledgment         | Within 48 hours        |
+| Initial assessment     | Within 5 business days |
+| Fix release (critical) | Within 7 days          |
+| Fix release (moderate) | Within 30 days         |
 
 ## Security Design
 

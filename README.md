@@ -2,16 +2,16 @@
 <div align="center">
   <br>
   <img src="./docs/tribunalkit_no_bg.png" alt="TribunalKit Logo" width="380" style="margin-bottom: 20px;" />
-  
+
   <h1 style="font-size: 3.25em; font-weight: 800; letter-spacing: -2px; margin: 0; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
     TRIBUNAL KIT
   </h1>
-  
+
   <p style="font-size: 1.35em; color: #ffffff; font-weight: 600; margin: 15px 0 8px 0;">
     Your AI writes code that doesn't exist. Tribunal Kit stops it.
   </p>
   <p style="font-size: 0.95em; color: #88888b; font-weight: 400; letter-spacing: 1px; margin: 0 0 25px 0;">
-    The governance layer for AI coding agents — 51 specialists, 27 reviewers, Rust core.
+    The governance layer for AI coding agents — 52 specialists, 28 reviewers, Rust core.
   </p>
 
   <!-- BADGES -->
@@ -33,7 +33,7 @@
       <img src="https://img.shields.io/badge/License-MIT-1a1a1f?style=for-the-badge&color=2d2d30" alt="License" />
     </a>
     <a href="CHANGELOG.md">
-      <img src="https://img.shields.io/badge/Release-v6.0.1-ccff00?style=for-the-badge&color=111111&logo=github&logoColor=ccff00" alt="Release Version" />
+      <img src="https://img.shields.io/badge/Release-v7.0.0-ccff00?style=for-the-badge&color=111111&logo=github&logoColor=ccff00" alt="Release Version" />
     </a>
     <a href="mcp_config.json">
       <img src="https://img.shields.io/badge/MCP-Ready-00c2ff?style=for-the-badge&logo=openai&logoColor=111" alt="MCP Server" />
@@ -67,11 +67,12 @@
     <strong style="color: #ffffff; font-size: 1.1em;">One command. Your AI stops lying.</strong>
   </div>
   <p style="color: #c9c9d1; font-size: 0.95em; line-height: 1.6; margin: 0 0 15px 0;">
-    Tribunal Kit wraps your coding agents in a <strong>neurosymbolic verification envelope</strong> — 51 specialist agents, 27 parallel reviewers, 183 reusable skills, and a compiled Rust core — that intercepts AI output, validates it against your actual codebase, and blocks hallucinated code before it reaches disk. Works with <strong>Cursor</strong>, <strong>VSCode</strong>, <strong>Windsurf</strong>, <strong>Claude Code</strong>, and <strong>Aider</strong>.
+    Tribunal Kit wraps your coding agents in a <strong>neurosymbolic verification envelope</strong> — 52 specialist agents, 28 parallel reviewers, 183 reusable skills, and a compiled Rust core — that intercepts AI output, validates it against your actual codebase, and blocks hallucinated code before it reaches disk. Works with <strong>Cursor</strong>, <strong>VSCode</strong>, <strong>Windsurf</strong>, <strong>Claude Code</strong>, and <strong>Aider</strong>.
   </p>
 </div>
 
 <!-- QUICK INSTALL -->
+
 ```bash
 npx tribunal-kit init    # Install the governance layer (< 60 seconds)
 npx tribunal-kit sync    # Bridge with Cursor / Windsurf / VSCode
@@ -84,16 +85,16 @@ npx tribunal-kit status  # Verify everything is locked in
 
 ### What's Inside
 
-| Layer | Count | What It Does |
-|:--|:--|:--|
-| **Specialist Agents** | 51 | Domain-specific reasoning (frontend, backend, security, database, mobile, DevOps) |
-| **Tribunal Reviewers** | 27 | Parallel code review pipeline that catches hallucinations before they ship |
-| **Reusable Skills** | 183 | Deep knowledge packs (React 19, Next.js 15, Rust, Python, Vue, animations, a11y) |
-| **Slash Workflows** | 37 | One-command operations (`/generate`, `/debug`, `/audit`, `/deploy`, `/refactor`) |
-| **Rust Core** | 1 | Native binary for sub-50ms operations (hashing, dedup, DAG scheduling, compression) |
-| **MCP Server** | 1 | Model Context Protocol integration for dynamic tool access |
-| **Persistent Memory** | 4 types | Semantic, Procedural, Episodic, Working — survives across sessions |
-| **Case Law Database** | ∞ | Records past AI mistakes as permanent precedents to prevent recurrence |
+| Layer                  | Count   | What It Does                                                                        |
+| :--------------------- | :------ | :---------------------------------------------------------------------------------- |
+| **Specialist Agents**  | 51      | Domain-specific reasoning (frontend, backend, security, database, mobile, DevOps)   |
+| **Tribunal Reviewers** | 27      | Parallel code review pipeline that catches hallucinations before they ship          |
+| **Reusable Skills**    | 183     | Deep knowledge packs (React 19, Next.js 15, Rust, Python, Vue, animations, a11y)    |
+| **Slash Workflows**    | 38      | One-command operations (`/generate`, `/debug`, `/audit`, `/deploy`, `/refactor`)    |
+| **Rust Core**          | 1       | Native binary for sub-50ms operations (hashing, dedup, DAG scheduling, compression) |
+| **MCP Server**         | 1       | Model Context Protocol integration for dynamic tool access                          |
+| **Persistent Memory**  | 4 types | Semantic, Procedural, Episodic, Working — survives across sessions                  |
+| **Case Law Database**  | ∞       | Records past AI mistakes as permanent precedents to prevent recurrence              |
 
 <br>
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
@@ -119,7 +120,6 @@ npx tribunal-kit status  # Verify everything is locked in
     </ul>
   </div>
 </details>
-
 
 ## 📈 Comparative Analysis
 
@@ -187,19 +187,21 @@ AI engineering requires more than static template rules or raw linters. See how 
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
 
 <!-- SECTION 3 -->
+
 ## ⚡ State-of-the-Art Performance (Rust Core)
 
 Tribunal Kit v6 splits heavy computational tasks between a native Rust core and a flexible JS orchestrator:
 
-*   **Compiled Rust Core (`tribunal-core`)**: Powers all deterministic operations, such as path-traversal sandboxing, Levenshtein distance calculations, text merges, and memory database reads to eliminate Node startup latency.
-*   **Zero-Latency Hash Manifests**: File synchronization and updates use SHA-256 incremental hash diffs, copying only modified assets and reducing CLI setup time by **95%**.
-*   **Semaphore-Bounded Parallelism**: Fully concurrent operations with thread limits (64 in Rust, 32 in Node.js) to avoid resource starvation in complex monorepos.
+- **Compiled Rust Core (`tribunal-core`)**: Powers all deterministic operations, such as path-traversal sandboxing, Levenshtein distance calculations, text merges, and memory database reads to eliminate Node startup latency.
+- **Zero-Latency Hash Manifests**: File synchronization and updates use SHA-256 incremental hash diffs, copying only modified assets and reducing CLI setup time by **95%**.
+- **Semaphore-Bounded Parallelism**: Fully concurrent operations with thread limits (64 in Rust, 32 in Node.js) to avoid resource starvation in complex monorepos.
 
 <br>
 <hr style="border: 1px solid #222; margin: 40px 0;">
 <br>
 
 <!-- SECTION 4 -->
+
 ## 🛠️ Advanced Setup
 
 Already ran `npx tribunal-kit init`? Here's how to go further:
@@ -228,11 +230,12 @@ tk optimize-skill --target ./skills/auth-security.md "npm run test:auth" --epoch
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
 
 <!-- SECTION 5 -->
+
 ## ⚖️ The Tribunal Pipeline — Mitigating AI Code Hallucinations
 
-Code generation is solved. **Code correctness is the frontier.** 
+Code generation is solved. **Code correctness is the frontier.**
 
-The Tribunal Pipeline intercepts raw agent generation and routes it through a parallel suite of **27 domain-specific reviewers** before presenting changes to the developer:
+The Tribunal Pipeline intercepts raw agent generation and routes it through a parallel suite of **28 domain-specific reviewers** before presenting changes to the developer:
 
 ```mermaid
 graph TD
@@ -243,7 +246,7 @@ graph TD
     C -.->|Failed| E[Maker Auto-Correction]
     E -.-> C
 
-    D -->|27 Domain Reviewers| F[Human Gate]
+    D -->|28 Domain Reviewers| F[Human Gate]
     F -->|Approved| G((Committed to Disk))
 
     classDef default fill:#1a1a1a,stroke:#333,stroke-width:2px,color:#fff;
@@ -255,28 +258,31 @@ graph TD
 ```
 
 ### Reviewer Swarms Include:
-*   **`logic-reviewer`** · Semantic soundness & behavior checks.
-*   **`security-auditor`** · Payload boundaries, SQL injection & OWASP scanning.
-*   **`resilience-reviewer`** · Async error boundaries and retry logic.
-*   **`ui-ux-auditor`** · Structural accessibility (a11y) & premium animations.
-*   **`schema-reviewer`** · Type narrowing and database integrity checks.
+
+- **`logic-reviewer`** · Semantic soundness & behavior checks.
+- **`security-auditor`** · Payload boundaries, SQL injection & OWASP scanning.
+- **`resilience-reviewer`** · Async error boundaries and retry logic.
+- **`ui-ux-auditor`** · Structural accessibility (a11y) & premium animations.
+- **`schema-reviewer`** · Type narrowing and database integrity checks.
 
 <br>
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
 
 <!-- SECTION 6 -->
+
 ## 🧠 Omniscience Cognitive Alignment Engine (OCAE)
 
 The **Omniscience Cognitive Alignment Engine (OCAE)** aligns any LLM with the reasoning loops of a senior staff engineer:
 
-*   **Step 0 Epistemic Loop**: Always-on cognition loop enforcing confidence checking (L1–L5), knowledge freshness audits, and precision budgeting before any script execution.
-*   **Dynamic API Trap Mitigation**: Automatically guards code blocks against framework-specific compiler breakages (e.g., React 19 hook constraints, Drizzle ORM filtration issues, and Next.js 15 route headers).
-*   **Prose Alignment Formatting**: Collapses ugly lists and bullet points into highly readable, scannable documentation prose, stripping out typical AI conversational introduction/conclusion slop.
+- **Step 0 Epistemic Loop**: Always-on cognition loop enforcing confidence checking (L1–L5), knowledge freshness audits, and precision budgeting before any script execution.
+- **Dynamic API Trap Mitigation**: Automatically guards code blocks against framework-specific compiler breakages (e.g., React 19 hook constraints, Drizzle ORM filtration issues, and Next.js 15 route headers).
+- **Prose Alignment Formatting**: Collapses ugly lists and bullet points into highly readable, scannable documentation prose, stripping out typical AI conversational introduction/conclusion slop.
 
 <br>
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
 
 <!-- SECTION 7 -->
+
 ## 🧬 SkillOpt: Autonomous Self-Evolution Engine
 
 Stop writing and tuning system prompts by hand. The **SkillOpt Self-Evolution Engine** automatically refines your prompt rules directly from test harness feedback:
@@ -295,21 +301,26 @@ tk optimize-skill --target ./skills/auth-security.md "npm run test:auth" --epoch
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
 
 <!-- SECTION 8 -->
+
 ## 🏛️ Supreme Court Case Law & Memory
 
 Tribunal Kit builds a permanent repository memory layer that spans across conversation sessions:
 
 ### 1. Supreme Court Case Law (`tk case`)
+
 Record AI coding errors as permanent local precedents. The `precedence-reviewer` actively references this local database to block the AI from repeating past code defects or pattern bugs.
-*   Add precedence: `tk case add`
-*   Search case law: `tk case search "postgres deadlock"`
+
+- Add precedence: `tk case add`
+- Search case law: `tk case search "postgres deadlock"`
 
 ### 2. 4-Type Persistent Memory (`tk memory`)
+
 Manages your project context utilizing a strict 4-category cognitive taxonomy:
-*   **Semantic Memory** — Project context (e.g., "Uses Drizzle with SQLite").
-*   **Procedural Memory** — Action guidelines (e.g., "Compile Rust binary before publishing").
-*   **Episodic Memory** — Development history and events.
-*   **Working Memory** — Current task scope.
+
+- **Semantic Memory** — Project context (e.g., "Uses Drizzle with SQLite").
+- **Procedural Memory** — Action guidelines (e.g., "Compile Rust binary before publishing").
+- **Episodic Memory** — Development history and events.
+- **Working Memory** — Current task scope.
 
 Budget-gated recall ensures that agents only pull relevant memory segments, avoiding token window bloat and context dilution.
 
@@ -317,18 +328,20 @@ Budget-gated recall ensures that agents only pull relevant memory segments, avoi
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
 
 <!-- SECTION 9 -->
+
 ## 🏃 The Marathon Harness — Long-Running Autonomy
 
 The **Marathon Harness** governs long-running multi-session tasks, keeping agents on track without looping or stalling:
 
-*   **Feature DAG Graphing**: Declare tasks with dependency bounds (e.g., `--deps=1,2`). If a core schema migration fails, dependent API route tasks are dynamically deadlocked and bypassed until fixed.
-*   **ANSI TUI Swarm Dashboard**: Intercepts verbose, noisy terminal output when running parallel swarms (`tk /swarm`), projecting agent research, coding, and review steps in real-time.
-*   **Failure Context Recalls**: Tracks failure histories, error stacks, and retry budgets. If a task is picked up by a new agent session, the agent receives the exact history of failed approaches to course-correct instantly.
+- **Feature DAG Graphing**: Declare tasks with dependency bounds (e.g., `--deps=1,2`). If a core schema migration fails, dependent API route tasks are dynamically deadlocked and bypassed until fixed.
+- **ANSI TUI Swarm Dashboard**: Intercepts verbose, noisy terminal output when running parallel swarms (`tk /swarm`), projecting agent research, coding, and review steps in real-time.
+- **Failure Context Recalls**: Tracks failure histories, error stacks, and retry budgets. If a task is picked up by a new agent session, the agent receives the exact history of failed approaches to course-correct instantly.
 
 <br>
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
 
 <!-- SECTION 10 -->
+
 ## 🔌 Model Context Protocol (MCP) Server Integration
 
 Tribunal Kit hosts an out-of-the-box **Model Context Protocol (MCP)** server via stdio. Connect it to Cursor, VSCode, Windsurf, or Claude Desktop to allow coding agents to query tools dynamically.
@@ -350,14 +363,44 @@ Tribunal Kit hosts an out-of-the-box **Model Context Protocol (MCP)** server via
 ```
 
 ### Exposed MCP Tools
-*   `run_tribunal_audit` — Triggers a workspace security, lint, and build checklist.
-*   `search_case_law` — Queries historical codebase rejections.
-*   `get_tribunal_skill` / `list_tribunal_agents` — Dynamically injects skills/agent guidelines without overloading system prompts.
+
+- `verify_contracts` — Proactively verifies proposed code against team contract rules before writing to disk.
+- `get_tribunal_skill` / `list_tribunal_agents` — Dynamically injects skills/agent guidelines without overloading system prompts.
+
+<br>
+<hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
+
+<!-- SECTION 13 -->
+
+## 📜 Sovereign Covenant Protocol — AI Agent Behavioral Contract Testing (`tk contract`)
+
+Design by Contract applied to AI coding agents. Declare invariants in declarative YAML rules stored in `.tribunal/contracts/`:
+
+```yaml
+name: 'No console.log in production code'
+scope: 'src/**/*.ts, src/**/*.tsx'
+severity: block
+must_not:
+  - pattern: 'console.log'
+    message: 'Use structured logger instead of console.log'
+```
+
+```bash
+# Scaffold starter contracts
+npx tribunal-kit contract init
+
+# Run contract checks against target or modified files
+npx tribunal-kit contract verify
+
+# Replay a failure context trace snapshot
+npx tribunal-kit contract replay <trace_id>
+```
 
 <br>
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
 
 <!-- SECTION 11 -->
+
 ## 💻 CLI Command Reference
 
 Below is the structured list of all core commands available via `npx tribunal-kit <command>` (or the alias `tk`):
@@ -427,6 +470,11 @@ Below is the structured list of all core commands available via `npx tribunal-ki
         <td style="padding: 12px 16px; color: #c9c9d1;"><code>init | status | next</code></td>
         <td style="padding: 12px 16px; color: #a0a0a5;">Sets up and executes long-running autonomous development.</td>
       </tr>
+      <tr style="border-bottom: 1px solid #222225;">
+        <td style="padding: 12px 16px;"><kbd style="background: #1c1c24; border: 1px solid #333; padding: 2px 6px; border-radius: 4px; color: #ffffff;">contract</kbd></td>
+        <td style="padding: 12px 16px; color: #c9c9d1;"><code>init | verify | list | trace | replay</code></td>
+        <td style="padding: 12px 16px; color: #a0a0a5;">AI Agent Behavioral Contract Testing and failure context trace replay.</td>
+      </tr>
     </tbody>
   </table>
 </div>
@@ -435,11 +483,13 @@ Below is the structured list of all core commands available via `npx tribunal-ki
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
 
 <!-- SECTION 12 -->
+
 ## 🤝 Contributing & Security
 
 We maintain high code standards and absolute runtime safety:
-*   **Security Policy**: Tribunal Kit operates with **zero runtime network dependencies**, zero dangerous `eval` executes, and sandboxed file paths to protect your codebase. Read more in [SECURITY.md](SECURITY.md).
-*   **Contributing Guide**: We welcome community-authored agents, skills, and workflows! Please read [CONTRIBUTING.md](CONTRIBUTING.md) to set up your local development environment and run our verification tests.
+
+- **Security Policy**: Tribunal Kit operates with **zero runtime network dependencies**, zero dangerous `eval` executes, and sandboxed file paths to protect your codebase. Read more in [SECURITY.md](SECURITY.md).
+- **Contributing Guide**: We welcome community-authored agents, skills, and workflows! Please read [CONTRIBUTING.md](CONTRIBUTING.md) to set up your local development environment and run our verification tests.
 
 <br>
 <br>

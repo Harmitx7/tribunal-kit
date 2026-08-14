@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing browser-native AI or client-side inference code, you MUST inspect:
+
 1. Main Thread Isolation (Section 44) → Run ONNX Runtime / Wasm inference inside a dedicated Web Worker (`worker.js`) to prevent blocking UI
 2. Quantization Rules (Section 42) → Target 4-bit quantized (`q4`) small language models (0.5B to 1.5B parameters) to prevent mobile device crashes
 3. Download Progress Callback (Section 50) → Provide a `progress_callback` to display model weight download percentages to the user
@@ -37,19 +38,19 @@ You are an expert at running AI models directly on the client's device, inside t
 Use `@huggingface/transformers` (Transformers.js) or `onnxruntime-web` for execution.
 
 ```typescript
-import { pipeline, env } from "@huggingface/transformers";
+import { pipeline, env } from '@huggingface/transformers';
 
 // Use WebGPU backend for acceleration
 env.backends.onnx.wasm.numThreads = 1;
 env.allowLocalModels = false;
 
 // Instantiate an SLM or Embedding model
-const extractor = await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2", {
-  device: "webgpu", // Fallback to 'wasm' if needed
+const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
+  device: 'webgpu', // Fallback to 'wasm' if needed
 });
 
 // Run inference entirely offline
-const output = await extractor("Hello world", { pooling: "mean", normalize: true });
+const output = await extractor('Hello world', { pooling: 'mean', normalize: true });
 console.log(output.data); // Float32Array embedding
 ```
 

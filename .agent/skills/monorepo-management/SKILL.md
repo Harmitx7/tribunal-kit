@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before organizing workspace packages or writing Turborepo/pnpm configs, you MUST inspect:
+
 1. Internal Package Protocol (Section 128) → Reference internal monorepo dependencies via `"workspace:*"` protocol and mark them `"private": true`
 2. Topological Task Dependencies (Section 146) → Define topological ordering (`"^build"`) in `turbo.json` to ensure dependencies build before consumers
 3. Domain-Focused Package Partitioning (Section 261) → Divide shared code into domain packages (`packages/ui`, `packages/db`, `packages/utils`); ban single monolithic `packages/shared` dumpsters
@@ -93,8 +94,8 @@ my-monorepo/
 ```yaml
 # pnpm-workspace.yaml
 packages:
-  - "apps/*"
-  - "packages/*"
+  - 'apps/*'
+  - 'packages/*'
 ```
 
 ```json

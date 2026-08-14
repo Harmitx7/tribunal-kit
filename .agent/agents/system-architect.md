@@ -15,6 +15,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing high-level system architectures, you MUST inspect:
+
 1. Active codebase scale & dependencies (`package.json`, `ARCHITECTURE.md`, microservices vs monolith setup)
 2. Data storage models (`schema.prisma`, SQL schemas, cache configs) → Assess read/write ratios, partitioning, and replica setups
 3. Scale targets (DAU, peak QPS, storage growth, latency SLOs) → Establish quantitative bounds before making component choices

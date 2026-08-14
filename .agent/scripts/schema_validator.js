@@ -8,25 +8,16 @@
  *   node .agent/scripts/schema_validator.js . --file prisma/schema.prisma
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const {
-  BOLD,
-  RESET,
-  BLUE,
-  sectionHeader: header,
-  ok,
-  fail,
-  warn,
-  skip,
-} = require("./_colors");
+const { BOLD, RESET, BLUE, sectionHeader: header, ok, fail, warn, skip } = require('./_colors');
 
 function detectOrm(projectRoot) {
-  if (fs.existsSync(path.join(projectRoot, "prisma", "schema.prisma"))) {
-    return "prisma";
+  if (fs.existsSync(path.join(projectRoot, 'prisma', 'schema.prisma'))) {
+    return 'prisma';
   }
 
   function searchFor(dir, patterns) {
@@ -38,12 +29,12 @@ function detectOrm(projectRoot) {
     }
 
     for (const item of items) {
-      if (item.isDirectory() && !["node_modules", ".git"].includes(item.name)) {
+      if (item.isDirectory() && !['node_modules', '.git'].includes(item.name)) {
         if (searchFor(path.join(dir, item.name), patterns)) return true;
-        if (item.name === "migrations") {
+        if (item.name === 'migrations') {
           try {
             const mFiles = fs.readdirSync(path.join(dir, item.name));
-            if (mFiles.some((f) => f.endsWith(".sql"))) return "sql";
+            if (mFiles.some(f => f.endsWith('.sql'))) return 'sql';
           } catch {}
         }
       } else {
@@ -56,15 +47,15 @@ function detectOrm(projectRoot) {
   }
 
   const type = searchFor(projectRoot, [
-    { test: (name) => name.startsWith("drizzle.config."), type: "drizzle" },
+    { test: name => name.startsWith('drizzle.config.'), type: 'drizzle' },
   ]);
   if (type) return type;
 
   if (
-    fs.existsSync(path.join(projectRoot, "knexfile.js")) ||
-    fs.existsSync(path.join(projectRoot, "knexfile.ts"))
+    fs.existsSync(path.join(projectRoot, 'knexfile.js')) ||
+    fs.existsSync(path.join(projectRoot, 'knexfile.ts'))
   ) {
-    return "knex";
+    return 'knex';
   }
 
   return null;
@@ -74,17 +65,17 @@ function validatePrisma(filepath) {
   const issues = [];
   let lines;
   try {
-    lines = fs.readFileSync(filepath, "utf8").split("\n");
+    lines = fs.readFileSync(filepath, 'utf8').split('\n');
   } catch {
-    return [["error", `Cannot read file: ${filepath}`, 0]];
+    return [['error', `Cannot read file: ${filepath}`, 0]];
   }
 
-  let currentModel = "";
+  let currentModel = '';
   let hasCreatedAt = false;
   let hasUpdatedAt = false;
   let modelStartLine = 0;
   let fieldsWithRelation = [];
-  let indexedFields = new Set();
+  const indexedFields = new Set();
   let hasIdField = false;
 
   for (let i = 0; i < lines.length; i++) {
@@ -97,26 +88,22 @@ function validatePrisma(filepath) {
       if (currentModel) {
         if (!hasCreatedAt)
           issues.push([
-            "warn",
+            'warn',
             `Model '${currentModel}' missing createdAt timestamp`,
             modelStartLine,
           ]);
         if (!hasUpdatedAt)
           issues.push([
-            "warn",
+            'warn',
             `Model '${currentModel}' missing updatedAt timestamp`,
             modelStartLine,
           ]);
         if (!hasIdField)
-          issues.push([
-            "warn",
-            `Model '${currentModel}' has no @id field`,
-            modelStartLine,
-          ]);
+          issues.push(['warn', `Model '${currentModel}' has no @id field`, modelStartLine]);
         for (const [fieldName, fieldLine] of fieldsWithRelation) {
           if (!indexedFields.has(fieldName)) {
             issues.push([
-              "warn",
+              'warn',
               `Model '${currentModel}': foreign key '${fieldName}' has no @@index`,
               fieldLine,
             ]);
@@ -133,29 +120,23 @@ function validatePrisma(filepath) {
       indexedFields.clear();
 
       if (currentModel[0] !== currentModel[0].toUpperCase()) {
-        issues.push([
-          "warn",
-          `Model '${currentModel}' should use PascalCase`,
-          lineNum,
-        ]);
+        issues.push(['warn', `Model '${currentModel}' should use PascalCase`, lineNum]);
       }
     }
 
     if (currentModel) {
-      if (stripped.includes("createdAt") || stripped.includes("created_at"))
-        hasCreatedAt = true;
-      if (stripped.includes("updatedAt") || stripped.includes("updated_at"))
-        hasUpdatedAt = true;
-      if (stripped.includes("@id")) hasIdField = true;
+      if (stripped.includes('createdAt') || stripped.includes('created_at')) hasCreatedAt = true;
+      if (stripped.includes('updatedAt') || stripped.includes('updated_at')) hasUpdatedAt = true;
+      if (stripped.includes('@id')) hasIdField = true;
 
       const fkMatch = stripped.match(/^\s*(\w+Id)\s+(Int|String|BigInt)/);
-      if (fkMatch && !stripped.includes("@relation")) {
+      if (fkMatch && !stripped.includes('@relation')) {
         fieldsWithRelation.push([fkMatch[1], lineNum]);
       }
 
       const indexMatch = stripped.match(/@@index\(\[([^\]]+)\]/);
       if (indexMatch) {
-        for (const field of indexMatch[1].split(",")) {
+        for (const field of indexMatch[1].split(',')) {
           indexedFields.add(field.trim());
         }
       }
@@ -164,27 +145,15 @@ function validatePrisma(filepath) {
 
   if (currentModel) {
     if (!hasCreatedAt)
-      issues.push([
-        "warn",
-        `Model '${currentModel}' missing createdAt timestamp`,
-        modelStartLine,
-      ]);
+      issues.push(['warn', `Model '${currentModel}' missing createdAt timestamp`, modelStartLine]);
     if (!hasUpdatedAt)
-      issues.push([
-        "warn",
-        `Model '${currentModel}' missing updatedAt timestamp`,
-        modelStartLine,
-      ]);
+      issues.push(['warn', `Model '${currentModel}' missing updatedAt timestamp`, modelStartLine]);
     if (!hasIdField)
-      issues.push([
-        "warn",
-        `Model '${currentModel}' has no @id field`,
-        modelStartLine,
-      ]);
+      issues.push(['warn', `Model '${currentModel}' has no @id field`, modelStartLine]);
     for (const [fieldName, fieldLine] of fieldsWithRelation) {
       if (!indexedFields.has(fieldName)) {
         issues.push([
-          "warn",
+          'warn',
           `Model '${currentModel}': foreign key '${fieldName}' may need @@index`,
           fieldLine,
         ]);
@@ -199,39 +168,27 @@ function validateSqlMigration(filepath) {
   const issues = [];
   let lines;
   try {
-    lines = fs.readFileSync(filepath, "utf8").split("\n");
+    lines = fs.readFileSync(filepath, 'utf8').split('\n');
   } catch {
-    return [["error", `Cannot read file: ${filepath}`, 0]];
+    return [['error', `Cannot read file: ${filepath}`, 0]];
   }
 
   for (let i = 0; i < lines.length; i++) {
     const lineNum = i + 1;
     const stripped = lines[i].trim().toUpperCase();
 
-    if (stripped.includes("DROP TABLE") && !stripped.includes("IF EXISTS")) {
-      issues.push([
-        "warn",
-        "DROP TABLE without IF EXISTS — may fail on clean databases",
-        lineNum,
-      ]);
+    if (stripped.includes('DROP TABLE') && !stripped.includes('IF EXISTS')) {
+      issues.push(['warn', 'DROP TABLE without IF EXISTS — may fail on clean databases', lineNum]);
     }
     if (
-      stripped.includes("REFERENCES") &&
-      !stripped.includes("NOT NULL") &&
-      !stripped.includes("NULL")
+      stripped.includes('REFERENCES') &&
+      !stripped.includes('NOT NULL') &&
+      !stripped.includes('NULL')
     ) {
-      issues.push([
-        "warn",
-        "Foreign key without explicit NULL/NOT NULL constraint",
-        lineNum,
-      ]);
+      issues.push(['warn', 'Foreign key without explicit NULL/NOT NULL constraint', lineNum]);
     }
-    if (stripped.includes("CREATE TABLE")) {
-      issues.push([
-        "info",
-        "Verify this table includes created_at / updated_at columns",
-        lineNum,
-      ]);
+    if (stripped.includes('CREATE TABLE')) {
+      issues.push(['info', 'Verify this table includes created_at / updated_at columns', lineNum]);
     }
   }
 
@@ -241,20 +198,20 @@ function validateSqlMigration(filepath) {
 function main() {
   const args = process.argv.slice(2);
   let targetPath = null;
-  let typeArg = "auto";
+  let typeArg = 'auto';
   let fileArg = null;
 
   let i = 0;
   while (i < args.length) {
-    if (args[i] === "--type" && i + 1 < args.length) typeArg = args[++i];
-    else if (args[i] === "--file" && i + 1 < args.length) fileArg = args[++i];
-    else if (!targetPath && !args[i].startsWith("-")) targetPath = args[i];
+    if (args[i] === '--type' && i + 1 < args.length) typeArg = args[++i];
+    else if (args[i] === '--file' && i + 1 < args.length) fileArg = args[++i];
+    else if (!targetPath && !args[i].startsWith('-')) targetPath = args[i];
     i++;
   }
 
   if (!targetPath) {
     console.log(
-      "Usage: node schema_validator.js <path> [--type <prisma|drizzle|sql>] [--file <filepath>]",
+      'Usage: node schema_validator.js <path> [--type <prisma|drizzle|sql>] [--file <filepath>]',
     );
     process.exit(1);
   }
@@ -268,9 +225,9 @@ function main() {
   console.log(`${BOLD}Tribunal — schema_validator.js${RESET}`);
   console.log(`Project: ${projectRoot}`);
 
-  const ormType = typeArg !== "auto" ? typeArg : detectOrm(projectRoot);
+  const ormType = typeArg !== 'auto' ? typeArg : detectOrm(projectRoot);
   if (!ormType && !fileArg) {
-    skip("No schema files detected — skipping validation");
+    skip('No schema files detected — skipping validation');
     process.exit(0);
   }
 
@@ -278,36 +235,34 @@ function main() {
 
   if (fileArg) {
     console.log(header(`Validating: ${fileArg}`));
-    const filepath = path.isAbsolute(fileArg)
-      ? fileArg
-      : path.join(projectRoot, fileArg);
+    const filepath = path.isAbsolute(fileArg) ? fileArg : path.join(projectRoot, fileArg);
     let issues = [];
-    if (filepath.endsWith(".prisma")) issues = validatePrisma(filepath);
-    else if (filepath.endsWith(".sql")) issues = validateSqlMigration(filepath);
+    if (filepath.endsWith('.prisma')) issues = validatePrisma(filepath);
+    else if (filepath.endsWith('.sql')) issues = validateSqlMigration(filepath);
     else {
       skip(`Unknown schema file type: ${fileArg}`);
       process.exit(0);
     }
 
     for (const [severity, message, line] of issues) {
-      if (severity === "error") {
+      if (severity === 'error') {
         fail(`L${line}: ${message}`);
         issuesCount++;
-      } else if (severity === "warn") {
+      } else if (severity === 'warn') {
         warn(`L${line}: ${message}`);
         issuesCount++;
       } else console.log(`  ${BLUE}ℹ️  L${line}: ${message}${RESET}`);
     }
-  } else if (ormType === "prisma") {
-    const schemaPath = path.join(projectRoot, "prisma", "schema.prisma");
+  } else if (ormType === 'prisma') {
+    const schemaPath = path.join(projectRoot, 'prisma', 'schema.prisma');
     if (fs.existsSync(schemaPath)) {
-      console.log(header("Prisma Schema Validation"));
+      console.log(header('Prisma Schema Validation'));
       const issues = validatePrisma(schemaPath);
       for (const [severity, message, line] of issues) {
-        if (severity === "error") {
+        if (severity === 'error') {
           fail(`L${line}: ${message}`);
           issuesCount++;
-        } else if (severity === "warn") {
+        } else if (severity === 'warn') {
           warn(`L${line}: ${message}`);
           issuesCount++;
         } else console.log(`  ${BLUE}ℹ️  L${line}: ${message}${RESET}`);
@@ -315,23 +270,20 @@ function main() {
     } else {
       skip(`Prisma schema not found at ${schemaPath}`);
     }
-  } else if (ormType === "sql") {
-    console.log(header("SQL Migration Validation"));
+  } else if (ormType === 'sql') {
+    console.log(header('SQL Migration Validation'));
     // Very basic recursion for migrations dir
     function findMigrations(dir) {
-      let res = [];
+      const res = [];
       try {
         const items = fs.readdirSync(dir, { withFileTypes: true });
         for (const item of items) {
-          if (
-            item.isDirectory() &&
-            !["node_modules", ".git"].includes(item.name)
-          ) {
-            if (item.name === "migrations") {
+          if (item.isDirectory() && !['node_modules', '.git'].includes(item.name)) {
+            if (item.name === 'migrations') {
               const sqls = fs
                 .readdirSync(path.join(dir, item.name))
-                .filter((f) => f.endsWith(".sql"))
-                .map((f) => path.join(dir, item.name, f));
+                .filter(f => f.endsWith('.sql'))
+                .map(f => path.join(dir, item.name, f));
               res.push(...sqls);
             } else {
               res.push(...findMigrations(path.join(dir, item.name)));
@@ -347,22 +299,22 @@ function main() {
       console.log(`\n  📄 ${path.basename(sqlFile)}`);
       const issues = validateSqlMigration(sqlFile);
       for (const [severity, message, line] of issues) {
-        if (severity === "error") {
+        if (severity === 'error') {
           fail(`  L${line}: ${message}`);
           issuesCount++;
-        } else if (severity === "warn") {
+        } else if (severity === 'warn') {
           warn(`  L${line}: ${message}`);
           issuesCount++;
         } else console.log(`    ${BLUE}ℹ️  L${line}: ${message}${RESET}`);
       }
     }
-  } else if (ormType === "drizzle") {
-    console.log(header("Drizzle Schema"));
-    skip("Drizzle validation not yet implemented — validate manually");
+  } else if (ormType === 'drizzle') {
+    console.log(header('Drizzle Schema'));
+    skip('Drizzle validation not yet implemented — validate manually');
   }
 
   console.log(`\n${BOLD}━━━ Schema Validation Summary ━━━${RESET}`);
-  if (issuesCount === 0) ok("No schema issues found");
+  if (issuesCount === 0) ok('No schema issues found');
   else warn(`${issuesCount} issue(s) found — review above`);
 
   process.exit(0);

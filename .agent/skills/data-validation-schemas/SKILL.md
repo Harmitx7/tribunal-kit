@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing schemas or parsing untrusted data boundaries, you MUST inspect:
+
 1. Universal Trust Boundary Rule (Section 25) → Enforce explicit Zod/Pydantic schemas on API bodies, query params, env vars, and webhooks
 2. Server-Side Mandatory Validation (Section 16) → Never rely solely on client-side UX validation; execute schema validation on the server
 3. Environment Startup Parse (Section 173) → Parse `process.env` with Zod at app startup to crash immediately on missing keys
@@ -60,7 +61,7 @@ Trust Boundaries:
 ### Basic Schemas
 
 ```typescript
-import { z } from "zod";
+import { z } from 'zod';
 
 // Primitives with constraints
 const Email = z.string().email().toLowerCase().trim();
@@ -70,14 +71,14 @@ const Username = z
   .min(3)
   .max(30)
   .regex(/^[a-zA-Z0-9_]+$/);
-const URL = z.string().url().startsWith("https://");
+const URL = z.string().url().startsWith('https://');
 
 // Object schema
 const CreateUserSchema = z.object({
   name: z.string().min(2).max(100),
   email: Email,
   age: Age.optional(),
-  role: z.enum(["admin", "editor", "viewer"]).default("viewer"),
+  role: z.enum(['admin', 'editor', 'viewer']).default('viewer'),
   metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
@@ -98,9 +99,9 @@ const BaseUserSchema = z.object({
 const CreateUserSchema = BaseUserSchema.extend({
   password: z.string().min(8),
   confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
+}).refine(data => data.password === data.confirmPassword, {
   message: "Passwords don't match",
-  path: ["confirmPassword"],
+  path: ['confirmPassword'],
 });
 
 const UpdateUserSchema = BaseUserSchema.partial(); // all fields optional
@@ -118,14 +119,14 @@ const FullProfileSchema = BaseUserSchema.merge(AddressSchema);
 
 ```typescript
 // ✅ Server-side: validate at the boundary, type-safe downstream
-import { z } from "zod";
+import { z } from 'zod';
 
 // Define once, use everywhere
 const QuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
-  sort: z.enum(["created", "updated", "name"]).default("created"),
-  order: z.enum(["asc", "desc"]).default("desc"),
+  sort: z.enum(['created', 'updated', 'name']).default('created'),
+  order: z.enum(['asc', 'desc']).default('desc'),
   search: z.string().max(200).optional(),
 });
 
@@ -135,7 +136,7 @@ function validate<T extends z.ZodType>(schema: T) {
     const result = schema.safeParse(req.body);
     if (!result.success) {
       return res.status(400).json({
-        error: "Validation failed",
+        error: 'Validation failed',
         issues: result.error.flatten().fieldErrors,
       });
     }
@@ -144,7 +145,7 @@ function validate<T extends z.ZodType>(schema: T) {
   };
 }
 
-app.post("/api/users", validate(CreateUserSchema), async (req, res) => {
+app.post('/api/users', validate(CreateUserSchema), async (req, res) => {
   // req.body is now fully typed and validated
   const user = await createUser(req.body);
   res.status(201).json(user);
@@ -186,13 +187,13 @@ if (!result.success) {
 ```typescript
 // ✅ Validate ALL env vars at startup — crash immediately if invalid
 const EnvSchema = z.object({
-  NODE_ENV: z.enum(["development", "production", "test"]),
+  NODE_ENV: z.enum(['development', 'production', 'test']),
   PORT: z.coerce.number().default(3000),
   DATABASE_URL: z.string().url(),
   REDIS_URL: z.string().url().optional(),
-  JWT_SECRET: z.string().min(32, "JWT_SECRET must be ≥ 32 characters"),
+  JWT_SECRET: z.string().min(32, 'JWT_SECRET must be ≥ 32 characters'),
   API_KEY: z.string().min(1),
-  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+  LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 });
 
 export const env = EnvSchema.parse(process.env);
@@ -241,15 +242,19 @@ async def create_user(user: CreateUserRequest):
 
 ```tsx
 // ✅ React Hook Form + Zod = type-safe forms
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 const SignupSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters").regex(/[A-Z]/, "Must contain uppercase letter").regex(/[0-9]/, "Must contain a number"),
+  email: z.string().email('Invalid email address'),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[A-Z]/, 'Must contain uppercase letter')
+    .regex(/[0-9]/, 'Must contain a number'),
   terms: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the terms" }),
+    errorMap: () => ({ message: 'You must accept the terms' }),
   }),
 });
 
@@ -265,15 +270,15 @@ function SignupForm() {
   });
 
   return (
-    <form onSubmit={handleSubmit((data) => signup(data))}>
-      <input {...register("email")} />
+    <form onSubmit={handleSubmit(data => signup(data))}>
+      <input {...register('email')} />
       {errors.email && <span>{errors.email.message}</span>}
 
-      <input type="password" {...register("password")} />
+      <input type="password" {...register('password')} />
       {errors.password && <span>{errors.password.message}</span>}
 
       <label>
-        <input type="checkbox" {...register("terms")} />I accept the terms
+        <input type="checkbox" {...register('terms')} />I accept the terms
       </label>
       {errors.terms && <span>{errors.terms.message}</span>}
 

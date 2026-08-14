@@ -1,7 +1,7 @@
 name: Bug Report
 description: Report a bug in Tribunal Kit
-title: "[Bug]: "
-labels: ["bug"]
+title: '[Bug]: '
+labels: ['bug']
 body:
   - type: markdown
     attributes:
@@ -12,7 +12,7 @@ body:
     attributes:
       label: Tribunal Kit Version
       description: Run `npx tribunal-kit --version` to find out
-      placeholder: "6.0.0"
+      placeholder: '6.0.0'
     validations:
       required: true
   - type: dropdown
@@ -32,7 +32,7 @@ body:
     attributes:
       label: Node.js Version
       description: Run `node --version` to find out
-      placeholder: "v22.0.0"
+      placeholder: 'v22.0.0'
     validations:
       required: true
   - type: dropdown
@@ -55,7 +55,7 @@ body:
     attributes:
       label: Command That Failed
       description: Which `tk` / `tribunal-kit` command triggered the issue?
-      placeholder: "npx tribunal-kit init --force"
+      placeholder: 'npx tribunal-kit init --force'
   - type: textarea
     id: what-happened
     attributes:
@@ -79,7 +79,7 @@ body:
       value: |
         1. 
         2. 
-        3. 
+        3.
     validations:
       required: true
   - type: textarea

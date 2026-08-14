@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before building Node.js services or middleware, you MUST inspect:
+
 1. Node Built-in Import Protocol (Section 34) → Use explicit `node:` prefix (`import fs from "node:fs/promises"`); ban legacy CommonJS `require()`
 2. Mandatory Process Exit on Uncaught Exception (Section 170) → Ensure process exits (`process.exit(1)`) after `uncaughtException` to prevent running in corrupted state
 3. Startup Environment Validation (Section 373) → Validate environment variables at app startup with Zod; crash immediately if required secrets are missing
@@ -40,10 +41,10 @@ Before building Node.js services or middleware, you MUST inspect:
 
 ```typescript
 // ✅ ESM imports (modern Node.js)
-import { readFile, writeFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
-import { createServer } from "node:http";
-import { EventEmitter } from "node:events";
+import { readFile, writeFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
+import { createServer } from 'node:http';
+import { EventEmitter } from 'node:events';
 
 // ❌ HALLUCINATION TRAP: Use node: protocol prefix for built-in modules
 // ❌ import fs from "fs";       ← ambiguous (could be npm package)
@@ -54,7 +55,7 @@ import { EventEmitter } from "node:events";
 // ✅ import fs from "node:fs/promises";  ← ESM
 
 // Dynamic imports (for conditional loading)
-const module = await import("./heavy-module.js");
+const module = await import('./heavy-module.js');
 ```
 
 ---
@@ -76,13 +77,13 @@ const module = await import("./heavy-module.js");
 ### Fastify (Recommended)
 
 ```typescript
-import Fastify from "fastify";
-import { z } from "zod";
+import Fastify from 'fastify';
+import { z } from 'zod';
 
 const app = Fastify({
   logger: {
-    level: process.env.LOG_LEVEL ?? "info",
-    transport: process.env.NODE_ENV === "development" ? { target: "pino-pretty" } : undefined,
+    level: process.env.LOG_LEVEL ?? 'info',
+    transport: process.env.NODE_ENV === 'development' ? { target: 'pino-pretty' } : undefined,
   },
 });
 
@@ -90,22 +91,22 @@ const app = Fastify({
 const CreateUserSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email(),
-  role: z.enum(["admin", "user"]).default("user"),
+  role: z.enum(['admin', 'user']).default('user'),
 });
 
 type CreateUserBody = z.infer<typeof CreateUserSchema>;
 
 app.post<{ Body: CreateUserBody }>(
-  "/users",
+  '/users',
   {
     schema: {
       body: {
-        type: "object",
-        required: ["name", "email"],
+        type: 'object',
+        required: ['name', 'email'],
         properties: {
-          name: { type: "string", minLength: 2 },
-          email: { type: "string", format: "email" },
-          role: { type: "string", enum: ["admin", "user"] },
+          name: { type: 'string', minLength: 2 },
+          email: { type: 'string', format: 'email' },
+          role: { type: 'string', enum: ['admin', 'user'] },
         },
       },
     },
@@ -120,7 +121,7 @@ app.post<{ Body: CreateUserBody }>(
 // Graceful shutdown
 const start = async () => {
   try {
-    await app.listen({ port: 3000, host: "0.0.0.0" });
+    await app.listen({ port: 3000, host: '0.0.0.0' });
   } catch (err) {
     app.log.error(err);
     process.exit(1);
@@ -133,29 +134,29 @@ start();
 ### Hono (Edge-First)
 
 ```typescript
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { logger } from "hono/logger";
-import { zValidator } from "@hono/zod-validator";
-import { z } from "zod";
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { logger } from 'hono/logger';
+import { zValidator } from '@hono/zod-validator';
+import { z } from 'zod';
 
 const app = new Hono();
 
-app.use("*", logger());
-app.use("*", cors({ origin: "https://myapp.com" }));
+app.use('*', logger());
+app.use('*', cors({ origin: 'https://myapp.com' }));
 
 const createUserSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
 });
 
-app.post("/users", zValidator("json", createUserSchema), async (c) => {
-  const body = c.req.valid("json");
+app.post('/users', zValidator('json', createUserSchema), async c => {
+  const body = c.req.valid('json');
   const user = await createUser(body);
   return c.json(user, 201);
 });
 
-app.get("/health", (c) => c.json({ status: "ok" }));
+app.get('/health', c => c.json({ status: 'ok' }));
 
 export default app; // works in Node, Deno, Bun, Cloudflare Workers
 ```
@@ -168,15 +169,15 @@ export default app; // works in Node, Deno, Bun, Cloudflare Workers
 
 ```typescript
 // ✅ MANDATORY: Handle unhandled rejections and exceptions
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   // Log to error tracking service (Sentry, etc.)
   // Gracefully shutdown
   process.exit(1);
 });
 
-process.on("uncaughtException", (error) => {
-  console.error("Uncaught Exception:", error);
+process.on('uncaughtException', error => {
+  console.error('Uncaught Exception:', error);
   // Log to error tracking service
   process.exit(1); // MUST exit — state is corrupted
 });
@@ -194,18 +195,18 @@ export class AppError extends Error {
   constructor(
     message: string,
     public statusCode: number = 500,
-    public code: string = "INTERNAL_ERROR",
+    public code: string = 'INTERNAL_ERROR',
     public isOperational: boolean = true,
   ) {
     super(message);
-    this.name = "AppError";
+    this.name = 'AppError';
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
 export class NotFoundError extends AppError {
   constructor(resource: string, id: string) {
-    super(`${resource} '${id}' not found`, 404, "NOT_FOUND");
+    super(`${resource} '${id}' not found`, 404, 'NOT_FOUND');
   }
 }
 
@@ -214,13 +215,13 @@ export class ValidationError extends AppError {
     message: string,
     public errors: Record<string, string[]> = {},
   ) {
-    super(message, 400, "VALIDATION_ERROR");
+    super(message, 400, 'VALIDATION_ERROR');
   }
 }
 
 export class UnauthorizedError extends AppError {
-  constructor(message = "Authentication required") {
-    super(message, 401, "UNAUTHORIZED");
+  constructor(message = 'Authentication required') {
+    super(message, 401, 'UNAUTHORIZED');
   }
 }
 
@@ -232,9 +233,9 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     });
   } else {
     // Programmer error — log and return generic message
-    console.error("Unexpected error:", err);
+    console.error('Unexpected error:', err);
     res.status(500).json({
-      error: { code: "INTERNAL_ERROR", message: "Something went wrong" },
+      error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
     });
   }
 });
@@ -262,13 +263,17 @@ const [users, posts, stats] = await Promise.all([
 // Total: ~200ms
 
 // Promise.allSettled — when some can fail
-const results = await Promise.allSettled([fetchCriticalData(), fetchOptionalData(), fetchAnalytics()]);
+const results = await Promise.allSettled([
+  fetchCriticalData(),
+  fetchOptionalData(),
+  fetchAnalytics(),
+]);
 
 for (const result of results) {
-  if (result.status === "fulfilled") {
+  if (result.status === 'fulfilled') {
     process(result.value);
   } else {
-    console.error("Failed:", result.reason);
+    console.error('Failed:', result.reason);
   }
 }
 ```
@@ -276,7 +281,10 @@ for (const result of results) {
 ### Retry Pattern
 
 ```typescript
-async function withRetry<T>(fn: () => Promise<T>, options: { maxRetries?: number; baseDelay?: number; maxDelay?: number } = {}): Promise<T> {
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  options: { maxRetries?: number; baseDelay?: number; maxDelay?: number } = {},
+): Promise<T> {
   const { maxRetries = 3, baseDelay = 1000, maxDelay = 10000 } = options;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -288,14 +296,14 @@ async function withRetry<T>(fn: () => Promise<T>, options: { maxRetries?: number
       const delay = Math.min(baseDelay * 2 ** attempt, maxDelay);
       const jitter = delay * (0.5 + Math.random() * 0.5);
       console.warn(`Attempt ${attempt + 1} failed, retrying in ${jitter}ms`);
-      await new Promise((resolve) => setTimeout(resolve, jitter));
+      await new Promise(resolve => setTimeout(resolve, jitter));
     }
   }
-  throw new Error("Unreachable");
+  throw new Error('Unreachable');
 }
 
 // Usage:
-const data = await withRetry(() => fetch("https://api.flaky.com/data"), {
+const data = await withRetry(() => fetch('https://api.flaky.com/data'), {
   maxRetries: 3,
   baseDelay: 500,
 });
@@ -312,7 +320,7 @@ async function fetchWithTimeout(url: string, timeoutMs = 5000): Promise<Response
     const response = await fetch(url, { signal: controller.signal });
     return response;
   } catch (error) {
-    if (error instanceof DOMException && error.name === "AbortError") {
+    if (error instanceof DOMException && error.name === 'AbortError') {
       throw new Error(`Request to ${url} timed out after ${timeoutMs}ms`);
     }
     throw error;
@@ -327,9 +335,9 @@ async function fetchWithTimeout(url: string, timeoutMs = 5000): Promise<Response
 ## Streaming
 
 ```typescript
-import { Readable, Transform, pipeline } from "node:stream/promises";
-import { createReadStream, createWriteStream } from "node:fs";
-import { createGzip } from "node:zlib";
+import { Readable, Transform, pipeline } from 'node:stream/promises';
+import { createReadStream, createWriteStream } from 'node:fs';
+import { createGzip } from 'node:zlib';
 
 // Stream large file processing (no memory issues)
 async function processLargeCSV(inputPath: string, outputPath: string) {
@@ -340,20 +348,25 @@ async function processLargeCSV(inputPath: string, outputPath: string) {
     },
   });
 
-  await pipeline(createReadStream(inputPath), transform, createGzip(), createWriteStream(outputPath));
+  await pipeline(
+    createReadStream(inputPath),
+    transform,
+    createGzip(),
+    createWriteStream(outputPath),
+  );
 }
 
 // Streaming HTTP response
-app.get("/export", async (req, res) => {
-  res.setHeader("Content-Type", "text/csv");
-  res.setHeader("Content-Disposition", "attachment; filename=export.csv");
+app.get('/export', async (req, res) => {
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename=export.csv');
 
-  const cursor = db.collection("users").find().stream();
-  cursor.on("data", (user) => {
+  const cursor = db.collection('users').find().stream();
+  cursor.on('data', user => {
     res.write(`${user.id},${user.name},${user.email}\n`);
   });
-  cursor.on("end", () => res.end());
-  cursor.on("error", (err) => {
+  cursor.on('end', () => res.end());
+  cursor.on('error', err => {
     console.error(err);
     res.status(500).end();
   });
@@ -370,16 +383,16 @@ app.get("/export", async (req, res) => {
 
 ```typescript
 // config.ts — centralized, validated configuration
-import { z } from "zod";
+import { z } from 'zod';
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.coerce.number().default(3000),
   DATABASE_URL: z.string().url(),
   REDIS_URL: z.string().url().optional(),
   JWT_SECRET: z.string().min(32),
-  CORS_ORIGIN: z.string().default("http://localhost:5173"),
-  LOG_LEVEL: z.enum(["debug", "info", "warn", "error"]).default("info"),
+  CORS_ORIGIN: z.string().default('http://localhost:5173'),
+  LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
 });
 
 export const config = envSchema.parse(process.env);
@@ -398,27 +411,27 @@ export const config = envSchema.parse(process.env);
 ## Security Hardening
 
 ```typescript
-import helmet from "helmet";
-import rateLimit from "express-rate-limit";
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 // Security headers
 app.use(helmet());
 
 // Rate limiting
 app.use(
-  "/api/",
+  '/api/',
   rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100, // 100 requests per window
     standardHeaders: true,
     legacyHeaders: false,
-    message: { error: "Too many requests, try again later" },
+    message: { error: 'Too many requests, try again later' },
   }),
 );
 
 // Auth rate limiting (stricter)
 app.use(
-  "/api/auth/",
+  '/api/auth/',
   rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 5, // only 5 login attempts per 15 min
@@ -426,7 +439,7 @@ app.use(
 );
 
 // Input validation (ALWAYS validate)
-app.post("/api/users", async (req, res, next) => {
+app.post('/api/users', async (req, res, next) => {
   try {
     const data = CreateUserSchema.parse(req.body); // Zod validates
     const user = await createUser(data);
@@ -441,12 +454,12 @@ app.post("/api/users", async (req, res, next) => {
 // ✅ db.query("SELECT * FROM users WHERE id = $1", [req.params.id]);
 
 // Path traversal prevention
-import { resolve, normalize } from "node:path";
+import { resolve, normalize } from 'node:path';
 
 function safePath(userInput: string, baseDir: string): string {
   const resolved = resolve(baseDir, normalize(userInput));
   if (!resolved.startsWith(baseDir)) {
-    throw new Error("Path traversal detected");
+    throw new Error('Path traversal detected');
   }
   return resolved;
 }
@@ -473,29 +486,29 @@ async function gracefulShutdown(signal: string) {
 
   // Allow in-flight requests 10s to complete
   setTimeout(() => {
-    console.error("Forceful shutdown after timeout");
+    console.error('Forceful shutdown after timeout');
     process.exit(1);
   }, 10000);
 
   process.exit(0);
 }
 
-process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
-process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 ```
 
 ### Worker Threads (CPU-Bound)
 
 ```typescript
-import { Worker, isMainThread, parentPort, workerData } from "node:worker_threads";
+import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads';
 
 if (isMainThread) {
   // Main thread — offload CPU work
   function runWorker(data: unknown): Promise<unknown> {
     return new Promise((resolve, reject) => {
       const worker = new Worker(new URL(import.meta.url), { workerData: data });
-      worker.on("message", resolve);
-      worker.on("error", reject);
+      worker.on('message', resolve);
+      worker.on('error', reject);
     });
   }
 

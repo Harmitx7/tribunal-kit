@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing Generative UI streaming pipelines, you MUST inspect:
+
 1. Tool Parameter Schemas (Section 87) → Validate all LLM tool parameters with Zod schemas
 2. RSC Server Action Boundaries (Section 33) → Annotate server actions with `"use server"` and yield Server Components directly from `streamUI`
 3. Intermediate Skeleton Yielding (Section 80) → Always `yield <SkeletonLoader />` before awaiting async APIs or external LLM tool calls
@@ -74,11 +75,11 @@ Use this when you need strict JSON streams for charts, tables, or complex states
 
 ```typescript
 const result = await streamObject({
-  model: openai("gpt-4-turbo"),
+  model: openai('gpt-4-turbo'),
   schema: z.object({
     points: z.array(z.object({ x: z.number(), y: z.number() })),
   }),
-  prompt: "Generate a sales forecast chart data",
+  prompt: 'Generate a sales forecast chart data',
 });
 // Client consumes via useObject
 ```

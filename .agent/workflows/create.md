@@ -22,6 +22,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before scaffolding a new application, you MUST inspect:
+
 1. Target Directory State → Confirm directory listing is empty or obtain explicit user confirmation before overwriting existing files
 2. Runtime & Environment Context → Check Node/npm version and inspect `.env.example` if available
 3. Human Gate Before Disk Modification → Enforce explicit approval of Socratic requirements, stack selection, and scaffolding plan before creating any files

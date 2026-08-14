@@ -18,6 +18,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before orchestrating multi-domain tasks, you MUST inspect:
+
 1. `ARCHITECTURE.md` / `task.md` → Verify master component breakdown, system bounds, and multi-domain scope
 2. Domain specialist agent availability (`.agent/agents/`) → Check routing capability for each domain in scope (UI, API, DB, DevOps)
 3. Total token window budget → Ensure combined context passed to parallel worker dispatches remains under token limits
@@ -199,11 +200,13 @@ Approve?  Y = write to disk | N = discard | R = revise with feedback
 ## 9. Fabel Tool Selection & Scaling Rules
 
 ### Tool Priority Hierarchy
+
 1. **Workspace Tools** — prioritize local file search, grep, view, and edit. These are fast and conserve token space.
 2. **Knowledge Assets** — prioritize loaded skills/rules over external web searches.
 3. **Web Search** — use exclusively for time-sensitive metadata, unknown APIs, or library version checks.
 
 ### Complexity-Scaled budgets
+
 - **Simple Lookup / Fact:** 1 tool call max.
 - **Single-File Edit / Bug Fix:** 2–4 tool calls.
 - **Complex Implementation:** 5–10 tool calls.

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing or writing backend server code, you MUST inspect:
+
 1. Server Action Endpoints (Section 26) → Treat Next.js Server Actions as public API routes: authenticate session and parse input with Zod at entry
 2. JWT Algorithm Verification (Section 17) → Enforce explicit algorithms (`alg: "HS256"`) when verifying JWT tokens to prevent "None" algorithm exploits
 3. IDOR & RBAC Validation (Section 34) → Verify resource ownership (`WHERE userId = session.userId`) and user roles before executing mutations

@@ -16,6 +16,7 @@ npx tribunal-kit init
 ```
 
 This installs the `.agent/` intelligence payload into your project:
+
 - **51 specialist agents** — domain-specific coding guidelines
 - **27 parallel reviewers** — the Tribunal pipeline
 - **171 reusable skills** — deep knowledge packs for every framework
@@ -31,6 +32,7 @@ npx tribunal-kit sync
 ```
 
 This creates configuration bridges for your IDE:
+
 - `.cursorrules` — Cursor
 - `.windsurfrules` — Windsurf
 - `.github/copilot-instructions.md` — GitHub Copilot
@@ -56,6 +58,7 @@ npx tribunal-kit guardrail
 ```
 
 The guardrail engine scans for:
+
 - **Phantom packages** — imports that don't exist in your `package.json`
 - **Unresolved `// VERIFY` tags** — uncertain API calls the AI flagged itself
 - **Numeric inconsistencies** — hallucinated count claims in documentation
@@ -89,21 +92,21 @@ Once the governance layer is installed, your AI coding agent automatically benef
 
 ## CLI Quick Reference
 
-| Command | What It Does |
-|:--|:--|
-| `tk init` | Install the `.agent/` governance payload |
-| `tk sync` | Bridge with Cursor / Windsurf / VSCode |
-| `tk status` | Check workspace integrity |
-| `tk guardrail` | Scan for AI hallucinations |
-| `tk hook` | Install Git pre-push guardrail |
-| `tk case add` | Record an AI mistake as precedent |
-| `tk case search "query"` | Search case law database |
-| `tk memory store` | Save project context |
-| `tk memory recall` | Retrieve relevant memories |
-| `tk learn` | Distill project idioms from Git history |
-| `tk optimize-skill` | Self-evolve a skill file |
-| `tk graph` | Map codebase dependencies |
-| `tk marathon init` | Start a long-running autonomous task |
+| Command                  | What It Does                             |
+| :----------------------- | :--------------------------------------- |
+| `tk init`                | Install the `.agent/` governance payload |
+| `tk sync`                | Bridge with Cursor / Windsurf / VSCode   |
+| `tk status`              | Check workspace integrity                |
+| `tk guardrail`           | Scan for AI hallucinations               |
+| `tk hook`                | Install Git pre-push guardrail           |
+| `tk case add`            | Record an AI mistake as precedent        |
+| `tk case search "query"` | Search case law database                 |
+| `tk memory store`        | Save project context                     |
+| `tk memory recall`       | Retrieve relevant memories               |
+| `tk learn`               | Distill project idioms from Git history  |
+| `tk optimize-skill`      | Self-evolve a skill file                 |
+| `tk graph`               | Map codebase dependencies                |
+| `tk marathon init`       | Start a long-running autonomous task     |
 
 ---
 

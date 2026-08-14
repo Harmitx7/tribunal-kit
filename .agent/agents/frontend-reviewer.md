@@ -21,6 +21,7 @@ React 19 and Next.js 15 App Router introduce new error categories that didn't ex
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing React/Next.js code, you MUST inspect:
+
 1. `package.json` → Confirm React version (React 19 vs 18) and Next.js version (Next.js 15 vs 14)
 2. Target component file directives → Check for `"use client"` or `"use server"` declarations
 3. Import statements → Verify hooks, components, and server actions align with boundaries
@@ -34,12 +35,13 @@ The official React 19 hook list — anything else from `'react'` is hallucinated
 **Valid hooks:** `useState`, `useEffect`, `useContext`, `useReducer`, `useCallback`, `useMemo`, `useRef`, `useId`, `useTransition`, `useDeferredValue`, `useImperativeHandle`, `useLayoutEffect`, `useDebugValue`, `useOptimistic`, `useFormStatus`, `useActionState`
 
 **Removed/renamed in React 19:**
-|Old|New|Notes|
-|:---|:---|:---|
-|`useFormState()`|`useActionState()`|Renamed, different signature|
-|`React.createServerContext()`|Removed|Use standard `createContext()`|
-|`ReactDOM.render()`|`ReactDOM.createRoot().render()`|Removed in React 19|
-|`React.FC` with `children` implicit|Explicit `children: ReactNode` prop|Breaking change|
+
+| Old                                 | New                                 | Notes                          |
+| :---------------------------------- | :---------------------------------- | :----------------------------- |
+| `useFormState()`                    | `useActionState()`                  | Renamed, different signature   |
+| `React.createServerContext()`       | Removed                             | Use standard `createContext()` |
+| `ReactDOM.render()`                 | `ReactDOM.createRoot().render()`    | Removed in React 19            |
+| `React.FC` with `children` implicit | Explicit `children: ReactNode` prop | Breaking change                |
 
 ---
 
@@ -54,29 +56,29 @@ export default async function Page() {
 
 // ❌ REJECTED: onClick in a Server Component
 export default async function Page() {
-  return <button onClick={() => alert("hi")}>Click</button>; // Serialization error
+  return <button onClick={() => alert('hi')}>Click</button>; // Serialization error
 }
 
 // ❌ REJECTED: Importing a client-only library in RSC
-import { motion } from "framer-motion"; // framer-motion uses hooks internally
+import { motion } from 'framer-motion'; // framer-motion uses hooks internally
 export default async function Page() {
   /* ... */
 }
 
 // ✅ APPROVED: Boundary correctly split
 // app/page.tsx (Server Component)
-import { Counter } from "./Counter"; // Client Component
+import { Counter } from './Counter'; // Client Component
 export default async function Page() {
   const data = await fetchData();
   return <Counter initialCount={data.count} />;
 }
 
 // app/Counter.tsx (Client Component — has 'use client' directive)
-("use client");
-import { useState } from "react";
+('use client');
+import { useState } from 'react';
 export function Counter({ initialCount }: { initialCount: number }) {
   const [count, setCount] = useState(initialCount);
-  return <button onClick={() => setCount((c) => c + 1)}>{count}</button>;
+  return <button onClick={() => setCount(c => c + 1)}>{count}</button>;
 }
 ```
 
@@ -94,7 +96,7 @@ function UserCard({ isAdmin }: { isAdmin: boolean }) {
 
 // ❌ REJECTED: Hook inside loop
 function List({ items }: { items: string[] }) {
-  return items.map((item) => {
+  return items.map(item => {
     const [selected, setSelected] = useState(false); // Order changes with items — crash
     return <div>{item}</div>;
   });
@@ -118,16 +120,16 @@ useEffect(() => {
 ```tsx
 // ❌ REJECTED: Direct mutation — React cannot detect this change
 const [items, setItems] = useState<string[]>([]);
-items.push("new item"); // Mutates existing reference — UI won't update
+items.push('new item'); // Mutates existing reference — UI won't update
 setItems(items); // Same reference = React skips re-render
 
 // ❌ REJECTED: Object mutation
-user.name = "New Name"; // Mutates object-in-state
+user.name = 'New Name'; // Mutates object-in-state
 setUser(user); // Same reference — skipped
 
 // ✅ APPROVED: New reference created
-setItems((prev) => [...prev, "new item"]);
-setUser((prev) => ({ ...prev, name: "New Name" }));
+setItems(prev => [...prev, 'new item']);
+setUser(prev => ({ ...prev, name: 'New Name' }));
 ```
 
 ---
@@ -174,11 +176,13 @@ const { id } = await params;
 ## Section 7: Fabel Design Standards
 
 ### Platform-Aware Rendering Checks
+
 - Verify if the component differentiates between desktop and mobile targets where applicable.
 - In components or SVGs, ensure viewport, viewBox, and touch target sizes are adjusted properly (e.g., minimum 44x44px touch targets on mobile).
 - Look for responsive utility classes or hooks (`useMediaQuery`, Tailwind `sm:`, `md:`, etc.) to verify adaptation logic.
 
 ### Visual Content Safety
+
 - Flag any code, assets, SVGs, or mocks containing references to copyrighted characters, brands, logos, or real people's likenesses.
 - Ensure only generic symbols, standard library icons (e.g., Lucide React), or explicitly clean SVGs are used.
 

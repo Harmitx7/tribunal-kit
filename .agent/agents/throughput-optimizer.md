@@ -21,6 +21,7 @@ You audit **server-side files only** — `.ts` and `.js` in `/api`, `/server`, `
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing server throughput, you MUST inspect:
+
 1. `package.json` → Check Node.js version, HTTP client (`undici`, `axios`, native `fetch`), and caching engines (`lru-cache`, `redis`)
 2. Server entry points (`server.ts`, `app/api/`) → Identify event-loop blocking operations (`readFileSync`, `JSON.parse` on large payloads)
 3. Outbound HTTP requests & DB queries → Check for missing HTTP Keep-Alive dispatcher or serialized `await` chains inside loops
@@ -46,27 +47,27 @@ The #1 throughput killer in Node.js. A single 50ms sync call blocks ALL concurre
 
 ```typescript
 // ❌ BLOCKS EVENT LOOP: Synchronous file read in async handler
-app.get("/config", async (req, res) => {
-  const data = fs.readFileSync("/etc/config.json", "utf8"); // BLOCKS all requests
+app.get('/config', async (req, res) => {
+  const data = fs.readFileSync('/etc/config.json', 'utf8'); // BLOCKS all requests
   res.json(JSON.parse(data));
 });
 
 // ✅ APPROVED: Async file read — yields to event loop
-app.get("/config", async (req, res) => {
-  const data = await fs.promises.readFile("/etc/config.json", "utf8");
+app.get('/config', async (req, res) => {
+  const data = await fs.promises.readFile('/etc/config.json', 'utf8');
   res.json(JSON.parse(data));
 });
 
 // ❌ BLOCKS EVENT LOOP: JSON.parse on large payload (> 1MB) on main thread
-app.post("/import", async (req, res) => {
+app.post('/import', async (req, res) => {
   const data = JSON.parse(largeBuffer.toString()); // 50-200ms blocking
 });
 
 // ✅ APPROVED: Stream-parse large JSON
-import { parser } from "stream-json";
-import { streamArray } from "stream-json/streamers/StreamArray";
+import { parser } from 'stream-json';
+import { streamArray } from 'stream-json/streamers/StreamArray';
 
-app.post("/import", async (req, res) => {
+app.post('/import', async (req, res) => {
   const pipeline = req.pipe(parser()).pipe(streamArray());
   for await (const { value } of pipeline) {
     await processItem(value); // Non-blocking, item-by-item
@@ -74,11 +75,11 @@ app.post("/import", async (req, res) => {
 });
 
 // ❌ BLOCKS EVENT LOOP: Synchronous crypto operations
-const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, "sha512");
+const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512');
 
 // ✅ APPROVED: Async crypto
 const hash = await new Promise((resolve, reject) => {
-  crypto.pbkdf2(password, salt, 100000, 64, "sha512", (err, key) => {
+  crypto.pbkdf2(password, salt, 100000, 64, 'sha512', (err, key) => {
     err ? reject(err) : resolve(key);
   });
 });
@@ -101,7 +102,11 @@ async function getDashboard(userId: string) {
 
 // ✅ APPROVED: Parallel execution (300ms total — 3x faster)
 async function getDashboard(userId: string) {
-  const [user, orders, notifications] = await Promise.all([getUser(userId), getOrders(userId), getNotifications(userId)]);
+  const [user, orders, notifications] = await Promise.all([
+    getUser(userId),
+    getOrders(userId),
+    getNotifications(userId),
+  ]);
   return { user, orders, notifications };
 }
 
@@ -112,12 +117,12 @@ for (const id of userIds) {
 }
 
 // ✅ APPROVED: Parallel with controlled concurrency
-const results = await Promise.all(userIds.map((id) => fetchUser(id)));
+const results = await Promise.all(userIds.map(id => fetchUser(id)));
 
 // ✅ APPROVED: Batched concurrency for large arrays (avoid overwhelming DB)
-import pLimit from "p-limit";
+import pLimit from 'p-limit';
 const limit = pLimit(10); // Max 10 concurrent
-const results = await Promise.all(userIds.map((id) => limit(() => fetchUser(id))));
+const results = await Promise.all(userIds.map(id => limit(() => fetchUser(id))));
 ```
 
 ---
@@ -128,7 +133,7 @@ const results = await Promise.all(userIds.map((id) => limit(() => fetchUser(id))
 // ❌ MEMORY LEAK: Global cache with no eviction — grows unbounded
 const cache = new Map<string, any>(); // Lives forever, entries never removed
 
-app.get("/data/:id", async (req, res) => {
+app.get('/data/:id', async (req, res) => {
   if (!cache.has(req.params.id)) {
     cache.set(req.params.id, await fetchData(req.params.id));
   }
@@ -137,7 +142,7 @@ app.get("/data/:id", async (req, res) => {
 // After 100K unique IDs → hundreds of MB consumed → OOM crash
 
 // ✅ APPROVED: LRU cache with max size and TTL
-import { LRUCache } from "lru-cache";
+import { LRUCache } from 'lru-cache';
 const cache = new LRUCache<string, any>({
   max: 1000, // Maximum 1000 entries
   ttl: 1000 * 60 * 5, // 5-minute TTL
@@ -149,17 +154,17 @@ const id = setInterval(() => syncMetrics(), 30000);
 
 // ✅ APPROVED: Graceful shutdown clears interval
 const id = setInterval(() => syncMetrics(), 30000);
-process.on("SIGTERM", () => clearInterval(id));
-process.on("SIGINT", () => clearInterval(id));
+process.on('SIGTERM', () => clearInterval(id));
+process.on('SIGINT', () => clearInterval(id));
 
 // ❌ MEMORY LEAK: Event emitter listeners accumulate
-server.on("request", handler);
+server.on('request', handler);
 // If called repeatedly (hot reload) → MaxListenersExceededWarning
 
 // ✅ APPROVED: Remove listener on cleanup
-server.on("request", handler);
+server.on('request', handler);
 // On shutdown/reload:
-server.removeListener("request", handler);
+server.removeListener('request', handler);
 ```
 
 ---
@@ -168,20 +173,20 @@ server.removeListener("request", handler);
 
 ```typescript
 // ❌ MAIN THREAD: CPU-heavy operation blocks ALL requests
-app.post("/resize", async (req, res) => {
+app.post('/resize', async (req, res) => {
   const resized = sharp(buffer).resize(800, 600).toBuffer(); // 200-500ms blocking
   res.send(resized);
 });
 
 // ✅ APPROVED: Offload to Worker Thread
-import { Worker } from "worker_threads";
+import { Worker } from 'worker_threads';
 
-app.post("/resize", async (req, res) => {
-  const worker = new Worker("./workers/resize.js", {
+app.post('/resize', async (req, res) => {
+  const worker = new Worker('./workers/resize.js', {
     workerData: { buffer: req.body, width: 800, height: 600 },
   });
-  worker.on("message", (result) => res.send(result));
-  worker.on("error", (err) => res.status(500).json({ error: err.message }));
+  worker.on('message', result => res.send(result));
+  worker.on('error', err => res.status(500).json({ error: err.message }));
 });
 
 // Flag these operations as Worker Thread candidates:
@@ -198,16 +203,16 @@ app.post("/resize", async (req, res) => {
 
 ```typescript
 // ❌ BUFFER BLOAT: Entire file loaded into memory before sending
-app.get("/export", async (req, res) => {
+app.get('/export', async (req, res) => {
   const data = await db.orders.findMany(); // 50MB result set
   const csv = convertToCSV(data); // Another 50MB in memory
   res.send(csv); // Total: 100MB per request
 });
 
 // ✅ APPROVED: Stream directly to response
-app.get("/export", async (req, res) => {
-  res.setHeader("Content-Type", "text/csv");
-  res.setHeader("Transfer-Encoding", "chunked");
+app.get('/export', async (req, res) => {
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Transfer-Encoding', 'chunked');
 
   const cursor = db.orders.findMany({ cursor: true });
   for await (const batch of cursor) {
@@ -217,16 +222,16 @@ app.get("/export", async (req, res) => {
 });
 
 // ❌ BUFFER BLOAT: Reading entire upload before processing
-app.post("/upload", async (req, res) => {
+app.post('/upload', async (req, res) => {
   const body = await req.arrayBuffer(); // Entire file in memory
   await processFile(Buffer.from(body));
 });
 
 // ✅ APPROVED: Pipe stream directly
-app.post("/upload", async (req, res) => {
+app.post('/upload', async (req, res) => {
   const writeStream = fs.createWriteStream(`/uploads/${filename}`);
   req.pipe(writeStream);
-  writeStream.on("finish", () => res.json({ status: "uploaded" }));
+  writeStream.on('finish', () => res.json({ status: 'uploaded' }));
 });
 ```
 
@@ -237,15 +242,15 @@ app.post("/upload", async (req, res) => {
 ```typescript
 // ❌ NO KEEP-ALIVE: New TCP connection per outbound fetch
 async function callExternalAPI(data: any) {
-  const res = await fetch("https://api.external.com/v1/data", {
-    method: "POST",
+  const res = await fetch('https://api.external.com/v1/data', {
+    method: 'POST',
     body: JSON.stringify(data),
   });
   // Each call = DNS lookup + TCP handshake + TLS negotiation (100-300ms overhead)
 }
 
 // ✅ APPROVED: Reuse connections with http.Agent
-import { Agent } from "undici";
+import { Agent } from 'undici';
 
 const agent = new Agent({
   keepAliveTimeout: 30_000,
@@ -254,8 +259,8 @@ const agent = new Agent({
 });
 
 async function callExternalAPI(data: any) {
-  const res = await fetch("https://api.external.com/v1/data", {
-    method: "POST",
+  const res = await fetch('https://api.external.com/v1/data', {
+    method: 'POST',
     body: JSON.stringify(data),
     dispatcher: agent,
   });
@@ -279,7 +284,7 @@ do {
   const batch = await prisma.user.findMany({
     take: 100,
     ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
-    orderBy: { id: "asc" },
+    orderBy: { id: 'asc' },
   });
   for (const user of batch) {
     await sendEmail(user.email);

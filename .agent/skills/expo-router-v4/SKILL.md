@@ -18,6 +18,7 @@ skills:
 ## Mandatory Pre-Flight Context Inspection
 
 Before building mobile navigation or components:
+
 1. New Architecture Enforcement → Enable Fabric renderer and TurboModules in `app.json` (`"newArchEnabled": true`)
 2. Typed Routing → Use `expo-router` typed routes for safe navigation
 3. Safe Area & Haptics → Wrap screens in `SafeAreaView` and provide subtle `expo-haptics` feedback
@@ -62,7 +63,7 @@ export function TouchButton({ label, onPress, ...props }: TouchButtonProps) {
   return (
     <Pressable
       {...props}
-      onPress={(e) => {
+      onPress={e => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         onPress?.(e);
       }}

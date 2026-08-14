@@ -1,7 +1,7 @@
 {
   "name": "tribunal-kit",
-  "version": "6.0.1",
-  "description": "Your AI writes code that doesn't exist. Tribunal Kit stops it. The governance layer for AI coding agents — 51 specialists, 27 parallel reviewers, 183 skills, Rust core, MCP server. Works with Cursor, VSCode, Windsurf, Claude Code, and Aider.",
+  "version": "7.0.0",
+  "description": "Your AI writes code that doesn't exist. Tribunal Kit stops it. The governance layer for AI coding agents — 52 specialists, 28 parallel reviewers, 183 skills, Rust core, MCP server. Works with Cursor, VSCode, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
     "ai-agent",
@@ -80,9 +80,9 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "test": "npm run validate-payload && jest --runInBand --coverage",
-    "test:unit": "jest test/unit --coverage",
-    "test:integration": "jest test/integration --coverage",
+    "test": "npm run validate-payload && jest --runInBand --coverage --forceExit",
+    "test:unit": "jest test/unit --coverage --forceExit",
+    "test:integration": "jest test/integration --coverage --forceExit",
     "preversion": "node scripts/sync-version.js",
     "version": "node scripts/changelog.js && git add CHANGELOG.md",
     "changelog": "node scripts/changelog.js",
@@ -90,11 +90,12 @@
     "sync": "node scripts/sync-version.js",
     "validate-payload": "node scripts/validate-payload.js",
     "benchmark": "node scripts/benchmark.js",
+    "benchmark:stress": "node scripts/stress_benchmark.js",
     "benchmark:rust": "cargo build --release && node scripts/benchmark.js",
     "build:rust": "cargo build --release",
     "build:core": "cargo build --release --manifest-path crates/core/Cargo.toml",
     "test:rust": "cargo test --manifest-path crates/core/Cargo.toml",
-    "test:all": "npm run validate-payload && npm run test:rust && jest --runInBand --coverage",
+    "test:all": "npm run validate-payload && npm run test:rust && jest --runInBand --coverage --forceExit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "build": "npm run build:rust"
@@ -106,12 +107,12 @@
     "typescript": "^5.4.5"
   },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^6.0.1",
-    "@tribunal-kit/core-darwin-x64": "^6.0.1",
-    "@tribunal-kit/core-linux-arm64": "^6.0.1",
-    "@tribunal-kit/core-linux-x64": "^6.0.1",
-    "@tribunal-kit/core-win32-arm64": "^6.0.1",
-    "@tribunal-kit/core-win32-x64": "^6.0.1"
+    "@tribunal-kit/core-darwin-arm64": "^7.0.0",
+    "@tribunal-kit/core-darwin-x64": "^7.0.0",
+    "@tribunal-kit/core-linux-arm64": "^7.0.0",
+    "@tribunal-kit/core-linux-x64": "^7.0.0",
+    "@tribunal-kit/core-win32-arm64": "^7.0.0",
+    "@tribunal-kit/core-win32-x64": "^7.0.0"
   },
   "jest": {
     "testMatch": [

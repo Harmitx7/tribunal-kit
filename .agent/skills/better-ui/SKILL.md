@@ -20,11 +20,12 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering component polish or micro-interactions, you MUST inspect:
+
 1. Outer vs Inner Radius Formula (Section 32) → Enforce $\text{Radius}_{\text{outer}} = \text{Radius}_{\text{inner}} + \text{Padding}_{\text{inner}}$
 2. Transition Rules (Section 25) → Strictly prohibit `transition: all`; specify explicit property transitions
 3. Multi-Layer Shadows (Section 42) → Use ambient + direct lighting stacks and dark mode surface elevation highlights
 
-Distilled design engineering principles for transforming functional UIs into polished, state-of-the-art software interfaces, based on Jakub Krehel's *Details that make interfaces feel better*.
+Distilled design engineering principles for transforming functional UIs into polished, state-of-the-art software interfaces, based on Jakub Krehel's _Details that make interfaces feel better_.
 
 ---
 
@@ -40,7 +41,7 @@ Distilled design engineering principles for transforming functional UIs into pol
 
 - **Nested Border Radius Formula**: Outer border radius MUST equal inner border radius plus inner padding.
   $$\text{Radius}_{\text{outer}} = \text{Radius}_{\text{inner}} + \text{Padding}_{\text{inner}}$$
-  *Example*: If container padding is `16px` and inner avatar radius is `8px`, outer container radius MUST be `24px`.
+  _Example_: If container padding is `16px` and inner avatar radius is `8px`, outer container radius MUST be `24px`.
 - **Concentric Curves**: Avoid mismatched corner radii where an inner card has `rounded-2xl` inside an outer `rounded-md` container.
 - **Optical Center Adjustment**: Text inside pill buttons or badges often looks vertically low if mathematically centered. Shift text upwards by `1px` or adjust `line-height` so optics match mathematics.
 
@@ -72,20 +73,26 @@ Distilled design engineering principles for transforming functional UIs into pol
 .stagger-item {
   animation: entrance 250ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-.stagger-item:nth-child(1) { animation-delay: 0ms; }
-.stagger-item:nth-child(2) { animation-delay: 40ms; }
-.stagger-item:nth-child(3) { animation-delay: 80ms; }
+.stagger-item:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger-item:nth-child(2) {
+  animation-delay: 40ms;
+}
+.stagger-item:nth-child(3) {
+  animation-delay: 80ms;
+}
 ```
 
 ---
 
 ## Anti-Slop Table
 
-| Slop Pattern | Better UI Standard | Rationale |
-| --- | --- | --- |
-| `transition: all 0.3s` | Specific CSS property transitions | Eliminates layout thrashing & unintended color transitions |
-| Flat click targets without press feedback | `scale(0.97)` on `:active` | Provides tactile physical response |
-| Arbitrary inner vs outer radii | $\text{Radius}_{\text{outer}} = \text{Radius}_{\text{inner}} + \text{Padding}$ | Maintains geometric optical harmony |
+| Slop Pattern                              | Better UI Standard                                                             | Rationale                                                  |
+| ----------------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| `transition: all 0.3s`                    | Specific CSS property transitions                                              | Eliminates layout thrashing & unintended color transitions |
+| Flat click targets without press feedback | `scale(0.97)` on `:active`                                                     | Provides tactile physical response                         |
+| Arbitrary inner vs outer radii            | $\text{Radius}_{\text{outer}} = \text{Radius}_{\text{inner}} + \text{Padding}$ | Maintains geometric optical harmony                        |
 
 ---
 

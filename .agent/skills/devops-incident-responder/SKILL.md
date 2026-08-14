@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before responding to production outages or performing incident triage, you MUST inspect:
+
 1. Stabilization-First Rule (Section 25) → Immediately rollback/mitigate first (revert commit, flip flag, shed load); perform root cause analysis AFTER system is stable
 2. Circuit Breaker Severance (Section 42) → Sever failing downstream dependencies immediately to prevent cascading overload across the system
 3. Triage Hierarchy (Section 73) → Analyze metrics (what) → traces (where) → logs (why) sequentially to pinpoint root causes
@@ -74,7 +75,7 @@ const breaker = new CircuitBreaker(fetchUser, {
   resetTimeout: 30000, // Open the circuit (stop sending requests) for 30s
 });
 
-breaker.fallback(() => ({ id: "cached-user", status: "degraded" }));
+breaker.fallback(() => ({ id: 'cached-user', status: 'degraded' }));
 ```
 
 **Heavy Mitigation Tactics:**

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before selecting an operational mode, you MUST inspect:
+
 1. User prompt intent & keywords (Section 148 Mode Selection Rules) → Classify request type (TEACH, DEBUG, REVIEW, PLAN, BUILD, DISCOVER, SHIP, ORCHESTRATE)
 2. Mode Leakage Mitigation rules (Section 160) → Prevent writing unapproved code during DISCOVER or REVIEW modes
 3. Output format contracts → Ensure findings use labeled severity tags (CRITICAL / WARNING / SUGGESTION)

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing React 19+ components or hooks, you MUST inspect:
+
 1. React 19 APIs (`useActionState` vs deprecated `useFormState`, `use()` vs `useContext`, `ref` as prop vs deprecated `forwardRef`)
 2. React Compiler Memoization (Section 125) → Avoid manual `useMemo`/`useCallback` unless React Compiler is explicitly disabled
 3. State Destructuring Traps (Section 189) → Never destructure entire Zustand stores; use granular selectors `useStore(s => s.value)`
@@ -40,7 +41,7 @@ Before writing React 19+ components or hooks, you MUST inspect:
 ### `use()` — Replaces many useEffect patterns
 
 ```tsx
-import { use } from "react";
+import { use } from 'react';
 // Reads promises (suspends until resolved)
 function UserProfile({ userPromise }: { userPromise: Promise<User> }) {
   const user = use(userPromise); // suspends
@@ -56,11 +57,11 @@ function Admin({ isAdmin }: { isAdmin: boolean }) {
 ### `useActionState` — Form actions with state
 
 ```tsx
-import { useActionState } from "react"; // NOT useFormState
+import { useActionState } from 'react'; // NOT useFormState
 
 async function submitForm(prevState: FormState, formData: FormData) {
-  const email = formData.get("email") as string;
-  if (!email.includes("@")) return { error: "Invalid email" };
+  const email = formData.get('email') as string;
+  if (!email.includes('@')) return { error: 'Invalid email' };
   await saveToDatabase(email);
   return { error: null, success: true };
 }
@@ -71,7 +72,7 @@ function SignupForm() {
     <form action={formAction}>
       <input name="email" disabled={isPending} />
       {state.error && <p>{state.error}</p>}
-      <button disabled={isPending}>{isPending ? "Saving..." : "Submit"}</button>
+      <button disabled={isPending}>{isPending ? 'Saving...' : 'Submit'}</button>
     </form>
   );
 }
@@ -80,16 +81,19 @@ function SignupForm() {
 ### `useOptimistic` — Instant UI feedback
 
 ```tsx
-import { useOptimistic } from "react";
+import { useOptimistic } from 'react';
 function TodoList({ todos }: { todos: Todo[] }) {
-  const [optimistic, addOptimistic] = useOptimistic(todos, (current, newTodo: Todo) => [...current, newTodo]);
+  const [optimistic, addOptimistic] = useOptimistic(todos, (current, newTodo: Todo) => [
+    ...current,
+    newTodo,
+  ]);
   async function handleAdd(formData: FormData) {
-    addOptimistic({ id: crypto.randomUUID(), title: formData.get("title"), pending: true });
-    await saveTodo(formData.get("title") as string);
+    addOptimistic({ id: crypto.randomUUID(), title: formData.get('title'), pending: true });
+    await saveTodo(formData.get('title') as string);
   }
   return (
     <form action={handleAdd}>
-      {optimistic.map((t) => (
+      {optimistic.map(t => (
         <li key={t.id} style={{ opacity: t.pending ? 0.5 : 1 }}>
           {t.title}
         </li>
@@ -102,11 +106,11 @@ function TodoList({ todos }: { todos: Todo[] }) {
 ### `useFormStatus` — Button pending state (must be INSIDE `<form>`)
 
 ```tsx
-import { useFormStatus } from "react-dom";
+import { useFormStatus } from 'react-dom';
 // ❌ TRAP: Cannot be called in the same component as <form>
 function SubmitButton() {
   const { pending } = useFormStatus(); // reads nearest parent form
-  return <button disabled={pending}>{pending ? "Saving..." : "Save"}</button>;
+  return <button disabled={pending}>{pending ? 'Saving...' : 'Save'}</button>;
 }
 ```
 
@@ -187,16 +191,16 @@ const CountDispatchCtx = createContext<Dispatch<Action>>(() => {});
 ### Zustand (preferred for global state)
 
 ```tsx
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 const useStore = create<Store>()(
   persist(
     (set, get) => ({
       count: 0,
-      increment: () => set((s) => ({ count: s.count + 1 })),
+      increment: () => set(s => ({ count: s.count + 1 })),
       getDoubled: () => get().count * 2,
     }),
-    { name: "my-store" },
+    { name: 'my-store' },
   ),
 );
 // ❌ TRAP: Do NOT destructure the whole store — causes re-render on every change
@@ -206,19 +210,19 @@ const useStore = create<Store>()(
 ### Jotai (preferred for derived/atomic state)
 
 ```tsx
-import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
+import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 const countAtom = atom(0);
-const doubledAtom = atom((get) => get(countAtom) * 2); // derived atom
+const doubledAtom = atom(get => get(countAtom) * 2); // derived atom
 // ❌ TRAP: atomWithStorage is from jotai/utils — NOT from jotai
-import { atomWithStorage } from "jotai/utils";
+import { atomWithStorage } from 'jotai/utils';
 ```
 
 ### React Query / TanStack Query
 
 ```tsx
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 const { data, isPending, error } = useQuery({
-  queryKey: ["user", userId],
+  queryKey: ['user', userId],
   queryFn: () => fetchUser(userId),
   staleTime: 5 * 60 * 1000, // don't refetch for 5 minutes
 });
@@ -226,14 +230,14 @@ const { data, isPending, error } = useQuery({
 const qc = useQueryClient();
 const mutation = useMutation({
   mutationFn: updateUser,
-  onMutate: async (newUser) => {
-    await qc.cancelQueries({ queryKey: ["user", newUser.id] });
-    const prev = qc.getQueryData(["user", newUser.id]);
-    qc.setQueryData(["user", newUser.id], newUser);
+  onMutate: async newUser => {
+    await qc.cancelQueries({ queryKey: ['user', newUser.id] });
+    const prev = qc.getQueryData(['user', newUser.id]);
+    qc.setQueryData(['user', newUser.id], newUser);
     return { prev };
   },
-  onError: (_, __, ctx) => qc.setQueryData(["user"], ctx?.prev),
-  onSettled: () => qc.invalidateQueries({ queryKey: ["user"] }),
+  onError: (_, __, ctx) => qc.setQueryData(['user'], ctx?.prev),
+  onSettled: () => qc.invalidateQueries({ queryKey: ['user'] }),
 });
 ```
 
@@ -255,7 +259,7 @@ const mutation = useMutation({
 
 ```tsx
 // React 19: ref is now a prop (no forwardRef needed)
-function Input({ ref, ...props }: ComponentProps<"input"> & { ref?: Ref<HTMLInputElement> }) {
+function Input({ ref, ...props }: ComponentProps<'input'> & { ref?: Ref<HTMLInputElement> }) {
   return <input ref={ref} {...props} />;
 }
 // ❌ TRAP: forwardRef is deprecated in React 19 — still works but not needed

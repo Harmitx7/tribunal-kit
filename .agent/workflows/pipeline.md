@@ -22,18 +22,19 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before running 3-pass pipeline generation, you MUST inspect:
+
 1. Pipeline Engine Script (`.agent/scripts/pipeline_engine.js`) → Verify availability and options (`--task`, `--file`, `--phase`)
 2. Context Token Allocation -> Keep Pass 2 builder prompt under 2,500 tokens (loading max 3 essential skill key-rules)
 3. Zero-LLM Pass 3 Validator → Run deterministic security, lint, and type checks on generated code prior to Human Gate submission
 
 ## When to Use /pipeline
 
-| Use `/pipeline` when...                         | Use something else when...                     |
-| :---------------------------------------------- | :--------------------------------------------- |
-| Code generation quality is the top priority     | Quick single-line fix → direct edit            |
-| Context window saturation is causing weak output | Need full tribunal review → `/generate`        |
-| Building UI components, APIs, or complex logic  | Exploring options → `/brainstorm`              |
-| You want maximum LLM attention on code synthesis | Planning architecture → `/plan`                |
+| Use `/pipeline` when...                          | Use something else when...              |
+| :----------------------------------------------- | :-------------------------------------- |
+| Code generation quality is the top priority      | Quick single-line fix → direct edit     |
+| Context window saturation is causing weak output | Need full tribunal review → `/generate` |
+| Building UI components, APIs, or complex logic   | Exploring options → `/brainstorm`       |
+| You want maximum LLM attention on code synthesis | Planning architecture → `/plan`         |
 
 ---
 
@@ -65,6 +66,7 @@ Output: Structured spec JSON with task_type, stack, essential_skills, and constr
 ## Phase 2 — Build (Focused Generation)
 
 Assembles a minimal prompt containing ONLY:
+
 - The spec from Phase 1
 - 2-3 essential skill key-rules (condensed)
 - Target file content (if modifying existing code)
@@ -74,6 +76,7 @@ node .agent/scripts/pipeline_engine.js --task "$TASK" --file "$FILE" --phase bui
 ```
 
 **What is NOT in the prompt (saving ~10,000 tokens):**
+
 - ❌ Full GEMINI.md master rules
 - ❌ Agent persona definitions
 - ❌ Tribunal gate rules
@@ -94,6 +97,7 @@ node .agent/scripts/pipeline_engine.js --phase validate --code ./output.tsx
 ```
 
 Checks:
+
 - ✅ OWASP security patterns (eval, innerHTML, hardcoded secrets, SQL injection)
 - ✅ TypeScript `any` usage
 - ✅ Empty catch blocks
@@ -111,6 +115,7 @@ node .agent/scripts/pipeline_engine.js --task "$TASK" --file "$FILE" --output re
 ```
 
 Or in dry-run mode:
+
 ```bash
 node .agent/scripts/pipeline_engine.js --task "$TASK" --file "$FILE" --dry-run
 ```
@@ -131,25 +136,25 @@ node .agent/scripts/pipeline_engine.js --task "$TASK" --file "$FILE" --dry-run
 
 ## Comparison: /generate vs /pipeline
 
-| Dimension                     | `/generate` (current) | `/pipeline` (new)       |
-| :---------------------------- | :-------------------- | :---------------------- |
-| System prompt tokens          | ~12,000–18,000        | ~2,500 (Pass 2)         |
-| % context for actual task     | ~11%                  | ~75%                    |
-| Governance overhead           | ~89%                  | ~25%                    |
-| Post-gen validation           | LLM-based (expensive) | Deterministic (free)    |
-| Skills loaded per generation  | 6–10                  | 2–3                     |
-| Self-healing retry            | Full re-generation    | Targeted feedback loop  |
-| Backward compatibility        | N/A                   | 100% (additive)         |
+| Dimension                    | `/generate` (current) | `/pipeline` (new)      |
+| :--------------------------- | :-------------------- | :--------------------- |
+| System prompt tokens         | ~12,000–18,000        | ~2,500 (Pass 2)        |
+| % context for actual task    | ~11%                  | ~75%                   |
+| Governance overhead          | ~89%                  | ~25%                   |
+| Post-gen validation          | LLM-based (expensive) | Deterministic (free)   |
+| Skills loaded per generation | 6–10                  | 2–3                    |
+| Self-healing retry           | Full re-generation    | Targeted feedback loop |
+| Backward compatibility       | N/A                   | 100% (additive)        |
 
 ---
 
 ## After /pipeline — Next Steps
 
-| Outcome                       | Next Command                        |
-| :---------------------------- | :---------------------------------- |
-| Code generated, needs review  | → `/review` for human audit         |
-| Code has issues after retry   | → `/generate` with full tribunal    |
-| Code passed, ready to test    | → `/test` for test generation       |
-| Code passed, ready to deploy  | → `/deploy` with pre-flight checks  |
+| Outcome                      | Next Command                       |
+| :--------------------------- | :--------------------------------- |
+| Code generated, needs review | → `/review` for human audit        |
+| Code has issues after retry  | → `/generate` with full tribunal   |
+| Code passed, ready to test   | → `/test` for test generation      |
+| Code passed, ready to deploy | → `/deploy` with pre-flight checks |
 
 ---

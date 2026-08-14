@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing C# code or ASP.NET Minimal APIs, you MUST inspect:
+
 1. CancellationToken Propagation (Section 191) → Always pass `CancellationToken ct` to async methods and EF Core queries
 2. Database-Level Projection (Section 283) → Project queries to DTOs using `.Select(...)` BEFORE `.ToListAsync()` to avoid N+1 and memory overhead
 3. Non-Blocking Async Invocations (Section 355) → Always `await` async tasks; strictly ban `.Result` or `.Wait()` to prevent thread deadlocks

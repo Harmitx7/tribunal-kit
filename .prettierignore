@@ -1,0 +1,13 @@
+node_modules
+dist
+target
+coverage
+scratch
+.aider.conf.yml
+.git
+.tribunal
+*.tgz
+Cargo.lock
+package-lock.json
+benchmark-results.json
+benchmark-stress-results.json

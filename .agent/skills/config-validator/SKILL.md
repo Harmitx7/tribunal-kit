@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before parsing or mutating configuration files or environment variables, you MUST inspect:
+
 1. Fail-Fast Boundary Parsing (Section 25) → Validate configurations at startup boundary via Zod schema (`ConfigSchema.parse()`); fail fast on invalid configs
 2. Referential Integrity Audit (Section 60) → Audit referenced assets (scripts, SKILL.md, workflow paths) for physical existence before execution
 3. Atomic File Writes (Section 111) → Write updated configs to `.tmp` files and perform OS atomic rename to prevent file corruption during crashes
@@ -41,12 +42,12 @@ Before parsing or mutating configuration files or environment variables, you MUS
 Never allow a system to boot, run, or proceed into a workflow if the underlying configuration is invalid. Parse configurations at the absolute boundary.
 
 ```typescript
-import { z } from "zod";
+import { z } from 'zod';
 
 // ❌ VULNERABLE: Implicit Trust
 // Assumes the JSON file is correct. Will crash randomly deep in the execution stack
 // if 'maxRetries' is missing or set to a string.
-const config = JSON.parse(fs.readFileSync("./.agent/config.json", "utf8"));
+const config = JSON.parse(fs.readFileSync('./.agent/config.json', 'utf8'));
 runAgent(config.maxRetries);
 
 // ✅ SAFE: Boundary Validation via Zod
@@ -54,15 +55,15 @@ const ConfigSchema = z.object({
   version: z.string().regex(/^\d+\.\d+\.\d+$/),
   maxRetries: z.number().min(0).max(10).default(3),
   enabledSkills: z.array(z.string()),
-  environment: z.enum(["development", "production", "test"]),
+  environment: z.enum(['development', 'production', 'test']),
   apiEndpoint: z.string().url().optional(),
 });
 
 try {
-  const rawData = JSON.parse(fs.readFileSync("./.agent/config.json", "utf8"));
+  const rawData = JSON.parse(fs.readFileSync('./.agent/config.json', 'utf8'));
   const config = ConfigSchema.parse(rawData); // Throws heavily detailed error instantly
 } catch (err) {
-  logger.fatal("System boot aborted. Invalid config.json:", err.errors);
+  logger.fatal('System boot aborted. Invalid config.json:', err.errors);
   process.exit(1);
 }
 ```
@@ -81,14 +82,14 @@ function auditAgentDirectory(config: Config) {
   const missingFiles = [];
 
   for (const skill of config.enabledSkills) {
-    const skillPath = path.join(".agent/skills", skill, "SKILL.md");
+    const skillPath = path.join('.agent/skills', skill, 'SKILL.md');
     if (!fs.existsSync(skillPath)) {
       missingFiles.push(`Skill manifest definition missing: ${skillPath}`);
     }
   }
 
   if (missingFiles.length > 0) {
-    throw new Error(`Referential Integrity Failure:\n${missingFiles.join("\n")}`);
+    throw new Error(`Referential Integrity Failure:\n${missingFiles.join('\n')}`);
   }
 }
 ```
@@ -106,12 +107,12 @@ Treat environment variables exactly like JSON configs: apply a rigid schema mapp
 // export a strictly validated object once.
 
 // src/env.ts
-import { z } from "zod";
+import { z } from 'zod';
 
 const EnvSchema = z.object({
   DATABASE_URL: z.string().url(),
   PORT: z.coerce.number().default(3000), // Transforms string "3000" to number 3000
-  NODE_ENV: z.enum(["development", "production"]).default("development"),
+  NODE_ENV: z.enum(['development', 'production']).default('development'),
   API_KEY: z.string().min(16), // Ensures keys aren't empty or mock data
 });
 

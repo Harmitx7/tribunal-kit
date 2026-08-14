@@ -20,8 +20,9 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before optimizing UI text or error messages, you MUST inspect:
+
 1. Target UI labels & modals → Check for vague "Submit" or "OK" buttons and passive corporate jargon
-2. Active Verb Rules (Section 24) → Ensure action buttons start with specific verbs describing outcomes (e.g. *Save changes*, *Download export*)
+2. Active Verb Rules (Section 24) → Ensure action buttons start with specific verbs describing outcomes (e.g. _Save changes_, _Download export_)
 3. Actionable Error Messages (Section 30) → Pair error descriptions with explicit resolution steps
 
 Optimize user interface text, button labels, error messaging, and helper copy for maximum clarity and minimum cognitive friction.
@@ -31,29 +32,33 @@ Optimize user interface text, button labels, error messaging, and helper copy fo
 ## 4 UX Copy Rules
 
 ### 1. Active & Action-Oriented Verbs
+
 - Action buttons MUST begin with strong, specific verbs describing the result.
-  - ❌ *Submit* → ✅ *Save changes*
-  - ❌ *Click here* → ✅ *Download export*
-  - ❌ *OK* → ✅ *Delete project*
+  - ❌ _Submit_ → ✅ _Save changes_
+  - ❌ _Click here_ → ✅ _Download export_
+  - ❌ _OK_ → ✅ _Delete project_
 
 ### 2. Actionable & Helpful Error Messages
+
 - Error messages MUST explain what happened AND how to resolve it.
-  - ❌ *Invalid input.*
-  - ✅ *Invalid email format. Enter an email like user@example.com.*
-  - ❌ *Error 403.*
-  - ✅ *You don't have permission to edit this document. Request access from the owner.*
+  - ❌ _Invalid input._
+  - ✅ _Invalid email format. Enter an email like user@example.com._
+  - ❌ _Error 403._
+  - ✅ _You don't have permission to edit this document. Request access from the owner._
 
 ### 3. Eliminate Passive Jargon
+
 - Remove internal technical jargon and passive phrasing.
-  - ❌ *Your request has been processed successfully by the system queue.*
-  - ✅ *Settings updated.*
+  - ❌ _Your request has been processed successfully by the system queue._
+  - ✅ _Settings updated._
 
 ### 4. Direct Confirmation Dialogs
+
 - Modal headers must state the explicit consequence. Modal action buttons must match the title verb.
-  - Title: *Delete workspace?*
-  - Body: *All projects, keys, and member permissions in this workspace will be permanently removed.*
-  - Primary Button: *Delete workspace* (Destructive red)
-  - Secondary Button: *Cancel*
+  - Title: _Delete workspace?_
+  - Body: _All projects, keys, and member permissions in this workspace will be permanently removed._
+  - Primary Button: _Delete workspace_ (Destructive red)
+  - Secondary Button: _Cancel_
 
 ---
 

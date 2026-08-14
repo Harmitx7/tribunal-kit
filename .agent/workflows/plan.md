@@ -20,6 +20,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before drafting implementation plans or technical blueprints, you MUST inspect:
+
 1. Workspace Context & Dependencies (`package.json`, `tsconfig.json`) → Confirm current stack capabilities and path mappings
 2. Existing Architecture & Directory Layout → Review current module boundaries to prevent redundant architectural patterns
 3. Zero Code Modification Rule → Restrict outputs in `/plan` mode to research, architectural design, and plan artifact generation; ban code generation before Plan approval

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before building React Native / Expo UI components, you MUST inspect:
+
 1. Safe Area Setup → Use `SafeAreaProvider` + `useSafeAreaInsets()` for granular notch/inset handling instead of raw `SafeAreaView`
 2. Virtualized List Rendering (Section 130) → Use `FlashList` (Shopify) or `FlatList` with `estimatedItemSize` instead of `ScrollView` for large lists
 3. Native Thread Animations (Section 99) → Use `react-native-reanimated` with `useSharedValue` to keep animations off the JS bridge thread

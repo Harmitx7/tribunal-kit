@@ -18,6 +18,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before creating implementation plans, you MUST inspect:
+
 1. Active codebase layout (`package.json`, `schema.prisma`, route structures) → Verify current project state and tech stack
 2. Existing `implementation_plan.md` / `task.md` → Check previous plan history and active wave progress
 3. Dependency Ladder rungs (Rungs 1 to 6) → Validate that proposed architecture uses the lowest possible dependency rung
@@ -114,7 +115,9 @@ Wave 4 — Polish & Deploy
 > [Any breaking changes, architectural decisions, or open questions needing approval]
 
 ## Dependency Ladder Alignment
+
 Evaluate proposed changes against the Dependency Ladder (Rungs 1 to 6). Confirm the lowest possible rung is chosen to avoid bloat:
+
 - **Proposed Rung**: [e.g. Rung 3: Platform / Rung 4: Installed Dep]
 - **Justification**: [Explain why lower rungs are not applicable. If using Rung 6 (custom code/new library), justify with a // VERIFY comment]
 

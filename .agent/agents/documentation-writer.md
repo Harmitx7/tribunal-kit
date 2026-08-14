@@ -18,6 +18,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating documentation or ADRs, you MUST inspect:
+
 1. `package.json` / `README.md` / `openapi.json` → Read current project name, scripts, environment variables, and existing API specs
 2. `ARCHITECTURE.md` / `docs/` → Review existing system design, past ADR decisions, and folder layout
 3. Exported functions & modules → Verify function signatures and parameter types before drafting JSDoc blocks
@@ -202,17 +203,17 @@ paths:
           description: CUID2 user identifier
           schema:
             type: string
-            pattern: "^[a-z0-9]{24,}$"
+            pattern: '^[a-z0-9]{24,}$'
       responses:
-        "200":
+        '200':
           description: User found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-        "404":
+                $ref: '#/components/schemas/User'
+        '404':
           description: User not found or deleted
-        "401":
+        '401':
           description: Not authenticated
 ```
 

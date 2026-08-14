@@ -8,24 +8,24 @@
  *         line number reporting, configurable --max-mutants.
  */
 
-const fs = require("fs");
-const path = require("path");
-const { spawnSync } = require("child_process");
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
 
 // ── Mutation Definitions ──────────────────────────────────────────────────────
 const MUTATIONS = [
-  { name: "Strict Equality", pattern: /===/g, replacement: "!==" },
-  { name: "Strict Inequality", pattern: /!==/g, replacement: "===" },
-  { name: "Logical AND", pattern: /&&/g, replacement: "||" },
-  { name: "Logical OR", pattern: /\|\|/g, replacement: "&&" },
-  { name: "True -> False", pattern: /\btrue\b/g, replacement: "false" },
-  { name: "False -> True", pattern: /\bfalse\b/g, replacement: "true" },
-  { name: "Greater Than", pattern: /(?<!=)>(?!=)/g, replacement: "<" },
-  { name: "Less Than", pattern: /(?<!=)<(?!=)/g, replacement: ">" },
+  { name: 'Strict Equality', pattern: /===/g, replacement: '!==' },
+  { name: 'Strict Inequality', pattern: /!==/g, replacement: '===' },
+  { name: 'Logical AND', pattern: /&&/g, replacement: '||' },
+  { name: 'Logical OR', pattern: /\|\|/g, replacement: '&&' },
+  { name: 'True -> False', pattern: /\btrue\b/g, replacement: 'false' },
+  { name: 'False -> True', pattern: /\bfalse\b/g, replacement: 'true' },
+  { name: 'Greater Than', pattern: /(?<!=)>(?!=)/g, replacement: '<' },
+  { name: 'Less Than', pattern: /(?<!=)<(?!=)/g, replacement: '>' },
   {
-    name: "Return Early Removal",
+    name: 'Return Early Removal',
     pattern: /\breturn\b/g,
-    replacement: "/* return */",
+    replacement: '/* return */',
   },
 ];
 
@@ -34,17 +34,17 @@ const MUTATIONS = [
 function buildCodeMask(source) {
   const mask = new Array(source.length).fill(true);
   let inString = false;
-  let stringChar = "";
+  let stringChar = '';
   let inBlockComment = false;
   let inLineComment = false;
 
   for (let i = 0; i < source.length; i++) {
     const ch = source[i];
-    const next = source[i + 1] || "";
+    const next = source[i + 1] || '';
 
     if (inBlockComment) {
       mask[i] = false;
-      if (ch === "*" && next === "/") {
+      if (ch === '*' && next === '/') {
         mask[i + 1] = false;
         inBlockComment = false;
         i++;
@@ -54,7 +54,7 @@ function buildCodeMask(source) {
 
     if (inLineComment) {
       mask[i] = false;
-      if (ch === "\n") {
+      if (ch === '\n') {
         inLineComment = false;
       }
       continue;
@@ -62,7 +62,7 @@ function buildCodeMask(source) {
 
     if (inString) {
       mask[i] = false;
-      if (ch === "\\") {
+      if (ch === '\\') {
         i++;
         if (i < source.length) mask[i] = false;
         continue;
@@ -74,7 +74,7 @@ function buildCodeMask(source) {
     }
 
     // Entering block comment
-    if (ch === "/" && next === "*") {
+    if (ch === '/' && next === '*') {
       mask[i] = false;
       mask[i + 1] = false;
       inBlockComment = true;
@@ -83,7 +83,7 @@ function buildCodeMask(source) {
     }
 
     // Entering line comment
-    if (ch === "/" && next === "/") {
+    if (ch === '/' && next === '/') {
       mask[i] = false;
       mask[i + 1] = false;
       inLineComment = true;
@@ -92,7 +92,7 @@ function buildCodeMask(source) {
     }
 
     // Entering string
-    if (ch === '"' || ch === "'" || ch === "`") {
+    if (ch === '"' || ch === "'" || ch === '`') {
       mask[i] = false;
       inString = true;
       stringChar = ch;
@@ -110,7 +110,7 @@ function buildCodeMask(source) {
 function getLineNumber(source, charIndex) {
   let line = 1;
   for (let i = 0; i < charIndex && i < source.length; i++) {
-    if (source[i] === "\n") line++;
+    if (source[i] === '\n') line++;
   }
   return line;
 }
@@ -123,7 +123,7 @@ let backupPath = null;
 function safeRestore() {
   if (targetFile && originalContent) {
     try {
-      fs.writeFileSync(targetFile, originalContent, "utf-8");
+      fs.writeFileSync(targetFile, originalContent, 'utf-8');
     } catch {
       // Last resort: tell user where the backup is
       if (backupPath) {
@@ -141,29 +141,29 @@ function safeRestore() {
 }
 
 // 🛑 ABSOLUTE SAFETY NET
-process.on("SIGINT", () => {
+process.on('SIGINT', () => {
   safeRestore();
-  console.error("\n[Tribunal] Mutation Engine aborted. Target file restored.");
+  console.error('\n[Tribunal] Mutation Engine aborted. Target file restored.');
   process.exit(1);
 });
 
-process.on("uncaughtException", (err) => {
+process.on('uncaughtException', err => {
   safeRestore();
-  console.error("\n[Tribunal] Critical error. File restored.", err);
+  console.error('\n[Tribunal] Critical error. File restored.', err);
   process.exit(1);
 });
 
-process.on("exit", safeRestore);
+process.on('exit', safeRestore);
 
 // ── CLI Argument Parsing ──────────────────────────────────────────────────────
 function parseCliArgs(argv) {
   const args = argv.slice(2);
   let maxMutants = 5; // default per mutation type
   let fileToMutate = null;
-  let testCommandParts = [];
+  const testCommandParts = [];
 
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === "--max-mutants" && args[i + 1]) {
+    if (args[i] === '--max-mutants' && args[i + 1]) {
       maxMutants = parseInt(args[i + 1], 10) || 5;
       i++; // skip next
     } else if (!fileToMutate) {
@@ -173,7 +173,7 @@ function parseCliArgs(argv) {
     }
   }
 
-  return { fileToMutate, testCommand: testCommandParts.join(" "), maxMutants };
+  return { fileToMutate, testCommand: testCommandParts.join(' '), maxMutants };
 }
 
 // ── Main Engine ───────────────────────────────────────────────────────────────
@@ -185,9 +185,9 @@ function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
     process.exit(1);
   }
 
-  originalContent = fs.readFileSync(targetFile, "utf-8");
-  backupPath = targetFile + ".bak";
-  fs.writeFileSync(backupPath, originalContent, "utf-8");
+  originalContent = fs.readFileSync(targetFile, 'utf-8');
+  backupPath = targetFile + '.bak';
+  fs.writeFileSync(backupPath, originalContent, 'utf-8');
 
   console.log(`\n━━━ Tribunal Mutation Engine v2.1 ━━━`);
   console.log(`Target:       ${fileToMutate}`);
@@ -195,11 +195,9 @@ function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
   console.log(`Max/type:     ${maxMutantsPerType}`);
   console.log(`\nExecuting baseline test run...`);
 
-  const baseline = spawnSync(testCommand, { shell: true, stdio: "pipe" });
+  const baseline = spawnSync(testCommand, { shell: true, stdio: 'pipe' });
   if (baseline.status !== 0) {
-    console.error(
-      `ERROR: Baseline test failed! Fix your tests before mutating.`,
-    );
+    console.error(`ERROR: Baseline test failed! Fix your tests before mutating.`);
     console.error(baseline.stderr.toString());
     safeRestore();
     process.exit(1);
@@ -220,10 +218,7 @@ function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
     const matchIndices = [];
     let m;
 
-    while (
-      (m = regex.exec(originalContent)) !== null &&
-      matchIndices.length < maxMutantsPerType
-    ) {
+    while ((m = regex.exec(originalContent)) !== null && matchIndices.length < maxMutantsPerType) {
       // Context-aware: skip matches that are inside strings or comments
       const matchStart = m.index;
       const matchEnd = m.index + m[0].length - 1;
@@ -250,12 +245,10 @@ function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
         mutatedString +
         originalContent.substring(index + length);
 
-      fs.writeFileSync(targetFile, mutatedContent, "utf-8");
+      fs.writeFileSync(targetFile, mutatedContent, 'utf-8');
 
-      process.stdout.write(
-        `  [Mutant #${totalMutants}] ${mutation.name} (L${lineNum}) ... `,
-      );
-      const run = spawnSync(testCommand, { shell: true, stdio: "pipe" });
+      process.stdout.write(`  [Mutant #${totalMutants}] ${mutation.name} (L${lineNum}) ... `);
+      const run = spawnSync(testCommand, { shell: true, stdio: 'pipe' });
 
       if (run.status !== 0) {
         console.log(`✅ KILLED`);
@@ -272,12 +265,11 @@ function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
       }
 
       // Restore immediately after each mutant
-      fs.writeFileSync(targetFile, originalContent, "utf-8");
+      fs.writeFileSync(targetFile, originalContent, 'utf-8');
     }
   }
 
-  const score =
-    totalMutants > 0 ? Math.round((killedMutants / totalMutants) * 100) : 100;
+  const score = totalMutants > 0 ? Math.round((killedMutants / totalMutants) * 100) : 100;
 
   console.log(`\n━━━ Mutation Summary ━━━`);
   console.log(`  Total Mutants:  ${totalMutants}`);
@@ -288,14 +280,10 @@ function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
   if (survivors.length > 0) {
     console.log(`\n━━━ Surviving Mutants (Weak Test Coverage) ━━━`);
     survivors.forEach((s, i) => {
-      console.log(
-        `  ${i + 1}. Line ${s.line}: ${s.type}  (${s.original} → ${s.mutated})`,
-      );
+      console.log(`  ${i + 1}. Line ${s.line}: ${s.type}  (${s.original} → ${s.mutated})`);
     });
     console.log(`\n  ⚠ These lines have no test that catches the mutation.`);
-    console.log(
-      `    Add assertions that would FAIL if the operator were swapped.`,
-    );
+    console.log(`    Add assertions that would FAIL if the operator were swapped.`);
   }
 
   process.exit(score < 80 ? 1 : 0);
@@ -305,13 +293,9 @@ function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
 const { fileToMutate, testCommand, maxMutants } = parseCliArgs(process.argv);
 
 if (!fileToMutate || !testCommand) {
-  console.log(
-    `Usage: node mutation_runner.js <target_file> [--max-mutants N] <test_command>`,
-  );
+  console.log(`Usage: node mutation_runner.js <target_file> [--max-mutants N] <test_command>`);
   console.log(`\nExamples:`);
-  console.log(
-    `  node mutation_runner.js src/math.js "npx jest src/math.test.js"`,
-  );
+  console.log(`  node mutation_runner.js src/math.js "npx jest src/math.test.js"`);
   console.log(
     `  node mutation_runner.js src/auth.js --max-mutants 10 "npx jest test/auth.test.js"`,
   );

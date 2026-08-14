@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing web audio feedback, you MUST inspect:
+
 1. Autoplay Policy Rules (Section 78) → Initialize `AudioContext` strictly after/inside user gesture interaction handlers
 2. Gain Volume Caps → Keep gain volume subtle ($\le 0.15$ max gain) to prevent user auditory discomfort
 3. Mute Preference Toggle (Section 66) → Provide a persistent sound mute option in settings or local storage

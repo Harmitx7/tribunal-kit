@@ -20,10 +20,10 @@
  *   node .agent/scripts/impact_classifier.js --task "Fix typo in comment"
  */
 
-"use strict";
+'use strict';
 
-const path = require("path");
-const { parseArgs } = require("./_utils");
+const path = require('path');
+const { parseArgs } = require('./_utils');
 
 // Critical file patterns that automatically force Tier 3
 const CRITICAL_PATTERNS = [
@@ -37,11 +37,21 @@ const CRITICAL_PATTERNS = [
   /jwt/i,
   /crypto/i,
   /secret/i,
-  /eval/i
+  /eval/i,
 ];
 
 // Low-impact extensions / patterns for Tier 0
-const FAST_PASS_EXTENSIONS = [".css", ".scss", ".less", ".md", ".txt", ".json", ".svg", ".png", ".jpg"];
+const FAST_PASS_EXTENSIONS = [
+  '.css',
+  '.scss',
+  '.less',
+  '.md',
+  '.txt',
+  '.json',
+  '.svg',
+  '.png',
+  '.jpg',
+];
 
 /**
  * Classify impact based on files, diff content, and task description
@@ -49,16 +59,21 @@ const FAST_PASS_EXTENSIONS = [".css", ".scss", ".less", ".md", ".txt", ".json", 
  * @returns {Object} Tier payload { tier, score, reasoning, maxReviewers, requireGate }
  */
 function classifyImpact(opts = {}) {
-  if (!opts || typeof opts !== "object") opts = {};
+  if (!opts || typeof opts !== 'object') opts = {};
   const rawFiles = opts.files;
   const files = Array.isArray(rawFiles)
-    ? rawFiles.filter(f => typeof f === "string" && f.length > 0)
-    : (typeof rawFiles === "string" && rawFiles.length > 0 ? [rawFiles] : []);
-  const diff = typeof opts.diff === "string" ? opts.diff : "";
-  const task = typeof opts.task === "string" ? opts.task : "";
-  const lineCount = typeof opts.lineCount === "number" && Number.isFinite(opts.lineCount) && opts.lineCount >= 0
-    ? opts.lineCount
-    : (diff.length > 0 ? diff.split("\n").length : 0);
+    ? rawFiles.filter(f => typeof f === 'string' && f.length > 0)
+    : typeof rawFiles === 'string' && rawFiles.length > 0
+      ? [rawFiles]
+      : [];
+  const diff = typeof opts.diff === 'string' ? opts.diff : '';
+  const task = typeof opts.task === 'string' ? opts.task : '';
+  const lineCount =
+    typeof opts.lineCount === 'number' && Number.isFinite(opts.lineCount) && opts.lineCount >= 0
+      ? opts.lineCount
+      : diff.length > 0
+        ? diff.split('\n').length
+        : 0;
 
   let score = 0.2; // Base baseline score
   const reasoning = [];
@@ -69,39 +84,47 @@ function classifyImpact(opts = {}) {
 
   if (isCriticalFile || isCriticalTask) {
     score += 0.6;
-    reasoning.push("Critical path detected (auth/security/schema/payment)");
+    reasoning.push('Critical path detected (auth/security/schema/payment)');
   }
 
   // Check 2: File Extensions & Types
   if (files.length > 0) {
-    const allFastPass = files.every(f => FAST_PASS_EXTENSIONS.includes(path.extname(f).toLowerCase()));
+    const allFastPass = files.every(f =>
+      FAST_PASS_EXTENSIONS.includes(path.extname(f).toLowerCase()),
+    );
     if (allFastPass) {
       score -= 0.25;
-      reasoning.push("All modified files are low-risk assets (styles/docs/assets)");
+      reasoning.push('All modified files are low-risk assets (styles/docs/assets)');
     }
   }
 
   // Check 3: Line Count & Diff Size
   if (lineCount <= 10) {
     score -= 0.15;
-    reasoning.push("Small diff size (<= 10 lines)");
+    reasoning.push('Small diff size (<= 10 lines)');
   } else if (lineCount > 100) {
     score += 0.3;
-    reasoning.push("Large diff size (> 100 lines)");
+    reasoning.push('Large diff size (> 100 lines)');
   } else if (lineCount > 30) {
     score += 0.15;
-    reasoning.push("Medium diff size (30-100 lines)");
+    reasoning.push('Medium diff size (30-100 lines)');
   }
 
   // Check 4: Task Keywords
-  const taskLower = task.toLowerCase();
+  const taskStr =
+    typeof task === 'string'
+      ? task
+      : task && typeof task === 'object'
+        ? task.task || task.spec || ''
+        : String(task || '');
+  const taskLower = taskStr.toLowerCase();
   if (/typo|fix comment|format|lint|rename|css|style|docs|readme/i.test(taskLower)) {
     score -= 0.2;
-    reasoning.push("Task signals simple edit or formatting");
+    reasoning.push('Task signals simple edit or formatting');
   }
   if (/refactor|rewrite|architecture|redesign|migration|overhaul|security/i.test(taskLower)) {
     score += 0.35;
-    reasoning.push("Task signals structural refactor or security review");
+    reasoning.push('Task signals structural refactor or security review');
   }
 
   // Clamp score between 0.0 and 1.0
@@ -120,7 +143,7 @@ function classifyImpact(opts = {}) {
     tier = 1;
     maxReviewers = 1;
     requireGate = false;
-  } else if (score < 0.70 && !isCriticalFile) {
+  } else if (score < 0.7 && !isCriticalFile) {
     tier = 2;
     maxReviewers = 2;
     requireGate = true; // Conditional gate
@@ -136,30 +159,32 @@ function classifyImpact(opts = {}) {
     maxReviewers,
     requireGate,
     reasoning,
-    fastPass: tier === 0
+    fastPass: tier === 0,
   };
 }
 
 // Direct CLI Execution
 if (require.main === module) {
   const args = parseArgs(process.argv);
-  const files = args.files ? args.files.split(",") : [];
+  const files = args.files ? args.files.split(',') : [];
   const result = classifyImpact({
     files,
-    diff: args.diff || "",
-    task: args.task || "",
-    lineCount: args.lines ? parseInt(args.lines, 10) : undefined
+    diff: args.diff || '',
+    task: args.task || '',
+    lineCount: args.lines ? parseInt(args.lines, 10) : undefined,
   });
 
   if (args.json) {
     console.log(JSON.stringify(result, null, 2));
   } else {
     console.log(`\n━━━ Adaptive Governance Impact Tier ━━━━━━━━━━━━━`);
-    console.log(`  Tier:         Tier ${result.tier} (${result.fastPass ? "FAST-PASS" : result.tier === 1 ? "EXPRESS" : result.tier === 2 ? "TARGETED" : "GAUNTLET"})`);
+    console.log(
+      `  Tier:         Tier ${result.tier} (${result.fastPass ? 'FAST-PASS' : result.tier === 1 ? 'EXPRESS' : result.tier === 2 ? 'TARGETED' : 'GAUNTLET'})`,
+    );
     console.log(`  Score:        ${result.score}`);
     console.log(`  Max Reviewers:${result.maxReviewers}`);
     console.log(`  Require Gate: ${result.requireGate}`);
-    console.log(`  Reasoning:    ${result.reasoning.join(" | ") || "Baseline assessment"}`);
+    console.log(`  Reasoning:    ${result.reasoning.join(' | ') || 'Baseline assessment'}`);
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
   }
 }

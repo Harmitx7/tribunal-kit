@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering Apple-style UIs or gesture-driven components, you MUST inspect:
+
 1. Interruptible Physics-Based Springs (Section 22) → Use physics springs (`stiffness: 300, damping: 24, mass: 0.8`) instead of fixed-duration CSS cubic-beziers
 2. Translucent Backdrop Blur (Section 44) → Limit `backdrop-filter: blur(20px) saturate(180%)` strictly to sticky headers or modals to avoid GPU scroll jank
 3. Optical Letter-Spacing (Section 72) → Apply inverse tracking (`-0.025em` for titles, `+0.015em` for small captions) based on SF Pro font scaling
@@ -41,10 +42,10 @@ Apple interfaces do NOT use fixed-duration cubic-beziers for interactive element
 ```javascript
 // Framer Motion / Motion React Spring Config
 const appleSpring = {
-  type: "spring",
+  type: 'spring',
   stiffness: 300,
   damping: 24,
-  mass: 0.8
+  mass: 0.8,
 };
 ```
 
@@ -87,11 +88,11 @@ Apple depth relies on subtle, multi-layered backdrop blur and border highlights:
 
 ## Anti-Slop Table
 
-| Anti-Pattern | Apple Design Solution | Rationale |
-| --- | --- | --- |
-| Rigid linear/ease transitions | Physics-based spring curves (`stiffness: 300, damping: 24`) | Simulates real-world physical momentum |
-| Opaque static dropdowns | Translucent backdrop blur panel (`blur(20px) saturate(180%)`) | Preserves spatial context beneath UI |
-| Sudden state jumps | Interruptible velocity-preserving spring animations | Prevents visual jarring during rapid user input |
+| Anti-Pattern                  | Apple Design Solution                                         | Rationale                                       |
+| ----------------------------- | ------------------------------------------------------------- | ----------------------------------------------- |
+| Rigid linear/ease transitions | Physics-based spring curves (`stiffness: 300, damping: 24`)   | Simulates real-world physical momentum          |
+| Opaque static dropdowns       | Translucent backdrop blur panel (`blur(20px) saturate(180%)`) | Preserves spatial context beneath UI            |
+| Sudden state jumps            | Interruptible velocity-preserving spring animations           | Prevents visual jarring during rapid user input |
 
 ---
 

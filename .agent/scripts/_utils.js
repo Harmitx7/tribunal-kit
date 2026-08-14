@@ -8,46 +8,46 @@
  *   const { findAgentDir, walkDir, loadJson } = require('./_utils');
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
-const { RED, RESET } = require("./_colors");
+const fs = require('fs');
+const path = require('path');
+const { RED, RESET } = require('./_colors');
 
 // ── Default Skip Directories ────────────────────────────────────────────────
 const DEFAULT_SKIP_DIRS = new Set([
-  "node_modules",
-  ".git",
-  "dist",
-  "build",
-  ".next",
-  ".agent",
-  "__pycache__",
-  ".venv",
-  "venv",
-  "coverage",
-  ".turbo",
-  ".svelte-kit",
-  ".nuxt",
-  ".output",
+  'node_modules',
+  '.git',
+  'dist',
+  'build',
+  '.next',
+  '.agent',
+  '__pycache__',
+  '.venv',
+  'venv',
+  'coverage',
+  '.turbo',
+  '.svelte-kit',
+  '.nuxt',
+  '.output',
 ]);
 
 // ── Default Source Extensions ───────────────────────────────────────────────
 const SOURCE_EXTENSIONS = new Set([
-  ".ts",
-  ".tsx",
-  ".js",
-  ".jsx",
-  ".mjs",
-  ".cjs",
-  ".py",
-  ".rs",
-  ".go",
-  ".java",
-  ".cs",
-  ".rb",
-  ".vue",
-  ".svelte",
+  '.ts',
+  '.tsx',
+  '.js',
+  '.jsx',
+  '.mjs',
+  '.cjs',
+  '.py',
+  '.rs',
+  '.go',
+  '.java',
+  '.cs',
+  '.rb',
+  '.vue',
+  '.svelte',
 ]);
 
 // ── Agent Directory Discovery ───────────────────────────────────────────────
@@ -62,7 +62,7 @@ function findAgentDir(startDir) {
   const root = path.parse(current).root;
 
   while (current !== root) {
-    const candidate = path.join(current, ".agent");
+    const candidate = path.join(current, '.agent');
     if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) {
       return candidate;
     }
@@ -83,7 +83,7 @@ function findAgentDir(startDir) {
  * @returns {boolean}
  */
 function hasNpm(dir) {
-  return fs.existsSync(path.join(dir, "package.json"));
+  return fs.existsSync(path.join(dir, 'package.json'));
 }
 
 /**
@@ -93,7 +93,7 @@ function hasNpm(dir) {
  */
 function loadJson(filePath) {
   try {
-    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
   } catch {
     return null;
   }
@@ -164,8 +164,7 @@ function countFiles(dir, skipDirs = DEFAULT_SKIP_DIRS) {
       return;
     }
     for (const e of entries) {
-      if (e.isDirectory() && !skipDirs.has(e.name))
-        _count(path.join(d, e.name));
+      if (e.isDirectory() && !skipDirs.has(e.name)) _count(path.join(d, e.name));
       else if (e.isFile()) count++;
     }
   }
@@ -189,31 +188,31 @@ function parseArgs(argv, schema = {}) {
 
   // Set defaults
   for (const [key, def] of Object.entries(schema)) {
-    flags[key] = def.default ?? (def.type === "boolean" ? false : null);
+    flags[key] = def.default ?? (def.type === 'boolean' ? false : null);
   }
 
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
 
-    if (arg === "-h" || arg === "--help") {
+    if (arg === '-h' || arg === '--help') {
       flags.help = true;
       continue;
     }
 
-    if (arg.startsWith("--")) {
+    if (arg.startsWith('--')) {
       const flagName = arg.slice(2);
       const schemaDef = schema[flagName];
 
-      if (schemaDef && schemaDef.type === "boolean") {
+      if (schemaDef && schemaDef.type === 'boolean') {
         flags[flagName] = true;
       } else if (schemaDef && i + 1 < argv.length) {
         const val = argv[++i];
-        flags[flagName] = schemaDef.type === "number" ? Number(val) : val;
+        flags[flagName] = schemaDef.type === 'number' ? Number(val) : val;
       } else {
         // Unknown flag, store as boolean
         flags[flagName] = true;
       }
-    } else if (arg.startsWith("-") && arg.length === 2) {
+    } else if (arg.startsWith('-') && arg.length === 2) {
       // Short flag — treat as boolean
       flags[arg.slice(1)] = true;
     } else {
@@ -226,7 +225,7 @@ function parseArgs(argv, schema = {}) {
 
 // ── Command Runner ──────────────────────────────────────────────────────────
 
-const WINDOWS_CMD_SHIMS = new Set(["npm", "npx", "pnpm", "yarn", "bun", "bunx"]);
+const WINDOWS_CMD_SHIMS = new Set(['npm', 'npx', 'pnpm', 'yarn', 'bun', 'bunx']);
 
 /**
  * Select the executable that should be passed to spawnSync.
@@ -239,11 +238,11 @@ const WINDOWS_CMD_SHIMS = new Set(["npm", "npx", "pnpm", "yarn", "bun", "bunx"])
  */
 function normalizeCommand(cmd, platform = process.platform) {
   const lowerCaseCommand = cmd.toLowerCase();
-  const hasPath = cmd.includes("/") || cmd.includes("\\\\");
+  const hasPath = cmd.includes('/') || cmd.includes('\\\\');
   if (
-    platform === "win32" &&
+    platform === 'win32' &&
     !hasPath &&
-    !lowerCaseCommand.endsWith(".cmd") &&
+    !lowerCaseCommand.endsWith('.cmd') &&
     WINDOWS_CMD_SHIMS.has(lowerCaseCommand)
   ) {
     return `${cmd}.cmd`;
@@ -261,22 +260,22 @@ function normalizeCommand(cmd, platform = process.platform) {
  * @returns {{ status: number, stdout: string, stderr: string, ok: boolean }}
  */
 function runCommand(cmd, args = [], opts = {}) {
-  const { spawnSync } = require("child_process");
+  const { spawnSync } = require('child_process');
   const executable = normalizeCommand(cmd);
 
   const result = spawnSync(executable, args, {
-    encoding: "utf8",
+    encoding: 'utf8',
     timeout: opts.timeout || 120000,
     cwd: opts.cwd || process.cwd(),
-    shell: process.platform === "win32",
-    stdio: opts.stdio || "pipe",
+    shell: process.platform === 'win32',
+    stdio: opts.stdio || 'pipe',
     ...opts,
   });
 
   return {
     status: result.status ?? 1,
-    stdout: (result.stdout || "").toString(),
-    stderr: (result.stderr || "").toString(),
+    stdout: (result.stdout || '').toString(),
+    stderr: (result.stderr || '').toString(),
     ok: result.status === 0,
   };
 }

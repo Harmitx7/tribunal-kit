@@ -99,12 +99,12 @@ project-name/
    Add to `nuxt.config.ts`:
 
    ```ts
-   import tailwindcss from "@tailwindcss/vite";
+   import tailwindcss from '@tailwindcss/vite';
    export default defineNuxtConfig({
      vite: {
        plugins: [tailwindcss()],
      },
-     css: ["~/assets/css/main.css"],
+     css: ['~/assets/css/main.css'],
    });
    ```
 
@@ -112,7 +112,7 @@ project-name/
    In `app/assets/css/main.css`:
 
    ```css
-   @import "tailwindcss";
+   @import 'tailwindcss';
    @theme {
      --color-primary: oklch(0.6 0.15 150);
    }

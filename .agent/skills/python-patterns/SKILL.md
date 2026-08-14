@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before architecting Python projects or selecting frameworks, you MUST inspect:
+
 1. Typed Data Models over Dicts (Section 15) → Use Pydantic models or `@dataclass` for structured data; ban un-typed `dict` passing
 2. Specific Exception Handling (Section 16) → Catch explicit exceptions (`ValueError`, `AppError`); ban bare `except:` or generic `except Exception:` swallowing
 3. Pathlib Modern API (Section 17) → Use `pathlib.Path` for cross-platform filesystem operations; ban legacy `os.path`

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating UI layouts or visual code, you MUST inspect:
+
 1. Structural Layout Variance (Section 24) → Vary structural layout across sections; ban uniform 3-card bento grids
 2. OKLCH Perceptual Palette (Section 30) → Declare all color tokens using OKLCH color space for perceptual uniformity
 3. Zero Truncation Rule (Section 39) → Strictly ban `// TODO: add remaining items` placeholder comments; generate complete production-ready code
@@ -31,21 +32,27 @@ Inject high-agency visual judgment and layout variance into AI-generated interfa
 ## 4 High-Agency Visual Constraints
 
 ### 1. Structural Layout Variance
+
 Never use standard symmetrical layouts by default. Vary structural axes across sections:
+
 - **Hero**: Asymmetric 60/40 split or left-aligned stacked text with offset app preview frame.
 - **Features**: Alternating 2-column image/text rhythm or horizontal scroll cards.
 - **CTA**: Single full-width card with progressive backdrop blur overlay.
 
 ### 2. OKLCH Perceptual Palette Generation
+
 Always generate color schemes in OKLCH:
+
 - Background: `oklch(0.98 0.005 240)`
 - Foreground: `oklch(0.18 0.01 240)`
 - Accent: `oklch(0.62 0.22 250)`
 
 ### 3. GSAP / Motion Engineering Integration
+
 When animation is requested, use explicit GSAP timelines with custom easing curves (`power3.out`, `expo.out`), avoiding default linear transitions.
 
 ### 4. Zero Output Truncation
+
 Never output placeholder `// TODO: add remaining items` comments in UI code. Generate full, production-ready JSX/CSS markup.
 
 ---

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before cleaning up UI styles, you MUST inspect:
+
 1. `DESIGN.md` / `package.json` → Check Tailwind CSS configuration and accessibility primitives (`Base UI`, `Radix`)
 2. The 5-Step Deslop Protocol (Section 33) → Fix spacing violations, establish 3-tier typographic hierarchy, and eliminate harsh borders
 3. Anti-Slop Table (Section 43) → Replace hardcoded arbitrary paddings and low-contrast text with tokenized CSS variables
@@ -51,13 +52,13 @@ Enforces an opinionated UI baseline to clean up sloppy code and prevent AI-gener
 
 ## Anti-Slop Table
 
-| Slop Pattern | Baseline Fix | Rationale |
-| --- | --- | --- |
-| `color: #888` on dark background | `color: var(--text-muted)` (min 4.5:1 ratio) | Improves readability and WCAG compliance |
-| `padding: 15px 23px` | `padding: 16px 24px` | Aligns to 8px structural grid |
-| `border: 1px solid black` | `border: 1px solid rgba(0,0,0,0.1)` | Removes harsh, distracting lines |
-| Mixed font sizes (13px, 14px, 15px) | Standardized scale (12px, 14px, 16px) | Establishes clear visual hierarchy |
-| Plain text buttons without states | Rounded button with hover/active press feedback | Indicates clickability and tactile response |
+| Slop Pattern                        | Baseline Fix                                    | Rationale                                   |
+| ----------------------------------- | ----------------------------------------------- | ------------------------------------------- |
+| `color: #888` on dark background    | `color: var(--text-muted)` (min 4.5:1 ratio)    | Improves readability and WCAG compliance    |
+| `padding: 15px 23px`                | `padding: 16px 24px`                            | Aligns to 8px structural grid               |
+| `border: 1px solid black`           | `border: 1px solid rgba(0,0,0,0.1)`             | Removes harsh, distracting lines            |
+| Mixed font sizes (13px, 14px, 15px) | Standardized scale (12px, 14px, 16px)           | Establishes clear visual hierarchy          |
+| Plain text buttons without states   | Rounded button with hover/active press feedback | Indicates clickability and tactile response |
 
 ---
 

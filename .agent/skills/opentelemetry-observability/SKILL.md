@@ -18,6 +18,7 @@ skills:
 ## Mandatory Pre-Flight Context Inspection
 
 Before instrumenting applications:
+
 1. Vendor-Neutral Telemetry → Use standard OpenTelemetry SDKs (OTLP over gRPC/HTTP)
 2. Trace Propagation → Propagate `traceparent` W3C headers across HTTP and message queues
 3. Sampling Policy → Implement head/tail sampling to reduce telemetry storage costs by 80%
@@ -35,7 +36,7 @@ const loginCounter = meter.createCounter('user_logins_total', {
 });
 
 export async function handleLogin(userId: string) {
-  return tracer.startActiveSpan('handleLogin', async (span) => {
+  return tracer.startActiveSpan('handleLogin', async span => {
     try {
       span.setAttribute('user.id', userId);
       loginCounter.add(1, { status: 'success' });

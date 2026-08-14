@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering luxury or soft-depth UI interfaces, you MUST inspect:
+
 1. Multi-Layer Shadow Recipe (Section 25) → Blend low-opacity multi-layered ambient shadows ($\le 6\%$ opacity per layer) instead of heavy single drop shadows
 2. Spatial Cadence (Section 37) → Increase container padding by $1.5\times$ ($\ge 24\text{px}$) to provide generous negative space
 3. Color Harmonies (Section 40) → Use quiet, low-chroma monochromatic OKLCH palettes for background and typography
@@ -31,7 +32,9 @@ Craft high-end, luxury interfaces featuring soft depth, gentle surface transitio
 ## 4 Soft Design Rules
 
 ### 1. Multi-Layer Soft Ambient Depth
+
 - Avoid harsh drop-shadows. Use low-opacity multi-layered ambient lighting shadows:
+
 ```css
 .soft-depth-card {
   background: var(--surface);
@@ -44,12 +47,15 @@ Craft high-end, luxury interfaces featuring soft depth, gentle surface transitio
 ```
 
 ### 2. Generous Negative Space Cadence
+
 - Increase component padding by 1.5x (e.g. `24px` -> `36px`, `32px` -> `48px`). Generous negative space is the ultimate indicator of luxury software.
 
 ### 3. Subdued Monochrome Color Harmonies
+
 - Use quiet, low-chroma monochromatic palettes (`oklch(0.97 0.005 240)` background with `oklch(0.22 0.01 240)` primary text).
 
 ### 4. Fluid, Low-Velocity Transitions
+
 - Transition speeds should be gentle ($\approx 250\text{ms}$) with strong ease-out curves (`cubic-bezier(0.16, 1, 0.3, 1)`).
 
 ---

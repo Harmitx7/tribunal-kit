@@ -1,0 +1,10 @@
+name: 'Async functions must handle errors'
+description: 'Every async function should have error handling'
+scope: 'src/**/*.ts, src/**/*.tsx'
+when: file_modified
+severity: info
+must:
+  - pattern: "regex:(try\\s*\\{|.catch\\(|\\.catch\\s*\\()"
+    message: 'Async functions should include try/catch or .catch() for error handling'
+metadata:
+  tags: ['resilience', 'error-handling']

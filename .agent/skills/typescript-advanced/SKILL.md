@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing complex TypeScript types or library abstractions, you MUST inspect:
+
 1. Zero `as any` Cast Rule (Section 15) → Fix the underlying type signature or use `as unknown as T` with explicit reasoning comment; ban `as any`
 2. Discriminated Unions for State Machine Modeling (Section 62) → Model multi-state objects with tagged discriminated unions for compile-time exhaustive checks
 3. The `satisfies` Operator vs Type Assertion (Section 193) → Use `satisfies` to validate types without widening object literals
@@ -41,7 +42,7 @@ Before writing complex TypeScript types or library abstractions, you MUST inspec
 ```typescript
 // ✅ Constrained generics — T must have an id
 function findById<T extends { id: string }>(items: T[], id: string): T | undefined {
-  return items.find((item) => item.id === id);
+  return items.find(item => item.id === id);
 }
 
 // ✅ Multiple constraints
@@ -54,9 +55,9 @@ function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
   return obj[key];
 }
 
-const user = { name: "Alice", age: 30 };
-const name = getProperty(user, "name"); // type: string
-const age = getProperty(user, "age"); // type: number
+const user = { name: 'Alice', age: 30 };
+const name = getProperty(user, 'name'); // type: string
+const age = getProperty(user, 'age'); // type: number
 // getProperty(user, "email");           // ❌ Compile error — "email" not in keyof
 
 // ✅ Default generic parameters
@@ -64,7 +65,7 @@ function createState<T = string>(initial: T): { value: T; set: (v: T) => void } 
   let value = initial;
   return {
     value,
-    set: (v) => {
+    set: v => {
       value = v;
     },
   };
@@ -119,7 +120,7 @@ function renderUser(state: RequestState<User>) {
 // ✅ Type-level if/else
 type IsString<T> = T extends string ? true : false;
 
-type A = IsString<"hello">; // true
+type A = IsString<'hello'>; // true
 type B = IsString<42>; // false
 
 // ✅ Extract return type of async functions
@@ -184,21 +185,25 @@ type OnlyStrings = StringKeys<{ name: string; age: number; email: string }>;
 
 ```typescript
 // ✅ Type-safe string patterns
-type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";
+type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 type APIRoute = `/api/${string}`;
 type EventName = `on${Capitalize<string>}`;
 
 // ✅ Practical: CSS unit types
-type CSSUnit = "px" | "rem" | "em" | "vh" | "vw" | "%";
+type CSSUnit = 'px' | 'rem' | 'em' | 'vh' | 'vw' | '%';
 type CSSValue = `${number}${CSSUnit}`;
 
-const width: CSSValue = "100px"; // ✅
+const width: CSSValue = '100px'; // ✅
 // const bad: CSSValue = "100";     // ❌ Compile error
 
 // ✅ Route parameter extraction
-type ExtractParams<T extends string> = T extends `${string}:${infer Param}/${infer Rest}` ? Param | ExtractParams<Rest> : T extends `${string}:${infer Param}` ? Param : never;
+type ExtractParams<T extends string> = T extends `${string}:${infer Param}/${infer Rest}`
+  ? Param | ExtractParams<Rest>
+  : T extends `${string}:${infer Param}`
+    ? Param
+    : never;
 
-type UserRouteParams = ExtractParams<"/users/:userId/posts/:postId">;
+type UserRouteParams = ExtractParams<'/users/:userId/posts/:postId'>;
 // → "userId" | "postId"
 ```
 
@@ -213,16 +218,16 @@ type ColorMap = Record<string, [number, number, number] | string>;
 // With `as` — loses specificity
 const colorsAs = {
   red: [255, 0, 0],
-  green: "#00ff00",
+  green: '#00ff00',
 } as ColorMap;
-colorsAs.red.map((x) => x); // ❌ Error: string | number[] has no .map
+colorsAs.red.map(x => x); // ❌ Error: string | number[] has no .map
 
 // With `satisfies` — keeps literal types
 const colors = {
   red: [255, 0, 0],
-  green: "#00ff00",
+  green: '#00ff00',
 } satisfies ColorMap;
-colors.red.map((x) => x); // ✅ TypeScript knows it's a tuple
+colors.red.map(x => x); // ✅ TypeScript knows it's a tuple
 colors.green.toUpperCase(); // ✅ TypeScript knows it's a string
 ```
 
@@ -292,11 +297,11 @@ Awaited<T>; // Unwrap Promise<T> recursively
 
 ```typescript
 // ❌ BAD: Non-null assertion
-const element = document.getElementById("app")!;
+const element = document.getElementById('app')!;
 
 // ✅ GOOD: Narrowing
-const element = document.getElementById("app");
-if (!element) throw new Error("Missing #app element");
+const element = document.getElementById('app');
+if (!element) throw new Error('Missing #app element');
 // element is now guaranteed non-null
 ```
 

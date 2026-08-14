@@ -3,6 +3,33 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [7.0.0] — 2026-08-09 — 🏛️ Codename: Sovereign Covenant Protocol & CI/CD Defense Suite
+
+### 🚀 CI/CD Pipeline Defense Suite & Automated Repair Subsystem
+
+- **CI/CD Pipeline Reviewer Agent (`@pipeline-reviewer`)**: Added dedicated DevOps/CI reviewer agent (`.agent/agents/pipeline-reviewer.md`) enforcing 10 automated checks (`CI-01` to `CI-10`) covering deprecated actions, `pull_request_target` pwn vectors, concurrency mutexes, `write-all` permissions, secret leakage, unredacted tokens, script injection in `run:` steps, missing step timeouts, Dockerfile root execution, and GitLab CI syntax.
+- **Pre-Deploy CI/CD Tribunal Gate (`/tribunal-cicd`)**: Added `/tribunal-cicd` 5-reviewer gate (`pipeline-reviewer`, `security-auditor`, `dependency-reviewer`, `resilience-reviewer`, `precedence-reviewer`) for auditing workflow definitions and deployment pipelines before merge.
+- **Automated CI Failure Diagnosis & Log Repair Loop (`/fix-ci`)**: Added `/fix-ci` workflow (`.agent/workflows/fix-ci.md`) providing a 4-step diagnostic loop that parses raw runner logs (lockfile drift, matrix mismatches, missing secrets, test timeouts) and synthesizes minimal, validated repairs.
+- **Deterministic Zero-Dependency CI/CD Validator (`cicd_validator.js`)**: Created high-performance validator script (`.agent/scripts/cicd_validator.js`) that verifies `.github/workflows/*.yml`, `.gitlab-ci.yml`, and `Dockerfile` configurations locally in under 10ms.
+- **CI/CD Validator Test Suite (`cicd_validator.test.js`)**: Added 6 comprehensive unit tests validating action versions, concurrency controls, timeout definitions, and permission boundaries.
+
+### 📜 Sovereign Covenant Protocol: NeuroSymbolic Agent Behavioral Contract & Flight Trace Subsystem
+
+- **AI Agent Behavioral Contract Testing (`tk contract`)**: Created a zero-dependency contract evaluation engine (`.agent/scripts/contract_engine.js`) that enforces team invariants, structural boundaries, and forbidden/required code patterns before code is committed to disk.
+- **Failure Context Snapshot & Replay Engine (`.agent/scripts/trace_engine.js`)**: Integrated Option 1 Hybrid session tracing. When a contract check yields a `block` or `warn` violation, the engine auto-saves a lightweight **Failure Context Snapshot** (`.tribunal/traces/`) capturing the violation line, code snippet, and Git branch context for CLI replay via `tk contract replay <id>`.
+- **Declarative YAML Contract Schema (`.tribunal/contracts/`)**: Introduced human-readable YAML contract specifications supporting glob pattern scoping (`scope`), exclusions (`exclude`), rule exception lists (`except`), severity levels (`block`, `warn`, `info`), literal strings, and `regex:` expressions.
+- **Starter Contract Scaffolding (`tk contract init`)**: Added 3 production starter contracts (`no-console-log.yaml`, `no-any-type.yaml`, `require-error-handling.yaml`) scaffolded into `.tribunal/contracts/`.
+- **MCP Server Proactive Tool (`verify_contracts`)**: Registered `verify_contracts` in `bin/mcp-server.js` allowing AI coding agents in Cursor, VSCode, Windsurf, or Claude Desktop to self-verify code against team behavioral contracts _before_ making edits.
+- **Case Law Bridge (`tk contract generate --from-case <id>`)**: Built a seamless bridge from Case Law precedents (`tk case`) to auto-generate contract rules, preventing past AI coding errors from recurring.
+- **Slash Workflow Command (`/contract`)**: Created `.agent/workflows/contract.md` workflow guide for one-command contract administration and validation.
+- **Workspace Status & Pre-Push Hook Integration**: Extended `npx tribunal-kit status` to report active contract rule counts and updated `dist/index.d.ts` with complete TypeScript interfaces (`Contract`, `ContractViolation`, `VerifyContractsInput`, `cmdContract`).
+
+### 🛡️ Codebase Quality, Audit Resolution & Test Infrastructure
+
+- **ESLint 9 & Prettier Modernization**: Configured flat config ignores, created `.prettierignore` for clean format passes, and eliminated `no-throw-literal` antipatterns in `mcp-server.js` with structured `RpcError`.
+- **Full Test Suite & Checklist Verification**: Reached 100% clean passes across 41 test suites (383/383 tests passing) and all priority tiers of `checklist.js` (Secret Scan, Lint, TypeScript, Tests).
+- **HyperSparse Routing Index Alignment**: Synchronized `routing_index.json` to 52 specialized agents and 40 workflows.
+
 ## [6.0.1] — 2026-08-07
 
 ### ⚡ HyperSparse Router, MCP Modernization (2025-03-26) & Governance Architecture
@@ -35,7 +62,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Terminal Status Dashboard (`cmd_status` in `crates/core/src/main.rs`)**: Upgraded terminal status output with real-time bridge freshness tracking (fresh/stale/missing), context token compression stats, and 21-reviewer pipeline readiness indicators.
 - **Guardrail Engine & Pre-Deploy Integration (`.agent/scripts/verify_all.js`)**: Integrated Step 7 (Rust Core Tests) into `verify_all.js` and added `ruleRustModuleRegistration` to `guardrail_engine.js` for strict binary/wrapper module alignment.
 
-
 ## [5.8.6] — 2026-07-28
 
 ### ✨ Features & Architecture Enhancements
@@ -67,7 +93,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Reviewer Count Harmonization**: Standardized parallel reviewer classification across `integrity_manifest.js`, `scripts/sync-version.js`, `tribunal-full.md`, `README.md`, and `package.json` to 20 reviewers (including `throughput-optimizer`).
 - **Version Sync Enhancement**: Updated `scripts/sync-version.js` to verify and align `optionalDependencies` (`@tribunal-kit/core-*-*`) in `package.json` whenever the package version is bumped.
 
-
 ## [5.8.4] — 2026-07-22
 
 ### ✨ Features & Enhancements
@@ -79,7 +104,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Canonical Helper Deduplication**: Replaced duplicate inline `findAgentDir` implementations across `case_law_manager.js`, `context_broker.js`, `skill_integrator.js`, `swarm_dispatcher.js`, and `skill_evolution.js` with canonical imports from `_utils.js`.
 - **Zero-Latency Async Version Check**: Integrated `dist/utils/version.js`'s non-blocking background fetch and 1-hour local disk cache (`.tribunal-kit-update-cache.json`) into the legacy CLI path, eliminating 5-second HTTP delays on startup.
 - **Expanded Command Parity**: Enabled native access to all 17 CLI commands (including `align`, `compile`, `memory`, `guardrail`, and `optimize-skill`) through the `bin/tribunal-kit.js` entry point.
-- **SkillOpt Self-Evolution Engine**: Implemented the full SkillOpt pipeline from the *Automated Skill Optimization for Large Language Models* research paper. A new `optimize-skill` CLI subcommand (`tk optimize-skill --target <skill> "<harness>"`) runs multi-epoch optimization loops that automatically refine any SKILL.md using LLM-proposed patches, harness-evaluated scoring, and Rust-accelerated deduplication — all without external API dependencies beyond the user's existing LLM key.
+- **SkillOpt Self-Evolution Engine**: Implemented the full SkillOpt pipeline from the _Automated Skill Optimization for Large Language Models_ research paper. A new `optimize-skill` CLI subcommand (`tk optimize-skill --target <skill> "<harness>"`) runs multi-epoch optimization loops that automatically refine any SKILL.md using LLM-proposed patches, harness-evaluated scoring, and Rust-accelerated deduplication — all without external API dependencies beyond the user's existing LLM key.
 - **Hybrid Rust Core + JS Harness Architecture**: The optimization loop is split between a high-performance Rust core (`optimize.rs`) for deterministic patch merging, Levenshtein similarity deduplication, and strict schema validation, and a JS orchestrator (`optimize.js`) for LLM calls, harness execution, and epoch management. This ensures sub-millisecond merge/dedup operations while keeping LLM interaction flexible.
 - **Rust `optimize-step` Subcommand**: Added `OptimizeStep` to the Rust `tribunal-core` binary with `merge-patches` and `dedup-patches` actions. Merge applies multiple text patches sequentially to a base document. Dedup uses normalized Levenshtein similarity (configurable threshold, default 0.85) to eliminate near-duplicate patch proposals.
 - **CLI Routing**: Added `optimize-skill` command to `cli.js` with lazy-loaded `dist/commands/optimize.js` module. Supports `--target`, `--epochs`, `--candidates`, `--threshold`, and `--harness-timeout` flags.
@@ -171,7 +196,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ### ✨ Features
 
-- **Omniscience Cognitive Alignment Engine (OCAE)**: Deployed a groundbreaking cognitive intelligence architecture that aligns *any* model orchestrated by Tribunal Kit with supreme reasoning and thinking loops. 
+- **Omniscience Cognitive Alignment Engine (OCAE)**: Deployed a groundbreaking cognitive intelligence architecture that aligns _any_ model orchestrated by Tribunal Kit with supreme reasoning and thinking loops.
   - Implemented the always-on **Step 0 Epistemic Loop** (+800 tokens overhead only) forcing models to run strict confidence checks, self-audit knowledge freshness, and self-select optimal precision budgets before running commands.
   - Deployed the on-demand **Omniscience Core Skill (`fabel-protocol`)**, encapsulating a full platform-aware design cascade, complexity-scaled tool budgets, and stale-context detection algorithms.
   - Hardened the 6 core Tribunal Reviewer agents (`logic`, `frontend`, `security`, `orchestrator`, `frontend-specialist`, `ui-ux-auditor`) with visual content safety checks, async dynamic API validation, and prompt injection XML framing.
@@ -216,12 +241,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Removed Duplicate Docs**: Deleted `AGENT_FLOW.md` (redundant with `.agent/ARCHITECTURE.md`) and `.agent/GEMINI.md` (duplicate of canonical `.agent/rules/GEMINI.md`).
 
 ### Added
+
 - Extracted and integrated UI/UX design engineering philosophy from `emilkowalski/skills`.
 - Added new `emil-design-eng` skill enforcing interface craft and component physical consistency.
 - Added new `review-animations` reviewer enforcing a 10-point non-negotiable standard (interruptibility, GPU-only properties, sub-300ms budgets).
 - Added `.agent/skills/review-animations/STANDARDS.md` referencing exact curves and tables.
 
 ### Changed
+
 - Increased maximum Tribunal coverage (`/tribunal-full`) from 18 to 19 Reviewers.
 - Upgraded `/tribunal-frontend` to include the `review-animations` Socratic gate (now 6 frontend reviewers).
 - Upgraded `/ui-ux-pro-max` swarm constraints to enforce `emil-design-eng` for the Motion Engineer worker.
@@ -234,6 +261,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Reference Integrity**: Fixed a broken reference in `.agent/rules/GEMINI.md` to point to the correct `.agent/ARCHITECTURE.md` instead of the deleted `AGENT_FLOW.md`.
 
 ## [4.6.0] — 2026-06-21
+
 ### ✨ Features
 
 - **Self-Describing Skill Graph**: Migrated the `intelligent-routing` core from a centralized, flat 150-line Markdown manifest to a decentralized YAML frontmatter architecture.

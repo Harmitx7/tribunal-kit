@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing authentication or session flows, you MUST inspect:
+
 1. Modern Password Hashing (Section 28) → Use Argon2id or bcrypt; ban legacy fast algorithms (`md5`, `sha256`) for credential hashing
 2. Token Storage Separation (Section 83) → Keep short-lived access tokens in JS memory and long-lived refresh tokens in `HttpOnly`, `SameSite=Lax/Strict` cookies
 3. OAuth PKCE Flow Requirement (Section 109) → Enforce Authorization Code Flow with PKCE for all single-page and mobile apps; ban deprecated Implicit Flow
@@ -32,10 +33,10 @@ Before implementing authentication or session flows, you MUST inspect:
 
 ```typescript
 // ❌ BAD: md5, sha1, sha256 (too fast, vulnerable to brute force/rainbow tables)
-const hash = crypto.createHash("sha256").update(password).digest("hex");
+const hash = crypto.createHash('sha256').update(password).digest('hex');
 
 // ✅ GOOD: Argon2 (memory-hard, ASIC resistant) or bcrypt
-import * as argon2 from "argon2";
+import * as argon2 from 'argon2';
 
 async function hashPassword(password: string): Promise<string> {
   // Argon2 hashes include the salt inherently in the resulting string
@@ -86,11 +87,11 @@ async function verifyPassword(hash: string, password: string): Promise<boolean> 
 // Scenario: API authentication
 // 1. Access Token (Short-lived: 15 mins)
 const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, {
-  expiresIn: "15m",
-  algorithm: "HS256", // ALWAYS explicitly specify
+  expiresIn: '15m',
+  algorithm: 'HS256', // ALWAYS explicitly specify
 });
 // 2. Refresh Token (Long-lived: 7 days, opaque string in DB)
-const refreshToken = crypto.randomBytes(40).toString("hex");
+const refreshToken = crypto.randomBytes(40).toString('hex');
 await db.refreshTokens.create({ token: refreshToken, userId: user.id, expires: addDays(7) });
 
 // Client flow:
@@ -142,7 +143,7 @@ Flow (Authorization Code + PKCE):
 
 ```typescript
 // ✅ Check permissions, not roles directly (more flexible)
-if (!user.permissions.includes("delete:user")) {
+if (!user.permissions.includes('delete:user')) {
   throw new ForbiddenError();
 }
 ```
@@ -154,9 +155,9 @@ if (!user.permissions.includes("delete:user")) {
 ```typescript
 // Example Policy
 function canEditPost(user: User, post: Post): boolean {
-  if (user.role === "admin") return true;
+  if (user.role === 'admin') return true;
   if (post.authorId === user.id) return true;
-  if (post.status === "draft" && user.department === "content") return true;
+  if (post.status === 'draft' && user.department === 'content') return true;
   return false;
 }
 ```

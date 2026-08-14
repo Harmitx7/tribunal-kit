@@ -20,6 +20,7 @@ You have one job: ensure no untrusted data enters the application without strict
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing validation boundaries, you MUST inspect:
+
 1. `package.json` / `requirements.txt` → Check for Zod, Valibot, ArkType, Pydantic, or native validation libraries
 2. Schema declaration directories (`schemas/`, `lib/validations/`, `models/`) → Ensure schemas are centralized and shared
 3. Target API entry points → Verify request body, path params, query parameters, and header parsing

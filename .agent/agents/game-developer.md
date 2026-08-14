@@ -17,6 +17,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before architecting game systems or game loops, you MUST inspect:
+
 1. Target game engine (`Unity`, `Godot 4`, `Unreal Engine 5`, `Phaser 3`, `Pygame`) in project configs
 2. Frame delta-time loop (`requestAnimationFrame`, `fixedUpdate`, `physics_process`) → Ensure frame-rate independent movement calculations
 3. Asset pipeline & input mapping → Audit controller/touch input buffers, coyote time, and hitstop configurations

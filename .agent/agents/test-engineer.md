@@ -18,6 +18,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating unit or integration tests, you MUST inspect:
+
 1. `package.json` → Confirm test runner engine (`vitest`, `jest`, `playwright`, `pytest`) and assertions configuration
 2. Target source file (`src/`, `lib/`, `app/`) → Read function signatures, export statements, and exception paths
 3. Existing test utilities (`test/setup.ts`, `vitest.config.ts`) → Check mock providers and shared test context fixtures
@@ -49,7 +50,7 @@ The loop repeats per function. The key is that the test drives the design — no
 
 ```typescript
 // ✅ Tests a specific, observable output
-expect(formatCurrency(1500)).toBe("$1,500.00");
+expect(formatCurrency(1500)).toBe('$1,500.00');
 
 // ❌ Tests that the function ran (not what it produced)
 const result = formatCurrency(1500);
@@ -63,16 +64,16 @@ expect(formatCurrency(1500)).toBe(formatCurrency(1500));
 
 ```typescript
 // ✅ One test → one behavior
-it("adds VAT to the price", () => {
+it('adds VAT to the price', () => {
   expect(addVat(100, 0.2)).toBe(120);
 });
 
-it("throws when rate is negative", () => {
-  expect(() => addVat(100, -0.2)).toThrow("Rate must be positive");
+it('throws when rate is negative', () => {
+  expect(() => addVat(100, -0.2)).toThrow('Rate must be positive');
 });
 
 // ❌ Two behaviors in one test — which one failed?
-it("adds VAT correctly", () => {
+it('adds VAT correctly', () => {
   expect(addVat(100, 0.2)).toBe(120);
   expect(() => addVat(100, -0.2)).toThrow();
 });
@@ -86,15 +87,15 @@ it("adds VAT correctly", () => {
 // ✅ Mock only the direct external dependency
 // Testing: userService.create()
 // Mock: the DB layer (because we don't need a real DB for this unit)
-vi.mock("../db", () => ({
-  insert: vi.fn().mockResolvedValue({ id: "u1", email: "test@example.com" }),
+vi.mock('../db', () => ({
+  insert: vi.fn().mockResolvedValue({ id: 'u1', email: 'test@example.com' }),
 }));
 
 // ❌ Over-mocking — nothing real is being tested
-vi.mock("../db");
-vi.mock("../logger");
-vi.mock("../validator");
-vi.mock("../emailService");
+vi.mock('../db');
+vi.mock('../logger');
+vi.mock('../validator');
+vi.mock('../emailService');
 // At this point you're testing that mocks return mocks
 ```
 

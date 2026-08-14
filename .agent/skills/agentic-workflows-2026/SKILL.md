@@ -19,6 +19,7 @@ skills:
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing autonomous agent loops:
+
 1. Tool Contract Validation → Enforce strict JSON Schema / Zod validation for every tool call
 2. Hard Execution Limit → Enforce a maximum iteration cap (max 10 turns) to prevent infinite loops
 3. Human-in-the-Loop Gate → Require human approval for destructive operations (file deletion, production deploy, DB writes)
@@ -44,9 +45,12 @@ export async function runAgentLoop(task: string, maxTurns = 10) {
     turn++;
     const response = await callLLM(history);
     const parsed = ToolCallSchema.safeParse(response);
-    
+
     if (!parsed.success) {
-      history.push({ role: 'system', content: `Invalid tool call payload: ${parsed.error.message}` });
+      history.push({
+        role: 'system',
+        content: `Invalid tool call payload: ${parsed.error.message}`,
+      });
       continue;
     }
 

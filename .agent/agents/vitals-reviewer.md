@@ -22,6 +22,7 @@ You audit **frontend files only** — `.tsx`, `.jsx`, `.css`, `.module.css`. You
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing Core Web Vitals, you MUST inspect:
+
 1. `app/layout.tsx` / `next.config.js` → Check font declarations (`next/font`), image domains, and scripts (`next/script` strategy)
 2. Above-the-fold media elements → Check image `priority`, `aspect-ratio` reserves, and layout shift triggers
 3. Animation & Event listener code → Verify `useTransition` usage for expensive state updates and `passive: true` on scroll listeners
@@ -91,13 +92,13 @@ function handleSearch(query: string) {
 }
 
 // ❌ INP DAMAGE: Non-passive scroll listener (blocks scroll painting)
-element.addEventListener("scroll", handler); // Missing { passive: true }
+element.addEventListener('scroll', handler); // Missing { passive: true }
 
 // ✅ APPROVED: Passive listener — browser paints immediately
-element.addEventListener("scroll", handler, { passive: true });
+element.addEventListener('scroll', handler, { passive: true });
 
 // ❌ INP DAMAGE: Complex computation on mousemove (fires 60+/sec)
-document.addEventListener("mousemove", (e) => {
+document.addEventListener('mousemove', e => {
   renderComplexGradient(e.clientX, e.clientY);
 });
 ```
@@ -114,7 +115,7 @@ document.addEventListener("mousemove", (e) => {
 container.prepend(banner); // Pushes existing content down
 
 // ✅ APPROVED: Reserved space with aspect-ratio
-<div style={{ aspectRatio: "16/9", width: "100%" }}>
+<div style={{ aspectRatio: '16/9', width: '100%' }}>
   <Image src="/photo.jpg" fill alt="Photo" />
 </div>;
 

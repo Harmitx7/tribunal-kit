@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering Supabase schemas or writing PostgreSQL migrations, you MUST inspect:
+
 1. Row Level Security Mandatory Policy (Section 28) → Always enable RLS on every table (`alter table ... enable row level security;`) before deploying
 2. Direct UID Match RLS Rule (Section 30) → Use direct equality (`auth.uid() = user_id`) in RLS policies; avoid slow `IN` subqueries
 3. SQL Migration File Requirement (Section 38) → Write explicit SQL migration files (`supabase/migrations/`) rather than manual GUI operations

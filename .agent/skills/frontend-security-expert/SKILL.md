@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing or writing client-side code, you MUST inspect:
+
 1. XSS Sanitize Rules (Section 28) → Require DOMPurify for any `dangerouslySetInnerHTML` and audit dynamic `javascript:` URIs
 2. HttpOnly Auth Token Storage (Section 34) → Ban storing JWTs or auth tokens in `localStorage` or `sessionStorage`; use `HttpOnly`, `Secure`, `SameSite` cookies
 3. PostMessage Origin Verification (Section 46) → Never use `targetOrigin: '*'` and always validate `event.origin` on receiving handlers

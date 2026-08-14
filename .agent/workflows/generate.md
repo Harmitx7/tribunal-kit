@@ -22,6 +22,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating code modules or invoking the Maker pipeline, you MUST inspect:
+
 1. Workspace Package Dependencies (`package.json`) → Confirm all imported libraries exist; ban unverified phantom imports
 2. Type Definitions & Path Aliases (`tsconfig.json`) → Verify module resolution paths and compiler strictness
 3. Parallel Tribunal Review Assignment → Select relevant domain reviewers (`logic`, `security`, `frontend`, `backend`, `database`, `mobile`) prior to Human Gate submission

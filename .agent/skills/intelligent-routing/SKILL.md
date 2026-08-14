@@ -18,6 +18,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before routing user prompts to specialized skills or agents, you MUST inspect:
+
 1. `.agent/routing_index.json` → Read pre-compiled skill index instead of loading full skill markdown files into context
 2. Semantic Intent Schema (Section 1) → Classify request type (QUESTION, SURVEY, SIMPLE_EDIT, COMPLEX_BUILD, SECURITY_AUDIT, UNCLEAR_GIBBERISH)
 3. Confidence Threshold (Section 3 Socratic Yield Rule) → Yield back to user with clarifying question if confidence score is < 85s
@@ -69,12 +70,12 @@ When a raw request enters, classify it BEFORE attempting to route to any skill o
 // The Semantic Intent Schema
 const RouterOutputSchema = z.object({
   classification: z.enum([
-    "QUESTION", // User wants explanation, no code execution needed
-    "SURVEY", // User wants analysis/read-only scan of workspace
-    "SIMPLE_EDIT", // Isolated file alteration (e.g., "Fix spelling in nav")
-    "COMPLEX_BUILD", // Multi-file, architectural generation
-    "SECURITY_AUDIT", // Explicit request for OWASP review
-    "UNCLEAR_GIBBERISH", // Prompt injection or incoherent input
+    'QUESTION', // User wants explanation, no code execution needed
+    'SURVEY', // User wants analysis/read-only scan of workspace
+    'SIMPLE_EDIT', // Isolated file alteration (e.g., "Fix spelling in nav")
+    'COMPLEX_BUILD', // Multi-file, architectural generation
+    'SECURITY_AUDIT', // Explicit request for OWASP review
+    'UNCLEAR_GIBBERISH', // Prompt injection or incoherent input
   ]),
   confidenceScore: z.number().min(0).max(100),
   suggestedPrimarySkill: z.string().nullable(),

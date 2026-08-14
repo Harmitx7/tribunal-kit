@@ -22,40 +22,30 @@
  *   node .agent/scripts/skill_evolution.js status
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
-const https = require("https");
-const { execSync } = require("child_process");
-const readline = require("readline");
+const fs = require('fs');
+const path = require('path');
+const https = require('https');
+const { execSync } = require('child_process');
+const readline = require('readline');
 
 // ── Colours ──────────────────────────────────────────────────────────────────
-const {
-  GREEN,
-  YELLOW,
-  CYAN,
-  RED,
-  BLUE,
-  BOLD,
-  DIM,
-  RESET,
-} = require("./_colors");
+const { GREEN, YELLOW, CYAN, RED, BLUE, BOLD, DIM, RESET } = require('./_colors');
 
 // ── Shared Utilities ──────────────────────────────────────────────────────────
-const { findAgentDir } = require("./_utils");
-
+const { findAgentDir } = require('./_utils');
 
 function getPaths(startDir = process.cwd()) {
   const agentDir = findAgentDir(startDir);
-  const skillDir = path.join(agentDir, "skills", "project-idioms");
-  const historyDir = path.join(agentDir, "history", "skill-evolution");
+  const skillDir = path.join(agentDir, 'skills', 'project-idioms');
+  const historyDir = path.join(agentDir, 'history', 'skill-evolution');
   return {
     agentDir,
     skillDir,
-    skillFile: path.join(skillDir, "SKILL.md"),
+    skillFile: path.join(skillDir, 'SKILL.md'),
     historyDir,
-    logFile: path.join(historyDir, "digest-log.json"),
+    logFile: path.join(historyDir, 'digest-log.json'),
   };
 }
 
@@ -98,7 +88,7 @@ const NOISE_PATTERNS = [
 ];
 
 function architecturalWeight(line) {
-  const code = line.replace(/^[+-]/, "").trim();
+  const code = line.replace(/^[+-]/, '').trim();
   for (const p of NOISE_PATTERNS) {
     if (p.test(code)) return 0;
   }
@@ -147,34 +137,30 @@ function normalizedSimilarity(a, b) {
  */
 function isDuplicateIdiom(newPattern, existingIdioms, threshold = 0.8) {
   const newLow = newPattern.toLowerCase();
-  return existingIdioms.some((ex) => {
-    const exLow = (ex.pattern || "").toLowerCase();
+  return existingIdioms.some(ex => {
+    const exLow = (ex.pattern || '').toLowerCase();
     return normalizedSimilarity(newLow, exLow) >= threshold;
   });
 }
 
 function semanticDelta(diffText, minWeight = 2) {
-  const lines = diffText.split("\n");
+  const lines = diffText.split('\n');
   const kept = [];
   let currentHunkHasHigh = false;
   let hunkLines = [];
 
   for (const line of lines) {
-    if (
-      line.startsWith("---") ||
-      line.startsWith("+++") ||
-      line.startsWith("diff --git")
-    ) {
+    if (line.startsWith('---') || line.startsWith('+++') || line.startsWith('diff --git')) {
       kept.push(line);
       continue;
     }
-    if (line.startsWith("@@")) {
+    if (line.startsWith('@@')) {
       if (currentHunkHasHigh) kept.push(...hunkLines);
       currentHunkHasHigh = false;
       hunkLines = [line];
       continue;
     }
-    if (line.startsWith("+") || line.startsWith("-")) {
+    if (line.startsWith('+') || line.startsWith('-')) {
       const w = architecturalWeight(line);
       hunkLines.push(line);
       if (w >= minWeight) currentHunkHasHigh = true;
@@ -184,25 +170,25 @@ function semanticDelta(diffText, minWeight = 2) {
   }
   if (currentHunkHasHigh) kept.push(...hunkLines);
 
-  let result = kept.join("\n");
-  result = result.replace(/\n( ?\n){3,}/g, "\n\n");
+  let result = kept.join('\n');
+  result = result.replace(/\n( ?\n){3,}/g, '\n\n');
   return result.trim();
 }
 
 // ── Git helpers ────────────────────────────────────────────────────────────────
-function getGitDiff(mode = "staged") {
+function getGitDiff(mode = 'staged') {
   try {
     let cmd;
-    if (mode === "staged") cmd = "git diff --cached --unified=3";
-    else if (mode === "head") cmd = "git diff HEAD~1 HEAD --unified=3";
-    else cmd = "git diff --unified=3";
+    if (mode === 'staged') cmd = 'git diff --cached --unified=3';
+    else if (mode === 'head') cmd = 'git diff HEAD~1 HEAD --unified=3';
+    else cmd = 'git diff --unified=3';
     return execSync(cmd, {
-      encoding: "utf8",
+      encoding: 'utf8',
       timeout: 10000,
-      stdio: ["pipe", "pipe", "pipe"],
+      stdio: ['pipe', 'pipe', 'pipe'],
     });
   } catch {
-    return "";
+    return '';
   }
 }
 
@@ -214,10 +200,9 @@ function countTokensEstimate(text) {
 function loadExistingIdioms() {
   const { skillFile } = getPaths();
   if (!fs.existsSync(skillFile)) return [];
-  const content = fs.readFileSync(skillFile, "utf8");
+  const content = fs.readFileSync(skillFile, 'utf8');
   const idioms = [];
-  const pattern =
-    /\|\s*(\d+)\s*\|\s*`([^`]+)`\s*\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|/g;
+  const pattern = /\|\s*(\d+)\s*\|\s*`([^`]+)`\s*\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|/g;
   let m;
   while ((m = pattern.exec(content)) !== null) {
     idioms.push({
@@ -233,16 +218,15 @@ function loadExistingIdioms() {
 
 function nextIdiomId(idioms) {
   if (!idioms.length) return 1;
-  return Math.max(...idioms.map((i) => i.id)) + 1;
+  return Math.max(...idioms.map(i => i.id)) + 1;
 }
 
 function renderSkillMd(idioms, digestCount) {
   const now = new Date().toISOString().slice(0, 10);
   const rows = idioms.map(
-    (i) =>
-      `| ${i.id} | \`${i.pattern}\` | ${i.reason} | ${i.domain} | ${i.since} |`,
+    i => `| ${i.id} | \`${i.pattern}\` | ${i.reason} | ${i.domain} | ${i.since} |`,
   );
-  const table = rows.length ? rows.join("\n") : "_No idioms recorded yet._";
+  const table = rows.length ? rows.join('\n') : '_No idioms recorded yet._';
 
   return `---
 name: project-idioms
@@ -330,22 +314,22 @@ function parseLlmYamlResponse(response) {
   let inIdioms = false;
   let current = {};
 
-  for (const line of response.split("\n")) {
+  for (const line of response.split('\n')) {
     const stripped = line.trim();
-    if (stripped === "idioms:") {
+    if (stripped === 'idioms:') {
       inIdioms = true;
       continue;
     }
     if (!inIdioms) continue;
-    if (stripped.startsWith("- pattern:")) {
+    if (stripped.startsWith('- pattern:')) {
       if (current.pattern) idioms.push(current);
       current = {
-        pattern: stripped.split(":", 2)[1].trim().replace(/^"|"$/g, ""),
+        pattern: stripped.split(':', 2)[1].trim().replace(/^"|"$/g, ''),
       };
-    } else if (stripped.startsWith("reason:") && current.pattern) {
-      current.reason = stripped.split(":", 2)[1].trim().replace(/^"|"$/g, "");
-    } else if (stripped.startsWith("domain:") && current.pattern) {
-      current.domain = stripped.split(":", 2)[1].trim().replace(/^"|"$/g, "");
+    } else if (stripped.startsWith('reason:') && current.pattern) {
+      current.reason = stripped.split(':', 2)[1].trim().replace(/^"|"$/g, '');
+    } else if (stripped.startsWith('domain:') && current.pattern) {
+      current.domain = stripped.split(':', 2)[1].trim().replace(/^"|"$/g, '');
     }
   }
   if (current.pattern) idioms.push(current);
@@ -358,7 +342,7 @@ function loadLog() {
   fs.mkdirSync(historyDir, { recursive: true });
   if (fs.existsSync(logFile)) {
     try {
-      return JSON.parse(fs.readFileSync(logFile, "utf8"));
+      return JSON.parse(fs.readFileSync(logFile, 'utf8'));
     } catch {
       /* fallthrough */
     }
@@ -369,7 +353,7 @@ function loadLog() {
 function saveLog(log) {
   const { historyDir, logFile } = getPaths();
   fs.mkdirSync(historyDir, { recursive: true });
-  fs.writeFileSync(logFile, JSON.stringify(log, null, 2), "utf8");
+  fs.writeFileSync(logFile, JSON.stringify(log, null, 2), 'utf8');
 }
 
 // ── Auto-LLM API Integration ─────────────────────────────────────────────────
@@ -379,11 +363,9 @@ function saveLog(log) {
 
 function detectLlmProvider() {
   if (process.env.ANTHROPIC_API_KEY)
-    return { provider: "anthropic", key: process.env.ANTHROPIC_API_KEY };
-  if (process.env.OPENAI_API_KEY)
-    return { provider: "openai", key: process.env.OPENAI_API_KEY };
-  if (process.env.GEMINI_API_KEY)
-    return { provider: "gemini", key: process.env.GEMINI_API_KEY };
+    return { provider: 'anthropic', key: process.env.ANTHROPIC_API_KEY };
+  if (process.env.OPENAI_API_KEY) return { provider: 'openai', key: process.env.OPENAI_API_KEY };
+  if (process.env.GEMINI_API_KEY) return { provider: 'gemini', key: process.env.GEMINI_API_KEY };
   return null;
 }
 
@@ -404,23 +386,23 @@ async function callLlmApi(prompt, provider, apiKey) {
       const data = JSON.stringify(body);
       const req = https.request(
         {
-          method: "POST",
+          method: 'POST',
           hostname,
           path,
-          headers: { ...headers, "Content-Length": Buffer.byteLength(data) },
+          headers: { ...headers, 'Content-Length': Buffer.byteLength(data) },
         },
-        (res) => {
-          let raw = "";
-          res.on("data", (c) => {
+        res => {
+          let raw = '';
+          res.on('data', c => {
             raw += c;
           });
-          res.on("end", () => resolve(raw));
-          res.on("error", reject);
+          res.on('end', () => resolve(raw));
+          res.on('error', reject);
         },
       );
-      req.on("error", reject);
+      req.on('error', reject);
       req.setTimeout(timeout, () => {
-        req.destroy(new Error("LLM API timeout"));
+        req.destroy(new Error('LLM API timeout'));
       });
       req.write(data);
       req.end();
@@ -428,37 +410,37 @@ async function callLlmApi(prompt, provider, apiKey) {
   }
 
   try {
-    if (provider === "anthropic") {
+    if (provider === 'anthropic') {
       const raw = await httpsPost(
-        "api.anthropic.com",
-        "/v1/messages",
+        'api.anthropic.com',
+        '/v1/messages',
         {
-          "Content-Type": "application/json",
-          "x-api-key": apiKey,
-          "anthropic-version": "2023-06-01",
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
         },
         {
-          model: "claude-3-haiku-20240307", // Fastest/cheapest — idiom extraction
+          model: 'claude-3-haiku-20240307', // Fastest/cheapest — idiom extraction
           max_tokens: 512,
-          messages: [{ role: "user", content: prompt }],
+          messages: [{ role: 'user', content: prompt }],
         },
       );
       const json = JSON.parse(raw);
       return json?.content?.[0]?.text ?? null;
     }
 
-    if (provider === "openai") {
+    if (provider === 'openai') {
       const raw = await httpsPost(
-        "api.openai.com",
-        "/v1/chat/completions",
+        'api.openai.com',
+        '/v1/chat/completions',
         {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${apiKey}`,
         },
         {
-          model: "gpt-4o-mini", // Cheapest capable model for YAML extraction
+          model: 'gpt-4o-mini', // Cheapest capable model for YAML extraction
           max_tokens: 512,
-          messages: [{ role: "user", content: prompt }],
+          messages: [{ role: 'user', content: prompt }],
           temperature: 0.1,
         },
       );
@@ -466,11 +448,11 @@ async function callLlmApi(prompt, provider, apiKey) {
       return json?.choices?.[0]?.message?.content ?? null;
     }
 
-    if (provider === "gemini") {
+    if (provider === 'gemini') {
       const raw = await httpsPost(
-        "generativelanguage.googleapis.com",
+        'generativelanguage.googleapis.com',
         `/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-        { "Content-Type": "application/json" },
+        { 'Content-Type': 'application/json' },
         {
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: { maxOutputTokens: 512, temperature: 0.1 },
@@ -488,8 +470,8 @@ async function callLlmApi(prompt, provider, apiKey) {
 // ── Commands ──────────────────────────────────────────────────────────────────
 // ── Strategy Filtering ────────────────────────────────────────────────────────
 function applyStrategyFilter(signals, strategy) {
-  if (strategy === "repair-only") {
-    return signals.filter((s) => s.type === "log_error");
+  if (strategy === 'repair-only') {
+    return signals.filter(s => s.type === 'log_error');
   }
   return signals;
 }
@@ -531,52 +513,64 @@ function parseEvolutionYaml(response) {
   let currentSection = null; // 'idioms' | 'cases'
   let current = null;
 
-  const lines = response.split("\n");
+  const lines = response.split('\n');
   for (const line of lines) {
     const trimmed = line.trim();
-    if (trimmed === "idioms:") {
+    if (trimmed === 'idioms:') {
       if (current) {
-        if (currentSection === "idioms") idioms.push(current);
-        if (currentSection === "cases") cases.push(current);
+        if (currentSection === 'idioms') idioms.push(current);
+        if (currentSection === 'cases') cases.push(current);
       }
-      currentSection = "idioms";
+      currentSection = 'idioms';
       current = null;
       continue;
     }
-    if (trimmed === "cases:") {
+    if (trimmed === 'cases:') {
       if (current) {
-        if (currentSection === "idioms") idioms.push(current);
-        if (currentSection === "cases") cases.push(current);
+        if (currentSection === 'idioms') idioms.push(current);
+        if (currentSection === 'cases') cases.push(current);
       }
-      currentSection = "cases";
+      currentSection = 'cases';
       current = null;
       continue;
     }
 
-    if (trimmed.startsWith("- pattern:") || (trimmed.startsWith("- ") && trimmed.includes("pattern:"))) {
+    if (
+      trimmed.startsWith('- pattern:') ||
+      (trimmed.startsWith('- ') && trimmed.includes('pattern:'))
+    ) {
       if (current) {
-        if (currentSection === "idioms") idioms.push(current);
-        if (currentSection === "cases") cases.push(current);
+        if (currentSection === 'idioms') idioms.push(current);
+        if (currentSection === 'cases') cases.push(current);
       }
-      let pat = "";
-      if (trimmed.startsWith("- pattern:")) {
-        pat = trimmed.substring("- pattern:".length).trim();
+      let pat = '';
+      if (trimmed.startsWith('- pattern:')) {
+        pat = trimmed.substring('- pattern:'.length).trim();
       } else {
-        pat = trimmed.split("pattern:", 2)[1].trim();
+        pat = trimmed.split('pattern:', 2)[1].trim();
       }
-      current = { pattern: pat.replace(/^['"]|['"]$/g, "") };
-    } else if (trimmed.startsWith("reason:") && current) {
-      current.reason = trimmed.substring("reason:".length).trim().replace(/^['"]|['"]$/g, "");
-    } else if (trimmed.startsWith("domain:") && current) {
-      current.domain = trimmed.substring("domain:".length).trim().replace(/^['"]|['"]$/g, "");
-    } else if (trimmed.startsWith("verdict:") && current) {
-      current.verdict = trimmed.substring("verdict:".length).trim().replace(/^['"]|['"]$/g, "");
+      current = { pattern: pat.replace(/^['"]|['"]$/g, '') };
+    } else if (trimmed.startsWith('reason:') && current) {
+      current.reason = trimmed
+        .substring('reason:'.length)
+        .trim()
+        .replace(/^['"]|['"]$/g, '');
+    } else if (trimmed.startsWith('domain:') && current) {
+      current.domain = trimmed
+        .substring('domain:'.length)
+        .trim()
+        .replace(/^['"]|['"]$/g, '');
+    } else if (trimmed.startsWith('verdict:') && current) {
+      current.verdict = trimmed
+        .substring('verdict:'.length)
+        .trim()
+        .replace(/^['"]|['"]$/g, '');
     }
   }
 
   if (current) {
-    if (currentSection === "idioms") idioms.push(current);
-    if (currentSection === "cases") cases.push(current);
+    if (currentSection === 'idioms') idioms.push(current);
+    if (currentSection === 'cases') cases.push(current);
   }
 
   return { idioms, cases };
@@ -584,23 +578,20 @@ function parseEvolutionYaml(response) {
 
 // ── Commands ──────────────────────────────────────────────────────────────────
 async function cmdDigest(args) {
-  const dryRun = args.includes("--dry-run");
-  const diffMode = args.includes("--head") ? "head" : "staged";
+  const dryRun = args.includes('--dry-run');
+  const diffMode = args.includes('--head') ? 'head' : 'staged';
 
-  const logArg = args.find((a) => a.startsWith("--log="));
-  const logFile = logArg ? logArg.split("=").slice(1).join("=") : null;
+  const logArg = args.find(a => a.startsWith('--log='));
+  const logFile = logArg ? logArg.split('=').slice(1).join('=') : null;
 
-  const strategyArg = args.find((a) => a.startsWith("--strategy="));
-  const strategy = strategyArg ? strategyArg.split("=").slice(1).join("=") : "balanced";
+  const strategyArg = args.find(a => a.startsWith('--strategy='));
+  const strategy = strategyArg ? strategyArg.split('=').slice(1).join('=') : 'balanced';
 
-  console.log(
-    `\n${BOLD}${CYAN}━━━ Skill Evolution — Digest Cycle ━━━━━━━━━━━━━━━━${RESET}`,
-  );
-  if (dryRun)
-    console.log(`  ${YELLOW}DRY RUN — no files will be written${RESET}\n`);
+  console.log(`\n${BOLD}${CYAN}━━━ Skill Evolution — Digest Cycle ━━━━━━━━━━━━━━━━${RESET}`);
+  if (dryRun) console.log(`  ${YELLOW}DRY RUN — no files will be written${RESET}\n`);
 
-  let rawDiff = "";
-  let delta = "";
+  let rawDiff = '';
+  let delta = '';
   let rawTokens = 0;
   let deltaTokens = 0;
   let logSignals = [];
@@ -612,28 +603,22 @@ async function cmdDigest(args) {
       console.log(`  ${RED}✖ Log file not found: ${logFile}${RESET}\n`);
       return;
     }
-    const logText = fs.readFileSync(logFile, "utf8");
+    const logText = fs.readFileSync(logFile, 'utf8');
     rawTokens = countTokensEstimate(logText);
 
-    console.log(
-      `  ${DIM}[2/5] Extracting signals from log (Signal Detector)...${RESET}`,
-    );
-    const { detectSignals } = require("./signal_detector");
+    console.log(`  ${DIM}[2/5] Extracting signals from log (Signal Detector)...${RESET}`);
+    const { detectSignals } = require('./signal_detector');
     const signals = detectSignals(logText);
 
     if (signals.length === 0) {
-      console.log(
-        `  ${GREEN}✔ No errors or performance signals found in logs.${RESET}`,
-      );
+      console.log(`  ${GREEN}✔ No errors or performance signals found in logs.${RESET}`);
       console.log(`  ${DIM}  No self-evolution reflection needed.${RESET}\n`);
       return;
     }
 
     logSignals = applyStrategyFilter(signals, strategy);
     if (logSignals.length === 0) {
-      console.log(
-        `  ${YELLOW}⚠ Strategy filter [${strategy}] filtered out all signals.${RESET}\n`,
-      );
+      console.log(`  ${YELLOW}⚠ Strategy filter [${strategy}] filtered out all signals.${RESET}\n`);
       return;
     }
 
@@ -642,45 +627,33 @@ async function cmdDigest(args) {
     );
 
     delta = logSignals
-      .map((s) => {
+      .map(s => {
         let chunk = `--- SIGNAL: ${s.type} ---\n`;
-        if (s.file) chunk += `File: ${s.file}${s.line ? `:${s.line}` : ""}\n`;
+        if (s.file) chunk += `File: ${s.file}${s.line ? `:${s.line}` : ''}\n`;
         chunk += `Message: ${s.message}\n`;
         chunk += `Context:\n${s.context}\n`;
         return chunk;
       })
-      .join("\n\n");
+      .join('\n\n');
 
     deltaTokens = countTokensEstimate(delta);
   } else {
     console.log(`  ${DIM}[1/5] Fetching git diff (${diffMode})...${RESET}`);
     rawDiff = getGitDiff(diffMode);
     if (!rawDiff.trim()) {
-      console.log(
-        `  ${YELLOW}⚠ No diff found. Commit or stage changes first.${RESET}`,
-      );
-      console.log(
-        `  ${DIM}Tip: Use --head to diff against the last commit.${RESET}\n`,
-      );
+      console.log(`  ${YELLOW}⚠ No diff found. Commit or stage changes first.${RESET}`);
+      console.log(`  ${DIM}Tip: Use --head to diff against the last commit.${RESET}\n`);
       return;
     }
 
     rawTokens = countTokensEstimate(rawDiff);
-    console.log(
-      `  ${DIM}   Raw diff: ~${rawTokens} tokens (${rawDiff.length} chars)${RESET}`,
-    );
+    console.log(`  ${DIM}   Raw diff: ~${rawTokens} tokens (${rawDiff.length} chars)${RESET}`);
 
-    console.log(
-      `  ${DIM}[2/5] Extracting architectural delta (Semantic Filter)...${RESET}`,
-    );
+    console.log(`  ${DIM}[2/5] Extracting architectural delta (Semantic Filter)...${RESET}`);
     delta = semanticDelta(rawDiff, 2);
     if (!delta.trim()) {
-      console.log(
-        `  ${GREEN}✔ Delta is 100% trivial (whitespace/comments/imports only).${RESET}`,
-      );
-      console.log(
-        `  ${DIM}  No LLM call needed. Zero tokens consumed.${RESET}\n`,
-      );
+      console.log(`  ${GREEN}✔ Delta is 100% trivial (whitespace/comments/imports only).${RESET}`);
+      console.log(`  ${DIM}  No LLM call needed. Zero tokens consumed.${RESET}\n`);
       return;
     }
 
@@ -694,25 +667,21 @@ async function cmdDigest(args) {
   );
 
   console.log(`\n  ${BOLD}Architectural Delta Preview:${RESET}`);
-  const previewLines = delta.split("\n").slice(0, 20);
+  const previewLines = delta.split('\n').slice(0, 20);
   for (const line of previewLines) {
-    if (line.startsWith("+")) console.log(`    ${GREEN}${line}${RESET}`);
-    else if (line.startsWith("-")) console.log(`    ${RED}${line}${RESET}`);
-    else if (line.startsWith("@@")) console.log(`    ${BLUE}${line}${RESET}`);
+    if (line.startsWith('+')) console.log(`    ${GREEN}${line}${RESET}`);
+    else if (line.startsWith('-')) console.log(`    ${RED}${line}${RESET}`);
+    else if (line.startsWith('@@')) console.log(`    ${BLUE}${line}${RESET}`);
     else console.log(`    ${DIM}${line}${RESET}`);
   }
-  if (delta.split("\n").length > 20)
-    console.log(
-      `    ... (${delta.split("\n").length - 20} more lines)`,
-    );
+  if (delta.split('\n').length > 20)
+    console.log(`    ... (${delta.split('\n').length - 20} more lines)`);
 
   if (dryRun) {
     console.log(
       `\n  ${YELLOW}[DRY RUN] Would send ${deltaTokens} tokens to LLM for reflection.${RESET}`,
     );
-    console.log(
-      `  ${DIM}Run without --dry-run to complete the digest.${RESET}\n`,
-    );
+    console.log(`  ${DIM}Run without --dry-run to complete the digest.${RESET}\n`);
     return;
   }
 
@@ -720,27 +689,19 @@ async function cmdDigest(args) {
   const reflectionPrompt = isLogMode
     ? generateLogReflectionPrompt(delta)
     : generateReflectionPrompt(delta);
-  let llmResponse = "";
+  let llmResponse = '';
 
   let llmCreds = detectLlmProvider();
   if (llmCreds) {
-    console.log(
-      `  ${DIM}[3/5] LLM Reflection — auto-calling ${llmCreds.provider} API...${RESET}`,
-    );
-    const autoResponse = await callLlmApi(
-      reflectionPrompt,
-      llmCreds.provider,
-      llmCreds.key,
-    );
+    console.log(`  ${DIM}[3/5] LLM Reflection — auto-calling ${llmCreds.provider} API...${RESET}`);
+    const autoResponse = await callLlmApi(reflectionPrompt, llmCreds.provider, llmCreds.key);
     if (autoResponse) {
       llmResponse = autoResponse;
       console.log(
-        `  ${GREEN}✔ Auto-response received (${llmCreds.provider}) — ${llmResponse.split("\n").length} lines${RESET}`,
+        `  ${GREEN}✔ Auto-response received (${llmCreds.provider}) — ${llmResponse.split('\n').length} lines${RESET}`,
       );
     } else {
-      console.log(
-        `  ${YELLOW}⚠ API call failed — falling back to manual mode${RESET}`,
-      );
+      console.log(`  ${YELLOW}⚠ API call failed — falling back to manual mode${RESET}`);
       llmCreds = null;
     }
   }
@@ -753,29 +714,27 @@ async function cmdDigest(args) {
     console.log(
       `  ${DIM}  Tip: Set ANTHROPIC_API_KEY, OPENAI_API_KEY, or GEMINI_API_KEY to automate this step.${RESET}`,
     );
-    console.log(`\n  ${BOLD}${"─".repeat(60)}${RESET}`);
+    console.log(`\n  ${BOLD}${'─'.repeat(60)}${RESET}`);
     console.log(reflectionPrompt);
-    console.log(`  ${BOLD}${"─".repeat(60)}${RESET}`);
-    console.log(
-      `\n  ${BOLD}Paste LLM response below (type END_RESPONSE when done):${RESET}`,
-    );
+    console.log(`  ${BOLD}${'─'.repeat(60)}${RESET}`);
+    console.log(`\n  ${BOLD}Paste LLM response below (type END_RESPONSE when done):${RESET}`);
 
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
     });
     const responseLines = [];
-    await new Promise((resolve) => {
-      const listener = (line) => {
-        if (line.trim() === "END_RESPONSE") {
-          rl.removeListener("line", listener);
+    await new Promise(resolve => {
+      const listener = line => {
+        if (line.trim() === 'END_RESPONSE') {
+          rl.removeListener('line', listener);
           resolve();
         } else responseLines.push(line);
       };
-      rl.on("line", listener);
+      rl.on('line', listener);
     });
     rl.close();
-    llmResponse = responseLines.join("\n");
+    llmResponse = responseLines.join('\n');
   }
 
   console.log(`\n  ${DIM}[4/5] Parsing idioms/cases...${RESET}`);
@@ -791,9 +750,7 @@ async function cmdDigest(args) {
   }
 
   if (!newIdioms.length && !newCases.length) {
-    console.log(
-      `  ${YELLOW}⚠ No idioms or cases extracted from LLM response.${RESET}`,
-    );
+    console.log(`  ${YELLOW}⚠ No idioms or cases extracted from LLM response.${RESET}`);
     console.log(`\n`);
     return;
   }
@@ -801,24 +758,18 @@ async function cmdDigest(args) {
   if (newIdioms.length > 0) {
     console.log(`  ${GREEN}✔ Extracted ${newIdioms.length} idiom(s)${RESET}`);
     for (const idiom of newIdioms) {
-      console.log(
-        `    ${CYAN}• ${idiom.pattern || "?"}${RESET}  — ${idiom.reason || ""}`,
-      );
+      console.log(`    ${CYAN}• ${idiom.pattern || '?'}${RESET}  — ${idiom.reason || ''}`);
     }
   }
 
   if (newCases.length > 0) {
     console.log(`  ${GREEN}✔ Extracted ${newCases.length} case precedent(s)${RESET}`);
     for (const c of newCases) {
-      console.log(
-        `    ${RED}• ${c.pattern || "?"}${RESET}  — ${c.reason || ""}`,
-      );
+      console.log(`    ${RED}• ${c.pattern || '?'}${RESET}  — ${c.reason || ''}`);
     }
   }
 
-  console.log(
-    `\n  ${DIM}[5/5] Merging into project-idioms/SKILL.md...${RESET}`,
-  );
+  console.log(`\n  ${DIM}[5/5] Merging into project-idioms/SKILL.md...${RESET}`);
   const existing = loadExistingIdioms();
   const log = loadLog();
   let nextId = nextIdiomId(existing);
@@ -827,15 +778,15 @@ async function cmdDigest(args) {
   let added = 0;
 
   for (const idiom of newIdioms) {
-    if (isDuplicateIdiom(idiom.pattern || "", existing)) {
+    if (isDuplicateIdiom(idiom.pattern || '', existing)) {
       console.log(`  ${DIM}  Skipped near-duplicate idiom: ${idiom.pattern}${RESET}`);
       continue;
     }
     merged.push({
       id: nextId,
-      pattern: idiom.pattern || "?",
-      reason: idiom.reason || "No reason provided.",
-      domain: idiom.domain || "general",
+      pattern: idiom.pattern || '?',
+      reason: idiom.reason || 'No reason provided.',
+      domain: idiom.domain || 'general',
       since: today,
     });
     nextId++;
@@ -847,7 +798,7 @@ async function cmdDigest(args) {
     const skillMd = renderSkillMd(merged, (log.cycles || []).length + 1);
     const { skillDir, skillFile } = getPaths();
     fs.mkdirSync(skillDir, { recursive: true });
-    fs.writeFileSync(skillFile, skillMd, "utf8");
+    fs.writeFileSync(skillFile, skillMd, 'utf8');
     console.log(`  ${GREEN}✔ ${added} new idiom(s) added to SKILL.md${RESET}`);
   } else {
     console.log(`  ${DIM}  No new unique idioms added to SKILL.md.${RESET}`);
@@ -856,16 +807,16 @@ async function cmdDigest(args) {
   // Record Case Precedents if present
   if (newCases && newCases.length > 0) {
     console.log(`\n  ${DIM}Merging into Case Law precedents...${RESET}`);
-    const caseLawManager = require("./case_law_manager");
+    const caseLawManager = require('./case_law_manager');
     const clIndex = caseLawManager.loadIndex();
     let clNextId = clIndex.next_id;
     let clAdded = 0;
 
     for (const c of newCases) {
-      const diffText = c.pattern || "";
-      const reason = c.reason || "";
-      const domain = c.domain || "general";
-      const verdict = c.verdict || "REJECTED";
+      const diffText = c.pattern || '';
+      const reason = c.reason || '';
+      const domain = c.domain || 'general';
+      const verdict = c.verdict || 'REJECTED';
       const fingerprint = caseLawManager.contentHash(diffText);
 
       let isDup = false;
@@ -876,14 +827,12 @@ async function cmdDigest(args) {
         }
       }
       if (isDup) {
-        console.log(
-          `  ${DIM}  Skipped duplicate case: ${reason.slice(0, 50)}...${RESET}`,
-        );
+        console.log(`  ${DIM}  Skipped duplicate case: ${reason.slice(0, 50)}...${RESET}`);
         continue;
       }
 
       const deltaCase = caseLawManager.semanticDelta(diffText);
-      const tags = caseLawManager.extractTags(diffText + " " + reason);
+      const tags = caseLawManager.extractTags(diffText + ' ' + reason);
       const caseRecord = {
         id: clNextId,
         fingerprint,
@@ -891,8 +840,8 @@ async function cmdDigest(args) {
         domain,
         verdict,
         reason: reason.trim(),
-        pr_ref: "auto-evolution",
-        reviewer: "skill-evolution",
+        pr_ref: 'auto-evolution',
+        reviewer: 'skill-evolution',
         tags,
         stack_version: null,
         diff_raw: diffText.trim(),
@@ -937,20 +886,16 @@ async function cmdDigest(args) {
 
   console.log(`\n  ${GREEN}✔ Learn cycle complete.${RESET}`);
   console.log(`  ${DIM}   Total idioms: ${merged.length}${RESET}`);
-  console.log(
-    `  ${DIM}   Lifetime tokens saved: ${log.total_tokens_saved}${RESET}\n`,
-  );
+  console.log(`  ${DIM}   Lifetime tokens saved: ${log.total_tokens_saved}${RESET}\n`);
 }
 
 function cmdShow() {
   const { skillFile } = getPaths();
   if (!fs.existsSync(skillFile)) {
-    console.log(
-      `${YELLOW}No project-idioms skill found. Run 'digest' first.${RESET}`,
-    );
+    console.log(`${YELLOW}No project-idioms skill found. Run 'digest' first.${RESET}`);
     return;
   }
-  console.log(fs.readFileSync(skillFile, "utf8"));
+  console.log(fs.readFileSync(skillFile, 'utf8'));
 }
 
 function cmdReset() {
@@ -974,34 +919,28 @@ function cmdStatus() {
   const { skillFile } = getPaths();
   const idiomsExist = fs.existsSync(skillFile);
 
-  console.log(
-    `\n${BOLD}${CYAN}━━━ Skill Evolution Status ━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`,
-  );
+  console.log(`\n${BOLD}${CYAN}━━━ Skill Evolution Status ━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`);
   console.log(`  Digest cycles    : ${BOLD}${cycles.length}${RESET}`);
   console.log(`  Total idioms     : ${BOLD}${totalIdioms}${RESET}`);
   console.log(
     `  Tokens saved     : ${GREEN}${totalSaved.toLocaleString()} tokens${RESET}  (≈ $${((totalSaved / 1_000_000) * 3).toFixed(4)} at $3/M)`,
   );
-  console.log(`  SKILL.md exists  : ${idiomsExist ? "✔" : "✗"}`);
+  console.log(`  SKILL.md exists  : ${idiomsExist ? '✔' : '✗'}`);
 
   if (cycles.length) {
     console.log(`\n  ${BOLD}Last 5 digest cycles:${RESET}`);
     for (const cycle of cycles.slice(-5).reverse()) {
-      const ts = (cycle.timestamp || "?").slice(0, 16);
+      const ts = (cycle.timestamp || '?').slice(0, 16);
       const deltaT = cycle.delta_tokens || 0;
       const saved = cycle.tokens_saved || 0;
       const addedCount = cycle.idioms_added || 0;
-      const pct = Math.floor(
-        (saved / Math.max(cycle.raw_tokens || 1, 1)) * 100,
-      );
+      const pct = Math.floor((saved / Math.max(cycle.raw_tokens || 1, 1)) * 100);
       console.log(
         `    ${DIM}${ts}${RESET}  delta=${deltaT}tok  saved=${saved}tok (${pct}%)  idioms+=${addedCount}`,
       );
     }
   }
-  console.log(
-    `${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}\n`,
-  );
+  console.log(`${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}\n`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -1014,7 +953,7 @@ const COMMANDS = {
 
 async function main() {
   const argv = process.argv.slice(2);
-  if (!argv.length || ["-h", "--help", "help"].includes(argv[0])) {
+  if (!argv.length || ['-h', '--help', 'help'].includes(argv[0])) {
     console.log(`
 ${BOLD}skill_evolution.js${RESET} — Tribunal Skill Evolution Forge
 
@@ -1051,7 +990,7 @@ module.exports = {
 };
 
 if (require.main === module) {
-  main().catch((err) => {
+  main().catch(err => {
     console.error(err);
     process.exit(1);
   });

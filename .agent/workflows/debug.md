@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before investigating or attempting any code modification during a bug report, you MUST inspect:
+
 1. Exact Error Traceback / Stack Log → Read raw error logs without paraphrasing; ban making diagnostic hypotheses without tracebacks
 2. Target File & Callers → Inspect file referenced in error trace along with its upstream callers
 3. Recent Changes (`git diff`) → Inspect recent edits to identify regressions before mutating code

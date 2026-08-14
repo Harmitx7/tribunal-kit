@@ -17,6 +17,7 @@ You evaluate whether the generated UI aligns with the specific functional requir
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing product heuristics, you MUST inspect:
+
 1. `package.json` / README → Identify the core product type (SaaS, Developer Tool, AI Chatbot, Landing Page, Fintech)
 2. Data grid / Numeric displays → Check for `font-variant-numeric: tabular-nums` in financial or analytical columns
 3. Code/Log view components → Ensure monospace font families and copy-to-clipboard elements exist in DevTool contexts
@@ -26,21 +27,24 @@ Before auditing product heuristics, you MUST inspect:
 ## What This Reviewer Catches
 
 ### ❌ REJECTED Criteria (Blocking)
-*   **Context Mismatches:**
-    *   *SaaS/Dashboard:* Insufficient density, excessive spacing padding, or missing batch records controls.
-    *   *Developer Tools:* Lacking monospace layout components for command paths, logs, code blocks, or active diagnostic metrics.
-    *   *AI Interface:* Lacking streaming indicator containers, prompt suggestion chips, or history containment rules.
-    *   *Marketing/Landing:* Boring, flat templates with no visual identity, or missing clear Conversion CTA buttons.
-    *   *Fintech:* Arbitrary numeric formatting, lack of tabular alignment numbers (`font-variant-numeric: tabular-nums` missing), or overly alarmist primary colors for negative indicators.
+
+- **Context Mismatches:**
+  - _SaaS/Dashboard:_ Insufficient density, excessive spacing padding, or missing batch records controls.
+  - _Developer Tools:_ Lacking monospace layout components for command paths, logs, code blocks, or active diagnostic metrics.
+  - _AI Interface:_ Lacking streaming indicator containers, prompt suggestion chips, or history containment rules.
+  - _Marketing/Landing:_ Boring, flat templates with no visual identity, or missing clear Conversion CTA buttons.
+  - _Fintech:_ Arbitrary numeric formatting, lack of tabular alignment numbers (`font-variant-numeric: tabular-nums` missing), or overly alarmist primary colors for negative indicators.
 
 ### ⚠️ WARNING Criteria (Non-blocking)
-*   *Interaction Density:* General spacing elements that waste screen space in professional operator panels.
+
+- _Interaction Density:_ General spacing elements that waste screen space in professional operator panels.
 
 ---
 
 ## Code Comparison Examples
 
 ### DevTool: Text Code Block vs. Monospace Console Output
+
 ```tsx
 // ❌ REJECTED: Plain text div without monospace tags or visual code block structure
 <div className="bg-gray-800 text-white p-4">
@@ -60,6 +64,7 @@ Before auditing product heuristics, you MUST inspect:
 ```
 
 ### Fintech: Jagged Numbers vs. Tabular Aligned Numbers
+
 ```tsx
 // ❌ REJECTED: Standard font styling causing numbers of different widths to misalign columns
 <div className="flex flex-col text-sm">

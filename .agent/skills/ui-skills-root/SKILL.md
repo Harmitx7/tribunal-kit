@@ -22,6 +22,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before routing UI requests, you MUST inspect:
+
 1. `package.json` / `DESIGN.md` → Identify tech stack (React, Next.js, Vue, Tailwind, CSS) and visual design language
 2. Intent Routing Matrix (Section 2) → Select maximum 2-3 precise skills matching the user's primary UI goal
 3. Skill pack bindings (`ui-skill-packs`) → Use consolidated packs for multi-component frontend builds
@@ -34,44 +35,44 @@ The master decision engine for routing user UI requests to the precise set of de
 
 When a user asks for UI assistance, identify their core **intent** and dispatch the appropriate skills:
 
-| Intent / Goal | Primary Skill | Secondary / Supporting Skills |
-| --- | --- | --- |
-| **Fast cleanup of ugly/cluttered UI** | `baseline-ui` | `better-ui`, `polish` |
-| **Production-grade design engineering & micro-details** | `better-ui` | `impeccable`, `frontend-design` |
-| **Extract design language & create DESIGN.md** | `create-design-md` | `extract-design-system`, `frontend-design` |
-| **Audit & fix HTML / ARIA accessibility (WCAG)** | `fixing-accessibility` | `audit-and-fix`, `web-accessibility-auditor` |
-| **Fix animation jank & 60/120fps performance** | `fixing-motion-performance` | `60fps-animation`, `gsap-performance` |
-| **Evidence-based UI audit & implementation planning** | `improve-ui` | `better-ui`, `baseline-ui` |
-| **OKLCH color system, contrast & P3 gamut** | `better-colors` | `colorize`, `better-ui` |
-| **Web typography, font scales, tabular numbers** | `better-typography` | `typeset`, `better-ui` |
-| **Apple-grade fluid springs, translucency & depth** | `apple-design` | `emil-design-eng`, `soft-skill` |
-| **Make a bland UI stand out / add punch** | `bolder` | `delight`, `colorize` |
-| **Tone down noisy or loud designs** | `quieter` | `distill`, `swiss-design` |
-| **Simplify complex / cluttered interface** | `distill` | `clarify`, `quieter` |
-| **Add subtle micro-interactions & delight** | `delight` | `whimsy-injector`, `micro-interaction` |
-| **Final pre-ship quality & alignment pass** | `polish` | `harden`, `fixing-accessibility` |
-| **Make UI resilient (errors, empty states, i18n)** | `harden` | `web-accessibility-auditor` |
-| **UX evaluation & scoring** | `critique` | `ui-ux-researcher` |
-| **Improve microcopy & messaging clarity** | `clarify` | `shape` |
-| **Pre-code feature UX planning** | `shape` | `brainstorming`, `appflow-wireframe` |
-| **Build unstyled accessible UI primitives** | `build-primitive` | `fixing-accessibility` |
-| **Responsive & container-query adaptation** | `adapt` | `mobile-design` |
-| **Depth, progressive blur, glassmorphism** | `progressive-blur` | `beautiful-shadows` |
-| **60fps animation performance audit** | `60fps-animation` | `fixing-motion-performance` |
-| **Tiered reduced-motion (a11y)** | `accessible-animation` | `fixing-accessibility` |
-| **Page & route transitions (View Transitions)** | `page-transition-animation` | `framer-motion-expert` |
-| **Scroll-driven motion & storytelling** | `animation-on-scroll` | `gsap-scrolltrigger` |
-| **Cohesive animation token system** | `animation-systems` | `motion-engineering` |
-| **Lottie & dotLottie vector animations** | `lottie-animation` | `text-to-lottie` |
-| **SVG path morphing & stroke draw-on** | `svg-animation` | `morphing-icons` |
-| **Hardware-accelerated marquees** | `marquee-loop` | `60fps-animation` |
-| **Spring physics vs easing decision** | `to-spring-or-not-to-spring` | `apple-design` |
-| **Tactile Web Audio API sound feedback** | `sounds-on-the-web` | `delight` |
-| **Technical SEO, metadata & OpenGraph** | `fixing-metadata` | `web-quality-audit` |
-| **Lighthouse quality audit** | `web-quality-audit` | `performance-profiling` |
-| **Landing page hierarchy & conversion** | `landing-page` | `compact-landing` |
-| **Pricing tables & comparison matrices** | `pricing-page` | `frontend-design` |
-| **Social proof, logo grids, trust rows** | `company-logos` | `baseline-ui` |
+| Intent / Goal                                           | Primary Skill                | Secondary / Supporting Skills                |
+| ------------------------------------------------------- | ---------------------------- | -------------------------------------------- |
+| **Fast cleanup of ugly/cluttered UI**                   | `baseline-ui`                | `better-ui`, `polish`                        |
+| **Production-grade design engineering & micro-details** | `better-ui`                  | `impeccable`, `frontend-design`              |
+| **Extract design language & create DESIGN.md**          | `create-design-md`           | `extract-design-system`, `frontend-design`   |
+| **Audit & fix HTML / ARIA accessibility (WCAG)**        | `fixing-accessibility`       | `audit-and-fix`, `web-accessibility-auditor` |
+| **Fix animation jank & 60/120fps performance**          | `fixing-motion-performance`  | `60fps-animation`, `gsap-performance`        |
+| **Evidence-based UI audit & implementation planning**   | `improve-ui`                 | `better-ui`, `baseline-ui`                   |
+| **OKLCH color system, contrast & P3 gamut**             | `better-colors`              | `colorize`, `better-ui`                      |
+| **Web typography, font scales, tabular numbers**        | `better-typography`          | `typeset`, `better-ui`                       |
+| **Apple-grade fluid springs, translucency & depth**     | `apple-design`               | `emil-design-eng`, `soft-skill`              |
+| **Make a bland UI stand out / add punch**               | `bolder`                     | `delight`, `colorize`                        |
+| **Tone down noisy or loud designs**                     | `quieter`                    | `distill`, `swiss-design`                    |
+| **Simplify complex / cluttered interface**              | `distill`                    | `clarify`, `quieter`                         |
+| **Add subtle micro-interactions & delight**             | `delight`                    | `whimsy-injector`, `micro-interaction`       |
+| **Final pre-ship quality & alignment pass**             | `polish`                     | `harden`, `fixing-accessibility`             |
+| **Make UI resilient (errors, empty states, i18n)**      | `harden`                     | `web-accessibility-auditor`                  |
+| **UX evaluation & scoring**                             | `critique`                   | `ui-ux-researcher`                           |
+| **Improve microcopy & messaging clarity**               | `clarify`                    | `shape`                                      |
+| **Pre-code feature UX planning**                        | `shape`                      | `brainstorming`, `appflow-wireframe`         |
+| **Build unstyled accessible UI primitives**             | `build-primitive`            | `fixing-accessibility`                       |
+| **Responsive & container-query adaptation**             | `adapt`                      | `mobile-design`                              |
+| **Depth, progressive blur, glassmorphism**              | `progressive-blur`           | `beautiful-shadows`                          |
+| **60fps animation performance audit**                   | `60fps-animation`            | `fixing-motion-performance`                  |
+| **Tiered reduced-motion (a11y)**                        | `accessible-animation`       | `fixing-accessibility`                       |
+| **Page & route transitions (View Transitions)**         | `page-transition-animation`  | `framer-motion-expert`                       |
+| **Scroll-driven motion & storytelling**                 | `animation-on-scroll`        | `gsap-scrolltrigger`                         |
+| **Cohesive animation token system**                     | `animation-systems`          | `motion-engineering`                         |
+| **Lottie & dotLottie vector animations**                | `lottie-animation`           | `text-to-lottie`                             |
+| **SVG path morphing & stroke draw-on**                  | `svg-animation`              | `morphing-icons`                             |
+| **Hardware-accelerated marquees**                       | `marquee-loop`               | `60fps-animation`                            |
+| **Spring physics vs easing decision**                   | `to-spring-or-not-to-spring` | `apple-design`                               |
+| **Tactile Web Audio API sound feedback**                | `sounds-on-the-web`          | `delight`                                    |
+| **Technical SEO, metadata & OpenGraph**                 | `fixing-metadata`            | `web-quality-audit`                          |
+| **Lighthouse quality audit**                            | `web-quality-audit`          | `performance-profiling`                      |
+| **Landing page hierarchy & conversion**                 | `landing-page`               | `compact-landing`                            |
+| **Pricing tables & comparison matrices**                | `pricing-page`               | `frontend-design`                            |
+| **Social proof, logo grids, trust rows**                | `company-logos`              | `baseline-ui`                                |
 
 ---
 

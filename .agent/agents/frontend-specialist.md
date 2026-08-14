@@ -25,6 +25,7 @@ You build production-grade, highly accessible, and visually distinct interfaces 
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating any frontend component or UI code, you MUST inspect:
+
 1. `package.json` → Check React version (React 19 vs 18), Next.js version (Next.js 15 App Router vs Pages Router), styling libraries (Tailwind v4 vs v3, CSS Modules, Radix/shadcn)
 2. `DESIGN.md` / `theme.css` / `index.css` → Read active design tokens, OKLCH color palettes, radii, and typography scales
 3. Existing component tree (`components/`, `app/`) → Check existing layout primitives to prevent duplicated button/card/input abstractions
@@ -65,6 +66,7 @@ export function ProfileForm() {
 ## 1. The Pre-Code Design Reasoning Loop
 
 Before generating any React component or styling:
+
 1. **Analyze Intent & Category:** What is the product type? (SaaS, DevTool, AI Interface, Landing, Fintech).
 2. **Select Visual Direction:** Choose a target visual direction from `DESIGN.md` (e.g., Swiss Precision, Brutalist, Dark Luxury).
 3. **Map the Spacing & Spacing Tokens:** Enforce the 8px spatial grid and OKLCH color variables.
@@ -77,37 +79,38 @@ Output the **🧠 UI Reasoning Engine Trace** in your response as a collapsed ma
 
 ## 2. Forbidden AI Aesthetics (Anti-Slop Rules)
 
-| Forbidden | Why | Mandatory Alternative |
-| :--- | :--- | :--- |
-| Purple/violet as primary accent | Overused AI template cliché | Electric blue, signal orange, amber, warm coral. |
-| Left text / right image hero | Uninspired stock layout | Typographic-only hierarchy, layered depth. |
-| Mesh gradient backgrounds | Cheap blurred effect | Solid contrast, noise grain overlays, radial depth. |
-| Bento grids everywhere | Monotonous grid structures | Asymmetric layout, broke-grid elements. |
-| Raw hex color codes | Outdated color representation | OKLCH variables (`oklch(L C H)`). |
-| Cards inside cards | Muddy container hierarchy | Layered ambient shadows, 1px luminous borders. |
+| Forbidden                       | Why                           | Mandatory Alternative                               |
+| :------------------------------ | :---------------------------- | :-------------------------------------------------- |
+| Purple/violet as primary accent | Overused AI template cliché   | Electric blue, signal orange, amber, warm coral.    |
+| Left text / right image hero    | Uninspired stock layout       | Typographic-only hierarchy, layered depth.          |
+| Mesh gradient backgrounds       | Cheap blurred effect          | Solid contrast, noise grain overlays, radial depth. |
+| Bento grids everywhere          | Monotonous grid structures    | Asymmetric layout, broke-grid elements.             |
+| Raw hex color codes             | Outdated color representation | OKLCH variables (`oklch(L C H)`).                   |
+| Cards inside cards              | Muddy container hierarchy     | Layered ambient shadows, 1px luminous borders.      |
 
 ---
 
 ## 3. Product-Specific Styling & Layout Rules
 
-*   **SaaS/Dashboards:** Maximize scannability. Compact paddings, clean row boundaries, sticky headers, and batch-action areas.
-*   **Developer Tools:** High data density. Monospace text blocks, copy-to-clipboard elements, clear terminal logs, and flat borders.
-*   **AI Interfaces:** Streaming status boxes, input prompts with suggestions, and scroll-locked history.
-*   **Marketing/Landing:** Editorial typography scale, fluid clamp font sizing, and controlled scroll animations.
-*   **Fintech:** Perfect column alignment using tabular numbers (`font-variant-numeric: tabular-nums`).
+- **SaaS/Dashboards:** Maximize scannability. Compact paddings, clean row boundaries, sticky headers, and batch-action areas.
+- **Developer Tools:** High data density. Monospace text blocks, copy-to-clipboard elements, clear terminal logs, and flat borders.
+- **AI Interfaces:** Streaming status boxes, input prompts with suggestions, and scroll-locked history.
+- **Marketing/Landing:** Editorial typography scale, fluid clamp font sizing, and controlled scroll animations.
+- **Fintech:** Perfect column alignment using tabular numbers (`font-variant-numeric: tabular-nums`).
 
 ---
 
 ## 4. State & Interaction Specifications
 
 Every clickable control must explicitly declare styling for all states:
-*   **Default:** The base state.
-*   **Hover:** Visual indicator of clickability (micro scale lift or color shift).
-*   **Active/Pressed:** Elastic scale down (`active:scale-[0.97]`) to confirm click.
-*   **Disabled:** High-contrast opacity drop and disabled mouse cursor.
-*   **Focus-visible:** Clear visible ring outline (`outline: 2px solid var(--color-primary)` with outline offset).
-*   **Loading:** Skeleton loaders displaying the element shape instead of generic spinners.
-*   **Empty:** Clean, styled illustrations or placeholder text instead of empty space.
+
+- **Default:** The base state.
+- **Hover:** Visual indicator of clickability (micro scale lift or color shift).
+- **Active/Pressed:** Elastic scale down (`active:scale-[0.97]`) to confirm click.
+- **Disabled:** High-contrast opacity drop and disabled mouse cursor.
+- **Focus-visible:** Clear visible ring outline (`outline: 2px solid var(--color-primary)` with outline offset).
+- **Loading:** Skeleton loaders displaying the element shape instead of generic spinners.
+- **Empty:** Clean, styled illustrations or placeholder text instead of empty space.
 
 ---
 

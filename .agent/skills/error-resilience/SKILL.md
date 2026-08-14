@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing retry logic, circuit breakers, or error handling routines, you MUST inspect:
+
 1. Idempotency Key Rule for Retries (Section 123) → Require explicit idempotency keys when retrying non-safe operations (POST/PUT); ban un-keyed retries
 2. Exponential Backoff with Jitter (Section 106) → Implement randomized full jitter with capped exponential delays; ban fixed-delay retry loops
 3. Operational vs Programmer Error Split (Section 28) → Catch and recover strictly from `OperationalError` instances; allow programmer bugs (`TypeError`) to crash fast
@@ -102,7 +103,12 @@ const DEFAULT_RETRY: RetryOptions = {
   maxRetries: 3,
   baseDelayMs: 500,
   maxDelayMs: 15_000,
-  retryableErrors: (err) => err instanceof Error && (err.message.includes("ECONNRESET") || err.message.includes("ETIMEDOUT") || err.message.includes("503") || err.message.includes("429")),
+  retryableErrors: err =>
+    err instanceof Error &&
+    (err.message.includes('ECONNRESET') ||
+      err.message.includes('ETIMEDOUT') ||
+      err.message.includes('503') ||
+      err.message.includes('429')),
 };
 
 async function withRetry<T>(fn: () => Promise<T>, options: Partial<RetryOptions> = {}): Promise<T> {
@@ -122,16 +128,19 @@ async function withRetry<T>(fn: () => Promise<T>, options: Partial<RetryOptions>
       const capped = Math.min(exponential, opts.maxDelayMs);
       const jitter = Math.random() * capped;
 
-      console.warn(`[RETRY] Attempt ${attempt + 1}/${opts.maxRetries} failed. ` + `Retrying in ${Math.round(jitter)}ms...`);
+      console.warn(
+        `[RETRY] Attempt ${attempt + 1}/${opts.maxRetries} failed. ` +
+          `Retrying in ${Math.round(jitter)}ms...`,
+      );
 
       await sleep(jitter);
     }
   }
-  throw new Error("Unreachable");
+  throw new Error('Unreachable');
 }
 
 function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 // ❌ NEVER retry non-idempotent operations without idempotency keys
@@ -145,9 +154,9 @@ function sleep(ms: number): Promise<void> {
 
 ```typescript
 enum CircuitState {
-  CLOSED = "CLOSED", // Normal — requests pass through
-  OPEN = "OPEN", // Tripped — requests fail immediately
-  HALF_OPEN = "HALF_OPEN", // Testing — one request allowed
+  CLOSED = 'CLOSED', // Normal — requests pass through
+  OPEN = 'OPEN', // Tripped — requests fail immediately
+  HALF_OPEN = 'HALF_OPEN', // Testing — one request allowed
 }
 
 class CircuitBreaker {
@@ -210,7 +219,7 @@ const paymentCircuit = new CircuitBreaker(5, 30_000);
 
 const result = await paymentCircuit.execute(
   () => paymentGateway.charge(amount),
-  () => ({ status: "deferred", message: "Payment queued for retry" }),
+  () => ({ status: 'deferred', message: 'Payment queued for retry' }),
 );
 ```
 
@@ -220,7 +229,7 @@ const result = await paymentCircuit.execute(
 
 ```tsx
 // ✅ Error boundary with recovery
-import { Component, type ReactNode } from "react";
+import { Component, type ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -251,7 +260,9 @@ class ErrorBoundary extends Component<Props, State> {
         this.props.fallback ?? (
           <div role="alert">
             <h2>Something went wrong</h2>
-            <button onClick={() => this.setState({ hasError: false, error: null })}>Try Again</button>
+            <button onClick={() => this.setState({ hasError: false, error: null })}>
+              Try Again
+            </button>
           </div>
         )
       );
@@ -273,7 +284,10 @@ class ErrorBoundary extends Component<Props, State> {
 
 ```typescript
 // ✅ AbortController-based timeout (modern, cancellable)
-async function withTimeout<T>(fn: (signal: AbortSignal) => Promise<T>, timeoutMs: number): Promise<T> {
+async function withTimeout<T>(
+  fn: (signal: AbortSignal) => Promise<T>,
+  timeoutMs: number,
+): Promise<T> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -290,7 +304,7 @@ async function withTimeout<T>(fn: (signal: AbortSignal) => Promise<T>, timeoutMs
 }
 
 // Usage
-const data = await withTimeout((signal) => fetch("https://api.example.com/data", { signal }), 5000);
+const data = await withTimeout(signal => fetch('https://api.example.com/data', { signal }), 5000);
 ```
 
 ---
@@ -318,8 +332,8 @@ async function getUserProfile(userId: string): Promise<UserProfile> {
   // Layer 3: Default
   return {
     id: userId,
-    name: "Unknown User",
-    avatar: "/default-avatar.png",
+    name: 'Unknown User',
+    avatar: '/default-avatar.png',
     _stale: true,
     _default: true,
   };
@@ -343,7 +357,11 @@ interface DeadLetter<T> {
   originalQueue: string;
 }
 
-async function processWithDLQ<T>(payload: T, processor: (item: T) => Promise<void>, dlqStore: { push: (item: DeadLetter<T>) => Promise<void> }): Promise<void> {
+async function processWithDLQ<T>(
+  payload: T,
+  processor: (item: T) => Promise<void>,
+  dlqStore: { push: (item: DeadLetter<T>) => Promise<void> },
+): Promise<void> {
   try {
     await withRetry(() => processor(payload), { maxRetries: 3 });
   } catch (error) {
@@ -353,7 +371,7 @@ async function processWithDLQ<T>(payload: T, processor: (item: T) => Promise<voi
       error: error instanceof Error ? error.message : String(error),
       failedAt: new Date().toISOString(),
       attempts: 4,
-      originalQueue: "main",
+      originalQueue: 'main',
     });
     // Don't throw — the message is preserved for manual review
   }

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before configuring JS/TS tooling or lint rules, you MUST inspect:
+
 1. Pure ESM-First Requirement (Section 24) → Set `"type": "module"` in `package.json`; ban CommonJS `require()` or `module.exports`
 2. ESLint Flat Config (`eslint.config.js`) (Section 28) → Use `@antfu/eslint-config` with flat config format; ban legacy `.eslintrc.json`
 3. Explicit Type Imports (`import type`) (Section 45) → Enforce `import type` for type-only symbols to allow clean tree-shaking compilation
@@ -33,27 +34,31 @@ Enforce Anthony Fu's modern JavaScript/TypeScript engineering conventions: ESM-f
 ## 4 Core Tooling Conventions
 
 ### 1. ESM-First Standards
+
 - Use pure ES Modules (`"type": "module"` in `package.json`).
 - Avoid CommonJS `require()` or `module.exports`. Use explicit `.js` extension in relative imports when building Node ESM modules.
 
 ### 2. Single ESLint Flat Config (`eslint.config.js`)
+
 - Use `@antfu/eslint-config` for unified linting across TypeScript, Vue, React, JSON, and Markdown in 1 simple config file.
 
 ```javascript
 // eslint.config.js
-import antfu from '@antfu/eslint-config'
+import antfu from '@antfu/eslint-config';
 
 export default antfu({
   typescript: true,
   vue: true,
   react: true,
-})
+});
 ```
 
 ### 3. PNPM Catalog & Workspace Monorepo
+
 - Use `pnpm-workspace.yaml` with PNPM catalogs (`catalog:`) to lock unified dependency versions across monorepos.
 
 ### 4. Explicit Type Imports (`import type`)
+
 - Enforce `import type { User } from './types'` to allow tree-shaking compilers (esbuild/tsdown) to strip type imports cleanly without runtime side effects.
 
 ---

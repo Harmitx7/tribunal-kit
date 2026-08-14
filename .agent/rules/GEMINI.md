@@ -139,12 +139,12 @@ Did I load the agent's required skills?  → If no: check frontmatter skills: fi
 
 The Socratic Gate is **adaptive** based on the task's **Impact Tier** evaluated by `impact_classifier.js`:
 
-| Impact Tier | Scope | Socratic Gate Policy |
-| ----------- | ----- | --------------------- |
-| **Tier 0 (Fast-Pass)** | Typo, CSS, markdown, formatting | **BYPASS** — 0 questions, 0 LLM calls |
-| **Tier 1 (Express Pass)** | Single-file component or function logic edit | **BYPASS** — 0 questions, single specialist pass |
-| **Tier 2 (Targeted Audit)** | Multi-file feature edit | **CONDITIONAL** — Ask 1 question ONLY if ambiguity score > 0.5 |
-| **Tier 3 (Full Gauntlet)** | Auth, schema, migration, breaking architectural changes | **REQUIRED** — 1-2 targeted questions before execution (bypassable via `--no-gate` / `--express`) |
+| Impact Tier                 | Scope                                                   | Socratic Gate Policy                                                                              |
+| --------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| **Tier 0 (Fast-Pass)**      | Typo, CSS, markdown, formatting                         | **BYPASS** — 0 questions, 0 LLM calls                                                             |
+| **Tier 1 (Express Pass)**   | Single-file component or function logic edit            | **BYPASS** — 0 questions, single specialist pass                                                  |
+| **Tier 2 (Targeted Audit)** | Multi-file feature edit                                 | **CONDITIONAL** — Ask 1 question ONLY if ambiguity score > 0.5                                    |
+| **Tier 3 (Full Gauntlet)**  | Auth, schema, migration, breaking architectural changes | **REQUIRED** — 1-2 targeted questions before execution (bypassable via `--no-gate` / `--express`) |
 
 **Rules:**
 
@@ -213,14 +213,15 @@ The Human Gate is never skipped. No code is written to a file without explicit u
 
 **Reviewer assignment by domain:**
 
-| Code type             | Reviewers                                                                     |
-| --------------------- | ----------------------------------------------------------------------------- |
+| Code type             | Reviewers                                                                                           |
+| --------------------- | --------------------------------------------------------------------------------------------------- |
 | Backend/API           | logic + security + dependency + type-safety + resilience + schema + complexity-reviewer             |
 | Frontend/React        | logic + security + frontend + type-safety + ui-ux-auditor + review-animations + complexity-reviewer |
 | Database/SQL          | logic + security + sql + schema + complexity-reviewer                                               |
 | Mobile/Cross-platform | logic + security + mobile-reviewer + type-safety + complexity-reviewer                              |
+| CI/CD / DevOps        | pipeline-reviewer + security + dependency + resilience + complexity-reviewer                        |
 | Any domain            | + performance (if optimization)                                                                     |
-| Before merge          | /tribunal-full (all 27 reviewers)                                                                   |
+| Before merge          | /tribunal-full (all 28 reviewers)                                                                   |
 
 ---
 
@@ -281,6 +282,7 @@ These scripts live in `.agent/scripts/`. Agents and skills can invoke them:
 | -------------------------- | ------------------------------------------------- | --------------------------------------------- |
 | `checklist.js`             | Priority audit: Security→Lint→Schema→Tests→UX→SEO | Before/after any major change                 |
 | `verify_all.js`            | Full pre-deploy validation suite                  | Pre-deploy                                    |
+| `cicd_validator.js`        | GitHub Actions & CI/CD workflow security/syntax   | Deploys, CI changes, /tribunal-cicd           |
 | `auto_preview.js`          | Start/stop/restart local dev server               | After /create or /enhance                     |
 | `session_manager.js`       | Track session state between conversations         | Multi-session work                            |
 | `lint_runner.js`           | Standalone lint runner (ESLint, Prettier, Ruff)   | Every code change                             |

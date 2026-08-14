@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before running complex Git operations or writing release workflows, you MUST inspect:
+
 1. Safe Force Push Rule (Section 18) → Use `--force-with-lease` exclusively; ban raw `git push --force` on shared/remote branches
 2. Reflog Recovery Strategy (Section 30) → Inspect `git reflog` to recover lost commits or bad resets before discarding uncommitted state
 3. OIDC Authentication Protocol (Section 208) → Configure OIDC AWS auth (`id-token: write`) in GitHub Actions workflows; ban static AWS access keys
@@ -166,18 +167,18 @@ git checkout main
 ```javascript
 // release.config.js
 export default {
-  branches: ["main", { name: "beta", prerelease: true }],
+  branches: ['main', { name: 'beta', prerelease: true }],
   plugins: [
-    "@semantic-release/commit-analyzer", // reads conventional commits
-    "@semantic-release/release-notes-generator",
-    "@semantic-release/changelog", // updates CHANGELOG.md
-    "@semantic-release/npm", // bumps package.json version
-    "@semantic-release/github", // creates GitHub Release
+    '@semantic-release/commit-analyzer', // reads conventional commits
+    '@semantic-release/release-notes-generator',
+    '@semantic-release/changelog', // updates CHANGELOG.md
+    '@semantic-release/npm', // bumps package.json version
+    '@semantic-release/github', // creates GitHub Release
     [
-      "@semantic-release/git",
+      '@semantic-release/git',
       {
-        assets: ["CHANGELOG.md", "package.json"],
-        message: "chore(release): ${nextRelease.version} [skip ci]",
+        assets: ['CHANGELOG.md', 'package.json'],
+        message: 'chore(release): ${nextRelease.version} [skip ci]',
       },
     ],
   ],

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering LLM integrations or tool calling loops, you MUST inspect:
+
 1. Zod Schema Validation on JSON Outputs (Section 115) → Always run Zod validation (`Schema.parse(...)`) on LLM JSON responses, even in strict mode
 2. Hybrid Vector + Keyword Search (Section 290) → Use hybrid vector + BM25 keyword search in RAG applications to prevent missing exact identifiers
 3. System Prompt Secret Isolation (Section 69) → Never put private API keys, database credentials, or secret internal URLs into system prompts
@@ -76,7 +77,7 @@ const SYSTEM_PROMPT = `You are a customer support agent for Acme Corp.
 - End with a follow-up question
 
 ## Context
-Current date: ${new Date().toISOString().split("T")[0]}
+Current date: ${new Date().toISOString().split('T')[0]}
 User plan: {{user_plan}}
 `;
 
@@ -88,11 +89,11 @@ User plan: {{user_plan}}
 ### Structured Output (JSON Mode)
 
 ```typescript
-import { z } from "zod";
-import OpenAI from "openai";
+import { z } from 'zod';
+import OpenAI from 'openai';
 
 const SentimentSchema = z.object({
-  sentiment: z.enum(["positive", "negative", "neutral"]),
+  sentiment: z.enum(['positive', 'negative', 'neutral']),
   confidence: z.number().min(0).max(1),
   reasoning: z.string(),
   topics: z.array(z.string()),
@@ -101,49 +102,49 @@ const SentimentSchema = z.object({
 // OpenAI — json_schema mode (strict = true enforces schema exactly)
 async function analyzeSentiment(text: string) {
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: 'gpt-4o-mini',
     response_format: {
-      type: "json_schema",
+      type: 'json_schema',
       json_schema: {
-        name: "sentiment_analysis",
+        name: 'sentiment_analysis',
         strict: true,
         schema: {
-          type: "object",
+          type: 'object',
           properties: {
-            sentiment: { type: "string", enum: ["positive", "negative", "neutral"] },
-            confidence: { type: "number" },
-            reasoning: { type: "string" },
-            topics: { type: "array", items: { type: "string" } },
+            sentiment: { type: 'string', enum: ['positive', 'negative', 'neutral'] },
+            confidence: { type: 'number' },
+            reasoning: { type: 'string' },
+            topics: { type: 'array', items: { type: 'string' } },
           },
-          required: ["sentiment", "confidence", "reasoning", "topics"],
+          required: ['sentiment', 'confidence', 'reasoning', 'topics'],
           additionalProperties: false, // required for strict mode
         },
       },
     },
     messages: [
-      { role: "system", content: "Analyze sentiment." },
-      { role: "user", content: text },
+      { role: 'system', content: 'Analyze sentiment.' },
+      { role: 'user', content: text },
     ],
   });
-  const raw = JSON.parse(response.choices[0].message.content ?? "{}");
+  const raw = JSON.parse(response.choices[0].message.content ?? '{}');
   return SentimentSchema.parse(raw); // always validate with Zod even in strict mode
 }
 
 // Gemini — response_mime_type + response_schema
-import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import { GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
+  model: 'gemini-2.0-flash',
   generationConfig: {
-    responseMimeType: "application/json",
+    responseMimeType: 'application/json',
     responseSchema: {
       type: SchemaType.OBJECT,
       properties: {
-        sentiment: { type: SchemaType.STRING, enum: ["positive", "negative", "neutral"] },
+        sentiment: { type: SchemaType.STRING, enum: ['positive', 'negative', 'neutral'] },
         confidence: { type: SchemaType.NUMBER },
         topics: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
       },
-      required: ["sentiment", "confidence", "topics"],
+      required: ['sentiment', 'confidence', 'topics'],
     },
   },
 });
@@ -159,32 +160,32 @@ const model = genAI.getGenerativeModel({
 ```typescript
 const tools: OpenAI.ChatCompletionTool[] = [
   {
-    type: "function",
+    type: 'function',
     function: {
-      name: "search_products",
-      description: "Search products by name, category, or price range",
+      name: 'search_products',
+      description: 'Search products by name, category, or price range',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
-          query: { type: "string", description: "Search query" },
-          category: { type: "string", enum: ["electronics", "clothing", "home"] },
-          max_price: { type: "number", description: "Maximum price in USD" },
+          query: { type: 'string', description: 'Search query' },
+          category: { type: 'string', enum: ['electronics', 'clothing', 'home'] },
+          max_price: { type: 'number', description: 'Maximum price in USD' },
         },
-        required: ["query"],
+        required: ['query'],
       },
     },
   },
   {
-    type: "function",
+    type: 'function',
     function: {
-      name: "get_order_status",
-      description: "Get the status of an order by order ID",
+      name: 'get_order_status',
+      description: 'Get the status of an order by order ID',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
-          order_id: { type: "string", description: "The order ID (e.g., ORD-12345)" },
+          order_id: { type: 'string', description: 'The order ID (e.g., ORD-12345)' },
         },
-        required: ["order_id"],
+        required: ['order_id'],
       },
     },
   },
@@ -193,18 +194,18 @@ const tools: OpenAI.ChatCompletionTool[] = [
 // Tool execution loop
 async function chatWithTools(userMessage: string) {
   const messages: OpenAI.ChatCompletionMessageParam[] = [
-    { role: "system", content: SYSTEM_PROMPT },
-    { role: "user", content: userMessage },
+    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'user', content: userMessage },
   ];
 
   let response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: 'gpt-4o-mini',
     messages,
     tools,
   });
 
   // Process tool calls
-  while (response.choices[0].finish_reason === "tool_calls") {
+  while (response.choices[0].finish_reason === 'tool_calls') {
     const toolCalls = response.choices[0].message.tool_calls ?? [];
     messages.push(response.choices[0].message);
 
@@ -212,14 +213,14 @@ async function chatWithTools(userMessage: string) {
       const args = JSON.parse(call.function.arguments);
       const result = await executeFunction(call.function.name, args);
       messages.push({
-        role: "tool",
+        role: 'tool',
         tool_call_id: call.id,
         content: JSON.stringify(result),
       });
     }
 
     response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: 'gpt-4o-mini',
       messages,
       tools,
     });
@@ -262,19 +263,19 @@ function chunkDocument(text: string, options: ChunkOptions = {}): Chunk[] {
   const {
     maxTokens = 512, // chunk size
     overlapTokens = 50, // overlap between chunks
-    separator = "\n\n", // split on paragraph boundaries first
+    separator = '\n\n', // split on paragraph boundaries first
   } = options;
 
   const paragraphs = text.split(separator);
   const chunks: Chunk[] = [];
-  let current = "";
+  let current = '';
 
   for (const para of paragraphs) {
     if (tokenCount(current + para) > maxTokens && current) {
       chunks.push({ text: current.trim(), tokens: tokenCount(current) });
       // Keep overlap from previous chunk
-      const words = current.split(" ");
-      current = words.slice(-overlapTokens).join(" ") + separator + para;
+      const words = current.split(' ');
+      current = words.slice(-overlapTokens).join(' ') + separator + para;
     } else {
       current += separator + para;
     }
@@ -311,14 +312,14 @@ Milvus                 → Enterprise scale, GPU acceleration
 
 ```typescript
 // Server-Sent Events for AI token streaming
-app.get("/api/chat", async (req, res) => {
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
+app.get('/api/chat', async (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
 
   const stream = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [{ role: "user", content: req.query.message as string }],
+    model: 'gpt-4o-mini',
+    messages: [{ role: 'user', content: req.query.message as string }],
     stream: true,
   });
 
@@ -329,14 +330,14 @@ app.get("/api/chat", async (req, res) => {
     }
   }
 
-  res.write("data: [DONE]\n\n");
+  res.write('data: [DONE]\n\n');
   res.end();
 });
 
 // Client-side consumption
 const eventSource = new EventSource(`/api/chat?message=${encodeURIComponent(msg)}`);
-eventSource.onmessage = (event) => {
-  if (event.data === "[DONE]") {
+eventSource.onmessage = event => {
+  if (event.data === '[DONE]') {
     eventSource.close();
     return;
   }

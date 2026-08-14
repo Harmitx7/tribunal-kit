@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing Framer Motion code in React, you MUST inspect:
+
 1. `package.json` / Next.js Client Boundaries → Add `"use client"` directive on Next.js App Router files containing `motion.X`
 2. AnimatePresence & layoutId Rules (Section 117) → Enforce `mode="wait"` and ensure every `<AnimatePresence>` child has a unique `key`
 3. Bundle Optimization (Section 182) → Use `<LazyMotion features={domAnimation}>` with `m.div` for lightweight production bundles
@@ -44,8 +45,13 @@ Before writing Framer Motion code in React, you MUST inspect:
 ### `motion.X` / Declarative Animation
 
 ```tsx
-import { motion } from "framer-motion";
-<motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3, ease: "easeOut" }} />;
+import { motion } from 'framer-motion';
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  exit={{ opacity: 0, y: -20 }}
+  transition={{ duration: 0.3, ease: 'easeOut' }}
+/>;
 ```
 
 ### Variants (Stagger / Orchestration)
@@ -56,11 +62,11 @@ const container = {
   visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
 };
 const item = {
-  hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.4 } },
+  hidden: { opacity: 0, y: 20, filter: 'blur(4px)' },
+  visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.4 } },
 };
 <motion.ul variants={container} initial="hidden" animate="visible">
-  {list.map((e) => (
+  {list.map(e => (
     <motion.li key={e.id} variants={item}>
       {e.name}
     </motion.li>
@@ -131,10 +137,15 @@ import { LayoutGroup } from "framer-motion";
 
 ```tsx
 <AnimatePresence mode="sync">
-  {" "}
+  {' '}
   {/* "sync"|"wait"|"popLayout" */}
-  {items.map((item) => (
-    <motion.div key={item.id} /* ← REQUIRED */ initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} />
+  {items.map(item => (
+    <motion.div
+      key={item.id}
+      /* ← REQUIRED */ initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+    />
   ))}
 </AnimatePresence>
 // mode="wait" — waits for exit before entering
@@ -146,7 +157,7 @@ import { LayoutGroup } from "framer-motion";
 ## Scroll Animations
 
 ```tsx
-import { useScroll, useTransform } from "framer-motion";
+import { useScroll, useTransform } from 'framer-motion';
 // Page scroll progress (0–1)
 const { scrollYProgress } = useScroll();
 const y = useTransform(scrollYProgress, [0, 1], [0, -200]);
@@ -155,7 +166,7 @@ const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
 // Element-scoped scroll
 const ref = useRef(null);
-const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
 ```
 
 ---
@@ -165,9 +176,9 @@ const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end 
 ### `useAnimate` — Imperative sequences
 
 ```tsx
-import { useAnimate, stagger } from "framer-motion";
+import { useAnimate, stagger } from 'framer-motion';
 const [scope, animate] = useAnimate(); // ← returns [scope, animate] NOT [ref, controls]
-await animate(".item", { opacity: 1 }, { delay: stagger(0.1) });
+await animate('.item', { opacity: 1 }, { delay: stagger(0.1) });
 <div ref={scope}>...</div>;
 ```
 
@@ -194,7 +205,7 @@ const skewX = useTransform(xVel, [-1000, 0, 1000], [-15, 0, 15]);
 
 ```tsx
 // LazyMotion — ~5KB vs ~30KB full bundle
-import { LazyMotion, domAnimation, m } from "framer-motion";
+import { LazyMotion, domAnimation, m } from 'framer-motion';
 // domAnimation ≈ 5KB | domMax ≈ 20KB (needed for layout/drag)
 <LazyMotion features={domAnimation}>
   <m.div animate={{ opacity: 1 }} />
@@ -204,10 +215,13 @@ import { LazyMotion, domAnimation, m } from "framer-motion";
 ### Accessibility
 
 ```tsx
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from 'framer-motion';
 const reduce = useReducedMotion();
 // opacity/color: always safe | position/scale/rotation: must be disabled when reduce=true
-<motion.div animate={{ x: reduce ? 0 : 100, opacity: 1 }} transition={{ duration: reduce ? 0 : 0.5 }} />;
+<motion.div
+  animate={{ x: reduce ? 0 : 100, opacity: 1 }}
+  transition={{ duration: reduce ? 0 : 0.5 }}
+/>;
 ```
 
 ### Rules

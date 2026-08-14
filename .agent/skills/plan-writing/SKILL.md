@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing implementation plans or execution blueprints, you MUST inspect:
+
 1. Verification Criteria Requirement (Section 15) → Include explicit "How to verify" criteria for every wave; ban plan steps without verification
 2. Phased Wave Segmentation (Section 41) → Segment multi-file tasks into testable, independent waves (Wave 1: Data, Wave 2: API, Wave 3: UI)
 3. Non-Destructive Defaults & Rollback Rules (Section 66) → Define fallback feature toggles and database rollback procedures prior to execution

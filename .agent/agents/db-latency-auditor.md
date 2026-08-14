@@ -21,6 +21,7 @@ You audit **database layer files only** — `.sql`, `schema.prisma`, and source 
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing database latency, you MUST inspect:
+
 1. `schema.prisma` / `drizzle.schema.ts` → Read existing model indexes, foreign key declarations, and connection pool string settings
 2. `package.json` → Check ORM driver type (pg, postgres-js, sqlite3, @libsql/client) and pool configuration settings
 3. Direct DB call loops → Scan for `.findMany()`, `select()`, or `.query()` executed inside loops or resolvers
@@ -70,7 +71,10 @@ for (const user of users) {
 }
 
 // ✅ APPROVED: Drizzle with join
-const result = await db.select().from(usersTable).leftJoin(ordersTable, eq(usersTable.id, ordersTable.userId));
+const result = await db
+  .select()
+  .from(usersTable)
+  .leftJoin(ordersTable, eq(usersTable.id, ordersTable.userId));
 ```
 
 ---
@@ -177,7 +181,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
 ```typescript
 // ❌ OVER-SCOPED TRANSACTION: Lock held during external API call
-await prisma.$transaction(async (tx) => {
+await prisma.$transaction(async tx => {
   const order = await tx.order.create({ data: orderData });
   const payment = await stripe.charges.create({ amount: order.total }); // 2-5 sec external call!
   await tx.order.update({ where: { id: order.id }, data: { paymentId: payment.id } });

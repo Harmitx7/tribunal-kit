@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before debugging issues or analyzing stack traces, you MUST inspect:
+
 1. Single Variable Isolation (Section 15) → Change ONE variable at a time when debugging; ban shotgun debugging or multi-file edits simultaneously
 2. Deterministic Reproduction Pre-requisite (Section 29) → Write a failing deterministic test/reproduction script FIRST before modifying code logic
 3. Stack Trace Application Line Extraction (Section 98) → Trace up past `node_modules` to locate the top-most application code frame you wrote

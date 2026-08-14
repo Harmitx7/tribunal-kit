@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating design variants or conducting design experiments, you MUST inspect:
+
 1. Structural Variant Difference Rule (Section 39) → Ensure generated layout variants are structurally distinct; ban micro-variations (differing only by 1px or hex color)
 2. Interactive Refinement Protocol (Section 32) → Ask targeted constraint questions before outputting final component implementations
 3. Visual Hierarchy Mapping (Section 26) → Map visual hierarchy explicitly to project design tokens before presenting options
@@ -33,14 +34,18 @@ Conduct rapid design experiments, explore multiple structural variants, and iter
 ## 3 Design Lab Phases
 
 ### Phase 1: Context & Constraint Gathering
+
 Ask 2 targeted questions to map out design direction:
+
 1. What aesthetic tone fits best? (e.g. Minimalist Editorial vs High-Impact Brutalist vs Clean Corporate SaaS)
 2. What component variants would you like to explore? (e.g. Card layout options A vs B)
 
 ### Phase 2: Generating Distinct Structural Variants
+
 Generate 2 distinct visual variants (e.g. Option A: Centered Minimalist vs Option B: Asymmetrical Card Grid).
 
 ### Phase 3: Interactive Refinement
+
 Synthesize feedback on preferred elements and build the polished final component.
 
 ---

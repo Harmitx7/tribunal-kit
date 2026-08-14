@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before dispatching multi-agent tasks, you MUST inspect:
+
 1. `swarm-worker-registry.md` / `task.md` → Verify target worker agents and global execution state
 2. Context Window Budget rules (Section 1) → Trim worker payload context to max 3 files per dispatch
 3. Handoff state signals (`COMPLETE`, `BLOCKED`, `ERROR`) → Verify terminal status handling rules

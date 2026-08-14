@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing or hardening API endpoints, you MUST inspect:
+
 1. IDOR Prevention (Section 17) → Perform explicit tenancy checks (`receipt.userId === req.user.id`) and prefer UUIDv4/CUID over sequential integer IDs
 2. Mass Assignment Mitigations (Section 47) → Enforce strict Zod schemas (`.strict()`) to prevent parameter overposting into DB updates
 3. Distributed Rate Limiting (Section 80) → Store rate limit state in Redis for multi-pod load balanced environments to prevent limit bypasses
@@ -34,19 +35,19 @@ IDOR occurs when an application provides direct access to objects based on user-
 
 ```typescript
 // ❌ VULNERABLE: Trusting the requested ID blindly
-app.get("/api/receipts/:id", async (req, res) => {
+app.get('/api/receipts/:id', async (req, res) => {
   const receipt = await db.receipts.findById(req.params.id);
   res.json(receipt); // Attack: Increment ID to view others' receipts
 });
 
 // ✅ SAFE: Verifying ownership
-app.get("/api/receipts/:id", async (req, res) => {
+app.get('/api/receipts/:id', async (req, res) => {
   const receipt = await db.receipts.findById(req.params.id);
   if (!receipt) return res.status(404).send();
 
   // Explicit tenancy check
-  if (receipt.userId !== req.user.id && req.user.role !== "admin") {
-    return res.status(403).json({ error: "Access denied" });
+  if (receipt.userId !== req.user.id && req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Access denied' });
   }
 
   res.json(receipt);
@@ -64,20 +65,20 @@ Occurs when web frameworks automatically bind HTTP request parameters to applica
 
 ```typescript
 // ❌ VULNERABLE: Direct object binding
-app.put("/api/users/:id", async (req, res) => {
+app.put('/api/users/:id', async (req, res) => {
   // Attack: req.body = { name: "Bob", role: "admin", isPaid: true }
   await db.users.update({ id: req.params.id }, req.body);
-  res.send("Updated");
+  res.send('Updated');
 });
 
 // ✅ SAFE: Explicit property selection (DTOs)
-app.put("/api/users/:id", async (req, res) => {
+app.put('/api/users/:id', async (req, res) => {
   // Only extract explicitly allowed fields
   const { name, email, bio } = req.body;
   const safeData = { name, email, bio };
 
   await db.users.update({ id: req.params.id }, safeData);
-  res.send("Updated");
+  res.send('Updated');
 });
 
 // ✅ BEST: Validation libraries (Zod, Joi) handling stripping
@@ -95,8 +96,8 @@ const UpdateUserSchema = z
 
 ```typescript
 // Basic Rate Limiting (Express)
-import rateLimit from "express-rate-limit";
-import RedisStore from "rate-limit-redis";
+import rateLimit from 'express-rate-limit';
+import RedisStore from 'rate-limit-redis';
 
 // Global baseline limit
 export const globalLimiter = rateLimit({
@@ -111,7 +112,7 @@ export const authLimiter = rateLimit({
   store: new RedisStore({ client: redisClient }),
   windowMs: 60 * 60 * 1000, // 1 Hour
   max: 5, // 5 login attempts per IP per hour
-  message: "Too many login attempts, please try again later",
+  message: 'Too many login attempts, please try again later',
 });
 
 // ❌ HALLUCINATION TRAP: In-memory rate limiting across multiple server pods
@@ -144,8 +145,8 @@ Best Practices for issuance and storage:
 
 // 1. Query Depth Limiting (Prevent nested joins crushing the DB)
 // User -> Posts -> Comments -> Author -> Posts -> Comments...
-import depthLimit from "graphql-depth-limit";
-app.use("/graphql", graphqlHTTP({ validationRules: [depthLimit(5)] }));
+import depthLimit from 'graphql-depth-limit';
+app.use('/graphql', graphqlHTTP({ validationRules: [depthLimit(5)] }));
 
 // 2. Query Cost Analysis
 // Prevent attackers from requesting 100,000 items in a single query
@@ -155,7 +156,7 @@ app.use("/graphql", graphqlHTTP({ validationRules: [depthLimit(5)] }));
 // Introspection allows attackers to download your entire schema.
 const server = new ApolloServer({
   schema,
-  introspection: process.env.NODE_ENV !== "production",
+  introspection: process.env.NODE_ENV !== 'production',
 });
 ```
 

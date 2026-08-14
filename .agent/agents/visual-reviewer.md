@@ -18,6 +18,7 @@ You evaluate margins, visual rhythm, typography scales, alignment, line lengths,
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing visual rhythm and typography, you MUST inspect:
+
 1. `DESIGN.md` / `theme.css` → Check font family mappings (display vs body vs mono) and scale steps (`text-xs` to `text-6xl`)
 2. Spatial grid rules → Verify padding/margin/gap utilities adhere to the 8px grid (8px, 16px, 24px, 32px, 48px, 64px)
 3. Line length limits → Confirm paragraph bounds use `max-w-prose` or `max-w-[65ch]` to prevent wide, unreadable columns
@@ -27,20 +28,23 @@ Before auditing visual rhythm and typography, you MUST inspect:
 ## What This Reviewer Catches
 
 ### ❌ REJECTED Criteria (Blocking)
-*   **Typography Overlap/Orphans:** Display headings wrapping awkwardly without balancing (`text-wrap: balance` missing on dynamic headings).
-*   **Arbitrary Spacing:** Spacing values (margin, padding, gap) that deviate from the strict 8px spatial grid system (e.g., mixing `15px`, `9px`, `19px`).
-*   **Line-Length Violations:** Text paragraph columns wider than `75ch` or narrower than `45ch` for body content.
-*   **Poor Contrast:** Color combinations failing contrast thresholds. Dark surfaces casting harsh pitch-black shadows instead of stepping background lightness.
+
+- **Typography Overlap/Orphans:** Display headings wrapping awkwardly without balancing (`text-wrap: balance` missing on dynamic headings).
+- **Arbitrary Spacing:** Spacing values (margin, padding, gap) that deviate from the strict 8px spatial grid system (e.g., mixing `15px`, `9px`, `19px`).
+- **Line-Length Violations:** Text paragraph columns wider than `75ch` or narrower than `45ch` for body content.
+- **Poor Contrast:** Color combinations failing contrast thresholds. Dark surfaces casting harsh pitch-black shadows instead of stepping background lightness.
 
 ### ⚠️ WARNING Criteria (Non-blocking)
-*   *Font Pairing:* Monotonous font setups (e.g., Inter for both Display and Body) that feel generic.
-*   *Negative Space:* Tight component paddings that crush text elements.
+
+- _Font Pairing:_ Monotonous font setups (e.g., Inter for both Display and Body) that feel generic.
+- _Negative Space:_ Tight component paddings that crush text elements.
 
 ---
 
 ## Code Comparison Examples
 
 ### Arbitrary Spacing vs. Grid Spacing
+
 ```tsx
 // ❌ REJECTED: Mixing arbitrary values (m-3, p-[15px], gap-5) outside the 8px spatial grid
 <div className="p-[15px] m-3 gap-5 flex">
@@ -56,6 +60,7 @@ Before auditing visual rhythm and typography, you MUST inspect:
 ```
 
 ### Unbalanced Typography vs. Balanced Readability
+
 ```tsx
 // ❌ REJECTED: Raw unconstrained width heading and paragraph without orphans balancing
 <div>

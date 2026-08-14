@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before optimizing GSAP animations for performance, you MUST inspect:
+
 1. Target properties (Section 18) → Animate Composite properties (`x`, `y`, `scale`, `rotation`, `opacity`) instead of layout properties (`left`, `top`, `width`, `height`)
 2. Frequent Updates (Section 45) → Use `gsap.quickTo()` for mouse followers or rapid pointer movement loops
 3. Batching & Staggering (Section 39) → Use GSAP `stagger` instead of creating multiple individual delayed tweens
@@ -62,10 +63,10 @@ GSAP batches updates internally. When mixing GSAP with direct DOM reads/writes o
 Prefer **gsap.quickTo()** for properties that are updated often (e.g. mouse-follower x/y). It reuses a single tween instead of creating new tweens on each update.
 
 ```javascript
-let xTo = gsap.quickTo("#id", "x", { duration: 0.4, ease: "power3" }),
-  yTo = gsap.quickTo("#id", "y", { duration: 0.4, ease: "power3" });
+let xTo = gsap.quickTo('#id', 'x', { duration: 0.4, ease: 'power3' }),
+  yTo = gsap.quickTo('#id', 'y', { duration: 0.4, ease: 'power3' });
 
-document.querySelector("#container").addEventListener("mousemove", (e) => {
+document.querySelector('#container').addEventListener('mousemove', e => {
   xTo(e.pageX);
   yTo(e.pageY);
 });

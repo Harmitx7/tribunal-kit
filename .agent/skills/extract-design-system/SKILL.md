@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before extracting design systems or tokenizing CSS variables, you MUST inspect:
+
 1. 3+ Repetition Frequency Rule (Section 15) → Only tokenize values that recur 3+ times across components to prevent variable bloat
 2. Semantic Naming Convention (Section 17) → Use functional/semantic names (`--color-primary`) rather than literal colors (`--red-500`)
 3. Accessibility Token Contract (Section 110) → Ensure extracted text and surface tokens satisfy a min 4.5:1 WCAG AA contrast ratio
@@ -52,7 +53,7 @@ Tokens should be semantic, not literal. `color-brand` > `color-red`.
   --surface-muted: 210, 40%, 96%;
 
   /* Typography */
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
 
   /* Space / Geometry (8px grid scale) */
   --space-1: 0.25rem; /* 4px */
@@ -90,26 +91,26 @@ If building a design system inside React/Next.js, standardize the system through
 
 ```typescript
 // ✅ Efficient Extracted Component Architecture
-import { cva } from "class-variance-authority";
+import { cva } from 'class-variance-authority';
 
 const buttonStyles = cva(
-  "inline-flex items-center justify-center rounded-md font-medium transition-colors", // Base
+  'inline-flex items-center justify-center rounded-md font-medium transition-colors', // Base
   {
     variants: {
       intent: {
-        primary: "bg-primary text-white hover:bg-primary/90",
-        destructive: "bg-red-500 text-white hover:bg-red-600",
-        outline: "border border-input hover:bg-accent",
+        primary: 'bg-primary text-white hover:bg-primary/90',
+        destructive: 'bg-red-500 text-white hover:bg-red-600',
+        outline: 'border border-input hover:bg-accent',
       },
       size: {
-        sm: "h-9 px-3 text-sm",
-        default: "h-10 px-4 py-2", // Extracted standard size
-        lg: "h-11 px-8",
+        sm: 'h-9 px-3 text-sm',
+        default: 'h-10 px-4 py-2', // Extracted standard size
+        lg: 'h-11 px-8',
       },
     },
     defaultVariants: {
-      intent: "primary",
-      size: "default",
+      intent: 'primary',
+      size: 'default',
     },
   },
 );

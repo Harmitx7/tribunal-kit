@@ -4,22 +4,22 @@
  * Validate Orchestrator micro-worker payloads (legacy) and Swarm payloads.
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
-const { execSync } = require("child_process");
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
 
 // ─── ANSI TUI Renderer ────────────────────────────────────────────────────────
 class SwarmDashboard {
   constructor(workers) {
-    this.workers = workers.map((w) => ({
-      name: w.target_agent || w.agent || "Worker",
-      task: (w.task_description || w.goal || "").slice(0, 40) + "...",
-      status: "⏳ Pending",
-      color: "\x1b[33m", // Yellow
+    this.workers = workers.map(w => ({
+      name: w.target_agent || w.agent || 'Worker',
+      task: (w.task_description || w.goal || '').slice(0, 40) + '...',
+      status: '⏳ Pending',
+      color: '\x1b[33m', // Yellow
     }));
-    this.spinnerFrames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+    this.spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
     this.frameIdx = 0;
     this.linesRendered = 0;
     this.timer = null;
@@ -30,21 +30,19 @@ class SwarmDashboard {
       process.stdout.write(`\x1b[${this.linesRendered}A`);
     }
 
-    let output =
-      "\n\x1b[1m\x1b[36m━━━ Tribunal Swarm Dispatcher ━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n\n";
+    let output = '\n\x1b[1m\x1b[36m━━━ Tribunal Swarm Dispatcher ━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n\n';
     const frame = this.spinnerFrames[this.frameIdx];
 
-    this.workers.forEach((w) => {
-      const icon = w.status.includes("Pending")
+    this.workers.forEach(w => {
+      const icon = w.status.includes('Pending')
         ? `\x1b[36m${frame}\x1b[0m`
-        : w.status.includes("Done")
-          ? "\x1b[32m✔\x1b[0m"
-          : "\x1b[31m✖\x1b[0m";
+        : w.status.includes('Done')
+          ? '\x1b[32m✔\x1b[0m'
+          : '\x1b[31m✖\x1b[0m';
       output += `  ${icon}  \x1b[1m${w.name.padEnd(25)}\x1b[0m \x1b[2m|\x1b[0m ${w.color}${w.status.padEnd(12)}\x1b[0m \x1b[2m|\x1b[0m \x1b[3m${w.task}\x1b[0m\n`;
     });
 
-    output +=
-      "\n\x1b[1m\x1b[36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n";
+    output += '\n\x1b[1m\x1b[36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n';
 
     process.stdout.write(output);
     this.linesRendered = this.workers.length + 5;
@@ -71,34 +69,34 @@ class SwarmDashboard {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const VALID_WORKER_TYPES = new Set([
-  "research",
-  "generate_code",
-  "review_code",
-  "debug",
-  "plan",
-  "design_schema",
-  "write_docs",
-  "security_audit",
-  "optimize",
-  "test",
+  'research',
+  'generate_code',
+  'review_code',
+  'debug',
+  'plan',
+  'design_schema',
+  'write_docs',
+  'security_audit',
+  'optimize',
+  'test',
 ]);
 
-const VALID_RESULT_STATUSES = new Set(["success", "failure", "escalate"]);
+const VALID_RESULT_STATUSES = new Set(['success', 'failure', 'escalate']);
 
 const MAX_GOAL_LENGTH = 200;
 const MAX_CONTEXT_LENGTH = 800;
 const MAX_WORKERS_PER_SWARM = 5;
 
 function getBinaryPath() {
-  if (process.env.TRIBUNAL_FORCE_JS === "1") return null;
-  const isWindows = process.platform === "win32";
-  const ext = isWindows ? ".exe" : "";
+  if (process.env.TRIBUNAL_FORCE_JS === '1') return null;
+  const isWindows = process.platform === 'win32';
+  const ext = isWindows ? '.exe' : '';
   const candidates = [
     process.env.TRIBUNAL_CORE_PATH,
-    path.resolve(__dirname, "..", "..", "tribunal-kit", "target", "release", `tribunal-core${ext}`),
-    path.resolve(__dirname, "..", "..", "target", "release", `tribunal-core${ext}`),
-    path.resolve(process.cwd(), "target", "release", `tribunal-core${ext}`),
-    path.resolve(process.cwd(), "tribunal-kit", "target", "release", `tribunal-core${ext}`),
+    path.resolve(__dirname, '..', '..', 'tribunal-kit', 'target', 'release', `tribunal-core${ext}`),
+    path.resolve(__dirname, '..', '..', 'target', 'release', `tribunal-core${ext}`),
+    path.resolve(process.cwd(), 'target', 'release', `tribunal-core${ext}`),
+    path.resolve(process.cwd(), 'tribunal-kit', 'target', 'release', `tribunal-core${ext}`),
   ];
   for (const c of candidates) {
     if (c && fs.existsSync(c)) return c;
@@ -110,9 +108,9 @@ function nativeValidate(file, schemaType) {
   const bin = getBinaryPath();
   if (!bin || !file || !fs.existsSync(file)) return null;
   try {
-    const { spawnSync } = require("child_process");
-    const res = spawnSync(bin, ["validate", "--file", file, "--schema", schemaType], {
-      encoding: "utf-8",
+    const { spawnSync } = require('child_process');
+    const res = spawnSync(bin, ['validate', '--file', file, '--schema', schemaType], {
+      encoding: 'utf-8',
     });
     if (res.status === 0) {
       return true;
@@ -127,7 +125,7 @@ function findAgentDir(startPath) {
   let current = path.resolve(startPath);
   const root = path.parse(current).root;
   while (current !== root) {
-    const agentDir = path.join(current, ".agent");
+    const agentDir = path.join(current, '.agent');
     if (fs.existsSync(agentDir) && fs.statSync(agentDir).isDirectory()) {
       return agentDir;
     }
@@ -140,16 +138,14 @@ function findAgentDir(startPath) {
 
 function validatePayload(payloadData, workspaceRoot, agentsDir, payloadFile = null) {
   if (payloadFile) {
-    const nativeResult = nativeValidate(payloadFile, "micro-worker");
+    const nativeResult = nativeValidate(payloadFile, 'micro-worker');
     if (nativeResult === true) {
       return true;
     }
   }
 
   if (!payloadData.dispatch_micro_workers) {
-    console.error(
-      "ERROR: Payload missing required 'dispatch_micro_workers' array.",
-    );
+    console.error("ERROR: Payload missing required 'dispatch_micro_workers' array.");
     return false;
   }
 
@@ -171,9 +167,7 @@ function validatePayload(payloadData, workspaceRoot, agentsDir, payloadFile = nu
 
     const agentFile = path.join(agentsDir, `${agentName}.md`);
     if (!fs.existsSync(agentFile)) {
-      console.error(
-        `ERROR: Worker ${i}: target_agent '${agentName}' not found at ${agentFile}.`,
-      );
+      console.error(`ERROR: Worker ${i}: target_agent '${agentName}' not found at ${agentFile}.`);
       allValid = false;
     }
 
@@ -199,12 +193,12 @@ function validatePayload(payloadData, workspaceRoot, agentsDir, payloadFile = nu
 
 function buildWorkerPrompts(payloadData, workspaceRoot) {
   const prompts = [];
-  let astContext = "";
+  let astContext = '';
 
   try {
     const res = execSync(`python -m code_review_graph review-delta`, {
       cwd: workspaceRoot,
-      stdio: "pipe",
+      stdio: 'pipe',
     })
       .toString()
       .trim();
@@ -218,15 +212,15 @@ function buildWorkerPrompts(payloadData, workspaceRoot) {
   const workers = payloadData.dispatch_micro_workers || [];
   for (const worker of workers) {
     const agent = worker.target_agent;
-    const ctx = worker.context_summary || "";
-    const task = worker.task_description || "";
+    const ctx = worker.context_summary || '';
+    const task = worker.task_description || '';
     const files = worker.files_attached || [];
 
     let prompt = `--- MICRO-WORKER DISPATCH ---\n`;
     prompt += `Agent: ${agent}\n`;
     prompt += `Context: ${ctx}${astContext}\n`;
     prompt += `Task: ${task}\n`;
-    prompt += `Attached Files: ${files.length ? files.join(", ") : "None"}\n`;
+    prompt += `Attached Files: ${files.length ? files.join(', ') : 'None'}\n`;
     prompt += `-----------------------------`;
     prompts.push(prompt);
   }
@@ -239,10 +233,8 @@ function validateWorkerRequest(req, index, agentsDir) {
   const errors = [];
 
   const taskId = req.task_id;
-  if (!taskId || typeof taskId !== "string") {
-    errors.push(
-      `WorkerRequest[${index}]: 'task_id' must be a non-empty string.`,
-    );
+  if (!taskId || typeof taskId !== 'string') {
+    errors.push(`WorkerRequest[${index}]: 'task_id' must be a non-empty string.`);
   }
 
   const reqType = req.type;
@@ -253,7 +245,7 @@ function validateWorkerRequest(req, index, agentsDir) {
   }
 
   const agent = req.agent;
-  if (!agent || typeof agent !== "string") {
+  if (!agent || typeof agent !== 'string') {
     errors.push(`WorkerRequest[${index}]: 'agent' must be a non-empty string.`);
   } else {
     const agentFile = path.join(agentsDir, `${agent}.md`);
@@ -265,7 +257,7 @@ function validateWorkerRequest(req, index, agentsDir) {
   }
 
   const goal = req.goal;
-  if (!goal || typeof goal !== "string") {
+  if (!goal || typeof goal !== 'string') {
     errors.push(`WorkerRequest[${index}]: 'goal' must be a non-empty string.`);
   } else if (goal.length > MAX_GOAL_LENGTH) {
     errors.push(
@@ -274,10 +266,8 @@ function validateWorkerRequest(req, index, agentsDir) {
   }
 
   const context = req.context;
-  if (!context || typeof context !== "string") {
-    errors.push(
-      `WorkerRequest[${index}]: 'context' must be a non-empty string.`,
-    );
+  if (!context || typeof context !== 'string') {
+    errors.push(`WorkerRequest[${index}]: 'context' must be a non-empty string.`);
   } else if (context.length > MAX_CONTEXT_LENGTH) {
     errors.push(
       `WorkerRequest[${index}]: 'context' exceeds ${MAX_CONTEXT_LENGTH} characters (${context.length} chars). Trim to minimal required context only.`,
@@ -287,7 +277,7 @@ function validateWorkerRequest(req, index, agentsDir) {
   const maxRetries = req.max_retries;
   if (maxRetries !== undefined) {
     if (
-      typeof maxRetries !== "number" ||
+      typeof maxRetries !== 'number' ||
       !Number.isInteger(maxRetries) ||
       maxRetries < 1 ||
       maxRetries > 3
@@ -305,14 +295,12 @@ function validateWorkerResult(res, index) {
   const errors = [];
 
   const taskId = res.task_id;
-  if (!taskId || typeof taskId !== "string") {
-    errors.push(
-      `WorkerResult[${index}]: 'task_id' must be a non-empty string.`,
-    );
+  if (!taskId || typeof taskId !== 'string') {
+    errors.push(`WorkerResult[${index}]: 'task_id' must be a non-empty string.`);
   }
 
   const agent = res.agent;
-  if (!agent || typeof agent !== "string") {
+  if (!agent || typeof agent !== 'string') {
     errors.push(`WorkerResult[${index}]: 'agent' must be a non-empty string.`);
   }
 
@@ -325,12 +313,10 @@ function validateWorkerResult(res, index) {
 
   const output = res.output;
   const error = res.error;
-  if (status === "success" && !output) {
-    errors.push(
-      `WorkerResult[${index}]: 'output' is required when status is 'success'.`,
-    );
+  if (status === 'success' && !output) {
+    errors.push(`WorkerResult[${index}]: 'output' is required when status is 'success'.`);
   }
-  if ((status === "failure" || status === "escalate") && !error) {
+  if ((status === 'failure' || status === 'escalate') && !error) {
     errors.push(
       `WorkerResult[${index}]: 'error' is required when status is '${status}'. Be specific — 'Something went wrong' is not acceptable.`,
     );
@@ -338,30 +324,33 @@ function validateWorkerResult(res, index) {
 
   const attempts = res.attempts;
   if (attempts !== undefined) {
-    if (
-      typeof attempts !== "number" ||
-      !Number.isInteger(attempts) ||
-      attempts < 1
-    ) {
-      errors.push(
-        `WorkerResult[${index}]: 'attempts' must be an integer >= 1, got '${attempts}'.`,
-      );
+    if (typeof attempts !== 'number' || !Number.isInteger(attempts) || attempts < 1) {
+      errors.push(`WorkerResult[${index}]: 'attempts' must be an integer >= 1, got '${attempts}'.`);
     }
   }
 
   return errors;
 }
 
-function validateSwarmPayload(payloadData, agentsDir, payloadFile = null) {
+function validateSwarmPayload(payloadData, agentsDir, payloadFile = null, opts = {}) {
+  let resolvedAgentsDir = agentsDir;
+  let quiet = false;
+
+  if (typeof agentsDir === 'object' && agentsDir !== null && typeof agentsDir !== 'string') {
+    quiet = !!(agentsDir.quiet || agentsDir.silent);
+    resolvedAgentsDir = agentsDir.agentsDir || null;
+  }
+  if (opts && (opts.quiet || opts.silent)) quiet = true;
+
   if (payloadFile) {
-    const nativeResult = nativeValidate(payloadFile, "swarm");
+    const nativeResult = nativeValidate(payloadFile, 'swarm');
     if (nativeResult === true) {
       return true;
     }
   }
 
   let items;
-  if (typeof payloadData === "object" && payloadData !== null) {
+  if (typeof payloadData === 'object' && payloadData !== null) {
     if (Array.isArray(payloadData)) {
       items = payloadData;
     } else if (payloadData.workers && Array.isArray(payloadData.workers)) {
@@ -370,38 +359,42 @@ function validateSwarmPayload(payloadData, agentsDir, payloadFile = null) {
       items = [payloadData];
     }
   } else {
-    console.error("ERROR: Swarm payload must be a JSON object or array.");
+    if (!quiet) console.error('ERROR: Swarm payload must be a JSON object or array.');
     return false;
   }
 
   if (items.length > MAX_WORKERS_PER_SWARM) {
-    console.error(
-      `ERROR: Swarm payload contains ${items.length} workers, exceeding the maximum of ${MAX_WORKERS_PER_SWARM}.`,
-    );
+    if (!quiet) {
+      console.error(
+        `ERROR: Swarm payload contains ${items.length} workers, exceeding the maximum of ${MAX_WORKERS_PER_SWARM}.`,
+      );
+    }
     return false;
   }
 
   const allErrors = [];
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
-    if (typeof item !== "object" || item === null) {
+    if (typeof item !== 'object' || item === null) {
       allErrors.push(`Item[${i}]: must be a JSON object.`);
       continue;
     }
 
     let errors;
-    if ("status" in item && "output" in item) {
+    if ('status' in item && 'output' in item) {
       errors = validateWorkerResult(item, i);
     } else {
-      errors = validateWorkerRequest(item, i, agentsDir);
+      errors = validateWorkerRequest(item, i, resolvedAgentsDir);
     }
 
     allErrors.push(...errors);
   }
 
   if (allErrors.length > 0) {
-    for (const err of allErrors) {
-      console.error(`ERROR: ${err}`);
+    if (!quiet) {
+      for (const err of allErrors) {
+        console.error(`ERROR: ${err}`);
+      }
     }
     return false;
   }
@@ -415,32 +408,32 @@ function main() {
   const args = process.argv.slice(2);
   let payload = null;
   let file = null;
-  let workspace = ".";
-  let mode = "legacy";
+  let workspace = '.';
+  let mode = 'legacy';
   let useTui = false;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    if (arg === "--payload" && i + 1 < args.length) {
+    if (arg === '--payload' && i + 1 < args.length) {
       payload = args[++i];
-    } else if (arg === "--file" && i + 1 < args.length) {
+    } else if (arg === '--file' && i + 1 < args.length) {
       file = args[++i];
-    } else if (arg === "--workspace" && i + 1 < args.length) {
+    } else if (arg === '--workspace' && i + 1 < args.length) {
       workspace = args[++i];
-    } else if (arg === "--mode" && i + 1 < args.length) {
+    } else if (arg === '--mode' && i + 1 < args.length) {
       mode = args[++i];
-    } else if (arg === "--tui") {
+    } else if (arg === '--tui') {
       useTui = true;
-    } else if (arg === "-h" || arg === "--help") {
+    } else if (arg === '-h' || arg === '--help') {
       console.log(
-        "Usage: swarm_dispatcher.js [--payload <json>] [--file <path>] [--workspace <dir>] [--mode legacy|swarm] [--tui]",
+        'Usage: swarm_dispatcher.js [--payload <json>] [--file <path>] [--workspace <dir>] [--mode legacy|swarm] [--tui]',
       );
       process.exit(0);
     }
   }
 
   if (!payload && !file) {
-    console.error("ERROR: Must provide either --payload or --file");
+    console.error('ERROR: Must provide either --payload or --file');
     process.exit(1);
   }
 
@@ -448,24 +441,20 @@ function main() {
   const agentDir = findAgentDir(workspaceRoot);
 
   if (!agentDir) {
-    console.error(
-      `ERROR: Could not find .agent directory starting from ${workspaceRoot}`,
-    );
+    console.error(`ERROR: Could not find .agent directory starting from ${workspaceRoot}`);
     process.exit(1);
   }
 
-  const agentsDir = path.join(agentDir, "agents");
+  const agentsDir = path.join(agentDir, 'agents');
   if (!fs.existsSync(agentsDir)) {
-    console.error(
-      `ERROR: Could not find 'agents' directory inside ${agentDir}`,
-    );
+    console.error(`ERROR: Could not find 'agents' directory inside ${agentDir}`);
     process.exit(1);
   }
 
   let payloadData;
   try {
     if (file) {
-      payloadData = JSON.parse(fs.readFileSync(file, "utf8"));
+      payloadData = JSON.parse(fs.readFileSync(file, 'utf8'));
     } else {
       payloadData = JSON.parse(payload);
     }
@@ -474,17 +463,17 @@ function main() {
     process.exit(1);
   }
 
-  if (mode === "swarm") {
+  if (mode === 'swarm') {
     if (!validateSwarmPayload(payloadData, agentsDir, file)) {
-      console.error("ERROR: Swarm payload validation failed.");
+      console.error('ERROR: Swarm payload validation failed.');
       process.exit(1);
     }
 
-    let astContext = "";
+    let astContext = '';
     try {
       const res = execSync(`python -m code_review_graph review-delta`, {
         cwd: workspaceRoot,
-        stdio: "pipe",
+        stdio: 'pipe',
       })
         .toString()
         .trim();
@@ -497,16 +486,14 @@ function main() {
 
     if (astContext) {
       const items =
-        typeof payloadData === "object" &&
-        payloadData !== null &&
-        payloadData.workers
+        typeof payloadData === 'object' && payloadData !== null && payloadData.workers
           ? payloadData.workers
           : Array.isArray(payloadData)
             ? payloadData
             : [payloadData];
 
       for (const item of items) {
-        if (item && "context" in item) {
+        if (item && 'context' in item) {
           item.context += astContext;
         }
       }
@@ -514,9 +501,7 @@ function main() {
 
     if (useTui) {
       const workers =
-        typeof payloadData === "object" &&
-        payloadData !== null &&
-        payloadData.workers
+        typeof payloadData === 'object' && payloadData !== null && payloadData.workers
           ? payloadData.workers
           : Array.isArray(payloadData)
             ? payloadData
@@ -526,34 +511,26 @@ function main() {
       dashboard.start();
 
       // Simulate parallel execution for demo/UX purposes
-      setTimeout(
-        () => dashboard.updateStatus(0, "Researching", "\x1b[36m"),
-        1000,
-      );
+      setTimeout(() => dashboard.updateStatus(0, 'Researching', '\x1b[36m'), 1000);
       setTimeout(() => {
-        if (workers.length > 1)
-          dashboard.updateStatus(1, "Generating", "\x1b[35m");
+        if (workers.length > 1) dashboard.updateStatus(1, 'Generating', '\x1b[35m');
       }, 1500);
 
       setTimeout(() => {
-        workers.forEach((w, i) =>
-          dashboard.updateStatus(i, "✔ Done", "\x1b[32m"),
-        );
+        workers.forEach((w, i) => dashboard.updateStatus(i, '✔ Done', '\x1b[32m'));
         dashboard.stop();
-        console.log(
-          "\n\x1b[32m✔ Swarm validation complete. Ready for dispatch.\x1b[0m\n",
-        );
+        console.log('\n\x1b[32m✔ Swarm validation complete. Ready for dispatch.\x1b[0m\n');
       }, 3000);
     } else {
-      console.log("INFO: Swarm payload validation successful.");
+      console.log('INFO: Swarm payload validation successful.');
       if (astContext) {
-        console.log("--- ENRICHED SWARM PAYLOAD ---");
+        console.log('--- ENRICHED SWARM PAYLOAD ---');
         console.log(JSON.stringify(payloadData, null, 2));
       }
     }
   } else {
     if (!validatePayload(payloadData, workspaceRoot, agentsDir, file)) {
-      console.error("ERROR: Payload validation failed.");
+      console.error('ERROR: Payload validation failed.');
       process.exit(1);
     }
 
@@ -563,26 +540,18 @@ function main() {
       dashboard.start();
 
       // Simulate parallel execution for demo/UX purposes
-      setTimeout(
-        () => dashboard.updateStatus(0, "Researching", "\x1b[36m"),
-        1000,
-      );
+      setTimeout(() => dashboard.updateStatus(0, 'Researching', '\x1b[36m'), 1000);
       setTimeout(() => {
-        if (workers.length > 1)
-          dashboard.updateStatus(1, "Generating", "\x1b[35m");
+        if (workers.length > 1) dashboard.updateStatus(1, 'Generating', '\x1b[35m');
       }, 1500);
 
       setTimeout(() => {
-        workers.forEach((w, i) =>
-          dashboard.updateStatus(i, "✔ Done", "\x1b[32m"),
-        );
+        workers.forEach((w, i) => dashboard.updateStatus(i, '✔ Done', '\x1b[32m'));
         dashboard.stop();
-        console.log(
-          "\n\x1b[32m✔ All workers successfully dispatched.\x1b[0m\n",
-        );
+        console.log('\n\x1b[32m✔ All workers successfully dispatched.\x1b[0m\n');
       }, 3000);
     } else {
-      console.log("INFO: Payload validation successful.");
+      console.log('INFO: Payload validation successful.');
       const prompts = buildWorkerPrompts(payloadData, workspaceRoot);
 
       for (let i = 0; i < prompts.length; i++) {

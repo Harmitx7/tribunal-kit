@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before architecting AWS cloud infrastructure or writing Terraform HCL, you MUST inspect:
+
 1. Dynamic Account ID & Region Resolution (Section 20) → Use `data.aws_caller_identity.current.account_id` and `var.region`; ban hardcoded account IDs or ARNs
 2. Private Subnet Application Placement (Section 23) → Place application compute (ECS, Lambda) strictly in private subnets; only ALB and NAT Gateway live in public subnets
 3. Secrets Manager Secret Injection (Section 21) → Reference secret ARNs from AWS Secrets Manager in ECS task definitions; ban plaintext environment variables for passwords/tokens

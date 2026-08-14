@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering multilingual or i18n features, you MUST inspect:
+
 1. Dictionary Interpolation (Section 15) → Use ICU parameter interpolation `t('greeting', { name })` instead of string concatenation
 2. Native `Intl` API Formatting (Section 71) → Use native `Intl.NumberFormat` and `Intl.DateTimeFormat` with active locale instead of third-party string parsers
 3. Logical CSS Properties for RTL (Section 94) → Use logical properties (`margin-inline-start`, `ms-4`) instead of physical `marginLeft`/`marginRight` for Arabic/Hebrew support
@@ -66,15 +67,15 @@ export function Header({ user, alertCount }) {
 }
 
 // ✅ GOOD: i18n Abstraction (using next-intl)
-import { useTranslations } from "next-intl";
+import { useTranslations } from 'next-intl';
 
 export function Header({ user, alertCount }) {
-  const t = useTranslations("Dashboard");
+  const t = useTranslations('Dashboard');
 
   return (
     <header>
-      <h1>{t("welcomeMessage", { name: user.name })}</h1>
-      <p>{t("unreadAlerts", { count: alertCount })}</p>
+      <h1>{t('welcomeMessage', { name: user.name })}</h1>
+      <p>{t('unreadAlerts', { count: alertCount })}</p>
     </header>
   );
 }
@@ -88,19 +89,19 @@ Do not install `moment.js` or write massive regex string parsers to format curre
 
 ```typescript
 // Data/Currency Formatting correctly tied to the active locale
-const locale = "de-DE";
+const locale = 'de-DE';
 
 // ✅ Currency
-const price = new Intl.NumberFormat(locale, { style: "currency", currency: "EUR" }).format(1200.5);
+const price = new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' }).format(1200.5);
 // Output in Germany: "1.200,50 €"
 
 // ✅ Dates
-const date = new Intl.DateTimeFormat(locale, { dateStyle: "full" }).format(new Date());
+const date = new Intl.DateTimeFormat(locale, { dateStyle: 'full' }).format(new Date());
 // Output in Germany: "Freitag, 2. April 2026"
 
 // ✅ Relative Time
-const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
-rtf.format(-2, "day"); // Output: "vorgestern" (the day before yesterday)
+const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+rtf.format(-2, 'day'); // Output: "vorgestern" (the day before yesterday)
 ```
 
 ---

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering SVG path or stroke animations, you MUST inspect:
+
 1. Target SVG attributes → Ensure `fill="none"` is set on draw-on paths to prevent black fill occlusion
 2. Path Length Calibration (Section 70) → Calculate exact `path.getTotalLength()` instead of guessing `stroke-dasharray` values
 3. Non-scaling Stroke rule (Section 83) → Apply `vector-effect="non-scaling-stroke"` if vector elements scale across responsive viewports
@@ -31,10 +32,15 @@ Craft crisp, resolution-independent vector animations using CSS, Framer Motion, 
 ## 3 SVG Motion Techniques
 
 ### 1. Pure CSS Stroke Draw-On Effect
+
 ```css
 @keyframes draw-path {
-  from { stroke-dashoffset: 1000; }
-  to { stroke-dashoffset: 0; }
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 
 .draw-signature-path {
@@ -45,8 +51,9 @@ Craft crisp, resolution-independent vector animations using CSS, Framer Motion, 
 ```
 
 ### 2. Framer Motion SVG Path Length Animation
+
 ```tsx
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 export function DrawCheckmark() {
   return (
@@ -55,7 +62,7 @@ export function DrawCheckmark() {
         d="M5 13l4 4L19 7"
         initial={{ pathLength: 0 }}
         animate={{ pathLength: 1 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
       />
     </svg>
   );
@@ -63,12 +70,14 @@ export function DrawCheckmark() {
 ```
 
 ### 3. SVG Path Morphing (GSAP MorphSVGPlugin)
+
 - Morph between 2 vector paths with identical point counts or using GSAP MorphSVG:
+
 ```javascript
-gsap.to("#start-shape", {
-  morphSVG: "#end-shape",
+gsap.to('#start-shape', {
+  morphSVG: '#end-shape',
   duration: 0.6,
-  ease: "power2.inOut"
+  ease: 'power2.inOut',
 });
 ```
 

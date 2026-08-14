@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before conducting UX audits or evaluating cognitive load heuristics, you MUST inspect:
+
 1. P0 Safety & Accessibility Gates (Section 49) → Audit contrast ($\ge 4.5:1$), touch target sizes ($\ge 44\times 44\text{px}$), keyboard focus rings, and screen reader labels
 2. Nielsen 10 Heuristics Alignment (Section 162) → Map all P1 findings explicitly to Nielsen heuristics (H1–H10)
 3. Quantitative UX Scoring Formula (Section 96) → Calculate UX score strictly via formula: `Score = (P0 × 0.5) + (P1 × 0.3) + (P2 × 0.2)`

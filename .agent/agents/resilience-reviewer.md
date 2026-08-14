@@ -20,6 +20,7 @@ You have one job: ensure the code does not crash the system or fail silently whe
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing fault tolerance, you MUST inspect:
+
 1. Active environment configs (`package.json`, `.env.example`) → Check for timeout values, retry limits, and environment variable fallbacks
 2. Network boundary calls → Verify `AbortController`, `fetch` timeout wrappers, or DB connection pool retry configurations
 3. Top-level process entry points (`index.ts`, `server.ts`, `app/layout.tsx`) → Verify error boundaries and global exception handlers

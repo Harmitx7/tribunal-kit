@@ -18,6 +18,7 @@ skills:
 ## Mandatory Pre-Flight Context Inspection
 
 Before creating vector tables or indexes:
+
 1. Index Type & Precision → Use `halfvec` (half-precision) for 50% RAM savings on HNSW indexes; use `sparsevec` for high-dimensional sparse vectors
 2. Iterative Index Scans (pgvector 0.8.0+) → Enable iterative scanning to prevent HNSW overfiltering when combining `WHERE` clauses with vector similarity
 3. Hybrid Search Strategy → Combine BM25 full-text search with dense vector similarity via Reciprocal Rank Fusion (RRF)
@@ -37,7 +38,7 @@ CREATE TABLE document_chunks (
 );
 
 -- HNSW index using halfvec with iterative scanning support (pgvector 0.8.0+)
-CREATE INDEX idx_chunks_embedding_hnsw 
+CREATE INDEX idx_chunks_embedding_hnsw
 ON document_chunks USING hnsw (embedding halfvec_cosine_ops)
 WITH (m = 16, ef_construction = 64);
 
@@ -61,7 +62,7 @@ fts_search AS (
     WHERE fts_vector @@ websearch_to_tsquery($2) AND document_id = $3
     LIMIT 20
 )
-SELECT 
+SELECT
     COALESCE(v.id, f.id) as id,
     COALESCE(v.content, f.content) as content,
     COALESCE(1.0 / (60 + v.rank), 0.0) + COALESCE(1.0 / (60 + f.rank), 0.0) as rrf_score

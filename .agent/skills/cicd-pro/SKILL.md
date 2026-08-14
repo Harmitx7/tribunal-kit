@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing CI/CD workflows or deployment scripts, you MUST inspect:
+
 1. Concurrency Mutex Requirement (Section 18) → Configure top-level `concurrency:` blocks in GitHub Actions workflows to prevent parallel deploy collisions
 2. OIDC Authentication Protocol (Section 20) → Use OIDC (`id-token: write` permission) for AWS/cloud credentials; ban static access keys in secrets
 3. Production Promotion Gates (Section 21) → Enforce environment promotion gates (`staging` → `production` with manual reviewers) before deploying
@@ -169,7 +170,7 @@ jobs:
         with:
           image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
           severity: CRITICAL
-          exit-code: "1" # fail on critical vulnerabilities
+          exit-code: '1' # fail on critical vulnerabilities
 
   # ──── STAGE 3: DEPLOY STAGING ────
   deploy-staging:

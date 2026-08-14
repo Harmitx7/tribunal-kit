@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing animation CSS or JS, you MUST inspect:
+
 1. Target animated properties → Strictly enforce GPU compositor-only properties (`transform`, `opacity`) and ban layout-triggering properties (`width`, `height`, `top`, `left`)
 2. Scale Math Replacement (Section 29) → Use `transform: scaleX(2)` instead of animating `width`
 3. `will-change` VRAM Management (Section 45) → Apply `will-change` dynamically during active animation and remove upon completion
@@ -31,12 +32,16 @@ Eliminate jank, layout thrashing, and frame drops to achieve locked 60fps / 120f
 ## 4 Performance Rules
 
 ### 1. Compositor-Only Animation Pipeline
+
 Only animate properties handled strictly by the GPU compositor layer:
+
 - ✅ **Compositor Properties** (Zero Layout / Zero Paint): `transform` (`translate3d`, `scale`, `rotate`) and `opacity`.
 - ❌ **Forbidden Animating Properties** (Triggers Full Layout Re-calculation): `width`, `height`, `margin`, `padding`, `top`, `left`, `border-width`.
 
 ### 2. Replacing Width/Height Transitions with Scale Math
+
 Instead of animating `width: 100px` to `200px`:
+
 ```css
 /* BAD: Triggers Layout recalculation on every frame */
 .box-bad {
@@ -52,10 +57,12 @@ Instead of animating `width: 100px` to `200px`:
 ```
 
 ### 3. `will-change` Management
+
 - Apply `will-change: transform, opacity` ONLY right before or during active animation.
 - Remove `will-change` when animation completes to free up GPU VRAM memory!
 
 ### 4. Layout Thrashing Prevention in JS
+
 - Never interleave DOM reads (`element.offsetHeight`) with DOM writes (`element.style.height = ...`) inside requestAnimationFrame or scroll handlers. Batch all reads first, then perform all writes.
 
 ---

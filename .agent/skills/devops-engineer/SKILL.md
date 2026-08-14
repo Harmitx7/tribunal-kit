@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before building Dockerfiles, Docker Compose, or GitHub Actions pipelines, you MUST inspect:
+
 1. Non-Root Docker Container Rule (Section 47) → Explicitly specify a non-root user (`USER appuser`) in production Dockerfiles
 2. Deterministic Package Installation (Section 28) → Use `npm ci` (or yarn/pnpm equivalent with lockfiles) in Docker and CI; ban `npm install`
 3. CI/CD Concurrency Group Cancellation (Section 142) → Configure `concurrency.cancel-in-progress: true` on PR workflows to cancel stale builds
@@ -102,7 +103,7 @@ services:
       context: .
       target: runner
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - DATABASE_URL=postgres://postgres:postgres@db:5432/myapp
       - REDIS_URL=redis://redis:6379
@@ -122,7 +123,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 3s
       retries: 5

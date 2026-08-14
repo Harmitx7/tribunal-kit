@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before recommending design trends or visual directions, you MUST inspect:
+
 1. Banned AI Cliché Rule (Section 40) → Ban purple/violet gradients, generic mesh backgrounds, and un-justified left-text/right-image hero layouts
 2. WCAG 2.2 AA Contrast Compliance (Section 61) → Calculate HSL palette contrast ($\ge 4.5:1$ text, $\ge 3:1$ large text) before finalizing tokens
 3. Verified Google Fonts Only (Section 175) → Ensure typography recommendations are active in Google Fonts or system defaults

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing Python code or FastAPI endpoints, you MUST inspect:
+
 1. Pydantic v2 Migration Syntax (Section 17) → Use `model_dump()`, `model_dump_json()`, `model_validate()`, and `@field_validator`; ban v1 `.dict()` and `@validator`
 2. Modern Native Generics (Section 16) → Use native `list[str]`, `dict[k,v]`, and `X | None` (Python 3.10+); ban legacy `typing.List` / `typing.Optional`
 3. Non-Blocking Async Clients (Section 21) → Use `httpx.AsyncClient()` in async code; ban blocking `requests` library inside asyncio event loops

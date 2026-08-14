@@ -18,6 +18,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating React Native or Expo mobile code, you MUST inspect:
+
 1. `package.json` / `app.json` → Confirm Expo SDK version, Expo Router v4 status, and installed native modules (`expo-image`, `react-native-reanimated`, `@shopify/flash-list`)
 2. `app/_layout.tsx` → Inspect file-based routing architecture and stack/tab provider setup
 3. Safe Area & Theme tokens → Check `react-native-safe-area-context` usage and dark mode color scheme bindings
@@ -60,13 +61,13 @@ Rule: Animations must NEVER cross the bridge during execution
 
 ```tsx
 // ❌ BRIDGE CROSSING: setState inside animation → UI→JS→UI round trip = jank
-const gesture = Gesture.Pan().onUpdate((e) => {
+const gesture = Gesture.Pan().onUpdate(e => {
   setState(e.translationX); // Crosses to JS thread — destroys 60fps
 });
 
 // ✅ UI THREAD: shared values never cross the bridge
 const translateX = useSharedValue(0);
-const gesture = Gesture.Pan().onUpdate((e) => {
+const gesture = Gesture.Pan().onUpdate(e => {
   translateX.value = e.translationX; // Pure UI thread
 });
 
@@ -76,12 +77,12 @@ const animatedStyle = useAnimatedStyle(() => ({
 
 // ✅ Custom functions in animations need 'worklet' directive
 const clamp = (val: number, min: number, max: number): number => {
-  "worklet";
+  'worklet';
   return Math.min(Math.max(val, min), max);
 };
 
 // ✅ runOnJS: deliberate bridge crossing after animation completes
-const gesture = Gesture.Pan().onEnd((e) => {
+const gesture = Gesture.Pan().onEnd(e => {
   if (e.translationX > 100) {
     runOnJS(handleDismiss)(); // Explicit bridge crossing — acceptable on end, not onUpdate
   }
@@ -190,12 +191,12 @@ const { id } = useLocalSearchParams<{ id: string }>();
 ```tsx
 // ✅ Always clean up subscriptions
 useEffect(() => {
-  const subscription = AppState.addEventListener("change", handleAppState);
+  const subscription = AppState.addEventListener('change', handleAppState);
   return () => subscription.remove();
 }, []);
 
 // ✅ Expo Image over Image component (automatic memory management)
-import { Image } from "expo-image";
+import { Image } from 'expo-image';
 <Image
   source={{ uri: imageUrl }}
   contentFit="cover"

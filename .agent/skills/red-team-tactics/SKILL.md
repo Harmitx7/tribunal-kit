@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before performing red team assessments or security testing, you MUST inspect:
+
 1. Written Authorization Gate (Section 34) → Verify written authorization, defined scope, rules of engagement, and emergency contact before executing tests
 2. Reproducible PoC Rule (Section 16) → Include a reproducible Proof-of-Concept, CVSS risk score, and explicit remediation snippet for every finding
 3. Breach Discovery Halt (Section 162) → Immediately halt security testing and report if evidence of an active real-world breach is discovered

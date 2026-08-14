@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before creating or editing ScrollTrigger animations, you MUST inspect:
+
 1. Plugin Registration Requirement (Section 22) → Explicitly execute `gsap.registerPlugin(ScrollTrigger)` once at root; ban unregistered plugin usage
 2. Child Tween ScrollTrigger Ban (Section 288) → Attach `scrollTrigger` to top-level timeline/tweens ONLY; ban attaching `scrollTrigger` to child timeline steps
 3. Horizontal Ease-None Rule (Section 226) → Enforce `ease: "none"` on horizontal scrolling tweens; ban custom easing on containerAnimation tweens
@@ -45,14 +46,14 @@ gsap.registerPlugin(ScrollTrigger);
 Tie a tween or timeline to scroll position:
 
 ```javascript
-gsap.to(".box", {
+gsap.to('.box', {
   x: 500,
   duration: 1,
   scrollTrigger: {
-    trigger: ".box",
-    start: "top center", // when top of trigger hits center of viewport
-    end: "bottom center", // when the bottom of the trigger hits the center of the viewport
-    toggleActions: "play reverse play reverse", // onEnter play, onLeave reverse, onEnterBack play, onLeaveBack reverse
+    trigger: '.box',
+    start: 'top center', // when top of trigger hits center of viewport
+    end: 'bottom center', // when the bottom of the trigger hits the center of the viewport
+    toggleActions: 'play reverse play reverse', // onEnter play, onLeave reverse, onEnterBack play, onLeaveBack reverse
   },
 });
 ```
@@ -89,10 +90,10 @@ Main properties for the `scrollTrigger` config object (shorthand: `scrollTrigger
 
 ```javascript
 ScrollTrigger.create({
-  trigger: "#id",
-  start: "top top",
-  end: "bottom 50%+=100px",
-  onUpdate: (self) => console.log(self.progress.toFixed(3), self.direction),
+  trigger: '#id',
+  start: 'top top',
+  end: 'bottom 50%+=100px',
+  onUpdate: self => console.log(self.progress.toFixed(3), self.direction),
 });
 ```
 
@@ -114,26 +115,26 @@ ScrollTrigger.create({
 - **batchMax** (Number | Function) — Max elements per batch. When full, the callback fires and the next batch starts. Use a **function** that returns a number for responsive layouts; it runs on refresh (resize, tab focus, etc.).
 
 ```javascript
-ScrollTrigger.batch(".box", {
+ScrollTrigger.batch('.box', {
   onEnter: (elements, triggers) => {
     gsap.to(elements, { opacity: 1, y: 0, stagger: 0.15 });
   },
   onLeave: (elements, triggers) => {
     gsap.to(elements, { opacity: 0, y: 100 });
   },
-  start: "top 80%",
-  end: "bottom 20%",
+  start: 'top 80%',
+  end: 'bottom 20%',
 });
 ```
 
 With **batchMax** and **interval** for finer control:
 
 ```javascript
-ScrollTrigger.batch(".card", {
+ScrollTrigger.batch('.card', {
   interval: 0.1,
   batchMax: 4,
-  onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, stagger: 0.1, overwrite: true }),
-  onLeaveBack: (batch) => gsap.set(batch, { opacity: 0, y: 50, overwrite: true }),
+  onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, stagger: 0.1, overwrite: true }),
+  onLeaveBack: batch => gsap.set(batch, { opacity: 0, y: 50, overwrite: true }),
 });
 ```
 
@@ -176,12 +177,12 @@ See [ScrollTrigger.scrollerProxy()](https://gsap.com/docs/v3/Plugins/ScrollTrigg
 Scrub ties animation progress to scroll. Use for “scroll-driven” feel:
 
 ```javascript
-gsap.to(".box", {
+gsap.to('.box', {
   x: 500,
   scrollTrigger: {
-    trigger: ".box",
-    start: "top center",
-    end: "bottom center",
+    trigger: '.box',
+    start: 'top center',
+    end: 'bottom center',
     scrub: true, // or number (smoothness delay in seconds), so 0.5 means it'd take 0.5 seconds to "catch up" to the current scroll position.
   },
 });
@@ -227,14 +228,14 @@ Drive a timeline with scroll and optional scrub:
 ```javascript
 const tl = gsap.timeline({
   scrollTrigger: {
-    trigger: ".container",
-    start: "top top",
-    end: "+=2000",
+    trigger: '.container',
+    start: 'top top',
+    end: '+=2000',
     scrub: 1,
     pin: true,
   },
 });
-tl.to(".a", { x: 100 }).to(".b", { y: 50 }).to(".c", { opacity: 0 });
+tl.to('.a', { x: 100 }).to('.b', { y: 50 }).to('.c', { opacity: 0 });
 ```
 
 The timeline’s progress is tied to scroll through the trigger’s start/end range.
@@ -251,27 +252,27 @@ A common pattern: **pin** a section, then as the user scrolls **vertically**, co
 4. To trigger things based on the horizontal movement caused by that tween, set **containerAnimation** to that tween.
 
 ```javascript
-const scrollingEl = document.querySelector(".horizontal-el");
+const scrollingEl = document.querySelector('.horizontal-el');
 // Panel = pinned viewport-sized section. .horizontal-wrap = inner content that moves left.
 const scrollTween = gsap.to(scrollingEl, {
   xPercent: () => Max.max(0, window.innerWidth - scrollingEl.offsetWidth),
-  ease: "none", // ease: "none" is required
+  ease: 'none', // ease: "none" is required
   scrollTrigger: {
     trigger: scrollingEl,
     pin: scrollingEl.parentNode, // wrapper so that we're not animating the pinned element
-    start: "top top",
-    end: "+=1000",
+    start: 'top top',
+    end: '+=1000',
   },
 });
 
 // other tweens that trigger based on horizontal movement should reference the containerAnimation:
-gsap.to(".nested-el-1", {
+gsap.to('.nested-el-1', {
   y: 100,
   scrollTrigger: {
     containerAnimation: scrollTween, // IMPORTANT
-    trigger: ".nested-wrapper-1",
-    start: "left center", // based on horizontal movement
-    toggleActions: "play none none reset",
+    trigger: '.nested-wrapper-1',
+    start: 'left center', // based on horizontal movement
+    toggleActions: 'play none none reset',
   },
 });
 ```
@@ -284,9 +285,9 @@ gsap.to(".nested-el-1", {
 - When removing animated elements or changing pages (e.g. in SPAs), **kill** associated ScrollTrigger instances so they don’t run on stale elements:
 
 ```javascript
-ScrollTrigger.getAll().forEach((t) => t.kill());
+ScrollTrigger.getAll().forEach(t => t.kill());
 // or kill by the id assigned to the ScrollTrigger in its config object like {id: "my-id", ...}
-ScrollTrigger.getById("my-id")?.kill();
+ScrollTrigger.getById('my-id')?.kill();
 ```
 
 In React, use the `useGSAP()` hook (@gsap/react NPM package) to ensure proper cleanup automatically, or manually kill in a cleanup (e.g. in useEffect return) when the component unmounts.

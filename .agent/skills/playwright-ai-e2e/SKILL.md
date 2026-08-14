@@ -19,6 +19,7 @@ skills:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing end-to-end web tests:
+
 1. ARIA Role Locators → Use accessibility roles (`getByRole`, `getByText`) over brittle CSS selectors
 2. Auto-Waiting & Zero Sleep → Avoid `page.waitForTimeout()`; rely on Playwright built-in auto-waiting
 3. Network Interception → Mock external third-party APIs using `page.route()` for deterministic CI runs
@@ -31,7 +32,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Dashboard Features', () => {
   test.beforeEach(async ({ page }) => {
     // Intercept external analytics API to avoid flaky network calls
-    await page.route('**/api/analytics', async (route) => {
+    await page.route('**/api/analytics', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -42,7 +43,7 @@ test.describe('Dashboard Features', () => {
 
   test('user views analytics dashboard', async ({ page }) => {
     await page.goto('/dashboard');
-    
+
     // Resilient ARIA locators
     const heading = page.getByRole('heading', { name: 'Analytics' });
     await expect(heading).toBeVisible();

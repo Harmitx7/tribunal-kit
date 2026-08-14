@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering Next.js 15+ App Router code, you MUST inspect:
+
 1. Client Boundary rules (`"use client"` vs Server Components) → Use Server Components by default; add `"use client"` only for interactivity/hooks
 2. Server Actions Validation (Section 68) → Always include `"use server"` and validate form inputs with Zod (`Schema.safeParse`)
 3. Next.js 15 Caching & Dynamic APIs (Section 106) → `fetch()` is UNCACHED by default in Next.js 15; `cookies()` and `headers()` are `async`
@@ -64,7 +65,7 @@ app/
 export default function Page() {
   return (
     <ClientSidebar>
-      {" "}
+      {' '}
       {/* "use client" */}
       <ServerStats /> {/* Server: zero JS bundle, fetches DB */}
     </ClientSidebar>
@@ -77,19 +78,19 @@ export default function Page() {
 ## Server Actions (Mutations)
 
 ```tsx
-"use server";
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
+'use server';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
 const Schema = z.object({ name: z.string().min(2) });
 
 export async function createUser(prevState: any, formData: FormData) {
   // ❌ TRAP: ALWAYS validate formData. Never trust client input.
-  const parsed = Schema.safeParse({ name: formData.get("name") });
+  const parsed = Schema.safeParse({ name: formData.get('name') });
   if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors };
 
   await db.user.create({ data: parsed.data });
-  revalidatePath("/users"); // Clears cache so next render shows new user
+  revalidatePath('/users'); // Clears cache so next render shows new user
   return { success: true };
 }
 ```
@@ -97,9 +98,9 @@ export async function createUser(prevState: any, formData: FormData) {
 Client usage (React 19):
 
 ```tsx
-"use client";
-import { useActionState } from "react";
-import { createUser } from "./actions";
+'use client';
+import { useActionState } from 'react';
+import { createUser } from './actions';
 
 export function UserForm() {
   const [state, formAction, isPending] = useActionState(createUser, null);
@@ -120,13 +121,17 @@ export function UserForm() {
 ```tsx
 // Next.js 15 caching defaults
 const dynamic = await fetch(url); // 15 default: NO CACHE
-const static = await fetch(url, { cache: "force-cache" }); // Static
+const static = await fetch(url, { cache: 'force-cache' }); // Static
 const isr = await fetch(url, { next: { revalidate: 3600 } }); // Revalidate every hour
-const tagged = await fetch(url, { next: { tags: ["user-1"] } }); // On-demand via revalidateTag()
+const tagged = await fetch(url, { next: { tags: ['user-1'] } }); // On-demand via revalidateTag()
 
 // DB calls without fetch
-import { unstable_cache } from "next/cache";
-const getCachedUser = unstable_cache(async (id) => db.user.findUnique({ where: { id } }), ["user-cache-key"], { revalidate: 60, tags: ["users"] });
+import { unstable_cache } from 'next/cache';
+const getCachedUser = unstable_cache(
+  async id => db.user.findUnique({ where: { id } }),
+  ['user-cache-key'],
+  { revalidate: 60, tags: ['users'] },
+);
 ```
 
 ### Waterfall Elimination
@@ -160,11 +165,11 @@ PPR static-generates the route shell and streams dynamic parts.
 export default { experimental: { ppr: true } };
 
 // Any component reading cookies/headers inside a Suspense boundary becomes a dynamic hole
-import { cookies } from "next/headers";
+import { cookies } from 'next/headers';
 
 async function Cart() {
   const c = await cookies(); // Next.js 15 cookies are async!
-  const cartId = c.get("cartId");
+  const cartId = c.get('cartId');
 }
 
 export default function Page() {
@@ -185,18 +190,18 @@ export default function Page() {
 
 ```typescript
 // middleware.ts (Root of project)
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export function middleware(req: NextRequest) {
-  const token = req.cookies.get("auth-token");
-  if (!token && req.nextUrl.pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/login", req.url));
+  const token = req.cookies.get('auth-token');
+  if (!token && req.nextUrl.pathname.startsWith('/dashboard')) {
+    return NextResponse.redirect(new URL('/login', req.url));
   }
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"], // Strict matcher is critical for performance
+  matcher: ['/dashboard/:path*'], // Strict matcher is critical for performance
 };
 ```
 

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing logo grids or trust rows, you MUST inspect:
+
 1. Optical Weight Normalization rules (Section 24) → Enforce bounding box limits (`max-height: 28px`, `max-width: 120px`) with `object-fit: contain`
 2. Monochromatic Harmonization rules (Section 29) → Render all logos in monochromatic SVG fill (`fill="currentColor"`) matching `--text-muted`
 3. Hover States → Transition opacity to 100% smoothly over `200ms` on hover
@@ -31,15 +32,19 @@ Architect balanced, optically aligned logo rows and trust grids that communicate
 ## 4 Logo Layout Rules
 
 ### 1. Optical Weight Normalization
+
 Logos vary wildly in aspect ratio (e.g. square logos vs wide wordmarks).
+
 - **Rule**: Set a maximum bounding box (`max-height: 28px`, `max-width: 120px`) and use `object-fit: contain` with `filter: grayscale(100%) opacity(0.7)`.
 - On hover, transition `opacity(1)` and remove grayscale smoothly over `200ms`.
 
 ### 2. Monochromatic Harmonization
+
 - Never display multi-colored corporate logos together—they create visual chaos.
 - Render all logos in monochromatic SVG fill (`fill="currentColor"`) matching `--text-muted` or `--foreground-muted`.
 
 ### 3. Responsive Flex Grid
+
 ```css
 .logo-trust-row {
   display: flex;
@@ -51,6 +56,7 @@ Logos vary wildly in aspect ratio (e.g. square logos vs wide wordmarks).
 ```
 
 ### 4. Seamless Ticker Marquee (Optional)
+
 - For 8+ logos, use a hardware-accelerated CSS marquee animation with duplicate items for seamless continuous looping and `animation-play-state: paused` on hover.
 
 ---

@@ -22,6 +22,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before executing structural refactoring or extracting interfaces, you MUST inspect:
+
 1. Complete Dependent Map (Grep Importers) → Identify every file importing the target module before touching a single line
 2. Baseline Test Suite Verification (`test_runner.js`) → Ensure all unit and integration tests pass BEFORE initiating refactor steps
 3. Observable Behavior Preservation → Enforce zero change in public function behavior or API contracts; verify tests pass cleanly after every step
@@ -137,14 +138,14 @@ Rolling forward with broken tests is not refactoring — it's breaking code.
 
 ```typescript
 // Before: inline logic in handler
-app.post("/orders", async (req, res) => {
+app.post('/orders', async (req, res) => {
   const discount = amount > 100 ? amount * 0.9 : amount; // inline
   // ...
 });
 
 // After: extracted pure function with tests
 const applyDiscount = (amount: number): number => (amount > 100 ? amount * 0.9 : amount);
-app.post("/orders", async (req, res) => {
+app.post('/orders', async (req, res) => {
   const discount = applyDiscount(amount); // single responsibility
   // ...
 });

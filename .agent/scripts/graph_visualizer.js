@@ -5,27 +5,25 @@
  * Uses a native zero-dependency Canvas force-directed graph.
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const { RED, GREEN, DIM, RESET } = require("./_colors");
+const { RED, GREEN, DIM, RESET } = require('./_colors');
 
-const AGENT_DIR = path.join(process.cwd(), ".agent");
-const HISTORY_DIR = path.join(AGENT_DIR, "history");
-const CACHE_FILE = path.join(HISTORY_DIR, "graph-cache.json");
-const HTML_FILE = path.join(HISTORY_DIR, "architecture-explorer.html");
+const AGENT_DIR = path.join(process.cwd(), '.agent');
+const HISTORY_DIR = path.join(AGENT_DIR, 'history');
+const CACHE_FILE = path.join(HISTORY_DIR, 'graph-cache.json');
+const HTML_FILE = path.join(HISTORY_DIR, 'architecture-explorer.html');
 
 function main() {
   if (!fs.existsSync(CACHE_FILE)) {
-    console.error(
-      `${RED}✖ Error: graph-cache.json not found. Run graph_builder.js first.${RESET}`,
-    );
+    console.error(`${RED}✖ Error: graph-cache.json not found. Run graph_builder.js first.${RESET}`);
     process.exit(1);
   }
 
-  const cacheData = fs.readFileSync(CACHE_FILE, "utf8");
+  const cacheData = fs.readFileSync(CACHE_FILE, 'utf8');
 
   const htmlContent = `<!DOCTYPE html>
 <html lang="en">

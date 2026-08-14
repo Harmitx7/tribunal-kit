@@ -5,19 +5,19 @@
  * stripping out internal logic to save tokens and prevent context bloat.
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const { RED, CYAN, RESET } = require("./_colors");
+const { RED, CYAN, RESET } = require('./_colors');
 
 function getFlag(name) {
   const idx = process.argv.indexOf(name);
   return idx !== -1 && process.argv[idx + 1] ? process.argv[idx + 1] : null;
 }
 
-const targetFile = getFlag("--focus");
+const targetFile = getFlag('--focus');
 
 if (!targetFile) {
   console.error(
@@ -34,7 +34,7 @@ if (!fs.existsSync(absolutePath)) {
 }
 
 function extractSkeleton(content) {
-  const lines = content.split("\n");
+  const lines = content.split('\n');
   const skeleton = [];
 
   // State machine flags
@@ -44,15 +44,12 @@ function extractSkeleton(content) {
   // ── Regex Matchers ──
   const importRegex = /^import\s+.*$/;
   const requireRegex = /^(?:const|let|var)\s+.*require\(.*$/;
-  const classRegex =
-    /^(?:export\s+)?(?:default\s+)?class\s+(\w+)(?:\s+extends\s+[\w.]+)?/;
-  const functionRegex =
-    /^(?:export\s+)?(?:default\s+)?(?:async\s+)?function\s+(\w*)\s*\(([^)]*)\)/;
+  const classRegex = /^(?:export\s+)?(?:default\s+)?class\s+(\w+)(?:\s+extends\s+[\w.]+)?/;
+  const functionRegex = /^(?:export\s+)?(?:default\s+)?(?:async\s+)?function\s+(\w*)\s*\(([^)]*)\)/;
   const arrowFuncRegex =
     /^(?:export\s+)?(?:const|let|var)\s+(\w+)\s*=\s*(?:async\s+)?\(([^)]*)\)\s*=>/;
   // Heuristic for React Components (starts with Capital letter)
-  const reactComponentRegex =
-    /^(?:export\s+)?(?:const|let|var)\s+([A-Z]\w+)\s*=\s*(?:[^=;]+)?=>/;
+  const reactComponentRegex = /^(?:export\s+)?(?:const|let|var)\s+([A-Z]\w+)\s*=\s*(?:[^=;]+)?=>/;
   const typeInterfaceRegex = /^(?:export\s+)?(?:type|interface)\s+(\w+)/;
 
   for (let i = 0; i < lines.length; i++) {
@@ -69,18 +66,16 @@ function extractSkeleton(content) {
 
     // Keep types and interfaces
     if (typeInterfaceRegex.test(trimmed)) {
-      skeleton.push(line + (trimmed.endsWith("{") ? " /* ... */ }" : ""));
+      skeleton.push(line + (trimmed.endsWith('{') ? ' /* ... */ }' : ''));
       continue;
     }
 
     // Keep classes
     const classMatch = classRegex.exec(trimmed);
     if (classMatch) {
-      skeleton.push("\n" + line + (trimmed.endsWith("{") ? "" : " {"));
+      skeleton.push('\n' + line + (trimmed.endsWith('{') ? '' : ' {'));
       inClass = true;
-      braceDepth =
-        (trimmed.match(/\{/g) || []).length -
-        (trimmed.match(/\}/g) || []).length;
+      braceDepth = (trimmed.match(/\{/g) || []).length - (trimmed.match(/\}/g) || []).length;
       continue;
     }
 
@@ -88,11 +83,9 @@ function extractSkeleton(content) {
     const funcMatch = functionRegex.exec(trimmed);
     if (funcMatch) {
       skeleton.push(
-        "\n" +
+        '\n' +
           line +
-          (trimmed.endsWith("{")
-            ? " /* logic stripped */ }"
-            : " { /* logic stripped */ }"),
+          (trimmed.endsWith('{') ? ' /* logic stripped */ }' : ' { /* logic stripped */ }'),
       );
       continue;
     }
@@ -101,11 +94,9 @@ function extractSkeleton(content) {
     const arrowMatch = arrowFuncRegex.exec(trimmed);
     if (arrowMatch) {
       skeleton.push(
-        "\n" +
+        '\n' +
           line +
-          (trimmed.endsWith("{")
-            ? " /* logic stripped */ }"
-            : " { /* logic stripped */ }"),
+          (trimmed.endsWith('{') ? ' /* logic stripped */ }' : ' { /* logic stripped */ }'),
       );
       continue;
     }
@@ -114,11 +105,9 @@ function extractSkeleton(content) {
     const reactMatch = reactComponentRegex.exec(trimmed);
     if (reactMatch && !arrowMatch) {
       skeleton.push(
-        "\n" +
+        '\n' +
           line +
-          (trimmed.endsWith("{")
-            ? " /* logic stripped */ }"
-            : " { /* logic stripped */ }"),
+          (trimmed.endsWith('{') ? ' /* logic stripped */ }' : ' { /* logic stripped */ }'),
       );
       continue;
     }
@@ -126,18 +115,18 @@ function extractSkeleton(content) {
     // Very basic tracking of class methods (indentation heuristic)
     if (
       inClass &&
-      (line.startsWith("  ") || line.startsWith("\t")) &&
-      trimmed.includes("(") &&
-      trimmed.includes(")") &&
-      !trimmed.startsWith("//")
+      (line.startsWith('  ') || line.startsWith('\t')) &&
+      trimmed.includes('(') &&
+      trimmed.includes(')') &&
+      !trimmed.startsWith('//')
     ) {
       // Avoid pushing if it's just a deeply nested logic block
       if (
-        !trimmed.startsWith("if") &&
-        !trimmed.startsWith("for") &&
-        !trimmed.startsWith("switch")
+        !trimmed.startsWith('if') &&
+        !trimmed.startsWith('for') &&
+        !trimmed.startsWith('switch')
       ) {
-        skeleton.push("  " + trimmed + " { /* ... */ }");
+        skeleton.push('  ' + trimmed + ' { /* ... */ }');
       }
     }
 
@@ -146,52 +135,46 @@ function extractSkeleton(content) {
       braceDepth += (line.match(/\{/g) || []).length;
       braceDepth -= (line.match(/\}/g) || []).length;
       if (braceDepth <= 0) {
-        skeleton.push("}\n");
+        skeleton.push('}\n');
         inClass = false;
         braceDepth = 0;
       }
     }
   }
 
-  return skeleton.join("\n");
+  return skeleton.join('\n');
 }
 
 function main() {
   console.log(`${CYAN}✦ Zooming into: ${targetFile}${RESET}`);
 
   try {
-    const content = fs.readFileSync(absolutePath, "utf8");
+    const content = fs.readFileSync(absolutePath, 'utf8');
 
     // Strip comments to make regex parsing easier
-    const noComments = content
-      .replace(/\/\*[\s\S]*?\*\//g, "")
-      .replace(/\/\/.*$/gm, "");
+    const noComments = content.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
 
     let skeleton = extractSkeleton(noComments);
 
     // Fallback Logic: If the file produced practically no useful skeleton (e.g. pure data object or failed parsing)
     if (skeleton.trim().length < 20) {
-      const lines = content.split("\n");
+      const lines = content.split('\n');
       skeleton =
         `// [WARNING: Parser yielded little structure. Falling back to truncated raw file]\n` +
-        lines.slice(0, 100).join("\n") +
-        (lines.length > 100 ? "\n\n... (truncated)" : "");
+        lines.slice(0, 100).join('\n') +
+        (lines.length > 100 ? '\n\n... (truncated)' : '');
     }
 
-    console.log("\n--- SKELETON START ---");
+    console.log('\n--- SKELETON START ---');
     console.log(skeleton);
-    console.log("--- SKELETON END ---\n");
+    console.log('--- SKELETON END ---\n');
   } catch (e) {
     console.error(`${RED}✖ Error parsing file: ${e.message}${RESET}`);
     // Fallback Logic: Return truncated raw on hard failure
-    const rawContent = fs
-      .readFileSync(absolutePath, "utf8")
-      .split("\n")
-      .slice(0, 100)
-      .join("\n");
-    console.log("\n--- RAW FILE FALLBACK (100 lines) ---");
+    const rawContent = fs.readFileSync(absolutePath, 'utf8').split('\n').slice(0, 100).join('\n');
+    console.log('\n--- RAW FILE FALLBACK (100 lines) ---');
     console.log(rawContent);
-    console.log("-------------------------------------\n");
+    console.log('-------------------------------------\n');
   }
 }
 

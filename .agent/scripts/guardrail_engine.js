@@ -22,10 +22,10 @@
  *   const result = validate(text, manifest, options);
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 // ── Rule Definitions ──────────────────────────────────────────────────────────
 
@@ -35,20 +35,30 @@ const path = require("path");
  */
 function ruleFileExists(content, manifest, _ctx) {
   const violations = [];
-  if (_ctx && _ctx.filePath && (_ctx.filePath.endsWith(".js") || _ctx.filePath.endsWith(".py") || _ctx.filePath.endsWith(".json"))) {
+  if (
+    _ctx &&
+    _ctx.filePath &&
+    (_ctx.filePath.endsWith('.js') ||
+      _ctx.filePath.endsWith('.py') ||
+      _ctx.filePath.endsWith('.json'))
+  ) {
     return violations;
   }
   const refs = manifest.cross_references || [];
 
-  const agentDir = path.join(_ctx.projectRoot, ".agent");
-  const currentRelSource = _ctx.filePath ? path.relative(agentDir, _ctx.filePath).replace(/\\/g, "/") : null;
+  const agentDir = path.join(_ctx.projectRoot, '.agent');
+  const currentRelSource = _ctx.filePath
+    ? path.relative(agentDir, _ctx.filePath).replace(/\\/g, '/')
+    : null;
 
   // Check phantom references from the manifest
-  const phantoms = refs.filter((r) => !r.exists && (!currentRelSource || r.source === currentRelSource));
+  const phantoms = refs.filter(
+    r => !r.exists && (!currentRelSource || r.source === currentRelSource),
+  );
   for (const p of phantoms) {
     violations.push({
-      rule: "file-exists",
-      severity: "critical",
+      rule: 'file-exists',
+      severity: 'critical',
       location: p.source,
       message: `Phantom reference: "${p.ref}" does not exist`,
       suggestion: null,
@@ -79,13 +89,13 @@ function ruleScriptExtension(content, manifest, _ctx) {
     if (scriptFiles[referencedFile]) continue; // exact match — fine
 
     // Check if the OTHER extension exists
-    const altExt = referencedExt === "js" ? "py" : "js";
+    const altExt = referencedExt === 'js' ? 'py' : 'js';
     const altFile = `${baseName}.${altExt}`;
 
     if (scriptFiles[altFile]) {
       violations.push({
-        rule: "script-extension",
-        severity: "warning",
+        rule: 'script-extension',
+        severity: 'warning',
         location: `content match: scripts/${referencedFile}`,
         message: `Script "scripts/${referencedFile}" does not exist, but "scripts/${altFile}" does`,
         suggestion: `Replace "scripts/${referencedFile}" with "scripts/${altFile}"`,
@@ -107,7 +117,8 @@ function ruleReviewerCount(content, manifest, _ctx) {
   const actualCount = manifest.agents ? manifest.agents.reviewer_count : null;
   if (actualCount === null) return violations;
 
-  const countRegex = /(\d+)\s*(?:-\s*)?(?:(?:parallel|domain(?:-specific)?|tribunal|code)\s+)*reviewers?\b/gi;
+  const countRegex =
+    /(\d+)\s*(?:-\s*)?(?:(?:parallel|domain(?:-specific)?|tribunal|code)\s+)*reviewers?\b/gi;
   let match;
   while ((match = countRegex.exec(content)) !== null) {
     const claimed = parseInt(match[1], 10);
@@ -115,8 +126,8 @@ function ruleReviewerCount(content, manifest, _ctx) {
 
     if (claimed !== actualCount) {
       violations.push({
-        rule: "reviewer-count",
-        severity: "warning",
+        rule: 'reviewer-count',
+        severity: 'warning',
         location: `content match: "${match[0]}"`,
         message: `Claims ${claimed} reviewers, but manifest reports ${actualCount}`,
         suggestion: `Replace "${match[0]}" with "${actualCount} reviewers"`,
@@ -135,7 +146,13 @@ function ruleReviewerCount(content, manifest, _ctx) {
  */
 function ruleSkillExists(content, manifest, _ctx) {
   const violations = [];
-  if (_ctx && _ctx.filePath && (_ctx.filePath.endsWith(".js") || _ctx.filePath.endsWith(".py") || _ctx.filePath.endsWith(".json"))) {
+  if (
+    _ctx &&
+    _ctx.filePath &&
+    (_ctx.filePath.endsWith('.js') ||
+      _ctx.filePath.endsWith('.py') ||
+      _ctx.filePath.endsWith('.json'))
+  ) {
     return violations;
   }
   const skillNames = new Set(manifest.skills ? manifest.skills.names : []);
@@ -148,16 +165,16 @@ function ruleSkillExists(content, manifest, _ctx) {
     const name = match[1];
 
     // Only check names that look like skill names (contain a hyphen, not pure keywords)
-    if (!name.includes("-")) continue;
+    if (!name.includes('-')) continue;
     // Skip common non-skill patterns
     if (
-      name.startsWith("--") ||
-      name.endsWith(".md") ||
-      name.endsWith(".js") ||
-      name.endsWith(".ts") ||
-      name.endsWith(".py") ||
-      name.startsWith("npm-") ||
-      name.startsWith("git-")
+      name.startsWith('--') ||
+      name.endsWith('.md') ||
+      name.endsWith('.js') ||
+      name.endsWith('.ts') ||
+      name.endsWith('.py') ||
+      name.startsWith('npm-') ||
+      name.startsWith('git-')
     ) {
       continue;
     }
@@ -171,8 +188,8 @@ function ruleSkillExists(content, manifest, _ctx) {
     if (!isKnownSkill && !isKnownAgent) {
       // Only flag if it looks like it's being used as a skill/agent reference
       // Check surrounding context for routing-table-like patterns
-      const lineStart = content.lastIndexOf("\n", match.index) + 1;
-      const lineEnd = content.indexOf("\n", match.index);
+      const lineStart = content.lastIndexOf('\n', match.index) + 1;
+      const lineEnd = content.indexOf('\n', match.index);
       const line = content.substring(lineStart, lineEnd === -1 ? content.length : lineEnd);
 
       // Flag only if the line looks like a routing/reference context
@@ -181,8 +198,8 @@ function ruleSkillExists(content, manifest, _ctx) {
         !/(example|e\.g\.|sample|template|placeholder)/i.test(line)
       ) {
         violations.push({
-          rule: "skill-exists",
-          severity: "info",
+          rule: 'skill-exists',
+          severity: 'info',
           location: `content match: \`${name}\``,
           message: `"${name}" is not a recognized skill or agent name`,
           suggestion: `Verify that "${name}" exists in .agent/skills/ or .agent/agents/`,
@@ -201,7 +218,13 @@ function ruleSkillExists(content, manifest, _ctx) {
  */
 function ruleAgentExists(content, manifest, _ctx) {
   const violations = [];
-  if (_ctx && _ctx.filePath && (_ctx.filePath.endsWith(".js") || _ctx.filePath.endsWith(".py") || _ctx.filePath.endsWith(".json"))) {
+  if (
+    _ctx &&
+    _ctx.filePath &&
+    (_ctx.filePath.endsWith('.js') ||
+      _ctx.filePath.endsWith('.py') ||
+      _ctx.filePath.endsWith('.json'))
+  ) {
     return violations;
   }
   const agentNames = new Set(manifest.agents ? manifest.agents.all : []);
@@ -214,8 +237,8 @@ function ruleAgentExists(content, manifest, _ctx) {
     const name = match[1];
     if (!agentNames.has(name)) {
       violations.push({
-        rule: "agent-exists",
-        severity: "critical",
+        rule: 'agent-exists',
+        severity: 'critical',
         location: `content match: agents/${name}.md`,
         message: `Agent "agents/${name}.md" is referenced but does not exist`,
         suggestion: null,
@@ -233,10 +256,10 @@ function ruleAgentExists(content, manifest, _ctx) {
  */
 function ruleUnresolvedVerify(content, _manifest, ctx) {
   const violations = [];
-  
+
   // Skip this check for the internal .agent files themselves
   // because they contain instructions/comments ABOUT the VERIFY tag.
-  if (ctx && ctx.filePath && ctx.filePath.includes(".agent")) {
+  if (ctx && ctx.filePath && ctx.filePath.includes('.agent')) {
     return violations;
   }
 
@@ -246,11 +269,11 @@ function ruleUnresolvedVerify(content, _manifest, ctx) {
     const verifyMatch = lines[i].match(/\/\/\s*VERIFY:\s*(.+)/);
     if (verifyMatch) {
       violations.push({
-        rule: "unresolved-verify",
-        severity: "critical",
+        rule: 'unresolved-verify',
+        severity: 'critical',
         location: `line ${i + 1}`,
         message: `Unresolved VERIFY tag: "${verifyMatch[1].trim()}"`,
-        suggestion: "Resolve this verification before shipping",
+        suggestion: 'Resolve this verification before shipping',
         autoFixable: false,
       });
     }
@@ -265,24 +288,25 @@ function ruleUnresolvedVerify(content, _manifest, ctx) {
  */
 function ruleNumericConsistency(content, manifest, _ctx) {
   const violations = [];
-  const agentDir = _ctx && _ctx.projectRoot ? path.join(_ctx.projectRoot, ".agent") : "";
-  const currentRelSource = _ctx && _ctx.filePath ? path.relative(agentDir, _ctx.filePath).replace(/\\/g, "/") : null;
+  const agentDir = _ctx && _ctx.projectRoot ? path.join(_ctx.projectRoot, '.agent') : '';
+  const currentRelSource =
+    _ctx && _ctx.filePath ? path.relative(agentDir, _ctx.filePath).replace(/\\/g, '/') : null;
 
   const invalidClaims = (manifest.numeric_claims || []).filter(
-    (c) => !c.valid && (!currentRelSource || c.source.startsWith(currentRelSource + ":")),
+    c => !c.valid && (!currentRelSource || c.source.startsWith(currentRelSource + ':')),
   );
 
   for (const claim of invalidClaims) {
     violations.push({
-      rule: "numeric-consistency",
-      severity: "warning",
+      rule: 'numeric-consistency',
+      severity: 'warning',
       location: claim.source,
       message: `Claims "${claim.claim}" but actual count is ${claim.actual}`,
-      suggestion: `Update to "${claim.actual} ${claim.claim.replace(/\d+\s*/, "")}"`,
+      suggestion: `Update to "${claim.actual} ${claim.claim.replace(/\d+\s*/, '')}"`,
       autoFixable: true,
       fix: {
         find: claim.claim,
-        replace: `${claim.actual} ${claim.claim.replace(/\d+\s*/, "")}`,
+        replace: `${claim.actual} ${claim.claim.replace(/\d+\s*/, '')}`,
       },
     });
   }
@@ -297,17 +321,17 @@ function ruleNumericConsistency(content, manifest, _ctx) {
 function ruleImportPhantom(content, _manifest, ctx) {
   const violations = [];
   const projectRoot = ctx.projectRoot;
-  const filePath = ctx.filePath || "";
+  const filePath = ctx.filePath || '';
 
   // Only check Javascript/Typescript files for phantom imports
-  if (!filePath.endsWith(".js") && !filePath.endsWith(".ts")) return violations;
+  if (!filePath.endsWith('.js') && !filePath.endsWith('.ts')) return violations;
 
   // Load package.json dependencies
   let deps = new Set();
   try {
-    const pkgPath = path.join(projectRoot, "package.json");
+    const pkgPath = path.join(projectRoot, 'package.json');
     if (fs.existsSync(pkgPath)) {
-      const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
       const allDeps = {
         ...(pkg.dependencies || {}),
         ...(pkg.devDependencies || {}),
@@ -324,36 +348,84 @@ function ruleImportPhantom(content, _manifest, ctx) {
 
   // Node.js built-in modules
   const builtins = new Set([
-    "assert", "buffer", "child_process", "cluster", "console", "constants",
-    "crypto", "dgram", "dns", "domain", "events", "fs", "http", "http2",
-    "https", "module", "net", "os", "path", "perf_hooks", "process",
-    "punycode", "querystring", "readline", "repl", "stream", "string_decoder",
-    "sys", "timers", "tls", "trace_events", "tty", "url", "util", "v8",
-    "vm", "wasi", "worker_threads", "zlib", "node:fs", "node:path",
-    "node:crypto", "node:http", "node:https", "node:url", "node:util",
-    "node:os", "node:child_process", "node:stream", "node:events",
-    "node:buffer", "node:net", "node:tls", "node:worker_threads",
-    "node:readline", "node:zlib", "node:querystring", "node:assert",
-    "node:test",
+    'assert',
+    'buffer',
+    'child_process',
+    'cluster',
+    'console',
+    'constants',
+    'crypto',
+    'dgram',
+    'dns',
+    'domain',
+    'events',
+    'fs',
+    'http',
+    'http2',
+    'https',
+    'module',
+    'net',
+    'os',
+    'path',
+    'perf_hooks',
+    'process',
+    'punycode',
+    'querystring',
+    'readline',
+    'repl',
+    'stream',
+    'string_decoder',
+    'sys',
+    'timers',
+    'tls',
+    'trace_events',
+    'tty',
+    'url',
+    'util',
+    'v8',
+    'vm',
+    'wasi',
+    'worker_threads',
+    'zlib',
+    'node:fs',
+    'node:path',
+    'node:crypto',
+    'node:http',
+    'node:https',
+    'node:url',
+    'node:util',
+    'node:os',
+    'node:child_process',
+    'node:stream',
+    'node:events',
+    'node:buffer',
+    'node:net',
+    'node:tls',
+    'node:worker_threads',
+    'node:readline',
+    'node:zlib',
+    'node:querystring',
+    'node:assert',
+    'node:test',
   ]);
 
   // Find require() and import statements for external packages
   const requireRegex = /require\s*\(\s*['"]([^'"./][^'"]*)['"]\s*\)/g;
   const importRegex = /import\s+(?:[\s\S]*?\s+from\s+)?['"]([^'"./][^'"]*)['"]/g;
 
-  const checkPackage = (regex) => {
+  const checkPackage = regex => {
     let match;
     while ((match = regex.exec(content)) !== null) {
       const pkg = match[1];
       // Extract the package name (handle scoped packages like @scope/name)
-      const pkgName = pkg.startsWith("@")
-        ? pkg.split("/").slice(0, 2).join("/")
-        : pkg.split("/")[0];
+      const pkgName = pkg.startsWith('@')
+        ? pkg.split('/').slice(0, 2).join('/')
+        : pkg.split('/')[0];
 
       if (!builtins.has(pkgName) && !deps.has(pkgName)) {
         violations.push({
-          rule: "import-phantom",
-          severity: "info",
+          rule: 'import-phantom',
+          severity: 'info',
           location: `content match: "${match[0]}"`,
           message: `Package "${pkgName}" is not in package.json`,
           suggestion: `Verify "${pkgName}" is installed or add it to dependencies`,
@@ -378,16 +450,16 @@ function ruleRustModuleRegistration(content, manifest, _ctx) {
   const violations = [];
   const root = _ctx.projectRoot || process.cwd();
 
-  const modRs = path.join(root, "crates", "core", "src", "commands", "mod.rs");
+  const modRs = path.join(root, 'crates', 'core', 'src', 'commands', 'mod.rs');
   if (fs.existsSync(modRs)) {
-    const modContent = fs.readFileSync(modRs, "utf8");
-    const requiredMods = ["context_broker", "dag_scheduler", "context_compress"];
+    const modContent = fs.readFileSync(modRs, 'utf8');
+    const requiredMods = ['context_broker', 'dag_scheduler', 'context_compress'];
     for (const m of requiredMods) {
       if (!modContent.includes(`pub mod ${m};`)) {
         violations.push({
-          rule: "rust-module-registration",
-          severity: "warning",
-          location: "crates/core/src/commands/mod.rs",
+          rule: 'rust-module-registration',
+          severity: 'warning',
+          location: 'crates/core/src/commands/mod.rs',
           message: `Rust command module "${m}" not declared in mod.rs`,
           suggestion: `Add "pub mod ${m};" to crates/core/src/commands/mod.rs`,
           autoFixable: false,
@@ -396,14 +468,14 @@ function ruleRustModuleRegistration(content, manifest, _ctx) {
     }
   }
 
-  const wrapperJs = path.join(root, "bin", "wrapper.js");
+  const wrapperJs = path.join(root, 'bin', 'wrapper.js');
   if (fs.existsSync(wrapperJs)) {
-    const wrapperContent = fs.readFileSync(wrapperJs, "utf8");
+    const wrapperContent = fs.readFileSync(wrapperJs, 'utf8');
     if (!wrapperContent.includes('"context-broker"')) {
       violations.push({
-        rule: "rust-module-registration",
-        severity: "warning",
-        location: "bin/wrapper.js",
+        rule: 'rust-module-registration',
+        severity: 'warning',
+        location: 'bin/wrapper.js',
         message: 'Command "context-broker" not registered in RUST_COMMANDS in bin/wrapper.js',
         suggestion: 'Add "context-broker" to RUST_COMMANDS set in bin/wrapper.js',
         autoFixable: false,
@@ -417,15 +489,15 @@ function ruleRustModuleRegistration(content, manifest, _ctx) {
 // ── Rule Registry ─────────────────────────────────────────────────────────────
 
 const RULES = {
-  "file-exists": ruleFileExists,
-  "script-extension": ruleScriptExtension,
-  "reviewer-count": ruleReviewerCount,
-  "skill-exists": ruleSkillExists,
-  "agent-exists": ruleAgentExists,
-  "unresolved-verify": ruleUnresolvedVerify,
-  "numeric-consistency": ruleNumericConsistency,
-  "import-phantom": ruleImportPhantom,
-  "rust-module-registration": ruleRustModuleRegistration,
+  'file-exists': ruleFileExists,
+  'script-extension': ruleScriptExtension,
+  'reviewer-count': ruleReviewerCount,
+  'skill-exists': ruleSkillExists,
+  'agent-exists': ruleAgentExists,
+  'unresolved-verify': ruleUnresolvedVerify,
+  'numeric-consistency': ruleNumericConsistency,
+  'import-phantom': ruleImportPhantom,
+  'rust-module-registration': ruleRustModuleRegistration,
 };
 
 // ── Main Validate Function ────────────────────────────────────────────────────
@@ -443,15 +515,14 @@ const RULES = {
  */
 function validate(content, manifest, options = {}) {
   const {
-    rules: ruleFilter = ["all"],
+    rules: ruleFilter = ['all'],
     autoFix = false,
     context = { projectRoot: process.cwd() },
   } = options;
 
-  const activeRules =
-    ruleFilter.includes("all")
-      ? Object.entries(RULES)
-      : Object.entries(RULES).filter(([name]) => ruleFilter.includes(name));
+  const activeRules = ruleFilter.includes('all')
+    ? Object.entries(RULES)
+    : Object.entries(RULES).filter(([name]) => ruleFilter.includes(name));
 
   const allViolations = [];
 
@@ -462,8 +533,8 @@ function validate(content, manifest, options = {}) {
     } catch (err) {
       allViolations.push({
         rule: _name,
-        severity: "info",
-        location: "engine",
+        severity: 'info',
+        location: 'engine',
         message: `Rule "${_name}" threw an error: ${err.message}`,
         suggestion: null,
         autoFixable: false,
@@ -475,29 +546,27 @@ function validate(content, manifest, options = {}) {
   let autoFixedContent = null;
   if (autoFix) {
     autoFixedContent = content;
-    const fixableViolations = allViolations.filter(
-      (v) => v.autoFixable && v.fix,
-    );
+    const fixableViolations = allViolations.filter(v => v.autoFixable && v.fix);
     for (const v of fixableViolations) {
       autoFixedContent = autoFixedContent.split(v.fix.find).join(v.fix.replace);
     }
   }
 
   // Compute pass/fail
-  const hasCritical = allViolations.some((v) => v.severity === "critical");
-  const hasWarning = allViolations.some((v) => v.severity === "warning");
+  const hasCritical = allViolations.some(v => v.severity === 'critical');
+  const hasWarning = allViolations.some(v => v.severity === 'warning');
 
   return {
     passed: !hasCritical,
     violations: allViolations,
     autoFixedContent,
     summary: hasCritical
-      ? `REJECTED — ${allViolations.filter((v) => v.severity === "critical").length} critical violation(s)`
+      ? `REJECTED — ${allViolations.filter(v => v.severity === 'critical').length} critical violation(s)`
       : hasWarning
-        ? `WARNING — ${allViolations.filter((v) => v.severity === "warning").length} warning(s), no critical issues`
+        ? `WARNING — ${allViolations.filter(v => v.severity === 'warning').length} warning(s), no critical issues`
         : allViolations.length > 0
           ? `PASSED — ${allViolations.length} informational note(s)`
-          : "PASSED — clean, no violations",
+          : 'PASSED — clean, no violations',
   };
 }
 
@@ -506,34 +575,27 @@ function validate(content, manifest, options = {}) {
 function main() {
   const args = process.argv.slice(2);
 
-  const fileIdx = args.indexOf("--file");
-  const scanMode = args.includes("--scan");
-  const fixMode = args.includes("--fix");
-  const jsonMode = args.includes("--json");
+  const fileIdx = args.indexOf('--file');
+  const scanMode = args.includes('--scan');
+  const fixMode = args.includes('--fix');
+  const jsonMode = args.includes('--json');
 
   // Load or generate manifest
   const projectRoot = process.cwd();
   let manifest;
 
-  const manifestPath = path.join(
-    projectRoot,
-    ".agent",
-    "history",
-    "integrity_manifest.json",
-  );
+  const manifestPath = path.join(projectRoot, '.agent', 'history', 'integrity_manifest.json');
 
   if (false && fs.existsSync(manifestPath)) {
-    manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+    manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   } else {
     // Generate on the fly
     try {
-      const { generateManifest } = require("./integrity_manifest");
+      const { generateManifest } = require('./integrity_manifest');
       manifest = generateManifest(projectRoot);
     } catch {
-      console.error("❌ Cannot load or generate integrity manifest.");
-      console.error(
-        "   Run: node .agent/scripts/integrity_manifest.js first.",
-      );
+      console.error('❌ Cannot load or generate integrity manifest.');
+      console.error('   Run: node .agent/scripts/integrity_manifest.js first.');
       process.exit(1);
     }
   }
@@ -548,23 +610,19 @@ function main() {
 
   if (fileIdx !== -1 && args[fileIdx + 1]) {
     filesToCheck.push(path.resolve(args[fileIdx + 1]));
-  } else if (fixMode && args[0] && !args[0].startsWith("--")) {
+  } else if (fixMode && args[0] && !args[0].startsWith('--')) {
     filesToCheck.push(path.resolve(args[0]));
   } else if (scanMode) {
     // Scan all .agent/ markdown files
-    const agentDir = path.join(projectRoot, ".agent");
+    const agentDir = path.join(projectRoot, '.agent');
     filesToCheck = walkAgentFiles(agentDir);
   } else {
-    console.log("Usage:");
+    console.log('Usage:');
+    console.log('  node .agent/scripts/guardrail_engine.js --file <path>   Validate a file');
     console.log(
-      "  node .agent/scripts/guardrail_engine.js --file <path>   Validate a file",
+      '  node .agent/scripts/guardrail_engine.js --scan           Scan all .agent/ files',
     );
-    console.log(
-      "  node .agent/scripts/guardrail_engine.js --scan           Scan all .agent/ files",
-    );
-    console.log(
-      "  node .agent/scripts/guardrail_engine.js --fix <path>    Auto-fix a file",
-    );
+    console.log('  node .agent/scripts/guardrail_engine.js --fix <path>    Auto-fix a file');
     process.exit(0);
   }
 
@@ -579,16 +637,14 @@ function main() {
       continue;
     }
 
-    const content = fs.readFileSync(file, "utf8");
+    const content = fs.readFileSync(file, 'utf8');
     const result = validate(content, manifest, {
       autoFix: fixMode,
       context: { projectRoot, filePath: file },
     });
 
     totalViolations += result.violations.length;
-    totalCritical += result.violations.filter(
-      (v) => v.severity === "critical",
-    ).length;
+    totalCritical += result.violations.filter(v => v.severity === 'critical').length;
 
     if (result.violations.length > 0) {
       allResults.push({
@@ -599,10 +655,8 @@ function main() {
 
     // Apply auto-fix
     if (fixMode && result.autoFixedContent && result.autoFixedContent !== content) {
-      fs.writeFileSync(file, result.autoFixedContent, "utf8");
-      console.log(
-        `  ✅ Auto-fixed: ${path.relative(projectRoot, file)}`,
-      );
+      fs.writeFileSync(file, result.autoFixedContent, 'utf8');
+      console.log(`  ✅ Auto-fixed: ${path.relative(projectRoot, file)}`);
     }
   }
 
@@ -622,12 +676,7 @@ function main() {
   for (const result of allResults) {
     console.log(`\n   📄 ${result.file} — ${result.summary}`);
     for (const v of result.violations) {
-      const icon =
-        v.severity === "critical"
-          ? "🔴"
-          : v.severity === "warning"
-            ? "🟡"
-            : "🔵";
+      const icon = v.severity === 'critical' ? '🔴' : v.severity === 'warning' ? '🟡' : '🔵';
       console.log(`      ${icon} [${v.rule}] ${v.message}`);
       if (v.suggestion) {
         console.log(`         💡 ${v.suggestion}`);
@@ -652,11 +701,7 @@ function walkAgentFiles(dir, fileList = []) {
     const entries = fs.readdirSync(dir);
     for (const entry of entries) {
       const fullPath = path.join(dir, entry);
-      if (
-        ["node_modules", ".git", "history", ".backups", ".shared"].includes(
-          entry,
-        )
-      ) {
+      if (['node_modules', '.git', 'history', '.backups', '.shared'].includes(entry)) {
         continue;
       }
 
@@ -664,7 +709,12 @@ function walkAgentFiles(dir, fileList = []) {
         const stat = fs.statSync(fullPath);
         if (stat.isDirectory()) {
           walkAgentFiles(fullPath, fileList);
-        } else if (entry.endsWith(".md") || entry.endsWith(".json") || entry.endsWith(".js") || entry.endsWith(".py")) {
+        } else if (
+          entry.endsWith('.md') ||
+          entry.endsWith('.json') ||
+          entry.endsWith('.js') ||
+          entry.endsWith('.py')
+        ) {
           fileList.push(fullPath);
         }
       } catch {

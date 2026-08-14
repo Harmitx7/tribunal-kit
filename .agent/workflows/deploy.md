@@ -22,6 +22,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before triggering production deployment or executing deploy scripts, you MUST inspect:
+
 1. Full Pre-Flight Verification Suite (`verify_all.js`) → Verify tests, type-checking, lint, security scans, and production build output cleanly
 2. CI/CD Manifests (`.github/workflows`, `fly.toml`, `render.yaml`, etc.) → Check deployment targets and environment variable requirements
 3. Human Gate & Rollback Baseline → Confirm baseline git tag/commit and secure explicit human approval before publishing release

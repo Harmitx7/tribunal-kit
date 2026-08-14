@@ -25,6 +25,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before triggering a full project audit, you MUST inspect:
+
 1. Workspace Package Manifest (`package.json`) → Verify installed test frameworks, linters, and dependencies
 2. Executable Scripts Inventory (`.agent/scripts/`) → Verify presence of `security_scan.js`, `lint_runner.js`, and `test_runner.js`
 3. Pipeline Execution Constraints → Confirm fixed execution order (Security → Dependencies → Type Check → Lint → Schema → Tests → Bundle) and HALT rules on critical CVE findings

@@ -6,61 +6,50 @@
  * Now includes Blast Radius calculation and robust token stripping.
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
-const crypto = require("crypto");
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
 
-const {
-  RED,
-  GREEN,
-  BOLD,
-  DIM,
-  CYAN,
-  RESET,
-  timer,
-  formatMs,
-} = require("./_colors");
+const { RED, GREEN, BOLD, DIM, CYAN, RESET, timer, formatMs } = require('./_colors');
 
-const AGENT_DIR = path.join(process.cwd(), ".agent");
-const HISTORY_DIR = path.join(AGENT_DIR, "history");
-const CACHE_FILE = path.join(HISTORY_DIR, "graph-cache.json");
-const GRAPH_FILE = path.join(HISTORY_DIR, "architecture-graph.yaml");
+const AGENT_DIR = path.join(process.cwd(), '.agent');
+const HISTORY_DIR = path.join(AGENT_DIR, 'history');
+const CACHE_FILE = path.join(HISTORY_DIR, 'graph-cache.json');
+const GRAPH_FILE = path.join(HISTORY_DIR, 'architecture-graph.yaml');
 
 // ── Exclusions & Safety ───────────────────────────────────────────────────────
 const DEFAULT_EXCLUSIONS = new Set([
-  "node_modules",
-  ".git",
-  ".next",
-  "dist",
-  "build",
-  "coverage",
-  ".agent",
-  "artifacts",
+  'node_modules',
+  '.git',
+  '.next',
+  'dist',
+  'build',
+  'coverage',
+  '.agent',
+  'artifacts',
 ]);
 
 function loadGitIgnore() {
-  const gitignorePath = path.join(process.cwd(), ".gitignore");
+  const gitignorePath = path.join(process.cwd(), '.gitignore');
   if (!fs.existsSync(gitignorePath)) return [];
 
   return fs
-    .readFileSync(gitignorePath, "utf8")
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line && !line.startsWith("#"))
-    .map((line) => line.replace(/\/$/, "").replace(/^\//, ""));
+    .readFileSync(gitignorePath, 'utf8')
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line && !line.startsWith('#'))
+    .map(line => line.replace(/\/$/, '').replace(/^\//, ''));
 }
 
 const customExclusions = loadGitIgnore();
 
 function isExcluded(filePath) {
   const parts = filePath.split(path.sep);
-  if (parts.some((p) => DEFAULT_EXCLUSIONS.has(p))) return true;
+  if (parts.some(p => DEFAULT_EXCLUSIONS.has(p))) return true;
 
-  const relativePath = path
-    .relative(process.cwd(), filePath)
-    .replace(/\\/g, "/");
+  const relativePath = path.relative(process.cwd(), filePath).replace(/\\/g, '/');
   for (const pattern of customExclusions) {
     if (relativePath.includes(pattern)) return true;
   }
@@ -70,7 +59,7 @@ function isExcluded(filePath) {
 // ── Content Hashing ───────────────────────────────────────────────────────────
 function getFileHash(filePath) {
   const content = fs.readFileSync(filePath);
-  return crypto.createHash("sha1").update(content).digest("hex");
+  return crypto.createHash('sha1').update(content).digest('hex');
 }
 
 // ── Traversal ─────────────────────────────────────────────────────────────────
@@ -119,38 +108,27 @@ function parseFile(content) {
 
   // I'll define an inner function to just strip comments to be safe for imports.
   // Let's stick to the simple `.replace` for comments for now, and rely on regex boundaries.
-  const semiCleanContent = content
-    .replace(/\/\*[\s\S]*?\*\//g, "")
-    .replace(/\/\/.*$/gm, "");
+  const semiCleanContent = content.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
 
-  const importRegex2 =
-    /^[\s]*import(?:(?:[\w*\s{},]*)\sfrom\s+)?['"]([^'"]+)['"]/gm;
+  const importRegex2 = /^[\s]*import(?:(?:[\w*\s{},]*)\sfrom\s+)?['"]([^'"]+)['"]/gm;
   const requireRegex = /require\(['"]([^'"]+)['"]\)/g;
   const dynamicImportRegex = /import\(['"]([^'"]+)['"]\)/g;
 
-  const exportRegex =
-    /^[\s]*export\s+(?:const|let|var|function|class)\s+([a-zA-Z0-9_]+)/gm;
+  const exportRegex = /^[\s]*export\s+(?:const|let|var|function|class)\s+([a-zA-Z0-9_]+)/gm;
   const moduleExportRegex = /module\.exports\s*=\s*\{([^}]+)\}/g;
   const defaultExportRegex = /^[\s]*export\s+default\s+([a-zA-Z0-9_]+)/gm;
 
   let match;
-  while ((match = importRegex2.exec(semiCleanContent)) !== null)
-    imports.add(match[1]);
-  while ((match = requireRegex.exec(semiCleanContent)) !== null)
-    imports.add(match[1]);
-  while ((match = dynamicImportRegex.exec(semiCleanContent)) !== null)
-    imports.add(match[1]);
+  while ((match = importRegex2.exec(semiCleanContent)) !== null) imports.add(match[1]);
+  while ((match = requireRegex.exec(semiCleanContent)) !== null) imports.add(match[1]);
+  while ((match = dynamicImportRegex.exec(semiCleanContent)) !== null) imports.add(match[1]);
 
-  while ((match = exportRegex.exec(semiCleanContent)) !== null)
-    exports.add(match[1]);
-  while ((match = defaultExportRegex.exec(semiCleanContent)) !== null)
-    exports.add(match[1]);
+  while ((match = exportRegex.exec(semiCleanContent)) !== null) exports.add(match[1]);
+  while ((match = defaultExportRegex.exec(semiCleanContent)) !== null) exports.add(match[1]);
 
   while ((match = moduleExportRegex.exec(semiCleanContent)) !== null) {
-    const tokens = match[1]
-      .split(",")
-      .map((s) => s.trim().split(":")[0].trim());
-    tokens.forEach((t) => t && exports.add(t));
+    const tokens = match[1].split(',').map(s => s.trim().split(':')[0].trim());
+    tokens.forEach(t => t && exports.add(t));
   }
 
   return {
@@ -161,8 +139,8 @@ function parseFile(content) {
 
 // ── YAML Generation ───────────────────────────────────────────────────────────
 function generateYAML(data) {
-  let yaml = "# Auto-generated Architecture Graph by Tribunal Kit\n";
-  yaml += "# DO NOT EDIT MANUALLY - Auto-updates via incremental cache\n\n";
+  let yaml = '# Auto-generated Architecture Graph by Tribunal Kit\n';
+  yaml += '# DO NOT EDIT MANUALLY - Auto-updates via incremental cache\n\n';
 
   for (const [file, info] of Object.entries(data)) {
     if (
@@ -173,20 +151,20 @@ function generateYAML(data) {
       continue;
 
     yaml += `"${file}":\n`;
-    yaml += `  riskScore: "${info.riskScore || "Low"}"\n`;
+    yaml += `  riskScore: "${info.riskScore || 'Low'}"\n`;
     yaml += `  blastRadius: ${info.blastRadius || 0}\n`;
 
     if (info.imports && info.imports.length > 0) {
       yaml += `  imports:\n`;
-      info.imports.forEach((i) => (yaml += `    - "${i}"\n`));
+      info.imports.forEach(i => (yaml += `    - "${i}"\n`));
     }
     if (info.exports && info.exports.length > 0) {
       yaml += `  exports:\n`;
-      info.exports.forEach((e) => (yaml += `    - "${e}"\n`));
+      info.exports.forEach(e => (yaml += `    - "${e}"\n`));
     }
     if (info.dependents && info.dependents.length > 0) {
       yaml += `  dependents:\n`;
-      info.dependents.forEach((d) => (yaml += `    - "${d}"\n`));
+      info.dependents.forEach(d => (yaml += `    - "${d}"\n`));
     }
   }
   return yaml;
@@ -199,13 +177,12 @@ function main() {
     process.exit(1);
   }
 
-  if (!fs.existsSync(HISTORY_DIR))
-    fs.mkdirSync(HISTORY_DIR, { recursive: true });
+  if (!fs.existsSync(HISTORY_DIR)) fs.mkdirSync(HISTORY_DIR, { recursive: true });
 
   let cache = {};
   if (fs.existsSync(CACHE_FILE)) {
     try {
-      cache = JSON.parse(fs.readFileSync(CACHE_FILE, "utf8"));
+      cache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
     } catch {
       /* ignore */
     }
@@ -221,7 +198,7 @@ function main() {
   const changedFiles = new Set();
 
   for (const file of files) {
-    const relativePath = path.relative(process.cwd(), file).replace(/\\/g, "/");
+    const relativePath = path.relative(process.cwd(), file).replace(/\\/g, '/');
     let fileHash;
     try {
       fileHash = getFileHash(file);
@@ -237,7 +214,7 @@ function main() {
       cachedCount++;
     } else {
       try {
-        const content = fs.readFileSync(file, "utf8");
+        const content = fs.readFileSync(file, 'utf8');
         const parsed = parseFile(content);
         graphData[relativePath] = parsed;
 
@@ -260,15 +237,15 @@ function main() {
   const fileKeys = Object.keys(graphData);
   for (const [file, info] of Object.entries(graphData)) {
     for (const imp of info.imports) {
-      if (imp.startsWith(".")) {
-        let resolved = path.posix.join(path.dirname(file), imp);
+      if (imp.startsWith('.')) {
+        const resolved = path.posix.join(path.dirname(file), imp);
         // Look for direct match or .js / index.js
-        let matchingKey = fileKeys.find(
-          (k) =>
+        const matchingKey = fileKeys.find(
+          k =>
             k === resolved ||
-            k === resolved + ".js" ||
-            k === resolved + ".ts" ||
-            k === resolved + "/index.js",
+            k === resolved + '.js' ||
+            k === resolved + '.ts' ||
+            k === resolved + '/index.js',
         );
         if (matchingKey) {
           if (!graphData[matchingKey].dependents.includes(file)) {
@@ -290,10 +267,10 @@ function main() {
     }
     visit(file);
     const radius = visited.size - 1;
-    let score = "Low";
-    if (radius > 10) score = "Critical";
-    else if (radius >= 5) score = "High";
-    else if (radius >= 2) score = "Medium";
+    let score = 'Low';
+    if (radius > 10) score = 'Critical';
+    else if (radius >= 5) score = 'High';
+    else if (radius >= 2) score = 'Medium';
     return { score, count: Math.max(0, radius) };
   }
 
@@ -314,7 +291,7 @@ function main() {
   fs.writeFileSync(GRAPH_FILE, generateYAML(graphData));
 
   // ── Pre-Computed Context Snapshots (Incremental) ─────────────────────────
-  const SNAPSHOTS_DIR = path.join(HISTORY_DIR, "snapshots");
+  const SNAPSHOTS_DIR = path.join(HISTORY_DIR, 'snapshots');
   if (!fs.existsSync(SNAPSHOTS_DIR)) {
     fs.mkdirSync(SNAPSHOTS_DIR, { recursive: true });
   }
@@ -322,12 +299,9 @@ function main() {
   // Clean up snapshots for files that no longer exist
   try {
     const existingSnapshots = fs.readdirSync(SNAPSHOTS_DIR);
-    const currentFileSet = new Set(
-      fileKeys.map((f) => f.replace(/[\\/]/g, "__") + ".json"),
-    );
+    const currentFileSet = new Set(fileKeys.map(f => f.replace(/[\\/]/g, '__') + '.json'));
     for (const snap of existingSnapshots) {
-      if (!currentFileSet.has(snap))
-        fs.unlinkSync(path.join(SNAPSHOTS_DIR, snap));
+      if (!currentFileSet.has(snap)) fs.unlinkSync(path.join(SNAPSHOTS_DIR, snap));
     }
   } catch {
     /* ignore */
@@ -338,7 +312,7 @@ function main() {
   let snapshotSkipped = 0;
   for (const file of fileKeys) {
     const info = graphData[file];
-    const snapshotFile = file.replace(/[\\/]/g, "__") + ".json";
+    const snapshotFile = file.replace(/[\\/]/g, '__') + '.json';
     const snapshotPath = path.join(SNAPSHOTS_DIR, snapshotFile);
 
     // Skip unchanged files that already have a snapshot
@@ -347,9 +321,9 @@ function main() {
       continue;
     }
 
-    let content = "";
+    let content = '';
     try {
-      content = fs.readFileSync(path.join(process.cwd(), file), "utf8");
+      content = fs.readFileSync(path.join(process.cwd(), file), 'utf8');
     } catch {
       continue;
     }
@@ -364,14 +338,14 @@ function main() {
     };
 
     for (const imp of info.imports) {
-      if (imp.startsWith(".")) {
-        let resolved = path.posix.join(path.dirname(file), imp);
-        let matchingKey = fileKeys.find(
-          (k) =>
+      if (imp.startsWith('.')) {
+        const resolved = path.posix.join(path.dirname(file), imp);
+        const matchingKey = fileKeys.find(
+          k =>
             k === resolved ||
-            k === resolved + ".js" ||
-            k === resolved + ".ts" ||
-            k === resolved + "/index.js",
+            k === resolved + '.js' ||
+            k === resolved + '.ts' ||
+            k === resolved + '/index.js',
         );
         if (matchingKey && graphData[matchingKey]) {
           snapshot.imports[imp] = graphData[matchingKey].exports;
@@ -386,9 +360,7 @@ function main() {
     fs.writeFileSync(snapshotPath, JSON.stringify(snapshot, null, 2));
     snapshotWritten++;
   }
-  console.log(
-    `  ${DIM}Snapshots: ${snapshotWritten} written | ${snapshotSkipped} cached${RESET}`,
-  );
+  console.log(`  ${DIM}Snapshots: ${snapshotWritten} written | ${snapshotSkipped} cached${RESET}`);
 
   const totalMs = totalTimer();
   console.log(`\n${GREEN}${BOLD}✔ Graph successfully built.${RESET}`);

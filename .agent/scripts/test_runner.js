@@ -9,11 +9,11 @@
  *   node .agent/scripts/test_runner.js . --file src/utils.test.ts
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
-const { spawnSync } = require("child_process");
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
 
 const {
   RED,
@@ -29,22 +29,22 @@ const {
   ok,
   fail,
   skip,
-} = require("./_colors");
+} = require('./_colors');
 
-const { loadJson } = require("./_utils");
+const { loadJson } = require('./_utils');
 
 function runTests(label, cmd, cwd) {
   const elapsed = timer();
   try {
     const executable =
-      process.platform === "win32" && (cmd[0] === "npx" || cmd[0] === "npm")
+      process.platform === 'win32' && (cmd[0] === 'npx' || cmd[0] === 'npm')
         ? `${cmd[0]}.cmd`
         : cmd[0];
     const result = spawnSync(executable, cmd.slice(1), {
       cwd,
-      encoding: "utf8",
+      encoding: 'utf8',
       timeout: 300000, // 5m
-      shell: process.platform === "win32",
+      shell: process.platform === 'win32',
     });
 
     const ms = elapsed();
@@ -52,11 +52,11 @@ function runTests(label, cmd, cwd) {
     if (result.error && !result.stdout && !result.stderr) {
       console.log(`    Error: ${result.error.message}`);
     }
-    const out = result.stdout ? result.stdout.toString() : "";
-    const err = result.stderr ? result.stderr.toString() : "";
-    const output = (out + "\n" + err).trim();
+    const out = result.stdout ? result.stdout.toString() : '';
+    const err = result.stderr ? result.stderr.toString() : '';
+    const output = (out + '\n' + err).trim();
     if (output) {
-      for (const line of output.split("\n")) {
+      for (const line of output.split('\n')) {
         console.log(`    ${line}`);
       }
     }
@@ -75,7 +75,7 @@ function runTests(label, cmd, cwd) {
 }
 
 function detectTestFramework(projectRoot) {
-  const pkg = loadJson(path.join(projectRoot, "package.json"));
+  const pkg = loadJson(path.join(projectRoot, 'package.json'));
   if (pkg) {
     const deps = {
       ...(pkg.dependencies || {}),
@@ -83,18 +83,18 @@ function detectTestFramework(projectRoot) {
     };
     const scripts = pkg.scripts || {};
 
-    if (deps.vitest) return "vitest";
-    if (deps.jest) return "jest";
-    if (deps.mocha) return "mocha";
-    if (scripts.test) return "npm-test";
+    if (deps.vitest) return 'vitest';
+    if (deps.jest) return 'jest';
+    if (deps.mocha) return 'mocha';
+    if (scripts.test) return 'npm-test';
   }
 
   if (
-    fs.existsSync(path.join(projectRoot, "pytest.ini")) ||
-    fs.existsSync(path.join(projectRoot, "pyproject.toml")) ||
-    fs.existsSync(path.join(projectRoot, "conftest.py"))
+    fs.existsSync(path.join(projectRoot, 'pytest.ini')) ||
+    fs.existsSync(path.join(projectRoot, 'pyproject.toml')) ||
+    fs.existsSync(path.join(projectRoot, 'conftest.py'))
   ) {
-    return "pytest";
+    return 'pytest';
   }
 
   // Go
@@ -106,16 +106,16 @@ function detectTestFramework(projectRoot) {
       return false;
     }
     for (const item of items) {
-      if (item.isDirectory() && !["node_modules", ".git"].includes(item.name)) {
+      if (item.isDirectory() && !['node_modules', '.git'].includes(item.name)) {
         if (hasGoTests(path.join(dir, item.name))) return true;
-      } else if (item.name.endsWith("_test.go")) {
+      } else if (item.name.endsWith('_test.go')) {
         return true;
       }
     }
     return false;
   }
 
-  if (hasGoTests(projectRoot)) return "go";
+  if (hasGoTests(projectRoot)) return 'go';
 
   return null;
 }
@@ -129,17 +129,15 @@ function main() {
 
   let i = 0;
   while (i < args.length) {
-    if (args[i] === "--coverage") coverageFlag = true;
-    else if (args[i] === "--watch") watchFlag = true;
-    else if (args[i] === "--file" && i + 1 < args.length) fileArg = args[++i];
-    else if (!targetPath && !args[i].startsWith("-")) targetPath = args[i];
+    if (args[i] === '--coverage') coverageFlag = true;
+    else if (args[i] === '--watch') watchFlag = true;
+    else if (args[i] === '--file' && i + 1 < args.length) fileArg = args[++i];
+    else if (!targetPath && !args[i].startsWith('-')) targetPath = args[i];
     i++;
   }
 
   if (!targetPath) {
-    console.log(
-      "Usage: node test_runner.js <path> [--coverage] [--watch] [--file <filepath>]",
-    );
+    console.log('Usage: node test_runner.js <path> [--coverage] [--watch] [--file <filepath>]');
     process.exit(1);
   }
 
@@ -151,14 +149,14 @@ function main() {
 
   const framework = detectTestFramework(projectRoot);
   console.log(
-    banner("test_runner.js", {
+    banner('test_runner.js', {
       Project: projectRoot,
-      Framework: framework || "none detected",
+      Framework: framework || 'none detected',
     }),
   );
 
   if (!framework) {
-    skip("No test framework detected in this project");
+    skip('No test framework detected in this project');
     process.exit(0);
   }
 
@@ -167,34 +165,34 @@ function main() {
   let cmd = [];
   let passed = true;
 
-  if (["vitest", "jest", "mocha", "npm-test"].includes(framework)) {
-    if (framework === "vitest") {
-      cmd = ["npx", "vitest", "run"];
-      if (coverageFlag) cmd.push("--coverage");
-      if (watchFlag) cmd = ["npx", "vitest"];
+  if (['vitest', 'jest', 'mocha', 'npm-test'].includes(framework)) {
+    if (framework === 'vitest') {
+      cmd = ['npx', 'vitest', 'run'];
+      if (coverageFlag) cmd.push('--coverage');
+      if (watchFlag) cmd = ['npx', 'vitest'];
       if (fileArg) cmd.push(fileArg);
-    } else if (framework === "jest") {
-      cmd = ["npx", "jest"];
-      if (coverageFlag) cmd.push("--coverage");
-      if (watchFlag) cmd.push("--watch");
+    } else if (framework === 'jest') {
+      cmd = ['npx', 'jest'];
+      if (coverageFlag) cmd.push('--coverage');
+      if (watchFlag) cmd.push('--watch');
       if (fileArg) cmd.push(fileArg);
     } else {
-      cmd = ["npm", "test", "--", "--passWithNoTests"];
-      if (coverageFlag) cmd.push("--coverage");
+      cmd = ['npm', 'test', '--', '--passWithNoTests'];
+      if (coverageFlag) cmd.push('--coverage');
       if (fileArg) cmd.push(fileArg);
     }
     passed = runTests(framework, cmd, projectRoot);
-  } else if (framework === "pytest") {
-    cmd = ["python", "-m", "pytest", "-v"];
-    if (coverageFlag) cmd.push("--cov", "--cov-report=term-missing");
-    if (watchFlag) cmd = ["python", "-m", "pytest-watch", "--", "-v"];
+  } else if (framework === 'pytest') {
+    cmd = ['python', '-m', 'pytest', '-v'];
+    if (coverageFlag) cmd.push('--cov', '--cov-report=term-missing');
+    if (watchFlag) cmd = ['python', '-m', 'pytest-watch', '--', '-v'];
     if (fileArg) cmd.push(fileArg);
-    passed = runTests("pytest", cmd, projectRoot);
-  } else if (framework === "go") {
-    cmd = ["go", "test", "./...", "-v"];
-    if (coverageFlag) cmd.push("-cover");
-    if (fileArg) cmd = ["go", "test", "-v", "-run", fileArg];
-    passed = runTests("go test", cmd, projectRoot);
+    passed = runTests('pytest', cmd, projectRoot);
+  } else if (framework === 'go') {
+    cmd = ['go', 'test', './...', '-v'];
+    if (coverageFlag) cmd.push('-cover');
+    if (fileArg) cmd = ['go', 'test', '-v', '-run', fileArg];
+    passed = runTests('go test', cmd, projectRoot);
   }
 
   console.log(`\n${BOLD}${CYAN}━━━ Test Summary ━━━${RESET}`);

@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before optimizing code or running performance reviews, you MUST inspect:
+
 1. Target Source & Heavy Import Inspection (`package.json`, `next.config.js`) → Identify heavy library imports (`moment`, full `lodash`) for tree-shaking
 2. Measured Baseline Metrics → Run `bundle_analyzer.js` or latency measurements; ban claiming performance improvements without measured proof
 3. 2-Reviewer Performance Gate → Run logic-reviewer and performance-optimizer before approving optimization diffs

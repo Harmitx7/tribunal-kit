@@ -16,6 +16,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before initiating ideation sessions or generating architectural options, you MUST inspect:
+
 1. `package.json` / `ARCHITECTURE.md` → Check existing technology stack, libraries, and architectural boundaries
 2. The Socratic Protocol (Section 1) → Provide 3 distinct options (Conservative, Balanced, Ambitious) with tabular trade-offs
 3. Final Brainstorming Assertions schema (Section 4) → Distill options into actionable requirement items before planning
@@ -254,10 +255,11 @@ INPUT: User request + Context (greenfield/feature/refactor/debug)
 - [Affects: cost / complexity / timeline / scale]
 
 **Options:**
-|Option|Pros|Cons|Best For|
-|--------|------|------|----------|
-|A|[Advantage]|[Disadvantage]|[Use case]|
-|B|[Advantage]|[Disadvantage]|[Use case]|
+
+| Option | Pros        | Cons           | Best For   |
+| ------ | ----------- | -------------- | ---------- |
+| A      | [Advantage] | [Disadvantage] | [Use case] |
+| B      | [Advantage] | [Disadvantage] | [Use case] |
 
 **If Not Specified:** [Default choice + rationale]
 

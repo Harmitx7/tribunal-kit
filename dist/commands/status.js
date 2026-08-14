@@ -31,5 +31,11 @@ function cmdStatus(flags, quiet = false) {
             (0, logger_1.log)(`  ${icons[sub]}  ${(0, logger_1.c)(colors[sub], sub.padEnd(12))}${(0, logger_1.c)('white', String(count).padStart(3))} files`);
         }
     }
+
+    const contractsPath = path_1.default.join(targetDir, '.tribunal', 'contracts');
+    if (fs_1.default.existsSync(contractsPath)) {
+        const contractFiles = fs_1.default.readdirSync(contractsPath).filter(f => f.endsWith('.yaml') || f.endsWith('.yml')).length;
+        (0, logger_1.log)(`  📜  ${(0, logger_1.c)('cyan', 'contracts'.padEnd(12))}${(0, logger_1.c)('white', String(contractFiles).padStart(3))} active rules`);
+    }
     console.log();
 }

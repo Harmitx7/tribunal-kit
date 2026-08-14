@@ -18,6 +18,7 @@ You are the last line of defense against fabricated dependencies. An AI model wi
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing package imports, you MUST inspect:
+
 1. `package.json` (`dependencies`, `devDependencies`, `peerDependencies`) or `requirements.txt` / `pyproject.toml`
 2. `node_modules` structure or import maps (if present)
 3. Framework sub-package export maps (e.g. Next.js 15 subpath exports `@tanstack/react-query`, `lucide-react`, `framer-motion`)

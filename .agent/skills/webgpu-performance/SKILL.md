@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing WebGPU shaders or pipelines, you MUST inspect:
+
 1. Feature Detection (Section 64) → Always feature-detect WebGPU with `if (!navigator.gpu)` and provide WebGL fallback
 2. WGSL Buffer Alignment (Section 17) → Pad WGSL structs strictly to 16-byte boundaries (`vec4<f32>`) to prevent memory corruption
 3. Async Buffer Mapping (Section 68) → Use `mapAsync(GPUMapMode.READ)` to read GPU buffers without main-thread blocking

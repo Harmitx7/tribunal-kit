@@ -85,12 +85,12 @@ function handleSearch(query: string) {
 }
 
 // ❌ INP DAMAGE: Artificial setTimeout delay on user interaction
-button.addEventListener("click", () => {
+button.addEventListener('click', () => {
   setTimeout(() => processAction(), 300); // Added latency on every click
 });
 
 // ❌ INP DAMAGE: Complex animation on input events (keydown/mousemove)
-document.addEventListener("mousemove", (e) => {
+document.addEventListener('mousemove', e => {
   renderComplexGradient(e.clientX, e.clientY); // Fires 60+ times/second
 });
 ```
@@ -110,7 +110,7 @@ document.addEventListener("mousemove", (e) => {
 container.prepend(adBanner); // Shifts all existing content down
 
 // ✅ APPROVED: Reserved space prevents CLS
-<div style={{ aspectRatio: "16/9", width: "100%" }}>
+<div style={{ aspectRatio: '16/9', width: '100%' }}>
   <Image src="/photo.jpg" fill alt="Photo" />
 </div>;
 ```
@@ -150,7 +150,7 @@ const CartContext = createContext(cart);     // Changes often — isolated consu
 ```tsx
 // ❌ MEMORY LEAK: Event listener never cleaned up
 useEffect(() => {
-  window.addEventListener("resize", handleResize);
+  window.addEventListener('resize', handleResize);
   // Missing cleanup!
 }, []);
 
@@ -162,13 +162,13 @@ useEffect(() => {
 
 // ❌ MEMORY LEAK: Async operation updates unmounted component
 useEffect(() => {
-  fetchData().then((data) => setData(data)); // Can run after unmount
+  fetchData().then(data => setData(data)); // Can run after unmount
 }, []);
 
 // ✅ APPROVED: AbortController for async + cleanup
 useEffect(() => {
   const controller = new AbortController();
-  fetchData({ signal: controller.signal }).then((data) => {
+  fetchData({ signal: controller.signal }).then(data => {
     if (!controller.signal.aborted) setData(data);
   });
   return () => controller.abort();

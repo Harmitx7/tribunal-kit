@@ -1,0 +1,9 @@
+name: 'No console.log in production code'
+description: 'Prevents debug logging from reaching production'
+scope: 'src/**/*.ts, src/**/*.tsx, src/**/*.js'
+exclude: '**/*.test.*, **/*.spec.*, scripts/**'
+when: file_modified
+severity: warn
+must_not:
+  - pattern: 'console.log'
+    message: 'Use a structured logger instead of console.log'

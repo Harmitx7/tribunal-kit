@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before executing parallel agent dispatches, you MUST inspect:
+
 1. Target file paths for concurrent workers → Enforce directory isolation; never allow two parallel workers to edit the same file
 2. `Promise.allSettled()` error handling (Section 77) → Handle partial worker failures gracefully without crashing the pipeline
 3. Context Window Budget → Keep total context across all parallel workers under 80,000 tokens
@@ -50,7 +51,11 @@ The foundation of parallel multi-agent architecture.
 // Architectural representation (Fan-out/Fan-in)
 async function executeParallelAudit(sourceCode: string) {
   // Fan-Out
-  const promises = [agentDispatch({ role: "security-auditor", task: sourceCode }), agentDispatch({ role: "performance-profiling", task: sourceCode }), agentDispatch({ role: "web-accessibility-auditor", task: sourceCode })];
+  const promises = [
+    agentDispatch({ role: 'security-auditor', task: sourceCode }),
+    agentDispatch({ role: 'performance-profiling', task: sourceCode }),
+    agentDispatch({ role: 'web-accessibility-auditor', task: sourceCode }),
+  ];
 
   // Await concurrent resolution
   // If one takes 10s and another takes 2s, the total wait is max(10s)
@@ -98,7 +103,7 @@ const results = await Promise.all(agentJobs);
 const results = await Promise.allSettled(agentJobs);
 
 for (const result of results) {
-  if (result.status === "fulfilled") {
+  if (result.status === 'fulfilled') {
     aggregatedOutput.push(result.value);
   } else {
     // 1 agent failed (e.g. rate limit, or runtime crash)

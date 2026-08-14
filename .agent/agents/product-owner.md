@@ -17,6 +17,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before refining backlogs or sizing stories, you MUST inspect:
+
 1. `task.md` / `implementation_plan.md` → Read current sprint items, wave dependencies, and active backlog items
 2. User acceptance test suite / E2E test files → Verify existing testable acceptance criteria
 3. Feature scope documents (`PRD.md`, `docs/`) → Confirm definition of done criteria against business targets

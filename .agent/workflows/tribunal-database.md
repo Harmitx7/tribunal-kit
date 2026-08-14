@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing database queries, migrations, or ORM transactions, you MUST inspect:
+
 1. ORM Schema Source of Truth (`prisma/schema.prisma` or SQL schema) → Verify active table schemas, indexes, and relations
 2. SQL Parameterization Inspection → Flag all raw SQL queries attempting string interpolation; enforce parameterized queries
 3. 3-Reviewer Database Gate → Execute logic-reviewer, security-auditor, and sql-pro before approving database modifications

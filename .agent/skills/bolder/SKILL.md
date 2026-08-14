@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before applying bold visual transformations, you MUST inspect:
+
 1. `DESIGN.md` / `package.json` → Check existing brand color variables and design tokens
 2. Typographic Contrast Scaling rules (Section 24) → Enforce extreme scale jumps (`1.5rem` to `4.5rem`) for display headings
 3. Single Electric Accent System (Section 28) → Use one high-chroma accent color sparingly for primary CTAs and badges
@@ -31,21 +32,26 @@ Transform generic, boring template UIs into high-impact, distinctive interfaces 
 ## 5 Tactics for Bold UI Transformation
 
 ### 1. Typographic Contrast Scaling
+
 - **Extreme Scale Jump**: Increase heading size contrast. Jump from `1.5rem` to `3.5rem` or `4.5rem` display type for key value propositions.
 - **Font Weight Hierarchy**: Pair ultra-heavy display headings (`font-weight: 800` / `900`) with clean, lightweight body type (`font-weight: 400`).
 
 ### 2. High-Contrast Accent System
+
 - **Single Electric Accent**: Introduce one bold, unexpected accent color (e.g. electric lime `oklch(0.85 0.25 130)`, safety orange `oklch(0.68 0.22 40)`, or deep cobalt `oklch(0.45 0.28 260)`).
 - **Asymmetric Color Application**: Use the accent color sparingly on primary CTA buttons, hero badges, or interactive active indicators—never on body text.
 
 ### 3. Oversized Spatial Framing & Borders
+
 - **Crisp Structural Outlines**: Replace faint gray borders with thick 2px solid structural borders (`border: 2px solid var(--foreground)`).
 - **Hard Drop Shadows**: Use sharp, solid offset shadows (`box-shadow: 4px 4px 0px var(--foreground)`) for brutalist or neo-brutalist energy.
 
 ### 4. Hero Section Asymmetry
+
 - **Break Symmetrical Grids**: Shift text alignment left, place a huge badge or key visual off-axis, or overlap card containers across background sections.
 
 ### 5. Tactile Micro-Interactions
+
 - **Snappy Press Springs**: Give buttons a satisfying 3D press effect on active (`transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--foreground)`).
 
 ---

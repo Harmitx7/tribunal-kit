@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before architecting real-time streaming or WebSocket infrastructure, you MUST inspect:
+
 1. One-Way SSE Selection Rule (Section 49) → Prefer SSE for one-way server-to-client streaming (AI responses, notifications); reserve WebSockets for bidirectional interactive features
 2. WebSocket Exponential Reconnection (Section 183) → Implement exponential backoff with random jitter for client reconnection loops to prevent thundering herd crashes
 3. Optimistic UI Rollback Handler (Section 207) → Capture previous state before optimistic mutations and implement explicit onError rollback logic
@@ -74,18 +75,18 @@ Before architecting real-time streaming or WebSocket infrastructure, you MUST in
 
 ```typescript
 // Server (Node.js/Express)
-app.get("/api/events", (req, res) => {
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-  res.setHeader("X-Accel-Buffering", "no"); // disable nginx buffering
+app.get('/api/events', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no'); // disable nginx buffering
 
   // Send initial connection event
-  res.write(`data: ${JSON.stringify({ type: "connected" })}\n\n`);
+  res.write(`data: ${JSON.stringify({ type: 'connected' })}\n\n`);
 
   // Heartbeat to keep connection alive
   const heartbeat = setInterval(() => {
-    res.write(": heartbeat\n\n"); // comment line, ignored by client
+    res.write(': heartbeat\n\n'); // comment line, ignored by client
   }, 15000);
 
   // Subscribe to events
@@ -97,16 +98,16 @@ app.get("/api/events", (req, res) => {
   eventBus.subscribe(handler);
 
   // Cleanup on disconnect
-  req.on("close", () => {
+  req.on('close', () => {
     clearInterval(heartbeat);
     eventBus.unsubscribe(handler);
   });
 });
 
 // Client
-const eventSource = new EventSource("/api/events");
+const eventSource = new EventSource('/api/events');
 
-eventSource.addEventListener("notification", (e) => {
+eventSource.addEventListener('notification', e => {
   const data = JSON.parse(e.data);
   showNotification(data);
 });
@@ -114,7 +115,7 @@ eventSource.addEventListener("notification", (e) => {
 // Auto-reconnection is built-in!
 // The browser automatically reconnects with Last-Event-ID header
 eventSource.onerror = () => {
-  console.log("Connection lost — auto-reconnecting...");
+  console.log('Connection lost — auto-reconnecting...');
 };
 ```
 
@@ -124,39 +125,39 @@ eventSource.onerror = () => {
 
 ```typescript
 // Server (ws library)
-import { WebSocketServer, WebSocket } from "ws";
+import { WebSocketServer, WebSocket } from 'ws';
 
-const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
+const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
 
 // Connection management
 const clients = new Map<string, WebSocket>();
 
-wss.on("connection", (ws, req) => {
+wss.on('connection', (ws, req) => {
   const userId = authenticateFromHeaders(req);
   clients.set(userId, ws);
 
-  ws.on("message", (raw) => {
+  ws.on('message', raw => {
     try {
       const message = JSON.parse(raw.toString());
       handleMessage(userId, message);
     } catch (e) {
-      ws.send(JSON.stringify({ error: "Invalid message format" }));
+      ws.send(JSON.stringify({ error: 'Invalid message format' }));
     }
   });
 
-  ws.on("close", () => {
+  ws.on('close', () => {
     clients.delete(userId);
     broadcastPresence();
   });
 
-  ws.on("pong", () => {
+  ws.on('pong', () => {
     // Client is alive
   });
 });
 
 // Heartbeat — detect dead connections
 const interval = setInterval(() => {
-  wss.clients.forEach((ws) => {
+  wss.clients.forEach(ws => {
     if (ws.readyState === WebSocket.OPEN) {
       ws.ping();
     }
@@ -211,27 +212,27 @@ class ReconnectingWebSocket {
 // React pattern: update UI immediately, reconcile on server response
 async function toggleLike(postId: string) {
   // 1. Optimistic update (instant UI feedback)
-  setLiked((prev) => !prev);
-  setLikeCount((prev) => (liked ? prev - 1 : prev + 1));
+  setLiked(prev => !prev);
+  setLikeCount(prev => (liked ? prev - 1 : prev + 1));
 
   try {
     // 2. Server request
     await api.post(`/posts/${postId}/like`);
   } catch (error) {
     // 3. Rollback on failure
-    setLiked((prev) => !prev);
-    setLikeCount((prev) => (liked ? prev + 1 : prev - 1));
-    toast.error("Failed to update. Please try again.");
+    setLiked(prev => !prev);
+    setLikeCount(prev => (liked ? prev + 1 : prev - 1));
+    toast.error('Failed to update. Please try again.');
   }
 }
 
 // With React Query / TanStack Query:
 const likeMutation = useMutation({
   mutationFn: (postId: string) => api.post(`/posts/${postId}/like`),
-  onMutate: async (postId) => {
-    await queryClient.cancelQueries({ queryKey: ["post", postId] });
-    const previous = queryClient.getQueryData(["post", postId]);
-    queryClient.setQueryData(["post", postId], (old: Post) => ({
+  onMutate: async postId => {
+    await queryClient.cancelQueries({ queryKey: ['post', postId] });
+    const previous = queryClient.getQueryData(['post', postId]);
+    queryClient.setQueryData(['post', postId], (old: Post) => ({
       ...old,
       liked: !old.liked,
       likeCount: old.liked ? old.likeCount - 1 : old.likeCount + 1,
@@ -239,10 +240,10 @@ const likeMutation = useMutation({
     return { previous };
   },
   onError: (err, postId, context) => {
-    queryClient.setQueryData(["post", postId], context?.previous);
+    queryClient.setQueryData(['post', postId], context?.previous);
   },
   onSettled: (data, err, postId) => {
-    queryClient.invalidateQueries({ queryKey: ["post", postId] });
+    queryClient.invalidateQueries({ queryKey: ['post', postId] });
   },
 });
 ```
@@ -256,7 +257,7 @@ const likeMutation = useMutation({
 
 interface PresenceState {
   userId: string;
-  status: "online" | "away" | "offline";
+  status: 'online' | 'away' | 'offline';
   cursor?: { x: number; y: number };
   lastSeen: number;
 }
@@ -270,7 +271,7 @@ class PresenceManager {
     this.presence.set(userId, {
       ...this.presence.get(userId),
       userId,
-      status: "online",
+      status: 'online',
       lastSeen: Date.now(),
       ...state,
     } as PresenceState);
@@ -278,7 +279,7 @@ class PresenceManager {
 
   getActive(): PresenceState[] {
     const now = Date.now();
-    return [...this.presence.values()].filter((p) => now - p.lastSeen < this.TIMEOUT_MS);
+    return [...this.presence.values()].filter(p => now - p.lastSeen < this.TIMEOUT_MS);
   }
 
   remove(userId: string) {

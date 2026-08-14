@@ -17,6 +17,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing legacy codebases, you MUST inspect:
+
 1. `package.json` / `requirements.txt` → Read project dependencies, deprecated library usages, and version ages
 2. Entry point files (`server.ts`, `index.js`, `app/`) → Locate active listeners, API routers, and scheduled jobs
 3. Test suite directory (`tests/`, `__tests__/`, `spec/`) → Check baseline test coverage before recommending refactors

@@ -21,6 +21,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering web animations or selecting motion libraries, you MUST inspect:
+
 1. Master Library Decision Matrix (Section 29) → Select appropriate library (Framer Motion, GSAP, View Transitions API, Lottie) based on interaction category
 2. 120fps GPU Compositing Rule (Section 181) → Restrict animations strictly to `transform` and `opacity` to avoid layout thrashing
 3. Accessibility & `prefers-reduced-motion` (Section 158) → Ensure fallback to instant opacity or no-op motion for reduced-motion preference
@@ -80,7 +81,11 @@ Used for immediate feedback, clarifying actions, and improving perceived respons
 
 ```tsx
 // Framer Motion — button with spring micro-interaction
-<motion.button whileHover={{ scale: 1.02, filter: "brightness(1.08)" }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
+<motion.button
+  whileHover={{ scale: 1.02, filter: 'brightness(1.08)' }}
+  whileTap={{ scale: 0.97 }}
+  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+>
   Submit
 </motion.button>
 ```
@@ -91,18 +96,18 @@ Triggers narrative flow and depth based on user scrolling.
 
 ```javascript
 // GSAP ScrollTrigger — industry standard
-gsap.from(".reveal-section", {
-  scrollTrigger: { trigger: ".reveal-section", start: "top 80%", scrub: 1 },
+gsap.from('.reveal-section', {
+  scrollTrigger: { trigger: '.reveal-section', start: 'top 80%', scrub: 1 },
   y: 60,
   opacity: 0,
   stagger: 0.1,
 });
 
 // Lenis — smooth scroll compatible with GSAP
-import Lenis from "lenis";
+import Lenis from 'lenis';
 const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.8 });
-lenis.on("scroll", ScrollTrigger.update);
-gsap.ticker.add((time) => lenis.raf(time * 1000));
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add(time => lenis.raf(time * 1000));
 gsap.ticker.lagSmoothing(0);
 ```
 
@@ -146,9 +151,9 @@ function navigateWithTransition(url: string, navigate: (path: string) => void) {
   display: none;
   opacity: 0;
   transform: scale(0.95);
-  transition: 
-    opacity 0.2s ease, 
-    transform 0.2s cubic-bezier(0.2, 0.8, 0.4, 1), 
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.4, 1),
     display 0.2s allow-discrete;
 }
 
@@ -174,16 +179,16 @@ function navigateWithTransition(url: string, navigate: (path: string) => void) {
    Always respect `prefers-reduced-motion`. Fall back to instant opacity or no-op motion.
 
 ```tsx
-import { useReducedMotion } from "motion/react";
+import { useReducedMotion } from 'motion/react';
 
 function AccessibleComponent() {
   const shouldReduceMotion = useReducedMotion();
-  
+
   return (
     <motion.div
-      animate={{ 
-        x: shouldReduceMotion ? 0 : 100, 
-        opacity: 1 
+      animate={{
+        x: shouldReduceMotion ? 0 : 100,
+        opacity: 1,
       }}
       transition={{ duration: shouldReduceMotion ? 0 : 0.3 }}
     />
@@ -220,4 +225,3 @@ function AccessibleComponent() {
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 Inspect motion frame performance in DevTools Rendering tab to verify 60/120fps compositor execution without layout thrashing.
-

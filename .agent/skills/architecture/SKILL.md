@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before selecting architectural patterns or designing systems, you MUST inspect:
+
 1. Pragmatic Monolith Default (Section 31) → Start with a modular monolith for teams <5 or scale <100K RPM; ban premature microservices
 2. Clean Architecture Dependency Direction (Section 50) → Ensure dependency arrows point strictly inward to Domain; Domain must have zero external infrastructure dependencies
 3. ADR Requirement for Non-Trivial Decisons (Section 135) → Document every major architectural decision with an ADR in `docs/architecture/`
@@ -72,7 +73,7 @@ interface UserRepository {
 }
 class User {
   promote(): void {
-    if (this._role === UserRole.ADMIN) throw new DomainError("Already admin");
+    if (this._role === UserRole.ADMIN) throw new DomainError('Already admin');
     this._role = UserRole.ADMIN;
   }
 }
@@ -81,7 +82,7 @@ class User {
 class PromoteUserUseCase {
   async execute(userId: string): Promise<void> {
     const user = await this.userRepo.findById(userId);
-    if (!user) throw new NotFoundError("User", userId);
+    if (!user) throw new NotFoundError('User', userId);
     user.promote();
     await this.userRepo.save(user);
     await this.eventBus.publish(new UserPromotedEvent(userId));

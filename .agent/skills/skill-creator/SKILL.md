@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before creating a new skill module, you MUST inspect:
+
 1. `.agent/skills/` directory → Check if a skill in the same domain already exists to prevent duplication
 2. Option A+C Hybrid Skill Schema (Section 26) → Enforce frontmatter with `version: 3.0.0`, `scripts-binding`, `Pre-Flight Checklist`, and `VBC Protocol`
 3. Target skill path (`.agent/skills/<skill-name>/SKILL.md`) → Verify destination directory structure before creation

@@ -3,31 +3,31 @@
  * Integration test suite for Day 2 Parallel Tribunal Reviewer Engine.
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
-const { execFileSync } = require("child_process");
+const fs = require('fs');
+const path = require('path');
+const { execFileSync } = require('child_process');
 
-describe("Day 2: Parallel Tribunal Reviewer Engine", () => {
-  const repoRoot = path.join(__dirname, "../..");
+describe('Day 2: Parallel Tribunal Reviewer Engine', () => {
+  const repoRoot = path.join(__dirname, '../..');
 
-  test("DAG Scheduler categorizes reviewer nodes into fast and deep wave groups", () => {
+  test('DAG Scheduler categorizes reviewer nodes into fast and deep wave groups', () => {
     const tasks = [
-      { id: "logic-reviewer", tier: "fast", dependencies: [] },
-      { id: "security-auditor", tier: "deep", dependencies: [] },
-      { id: "complexity-reviewer", tier: "fast", dependencies: ["logic-reviewer"] },
-      { id: "ui-ux-auditor", tier: "deep", dependencies: ["logic-reviewer"] },
+      { id: 'logic-reviewer', tier: 'fast', dependencies: [] },
+      { id: 'security-auditor', tier: 'deep', dependencies: [] },
+      { id: 'complexity-reviewer', tier: 'fast', dependencies: ['logic-reviewer'] },
+      { id: 'ui-ux-auditor', tier: 'deep', dependencies: ['logic-reviewer'] },
     ];
 
-    const rustBin = path.join(repoRoot, "target/release/tribunal-core.exe");
+    const rustBin = path.join(repoRoot, 'target/release/tribunal-core.exe');
     const binToRun = fs.existsSync(rustBin)
       ? rustBin
-      : path.join(repoRoot, "target/debug/tribunal-core.exe");
+      : path.join(repoRoot, 'target/debug/tribunal-core.exe');
 
     if (fs.existsSync(binToRun)) {
-      const out = execFileSync(binToRun, ["dag-schedule", "--tasks", JSON.stringify(tasks)], {
-        encoding: "utf8",
+      const out = execFileSync(binToRun, ['dag-schedule', '--tasks', JSON.stringify(tasks)], {
+        encoding: 'utf8',
       });
 
       const res = JSON.parse(out);
@@ -37,36 +37,36 @@ describe("Day 2: Parallel Tribunal Reviewer Engine", () => {
 
       // Wave 0 should have 2 root reviewers
       expect(res.wave_groups[0].tasks.length).toBe(2);
-      expect(res.wave_groups[0].fast_tasks).toContain("logic-reviewer");
-      expect(res.wave_groups[0].deep_tasks).toContain("security-auditor");
+      expect(res.wave_groups[0].fast_tasks).toContain('logic-reviewer');
+      expect(res.wave_groups[0].deep_tasks).toContain('security-auditor');
     } else {
       // Pass gracefully if binary is not yet compiled
       expect(true).toBe(true);
     }
   });
 
-  test("Parallel fan-out Promise.allSettled error isolation", async () => {
+  test('Parallel fan-out Promise.allSettled error isolation', async () => {
     const mockReviewers = [
-      { name: "logic", fn: async () => ({ status: "pass", durationMs: 15 }) },
-      { name: "security", fn: async () => ({ status: "pass", durationMs: 25 }) },
+      { name: 'logic', fn: async () => ({ status: 'pass', durationMs: 15 }) },
+      { name: 'security', fn: async () => ({ status: 'pass', durationMs: 25 }) },
       {
-        name: "failing-reviewer",
+        name: 'failing-reviewer',
         fn: async () => {
-          throw new Error("Reviewer failed due to timeout");
+          throw new Error('Reviewer failed due to timeout');
         },
       },
     ];
 
     const startTime = Date.now();
     const results = await Promise.allSettled(
-      mockReviewers.map(async (rev) => {
+      mockReviewers.map(async rev => {
         try {
           const res = await rev.fn();
           return { name: rev.name, ...res };
         } catch (err) {
-          return { name: rev.name, status: "error", error: err.message };
+          return { name: rev.name, status: 'error', error: err.message };
         }
-      })
+      }),
     );
 
     const duration = Date.now() - startTime;
@@ -76,11 +76,11 @@ describe("Day 2: Parallel Tribunal Reviewer Engine", () => {
     expect(results.length).toBe(3);
 
     // Error isolation: 2 succeeded, 1 gracefully captured error
-    const fulfilled = results.filter((r) => r.status === "fulfilled");
+    const fulfilled = results.filter(r => r.status === 'fulfilled');
     expect(fulfilled.length).toBe(3);
 
-    const errorItem = fulfilled.find((r) => r.value.name === "failing-reviewer");
-    expect(errorItem.value.status).toBe("error");
-    expect(errorItem.value.error).toContain("Reviewer failed");
+    const errorItem = fulfilled.find(r => r.value.name === 'failing-reviewer');
+    expect(errorItem.value.status).toBe('error');
+    expect(errorItem.value.error).toContain('Reviewer failed');
   });
 });

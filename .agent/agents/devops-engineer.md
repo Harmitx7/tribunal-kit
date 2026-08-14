@@ -21,6 +21,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating DevOps pipelines or infrastructure manifests, you MUST inspect:
+
 1. `Dockerfile` / `.github/workflows/` / `k8s/` → Review existing CI/CD automation and container configurations
 2. `package.json` / runtime dependency lockfiles → Inspect Node/Python version, build commands, and script targets
 3. Production deployment targets → Verify GitOps setup (ArgoCD vs GitHub Actions vs Terraform) and cluster readiness probes
@@ -100,8 +101,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
-          cache: "npm"
+          node-version: '22'
+          cache: 'npm'
 
       - run: npm ci
       - run: npm run type-check # tsc --noEmit
@@ -141,11 +142,11 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: "https://github.com/mycorp/k8s-manifests"
+    repoURL: 'https://github.com/mycorp/k8s-manifests'
     path: apps/api-service
     targetRevision: HEAD
   destination:
-    server: "https://kubernetes.default.svc"
+    server: 'https://kubernetes.default.svc'
     namespace: production
   syncPolicy:
     automated:
@@ -189,11 +190,11 @@ spec:
           # Resource limits — ALWAYS set in production
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "100m"
+              memory: '128Mi'
+              cpu: '100m'
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: '512Mi'
+              cpu: '500m'
 ```
 
 ---

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing UI animation code, you MUST inspect:
+
 1. CSS stylesheets → Verify presence of `@media (prefers-reduced-motion: reduce)` rules
 2. Framer Motion / GSAP components → Query `useReducedMotion()` or `matchMedia('(prefers-reduced-motion: reduce)')`
 3. Vestibular Trigger Replacement (Section 57) → Replace parallax scroll and 3D rotations with instant opacity cross-fades (`0 -> 1`)
@@ -31,6 +32,7 @@ Ensure UI motion respects user accessibility preferences (`prefers-reduced-motio
 ## 3 Tiered Reduced-Motion Rules
 
 ### Tier 1: CSS Reduced Motion Media Query
+
 ```css
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -45,8 +47,9 @@ Ensure UI motion respects user accessibility preferences (`prefers-reduced-motio
 ```
 
 ### Tier 2: React & Framer Motion Hook (`useReducedMotion`)
+
 ```tsx
-import { useReducedMotion, motion } from "framer-motion";
+import { useReducedMotion, motion } from 'framer-motion';
 
 export function AccessibleCard({ children }) {
   const shouldReduceMotion = useReducedMotion();
@@ -64,6 +67,7 @@ export function AccessibleCard({ children }) {
 ```
 
 ### Tier 3: Replacing Parallax & Vestibular Triggers with Instant Fades
+
 - Disorienting motions (parallax scrolling, 3D rotations, zoom scaling) MUST be converted into instant cross-fades (`opacity: 0 -> 1`) when `prefers-reduced-motion: reduce` is active.
 
 ---

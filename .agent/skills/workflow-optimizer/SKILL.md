@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before analyzing tool-calling logs or task efficiency, you MUST inspect:
+
 1. Tool Call Pattern Analysis table (Section 1) → Classify redundant reads, serial bottlenecks, and context dumps
 2. Parallelism Opportunity Detection (Section 2) → Verify read/write dependency rules for batch tool calls
 3. Efficiency Score formula (Section 105) → Compute actual vs optimal call ratios accurately

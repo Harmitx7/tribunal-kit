@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing LLM integrations, prompt templates, or AI API calls, you MUST inspect:
+
 1. Target AI Code & SDK Manifests (`package.json`) → Verify official AI SDK versions (Vercel AI SDK `ai`, `@langchain/core`, `openai`, `@google/genai`)
 2. Prompt Injection Boundary Check → Confirm user inputs are strictly passed via message roles or delimited blocks; ban string concatenation into system prompts
 3. 3-Reviewer AI Integration Gate → Run ai-code-reviewer, logic-reviewer, and security-auditor before approving AI code diffs
@@ -94,12 +95,12 @@ All model names should be in environment variables, not hardcoded.
 
 ```typescript
 // ❌ CRITICAL: User input in system prompt
-messages: [{ role: "system", content: `Help with: ${userQuery}` }];
+messages: [{ role: 'system', content: `Help with: ${userQuery}` }];
 
 // ✅ SAFE: Strict role separation
 messages: [
-  { role: "system", content: "You are a helpful product assistant." },
-  { role: "user", content: userQuery },
+  { role: 'system', content: 'You are a helpful product assistant.' },
+  { role: 'user', content: userQuery },
 ];
 
 // ✅ SAFE: When injection context unavoidable — explicit delimiter

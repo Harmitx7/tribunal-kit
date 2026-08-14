@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before optimizing content for AI engine ingestion, you MUST inspect:
+
 1. High Information Density Rule (Section 25) → Maximize factual density; eliminate marketing boilerplate so LLM context windows aren't truncated
 2. Explicit Claim-to-Source Mapping (Section 51) → Map stats and claims directly to explicit `<cite>` sources/links; ban vague unanchored assertions
 3. Text-Based Architecture Diagrams (Section 94) → Represent architecture via text/Mermaid.js code blocks; ban image-only architecture diagrams
@@ -49,7 +50,7 @@ Modern sites should natively serve structured markdown if they detect an AI User
 ```typescript
 // Next.js Edge Middleware for GEO
 export function middleware(req: NextRequest) {
-  const ua = req.headers.get("user-agent") || "";
+  const ua = req.headers.get('user-agent') || '';
   const isBot = /ChatGPT|Perplexity|ClaudeBot/i.test(ua);
 
   if (isBot) {

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering component micro-interactions, you MUST inspect:
+
 1. Duration Caps → Keep interactive component feedback (press/hover/toggle) under 180ms
 2. Popover Origin Rules (Section 60) → Set `transform-origin` dynamically to match trigger button position
 3. SVG Path Draw-on (Section 48) → Use `stroke-dashoffset` transitions for checkboxes and toggle icons
@@ -31,9 +32,12 @@ Craft responsive, physically grounded micro-interactions for everyday UI control
 ## 4 Micro-Interaction Recipes
 
 ### 1. Tactile Button Press
+
 ```css
 .btn-tactile {
-  transition: transform 120ms cubic-bezier(0.2, 0, 0, 1), box-shadow 120ms ease;
+  transition:
+    transform 120ms cubic-bezier(0.2, 0, 0, 1),
+    box-shadow 120ms ease;
 }
 .btn-tactile:hover {
   transform: translateY(-1px);
@@ -44,30 +48,35 @@ Craft responsive, physically grounded micro-interactions for everyday UI control
 ```
 
 ### 2. Animated Toggle Switch
+
 ```css
 .toggle-thumb {
   transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1); /* Subtle spring overshoot */
 }
-[data-state="checked"] .toggle-thumb {
+[data-state='checked'] .toggle-thumb {
   transform: translateX(20px);
 }
 ```
 
 ### 3. Animated Checkbox Morph
+
 Use an SVG path draw-on keyframe when checked:
+
 ```css
 .checkbox-svg-path {
   stroke-dasharray: 24;
   stroke-dashoffset: 24;
   transition: stroke-dashoffset 180ms ease-out;
 }
-[data-state="checked"] .checkbox-svg-path {
+[data-state='checked'] .checkbox-svg-path {
   stroke-dashoffset: 0;
 }
 ```
 
 ### 4. Origin-Aware Popover / Dropdown
+
 Popovers scale out from their trigger source using CSS variables:
+
 ```css
 .popover-content {
   transform-origin: var(--radix-popover-content-transform-origin, center top);
@@ -75,8 +84,14 @@ Popovers scale out from their trigger source using CSS variables:
 }
 
 @keyframes popover-enter {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 ```
 

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before attempting bug diagnostics or proposing code fixes, you MUST inspect:
+
 1. Red-Capable Feedback Loop Rule (Section 34) → Construct a fast, deterministic, automated feedback loop command that reproduces the bug (goes red) BEFORE making code edits
 2. Falsifiable Hypotheses Formulation (Section 107) → Formulate 3–5 falsifiable hypotheses (`"If X is cause, then Y prediction"`) before testing any single theory
 3. Tagged Debug Logging & Cleanup (Section 123) → Tag debug log instrumentation (`[DEBUG-id]`) and sweep clean before finalizing regression fixes
@@ -66,6 +67,7 @@ Build the right feedback loop, and the bug is 90% fixed.
 ### Tighten the Loop
 
 Treat the loop as a product. Once you have a loop, tighten it:
+
 - **Can I make it faster?** (Cache setup, skip unrelated init, narrow the test scope.)
 - **Can I make the signal sharper?** (Assert on the specific symptom, not "didn't crash".)
 - **Can I make it more deterministic?** (Pin time, seed RNG, isolate filesystem, freeze network.)
@@ -79,21 +81,23 @@ The goal is not a clean repro but a higher reproduction rate. Loop the trigger 1
 ### When You Genuinely Cannot Build a Loop
 
 Stop and say so explicitly. List what you tried. Ask the user for:
+
 1. Access to whatever environment reproduces it.
 2. A captured artifact (HAR file, log dump, core dump, screen recording with timestamps).
 3. Permission to add temporary production instrumentation.
 
-*Do not proceed to hypothesise without a loop.*
+_Do not proceed to hypothesise without a loop._
 
 ### Phase 1 Completion Criterion — A Tight Loop That Goes Red
 
 Phase 1 is done when the loop is tight and red-capable: you can name **one command** — a script path, a test invocation, a curl — that you have already run at least once (paste the invocation and its output), and that is:
+
 - ✅ **Red-capable**: Drives the actual bug code path and asserts the user's exact symptom, going red on this bug and green once fixed. Not "runs without erroring" — it must catch this specific bug.
 - ✅ **Deterministic**: Same verdict every run (or high, pinned reproduction rate).
 - ✅ **Fast**: Seconds, not minutes.
 - ✅ **Agent-runnable**: Runnable unattended (HITL only via `scripts/hitl-loop.template.sh`).
 
-*If you catch yourself reading code to build a theory before this command exists, stop. No red-capable command, no Phase 2.*
+_If you catch yourself reading code to build a theory before this command exists, stop. No red-capable command, no Phase 2._
 
 ---
 
@@ -102,11 +106,13 @@ Phase 1 is done when the loop is tight and red-capable: you can name **one comma
 Run the loop. Watch it go red — the bug appears.
 
 ### Confirm
+
 1. The loop produces the failure mode the user described — not a different failure nearby. (Wrong bug = wrong fix.)
 2. The failure is reproducible across multiple runs (or at a high enough reproduction rate).
 3. You have captured the exact symptom (error message, wrong output, slow timing) so later phases can verify the fix addresses it.
 
 ### Minimise
+
 Once it's red, shrink the repro to the smallest scenario that still goes red. Cut inputs, callers, config, data, and steps one at a time, re-running the loop after each cut — keep only what's load-bearing for the failure.
 
 > 🎯 **Why bother**: A minimal repro shrinks the hypothesis space in Phase 3 (fewer moving parts left to suspect) and becomes the clean regression test in Phase 5.
@@ -134,6 +140,7 @@ Show the ranked list to the user before testing. (Proceed with your ranking if t
 Each probe must map to a specific prediction from Phase 3. Change one variable at a time.
 
 ### Tool Preference
+
 1. **Debugger / REPL Inspection**: If the environment supports it. One breakpoint beats ten logs.
 2. **Targeted Logs**: Place logs at boundaries that distinguish hypotheses. Never "log everything and grep".
 3. **Tag Every Debug Log**: Prefix every debug log with a unique tag, e.g. `[DEBUG-a4f2]`. Cleanup at the end becomes a single grep.
@@ -150,6 +157,7 @@ A correct seam is one where the test exercises the real bug pattern as it occurs
 If no correct seam exists, note it. The codebase architecture is preventing the bug from being locked down. Flag this for Phase 6.
 
 ### If a Correct Seam Exists:
+
 1. Turn the minimised repro into a failing test at that seam.
 2. Watch it fail.
 3. Apply the fix.
@@ -161,6 +169,7 @@ If no correct seam exists, note it. The codebase architecture is preventing the 
 ## Phase 6 — Cleanup + Post-Mortem
 
 ### Required Before Declaring Done
+
 - [ ] Original repro no longer reproduces (re-run Phase 1 loop)
 - [ ] Regression test passes (or absence of seam is documented)
 - [ ] All `[DEBUG-...]` instrumentation removed (grep the prefix)
@@ -168,6 +177,7 @@ If no correct seam exists, note it. The codebase architecture is preventing the 
 - [ ] Correct hypothesis stated in commit / PR message
 
 ### Post-Mortem Handoff
+
 Ask: **What would have prevented this bug?** If the answer involves architectural debt (no good test seam, tangled callers, hidden coupling), hand off to `/improve-codebase-architecture` with specific findings.
 
 ---

@@ -19,6 +19,7 @@ skills:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing property tests:
+
 1. Invariant Identification → Define mathematical properties that must hold true for ALL inputs (e.g. `reverse(reverse(list)) == list`)
 2. Arbitrary Generator Scoping → Constrain generator bounds to domain validity (e.g. non-empty strings, positive integers)
 3. Shrinking & Reproducibility → Store seed values for failing test runs to reproduce minimal failing inputs
@@ -37,19 +38,16 @@ function parseAmount(currencyStr: string): number | null {
 
 test('currency parser invariant: non-negative parsed numbers', () => {
   fc.assert(
-    fc.property(
-      fc.tuple(fc.string(), fc.double({ min: 0, max: 1000000 })),
-      ([prefix, val]) => {
-        const input = `${prefix}$${val.toFixed(2)}`;
-        const parsed = parseAmount(input);
-        
-        if (parsed !== null) {
-          expect(parsed).toBeGreaterThanOrEqual(0);
-          expect(Number.isFinite(parsed)).toBe(true);
-        }
+    fc.property(fc.tuple(fc.string(), fc.double({ min: 0, max: 1000000 })), ([prefix, val]) => {
+      const input = `${prefix}$${val.toFixed(2)}`;
+      const parsed = parseAmount(input);
+
+      if (parsed !== null) {
+        expect(parsed).toBeGreaterThanOrEqual(0);
+        expect(Number.isFinite(parsed)).toBe(true);
       }
-    ),
-    { numRuns: 500 } // Execute 500 generative iterations
+    }),
+    { numRuns: 500 }, // Execute 500 generative iterations
   );
 });
 ```

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing scroll-driven animations, you MUST inspect:
+
 1. Target browser support → Prefer pure CSS `animation-timeline: view()` / `scroll()` when possible
 2. Pinning & Scrubbing rules (Section 45) → Use `scrub: 1` in GSAP ScrollTrigger timelines for smooth inertia
 3. Anti-Scrolljacking rule (Section 88) → Never hijack native scroll wheel momentum or override browser scrolling velocity
@@ -31,6 +32,7 @@ Architect performant scroll-linked motion and scrollytelling sequences that feel
 ## 3 Scroll-Driven Architecture Patterns
 
 ### 1. Modern Pure CSS `view-timeline` (No JavaScript Required)
+
 ```css
 @keyframes reveal-on-scroll {
   from {
@@ -51,30 +53,37 @@ Architect performant scroll-linked motion and scrollytelling sequences that feel
 ```
 
 ### 2. Sticky Canvas / Section Pinned Storytelling (GSAP ScrollTrigger)
+
 ```javascript
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-gsap.timeline({
-  scrollTrigger: {
-    trigger: ".story-container",
-    start: "top top",
-    end: "+=200%",
-    pin: true,
-    scrub: 1, // Smooth scrub delay
-  }
-})
-.to(".story-step-1", { opacity: 0, y: -20 })
-.from(".story-step-2", { opacity: 0, y: 20 });
+gsap
+  .timeline({
+    scrollTrigger: {
+      trigger: '.story-container',
+      start: 'top top',
+      end: '+=200%',
+      pin: true,
+      scrub: 1, // Smooth scrub delay
+    },
+  })
+  .to('.story-step-1', { opacity: 0, y: -20 })
+  .from('.story-step-2', { opacity: 0, y: 20 });
 ```
 
 ### 3. Scroll Progress Indicator Bar
+
 ```css
 @keyframes grow-progress {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 .scroll-progress-bar {

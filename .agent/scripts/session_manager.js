@@ -13,31 +13,31 @@
  *   node .agent/scripts/session_manager.js export [--stdout]
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const STATE_FILE = ".agent_session.json";
+const STATE_FILE = '.agent_session.json';
 
-const { GREEN, YELLOW, BLUE, CYAN, RED, BOLD, RESET } = require("./_colors");
+const { GREEN, YELLOW, BLUE, CYAN, RED, BOLD, RESET } = require('./_colors');
 
 const VALID_COMMANDS = new Set([
-  "save",
-  "load",
-  "show",
-  "clear",
-  "status",
-  "tag",
-  "list",
-  "export",
+  'save',
+  'load',
+  'show',
+  'clear',
+  'status',
+  'tag',
+  'list',
+  'export',
 ]);
 const LIST_PAGE_SIZE = 10;
 
 function loadState() {
   if (!fs.existsSync(STATE_FILE)) return {};
   try {
-    const content = fs.readFileSync(STATE_FILE, "utf8");
+    const content = fs.readFileSync(STATE_FILE, 'utf8');
     return JSON.parse(content);
   } catch {
     return {};
@@ -45,7 +45,7 @@ function loadState() {
 }
 
 function saveState(state) {
-  fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2), "utf8");
+  fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2), 'utf8');
 }
 
 function cmdSave(note) {
@@ -73,7 +73,7 @@ function cmdLoad() {
     console.log(`${YELLOW}No active session — use 'save' first.${RESET}`);
     return;
   }
-  const tagsStr = (current.tags || []).join(", ") || "none";
+  const tagsStr = (current.tags || []).join(', ') || 'none';
   console.log(`${BOLD}Current session:${RESET}`);
   console.log(`  Session: #${current.session}`);
   console.log(`  Time:    ${current.timestamp}`);
@@ -91,8 +91,8 @@ function cmdShow() {
   console.log(`${BOLD}Session History (${history.length} total):${RESET}`);
   const recent = history.slice(-10).reverse();
   for (const entry of recent) {
-    const tagsStr = (entry.tags || []).join(", ") || "";
-    const tagsDisplay = tagsStr ? `  [${tagsStr}]` : "";
+    const tagsStr = (entry.tags || []).join(', ') || '';
+    const tagsDisplay = tagsStr ? `  [${tagsStr}]` : '';
     console.log(
       `\n  ${BLUE}#${entry.session}${RESET} — ${entry.timestamp.slice(0, 16)}${tagsDisplay}`,
     );
@@ -115,28 +115,22 @@ function cmdStatus() {
   const current = state.current;
 
   if (!history.length) {
-    console.log(
-      `${YELLOW}No session history — use 'save' to start tracking.${RESET}`,
-    );
+    console.log(`${YELLOW}No session history — use 'save' to start tracking.${RESET}`);
     return;
   }
 
   const total = history.length;
   const recent = history.slice(-3).reverse();
 
-  console.log(
-    `\n${BOLD}${CYAN}━━━ Session Status ━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`,
-  );
+  console.log(`\n${BOLD}${CYAN}━━━ Session Status ━━━━━━━━━━━━━━━━━━━━━━━━${RESET}`);
   console.log(`  Total sessions: ${total}`);
   if (current) {
-    console.log(
-      `  Active:         #${current.session} — ${current.note.slice(0, 60)}`,
-    );
+    console.log(`  Active:         #${current.session} — ${current.note.slice(0, 60)}`);
   }
   console.log(`\n${BOLD}  Last 3 sessions:${RESET}`);
   for (const entry of recent) {
-    const tagsStr = (entry.tags || []).join(", ") || "";
-    const tagsDisplay = tagsStr ? `  [${tagsStr}]` : "";
+    const tagsStr = (entry.tags || []).join(', ') || '';
+    const tagsDisplay = tagsStr ? `  [${tagsStr}]` : '';
     const ts = entry.timestamp.slice(0, 16);
     console.log(`    ${BLUE}#${entry.session}${RESET} ${ts}${tagsDisplay}`);
     console.log(`    ${entry.note.slice(0, 70)}`);
@@ -154,16 +148,12 @@ function cmdTag(label) {
   const state = loadState();
   const current = state.current;
   if (!current) {
-    console.log(
-      `${YELLOW}No active session — use 'save' first before tagging.${RESET}`,
-    );
+    console.log(`${YELLOW}No active session — use 'save' first before tagging.${RESET}`);
     process.exit(1);
   }
   if (!current.tags) current.tags = [];
   if (current.tags.includes(label)) {
-    console.log(
-      `${YELLOW}Tag '${label}' already exists on session #${current.session}.${RESET}`,
-    );
+    console.log(`${YELLOW}Tag '${label}' already exists on session #${current.session}.${RESET}`);
     return;
   }
 
@@ -183,9 +173,7 @@ function cmdTag(label) {
   }
 
   saveState(state);
-  console.log(
-    `${GREEN}✅ Tagged session #${current.session} with '${label}'.${RESET}`,
-  );
+  console.log(`${GREEN}✅ Tagged session #${current.session} with '${label}'.${RESET}`);
 }
 
 function cmdList(showAll) {
@@ -205,12 +193,10 @@ function cmdList(showAll) {
   );
 
   for (const entry of recent) {
-    const tagsStr = (entry.tags || []).join(", ");
-    const tagsDisplay = tagsStr ? `  [${YELLOW}${tagsStr}${RESET}]` : "";
+    const tagsStr = (entry.tags || []).join(', ');
+    const tagsDisplay = tagsStr ? `  [${YELLOW}${tagsStr}${RESET}]` : '';
     const ts = entry.timestamp.slice(0, 16);
-    console.log(
-      `\n  ${BOLD}${BLUE}#${entry.session}${RESET} — ${ts}${tagsDisplay}`,
-    );
+    console.log(`\n  ${BOLD}${BLUE}#${entry.session}${RESET} — ${ts}${tagsDisplay}`);
     console.log(`  ${entry.note}`);
   }
 
@@ -231,31 +217,29 @@ function cmdExport(toStdout) {
     return;
   }
 
-  const lines = ["# Session Export\n"];
+  const lines = ['# Session Export\n'];
   lines.push(`Generated: ${new Date().toISOString().slice(0, 16)}\n`);
   lines.push(`Total sessions: ${history.length}\n\n---\n`);
 
   const reversed = history.slice().reverse();
   for (const entry of reversed) {
-    const sessionNum = entry.session || "?";
-    const ts = (entry.timestamp || "").slice(0, 16);
-    const note = entry.note || "";
+    const sessionNum = entry.session || '?';
+    const ts = (entry.timestamp || '').slice(0, 16);
+    const note = entry.note || '';
     const tags = entry.tags || [];
-    const tagsStr = tags.length ? `\n**Tags:** ${tags.join(", ")}` : "";
+    const tagsStr = tags.length ? `\n**Tags:** ${tags.join(', ')}` : '';
 
     lines.push(`## Session #${sessionNum} — ${ts}\n`);
     lines.push(`${note}${tagsStr}\n\n---\n`);
   }
 
-  const content = lines.join("\n");
+  const content = lines.join('\n');
   if (toStdout) {
     console.log(content);
   } else {
-    const exportPath = path.resolve("session_export.md");
-    fs.writeFileSync(exportPath, content, "utf8");
-    console.log(
-      `${GREEN}✅ Exported ${history.length} sessions to${RESET} ${exportPath}`,
-    );
+    const exportPath = path.resolve('session_export.md');
+    fs.writeFileSync(exportPath, content, 'utf8');
+    console.log(`${GREEN}✅ Exported ${history.length} sessions to${RESET} ${exportPath}`);
   }
 }
 
@@ -272,31 +256,30 @@ function main() {
 
   if (!VALID_COMMANDS.has(cmd)) {
     console.log(`${RED}Unknown command: '${cmd}'${RESET}`);
-    console.log(`Valid commands: ${[...VALID_COMMANDS].sort().join(", ")}`);
+    console.log(`Valid commands: ${[...VALID_COMMANDS].sort().join(', ')}`);
     process.exit(1);
   }
 
-  if (cmd === "save") {
-    let note = args.slice(1).join(" ").trim();
-    if (!note)
-      note = `session ${new Date().toISOString().slice(0, 16).replace("T", " ")}`;
+  if (cmd === 'save') {
+    let note = args.slice(1).join(' ').trim();
+    if (!note) note = `session ${new Date().toISOString().slice(0, 16).replace('T', ' ')}`;
     cmdSave(note);
-  } else if (cmd === "load") {
+  } else if (cmd === 'load') {
     cmdLoad();
-  } else if (cmd === "show") {
+  } else if (cmd === 'show') {
     cmdShow();
-  } else if (cmd === "clear") {
+  } else if (cmd === 'clear') {
     cmdClear();
-  } else if (cmd === "status") {
+  } else if (cmd === 'status') {
     cmdStatus();
-  } else if (cmd === "tag") {
-    const label = args.slice(1).join(" ").trim();
+  } else if (cmd === 'tag') {
+    const label = args.slice(1).join(' ').trim();
     cmdTag(label);
-  } else if (cmd === "list") {
-    const showAll = args.includes("--all");
+  } else if (cmd === 'list') {
+    const showAll = args.includes('--all');
     cmdList(showAll);
-  } else if (cmd === "export") {
-    const toStdout = args.includes("--stdout");
+  } else if (cmd === 'export') {
+    const toStdout = args.includes('--stdout');
     cmdExport(toStdout);
   }
 }

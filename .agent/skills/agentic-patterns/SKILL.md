@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing agentic loops, tool schemas, or memory architectures, you MUST inspect:
+
 1. `package.json` / LLM SDK definitions → Check tool calling syntax (Zod schemas, OpenAI/Anthropic function calling API)
 2. Agent Loop boundaries (Section 1) → Define hard caps on `MAX_STEPS` (default: 10) and explicit termination reasons
 3. Human-in-the-loop gates (Section 5) → Ensure approval gates for destructive, data-deleting, or high-cost API calls
@@ -45,7 +46,7 @@ PERCEIVE → PLAN → ACT → OBSERVE → (repeat or terminate)
 ```ts
 // The three termination conditions — always define all three
 type AgentResult = {
-  reason: "goal_reached" | "max_steps_exceeded" | "human_escalation";
+  reason: 'goal_reached' | 'max_steps_exceeded' | 'human_escalation';
   steps: number;
   result: string;
 };
@@ -63,23 +64,24 @@ Tools are the agent's interface to the real world. Design them defensively:
 // Tool definition — what the LLM sees and how to call it
 const tools = [
   {
-    type: "function",
+    type: 'function',
     function: {
-      name: "search_database",
-      description: "Search the product database. Use this before creating a new record to avoid duplicates.",
+      name: 'search_database',
+      description:
+        'Search the product database. Use this before creating a new record to avoid duplicates.',
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
           query: {
-            type: "string",
-            description: "Search terms — be specific",
+            type: 'string',
+            description: 'Search terms — be specific',
           },
           limit: {
-            type: "number",
-            description: "Max results to return. Default: 5, max: 20",
+            type: 'number',
+            description: 'Max results to return. Default: 5, max: 20',
           },
         },
-        required: ["query"],
+        required: ['query'],
       },
     },
   },
@@ -145,10 +147,13 @@ async function buildContext(userId: string, currentQuery: string) {
   });
 
   return [
-    { role: "system", content: systemPrompt },
+    { role: 'system', content: systemPrompt },
     // Inject relevant past context — NOT entire history
-    { role: "system", content: `Relevant past context:\n${pastMemories.map((m) => m.content).join("\n")}` },
-    { role: "user", content: currentQuery },
+    {
+      role: 'system',
+      content: `Relevant past context:\n${pastMemories.map(m => m.content).join('\n')}`,
+    },
+    { role: 'user', content: currentQuery },
   ];
 }
 ```
@@ -175,7 +180,10 @@ Supervisor agent ─→ breaks task into subtasks
 
 ```ts
 // Two independent agents answer the same question — supervisor resolves disagreement
-const [answerA, answerB] = await Promise.all([agentA.complete(question), agentB.complete(question)]);
+const [answerA, answerB] = await Promise.all([
+  agentA.complete(question),
+  agentB.complete(question),
+]);
 
 if (answerA.answer === answerB.answer) {
   return answerA; // Agreement — high confidence
@@ -209,13 +217,13 @@ async function agentLoop(task: string) {
         reason: planned.reasoning,
         confidence: planned.confidence,
       });
-      if (!approved) return { reason: "human_rejected", step };
+      if (!approved) return { reason: 'human_rejected', step };
     }
 
     // ✅ Confidence gate — don't act when uncertain
     if (planned.confidence < 0.7) {
       return {
-        reason: "human_escalation",
+        reason: 'human_escalation',
         message: `Low confidence (${planned.confidence}) on: ${planned.action.description}`,
       };
     }
@@ -238,23 +246,23 @@ Every production agent needs:
 const guardrails = {
   // Input guardrails — reject bad prompts before they reach the agent
   input: [
-    { check: "no_prompt_injection", action: "reject" },
-    { check: "within_scope", action: "reject" }, // Off-topic requests
-    { check: "pii_detection", action: "redact" }, // Redact before processing
+    { check: 'no_prompt_injection', action: 'reject' },
+    { check: 'within_scope', action: 'reject' }, // Off-topic requests
+    { check: 'pii_detection', action: 'redact' }, // Redact before processing
   ],
 
   // Output guardrails — validate before returning
   output: [
-    { check: "no_hallucinated_citations", action: "flag" },
-    { check: "schema_valid", action: "retry_once" },
-    { check: "no_pii_leaked", action: "reject" },
+    { check: 'no_hallucinated_citations', action: 'flag' },
+    { check: 'schema_valid', action: 'retry_once' },
+    { check: 'no_pii_leaked', action: 'reject' },
   ],
 
   // Resource guardrails — prevent runaway cost/loops
   resource: [
-    { check: "max_tokens_per_session", limit: 100_000 },
-    { check: "max_tool_calls_per_session", limit: 50 },
-    { check: "max_cost_per_session_usd", limit: 1.0 },
+    { check: 'max_tokens_per_session', limit: 100_000 },
+    { check: 'max_tool_calls_per_session', limit: 50 },
+    { check: 'max_cost_per_session_usd', limit: 1.0 },
   ],
 };
 ```

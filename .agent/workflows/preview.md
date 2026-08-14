@@ -20,6 +20,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before managing dev server lifecycle or starting preview servers, you MUST inspect:
+
 1. Workspace Dev Script Configuration (`package.json`) → Verify `npm run dev` or equivalent start script and framework server port
 2. Environment Configuration (`.env`) → Check port bindings and dev server host configs
 3. Dev Server Lifecycle Script (`.agent/scripts/auto_preview.js`) → Use automated script for process management, port collision detection, and health checks

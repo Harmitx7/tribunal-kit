@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before refactoring code or evaluating clean code standards, you MUST inspect:
+
 1. Intent-Revealing Naming (Section 25) → Name variables/functions to reveal explicit intent; ban cryptic abbreviations (`d`, `proc`, `u`)
 2. Single-Purpose Functions (Section 95) → Ensure functions perform 1 single task; extract sub-operations if function exceeds ~30 lines
 3. Guard Clause Early Returns (Section 344) → Flatten nested logic (>3 levels) using guard clauses and fail-fast early returns
@@ -112,8 +113,8 @@ if (retries > MAX_RETRY_ATTEMPTS) { ... }
 // ❌ BAD: Does 5 things in one function
 async function processOrder(order: Order) {
   // validate
-  if (!order.items.length) throw new Error("Empty");
-  if (order.total < 0) throw new Error("Negative");
+  if (!order.items.length) throw new Error('Empty');
+  if (order.total < 0) throw new Error('Negative');
   // calculate
   const subtotal = order.items.reduce((sum, i) => sum + i.price * i.qty, 0);
   const tax = subtotal * 0.08;
@@ -121,9 +122,9 @@ async function processOrder(order: Order) {
   // save
   await db.orders.insert({ ...order, total });
   // notify
-  await emailService.send(order.userId, "Order placed");
+  await emailService.send(order.userId, 'Order placed');
   // log
-  logger.info("Order processed", { orderId: order.id });
+  logger.info('Order processed', { orderId: order.id });
 }
 
 // ✅ GOOD: Each function does one thing
@@ -136,8 +137,8 @@ async function processOrder(order: Order): Promise<ProcessedOrder> {
 }
 
 function validateOrder(order: Order): void {
-  if (!order.items.length) throw new ValidationError("Order cannot be empty");
-  if (order.total < 0) throw new ValidationError("Total cannot be negative");
+  if (!order.items.length) throw new ValidationError('Order cannot be empty');
+  if (order.total < 0) throw new ValidationError('Total cannot be negative');
 }
 
 function calculateTotals(items: OrderItem[]): OrderTotals {
@@ -203,9 +204,9 @@ class AvatarService { upload() { ... } }
 ```typescript
 // ❌ BAD: Adding a new type requires modifying existing code
 function calculateDiscount(type: string, amount: number): number {
-  if (type === "student") return amount * 0.2;
-  if (type === "veteran") return amount * 0.15;
-  if (type === "senior") return amount * 0.1; // must modify for every new type
+  if (type === 'student') return amount * 0.2;
+  if (type === 'veteran') return amount * 0.15;
+  if (type === 'senior') return amount * 0.1; // must modify for every new type
   return 0;
 }
 
@@ -275,7 +276,7 @@ try {
 try {
   await processPayment(order);
 } catch (e) {
-  console.log("Something went wrong");
+  console.log('Something went wrong');
 }
 
 // ✅ GOOD: Handle specific errors, propagate unexpected
@@ -283,12 +284,12 @@ try {
   await processPayment(order);
 } catch (error) {
   if (error instanceof InsufficientFundsError) {
-    return { success: false, message: "Insufficient funds" };
+    return { success: false, message: 'Insufficient funds' };
   }
   if (error instanceof PaymentGatewayError) {
-    logger.warn("Payment gateway unavailable, queuing for retry", { orderId: order.id });
+    logger.warn('Payment gateway unavailable, queuing for retry', { orderId: order.id });
     await retryQueue.add(order);
-    return { success: false, message: "Payment processing delayed" };
+    return { success: false, message: 'Payment processing delayed' };
   }
   throw error; // unexpected error — let it propagate
 }
@@ -346,7 +347,7 @@ Long parameter list       → Parameter object
 function processUser(user: User) {
   if (user) {
     if (user.isActive) {
-      if (user.hasPermission("edit")) {
+      if (user.hasPermission('edit')) {
         // actual logic buried 3 levels deep
         doStuff();
       }
@@ -358,7 +359,7 @@ function processUser(user: User) {
 function processUser(user: User) {
   if (!user) return;
   if (!user.isActive) return;
-  if (!user.hasPermission("edit")) return;
+  if (!user.hasPermission('edit')) return;
 
   doStuff(); // happy path at top level
 }

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing morphing icon components, you MUST inspect:
+
 1. Target states (e.g. Hamburger Menu <-> Close X, Play <-> Pause) → Verify matching SVG path point count and coordinate bounds
 2. Accessibility (Section 65) → Ensure `aria-label` updates dynamically alongside state changes
 3. Interpolation Curves → Use snappy ease-out curves (`cubic-bezier(0.16, 1, 0.3, 1)`) with duration $\le 200\text{ms}$
@@ -31,32 +32,41 @@ Architect crisp, interactive SVG icon components that morph seamlessly between o
 ## The Hamburger Menu <-> Close X Morph Recipe
 
 ```tsx
-import React from "react";
-import { motion } from "framer-motion";
+import React from 'react';
+import { motion } from 'framer-motion';
 
 export function MenuToCloseIcon({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
       className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-      aria-label={isOpen ? "Close menu" : "Open menu"}
+      aria-label={isOpen ? 'Close menu' : 'Open menu'}
     >
       <svg className="w-6 h-6 stroke-current stroke-2 fill-none" viewBox="0 0 24 24">
         {/* Top Line -> Top diagonal of X */}
         <motion.line
-          x1="4" y1="6" x2="20" y2="6"
+          x1="4"
+          y1="6"
+          x2="20"
+          y2="6"
           animate={isOpen ? { x1: 6, y1: 6, x2: 18, y2: 18 } : { x1: 4, y1: 6, x2: 20, y2: 6 }}
           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         />
         {/* Middle Line -> Fade out */}
         <motion.line
-          x1="4" y1="12" x2="20" y2="12"
+          x1="4"
+          y1="12"
+          x2="20"
+          y2="12"
           animate={isOpen ? { opacity: 0, x: -4 } : { opacity: 1, x: 0 }}
           transition={{ duration: 0.15 }}
         />
         {/* Bottom Line -> Bottom diagonal of X */}
         <motion.line
-          x1="4" y1="18" x2="20" y2="18"
+          x1="4"
+          y1="18"
+          x2="20"
+          y2="18"
           animate={isOpen ? { x1: 6, y1: 18, x2: 18, y2: 6 } : { x1: 4, y1: 18, x2: 20, y2: 18 }}
           transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         />

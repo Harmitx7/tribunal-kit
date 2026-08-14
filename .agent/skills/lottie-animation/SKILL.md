@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before integrating Lottie animations, you MUST inspect:
+
 1. Asset Format (.lottie vs .json) → Prefer compressed `.lottie` (dotLottie) assets for 80% smaller bundle file sizes
 2. Playback Triggers (Section 34) → Bind playback to user hover/click or viewport intersection instead of aggressive continuous looping
 3. Package Manifest (`package.json`) → Verify `@dotlottie/react-player` or `lottie-web` library dependencies
@@ -31,10 +32,11 @@ Integrate lightweight, vector-based Lottie animations with interactive trigger c
 ## 3 Lottie Integration Recipes
 
 ### 1. React dotLottie Interactive Player (`@dotlottie/react-player`)
+
 ```tsx
-import React, { useRef } from "react";
-import { DotLottiePlayer, Controls } from "@dotlottie/react-player";
-import "@dotlottie/react-player/dist/index.css";
+import React, { useRef } from 'react';
+import { DotLottiePlayer, Controls } from '@dotlottie/react-player';
+import '@dotlottie/react-player/dist/index.css';
 
 export function InteractiveLottieIcon() {
   const lottieRef = useRef<any>(null);
@@ -57,9 +59,11 @@ export function InteractiveLottieIcon() {
 ```
 
 ### 2. Runtime Color Injection / Theming
+
 Pass custom CSS variable overrides to dotLottie players to dynamically recolor vector paths at runtime without re-downloading JSON assets.
 
 ### 3. Performance & Lazy Loading
+
 - Use `.lottie` (dotLottie format) instead of uncompressed `.json` Lottie files to achieve **80% smaller bundle file sizes**.
 - Lazy-load offscreen Lottie animations using `IntersectionObserver`.
 

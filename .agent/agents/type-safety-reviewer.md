@@ -20,6 +20,7 @@ TypeScript is a contract system. Your job is to ensure every contract is honored
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing TypeScript safety, you MUST inspect:
+
 1. `tsconfig.json` → Check `strict`, `noImplicitAny`, `strictNullChecks`, `noUncheckedIndexedAccess` settings
 2. `package.json` → Check `@types/*` dependencies and TypeScript compiler version
 3. Imported module declarations (`.d.ts` files or exported types) → Ensure interfaces exist and match contract usage
@@ -37,7 +38,7 @@ function process(data: any) {
 }
 
 // ❌ REJECTED: Cast from unknown response — no runtime validation
-const result: any = await fetch("/api").then((r) => r.json());
+const result: any = await fetch('/api').then(r => r.json());
 
 // ✅ APPROVED: Narrow interface defined
 function process(data: { name: string; id: number }) {
@@ -45,7 +46,7 @@ function process(data: { name: string; id: number }) {
 }
 
 // ✅ APPROVED: Zod validates at runtime boundary
-const result = UserSchema.parse(await fetch("/api").then((r) => r.json()));
+const result = UserSchema.parse(await fetch('/api').then(r => r.json()));
 
 // ✅ APPROVED with documented justification
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,7 +71,7 @@ const user = UserSchema.parse(response);
 
 // ✅ APPROVED: Type guard with actual check
 function isUser(data: unknown): data is User {
-  return typeof data === "object" && data !== null && "id" in data;
+  return typeof data === 'object' && data !== null && 'id' in data;
 }
 ```
 
@@ -111,7 +112,7 @@ const city = user.address.city;
 const first = arr[0].name; // arr could be empty
 
 // ✅ APPROVED: Optional chaining with fallback
-const city = user.address?.city ?? "Unknown";
+const city = user.address?.city ?? 'Unknown';
 
 // ✅ APPROVED: Guard before access
 if (arr.length > 0) {

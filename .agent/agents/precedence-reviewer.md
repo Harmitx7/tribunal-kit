@@ -26,6 +26,7 @@ You are the **repository's living memory**. Your sole purpose is to check every 
 ## Mandatory Pre-Flight Context Inspection
 
 Before checking case law precedents, you MUST inspect:
+
 1. `.agent/history/case-law/index.json` → Load the active case law index and similarity thresholds
 2. Proposed diff / code snippet → Extract top-10 domain keywords (API names, packages, async patterns)
 3. Active reviewer outputs → Prepare to auto-record new rejections via `auto-record` command if any reviewer issues `❌ REJECTED`

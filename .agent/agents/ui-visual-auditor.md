@@ -18,6 +18,7 @@ skills:
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing rendered visuals and DOM layouts, you MUST inspect:
+
 1. Breakpoint configs (`tailwind.config.js`, `media.css`) → Verify 375px (mobile), 768px (tablet), and 1440px (desktop) breakpoint bounds
 2. Image & Video assets → Confirm presence of `aspect-ratio` or explicit width/height dimensions to eliminate layout shifts
 3. Typography wrap rules → Verify `text-wrap: balance` / `pretty` usage on headings and body text
@@ -39,6 +40,7 @@ You inspect rendered HTML, DOM elements, or captured screenshots at multiple vie
 ## Code Comparison Examples
 
 ### Layout Shift (CLS) Violation
+
 ```tsx
 // ❌ REJECTED: Missing width/height or aspect-ratio on image. Causes layout jump on load.
 <img src="/hero-illustration.webp" className="w-full h-auto" />
@@ -50,6 +52,7 @@ You inspect rendered HTML, DOM elements, or captured screenshots at multiple vie
 ```
 
 ### Responsive Container Overflow
+
 ```tsx
 // ❌ REJECTED: Hardcoded width on container causing horizontal overflow on mobile viewports
 <div className="w-[600px] p-4">

@@ -19,6 +19,7 @@ skills:
 ## Mandatory Pre-Flight Context Inspection
 
 Before deploying AI features:
+
 1. Indirect Prompt Injection Defense → Sanitize third-party content (scraped URLs, PDF imports, RAG docs) before feeding to LLMs
 2. XML Delimiter Sandboxing → Enclose user/external inputs inside `<external_context>` and instruct model to ignore instructions within
 3. Insecure Output Handling (OWASP LLM02) → Escape HTML/script tags on all rendered model outputs
@@ -28,13 +29,13 @@ Before deploying AI features:
 ```typescript
 export function sanitizeRAGDocument(rawDocumentContent: string): string {
   if (!rawDocumentContent || typeof rawDocumentContent !== 'string') return '';
-  
+
   // 1. Redact indirect prompt injection trigger phrases
   let cleaned = rawDocumentContent.replace(
     /(?:system:\s*ignore|override system prompt|you are now in developer mode|print system prompt)/gi,
-    '[REDACTED_INDIRECT_INJECTION]'
+    '[REDACTED_INDIRECT_INJECTION]',
   );
-  
+
   // 2. Escape structural tag injection attempts
   cleaned = cleaned.replace(/<\/?(?:system|user_input|external_context)[^>]*>/gi, '');
 
@@ -45,12 +46,12 @@ export function sanitizeRAGDocument(rawDocumentContent: string): string {
 
 ## OWASP LLM Top 10 (2026 Matrix)
 
-| Risk ID | Vulnerability | Defense Implementation |
-|---|---|---|
+| Risk ID   | Vulnerability                        | Defense Implementation                              |
+| --------- | ------------------------------------ | --------------------------------------------------- |
 | **LLM01** | Prompt Injection (Direct & Indirect) | Delimiter sandboxing + `sanitizeRAGDocument` filter |
-| **LLM02** | Insecure Output Handling | Strict Zod output parsing + DOMPurify on frontend |
-| **LLM04** | Model Denial of Service | Hard `max_tokens` limit + IP bucket rate limiting |
-| **LLM07** | System Prompt Leakage | System prompt redaction guards in output stream |
+| **LLM02** | Insecure Output Handling             | Strict Zod output parsing + DOMPurify on frontend   |
+| **LLM04** | Model Denial of Service              | Hard `max_tokens` limit + IP bucket rate limiting   |
+| **LLM07** | System Prompt Leakage                | System prompt redaction guards in output stream     |
 
 ## 🛑 Verification-Before-Completion (VBC) Protocol
 

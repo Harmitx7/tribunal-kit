@@ -21,6 +21,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before inspecting codebase architecture, you MUST inspect:
+
 1. Context Snapshots (`.agent/history/snapshots/`) → Read pre-computed JSON snapshots to reduce token overhead by 27x
 2. `graph_builder.js` output → Check downstream dependencies, risk scores, and blast radius before modifying any file
 3. Module boundaries → Identify top imported symbols and high-risk core modules

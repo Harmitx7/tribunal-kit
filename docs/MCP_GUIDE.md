@@ -27,6 +27,7 @@ Add `tribunal-kit` to your MCP configuration (`mcp_config.json` or `.cursor/mcp.
 ## Capabilities
 
 ### 1. MCP Tools
+
 - **`run_tribunal_audit`**: Workspace anti-hallucination audit.
 - **`sync_ide_bridges`**: Re-generate `.cursorrules`, `.windsurfrules`, `.gemini/GEMINI.md`, etc.
 - **`search_case_law`**: Query past code rejections and legal precedents.
@@ -36,6 +37,7 @@ Add `tribunal-kit` to your MCP configuration (`mcp_config.json` or `.cursor/mcp.
 - **`align_output`**: Clean AI output slop and validate anti-patterns.
 
 ### 2. MCP Resources (`tribunal://`)
+
 Agents, skills, and workflows can be read directly as native MCP Resources:
 
 - `tribunal://agent/{name}` — Read agent markdown file (e.g., `tribunal://agent/security-auditor`).
@@ -43,4 +45,5 @@ Agents, skills, and workflows can be read directly as native MCP Resources:
 - `tribunal://workflow/{name}` — Read workflow guide (e.g., `tribunal://workflow/audit`).
 
 ### 3. MCP Prompts
+
 Workflow instructions are available as native MCP prompts (e.g., `/audit`, `/enhance`, `/generate`, `/pipeline`, `/refactor`).

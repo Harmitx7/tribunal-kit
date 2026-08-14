@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing domain entities or business modeling, you MUST inspect:
+
 1. Ubiquitous Language Uniformity (Section 25) → Standardize 1 explicit term across UI, code, and DB (e.g. Customer vs User); ban interchangeable synonyms
 2. Bounded Context Separation (Section 30) → Isolate models per context (e.g. Inventory Product vs Catalog Product); ban 60-column monolithic entities
 3. Aggregate Root Invariants (Section 34) → Mutate child entities strictly through Aggregate Root methods (`order.addItem(...)`); ban direct child mutations
@@ -33,30 +34,37 @@ Model business domain concepts cleanly before committing to database schemas or 
 ## 4 Domain Modeling Rules
 
 ### 1. Establish Ubiquitous Language
+
 - Agree on strict, unambiguous terms used identically across domain experts, code variable names, database tables, and UI copy.
-  - ❌ *User*, *Account*, *Member*, *Client* used interchangeably for the same concept.
+  - ❌ _User_, _Account_, _Member_, _Client_ used interchangeably for the same concept.
   - ✅ Define 1 clear term: **Customer** (for billing context) vs **User** (for authentication context).
 
 ### 2. Define Bounded Contexts
-- Separate large systems into distinct bounded contexts. An entity named `Product` in the *Inventory Context* (stock level, warehouse bin) has different attributes than `Product` in the *Catalog Context* (hero image, pricing).
+
+- Separate large systems into distinct bounded contexts. An entity named `Product` in the _Inventory Context_ (stock level, warehouse bin) has different attributes than `Product` in the _Catalog Context_ (hero image, pricing).
 
 ### 3. Aggregates & Invariants
+
 - An **Aggregate Root** (e.g. `Order`) enforces internal business invariants across child entities (`OrderItem`).
 - Never mutate a child entity (`OrderItem`) directly without passing through the aggregate root method (`order.addItem(product, qty)`).
 
 ### 4. Value Objects Over Primitives
+
 - Wrap primitives into type-safe Value Objects to enforce validation logic:
+
 ```typescript
 // Value Object enforcing domain rule
 export class EmailAddress {
   private readonly value: string;
 
   constructor(email: string) {
-    if (!email.includes("@")) throw new Error("Invalid email domain");
+    if (!email.includes('@')) throw new Error('Invalid email domain');
     this.value = email.toLowerCase().trim();
   }
 
-  public toString(): string { return this.value; }
+  public toString(): string {
+    return this.value;
+  }
 }
 ```
 

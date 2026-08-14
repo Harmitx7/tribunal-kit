@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before running performance benchmarks or capturing latency metrics, you MUST inspect:
+
 1. Target App Environment & Build Command (`package.json`) → Confirm production build output and dev/preview server URL
 2. Benchmark Scripts Availability (`.agent/scripts/bundle_analyzer.js`) → Verify automated bundle and latency measurement tooling
 3. Before/After Metric Recording Constraint → Require side-by-side metric tables (LCP, CLS, INP, TTFB, Bundle Size) for every benchmark pass

@@ -23,6 +23,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing or implementing advanced UI/UX layouts, you MUST inspect:
+
 1. Active Design Tokens & System (`DESIGN.md`, CSS custom properties) → Verify OKLCH color palettes, typography scale, and spacing grid
 2. UI Reasoning Engine 16-Step Pipeline (`.agent/skills/ui-reasoning-engine/SKILL.md`) → Structure component layout, micro-interactions, and accessibility before coding
 3. Anti-Generic Aesthetic Rule → Ban plain purple/violet AI gradients and stock hero templates; enforce bespoke visual hierarchy and tactile micro-interactions
@@ -31,18 +32,19 @@ Before designing or implementing advanced UI/UX layouts, you MUST inspect:
 
 ## When to Use /ui-ux-pro-max
 
-| Use `/ui-ux-pro-max` when... | Use instead when... |
-| :--- | :--- |
+| Use `/ui-ux-pro-max` when...              | Use instead when...                     |
+| :---------------------------------------- | :-------------------------------------- |
 | Building a visually distinctive interface | Functional-only component → `/generate` |
-| Design quality is the primary goal | Fast page needed → `/enhance` |
-| Creating from a design brief | Bug fix in UI → `/debug` |
-| Mobile + web parity required | |
+| Design quality is the primary goal        | Fast page needed → `/enhance`           |
+| Creating from a design brief              | Bug fix in UI → `/debug`                |
+| Mobile + web parity required              |                                         |
 
 ---
 
 ## Phase 1 — Design Intent & Product Aware Reasoning (Mandatory)
 
 Answer these before writing any code (using the `ui-reasoning-engine` skill):
+
 1. **Who is the user?** (Casual consumer vs expert operator).
 2. **What is the product category?** (SaaS, DevTool, AI Interface, Landing, Fintech).
 3. **What is the visual direction?** (Brutalist, Editorial, Soft Minimal, Dark Luxury, Swiss).
@@ -56,17 +58,19 @@ Write the **🧠 UI Reasoning Engine Trace** in your response as a collapsed mar
 ## Phase 2 — Visual Identity & Design Tokens
 
 Every interface must use custom variables defined in `DESIGN.md` and `design-tokens.json`:
-*   ❌ **Banned Clichés:** Purple/violet accents, mesh gradients, glassmorphism overuse, default library themes.
-*   ✅ **Intentional Styling:** Dynamic OKLCH colors, 8px grid alignment, variable font sizes with CSS `clamp()`, and 1px luminous borders.
+
+- ❌ **Banned Clichés:** Purple/violet accents, mesh gradients, glassmorphism overuse, default library themes.
+- ✅ **Intentional Styling:** Dynamic OKLCH colors, 8px grid alignment, variable font sizes with CSS `clamp()`, and 1px luminous borders.
 
 ---
 
 ## Phase 3 — Interaction States & Micro-interactions
 
 Ensure every interactive element has styling defined for:
-*   `hover`, `focus-visible`, `active`/`pressed`, and `disabled` states.
-*   Confirm clicks with spring scale-down transitions (`active:scale-[0.97]`).
-*   Trap keyboard focus within modals/dialogs and return it to the trigger on close.
+
+- `hover`, `focus-visible`, `active`/`pressed`, and `disabled` states.
+- Confirm clicks with spring scale-down transitions (`active:scale-[0.97]`).
+- Trap keyboard focus within modals/dialogs and return it to the trigger on close.
 
 ---
 
@@ -92,8 +96,8 @@ Ensure every interactive element has styling defined for:
 
 ## After /ui-ux-pro-max — Next Steps
 
-| Outcome | Next Command |
-| :--- | :--- |
-| Design complete | → `/preview start` to see it in action |
-| Reviewers reject with fixes | → Apply fixes, then run `/tribunal-ui` again |
-| Performance concerns | → `/performance-benchmarker` for Lighthouse/CWV |
+| Outcome                     | Next Command                                    |
+| :-------------------------- | :---------------------------------------------- |
+| Design complete             | → `/preview start` to see it in action          |
+| Reviewers reject with fixes | → Apply fixes, then run `/tribunal-ui` again    |
+| Performance concerns        | → `/performance-benchmarker` for Lighthouse/CWV |

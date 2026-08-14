@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before building web application test suites or configuring component mocks, you MUST inspect:
+
 1. Testing Trophy Allocation (Section 27) → Prioritize Integration tests (60% RTL + MSW) over pure Unit (20%) or E2E (10%)
 2. MSW Network Interception Rule (Section 40) → Intercept HTTP network calls via MSW (`setupServer`); ban mocking library clients like `axios.get.mockResolvedValue`
 3. Decouple Business Logic from React (Section 99) → Extract complex calculations into pure testable functions outside React components
@@ -55,17 +56,17 @@ To prevent network calls, utilize Mock Service Worker (MSW) which intercepts req
 
 ```typescript
 // ❌ BAD: Mocking implementation details
-jest.mock("axios");
+jest.mock('axios');
 axios.get.mockResolvedValue({ data: { users: [] } });
 
 // ✅ GOOD: MSW (Mock Service Worker) network level interception
 // The component functions EXACTLY as it would in production
-import { http, HttpResponse } from "msw";
-import { setupServer } from "msw/node";
+import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 
 export const handlers = [
-  http.get("/api/users", () => {
-    return HttpResponse.json([{ id: 1, name: "John Appleseed" }]);
+  http.get('/api/users', () => {
+    return HttpResponse.json([{ id: 1, name: 'John Appleseed' }]);
   }),
 ];
 const server = setupServer(...handlers);
@@ -112,21 +113,21 @@ Isolate business logic entirely from React.
 ```typescript
 // ✅ Move complex logic OUT of the React component entirely
 export function calculateTax(subtotal: number, state: string): number {
-  if (subtotal < 0) throw new Error("Subtotal cannot be negative");
-  if (state === "CA") return subtotal * 0.0825;
+  if (subtotal < 0) throw new Error('Subtotal cannot be negative');
+  if (state === 'CA') return subtotal * 0.0825;
   return 0; // Default
 }
 
 // ✅ Test with extreme precision and coverage
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from 'vitest';
 
-describe("calculateTax()", () => {
-  it("applies CA tax correctly", () => {
-    expect(calculateTax(100, "CA")).toBe(8.25);
+describe('calculateTax()', () => {
+  it('applies CA tax correctly', () => {
+    expect(calculateTax(100, 'CA')).toBe(8.25);
   });
 
-  it("throws on negative input", () => {
-    expect(() => calculateTax(-50, "CA")).toThrowError("negative");
+  it('throws on negative input', () => {
+    expect(() => calculateTax(-50, 'CA')).toThrowError('negative');
   });
 });
 ```

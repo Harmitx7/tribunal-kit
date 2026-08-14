@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing Vue 3.5+ or Nuxt 4 components, you MUST inspect:
+
 1. Script Setup Architecture → Use `<script setup lang="ts">` exclusively; ban legacy Options API
 2. Pinia & Reactivity Rules (Section 133) → Use `storeToRefs(store)` when destructuring Pinia state to preserve reactivity
 3. Model & Watcher Syntax (Section 42) → Use `defineModel<T>()` (Vue 3.4+) and `watch(() => state.prop, ...)` for primitive watchers
@@ -42,19 +43,21 @@ Before writing Vue 3.5+ or Nuxt 4 components, you MUST inspect:
 
 ```vue
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from 'vue';
 
 // Props
 const props = defineProps<{ title: string; count?: number }>();
 // With defaults:
-const props = withDefaults(defineProps<{ variant?: "primary" | "secondary" }>(), { variant: "primary" });
+const props = withDefaults(defineProps<{ variant?: 'primary' | 'secondary' }>(), {
+  variant: 'primary',
+});
 
 // Emits
 const emit = defineEmits<{ update: [value: string]; delete: [id: number] }>();
 
 // v-model (Vue 3.4+)
 const modelValue = defineModel<string>(); // default model
-const count = defineModel<number>("count"); // named model
+const count = defineModel<number>('count'); // named model
 
 // Expose to parent ref
 defineExpose({ reset: () => {}, focus: () => {} });
@@ -71,7 +74,7 @@ const count = ref(0);
 count.value++;
 
 // reactive — for objects (loses reactivity on reassign/destructure)
-const state = reactive({ name: "Alice", age: 25 });
+const state = reactive({ name: 'Alice', age: 25 });
 // ❌ const { name } = state; // loses reactivity
 // ✅ const name = computed(() => state.name);
 
@@ -79,8 +82,8 @@ const state = reactive({ name: "Alice", age: 25 });
 const doubled = computed(() => count.value * 2);
 const fullName = computed({
   get: () => `${first.value} ${last.value}`,
-  set: (v) => {
-    [first.value, last.value] = v.split(" ");
+  set: v => {
+    [first.value, last.value] = v.split(' ');
   },
 });
 
@@ -131,8 +134,8 @@ export function useAsyncData<T>(fn: () => Promise<T>) {
 
 ```ts
 // stores/counter.ts
-import { defineStore } from "pinia";
-export const useCounterStore = defineStore("counter", () => {
+import { defineStore } from 'pinia';
+export const useCounterStore = defineStore('counter', () => {
   const count = ref(0); // Setup Store (preferred)
   const doubled = computed(() => count.value * 2);
   function increment() {
@@ -145,12 +148,12 @@ export const useCounterStore = defineStore("counter", () => {
 const store = useCounterStore();
 // ❌ const { count } = store;        // loses reactivity!
 // ✅ const count = storeToRefs(store).count;
-import { storeToRefs } from "pinia";
+import { storeToRefs } from 'pinia';
 const { count } = storeToRefs(store);
 
 // Persist plugin:
-import { createPinia } from "pinia";
-import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import { createPinia } from 'pinia';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 const pinia = createPinia().use(piniaPluginPersistedstate);
 ```
 
@@ -160,25 +163,25 @@ const pinia = createPinia().use(piniaPluginPersistedstate);
 
 ```ts
 // router/index.ts
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory } from 'vue-router';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/", component: () => import("./views/Home.vue") }, // lazy-loaded
-    { path: "/user/:id", component: UserView, props: true }, // props:true passes params as props
-    { path: "/:pathMatch(.*)*", component: NotFound }, // 404 catch-all
+    { path: '/', component: () => import('./views/Home.vue') }, // lazy-loaded
+    { path: '/user/:id', component: UserView, props: true }, // props:true passes params as props
+    { path: '/:pathMatch(.*)*', component: NotFound }, // 404 catch-all
   ],
 });
 // Route guards
 router.beforeEach(async (to, from) => {
-  if (to.meta.requiresAuth && !isLoggedIn()) return { name: "Login" };
+  if (to.meta.requiresAuth && !isLoggedIn()) return { name: 'Login' };
 });
 
 // In component:
-import { useRouter, useRoute } from "vue-router";
+import { useRouter, useRoute } from 'vue-router';
 const router = useRouter();
 const route = useRoute();
-router.push({ name: "User", params: { id: 42 } });
+router.push({ name: 'User', params: { id: 42 } });
 const userId = route.params.id as string;
 ```
 
@@ -243,7 +246,7 @@ const { id } = useRoute().params; // auto-imported
 const { data, error, refresh } = await useFetch(`/api/users/${id}`, {
   lazy: false, // SSR: wait for data before rendering
   server: true, // fetch on server (default)
-  transform: (r) => r.user,
+  transform: r => r.user,
 });
 // ❌ TRAP: useFetch in Nuxt ≠ @tanstack/react-query. It's Nuxt-specific.
 // ❌ TRAP: useAsyncData key must be UNIQUE per page/component

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before building WebGL 3D globe components with Cobe, you MUST inspect:
+
 1. `package.json` → Verify `cobe` dependency exists
 2. WebGL Context Cleanup (Section 59) → Ensure `globe.destroy()` is called in the `useEffect` unmount cleanup to prevent memory leaks
 3. Canvas Sizing (Section 65) → Match `devicePixelRatio` to high-DPI screens and set `aspectRatio: 1` to prevent visual stretching
@@ -31,8 +32,8 @@ Integrate ultra-fast, 5KB WebGL interactive globes for landing page hero section
 ## Cobe Canvas Setup Recipe (React)
 
 ```tsx
-import React, { useEffect, useRef } from "react";
-import createGlobe from "cobe";
+import React, { useEffect, useRef } from 'react';
+import createGlobe from 'cobe';
 
 export function InteractiveGlobe() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -56,10 +57,10 @@ export function InteractiveGlobe() {
       glowColor: [0.1, 0.1, 0.2],
       markers: [
         { location: [37.7595, -122.4367], size: 0.05 }, // San Francisco
-        { location: [51.5074, -0.1278], size: 0.05 },   // London
-        { location: [35.6762, 139.6503], size: 0.05 },  // Tokyo
+        { location: [51.5074, -0.1278], size: 0.05 }, // London
+        { location: [35.6762, 139.6503], size: 0.05 }, // Tokyo
       ],
-      onRender: (state) => {
+      onRender: state => {
         state.phi = phi;
         phi += 0.005; // Smooth rotation
       },
@@ -69,10 +70,7 @@ export function InteractiveGlobe() {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ width: 600, height: 600, maxWidth: "100%", aspectRatio: 1 }}
-    />
+    <canvas ref={canvasRef} style={{ width: 600, height: 600, maxWidth: '100%', aspectRatio: 1 }} />
   );
 }
 ```

@@ -1,60 +1,60 @@
-"use strict";
+'use strict';
 
-const path = require("path");
-const fs = require("fs");
+const path = require('path');
+const fs = require('fs');
 
-const AGENT_DIR = path.resolve(__dirname, "../../.agent");
-const WORKFLOWS_DIR = path.join(AGENT_DIR, "workflows");
-const AGENTS_DIR = path.join(AGENT_DIR, "agents");
-const SKILLS_DIR = path.join(AGENT_DIR, "skills");
+const AGENT_DIR = path.resolve(__dirname, '../../.agent');
+const WORKFLOWS_DIR = path.join(AGENT_DIR, 'workflows');
+const AGENTS_DIR = path.join(AGENT_DIR, 'agents');
+const SKILLS_DIR = path.join(AGENT_DIR, 'skills');
 
 // Expected slash commands per plan (37 workflows)
 const EXPECTED_WORKFLOWS = [
-  "acf",
-  "api-tester",
-  "audit",
-  "brainstorm",
-  "changelog",
-  "create",
-  "debug",
-  "deploy",
-  "enhance",
-  "fix",
-  "generate",
-  "marathon",
-  "migrate",
-  "minimal",
-  "orchestrate",
-  "performance-benchmarker",
-  "pipeline",
-  "plan",
-  "preview",
-  "refactor",
-  "review",
-  "review-ai",
-  "session",
-  "status",
-  "strengthen-skills",
-  "super-prompt",
-  "swarm",
-  "test",
-  "tribunal-backend",
-  "tribunal-database",
-  "tribunal-frontend",
-  "tribunal-full",
-  "tribunal-mobile",
-  "tribunal-performance",
-  "tribunal-speed",
-  "tribunal-ui",
-  "ui-ux-pro-max",
+  'acf',
+  'api-tester',
+  'audit',
+  'brainstorm',
+  'changelog',
+  'create',
+  'debug',
+  'deploy',
+  'enhance',
+  'fix',
+  'generate',
+  'marathon',
+  'migrate',
+  'minimal',
+  'orchestrate',
+  'performance-benchmarker',
+  'pipeline',
+  'plan',
+  'preview',
+  'refactor',
+  'review',
+  'review-ai',
+  'session',
+  'status',
+  'strengthen-skills',
+  'super-prompt',
+  'swarm',
+  'test',
+  'tribunal-backend',
+  'tribunal-database',
+  'tribunal-frontend',
+  'tribunal-full',
+  'tribunal-mobile',
+  'tribunal-performance',
+  'tribunal-speed',
+  'tribunal-ui',
+  'ui-ux-pro-max',
 ];
 
-describe("Workflow file integrity", () => {
-  test(".agent/workflows/ directory exists", () => {
+describe('Workflow file integrity', () => {
+  test('.agent/workflows/ directory exists', () => {
     expect(fs.existsSync(WORKFLOWS_DIR)).toBe(true);
   });
 
-  test("all 37 expected workflow files are present and non-empty", () => {
+  test('all 37 expected workflow files are present and non-empty', () => {
     const missing = [];
     const empty = [];
 
@@ -72,62 +72,49 @@ describe("Workflow file integrity", () => {
     expect(empty).toEqual([]);
   });
 
-  test("no workflow file is a duplicate of another", () => {
-    const files = fs
-      .readdirSync(WORKFLOWS_DIR)
-      .filter((f) => f.endsWith(".md"));
-    const contents = files.map((f) =>
-      fs.readFileSync(path.join(WORKFLOWS_DIR, f), "utf8").trim(),
-    );
+  test('no workflow file is a duplicate of another', () => {
+    const files = fs.readdirSync(WORKFLOWS_DIR).filter(f => f.endsWith('.md'));
+    const contents = files.map(f => fs.readFileSync(path.join(WORKFLOWS_DIR, f), 'utf8').trim());
     const unique = new Set(contents);
     expect(unique.size).toBe(contents.length);
   });
 });
 
-describe("Agent file integrity", () => {
-  test(".agent/agents/ directory exists", () => {
+describe('Agent file integrity', () => {
+  test('.agent/agents/ directory exists', () => {
     expect(fs.existsSync(AGENTS_DIR)).toBe(true);
   });
 
-  test("at least 30 agent files are present", () => {
-    const files = fs.readdirSync(AGENTS_DIR).filter((f) => f.endsWith(".md"));
+  test('at least 30 agent files are present', () => {
+    const files = fs.readdirSync(AGENTS_DIR).filter(f => f.endsWith('.md'));
     expect(files.length).toBeGreaterThanOrEqual(30);
   });
 
-  test("all agent files are non-empty", () => {
-    const files = fs.readdirSync(AGENTS_DIR).filter((f) => f.endsWith(".md"));
-    const empty = files.filter(
-      (f) => fs.statSync(path.join(AGENTS_DIR, f)).size === 0,
-    );
+  test('all agent files are non-empty', () => {
+    const files = fs.readdirSync(AGENTS_DIR).filter(f => f.endsWith('.md'));
+    const empty = files.filter(f => fs.statSync(path.join(AGENTS_DIR, f)).size === 0);
     expect(empty).toEqual([]);
   });
 });
 
-describe("Skills directory integrity", () => {
-  test(".agent/skills/ directory exists", () => {
+describe('Skills directory integrity', () => {
+  test('.agent/skills/ directory exists', () => {
     expect(fs.existsSync(SKILLS_DIR)).toBe(true);
   });
 
-  test("at least 50 skill entries are present", () => {
+  test('at least 50 skill entries are present', () => {
     const entries = fs.readdirSync(SKILLS_DIR);
     // Each skill is a directory containing a SKILL.md
-    const skillDirs = entries.filter((e) =>
-      fs.statSync(path.join(SKILLS_DIR, e)).isDirectory(),
-    );
+    const skillDirs = entries.filter(e => fs.statSync(path.join(SKILLS_DIR, e)).isDirectory());
     expect(skillDirs.length).toBeGreaterThanOrEqual(50);
   });
 
-  test("every non-empty skill package directory contains a SKILL.md", () => {
+  test('every non-empty skill package directory contains a SKILL.md', () => {
     const entries = fs.readdirSync(SKILLS_DIR);
-    const skillDirs = entries.filter((e) =>
-      fs.statSync(path.join(SKILLS_DIR, e)).isDirectory(),
-    );
-    const missing = skillDirs.filter((dir) => {
+    const skillDirs = entries.filter(e => fs.statSync(path.join(SKILLS_DIR, e)).isDirectory());
+    const missing = skillDirs.filter(dir => {
       const skillDir = path.join(SKILLS_DIR, dir);
-      return (
-        fs.readdirSync(skillDir).length > 0 &&
-        !fs.existsSync(path.join(skillDir, "SKILL.md"))
-      );
+      return fs.readdirSync(skillDir).length > 0 && !fs.existsSync(path.join(skillDir, 'SKILL.md'));
     });
     expect(missing).toEqual([]);
   });

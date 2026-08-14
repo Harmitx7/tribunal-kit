@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing or implementing API endpoints, you MUST inspect:
+
 1. Authorization Header Token Passing (Section 17) → Pass JWTs in `Authorization: Bearer` headers; strictly ban tokens in URL query params
 2. Cursor-Based Pagination (Section 19) → Use cursor pagination for datasets >10K rows to eliminate `OFFSET N` performance degradation
 3. Idempotency Header for Mutations (Section 21) → Require `Idempotency-Key` headers for state-changing `POST` or `PATCH` retry operations
@@ -108,7 +109,7 @@ interface ApiError {
 // GET /api/v1/posts?cursor=eyJpZCI6MTAwfQ&limit=20
 const posts = await db.post.findMany({
   where: { id: { lt: decodeCursor(req.query.cursor).id } },
-  orderBy: { id: "desc" },
+  orderBy: { id: 'desc' },
   take: limit + 1, // fetch one extra to determine hasMore
 });
 const hasMore = posts.length > limit;
@@ -126,15 +127,15 @@ return { data: posts, meta: { hasMore, nextCursor: encodeCursor(posts.at(-1)) } 
 
 ```typescript
 // POST /api/v1/payments with header: Idempotency-Key: <uuid>
-app.post("/api/v1/payments", async (req, res) => {
-  const key = req.headers["idempotency-key"];
-  if (!key) return res.status(400).json({ error: "Missing Idempotency-Key" });
+app.post('/api/v1/payments', async (req, res) => {
+  const key = req.headers['idempotency-key'];
+  if (!key) return res.status(400).json({ error: 'Missing Idempotency-Key' });
 
   const cached = await redis.get(`idempotency:${key}`);
   if (cached) return res.status(200).json(JSON.parse(cached));
 
   const result = await processPayment(req.body);
-  await redis.set(`idempotency:${key}`, JSON.stringify(result), "EX", 86400);
+  await redis.set(`idempotency:${key}`, JSON.stringify(result), 'EX', 86400);
   return res.status(201).json(result);
 });
 // GET, PUT, DELETE → naturally idempotent (safe to retry without a key)
@@ -147,15 +148,18 @@ app.post("/api/v1/payments", async (req, res) => {
 
 ```typescript
 // HMAC signature verification (always verify — never trust unsigned webhooks)
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHmac, timingSafeEqual } from 'node:crypto';
 function verify(payload: string, signature: string, secret: string): boolean {
-  const expected = createHmac("sha256", secret).update(payload).digest("hex");
+  const expected = createHmac('sha256', secret).update(payload).digest('hex');
   return timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
 }
 
-app.post("/webhooks", (req, res) => {
-  if (!verify(JSON.stringify(req.body), req.headers["x-webhook-signature"] as string, WEBHOOK_SECRET)) return res.status(401).send("Invalid signature");
-  res.status(200).send("OK"); // respond immediately
+app.post('/webhooks', (req, res) => {
+  if (
+    !verify(JSON.stringify(req.body), req.headers['x-webhook-signature'] as string, WEBHOOK_SECRET)
+  )
+    return res.status(401).send('Invalid signature');
+  res.status(200).send('OK'); // respond immediately
   processWebhookAsync(req.body); // process asynchronously
 });
 // Retry policy: 3 retries with exponential backoff (1s → 10s → 100s)

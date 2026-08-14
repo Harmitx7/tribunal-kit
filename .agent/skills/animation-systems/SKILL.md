@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before defining animation tokens or styling transitions, you MUST inspect:
+
 1. `index.css` / `DESIGN.md` → Verify presence of centralized `--duration-*` and `--ease-*` CSS custom properties
 2. Centralized Motion Tokens Schema (Section 26) → Enforce standardized duration tiers (80ms instant to 500ms delight)
 3. Anti-Ad-Hoc Easing Rule (Section 48) → Strictly prohibit inline custom cubic-bezier curves; reference motion tokens instead
@@ -35,18 +36,18 @@ Define standardized design tokens for motion in global CSS or Tailwind config:
 ```css
 :root {
   /* Duration Scale */
-  --duration-instant:  80ms;  /* Micro feedback, toggle switches */
-  --duration-fast:    150ms;  /* Tooltips, hover states, press feedback */
-  --duration-normal:  220ms;  /* Dropdowns, menus, tab switching */
-  --duration-slow:    320ms;  /* Modals, drawers, page reveals */
-  --duration-delight: 500ms;  /* Milestone celebrations, toasts */
+  --duration-instant: 80ms; /* Micro feedback, toggle switches */
+  --duration-fast: 150ms; /* Tooltips, hover states, press feedback */
+  --duration-normal: 220ms; /* Dropdowns, menus, tab switching */
+  --duration-slow: 320ms; /* Modals, drawers, page reveals */
+  --duration-delight: 500ms; /* Milestone celebrations, toasts */
 
   /* Standardized Easing Curves */
-  --ease-snappy:  cubic-bezier(0.2, 0, 0, 1);       /* Quick response for press/active */
-  --ease-out-ui:  cubic-bezier(0.16, 1, 0.3, 1);     /* Smooth entrance for popovers/modals */
-  --ease-in-ui:   cubic-bezier(0.7, 0, 0.84, 0);     /* Smooth exit for modals */
-  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);/* Subtle spring overshoot */
-  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);    /* Morphing layout changes */
+  --ease-snappy: cubic-bezier(0.2, 0, 0, 1); /* Quick response for press/active */
+  --ease-out-ui: cubic-bezier(0.16, 1, 0.3, 1); /* Smooth entrance for popovers/modals */
+  --ease-in-ui: cubic-bezier(0.7, 0, 0.84, 0); /* Smooth exit for modals */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* Subtle spring overshoot */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* Morphing layout changes */
 }
 ```
 

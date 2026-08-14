@@ -52,10 +52,10 @@ Using `next.config.ts` instead of `.js` for better type safety.
 
 ```typescript
 // next.config.ts
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  output: "export", // Required for Static Hosting (S3, GitHub Pages)
+  output: 'export', // Required for Static Hosting (S3, GitHub Pages)
   images: {
     unoptimized: true, // Required if not using Node.js server image optimization
   },
@@ -74,19 +74,19 @@ Deprecated next-seo. Configure directly in layout.tsx or page.tsx.
 
 ```typescript
 // src/app/layout.tsx
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Product Name",
-    default: "Home - Product Name",
+    template: '%s | Product Name',
+    default: 'Home - Product Name',
   },
-  description: "SEO optimized description for the landing page.",
+  description: 'SEO optimized description for the landing page.',
   openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "https://mysite.com",
-    siteName: "My Brand",
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://mysite.com',
+    siteName: 'My Brand',
   },
 };
 ```
@@ -138,11 +138,11 @@ export const metadata: Metadata = {
 3. Configure Tailwind v4 (in `src/app/globals.css`):
 
    ```css
-   @import "tailwindcss";
+   @import 'tailwindcss';
 
    @theme {
      --color-primary: #3b82f6;
-     --font-sans: "Inter", sans-serif;
+     --font-sans: 'Inter', sans-serif;
    }
    ```
 

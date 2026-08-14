@@ -59,7 +59,10 @@
         "md": { "$value": "16px", "$type": "dimension" }
       },
       "typography": {
-        "family-sans": { "$value": "Plus Jakarta Sans, system-ui, sans-serif", "$type": "fontFamily" }
+        "family-sans": {
+          "$value": "Plus Jakarta Sans, system-ui, sans-serif",
+          "$type": "fontFamily"
+        }
       }
     },
     "soft-minimal": {
@@ -122,11 +125,11 @@
   },
 
   "spacing": {
-    "xs":  { "$value": "4px",  "$type": "dimension" },
-    "sm":  { "$value": "8px",  "$type": "dimension" },
-    "md":  { "$value": "16px", "$type": "dimension" },
-    "lg":  { "$value": "24px", "$type": "dimension" },
-    "xl":  { "$value": "32px", "$type": "dimension" }
+    "xs": { "$value": "4px", "$type": "dimension" },
+    "sm": { "$value": "8px", "$type": "dimension" },
+    "md": { "$value": "16px", "$type": "dimension" },
+    "lg": { "$value": "24px", "$type": "dimension" },
+    "xl": { "$value": "32px", "$type": "dimension" }
   },
 
   "shadow": {

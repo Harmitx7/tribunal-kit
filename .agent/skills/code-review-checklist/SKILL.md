@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before performing code reviews or writing PR comments, you MUST inspect:
+
 1. Label Convention Standardization (Section 27) → Categorize all feedback into `BLOCKER:`, `CONCERN:`, `SUGGESTION:`, or `NOTE:`
 2. Context Window Discipline (Section 120) → Quote concise 1-3 line snippets with line numbers; ban pasting massive blocks of unchanged code
 3. Anti-Nitpicking Rule (Section 130) → Delegate syntax/formatting formatting checks to linters (`eslint`/Prettier); focus reviews on logic and security

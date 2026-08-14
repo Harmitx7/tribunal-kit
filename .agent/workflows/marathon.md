@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before initiating or resuming a multi-session marathon harness, you MUST inspect:
+
 1. Marathon State Ledger (`progress.json`, `feature_list.json`) → Verify current session index, completed features, and active task
 2. Session Continuity Manager (`.agent/scripts/session_manager.js`) → Verify state snapshot before context truncation
 3. Atomic Feature Handoff Protocol → Ensure each session completes exactly ONE atomic feature, runs `verify_all.js`, and commits state before handoff

@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before executing auto-fixers or modifying code files to resolve lint/type issues, you MUST inspect:
+
 1. Workspace Linter & Compiler Settings (`tsconfig.json`, `.eslintrc`, `biome.json`) → Confirm rule strictness and formatting standards
 2. Target File Lint Output → Execute `node .agent/scripts/lint_runner.js` to gather precise error line numbers and rule IDs
 3. Diff Verification Before Disk Write → Show explicit diff of proposed changes and confirm Human Gate approval before saving

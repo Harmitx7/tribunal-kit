@@ -22,6 +22,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before running framework upgrades, major dependency bumps, or database migrations, you MUST inspect:
+
 1. Dependency Compatibility Matrix (`dependency_analyzer.js`) → Verify target version peer dependencies and breaking changes
 2. Database Expand-and-Contract Plan (`schema_validator.js`) → Ensure database column changes add new fields before dropping old ones
 3. Rollback Protocol Verification → Test local rollback procedure (e.g. SQLite backup or DB transaction revert) before applying migration

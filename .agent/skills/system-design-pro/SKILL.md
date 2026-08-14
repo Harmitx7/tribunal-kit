@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing system architecture or writing scale proposals, you MUST inspect:
+
 1. 6-Step Design Framework (Section 27) → Execute Clarify Scope, Scale Estimation, API Definition, Data Model, High-Level Design, and Deep Dive in exact order
 2. Quantified Scale Estimation (Section 65) → Calculate read/write QPS, storage growth, and bandwidth before selecting database or caching tiers
 3. Monolith First Rule (Section 17) → Start with modular monolith for $<10\text{K}$ RPM; ban introducing microservices or sharding prematurely

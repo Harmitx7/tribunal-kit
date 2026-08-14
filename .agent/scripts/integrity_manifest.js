@@ -19,14 +19,14 @@
  * Zero external dependencies. Node.js stdlib only.
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const AGENT_DIR_NAME = ".agent";
+const AGENT_DIR_NAME = '.agent';
 
 // ── YAML Frontmatter Parser (regex-based, zero deps) ─────────────────────────
 
@@ -57,24 +57,24 @@ function safeReaddir(dir) {
 
 function safeReadFile(filePath) {
   try {
-    return fs.readFileSync(filePath, "utf8");
+    return fs.readFileSync(filePath, 'utf8');
   } catch {
-    return "";
+    return '';
   }
 }
 
 // ── Agent Crawler ─────────────────────────────────────────────────────────────
 
 function crawlAgents(agentDir) {
-  const agentsDir = path.join(agentDir, "agents");
-  const files = safeReaddir(agentsDir).filter((f) => f.endsWith(".md"));
+  const agentsDir = path.join(agentDir, 'agents');
+  const files = safeReaddir(agentsDir).filter(f => f.endsWith('.md'));
 
   const reviewers = [];
   const specialists = [];
   const allAgents = [];
 
   for (const file of files) {
-    const name = file.replace(/\.md$/, "");
+    const name = file.replace(/\.md$/, '');
     allAgents.push(name);
 
     // Classify: reviewer if name contains "reviewer", "auditor", or "tester"
@@ -84,7 +84,6 @@ function crawlAgents(agentDir) {
     const isReviewer =
       /reviewer|auditor|tester|throughput-optimizer/i.test(name) ||
       (fm.role && /reviewer/i.test(fm.role));
-
 
     if (isReviewer) {
       reviewers.push(name);
@@ -105,12 +104,12 @@ function crawlAgents(agentDir) {
 // ── Skill Crawler ─────────────────────────────────────────────────────────────
 
 function crawlSkills(agentDir) {
-  const skillsDir = path.join(agentDir, "skills");
+  const skillsDir = path.join(agentDir, 'skills');
   const entries = safeReaddir(skillsDir);
   const names = [];
 
   for (const entry of entries) {
-    const skillPath = path.join(skillsDir, entry, "SKILL.md");
+    const skillPath = path.join(skillsDir, entry, 'SKILL.md');
     if (fs.existsSync(skillPath)) {
       const content = safeReadFile(skillPath);
       const fm = parseFrontmatter(content);
@@ -127,15 +126,13 @@ function crawlSkills(agentDir) {
 // ── Script Crawler ────────────────────────────────────────────────────────────
 
 function crawlScripts(agentDir) {
-  const scriptsDir = path.join(agentDir, "scripts");
-  const files = safeReaddir(scriptsDir).filter(
-    (f) => f.endsWith(".js") || f.endsWith(".py"),
-  );
+  const scriptsDir = path.join(agentDir, 'scripts');
+  const files = safeReaddir(scriptsDir).filter(f => f.endsWith('.js') || f.endsWith('.py'));
 
   const fileMap = {};
   for (const file of files) {
-    const relPath = path.join(AGENT_DIR_NAME, "scripts", file);
-    fileMap[file] = relPath.replace(/\\/g, "/");
+    const relPath = path.join(AGENT_DIR_NAME, 'scripts', file);
+    fileMap[file] = relPath.replace(/\\/g, '/');
   }
 
   return {
@@ -147,9 +144,9 @@ function crawlScripts(agentDir) {
 // ── Workflow Crawler ──────────────────────────────────────────────────────────
 
 function crawlWorkflows(agentDir) {
-  const workflowsDir = path.join(agentDir, "workflows");
-  const files = safeReaddir(workflowsDir).filter((f) => f.endsWith(".md"));
-  const names = files.map((f) => f.replace(/\.md$/, ""));
+  const workflowsDir = path.join(agentDir, 'workflows');
+  const files = safeReaddir(workflowsDir).filter(f => f.endsWith('.md'));
+  const names = files.map(f => f.replace(/\.md$/, ''));
 
   return {
     total: names.length,
@@ -170,11 +167,10 @@ function crawlWorkflows(agentDir) {
  */
 function extractCrossReferences(filePath, content, agentDir) {
   const refs = [];
-  const relSource = path.relative(agentDir, filePath).replace(/\\/g, "/");
+  const relSource = path.relative(agentDir, filePath).replace(/\\/g, '/');
 
   // Agent references: agents/name.md or `agent-name`
-  const agentRefRegex =
-    /(?:agents\/)([\w-]+)(?:\.md)?/g;
+  const agentRefRegex = /(?:agents\/)([\w-]+)(?:\.md)?/g;
   let m;
   while ((m = agentRefRegex.exec(content)) !== null) {
     const refFile = `agents/${m[1]}.md`;
@@ -183,13 +179,12 @@ function extractCrossReferences(filePath, content, agentDir) {
       source: relSource,
       ref: refFile,
       exists: fs.existsSync(fullPath),
-      type: "agent",
+      type: 'agent',
     });
   }
 
   // Script references: scripts/name.js or scripts/name.py
-  const scriptRefRegex =
-    /(?:scripts\/)([\w_-]+)\.(js|py)/g;
+  const scriptRefRegex = /(?:scripts\/)([\w_-]+)\.(js|py)/g;
   while ((m = scriptRefRegex.exec(content)) !== null) {
     const refFile = `scripts/${m[1]}.${m[2]}`;
     const fullPath = path.join(agentDir, refFile);
@@ -197,7 +192,7 @@ function extractCrossReferences(filePath, content, agentDir) {
       source: relSource,
       ref: refFile,
       exists: fs.existsSync(fullPath),
-      type: "script",
+      type: 'script',
     });
   }
 
@@ -205,7 +200,7 @@ function extractCrossReferences(filePath, content, agentDir) {
   const workflowRefRegex = /(?:workflows\/)([\w-]+)(?:\.md)?/g;
   while ((m = workflowRefRegex.exec(content)) !== null) {
     const precedingText = content.substring(Math.max(0, m.index - 100), m.index);
-    if (precedingText.includes(".github/") || precedingText.includes("github.com/")) {
+    if (precedingText.includes('.github/') || precedingText.includes('github.com/')) {
       continue;
     }
     const refFile = `workflows/${m[1]}.md`;
@@ -214,13 +209,13 @@ function extractCrossReferences(filePath, content, agentDir) {
       source: relSource,
       ref: refFile,
       exists: fs.existsSync(fullPath),
-      type: "workflow",
+      type: 'workflow',
     });
   }
 
   // Deduplicate
   const seen = new Set();
-  return refs.filter((r) => {
+  return refs.filter(r => {
     const key = `${r.source}→${r.ref}`;
     if (seen.has(key)) return false;
     seen.add(key);
@@ -236,18 +231,19 @@ function extractCrossReferences(filePath, content, agentDir) {
  */
 function extractNumericClaims(filePath, content, agentDir, actualCounts) {
   const claims = [];
-  const relSource = path.relative(agentDir, filePath).replace(/\\/g, "/");
+  const relSource = path.relative(agentDir, filePath).replace(/\\/g, '/');
   const lines = content.split(/\r?\n/);
 
   const claimPatterns = [
     {
-      regex: /(\d+)\s*(?:-\s*)?(?:(?:parallel|domain(?:-specific)?|tribunal|code)\s+)*reviewers?\b/gi,
-      entity: "reviewers",
+      regex:
+        /(\d+)\s*(?:-\s*)?(?:(?:parallel|domain(?:-specific)?|tribunal|code)\s+)*reviewers?\b/gi,
+      entity: 'reviewers',
     },
-    { regex: /(\d+)\s*(?:specialist\s+)?agents?\b/gi, entity: "agents" },
-    { regex: /(\d+)\s*(?:modular\s+)?skills?\b/gi, entity: "skills" },
-    { regex: /(\d+)\s*(?:slash\s+)?workflows?\b/gi, entity: "workflows" },
-    { regex: /(\d+)\s*(?:JS\s+)?scripts?\b/gi, entity: "scripts" },
+    { regex: /(\d+)\s*(?:specialist\s+)?agents?\b/gi, entity: 'agents' },
+    { regex: /(\d+)\s*(?:modular\s+)?skills?\b/gi, entity: 'skills' },
+    { regex: /(\d+)\s*(?:slash\s+)?workflows?\b/gi, entity: 'workflows' },
+    { regex: /(\d+)\s*(?:JS\s+)?scripts?\b/gi, entity: 'scripts' },
   ];
 
   for (let i = 0; i < lines.length; i++) {
@@ -290,16 +286,16 @@ function walkMdFiles(dir, fileList = []) {
       const stat = fs.statSync(fullPath);
       if (stat.isDirectory()) {
         // Skip node_modules, .git, history, .backups, .shared
-        if (
-          ["node_modules", ".git", "history", ".backups", ".shared"].includes(
-            entry,
-          )
-        ) {
+        if (['node_modules', '.git', 'history', '.backups', '.shared'].includes(entry)) {
           continue;
         }
         walkMdFiles(fullPath, fileList);
-      } else if (entry.endsWith(".md") || entry.endsWith(".json")) {
-        if (entry.startsWith("http") || entry.startsWith("#") || entry.startsWith("https://github.com/")) {
+      } else if (entry.endsWith('.md') || entry.endsWith('.json')) {
+        if (
+          entry.startsWith('http') ||
+          entry.startsWith('#') ||
+          entry.startsWith('https://github.com/')
+        ) {
           continue;
         }
         fileList.push(fullPath);
@@ -354,7 +350,7 @@ function generateManifest(projectRoot) {
 
   // Phase 3: Deduplicate cross-references
   const seenRefs = new Set();
-  const uniqueRefs = allRefs.filter((r) => {
+  const uniqueRefs = allRefs.filter(r => {
     const key = `${r.source}→${r.ref}`;
     if (seenRefs.has(key)) return false;
     seenRefs.add(key);
@@ -362,12 +358,10 @@ function generateManifest(projectRoot) {
   });
 
   // Phase 4: Build manifest
-  let version = "unknown";
+  let version = 'unknown';
   try {
-    const pkg = JSON.parse(
-      safeReadFile(path.join(projectRoot, "package.json")) || "{}",
-    );
-    version = pkg.version || "unknown";
+    const pkg = JSON.parse(safeReadFile(path.join(projectRoot, 'package.json')) || '{}');
+    version = pkg.version || 'unknown';
   } catch {
     // Ignore
   }
@@ -382,8 +376,8 @@ function generateManifest(projectRoot) {
     cross_references: uniqueRefs,
     numeric_claims: allClaims,
     integrity: {
-      phantom_references: uniqueRefs.filter((r) => !r.exists).length,
-      invalid_claims: allClaims.filter((c) => !c.valid).length,
+      phantom_references: uniqueRefs.filter(r => !r.exists).length,
+      invalid_claims: allClaims.filter(c => !c.valid).length,
       total_references: uniqueRefs.length,
       total_claims: allClaims.length,
     },
@@ -395,13 +389,13 @@ function generateManifest(projectRoot) {
 // ── Persist Manifest ──────────────────────────────────────────────────────────
 
 function saveManifest(manifest, projectRoot) {
-  const historyDir = path.join(projectRoot, AGENT_DIR_NAME, "history");
+  const historyDir = path.join(projectRoot, AGENT_DIR_NAME, 'history');
   if (!fs.existsSync(historyDir)) {
     fs.mkdirSync(historyDir, { recursive: true });
   }
 
-  const outputPath = path.join(historyDir, "integrity_manifest.json");
-  fs.writeFileSync(outputPath, JSON.stringify(manifest, null, 2), "utf8");
+  const outputPath = path.join(historyDir, 'integrity_manifest.json');
+  fs.writeFileSync(outputPath, JSON.stringify(manifest, null, 2), 'utf8');
   return outputPath;
 }
 
@@ -410,8 +404,8 @@ function saveManifest(manifest, projectRoot) {
 function main() {
   const args = process.argv.slice(2);
   const projectRoot = process.cwd();
-  const outputJson = args.includes("--output") && args.includes("json");
-  const validateOnly = args.includes("--validate");
+  const outputJson = args.includes('--output') && args.includes('json');
+  const validateOnly = args.includes('--validate');
 
   const manifest = generateManifest(projectRoot);
 
@@ -433,7 +427,9 @@ function main() {
   console.log(`\n🛡️  Integrity Manifest Generated`);
   console.log(`   Path: ${outputPath}`);
   console.log(`   ─────────────────────────────────`);
-  console.log(`   Agents:      ${manifest.agents.total} (${manifest.agents.reviewer_count} reviewers)`);
+  console.log(
+    `   Agents:      ${manifest.agents.total} (${manifest.agents.reviewer_count} reviewers)`,
+  );
   console.log(`   Skills:      ${manifest.skills.total}`);
   console.log(`   Scripts:     ${manifest.scripts.total}`);
   console.log(`   Workflows:   ${manifest.workflows.total}`);
@@ -443,7 +439,7 @@ function main() {
 
   if (integrity.phantom_references > 0) {
     console.log(`   ⚠️  Phantom references: ${integrity.phantom_references}`);
-    const phantoms = manifest.cross_references.filter((r) => !r.exists);
+    const phantoms = manifest.cross_references.filter(r => !r.exists);
     for (const p of phantoms) {
       console.log(`      ❌ ${p.source} → ${p.ref}`);
     }
@@ -451,24 +447,20 @@ function main() {
 
   if (integrity.invalid_claims > 0) {
     console.log(`   ⚠️  Invalid claims: ${integrity.invalid_claims}`);
-    const invalid = manifest.numeric_claims.filter((c) => !c.valid);
+    const invalid = manifest.numeric_claims.filter(c => !c.valid);
     for (const c of invalid) {
       console.log(`      ❌ ${c.source}: says "${c.claim}" but actual is ${c.actual}`);
     }
   }
 
-  if (
-    integrity.phantom_references === 0 &&
-    integrity.invalid_claims === 0
-  ) {
+  if (integrity.phantom_references === 0 && integrity.invalid_claims === 0) {
     console.log(`   ✅ All references valid. All claims accurate.`);
   }
 
   console.log();
 
   if (validateOnly) {
-    const exitCode =
-      integrity.phantom_references > 0 || integrity.invalid_claims > 0 ? 1 : 0;
+    const exitCode = integrity.phantom_references > 0 || integrity.invalid_claims > 0 ? 1 : 0;
     process.exit(exitCode);
   }
 }

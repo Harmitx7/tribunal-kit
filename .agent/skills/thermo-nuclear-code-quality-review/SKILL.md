@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before performing ultra-strict maintainability code audits, you MUST inspect:
+
 1. File Size Hard Limit Rule (300 lines max) (Section 24) → Flag any file >300 lines for immediate module decomposition
 2. Cyclomatic Nesting Limit (3 levels max) (Section 27) → Flag nested conditionals >3 levels deep; require early guard clause returns
 3. Direct Dependency Coupling Ban (Section 53) → Flag domain logic directly importing vendor SDKs or DB models instead of interface adapters
@@ -33,9 +34,11 @@ Execute a ruthless, zero-tolerance code maintainability audit targeting abstract
 ## 5 Zero-Tolerance Audit Rules
 
 ### 1. File Size Hard Limit (Max 300 Lines)
+
 - Flag ANY single file exceeding 300 lines of code. Demand decomposition into modular helper components or sub-packages.
 
 ### 2. Cyclomatic Complexity & Nested Conditionals (Max 3 Levels)
+
 - Flag any function with nested conditionals deeper than 3 levels (`if -> if -> if -> for`). Require early guard clause returns.
 
 ```typescript
@@ -59,9 +62,11 @@ function processOrder(order: Order) {
 ```
 
 ### 3. Magic Values & String Literals
+
 - Hardcoded status strings (`"PENDING_APPROVAL_V2"`) or raw numbers (`86400000`) outside central `const` or `enum` declarations trigger immediate failure.
 
 ### 4. Direct Dependency Coupling
+
 - Modules importing concrete database models or vendor SDKs directly inside domain business logic instead of interface adapters are rejected.
 
 ---

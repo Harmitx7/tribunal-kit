@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing Playwright E2E tests or test fixtures, you MUST inspect:
+
 1. Auto-Waiting & Resilient Selectors (Section 26) → Use `getByRole()`, `getByLabel()` or `getByTestId()`; ban `page.waitForTimeout()` and CSS layout paths
 2. Complete Test Isolation Rule (Section 53) → Isolate every test in fresh browser context; ban cascading tests dependent on previous test outcomes
 3. External Network Interception (Section 86) → Intercept 3rd party external APIs (`page.route()`) to eliminate flaky network failures in CI
@@ -46,13 +47,13 @@ Playwright automatically waits for elements to be actionable (visible, stable, n
 await page.waitForTimeout(3000);
 
 // ❌ FLAKY: CSS selectors tied to layout/styling changes
-await page.locator(".btn-primary > span").click();
+await page.locator('.btn-primary > span').click();
 
 // ✅ ROBUST: Playwright auto-waits for actionability based on user-centric selectors
-await page.getByRole("button", { name: "Submit Checkout" }).click();
+await page.getByRole('button', { name: 'Submit Checkout' }).click();
 
 // ✅ ROBUST: Testing for expected states
-await expect(page.getByText("Order confirmed")).toBeVisible();
+await expect(page.getByText('Order confirmed')).toBeVisible();
 ```
 
 ### The Selector Hierarchy (Best to Worst)
@@ -69,15 +70,15 @@ await expect(page.getByText("Order confirmed")).toBeVisible();
 Do not cascade tests (where Test B requires Test A to pass first). Playwright gives every test a blank browser context isolated from the rest.
 
 ```typescript
-import { test, expect } from "@playwright/test";
+import { test, expect } from '@playwright/test';
 
 // ❌ BAD: Cascading state
-test.describe("Dashboard", () => {
-  test("Login", async ({ page }) => {
+test.describe('Dashboard', () => {
+  test('Login', async ({ page }) => {
     await login(page); // Next test assumes this succeeded
   });
-  test("Action", async ({ page }) => {
-    await page.getByRole("button", { name: "Save" }).click();
+  test('Action', async ({ page }) => {
+    await page.getByRole('button', { name: 'Save' }).click();
   });
 });
 
@@ -85,12 +86,12 @@ test.describe("Dashboard", () => {
 test.beforeEach(async ({ page }) => {
   // Login directly via API to bypass slow UI login, seeding cookies
   await performFastApiLogin(page);
-  await page.goto("/dashboard");
+  await page.goto('/dashboard');
 });
 
-test("Should save settings", async ({ page }) => {
-  await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByRole("alert")).toHaveText("Saved successfully");
+test('Should save settings', async ({ page }) => {
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page.getByRole('alert')).toHaveText('Saved successfully');
 });
 ```
 
@@ -101,16 +102,16 @@ test("Should save settings", async ({ page }) => {
 E2E tests that rely on external 3rd party APIs (Stripe, SendGrid) will fail randomly due to network latency outside your control.
 
 ```typescript
-test("Should block invalid credit cards", async ({ page }) => {
+test('Should block invalid credit cards', async ({ page }) => {
   // Intercept the outgoing request to the payment processor
-  await page.route("**/api/v1/charge*", async (route) => {
+  await page.route('**/api/v1/charge*', async route => {
     // Return a mocked failure response immediately
-    const json = { status: "declined", message: "Insufficient funds" };
+    const json = { status: 'declined', message: 'Insufficient funds' };
     await route.fulfill({ status: 400, json });
   });
 
-  await page.getByRole("button", { name: "Purchase" }).click();
-  await expect(page.getByText("Insufficient funds")).toBeVisible();
+  await page.getByRole('button', { name: 'Purchase' }).click();
+  await expect(page.getByText('Insufficient funds')).toBeVisible();
 });
 ```
 
@@ -120,33 +121,33 @@ test("Should block invalid credit cards", async ({ page }) => {
 
 ```typescript
 // playwright.config.ts
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: "./tests/e2e",
+  testDir: './tests/e2e',
   fullyParallel: true, // Run tests concurrently
   forbidOnly: !!process.env.CI, // Fail build if `.only` was left in code
   retries: process.env.CI ? 2 : 0, // Retry flakes on CI only
   workers: process.env.CI ? 1 : undefined, // Reduce CI overload
-  reporter: "html",
+  reporter: 'html',
 
   use: {
-    trace: "on-first-retry", // Record trace viewer ONLY on failure to save space
-    video: "retain-on-failure",
-    baseURL: "http://localhost:3000",
+    trace: 'on-first-retry', // Record trace viewer ONLY on failure to save space
+    video: 'retain-on-failure',
+    baseURL: 'http://localhost:3000',
   },
 
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
     // Mobile Viewport Example
-    { name: "Mobile Safari", use: { ...devices["iPhone 13"] } },
+    { name: 'Mobile Safari', use: { ...devices['iPhone 13'] } },
   ],
 
   // Spin up local server before running tests
   webServer: {
-    command: "npm run build && npm run start",
-    url: "http://localhost:3000",
+    command: 'npm run build && npm run start',
+    url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
   },
 });

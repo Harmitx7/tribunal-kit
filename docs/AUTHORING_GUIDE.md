@@ -22,6 +22,7 @@ version: 3.0.0
 # Backend Security Specialist
 
 ## Core Rules
+
 1. Every SQL query must be parameterized.
 2. Every async route must have error handling middleware.
 ```
@@ -43,6 +44,7 @@ script: scripts/validate_api.js
 # My Custom Skill
 
 ## Pre-Flight Checklist
+
 - Check endpoint URL structure
 - Verify JWT header parsing
 ```

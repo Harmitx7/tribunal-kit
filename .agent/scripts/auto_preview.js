@@ -9,28 +9,28 @@
  *   node .agent/scripts/auto_preview.js restart
  */
 
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
-const { spawn } = require("child_process");
-const net = require("net");
+const fs = require('fs');
+const path = require('path');
+const { spawn } = require('child_process');
+const net = require('net');
 
-const PID_FILE = ".preview.pid";
+const PID_FILE = '.preview.pid';
 const DEFAULT_PORT = 3000;
 const TIMEOUT_SECONDS = 30;
 
-const { GREEN, RED, YELLOW, BOLD, RESET } = require("./colors.js");
+const { GREEN, RED, YELLOW, BOLD, RESET } = require('./colors.js');
 
 function findStartCommand() {
-  const pkgPath = path.resolve("package.json");
+  const pkgPath = path.resolve('package.json');
   if (!fs.existsSync(pkgPath)) return { cmd: [], found: false };
 
   try {
-    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
     const scripts = pkg.scripts || {};
-    if (scripts.dev) return { cmd: ["npm", "run", "dev"], found: true };
-    if (scripts.start) return { cmd: ["npm", "run", "start"], found: true };
+    if (scripts.dev) return { cmd: ['npm', 'run', 'dev'], found: true };
+    if (scripts.start) return { cmd: ['npm', 'run', 'start'], found: true };
   } catch {
     // Ignore
   }
@@ -38,13 +38,13 @@ function findStartCommand() {
 }
 
 function getPortFromEnv() {
-  const envPath = path.resolve(".env");
+  const envPath = path.resolve('.env');
   if (fs.existsSync(envPath)) {
     try {
-      const data = fs.readFileSync(envPath, "utf8");
-      for (const line of data.split("\n")) {
-        if (line.trim().startsWith("PORT=")) {
-          return parseInt(line.split("=")[1].trim(), 10);
+      const data = fs.readFileSync(envPath, 'utf8');
+      for (const line of data.split('\n')) {
+        if (line.trim().startsWith('PORT=')) {
+          return parseInt(line.split('=')[1].trim(), 10);
         }
       }
     } catch {}
@@ -53,36 +53,36 @@ function getPortFromEnv() {
 }
 
 function isPortOpen(port) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const client = new net.Socket();
     client.setTimeout(1000);
     client
-      .once("connect", () => {
+      .once('connect', () => {
         client.destroy();
         resolve(true);
       })
-      .once("timeout", () => {
+      .once('timeout', () => {
         client.destroy();
         resolve(false);
       })
-      .once("error", () => {
+      .once('error', () => {
         resolve(false);
       })
-      .connect(port, "localhost");
+      .connect(port, 'localhost');
   });
 }
 
 function readPid() {
   if (fs.existsSync(PID_FILE)) {
     try {
-      return parseInt(fs.readFileSync(PID_FILE, "utf8").trim(), 10);
+      return parseInt(fs.readFileSync(PID_FILE, 'utf8').trim(), 10);
     } catch {}
   }
   return null;
 }
 
 function writePid(pid) {
-  fs.writeFileSync(PID_FILE, String(pid), "utf8");
+  fs.writeFileSync(PID_FILE, String(pid), 'utf8');
 }
 
 function clearPid() {
@@ -107,18 +107,16 @@ async function startServer() {
     console.log(
       `   This project has no package.json, or its package.json has no 'dev' or 'start' script.`,
     );
-    console.log(
-      `   Add a script to package.json, or start your server manually.`,
-    );
+    console.log(`   Add a script to package.json, or start your server manually.`);
     return;
   }
 
-  console.log(`${BOLD}Starting: ${cmd.join(" ")}${RESET}`);
+  console.log(`${BOLD}Starting: ${cmd.join(' ')}${RESET}`);
   // Adjust command for windows (npm.cmd instead of npm)
-  const executable = process.platform === "win32" ? `${cmd[0]}.cmd` : cmd[0];
+  const executable = process.platform === 'win32' ? `${cmd[0]}.cmd` : cmd[0];
 
   const proc = spawn(executable, cmd.slice(1), {
-    stdio: "pipe",
+    stdio: 'pipe',
     detached: true,
   });
 
@@ -135,19 +133,17 @@ async function startServer() {
       console.log(`\n${GREEN}✅ Server started${RESET}`);
       console.log(`   URL:     http://localhost:${port}`);
       console.log(`   PID:     ${proc.pid}`);
-      console.log(`   Command: ${cmd.join(" ")}`);
+      console.log(`   Command: ${cmd.join(' ')}`);
       console.log(`\nStop with: node .agent/scripts/auto_preview.js stop`);
       return;
     }
-    process.stdout.write(".");
-    await new Promise((r) => setTimeout(r, 1000));
+    process.stdout.write('.');
+    await new Promise(r => setTimeout(r, 1000));
   }
 
-  console.log(
-    `\n${RED}❌ Server did not start within ${TIMEOUT_SECONDS}s${RESET}`,
-  );
+  console.log(`\n${RED}❌ Server did not start within ${TIMEOUT_SECONDS}s${RESET}`);
   try {
-    process.kill(proc.pid, "SIGTERM");
+    process.kill(proc.pid, 'SIGTERM');
   } catch {}
   clearPid();
 }
@@ -159,7 +155,7 @@ function stopServer() {
     return;
   }
   try {
-    process.kill(pid, "SIGTERM");
+    process.kill(pid, 'SIGTERM');
     console.log(`${GREEN}✅ Server stopped (PID ${pid})${RESET}`);
   } catch {
     console.log(`${YELLOW}Process ${pid} was not running${RESET}`);
@@ -181,7 +177,7 @@ async function showStatus() {
 
 async function main() {
   const args = process.argv.slice(2);
-  const actions = new Set(["start", "stop", "status", "restart"]);
+  const actions = new Set(['start', 'stop', 'status', 'restart']);
 
   if (args.length < 1 || !actions.has(args[0])) {
     console.log(`Usage: node auto_preview.js [start|stop|status|restart]`);
@@ -189,15 +185,15 @@ async function main() {
   }
 
   const action = args[0];
-  if (action === "start") {
+  if (action === 'start') {
     await startServer();
-  } else if (action === "stop") {
+  } else if (action === 'stop') {
     stopServer();
-  } else if (action === "status") {
+  } else if (action === 'status') {
     await showStatus();
-  } else if (action === "restart") {
+  } else if (action === 'restart') {
     stopServer();
-    await new Promise((r) => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 1000));
     await startServer();
   }
 }

@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing React Native, Expo, or native mobile code, you MUST inspect:
+
 1. Native Configuration Manifests (`app.json`, `app.config.js`, `package.json`) → Verify Expo SDK version, Reanimated dependencies, and permissions
 2. Gesture & 60fps Motion Rules → Enforce `react-native-reanimated` worklets on UI thread; ban JavaScript bridge layout thrashing
 3. 3-Reviewer Mobile Gate → Run logic-reviewer, security-auditor, and mobile-reviewer before approving mobile component diffs
@@ -93,19 +94,19 @@ If all reviewers → ✅ APPROVED: Human Gate
 const clamp = (val: number, min: number, max: number) => Math.min(Math.max(val, min), max);
 // ✅ Must have worklet directive
 const clamp = (val: number, min: number, max: number): number => {
-  "worklet";
+  'worklet';
   return Math.min(Math.max(val, min), max);
 };
 
 // ❌ Expo Router: navigate() was refactored in v4 — old API
-import { navigate } from "expo-router"; // Named export doesn't exist
+import { navigate } from 'expo-router'; // Named export doesn't exist
 // ✅ Current Expo Router v4
-import { router } from "expo-router";
-router.push("/products/123");
+import { router } from 'expo-router';
+router.push('/products/123');
 
 // ❌ React Native: StyleSheet.create doesn't eval functions
 const styles = StyleSheet.create({
-  box: { paddingTop: Platform.OS === "ios" ? 20 : 0 }, // Doesn't work in all contexts
+  box: { paddingTop: Platform.OS === 'ios' ? 20 : 0 }, // Doesn't work in all contexts
 });
 // ✅ Use Platform.select or dynamic style object
 const boxStyle = Platform.select({ ios: { paddingTop: 20 }, android: { paddingTop: 0 } });

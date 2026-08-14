@@ -7,34 +7,33 @@
  * falls back to the original JavaScript implementation.
  */
 
-const fs = require("fs");
-const path = require("path");
-const { spawnSync } = require("child_process");
-const os = require("os");
+const fs = require('fs');
+const path = require('path');
+const { spawnSync } = require('child_process');
+const os = require('os');
 
 // Commands that have been fully ported to Rust so far
 const RUST_COMMANDS = new Set([
-  "init",
-  "validate",
-  "status",
-  "sync",
-  "hook",
-  "uninstall",
-  "memory",
-  "min-context",
-  "dag-schedule",
-  "context-compress",
-  "context-broker",
-  "optimize-step",
-  "impact-tier",
+  'init',
+  'validate',
+  'status',
+  'sync',
+  'hook',
+  'uninstall',
+  'memory',
+  'min-context',
+  'dag-schedule',
+  'context-compress',
+  'context-broker',
+  'optimize-step',
+  'impact-tier',
 ]);
-
 
 // Determine the path to the compiled Rust binary
 // In a full production release, this checks optionalDependencies in node_modules
 // For development, it checks the local target/release folder
 function getBinaryPath() {
-  if (process.env.TRIBUNAL_FORCE_JS === "1") {
+  if (process.env.TRIBUNAL_FORCE_JS === '1') {
     return null;
   }
 
@@ -42,8 +41,8 @@ function getBinaryPath() {
     return process.env.TRIBUNAL_CORE_PATH;
   }
 
-  const isWindows = os.platform() === "win32";
-  const ext = isWindows ? ".exe" : "";
+  const isWindows = os.platform() === 'win32';
+  const ext = isWindows ? '.exe' : '';
   const platform = os.platform();
   const arch = os.arch();
 
@@ -66,14 +65,14 @@ function getBinaryPath() {
 
   // Second, try to find the binary in local dev target directories
   const candidatePaths = [
-    path.resolve(__dirname, "..", "target", "release", `tribunal-core${ext}`),
-    path.resolve(__dirname, "..", "target", "debug", `tribunal-core${ext}`),
-    path.resolve(__dirname, "..", "..", "target", "release", `tribunal-core${ext}`),
-    path.resolve(__dirname, "..", "..", "target", "debug", `tribunal-core${ext}`),
-    path.resolve(process.cwd(), "target", "release", `tribunal-core${ext}`),
-    path.resolve(process.cwd(), "target", "debug", `tribunal-core${ext}`),
-    path.resolve(process.cwd(), "tribunal-kit", "target", "release", `tribunal-core${ext}`),
-    path.resolve(process.cwd(), "tribunal-kit", "target", "debug", `tribunal-core${ext}`),
+    path.resolve(__dirname, '..', 'target', 'release', `tribunal-core${ext}`),
+    path.resolve(__dirname, '..', 'target', 'debug', `tribunal-core${ext}`),
+    path.resolve(__dirname, '..', '..', 'target', 'release', `tribunal-core${ext}`),
+    path.resolve(__dirname, '..', '..', 'target', 'debug', `tribunal-core${ext}`),
+    path.resolve(process.cwd(), 'target', 'release', `tribunal-core${ext}`),
+    path.resolve(process.cwd(), 'target', 'debug', `tribunal-core${ext}`),
+    path.resolve(process.cwd(), 'tribunal-kit', 'target', 'release', `tribunal-core${ext}`),
+    path.resolve(process.cwd(), 'tribunal-kit', 'target', 'debug', `tribunal-core${ext}`),
   ];
 
   for (const candidate of candidatePaths) {
@@ -83,12 +82,12 @@ function getBinaryPath() {
   }
 
   // Third, attempt on-demand compilation if Cargo.toml exists locally and cargo is installed
-  const cargoTomlPath = path.resolve(__dirname, "..", "Cargo.toml");
+  const cargoTomlPath = path.resolve(__dirname, '..', 'Cargo.toml');
   if (fs.existsSync(cargoTomlPath)) {
     try {
-      const buildResult = spawnSync("cargo", ["build", "--release"], {
-        cwd: path.resolve(__dirname, ".."),
-        stdio: "ignore",
+      const buildResult = spawnSync('cargo', ['build', '--release'], {
+        cwd: path.resolve(__dirname, '..'),
+        stdio: 'ignore',
         timeout: 60000,
       });
       if (buildResult.status === 0) {
@@ -105,13 +104,8 @@ function getBinaryPath() {
   return null;
 }
 
-
 function runRustBinary(binPath, args) {
-  const stdio = [
-    "inherit",
-    "inherit",
-    "inherit",
-  ];
+  const stdio = ['inherit', 'inherit', 'inherit'];
   const result = spawnSync(binPath, args, {
     stdio: stdio,
     env: process.env,
@@ -133,8 +127,8 @@ function runRustBinary(binPath, args) {
 function runLegacyFallback() {
   // Use the modular dist/ CLI with lazy-loaded commands for faster cold-start.
   // Each command module is require()'d only when invoked (~70% fewer files loaded).
-  const { main } = require("../dist/cli.js");
-  main().catch((err) => {
+  const { main } = require('../dist/cli.js');
+  main().catch(err => {
     console.error(`\x1b[91m✖ Fatal Error:\x1b[0m ${err.message || err}`);
     process.exit(1);
   });
@@ -145,16 +139,16 @@ function main() {
   const args = process.argv.slice(2);
 
   // Extract the command (the first non-flag argument)
-  const command = args.find((a) => !a.startsWith("-"));
+  const command = args.find(a => !a.startsWith('-'));
 
   if (command && RUST_COMMANDS.has(command)) {
     const binPath = getBinaryPath();
 
     if (binPath) {
       // For the init command, Rust needs to know where the .agent template folder is.
-      if (command === "init") {
-        const sourceDir = path.resolve(__dirname, "..", ".agent");
-        args.push("--source-dir", sourceDir);
+      if (command === 'init') {
+        const sourceDir = path.resolve(__dirname, '..', '.agent');
+        args.push('--source-dir', sourceDir);
       }
 
       // Route to Rust engine
@@ -168,7 +162,7 @@ function main() {
       // Warn if Rust command was requested but binary is missing (in verbose mode)
       if (process.env.TK_VERBOSE || process.env.VERBOSE) {
         console.warn(
-          "\x1b[93m⚠ Rust binary not found in target/. Falling back to JS engine.\x1b[0m",
+          '\x1b[93m⚠ Rust binary not found in target/. Falling back to JS engine.\x1b[0m',
         );
       }
     }

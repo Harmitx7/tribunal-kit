@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing Rust code or Axum handlers, you MUST inspect:
+
 1. Production Error Propagation (Section 130) → Use `?` operator and structured `Result<T, E>`; ban `.unwrap()` in production code
 2. Library vs App Error Strategy (Section 192) → Use `thiserror` for library crates to export structured errors; use `anyhow` only for application code
 3. Axum 0.7+ Route Parameters (Section 444) → Use `{id}` bracket syntax for path parameters (`/users/{id}`); ban legacy `:id` syntax

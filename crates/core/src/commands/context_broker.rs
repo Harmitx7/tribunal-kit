@@ -1,7 +1,7 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MatchedRule {
@@ -70,7 +70,7 @@ pub fn resolve_context(repo_path: &str, target_file: Option<&str>) -> Result<Str
 
     // 3. Assemble compressed context snapshot
     let rules_matched = rules.len();
-    let mut snapshot_lines = Vec::new();
+    let mut snapshot_lines = Vec::with_capacity(rules_matched * 16 + 4);
     snapshot_lines.push(format!("# Context Snapshot for: {}", target_file.unwrap_or("Global Workspace")));
     if let Some(ext) = target_ext {
         snapshot_lines.push(format!("Target Extension: .{}", ext));
@@ -99,7 +99,7 @@ pub fn resolve_context(repo_path: &str, target_file: Option<&str>) -> Result<Str
         context_snapshot,
     };
 
-    Ok(serde_json::to_string_pretty(&result)?)
+    Ok(serde_json::to_string(&result)?)
 }
 
 #[cfg(test)]

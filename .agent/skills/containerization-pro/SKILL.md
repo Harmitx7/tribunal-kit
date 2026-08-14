@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before writing Dockerfiles or containerizing applications, you MUST inspect:
+
 1. Dockerignore Prerequisite (Section 29) → Create a strict `.dockerignore` file before writing any Dockerfile to prevent leaking `node_modules`, `.env`, `.git`
 2. Non-Root Security User (Section 81) → Create and switch to a dedicated non-root user (`USER appuser`) in the final runtime stage
 3. Deterministic Dependency Installation (Section 19) → Use `npm ci --omit=dev` (or language lockfile equivalent); ban un-pinned `npm install`
@@ -275,7 +276,7 @@ services:
       target: builder # use builder stage locally (includes devtools)
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       NODE_ENV: development
       DATABASE_URL: postgres://postgres:postgres@db:5432/myapp_dev
@@ -299,19 +300,19 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 3s
       retries: 5
     ports:
-      - "5432:5432" # expose for local DB clients
+      - '5432:5432' # expose for local DB clients
 
   redis:
     image: redis:7-alpine
     volumes:
       - redisdata:/data
     ports:
-      - "6379:6379"
+      - '6379:6379'
 
 volumes:
   pgdata:
@@ -331,7 +332,7 @@ volumes:
     format: sarif
     output: trivy-results.sarif
     severity: CRITICAL,HIGH
-    exit-code: "1" # fail pipeline on CRITICAL/HIGH vulnerabilities
+    exit-code: '1' # fail pipeline on CRITICAL/HIGH vulnerabilities
 
 - name: Upload Trivy scan results to GitHub Security tab
   uses: github/codeql-action/upload-sarif@v3

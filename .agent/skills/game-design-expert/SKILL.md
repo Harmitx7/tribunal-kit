@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before designing gameplay systems or controller feel, you MUST inspect:
+
 1. 3Cs Foundation (Character, Camera, Controls) (Section 25) → Implement input buffering (~150ms) and coyote time (~100ms) before designing enemy AI or progression
 2. Macro Gameplay Loop Validation (Section 42) → Ensure upgrading systems directly alter action and combat feel to prevent player churn
 3. Juicing & Hitstop Feel (Section 58) → Incorporate screen shake, hitstop (3 freeze frames), particle explosions, and squash-and-stretch for impact feedback

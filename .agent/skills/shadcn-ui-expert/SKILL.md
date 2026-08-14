@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before using or customizing shadcn/ui components, you MUST inspect:
+
 1. Component Installation State → Check `@/components/ui/` directory for existing components before running `npx shadcn@latest add`
 2. `cn` Utility Usage (Section 144) → Use `cn(...)` (combining `clsx` + `tailwind-merge`) for all conditional and overridden class names
 3. Client Component Boundaries (Section 166) → Add `"use client"` on interactive Radix primitives (Dialog, Select, Popover) before rendering in App Router
@@ -78,30 +79,35 @@ Do not treat `components/ui/*` as an immutable black box. You are _supposed_ to 
 ### Adding Variants via `cva` (Class Variance Authority)
 
 ```typescript
-import { cva, type VariantProps } from "class-variance-authority";
+import { cva, type VariantProps } from 'class-variance-authority';
 
 // Adding a new "ghost-rounded" variant to the Button component
-const buttonVariants = cva("inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors...", {
-  variants: {
-    variant: {
-      default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-      destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-      outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-      // YOUR CUSTOM VARIANT:
-      "ghost-rounded": "bg-transparent hover:bg-accent hover:text-accent-foreground rounded-full px-6",
+const buttonVariants = cva(
+  'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors...',
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary text-primary-foreground shadow hover:bg-primary/90',
+        destructive: 'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
+        outline:
+          'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
+        // YOUR CUSTOM VARIANT:
+        'ghost-rounded':
+          'bg-transparent hover:bg-accent hover:text-accent-foreground rounded-full px-6',
+      },
+      size: {
+        default: 'h-9 px-4 py-2',
+        sm: 'h-8 rounded-md px-3 text-xs',
+        lg: 'h-10 rounded-md px-8',
+        icon: 'h-9 w-9',
+      },
     },
-    size: {
-      default: "h-9 px-4 py-2",
-      sm: "h-8 rounded-md px-3 text-xs",
-      lg: "h-10 rounded-md px-8",
-      icon: "h-9 w-9",
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
     },
   },
-  defaultVariants: {
-    variant: "default",
-    size: "default",
-  },
-});
+);
 ```
 
 ---
@@ -156,8 +162,8 @@ Implementation with Tailwind v4 CSS-first configuration:
 The `cn` utility combines `clsx` (conditional classes) and `tailwind-merge` (fixing class conflicts).
 
 ```typescript
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -168,7 +174,7 @@ export function cn(...inputs: ClassValue[]) {
 const className = `px-4 py-2 bg-blue-500 hover:bg-blue-600 ${props.className}`;
 
 // ✅ GOOD: cn resolves conflicts correctly
-const className = cn("px-4 py-2 bg-blue-500 hover:bg-blue-600", props.className);
+const className = cn('px-4 py-2 bg-blue-500 hover:bg-blue-600', props.className);
 ```
 
 ---

@@ -11,11 +11,13 @@ npm install tribunal-kit
 ```
 
 ### CommonJS
+
 ```javascript
 const { cmdInit, cmdStatus, cmdMemory, cmdAlign, alignText } = require('tribunal-kit');
 ```
 
 ### ESM
+
 ```javascript
 import { cmdInit, cmdStatus, cmdMemory, cmdAlign } from 'tribunal-kit';
 ```
@@ -25,6 +27,7 @@ import { cmdInit, cmdStatus, cmdMemory, cmdAlign } from 'tribunal-kit';
 ## Core Functions
 
 ### `cmdInit(flags, quiet)`
+
 Initializes the `.agent/` Anti-Hallucination Barrier in a target workspace.
 
 - **Parameters:**
@@ -39,6 +42,7 @@ await cmdInit({ path: './my-project', profile: 'web', force: true });
 ---
 
 ### `cmdStatus(flags, quiet)`
+
 Returns status of installed agents, skills, memory entries, and IDE bridges.
 
 - **Parameters:**
@@ -49,6 +53,7 @@ Returns status of installed agents, skills, memory entries, and IDE bridges.
 ---
 
 ### `cmdMemory(flags, argv, quiet)`
+
 Interacts with the 4-Type Taxonomy Persistent Memory Engine (Semantic, Procedural, Episodic, Working).
 
 - **Parameters:**
@@ -60,11 +65,13 @@ Interacts with the 4-Type Taxonomy Persistent Memory Engine (Semantic, Procedura
 ---
 
 ### `cmdAlign(flags, argv, quiet)`
+
 Cleans AI responses by stripping introductory/outro slop, collapsing single-item bullet lists, and validating code traps (Next.js 15, React 19, Drizzle, non-existent LLM models).
 
 ---
 
 ### `cmdImpactTier(processArgs, quiet)`
+
 Classifies a task into governance Impact Tiers (0: Fast-Pass, 1: Express Pass, 2: Targeted Audit, 3: Full Gauntlet).
 
 ---

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing metadata or search optimization, you MUST inspect:
+
 1. One H1 Heading Law (Section 64) → Ensure exactly ONE `<h1>` per page for document title; ban multiple `<h1>` tags or missing H1s
 2. Server-Side Rendering (SSR/SSG) Rule (Section 18) → Use SSR/SSG for indexable pages; ban client-side-only rendering for public SEO content
 3. JSON-LD Structured Data Injection (Section 86) → Inject Schema.org JSON-LD scripts (`application/ld+json`) for rich entity indexing
@@ -43,7 +44,7 @@ Do not use legacy `next/head` tags scattered across components. Use the built-in
 
 ```typescript
 // app/blog/[slug]/page.tsx
-import { Metadata } from "next";
+import { Metadata } from 'next';
 
 export async function generateMetadata({ params }): Promise<Metadata> {
   const post = await fetchPost(params.slug);
@@ -58,12 +59,12 @@ export async function generateMetadata({ params }): Promise<Metadata> {
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      type: "article",
+      type: 'article',
       url: `https://example.com/blog/${params.slug}`,
       images: [{ url: post.coverImageUrl, width: 1200, height: 630 }],
     },
     twitter: {
-      card: "summary_large_image", // Critical for big Twitter link previews
+      card: 'summary_large_image', // Critical for big Twitter link previews
     },
   };
 }

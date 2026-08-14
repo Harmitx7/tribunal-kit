@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing marquee loop tracks, you MUST inspect:
+
 1. DOM Structure (Section 24) → Duplicate item tracks MUST be rendered with `aria-hidden="true"` to prevent screen reader redundancy
 2. Hover Accessibility (Section 50) → Enforce `animation-play-state: paused` on `:hover` and `:focus-within`
 3. Reduced Motion Fallback (Section 61) → Collapse marquee into static wrapped flex grid when `prefers-reduced-motion: reduce` is active

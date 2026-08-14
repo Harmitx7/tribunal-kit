@@ -29,6 +29,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before launching the full 21-reviewer audit, you MUST inspect:
+
 1. Pending Code Modifications (`git diff` / modified files) → Inspect diffs across all domains (frontend, backend, database, mobile)
 2. Workspace Configuration Context (`package.json`, `tsconfig.json`, `tailwind.config`) → Verify project build contracts
 3. 21-Reviewer Synthesis Gate → Execute all 21 specialized reviewers in parallel; halt on any security violation or critical bug before Human Gate approval
@@ -93,7 +94,7 @@ Not all 21 reviewers produce meaningful findings on all code types. Active revie
 | AI LLM integration  | logic, security, ai-code, dependency                              |
 | Test file           | test-coverage, logic                                              |
 | React Native / Expo | mobile, logic, security, performance, ui-ux                       |
-| Next.js page        | logic, frontend, performance, accessibility, ui-ux                       |
+| Next.js page        | logic, frontend, performance, accessibility, ui-ux                |
 | Auth/JWT code       | security, logic, type-safety                                      |
 
 ---

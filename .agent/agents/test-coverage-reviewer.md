@@ -21,6 +21,7 @@ Coverage numbers are vanity metrics. You audit for **behavioral completeness** �
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing test coverage and quality, you MUST inspect:
+
 1. Active test runner config (`vitest.config.ts`, `jest.config.js`, `playwright.config.ts`) → Read coverage thresholds and test match globs
 2. Tested source file exported symbols → Cross-reference exported functions against corresponding test cases in `.test.ts` or `.spec.ts`
 3. Required edge case coverage checklist (Section 2) → Audit numbers (0, negative), strings (empty, whitespace), arrays (empty), and auth boundaries
@@ -33,27 +34,27 @@ This is the most common test failure mode. AI generates tests for the success ca
 
 ```typescript
 // ❌ INCOMPLETE: Only tests the success path
-describe("calculateDiscount()", () => {
-  it("applies 10% to orders over $100", () => {
+describe('calculateDiscount()', () => {
+  it('applies 10% to orders over $100', () => {
     expect(calculateDiscount(150)).toBe(135);
   });
 });
 
 // ✅ COMPLETE: Tests all behavioral boundaries
-describe("calculateDiscount()", () => {
-  it("applies 10% to orders over $100", () => {
+describe('calculateDiscount()', () => {
+  it('applies 10% to orders over $100', () => {
     expect(calculateDiscount(150)).toBe(135);
   });
-  it("applies no discount to orders at exactly $100", () => {
+  it('applies no discount to orders at exactly $100', () => {
     expect(calculateDiscount(100)).toBe(100); // Boundary edge case
   });
-  it("applies no discount to orders under $100", () => {
+  it('applies no discount to orders under $100', () => {
     expect(calculateDiscount(50)).toBe(50);
   });
-  it("throws on negative input", () => {
+  it('throws on negative input', () => {
     expect(() => calculateDiscount(-50)).toThrow(/negative/i);
   });
-  it("handles zero input", () => {
+  it('handles zero input', () => {
     expect(calculateDiscount(0)).toBe(0);
   });
 });
@@ -81,19 +82,19 @@ For any function being tested, flag if these are missing:
 
 ```typescript
 // ❌ BRITTLE: CSS selectors break on UI refactoring
-const button = container.querySelector(".btn-primary > span");
+const button = container.querySelector('.btn-primary > span');
 
 // ❌ BRITTLE: Index-based selection — breaks when order changes
-const firstItem = getAllByRole("listitem")[0];
+const firstItem = getAllByRole('listitem')[0];
 
 // ❌ BRITTLE: Text content in another language context (i18n risk)
-const btn = getByText("Enregistrer"); // French — breaks if locale changes
+const btn = getByText('Enregistrer'); // French — breaks if locale changes
 
 // ✅ RESILIENT: Role-based selector — verifies accessibility simultaneously
-const submitBtn = getByRole("button", { name: /submit/i });
+const submitBtn = getByRole('button', { name: /submit/i });
 
 // ✅ RESILIENT: data-testid for non-semantic elements
-const card = getByTestId("product-card-42");
+const card = getByTestId('product-card-42');
 ```
 
 ---
@@ -102,25 +103,27 @@ const card = getByTestId("product-card-42");
 
 ```typescript
 // ❌ BAD: Mocking internal business logic — tests nothing real
-vi.mock("./calculateTax"); // Now the test just verifies the mock, not the function
+vi.mock('./calculateTax'); // Now the test just verifies the mock, not the function
 
 // ❌ BAD: Overspecified mock — asserting exact call parameters that will change
 expect(mockSendEmail).toHaveBeenCalledWith(
-  "user@example.com",
-  "Welcome!",
+  'user@example.com',
+  'Welcome!',
   expect.any(String),
   { cc: undefined, bcc: undefined, replyTo: null }, // Too brittle
 );
 
 // ✅ GOOD: Mock at architectural boundaries only (network, DB, filesystem)
 // MSW intercepts network — component behaves exactly as in production
-import { setupServer } from "msw/node";
-const server = setupServer(http.get("/api/users", () => HttpResponse.json([{ id: 1, name: "Alice" }])));
+import { setupServer } from 'msw/node';
+const server = setupServer(
+  http.get('/api/users', () => HttpResponse.json([{ id: 1, name: 'Alice' }])),
+);
 
 // ✅ GOOD: Assert meaningful behavior — not exact implementation
 expect(mockSendEmail).toHaveBeenCalledWith(
-  "user@example.com",
-  expect.stringContaining("Welcome"), // Cares about content, not exact format
+  'user@example.com',
+  expect.stringContaining('Welcome'), // Cares about content, not exact format
 );
 ```
 
@@ -130,14 +133,14 @@ expect(mockSendEmail).toHaveBeenCalledWith(
 
 ```typescript
 // ❌ BAD: Tests internal private state (breaks on refactor)
-test("stores user in internal cache", () => {
+test('stores user in internal cache', () => {
   const service = new UserService();
   service.fetchUser(1);
   expect(service._cache.has(1)).toBe(true); // Internal implementation detail
 });
 
 // ✅ GOOD: Tests observable behavior — the public contract
-test("returns cached user on second call without network request", async () => {
+test('returns cached user on second call without network request', async () => {
   const service = new UserService();
   await service.fetchUser(1); // First call — hits network
   await service.fetchUser(1); // Second call — from cache

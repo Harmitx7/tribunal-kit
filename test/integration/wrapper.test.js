@@ -1,48 +1,51 @@
-"use strict";
+'use strict';
 
-const { spawnSync } = require("child_process");
-const path = require("path");
-const fs = require("fs");
-const os = require("os");
+const { spawnSync } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
 
-const WRAPPER = path.resolve(__dirname, "../../bin/wrapper.js");
+const WRAPPER = path.resolve(__dirname, '../../bin/wrapper.js');
 
 function runWrapper(args = [], extraEnv = {}) {
   return spawnSync(process.execPath, [WRAPPER, ...args], {
-    encoding: "utf8",
+    encoding: 'utf8',
     timeout: 5000,
-    env: { ...process.env, TK_SKIP_UPDATE_CHECK: "1", ...extraEnv },
+    env: { ...process.env, TK_SKIP_UPDATE_CHECK: '1', ...extraEnv },
   });
 }
 
-describe("wrapper.js fallback routing", () => {
-  test("routes unknown commands to JS implementation directly", () => {
-    const result = runWrapper(["unknown-command-test"]);
+describe('wrapper.js fallback routing', () => {
+  test('routes unknown commands to JS implementation directly', () => {
+    const result = runWrapper(['unknown-command-test']);
     // The JS implementation outputs 'Tribunal Kit' when run without args or unhandled command
-    expect(result.stdout).toContain("Run tribunal-kit --help for usage");
+    expect(result.stdout).toContain('Run tribunal-kit --help for usage');
   });
 
-  test("warns and falls back to JS when Rust binary is not found for supported command", () => {
-    const result = runWrapper(["status"], { TRIBUNAL_FORCE_JS: "1", TK_VERBOSE: "1" });
+  test('warns and falls back to JS when Rust binary is not found for supported command', () => {
+    const result = runWrapper(['status'], { TRIBUNAL_FORCE_JS: '1', TK_VERBOSE: '1' });
     // Since the binary doesn't exist yet, it should log the warning and then run JS status
-    expect(result.stderr).toContain("Rust binary not found");
+    expect(result.stderr).toContain('Rust binary not found');
     // Check that the JS status command actually runs (it usually prints the agent config status)
     // We look for any known output from JS cmdStatus or at least lack of Rust execution
-    expect(result.stdout).not.toContain("Executing via Rust Core Engine");
+    expect(result.stdout).not.toContain('Executing via Rust Core Engine');
   });
 
-  test("runs validate through the JavaScript fallback", () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tk-wrapper-validate-"));
-    const payloadPath = path.join(tempDir, "payload.json");
-    fs.writeFileSync(payloadPath, JSON.stringify({ dispatch_micro_workers: [{ target_agent: "logic-reviewer" }] }));
+  test('runs validate through the JavaScript fallback', () => {
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tk-wrapper-validate-'));
+    const payloadPath = path.join(tempDir, 'payload.json');
+    fs.writeFileSync(
+      payloadPath,
+      JSON.stringify({ dispatch_micro_workers: [{ target_agent: 'logic-reviewer' }] }),
+    );
 
     try {
-      const result = runWrapper(
-        ["validate", "--file", payloadPath, "--schema", "micro-worker"],
-        { TRIBUNAL_FORCE_JS: "1", TK_VERBOSE: "1" },
-      );
+      const result = runWrapper(['validate', '--file', payloadPath, '--schema', 'micro-worker'], {
+        TRIBUNAL_FORCE_JS: '1',
+        TK_VERBOSE: '1',
+      });
       expect(result.status).toBe(0);
-      expect(result.stderr).toContain("Rust binary not found");
+      expect(result.stderr).toContain('Rust binary not found');
     } finally {
       fs.rmSync(tempDir, { recursive: true, force: true });
     }

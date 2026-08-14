@@ -59,6 +59,8 @@ async function cmdCase(flags, processArgs, quiet = false) {
                 );
                 if (!quiet) {
                     (0, logger_1.log)(`  ${(0, logger_1.c)('cyan', '\u25b8')} Memory bridge: case law rejection stored to memory index`);
+                    (0, logger_1.log)(`  ${(0, logger_1.c)('gray', '💡')} Tip: Auto-generate a behavioral contract to prevent recurrence:`);
+                    (0, logger_1.log)(`     ${(0, logger_1.c)('cyan', 'tk contract generate --from-case latest')}`);
                 }
             } catch {
                 // Non-critical — case law was still saved, memory bridge is a bonus

@@ -1,7 +1,7 @@
 name: Feature Request
 description: Suggest an enhancement or new capability
-title: "[Feature]: "
-labels: ["enhancement"]
+title: '[Feature]: '
+labels: ['enhancement']
 body:
   - type: markdown
     attributes:
@@ -30,7 +30,7 @@ body:
     attributes:
       label: Problem or Use Case
       description: What problem does this solve? Describe the use case, not just the solution.
-      placeholder: "When I use Cursor with a large monorepo, I need..."
+      placeholder: 'When I use Cursor with a large monorepo, I need...'
     validations:
       required: true
   - type: textarea
@@ -51,5 +51,5 @@ body:
       label: Would you be willing to contribute this?
       options:
         - "Yes — I'd like to submit a PR"
-        - "Maybe — with guidance"
-        - "No — just suggesting"
+        - 'Maybe — with guidance'
+        - 'No — just suggesting'

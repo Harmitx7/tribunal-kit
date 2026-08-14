@@ -17,6 +17,7 @@ last-updated: 2026-07-29
 ## Mandatory Pre-Flight Context Inspection
 
 Before generating metadata, sitemaps, or structured data, you MUST inspect:
+
 1. `app/layout.tsx` / `next.config.js` → Read base URL, default metadata options, and OpenGraph defaults
 2. Page templates (`app/**/page.tsx`) → Verify heading hierarchy (single `<h1>` per page) and Schema.org JSON-LD scripts
 3. AI bot middleware / GEO paths → Audit `sitemap.ts`, `robots.ts`, and crawler detection rules
@@ -25,20 +26,24 @@ Before generating metadata, sitemaps, or structured data, you MUST inspect:
 
 ```typescript
 // app/products/[slug]/page.tsx
-import { Metadata } from "next";
+import { Metadata } from 'next';
 
 // Static metadata
 export const metadata: Metadata = {
-  title: "Product Name | Brand",
-  description: "Compelling 155-character description that matches search intent.",
+  title: 'Product Name | Brand',
+  description: 'Compelling 155-character description that matches search intent.',
 };
 
 // Dynamic metadata (fetched per-page)
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProduct(slug);
 
-  if (!product) return { title: "Not Found" };
+  if (!product) return { title: 'Not Found' };
 
   return {
     title: `${product.name} | Brand`,
@@ -56,12 +61,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
           alt: product.name,
         },
       ],
-      siteName: "Your Brand",
-      type: "website",
+      siteName: 'Your Brand',
+      type: 'website',
     },
 
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title: product.name,
       description: product.seoDescription,
       images: [product.imageUrl],
@@ -81,21 +86,23 @@ export default async function ProductPage({ params }) {
   const product = await getProduct(slug);
 
   const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
+    '@context': 'https://schema.org',
+    '@type': 'Product',
     name: product.name,
     image: product.imageUrl,
     description: product.description,
     sku: product.sku,
     offers: {
-      "@type": "Offer",
+      '@type': 'Offer',
       price: product.price,
-      priceCurrency: "USD",
-      availability: product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      priceCurrency: 'USD',
+      availability: product.inStock
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
       url: `https://yoursite.com/products/${slug}`,
     },
     aggregateRating: {
-      "@type": "AggregateRating",
+      '@type': 'AggregateRating',
       ratingValue: product.averageRating,
       reviewCount: product.reviewCount,
     },
@@ -103,7 +110,10 @@ export default async function ProductPage({ params }) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* page content */}
     </>
   );
@@ -116,29 +126,29 @@ export default async function ProductPage({ params }) {
 
 ```typescript
 // app/sitemap.ts
-import { MetadataRoute } from "next";
+import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await getAllProducts();
 
-  const productUrls = products.map((product) => ({
+  const productUrls = products.map(product => ({
     url: `https://yoursite.com/products/${product.slug}`,
     lastModified: product.updatedAt,
-    changeFrequency: "weekly" as const,
+    changeFrequency: 'weekly' as const,
     priority: 0.8,
   }));
 
   return [
     {
-      url: "https://yoursite.com",
+      url: 'https://yoursite.com',
       lastModified: new Date(),
-      changeFrequency: "daily",
+      changeFrequency: 'daily',
       priority: 1.0,
     },
     {
-      url: "https://yoursite.com/products",
+      url: 'https://yoursite.com/products',
       lastModified: new Date(),
-      changeFrequency: "daily",
+      changeFrequency: 'daily',
       priority: 0.9,
     },
     ...productUrls,
@@ -177,7 +187,7 @@ When AI engines (Perplexity, ChatGPT Search) index your site, they need:
 // Next.js Edge Middleware: serve bare markdown to AI bots
 // middleware.ts
 export function middleware(req: NextRequest) {
-  const ua = req.headers.get("user-agent") ?? "";
+  const ua = req.headers.get('user-agent') ?? '';
   const isAIBot = /ChatGPT-User|PerplexityBot|ClaudeBot|GPTBot/i.test(ua);
 
   if (isAIBot) {

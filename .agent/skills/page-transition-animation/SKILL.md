@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering route or page transitions, you MUST inspect:
+
 1. Target Framework & API (View Transitions API vs Framer Motion `AnimatePresence`)
 2. `AnimatePresence` Keying (Section 69) → Enforce `key={pathname}` and `mode="wait"` to prevent double-page DOM stacking
 3. Vertical Displacement Cap → Keep route movement under $12\text{px}$ to prevent visual scroll shifts
@@ -31,6 +32,7 @@ Architect smooth, seamless page and route transitions without layout jumps or fr
 ## 3 Page Transition Architectures
 
 ### 1. Native Web View Transitions API
+
 The modern web standard for seamless page transitions (works across MPAs and SPAs):
 
 ```javascript
@@ -63,11 +65,12 @@ function navigateToPage(url) {
 ```
 
 ### 2. Next.js App Router + Framer Motion (`AnimatePresence`)
-```tsx
-"use client";
 
-import { usePathname } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
+```tsx
+'use client';
+
+import { usePathname } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export function RouteLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

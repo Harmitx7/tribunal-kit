@@ -19,6 +19,7 @@ skills:
 ## Mandatory Pre-Flight Context Inspection
 
 Before provisioning cloud infrastructure:
+
 1. OpenTofu State Locking → Use remote S3/DynamoDB or backend state locking to prevent concurrency collisions
 2. Least Privilege IAM → Enforce strict role-based access control (RBAC) on all cloud resources
 3. Plan Validation → Run `tofu plan` and static security analysis (tfsec/checkov) before `tofu apply`

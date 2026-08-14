@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing local-first storage or CRDT synchronization, you MUST inspect:
+
 1. Conflict Resolution Strategy (Section 15) → Define explicit conflict resolution (LWW timestamps or Yjs CRDTs) before writing local sync logic
 2. Persistent Storage (Section 16) → Use IndexedDB (via Dexie/idb) or SQLite WASM for local persistence; ban localStorage for >5MB data
 3. Incremental Watermark Sync (Section 17) → Perform delta syncs using timestamps/watermarks rather than re-fetching full datasets
@@ -55,20 +56,20 @@ Do not use React Query / SWR to build local-first. They are HTTP caching mechani
 // ❌ CLOUD-FIRST (React Query / Fetch)
 // Fails when offline. Subject to UI latency.
 const { data, isLoading } = useQuery({
-  queryKey: ["todos"],
-  queryFn: () => fetch("/api/todos").then((res) => res.json()),
+  queryKey: ['todos'],
+  queryFn: () => fetch('/api/todos').then(res => res.json()),
 });
 
 // ✅ LOCAL-FIRST (e.g. PowerSync / ElectricSQL / WatermelonDB)
 // Resolves instantly. Data lives locally. Syncs silently in background.
-import { useQuery } from "@powersync/react";
+import { useQuery } from '@powersync/react';
 
-const { data, isLoading } = useQuery("SELECT * FROM todos ORDER BY created_at DESC");
+const { data, isLoading } = useQuery('SELECT * FROM todos ORDER BY created_at DESC');
 
 // Writes are also local First
 const addTodo = async (text: string) => {
   // Written to the local SQLite WASM database instantly.
-  await localDb.execute("INSERT INTO todos (id, text) VALUES (uuid(), ?)", [text]);
+  await localDb.execute('INSERT INTO todos (id, text) VALUES (uuid(), ?)', [text]);
   // Background worker syncs to Postgres later.
 };
 ```
@@ -83,22 +84,22 @@ When two users edit the exact same document offline and then reconnect, how is i
 
 ```typescript
 // Yjs - The leading CRDT library for collaborative text/state
-import * as Y from "yjs";
-import { WebsocketProvider } from "y-websocket";
+import * as Y from 'yjs';
+import { WebsocketProvider } from 'y-websocket';
 
 const ydoc = new Y.Doc();
-const provider = new WebsocketProvider("wss://sync.example.com", "room-1", ydoc);
+const provider = new WebsocketProvider('wss://sync.example.com', 'room-1', ydoc);
 
 // Shared state array
-const yarray = ydoc.getArray("todos");
+const yarray = ydoc.getArray('todos');
 
 // Observe changes (Fires locally and when peers sync)
-yarray.observe((event) => {
-  console.log("State updated natively without conflict:", yarray.toArray());
+yarray.observe(event => {
+  console.log('State updated natively without conflict:', yarray.toArray());
 });
 
 // Insert data (Instantly merges cleanly with remote peers)
-yarray.insert(0, ["Buy milk"]);
+yarray.insert(0, ['Buy milk']);
 ```
 
 ---
@@ -117,7 +118,7 @@ Storing megabytes of relational data in `localStorage` will crash the browser.
 
 ```typescript
 // Clean IndexedDB Wrapper Example (Dexie)
-import Dexie, { type EntityTable } from "dexie";
+import Dexie, { type EntityTable } from 'dexie';
 
 interface Friend {
   id: number;
@@ -125,21 +126,21 @@ interface Friend {
   age: number;
 }
 
-const db = new Dexie("FriendsDatabase") as Dexie & {
-  friends: EntityTable<Friend, "id">;
+const db = new Dexie('FriendsDatabase') as Dexie & {
+  friends: EntityTable<Friend, 'id'>;
 };
 
 // Schema configuration
 db.version(1).stores({
-  friends: "++id, name, age", // Primary key and indexed props
+  friends: '++id, name, age', // Primary key and indexed props
 });
 
 // Write to DB instantly
-await db.friends.add({ name: "Alice", age: 25 });
+await db.friends.add({ name: 'Alice', age: 25 });
 
 // Live query natively drives React state without network calls
-import { useLiveQuery } from "dexie-react-hooks";
-const friends = useLiveQuery(() => db.friends.where("age").above(21).toArray());
+import { useLiveQuery } from 'dexie-react-hooks';
+const friends = useLiveQuery(() => db.friends.where('age').above(21).toArray());
 ```
 
 ---

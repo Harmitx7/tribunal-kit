@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before implementing clip-path or SVG mask reveals, you MUST inspect:
+
 1. Target DOM elements → Enforce `overflow: hidden` on text line wrappers to prevent unmasked overflow artifacts
 2. `clip-path: inset()` syntax (Section 26) → Prefer CSS `clip-path` over heavy SVG masks for linear curtain wipes
 3. Transition Easing → Use custom ease-out curves (`cubic-bezier(0.16, 1, 0.3, 1)`) for smooth deceleration
@@ -31,10 +32,15 @@ Create editorial, high-end visual reveals using CSS `clip-path` and SVG masks.
 ## 3 Masked Reveal Patterns
 
 ### 1. CSS `clip-path` Curtain Reveal
+
 ```css
 @keyframes curtain-reveal {
-  from { clip-path: inset(0 100% 0 0); }
-  to { clip-path: inset(0 0 0 0); }
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
 }
 
 .reveal-image-curtain {
@@ -43,10 +49,15 @@ Create editorial, high-end visual reveals using CSS `clip-path` and SVG masks.
 ```
 
 ### 2. Radial Spotlight Clip Reveal
+
 ```css
 @keyframes circle-expand {
-  from { clip-path: circle(0% at 50% 50%); }
-  to { clip-path: circle(150% at 50% 50%); }
+  from {
+    clip-path: circle(0% at 50% 50%);
+  }
+  to {
+    clip-path: circle(150% at 50% 50%);
+  }
 }
 
 .spotlight-reveal {
@@ -55,7 +66,9 @@ Create editorial, high-end visual reveals using CSS `clip-path` and SVG masks.
 ```
 
 ### 3. Masked Text Line Wipe (Editorial Typography)
+
 Wrap text lines inside overflow-hidden wrappers and animate inner text lines upward:
+
 ```css
 .text-line-wrapper {
   overflow: hidden;

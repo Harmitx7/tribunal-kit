@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before refactoring or producing an architectural improvement roadmap, you MUST inspect:
+
 1. Circular Dependency Breaking Rule (Section 24) → Identify circular imports (`A -> B -> C -> A`) and resolve via event buses or explicit interfaces
 2. Monolithic Controller Line Threshold (500 lines) (Section 27) → Flag any controller/service >500 lines with mixed concerns for immediate decomposition
 3. Incremental Refactoring Rule (Section 46) → Ban shotgun surgery across >5 files simultaneously; enforce phased, test-backed interface extractions
@@ -33,22 +34,26 @@ Audit an existing codebase for structural rot, circular dependencies, monolithic
 ## 4 Audit Steps
 
 ### 1. Dependency Graph Inspection
+
 - Map import relationships across modules. Identify circular dependencies (`A -> B -> C -> A`) and break them by introducing event buses or interface abstractions.
 
 ### 2. Monolithic Controller Detection
+
 - Flag files exceeding 500 lines of code containing mixed concerns (database queries, HTTP response handling, email sending, data validation).
 
 ### 3. Interface Shrinking (Deepening Modules)
+
 - Audit public exports. Convert large multi-parameter interfaces into thin, single-responsibility contracts.
 
 ### 4. Prioritized Architectural Roadmap Output
+
 Output audit findings in a clear prioritized Markdown table:
 
-| Impact Level | Architectural Issue | Proposed Seam / Refactor |
-| --- | --- | --- |
-| 🔴 **High Impact** | Direct DB queries inside React Server Components | Extract Repository layer pattern |
-| 🟠 **Medium Impact** | Circular import between Auth and User modules | Introduce `EventBus` for user registration events |
-| 🟡 **Low Impact** | Hardcoded API base URLs across 12 files | Centralize in typed `ConfigService` |
+| Impact Level         | Architectural Issue                              | Proposed Seam / Refactor                          |
+| -------------------- | ------------------------------------------------ | ------------------------------------------------- |
+| 🔴 **High Impact**   | Direct DB queries inside React Server Components | Extract Repository layer pattern                  |
+| 🟠 **Medium Impact** | Circular import between Auth and User modules    | Introduce `EventBus` for user registration events |
+| 🟡 **Low Impact**    | Hardcoded API base URLs across 12 files          | Centralize in typed `ConfigService`               |
 
 ---
 

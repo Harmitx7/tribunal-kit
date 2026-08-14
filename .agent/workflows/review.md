@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing code for hallucinations or structural flaws, you MUST inspect:
+
 1. Target Source Code & Dependent Modules → Read target files and their import declarations
 2. Package Manifest (`package.json`) → Cross-reference imported packages against installed dependencies
 3. Pure Read-Only Constraint → Prohibit any file mutations or generation; output findings in structured audit tables strictly

@@ -104,7 +104,7 @@ project-name/
 3. Install Tailwind v4 (Add to globals.css):
 
    ```css
-   @import "tailwindcss";
+   @import 'tailwindcss';
    ```
 
 4. Configure environment (.env.local)

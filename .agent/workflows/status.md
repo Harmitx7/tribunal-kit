@@ -19,6 +19,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before rendering project status dashboards, you MUST inspect:
+
 1. Active Execution Ledger (`task.md`) → Read current wave progress, finished tasks, and active in-progress item
 2. Workspace Git Status (`git status`, `git diff --stat`) → List uncommitted edits and modified files
 3. Read-Only Constraint → Ban any file mutations or state updates during status reporting; report status strictly

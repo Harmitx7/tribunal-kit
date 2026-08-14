@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before defining color palettes or CSS theme variables, you MUST inspect:
+
 1. `DESIGN.md` / `index.css` → Check existing CSS custom properties and color variables
 2. OKLCH Syntax & Relative Color Rules (Section 30) → Use `oklch(L C H)` format with subtle chroma (`C: 0.01-0.02`) for neutrals
 3. WCAG 2.2 AA Contrast Thresholds (Section 82) → Ensure `L ≤ 45%` for text on light background and `L ≥ 70%` on dark background
@@ -63,7 +64,7 @@ $$\text{Format: } \text{oklch}(L \quad C \quad H [\quad / \quad A])$$
   /* Neutrals: Subtly Tinted (Chroma ~ 0.015) */
   --bg-surface: oklch(0.99 0.005 260);
   --bg-surface-raised: oklch(0.96 0.01 260);
-  --text-main: oklch(0.20 0.02 260);
+  --text-main: oklch(0.2 0.02 260);
   --text-muted: oklch(0.45 0.02 260);
   --border-subtle: oklch(0.88 0.015 260);
 }
@@ -72,7 +73,7 @@ $$\text{Format: } \text{oklch}(L \quad C \quad H [\quad / \quad A])$$
 :root {
   color-scheme: light dark;
   --surface-adaptive: light-dark(oklch(0.99 0.005 260), oklch(0.14 0.015 260));
-  --text-adaptive: light-dark(oklch(0.20 0.02 260), oklch(0.96 0.01 260));
+  --text-adaptive: light-dark(oklch(0.2 0.02 260), oklch(0.96 0.01 260));
 }
 
 @media (prefers-color-scheme: dark) {
@@ -91,12 +92,15 @@ $$\text{Format: } \text{oklch}(L \quad C \quad H [\quad / \quad A])$$
 ## 3. WCAG 2.2 AA Contrast Standards
 
 Always verify contrast using WCAG AA minimum thresholds:
+
 - **Normal Text (< 18pt / < 24px)**: Minimum **4.5:1** contrast ratio.
 - **Large Text (≥ 18pt / ≥ 24px bold)**: Minimum **3.0:1** contrast ratio.
 - **UI Components & Icons**: Minimum **3.0:1** contrast ratio against adjacent surface.
 
 ### Rule of Thumb in OKLCH:
+
 To achieve 4.5:1 text contrast against a surface:
+
 - Against Light Surface (`L ≈ 98%`): Text lightness `L` MUST be **`≤ 45%`**.
 - Against Dark Surface (`L ≈ 14%`): Text lightness `L` MUST be **`≥ 70%`**.
 
@@ -111,11 +115,11 @@ To achieve 4.5:1 text contrast against a surface:
 
 ## Anti-Slop Table
 
-| Anti-Pattern | OKLCH Solution | Rationale |
-| --- | --- | --- |
-| Single gray for all backgrounds | Neutral tinted with brand hue (`C: 0.01-0.02`) | Creates cohesive, harmonious UI surfaces |
-| Over-saturated dark mode accents | Scale chroma down (`C: 0.22` → `C: 0.15`) in dark mode | Eliminates glowing text vibration & visual strain |
-| Harsh pure black borders (`#000`) | Alpha-tinted borders (`rgba(255,255,255,0.08)`) | Smooths elevation layers |
+| Anti-Pattern                      | OKLCH Solution                                         | Rationale                                         |
+| --------------------------------- | ------------------------------------------------------ | ------------------------------------------------- |
+| Single gray for all backgrounds   | Neutral tinted with brand hue (`C: 0.01-0.02`)         | Creates cohesive, harmonious UI surfaces          |
+| Over-saturated dark mode accents  | Scale chroma down (`C: 0.22` → `C: 0.15`) in dark mode | Eliminates glowing text vibration & visual strain |
+| Harsh pure black borders (`#000`) | Alpha-tinted borders (`rgba(255,255,255,0.08)`)        | Smooths elevation layers                          |
 
 ---
 

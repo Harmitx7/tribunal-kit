@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering game state loops or physics engines, you MUST inspect:
+
 1. Clamped DeltaTime Rule (Section 25) → Clamp `deltaTime` (max 0.05s) to prevent physics explosions on frame rate drops
 2. Garbage Collection & Object Pooling (Section 50) → Pre-allocate and pool game objects; ban `Instantiate()` or dynamic memory allocations in frame update loops
 3. FixedUpdate vs Update Separation (Section 43) → Put all physics logic in `FixedUpdate()`; use `Update()` strictly for visual interpolation and input collection

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing accessibility or building UI components, you MUST inspect:
+
 1. Native Semantic HTML First Rule (Section 28) → Use native `<button>`, `<a>`, `<label>` elements; ban adding `role="button"` to non-interactive `<div>` tags
 2. Keyboard Focus Visibility (Section 61) → Preserve `:focus-visible` outlines; ban global outline removal (`*:focus { outline: none; }`)
 3. Explicit Form Label Linking (Section 129) → Explicitly link inputs to `<label>` via `id`/`for` attributes; ban using `placeholder` as a label replacement
@@ -104,7 +105,7 @@ When a modal opens:
   <button formmethod="dialog">Close</button>
 </dialog>
 <script>
-  document.getElementById("myModal").showModal();
+  document.getElementById('myModal').showModal();
 </script>
 ```
 

@@ -20,6 +20,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before saving, restoring, or clearing session state snapshots, you MUST inspect:
+
 1. Session Manager Executable (`.agent/scripts/session_manager.js`) → Confirm script availability and snapshot parameters
 2. Active Session History -> Read latest snapshot metadata (`session_id`, active task, modified files, open decisions)
 3. Zero Context Loss Rule → Verify state snapshot contains explicit next steps and task status prior to terminating conversation

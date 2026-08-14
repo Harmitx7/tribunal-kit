@@ -6,22 +6,22 @@
  * Run: node scripts/benchmark.js
  */
 
-const { spawnSync } = require("child_process");
-const path = require("path");
-const fs = require("fs");
-const os = require("os");
+const { spawnSync } = require('child_process');
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
 
 // ANSI colors
 const C = {
-  reset: "\x1b[0m",
-  bold: "\x1b[1m",
-  dim: "\x1b[2m",
-  red: "\x1b[91m",
-  green: "\x1b[92m",
-  yellow: "\x1b[93m",
-  cyan: "\x1b[96m",
-  white: "\x1b[97m",
-  gray: "\x1b[90m",
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+  dim: '\x1b[2m',
+  red: '\x1b[91m',
+  green: '\x1b[92m',
+  yellow: '\x1b[93m',
+  cyan: '\x1b[96m',
+  white: '\x1b[97m',
+  gray: '\x1b[90m',
 };
 
 function c(color, text) {
@@ -59,10 +59,10 @@ function benchmarkCommand(label, command, runs = 3) {
   return benchmark(
     label,
     () => {
-      spawnSync("node", command.split(" "), {
-        stdio: "pipe",
-        encoding: "utf8",
-        env: { ...process.env, TK_SKIP_UPDATE_CHECK: "1" },
+      spawnSync('node', command.split(' '), {
+        stdio: 'pipe',
+        encoding: 'utf8',
+        env: { ...process.env, TK_SKIP_UPDATE_CHECK: '1' },
       });
     },
     runs,
@@ -72,67 +72,50 @@ function benchmarkCommand(label, command, runs = 3) {
 async function main() {
   console.log();
   console.log(bold(`  ⚡ Tribunal-Kit Performance Benchmark`));
-  console.log(c("gray", `  ─────────────────────────────────────────`));
-  console.log(c("gray", `  Platform: ${os.platform()} ${os.arch()}`));
-  console.log(c("gray", `  Node: ${process.version}`));
-  console.log(
-    c(
-      "gray",
-      `  CPUs: ${os.cpus().length}x ${os.cpus()[0]?.model || "unknown"}`,
-    ),
-  );
-  console.log(c("gray", `  ─────────────────────────────────────────`));
+  console.log(c('gray', `  ─────────────────────────────────────────`));
+  console.log(c('gray', `  Platform: ${os.platform()} ${os.arch()}`));
+  console.log(c('gray', `  Node: ${process.version}`));
+  console.log(c('gray', `  CPUs: ${os.cpus().length}x ${os.cpus()[0]?.model || 'unknown'}`));
+  console.log(c('gray', `  ─────────────────────────────────────────`));
   console.log();
 
-  const cliPath = path.resolve(__dirname, "../bin/wrapper.js");
+  const cliPath = path.resolve(__dirname, '../bin/wrapper.js');
   const tempDir = path.join(os.tmpdir(), `tribunal-bench-${Date.now()}`);
   fs.mkdirSync(tempDir, { recursive: true });
 
   const results = [];
 
   // 1. Cold start (help)
-  console.log(c("cyan", "  ▸ Benchmarking: CLI cold-start (--help)"));
-  const helpResult = await benchmarkCommand(
-    "CLI cold-start (--help)",
-    `${cliPath} --help`,
-    5,
-  );
+  console.log(c('cyan', '  ▸ Benchmarking: CLI cold-start (--help)'));
+  const helpResult = await benchmarkCommand('CLI cold-start (--help)', `${cliPath} --help`, 5);
   results.push(helpResult);
 
   // 2. Status check
-  console.log(c("cyan", "  ▸ Benchmarking: tk status"));
-  const statusResult = await benchmarkCommand(
-    "Status check",
-    `${cliPath} status --quiet`,
-    5,
-  );
+  console.log(c('cyan', '  ▸ Benchmarking: tk status'));
+  const statusResult = await benchmarkCommand('Status check', `${cliPath} status --quiet`, 5);
   results.push(statusResult);
 
   // 3. Init (dry-run)
-  console.log(c("cyan", "  ▸ Benchmarking: tk init --dry-run"));
+  console.log(c('cyan', '  ▸ Benchmarking: tk init --dry-run'));
   const initResult = await benchmarkCommand(
-    "Init (dry-run)",
+    'Init (dry-run)',
     `${cliPath} init --dry-run --quiet --skip-update-check --path=${tempDir}`,
     3,
   );
   results.push(initResult);
 
   // 4. Init (real, to temp dir)
-  console.log(c("cyan", "  ▸ Benchmarking: tk init (real copy)"));
+  console.log(c('cyan', '  ▸ Benchmarking: tk init (real copy)'));
   const initRealResult = await benchmark(
-    "Init (full copy)",
+    'Init (full copy)',
     () => {
       const runDir = path.join(tempDir, `run-${Date.now()}`);
       fs.mkdirSync(runDir, { recursive: true });
-      spawnSync(
-        "node",
-        [cliPath, "init", "--quiet", "--skip-update-check", `--path=${runDir}`],
-        {
-          stdio: "pipe",
-          encoding: "utf8",
-          env: { ...process.env, TK_SKIP_UPDATE_CHECK: "1" },
-        },
-      );
+      spawnSync('node', [cliPath, 'init', '--quiet', '--skip-update-check', `--path=${runDir}`], {
+        stdio: 'pipe',
+        encoding: 'utf8',
+        env: { ...process.env, TK_SKIP_UPDATE_CHECK: '1' },
+      });
       // Cleanup
       try {
         fs.rmSync(runDir, { recursive: true, force: true });
@@ -143,35 +126,35 @@ async function main() {
   results.push(initRealResult);
 
   // 5. DAG scheduling benchmark
-  console.log(c("cyan", "  ▸ Benchmarking: DAG scheduling calculation"));
+  console.log(c('cyan', '  ▸ Benchmarking: DAG scheduling calculation'));
   const dagResult = await benchmark(
-    "DAG wave scheduling",
+    'DAG wave scheduling',
     () => {
       const workers = [
-        { task_id: "w1", dependencies: [] },
-        { task_id: "w2", dependencies: ["w1"] },
-        { task_id: "w3", dependencies: ["w1"] },
-        { task_id: "w4", dependencies: ["w2", "w3"] },
+        { task_id: 'w1', dependencies: [] },
+        { task_id: 'w2', dependencies: ['w1'] },
+        { task_id: 'w3', dependencies: ['w1'] },
+        { task_id: 'w4', dependencies: ['w2', 'w3'] },
       ];
       const inDegree = {};
       const adjList = {};
-      workers.forEach((w) => {
+      workers.forEach(w => {
         inDegree[w.task_id] = 0;
         adjList[w.task_id] = [];
       });
-      workers.forEach((w) => {
-        w.dependencies.forEach((dep) => {
+      workers.forEach(w => {
+        w.dependencies.forEach(dep => {
           adjList[dep].push(w.task_id);
           inDegree[w.task_id] += 1;
         });
       });
-      let currentWave = Object.keys(inDegree).filter((id) => inDegree[id] === 0);
+      let currentWave = Object.keys(inDegree).filter(id => inDegree[id] === 0);
       const waves = [];
       while (currentWave.length > 0) {
         waves.push(currentWave);
         const next = [];
-        currentWave.forEach((id) => {
-          adjList[id].forEach((nbr) => {
+        currentWave.forEach(id => {
+          adjList[id].forEach(nbr => {
             inDegree[nbr] -= 1;
             if (inDegree[nbr] === 0) next.push(nbr);
           });
@@ -184,12 +167,12 @@ async function main() {
   results.push(dagResult);
 
   // 6. Minimal Change Governance Engine benchmark
-  console.log(c("cyan", "  ▸ Benchmarking: Minimal Change Governance Engine"));
+  console.log(c('cyan', '  ▸ Benchmarking: Minimal Change Governance Engine'));
   const minResult = await benchmark(
-    "Minimal Change Audit",
+    'Minimal Change Audit',
     () => {
-      const minEngine = require("../.agent/scripts/minimal_change_engine");
-      minEngine.evaluateMinimalChange("add retry logic to API requests", {
+      const minEngine = require('../.agent/scripts/minimal_change_engine');
+      minEngine.evaluateMinimalChange('add retry logic to API requests', {
         files_added: 0,
         files_modified: 1,
         estimated_lines_added: 15,
@@ -199,39 +182,32 @@ async function main() {
   );
   results.push(minResult);
 
-
   // Print results table
   console.log();
   console.log(bold(`  Results`));
+  console.log(c('gray', `  ─────────────────────────────────────────────────────────`));
   console.log(
-    c("gray", `  ─────────────────────────────────────────────────────────`),
+    `  ${c('white', 'Operation'.padEnd(30))} ${c('white', 'Avg (ms)'.padStart(10))} ${c('white', 'Min'.padStart(8))} ${c('white', 'Max'.padStart(8))}`,
   );
-  console.log(
-    `  ${c("white", "Operation".padEnd(30))} ${c("white", "Avg (ms)".padStart(10))} ${c("white", "Min".padStart(8))} ${c("white", "Max".padStart(8))}`,
-  );
-  console.log(
-    c("gray", `  ─────────────────────────────────────────────────────────`),
-  );
+  console.log(c('gray', `  ─────────────────────────────────────────────────────────`));
 
   for (const r of results) {
-    const avgColor = r.avg < 100 ? "green" : r.avg < 500 ? "yellow" : "red";
+    const avgColor = r.avg < 100 ? 'green' : r.avg < 500 ? 'yellow' : 'red';
     console.log(
-      `  ${c("white", r.label.padEnd(30))} ${c(avgColor, String(Math.round(r.avg)).padStart(10))} ${c("gray", String(Math.round(r.min)).padStart(8))} ${c("gray", String(Math.round(r.max)).padStart(8))}`,
+      `  ${c('white', r.label.padEnd(30))} ${c(avgColor, String(Math.round(r.avg)).padStart(10))} ${c('gray', String(Math.round(r.min)).padStart(8))} ${c('gray', String(Math.round(r.max)).padStart(8))}`,
     );
   }
 
-  console.log(
-    c("gray", `  ─────────────────────────────────────────────────────────`),
-  );
+  console.log(c('gray', `  ─────────────────────────────────────────────────────────`));
   console.log();
 
   // Write results to JSON for CI/comparison
-  const outputPath = path.resolve(__dirname, "../benchmark-results.json");
+  const outputPath = path.resolve(__dirname, '../benchmark-results.json');
   const outputData = {
     timestamp: new Date().toISOString(),
     platform: `${os.platform()}-${os.arch()}`,
     node: process.version,
-    results: results.map((r) => ({
+    results: results.map(r => ({
       label: r.label,
       avg_ms: Math.round(r.avg),
       min_ms: Math.round(r.min),
@@ -240,7 +216,7 @@ async function main() {
     })),
   };
   fs.writeFileSync(outputPath, JSON.stringify(outputData, null, 2));
-  console.log(c("green", `  ✔ Results saved to benchmark-results.json`));
+  console.log(c('green', `  ✔ Results saved to benchmark-results.json`));
 
   // Cleanup temp
   try {
@@ -249,7 +225,7 @@ async function main() {
   console.log();
 }
 
-main().catch((err) => {
+main().catch(err => {
   console.error(`Benchmark failed: ${err.message}`);
   process.exit(1);
 });

@@ -24,6 +24,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing React components or frontend UI logic, you MUST inspect:
+
 1. Design Tokens & Styling Context (`globals.css`, `tailwind.config`) → Verify OKLCH color palettes, typography scale, and dark mode classes
 2. Active UI Skill Pack (`.agent/skills/ui-skill-packs/SKILL.md`) → Load mandatory UI skill pack (Pack 1: Foundations, Pack 2: Motion, Pack 3: Systems)
 3. 7-Reviewer Frontend Gate → Run logic, security, frontend-reviewer, type-safety, ui-ux-auditor, motion-reviewer, and visual-auditor before approving UI diffs
@@ -111,12 +112,12 @@ If all reviewers → ✅ APPROVED: Human Gate
 
 ```typescript
 // ❌ React 19: useFormState renamed to useActionState
-import { useFormState } from 'react';      // useFormState no longer exists in React 19
-import { useActionState } from 'react';    // Correct React 19 name
+import { useFormState } from 'react'; // useFormState no longer exists in React 19
+import { useActionState } from 'react'; // Correct React 19 name
 
 // ❌ Next.js 15: params and searchParams must be awaited
-const { id } = params;                    // WRONG — params is a Promise in Next.js 15
-const { id } = await params;             // CORRECT
+const { id } = params; // WRONG — params is a Promise in Next.js 15
+const { id } = await params; // CORRECT
 
 // ❌ Hook not valid in Server Component
 export default async function Page() {
@@ -124,8 +125,9 @@ export default async function Page() {
 }
 
 // ❌ Server Action missing 'use server'
-async function saveData(formData: FormData) {  // Without 'use server' — not a Server Action
-  'use server';                                // Must be FIRST line
+async function saveData(formData: FormData) {
+  // Without 'use server' — not a Server Action
+  'use server'; // Must be FIRST line
 }
 ```
 

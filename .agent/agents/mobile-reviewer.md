@@ -21,6 +21,7 @@ Mobile performance failure is permanent — the app store reviews mention it, th
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing React Native code, you MUST inspect:
+
 1. `package.json` / `app.json` → Confirm Expo SDK version, `@shopify/flash-list`, `react-native-reanimated` 3+, and native dependencies
 2. Animation callbacks → Audit Reanimated shared value updates and verify `"worklet"` directives on non-bridge functions
 3. List components → Verify `FlashList` usage over `FlatList` for virtualized datasets exceeding 20 items
@@ -34,24 +35,24 @@ React Native Reanimated 3 runs animations entirely on the UI thread — but only
 ```tsx
 // ❌ BRIDGE CROSSING: Regular setState inside animation callback
 const translateX = useSharedValue(0);
-const gesture = Gesture.Pan().onUpdate((e) => {
+const gesture = Gesture.Pan().onUpdate(e => {
   setState(e.translationX); // Crosses from UI thread to JS thread — jank guaranteed
 });
 
 // ❌ BRIDGE CROSSING: Using regular function instead of worklet
-const gesture = Gesture.Pan().onUpdate((e) => {
+const gesture = Gesture.Pan().onUpdate(e => {
   doSomething(e.translationX); // Regular function can't run on UI thread
 });
 
 // ✅ APPROVED: Everything stays on UI thread
 const translateX = useSharedValue(0);
-const gesture = Gesture.Pan().onUpdate((e) => {
+const gesture = Gesture.Pan().onUpdate(e => {
   translateX.value = e.translationX; // Direct shared value update — UI thread only
 });
 
 // ✅ APPROVED: worklet directive for custom functions used in animations
 const clamp = (value: number, min: number, max: number): number => {
-  "worklet";
+  'worklet';
   return Math.min(Math.max(value, min), max);
 };
 ```
@@ -123,20 +124,20 @@ function Screen() {
 ```tsx
 // ❌ MEMORY LEAK: AppState subscription not removed
 useEffect(() => {
-  const subscription = AppState.addEventListener("change", handleChange);
+  const subscription = AppState.addEventListener('change', handleChange);
   // Missing: return () => subscription.remove();
 }, []);
 
 // ❌ MEMORY LEAK: Keyboard listener not removed
 useEffect(() => {
-  const show = Keyboard.addListener("keyboardWillShow", onShow);
-  const hide = Keyboard.addListener("keyboardWillHide", onHide);
+  const show = Keyboard.addListener('keyboardWillShow', onShow);
+  const hide = Keyboard.addListener('keyboardWillHide', onHide);
   // Missing cleanup!
 }, []);
 
 // ✅ APPROVED: Always return cleanup
 useEffect(() => {
-  const subscription = AppState.addEventListener("change", handleChange);
+  const subscription = AppState.addEventListener('change', handleChange);
   return () => subscription.remove();
 }, []);
 ```
@@ -147,22 +148,22 @@ useEffect(() => {
 
 ```tsx
 // ❌ CRASH: iOS-only API used without platform check
-import { DatePickerIOS } from "react-native"; // Removed in RN 0.65+
+import { DatePickerIOS } from 'react-native'; // Removed in RN 0.65+
 
 // ❌ WARN: Platform-specific style without guard
 const styles = StyleSheet.create({
   shadow: {
-    shadowColor: "#000", // iOS only
+    shadowColor: '#000', // iOS only
     elevation: 5, // Android only — both fine, but document intent
   },
 });
 
 // ❌ CRASH on web: Linking.openURL with tel: on web platforms
-await Linking.openURL("tel:+1234567890"); // Throws on Expo Web
+await Linking.openURL('tel:+1234567890'); // Throws on Expo Web
 
 // ✅ APPROVED: Platform guard
-if (Platform.OS !== "web") {
-  await Linking.openURL("tel:+1234567890");
+if (Platform.OS !== 'web') {
+  await Linking.openURL('tel:+1234567890');
 }
 ```
 

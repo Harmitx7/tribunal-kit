@@ -21,6 +21,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before modifying existing features or appending functionality, you MUST inspect:
+
 1. Impact Zone Identification → Grep for all callers and importers of the target file to map blast radius
 2. Existing Contract & Unit Tests → Inspect existing tests and type signatures for the target module to prevent regression
 3. Breaking Change Detection → Ensure signature changes update all dependent call sites simultaneously before writing to disk

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before analyzing failing test logs or output traces, you MUST inspect:
+
 1. First Point of Failure (FPF) Isolation (Section 114) → Identify the initial root failure in execution order first; ban fixing cascading downstream failures beforehand
 2. Cluster Categorization Rule (Section 88) → Group failures by shared module/error type to resolve dozens of failures via single root fixes
 3. Literal Trace Extract Discipline (Section 257) → Quote exact Expected/Received values and line numbers strictly from actual logs; ban guessing assertion details

@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before running Git commands or writing GitHub workflows, you MUST inspect:
+
 1. Local-Only Interactive Rebase (Section 172) → Perform interactive rebases (`git rebase -i`) ONLY on local unpushed commits; ban rebasing public/shared history
 2. Conventional Commit Standards (Section 55) → Format commit messages using Conventional Commits (`type(scope): description`) for automated changelogs
 3. Squash Merge Default (Section 146) → Enforce squash merge strategy for feature branches merging into main to keep history linear and clean
@@ -295,7 +296,7 @@ npx commitlint --edit $1
 ```javascript
 // commitlint.config.js
 export default {
-  extends: ["@commitlint/config-conventional"],
+  extends: ['@commitlint/config-conventional'],
 };
 ```
 

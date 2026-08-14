@@ -2,6 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 
+#[allow(dead_code)]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
 pub enum ImpactTier {
     Tier0FastPass,

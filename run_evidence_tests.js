@@ -1,1 +1,3 @@
-// DELETE THIS FILE — temporary test runner no longer needed.
+/**
+ * DEPRECATED & REMOVED — Temporary test runner no longer needed.
+ */

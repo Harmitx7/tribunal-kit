@@ -93,11 +93,11 @@ project-name/
    Ensure `src/app/globals.css` uses the new import syntax instead of a config file:
 
    ```css
-   @import "tailwindcss";
+   @import 'tailwindcss';
 
    @theme {
      --color-primary: oklch(0.5 0.2 240);
-     --font-sans: "Inter", sans-serif;
+     --font-sans: 'Inter', sans-serif;
    }
    ```
 

@@ -21,6 +21,7 @@ Every piece of code that calls an LLM API must be verified against the actual pr
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing LLM integration code, you MUST inspect:
+
 1. `package.json` / `requirements.txt` → Check LLM SDK versions (`openai`, `@anthropic-ai/sdk`, `@google/genai`, `ai` Vercel AI SDK)
 2. Environment configs → Confirm model name strings are parameterized (`process.env.MODEL_NAME`) rather than hardcoded strings
 3. Prompt templates → Audit user input sanitization delimiters (`<user_input>`) and prompt injection boundaries
@@ -48,21 +49,21 @@ Flag any model name that cannot be verified in the provider's current model docu
 ```typescript
 // ❌ HALLUCINATED: Parameters that don't exist in OpenAI SDK
 const response = await openai.chat.completions.create({
-  model: "gpt-4o",
+  model: 'gpt-4o',
   messages,
   max_length: 1000, // Hallucinated — use max_tokens
-  format: "json", // Hallucinated — use response_format: { type: 'json_object' }
+  format: 'json', // Hallucinated — use response_format: { type: 'json_object' }
   memory: true, // Doesn't exist
-  plugins: ["web-search"], // Doesn't exist in API
-  instructions: "Be helpful", // Hallucinated — belongs in system message
+  plugins: ['web-search'], // Doesn't exist in API
+  instructions: 'Be helpful', // Hallucinated — belongs in system message
 });
 
 // ✅ REAL OpenAI API parameters
 const response = await openai.chat.completions.create({
-  model: "gpt-4o",
+  model: 'gpt-4o',
   messages,
   max_tokens: 1000,
-  response_format: { type: "json_object" },
+  response_format: { type: 'json_object' },
   temperature: 0.7,
   stream: false,
 });
@@ -71,17 +72,17 @@ const response = await openai.chat.completions.create({
 ```typescript
 // ❌ HALLUCINATED: Anthropic SDK parameters
 const message = await anthropic.messages.create({
-  model: "claude-3-5-sonnet-20241022",
+  model: 'claude-3-5-sonnet-20241022',
   messages,
   max_response: 1024, // Hallucinated — use max_tokens
-  system_prompt: "...", // Hallucinated — 'system' is a top-level param
+  system_prompt: '...', // Hallucinated — 'system' is a top-level param
 });
 
 // ✅ REAL Anthropic API
 const message = await anthropic.messages.create({
-  model: "claude-3-5-sonnet-20241022",
+  model: 'claude-3-5-sonnet-20241022',
   max_tokens: 1024,
-  system: "You are a helpful assistant.",
+  system: 'You are a helpful assistant.',
   messages,
 });
 ```
@@ -97,13 +98,16 @@ const systemPrompt = `You are a helpful assistant. Context: ${userInput}`;
 
 // ❌ CRITICAL: User content in system role message
 const messages = [
-  { role: "system", content: userQuery }, // User can override system behavior
+  { role: 'system', content: userQuery }, // User can override system behavior
 ];
 
 // ✅ SAFE: Strict role separation
 const messages = [
-  { role: "system", content: "You are a helpful assistant. Only answer questions about our product." },
-  { role: "user", content: userQuery }, // User input isolated to user role
+  {
+    role: 'system',
+    content: 'You are a helpful assistant. Only answer questions about our product.',
+  },
+  { role: 'user', content: userQuery }, // User input isolated to user role
 ];
 
 // ✅ SAFE: XML delimiting when injection context unavoidable
@@ -155,14 +159,14 @@ try {
 const allUsers = await prisma.user.findMany(); // 50,000 users
 const response = await openai.chat.completions.create({
   messages: [
-    { role: "user", content: `Users: ${JSON.stringify(allUsers)}\n${userQuery}` },
+    { role: 'user', content: `Users: ${JSON.stringify(allUsers)}\n${userQuery}` },
     // This could be 200,000 tokens per request!
   ],
 });
 
 // ❌ COST EXPLOSION: No max_tokens limit on user-facing endpoint
 const response = await anthropic.messages.create({
-  model: "claude-3-5-sonnet-20241022",
+  model: 'claude-3-5-sonnet-20241022',
   // Missing max_tokens — model can run indefinitely
   messages,
 });
@@ -170,11 +174,11 @@ const response = await anthropic.messages.create({
 // ✅ APPROVED: Token budgeting + RAG for large datasets
 const relevantChunks = await vectorStore.similaritySearch(userQuery, 5); // Retrieve top 5
 const response = await openai.chat.completions.create({
-  model: "gpt-4o-mini", // Cost-efficient model for routing
+  model: 'gpt-4o-mini', // Cost-efficient model for routing
   max_tokens: 500, // Hard cap prevents runaway responses
   messages: [
-    { role: "system", content: `Context:\n${relevantChunks.map((c) => c.content).join("\n")}` },
-    { role: "user", content: userQuery },
+    { role: 'system', content: `Context:\n${relevantChunks.map(c => c.content).join('\n')}` },
+    { role: 'user', content: userQuery },
   ],
 });
 ```
@@ -186,12 +190,12 @@ const response = await openai.chat.completions.create({
 ```typescript
 // ❌ REJECTED: Conversation history appended unbounded — will eventually overflow
 const messages = conversationHistory; // Can grow to 100k+ tokens
-messages.push({ role: "user", content: newMessage });
+messages.push({ role: 'user', content: newMessage });
 const response = await client.chat(messages);
 
 // ✅ APPROVED: Sliding window with token counting
-import { encoding_for_model } from "tiktoken";
-const enc = encoding_for_model("gpt-4o");
+import { encoding_for_model } from 'tiktoken';
+const enc = encoding_for_model('gpt-4o');
 
 function trimToTokenLimit(messages: Message[], limit: number = 100_000): Message[] {
   let totalTokens = 0;

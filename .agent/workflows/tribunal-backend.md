@@ -22,6 +22,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before auditing backend routes or server logic, you MUST inspect:
+
 1. Target Backend Source & Contracts → Read target route handlers, Server Actions, or controller methods
 2. Dependencies & Environment (`package.json`, `.env.example`) → Check backend framework versions, secret key placeholders, and ORM schemas
 3. 6-Reviewer Parallel Gate → Execute logic-reviewer, security-auditor, dependency-analyzer, type-safety, resilience-reviewer, and schema-reviewer before approving diffs
@@ -108,10 +109,10 @@ router.middleware(() => {}); // not a method — use app.use()
 router.beforeAll(() => {}); // not a method — use router.use()
 
 // ❌ Hono methods that don't exist
-app.middleware("/path", handler); // not valid — use app.use('/path', handler)
+app.middleware('/path', handler); // not valid — use app.use('/path', handler)
 
 // ❌ next-auth v4 patterns in v5 projects
-import { getServerSession } from "next-auth"; // v4 — use auth() from './auth' in v5
+import { getServerSession } from 'next-auth'; // v4 — use auth() from './auth' in v5
 
 // ❌ jwt.verify async form (it's synchronous)
 const payload = await jwt.verify(token, secret); // jwt.verify is NOT async

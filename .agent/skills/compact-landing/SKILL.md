@@ -20,6 +20,7 @@ scripts-binding:
 ## Mandatory Pre-Flight Context Inspection
 
 Before engineering compact landing pages, you MUST inspect:
+
 1. Viewport Fit (Section 24) → Fit hero, preview, and primary CTA inside a single 1080p desktop viewport without initial scrolling
 2. Section Limit (Section 35) → Limit total page structure to max 4 tight sections (Hero, Social Proof, 3-Benefit Grid, Footer Card)
 3. Typography Restraint (Section 30) → Cap display font sizes at `clamp(1.75rem, 4vw, 2.75rem)` and apply `text-wrap: balance`
@@ -31,16 +32,19 @@ Build tight, ultra-focused, high-converting landing pages that deliver value qui
 ## 4 Compact Landing Rules
 
 ### 1. The Single Viewport Value Pitch
+
 - Above-the-fold content must answer 3 questions instantly within 1 single screen viewport:
-  1. *What is it?* (Clear, un-hypey headline + subhead)
-  2. *What does it look like?* (Crisp UI screenshot or interactive preview component)
-  3. *How do I get it?* (Unambiguous primary CTA input/button)
+  1. _What is it?_ (Clear, un-hypey headline + subhead)
+  2. _What does it look like?_ (Crisp UI screenshot or interactive preview component)
+  3. _How do I get it?_ (Unambiguous primary CTA input/button)
 
 ### 2. Quiet Typographic Hierarchy
+
 - Use subdued monochrome typography (`oklch(0.95 0.005 240)` background with `oklch(0.20 0.01 240)` body copy).
 - Keep display font sizes restrained (`clamp(1.75rem, 4vw, 2.75rem)`) rather than giant 5rem text blocks.
 
 ### 3. Tight Spatial Grid
+
 - Limit total page section count to max 4 sections:
   1. Hero + Primary CTA + Product Preview
   2. Social Proof / Logo Bar
@@ -48,6 +52,7 @@ Build tight, ultra-focused, high-converting landing pages that deliver value qui
   4. Conversion Footer Card
 
 ### 4. Zero Unnecessary Visual Noise
+
 - Omit decorative background shapes, floating 3D spheres, and rainbow gradients. Let contrast and typography drive visual quality.
 
 ---
