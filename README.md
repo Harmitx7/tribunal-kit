@@ -79,6 +79,15 @@ npx tribunal-kit sync    # Bridge with Cursor / Windsurf / VSCode
 npx tribunal-kit status  # Verify everything is locked in
 ```
 
+### 🔌 CLI Agent Plugins (Claude Code, Aider, Cline)
+To automatically integrate Tribunal Kit into terminal-based AI agents, use the universal adapter:
+
+```bash
+npx tribunal-kit tk-adapt           # Auto-detect and install for all supported agents
+npx tribunal-kit tk-adapt claude    # Install strictly for Claude Code
+npx tribunal-kit tk-adapt --global  # Install globally to ~/.tribunal-kit/
+```
+
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
 
 <!-- WHAT YOU GET -->
