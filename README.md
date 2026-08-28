@@ -1,7 +1,7 @@
 <!-- PROJECT HEADER -->
 <div align="center">
   <br>
-  <img src="./docs/tribunalkit_no_bg.png" alt="TribunalKit Logo" width="380" style="margin-bottom: 20px;" />
+  <img src="https://raw.githubusercontent.com/Harmitx7/tribunal-kit/main/docs/tribunalkit_no_bg.png" alt="TribunalKit Logo" width="380" style="margin-bottom: 20px;" />
 
   <h1 style="font-size: 3.25em; font-weight: 800; letter-spacing: -2px; margin: 0; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
     TRIBUNAL KIT
@@ -33,7 +33,7 @@
       <img src="https://img.shields.io/badge/License-MIT-1a1a1f?style=for-the-badge&color=2d2d30" alt="License" />
     </a>
     <a href="CHANGELOG.md">
-      <img src="https://img.shields.io/badge/Release-v7.0.0-ccff00?style=for-the-badge&color=111111&logo=github&logoColor=ccff00" alt="Release Version" />
+      <img src="https://img.shields.io/badge/Release-v8.0.0-ccff00?style=for-the-badge&color=111111&logo=github&logoColor=ccff00" alt="Release Version" />
     </a>
     <a href="mcp_config.json">
       <img src="https://img.shields.io/badge/MCP-Ready-00c2ff?style=for-the-badge&logo=openai&logoColor=111" alt="MCP Server" />
@@ -87,13 +87,13 @@ npx tribunal-kit status  # Verify everything is locked in
 
 | Layer                  | Count   | What It Does                                                                        |
 | :--------------------- | :------ | :---------------------------------------------------------------------------------- |
-| **Specialist Agents**  | 51      | Domain-specific reasoning (frontend, backend, security, database, mobile, DevOps)   |
-| **Tribunal Reviewers** | 27      | Parallel code review pipeline that catches hallucinations before they ship          |
+| **Specialist Agents**  | 52      | Domain-specific reasoning (frontend, backend, security, database, mobile, DevOps)   |
+| **Tribunal Reviewers** | 28      | Parallel code review pipeline that catches hallucinations before they ship          |
 | **Reusable Skills**    | 183     | Deep knowledge packs (React 19, Next.js 15, Rust, Python, Vue, animations, a11y)    |
 | **Slash Workflows**    | 38      | One-command operations (`/generate`, `/debug`, `/audit`, `/deploy`, `/refactor`)    |
-| **Rust Core**          | 1       | Native binary for sub-50ms operations (hashing, dedup, DAG scheduling, compression) |
-| **MCP Server**         | 1       | Model Context Protocol integration for dynamic tool access                          |
-| **Persistent Memory**  | 4 types | Semantic, Procedural, Episodic, Working — survives across sessions                  |
+| **Rust Core**          | 1       | Native binary for AOT Semantic Graph extraction, AST parsing, hashing, and deduping |
+| **MCP Server**         | 1       | Model Context Protocol integration with `query_semantic_graph` capabilities         |
+| **Native Plugins**     | ∞       | Direct integration into CLI tools like Claude Code via `/plugin marketplace add`    |
 | **Case Law Database**  | ∞       | Records past AI mistakes as permanent precedents to prevent recurrence              |
 
 <br>

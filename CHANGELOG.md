@@ -3,7 +3,20 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [8.0.0] — 2026-08-28 — 🏛️ Codename: AOT Semantic Context Graph & Universal Native Plugin Architecture
+
+### 🚀 AOT Semantic Context Graph
+- **Native Rust Engine (`tribunal-core`)**: Introduced a blazingly fast AST structural parsing engine natively written in Rust via `oxc_parser`. Moves logic away from brute-force regex toward 100% deterministic graph querying.
+- **Node Bridge (`build-graph.js`)**: Implemented an async/sync bridge for zero-latency communication between Node MCP and the Rust context engine.
+- **Context Density Optimization**: Replaced arbitrary file dump context loading with a strict `.tribunal/graph.json` query structure to minimize prompt saturation and eliminate model hallucination due to oversized contexts.
+
+### 🔌 Universal Native Agent Plugin Ecosystem
+- **Claude Code Marketplace Integration**: Shipped `.claude/CLAUDE.md`, `plugin.json`, and `claude.json` to natively inject the 52 Specialists and 28 Reviewers directly into Claude Code CLI without bulky proxy servers.
+- **CLI Adapter Injection (`adapter-install.js`)**: Universal injection strategy linking workspace environments to their respective terminal AI tools natively.
+- **MCP Server Expansion**: Published `query_semantic_graph` endpoint into `mcp-server.js` exposing AST structure back to all attached IDEs or autonomous AI harnesses.
+
 ## [7.0.0] — 2026-08-09 — 🏛️ Codename: Sovereign Covenant Protocol & CI/CD Defense Suite
+
 
 ### 🚀 CI/CD Pipeline Defense Suite & Automated Repair Subsystem
 

@@ -1,6 +1,6 @@
 [package]
 name = "tribunal-core"
-version = "7.0.0"
+version = "8.0.0"
 edition = "2021"
 description = "High-performance Rust core engine for Tribunal-Kit — strict schema validation, zero-hallucination CLI"
 license = "MIT"
@@ -17,3 +17,8 @@ clap = { version = "4.5", features = ["derive"] }
 anyhow = "1.0"
 owo-colors = "4.1"
 indicatif = "0.17"
+ignore = "0.4"
+oxc_allocator = "0.13.1"
+oxc_ast = "0.13.1"
+oxc_parser = "0.13.1"
+oxc_span = "0.13.1"

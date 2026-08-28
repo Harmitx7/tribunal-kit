@@ -1,6 +1,6 @@
 {
   "name": "tribunal-kit",
-  "version": "7.0.0",
+  "version": "8.0.0",
   "description": "Your AI writes code that doesn't exist. Tribunal Kit stops it. The governance layer for AI coding agents — 52 specialists, 28 parallel reviewers, 183 skills, Rust core, MCP server. Works with Cursor, VSCode, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
@@ -43,13 +43,19 @@
     "ai-code-reviewer",
     "hallucination-mitigation",
     "autonomous-workflows",
-    "code-correctness"
+    "code-correctness",
+    "claude-code-plugin",
+    "claude-plugin"
   ],
   "homepage": "https://github.com/Harmitx7/tribunal-kit",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Harmitx7/tribunal-kit.git"
   },
+  "bugs": {
+    "url": "https://github.com/Harmitx7/tribunal-kit/issues"
+  },
+  "author": "Harmitx7",
   "license": "MIT",
   "types": "dist/index.d.ts",
   "main": "dist/cli.js",
@@ -63,18 +69,26 @@
   },
   "bin": {
     "tribunal-kit": "bin/wrapper.js",
-    "tk": "bin/wrapper.js"
+    "tk": "bin/wrapper.js",
+    "tk-proxy": "bin/tk-proxy.js",
+    "tk-adapt": "bin/adapter-install.js"
   },
   "files": [
     "bin/",
     "dist/",
     "scripts/",
     ".agent/",
+    ".claude/",
     "README.md",
     "LICENSE",
     "SECURITY.md",
     "CONTRIBUTING.md",
-    "mcp_config.json"
+    "mcp_config.json",
+    "plugin.json",
+    "claude.json",
+    "system-prompt.md",
+    "slash-commands.json",
+    "specialist-registry.json"
   ],
   "engines": {
     "node": ">=18.0.0"
@@ -107,12 +121,12 @@
     "typescript": "^5.4.5"
   },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^7.0.0",
-    "@tribunal-kit/core-darwin-x64": "^7.0.0",
-    "@tribunal-kit/core-linux-arm64": "^7.0.0",
-    "@tribunal-kit/core-linux-x64": "^7.0.0",
-    "@tribunal-kit/core-win32-arm64": "^7.0.0",
-    "@tribunal-kit/core-win32-x64": "^7.0.0"
+    "@tribunal-kit/core-darwin-arm64": "^8.0.0",
+    "@tribunal-kit/core-darwin-x64": "^8.0.0",
+    "@tribunal-kit/core-linux-arm64": "^8.0.0",
+    "@tribunal-kit/core-linux-x64": "^8.0.0",
+    "@tribunal-kit/core-win32-arm64": "^8.0.0",
+    "@tribunal-kit/core-win32-x64": "^8.0.0"
   },
   "jest": {
     "testMatch": [

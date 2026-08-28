@@ -187,6 +187,13 @@ enum Commands {
         #[arg(long, default_value = "")]
         task: String,
     },
+
+    /// Generate AOT Semantic Context Graph
+    Graph {
+        /// Target directory to scan
+        #[arg(default_value = ".")]
+        path: String,
+    },
 }
 
 #[derive(Subcommand)]
@@ -415,6 +422,21 @@ async fn main() -> Result<()> {
         Commands::ContextBroker { repo_path, target_file } => cmd_context_broker(&repo_path, target_file.as_deref()).await,
 
         Commands::ImpactTier { files, lines, task } => cmd_impact_tier(&files, lines, &task).await,
+
+        Commands::Graph { path } => cmd_graph(&path).await,
+    }
+}
+
+async fn cmd_graph(path: &str) -> Result<()> {
+    match commands::graph::generate_graph(path) {
+        Ok(json_output) => {
+            println!("{}", json_output);
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ Graph generation failed: {:#}", e);
+            std::process::exit(1);
+        }
     }
 }
 

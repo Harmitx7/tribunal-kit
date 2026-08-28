@@ -475,6 +475,21 @@ function handleRequest(req) {
             additionalProperties: false,
           },
         },
+        {
+          name: 'query_semantic_graph',
+          description:
+            'Query the Ahead-of-Time (AOT) Semantic Context Graph to quickly resolve function signatures, dependencies, and file structures without inflating context windows.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              targetPath: {
+                type: 'string',
+                description: "The directory to query (defaults to current workspace).",
+              },
+            },
+            additionalProperties: false,
+          },
+        },
       ],
     };
   }
@@ -699,6 +714,23 @@ function handleRequest(req) {
         };
       } catch (e) {
         return { content: [{ type: 'text', text: `Memory store failed: ${e.message}` }] };
+      }
+    }
+
+    if (toolName === 'query_semantic_graph') {
+      const targetPath = req.params?.arguments?.targetPath || process.cwd();
+      try {
+        // Because MCP doesn't natively await async functions deeply in this handler's structure, 
+        // we'll run it synchronously via a wrapper or assume it completes quickly enough for stdout.
+        // Actually, we can return a Promise here if the MCP handler supports it, which we'll assume it does or we'll wrap it.
+        const result = spawnSync('node', [path.join(__dirname, '../scripts/build-graph.js'), targetPath], {
+          encoding: 'utf8',
+          timeout: 10000
+        });
+        if (result.error) throw result.error;
+        return { content: [{ type: 'text', text: result.stdout || result.stderr }] };
+      } catch (e) {
+        return { content: [{ type: 'text', text: `Failed to query graph: ${e.message}` }] };
       }
     }
 
