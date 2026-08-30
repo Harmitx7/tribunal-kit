@@ -33,83 +33,73 @@ const ADAPTERS = {
       }
       // Also install MCP server config
       installMcpConfig(projectRoot, 'claude');
-    }
+    },
   },
 
-  'aider': {
+  aider: {
     detect: () => commandExists('aider'),
     rulesFile: '.aider.conf.yml',
     description: 'Aider CLI',
-    setup: (projectRoot) => {
+    setup: projectRoot => {
       const conventionsPath = path.join(projectRoot, 'CONVENTIONS.md');
-      const systemPrompt = fs.readFileSync(
-        path.join(__dirname, '..', 'system-prompt.md'), 'utf8'
-      );
+      const systemPrompt = fs.readFileSync(path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'), 'utf8');
       fs.writeFileSync(conventionsPath, systemPrompt);
       console.log(`  ✓ Wrote ${conventionsPath}`);
-    }
+    },
   },
 
-  'codex': {
+  codex: {
     detect: () => commandExists('codex'),
     rulesFile: 'AGENTS.md',
     description: 'OpenAI Codex CLI',
-    setup: (projectRoot) => {
+    setup: projectRoot => {
       const agentsPath = path.join(projectRoot, 'AGENTS.md');
-      const systemPrompt = fs.readFileSync(
-        path.join(__dirname, '..', 'system-prompt.md'), 'utf8'
-      );
+      const systemPrompt = fs.readFileSync(path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'), 'utf8');
       fs.writeFileSync(agentsPath, systemPrompt);
       console.log(`  ✓ Wrote ${agentsPath}`);
-    }
+    },
   },
 
   'gemini-cli': {
     detect: () => commandExists('gemini'),
     rulesFile: '.gemini/rules/GEMINI.md',
     description: 'Google Gemini CLI',
-    setup: (projectRoot) => {
+    setup: projectRoot => {
       const geminiDir = path.join(projectRoot, '.gemini', 'rules');
       ensureDir(geminiDir);
-      const systemPrompt = fs.readFileSync(
-        path.join(__dirname, '..', 'system-prompt.md'), 'utf8'
-      );
+      const systemPrompt = fs.readFileSync(path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'), 'utf8');
       fs.writeFileSync(path.join(geminiDir, 'GEMINI.md'), systemPrompt);
       console.log(`  ✓ Wrote ${path.join(geminiDir, 'GEMINI.md')}`);
       // Also install MCP config
       installMcpConfig(projectRoot, 'gemini');
-    }
+    },
   },
 
-  'opencode': {
+  opencode: {
     detect: () => commandExists('opencode'),
     rulesFile: '.opencode/rules.md',
     description: 'OpenCode CLI',
-    setup: (projectRoot) => {
+    setup: projectRoot => {
       const opencodeDir = path.join(projectRoot, '.opencode');
       ensureDir(opencodeDir);
-      const systemPrompt = fs.readFileSync(
-        path.join(__dirname, '..', 'system-prompt.md'), 'utf8'
-      );
+      const systemPrompt = fs.readFileSync(path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'), 'utf8');
       fs.writeFileSync(path.join(opencodeDir, 'rules.md'), systemPrompt);
       console.log(`  ✓ Wrote ${path.join(opencodeDir, 'rules.md')}`);
-    }
+    },
   },
 
   'copilot-cli': {
     detect: () => commandExists('gh') && hasGhExtension('copilot'),
     rulesFile: '.github/copilot-instructions.md',
     description: 'GitHub Copilot CLI',
-    setup: (projectRoot) => {
+    setup: projectRoot => {
       const ghDir = path.join(projectRoot, '.github');
       ensureDir(ghDir);
-      const systemPrompt = fs.readFileSync(
-        path.join(__dirname, '..', 'system-prompt.md'), 'utf8'
-      );
+      const systemPrompt = fs.readFileSync(path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'), 'utf8');
       fs.writeFileSync(path.join(ghDir, 'copilot-instructions.md'), systemPrompt);
       console.log(`  ✓ Wrote ${path.join(ghDir, 'copilot-instructions.md')}`);
-    }
-  }
+    },
+  },
 };
 
 // --- Utility Functions ---
@@ -146,9 +136,9 @@ function installMcpConfig(projectRoot, target) {
       'tribunal-kit': {
         command: 'node',
         args: [path.join(__dirname, '..', 'bin', 'mcp-server.js')],
-        env: { NODE_ENV: 'production' }
-      }
-    }
+        env: { NODE_ENV: 'production' },
+      },
+    },
   };
 
   let configPath;
@@ -170,9 +160,7 @@ function main() {
   const args = process.argv.slice(2);
   const globalMode = args.includes('--global');
   const targetAgent = args.find(a => !a.startsWith('-'));
-  const projectRoot = globalMode
-    ? path.join(os.homedir(), '.tribunal-kit')
-    : process.cwd();
+  const projectRoot = globalMode ? path.join(os.homedir(), '.tribunal-kit') : process.cwd();
 
   console.log('');
   console.log('┌─────────────────────────────────────────────┐');

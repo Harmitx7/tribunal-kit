@@ -8,7 +8,7 @@ const _fs = require('fs');
 const { handleRequest, stripBoilerplate, runTribunalAudit } = require('../../bin/mcp-server');
 
 describe('MCP Server Boilerplate Stripper', () => {
-  test('strips standard duplicate boilerplate blocks from text', () => {
+  test('strips standard duplicate boilerplate blocks from text', async () => {
     const rawText = `## Core Rules
 - Rule 1
 - Rule 2
@@ -32,38 +32,38 @@ Verify everything.
     expect(stripBoilerplate(rawText)).toBe(expected);
   });
 
-  test('handles text without boilerplate gracefully', () => {
+  test('handles text without boilerplate gracefully', async () => {
     const rawText = 'Just normal instructions.';
     expect(stripBoilerplate(rawText)).toBe('Just normal instructions.');
   });
 
-  test('returns empty string for empty input', () => {
+  test('returns empty string for empty input', async () => {
     expect(stripBoilerplate('')).toBe('');
     expect(stripBoilerplate(null)).toBeNull();
   });
 });
 
 describe('MCP Server handleRequest', () => {
-  test('handles initialize request correctly', () => {
+  test('handles initialize request correctly', async () => {
     const req = {
       jsonrpc: '2.0',
       id: 1,
       method: 'initialize',
       params: {},
     };
-    const result = handleRequest(req);
+    const result = await handleRequest(req);
     expect(result.protocolVersion).toBe('2025-03-26');
     expect(result.serverInfo.name).toBe('tribunal-kit-mcp');
   });
 
-  test('lists tools including get_sparse_context', () => {
+  test('lists tools including get_sparse_context', async () => {
     const req = {
       jsonrpc: '2.0',
       id: 2,
       method: 'tools/list',
       params: {},
     };
-    const result = handleRequest(req);
+    const result = await handleRequest(req);
     expect(result.tools).toBeDefined();
 
     const getSparseContextTool = result.tools.find(t => t.name === 'get_sparse_context');
@@ -71,12 +71,12 @@ describe('MCP Server handleRequest', () => {
     expect(getSparseContextTool.inputSchema.required).toContain('task');
   });
 
-  test('uses the in-process manifest audit rather than schema validation', () => {
+  test('uses the in-process manifest audit rather than schema validation', async () => {
     const text = runTribunalAudit();
     expect(text).toContain('Tribunal audit complete.');
     expect(text).toMatch(/Agents: \d+ \(\d+ reviewers\)/);
 
-    const result = handleRequest({
+    const result = await handleRequest({
       jsonrpc: '2.0',
       id: 20,
       method: 'tools/call',
@@ -85,7 +85,7 @@ describe('MCP Server handleRequest', () => {
     expect(result.content[0].text).toContain('Tribunal audit');
   });
 
-  test('get_sparse_context throws error if task is missing', () => {
+  test('get_sparse_context throws error if task is missing', async () => {
     const req = {
       jsonrpc: '2.0',
       id: 3,
@@ -95,10 +95,10 @@ describe('MCP Server handleRequest', () => {
         arguments: {},
       },
     };
-    expect(() => handleRequest(req)).toThrow();
+    await expect(handleRequest(req)).rejects.toThrow();
   });
 
-  test('get_sparse_context returns sparse context prompt', () => {
+  test('get_sparse_context returns sparse context prompt', async () => {
     const req = {
       jsonrpc: '2.0',
       id: 4,
@@ -115,7 +115,7 @@ describe('MCP Server handleRequest', () => {
 
     // We mock process.cwd or make sure .agent/ exists
     // The test runs from the project root where .agent/ actually exists!
-    const result = handleRequest(req);
+    const result = await handleRequest(req);
     expect(result.content).toBeDefined();
     expect(result.content[0].type).toBe('text');
 
@@ -126,7 +126,7 @@ describe('MCP Server handleRequest', () => {
     expect(text).not.toContain('AI coding assistants often fall into specific bad habits');
   });
 
-  test('get_tribunal_skill strips boilerplate', () => {
+  test('get_tribunal_skill strips boilerplate', async () => {
     const req = {
       jsonrpc: '2.0',
       id: 5,
@@ -139,7 +139,7 @@ describe('MCP Server handleRequest', () => {
       },
     };
 
-    const result = handleRequest(req);
+    const result = await handleRequest(req);
     expect(result.content).toBeDefined();
     expect(result.content[0].type).toBe('text');
 

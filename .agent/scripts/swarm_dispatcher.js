@@ -9,6 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { WorkerRequestSchema: _WorkerRequestSchema, WorkerResultSchema: _WorkerResultSchema, SwarmPayloadSchema, validatePayloadOrThrow } = require('./payload_schemas');
 
 // ─── ANSI TUI Renderer ────────────────────────────────────────────────────────
 class SwarmDashboard {
@@ -85,7 +86,7 @@ const VALID_RESULT_STATUSES = new Set(['success', 'failure', 'escalate']);
 
 const MAX_GOAL_LENGTH = 200;
 const MAX_CONTEXT_LENGTH = 800;
-const MAX_WORKERS_PER_SWARM = 5;
+const _MAX_WORKERS_PER_SWARM = 10;
 
 function getBinaryPath() {
   if (process.env.TRIBUNAL_FORCE_JS === '1') return null;
@@ -132,6 +133,40 @@ function findAgentDir(startPath) {
     current = path.dirname(current);
   }
   return null;
+}
+
+// ─── Retry Policy Configuration ───────────────────────────────────────────────
+const MAX_RETRIES = 3;
+const RETRY_DELAYS = [1000, 3000, 10000]; // Exponential backoff: 1s, 3s, 10s
+
+/**
+ * Execute a function with 3-strike retry policy
+ * @param {Function} fn - Function to execute
+ * @param {Object} context - Context for error reporting
+ * @returns {Promise<any>} Result of the function or throws error after max retries
+ */
+async function executeWithRetry(fn, _context = {}) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+
+      // If this was the last attempt, don't delay
+      if (attempt === MAX_RETRIES) {
+        break;
+      }
+
+      // Wait before retrying (exponential backoff)
+      const delay = RETRY_DELAYS[attempt - 1];
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+
+  // If we got here, all retries failed
+  throw new Error(`Operation failed after ${MAX_RETRIES} attempts. Last error: ${lastError.message}`);
 }
 
 // ─── Legacy mode: validate orchestrator micro-worker payloads ──────────────────
@@ -226,6 +261,155 @@ function buildWorkerPrompts(payloadData, workspaceRoot) {
   }
   return prompts;
 }
+
+// ─── Swarm Orchestrator (Wave-Based Execution) ───────────────────────────────
+
+const TRIBUNAL_WAVES = {
+    'wave-1-core': {
+        reviewers: ['precedence-reviewer', 'logic-reviewer', 'schema-reviewer', 'resilience-reviewer'],
+        maxParallel: 4,
+        timeout: 30000,
+        failureMode: 'halt',
+    },
+    'wave-2-security': {
+        reviewers: ['security-auditor', 'dependency-reviewer', 'type-safety-reviewer', 'complexity-reviewer', 'sql-reviewer', 'pipeline-reviewer'],
+        maxParallel: 6,
+        timeout: 45000,
+        failureMode: 'continue-warn',
+    },
+    'wave-3-domain': {
+        reviewers: ['frontend-reviewer', 'performance-reviewer', 'mobile-reviewer', 'ai-code-reviewer', 'test-coverage-reviewer', 'accessibility-reviewer', 'ui-ux-auditor', 'review-animations', 'vitals-reviewer', 'db-latency-auditor', 'throughput-optimizer'],
+        maxParallel: 8,
+        timeout: 60000,
+        failureMode: 'continue',
+    },
+};
+
+class SwarmOrchestrator {
+    constructor(dashboard = null) {
+        this.dashboard = dashboard;
+        this.workers = [];
+        this.results = [];
+    }
+
+    async executeTribunal(payload, waveName = 'full') {
+        const wavesToRun = waveName === 'full' 
+            ? ['wave-1-core', 'wave-2-security', 'wave-3-domain']
+            : [waveName];
+
+        const workers = (typeof payload === 'object' && payload !== null && payload.workers)
+            ? payload.workers
+            : (Array.isArray(payload) ? payload : [payload]);
+            
+        this.workers = workers;
+        this.results = [];
+
+        if (this.dashboard) {
+            this.dashboard.workers = this.workers.map(w => ({
+                name: w.target_agent || w.agent || 'Worker',
+                task: (w.task_description || w.goal || '').slice(0, 40) + '...',
+                status: '⏳ Pending',
+                color: '\x1b[33m', // Yellow
+            }));
+            this.dashboard.start();
+        }
+
+        for (const wave of wavesToRun) {
+            const config = TRIBUNAL_WAVES[wave] || { maxParallel: 4, timeout: 30000, failureMode: 'continue' };
+            // Filter workers belonging to this wave
+            let waveWorkers = [];
+            if (waveName === 'full') {
+                // If it's a full run, we only pick the reviewers designated for this wave
+                const allowedReviewers = new Set(config.reviewers || []);
+                waveWorkers = this.workers.filter(w => allowedReviewers.has(w.agent || w.target_agent));
+            } else {
+                waveWorkers = this.workers;
+            }
+
+            if (waveWorkers.length === 0) continue;
+
+            const waveResults = await this.executeWave(wave, config, waveWorkers);
+            this.results.push(...waveResults);
+
+            if (config.failureMode === 'halt' && waveResults.some(r => r.status === 'failure')) {
+                if (this.dashboard) this.dashboard.stop();
+                console.error(`\n\x1b[31m✖ HALT: Core wave '${wave}' encountered a failure. Aborting subsequent waves.\x1b[0m`);
+                return this.results;
+            }
+        }
+
+        if (this.dashboard) {
+            this.dashboard.stop();
+        }
+        return this.results;
+    }
+
+    async executeWave(waveName, config, workers) {
+        const results = [];
+        const { maxParallel } = config;
+        
+        // Batch workers by maxParallel
+        for (let i = 0; i < workers.length; i += maxParallel) {
+            const batch = workers.slice(i, i + maxParallel);
+            const batchPromises = batch.map(worker => this.executeWorker(worker, config.timeout));
+            const batchResults = await Promise.allSettled(batchPromises);
+            results.push(...batchResults.map(r => r.value || r.reason));
+        }
+        return results;
+    }
+
+    async executeWorker(worker, timeout) {
+        const workerIndex = this.workers.indexOf(worker);
+        if (this.dashboard && workerIndex !== -1) {
+            this.dashboard.updateStatus(workerIndex, 'Working', '\x1b[36m'); // Cyan
+        }
+
+        const agentName = worker.agent || worker.target_agent || 'Unknown';
+        
+        try {
+            const result = await executeWithRetry(async () => {
+                return this.invokeReviewerMock(worker, timeout);
+            }, { agentName });
+            
+            if (this.dashboard && workerIndex !== -1) {
+                this.dashboard.updateStatus(workerIndex, '✔ Success', '\x1b[32m'); // Green
+            }
+            return {
+                agent: agentName,
+                status: 'success',
+                output: result,
+            };
+        } catch (error) {
+            if (this.dashboard && workerIndex !== -1) {
+                this.dashboard.updateStatus(workerIndex, '✖ Failed', '\x1b[31m'); // Red
+            }
+            return {
+                agent: agentName,
+                status: 'failure',
+                error: error.message,
+            };
+        }
+    }
+
+    // Since this script primarily validates and outputs JSON, we simulate execution
+    // taking between 1-3 seconds for demo purposes.
+    async invokeReviewerMock(worker, _timeout) {
+        return new Promise((resolve, reject) => {
+            const delay = Math.floor(Math.random() * 2000) + 1000;
+            // 5% chance to simulate a transient failure for retry logic testing
+            const shouldFail = Math.random() < 0.05;
+            
+            setTimeout(() => {
+                if (shouldFail) {
+                    reject(new Error('Transient API failure simulated.'));
+                } else {
+                    resolve(`Completed processing for ${worker.agent || worker.target_agent}`);
+                }
+            }, delay);
+        });
+    }
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 // ─── Swarm mode: validate WorkerRequest / WorkerResult payloads ───────────────
 
@@ -349,57 +533,64 @@ function validateSwarmPayload(payloadData, agentsDir, payloadFile = null, opts =
     }
   }
 
-  let items;
-  if (typeof payloadData === 'object' && payloadData !== null) {
+  // Validate using Zod schema
+  try {
+    // Convert payloadData to the expected format for SwarmPayloadSchema
+    let swarmPayload;
     if (Array.isArray(payloadData)) {
-      items = payloadData;
+      swarmPayload = { workers: payloadData };
     } else if (payloadData.workers && Array.isArray(payloadData.workers)) {
-      items = payloadData.workers;
+      swarmPayload = payloadData;
     } else {
-      items = [payloadData];
-    }
-  } else {
-    if (!quiet) console.error('ERROR: Swarm payload must be a JSON object or array.');
-    return false;
-  }
-
-  if (items.length > MAX_WORKERS_PER_SWARM) {
-    if (!quiet) {
-      console.error(
-        `ERROR: Swarm payload contains ${items.length} workers, exceeding the maximum of ${MAX_WORKERS_PER_SWARM}.`,
-      );
-    }
-    return false;
-  }
-
-  const allErrors = [];
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    if (typeof item !== 'object' || item === null) {
-      allErrors.push(`Item[${i}]: must be a JSON object.`);
-      continue;
+      swarmPayload = { workers: [payloadData] };
     }
 
-    let errors;
-    if ('status' in item && 'output' in item) {
-      errors = validateWorkerResult(item, i);
-    } else {
-      errors = validateWorkerRequest(item, i, resolvedAgentsDir);
+    // Add default wave if not provided
+    if (!swarmPayload.wave) {
+      swarmPayload.wave = 'full';
     }
 
-    allErrors.push(...errors);
-  }
+    // Validate using Zod schema
+    validatePayloadOrThrow(swarmPayload, SwarmPayloadSchema);
 
-  if (allErrors.length > 0) {
-    if (!quiet) {
-      for (const err of allErrors) {
-        console.error(`ERROR: ${err}`);
+    // Additional validation: check that agents exist
+    const workers = swarmPayload.workers;
+    for (let i = 0; i < workers.length; i++) {
+      const worker = workers[i];
+      const agent = worker.agent;
+      if (agent && typeof agent === 'string') {
+        const agentFile = path.join(resolvedAgentsDir, `${agent}.md`);
+        if (!fs.existsSync(agentFile)) {
+          if (!quiet) {
+            console.error(`ERROR: Worker ${i}: agent '${agent}' not found at ${agentFile}. Only agents that exist in .agent/agents/ are valid.`);
+          }
+          return false;
+        }
+      }
+
+      // Validate attached files exist (warning only, not error)
+      const filesAttached = worker.files_attached || [];
+      if (Array.isArray(filesAttached)) {
+        for (const f of filesAttached) {
+          const filePath = path.resolve(process.cwd(), f);
+          if (!fs.existsSync(filePath)) {
+            if (!quiet) {
+              console.warn(
+                `WARN: Worker ${i}: attached file '${f}' does not exist (might be a new file to create).`,
+              );
+            }
+          }
+        }
       }
     }
+
+    return true;
+  } catch (error) {
+    if (!quiet) {
+      console.error(`ERROR: Swarm payload validation failed: ${error.message}`);
+    }
     return false;
   }
-
-  return true;
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -499,35 +690,31 @@ function main() {
       }
     }
 
-    if (useTui) {
-      const workers =
-        typeof payloadData === 'object' && payloadData !== null && payloadData.workers
-          ? payloadData.workers
-          : Array.isArray(payloadData)
-            ? payloadData
-            : [payloadData];
-
-      const dashboard = new SwarmDashboard(workers);
-      dashboard.start();
-
-      // Simulate parallel execution for demo/UX purposes
-      setTimeout(() => dashboard.updateStatus(0, 'Researching', '\x1b[36m'), 1000);
-      setTimeout(() => {
-        if (workers.length > 1) dashboard.updateStatus(1, 'Generating', '\x1b[35m');
-      }, 1500);
-
-      setTimeout(() => {
-        workers.forEach((w, i) => dashboard.updateStatus(i, '✔ Done', '\x1b[32m'));
-        dashboard.stop();
-        console.log('\n\x1b[32m✔ Swarm validation complete. Ready for dispatch.\x1b[0m\n');
-      }, 3000);
-    } else {
-      console.log('INFO: Swarm payload validation successful.');
-      if (astContext) {
-        console.log('--- ENRICHED SWARM PAYLOAD ---');
-        console.log(JSON.stringify(payloadData, null, 2));
-      }
-    }
+    const orchestrator = new SwarmOrchestrator(useTui ? new SwarmDashboard([]) : null);
+    
+    // We must run in an async context since SwarmOrchestrator uses async/await.
+    const wave = (typeof payloadData === 'object' && payloadData !== null && payloadData.wave) 
+        ? payloadData.wave 
+        : 'full';
+    
+    orchestrator.executeTribunal(payloadData, wave)
+      .then((results) => {
+          if (!useTui) {
+              console.log('INFO: Swarm payload validation and orchestration successful.');
+              if (astContext) {
+                  console.log('--- ENRICHED SWARM PAYLOAD ---');
+                  console.log(JSON.stringify(payloadData, null, 2));
+              }
+              console.log('--- EXECUTION PLAN (MOCK RESULTS) ---');
+              console.log(JSON.stringify(results, null, 2));
+          } else {
+              console.log('\n\x1b[32m✔ Swarm orchestration complete.\x1b[0m\n');
+          }
+      })
+      .catch((err) => {
+          console.error(`ERROR: Swarm orchestration failed: ${err.message}`);
+          process.exit(1);
+      });
   } else {
     if (!validatePayload(payloadData, workspaceRoot, agentsDir, file)) {
       console.error('ERROR: Payload validation failed.');

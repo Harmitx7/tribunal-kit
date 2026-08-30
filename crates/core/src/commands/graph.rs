@@ -1,15 +1,17 @@
 use anyhow::Result;
 use serde::Serialize;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::fs;
 use ignore::WalkBuilder;
 use oxc_allocator::Allocator;
 use oxc_parser::Parser;
 use oxc_span::SourceType;
+use oxc_ast::ast::*;
 
 #[derive(Serialize, Debug)]
 pub struct GraphNode {
     pub file_path: String,
+    pub imports: Vec<String>,
     pub exports: Vec<String>,
     pub functions: Vec<String>,
 }
@@ -18,6 +20,8 @@ pub struct GraphNode {
 pub struct SemanticGraph {
     pub nodes: Vec<GraphNode>,
 }
+
+
 
 pub fn generate_graph(path: &str) -> Result<String> {
     let mut nodes = Vec::new();
@@ -43,14 +47,43 @@ pub fn generate_graph(path: &str) -> Result<String> {
             let source_type = SourceType::from_path(p).unwrap_or_default();
             let ret = Parser::new(&allocator, &source_text, source_type).parse();
 
-            let exports = Vec::new();
-            let functions = Vec::new();
+            let mut imports = Vec::new();
+            let mut exports = Vec::new();
+            let mut functions = Vec::new();
 
-            // Note: In a complete implementation we would traverse `ret.program` using oxc_ast::Visit.
-            // For now, we return the parsed file node to establish the JSON RPC / MCP connection.
-            
+            for stmt in &ret.program.body {
+                match stmt {
+                    Statement::ImportDeclaration(import) => {
+                        imports.push(import.source.value.to_string());
+                    }
+                    Statement::ExportNamedDeclaration(export) => {
+                        if let Some(source) = &export.source {
+                            imports.push(source.value.to_string());
+                        }
+                        if let Some(decl) = &export.declaration {
+                            if let Declaration::FunctionDeclaration(func) = decl {
+                                if let Some(id) = &func.id {
+                                    exports.push(id.name.to_string());
+                                    functions.push(id.name.to_string());
+                                }
+                            }
+                        }
+                    }
+                    Statement::ExportAllDeclaration(export) => {
+                        imports.push(export.source.value.to_string());
+                    }
+                    Statement::FunctionDeclaration(func) => {
+                        if let Some(id) = &func.id {
+                            functions.push(id.name.to_string());
+                        }
+                    }
+                    _ => {}
+                }
+            }
+
             nodes.push(GraphNode {
-                file_path: p.display().to_string(),
+                file_path: p.display().to_string().replace("\\", "/"),
+                imports,
                 exports,
                 functions,
             });

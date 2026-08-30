@@ -54,34 +54,68 @@ const ACTION_ROUTER = {
 };
 
 /**
+ * Sanitizes user input to prevent prompt injection attacks.
+ * @param {string} text 
+ * @returns {string} Sanitized text
+ */
+function sanitizeUserInput(text) {
+  // 1. Strip XML/HTML tags
+  const sanitized = text.replace(/<[^>]+>/g, '');
+  
+  // 2. Check for injection patterns
+  const injectionPatterns = [
+      /ignore\s+(all\s+)?previous\s+instructions/i,
+      /you\s+are\s+now\s+a?\s+/i,
+      /system\s*:\s*/i,
+      /assistant\s*:\s*/i,
+      /\[\[INST\]\]/i,
+      /<<SYS>>/i,
+  ];
+  
+  for (const pattern of injectionPatterns) {
+      if (pattern.test(sanitized)) {
+          // Wrap in explicit delimiter if injection is detected
+          return `USER_INPUT_START\n${sanitized}\nUSER_INPUT_END`;
+      }
+  }
+  
+  return sanitized;
+}
+
+/**
  * Programmatically compile a user request or spec object into a hyper-dense super-prompt string.
  * @param {string|object} input
  * @returns {string} Highly compressed YAML string
  */
 function compileSuperPrompt(input) {
-  let cleanInput = '';
   let preStack = [];
   let preRules = [];
-
+  
+  let rawText = '';
   if (typeof input === 'object' && input !== null) {
-    cleanInput = (input.task || input.spec || '').trim();
+    rawText = (input.task || input.spec || '');
     if (Array.isArray(input.stack)) preStack = input.stack;
     if (Array.isArray(input.rules)) preRules = input.rules;
   } else {
-    cleanInput = String(input || '').trim();
+    rawText = String(input || '');
   }
 
-  // 1. Extract Action (Intent mapping)
-  const actionMatch = cleanInput.match(
+  // Sanitize the input to prevent prompt injection
+  const originalInput = sanitizeUserInput(rawText);
+  const trimmedInput = originalInput.trim();
+  const _cleanInput = trimmedInput;
+
+  // 1. Extract Action (Intent mapping) using trimmed input
+  const actionMatch = trimmedInput.match(
     /^(?:(?:hey,?\s*|please\s+|can you\s+|could you\s+|would you\s+|i need you to\s+|i want to\s+)*)(build|create|fix|debug|refactor|update|write|design|audit)\b/i,
   );
   const action = actionMatch ? actionMatch[1].toLowerCase() : 'execute';
 
-  // 2. Extract Tech Stack
+  // 2. Extract Tech Stack using trimmed input
   const stackSet = new Set(preStack.map(s => s.toLowerCase()));
   TECH_KEYWORDS.forEach(tech => {
     const regex = new RegExp(`\\b${tech.replace('.', '\\.')}\\b`, 'i');
-    if (regex.test(cleanInput)) {
+    if (regex.test(trimmedInput)) {
       stackSet.add(tech.toLowerCase());
     }
   });
@@ -101,10 +135,26 @@ function compileSuperPrompt(input) {
 
   const finalSkills = Array.from(recommendedSkills).slice(0, 4);
 
-  // 4. Compact YAML Generation
-  const indentedTarget = cleanInput
+  // 4. Compact YAML Generation with prompt injection defense
+  // Preserve leading whitespace and escape leading "---" or "..." to prevent YAML document start
+  const indentedTarget = originalInput
     .split('\n')
-    .map(line => '  ' + line)
+    .map(line => {
+      const match = line.match(/^(\s*)/);
+      const leadingSpaces = match[1];
+      const content = line.substring(match[1].length);
+
+      let escapedContent = content;
+      if (content.startsWith('---')) {
+        escapedContent = '- --' + content.substring(3);
+      }
+      else if (content.startsWith('...')) {
+        escapedContent = '- ...' + content.substring(3);
+      }
+
+      const withIndent = '   ' + leadingSpaces + escapedContent; // 3 spaces for YAML indentation
+      return withIndent;
+    })
     .join('\n');
 
   return [
@@ -114,7 +164,6 @@ function compileSuperPrompt(input) {
     indentedTarget,
     `stack: [${stack.join(', ')}]`,
     `recommended_skills: [${finalSkills.join(', ')}]`,
-    '---',
   ].join('\n');
 }
 

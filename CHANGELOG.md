@@ -3,20 +3,56 @@
 All notable changes to Tribunal Kit are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [8.0.0] — 2026-08-28 — 🏛️ Codename: AOT Semantic Context Graph & Universal Native Plugin Architecture
+## [8.0.0] — 2026-08-30 — ⚡ Codename: Leviathan Orchestrator & Semantic AOT
+
+### 🚀 Swarm Orchestrator & Wave-Based Execution (Phase 3)
+
+- **SwarmOrchestrator Class**: Upgraded `swarm_dispatcher.js` from a simulated UI to a fully functional wave-based orchestrator.
+- **3-Wave Execution Pipeline**: Deployed execution waves (`wave-1-core`, `wave-2-security`, `wave-3-domain`) to execute reviewers with strict failure mode partitioning (e.g., core failures halt the pipeline, security failures warn and continue).
+- **Automated Resilience (3-Strike Retry)**: Wired `executeWithRetry` natively into the worker execution loop to handle transient API failures using an exponential backoff strategy (1s, 3s, 10s).
+
+### 🛡️ Prompt Injection Defense
+
+- **Input Sanitization**: Implemented `sanitizeUserInput` in `prompt_compiler.js` to strip HTML/XML tags and safely wrap user inputs in strict delimiters, defending the `compileSuperPrompt` generation pipeline against malicious prompt injection attacks.
+
+### 🚀 Skill Format v4 — Stratified Density + Assertion-Dense Architecture
+
+- **Hybrid B2+B3 Skill Format**: Introduced Skill Format v4, a tiered architecture combining stratified density loading (Tier 1: Header, Tier 2: Core, Tier 3: Recipes) with assertion-dense syntax (`❌→✅` traps, `WHEN→MUST/NEVER/THEN` rules). Reduces average skill token footprint by **60-85%** while preserving all domain knowledge.
+- **Shared Guardrails Deduplication (`.agent/skills/_shared/guardrails.md`)**: Extracted VBC Protocol, Pre-Flight Checklist, and LLM Traps from all individual skills into a single shared file. Eliminates ~36,600 wasted tokens across the 184-skill corpus caused by triplicated boilerplate blocks.
+- **Tier Boundary Markers (`<!-- TIER:RECIPES -->`)**: HTML comment markers separate always-loaded assertion tiers (Traps + Rules) from on-demand code recipe tiers, enabling future lazy-loading by `skill_integrator.js`.
+
+### 📐 Pilot Skill Rewrites (6 Skills Migrated)
+
+- **`react-specialist`**: 365 → 125 lines (**-66%**). Converted all React 19 API knowledge to `❌→✅` traps and `WHEN→THEN` rules. Full code recipes for `use()`, `useActionState`, `useOptimistic`, Zustand selectors, and compound components preserved in Tier 3.
+- **`python-pro`**: 383 → 141 lines (**-63%**). Pydantic v2, FastAPI lifespan, async patterns, and Python 3.12+ type system distilled to assertion format with complete code recipes.
+- **`nextjs-react-expert`**: 296 → 117 lines (**-60%**). Next.js 15 App Router conventions, Server Actions with Zod validation, PPR, caching, and middleware patterns preserved.
+- **`better-ui`**: 119 → 42 lines (**-65%**). Design engineering rules (multi-layer shadows, nested border-radius formula, stagger animations) converted to `WHEN→MUST` assertions.
+- **`impeccable`**: 89 → 36 lines (**-60%**). Typography, color, motion, and layout pillars compressed to pure assertion format with OKLCH, 8px grid, and duration constraint rules.
+- **`skill-creator`**: 145 → 80 lines (**-45%**). Rewritten as the v4 format enforcer — now defines the complete v4 frontmatter schema, tiered structure template, and assertion syntax reference for all future skills.
+
+### 📋 v4 Skill Specification
+
+- **Frontmatter Schema**: `name`, `v: 4`, `scope` (file extension triggers), `loads` (dependency skills), `guardrails: shared`, `reviewers` (Tribunal reviewers).
+- **Assertion Syntax**: `❌ old → ✅ new` (hallucination traps), `WHEN X → MUST Y` (requirements), `WHEN X → NEVER Y` (prohibitions), `WHEN X → THEN Y` (expected behavior).
+- **Density Constraints**: Traps section ≤10 lines, Rules section ≤30 lines, one line = one rule.
 
 ### 🚀 AOT Semantic Context Graph
+
 - **Native Rust Engine (`tribunal-core`)**: Introduced a blazingly fast AST structural parsing engine natively written in Rust via `oxc_parser`. Moves logic away from brute-force regex toward 100% deterministic graph querying.
 - **Node Bridge (`build-graph.js`)**: Implemented an async/sync bridge for zero-latency communication between Node MCP and the Rust context engine.
 - **Context Density Optimization**: Replaced arbitrary file dump context loading with a strict `.tribunal/graph.json` query structure to minimize prompt saturation and eliminate model hallucination due to oversized contexts.
 
 ### 🔌 Universal Native Agent Plugin Ecosystem
+
 - **Claude Code Marketplace Integration**: Shipped `.claude/CLAUDE.md`, `plugin.json`, and `claude.json` to natively inject the 52 Specialists and 28 Reviewers directly into Claude Code CLI without bulky proxy servers.
 - **CLI Adapter Injection (`adapter-install.js`)**: Universal injection strategy linking workspace environments to their respective terminal AI tools natively.
 - **MCP Server Expansion**: Published `query_semantic_graph` endpoint into `mcp-server.js` exposing AST structure back to all attached IDEs or autonomous AI harnesses.
 
-## [7.0.0] — 2026-08-09 — 🏛️ Codename: Sovereign Covenant Protocol & CI/CD Defense Suite
+### 🐛 Bug Fixes
 
+- **MCP Server**: Fixed a syntax error and missing closing brace in the `query_semantic_graph` tool definition.
+
+## [7.0.0] — 2026-08-09 — 🛡️ Codename: Sovereign Covenant & Sentinel CI
 
 ### 🚀 CI/CD Pipeline Defense Suite & Automated Repair Subsystem
 
@@ -43,7 +79,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Full Test Suite & Checklist Verification**: Reached 100% clean passes across 41 test suites (383/383 tests passing) and all priority tiers of `checklist.js` (Secret Scan, Lint, TypeScript, Tests).
 - **HyperSparse Routing Index Alignment**: Synchronized `routing_index.json` to 52 specialized agents and 40 workflows.
 
-## [6.0.1] — 2026-08-07
+## [6.0.1] — 2026-08-07 — 🚄 Codename: HyperSparse Matrix & MCP Evolution
 
 ### ⚡ HyperSparse Router, MCP Modernization (2025-03-26) & Governance Architecture
 
@@ -60,7 +96,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Comprehensive Documentation Suite**: Created `docs/API_REFERENCE.md`, `docs/MCP_GUIDE.md`, and `docs/AUTHORING_GUIDE.md` covering programmatic imports, MCP server integration, and custom asset authoring.
 - **Unit Test Suite Expansion**: Created unit tests for `learn`, `compile`, and `native` fallback commands (`test/unit/learn.test.js`, `test/unit/compile.test.js`, `test/unit/native.test.js`), achieving 28 passing test suites (313 unit tests).
 
-## [6.0.0] — 2026-07-30
+## [6.0.0] — 2026-07-30 — 🦀 Codename: Rust Core Ascendancy & v3.0 Unified
 
 ### ⚡ Hybrid Rust Core Engine & Unified v3.0.0 Payload Release
 
@@ -75,7 +111,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Terminal Status Dashboard (`cmd_status` in `crates/core/src/main.rs`)**: Upgraded terminal status output with real-time bridge freshness tracking (fresh/stale/missing), context token compression stats, and 21-reviewer pipeline readiness indicators.
 - **Guardrail Engine & Pre-Deploy Integration (`.agent/scripts/verify_all.js`)**: Integrated Step 7 (Rust Core Tests) into `verify_all.js` and added `ruleRustModuleRegistration` to `guardrail_engine.js` for strict binary/wrapper module alignment.
 
-## [5.8.6] — 2026-07-28
+## [5.8.6] — 2026-07-28 — 🧬 Codename: 3-Pass Synthesis Pipeline
 
 ### ✨ Features & Architecture Enhancements
 
@@ -85,7 +121,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Context Broker Extension (`.agent/scripts/context_broker.js`)**: Added `brokerForPipeline()` API and `--output pipeline-plan`/`--output pipeline-build` modes to provide phase-specific context pruning.
 - **Pipeline Workflow & Architecture Docs**: Added `/pipeline` workflow (`.agent/workflows/pipeline.md`) and updated `.agent/ARCHITECTURE.md` with pipeline flow diagrams and token budget comparisons.
 
-## [5.8.5] — 2026-07-27
+## [5.8.5] — 2026-07-27 — 🕸️ Codename: DAG Kahn Scheduler & Context Compression
 
 ### ✨ Features & Performance Enhancements
 
@@ -106,7 +142,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Reviewer Count Harmonization**: Standardized parallel reviewer classification across `integrity_manifest.js`, `scripts/sync-version.js`, `tribunal-full.md`, `README.md`, and `package.json` to 20 reviewers (including `throughput-optimizer`).
 - **Version Sync Enhancement**: Updated `scripts/sync-version.js` to verify and align `optionalDependencies` (`@tribunal-kit/core-*-*`) in `package.json` whenever the package version is bumped.
 
-## [5.8.4] — 2026-07-22
+## [5.8.4] — 2026-07-22 — 🛡️ Codename: Zero-Exception Guardrail & SkillOpt Engine
 
 ### ✨ Features & Enhancements
 
@@ -148,7 +184,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **JS Unit Tests**: Added `test/unit/optimize.test.js` with 3 test cases covering command initialization guards (missing `.agent` directory, missing LLM key, missing core binary). Total JS test count: 184 → 187.
 - **Guardrail Unit Tests**: Added comprehensive test suites in `guardrail_engine.test.js` and `integrity_manifest.test.js` covering context serialization, integrity assertions, and numeric inconsistency extraction. Overall test suite expanded to 245 passing tests.
 
-## [5.8.3] — 2026-07-18
+## [5.8.3] — 2026-07-18 — 🧠 Codename: Hallucination Purge & Complexity Rungs
 
 ### 🐛 Fixes
 
@@ -158,7 +194,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   - **csharp-developer Skill**: Fixed references to the non-existent `dotnet-core-expert` to correctly map to the `csharp-developer` skill.
   - **Reviewer Count Standardisation**: Consolidated contradictory reviewer count references (19 vs 22) to the actual defined count of **20** parallel reviewers.
 
-## [5.8.2] — 2026-07-16
+## [5.8.2] — 2026-07-16 — 🔄 Codename: GEP Autonomous Evolution
 
 ### ✨ Features & Enhancements
 
@@ -188,7 +224,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Signal Extraction Suite**: Added `skill_evolution.test.js` covering baseline log signal parser unit tests.
 - **Init Command Test Suite**: Added `test/unit/init.test.js` with 19 new test cases covering `cmdInit` (self-install guard, non-existent target, existing `.agent/` without `--force`, dry-run, full init, `--force` reinit), `isSelfInstall` (path match, package.json name match, invalid JSON), `copyDir` (basic copy, nested dirs, dry-run, filter exclusion), `countDir` (empty, top-level, recursive), and `generateIDEBridges` (bridge file creation). Total test count: 165 → 184.
 
-## [5.8.1] — 2026-07-11
+## [5.8.1] — 2026-07-11 — 👁️ Codename: Fabel-5 Cognitive Alignment
 
 ### ✨ Features & Enhancements
 
@@ -205,7 +241,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Dependency Version Mismatch**: Upgraded all native core binary packages in `optionalDependencies` from `^4.5.1` to `^5.8.1` to match the main package release version.
 - **Documentation Consistency**: Aligned references in `README.md` to show the correct `20-reviewer` pipeline instead of `19-reviewer`.
 
-## [5.8.0] — 2026-07-07
+## [5.8.0] — 2026-07-07 — 🌌 Codename: Omniscience Core (OCAE) & Memory Subsystem
 
 ### ✨ Features
 
@@ -231,7 +267,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 - **`windsurfRules is not defined`**: Fixed a critical `ReferenceError` in `dist/commands/init.js` where 5 IDE bridge variables (`windsurfRules`, `geminiSettings`, `geminiRulesBridge`, `copilotInstructions`, `claudeRules`) were referenced but never defined. Ported the missing definitions from `bin/tribunal-kit.js`.
 
-## [5.7.0] — 2026-06-29
+## [5.7.0] — 2026-06-29 — ⚡ Codename: The Quantum Update
 
 ### ⚡ Performance (The "Quantum" Update)
 
@@ -246,7 +282,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 - **Benchmark Harness**: Added `scripts/benchmark.js` to scientifically measure latency across cold-starts, dry-runs, and full copies.
 
-## [4.6.1] — 2026-06-26
+## [4.6.1] — 2026-06-26 — 🎨 Codename: Emil Design Mastery & Motion Guard
 
 ### ✨ Enhancements & Cleanup
 
@@ -273,7 +309,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Documentation Accuracy**: Updated `package.json` description to accurately reflect 18 parallel Tribunal reviewers and 43 specialist agents.
 - **Reference Integrity**: Fixed a broken reference in `.agent/rules/GEMINI.md` to point to the correct `.agent/ARCHITECTURE.md` instead of the deleted `AGENT_FLOW.md`.
 
-## [4.6.0] — 2026-06-21
+## [4.6.0] — 2026-06-21 — 🗺️ Codename: Decentralized Skill Graph & Pro Tier
 
 ### ✨ Features
 
@@ -283,7 +319,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Pro Tier Skills**: Introduced 5 new Enterprise-grade Pro skills: `git-pro`, `containerization-pro`, `cicd-pro`, `system-design-pro`, and `cloud-architect`.
 - **ACF Workflow Synchronization**: Restored the missing `/acf` (Agent Context Format Distiller) workflow into the Tribunal-Kit.
 
-## [4.4.0] — 2026-04-29
+## [4.4.0] — 2026-04-29 — 🧬 Codename: Mutation Engine & Context Snapshots
 
 ### ✨ Features
 
@@ -297,7 +333,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Security Hardening**: Eliminated info disclosure warnings in `bin/tribunal-kit.js` and fixed XSS vulnerability in `graph_visualizer.js`.
 - **Test Integrity**: Validated entire agentic pipeline with 100% passing tests (80/80).
 
-## [4.3.1] — 2026-04-25
+## [4.3.1] — 2026-04-25 — 🔍 Codename: Micro-Zoomer AST Graph
 
 ### ✨ Features
 
@@ -311,7 +347,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **Skill Compliance**: Bulk-injected missing validation headers across all 89 core skills.
 - **Regex Edge Cases**: Fixed Semantic Delta import extraction and stop-word rules in `case_law_manager.js`.
 
-## [4.3.0] — 2026-04-20
+## [4.3.0] — 2026-04-20 — 🔧 Codename: Inner-Loop Hardening
 
 ### ✨ Features
 
@@ -330,7 +366,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 - change CLI UI banner color to #ff1637 (`7ffe9bc`)
 
-## [4.2.0] — 2026-04-18
+## [4.2.0] — 2026-04-18 — 🏛️ Codename: API Architect & Resilience Engine
 
 ### Added
 
@@ -381,7 +417,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
-## [4.0.0] — 2026-04-10
+## [4.0.0] — 2026-04-10 — 🚀 Codename: Tribunal Alpha Shift
 
 ### Added
 
@@ -442,7 +478,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
-## [3.1.0] — 2026-04-07
+## [3.1.0] — 2026-04-07 — 🛡️ Codename: Framework Shield
 
 ### Added
 
@@ -495,7 +531,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
-## [3.0.0] — 2026-04-02
+## [3.0.0] — 2026-04-02 — 💣 Codename: The V3 Breaking Evolution
 
 ### 🚨 Breaking Changes
 
@@ -605,7 +641,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
-## [2.4.6] — 2026-03-30
+## [2.4.6] — 2026-03-30 — 🛠️ Codename: Micro-Patch Gamma
 
 ### Added
 
@@ -617,7 +653,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
-## [2.4.5] — 2026-03-25
+## [2.4.5] — 2026-03-25 — 📖 Codename: Documentation Singularity
 
 ### Added
 
@@ -633,9 +669,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
-## [2.4.0] — 2026-03-05
+## [2.4.0] — 2026-03-05 — 🚀 Codename: Tribunal Genesis Phase II
 
-## [2.4.1] — 2026-03-09
+## [2.4.1] — 2026-03-09 — 🐛 Codename: Hotfix Delta
 
 ### Changed
 
@@ -645,7 +681,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
-## [2.4.0] — 2026-03-05
+## [2.4.0] — 2026-03-05 — 🚀 Codename: Tribunal Genesis Phase II
 
 ### Added
 

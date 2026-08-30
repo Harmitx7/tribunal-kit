@@ -44,5 +44,5 @@ function getGlobalAgentPath() {
 module.exports = {
   initializeGlobalStore,
   getGlobalAgentPath,
-  GLOBAL_STORE_PATH
+  GLOBAL_STORE_PATH,
 };

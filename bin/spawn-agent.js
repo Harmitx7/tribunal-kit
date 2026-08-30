@@ -20,20 +20,20 @@ function spawnAgent(agentCommand, proxyPort) {
 
   const child = spawn(command, args, {
     stdio: 'inherit', // Pass stdin, stdout, stderr directly to the TTY
-    env
+    env,
   });
 
-  child.on('close', (code) => {
+  child.on('close', code => {
     console.log(`[Tribunal Proxy] ${command} exited with code ${code}`);
     process.exit(code);
   });
 
-  child.on('error', (err) => {
+  child.on('error', err => {
     console.error(`[Tribunal Proxy] Failed to start ${command}:`, err);
     process.exit(1);
   });
 }
 
 module.exports = {
-  spawnAgent
+  spawnAgent,
 };

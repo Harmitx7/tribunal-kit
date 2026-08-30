@@ -20,6 +20,61 @@ const PKG = require(path.resolve(__dirname, '../package.json'));
 
 // Timeout for intentionally isolated child processes (30 seconds).
 const SPAWN_TIMEOUT_MS = 30000;
+const GENERAL_TOOL_TIMEOUT_MS = 60000;
+
+// --- DSH Guard: Cooperative Timeout ---
+async function withToolTimeout(fn, timeoutMs) {
+  let timeoutId;
+  const timeoutPromise = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error('TOOL_TIMEOUT'));
+    }, timeoutMs);
+  });
+
+  try {
+    const result = await Promise.race([Promise.resolve().then(fn), timeoutPromise]);
+    return result;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+// --- DSH Guard: Loop Detection ---
+class ToolRepeatGuard {
+  constructor() {
+    this.history = new Map();
+  }
+
+  observe(toolName, argsObj) {
+    const canonicalize = obj => {
+      if (Array.isArray(obj)) return obj.map(canonicalize);
+      if (obj !== null && typeof obj === 'object') {
+        const sorted = {};
+        for (const key of Object.keys(obj).sort()) {
+          sorted[key] = canonicalize(obj[key]);
+        }
+        return sorted;
+      }
+      return obj;
+    };
+
+    const canonicalArgs = JSON.stringify(canonicalize(argsObj) || {});
+    const key = `${toolName}::${canonicalArgs}`;
+
+    const currentCount = (this.history.get(key) || 0) + 1;
+    this.history.clear();
+    this.history.set(key, currentCount);
+
+    if (currentCount === 3) {
+      return 'SYSTEM NOTIFICATION: You are repeating the exact same tool call with identical arguments. Carefully analyze the previous result before calling again: if the task is not complete, try a different approach or different arguments instead of repeating the call.';
+    }
+    if (currentCount >= 5) {
+      return `SYSTEM NOTIFICATION: Repeated tool call detected:\n- tool: ${toolName}\n- consecutive_calls: ${currentCount}\n- arguments: ${canonicalArgs}\nThe repeated calls are not making progress. Do not call this tool with these exact arguments again. Inspect the latest result and choose a different action, different arguments, or finish the task.`;
+    }
+    return null;
+  }
+}
+const repeatGuard = new ToolRepeatGuard();
 
 class RpcError extends Error {
   constructor(code, message) {
@@ -118,7 +173,7 @@ function getAgentDir() {
   return path.resolve(__dirname, '../.agent');
 }
 
-function handleRequest(req) {
+async function handleRequest(req) {
   const fs = require('fs');
   if (req.method === 'notifications/initialized' || req.method === 'notifications/cancelled') {
     return null;
@@ -484,9 +539,25 @@ function handleRequest(req) {
             properties: {
               targetPath: {
                 type: 'string',
-                description: "The directory to query (defaults to current workspace).",
+                description: 'The directory to query (defaults to current workspace).',
               },
             },
+            additionalProperties: false,
+          },
+        },
+        {
+          name: 'exit_plan_mode',
+          description:
+            'Present your finished plan for human reviewed designing your approach. Execution will suspend until the user approves or requests changes.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              plan_content: {
+                type: 'string',
+                description: 'The markdown content of your proposed plan.',
+              },
+            },
+            required: ['plan_content'],
             additionalProperties: false,
           },
         },
@@ -496,345 +567,541 @@ function handleRequest(req) {
 
   if (req.method === 'tools/call') {
     const toolName = req.params && req.params.name;
+    const argsObj = req.params && req.params.arguments;
     if (!toolName) {
       throw new RpcError(-32602, 'Missing required parameter: params.name');
     }
 
-    if (toolName === 'run_tribunal_audit') {
-      const text = runTribunalAudit();
-      return { content: [{ type: 'text', text }] };
-    }
+    const reminder = repeatGuard.observe(toolName, argsObj);
 
-    if (toolName === 'sync_ide_bridges') {
-      const fs = require('fs');
-      const cwd = process.cwd();
-      const agentDest = path.join(cwd, '.agent');
-      if (!fs.existsSync(agentDest)) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Error: .agent/ directory not found. Run `tk init` first.',
-            },
-          ],
-        };
-      }
-      try {
-        const { generateIDEBridges } = require(path.resolve(__dirname, '../dist/commands/init.js'));
-        // generateIDEBridges is async — execute synchronously in MCP context
-        generateIDEBridges(cwd, agentDest, true)
-          .then(() => {})
-          .catch(() => {});
-        return {
-          content: [
-            {
-              type: 'text',
-              text: 'Sync complete',
-            },
-          ],
-        };
-      } catch (e) {
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Sync failed: ${e.message}`,
-            },
-          ],
-        };
-      }
-    }
-
-    if (toolName === 'search_case_law') {
-      const query = req.params && req.params.arguments && req.params.arguments.query;
-      if (!query || typeof query !== 'string') {
-        throw new RpcError(-32602, 'Missing or invalid required argument: query (string)');
-      }
-      const text = searchCaseLaw(query);
-      return { content: [{ type: 'text', text }] };
-    }
-
-    if (toolName === 'list_tribunal_agents') {
-      const fs = require('fs');
-      const agentDir = path.join(getAgentDir(), 'agents');
-      if (!fs.existsSync(agentDir))
-        return {
-          content: [{ type: 'text', text: 'No agents found or .agent directory missing.' }],
-        };
-      const agents = fs
-        .readdirSync(agentDir)
-        .filter(f => f.endsWith('.md'))
-        .map(f => f.replace('.md', ''));
-      return { content: [{ type: 'text', text: 'Available Agents:\n- ' + agents.join('\n- ') }] };
-    }
-
-    if (toolName === 'get_tribunal_agent') {
-      const fs = require('fs');
-      const name = req.params?.arguments?.name;
-      if (!name || typeof name !== 'string')
-        throw new RpcError(-32602, 'Missing or invalid argument: name (string)');
-      const sanitizedName = path.basename(name);
-      const agentsDir = path.resolve(getAgentDir(), 'agents');
-      const agentPath = path.resolve(agentsDir, `${sanitizedName}.md`);
-      // Path containment: ensure resolved path stays within agents directory
-      if (!agentPath.startsWith(agentsDir))
-        throw new RpcError(-32602, 'Invalid agent name: path traversal detected');
-      if (!fs.existsSync(agentPath))
-        return { content: [{ type: 'text', text: `Agent '${sanitizedName}' not found.` }] };
-      const text = fs.readFileSync(agentPath, 'utf8');
-      return { content: [{ type: 'text', text: stripBoilerplate(text) }] };
-    }
-
-    if (toolName === 'list_tribunal_skills') {
-      const fs = require('fs');
-      const skillsDir = path.join(getAgentDir(), 'skills');
-      if (!fs.existsSync(skillsDir))
-        return {
-          content: [{ type: 'text', text: 'No skills found or .agent directory missing.' }],
-        };
-      const skills = fs
-        .readdirSync(skillsDir, { withFileTypes: true })
-        .filter(d => d.isDirectory())
-        .map(d => d.name);
-      return { content: [{ type: 'text', text: 'Available Skills:\n- ' + skills.join('\n- ') }] };
-    }
-
-    if (toolName === 'get_tribunal_skill') {
-      const fs = require('fs');
-      const name = req.params?.arguments?.name;
-      if (!name || typeof name !== 'string')
-        throw new RpcError(-32602, 'Missing or invalid argument: name (string)');
-      const sanitizedName = path.basename(name);
-      const skillsDir = path.resolve(getAgentDir(), 'skills');
-      const skillPath = path.resolve(skillsDir, sanitizedName, 'SKILL.md');
-      // Path containment: ensure resolved path stays within skills directory
-      if (!skillPath.startsWith(skillsDir))
-        throw new RpcError(-32602, 'Invalid skill name: path traversal detected');
-      if (!fs.existsSync(skillPath))
-        return { content: [{ type: 'text', text: `Skill '${sanitizedName}' not found.` }] };
-      const text = fs.readFileSync(skillPath, 'utf8');
-      return { content: [{ type: 'text', text: stripBoilerplate(text) }] };
-    }
-
-    if (toolName === 'get_sparse_context') {
-      const task = req.params?.arguments?.task;
-      const files = req.params?.arguments?.files || [];
-      const model = req.params?.arguments?.model || 'large';
-
-      if (!task) throw new RpcError(-32602, 'Missing required argument: task');
-
-      const agentDest = getAgentDir();
-      const fs = require('fs');
-      if (!fs.existsSync(agentDest)) {
-        return {
-          content: [
-            { type: 'text', text: 'Error: .agent/ directory not found. Run `tk init` first.' },
-          ],
-        };
-      }
-
-      try {
-        const brokerScript = path.join(agentDest, 'scripts', 'context_broker.js');
-        const { broker } = require(brokerScript);
-        const brokerResult = broker(task, files, model, agentDest);
-        return { content: [{ type: 'text', text: stripBoilerplate(brokerResult.promptText) }] };
-      } catch (e) {
-        return {
-          content: [{ type: 'text', text: `Failed to retrieve sparse context: ${e.message}` }],
-        };
-      }
-    }
-
-    if (toolName === 'recall_memory') {
-      const query = req.params?.arguments?.query;
-      if (!query || typeof query !== 'string') {
-        throw new RpcError(-32602, 'Missing or invalid required argument: query (string)');
-      }
-      const budget = req.params?.arguments?.budget || 2000;
-      const agentDest = getAgentDir();
-      const fs = require('fs');
-      if (!fs.existsSync(agentDest)) {
-        return {
-          content: [
-            { type: 'text', text: 'Error: .agent/ directory not found. Run `tk init` first.' },
-          ],
-        };
-      }
-      try {
-        const { _memoryRecall } = require('../dist/commands/memory.js');
-        const { results, tokens_used } = _memoryRecall(agentDest, query, budget);
-        if (results.length === 0) {
-          return { content: [{ type: 'text', text: `No memories match query: "${query}"` }] };
+    const executeTool = async () => {
+      if (toolName === 'exit_plan_mode') {
+        const planContent = req.params?.arguments?.plan_content;
+        if (typeof planContent !== 'string') {
+          throw new RpcError(-32602, 'Missing or invalid required argument: plan_content (string)');
         }
-        let text = `## Memory Recall (${results.length} results, ~${tokens_used}/${budget} tokens)\n\n`;
-        for (const entry of results) {
-          text += `- **[${entry.memory_type.toUpperCase()}]** #${entry.id}: ${entry.content}`;
-          if (entry.tags.length > 0) text += ` _(${entry.tags.join(', ')})_`;
-          text += `\n`;
+        // The wrapper CLI can intercept this, but for the LLM context, we explicitly tell it to wait.
+        return {
+          content: [
+            {
+              type: 'text',
+              text: 'PLAN_SUBMITTED_FOR_REVIEW: The plan has been presented to the human. Please suspend execution and wait for the human to approve or provide feedback in the next turn. Do not call any further tools until you receive a response.',
+            },
+          ],
+        };
+      }
+
+      if (toolName === 'dispatch_swarm') {
+        const payload = req.params?.arguments?.payload;
+        const file = req.params?.arguments?.file;
+        const workspace = req.params?.arguments?.workspace || '.';
+        const mode = req.params?.arguments?.mode || 'legacy';
+        const useTui = req.params?.arguments?.use_tui || false;
+
+        if (!payload && !file) {
+          throw new RpcError(-32602, 'Missing required argument: either payload or file must be provided');
         }
+
+        if (payload && file) {
+          throw new RpcError(-32602, 'Invalid arguments: provide either payload or file, not both');
+        }
+
+        const agentDir = getAgentDir();
+        const fs = require('fs');
+        if (!fs.existsSync(agentDir)) {
+          return {
+            content: [
+              { type: 'text', text: 'Error: .agent/ directory not found. Run `tk init` first.' },
+            ],
+          };
+        }
+
+        try {
+          let _payloadData;
+          if (file) {
+            const filePath = path.resolve(workspace, file);
+            if (!fs.existsSync(filePath)) {
+              throw new Error(`File not found: ${filePath}`);
+            }
+            _payloadData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+          } else {
+            _payloadData = JSON.parse(payload);
+          }
+
+          // Import swarm dispatcher functions
+          const _swarmDispatcher = require(path.join(agentDir, 'scripts', 'swarm_dispatcher.js'));
+
+          // Execute the swarm dispatcher
+          const originalArgv = process.argv;
+          process.argv = [
+            'node',
+            'swarm_dispatcher.js',
+            '--mode', mode,
+            '--workspace', workspace,
+          ];
+
+          if (useTui) {
+            process.argv.push('--tui');
+          }
+
+          if (file) {
+            process.argv.push('--file');
+            process.argv.push(file);
+          } else if (payload) {
+            process.argv.push('--payload');
+            process.argv.push(payload);
+          }
+
+          // Capture output
+          const { spawnSync } = require('child_process');
+          const result = spawnSync(process.execPath, [path.join(agentDir, 'scripts', 'swarm_dispatcher.js'), ...process.argv.slice(2)], {
+            encoding: 'utf8',
+            timeout: 30000,
+          });
+
+          // Restore argv
+          process.argv = originalArgv;
+
+          if (result.error) {
+            throw result.error;
+          }
+
+          return {
+            content: [{ type: 'text', text: result.stdout || result.stderr || 'Swarm dispatch completed' }],
+          };
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Swarm dispatch failed: ${e.message}` }],
+          };
+        }
+      }
+
+      if (toolName === 'get_ast_context') {
+        const targetPath = req.params?.arguments?.targetPath || process.cwd();
+        try {
+          const result = spawnSync(
+            'node',
+            [path.join(__dirname, '../scripts/build-graph.js'), targetPath],
+            {
+              encoding: 'utf8',
+              timeout: 10000,
+            },
+          );
+          if (result.error) throw result.error;
+          return { content: [{ type: 'text', text: result.stdout || result.stderr }] };
+        } catch (e) {
+          return { content: [{ type: 'text', text: `Failed to query graph: ${e.message}` }] };
+        }
+      }
+
+      if (toolName === 'validate_payload') {
+        const payloadStr = req.params?.arguments?.payload;
+        const schemaType = req.params?.arguments?.schemaType;
+
+        if (!payloadStr || typeof payloadStr !== 'string') {
+          throw new RpcError(-32602, 'Missing or invalid required argument: payload (string)');
+        }
+        if (!schemaType || typeof schemaType !== 'string') {
+          throw new RpcError(-32602, 'Missing or invalid required argument: schemaType (string)');
+        }
+
+        const agentDir = getAgentDir();
+        const fs = require('fs');
+        if (!fs.existsSync(agentDir)) {
+          return {
+            content: [
+              { type: 'text', text: 'Error: .agent/ directory not found. Run `tk init` first.' },
+            ],
+          };
+        }
+
+        try {
+          const payloadData = JSON.parse(payloadStr);
+          const { WorkerRequestSchema, WorkerResultSchema, SwarmPayloadSchema, validatePayloadOrThrow } = require(path.join(agentDir, 'scripts', 'payload_schemas.js'));
+
+          let schema;
+          switch (schemaType) {
+            case 'worker-request':
+              schema = WorkerRequestSchema;
+              break;
+            case 'worker-result':
+              schema = WorkerResultSchema;
+              break;
+            case 'swarm-payload':
+              schema = SwarmPayloadSchema;
+              break;
+            default:
+              throw new RpcError(-32602, `Invalid schemaType: ${schemaType}. Must be one of: worker-request, worker-result, swarm-payload`);
+          }
+
+          const validatedData = validatePayloadOrThrow(payloadData, schema);
+          return {
+            content: [{ type: 'text', text: `Payload validation successful.\n\nValidated payload:\n${JSON.stringify(validatedData, null, 2)}` }],
+          };
+        } catch (e) {
+          if (e instanceof SyntaxError) {
+            return { content: [{ type: 'text', text: `Invalid JSON payload: ${e.message}` }] };
+          } else {
+            return { content: [{ type: 'text', text: `Payload validation failed: ${e.message}` }] };
+          }
+        }
+      }
+
+      if (toolName === 'run_tribunal_audit') {
+        const text = runTribunalAudit();
         return { content: [{ type: 'text', text }] };
-      } catch (e) {
-        return { content: [{ type: 'text', text: `Memory recall failed: ${e.message}` }] };
       }
-    }
 
-    if (toolName === 'store_memory') {
-      const memType = req.params?.arguments?.type;
-      const content = req.params?.arguments?.content;
-      const tags = req.params?.arguments?.tags || [];
-      if (!memType || !content) {
-        throw new RpcError(-32602, 'Missing required arguments: type (string), content (string)');
+      if (toolName === 'sync_ide_bridges') {
+        const fs = require('fs');
+        const cwd = process.cwd();
+        const agentDest = path.join(cwd, '.agent');
+        if (!fs.existsSync(agentDest)) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: 'Error: .agent/ directory not found. Run `tk init` first.',
+              },
+            ],
+          };
+        }
+        try {
+          const { generateIDEBridges } = require(
+            path.resolve(__dirname, '../dist/commands/init.js'),
+          );
+          // generateIDEBridges is async
+          await generateIDEBridges(cwd, agentDest, true);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: 'Sync complete',
+              },
+            ],
+          };
+        } catch (e) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `Sync failed: ${e.message}`,
+              },
+            ],
+          };
+        }
       }
-      const validTypes = ['semantic', 'procedural', 'episodic', 'working'];
-      if (!validTypes.includes(memType)) {
-        throw new RpcError(
-          -32602,
-          `Invalid memory type: "${memType}". Must be one of: ${validTypes.join(', ')}`,
-        );
+
+      if (toolName === 'search_case_law') {
+        const query = req.params && req.params.arguments && req.params.arguments.query;
+        if (!query || typeof query !== 'string') {
+          throw new RpcError(-32602, 'Missing or invalid required argument: query (string)');
+        }
+        const text = searchCaseLaw(query);
+        return { content: [{ type: 'text', text }] };
       }
-      const agentDest = getAgentDir();
-      const fs = require('fs');
-      if (!fs.existsSync(agentDest)) {
-        return {
-          content: [
-            { type: 'text', text: 'Error: .agent/ directory not found. Run `tk init` first.' },
-          ],
-        };
+
+      if (toolName === 'list_tribunal_agents') {
+        const fs = require('fs');
+        const agentDir = path.join(getAgentDir(), 'agents');
+        if (!fs.existsSync(agentDir))
+          return {
+            content: [{ type: 'text', text: 'No agents found or .agent directory missing.' }],
+          };
+        const agents = fs
+          .readdirSync(agentDir)
+          .filter(f => f.endsWith('.md'))
+          .map(f => f.replace('.md', ''));
+        return { content: [{ type: 'text', text: 'Available Agents:\n- ' + agents.join('\n- ') }] };
       }
-      try {
-        const { _memoryStore } = require('../dist/commands/memory.js');
-        const result = _memoryStore(agentDest, memType, content, tags, null);
-        return {
-          content: [
+
+      if (toolName === 'get_tribunal_agent') {
+        const fs = require('fs');
+        const name = req.params?.arguments?.name;
+        if (!name || typeof name !== 'string')
+          throw new RpcError(-32602, 'Missing or invalid argument: name (string)');
+        const sanitizedName = path.basename(name);
+        const agentsDir = path.resolve(getAgentDir(), 'agents');
+        const agentPath = path.resolve(agentsDir, `${sanitizedName}.md`);
+        // Path containment: ensure resolved path stays within agents directory
+        if (!agentPath.startsWith(agentsDir))
+          throw new RpcError(-32602, 'Invalid agent name: path traversal detected');
+        if (!fs.existsSync(agentPath))
+          return { content: [{ type: 'text', text: `Agent '${sanitizedName}' not found.` }] };
+        const text = fs.readFileSync(agentPath, 'utf8');
+        return { content: [{ type: 'text', text: stripBoilerplate(text) }] };
+      }
+
+      if (toolName === 'list_tribunal_skills') {
+        const fs = require('fs');
+        const skillsDir = path.join(getAgentDir(), 'skills');
+        if (!fs.existsSync(skillsDir))
+          return {
+            content: [{ type: 'text', text: 'No skills found or .agent directory missing.' }],
+          };
+        const skills = fs
+          .readdirSync(skillsDir, { withFileTypes: true })
+          .filter(d => d.isDirectory())
+          .map(d => d.name);
+        return { content: [{ type: 'text', text: 'Available Skills:\n- ' + skills.join('\n- ') }] };
+      }
+
+      if (toolName === 'get_tribunal_skill') {
+        const fs = require('fs');
+        const name = req.params?.arguments?.name;
+        if (!name || typeof name !== 'string')
+          throw new RpcError(-32602, 'Missing or invalid argument: name (string)');
+        const sanitizedName = path.basename(name);
+        const skillsDir = path.resolve(getAgentDir(), 'skills');
+        const skillPath = path.resolve(skillsDir, sanitizedName, 'SKILL.md');
+        // Path containment: ensure resolved path stays within skills directory
+        if (!skillPath.startsWith(skillsDir))
+          throw new RpcError(-32602, 'Invalid skill name: path traversal detected');
+        if (!fs.existsSync(skillPath))
+          return { content: [{ type: 'text', text: `Skill '${sanitizedName}' not found.` }] };
+        const text = fs.readFileSync(skillPath, 'utf8');
+        return { content: [{ type: 'text', text: stripBoilerplate(text) }] };
+      }
+
+      if (toolName === 'get_sparse_context') {
+        const task = req.params?.arguments?.task;
+        const files = req.params?.arguments?.files || [];
+        const model = req.params?.arguments?.model || 'large';
+
+        if (!task) throw new RpcError(-32602, 'Missing required argument: task');
+
+        const agentDest = getAgentDir();
+        const fs = require('fs');
+        if (!fs.existsSync(agentDest)) {
+          return {
+            content: [
+              { type: 'text', text: 'Error: .agent/ directory not found. Run `tk init` first.' },
+            ],
+          };
+        }
+
+        try {
+          const brokerScript = path.join(agentDest, 'scripts', 'context_broker.js');
+          const { broker } = require(brokerScript);
+          const brokerResult = broker(task, files, model, agentDest);
+          return { content: [{ type: 'text', text: stripBoilerplate(brokerResult.promptText) }] };
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Failed to retrieve sparse context: ${e.message}` }],
+          };
+        }
+      }
+
+      if (toolName === 'recall_memory') {
+        const query = req.params?.arguments?.query;
+        if (!query || typeof query !== 'string') {
+          throw new RpcError(-32602, 'Missing or invalid required argument: query (string)');
+        }
+        const budget = req.params?.arguments?.budget || 2000;
+        const agentDest = getAgentDir();
+        const fs = require('fs');
+        if (!fs.existsSync(agentDest)) {
+          return {
+            content: [
+              { type: 'text', text: 'Error: .agent/ directory not found. Run `tk init` first.' },
+            ],
+          };
+        }
+        try {
+          const { _memoryRecall } = require('../dist/commands/memory.js');
+          const { results, tokens_used } = _memoryRecall(agentDest, query, budget);
+          if (results.length === 0) {
+            return { content: [{ type: 'text', text: `No memories match query: "${query}"` }] };
+          }
+          let text = `## Memory Recall (${results.length} results, ~${tokens_used}/${budget} tokens)\n\n`;
+          for (const entry of results) {
+            text += `- **[${entry.memory_type.toUpperCase()}]** #${entry.id}: ${entry.content}`;
+            if (entry.tags.length > 0) text += ` _(${entry.tags.join(', ')})_`;
+            text += `\n`;
+          }
+          return { content: [{ type: 'text', text }] };
+        } catch (e) {
+          return { content: [{ type: 'text', text: `Memory recall failed: ${e.message}` }] };
+        }
+      }
+
+      if (toolName === 'store_memory') {
+        const memType = req.params?.arguments?.type;
+        const content = req.params?.arguments?.content;
+        const tags = req.params?.arguments?.tags || [];
+        if (!memType || !content) {
+          throw new RpcError(-32602, 'Missing required arguments: type (string), content (string)');
+        }
+        const validTypes = ['semantic', 'procedural', 'episodic', 'working'];
+        if (!validTypes.includes(memType)) {
+          throw new RpcError(
+            -32602,
+            `Invalid memory type: "${memType}". Must be one of: ${validTypes.join(', ')}`,
+          );
+        }
+        const agentDest = getAgentDir();
+        const fs = require('fs');
+        if (!fs.existsSync(agentDest)) {
+          return {
+            content: [
+              { type: 'text', text: 'Error: .agent/ directory not found. Run `tk init` first.' },
+            ],
+          };
+        }
+        try {
+          const { _memoryStore } = require('../dist/commands/memory.js');
+          const result = _memoryStore(agentDest, memType, content, tags, null);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `Memory stored: #${result.id} (${memType}, ~${result.token_estimate} tokens)`,
+              },
+            ],
+          };
+        } catch (e) {
+          return { content: [{ type: 'text', text: `Memory store failed: ${e.message}` }] };
+        }
+      }
+
+      if (toolName === 'query_semantic_graph') {
+        const targetPath = req.params?.arguments?.targetPath || process.cwd();
+        try {
+          const result = spawnSync(
+            'node',
+            [path.join(__dirname, '../scripts/build-graph.js'), targetPath],
             {
-              type: 'text',
-              text: `Memory stored: #${result.id} (${memType}, ~${result.token_estimate} tokens)`,
+              encoding: 'utf8',
+              timeout: 10000,
             },
-          ],
-        };
-      } catch (e) {
-        return { content: [{ type: 'text', text: `Memory store failed: ${e.message}` }] };
+          );
+          if (result.error) throw result.error;
+          return { content: [{ type: 'text', text: result.stdout || result.stderr }] };
+        } catch (e) {
+          return { content: [{ type: 'text', text: `Failed to query graph: ${e.message}` }] };
+        }
       }
-    }
 
-    if (toolName === 'query_semantic_graph') {
-      const targetPath = req.params?.arguments?.targetPath || process.cwd();
-      try {
-        // Because MCP doesn't natively await async functions deeply in this handler's structure, 
-        // we'll run it synchronously via a wrapper or assume it completes quickly enough for stdout.
-        // Actually, we can return a Promise here if the MCP handler supports it, which we'll assume it does or we'll wrap it.
-        const result = spawnSync('node', [path.join(__dirname, '../scripts/build-graph.js'), targetPath], {
-          encoding: 'utf8',
-          timeout: 10000
-        });
-        if (result.error) throw result.error;
-        return { content: [{ type: 'text', text: result.stdout || result.stderr }] };
-      } catch (e) {
-        return { content: [{ type: 'text', text: `Failed to query graph: ${e.message}` }] };
-      }
-    }
+      if (toolName === 'align_output') {
+        const text = req.params?.arguments?.text;
+        if (typeof text !== 'string') {
+          throw new RpcError(-32602, 'Missing or invalid required argument: text (string)');
+        }
+        try {
+          const { alignText, validateCodeContent } = require('../dist/commands/align.js');
+          const aligned = alignText(text);
+          const warnings = validateCodeContent(aligned);
 
-    if (toolName === 'align_output') {
-      const text = req.params?.arguments?.text;
-      if (typeof text !== 'string') {
-        throw new RpcError(-32602, 'Missing or invalid required argument: text (string)');
-      }
-      try {
-        const { alignText, validateCodeContent } = require('../dist/commands/align.js');
-        const aligned = alignText(text);
-        const warnings = validateCodeContent(aligned);
-
-        let outputText = aligned;
-        if (warnings.length > 0) {
-          outputText += '\n\n⚠️  OCAE Alignment Validator Warnings:\n';
-          for (const warnMsg of warnings) {
-            outputText += `● ${warnMsg}\n`;
+          let outputText = aligned;
+          if (warnings.length > 0) {
+            outputText += '\n\n⚠️  OCAE Alignment Validator Warnings:\n';
+            for (const warnMsg of warnings) {
+              outputText += `● ${warnMsg}\n`;
+            }
           }
+          return { content: [{ type: 'text', text: outputText }] };
+        } catch (e) {
+          return { content: [{ type: 'text', text: `Output alignment failed: ${e.message}` }] };
         }
-        return { content: [{ type: 'text', text: outputText }] };
-      } catch (e) {
-        return { content: [{ type: 'text', text: `Output alignment failed: ${e.message}` }] };
-      }
-    }
-
-    if (toolName === 'verify_contracts') {
-      const file = req.params?.arguments?.file;
-      const content = req.params?.arguments?.content;
-
-      if (!file || typeof file !== 'string' || typeof content !== 'string') {
-        throw new RpcError(
-          -32602,
-          'Missing or invalid required arguments: file (string), content (string)',
-        );
       }
 
-      try {
-        const projectRoot = process.cwd();
-        const contractEnginePath = path.join(getAgentDir(), 'scripts', 'contract_engine.js');
-        if (!require('fs').existsSync(contractEnginePath)) {
-          return {
-            content: [
-              { type: 'text', text: 'Error: contract_engine.js not found. Run `tk init` first.' },
-            ],
-          };
+      if (toolName === 'verify_contracts') {
+        const file = req.params?.arguments?.file;
+        const content = req.params?.arguments?.content;
+
+        if (!file || typeof file !== 'string' || typeof content !== 'string') {
+          throw new RpcError(
+            -32602,
+            'Missing or invalid required arguments: file (string), content (string)',
+          );
         }
 
-        const contractEngine = require(contractEnginePath);
-        const contracts = contractEngine.loadContracts(projectRoot);
-
-        if (contracts.length === 0) {
-          return {
-            content: [
-              {
-                type: 'text',
-                text: 'No active behavioral contracts found in .tribunal/contracts/.',
-              },
-            ],
-          };
-        }
-
-        const relativePath = path.relative(projectRoot, file).replace(/\\/g, '/');
-        const allViolations = [];
-
-        for (const contract of contracts) {
-          const vList = contractEngine.evaluateContract(contract, relativePath, content);
-          if (vList.length > 0) {
-            allViolations.push(...vList);
+        try {
+          const projectRoot = process.cwd();
+          const contractEnginePath = path.join(getAgentDir(), 'scripts', 'contract_engine.js');
+          if (!require('fs').existsSync(contractEnginePath)) {
+            return {
+              content: [
+                { type: 'text', text: 'Error: contract_engine.js not found. Run `tk init` first.' },
+              ],
+            };
           }
-        }
 
-        if (allViolations.length === 0) {
+          const contractEngine = require(contractEnginePath);
+          const contracts = contractEngine.loadContracts(projectRoot);
+
+          if (contracts.length === 0) {
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: 'No active behavioral contracts found in .tribunal/contracts/.',
+                },
+              ],
+            };
+          }
+
+          const relativePath = path.relative(projectRoot, file).replace(/\\/g, '/');
+          const allViolations = [];
+
+          for (const contract of contracts) {
+            const vList = contractEngine.evaluateContract(contract, relativePath, content);
+            if (vList.length > 0) {
+              allViolations.push(...vList);
+            }
+          }
+
+          if (allViolations.length === 0) {
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: '✅ Contract check passed. Zero behavioral violations detected.',
+                },
+              ],
+            };
+          }
+
+          let report = `📜 Contract Verification Results (${allViolations.length} violations):\n`;
+          for (const v of allViolations) {
+            report += `● [${v.severity.toUpperCase()}] ${v.contract}: ${v.message}\n`;
+            if (v.line) report += `   Line ${v.line}: ${v.snippet || ''}\n`;
+          }
+
+          return { content: [{ type: 'text', text: report }] };
+        } catch (e) {
           return {
-            content: [
-              {
-                type: 'text',
-                text: '✅ Contract check passed. Zero behavioral violations detected.',
-              },
-            ],
+            content: [{ type: 'text', text: `Contract verification failed: ${e.message}` }],
           };
         }
-
-        let report = `📜 Contract Verification Results (${allViolations.length} violations):\n`;
-        for (const v of allViolations) {
-          report += `● [${v.severity.toUpperCase()}] ${v.contract}: ${v.message}\n`;
-          if (v.line) report += `   Line ${v.line}: ${v.snippet || ''}\n`;
-        }
-
-        return { content: [{ type: 'text', text: report }] };
-      } catch (e) {
-        return { content: [{ type: 'text', text: `Contract verification failed: ${e.message}` }] };
       }
-    }
 
-    throw new RpcError(-32601, `Unknown tool: ${toolName}`);
+      throw new RpcError(-32601, `Unknown tool: ${toolName}`);
+    };
+
+    try {
+      const result = await withToolTimeout(executeTool, GENERAL_TOOL_TIMEOUT_MS);
+      if (reminder) {
+        result.content.push({ type: 'text', text: '\n\n' + reminder });
+      }
+      return result;
+    } catch (e) {
+      if (e.message === 'TOOL_TIMEOUT') {
+        const errorMsg = `Error: Tool execution timed out after ${GENERAL_TOOL_TIMEOUT_MS}ms`;
+        const result = { content: [{ type: 'text', text: errorMsg }] };
+        if (reminder) result.content.push({ type: 'text', text: '\n\n' + reminder });
+        return result;
+      }
+      throw e;
+    }
   }
 
   throw new RpcError(-32601, `Unknown method: ${req.method}`);
 }
 
-function processSingleRequest(req) {
+async function processSingleRequest(req) {
   try {
-    const result = handleRequest(req);
+    const result = await handleRequest(req);
     // If it's a notification, do not send a response
     if (req.id === undefined || req.id === null) {
       return null;
@@ -858,7 +1125,7 @@ function processSingleRequest(req) {
   }
 }
 
-rl.on('line', line => {
+rl.on('line', async line => {
   if (line.length > 1048576) {
     // 1MB limit
     const errorRes = {
@@ -888,7 +1155,7 @@ rl.on('line', line => {
   if (Array.isArray(req)) {
     const responses = [];
     for (const singleReq of req) {
-      const response = processSingleRequest(singleReq);
+      const response = await processSingleRequest(singleReq);
       if (response) {
         responses.push(response);
       }
@@ -897,7 +1164,7 @@ rl.on('line', line => {
       console.log(JSON.stringify(responses));
     }
   } else {
-    const response = processSingleRequest(req);
+    const response = await processSingleRequest(req);
     if (response) {
       console.log(JSON.stringify(response));
     }

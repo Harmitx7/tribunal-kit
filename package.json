@@ -84,11 +84,11 @@
     "SECURITY.md",
     "CONTRIBUTING.md",
     "mcp_config.json",
-    "plugin.json",
-    "claude.json",
-    "system-prompt.md",
-    "slash-commands.json",
-    "specialist-registry.json"
+    ".agent/config/plugin.json",
+    ".agent/config/claude.json",
+    ".agent/config/system-prompt.md",
+    ".agent/config/slash-commands.json",
+    ".agent/config/specialist-registry.json"
   ],
   "engines": {
     "node": ">=18.0.0"
@@ -139,5 +139,9 @@
       ".agent/scripts/**/*.js",
       "dist/**/*.js"
     ]
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "zod": "^4.5.4"
   }
 }

@@ -80,6 +80,7 @@ npx tribunal-kit status  # Verify everything is locked in
 ```
 
 ### 🔌 CLI Agent Plugins (Claude Code, Aider, Cline)
+
 To automatically integrate Tribunal Kit into terminal-based AI agents, use the universal adapter:
 
 ```bash
@@ -94,16 +95,16 @@ npx tribunal-kit tk-adapt --global  # Install globally to ~/.tribunal-kit/
 
 ### What's Inside
 
-| Layer                  | Count   | What It Does                                                                        |
-| :--------------------- | :------ | :---------------------------------------------------------------------------------- |
-| **Specialist Agents**  | 52      | Domain-specific reasoning (frontend, backend, security, database, mobile, DevOps)   |
-| **Tribunal Reviewers** | 28      | Parallel code review pipeline that catches hallucinations before they ship          |
-| **Reusable Skills**    | 183     | Deep knowledge packs (React 19, Next.js 15, Rust, Python, Vue, animations, a11y)    |
-| **Slash Workflows**    | 38      | One-command operations (`/generate`, `/debug`, `/audit`, `/deploy`, `/refactor`)    |
-| **Rust Core**          | 1       | Native binary for AOT Semantic Graph extraction, AST parsing, hashing, and deduping |
-| **MCP Server**         | 1       | Model Context Protocol integration with `query_semantic_graph` capabilities         |
-| **Native Plugins**     | ∞       | Direct integration into CLI tools like Claude Code via `/plugin marketplace add`    |
-| **Case Law Database**  | ∞       | Records past AI mistakes as permanent precedents to prevent recurrence              |
+| Layer                  | Count | What It Does                                                                        |
+| :--------------------- | :---- | :---------------------------------------------------------------------------------- |
+| **Specialist Agents**  | 52    | Domain-specific reasoning (frontend, backend, security, database, mobile, DevOps)   |
+| **Tribunal Reviewers** | 28    | Parallel code review pipeline that catches hallucinations before they ship          |
+| **Reusable Skills**    | 183   | Deep knowledge packs (React 19, Next.js 15, Rust, Python, Vue, animations, a11y)    |
+| **Slash Workflows**    | 38    | One-command operations (`/generate`, `/debug`, `/audit`, `/deploy`, `/refactor`)    |
+| **Rust Core**          | 1     | Native binary for AOT Semantic Graph extraction, AST parsing, hashing, and deduping |
+| **MCP Server**         | 1     | Model Context Protocol integration with `query_semantic_graph` capabilities         |
+| **Native Plugins**     | ∞     | Direct integration into CLI tools like Claude Code via `/plugin marketplace add`    |
+| **Case Law Database**  | ∞     | Records past AI mistakes as permanent precedents to prevent recurrence              |
 
 <br>
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />

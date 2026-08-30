@@ -53,7 +53,7 @@ const { handleRequest, stripBoilerplate } = require('../../bin/mcp-server');
 
 describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
   describe('Impact Classifier — malformed inputs', () => {
-    test('handles null opts gracefully', () => {
+    test('handles null opts gracefully', async () => {
       const result = classifyImpact(null);
       expect(result).toHaveProperty('tier');
       expect(typeof result.tier).toBe('number');
@@ -61,13 +61,13 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
       expect(result.tier).toBeLessThanOrEqual(3);
     });
 
-    test('handles undefined opts gracefully', () => {
+    test('handles undefined opts gracefully', async () => {
       const result = classifyImpact(undefined);
       expect(result).toHaveProperty('tier');
       expect(typeof result.score).toBe('number');
     });
 
-    test('handles empty object gracefully', () => {
+    test('handles empty object gracefully', async () => {
       const result = classifyImpact({});
       expect(result).toHaveProperty('tier');
       expect(result).toHaveProperty('score');
@@ -77,7 +77,7 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
       expect(result).toHaveProperty('fastPass');
     });
 
-    test('filters non-string entries from files array', () => {
+    test('filters non-string entries from files array', async () => {
       const result = classifyImpact({
         files: [null, undefined, 42, '', 'valid.css', { name: 'bad' }],
         task: 'fix style',
@@ -88,61 +88,61 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
       expect(result.tier).toBe(0); // CSS file, small edit => Tier 0
     });
 
-    test('handles numeric task gracefully (type coercion safety)', () => {
+    test('handles numeric task gracefully (type coercion safety)', async () => {
       const result = classifyImpact({ task: 12345, files: [] });
       expect(result).toHaveProperty('tier');
       // Numeric task should be treated as empty string, not crash
     });
 
-    test('handles negative lineCount gracefully', () => {
+    test('handles negative lineCount gracefully', async () => {
       const result = classifyImpact({ lineCount: -10 });
       expect(result).toHaveProperty('tier');
       expect(result.tier).toBeGreaterThanOrEqual(0);
     });
 
-    test('handles Infinity lineCount gracefully', () => {
+    test('handles Infinity lineCount gracefully', async () => {
       const result = classifyImpact({ lineCount: Infinity });
       expect(result).toHaveProperty('tier');
     });
 
-    test('handles NaN lineCount gracefully', () => {
+    test('handles NaN lineCount gracefully', async () => {
       const result = classifyImpact({ lineCount: NaN });
       expect(result).toHaveProperty('tier');
     });
   });
 
   describe('Token Budget Broker — boundary inputs', () => {
-    test('handles negative tier by clamping to 0', () => {
+    test('handles negative tier by clamping to 0', async () => {
       const result = getTokenBudget(-5);
       expect(result.tier).toBe(0);
       expect(result.maxTokens).toBe(0);
     });
 
-    test('handles tier > 3 by clamping to 3', () => {
+    test('handles tier > 3 by clamping to 3', async () => {
       const result = getTokenBudget(99);
       expect(result.tier).toBe(3);
       expect(result.maxTokens).toBe(32000);
     });
 
-    test('handles NaN tier by defaulting to tier 1', () => {
+    test('handles NaN tier by defaulting to tier 1', async () => {
       const result = getTokenBudget(NaN);
       expect(result.tier).toBe(1);
       expect(result.maxTokens).toBe(2000);
     });
 
-    test('handles string tier by defaulting to tier 1', () => {
+    test('handles string tier by defaulting to tier 1', async () => {
       const result = getTokenBudget('invalid');
       expect(result.tier).toBe(1);
       expect(result.maxTokens).toBe(2000);
     });
 
-    test('handles undefined tier by defaulting to tier 1', () => {
+    test('handles undefined tier by defaulting to tier 1', async () => {
       const result = getTokenBudget(undefined);
       expect(result.tier).toBe(1);
       expect(result.maxTokens).toBe(2000);
     });
 
-    test('rounds fractional tiers to nearest integer', () => {
+    test('rounds fractional tiers to nearest integer', async () => {
       const result = getTokenBudget(1.7);
       expect(result.tier).toBe(2);
       expect(result.maxTokens).toBe(8000);
@@ -150,12 +150,12 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
   });
 
   describe('MCP Server — argument validation', () => {
-    test('rejects tools/call with missing params.name', () => {
+    test('rejects tools/call with missing params.name', async () => {
       const req = { jsonrpc: '2.0', id: 1, method: 'tools/call', params: {} };
-      expect(() => handleRequest(req)).toThrow();
+      await expect(handleRequest(req)).rejects.toThrow();
     });
 
-    test('rejects unknown tool name with -32601', () => {
+    test('rejects unknown tool name with -32601', async () => {
       const req = {
         jsonrpc: '2.0',
         id: 1,
@@ -163,14 +163,14 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
         params: { name: 'nonexistent_tool_xyz' },
       };
       try {
-        handleRequest(req);
+        await handleRequest(req);
         fail('Should have thrown');
       } catch (e) {
         expect(e.code).toBe(-32601);
       }
     });
 
-    test('rejects search_case_law with non-string query', () => {
+    test('rejects search_case_law with non-string query', async () => {
       const req = {
         jsonrpc: '2.0',
         id: 1,
@@ -178,14 +178,14 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
         params: { name: 'search_case_law', arguments: { query: 123 } },
       };
       try {
-        handleRequest(req);
+        await handleRequest(req);
         fail('Should have thrown');
       } catch (e) {
         expect(e.code).toBe(-32602);
       }
     });
 
-    test('rejects get_tribunal_agent with non-string name', () => {
+    test('rejects get_tribunal_agent with non-string name', async () => {
       const req = {
         jsonrpc: '2.0',
         id: 1,
@@ -193,14 +193,14 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
         params: { name: 'get_tribunal_agent', arguments: { name: 42 } },
       };
       try {
-        handleRequest(req);
+        await handleRequest(req);
         fail('Should have thrown');
       } catch (e) {
         expect(e.code).toBe(-32602);
       }
     });
 
-    test('rejects get_tribunal_skill with non-string name', () => {
+    test('rejects get_tribunal_skill with non-string name', async () => {
       const req = {
         jsonrpc: '2.0',
         id: 1,
@@ -208,14 +208,14 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
         params: { name: 'get_tribunal_skill', arguments: { name: null } },
       };
       try {
-        handleRequest(req);
+        await handleRequest(req);
         fail('Should have thrown');
       } catch (e) {
         expect(e.code).toBe(-32602);
       }
     });
 
-    test('rejects store_memory with invalid type', () => {
+    test('rejects store_memory with invalid type', async () => {
       const req = {
         jsonrpc: '2.0',
         id: 1,
@@ -223,7 +223,7 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
         params: { name: 'store_memory', arguments: { type: 'invalid_type', content: 'test' } },
       };
       try {
-        handleRequest(req);
+        await handleRequest(req);
         fail('Should have thrown');
       } catch (e) {
         expect(e.code).toBe(-32602);
@@ -232,7 +232,7 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
   });
 
   describe('MCP Server — path traversal defense', () => {
-    test('get_tribunal_agent sanitizes path traversal attempts', () => {
+    test('get_tribunal_agent sanitizes path traversal attempts', async () => {
       const req = {
         jsonrpc: '2.0',
         id: 1,
@@ -241,30 +241,30 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
       };
       // Should not throw a path traversal error — path.basename strips traversal
       // Should return "not found" because "passwd" is not an agent
-      const result = handleRequest(req);
+      const result = await handleRequest(req);
       expect(result.content[0].text).toContain('not found');
     });
 
-    test('get_tribunal_skill sanitizes path traversal attempts', () => {
+    test('get_tribunal_skill sanitizes path traversal attempts', async () => {
       const req = {
         jsonrpc: '2.0',
         id: 1,
         method: 'tools/call',
         params: { name: 'get_tribunal_skill', arguments: { name: '../../../etc/shadow' } },
       };
-      const result = handleRequest(req);
+      const result = await handleRequest(req);
       expect(result.content[0].text).toContain('not found');
     });
   });
 
   describe('Socratic Gate — flag override safety', () => {
-    test('only recognized flags bypass the gate', () => {
+    test('only recognized flags bypass the gate', async () => {
       // Unrecognized flag should NOT bypass
       const result = evaluateSocraticGate({ tier: 3, flags: { randomFlag: true } });
       expect(result.shouldBlock).toBe(true);
     });
 
-    test('no-gate flag bypasses even Tier 3', () => {
+    test('no-gate flag bypasses even Tier 3', async () => {
       const result = evaluateSocraticGate({ tier: 3, flags: { 'no-gate': true } });
       expect(result.shouldBlock).toBe(false);
     });
@@ -317,7 +317,7 @@ describe('DETERMINISM: Repeatable Classification & Budget Allocation', () => {
       }
     });
 
-    test('score is always a finite number between 0 and 1', () => {
+    test('score is always a finite number between 0 and 1', async () => {
       const cases = [
         {},
         { files: ['a.css'], task: 'typo', lineCount: 1 },
@@ -331,7 +331,7 @@ describe('DETERMINISM: Repeatable Classification & Budget Allocation', () => {
       }
     });
 
-    test('fastPass is true if and only if tier === 0', () => {
+    test('fastPass is true if and only if tier === 0', async () => {
       const tier0 = classifyImpact({ files: ['readme.md'], task: 'fix docs typo', lineCount: 1 });
       expect(tier0.fastPass).toBe(tier0.tier === 0);
 
@@ -352,7 +352,7 @@ describe('DETERMINISM: Repeatable Classification & Budget Allocation', () => {
       }
     });
 
-    test('TIER_TOKEN_LIMITS is immutable (frozen or consistent)', () => {
+    test('TIER_TOKEN_LIMITS is immutable (frozen or consistent)', async () => {
       expect(TIER_TOKEN_LIMITS[0]).toBe(0);
       expect(TIER_TOKEN_LIMITS[1]).toBe(2000);
       expect(TIER_TOKEN_LIMITS[2]).toBe(8000);
@@ -380,7 +380,7 @@ describe('DETERMINISM: Repeatable Classification & Budget Allocation', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('FAILURE TOLERANCE: Graceful Degradation Under Failure', () => {
-  test('wrapper.js runRustBinary contains graceful fallback pattern (not process.exit on spawn error)', () => {
+  test('wrapper.js runRustBinary contains graceful fallback pattern (not process.exit on spawn error)', async () => {
     const wrapperSource = fs.readFileSync(path.join(ROOT, 'bin/wrapper.js'), 'utf8');
 
     // Extract the runRustBinary function body to verify it returns false on error
@@ -397,7 +397,7 @@ describe('FAILURE TOLERANCE: Graceful Degradation Under Failure', () => {
     expect(wrapperSource).toContain('Falling back to JS engine');
   });
 
-  test('TRIBUNAL_FORCE_JS=1 forces JS fallback without crashing', () => {
+  test('TRIBUNAL_FORCE_JS=1 forces JS fallback without crashing', async () => {
     const wrapperPath = path.join(ROOT, 'bin/wrapper.js');
     // This should not throw — it should execute via JS engine
     try {
@@ -415,28 +415,28 @@ describe('FAILURE TOLERANCE: Graceful Degradation Under Failure', () => {
     }
   });
 
-  test('MCP server handles batch JSON-RPC requests (protocol resilience)', () => {
+  test('MCP server handles batch JSON-RPC requests (protocol resilience)', async () => {
     const batch = [
       { jsonrpc: '2.0', id: 1, method: 'ping' },
       { jsonrpc: '2.0', id: 2, method: 'resources/list' },
     ];
     // Simulate batch by processing individually (batch is handled in rl.on line)
     for (const req of batch) {
-      const result = handleRequest(req);
+      const result = await handleRequest(req);
       expect(result).toBeDefined();
     }
   });
 
-  test('MCP server handles notification methods without response (no crash)', () => {
+  test('MCP server handles notification methods without response (no crash)', async () => {
     const notificationReq = { method: 'notifications/initialized' };
-    const result = handleRequest(notificationReq);
+    const result = await handleRequest(notificationReq);
     expect(result).toBeNull();
   });
 
-  test('MCP server returns proper error for unknown methods', () => {
+  test('MCP server returns proper error for unknown methods', async () => {
     const req = { jsonrpc: '2.0', id: 99, method: 'completely/unknown' };
     try {
-      handleRequest(req);
+      await handleRequest(req);
       fail('Should have thrown');
     } catch (e) {
       expect(e.code).toBe(-32601);
@@ -444,17 +444,17 @@ describe('FAILURE TOLERANCE: Graceful Degradation Under Failure', () => {
     }
   });
 
-  test('integrity manifest handles missing .agent directory gracefully', () => {
+  test('integrity manifest handles missing .agent directory gracefully', async () => {
     const result = generateManifest('/nonexistent/path/that/does/not/exist');
     expect(result).toHaveProperty('error');
     expect(typeof result.error).toBe('string');
   });
 
-  test('parseFrontmatter handles empty string without crash', () => {
+  test('parseFrontmatter handles empty string without crash', async () => {
     expect(parseFrontmatter('')).toEqual({});
   });
 
-  test('parseFrontmatter handles malformed YAML without crash', () => {
+  test('parseFrontmatter handles malformed YAML without crash', async () => {
     const malformed = '---\n\n---\n\nContent';
     const result = parseFrontmatter(malformed);
     // Should return empty object (no valid key-value pairs)
@@ -467,9 +467,9 @@ describe('FAILURE TOLERANCE: Graceful Degradation Under Failure', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('OBSERVABILITY: Structured Errors & Audit Outputs', () => {
-  test('MCP initialize response contains valid server info', () => {
+  test('MCP initialize response contains valid server info', async () => {
     const req = { jsonrpc: '2.0', id: 1, method: 'initialize', params: {} };
-    const result = handleRequest(req);
+    const result = await handleRequest(req);
 
     expect(result.protocolVersion).toBe('2025-03-26');
     expect(result.serverInfo.name).toBe('tribunal-kit-mcp');
@@ -477,9 +477,9 @@ describe('OBSERVABILITY: Structured Errors & Audit Outputs', () => {
     expect(result.serverInfo.version).toMatch(/^\d+\.\d+\.\d+$/);
   });
 
-  test('MCP tools/list returns well-formed tool descriptors', () => {
+  test('MCP tools/list returns well-formed tool descriptors', async () => {
     const req = { jsonrpc: '2.0', id: 1, method: 'tools/list', params: {} };
-    const result = handleRequest(req);
+    const result = await handleRequest(req);
 
     expect(Array.isArray(result.tools)).toBe(true);
     expect(result.tools.length).toBeGreaterThan(0);
@@ -493,7 +493,7 @@ describe('OBSERVABILITY: Structured Errors & Audit Outputs', () => {
     }
   });
 
-  test('Impact classifier returns structured reasoning array', () => {
+  test('Impact classifier returns structured reasoning array', async () => {
     const result = classifyImpact({ files: ['auth.ts'], task: 'update jwt', lineCount: 10 });
     expect(Array.isArray(result.reasoning)).toBe(true);
     expect(result.reasoning.length).toBeGreaterThan(0);
@@ -503,13 +503,13 @@ describe('OBSERVABILITY: Structured Errors & Audit Outputs', () => {
     }
   });
 
-  test('Socratic gate returns structured reason string', () => {
+  test('Socratic gate returns structured reason string', async () => {
     const result = evaluateSocraticGate({ tier: 3 });
     expect(typeof result.reason).toBe('string');
     expect(result.reason.length).toBeGreaterThan(0);
   });
 
-  test('Token budget returns all expected fields for observability', () => {
+  test('Token budget returns all expected fields for observability', async () => {
     const result = getTokenBudget(2);
     expect(result).toHaveProperty('tier');
     expect(result).toHaveProperty('maxTokens');
@@ -518,7 +518,7 @@ describe('OBSERVABILITY: Structured Errors & Audit Outputs', () => {
     expect(result).toHaveProperty('maxReviewers');
   });
 
-  test('stripBoilerplate function preserves core content while removing guardrail boilerplate', () => {
+  test('stripBoilerplate function preserves core content while removing guardrail boilerplate', async () => {
     const input = 'Core content here.\n\n## Pre-Flight Checklist\nBoilerplate content';
     const result = stripBoilerplate(input);
     expect(result).toContain('Core content here.');
@@ -531,7 +531,7 @@ describe('OBSERVABILITY: Structured Errors & Audit Outputs', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('REPRODUCIBILITY: Stable Manifests & Version Metadata', () => {
-  test('integrity manifest is reproducible (two runs produce identical structure)', () => {
+  test('integrity manifest is reproducible (two runs produce identical structure)', async () => {
     const manifest1 = generateManifest(ROOT);
     const manifest2 = generateManifest(ROOT);
 
@@ -547,7 +547,7 @@ describe('REPRODUCIBILITY: Stable Manifests & Version Metadata', () => {
     expect(manifest1.integrity.invalid_claims).toBe(manifest2.integrity.invalid_claims);
   });
 
-  test('package.json version matches Cargo.toml version', () => {
+  test('package.json version matches Cargo.toml version', async () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
     const cargoToml = fs.readFileSync(path.join(ROOT, 'crates/core/Cargo.toml'), 'utf8');
     const cargoVersion = cargoToml.match(/^version\s*=\s*"([^"]+)"/m)?.[1];
@@ -555,7 +555,7 @@ describe('REPRODUCIBILITY: Stable Manifests & Version Metadata', () => {
     expect(cargoVersion).toBe(pkg.version);
   });
 
-  test('package.json version matches Cargo.lock tribunal-core version', () => {
+  test('package.json version matches Cargo.lock tribunal-core version', async () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
     const cargoLock = fs.readFileSync(path.join(ROOT, 'Cargo.lock'), 'utf8');
     const lockVersion = cargoLock.match(
@@ -565,7 +565,7 @@ describe('REPRODUCIBILITY: Stable Manifests & Version Metadata', () => {
     expect(lockVersion).toBe(pkg.version);
   });
 
-  test('optionalDependencies versions are in sync with package.json version', () => {
+  test('optionalDependencies versions are in sync with package.json version', async () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
     const expectedVersion = `^${pkg.version}`;
 
@@ -574,7 +574,7 @@ describe('REPRODUCIBILITY: Stable Manifests & Version Metadata', () => {
     }
   });
 
-  test('package-lock.json root version matches package.json', () => {
+  test('package-lock.json root version matches package.json', async () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
     const lock = JSON.parse(fs.readFileSync(path.join(ROOT, 'package-lock.json'), 'utf8'));
 
@@ -587,7 +587,7 @@ describe('REPRODUCIBILITY: Stable Manifests & Version Metadata', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('PRODUCTION RELEASE SUITABILITY: Structural Integrity', () => {
-  test('critical files exist for production release', () => {
+  test('critical files exist for production release', async () => {
     const criticalFiles = [
       'package.json',
       'README.md',
@@ -615,17 +615,17 @@ describe('PRODUCTION RELEASE SUITABILITY: Structural Integrity', () => {
     }
   });
 
-  test('bin/wrapper.js shebang is correct for cross-platform npm bin', () => {
+  test('bin/wrapper.js shebang is correct for cross-platform npm bin', async () => {
     const wrapper = fs.readFileSync(path.join(ROOT, 'bin/wrapper.js'), 'utf8');
     expect(wrapper.startsWith('#!/usr/bin/env node')).toBe(true);
   });
 
-  test('bin/mcp-server.js shebang is correct', () => {
+  test('bin/mcp-server.js shebang is correct', async () => {
     const mcp = fs.readFileSync(path.join(ROOT, 'bin/mcp-server.js'), 'utf8');
     expect(mcp.startsWith('#!/usr/bin/env node')).toBe(true);
   });
 
-  test('package.json exports are correctly defined', () => {
+  test('package.json exports are correctly defined', async () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
 
     expect(pkg.main).toBe('dist/cli.js');
@@ -636,7 +636,7 @@ describe('PRODUCTION RELEASE SUITABILITY: Structural Integrity', () => {
     expect(pkg.exports['.'].require).toBe('./dist/cli.js');
   });
 
-  test('package.json bin entries point to existing files', () => {
+  test('package.json bin entries point to existing files', async () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
 
     for (const [_binName, binPath] of Object.entries(pkg.bin || {})) {
@@ -645,14 +645,14 @@ describe('PRODUCTION RELEASE SUITABILITY: Structural Integrity', () => {
     }
   });
 
-  test('package.json engines specifies minimum Node version', () => {
+  test('package.json engines specifies minimum Node version', async () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
     expect(pkg.engines).toBeDefined();
     expect(pkg.engines.node).toBeDefined();
     expect(pkg.engines.node).toMatch(/>=\s*18/);
   });
 
-  test('no hardcoded secrets in source files', () => {
+  test('no hardcoded secrets in source files', async () => {
     const sensitivePatterns = [
       /sk-[a-zA-Z0-9]{20,}/, // OpenAI API keys
       /ghp_[a-zA-Z0-9]{36}/, // GitHub personal access tokens
@@ -677,7 +677,7 @@ describe('PRODUCTION RELEASE SUITABILITY: Structural Integrity', () => {
     }
   });
 
-  test('integrity manifest reports phantom references accurately', () => {
+  test('integrity manifest reports phantom references accurately', async () => {
     const manifest = generateManifest(ROOT);
     if (manifest.error) {
       // If .agent not found, skip (edge case in CI)
@@ -689,7 +689,7 @@ describe('PRODUCTION RELEASE SUITABILITY: Structural Integrity', () => {
     expect(typeof manifest.integrity.invalid_claims).toBe('number');
   });
 
-  test('routing_index.json exists and has valid structure', () => {
+  test('routing_index.json exists and has valid structure', async () => {
     const routingIndexPath = path.join(ROOT, '.agent', 'routing_index.json');
     if (!fs.existsSync(routingIndexPath)) {
       // Skip if routing_index.json doesn't exist yet
@@ -703,7 +703,7 @@ describe('PRODUCTION RELEASE SUITABILITY: Structural Integrity', () => {
     expect(typeof routingIndex.summary.total_skills).toBe('number');
   });
 
-  test('RUST_COMMANDS set in wrapper.js matches Rust core command modules', () => {
+  test('RUST_COMMANDS set in wrapper.js matches Rust core command modules', async () => {
     const wrapperSource = fs.readFileSync(path.join(ROOT, 'bin/wrapper.js'), 'utf8');
 
     // Extract command names from the RUST_COMMANDS set

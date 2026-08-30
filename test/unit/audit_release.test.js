@@ -11,7 +11,7 @@ describe('Release Audit Verification & Counts', () => {
   const agentDir = path.join(rootDir, '.agent');
   const routingIndexPath = path.join(agentDir, 'routing_index.json');
 
-  test('routing_index.json summary counts match actual filesystem totals', () => {
+  test('routing_index.json summary counts match actual filesystem totals', async () => {
     expect(fs.existsSync(routingIndexPath)).toBe(true);
 
     const routingIndex = JSON.parse(fs.readFileSync(routingIndexPath, 'utf8'));
@@ -32,14 +32,14 @@ describe('Release Audit Verification & Counts', () => {
     expect(summary.total_skills).toBe(skillDirs.length);
   });
 
-  test('MCP Server handles resources/list and prompts/list correctly according to spec', () => {
+  test('MCP Server handles resources/list and prompts/list correctly according to spec', async () => {
     const resListReq = { jsonrpc: '2.0', id: 101, method: 'resources/list', params: {} };
-    const resListResult = handleRequest(resListReq);
+    const resListResult = await handleRequest(resListReq);
     expect(Array.isArray(resListResult.resources)).toBe(true);
     expect(resListResult.resources.length).toBeGreaterThan(0);
 
     const promptListReq = { jsonrpc: '2.0', id: 102, method: 'prompts/list', params: {} };
-    const promptListResult = handleRequest(promptListReq);
+    const promptListResult = await handleRequest(promptListReq);
     expect(Array.isArray(promptListResult.prompts)).toBe(true);
     expect(promptListResult.prompts.length).toBeGreaterThan(0);
   });
