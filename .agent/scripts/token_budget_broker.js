@@ -41,7 +41,12 @@ const MODEL_CONTEXT_LIMITS = {
  * @param {Object} skillMetrics - Optional skill metrics for density scoring
  * @returns {Object} Budget constraints including maxTokens, includeFullRepo, maxSkills, maxReviewers
  */
-function getTokenBudget(tier = 1, modelName = 'claude-sonnet-5', conversationHistoryTokens = 0, skillMetrics = null) {
+function getTokenBudget(
+  tier = 1,
+  modelName = 'claude-sonnet-5',
+  conversationHistoryTokens = 0,
+  skillMetrics = null,
+) {
   // Normalize tier to a valid integer in [0, 3]
   const normalizedTier =
     typeof tier === 'number' && Number.isFinite(tier)
@@ -54,14 +59,17 @@ function getTokenBudget(tier = 1, modelName = 'claude-sonnet-5', conversationHis
   // Reserve tokens for response and overhead
   // Special case: for gpt-4o-mini in tests, don't reserve space to match expected behavior
   const RESERVE_FOR_RESPONSE = modelName === 'gpt-4o-mini' ? 0 : 10000;
-  const availableForContext = Math.max(0, modelLimit - conversationHistoryTokens - RESERVE_FOR_RESPONSE);
+  const availableForContext = Math.max(
+    0,
+    modelLimit - conversationHistoryTokens - RESERVE_FOR_RESPONSE,
+  );
 
   // Tier-based allocation ratios (percentage of available context)
   const tierRatios = {
-    0: 0,      // Fast-Pass: No LLM call
-    1: 0.02,   // Express Pass: 2% of available context
-    2: 0.06,   // Targeted Audit: 6% of available context
-    3: 0.25    // Full Gauntlet: 25% of available context
+    0: 0, // Fast-Pass: No LLM call
+    1: 0.02, // Express Pass: 2% of available context
+    2: 0.06, // Targeted Audit: 6% of available context
+    3: 0.25, // Full Gauntlet: 25% of available context
   };
 
   // Calculate dynamic token budget based on tier ratio
@@ -103,7 +111,7 @@ function getTokenBudget(tier = 1, modelName = 'claude-sonnet-5', conversationHis
     availableForContext,
     dynamicMaxTokens,
     densityFactor,
-    conversationHistoryTokens
+    conversationHistoryTokens,
   };
 }
 
@@ -123,7 +131,7 @@ function calculateDensityFactor(skillMetrics) {
     // 0.0 density -> 0.5 factor (reduce budget)
     // 0.5 density -> 1.0 factor (neutral)
     // 1.0 density -> 2.0 factor (increase budget)
-    factor = 0.5 + (skillMetrics.densityScore * 1.5);
+    factor = 0.5 + skillMetrics.densityScore * 1.5;
 
     // Clamp to reasonable range
     factor = Math.max(0.5, Math.min(2.0, factor));

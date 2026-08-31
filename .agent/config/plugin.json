@@ -1,0 +1,102 @@
+{
+  "name": "tribunal-kit",
+  "version": "8.0.0",
+  "description": "The governance layer for AI coding agents. 52 specialists, 28 parallel reviewers, 186 skills, Rust core. Anti-hallucination enforcement for any AI agent.",
+  "author": "Harmitx7",
+  "homepage": "https://github.com/Harmitx7/tribunal-kit",
+  "license": "MIT",
+
+  "plugin": {
+    "type": "hybrid",
+    "entrypoints": {
+      "system_prompt": "system-prompt.md",
+      "mcp_server": {
+        "command": "node",
+        "args": ["bin/mcp-server.js"],
+        "transport": "stdio"
+      },
+      "slash_commands": "slash-commands.json"
+    },
+    "capabilities": [
+      "system_prompt_injection",
+      "mcp_tools",
+      "slash_commands",
+      "auto_review_gate",
+      "specialist_routing"
+    ],
+    "permissions": ["read_files", "write_files", "execute_commands"]
+  },
+
+  "adapters": {
+    "claude-code": {
+      "rules_file": ".claude/CLAUDE.md",
+      "mcp_config": "mcp_config.json",
+      "slash_commands": true
+    },
+    "aider": {
+      "rules_file": ".aider.conf.yml",
+      "convention_file": "CONVENTIONS.md"
+    },
+    "codex": {
+      "instructions_file": "AGENTS.md"
+    },
+    "gemini-cli": {
+      "rules_file": ".gemini/rules/GEMINI.md",
+      "mcp_config": "mcp_config.json"
+    },
+    "opencode": {
+      "rules_file": ".opencode/rules.md",
+      "mcp_config": "mcp_config.json"
+    },
+    "cursor": {
+      "rules_file": ".cursorrules"
+    },
+    "windsurf": {
+      "rules_file": ".windsurfrules"
+    },
+    "cline": {
+      "rules_file": ".clinerules"
+    },
+    "copilot-cli": {
+      "instructions_file": ".github/copilot-instructions.md"
+    }
+  },
+
+  "specialists": {
+    "total": 52,
+    "reviewers": 28,
+    "registry": "specialist-registry.json"
+  },
+
+  "skills": {
+    "total": 186,
+    "lazy_loaded": true,
+    "topic_map": ".agent/skill_topic_map.json"
+  },
+
+  "workflows": {
+    "total": 40,
+    "directory": ".agent/workflows/"
+  },
+
+  "governance": {
+    "tribunal_gate": {
+      "enabled": true,
+      "human_gate": true,
+      "parallel_reviewers": true,
+      "auto_assign_by_domain": true
+    },
+    "anti_hallucination": {
+      "epistemic_check": true,
+      "verify_imports": true,
+      "verify_api_calls": true,
+      "confidence_levels": ["L1", "L2", "L3", "L4", "L5"]
+    },
+    "socratic_gate": {
+      "tier_0_bypass": true,
+      "tier_1_bypass": true,
+      "tier_2_conditional": true,
+      "tier_3_required": true
+    }
+  }
+}

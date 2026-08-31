@@ -43,47 +43,11 @@ function getKitAgent() {
     }
     return agentDir;
 }
+const { renderBanner } = require('../tui/banner');
+
 function banner(quiet) {
-    if (quiet)
-        return;
-    // Big ASCII art (TRIBUNAL-KIT)
-    const art = String.raw `
-████████╗██████╗ ██╗██████╗ ██╗   ██╗███╗   ██╗ █████╗ ██╗      ██╗  ██╗██╗████████╗
-╚══██╔══╝██╔══██╗██║██╔══██╗██║   ██║████╗  ██║██╔══██╗██║      ██║ ██╔╝██║╚══██╔══╝
-   ██║   ██████╔╝██║██████╔╝██║   ██║██╔██╗ ██║███████║██║█████╗█████╔╝ ██║   ██║   
-   ██║   ██╔══██╗██║██╔══██╗██║   ██║██║╚██╗██║██╔══██║██║╚════╝██╔═██╗ ██║   ██║   
-   ██║   ██║  ██║██║██████╔╝╚██████╔╝██║ ╚████║██║  ██║███████╗ ██║  ██╗██║   ██║   
-   ╚═╝   ╚═╝  ╚═╝╚═╝╚═════╝  ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝ ╚═╝  ╚═╝╚═╝   ╚═╝   `.split('\n').filter(Boolean);
-    console.log();
-    for (const line of art) {
-        let gradientLine = '  \x1b[1m';
-        const len = line.length;
-        for (let i = 0; i < len; i++) {
-            const char = line[i];
-            if (char === ' ') {
-                gradientLine += ' ';
-                continue;
-            }
-            // Horizontal gradient: flame red (left) to coral/orange (right)
-            const ratio = i / len;
-            const r = 255;
-            const g = Math.floor(30 + ratio * 100);
-            const b = Math.floor(60 - ratio * 40);
-            gradientLine += `\x1b[38;2;${r};${g};${b}m${char}`;
-        }
-        gradientLine += '\x1b[0m';
-        (0, logger_1.log)(gradientLine);
-    }
-    console.log();
-    // Subtitle strip
-    const W = 84;
-    const plainSub = '🛡️  ANTI-HALLUCINATION AGENT SYSTEM';
-    const coloredSub = `${(0, logger_1.bold)((0, logger_1.c)('white', '🛡️  ANTI-HALLUCINATION AGENT SYSTEM'))}`;
-    const sp = Math.max(0, W - plainSub.length);
-    const centred = ' '.repeat(Math.floor(sp / 2)) + coloredSub + ' '.repeat(Math.ceil(sp / 2));
-    (0, logger_1.log)(`  ${(0, logger_1.c)('gray', `✦  ${'━'.repeat(W - 6)}  ✦`)}`);
-    (0, logger_1.log)(`  ${centred}`);
-    (0, logger_1.log)(`  ${(0, logger_1.c)('gray', `✦  ${'━'.repeat(W - 6)}  ✦`)}`);
-    console.log();
+    if (quiet) return;
+    const PKG = require('../../package.json');
+    renderBanner(PKG.version, quiet);
 }
 

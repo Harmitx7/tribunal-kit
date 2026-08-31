@@ -9,7 +9,12 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { WorkerRequestSchema: _WorkerRequestSchema, WorkerResultSchema: _WorkerResultSchema, SwarmPayloadSchema, validatePayloadOrThrow } = require('./payload_schemas');
+const {
+  WorkerRequestSchema: _WorkerRequestSchema,
+  WorkerResultSchema: _WorkerResultSchema,
+  SwarmPayloadSchema,
+  validatePayloadOrThrow,
+} = require('./payload_schemas');
 
 // ─── ANSI TUI Renderer ────────────────────────────────────────────────────────
 class SwarmDashboard {
@@ -166,7 +171,9 @@ async function executeWithRetry(fn, _context = {}) {
   }
 
   // If we got here, all retries failed
-  throw new Error(`Operation failed after ${MAX_RETRIES} attempts. Last error: ${lastError.message}`);
+  throw new Error(
+    `Operation failed after ${MAX_RETRIES} attempts. Last error: ${lastError.message}`,
+  );
 }
 
 // ─── Legacy mode: validate orchestrator micro-worker payloads ──────────────────
@@ -265,149 +272,179 @@ function buildWorkerPrompts(payloadData, workspaceRoot) {
 // ─── Swarm Orchestrator (Wave-Based Execution) ───────────────────────────────
 
 const TRIBUNAL_WAVES = {
-    'wave-1-core': {
-        reviewers: ['precedence-reviewer', 'logic-reviewer', 'schema-reviewer', 'resilience-reviewer'],
-        maxParallel: 4,
-        timeout: 30000,
-        failureMode: 'halt',
-    },
-    'wave-2-security': {
-        reviewers: ['security-auditor', 'dependency-reviewer', 'type-safety-reviewer', 'complexity-reviewer', 'sql-reviewer', 'pipeline-reviewer'],
-        maxParallel: 6,
-        timeout: 45000,
-        failureMode: 'continue-warn',
-    },
-    'wave-3-domain': {
-        reviewers: ['frontend-reviewer', 'performance-reviewer', 'mobile-reviewer', 'ai-code-reviewer', 'test-coverage-reviewer', 'accessibility-reviewer', 'ui-ux-auditor', 'review-animations', 'vitals-reviewer', 'db-latency-auditor', 'throughput-optimizer'],
-        maxParallel: 8,
-        timeout: 60000,
-        failureMode: 'continue',
-    },
+  'wave-1-core': {
+    reviewers: ['precedence-reviewer', 'logic-reviewer', 'schema-reviewer', 'resilience-reviewer'],
+    maxParallel: 4,
+    timeout: 30000,
+    failureMode: 'halt',
+  },
+  'wave-2-security': {
+    reviewers: [
+      'security-auditor',
+      'dependency-reviewer',
+      'type-safety-reviewer',
+      'complexity-reviewer',
+      'sql-reviewer',
+      'pipeline-reviewer',
+    ],
+    maxParallel: 6,
+    timeout: 45000,
+    failureMode: 'continue-warn',
+  },
+  'wave-3-domain': {
+    reviewers: [
+      'frontend-reviewer',
+      'performance-reviewer',
+      'mobile-reviewer',
+      'ai-code-reviewer',
+      'test-coverage-reviewer',
+      'accessibility-reviewer',
+      'ui-ux-auditor',
+      'review-animations',
+      'vitals-reviewer',
+      'db-latency-auditor',
+      'throughput-optimizer',
+    ],
+    maxParallel: 8,
+    timeout: 60000,
+    failureMode: 'continue',
+  },
 };
 
 class SwarmOrchestrator {
-    constructor(dashboard = null) {
-        this.dashboard = dashboard;
-        this.workers = [];
-        this.results = [];
+  constructor(dashboard = null) {
+    this.dashboard = dashboard;
+    this.workers = [];
+    this.results = [];
+  }
+
+  async executeTribunal(payload, waveName = 'full') {
+    const wavesToRun =
+      waveName === 'full' ? ['wave-1-core', 'wave-2-security', 'wave-3-domain'] : [waveName];
+
+    const workers =
+      typeof payload === 'object' && payload !== null && payload.workers
+        ? payload.workers
+        : Array.isArray(payload)
+          ? payload
+          : [payload];
+
+    this.workers = workers;
+    this.results = [];
+
+    if (this.dashboard) {
+      this.dashboard.workers = this.workers.map(w => ({
+        name: w.target_agent || w.agent || 'Worker',
+        task: (w.task_description || w.goal || '').slice(0, 40) + '...',
+        status: '⏳ Pending',
+        color: '\x1b[33m', // Yellow
+      }));
+      this.dashboard.start();
     }
 
-    async executeTribunal(payload, waveName = 'full') {
-        const wavesToRun = waveName === 'full' 
-            ? ['wave-1-core', 'wave-2-security', 'wave-3-domain']
-            : [waveName];
+    for (const wave of wavesToRun) {
+      const config = TRIBUNAL_WAVES[wave] || {
+        maxParallel: 4,
+        timeout: 30000,
+        failureMode: 'continue',
+      };
+      // Filter workers belonging to this wave
+      let waveWorkers = [];
+      if (waveName === 'full') {
+        // If it's a full run, we only pick the reviewers designated for this wave
+        const allowedReviewers = new Set(config.reviewers || []);
+        waveWorkers = this.workers.filter(w => allowedReviewers.has(w.agent || w.target_agent));
+      } else {
+        waveWorkers = this.workers;
+      }
 
-        const workers = (typeof payload === 'object' && payload !== null && payload.workers)
-            ? payload.workers
-            : (Array.isArray(payload) ? payload : [payload]);
-            
-        this.workers = workers;
-        this.results = [];
+      if (waveWorkers.length === 0) continue;
 
-        if (this.dashboard) {
-            this.dashboard.workers = this.workers.map(w => ({
-                name: w.target_agent || w.agent || 'Worker',
-                task: (w.task_description || w.goal || '').slice(0, 40) + '...',
-                status: '⏳ Pending',
-                color: '\x1b[33m', // Yellow
-            }));
-            this.dashboard.start();
-        }
+      const waveResults = await this.executeWave(wave, config, waveWorkers);
+      this.results.push(...waveResults);
 
-        for (const wave of wavesToRun) {
-            const config = TRIBUNAL_WAVES[wave] || { maxParallel: 4, timeout: 30000, failureMode: 'continue' };
-            // Filter workers belonging to this wave
-            let waveWorkers = [];
-            if (waveName === 'full') {
-                // If it's a full run, we only pick the reviewers designated for this wave
-                const allowedReviewers = new Set(config.reviewers || []);
-                waveWorkers = this.workers.filter(w => allowedReviewers.has(w.agent || w.target_agent));
-            } else {
-                waveWorkers = this.workers;
-            }
-
-            if (waveWorkers.length === 0) continue;
-
-            const waveResults = await this.executeWave(wave, config, waveWorkers);
-            this.results.push(...waveResults);
-
-            if (config.failureMode === 'halt' && waveResults.some(r => r.status === 'failure')) {
-                if (this.dashboard) this.dashboard.stop();
-                console.error(`\n\x1b[31m✖ HALT: Core wave '${wave}' encountered a failure. Aborting subsequent waves.\x1b[0m`);
-                return this.results;
-            }
-        }
-
-        if (this.dashboard) {
-            this.dashboard.stop();
-        }
+      if (config.failureMode === 'halt' && waveResults.some(r => r.status === 'failure')) {
+        if (this.dashboard) this.dashboard.stop();
+        console.error(
+          `\n\x1b[31m✖ HALT: Core wave '${wave}' encountered a failure. Aborting subsequent waves.\x1b[0m`,
+        );
         return this.results;
+      }
     }
 
-    async executeWave(waveName, config, workers) {
-        const results = [];
-        const { maxParallel } = config;
-        
-        // Batch workers by maxParallel
-        for (let i = 0; i < workers.length; i += maxParallel) {
-            const batch = workers.slice(i, i + maxParallel);
-            const batchPromises = batch.map(worker => this.executeWorker(worker, config.timeout));
-            const batchResults = await Promise.allSettled(batchPromises);
-            results.push(...batchResults.map(r => r.value || r.reason));
+    if (this.dashboard) {
+      this.dashboard.stop();
+    }
+    return this.results;
+  }
+
+  async executeWave(waveName, config, workers) {
+    const results = [];
+    const { maxParallel } = config;
+
+    // Batch workers by maxParallel
+    for (let i = 0; i < workers.length; i += maxParallel) {
+      const batch = workers.slice(i, i + maxParallel);
+      const batchPromises = batch.map(worker => this.executeWorker(worker, config.timeout));
+      const batchResults = await Promise.allSettled(batchPromises);
+      results.push(...batchResults.map(r => r.value || r.reason));
+    }
+    return results;
+  }
+
+  async executeWorker(worker, timeout) {
+    const workerIndex = this.workers.indexOf(worker);
+    if (this.dashboard && workerIndex !== -1) {
+      this.dashboard.updateStatus(workerIndex, 'Working', '\x1b[36m'); // Cyan
+    }
+
+    const agentName = worker.agent || worker.target_agent || 'Unknown';
+
+    try {
+      const result = await executeWithRetry(
+        async () => {
+          return this.invokeReviewerMock(worker, timeout);
+        },
+        { agentName },
+      );
+
+      if (this.dashboard && workerIndex !== -1) {
+        this.dashboard.updateStatus(workerIndex, '✔ Success', '\x1b[32m'); // Green
+      }
+      return {
+        agent: agentName,
+        status: 'success',
+        output: result,
+      };
+    } catch (error) {
+      if (this.dashboard && workerIndex !== -1) {
+        this.dashboard.updateStatus(workerIndex, '✖ Failed', '\x1b[31m'); // Red
+      }
+      return {
+        agent: agentName,
+        status: 'failure',
+        error: error.message,
+      };
+    }
+  }
+
+  // Since this script primarily validates and outputs JSON, we simulate execution
+  // taking between 1-3 seconds for demo purposes.
+  async invokeReviewerMock(worker, _timeout) {
+    return new Promise((resolve, reject) => {
+      const delay = Math.floor(Math.random() * 2000) + 1000;
+      // 5% chance to simulate a transient failure for retry logic testing
+      const shouldFail = Math.random() < 0.05;
+
+      setTimeout(() => {
+        if (shouldFail) {
+          reject(new Error('Transient API failure simulated.'));
+        } else {
+          resolve(`Completed processing for ${worker.agent || worker.target_agent}`);
         }
-        return results;
-    }
-
-    async executeWorker(worker, timeout) {
-        const workerIndex = this.workers.indexOf(worker);
-        if (this.dashboard && workerIndex !== -1) {
-            this.dashboard.updateStatus(workerIndex, 'Working', '\x1b[36m'); // Cyan
-        }
-
-        const agentName = worker.agent || worker.target_agent || 'Unknown';
-        
-        try {
-            const result = await executeWithRetry(async () => {
-                return this.invokeReviewerMock(worker, timeout);
-            }, { agentName });
-            
-            if (this.dashboard && workerIndex !== -1) {
-                this.dashboard.updateStatus(workerIndex, '✔ Success', '\x1b[32m'); // Green
-            }
-            return {
-                agent: agentName,
-                status: 'success',
-                output: result,
-            };
-        } catch (error) {
-            if (this.dashboard && workerIndex !== -1) {
-                this.dashboard.updateStatus(workerIndex, '✖ Failed', '\x1b[31m'); // Red
-            }
-            return {
-                agent: agentName,
-                status: 'failure',
-                error: error.message,
-            };
-        }
-    }
-
-    // Since this script primarily validates and outputs JSON, we simulate execution
-    // taking between 1-3 seconds for demo purposes.
-    async invokeReviewerMock(worker, _timeout) {
-        return new Promise((resolve, reject) => {
-            const delay = Math.floor(Math.random() * 2000) + 1000;
-            // 5% chance to simulate a transient failure for retry logic testing
-            const shouldFail = Math.random() < 0.05;
-            
-            setTimeout(() => {
-                if (shouldFail) {
-                    reject(new Error('Transient API failure simulated.'));
-                } else {
-                    resolve(`Completed processing for ${worker.agent || worker.target_agent}`);
-                }
-            }, delay);
-        });
-    }
+      }, delay);
+    });
+  }
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -562,7 +599,9 @@ function validateSwarmPayload(payloadData, agentsDir, payloadFile = null, opts =
         const agentFile = path.join(resolvedAgentsDir, `${agent}.md`);
         if (!fs.existsSync(agentFile)) {
           if (!quiet) {
-            console.error(`ERROR: Worker ${i}: agent '${agent}' not found at ${agentFile}. Only agents that exist in .agent/agents/ are valid.`);
+            console.error(
+              `ERROR: Worker ${i}: agent '${agent}' not found at ${agentFile}. Only agents that exist in .agent/agents/ are valid.`,
+            );
           }
           return false;
         }
@@ -691,29 +730,31 @@ function main() {
     }
 
     const orchestrator = new SwarmOrchestrator(useTui ? new SwarmDashboard([]) : null);
-    
+
     // We must run in an async context since SwarmOrchestrator uses async/await.
-    const wave = (typeof payloadData === 'object' && payloadData !== null && payloadData.wave) 
-        ? payloadData.wave 
+    const wave =
+      typeof payloadData === 'object' && payloadData !== null && payloadData.wave
+        ? payloadData.wave
         : 'full';
-    
-    orchestrator.executeTribunal(payloadData, wave)
-      .then((results) => {
-          if (!useTui) {
-              console.log('INFO: Swarm payload validation and orchestration successful.');
-              if (astContext) {
-                  console.log('--- ENRICHED SWARM PAYLOAD ---');
-                  console.log(JSON.stringify(payloadData, null, 2));
-              }
-              console.log('--- EXECUTION PLAN (MOCK RESULTS) ---');
-              console.log(JSON.stringify(results, null, 2));
-          } else {
-              console.log('\n\x1b[32m✔ Swarm orchestration complete.\x1b[0m\n');
+
+    orchestrator
+      .executeTribunal(payloadData, wave)
+      .then(results => {
+        if (!useTui) {
+          console.log('INFO: Swarm payload validation and orchestration successful.');
+          if (astContext) {
+            console.log('--- ENRICHED SWARM PAYLOAD ---');
+            console.log(JSON.stringify(payloadData, null, 2));
           }
+          console.log('--- EXECUTION PLAN (MOCK RESULTS) ---');
+          console.log(JSON.stringify(results, null, 2));
+        } else {
+          console.log('\n\x1b[32m✔ Swarm orchestration complete.\x1b[0m\n');
+        }
       })
-      .catch((err) => {
-          console.error(`ERROR: Swarm orchestration failed: ${err.message}`);
-          process.exit(1);
+      .catch(err => {
+        console.error(`ERROR: Swarm orchestration failed: ${err.message}`);
+        process.exit(1);
       });
   } else {
     if (!validatePayload(payloadData, workspaceRoot, agentsDir, file)) {

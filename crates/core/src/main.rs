@@ -6,6 +6,7 @@ use owo_colors::OwoColorize;
 use indicatif::{ProgressBar, ProgressStyle};
 
 mod commands;
+mod tui;
 
 // ── CLI Argument Definitions ────────────────────────────────────────────────
 // clap derives the full CLI schema at compile time — no runtime parsing ambiguity.
@@ -493,7 +494,18 @@ async fn cmd_context_compress(file: &str, max_lines: Option<usize>) -> Result<()
 
 // ── Command Implementations ─────────────────────────────────────────────────
 
+fn print_banner(quiet: bool) {
+    if quiet {
+        return;
+    }
+    let caps = tui::TermCaps::probe();
+    tui::render_banner(&caps, env!("CARGO_PKG_VERSION"));
+}
+
 async fn cmd_init(path: &str, force: bool, dry_run: bool, quiet: bool, _minimal: bool, source_dir: &str) -> Result<()> {
+    print_banner(quiet);
+
+
     let target = PathBuf::from(path);
     let agent_dest = target.join(".agent");
     let source_path = PathBuf::from(source_dir);
@@ -633,11 +645,14 @@ async fn cmd_init(path: &str, force: bool, dry_run: bool, quiet: bool, _minimal:
 
     // Human-readable status on stderr (visible to user)
     if !quiet {
-        eprintln!("{} {}", "✔".green(), "Tribunal-Kit initialized securely".bold());
-        eprintln!("  {} Core Agents initialized", "▶".dimmed());
-        eprintln!("  {} 2026 Skills injected", "▶".dimmed());
-        eprintln!("  {} IDE Bridges synthesized", "▶".dimmed());
-        eprintln!("  {} at: {}", "▶".dimmed(), target.display().to_string().dimmed());
+        let caps = tui::TermCaps::probe();
+        let tree = tui::ActionTree::new(&caps);
+        tree.action("Initializing Anti-Hallucination Barrier", Some(&target.display().to_string()));
+        tree.branch(&format!("{} Core Specialists active in registry", agents));
+        tree.branch(&format!("{} Agentic Skills mapped via lazy routing", skills));
+        tree.branch(&format!("{} Workflows and {} enforcement scripts installed", workflows, scripts));
+        tree.branch("IDE Bridges synthesized (.cursorrules, .windsurfrules, CLAUDE.md)");
+        tree.complete(&format!("Tribunal-Kit v{} initialized successfully at {}", env!("CARGO_PKG_VERSION"), target.display()));
     }
 
     Ok(())

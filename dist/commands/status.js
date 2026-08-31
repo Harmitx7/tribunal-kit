@@ -1,41 +1,66 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.cmdStatus = cmdStatus;
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const logger_1 = require("../utils/logger");
-const helpers_1 = require("../utils/helpers");
-function cmdStatus(flags, quiet = false) {
-    const targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
-    const agentDest = path_1.default.join(targetDir, '.agent');
-    (0, helpers_1.banner)(quiet);
-    if (!fs_1.default.existsSync(agentDest)) {
-        (0, logger_1.log)(`  ${(0, logger_1.c)('red', '✖')} ${(0, logger_1.bold)('Not installed')} in this project`);
-        console.log();
-        (0, logger_1.log)(`  ${(0, logger_1.c)('gray', 'Run:')} ${(0, logger_1.c)('cyan', 'npx tribunal-kit init')}`);
-        console.log();
-        return;
-    }
-    (0, logger_1.log)(`  ${(0, logger_1.c)('green', '✔')} ${(0, logger_1.bold)((0, logger_1.c)('green', 'Installed'))}  ${(0, logger_1.c)('gray', '→')}  ${(0, logger_1.c)('gray', agentDest)}`);
-    console.log();
-    const icons = { agents: '🤖', workflows: '⚡', skills: '🧠', scripts: '🔧' };
-    const colors = { agents: 'magenta', workflows: 'yellow', skills: 'blue', scripts: 'green' };
-    const subdirs = ['agents', 'workflows', 'skills', 'scripts'];
-    for (const sub of subdirs) {
-        const subPath = path_1.default.join(agentDest, sub);
-        if (fs_1.default.existsSync(subPath)) {
-            const count = fs_1.default.readdirSync(subPath).filter(f => !fs_1.default.statSync(path_1.default.join(subPath, f)).isDirectory()).length;
-            (0, logger_1.log)(`  ${icons[sub]}  ${(0, logger_1.c)(colors[sub], sub.padEnd(12))}${(0, logger_1.c)('white', String(count).padStart(3))} files`);
-        }
-    }
+'use strict';
 
-    const contractsPath = path_1.default.join(targetDir, '.tribunal', 'contracts');
-    if (fs_1.default.existsSync(contractsPath)) {
-        const contractFiles = fs_1.default.readdirSync(contractsPath).filter(f => f.endsWith('.yaml') || f.endsWith('.yml')).length;
-        (0, logger_1.log)(`  📜  ${(0, logger_1.c)('cyan', 'contracts'.padEnd(12))}${(0, logger_1.c)('white', String(contractFiles).padStart(3))} active rules`);
-    }
+Object.defineProperty(exports, '__esModule', { value: true });
+exports.cmdStatus = cmdStatus;
+
+const fs = require('fs');
+const path = require('path');
+const { color, bold, dim, RGB, GLYPHS, renderBanner } = require('../tui');
+
+function cmdStatus(flags, quiet = false) {
+  const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
+  const agentDest = path.join(targetDir, '.agent');
+  const PKG = require('../../package.json');
+
+  renderBanner(PKG.version, quiet);
+
+  const g = GLYPHS;
+
+  if (!fs.existsSync(agentDest)) {
+    console.log(`  ${color(RGB.ROSE, g.failure)} ${bold('Not installed')} in this project`);
     console.log();
+    console.log(`  ${dim('Run:')} ${color(RGB.CYAN, 'npx tribunal-kit init')}`);
+    console.log();
+    return;
+  }
+
+  const agentsCount = fs.existsSync(path.join(agentDest, 'agents'))
+    ? fs.readdirSync(path.join(agentDest, 'agents')).filter(f => f.endsWith('.md')).length
+    : 0;
+  const workflowsCount = fs.existsSync(path.join(agentDest, 'workflows'))
+    ? fs.readdirSync(path.join(agentDest, 'workflows')).filter(f => f.endsWith('.md')).length
+    : 0;
+  const skillsCount = fs.existsSync(path.join(agentDest, 'skills'))
+    ? fs.readdirSync(path.join(agentDest, 'skills')).length
+    : 0;
+  const scriptsCount = fs.existsSync(path.join(agentDest, 'scripts'))
+    ? fs.readdirSync(path.join(agentDest, 'scripts')).filter(f => f.endsWith('.js')).length
+    : 0;
+
+  console.log(`  ${color(RGB.EMERALD, g.success)} ${bold(color(RGB.EMERALD, 'Installed & Active'))}  ${dim('→')}  ${dim(agentDest)}`);
+  console.log();
+
+  console.log(`    ${color(RGB.FLAME, '🤖')}  ${color(RGB.WHITE, 'Agents'.padEnd(12))}  ${color(RGB.CYAN, String(agentsCount).padStart(3))} ${dim('specialists')}`);
+  console.log(`    ${color(RGB.AMBER, '⚡')}  ${color(RGB.WHITE, 'Workflows'.padEnd(12))}  ${color(RGB.CYAN, String(workflowsCount).padStart(3))} ${dim('commands')}`);
+  console.log(`    ${color(RGB.PURPLE, '🧠')}  ${color(RGB.WHITE, 'Skills'.padEnd(12))}  ${color(RGB.CYAN, String(skillsCount).padStart(3))} ${dim('injected')}`);
+  console.log(`    ${color(RGB.EMERALD, '🔧')}  ${color(RGB.WHITE, 'Scripts'.padEnd(12))}  ${color(RGB.CYAN, String(scriptsCount).padStart(3))} ${dim('enforcers')}`);
+  console.log();
+
+  // IDE Bridges Check
+  const bridges = [
+    { name: 'Cursor', file: '.cursorrules' },
+    { name: 'Windsurf', file: '.windsurfrules' },
+    { name: 'Claude Code', file: '.claude/CLAUDE.md' },
+    { name: 'Antigravity / Gemini', file: '.gemini/GEMINI.md' },
+  ];
+
+  console.log(`  ${dim('IDE Bridges:')}`);
+  for (const b of bridges) {
+    const exists = fs.existsSync(path.join(targetDir, b.file));
+    const icon = exists ? color(RGB.EMERALD, g.success) : color(RGB.ZINC_600, '·');
+    const label = exists ? color(RGB.WHITE, b.name) : dim(b.name);
+    console.log(`    ${icon} ${label} ${dim(`(${b.file})`)}`);
+  }
+
+  console.log();
 }

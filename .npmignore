@@ -62,7 +62,7 @@ Cargo.lock
 
 # Exclude AI IDE Configuration (user-project files, not part of the kit)
 .gemini/
-.claude/
+.claude/settings.local.json
 .cursorrules
 .windsurfrules
 
@@ -71,3 +71,7 @@ Cargo.lock
 # bin/     → CLI entry points
 # dist/    → modular CLI + TypeScript types
 # scripts/ → sync/changelog utilities
+
+# Exclude agent history
+.agent/history/
+.agent/.backups/

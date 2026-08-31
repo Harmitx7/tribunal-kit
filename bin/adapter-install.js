@@ -42,7 +42,10 @@ const ADAPTERS = {
     description: 'Aider CLI',
     setup: projectRoot => {
       const conventionsPath = path.join(projectRoot, 'CONVENTIONS.md');
-      const systemPrompt = fs.readFileSync(path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'), 'utf8');
+      const systemPrompt = fs.readFileSync(
+        path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'),
+        'utf8',
+      );
       fs.writeFileSync(conventionsPath, systemPrompt);
       console.log(`  ✓ Wrote ${conventionsPath}`);
     },
@@ -54,7 +57,10 @@ const ADAPTERS = {
     description: 'OpenAI Codex CLI',
     setup: projectRoot => {
       const agentsPath = path.join(projectRoot, 'AGENTS.md');
-      const systemPrompt = fs.readFileSync(path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'), 'utf8');
+      const systemPrompt = fs.readFileSync(
+        path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'),
+        'utf8',
+      );
       fs.writeFileSync(agentsPath, systemPrompt);
       console.log(`  ✓ Wrote ${agentsPath}`);
     },
@@ -67,7 +73,10 @@ const ADAPTERS = {
     setup: projectRoot => {
       const geminiDir = path.join(projectRoot, '.gemini', 'rules');
       ensureDir(geminiDir);
-      const systemPrompt = fs.readFileSync(path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'), 'utf8');
+      const systemPrompt = fs.readFileSync(
+        path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'),
+        'utf8',
+      );
       fs.writeFileSync(path.join(geminiDir, 'GEMINI.md'), systemPrompt);
       console.log(`  ✓ Wrote ${path.join(geminiDir, 'GEMINI.md')}`);
       // Also install MCP config
@@ -82,7 +91,10 @@ const ADAPTERS = {
     setup: projectRoot => {
       const opencodeDir = path.join(projectRoot, '.opencode');
       ensureDir(opencodeDir);
-      const systemPrompt = fs.readFileSync(path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'), 'utf8');
+      const systemPrompt = fs.readFileSync(
+        path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'),
+        'utf8',
+      );
       fs.writeFileSync(path.join(opencodeDir, 'rules.md'), systemPrompt);
       console.log(`  ✓ Wrote ${path.join(opencodeDir, 'rules.md')}`);
     },
@@ -95,7 +107,10 @@ const ADAPTERS = {
     setup: projectRoot => {
       const ghDir = path.join(projectRoot, '.github');
       ensureDir(ghDir);
-      const systemPrompt = fs.readFileSync(path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'), 'utf8');
+      const systemPrompt = fs.readFileSync(
+        path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'),
+        'utf8',
+      );
       fs.writeFileSync(path.join(ghDir, 'copilot-instructions.md'), systemPrompt);
       console.log(`  ✓ Wrote ${path.join(ghDir, 'copilot-instructions.md')}`);
     },

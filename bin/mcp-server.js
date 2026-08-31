@@ -599,7 +599,10 @@ async function handleRequest(req) {
         const useTui = req.params?.arguments?.use_tui || false;
 
         if (!payload && !file) {
-          throw new RpcError(-32602, 'Missing required argument: either payload or file must be provided');
+          throw new RpcError(
+            -32602,
+            'Missing required argument: either payload or file must be provided',
+          );
         }
 
         if (payload && file) {
@@ -633,12 +636,7 @@ async function handleRequest(req) {
 
           // Execute the swarm dispatcher
           const originalArgv = process.argv;
-          process.argv = [
-            'node',
-            'swarm_dispatcher.js',
-            '--mode', mode,
-            '--workspace', workspace,
-          ];
+          process.argv = ['node', 'swarm_dispatcher.js', '--mode', mode, '--workspace', workspace];
 
           if (useTui) {
             process.argv.push('--tui');
@@ -654,10 +652,14 @@ async function handleRequest(req) {
 
           // Capture output
           const { spawnSync } = require('child_process');
-          const result = spawnSync(process.execPath, [path.join(agentDir, 'scripts', 'swarm_dispatcher.js'), ...process.argv.slice(2)], {
-            encoding: 'utf8',
-            timeout: 30000,
-          });
+          const result = spawnSync(
+            process.execPath,
+            [path.join(agentDir, 'scripts', 'swarm_dispatcher.js'), ...process.argv.slice(2)],
+            {
+              encoding: 'utf8',
+              timeout: 30000,
+            },
+          );
 
           // Restore argv
           process.argv = originalArgv;
@@ -667,7 +669,9 @@ async function handleRequest(req) {
           }
 
           return {
-            content: [{ type: 'text', text: result.stdout || result.stderr || 'Swarm dispatch completed' }],
+            content: [
+              { type: 'text', text: result.stdout || result.stderr || 'Swarm dispatch completed' },
+            ],
           };
         } catch (e) {
           return {
@@ -717,7 +721,12 @@ async function handleRequest(req) {
 
         try {
           const payloadData = JSON.parse(payloadStr);
-          const { WorkerRequestSchema, WorkerResultSchema, SwarmPayloadSchema, validatePayloadOrThrow } = require(path.join(agentDir, 'scripts', 'payload_schemas.js'));
+          const {
+            WorkerRequestSchema,
+            WorkerResultSchema,
+            SwarmPayloadSchema,
+            validatePayloadOrThrow,
+          } = require(path.join(agentDir, 'scripts', 'payload_schemas.js'));
 
           let schema;
           switch (schemaType) {
@@ -731,12 +740,20 @@ async function handleRequest(req) {
               schema = SwarmPayloadSchema;
               break;
             default:
-              throw new RpcError(-32602, `Invalid schemaType: ${schemaType}. Must be one of: worker-request, worker-result, swarm-payload`);
+              throw new RpcError(
+                -32602,
+                `Invalid schemaType: ${schemaType}. Must be one of: worker-request, worker-result, swarm-payload`,
+              );
           }
 
           const validatedData = validatePayloadOrThrow(payloadData, schema);
           return {
-            content: [{ type: 'text', text: `Payload validation successful.\n\nValidated payload:\n${JSON.stringify(validatedData, null, 2)}` }],
+            content: [
+              {
+                type: 'text',
+                text: `Payload validation successful.\n\nValidated payload:\n${JSON.stringify(validatedData, null, 2)}`,
+              },
+            ],
           };
         } catch (e) {
           if (e instanceof SyntaxError) {

@@ -55,30 +55,30 @@ const ACTION_ROUTER = {
 
 /**
  * Sanitizes user input to prevent prompt injection attacks.
- * @param {string} text 
+ * @param {string} text
  * @returns {string} Sanitized text
  */
 function sanitizeUserInput(text) {
   // 1. Strip XML/HTML tags
   const sanitized = text.replace(/<[^>]+>/g, '');
-  
+
   // 2. Check for injection patterns
   const injectionPatterns = [
-      /ignore\s+(all\s+)?previous\s+instructions/i,
-      /you\s+are\s+now\s+a?\s+/i,
-      /system\s*:\s*/i,
-      /assistant\s*:\s*/i,
-      /\[\[INST\]\]/i,
-      /<<SYS>>/i,
+    /ignore\s+(all\s+)?previous\s+instructions/i,
+    /you\s+are\s+now\s+a?\s+/i,
+    /system\s*:\s*/i,
+    /assistant\s*:\s*/i,
+    /\[\[INST\]\]/i,
+    /<<SYS>>/i,
   ];
-  
+
   for (const pattern of injectionPatterns) {
-      if (pattern.test(sanitized)) {
-          // Wrap in explicit delimiter if injection is detected
-          return `USER_INPUT_START\n${sanitized}\nUSER_INPUT_END`;
-      }
+    if (pattern.test(sanitized)) {
+      // Wrap in explicit delimiter if injection is detected
+      return `USER_INPUT_START\n${sanitized}\nUSER_INPUT_END`;
+    }
   }
-  
+
   return sanitized;
 }
 
@@ -90,10 +90,10 @@ function sanitizeUserInput(text) {
 function compileSuperPrompt(input) {
   let preStack = [];
   let preRules = [];
-  
+
   let rawText = '';
   if (typeof input === 'object' && input !== null) {
-    rawText = (input.task || input.spec || '');
+    rawText = input.task || input.spec || '';
     if (Array.isArray(input.stack)) preStack = input.stack;
     if (Array.isArray(input.rules)) preRules = input.rules;
   } else {
@@ -147,8 +147,7 @@ function compileSuperPrompt(input) {
       let escapedContent = content;
       if (content.startsWith('---')) {
         escapedContent = '- --' + content.substring(3);
-      }
-      else if (content.startsWith('...')) {
+      } else if (content.startsWith('...')) {
         escapedContent = '- ...' + content.substring(3);
       }
 

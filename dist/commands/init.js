@@ -11,6 +11,7 @@ const logger_1 = require("../utils/logger");
 const fs_2 = require("../utils/fs");
 const helpers_1 = require("../utils/helpers");
 const hasher_1 = require("../utils/hasher");
+const { ActionTree, WizardPrompt, renderBanner } = require("../tui");
 // Core agents to install in --minimal mode
 const CORE_AGENTS = new Set([
     'backend-specialist.md',
@@ -225,64 +226,20 @@ async function cmdInit(flags, quiet = false) {
             (0, logger_1.dim)(`Target: ${agentDest}`);
         }
         else {
-            // ── Success card — W=62, rows padded by plain-text length ──
-            const W = 62;
-            const borderCol = 'red';
             const agentsCount = fs_1.default.readdirSync(path_1.default.join(agentDest, 'agents')).length;
             const workflowsCount = fs_1.default.readdirSync(path_1.default.join(agentDest, 'workflows')).length;
             const skillsCount = fs_1.default.readdirSync(path_1.default.join(agentDest, 'skills')).length;
             const scriptsCount = fs_1.default.readdirSync(path_1.default.join(agentDest, 'scripts')).length;
             
-            const drawRow = (plainText, styledText) => {
-                const trail = ' '.repeat(Math.max(0, W - plainText.length));
-                return `  ${(0, logger_1.c)(borderCol, '│')}${styledText}${trail}${(0, logger_1.c)(borderCol, '│')}`;
-            };
-            
-            const compRow = (icon, label, count, color) => {
-                const leftPlain = `    ${icon}  ${label.padEnd(10)} `;
-                const rightPlain = ` [ ${String(count).padStart(3)} ]`;
-                const numDots = W - leftPlain.length - rightPlain.length - 4; // 4 spaces margin
-                const dots = '.'.repeat(Math.max(0, numDots));
-                
-                const plain = `${leftPlain}${dots}${rightPlain}`;
-                const styled = `    ${icon}  ${(0, logger_1.c)('white', label.padEnd(10))} ${(0, logger_1.c)('gray', dots)} ${(0, logger_1.c)('gray', '[')} ${(0, logger_1.c)(color, String(count).padStart(3))} ${(0, logger_1.c)('gray', ']')}`;
-                return drawRow(plain, styled);
-            };
-            
-            const stepRow = (cmd, desc) => {
-                const leftPlain = `    ${cmd.padEnd(16)}`;
-                const rightPlain = `▸  ${desc}`;
-                const plain = `${leftPlain}${rightPlain}`;
-                const styled = `    ${(0, logger_1.c)('white', cmd.padEnd(16))}${(0, logger_1.c)('gray', '▸')}  ${(0, logger_1.c)('gray', desc)}`;
-                return drawRow(plain, styled);
-            };
-            
-            console.log(`  ${(0, logger_1.c)('green', '✔')} ${(0, logger_1.bold)((0, logger_1.c)('green', 'Installation complete'))} ${(0, logger_1.c)('gray', '—')} ${(0, logger_1.c)('white', String(copied))} files`);
-            console.log(`  ${(0, logger_1.c)('gray', '  ╰─')} ${(0, logger_1.c)('gray', agentDest)}`);
-            console.log();
-            console.log(`  ${(0, logger_1.c)(borderCol, '┌' + '─'.repeat(W) + '┐')}`);
-            console.log(drawRow(`  TRIBUNAL ENVIRONMENT SYNCHRONIZED`, `  ${(0, logger_1.bold)((0, logger_1.c)('white', 'TRIBUNAL ENVIRONMENT SYNCHRONIZED'))}`));
-            console.log(`  ${(0, logger_1.c)(borderCol, '├' + '─'.repeat(W) + '┤')}`);
-            console.log(drawRow(`  Guarding:  Active & Enforcing`, `  ${(0, logger_1.c)('gray', 'Guarding:')}  ${(0, logger_1.c)('green', 'Active & Enforcing')}`));
-            console.log(drawRow(`  Manifest:  Verified`, `  ${(0, logger_1.c)('gray', 'Manifest:')}  ${(0, logger_1.c)('cyan', 'Verified')}`));
-            console.log(drawRow('', ''));
-            console.log(drawRow('  Installed Components:', (0, logger_1.bold)((0, logger_1.c)('white', '  Installed Components:'))));
-            console.log(compRow('🤖', 'Agents', agentsCount, 'magenta'));
-            console.log(compRow('⚡', 'Workflows', workflowsCount, 'yellow'));
-            console.log(compRow('🧠', 'Skills', skillsCount, 'blue'));
-            console.log(compRow('🔧', 'Scripts', scriptsCount, 'green'));
-            console.log(`  ${(0, logger_1.c)(borderCol, '├' + '─'.repeat(W) + '┤')}`);
-            console.log(drawRow('', ''));
-            console.log(drawRow('  Next Steps:', (0, logger_1.c)('gray', '  Next Steps:')));
-            console.log(stepRow('/generate', 'Generate code with reviews'));
-            console.log(stepRow('/review', 'Audit existing code for issues'));
-            console.log(stepRow('/tribunal-full', 'Run all 21 reviewers in parallel'));
-            console.log(drawRow('', ''));
-            console.log(`  ${(0, logger_1.c)(borderCol, '└' + '─'.repeat(W) + '┘')}`);
-            console.log();
-            (0, logger_1.log)(`  ${(0, logger_1.c)('gray', '✦ Generating IDE bridge files...')}`);
+            const tree = new ActionTree();
+            await tree.action('Establishing Anti-Hallucination Barrier', agentDest);
+            await tree.branch(`${agentsCount} Core Specialists active in registry`);
+            await tree.branch(`${skillsCount} Agentic Skills mapped via lazy routing`);
+            await tree.branch(`${workflowsCount} Workflows & ${scriptsCount} Enforcement scripts installed`);
+            await tree.action('Synthesizing IDE Bridges');
             await generateIDEBridges(targetDir, agentDest, dryRun, isMinimal);
             await scaffoldDesignSystem(targetDir, agentSrc, dryRun);
+            tree.complete(`Tribunal-Kit v${pkg.version} initialized successfully at ${targetDir}`);
         }
         console.log();
     }
