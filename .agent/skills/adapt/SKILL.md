@@ -1,8 +1,8 @@
 ---
 name: adapt
 description: Adapt designs across breakpoints, devices, platform constraints, touch vs mouse input, and container queries. Use when making a UI responsive or optimizing for mobile/tablet.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - mobile-design
   - building-native-ui
@@ -26,6 +26,12 @@ Before engineering responsive layouts or cross-device UIs, you MUST inspect:
 3. Fluid Clamp Scaling (Section 45) → Use `clamp()` for smooth fluid typography and spacing without abrupt media query jumps
 
 Architect UIs that adapt fluidly to screen dimensions, container boundaries, input devices (touch vs pointer), and orientation.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Adapt designs across breakpoints, devices, platform constraints, touch vs mouse input, and container queries. Use when making a UI responsive or optimizing for mobile/tablet..
+- **DO NOT activate when:** The task falls strictly outside adapt domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -63,28 +69,25 @@ Architect UIs that adapt fluidly to screen dimensions, container boundaries, inp
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Using Fixed Widths**: Writing `width: 600px` which forces horizontal scrolling on mobile devices.
-2. **Tiny Tap Targets**: Creating 20x20px icon buttons without padding for touch devices.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `mobile-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are re-usable components using `@container` queries for layout adaptation?
-✅ Do all touch interactive targets meet the 44x44px minimum sizing rule?
-✅ Does the layout prevent horizontal scrollbars on 320px screen widths?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

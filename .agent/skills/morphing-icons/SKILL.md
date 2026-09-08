@@ -1,8 +1,8 @@
 ---
 name: morphing-icons
 description: Build morphing SVG icon components that transition smoothly between states (Play <-> Pause, Hamburger Menu <-> Close X, Sun <-> Moon).
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - svg-animation
   - micro-interaction
@@ -26,6 +26,12 @@ Before implementing morphing icon components, you MUST inspect:
 3. Interpolation Curves → Use snappy ease-out curves (`cubic-bezier(0.16, 1, 0.3, 1)`) with duration $\le 200\text{ms}$
 
 Architect crisp, interactive SVG icon components that morph seamlessly between operational states.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Build morphing SVG icon components that transition smoothly between states (Play <-> Pause, Hamburger Menu <-> Close X, Sun <-> Moon)..
+- **DO NOT activate when:** The task falls strictly outside morphing-icons domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -78,27 +84,25 @@ export function MenuToCloseIcon({ isOpen, onClick }: { isOpen: boolean; onClick:
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Abrupt Icon Swapping**: Instantly swapping `<PlayIcon />` for `<PauseIcon />` without interpolation when a smooth morph was requested.
-2. **Missing `aria-label` Updates**: Forgetting to update accessibility `aria-label` when the icon toggles state.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `motion-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are vector coordinates smoothly interpolated during state changes?
-✅ Is `aria-label` dynamically toggled to match current icon state?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

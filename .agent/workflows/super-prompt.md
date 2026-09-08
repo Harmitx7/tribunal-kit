@@ -24,6 +24,10 @@ Before compiling prompts or running prompt compression, you MUST inspect:
 2. Prompt Compiler Script (`.agent/scripts/prompt_compiler.js`) → Verify availability of local prompt compiler script
 3. Zero Token Overhead Principle → Ensure compilation executes locally without invoking LLM API calls
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `llm-engineering` (.agent/skills/llm-engineering/SKILL.md): LLM integration patterns, prompt engineering, and cost optimization
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+
 ---
 
 ## Usage

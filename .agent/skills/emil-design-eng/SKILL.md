@@ -1,8 +1,8 @@
 ---
 name: emil-design-eng
 description: Encodes Emil Kowalski's philosophy on UI polish, component design, animation decisions, and the invisible details that make software feel great. Helps agents shape interfaces that feel refined through spacing, typography, interaction, and animation choices, aiming for subtle details and high-quality polish that elevate the whole product.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - apple-design
   - motion-engineering
@@ -24,6 +24,12 @@ Before designing or reviewing UI micro-animations, you MUST inspect:
 1. Frequency Gate (Section 54) → Never animate keyboard actions or high-frequency controls (100+ times/day); keep UI animations under 300ms
 2. Easing Rule (Section 75) → Use strong `ease-out` (`cubic-bezier(0.23, 1, 0.32, 1)`) for entering UI elements; ban `ease-in`
 3. Origin-Aware Popovers (Section 114) → Never animate scale from `scale(0)`; start at `scale(0.95)` with origin bound to trigger coordinates
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Encodes Emil Kowalski's philosophy on UI polish, component design, animation decisions, and the invisible details that make software feel great. Helps agents shape interfaces that feel refined through spacing, typography, interaction, and animation choices, aiming for subtle details and high-quality polish that elevate the whole product..
+- **DO NOT activate when:** The task falls strictly outside emil-design-eng domain or belongs to a different dedicated specialist.
 
 ## Initial Response
 
@@ -139,34 +145,25 @@ Popovers should scale in from their trigger, not from center. Explicitly set `tr
 
 ---
 
-## 🤖 LLM-Specific Traps
-
-1. **Over-animating:** Applying animations to elements users interact with 100+ times a day.
-2. **Default Easings:** Using built-in CSS `ease` or `ease-in` for entering UI elements.
-3. **Sluggishness:** Proposing UI animations longer than 300ms.
-4. **Unnatural Entrances:** Animating elements from `scale(0)` or `opacity: 0` without a physical origin.
-5. **Ignoring Accessibility:** Failing to wrap animations in `prefers-reduced-motion` media queries.
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `frontend-reviewer` · `accessibility-reviewer`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
+
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
-✅ Did I justify the animation's existence based on frequency?
-✅ Are all UI animations under 300ms?
-✅ Did I use `ease-out` (custom cubic-bezier) for entering elements?
-✅ Are popovers origin-aware and avoiding `scale(0)`?
-✅ Is `prefers-reduced-motion` respected?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring animation work complete because the code compiles.
-- ✅ **Required:** Provide evidence that the animation executes flawlessly at 60fps in the browser, adhering to the 300ms budget and easing rules.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

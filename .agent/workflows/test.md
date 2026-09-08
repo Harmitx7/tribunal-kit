@@ -6,7 +6,7 @@ last-updated: 2026-07-30
 required-skills:
   - testing-patterns
   - tdd-workflow
-  - test-engineer
+  - test-result-analyzer
 scripts-binding:
   - .agent/scripts/test_runner.js
   - .agent/scripts/verify_all.js
@@ -25,6 +25,11 @@ Before generating test suites or executing test runners, you MUST inspect:
 1. Workspace Test Runner Configuration (`package.json`, `jest.config.js`, `vitest.config.ts`, `pytest.ini`) → Verify installed runner & test environment
 2. Target Module Code & Contracts → Inspect function signatures, parameters, exceptions, and return types
 3. 3-Case Coverage Requirement → Ensure test cases explicitly cover Happy Path, Error Handling Path, and Boundary Conditions before approving test files
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `testing-patterns` (.agent/skills/testing-patterns/SKILL.md): Testing Trophy strategy (unit → integration → E2E)
+   - `tdd-workflow` (.agent/skills/tdd-workflow/SKILL.md): Red-Green-Refactor TDD cycle and test-first development
+   - `test-result-analyzer` (.agent/skills/test-result-analyzer/SKILL.md): Root cause analysis across multiple failing test files
 
 ---
 

@@ -2,8 +2,8 @@
 name: error-resilience
 description: Error resilience and fault tolerance mastery. Retry strategies (exponential backoff with jitter), circuit breakers, bulkheads, graceful degradation, React error boundaries, dead letter queues, timeout patterns, fallback chains, and idempotent error recovery. Use when building fault-tolerant systems, handling flaky external services, or preventing cascading failures.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - devops-incident-responder
   - backend-security-expert
@@ -21,19 +21,38 @@ scripts-binding:
 
 Before writing retry logic, circuit breakers, or error handling routines, you MUST inspect:
 
-1. Idempotency Key Rule for Retries (Section 123) → Require explicit idempotency keys when retrying non-safe operations (POST/PUT); ban un-keyed retries
-2. Exponential Backoff with Jitter (Section 106) → Implement randomized full jitter with capped exponential delays; ban fixed-delay retry loops
-3. Operational vs Programmer Error Split (Section 28) → Catch and recover strictly from `OperationalError` instances; allow programmer bugs (`TypeError`) to crash fast
+1. Idempotency Key Rule for Retries → Require explicit idempotency keys when retrying state-changing mutations (POST/PUT); ban un-keyed blind retries
+2. Exponential Backoff with Full Jitter → Implement randomized full jitter with capped exponential delays (`sleep = rand(0, min(cap, base * 2^attempt))`); ban fixed-delay retry loops
+3. Global Request Timeout Budgets → Always pass and respect `AbortSignal.timeout(ms)` to cancel downstream calls before connection pool starvation occurs
+4. Operational vs Programmer Error Split → Catch and recover strictly from known operational errors (network blips, rate limits); fail fast on programmer bugs (`TypeError`, null references)
+
+## Activation Boundaries
+
+- **Activate when:** Building resilient distributed systems, implementing retry loops, circuit breakers, timeout budgets, bulkhead isolation, and React error boundaries.
+- **DO NOT activate when:** Writing localized pure mathematical transformations or simple CSS styling.
+
+## 2026 Fault Tolerance & Resilience Invariants
+
+1. **`AbortSignal.timeout()` Budgeting**:
+   ```ts
+   // Native in modern Node.js and browsers
+   const res = await fetch(url, { signal: AbortSignal.timeout(3000) });
+   ```
+2. **AWS Architecture Full Jitter Formula**:
+   ```ts
+   function getJitteredBackoff(attempt: number, baseMs = 100, maxCapMs = 5000): number {
+     const exponential = Math.min(maxCapMs, baseMs * 2 ** attempt);
+     return Math.random() * exponential;
+   }
+   ```
+3. **Circuit Breaker Trip Thresholds**: Trip to `OPEN` on ≥ 5 consecutive 5xx errors or > 50% failure rate over a 10s rolling window. Fail fast immediately with a cached or fallback response while open.
 
 ## Hallucination Traps (Read First)
 
-- ❌ Retrying non-idempotent operations (POST payments) without idempotency keys -> ✅ Always require idempotency keys for non-safe HTTP methods before retrying
-- ❌ Using fixed delay retries instead of exponential backoff -> ✅ Exponential backoff with jitter prevents thundering herd
-- ❌ Catching all errors and swallowing them -> ✅ Only catch recoverable (operational) errors; let programmer errors crash
-
----
-
-# Error Resilience — Fault-Tolerant Systems
+- ❌ Retrying non-idempotent operations without idempotency keys → ✅ Blind retries cause double charges and duplicated records
+- ❌ Retrying indefinitely without exponential backoff → ✅ Causes the "thundering herd" problem and DDOSes reviving downstream servers
+- ❌ Swallowing errors silently `catch (e) {}` → ✅ Logs must capture the root stack trace and error cause
+- ❌ Using `setTimeout` without clearing when promise resolves → ✅ Causes timer memory leaks
 
 ---
 
@@ -407,69 +426,17 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -478,8 +445,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

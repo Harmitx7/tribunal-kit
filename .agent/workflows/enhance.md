@@ -6,7 +6,7 @@ last-updated: 2026-07-30
 required-skills:
   - clean-code
   - codebase-design
-  - test-engineer
+  - testing-patterns
 scripts-binding:
   - .agent/scripts/lint_runner.js
   - .agent/scripts/test_runner.js
@@ -25,6 +25,11 @@ Before modifying existing features or appending functionality, you MUST inspect:
 1. Impact Zone Identification → Grep for all callers and importers of the target file to map blast radius
 2. Existing Contract & Unit Tests → Inspect existing tests and type signatures for the target module to prevent regression
 3. Breaking Change Detection → Ensure signature changes update all dependent call sites simultaneously before writing to disk
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+   - `codebase-design` (.agent/skills/codebase-design/SKILL.md): Deep module design with small interfaces and clean seams
+   - `testing-patterns` (.agent/skills/testing-patterns/SKILL.md): Testing Trophy strategy (unit → integration → E2E)
 
 ---
 

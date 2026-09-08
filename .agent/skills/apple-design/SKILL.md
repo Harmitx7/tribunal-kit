@@ -1,8 +1,8 @@
 ---
 name: apple-design
 description: Apple's approach to interface design and fluid, physical motion, translated for the web. Use when building or reviewing gesture-driven UI, spring animations, drag/swipe/sheet interactions, momentum and interruptible transitions, translucent materials and depth, typography (optical sizing, tracking, leading), reduced-motion, or the design foundations behind Apple-style interfaces.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - soft-skill
   - emil-design-eng
@@ -26,6 +26,12 @@ Before engineering Apple-style UIs or gesture-driven components, you MUST inspec
 3. Optical Letter-Spacing (Section 72) → Apply inverse tracking (`-0.025em` for titles, `+0.015em` for small captions) based on SF Pro font scaling
 
 Design engineering guidelines for bringing Apple's fluid, physical interface paradigms to modern web applications.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Apple's approach to interface design and fluid, physical motion, translated for the web. Use when building or reviewing gesture-driven UI, spring animations, drag/swipe/sheet interactions, momentum and interruptible transitions, translucent materials and depth, typography (optical sizing, tracking, leading), reduced-motion, or the design foundations behind Apple-style interfaces..
+- **DO NOT activate when:** The task falls strictly outside apple-design domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -96,23 +102,25 @@ Apple depth relies on subtle, multi-layered backdrop blur and border highlights:
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Over-using Blur**: Applying `backdrop-filter: blur(30px)` to dozens of items causes severe GPU frame drops during scrolling. Apply blur to sticky headers or modal backdrops only.
-2. **Non-Interruptible Gestures**: Using CSS `transition: transform 0.5s ease` for drag or swipe handlers instead of gesture springs.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are spring animations interruptible with realistic mass/stiffness/damping?
-✅ Is backdrop-filter limited to top-level sticky surfaces and modals?
-✅ Does letter-spacing scale inversely with font size (tighter for large titles)?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
-Test gesture response and spring motion in live preview to ensure 60/120fps fluidity without GPU lag.
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

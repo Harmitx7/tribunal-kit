@@ -1,8 +1,8 @@
 ---
 name: better-colors
 description: OKLCH color space for web projects. Convert hex/rgb/hsl to oklch, generate palettes, check contrast, handle gamut boundaries, and theme with Tailwind v4. Triggers on oklch, color conversion, palette generation, contrast ratio, gamut, display p3, design tokens, hue drift, chroma, dark mode colors.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - better-ui
   - baseline-ui
@@ -26,6 +26,12 @@ Before defining color palettes or CSS theme variables, you MUST inspect:
 3. WCAG 2.2 AA Contrast Thresholds (Section 82) → Ensure `L ≤ 45%` for text on light background and `L ≥ 70%` on dark background
 
 Design engineering guidelines for building perceptually uniform, WCAG 2.2 AA compliant, P3-gamut color systems using the modern **OKLCH** color space.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring OKLCH color space for web projects. Convert hex/rgb/hsl to oklch, generate palettes, check contrast, handle gamut boundaries, and theme with Tailwind v4. Triggers on oklch, color conversion, palette generation, contrast ratio, gamut, display p3, design tokens, hue drift, chroma, dark mode colors..
+- **DO NOT activate when:** The task falls strictly outside better-colors domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -123,23 +129,25 @@ To achieve 4.5:1 text contrast against a surface:
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Using HSL for Dark Mode Inversion**: Inverting `lightness` in HSL causes dramatic hue shifts and contrast failures.
-2. **Exceeding Display P3 Gamut**: Setting Chroma `C > 0.32` without fallback causes clipping or dull rendering on non-P3 displays.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are all color custom properties defined using OKLCH?
-✅ Does text meet the minimum 4.5:1 WCAG AA contrast ratio?
-✅ Are dark mode surfaces subtly tinted rather than pure #000000 black?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
-Inspect colors across light and dark modes in browser preview to verify contrast and visual harmony.
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

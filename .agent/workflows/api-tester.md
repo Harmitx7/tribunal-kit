@@ -26,6 +26,11 @@ Before running automated API endpoint tests or auth-aware request sequences, you
 2. Test Server URL & Credentials (`.env.test`) → Verify base URL and test token environment variables
 3. Multi-Stage Request Sequence → Enforce sequential execution: Auth Login → Token Capture → CRUD Operations → Error Edge Case Verification
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `testing-patterns` (.agent/skills/testing-patterns/SKILL.md): Testing Trophy strategy (unit → integration → E2E)
+   - `api-patterns` (.agent/skills/api-patterns/SKILL.md): REST/GraphQL API design, versioning, and error contracts
+   - `backend-security-expert` (.agent/skills/backend-security-expert/SKILL.md): Server-side security, auth, JWT, ORM injection, RBAC
+
 ---
 
 ## When to Use /api-tester

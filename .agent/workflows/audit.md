@@ -30,6 +30,11 @@ Before triggering a full project audit, you MUST inspect:
 2. Executable Scripts Inventory (`.agent/scripts/`) → Verify presence of `security_scan.js`, `lint_runner.js`, and `test_runner.js`
 3. Pipeline Execution Constraints → Confirm fixed execution order (Security → Dependencies → Type Check → Lint → Schema → Tests → Bundle) and HALT rules on critical CVE findings
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `vulnerability-scanner` (.agent/skills/vulnerability-scanner/SKILL.md): OWASP vulnerability scanning patterns and severity classification
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+   - `code-review-checklist` (.agent/skills/code-review-checklist/SKILL.md): Code quality, security, and best practice review gates
+
 ---
 
 ## When to Use /audit

@@ -1,8 +1,8 @@
 ---
 name: transitions-dev
 description: Production-ready CSS transition patterns for web apps with drop-in snippets for cards, modals, dropdowns, panels, and accordions.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - better-ui
   - micro-interaction
@@ -26,6 +26,12 @@ Before implementing CSS transitions, you MUST inspect:
 3. Target transition properties → Enforce explicit property transitions (`transform`, `opacity`, `box-shadow`) and ban `transition: all`
 
 Drop-in, hardware-accelerated CSS transition utility classes for modern web components.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Production-ready CSS transition patterns for web apps with drop-in snippets for cards, modals, dropdowns, panels, and accordions..
+- **DO NOT activate when:** The task falls strictly outside transitions-dev domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -97,27 +103,25 @@ Animate element height smoothly without hardcoding fixed pixel heights:
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Animating `height` directly**: Animating `height: 0` to `height: auto` in CSS (which fails in CSS). Use `grid-template-rows: 0fr -> 1fr`.
-2. **Missing `overflow: hidden`**: Forgetting `overflow: hidden` on accordion inner wrappers, causing content to spill out during collapse.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `motion-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are accordions using `grid-template-rows: 0fr -> 1fr` for smooth height expansion?
-✅ Are modal enter/exit states scaling from `scale(0.96)` with opacity?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

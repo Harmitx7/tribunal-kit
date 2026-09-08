@@ -2,8 +2,8 @@
 name: antfu-conventions
 description: Anthony Fu's opinionated tooling and conventions for JavaScript/TypeScript projects: ESM-first, zero-config, type-safe, and clean tooling standards.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - clean-code
   - typescript-advanced
@@ -25,9 +25,13 @@ Before configuring JS/TS tooling or lint rules, you MUST inspect:
 2. ESLint Flat Config (`eslint.config.js`) (Section 28) → Use `@antfu/eslint-config` with flat config format; ban legacy `.eslintrc.json`
 3. Explicit Type Imports (`import type`) (Section 45) → Enforce `import type` for type-only symbols to allow clean tree-shaking compilation
 
-# Antfu Conventions — ESM-First & Opinionated Modern Tooling
-
 Enforce Anthony Fu's modern JavaScript/TypeScript engineering conventions: ESM-first, zero-config, pnpm workspaces, and strict type safety.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Anthony Fu's opinionated tooling and conventions for JavaScript/TypeScript projects: ESM-first, zero-config, type-safe, and clean tooling standards..
+- **DO NOT activate when:** The task falls strictly outside antfu-conventions domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -63,28 +67,25 @@ export default antfu({
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Mixing CommonJS and ESM**: Generating `require()` calls inside `"type": "module"` ESM packages.
-2. **Legacy ESLint `.eslintrc.json`**: Generating deprecated legacy ESLint configs instead of modern Flat Config `eslint.config.js`.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `type-safety` · `dependency-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is `"type": "module"` active in package.json?
-✅ Are type imports declared explicitly with `import type`?
-✅ Is `eslint.config.js` flat config format used?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

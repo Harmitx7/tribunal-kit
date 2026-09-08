@@ -2,8 +2,8 @@
 name: building-native-ui
 description: Cross-platform Native UI mastery (React Native / Expo). Building seamless, 60fps mobile interfaces, handling safe areas, navigation architectures (Expo Router), native modules, gestures/animations (Reanimated), and platform-specific styling. Use when building React Native or Expo mobile apps.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - mobile-design
   - react-specialist
@@ -25,6 +25,12 @@ Before building React Native / Expo UI components, you MUST inspect:
 2. Virtualized List Rendering (Section 130) → Use `FlashList` (Shopify) or `FlatList` with `estimatedItemSize` instead of `ScrollView` for large lists
 3. Native Thread Animations (Section 99) → Use `react-native-reanimated` with `useSharedValue` to keep animations off the JS bridge thread
 
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Cross-platform Native UI mastery (React Native / Expo). Building seamless, 60fps mobile interfaces, handling safe areas, navigation architectures (Expo Router), native modules, gestures/animations (Reanimated), and platform-specific styling. Use when building React Native or Expo mobile apps..
+- **DO NOT activate when:** The task falls strictly outside building-native-ui domain or belongs to a different dedicated specialist.
+
 ## Hallucination Traps (Read First)
 
 - ❌ `SafeAreaView` wrapping everything -> ✅ Use `SafeAreaProvider` + `useSafeAreaInsets()` for granular control
@@ -33,8 +39,6 @@ Before building React Native / Expo UI components, you MUST inspect:
 - ❌ Animating with `Animated.timing` by default -> ✅ Use `Reanimated 3` with `useSharedValue` for 120fps worklet-based animations
 
 ---
-
-# Building Native UI — React Native & Expo Mastery
 
 A mobile app isn't a website confined to a small screen.
 60 FPS is not a goal; it is a rigid requirement. The JS thread is a fragile bottleneck.
@@ -181,69 +185,17 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -252,8 +204,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

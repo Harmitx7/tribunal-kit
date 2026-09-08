@@ -2,8 +2,8 @@
 name: observability
 description: Production observability mastery. Structured logging (Pino/Winston), OpenTelemetry tracing, metrics (Prometheus/Grafana), SLIs/SLOs/error budgets, distributed tracing, alerting design, health checks, and AI observability. Use when setting up monitoring, debugging production issues, or designing observable distributed systems.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - devops-incident-responder
   - nodejs-best-practices
@@ -25,7 +25,11 @@ Before instrumenting applications for observability, you MUST inspect:
 2. Separation of Liveness & Readiness Checks (Section 253) → Isolate `/health/live` (process active) from `/health/ready` (DB connected); ban DB calls in liveness checks to prevent restart loops
 3. Correlation Tracking Context (Section 80) → Inject `x-request-id` via AsyncLocalStorage or middleware so every log line is correlated to a specific request
 
-# Observability — Production Monitoring Mastery
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Production observability mastery. Structured logging (Pino/Winston), OpenTelemetry tracing, metrics (Prometheus/Grafana), SLIs/SLOs/error budgets, distributed tracing, alerting design, health checks, and AI observability. Use when setting up monitoring, debugging production issues, or designing observable distributed systems..
+- **DO NOT activate when:** The task falls strictly outside observability domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -322,69 +326,17 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -393,8 +345,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

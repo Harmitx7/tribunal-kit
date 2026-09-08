@@ -1,8 +1,8 @@
 ---
 name: fixing-metadata
 description: Audit and fix page metadata including page titles, meta descriptions, Open Graph, Twitter cards, canonical URLs, and JSON-LD structured data.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - nextjs-react-expert
   - baseline-ui
@@ -26,6 +26,12 @@ Before engineering metadata or Open Graph tags, you MUST inspect:
 3. Twitter Card Type (Section 39) → Always specify `<meta name="twitter:card" content="summary_large_image" />` for prominent social previews
 
 Audit, generate, and fix page metadata for rich social previews, search engine indexing, and structured data.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Audit and fix page metadata including page titles, meta descriptions, Open Graph, Twitter cards, canonical URLs, and JSON-LD structured data..
+- **DO NOT activate when:** The task falls strictly outside fixing-metadata domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -90,28 +96,25 @@ export const metadata: Metadata = {
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Relative Image URLs in OG Metadata**: Using `<meta property="og:image" content="/og.jpg">` instead of full absolute HTTPS URLs (`https://domain.com/og.jpg`).
-2. **Missing `summary_large_image`**: Forgetting `twitter:card` type, causing Twitter/X to render a tiny square thumbnail instead of a prominent banner preview.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `seo-specialist` · `frontend-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are OpenGraph and Twitter card image URLs absolute HTTPS links?
-✅ Is title length between 50 and 60 characters?
-✅ Is canonical URL explicitly defined?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

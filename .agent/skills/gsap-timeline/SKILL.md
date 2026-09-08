@@ -2,8 +2,8 @@
 name: gsap-timeline
 description: Official GSAP skill for timelines — gsap.timeline(), position parameter, nesting, playback. Use when sequencing animations, choreographing keyframes, or when the user asks about animation sequencing, timelines, or animation order (in GSAP or when recommending a library that supports timelines).
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - motion-engineering
   - gsap-react
@@ -24,6 +24,12 @@ Before creating GSAP timelines, you MUST inspect:
 1. Position Parameter Syntax (Section 27) → Pass position as the 3rd argument (`"<"`, `">"`, `"+=0.5"`) instead of using hardcoded delays
 2. Timeline Defaults (Section 45) → Pass `{ defaults: { duration, ease } }` into `gsap.timeline()` constructor to avoid repetitive child declarations
 3. ScrollTrigger Placement (Section 101) → Place `scrollTrigger` ONLY on the top-level timeline, never on child tweens inside a timeline
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Official GSAP skill for timelines — gsap.timeline(), position parameter, nesting, playback. Use when sequencing animations, choreographing keyframes, or when the user asks about animation sequencing, timelines, or animation order (in GSAP or when recommending a library that supports timelines)..
+- **DO NOT activate when:** The task falls strictly outside gsap-timeline domain or belongs to a different dedicated specialist.
 
 ## When to Use This Skill
 
@@ -127,89 +133,17 @@ master.to('.c', { opacity: 0 }, '+=0.2');
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
----
-
-## 🚨 LLM Trap Table
-
-| Pattern       | What AI Does Wrong            | What Is Actually Correct                                    |
-| :------------ | :---------------------------- | :---------------------------------------------------------- |
-| gsap-timeline | Position parameter as 2nd arg | Position parameter is the 3rd arg: tl.to(el, {x: 100}, "<") |
-| gsap-timeline | tl.add(gsap.to(...))          | tl.to(...) (just chain the tween directly)                  |
-| gsap-timeline | Hardcoded delays (delay: 1)   | Use position parameter (<, >, +=1) for relative timing      |
-
----
-
-## ✅ Pre-Flight Self-Audit
-
-Before producing any output, verify:
-
-```
-✅ Did I read the actual files before making claims about them?
-✅ Did I verify all method names against official GSAP documentation?
-✅ Did I add // VERIFY: on any uncertain API calls?
-✅ Are all imports from packages that actually exist in package.json?
-✅ Did I test my logic with edge cases (null, empty, 0, max)?
-✅ Did I avoid generating code for more than one module at a time?
-✅ Am I working from evidence, not assumption?
-```
-
----
-
-## 🔁 VBC Protocol (Verify → Build → Confirm)
-
-```
-VERIFY:  Read the actual codebase before writing anything
-BUILD:   Generate the smallest meaningful unit of code
-CONFIRM: Verify the output is correct before presenting
-```
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -218,8 +152,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

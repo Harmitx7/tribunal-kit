@@ -1,8 +1,8 @@
 ---
 name: compact-landing
 description: Build compact, premium landing pages with clear CTA hierarchy, quiet typography, restrained visual noise, and high conversion flow.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - landing-page
   - quieter
@@ -26,6 +26,12 @@ Before engineering compact landing pages, you MUST inspect:
 3. Typography Restraint (Section 30) → Cap display font sizes at `clamp(1.75rem, 4vw, 2.75rem)` and apply `text-wrap: balance`
 
 Build tight, ultra-focused, high-converting landing pages that deliver value quickly without unnecessary multi-scroll filler.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Build compact, premium landing pages with clear CTA hierarchy, quiet typography, restrained visual noise, and high conversion flow..
+- **DO NOT activate when:** The task falls strictly outside compact-landing domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -57,28 +63,25 @@ Build tight, ultra-focused, high-converting landing pages that deliver value qui
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Adding 10 Scroll Sections**: Padding out compact landing pages with generic boilerplate feature grids and stock FAQs when a tight 3-section layout was requested.
-2. **Multiple Competing CTAs**: Adding 4 different buttons in the hero section. Keep 1 primary action button.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `ui-ux-auditor`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Does the hero section fit comfortably inside a 1080p desktop viewport without scrolling?
-✅ Is heading font size restrained and balanced (`text-wrap: balance`)?
-✅ Is the page limited to max 4 tight sections?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

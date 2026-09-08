@@ -2,8 +2,8 @@
 name: local-first
 description: Local-first software architecture mastery. CRDTs (Conflict-free Replicated Data Types), IndexedDB synchronization, sync engines (ElectricSQL, Replicache, PowerSync), offline-capable data fetching, optimistic UI, and SQLite in the browser (WASM). Use when building PWA offline capabilities, rapid UIs, or multiplayer collaborative tools.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - local-first-architecture
   - react-specialist
@@ -25,6 +25,12 @@ Before implementing local-first storage or CRDT synchronization, you MUST inspec
 2. Persistent Storage (Section 16) → Use IndexedDB (via Dexie/idb) or SQLite WASM for local persistence; ban localStorage for >5MB data
 3. Incremental Watermark Sync (Section 17) → Perform delta syncs using timestamps/watermarks rather than re-fetching full datasets
 
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Local-first software architecture mastery. CRDTs (Conflict-free Replicated Data Types), IndexedDB synchronization, sync engines (ElectricSQL, Replicache, PowerSync), offline-capable data fetching, optimistic UI, and SQLite in the browser (WASM). Use when building PWA offline capabilities, rapid UIs, or multiplayer collaborative tools..
+- **DO NOT activate when:** The task falls strictly outside local-first domain or belongs to a different dedicated specialist.
+
 ## Hallucination Traps (Read First)
 
 - ❌ Assuming server data is always newer than local data -> ✅ Conflicts are inevitable; design merge strategy (LWW, CRDTs) before writing code
@@ -32,8 +38,6 @@ Before implementing local-first storage or CRDT synchronization, you MUST inspec
 - ❌ Syncing entire datasets on every connection -> ✅ Use incremental sync with watermarks/timestamps to minimize bandwidth
 
 ---
-
-# Local-First Architecture — Offline-capable Mastery
 
 ---
 
@@ -157,69 +161,17 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -228,8 +180,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

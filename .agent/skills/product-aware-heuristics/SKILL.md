@@ -1,8 +1,8 @@
 ---
 name: product-aware-heuristics
 description: Defines specific visual and structural design heuristics and React/Tailwind templates tailored to different product types (SaaS, developer tools, AI interfaces, landing pages, fintech, e-commerce, and editorial).
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - ui-reasoning-engine
   - interface-design
@@ -27,6 +27,12 @@ Before selecting layout templates or component heuristics, you MUST inspect:
 3. Touch & Pointer Bounds → Ensure interactive buttons and checkboxes meet 44x44px touch target guidelines
 
 An interface must match its domain context. A developer tool should not look like a luxury editorial website. This skill defines the heuristics, layout requirements, and drop-in layout templates for different product categories.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Defines specific visual and structural design heuristics and React/Tailwind templates tailored to different product types (SaaS, developer tools, AI interfaces, landing pages, fintech, e-commerce, and editorial)..
+- **DO NOT activate when:** The task falls strictly outside product-aware-heuristics domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -397,12 +403,25 @@ export function AIChatInput({ onSubmit }) {
 
 ---
 
-## Pre-Flight Checklist
+## 🏛️ Tribunal Verification & Guardrails
 
-- [ ] Have I verified the visual guidelines match the target Product Category?
-- [ ] Have I checked for tabular numbers alignment in Fintech interfaces?
-- [ ] Have I checked for monospace format in Developer Tools?
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
-## VBC Protocol (Verification-Before-Completion)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
+### ✅ Pre-Flight Self-Audit
+```
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
+```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

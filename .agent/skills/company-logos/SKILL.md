@@ -1,8 +1,8 @@
 ---
 name: company-logos
 description: Social proof rows, logo grids, customer carousels, and trust badges layout rules for balanced visual weight and responsive alignment.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - baseline-ui
   - landing-page
@@ -26,6 +26,12 @@ Before designing logo grids or trust rows, you MUST inspect:
 3. Hover States → Transition opacity to 100% smoothly over `200ms` on hover
 
 Architect balanced, optically aligned logo rows and trust grids that communicate credibility without visual clutter.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Social proof rows, logo grids, customer carousels, and trust badges layout rules for balanced visual weight and responsive alignment..
+- **DO NOT activate when:** The task falls strictly outside company-logos domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -61,28 +67,25 @@ Logos vary wildly in aspect ratio (e.g. square logos vs wide wordmarks).
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Unfiltered Raw Logos**: Rendering original multi-colored SVG logos next to each other, creating a messy mismatched visual strip.
-2. **Missing Grayscale / Opacity**: Displaying bright saturated company logos that steal attention away from the hero CTA.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are all logos converted to monochromatic `currentColor` or uniform grayscale?
-✅ Are logo heights normalized optically (`max-height: 28px - 32px`)?
-✅ Is generous gap spacing (`2.5rem` - `4rem`) provided between brand marks?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

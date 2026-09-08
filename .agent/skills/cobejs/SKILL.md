@@ -1,8 +1,8 @@
 ---
 name: cobejs
 description: Build lightweight, hardware-accelerated 3D interactive animated globes and web orbs using Cobe WebGL.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - 60fps-animation
   - motion-engineering
@@ -26,6 +26,12 @@ Before building WebGL 3D globe components with Cobe, you MUST inspect:
 3. Canvas Sizing (Section 65) → Match `devicePixelRatio` to high-DPI screens and set `aspectRatio: 1` to prevent visual stretching
 
 Integrate ultra-fast, 5KB WebGL interactive globes for landing page hero sections and interactive location maps.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Build lightweight, hardware-accelerated 3D interactive animated globes and web orbs using Cobe WebGL..
+- **DO NOT activate when:** The task falls strictly outside cobejs domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -77,27 +83,25 @@ export function InteractiveGlobe() {
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Forgetting Canvas Destroy Cleanup**: Failing to call `globe.destroy()` on component unmount, causing WebGL context leaks.
-2. **Missing `aspectRatio: 1`**: Failing to constrain aspect ratio, causing globe canvas stretching.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `performance-optimizer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is `globe.destroy()` invoked in the unmount cleanup function?
-✅ Is `devicePixelRatio` set to match high-DPI screens without GPU slowdown?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

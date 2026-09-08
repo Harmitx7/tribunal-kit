@@ -2,8 +2,8 @@
 name: intelligent-routing
 description: LLM Intent Processing and Gateway Routing mastery. Request classification hierarchies, function routing, confidence scoring, fallback cascades, zero-shot vs few-shot classification patterns, and identifying specialized skills for delegation. Use when parsing raw user input to determine the architectural path of execution.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - fabel-protocol
   - agentic-patterns
@@ -23,6 +23,12 @@ Before routing user prompts to specialized skills or agents, you MUST inspect:
 2. Semantic Intent Schema (Section 1) → Classify request type (QUESTION, SURVEY, SIMPLE_EDIT, COMPLEX_BUILD, SECURITY_AUDIT, UNCLEAR_GIBBERISH)
 3. Confidence Threshold (Section 3 Socratic Yield Rule) → Yield back to user with clarifying question if confidence score is < 85s
 
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring LLM Intent Processing and Gateway Routing mastery. Request classification hierarchies, function routing, confidence scoring, fallback cascades, zero-shot vs few-shot classification patterns, and identifying specialized skills for delegation. Use when parsing raw user input to determine the architectural path of execution..
+- **DO NOT activate when:** The task falls strictly outside intelligent-routing domain or belongs to a different dedicated specialist.
+
 ## Hallucination Traps (Read First)
 
 - ❌ Routing based on exact keyword matching -> ✅ Use intent classification with confidence scores; keywords miss synonyms and context
@@ -31,8 +37,6 @@ Before routing user prompts to specialized skills or agents, you MUST inspect:
 - ❌ Loading 100+ skill descriptions into context for every route -> ✅ Read the compiled `.agent/routing_index.json` instead of a giant markdown table
 
 ---
-
-# Intelligent Routing v4 — Self-Describing Skill Graph
 
 ## Architecture Overview
 
@@ -215,33 +219,17 @@ This is idempotent — running it multiple times produces the same output. The i
 
 ---
 
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -250,8 +238,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

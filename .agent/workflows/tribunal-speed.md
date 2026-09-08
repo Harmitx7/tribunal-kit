@@ -26,6 +26,11 @@ Before running a full-stack performance audit, you MUST inspect:
 2. Max 5 AI Call Ceiling → Cap swarm executions to 3 parallel specialists + 1 synthesis step to prevent token explosion
 3. Ranked Impact Synthesis → Output findings strictly in a single unified table prioritized by user-facing latency impact
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `performance-profiling` (.agent/skills/performance-profiling/SKILL.md): Performance measurement methodology and profiling tools
+   - `observability` (.agent/skills/observability/SKILL.md): Distributed tracing, metrics, and monitoring instrumentation
+   - `edge-computing` (.agent/skills/edge-computing/SKILL.md): Edge runtime patterns, cold starts, and regional deployment
+
 ---
 
 ## When to Use /tribunal-speed

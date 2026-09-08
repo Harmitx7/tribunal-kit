@@ -1,8 +1,8 @@
 ---
 name: better-ui
 description: Design engineering principles for making interfaces feel polished. Use when building UI components, reviewing frontend code, implementing animations, hover states, shadows, borders, micro-interactions, or visual detail work.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - baseline-ui
   - better-colors
@@ -21,11 +21,44 @@ scripts-binding:
 
 Before engineering component polish or micro-interactions, you MUST inspect:
 
-1. Outer vs Inner Radius Formula (Section 32) → Enforce $\text{Radius}_{\text{outer}} = \text{Radius}_{\text{inner}} + \text{Padding}_{\text{inner}}$
-2. Transition Rules (Section 25) → Strictly prohibit `transition: all`; specify explicit property transitions
-3. Multi-Layer Shadows (Section 42) → Use ambient + direct lighting stacks and dark mode surface elevation highlights
+1. Nested Radius Formula → Enforce `Radius(outer) = Radius(inner) + Padding(inner)` to prevent visual corner clipping
+2. Explicit Property Transitions → Strictly ban `transition: all`; specify explicit properties (`transform`, `opacity`, `box-shadow`)
+3. OKLCH Color Space & Contrast → Use perceptual OKLCH color palettes; verify text contrast against APCA / WCAG 2.2 standards
+4. Anti-Slop Directive → Ban generic purple/indigo AI gradients and default left-text/right-image hero templates
 
-Distilled design engineering principles for transforming functional UIs into polished, state-of-the-art software interfaces, based on Jakub Krehel's _Details that make interfaces feel better_.
+## Activation Boundaries
+
+- **Activate when:** Styling frontend components, refining layout spacing, crafting hover/press states, elevating visual depth/shadows, and deslopping generic UI templates.
+- **DO NOT activate when:** Writing backend database schemas, SQL queries, or infrastructure deployment scripts.
+
+## 2026 UI Design Engineering Invariants
+
+1. **The Nested Border Radius Formula**:
+   ```css
+   /* Inner card radius = 8px, Container padding = 16px -> Outer container radius = 24px */
+   .card-container { padding: 16px; border-radius: 24px; }
+   .card-inner     { border-radius: 8px; }
+   ```
+2. **Perceptual OKLCH Color Scale**:
+   ```css
+   :root {
+     --surface-0: oklch(0.14 0.01 260);
+     --surface-1: oklch(0.18 0.01 260);
+     --primary:   oklch(0.65 0.18 145); /* High-chroma, uniform lightness */
+   }
+   ```
+3. **Subgrid for Pixel-Perfect Card Alignment**:
+   ```css
+   .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+   .card-grid > .card { display: grid; grid-template-rows: subgrid; grid-row: span 3; }
+   ```
+
+## Hallucination Traps (Read First)
+
+- ❌ `transition: all 0.3s ease` → ✅ Specify explicit properties `transition: transform 150ms ease, opacity 150ms ease`
+- ❌ Hardcoded single muddy black shadows → ✅ Multi-layer ambient + directional shadows
+- ❌ Mismatched concentric border radii → ✅ Outer radius MUST equal inner radius + padding
+- ❌ Generic AI violet/purple mesh gradients → ✅ Use subtle grain, solid contrast, and refined OKLCH accents
 
 ---
 
@@ -96,23 +129,25 @@ Distilled design engineering principles for transforming functional UIs into pol
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **`transition: all` Laziness**: Causes layout recalculations and flashes during dark/light mode toggles.
-2. **Missing Active States**: Adding hover effects but forgetting `:active` click feedback.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are all inner vs outer radii mathematically aligned?
-✅ Did I use specific CSS transition properties instead of transition: all?
-✅ Is hover and active state feedback explicit on all interactive targets?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
-Inspect micro-interactions and nested corner geometry in browser preview before delivery.
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

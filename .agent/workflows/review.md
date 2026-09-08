@@ -26,6 +26,11 @@ Before auditing code for hallucinations or structural flaws, you MUST inspect:
 2. Package Manifest (`package.json`) → Cross-reference imported packages against installed dependencies
 3. Pure Read-Only Constraint → Prohibit any file mutations or generation; output findings in structured audit tables strictly
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `code-review-checklist` (.agent/skills/code-review-checklist/SKILL.md): Code quality, security, and best practice review gates
+   - `vulnerability-scanner` (.agent/skills/vulnerability-scanner/SKILL.md): OWASP vulnerability scanning patterns and severity classification
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+
 ---
 
 ## When to Use /review

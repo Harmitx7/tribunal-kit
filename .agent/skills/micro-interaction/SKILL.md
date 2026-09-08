@@ -1,8 +1,8 @@
 ---
 name: micro-interaction
 description: Detailed UI motion guidance for hover and press feedback, toggles, checkboxes, toasts, drawers, modals, list transitions, and shared-element interactions.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - delight
   - better-ui
@@ -26,6 +26,12 @@ Before engineering component micro-interactions, you MUST inspect:
 3. SVG Path Draw-on (Section 48) → Use `stroke-dashoffset` transitions for checkboxes and toggle icons
 
 Craft responsive, physically grounded micro-interactions for everyday UI controls.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Detailed UI motion guidance for hover and press feedback, toggles, checkboxes, toasts, drawers, modals, list transitions, and shared-element interactions..
+- **DO NOT activate when:** The task falls strictly outside micro-interaction domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -97,28 +103,25 @@ Popovers scale out from their trigger source using CSS variables:
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Center Scaling Popovers**: Popovers springing out from the screen center instead of scaling from their trigger origin.
-2. **Slow Micro-Interactions**: Setting button press or toggle transitions to 400ms, making the UI feel sluggish.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `motion-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are interactive component feedback durations under 180ms?
-✅ Are popover/dropdown transform origins explicitly tied to their trigger?
-✅ Is checkmark SVG stroke-dasharray used for crisp checkbox check animation?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

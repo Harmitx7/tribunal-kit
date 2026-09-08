@@ -2,8 +2,8 @@
 name: platform-engineering-opentofu
 description: Infrastructure as Code (IaC) with OpenTofu/Terraform/Pulumi, automated cloud provisioning, DevSecOps pipelines, and self-service platform engineering.
 tools: Read, Grep, Glob, Edit, Write
-version: 3.0.0
-last-updated: 2026-08-05
+version: 4.0.0
+last-updated: 2026-09-07
 script: .agent/scripts/verify_all.js
 scripts-binding:
   - .agent/scripts/security_scan.js
@@ -23,6 +23,12 @@ Before provisioning cloud infrastructure:
 1. OpenTofu State Locking → Use remote S3/DynamoDB or backend state locking to prevent concurrency collisions
 2. Least Privilege IAM → Enforce strict role-based access control (RBAC) on all cloud resources
 3. Plan Validation → Run `tofu plan` and static security analysis (tfsec/checkov) before `tofu apply`
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Infrastructure as Code (IaC) with OpenTofu/Terraform/Pulumi, automated cloud provisioning, DevSecOps pipelines, and self-service platform engineering..
+- **DO NOT activate when:** The task falls strictly outside platform-engineering-opentofu domain or belongs to a different dedicated specialist.
 
 ## Production AWS VPC & ECS Module Blueprint
 
@@ -62,7 +68,27 @@ resource "aws_subnet" "public_a" {
 }
 ```
 
-## 🛑 Verification-Before-Completion (VBC) Protocol
+---
 
-- Run `tofu validate` and security scan before applying changes.
-- Ensure rollback plan is explicitly documented.
+## 🏛️ Tribunal Verification & Guardrails
+
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
+
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+
+### ✅ Pre-Flight Self-Audit
+```
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
+```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

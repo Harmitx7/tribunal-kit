@@ -2,8 +2,8 @@
 name: gsap-utils
 description: Official GSAP skill for gsap.utils — clamp, mapRange, normalize, interpolate, random, snap, toArray, wrap, pipe. Use when the user asks about gsap.utils, clamp, mapRange, random, snap, toArray, wrap, or helper utilities in GSAP.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - motion-engineering
   - gsap-react
@@ -24,6 +24,12 @@ Before using `gsap.utils`, you MUST inspect:
 1. Pure Number vs Unit strings (Section 306) → `mapRange` and `normalize` work ONLY on numbers; use `getUnit` and `unitize` for string values with units
 2. Reusable Function Form (Section 22) → Omit the value argument (or pass `true` as 4th param for `random()`) to get a reusable function for high-frequency loops
 3. Component Scoping (Section 219) → Use `gsap.utils.selector(containerRef)` inside React components to restrict selector targets
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Official GSAP skill for gsap.utils — clamp, mapRange, normalize, interpolate, random, snap, toArray, wrap, pipe. Use when the user asks about gsap.utils, clamp, mapRange, random, snap, toArray, wrap, or helper utilities in GSAP..
+- **DO NOT activate when:** The task falls strictly outside gsap-utils domain or belongs to a different dedicated specialist.
 
 ## When to Use This Skill
 
@@ -304,89 +310,17 @@ https://gsap.com/docs/v3/HelperFunctions
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
----
-
-## 🚨 LLM Trap Table
-
-| Pattern    | What AI Does Wrong                   | What Is Actually Correct                                           |
-| :--------- | :----------------------------------- | :----------------------------------------------------------------- |
-| gsap-utils | Using mapRange on units like "100px" | mapRange works only on pure numbers. Use getUnit/unitize           |
-| gsap-utils | Re-creating random per frame         | Pass true as 4th param: random(-10, 10, 1, true) for a reusable fn |
-| gsap-utils | Scoping global .box                  | Use gsap.utils.selector(container) inside components               |
-
----
-
-## ✅ Pre-Flight Self-Audit
-
-Before producing any output, verify:
-
-```
-✅ Did I read the actual files before making claims about them?
-✅ Did I verify all method names against official GSAP documentation?
-✅ Did I add // VERIFY: on any uncertain API calls?
-✅ Are all imports from packages that actually exist in package.json?
-✅ Did I test my logic with edge cases (null, empty, 0, max)?
-✅ Did I avoid generating code for more than one module at a time?
-✅ Am I working from evidence, not assumption?
-```
-
----
-
-## 🔁 VBC Protocol (Verify → Build → Confirm)
-
-```
-VERIFY:  Read the actual codebase before writing anything
-BUILD:   Generate the smallest meaningful unit of code
-CONFIRM: Verify the output is correct before presenting
-```
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -395,8 +329,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

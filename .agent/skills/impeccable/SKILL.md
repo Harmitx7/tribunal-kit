@@ -1,8 +1,8 @@
 ---
 name: impeccable
 description: Flagship design engineering skill for creating production-grade, anti-generic frontend interfaces with supreme craftsmanship, visual hierarchy, typography, spatial systems, and micro-interactions.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - better-ui
   - better-colors
@@ -26,6 +26,12 @@ Before designing or engineering frontend components, you MUST inspect:
 3. Motion & Micro-Interactions (Section 34) → Limit micro-interactions to $\le 160\text{ms}$ and check `prefers-reduced-motion` fallbacks
 
 The gold standard framework for crafting bespoke, world-class web applications that feel custom-built by elite design engineers.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Flagship design engineering skill for creating production-grade, anti-generic frontend interfaces with supreme craftsmanship, visual hierarchy, typography, spatial systems, and micro-interactions..
+- **DO NOT activate when:** The task falls strictly outside impeccable domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -59,30 +65,25 @@ The gold standard framework for crafting bespoke, world-class web applications t
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Generic AI Aesthetics**: Using purple-to-blue gradients, glow effects on every button, or heavy glassmorphism on white text.
-2. **Hardcoded Pixel Values**: Writing hardcoded `px` font sizes and dimensions instead of `rem` and fluid `clamp()` utilities.
-3. **Orphaned Text**: Failing to apply `text-wrap: balance` to multi-line headings.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `ui-ux-auditor` · `motion-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are tabular numbers enabled on all changing numeric values?
-✅ Is heading text wrapped using `text-wrap: balance`?
-✅ Is container query responsiveness utilized where components are reused?
-✅ Are transitions tuned with custom cubic-bezier curves under 300ms?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -1,8 +1,8 @@
 ---
 name: react-doctor
 description: Scan React and Next.js applications for security, performance, re-render inefficiencies, memory leaks, and correctness issues.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - react-specialist
   - nextjs-react-expert
@@ -26,6 +26,12 @@ Before auditing React components for performance or health issues, you MUST insp
 3. Derived State Anti-Pattern (Section 41) → Ban props duplicated into state (`useState(props.val)`); derive values directly during render
 
 Diagnose and resolve unnecessary re-renders, state synchronization bugs, memory leaks, and hook dependency issues in React applications.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Scan React and Next.js applications for security, performance, re-render inefficiencies, memory leaks, and correctness issues..
+- **DO NOT activate when:** The task falls strictly outside react-doctor domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -58,28 +64,25 @@ useEffect(() => {
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Over-using `useCallback` everywhere**: Wrapping trivial primitives or 1-line functions that aren't passed to memoized children.
-2. **Missing `useEffect` Dependencies**: Omitting referenced variables from effect dependency arrays without proper `useCallback` or ref wrapping.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `react-specialist` · `type-safety`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are event listeners and timers properly cleaned up in `useEffect` returns?
-✅ Are expensive calculations wrapped in `useMemo`?
-✅ Is state colocated to minimize re-render scope?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

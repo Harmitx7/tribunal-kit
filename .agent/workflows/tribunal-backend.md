@@ -27,6 +27,11 @@ Before auditing backend routes or server logic, you MUST inspect:
 2. Dependencies & Environment (`package.json`, `.env.example`) → Check backend framework versions, secret key placeholders, and ORM schemas
 3. 6-Reviewer Parallel Gate → Execute logic-reviewer, security-auditor, dependency-analyzer, type-safety, resilience-reviewer, and schema-reviewer before approving diffs
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `backend-security-expert` (.agent/skills/backend-security-expert/SKILL.md): Server-side security, auth, JWT, ORM injection, RBAC
+   - `nodejs-best-practices` (.agent/skills/nodejs-best-practices/SKILL.md): Node.js patterns, async handling, and error management
+   - `api-patterns` (.agent/skills/api-patterns/SKILL.md): REST/GraphQL API design, versioning, and error contracts
+
 ---
 
 ## When to Use /tribunal-backend

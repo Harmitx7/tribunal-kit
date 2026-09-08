@@ -1,8 +1,8 @@
 ---
 name: landing-page
 description: High-converting landing page structure, hero section layout variance, CTA hierarchy, visual pacing, feature grid storytelling, and social proof placement.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - compact-landing
   - company-logos
@@ -27,6 +27,12 @@ Before engineering full landing pages, you MUST inspect:
 3. Blueprint Rhythm (Section 22) → Follow the 6-section blueprint (Nav, Hero, Social Proof, Features, Testimonials, Final CTA)
 
 Build high-converting, visually stunning landing pages that guide visitors from curiosity to conversion.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring High-converting landing page structure, hero section layout variance, CTA hierarchy, visual pacing, feature grid storytelling, and social proof placement..
+- **DO NOT activate when:** The task falls strictly outside landing-page domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -72,28 +78,25 @@ Avoid standard left-text / right-image templates on every project. Choose based 
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Standard Generic Left-Text / Right-Image Every Time**: Re-using the exact same layout template for every marketing page request.
-2. **Multiple Equal Primary Buttons**: Displaying 3 solid colored buttons together, creating CTA confusion.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `ui-ux-auditor`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is there a single, unambiguous primary CTA button above the fold?
-✅ Is heading text balanced with `text-wrap: balance`?
-✅ Is social proof placed immediately following the hero section?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

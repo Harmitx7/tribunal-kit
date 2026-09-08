@@ -1,8 +1,8 @@
 ---
 name: animation-systems
 description: Systematize animation tokens (durations, easings, keyframes) across a full codebase for consistent motion design and maintenance.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - motion-engineering
   - 60fps-animation
@@ -26,6 +26,12 @@ Before defining animation tokens or styling transitions, you MUST inspect:
 3. Anti-Ad-Hoc Easing Rule (Section 48) → Strictly prohibit inline custom cubic-bezier curves; reference motion tokens instead
 
 Architect a unified, scalable motion system with centralized CSS easing curves, duration tiers, and standardized keyframes.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Systematize animation tokens (durations, easings, keyframes) across a full codebase for consistent motion design and maintenance..
+- **DO NOT activate when:** The task falls strictly outside animation-systems domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -53,27 +59,25 @@ Define standardized design tokens for motion in global CSS or Tailwind config:
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Ad-Hoc Easing Curves**: Writing random `cubic-bezier(0.12, 0.45, ...)` inline inside individual components instead of referencing motion tokens.
-2. **Inconsistent Speeds**: Having tooltips take 400ms while modals take 100ms. Follow the duration scale strictly.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `motion-reviewer` · `frontend-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are all animation durations and easings pulled from centralized CSS motion tokens?
-✅ Do component entrance and exit transitions match the system's duration scale?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -27,6 +27,11 @@ Before running 3-pass pipeline generation, you MUST inspect:
 2. Context Token Allocation -> Keep Pass 2 builder prompt under 2,500 tokens (loading max 3 essential skill key-rules)
 3. Zero-LLM Pass 3 Validator → Run deterministic security, lint, and type checks on generated code prior to Human Gate submission
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+   - `codebase-design` (.agent/skills/codebase-design/SKILL.md): Deep module design with small interfaces and clean seams
+   - `lint-and-validate` (.agent/skills/lint-and-validate/SKILL.md): ESLint, Prettier, and code quality enforcement rules
+
 ## When to Use /pipeline
 
 | Use `/pipeline` when...                          | Use something else when...              |

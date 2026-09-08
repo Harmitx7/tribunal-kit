@@ -2,8 +2,8 @@
 name: clean-code
 description: Clean code mastery. Naming conventions, function design, DRY vs WET, SOLID principles with code examples, refactoring patterns, code smells detection, error handling philosophy, comments that add value, and the art of simplicity. Use when reviewing code quality, refactoring, or establishing coding standards.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - codebase-design
   - code-review-checklist
@@ -24,16 +24,27 @@ Before refactoring code or evaluating clean code standards, you MUST inspect:
 1. Intent-Revealing Naming (Section 25) → Name variables/functions to reveal explicit intent; ban cryptic abbreviations (`d`, `proc`, `u`)
 2. Single-Purpose Functions (Section 95) → Ensure functions perform 1 single task; extract sub-operations if function exceeds ~30 lines
 3. Guard Clause Early Returns (Section 344) → Flatten nested logic (>3 levels) using guard clauses and fail-fast early returns
+4. Algorithmic Complexity & Lookups → Prefer `Set` / `Map` for O(1) membership lookups instead of repeated O(N) array scans
+
+## Activation Boundaries
+
+- **Activate when:** Refactoring existing codebases, establishing code quality standards, designing function boundaries, eliminating code smells, and writing logic-bearing business modules.
+- **DO NOT activate when:** Writing quick disposable test fixtures, raw low-level binary protocol buffers, or machine-generated artifacts where human maintainability is not an invariant.
+
+## 2026 Code Performance & Logic Invariants
+
+1. **Fail-Fast Early Returns**: Flatten nested conditionals (`if ... else if ... else`). Return or throw immediately on validation failure.
+2. **O(1) Data Structures**: Replace repeated `array.find()` or `array.includes()` in loops with `Set.has()` or `Map.get()`.
+3. **Cyclomatic Complexity Cap**: No single function may exceed cyclomatic complexity > 10. Split multi-branch operations into dedicated strategy handlers.
+4. **Pure Core, Imperative Shell**: Keep business calculations pure and deterministic; push network I/O, file access, and mutation to the boundaries.
+5. **Typed Error Hierarchy**: Never throw raw strings or generic `Error`. Throw domain-specific error classes containing structured metadata (`code`, `retryable`, `context`).
 
 ## Hallucination Traps (Read First)
 
 - ❌ Over-abstracting code that is used in only one place -> ✅ Don't DRY single-use code; premature abstraction is worse than duplication
 - ❌ Adding comments that restate what the code does -> ✅ Comments explain WHY, not WHAT; the code explains what
 - ❌ Creating utility functions for trivial one-liners -> ✅ Inline is clearer when the operation is self-documenting
-
----
-
-# Clean Code — The Art of Readable Software
+- ❌ Using `array.find()` inside an `array.filter()` loop (O(N²)) -> ✅ Index into a `Map` first (O(N))
 
 ---
 
@@ -379,69 +390,17 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -450,8 +409,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

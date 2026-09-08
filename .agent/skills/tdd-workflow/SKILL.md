@@ -2,8 +2,8 @@
 name: tdd-workflow
 description: Test-Driven Development (TDD) mastery. Red-Green-Refactor cycles, behavior-driven design (BDD), strict mutation coverage, test doubles (mocks/stubs/spies), and avoiding test-induced design damage. Use when building complex algorithms, deep business logic, or strictly regulated systems.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - testing-patterns
   - clean-code
@@ -21,23 +21,66 @@ scripts-binding:
 
 Before implementing feature logic or writing unit tests, you MUST inspect:
 
-1. Red-Green-Refactor Cycle (Section 25) → Write failing test FIRST (Red) → minimal passing code SECOND (Green) → cleanup THIRD (Refactor)
-2. Behavior-First Assertion Rule (Section 36) → Assert public contract results (GIVEN/WHEN/THEN); ban asserting internal private fields or state
-3. IO Boundary-Only Mocking (Section 50) → Mock ONLY un-owned external boundaries (DB IO, network APIs); ban mocking domain entities or pure utils
+1. Red-Green-Refactor Cycle → Write failing test FIRST (Red) → minimal passing code SECOND (Green) → cleanup THIRD (Refactor)
+2. Behavior-First Assertion Rule → Assert public contract results (GIVEN/WHEN/THEN); ban asserting internal private fields or private state
+3. I/O Boundary-Only Mocking → Mock ONLY un-owned external boundaries (database I/O, network fetch); ban mocking pure domain utilities or internal classes
+4. Fast Deterministic Test Runner → Tests must execute in memory in < 100ms per file; avoid unneeded sleep delays or live network connections
 
-# TDD Workflow — Red-Green-Refactor Mastery
+## Activation Boundaries
 
-Build features and fixes one slice at a time using strict Test-Driven Development (TDD) discipline.
+- **Activate when:** Developing new algorithms, complex business logic, financial calculations, state machine transitions, and fixing bugs via regression reproduction.
+- **DO NOT activate when:** Writing disposable prototype scripts, pure visual CSS layouts, or static documentation.
+
+## 2026 TDD & Verification Invariants
+
+1. **Bug Fix Regression Test First**:
+   Never fix a bug directly in production code. First write a test reproducing the exact failure case (Red), then apply the minimal fix (Green).
+2. **Deterministic Time & Clocks**:
+   Never use real `Date.now()` or `setTimeout()` in unit tests. Use fake timers (`vi.useFakeTimers()` or `jest.useFakeTimers()`) for instant, deterministic clock control.
+3. **Property-Based Testing Integration**:
+   For complex parsing or serialization algorithms, complement example-based unit tests with generative property-based tests (e.g. `fast-check` / `hypothesis`).
+
+## Hallucination Traps (Read First)
+
+- ❌ Writing tests after all code is written → ✅ Write the test first to prove the test actually fails
+- ❌ Testing implementation details (e.g. testing private methods) → ✅ Test public interface behavior
+- ❌ Mocking what you own → ✅ Use real domain objects in tests; mock only external network/DB I/O
+- ❌ Writing 5 assertions testing 5 unrelated things in one test → ✅ One logical behavior per test
+
+## The Iron Law of TDD
+
+```
+NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST
+```
+
+Write code before the test? **Delete it. Start over.**
+No exceptions:
+- Don't keep it as "reference"
+- Don't "adapt" it while writing tests
+- Delete means delete. Implement fresh from tests.
+
+## Anti-Rationalization Table
+
+| Thought | Reality |
+|---------|---------|
+| "This is simple, I'll write tests after" | Simple tasks develop subtle edge cases. Write the test first. |
+| "I know the implementation already" | Knowing it makes writing the failing test take 30 seconds. Write it. |
+| "I'll just keep the code as a reference" | Keeping it biases your tests to match your bugs. Delete it. |
+| "Mocking the whole service is faster" | Mocking what you own tests your mocks, not your software. |
 
 ---
 
 ## The 3-Phase TDD Cycle
 
 ```
-[ 1. RED ]    Write a failing behavioral test for the minimal next requirement.
-                  ↓
-[ 2. GREEN ]  Write the simplest production code to make the test pass.
-                  ↓
+[ 1. RED ]      Write a failing behavioral test for the minimal next requirement.
+                    ↓
+[ VERIFY RED ]  Watch it fail for the expected reason (mandatory).
+                    ↓
+[ 2. GREEN ]    Write the simplest production code to make the test pass.
+                    ↓
+[ VERIFY GREEN] Run test suite and confirm 0 failures.
+                    ↓
 [ 3. REFACTOR ] Clean up code & duplicate logic while ensuring tests stay green.
 ```
 
@@ -71,28 +114,25 @@ expect(calculator.add(40, 2)).toBe(42);
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Writing Code First, Tests Later**: Generating 200 lines of implementation code and adding tests as an afterthought.
-2. **Fragile Mock Over-use**: Mocking every internal dependency, creating brittle tests that break during refactoring.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `test-engineer` · `logic-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Was the failing test written and verified BEFORE writing implementation code?
-✅ Does the test assert external behavior rather than internal private state?
-✅ Are mocks restricted strictly to external IO boundaries?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -2,8 +2,8 @@
 name: cloud-architect
 description: Production AWS cloud architecture mastery. Service selection (ECS Fargate vs Lambda vs EC2, RDS vs Aurora vs DynamoDB), Terraform IaC patterns with HCL examples, VPC networking design, IAM least privilege, Secrets Manager, CloudWatch observability, cost optimization, and multi-environment AWS Organizations strategy. Golden Path - AWS. Use when architecting cloud infrastructure, writing Terraform, or making AWS service selection decisions.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - cicd-pro
   - devops-engineer
@@ -25,6 +25,12 @@ Before architecting AWS cloud infrastructure or writing Terraform HCL, you MUST 
 2. Private Subnet Application Placement (Section 23) → Place application compute (ECS, Lambda) strictly in private subnets; only ALB and NAT Gateway live in public subnets
 3. Secrets Manager Secret Injection (Section 21) → Reference secret ARNs from AWS Secrets Manager in ECS task definitions; ban plaintext environment variables for passwords/tokens
 
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Production AWS cloud architecture mastery. Service selection (ECS Fargate vs Lambda vs EC2, RDS vs Aurora vs DynamoDB), Terraform IaC patterns with HCL examples, VPC networking design, IAM least privilege, Secrets Manager, CloudWatch observability, cost optimization, and multi-environment AWS Organizations strategy. Golden Path - AWS. Use when architecting cloud infrastructure, writing Terraform, or making AWS service selection decisions..
+- **DO NOT activate when:** The task falls strictly outside cloud-architect domain or belongs to a different dedicated specialist.
+
 ## Hallucination Traps (Read First)
 
 - ❌ Confusing availability zones with regions → ✅ `us-east-1` is a region. `us-east-1a` is an AZ within that region. Multi-AZ ≠ multi-region.
@@ -35,8 +41,6 @@ Before architecting AWS cloud infrastructure or writing Terraform HCL, you MUST 
 - ❌ Public subnets for application servers → ✅ Application tier lives in private subnets. Only ALB and NAT Gateway in public subnets.
 
 ---
-
-# Cloud Architect — Production AWS Mastery
 
 ## 1. Service Selection Matrix
 
@@ -416,36 +420,25 @@ terraform {
 
 ---
 
-## 🤖 LLM-Specific Traps
-
-1. **Omitting `data.aws_caller_identity.current.account_id`**: Never hardcode AWS account IDs in Terraform. Use the data source.
-2. **Lambda for database-heavy operations**: Lambda's ephemeral compute model means each invocation opens a new DB connection. Use RDS Proxy for Lambda → RDS patterns.
-3. **Ignoring NAT Gateway costs**: NAT Gateways cost ~$32/month + $0.045/GB. For staging, a single NAT Gateway is fine. For production, one per AZ for HA.
-4. **Security groups as firewalls**: Security groups are stateful. NACLs are stateless. Never use NACLs as your primary defense layer — security groups are the right tool.
-5. **Missing `lifecycle { ignore_changes }` on ECS services**: Without this, Terraform fights with your CI/CD pipeline over the running task definition revision.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor` · `cloud-engineer`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
+
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are all secrets stored in Secrets Manager (not plaintext env vars)?
-✅ Are application servers in private subnets?
-✅ Are IAM policies scoped to specific resources (no wildcard Resource: "*")?
-✅ Is Terraform state stored in S3 with DynamoDB locking?
-✅ Are CloudWatch alarms defined for error rates AND latency?
-✅ Is auto-rollback configured on the ECS service circuit breaker?
-✅ Are hardcoded account IDs / region strings replaced with data sources?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden**: Declaring Terraform configuration correct because it "looks right."
-- ✅ **Required**: Run `terraform plan` with zero unexpected changes AND `terraform apply` successfully completes before marking infrastructure work as done.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

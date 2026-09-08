@@ -2,8 +2,8 @@
 name: expo-router-v4
 description: React Native 0.76+ New Architecture (Fabric/TurboModules), Expo Router v4 typed file-based navigation, native haptics, and biometrics.
 tools: Read, Grep, Glob, Edit, Write
-version: 3.0.0
-last-updated: 2026-08-05
+version: 4.0.0
+last-updated: 2026-09-07
 script: .agent/scripts/lint_runner.js
 scripts-binding:
   - .agent/scripts/lint_runner.js
@@ -22,6 +22,12 @@ Before building mobile navigation or components:
 1. New Architecture Enforcement → Enable Fabric renderer and TurboModules in `app.json` (`"newArchEnabled": true`)
 2. Typed Routing → Use `expo-router` typed routes for safe navigation
 3. Safe Area & Haptics → Wrap screens in `SafeAreaView` and provide subtle `expo-haptics` feedback
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring React Native 0.76+ New Architecture (Fabric/TurboModules), Expo Router v4 typed file-based navigation, native haptics, and biometrics..
+- **DO NOT activate when:** The task falls strictly outside expo-router-v4 domain or belongs to a different dedicated specialist.
 
 ## Layout Navigation Architecture (`app/_layout.tsx`)
 
@@ -75,7 +81,27 @@ export function TouchButton({ label, onPress, ...props }: TouchButtonProps) {
 }
 ```
 
-## 🛑 Verification-Before-Completion (VBC) Protocol
+---
 
-- Verify zero bridge warnings during navigation.
-- Ensure safe area insets are respected across iOS notch and Android gesture bars.
+## 🏛️ Tribunal Verification & Guardrails
+
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
+
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+
+### ✅ Pre-Flight Self-Audit
+```
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
+```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

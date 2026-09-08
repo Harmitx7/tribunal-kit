@@ -1,8 +1,8 @@
 ---
 name: ui-ux-pro-max
 description: The Picasso Protocol — Elite UI/UX design mastery. Integrates the 16-step UI Reasoning Engine, Category-Specific Heuristics, and Anti-Pattern controls to generate portfolio-grade interfaces.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - ui-reasoning-engine
   - product-aware-heuristics
@@ -22,11 +22,24 @@ scripts-binding:
 
 Before generating UI designs or front-end components, you MUST inspect:
 
-1. Rejection Guardrails (Section 17) → Ban primary purple gradients (`from-purple-600`), Inter/Roboto defaults, left-text/right-image hero layouts, and mesh gradients
-2. OKLCH Display-P3 Color Science (Section 29) → Use OKLCH variables with chroma `0.20`–`0.28` for accents and stepped neutral contrast (`0.04` Lightness increments)
-3. Fluid Typographic Scaling (Section 51) → Apply `clamp()` sizes, tight negative tracking (`-0.04em`), and `text-wrap: balance` on headings
+1. Rejection Guardrails → Ban primary purple gradients (`from-purple-600`), Inter/Roboto defaults, left-text/right-image hero layouts, and mesh gradients
+2. OKLCH Display-P3 Color Science → Use OKLCH variables with chroma `0.20`–`0.28` for accents and stepped neutral contrast (`0.04` Lightness increments)
+3. Fluid Typographic Scaling → Apply `clamp()` sizes, tight negative tracking (`-0.04em`), and `text-wrap: balance` on headings
+4. APCA Contrast Compliance → Verify text against APCA contrast thresholds rather than outdated WCAG 2.1 math
 
-This skill transforms AI-generated interfaces from generic "AI templates" into portfolio-grade, human-crafted interfaces by running intent analysis _before_ layout and styling.
+## Activation Boundaries
+
+- **Activate when:** Creating showcase landing pages, web application dashboards, design systems, design tokens, visual redesigns, and portfolio-grade UI components.
+- **DO NOT activate when:** Writing raw backend SQL queries, server infrastructure Dockerfiles, or CLI terminal utilities.
+
+## 2026 Picasso Protocol Design Invariants
+
+1. **Anti-Cliché Palette Discipline**:
+   Never use purple (#7c3aed / #8b5cf6) as primary brand color. Curate characterful palettes: Obsidian + Signal Orange, Slate + Electric Cyan, or Bone White + Deep Emerald.
+2. **Intentional Typography Pairing**:
+   Pair an expressive display font (e.g., Clash Display, Syne, Cabinet Grotesk, Newsreader) with an ultra-readable neutral body font (e.g., Geist Sans, Plus Jakarta Sans, General Sans).
+3. **Fluid Layout Bounds & Asymmetry**:
+   Break repetitive bento grids. Use asymmetric column spans (e.g. 7:5 or 8:4), overlapping cards, and ambient grain overlays.
 
 ---
 
@@ -108,12 +121,25 @@ All buttons and active controls must define styled properties for:
 
 ---
 
-## Pre-Flight Checklist
+## 🏛️ Tribunal Verification & Guardrails
 
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-- [ ] Have I verified the design passes the Anti-AI-Slop Checklist?
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
-## VBC Protocol (Verification-Before-Completion)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
+### ✅ Pre-Flight Self-Audit
+```
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
+```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

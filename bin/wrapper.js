@@ -27,6 +27,7 @@ const RUST_COMMANDS = new Set([
   'context-broker',
   'optimize-step',
   'impact-tier',
+  'sdd',
 ]);
 
 // Determine the path to the compiled Rust binary

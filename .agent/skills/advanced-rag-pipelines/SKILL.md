@@ -2,8 +2,8 @@
 name: advanced-rag-pipelines
 description: Production-grade Retrieval-Augmented Generation (RAG) mastery. Semantic chunking, Hybrid Search (Dense + Sparse/BM25), Cross-Encoder Reranking, and architecture-agnostic vector database management.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - llm-engineering
   - ai-prompt-injection-defense
@@ -21,19 +21,45 @@ scripts-binding:
 
 Before building RAG pipelines or vector search components, you MUST inspect:
 
-1. Hybrid Search Requirement (Section 16) → Always combine Dense Vector Search with Sparse BM25 Search to catch exact keyword matches (IDs, versions)
-2. Two-Stage Reranking Pipeline (Section 29) → Retrieve top ~50 candidate chunks, then rerank with a Cross-Encoder down to top 3-5 before feeding the LLM
-3. Context XML Framing (Section 59) → Wrap retrieved chunks inside explicit `<context>` XML tags in the prompt to prevent indirect prompt injection
+1. Hybrid Search (RRF) → Combine Dense Vector Search with Sparse BM25 Search using Reciprocal Rank Fusion (RRF) to catch exact keyword matches (IDs, versions)
+2. Two-Stage Reranking Pipeline → Retrieve top ~50 candidate chunks, then rerank with a Cross-Encoder down to top 3-5 before feeding the LLM
+3. Vector Quantization & Indexing → Use HNSW indexes and `halfvec` (FP16) or scalar quantization in pgvector 0.8+ / Pinecone to reduce RAM by 50%
+4. Context XML Framing → Wrap retrieved chunks inside explicit `<retrieved_context>` XML tags in the prompt to prevent indirect prompt injection
 
-# Advanced RAG Pipelines (Production AI Data)
+## Activation Boundaries
 
-You are an expert in building production-grade Retrieval-Augmented Generation (RAG) data pipelines. You understand that naive RAG (fixed chunking + Cosine similarity) fails in production. You architect systems that retrieve context with high precision using hybrid search, reranking, and semantic strategies.
+- **Activate when:** Architecting RAG data pipelines, semantic chunking, vector embeddings, hybrid dense/sparse search, cross-encoder reranking, and vector database tuning.
+- **DO NOT activate when:** Writing pure transactional relational SQL without semantic search or basic prompt engineering.
 
-## 1. Core Principles
+## 2026 RAG Performance & Vector Invariants
 
-- **Garbage In, Garbage Out:** Vector embeddings are only as good as the chunking strategy. Never use arbitrary character counts for chunking code or complex documents.
-- **Hybrid Search is Mandatory:** Dense vectors (embeddings) are terrible at exact keyword matches (e.g., finding "ID-4912" or "v4.4.4"). Always combine Dense Search with Sparse Search (BM25) to catch both semantic intent and exact matches.
-- **Retrieve Many, Rerank to Few:** It is cheaper and more accurate to retrieve 50 candidate chunks from a Vector DB and use a Cross-Encoder to rerank them down to the top 5 for the LLM.
+1. **Reciprocal Rank Fusion (RRF)**:
+   ```python
+   # Combine dense + sparse rankings without normalizing disparate score distributions
+   def rrf(dense_ranks: dict[str, int], sparse_ranks: dict[str, int], k: int = 60) -> dict[str, float]:
+       scores = {}
+       for doc_id, rank in dense_ranks.items():
+           scores[doc_id] = scores.get(doc_id, 0) + 1 / (k + rank)
+       for doc_id, rank in sparse_ranks.items():
+           scores[doc_id] = scores.get(doc_id, 0) + 1 / (k + rank)
+       return dict(sorted(scores.items(), key=lambda x: x[1], reverse=True))
+   ```
+2. **HNSW Indexing with Halfvec (pgvector 0.8+)**:
+   ```sql
+   -- Halves memory usage with < 1% recall loss
+   CREATE INDEX idx_docs_embedding ON documents
+   USING hnsw ((embedding::halfvec(1536)) halfvec_cosine_ops);
+   ```
+3. **Aggressive Context Pruning**: Never dump > 5 chunks into the final LLM prompt. Context dilution ("Lost in the Middle") degrades factual recall and spikes latency.
+
+## Hallucination Traps (Read First)
+
+- ❌ Fixed-character chunking (e.g. split every 500 chars) → ✅ AST/Markdown-aware structural chunking
+- ❌ Relying only on cosine similarity on raw queries → ✅ Hybrid search (Dense + BM25) with cross-encoder rerank
+- ❌ Injecting raw text into system prompt → ✅ Enclose in `<retrieved_context>` tags to prevent indirect prompt injection
+- ❌ Full precision FP32 vectors on massive datasets → ✅ Use FP16 (`halfvec`) or scalar quantization
+
+---
 
 ## 2. Advanced Architectural Patterns
 
@@ -77,42 +103,19 @@ Before submitting code, ensure:
 2. BM25 / Sparse search is considered alongside standard dense embeddings.
 3. Chunks are injected into the final LLM prompt with explicit `<context>` XML boundaries to prevent prompt injection.
 
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
 ---
 
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -121,8 +124,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

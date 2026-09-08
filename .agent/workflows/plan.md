@@ -6,7 +6,7 @@ last-updated: 2026-07-30
 required-skills:
   - plan-writing
   - architecture
-  - project-planner
+  - domain-modeling
 scripts-binding:
   - .agent/scripts/verify_all.js
 ---
@@ -24,6 +24,11 @@ Before drafting implementation plans or technical blueprints, you MUST inspect:
 1. Workspace Context & Dependencies (`package.json`, `tsconfig.json`) → Confirm current stack capabilities and path mappings
 2. Existing Architecture & Directory Layout → Review current module boundaries to prevent redundant architectural patterns
 3. Zero Code Modification Rule → Restrict outputs in `/plan` mode to research, architectural design, and plan artifact generation; ban code generation before Plan approval
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `plan-writing` (.agent/skills/plan-writing/SKILL.md): Implementation plan structure, phases, and approval gates
+   - `architecture` (.agent/skills/architecture/SKILL.md): System architecture, module boundaries, and dependency management
+   - `domain-modeling` (.agent/skills/domain-modeling/SKILL.md): Ubiquitous language, entity relationships, bounded contexts
 
 ---
 

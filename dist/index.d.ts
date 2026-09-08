@@ -199,6 +199,12 @@ export function cmdContextCompress(argv: string[], quiet?: boolean): void;
  */
 export function cmdOptimizeStep(argv: string[], quiet?: boolean): void;
 
+/**
+ * Classify task governance impact tier (0-3).
+ * Equivalent to `npx tribunal-kit impact-tier`.
+ */
+export function cmdImpactTier(argv: string[], quiet?: boolean): void;
+
 // ── Logger Utilities ─────────────────────────────────────────────────────────
 
 /** ANSI color code map. */

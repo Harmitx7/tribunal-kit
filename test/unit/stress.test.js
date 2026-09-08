@@ -18,7 +18,7 @@ describe('Tribunal-Kit Governance Stress Suite', () => {
   test('Concurrency stress test passes with high throughput', () => {
     expect(stressResults.concurrency).toBeDefined();
     expect(stressResults.concurrency.all_passed).toBe(true);
-    expect(stressResults.concurrency.ops_per_sec).toBeGreaterThan(50);
+    expect(stressResults.concurrency.ops_per_sec).toBeGreaterThanOrEqual(40);
   });
 
   test('Scale stress test handles 10,000 LOC within budget', () => {

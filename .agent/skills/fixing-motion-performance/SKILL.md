@@ -1,8 +1,8 @@
 ---
 name: fixing-motion-performance
 description: Audit and fix animation performance issues including layout thrashing, compositor properties, scroll-linked motion, and blur effects. Use when animations stutter, transitions jank, or reviewing CSS/JS animation performance.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - 60fps-animation
   - motion-engineering
@@ -26,6 +26,12 @@ Before auditing or fixing animation performance, you MUST inspect:
 3. `will-change` VRAM management (Section 53) → Remove `will-change` hints upon animation completion
 
 Guidelines for auditing and resolving web animation jank, layout thrashing, and GPU rendering bottlenecks.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Audit and fix animation performance issues including layout thrashing, compositor properties, scroll-linked motion, and blur effects. Use when animations stutter, transitions jank, or reviewing CSS/JS animation performance..
+- **DO NOT activate when:** The task falls strictly outside fixing-motion-performance domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -85,23 +91,25 @@ elements.forEach((el, i) => {
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **`transition: all`**: Using `all` causes layout recalculation and repaint on every hover.
-2. **`requestAnimationFrame` Memory Leaks**: Launching continuous `rAF` loops without cancellation logic (`cancelAnimationFrame`).
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are all continuous animations restricted strictly to transform and opacity?
-✅ Are DOM reads and writes batched to eliminate layout thrashing?
-✅ Is will-change used sparingly on active animated elements only?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
-Inspect Chrome Performance tab rendering profile in live preview to verify 60/120fps motion without frame drops.
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

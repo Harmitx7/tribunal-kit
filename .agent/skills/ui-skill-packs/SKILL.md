@@ -1,8 +1,8 @@
 ---
 name: ui-skill-packs
 description: Mandatory skill loading packs for UI generation. Consolidates 42+ individual UI skills into 3 tiered packs (Core Craft, Immersive & System, High-End Design) to guarantee non-generic, high-fidelity UI outputs.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - taste-skill
   - better-colors
@@ -26,6 +26,12 @@ Before generating UI code, you MUST inspect:
 1. `package.json` / `tailwind.config.ts` / `index.css` → Check UI stack (Tailwind v4, Vanilla CSS, OKLCH, Framer Motion)
 2. `DESIGN.md` / color token definitions → Verify palette rules and dark mode contrast variables
 3. Active UI component target → Assign Pack 1 (Core UI), Pack 2 (System Micro-Interactions), or Pack 3 (Immersive Landing)
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Mandatory skill loading packs for UI generation. Consolidates 42+ individual UI skills into 3 tiered packs (Core Craft, Immersive & System, High-End Design) to guarantee non-generic, high-fidelity UI outputs..
+- **DO NOT activate when:** The task falls strictly outside ui-skill-packs domain or belongs to a different dedicated specialist.
 
 ## 1. Pack Definitions
 
@@ -62,21 +68,25 @@ Binding skills: taste-skill, better-colors, micro-interaction, impeccable...
 
 ---
 
-## Pre-Flight Checklist
+## 🏛️ Tribunal Verification & Guardrails
 
-Before generating UI component code:
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
-1. Verify target framework (React, Next.js, Vue, Svelte) and styling system (CSS Modules, Tailwind, OKLCH CSS).
-2. Select appropriate UI Skill Pack (Pack 1, Pack 2, or Pack 3).
-3. Ensure color variables use OKLCH color space for accessible contrast ratios.
-4. Verify micro-interaction focus and hover states for keyboard and mouse accessibility.
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
----
+### ✅ Pre-Flight Self-Audit
+```
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
+```
 
-## VBC Protocol
-
-Visual Balance & Contrast Protocol:
-
-1. **Contrast Ratio**: Enforce WCAG 2.2 AA (4.5:1 text, 3:1 graphical elements).
-2. **Typography Cadence**: Enforce strict fluid font sizing and line-height cadence.
-3. **Motion Hygiene**: Respect `prefers-reduced-motion` media queries on all animations.
+### 🛑 Verification-Before-Completion (VBC) Protocol
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

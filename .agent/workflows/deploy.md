@@ -6,7 +6,7 @@ last-updated: 2026-07-30
 required-skills:
   - deployment-procedures
   - devops-engineer
-  - verify_all
+  - containerization-pro
 scripts-binding:
   - .agent/scripts/verify_all.js
   - .agent/scripts/security_scan.js
@@ -26,6 +26,11 @@ Before triggering production deployment or executing deploy scripts, you MUST in
 1. Full Pre-Flight Verification Suite (`verify_all.js`) → Verify tests, type-checking, lint, security scans, and production build output cleanly
 2. CI/CD Manifests (`.github/workflows`, `fly.toml`, `render.yaml`, etc.) → Check deployment targets and environment variable requirements
 3. Human Gate & Rollback Baseline → Confirm baseline git tag/commit and secure explicit human approval before publishing release
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `deployment-procedures` (.agent/skills/deployment-procedures/SKILL.md): Production deployment checklists and rollback procedures
+   - `devops-engineer` (.agent/skills/devops-engineer/SKILL.md): CI/CD pipeline management and infrastructure automation
+   - `containerization-pro` (.agent/skills/containerization-pro/SKILL.md): Docker, Kubernetes, and container security best practices
 
 ---
 

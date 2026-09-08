@@ -1,8 +1,8 @@
 ---
 name: clarify
 description: Improve UX microcopy, label optimization, error messages, and cognitive clarity. Use when text in a UI is confusing, wordy, ambiguous, or unhelpful.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - distill
   - shape
@@ -26,6 +26,12 @@ Before optimizing UI text or error messages, you MUST inspect:
 3. Actionable Error Messages (Section 30) → Pair error descriptions with explicit resolution steps
 
 Optimize user interface text, button labels, error messaging, and helper copy for maximum clarity and minimum cognitive friction.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Improve UX microcopy, label optimization, error messages, and cognitive clarity. Use when text in a UI is confusing, wordy, ambiguous, or unhelpful..
+- **DO NOT activate when:** The task falls strictly outside clarify domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -62,28 +68,25 @@ Optimize user interface text, button labels, error messaging, and helper copy fo
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Generic OK/Cancel Modals**: Writing modal dialogs with generic "OK" buttons that obscure the action consequence.
-2. **Snarky or Overly Clever Copy**: Using cute or humorous error messages when users are frustrated by a failure.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `ui-ux-auditor`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Does every button start with an explicit action verb?
-✅ Do error messages clearly instruct the user how to resolve the issue?
-✅ Is passive corporate jargon completely eliminated?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

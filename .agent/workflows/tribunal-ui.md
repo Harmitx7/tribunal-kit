@@ -28,6 +28,13 @@ Before executing dedicated UI/UX audits or design-system reviews, you MUST inspe
 2. Product Domain Category → Select category heuristics (Dashboard, E-Commerce, Landing Page, Mobile App, Marketing)
 3. 7-Reviewer Dedicated UI Gate → Run ux-auditor, visual-auditor, interaction-auditor, anti-pattern-auditor, product-heuristics, a11y-auditor, and visual-auditor before passing designs
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `ui-reasoning-engine` (.agent/skills/ui-reasoning-engine/SKILL.md): 16-step cognitive pipeline for layout and styling decisions
+   - `product-aware-heuristics` (.agent/skills/product-aware-heuristics/SKILL.md): Visual heuristics tailored to product types (SaaS, AI, fintech)
+   - `ui-ux-pro-max` (.agent/skills/ui-ux-pro-max/SKILL.md): Elite UI/UX with Anti-Pattern controls and portfolio-grade output
+   - `frontend-design` (.agent/skills/frontend-design/SKILL.md): Design engineering with OKLCH color syntax, spatial grid math
+   - `web-design-guidelines` (.agent/skills/web-design-guidelines/SKILL.md): APCA contrast, Core Web Vitals, battery-efficient rendering
+
 ---
 
 ## When to Use /tribunal-ui

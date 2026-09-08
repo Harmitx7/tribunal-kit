@@ -1,8 +1,8 @@
 ---
 name: sounds-on-the-web
 description: Web Audio API procedural sound synthesis for tactile micro-interaction feedback (clicks, pops, success chimes) with mute toggles and accessibility awareness.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - delight
   - micro-interaction
@@ -26,6 +26,12 @@ Before implementing web audio feedback, you MUST inspect:
 3. Mute Preference Toggle (Section 66) → Provide a persistent sound mute option in settings or local storage
 
 Synthesize lightweight, zero-dependency tactile sound effects for web micro-interactions.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Web Audio API procedural sound synthesis for tactile micro-interaction feedback (clicks, pops, success chimes) with mute toggles and accessibility awareness..
+- **DO NOT activate when:** The task falls strictly outside sounds-on-the-web domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -83,28 +89,25 @@ export const soundFX = new SoundFeedback();
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Autoplay Audio Errors**: Triggering Web Audio API before user gesture interaction (violating browser autoplay policies).
-2. **Missing Mute Toggle**: Failing to provide a persistent sound toggle switch in application settings.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is AudioContext initialized strictly inside/after user gesture handlers?
-✅ Is volume gain kept subtle ($\le 0.15$ max volume)?
-✅ Is a persistent sound mute option provided?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

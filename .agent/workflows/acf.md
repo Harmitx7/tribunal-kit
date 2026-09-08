@@ -24,6 +24,10 @@ Before distilling markdown specs into `.acf` YAML files, you MUST inspect:
 2. Existing Context Registry (`context/*.acf`) → Check target directory to prevent duplicate context creation
 3. YAML Schema Strictness → Validate output against ACF schema (rules, constraints, tech-stack, boundaries) before writing to disk
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+   - `documentation-templates` (.agent/skills/documentation-templates/SKILL.md): README, API docs, code comments, and AI-friendly documentation
+
 ---
 
 ## When to Use /acf

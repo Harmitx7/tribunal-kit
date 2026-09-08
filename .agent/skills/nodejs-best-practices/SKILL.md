@@ -2,8 +2,8 @@
 name: nodejs-best-practices
 description: Node.js 22+ production mastery. ES Modules, async patterns, Express/Fastify/Hono, middleware architecture, error handling, streaming, worker threads, environment config, security hardening, process management, and deployment patterns. Use when building Node.js servers, APIs, CLI tools, or any server-side JavaScript.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - backend-security-expert
   - api-patterns
@@ -21,11 +21,38 @@ scripts-binding:
 
 Before building Node.js services or middleware, you MUST inspect:
 
-1. Node Built-in Import Protocol (Section 34) → Use explicit `node:` prefix (`import fs from "node:fs/promises"`); ban legacy CommonJS `require()`
-2. Mandatory Process Exit on Uncaught Exception (Section 170) → Ensure process exits (`process.exit(1)`) after `uncaughtException` to prevent running in corrupted state
-3. Startup Environment Validation (Section 373) → Validate environment variables at app startup with Zod; crash immediately if required secrets are missing
+1. Built-in `node:` Prefix & ESM → Always use explicit `node:` protocol prefix (`import fs from 'node:fs/promises'`); ban legacy CommonJS `require()`
+2. Node 22+ Built-ins → Use `node:sqlite` for local relational data; use `import.meta.dirname` (banning verbose `fileURLToPath(import.meta.url)`)
+3. Event Loop Non-Blocking & Stream Backpressure → Never use sync I/O in hot paths (`readFileSync`); handle stream backpressure with `pipeline()` from `node:stream/promises`
+4. Startup Environment Validation → Validate all `process.env` keys at startup with Zod/Valibot; fail fast before listening on ports
 
-# Node.js Best Practices — Node 22+ Production Mastery
+## Activation Boundaries
+
+- **Activate when:** Designing server-side Node.js 22+ backends, Fastify/Hono/Express APIs, microservices, CLI tools, worker queues, and event loop performance tuning.
+- **DO NOT activate when:** Writing client-side browser DOM code, or mobile cross-platform scripts.
+
+## 2026 Node.js 22+ Performance & Runtime Invariants
+
+1. **`node:sqlite` Built-in Database**: In Node 22+, use `node:sqlite` for embedded storage without requiring compiled native C++ bindings:
+   ```ts
+   import { DatabaseSync } from 'node:sqlite';
+   const db = new DatabaseSync(':memory:');
+   ```
+2. **`import.meta.dirname` & `import.meta.filename`**: Native in Node 20.11+ and 22+:
+   ```ts
+   import { join } from 'node:path';
+   const configPath = join(import.meta.dirname, 'config.json');
+   ```
+3. **Safe Async Stream Pipelining**: Always use `pipeline` from `node:stream/promises` to automatically destroy streams on error and prevent memory leaks.
+4. **Native Test Runner**: Use `node:test` and `node:assert/strict` for zero-dependency high-speed test suites.
+
+## Hallucination Traps (Read First)
+
+- ❌ `import fs from "fs"` → ✅ `import fs from "node:fs"` (always use `node:` prefix)
+- ❌ `path.dirname(fileURLToPath(import.meta.url))` → ✅ Node 22+: `import.meta.dirname`
+- ❌ Installing `better-sqlite3` for basic SQLite → ✅ Use native `import { DatabaseSync } from 'node:sqlite'`
+- ❌ `fs.readFileSync()` inside request handlers → ✅ `await fs.readFile()` from `node:fs/promises`
+- ❌ Unhandled promise rejections without crashing → ✅ In Node 22+, always handle or exit cleanly
 
 ---
 
@@ -538,69 +565,17 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -609,8 +584,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

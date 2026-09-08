@@ -2,8 +2,8 @@
 name: containerization-pro
 description: Production-grade containerization mastery. Multi-stage Dockerfiles for Node.js/Python/Rust/Go, image hardening (non-root, distroless, read-only FS), BuildKit layer caching, multi-platform builds (docker buildx), Docker Compose for local dev, container security scanning (Trivy/Grype), and AWS ECR workflows. Use when containerizing applications, optimizing Docker builds, or setting up container registries.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - devops-engineer
   - cicd-pro
@@ -25,6 +25,12 @@ Before writing Dockerfiles or containerizing applications, you MUST inspect:
 2. Non-Root Security User (Section 81) → Create and switch to a dedicated non-root user (`USER appuser`) in the final runtime stage
 3. Deterministic Dependency Installation (Section 19) → Use `npm ci --omit=dev` (or language lockfile equivalent); ban un-pinned `npm install`
 
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Production-grade containerization mastery. Multi-stage Dockerfiles for Node.js/Python/Rust/Go, image hardening (non-root, distroless, read-only FS), BuildKit layer caching, multi-platform builds (docker buildx), Docker Compose for local dev, container security scanning (Trivy/Grype), and AWS ECR workflows. Use when containerizing applications, optimizing Docker builds, or setting up container registries..
+- **DO NOT activate when:** The task falls strictly outside containerization-pro domain or belongs to a different dedicated specialist.
+
 ## Hallucination Traps (Read First)
 
 - ❌ `FROM node:22` → ✅ `FROM node:22-alpine` (1GB+ vs ~150MB). Always use slim/alpine variants.
@@ -35,8 +41,6 @@ Before writing Dockerfiles or containerizing applications, you MUST inspect:
 - ❌ `docker build` without `--platform` for CI → ✅ CI often runs on `amd64`; target hosts may be `arm64`. Always specify platform or use multi-platform builds.
 
 ---
-
-# Containerization Pro — Production-Grade Docker Mastery
 
 ## 1. The .dockerignore (Write This First)
 
@@ -429,36 +433,25 @@ jobs:
 
 ---
 
-## 🤖 LLM-Specific Traps
-
-1. **`FROM node:latest`**: Never use `latest` tag in production Dockerfiles. Tags are mutable. Pin to a specific version (`node:22.3.0-alpine`).
-2. **Missing HEALTHCHECK**: Orchestrators (ECS, Kubernetes) use HEALTHCHECK to know when a container is ready. Without it, traffic is sent before the app is ready.
-3. **Secrets as build args**: `ARG SECRET_KEY` bakes secrets into the image history. Use `--secret` flag with BuildKit or runtime environment variables.
-4. **`docker-compose up` in production**: Docker Compose is for development. Use ECS, Kubernetes, or similar for production.
-5. **Wrong COPY source path**: `COPY --from=builder` paths are relative to the builder WORKDIR. Always verify the exact output path.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor` · `devops-engineer`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
+
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Does the Dockerfile use a non-root user?
-✅ Is there a .dockerignore file?
-✅ Is the final stage minimal (alpine/distroless, no build tools)?
-✅ Are secrets passed as runtime env vars, not build args?
-✅ Is there a HEALTHCHECK instruction?
-✅ Are image tags pinned (not :latest)?
-✅ Is multi-stage build used for compiled/built artifacts?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden**: Declaring a Dockerfile correct because it "looks valid."
-- ✅ **Required**: Run `docker build .` successfully AND `docker run` the image to verify the health endpoint responds before declaring complete.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

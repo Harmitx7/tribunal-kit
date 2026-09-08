@@ -1,8 +1,8 @@
 ---
 name: shape
 description: Plan feature UX before writing code via structured Socratic design interviews. Use when a user asks to plan a new screen, onboarding flow, feature UX, or user interaction before implementation.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - brainstorming
   - plan-writing
@@ -26,6 +26,12 @@ Before generating UI component code for new features, you MUST inspect:
 3. Architecture Contract (Section 37) → Draft entry/exit points and primary action contract before coding
 
 Uncover core requirements, define interaction boundaries, and lock down screen flows BEFORE writing frontend code.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Plan feature UX before writing code via structured Socratic design interviews. Use when a user asks to plan a new screen, onboarding flow, feature UX, or user interaction before implementation..
+- **DO NOT activate when:** The task falls strictly outside shape domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -62,28 +68,25 @@ Summarize the screen contract in a concise visual outline before coding:
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Jumping straight to code**: Writing CSS/React components without clarifying user goals or entry/exit points.
-2. **Over-asking questions**: Asking more than 2-3 questions. Prioritize only blocking architectural ambiguities.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `ui-ux-auditor`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are the entry and exit points of the screen explicitly defined?
-✅ Are all 5 screen states (default, empty, loading, error, success) planned?
-✅ Has the user confirmed the core interaction boundary before code generation?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -1,8 +1,8 @@
 ---
 name: delight
 description: Inject micro-moments of delight, subtle surprise interactions, personality, and tactile feedback into user interfaces. Use when building success celebrations, copy-to-clipboard feedback, empty states, or playful UI elements.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - whimsy-injector
   - micro-interaction
@@ -26,6 +26,12 @@ Before implementing micro-delight moments, you MUST inspect:
 3. Morphing State Checkmark rules (Section 24) → Hold confirmation icon for 1.5s before smoothly morphing back
 
 Elevate everyday digital interactions with subtle, memorable details that make software a joy to use.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Inject micro-moments of delight, subtle surprise interactions, personality, and tactile feedback into user interfaces. Use when building success celebrations, copy-to-clipboard feedback, empty states, or playful UI elements..
+- **DO NOT activate when:** The task falls strictly outside delight domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -53,28 +59,25 @@ Elevate everyday digital interactions with subtle, memorable details that make s
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Overdoing Delight on High-Frequency Actions**: Adding confetti bursts or long animations to actions users perform 50+ times a day. Keep high-frequency delight under 100ms and non-intrusive.
-2. **Ignoring Accessibility**: Failing to check `prefers-reduced-motion` for particle effects or canvas animations.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `motion-reviewer` · `frontend-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is the delight moment brief (< 300ms for motion, 1.5s total hold)?
-✅ Does it respect `prefers-reduced-motion`?
-✅ Is it restricted to occasional milestones or state confirmations?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

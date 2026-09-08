@@ -1,8 +1,8 @@
 ---
 name: ui-skills-root
 description: Master router skill for design engineering and UI craft. Use when the user needs UI help and you must route by topic, stack, intent, or design discipline to the smallest useful set of UI skills.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - ui-skill-packs
   - ui-reasoning-engine
@@ -28,6 +28,12 @@ Before routing UI requests, you MUST inspect:
 3. Skill pack bindings (`ui-skill-packs`) → Use consolidated packs for multi-component frontend builds
 
 The master decision engine for routing user UI requests to the precise set of design-engineering skills.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Master router skill for design engineering and UI craft. Use when the user needs UI help and you must route by topic, stack, intent, or design discipline to the smallest useful set of UI skills..
+- **DO NOT activate when:** The task falls strictly outside ui-skills-root domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -76,23 +82,25 @@ When a user asks for UI assistance, identify their core **intent** and dispatch 
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Skill Bloat:** Loading more than 3 skills at once for a single request. Pick the 1-2 highest precision skills.
-2. **Ignoring Intent:** Applying animation skills when the user asked for simple layout structure.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Did I select the most specific UI skill for the user's explicit intent?
-✅ Am I respecting modern web design standards (CSS Variables, container queries, OKLCH)?
-✅ Is the proposed UI accessible (WCAG 2.2 AA contrast, keyboard nav)?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
-You MUST verify that selected UI skills are present in `.agent/skills/` and read their instructions before generating code.
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

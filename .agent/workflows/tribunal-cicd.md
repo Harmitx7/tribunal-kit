@@ -27,6 +27,11 @@ Before auditing CI/CD configurations, you MUST inspect:
 2. Repository Secrets & OIDC Configuration (`id-token: write`, environment promotion rules)
 3. 5-Reviewer Parallel Gate: Execute `pipeline-reviewer`, `security-auditor`, `dependency-reviewer`, `resilience-reviewer`, and `precedence-reviewer`.
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `cicd-pro` (.agent/skills/cicd-pro/SKILL.md): CI/CD workflow syntax, matrix builds, and deployment strategies
+   - `devops-engineer` (.agent/skills/devops-engineer/SKILL.md): CI/CD pipeline management and infrastructure automation
+   - `containerization-pro` (.agent/skills/containerization-pro/SKILL.md): Docker, Kubernetes, and container security best practices
+
 ---
 
 ## When to Use /tribunal-cicd

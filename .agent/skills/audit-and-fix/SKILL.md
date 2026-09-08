@@ -1,8 +1,8 @@
 ---
 name: audit-and-fix
 description: Accessibility auditing and remediation workflow combining detection, prioritization, and practical code fixes for WCAG 2.2 AA compliance issues.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - fixing-accessibility
   - build-primitive
@@ -26,6 +26,12 @@ Before performing accessibility audits or fixes, you MUST inspect:
 3. Anti-Redundant ARIA rule (Section 60) → Do NOT add `role="button"` to native `<button>` tags; apply `aria-hidden="true"` to decorative inner SVGs
 
 Systematically audit HTML/JSX markup against WCAG 2.2 AA standards, prioritize accessibility violations, and apply verified code fixes.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Accessibility auditing and remediation workflow combining detection, prioritization, and practical code fixes for WCAG 2.2 AA compliance issues..
+- **DO NOT activate when:** The task falls strictly outside audit-and-fix domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -68,28 +74,25 @@ Scan component code for:
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Adding Redundant ARIA**: Adding `role="button"` to native `<button>` tags (valid HTML5 buttons don't need redundant roles).
-2. **Deleting Decorative SVGs from Screen Readers**: Forgetting `aria-hidden="true"` on decorative icons inside labeled buttons.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `accessibility-reviewer` · `frontend-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are all icon-only buttons provided with descriptive `aria-label` attributes?
-✅ Are decorative SVG icons hidden from screen readers with `aria-hidden="true"`?
-✅ Do custom interactive controls support Enter and Space key triggers?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

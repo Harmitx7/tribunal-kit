@@ -26,6 +26,11 @@ Before auditing database queries, migrations, or ORM transactions, you MUST insp
 2. SQL Parameterization Inspection → Flag all raw SQL queries attempting string interpolation; enforce parameterized queries
 3. 3-Reviewer Database Gate → Execute logic-reviewer, security-auditor, and sql-pro before approving database modifications
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `database-design` (.agent/skills/database-design/SKILL.md): Schema normalization, indexing, migration strategy
+   - `sql-pro` (.agent/skills/sql-pro/SKILL.md): Advanced SQL queries, window functions, and query optimization
+   - `supabase-postgres-best-practices` (.agent/skills/supabase-postgres-best-practices/SKILL.md): RLS, edge functions, real-time, performant schema design
+
 ---
 
 ## When to Use /tribunal-database

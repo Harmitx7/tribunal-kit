@@ -1,0 +1,14 @@
+{
+  "name": "tribunal-kit",
+  "version": "9.0.0",
+  "description": "Enterprise-grade governance layer and anti-hallucination engine for Devin: 52 specialists, 28 parallel reviewers, Rust core, and SDD workflows.",
+  "author": {
+    "name": "Harmitx7",
+    "email": "harmit@tribunalkit.com"
+  },
+  "homepage": "https://github.com/Harmitx7/tribunal-kit",
+  "repository": "https://github.com/Harmitx7/tribunal-kit",
+  "license": "MIT",
+  "skills": "./.agent/skills/",
+  "hooks": "./hooks/hooks.json"
+}

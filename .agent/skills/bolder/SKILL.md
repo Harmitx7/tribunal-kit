@@ -1,8 +1,8 @@
 ---
 name: bolder
 description: Increase visual impact, punch, and personality for generic or bland interfaces. Use when the user asks to make the UI pop, stand out, have more character, or feel less template-like.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - better-colors
   - better-ui
@@ -26,6 +26,12 @@ Before applying bold visual transformations, you MUST inspect:
 3. Single Electric Accent System (Section 28) → Use one high-chroma accent color sparingly for primary CTAs and badges
 
 Transform generic, boring template UIs into high-impact, distinctive interfaces with strong visual presence.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Increase visual impact, punch, and personality for generic or bland interfaces. Use when the user asks to make the UI pop, stand out, have more character, or feel less template-like..
+- **DO NOT activate when:** The task falls strictly outside bolder domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -56,28 +62,25 @@ Transform generic, boring template UIs into high-impact, distinctive interfaces 
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Adding Generic Purple Gradients**: Relying on generic AI gradient presets instead of distinct brand colors.
-2. **Making Everything Loud**: Applying high contrast to all text and cards, which destroys readability. Keep body copy clean and legible.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `ui-ux-auditor`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is the primary accent color distinct and used intentionally?
-✅ Does the display typography maintain legibility while being high-impact?
-✅ Is body text kept crisp and high-contrast on readable backgrounds?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

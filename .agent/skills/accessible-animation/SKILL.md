@@ -1,8 +1,8 @@
 ---
 name: accessible-animation
 description: Tiered reduced-motion patterns for CSS, GSAP, Framer Motion, Lenis, and View Transitions API to ensure full WCAG 2.2 accessibility compliance for motion.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - 60fps-animation
   - motion-engineering
@@ -26,6 +26,12 @@ Before implementing UI animation code, you MUST inspect:
 3. Vestibular Trigger Replacement (Section 57) → Replace parallax scroll and 3D rotations with instant opacity cross-fades (`0 -> 1`)
 
 Ensure UI motion respects user accessibility preferences (`prefers-reduced-motion: reduce`) without stripping functional state updates.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Tiered reduced-motion patterns for CSS, GSAP, Framer Motion, Lenis, and View Transitions API to ensure full WCAG 2.2 accessibility compliance for motion..
+- **DO NOT activate when:** The task falls strictly outside accessible-animation domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -72,28 +78,25 @@ export function AccessibleCard({ children }) {
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Stripping All State Updates**: Completely disabling CSS transitions so elements abruptly disappear or jump without opacity fading.
-2. **Ignoring JS Smooth Scroll**: Leaving smooth scroll libraries (Lenis, GSAP ScrollSmoother) active when reduced motion is preferred.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `accessibility-reviewer` · `motion-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is `@media (prefers-reduced-motion: reduce)` declared in CSS stylesheets?
-✅ Do JS animation libraries (Framer Motion / GSAP) query `useReducedMotion()` or `window.matchMedia`?
-✅ Are disorienting parallax/zoom effects converted into gentle opacity fades?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

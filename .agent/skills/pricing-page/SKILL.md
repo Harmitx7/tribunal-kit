@@ -1,8 +1,8 @@
 ---
 name: pricing-page
 description: SaaS pricing table architecture, billing cycle toggles (Monthly/Annual), feature comparison matrices, tier highlighting, and conversion optimization.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - landing-page
   - compact-landing
@@ -26,6 +26,12 @@ Before engineering SaaS pricing pages or comparison tables, you MUST inspect:
 3. Discount Badge (Section 26) → Display explicit "Save X%" discount badge alongside the Annual billing toggle option
 
 Architect high-converting SaaS pricing tables with clear billing toggles, tier differentiation, and feature comparison matrices.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring SaaS pricing table architecture, billing cycle toggles (Monthly/Annual), feature comparison matrices, tier highlighting, and conversion optimization..
+- **DO NOT activate when:** The task falls strictly outside pricing-page domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -55,28 +61,25 @@ Architect high-converting SaaS pricing tables with clear billing toggles, tier d
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Jittering Price Numeral Transitions**: Price numbers shifting layout width when toggling monthly/annual billing. Use `font-variant-numeric: tabular-nums`.
-2. **Identical Visual Treatment**: Making all 3 pricing tiers look identical, preventing users from spotting the recommended plan.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `ui-ux-auditor`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is the "Most Popular / Pro" tier visually distinct with primary CTA styling?
-✅ Is `tabular-nums` applied to price numerals to prevent toggle layout shifts?
-✅ Is the Annual discount savings badge clearly visible next to the billing toggle?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

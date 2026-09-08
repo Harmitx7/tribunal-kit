@@ -1,8 +1,8 @@
 ---
 name: fabel-protocol
 description: Distilled Fabel-5 cognitive intelligence protocol. Injects epistemic reasoning, coding discipline, design evaluation cascades, and orchestration patterns into any AI model. Load this skill to make any model think, reason, code, and design like Fabel-5. Activates for complex builds, code generation, design tasks, and multi-agent orchestration.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - agentic-patterns
   - thinking-protocol
@@ -26,6 +26,12 @@ Before executing reasoning loops, you MUST inspect:
 3. High-Risk Hallucination Heatmap (Section 7) → Tag uncertain ORM/SDK method calls with `// VERIFY: [reason]` tags
 
 > Distilled from the Fabel-5 system prompt (191KB → 2,000 tokens). Makes any model reason like Fabel-5.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Distilled Fabel-5 cognitive intelligence protocol. Injects epistemic reasoning, coding discipline, design evaluation cascades, and orchestration patterns into any AI model. Load this skill to make any model think, reason, code, and design like Fabel-5. Activates for complex builds, code generation, design tasks, and multi-agent orchestration..
+- **DO NOT activate when:** The task falls strictly outside fabel-protocol domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -283,13 +289,25 @@ Before finalizing any response, ask yourself:
 
 ---
 
-## Pre-Flight Checklist
+## 🏛️ Tribunal Verification & Guardrails
 
-- [ ] Have I reviewed the Fabel epistemic confidence guidelines before starting?
-- [ ] Have I checked the framework version context in the workspace?
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
-## VBC Protocol
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-- [ ] Verify that any APIs or files to be updated are loaded and checked for stale context prior to execution.
+### ✅ Pre-Flight Self-Audit
+```
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
+```
 
----
+### 🛑 Verification-Before-Completion (VBC) Protocol
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -1,8 +1,8 @@
 ---
 name: to-spring-or-not-to-spring
 description: Audit and decide when to use physics-based spring animations (stiffness, damping, mass) vs duration-based cubic-bezier easing curves.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - motion-engineering
   - framer-motion-expert
@@ -27,6 +27,12 @@ Before selecting animation model (Spring vs Cubic-Bezier), you MUST inspect:
 
 Decide when to use physics-driven spring models (Framer Motion / Reanimated) vs duration-based cubic-bezier easing curves.
 
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Audit and decide when to use physics-based spring animations (stiffness, damping, mass) vs duration-based cubic-bezier easing curves..
+- **DO NOT activate when:** The task falls strictly outside to-spring-or-not-to-spring domain or belongs to a different dedicated specialist.
+
 ---
 
 ## Spring vs Duration Decision Matrix
@@ -50,27 +56,25 @@ Decide when to use physics-driven spring models (Framer Motion / Reanimated) vs 
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Bouncy Springs on Modals**: Adding low-damping bouncy springs to popovers or modals, making popovers wobble on screen.
-2. **Fixed Duration Springs**: Setting `duration: 0.5` alongside `type: "spring"` in Framer Motion, which overrides natural spring physics.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `motion-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are spring physics restricted to gestures, toggles, drag targets, and playful badges?
-✅ Are modals, dropdowns, and route transitions using deterministic cubic-bezier curves?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

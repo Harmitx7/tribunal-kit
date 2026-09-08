@@ -1,8 +1,8 @@
 ---
 name: lottie-animation
 description: Lottie and dotLottie integration, playback control, hover/click triggers, runtime theming, and performance optimization for React/Vue/Web.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - 60fps-animation
   - motion-engineering
@@ -26,6 +26,12 @@ Before integrating Lottie animations, you MUST inspect:
 3. Package Manifest (`package.json`) → Verify `@dotlottie/react-player` or `lottie-web` library dependencies
 
 Integrate lightweight, vector-based Lottie animations with interactive trigger controls and runtime color theming.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Lottie and dotLottie integration, playback control, hover/click triggers, runtime theming, and performance optimization for React/Vue/Web..
+- **DO NOT activate when:** The task falls strictly outside lottie-animation domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -69,27 +75,25 @@ Pass custom CSS variable overrides to dotLottie players to dynamically recolor v
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Embedding Massive Uncompressed Lottie JSONs**: Importing 2MB JSON files inline into JavaScript bundles.
-2. **Autoplay Loops Everywhere**: Setting `autoplay loop` on 10 offscreen icons, causing massive CPU idle usage.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `performance-optimizer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are dotLottie (`.lottie`) binary assets preferred over raw uncompressed `.json`?
-✅ Is playback triggered intentionally via hover, click, or visible viewport intersection?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

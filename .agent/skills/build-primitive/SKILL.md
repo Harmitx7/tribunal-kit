@@ -1,8 +1,8 @@
 ---
 name: build-primitive
 description: Build foundational, unstyled, accessible UI primitives from scratch with strong ARIA attributes, keyboard navigation, focus traps, and state management. Use when creating custom Headless UI components (Dialog, Combobox, Accordion, Popover, Menu).
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - react-specialist
   - baseline-ui
@@ -26,6 +26,12 @@ Before building headless UI primitives, you MUST inspect:
 3. Data Attributes (Section 41) → Expose clean `data-state="open|closed"` and `data-disabled` attributes for unstyled CSS consumer integration
 
 Build rock-solid, framework-agnostic or React headless UI primitives with complete ARIA pattern compliance, keyboard control, and focus management.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Build foundational, unstyled, accessible UI primitives from scratch with strong ARIA attributes, keyboard navigation, focus traps, and state management. Use when creating custom Headless UI components (Dialog, Combobox, Accordion, Popover, Menu)..
+- **DO NOT activate when:** The task falls strictly outside build-primitive domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -57,28 +63,25 @@ Build rock-solid, framework-agnostic or React headless UI primitives with comple
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Forgetting `type="button"`**: Omitting `type="button"` on custom trigger buttons inside forms, causing unintended form submissions.
-2. **Missing `aria-expanded`**: Toggle triggers missing `aria-expanded` attributes.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `accessibility-reviewer` · `type-safety`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are all WAI-ARIA roles and states correctly attached?
-✅ Is keyboard navigation fully implemented (Arrow keys, Enter, Escape)?
-✅ Is focus trapped inside modals and restored to the trigger upon exit?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

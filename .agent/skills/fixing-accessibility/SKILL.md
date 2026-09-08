@@ -1,8 +1,8 @@
 ---
 name: fixing-accessibility
 description: Audit and fix HTML accessibility issues including ARIA labels, keyboard navigation, focus management, color contrast, and form errors. Use when adding interactive controls, forms, dialogs, or reviewing WCAG compliance.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - audit-and-fix
   - build-primitive
@@ -26,6 +26,12 @@ Before remediating HTML accessibility defects, you MUST inspect:
 3. Form Error Association (Section 32) → Attach `aria-invalid="true"` and `aria-describedby` pointing to error text IDs
 
 Guidelines for detecting, prioritizing, and fixing accessibility defects across web interfaces.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Audit and fix HTML accessibility issues including ARIA labels, keyboard navigation, focus management, color contrast, and form errors. Use when adding interactive controls, forms, dialogs, or reviewing WCAG compliance..
+- **DO NOT activate when:** The task falls strictly outside fixing-accessibility domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -94,23 +100,25 @@ Guidelines for detecting, prioritizing, and fixing accessibility defects across 
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Stripping Focus Outlines**: Setting `outline: none` without providing a visible `:focus-visible` replacement.
-2. **Duplicate ARIA Labels**: Putting `aria-label` on both a outer button and inner text/icon simultaneously.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are all icon buttons properly labeled with aria-label?
-✅ Can all interactive elements be operated using keyboard only (Tab + Space/Enter)?
-✅ Do form fields have explicit aria-describedby associations for helper and error text?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
-Test keyboard navigation (`Tab`, `Shift+Tab`, `Escape`) in browser preview before finalizing code.
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

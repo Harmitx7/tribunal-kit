@@ -1,8 +1,8 @@
 ---
 name: colorize
 description: Introduce strategic, harmonious, accessible color systems and OKLCH color palettes to visually flat or dull interfaces.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - better-colors
   - baseline-ui
@@ -26,6 +26,12 @@ Before designing color systems or applying color palettes, you MUST inspect:
 3. Status Token Uniformity (Section 45) → Keep status color lightness consistent ($L \approx 0.60$–$0.72$) across Success, Warning, Destructive, and Info scales
 
 Architect uniform, perceptually balanced color scales using the modern OKLCH color space for light and dark modes.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Introduce strategic, harmonious, accessible color systems and OKLCH color palettes to visually flat or dull interfaces..
+- **DO NOT activate when:** The task falls strictly outside colorize domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -64,28 +70,25 @@ Never use random red/green/yellow hex codes. Maintain matching chroma and lightn
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Random Hex Colors**: Scattering `#3b82f6` or `#ef4444` directly in component files without CSS variables.
-2. **Ignoring Wide-Gamut Displays**: Failing to provide fallback colors for browsers without Display P3 support.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `ui-ux-auditor`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are colors declared via CSS variables in the OKLCH color space?
-✅ Does the color distribution strictly honor the 60-30-10 budget?
-✅ Do status colors maintain uniform perceptual lightness ($L \approx 0.60$ - $0.72$)?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

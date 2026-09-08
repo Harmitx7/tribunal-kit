@@ -6,7 +6,7 @@ last-updated: 2026-07-30
 required-skills:
   - harness-protocol
   - agent-organizer
-  - project-planner
+  - agentic-workflows-2026
 scripts-binding:
   - .agent/scripts/session_manager.js
   - .agent/scripts/verify_all.js
@@ -25,6 +25,11 @@ Before initiating or resuming a multi-session marathon harness, you MUST inspect
 1. Marathon State Ledger (`progress.json`, `feature_list.json`) → Verify current session index, completed features, and active task
 2. Session Continuity Manager (`.agent/scripts/session_manager.js`) → Verify state snapshot before context truncation
 3. Atomic Feature Handoff Protocol → Ensure each session completes exactly ONE atomic feature, runs `verify_all.js`, and commits state before handoff
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `harness-protocol` (.agent/skills/harness-protocol/SKILL.md): Marathon long-running agent harness rules and handoff protocols
+   - `agent-organizer` (.agent/skills/agent-organizer/SKILL.md): Multi-agent coordination and task decomposition
+   - `agentic-workflows-2026` (.agent/skills/agentic-workflows-2026/SKILL.md): Advanced agent loops, ReAct planning, and structured tool calling
 
 ---
 

@@ -2,8 +2,8 @@
 name: vector-search-pgvector
 description: Production vector database search using pgvector 0.8.0+, halfvec, sparsevec, Pinecone, Weaviate, hybrid sparse-dense retrieval, and iterative HNSW scanning.
 tools: Read, Grep, Glob, Edit, Write
-version: 3.0.0
-last-updated: 2026-08-05
+version: 4.0.0
+last-updated: 2026-09-07
 script: .agent/scripts/schema_validator.js
 scripts-binding:
   - .agent/scripts/schema_validator.js
@@ -22,6 +22,12 @@ Before creating vector tables or indexes:
 1. Index Type & Precision → Use `halfvec` (half-precision) for 50% RAM savings on HNSW indexes; use `sparsevec` for high-dimensional sparse vectors
 2. Iterative Index Scans (pgvector 0.8.0+) → Enable iterative scanning to prevent HNSW overfiltering when combining `WHERE` clauses with vector similarity
 3. Hybrid Search Strategy → Combine BM25 full-text search with dense vector similarity via Reciprocal Rank Fusion (RRF)
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Production vector database search using pgvector 0.8.0+, halfvec, sparsevec, Pinecone, Weaviate, hybrid sparse-dense retrieval, and iterative HNSW scanning..
+- **DO NOT activate when:** The task falls strictly outside vector-search-pgvector domain or belongs to a different dedicated specialist.
 
 ## High-Performance pgvector 0.8.0+ Schema (`halfvec` + HNSW)
 
@@ -72,7 +78,27 @@ ORDER BY rrf_score DESC
 LIMIT 10;
 ```
 
-## 🛑 Verification-Before-Completion (VBC) Protocol
+---
 
-- Verify vector index construction queries pass `EXPLAIN ANALYZE` with `halfvec`.
-- Confirm pgvector extension version is >= 0.8.0 for iterative scanning support.
+## 🏛️ Tribunal Verification & Guardrails
+
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
+
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+
+### ✅ Pre-Flight Self-Audit
+```
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
+```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

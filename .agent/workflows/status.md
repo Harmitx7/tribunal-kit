@@ -24,6 +24,10 @@ Before rendering project status dashboards, you MUST inspect:
 2. Workspace Git Status (`git status`, `git diff --stat`) → List uncommitted edits and modified files
 3. Read-Only Constraint → Ban any file mutations or state updates during status reporting; report status strictly
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `bash-linux` (.agent/skills/bash-linux/SKILL.md): Shell scripting patterns and command-line automation
+   - `code-review-checklist` (.agent/skills/code-review-checklist/SKILL.md): Code quality, security, and best practice review gates
+
 ---
 
 ## What /status Shows

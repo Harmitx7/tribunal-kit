@@ -1,8 +1,8 @@
 ---
 name: progressive-blur
 description: Smooth progressive backdrop blurs, depth overlays, and modern glassmorphism using CSS mask-image and multi-layered backdrop filters without GPU performance drops.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - 60fps-animation
   - better-colors
@@ -26,6 +26,12 @@ Before engineering glassmorphism or backdrop blurs, you MUST inspect:
 3. Masked Blur Gradient layers (Section 25) → Blend multi-step blur layers with linear gradient masks to avoid harsh edge cutoffs
 
 Architect high-performance, progressive backdrop blurs and frosted glass interfaces that feel tactile and fluid.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Smooth progressive backdrop blurs, depth overlays, and modern glassmorphism using CSS mask-image and multi-layered backdrop filters without GPU performance drops..
+- **DO NOT activate when:** The task falls strictly outside progressive-blur domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -87,28 +93,25 @@ Backdrop blurs can cause frame drops if animated directly.
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Animating `backdrop-filter` radius**: Animating `blur(0px)` to `blur(20px)` on every frame, which tanks GPU performance to under 20fps.
-2. **Missing vendor prefixes**: Forgetting `-webkit-backdrop-filter` for Safari compatibility.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `performance-optimizer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are `-webkit-backdrop-filter` vendor prefixes present?
-✅ Is `opacity` animated instead of directly interpolating `backdrop-filter` radius?
-✅ Is dark mode contrast preserved over frosted glass surfaces?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

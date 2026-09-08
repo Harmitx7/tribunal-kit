@@ -2,8 +2,8 @@
 name: diagnosing-bugs
 description: Systematic bug diagnosis methodology for hard bugs: Phase 1 (Build feedback loop), Phase 2 (Reproduce + minimise), Phase 3 (Hypothesise), Phase 4 (Instrument), Phase 5 (Fix + regression test), Phase 6 (Cleanup + post-mortem).
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - systematic-debugging
   - test-result-analyzer
@@ -25,11 +25,15 @@ Before attempting bug diagnostics or proposing code fixes, you MUST inspect:
 2. Falsifiable Hypotheses Formulation (Section 107) → Formulate 3–5 falsifiable hypotheses (`"If X is cause, then Y prediction"`) before testing any single theory
 3. Tagged Debug Logging & Cleanup (Section 123) → Tag debug log instrumentation (`[DEBUG-id]`) and sweep clean before finalizing regression fixes
 
-# Diagnosing Bugs — A Discipline for Hard Bugs
-
 A systematic discipline for hard bugs. Skip phases only when explicitly justified.
 
 When exploring the codebase, read `CONTEXT.md` (if it exists) to get a clear mental model of the relevant modules, and check ADRs in the area you're touching.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Systematic bug diagnosis methodology for hard bugs: Phase 1 (Build feedback loop), Phase 2 (Reproduce + minimise), Phase 3 (Hypothesise), Phase 4 (Instrument), Phase 5 (Fix + regression test), Phase 6 (Cleanup + post-mortem)..
+- **DO NOT activate when:** The task falls strictly outside diagnosing-bugs domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -182,30 +186,25 @@ Ask: **What would have prevented this bug?** If the answer involves architectura
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Shotgun Debugging**: Making random edits across multiple files hoping the error disappears.
-2. **Reading Code to Build Theories Before Having a Red Loop**: Jumping straight to hypotheses without a red-capable command.
-3. **Symptom Swallowing**: Wrapping a throwing call in silent `try/catch` or returning empty fallbacks instead of addressing root cause.
-4. **Testing Multiple Hypotheses at Once**: Changing multiple variables simultaneously, creating ambiguous results.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-## 🏛️ Tribunal Integration & Pre-Flight Self-Audit
-
-**Active Reviewers: `debugger` · `logic-reviewer` · `resilience-reviewer`**
-
+### ✅ Pre-Flight Self-Audit
 ```
-✅ Has a red-capable feedback loop command been executed and verified red?
-✅ Has the repro scenario been minimised to only load-bearing elements?
-✅ Were 3–5 falsifiable hypotheses formulated before testing?
-✅ Are all debug logs tagged with [DEBUG-...] and cleaned up before merge?
-✅ Has a regression test been added at a valid seam?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

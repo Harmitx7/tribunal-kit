@@ -1,0 +1,45 @@
+{
+  "name": "tribunal-kit",
+  "version": "9.0.0",
+  "description": "Enterprise-grade governance layer and anti-hallucination engine: 52 specialists, 28 parallel reviewers, Rust core, Subagent-Driven Development (SDD), and strict TDD workflows.",
+  "author": {
+    "name": "Harmitx7",
+    "email": "harmit@tribunalkit.com",
+    "url": "https://github.com/Harmitx7/tribunal-kit"
+  },
+  "homepage": "https://github.com/Harmitx7/tribunal-kit",
+  "repository": "https://github.com/Harmitx7/tribunal-kit",
+  "license": "MIT",
+  "keywords": [
+    "tribunal",
+    "governance",
+    "anti-hallucination",
+    "subagent-driven-development",
+    "skills",
+    "planning",
+    "tdd",
+    "debugging",
+    "code-review",
+    "workflow"
+  ],
+  "skills": "./.agent/skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "Tribunal Kit",
+    "shortDescription": "Anti-hallucination governance, 28 specialist reviewers, and SDD for coding agents",
+    "longDescription": "Use Tribunal Kit to govern coding agents through Socratic brainstorming, bite-sized implementation planning, strict test-driven development, out-of-band context isolation, 28-specialist review waves, and persistent Case Law memory.",
+    "developerName": "Harmitx7",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Let's design and implement a new feature using Tribunal SDD.",
+      "Run a full Tribunal code audit on this repository."
+    ],
+    "websiteURL": "https://github.com/Harmitx7/tribunal-kit",
+    "brandColor": "#3B82F6"
+  }
+}

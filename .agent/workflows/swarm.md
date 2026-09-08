@@ -6,7 +6,7 @@ last-updated: 2026-07-30
 required-skills:
   - parallel-agents
   - agent-organizer
-  - swarm-dispatcher
+  - agentic-workflows-2026
 scripts-binding:
   - .agent/scripts/swarm_dispatcher.js
   - .agent/scripts/verify_all.js
@@ -25,6 +25,11 @@ Before decomposing goals into worker sub-tasks or triggering swarm execution, yo
 1. Swarm Dispatcher Validator (`.agent/scripts/swarm_dispatcher.js`) → Run payload validation script to ensure valid worker JSON payloads
 2. Non-Overlapping File Boundary Rule → Verify worker tasks target disjoint file sets to prevent git write conflicts during parallel execution
 3. `Promise.allSettled()` Fan-In Protocol → Collect all worker status reports and synthesize final deliverable before Human Gate confirmation
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `parallel-agents` (.agent/skills/parallel-agents/SKILL.md): Parallel agent dispatch patterns and fan-in synthesis
+   - `agent-organizer` (.agent/skills/agent-organizer/SKILL.md): Multi-agent coordination and task decomposition
+   - `agentic-workflows-2026` (.agent/skills/agentic-workflows-2026/SKILL.md): Advanced agent loops, ReAct planning, and structured tool calling
 
 ---
 

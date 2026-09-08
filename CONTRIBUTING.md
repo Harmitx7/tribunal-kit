@@ -44,7 +44,7 @@ tribunal-kit/
 ├── .agent/                 # The intelligence payload (agents, skills, workflows)
 │   ├── agents/             # 52 specialist and reviewer agent definitions
 │   ├── skills/             # Reusable skill packs
-│   ├── workflows/          # 40 workflow definitions
+│   ├── workflows/          # 41 workflow definitions
 │   └── scripts/            # Automation scripts
 ├── test/
 │   ├── unit/               # Unit tests (Jest)

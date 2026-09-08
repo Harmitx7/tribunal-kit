@@ -2,8 +2,8 @@
 name: systematic-debugging
 description: Systematic debugging framework. Root-cause isolation, 4-phase methodology, hypothesis testing, log tracing, avoiding shotgun-surgery, memory allocation analysis, and empirical evidence gathering. Use when debugging complex, highly-coupled, or elusive bugs across mixed execution environments.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - diagnosing-bugs
   - test-result-analyzer
@@ -25,6 +25,12 @@ Before debugging issues or analyzing stack traces, you MUST inspect:
 2. Deterministic Reproduction Pre-requisite (Section 29) → Write a failing deterministic test/reproduction script FIRST before modifying code logic
 3. Stack Trace Application Line Extraction (Section 98) → Trace up past `node_modules` to locate the top-most application code frame you wrote
 
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Systematic debugging framework. Root-cause isolation, 4-phase methodology, hypothesis testing, log tracing, avoiding shotgun-surgery, memory allocation analysis, and empirical evidence gathering. Use when debugging complex, highly-coupled, or elusive bugs across mixed execution environments..
+- **DO NOT activate when:** The task falls strictly outside systematic-debugging domain or belongs to a different dedicated specialist.
+
 ## Hallucination Traps (Read First)
 
 - ❌ Changing multiple things at once to fix a bug -> ✅ Change ONE variable at a time; multiple changes make it impossible to identify the fix
@@ -32,8 +38,6 @@ Before debugging issues or analyzing stack traces, you MUST inspect:
 - ❌ Not reproducing the bug before attempting a fix -> ✅ If you cannot reproduce it reliably, you cannot verify your fix works
 
 ---
-
-# Systematic Debugging — Root Cause Mastery
 
 ---
 
@@ -69,7 +73,16 @@ Never jump straight into modifying code when a bug is reported.
 
 ---
 
-## 2. Advanced Diagnostic Vectors
+## 2. Specialized Diagnostic Techniques
+
+When debugging intricate or elusive bugs, reference these specialized technique guides:
+- **Root Cause Tracing (`./root-cause-tracing.md`):** Trace backwards up the call stack to identify where invalid data originated, rather than fixing where the error appears.
+- **Condition-Based Waiting (`./condition-based-waiting.md`):** Eliminate flaky tests and timing bugs by waiting for specific deterministic state conditions instead of arbitrary `setTimeout` or `sleep` calls.
+- **Defense in Depth (`./defense-in-depth.md`):** Add validation and runtime assertions at multiple component boundaries.
+
+---
+
+## 3. Advanced Diagnostic Vectors
 
 When pure logic errors are ruled out, look for environmental factors.
 
@@ -132,69 +145,17 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -203,8 +164,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

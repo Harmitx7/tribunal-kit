@@ -1,8 +1,8 @@
 ---
 name: animation-on-scroll
 description: Intentional scroll-driven motion using modern CSS scroll-timeline, view-timeline, or GSAP ScrollTrigger without scroll jank or performance degradation.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - motion-engineering
   - 60fps-animation
@@ -26,6 +26,12 @@ Before implementing scroll-driven animations, you MUST inspect:
 3. Anti-Scrolljacking rule (Section 88) → Never hijack native scroll wheel momentum or override browser scrolling velocity
 
 Architect performant scroll-linked motion and scrollytelling sequences that feel natural, fluid, and non-intrusive.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Intentional scroll-driven motion using modern CSS scroll-timeline, view-timeline, or GSAP ScrollTrigger without scroll jank or performance degradation..
+- **DO NOT activate when:** The task falls strictly outside animation-on-scroll domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -101,28 +107,25 @@ gsap
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Janky Window Scroll Listeners**: Binding raw `window.addEventListener('scroll', ...)` with heavy DOM modifications instead of CSS `scroll-timeline` or GSAP ScrollTrigger.
-2. **Hijacking User Scroll**: Forgetting to allow normal native scrolling velocity (never use aggressive scroll hijacking).
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `motion-reviewer` · `performance-optimizer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are CSS `animation-timeline: view()` or `scroll()` utilized where supported?
-✅ Is `scrub: 1` enabled in GSAP ScrollTrigger to prevent abrupt scroll jumps?
-✅ Does scroll motion respect `prefers-reduced-motion`?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

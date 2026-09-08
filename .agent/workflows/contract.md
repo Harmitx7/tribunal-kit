@@ -1,3 +1,17 @@
+---
+description: AI Agent Behavioral Contract Testing & Trace Replay. Define, validate, and enforce team behavioral rules as YAML contracts. Provides init, verify, list, trace, and auto-generate from Case Law.
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - clean-code
+  - code-review-checklist
+  - data-validation-schemas
+scripts-binding:
+  - .agent/scripts/security_scan.js
+  - .agent/scripts/lint_runner.js
+---
+
 # /contract — AI Agent Behavioral Contract Testing & Trace Replay
 
 $ARGUMENTS
@@ -11,6 +25,11 @@ Before running behavioral contract validation, inspect:
 1. Active Contracts Directory (`.tribunal/contracts/`) → Verify active `.yaml` rules and severities
 2. Target File Scope → Determine modified or targeted files for contract validation
 3. Failure Context Snapshots (`.tribunal/traces/`) → Check past captured trace snapshots for context
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+   - `code-review-checklist` (.agent/skills/code-review-checklist/SKILL.md): Code quality, security, and best practice review gates
+   - `data-validation-schemas` (.agent/skills/data-validation-schemas/SKILL.md): Zod, Pydantic, and input validation schema patterns
 
 ---
 

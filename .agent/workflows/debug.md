@@ -26,6 +26,11 @@ Before investigating or attempting any code modification during a bug report, yo
 2. Target File & Callers → Inspect file referenced in error trace along with its upstream callers
 3. Recent Changes (`git diff`) → Inspect recent edits to identify regressions before mutating code
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `systematic-debugging` (.agent/skills/systematic-debugging/SKILL.md): 4-phase debugging methodology (Collect → Hypothesize → Test → Fix)
+   - `test-result-analyzer` (.agent/skills/test-result-analyzer/SKILL.md): Root cause analysis across multiple failing test files
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+
 ---
 
 ## The Investigation Contract

@@ -1,7 +1,117 @@
-# Changelog
+# 🏛️ Tribunal Kit — Changelog
 
-All notable changes to Tribunal Kit are documented here.
-Format follows [Keep a Changelog](https://keepachangelog.com/).
+[![Keep a Changelog](https://img.shields.io/badge/Changelog-Keep%20a%20Changelog%20v1.1.0-blue.svg?style=flat-square)](https://keepachangelog.com/)
+[![SemVer](https://img.shields.io/badge/SemVer-2.0.0-green.svg?style=flat-square)](https://semver.org/)
+[![Specialists](https://img.shields.io/badge/Specialists-52-cyan.svg?style=flat-square)](#)
+[![Reviewers](https://img.shields.io/badge/Reviewers-28-emerald.svg?style=flat-square)](#)
+[![Skills Corpus](https://img.shields.io/badge/Corpus-184%20Skills-teal.svg?style=flat-square)](#)
+[![Workflows](https://img.shields.io/badge/Workflows-41%20Audited-indigo.svg?style=flat-square)](#)
+[![Harnesses](https://img.shields.io/badge/Harnesses-9%20Supported-orange.svg?style=flat-square)](#)
+[![Test Suite](https://img.shields.io/badge/Tests-100%25%20Passing%20(455%20tests)-brightgreen.svg?style=flat-square)](#)
+
+All notable changes to **Tribunal Kit** are documented here.
+Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
+
+---
+
+## [9.0.0] — 2026-09-08 — 🏛️ Codename: Hyperion Corpus & Universal Governance
+
+> [!IMPORTANT]
+> **Release 9.0.0** establishes universal multi-harness governance across 9 major agent environments (Claude Code, Cursor, Codex, Devin, Hermes, Kimi, OpenCode, Pi, Gemini), introduces native Rust Spec-Driven Development (`tk sdd`), achieves 100% workflow standardization across all 41 workflows, and modernizes the entire 184-skill corpus under the V4 assertion-dense specification.
+
+### 📊 Executive Release KPI Scorecard
+
+| Domain Metric | Baseline (v8.0) | Release 9.0.0 | Improvement / Impact |
+| :--- | :--- | :--- | :--- |
+| **Agent Harnesses Supported** | 1 (Claude Code) | **9 Major CLI & IDE Harnesses** | Full multi-agent runtime ubiquity |
+| **Active Skill Corpus** | 183 skills | **184 V4 Hybrid Skills** | 100% deduplicated, 60-85% token reduction |
+| **Workflow Catalog Standards** | 40 workflows | **41 Workflows (100% Compliant)** | 0 broken refs, mandatory pre-flight loaders |
+| **Governance CLI Engines** | Contract, Trace | **+ Spec-Driven Dev (`sdd`)** | Native Rust core architect/implement/review loop |
+| **Verified Test Coverage** | 35 suites / 362 tests | **36 Unit (368) + 10 Int (54) + 33 Rust** | 455 total passing tests, 0 failures |
+| **ESLint & Source Strictness** | Ad-hoc exceptions | **0 errors, 0 warnings (72 files)** | Clean ES modules across plugins and hooks |
+
+---
+
+### 🌐 [SKILLS] Corpus-Wide V4 Hybrid Skill Modernization (184 Skills)
+
+- **V4 Hybrid Skill Schema**: Upgraded the entire 184-skill corpus in `.agent/skills/` to the V4 specification, integrating clean metadata, automated scripts bindings (`lint_runner.js`, `verify_all.js`), domain-specific anti-pattern tables, and the canonical VBC Protocol.
+- **Idempotent Skill Modernizer (`scripts/modernize_skills.js`)**: Shipped an automated deduplication and schema validation engine with `--validate`, `--dry-run`, `--fix`, and `--sync-to-root` flags. Eliminated duplicate guardrail stacks across 82 previously degraded skill files.
+- **Deterministic Activation Boundaries**: Added strict `Activate when:` and `DO NOT activate when:` boundaries across skills to resolve cross-domain semantic overlap and eliminate false-positive agent activations.
+
+### 🔌 [PLUGINS & SDD] Universal Multi-Harness Plugin Architecture & Spec-Driven Development (SDD)
+
+- **Universal Agent Ecosystem Support (9 Harnesses)**: Integrated full-spectrum plugin definitions and manifests across 9 major agent environments:
+  - **Claude Code**: [`.claude-plugin/plugin.json`](file:///c:/Users/sunrise/Desktop/pfojects/cli%20project/tribunal-kit/.claude-plugin/plugin.json) & [`.claude-plugin/marketplace.json`](file:///c:/Users/sunrise/Desktop/pfojects/cli%20project/tribunal-kit/.claude-plugin/marketplace.json)
+  - **Cursor**: [`.cursor-plugin/plugin.json`](file:///c:/Users/sunrise/Desktop/pfojects/cli%20project/tribunal-kit/.cursor-plugin/plugin.json) & [`hooks/hooks-cursor.json`](file:///c:/Users/sunrise/Desktop/pfojects/cli%20project/tribunal-kit/hooks/hooks-cursor.json)
+  - **OpenAI Codex**: [`.codex-plugin/plugin.json`](file:///c:/Users/sunrise/Desktop/pfojects/cli%20project/tribunal-kit/.codex-plugin/plugin.json)
+  - **Devin CLI**: [`.devin-plugin/plugin.json`](file:///c:/Users/sunrise/Desktop/pfojects/cli%20project/tribunal-kit/.devin-plugin/plugin.json)
+  - **Hermes Agent**: [`.hermes-plugin/plugin.yaml`](file:///c:/Users/sunrise/Desktop/pfojects/cli%20project/tribunal-kit/.hermes-plugin/plugin.yaml) & [`.hermes-plugin/__init__.py`](file:///c:/Users/sunrise/Desktop/pfojects/cli%20project/tribunal-kit/.hermes-plugin/__init__.py)
+  - **Kimi Code**: [`.kimi-plugin/plugin.json`](file:///c:/Users/sunrise/Desktop/pfojects/cli%20project/tribunal-kit/.kimi-plugin/plugin.json)
+  - **OpenCode**: [`.opencode/plugins/tribunal.js`](file:///c:/Users/sunrise/Desktop/pfojects/cli%20project/tribunal-kit/.opencode/plugins/tribunal.js)
+  - **Pi Agent**: [`.pi/extensions/tribunal.ts`](file:///c:/Users/sunrise/Desktop/pfojects/cli%20project/tribunal-kit/.pi/extensions/tribunal.ts)
+  - **Google Gemini**: [`gemini-extension.json`](file:///c:/Users/sunrise/Desktop/pfojects/cli%20project/tribunal-kit/gemini-extension.json)
+  - **Tribunal Core Workspace**: Mirroring `.agents/` for seamless runtime rule and tool discovery.
+- **Unified Hook Lifecycle Architecture (`hooks/`)**: Built runtime lifecycle interceptors (`session-start.js`, `pre-command.js`, `post-command.js`) to dynamically inject rules, session state, and security boundaries across any CLI or editor agent.
+- **Native Rust CLI `sdd` Subcommand (`crates/core/src/commands/sdd.rs`)**: Implemented the native Spec-Driven Development subcommand in Rust core, wired through `crates/core/src/commands/mod.rs` and `crates/core/src/main.rs`, and surfaced through `bin/wrapper.js` (`cmdSdd`).
+- **Spec-Driven Development Workflow & Templates**: Added `.agent/workflows/sdd.md` and standard prompt templates in `.agent/templates/sdd/` (`architect-prompt.md`, `implementer-prompt.md`, `reviewer-prompt.md`) enforcing structured architectural specification and review gates before code generation.
+- **Verification Before Completion (VBC) Protocol**: Shipped dedicated skill `.agent/skills/verification-before-completion/SKILL.md` and systematic debugging deep-dive guides (`condition-based-waiting.md`, `defense-in-depth.md`, `root-cause-tracing.md`).
+- **SDD Integration Test Suite**: Added `test/unit/sdd_integration.test.js` with 6 automated tests validating CLI execution, schema compliance, and template existence.
+
+### 📋 [WORKFLOWS] 100% Corpus-Wide Workflow Standardization & Explicit Pre-Flight Skill Loading (41 Workflows)
+
+- **Complete 41/41 Workflow Catalog Audit**: Audited all 41 workflow definitions in `.agent/workflows/` for structural integrity, YAML frontmatter compliance, and valid skill dependencies.
+- **Frontmatter Schema Normalization**: Repaired missing frontmatter in `contract.md` and `sdd.md` to conform to the v3.0.0 specification (`required-skills`, `scripts-binding`).
+- **Broken Skill Reference Remediation**: Eliminated 11 invalid/broken skill references across workflows (e.g. mapping agent names `project-planner`, `csharp-developer`, `devops-incident-responder`, `database-architect`, `sql-pro`, `api-architect` to valid skill paths `plan-writing`, `clean-code`, `error-resilience`, `database-design`, `api-patterns`).
+- **Universal Explicit Skill Loaders**: Injected mandatory Pre-Flight skill-loading instructions (`Read .agent/skills/<name>/SKILL.md before executing`) into all 38 workflows previously lacking them, achieving 100% (41 of 41) compliance across the entire workflow catalog.
+
+### ⚡ [RUNTIME] 2026 LTS Runtime Standards & Performance Invariants
+
+- **React 19 & Next.js 15 Integration (`react-specialist`, `nextjs-react-expert`)**:
+  - Enforced native direct `ref` prop as a component prop, explicitly banning legacy `forwardRef`.
+  - Upgraded Next.js App Router rules for async dynamic APIs (`await params`, `await cookies()`, `await headers()`), uncached `fetch()` defaults, Partial Prerendering (PPR), and Server Action taint validation.
+  - Standardized on `useActionState` and `useOptimistic` for native form transitions.
+- **Node.js 22+ LTS Standards (`nodejs-best-practices`)**:
+  - Enforced built-in `node:sqlite` (`DatabaseSync`), native test runner `node:test`, and `import.meta.dirname`, eliminating unnecessary external C++ compilation dependencies.
+  - Mandated stream backpressure management via `pipeline()` from `node:stream/promises`.
+- **Advanced TypeScript 5.5+ (`typescript-advanced`)**:
+  - Added TS 5.5+ inferred type predicates and `isolatedDeclarations` export annotations.
+  - Enforced interface inheritance over quadratic deep intersection types (`A & B & C`) to protect compiler memory budgets.
+- **Python 3.12+ Systems (`python-pro`)**:
+  - Standardized on PEP 695 native `type` statements and generic functions `def func[T]()`.
+  - Mandated structured concurrency via `asyncio.TaskGroup` over raw `asyncio.gather()`.
+  - Enforced Pydantic v2 zero-copy deserialization (`model_validate`, `model_dump`).
+- **Modern Rust 2024 / 1.80+ (`rust-pro`)**:
+  - Replaced external lazy statics with native `std::sync::LazyLock`.
+  - Added Axum 0.7+ `{id}` bracket route parameter syntax and Tokio cancellation safety invariants.
+- **High-Throughput SQL & Relational Architecture (`sql-pro`, `database-design`)**:
+  - Standardized on RFC 9562 UUID v7 for sequential B-tree indexing and B-tree fragmentation prevention.
+  - Enforced SARGable date/time predicates and keyset cursor pagination, banning deep `OFFSET` on datasets > 1,000 rows.
+  - Mandated the expand-contract pattern for zero-downtime database migrations.
+- **AI Security Hardening (`ai-prompt-injection-defense`, `backend-security-expert`)**:
+  - Implemented the Dual-LLM pattern for sandboxing untrusted context and random nonce XML framing (`<untrusted_data id="...">`).
+  - Added timing attack defense via `crypto.timingSafeEqual()`, SSRF validation on outbound webhooks, and strict JWT algorithm pinning.
+- **Next-Gen UI/UX & Motion Engineering (`better-ui`, `ui-ux-pro-max`, `60fps-animation`)**:
+  - Enforced Display-P3 OKLCH color palettes and APCA contrast compliance.
+  - Implemented the nested border-radius geometry formula ($\text{Radius}_{\text{outer}} = \text{Radius}_{\text{inner}} + \text{Padding}$).
+  - Integrated native CSS scroll-driven animations (`animation-timeline`) and CSS `@starting-style` transitions on GPU compositor layers.
+
+### 🧹 [QUALITY] Thermo-Nuclear Quality Hardening, Type Seams & Dead Code Elimination
+
+- **Zero-Tolerance ESLint Governance**: Configured `eslint.config.js` to parse `.opencode/**/*.js` and `**/*.mjs`. Cleaned dead imports (`os`), stripped unused function `normalizePath`, and resolved all unused argument/variable warnings in `.opencode/plugins/tribunal.js`, `hooks/session-start.js`, and `scripts/audit_skill_sdo.js`.
+- **Cross-Repository Metadata Synchronization**: Synchronized version `9.0.0` and resource totals (52 agents, 28 reviewers, 184 skills, 41 workflows, 41 scripts) across `package.json`, `README.md`, `CONTRIBUTING.md`, `.agent/config/plugin.json`, `.agent/config/system-prompt.md`, and `npm/core-template/package.json`.
+- **Public API Type Seams**: Added missing declaration `cmdImpactTier` in `dist/index.d.ts`.
+- **Windows Test Suite Reliability**: Hardened `test/unit/learn.test.js` with a 15,000 ms timeout to prevent premature process termination under Windows.
+- **Dead Code Purge**: Purged disconnected Vite starter boilerplate in `src/ui/` (`counter.ts`, `main.ts`, `style.css`, `index.html`, etc.), deleted legacy `tribunal-kit-5.0.0.tgz` archive (680 KB), and removed unreferenced scratch artifacts.
+
+### 🛠️ [TESTING] Tooling & Test Suite Resilience
+
+- **Stress Benchmark Boundary Calibration**: Calibrated `test/unit/stress.test.js` to ensure deterministic execution under high-concurrency Node environments.
+- **100% Passing Test Suite Across All Engines**:
+  - **JS Unit Tests**: 36 of 36 unit test suites passing (368 tests passing, 0 failures)
+  - **JS Integration Tests**: 10 of 10 integration test suites passing (54 tests passing, 0 failures)
+  - **Rust Core Tests**: 33 of 33 tests passing with 0 failures (`cargo test`)
+  - **ESLint Audit**: Clean pass across all 72 JavaScript source and configuration files (0 errors, 0 warnings)
+  - **Payload Integrity**: All 311 intelligence payload files verified against schema
 
 ## [8.0.0] — 2026-08-30 — ⚡ Codename: Leviathan Orchestrator & Semantic AOT
 

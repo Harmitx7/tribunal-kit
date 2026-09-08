@@ -25,6 +25,11 @@ Before generating changelogs or parsing git history, you MUST inspect:
 2. Package Manifest & Version (`package.json`) → Retrieve current release version and target release tag
 3. Keep a Changelog Formatting Standard → Enforce categories: Added, Changed, Deprecated, Removed, Fixed, Security
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `github-operations` (.agent/skills/github-operations/SKILL.md): Git workflows, branching strategies, and PR management
+   - `git-pro` (.agent/skills/git-pro/SKILL.md): Advanced git operations, rebasing, cherry-picking
+   - `readme-builder` (.agent/skills/readme-builder/SKILL.md): README generation and documentation structure
+
 ---
 
 ## When to Use /changelog

@@ -1,0 +1,38 @@
+{
+  "name": "tribunal-kit",
+  "version": "9.0.0",
+  "description": "Multi-agent coding governance, 28-specialist review waves, and Subagent-Driven Development (SDD) engine.",
+  "author": {
+    "name": "sunrise",
+    "email": "sunrise@example.com"
+  },
+  "homepage": "https://github.com/sunrise/tribunal-kit",
+  "license": "MIT",
+  "keywords": [
+    "tribunal",
+    "subagent-driven-development",
+    "code-review",
+    "skills",
+    "planning",
+    "tdd",
+    "debugging",
+    "governance"
+  ],
+  "skills": "./.agent/skills/",
+  "sessionStart": {
+    "skill": "verification-before-completion"
+  },
+  "skillInstructions": "Kimi Code tool mapping for Tribunal-Kit:\n\n- When Tribunal rules or skills require user clarification or Socratic gates, call Kimi Code's `AskUserQuestion` tool with concrete options. Put the recommended option first.\n- When a skill refers to `TodoWrite`, use Kimi Code's `TodoList` tool.\n- When running Subagent-Driven Development (`/sdd`) or reviewing tasks, use Kimi Code's `Agent` tool with `subagent_type: \"coder\"` for implementation and reviewer subagents. Use `subagent_type: \"explore\"` for read-only codebase exploration.\n- Keep implementers isolated: implementers read `.tribunal/sdd/<plan>/task-<N>-brief.md` and write `task-<N>-report.md`, returning <15 lines status.\n- Reviewers inspect `.tribunal/sdd/<plan>/review-<base>..<head>.diff` out-of-band and emit structured verdicts.\n- Enforce the Iron Law of TDD and Verification-Before-Completion on every change.",
+  "interface": {
+    "displayName": "Tribunal Kit",
+    "shortDescription": "28-Specialist Review Waves & Subagent-Driven Development (SDD) Engine",
+    "longDescription": "Tribunal Kit provides institutional-grade code review, anti-hallucination guardrails, Subagent-Driven Development (SDD), and automated testing pipelines for AI coding agents.",
+    "developerName": "sunrise",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/sunrise/tribunal-kit"
+  }
+}

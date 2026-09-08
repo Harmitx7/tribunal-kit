@@ -6,7 +6,7 @@ last-updated: 2026-07-30
 required-skills:
   - brainstorming
   - shape
-  - project-planner
+  - plan-writing
 scripts-binding:
   - .agent/scripts/verify_all.js
 ---
@@ -24,6 +24,22 @@ Before generating options or conducting Socratic architectural exploration, you 
 1. Technology Stack Manifest (`package.json`, `tsconfig.json`) → Confirm existing language/framework versions and active library boundaries
 2. Workspace File Layout → Understand current module scale and project structure before proposing architectural shifts
 3. Pure Exploration Constraint → Enforce zero code edits or file creation during brainstorm phase; restrict output to options, tradeoffs, and recommendations
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `brainstorming` (.agent/skills/brainstorming/SKILL.md): Structured ideation and option exploration methodology
+   - `shape` (.agent/skills/shape/SKILL.md): Socratic UX interview and feature planning before implementation
+   - `plan-writing` (.agent/skills/plan-writing/SKILL.md): Implementation plan structure, phases, and approval gates
+
+---
+
+## Path Classification (Announce First)
+
+Before asking questions, classify the request path out loud so the user can override:
+- **Spike:** A quick feasibility probe ("is it possible...", "quick prototype"). Output is a recommendation; any code written is strictly throwaway.
+- **Bounded:** A well-scoped change to existing code in this repository (one small endpoint, a new flag). Present short design in chat and get explicit human approval before any implementation.
+- **Architectural:** New feature, new subsystem, or interface change. Full process: clarifying questions, 2-3 approaches, written spec committed to `docs/specs/YYYY-MM-DD-<topic>-design.md`, human approval gate, then `/plan-writing` or `/sdd`.
+
+> **One-Way Ratchet:** When in doubt, take the heavier path. If hidden complexity is discovered mid-task, upgrade the path immediately. Never downgrade mid-task.
 
 ---
 

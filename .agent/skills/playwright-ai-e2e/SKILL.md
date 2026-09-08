@@ -2,8 +2,8 @@
 name: playwright-ai-e2e
 description: Modern Playwright 1.45+ E2E web testing, resilient ARIA locators, visual regression testing, network mocking, and AI-assisted flakiness detection.
 tools: Read, Grep, Glob, Edit, Write
-version: 3.0.0
-last-updated: 2026-08-05
+version: 4.0.0
+last-updated: 2026-09-07
 script: .agent/scripts/test_runner.js
 scripts-binding:
   - .agent/scripts/test_runner.js
@@ -23,6 +23,12 @@ Before writing end-to-end web tests:
 1. ARIA Role Locators → Use accessibility roles (`getByRole`, `getByText`) over brittle CSS selectors
 2. Auto-Waiting & Zero Sleep → Avoid `page.waitForTimeout()`; rely on Playwright built-in auto-waiting
 3. Network Interception → Mock external third-party APIs using `page.route()` for deterministic CI runs
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Modern Playwright 1.45+ E2E web testing, resilient ARIA locators, visual regression testing, network mocking, and AI-assisted flakiness detection..
+- **DO NOT activate when:** The task falls strictly outside playwright-ai-e2e domain or belongs to a different dedicated specialist.
 
 ## Resilient E2E API Route Mocking & Interaction Test
 
@@ -54,7 +60,27 @@ test.describe('Dashboard Features', () => {
 });
 ```
 
-## 🛑 Verification-Before-Completion (VBC) Protocol
+---
 
-- Run Playwright test suite in headless mode and verify zero flakiness.
-- Ensure all interactive elements rely on resilient locators.
+## 🏛️ Tribunal Verification & Guardrails
+
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
+
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
+
+### ✅ Pre-Flight Self-Audit
+```
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
+```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

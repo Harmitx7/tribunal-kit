@@ -195,6 +195,56 @@ enum Commands {
         #[arg(default_value = ".")]
         path: String,
     },
+
+    /// Subagent-Driven Development (SDD) workspace, brief slicing, and diff packaging
+    Sdd {
+        #[command(subcommand)]
+        action: SddAction,
+    },
+}
+
+#[derive(Subcommand)]
+enum SddAction {
+    /// Resolve and ensure the plan-scoped SDD workspace directory
+    Workspace {
+        /// Path to the implementation plan file
+        #[arg(long)]
+        plan: String,
+    },
+
+    /// Extract a single task's text from a plan file out-of-band
+    Brief {
+        /// Path to the implementation plan file
+        #[arg(long)]
+        plan: String,
+
+        /// Task number to extract
+        #[arg(long)]
+        task: u32,
+
+        /// Optional custom output file path
+        #[arg(long)]
+        out: Option<String>,
+    },
+
+    /// Generate an out-of-band diff package for Tribunal reviewer waves
+    Diff {
+        /// Path to the implementation plan file
+        #[arg(long)]
+        plan: String,
+
+        /// Base git commit / revision
+        #[arg(long)]
+        base: String,
+
+        /// Head git commit / revision
+        #[arg(long)]
+        head: String,
+
+        /// Optional custom output file path
+        #[arg(long)]
+        out: Option<String>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -425,6 +475,28 @@ async fn main() -> Result<()> {
         Commands::ImpactTier { files, lines, task } => cmd_impact_tier(&files, lines, &task).await,
 
         Commands::Graph { path } => cmd_graph(&path).await,
+
+        Commands::Sdd { action } => cmd_sdd(action).await,
+    }
+}
+
+async fn cmd_sdd(action: SddAction) -> Result<()> {
+    match action {
+        SddAction::Workspace { plan } => {
+            let ws = commands::sdd::sdd_workspace(&plan)?;
+            println!("{}", ws.display());
+            Ok(())
+        }
+        SddAction::Brief { plan, task, out } => {
+            let path = commands::sdd::sdd_brief(&plan, task, out.as_deref())?;
+            println!("{}", path.display());
+            Ok(())
+        }
+        SddAction::Diff { plan, base, head, out } => {
+            let path = commands::sdd::sdd_diff(&plan, &base, &head, out.as_deref())?;
+            println!("{}", path.display());
+            Ok(())
+        }
     }
 }
 

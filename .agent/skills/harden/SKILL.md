@@ -1,8 +1,8 @@
 ---
 name: harden
 description: Make interfaces production-resilient with robust empty states, error boundaries, loading skeletons, offline indicators, and internationalization (i18n) layout support.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - polish
   - baseline-ui
@@ -26,6 +26,12 @@ Before implementing UI component logic, you MUST inspect:
 3. String Expansion (i18n) rules (Section 40) → Avoid hardcoded pixel widths (`width: 120px`); use `min-width` and flexible auto-layout
 
 Ensure UI components gracefully handle network failures, missing data, slow connections, extreme text lengths, and internationalization.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Make interfaces production-resilient with robust empty states, error boundaries, loading skeletons, offline indicators, and internationalization (i18n) layout support..
+- **DO NOT activate when:** The task falls strictly outside harden domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -62,28 +68,25 @@ Ensure UI components gracefully handle network failures, missing data, slow conn
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Swallowing Errors**: Catching API errors and displaying a blank container without informing the user.
-2. **Fixed Container Widths**: Using hardcoded `width: 200px` on containers with international text.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `resilience-reviewer` · `frontend-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Does every async data container have explicit loading, error, and empty states?
-✅ Are all containers built flexibly to accommodate 50% text expansion (i18n)?
-✅ Do error fallbacks include actionable retry buttons?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

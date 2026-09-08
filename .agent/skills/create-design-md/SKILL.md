@@ -1,8 +1,8 @@
 ---
 name: create-design-md
 description: Create or update a DESIGN.md from an existing product repository or public website, with evidence-based design tokens and guidance. Use when asked to document an interface's design language, reconstruct its visual system, extract design tokens, or give coding agents persistent UI context.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - baseline-ui
   - better-ui
@@ -26,6 +26,12 @@ Before extracting design tokens or authoring `DESIGN.md`, you MUST inspect:
 3. Read-Only Safety (Section 86) → NEVER mutate product source code while extracting tokens or creating `DESIGN.md`
 
 Generate or update an authoritative `DESIGN.md` file for a product repository or website by extracting verified design tokens, components, and layout guidance.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Create or update a DESIGN.md from an existing product repository or public website, with evidence-based design tokens and guidance. Use when asked to document an interface's design language, reconstruct its visual system, extract design tokens, or give coding agents persistent UI context..
+- **DO NOT activate when:** The task falls strictly outside create-design-md domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -99,23 +105,25 @@ Output must strictly adhere to the following schema structure:
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Modifying Product Source**: Changing source files during design document generation. `create-design-md` is strictly read-only on product code.
-2. **Inventing Token Names**: Creating fake token names not present in the codebase.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Did I base all documented tokens on verified codebase or computed style evidence?
-✅ Is the generated DESIGN.md saved at the root of the target project?
-✅ Does the document follow the standardized 5-section schema contract?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
-Validate `DESIGN.md` against existing CSS variables to ensure zero token mismatches.
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

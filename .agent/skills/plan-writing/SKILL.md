@@ -2,8 +2,8 @@
 name: plan-writing
 description: Technical design and implementation planning mastery. Writing structured execution checklists, dependency mapping, establishing rollback protocols, segmenting monolithic tasks, writing ADRs (Architecture Decision Records), and defining verification criteria. Use when transitioning from ideation to coordinated execution.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - project-planner
   - brainstorming
@@ -21,19 +21,34 @@ scripts-binding:
 
 Before writing implementation plans or execution blueprints, you MUST inspect:
 
-1. Verification Criteria Requirement (Section 15) → Include explicit "How to verify" criteria for every wave; ban plan steps without verification
-2. Phased Wave Segmentation (Section 41) → Segment multi-file tasks into testable, independent waves (Wave 1: Data, Wave 2: API, Wave 3: UI)
-3. Non-Destructive Defaults & Rollback Rules (Section 66) → Define fallback feature toggles and database rollback procedures prior to execution
+1. The Task Contract Requirement → Formulate Objective, Inputs, Outputs, Hard Constraints, and Acceptance Criteria before outlining file edits
+2. Verification Criteria Requirement → Include explicit "How to verify" commands (unit tests, curl, linter) for every execution step; ban unverified plan steps
+3. Phased Wave Segmentation → Segment multi-file tasks into testable, independent waves (Wave 1: Data, Wave 2: Logic/API, Wave 3: UI, Wave 4: Audit)
+4. Non-Destructive Defaults & Rollback Rules → Define fallback feature toggles and database migration rollback procedures prior to execution
+
+## Activation Boundaries
+
+- **Activate when:** Preparing complex multi-file architectural changes, writing implementation plans, establishing ADRs, segmenting large tasks into execution waves, and defining verification strategies.
+- **DO NOT activate when:** Executing small single-file typo fixes, simple CSS tweaks, or answering conceptual questions without code changes.
+
+## 2026 Plan Writing & Task Contract Invariants
+
+1. **The Strict Task Contract**:
+   Every plan must establish:
+   - **OBJECTIVE**: Precise outcome expected.
+   - **HARD CONSTRAINTS**: Unchangeable tech stack, performance budgets, backwards compatibility.
+   - **ACCEPTANCE CRITERIA**: Unambiguous, observable conditions proving success (e.g. `npm test exits 0`, `LCP < 1.2s`).
+2. **Chunking Limit (Max 5 Files Per Wave)**:
+   Never generate a single wave touching > 5 files. Break large epics into consecutive waves where each wave compiles and passes verification before proceeding.
+3. **Evidence-Based Closeout**:
+   Every wave ends with an automated command the agent or human must run to prove correctness before proceeding to the next wave.
 
 ## Hallucination Traps (Read First)
 
-- ❌ Writing plans without verification criteria -> ✅ Every plan needs a 'How to verify this worked' section
-- ❌ Planning at the wrong granularity (too high or too low) -> ✅ Plans should be at the component/feature level, not line-by-line or system-wide
-- ❌ Skipping the 'What could go wrong' section -> ✅ Identifying failure modes before implementation prevents costly rework
-
----
-
-# Plan Writing — Execution Blueprints Mastery
+- ❌ Writing plans without verification criteria → ✅ Every plan needs a 'How to verify this worked' section
+- ❌ Planning at the wrong granularity (too high or too low) → ✅ Plans should be at the component/feature level
+- ❌ Skipping the 'What could go wrong' section → ✅ Identifying failure modes before implementation prevents costly rework
+- ❌ Multi-file mega plans without wave chunking → ✅ Break into independent, testable waves
 
 ---
 
@@ -45,9 +60,15 @@ Before altering multiple files or introducing a new system architecture, a rigid
 
 1. **Objective Context:** 2-sentence summary of the requested goal.
 2. **Architectural Handoff:** (What stack, what libraries, what constraints).
-3. **Dependency Tree Execution Order:** (Cannot build frontend UI until backend API exists).
-4. **File Blueprint:** Exact files expected to be touched (`[NEW] src/api/user.ts`, `[MODIFY] src/db/schema.prisma`).
-5. **Verification Protocol:** Exactly how the agent/human will prove the task is completed successfully.
+3. **Task-Level Interface Contracts (Mandatory for Subagent Decoupling):**
+   Every task MUST declare:
+   - `Consumes:` Exact function signatures and types it imports from prior tasks.
+   - `Produces:` Exact function signatures and types it exports for subsequent tasks.
+4. **The Zero-Placeholder Invariant:**
+   Never write "TBD", "TODO", "implement later", "add validation", or "write tests for above". Every step must contain complete, exact code blocks and verification commands.
+5. **Dependency Tree Execution Order:** (Cannot build frontend UI until backend API exists).
+6. **File Blueprint:** Exact files expected to be touched (`[NEW] src/api/user.ts`, `[MODIFY] src/db/schema.prisma`).
+7. **Verification Protocol:** Exactly how the agent/human will prove the task is completed successfully.
 
 ---
 
@@ -129,69 +150,17 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -200,8 +169,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

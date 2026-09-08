@@ -5,7 +5,7 @@ version: 3.0.0
 last-updated: 2026-07-30
 required-skills:
   - bash-linux
-  - frontend-specialist
+  - nextjs-react-expert
   - devops-engineer
 scripts-binding:
   - .agent/scripts/auto_preview.js
@@ -24,6 +24,11 @@ Before managing dev server lifecycle or starting preview servers, you MUST inspe
 1. Workspace Dev Script Configuration (`package.json`) → Verify `npm run dev` or equivalent start script and framework server port
 2. Environment Configuration (`.env`) → Check port bindings and dev server host configs
 3. Dev Server Lifecycle Script (`.agent/scripts/auto_preview.js`) → Use automated script for process management, port collision detection, and health checks
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `bash-linux` (.agent/skills/bash-linux/SKILL.md): Shell scripting patterns and command-line automation
+   - `nextjs-react-expert` (.agent/skills/nextjs-react-expert/SKILL.md): Next.js 15+ App Router, Server Components, Server Actions, PPR
+   - `devops-engineer` (.agent/skills/devops-engineer/SKILL.md): CI/CD pipeline management and infrastructure automation
 
 ---
 

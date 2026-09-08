@@ -12,5 +12,5 @@ describe('cmdLearn command', () => {
     const flags = { quiet: true, head: false };
     // Should resolve cleanly
     await expect(cmdLearn(flags, true)).resolves.not.toThrow();
-  });
+  }, 15000);
 });

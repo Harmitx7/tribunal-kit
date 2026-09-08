@@ -2,8 +2,8 @@
 name: typescript-advanced
 description: Advanced TypeScript mastery. Generics with constraints, conditional types, mapped types, template literal types, the satisfies operator, discriminated unions, branded/nominal types, type-level programming, utility type internals, variance annotations, module augmentation, and declaration merging. Use when writing complex type definitions, building type-safe libraries, or solving "how do I type this?" problems.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - clean-code
   - data-validation-schemas
@@ -21,19 +21,30 @@ scripts-binding:
 
 Before writing complex TypeScript types or library abstractions, you MUST inspect:
 
-1. Zero `as any` Cast Rule (Section 15) → Fix the underlying type signature or use `as unknown as T` with explicit reasoning comment; ban `as any`
+1. Zero `as any` Cast Rule (Section 15) → Fix the underlying type signature or use `unknown` with a type guard; ban `as any`
 2. Discriminated Unions for State Machine Modeling (Section 62) → Model multi-state objects with tagged discriminated unions for compile-time exhaustive checks
 3. The `satisfies` Operator vs Type Assertion (Section 193) → Use `satisfies` to validate types without widening object literals
+4. Compiler Memory & Type Instantiation Limits → Avoid recursive conditional types deeper than 5 levels; prefer interface extension over deep `&` intersections
+5. TS 5.5+ Inferred Type Predicates → Leverage native type narrowing in `.filter()` without manual `x is T` boilerplate where possible
+
+## Activation Boundaries
+
+- **Activate when:** Designing type-safe library APIs, generic utility types, discriminated union state machines, and resolving complex TypeScript compiler errors.
+- **DO NOT activate when:** Writing pure runtime JavaScript without TypeScript, or basic application components with trivial props.
+
+## 2026 TypeScript Performance & Compiler Invariants
+
+1. **Explicit Return Types on Exports (`isolatedDeclarations`)**: Always add explicit return types to exported functions/methods for fast, parallel build compilation.
+2. **Interface Extension Over Deep Intersections**: Use `interface B extends A` instead of `type B = A & { ... }`. Interfaces are cached by TS compiler's internal type-checker, preventing quadratic build slowdowns.
+3. **Safe Indexed Access**: Handle `undefined` when reading objects/arrays under `noUncheckedIndexedAccess`.
+4. **Const Type Parameters**: Use `function parse<const T>(val: T)` to preserve literal types without requiring the caller to write `as const`.
 
 ## Hallucination Traps (Read First)
 
-- ❌ Using `as any` to silence type errors -> ✅ Fix the type; `as any` hides bugs that crash at runtime
-- ❌ Using `interface` when `type` is needed (unions, mapped types) -> ✅ `type` for unions/intersections/mapped; `interface` for objects that may be extended
-- ❌ Overcomplicating types — if a type takes 30 seconds to read, simplify it -> ✅ Types serve the developer, not the other way around
-
----
-
-# Advanced TypeScript — Type-Level Mastery
+- ❌ Using `as any` to silence type errors -> ✅ Fix the type or use `unknown` + type guard; `as any` masks runtime errors
+- ❌ Using deep recursive conditional types that trigger `Type instantiation is excessively deep` -> ✅ Use iteration or flat lookup tables
+- ❌ Overusing `type X = A & B & C & D` -> ✅ Use `interface` extension to preserve compiler performance
+- ❌ Manual `x is T` when TS 5.5+ infers the predicate -> ✅ Write natural predicate functions without unnecessary type assertion casts
 
 ---
 
@@ -319,69 +330,17 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -390,8 +349,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

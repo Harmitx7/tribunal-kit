@@ -6,7 +6,7 @@ last-updated: 2026-07-30
 required-skills:
   - app-builder
   - architecture
-  - project-planner
+  - codebase-design
 scripts-binding:
   - .agent/scripts/auto_preview.js
   - .agent/scripts/verify_all.js
@@ -26,6 +26,11 @@ Before scaffolding a new application, you MUST inspect:
 1. Target Directory State → Confirm directory listing is empty or obtain explicit user confirmation before overwriting existing files
 2. Runtime & Environment Context → Check Node/npm version and inspect `.env.example` if available
 3. Human Gate Before Disk Modification → Enforce explicit approval of Socratic requirements, stack selection, and scaffolding plan before creating any files
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `app-builder` (.agent/skills/app-builder/SKILL.md): Full-stack application scaffolding and creation orchestration
+   - `architecture` (.agent/skills/architecture/SKILL.md): System architecture, module boundaries, and dependency management
+   - `codebase-design` (.agent/skills/codebase-design/SKILL.md): Deep module design with small interfaces and clean seams
 
 ---
 

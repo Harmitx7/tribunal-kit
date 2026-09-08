@@ -1,8 +1,8 @@
 ---
 name: soft-skill
 description: High-end visual design guidance for premium typography, spacing, depth, and animation systems.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - taste-skill
   - progressive-blur
@@ -26,6 +26,12 @@ Before engineering luxury or soft-depth UI interfaces, you MUST inspect:
 3. Color Harmonies (Section 40) → Use quiet, low-chroma monochromatic OKLCH palettes for background and typography
 
 Craft high-end, luxury interfaces featuring soft depth, gentle surface transitions, quiet typography, and tactile spatial rhythm.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring High-end visual design guidance for premium typography, spacing, depth, and animation systems..
+- **DO NOT activate when:** The task falls strictly outside soft-skill domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -60,28 +66,25 @@ Craft high-end, luxury interfaces featuring soft depth, gentle surface transitio
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Muddy Dark Shadows**: Using heavy `rgba(0,0,0,0.5)` drop shadows on light surfaces.
-2. **Cramped Containers**: Packing text elements tightly inside small containers with minimal padding.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `ui-ux-auditor`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are drop shadows multi-layered with opacity under 6% per layer?
-✅ Is container padding generous ($\ge 24\text{px}$)?
-✅ Is color palette subdued and monochromatic?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

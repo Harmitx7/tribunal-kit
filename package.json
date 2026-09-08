@@ -1,7 +1,7 @@
 {
   "name": "tribunal-kit",
-  "version": "8.0.0",
-  "description": "Your AI writes code that doesn't exist. Tribunal Kit stops it. The governance layer for AI coding agents — 52 specialists, 28 parallel reviewers, 183 skills, Rust core, MCP server. Works with Cursor, VSCode, Windsurf, Claude Code, and Aider.",
+  "version": "9.0.0",
+  "description": "Your AI writes code that doesn't exist. Tribunal Kit stops it. The governance layer for AI coding agents — 52 specialists, 28 parallel reviewers, 184 skills, Rust core, MCP server. Works with Cursor, VSCode, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
     "ai-agent",
@@ -77,6 +77,17 @@
     "bin/",
     "dist/",
     "scripts/",
+    "hooks/",
+    ".claude-plugin/",
+    ".cursor-plugin/",
+    ".codex-plugin/",
+    ".devin-plugin/",
+    ".hermes-plugin/",
+    ".kimi-plugin/",
+    ".opencode/",
+    ".agents/",
+    ".pi/",
+    "gemini-extension.json",
     ".agent/",
     ".claude/CLAUDE.md",
     "README.md",
@@ -89,6 +100,14 @@
     ".agent/config/slash-commands.json",
     ".agent/config/specialist-registry.json"
   ],
+  "pi": {
+    "extensions": [
+      "./.pi/extensions/tribunal.ts"
+    ],
+    "skills": [
+      "./.agent/skills"
+    ]
+  },
   "engines": {
     "node": ">=18.0.0"
   },
@@ -120,12 +139,12 @@
     "typescript": "^5.4.5"
   },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^8.0.0",
-    "@tribunal-kit/core-darwin-x64": "^8.0.0",
-    "@tribunal-kit/core-linux-arm64": "^8.0.0",
-    "@tribunal-kit/core-linux-x64": "^8.0.0",
-    "@tribunal-kit/core-win32-arm64": "^8.0.0",
-    "@tribunal-kit/core-win32-x64": "^8.0.0"
+    "@tribunal-kit/core-darwin-arm64": "^9.0.0",
+    "@tribunal-kit/core-darwin-x64": "^9.0.0",
+    "@tribunal-kit/core-linux-arm64": "^9.0.0",
+    "@tribunal-kit/core-linux-x64": "^9.0.0",
+    "@tribunal-kit/core-win32-arm64": "^9.0.0",
+    "@tribunal-kit/core-win32-x64": "^9.0.0"
   },
   "jest": {
     "testMatch": [

@@ -2,8 +2,8 @@
 name: nextjs-react-expert
 description: Next.js 15+ App Router mastery. Server Components, Server Actions, PPR, caching, metadata, middleware, parallel/intercepting routes. Use when building Next.js apps or optimizing Next.js performance.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - react-specialist
   - react-doctor
@@ -21,20 +21,42 @@ scripts-binding:
 
 Before engineering Next.js 15+ App Router code, you MUST inspect:
 
-1. Client Boundary rules (`"use client"` vs Server Components) → Use Server Components by default; add `"use client"` only for interactivity/hooks
-2. Server Actions Validation (Section 68) → Always include `"use server"` and validate form inputs with Zod (`Schema.safeParse`)
-3. Next.js 15 Caching & Dynamic APIs (Section 106) → `fetch()` is UNCACHED by default in Next.js 15; `cookies()` and `headers()` are `async`
+1. Next.js 15 Async Dynamic APIs → `cookies()`, `headers()`, and route `params` / `searchParams` are now **async Promises** (`await params`)
+2. Server Components by Default → Keep data fetching on the server; add `"use client"` only for user interactions or hooks
+3. Server Action Validation & Taint → Always declare `"use server"`, validate inputs with Zod (`schema.safeParse`), and use `experimental_taintUniqueValue` for secrets
+4. Caching Semantics → `fetch()` is UNCACHED by default in Next.js 15; explicitly specify `{ cache: 'force-cache' }` or `revalidateTag()` when static caching is intended
+
+## Activation Boundaries
+
+- **Activate when:** Building Next.js 15 App Router applications, Server Actions, route handlers, middleware, and configuring Partial Prerendering (PPR).
+- **DO NOT activate when:** Building pure client-only Vite/SPA applications or Express/Fastify standalone backend servers.
+
+## 2026 Next.js 15 Architecture & Performance Invariants
+
+1. **Async Route Params**: In Next.js 15, `params` and `searchParams` are Promises:
+   ```tsx
+   export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+     const { id } = await params;
+   }
+   ```
+2. **Async Headers & Cookies**: Always `await cookies()` and `await headers()`:
+   ```ts
+   import { cookies } from 'next/headers';
+   const cookieStore = await cookies();
+   ```
+3. **Partial Prerendering (PPR)**: Isolate dynamic data fetches within `<Suspense>` boundaries so the static shell renders instantly.
+4. **Server Action CSRF & Origin Verification**: Next.js 15 checks host header by default; ensure actions validate permissions before mutations.
 
 ## Hallucination Traps (Read First)
 
+- ❌ Synchronous `const { id } = params` → ✅ Next.js 15: `const { id } = await params`
+- ❌ Synchronous `const c = cookies()` → ✅ Next.js 15: `const c = await cookies()`
+- ❌ Assuming `fetch()` is cached by default → ✅ Next.js 15 defaults to `{ cache: 'no-store' }`
 - ❌ `pages/api/` or `_app.tsx` → ✅ App Router only: `app/api/route.ts`, `app/layout.tsx`
-- ❌ `getServerSideProps` → ✅ `async function Page()` fetches directly
-- ❌ `next/router` → ✅ `next/navigation` (`useRouter`, `usePathname`, `useSearchParams`)
-- ❌ Server Action without `"use server"` → ✅ Required at top of file or top of function
-- ❌ Fetch is cached by default → ✅ **Next.js 15 changed this**: `fetch()` is UNCACHED by default
-- ❌ `cookies()` at top of page → ✅ Opts entire route into dynamic rendering, breaking PPR. Wrap inside `<Suspense>`
-- ❌ Passing functions as props Server → Client → ✅ Illegal. Use Server Actions instead.
-- ❌ Plain `Response` in route handler → ✅ Use `NextResponse.json()`
+- ❌ `getServerSideProps` → ✅ Direct `async` Server Components
+- ❌ `next/router` → ✅ `next/navigation` (`useRouter`, `usePathname`)
+- ❌ Server Action without `"use server"` → ✅ Required at top of file or function
+- ❌ Passing functions as props Server → Client → ✅ Use Server Actions
 
 ---
 
@@ -217,69 +239,17 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -288,8 +258,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

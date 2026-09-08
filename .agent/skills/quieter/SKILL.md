@@ -1,8 +1,8 @@
 ---
 name: quieter
 description: Tone down overly loud, noisy, visually aggressive, or distracting designs while maintaining high visual quality. Use when a UI feels cluttered, overwhelming, tacky, or visually hyperactive.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - distill
   - swiss-design
@@ -26,6 +26,12 @@ Before subduing visual design elements, you MUST inspect:
 3. Motion Restraint rules (Section 35) → Eliminate looping pulsing badges and restrict motion to user-initiated actions
 
 Reduce visual noise, eliminate unnecessary color competition, and restore calm focus to chaotic interfaces.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Tone down overly loud, noisy, visually aggressive, or distracting designs while maintaining high visual quality. Use when a UI feels cluttered, overwhelming, tacky, or visually hyperactive..
+- **DO NOT activate when:** The task falls strictly outside quieter domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -56,28 +62,25 @@ Reduce visual noise, eliminate unnecessary color competition, and restore calm f
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Making Text Unreadable**: Reducing color saturation so much that text fails WCAG AA contrast (below 4.5:1).
-2. **Stripping Functional Indicators**: Removing error/warning colors when reducing palette noise. Keep functional colors crisp.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `ui-ux-auditor`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are saturated colors restricted to primary actions?
-✅ Did I retain minimum 4.5:1 text contrast for all body and label copy?
-✅ Has unnecessary layout animation or pulsing been eliminated?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

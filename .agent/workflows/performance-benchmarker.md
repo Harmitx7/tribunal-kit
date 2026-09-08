@@ -5,7 +5,7 @@ version: 3.0.0
 last-updated: 2026-07-30
 required-skills:
   - performance-profiling
-  - vitals-reviewer
+  - web-quality-audit
   - 60fps-animation
 scripts-binding:
   - .agent/scripts/bundle_analyzer.js
@@ -25,6 +25,11 @@ Before running performance benchmarks or capturing latency metrics, you MUST ins
 1. Target App Environment & Build Command (`package.json`) → Confirm production build output and dev/preview server URL
 2. Benchmark Scripts Availability (`.agent/scripts/bundle_analyzer.js`) → Verify automated bundle and latency measurement tooling
 3. Before/After Metric Recording Constraint → Require side-by-side metric tables (LCP, CLS, INP, TTFB, Bundle Size) for every benchmark pass
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `performance-profiling` (.agent/skills/performance-profiling/SKILL.md): Performance measurement methodology and profiling tools
+   - `web-quality-audit` (.agent/skills/web-quality-audit/SKILL.md): Lighthouse-style analysis across Performance, Accessibility, SEO
+   - `60fps-animation` (.agent/skills/60fps-animation/SKILL.md): GPU compositor-friendly properties and layout thrash avoidance
 
 ---
 

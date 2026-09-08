@@ -1,8 +1,8 @@
 ---
 name: typeset
 description: Professional web typography scaling, font pairing, optical sizing, tracking, line height cadence, text-wrap balance, and OpenType features. Use when refining typography systems or text styling.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - swiss-design
   - better-ui
@@ -26,6 +26,12 @@ Before refining typography scales or text styles, you MUST inspect:
 3. Modern Text Wrapping (Section 36) → Apply `text-wrap: balance` to headings and limit paragraph line width to `65ch`
 
 Architect disciplined, optically balanced typography systems across web components.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Professional web typography scaling, font pairing, optical sizing, tracking, line height cadence, text-wrap balance, and OpenType features. Use when refining typography systems or text styling..
+- **DO NOT activate when:** The task falls strictly outside typeset domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -67,28 +73,25 @@ $$\text{Tracking}(\text{px}) \propto -\log(\text{FontSize})$$
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Uniform Line Height**: Setting `line-height: 1.5` on large 4rem display headings, causing massive awkward vertical gaps.
-2. **Missing Text Wrap Rules**: Allowing headings to wrap into single orphaned words.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `ui-ux-auditor`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are line-heights inversely proportional to font sizes (Display: 1.1, Body: 1.5)?
-✅ Is `text-wrap: balance` applied to display titles and headings?
-✅ Do numeric columns use tabular numbers (`font-variant-numeric: tabular-nums`)?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

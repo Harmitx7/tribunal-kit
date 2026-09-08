@@ -1,8 +1,8 @@
 ---
 name: svg-animation
 description: SVG stroke draw-on effects, path morphing, animated icons, motion paths, and interactive vector graphics.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - morphing-icons
   - 60fps-animation
@@ -26,6 +26,12 @@ Before engineering SVG path or stroke animations, you MUST inspect:
 3. Non-scaling Stroke rule (Section 83) → Apply `vector-effect="non-scaling-stroke"` if vector elements scale across responsive viewports
 
 Craft crisp, resolution-independent vector animations using CSS, Framer Motion, or GSAP.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring SVG stroke draw-on effects, path morphing, animated icons, motion paths, and interactive vector graphics..
+- **DO NOT activate when:** The task falls strictly outside svg-animation domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -83,27 +89,25 @@ gsap.to('#start-shape', {
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Incorrect `stroke-dasharray` Length**: Guessing path lengths without measuring `path.getTotalLength()`, resulting in clipped or incomplete draw-on animations.
-2. **Missing `fill="none"`**: Forgetting `fill="none"` on draw-on stroke paths, causing black fill shapes during path animation.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `motion-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is `stroke-dasharray` calibrated to match the true SVG path length?
-✅ Is `vector-effect="non-scaling-stroke"` applied if SVG elements scale responsively?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

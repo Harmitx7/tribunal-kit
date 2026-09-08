@@ -27,6 +27,11 @@ Before running framework upgrades, major dependency bumps, or database migration
 2. Database Expand-and-Contract Plan (`schema_validator.js`) → Ensure database column changes add new fields before dropping old ones
 3. Rollback Protocol Verification → Test local rollback procedure (e.g. SQLite backup or DB transaction revert) before applying migration
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `plan-writing` (.agent/skills/plan-writing/SKILL.md): Implementation plan structure, phases, and approval gates
+   - `architecture` (.agent/skills/architecture/SKILL.md): System architecture, module boundaries, and dependency management
+   - `database-design` (.agent/skills/database-design/SKILL.md): Schema normalization, indexing, migration strategy
+
 ---
 
 ## When to Use /migrate

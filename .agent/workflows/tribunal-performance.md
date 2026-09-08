@@ -26,6 +26,11 @@ Before optimizing code or running performance reviews, you MUST inspect:
 2. Measured Baseline Metrics → Run `bundle_analyzer.js` or latency measurements; ban claiming performance improvements without measured proof
 3. 2-Reviewer Performance Gate → Run logic-reviewer and performance-optimizer before approving optimization diffs
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `performance-profiling` (.agent/skills/performance-profiling/SKILL.md): Performance measurement methodology and profiling tools
+   - `60fps-animation` (.agent/skills/60fps-animation/SKILL.md): GPU compositor-friendly properties and layout thrash avoidance
+   - `gsap-performance` (.agent/skills/gsap-performance/SKILL.md): GSAP animation performance optimization and GPU acceleration
+
 ---
 
 ## When to Use /tribunal-performance

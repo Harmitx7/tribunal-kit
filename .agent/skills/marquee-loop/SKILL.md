@@ -1,8 +1,8 @@
 ---
 name: marquee-loop
 description: Hardware-accelerated, seamless, continuous looping marquees for logo rows, testimonials, and announcements with pause-on-hover accessibility.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - 60fps-animation
   - company-logos
@@ -26,6 +26,12 @@ Before implementing marquee loop tracks, you MUST inspect:
 3. Reduced Motion Fallback (Section 61) → Collapse marquee into static wrapped flex grid when `prefers-reduced-motion: reduce` is active
 
 Build seamless 60fps infinite marquee tracks that pause on hover and respect accessibility settings.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Hardware-accelerated, seamless, continuous looping marquees for logo rows, testimonials, and announcements with pause-on-hover accessibility..
+- **DO NOT activate when:** The task falls strictly outside marquee-loop domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -79,28 +85,25 @@ Build seamless 60fps infinite marquee tracks that pause on hover and respect acc
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Missing Duplicate Duplicate Track**: Animating a single track without duplicating content, causing a visible blank jump when the animation loops.
-2. **Missing `animation-play-state: paused` on Hover**: Blocking users from clicking or reading marquee content by refusing to pause on hover/focus.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `performance-optimizer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is the duplicate item track present with `aria-hidden="true"`?
-✅ Is `animation-play-state: paused` active on container hover/focus?
-✅ Does marquee collapse into static grid when `prefers-reduced-motion` is enabled?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

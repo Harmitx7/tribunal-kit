@@ -1,8 +1,8 @@
 ---
 name: page-transition-animation
 description: Page and route transition patterns using the native View Transitions API, Framer Motion AnimatePresence, and Next.js App Router exit animations.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - framer-motion-expert
   - 60fps-animation
@@ -26,6 +26,12 @@ Before engineering route or page transitions, you MUST inspect:
 3. Vertical Displacement Cap → Keep route movement under $12\text{px}$ to prevent visual scroll shifts
 
 Architect smooth, seamless page and route transitions without layout jumps or frozen exit states.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Page and route transition patterns using the native View Transitions API, Framer Motion AnimatePresence, and Next.js App Router exit animations..
+- **DO NOT activate when:** The task falls strictly outside page-transition-animation domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -93,28 +99,25 @@ export function RouteLayoutWrapper({ children }: { children: React.ReactNode }) 
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Broken Next.js App Router Exits**: Forgetting to set a unique `key={pathname}` on `AnimatePresence` children, causing exit animations to be skipped entirely.
-2. **Excessive Vertical Displacement**: Animating pages from `y: 100px` down, causing jarring vertical scroll shifts. Keep route shifts under `12px`.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `motion-reviewer` · `frontend-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is `document.startViewTransition` feature-detected with fallback for older browsers?
-✅ Is `mode="wait"` set on `AnimatePresence` to prevent double-page DOM stacking?
-✅ Is vertical page movement subtle ($\le 12\text{px}$) during transitions?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

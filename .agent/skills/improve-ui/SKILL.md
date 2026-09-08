@@ -1,8 +1,8 @@
 ---
 name: improve-ui
 description: Audit an existing product surface against its own design evidence, identify verified UI problems, and write self-contained implementation plans for another agent. Strictly read-only on product source. Use when asked to review, refine, improve, or clean up an interface without replacing its identity.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - better-ui
   - baseline-ui
@@ -26,6 +26,12 @@ Before auditing UI surfaces or writing remediation plans, you MUST inspect:
 3. Plan Artifact Output (Section 25) → Write implementation plans to `design-plans/` or output structured markdown for execution
 
 Audit a specific product surface against its governing design tokens and guidelines, identify verified UI defects, and generate self-contained implementation plans for remediation.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Audit an existing product surface against its own design evidence, identify verified UI problems, and write self-contained implementation plans for another agent. Strictly read-only on product source. Use when asked to review, refine, improve, or clean up an interface without replacing its identity..
+- **DO NOT activate when:** The task falls strictly outside improve-ui domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -77,23 +83,25 @@ Write a self-contained plan specifying:
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Mutating Code During Audit**: Applying code changes immediately instead of generating a clean implementation plan.
-2. **Re-architecting Scope**: Re-writing component state hooks when only CSS spacing and contrast fixes were requested.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is the audit strictly read-only on product source code?
-✅ Are all reported findings supported by concrete token or layout evidence?
-✅ Is the generated implementation plan self-contained and ready for execution?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
-Confirm all plan recommendations match project CSS custom properties before delivery.
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

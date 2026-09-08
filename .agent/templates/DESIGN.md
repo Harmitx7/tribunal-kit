@@ -10,292 +10,812 @@
 
 Choose **ONE** direction from the list below to define the brand visual system. Do not mix directions:
 
-- **Swiss Precision:** Clean, grid-locked alignment, sans-serif typography, clinical whitespace, no decoration.
-- **Brutalist:** Raw, exposed 1px borders, monospace display fonts, high contrast, sharp corners (`radius: 2px`).
-- **Editorial:** Magazine-inspired layout, large display headings, generous margins, serif headings, single-column reading paths.
-- **Neo-Glassmorphism:** Tinted overlays, high backdrop blur (`blur(20px)`), luminous hairlines, floating modules.
-- **Soft Minimal:** Warm tinted grays (`oklch`), rounded shapes (`radius: 12px`), deep shadows, spacious margins.
-- **Dark Luxury:** Near-black base (`#0A0A0F`), gold/amber accent lines, thin fonts, subtle animations.
-- **Neon Cyberpunk:** Dark base surfaces, highly saturated vivid accents (neon cyan/green), glow effects, sharp geometry.
-- **Retro Analog:** Warm grain overlay, rounded typography, muted color palettes, physical paper-like textures.
+*   **Swiss Precision:** Clean, grid-locked alignment, sans-serif typography, clinical whitespace, neutral OKLCH slates, zero border radii.
+*   **Brutalist:** Raw, exposed 2px borders, monospace display fonts, high-contrast acid accents, hard 4px offset drop shadows, sharp corners.
+*   **Editorial:** Magazine-inspired layout, large display serif headings, warm alabaster surfaces, deep terracotta accents, generous margins.
+*   **Neo-Glassmorphism:** Deep indigo dark base, translucent glass surfaces, high backdrop blur (`blur(20px)`), luminous hairlines, electric cyan accents.
+*   **Soft Minimal:** Warm tinted grays, graphite slate accents, rounded friendly shapes (`radius: 12px`), whisper-soft diffused shadows.
+*   **Dark Luxury:** OLED near-black base (`#08080C`), gold/amber accent lines, ultra-fine hairlines, understated typography, subtle animations.
+*   **Neon Cyberpunk:** Deep space navy base, highly saturated neon green/cyan glow effects, sharp geometry, technical monospace accents.
+*   **Retro Analog:** Warm grain parchment overlay, muted rust and olive tones, rounded typography, tactile paper-like borders.
+
+### Activation Guide
+To activate your chosen identity:
+1. Replace `[Enter Chosen Direction Here]` above with your chosen theme name (e.g. `Swiss Precision`).
+2. Copy the corresponding tokens into your application's root stylesheet (`:root` or `:root[data-theme="..."]`).
+3. Ensure all components consume `var(--...)` tokens rather than hardcoded hex codes.
 
 ---
 
 ## 2. Visual Identities CSS Tokens Definition
 
 ### 1. Swiss Precision
+*Clean, rational, objective modernist design inspired by Josef Müller-Brockmann and the International Typographic Style.*
 
 ```css
 :root {
-  --font-display: 'General Sans', sans-serif;
-  --font-body: 'Satoshi', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  /* Typography */
+  --font-display: "General Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Satoshi", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
 
   /* Surfaces */
-  --bg-base: oklch(0.98 0.002 240);
-  --bg-surface: oklch(1 0 0);
-  --bg-surface-raised: oklch(0.95 0.003 240);
+  --bg-base:             oklch(0.98 0.002 240);
+  --bg-surface:          oklch(1.00 0 0);
+  --bg-surface-raised:   oklch(0.95 0.003 240);
+  --bg-surface-overlay:  oklch(1.00 0 0 / 0.95);
+  --bg-surface-sunken:   oklch(0.92 0.004 240);
+
+  /* Foreground & Text */
+  --text-primary:        oklch(0.18 0.01 240);
+  --text-secondary:      oklch(0.42 0.01 240);
+  --text-muted:          oklch(0.60 0.008 240);
+  --text-inverse:        oklch(0.98 0 0);
 
   /* Accents */
-  --color-primary: oklch(0.2 0.01 240); /* Minimal black/slate */
-  --color-primary-hover: oklch(0.4 0.01 240);
+  --color-primary:       oklch(0.20 0.01 240);        /* Deep Graphite */
+  --color-primary-hover: oklch(0.35 0.01 240);
+  --color-primary-subtle:oklch(0.94 0.004 240);
+  --color-accent:        oklch(0.55 0.22 25);         /* International Klein Blue or Swiss Red */
 
-  /* Spacing Grid */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
+  /* Functional Status */
+  --status-success:      oklch(0.55 0.16 145);
+  --status-warning:      oklch(0.68 0.16 75);
+  --status-error:        oklch(0.52 0.22 25);
+  --status-info:         oklch(0.52 0.18 245);
 
-  /* Radii */
+  /* Spacing Grid (Strict 8px system) */
+  --space-2xs: 2px;
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Radii (Strict zero radius) */
+  --radius-xs: 0px;
   --radius-sm: 0px;
   --radius-md: 0px;
   --radius-lg: 0px;
+  --radius-full: 0px;
+
+  /* Borders & Dividers */
+  --border-subtle: 1px solid oklch(0.88 0.003 240);
+  --border-strong: 1px solid oklch(0.18 0.01 240);
+  --border-focus:  2px solid oklch(0.20 0.01 240);
 
   /* Elevation */
   --shadow-sm: none;
   --shadow-md: none;
-  --border-subtle: oklch(90% 0.002 240);
+  --shadow-lg: 0 8px 0 oklch(0.18 0.01 240 / 0.15);
 }
 ```
+
+---
 
 ### 2. Brutalist
+*Uncompromising raw aesthetics, exposed structural outlines, monospace dominance, and hard cast shadows.*
 
 ```css
 :root {
-  --font-display: 'JetBrains Mono', monospace;
-  --font-body: 'General Sans', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  /* Typography */
+  --font-display: "Space Grotesk", "Impact", sans-serif;
+  --font-body: "General Sans", -apple-system, sans-serif;
+  --font-mono: "Space Mono", "JetBrains Mono", monospace;
 
-  --bg-base: oklch(1 0 0);
-  --bg-surface: oklch(1 0 0);
-  --bg-surface-raised: oklch(0.95 0.005 240);
+  /* Surfaces */
+  --bg-base:             oklch(1.00 0 0);
+  --bg-surface:          oklch(1.00 0 0);
+  --bg-surface-raised:   oklch(0.96 0.005 140);
+  --bg-surface-overlay:  oklch(1.00 0 0);
+  --bg-surface-sunken:   oklch(0.92 0.01 140);
 
-  --color-primary: oklch(0.6 0.28 140); /* Acid Green */
-  --color-primary-hover: oklch(0.5 0.28 140);
+  /* Foreground & Text */
+  --text-primary:        oklch(0.10 0.01 240);
+  --text-secondary:      oklch(0.35 0.01 240);
+  --text-muted:          oklch(0.55 0.01 240);
+  --text-inverse:        oklch(1.00 0 0);
 
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
+  /* Accents */
+  --color-primary:       oklch(0.60 0.28 140);        /* Acid Lime */
+  --color-primary-hover: oklch(0.50 0.28 140);
+  --color-primary-subtle:oklch(0.93 0.10 140);
+  --color-accent:        oklch(0.65 0.25 350);        /* Cyber Pink */
 
+  /* Functional Status */
+  --status-success:      oklch(0.60 0.28 140);
+  --status-warning:      oklch(0.75 0.20 85);
+  --status-error:        oklch(0.55 0.25 25);
+  --status-info:         oklch(0.55 0.20 230);
+
+  /* Spacing */
+  --space-2xs: 2px;
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Radii */
+  --radius-xs: 1px;
   --radius-sm: 2px;
   --radius-md: 2px;
-  --radius-lg: 2px;
+  --radius-lg: 3px;
+  --radius-full: 9999px;
 
-  --shadow-sm: 2px 2px 0px oklch(10% 0.01 240); /* Hard drop shadows */
-  --shadow-md: 4px 4px 0px oklch(10% 0.01 240);
-  --border-subtle: 2px solid oklch(10% 0.01 240);
+  /* Borders & Dividers (Heavy outlines) */
+  --border-subtle: 2px solid oklch(0.10 0.01 240);
+  --border-strong: 3px solid oklch(0.10 0.01 240);
+  --border-focus:  3px solid oklch(0.60 0.28 140);
+
+  /* Elevation (Hard drop-shadows with zero blur) */
+  --shadow-sm: 2px 2px 0px oklch(0.10 0.01 240);
+  --shadow-md: 4px 4px 0px oklch(0.10 0.01 240);
+  --shadow-lg: 8px 8px 0px oklch(0.10 0.01 240);
 }
 ```
 
+---
+
 ### 3. Editorial
+*Sophisticated literary elegance, high editorial serif headings, warm creamy paper textures, and generous margins.*
 
 ```css
 :root {
-  --font-display: 'Playfair Display', serif;
-  --font-body: 'Source Sans 3', sans-serif;
-  --font-mono: 'Courier New', monospace;
+  /* Typography */
+  --font-display: "Playfair Display", "Newsreader", Georgia, serif;
+  --font-body: "Source Sans 3", "Satoshi", sans-serif;
+  --font-mono: "Courier Prime", "Courier New", monospace;
 
-  --bg-base: oklch(0.97 0.005 60); /* Warm alabaster tint */
-  --bg-surface: oklch(0.99 0.002 60);
-  --bg-surface-raised: oklch(0.94 0.008 60);
+  /* Surfaces */
+  --bg-base:             oklch(0.97 0.006 65);        /* Warm Alabaster */
+  --bg-surface:          oklch(0.99 0.003 65);
+  --bg-surface-raised:   oklch(0.94 0.009 65);
+  --bg-surface-overlay:  oklch(0.99 0.003 65 / 0.95);
+  --bg-surface-sunken:   oklch(0.91 0.012 65);
 
-  --color-primary: oklch(0.35 0.12 25); /* Deep terracotta red */
-  --color-primary-hover: oklch(0.25 0.12 25);
+  /* Foreground & Text */
+  --text-primary:        oklch(0.20 0.02 55);         /* Deep Espresso Charcoal */
+  --text-secondary:      oklch(0.42 0.02 55);
+  --text-muted:          oklch(0.62 0.015 65);
+  --text-inverse:        oklch(0.98 0.005 65);
 
-  --space-xs: 6px;
-  --space-sm: 12px;
-  --space-md: 24px;
-  --space-lg: 36px;
-  --space-xl: 48px;
+  /* Accents */
+  --color-primary:       oklch(0.38 0.13 30);         /* Terracotta Sienna */
+  --color-primary-hover: oklch(0.28 0.13 30);
+  --color-primary-subtle:oklch(0.93 0.03 30);
+  --color-accent:        oklch(0.45 0.10 85);         /* Antique Olive Amber */
 
+  /* Functional Status */
+  --status-success:      oklch(0.50 0.12 140);
+  --status-warning:      oklch(0.65 0.14 75);
+  --status-error:        oklch(0.48 0.18 28);
+  --status-info:         oklch(0.48 0.12 230);
+
+  /* Spacing (Generous editorial flow) */
+  --space-2xs: 3px;
+  --space-xs:  6px;
+  --space-sm:  12px;
+  --space-md:  24px;
+  --space-lg:  36px;
+  --space-xl:  48px;
+  --space-2xl: 72px;
+  --space-3xl: 96px;
+
+  /* Radii */
+  --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
+  --radius-full: 9999px;
 
-  --shadow-sm: 0 2px 8px oklch(20% 0.01 60 / 0.05);
-  --shadow-md: 0 8px 24px oklch(20% 0.01 60 / 0.08);
-  --border-subtle: oklch(88% 0.01 60);
+  /* Borders & Dividers */
+  --border-subtle: 1px solid oklch(0.88 0.01 65);
+  --border-strong: 1px solid oklch(0.20 0.02 55);
+  --border-focus:  2px solid oklch(0.38 0.13 30);
+
+  /* Elevation (Soft paper elevation) */
+  --shadow-sm: 0 2px 8px oklch(0.20 0.02 55 / 0.05);
+  --shadow-md: 0 8px 24px oklch(0.20 0.02 55 / 0.08);
+  --shadow-lg: 0 16px 48px oklch(0.20 0.02 55 / 0.12);
 }
 ```
+
+---
 
 ### 4. Neo-Glassmorphism
+*Deep luminous indigo backdrops, progressive frosted glass layers, neon cyan accents, and 1px luminous hairlines.*
 
 ```css
 :root {
-  --font-display: 'Clash Display', sans-serif;
-  --font-body: 'Satoshi', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  /* Typography */
+  --font-display: "Clash Display", "Plus Jakarta Sans", sans-serif;
+  --font-body: "Satoshi", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 
-  --bg-base: oklch(0.12 0.01 220); /* Deep indigo gradient base */
-  --bg-surface: oklch(100% 0 0 / 0.15); /* Translucent glass */
-  --bg-surface-raised: oklch(100% 0 0 / 0.25);
+  /* Surfaces */
+  --bg-base:             oklch(0.12 0.018 250);       /* Midnight Obsidian */
+  --bg-surface:          oklch(1.00 0 0 / 0.08);      /* Translucent Glass */
+  --bg-surface-raised:   oklch(1.00 0 0 / 0.14);
+  --bg-surface-overlay:  oklch(0.14 0.02 250 / 0.85);
+  --bg-surface-sunken:   oklch(0.08 0.01 250 / 0.50);
 
-  --color-primary: oklch(0.7 0.22 200); /* Electric cyan */
-  --color-primary-hover: oklch(0.6 0.22 200);
+  /* Foreground & Text */
+  --text-primary:        oklch(0.98 0.005 240);
+  --text-secondary:      oklch(0.78 0.015 240);
+  --text-muted:          oklch(0.55 0.02 240);
+  --text-inverse:        oklch(0.12 0.02 250);
 
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
+  /* Accents */
+  --color-primary:       oklch(0.72 0.20 205);        /* Luminescent Electric Cyan */
+  --color-primary-hover: oklch(0.62 0.20 205);
+  --color-primary-subtle:oklch(0.72 0.20 205 / 0.15);
+  --color-accent:        oklch(0.75 0.18 310);        /* Luminescent Orchid */
 
-  --radius-sm: 4px;
+  /* Functional Status */
+  --status-success:      oklch(0.72 0.20 150);
+  --status-warning:      oklch(0.78 0.18 80);
+  --status-error:        oklch(0.65 0.22 25);
+  --status-info:         oklch(0.72 0.20 220);
+
+  /* Spacing */
+  --space-2xs: 2px;
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
   --radius-md: 16px;
   --radius-lg: 28px;
+  --radius-full: 9999px;
 
-  --shadow-sm: 0 4px 12px oklch(0% 0 0 / 0.15);
-  --shadow-md: 0 12px 32px oklch(0% 0 0 / 0.25);
-  --border-subtle: 1px solid oklch(100% 0 0 / 0.18); /* Glass hairline glow */
+  /* Borders & Glass Filters */
+  --backdrop-blur: blur(20px) saturate(180%);
+  --border-subtle: 1px solid oklch(1.00 0 0 / 0.12);
+  --border-strong: 1px solid oklch(1.00 0 0 / 0.24);
+  --border-focus:  2px solid oklch(0.72 0.20 205);
+
+  /* Elevation (Soft luminous colored glows) */
+  --shadow-sm: 0 4px 16px oklch(0% 0 0 / 0.25);
+  --shadow-md: 0 12px 32px oklch(0% 0 0 / 0.40);
+  --shadow-lg: 0 20px 60px oklch(0% 0 0 / 0.55), 0 0 30px oklch(0.72 0.20 205 / 0.15);
 }
 ```
 
+---
+
 ### 5. Soft Minimal
+*Understated Nordic restraint, warm organic off-whites, gentle rounded corners, whisper-quiet shadows, and peaceful spacing.*
 
 ```css
 :root {
-  --font-display: 'Geist Sans', sans-serif;
-  --font-body: 'Geist Sans', sans-serif;
-  --font-mono: 'Geist Mono', monospace;
+  /* Typography */
+  --font-display: "Geist Sans", "Inter", -apple-system, sans-serif;
+  --font-body: "Geist Sans", "Inter", -apple-system, sans-serif;
+  --font-mono: "Geist Mono", "SF Mono", monospace;
 
-  --bg-base: oklch(0.98 0.003 80); /* Warm off-white */
-  --bg-surface: oklch(1 0 0);
-  --bg-surface-raised: oklch(0.96 0.005 80);
+  /* Surfaces */
+  --bg-base:             oklch(0.98 0.003 80);        /* Warm Parchment Slate */
+  --bg-surface:          oklch(1.00 0 0);
+  --bg-surface-raised:   oklch(0.96 0.005 80);
+  --bg-surface-overlay:  oklch(1.00 0 0 / 0.96);
+  --bg-surface-sunken:   oklch(0.93 0.006 80);
 
-  --color-primary: oklch(0.4 0.06 200); /* Muted graphite slate */
-  --color-primary-hover: oklch(0.3 0.06 200);
+  /* Foreground & Text */
+  --text-primary:        oklch(0.24 0.015 240);
+  --text-secondary:      oklch(0.48 0.015 240);
+  --text-muted:          oklch(0.66 0.01 240);
+  --text-inverse:        oklch(0.98 0 0);
 
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
+  /* Accents */
+  --color-primary:       oklch(0.36 0.05 240);        /* Warm Graphite */
+  --color-primary-hover: oklch(0.26 0.05 240);
+  --color-primary-subtle:oklch(0.94 0.01 240);
+  --color-accent:        oklch(0.58 0.12 180);        /* Sage Teal */
 
+  /* Functional Status */
+  --status-success:      oklch(0.58 0.12 145);
+  --status-warning:      oklch(0.72 0.13 80);
+  --status-error:        oklch(0.56 0.18 25);
+  --status-info:         oklch(0.55 0.14 240);
+
+  /* Spacing */
+  --space-2xs: 2px;
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Radii */
+  --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 12px;
   --radius-lg: 20px;
+  --radius-full: 9999px;
 
-  --shadow-sm: 0 2px 4px oklch(0% 0 0 / 0.02);
-  --shadow-md: 0 8px 24px oklch(0% 0 0 / 0.04);
-  --border-subtle: oklch(93% 0.003 80);
+  /* Borders & Dividers */
+  --border-subtle: 1px solid oklch(0.92 0.004 80);
+  --border-strong: 1px solid oklch(0.78 0.01 80);
+  --border-focus:  2px solid oklch(0.36 0.05 240);
+
+  /* Elevation (Ultra-diffused feather shadows) */
+  --shadow-sm: 0 1px 3px oklch(0.20 0.01 240 / 0.03), 0 1px 2px oklch(0.20 0.01 240 / 0.02);
+  --shadow-md: 0 4px 16px oklch(0.20 0.01 240 / 0.05), 0 2px 6px oklch(0.20 0.01 240 / 0.03);
+  --shadow-lg: 0 12px 36px oklch(0.20 0.01 240 / 0.08), 0 4px 12px oklch(0.20 0.01 240 / 0.04);
 }
 ```
+
+---
 
 ### 6. Dark Luxury
+*Private-banking exclusivity, deep OLED black canvas, gold/champagne hairline accents, and razor-sharp typographic precision.*
 
 ```css
 :root {
-  --font-display: 'Cabinet Grotesk', sans-serif;
-  --font-body: 'Satoshi', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  /* Typography */
+  --font-display: "Cabinet Grotesk", "Cormorant Garamond", serif;
+  --font-body: "Satoshi", "Outfit", -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 
-  --bg-base: oklch(0.08 0.005 250); /* OLED-friendly black */
-  --bg-surface: oklch(0.12 0.008 250);
-  --bg-surface-raised: oklch(0.16 0.01 250);
+  /* Surfaces */
+  --bg-base:             oklch(0.08 0.005 250);       /* OLED Jet Black */
+  --bg-surface:          oklch(0.12 0.008 250);
+  --bg-surface-raised:   oklch(0.16 0.010 250);
+  --bg-surface-overlay:  oklch(0.12 0.008 250 / 0.92);
+  --bg-surface-sunken:   oklch(0.05 0.003 250);
 
-  --color-primary: oklch(0.78 0.12 85); /* Gold/Amber */
+  /* Foreground & Text */
+  --text-primary:        oklch(0.95 0.005 85);
+  --text-secondary:      oklch(0.74 0.015 85);
+  --text-muted:          oklch(0.48 0.015 85);
+  --text-inverse:        oklch(0.08 0.005 250);
+
+  /* Accents */
+  --color-primary:       oklch(0.78 0.12 85);         /* Muted Imperial Gold */
   --color-primary-hover: oklch(0.68 0.12 85);
+  --color-primary-subtle:oklch(0.78 0.12 85 / 0.12);
+  --color-accent:        oklch(0.85 0.08 90);         /* Champagne Pearl */
 
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
+  /* Functional Status */
+  --status-success:      oklch(0.65 0.14 145);
+  --status-warning:      oklch(0.78 0.12 85);
+  --status-error:        oklch(0.58 0.20 25);
+  --status-info:         oklch(0.62 0.12 240);
 
-  --radius-sm: 2px;
+  /* Spacing */
+  --space-2xs: 2px;
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Radii */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 12px;
+  --radius-full: 9999px;
 
-  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.3);
-  --shadow-md: 0 4px 16px oklch(0% 0 0 / 0.5);
-  --border-subtle: oklch(22% 0.01 250 / 0.5); /* Thin hairline borders */
+  /* Borders & Hairlines */
+  --border-subtle: 1px solid oklch(0.24 0.01 250);
+  --border-strong: 1px solid oklch(0.78 0.12 85 / 0.40);
+  --border-focus:  2px solid oklch(0.78 0.12 85);
+
+  /* Elevation */
+  --shadow-sm: 0 2px 6px oklch(0 0 0 / 0.40);
+  --shadow-md: 0 8px 24px oklch(0 0 0 / 0.60);
+  --shadow-lg: 0 16px 48px oklch(0 0 0 / 0.80), 0 0 1px oklch(0.78 0.12 85 / 0.25);
 }
 ```
+
+---
 
 ### 7. Neon Cyberpunk
+*High-velocity terminal engineering, deep space navy, vivid radiant lasers, chromatic contrast, and angular geometry.*
 
 ```css
 :root {
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-body: 'General Sans', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  /* Typography */
+  --font-display: "Space Grotesk", "Syne", sans-serif;
+  --font-body: "General Sans", "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
 
-  --bg-base: oklch(0.05 0.01 280); /* Deep space navy */
-  --bg-surface: oklch(0.08 0.015 280);
-  --bg-surface-raised: oklch(0.12 0.02 280);
+  /* Surfaces */
+  --bg-base:             oklch(0.05 0.012 280);       /* Void Navy */
+  --bg-surface:          oklch(0.09 0.018 280);
+  --bg-surface-raised:   oklch(0.14 0.024 280);
+  --bg-surface-overlay:  oklch(0.09 0.018 280 / 0.92);
+  --bg-surface-sunken:   oklch(0.03 0.008 280);
 
-  --color-primary: oklch(0.75 0.28 160); /* Neon green glow */
+  /* Foreground & Text */
+  --text-primary:        oklch(0.98 0.01 200);
+  --text-secondary:      oklch(0.76 0.03 200);
+  --text-muted:          oklch(0.50 0.04 280);
+  --text-inverse:        oklch(0.05 0.012 280);
+
+  /* Accents */
+  --color-primary:       oklch(0.75 0.28 160);        /* Acid Neon Emerald */
   --color-primary-hover: oklch(0.85 0.28 160);
+  --color-primary-subtle:oklch(0.75 0.28 160 / 0.15);
+  --color-accent:        oklch(0.72 0.26 330);        /* Plasma Magenta */
 
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
+  /* Functional Status */
+  --status-success:      oklch(0.75 0.28 160);
+  --status-warning:      oklch(0.82 0.22 95);
+  --status-error:        oklch(0.68 0.28 25);
+  --status-info:         oklch(0.72 0.24 230);
 
-  --radius-sm: 0px;
+  /* Spacing */
+  --space-2xs: 2px;
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  16px;
+  --space-lg:  24px;
+  --space-xl:  32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Radii */
+  --radius-xs: 0px;
+  --radius-sm: 2px;
   --radius-md: 4px;
   --radius-lg: 8px;
+  --radius-full: 9999px;
 
-  --shadow-sm: 0 0 8px oklch(0.75 0.28 160 / 0.2);
-  --shadow-md: 0 0 16px oklch(0.75 0.28 160 / 0.4);
-  --border-subtle: oklch(20% 0.03 280);
+  /* Borders & Glows */
+  --border-subtle: 1px solid oklch(0.22 0.04 280);
+  --border-strong: 1px solid oklch(0.75 0.28 160 / 0.50);
+  --border-focus:  2px solid oklch(0.75 0.28 160);
+
+  /* Elevation (Neon radiance glows) */
+  --shadow-sm: 0 0 10px oklch(0.75 0.28 160 / 0.20);
+  --shadow-md: 0 0 20px oklch(0.75 0.28 160 / 0.35);
+  --shadow-lg: 0 0 35px oklch(0.75 0.28 160 / 0.50), 0 0 70px oklch(0.72 0.26 330 / 0.25);
 }
 ```
 
+---
+
 ### 8. Retro Analog
+*Warm archival grain, vintage print craftsmanship, typewriter monospace elements, and physical print textures.*
 
 ```css
 :root {
-  --font-display: 'Clash Display', sans-serif;
-  --font-body: 'Switzer', sans-serif;
-  --font-mono: 'Courier New', monospace;
+  /* Typography */
+  --font-display: "Clash Display", "Cooper Black", serif;
+  --font-body: "Switzer", "Courier Prime", monospace, sans-serif;
+  --font-mono: "Courier Prime", "Courier New", monospace;
 
-  --bg-base: oklch(0.94 0.015 70); /* Warm paper beige */
-  --bg-surface: oklch(0.96 0.015 70);
-  --bg-surface-raised: oklch(0.91 0.02 70);
+  /* Surfaces */
+  --bg-base:             oklch(0.93 0.018 72);        /* Archival Newsprint */
+  --bg-surface:          oklch(0.96 0.015 72);
+  --bg-surface-raised:   oklch(0.90 0.022 72);
+  --bg-surface-overlay:  oklch(0.96 0.015 72 / 0.95);
+  --bg-surface-sunken:   oklch(0.87 0.025 72);
 
-  --color-primary: oklch(0.5 0.18 45); /* Muted rust brown */
-  --color-primary-hover: oklch(0.4 0.18 45);
+  /* Foreground & Text */
+  --text-primary:        oklch(0.22 0.025 50);        /* Deep Raw Umber */
+  --text-secondary:      oklch(0.42 0.025 50);
+  --text-muted:          oklch(0.60 0.020 60);
+  --text-inverse:        oklch(0.96 0.015 72);
 
-  --space-xs: 5px;
-  --space-sm: 10px;
-  --space-md: 20px;
-  --space-lg: 30px;
-  --space-xl: 40px;
+  /* Accents */
+  --color-primary:       oklch(0.50 0.18 45);         /* Burnished Rust Amber */
+  --color-primary-hover: oklch(0.40 0.18 45);
+  --color-primary-subtle:oklch(0.90 0.04 45);
+  --color-accent:        oklch(0.48 0.12 120);        /* Vintage Forest Olive */
 
+  /* Functional Status */
+  --status-success:      oklch(0.48 0.12 135);
+  --status-warning:      oklch(0.66 0.15 75);
+  --status-error:        oklch(0.46 0.18 30);
+  --status-info:         oklch(0.48 0.10 220);
+
+  /* Spacing */
+  --space-2xs: 3px;
+  --space-xs:  5px;
+  --space-sm:  10px;
+  --space-md:  20px;
+  --space-lg:  30px;
+  --space-xl:  40px;
+  --space-2xl: 60px;
+  --space-3xl: 80px;
+
+  /* Radii */
+  --radius-xs: 2px;
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
+  --radius-full: 9999px;
 
-  --shadow-sm: 1px 1px 2px oklch(20% 0.02 70 / 0.08);
-  --shadow-md: 3px 3px 6px oklch(20% 0.02 70 / 0.12);
-  --border-subtle: oklch(85% 0.02 70);
+  /* Borders & Dividers */
+  --border-subtle: 1px solid oklch(0.84 0.02 72);
+  --border-strong: 2px solid oklch(0.22 0.025 50);
+  --border-focus:  2px solid oklch(0.50 0.18 45);
+
+  /* Elevation (Tactile offset print shadows) */
+  --shadow-sm: 1px 1px 0px oklch(0.22 0.025 50 / 0.30);
+  --shadow-md: 3px 3px 0px oklch(0.22 0.025 50 / 0.40);
+  --shadow-lg: 6px 6px 0px oklch(0.22 0.025 50 / 0.50);
 }
 ```
 
 ---
 
-## 3. Typographical Scaling (Fluid Type)
+## 3. Typographical Architecture & Fluid Scale
 
-- Headings must use `clamp()` to scale fluidly with the screen width.
-- Always include `text-wrap: balance` to prevent typographical orphans.
-- Body text line length must be clamped to `65ch` max width.
+Every interface must use mathematical fluid scaling via CSS `clamp()` to scale seamlessly across viewports without breakpoint jumps.
+
+### Fluid Typography Scale
+```css
+:root {
+  /* Display / Hero */
+  --text-display: clamp(2.5rem, 1.8rem + 3.5vw, 4.5rem);   /* 40px -> 72px */
+  --line-display: 1.05;
+  --tracking-display: -0.03em;
+
+  /* Heading 1 */
+  --text-h1: clamp(2rem, 1.5rem + 2.5vw, 3.25rem);        /* 32px -> 52px */
+  --line-h1: 1.15;
+  --tracking-h1: -0.025em;
+
+  /* Heading 2 */
+  --text-h2: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);      /* 24px -> 36px */
+  --line-h2: 1.25;
+  --tracking-h2: -0.02em;
+
+  /* Heading 3 */
+  --text-h3: clamp(1.25rem, 1.1rem + 0.75vw, 1.625rem);   /* 20px -> 26px */
+  --line-h3: 1.35;
+  --tracking-h3: -0.015em;
+
+  /* Body Typography */
+  --text-body-lg: clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem); /* 18px -> 20px */
+  --text-body:    clamp(0.9375rem, 0.9rem + 0.2vw, 1rem);     /* 15px -> 16px */
+  --text-body-sm: clamp(0.8125rem, 0.8rem + 0.1vw, 0.875rem); /* 13px -> 14px */
+  --text-caption: 0.75rem;                                    /* 12px */
+
+  --line-body: 1.6;
+  --tracking-body: 0em;
+  --tracking-caps: 0.06em;
+}
+```
+
+### Typographic Invariants
+1. **Headline Balancing:** Always add `text-wrap: balance` on all `h1`, `h2`, `h3` tags to eliminate orphan words.
+2. **Body Text Wrapping:** Add `text-wrap: pretty` on long-form paragraphs to prevent dangling end lines.
+3. **Reading Line Length:** Never exceed `65ch` on prose container widths (`max-width: 65ch`).
+4. **Tabular Numerics:** All numbers, financial metrics, counters, and table data MUST use `font-variant-numeric: tabular-nums` to prevent horizontal jitter during updates.
+5. **Tracking Cadence:** Tighter tracking on larger headings (`-0.025em`), neutral on body (`0em`), and expanded tracking on uppercase labels (`0.06em`).
 
 ---
 
-## 4. Spacing Rules & Nested Radii
+## 4. Spatial Discipline, Container Queries & Concentric Geometry
 
-- Maintain the 8px grid alignment.
-- Nested Radius Formula: `outer_radius = inner_radius + padding_inner`.
+### The 8-Point Spatial Grid
+All margins, paddings, and layout gaps MUST adhere to multiples of the 8px spatial grid, with 4px half-steps permitted only for dense micro-controls (e.g., chips, tags, inputs):
+- `4px` (xs): Tight component internals, icon-to-text spacing.
+- `8px` (sm): Standard intra-component padding, button gaps.
+- `16px` (md): Card padding, list item separation.
+- `24px` (lg): Section grid gaps, modal content padding.
+- `32px` (xl): Page column gutters, card container separation.
+- `48px` (2xl): Section breaks on mobile.
+- `64px`–`96px` (3xl): Major landing section boundaries on desktop.
+
+### Concentric Nested Radius Law
+To avoid visual tension caused by non-concentric curves, the outer radius MUST equal the inner radius plus the inner padding:
+
+$$\mathbf{R_{\text{outer}} = R_{\text{inner}} + P_{\text{padding}}}$$
+
+```css
+/* Concentric Example: Card with an internal Button/Image */
+.parent-card {
+  padding: 16px;                     /* P_padding = 16px */
+  border-radius: 24px;               /* R_outer = 8px + 16px = 24px */
+}
+
+.child-element {
+  border-radius: 8px;                /* R_inner = 8px */
+}
+```
+
+### Container Queries Architecture
+For modular components that adapt to their container rather than the screen viewport:
+```css
+.card-container {
+  container-type: inline-size;
+  container-name: card;
+}
+
+@container card (min-width: 480px) {
+  .card-layout {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: var(--space-md);
+  }
+}
+```
 
 ---
 
-## 5. Interaction States & Transitions
+## 5. Interaction Physics, Motion & Micro-Interactions
 
-All buttons and active controls must define styled properties for:
+Every interactive element MUST possess intentional, physical micro-interactions across all five fundamental interaction states.
 
-- `hover`, `focus-visible`, `active`/`pressed`, and `disabled` states.
-- Use spring easing curves: `cubic-bezier(0.34, 1.56, 0.64, 1)`.
+### The 5 Interaction States Matrix
+| State | Visual Behavior | CSS Implementation |
+| :--- | :--- | :--- |
+| **Default** | Baseline resting surface and border | `background-color: var(--bg-surface); border: var(--border-subtle);` |
+| **Hover** | Subtle elevation, background brightness shift (+4% L) | `background-color: var(--color-primary-hover); cursor: pointer;` |
+| **Focus-Visible** | High-contrast double ring outline with 2px offset | `outline: var(--border-focus); outline-offset: 2px;` |
+| **Active / Pressed** | Tactile physical compression (`scale(0.97)`) | `transform: scale(0.97); transition-duration: var(--duration-instant);` |
+| **Disabled** | 50% opacity, desaturated, cursor blocked | `opacity: 0.5; cursor: not-allowed; pointer-events: none;` |
+
+### Motion Tokens & Physics Curves
+```css
+:root {
+  /* Durations */
+  --duration-instant: 100ms;    /* Active press, switches */
+  --duration-fast:    150ms;    /* Hover states, tooltips */
+  --duration-base:    250ms;    /* Dropdowns, dialogs, card expands */
+  --duration-slow:    400ms;    /* Page transitions, drawer slides */
+
+  /* Easing Curves */
+  --ease-spring:     cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Tactile bounce */
+  --ease-out-expo:   cubic-bezier(0.16, 1, 0.3, 1);           /* Snappy deceleration */
+  --ease-smooth:     cubic-bezier(0.4, 0, 0.2, 1);            /* Natural material curve */
+}
+```
+
+### Motion Invariants
+1. **Never Animate Layout Properties:** Only animate compositor-friendly properties (`transform`, `opacity`, `filter`). Never animate `width`, `height`, `margin`, or `top` directly.
+2. **Ban `transition: all`:** Always specify exact properties being transitioned (e.g. `transition: transform var(--duration-fast) var(--ease-spring), opacity var(--duration-fast) ease`).
+3. **Respect Reduced Motion:**
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+```
+
+---
+
+## 6. Elevation, Depth & Layering Architecture
+
+Surfaces must layer cleanly along the Z-axis using dual-shadow illumination (diffuse ambient bounce + sharp contact shadow):
+
+```css
+:root {
+  /* Level 0: Canvas Base (flat) */
+  /* Level 1: Cards & Panels */
+  --shadow-sm:
+    0 1px 2px oklch(0 0 0 / 0.06),
+    0 2px 4px oklch(0 0 0 / 0.04);
+
+  /* Level 2: Menus & Popovers */
+  --shadow-md:
+    0 4px 6px -1px oklch(0 0 0 / 0.08),
+    0 10px 20px -3px oklch(0 0 0 / 0.06);
+
+  /* Level 3: Modals & Drawers */
+  --shadow-lg:
+    0 10px 15px -3px oklch(0 0 0 / 0.10),
+    0 24px 48px -6px oklch(0 0 0 / 0.12);
+
+  /* Level 4: Floating Toasts & Critical Alerts */
+  --shadow-xl:
+    0 20px 25px -5px oklch(0 0 0 / 0.14),
+    0 36px 64px -10px oklch(0 0 0 / 0.16);
+}
+```
+
+### Progressive Backdrop Blur
+For modern floating headers, modals, and sticky action bars:
+```css
+.frosted-overlay {
+  background-color: var(--bg-surface-overlay);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border-bottom: var(--border-subtle);
+}
+```
+
+---
+
+## 7. Core Component Primitives Contract
+
+All generated UI components must adhere to the following architectural contracts:
+
+### 1. Button Primitive
+- **Variants:** `primary`, `secondary`, `outline`, `ghost`, `destructive`.
+- **Sizes:** `sm` (32px h, 12px px), `md` (40px h, 16px px), `lg` (48px h, 20px px).
+- **Invariants:** Must have `display: inline-flex`, `align-items: center`, `justify-content: center`, `gap: var(--space-xs)`.
+- **States:** Active state must use `transform: scale(0.97)` with `--duration-instant`.
+
+### 2. Form Control Primitive (Inputs & Selects)
+- **Minimum Target Size:** Minimum height `40px` (desktop), `44px` (touch devices).
+- **Resting:** `border: var(--border-subtle); background: var(--bg-surface);`.
+- **Focus:** `border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-subtle); outline: none;`.
+- **Error:** `border-color: var(--status-error); box-shadow: 0 0 0 3px oklch(0.55 0.20 25 / 0.15);`.
+
+### 3. Modal / Dialog Primitive
+- **Scrim Backdrop:** `background-color: oklch(0 0 0 / 0.50); backdrop-filter: blur(8px);`.
+- **Placement:** Centered with spring scale entrance (`scale(0.95) -> scale(1.00)`).
+- **Accessibility:** Must trap keyboard focus (`Tab` navigation constrained inside dialog), `Escape` to close, return focus to trigger on exit.
+
+---
+
+## 8. Anti-AI Clichés & Tribunal Aesthetic Invariants
+
+AI models routinely generate bland, template-like interfaces unless strictly constrained. All coding agents MUST comply with the following Anti-Slop Table:
+
+| Anti-Pattern (AI Slop) | Tribunal Standard | Reason / Rationale |
+| :--- | :--- | :--- |
+| **Generic Purple/Violet Gradients** (`#8B5CF6`) | Use curated brand palette or monochrome slate + high-chroma single accent | Violet gradients are the universal AI cliché stamp. |
+| **Stock Split Hero (Text Left / Image Right)** | Asymmetric editorial typography, interactive terminal, or canvas preview | Overused boilerplate looks like a generic 2020 SaaS template. |
+| **Unreadable Low-Contrast Gray Text** | Minimum contrast APCA Lc ≥ 60 or WCAG 4.5:1 on all surfaces | Faint gray text harms readability and fails accessibility. |
+| **Overuse of Heavy Mesh Gradients** | Crisp solid surfaces, grain texture, or subtle targeted radial spotlight glows | Mesh gradients look noisy, generic, and degrade GPU battery life. |
+| **Universal `transition: all 0.3s`** | Declare explicit animated properties with spring or exponential easing curves | Animating `all` causes layout jank and performance degradation. |
+| **Nested Rounded Corners Without Math** | Concentric radius formula: $R_{outer} = R_{inner} + P_{padding}$ | Non-concentric nested radii create jarring visual warping. |
+| **Empty States with Dead Ends** | Empty states must provide contextual guidance + a primary Call to Action | Prevents confusing drop-offs for first-time users. |
+
+---
+
+## 9. Accessibility & APCA Contrast Invariants
+
+Tribunal Kit enforces strict compliance with WCAG 2.2 AA and modern APCA (Accessible Perceptual Contrast Algorithm) standards:
+
+1. **APCA Contrast Thresholds:**
+   - Primary Body Copy: Minimum $L^c \ge 60$ (preferred $L^c \ge 75$).
+   - Large Headings ($\ge 24\text{px}$): Minimum $L^c \ge 45$.
+   - Interactive Control Borders & Icons: Minimum $L^c \ge 45$.
+2. **Focus Visibility:**
+   - Every interactive control must have an unmistakable `:focus-visible` state.
+   - Never use `outline: none` without providing an equivalent high-contrast focus indicator.
+3. **Touch Targets:**
+   - Minimum bounding box of $44\text{px} \times 44\text{px}$ on touch viewports (`@media (pointer: coarse)`).
+   - Minimum bounding box of $36\text{px} \times 36\text{px}$ on desktop viewports.
+4. **Non-Color Dependency:**
+   - Never convey error, warning, or status strictly through color alone. Always pair status badges with an icon and text label.
+
+---
+
+## 10. Multi-Platform Synchronization (Web, Tailwind, Tokens JSON)
+
+### Using Tokens in Tailwind CSS v4
+```css
+@theme {
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-bg-base: var(--bg-base);
+  --color-bg-surface: var(--bg-surface);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+}
+```
+
+### Synchronization with `design-tokens.json`
+All tokens in `DESIGN.md` have 1:1 representations in `design-tokens.json` following the W3C Design Tokens Community Group standard. Agents generating new components must verify that token variable names match both files.

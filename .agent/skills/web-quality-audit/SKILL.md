@@ -1,8 +1,8 @@
 ---
 name: web-quality-audit
 description: Web quality auditing skill for Lighthouse-style analysis across Performance, Accessibility, Best Practices, and SEO signals.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - web-design-guidelines
   - fixing-accessibility
@@ -26,6 +26,12 @@ Before executing web quality audits or Lighthouse-style evaluations, you MUST in
 3. Async Script Loading (Section 46) → Enforce `async` or `defer` attributes on all third-party script tags in `<head>`
 
 Conduct a comprehensive multi-pillar web quality audit covering Performance, Accessibility, Best Practices, and SEO signals.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Web quality auditing skill for Lighthouse-style analysis across Performance, Accessibility, Best Practices, and SEO signals..
+- **DO NOT activate when:** The task falls strictly outside web-quality-audit domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -54,28 +60,25 @@ Conduct a comprehensive multi-pillar web quality audit covering Performance, Acc
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Ignoring Image Dimensions**: Omitting `width` and `height` on images, causing layout shifts (CLS penalties).
-2. **Synchronous Heavy Scripts**: Loading render-blocking third-party scripts in the document `<head>` without `async` or `defer`.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `vitals-reviewer` · `accessibility-reviewer` · `seo-specialist`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are explicit `width` and `height` aspect ratios declared on all media tags?
-✅ Are script tags in the `<head>` marked with `defer` or `async`?
-✅ Is text contrast WCAG AA compliant across all components?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

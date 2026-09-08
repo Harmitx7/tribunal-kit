@@ -1,0 +1,20 @@
+{
+  "name": "tribunal-kit",
+  "interface": {
+    "displayName": "Tribunal Kit"
+  },
+  "plugins": [
+    {
+      "name": "tribunal-kit",
+      "source": {
+        "source": "url",
+        "url": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

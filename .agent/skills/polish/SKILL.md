@@ -1,8 +1,8 @@
 ---
 name: polish
 description: Final production quality pass for spacing, alignment, visual rhythm, dark mode consistency, and edge states. Use before shipping or merging a feature to ensure 100% UI fidelity.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - better-ui
   - harden
@@ -27,6 +27,12 @@ Before running a pre-ship quality pass, you MUST inspect:
 
 The comprehensive pre-ship inspection checklist to verify that code meets top-tier design-engineering standards.
 
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Final production quality pass for spacing, alignment, visual rhythm, dark mode consistency, and edge states. Use before shipping or merging a feature to ensure 100% UI fidelity..
+- **DO NOT activate when:** The task falls strictly outside polish domain or belongs to a different dedicated specialist.
+
 ---
 
 ## Pre-Ship 10-Point Polish Checklist
@@ -46,28 +52,25 @@ The comprehensive pre-ship inspection checklist to verify that code meets top-ti
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Shipping without truncation**: Letting long user inputs overflow card boundaries or break layouts.
-2. **Missing Dark Mode Contrast**: Using dark text on dark surfaces in theme toggles.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `ui-ux-auditor` · `accessibility-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Have all 10 polish items been verified across light and dark modes?
-✅ Is text truncation handled for edge-case content lengths?
-✅ Do interactive elements show visible focus indicators during keyboard tab testing?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

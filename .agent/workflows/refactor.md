@@ -27,6 +27,12 @@ Before executing structural refactoring or extracting interfaces, you MUST inspe
 2. Baseline Test Suite Verification (`test_runner.js`) → Ensure all unit and integration tests pass BEFORE initiating refactor steps
 3. Observable Behavior Preservation → Enforce zero change in public function behavior or API contracts; verify tests pass cleanly after every step
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+   - `architecture` (.agent/skills/architecture/SKILL.md): System architecture, module boundaries, and dependency management
+   - `codebase-design` (.agent/skills/codebase-design/SKILL.md): Deep module design with small interfaces and clean seams
+   - `tdd-workflow` (.agent/skills/tdd-workflow/SKILL.md): Red-Green-Refactor TDD cycle and test-first development
+
 ---
 
 ## The Refactoring Contract

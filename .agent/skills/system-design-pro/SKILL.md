@@ -2,8 +2,8 @@
 name: system-design-pro
 description: Industry-level system design mastery for interviews and production. The 6-step design framework, scale estimation (DAU→QPS→storage→bandwidth), core building blocks (load balancers L4/L7, CDN, caches, queues), database selection matrix, CAP Theorem applied, and reference designs for URL shortener, rate limiter, Twitter feed, distributed cache, and notification system. Use when designing systems for scale, conducting architecture reviews, or preparing system design discussions.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - architecture
   - database-design
@@ -25,6 +25,12 @@ Before designing system architecture or writing scale proposals, you MUST inspec
 2. Quantified Scale Estimation (Section 65) → Calculate read/write QPS, storage growth, and bandwidth before selecting database or caching tiers
 3. Monolith First Rule (Section 17) → Start with modular monolith for $<10\text{K}$ RPM; ban introducing microservices or sharding prematurely
 
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Industry-level system design mastery for interviews and production. The 6-step design framework, scale estimation (DAU→QPS→storage→bandwidth), core building blocks (load balancers L4/L7, CDN, caches, queues), database selection matrix, CAP Theorem applied, and reference designs for URL shortener, rate limiter, Twitter feed, distributed cache, and notification system. Use when designing systems for scale, conducting architecture reviews, or preparing system design discussions..
+- **DO NOT activate when:** The task falls strictly outside system-design-pro domain or belongs to a different dedicated specialist.
+
 ## Hallucination Traps (Read First)
 
 - ❌ "Just use microservices" for <10K RPM → ✅ Microservices add operational complexity that kills small teams. Start monolith.
@@ -34,8 +40,6 @@ Before designing system architecture or writing scale proposals, you MUST inspec
 - ❌ Designing for peak load from day one → ✅ Design for 3-5x current load. Over-engineering kills velocity. Add complexity when measured, not speculated.
 
 ---
-
-# System Design Pro — Industry-Level Mastery
 
 ## 1. The 6-Step Design Framework
 
@@ -325,34 +329,25 @@ Failure handling:
 
 ---
 
-## 🤖 LLM-Specific Traps
-
-1. **Premature sharding**: Suggesting database sharding before the user has even mentioned scale issues. Sharding is complex; exhaust simpler options first.
-2. **NoSQL for everything**: DynamoDB and MongoDB are not universally better. They sacrifice joins and ACID. Present the tradeoffs honestly.
-3. **Ignoring the 80/20 of read QPS**: Most web apps are 80-95% reads. Design the read path first (caching, CDN, read replicas) before optimizing writes.
-4. **Forgetting the Coordinator Problem**: Distributed systems need coordination (who is the leader?). Mention ZooKeeper/etcd or leaderless designs when relevant.
-5. **Over-specifying CAP**: Real systems pick AP vs CP at the feature level, not the system level. A shopping cart (AP) and payment processing (CP) can coexist.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `system-architect` · `database-architect`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
+
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Did I quantify the scale before recommending a solution?
-✅ Did I present at least 2 database options with tradeoffs?
-✅ Did I define the read:write ratio before choosing a caching strategy?
-✅ Did I verify the system doesn't need microservices before recommending them?
-✅ Did I define a failure mode and mitigation for the primary bottleneck?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden**: Recommending an architecture without first establishing scale numbers.
-- ✅ **Required**: Every system design must include: QPS estimates, data model, caching strategy, and at least one identified bottleneck with a scaling plan.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

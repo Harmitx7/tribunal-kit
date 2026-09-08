@@ -1,8 +1,8 @@
 ---
 name: baseline-ui
 description: Quickly deslop UI code by fixing spacing, hierarchy, typography, contrast, and small layout issues. Use when the interface needs a fast cleanup or polish pass.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - better-ui
   - frontend-design
@@ -26,6 +26,12 @@ Before cleaning up UI styles, you MUST inspect:
 3. Anti-Slop Table (Section 43) → Replace hardcoded arbitrary paddings and low-contrast text with tokenized CSS variables
 
 Enforces an opinionated UI baseline to clean up sloppy code and prevent AI-generated interface slop without changing product architecture or feature scope.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Quickly deslop UI code by fixing spacing, hierarchy, typography, contrast, and small layout issues. Use when the interface needs a fast cleanup or polish pass..
+- **DO NOT activate when:** The task falls strictly outside baseline-ui domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -62,23 +68,25 @@ Enforces an opinionated UI baseline to clean up sloppy code and prevent AI-gener
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Re-architecting when asked to deslop**: Modifying component state, context, or props when only CSS/visual cleanup was requested.
-2. **Rebuilding native accessibility by hand**: Writing custom keyboard listener loops instead of using primitives (`Base UI`, `Radix`).
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Did I retain existing product logic and HTML structure?
-✅ Are all spacing values aligned to standard multiples (4/8/12/16/24/32)?
-✅ Is text contrast WCAG AA compliant and are icon buttons labeled with aria-label?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
-Inspect UI layout across desktop and mobile viewports in browser preview to verify visual polish.
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

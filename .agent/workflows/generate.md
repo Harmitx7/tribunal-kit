@@ -27,6 +27,11 @@ Before generating code modules or invoking the Maker pipeline, you MUST inspect:
 2. Type Definitions & Path Aliases (`tsconfig.json`) → Verify module resolution paths and compiler strictness
 3. Parallel Tribunal Review Assignment → Select relevant domain reviewers (`logic`, `security`, `frontend`, `backend`, `database`, `mobile`) prior to Human Gate submission
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+   - `codebase-design` (.agent/skills/codebase-design/SKILL.md): Deep module design with small interfaces and clean seams
+   - `lint-and-validate` (.agent/skills/lint-and-validate/SKILL.md): ESLint, Prettier, and code quality enforcement rules
+
 ---
 
 ## When to Use /generate

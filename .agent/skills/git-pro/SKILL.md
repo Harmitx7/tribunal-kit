@@ -2,8 +2,8 @@
 name: git-pro
 description: Industry-level Git & GitHub mastery. Advanced Git internals (bisect, worktrees, reflog), monorepo strategies (Turborepo/Nx), semantic-release, OIDC-based GitHub Actions auth (no static AWS secrets), CODEOWNERS, matrix builds, reusable workflows, and release engineering. Use when advanced Git operations, complex branching strategies, or production-grade CI/CD workflow authoring is required.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - github-operations
   - cicd-pro
@@ -25,6 +25,12 @@ Before running complex Git operations or writing release workflows, you MUST ins
 2. Reflog Recovery Strategy (Section 30) → Inspect `git reflog` to recover lost commits or bad resets before discarding uncommitted state
 3. OIDC Authentication Protocol (Section 208) → Configure OIDC AWS auth (`id-token: write`) in GitHub Actions workflows; ban static AWS access keys
 
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Industry-level Git & GitHub mastery. Advanced Git internals (bisect, worktrees, reflog), monorepo strategies (Turborepo/Nx), semantic-release, OIDC-based GitHub Actions auth (no static AWS secrets), CODEOWNERS, matrix builds, reusable workflows, and release engineering. Use when advanced Git operations, complex branching strategies, or production-grade CI/CD workflow authoring is required..
+- **DO NOT activate when:** The task falls strictly outside git-pro domain or belongs to a different dedicated specialist.
+
 ## Hallucination Traps (Read First)
 
 - ❌ `git push --force` on shared branches → ✅ Always use `git push --force-with-lease` (fails if remote has new commits you haven't seen)
@@ -34,8 +40,6 @@ Before running complex Git operations or writing release workflows, you MUST ins
 - ❌ `git reset --hard` without confirming you want to discard work → ✅ Always `git stash` first as a safety net
 
 ---
-
-# Git Pro — Industry-Level Mastery
 
 ## 1. Advanced Git Internals
 
@@ -408,40 +412,25 @@ resource "github_branch_protection" "main" {
 
 ---
 
-## 🤖 LLM-Specific Traps
-
-1. **`--force` without `--force-with-lease`**: Always use `--force-with-lease`. It fails safely if the remote has new commits, preventing accidental overwrite of teammates' work.
-2. **Rebasing public history**: Never rebase commits already pushed to a shared branch. Use `git revert` to safely undo public commits.
-3. **`GITHUB_TOKEN` scope confusion**: `secrets.GITHUB_TOKEN` cannot trigger other workflows and has limited cross-repo access. Use a GitHub App token for automation.
-4. **Missing `fetch-depth: 0`**: `semantic-release` and `git describe` require full history. Shallow clones (`fetch-depth: 1`) will cause failures.
-5. **Hardcoded branch names in workflows**: Use `github.event.repository.default_branch` or `vars.` instead of hardcoding `main`.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor` · `devops-engineer`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions**: Never assume AWS account IDs, role ARNs, or org names. Always use variables/inputs.
-2. **Static Secrets**: Never suggest `AWS_ACCESS_KEY_ID` in GitHub Actions. Always use OIDC.
-3. **`git push --force`**: Never suggest force pushing to shared/protected branches without `--force-with-lease`.
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are all AWS credentials using OIDC (not static keys)?
-✅ Are all branch operations checked for public/shared status first?
-✅ Did I verify `semantic-release` plugins are in package.json?
-✅ Are CODEOWNERS paths relative to repository root?
-✅ Did I include `fetch-depth: 0` where git history is required?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden**: Declaring a workflow correct because the YAML "looks right."
-- ✅ **Required**: Verify with `act` locally or confirm CI run passes before declaring success.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

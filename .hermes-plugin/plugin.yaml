@@ -1,0 +1,6 @@
+name: tribunal-kit
+version: 9.0.0
+description: Tribunal Agent Kit governance, 28-reviewer waves, and Subagent-Driven Development engine for Hermes Agent
+author: sunrise
+provides_hooks:
+  - pre_llm_call

@@ -32,6 +32,10 @@ Before proposing any code change, you MUST evaluate the **10 Core Governance Que
 9. Is the proposed abstraction necessary for the current requirement? (`MODIFY`/`EXTEND`)
 10. What is the smallest implementation that satisfies the request? (`MODIFY`/`EXTEND` vs `CREATE`)
 
+11. Required Skills → Before executing, load and follow procedural rules from:
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+   - `codebase-design` (.agent/skills/codebase-design/SKILL.md): Deep module design with small interfaces and clean seams
+
 ---
 
 ## Sub-Commands

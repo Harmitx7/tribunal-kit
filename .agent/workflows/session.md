@@ -25,6 +25,11 @@ Before saving, restoring, or clearing session state snapshots, you MUST inspect:
 2. Active Session History -> Read latest snapshot metadata (`session_id`, active task, modified files, open decisions)
 3. Zero Context Loss Rule → Verify state snapshot contains explicit next steps and task status prior to terminating conversation
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `behavioral-modes` (.agent/skills/behavioral-modes/SKILL.md): Agent operational modes (brainstorm, implement, debug, review)
+   - `agent-organizer` (.agent/skills/agent-organizer/SKILL.md): Multi-agent coordination and task decomposition
+   - `harness-protocol` (.agent/skills/harness-protocol/SKILL.md): Marathon long-running agent harness rules and handoff protocols
+
 ---
 
 ## Commands

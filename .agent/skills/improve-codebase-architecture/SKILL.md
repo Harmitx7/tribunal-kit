@@ -2,8 +2,8 @@
 name: improve-codebase-architecture
 description: Scans a codebase for deepening opportunities, architectural bottlenecks, tight coupling, and produces a prioritized visual improvement roadmap.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - codebase-design
   - clean-code
@@ -25,9 +25,13 @@ Before refactoring or producing an architectural improvement roadmap, you MUST i
 2. Monolithic Controller Line Threshold (500 lines) (Section 27) → Flag any controller/service >500 lines with mixed concerns for immediate decomposition
 3. Incremental Refactoring Rule (Section 46) → Ban shotgun surgery across >5 files simultaneously; enforce phased, test-backed interface extractions
 
-# Improve Codebase Architecture — Architectural Audit & Refactoring
-
 Audit an existing codebase for structural rot, circular dependencies, monolithic controllers, and produce a prioritized refactoring roadmap.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Scans a codebase for deepening opportunities, architectural bottlenecks, tight coupling, and produces a prioritized visual improvement roadmap..
+- **DO NOT activate when:** The task falls strictly outside improve-codebase-architecture domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -57,27 +61,25 @@ Output audit findings in a clear prioritized Markdown table:
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Shotgun Surgery**: Refactoring 20 files at once without establishing tests or clean interfaces first.
-2. **Ignoring Existing Conventions**: Forgetting existing project patterns and forcing an incompatible framework structure.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `logic-reviewer` · `complexity-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are circular dependencies identified and resolved via clean seams?
-✅ Is the refactoring plan broken down into safe, testable phases?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

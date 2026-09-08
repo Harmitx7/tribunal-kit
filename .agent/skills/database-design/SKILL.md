@@ -2,8 +2,8 @@
 name: database-design
 description: Database design mastery. Schema design with normalization, denormalization strategies, indexing, migration pipelines, ORM selection (Prisma/Drizzle/SQLAlchemy/EF Core), connection pooling, soft deletes, audit trails, multi-tenancy, and serverless database patterns. Use when designing schemas, choosing databases, planning migrations, or architecting data layers.
 tools: Read, Grep, Glob, Bash, Edit, Write
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - supabase-postgres-best-practices
   - sql-pro
@@ -21,20 +21,34 @@ scripts-binding:
 
 Before designing schemas or writing SQL migrations, you MUST inspect:
 
-1. Timezone Timestamp Standard (Section 17) → Use `TIMESTAMPTZ` for all timestamp columns; ban bare `TIMESTAMP`
-2. Primary Key Index Performance (Section 18) → Use `BIGINT GENERATED ALWAYS AS IDENTITY` or UUID v7 (time-ordered); ban random UUID v4 as primary key
-3. Foreign Key Indexing (Section 19) → Create explicit indexes on all foreign key columns (`CREATE INDEX idx_... ON table(fk_id)`) to prevent full table scans during cascading deletes
+1. Timezone Timestamp Standard → Always use `TIMESTAMPTZ`; ban bare `TIMESTAMP`
+2. Primary Key B-Tree Locality → Use `BIGINT GENERATED ALWAYS AS IDENTITY` or UUID v7 (RFC 9562); ban random UUID v4 as primary keys on high-insert tables
+3. Foreign Key Indexing → Explicitly create indexes on all foreign key columns (`CREATE INDEX idx_... ON table(fk_id)`) to prevent full table locks during cascading operations
+4. Zero-Downtime Migration Pattern → Use the expand-contract pattern; never rename columns or drop columns in a single deploy step
 
-# Database Design — Schema & Architecture Mastery
+## Activation Boundaries
+
+- **Activate when:** Designing database relational schemas, writing database migrations, indexing query paths, tuning connection pooling, and architecting persistence layers.
+- **DO NOT activate when:** Writing frontend UI components, styling layouts, or handling client-side state.
+
+## 2026 Database Performance & Schema Invariants
+
+1. **Time-Ordered UUID v7 (RFC 9562)**: When UUIDs are required across distributed systems, use UUID v7 so records append sequentially to B-tree indexes, avoiding fragmentation.
+2. **Partial Indexing on Soft Deletes**:
+   ```sql
+   CREATE INDEX idx_users_active_email ON users (email) WHERE deleted_at IS NULL;
+   ```
+3. **Covering Indexes**: Use `INCLUDE (col_a, col_b)` to allow index-only scans without table heap lookups on read-heavy query patterns.
+4. **Connection Pooling in Serverless**: Always route serverless connections through Supavisor, PgBouncer, or Neon connection poolers with transaction-mode pooling.
 
 ## Hallucination Traps (Read First)
 
-- ❌ `TIMESTAMP` → ✅ Always `TIMESTAMPTZ` (with timezone). `TIMESTAMP` is ambiguous across timezones.
-- ❌ UUID v4 as primary key → ✅ UUID v7 (time-ordered) or `BIGINT GENERATED ALWAYS AS IDENTITY`. UUID v4 is random — destroys B-tree index performance on high-insert tables.
-- ❌ No index on foreign keys → ✅ PostgreSQL does NOT auto-index FK columns. Cascading deletes cause full table scans without them.
-- ❌ Adding `NOT NULL` column directly to a large table → ✅ Locks the entire table. Add as nullable, backfill in batches, then add constraint.
-- ❌ Soft delete without a partial index → ✅ Every query must filter `WHERE deleted_at IS NULL`. Add `CREATE INDEX ... WHERE deleted_at IS NULL` or use a view.
-- ❌ Serverless functions without a connection pooler → ✅ Each Lambda/Vercel invocation opens a new connection. Use PgBouncer or Supabase Supavisor — without it, you'll hit `max_connections` instantly.
+- ❌ `TIMESTAMP` without timezone → ✅ Always `TIMESTAMPTZ`
+- ❌ UUID v4 as primary key → ✅ UUID v7 (time-ordered) or `BIGINT GENERATED ALWAYS AS IDENTITY`
+- ❌ Omitting indexes on foreign keys → ✅ Postgres does NOT auto-index FKs; always create explicit indexes
+- ❌ Adding `NOT NULL` column without default directly on large tables → ✅ Add nullable first, backfill in batches, then set `NOT NULL`
+- ❌ Soft delete without partial index → ✅ Always index `WHERE deleted_at IS NULL`
+- ❌ Direct DB connection inside serverless functions → ✅ Use pooled connection string (PgBouncer/Supavisor)
 
 ---
 
@@ -226,69 +240,17 @@ AI coding assistants often fall into specific bad habits when dealing with this 
 
 ---
 
-**Slash command: `/review` or `/tribunal-full`**
-**Active reviewers: `logic-reviewer` · `security-auditor`**
-
-### ❌ Forbidden AI Tropes
-
-1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
-2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
-3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-
-Review these questions before confirming output:
-
-```
-✅ Did I rely ONLY on real, verified tools and methods?
-✅ Is this solution appropriately scoped to the user's constraints?
-✅ Did I handle potential failure modes and edge cases?
-✅ Have I avoided generic boilerplate that doesn't add value?
-```
-
-### 🛑 Verification-Before-Completion (VBC) Protocol
-
-**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
-- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
-- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.
-
-## Pre-Flight Checklist
-
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
-
-## VBC Protocol (Verification-Before-Completion)
-
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
-
----
-
-## 🤖 LLM-Specific Traps
-
-AI coding assistants often fall into specific bad habits when dealing with this domain. These are strictly forbidden:
-
-1. **Over-engineering:** Proposing complex abstractions or distributed systems when a simpler approach suffices.
-2. **Hallucinated Libraries/Methods:** Using non-existent methods or packages. Always `// VERIFY` or check `package.json` / `requirements.txt`.
-3. **Skipping Edge Cases:** Writing the "happy path" and ignoring error handling, timeouts, or data validation.
-4. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
-5. **Silent Degradation:** Catching and suppressing errors without logging or re-raising.
-
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+## 🏛️ Tribunal Verification & Guardrails
 
 **Slash command: `/review` or `/tribunal-full`**
 **Active reviewers: `logic-reviewer` · `security-auditor`**
 
 ### ❌ Forbidden AI Tropes
-
 1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
 2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
 3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
-Review these questions before confirming output:
-
 ```
 ✅ Did I rely ONLY on real, verified tools and methods?
 ✅ Is this solution appropriately scoped to the user's constraints?
@@ -297,8 +259,6 @@ Review these questions before confirming output:
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

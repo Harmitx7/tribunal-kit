@@ -1,8 +1,8 @@
 ---
 name: frontend-design
 description: Design engineering principles for React/Next.js. Relative color syntax (OKLCH), spatial grid math, fluid container queries, and contrast validation.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - baseline-ui
   - better-colors
@@ -26,6 +26,12 @@ Before implementing front-end designs or CSS layout systems, you MUST inspect:
 3. APCA Contrast Thresholds (Section 81) → Ensure Lc > 75 for body text, Lc > 60 for headings, and Lc > 45 for borders and labels
 
 This skill guides the implementation of responsive layout systems, color science, and spatial tokens.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Design engineering principles for React/Next.js. Relative color syntax (OKLCH), spatial grid math, fluid container queries, and contrast validation..
+- **DO NOT activate when:** The task falls strictly outside frontend-design domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -110,11 +116,25 @@ Ensure that typography meets the APCA Lc guidelines:
 
 ---
 
-## Pre-Flight Checklist
+## 🏛️ Tribunal Verification & Guardrails
 
-- [ ] Have I reviewed the user's specific constraints and requests?
-- [ ] Have I checked the environment for relevant existing implementations?
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
-## VBC Protocol (Verification-Before-Completion)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
+### ✅ Pre-Flight Self-Audit
+```
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
+```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

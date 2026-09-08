@@ -6,7 +6,7 @@ last-updated: 2026-07-30
 required-skills:
   - agent-organizer
   - parallel-agents
-  - swarm-dispatcher
+  - agentic-patterns
 scripts-binding:
   - .agent/scripts/swarm_dispatcher.js
   - .agent/scripts/verify_all.js
@@ -25,6 +25,11 @@ Before dispatching multi-agent orchestrations or parallel sub-task workers, you 
 1. Orchestrator Payload Validator (`swarm_dispatcher.js`) → Validate subagent payload contracts and JSON schema before fan-out
 2. Context Window Budget Allocation → Provide scoped `context_summary` per worker; ban dumping full conversation history to workers
 3. Fan-In Synthesis & Human Gate → Collect all worker outputs via `Promise.allSettled()` pattern and present unified synthesis before writing disk changes
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `agent-organizer` (.agent/skills/agent-organizer/SKILL.md): Multi-agent coordination and task decomposition
+   - `parallel-agents` (.agent/skills/parallel-agents/SKILL.md): Parallel agent dispatch patterns and fan-in synthesis
+   - `agentic-patterns` (.agent/skills/agentic-patterns/SKILL.md): Agentic design patterns for multi-agent systems
 
 ---
 

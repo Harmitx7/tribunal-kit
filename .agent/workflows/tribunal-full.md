@@ -34,6 +34,14 @@ Before launching the full 21-reviewer audit, you MUST inspect:
 2. Workspace Configuration Context (`package.json`, `tsconfig.json`, `tailwind.config`) → Verify project build contracts
 3. 21-Reviewer Synthesis Gate → Execute all 21 specialized reviewers in parallel; halt on any security violation or critical bug before Human Gate approval
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+   - `backend-security-expert` (.agent/skills/backend-security-expert/SKILL.md): Server-side security, auth, JWT, ORM injection, RBAC
+   - `frontend-design` (.agent/skills/frontend-design/SKILL.md): Design engineering with OKLCH color syntax, spatial grid math
+   - `database-design` (.agent/skills/database-design/SKILL.md): Schema normalization, indexing, migration strategy
+   - `mobile-design` (.agent/skills/mobile-design/SKILL.md): Mobile-first design for iOS, Android, touch, haptics, 120Hz
+   - `performance-profiling` (.agent/skills/performance-profiling/SKILL.md): Performance measurement methodology and profiling tools
+
 ---
 
 ## When to Use /tribunal-full

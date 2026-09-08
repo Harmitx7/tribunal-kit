@@ -1,8 +1,8 @@
 ---
 name: gpt-taste
 description: High-agency UX/UI skill with strict layout variance, typography, and GSAP motion engineering constraints for superior visual judgment.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - taste-skill
   - better-ui
@@ -26,6 +26,12 @@ Before generating UI layouts or visual code, you MUST inspect:
 3. Zero Truncation Rule (Section 39) → Strictly ban `// TODO: add remaining items` placeholder comments; generate complete production-ready code
 
 Inject high-agency visual judgment and layout variance into AI-generated interfaces.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring High-agency UX/UI skill with strict layout variance, typography, and GSAP motion engineering constraints for superior visual judgment..
+- **DO NOT activate when:** The task falls strictly outside gpt-taste domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -57,28 +63,25 @@ Never output placeholder `// TODO: add remaining items` comments in UI code. Gen
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Truncated Code Outputs**: Outputting incomplete code snippets or placeholder comments.
-2. **Symmetrical Grid Boredom**: Using 3 identical square cards side-by-side without visual hierarchy differentiation.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `ui-ux-auditor`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are code outputs 100% complete without placeholder TODOs?
-✅ Is structural layout varied across different page sections?
-✅ Are colors declared via OKLCH variables?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -1,8 +1,8 @@
 ---
 name: ui-reasoning-engine
 description: Enforces a structured cognitive pipeline that forces the agent to analyze user goals, information architecture, platform constraints, and design tokens before styling any component.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - product-aware-heuristics
   - interface-design
@@ -27,6 +27,12 @@ Before generating UI component code, you MUST inspect:
 3. Target viewport & input mode → Check desktop vs mobile touch bounds (minimum 44x44px for coarse pointers)
 
 To build state-of-the-art interfaces, you must think before you style. This skill enforces a structured reasoning process. Before writing any HTML, CSS, or Component code, you must execute the following 16-step analysis.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Enforces a structured cognitive pipeline that forces the agent to analyze user goals, information architecture, platform constraints, and design tokens before styling any component..
+- **DO NOT activate when:** The task falls strictly outside ui-reasoning-engine domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -162,12 +168,25 @@ When building any UI, the Maker Agent must document this reasoning loop before r
 
 ---
 
-## Pre-Flight Checklist
+## 🏛️ Tribunal Verification & Guardrails
 
-- [ ] Have I executed the 16-step UI Reasoning Loop?
-- [ ] Have I identified the target Product Category and Visual Direction?
-- [ ] Have I verified touch targets are 24px minimum (and 44px+ for coarse pointers)?
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
-## VBC Protocol (Verification-Before-Completion)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
-You MUST verify existing code signatures and variables before attempting to modify or call them. No hallucination is permitted.
+### ✅ Pre-Flight Self-Audit
+```
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
+```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

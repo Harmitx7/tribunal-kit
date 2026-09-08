@@ -1,8 +1,8 @@
 ---
 name: taste-skill
 description: Senior UI/UX frontend skill that enforces anti-slop design decisions, motion quality, visual rhythm, micro-craft, and architectural discipline.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - better-ui
   - impeccable
@@ -26,6 +26,12 @@ Before rendering UI components, you MUST inspect:
 3. Tactile Press Feedback (Section 39) → Enforce `:active` press feedback (`transform: scale(0.97)`) on all interactive buttons/cards
 
 Enforce senior-level design taste, anti-slop constraints, and visual craft across every component.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Senior UI/UX frontend skill that enforces anti-slop design decisions, motion quality, visual rhythm, micro-craft, and architectural discipline..
+- **DO NOT activate when:** The task falls strictly outside taste-skill domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -59,28 +65,25 @@ Enforce senior-level design taste, anti-slop constraints, and visual craft acros
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Defaulting to Plain Templates**: Producing boring, unstyled HTML buttons with zero hover/active states.
-2. **Ignoring Dark Mode Depth**: Leaving card backgrounds flat black (`#000000`) without surface lightness progression.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `frontend-reviewer` · `ui-ux-auditor`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are generic purple gradients and glowing borders completely avoided?
-✅ Is text length bounded to 65ch max width for body paragraphs?
-✅ Do interactive elements feature tactile press feedback (`scale(0.97)`)?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

@@ -38,9 +38,9 @@ flowchart TD
 
 ### Subsystem A: 2-Tier Lazy Skill Routing Engine
 
-- **Lightweight Index (`skill_topic_map.json`):** 183 skills indexed across 9 domain routes and file extensions (~500 tokens).
+- **Lightweight Index (`skill_topic_map.json`):** 184 skills indexed across 9 domain routes and file extensions (~500 tokens).
 - **Startup Overhead:** ~2,500 – 3,500 startup tokens vs 85,000 tokens previously (95% token reduction).
-- **Zero Exclusions:** All 183 skills remain indexed on disk; target skills are fetched dynamically on-demand via `view_file`.
+- **Zero Exclusions:** All 184 skills remain indexed on disk; target skills are fetched dynamically on-demand via `view_file`.
 
 ### Subsystem C: Stage-Partitioned Tribunal Pipeline
 

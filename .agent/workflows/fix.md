@@ -26,6 +26,11 @@ Before executing auto-fixers or modifying code files to resolve lint/type issues
 2. Target File Lint Output → Execute `node .agent/scripts/lint_runner.js` to gather precise error line numbers and rule IDs
 3. Diff Verification Before Disk Write → Show explicit diff of proposed changes and confirm Human Gate approval before saving
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `lint-and-validate` (.agent/skills/lint-and-validate/SKILL.md): ESLint, Prettier, and code quality enforcement rules
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+   - `typescript-advanced` (.agent/skills/typescript-advanced/SKILL.md): TypeScript strict mode, generics, utility types, and type narrowing
+
 ---
 
 ## When to Use /fix

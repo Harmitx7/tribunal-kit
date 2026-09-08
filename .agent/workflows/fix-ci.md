@@ -27,6 +27,11 @@ Before attempting to fix CI pipeline failures:
 2. Inspect Workflow YAML & Project Configs → Compare runner environment (Node/Python/OS version) with local workspace
 3. Human Gate Before Disk Write → Present root cause explanation and proposed diff for approval
 
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `cicd-pro` (.agent/skills/cicd-pro/SKILL.md): CI/CD workflow syntax, matrix builds, and deployment strategies
+   - `diagnosing-bugs` (.agent/skills/diagnosing-bugs/SKILL.md): Bug diagnosis patterns and root cause investigation
+   - `devops-engineer` (.agent/skills/devops-engineer/SKILL.md): CI/CD pipeline management and infrastructure automation
+
 ---
 
 ## 4-Step CI Diagnosis & Repair Loop

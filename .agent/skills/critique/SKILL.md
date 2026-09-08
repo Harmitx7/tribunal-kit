@@ -1,8 +1,8 @@
 ---
 name: critique
 description: Evaluate design quality with structured UX scoring, heuristic analysis, and persona-based usability checks. Use when asked to critique, evaluate, grade, or audit a UI design before implementation.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - ui-ux-researcher
   - web-design-guidelines
@@ -26,6 +26,12 @@ Before evaluating UI designs or code, you MUST inspect:
 3. Top 3 Actionable Fixes → Group recommendations by priority (High, Medium, Low) with concrete CSS/JSX fixes
 
 Evaluate interfaces against 6 core usability heuristics and produce an objective design scorecard with prioritized recommendations.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Evaluate design quality with structured UX scoring, heuristic analysis, and persona-based usability checks. Use when asked to critique, evaluate, grade, or audit a UI design before implementation..
+- **DO NOT activate when:** The task falls strictly outside critique domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -85,22 +91,25 @@ Always output the critique as a structured Markdown evaluation:
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Vague Superficial Praise**: Giving generic feedback like "Looks great!" without scoring heuristics.
-2. **Hyper-Subjective Nitpicks**: Flagging personal aesthetic preferences as critical flaws. Ground all critique in objective usability heuristics and WCAG guidelines.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
+
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Did I score all 6 heuristics with objective observations?
-✅ Are actionable fixes prioritized by impact (High/Medium/Low)?
-✅ Is all critique grounded in WCAG or established usability heuristics?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

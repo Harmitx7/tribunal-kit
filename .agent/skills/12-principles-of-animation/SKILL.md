@@ -1,8 +1,8 @@
 ---
 name: 12-principles-of-animation
 description: Application of Disney's 12 Principles of Animation (Squash & Stretch, Anticipation, Staging, Follow Through, Slow In & Slow Out, Arc, Secondary Action, Timing, Exaggeration, Solid Drawing, Appeal) to modern web UI motion.
-version: 3.0.0
-last-updated: 2026-07-30
+version: 4.0.0
+last-updated: 2026-09-07
 skills:
   - motion-engineering
   - 60fps-animation
@@ -26,6 +26,12 @@ Before applying animation principles to web components, you MUST inspect:
 3. Staging Rules (Section 31) → Direct user focus with sequential motion rather than competing simultaneous animations
 
 Translate Disney's 12 classic principles of animation into modern CSS, Web API, and Framer Motion code patterns.
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Application of Disney's 12 Principles of Animation (Squash & Stretch, Anticipation, Staging, Follow Through, Slow In & Slow Out, Arc, Secondary Action, Timing, Exaggeration, Solid Drawing, Appeal) to modern web UI motion..
+- **DO NOT activate when:** The task falls strictly outside 12-principles-of-animation domain or belongs to a different dedicated specialist.
 
 ---
 
@@ -58,28 +64,25 @@ Translate Disney's 12 classic principles of animation into modern CSS, Web API, 
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Extreme Distortion**: Applying 30% squash and stretch to text buttons, causing distorted unreadable font rendering. Keep UI squash/stretch subtle (max 2% - 4%).
-2. **Mechanical Linear Motion**: Using `linear` easing for UI elements entering the screen.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
-
-**Active reviewers: `motion-reviewer` · `frontend-reviewer`**
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Is squash & stretch volume-preserving ($Width \times Height \approx 1$)?
-✅ Are entrance animations using custom `ease-out` curves?
-✅ Is motion staged to lead user focus sequentially?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
-
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

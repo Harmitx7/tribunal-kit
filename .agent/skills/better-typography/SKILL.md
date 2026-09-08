@@ -1,8 +1,8 @@
 ---
 name: better-typography
 description: Web typography from choosing fonts to spacing, wrapping, and accessibility. Use when picking or pairing typefaces, configuring variable fonts or OpenType features, setting up a type scale, styling text in components, truncating text, styling underlines, selection, placeholders, or carets. Triggers on typography, fonts, variable fonts, font-weight, opentype, letter-spacing, line-height, type scale, tabular numbers, text-wrap, truncation, line clamp, measure, line length.
-version: 1.0.0
-last-updated: 2026-07-22
+version: 4.0.0
+last-updated: 2026-09-07
 applies-to-model: gemini-3-6-flash, claude-3-7-sonnet
 routing:
   domain: UI Craft & Design Engineering
@@ -21,9 +21,19 @@ routing:
         optical sizing,
       ]
     weak: [fonts, text style, line height]
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/verify_all.js
 ---
 
 # Better Typography — Web Typography & Font Engineering
+
+
+
+## Activation Boundaries
+
+- **Activate when:** Operating in tasks requiring Web typography from choosing fonts to spacing, wrapping, and accessibility. Use when picking or pairing typefaces, configuring variable fonts or OpenType features, setting up a type scale, styling text in components, truncating text, styling underlines, selection, placeholders, or carets. Triggers on typography, fonts, variable fonts, font-weight, opentype, letter-spacing, line-height, type scale, tabular numbers, text-wrap, truncation, line clamp, measure, line length..
+- **DO NOT activate when:** The task falls strictly outside better-typography domain or belongs to a different dedicated specialist.
 
 Design engineering guidelines for setting up modern, readable, scalable typography with OpenType features, fluid type scales, and optimal measure.
 
@@ -103,23 +113,25 @@ body {
 
 ---
 
-## 🤖 LLM-Specific Traps
+## 🏛️ Tribunal Verification & Guardrails
 
-1. **Using Pixel Font Sizes**: Defining `font-size: 14px` instead of `0.875rem` breaks user browser accessibility font size preferences.
-2. **Missing `text-wrap` Support**: Forgetting `text-wrap: balance` on multi-line card titles.
+**Slash command: `/review` or `/tribunal-full`**
+**Active reviewers: `logic-reviewer` · `security-auditor`**
 
----
-
-## 🏛️ Tribunal Integration (Anti-Hallucination)
+### ❌ Forbidden AI Tropes
+1. **Blind Assumptions:** Never make an assumption without documenting it clearly with `// VERIFY: [reason]`.
+2. **Silent Degradation:** Catching and suppressing errors without logging or handling.
+3. **Context Amnesia:** Forgetting the user's constraints and offering generic advice instead of tailored solutions.
 
 ### ✅ Pre-Flight Self-Audit
-
 ```
-✅ Are all body paragraph containers capped at max-width: 65ch?
-✅ Is text-wrap: balance applied to headings?
-✅ Are tabular numbers enabled on price grids and timer counters?
+✅ Did I rely ONLY on real, verified tools and methods?
+✅ Is this solution appropriately scoped to the user's constraints?
+✅ Did I handle potential failure modes and edge cases?
+✅ Have I avoided generic boilerplate that doesn't add value?
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
-
-Inspect typography scaling and line wrapping across desktop and mobile viewports in browser preview.
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing tests, compile success, or equivalent proof) that your output works as intended.

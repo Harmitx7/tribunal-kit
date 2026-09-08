@@ -1,6 +1,13 @@
 module.exports = [
   {
-    ignores: ['dist/**', 'node_modules/**', 'target/**', 'coverage/**', 'scratch/**'],
+    ignores: [
+      'dist/**',
+      '**/dist/**',
+      'node_modules/**',
+      'target/**',
+      'coverage/**',
+      'scratch/**',
+    ],
   },
   {
     files: ['**/*.js'],
@@ -52,6 +59,13 @@ module.exports = [
       'no-throw-literal': 'error',
       'no-return-await': 'warn',
       'no-template-curly-in-string': 'warn',
+    },
+  },
+  {
+    files: ['.opencode/**/*.js', '**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
     },
   },
 ];
