@@ -1,13 +1,11 @@
 <!-- PROJECT HEADER -->
 <div align="center">
   <br>
-  <img src="https://raw.githubusercontent.com/Harmitx7/tribunal-kit/main/docs/tribunalkit_no_bg.png" alt="TribunalKit Logo" width="380" style="margin-bottom: 20px;" />
+  <a href="https://github.com/Harmitx7/tribunal-kit">
+    <img src="docs/assets/tribunal-hero-header.svg" alt="Tribunal Kit Hero Banner" width="100%" style="max-width: 1000px; margin-bottom: 24px; border-radius: 14px;" />
+  </a>
 
-  <h1 style="font-size: 3.5em; font-weight: 800; letter-spacing: -2px; margin: 0; color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-    TRIBUNAL KIT
-  </h1>
-
-  <p style="font-size: 1.35em; color: #ffffff; font-weight: 600; margin: 15px 0 8px 0;">
+  <p style="font-size: 1.35em; color: #ffffff; font-weight: 600; margin: 10px 0 8px 0;">
     Your AI writes code that doesn't exist. Tribunal Kit stops it.
   </p>
   <p style="font-size: 1.0em; color: #88888b; font-weight: 400; letter-spacing: 0.5px; margin: 0 0 25px 0;">
@@ -33,10 +31,13 @@
       <img src="https://img.shields.io/badge/License-MIT-1a1a1f?style=for-the-badge&color=2d2d30" alt="License" />
     </a>
     <a href="CHANGELOG.md">
-      <img src="https://img.shields.io/badge/Release-v9.0.0-ccff00?style=for-the-badge&color=111111&logo=github&logoColor=ccff00" alt="Release Version" />
+      <img src="https://img.shields.io/badge/Release-v9.0.0-ff3300?style=for-the-badge&color=111111&logo=github&logoColor=ff3300" alt="Release Version" />
     </a>
     <a href="package.json">
-      <img src="https://img.shields.io/badge/Dependencies-0-ccff00?style=for-the-badge&color=111111&logoColor=111" alt="Zero Dependencies" />
+      <img src="https://img.shields.io/badge/Dependencies-0-ff3300?style=for-the-badge&color=111111&logoColor=ff3300" alt="Zero Dependencies" />
+    </a>
+    <a href="DESIGN.md">
+      <img src="https://img.shields.io/badge/Design_System-Classical_Neo--Brutalist-ff3300?style=for-the-badge&color=111111" alt="Design System" />
     </a>
     <a href="crates/core">
       <img src="https://img.shields.io/badge/Core-Rust_10ms-DEA584?style=for-the-badge&logo=rust&logoColor=white" alt="Rust Core" />
@@ -58,9 +59,9 @@
 <br>
 
 <!-- THE PROBLEM -->
-<div style="background: linear-gradient(145deg, #1a0a0a, #16161c); border: 1px solid #3a1a1a; border-radius: 12px; padding: 24px; margin-bottom: 20px;">
+<div style="background: linear-gradient(145deg, #180a0c, #11141c); border: 1px solid #4a1820; border-radius: 12px; padding: 24px; margin-bottom: 20px;">
   <div style="display: flex; align-items: center; margin-bottom: 12px;">
-    <span style="background-color: #ff1637; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-right: 10px;">The Problem</span>
+    <span style="background-color: #ff2200; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-right: 10px;">The Problem</span>
     <strong style="color: #ffffff; font-size: 1.15em;">AI coding agents hallucinate. Constantly.</strong>
   </div>
   <p style="color: #c9c9d1; font-size: 0.95em; line-height: 1.6; margin: 0;">
@@ -71,34 +72,20 @@
 </div>
 
 <!-- THE SOLUTION -->
-<div style="background: linear-gradient(145deg, #0a1a0a, #16161c); border: 1px solid #1a3a1a; border-radius: 12px; padding: 24px; margin-bottom: 35px;">
+<div style="background: linear-gradient(145deg, #121622, #0c0f17); border: 1px solid #ff3300; border-radius: 12px; padding: 24px; margin-bottom: 35px;">
   <div style="display: flex; align-items: center; margin-bottom: 12px;">
-    <span style="background-color: #ccff00; color: #111; padding: 4px 8px; border-radius: 4px; font-size: 0.75em; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-right: 10px;">The Solution</span>
+    <span style="background-color: #ff3300; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-right: 10px;">The Solution</span>
     <strong style="color: #ffffff; font-size: 1.15em;">One command. Your AI stops lying.</strong>
   </div>
   <p style="color: #c9c9d1; font-size: 0.95em; line-height: 1.6; margin: 0;">
-    Tribunal Kit wraps your coding agents in an active <strong>neurosymbolic verification envelope</strong> — 52 specialist agents, 28 parallel reviewers, 185 skills, and a native compiled Rust core. It intercepts AI output in <strong>&lt; 12ms</strong>, validates it against your live repository AST, and blocks hallucinated code before it ever touches disk.
+    Tribunal Kit wraps your coding agents in an active <strong>neurosymbolic verification envelope</strong> — 52 specialist agents, 28 parallel reviewers, 185 skills, and a native compiled Rust core. It intercepts AI output in <strong>&lt; 10ms</strong>, validates it against your live repository AST, and blocks hallucinated code before it ever touches disk.
   </p>
 </div>
 
 <!-- VISUAL DEMONSTRATION -->
-### ⚡ The Real-Time Difference
-
-```text
-  WITHOUT TRIBUNAL KIT                               WITH TRIBUNAL KIT
-─────────────────────────────────────────────      ─────────────────────────────────────────────
-$ cursor "Build a file upload Server Action"        $ cursor "Build a file upload Server Action"
-
-AI Output:                                         AI Output:
-  import { useFormStatus } from 'react-dom';         import { useActionState } from 'react';
-  import { uploadFile } from 'ghost-s3-uploader';    import { put } from '@vercel/blob';
-
-Runtime Result:                                    Tribunal Core Intercept (9ms):
-  ❌ Error: Cannot find module 'ghost-s3-uploader'    🛡️ [BLOCKED] 'ghost-s3-uploader' is a PHANTOM PACKAGE
-  ❌ Warning: useFormStatus deprecated in React 19   ⚖️ [CASE LAW] Enforcing Next.js 15 Server Action rules
-                                                    ✅ [APPROVED] Verified against package.json & AST
-  💥 45 minutes wasted debugging                      ⚡ 0 minutes wasted. 100% working code shipped.
-```
+<div align="center" style="margin: 28px 0;">
+  <img src="docs/assets/realtime-difference.svg" alt="The Real-Time Difference: Without vs With Tribunal Kit" width="100%" style="max-width: 1100px; border-radius: 14px;" />
+</div>
 
 ---
 
@@ -155,37 +142,37 @@ Tribunal Kit ships with pre-configured native plugins and extensions across the 
     <tbody>
       <tr style="border-bottom: 1px solid #222225;">
         <td style="padding: 12px 16px; font-weight: 600; color: #ffffff;">Anthropic Claude Code</td>
-        <td style="padding: 12px 16px; color: #ccff00;">Native Marketplace Plugin (<code>.claude-plugin/</code>)</td>
+        <td style="padding: 12px 16px; color: #ff4d1a; font-weight: 600;">Native Marketplace Plugin (<code>.claude-plugin/</code>)</td>
         <td style="padding: 12px 16px;"><code>/plugin marketplace add Harmitx7/tribunal-kit</code> or <code>tk-adapt claude</code></td>
       </tr>
       <tr style="border-bottom: 1px solid #222225;">
         <td style="padding: 12px 16px; font-weight: 600; color: #ffffff;">OpenCode.ai</td>
-        <td style="padding: 12px 16px; color: #ccff00;">Native Plugin Config (<code>.opencode/</code>)</td>
+        <td style="padding: 12px 16px; color: #ff4d1a; font-weight: 600;">Native Plugin Config (<code>.opencode/</code>)</td>
         <td style="padding: 12px 16px;">Add <code>"plugin": ["tribunal-kit@latest"]</code> in <code>opencode.json</code></td>
       </tr>
       <tr style="border-bottom: 1px solid #222225;">
         <td style="padding: 12px 16px; font-weight: 600; color: #ffffff;">Cursor IDE</td>
-        <td style="padding: 12px 16px; color: #ccff00;">Plugin & Rule Bridge (<code>.cursor-plugin/</code>)</td>
+        <td style="padding: 12px 16px; color: #ff4d1a; font-weight: 600;">Plugin &amp; Rule Bridge (<code>.cursor-plugin/</code>)</td>
         <td style="padding: 12px 16px;"><code>npx tribunal-kit sync</code></td>
       </tr>
       <tr style="border-bottom: 1px solid #222225;">
         <td style="padding: 12px 16px; font-weight: 600; color: #ffffff;">Cognition Devin</td>
-        <td style="padding: 12px 16px; color: #ccff00;">Devin Native Plugin (<code>.devin-plugin/</code>)</td>
+        <td style="padding: 12px 16px; color: #ff4d1a; font-weight: 600;">Devin Native Plugin (<code>.devin-plugin/</code>)</td>
         <td style="padding: 12px 16px;">Auto-detected via <code>.devin-plugin/plugin.json</code></td>
       </tr>
       <tr style="border-bottom: 1px solid #222225;">
         <td style="padding: 12px 16px; font-weight: 600; color: #ffffff;">Google Gemini CLI</td>
-        <td style="padding: 12px 16px; color: #ccff00;">Extension Manifest (<code>gemini-extension.json</code>)</td>
+        <td style="padding: 12px 16px; color: #ff4d1a; font-weight: 600;">Extension Manifest (<code>gemini-extension.json</code>)</td>
         <td style="padding: 12px 16px;">Auto-registered via <code>gemini-extension.json</code></td>
       </tr>
       <tr style="border-bottom: 1px solid #222225;">
-        <td style="padding: 12px 16px; font-weight: 600; color: #ffffff;">Moonshot Kimi & Hermes</td>
-        <td style="padding: 12px 16px; color: #ccff00;">Native Plugin Bundles (<code>.kimi-plugin</code>, <code>.hermes-plugin</code>)</td>
+        <td style="padding: 12px 16px; font-weight: 600; color: #ffffff;">Moonshot Kimi &amp; Hermes</td>
+        <td style="padding: 12px 16px; color: #ff4d1a; font-weight: 600;">Native Plugin Bundles (<code>.kimi-plugin</code>, <code>.hermes-plugin</code>)</td>
         <td style="padding: 12px 16px;">Packaged out-of-the-box with manifest bindings</td>
       </tr>
       <tr style="border-bottom: 1px solid #222225;">
-        <td style="padding: 12px 16px; font-weight: 600; color: #ffffff;">Aider CLI & Codex</td>
-        <td style="padding: 12px 16px; color: #ccff00;">Conventions & Agents Bridge</td>
+        <td style="padding: 12px 16px; font-weight: 600; color: #ffffff;">Aider CLI &amp; Codex</td>
+        <td style="padding: 12px 16px; color: #ff4d1a; font-weight: 600;">Conventions &amp; Agents Bridge</td>
         <td style="padding: 12px 16px;"><code>npx tribunal-kit tk-adapt aider</code></td>
       </tr>
     </tbody>
@@ -224,7 +211,7 @@ AI engineering requires active verification, not passive prompt text:
     <thead>
       <tr style="border-bottom: 2px solid #22222f; background-color: #16161d;">
         <th style="padding: 14px 18px; color: #ffffff; font-weight: 600;">Dimension / Capability</th>
-        <th style="padding: 14px 18px; color: #ccff00; font-weight: 600;">Tribunal Kit 🛡️</th>
+        <th style="padding: 14px 18px; color: #ff4d1a; font-weight: 700;">Tribunal Kit 🛡️</th>
         <th style="padding: 14px 18px; color: #a0a0a5; font-weight: 600;">Static <code>.cursorrules</code></th>
         <th style="padding: 14px 18px; color: #a0a0a5; font-weight: 600;">AST Linters (ESLint)</th>
         <th style="padding: 14px 18px; color: #a0a0a5; font-weight: 600;">Manual System Prompts</th>
@@ -233,42 +220,42 @@ AI engineering requires active verification, not passive prompt text:
     <tbody>
       <tr style="border-bottom: 1px solid #222228;">
         <td style="padding: 14px 18px; font-weight: 600; color: #ffffff;">Hallucination Interception</td>
-        <td style="padding: 14px 18px; color: #ccff00; font-weight: 600; background-color: #1a2211;">Active check gates (<code>tk guardrail</code>)</td>
+        <td style="padding: 14px 18px; color: #ff4d1a; font-weight: 700; background-color: #1c100c;">Active check gates (<code>tk guardrail</code>)</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">None (passive text only)</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">None (misses semantic intent)</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">None (models drift)</td>
       </tr>
       <tr style="border-bottom: 1px solid #222228;">
         <td style="padding: 14px 18px; font-weight: 600; color: #ffffff;">Context Window Overhead</td>
-        <td style="padding: 14px 18px; color: #ccff00; font-weight: 600; background-color: #1a2211;">Budget-gated recall & MCP tools</td>
+        <td style="padding: 14px 18px; color: #ff4d1a; font-weight: 700; background-color: #1c100c;">Budget-gated recall &amp; MCP tools</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">Severe (bloats with entire files)</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">N/A (runs post-edit)</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">High (burns context budget)</td>
       </tr>
       <tr style="border-bottom: 1px solid #222228;">
         <td style="padding: 14px 18px; font-weight: 600; color: #ffffff;">Cross-Session Memory</td>
-        <td style="padding: 14px 18px; color: #ccff00; font-weight: 600; background-color: #1a2211;">Supreme Court Case Law (<code>tk case</code>)</td>
+        <td style="padding: 14px 18px; color: #ff4d1a; font-weight: 700; background-color: #1c100c;">Supreme Court Case Law (<code>tk case</code>)</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">None (forgets every prompt)</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">None</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">None</td>
       </tr>
       <tr style="border-bottom: 1px solid #222228;">
         <td style="padding: 14px 18px; font-weight: 600; color: #ffffff;">Self-Evolution</td>
-        <td style="padding: 14px 18px; color: #ccff00; font-weight: 600; background-color: #1a2211;">Git diff learning & SkillOpt</td>
+        <td style="padding: 14px 18px; color: #ff4d1a; font-weight: 700; background-color: #1c100c;">Git diff learning &amp; SkillOpt</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">Manual editing</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">Manual config edits</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">Manual prompt tuning</td>
       </tr>
       <tr style="border-bottom: 1px solid #222228;">
-        <td style="padding: 14px 18px; font-weight: 600; color: #ffffff;">IDE & CLI Universal Support</td>
-        <td style="padding: 14px 18px; color: #ccff00; font-weight: 600; background-color: #1a2211;">Cursor, Windsurf, VSCode, Claude, Aider</td>
+        <td style="padding: 14px 18px; font-weight: 600; color: #ffffff;">IDE &amp; CLI Universal Support</td>
+        <td style="padding: 14px 18px; color: #ff4d1a; font-weight: 700; background-color: #1c100c;">Cursor, Windsurf, VSCode, Claude, Aider</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">Cursor/Windsurf only</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">Independent</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">Hand-copied</td>
       </tr>
       <tr style="border-bottom: 1px solid #222228;">
         <td style="padding: 14px 18px; font-weight: 600; color: #ffffff;">Execution Performance</td>
-        <td style="padding: 14px 18px; color: #ccff00; font-weight: 600; background-color: #1a2211;">Compiled Rust Core (<code>tribunal-core</code>)</td>
+        <td style="padding: 14px 18px; color: #ff4d1a; font-weight: 700; background-color: #1c100c;">Compiled Rust Core (<code>tribunal-core</code>)</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">N/A (static)</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">Slow Node processes</td>
         <td style="padding: 14px 18px; color: #c9c9d1;">Slow API calls</td>
@@ -283,6 +270,10 @@ AI engineering requires active verification, not passive prompt text:
 <!-- SECTION: 4 SUPERPOWERS -->
 
 ## 🏛️ The 4 Core Superpowers
+
+<div align="center" style="margin: 25px 0 35px 0;">
+  <img src="docs/assets/superpowers-grid.svg" alt="The 4 Core Superpowers of Tribunal Kit" width="100%" style="max-width: 1200px; border-radius: 14px;" />
+</div>
 
 ### 1. ⚖️ Supreme Court Case Law & Memory (`tk case`)
 **Your AI will never make the same mistake twice.** Whenever your coding assistant introduces an antipattern or bug, record it as a legal precedent:
@@ -333,25 +324,26 @@ Code generation is solved. **Code correctness is the frontier.**
 
 The Tribunal Pipeline intercepts raw agent generation and routes it through a parallel suite of **28 domain-specific reviewers** before presenting changes to the developer:
 
+<div align="center" style="margin: 25px 0 35px 0;">
+  <img src="docs/assets/tribunal-pipeline.svg" alt="The Tribunal Architecture Pipeline" width="100%" style="max-width: 1200px; border-radius: 14px;" />
+</div>
+
+<details>
+<summary><b>View Raw Pipeline Specification (Mermaid Graph)</b></summary>
+<br>
+
 ```mermaid
-graph TD
-    A[User Request] -->|Intent Parsed| B(Context Broker)
-    B --> C{Inner-Loop Validator}
-
-    C -->|Syntax & Secrets Check| D[Parallel Tribunal Review]
-    C -.->|Failed| E[Maker Auto-Correction]
-    E -.-> C
-
-    D -->|28 Domain Reviewers| F[Human Gate]
-    F -->|Approved| G((Committed to Disk))
-
-    classDef default fill:#1a1a1a,stroke:#333,stroke-width:2px,color:#fff;
-    classDef critical fill:#ff1637,stroke:#fff,stroke-width:2px,color:#fff;
-    classDef success fill:#ccff00,stroke:#fff,stroke-width:2px,color:#1a1a1a;
-
-    class D critical;
-    class G success;
+graph LR
+    A[User Request] --> B[Context Broker]
+    B --> C[Compiled Rust Core]
+    C --> D[28 Parallel Reviewers]
+    D -->|Violation| E[Inner-Loop Auto-Correct]
+    E -.-> B
+    D -->|Passed| F[Human Gate]
+    F --> G[Safe Commit to Disk]
 ```
+
+</details>
 
 ### Reviewer Swarms Include:
 - **`logic-reviewer`** · Semantic soundness & impossible logic checks.
@@ -514,11 +506,15 @@ Below is the structured list of all core commands available via `npx tribunal-ki
 Help protect the open-source ecosystem from AI hallucinations. Embed this badge in your repository's `README.md`:
 
 ```markdown
-[![Protected by Tribunal Kit](https://img.shields.io/badge/Protected%20by-Tribunal%20Kit-ccff00?style=for-the-badge&logo=shield&logoColor=black)](https://github.com/Harmitx7/tribunal-kit)
+[![Protected by Tribunal Kit](https://img.shields.io/badge/Protected%20by-Tribunal%20Kit-ff3300?style=for-the-badge&logo=shield&logoColor=white)](https://github.com/Harmitx7/tribunal-kit)
 ```
 
 **Renders as:**  
-[![Protected by Tribunal Kit](https://img.shields.io/badge/Protected%20by-Tribunal%20Kit-ccff00?style=for-the-badge&logo=shield&logoColor=black)](https://github.com/Harmitx7/tribunal-kit)
+[![Protected by Tribunal Kit](https://img.shields.io/badge/Protected%20by-Tribunal%20Kit-ff3300?style=for-the-badge&logo=shield&logoColor=white)](https://github.com/Harmitx7/tribunal-kit)
+
+<div align="center" style="margin: 25px 0;">
+  <img src="docs/assets/shield-badge-banner.svg" alt="Protected by Tribunal Kit Supply Chain Seal" width="100%" style="max-width: 800px; border-radius: 12px;" />
+</div>
 
 <br>
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
@@ -527,12 +523,13 @@ Help protect the open-source ecosystem from AI hallucinations. Embed this badge 
 
 ## 🤝 Contributing & Security
 
+- **Design System**: Built under the Classical Neo-Brutalist & Kinetic Governance specification. See [DESIGN.md](DESIGN.md).
 - **Security Policy**: Zero network runtime dependencies, zero dynamic `eval`, and sandboxed file paths. Review [SECURITY.md](SECURITY.md).
 - **Contributing Guide**: We welcome community-authored agents, skills, and Rust core optimizations. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-<div align="center" style="background: #111115; border: 1px solid #22222a; border-radius: 8px; padding: 25px; margin-top: 50px;">
-  <img src="https://img.shields.io/badge/Status-Active_&_Secured-ccff00?style=for-the-badge&logoColor=1a1a1a" alt="Status" />
+<div align="center" style="background: #0e1118; border: 1px solid #242938; border-radius: 8px; padding: 25px; margin-top: 50px;">
+  <img src="https://img.shields.io/badge/Status-Active_&_Secured-ff3300?style=for-the-badge&logoColor=white" alt="Status" />
   <br><br>
-  <span style="font-style: italic; color: #c9c9d1; font-size: 0.95em;">"Never guess database schemas. Verify every async boundary. Welcome to the Tribunal."</span><br><br>
-  <sub style="color: #6b6b75;"><b>MIT Licensed</b> • Engineered for ultimate AI code governance.</sub>
+  <span style="font-style: italic; color: #f5f2eb; font-size: 0.95em;">"Never guess database schemas. Verify every async boundary. Welcome to the Tribunal."</span><br><br>
+  <sub style="color: #8a92a3;"><b>MIT Licensed</b> • Engineered for ultimate AI code governance • Classical Neo-Brutalist Edition.</sub>
 </div>

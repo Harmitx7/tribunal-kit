@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 150" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <!-- Master Background -->
+    <linearGradient id="tapeBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c0e14"/>
+      <stop offset="100%" stop-color="#06070a"/>
+    </linearGradient>
+
+    <!-- Halftone for Banner -->
+    <pattern id="shieldDots" width="4" height="4" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#ff3300"/>
+    </pattern>
+
+    <filter id="tapeShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  <style>
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .extended { font-family: -apple-system, BlinkMacSystemFont, 'Impact', 'Arial Black', sans-serif; }
+  </style>
+
+  <!-- Base Decal Body -->
+  <rect width="800" height="150" rx="8" fill="url(#tapeBg)"/>
+  <rect x="1" y="1" width="798" height="148" rx="7" fill="none" stroke="#2a3040" stroke-width="1.2"/>
+
+  <!-- Left Accent Vermilion Block (MarCardona Decal Style) -->
+  <rect x="0" y="0" width="8" height="150" rx="2" fill="#ff3300"/>
+
+  <!-- Left Circular Seal Stamp -->
+  <g transform="translate(60, 75)" filter="url(#tapeShadow)">
+    <circle cx="0" cy="0" r="34" fill="#141824" stroke="#ff3300" stroke-width="1.5"/>
+    <circle cx="0" cy="0" r="28" fill="none" stroke="#252c3e" stroke-width="1" stroke-dasharray="3 3"/>
+    <!-- 8-Point Asterism Center -->
+    <path d="M 0 -18 L 3 -6 L 15 -3 L 3 0 L 0 12 L -3 0 L -15 -3 L -3 -6 Z" fill="#ff3300"/>
+    <!-- Micro Stamp Ring -->
+    <text x="0" y="24" text-anchor="middle" font-size="6.5" font-weight="900" fill="#f5f2eb" letter-spacing="1" class="mono">VERITAS</text>
+  </g>
+
+  <!-- Center Content -->
+  <g transform="translate(115, 34)">
+    <!-- Top Meta Label -->
+    <text x="0" y="0" font-size="9.5" font-weight="900" fill="#ff3300" letter-spacing="2" class="mono">
+      AI SUPPLY CHAIN SECURITY SEAL // ARTICLE IV
+    </text>
+
+    <!-- Title -->
+    <text x="0" y="26" font-size="20" font-weight="900" fill="#f5f2eb" letter-spacing="1" class="extended">
+      Protected by Tribunal Kit
+    </text>
+
+    <!-- Subtitle -->
+    <text x="0" y="46" font-size="11" fill="#8a92a3" class="sans">
+      Zero hallucinated packages • 28 parallel reviewer gates • Pre-push verified
+    </text>
+
+    <!-- ==================== MARCARDONA 6-STAGE DECOMPOSITION STRIP ==================== -->
+    <g transform="translate(0, 60)">
+      <!-- Stage 1: Solid Shield -->
+      <g transform="translate(0, 0)">
+        <path d="M 8 0 L 16 4 L 16 12 C 16 17, 12 21, 8 23 C 4 21, 0 17, 0 12 L 0 4 Z" fill="#ff3300"/>
+      </g>
+      <!-- Stage 2: Halftone Shield -->
+      <g transform="translate(26, 0)">
+        <path d="M 8 0 L 16 4 L 16 12 C 16 17, 12 21, 8 23 C 4 21, 0 17, 0 12 L 0 4 Z" fill="url(#shieldDots)"/>
+        <path d="M 8 0 L 16 4 L 16 12 C 16 17, 12 21, 8 23 C 4 21, 0 17, 0 12 L 0 4 Z" fill="none" stroke="#ff3300" stroke-width="0.8"/>
+      </g>
+      <!-- Stage 3: Contour Shield -->
+      <g transform="translate(52, 0)">
+        <path d="M 8 0 L 16 4 L 16 12 C 16 17, 12 21, 8 23 C 4 21, 0 17, 0 12 L 0 4 Z" fill="none" stroke="#ff3300" stroke-width="1.5"/>
+      </g>
+      <!-- Stage 4: Stippled Shield -->
+      <g transform="translate(78, 0)">
+        <path d="M 8 0 L 16 4 L 16 12 C 16 17, 12 21, 8 23 C 4 21, 0 17, 0 12 L 0 4 Z" fill="none" stroke="#d4d8e0" stroke-width="1.2" stroke-dasharray="2 2"/>
+      </g>
+      <!-- Stage 5: Wireframe Cross Shield -->
+      <g transform="translate(104, 0)">
+        <path d="M 8 0 L 16 4 L 16 12 C 16 17, 12 21, 8 23 C 4 21, 0 17, 0 12 L 0 4 Z" fill="none" stroke="#8a92a3" stroke-width="0.8"/>
+        <line x1="8" y1="2" x2="8" y2="21" stroke="#8a92a3" stroke-width="0.6"/>
+        <line x1="2" y1="9" x2="14" y2="9" stroke="#8a92a3" stroke-width="0.6"/>
+      </g>
+      <!-- Stage 6: Particle Dot Core -->
+      <g transform="translate(130, 0)">
+        <circle cx="8" cy="11" r="2" fill="#ff3300"/>
+        <circle cx="2" cy="5" r="1" fill="#8a92a3"/>
+        <circle cx="14" cy="5" r="1" fill="#8a92a3"/>
+        <circle cx="8" cy="21" r="1" fill="#8a92a3"/>
+      </g>
+
+      <!-- Label below strip -->
+      <text x="160" y="16" font-size="8.5" font-weight="700" fill="#ff3300" letter-spacing="1" class="mono">
+        AST-HASH STATE: REPRODUCIBLE INVARIANT
+      </text>
+    </g>
+  </g>
+
+  <!-- Right Interactive Verification Badge Preview Box -->
+  <g transform="translate(560, 42)" filter="url(#tapeShadow)">
+    <rect width="210" height="66" rx="6" fill="#141724" stroke="#2d3345" stroke-width="1"/>
+    
+    <!-- Top mini header -->
+    <rect width="210" height="20" rx="6" fill="#1b202e"/>
+    <rect y="12" width="210" height="8" fill="#1b202e"/>
+    <text x="10" y="14" font-size="8" font-weight="900" fill="#8a92a3" letter-spacing="1" class="mono">EMBED DECAL</text>
+    <circle cx="196" cy="10" r="3" fill="#ff3300"/>
+
+    <!-- Dual Badge Preview Pill -->
+    <g transform="translate(10, 28)">
+      <rect width="95" height="28" rx="3" fill="#06070a" stroke="#252a3a" stroke-width="1"/>
+      <path d="M 12 14 L 13 10 L 14 14 L 18 15 L 14 16 L 13 20 L 12 16 L 8 15 Z" fill="#ff3300"/>
+      <text x="24" y="18" font-size="8.5" font-weight="900" fill="#f5f2eb" class="mono">PROTECTED</text>
+
+      <rect x="95" width="95" height="28" rx="3" fill="#ff3300"/>
+      <text x="142" y="18" text-anchor="middle" font-size="9" font-weight="900" fill="#ffffff" class="mono">TRIBUNAL</text>
+    </g>
+  </g>
+</svg>
