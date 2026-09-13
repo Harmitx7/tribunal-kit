@@ -77,7 +77,7 @@
     <strong style="color: #ffffff; font-size: 1.15em;">One command. Your AI stops lying.</strong>
   </div>
   <p style="color: #c9c9d1; font-size: 0.95em; line-height: 1.6; margin: 0;">
-    Tribunal Kit wraps your coding agents in an active <strong>neurosymbolic verification envelope</strong> — 52 specialist agents, 28 parallel reviewers, 184 skills, and a native compiled Rust core. It intercepts AI output in <strong>&lt; 12ms</strong>, validates it against your live repository AST, and blocks hallucinated code before it ever touches disk.
+    Tribunal Kit wraps your coding agents in an active <strong>neurosymbolic verification envelope</strong> — 52 specialist agents, 28 parallel reviewers, 185 skills, and a native compiled Rust core. It intercepts AI output in <strong>&lt; 12ms</strong>, validates it against your live repository AST, and blocks hallucinated code before it ever touches disk.
   </p>
 </div>
 

@@ -82,13 +82,14 @@ function getBinaryPath() {
     }
   }
 
-  // Third, attempt on-demand compilation if Cargo.toml exists locally and cargo is installed
+  // Third, attempt on-demand compilation if Cargo.toml exists locally and explicitly requested
   const cargoTomlPath = path.resolve(__dirname, '..', 'Cargo.toml');
-  if (fs.existsSync(cargoTomlPath)) {
+  if (process.env.TK_AUTO_BUILD === '1' && fs.existsSync(cargoTomlPath)) {
     try {
+      console.log('\x1b[90m⚡ Building Rust core engine (TK_AUTO_BUILD=1)...\x1b[0m');
       const buildResult = spawnSync('cargo', ['build', '--release'], {
         cwd: path.resolve(__dirname, '..'),
-        stdio: 'ignore',
+        stdio: 'inherit',
         timeout: 60000,
       });
       if (buildResult.status === 0) {
@@ -106,6 +107,15 @@ function getBinaryPath() {
 }
 
 function runRustBinary(binPath, args) {
+  // On Unix-like platforms, ensure the binary has execute permissions
+  if (os.platform() !== 'win32') {
+    try {
+      fs.chmodSync(binPath, 0o755);
+    } catch {
+      // Best-effort permission check
+    }
+  }
+
   const stdio = ['inherit', 'inherit', 'inherit'];
   const result = spawnSync(binPath, args, {
     stdio: stdio,
@@ -122,7 +132,12 @@ function runRustBinary(binPath, args) {
     return false; // Signal caller to fall back
   }
 
-  process.exit(result.status || 0);
+  if (result.signal) {
+    const signalCode = os.constants?.signals?.[result.signal] || 1;
+    process.exit(128 + signalCode);
+  }
+
+  process.exit(result.status !== null && result.status !== undefined ? result.status : 1);
 }
 
 function runLegacyFallback() {

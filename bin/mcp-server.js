@@ -561,6 +561,165 @@ async function handleRequest(req) {
             additionalProperties: false,
           },
         },
+        {
+          name: 'tk_browser_navigate',
+          description:
+            'Token-efficient browser navigation. Navigates headlessly to a URL, prunes HTML using htmltrim (< 4,000 bytes / ~1,000 tokens), enforces IDPI prompt injection defense, and returns compact semantic markdown with an interactive elements tree.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              url: {
+                type: 'string',
+                description: 'The target URL to inspect (e.g. http://localhost:3000 or https://example.com)',
+              },
+            },
+            required: ['url'],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: 'tk_browser_audit',
+          description:
+            'Live web quality, accessibility, console error, and Core Web Vitals auditor. Navigates headlessly to a URL, checks WCAG 2.2 contrast/aria, network failures, uncaught exceptions, and security headers. Returns structured audit report.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              url: {
+                type: 'string',
+                description: 'The target URL to audit (e.g. http://localhost:3000)',
+              },
+            },
+            required: ['url'],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: 'tk_browser_compare',
+          description:
+            'Visual regression differ. Captures synchronized screenshots of two URLs (e.g. localhost dev server vs production) and computes pixel mismatch percentage to verify layout integrity before release.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              url1: {
+                type: 'string',
+                description: 'Baseline or staging URL (e.g. http://localhost:3000)',
+              },
+              url2: {
+                type: 'string',
+                description: 'Production or target URL to compare against',
+              },
+              maxDiffPercent: {
+                type: 'number',
+                description: 'Maximum allowable difference percentage before failing (default: 1.0)',
+              },
+            },
+            required: ['url1', 'url2'],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: 'tk_browser_screenshot',
+          description:
+            'Captures a viewport screenshot of a target URL as base64 PNG data.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              url: {
+                type: 'string',
+                description: 'The URL to screenshot',
+              },
+            },
+            required: ['url'],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: 'tk_deconstruct_component',
+          description:
+            'Reverse-engineers a live web element into a production React TSX component with Tailwind CSS classes by inspecting computed CSSOM (geometry, typography, elevation, transitions).',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              url: {
+                type: 'string',
+                description: 'The URL hosting the target element',
+              },
+              selector: {
+                type: 'string',
+                description: 'CSS selector matching the element (e.g. button.primary or #pricing-card)',
+              },
+              name: {
+                type: 'string',
+                description: 'Optional PascalCase component name (e.g. PricingCard)',
+              },
+            },
+            required: ['url', 'selector'],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: 'tk_heal_runtime_errors',
+          description:
+            'Runtime Sentinel error hunter. Scans a live web page or dev server for uncaught exceptions, React boundary errors, and framework overlays, localizing them to workspace source files.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              url: {
+                type: 'string',
+                description: 'The dev server or web page URL (e.g. http://localhost:3000)',
+              },
+              verify: {
+                type: 'boolean',
+                description: 'If true, verifies whether previously reported runtime errors have cleared',
+              },
+            },
+            required: ['url'],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: 'tk_codify_browser_audit',
+          description:
+            'Audits a target URL and automatically codifies detected WCAG accessibility failures, missing security headers, and console errors into binding Case Law precedents.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              url: {
+                type: 'string',
+                description: 'The URL to audit and codify',
+              },
+            },
+            required: ['url'],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: 'tribunal_get_context',
+          description:
+            'Generate or retrieve an elite Flight Data HUD context dossier for any file, multi-file pair, or directory. Automatically extracts public API contracts, callers, Chesterton\'s Fences, invariants, and test recipes. Supports drift checking and living vault sync.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              target: {
+                type: 'string',
+                description: 'File path, folder path, or primary file to analyze.',
+              },
+              compareWith: {
+                type: 'string',
+                description: 'Optional secondary file for multi-file interface bridge analysis.',
+              },
+              write: {
+                type: 'boolean',
+                description: 'Whether to write the generated dossier to docs/context/ and update INDEX.md (default: true).',
+              },
+              check: {
+                type: 'boolean',
+                description: 'Run vault-wide semantic drift check instead of analyzing a target.',
+              },
+            },
+            additionalProperties: false,
+          },
+        },
       ],
     };
   }
@@ -575,6 +734,83 @@ async function handleRequest(req) {
     const reminder = repeatGuard.observe(toolName, argsObj);
 
     const executeTool = async () => {
+      if (toolName === 'tribunal_get_context') {
+        const target = req.params?.arguments?.target;
+        const compareWith = req.params?.arguments?.compareWith;
+        const write = req.params?.arguments?.write !== false;
+        const check = req.params?.arguments?.check;
+
+        try {
+          const compiler = require('../scripts/context_compiler');
+          const workspaceRoot = process.cwd();
+
+          if (check) {
+            const drift = compiler.checkDrift(workspaceRoot);
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(drift, null, 2),
+                },
+              ],
+            };
+          }
+
+          if (target && compareWith) {
+            const bridge = compiler.analyzeMultiFileBridge(target, compareWith, workspaceRoot);
+            const md = compiler.renderBridgeDossier(bridge);
+            if (write) {
+              const outName = `${path.basename(target).replace(/\.[^.]+$/, '')}__${path.basename(compareWith).replace(/\.[^.]+$/, '')}.bridge.md`;
+              const dest = path.join(workspaceRoot, 'docs', 'context', outName);
+              fs.mkdirSync(path.dirname(dest), { recursive: true });
+              fs.writeFileSync(dest, md, 'utf8');
+              compiler.syncVaultIndex(workspaceRoot);
+            }
+            return {
+              content: [{ type: 'text', text: md }],
+            };
+          }
+
+          if (!target) {
+            throw new RpcError(-32602, 'Missing required argument: target (file or directory path)');
+          }
+
+          const absTarget = path.isAbsolute(target) ? target : path.resolve(workspaceRoot, target);
+          if (fs.existsSync(absTarget) && fs.statSync(absTarget).isDirectory()) {
+            const dirData = compiler.analyzeDirectory(absTarget, workspaceRoot);
+            const md = compiler.renderDirectoryDossier(dirData);
+            if (write) {
+              const outName = `${path.basename(absTarget)}.context.md`;
+              const dest = path.join(workspaceRoot, 'docs', 'context', outName);
+              fs.mkdirSync(path.dirname(dest), { recursive: true });
+              fs.writeFileSync(dest, md, 'utf8');
+              compiler.syncVaultIndex(workspaceRoot);
+            }
+            return {
+              content: [{ type: 'text', text: md }],
+            };
+          }
+
+          const fileData = compiler.analyzeSingleFile(target, workspaceRoot);
+          const md = compiler.renderSingleFileDossier(fileData);
+          if (write) {
+            const outName = `${path.basename(target).replace(/\.[^.]+$/, '')}.context.md`;
+            const dest = path.join(workspaceRoot, 'docs', 'context', outName);
+            fs.mkdirSync(path.dirname(dest), { recursive: true });
+            fs.writeFileSync(dest, md, 'utf8');
+            compiler.syncVaultIndex(workspaceRoot);
+          }
+          return {
+            content: [{ type: 'text', text: md }],
+          };
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Context Compiler Error: ${e.message}` }],
+            isError: true,
+          };
+        }
+      }
+
       if (toolName === 'exit_plan_mode') {
         const planContent = req.params?.arguments?.plan_content;
         if (typeof planContent !== 'string') {
@@ -589,6 +825,196 @@ async function handleRequest(req) {
             },
           ],
         };
+      }
+
+      if (toolName === 'tk_browser_navigate') {
+        const url = req.params?.arguments?.url;
+        if (!url || typeof url !== 'string') {
+          throw new RpcError(-32602, 'Missing required argument: url (string)');
+        }
+        try {
+          const { browse } = require('../dist/browser');
+          const result = await browse(url);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: result.sandboxed,
+              },
+            ],
+          };
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Browser navigation error: ${e.message}` }],
+            isError: true,
+          };
+        }
+      }
+
+      if (toolName === 'tk_browser_audit') {
+        const url = req.params?.arguments?.url;
+        if (!url || typeof url !== 'string') {
+          throw new RpcError(-32602, 'Missing required argument: url (string)');
+        }
+        try {
+          const { auditURL } = require('../dist/browser');
+          const report = await auditURL(url);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(report, null, 2),
+              },
+            ],
+          };
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Browser audit error: ${e.message}` }],
+            isError: true,
+          };
+        }
+      }
+
+      if (toolName === 'tk_browser_compare') {
+        const url1 = req.params?.arguments?.url1;
+        const url2 = req.params?.arguments?.url2;
+        const maxDiffPercent = req.params?.arguments?.maxDiffPercent;
+        if (!url1 || !url2) {
+          throw new RpcError(-32602, 'Missing required arguments: url1 and url2 (strings)');
+        }
+        try {
+          const { compareURLs } = require('../dist/browser');
+          const result = await compareURLs(url1, url2, { maxDiffPercent });
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Browser compare error: ${e.message}` }],
+            isError: true,
+          };
+        }
+      }
+
+      if (toolName === 'tk_browser_screenshot') {
+        const url = req.params?.arguments?.url;
+        if (!url || typeof url !== 'string') {
+          throw new RpcError(-32602, 'Missing required argument: url (string)');
+        }
+        try {
+          const { launchBrowser, CdpClient, createNewTab, closeTab } = require('../dist/browser');
+          const browser = await launchBrowser();
+          let client = null;
+          let tab = null;
+          try {
+            tab = await createNewTab(browser.port);
+            client = new CdpClient();
+            await client.connect(tab.webSocketDebuggerUrl);
+            await client.initDomains();
+            await client.navigate(url);
+            const shot = await client.captureScreenshot('png');
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `Screenshot captured successfully for ${url} (${Buffer.byteLength(shot, 'base64')} bytes base64 PNG).`,
+                },
+              ],
+            };
+          } finally {
+            if (client) client.close();
+            if (tab && browser) await closeTab(tab.id, browser.port);
+            await browser.close();
+          }
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Screenshot error: ${e.message}` }],
+            isError: true,
+          };
+        }
+      }
+
+      if (toolName === 'tk_deconstruct_component') {
+        const url = req.params?.arguments?.url;
+        const selector = req.params?.arguments?.selector;
+        const name = req.params?.arguments?.name;
+        if (!url || !selector) {
+          throw new RpcError(-32602, 'Missing required arguments: url and selector (strings)');
+        }
+        try {
+          const { deconstructElement } = require('../dist/browser');
+          const result = await deconstructElement(url, selector, { name });
+          return {
+            content: [
+              {
+                type: 'text',
+                text: result.code,
+              },
+            ],
+          };
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Component deconstruction error: ${e.message}` }],
+            isError: true,
+          };
+        }
+      }
+
+      if (toolName === 'tk_heal_runtime_errors') {
+        const url = req.params?.arguments?.url;
+        const verify = req.params?.arguments?.verify;
+        if (!url) {
+          throw new RpcError(-32602, 'Missing required argument: url (string)');
+        }
+        try {
+          const { captureRuntimeErrors, verifyRuntimeFix } = require('../dist/browser');
+          const result = verify
+            ? await verifyRuntimeFix(url)
+            : await captureRuntimeErrors(url);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(result, null, 2),
+              },
+            ],
+          };
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Runtime Sentinel error: ${e.message}` }],
+            isError: true,
+          };
+        }
+      }
+
+      if (toolName === 'tk_codify_browser_audit') {
+        const url = req.params?.arguments?.url;
+        if (!url) {
+          throw new RpcError(-32602, 'Missing required argument: url (string)');
+        }
+        try {
+          const { auditURL, codifyAuditViolations } = require('../dist/browser');
+          const report = await auditURL(url);
+          const codified = codifyAuditViolations(report);
+          return {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify({ report, codified }, null, 2),
+              },
+            ],
+          };
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Audit & codify error: ${e.message}` }],
+            isError: true,
+          };
+        }
       }
 
       if (toolName === 'dispatch_swarm') {

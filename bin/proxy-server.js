@@ -51,29 +51,34 @@ function startProxyServer(port) {
         // 5MB payload limit to prevent memory exhaustion (DoS)
         if (body.length > 5 * 1024 * 1024) {
           console.error('[Tribunal Proxy] Request too large, aborting.');
+          if (!clientRes.headersSent) {
+            clientRes.writeHead(413, { 'Content-Type': 'text/plain' });
+            clientRes.end('Payload Too Large');
+          }
           clientReq.destroy();
         }
       });
 
       clientReq.on('end', () => {
+        if (clientReq.destroyed) return;
         let modifiedBody = body;
 
         // Only intercept AI chat completion endpoints
-        if (clientReq.url.includes('/v1/messages')) {
+        if (clientReq.url && clientReq.url.includes('/v1/messages')) {
           console.log(`[Tribunal Proxy] Intercepting request to ${clientReq.url}`);
           modifiedBody = injectRulesIntoAnthropicPayload(body);
         }
+
+        const headers = { ...clientReq.headers, host: 'api.anthropic.com' };
+        delete headers['transfer-encoding'];
+        headers['content-length'] = Buffer.byteLength(modifiedBody);
 
         const options = {
           hostname: 'api.anthropic.com',
           port: 443,
           path: clientReq.url,
           method: clientReq.method,
-          headers: {
-            ...clientReq.headers,
-            host: 'api.anthropic.com',
-            'content-length': Buffer.byteLength(modifiedBody),
-          },
+          headers,
         };
 
         const proxyReq = https.request(options, proxyRes => {
@@ -83,11 +88,15 @@ function startProxyServer(port) {
 
         proxyReq.on('error', err => {
           console.error('[Tribunal Proxy] Proxy request error:', err);
-          clientRes.writeHead(500);
-          clientRes.end();
+          if (!clientRes.headersSent) {
+            clientRes.writeHead(502, { 'Content-Type': 'text/plain' });
+            clientRes.end('Bad Gateway');
+          }
         });
 
-        proxyReq.write(modifiedBody);
+        if (modifiedBody && clientReq.method !== 'GET' && clientReq.method !== 'HEAD') {
+          proxyReq.write(modifiedBody);
+        }
         proxyReq.end();
       });
     });

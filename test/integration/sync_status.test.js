@@ -58,7 +58,7 @@ describe('Day 3: Multi-IDE Sync Engine & Status Dashboard', () => {
   const bin = findBinary();
   const skipRust = !bin;
 
-  test('sync writes all 6 IDE bridge files from .agent/rules/GEMINI.md', () => {
+  test('sync writes all 8 IDE bridge files from .agent/rules/GEMINI.md', () => {
     if (skipRust) {
       // Graceful skip if binary not compiled
       expect(true).toBe(true);
@@ -73,7 +73,7 @@ describe('Day 3: Multi-IDE Sync Engine & Status Dashboard', () => {
       const res = JSON.parse(out.trim());
 
       expect(res.success).toBe(true);
-      expect(res.bridges_synced).toBe(6);
+      expect(res.bridges_synced).toBe(8);
 
       // Verify all bridge files were actually written
       expect(fs.existsSync(path.join(tempDir, '.cursorrules'))).toBe(true);
@@ -82,6 +82,8 @@ describe('Day 3: Multi-IDE Sync Engine & Status Dashboard', () => {
       expect(fs.existsSync(path.join(tempDir, '.gemini', 'settings.json'))).toBe(true);
       expect(fs.existsSync(path.join(tempDir, '.github', 'copilot-instructions.md'))).toBe(true);
       expect(fs.existsSync(path.join(tempDir, '.claude', 'CLAUDE.md'))).toBe(true);
+      expect(fs.existsSync(path.join(tempDir, 'CLAUDE.md'))).toBe(true);
+      expect(fs.existsSync(path.join(tempDir, 'AGENTS.md'))).toBe(true);
 
       // Verify bridge content contains the rules
       const cursorContent = fs.readFileSync(path.join(tempDir, '.cursorrules'), 'utf8');
@@ -112,7 +114,7 @@ describe('Day 3: Multi-IDE Sync Engine & Status Dashboard', () => {
 
       expect(res.installed).toBe(true);
       expect(res.bridges).toBeDefined();
-      expect(res.bridges.length).toBe(6);
+      expect(res.bridges.length).toBe(8);
       expect(res.reviewers).toBeDefined();
       expect(res.reviewers.ready).toBeGreaterThanOrEqual(2); // logic-reviewer + security-auditor
       expect(res.context_tokens_estimate).toBeDefined();
@@ -139,7 +141,7 @@ describe('Day 3: Multi-IDE Sync Engine & Status Dashboard', () => {
       expect(res.installed).toBe(true);
       expect(res.bridges).toBeDefined();
       const missingBridges = (res.bridges || []).filter(b => b.status === 'missing');
-      expect(missingBridges.length).toBe(6);
+      expect(missingBridges.length).toBe(8);
     } finally {
       cleanupTempProject(tempDir);
     }

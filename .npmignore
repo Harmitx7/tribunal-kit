@@ -49,6 +49,7 @@ target/
 crates/
 Cargo.toml
 Cargo.lock
+npm/packages/
 *.tgz
 *.tar.gz
 

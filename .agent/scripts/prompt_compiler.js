@@ -20,6 +20,33 @@ const TECH_KEYWORDS = [
   'html',
   'prisma',
   'drizzle',
+  'fastapi',
+  'django',
+  'graphql',
+  'rust',
+  'docker',
+  'kubernetes',
+  'aws',
+  'terraform',
+  'opentofu',
+  'redis',
+  'supabase',
+  'playwright',
+  'jest',
+  'vitest',
+  'react-native',
+  'flutter',
+  'expo',
+  'c#',
+  '.net',
+  'blazor',
+  'angular',
+  'astro',
+  'sqlite',
+  'opentelemetry',
+  'webgpu',
+  'llm',
+  'rag',
 ];
 
 const ROUTER_MAP = {
@@ -39,18 +66,52 @@ const ROUTER_MAP = {
   html: ['frontend-design'],
   prisma: ['database-design'],
   drizzle: ['database-design'],
+  fastapi: ['python-pro', 'api-patterns'],
+  django: ['python-pro', 'database-design'],
+  graphql: ['api-patterns', 'backend-security-expert'],
+  rust: ['rust-pro', 'clean-code'],
+  docker: ['containerization-pro', 'devops-engineer'],
+  kubernetes: ['platform-engineer', 'containerization-pro'],
+  aws: ['cloud-architect', 'devops-engineer'],
+  terraform: ['platform-engineering-opentofu'],
+  opentofu: ['platform-engineering-opentofu'],
+  redis: ['database-design', 'backend-security-expert'],
+  supabase: ['supabase-postgres-best-practices', 'database-design'],
+  playwright: ['playwright-ai-e2e', 'webapp-testing'],
+  jest: ['testing-patterns'],
+  vitest: ['testing-patterns'],
+  'react-native': ['mobile-design', 'expo-router-v4'],
+  flutter: ['mobile-design'],
+  expo: ['expo-router-v4', 'mobile-design'],
+  'c#': ['csharp-developer'],
+  '.net': ['csharp-developer'],
+  blazor: ['csharp-developer'],
+  angular: ['clean-code'],
+  astro: ['frontend-design'],
+  sqlite: ['database-design'],
+  opentelemetry: ['opentelemetry-observability'],
+  webgpu: ['webgpu-performance'],
+  llm: ['llm-engineering', 'ai-app-hardening'],
+  rag: ['advanced-rag-pipelines', 'llm-engineering'],
 };
 
 const ACTION_ROUTER = {
-  build: ['architecture'],
-  create: ['architecture'],
-  fix: ['systematic-debugging'],
-  debug: ['systematic-debugging'],
-  refactor: ['clean-code'],
+  build: ['architecture', 'clean-code'],
+  create: ['architecture', 'clean-code'],
+  fix: ['systematic-debugging', 'clean-code'],
+  debug: ['systematic-debugging', 'diagnosing-bugs'],
+  refactor: ['clean-code', 'codebase-design'],
   update: ['clean-code'],
   write: ['clean-code'],
-  design: ['frontend-design'],
-  audit: ['vulnerability-scanner', 'lint-and-validate'],
+  design: ['frontend-design', 'better-ui'],
+  audit: ['vulnerability-scanner', 'lint-and-validate', 'code-review-checklist'],
+  test: ['testing-patterns', 'property-based-testing'],
+  benchmark: ['performance-profiling'],
+  optimize: ['performance-profiling', 'clean-code'],
+  deploy: ['deployment-procedures', 'devops-engineer'],
+  migrate: ['database-design'],
+  secure: ['vulnerability-scanner', 'backend-security-expert'],
+  contract: ['domain-modeling', 'clean-code'],
 };
 
 /**
@@ -64,12 +125,17 @@ function sanitizeUserInput(text) {
 
   // 2. Check for injection patterns
   const injectionPatterns = [
-    /ignore\s+(all\s+)?previous\s+instructions/i,
+    /ignore\s+(all\s+)?(previous|prior)\s+instructions/i,
+    /disregard\s+(all\s+)?(previous|prior)\s+instructions/i,
     /you\s+are\s+now\s+a?\s+/i,
+    /\bDAN\b|jailbreak/i,
     /system\s*:\s*/i,
     /assistant\s*:\s*/i,
-    /\[\[INST\]\]/i,
+    /user\s*:\s*/i,
+    /\[\[?INST\]?\]/i,
     /<<SYS>>/i,
+    /bypass\s+(all\s+)?(guardrails|safety|tribunal)/i,
+    /override\s+(system|model|all)\s+instructions/i,
   ];
 
   for (const pattern of injectionPatterns) {
@@ -80,6 +146,30 @@ function sanitizeUserInput(text) {
   }
 
   return sanitized;
+}
+
+/**
+ * Classifies the governance impact tier (0-3) based on action and stack.
+ * @param {string} action
+ * @param {string[]} stack
+ * @param {string} text
+ * @returns {number} Tier (0-3)
+ */
+function inferImpactTier(action, stack, text) {
+  const lower = text.toLowerCase();
+  if (/auth|jwt|session|login|migration|breaking|schema|password|secret|key/i.test(lower)) {
+    return 3;
+  }
+  if (['deploy', 'migrate', 'secure'].includes(action)) {
+    return 3;
+  }
+  if (['build', 'create', 'refactor', 'contract'].includes(action) || stack.length >= 2) {
+    return 2;
+  }
+  if (['fix', 'debug', 'update', 'test'].includes(action)) {
+    return 1;
+  }
+  return 0;
 }
 
 /**
@@ -103,11 +193,10 @@ function compileSuperPrompt(input) {
   // Sanitize the input to prevent prompt injection
   const originalInput = sanitizeUserInput(rawText);
   const trimmedInput = originalInput.trim();
-  const _cleanInput = trimmedInput;
 
   // 1. Extract Action (Intent mapping) using trimmed input
   const actionMatch = trimmedInput.match(
-    /^(?:(?:hey,?\s*|please\s+|can you\s+|could you\s+|would you\s+|i need you to\s+|i want to\s+)*)(build|create|fix|debug|refactor|update|write|design|audit)\b/i,
+    /^(?:(?:hey,?\s*|please\s+|can you\s+|could you\s+|would you\s+|i need you to\s+|i want to\s+)*)(build|create|fix|debug|refactor|update|write|design|audit|test|benchmark|optimize|deploy|migrate|secure|contract)\b/i,
   );
   const action = actionMatch ? actionMatch[1].toLowerCase() : 'execute';
 
@@ -133,7 +222,8 @@ function compileSuperPrompt(input) {
     }
   });
 
-  const finalSkills = Array.from(recommendedSkills).slice(0, 4);
+  const finalSkills = Array.from(recommendedSkills).slice(0, 5);
+  const impactTier = inferImpactTier(action, stack, trimmedInput);
 
   // 4. Compact YAML Generation with prompt injection defense
   // Preserve leading whitespace and escape leading "---" or "..." to prevent YAML document start
@@ -162,7 +252,9 @@ function compileSuperPrompt(input) {
     `target: |`,
     indentedTarget,
     `stack: [${stack.join(', ')}]`,
+    `impact_tier: ${impactTier}`,
     `recommended_skills: [${finalSkills.join(', ')}]`,
+    `governance: tribunal-v9`,
   ].join('\n');
 }
 
@@ -177,4 +269,4 @@ if (require.main === module) {
   console.log(compileSuperPrompt(rawInput));
 }
 
-module.exports = { compileSuperPrompt };
+module.exports = { compileSuperPrompt, sanitizeUserInput, inferImpactTier };

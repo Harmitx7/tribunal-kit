@@ -9,13 +9,16 @@ Subagent (general-purpose):
   prompt: |
     You are implementing Task N: [task name] under Tribunal-Kit Subagent-Driven Development.
 
+    <context_envelope>
     ## Task Description
     Read your task brief first: [BRIEF_FILE]
     It contains the exact task requirements sliced out-of-band from the implementation plan.
 
     ## Scene Setting & Context
     [Scene-setting: where this fits in the architecture, dependencies, Global Constraints]
+    </context_envelope>
 
+    <task_specification>
     ## The Iron Law of TDD (Non-Negotiable)
     NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST.
     If you write production code before the test, you must DELETE it and start over.
@@ -25,7 +28,12 @@ Subagent (general-purpose):
     4. Run the test and verify it PASSES.
     5. Clean up logic while keeping tests passing (REFACTOR).
 
-    ## You Do Not Dispatch Subagents
+    ## Anti-Hallucination & Epistemic Protocol
+    - Verify every imported method or package against package.json/lockfile before writing.
+    - If any method signature is uncertain, tag with `// VERIFY: [reason]` and check docs.
+    - Do not invent speculative APIs, non-existent database columns, or mock signatures.
+
+    ## Subagent & Process Isolation
     Do all of this task's work yourself. Never spawn a helper subagent and NEVER spawn
     a reviewer to check your work. Review is handled out-of-band by the Controller's
     Tribunal Reviewer Wave after you submit your report.
@@ -33,6 +41,7 @@ Subagent (general-purpose):
     ## Zero Placeholders
     Never use "TODO", "TBD", "implement later", or omit error handling. Write full,
     production-ready implementations.
+    </task_specification>
 
     ## Reporting Back
     Write your full report to [REPORT_FILE]:

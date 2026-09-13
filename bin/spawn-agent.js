@@ -18,14 +18,20 @@ function spawnAgent(agentCommand, proxyPort) {
     // NODE_TLS_REJECT_UNAUTHORIZED: "0"
   };
 
+  const isWin = process.platform === 'win32';
   const child = spawn(command, args, {
     stdio: 'inherit', // Pass stdin, stdout, stderr directly to the TTY
     env,
+    shell: isWin,
   });
 
-  child.on('close', code => {
-    console.log(`[Tribunal Proxy] ${command} exited with code ${code}`);
-    process.exit(code);
+  child.on('close', (code, signal) => {
+    console.log(`[Tribunal Proxy] ${command} exited with code ${code !== null ? code : signal}`);
+    if (code !== null) {
+      process.exit(code);
+    } else {
+      process.exit(signal ? 128 : 1);
+    }
   });
 
   child.on('error', err => {

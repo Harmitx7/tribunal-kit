@@ -1,6 +1,6 @@
 ---
 name: game-developer
-description: Game development router. Delegates to game-engineering-expert for technical game systems (physics, rendering, ECS, multiplayer) or game-design-expert for design principles (3Cs, game feel, progression loops). Keywords: game, unity, godot, unreal, phaser, pygame, physics, animation, collision, level design, game feel.
+description: "Game development router. Delegates to game-engineering-expert for technical game systems (physics, rendering, ECS, multiplayer) or game-design-expert for design principles (3Cs, game feel, progression loops). Keywords: game, unity, godot, unreal, phaser, pygame, physics, animation, collision, level design, game feel."
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:

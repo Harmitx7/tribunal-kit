@@ -18,11 +18,11 @@ Or install from git:
 
 ```json
 {
-  "plugin": ["tribunal-kit@git+https://github.com/sunrise/tribunal-kit.git"]
+  "plugin": ["tribunal-kit@git+https://github.com/Harmitx7/tribunal-kit.git"]
 }
 ```
 
-Restart OpenCode. The plugin registers all 184 Tribunal skills and auto-injects Master Governance rules on session start.
+Restart OpenCode. The plugin registers all 185 Tribunal skills and auto-injects Master Governance rules on session start.
 
 ## Usage
 

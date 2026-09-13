@@ -8,8 +8,20 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const logger_1 = require("../utils/logger");
 const helpers_1 = require("../utils/helpers");
+const fs_2 = require("../utils/fs");
 function cmdUninstall(flags, quiet = false) {
     const targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
+    const pkgStr = fs_1.default.readFileSync(path_1.default.resolve(__dirname, '../../package.json'), 'utf8');
+    const pkg = JSON.parse(pkgStr);
+    if ((0, fs_2.isSelfInstall)(targetDir, pkg.name, path_1.default.resolve(__dirname, '../..'))) {
+        (0, logger_1.err)('Cannot run uninstall inside the tribunal-kit package itself.');
+        (0, logger_1.err)(`Target: ${targetDir}`);
+        console.log();
+        (0, logger_1.dim)('This command is designed to remove .agent/ from OTHER projects.');
+        (0, logger_1.dim)('Run it from the root of the target project you want to uninstall from.');
+        console.log();
+        process.exit(1);
+    }
     const agentDest = path_1.default.join(targetDir, '.agent');
     (0, helpers_1.banner)(quiet);
     if (!fs_1.default.existsSync(agentDest)) {

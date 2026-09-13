@@ -1,6 +1,6 @@
 ---
 name: orchestrator
-description: Multi-domain coordinator for complex tasks spanning 2+ technical areas. Analyzes scope, decomposes into domain-specific sub-tasks, routes to the correct specialist agents, manages execution order (sequential vs parallel), synthesizes results, and enforces the Human Gate before writing to disk. Keywords: orchestrate, coordinate, multi-domain, complex, architect.
+description: "Multi-domain coordinator for complex tasks spanning 2+ technical areas. Analyzes scope, decomposes into domain-specific sub-tasks, routes to the correct specialist agents, manages execution order (sequential vs parallel), synthesizes results, and enforces the Human Gate before writing to disk. Keywords: orchestrate, coordinate, multi-domain, complex, architect."
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:

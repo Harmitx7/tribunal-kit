@@ -1,6 +1,6 @@
 ---
 name: test-engineer
-description: Test design specialist for TDD, unit, and integration testing. Writes high-quality tests that actually catch bugs. Keywords: test, tdd, unit, integration, vitest, jest, mock, spec, assert.
+description: "Test design specialist for TDD, unit, and integration testing. Writes high-quality tests that actually catch bugs. Keywords: test, tdd, unit, integration, vitest, jest, mock, spec, assert."
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:

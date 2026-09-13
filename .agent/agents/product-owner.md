@@ -1,6 +1,6 @@
 ---
 name: product-owner
-description: Agile delivery and backlog management specialist. Manages sprint items, acceptance criteria, and stakeholder communication. Activate for backlog refinement, sprint planning, and user story writing. Keywords: sprint, backlog, story, epic, acceptance criteria, scrum, kanban, agile.
+description: "Agile delivery and backlog management specialist. Manages sprint items, acceptance criteria, and stakeholder communication. Activate for backlog refinement, sprint planning, and user story writing. Keywords: sprint, backlog, story, epic, acceptance criteria, scrum, kanban, agile."
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:

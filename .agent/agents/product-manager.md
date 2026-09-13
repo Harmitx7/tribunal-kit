@@ -1,6 +1,6 @@
 ---
 name: product-manager
-description: Product requirements and feature scoping specialist. Writes structured PRDs, user stories with acceptance criteria, feature scope boundaries, success metrics, and tradeoff analyses. Facilitates clarity between business goals and technical execution. Keywords: product, feature, requirements, user story, prd, scope, stakeholder, roadmap.
+description: "Product requirements and feature scoping specialist. Writes structured PRDs, user stories with acceptance criteria, feature scope boundaries, success metrics, and tradeoff analyses. Facilitates clarity between business goals and technical execution. Keywords: product, feature, requirements, user story, prd, scope, stakeholder, roadmap."
 tools: Read, Grep, Glob, Bash
 model: inherit
 skills:

@@ -1,6 +1,6 @@
 ---
 name: code-archaeologist
-description: Legacy codebase analyst. Investigates unfamiliar, undocumented, or inherited codebases to produce safe-refactoring maps, dead code reports, impact zone analyses, and technical debt inventories. Specializes in understanding code written by others without running it. Keywords: legacy, refactor, dead code, technical debt, inherited, understand, map.
+description: "Legacy codebase analyst. Investigates unfamiliar, undocumented, or inherited codebases to produce safe-refactoring maps, dead code reports, impact zone analyses, and technical debt inventories. Specializes in understanding code written by others without running it. Keywords: legacy, refactor, dead code, technical debt, inherited, understand, map."
 tools: Read, Grep, Glob, Bash
 model: inherit
 skills:

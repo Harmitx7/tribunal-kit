@@ -1,6 +1,18 @@
 {
   "commands": [
     {
+      "name": "/context",
+      "description": "Generate an elite Flight Data HUD context dossier for any file, multi-file pair, or project folder. Maintains living codebase context vault.",
+      "usage": "/context <file_or_folder_path> [--crawl] [--check] [--link]",
+      "aliases": ["/file-context", "/digest"],
+      "examples": [
+        "/context src/services/auth.ts",
+        "/context src/components/Button.tsx src/theme/tokens.ts",
+        "/context tribunal-kit/",
+        "/context --check"
+      ]
+    },
+    {
       "name": "/tribunal",
       "description": "Run full Tribunal review on the current file or selection. All 28 reviewers audit in parallel.",
       "usage": "/tribunal [file_path]",
@@ -34,7 +46,7 @@
     },
     {
       "name": "/skill",
-      "description": "Load a specific skill on-demand from the 186-skill library.",
+      "description": "Load a specific skill on-demand from the 185-skill library.",
       "usage": "/skill <skill_name>",
       "examples": ["/skill react-specialist", "/skill python-pro", "/skill nextjs-react-expert"]
     },

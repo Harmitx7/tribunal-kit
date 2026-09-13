@@ -69,6 +69,13 @@ describe('MCP Server handleRequest', () => {
     const getSparseContextTool = result.tools.find(t => t.name === 'get_sparse_context');
     expect(getSparseContextTool).toBeDefined();
     expect(getSparseContextTool.inputSchema.required).toContain('task');
+
+    expect(result.tools.find(t => t.name === 'tk_browser_navigate')).toBeDefined();
+    expect(result.tools.find(t => t.name === 'tk_browser_audit')).toBeDefined();
+    expect(result.tools.find(t => t.name === 'tk_browser_compare')).toBeDefined();
+    expect(result.tools.find(t => t.name === 'tk_deconstruct_component')).toBeDefined();
+    expect(result.tools.find(t => t.name === 'tk_heal_runtime_errors')).toBeDefined();
+    expect(result.tools.find(t => t.name === 'tk_codify_browser_audit')).toBeDefined();
   });
 
   test('uses the in-process manifest audit rather than schema validation', async () => {

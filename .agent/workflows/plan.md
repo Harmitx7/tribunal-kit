@@ -1,5 +1,5 @@
 ---
-description: Create project plan using project-planner agent. 4-phase approach: Analyze → Research → Plan Document → Human Gate. NO code writing — only plan file generation. Writing begins only after explicit human approval.
+description: "Create project plan using project-planner agent. 4-phase approach: Analyze → Research → Plan Document → Human Gate. NO code writing — only plan file generation. Writing begins only after explicit human approval."
 tools: Read, Grep, Glob, Bash, Edit, Write
 version: 3.0.0
 last-updated: 2026-07-30

@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   lint:
-    name: Lint
+    name: Lint & Metadata Check
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -32,7 +32,10 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: npx eslint .
+        run: npm run lint
+
+      - name: Verify version sync & metadata
+        run: node scripts/sync-version.js
 
   test:
     name: Test (Node ${{ matrix.node-version }}, ${{ matrix.os }})
@@ -64,9 +67,6 @@ jobs:
       - name: Run tests with coverage
         run: npm test
 
-      - name: Verify version sync
-        run: node scripts/sync-version.js
-
       - name: Verify package contents
         run: |
           test -d .agent/agents
@@ -74,7 +74,10 @@ jobs:
           test -d .agent/skills
           test -d .agent/scripts
           test -f .agent/ARCHITECTURE.md
+          test -f bin/wrapper.js
           test -f bin/tribunal-kit.js
+          test -f bin/mcp-server.js
+          test -f dist/cli.js
         shell: bash
 
       - name: Upload coverage report
@@ -101,6 +104,11 @@ jobs:
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: crates/core
 
       - name: Run Rust tests
         run: cargo test --manifest-path crates/core/Cargo.toml

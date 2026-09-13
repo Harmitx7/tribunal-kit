@@ -31,6 +31,10 @@ const ADAPTERS = {
       if (fs.existsSync(source)) {
         fs.copyFileSync(source, target);
       }
+      const rootTarget = path.join(projectRoot, 'CLAUDE.md');
+      if (fs.existsSync(source) && !fs.existsSync(rootTarget)) {
+        fs.copyFileSync(source, rootTarget);
+      }
       // Also install MCP server config
       installMcpConfig(projectRoot, 'claude');
     },
@@ -57,10 +61,16 @@ const ADAPTERS = {
     description: 'OpenAI Codex CLI',
     setup: projectRoot => {
       const agentsPath = path.join(projectRoot, 'AGENTS.md');
-      const systemPrompt = fs.readFileSync(
-        path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'),
-        'utf8',
-      );
+      const rootAgentsSource = path.join(__dirname, '..', 'AGENTS.md');
+      let systemPrompt = '';
+      if (fs.existsSync(rootAgentsSource)) {
+        systemPrompt = fs.readFileSync(rootAgentsSource, 'utf8');
+      } else {
+        systemPrompt = fs.readFileSync(
+          path.join(__dirname, '..', '.agent', 'config', 'system-prompt.md'),
+          'utf8',
+        );
+      }
       fs.writeFileSync(agentsPath, systemPrompt);
       console.log(`  ✓ Wrote ${agentsPath}`);
     },
@@ -146,16 +156,6 @@ function ensureDir(dirPath) {
 }
 
 function installMcpConfig(projectRoot, target) {
-  const mcpConfig = {
-    mcpServers: {
-      'tribunal-kit': {
-        command: 'node',
-        args: [path.join(__dirname, '..', 'bin', 'mcp-server.js')],
-        env: { NODE_ENV: 'production' },
-      },
-    },
-  };
-
   let configPath;
   if (target === 'claude') {
     configPath = path.join(projectRoot, '.claude', 'mcp.json');
@@ -165,7 +165,31 @@ function installMcpConfig(projectRoot, target) {
     configPath = path.join(projectRoot, 'mcp_config.json');
   }
 
-  fs.writeFileSync(configPath, JSON.stringify(mcpConfig, null, 2));
+  ensureDir(path.dirname(configPath));
+
+  let existing = {};
+  if (fs.existsSync(configPath)) {
+    try {
+      existing = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    } catch {
+      existing = {};
+    }
+  }
+
+  if (!existing || typeof existing !== 'object') {
+    existing = {};
+  }
+  if (!existing.mcpServers || typeof existing.mcpServers !== 'object') {
+    existing.mcpServers = {};
+  }
+
+  existing.mcpServers['tribunal-kit'] = {
+    command: 'node',
+    args: [path.join(__dirname, '..', 'bin', 'mcp-server.js')],
+    env: { NODE_ENV: 'production' },
+  };
+
+  fs.writeFileSync(configPath, JSON.stringify(existing, null, 2));
   console.log(`  ✓ MCP server registered at ${configPath}`);
 }
 
@@ -180,7 +204,7 @@ function main() {
   console.log('');
   console.log('┌─────────────────────────────────────────────┐');
   console.log('│  🔱 Tribunal Kit — Universal Agent Adapter  │');
-  console.log('│  v7.0.0 · 52 specialists · 186 skills       │');
+  console.log('│  v9.0.0 · 52 specialists · 185 skills       │');
   console.log('└─────────────────────────────────────────────┘');
   console.log('');
 

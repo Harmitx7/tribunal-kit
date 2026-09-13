@@ -151,7 +151,8 @@
       "tdd-workflow",
       "test-result-analyzer",
       "playwright-ai-e2e",
-      "property-based-testing"
+      "property-based-testing",
+      "browser-audit"
     ],
     "meta": [
       "agent-organizer",

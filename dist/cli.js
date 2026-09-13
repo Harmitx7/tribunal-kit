@@ -16,79 +16,65 @@ const CURRENT_VERSION = PKG.version;
 function parseArgs(argv) {
     const args = { command: null, flags: {} };
     const raw = argv.slice(2);
-    // First non-flag arg is the command
-    for (const arg of raw) {
-        if (!arg.startsWith('--') && !args.command) {
-            args.command = arg;
+    for (let i = 0; i < raw.length; i++) {
+        const arg = raw[i];
+        if (!arg.startsWith('-')) {
+            if (!args.command) {
+                args.command = arg;
+            }
             continue;
         }
         if (arg === '--force') {
             args.flags.force = true;
-            continue;
-        }
-        if (arg === '--quiet') {
+        } else if (arg === '--quiet') {
             args.flags.quiet = true;
-            continue;
-        }
-        if (arg === '--verbose') {
+        } else if (arg === '--verbose') {
             args.flags.verbose = true;
-            continue;
-        }
-        if (arg === '--dry-run') {
+        } else if (arg === '--dry-run') {
             args.flags.dryRun = true;
-            continue;
-        }
-        if (arg === '--minimal') {
+        } else if (arg === '--minimal') {
             args.flags.minimal = true;
-            continue;
-        }
-        if (arg.startsWith('--profile=')) {
+        } else if (arg.startsWith('--profile=')) {
             args.flags.profile = arg.split('=').slice(1).join('=');
-            continue;
-        }
-        if (arg === '--profile') {
-            const idx = raw.indexOf('--profile');
-            args.flags.profile = raw[idx + 1] || 'full';
-            continue;
-        }
-        if (arg === '--skip-update-check') {
+        } else if (arg === '--profile') {
+            const nextVal = raw[++i];
+            args.flags.profile = nextVal || 'full';
+        } else if (arg === '--skip-update-check') {
             args.flags.skipUpdateCheck = true;
-            continue;
-        }
-        if (arg === '--write') {
+        } else if (arg === '--write') {
             args.flags.write = true;
-            continue;
-        }
-        if (arg === '--head') {
+        } else if (arg === '--head') {
             args.flags.head = true;
-            continue;
-        }
-        if (arg.startsWith('--path=')) {
+        } else if (arg.startsWith('--path=')) {
             args.flags.path = arg.split('=').slice(1).join('=');
-        }
-        if (arg === '--path') {
-            const idx = raw.indexOf('--path');
-            const nextVal = raw[idx + 1];
+        } else if (arg === '--path') {
+            const nextVal = raw[++i];
             if (!nextVal || nextVal.startsWith('--')) {
                 console.error(`  \x1b[91m✖ --path requires a directory argument\x1b[0m`);
                 process.exit(1);
             }
             args.flags.path = nextVal;
-        }
-        if (arg.startsWith('--target=')) {
+        } else if (arg.startsWith('--target=')) {
             args.flags.target = arg.split('=').slice(1).join('=');
-        }
-        if (arg === '--target') {
-            const idx = raw.indexOf('--target');
-            const nextVal = raw[idx + 1];
+        } else if (arg === '--target') {
+            const nextVal = raw[++i];
             if (!nextVal || nextVal.startsWith('--')) {
                 console.error(`  \x1b[91m✖ --target requires an argument\x1b[0m`);
                 process.exit(1);
             }
             args.flags.target = nextVal;
-        }
-        if (arg.startsWith('--branch=')) {
+        } else if (arg.startsWith('--branch=')) {
             args.flags.branch = arg.split('=').slice(1).join('=');
+        } else if (arg === '--branch') {
+            args.flags.branch = raw[++i];
+        } else if (arg.startsWith('--log=')) {
+            args.flags.log = arg.split('=').slice(1).join('=');
+        } else if (arg === '--log') {
+            args.flags.log = raw[++i];
+        } else if (arg.startsWith('--strategy=')) {
+            args.flags.strategy = arg.split('=').slice(1).join('=');
+        } else if (arg === '--strategy') {
+            args.flags.strategy = raw[++i];
         }
     }
     return args;
@@ -123,6 +109,11 @@ function cmdHelp(quiet = false) {
     (0, logger_1.log)(cmd('guardrail', 'Validate .agent/ integrity (phantom refs, count mismatches, drift)'));
     (0, logger_1.log)(cmd('contract', 'AI Agent Behavioral Contract Testing (init, verify, list, trace, replay)'));
     (0, logger_1.log)(cmd('impact-tier', 'Classify task governance impact tier (0-3)'));
+    (0, logger_1.log)(cmd('browse', 'Token-efficient page reader (pruned to <4k bytes)'));
+    (0, logger_1.log)(cmd('audit-web', 'Live browser accessibility, console & vitals auditor'));
+    (0, logger_1.log)(cmd('compare-web', 'Visual regression differ for CI & release gating'));
+    (0, logger_1.log)(cmd('deconstruct', 'Reverse-engineer live web elements into React TSX + Tailwind'));
+    (0, logger_1.log)(cmd('heal', 'Runtime Sentinel error hunter & live fix verifier'));
     (0, logger_1.log)(cmd('uninstall', 'Remove .agent/ folder from project'));
     console.log();
     (0, logger_1.log)((0, logger_1.bold)('  Options'));
@@ -322,6 +313,31 @@ async function runWithUpdateCheck(command, flags) {
         case 'impact-tier': {
             const cmdImpactTier = loadCmd('./commands/native', 'cmdImpactTier');
             cmdImpactTier(process.argv, quiet);
+            break;
+        }
+        case 'browse': {
+            const cmdBrowse = loadCmd('./commands/browse', 'cmdBrowse');
+            await cmdBrowse(flags, process.argv, quiet);
+            break;
+        }
+        case 'audit-web': {
+            const cmdAuditWeb = loadCmd('./commands/audit-web', 'cmdAuditWeb');
+            await cmdAuditWeb(flags, process.argv, quiet);
+            break;
+        }
+        case 'compare-web': {
+            const cmdCompareWeb = loadCmd('./commands/compare-web', 'cmdCompareWeb');
+            await cmdCompareWeb(flags, process.argv, quiet);
+            break;
+        }
+        case 'deconstruct': {
+            const cmdDeconstruct = loadCmd('./commands/deconstruct', 'cmdDeconstruct');
+            await cmdDeconstruct(flags, process.argv, quiet);
+            break;
+        }
+        case 'heal': {
+            const cmdHeal = loadCmd('./commands/heal', 'cmdHeal');
+            await cmdHeal(flags, process.argv, quiet);
             break;
         }
         case 'help':
