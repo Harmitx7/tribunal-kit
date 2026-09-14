@@ -121,7 +121,7 @@
     "test:unit": "jest test/unit --coverage --forceExit",
     "test:integration": "jest test/integration --coverage --forceExit",
     "preversion": "node scripts/sync-version.js",
-    "version": "node scripts/changelog.js && git add CHANGELOG.md",
+    "version": "node scripts/apply-version.js && cargo build --release && node scripts/changelog.js && git add CHANGELOG.md plugin.json gemini-extension.json npm/core-template/package.json README.md crates/core/Cargo.toml Cargo.lock bin/adapter-install.js dist/tui/banner.js scripts/apply-version.js",
     "changelog": "node scripts/changelog.js",
     "changelog:preview": "node scripts/changelog.js --preview",
     "sync": "node scripts/sync-version.js",
@@ -151,12 +151,12 @@
     "ws": "^8.21.3"
   },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^9.0.0",
-    "@tribunal-kit/core-darwin-x64": "^9.0.0",
-    "@tribunal-kit/core-linux-arm64": "^9.0.0",
-    "@tribunal-kit/core-linux-x64": "^9.0.0",
-    "@tribunal-kit/core-win32-arm64": "^9.0.0",
-    "@tribunal-kit/core-win32-x64": "^9.0.0"
+    "@tribunal-kit/core-darwin-arm64": "^9.0.1",
+    "@tribunal-kit/core-darwin-x64": "^9.0.1",
+    "@tribunal-kit/core-linux-arm64": "^9.0.1",
+    "@tribunal-kit/core-linux-x64": "^9.0.1",
+    "@tribunal-kit/core-win32-arm64": "^9.0.1",
+    "@tribunal-kit/core-win32-x64": "^9.0.1"
   },
   "jest": {
     "testMatch": [
