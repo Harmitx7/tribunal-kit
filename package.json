@@ -136,6 +136,7 @@
     "test:rust": "cargo test --manifest-path crates/core/Cargo.toml",
     "test:all": "npm run validate-payload && npm run test:rust && jest --runInBand --coverage --forceExit",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "clean:pycache": "node scripts/clean-pycache.js",
     "prepack": "npm run clean:pycache",
     "format": "prettier --write .",
@@ -146,7 +147,8 @@
     "eslint": "^9.1.1",
     "jest": "^30.4.2",
     "prettier": "^3.2.5",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "ws": "^8.21.3"
   },
   "optionalDependencies": {
     "@tribunal-kit/core-darwin-arm64": "^9.0.0",

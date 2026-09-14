@@ -15,7 +15,7 @@ const {
 const { handleRequest } = require('../../bin/mcp-server');
 
 describe('Context Compiler Engine', () => {
-  const workspaceRoot = path.resolve(__dirname, '../../..');
+  const workspaceRoot = path.resolve(__dirname, '../..');
   const targetFile = path.resolve(__dirname, '../../crates/core/src/commands/context_compress.rs');
   const targetDir = path.resolve(__dirname, '../../crates/core');
 
@@ -96,6 +96,13 @@ describe('Context Compiler Engine', () => {
   });
 
   test('maintains living vault registry and executes drift audit', () => {
+    // Generate a test dossier to ensure the vault isn't empty in CI
+    const meta = analyzeSingleFile(targetFile, workspaceRoot);
+    const md = renderSingleFileDossier(meta);
+    const outPath = path.resolve(workspaceRoot, 'docs/context/context_compress.context.md');
+    fs.mkdirSync(path.dirname(outPath), { recursive: true });
+    fs.writeFileSync(outPath, md, 'utf8');
+
     const sync = syncVaultIndex(workspaceRoot);
     expect(sync.indexedCount).toBeGreaterThan(0);
     expect(fs.existsSync(sync.indexFile)).toBe(true);

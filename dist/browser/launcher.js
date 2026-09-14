@@ -115,8 +115,8 @@ async function launchBrowser(options = {}) {
     }
   });
 
-  // Wait for CDP port to accept connections (up to 10 seconds)
-  const maxAttempts = options.startupTimeoutMs ? Math.ceil(options.startupTimeoutMs / 150) : 70;
+  // Wait for CDP port to accept connections (up to 20 seconds)
+  const maxAttempts = options.startupTimeoutMs ? Math.ceil(options.startupTimeoutMs / 150) : 140;
   let ready = false;
   for (let i = 0; i < maxAttempts; i++) {
     await new Promise(r => setTimeout(r, 150));
@@ -128,7 +128,7 @@ async function launchBrowser(options = {}) {
 
   if (!ready) {
     proc.kill();
-    throw new Error(`Chrome spawned on port ${port} but failed to respond within 10 seconds`);
+    throw new Error(`Chrome spawned on port ${port} but failed to respond within 20 seconds`);
   }
 
   const close = async () => {

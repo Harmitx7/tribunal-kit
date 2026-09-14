@@ -774,7 +774,7 @@ function syncVaultIndex(workspaceRoot = process.cwd()) {
     if (sourceMatch) {
       source = sourceMatch[1].replace(/["']/g, '');
       domain = domainMatch ? domainMatch[1].replace(/["']/g, '') : 'Single Module';
-      const absSource = path.isAbsolute(source) ? source : path.join(workspaceRoot, source);
+      const absSource = resolvePath(source, workspaceRoot);
       if (fs.existsSync(absSource)) {
         const curHash = computeSha256(fs.readFileSync(absSource, 'utf8'));
         if (curHash !== hash) {
@@ -790,7 +790,7 @@ function syncVaultIndex(workspaceRoot = process.cwd()) {
     } else if (dirMatch) {
       source = dirMatch[1].replace(/["']/g, '');
       domain = 'Subsystem Cluster';
-      const absDir = path.isAbsolute(source) ? source : path.join(workspaceRoot, source);
+      const absDir = resolvePath(source, workspaceRoot);
       status = fs.existsSync(absDir) ? '🟢 Active' : '⚪ Missing';
     }
 

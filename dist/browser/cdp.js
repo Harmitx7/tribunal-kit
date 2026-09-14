@@ -8,6 +8,226 @@
  */
 
 const http = require('http');
+const crypto = require('crypto');
+
+const WS_OPEN = 1;
+
+function getNativeWebSocket() {
+  if (typeof WebSocket !== 'undefined') return WebSocket;
+  if (typeof globalThis !== 'undefined' && typeof globalThis.WebSocket !== 'undefined') return globalThis.WebSocket;
+  if (typeof global !== 'undefined' && typeof global.WebSocket !== 'undefined') return global.WebSocket;
+  return null;
+}
+
+/**
+ * Zero-dependency RFC 6455 WebSocket client using Node.js standard http/crypto libraries.
+ * Seamless fallback for Node < 22 or environments without a global WebSocket.
+ */
+function createNodeWebSocket(wsUrl) {
+  const parsed = new URL(wsUrl);
+  const key = crypto.randomBytes(16).toString('base64');
+
+  const ws = {
+    readyState: 0, // 0: CONNECTING, 1: OPEN, 2: CLOSING, 3: CLOSED
+    onopen: null,
+    onmessage: null,
+    onerror: null,
+    onclose: null,
+    _socket: null,
+    send(data) {
+      if (this.readyState !== WS_OPEN || !this._socket) {
+        throw new Error('WebSocket is not open: readyState ' + this.readyState);
+      }
+      const payload = Buffer.isBuffer(data) ? data : Buffer.from(String(data), 'utf8');
+      const mask = crypto.randomBytes(4);
+      let header;
+
+      if (payload.length < 126) {
+        header = Buffer.alloc(2 + 4);
+        header[0] = 0x81;
+        header[1] = 0x80 | payload.length;
+        mask.copy(header, 2);
+      } else if (payload.length <= 65535) {
+        header = Buffer.alloc(4 + 4);
+        header[0] = 0x81;
+        header[1] = 0x80 | 126;
+        header.writeUInt16BE(payload.length, 2);
+        mask.copy(header, 4);
+      } else {
+        header = Buffer.alloc(10 + 4);
+        header[0] = 0x81;
+        header[1] = 0x80 | 127;
+        header.writeBigUInt64BE(BigInt(payload.length), 2);
+        mask.copy(header, 10);
+      }
+
+      const masked = Buffer.allocUnsafe(payload.length);
+      for (let i = 0; i < payload.length; i++) {
+        masked[i] = payload[i] ^ mask[i % 4];
+      }
+
+      this._socket.write(Buffer.concat([header, masked]));
+    },
+    close() {
+      if (this.readyState === WS_OPEN && this._socket) {
+        this.readyState = 2;
+        const mask = crypto.randomBytes(4);
+        const closeFrame = Buffer.concat([Buffer.from([0x88, 0x80]), mask]);
+        try {
+          this._socket.write(closeFrame);
+        } catch {
+          // Ignore
+        }
+        this._socket.end();
+      }
+      this.readyState = 3;
+      if (this.onclose) {
+        try {
+          this.onclose();
+        } catch {
+          // Ignore
+        }
+      }
+    },
+  };
+
+  const req = http.request({
+    hostname: parsed.hostname || '127.0.0.1',
+    port: parsed.port || 80,
+    path: parsed.pathname + parsed.search,
+    method: 'GET',
+    headers: {
+      Host: `${parsed.hostname || '127.0.0.1'}:${parsed.port || 80}`,
+      Upgrade: 'websocket',
+      Connection: 'Upgrade',
+      'Sec-WebSocket-Key': key,
+      'Sec-WebSocket-Version': '13',
+    },
+  });
+
+  req.on('upgrade', (res, socket, head) => {
+    ws._socket = socket;
+    ws.readyState = WS_OPEN;
+
+    let buffer = head && head.length > 0 ? Buffer.from(head) : Buffer.alloc(0);
+
+    socket.on('data', (chunk) => {
+      buffer = Buffer.concat([buffer, chunk]);
+
+      while (buffer.length >= 2) {
+        const b0 = buffer[0];
+        const opcode = b0 & 0x0f;
+        const b1 = buffer[1];
+        const isMasked = (b1 & 0x80) !== 0;
+        let payloadLen = b1 & 0x7f;
+        let offset = 2;
+
+        if (payloadLen === 126) {
+          if (buffer.length < 4) break;
+          payloadLen = buffer.readUInt16BE(2);
+          offset = 4;
+        } else if (payloadLen === 127) {
+          if (buffer.length < 10) break;
+          payloadLen = Number(buffer.readBigUInt64BE(2));
+          offset = 10;
+        }
+
+        let mask = null;
+        if (isMasked) {
+          if (buffer.length < offset + 4) break;
+          mask = buffer.slice(offset, offset + 4);
+          offset += 4;
+        }
+
+        if (buffer.length < offset + payloadLen) {
+          break;
+        }
+
+        let payload = buffer.slice(offset, offset + payloadLen);
+        buffer = buffer.slice(offset + payloadLen);
+
+        if (isMasked && mask) {
+          const unmasked = Buffer.allocUnsafe(payloadLen);
+          for (let i = 0; i < payloadLen; i++) {
+            unmasked[i] = payload[i] ^ mask[i % 4];
+          }
+          payload = unmasked;
+        }
+
+        if (opcode === 1) {
+          if (ws.onmessage) {
+            try {
+              ws.onmessage({ data: payload.toString('utf8') });
+            } catch {
+              // Ignore
+            }
+          }
+        } else if (opcode === 8) {
+          ws.close();
+        } else if (opcode === 9) {
+          const pongMask = crypto.randomBytes(4);
+          const pongHeader = Buffer.from([0x8a, 0x80]);
+          try {
+            socket.write(Buffer.concat([pongHeader, pongMask]));
+          } catch {
+            // Ignore
+          }
+        }
+      }
+    });
+
+    socket.on('error', (err) => {
+      if (ws.onerror) {
+        try {
+          ws.onerror(err);
+        } catch {
+          // Ignore
+        }
+      }
+    });
+
+    socket.on('close', () => {
+      ws.readyState = 3;
+      if (ws.onclose) {
+        try {
+          ws.onclose();
+        } catch {
+          // Ignore
+        }
+      }
+    });
+
+    if (ws.onopen) {
+      try {
+        ws.onopen();
+      } catch {
+        // Ignore
+      }
+    }
+  });
+
+  req.on('error', (err) => {
+    ws.readyState = 3;
+    if (ws.onerror) {
+      try {
+        ws.onerror(err);
+      } catch {
+        // Ignore
+      }
+    }
+  });
+
+  req.end();
+  return ws;
+}
+
+function createWebSocket(wsUrl) {
+  const Native = getNativeWebSocket();
+  if (Native) {
+    return new Native(wsUrl);
+  }
+  return createNodeWebSocket(wsUrl);
+}
 
 class CdpClient {
   constructor() {
@@ -26,7 +246,7 @@ class CdpClient {
     if (!wsUrl) throw new Error('CdpClient: wsUrl is required');
 
     return new Promise((resolve, reject) => {
-      const socket = new WebSocket(wsUrl);
+      const socket = createWebSocket(wsUrl);
       this.ws = socket;
 
       socket.onopen = () => {
@@ -79,7 +299,7 @@ class CdpClient {
    * @returns {Promise<any>}
    */
   send(method, params = {}) {
-    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+    if (!this.ws || this.ws.readyState !== WS_OPEN) {
       return Promise.reject(new Error('CdpClient is not connected'));
     }
 

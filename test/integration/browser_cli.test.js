@@ -3,6 +3,11 @@
 const http = require('http');
 const { browse, auditURL } = require('../../dist/browser');
 
+// Polyfill WebSocket for Node < 21
+if (typeof global.WebSocket === 'undefined') {
+  global.WebSocket = require('ws');
+}
+
 describe('Browser Live Integration & Auditing', () => {
   let server;
   const PORT = 45678;

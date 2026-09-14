@@ -8,7 +8,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' }}
 
 permissions:
   contents: read
@@ -34,8 +34,39 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
+      - name: Run Type Check
+        run: npm run typecheck
+
       - name: Verify version sync & metadata
         run: node scripts/sync-version.js
+
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: NPM Audit
+        run: npm audit --audit-level=high
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
 
   test:
     name: Test (Node ${{ matrix.node-version }}, ${{ matrix.os }})
@@ -118,7 +149,7 @@ jobs:
 
   release-gate:
     name: Release Gate
-    needs: [test, test-rust]
+    needs: [test, test-rust, security]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: github.ref == 'refs/heads/main'

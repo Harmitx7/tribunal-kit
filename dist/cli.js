@@ -114,6 +114,7 @@ function cmdHelp(quiet = false) {
     (0, logger_1.log)(cmd('compare-web', 'Visual regression differ for CI & release gating'));
     (0, logger_1.log)(cmd('deconstruct', 'Reverse-engineer live web elements into React TSX + Tailwind'));
     (0, logger_1.log)(cmd('heal', 'Runtime Sentinel error hunter & live fix verifier'));
+    (0, logger_1.log)(cmd('sdd', 'Subagent-Driven Development workspace & brief slicing (workspace, brief, diff)'));
     (0, logger_1.log)(cmd('uninstall', 'Remove .agent/ folder from project'));
     console.log();
     (0, logger_1.log)((0, logger_1.bold)('  Options'));
@@ -338,6 +339,11 @@ async function runWithUpdateCheck(command, flags) {
         case 'heal': {
             const cmdHeal = loadCmd('./commands/heal', 'cmdHeal');
             await cmdHeal(flags, process.argv, quiet);
+            break;
+        }
+        case 'sdd': {
+            const cmdSdd = loadCmd('./commands/sdd', 'cmdSdd');
+            await cmdSdd(flags, process.argv, quiet);
             break;
         }
         case 'help':
