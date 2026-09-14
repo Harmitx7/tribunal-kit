@@ -1,6 +1,6 @@
 {
   "name": "tribunal-kit",
-  "version": "9.0.0",
+  "version": "9.0.1",
   "description": "Your AI writes code that doesn't exist. Tribunal Kit stops it. The governance layer for AI coding agents — 52 specialists, 28 parallel reviewers, 185 skills, Rust core, MCP server. Works with Cursor, VSCode, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
