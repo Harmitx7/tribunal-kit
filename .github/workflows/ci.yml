@@ -43,6 +43,9 @@ jobs:
   security:
     name: Security Audit
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
     timeout-minutes: 15
     steps:
       - name: Checkout
