@@ -31,7 +31,7 @@
       <img src="https://img.shields.io/badge/License-MIT-1a1a1f?style=for-the-badge&color=2d2d30" alt="License" />
     </a>
     <a href="CHANGELOG.md">
-      <img src="https://img.shields.io/badge/Release-v9.0.1-ff3300?style=for-the-badge&color=111111&logo=github&logoColor=ff3300" alt="Release Version" />
+      <img src="https://img.shields.io/badge/Release-v9.0.2-ff3300?style=for-the-badge&color=111111&logo=github&logoColor=ff3300" alt="Release Version" />
     </a>
     <a href="package.json">
       <img src="https://img.shields.io/badge/Dependencies-0-ff3300?style=for-the-badge&color=111111&logoColor=ff3300" alt="Zero Dependencies" />

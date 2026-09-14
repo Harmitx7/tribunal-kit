@@ -1,6 +1,6 @@
 {
   "name": "tribunal-kit",
-  "version": "9.0.1",
+  "version": "9.0.2",
   "description": "Your AI writes code that doesn't exist. Tribunal Kit stops it. The governance layer for AI coding agents — 52 specialists, 28 parallel reviewers, 185 skills, Rust core, MCP server. Works with Cursor, VSCode, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
@@ -151,12 +151,12 @@
     "ws": "^8.21.3"
   },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^9.0.1",
-    "@tribunal-kit/core-darwin-x64": "^9.0.1",
-    "@tribunal-kit/core-linux-arm64": "^9.0.1",
-    "@tribunal-kit/core-linux-x64": "^9.0.1",
-    "@tribunal-kit/core-win32-arm64": "^9.0.1",
-    "@tribunal-kit/core-win32-x64": "^9.0.1"
+    "@tribunal-kit/core-darwin-arm64": "^9.0.2",
+    "@tribunal-kit/core-darwin-x64": "^9.0.2",
+    "@tribunal-kit/core-linux-arm64": "^9.0.2",
+    "@tribunal-kit/core-linux-x64": "^9.0.2",
+    "@tribunal-kit/core-win32-arm64": "^9.0.2",
+    "@tribunal-kit/core-win32-x64": "^9.0.2"
   },
   "jest": {
     "testMatch": [
