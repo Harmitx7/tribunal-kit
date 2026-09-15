@@ -1,6 +1,6 @@
 {
   "name": "@tribunal-kit/core-${PLATFORM}-${ARCH}",
-  "version": "9.0.2",
+  "version": "9.2.1",
   "os": [
     "${PLATFORM}"
   ],
