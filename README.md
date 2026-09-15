@@ -5,11 +5,11 @@
     <img src="docs/assets/tribunal-hero-header.svg" alt="Tribunal Kit Hero Banner" width="100%" style="max-width: 1000px; margin-bottom: 24px; border-radius: 14px;" />
   </a>
 
-  <p style="font-size: 1.35em; color: #ffffff; font-weight: 600; margin: 10px 0 8px 0;">
-    Your AI writes code that doesn't exist. Tribunal Kit stops it.
-  </p>
+  <h1 style="font-size: 1.35em; color: #ffffff; font-weight: 600; margin: 10px 0 8px 0;">
+    Tribunal Kit: AI Coding Agent Governance Layer
+  </h1>
   <p style="font-size: 1.0em; color: #88888b; font-weight: 400; letter-spacing: 0.5px; margin: 0 0 25px 0;">
-    The zero-dependency governance layer for AI coding agents — 52 specialists, 28 reviewers, compiled Rust core.
+    Your AI writes code that doesn't exist. Tribunal Kit stops it. The zero-dependency AI governance layer for preventing hallucinations and ghost packages — 52 specialists, 28 reviewers, compiled Rust core.
   </p>
 
   <!-- BADGES -->
@@ -75,7 +75,7 @@
 <div style="background: linear-gradient(145deg, #121622, #0c0f17); border: 1px solid #ff3300; border-radius: 12px; padding: 24px; margin-bottom: 35px;">
   <div style="display: flex; align-items: center; margin-bottom: 12px;">
     <span style="background-color: #ff3300; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-right: 10px;">The Solution</span>
-    <strong style="color: #ffffff; font-size: 1.15em;">One command. Your AI stops lying.</strong>
+    <h2 style="color: #ffffff; font-size: 1.15em; margin: 0; font-weight: bold; display: inline;">One command. Your AI stops hallucinating ghost packages.</h2>
   </div>
   <p style="color: #c9c9d1; font-size: 0.95em; line-height: 1.6; margin: 0;">
     Tribunal Kit wraps your coding agents in an active <strong>neurosymbolic verification envelope</strong> — 52 specialist agents, 28 parallel reviewers, 185 skills, and a native compiled Rust core. It intercepts AI output in <strong>&lt; 10ms</strong>, validates it against your live repository AST, and blocks hallucinated code before it ever touches disk.
