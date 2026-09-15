@@ -28,6 +28,10 @@ const RUST_COMMANDS = new Set([
   'optimize-step',
   'impact-tier',
   'sdd',
+  'fitness',
+  'telemetry-record',
+  'telemetry-summary',
+  'resolve-skills',
 ]);
 
 // Determine the path to the compiled Rust binary

@@ -201,6 +201,50 @@ enum Commands {
         #[command(subcommand)]
         action: SddAction,
     },
+
+    /// Compute composite fitness scores for skills
+    Fitness {
+        /// Path to the skills directory
+        #[arg(long)]
+        skills_dir: String,
+
+        /// Optional: score a single skill file path
+        #[arg(long)]
+        skill: Option<String>,
+
+        /// Target directory (for output to .tribunal/fitness/)
+        #[arg(long, default_value = ".")]
+        repo_path: String,
+    },
+
+    /// Record a dispatch telemetry event
+    TelemetryRecord {
+        /// JSON string of the DispatchEvent
+        #[arg(long)]
+        event: String,
+
+        /// Target repository path
+        #[arg(long, default_value = ".")]
+        repo_path: String,
+    },
+
+    /// Summarize dispatch telemetry
+    TelemetrySummary {
+        /// Target repository path
+        #[arg(long, default_value = ".")]
+        repo_path: String,
+    },
+
+    /// Resolve skill dependencies for a given set of requested skills
+    ResolveSkills {
+        /// Skills directory
+        #[arg(long)]
+        skills_dir: String,
+
+        /// Comma-separated list of requested skill names
+        #[arg(long)]
+        skills: String,
+    },
 }
 
 #[derive(Subcommand)]
@@ -477,6 +521,14 @@ async fn main() -> Result<()> {
         Commands::Graph { path } => cmd_graph(&path).await,
 
         Commands::Sdd { action } => cmd_sdd(action).await,
+
+        Commands::Fitness { skills_dir, skill, repo_path } => cmd_fitness(&skills_dir, skill.as_deref(), &repo_path).await,
+
+        Commands::TelemetryRecord { event, repo_path } => cmd_telemetry_record(&event, &repo_path).await,
+
+        Commands::TelemetrySummary { repo_path } => cmd_telemetry_summary(&repo_path).await,
+
+        Commands::ResolveSkills { skills_dir, skills } => cmd_resolve_skills(&skills_dir, &skills).await,
     }
 }
 
@@ -496,6 +548,84 @@ async fn cmd_sdd(action: SddAction) -> Result<()> {
             let path = commands::sdd::sdd_diff(&plan, &base, &head, out.as_deref())?;
             println!("{}", path.display());
             Ok(())
+        }
+    }
+}
+
+// ── Sovereign Intelligence Drop 1 Command Handlers ──────────────────────────
+
+async fn cmd_fitness(skills_dir: &str, skill: Option<&str>, repo_path: &str) -> Result<()> {
+    if let Some(skill_path) = skill {
+        match commands::fitness_scorer::score_skill(skill_path) {
+            Ok(json_output) => {
+                println!("{}", json_output);
+                Ok(())
+            }
+            Err(e) => {
+                eprintln!("✖ Fitness scoring failed: {:#}", e);
+                std::process::exit(1);
+            }
+        }
+    } else {
+        match commands::fitness_scorer::score_all_skills(skills_dir, repo_path) {
+            Ok(json_output) => {
+                // Print a concise summary instead of full JSON
+                if let Ok(summary) = serde_json::from_str::<serde_json::Value>(&json_output) {
+                    let total = summary["total_skills"].as_u64().unwrap_or(0);
+                    let avg = summary["average_fitness"].as_f64().unwrap_or(0.0);
+                    eprintln!("\n{}", "⚡ Skill Fitness Scoring Complete".bold());
+                    eprintln!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+                    eprintln!("  Total Skills Scored: {}", total.to_string().bold());
+                    eprintln!("  Average Fitness:     {:.3}", avg);
+                    eprintln!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+                }
+                println!("{}", json_output);
+                Ok(())
+            }
+            Err(e) => {
+                eprintln!("✖ Fitness scoring failed: {:#}", e);
+                std::process::exit(1);
+            }
+        }
+    }
+}
+
+async fn cmd_telemetry_record(event_json: &str, repo_path: &str) -> Result<()> {
+    match commands::telemetry::record_dispatch(event_json, repo_path) {
+        Ok(json_output) => {
+            println!("{}", json_output);
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ Telemetry record failed: {:#}", e);
+            std::process::exit(1);
+        }
+    }
+}
+
+async fn cmd_telemetry_summary(repo_path: &str) -> Result<()> {
+    match commands::telemetry::summarize_telemetry(repo_path) {
+        Ok(json_output) => {
+            println!("{}", json_output);
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ Telemetry summary failed: {:#}", e);
+            std::process::exit(1);
+        }
+    }
+}
+
+async fn cmd_resolve_skills(skills_dir: &str, skills_str: &str) -> Result<()> {
+    let requested: Vec<String> = skills_str.split(',').map(|s| s.trim().to_string()).collect();
+    match commands::skill_resolver::resolve_skills(skills_dir, &requested) {
+        Ok(json_output) => {
+            println!("{}", json_output);
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ Skill resolution failed: {:#}", e);
+            std::process::exit(1);
         }
     }
 }

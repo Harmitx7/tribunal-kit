@@ -6,3 +6,6 @@ pub mod context_broker;
 pub mod impact_tier;
 pub mod graph;
 pub mod sdd;
+pub mod fitness_scorer;
+pub mod telemetry;
+pub mod skill_resolver;
