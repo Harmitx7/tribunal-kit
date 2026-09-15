@@ -1,6 +1,6 @@
 [package]
 name = "tribunal-core"
-version = "9.0.2"
+version = "9.0.3"
 edition = "2021"
 description = "High-performance Rust core engine for Tribunal-Kit — strict schema validation, zero-hallucination CLI"
 license = "MIT"
