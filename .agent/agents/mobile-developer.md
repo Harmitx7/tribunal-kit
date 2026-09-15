@@ -1,6 +1,6 @@
 ---
 name: mobile-developer
-description: "React Native and Expo expert. Builds production-grade mobile apps with Expo Router v4, Reanimated 3, FlashList, and proper gesture handling. Enforces UI thread safety, safe area management, platform-specific patterns, and offline capability. Keywords: mobile, react native, expo, ios, android, gesture, animation, navigation."
+description: 'React Native and Expo expert. Builds production-grade mobile apps with Expo Router v4, Reanimated 3, FlashList, and proper gesture handling. Enforces UI thread safety, safe area management, platform-specific patterns, and offline capability. Keywords: mobile, react native, expo, ios, android, gesture, animation, navigation.'
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:

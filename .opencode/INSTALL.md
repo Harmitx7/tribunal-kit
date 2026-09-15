@@ -37,5 +37,6 @@ use skill tool to load verification-before-completion
 ## Subagent-Driven Development (SDD)
 
 OpenCode delegates tasks to subagents via the `task` tool:
+
 - Implementers execute tasks following `.tribunal/sdd/<plan>/task-<N>-brief.md`.
 - Reviewers evaluate diffs via `tk sdd diff` out-of-band.

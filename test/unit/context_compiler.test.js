@@ -10,7 +10,7 @@ const {
   renderBridgeDossier,
   renderDirectoryDossier,
   syncVaultIndex,
-  checkDrift
+  checkDrift,
 } = require('../../scripts/context_compiler');
 const { handleRequest } = require('../../bin/mcp-server');
 

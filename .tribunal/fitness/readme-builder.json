@@ -1,0 +1,14 @@
+{
+  "skill_name": "readme-builder",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9994499578852467,
+  "dedup_score": 0.06000000000000005,
+  "trap_density": 0.37661946369388366,
+  "recency_score": 1.0,
+  "section_depth": 0.614,
+  "composite_fitness": 0.7074829111311318,
+  "total_tokens_estimate": 3453,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

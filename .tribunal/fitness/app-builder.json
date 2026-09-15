@@ -1,0 +1,15 @@
+{
+  "skill_name": "app-builder",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9994893518038966,
+  "dedup_score": 0.052000000000000046,
+  "trap_density": 0.26743225704959295,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7478127089182183,
+  "total_tokens_estimate": 6470,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'frontend'"
+  ]
+}

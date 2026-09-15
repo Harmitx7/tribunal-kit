@@ -1,0 +1,14 @@
+{
+  "skill_name": "local-first-architecture",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9979263091296287,
+  "dedup_score": 0.10199999999999998,
+  "trap_density": 0.5574406204556471,
+  "recency_score": 1.0,
+  "section_depth": 0.5549999999999999,
+  "composite_fitness": 0.7317513548942727,
+  "total_tokens_estimate": 2183,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

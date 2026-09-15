@@ -10,25 +10,25 @@
 ```css
 :root {
   /* Surface & Ink */
-  --ink-void: #060709;          /* Deep pitch obsidian void */
-  --ink-charcoal: #0e1117;      /* Primary module & container fill */
-  --ink-surface-card: #141822;  /* Elevated card background */
-  --ink-border: #222634;        /* Crisp structural 1px wire border */
+  --ink-void: #060709; /* Deep pitch obsidian void */
+  --ink-charcoal: #0e1117; /* Primary module & container fill */
+  --ink-surface-card: #141822; /* Elevated card background */
+  --ink-border: #222634; /* Crisp structural 1px wire border */
 
   /* The Incandescent Flame (Accent Primary) */
-  --flame-vermilion: #ff3300;   /* High-impact kinetic orange-red (Primary action / speed cut) */
-  --flame-bright: #ff4d1a;      /* Highlights, diode alerts, and hover glows */
-  --flame-burn: #cc2900;        /* Deep shade for halftone depth & duotone shadows */
+  --flame-vermilion: #ff3300; /* High-impact kinetic orange-red (Primary action / speed cut) */
+  --flame-bright: #ff4d1a; /* Highlights, diode alerts, and hover glows */
+  --flame-burn: #cc2900; /* Deep shade for halftone depth & duotone shadows */
 
   /* Substrates & Print Stock */
-  --paper-bone: #f5f2eb;        /* Warm unbleached bone parchment */
-  --paper-cream: #ebe7de;       /* Secondary editorial paper fill */
-  --paper-chalk: #ffffff;       /* Pure high-contrast typographical white */
+  --paper-bone: #f5f2eb; /* Warm unbleached bone parchment */
+  --paper-cream: #ebe7de; /* Secondary editorial paper fill */
+  --paper-chalk: #ffffff; /* Pure high-contrast typographical white */
 
   /* Industrial Label Chrome */
-  --tape-silver: #d4d8e0;       /* Cool galvanized industrial inspection tape */
-  --tape-steel: #8a92a3;        /* Muted mechanical metadata text */
-  --tape-dark: #1f232e;         /* Dark label tape base */
+  --tape-silver: #d4d8e0; /* Cool galvanized industrial inspection tape */
+  --tape-steel: #8a92a3; /* Muted mechanical metadata text */
+  --tape-dark: #1f232e; /* Dark label tape base */
 }
 ```
 
@@ -47,19 +47,24 @@
 ## 🏛️ 3. Five Signature Graphic Motifs
 
 ### I. Halftone Classical Statuary (The Tribunal Magistrate)
+
 - Classical Roman/Greek sculpture (Praetor, Apollo, Lady Justice) rendered in high-contrast vector halftone raster dither.
 - Duotone colorway: `--flame-vermilion` and `--ink-void` over `--paper-bone`.
 
 ### II. Kinetic Horizontal Speed-Lines
+
 - Linear horizontal incisions cutting through letterforms and containers, evoking sub-10ms compiled execution speed.
 
 ### III. 3D Mechanical Keyboard Keycaps
+
 - Beveled tactile hardware keycaps with top-down lighting and sharp drop shadows representing physical developer tooling.
 
 ### IV. The 8-Point Judicial Asterism (`✦` / `✸`)
+
 - Sharp geometric compass star representing constitutional ground truth, cardinal direction, and uncompromising invariant enforcement.
 
 ### V. Industrial Inspection Label Decals & Decomposition Strips
+
 - Industrial packaging tape borders with repeating symbol decomposition (solid silhouette → halftone dot → contour stroke → wireframe mesh), barcode calibrations, and security certification seals.
 
 ---

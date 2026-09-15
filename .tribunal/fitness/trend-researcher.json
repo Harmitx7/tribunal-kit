@@ -1,0 +1,15 @@
+{
+  "skill_name": "trend-researcher",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9985155402301911,
+  "dedup_score": 0.06800000000000006,
+  "trap_density": 0.26716537536735235,
+  "recency_score": 1.0,
+  "section_depth": 0.9384615384615385,
+  "composite_fitness": 0.7407471451203718,
+  "total_tokens_estimate": 3835,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'meta'"
+  ]
+}

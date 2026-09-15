@@ -1,6 +1,6 @@
 ---
 name: debugger
-description: "Systematic root-cause investigator. Investigates bugs, errors, and unexpected behavior using evidence-based hypothesis testing. No fix is suggested until the root cause is confirmed. Activates on /debug commands. Uses 4-phase methodology: Collect → Hypothesize → Test → Fix."
+description: 'Systematic root-cause investigator. Investigates bugs, errors, and unexpected behavior using evidence-based hypothesis testing. No fix is suggested until the root cause is confirmed. Activates on /debug commands. Uses 4-phase methodology: Collect → Hypothesize → Test → Fix.'
 tools: Read, Grep, Glob, Bash
 model: inherit
 skills:

@@ -1,0 +1,14 @@
+{
+  "skill_name": "build-primitive",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9987658108194873,
+  "dedup_score": 0.09799999999999998,
+  "trap_density": 0.44101433296582143,
+  "recency_score": 1.0,
+  "section_depth": 0.63125,
+  "composite_fitness": 0.7252928121087707,
+  "total_tokens_estimate": 1945,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

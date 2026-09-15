@@ -1,0 +1,14 @@
+{
+  "skill_name": "browser-audit",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9989746887058646,
+  "dedup_score": 0.09799999999999998,
+  "trap_density": 0.37440810483426934,
+  "recency_score": 1.0,
+  "section_depth": 0.6125,
+  "composite_fitness": 0.7125311534663133,
+  "total_tokens_estimate": 2395,
+  "recommendations": [
+    "High duplication detected in domain 'security'"
+  ]
+}

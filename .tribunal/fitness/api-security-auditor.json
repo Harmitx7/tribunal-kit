@@ -1,0 +1,14 @@
+{
+  "skill_name": "api-security-auditor",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9493795804441798,
+  "dedup_score": 0.09599999999999997,
+  "trap_density": 0.40478026214340784,
+  "recency_score": 1.0,
+  "section_depth": 0.8416666666666666,
+  "composite_fitness": 0.7412429554103471,
+  "total_tokens_estimate": 2745,
+  "recommendations": [
+    "High duplication detected in domain 'security'"
+  ]
+}

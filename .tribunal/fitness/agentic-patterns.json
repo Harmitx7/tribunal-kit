@@ -1,0 +1,15 @@
+{
+  "skill_name": "agentic-patterns",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9992965821015556,
+  "dedup_score": 0.05600000000000005,
+  "trap_density": 0.28805336567616735,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7514673212717362,
+  "total_tokens_estimate": 3444,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'meta'"
+  ]
+}

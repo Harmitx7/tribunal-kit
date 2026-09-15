@@ -1,0 +1,14 @@
+{
+  "skill_name": "api-patterns",
+  "coverage_score": 1.0,
+  "specificity_score": 0.999492133059889,
+  "dedup_score": 0.08599999999999997,
+  "trap_density": 0.5423629434183525,
+  "recency_score": 1.0,
+  "section_depth": 0.7647058823529412,
+  "composite_fitness": 0.7588587504776718,
+  "total_tokens_estimate": 3574,
+  "recommendations": [
+    "High duplication detected in domain 'backend'"
+  ]
+}

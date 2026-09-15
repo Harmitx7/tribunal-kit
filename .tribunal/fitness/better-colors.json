@@ -1,0 +1,15 @@
+{
+  "skill_name": "better-colors",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9985975252534218,
+  "dedup_score": 0.09799999999999998,
+  "trap_density": 0.28002800280028006,
+  "recency_score": 1.0,
+  "section_depth": 0.6791666666666667,
+  "composite_fitness": 0.7082987054707264,
+  "total_tokens_estimate": 2641,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'meta'"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "skill_name": "python-patterns",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9662106152562657,
+  "dedup_score": 0.06000000000000005,
+  "trap_density": 0.45317220543806647,
+  "recency_score": 1.0,
+  "section_depth": 0.821875,
+  "composite_fitness": 0.7434992038669631,
+  "total_tokens_estimate": 3087,
+  "recommendations": [
+    "High duplication detected in domain 'backend'"
+  ]
+}

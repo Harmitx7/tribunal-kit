@@ -1,0 +1,14 @@
+{
+  "skill_name": "codebase-design",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9981334903730025,
+  "dedup_score": 0.07399999999999995,
+  "trap_density": 0.5654189754608165,
+  "recency_score": 1.0,
+  "section_depth": 0.625,
+  "composite_fitness": 0.739289544393723,
+  "total_tokens_estimate": 2326,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

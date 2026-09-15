@@ -1,0 +1,14 @@
+{
+  "skill_name": "game-design-expert",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9974664352544537,
+  "dedup_score": 0.09599999999999997,
+  "trap_density": 0.4546393883033685,
+  "recency_score": 1.0,
+  "section_depth": 0.5307692307692308,
+  "composite_fitness": 0.7117045799117806,
+  "total_tokens_estimate": 2582,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "skill_name": "lint-and-validate",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9993944578126073,
+  "dedup_score": 0.06800000000000006,
+  "trap_density": 0.40297853701270253,
+  "recency_score": 1.0,
+  "section_depth": 0.8933333333333333,
+  "composite_fitness": 0.7545256721144268,
+  "total_tokens_estimate": 2942,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

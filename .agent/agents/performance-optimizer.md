@@ -1,6 +1,6 @@
 ---
 name: performance-optimizer
-description: "Web and API performance specialist. Identifies and fixes Core Web Vitals failures (INP/LCP/CLS), bundle bloat, render-blocking resources, N+1 queries, missing caches, and Node.js event loop saturation. Evidence-first: measure before optimizing, verify after. Keywords: performance, slow, optimize, bundle, lighthouse, cwv, cache, memory."
+description: 'Web and API performance specialist. Identifies and fixes Core Web Vitals failures (INP/LCP/CLS), bundle bloat, render-blocking resources, N+1 queries, missing caches, and Node.js event loop saturation. Evidence-first: measure before optimizing, verify after. Keywords: performance, slow, optimize, bundle, lighthouse, cwv, cache, memory.'
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:

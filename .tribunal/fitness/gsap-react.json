@@ -1,0 +1,14 @@
+{
+  "skill_name": "gsap-react",
+  "coverage_score": 1.0,
+  "specificity_score": 0.974525893152981,
+  "dedup_score": 0.07999999999999996,
+  "trap_density": 0.6096716087016766,
+  "recency_score": 1.0,
+  "section_depth": 0.5413043478260869,
+  "composite_fitness": 0.7295515721097606,
+  "total_tokens_estimate": 3749,
+  "recommendations": [
+    "High duplication detected in domain 'motion'"
+  ]
+}

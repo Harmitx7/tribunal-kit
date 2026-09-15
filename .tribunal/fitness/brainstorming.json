@@ -1,0 +1,15 @@
+{
+  "skill_name": "brainstorming",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9989695813762471,
+  "dedup_score": 0.07000000000000006,
+  "trap_density": 0.218751367196045,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7431066213546562,
+  "total_tokens_estimate": 5870,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'meta'"
+  ]
+}

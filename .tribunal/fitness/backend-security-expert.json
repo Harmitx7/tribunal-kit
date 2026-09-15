@@ -1,0 +1,14 @@
+{
+  "skill_name": "backend-security-expert",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9993670675239016,
+  "dedup_score": 0.11199999999999999,
+  "trap_density": 0.5434782608695652,
+  "recency_score": 1.0,
+  "section_depth": 0.4576923076923077,
+  "composite_fitness": 0.7168489987890613,
+  "total_tokens_estimate": 2429,
+  "recommendations": [
+    "High duplication detected in domain 'security'"
+  ]
+}

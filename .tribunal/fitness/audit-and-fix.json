@@ -1,0 +1,14 @@
+{
+  "skill_name": "audit-and-fix",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9989965634518218,
+  "dedup_score": 0.11399999999999999,
+  "trap_density": 0.3831417624521073,
+  "recency_score": 1.0,
+  "section_depth": 0.7,
+  "composite_fitness": 0.7293705770581804,
+  "total_tokens_estimate": 2065,
+  "recommendations": [
+    "High duplication detected in domain 'security'"
+  ]
+}

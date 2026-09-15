@@ -1,0 +1,14 @@
+{
+  "skill_name": "sounds-on-the-web",
+  "coverage_score": 1.0,
+  "specificity_score": 0.998591985300726,
+  "dedup_score": 0.11199999999999999,
+  "trap_density": 0.38272279934390374,
+  "recency_score": 1.0,
+  "section_depth": 0.79375,
+  "composite_fitness": 0.7429893169617307,
+  "total_tokens_estimate": 1938,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

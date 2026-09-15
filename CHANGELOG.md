@@ -7,10 +7,74 @@
 [![Skills Corpus](https://img.shields.io/badge/Corpus-185%20Skills-teal.svg?style=flat-square)](#)
 [![Workflows](https://img.shields.io/badge/Workflows-44%20Audited-indigo.svg?style=flat-square)](#)
 [![Harnesses](https://img.shields.io/badge/Harnesses-9%20Supported-orange.svg?style=flat-square)](#)
-[![Test Suite](https://img.shields.io/badge/Tests-100%25%20Passing%20(489%20tests)-brightgreen.svg?style=flat-square)](#)
+[![Test Suite](<https://img.shields.io/badge/Tests-100%25%20Passing%20(489%20tests)-brightgreen.svg?style=flat-square>)](#)
 
 All notable changes to **Tribunal Kit** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
+
+
+## [9.2.1] — 2026-09-15 — 🧠 Codename: Sovereign Intelligence (Drop 1: The Foundation)
+
+> [!IMPORTANT]
+> **Release 9.2.1** introduces **Drop 1 of the Sovereign Intelligence** evolution. This release lays the foundational Rust architecture for next-generation skill evolution and intelligent routing. It introduces three powerful native subsystems: **Skill Fitness Scoring**, **Dispatch Telemetry Collection**, and **Skill Dependency Resolution**. Additionally, a comprehensive suite of stability fixes across Node.js scripts and the Rust core guarantees a fortified runtime environment.
+
+### 📊 Release KPI Scorecard
+
+| Domain Metric               | Baseline (v9.1.0) | Release 9.2.1                | Improvement / Impact                                                  |
+| :-------------------------- | :---------------- | :--------------------------- | :-------------------------------------------------------------------- |
+| **Skill Quality Assurance** | Manual reviews    | **Automated Fitness Scorer** | Composite scoring across 6 dimensions (`tk fitness`)                  |
+| **Agent Telemetry**         | Ephemeral         | **Local JSONL Event Log**    | Persistent dispatch stats and agent heatmaps (`tk telemetry-record`)  |
+| **Dependency Resolution**   | Static lists      | **Transitive BFS Graph**     | Auto-loads co-requires and detects conflicts (`tk resolve`)           |
+| **Reviewer Wave Sizing**    | Static (0,1,2,8)  | **Adaptive Domain Sizing**   | File extension and task keyword routing in `impact_tier.rs`           |
+| **Telemetry Footprint**     | Unbounded         | **90-Day Compaction**        | Automated garbage collection into monthly buckets (`telemetry_gc.js`) |
+| **System Stability**        | Fragile scripts   | **Fortified Resilience**     | 9 critical runtime vulnerabilities & blindspots resolved              |
+
+---
+
+### 🏛️ [CORE] Sovereign Intelligence Core (Rust Engine)
+
+- **Skill Fitness Scoring Engine (`fitness_scorer.rs`)**: Computes a robust composite fitness score (0.0–1.0) for every `SKILL.md` by analyzing coverage, specificity, deduplication, LLM-trap density, recency, and section depth. Included a critical math fix for recency calculations on years prior to 2026.
+- **Dispatch Telemetry Collector (`telemetry.rs`)**: High-speed, local-only JSONL event logging for every Orchestrator/Supervisor dispatch. Computes aggregate per-agent performance statistics (success rates, durations, revisions) with zero network overhead.
+- **Skill Graph Resolver (`skill_resolver.rs`)**: A semantic graph engine that parses all YAML frontmatter to resolve `co-requires`, apply `supersedes` upgrades, and detect `conflicts-with` violations at runtime.
+- **Adaptive Reviewer Waves (`impact_tier.rs`)**: Upgraded impact tiering with automatic domain detection (frontend, backend, database, security, devops, mobile) to route code changes to domain-specific reviewer clusters, eliminating irrelevant reviewer load.
+- **AST Skill Compiler (`compiler.rs`)**: Reads `SKILL.md` files, drops raw markdown prose, and automatically compiles `traps` and `rules` into highly-dense Super-Prompt YAML, slashing token usage by 80%.
+- **Darwinian Purge Engine (`purge.rs`)**: Hooks into the fitness scorer to continually evaluate the skill ecosystem. Automatically moves skills with `< 0.20` fitness into a `_deprecated/` directory and flags enormous skills for "Fission".
+- **Hierarchical Swarm Routing**: Swarm dispatcher now supports nested chains-of-command via `tier` (`strategic` vs `tactical`) and `coordinator` fields, enabling multi-stage domain delegation.
+- **New Core CLI Commands**: Native Rust binary bindings for `tk fitness`, `tk resolve`, `tk telemetry-record`, `tk telemetry-summary`, `tk compile`, and `tk purge`.
+
+---
+
+### 🧠 [AGENT] Operational Capabilities & Workflows
+
+- **Subagent-Driven Development (SDD)**: Enforced via `task-<N>-brief.md` isolation and `review-<base>..<head>.diff` atomic diffing (Out-of-Band Context Isolation).
+- **Verification-Before-Completion (VBC)**: Iron-law TDD pattern where agents must actively run verification shell commands locally to generate pass/fail evidence before declaring a task complete.
+- **4-Type Persistent Memory**: Upgraded multi-session context persistence supporting Explicit Core Memory, Archival Thread Memory, Vector RAG Retrieval, and Ephemeral Working Memory.
+- **Skill Genome SVGs (`genome.rs`)**: Beautiful, self-generating SVG visualizations of the Tribunal skill-tree genetics.
+- **Global Leaderboards & Heatmaps (`heatmap.rs` / `leaderboard.rs`)**: Terminal-rendered visualizations of agent efficacy over time.
+
+---
+
+### 🧹 [MAINTENANCE] Telemetry Lifecycle Management
+
+- **Automated Garbage Collection (`telemetry_gc.js`)**: A new utility script to compact the append-only `.tribunal/telemetry/dispatch.jsonl` log. Retains the last 90 days of raw events while aggregating older events into optimized monthly summary buckets.
+
+---
+
+### 🛠️ [STABILITY] Script Resilience & Edge Case Resolution
+
+To ensure pristine execution across varying environments and toolchains, this release delivers vital stability and logic patches:
+- **Environment Targeting (`bin/wrapper.js`)**: Bulletproofed the `TRIBUNAL_FORCE_JS` check to reliably fall back to the Node.js legacy router.
+- **Regex & Validation Upgrades**: 
+  - `schema_validator.js` correctly maps `searchFor` recursive file scans to exact ORM identifier strings, preventing downstream false positives.
+  - `pipeline_engine.js` correctly isolates SQL injection risks on both prefix and suffix interpolations.
+  - `inner_loop_validator.js` seamlessly catches empty `.catch(e => {})` closures containing variables.
+- **File System & CLI Tooling Resiliency**:
+  - `telemetry_gc.js` mitigates data loss during `.jsonl` compaction by falling through gracefully when archives are empty.
+  - `bundle_analyzer.js` actively traps and suppresses `ENOENT` faults on broken symlinks to prevent build failures.
+  - `dependency_analyzer.js` resolved the inverted logic within the `--check-unused` argument flag.
+  - `test_runner.js` implements strict argument evaluation, preventing watch flags from stripping out code coverage hooks.
+
+---
 
 ## [9.1.0] — 2026-09-13 — 🌐 Codename: Autonomous Browser Intelligence, Empirical Case Law & Living Context Engine
 
@@ -19,23 +83,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [S
 
 ### 📊 Release KPI Scorecard
 
-| Domain Metric | Baseline (v9.0.0) | Release 9.1.0 | Improvement / Impact |
-| :--- | :--- | :--- | :--- |
-| **Context Generation Latency** | Manual / N/A | **< 50ms AST extraction** | High-speed multi-language regex & AST compiler (`scripts/context_compiler.js`) |
-| **Autonomous MCP Context** | Disconnected | **`tribunal_get_context`** | Native stdio JSON-RPC 2.0 tool for Cursor, Windsurf, Claude Code, Antigravity |
-| **Input Polymorphism** | Single file only | **Single, Pair & Directory** | Dynamic dispatch for Single File HUD, Multi-File Bridge, & Subsystem Clusters |
-| **Documentation Drift** | Unmonitored | **Dual-Tier Semantic Sentinel** | Tracks `source_hash` & `interface_hash` to detect staleness (`--check`) |
-| **Living Vault Architecture** | Decentralized | **`docs/context/INDEX.md`** | Auto-indexed living catalog of all codebase context dossiers |
-| **Browser Driver Dependency** | None (N/A) | **Zero external dependencies** | Pure Node 22 native `WebSocket` CDP client |
-| **DOM Ingestion Budget** | Raw HTML (>100KB) | **< 4,000 UTF-8 bytes** | PinchTab-inspired `htmltrim` algorithm with IDPI sandbox |
-| **Component Reverse-Engineering**| Manual inspection | **Component Synapse (`tk deconstruct`)** | Extracts computed CSSOM into production React TSX |
-| **Audit-to-Precedent Bridge** | Disconnected | **Case Law Bridge (`--codify`)** | Live WCAG/console failures become permanent case law |
-| **Runtime Diagnostics** | Terminal logs only | **Runtime Sentinel (`tk heal`)** | Dev-server overlay detection & source file localization |
-| **SDD Prompt Sandboxing** | Open Markdown text | **Delimited XML envelopes** | Mandatory epistemic verification & subagent isolation |
-| **Compiler Keyword Taxonomy** | 10 keywords / 9 actions | **37 keywords / 16 actions** | Governance Impact Tier engine (Tiers 0-3) |
-| **Proxy DoS Protection** | Unbounded payload | **5MB payload guard (HTTP 413)** | Safe Anthropic `/v1/messages` header recalculation |
-| **Audited Workflows** | 43 workflows | **44 workflows** | Registered `/context` in `.agent/workflows/` and `slash-commands.json` |
-| **Verified Test Corpus** | 455 total passing tests | **489 total passing tests** | 43 unit (409) + 11 integration (56) + 33 Rust |
+| Domain Metric                     | Baseline (v9.0.0)       | Release 9.1.0                            | Improvement / Impact                                                           |
+| :-------------------------------- | :---------------------- | :--------------------------------------- | :----------------------------------------------------------------------------- |
+| **Context Generation Latency**    | Manual / N/A            | **< 50ms AST extraction**                | High-speed multi-language regex & AST compiler (`scripts/context_compiler.js`) |
+| **Autonomous MCP Context**        | Disconnected            | **`tribunal_get_context`**               | Native stdio JSON-RPC 2.0 tool for Cursor, Windsurf, Claude Code, Antigravity  |
+| **Input Polymorphism**            | Single file only        | **Single, Pair & Directory**             | Dynamic dispatch for Single File HUD, Multi-File Bridge, & Subsystem Clusters  |
+| **Documentation Drift**           | Unmonitored             | **Dual-Tier Semantic Sentinel**          | Tracks `source_hash` & `interface_hash` to detect staleness (`--check`)        |
+| **Living Vault Architecture**     | Decentralized           | **`docs/context/INDEX.md`**              | Auto-indexed living catalog of all codebase context dossiers                   |
+| **Browser Driver Dependency**     | None (N/A)              | **Zero external dependencies**           | Pure Node 22 native `WebSocket` CDP client                                     |
+| **DOM Ingestion Budget**          | Raw HTML (>100KB)       | **< 4,000 UTF-8 bytes**                  | PinchTab-inspired `htmltrim` algorithm with IDPI sandbox                       |
+| **Component Reverse-Engineering** | Manual inspection       | **Component Synapse (`tk deconstruct`)** | Extracts computed CSSOM into production React TSX                              |
+| **Audit-to-Precedent Bridge**     | Disconnected            | **Case Law Bridge (`--codify`)**         | Live WCAG/console failures become permanent case law                           |
+| **Runtime Diagnostics**           | Terminal logs only      | **Runtime Sentinel (`tk heal`)**         | Dev-server overlay detection & source file localization                        |
+| **SDD Prompt Sandboxing**         | Open Markdown text      | **Delimited XML envelopes**              | Mandatory epistemic verification & subagent isolation                          |
+| **Compiler Keyword Taxonomy**     | 10 keywords / 9 actions | **37 keywords / 16 actions**             | Governance Impact Tier engine (Tiers 0-3)                                      |
+| **Proxy DoS Protection**          | Unbounded payload       | **5MB payload guard (HTTP 413)**         | Safe Anthropic `/v1/messages` header recalculation                             |
+| **Audited Workflows**             | 43 workflows            | **44 workflows**                         | Registered `/context` in `.agent/workflows/` and `slash-commands.json`         |
+| **Verified Test Corpus**          | 455 total passing tests | **489 total passing tests**              | 43 unit (409) + 11 integration (56) + 33 Rust                                  |
 
 ---
 
@@ -169,14 +233,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [S
 
 ### 📊 Executive Release KPI Scorecard
 
-| Domain Metric | Baseline (v8.0) | Release 9.0.0 | Improvement / Impact |
-| :--- | :--- | :--- | :--- |
-| **Agent Harnesses Supported** | 1 (Claude Code) | **9 Major CLI & IDE Harnesses** | Full multi-agent runtime ubiquity |
-| **Active Skill Corpus** | 183 skills | **184 V4 Hybrid Skills** | 100% deduplicated, 60-85% token reduction |
-| **Workflow Catalog Standards** | 40 workflows | **41 Workflows (100% Compliant)** | 0 broken refs, mandatory pre-flight loaders |
-| **Governance CLI Engines** | Contract, Trace | **+ Spec-Driven Dev (`sdd`)** | Native Rust core architect/implement/review loop |
-| **Verified Test Coverage** | 35 suites / 362 tests | **36 Unit (368) + 10 Int (54) + 33 Rust** | 455 total passing tests, 0 failures |
-| **ESLint & Source Strictness** | Ad-hoc exceptions | **0 errors, 0 warnings (72 files)** | Clean ES modules across plugins and hooks |
+| Domain Metric                  | Baseline (v8.0)       | Release 9.0.0                             | Improvement / Impact                             |
+| :----------------------------- | :-------------------- | :---------------------------------------- | :----------------------------------------------- |
+| **Agent Harnesses Supported**  | 1 (Claude Code)       | **9 Major CLI & IDE Harnesses**           | Full multi-agent runtime ubiquity                |
+| **Active Skill Corpus**        | 183 skills            | **184 V4 Hybrid Skills**                  | 100% deduplicated, 60-85% token reduction        |
+| **Workflow Catalog Standards** | 40 workflows          | **41 Workflows (100% Compliant)**         | 0 broken refs, mandatory pre-flight loaders      |
+| **Governance CLI Engines**     | Contract, Trace       | **+ Spec-Driven Dev (`sdd`)**             | Native Rust core architect/implement/review loop |
+| **Verified Test Coverage**     | 35 suites / 362 tests | **36 Unit (368) + 10 Int (54) + 33 Rust** | 455 total passing tests, 0 failures              |
+| **ESLint & Source Strictness** | Ad-hoc exceptions     | **0 errors, 0 warnings (72 files)**       | Clean ES modules across plugins and hooks        |
 
 ---
 

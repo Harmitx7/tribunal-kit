@@ -1,0 +1,14 @@
+{
+  "skill_name": "review-animations",
+  "coverage_score": 1.0,
+  "specificity_score": 0.997810803098003,
+  "dedup_score": 0.07599999999999996,
+  "trap_density": 0.3179650238473768,
+  "recency_score": 1.0,
+  "section_depth": 0.5277777777777778,
+  "composite_fitness": 0.6878235808633737,
+  "total_tokens_estimate": 2314,
+  "recommendations": [
+    "High duplication detected in domain 'motion'"
+  ]
+}

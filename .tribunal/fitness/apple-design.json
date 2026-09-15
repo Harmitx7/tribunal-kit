@@ -1,0 +1,14 @@
+{
+  "skill_name": "apple-design",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9988380184385498,
+  "dedup_score": 0.10399999999999998,
+  "trap_density": 0.3201463526183398,
+  "recency_score": 1.0,
+  "section_depth": 0.6227272727272728,
+  "composite_fitness": 0.7067986474895518,
+  "total_tokens_estimate": 2351,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

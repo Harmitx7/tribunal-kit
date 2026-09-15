@@ -1,41 +1,41 @@
-import { readFileSync, existsSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { readFileSync, existsSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export interface ExtensionAPI {
   on(event: string, handler: (payload?: any) => Promise<any> | any): void;
 }
 
-const EXTREMELY_IMPORTANT_MARKER = "<EXTREMELY_IMPORTANT>";
-const BOOTSTRAP_MARKER = "tribunal-kit:master-governance bootstrap for pi";
+const EXTREMELY_IMPORTANT_MARKER = '<EXTREMELY_IMPORTANT>';
+const BOOTSTRAP_MARKER = 'tribunal-kit:master-governance bootstrap for pi';
 
 const extensionDir = dirname(fileURLToPath(import.meta.url));
-const packageRoot = resolve(extensionDir, "../..");
-const skillsDir = resolve(packageRoot, ".agent", "skills");
-const rulesPath = resolve(packageRoot, ".agent", "rules", "GEMINI.md");
+const packageRoot = resolve(extensionDir, '../..');
+const skillsDir = resolve(packageRoot, '.agent', 'skills');
+const rulesPath = resolve(packageRoot, '.agent', 'rules', 'GEMINI.md');
 
 let cachedBootstrap: string | null | undefined;
 
 export default function tribunalPiExtension(pi: ExtensionAPI) {
   let injectBootstrap = true;
 
-  pi.on("resources_discover", async () => ({
+  pi.on('resources_discover', async () => ({
     skillPaths: [skillsDir],
   }));
 
-  pi.on("session_start", async () => {
+  pi.on('session_start', async () => {
     injectBootstrap = true;
   });
 
-  pi.on("session_compact", async () => {
+  pi.on('session_compact', async () => {
     injectBootstrap = true;
   });
 
-  pi.on("agent_end", async () => {
+  pi.on('agent_end', async () => {
     injectBootstrap = false;
   });
 
-  pi.on("context", async (event: any) => {
+  pi.on('context', async (event: any) => {
     if (!injectBootstrap) return;
     if (event?.messages?.some(messageContainsBootstrap)) return;
 
@@ -43,8 +43,8 @@ export default function tribunalPiExtension(pi: ExtensionAPI) {
     if (!bootstrap) return;
 
     const bootstrapMessage = {
-      role: "user" as const,
-      content: [{ type: "text" as const, text: bootstrap }],
+      role: 'user' as const,
+      content: [{ type: 'text' as const, text: bootstrap }],
       timestamp: Date.now(),
     };
 
@@ -52,11 +52,7 @@ export default function tribunalPiExtension(pi: ExtensionAPI) {
     const insertAt = firstNonCompactionSummaryIndex(messages);
 
     return {
-      messages: [
-        ...messages.slice(0, insertAt),
-        bootstrapMessage,
-        ...messages.slice(insertAt),
-      ],
+      messages: [...messages.slice(0, insertAt), bootstrapMessage, ...messages.slice(insertAt)],
     };
   });
 }
@@ -65,12 +61,13 @@ function getBootstrapContent(): string | null {
   if (cachedBootstrap !== undefined) return cachedBootstrap;
 
   try {
-    let body = "";
+    let body = '';
     if (existsSync(rulesPath)) {
-      const raw = readFileSync(rulesPath, "utf8");
+      const raw = readFileSync(rulesPath, 'utf8');
       body = stripFrontmatter(raw);
     } else {
-      body = "# Tribunal Kit Master Governance Active\nEnforce strict TDD and 28-specialist reviewer waves.";
+      body =
+        '# Tribunal Kit Master Governance Active\nEnforce strict TDD and 28-specialist reviewer waves.';
     }
 
     cachedBootstrap = `${EXTREMELY_IMPORTANT_MARKER}
@@ -111,14 +108,14 @@ Subagent-Driven Development (SDD):
 
 function messageContainsBootstrap(message: unknown): boolean {
   const content = (message as { content?: unknown })?.content;
-  if (typeof content === "string") return content.includes(BOOTSTRAP_MARKER);
+  if (typeof content === 'string') return content.includes(BOOTSTRAP_MARKER);
   if (!Array.isArray(content)) return false;
-  return content.some((part) => {
+  return content.some(part => {
     return (
       part &&
-      typeof part === "object" &&
-      (part as { type?: unknown }).type === "text" &&
-      typeof (part as { text?: unknown }).text === "string" &&
+      typeof part === 'object' &&
+      (part as { type?: unknown }).type === 'text' &&
+      typeof (part as { text?: unknown }).text === 'string' &&
       (part as { text: string }).text.includes(BOOTSTRAP_MARKER)
     );
   });
@@ -126,7 +123,7 @@ function messageContainsBootstrap(message: unknown): boolean {
 
 function firstNonCompactionSummaryIndex(messages: unknown[]): number {
   let index = 0;
-  while ((messages[index] as { role?: unknown } | undefined)?.role === "compactionSummary") {
+  while ((messages[index] as { role?: unknown } | undefined)?.role === 'compactionSummary') {
     index += 1;
   }
   return index;

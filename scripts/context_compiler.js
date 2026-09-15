@@ -28,7 +28,7 @@ let C = {
   BLUE: '\x1b[94m',
   BOLD: '\x1b[1m',
   DIM: '\x1b[2m',
-  RESET: '\x1b[0m'
+  RESET: '\x1b[0m',
 };
 
 try {
@@ -51,7 +51,10 @@ function computeSha256(content) {
 }
 
 function computeInterfaceHash(signatures) {
-  const text = signatures.map(s => `${s.kind}:${s.name}:${s.signature}`).sort().join('\n');
+  const text = signatures
+    .map(s => `${s.kind}:${s.name}:${s.signature}`)
+    .sort()
+    .join('\n');
   return crypto.createHash('sha256').update(text, 'utf8').digest('hex').substring(0, 16);
 }
 
@@ -81,7 +84,7 @@ function extractFileSkeleton(filePath, rawContent) {
     ) {
       landmines.push({
         line: idx + 1,
-        content: trimmed
+        content: trimmed,
       });
     }
   });
@@ -92,51 +95,61 @@ function extractFileSkeleton(filePath, rawContent) {
       const trimmed = line.trim();
 
       // Imports
-      const importMatch = trimmed.match(/^import\s+(?:type\s+)?(?:(.+?)\s+from\s+)?['"]([^'"]+)['"]/);
+      const importMatch = trimmed.match(
+        /^import\s+(?:type\s+)?(?:(.+?)\s+from\s+)?['"]([^'"]+)['"]/,
+      );
       if (importMatch) {
         imports.push({
           source: importMatch[2],
           specifiers: importMatch[1] ? importMatch[1].trim() : '*',
-          line: idx + 1
+          line: idx + 1,
         });
       }
-      const requireMatch = trimmed.match(/(?:const|let|var)\s+(.+?)\s*=\s*require\(['"]([^'"]+)['"]\)/);
+      const requireMatch = trimmed.match(
+        /(?:const|let|var)\s+(.+?)\s*=\s*require\(['"]([^'"]+)['"]\)/,
+      );
       if (requireMatch) {
         imports.push({
           source: requireMatch[2],
           specifiers: requireMatch[1].trim(),
-          line: idx + 1
+          line: idx + 1,
         });
       }
 
       // Exports
-      const exportFunc = trimmed.match(/^export\s+(?:default\s+)?(?:async\s+)?function\s+(\w+)\s*(\(.*?\))/);
+      const exportFunc = trimmed.match(
+        /^export\s+(?:default\s+)?(?:async\s+)?function\s+(\w+)\s*(\(.*?\))/,
+      );
       if (exportFunc) {
         exports.push({
           kind: 'function',
           name: exportFunc[1],
           signature: `function ${exportFunc[1]}${exportFunc[2]}`,
-          line: idx + 1
+          line: idx + 1,
         });
       }
 
-      const exportConst = trimmed.match(/^export\s+const\s+(\w+)(?:\s*:\s*([^=]+))?\s*=\s*(?:async\s+)?(?:\((.*?)\)|(\w+))\s*=>/);
+      const exportConst = trimmed.match(
+        /^export\s+const\s+(\w+)(?:\s*:\s*([^=]+))?\s*=\s*(?:async\s+)?(?:\((.*?)\)|(\w+))\s*=>/,
+      );
       if (exportConst) {
         exports.push({
           kind: 'arrow_function',
           name: exportConst[1],
           signature: `const ${exportConst[1]}: (${exportConst[3] || exportConst[4] || ''}) => ...`,
-          line: idx + 1
+          line: idx + 1,
         });
       }
 
-      const exportClass = trimmed.match(/^export\s+(?:default\s+)?class\s+(\w+)(?:\s+extends\s+(\w+))?/);
+      const exportClass = trimmed.match(
+        /^export\s+(?:default\s+)?class\s+(\w+)(?:\s+extends\s+(\w+))?/,
+      );
       if (exportClass) {
         exports.push({
           kind: 'class',
           name: exportClass[1],
           signature: `class ${exportClass[1]}${exportClass[2] ? ' extends ' + exportClass[2] : ''}`,
-          line: idx + 1
+          line: idx + 1,
         });
       }
 
@@ -147,17 +160,19 @@ function extractFileSkeleton(filePath, rawContent) {
           kind: 'type',
           name: exportType[1],
           signature: trimmed.replace(/;?$/, ''),
-          line: idx + 1
+          line: idx + 1,
         });
       }
 
-      const exportInterface = trimmed.match(/^export\s+interface\s+(\w+)(?:<.*?>)?(?:\s+extends\s+.*?)?\s*\{?/);
+      const exportInterface = trimmed.match(
+        /^export\s+interface\s+(\w+)(?:<.*?>)?(?:\s+extends\s+.*?)?\s*\{?/,
+      );
       if (exportInterface) {
         types.push({
           kind: 'interface',
           name: exportInterface[1],
           signature: trimmed.replace(/\{?$/, '').trim(),
-          line: idx + 1
+          line: idx + 1,
         });
       }
     });
@@ -171,18 +186,20 @@ function extractFileSkeleton(filePath, rawContent) {
         imports.push({
           source: useMatch[1].trim(),
           specifiers: useMatch[1].trim(),
-          line: idx + 1
+          line: idx + 1,
         });
       }
 
       // Public Functions
-      const pubFn = trimmed.match(/^pub(?:\(.*?\))?\s+(?:async\s+)?fn\s+(\w+)(?:<.*?>)?\s*(\(.*?\))(?:\s*->\s*([^{;]+))?/);
+      const pubFn = trimmed.match(
+        /^pub(?:\(.*?\))?\s+(?:async\s+)?fn\s+(\w+)(?:<.*?>)?\s*(\(.*?\))(?:\s*->\s*([^{;]+))?/,
+      );
       if (pubFn) {
         exports.push({
           kind: 'function',
           name: pubFn[1],
           signature: `pub fn ${pubFn[1]}${pubFn[2]}${pubFn[3] ? ' -> ' + pubFn[3].trim() : ''}`,
-          line: idx + 1
+          line: idx + 1,
         });
       }
 
@@ -193,7 +210,7 @@ function extractFileSkeleton(filePath, rawContent) {
           kind: 'struct',
           name: pubStruct[1],
           signature: `pub struct ${pubStruct[1]}`,
-          line: idx + 1
+          line: idx + 1,
         });
       }
 
@@ -203,7 +220,7 @@ function extractFileSkeleton(filePath, rawContent) {
           kind: 'enum',
           name: pubEnum[1],
           signature: `pub enum ${pubEnum[1]}`,
-          line: idx + 1
+          line: idx + 1,
         });
       }
 
@@ -213,7 +230,7 @@ function extractFileSkeleton(filePath, rawContent) {
           kind: 'trait',
           name: pubTrait[1],
           signature: `pub trait ${pubTrait[1]}`,
-          line: idx + 1
+          line: idx + 1,
         });
       }
     });
@@ -226,17 +243,19 @@ function extractFileSkeleton(filePath, rawContent) {
         imports.push({
           source: importMatch[1] || importMatch[2],
           specifiers: importMatch[2],
-          line: idx + 1
+          line: idx + 1,
         });
       }
 
-      const defMatch = trimmed.match(/^(?:async\s+)?def\s+([a-zA-Z_]\w*)\s*(\(.*?\))(?:\s*->\s*([^:]+))?:/);
+      const defMatch = trimmed.match(
+        /^(?:async\s+)?def\s+([a-zA-Z_]\w*)\s*(\(.*?\))(?:\s*->\s*([^:]+))?:/,
+      );
       if (defMatch && !defMatch[1].startsWith('_')) {
         exports.push({
           kind: 'function',
           name: defMatch[1],
           signature: `def ${defMatch[1]}${defMatch[2]}${defMatch[3] ? ' -> ' + defMatch[3].trim() : ''}`,
-          line: idx + 1
+          line: idx + 1,
         });
       }
 
@@ -246,7 +265,7 @@ function extractFileSkeleton(filePath, rawContent) {
           kind: 'class',
           name: classMatch[1],
           signature: `class ${classMatch[1]}${classMatch[2] ? '(' + classMatch[2] + ')' : ''}`,
-          line: idx + 1
+          line: idx + 1,
         });
       }
     });
@@ -260,7 +279,7 @@ function extractFileSkeleton(filePath, rawContent) {
     exports,
     types,
     landmines,
-    interfaceHash
+    interfaceHash,
   };
 }
 
@@ -283,13 +302,21 @@ function findInboundCallers(targetFilePath, exportNames, workspaceRoot = process
       if (!token || token.length < 3) continue;
       try {
         const cmd = `git grep -n -I "${token}" -- ":!docs/" ":!node_modules/" ":!dist/" ":!target/" ":!*.lock"`;
-        const res = execSync(cmd, { cwd: workspaceRoot, stdio: ['ignore', 'pipe', 'ignore'], encoding: 'utf8' });
+        const res = execSync(cmd, {
+          cwd: workspaceRoot,
+          stdio: ['ignore', 'pipe', 'ignore'],
+          encoding: 'utf8',
+        });
         if (res) grepOutputs.push(...res.split('\n').filter(Boolean));
       } catch {
         // Ripgrep fallback
         try {
           const cmd = `rg -n --no-heading --color=never "${token}" -g "!docs/**" -g "!node_modules/**" -g "!target/**" -g "!dist/**"`;
-          const res = execSync(cmd, { cwd: workspaceRoot, stdio: ['ignore', 'pipe', 'ignore'], encoding: 'utf8' });
+          const res = execSync(cmd, {
+            cwd: workspaceRoot,
+            stdio: ['ignore', 'pipe', 'ignore'],
+            encoding: 'utf8',
+          });
           if (res) grepOutputs.push(...res.split('\n').filter(Boolean));
         } catch {
           // Silent catch
@@ -310,7 +337,11 @@ function findInboundCallers(targetFilePath, exportNames, workspaceRoot = process
     const lineContent = parts.slice(2).join(':').trim();
 
     // Ignore self-references and context docs
-    if (callerFile === relativeTarget || callerFile.includes('.context.md') || callerFile.includes('INDEX.md')) {
+    if (
+      callerFile === relativeTarget ||
+      callerFile.includes('.context.md') ||
+      callerFile.includes('INDEX.md')
+    ) {
       continue;
     }
 
@@ -322,7 +353,10 @@ function findInboundCallers(targetFilePath, exportNames, workspaceRoot = process
       file: callerFile,
       line: lineNum,
       snippet: lineContent.substring(0, 100),
-      isDirectImport: lineContent.includes('import') || lineContent.includes('require') || lineContent.includes('use ')
+      isDirectImport:
+        lineContent.includes('import') ||
+        lineContent.includes('require') ||
+        lineContent.includes('use '),
     });
 
     if (callers.length >= 12) break; // Cap callers for token efficiency
@@ -338,25 +372,30 @@ function discoverTests(targetFilePath, workspaceRoot = process.cwd()) {
   const baseName = path.basename(targetFilePath);
   const stem = baseName.replace(/\.[^.]+$/, '');
 
-  const testPatterns = [
-    `${stem}.test.`,
-    `${stem}.spec.`,
-    `${stem}_test.`,
-    `test_${stem}.`
-  ];
+  const testPatterns = [`${stem}.test.`, `${stem}.spec.`, `${stem}_test.`, `test_${stem}.`];
 
   function walk(dir) {
     if (!fs.existsSync(dir)) return;
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {
-        if (entry.name === 'node_modules' || entry.name === 'target' || entry.name === '.git' || entry.name === 'dist') {
+        if (
+          entry.name === 'node_modules' ||
+          entry.name === 'target' ||
+          entry.name === '.git' ||
+          entry.name === 'dist'
+        ) {
           continue;
         }
         const full = path.join(dir, entry.name);
         if (entry.isDirectory()) {
           // Only walk tests dirs or immediate directories
-          if (entry.name === 'tests' || entry.name === '__tests__' || entry.name === 'test' || entry.name === 'crates') {
+          if (
+            entry.name === 'tests' ||
+            entry.name === '__tests__' ||
+            entry.name === 'test' ||
+            entry.name === 'crates'
+          ) {
             walk(full);
           }
         } else if (entry.isFile()) {
@@ -389,13 +428,27 @@ function resolveSkills(targetFilePath, content) {
     else skills.push('clean-code');
   }
 
-  if (lowerContent.includes('auth') || lowerContent.includes('jwt') || lowerContent.includes('token') || lowerContent.includes('crypto')) {
+  if (
+    lowerContent.includes('auth') ||
+    lowerContent.includes('jwt') ||
+    lowerContent.includes('token') ||
+    lowerContent.includes('crypto')
+  ) {
     skills.push('backend-security-expert');
   }
-  if (lowerContent.includes('query') || lowerContent.includes('prisma') || lowerContent.includes('sql') || lowerContent.includes('database')) {
+  if (
+    lowerContent.includes('query') ||
+    lowerContent.includes('prisma') ||
+    lowerContent.includes('sql') ||
+    lowerContent.includes('database')
+  ) {
     skills.push('database-architect');
   }
-  if (lowerContent.includes('compress') || lowerContent.includes('tokens') || lowerContent.includes('prompt')) {
+  if (
+    lowerContent.includes('compress') ||
+    lowerContent.includes('tokens') ||
+    lowerContent.includes('prompt')
+  ) {
     skills.push('context-engineering-pro');
   }
 
@@ -426,7 +479,9 @@ function getDocsDir(workspaceRoot = process.cwd()) {
   const local = path.join(workspaceRoot, 'docs', 'context');
   if (fs.existsSync(local)) {
     try {
-      const files = fs.readdirSync(local).filter(f => f.endsWith('.context.md') || f.endsWith('.bridge.md'));
+      const files = fs
+        .readdirSync(local)
+        .filter(f => f.endsWith('.context.md') || f.endsWith('.bridge.md'));
       if (files.length > 0) return local;
     } catch {
       // fallback
@@ -435,7 +490,9 @@ function getDocsDir(workspaceRoot = process.cwd()) {
   const parent = path.join(workspaceRoot, '..', 'docs', 'context');
   if (fs.existsSync(parent)) {
     try {
-      const files = fs.readdirSync(parent).filter(f => f.endsWith('.context.md') || f.endsWith('.bridge.md'));
+      const files = fs
+        .readdirSync(parent)
+        .filter(f => f.endsWith('.context.md') || f.endsWith('.bridge.md'));
       if (files.length > 0) return parent;
     } catch {
       // fallback
@@ -463,10 +520,17 @@ function analyzeSingleFile(targetPath, workspaceRoot = process.cwd()) {
 
   // Determine domain layer
   let domainLayer = 'Core Logic / Utility';
-  if (relativePath.includes('api') || relativePath.includes('route')) domainLayer = 'API / Gateway Layer';
+  if (relativePath.includes('api') || relativePath.includes('route'))
+    domainLayer = 'API / Gateway Layer';
   else if (relativePath.includes('service')) domainLayer = 'Service / Business Logic';
-  else if (relativePath.includes('model') || relativePath.includes('schema') || relativePath.includes('db')) domainLayer = 'Data / Persistence Layer';
-  else if (relativePath.includes('components') || relativePath.includes('ui')) domainLayer = 'UI / Presentation Layer';
+  else if (
+    relativePath.includes('model') ||
+    relativePath.includes('schema') ||
+    relativePath.includes('db')
+  )
+    domainLayer = 'Data / Persistence Layer';
+  else if (relativePath.includes('components') || relativePath.includes('ui'))
+    domainLayer = 'UI / Presentation Layer';
   else if (relativePath.includes('commands')) domainLayer = 'Command / Dispatch Layer';
 
   return {
@@ -483,7 +547,7 @@ function analyzeSingleFile(targetPath, workspaceRoot = process.cwd()) {
     tests,
     skills,
     lineCount: rawContent.split('\n').length,
-    byteSize: Buffer.byteLength(rawContent, 'utf8')
+    byteSize: Buffer.byteLength(rawContent, 'utf8'),
   };
 }
 
@@ -493,8 +557,12 @@ function analyzeMultiFileBridge(pathA, pathB, workspaceRoot = process.cwd()) {
   const metaA = analyzeSingleFile(pathA, workspaceRoot);
   const metaB = analyzeSingleFile(pathB, workspaceRoot);
 
-  const aImportsB = metaA.imports.some(imp => imp.source.includes(path.basename(metaB.filePath).replace(/\.[^.]+$/, '')));
-  const bImportsA = metaB.imports.some(imp => imp.source.includes(path.basename(metaA.filePath).replace(/\.[^.]+$/, '')));
+  const aImportsB = metaA.imports.some(imp =>
+    imp.source.includes(path.basename(metaB.filePath).replace(/\.[^.]+$/, '')),
+  );
+  const bImportsA = metaB.imports.some(imp =>
+    imp.source.includes(path.basename(metaA.filePath).replace(/\.[^.]+$/, '')),
+  );
 
   const sharedTypes = [];
   const typeNamesA = new Set(metaA.types.map(t => t.name));
@@ -510,8 +578,15 @@ function analyzeMultiFileBridge(pathA, pathB, workspaceRoot = process.cwd()) {
       aImportsB,
       bImportsA,
       sharedTypes,
-      relationship: aImportsB && bImportsA ? 'Bidirectional Coupling' : aImportsB ? 'A depends on B' : bImportsA ? 'B depends on A' : 'Sibling / Peer Modules'
-    }
+      relationship:
+        aImportsB && bImportsA
+          ? 'Bidirectional Coupling'
+          : aImportsB
+            ? 'A depends on B'
+            : bImportsA
+              ? 'B depends on A'
+              : 'Sibling / Peer Modules',
+    },
   };
 }
 
@@ -529,7 +604,15 @@ function analyzeDirectory(dirPath, workspaceRoot = process.cwd()) {
   let totalFiles = 0;
   const langCounts = {};
 
-  const ignoreSet = new Set(['node_modules', 'target', '.git', 'dist', 'coverage', '.gemini', 'build']);
+  const ignoreSet = new Set([
+    'node_modules',
+    'target',
+    '.git',
+    'dist',
+    'coverage',
+    '.gemini',
+    'build',
+  ]);
 
   // Check top-level manifests
   if (fs.existsSync(path.join(absDir, 'package.json'))) manifests.push('package.json');
@@ -547,7 +630,7 @@ function analyzeDirectory(dirPath, workspaceRoot = process.cwd()) {
         subsystems.push({
           name: entry.name,
           fileCount: subFiles.length,
-          keySample: subFiles.slice(0, 3).join(', ')
+          keySample: subFiles.slice(0, 3).join(', '),
         });
       } catch {
         // Ignore unreadable
@@ -565,28 +648,38 @@ function analyzeDirectory(dirPath, workspaceRoot = process.cwd()) {
     manifests,
     subsystems,
     directFiles: totalFiles,
-    langCounts
+    langCounts,
   };
 }
 
 // ── Markdown Dossier Generators ─────────────────────────────────────────────
 
 function renderSingleFileDossier(data) {
-  const callersTable = data.callers.length > 0
-    ? data.callers.map(c => `| \`${c.file}:${c.line}\` | \`${c.snippet}\` | ${c.isDirectImport ? 'Direct Import' : 'Symbol Reference'} |`).join('\n')
-    : '| *None detected (potential root entrypoint or test)* | - | - |';
+  const callersTable =
+    data.callers.length > 0
+      ? data.callers
+          .map(
+            c =>
+              `| \`${c.file}:${c.line}\` | \`${c.snippet}\` | ${c.isDirectImport ? 'Direct Import' : 'Symbol Reference'} |`,
+          )
+          .join('\n')
+      : '| *None detected (potential root entrypoint or test)* | - | - |';
 
-  const typesTable = data.exports.concat(data.types).length > 0
-    ? data.exports.concat(data.types).slice(0, 10).map(s => `| \`${s.name}\` | \`${s.kind}\` | \`${s.signature}\` | Line ${s.line} |`).join('\n')
-    : '| *No explicit exported symbols detected* | - | - | - |';
+  const typesTable =
+    data.exports.concat(data.types).length > 0
+      ? data.exports
+          .concat(data.types)
+          .slice(0, 10)
+          .map(s => `| \`${s.name}\` | \`${s.kind}\` | \`${s.signature}\` | Line ${s.line} |`)
+          .join('\n')
+      : '| *No explicit exported symbols detected* | - | - | - |';
 
-  const landminesContent = data.landmines.length > 0
-    ? data.landmines.map(l => `> [!CAUTION]\n> **Line ${l.line}:** \`${l.content}\``).join('\n\n')
-    : '> [!NOTE]\n> No explicit defensive comments (`// VERIFY`, `// NOTE`, `// HACK`) found in source code.';
+  const landminesContent =
+    data.landmines.length > 0
+      ? data.landmines.map(l => `> [!CAUTION]\n> **Line ${l.line}:** \`${l.content}\``).join('\n\n')
+      : '> [!NOTE]\n> No explicit defensive comments (`// VERIFY`, `// NOTE`, `// HACK`) found in source code.';
 
-  const testCommand = data.tests.length > 0
-    ? `npm test -- ${data.tests[0]}`
-    : `npm test`;
+  const testCommand = data.tests.length > 0 ? `npm test -- ${data.tests[0]}` : `npm test`;
 
   return `---
 version: 2.0.0
@@ -607,7 +700,10 @@ ${data.tests.length > 0 ? data.tests.map(t => `  - ${t}`).join('\n') : '  - none
 > \`\`\`yaml
 > Target: ${data.filePath} (${data.domainLayer})
 > Role: Core logic for ${path.basename(data.filePath)}.
-> Exports: [${data.exports.map(e => e.name).slice(0, 6).join(', ')}]
+> Exports: [${data.exports
+    .map(e => e.name)
+    .slice(0, 6)
+    .join(', ')}]
 > Inbound Callers: ${data.callers.length} active consumer sites.
 > Invariant Check: Verify test passing before merge: ${testCommand}
 > \`\`\`
@@ -643,17 +739,37 @@ graph LR
     classDef ext fill:#0f172a,stroke:#64748b,stroke-width:1px,color:#94a3b8;
 
     subgraph Inbound Callers
-${data.callers.slice(0, 4).map((c, i) => `        C${i}["${c.file}"]:::ext`).join('\n') || '        C0["Entrypoint / CLI"]:::ext'}
+${
+  data.callers
+    .slice(0, 4)
+    .map((c, i) => `        C${i}["${c.file}"]:::ext`)
+    .join('\n') || '        C0["Entrypoint / CLI"]:::ext'
+}
     end
 
     T["${path.basename(data.filePath)}"]:::target
 
     subgraph Dependencies
-${data.imports.slice(0, 4).map((imp, i) => `        D${i}["${imp.source}"]:::ext`).join('\n') || '        D0["Stdlib"]:::ext'}
+${
+  data.imports
+    .slice(0, 4)
+    .map((imp, i) => `        D${i}["${imp.source}"]:::ext`)
+    .join('\n') || '        D0["Stdlib"]:::ext'
+}
     end
 
-${data.callers.slice(0, 4).map((_, i) => `    C${i} --> T`).join('\n') || '    C0 --> T'}
-${data.imports.slice(0, 4).map((_, i) => `    T --> D${i}`).join('\n') || '    T --> D0'}
+${
+  data.callers
+    .slice(0, 4)
+    .map((_, i) => `    C${i} --> T`)
+    .join('\n') || '    C0 --> T'
+}
+${
+  data.imports
+    .slice(0, 4)
+    .map((_, i) => `    T --> D${i}`)
+    .join('\n') || '    T --> D0'
+}
 \`\`\`
 
 ### Inbound Consumer Sites
@@ -706,9 +822,11 @@ graph LR
 \`\`\`
 
 ## 📦 Shared Types & Interfaces
-${data.coupling.sharedTypes.length > 0
-  ? data.coupling.sharedTypes.map(t => `- \`${t}\``).join('\n')
-  : '- *No identical type names detected between modules.*'}
+${
+  data.coupling.sharedTypes.length > 0
+    ? data.coupling.sharedTypes.map(t => `- \`${t}\``).join('\n')
+    : '- *No identical type names detected between modules.*'
+}
 
 ## 📋 Interface Alignment Summary
 - **${path.basename(data.fileA.filePath)} Exports:** ${data.fileA.exports.length} symbols.
@@ -755,7 +873,9 @@ function syncVaultIndex(workspaceRoot = process.cwd()) {
     fs.mkdirSync(docsDir, { recursive: true });
   }
 
-  const files = fs.readdirSync(docsDir).filter(f => f.endsWith('.context.md') || f.endsWith('.bridge.md'));
+  const files = fs
+    .readdirSync(docsDir)
+    .filter(f => f.endsWith('.context.md') || f.endsWith('.bridge.md'));
 
   const rows = [];
   for (const f of files) {
@@ -822,7 +942,7 @@ function checkDrift(workspaceRoot = process.cwd()) {
     total: syncRes.indexedCount,
     fresh: freshCount,
     stale: staleCount,
-    isHealthy: staleCount === 0
+    isHealthy: staleCount === 0,
   };
 }
 
@@ -838,7 +958,9 @@ function main() {
     console.log(`Total Dossiers: ${drift.total}`);
     console.log(`🟢 Fresh:       ${drift.fresh}`);
     console.log(`🔴 Stale:       ${drift.stale}`);
-    console.log(`Status:         ${drift.isHealthy ? C.GREEN + 'HEALTHY' : C.RED + 'DRIFT DETECTED'}${C.RESET}\n`);
+    console.log(
+      `Status:         ${drift.isHealthy ? C.GREEN + 'HEALTHY' : C.RED + 'DRIFT DETECTED'}${C.RESET}\n`,
+    );
     process.exit(drift.isHealthy ? 0 : 1);
   }
 
@@ -922,7 +1044,9 @@ function main() {
       }
     }
   } else {
-    console.error(`${C.RED}Error: Provide --file <path>, --dir <path>, --multi <fileA> <fileB>, or --check${C.RESET}`);
+    console.error(
+      `${C.RED}Error: Provide --file <path>, --dir <path>, --multi <fileA> <fileB>, or --check${C.RESET}`,
+    );
     process.exit(1);
   }
 }
@@ -936,7 +1060,7 @@ module.exports = {
   renderBridgeDossier,
   renderDirectoryDossier,
   syncVaultIndex,
-  checkDrift
+  checkDrift,
 };
 
 if (require.main === module) {

@@ -1,0 +1,14 @@
+{
+  "skill_name": "deployment-procedures",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9990271012998112,
+  "dedup_score": 0.10199999999999998,
+  "trap_density": 0.44633799959423814,
+  "recency_score": 1.0,
+  "section_depth": 0.7458333333333333,
+  "composite_fitness": 0.7439311201990979,
+  "total_tokens_estimate": 2615,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

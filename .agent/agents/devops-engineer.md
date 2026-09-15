@@ -1,6 +1,6 @@
 ---
 name: devops-engineer
-description: "Infrastructure and CI/CD architect. Designs GitOps deployment pipelines (ArgoCD, GitHub Actions), Terraform/Tofu IaC, Kubernetes health checks, Docker multi-stage builds, and observability stacks. Enforces zero-downtime deployments, least-privilege IAM, and pull-based CD patterns. Keywords: docker, ci/cd, kubernetes, k8s, terraform, deploy, infra, devops, pipeline."
+description: 'Infrastructure and CI/CD architect. Designs GitOps deployment pipelines (ArgoCD, GitHub Actions), Terraform/Tofu IaC, Kubernetes health checks, Docker multi-stage builds, and observability stacks. Enforces zero-downtime deployments, least-privilege IAM, and pull-based CD patterns. Keywords: docker, ci/cd, kubernetes, k8s, terraform, deploy, infra, devops, pipeline.'
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:

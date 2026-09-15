@@ -1,0 +1,14 @@
+{
+  "skill_name": "antfu-conventions",
+  "coverage_score": 1.0,
+  "specificity_score": 0.998344744413762,
+  "dedup_score": 0.118,
+  "trap_density": 0.377852056387153,
+  "recency_score": 1.0,
+  "section_depth": 0.65625,
+  "composite_fitness": 0.7224842573408253,
+  "total_tokens_estimate": 1830,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

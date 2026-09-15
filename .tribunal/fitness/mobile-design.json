@@ -1,0 +1,14 @@
+{
+  "skill_name": "mobile-design",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9993913706552711,
+  "dedup_score": 0.05400000000000005,
+  "trap_density": 0.6758659532526049,
+  "recency_score": 1.0,
+  "section_depth": 0.7944444444444445,
+  "composite_fitness": 0.7785248337856115,
+  "total_tokens_estimate": 3676,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

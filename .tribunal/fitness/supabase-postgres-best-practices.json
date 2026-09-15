@@ -1,0 +1,14 @@
+{
+  "skill_name": "supabase-postgres-best-practices",
+  "coverage_score": 1.0,
+  "specificity_score": 0.8559445347941453,
+  "dedup_score": 0.122,
+  "trap_density": 0.6065200909780136,
+  "recency_score": 1.0,
+  "section_depth": 0.5944444444444444,
+  "composite_fitness": 0.7196335872721976,
+  "total_tokens_estimate": 2091,
+  "recommendations": [
+    "High duplication detected in domain 'database'"
+  ]
+}

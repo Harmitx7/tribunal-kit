@@ -1,0 +1,14 @@
+{
+  "skill_name": "create-design-md",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9986243948960307,
+  "dedup_score": 0.12,
+  "trap_density": 0.3077599472411519,
+  "recency_score": 1.0,
+  "section_depth": 0.4533333333333333,
+  "composite_fitness": 0.6818888710653789,
+  "total_tokens_estimate": 2415,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

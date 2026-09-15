@@ -1,0 +1,14 @@
+{
+  "skill_name": "agent-organizer",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9988543141017253,
+  "dedup_score": 0.07599999999999996,
+  "trap_density": 0.4499678594386115,
+  "recency_score": 1.0,
+  "section_depth": 0.6791666666666667,
+  "composite_fitness": 0.7305410417361368,
+  "total_tokens_estimate": 2484,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

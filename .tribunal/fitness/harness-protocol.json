@@ -1,0 +1,14 @@
+{
+  "skill_name": "harness-protocol",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9974200069154454,
+  "dedup_score": 0.07799999999999996,
+  "trap_density": 0.4069494443574895,
+  "recency_score": 1.0,
+  "section_depth": 0.44000000000000006,
+  "composite_fitness": 0.6882264180367124,
+  "total_tokens_estimate": 1694,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

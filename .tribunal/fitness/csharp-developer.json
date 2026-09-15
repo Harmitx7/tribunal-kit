@@ -1,0 +1,15 @@
+{
+  "skill_name": "csharp-developer",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9993339922490366,
+  "dedup_score": 0.08799999999999997,
+  "trap_density": 0.28207271207689094,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.755377705261341,
+  "total_tokens_estimate": 4948,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'backend'"
+  ]
+}

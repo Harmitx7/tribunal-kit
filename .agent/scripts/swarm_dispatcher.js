@@ -257,10 +257,26 @@ function buildWorkerPrompts(payloadData, workspaceRoot) {
     const ctx = worker.context_summary || '';
     const task = worker.task_description || '';
     const files = worker.files_attached || [];
+    const skills = worker.skills_required || [];
+
+    let compiledSkills = '';
+    if (skills.length > 0) {
+      try {
+        const res = execSync(`node bin/wrapper.js compile --skills-dir .agent/skills --skills ${skills.join(',')}`, {
+          cwd: workspaceRoot,
+          stdio: 'pipe',
+        }).toString().trim();
+        if (res) {
+          compiledSkills = `\n\n[Super-Prompt (Compiled Skills)]:\n${res}`;
+        }
+      } catch (e) {
+        compiledSkills = `\n\n[Skill Compilation Failed]: ${e.message}`;
+      }
+    }
 
     let prompt = `--- MICRO-WORKER DISPATCH ---\n`;
     prompt += `Agent: ${agent}\n`;
-    prompt += `Context: ${ctx}${astContext}\n`;
+    prompt += `Context: ${ctx}${astContext}${compiledSkills}\n`;
     prompt += `Task: ${task}\n`;
     prompt += `Attached Files: ${files.length ? files.join(', ') : 'None'}\n`;
     prompt += `-----------------------------`;
@@ -329,7 +345,18 @@ class SwarmOrchestrator {
           ? payload
           : [payload];
 
-    this.workers = workers;
+    // Intercept low confidence tasks to inject Socratic Gate reasoning prompts
+    this.workers = workers.map(w => {
+      if (w.confidence_score !== undefined && w.confidence_score < 70) {
+        const socraticPrompt =
+          `\n\n[SOCRATIC GATE INTERCEPT - LOW CONFIDENCE ROUTING]\n` +
+          `Confidence Score: ${w.confidence_score}/100\n` +
+          `Reasoning Prompt: You have been routed this task with low confidence. Before taking action, you MUST ask 1-2 clarifying questions about the underlying assumptions or architectural boundaries. Do NOT execute implementation until ambiguity is resolved.`;
+        return { ...w, context: (w.context || '') + socraticPrompt };
+      }
+      return w;
+    });
+
     this.results = [];
 
     if (this.dashboard) {

@@ -1,6 +1,6 @@
 ---
 name: penetration-tester
-description: "Offensive security analyst using MITRE ATT&CK methodology. Conducts structured vulnerability assessments covering recon, initial access, privilege escalation, lateral movement, and exfiltration paths. Produces actionable remediation reports. Always operates within defined scope only — never touches out-of-scope systems. Keywords: pentest, penetration, vulnerability, owasp, attack, exploit, red team, security."
+description: 'Offensive security analyst using MITRE ATT&CK methodology. Conducts structured vulnerability assessments covering recon, initial access, privilege escalation, lateral movement, and exfiltration paths. Produces actionable remediation reports. Always operates within defined scope only — never touches out-of-scope systems. Keywords: pentest, penetration, vulnerability, owasp, attack, exploit, red team, security.'
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:

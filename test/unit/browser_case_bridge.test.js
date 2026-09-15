@@ -18,8 +18,8 @@ describe('browser/case_bridge.js — Empirical Case Law Bridge', () => {
     saveIndexCalled = false;
 
     jest.spyOn(caseLaw, 'loadIndex').mockImplementation(() => mockIndex);
-    jest.spyOn(caseLaw, 'saveCase').mockImplementation((c) => savedCases.push(c));
-    jest.spyOn(caseLaw, 'saveIndex').mockImplementation((idx) => {
+    jest.spyOn(caseLaw, 'saveCase').mockImplementation(c => savedCases.push(c));
+    jest.spyOn(caseLaw, 'saveIndex').mockImplementation(idx => {
       saveIndexCalled = true;
       mockIndex = idx;
     });
@@ -54,18 +54,18 @@ describe('browser/case_bridge.js — Empirical Case Law Bridge', () => {
     expect(saveIndexCalled).toBe(true);
 
     const a11yCase = savedCases.find(
-      (c) => c.domain === 'frontend' && c.reason.includes('Accessibility')
+      c => c.domain === 'frontend' && c.reason.includes('Accessibility'),
     );
     expect(a11yCase).toBeDefined();
     expect(a11yCase.id).toBe(10);
     expect(a11yCase.reviewer).toBe('browser-audit');
     expect(a11yCase.verdict).toBe('REJECTED');
 
-    const secCase = savedCases.find((c) => c.domain === 'security');
+    const secCase = savedCases.find(c => c.domain === 'security');
     expect(secCase).toBeDefined();
     expect(secCase.reason).toContain('Content-Security-Policy');
 
-    const errCase = savedCases.find((c) => c.reason.includes('Uncaught browser exception'));
+    const errCase = savedCases.find(c => c.reason.includes('Uncaught browser exception'));
     expect(errCase).toBeDefined();
   });
 

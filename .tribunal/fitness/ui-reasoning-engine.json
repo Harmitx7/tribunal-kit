@@ -1,0 +1,15 @@
+{
+  "skill_name": "ui-reasoning-engine",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9986581665725507,
+  "dedup_score": 0.10399999999999998,
+  "trap_density": 0.22110723700994978,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7484977188660027,
+  "total_tokens_estimate": 3063,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'frontend'"
+  ]
+}

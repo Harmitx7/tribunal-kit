@@ -1,0 +1,15 @@
+{
+  "skill_name": "svg-animation",
+  "coverage_score": 1.0,
+  "specificity_score": 0.999438128377203,
+  "dedup_score": 0.09999999999999998,
+  "trap_density": 0.18544847623168698,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7427048971101937,
+  "total_tokens_estimate": 4173,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'motion'"
+  ]
+}

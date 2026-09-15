@@ -1,0 +1,14 @@
+{
+  "skill_name": "progressive-blur",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9988949724367419,
+  "dedup_score": 0.11599999999999999,
+  "trap_density": 0.383719336713718,
+  "recency_score": 1.0,
+  "section_depth": 0.81875,
+  "composite_fitness": 0.747549394994406,
+  "total_tokens_estimate": 1935,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "skill_name": "ui-skills-root",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9983242414518487,
+  "dedup_score": 0.05800000000000005,
+  "trap_density": 0.2298647334453187,
+  "recency_score": 1.0,
+  "section_depth": 0.7375,
+  "composite_fitness": 0.7034695583071675,
+  "total_tokens_estimate": 2954,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'frontend'"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "skill_name": "webapp-testing",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9989184437577132,
+  "dedup_score": 0.07999999999999996,
+  "trap_density": 0.5227938101212881,
+  "recency_score": 1.0,
+  "section_depth": 0.7954545454545454,
+  "composite_fitness": 0.7595209420879176,
+  "total_tokens_estimate": 2549,
+  "recommendations": [
+    "High duplication detected in domain 'testing'"
+  ]
+}

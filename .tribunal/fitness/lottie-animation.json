@@ -1,0 +1,14 @@
+{
+  "skill_name": "lottie-animation",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9986701043110924,
+  "dedup_score": 0.09599999999999997,
+  "trap_density": 0.4043905257076834,
+  "recency_score": 1.0,
+  "section_depth": 0.70625,
+  "composite_fitness": 0.730730099718371,
+  "total_tokens_estimate": 1838,
+  "recommendations": [
+    "High duplication detected in domain 'motion'"
+  ]
+}

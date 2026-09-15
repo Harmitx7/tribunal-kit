@@ -245,6 +245,83 @@ enum Commands {
         #[arg(long)]
         skills: String,
     },
+
+    /// Generate an agent telemetry heatmap
+    Heatmap {
+        /// Target repository path
+        #[arg(long, default_value = ".")]
+        repo_path: String,
+    },
+
+    /// Cross-pollinate // VERIFY traps across skills in the same domain
+    Pollinate {
+        /// Skills directory
+        #[arg(long)]
+        skills_dir: String,
+    },
+
+    /// Render competitive skill leaderboard
+    Leaderboard {
+        /// Skills directory
+        #[arg(long)]
+        skills_dir: String,
+
+        /// Target repository path
+        #[arg(long, default_value = ".")]
+        repo_path: String,
+        
+        /// Limit number of skills to display
+        #[arg(long, default_value_t = 20)]
+        limit: usize,
+    },
+
+    /// Run and publish synthetic benchmarks
+    Benchmark {
+        /// Skills directory
+        #[arg(long)]
+        skills_dir: String,
+
+        /// Target repository path
+        #[arg(long, default_value = ".")]
+        repo_path: String,
+        
+        /// Publish benchmark results
+        #[arg(long, default_value_t = false)]
+        publish: bool,
+    },
+
+    /// Generate Skill Genome SVG visualization
+    Genome {
+        /// Skills directory
+        #[arg(long)]
+        skills_dir: String,
+
+        /// Target repository path
+        #[arg(long, default_value = ".")]
+        repo_path: String,
+    },
+
+    /// AST Skill Compiler: Compresses skills into a dense YAML Super-Prompt
+    Compile {
+        /// Skills directory
+        #[arg(long)]
+        skills_dir: String,
+
+        /// Comma-separated list of skills to compile
+        #[arg(long)]
+        skills: String,
+    },
+
+    /// The Darwinian Purge: Prunes weak skills and recommends fission for bloated ones
+    Purge {
+        /// Skills directory
+        #[arg(long)]
+        skills_dir: String,
+
+        /// Preview actions without moving files
+        #[arg(long, default_value_t = false)]
+        dry_run: bool,
+    },
 }
 
 #[derive(Subcommand)]
@@ -529,7 +606,29 @@ async fn main() -> Result<()> {
         Commands::TelemetrySummary { repo_path } => cmd_telemetry_summary(&repo_path).await,
 
         Commands::ResolveSkills { skills_dir, skills } => cmd_resolve_skills(&skills_dir, &skills).await,
+
+        Commands::Heatmap { repo_path } => cmd_heatmap(&repo_path).await,
+
+        Commands::Pollinate { skills_dir } => cmd_pollinate(&skills_dir).await,
+        
+        Commands::Leaderboard { skills_dir, repo_path, limit } => cmd_leaderboard(&skills_dir, &repo_path, limit).await,
+        
+        Commands::Benchmark { skills_dir, repo_path, publish } => cmd_benchmark(&skills_dir, &repo_path, publish).await,
+        
+        Commands::Genome { skills_dir, repo_path } => cmd_genome(&skills_dir, &repo_path).await,
+
+        Commands::Compile { skills_dir, skills } => cmd_compile(&skills_dir, &skills).await,
+
+        Commands::Purge { skills_dir, dry_run } => cmd_purge(&skills_dir, dry_run).await,
     }
+}
+
+async fn cmd_compile(skills_dir: &str, skills: &str) -> Result<()> {
+    commands::compiler::cmd_compile(skills_dir, skills)
+}
+
+async fn cmd_purge(skills_dir: &str, dry_run: bool) -> Result<()> {
+    commands::purge::cmd_purge(skills_dir, dry_run)
 }
 
 async fn cmd_sdd(action: SddAction) -> Result<()> {
@@ -625,6 +724,80 @@ async fn cmd_resolve_skills(skills_dir: &str, skills_str: &str) -> Result<()> {
         }
         Err(e) => {
             eprintln!("✖ Skill resolution failed: {:#}", e);
+            std::process::exit(1);
+        }
+    }
+}
+
+async fn cmd_heatmap(repo_path: &str) -> Result<()> {
+    match commands::heatmap::generate_heatmap(repo_path) {
+        Ok(json_output) => {
+            // we can parse it and print the ANSI
+            if let Ok(v) = serde_json::from_str::<serde_json::Value>(&json_output) {
+                if let Some(ansi) = v["ansi_output"].as_str() {
+                    println!("{}", ansi);
+                    return Ok(());
+                }
+            }
+            println!("{}", json_output);
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ Heatmap generation failed: {:#}", e);
+            std::process::exit(1);
+        }
+    }
+}
+
+async fn cmd_pollinate(skills_dir: &str) -> Result<()> {
+    match commands::pollinator::pollinate_skills(skills_dir) {
+        Ok(json_output) => {
+            println!("{}", json_output);
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ Pollination failed: {:#}", e);
+            std::process::exit(1);
+        }
+    }
+}
+
+async fn cmd_leaderboard(skills_dir: &str, repo_path: &str, limit: usize) -> Result<()> {
+    match commands::leaderboard::render_leaderboard(skills_dir, repo_path, limit) {
+        Ok(output) => {
+            println!("{}", output);
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ Leaderboard generation failed: {:#}", e);
+            std::process::exit(1);
+        }
+    }
+}
+
+async fn cmd_benchmark(skills_dir: &str, repo_path: &str, publish: bool) -> Result<()> {
+    match commands::benchmark::run_benchmark(skills_dir, repo_path, publish) {
+        Ok(json_output) => {
+            if !publish {
+                println!("{}", json_output);
+            }
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ Benchmark generation failed: {:#}", e);
+            std::process::exit(1);
+        }
+    }
+}
+
+async fn cmd_genome(skills_dir: &str, repo_path: &str) -> Result<()> {
+    match commands::genome::generate_genome_svg(skills_dir, repo_path) {
+        Ok(_) => {
+            // Success msg is printed inside the func
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ Genome generation failed: {:#}", e);
             std::process::exit(1);
         }
     }
@@ -1207,7 +1380,7 @@ async fn cmd_sync(path: &str, quiet: bool) -> Result<()> {
 /// Sync IDE bridges by force-writing all 6 bridge files from .agent/rules/GEMINI.md.
 /// Unlike `generate_ide_bridges` (used during init, which skips existing files),
 /// this always overwrites to ensure bridge content stays fresh with the source rules.
-async fn sync_ide_bridges(target: &PathBuf, agent_dir: &PathBuf) -> Result<()> {
+async fn sync_ide_bridges(target: &std::path::Path, agent_dir: &std::path::Path) -> Result<()> {
     let rules_file = agent_dir.join("rules").join("GEMINI.md");
     let rules_content = tokio::fs::read_to_string(&rules_file).await.unwrap_or_default();
 
@@ -1427,7 +1600,7 @@ async fn cmd_memory(path: &str, action: MemoryAction, quiet: bool) -> Result<()>
             let (total, sem, proc_, ep, work, tokens) = commands::memory::get_stats(&index);
 
             if !quiet {
-                eprintln!("\n{}  {}", "🧠".to_string(), "Tribunal Memory Index".bold());
+                eprintln!("\n{}  {}", "🧠", "Tribunal Memory Index".bold());
                 eprintln!("  {} Total entries: {}", "▶".dimmed(), total);
                 eprintln!("  {} Semantic:      {} (permanent)", "▶".dimmed(), sem);
                 eprintln!("  {} Procedural:    {} (permanent)", "▶".dimmed(), proc_);
@@ -1543,7 +1716,7 @@ fn copy_dir_all_inner(src: PathBuf, dst: PathBuf, sem: Arc<Semaphore>) -> Pin<Bo
     })
 }
 
-async fn generate_ide_bridges(target: &PathBuf, agent_dest: &PathBuf) -> Result<()> {
+async fn generate_ide_bridges(target: &std::path::Path, agent_dest: &std::path::Path) -> Result<()> {
     let rules_file = agent_dest.join("rules").join("GEMINI.md");
     let rules_content = tokio::fs::read_to_string(&rules_file).await.unwrap_or_default();
 

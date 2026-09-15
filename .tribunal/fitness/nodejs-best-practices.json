@@ -1,0 +1,14 @@
+{
+  "skill_name": "nodejs-best-practices",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9786634705322347,
+  "dedup_score": 0.134,
+  "trap_density": 0.4767807761991037,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7873498105363125,
+  "total_tokens_estimate": 5396,
+  "recommendations": [
+    "High duplication detected in domain 'backend'"
+  ]
+}

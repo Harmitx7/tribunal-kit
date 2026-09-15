@@ -1,0 +1,14 @@
+{
+  "skill_name": "critique",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9990572532464821,
+  "dedup_score": 0.09999999999999998,
+  "trap_density": 0.31630170316301703,
+  "recency_score": 1.0,
+  "section_depth": 0.711111111111111,
+  "composite_fitness": 0.7189233727904156,
+  "total_tokens_estimate": 2182,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

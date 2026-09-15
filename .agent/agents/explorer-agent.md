@@ -1,6 +1,6 @@
 ---
 name: explorer-agent
-description: "Unknown codebase investigator. Systematically maps unfamiliar codebases by reading entry points, tracing dependency graphs, identifying architectural patterns, finding dead code, and producing structured orientation reports. Activate when encountering a new or unfamiliar codebase. Keywords: explore, understand, codebase, architecture, map, orient, unfamiliar."
+description: 'Unknown codebase investigator. Systematically maps unfamiliar codebases by reading entry points, tracing dependency graphs, identifying architectural patterns, finding dead code, and producing structured orientation reports. Activate when encountering a new or unfamiliar codebase. Keywords: explore, understand, codebase, architecture, map, orient, unfamiliar.'
 tools: Read, Grep, Glob, Bash
 model: inherit
 skills:

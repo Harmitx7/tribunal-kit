@@ -1,0 +1,14 @@
+{
+  "skill_name": "typeset",
+  "coverage_score": 1.0,
+  "specificity_score": 0.998771511041419,
+  "dedup_score": 0.08199999999999996,
+  "trap_density": 0.3669724770642202,
+  "recency_score": 1.0,
+  "section_depth": 0.69375,
+  "composite_fitness": 0.7211626737679168,
+  "total_tokens_estimate": 1886,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

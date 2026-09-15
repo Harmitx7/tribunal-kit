@@ -1,0 +1,14 @@
+{
+  "skill_name": "context-engineering-pro",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9992142542455252,
+  "dedup_score": 0.08199999999999996,
+  "trap_density": 0.35446489434219497,
+  "recency_score": 1.0,
+  "section_depth": 0.69375,
+  "composite_fitness": 0.7193750850004341,
+  "total_tokens_estimate": 1966,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

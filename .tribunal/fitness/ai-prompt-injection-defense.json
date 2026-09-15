@@ -1,0 +1,14 @@
+{
+  "skill_name": "ai-prompt-injection-defense",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9989332819596217,
+  "dedup_score": 0.118,
+  "trap_density": 0.46419668185334817,
+  "recency_score": 1.0,
+  "section_depth": 0.7392857142857143,
+  "composite_fitness": 0.7480090158127837,
+  "total_tokens_estimate": 3060,
+  "recommendations": [
+    "High duplication detected in domain 'security'"
+  ]
+}

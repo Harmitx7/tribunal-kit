@@ -1,0 +1,14 @@
+{
+  "skill_name": "web-quality-audit",
+  "coverage_score": 1.0,
+  "specificity_score": 0.5989685761119353,
+  "dedup_score": 0.09599999999999997,
+  "trap_density": 0.3637890023786204,
+  "recency_score": 1.0,
+  "section_depth": 0.6125,
+  "composite_fitness": 0.6306370655791802,
+  "total_tokens_estimate": 1892,
+  "recommendations": [
+    "High duplication detected in domain 'security'"
+  ]
+}

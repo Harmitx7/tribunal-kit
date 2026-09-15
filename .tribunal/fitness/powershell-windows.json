@@ -1,0 +1,14 @@
+{
+  "skill_name": "powershell-windows",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9992565531244755,
+  "dedup_score": 0.08199999999999996,
+  "trap_density": 0.3718691895439134,
+  "recency_score": 1.0,
+  "section_depth": 0.7041666666666667,
+  "composite_fitness": 0.7235566890564821,
+  "total_tokens_estimate": 2426,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

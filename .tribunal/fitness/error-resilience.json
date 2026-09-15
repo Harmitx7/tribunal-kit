@@ -1,0 +1,14 @@
+{
+  "skill_name": "error-resilience",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9991686916485485,
+  "dedup_score": 0.08799999999999997,
+  "trap_density": 0.5099728014505893,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7895296585472982,
+  "total_tokens_estimate": 4580,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

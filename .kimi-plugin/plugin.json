@@ -28,11 +28,7 @@
     "shortDescription": "28-Specialist Review Waves & Subagent-Driven Development (SDD) Engine",
     "longDescription": "Tribunal Kit provides institutional-grade code review, anti-hallucination guardrails, Subagent-Driven Development (SDD), and automated testing pipelines for AI coding agents.",
     "developerName": "Harmitx7",
-    "capabilities": [
-      "Interactive",
-      "Read",
-      "Write"
-    ],
+    "capabilities": ["Interactive", "Read", "Write"],
     "websiteURL": "https://github.com/Harmitx7/tribunal-kit"
   }
 }

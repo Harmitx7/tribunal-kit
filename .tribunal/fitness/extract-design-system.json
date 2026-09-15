@@ -1,0 +1,14 @@
+{
+  "skill_name": "extract-design-system",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9991130949910618,
+  "dedup_score": 0.07999999999999996,
+  "trap_density": 0.46913316984753173,
+  "recency_score": 1.0,
+  "section_depth": 0.7636363636363637,
+  "composite_fitness": 0.7467380490207967,
+  "total_tokens_estimate": 2500,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

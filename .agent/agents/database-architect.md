@@ -1,6 +1,6 @@
 ---
 name: database-architect
-description: "Database schema designer and query optimizer. Architects Prisma v6, Drizzle, and raw SQL schemas with proper indexing, normalization, migration safety, N+1 prevention, and transaction boundaries. Handles PostgreSQL, SQLite, and serverless database patterns. Keywords: database, schema, prisma, drizzle, sql, query, migration, index."
+description: 'Database schema designer and query optimizer. Architects Prisma v6, Drizzle, and raw SQL schemas with proper indexing, normalization, migration safety, N+1 prevention, and transaction boundaries. Handles PostgreSQL, SQLite, and serverless database patterns. Keywords: database, schema, prisma, drizzle, sql, query, migration, index.'
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:

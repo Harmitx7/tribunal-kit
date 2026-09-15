@@ -1,0 +1,14 @@
+{
+  "skill_name": "harden",
+  "coverage_score": 1.0,
+  "specificity_score": 0.998705962417268,
+  "dedup_score": 0.10399999999999998,
+  "trap_density": 0.3575849264200247,
+  "recency_score": 1.0,
+  "section_depth": 0.6625,
+  "composite_fitness": 0.7183539314464572,
+  "total_tokens_estimate": 1926,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

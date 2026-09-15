@@ -1,0 +1,14 @@
+{
+  "skill_name": "duckdb-analytical-sql",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9988955069680097,
+  "dedup_score": 0.11199999999999999,
+  "trap_density": 0.39310553371635926,
+  "recency_score": 1.0,
+  "section_depth": 0.63125,
+  "composite_fitness": 0.7202324314510559,
+  "total_tokens_estimate": 1771,
+  "recommendations": [
+    "High duplication detected in domain 'database'"
+  ]
+}

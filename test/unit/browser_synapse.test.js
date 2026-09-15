@@ -87,7 +87,9 @@ describe('browser/synapse.js — Component Synapse Engine', () => {
       };
 
       const code = synthesizeReactComponent('SearchInput', data);
-      expect(code).toContain('export interface SearchInputProps extends React.InputHTMLAttributes<HTMLInputElement>');
+      expect(code).toContain(
+        'export interface SearchInputProps extends React.InputHTMLAttributes<HTMLInputElement>',
+      );
       expect(code).toContain('export const SearchInput: React.FC<SearchInputProps>');
       expect(code).toContain('<input');
       expect(code).toContain('export default SearchInput;');

@@ -13,7 +13,7 @@ describe('Browser Live Integration & Auditing', () => {
   const PORT = 45678;
   const TEST_URL = `http://127.0.0.1:${PORT}`;
 
-  beforeAll((done) => {
+  beforeAll(done => {
     server = http.createServer((req, res) => {
       res.writeHead(200, {
         'Content-Type': 'text/html; charset=utf-8',
@@ -42,7 +42,7 @@ describe('Browser Live Integration & Auditing', () => {
     server.listen(PORT, '127.0.0.1', () => done());
   });
 
-  afterAll((done) => {
+  afterAll(done => {
     if (server) {
       server.close(done);
     } else {

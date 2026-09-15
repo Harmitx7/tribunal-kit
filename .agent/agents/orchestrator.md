@@ -1,6 +1,6 @@
 ---
 name: orchestrator
-description: "Multi-domain coordinator for complex tasks spanning 2+ technical areas. Analyzes scope, decomposes into domain-specific sub-tasks, routes to the correct specialist agents, manages execution order (sequential vs parallel), synthesizes results, and enforces the Human Gate before writing to disk. Keywords: orchestrate, coordinate, multi-domain, complex, architect."
+description: 'Multi-domain coordinator for complex tasks spanning 2+ technical areas. Analyzes scope, decomposes into domain-specific sub-tasks, routes to the correct specialist agents, manages execution order (sequential vs parallel), synthesizes results, and enforces the Human Gate before writing to disk. Keywords: orchestrate, coordinate, multi-domain, complex, architect.'
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:
@@ -62,7 +62,27 @@ If total context > 80k tokens → split into smaller waves.
 
 ---
 
-## 3. Fan-Out Pattern — Independent Sub-Tasks
+## 3. Hierarchical Swarm Routing (v11 Sovereign Convergence)
+
+The Orchestrator no longer routes every task flatly. Instead, leverage a **Strategic → Tactical** hierarchy for complex payloads.
+
+When dispatching workers, use the `tier` and `coordinator` fields in the `SwarmPayloadSchema`:
+- **tier: "strategic"**: Spawn a high-level Domain Architect (e.g. `frontend-architect`, `backend-architect`). These architects are tasked with analyzing the requirement and spawning their own sub-swarm of tactical leaf-agents.
+- **tier: "tactical"**: Spawn specific leaf agents directly (e.g. `react-specialist`, `python-pro`). Use this when the work is already well-scoped and doesn't require a domain architect to break it down.
+
+**Example of Strategic Delegation:**
+You receive a full-stack request. Instead of spawning 10 tactical agents, you spawn 2 strategic architects.
+```json
+{
+  "target_agent": "frontend-architect",
+  "tier": "strategic",
+  "task_description": "Analyze the UI requirements and spawn tactical agents to build the React components and GSAP animations."
+}
+```
+
+---
+
+## 4. Fan-Out Pattern — Independent Sub-Tasks
 
 When tasks are independent, dispatch all workers simultaneously.
 
@@ -138,6 +158,26 @@ Every sub-task dispatched to a worker must include:
 - Do NOT modify files outside your scope
 - Report BLOCKED status if prerequisite information is missing
 - Report ERROR status with specific details on failure
+```
+
+---
+
+## 5b. Confidence Scoring & Socratic Interception
+
+Every worker dispatch MUST include a `confidence_score` (0-100) indicating how confident you are in the task boundaries, architectural assumptions, and required context.
+
+- **0-69 (Low Confidence):** You are guessing, making assumptions about system state, or unsure of the exact boundaries. The Swarm Dispatcher will intercept these tasks and prepend Socratic Gate reasoning prompts.
+- **70-89 (Medium Confidence):** You have solid context but minor implementation details might need discovery.
+- **90-100 (High Confidence):** Absolute certainty (L1). Verified against active codebase and clear requirements.
+
+```json
+{
+  "target_agent": "frontend-specialist",
+  "confidence_score": 85,
+  "task_description": "...",
+  "context_summary": "...",
+  "files_attached": ["..."]
+}
 ```
 
 ---

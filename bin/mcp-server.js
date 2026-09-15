@@ -570,7 +570,8 @@ async function handleRequest(req) {
             properties: {
               url: {
                 type: 'string',
-                description: 'The target URL to inspect (e.g. http://localhost:3000 or https://example.com)',
+                description:
+                  'The target URL to inspect (e.g. http://localhost:3000 or https://example.com)',
               },
             },
             required: ['url'],
@@ -610,7 +611,8 @@ async function handleRequest(req) {
               },
               maxDiffPercent: {
                 type: 'number',
-                description: 'Maximum allowable difference percentage before failing (default: 1.0)',
+                description:
+                  'Maximum allowable difference percentage before failing (default: 1.0)',
               },
             },
             required: ['url1', 'url2'],
@@ -619,8 +621,7 @@ async function handleRequest(req) {
         },
         {
           name: 'tk_browser_screenshot',
-          description:
-            'Captures a viewport screenshot of a target URL as base64 PNG data.',
+          description: 'Captures a viewport screenshot of a target URL as base64 PNG data.',
           inputSchema: {
             type: 'object',
             properties: {
@@ -646,7 +647,8 @@ async function handleRequest(req) {
               },
               selector: {
                 type: 'string',
-                description: 'CSS selector matching the element (e.g. button.primary or #pricing-card)',
+                description:
+                  'CSS selector matching the element (e.g. button.primary or #pricing-card)',
               },
               name: {
                 type: 'string',
@@ -670,7 +672,8 @@ async function handleRequest(req) {
               },
               verify: {
                 type: 'boolean',
-                description: 'If true, verifies whether previously reported runtime errors have cleared',
+                description:
+                  'If true, verifies whether previously reported runtime errors have cleared',
               },
             },
             required: ['url'],
@@ -696,7 +699,7 @@ async function handleRequest(req) {
         {
           name: 'tribunal_get_context',
           description:
-            'Generate or retrieve an elite Flight Data HUD context dossier for any file, multi-file pair, or directory. Automatically extracts public API contracts, callers, Chesterton\'s Fences, invariants, and test recipes. Supports drift checking and living vault sync.',
+            "Generate or retrieve an elite Flight Data HUD context dossier for any file, multi-file pair, or directory. Automatically extracts public API contracts, callers, Chesterton's Fences, invariants, and test recipes. Supports drift checking and living vault sync.",
           inputSchema: {
             type: 'object',
             properties: {
@@ -710,7 +713,8 @@ async function handleRequest(req) {
               },
               write: {
                 type: 'boolean',
-                description: 'Whether to write the generated dossier to docs/context/ and update INDEX.md (default: true).',
+                description:
+                  'Whether to write the generated dossier to docs/context/ and update INDEX.md (default: true).',
               },
               check: {
                 type: 'boolean',
@@ -772,7 +776,10 @@ async function handleRequest(req) {
           }
 
           if (!target) {
-            throw new RpcError(-32602, 'Missing required argument: target (file or directory path)');
+            throw new RpcError(
+              -32602,
+              'Missing required argument: target (file or directory path)',
+            );
           }
 
           const absTarget = path.isAbsolute(target) ? target : path.resolve(workspaceRoot, target);
@@ -973,9 +980,7 @@ async function handleRequest(req) {
         }
         try {
           const { captureRuntimeErrors, verifyRuntimeFix } = require('../dist/browser');
-          const result = verify
-            ? await verifyRuntimeFix(url)
-            : await captureRuntimeErrors(url);
+          const result = verify ? await verifyRuntimeFix(url) : await captureRuntimeErrors(url);
           return {
             content: [
               {

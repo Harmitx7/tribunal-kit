@@ -2,7 +2,7 @@
 
 Use this template when dispatching an out-of-band task reviewer subagent under Tribunal-Kit SDD.
 
-```
+````
 Subagent (general-purpose):
   description: "Review Task N (Spec Compliance + Code Quality)"
   model: [MODEL — REQUIRED: Choose per task complexity]
@@ -75,4 +75,4 @@ Subagent (general-purpose):
 
     ### Final Verdict
     [APPROVED | CHANGES_REQUIRED]
-```
+````

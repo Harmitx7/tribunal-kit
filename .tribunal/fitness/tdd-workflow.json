@@ -1,0 +1,14 @@
+{
+  "skill_name": "tdd-workflow",
+  "coverage_score": 1.0,
+  "specificity_score": 0.998880345939506,
+  "dedup_score": 0.10399999999999998,
+  "trap_density": 0.5231767290990896,
+  "recency_score": 1.0,
+  "section_depth": 0.5769230769230769,
+  "composite_fitness": 0.7303910400912262,
+  "total_tokens_estimate": 2539,
+  "recommendations": [
+    "High duplication detected in domain 'testing'"
+  ]
+}

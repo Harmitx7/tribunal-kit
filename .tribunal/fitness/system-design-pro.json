@@ -1,0 +1,14 @@
+{
+  "skill_name": "system-design-pro",
+  "coverage_score": 1.0,
+  "specificity_score": 0.99902356305663,
+  "dedup_score": 0.08799999999999997,
+  "trap_density": 0.3399167789954873,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7639922294606492,
+  "total_tokens_estimate": 4458,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

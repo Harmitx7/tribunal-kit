@@ -1,0 +1,14 @@
+{
+  "skill_name": "adapt",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9983028850953379,
+  "dedup_score": 0.09199999999999997,
+  "trap_density": 0.3725995987388937,
+  "recency_score": 1.0,
+  "section_depth": 0.66875,
+  "composite_fitness": 0.7196630168299016,
+  "total_tokens_estimate": 1858,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

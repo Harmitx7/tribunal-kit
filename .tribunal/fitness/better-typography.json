@@ -1,0 +1,14 @@
+{
+  "skill_name": "better-typography",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9988247162505451,
+  "dedup_score": 0.118,
+  "trap_density": 0.31742432830744816,
+  "recency_score": 1.0,
+  "section_depth": 0.6454545454545454,
+  "composite_fitness": 0.7118967743144081,
+  "total_tokens_estimate": 2379,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

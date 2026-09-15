@@ -43,7 +43,6 @@ function run() {
 
   const now = new Date();
   const cutoff = new Date(now.getTime() - retentionDays * 24 * 60 * 60 * 1000);
-  const cutoffStr = cutoff.toISOString();
 
   const retained = [];
   const archived = [];
@@ -67,7 +66,12 @@ function run() {
   console.log(`  Events to archive: ${archived.length}`);
 
   if (archived.length === 0) {
-    console.log('  ✓ Nothing to compact. All events within retention window.\n');
+    if (lines.length !== retained.length) {
+      if (!dryRun) fs.writeFileSync(logFile, retained.join('\n') + '\n');
+      console.log(`  ✓ Cleaned malformed lines. ${retained.length} events retained.\n`);
+    } else {
+      console.log('  ✓ Nothing to compact. All events within retention window.\n');
+    }
     return;
   }
 
@@ -115,7 +119,9 @@ function run() {
     if (fs.existsSync(archiveFile)) {
       try {
         existing = JSON.parse(fs.readFileSync(archiveFile, 'utf-8'));
-      } catch { /* overwrite */ }
+      } catch {
+        /* overwrite */
+      }
     }
 
     const merged = {

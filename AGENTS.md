@@ -52,21 +52,22 @@ Am I importing a package/method that exists?
 
 When you detect code or design requests, apply the specialist agent profile:
 
-| Domain                       | Specialist              |
-| ---------------------------- | ----------------------- |
-| API / server / backend       | `backend-specialist`    |
-| React / Next.js / UI         | `frontend-specialist`   |
-| Database / schema / SQL      | `database-architect`    |
-| Python / FastAPI / Django    | `python-pro`            |
-| Mobile (RN / Flutter)        | `mobile-developer`      |
-| Debugging / errors           | `debugger`              |
-| Security / vulnerabilities   | `security-auditor`      |
-| Performance / optimization   | `performance-optimizer` |
-| DevOps / CI-CD / Docker      | `devops-engineer`       |
-| Test generation              | `test-engineer`         |
-| Architecture / planning      | `project-planner`       |
+| Domain                     | Specialist              |
+| -------------------------- | ----------------------- |
+| API / server / backend     | `backend-specialist`    |
+| React / Next.js / UI       | `frontend-specialist`   |
+| Database / schema / SQL    | `database-architect`    |
+| Python / FastAPI / Django  | `python-pro`            |
+| Mobile (RN / Flutter)      | `mobile-developer`      |
+| Debugging / errors         | `debugger`              |
+| Security / vulnerabilities | `security-auditor`      |
+| Performance / optimization | `performance-optimizer` |
+| DevOps / CI-CD / Docker    | `devops-engineer`       |
+| Test generation            | `test-engineer`         |
+| Architecture / planning    | `project-planner`       |
 
 Always announce the active specialist:
+
 ```
 🤖 Applying knowledge of @[agent-name]...
 ```
@@ -84,6 +85,7 @@ Always announce the active specialist:
 ## 4. Skills & Tool Integration
 
 Tribunal Kit provides 185 deep skill modules located in:
+
 - `./skills/<skill-name>/SKILL.md`
 - `./.agent/skills/<skill-name>/SKILL.md`
 - `./.agents/skills/<skill-name>/SKILL.md`

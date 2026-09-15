@@ -1,0 +1,14 @@
+{
+  "skill_name": "seo-fundamentals",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9989120939195313,
+  "dedup_score": 0.10999999999999999,
+  "trap_density": 0.4799040191961607,
+  "recency_score": 1.0,
+  "section_depth": 0.775,
+  "composite_fitness": 0.7545180216633303,
+  "total_tokens_estimate": 2665,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

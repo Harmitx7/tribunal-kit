@@ -1,0 +1,14 @@
+{
+  "skill_name": "devops-engineer",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9995673301413817,
+  "dedup_score": 0.10799999999999998,
+  "trap_density": 0.4102887801798959,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7776567830552606,
+  "total_tokens_estimate": 3331,
+  "recommendations": [
+    "High duplication detected in domain 'devops'"
+  ]
+}

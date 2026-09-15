@@ -160,8 +160,8 @@ describe('dist/commands/init — cmdInit', () => {
     try {
       await cmdInit(forceFlags, true);
     } catch (e) {
-      // If an error occurs on Windows (e.g. EPERM during copy/rm), cmdInit will catch it 
-      // and call process.exit(1), which triggers our mock to throw. 
+      // If an error occurs on Windows (e.g. EPERM during copy/rm), cmdInit will catch it
+      // and call process.exit(1), which triggers our mock to throw.
       // We catch it here to allow the test to finish and assert the final state.
       if (!e.message.includes('process.exit')) {
         throw e;

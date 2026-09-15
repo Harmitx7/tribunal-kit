@@ -162,17 +162,11 @@ describe('Platform Download & Multi-Agent Installation Audit', () => {
     expect(kimi.homepage).toBe('https://github.com/Harmitx7/tribunal-kit');
     expect(kimi.author.name).toBe('Harmitx7');
 
-    const opencodeInstall = fs.readFileSync(
-      path.join(repoRoot, '.opencode', 'INSTALL.md'),
-      'utf8',
-    );
+    const opencodeInstall = fs.readFileSync(path.join(repoRoot, '.opencode', 'INSTALL.md'), 'utf8');
     expect(opencodeInstall).not.toContain('github.com/sunrise/tribunal-kit');
     expect(opencodeInstall).toContain('github.com/Harmitx7/tribunal-kit');
 
-    const hermes = fs.readFileSync(
-      path.join(repoRoot, '.hermes-plugin', 'plugin.yaml'),
-      'utf8',
-    );
+    const hermes = fs.readFileSync(path.join(repoRoot, '.hermes-plugin', 'plugin.yaml'), 'utf8');
     expect(hermes).toContain('author: Harmitx7');
   });
 });

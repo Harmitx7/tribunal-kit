@@ -1,0 +1,14 @@
+{
+  "skill_name": "geo-fundamentals",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9987625332213388,
+  "dedup_score": 0.09199999999999997,
+  "trap_density": 0.4937763604567431,
+  "recency_score": 1.0,
+  "section_depth": 0.6458333333333333,
+  "composite_fitness": 0.7344939607127792,
+  "total_tokens_estimate": 2599,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

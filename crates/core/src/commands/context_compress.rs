@@ -33,11 +33,10 @@ pub fn compress_context(file_path: &str, max_lines: Option<usize>) -> Result<Str
         }
 
         // Strip single line comments for code contexts
-        if is_code {
-            if trimmed.starts_with("//") && !trimmed.contains("// VERIFY") {
+        if is_code
+            && trimmed.starts_with("//") && !trimmed.contains("// VERIFY") {
                 continue;
             }
-        }
 
         lines.push(line.to_string());
     }

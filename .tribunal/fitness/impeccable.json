@@ -1,0 +1,14 @@
+{
+  "skill_name": "impeccable",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9983128512813345,
+  "dedup_score": 0.08199999999999996,
+  "trap_density": 0.31332851289467345,
+  "recency_score": 1.0,
+  "section_depth": 0.64375,
+  "composite_fitness": 0.7055243471904679,
+  "total_tokens_estimate": 2191,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

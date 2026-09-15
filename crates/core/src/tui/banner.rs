@@ -67,8 +67,8 @@ pub fn render_banner(caps: &TermCaps, version: &str) {
 
     eprintln!();
     eprintln!("{}", colored_border_top);
-    eprintln!("  {} {}{}{}{} {}", pipe, bold_title, " ".repeat(spaces), colored_right_pill, "", pipe);
-    eprintln!("  {} {}{}{} {}", pipe, colored_subtitle, " ".repeat(sub_spaces), "", pipe);
+    eprintln!("  {} {}{}{} {}", pipe, bold_title, " ".repeat(spaces), colored_right_pill, pipe);
+    eprintln!("  {} {}{} {}", pipe, colored_subtitle, " ".repeat(sub_spaces), pipe);
     eprintln!("{}", colored_border_bottom);
     eprintln!();
 }

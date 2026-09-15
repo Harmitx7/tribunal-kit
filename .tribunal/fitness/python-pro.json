@@ -1,0 +1,14 @@
+{
+  "skill_name": "python-pro",
+  "coverage_score": 1.0,
+  "specificity_score": 0.999602430851366,
+  "dedup_score": 0.06000000000000005,
+  "trap_density": 0.47933670164529085,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7808209914170668,
+  "total_tokens_estimate": 3970,
+  "recommendations": [
+    "High duplication detected in domain 'backend'"
+  ]
+}

@@ -114,7 +114,7 @@ const SYNTAX_HEURISTICS = [
     fix: 'Add at minimum: catch (err) { console.error(err); throw err; }',
   },
   {
-    pattern: /\.then\(\s*\)\s*\.catch\s*\(|\.catch\s*\(\s*\)/,
+    pattern: /\.then\(\s*\)\s*\.catch\s*\(|\.catch\s*\(\s*(?:[^)]*)\s*\)\s*\{\s*\}/,
     severity: 'medium',
     category: 'Error Handling',
     message: 'Empty .then() or .catch() handler — Promise errors may be silenced',

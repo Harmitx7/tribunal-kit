@@ -44,6 +44,15 @@ const WorkerRequestSchema = z.object({
     .optional()
     .default('medium')
     .describe('Task priority level'),
+  confidence_score: z
+    .number()
+    .int('confidence_score must be an integer')
+    .min(0)
+    .max(100)
+    .optional()
+    .describe(
+      'Confidence score indicating how confident the agent is in this routing decision (0-100)',
+    ),
   metadata: z.record(z.unknown()).optional().describe('Additional metadata for the worker'),
 });
 
@@ -89,6 +98,15 @@ const SwarmPayloadSchema = z.object({
     .optional()
     .default('full')
     .describe('Which tribunal wave to execute'),
+  tier: z
+    .enum(['strategic', 'tactical'])
+    .optional()
+    .default('tactical')
+    .describe('Routing tier: strategic (coordinator spawns sub-swarms) or tactical (leaf agents)'),
+  coordinator: z
+    .string()
+    .optional()
+    .describe('The agent responsible for coordinating this swarm tier (e.g. frontend-architect)'),
   shared_context: z
     .record(z.unknown())
     .optional()

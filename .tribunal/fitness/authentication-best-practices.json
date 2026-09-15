@@ -1,0 +1,14 @@
+{
+  "skill_name": "authentication-best-practices",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9325002997322394,
+  "dedup_score": 0.10799999999999998,
+  "trap_density": 0.32018080798568604,
+  "recency_score": 1.0,
+  "section_depth": 0.85,
+  "composite_fitness": 0.7282271811443009,
+  "total_tokens_estimate": 2812,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

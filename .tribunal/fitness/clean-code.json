@@ -1,0 +1,14 @@
+{
+  "skill_name": "clean-code",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9992365092893838,
+  "dedup_score": 0.08599999999999997,
+  "trap_density": 0.6179992275009656,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.8054471859830217,
+  "total_tokens_estimate": 4032,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

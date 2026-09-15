@@ -1,0 +1,14 @@
+{
+  "skill_name": "quieter",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9982311344297904,
+  "dedup_score": 0.09799999999999998,
+  "trap_density": 0.35941387890517007,
+  "recency_score": 1.0,
+  "section_depth": 0.625,
+  "composite_fitness": 0.7120083087217336,
+  "total_tokens_estimate": 1921,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

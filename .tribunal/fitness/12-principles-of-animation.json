@@ -1,0 +1,14 @@
+{
+  "skill_name": "12-principles-of-animation",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9977575399290095,
+  "dedup_score": 0.12,
+  "trap_density": 0.3872216844143272,
+  "recency_score": 1.0,
+  "section_depth": 0.6375,
+  "composite_fitness": 0.7212597606479509,
+  "total_tokens_estimate": 1939,
+  "recommendations": [
+    "High duplication detected in domain 'motion'"
+  ]
+}

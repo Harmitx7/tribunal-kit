@@ -1,0 +1,14 @@
+{
+  "skill_name": "baseline-ui",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9984979737623261,
+  "dedup_score": 0.08999999999999997,
+  "trap_density": 0.30040439052570767,
+  "recency_score": 1.0,
+  "section_depth": 0.52,
+  "composite_fitness": 0.6862602533313213,
+  "total_tokens_estimate": 2272,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

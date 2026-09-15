@@ -1,0 +1,14 @@
+{
+  "skill_name": "documentation-templates",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9990573599968031,
+  "dedup_score": 0.06400000000000006,
+  "trap_density": 0.39663652229097257,
+  "recency_score": 1.0,
+  "section_depth": 0.5035714285714286,
+  "composite_fitness": 0.6944426646287208,
+  "total_tokens_estimate": 3252,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

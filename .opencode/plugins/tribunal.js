@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const extractAndStripFrontmatter = (content) => {
+const extractAndStripFrontmatter = content => {
   const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!match) return { frontmatter: {}, content };
 
@@ -23,7 +23,10 @@ const extractAndStripFrontmatter = (content) => {
     const colonIdx = line.indexOf(':');
     if (colonIdx > 0) {
       const key = line.slice(0, colonIdx).trim();
-      const value = line.slice(colonIdx + 1).trim().replace(/^["']|["']$/g, '');
+      const value = line
+        .slice(colonIdx + 1)
+        .trim()
+        .replace(/^["']|["']$/g, '');
       frontmatter[key] = value;
     }
   }
@@ -47,7 +50,8 @@ export const TribunalPlugin = async ({ client: _client, directory: _directory } 
       const { content } = extractAndStripFrontmatter(raw);
       rulesContent = content;
     } else {
-      rulesContent = '# Tribunal Kit Master Governance Active\nEnforce strict TDD, out-of-band reviews, and 28-specialist waves.';
+      rulesContent =
+        '# Tribunal Kit Master Governance Active\nEnforce strict TDD, out-of-band reviews, and 28-specialist waves.';
     }
 
     const toolMapping = `**Tool Mapping for OpenCode:**
@@ -76,7 +80,7 @@ ${toolMapping}
   };
 
   return {
-    config: async (config) => {
+    config: async config => {
       config.skills = config.skills || {};
       config.skills.paths = config.skills.paths || [];
       if (!config.skills.paths.includes(tribunalSkillsDir)) {
@@ -90,11 +94,16 @@ ${toolMapping}
       const firstUser = output.messages.find(m => m.info && m.info.role === 'user');
       if (!firstUser || !firstUser.parts || !firstUser.parts.length) return;
 
-      if (firstUser.parts.some(p => p.type === 'text' && p.text && p.text.includes('EXTREMELY_IMPORTANT'))) return;
+      if (
+        firstUser.parts.some(
+          p => p.type === 'text' && p.text && p.text.includes('EXTREMELY_IMPORTANT'),
+        )
+      )
+        return;
 
       const ref = firstUser.parts[0];
       firstUser.parts.unshift({ ...ref, type: 'text', text: bootstrap });
-    }
+    },
   };
 };
 

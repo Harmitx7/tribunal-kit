@@ -1,0 +1,14 @@
+{
+  "skill_name": "behavioral-modes",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9970348184499299,
+  "dedup_score": 0.05600000000000005,
+  "trap_density": 0.4199475065616798,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.770799089674238,
+  "total_tokens_estimate": 2970,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

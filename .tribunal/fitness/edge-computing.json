@@ -1,0 +1,14 @@
+{
+  "skill_name": "edge-computing",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9993404353126937,
+  "dedup_score": 0.07399999999999995,
+  "trap_density": 0.4546746234725775,
+  "recency_score": 1.0,
+  "section_depth": 0.7916666666666667,
+  "composite_fitness": 0.7479192805834254,
+  "total_tokens_estimate": 2790,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "skill_name": "page-transition-animation",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9994236656861211,
+  "dedup_score": 0.122,
+  "trap_density": 0.3844569545516957,
+  "recency_score": 1.0,
+  "section_depth": 0.85625,
+  "composite_fitness": 0.7542907763199785,
+  "total_tokens_estimate": 1933,
+  "recommendations": [
+    "High duplication detected in domain 'motion'"
+  ]
+}

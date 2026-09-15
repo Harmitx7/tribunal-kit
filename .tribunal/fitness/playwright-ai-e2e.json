@@ -1,0 +1,14 @@
+{
+  "skill_name": "playwright-ai-e2e",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9990059890409044,
+  "dedup_score": 0.10199999999999998,
+  "trap_density": 0.38512812916604944,
+  "recency_score": 1.0,
+  "section_depth": 0.63125,
+  "composite_fitness": 0.7175579171830883,
+  "total_tokens_estimate": 1816,
+  "recommendations": [
+    "High duplication detected in domain 'testing'"
+  ]
+}

@@ -32,13 +32,20 @@ const RUST_COMMANDS = new Set([
   'telemetry-record',
   'telemetry-summary',
   'resolve-skills',
+  'heatmap',
+  'pollinate',
+  'leaderboard',
+  'benchmark',
+  'genome',
+  'compile',
+  'purge',
 ]);
 
 // Determine the path to the compiled Rust binary
 // In a full production release, this checks optionalDependencies in node_modules
 // For development, it checks the local target/release folder
 function getBinaryPath() {
-  if (process.env.TRIBUNAL_FORCE_JS === '1') {
+  if (process.env.TRIBUNAL_FORCE_JS === '1' || process.env.TRIBUNAL_FORCE_JS === 'true') {
     return null;
   }
 

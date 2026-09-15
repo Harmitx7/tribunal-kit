@@ -1,0 +1,14 @@
+{
+  "skill_name": "redesign-skill",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9983407576607678,
+  "dedup_score": 0.09599999999999997,
+  "trap_density": 0.38246543100912034,
+  "recency_score": 1.0,
+  "section_depth": 0.60625,
+  "composite_fitness": 0.7123754661835215,
+  "total_tokens_estimate": 1798,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

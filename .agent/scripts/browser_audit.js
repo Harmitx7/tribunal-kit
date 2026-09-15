@@ -23,7 +23,9 @@ async function main() {
     if (isJson) {
       console.log(JSON.stringify({ error: 'Missing target URL' }));
     } else {
-      console.error(`  ${RED}✖ Error:${RESET} Missing target URL. Usage: node .agent/scripts/browser_audit.js <url>`);
+      console.error(
+        `  ${RED}✖ Error:${RESET} Missing target URL. Usage: node .agent/scripts/browser_audit.js <url>`,
+      );
     }
     process.exit(1);
   }
@@ -47,8 +49,10 @@ async function main() {
     console.log(`  ${BOLD}Duration:${RESET}  ${formatMs(report.durationMs)}\n`);
 
     // Scores
-    const a11yCol = report.scores.accessibility >= 80 ? GREEN : report.scores.accessibility >= 60 ? YELLOW : RED;
-    const secCol = report.scores.security >= 80 ? GREEN : report.scores.security >= 60 ? YELLOW : RED;
+    const a11yCol =
+      report.scores.accessibility >= 80 ? GREEN : report.scores.accessibility >= 60 ? YELLOW : RED;
+    const secCol =
+      report.scores.security >= 80 ? GREEN : report.scores.security >= 60 ? YELLOW : RED;
 
     console.log(`  ${BOLD}Audit Scores:${RESET}`);
     console.log(`    Accessibility:   ${a11yCol}${report.scores.accessibility}/100${RESET}`);
@@ -71,10 +75,14 @@ async function main() {
     }
 
     if (report.summary.passed) {
-      console.log(`  ${GREEN}${BOLD}✔ Browser audit passed in ${elapsed()} — No critical violations found.${RESET}\n`);
+      console.log(
+        `  ${GREEN}${BOLD}✔ Browser audit passed in ${elapsed()} — No critical violations found.${RESET}\n`,
+      );
       process.exit(0);
     } else {
-      console.log(`  ${YELLOW}${BOLD}⚠ Browser audit completed in ${elapsed()} with ${report.summary.totalIssues} issue(s).${RESET}\n`);
+      console.log(
+        `  ${YELLOW}${BOLD}⚠ Browser audit completed in ${elapsed()} with ${report.summary.totalIssues} issue(s).${RESET}\n`,
+      );
       process.exit(1);
     }
   } catch (err) {

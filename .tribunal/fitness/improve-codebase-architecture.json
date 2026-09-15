@@ -1,0 +1,14 @@
+{
+  "skill_name": "improve-codebase-architecture",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9971150138931358,
+  "dedup_score": 0.14400000000000002,
+  "trap_density": 0.35738831615120276,
+  "recency_score": 1.0,
+  "section_depth": 0.61875,
+  "composite_fitness": 0.7174437502013076,
+  "total_tokens_estimate": 1927,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

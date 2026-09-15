@@ -34,14 +34,14 @@ Before generating, refactoring, or reviewing code in the `webgpu-performance` do
 
 Execute all non-trivial tasks through this 7-pass cognitive loop:
 
-| Pass | Phase | Core Action |
-|:---|:---|:---|
-| **Pass 1** | **Understand** | Deconstruct the user's explicit objective, implicit requirements, and platform constraints. |
-| **Pass 2** | **Plan** | Decompose the task into smallest logical steps; map dependencies and required tool calls. |
-| **Pass 3** | **Execute** | Implement the solution with production-grade craft, zero placeholders, and strict typing. |
-| **Pass 4** | **Verify** | Run linters, unit tests, or compiler checks to validate structural correctness. |
-| **Pass 5** | **Attack** | Perform an adversarial review searching for edge-case failures, race conditions, and traps. |
-| **Pass 6** | **Improve** | Eliminate discovered friction, optimize performance, and harden error boundaries. |
+| Pass       | Phase            | Core Action                                                                                  |
+| :--------- | :--------------- | :------------------------------------------------------------------------------------------- |
+| **Pass 1** | **Understand**   | Deconstruct the user's explicit objective, implicit requirements, and platform constraints.  |
+| **Pass 2** | **Plan**         | Decompose the task into smallest logical steps; map dependencies and required tool calls.    |
+| **Pass 3** | **Execute**      | Implement the solution with production-grade craft, zero placeholders, and strict typing.    |
+| **Pass 4** | **Verify**       | Run linters, unit tests, or compiler checks to validate structural correctness.              |
+| **Pass 5** | **Attack**       | Perform an adversarial review searching for edge-case failures, race conditions, and traps.  |
+| **Pass 6** | **Improve**      | Eliminate discovered friction, optimize performance, and harden error boundaries.            |
 | **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. |
 
 ---
@@ -49,7 +49,6 @@ Execute all non-trivial tasks through this 7-pass cognitive loop:
 ## 🛠️ Technical Architecture & Reference Recipes
 
 ---
-
 
 ## 1. Core Principles
 
@@ -121,23 +120,23 @@ Before submitting code, ensure:
 
 ## 🚨 Edge-Case & Failure Mode Matrix
 
-| Scenario | Risk | Mitigation Strategy |
-|:---|:---|:---|
-| **Empty or Null Inputs** | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers |
-| **Network Timeout / Latency** | Hanging operations or duplicate side-effects | Implement bounded abort controllers, exponential backoff, and idempotency keys |
-| **Concurrency / Race Conditions** | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls |
-| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection | Validate boundary payloads with Zod/Pydantic schemas prior to execution |
-| **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
+| Scenario                               | Risk                                                 | Mitigation Strategy                                                             |
+| :------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **Empty or Null Inputs**               | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers   |
+| **Network Timeout / Latency**          | Hanging operations or duplicate side-effects         | Implement bounded abort controllers, exponential backoff, and idempotency keys  |
+| **Concurrency / Race Conditions**      | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls          |
+| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection      | Validate boundary payloads with Zod/Pydantic schemas prior to execution         |
+| **Resource / Memory Saturation**       | OOM errors, frame drops, or memory leaks             | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
 
 ---
 
 ## 🤖 LLM-Specific Traps Table
 
-| Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
-|:---|:---|:---|
-| **Hallucinated Tool Capabilities** | Assuming an external library or CLI command exists without verification | Run a verification check or verify package.json before referencing tools |
-| **Premature Completion Claim** | Declaring a task finished because code was generated without verification | Execute tests, linters, or terminal commands to provide concrete proof |
-| **Context Bloat Dumping** | Pasting entire multi-thousand-line files into prompt context | Extract targeted excerpts, symbols, and signatures to preserve tokens |
+| Anti-Pattern                       | What AI Commonly Does Wrong                                               | What Is Actually Correct                                                 |
+| :--------------------------------- | :------------------------------------------------------------------------ | :----------------------------------------------------------------------- |
+| **Hallucinated Tool Capabilities** | Assuming an external library or CLI command exists without verification   | Run a verification check or verify package.json before referencing tools |
+| **Premature Completion Claim**     | Declaring a task finished because code was generated without verification | Execute tests, linters, or terminal commands to provide concrete proof   |
+| **Context Bloat Dumping**          | Pasting entire multi-thousand-line files into prompt context              | Extract targeted excerpts, symbols, and signatures to preserve tokens    |
 
 ---
 
@@ -159,5 +158,6 @@ Before submitting code, ensure:
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.

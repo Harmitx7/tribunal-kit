@@ -1,0 +1,14 @@
+{
+  "skill_name": "parallel-agents",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9983085800343988,
+  "dedup_score": 0.07599999999999996,
+  "trap_density": 0.5009915457676651,
+  "recency_score": 1.0,
+  "section_depth": 0.65,
+  "composite_fitness": 0.7337104478720295,
+  "total_tokens_estimate": 2551,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

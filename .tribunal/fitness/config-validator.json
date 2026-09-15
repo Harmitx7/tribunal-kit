@@ -1,0 +1,14 @@
+{
+  "skill_name": "config-validator",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9989374937566406,
+  "dedup_score": 0.07599999999999996,
+  "trap_density": 0.4745203218485661,
+  "recency_score": 1.0,
+  "section_depth": 0.7166666666666667,
+  "composite_fitness": 0.7398655470286131,
+  "total_tokens_estimate": 2584,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

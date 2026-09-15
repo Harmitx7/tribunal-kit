@@ -35,14 +35,14 @@ Before generating, refactoring, or reviewing code in the `animation-systems` dom
 
 Execute all non-trivial tasks through this 7-pass cognitive loop:
 
-| Pass | Phase | Core Action |
-|:---|:---|:---|
-| **Pass 1** | **Understand** | Deconstruct the user's explicit objective, implicit requirements, and platform constraints. |
-| **Pass 2** | **Plan** | Decompose the task into smallest logical steps; map dependencies and required tool calls. |
-| **Pass 3** | **Execute** | Implement the solution with production-grade craft, zero placeholders, and strict typing. |
-| **Pass 4** | **Verify** | Run linters, unit tests, or compiler checks to validate structural correctness. |
-| **Pass 5** | **Attack** | Perform an adversarial review searching for edge-case failures, race conditions, and traps. |
-| **Pass 6** | **Improve** | Eliminate discovered friction, optimize performance, and harden error boundaries. |
+| Pass       | Phase            | Core Action                                                                                  |
+| :--------- | :--------------- | :------------------------------------------------------------------------------------------- |
+| **Pass 1** | **Understand**   | Deconstruct the user's explicit objective, implicit requirements, and platform constraints.  |
+| **Pass 2** | **Plan**         | Decompose the task into smallest logical steps; map dependencies and required tool calls.    |
+| **Pass 3** | **Execute**      | Implement the solution with production-grade craft, zero placeholders, and strict typing.    |
+| **Pass 4** | **Verify**       | Run linters, unit tests, or compiler checks to validate structural correctness.              |
+| **Pass 5** | **Attack**       | Perform an adversarial review searching for edge-case failures, race conditions, and traps.  |
+| **Pass 6** | **Improve**      | Eliminate discovered friction, optimize performance, and harden error boundaries.            |
 | **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. |
 
 ---
@@ -53,12 +53,9 @@ Without a centralized motion system, codebases descend into animation chaos: arb
 
 ---
 
-
 ---
 
-
 ---
-
 
 ---
 
@@ -66,17 +63,17 @@ Without a centralized motion system, codebases descend into animation chaos: arb
 
 ### 1. The Global Motion Token Taxonomy
 
-| Token Variable | Value | Intended Interaction Scope |
-|:---|:---|:---|
-| `--duration-instant` | `80ms` | Button active press, micro-clicks, checkbox states |
-| `--duration-fast` | `150ms` | Hover states, tooltips, focus rings, status badges |
-| `--duration-normal` | `220ms` | Dropdowns, menus, tabs, segment switches, popovers |
-| `--duration-deliberate` | `320ms` | Modals, drawers, accordion expansion, card reveals |
-| `--duration-celebrate` | `500ms` | Confetti, completion fireworks, onboarding sweeps |
-| `--ease-snappy` | `cubic-bezier(0.2, 0, 0, 1)` | Direct tactile interaction and press feedback |
-| `--ease-out-ui` | `cubic-bezier(0.16, 1, 0.3, 1)` | Entrance transitions, unfolds, dynamic cards |
-| `--ease-in-ui` | `cubic-bezier(0.7, 0, 0.84, 0)` | Clean exits, dismissals, unmount fades |
-| `--ease-spring` | `cubic-bezier(0.34, 1.56, 0.64, 1)` | Playful toggles and organic badge pop-ins |
+| Token Variable          | Value                               | Intended Interaction Scope                         |
+| :---------------------- | :---------------------------------- | :------------------------------------------------- |
+| `--duration-instant`    | `80ms`                              | Button active press, micro-clicks, checkbox states |
+| `--duration-fast`       | `150ms`                             | Hover states, tooltips, focus rings, status badges |
+| `--duration-normal`     | `220ms`                             | Dropdowns, menus, tabs, segment switches, popovers |
+| `--duration-deliberate` | `320ms`                             | Modals, drawers, accordion expansion, card reveals |
+| `--duration-celebrate`  | `500ms`                             | Confetti, completion fireworks, onboarding sweeps  |
+| `--ease-snappy`         | `cubic-bezier(0.2, 0, 0, 1)`        | Direct tactile interaction and press feedback      |
+| `--ease-out-ui`         | `cubic-bezier(0.16, 1, 0.3, 1)`     | Entrance transitions, unfolds, dynamic cards       |
+| `--ease-in-ui`          | `cubic-bezier(0.7, 0, 0.84, 0)`     | Clean exits, dismissals, unmount fades             |
+| `--ease-spring`         | `cubic-bezier(0.34, 1.56, 0.64, 1)` | Playful toggles and organic badge pop-ins          |
 
 ---
 
@@ -103,7 +100,9 @@ Without a centralized motion system, codebases descend into animation chaos: arb
   /* Pre-assembled Transitions */
   --transition-press: transform var(--duration-instant) var(--ease-snappy);
   --transition-fade: opacity var(--duration-fast) var(--ease-out-ui);
-  --transition-unfold: transform var(--duration-normal) var(--ease-out-ui), opacity var(--duration-normal) var(--ease-out-ui);
+  --transition-unfold:
+    transform var(--duration-normal) var(--ease-out-ui),
+    opacity var(--duration-normal) var(--ease-out-ui);
 }
 
 /* Systemic Reduced Motion Collapse */
@@ -231,23 +230,23 @@ export function SystemModal({ isOpen, children }: { isOpen: boolean; children: R
 
 ## 🚨 Edge-Case & Failure Mode Matrix
 
-| Scenario | Risk | Mitigation Strategy |
-|:---|:---|:---|
-| **Empty or Null Inputs** | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers |
-| **Network Timeout / Latency** | Hanging operations or duplicate side-effects | Implement bounded abort controllers, exponential backoff, and idempotency keys |
-| **Concurrency / Race Conditions** | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls |
-| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection | Validate boundary payloads with Zod/Pydantic schemas prior to execution |
-| **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
+| Scenario                               | Risk                                                 | Mitigation Strategy                                                             |
+| :------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **Empty or Null Inputs**               | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers   |
+| **Network Timeout / Latency**          | Hanging operations or duplicate side-effects         | Implement bounded abort controllers, exponential backoff, and idempotency keys  |
+| **Concurrency / Race Conditions**      | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls          |
+| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection      | Validate boundary payloads with Zod/Pydantic schemas prior to execution         |
+| **Resource / Memory Saturation**       | OOM errors, frame drops, or memory leaks             | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
 
 ---
 
 ## 🤖 LLM-Specific Traps Table
 
-| Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
-|:---|:---|:---|
-| **The Instant Pop Trap** | Conditionally unmounting elements without animated interpolation | Use AnimatePresence or coordinate morphs with continuous geometry |
-| **Layout Thrashing** | Animating width, height, top, or left inside animation loops | Animate composite-only transform (translate3d, scale) and opacity |
-| **Sluggish Duration** | Setting micro-interaction transitions to 600ms+ causing interface lag | Cap interactive feedback at 160ms–240ms with snappy ease-out curves |
+| Anti-Pattern             | What AI Commonly Does Wrong                                           | What Is Actually Correct                                            |
+| :----------------------- | :-------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| **The Instant Pop Trap** | Conditionally unmounting elements without animated interpolation      | Use AnimatePresence or coordinate morphs with continuous geometry   |
+| **Layout Thrashing**     | Animating width, height, top, or left inside animation loops          | Animate composite-only transform (translate3d, scale) and opacity   |
+| **Sluggish Duration**    | Setting micro-interaction transitions to 600ms+ causing interface lag | Cap interactive feedback at 160ms–240ms with snappy ease-out curves |
 
 ---
 
@@ -269,5 +268,6 @@ export function SystemModal({ isOpen, children }: { isOpen: boolean; children: R
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.

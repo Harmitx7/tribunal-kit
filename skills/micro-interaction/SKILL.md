@@ -35,14 +35,14 @@ Before generating, refactoring, or reviewing code in the `micro-interaction` dom
 
 Execute all non-trivial tasks through this 7-pass cognitive loop:
 
-| Pass | Phase | Core Action |
-|:---|:---|:---|
-| **Pass 1** | **Understand** | Deconstruct the user's explicit objective, implicit requirements, and platform constraints. |
-| **Pass 2** | **Plan** | Decompose the task into smallest logical steps; map dependencies and required tool calls. |
-| **Pass 3** | **Execute** | Implement the solution with production-grade craft, zero placeholders, and strict typing. |
-| **Pass 4** | **Verify** | Run linters, unit tests, or compiler checks to validate structural correctness. |
-| **Pass 5** | **Attack** | Perform an adversarial review searching for edge-case failures, race conditions, and traps. |
-| **Pass 6** | **Improve** | Eliminate discovered friction, optimize performance, and harden error boundaries. |
+| Pass       | Phase            | Core Action                                                                                  |
+| :--------- | :--------------- | :------------------------------------------------------------------------------------------- |
+| **Pass 1** | **Understand**   | Deconstruct the user's explicit objective, implicit requirements, and platform constraints.  |
+| **Pass 2** | **Plan**         | Decompose the task into smallest logical steps; map dependencies and required tool calls.    |
+| **Pass 3** | **Execute**      | Implement the solution with production-grade craft, zero placeholders, and strict typing.    |
+| **Pass 4** | **Verify**       | Run linters, unit tests, or compiler checks to validate structural correctness.              |
+| **Pass 5** | **Attack**       | Perform an adversarial review searching for edge-case failures, race conditions, and traps.  |
+| **Pass 6** | **Improve**      | Eliminate discovered friction, optimize performance, and harden error boundaries.            |
 | **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. |
 
 ---
@@ -53,12 +53,9 @@ Micro-interactions bridge intention and confirmation. When a button compresses b
 
 ---
 
-
 ---
 
-
 ---
-
 
 ---
 
@@ -66,13 +63,13 @@ Micro-interactions bridge intention and confirmation. When a button compresses b
 
 ### 1. The Micro-Interaction Timing & Easing Matrix
 
-| Component | Target Duration | Recommended Curve / Physics | Perceived Feel |
-|:---|:---|:---|:---|
-| **Button Press (`:active`)** | 80ms–120ms | `cubic-bezier(0.2, 0, 0, 1)` | Crisp, immediate tactile resistance |
-| **Toggle Switch** | 160ms–200ms | `spring(stiffness: 420, damping: 26)` | Snappy with slight organic overshoot |
-| **Checkbox Tick** | 140ms–180ms | `stroke-dashoffset` linear deceleration | Decisive, pencil-drawn precision |
-| **Toast Pop-In** | 180ms–240ms | `cubic-bezier(0.16, 1, 0.3, 1)` | Smooth magnetic arrival |
-| **Popover / Dropdown** | 140ms–180ms | `scale(0.96) -> 1` + origin anchoring | Anchored physical unfold |
+| Component                    | Target Duration | Recommended Curve / Physics             | Perceived Feel                       |
+| :--------------------------- | :-------------- | :-------------------------------------- | :----------------------------------- |
+| **Button Press (`:active`)** | 80ms–120ms      | `cubic-bezier(0.2, 0, 0, 1)`            | Crisp, immediate tactile resistance  |
+| **Toggle Switch**            | 160ms–200ms     | `spring(stiffness: 420, damping: 26)`   | Snappy with slight organic overshoot |
+| **Checkbox Tick**            | 140ms–180ms     | `stroke-dashoffset` linear deceleration | Decisive, pencil-drawn precision     |
+| **Toast Pop-In**             | 180ms–240ms     | `cubic-bezier(0.16, 1, 0.3, 1)`         | Smooth magnetic arrival              |
+| **Popover / Dropdown**       | 140ms–180ms     | `scale(0.96) -> 1` + origin anchoring   | Anchored physical unfold             |
 
 ---
 
@@ -193,7 +190,10 @@ export function DrawOnCheckbox({
             : 'border-neutral-400 dark:border-neutral-600 bg-white dark:bg-neutral-900'
         }`}
       >
-        <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 stroke-current fill-none stroke-[2.4] stroke-linecap-round stroke-linejoin-round">
+        <svg
+          viewBox="0 0 16 16"
+          className="w-3.5 h-3.5 stroke-current fill-none stroke-[2.4] stroke-linecap-round stroke-linejoin-round"
+        >
           <motion.path
             d="M 3.5 8.5 L 6.5 11.5 L 12.5 4.5"
             initial={false}
@@ -222,7 +222,13 @@ interface ToastProps {
   onDismiss: (id: string) => void;
 }
 
-export function ToastContainer({ toasts, onDismiss }: { toasts: ToastProps[]; onDismiss: (id: string) => void }) {
+export function ToastContainer({
+  toasts,
+  onDismiss,
+}: {
+  toasts: ToastProps[];
+  onDismiss: (id: string) => void;
+}) {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none">
       <AnimatePresence mode="popLayout">
@@ -279,23 +285,23 @@ export function ToastContainer({ toasts, onDismiss }: { toasts: ToastProps[]; on
 
 ## 🚨 Edge-Case & Failure Mode Matrix
 
-| Scenario | Risk | Mitigation Strategy |
-|:---|:---|:---|
-| **Empty or Null Inputs** | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers |
-| **Network Timeout / Latency** | Hanging operations or duplicate side-effects | Implement bounded abort controllers, exponential backoff, and idempotency keys |
-| **Concurrency / Race Conditions** | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls |
-| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection | Validate boundary payloads with Zod/Pydantic schemas prior to execution |
-| **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
+| Scenario                               | Risk                                                 | Mitigation Strategy                                                             |
+| :------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **Empty or Null Inputs**               | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers   |
+| **Network Timeout / Latency**          | Hanging operations or duplicate side-effects         | Implement bounded abort controllers, exponential backoff, and idempotency keys  |
+| **Concurrency / Race Conditions**      | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls          |
+| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection      | Validate boundary payloads with Zod/Pydantic schemas prior to execution         |
+| **Resource / Memory Saturation**       | OOM errors, frame drops, or memory leaks             | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
 
 ---
 
 ## 🤖 LLM-Specific Traps Table
 
-| Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
-|:---|:---|:---|
-| **The Instant Pop Trap** | Conditionally unmounting elements without animated interpolation | Use AnimatePresence or coordinate morphs with continuous geometry |
-| **Layout Thrashing** | Animating width, height, top, or left inside animation loops | Animate composite-only transform (translate3d, scale) and opacity |
-| **Sluggish Duration** | Setting micro-interaction transitions to 600ms+ causing interface lag | Cap interactive feedback at 160ms–240ms with snappy ease-out curves |
+| Anti-Pattern             | What AI Commonly Does Wrong                                           | What Is Actually Correct                                            |
+| :----------------------- | :-------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| **The Instant Pop Trap** | Conditionally unmounting elements without animated interpolation      | Use AnimatePresence or coordinate morphs with continuous geometry   |
+| **Layout Thrashing**     | Animating width, height, top, or left inside animation loops          | Animate composite-only transform (translate3d, scale) and opacity   |
+| **Sluggish Duration**    | Setting micro-interaction transitions to 600ms+ causing interface lag | Cap interactive feedback at 160ms–240ms with snappy ease-out curves |
 
 ---
 
@@ -317,5 +323,6 @@ export function ToastContainer({ toasts, onDismiss }: { toasts: ToastProps[]; on
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.

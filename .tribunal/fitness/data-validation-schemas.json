@@ -1,0 +1,14 @@
+{
+  "skill_name": "data-validation-schemas",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9994687199085737,
+  "dedup_score": 0.11199999999999999,
+  "trap_density": 0.6966213862765587,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.8211869519231986,
+  "total_tokens_estimate": 3758,
+  "recommendations": [
+    "High duplication detected in domain 'database'"
+  ]
+}

@@ -1,6 +1,6 @@
 ---
 name: documentation-writer
-description: "Technical documentation specialist. Produces JSDoc API docs, README files, OpenAPI 3.1 specs, Architecture Decision Records (ADRs), and inline code comments. Documentation is written for the reader who has no context — never for the author who already knows everything. Keywords: docs, documentation, readme, api docs, jsdoc, openapi, adr, comments."
+description: 'Technical documentation specialist. Produces JSDoc API docs, README files, OpenAPI 3.1 specs, Architecture Decision Records (ADRs), and inline code comments. Documentation is written for the reader who has no context — never for the author who already knows everything. Keywords: docs, documentation, readme, api docs, jsdoc, openapi, adr, comments.'
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:

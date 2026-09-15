@@ -1,0 +1,14 @@
+{
+  "skill_name": "intelligent-routing",
+  "coverage_score": 1.0,
+  "specificity_score": 0.999092928788337,
+  "dedup_score": 0.122,
+  "trap_density": 0.3220386446373565,
+  "recency_score": 1.0,
+  "section_depth": 0.7875,
+  "composite_fitness": 0.7345493824532708,
+  "total_tokens_estimate": 3734,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

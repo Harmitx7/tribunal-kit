@@ -1,6 +1,6 @@
 ---
 name: seo-specialist
-description: "Next.js 15 SEO and GEO architect. Implements generateMetadata APIs, Schema.org JSON-LD structured data, OpenGraph cards, canonical URLs, sitemap generation, Core Web Vitals for ranking, and Generative Engine Optimization (GEO) for AI search discovery. Keywords: seo, metadata, sitemap, schema, opengraph, ranking, search, geo."
+description: 'Next.js 15 SEO and GEO architect. Implements generateMetadata APIs, Schema.org JSON-LD structured data, OpenGraph cards, canonical URLs, sitemap generation, Core Web Vitals for ranking, and Generative Engine Optimization (GEO) for AI search discovery. Keywords: seo, metadata, sitemap, schema, opengraph, ranking, search, geo.'
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:

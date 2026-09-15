@@ -186,16 +186,16 @@ Tribunal Kit ships with pre-configured native plugins and extensions across the 
 
 ### 📦 What's Inside
 
-| Layer | Count | What It Does |
-| :--- | :--- | :--- |
-| **Specialist Agents** | 52 | Domain-specific reasoning (Frontend, Backend, Security, Database, Mobile, DevOps) |
-| **Tribunal Reviewers** | 28 | Parallel review pipeline that intercepts logic and security defects before disk write |
-| **Reusable Skills** | 184 | Deep knowledge packs (React 19, Next.js 15, Rust, Python, Vue, Animations, A11y) |
-| **Slash Workflows** | 41 | One-command operations (`/generate`, `/debug`, `/audit`, `/deploy`, `/refactor`) |
-| **Native Plugins** | 9+ | First-class plugins for Claude Code, Cursor, OpenCode, Devin, Kimi, Hermes, Pi, and Gemini CLI |
-| **Compiled Rust Core** | 1 | Native binary for AOT Semantic Graph extraction, AST parsing, hashing, and deduping |
-| **MCP Server** | 1 | Model Context Protocol integration with `query_semantic_graph` capabilities |
-| **Supreme Court Precedents** | ∞ | Permanent repository memory that records AI mistakes so they are never repeated |
+| Layer                        | Count | What It Does                                                                                   |
+| :--------------------------- | :---- | :--------------------------------------------------------------------------------------------- |
+| **Specialist Agents**        | 52    | Domain-specific reasoning (Frontend, Backend, Security, Database, Mobile, DevOps)              |
+| **Tribunal Reviewers**       | 28    | Parallel review pipeline that intercepts logic and security defects before disk write          |
+| **Reusable Skills**          | 184   | Deep knowledge packs (React 19, Next.js 15, Rust, Python, Vue, Animations, A11y)               |
+| **Slash Workflows**          | 41    | One-command operations (`/generate`, `/debug`, `/audit`, `/deploy`, `/refactor`)               |
+| **Native Plugins**           | 9+    | First-class plugins for Claude Code, Cursor, OpenCode, Devin, Kimi, Hermes, Pi, and Gemini CLI |
+| **Compiled Rust Core**       | 1     | Native binary for AOT Semantic Graph extraction, AST parsing, hashing, and deduping            |
+| **MCP Server**               | 1     | Model Context Protocol integration with `query_semantic_graph` capabilities                    |
+| **Supreme Court Precedents** | ∞     | Permanent repository memory that records AI mistakes so they are never repeated                |
 
 <br>
 <hr style="height: 1px; border: none; background: linear-gradient(to right, transparent, #33333f, transparent); margin: 40px 0;" />
@@ -276,6 +276,7 @@ AI engineering requires active verification, not passive prompt text:
 </div>
 
 ### 1. ⚖️ Supreme Court Case Law & Memory (`tk case`)
+
 **Your AI will never make the same mistake twice.** Whenever your coding assistant introduces an antipattern or bug, record it as a legal precedent:
 
 ```bash
@@ -289,6 +290,7 @@ tk case search "postgres deadlock"
 The `precedence-reviewer` actively checks this database during generation. If the agent attempts the same antipattern, Tribunal Kit rules it unconstitutional and blocks the write.
 
 ### 2. 🛡️ Phantom Package & Schema Guardrails (`tk guardrail`)
+
 AI models frequently hallucinate libraries that sound plausible but do not exist, exposing developers to **AI Package Hallucination Exploits (Slopsquatting)**:
 
 ```bash
@@ -297,6 +299,7 @@ npx tribunal-kit guardrail
 ```
 
 ### 3. 🧬 SkillOpt: Autonomous Self-Evolution Engine
+
 Stop manually re-prompting. SkillOpt mutates, token-checks, and benchmarks instruction skills directly against real test harnesses:
 
 ```bash
@@ -309,7 +312,9 @@ tk optimize-skill --target ./skills/auth-security.md "npm run test:auth" --epoch
 - **Genetic Promotion**: Passing harness tests promote winning candidates as the new baseline.
 
 ### 4. ⚡ Compiled Rust Core (`tribunal-core`)
+
 Heavy computation is delegated to a native Rust binary:
+
 - **Zero-Latency Hash Manifests**: File synchronization uses SHA-256 incremental hash diffs, speeding up CLI sync by **95%**.
 - **Semaphore-Bounded Parallelism**: Fully concurrent thread pools (64 in Rust, 32 in Node.js) eliminate resource starvation in massive monorepos.
 
@@ -346,6 +351,7 @@ graph LR
 </details>
 
 ### Reviewer Swarms Include:
+
 - **`logic-reviewer`** · Semantic soundness & impossible logic checks.
 - **`security-auditor`** · Payload boundaries, injection & OWASP scanning.
 - **`resilience-reviewer`** · Async error boundaries and retry logic.
@@ -404,6 +410,7 @@ Tribunal Kit hosts an out-of-the-box **MCP server** via stdio. Connect it to Cur
 ```
 
 ### Exposed MCP Tools:
+
 - `query_semantic_graph` — Queries active project AST and dependency edges.
 - `verify_contracts` — Verifies proposed code against team contract rules before writing to disk.
 - `get_tribunal_skill` — Dynamically injects skills without overloading system prompts.

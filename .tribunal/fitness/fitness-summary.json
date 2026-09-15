@@ -1,0 +1,2911 @@
+{
+  "success": true,
+  "total_skills": 185,
+  "scored_skills": 185,
+  "average_fitness": 0.7353585434272748,
+  "top_skills": [
+    {
+      "skill_name": "typescript-advanced",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9990869214309358,
+      "dedup_score": 0.09399999999999997,
+      "trap_density": 0.8292095760331684,
+      "recency_score": 1.0,
+      "section_depth": 0.9638888888888889,
+      "composite_fitness": 0.8328821540244957,
+      "total_tokens_estimate": 3915,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "data-validation-schemas",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9994687199085737,
+      "dedup_score": 0.11199999999999999,
+      "trap_density": 0.6966213862765587,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.8211869519231986,
+      "total_tokens_estimate": 3758,
+      "recommendations": [
+        "High duplication detected in domain 'database'"
+      ]
+    },
+    {
+      "skill_name": "vue-expert",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992974504446223,
+      "dedup_score": 0.05600000000000005,
+      "trap_density": 0.7071112896745682,
+      "recency_score": 1.0,
+      "section_depth": 0.94375,
+      "composite_fitness": 0.8058886835401096,
+      "total_tokens_estimate": 3218,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "clean-code",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992365092893838,
+      "dedup_score": 0.08599999999999997,
+      "trap_density": 0.6179992275009656,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.8054471859830217,
+      "total_tokens_estimate": 4032,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "cloud-architect",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9575098748409702,
+      "dedup_score": 0.08999999999999997,
+      "trap_density": 0.6633318834275772,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.8045017574823307,
+      "total_tokens_estimate": 4779,
+      "recommendations": [
+        "High duplication detected in domain 'devops'"
+      ]
+    },
+    {
+      "skill_name": "framer-motion-expert",
+      "coverage_score": 1.0,
+      "specificity_score": 0.999638270430514,
+      "dedup_score": 0.10599999999999998,
+      "trap_density": 0.6826493295408371,
+      "recency_score": 1.0,
+      "section_depth": 0.875,
+      "composite_fitness": 0.7994750535172284,
+      "total_tokens_estimate": 3214,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "web-accessibility-auditor",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9994159934368787,
+      "dedup_score": 0.09599999999999997,
+      "trap_density": 0.6817763036668509,
+      "recency_score": 1.0,
+      "section_depth": 0.8653846153846153,
+      "composite_fitness": 0.7963573365450957,
+      "total_tokens_estimate": 2862,
+      "recommendations": [
+        "High duplication detected in domain 'security'"
+      ]
+    },
+    {
+      "skill_name": "performance-profiling",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9995083063976593,
+      "dedup_score": 0.11399999999999999,
+      "trap_density": 0.5030181086519114,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7924543775773186,
+      "total_tokens_estimate": 3153,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "react-specialist",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9994506050310527,
+      "dedup_score": 0.05400000000000005,
+      "trap_density": 0.5535183006988168,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.791017866111033,
+      "total_tokens_estimate": 3733,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "error-resilience",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9991686916485485,
+      "dedup_score": 0.08799999999999997,
+      "trap_density": 0.5099728014505893,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7895296585472982,
+      "total_tokens_estimate": 4580,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    }
+  ],
+  "bottom_skills": [
+    {
+      "skill_name": "web-quality-audit",
+      "coverage_score": 1.0,
+      "specificity_score": 0.5989685761119353,
+      "dedup_score": 0.09599999999999997,
+      "trap_density": 0.3637890023786204,
+      "recency_score": 1.0,
+      "section_depth": 0.6125,
+      "composite_fitness": 0.6306370655791802,
+      "total_tokens_estimate": 1892,
+      "recommendations": [
+        "High duplication detected in domain 'security'"
+      ]
+    },
+    {
+      "skill_name": "gsap-performance",
+      "coverage_score": 1.0,
+      "specificity_score": 0.7990092285565898,
+      "dedup_score": 0.08199999999999996,
+      "trap_density": 0.49352251696483657,
+      "recency_score": 1.0,
+      "section_depth": 0.4,
+      "composite_fitness": 0.6561302232560433,
+      "total_tokens_estimate": 2564,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "project-idioms",
+      "coverage_score": 1.0,
+      "specificity_score": 0.8739316185962661,
+      "dedup_score": 0.08399999999999996,
+      "trap_density": 0.33487892838742916,
+      "recency_score": 1.0,
+      "section_depth": 0.5708333333333333,
+      "composite_fitness": 0.6732431629773675,
+      "total_tokens_estimate": 2020,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "create-design-md",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9986243948960307,
+      "dedup_score": 0.12,
+      "trap_density": 0.3077599472411519,
+      "recency_score": 1.0,
+      "section_depth": 0.4533333333333333,
+      "composite_fitness": 0.6818888710653789,
+      "total_tokens_estimate": 2415,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "baseline-ui",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9984979737623261,
+      "dedup_score": 0.08999999999999997,
+      "trap_density": 0.30040439052570767,
+      "recency_score": 1.0,
+      "section_depth": 0.52,
+      "composite_fitness": 0.6862602533313213,
+      "total_tokens_estimate": 2272,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "browser-native-ai",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9987104151764035,
+      "dedup_score": 0.08399999999999996,
+      "trap_density": 0.335530257639305,
+      "recency_score": 1.0,
+      "section_depth": 0.4958333333333333,
+      "composite_fitness": 0.6870466216811765,
+      "total_tokens_estimate": 2204,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "review-animations",
+      "coverage_score": 1.0,
+      "specificity_score": 0.997810803098003,
+      "dedup_score": 0.07599999999999996,
+      "trap_density": 0.3179650238473768,
+      "recency_score": 1.0,
+      "section_depth": 0.5277777777777778,
+      "composite_fitness": 0.6878235808633737,
+      "total_tokens_estimate": 2314,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "harness-protocol",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9974200069154454,
+      "dedup_score": 0.07799999999999996,
+      "trap_density": 0.4069494443574895,
+      "recency_score": 1.0,
+      "section_depth": 0.44000000000000006,
+      "composite_fitness": 0.6882264180367124,
+      "total_tokens_estimate": 1694,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "code-review-checklist",
+      "coverage_score": 1.0,
+      "specificity_score": 0.8873951071252281,
+      "dedup_score": 0.06400000000000006,
+      "trap_density": 0.33971035222599677,
+      "recency_score": 1.0,
+      "section_depth": 0.6900000000000001,
+      "composite_fitness": 0.6915355742589452,
+      "total_tokens_estimate": 2892,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "web-design-guidelines",
+      "coverage_score": 1.0,
+      "specificity_score": 0.997690346847049,
+      "dedup_score": 0.11599999999999999,
+      "trap_density": 0.3468053888221956,
+      "recency_score": 1.0,
+      "section_depth": 0.49000000000000005,
+      "composite_fitness": 0.6924588776927392,
+      "total_tokens_estimate": 1983,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    }
+  ],
+  "reports": [
+    {
+      "skill_name": "typescript-advanced",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9990869214309358,
+      "dedup_score": 0.09399999999999997,
+      "trap_density": 0.8292095760331684,
+      "recency_score": 1.0,
+      "section_depth": 0.9638888888888889,
+      "composite_fitness": 0.8328821540244957,
+      "total_tokens_estimate": 3915,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "data-validation-schemas",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9994687199085737,
+      "dedup_score": 0.11199999999999999,
+      "trap_density": 0.6966213862765587,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.8211869519231986,
+      "total_tokens_estimate": 3758,
+      "recommendations": [
+        "High duplication detected in domain 'database'"
+      ]
+    },
+    {
+      "skill_name": "vue-expert",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992974504446223,
+      "dedup_score": 0.05600000000000005,
+      "trap_density": 0.7071112896745682,
+      "recency_score": 1.0,
+      "section_depth": 0.94375,
+      "composite_fitness": 0.8058886835401096,
+      "total_tokens_estimate": 3218,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "clean-code",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992365092893838,
+      "dedup_score": 0.08599999999999997,
+      "trap_density": 0.6179992275009656,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.8054471859830217,
+      "total_tokens_estimate": 4032,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "cloud-architect",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9575098748409702,
+      "dedup_score": 0.08999999999999997,
+      "trap_density": 0.6633318834275772,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.8045017574823307,
+      "total_tokens_estimate": 4779,
+      "recommendations": [
+        "High duplication detected in domain 'devops'"
+      ]
+    },
+    {
+      "skill_name": "framer-motion-expert",
+      "coverage_score": 1.0,
+      "specificity_score": 0.999638270430514,
+      "dedup_score": 0.10599999999999998,
+      "trap_density": 0.6826493295408371,
+      "recency_score": 1.0,
+      "section_depth": 0.875,
+      "composite_fitness": 0.7994750535172284,
+      "total_tokens_estimate": 3214,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "web-accessibility-auditor",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9994159934368787,
+      "dedup_score": 0.09599999999999997,
+      "trap_density": 0.6817763036668509,
+      "recency_score": 1.0,
+      "section_depth": 0.8653846153846153,
+      "composite_fitness": 0.7963573365450957,
+      "total_tokens_estimate": 2862,
+      "recommendations": [
+        "High duplication detected in domain 'security'"
+      ]
+    },
+    {
+      "skill_name": "performance-profiling",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9995083063976593,
+      "dedup_score": 0.11399999999999999,
+      "trap_density": 0.5030181086519114,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7924543775773186,
+      "total_tokens_estimate": 3153,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "react-specialist",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9994506050310527,
+      "dedup_score": 0.05400000000000005,
+      "trap_density": 0.5535183006988168,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.791017866111033,
+      "total_tokens_estimate": 3733,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "error-resilience",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9991686916485485,
+      "dedup_score": 0.08799999999999997,
+      "trap_density": 0.5099728014505893,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7895296585472982,
+      "total_tokens_estimate": 4580,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "monorepo-management",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9996028407249901,
+      "dedup_score": 0.09799999999999998,
+      "trap_density": 0.5077837910068819,
+      "recency_score": 1.0,
+      "section_depth": 0.9911764705882353,
+      "composite_fitness": 0.7894646073842656,
+      "total_tokens_estimate": 3907,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "nodejs-best-practices",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9786634705322347,
+      "dedup_score": 0.134,
+      "trap_density": 0.4767807761991037,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7873498105363125,
+      "total_tokens_estimate": 5396,
+      "recommendations": [
+        "High duplication detected in domain 'backend'"
+      ]
+    },
+    {
+      "skill_name": "building-native-ui",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992993801012846,
+      "dedup_score": 0.09799999999999998,
+      "trap_density": 0.6093366093366094,
+      "recency_score": 1.0,
+      "section_depth": 0.8708333333333333,
+      "composite_fitness": 0.7865853674207482,
+      "total_tokens_estimate": 2689,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "sql-pro",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9996017249512755,
+      "dedup_score": 0.14,
+      "trap_density": 0.4249754821837201,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7846666673178132,
+      "total_tokens_estimate": 6292,
+      "recommendations": [
+        "High duplication detected in domain 'database'"
+      ]
+    },
+    {
+      "skill_name": "fabel-protocol",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9993958914834902,
+      "dedup_score": 0.06800000000000006,
+      "trap_density": 0.4980434009249377,
+      "recency_score": 1.0,
+      "section_depth": 0.996875,
+      "composite_fitness": 0.7843169384354387,
+      "total_tokens_estimate": 4382,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "swiftui-expert",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9991513874216167,
+      "dedup_score": 0.07799999999999996,
+      "trap_density": 0.6048996874684948,
+      "recency_score": 1.0,
+      "section_depth": 0.8791666666666667,
+      "composite_fitness": 0.7841402306045975,
+      "total_tokens_estimate": 2626,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "nextjs-react-expert",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9996233918871066,
+      "dedup_score": 0.08199999999999996,
+      "trap_density": 0.5918160297598918,
+      "recency_score": 1.0,
+      "section_depth": 0.8733333333333333,
+      "composite_fitness": 0.781997082841405,
+      "total_tokens_estimate": 3077,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "vulnerability-scanner",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9738360992841281,
+      "dedup_score": 0.09599999999999997,
+      "trap_density": 0.482111139304745,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7814838907525373,
+      "total_tokens_estimate": 4106,
+      "recommendations": [
+        "High duplication detected in domain 'security'"
+      ]
+    },
+    {
+      "skill_name": "python-pro",
+      "coverage_score": 1.0,
+      "specificity_score": 0.999602430851366,
+      "dedup_score": 0.06000000000000005,
+      "trap_density": 0.47933670164529085,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7808209914170668,
+      "total_tokens_estimate": 3970,
+      "recommendations": [
+        "High duplication detected in domain 'backend'"
+      ]
+    },
+    {
+      "skill_name": "mobile-design",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9993913706552711,
+      "dedup_score": 0.05400000000000005,
+      "trap_density": 0.6758659532526049,
+      "recency_score": 1.0,
+      "section_depth": 0.7944444444444445,
+      "composite_fitness": 0.7785248337856115,
+      "total_tokens_estimate": 3676,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "realtime-patterns",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9995099177177642,
+      "dedup_score": 0.08399999999999996,
+      "trap_density": 0.4368350595363911,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7780272424740114,
+      "total_tokens_estimate": 3711,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "devops-engineer",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9995673301413817,
+      "dedup_score": 0.10799999999999998,
+      "trap_density": 0.4102887801798959,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7776567830552606,
+      "total_tokens_estimate": 3331,
+      "recommendations": [
+        "High duplication detected in domain 'devops'"
+      ]
+    },
+    {
+      "skill_name": "shadcn-ui-expert",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9993831080632956,
+      "dedup_score": 0.07799999999999996,
+      "trap_density": 0.509576524336672,
+      "recency_score": 1.0,
+      "section_depth": 0.9307692307692308,
+      "composite_fitness": 0.7776284848785444,
+      "total_tokens_estimate": 2993,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "motion-engineering",
+      "coverage_score": 1.0,
+      "specificity_score": 0.966149132781207,
+      "dedup_score": 0.11599999999999999,
+      "trap_density": 0.43591979075850046,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7760177951700165,
+      "total_tokens_estimate": 3587,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "rust-pro",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9994802702594652,
+      "dedup_score": 0.08199999999999996,
+      "trap_density": 0.42145099557046406,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7754137033874626,
+      "total_tokens_estimate": 5958,
+      "recommendations": [
+        "High duplication detected in domain 'backend'"
+      ]
+    },
+    {
+      "skill_name": "playwright-best-practices",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9990879754053087,
+      "dedup_score": 0.10199999999999998,
+      "trap_density": 0.5612541126378943,
+      "recency_score": 1.0,
+      "section_depth": 0.8125,
+      "composite_fitness": 0.7711807119767459,
+      "total_tokens_estimate": 2732,
+      "recommendations": [
+        "High duplication detected in domain 'testing'"
+      ]
+    },
+    {
+      "skill_name": "behavioral-modes",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9970348184499299,
+      "dedup_score": 0.05600000000000005,
+      "trap_density": 0.4199475065616798,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.770799089674238,
+      "total_tokens_estimate": 2970,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "containerization-pro",
+      "coverage_score": 1.0,
+      "specificity_score": 0.999594729528137,
+      "dedup_score": 0.10199999999999998,
+      "trap_density": 0.364458966947342,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7698877909477287,
+      "total_tokens_estimate": 4151,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "i18n-localization",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9991514349598806,
+      "dedup_score": 0.07599999999999996,
+      "trap_density": 0.6357952739217971,
+      "recency_score": 1.0,
+      "section_depth": 0.7541666666666667,
+      "composite_fitness": 0.7697245780802456,
+      "total_tokens_estimate": 2515,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "github-operations",
+      "coverage_score": 1.0,
+      "specificity_score": 0.938960879255083,
+      "dedup_score": 0.09399999999999997,
+      "trap_density": 0.4453579993148339,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7686958757482417,
+      "total_tokens_estimate": 3070,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "server-management",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992811054165152,
+      "dedup_score": 0.07599999999999996,
+      "trap_density": 0.4427760130907691,
+      "recency_score": 1.0,
+      "section_depth": 0.9375,
+      "composite_fitness": 0.7682976230469183,
+      "total_tokens_estimate": 2738,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "clarify",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9982391062166338,
+      "dedup_score": 0.07399999999999995,
+      "trap_density": 0.7122507122507122,
+      "recency_score": 1.0,
+      "section_depth": 0.6625,
+      "composite_fitness": 0.7669604280809336,
+      "total_tokens_estimate": 1856,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "system-design-pro",
+      "coverage_score": 1.0,
+      "specificity_score": 0.99902356305663,
+      "dedup_score": 0.08799999999999997,
+      "trap_density": 0.3399167789954873,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7639922294606492,
+      "total_tokens_estimate": 4458,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "bash-linux",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9989587775818282,
+      "dedup_score": 0.07000000000000006,
+      "trap_density": 0.6327862368993474,
+      "recency_score": 1.0,
+      "section_depth": 0.7115384615384615,
+      "composite_fitness": 0.7619404602820369,
+      "total_tokens_estimate": 2664,
+      "recommendations": [
+        "High duplication detected in domain 'devops'"
+      ]
+    },
+    {
+      "skill_name": "accessible-animation",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9995154201166916,
+      "dedup_score": 0.15600000000000003,
+      "trap_density": 0.24645717806531117,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.760271660733135,
+      "total_tokens_estimate": 2965,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "git-pro",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9995099699768817,
+      "dedup_score": 0.07599999999999996,
+      "trap_density": 0.3240440699935191,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7599086044944041,
+      "total_tokens_estimate": 4022,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "webapp-testing",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9989184437577132,
+      "dedup_score": 0.07999999999999996,
+      "trap_density": 0.5227938101212881,
+      "recency_score": 1.0,
+      "section_depth": 0.7954545454545454,
+      "composite_fitness": 0.7595209420879176,
+      "total_tokens_estimate": 2549,
+      "recommendations": [
+        "High duplication detected in domain 'testing'"
+      ]
+    },
+    {
+      "skill_name": "cicd-pro",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992819973796606,
+      "dedup_score": 0.07000000000000006,
+      "trap_density": 0.3272072858155642,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7594374923482667,
+      "total_tokens_estimate": 4759,
+      "recommendations": [
+        "High duplication detected in domain 'devops'"
+      ]
+    },
+    {
+      "skill_name": "api-patterns",
+      "coverage_score": 1.0,
+      "specificity_score": 0.999492133059889,
+      "dedup_score": 0.08599999999999997,
+      "trap_density": 0.5423629434183525,
+      "recency_score": 1.0,
+      "section_depth": 0.7647058823529412,
+      "composite_fitness": 0.7588587504776718,
+      "total_tokens_estimate": 3574,
+      "recommendations": [
+        "High duplication detected in domain 'backend'"
+      ]
+    },
+    {
+      "skill_name": "animation-on-scroll",
+      "coverage_score": 1.0,
+      "specificity_score": 0.999443353506156,
+      "dedup_score": 0.14200000000000002,
+      "trap_density": 0.2504920379316515,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7587624763909788,
+      "total_tokens_estimate": 2924,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "animation-systems",
+      "coverage_score": 1.0,
+      "specificity_score": 0.999354417046588,
+      "dedup_score": 0.138,
+      "trap_density": 0.2422564457518602,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7569093502720966,
+      "total_tokens_estimate": 3011,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "transitions-dev",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9995084770077775,
+      "dedup_score": 0.10199999999999998,
+      "trap_density": 0.39469974626444887,
+      "recency_score": 1.0,
+      "section_depth": 0.88125,
+      "composite_fitness": 0.7565941573412228,
+      "total_tokens_estimate": 1876,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "micro-interaction",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9993290867903686,
+      "dedup_score": 0.16600000000000004,
+      "trap_density": 0.20717721050684426,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7558423989341004,
+      "total_tokens_estimate": 3497,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "csharp-developer",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9993339922490366,
+      "dedup_score": 0.08799999999999997,
+      "trap_density": 0.28207271207689094,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.755377705261341,
+      "total_tokens_estimate": 4948,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'backend'"
+      ]
+    },
+    {
+      "skill_name": "lint-and-validate",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9993944578126073,
+      "dedup_score": 0.06800000000000006,
+      "trap_density": 0.40297853701270253,
+      "recency_score": 1.0,
+      "section_depth": 0.8933333333333333,
+      "composite_fitness": 0.7545256721144268,
+      "total_tokens_estimate": 2942,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "seo-fundamentals",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9989120939195313,
+      "dedup_score": 0.10999999999999999,
+      "trap_density": 0.4799040191961607,
+      "recency_score": 1.0,
+      "section_depth": 0.775,
+      "composite_fitness": 0.7545180216633303,
+      "total_tokens_estimate": 2665,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "page-transition-animation",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9994236656861211,
+      "dedup_score": 0.122,
+      "trap_density": 0.3844569545516957,
+      "recency_score": 1.0,
+      "section_depth": 0.85625,
+      "composite_fitness": 0.7542907763199785,
+      "total_tokens_estimate": 1933,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "observability",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992900876668868,
+      "dedup_score": 0.07599999999999996,
+      "trap_density": 0.2726750861079219,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7521592804495656,
+      "total_tokens_estimate": 3643,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "60fps-animation",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992726722478426,
+      "dedup_score": 0.09999999999999998,
+      "trap_density": 0.6148025537952234,
+      "recency_score": 1.0,
+      "section_depth": 0.6318181818181818,
+      "composite_fitness": 0.7518476447915793,
+      "total_tokens_estimate": 2230,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "tailwind-patterns",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9996430505353396,
+      "dedup_score": 0.08599999999999997,
+      "trap_density": 0.25900522806849247,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7516793943173419,
+      "total_tokens_estimate": 5368,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "agentic-patterns",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992965821015556,
+      "dedup_score": 0.05600000000000005,
+      "trap_density": 0.28805336567616735,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7514673212717362,
+      "total_tokens_estimate": 3444,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "llm-engineering",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992098248704925,
+      "dedup_score": 0.07599999999999996,
+      "trap_density": 0.25133145832086645,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7489416837222285,
+      "total_tokens_estimate": 4345,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "ui-reasoning-engine",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9986581665725507,
+      "dedup_score": 0.10399999999999998,
+      "trap_density": 0.22110723700994978,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7484977188660027,
+      "total_tokens_estimate": 3063,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "ai-prompt-injection-defense",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9989332819596217,
+      "dedup_score": 0.118,
+      "trap_density": 0.46419668185334817,
+      "recency_score": 1.0,
+      "section_depth": 0.7392857142857143,
+      "composite_fitness": 0.7480090158127837,
+      "total_tokens_estimate": 3060,
+      "recommendations": [
+        "High duplication detected in domain 'security'"
+      ]
+    },
+    {
+      "skill_name": "edge-computing",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9993404353126937,
+      "dedup_score": 0.07399999999999995,
+      "trap_density": 0.4546746234725775,
+      "recency_score": 1.0,
+      "section_depth": 0.7916666666666667,
+      "composite_fitness": 0.7479192805834254,
+      "total_tokens_estimate": 2790,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "app-builder",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9994893518038966,
+      "dedup_score": 0.052000000000000046,
+      "trap_density": 0.26743225704959295,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7478127089182183,
+      "total_tokens_estimate": 6470,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "whimsy-injector",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9995549807390102,
+      "dedup_score": 0.10199999999999998,
+      "trap_density": 0.21621621621621623,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7476434285802345,
+      "total_tokens_estimate": 4279,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "progressive-blur",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9988949724367419,
+      "dedup_score": 0.11599999999999999,
+      "trap_density": 0.383719336713718,
+      "recency_score": 1.0,
+      "section_depth": 0.81875,
+      "composite_fitness": 0.747549394994406,
+      "total_tokens_estimate": 1935,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "morphing-icons",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9993076225757869,
+      "dedup_score": 0.132,
+      "trap_density": 0.18427518427518427,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7473028021564351,
+      "total_tokens_estimate": 4209,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "masked-reveal",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9991078554561281,
+      "dedup_score": 0.10599999999999998,
+      "trap_density": 0.20875270260195333,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7470344764815188,
+      "total_tokens_estimate": 3479,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "extract-design-system",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9991130949910618,
+      "dedup_score": 0.07999999999999996,
+      "trap_density": 0.46913316984753173,
+      "recency_score": 1.0,
+      "section_depth": 0.7636363636363637,
+      "composite_fitness": 0.7467380490207967,
+      "total_tokens_estimate": 2500,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "thermo-nuclear-code-quality-review",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9982271485841147,
+      "dedup_score": 0.19399999999999995,
+      "trap_density": 0.4125979920231055,
+      "recency_score": 1.0,
+      "section_depth": 0.70625,
+      "composite_fitness": 0.7465726285202888,
+      "total_tokens_estimate": 1928,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "local-first",
+      "coverage_score": 1.0,
+      "specificity_score": 0.998795089923338,
+      "dedup_score": 0.09199999999999997,
+      "trap_density": 0.43676414736042546,
+      "recency_score": 1.0,
+      "section_depth": 0.7708333333333333,
+      "composite_fitness": 0.7446986400887313,
+      "total_tokens_estimate": 2789,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "deployment-procedures",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9990271012998112,
+      "dedup_score": 0.10199999999999998,
+      "trap_density": 0.44633799959423814,
+      "recency_score": 1.0,
+      "section_depth": 0.7458333333333333,
+      "composite_fitness": 0.7439311201990979,
+      "total_tokens_estimate": 2615,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "testing-patterns",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9994356844854674,
+      "dedup_score": 0.07999999999999996,
+      "trap_density": 0.21229276182773962,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7437310511712545,
+      "total_tokens_estimate": 5118,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'testing'"
+      ]
+    },
+    {
+      "skill_name": "python-patterns",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9662106152562657,
+      "dedup_score": 0.06000000000000005,
+      "trap_density": 0.45317220543806647,
+      "recency_score": 1.0,
+      "section_depth": 0.821875,
+      "composite_fitness": 0.7434992038669631,
+      "total_tokens_estimate": 3087,
+      "recommendations": [
+        "High duplication detected in domain 'backend'"
+      ]
+    },
+    {
+      "skill_name": "brainstorming",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9989695813762471,
+      "dedup_score": 0.07000000000000006,
+      "trap_density": 0.218751367196045,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7431066213546562,
+      "total_tokens_estimate": 5870,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "sounds-on-the-web",
+      "coverage_score": 1.0,
+      "specificity_score": 0.998591985300726,
+      "dedup_score": 0.11199999999999999,
+      "trap_density": 0.38272279934390374,
+      "recency_score": 1.0,
+      "section_depth": 0.79375,
+      "composite_fitness": 0.7429893169617307,
+      "total_tokens_estimate": 1938,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "svg-animation",
+      "coverage_score": 1.0,
+      "specificity_score": 0.999438128377203,
+      "dedup_score": 0.09999999999999998,
+      "trap_density": 0.18544847623168698,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7427048971101937,
+      "total_tokens_estimate": 4173,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "architecture",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9993079792243872,
+      "dedup_score": 0.07799999999999996,
+      "trap_density": 0.5251641137855579,
+      "recency_score": 1.0,
+      "section_depth": 0.6794117647058824,
+      "composite_fitness": 0.7422479776185935,
+      "total_tokens_estimate": 3017,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "marquee-loop",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992805180270207,
+      "dedup_score": 0.10399999999999998,
+      "trap_density": 0.40768782760629013,
+      "recency_score": 1.0,
+      "section_depth": 0.76875,
+      "composite_fitness": 0.7419217777463477,
+      "total_tokens_estimate": 1824,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "skill-creator",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9982391062166338,
+      "dedup_score": 0.07999999999999996,
+      "trap_density": 0.4623963008295934,
+      "recency_score": 1.0,
+      "section_depth": 0.7375,
+      "composite_fitness": 0.7416322663677658,
+      "total_tokens_estimate": 1950,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "api-security-auditor",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9493795804441798,
+      "dedup_score": 0.09599999999999997,
+      "trap_density": 0.40478026214340784,
+      "recency_score": 1.0,
+      "section_depth": 0.8416666666666666,
+      "composite_fitness": 0.7412429554103471,
+      "total_tokens_estimate": 2745,
+      "recommendations": [
+        "High duplication detected in domain 'security'"
+      ]
+    },
+    {
+      "skill_name": "fixing-metadata",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9990548940702096,
+      "dedup_score": 0.11399999999999999,
+      "trap_density": 0.3237454862408168,
+      "recency_score": 1.0,
+      "section_depth": 0.8375,
+      "composite_fitness": 0.7410978017501645,
+      "total_tokens_estimate": 2114,
+      "recommendations": [
+        "High duplication detected in domain 'database'"
+      ]
+    },
+    {
+      "skill_name": "game-engineering-expert",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9982146218477809,
+      "dedup_score": 0.09999999999999998,
+      "trap_density": 0.5290466985451217,
+      "recency_score": 1.0,
+      "section_depth": 0.6458333333333333,
+      "composite_fitness": 0.7408749291513244,
+      "total_tokens_estimate": 2624,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "trend-researcher",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9985155402301911,
+      "dedup_score": 0.06800000000000006,
+      "trap_density": 0.26716537536735235,
+      "recency_score": 1.0,
+      "section_depth": 0.9384615384615385,
+      "composite_fitness": 0.7407471451203718,
+      "total_tokens_estimate": 3835,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "config-validator",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9989374937566406,
+      "dedup_score": 0.07599999999999996,
+      "trap_density": 0.4745203218485661,
+      "recency_score": 1.0,
+      "section_depth": 0.7166666666666667,
+      "composite_fitness": 0.7398655470286131,
+      "total_tokens_estimate": 2584,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "codebase-design",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9981334903730025,
+      "dedup_score": 0.07399999999999995,
+      "trap_density": 0.5654189754608165,
+      "recency_score": 1.0,
+      "section_depth": 0.625,
+      "composite_fitness": 0.739289544393723,
+      "total_tokens_estimate": 2326,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "gsap-utils",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9772639541076847,
+      "dedup_score": 0.07999999999999996,
+      "trap_density": 0.2058616393087383,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7383320367178478,
+      "total_tokens_estimate": 4742,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "workflow-optimizer",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9979785390259508,
+      "dedup_score": 0.06800000000000006,
+      "trap_density": 0.2916464134435109,
+      "recency_score": 1.0,
+      "section_depth": 0.8961538461538462,
+      "composite_fitness": 0.7379657467447938,
+      "total_tokens_estimate": 3704,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "product-aware-heuristics",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9984018439055768,
+      "dedup_score": 0.138,
+      "trap_density": 0.10828370330265295,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7366229242765133,
+      "total_tokens_estimate": 6133,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "devops-incident-responder",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9982060810714459,
+      "dedup_score": 0.124,
+      "trap_density": 0.49550944564880767,
+      "recency_score": 1.0,
+      "section_depth": 0.625,
+      "composite_fitness": 0.7363176330616104,
+      "total_tokens_estimate": 2580,
+      "recommendations": [
+        "High duplication detected in domain 'devops'"
+      ]
+    },
+    {
+      "skill_name": "database-design",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9994309691417629,
+      "dedup_score": 0.07399999999999995,
+      "trap_density": 0.4001715020723167,
+      "recency_score": 1.0,
+      "section_depth": 0.7676470588235295,
+      "composite_fitness": 0.7361589779627294,
+      "total_tokens_estimate": 3664,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "intelligent-routing",
+      "coverage_score": 1.0,
+      "specificity_score": 0.999092928788337,
+      "dedup_score": 0.122,
+      "trap_density": 0.3220386446373565,
+      "recency_score": 1.0,
+      "section_depth": 0.7875,
+      "composite_fitness": 0.7345493824532708,
+      "total_tokens_estimate": 3734,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "geo-fundamentals",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9987625332213388,
+      "dedup_score": 0.09199999999999997,
+      "trap_density": 0.4937763604567431,
+      "recency_score": 1.0,
+      "section_depth": 0.6458333333333333,
+      "composite_fitness": 0.7344939607127792,
+      "total_tokens_estimate": 2599,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "taste-skill",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9985587468753433,
+      "dedup_score": 0.10199999999999998,
+      "trap_density": 0.4844685095468795,
+      "recency_score": 1.0,
+      "section_depth": 0.64375,
+      "composite_fitness": 0.7342445258071005,
+      "total_tokens_estimate": 1857,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "parallel-agents",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9983085800343988,
+      "dedup_score": 0.07599999999999996,
+      "trap_density": 0.5009915457676651,
+      "recency_score": 1.0,
+      "section_depth": 0.65,
+      "composite_fitness": 0.7337104478720295,
+      "total_tokens_estimate": 2551,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "domain-modeling",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9985304959534551,
+      "dedup_score": 0.11599999999999999,
+      "trap_density": 0.4093327875562832,
+      "recency_score": 1.0,
+      "section_depth": 0.7,
+      "composite_fitness": 0.7335060173241335,
+      "total_tokens_estimate": 1935,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "local-first-architecture",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9979263091296287,
+      "dedup_score": 0.10199999999999998,
+      "trap_density": 0.5574406204556471,
+      "recency_score": 1.0,
+      "section_depth": 0.5549999999999999,
+      "composite_fitness": 0.7317513548942727,
+      "total_tokens_estimate": 2183,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "cobejs",
+      "coverage_score": 1.0,
+      "specificity_score": 0.99879146233058,
+      "dedup_score": 0.08599999999999997,
+      "trap_density": 0.3707400541850848,
+      "recency_score": 1.0,
+      "section_depth": 0.75625,
+      "composite_fitness": 0.7317068005938787,
+      "total_tokens_estimate": 1847,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "lottie-animation",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9986701043110924,
+      "dedup_score": 0.09599999999999997,
+      "trap_density": 0.4043905257076834,
+      "recency_score": 1.0,
+      "section_depth": 0.70625,
+      "composite_fitness": 0.730730099718371,
+      "total_tokens_estimate": 1838,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "agent-organizer",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9988543141017253,
+      "dedup_score": 0.07599999999999996,
+      "trap_density": 0.4499678594386115,
+      "recency_score": 1.0,
+      "section_depth": 0.6791666666666667,
+      "composite_fitness": 0.7305410417361368,
+      "total_tokens_estimate": 2484,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "tdd-workflow",
+      "coverage_score": 1.0,
+      "specificity_score": 0.998880345939506,
+      "dedup_score": 0.10399999999999998,
+      "trap_density": 0.5231767290990896,
+      "recency_score": 1.0,
+      "section_depth": 0.5769230769230769,
+      "composite_fitness": 0.7303910400912262,
+      "total_tokens_estimate": 2539,
+      "recommendations": [
+        "High duplication detected in domain 'testing'"
+      ]
+    },
+    {
+      "skill_name": "advanced-rag-pipelines",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9990093157618696,
+      "dedup_score": 0.10199999999999998,
+      "trap_density": 0.5122185465798741,
+      "recency_score": 1.0,
+      "section_depth": 0.5875,
+      "composite_fitness": 0.730059645139355,
+      "total_tokens_estimate": 2468,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "platform-engineer",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9987305025611889,
+      "dedup_score": 0.08199999999999996,
+      "trap_density": 0.47225501770956313,
+      "recency_score": 1.0,
+      "section_depth": 0.6458333333333333,
+      "composite_fitness": 0.7297593531686721,
+      "total_tokens_estimate": 2484,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "gsap-react",
+      "coverage_score": 1.0,
+      "specificity_score": 0.974525893152981,
+      "dedup_score": 0.07999999999999996,
+      "trap_density": 0.6096716087016766,
+      "recency_score": 1.0,
+      "section_depth": 0.5413043478260869,
+      "composite_fitness": 0.7295515721097606,
+      "total_tokens_estimate": 3749,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "audit-and-fix",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9989965634518218,
+      "dedup_score": 0.11399999999999999,
+      "trap_density": 0.3831417624521073,
+      "recency_score": 1.0,
+      "section_depth": 0.7,
+      "composite_fitness": 0.7293705770581804,
+      "total_tokens_estimate": 2065,
+      "recommendations": [
+        "High duplication detected in domain 'security'"
+      ]
+    },
+    {
+      "skill_name": "zero-trust-passkeys",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9987658108194873,
+      "dedup_score": 0.13,
+      "trap_density": 0.338365434669443,
+      "recency_score": 1.0,
+      "section_depth": 0.7277777777777777,
+      "composite_fitness": 0.7291746440309805,
+      "total_tokens_estimate": 2049,
+      "recommendations": [
+        "High duplication detected in domain 'security'"
+      ]
+    },
+    {
+      "skill_name": "authentication-best-practices",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9325002997322394,
+      "dedup_score": 0.10799999999999998,
+      "trap_density": 0.32018080798568604,
+      "recency_score": 1.0,
+      "section_depth": 0.85,
+      "composite_fitness": 0.7282271811443009,
+      "total_tokens_estimate": 2812,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "to-spring-or-not-to-spring",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9978048293753742,
+      "dedup_score": 0.14,
+      "trap_density": 0.5324813631522897,
+      "recency_score": 1.0,
+      "section_depth": 0.5166666666666667,
+      "composite_fitness": 0.7279331703479184,
+      "total_tokens_estimate": 1987,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "platform-engineering-opentofu",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9988798276218812,
+      "dedup_score": 0.08199999999999996,
+      "trap_density": 0.42328042328042337,
+      "recency_score": 1.0,
+      "section_depth": 0.68125,
+      "composite_fitness": 0.7277555290164397,
+      "total_tokens_estimate": 1776,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "opentelemetry-observability",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9988727008090869,
+      "dedup_score": 0.138,
+      "trap_density": 0.4160475482912333,
+      "recency_score": 1.0,
+      "section_depth": 0.63125,
+      "composite_fitness": 0.7275691724055023,
+      "total_tokens_estimate": 1801,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "mcp-builder",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9984474142708089,
+      "dedup_score": 0.052000000000000046,
+      "trap_density": 0.48835079865703535,
+      "recency_score": 1.0,
+      "section_depth": 0.6333333333333333,
+      "composite_fitness": 0.725742102652717,
+      "total_tokens_estimate": 2624,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "build-primitive",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9987658108194873,
+      "dedup_score": 0.09799999999999998,
+      "trap_density": 0.44101433296582143,
+      "recency_score": 1.0,
+      "section_depth": 0.63125,
+      "composite_fitness": 0.7252928121087707,
+      "total_tokens_estimate": 1945,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "better-ui",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9993188852860814,
+      "dedup_score": 0.08999999999999997,
+      "trap_density": 0.44667783361250696,
+      "recency_score": 1.0,
+      "section_depth": 0.625,
+      "composite_fitness": 0.7241154520990923,
+      "total_tokens_estimate": 2811,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "vector-search-pgvector",
+      "coverage_score": 1.0,
+      "specificity_score": 0.999079847460489,
+      "dedup_score": 0.15800000000000003,
+      "trap_density": 0.3401805573727594,
+      "recency_score": 1.0,
+      "section_depth": 0.6611111111111111,
+      "composite_fitness": 0.7237097197646783,
+      "total_tokens_estimate": 2033,
+      "recommendations": [
+        "High duplication detected in domain 'database'"
+      ]
+    },
+    {
+      "skill_name": "powershell-windows",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992565531244755,
+      "dedup_score": 0.08199999999999996,
+      "trap_density": 0.3718691895439134,
+      "recency_score": 1.0,
+      "section_depth": 0.7041666666666667,
+      "composite_fitness": 0.7235566890564821,
+      "total_tokens_estimate": 2426,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "antfu-conventions",
+      "coverage_score": 1.0,
+      "specificity_score": 0.998344744413762,
+      "dedup_score": 0.118,
+      "trap_density": 0.377852056387153,
+      "recency_score": 1.0,
+      "section_depth": 0.65625,
+      "composite_fitness": 0.7224842573408253,
+      "total_tokens_estimate": 1830,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "test-result-analyzer",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992190718638357,
+      "dedup_score": 0.11599999999999999,
+      "trap_density": 0.1732994986693074,
+      "recency_score": 1.0,
+      "section_depth": 0.861111111111111,
+      "composite_fitness": 0.7224054058398299,
+      "total_tokens_estimate": 4151,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'testing'"
+      ]
+    },
+    {
+      "skill_name": "gsap-plugins",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9593227181609785,
+      "dedup_score": 0.08599999999999997,
+      "trap_density": 0.11727257497068186,
+      "recency_score": 1.0,
+      "section_depth": 1.0,
+      "composite_fitness": 0.7223554298777981,
+      "total_tokens_estimate": 9112,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "fixing-accessibility",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9990708640963905,
+      "dedup_score": 0.11399999999999999,
+      "trap_density": 0.351288056206089,
+      "recency_score": 1.0,
+      "section_depth": 0.6799999999999999,
+      "composite_fitness": 0.7216073812501914,
+      "total_tokens_estimate": 2688,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "12-principles-of-animation",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9977575399290095,
+      "dedup_score": 0.12,
+      "trap_density": 0.3872216844143272,
+      "recency_score": 1.0,
+      "section_depth": 0.6375,
+      "composite_fitness": 0.7212597606479509,
+      "total_tokens_estimate": 1939,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "expo-router-v4",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9990719731449454,
+      "dedup_score": 0.10399999999999998,
+      "trap_density": 0.360760371860691,
+      "recency_score": 1.0,
+      "section_depth": 0.6777777777777778,
+      "composite_fitness": 0.7211951170747594,
+      "total_tokens_estimate": 1906,
+      "recommendations": [
+        "High duplication detected in domain 'mobile'"
+      ]
+    },
+    {
+      "skill_name": "typeset",
+      "coverage_score": 1.0,
+      "specificity_score": 0.998771511041419,
+      "dedup_score": 0.08199999999999996,
+      "trap_density": 0.3669724770642202,
+      "recency_score": 1.0,
+      "section_depth": 0.69375,
+      "composite_fitness": 0.7211626737679168,
+      "total_tokens_estimate": 1886,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "systematic-debugging",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9972436186380843,
+      "dedup_score": 0.08999999999999997,
+      "trap_density": 0.399391403575504,
+      "recency_score": 1.0,
+      "section_depth": 0.65,
+      "composite_fitness": 0.7203574342639425,
+      "total_tokens_estimate": 2783,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "duckdb-analytical-sql",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9988955069680097,
+      "dedup_score": 0.11199999999999999,
+      "trap_density": 0.39310553371635926,
+      "recency_score": 1.0,
+      "section_depth": 0.63125,
+      "composite_fitness": 0.7202324314510559,
+      "total_tokens_estimate": 1771,
+      "recommendations": [
+        "High duplication detected in domain 'database'"
+      ]
+    },
+    {
+      "skill_name": "soft-skill",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9983527180152748,
+      "dedup_score": 0.10199999999999998,
+      "trap_density": 0.384900074019245,
+      "recency_score": 1.0,
+      "section_depth": 0.65,
+      "composite_fitness": 0.7202055547059417,
+      "total_tokens_estimate": 1780,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "adapt",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9983028850953379,
+      "dedup_score": 0.09199999999999997,
+      "trap_density": 0.3725995987388937,
+      "recency_score": 1.0,
+      "section_depth": 0.66875,
+      "composite_fitness": 0.7196630168299016,
+      "total_tokens_estimate": 1858,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "supabase-postgres-best-practices",
+      "coverage_score": 1.0,
+      "specificity_score": 0.8559445347941453,
+      "dedup_score": 0.122,
+      "trap_density": 0.6065200909780136,
+      "recency_score": 1.0,
+      "section_depth": 0.5944444444444444,
+      "composite_fitness": 0.7196335872721976,
+      "total_tokens_estimate": 2091,
+      "recommendations": [
+        "High duplication detected in domain 'database'"
+      ]
+    },
+    {
+      "skill_name": "react-doctor",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992351309270541,
+      "dedup_score": 0.09199999999999997,
+      "trap_density": 0.4012036108324975,
+      "recency_score": 1.0,
+      "section_depth": 0.6375,
+      "composite_fitness": 0.7194525678102853,
+      "total_tokens_estimate": 1847,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "context-engineering-pro",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992142542455252,
+      "dedup_score": 0.08199999999999996,
+      "trap_density": 0.35446489434219497,
+      "recency_score": 1.0,
+      "section_depth": 0.69375,
+      "composite_fitness": 0.7193750850004341,
+      "total_tokens_estimate": 1966,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "gsap-frameworks",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9984135209152657,
+      "dedup_score": 0.08399999999999996,
+      "trap_density": 0.386286817962337,
+      "recency_score": 1.0,
+      "section_depth": 0.659375,
+      "composite_fitness": 0.7191319768774036,
+      "total_tokens_estimate": 3263,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "critique",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9990572532464821,
+      "dedup_score": 0.09999999999999998,
+      "trap_density": 0.31630170316301703,
+      "recency_score": 1.0,
+      "section_depth": 0.711111111111111,
+      "composite_fitness": 0.7189233727904156,
+      "total_tokens_estimate": 2182,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "ui-ux-researcher",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9989101364668969,
+      "dedup_score": 0.05800000000000005,
+      "trap_density": 0.19694161260426318,
+      "recency_score": 1.0,
+      "section_depth": 0.8714285714285713,
+      "composite_fitness": 0.7187375548983045,
+      "total_tokens_estimate": 4409,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "harden",
+      "coverage_score": 1.0,
+      "specificity_score": 0.998705962417268,
+      "dedup_score": 0.10399999999999998,
+      "trap_density": 0.3575849264200247,
+      "recency_score": 1.0,
+      "section_depth": 0.6625,
+      "composite_fitness": 0.7183539314464572,
+      "total_tokens_estimate": 1926,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "verification-before-completion",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9991376673363452,
+      "dedup_score": 0.10599999999999998,
+      "trap_density": 0.47441545238902066,
+      "recency_score": 1.0,
+      "section_depth": 0.5428571428571429,
+      "composite_fitness": 0.7183184227541936,
+      "total_tokens_estimate": 2343,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "company-logos",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9988028634251234,
+      "dedup_score": 0.08999999999999997,
+      "trap_density": 0.37670240509997105,
+      "recency_score": 1.0,
+      "section_depth": 0.65625,
+      "composite_fitness": 0.7182034334500202,
+      "total_tokens_estimate": 1827,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "colorize",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9987415856021413,
+      "dedup_score": 0.08399999999999996,
+      "trap_density": 0.36226835725233386,
+      "recency_score": 1.0,
+      "section_depth": 0.675,
+      "composite_fitness": 0.7179385707082784,
+      "total_tokens_estimate": 1891,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "gpt-taste",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9983387642962112,
+      "dedup_score": 0.10999999999999999,
+      "trap_density": 0.3794512551079977,
+      "recency_score": 1.0,
+      "section_depth": 0.63125,
+      "composite_fitness": 0.7177729411254419,
+      "total_tokens_estimate": 1813,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "pricing-page",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9982530571499875,
+      "dedup_score": 0.134,
+      "trap_density": 0.36728351462070913,
+      "recency_score": 1.0,
+      "section_depth": 0.61875,
+      "composite_fitness": 0.7176556386231038,
+      "total_tokens_estimate": 1876,
+      "recommendations": [
+        "High duplication detected in domain 'devops'"
+      ]
+    },
+    {
+      "skill_name": "fixing-motion-performance",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9987627826030505,
+      "dedup_score": 0.124,
+      "trap_density": 0.42258481042375867,
+      "recency_score": 1.0,
+      "section_depth": 0.5727272727272728,
+      "composite_fitness": 0.7176493689932648,
+      "total_tokens_estimate": 2260,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "playwright-ai-e2e",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9990059890409044,
+      "dedup_score": 0.10199999999999998,
+      "trap_density": 0.38512812916604944,
+      "recency_score": 1.0,
+      "section_depth": 0.63125,
+      "composite_fitness": 0.7175579171830883,
+      "total_tokens_estimate": 1816,
+      "recommendations": [
+        "High duplication detected in domain 'testing'"
+      ]
+    },
+    {
+      "skill_name": "improve-codebase-architecture",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9971150138931358,
+      "dedup_score": 0.14400000000000002,
+      "trap_density": 0.35738831615120276,
+      "recency_score": 1.0,
+      "section_depth": 0.61875,
+      "composite_fitness": 0.7174437502013076,
+      "total_tokens_estimate": 1927,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "property-based-testing",
+      "coverage_score": 1.0,
+      "specificity_score": 0.998681740103064,
+      "dedup_score": 0.10999999999999999,
+      "trap_density": 0.386962345587141,
+      "recency_score": 1.0,
+      "section_depth": 0.61875,
+      "composite_fitness": 0.7170931998586839,
+      "total_tokens_estimate": 1804,
+      "recommendations": [
+        "High duplication detected in domain 'testing'"
+      ]
+    },
+    {
+      "skill_name": "backend-security-expert",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9993670675239016,
+      "dedup_score": 0.11199999999999999,
+      "trap_density": 0.5434782608695652,
+      "recency_score": 1.0,
+      "section_depth": 0.4576923076923077,
+      "composite_fitness": 0.7168489987890613,
+      "total_tokens_estimate": 2429,
+      "recommendations": [
+        "High duplication detected in domain 'security'"
+      ]
+    },
+    {
+      "skill_name": "diagnosing-bugs",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9960774470136602,
+      "dedup_score": 0.09599999999999997,
+      "trap_density": 0.24844720496894412,
+      "recency_score": 1.0,
+      "section_depth": 0.7714285714285715,
+      "composite_fitness": 0.7165968558623592,
+      "total_tokens_estimate": 3560,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "compact-landing",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9982889327692336,
+      "dedup_score": 0.10399999999999998,
+      "trap_density": 0.3767569917403275,
+      "recency_score": 1.0,
+      "section_depth": 0.63125,
+      "composite_fitness": 0.7164588353148958,
+      "total_tokens_estimate": 1826,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "shape",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9987472855475561,
+      "dedup_score": 0.07999999999999996,
+      "trap_density": 0.3672316384180791,
+      "recency_score": 1.0,
+      "section_depth": 0.6625,
+      "composite_fitness": 0.716209202872223,
+      "total_tokens_estimate": 1895,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "frontend-design",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9991681924797607,
+      "dedup_score": 0.09399999999999997,
+      "trap_density": 0.3233026610295946,
+      "recency_score": 1.0,
+      "section_depth": 0.6863636363636363,
+      "composite_fitness": 0.7153835831049368,
+      "total_tokens_estimate": 2116,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "ui-ux-pro-max",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9985122167969726,
+      "dedup_score": 0.09999999999999998,
+      "trap_density": 0.4056011588604539,
+      "recency_score": 1.0,
+      "section_depth": 0.5961538461538461,
+      "composite_fitness": 0.7149656941115395,
+      "total_tokens_estimate": 2717,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "frontend-security-expert",
+      "coverage_score": 1.0,
+      "specificity_score": 0.998872384064212,
+      "dedup_score": 0.10999999999999999,
+      "trap_density": 0.5620723362658847,
+      "recency_score": 1.0,
+      "section_depth": 0.4291666666666667,
+      "composite_fitness": 0.7149603272527251,
+      "total_tokens_estimate": 2178,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "gsap-core",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9679402574783533,
+      "dedup_score": 0.07399999999999995,
+      "trap_density": 0.34757422157856627,
+      "recency_score": 1.0,
+      "section_depth": 0.7136363636363636,
+      "composite_fitness": 0.7138696392779101,
+      "total_tokens_estimate": 5383,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "red-team-tactics",
+      "coverage_score": 1.0,
+      "specificity_score": 0.998366007634172,
+      "dedup_score": 0.11599999999999999,
+      "trap_density": 0.3996177569281557,
+      "recency_score": 1.0,
+      "section_depth": 0.575,
+      "composite_fitness": 0.7132658650660577,
+      "total_tokens_estimate": 2978,
+      "recommendations": [
+        "High duplication detected in domain 'security'"
+      ]
+    },
+    {
+      "skill_name": "browser-audit",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9989746887058646,
+      "dedup_score": 0.09799999999999998,
+      "trap_density": 0.37440810483426934,
+      "recency_score": 1.0,
+      "section_depth": 0.6125,
+      "composite_fitness": 0.7125311534663133,
+      "total_tokens_estimate": 2395,
+      "recommendations": [
+        "High duplication detected in domain 'security'"
+      ]
+    },
+    {
+      "skill_name": "redesign-skill",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9983407576607678,
+      "dedup_score": 0.09599999999999997,
+      "trap_density": 0.38246543100912034,
+      "recency_score": 1.0,
+      "section_depth": 0.60625,
+      "composite_fitness": 0.7123754661835215,
+      "total_tokens_estimate": 1798,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "edge-ai-mobile",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9989012086704625,
+      "dedup_score": 0.10399999999999998,
+      "trap_density": 0.40272614622056996,
+      "recency_score": 1.0,
+      "section_depth": 0.575,
+      "composite_fitness": 0.7120391636671779,
+      "total_tokens_estimate": 1732,
+      "recommendations": [
+        "High duplication detected in domain 'mobile'"
+      ]
+    },
+    {
+      "skill_name": "quieter",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9982311344297904,
+      "dedup_score": 0.09799999999999998,
+      "trap_density": 0.35941387890517007,
+      "recency_score": 1.0,
+      "section_depth": 0.625,
+      "composite_fitness": 0.7120083087217336,
+      "total_tokens_estimate": 1921,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "better-typography",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9988247162505451,
+      "dedup_score": 0.118,
+      "trap_density": 0.31742432830744816,
+      "recency_score": 1.0,
+      "section_depth": 0.6454545454545454,
+      "composite_fitness": 0.7118967743144081,
+      "total_tokens_estimate": 2379,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "game-design-expert",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9974664352544537,
+      "dedup_score": 0.09599999999999997,
+      "trap_density": 0.4546393883033685,
+      "recency_score": 1.0,
+      "section_depth": 0.5307692307692308,
+      "composite_fitness": 0.7117045799117806,
+      "total_tokens_estimate": 2582,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "agentic-workflows-2026",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9992189438588838,
+      "dedup_score": 0.09799999999999998,
+      "trap_density": 0.3255697470573503,
+      "recency_score": 1.0,
+      "section_depth": 0.65,
+      "composite_fitness": 0.7108792508303793,
+      "total_tokens_estimate": 2127,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "gsap-scrolltrigger",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9713755065723269,
+      "dedup_score": 0.07399999999999995,
+      "trap_density": 0.19755441261623355,
+      "recency_score": 1.0,
+      "section_depth": 0.8333333333333334,
+      "composite_fitness": 0.7100082632069004,
+      "total_tokens_estimate": 7493,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "landing-page",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9986233264143003,
+      "dedup_score": 0.09399999999999997,
+      "trap_density": 0.34080482369904314,
+      "recency_score": 1.0,
+      "section_depth": 0.6333333333333333,
+      "composite_fitness": 0.7099453888377164,
+      "total_tokens_estimate": 2019,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "design-lab",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9973702670625119,
+      "dedup_score": 0.09399999999999997,
+      "trap_density": 0.399815469783177,
+      "recency_score": 1.0,
+      "section_depth": 0.575,
+      "composite_fitness": 0.7097963738799788,
+      "total_tokens_estimate": 1735,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "swiss-design",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9983287975928296,
+      "dedup_score": 0.09399999999999997,
+      "trap_density": 0.3751262444091762,
+      "recency_score": 1.0,
+      "section_depth": 0.59375,
+      "composite_fitness": 0.7090971961799424,
+      "total_tokens_estimate": 1852,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "bolder",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9984739989050069,
+      "dedup_score": 0.08399999999999996,
+      "trap_density": 0.3517791909078609,
+      "recency_score": 1.0,
+      "section_depth": 0.625,
+      "composite_fitness": 0.7088116784171805,
+      "total_tokens_estimate": 1959,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "better-colors",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9985975252534218,
+      "dedup_score": 0.09799999999999998,
+      "trap_density": 0.28002800280028006,
+      "recency_score": 1.0,
+      "section_depth": 0.6791666666666667,
+      "composite_fitness": 0.7082987054707264,
+      "total_tokens_estimate": 2641,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "delight",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9982610292869821,
+      "dedup_score": 0.08199999999999996,
+      "trap_density": 0.3692657292998154,
+      "recency_score": 1.0,
+      "section_depth": 0.60625,
+      "composite_fitness": 0.7082795652523687,
+      "total_tokens_estimate": 1887,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "readme-builder",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9994499578852467,
+      "dedup_score": 0.06000000000000005,
+      "trap_density": 0.37661946369388366,
+      "recency_score": 1.0,
+      "section_depth": 0.614,
+      "composite_fitness": 0.7074829111311318,
+      "total_tokens_estimate": 3453,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "apple-design",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9988380184385498,
+      "dedup_score": 0.10399999999999998,
+      "trap_density": 0.3201463526183398,
+      "recency_score": 1.0,
+      "section_depth": 0.6227272727272728,
+      "composite_fitness": 0.7067986474895518,
+      "total_tokens_estimate": 2351,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "plan-writing",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9985155402301911,
+      "dedup_score": 0.07000000000000006,
+      "trap_density": 0.4398546567221266,
+      "recency_score": 1.0,
+      "section_depth": 0.53125,
+      "composite_fitness": 0.7058688065543572,
+      "total_tokens_estimate": 2765,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "impeccable",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9983128512813345,
+      "dedup_score": 0.08199999999999996,
+      "trap_density": 0.31332851289467345,
+      "recency_score": 1.0,
+      "section_depth": 0.64375,
+      "composite_fitness": 0.7055243471904679,
+      "total_tokens_estimate": 2191,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "thinking-protocol",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9976853699417352,
+      "dedup_score": 0.06800000000000006,
+      "trap_density": 0.44202652159129546,
+      "recency_score": 1.0,
+      "section_depth": 0.5285714285714286,
+      "composite_fitness": 0.7053267665127556,
+      "total_tokens_estimate": 1579,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "distill",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9982271485841147,
+      "dedup_score": 0.07399999999999995,
+      "trap_density": 0.3629257398101619,
+      "recency_score": 1.0,
+      "section_depth": 0.6,
+      "composite_fitness": 0.7051842906883472,
+      "total_tokens_estimate": 1903,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "emil-design-eng",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9985461168538607,
+      "dedup_score": 0.06000000000000005,
+      "trap_density": 0.22142735479475384,
+      "recency_score": 1.0,
+      "section_depth": 0.7541666666666667,
+      "composite_fitness": 0.7050483265899853,
+      "total_tokens_estimate": 3092,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "improve-ui",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9983427510332847,
+      "dedup_score": 0.12,
+      "trap_density": 0.3173828125,
+      "recency_score": 1.0,
+      "section_depth": 0.595,
+      "composite_fitness": 0.704525972081657,
+      "total_tokens_estimate": 2191,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "ai-app-hardening",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9987629607329208,
+      "dedup_score": 0.124,
+      "trap_density": 0.3524945770065076,
+      "recency_score": 1.0,
+      "section_depth": 0.55,
+      "composite_fitness": 0.7037267786975603,
+      "total_tokens_estimate": 1978,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "appflow-wireframe",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9987482355447839,
+      "dedup_score": 0.08399999999999996,
+      "trap_density": 0.3294892915980231,
+      "recency_score": 1.0,
+      "section_depth": 0.6125,
+      "composite_fitness": 0.7036480408486603,
+      "total_tokens_estimate": 2412,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "ui-skill-packs",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9987145117498762,
+      "dedup_score": 0.09399999999999997,
+      "trap_density": 0.34777956126270737,
+      "recency_score": 1.0,
+      "section_depth": 0.5833333333333333,
+      "composite_fitness": 0.7035098365393814,
+      "total_tokens_estimate": 1998,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "ui-skills-root",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9983242414518487,
+      "dedup_score": 0.05800000000000005,
+      "trap_density": 0.2298647334453187,
+      "recency_score": 1.0,
+      "section_depth": 0.7375,
+      "composite_fitness": 0.7034695583071675,
+      "total_tokens_estimate": 2954,
+      "recommendations": [
+        "Low trap density: Add LLM anti-pattern traps",
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "generative-ui-expert",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9991514898117292,
+      "dedup_score": 0.09399999999999997,
+      "trap_density": 0.31481897908702494,
+      "recency_score": 1.0,
+      "section_depth": 0.6125,
+      "composite_fitness": 0.7030281448253997,
+      "total_tokens_estimate": 2348,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "polish",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9984856301276398,
+      "dedup_score": 0.07999999999999996,
+      "trap_density": 0.3392484342379959,
+      "recency_score": 1.0,
+      "section_depth": 0.5625,
+      "composite_fitness": 0.6969593911612273,
+      "total_tokens_estimate": 2025,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "webgpu-performance",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9985677685148729,
+      "dedup_score": 0.07599999999999996,
+      "trap_density": 0.32852282060307403,
+      "recency_score": 1.0,
+      "section_depth": 0.5625,
+      "composite_fitness": 0.6947669767934357,
+      "total_tokens_estimate": 2253,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "documentation-templates",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9990573599968031,
+      "dedup_score": 0.06400000000000006,
+      "trap_density": 0.39663652229097257,
+      "recency_score": 1.0,
+      "section_depth": 0.5035714285714286,
+      "composite_fitness": 0.6944426646287208,
+      "total_tokens_estimate": 3252,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "knowledge-graph",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9988502124221452,
+      "dedup_score": 0.08999999999999997,
+      "trap_density": 0.34238200048911716,
+      "recency_score": 1.0,
+      "section_depth": 0.5318181818181819,
+      "composite_fitness": 0.6944000698305239,
+      "total_tokens_estimate": 2172,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "gsap-timeline",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9467246482917933,
+      "dedup_score": 0.08199999999999996,
+      "trap_density": 0.46161565479177125,
+      "recency_score": 1.0,
+      "section_depth": 0.48235294117647054,
+      "composite_fitness": 0.6932402190535949,
+      "total_tokens_estimate": 2636,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "web-design-guidelines",
+      "coverage_score": 1.0,
+      "specificity_score": 0.997690346847049,
+      "dedup_score": 0.11599999999999999,
+      "trap_density": 0.3468053888221956,
+      "recency_score": 1.0,
+      "section_depth": 0.49000000000000005,
+      "composite_fitness": 0.6924588776927392,
+      "total_tokens_estimate": 1983,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "code-review-checklist",
+      "coverage_score": 1.0,
+      "specificity_score": 0.8873951071252281,
+      "dedup_score": 0.06400000000000006,
+      "trap_density": 0.33971035222599677,
+      "recency_score": 1.0,
+      "section_depth": 0.6900000000000001,
+      "composite_fitness": 0.6915355742589452,
+      "total_tokens_estimate": 2892,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "harness-protocol",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9974200069154454,
+      "dedup_score": 0.07799999999999996,
+      "trap_density": 0.4069494443574895,
+      "recency_score": 1.0,
+      "section_depth": 0.44000000000000006,
+      "composite_fitness": 0.6882264180367124,
+      "total_tokens_estimate": 1694,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "review-animations",
+      "coverage_score": 1.0,
+      "specificity_score": 0.997810803098003,
+      "dedup_score": 0.07599999999999996,
+      "trap_density": 0.3179650238473768,
+      "recency_score": 1.0,
+      "section_depth": 0.5277777777777778,
+      "composite_fitness": 0.6878235808633737,
+      "total_tokens_estimate": 2314,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "browser-native-ai",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9987104151764035,
+      "dedup_score": 0.08399999999999996,
+      "trap_density": 0.335530257639305,
+      "recency_score": 1.0,
+      "section_depth": 0.4958333333333333,
+      "composite_fitness": 0.6870466216811765,
+      "total_tokens_estimate": 2204,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "baseline-ui",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9984979737623261,
+      "dedup_score": 0.08999999999999997,
+      "trap_density": 0.30040439052570767,
+      "recency_score": 1.0,
+      "section_depth": 0.52,
+      "composite_fitness": 0.6862602533313213,
+      "total_tokens_estimate": 2272,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "create-design-md",
+      "coverage_score": 1.0,
+      "specificity_score": 0.9986243948960307,
+      "dedup_score": 0.12,
+      "trap_density": 0.3077599472411519,
+      "recency_score": 1.0,
+      "section_depth": 0.4533333333333333,
+      "composite_fitness": 0.6818888710653789,
+      "total_tokens_estimate": 2415,
+      "recommendations": [
+        "High duplication detected in domain 'frontend'"
+      ]
+    },
+    {
+      "skill_name": "project-idioms",
+      "coverage_score": 1.0,
+      "specificity_score": 0.8739316185962661,
+      "dedup_score": 0.08399999999999996,
+      "trap_density": 0.33487892838742916,
+      "recency_score": 1.0,
+      "section_depth": 0.5708333333333333,
+      "composite_fitness": 0.6732431629773675,
+      "total_tokens_estimate": 2020,
+      "recommendations": [
+        "High duplication detected in domain 'meta'"
+      ]
+    },
+    {
+      "skill_name": "gsap-performance",
+      "coverage_score": 1.0,
+      "specificity_score": 0.7990092285565898,
+      "dedup_score": 0.08199999999999996,
+      "trap_density": 0.49352251696483657,
+      "recency_score": 1.0,
+      "section_depth": 0.4,
+      "composite_fitness": 0.6561302232560433,
+      "total_tokens_estimate": 2564,
+      "recommendations": [
+        "High duplication detected in domain 'motion'"
+      ]
+    },
+    {
+      "skill_name": "web-quality-audit",
+      "coverage_score": 1.0,
+      "specificity_score": 0.5989685761119353,
+      "dedup_score": 0.09599999999999997,
+      "trap_density": 0.3637890023786204,
+      "recency_score": 1.0,
+      "section_depth": 0.6125,
+      "composite_fitness": 0.6306370655791802,
+      "total_tokens_estimate": 1892,
+      "recommendations": [
+        "High duplication detected in domain 'security'"
+      ]
+    }
+  ]
+}

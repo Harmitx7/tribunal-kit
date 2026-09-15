@@ -344,14 +344,11 @@ pub fn garbage_collect(index: &mut MemoryIndex) -> (u32, u32) {
                 working_removed += 1;
                 false // Remove all working entries
             }
-            MemoryType::Episodic => {
-                if days_since(&e.created_at) >= EPISODIC_TTL_DAYS {
+            MemoryType::Episodic
+                if days_since(&e.created_at) >= EPISODIC_TTL_DAYS => {
                     episodic_removed += 1;
                     false // Expired
-                } else {
-                    true // Still fresh
                 }
-            }
             _ => true, // SEMANTIC and PROCEDURAL are permanent
         }
     });
@@ -389,7 +386,7 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
                 e.content.replace('|', "\\|"),
                 e.tags.join(", "),
                 format!("{:?}", e.source).to_lowercase(),
-                &e.created_at,
+                e.created_at,
             ));
         }
         md.push('\n');
@@ -408,7 +405,7 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
                 e.content.replace('|', "\\|"),
                 e.tags.join(", "),
                 format!("{:?}", e.source).to_lowercase(),
-                &e.created_at,
+                e.created_at,
             ));
         }
         md.push('\n');
@@ -429,7 +426,7 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
                 e.content.replace('|', "\\|"),
                 e.tags.join(", "),
                 format!("{:?}", e.source).to_lowercase(),
-                &e.created_at,
+                e.created_at,
                 remaining.max(0),
             ));
         }

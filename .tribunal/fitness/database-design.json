@@ -1,0 +1,14 @@
+{
+  "skill_name": "database-design",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9994309691417629,
+  "dedup_score": 0.07399999999999995,
+  "trap_density": 0.4001715020723167,
+  "recency_score": 1.0,
+  "section_depth": 0.7676470588235295,
+  "composite_fitness": 0.7361589779627294,
+  "total_tokens_estimate": 3664,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

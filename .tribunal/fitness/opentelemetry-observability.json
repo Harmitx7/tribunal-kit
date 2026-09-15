@@ -1,0 +1,14 @@
+{
+  "skill_name": "opentelemetry-observability",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9988727008090869,
+  "dedup_score": 0.138,
+  "trap_density": 0.4160475482912333,
+  "recency_score": 1.0,
+  "section_depth": 0.63125,
+  "composite_fitness": 0.7275691724055023,
+  "total_tokens_estimate": 1801,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

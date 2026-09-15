@@ -1,0 +1,15 @@
+{
+  "skill_name": "ui-ux-researcher",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9989101364668969,
+  "dedup_score": 0.05800000000000005,
+  "trap_density": 0.19694161260426318,
+  "recency_score": 1.0,
+  "section_depth": 0.8714285714285713,
+  "composite_fitness": 0.7187375548983045,
+  "total_tokens_estimate": 4409,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'frontend'"
+  ]
+}

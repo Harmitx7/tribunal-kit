@@ -1,0 +1,14 @@
+{
+  "skill_name": "ai-app-hardening",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9987629607329208,
+  "dedup_score": 0.124,
+  "trap_density": 0.3524945770065076,
+  "recency_score": 1.0,
+  "section_depth": 0.55,
+  "composite_fitness": 0.7037267786975603,
+  "total_tokens_estimate": 1978,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

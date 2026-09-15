@@ -1,0 +1,14 @@
+{
+  "skill_name": "skill-creator",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9982391062166338,
+  "dedup_score": 0.07999999999999996,
+  "trap_density": 0.4623963008295934,
+  "recency_score": 1.0,
+  "section_depth": 0.7375,
+  "composite_fitness": 0.7416322663677658,
+  "total_tokens_estimate": 1950,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

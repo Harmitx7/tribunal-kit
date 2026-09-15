@@ -66,10 +66,10 @@ describe('Subagent-Driven Development (SDD) & Plugin Integration', () => {
     const outPath = path.join(tempDir, 'task-2-extracted.md');
     const wrapperScript = path.join(repoRoot, 'bin', 'wrapper.js');
 
-    execSync(
-      `node "${wrapperScript}" sdd brief --plan "${planPath}" --task 2 --out "${outPath}"`,
-      { cwd: repoRoot, encoding: 'utf8' }
-    );
+    execSync(`node "${wrapperScript}" sdd brief --plan "${planPath}" --task 2 --out "${outPath}"`, {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    });
 
     expect(fs.existsSync(outPath)).toBe(true);
     const extracted = fs.readFileSync(outPath, 'utf8');
@@ -79,7 +79,13 @@ describe('Subagent-Driven Development (SDD) & Plugin Integration', () => {
   });
 
   test('verification-before-completion skill exists and contains Iron Law', () => {
-    const vbcPath = path.join(repoRoot, '.agent', 'skills', 'verification-before-completion', 'SKILL.md');
+    const vbcPath = path.join(
+      repoRoot,
+      '.agent',
+      'skills',
+      'verification-before-completion',
+      'SKILL.md',
+    );
     expect(fs.existsSync(vbcPath)).toBe(true);
     const content = fs.readFileSync(vbcPath, 'utf8');
     expect(content).toContain('NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE');

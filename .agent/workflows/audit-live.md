@@ -47,6 +47,7 @@ Audits a running local server (`http://localhost:3000`) or live staging URL usin
 ## 3. Human Gate Verification
 
 No code is modified on disk without explicit approval. Findings are presented as:
-* Issue Description & Location
-* Proposed Fix (Code diff)
-* Re-test command to verify resolution.
+
+- Issue Description & Location
+- Proposed Fix (Code diff)
+- Re-test command to verify resolution.

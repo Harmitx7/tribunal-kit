@@ -1,0 +1,14 @@
+{
+  "skill_name": "distill",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9982271485841147,
+  "dedup_score": 0.07399999999999995,
+  "trap_density": 0.3629257398101619,
+  "recency_score": 1.0,
+  "section_depth": 0.6,
+  "composite_fitness": 0.7051842906883472,
+  "total_tokens_estimate": 1903,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

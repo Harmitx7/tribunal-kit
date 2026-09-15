@@ -1,0 +1,14 @@
+{
+  "skill_name": "cobejs",
+  "coverage_score": 1.0,
+  "specificity_score": 0.99879146233058,
+  "dedup_score": 0.08599999999999997,
+  "trap_density": 0.3707400541850848,
+  "recency_score": 1.0,
+  "section_depth": 0.75625,
+  "composite_fitness": 0.7317068005938787,
+  "total_tokens_estimate": 1847,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

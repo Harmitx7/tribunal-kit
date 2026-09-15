@@ -1,0 +1,14 @@
+{
+  "skill_name": "sql-pro",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9996017249512755,
+  "dedup_score": 0.14,
+  "trap_density": 0.4249754821837201,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7846666673178132,
+  "total_tokens_estimate": 6292,
+  "recommendations": [
+    "High duplication detected in domain 'database'"
+  ]
+}

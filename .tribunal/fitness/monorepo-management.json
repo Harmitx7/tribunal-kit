@@ -1,0 +1,14 @@
+{
+  "skill_name": "monorepo-management",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9996028407249901,
+  "dedup_score": 0.09799999999999998,
+  "trap_density": 0.5077837910068819,
+  "recency_score": 1.0,
+  "section_depth": 0.9911764705882353,
+  "composite_fitness": 0.7894646073842656,
+  "total_tokens_estimate": 3907,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

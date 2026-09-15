@@ -1,0 +1,14 @@
+{
+  "skill_name": "design-lab",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9973702670625119,
+  "dedup_score": 0.09399999999999997,
+  "trap_density": 0.399815469783177,
+  "recency_score": 1.0,
+  "section_depth": 0.575,
+  "composite_fitness": 0.7097963738799788,
+  "total_tokens_estimate": 1735,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

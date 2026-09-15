@@ -1,0 +1,14 @@
+{
+  "skill_name": "appflow-wireframe",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9987482355447839,
+  "dedup_score": 0.08399999999999996,
+  "trap_density": 0.3294892915980231,
+  "recency_score": 1.0,
+  "section_depth": 0.6125,
+  "composite_fitness": 0.7036480408486603,
+  "total_tokens_estimate": 2412,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

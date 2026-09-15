@@ -1,0 +1,15 @@
+{
+  "skill_name": "test-result-analyzer",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9992190718638357,
+  "dedup_score": 0.11599999999999999,
+  "trap_density": 0.1732994986693074,
+  "recency_score": 1.0,
+  "section_depth": 0.861111111111111,
+  "composite_fitness": 0.7224054058398299,
+  "total_tokens_estimate": 4151,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'testing'"
+  ]
+}

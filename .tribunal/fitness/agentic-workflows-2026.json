@@ -1,0 +1,14 @@
+{
+  "skill_name": "agentic-workflows-2026",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9992189438588838,
+  "dedup_score": 0.09799999999999998,
+  "trap_density": 0.3255697470573503,
+  "recency_score": 1.0,
+  "section_depth": 0.65,
+  "composite_fitness": 0.7108792508303793,
+  "total_tokens_estimate": 2127,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

@@ -14,14 +14,14 @@ function updateFiles() {
     'README.md',
     'crates/core/Cargo.toml',
     'bin/adapter-install.js',
-    'dist/tui/banner.js'
+    'dist/tui/banner.js',
   ];
 
   for (const relPath of filesToUpdate) {
     const fullPath = path.join(ROOT, relPath);
     if (fs.existsSync(fullPath)) {
       let content = fs.readFileSync(fullPath, 'utf8');
-      
+
       if (relPath.endsWith('.json')) {
         const json = JSON.parse(content);
         if (json.version) {

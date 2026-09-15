@@ -1,0 +1,14 @@
+{
+  "skill_name": "code-review-checklist",
+  "coverage_score": 1.0,
+  "specificity_score": 0.8873951071252281,
+  "dedup_score": 0.06400000000000006,
+  "trap_density": 0.33971035222599677,
+  "recency_score": 1.0,
+  "section_depth": 0.6900000000000001,
+  "composite_fitness": 0.6915355742589452,
+  "total_tokens_estimate": 2892,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

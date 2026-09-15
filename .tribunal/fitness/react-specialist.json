@@ -1,0 +1,14 @@
+{
+  "skill_name": "react-specialist",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9994506050310527,
+  "dedup_score": 0.05400000000000005,
+  "trap_density": 0.5535183006988168,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.791017866111033,
+  "total_tokens_estimate": 3733,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

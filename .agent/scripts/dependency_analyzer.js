@@ -272,24 +272,24 @@ function main() {
     `\n  ${DIM}Found ${usedImports.size} unique external imports in ${formatMs(scanMs)}${RESET}`,
   );
 
-  if (!checkUnusedFlag) {
-    console.log(sectionHeader('Phantom Imports (not in package.json)'));
-    const phantom = checkPhantom(pkg, usedImports);
-    if (phantom.length > 0) {
-      for (const p of phantom)
-        fail(`'${p}' is imported but not in package.json — possible hallucination`);
-      issues += phantom.length;
-    } else {
-      ok('All imports found in package.json');
-    }
+  console.log(sectionHeader('Phantom Imports (not in package.json)'));
+  const phantom = checkPhantom(pkg, usedImports);
+  if (phantom.length > 0) {
+    for (const p of phantom)
+      fail(`'${p}' is imported but not in package.json — possible hallucination`);
+    issues += phantom.length;
+  } else {
+    ok('All imports found in package.json');
   }
 
-  console.log(sectionHeader('Unused Dependencies'));
-  const unused = checkUnused(pkg, usedImports);
-  if (unused.length > 0) {
-    for (const u of unused) warn(`'${u}' is in package.json but never imported — may be unused`);
-  } else {
-    ok('No obviously unused dependencies found');
+  if (checkUnusedFlag) {
+    console.log(sectionHeader('Unused Dependencies'));
+    const unused = checkUnused(pkg, usedImports);
+    if (unused.length > 0) {
+      for (const u of unused) warn(`'${u}' is in package.json but never imported — may be unused`);
+    } else {
+      ok('No obviously unused dependencies found');
+    }
   }
 
   if (auditFlag) {

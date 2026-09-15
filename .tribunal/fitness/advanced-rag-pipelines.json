@@ -1,0 +1,14 @@
+{
+  "skill_name": "advanced-rag-pipelines",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9990093157618696,
+  "dedup_score": 0.10199999999999998,
+  "trap_density": 0.5122185465798741,
+  "recency_score": 1.0,
+  "section_depth": 0.5875,
+  "composite_fitness": 0.730059645139355,
+  "total_tokens_estimate": 2468,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

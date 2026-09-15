@@ -1,0 +1,14 @@
+{
+  "skill_name": "realtime-patterns",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9995099177177642,
+  "dedup_score": 0.08399999999999996,
+  "trap_density": 0.4368350595363911,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7780272424740114,
+  "total_tokens_estimate": 3711,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

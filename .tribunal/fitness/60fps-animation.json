@@ -1,0 +1,14 @@
+{
+  "skill_name": "60fps-animation",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9992726722478426,
+  "dedup_score": 0.09999999999999998,
+  "trap_density": 0.6148025537952234,
+  "recency_score": 1.0,
+  "section_depth": 0.6318181818181818,
+  "composite_fitness": 0.7518476447915793,
+  "total_tokens_estimate": 2230,
+  "recommendations": [
+    "High duplication detected in domain 'motion'"
+  ]
+}

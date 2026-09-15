@@ -14,13 +14,7 @@
       "routing_domain": "general",
       "routing_tier": "core",
       "description": "Always active reviewer for logic errors and boundary checks.",
-      "trigger_keywords": [
-        "logic",
-        "bug",
-        "boundary",
-        "condition",
-        "edge case"
-      ]
+      "trigger_keywords": ["logic", "bug", "boundary", "condition", "edge case"]
     },
     {
       "name": "security-auditor",
@@ -29,13 +23,7 @@
       "routing_domain": "security",
       "routing_tier": "core",
       "description": "OWASP Top 10 security scanner and vulnerability auditor.",
-      "trigger_keywords": [
-        "security",
-        "owasp",
-        "injection",
-        "vulnerability",
-        "auth"
-      ]
+      "trigger_keywords": ["security", "owasp", "injection", "vulnerability", "auth"]
     },
     {
       "name": "pipeline-reviewer",
@@ -44,13 +32,7 @@
       "routing_domain": "devops",
       "routing_tier": "specialized",
       "description": "CI/CD Pipeline & Workflow Auditor for GitHub Actions, GitLab CI, and Dockerfiles.",
-      "trigger_keywords": [
-        "ci/cd",
-        "pipeline",
-        "github actions",
-        "workflow",
-        "dockerfile"
-      ]
+      "trigger_keywords": ["ci/cd", "pipeline", "github actions", "workflow", "dockerfile"]
     },
     {
       "name": "precedence-reviewer",
@@ -59,12 +41,7 @@
       "routing_domain": "general",
       "routing_tier": "core",
       "description": "Checks Case Law and architectural precedence before generation.",
-      "trigger_keywords": [
-        "precedence",
-        "case law",
-        "pattern",
-        "convention"
-      ]
+      "trigger_keywords": ["precedence", "case law", "pattern", "convention"]
     },
     {
       "name": "complexity-reviewer",
@@ -73,12 +50,7 @@
       "routing_domain": "general",
       "routing_tier": "core",
       "description": "Checks over-engineering and Dependency Ladder compliance.",
-      "trigger_keywords": [
-        "complexity",
-        "ladder",
-        "overengineering",
-        "simplification"
-      ]
+      "trigger_keywords": ["complexity", "ladder", "overengineering", "simplification"]
     },
     {
       "name": "minimalist-reviewer",
@@ -87,13 +59,7 @@
       "routing_domain": "general",
       "routing_tier": "core",
       "description": "Minimal Change Governance reviewer enforcing smallest correct maintainable change.",
-      "trigger_keywords": [
-        "minimal",
-        "change budget",
-        "minimality",
-        "reuse",
-        "abstraction"
-      ]
+      "trigger_keywords": ["minimal", "change budget", "minimality", "reuse", "abstraction"]
     },
     {
       "name": "type-safety-reviewer",
@@ -102,13 +68,7 @@
       "routing_domain": "general",
       "routing_tier": "specialized",
       "description": "TypeScript type safety and strict mode validation.",
-      "trigger_keywords": [
-        "typescript",
-        "type",
-        "any",
-        "generics",
-        "interface"
-      ]
+      "trigger_keywords": ["typescript", "type", "any", "generics", "interface"]
     },
     {
       "name": "dependency-reviewer",
@@ -117,13 +77,7 @@
       "routing_domain": "backend",
       "routing_tier": "specialized",
       "description": "Phantom package and package.json audit.",
-      "trigger_keywords": [
-        "dependency",
-        "npm",
-        "package",
-        "import",
-        "version"
-      ]
+      "trigger_keywords": ["dependency", "npm", "package", "import", "version"]
     },
     {
       "name": "resilience-reviewer",
@@ -132,12 +86,7 @@
       "routing_domain": "backend",
       "routing_tier": "specialized",
       "description": "Fault tolerance, retries, and error boundaries.",
-      "trigger_keywords": [
-        "resilience",
-        "retry",
-        "circuit breaker",
-        "timeout"
-      ]
+      "trigger_keywords": ["resilience", "retry", "circuit breaker", "timeout"]
     },
     {
       "name": "schema-reviewer",
@@ -146,13 +95,7 @@
       "routing_domain": "backend",
       "routing_tier": "specialized",
       "description": "Zod and Pydantic validation schema auditor.",
-      "trigger_keywords": [
-        "schema",
-        "zod",
-        "pydantic",
-        "validation",
-        "contract"
-      ]
+      "trigger_keywords": ["schema", "zod", "pydantic", "validation", "contract"]
     },
     {
       "name": "frontend-reviewer",
@@ -161,13 +104,7 @@
       "routing_domain": "frontend",
       "routing_tier": "specialized",
       "description": "React Server Components, hooks, and state mutation auditor.",
-      "trigger_keywords": [
-        "frontend",
-        "react",
-        "hooks",
-        "component",
-        "state"
-      ]
+      "trigger_keywords": ["frontend", "react", "hooks", "component", "state"]
     },
     {
       "name": "ui-ux-auditor",
@@ -176,13 +113,7 @@
       "routing_domain": "frontend",
       "routing_tier": "specialized",
       "description": "Usability heuristics and responsive spatial auditor.",
-      "trigger_keywords": [
-        "ui",
-        "ux",
-        "layout",
-        "spatial",
-        "heuristics"
-      ]
+      "trigger_keywords": ["ui", "ux", "layout", "spatial", "heuristics"]
     },
     {
       "name": "visual-reviewer",
@@ -191,13 +122,7 @@
       "routing_domain": "frontend",
       "routing_tier": "specialized",
       "description": "Visual hierarchy, typography, and OKLCH color palettes.",
-      "trigger_keywords": [
-        "visual",
-        "typography",
-        "oklch",
-        "color",
-        "palette"
-      ]
+      "trigger_keywords": ["visual", "typography", "oklch", "color", "palette"]
     },
     {
       "name": "interaction-reviewer",
@@ -206,13 +131,7 @@
       "routing_domain": "motion",
       "routing_tier": "specialized",
       "description": "Hover, focus, active states, and micro-interactions.",
-      "trigger_keywords": [
-        "interaction",
-        "hover",
-        "focus",
-        "microinteraction",
-        "state"
-      ]
+      "trigger_keywords": ["interaction", "hover", "focus", "microinteraction", "state"]
     },
     {
       "name": "anti-pattern-reviewer",
@@ -221,12 +140,7 @@
       "routing_domain": "frontend",
       "routing_tier": "specialized",
       "description": "Banned AI clichés auditor (purple gradients, generic hero).",
-      "trigger_keywords": [
-        "antipattern",
-        "cliché",
-        "gradient",
-        "ai aesthetic"
-      ]
+      "trigger_keywords": ["antipattern", "cliché", "gradient", "ai aesthetic"]
     },
     {
       "name": "accessibility-reviewer",
@@ -235,13 +149,7 @@
       "routing_domain": "frontend",
       "routing_tier": "specialized",
       "description": "WCAG 2.2 AA accessibility and ARIA attribute auditor.",
-      "trigger_keywords": [
-        "accessibility",
-        "a11y",
-        "wcag",
-        "aria",
-        "contrast"
-      ]
+      "trigger_keywords": ["accessibility", "a11y", "wcag", "aria", "contrast"]
     },
     {
       "name": "sql-reviewer",
@@ -250,13 +158,7 @@
       "routing_domain": "database",
       "routing_tier": "specialized",
       "description": "SQL parameterization and transaction integrity auditor.",
-      "trigger_keywords": [
-        "sql",
-        "query",
-        "orm",
-        "transaction",
-        "injection"
-      ]
+      "trigger_keywords": ["sql", "query", "orm", "transaction", "injection"]
     },
     {
       "name": "db-latency-auditor",
@@ -265,13 +167,7 @@
       "routing_domain": "database",
       "routing_tier": "specialized",
       "description": "Slow query detection and N+1 query auditor.",
-      "trigger_keywords": [
-        "latency",
-        "slow query",
-        "n+1",
-        "index",
-        "database"
-      ]
+      "trigger_keywords": ["latency", "slow query", "n+1", "index", "database"]
     },
     {
       "name": "mobile-reviewer",
@@ -280,13 +176,7 @@
       "routing_domain": "mobile",
       "routing_tier": "specialized",
       "description": "React Native, Expo Router, and 60fps gesture auditor.",
-      "trigger_keywords": [
-        "mobile",
-        "react native",
-        "expo",
-        "gesture",
-        "reanimated"
-      ]
+      "trigger_keywords": ["mobile", "react native", "expo", "gesture", "reanimated"]
     },
     {
       "name": "performance-reviewer",
@@ -295,12 +185,7 @@
       "routing_domain": "general",
       "routing_tier": "specialized",
       "description": "O(n2) bottlenecks, layout thrashing, and memory leaks auditor.",
-      "trigger_keywords": [
-        "performance",
-        "memory leak",
-        "bottleneck",
-        "profiling"
-      ]
+      "trigger_keywords": ["performance", "memory leak", "bottleneck", "profiling"]
     },
     {
       "name": "vitals-reviewer",
@@ -309,14 +194,7 @@
       "routing_domain": "frontend",
       "routing_tier": "specialized",
       "description": "Core Web Vitals auditor (LCP, CLS, INP, TTFB).",
-      "trigger_keywords": [
-        "vitals",
-        "cwv",
-        "lcp",
-        "cls",
-        "inp",
-        "ttfb"
-      ]
+      "trigger_keywords": ["vitals", "cwv", "lcp", "cls", "inp", "ttfb"]
     },
     {
       "name": "throughput-optimizer",
@@ -325,12 +203,7 @@
       "routing_domain": "backend",
       "routing_tier": "specialized",
       "description": "Node event loop blocking and concurrency optimizer.",
-      "trigger_keywords": [
-        "throughput",
-        "concurrency",
-        "event loop",
-        "streaming"
-      ]
+      "trigger_keywords": ["throughput", "concurrency", "event loop", "streaming"]
     },
     {
       "name": "ai-code-reviewer",
@@ -339,13 +212,7 @@
       "routing_domain": "ai-llm",
       "routing_tier": "specialized",
       "description": "LLM API integration and prompt injection defense auditor.",
-      "trigger_keywords": [
-        "ai",
-        "llm",
-        "openai",
-        "anthropic",
-        "prompt injection"
-      ]
+      "trigger_keywords": ["ai", "llm", "openai", "anthropic", "prompt injection"]
     },
     {
       "name": "supervisor-agent",
@@ -354,13 +221,7 @@
       "routing_domain": "orchestration",
       "routing_tier": "expert",
       "description": "Swarm triage, worker dispatch, and result synthesis.",
-      "trigger_keywords": [
-        "swarm",
-        "supervisor",
-        "dispatch",
-        "triage",
-        "synthesis"
-      ]
+      "trigger_keywords": ["swarm", "supervisor", "dispatch", "triage", "synthesis"]
     },
     {
       "name": "orchestrator",
@@ -369,12 +230,7 @@
       "routing_domain": "orchestration",
       "routing_tier": "expert",
       "description": "Multi-agent workflow coordination and fan-out/fan-in.",
-      "trigger_keywords": [
-        "orchestrate",
-        "multi-agent",
-        "fan-out",
-        "coordination"
-      ]
+      "trigger_keywords": ["orchestrate", "multi-agent", "fan-out", "coordination"]
     },
     {
       "name": "agent-organizer",
@@ -383,12 +239,7 @@
       "routing_domain": "orchestration",
       "routing_tier": "expert",
       "description": "Specialist agent ecosystem management and memory distillation.",
-      "trigger_keywords": [
-        "agent organizer",
-        "sub-agent",
-        "memory",
-        "ecosystem"
-      ]
+      "trigger_keywords": ["agent organizer", "sub-agent", "memory", "ecosystem"]
     },
     {
       "name": "project-planner",
@@ -397,13 +248,7 @@
       "routing_domain": "general",
       "routing_tier": "core",
       "description": "4-phase structured implementation planning.",
-      "trigger_keywords": [
-        "plan",
-        "planning",
-        "roadmap",
-        "architecture",
-        "phase"
-      ]
+      "trigger_keywords": ["plan", "planning", "roadmap", "architecture", "phase"]
     },
     {
       "name": "backend-specialist",
@@ -412,13 +257,7 @@
       "routing_domain": "backend",
       "routing_tier": "specialized",
       "description": "Node.js, Express, Hono, API design, and Server Actions.",
-      "trigger_keywords": [
-        "backend",
-        "api",
-        "express",
-        "hono",
-        "server actions"
-      ]
+      "trigger_keywords": ["backend", "api", "express", "hono", "server actions"]
     },
     {
       "name": "frontend-specialist",
@@ -427,13 +266,7 @@
       "routing_domain": "frontend",
       "routing_tier": "specialized",
       "description": "Modern web UI, CSS systems, and component architecture.",
-      "trigger_keywords": [
-        "frontend",
-        "ui",
-        "css",
-        "component",
-        "web"
-      ]
+      "trigger_keywords": ["frontend", "ui", "css", "component", "web"]
     },
     {
       "name": "react-specialist",
@@ -442,12 +275,7 @@
       "routing_domain": "frontend",
       "routing_tier": "specialized",
       "description": "React 19, Server Components, Zustand, and TanStack Query.",
-      "trigger_keywords": [
-        "react",
-        "server components",
-        "zustand",
-        "tanstack"
-      ]
+      "trigger_keywords": ["react", "server components", "zustand", "tanstack"]
     },
     {
       "name": "nextjs-react-expert",
@@ -456,13 +284,7 @@
       "routing_domain": "frontend",
       "routing_tier": "expert",
       "description": "Next.js 15 App Router, PPR, Server Actions, and Middleware.",
-      "trigger_keywords": [
-        "nextjs",
-        "app router",
-        "ppr",
-        "server actions",
-        "middleware"
-      ]
+      "trigger_keywords": ["nextjs", "app router", "ppr", "server actions", "middleware"]
     },
     {
       "name": "vue-expert",
@@ -471,12 +293,7 @@
       "routing_domain": "frontend",
       "routing_tier": "specialized",
       "description": "Vue 3.5+, Composition API, Nuxt 4, and Pinia.",
-      "trigger_keywords": [
-        "vue",
-        "nuxt",
-        "pinia",
-        "composition api"
-      ]
+      "trigger_keywords": ["vue", "nuxt", "pinia", "composition api"]
     },
     {
       "name": "python-pro",
@@ -485,13 +302,7 @@
       "routing_domain": "backend",
       "routing_tier": "specialized",
       "description": "Python 3.12+, FastAPI, Pydantic v2, Asyncio, and Pytest.",
-      "trigger_keywords": [
-        "python",
-        "fastapi",
-        "pydantic",
-        "asyncio",
-        "pytest"
-      ]
+      "trigger_keywords": ["python", "fastapi", "pydantic", "asyncio", "pytest"]
     },
     {
       "name": "rust-pro",
@@ -500,13 +311,7 @@
       "routing_domain": "backend",
       "routing_tier": "expert",
       "description": "Rust 1.75+, Tokio async, Axum, Serde, and memory safety.",
-      "trigger_keywords": [
-        "rust",
-        "tokio",
-        "axum",
-        "serde",
-        "memory safety"
-      ]
+      "trigger_keywords": ["rust", "tokio", "axum", "serde", "memory safety"]
     },
     {
       "name": "csharp-developer",
@@ -515,12 +320,7 @@
       "routing_domain": "backend",
       "routing_tier": "specialized",
       "description": "C# 12, .NET 8/9, ASP.NET Core, and Blazor architecture.",
-      "trigger_keywords": [
-        "csharp",
-        "dotnet",
-        "aspnet",
-        "blazor"
-      ]
+      "trigger_keywords": ["csharp", "dotnet", "aspnet", "blazor"]
     },
     {
       "name": "database-architect",
@@ -529,13 +329,7 @@
       "routing_domain": "database",
       "routing_tier": "expert",
       "description": "Data modeling, Prisma/Drizzle schema design, and migrations.",
-      "trigger_keywords": [
-        "database",
-        "prisma",
-        "drizzle",
-        "migration",
-        "schema"
-      ]
+      "trigger_keywords": ["database", "prisma", "drizzle", "migration", "schema"]
     },
     {
       "name": "sql-pro",
@@ -544,13 +338,7 @@
       "routing_domain": "database",
       "routing_tier": "specialized",
       "description": "PostgreSQL, Supabase RLS, and complex analytical SQL.",
-      "trigger_keywords": [
-        "sql",
-        "postgresql",
-        "supabase",
-        "rls",
-        "query"
-      ]
+      "trigger_keywords": ["sql", "postgresql", "supabase", "rls", "query"]
     },
     {
       "name": "mobile-developer",
@@ -559,13 +347,7 @@
       "routing_domain": "mobile",
       "routing_tier": "specialized",
       "description": "Expo, React Native, Flutter, and native modules.",
-      "trigger_keywords": [
-        "mobile",
-        "expo",
-        "react native",
-        "flutter",
-        "native"
-      ]
+      "trigger_keywords": ["mobile", "expo", "react native", "flutter", "native"]
     },
     {
       "name": "devops-engineer",
@@ -574,13 +356,7 @@
       "routing_domain": "devops",
       "routing_tier": "specialized",
       "description": "Docker, CI/CD pipelines, GitHub Actions, and deployment.",
-      "trigger_keywords": [
-        "devops",
-        "docker",
-        "cicd",
-        "github actions",
-        "deploy"
-      ]
+      "trigger_keywords": ["devops", "docker", "cicd", "github actions", "deploy"]
     },
     {
       "name": "platform-engineer",
@@ -589,12 +365,7 @@
       "routing_domain": "devops",
       "routing_tier": "expert",
       "description": "Cloud-native infrastructure, Kubernetes, and Terraform.",
-      "trigger_keywords": [
-        "platform",
-        "kubernetes",
-        "terraform",
-        "infrastructure"
-      ]
+      "trigger_keywords": ["platform", "kubernetes", "terraform", "infrastructure"]
     },
     {
       "name": "cloud-engineer",
@@ -603,13 +374,7 @@
       "routing_domain": "devops",
       "routing_tier": "specialized",
       "description": "AWS, Serverless, IaC, and edge computing topology.",
-      "trigger_keywords": [
-        "cloud",
-        "aws",
-        "serverless",
-        "iac",
-        "edge"
-      ]
+      "trigger_keywords": ["cloud", "aws", "serverless", "iac", "edge"]
     },
     {
       "name": "devops-incident-responder",
@@ -618,12 +383,7 @@
       "routing_domain": "devops",
       "routing_tier": "expert",
       "description": "Production incident root cause investigation and hotfixes.",
-      "trigger_keywords": [
-        "incident",
-        "production error",
-        "outage",
-        "hotfix"
-      ]
+      "trigger_keywords": ["incident", "production error", "outage", "hotfix"]
     },
     {
       "name": "debugger",
@@ -632,13 +392,7 @@
       "routing_domain": "general",
       "routing_tier": "specialized",
       "description": "4-phase systematic debugging and traceback isolation.",
-      "trigger_keywords": [
-        "debug",
-        "traceback",
-        "stack trace",
-        "error",
-        "fix"
-      ]
+      "trigger_keywords": ["debug", "traceback", "stack trace", "error", "fix"]
     },
     {
       "name": "system-architect",
@@ -647,12 +401,7 @@
       "routing_domain": "general",
       "routing_tier": "expert",
       "description": "Capacity planning, scale estimation, and distributed systems.",
-      "trigger_keywords": [
-        "system architect",
-        "system design",
-        "scale",
-        "capacity"
-      ]
+      "trigger_keywords": ["system architect", "system design", "scale", "capacity"]
     },
     {
       "name": "code-archaeologist",
@@ -661,12 +410,7 @@
       "routing_domain": "general",
       "routing_tier": "specialized",
       "description": "Legacy codebase analysis, debt mapping, and seams.",
-      "trigger_keywords": [
-        "legacy",
-        "code debt",
-        "refactor",
-        "archaeology"
-      ]
+      "trigger_keywords": ["legacy", "code debt", "refactor", "archaeology"]
     },
     {
       "name": "explorer-agent",
@@ -675,12 +419,7 @@
       "routing_domain": "general",
       "routing_tier": "basic",
       "description": "Unknown codebase mapping and dependency graph discovery.",
-      "trigger_keywords": [
-        "explore",
-        "unknown codebase",
-        "mapping",
-        "dependency"
-      ]
+      "trigger_keywords": ["explore", "unknown codebase", "mapping", "dependency"]
     },
     {
       "name": "documentation-writer",
@@ -689,12 +428,7 @@
       "routing_domain": "general",
       "routing_tier": "specialized",
       "description": "Technical documentation, OpenAPI, and README generation.",
-      "trigger_keywords": [
-        "documentation",
-        "readme",
-        "openapi",
-        "docs"
-      ]
+      "trigger_keywords": ["documentation", "readme", "openapi", "docs"]
     },
     {
       "name": "test-engineer",
@@ -703,13 +437,7 @@
       "routing_domain": "general",
       "routing_tier": "specialized",
       "description": "Testing Trophy strategy and behavioral test design.",
-      "trigger_keywords": [
-        "test",
-        "jest",
-        "vitest",
-        "coverage",
-        "unit test"
-      ]
+      "trigger_keywords": ["test", "jest", "vitest", "coverage", "unit test"]
     },
     {
       "name": "qa-automation-engineer",
@@ -718,12 +446,7 @@
       "routing_domain": "general",
       "routing_tier": "specialized",
       "description": "E2E Playwright testing and CI test automation.",
-      "trigger_keywords": [
-        "qa",
-        "e2e",
-        "playwright",
-        "test automation"
-      ]
+      "trigger_keywords": ["qa", "e2e", "playwright", "test automation"]
     },
     {
       "name": "seo-specialist",
@@ -732,12 +455,7 @@
       "routing_domain": "frontend",
       "routing_tier": "specialized",
       "description": "Technical SEO, OpenGraph, and Core Web Vitals optimization.",
-      "trigger_keywords": [
-        "seo",
-        "opengraph",
-        "meta tags",
-        "sitemap"
-      ]
+      "trigger_keywords": ["seo", "opengraph", "meta tags", "sitemap"]
     },
     {
       "name": "product-manager",
@@ -746,12 +464,7 @@
       "routing_domain": "general",
       "routing_tier": "specialized",
       "description": "Feature prioritization, scope control, and user stories.",
-      "trigger_keywords": [
-        "product manager",
-        "feature priority",
-        "scope",
-        "requirements"
-      ]
+      "trigger_keywords": ["product manager", "feature priority", "scope", "requirements"]
     },
     {
       "name": "product-owner",
@@ -760,12 +473,7 @@
       "routing_domain": "general",
       "routing_tier": "specialized",
       "description": "Backlog management and acceptance criteria verification.",
-      "trigger_keywords": [
-        "product owner",
-        "backlog",
-        "user story",
-        "acceptance criteria"
-      ]
+      "trigger_keywords": ["product owner", "backlog", "user story", "acceptance criteria"]
     }
   ],
   "workflows": [
@@ -776,12 +484,7 @@
       "description": "Full Tribunal: Maker -> Parallel Review -> Human Gate",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "generate",
-        "build",
-        "create code",
-        "write"
-      ]
+      "trigger_keywords": ["generate", "build", "create code", "write"]
     },
     {
       "command": "/review",
@@ -790,11 +493,7 @@
       "description": "Pure read-only hallucination audit",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "review",
-        "audit code",
-        "hallucination check"
-      ]
+      "trigger_keywords": ["review", "audit code", "hallucination check"]
     },
     {
       "command": "/tribunal-full",
@@ -803,11 +502,7 @@
       "description": "Comprehensive 21-reviewer parallel audit",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "tribunal full",
-        "full review",
-        "pre-merge audit"
-      ]
+      "trigger_keywords": ["tribunal full", "full review", "pre-merge audit"]
     },
     {
       "command": "/tribunal-backend",
@@ -816,11 +511,7 @@
       "description": "Logic + Security + Deps + Type Safety + Resilience + Schema",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tribunal backend",
-        "api review",
-        "server audit"
-      ]
+      "trigger_keywords": ["tribunal backend", "api review", "server audit"]
     },
     {
       "command": "/tribunal-frontend",
@@ -829,11 +520,7 @@
       "description": "Logic + Security + Frontend + Types + UI/UX + Motion + Visual",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tribunal frontend",
-        "react audit",
-        "ui review"
-      ]
+      "trigger_keywords": ["tribunal frontend", "react audit", "ui review"]
     },
     {
       "command": "/tribunal-database",
@@ -842,11 +529,7 @@
       "description": "Logic + Security + SQL parameterization audit",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tribunal database",
-        "sql audit",
-        "orm review"
-      ]
+      "trigger_keywords": ["tribunal database", "sql audit", "orm review"]
     },
     {
       "command": "/tribunal-mobile",
@@ -855,10 +538,7 @@
       "description": "Logic + Security + Mobile 60fps Reanimated audit",
       "routing_domain": "mobile",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tribunal mobile",
-        "react native review"
-      ]
+      "trigger_keywords": ["tribunal mobile", "react native review"]
     },
     {
       "command": "/tribunal-performance",
@@ -867,11 +547,7 @@
       "description": "Logic + Performance optimization audit",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tribunal performance",
-        "perf audit",
-        "optimization"
-      ]
+      "trigger_keywords": ["tribunal performance", "perf audit", "optimization"]
     },
     {
       "command": "/tribunal-ui",
@@ -880,11 +556,7 @@
       "description": "Dedicated UI/UX design heuristics audit",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tribunal ui",
-        "design audit",
-        "heuristics"
-      ]
+      "trigger_keywords": ["tribunal ui", "design audit", "heuristics"]
     },
     {
       "command": "/tribunal-speed",
@@ -893,11 +565,7 @@
       "description": "Full-stack parallel performance swarm (max 5 AI calls)",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "tribunal speed",
-        "latency swarm",
-        "fast perf"
-      ]
+      "trigger_keywords": ["tribunal speed", "latency swarm", "fast perf"]
     },
     {
       "command": "/brainstorm",
@@ -906,12 +574,7 @@
       "description": "Socratic exploration mode - 3 options & tradeoffs",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "brainstorm",
-        "options",
-        "explore",
-        "tradeoffs"
-      ]
+      "trigger_keywords": ["brainstorm", "options", "explore", "tradeoffs"]
     },
     {
       "command": "/create",
@@ -920,11 +583,7 @@
       "description": "Full application creation from requirements to scaffold",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "create app",
-        "scaffold",
-        "new project"
-      ]
+      "trigger_keywords": ["create app", "scaffold", "new project"]
     },
     {
       "command": "/enhance",
@@ -933,11 +592,7 @@
       "description": "Dependency-safe feature addition & impact analysis",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "enhance",
-        "add feature",
-        "update component"
-      ]
+      "trigger_keywords": ["enhance", "add feature", "update component"]
     },
     {
       "command": "/debug",
@@ -946,12 +601,7 @@
       "description": "4-phase systematic root cause investigation",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "debug",
-        "fix bug",
-        "root cause",
-        "error"
-      ]
+      "trigger_keywords": ["debug", "fix bug", "root cause", "error"]
     },
     {
       "command": "/plan",
@@ -960,11 +610,7 @@
       "description": "Strategic 4-phase implementation planning",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "plan",
-        "implementation plan",
-        "spec"
-      ]
+      "trigger_keywords": ["plan", "implementation plan", "spec"]
     },
     {
       "command": "/deploy",
@@ -973,11 +619,7 @@
       "description": "Pre-flight safety checks & production release gates",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "deploy",
-        "release",
-        "production"
-      ]
+      "trigger_keywords": ["deploy", "release", "production"]
     },
     {
       "command": "/test",
@@ -986,11 +628,7 @@
       "description": "Behavioral test generation & execution",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "test",
-        "run tests",
-        "generate tests"
-      ]
+      "trigger_keywords": ["test", "run tests", "generate tests"]
     },
     {
       "command": "/preview",
@@ -999,11 +637,7 @@
       "description": "Local dev server lifecycle management",
       "routing_domain": "general",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "preview",
-        "dev server",
-        "npm run dev"
-      ]
+      "trigger_keywords": ["preview", "dev server", "npm run dev"]
     },
     {
       "command": "/status",
@@ -1012,11 +646,7 @@
       "description": "Project health dashboard & active execution ledger",
       "routing_domain": "general",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "status",
-        "dashboard",
-        "task progress"
-      ]
+      "trigger_keywords": ["status", "dashboard", "task progress"]
     },
     {
       "command": "/session",
@@ -1025,11 +655,7 @@
       "description": "Multi-session state tracking & restoration",
       "routing_domain": "orchestration",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "session",
-        "state snapshot",
-        "restore context"
-      ]
+      "trigger_keywords": ["session", "state snapshot", "restore context"]
     },
     {
       "command": "/orchestrate",
@@ -1038,11 +664,7 @@
       "description": "Multi-agent fan-out/fan-in coordination",
       "routing_domain": "orchestration",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "orchestrate",
-        "multi-agent fanout",
-        "coordinate"
-      ]
+      "trigger_keywords": ["orchestrate", "multi-agent fanout", "coordinate"]
     },
     {
       "command": "/swarm",
@@ -1051,11 +673,7 @@
       "description": "Multi-agent swarm supervisor & JSON contract dispatcher",
       "routing_domain": "orchestration",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "swarm",
-        "supervisor worker",
-        "parallel swarm"
-      ]
+      "trigger_keywords": ["swarm", "supervisor worker", "parallel swarm"]
     },
     {
       "command": "/strengthen-skills",
@@ -1064,11 +682,7 @@
       "description": "Skill hardening & Tribunal guardrail injector",
       "routing_domain": "orchestration",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "strengthen skills",
-        "harden skills",
-        "guardrails"
-      ]
+      "trigger_keywords": ["strengthen skills", "harden skills", "guardrails"]
     },
     {
       "command": "/ui-ux-pro-max",
@@ -1077,11 +691,7 @@
       "description": "Picasso design specification & 16-step UI engine",
       "routing_domain": "frontend",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "ui ux pro max",
-        "picasso ui",
-        "advanced frontend"
-      ]
+      "trigger_keywords": ["ui ux pro max", "picasso ui", "advanced frontend"]
     },
     {
       "command": "/refactor",
@@ -1090,11 +700,7 @@
       "description": "Dependency-safe structural code refactoring",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "refactor",
-        "clean code",
-        "structure"
-      ]
+      "trigger_keywords": ["refactor", "clean code", "structure"]
     },
     {
       "command": "/migrate",
@@ -1103,11 +709,7 @@
       "description": "Expand-and-contract database & framework migrations",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "migrate",
-        "upgrade framework",
-        "db migration"
-      ]
+      "trigger_keywords": ["migrate", "upgrade framework", "db migration"]
     },
     {
       "command": "/audit",
@@ -1116,11 +718,7 @@
       "description": "Full project health assessment & priority script audit",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "audit",
-        "health check",
-        "security scan"
-      ]
+      "trigger_keywords": ["audit", "health check", "security scan"]
     },
     {
       "command": "/fix",
@@ -1129,11 +727,7 @@
       "description": "Automated error resolution & lint diff preview",
       "routing_domain": "general",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "fix",
-        "autofix",
-        "lint fix"
-      ]
+      "trigger_keywords": ["fix", "autofix", "lint fix"]
     },
     {
       "command": "/changelog",
@@ -1142,11 +736,7 @@
       "description": "Conventional commit history to changelog compiler",
       "routing_domain": "general",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "changelog",
-        "release notes",
-        "git log"
-      ]
+      "trigger_keywords": ["changelog", "release notes", "git log"]
     },
     {
       "command": "/review-ai",
@@ -1155,11 +745,7 @@
       "description": "LLM integration & prompt injection defense audit",
       "routing_domain": "ai-llm",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "review ai",
-        "llm security",
-        "prompt injection"
-      ]
+      "trigger_keywords": ["review ai", "llm security", "prompt injection"]
     },
     {
       "command": "/pipeline",
@@ -1168,11 +754,7 @@
       "description": "Token-efficient 3-pass code generation pipeline",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "pipeline",
-        "3 pass generation",
-        "decoupled build"
-      ]
+      "trigger_keywords": ["pipeline", "3 pass generation", "decoupled build"]
     },
     {
       "command": "/super-prompt",
@@ -1181,11 +763,7 @@
       "description": "Zero-token local prompt compiler",
       "routing_domain": "ai-llm",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "super prompt",
-        "prompt compiler",
-        "compress prompt"
-      ]
+      "trigger_keywords": ["super prompt", "prompt compiler", "compress prompt"]
     },
     {
       "command": "/marathon",
@@ -1194,11 +772,7 @@
       "description": "Multi-session long-running agent harness",
       "routing_domain": "orchestration",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "marathon",
-        "long running agent",
-        "multi session harness"
-      ]
+      "trigger_keywords": ["marathon", "long running agent", "multi session harness"]
     },
     {
       "command": "/acf",
@@ -1207,11 +781,7 @@
       "description": "Agent Context Format spec distillation",
       "routing_domain": "ai-llm",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "acf",
-        "agent context format",
-        "distill spec"
-      ]
+      "trigger_keywords": ["acf", "agent context format", "distill spec"]
     },
     {
       "command": "/api-tester",
@@ -1220,11 +790,7 @@
       "description": "Multi-stage auth-aware API endpoint testing",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "api tester",
-        "endpoint test",
-        "crud test"
-      ]
+      "trigger_keywords": ["api tester", "endpoint test", "crud test"]
     },
     {
       "command": "/performance-benchmarker",
@@ -1233,11 +799,7 @@
       "description": "Evidence-based Core Web Vitals measurement",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "performance benchmarker",
-        "lighthouse",
-        "cwv test"
-      ]
+      "trigger_keywords": ["performance benchmarker", "lighthouse", "cwv test"]
     },
     {
       "command": "/minimal",
@@ -1246,12 +808,7 @@
       "description": "Minimal change governance & footprint analyzer",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "minimal",
-        "minimality",
-        "change budget",
-        "decision order"
-      ]
+      "trigger_keywords": ["minimal", "minimality", "change budget", "decision order"]
     },
     {
       "command": "/tribunal-cicd",
@@ -1260,11 +817,7 @@
       "description": "CI/CD pipeline & GitHub Actions Tribunal audit",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tribunal cicd",
-        "audit pipeline",
-        "github actions audit"
-      ]
+      "trigger_keywords": ["tribunal cicd", "audit pipeline", "github actions audit"]
     },
     {
       "command": "/fix-ci",
@@ -1273,12 +826,7 @@
       "description": "Automated CI failure diagnosis & log repair loop",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "fix ci",
-        "ci failure",
-        "runner error",
-        "pipeline fix"
-      ]
+      "trigger_keywords": ["fix ci", "ci failure", "runner error", "pipeline fix"]
     },
     {
       "command": "/skill-enhancement-engine",
@@ -1301,560 +849,322 @@
       "description": "Application of Disney's 12 Principles of Animation to modern web UI motion.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "animation",
-        "disney",
-        "motion",
-        "squash",
-        "stretch",
-        "ui"
-      ]
+      "trigger_keywords": ["animation", "disney", "motion", "squash", "stretch", "ui"]
     },
     {
       "name": "60fps-animation",
       "description": "Web animation performance guidance for avoiding layout thrashing and GPU compositor motion.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "60fps",
-        "animation",
-        "fps",
-        "performance",
-        "transform",
-        "opacity"
-      ]
+      "trigger_keywords": ["60fps", "animation", "fps", "performance", "transform", "opacity"]
     },
     {
       "name": "Knowledge Graph Analyzer",
       "description": "Understands architecture, blast radius, and dependencies with 27x Context Snapshots.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "knowledge graph",
-        "architecture",
-        "blast radius",
-        "dependencies"
-      ]
+      "trigger_keywords": ["knowledge graph", "architecture", "blast radius", "dependencies"]
     },
     {
       "name": "accessible-animation",
       "description": "Tiered reduced-motion patterns for CSS, GSAP, Framer Motion, and View Transitions.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "accessible animation",
-        "prefers-reduced-motion",
-        "a11y",
-        "wcag"
-      ]
+      "trigger_keywords": ["accessible animation", "prefers-reduced-motion", "a11y", "wcag"]
     },
     {
       "name": "adapt",
       "description": "Adapt designs across breakpoints, devices, platform constraints, and container queries.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "responsive",
-        "adapt",
-        "breakpoints",
-        "container queries",
-        "mobile"
-      ]
+      "trigger_keywords": ["responsive", "adapt", "breakpoints", "container queries", "mobile"]
     },
     {
       "name": "advanced-rag-pipelines",
       "description": "Production-grade Retrieval-Augmented Generation (RAG), hybrid search, and reranking.",
       "routing_domain": "ai-llm",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "rag",
-        "vector search",
-        "bm25",
-        "reranking",
-        "embeddings"
-      ]
+      "trigger_keywords": ["rag", "vector search", "bm25", "reranking", "embeddings"]
     },
     {
       "name": "agent-organizer",
       "description": "Master Agent orchestration framework, sub-agent coordination, and memory distillation.",
       "routing_domain": "orchestration",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "agent organizer",
-        "subagent",
-        "memory",
-        "coordination"
-      ]
+      "trigger_keywords": ["agent organizer", "subagent", "memory", "coordination"]
     },
     {
       "name": "agentic-patterns",
       "description": "AI agent design principles, agent loops, tool calling, and human-in-the-loop gates.",
       "routing_domain": "ai-llm",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "agentic",
-        "tool calling",
-        "agent loop",
-        "guardrails"
-      ]
+      "trigger_keywords": ["agentic", "tool calling", "agent loop", "guardrails"]
     },
     {
       "name": "ai-prompt-injection-defense",
       "description": "Prompt Injection defense strategies, XML framing, and LLM circuit breakers.",
       "routing_domain": "security",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "prompt injection",
-        "jailbreak",
-        "sanitization",
-        "xml framing"
-      ]
+      "trigger_keywords": ["prompt injection", "jailbreak", "sanitization", "xml framing"]
     },
     {
       "name": "animation-on-scroll",
       "description": "Intentional scroll-driven motion using modern CSS view-timeline or GSAP ScrollTrigger.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "scroll animation",
-        "scrolltrigger",
-        "timeline",
-        "parallax"
-      ]
+      "trigger_keywords": ["scroll animation", "scrolltrigger", "timeline", "parallax"]
     },
     {
       "name": "animation-systems",
       "description": "Systematize animation tokens across a full codebase for consistent motion design.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "animation system",
-        "tokens",
-        "easing",
-        "duration",
-        "motion"
-      ]
+      "trigger_keywords": ["animation system", "tokens", "easing", "duration", "motion"]
     },
     {
       "name": "antfu-conventions",
       "description": "Anthony Fu's coding conventions and project configuration patterns for TypeScript.",
       "routing_domain": "general",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "antfu",
-        "conventions",
-        "eslint",
-        "typescript"
-      ]
+      "trigger_keywords": ["antfu", "conventions", "eslint", "typescript"]
     },
     {
       "name": "api-patterns",
       "description": "REST, GraphQL, tRPC, gRPC selection, pagination, rate limiting, and OpenAPI docs.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "api",
-        "rest",
-        "graphql",
-        "trpc",
-        "openapi"
-      ]
+      "trigger_keywords": ["api", "rest", "graphql", "trpc", "openapi"]
     },
     {
       "name": "api-security-auditor",
       "description": "API security auditing, rate limiting, payload validation, IDOR, and mass assignment.",
       "routing_domain": "security",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "api security",
-        "idor",
-        "rate limit",
-        "payload validation"
-      ]
+      "trigger_keywords": ["api security", "idor", "rate limit", "payload validation"]
     },
     {
       "name": "app-builder",
       "description": "Main application building orchestrator for full-stack projects.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "app builder",
-        "full stack",
-        "scaffold",
-        "application"
-      ]
+      "trigger_keywords": ["app builder", "full stack", "scaffold", "application"]
     },
     {
       "name": "appflow-wireframe",
       "description": "Mermaid.js flowcharting, user journey mapping, and interaction matrices.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "wireframe",
-        "appflow",
-        "mermaid",
-        "flowchart",
-        "user journey"
-      ]
+      "trigger_keywords": ["wireframe", "appflow", "mermaid", "flowchart", "user journey"]
     },
     {
       "name": "apple-design",
       "description": "Apple HIG and Apple-inspired design patterns for web and mobile.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "apple design",
-        "hig",
-        "ios style",
-        "clean ui"
-      ]
+      "trigger_keywords": ["apple design", "hig", "ios style", "clean ui"]
     },
     {
       "name": "architecture",
       "description": "Software architecture mastery, hexagonal architecture, domain-driven design, and ADRs.",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "architecture",
-        "clean architecture",
-        "hexagonal",
-        "ddd",
-        "adr"
-      ]
+      "trigger_keywords": ["architecture", "clean architecture", "hexagonal", "ddd", "adr"]
     },
     {
       "name": "audit-and-fix",
       "description": "Accessibility auditing and remediation workflow for WCAG 2.2 AA compliance.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "audit fix",
-        "a11y audit",
-        "wcag remediation"
-      ]
+      "trigger_keywords": ["audit fix", "a11y audit", "wcag remediation"]
     },
     {
       "name": "authentication-best-practices",
       "description": "OAuth2, OpenID Connect, JWT, session management, and RBAC/ABAC.",
       "routing_domain": "security",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "auth",
-        "oauth2",
-        "jwt",
-        "session",
-        "rbac"
-      ]
+      "trigger_keywords": ["auth", "oauth2", "jwt", "session", "rbac"]
     },
     {
       "name": "backend-security-expert",
       "description": "Backend security auditing for Next Server Actions, Node APIs, and ORM injection.",
       "routing_domain": "security",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "backend security",
-        "server actions",
-        "orm injection",
-        "rbac"
-      ]
+      "trigger_keywords": ["backend security", "server actions", "orm injection", "rbac"]
     },
     {
       "name": "baseline-ui",
       "description": "Quickly deslop UI code by fixing spacing, hierarchy, typography, and contrast.",
       "routing_domain": "frontend",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "baseline ui",
-        "deslop",
-        "cleanup ui",
-        "spacing"
-      ]
+      "trigger_keywords": ["baseline ui", "deslop", "cleanup ui", "spacing"]
     },
     {
       "name": "bash-linux",
       "description": "Bash terminal mastery, shell scripting, piping, AWK, and ripgrep text pipelines.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "bash",
-        "linux",
-        "terminal",
-        "awk",
-        "shell script"
-      ]
+      "trigger_keywords": ["bash", "linux", "terminal", "awk", "shell script"]
     },
     {
       "name": "behavioral-modes",
       "description": "AI operational modes (brainstorm, implement, debug, review, teach, ship).",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "behavioral mode",
-        "operational mode",
-        "persona"
-      ]
+      "trigger_keywords": ["behavioral mode", "operational mode", "persona"]
     },
     {
       "name": "better-colors",
       "description": "OKLCH color space for web projects, palettes, contrast ratios, and Tailwind v4 themes.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "oklch",
-        "color palette",
-        "better colors",
-        "tailwind v4"
-      ]
+      "trigger_keywords": ["oklch", "color palette", "better colors", "tailwind v4"]
     },
     {
       "name": "better-typography",
       "description": "Advanced web typography scaling, font pairing, optical sizing, and OpenType features.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "typography",
-        "font pairing",
-        "optical sizing",
-        "tracking"
-      ]
+      "trigger_keywords": ["typography", "font pairing", "optical sizing", "tracking"]
     },
     {
       "name": "better-ui",
       "description": "Design engineering principles for micro-interactions, shadows, borders, and hover states.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "better ui",
-        "micro-interactions",
-        "shadows",
-        "borders"
-      ]
+      "trigger_keywords": ["better ui", "micro-interactions", "shadows", "borders"]
     },
     {
       "name": "bolder",
       "description": "Increase visual impact, punch, and personality for generic or bland interfaces.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "bolder",
-        "make it pop",
-        "punchy ui",
-        "character"
-      ]
+      "trigger_keywords": ["bolder", "make it pop", "punchy ui", "character"]
     },
     {
       "name": "brainstorming",
       "description": "Socratic ideation, architectural exploration, and tradeoff analysis.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "brainstorming",
-        "socratic",
-        "ideation",
-        "exploration"
-      ]
+      "trigger_keywords": ["brainstorming", "socratic", "ideation", "exploration"]
     },
     {
       "name": "browser-native-ai",
       "description": "Browser-native AI, ONNX Runtime Web, WebNN API acceleration, and WebAssembly.",
       "routing_domain": "ai-llm",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "browser native ai",
-        "onnx",
-        "webnn",
-        "wasm ai"
-      ]
+      "trigger_keywords": ["browser native ai", "onnx", "webnn", "wasm ai"]
     },
     {
       "name": "build-primitive",
       "description": "Build foundational unstyled accessible UI primitives (Dialog, Combobox, Accordion).",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "primitive",
-        "headless ui",
-        "dialog",
-        "combobox",
-        "aria"
-      ]
+      "trigger_keywords": ["primitive", "headless ui", "dialog", "combobox", "aria"]
     },
     {
       "name": "building-native-ui",
       "description": "Cross-platform Native UI (React Native / Expo), 60fps motion, and safe areas.",
       "routing_domain": "mobile",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "native ui",
-        "react native",
-        "expo router",
-        "reanimated"
-      ]
+      "trigger_keywords": ["native ui", "react native", "expo router", "reanimated"]
     },
     {
       "name": "cicd-pro",
       "description": "Production CI/CD pipelines, GitHub Actions, automated testing, and zero-downtime deploy.",
       "routing_domain": "devops",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "cicd",
-        "github actions",
-        "pipeline",
-        "zero downtime"
-      ]
+      "trigger_keywords": ["cicd", "github actions", "pipeline", "zero downtime"]
     },
     {
       "name": "clarify",
       "description": "Improve UX microcopy, label optimization, error messages, and cognitive clarity.",
       "routing_domain": "frontend",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "clarify",
-        "microcopy",
-        "labels",
-        "ux text"
-      ]
+      "trigger_keywords": ["clarify", "microcopy", "labels", "ux text"]
     },
     {
       "name": "clean-code",
       "description": "Clean code naming conventions, DRY/WET balance, SOLID principles, and refactoring.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "clean code",
-        "solid",
-        "dry",
-        "refactoring",
-        "naming"
-      ]
+      "trigger_keywords": ["clean code", "solid", "dry", "refactoring", "naming"]
     },
     {
       "name": "cloud-architect",
       "description": "Cloud infrastructure architecture, AWS, multi-region resilience, and cost optimization.",
       "routing_domain": "devops",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "cloud architect",
-        "aws",
-        "infrastructure",
-        "resilience"
-      ]
+      "trigger_keywords": ["cloud architect", "aws", "infrastructure", "resilience"]
     },
     {
       "name": "cobejs",
       "description": "Build hardware-accelerated 3D interactive animated globes and web orbs with Cobe WebGL.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "cobejs",
-        "3d globe",
-        "webgl globe",
-        "interactive orb"
-      ]
+      "trigger_keywords": ["cobejs", "3d globe", "webgl globe", "interactive orb"]
     },
     {
       "name": "code-review-checklist",
       "description": "Code review guidelines covering logic, security, style, and best practices.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "code review",
-        "checklist",
-        "review guidelines"
-      ]
+      "trigger_keywords": ["code review", "checklist", "review guidelines"]
     },
     {
       "name": "codebase-design",
       "description": "Designing deep modules with small interfaces and clean seams.",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "codebase design",
-        "deep modules",
-        "seams",
-        "interfaces"
-      ]
+      "trigger_keywords": ["codebase design", "deep modules", "seams", "interfaces"]
     },
     {
       "name": "colorize",
       "description": "Strategic, harmonious, accessible color systems and OKLCH palettes for flat interfaces.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "colorize",
-        "oklch color",
-        "accessible color",
-        "palette"
-      ]
+      "trigger_keywords": ["colorize", "oklch color", "accessible color", "palette"]
     },
     {
       "name": "compact-landing",
       "description": "Build compact, premium landing pages with quiet typography and high conversion flow.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "compact landing",
-        "hero section",
-        "conversion ui"
-      ]
+      "trigger_keywords": ["compact landing", "hero section", "conversion ui"]
     },
     {
       "name": "company-logos",
       "description": "Social proof rows, logo grids, customer carousels, and trust badges layout rules.",
       "routing_domain": "frontend",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "company logos",
-        "social proof",
-        "logo grid",
-        "trust badges"
-      ]
+      "trigger_keywords": ["company logos", "social proof", "logo grid", "trust badges"]
     },
     {
       "name": "config-validator",
       "description": "Validate tsconfig, eslint, prettier, and build tool configuration schemas.",
       "routing_domain": "devops",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "config validator",
-        "tsconfig",
-        "eslint config"
-      ]
+      "trigger_keywords": ["config validator", "tsconfig", "eslint config"]
     },
     {
       "name": "containerization-pro",
       "description": "Docker, multi-stage container builds, distroless images, and container security.",
       "routing_domain": "devops",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "docker",
-        "container",
-        "multistage build",
-        "distroless"
-      ]
+      "trigger_keywords": ["docker", "container", "multistage build", "distroless"]
     },
     {
       "name": "create-design-md",
       "description": "Create or update DESIGN.md with evidence-based tokens from codebases or sites.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "design md",
-        "design tokens",
-        "extract design system"
-      ]
+      "trigger_keywords": ["design md", "design tokens", "extract design system"]
     },
     {
       "name": "critique",
       "description": "Evaluate design quality with UX scoring, heuristic analysis, and persona usability checks.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "critique",
-        "ux scoring",
-        "design audit",
-        "usability"
-      ]
+      "trigger_keywords": ["critique", "ux scoring", "design audit", "usability"]
     },
     {
       "name": "csharp-developer",
@@ -1862,1464 +1172,889 @@
       "description": "C# 12 and .NET 8/9 specialist for ASP.NET Core, EF Core, and Blazor.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "csharp",
-        "dotnet",
-        "ef core",
-        "blazor"
-      ]
+      "trigger_keywords": ["csharp", "dotnet", "ef core", "blazor"]
     },
     {
       "name": "data-validation-schemas",
       "description": "Zod, Pydantic, Valibot, and TypeBox data validation patterns.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "zod",
-        "pydantic",
-        "valibot",
-        "schema validation"
-      ]
+      "trigger_keywords": ["zod", "pydantic", "valibot", "schema validation"]
     },
     {
       "name": "database-design",
       "description": "Relational schema design, normalization, indexing strategies, and ORM mapping.",
       "routing_domain": "database",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "database design",
-        "indexing",
-        "normalization",
-        "schema"
-      ]
+      "trigger_keywords": ["database design", "indexing", "normalization", "schema"]
     },
     {
       "name": "delight",
       "description": "Inject micro-moments of delight, tactile feedback, and playful UI interactions.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "delight",
-        "tactile feedback",
-        "confetti",
-        "micro delight"
-      ]
+      "trigger_keywords": ["delight", "tactile feedback", "confetti", "micro delight"]
     },
     {
       "name": "dependency-ladder",
       "description": "Framework for minimizing code complexity and enforcing 6 Rungs of the Dependency Ladder.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "dependency ladder",
-        "overengineering",
-        "keep it simple"
-      ]
+      "trigger_keywords": ["dependency ladder", "overengineering", "keep it simple"]
     },
     {
       "name": "deployment-procedures",
       "description": "Production deployment procedures, rollback baselines, and pre-flight validation.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "deploy procedure",
-        "rollback",
-        "pre-flight checks"
-      ]
+      "trigger_keywords": ["deploy procedure", "rollback", "pre-flight checks"]
     },
     {
       "name": "design-lab",
       "description": "Design laboratory for experimental UI patterns, layout exploration, and visual prototyping.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "design lab",
-        "experimental ui",
-        "prototyping"
-      ]
+      "trigger_keywords": ["design lab", "experimental ui", "prototyping"]
     },
     {
       "name": "diagnosing-bugs",
       "description": "Systematic bug diagnosis methodology, root cause isolation, and hypothesis testing.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "diagnosing bugs",
-        "root cause",
-        "hypothesis testing"
-      ]
+      "trigger_keywords": ["diagnosing bugs", "root cause", "hypothesis testing"]
     },
     {
       "name": "distill",
       "description": "Simplify noisy interfaces by removing non-essential visual and operational complexity.",
       "routing_domain": "frontend",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "distill",
-        "simplify ui",
-        "remove clutter"
-      ]
+      "trigger_keywords": ["distill", "simplify ui", "remove clutter"]
     },
     {
       "name": "documentation-templates",
       "description": "Documentation templates for READMEs, API docs, code comments, and architecture specs.",
       "routing_domain": "general",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "doc templates",
-        "readme template",
-        "api doc format"
-      ]
+      "trigger_keywords": ["doc templates", "readme template", "api doc format"]
     },
     {
       "name": "domain-modeling",
       "description": "Build domain models, ubiquitous language, entity relationships, and bounded contexts.",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "domain modeling",
-        "ubiquitous language",
-        "bounded context"
-      ]
+      "trigger_keywords": ["domain modeling", "ubiquitous language", "bounded context"]
     },
     {
       "name": "edge-computing",
       "description": "Cloudflare Workers, Vercel Edge Functions, Durable Objects, and low latency caching.",
       "routing_domain": "backend",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "edge computing",
-        "cloudflare workers",
-        "edge functions"
-      ]
+      "trigger_keywords": ["edge computing", "cloudflare workers", "edge functions"]
     },
     {
       "name": "emil-design-eng",
       "description": "Emil Kowalski inspired design engineering micro-interactions and motion polish.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "emil design",
-        "kowalski",
-        "micro-interactions",
-        "motion polish"
-      ]
+      "trigger_keywords": ["emil design", "kowalski", "micro-interactions", "motion polish"]
     },
     {
       "name": "error-resilience",
       "description": "Error handling strategies, circuit breakers, fallback states, and retry loops.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "error resilience",
-        "circuit breaker",
-        "retry loop",
-        "fallback"
-      ]
+      "trigger_keywords": ["error resilience", "circuit breaker", "retry loop", "fallback"]
     },
     {
       "name": "extract-design-system",
       "description": "Extract design tokens, color variables, and typography rules into a reusable system.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "extract design system",
-        "tokens",
-        "css variables"
-      ]
+      "trigger_keywords": ["extract design system", "tokens", "css variables"]
     },
     {
       "name": "fabel-protocol",
       "description": "Epistemic cognitive check loop and precision budget protocol.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "fabel protocol",
-        "epistemic check",
-        "precision budget"
-      ]
+      "trigger_keywords": ["fabel protocol", "epistemic check", "precision budget"]
     },
     {
       "name": "fixing-accessibility",
       "description": "Audit and fix HTML accessibility issues including ARIA labels and focus traps.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "fixing accessibility",
-        "a11y fix",
-        "aria labels",
-        "focus trap"
-      ]
+      "trigger_keywords": ["fixing accessibility", "a11y fix", "aria labels", "focus trap"]
     },
     {
       "name": "fixing-metadata",
       "description": "Audit and fix page metadata, titles, OpenGraph cards, canonical URLs, and JSON-LD.",
       "routing_domain": "frontend",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "fixing metadata",
-        "opengraph",
-        "seo meta",
-        "json-ld"
-      ]
+      "trigger_keywords": ["fixing metadata", "opengraph", "seo meta", "json-ld"]
     },
     {
       "name": "fixing-motion-performance",
       "description": "Audit and fix animation performance, layout thrashing, and compositor properties.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "motion perf fix",
-        "layout thrashing",
-        "compositor properties"
-      ]
+      "trigger_keywords": ["motion perf fix", "layout thrashing", "compositor properties"]
     },
     {
       "name": "framer-motion-expert",
       "description": "Framer Motion 12+ for React declarative component animations and layout transitions.",
       "routing_domain": "motion",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "framer motion",
-        "animatepresence",
-        "layout animation",
-        "useanimate"
-      ]
+      "trigger_keywords": ["framer motion", "animatepresence", "layout animation", "useanimate"]
     },
     {
       "name": "frontend-design",
       "description": "Design thinking for web UI, micro-interactions, typography, and CSS-first UI logic.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "frontend design",
-        "visual hierarchy",
-        "css first"
-      ]
+      "trigger_keywords": ["frontend design", "visual hierarchy", "css first"]
     },
     {
       "name": "frontend-security-expert",
       "description": "Frontend security auditing for React/Next.js UI, hydration poisoning, and XSS.",
       "routing_domain": "security",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "frontend security",
-        "xss",
-        "hydration poisoning",
-        "csp"
-      ]
+      "trigger_keywords": ["frontend security", "xss", "hydration poisoning", "csp"]
     },
     {
       "name": "game-design-expert",
       "description": "Game mechanics, core loops, game feel, spatial level design, and progression systems.",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "game design",
-        "game mechanics",
-        "game feel",
-        "level design"
-      ]
+      "trigger_keywords": ["game design", "game mechanics", "game feel", "level design"]
     },
     {
       "name": "game-engineering-expert",
       "description": "Game engine architecture, entity-component systems (ECS), physics, and loop optimization.",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "game engineering",
-        "ecs",
-        "physics engine",
-        "game loop"
-      ]
+      "trigger_keywords": ["game engineering", "ecs", "physics engine", "game loop"]
     },
     {
       "name": "generative-ui-expert",
       "description": "Vercel AI SDK 3.0+, React Server Components + LLMs, streaming UI elements.",
       "routing_domain": "ai-llm",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "generative ui",
-        "vercel ai sdk",
-        "streaming ui",
-        "tool calling"
-      ]
+      "trigger_keywords": ["generative ui", "vercel ai sdk", "streaming ui", "tool calling"]
     },
     {
       "name": "geo-fundamentals",
       "description": "Geospatial data handling, GeoJSON, Turf.js, Leaflet, and Mapbox integrations.",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "geo",
-        "geojson",
-        "mapbox",
-        "turfjs",
-        "maps"
-      ]
+      "trigger_keywords": ["geo", "geojson", "mapbox", "turfjs", "maps"]
     },
     {
       "name": "git-pro",
       "description": "Git mastery, interactive rebase, cherry-pick, bisect, reflog, and conventional commits.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "git",
-        "rebase",
-        "cherry pick",
-        "bisect",
-        "reflog"
-      ]
+      "trigger_keywords": ["git", "rebase", "cherry pick", "bisect", "reflog"]
     },
     {
       "name": "github-operations",
       "description": "GitHub Actions workflows, PR templates, issue automation, and release management.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "github operations",
-        "github actions",
-        "pr template"
-      ]
+      "trigger_keywords": ["github operations", "github actions", "pr template"]
     },
     {
       "name": "gpt-taste",
       "description": "High-agency UX/UI skill with strict layout variance and GSAP motion engineering.",
       "routing_domain": "frontend",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "gpt taste",
-        "superior ui",
-        "layout variance"
-      ]
+      "trigger_keywords": ["gpt taste", "superior ui", "layout variance"]
     },
     {
       "name": "gsap-core",
       "description": "GSAP Core animation engine, gsap.to, gsap.from, gsap.fromTo, and easing curves.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap core",
-        "gsap.to",
-        "gsap.from",
-        "easing"
-      ]
+      "trigger_keywords": ["gsap core", "gsap.to", "gsap.from", "easing"]
     },
     {
       "name": "gsap-frameworks",
       "description": "Integrating GSAP cleanly across Next.js, React, Vue, Svelte, and Nuxt framework contexts.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap frameworks",
-        "gsap react",
-        "gsap vue",
-        "usegsap"
-      ]
+      "trigger_keywords": ["gsap frameworks", "gsap react", "gsap vue", "usegsap"]
     },
     {
       "name": "gsap-performance",
       "description": "Official GSAP skill for performance — transform preference, batching, will-change.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap perf",
-        "transform",
-        "will-change",
-        "gpu compositor"
-      ]
+      "trigger_keywords": ["gsap perf", "transform", "will-change", "gpu compositor"]
     },
     {
       "name": "gsap-plugins",
       "description": "GSAP official plugins (Flip, MotionPath, Observer, ScrollTo, SplitText, TextPlugin).",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap plugins",
-        "flip plugin",
-        "splittext",
-        "observer"
-      ]
+      "trigger_keywords": ["gsap plugins", "flip plugin", "splittext", "observer"]
     },
     {
       "name": "gsap-react",
       "description": "Official GSAP skill for React — useGSAP hook, refs, gsap.context(), cleanup.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap react",
-        "usegsap",
-        "gsap context",
-        "react animation"
-      ]
+      "trigger_keywords": ["gsap react", "usegsap", "gsap context", "react animation"]
     },
     {
       "name": "gsap-scrolltrigger",
       "description": "GSAP ScrollTrigger plugin for scroll-driven animations and pinning.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "scrolltrigger",
-        "pinning",
-        "scroll animation",
-        "scrub"
-      ]
+      "trigger_keywords": ["scrolltrigger", "pinning", "scroll animation", "scrub"]
     },
     {
       "name": "gsap-timeline",
       "description": "Official GSAP skill for timelines — position parameter, nesting, and playback control.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap timeline",
-        "sequence animation",
-        "position parameter"
-      ]
+      "trigger_keywords": ["gsap timeline", "sequence animation", "position parameter"]
     },
     {
       "name": "gsap-utils",
       "description": "Official GSAP skill for gsap.utils — clamp, mapRange, normalize, interpolate, random.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap utils",
-        "clamp",
-        "maprange",
-        "interpolate"
-      ]
+      "trigger_keywords": ["gsap utils", "clamp", "maprange", "interpolate"]
     },
     {
       "name": "harden",
       "description": "Make interfaces production-resilient with empty states, loading skeletons, and i18n.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "harden ui",
-        "empty state",
-        "loading skeleton",
-        "i18n"
-      ]
+      "trigger_keywords": ["harden ui", "empty state", "loading skeleton", "i18n"]
     },
     {
       "name": "harness-protocol",
       "description": "Rules and guidelines for the Marathon long-running agent harness.",
       "routing_domain": "orchestration",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "harness protocol",
-        "marathon",
-        "long running agent"
-      ]
+      "trigger_keywords": ["harness protocol", "marathon", "long running agent"]
     },
     {
       "name": "i18n-localization",
       "description": "Internationalization and localization patterns (next-intl, i18next, react-intl).",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "i18n",
-        "localization",
-        "next-intl",
-        "i18next"
-      ]
+      "trigger_keywords": ["i18n", "localization", "next-intl", "i18next"]
     },
     {
       "name": "impeccable",
       "description": "Flagship design engineering skill for creating production-grade anti-generic UI.",
       "routing_domain": "frontend",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "impeccable",
-        "flagship ui",
-        "craftsmanship",
-        "anti-generic"
-      ]
+      "trigger_keywords": ["impeccable", "flagship ui", "craftsmanship", "anti-generic"]
     },
     {
       "name": "improve-codebase-architecture",
       "description": "Scans codebase for deepening opportunities and architectural bottlenecks.",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "improve architecture",
-        "architectural debt",
-        "coupling"
-      ]
+      "trigger_keywords": ["improve architecture", "architectural debt", "coupling"]
     },
     {
       "name": "improve-ui",
       "description": "Audit an existing product surface against design evidence and write actionable plans.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "improve ui",
-        "ui audit",
-        "interface cleanup"
-      ]
+      "trigger_keywords": ["improve ui", "ui audit", "interface cleanup"]
     },
     {
       "name": "intelligent-routing",
       "description": "Dynamic request routing and agent selection logic.",
       "routing_domain": "orchestration",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "intelligent routing",
-        "agent selection",
-        "router"
-      ]
+      "trigger_keywords": ["intelligent routing", "agent selection", "router"]
     },
     {
       "name": "interface-design",
       "description": "Interface design principles for intuitive and coherent user interfaces.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "interface design",
-        "ui layout",
-        "visual coherence"
-      ]
+      "trigger_keywords": ["interface design", "ui layout", "visual coherence"]
     },
     {
       "name": "knowledge-graph",
       "description": "Codebase risk blast radius analysis and dependency topology visualization.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "knowledge graph",
-        "risk blast radius",
-        "codebase map"
-      ]
+      "trigger_keywords": ["knowledge graph", "risk blast radius", "codebase map"]
     },
     {
       "name": "landing-page",
       "description": "High-converting landing page structure, hero section layouts, and feature grid pacing.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "landing page",
-        "hero section",
-        "cta hierarchy",
-        "conversion"
-      ]
+      "trigger_keywords": ["landing page", "hero section", "cta hierarchy", "conversion"]
     },
     {
       "name": "lint-and-validate",
       "description": "Linting and validation principles for code quality enforcement.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "lint validate",
-        "eslint",
-        "prettier",
-        "code style"
-      ]
+      "trigger_keywords": ["lint validate", "eslint", "prettier", "code style"]
     },
     {
       "name": "llm-engineering",
       "description": "Prompt engineering, RAG pipelines, fine-tuning, function calling, and structured outputs.",
       "routing_domain": "ai-llm",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "llm engineering",
-        "prompt engineering",
-        "structured output"
-      ]
+      "trigger_keywords": ["llm engineering", "prompt engineering", "structured output"]
     },
     {
       "name": "local-first",
       "description": "Local-first architecture, CRDTs, optimistic updates, and offline sync engines.",
       "routing_domain": "backend",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "local first",
-        "crdt",
-        "offline sync",
-        "indexeddb"
-      ]
+      "trigger_keywords": ["local first", "crdt", "offline sync", "indexeddb"]
     },
     {
       "name": "local-first-architecture",
       "description": "Local-first architecture guidance for instant web apps, IndexedDB sync engines, and CRDTs.",
       "routing_domain": "backend",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "local first architecture",
-        "instant UI",
-        "offline operation"
-      ]
+      "trigger_keywords": ["local first architecture", "instant UI", "offline operation"]
     },
     {
       "name": "lottie-animation",
       "description": "Lottie and dotLottie integration, playback control, hover triggers, and runtime theming.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "lottie",
-        "dotlottie",
-        "lottie animation",
-        "vector animation"
-      ]
+      "trigger_keywords": ["lottie", "dotlottie", "lottie animation", "vector animation"]
     },
     {
       "name": "marquee-loop",
       "description": "Hardware-accelerated continuous looping marquees for logo rows and testimonials.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "marquee",
-        "loop",
-        "continuous scroll",
-        "logo row"
-      ]
+      "trigger_keywords": ["marquee", "loop", "continuous scroll", "logo row"]
     },
     {
       "name": "masked-reveal",
       "description": "CSS clip-path, SVG masking, and layered entrance reveals for images and text.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "masked reveal",
-        "clip path",
-        "svg mask",
-        "entrance animation"
-      ]
+      "trigger_keywords": ["masked reveal", "clip path", "svg mask", "entrance animation"]
     },
     {
       "name": "mcp-builder",
       "description": "Build Model Context Protocol (MCP) servers and tool schemas.",
       "routing_domain": "ai-llm",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "mcp builder",
-        "model context protocol",
-        "mcp tool"
-      ]
+      "trigger_keywords": ["mcp builder", "model context protocol", "mcp tool"]
     },
     {
       "name": "micro-interaction",
       "description": "UI motion guidance for hover/press feedback, toggles, toasts, drawers, and modals.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "micro interaction",
-        "press feedback",
-        "toast animation"
-      ]
+      "trigger_keywords": ["micro interaction", "press feedback", "toast animation"]
     },
     {
       "name": "mobile-design",
       "description": "Mobile-first design for iOS, Android, touch interactions, haptics, and Reanimated 3.",
       "routing_domain": "mobile",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "mobile design",
-        "touch UI",
-        "haptics",
-        "reanimated 3"
-      ]
+      "trigger_keywords": ["mobile design", "touch UI", "haptics", "reanimated 3"]
     },
     {
       "name": "monorepo-management",
       "description": "Monorepo management using Turborepo, Nx, pnpm workspaces, and shared packages.",
       "routing_domain": "devops",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "monorepo",
-        "turborepo",
-        "pnpm workspace",
-        "nx"
-      ]
+      "trigger_keywords": ["monorepo", "turborepo", "pnpm workspace", "nx"]
     },
     {
       "name": "morphing-icons",
       "description": "Build morphing SVG icon components that transition smoothly between states.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "morphing icons",
-        "svg morphing",
-        "icon transition"
-      ]
+      "trigger_keywords": ["morphing icons", "svg morphing", "icon transition"]
     },
     {
       "name": "motion-engineering",
       "description": "Motion engineering mastery across Framer Motion, GSAP, WebGL, and CSS keyframes.",
       "routing_domain": "motion",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "motion engineering",
-        "animation strategy",
-        "framer vs gsap"
-      ]
+      "trigger_keywords": ["motion engineering", "animation strategy", "framer vs gsap"]
     },
     {
       "name": "nextjs-react-expert",
       "description": "Next.js 15+ App Router, Server Components, Server Actions, PPR, and middleware.",
       "routing_domain": "frontend",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "nextjs expert",
-        "app router",
-        "server actions",
-        "ppr"
-      ]
+      "trigger_keywords": ["nextjs expert", "app router", "server actions", "ppr"]
     },
     {
       "name": "nodejs-best-practices",
       "description": "Node.js production practices, async error handling, clustering, and event loop safety.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "nodejs",
-        "event loop",
-        "async await",
-        "clustering"
-      ]
+      "trigger_keywords": ["nodejs", "event loop", "async await", "clustering"]
     },
     {
       "name": "observability",
       "description": "Telemetry, OpenTelemetry, Prometheus metrics, structured JSON logging, and tracing.",
       "routing_domain": "devops",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "observability",
-        "opentelemetry",
-        "metrics",
-        "tracing",
-        "logging"
-      ]
+      "trigger_keywords": ["observability", "opentelemetry", "metrics", "tracing", "logging"]
     },
     {
       "name": "page-transition-animation",
       "description": "Page and route transition patterns using View Transitions API and Framer Motion.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "page transition",
-        "view transitions",
-        "route animation"
-      ]
+      "trigger_keywords": ["page transition", "view transitions", "route animation"]
     },
     {
       "name": "parallel-agents",
       "description": "Parallel processing coordination for multi-agent swarms and fan-out/fan-in processing.",
       "routing_domain": "orchestration",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "parallel agents",
-        "swarm fanout",
-        "race condition"
-      ]
+      "trigger_keywords": ["parallel agents", "swarm fanout", "race condition"]
     },
     {
       "name": "performance-profiling",
       "description": "CPU profiling, heap snapshot analysis, flame graphs, and memory leak isolation.",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "profiling",
-        "flamegraph",
-        "heap snapshot",
-        "cpu profile"
-      ]
+      "trigger_keywords": ["profiling", "flamegraph", "heap snapshot", "cpu profile"]
     },
     {
       "name": "plan-writing",
       "description": "Structure comprehensive implementation plans with verification criteria.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "plan writing",
-        "implementation plan",
-        "spec format"
-      ]
+      "trigger_keywords": ["plan writing", "implementation plan", "spec format"]
     },
     {
       "name": "platform-engineer",
       "description": "Platform engineering, internal developer platforms (IDP), Kubernetes, and IaC.",
       "routing_domain": "devops",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "platform engineer",
-        "idp",
-        "kubernetes",
-        "terraform"
-      ]
+      "trigger_keywords": ["platform engineer", "idp", "kubernetes", "terraform"]
     },
     {
       "name": "playwright-best-practices",
       "description": "Playwright End-to-End (E2E) testing mastery, resilient selectors, and network mocking.",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "playwright",
-        "e2e test",
-        "selectors",
-        "network mock"
-      ]
+      "trigger_keywords": ["playwright", "e2e test", "selectors", "network mock"]
     },
     {
       "name": "polish",
       "description": "Final production quality pass for spacing, alignment, visual rhythm, and dark mode.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "polish",
-        "visual rhythm",
-        "alignment",
-        "dark mode check"
-      ]
+      "trigger_keywords": ["polish", "visual rhythm", "alignment", "dark mode check"]
     },
     {
       "name": "powershell-windows",
       "description": "PowerShell and Windows environment automation, object piping, and ErrorActionPreference.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "powershell",
-        "windows script",
-        "psprovider",
-        "cmdlet"
-      ]
+      "trigger_keywords": ["powershell", "windows script", "psprovider", "cmdlet"]
     },
     {
       "name": "pricing-page",
       "description": "SaaS pricing table architecture, billing toggles, feature comparison matrices, and CTA highlight.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "pricing page",
-        "pricing table",
-        "billing toggle",
-        "saas tier"
-      ]
+      "trigger_keywords": ["pricing page", "pricing table", "billing toggle", "saas tier"]
     },
     {
       "name": "product-aware-heuristics",
       "description": "Product-category UX heuristics for SaaS dashboards, e-commerce, and mobile apps.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "product heuristics",
-        "saas ux",
-        "ecommerce ux"
-      ]
+      "trigger_keywords": ["product heuristics", "saas ux", "ecommerce ux"]
     },
     {
       "name": "progressive-blur",
       "description": "Smooth progressive backdrop blurs, depth overlays, and modern glassmorphism.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "progressive blur",
-        "glassmorphism",
-        "backdrop filter"
-      ]
+      "trigger_keywords": ["progressive blur", "glassmorphism", "backdrop filter"]
     },
     {
       "name": "project-idioms",
       "description": "Auto-evolved project-specific architectural idioms extracted from codebase decisions.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "project idioms",
-        "team culture",
-        "code conventions"
-      ]
+      "trigger_keywords": ["project idioms", "team culture", "code conventions"]
     },
     {
       "name": "python-patterns",
       "description": "Python framework selection, async patterns, type hints, and project structure.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "python patterns",
-        "typing",
-        "dataclasses",
-        "asyncio"
-      ]
+      "trigger_keywords": ["python patterns", "typing", "dataclasses", "asyncio"]
     },
     {
       "name": "python-pro",
       "description": "Python 3.12+ specialist, FastAPI, Pydantic v2, asyncio, modern types, and pytest.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "python pro",
-        "fastapi",
-        "pydantic",
-        "pytest"
-      ]
+      "trigger_keywords": ["python pro", "fastapi", "pydantic", "pytest"]
     },
     {
       "name": "quieter",
       "description": "Tone down overly loud, noisy, visually aggressive, or distracting designs.",
       "routing_domain": "frontend",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "quieter",
-        "tone down",
-        "reduce noise",
-        "minimalist"
-      ]
+      "trigger_keywords": ["quieter", "tone down", "reduce noise", "minimalist"]
     },
     {
       "name": "react-doctor",
       "description": "Scan React and Next.js applications for security, performance, re-render inefficiencies.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "react doctor",
-        "re-renders",
-        "react memory leak"
-      ]
+      "trigger_keywords": ["react doctor", "re-renders", "react memory leak"]
     },
     {
       "name": "react-specialist",
       "description": "React 19 specialist, use(), Server/Client Components, Zustand/Jotai, React Query.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "react specialist",
-        "use hook",
-        "react query",
-        "zustand"
-      ]
+      "trigger_keywords": ["react specialist", "use hook", "react query", "zustand"]
     },
     {
       "name": "readme-builder",
       "description": "Interactive README.md generation specialist with badges, installation, and usage.",
       "routing_domain": "general",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "readme builder",
-        "readme generator",
-        "project docs"
-      ]
+      "trigger_keywords": ["readme builder", "readme generator", "project docs"]
     },
     {
       "name": "realtime-patterns",
       "description": "Real-time communication patterns (WebSockets, SSE, WebRTC, Long Polling).",
       "routing_domain": "backend",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "realtime",
-        "websockets",
-        "sse",
-        "webrtc"
-      ]
+      "trigger_keywords": ["realtime", "websockets", "sse", "webrtc"]
     },
     {
       "name": "red-team-tactics",
       "description": "Red team tactics principles based on MITRE ATT&CK attack phases and detection evasion.",
       "routing_domain": "security",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "red team",
-        "mitre attack",
-        "evasion",
-        "penetration"
-      ]
+      "trigger_keywords": ["red team", "mitre attack", "evasion", "penetration"]
     },
     {
       "name": "redesign-skill",
       "description": "Audit and upgrade existing interfaces to premium visual quality while preserving logic.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "redesign",
-        "ui upgrade",
-        "visual enhancement"
-      ]
+      "trigger_keywords": ["redesign", "ui upgrade", "visual enhancement"]
     },
     {
       "name": "review-animations",
       "description": "Audit web animations for layout thrashing, 60fps performance, and accessibility.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "review animations",
-        "animation audit",
-        "motion performance"
-      ]
+      "trigger_keywords": ["review animations", "animation audit", "motion performance"]
     },
     {
       "name": "rust-pro",
       "description": "Master Rust 1.75+ with async Tokio, Axum framework, Serde, and systems programming.",
       "routing_domain": "backend",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "rust pro",
-        "tokio",
-        "axum",
-        "serde",
-        "systems"
-      ]
+      "trigger_keywords": ["rust pro", "tokio", "axum", "serde", "systems"]
     },
     {
       "name": "seo-fundamentals",
       "description": "SEO title tags, meta descriptions, OpenGraph, canonical URLs, and structured data.",
       "routing_domain": "frontend",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "seo fundamentals",
-        "meta tags",
-        "opengraph",
-        "sitemap"
-      ]
+      "trigger_keywords": ["seo fundamentals", "meta tags", "opengraph", "sitemap"]
     },
     {
       "name": "server-management",
       "description": "Production Linux administration, Nginx reverse proxy, UFW firewalls, SSH, systemd.",
       "routing_domain": "devops",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "server management",
-        "nginx",
-        "ufw",
-        "systemd",
-        "linux"
-      ]
+      "trigger_keywords": ["server management", "nginx", "ufw", "systemd", "linux"]
     },
     {
       "name": "shadcn-ui-expert",
       "description": "Shadcn UI component library customization and Tailwind integration.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "shadcn",
-        "shadcn ui",
-        "tailwind components"
-      ]
+      "trigger_keywords": ["shadcn", "shadcn ui", "tailwind components"]
     },
     {
       "name": "shape",
       "description": "Plan feature UX before writing code via structured Socratic design interviews.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "shape",
-        "ux planning",
-        "onboarding flow",
-        "design interview"
-      ]
+      "trigger_keywords": ["shape", "ux planning", "onboarding flow", "design interview"]
     },
     {
       "name": "skill-creator",
       "description": "Meta-agent specialized in expanding the framework by creating new SKILL.md files.",
       "routing_domain": "orchestration",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "skill creator",
-        "create skill",
-        "new skill md"
-      ]
+      "trigger_keywords": ["skill creator", "create skill", "new skill md"]
     },
     {
       "name": "soft-skill",
       "description": "High-end visual design guidance for premium typography, spacing, depth, and animation.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "soft skill",
-        "premium design",
-        "visual depth"
-      ]
+      "trigger_keywords": ["soft skill", "premium design", "visual depth"]
     },
     {
       "name": "sounds-on-the-web",
       "description": "Web Audio API procedural sound synthesis for tactile micro-interaction audio feedback.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "web audio",
-        "sound synthesis",
-        "micro-interaction audio"
-      ]
+      "trigger_keywords": ["web audio", "sound synthesis", "micro-interaction audio"]
     },
     {
       "name": "sql-pro",
       "description": "Advanced SQL query optimization, window functions, CTEs, indexing, and query plans.",
       "routing_domain": "database",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "sql pro",
-        "explain analyze",
-        "window functions",
-        "cte"
-      ]
+      "trigger_keywords": ["sql pro", "explain analyze", "window functions", "cte"]
     },
     {
       "name": "supabase-postgres-best-practices",
       "description": "Supabase & PostgreSQL row level security (RLS), edge functions, and performant schema.",
       "routing_domain": "database",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "supabase",
-        "postgres",
-        "rls",
-        "edge functions"
-      ]
+      "trigger_keywords": ["supabase", "postgres", "rls", "edge functions"]
     },
     {
       "name": "svg-animation",
       "description": "SVG stroke draw-on effects, path morphing, animated icons, and motion paths.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "svg animation",
-        "path morphing",
-        "stroke draw"
-      ]
+      "trigger_keywords": ["svg animation", "path morphing", "stroke draw"]
     },
     {
       "name": "swiftui-expert",
       "description": "SwiftUI 5+ for iOS/macOS layout, state management, animations, and Swift Concurrency.",
       "routing_domain": "mobile",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "swiftui",
-        "ios app",
-        "swift concurrency",
-        "macos"
-      ]
+      "trigger_keywords": ["swiftui", "ios app", "swift concurrency", "macos"]
     },
     {
       "name": "swiss-design",
       "description": "International Typographic Style (Swiss Design) strict grid, bold typographic contrast.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "swiss design",
-        "grid discipline",
-        "typographic contrast"
-      ]
+      "trigger_keywords": ["swiss design", "grid discipline", "typographic contrast"]
     },
     {
       "name": "system-design-pro",
       "description": "System design, distributed systems, caching, message queues, and load balancers.",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "system design pro",
-        "load balancer",
-        "redis cache",
-        "kafka"
-      ]
+      "trigger_keywords": ["system design pro", "load balancer", "redis cache", "kafka"]
     },
     {
       "name": "systematic-debugging",
       "description": "Systematic debugging framework, root-cause isolation, 4-phase methodology, trace logs.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "systematic debugging",
-        "root cause isolation",
-        "trace log"
-      ]
+      "trigger_keywords": ["systematic debugging", "root cause isolation", "trace log"]
     },
     {
       "name": "tailwind-patterns",
       "description": "Tailwind CSS v3/v4 design tokens, arbitrary values, plugin ecosystem, and dynamic themes.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tailwind patterns",
-        "tailwind v4",
-        "css utilities"
-      ]
+      "trigger_keywords": ["tailwind patterns", "tailwind v4", "css utilities"]
     },
     {
       "name": "taste-skill",
       "description": "Senior UI/UX frontend skill enforcing anti-slop design decisions, motion quality, micro-craft.",
       "routing_domain": "frontend",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "taste skill",
-        "anti-slop",
-        "micro craft",
-        "ui quality"
-      ]
+      "trigger_keywords": ["taste skill", "anti-slop", "micro craft", "ui quality"]
     },
     {
       "name": "tdd-workflow",
       "description": "Test-Driven Development (TDD) mastery, Red-Green-Refactor cycles, and behavioral tests.",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "tdd",
-        "test driven development",
-        "red green refactor"
-      ]
+      "trigger_keywords": ["tdd", "test driven development", "red green refactor"]
     },
     {
       "name": "test-result-analyzer",
       "description": "Ingests test logs and identifies root causes across failing test files with actionable fixes.",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "test result analyzer",
-        "test logs",
-        "failing tests"
-      ]
+      "trigger_keywords": ["test result analyzer", "test logs", "failing tests"]
     },
     {
       "name": "testing-patterns",
       "description": "Unit, integration, and E2E testing strategies across frontend and backend stacks.",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "testing patterns",
-        "unit testing",
-        "integration testing"
-      ]
+      "trigger_keywords": ["testing patterns", "unit testing", "integration testing"]
     },
     {
       "name": "thermo-nuclear-code-quality-review",
       "description": "Strict maintainability review for abstraction quality, giant files, and debt growth.",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "thermo nuclear review",
-        "giant file check",
-        "code debt"
-      ]
+      "trigger_keywords": ["thermo nuclear review", "giant file check", "code debt"]
     },
     {
       "name": "thinking-protocol",
       "description": "Structured thinking protocol for problem decomposition and systematic decision-making.",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "thinking protocol",
-        "problem decomposition",
-        "reasoning"
-      ]
+      "trigger_keywords": ["thinking protocol", "problem decomposition", "reasoning"]
     },
     {
       "name": "threejs-fundamentals",
       "description": "Three.js 3D graphics for web, scene setup, lighting, materials, geometries, and WebGL.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "threejs",
-        "webgl 3d",
-        "3d scene",
-        "lighting"
-      ]
+      "trigger_keywords": ["threejs", "webgl 3d", "3d scene", "lighting"]
     },
     {
       "name": "to-spring-or-not-to-spring",
       "description": "Audit physics-based spring animations vs duration-based cubic-bezier easing curves.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "spring animation",
-        "stiffness damping",
-        "cubic bezier"
-      ]
+      "trigger_keywords": ["spring animation", "stiffness damping", "cubic bezier"]
     },
     {
       "name": "transitions-dev",
       "description": "Production CSS transition patterns for cards, modals, dropdowns, panels, accordions.",
       "routing_domain": "motion",
       "routing_tier": "basic",
-      "trigger_keywords": [
-        "css transitions",
-        "modal transition",
-        "dropdown animation"
-      ]
+      "trigger_keywords": ["css transitions", "modal transition", "dropdown animation"]
     },
     {
       "name": "trend-researcher",
       "description": "Creative muse and design trend analyzer for modern web/mobile interfaces.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "trend researcher",
-        "design trends",
-        "ui inspiration"
-      ]
+      "trigger_keywords": ["trend researcher", "design trends", "ui inspiration"]
     },
     {
       "name": "typeset",
       "description": "Web typography scaling, font pairing, optical sizing, line height cadence, text wrap balance.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "typeset",
-        "typography scale",
-        "line height",
-        "text wrap"
-      ]
+      "trigger_keywords": ["typeset", "typography scale", "line height", "text wrap"]
     },
     {
       "name": "typescript-advanced",
       "description": "Advanced TypeScript types, conditional types, template literals, type guards, brand types.",
       "routing_domain": "general",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "advanced typescript",
-        "generics",
-        "conditional types",
-        "typeguard"
-      ]
+      "trigger_keywords": ["advanced typescript", "generics", "conditional types", "typeguard"]
     },
     {
       "name": "ui-reasoning-engine",
       "description": "UI reasoning engine for evaluating design decisions against visual hierarchy and spacing.",
       "routing_domain": "frontend",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "ui reasoning engine",
-        "visual hierarchy",
-        "spacing system"
-      ]
+      "trigger_keywords": ["ui reasoning engine", "visual hierarchy", "spacing system"]
     },
     {
       "name": "ui-skill-packs",
       "description": "Mandatory skill loading packs consolidating UI skills into 3 tiered units.",
       "routing_domain": "frontend",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "ui skill packs",
-        "skill loading pack",
-        "ui bundle"
-      ]
+      "trigger_keywords": ["ui skill packs", "skill loading pack", "ui bundle"]
     },
     {
       "name": "ui-skills-root",
       "description": "Master router skill for design engineering and UI craft.",
       "routing_domain": "frontend",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "ui skills root",
-        "design engineering",
-        "ui router"
-      ]
+      "trigger_keywords": ["ui skills root", "design engineering", "ui router"]
     },
     {
       "name": "ui-ux-pro-max",
       "description": "Plan and implement cutting-edge UI/UX with modular swarm architecture.",
       "routing_domain": "frontend",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "ui ux pro max",
-        "picasso ui",
-        "modular swarm ui"
-      ]
+      "trigger_keywords": ["ui ux pro max", "picasso ui", "modular swarm ui"]
     },
     {
       "name": "ui-ux-researcher",
       "description": "Expert auditor for accessibility, cognitive load, and premium design heuristics.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "ui ux researcher",
-        "cognitive load",
-        "heuristics audit"
-      ]
+      "trigger_keywords": ["ui ux researcher", "cognitive load", "heuristics audit"]
     },
     {
       "name": "vulnerability-scanner",
       "description": "Automated security vulnerability scanner for dependencies and code injection vectors.",
       "routing_domain": "security",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "vulnerability scanner",
-        "cve scan",
-        "security audit"
-      ]
+      "trigger_keywords": ["vulnerability scanner", "cve scan", "security audit"]
     },
     {
       "name": "vue-expert",
       "description": "Vue 3.5+ Composition API, script setup, reactive refs, Pinia, Vue Router 4, Nuxt 4.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "vue expert",
-        "vue 3",
-        "nuxt 4",
-        "pinia"
-      ]
+      "trigger_keywords": ["vue expert", "vue 3", "nuxt 4", "pinia"]
     },
     {
       "name": "web-accessibility-auditor",
       "description": "Comprehensive WCAG 2.2 AA accessibility auditor for web applications.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "web a11y auditor",
-        "wcag audit",
-        "accessibility report"
-      ]
+      "trigger_keywords": ["web a11y auditor", "wcag audit", "accessibility report"]
     },
     {
       "name": "web-design-guidelines",
       "description": "Review UI code for Next-Generation Web Interface Guidelines compliance.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "web design guidelines",
-        "ui guidelines",
-        "interface audit"
-      ]
+      "trigger_keywords": ["web design guidelines", "ui guidelines", "interface audit"]
     },
     {
       "name": "web-quality-audit",
       "description": "Lighthouse-style analysis across Performance, Accessibility, Best Practices, SEO.",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "web quality audit",
-        "lighthouse",
-        "seo audit"
-      ]
+      "trigger_keywords": ["web quality audit", "lighthouse", "seo audit"]
     },
     {
       "name": "webapp-testing",
       "description": "Full-stack web application testing, mock servers, fixtures, and CI configuration.",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "webapp testing",
-        "mock server",
-        "test fixtures"
-      ]
+      "trigger_keywords": ["webapp testing", "mock server", "test fixtures"]
     },
     {
       "name": "webgpu-performance",
       "description": "WebGPU API, WGSL compute shaders, explicit GPU memory, and browser tensor calculations.",
       "routing_domain": "motion",
       "routing_tier": "expert",
-      "trigger_keywords": [
-        "webgpu",
-        "wgsl",
-        "compute shaders",
-        "gpu memory"
-      ]
+      "trigger_keywords": ["webgpu", "wgsl", "compute shaders", "gpu memory"]
     },
     {
       "name": "whimsy-injector",
       "description": "Micro-delight generator for subtle animations, playful transitions, and tactile feedback.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "whimsy injector",
-        "playful transition",
-        "micro delight"
-      ]
+      "trigger_keywords": ["whimsy injector", "playful transition", "micro delight"]
     },
     {
       "name": "workflow-optimizer",
       "description": "Analyzes agent tool-calling patterns and task execution efficiency to suggest improvements.",
       "routing_domain": "orchestration",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "workflow optimizer",
-        "tool calling efficiency",
-        "agent performance"
-      ]
+      "trigger_keywords": ["workflow optimizer", "tool calling efficiency", "agent performance"]
     }
   ]
 }

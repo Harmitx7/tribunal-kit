@@ -1,0 +1,14 @@
+{
+  "skill_name": "framer-motion-expert",
+  "coverage_score": 1.0,
+  "specificity_score": 0.999638270430514,
+  "dedup_score": 0.10599999999999998,
+  "trap_density": 0.6826493295408371,
+  "recency_score": 1.0,
+  "section_depth": 0.875,
+  "composite_fitness": 0.7994750535172284,
+  "total_tokens_estimate": 3214,
+  "recommendations": [
+    "High duplication detected in domain 'motion'"
+  ]
+}

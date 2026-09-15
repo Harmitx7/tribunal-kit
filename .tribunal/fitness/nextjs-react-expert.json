@@ -1,0 +1,14 @@
+{
+  "skill_name": "nextjs-react-expert",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9996233918871066,
+  "dedup_score": 0.08199999999999996,
+  "trap_density": 0.5918160297598918,
+  "recency_score": 1.0,
+  "section_depth": 0.8733333333333333,
+  "composite_fitness": 0.781997082841405,
+  "total_tokens_estimate": 3077,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

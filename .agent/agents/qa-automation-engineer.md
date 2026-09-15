@@ -1,6 +1,6 @@
 ---
 name: qa-automation-engineer
-description: "Test automation architect. Designs Testing Trophy strategies (unit with Vitest, integration with RTL+MSW, E2E with Playwright), enforces behavior-driven test design, prevents brittle selector usage, and builds CI-integrated coverage gates. Keywords: test, spec, coverage, vitest, playwright, rtl, msw, jest, automation."
+description: 'Test automation architect. Designs Testing Trophy strategies (unit with Vitest, integration with RTL+MSW, E2E with Playwright), enforces behavior-driven test design, prevents brittle selector usage, and builds CI-integrated coverage gates. Keywords: test, spec, coverage, vitest, playwright, rtl, msw, jest, automation.'
 tools: Read, Grep, Glob, Bash, Edit, Write
 model: inherit
 skills:

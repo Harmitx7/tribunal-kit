@@ -1,0 +1,14 @@
+{
+  "skill_name": "soft-skill",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9983527180152748,
+  "dedup_score": 0.10199999999999998,
+  "trap_density": 0.384900074019245,
+  "recency_score": 1.0,
+  "section_depth": 0.65,
+  "composite_fitness": 0.7202055547059417,
+  "total_tokens_estimate": 1780,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

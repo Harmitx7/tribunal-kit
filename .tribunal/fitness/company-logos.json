@@ -1,0 +1,14 @@
+{
+  "skill_name": "company-logos",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9988028634251234,
+  "dedup_score": 0.08999999999999997,
+  "trap_density": 0.37670240509997105,
+  "recency_score": 1.0,
+  "section_depth": 0.65625,
+  "composite_fitness": 0.7182034334500202,
+  "total_tokens_estimate": 1827,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

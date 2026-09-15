@@ -1,0 +1,15 @@
+{
+  "skill_name": "tailwind-patterns",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9996430505353396,
+  "dedup_score": 0.08599999999999997,
+  "trap_density": 0.25900522806849247,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7516793943173419,
+  "total_tokens_estimate": 5368,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'meta'"
+  ]
+}

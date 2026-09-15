@@ -1,0 +1,14 @@
+{
+  "skill_name": "systematic-debugging",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9972436186380843,
+  "dedup_score": 0.08999999999999997,
+  "trap_density": 0.399391403575504,
+  "recency_score": 1.0,
+  "section_depth": 0.65,
+  "composite_fitness": 0.7203574342639425,
+  "total_tokens_estimate": 2783,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

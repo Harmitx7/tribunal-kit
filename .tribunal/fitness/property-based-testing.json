@@ -1,0 +1,14 @@
+{
+  "skill_name": "property-based-testing",
+  "coverage_score": 1.0,
+  "specificity_score": 0.998681740103064,
+  "dedup_score": 0.10999999999999999,
+  "trap_density": 0.386962345587141,
+  "recency_score": 1.0,
+  "section_depth": 0.61875,
+  "composite_fitness": 0.7170931998586839,
+  "total_tokens_estimate": 1804,
+  "recommendations": [
+    "High duplication detected in domain 'testing'"
+  ]
+}

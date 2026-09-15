@@ -105,9 +105,13 @@ function analyzeDist(distDir) {
       if (item.isDirectory()) {
         _walk(fpath);
       } else {
-        const size = fs.statSync(fpath).size;
-        total += size;
-        files.push([path.relative(distDir, fpath), size]);
+        try {
+          const size = fs.statSync(fpath).size;
+          total += size;
+          files.push([path.relative(distDir, fpath), size]);
+        } catch (e) {
+          if (e.code !== 'ENOENT') throw e;
+        }
       }
     }
   }

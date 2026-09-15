@@ -1,0 +1,14 @@
+{
+  "skill_name": "building-native-ui",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9992993801012846,
+  "dedup_score": 0.09799999999999998,
+  "trap_density": 0.6093366093366094,
+  "recency_score": 1.0,
+  "section_depth": 0.8708333333333333,
+  "composite_fitness": 0.7865853674207482,
+  "total_tokens_estimate": 2689,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

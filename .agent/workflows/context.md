@@ -29,13 +29,13 @@ Before generating context dossiers or inspecting workspace files, you MUST:
 
 ## When to Use /context
 
-| Scenario | Command Pattern | Output Generated |
-| :--- | :--- | :--- |
-| Single File Dragged into Chat | `/context <file_path>` | `docs/context/[name].context.md` (Flight Data HUD) |
-| Multi-File Pair Dragged into Chat | `/context <fileA> <fileB>` | `docs/context/[nameA]__[nameB].bridge.md` (Interface Bridge) |
-| Whole Project / Subsystem Folder | `/context <dir_path>` | `docs/context/[folder].context.md` (Subsystem Macro Map) |
-| Audit Vault Freshness | `/context --check` | Terminal report flagging Fresh vs Stale context |
-| Batch Vault Crawling | `/context <dir_path> --crawl` | Crawls entire directory and populates context vault |
+| Scenario                          | Command Pattern               | Output Generated                                             |
+| :-------------------------------- | :---------------------------- | :----------------------------------------------------------- |
+| Single File Dragged into Chat     | `/context <file_path>`        | `docs/context/[name].context.md` (Flight Data HUD)           |
+| Multi-File Pair Dragged into Chat | `/context <fileA> <fileB>`    | `docs/context/[nameA]__[nameB].bridge.md` (Interface Bridge) |
+| Whole Project / Subsystem Folder  | `/context <dir_path>`         | `docs/context/[folder].context.md` (Subsystem Macro Map)     |
+| Audit Vault Freshness             | `/context --check`            | Terminal report flagging Fresh vs Stale context              |
+| Batch Vault Crawling              | `/context <dir_path> --crawl` | Crawls entire directory and populates context vault          |
 
 ---
 
@@ -44,6 +44,7 @@ Before generating context dossiers or inspecting workspace files, you MUST:
 ### Step 1: Parse Arguments & Detect Mode
 
 Examine `$ARGUMENTS`:
+
 - If `$ARGUMENTS` contains `--check`:
   ```bash
   node scripts/context_compiler.js --check
@@ -84,6 +85,7 @@ When presenting the result in the AI IDE chat, format the response using the **F
 ### Step 3: Vault Sync
 
 Confirm that:
+
 1. Dossier was written to `docs/context/[target].context.md`.
 2. Master registry `docs/context/INDEX.md` was updated.
 3. If `--link` flag was passed, verify or add top-line comment `// @context docs/context/...` to the target file.

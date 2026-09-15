@@ -1,0 +1,14 @@
+{
+  "skill_name": "bash-linux",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9989587775818282,
+  "dedup_score": 0.07000000000000006,
+  "trap_density": 0.6327862368993474,
+  "recency_score": 1.0,
+  "section_depth": 0.7115384615384615,
+  "composite_fitness": 0.7619404602820369,
+  "total_tokens_estimate": 2664,
+  "recommendations": [
+    "High duplication detected in domain 'devops'"
+  ]
+}

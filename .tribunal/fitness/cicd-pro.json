@@ -1,0 +1,14 @@
+{
+  "skill_name": "cicd-pro",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9992819973796606,
+  "dedup_score": 0.07000000000000006,
+  "trap_density": 0.3272072858155642,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7594374923482667,
+  "total_tokens_estimate": 4759,
+  "recommendations": [
+    "High duplication detected in domain 'devops'"
+  ]
+}

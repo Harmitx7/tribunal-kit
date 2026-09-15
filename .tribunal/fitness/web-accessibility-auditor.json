@@ -1,0 +1,14 @@
+{
+  "skill_name": "web-accessibility-auditor",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9994159934368787,
+  "dedup_score": 0.09599999999999997,
+  "trap_density": 0.6817763036668509,
+  "recency_score": 1.0,
+  "section_depth": 0.8653846153846153,
+  "composite_fitness": 0.7963573365450957,
+  "total_tokens_estimate": 2862,
+  "recommendations": [
+    "High duplication detected in domain 'security'"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "skill_name": "git-pro",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9995099699768817,
+  "dedup_score": 0.07599999999999996,
+  "trap_density": 0.3240440699935191,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7599086044944041,
+  "total_tokens_estimate": 4022,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

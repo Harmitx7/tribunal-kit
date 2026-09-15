@@ -1,6 +1,10 @@
 'use strict';
 
-const { compileSuperPrompt, sanitizeUserInput, inferImpactTier } = require('../../.agent/scripts/prompt_compiler');
+const {
+  compileSuperPrompt,
+  sanitizeUserInput,
+  inferImpactTier,
+} = require('../../.agent/scripts/prompt_compiler');
 
 describe('prompt_compiler.js', () => {
   describe('compileSuperPrompt()', () => {

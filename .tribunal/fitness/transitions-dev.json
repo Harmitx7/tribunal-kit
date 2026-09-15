@@ -1,0 +1,14 @@
+{
+  "skill_name": "transitions-dev",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9995084770077775,
+  "dedup_score": 0.10199999999999998,
+  "trap_density": 0.39469974626444887,
+  "recency_score": 1.0,
+  "section_depth": 0.88125,
+  "composite_fitness": 0.7565941573412228,
+  "total_tokens_estimate": 1876,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "skill_name": "fixing-motion-performance",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9987627826030505,
+  "dedup_score": 0.124,
+  "trap_density": 0.42258481042375867,
+  "recency_score": 1.0,
+  "section_depth": 0.5727272727272728,
+  "composite_fitness": 0.7176493689932648,
+  "total_tokens_estimate": 2260,
+  "recommendations": [
+    "High duplication detected in domain 'motion'"
+  ]
+}

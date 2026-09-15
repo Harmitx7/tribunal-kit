@@ -1,0 +1,14 @@
+{
+  "skill_name": "compact-landing",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9982889327692336,
+  "dedup_score": 0.10399999999999998,
+  "trap_density": 0.3767569917403275,
+  "recency_score": 1.0,
+  "section_depth": 0.63125,
+  "composite_fitness": 0.7164588353148958,
+  "total_tokens_estimate": 1826,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

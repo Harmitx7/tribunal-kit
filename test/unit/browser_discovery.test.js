@@ -40,8 +40,12 @@ describe('Browser & Binary Discovery', () => {
   });
 
   test('correctly identifies browser type from binary path', () => {
-    expect(detectBrowserType('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe')).toBe('chrome');
-    expect(detectBrowserType('C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe')).toBe('edge');
+    expect(detectBrowserType('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe')).toBe(
+      'chrome',
+    );
+    expect(
+      detectBrowserType('C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'),
+    ).toBe('edge');
     expect(detectBrowserType('/usr/bin/chromium')).toBe('chromium');
   });
 });

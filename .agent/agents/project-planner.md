@@ -1,6 +1,6 @@
 ---
 name: project-planner
-description: "Strategic project planner. Analyzes requirements, identifies risks, decomposes goals into executable wave plans with dependency ordering, produces implementation_plan.md artifacts, and manages scope boundaries. Generates no code — only executable plans for human review. Keywords: plan, strategy, architecture, scope, requirements, roadmap, design."
+description: 'Strategic project planner. Analyzes requirements, identifies risks, decomposes goals into executable wave plans with dependency ordering, produces implementation_plan.md artifacts, and manages scope boundaries. Generates no code — only executable plans for human review. Keywords: plan, strategy, architecture, scope, requirements, roadmap, design.'
 tools: Read, Grep, Glob, Bash
 model: inherit
 skills:

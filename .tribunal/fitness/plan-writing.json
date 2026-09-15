@@ -1,0 +1,14 @@
+{
+  "skill_name": "plan-writing",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9985155402301911,
+  "dedup_score": 0.07000000000000006,
+  "trap_density": 0.4398546567221266,
+  "recency_score": 1.0,
+  "section_depth": 0.53125,
+  "composite_fitness": 0.7058688065543572,
+  "total_tokens_estimate": 2765,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

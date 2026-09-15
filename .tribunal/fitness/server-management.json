@@ -1,0 +1,14 @@
+{
+  "skill_name": "server-management",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9992811054165152,
+  "dedup_score": 0.07599999999999996,
+  "trap_density": 0.4427760130907691,
+  "recency_score": 1.0,
+  "section_depth": 0.9375,
+  "composite_fitness": 0.7682976230469183,
+  "total_tokens_estimate": 2738,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

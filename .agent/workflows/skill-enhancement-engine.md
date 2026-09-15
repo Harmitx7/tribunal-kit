@@ -75,14 +75,14 @@ node scripts/audit_skill_sdo.js
 
 ## Integration with Tribunal Reviewers
 
-| Domain | Mapped Active Reviewers |
-|:---|:---|
-| `frontend` | `frontend-reviewer` · `type-safety` · `ui-ux-auditor` · `complexity-reviewer` |
-| `motion` | `frontend-reviewer` · `motion-reviewer` · `ui-ux-auditor` |
-| `backend` | `logic-reviewer` · `security-auditor` · `api-architect` · `resilience-reviewer` |
-| `database` | `database-architect` · `sql-pro` · `security-auditor` · `schema-validator` |
-| `security` | `security-auditor` · `penetration-tester` · `backend-security-expert` |
-| `devops` | `pipeline-reviewer` · `devops-engineer` · `resilience-reviewer` |
-| `testing` | `test-engineer` · `qa-automation-engineer` · `logic-reviewer` |
-| `mobile` | `mobile-reviewer` · `frontend-reviewer` · `type-safety` |
-| `meta` | `orchestrator` · `agent-organizer` · `logic-reviewer` |
+| Domain     | Mapped Active Reviewers                                                         |
+| :--------- | :------------------------------------------------------------------------------ |
+| `frontend` | `frontend-reviewer` · `type-safety` · `ui-ux-auditor` · `complexity-reviewer`   |
+| `motion`   | `frontend-reviewer` · `motion-reviewer` · `ui-ux-auditor`                       |
+| `backend`  | `logic-reviewer` · `security-auditor` · `api-architect` · `resilience-reviewer` |
+| `database` | `database-architect` · `sql-pro` · `security-auditor` · `schema-validator`      |
+| `security` | `security-auditor` · `penetration-tester` · `backend-security-expert`           |
+| `devops`   | `pipeline-reviewer` · `devops-engineer` · `resilience-reviewer`                 |
+| `testing`  | `test-engineer` · `qa-automation-engineer` · `logic-reviewer`                   |
+| `mobile`   | `mobile-reviewer` · `frontend-reviewer` · `type-safety`                         |
+| `meta`     | `orchestrator` · `agent-organizer` · `logic-reviewer`                           |

@@ -1,0 +1,14 @@
+{
+  "skill_name": "marquee-loop",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9992805180270207,
+  "dedup_score": 0.10399999999999998,
+  "trap_density": 0.40768782760629013,
+  "recency_score": 1.0,
+  "section_depth": 0.76875,
+  "composite_fitness": 0.7419217777463477,
+  "total_tokens_estimate": 1824,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

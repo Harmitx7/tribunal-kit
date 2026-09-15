@@ -40,7 +40,10 @@ function findBinary(platform, ext, rustTarget) {
   const candidates = [
     path.join(ROOT, 'target', rustTarget, 'release', binaryName),
     path.join(ROOT, 'target', 'release', binaryName),
-    path.join(ROOT, `tribunal-core-${platform}-${rustTarget.includes('arm64') || rustTarget.includes('aarch64') ? 'arm64' : 'x64'}${ext}`),
+    path.join(
+      ROOT,
+      `tribunal-core-${platform}-${rustTarget.includes('arm64') || rustTarget.includes('aarch64') ? 'arm64' : 'x64'}${ext}`,
+    ),
   ];
 
   for (const cand of candidates) {

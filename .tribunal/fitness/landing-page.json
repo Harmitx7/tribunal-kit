@@ -1,0 +1,14 @@
+{
+  "skill_name": "landing-page",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9986233264143003,
+  "dedup_score": 0.09399999999999997,
+  "trap_density": 0.34080482369904314,
+  "recency_score": 1.0,
+  "section_depth": 0.6333333333333333,
+  "composite_fitness": 0.7099453888377164,
+  "total_tokens_estimate": 2019,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

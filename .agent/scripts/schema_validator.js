@@ -30,7 +30,8 @@ function detectOrm(projectRoot) {
 
     for (const item of items) {
       if (item.isDirectory() && !['node_modules', '.git'].includes(item.name)) {
-        if (searchFor(path.join(dir, item.name), patterns)) return true;
+        const subResult = searchFor(path.join(dir, item.name), patterns);
+        if (subResult) return subResult;
         if (item.name === 'migrations') {
           try {
             const mFiles = fs.readdirSync(path.join(dir, item.name));

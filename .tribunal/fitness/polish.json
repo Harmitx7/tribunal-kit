@@ -1,0 +1,14 @@
+{
+  "skill_name": "polish",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9984856301276398,
+  "dedup_score": 0.07999999999999996,
+  "trap_density": 0.3392484342379959,
+  "recency_score": 1.0,
+  "section_depth": 0.5625,
+  "composite_fitness": 0.6969593911612273,
+  "total_tokens_estimate": 2025,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

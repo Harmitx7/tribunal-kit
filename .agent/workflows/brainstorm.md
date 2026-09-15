@@ -35,6 +35,7 @@ Before generating options or conducting Socratic architectural exploration, you 
 ## Path Classification (Announce First)
 
 Before asking questions, classify the request path out loud so the user can override:
+
 - **Spike:** A quick feasibility probe ("is it possible...", "quick prototype"). Output is a recommendation; any code written is strictly throwaway.
 - **Bounded:** A well-scoped change to existing code in this repository (one small endpoint, a new flag). Present short design in chat and get explicit human approval before any implementation.
 - **Architectural:** New feature, new subsystem, or interface change. Full process: clarifying questions, 2-3 approaches, written spec committed to `docs/specs/YYYY-MM-DD-<topic>-design.md`, human approval gate, then `/plan-writing` or `/sdd`.

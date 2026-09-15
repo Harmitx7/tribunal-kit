@@ -1,0 +1,14 @@
+{
+  "skill_name": "thinking-protocol",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9976853699417352,
+  "dedup_score": 0.06800000000000006,
+  "trap_density": 0.44202652159129546,
+  "recency_score": 1.0,
+  "section_depth": 0.5285714285714286,
+  "composite_fitness": 0.7053267665127556,
+  "total_tokens_estimate": 1579,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

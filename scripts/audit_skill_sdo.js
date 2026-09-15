@@ -54,14 +54,16 @@ function auditSkills() {
     }
 
     const desc = fm.description;
-    const isTriggerFocused = desc.toLowerCase().includes('use when') || 
-                             desc.toLowerCase().includes('activate when') ||
-                             desc.toLowerCase().includes('when ');
+    const isTriggerFocused =
+      desc.toLowerCase().includes('use when') ||
+      desc.toLowerCase().includes('activate when') ||
+      desc.toLowerCase().includes('when ');
 
     if (!isTriggerFocused) {
       warnings.push({
         skill: dir,
-        issue: 'Description does not explicitly specify trigger condition (should start with "Use when...")',
+        issue:
+          'Description does not explicitly specify trigger condition (should start with "Use when...")',
         description: desc.slice(0, 80) + '...',
       });
     } else {

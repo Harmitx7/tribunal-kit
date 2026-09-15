@@ -254,7 +254,7 @@ fn compute_recency(content: &str) -> f64 {
                 let age_months = if year >= 2026 {
                     (2026u32.saturating_sub(year)) * 12 + 9u32.saturating_sub(month)
                 } else {
-                    (2026 - year) * 12 + 9
+                    (2026 - year) * 12 + 9 - month
                 };
                 return (1.0 - (age_months as f64 / 24.0)).max(0.0).min(1.0);
             }
@@ -297,20 +297,22 @@ pub fn score_skill(skill_path: &str) -> Result<String> {
         .unwrap_or("unknown")
         .to_string();
 
-    let body = extract_body(&content);
+    let report = score_skill_content(&skill_name, &content);
+    Ok(serde_json::to_string_pretty(&report)?)
+}
+
+pub fn score_skill_content(skill_name: &str, content: &str) -> FitnessReport {
+    let body = extract_body(content);
     let total_tokens = content.len() / 4;
 
     let (coverage_score, mut recommendations) = compute_coverage(body);
     let specificity_score = compute_specificity(body);
     let trap_density = compute_trap_density(body);
-    let recency_score = compute_recency(&content);
+    let recency_score = compute_recency(content);
     let section_depth = compute_section_depth(body);
 
-    // Dedup score defaults to 1.0 for single skill scoring
-    // (requires sibling context for proper computation)
     let dedup_score = 1.0;
 
-    // Add recommendations based on scores
     if specificity_score < 0.4 {
         recommendations.push("Low specificity: Add more concrete code examples and framework-specific patterns".to_string());
     }
@@ -324,7 +326,6 @@ pub fn score_skill(skill_path: &str) -> Result<String> {
         recommendations.push("Shallow sections: Expand sections with deeper technical content and code examples".to_string());
     }
 
-    // Composite weighted average
     let composite_fitness =
         0.25 * coverage_score
         + 0.20 * specificity_score
@@ -333,8 +334,8 @@ pub fn score_skill(skill_path: &str) -> Result<String> {
         + 0.10 * recency_score
         + 0.15 * section_depth;
 
-    let report = FitnessReport {
-        skill_name,
+    FitnessReport {
+        skill_name: skill_name.to_string(),
         coverage_score,
         specificity_score,
         dedup_score,
@@ -344,9 +345,7 @@ pub fn score_skill(skill_path: &str) -> Result<String> {
         composite_fitness,
         total_tokens_estimate: total_tokens,
         recommendations,
-    };
-
-    Ok(serde_json::to_string_pretty(&report)?)
+    }
 }
 
 pub fn score_all_skills(skills_dir: &str, repo_path: &str) -> Result<String> {

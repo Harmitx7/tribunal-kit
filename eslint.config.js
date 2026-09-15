@@ -1,13 +1,6 @@
 module.exports = [
   {
-    ignores: [
-      'dist/**',
-      '**/dist/**',
-      'node_modules/**',
-      'target/**',
-      'coverage/**',
-      'scratch/**',
-    ],
+    ignores: ['dist/**', '**/dist/**', 'node_modules/**', 'target/**', 'coverage/**', 'scratch/**'],
   },
   {
     files: ['**/*.js'],

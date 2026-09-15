@@ -1,0 +1,14 @@
+{
+  "skill_name": "architecture",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9993079792243872,
+  "dedup_score": 0.07799999999999996,
+  "trap_density": 0.5251641137855579,
+  "recency_score": 1.0,
+  "section_depth": 0.6794117647058824,
+  "composite_fitness": 0.7422479776185935,
+  "total_tokens_estimate": 3017,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

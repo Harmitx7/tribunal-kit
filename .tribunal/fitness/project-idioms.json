@@ -1,0 +1,14 @@
+{
+  "skill_name": "project-idioms",
+  "coverage_score": 1.0,
+  "specificity_score": 0.8739316185962661,
+  "dedup_score": 0.08399999999999996,
+  "trap_density": 0.33487892838742916,
+  "recency_score": 1.0,
+  "section_depth": 0.5708333333333333,
+  "composite_fitness": 0.6732431629773675,
+  "total_tokens_estimate": 2020,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

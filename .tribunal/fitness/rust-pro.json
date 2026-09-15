@@ -1,0 +1,14 @@
+{
+  "skill_name": "rust-pro",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9994802702594652,
+  "dedup_score": 0.08199999999999996,
+  "trap_density": 0.42145099557046406,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7754137033874626,
+  "total_tokens_estimate": 5958,
+  "recommendations": [
+    "High duplication detected in domain 'backend'"
+  ]
+}

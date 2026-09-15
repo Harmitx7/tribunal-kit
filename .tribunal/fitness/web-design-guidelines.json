@@ -1,0 +1,14 @@
+{
+  "skill_name": "web-design-guidelines",
+  "coverage_score": 1.0,
+  "specificity_score": 0.997690346847049,
+  "dedup_score": 0.11599999999999999,
+  "trap_density": 0.3468053888221956,
+  "recency_score": 1.0,
+  "section_depth": 0.49000000000000005,
+  "composite_fitness": 0.6924588776927392,
+  "total_tokens_estimate": 1983,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

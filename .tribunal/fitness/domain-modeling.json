@@ -1,0 +1,14 @@
+{
+  "skill_name": "domain-modeling",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9985304959534551,
+  "dedup_score": 0.11599999999999999,
+  "trap_density": 0.4093327875562832,
+  "recency_score": 1.0,
+  "section_depth": 0.7,
+  "composite_fitness": 0.7335060173241335,
+  "total_tokens_estimate": 1935,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

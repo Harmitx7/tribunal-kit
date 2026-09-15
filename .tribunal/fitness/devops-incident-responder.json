@@ -1,0 +1,14 @@
+{
+  "skill_name": "devops-incident-responder",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9982060810714459,
+  "dedup_score": 0.124,
+  "trap_density": 0.49550944564880767,
+  "recency_score": 1.0,
+  "section_depth": 0.625,
+  "composite_fitness": 0.7363176330616104,
+  "total_tokens_estimate": 2580,
+  "recommendations": [
+    "High duplication detected in domain 'devops'"
+  ]
+}

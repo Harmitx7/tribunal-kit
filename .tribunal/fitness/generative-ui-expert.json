@@ -1,0 +1,14 @@
+{
+  "skill_name": "generative-ui-expert",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9991514898117292,
+  "dedup_score": 0.09399999999999997,
+  "trap_density": 0.31481897908702494,
+  "recency_score": 1.0,
+  "section_depth": 0.6125,
+  "composite_fitness": 0.7030281448253997,
+  "total_tokens_estimate": 2348,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

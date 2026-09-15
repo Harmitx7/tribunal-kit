@@ -1,0 +1,14 @@
+{
+  "skill_name": "to-spring-or-not-to-spring",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9978048293753742,
+  "dedup_score": 0.14,
+  "trap_density": 0.5324813631522897,
+  "recency_score": 1.0,
+  "section_depth": 0.5166666666666667,
+  "composite_fitness": 0.7279331703479184,
+  "total_tokens_estimate": 1987,
+  "recommendations": [
+    "High duplication detected in domain 'motion'"
+  ]
+}

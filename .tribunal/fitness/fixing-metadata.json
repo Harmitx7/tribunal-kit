@@ -1,0 +1,14 @@
+{
+  "skill_name": "fixing-metadata",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9990548940702096,
+  "dedup_score": 0.11399999999999999,
+  "trap_density": 0.3237454862408168,
+  "recency_score": 1.0,
+  "section_depth": 0.8375,
+  "composite_fitness": 0.7410978017501645,
+  "total_tokens_estimate": 2114,
+  "recommendations": [
+    "High duplication detected in domain 'database'"
+  ]
+}

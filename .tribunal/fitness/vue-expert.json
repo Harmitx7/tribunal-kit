@@ -1,0 +1,14 @@
+{
+  "skill_name": "vue-expert",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9992974504446223,
+  "dedup_score": 0.05600000000000005,
+  "trap_density": 0.7071112896745682,
+  "recency_score": 1.0,
+  "section_depth": 0.94375,
+  "composite_fitness": 0.8058886835401096,
+  "total_tokens_estimate": 3218,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

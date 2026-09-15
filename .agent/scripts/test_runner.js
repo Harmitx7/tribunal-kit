@@ -167,9 +167,8 @@ function main() {
 
   if (['vitest', 'jest', 'mocha', 'npm-test'].includes(framework)) {
     if (framework === 'vitest') {
-      cmd = ['npx', 'vitest', 'run'];
+      cmd = watchFlag ? ['npx', 'vitest'] : ['npx', 'vitest', 'run'];
       if (coverageFlag) cmd.push('--coverage');
-      if (watchFlag) cmd = ['npx', 'vitest'];
       if (fileArg) cmd.push(fileArg);
     } else if (framework === 'jest') {
       cmd = ['npx', 'jest'];

@@ -82,7 +82,10 @@ function parseFrontmatter(content) {
         isList = false;
       }
     } else if (isList && trimmed.startsWith('-')) {
-      const item = trimmed.slice(1).trim().replace(/^['"]|['"]$/g, '');
+      const item = trimmed
+        .slice(1)
+        .trim()
+        .replace(/^['"]|['"]$/g, '');
       if (Array.isArray(meta[currentKey])) {
         meta[currentKey].push(item);
       }
@@ -117,11 +120,13 @@ function deduplicateAndCleanBody(body, skillName, description) {
   }
 
   // Cut off legacy trailing guardrail stacks
-  const footerMarkerRegex = /\n---\s*\n+(\*\*Slash command: `\/review`|## 🤖 LLM-Specific Traps|## 🏛️ Tribunal Integration|### ❌ Forbidden AI Tropes|## Pre-Flight Checklist|## VBC Protocol)[\s\S]*$/;
+  const footerMarkerRegex =
+    /\n---\s*\n+(\*\*Slash command: `\/review`|## 🤖 LLM-Specific Traps|## 🏛️ Tribunal Integration|### ❌ Forbidden AI Tropes|## Pre-Flight Checklist|## VBC Protocol)[\s\S]*$/;
   cleaned = cleaned.replace(footerMarkerRegex, '').trim();
 
   // Remove any remaining isolated duplicate VBC blocks (H2 or H3)
-  const isolatedVbcRegex = /(##|###)\s+🛑?\s*Verification-Before-Completion \(VBC\) Protocol[\s\S]*?(?=\n## |\n---|\n# |$)/g;
+  const isolatedVbcRegex =
+    /(##|###)\s+🛑?\s*Verification-Before-Completion \(VBC\) Protocol[\s\S]*?(?=\n## |\n---|\n# |$)/g;
   cleaned = cleaned.replace(isolatedVbcRegex, '');
 
   // Remove trailing horizontal rules or whitespace
@@ -130,9 +135,12 @@ function deduplicateAndCleanBody(body, skillName, description) {
   // 3. Ensure Activation Boundaries section exists near the top
   if (!cleaned.includes('Activation Boundaries') && !cleaned.includes('Activate when:')) {
     const activationBlock = `\n\n## Activation Boundaries\n\n- **Activate when:** Operating in tasks requiring ${description || skillName}.\n- **DO NOT activate when:** The task falls strictly outside ${skillName} domain or belongs to a different dedicated specialist.\n`;
-    
+
     if (cleaned.includes('## Mandatory Pre-Flight Context Inspection')) {
-      cleaned = cleaned.replace(/(## Mandatory Pre-Flight Context Inspection[\s\S]*?(?=\n## |\n# |\n---|$))/, `$1${activationBlock}`);
+      cleaned = cleaned.replace(
+        /(## Mandatory Pre-Flight Context Inspection[\s\S]*?(?=\n## |\n# |\n---|$))/,
+        `$1${activationBlock}`,
+      );
     } else {
       cleaned = cleaned.replace(/^(#[^\n]+\n+)/, `$1${activationBlock}\n`);
     }
@@ -159,7 +167,7 @@ function processSkill(skillDirName) {
     return { name: skillDirName, error: 'Missing frontmatter' };
   }
 
-  const desc = meta ? (meta.description || '') : '';
+  const desc = meta ? meta.description || '' : '';
   const newBody = deduplicateAndCleanBody(body, skillDirName, desc);
 
   // Rebuild frontmatter with version: 4.0.0 and canonical scripts-binding
@@ -171,12 +179,14 @@ function processSkill(skillDirName) {
     updatedFrontmatter += '\nversion: 4.0.0';
   }
   if (!updatedFrontmatter.includes('scripts-binding:')) {
-    updatedFrontmatter += '\nscripts-binding:\n  - .agent/scripts/lint_runner.js\n  - .agent/scripts/verify_all.js';
+    updatedFrontmatter +=
+      '\nscripts-binding:\n  - .agent/scripts/lint_runner.js\n  - .agent/scripts/verify_all.js';
   }
 
   const newContent = `---\n${updatedFrontmatter.trim()}\n---\n\n${newBody}\n`;
 
-  const vbcMatches = (newContent.match(/Verification-Before-Completion \(VBC\) Protocol/g) || []).length;
+  const vbcMatches = (newContent.match(/Verification-Before-Completion \(VBC\) Protocol/g) || [])
+    .length;
   const trapsMatches = (newContent.match(/LLM-Specific Traps/g) || []).length;
   const isDuplicated = vbcMatches > 1 || trapsMatches > 1;
 
@@ -196,14 +206,16 @@ function processSkill(skillDirName) {
     isDuplicated,
     modified,
     vbcMatches,
-    trapsMatches
+    trapsMatches,
   };
 }
 
 function main() {
   console.log(`━━━ Tribunal Kit Skill Modernizer ━━━━━━━━━━━━━━━━━━━━━`);
   console.log(`Target: ${SKILLS_DIR}`);
-  console.log(`Mode:   ${FIX ? 'FIX (Overwriting files)' : DRY_RUN ? 'DRY-RUN (Simulated)' : 'VALIDATE (Read-only)'}`);
+  console.log(
+    `Mode:   ${FIX ? 'FIX (Overwriting files)' : DRY_RUN ? 'DRY-RUN (Simulated)' : 'VALIDATE (Read-only)'}`,
+  );
   if (SYNC_TO_ROOT) console.log(`Sync:   Enabled -> ${ROOT_SKILLS_DIR}`);
   console.log();
 
@@ -245,7 +257,9 @@ function main() {
 
   console.log();
   if (!FIX && totalModified > 0) {
-    console.log(`💡 Run with --fix to apply cleanups and V4 schema across all ${totalModified} skills.`);
+    console.log(
+      `💡 Run with --fix to apply cleanups and V4 schema across all ${totalModified} skills.`,
+    );
   } else if (FIX) {
     console.log(`✅ Successfully modernized and deduplicated skills to V4 schema!`);
   }

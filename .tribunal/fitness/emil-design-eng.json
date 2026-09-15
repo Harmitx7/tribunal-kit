@@ -1,0 +1,15 @@
+{
+  "skill_name": "emil-design-eng",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9985461168538607,
+  "dedup_score": 0.06000000000000005,
+  "trap_density": 0.22142735479475384,
+  "recency_score": 1.0,
+  "section_depth": 0.7541666666666667,
+  "composite_fitness": 0.7050483265899853,
+  "total_tokens_estimate": 3092,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'frontend'"
+  ]
+}

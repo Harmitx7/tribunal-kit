@@ -1,0 +1,14 @@
+{
+  "skill_name": "knowledge-graph",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9988502124221452,
+  "dedup_score": 0.08999999999999997,
+  "trap_density": 0.34238200048911716,
+  "recency_score": 1.0,
+  "section_depth": 0.5318181818181819,
+  "composite_fitness": 0.6944000698305239,
+  "total_tokens_estimate": 2172,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

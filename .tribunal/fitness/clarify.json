@@ -1,0 +1,14 @@
+{
+  "skill_name": "clarify",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9982391062166338,
+  "dedup_score": 0.07399999999999995,
+  "trap_density": 0.7122507122507122,
+  "recency_score": 1.0,
+  "section_depth": 0.6625,
+  "composite_fitness": 0.7669604280809336,
+  "total_tokens_estimate": 1856,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

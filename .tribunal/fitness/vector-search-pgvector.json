@@ -1,0 +1,14 @@
+{
+  "skill_name": "vector-search-pgvector",
+  "coverage_score": 1.0,
+  "specificity_score": 0.999079847460489,
+  "dedup_score": 0.15800000000000003,
+  "trap_density": 0.3401805573727594,
+  "recency_score": 1.0,
+  "section_depth": 0.6611111111111111,
+  "composite_fitness": 0.7237097197646783,
+  "total_tokens_estimate": 2033,
+  "recommendations": [
+    "High duplication detected in domain 'database'"
+  ]
+}

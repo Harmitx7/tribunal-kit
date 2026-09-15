@@ -1,0 +1,14 @@
+{
+  "skill_name": "pricing-page",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9982530571499875,
+  "dedup_score": 0.134,
+  "trap_density": 0.36728351462070913,
+  "recency_score": 1.0,
+  "section_depth": 0.61875,
+  "composite_fitness": 0.7176556386231038,
+  "total_tokens_estimate": 1876,
+  "recommendations": [
+    "High duplication detected in domain 'devops'"
+  ]
+}

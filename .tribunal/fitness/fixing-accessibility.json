@@ -1,0 +1,14 @@
+{
+  "skill_name": "fixing-accessibility",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9990708640963905,
+  "dedup_score": 0.11399999999999999,
+  "trap_density": 0.351288056206089,
+  "recency_score": 1.0,
+  "section_depth": 0.6799999999999999,
+  "composite_fitness": 0.7216073812501914,
+  "total_tokens_estimate": 2688,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

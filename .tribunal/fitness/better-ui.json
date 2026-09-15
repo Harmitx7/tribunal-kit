@@ -1,0 +1,14 @@
+{
+  "skill_name": "better-ui",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9993188852860814,
+  "dedup_score": 0.08999999999999997,
+  "trap_density": 0.44667783361250696,
+  "recency_score": 1.0,
+  "section_depth": 0.625,
+  "composite_fitness": 0.7241154520990923,
+  "total_tokens_estimate": 2811,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

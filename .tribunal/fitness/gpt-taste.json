@@ -1,0 +1,14 @@
+{
+  "skill_name": "gpt-taste",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9983387642962112,
+  "dedup_score": 0.10999999999999999,
+  "trap_density": 0.3794512551079977,
+  "recency_score": 1.0,
+  "section_depth": 0.63125,
+  "composite_fitness": 0.7177729411254419,
+  "total_tokens_estimate": 1813,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

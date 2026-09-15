@@ -1,0 +1,14 @@
+{
+  "skill_name": "performance-profiling",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9995083063976593,
+  "dedup_score": 0.11399999999999999,
+  "trap_density": 0.5030181086519114,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7924543775773186,
+  "total_tokens_estimate": 3153,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

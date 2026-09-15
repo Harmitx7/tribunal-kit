@@ -35,14 +35,14 @@ Before generating, refactoring, or reviewing code in the `accessible-animation` 
 
 Execute all non-trivial tasks through this 7-pass cognitive loop:
 
-| Pass | Phase | Core Action |
-|:---|:---|:---|
-| **Pass 1** | **Understand** | Deconstruct the user's explicit objective, implicit requirements, and platform constraints. |
-| **Pass 2** | **Plan** | Decompose the task into smallest logical steps; map dependencies and required tool calls. |
-| **Pass 3** | **Execute** | Implement the solution with production-grade craft, zero placeholders, and strict typing. |
-| **Pass 4** | **Verify** | Run linters, unit tests, or compiler checks to validate structural correctness. |
-| **Pass 5** | **Attack** | Perform an adversarial review searching for edge-case failures, race conditions, and traps. |
-| **Pass 6** | **Improve** | Eliminate discovered friction, optimize performance, and harden error boundaries. |
+| Pass       | Phase            | Core Action                                                                                  |
+| :--------- | :--------------- | :------------------------------------------------------------------------------------------- |
+| **Pass 1** | **Understand**   | Deconstruct the user's explicit objective, implicit requirements, and platform constraints.  |
+| **Pass 2** | **Plan**         | Decompose the task into smallest logical steps; map dependencies and required tool calls.    |
+| **Pass 3** | **Execute**      | Implement the solution with production-grade craft, zero placeholders, and strict typing.    |
+| **Pass 4** | **Verify**       | Run linters, unit tests, or compiler checks to validate structural correctness.              |
+| **Pass 5** | **Attack**       | Perform an adversarial review searching for edge-case failures, race conditions, and traps.  |
+| **Pass 6** | **Improve**      | Eliminate discovered friction, optimize performance, and harden error boundaries.            |
 | **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. |
 
 ---
@@ -53,12 +53,9 @@ Motion in digital interfaces elevates feedback and delight, but for users with v
 
 ---
 
-
 ---
 
-
 ---
-
 
 ---
 
@@ -66,13 +63,13 @@ Motion in digital interfaces elevates feedback and delight, but for users with v
 
 ### 1. The Vestibular Trigger Substitution Matrix
 
-| Disorienting Trigger | Vestibular Hazard | Accessible Compliant Substitution |
-|:---|:---|:---|
-| **Full-Page Parallax** | Severe nausea, spatial imbalance | Static layout positioning with subtle content opacity reveal |
-| **Multi-Axis 3D Rotation** | Visual vertigo, disorientation | 2D elevation shadow transition or subtle border glow |
-| **Rapid Zoom / Scale (>1.2x)** | Depth perception distortion | Gentle scale (1.0 to 1.02x) or immediate 150ms opacity cross-fade |
-| **Infinite Spinning Spinners** | Cognitive fatigue, dizziness | Pulsing opacity indicator or static step progress bar |
-| **Off-Canvas Fly-In Drawer** | Visual lurching across viewport | Immediate opacity dissolve (`0` to `1` over 120ms) |
+| Disorienting Trigger           | Vestibular Hazard                | Accessible Compliant Substitution                                 |
+| :----------------------------- | :------------------------------- | :---------------------------------------------------------------- |
+| **Full-Page Parallax**         | Severe nausea, spatial imbalance | Static layout positioning with subtle content opacity reveal      |
+| **Multi-Axis 3D Rotation**     | Visual vertigo, disorientation   | 2D elevation shadow transition or subtle border glow              |
+| **Rapid Zoom / Scale (>1.2x)** | Depth perception distortion      | Gentle scale (1.0 to 1.02x) or immediate 150ms opacity cross-fade |
+| **Infinite Spinning Spinners** | Cognitive fatigue, dizziness     | Pulsing opacity indicator or static step progress bar             |
+| **Off-Canvas Fly-In Drawer**   | Visual lurching across viewport  | Immediate opacity dissolve (`0` to `1` over 120ms)                |
 
 ---
 
@@ -212,7 +209,7 @@ export function setupAccessibleScrollMotion(targetElement: HTMLElement) {
           start: 'top 85%',
           toggleActions: 'play none none reverse',
         },
-      }
+      },
     );
   });
 
@@ -224,23 +221,23 @@ export function setupAccessibleScrollMotion(targetElement: HTMLElement) {
 
 ## 🚨 Edge-Case & Failure Mode Matrix
 
-| Scenario | Risk | Mitigation Strategy |
-|:---|:---|:---|
-| **Empty or Null Inputs** | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers |
-| **Network Timeout / Latency** | Hanging operations or duplicate side-effects | Implement bounded abort controllers, exponential backoff, and idempotency keys |
-| **Concurrency / Race Conditions** | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls |
-| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection | Validate boundary payloads with Zod/Pydantic schemas prior to execution |
-| **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
+| Scenario                               | Risk                                                 | Mitigation Strategy                                                             |
+| :------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **Empty or Null Inputs**               | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers   |
+| **Network Timeout / Latency**          | Hanging operations or duplicate side-effects         | Implement bounded abort controllers, exponential backoff, and idempotency keys  |
+| **Concurrency / Race Conditions**      | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls          |
+| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection      | Validate boundary payloads with Zod/Pydantic schemas prior to execution         |
+| **Resource / Memory Saturation**       | OOM errors, frame drops, or memory leaks             | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
 
 ---
 
 ## 🤖 LLM-Specific Traps Table
 
-| Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
-|:---|:---|:---|
-| **The Instant Pop Trap** | Conditionally unmounting elements without animated interpolation | Use AnimatePresence or coordinate morphs with continuous geometry |
-| **Layout Thrashing** | Animating width, height, top, or left inside animation loops | Animate composite-only transform (translate3d, scale) and opacity |
-| **Sluggish Duration** | Setting micro-interaction transitions to 600ms+ causing interface lag | Cap interactive feedback at 160ms–240ms with snappy ease-out curves |
+| Anti-Pattern             | What AI Commonly Does Wrong                                           | What Is Actually Correct                                            |
+| :----------------------- | :-------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| **The Instant Pop Trap** | Conditionally unmounting elements without animated interpolation      | Use AnimatePresence or coordinate morphs with continuous geometry   |
+| **Layout Thrashing**     | Animating width, height, top, or left inside animation loops          | Animate composite-only transform (translate3d, scale) and opacity   |
+| **Sluggish Duration**    | Setting micro-interaction transitions to 600ms+ causing interface lag | Cap interactive feedback at 160ms–240ms with snappy ease-out curves |
 
 ---
 
@@ -262,5 +259,6 @@ export function setupAccessibleScrollMotion(targetElement: HTMLElement) {
 ### 🛑 Verification-Before-Completion (VBC) Protocol
 
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.

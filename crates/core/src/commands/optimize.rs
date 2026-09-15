@@ -81,45 +81,33 @@ pub fn optimize_skill_step(
     budget: u32,
 ) -> Result<String> {
     let path = Path::new(skill_path);
-    let mut skill_content = if path.exists() {
+    let skill_name = path.parent()
+        .and_then(|p| p.file_name())
+        .and_then(|n| n.to_str())
+        .unwrap_or("unknown");
+
+    let base_skill_content = if path.exists() {
         fs::read_to_string(path)
             .with_context(|| format!("Failed to read skill file: {}", skill_path))?
     } else {
         String::new()
     };
 
-    let mut edits: Vec<PatchEdit> = serde_json::from_str(edits_json)
+    let edits: Vec<PatchEdit> = serde_json::from_str(edits_json)
         .with_context(|| "Failed to parse edits JSON")?;
 
-    // ── Rank Edits ──
-    // 1. Failure-driven patches take priority
-    // 2. High support count takes priority
-    edits.sort_by(|a, b| {
-        let a_is_fail = a.source_type.as_deref() == Some("failure");
-        let b_is_fail = b.source_type.as_deref() == Some("failure");
-        if a_is_fail != b_is_fail {
-            return b_is_fail.cmp(&a_is_fail);
-        }
-        let a_support = a.support_count.unwrap_or(1);
-        let b_support = b.support_count.unwrap_or(1);
-        b_support.cmp(&a_support)
-    });
-
-    let active_edits = edits.into_iter().take(budget as usize);
-
-    // ── Find Slow Update Protected Region ──
     let slow_start_marker = "<!-- SLOW_UPDATE_START -->";
     let slow_end_marker = "<!-- SLOW_UPDATE_END -->";
 
     let (slow_start, slow_end) = match (
-        skill_content.find(slow_start_marker),
-        skill_content.find(slow_end_marker),
+        base_skill_content.find(slow_start_marker),
+        base_skill_content.find(slow_end_marker),
     ) {
         (Some(start), Some(end)) if start < end => (Some(start), Some(end + slow_end_marker.len())),
         _ => (None, None),
     };
 
-    let is_in_protected_region = |target_pos: usize| -> bool {
+    let is_in_protected_region = |_content: &str, target_pos: usize| -> bool {
         if let (Some(start), Some(end)) = (slow_start, slow_end) {
             target_pos >= start && target_pos < end
         } else {
@@ -127,97 +115,112 @@ pub fn optimize_skill_step(
         }
     };
 
-    let mut applied_count = 0;
-    let mut reports = Vec::new();
-
-    for edit in active_edits {
+    // Helper to apply a single edit
+    let apply_edit = |base: &str, edit: &PatchEdit| -> Option<String> {
         let op = edit.op.as_str();
+        let mut new_content = base.to_string();
         match op {
             "append" => {
-                if let Some(content) = edit.content {
-                    if is_duplicate(&content, &skill_content, 0.8) {
-                        reports.push(format!("skip: append duplicate content"));
-                        continue;
+                if let Some(content) = &edit.content {
+                    if is_duplicate(content, base, 0.8) {
+                        return None;
                     }
-                    if !skill_content.ends_with('\n') && !skill_content.is_empty() {
-                        skill_content.push('\n');
+                    if !new_content.ends_with('\n') && !new_content.is_empty() {
+                        new_content.push('\n');
                     }
-                    skill_content.push_str(&content);
-                    skill_content.push('\n');
-                    applied_count += 1;
-                    reports.push(format!("applied: append content"));
+                    new_content.push_str(content);
+                    new_content.push('\n');
+                    return Some(new_content);
                 }
             }
             "delete" => {
-                if let Some(target) = edit.target {
-                    if let Some(pos) = skill_content.find(&target) {
-                        if is_in_protected_region(pos) {
-                            reports.push(format!("skip: delete target is inside protected region"));
-                            continue;
-                        }
-                        skill_content = skill_content.replace(&target, "");
-                        applied_count += 1;
-                        reports.push(format!("applied: deleted target"));
-                    } else {
-                        reports.push(format!("skip: delete target not found"));
+                if let Some(target) = &edit.target {
+                    if let Some(pos) = new_content.find(target) {
+                        if is_in_protected_region(base, pos) { return None; }
+                        return Some(new_content.replace(target, ""));
                     }
                 }
             }
             "replace" => {
-                if let (Some(target), Some(content)) = (edit.target, edit.content) {
-                    if let Some(pos) = skill_content.find(&target) {
-                        if is_in_protected_region(pos) {
-                            reports.push(format!("skip: replace target is inside protected region"));
-                            continue;
-                        }
-                        skill_content = skill_content.replace(&target, &content);
-                        applied_count += 1;
-                        reports.push(format!("applied: replaced target"));
-                    } else {
-                        reports.push(format!("skip: replace target not found"));
+                if let (Some(target), Some(content)) = (&edit.target, &edit.content) {
+                    if let Some(pos) = new_content.find(target) {
+                        if is_in_protected_region(base, pos) { return None; }
+                        return Some(new_content.replace(target, content));
                     }
                 }
             }
             "insert_after" => {
-                if let (Some(target), Some(content)) = (edit.target, edit.content) {
-                    if let Some(pos) = skill_content.find(&target) {
-                        if is_in_protected_region(pos) {
-                            reports.push(format!("skip: insert_after target is inside protected region"));
-                            continue;
-                        }
+                if let (Some(target), Some(content)) = (&edit.target, &edit.content) {
+                    if let Some(pos) = new_content.find(target) {
+                        if is_in_protected_region(base, pos) { return None; }
                         let insert_pos = pos + target.len();
                         let mut next_skill = String::new();
-                        next_skill.push_str(&skill_content[..insert_pos]);
-                        if !content.starts_with('\n') {
-                            next_skill.push('\n');
-                        }
-                        next_skill.push_str(&content);
-                        if !content.ends_with('\n') {
-                            next_skill.push('\n');
-                        }
-                        next_skill.push_str(&skill_content[insert_pos..]);
-                        skill_content = next_skill;
-                        applied_count += 1;
-                        reports.push(format!("applied: inserted content after target"));
-                    } else {
-                        reports.push(format!("skip: insert_after target not found"));
+                        next_skill.push_str(&new_content[..insert_pos]);
+                        if !content.starts_with('\n') { next_skill.push('\n'); }
+                        next_skill.push_str(content);
+                        if !content.ends_with('\n') { next_skill.push('\n'); }
+                        next_skill.push_str(&new_content[insert_pos..]);
+                        return Some(next_skill);
                     }
                 }
             }
-            _ => {
-                reports.push(format!("skip: unknown operation {}", op));
+            _ => {}
+        }
+        None
+    };
+
+    // ── Genetic Tournament Selection ──
+    // Evaluate all candidates
+    let mut candidates: Vec<(f64, String, PatchEdit)> = Vec::new();
+    for edit in edits {
+        if let Some(mutated_content) = apply_edit(&base_skill_content, &edit) {
+            let report = crate::commands::fitness_scorer::score_skill_content(skill_name, &mutated_content);
+            candidates.push((report.composite_fitness, mutated_content, edit));
+        }
+    }
+
+    // Sort by composite fitness descending
+    candidates.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
+
+    let mut applied_count = 0;
+    let mut reports = Vec::new();
+    let mut final_content = base_skill_content.clone();
+
+    // Greedily apply top N mutations (if budget allows, though usually they are conflicting so we just take the best one)
+    // To support budget > 1 properly, we should re-evaluate, but for simplicity we'll just apply the absolute best candidate.
+    // If budget > 1, we iteratively apply the best edit if it still cleanly applies.
+    let mut current_fitness = crate::commands::fitness_scorer::score_skill_content(skill_name, &final_content).composite_fitness;
+
+    for (candidate_fitness, _mutated, edit) in candidates.into_iter().take(budget as usize) {
+        if candidate_fitness > current_fitness {
+            // Re-apply to current final_content to ensure it still works
+            if let Some(next_content) = apply_edit(&final_content, &edit) {
+                let next_fitness = crate::commands::fitness_scorer::score_skill_content(skill_name, &next_content).composite_fitness;
+                if next_fitness > current_fitness {
+                    final_content = next_content;
+                    current_fitness = next_fitness;
+                    applied_count += 1;
+                    reports.push(format!("applied: {} (fitness: {:.3})", edit.op, current_fitness));
+                } else {
+                    reports.push(format!("skip: {} (did not improve fitness after prior edits)", edit.op));
+                }
+            } else {
+                reports.push(format!("skip: {} (failed to apply cleanly)", edit.op));
             }
+        } else {
+            reports.push(format!("skip: {} (fitness {:.3} <= current {:.3})", edit.op, candidate_fitness, current_fitness));
         }
     }
 
     if applied_count > 0 {
-        fs::write(path, &skill_content)
+        fs::write(path, &final_content)
             .with_context(|| format!("Failed to write updated skill file to {}", skill_path))?;
     }
 
     let report_json = serde_json::json!({
         "applied_count": applied_count,
         "reports": reports,
+        "final_fitness": current_fitness,
         "success": true
     });
 

@@ -1,0 +1,14 @@
+{
+  "skill_name": "frontend-security-expert",
+  "coverage_score": 1.0,
+  "specificity_score": 0.998872384064212,
+  "dedup_score": 0.10999999999999999,
+  "trap_density": 0.5620723362658847,
+  "recency_score": 1.0,
+  "section_depth": 0.4291666666666667,
+  "composite_fitness": 0.7149603272527251,
+  "total_tokens_estimate": 2178,
+  "recommendations": [
+    "High duplication detected in domain 'frontend'"
+  ]
+}

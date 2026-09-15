@@ -1,0 +1,14 @@
+{
+  "skill_name": "webgpu-performance",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9985677685148729,
+  "dedup_score": 0.07599999999999996,
+  "trap_density": 0.32852282060307403,
+  "recency_score": 1.0,
+  "section_depth": 0.5625,
+  "composite_fitness": 0.6947669767934357,
+  "total_tokens_estimate": 2253,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

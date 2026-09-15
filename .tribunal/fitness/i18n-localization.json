@@ -1,0 +1,14 @@
+{
+  "skill_name": "i18n-localization",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9991514349598806,
+  "dedup_score": 0.07599999999999996,
+  "trap_density": 0.6357952739217971,
+  "recency_score": 1.0,
+  "section_depth": 0.7541666666666667,
+  "composite_fitness": 0.7697245780802456,
+  "total_tokens_estimate": 2515,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

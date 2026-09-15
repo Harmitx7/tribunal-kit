@@ -1,0 +1,14 @@
+{
+  "skill_name": "motion-engineering",
+  "coverage_score": 1.0,
+  "specificity_score": 0.966149132781207,
+  "dedup_score": 0.11599999999999999,
+  "trap_density": 0.43591979075850046,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7760177951700165,
+  "total_tokens_estimate": 3587,
+  "recommendations": [
+    "High duplication detected in domain 'motion'"
+  ]
+}

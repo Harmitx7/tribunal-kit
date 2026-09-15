@@ -1,0 +1,15 @@
+{
+  "skill_name": "diagnosing-bugs",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9960774470136602,
+  "dedup_score": 0.09599999999999997,
+  "trap_density": 0.24844720496894412,
+  "recency_score": 1.0,
+  "section_depth": 0.7714285714285715,
+  "composite_fitness": 0.7165968558623592,
+  "total_tokens_estimate": 3560,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'meta'"
+  ]
+}

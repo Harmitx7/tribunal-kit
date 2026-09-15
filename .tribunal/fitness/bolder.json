@@ -1,0 +1,14 @@
+{
+  "skill_name": "bolder",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9984739989050069,
+  "dedup_score": 0.08399999999999996,
+  "trap_density": 0.3517791909078609,
+  "recency_score": 1.0,
+  "section_depth": 0.625,
+  "composite_fitness": 0.7088116784171805,
+  "total_tokens_estimate": 1959,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * skill_enhancement_engine.js — State-of-the-Art Skill Enhancement Engine
- * 
+ *
  * Transforms SKILL.md definitions into autonomous, production-grade execution engines.
  * Implements the 18-section architectural framework:
  * 1. Objective Layer & High-Impact Mission
@@ -56,14 +56,40 @@ function getSkillDomain(skillName) {
   for (const [domain, list] of Object.entries(domainRoutes)) {
     if (list.includes(skillName)) return domain;
   }
-  if (skillName.includes('anim') || skillName.includes('motion') || skillName.includes('gsap')) return 'motion';
-  if (skillName.includes('react') || skillName.includes('ui') || skillName.includes('css') || skillName.includes('design')) return 'frontend';
-  if (skillName.includes('sql') || skillName.includes('db') || skillName.includes('data')) return 'database';
-  if (skillName.includes('security') || skillName.includes('audit') || skillName.includes('vulnerab')) return 'security';
+  if (skillName.includes('anim') || skillName.includes('motion') || skillName.includes('gsap'))
+    return 'motion';
+  if (
+    skillName.includes('react') ||
+    skillName.includes('ui') ||
+    skillName.includes('css') ||
+    skillName.includes('design')
+  )
+    return 'frontend';
+  if (skillName.includes('sql') || skillName.includes('db') || skillName.includes('data'))
+    return 'database';
+  if (
+    skillName.includes('security') ||
+    skillName.includes('audit') ||
+    skillName.includes('vulnerab')
+  )
+    return 'security';
   if (skillName.includes('test') || skillName.includes('qa')) return 'testing';
-  if (skillName.includes('devops') || skillName.includes('ci') || skillName.includes('cloud') || skillName.includes('bash')) return 'devops';
-  if (skillName.includes('mobile') || skillName.includes('swift') || skillName.includes('expo')) return 'mobile';
-  if (skillName.includes('api') || skillName.includes('python') || skillName.includes('rust') || skillName.includes('backend')) return 'backend';
+  if (
+    skillName.includes('devops') ||
+    skillName.includes('ci') ||
+    skillName.includes('cloud') ||
+    skillName.includes('bash')
+  )
+    return 'devops';
+  if (skillName.includes('mobile') || skillName.includes('swift') || skillName.includes('expo'))
+    return 'mobile';
+  if (
+    skillName.includes('api') ||
+    skillName.includes('python') ||
+    skillName.includes('rust') ||
+    skillName.includes('backend')
+  )
+    return 'backend';
   return 'meta';
 }
 
@@ -147,49 +173,157 @@ const DOMAIN_PREFLIGHT = {
 
 const DOMAIN_TRAPS = {
   frontend: [
-    { trope: 'Uncontrolled Re-render Loop', bad: 'Mutating state inside render bodies or omitting hook dependencies', good: 'Wrap effects with explicit deps and isolate reactive derivations in useMemo' },
-    { trope: 'Accessibility Neglect', bad: 'Interactive <div> without role="button", tabIndex, or onKeyDown', good: 'Use semantic <button> or provide ARIA role, keyboard handlers, and focus ring' },
-    { trope: 'Layout Shift Flash', bad: 'Images/dynamic content without aspect-ratio or explicit dimensions', good: 'Enforce aspect-ratio or skeleton placeholders to guarantee zero CLS' },
+    {
+      trope: 'Uncontrolled Re-render Loop',
+      bad: 'Mutating state inside render bodies or omitting hook dependencies',
+      good: 'Wrap effects with explicit deps and isolate reactive derivations in useMemo',
+    },
+    {
+      trope: 'Accessibility Neglect',
+      bad: 'Interactive <div> without role="button", tabIndex, or onKeyDown',
+      good: 'Use semantic <button> or provide ARIA role, keyboard handlers, and focus ring',
+    },
+    {
+      trope: 'Layout Shift Flash',
+      bad: 'Images/dynamic content without aspect-ratio or explicit dimensions',
+      good: 'Enforce aspect-ratio or skeleton placeholders to guarantee zero CLS',
+    },
   ],
   motion: [
-    { trope: 'The Instant Pop Trap', bad: 'Conditionally unmounting elements without animated interpolation', good: 'Use AnimatePresence or coordinate morphs with continuous geometry' },
-    { trope: 'Layout Thrashing', bad: 'Animating width, height, top, or left inside animation loops', good: 'Animate composite-only transform (translate3d, scale) and opacity' },
-    { trope: 'Sluggish Duration', bad: 'Setting micro-interaction transitions to 600ms+ causing interface lag', good: 'Cap interactive feedback at 160ms–240ms with snappy ease-out curves' },
+    {
+      trope: 'The Instant Pop Trap',
+      bad: 'Conditionally unmounting elements without animated interpolation',
+      good: 'Use AnimatePresence or coordinate morphs with continuous geometry',
+    },
+    {
+      trope: 'Layout Thrashing',
+      bad: 'Animating width, height, top, or left inside animation loops',
+      good: 'Animate composite-only transform (translate3d, scale) and opacity',
+    },
+    {
+      trope: 'Sluggish Duration',
+      bad: 'Setting micro-interaction transitions to 600ms+ causing interface lag',
+      good: 'Cap interactive feedback at 160ms–240ms with snappy ease-out curves',
+    },
   ],
   backend: [
-    { trope: 'Unchecked Payload Cast', bad: 'Casting request bodies to TypeScript types without runtime schema validation', good: 'Parse request payloads through Zod/Pydantic schemas before business logic' },
-    { trope: 'Silent Error Swallowing', bad: 'Catching errors with empty catch blocks or logging without rethrowing', good: 'Propagate structured errors with status codes and contextual stack traces' },
-    { trope: 'Unparameterized Query', bad: 'Concatenating user inputs into SQL/Prisma query strings', good: 'Always use parameterized bindings or type-safe ORM query builders' },
+    {
+      trope: 'Unchecked Payload Cast',
+      bad: 'Casting request bodies to TypeScript types without runtime schema validation',
+      good: 'Parse request payloads through Zod/Pydantic schemas before business logic',
+    },
+    {
+      trope: 'Silent Error Swallowing',
+      bad: 'Catching errors with empty catch blocks or logging without rethrowing',
+      good: 'Propagate structured errors with status codes and contextual stack traces',
+    },
+    {
+      trope: 'Unparameterized Query',
+      bad: 'Concatenating user inputs into SQL/Prisma query strings',
+      good: 'Always use parameterized bindings or type-safe ORM query builders',
+    },
   ],
   database: [
-    { trope: 'Full Table Scan Blindspot', bad: 'Querying high-cardinality tables without index coverage', good: 'Verify query plans with EXPLAIN ANALYZE and add composite B-Tree indexes' },
-    { trope: 'Non-Atomic Batch Mutation', bad: 'Executing multiple related DB writes sequentially without transaction wrapper', good: 'Wrap multi-table updates in an atomic transaction with automatic rollback' },
-    { trope: 'Destructive Schema Migration', bad: 'Dropping or renaming columns in production without multi-phase migration', good: 'Use expand-and-contract: add new column, sync data, migrate callers, drop old' },
+    {
+      trope: 'Full Table Scan Blindspot',
+      bad: 'Querying high-cardinality tables without index coverage',
+      good: 'Verify query plans with EXPLAIN ANALYZE and add composite B-Tree indexes',
+    },
+    {
+      trope: 'Non-Atomic Batch Mutation',
+      bad: 'Executing multiple related DB writes sequentially without transaction wrapper',
+      good: 'Wrap multi-table updates in an atomic transaction with automatic rollback',
+    },
+    {
+      trope: 'Destructive Schema Migration',
+      bad: 'Dropping or renaming columns in production without multi-phase migration',
+      good: 'Use expand-and-contract: add new column, sync data, migrate callers, drop old',
+    },
   ],
   security: [
-    { trope: 'Hardcoded Secret Pattern', bad: 'Committing API keys, tokens, or private salts into source code', good: 'Load credentials strictly via runtime environment variables and secret stores' },
-    { trope: 'Prompt Injection Surface', bad: 'Directly concatenating untrusted user input into LLM system prompts', good: 'Wrap user content in isolated delimiters and strip injection control sequences' },
-    { trope: 'Missing Authorization Check', bad: 'Relying only on authentication token presence without checking tenant/object RBAC', good: 'Verify user permissions against the specific target record ID before mutation' },
+    {
+      trope: 'Hardcoded Secret Pattern',
+      bad: 'Committing API keys, tokens, or private salts into source code',
+      good: 'Load credentials strictly via runtime environment variables and secret stores',
+    },
+    {
+      trope: 'Prompt Injection Surface',
+      bad: 'Directly concatenating untrusted user input into LLM system prompts',
+      good: 'Wrap user content in isolated delimiters and strip injection control sequences',
+    },
+    {
+      trope: 'Missing Authorization Check',
+      bad: 'Relying only on authentication token presence without checking tenant/object RBAC',
+      good: 'Verify user permissions against the specific target record ID before mutation',
+    },
   ],
   devops: [
-    { trope: 'Silent Pipeline Failure', bad: 'Executing shell steps without set -euo pipefail, ignoring errors', good: 'Always initialize shell scripts with set -euo pipefail and trap handlers' },
-    { trope: 'Unpinned Dependency Shift', bad: 'Installing packages with npm install or using :latest docker tags', good: 'Lock dependencies with npm ci / lockfiles and use immutable SHA256 image digests' },
-    { trope: 'Leaking Build Secrets', bad: 'Passing secrets as Docker build arguments baked into image layers', good: 'Use Docker BuildKit secret mounts (--mount=type=secret) or runtime injection' },
+    {
+      trope: 'Silent Pipeline Failure',
+      bad: 'Executing shell steps without set -euo pipefail, ignoring errors',
+      good: 'Always initialize shell scripts with set -euo pipefail and trap handlers',
+    },
+    {
+      trope: 'Unpinned Dependency Shift',
+      bad: 'Installing packages with npm install or using :latest docker tags',
+      good: 'Lock dependencies with npm ci / lockfiles and use immutable SHA256 image digests',
+    },
+    {
+      trope: 'Leaking Build Secrets',
+      bad: 'Passing secrets as Docker build arguments baked into image layers',
+      good: 'Use Docker BuildKit secret mounts (--mount=type=secret) or runtime injection',
+    },
   ],
   testing: [
-    { trope: 'Testing Implementation Details', bad: 'Asserting on private component state or internal helper functions', good: 'Assert on observable user behaviors, DOM roles, and network outcomes' },
-    { trope: 'Flaky Async Assertion', bad: 'Using arbitrary setTimeout delays before asserting on asynchronous state', good: 'Use waitFor or findBy queries that poll with timeout bounds' },
-    { trope: 'Shared Mutable State', bad: 'Reusing database records across concurrent test runners', good: 'Isolate test databases per worker or execute in rolled-back transactions' },
+    {
+      trope: 'Testing Implementation Details',
+      bad: 'Asserting on private component state or internal helper functions',
+      good: 'Assert on observable user behaviors, DOM roles, and network outcomes',
+    },
+    {
+      trope: 'Flaky Async Assertion',
+      bad: 'Using arbitrary setTimeout delays before asserting on asynchronous state',
+      good: 'Use waitFor or findBy queries that poll with timeout bounds',
+    },
+    {
+      trope: 'Shared Mutable State',
+      bad: 'Reusing database records across concurrent test runners',
+      good: 'Isolate test databases per worker or execute in rolled-back transactions',
+    },
   ],
   mobile: [
-    { trope: 'JS Thread Animation Lag', bad: 'Driving gestures and scrolling physics on the React Native JS thread', good: 'Use React Native Reanimated worklets running directly on the UI thread' },
-    { trope: 'Missing Keyboard Offset', bad: 'Forms hidden behind native software keyboard on iOS/Android', good: 'Wrap form views in KeyboardAvoidingView with platform-calibrated behavior' },
-    { trope: 'Uncached Image Flooding', bad: 'Rendering raw image URLs in list items without memory caching', good: 'Use FastImage or Expo Image with disk cache policies and thumbnail previews' },
+    {
+      trope: 'JS Thread Animation Lag',
+      bad: 'Driving gestures and scrolling physics on the React Native JS thread',
+      good: 'Use React Native Reanimated worklets running directly on the UI thread',
+    },
+    {
+      trope: 'Missing Keyboard Offset',
+      bad: 'Forms hidden behind native software keyboard on iOS/Android',
+      good: 'Wrap form views in KeyboardAvoidingView with platform-calibrated behavior',
+    },
+    {
+      trope: 'Uncached Image Flooding',
+      bad: 'Rendering raw image URLs in list items without memory caching',
+      good: 'Use FastImage or Expo Image with disk cache policies and thumbnail previews',
+    },
   ],
   meta: [
-    { trope: 'Hallucinated Tool Capabilities', bad: 'Assuming an external library or CLI command exists without verification', good: 'Run a verification check or verify package.json before referencing tools' },
-    { trope: 'Premature Completion Claim', bad: 'Declaring a task finished because code was generated without verification', good: 'Execute tests, linters, or terminal commands to provide concrete proof' },
-    { trope: 'Context Bloat Dumping', bad: 'Pasting entire multi-thousand-line files into prompt context', good: 'Extract targeted excerpts, symbols, and signatures to preserve tokens' },
+    {
+      trope: 'Hallucinated Tool Capabilities',
+      bad: 'Assuming an external library or CLI command exists without verification',
+      good: 'Run a verification check or verify package.json before referencing tools',
+    },
+    {
+      trope: 'Premature Completion Claim',
+      bad: 'Declaring a task finished because code was generated without verification',
+      good: 'Execute tests, linters, or terminal commands to provide concrete proof',
+    },
+    {
+      trope: 'Context Bloat Dumping',
+      bad: 'Pasting entire multi-thousand-line files into prompt context',
+      good: 'Extract targeted excerpts, symbols, and signatures to preserve tokens',
+    },
   ],
 };
 
@@ -222,7 +356,10 @@ function parseFrontmatter(content) {
         isList = false;
       }
     } else if (isList && trimmed.startsWith('-')) {
-      const item = trimmed.slice(1).trim().replace(/^['"]|['"]$/g, '');
+      const item = trimmed
+        .slice(1)
+        .trim()
+        .replace(/^['"]|['"]$/g, '');
       if (Array.isArray(meta[currentKey])) {
         meta[currentKey].push(item);
       }
@@ -243,12 +380,15 @@ function buildEnhancedSkill(skillName, originalContent) {
 
   // Extract clean title
   const titleMatch = body.match(/^#\s+(.+)$/m);
-  const title = titleMatch ? titleMatch[1].trim() : `${skillName.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} Engineering`;
+  const title = titleMatch
+    ? titleMatch[1].trim()
+    : `${skillName.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())} Engineering`;
 
   // Extract existing core technical content (excluding legacy footers)
   let coreBody = body;
   // Strip old canonical footers or tribunal blocks
-  const footerMarkerRegex = /\n---\s*\n+(\*\*Slash command: `\/review`|## 🏛️ Tribunal Verification & Guardrails|## 🏛️ Tribunal Integration|### ❌ Forbidden AI Tropes|## 🤖 LLM-Specific Traps|AI coding assistants often fall into specific bad habits)[\s\S]*$/;
+  const footerMarkerRegex =
+    /\n---\s*\n+(\*\*Slash command: `\/review`|## 🏛️ Tribunal Verification & Guardrails|## 🏛️ Tribunal Integration|### ❌ Forbidden AI Tropes|## 🤖 LLM-Specific Traps|AI coding assistants often fall into specific bad habits)[\s\S]*$/;
   coreBody = coreBody.replace(footerMarkerRegex, '').trim();
 
   // Strip duplicated titles
@@ -257,23 +397,38 @@ function buildEnhancedSkill(skillName, originalContent) {
 
   // Strip duplicate Activation Boundaries if previously inserted
   coreBody = coreBody.replace(/## Activation Boundaries[\s\S]*?(?=\n## |\n---|\n# |$)/g, '').trim();
-  coreBody = coreBody.replace(/## Mandatory Pre-Flight Context Inspection[\s\S]*?(?=\n## |\n---|\n# |$)/g, '').trim();
-  coreBody = coreBody.replace(/## 🔁 Multi-Pass Execution Protocol[\s\S]*?(?=\n## |\n---|\n# |$)/g, '').trim();
-  coreBody = coreBody.replace(/## 🚨 Edge-Case & Failure Mode Matrix[\s\S]*?(?=\n## |\n---|\n# |$)/g, '').trim();
-  coreBody = coreBody.replace(/## 🤖 LLM-Specific Traps Table[\s\S]*?(?=\n## |\n---|\n# |$)/g, '').trim();
+  coreBody = coreBody
+    .replace(/## Mandatory Pre-Flight Context Inspection[\s\S]*?(?=\n## |\n---|\n# |$)/g, '')
+    .trim();
+  coreBody = coreBody
+    .replace(/## 🔁 Multi-Pass Execution Protocol[\s\S]*?(?=\n## |\n---|\n# |$)/g, '')
+    .trim();
+  coreBody = coreBody
+    .replace(/## 🚨 Edge-Case & Failure Mode Matrix[\s\S]*?(?=\n## |\n---|\n# |$)/g, '')
+    .trim();
+  coreBody = coreBody
+    .replace(/## 🤖 LLM-Specific Traps Table[\s\S]*?(?=\n## |\n---|\n# |$)/g, '')
+    .trim();
   coreBody = coreBody.replace(/## 🏛️ Tribunal Verification & Guardrails[\s\S]*$/g, '').trim();
   coreBody = coreBody.replace(/(\n---\s*)+$/, '').trim();
 
   // Format frontmatter with SDO trigger guarantee
   let desc = meta.description || `${skillName} mastery.`;
-  if (!desc.toLowerCase().startsWith('use when') && !desc.toLowerCase().startsWith('activate when')) {
+  if (
+    !desc.toLowerCase().startsWith('use when') &&
+    !desc.toLowerCase().startsWith('activate when')
+  ) {
     desc = `Use when ${desc.replace(/^["']|["']$/g, '')}`;
   }
 
   // Ensure scripts-binding
-  const scripts = Array.isArray(meta['scripts-binding']) ? meta['scripts-binding'] : ['.agent/scripts/lint_runner.js', '.agent/scripts/verify_all.js'];
-  if (!scripts.includes('.agent/scripts/lint_runner.js')) scripts.push('.agent/scripts/lint_runner.js');
-  if (!scripts.includes('.agent/scripts/verify_all.js')) scripts.push('.agent/scripts/verify_all.js');
+  const scripts = Array.isArray(meta['scripts-binding'])
+    ? meta['scripts-binding']
+    : ['.agent/scripts/lint_runner.js', '.agent/scripts/verify_all.js'];
+  if (!scripts.includes('.agent/scripts/lint_runner.js'))
+    scripts.push('.agent/scripts/lint_runner.js');
+  if (!scripts.includes('.agent/scripts/verify_all.js'))
+    scripts.push('.agent/scripts/verify_all.js');
 
   const formattedFrontmatter = [
     '---',
@@ -281,11 +436,15 @@ function buildEnhancedSkill(skillName, originalContent) {
     `description: ${desc}`,
     `version: 5.0.0`,
     `last-updated: 2026-09-13`,
-    meta.skills && meta.skills.length ? `skills:\n${meta.skills.map(s => `  - ${s}`).join('\n')}` : null,
+    meta.skills && meta.skills.length
+      ? `skills:\n${meta.skills.map(s => `  - ${s}`).join('\n')}`
+      : null,
     `tools: Read, Grep, Glob, Bash, Edit, Write`,
     `scripts-binding:\n${scripts.map(s => `  - ${s}`).join('\n')}`,
-    '---'
-  ].filter(Boolean).join('\n');
+    '---',
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   // Build the 18-Section Architecture
   const section1_Preflight = `## Mandatory Pre-Flight Context Inspection
@@ -413,7 +572,9 @@ function run() {
   console.log(`\n🚀 State-of-the-Art Skill Enhancement Engine`);
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
   console.log(`Target Skills: ${skillDirs.length}`);
-  console.log(`Execution Mode: ${DRY_RUN ? 'DRY RUN (preview only)' : FIX ? 'FIX (writing changes)' : 'VALIDATE ONLY'}`);
+  console.log(
+    `Execution Mode: ${DRY_RUN ? 'DRY RUN (preview only)' : FIX ? 'FIX (writing changes)' : 'VALIDATE ONLY'}`,
+  );
   console.log(`Sync to Root: ${SYNC_TO_ROOT ? 'YES' : 'NO'}\n`);
 
   let enhancedCount = 0;

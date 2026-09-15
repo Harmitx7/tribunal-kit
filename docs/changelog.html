@@ -1,1816 +1,2162 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tribunal Kit — Executive Changelog & Release Evolution</title>
-  <meta name="description" content="Release notes and changelog for Tribunal Kit — The autonomous governance layer for AI coding agents. 52 specialists, 28 reviewers, 184 skills, 41 workflows, Rust core.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    /* ==========================================================================
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tribunal Kit — Executive Changelog & Release Evolution</title>
+    <meta
+      name="description"
+      content="Release notes and changelog for Tribunal Kit — The autonomous governance layer for AI coding agents. 52 specialists, 28 reviewers, 184 skills, 41 workflows, Rust core."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ==========================================================================
        DESIGN TOKENS & OKLCH PALETTE (Anti-Cliché, Dark Luxury, Cyan/Emerald)
        ========================================================================== */
-    :root {
-      --bg-base: #07090e;
-      --bg-surface: #0e131f;
-      --bg-card: #121927;
-      --bg-card-hover: #162032;
-      --bg-elevated: #1a253b;
-      --bg-glass: rgba(14, 19, 31, 0.85);
+      :root {
+        --bg-base: #07090e;
+        --bg-surface: #0e131f;
+        --bg-card: #121927;
+        --bg-card-hover: #162032;
+        --bg-elevated: #1a253b;
+        --bg-glass: rgba(14, 19, 31, 0.85);
 
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-medium: rgba(255, 255, 255, 0.14);
-      --border-luminous: rgba(0, 229, 255, 0.28);
-      --border-emerald: rgba(16, 185, 129, 0.28);
+        --border-subtle: rgba(255, 255, 255, 0.08);
+        --border-medium: rgba(255, 255, 255, 0.14);
+        --border-luminous: rgba(0, 229, 255, 0.28);
+        --border-emerald: rgba(16, 185, 129, 0.28);
 
-      --accent-cyan: #00e5ff;
-      --accent-cyan-glow: rgba(0, 229, 255, 0.18);
-      --accent-emerald: #10b981;
-      --accent-emerald-glow: rgba(16, 185, 129, 0.16);
-      --accent-amber: #f59e0b;
-      --accent-rose: #f43f5e;
-      --accent-indigo: #6366f1;
+        --accent-cyan: #00e5ff;
+        --accent-cyan-glow: rgba(0, 229, 255, 0.18);
+        --accent-emerald: #10b981;
+        --accent-emerald-glow: rgba(16, 185, 129, 0.16);
+        --accent-amber: #f59e0b;
+        --accent-rose: #f43f5e;
+        --accent-indigo: #6366f1;
 
-      --text-primary: #f8fafc;
-      --text-secondary: #cbd5e1;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
+        --text-muted: #94a3b8;
+        --text-dim: #64748b;
 
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+        --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 16px;
-      --radius-xl: 22px;
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 16px;
+        --radius-xl: 22px;
 
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
-      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
-      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
-      --shadow-glow: 0 0 30px rgba(0, 229, 255, 0.15);
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+        --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+        --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+        --shadow-glow: 0 0 30px rgba(0, 229, 255, 0.15);
 
-      --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
-      --transition-smooth: 240ms cubic-bezier(0.16, 1, 0.3, 1);
-    }
+        --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+        --transition-smooth: 240ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
 
-    [data-theme="light"] {
-      --bg-base: #f8fafc;
-      --bg-surface: #ffffff;
-      --bg-card: #f1f5f9;
-      --bg-card-hover: #e2e8f0;
-      --bg-elevated: #ffffff;
-      --bg-glass: rgba(255, 255, 255, 0.9);
+      [data-theme='light'] {
+        --bg-base: #f8fafc;
+        --bg-surface: #ffffff;
+        --bg-card: #f1f5f9;
+        --bg-card-hover: #e2e8f0;
+        --bg-elevated: #ffffff;
+        --bg-glass: rgba(255, 255, 255, 0.9);
 
-      --border-subtle: rgba(0, 0, 0, 0.08);
-      --border-medium: rgba(0, 0, 0, 0.15);
-      --border-luminous: rgba(14, 165, 233, 0.35);
-      --border-emerald: rgba(16, 185, 129, 0.35);
+        --border-subtle: rgba(0, 0, 0, 0.08);
+        --border-medium: rgba(0, 0, 0, 0.15);
+        --border-luminous: rgba(14, 165, 233, 0.35);
+        --border-emerald: rgba(16, 185, 129, 0.35);
 
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
-      --text-muted: #64748b;
-      --text-dim: #94a3b8;
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --text-muted: #64748b;
+        --text-dim: #94a3b8;
 
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
-      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.1);
-      --shadow-glow: 0 0 30px rgba(14, 165, 233, 0.12);
-    }
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.1);
+        --shadow-glow: 0 0 30px rgba(14, 165, 233, 0.12);
+      }
 
-    [data-theme="oled"] {
-      --bg-base: #000000;
-      --bg-surface: #040406;
-      --bg-card: #08080c;
-      --bg-card-hover: #101016;
-      --bg-elevated: #14141c;
-      --border-subtle: rgba(255, 255, 255, 0.12);
-      --border-medium: rgba(255, 255, 255, 0.22);
-    }
+      [data-theme='oled'] {
+        --bg-base: #000000;
+        --bg-surface: #040406;
+        --bg-card: #08080c;
+        --bg-card-hover: #101016;
+        --bg-elevated: #14141c;
+        --border-subtle: rgba(255, 255, 255, 0.12);
+        --border-medium: rgba(255, 255, 255, 0.22);
+      }
 
-    /* ==========================================================================
+      /* ==========================================================================
        RESET & BASE STYLING
        ========================================================================== */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: var(--font-sans);
-      background-color: var(--bg-base);
-      color: var(--text-primary);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Top Ambient Luminous Halo */
-    body::before {
-      content: '';
-      position: fixed;
-      top: -240px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 1000px;
-      height: 480px;
-      background: radial-gradient(ellipse at center, rgba(0, 229, 255, 0.09) 0%, rgba(16, 185, 129, 0.04) 40%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    button {
-      font-family: inherit;
-      border: none;
-      background: none;
-      cursor: pointer;
-      color: inherit;
-    }
-
-    code, pre {
-      font-family: var(--font-mono);
-    }
-
-    /* Accessibility & Focus States (WCAG 2.4.7, 2.4.1, 2.3.3) */
-    :focus-visible {
-      outline: 2px solid var(--accent-cyan);
-      outline-offset: 3px;
-      border-radius: var(--radius-sm);
-    }
-
-    .skip-link {
-      position: absolute;
-      top: -100px;
-      left: 24px;
-      background: var(--accent-cyan);
-      color: #07090e;
-      font-weight: 700;
-      font-size: 0.95rem;
-      padding: 10px 18px;
-      border-radius: var(--radius-sm);
-      z-index: 1000;
-      text-decoration: none;
-      box-shadow: var(--shadow-md);
-      transition: top var(--transition-fast);
-    }
-
-    .skip-link:focus,
-    .skip-link:focus-visible {
-      top: 16px;
-      outline: 2px solid #ffffff;
-      outline-offset: 2px;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    }
 
-    /* ==========================================================================
+      body {
+        font-family: var(--font-sans);
+        background-color: var(--bg-base);
+        color: var(--text-primary);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Top Ambient Luminous Halo */
+      body::before {
+        content: '';
+        position: fixed;
+        top: -240px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 1000px;
+        height: 480px;
+        background: radial-gradient(
+          ellipse at center,
+          rgba(0, 229, 255, 0.09) 0%,
+          rgba(16, 185, 129, 0.04) 40%,
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        font-family: inherit;
+        border: none;
+        background: none;
+        cursor: pointer;
+        color: inherit;
+      }
+
+      code,
+      pre {
+        font-family: var(--font-mono);
+      }
+
+      /* Accessibility & Focus States (WCAG 2.4.7, 2.4.1, 2.3.3) */
+      :focus-visible {
+        outline: 2px solid var(--accent-cyan);
+        outline-offset: 3px;
+        border-radius: var(--radius-sm);
+      }
+
+      .skip-link {
+        position: absolute;
+        top: -100px;
+        left: 24px;
+        background: var(--accent-cyan);
+        color: #07090e;
+        font-weight: 700;
+        font-size: 0.95rem;
+        padding: 10px 18px;
+        border-radius: var(--radius-sm);
+        z-index: 1000;
+        text-decoration: none;
+        box-shadow: var(--shadow-md);
+        transition: top var(--transition-fast);
+      }
+
+      .skip-link:focus,
+      .skip-link:focus-visible {
+        top: 16px;
+        outline: 2px solid #ffffff;
+        outline-offset: 2px;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+
+      /* ==========================================================================
        CONTAINER & HEADER
        ========================================================================== */
-    .app-container {
-      max-width: 1360px;
-      margin: 0 auto;
-      padding: 0 24px 80px;
-      position: relative;
-      z-index: 1;
-    }
+      .app-container {
+        max-width: 1360px;
+        margin: 0 auto;
+        padding: 0 24px 80px;
+        position: relative;
+        z-index: 1;
+      }
 
-    /* Top Sticky Navbar */
-    .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      background-color: var(--bg-glass);
-      border-bottom: 1px solid var(--border-subtle);
-      margin: 0 -24px 32px;
-      padding: 16px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-    }
+      /* Top Sticky Navbar */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        background-color: var(--bg-glass);
+        border-bottom: 1px solid var(--border-subtle);
+        margin: 0 -24px 32px;
+        padding: 16px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
 
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 700;
-      font-size: 1.15rem;
-      letter-spacing: -0.02em;
-    }
+      .nav-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 700;
+        font-size: 1.15rem;
+        letter-spacing: -0.02em;
+      }
 
-    .brand-logo {
-      width: 34px;
-      height: 34px;
-      border-radius: var(--radius-sm);
-      background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(16, 185, 129, 0.2));
-      border: 1px solid var(--border-luminous);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      box-shadow: 0 0 16px rgba(0, 229, 255, 0.2);
-    }
+      .brand-logo {
+        width: 34px;
+        height: 34px;
+        border-radius: var(--radius-sm);
+        background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(16, 185, 129, 0.2));
+        border: 1px solid var(--border-luminous);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        box-shadow: 0 0 16px rgba(0, 229, 255, 0.2);
+      }
 
-    .nav-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid var(--border-emerald);
-      color: var(--accent-emerald);
-      padding: 4px 12px;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      font-family: var(--font-mono);
-      letter-spacing: -0.01em;
-    }
+      .nav-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid var(--border-emerald);
+        color: var(--accent-emerald);
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        font-family: var(--font-mono);
+        letter-spacing: -0.01em;
+      }
 
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background-color: var(--accent-emerald);
-      box-shadow: 0 0 8px var(--accent-emerald);
-      animation: pulseDot 2s infinite ease-in-out;
-    }
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background-color: var(--accent-emerald);
+        box-shadow: 0 0 8px var(--accent-emerald);
+        animation: pulseDot 2s infinite ease-in-out;
+      }
 
-    @keyframes pulseDot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.8); }
-    }
+      @keyframes pulseDot {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.4;
+          transform: scale(0.8);
+        }
+      }
 
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
 
-    .cli-copy-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      padding: 8px 14px;
-      border-radius: var(--radius-sm);
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      transition: all var(--transition-fast);
-    }
+      .cli-copy-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        padding: 8px 14px;
+        border-radius: var(--radius-sm);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        transition: all var(--transition-fast);
+      }
 
-    .cli-copy-btn:hover {
-      background-color: var(--bg-card-hover);
-      border-color: var(--border-medium);
-      color: var(--text-primary);
-    }
+      .cli-copy-btn:hover {
+        background-color: var(--bg-card-hover);
+        border-color: var(--border-medium);
+        color: var(--text-primary);
+      }
 
-    .cli-copy-btn:active {
-      transform: scale(0.97);
-    }
+      .cli-copy-btn:active {
+        transform: scale(0.97);
+      }
 
-    .cli-copy-btn.copied {
-      border-color: var(--accent-emerald);
-      color: var(--accent-emerald);
-    }
+      .cli-copy-btn.copied {
+        border-color: var(--accent-emerald);
+        color: var(--accent-emerald);
+      }
 
-    .theme-toggle-btn {
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--radius-sm);
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      transition: all var(--transition-fast);
-    }
+      .theme-toggle-btn {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-sm);
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        transition: all var(--transition-fast);
+      }
 
-    .theme-toggle-btn:hover {
-      color: var(--text-primary);
-      border-color: var(--border-medium);
-    }
+      .theme-toggle-btn:hover {
+        color: var(--text-primary);
+        border-color: var(--border-medium);
+      }
 
-    /* ==========================================================================
+      /* ==========================================================================
        HERO SECTION & KPI SCORECARD
        ========================================================================== */
-    .hero {
-      margin-bottom: 40px;
-      position: relative;
-    }
+      .hero {
+        margin-bottom: 40px;
+        position: relative;
+      }
 
-    .hero-badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
+      .hero-badge-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
 
-    .tag-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      padding: 4px 10px;
-      border-radius: var(--radius-sm);
-      font-size: 0.75rem;
-      font-family: var(--font-mono);
-      font-weight: 500;
-    }
+      .tag-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        color: var(--text-secondary);
+        padding: 4px 10px;
+        border-radius: var(--radius-sm);
+        font-size: 0.75rem;
+        font-family: var(--font-mono);
+        font-weight: 500;
+      }
 
-    .tag-badge.cyan {
-      border-color: var(--border-luminous);
-      color: var(--accent-cyan);
-      background: rgba(0, 229, 255, 0.05);
-    }
+      .tag-badge.cyan {
+        border-color: var(--border-luminous);
+        color: var(--accent-cyan);
+        background: rgba(0, 229, 255, 0.05);
+      }
 
-    .hero-title {
-      font-size: 2.8rem;
-      font-weight: 800;
-      letter-spacing: -0.035em;
-      line-height: 1.15;
-      margin-bottom: 12px;
-      background: linear-gradient(180deg, var(--text-primary) 30%, var(--text-secondary) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+      .hero-title {
+        font-size: 2.8rem;
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        line-height: 1.15;
+        margin-bottom: 12px;
+        background: linear-gradient(180deg, var(--text-primary) 30%, var(--text-secondary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
 
-    .hero-subtitle {
-      font-size: 1.15rem;
-      color: var(--text-secondary);
-      max-width: 820px;
-      font-weight: 400;
-      margin-bottom: 32px;
-    }
+      .hero-subtitle {
+        font-size: 1.15rem;
+        color: var(--text-secondary);
+        max-width: 820px;
+        font-weight: 400;
+        margin-bottom: 32px;
+      }
 
-    /* KPI Grid */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 36px;
-    }
+      /* KPI Grid */
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 36px;
+      }
 
-    .kpi-card {
-      background-color: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 18px 20px;
-      position: relative;
-      overflow: hidden;
-      transition: all var(--transition-smooth);
-    }
+      .kpi-card {
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 18px 20px;
+        position: relative;
+        overflow: hidden;
+        transition: all var(--transition-smooth);
+      }
 
-    .kpi-card:hover {
-      border-color: var(--border-luminous);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
+      .kpi-card:hover {
+        border-color: var(--border-luminous);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
 
-    .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
-      opacity: 0;
-      transition: opacity var(--transition-fast);
-    }
+      .kpi-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+        opacity: 0;
+        transition: opacity var(--transition-fast);
+      }
 
-    .kpi-card:hover::before {
-      opacity: 1;
-    }
+      .kpi-card:hover::before {
+        opacity: 1;
+      }
 
-    .kpi-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
+      .kpi-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
 
-    .kpi-value {
-      font-size: 1.9rem;
-      font-weight: 800;
-      font-family: var(--font-mono);
-      letter-spacing: -0.03em;
-      color: var(--text-primary);
-      display: flex;
-      align-items: baseline;
-      gap: 6px;
-    }
+      .kpi-value {
+        font-size: 1.9rem;
+        font-weight: 800;
+        font-family: var(--font-mono);
+        letter-spacing: -0.03em;
+        color: var(--text-primary);
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+      }
 
-    .kpi-sub {
-      font-size: 0.78rem;
-      color: var(--accent-emerald);
-      font-family: var(--font-sans);
-      font-weight: 600;
-    }
+      .kpi-sub {
+        font-size: 0.78rem;
+        color: var(--accent-emerald);
+        font-family: var(--font-sans);
+        font-weight: 600;
+      }
 
-    /* ==========================================================================
+      /* ==========================================================================
        SEARCH & FILTER CONTROLS
        ========================================================================== */
-    .controls-wrapper {
-      position: sticky;
-      top: 73px;
-      z-index: 90;
-      background: var(--bg-glass);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 16px 20px;
-      margin-bottom: 36px;
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+      .controls-wrapper {
+        position: sticky;
+        top: 73px;
+        z-index: 90;
+        background: var(--bg-glass);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        padding: 16px 20px;
+        margin-bottom: 36px;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
 
-    .search-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      position: relative;
-    }
+      .search-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+      }
 
-    .search-icon {
-      position: absolute;
-      left: 16px;
-      width: 18px;
-      height: 18px;
-      color: var(--text-muted);
-      pointer-events: none;
-    }
+      .search-icon {
+        position: absolute;
+        left: 16px;
+        width: 18px;
+        height: 18px;
+        color: var(--text-muted);
+        pointer-events: none;
+      }
 
-    .search-input {
-      width: 100%;
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 12px 100px 12px 46px;
-      color: var(--text-primary);
-      font-family: var(--font-sans);
-      font-size: 0.95rem;
-      outline: none;
-      transition: all var(--transition-fast);
-    }
+      .search-input {
+        width: 100%;
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 12px 100px 12px 46px;
+        color: var(--text-primary);
+        font-family: var(--font-sans);
+        font-size: 0.95rem;
+        outline: none;
+        transition: all var(--transition-fast);
+      }
 
-    .search-input:focus {
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15);
-      background-color: var(--bg-surface);
-    }
+      .search-input:focus {
+        border-color: var(--accent-cyan);
+        box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.15);
+        background-color: var(--bg-surface);
+      }
 
-    .search-shortcut {
-      position: absolute;
-      right: 14px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      padding: 3px 8px;
-      border-radius: var(--radius-sm);
-      pointer-events: none;
-    }
+      .search-shortcut {
+        position: absolute;
+        right: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--text-muted);
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        padding: 3px 8px;
+        border-radius: var(--radius-sm);
+        pointer-events: none;
+      }
 
-    .filter-pills {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 2px;
-      scrollbar-width: none;
-    }
+      .filter-pills {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+      }
 
-    .filter-pills::-webkit-scrollbar {
-      display: none;
-    }
+      .filter-pills::-webkit-scrollbar {
+        display: none;
+      }
 
-    .filter-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      white-space: nowrap;
-      transition: all var(--transition-fast);
-      cursor: pointer;
-    }
+      .filter-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        white-space: nowrap;
+        transition: all var(--transition-fast);
+        cursor: pointer;
+      }
 
-    .filter-pill:hover {
-      background-color: var(--bg-card-hover);
-      color: var(--text-primary);
-      border-color: var(--border-medium);
-    }
+      .filter-pill:hover {
+        background-color: var(--bg-card-hover);
+        color: var(--text-primary);
+        border-color: var(--border-medium);
+      }
 
-    .filter-pill.active {
-      background-color: rgba(0, 229, 255, 0.12);
-      border-color: var(--accent-cyan);
-      color: var(--accent-cyan);
-      font-weight: 600;
-    }
+      .filter-pill.active {
+        background-color: rgba(0, 229, 255, 0.12);
+        border-color: var(--accent-cyan);
+        color: var(--accent-cyan);
+        font-weight: 600;
+      }
 
-    .pill-count {
-      font-size: 0.72rem;
-      padding: 1px 6px;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.1);
-      font-family: var(--font-mono);
-    }
+      .pill-count {
+        font-size: 0.72rem;
+        padding: 1px 6px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.1);
+        font-family: var(--font-mono);
+      }
 
-    .filter-pill.active .pill-count {
-      background: rgba(0, 229, 255, 0.25);
-      color: var(--accent-cyan);
-    }
+      .filter-pill.active .pill-count {
+        background: rgba(0, 229, 255, 0.25);
+        color: var(--accent-cyan);
+      }
 
-    /* ==========================================================================
+      /* ==========================================================================
        MAIN CONTENT: TIMELINE & RELEASE FEED
        ========================================================================== */
-    .content-layout {
-      display: grid;
-      grid-template-columns: 240px 1fr;
-      gap: 40px;
-      align-items: start;
-    }
-
-    /* Sticky Left Navigation Rail */
-    .timeline-rail {
-      position: sticky;
-      top: 220px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      padding: 12px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-    }
-
-    .rail-heading {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      font-weight: 700;
-      padding: 6px 12px;
-      margin-bottom: 4px;
-    }
-
-    .rail-link {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      border-radius: var(--radius-sm);
-      font-family: var(--font-mono);
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      transition: all var(--transition-fast);
-    }
-
-    .rail-link:hover {
-      background-color: var(--bg-card);
-      color: var(--text-primary);
-    }
-
-    .rail-link.active {
-      background-color: rgba(0, 229, 255, 0.1);
-      color: var(--accent-cyan);
-      border-left: 2px solid var(--accent-cyan);
-      font-weight: 700;
-    }
-
-    .rail-tag {
-      font-size: 0.68rem;
-      color: var(--text-muted);
-    }
-
-    /* Release Feed */
-    .release-feed {
-      display: flex;
-      flex-direction: column;
-      gap: 48px;
-    }
-
-    .release-card {
-      background-color: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      padding: 32px;
-      position: relative;
-      transition: border-color var(--transition-fast);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .release-card:hover {
-      border-color: var(--border-medium);
-    }
-
-    .release-card.featured {
-      border-color: var(--border-luminous);
-      box-shadow: var(--shadow-glow);
-    }
-
-    /* Release Card Header */
-    .release-header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 16px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--border-subtle);
-      margin-bottom: 24px;
-    }
-
-    .version-meta {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .version-pill {
-      margin: 0;
-      line-height: 1.2;
-      display: inline-flex;
-      align-items: center;
-      font-family: var(--font-mono);
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--text-primary);
-      background: var(--bg-card);
-      border: 1px solid var(--border-medium);
-      padding: 4px 14px;
-      border-radius: var(--radius-sm);
-    }
-
-    .release-card.featured .version-pill {
-      border-color: var(--accent-cyan);
-      color: var(--accent-cyan);
-      background: rgba(0, 229, 255, 0.08);
-    }
-
-    .release-date {
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .codename-badge {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--accent-emerald);
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid var(--border-emerald);
-      padding: 4px 10px;
-      border-radius: var(--radius-sm);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .release-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .copy-tag-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      padding: 6px 12px;
-      border-radius: var(--radius-sm);
-      transition: all var(--transition-fast);
-    }
-
-    .copy-tag-btn:hover {
-      color: var(--text-primary);
-      border-color: var(--border-medium);
-    }
-
-    /* Executive Callout Alert */
-    .release-callout {
-      background: rgba(0, 229, 255, 0.04);
-      border: 1px solid var(--border-luminous);
-      border-radius: var(--radius-md);
-      padding: 16px 20px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      color: var(--text-secondary);
-      font-size: 0.92rem;
-    }
-
-    .callout-icon {
-      color: var(--accent-cyan);
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    /* Release Section Groups */
-    .release-group {
-      margin-bottom: 24px;
-    }
-
-    .group-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 12px;
-    }
-
-    .group-badge {
-      font-size: 0.72rem;
-      font-family: var(--font-mono);
-      text-transform: uppercase;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: var(--radius-sm);
-      background: var(--bg-elevated);
-      color: var(--accent-cyan);
-      border: 1px solid var(--border-subtle);
-    }
-
-    .group-badge.browser { color: #00e5ff; }
-    .group-badge.skills { color: #2dd4bf; }
-    .group-badge.plugins { color: #38bdf8; }
-    .group-badge.workflows { color: #818cf8; }
-    .group-badge.runtime { color: #f59e0b; }
-    .group-badge.quality { color: #10b981; }
-    .group-badge.testing { color: #a78bfa; }
-
-    /* Bullet List with High Polish */
-    .release-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .release-item {
-      padding: 12px 16px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      font-size: 0.92rem;
-      color: var(--text-secondary);
-      transition: all var(--transition-fast);
-      position: relative;
-    }
-
-    .release-item:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--border-medium);
-      color: var(--text-primary);
-    }
-
-    .release-item strong {
-      color: var(--text-primary);
-      font-weight: 600;
-    }
-
-    .release-item code {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid var(--border-subtle);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.82rem;
-      color: var(--accent-cyan);
-    }
-
-    /* Sub-bullets nested inside an item */
-    .sub-list {
-      list-style: none;
-      margin-top: 8px;
-      padding-left: 12px;
-      border-left: 2px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 0.86rem;
-      color: var(--text-muted);
-    }
-
-    .sub-list li {
-      position: relative;
-      padding-left: 12px;
-    }
-
-    .sub-list li::before {
-      content: '•';
-      position: absolute;
-      left: 0;
-      color: var(--accent-cyan);
-    }
-
-    /* Empty state for search results */
-    .empty-state {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 20px;
-      text-align: center;
-      background: var(--bg-surface);
-      border: 1px dashed var(--border-medium);
-      border-radius: var(--radius-lg);
-    }
-
-    .empty-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 8px;
-    }
-
-    .empty-desc {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-    }
-
-    .clear-search-btn {
-      padding: 8px 16px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-medium);
-      border-radius: var(--radius-sm);
-      font-size: 0.85rem;
-      color: var(--accent-cyan);
-      font-weight: 600;
-    }
-
-    /* Footer */
-    .footer {
-      margin-top: 80px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border-subtle);
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-
-    .footer-links {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .footer-link:hover {
-      color: var(--text-primary);
-    }
-
-    /* ==========================================================================
-       RESPONSIVE BREAKPOINTS
-       ========================================================================== */
-    @media (max-width: 960px) {
       .content-layout {
-        grid-template-columns: 1fr;
+        display: grid;
+        grid-template-columns: 240px 1fr;
+        gap: 40px;
+        align-items: start;
       }
 
+      /* Sticky Left Navigation Rail */
       .timeline-rail {
-        display: none; /* Hide rail on tablet/mobile */
+        position: sticky;
+        top: 220px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 12px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
       }
 
-      .hero-title {
-        font-size: 2.2rem;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .navbar {
-        padding: 12px 16px;
-        margin: 0 -16px 24px;
-      }
-
-      .app-container {
-        padding: 0 16px 60px;
+      .rail-heading {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        font-weight: 700;
+        padding: 6px 12px;
+        margin-bottom: 4px;
       }
 
-      .hero-title {
-        font-size: 1.8rem;
+      .rail-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+        border-radius: var(--radius-sm);
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+        color: var(--text-secondary);
+        transition: all var(--transition-fast);
       }
 
-      .kpi-grid {
-        grid-template-columns: 1fr 1fr;
+      .rail-link:hover {
+        background-color: var(--bg-card);
+        color: var(--text-primary);
+      }
+
+      .rail-link.active {
+        background-color: rgba(0, 229, 255, 0.1);
+        color: var(--accent-cyan);
+        border-left: 2px solid var(--accent-cyan);
+        font-weight: 700;
+      }
+
+      .rail-tag {
+        font-size: 0.68rem;
+        color: var(--text-muted);
+      }
+
+      /* Release Feed */
+      .release-feed {
+        display: flex;
+        flex-direction: column;
+        gap: 48px;
       }
 
       .release-card {
-        padding: 20px;
+        background-color: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-xl);
+        padding: 32px;
+        position: relative;
+        transition: border-color var(--transition-fast);
+        box-shadow: var(--shadow-sm);
       }
 
-      .cli-copy-btn span {
+      .release-card:hover {
+        border-color: var(--border-medium);
+      }
+
+      .release-card.featured {
+        border-color: var(--border-luminous);
+        box-shadow: var(--shadow-glow);
+      }
+
+      /* Release Card Header */
+      .release-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 16px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border-subtle);
+        margin-bottom: 24px;
+      }
+
+      .version-meta {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .version-pill {
+        margin: 0;
+        line-height: 1.2;
+        display: inline-flex;
+        align-items: center;
+        font-family: var(--font-mono);
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        background: var(--bg-card);
+        border: 1px solid var(--border-medium);
+        padding: 4px 14px;
+        border-radius: var(--radius-sm);
+      }
+
+      .release-card.featured .version-pill {
+        border-color: var(--accent-cyan);
+        color: var(--accent-cyan);
+        background: rgba(0, 229, 255, 0.08);
+      }
+
+      .release-date {
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        color: var(--text-muted);
+      }
+
+      .codename-badge {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--accent-emerald);
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid var(--border-emerald);
+        padding: 4px 10px;
+        border-radius: var(--radius-sm);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .release-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .copy-tag-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        padding: 6px 12px;
+        border-radius: var(--radius-sm);
+        transition: all var(--transition-fast);
+      }
+
+      .copy-tag-btn:hover {
+        color: var(--text-primary);
+        border-color: var(--border-medium);
+      }
+
+      /* Executive Callout Alert */
+      .release-callout {
+        background: rgba(0, 229, 255, 0.04);
+        border: 1px solid var(--border-luminous);
+        border-radius: var(--radius-md);
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        color: var(--text-secondary);
+        font-size: 0.92rem;
+      }
+
+      .callout-icon {
+        color: var(--accent-cyan);
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      /* Release Section Groups */
+      .release-group {
+        margin-bottom: 24px;
+      }
+
+      .group-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 12px;
+      }
+
+      .group-badge {
+        font-size: 0.72rem;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: var(--radius-sm);
+        background: var(--bg-elevated);
+        color: var(--accent-cyan);
+        border: 1px solid var(--border-subtle);
+      }
+
+      .group-badge.browser {
+        color: #00e5ff;
+      }
+      .group-badge.skills {
+        color: #2dd4bf;
+      }
+      .group-badge.plugins {
+        color: #38bdf8;
+      }
+      .group-badge.workflows {
+        color: #818cf8;
+      }
+      .group-badge.runtime {
+        color: #f59e0b;
+      }
+      .group-badge.quality {
+        color: #10b981;
+      }
+      .group-badge.testing {
+        color: #a78bfa;
+      }
+
+      /* Bullet List with High Polish */
+      .release-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .release-item {
+        padding: 12px 16px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        font-size: 0.92rem;
+        color: var(--text-secondary);
+        transition: all var(--transition-fast);
+        position: relative;
+      }
+
+      .release-item:hover {
+        background: var(--bg-card-hover);
+        border-color: var(--border-medium);
+        color: var(--text-primary);
+      }
+
+      .release-item strong {
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+
+      .release-item code {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--border-subtle);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.82rem;
+        color: var(--accent-cyan);
+      }
+
+      /* Sub-bullets nested inside an item */
+      .sub-list {
+        list-style: none;
+        margin-top: 8px;
+        padding-left: 12px;
+        border-left: 2px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        font-size: 0.86rem;
+        color: var(--text-muted);
+      }
+
+      .sub-list li {
+        position: relative;
+        padding-left: 12px;
+      }
+
+      .sub-list li::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        color: var(--accent-cyan);
+      }
+
+      /* Empty state for search results */
+      .empty-state {
         display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        text-align: center;
+        background: var(--bg-surface);
+        border: 1px dashed var(--border-medium);
+        border-radius: var(--radius-lg);
       }
-    }
-  </style>
-</head>
-<body>
 
-  <!-- Skip Link for Keyboard & Screen Reader Users (WCAG 2.4.1) -->
-  <a href="#releaseFeed" class="skip-link">Skip to release notes</a>
-  <div id="searchAnnounce" class="sr-only" aria-live="polite"></div>
+      .empty-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+      }
 
-  <div class="app-container">
+      .empty-desc {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+      }
 
-    <!-- Top Sticky Navbar -->
-    <header class="navbar">
-      <div class="nav-brand">
-        <div class="brand-logo" aria-hidden="true">🏛️</div>
-        <span>Tribunal Kit</span>
-        <div class="nav-status">
-          <span class="status-dot"></span>
-          <span>100% PASSING (455 TESTS)</span>
+      .clear-search-btn {
+        padding: 8px 16px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-medium);
+        border-radius: var(--radius-sm);
+        font-size: 0.85rem;
+        color: var(--accent-cyan);
+        font-weight: 600;
+      }
+
+      /* Footer */
+      .footer {
+        margin-top: 80px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border-subtle);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+      }
+
+      .footer-links {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .footer-link:hover {
+        color: var(--text-primary);
+      }
+
+      /* ==========================================================================
+       RESPONSIVE BREAKPOINTS
+       ========================================================================== */
+      @media (max-width: 960px) {
+        .content-layout {
+          grid-template-columns: 1fr;
+        }
+
+        .timeline-rail {
+          display: none; /* Hide rail on tablet/mobile */
+        }
+
+        .hero-title {
+          font-size: 2.2rem;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .navbar {
+          padding: 12px 16px;
+          margin: 0 -16px 24px;
+        }
+
+        .app-container {
+          padding: 0 16px 60px;
+        }
+
+        .hero-title {
+          font-size: 1.8rem;
+        }
+
+        .kpi-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .release-card {
+          padding: 20px;
+        }
+
+        .cli-copy-btn span {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Skip Link for Keyboard & Screen Reader Users (WCAG 2.4.1) -->
+    <a href="#releaseFeed" class="skip-link">Skip to release notes</a>
+    <div id="searchAnnounce" class="sr-only" aria-live="polite"></div>
+
+    <div class="app-container">
+      <!-- Top Sticky Navbar -->
+      <header class="navbar">
+        <div class="nav-brand">
+          <div class="brand-logo" aria-hidden="true">🏛️</div>
+          <span>Tribunal Kit</span>
+          <div class="nav-status">
+            <span class="status-dot"></span>
+            <span>100% PASSING (455 TESTS)</span>
+          </div>
         </div>
-      </div>
 
-      <div class="nav-actions">
-        <button id="cliCopyBtn" class="cli-copy-btn" title="Click to copy install command" aria-label="Copy CLI install command">
-          <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        <div class="nav-actions">
+          <button
+            id="cliCopyBtn"
+            class="cli-copy-btn"
+            title="Click to copy install command"
+            aria-label="Copy CLI install command"
+          >
+            <svg
+              aria-hidden="true"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span id="cliBtnText">npx tribunal-kit@latest</span>
+          </button>
+
+          <button
+            id="themeToggleBtn"
+            class="theme-toggle-btn"
+            title="Toggle theme (Dark / Light / OLED)"
+            aria-label="Toggle visual theme"
+          >
+            <svg
+              id="themeIcon"
+              aria-hidden="true"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-badge-row">
+          <span class="tag-badge cyan">⚡ SemVer 2.0.0</span>
+          <span class="tag-badge">Keep a Changelog v1.1.0</span>
+          <span class="tag-badge">9 Harness Ecosystems</span>
+          <span class="tag-badge">Deterministic AST Parsing</span>
+        </div>
+
+        <h1 class="hero-title">Release Evolution & Changelog</h1>
+        <p class="hero-subtitle">
+          The autonomous governance layer for AI coding agents. Inspect architecture shifts, runtime
+          performance invariants, multi-harness plugin adapters, and verified test passes across
+          versions.
+        </p>
+
+        <!-- KPI Executive Grid -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Active Release</div>
+            <div class="kpi-value">v9.1.0 <span class="kpi-sub">Browser Intel</span></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Specialist Agents</div>
+            <div class="kpi-value">52 <span class="kpi-sub">+28 Reviewers</span></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Skills Corpus</div>
+            <div class="kpi-value">185 <span class="kpi-sub">+browser-audit</span></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Standard Workflows</div>
+            <div class="kpi-value">43 <span class="kpi-sub">+live audits</span></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Verified Test Pass</div>
+            <div class="kpi-value">482 <span class="kpi-sub">100% Passing</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Search & Filter Controls -->
+      <section class="controls-wrapper" aria-label="Search and filter controls">
+        <div class="search-row">
+          <svg
+            class="search-icon"
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <span id="cliBtnText">npx tribunal-kit@latest</span>
-        </button>
-
-        <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle theme (Dark / Light / OLED)" aria-label="Toggle visual theme">
-          <svg id="themeIcon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-        </button>
-      </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-badge-row">
-        <span class="tag-badge cyan">⚡ SemVer 2.0.0</span>
-        <span class="tag-badge">Keep a Changelog v1.1.0</span>
-        <span class="tag-badge">9 Harness Ecosystems</span>
-        <span class="tag-badge">Deterministic AST Parsing</span>
-      </div>
-
-      <h1 class="hero-title">Release Evolution & Changelog</h1>
-      <p class="hero-subtitle">
-        The autonomous governance layer for AI coding agents. Inspect architecture shifts, runtime performance invariants, multi-harness plugin adapters, and verified test passes across versions.
-      </p>
-
-      <!-- KPI Executive Grid -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-label">Active Release</div>
-          <div class="kpi-value">v9.1.0 <span class="kpi-sub">Browser Intel</span></div>
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+            placeholder="Filter releases by keyword, RFC, agent, or feature (e.g., 'sdd', 'react 19', 'uuid v7', 'plugins')..."
+            aria-label="Search releases"
+          />
+          <div class="search-shortcut" title="Press forward slash to focus search">
+            <span>/</span> to search
+          </div>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Specialist Agents</div>
-          <div class="kpi-value">52 <span class="kpi-sub">+28 Reviewers</span></div>
+
+        <div class="filter-pills" role="tablist" aria-label="Category filters">
+          <button class="filter-pill active" data-filter="all" role="tab" aria-selected="true">
+            <span>All Releases</span>
+            <span class="pill-count" id="countAll">10</span>
+          </button>
+          <button class="filter-pill" data-filter="browser" role="tab" aria-selected="false">
+            <span>🌐 Browser Intel</span>
+            <span class="pill-count">1</span>
+          </button>
+          <button class="filter-pill" data-filter="plugins" role="tab" aria-selected="false">
+            <span>🔌 Plugins & SDD</span>
+            <span class="pill-count">3</span>
+          </button>
+          <button class="filter-pill" data-filter="skills" role="tab" aria-selected="false">
+            <span>🌐 Skills Corpus</span>
+            <span class="pill-count">3</span>
+          </button>
+          <button class="filter-pill" data-filter="workflows" role="tab" aria-selected="false">
+            <span>📋 Workflows</span>
+            <span class="pill-count">4</span>
+          </button>
+          <button class="filter-pill" data-filter="runtime" role="tab" aria-selected="false">
+            <span>⚡ 2026 Runtime</span>
+            <span class="pill-count">3</span>
+          </button>
+          <button class="filter-pill" data-filter="quality" role="tab" aria-selected="false">
+            <span>🧹 Quality & Hardening</span>
+            <span class="pill-count">4</span>
+          </button>
+          <button class="filter-pill" data-filter="testing" role="tab" aria-selected="false">
+            <span>🧪 Tests & CI</span>
+            <span class="pill-count">5</span>
+          </button>
         </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Skills Corpus</div>
-          <div class="kpi-value">185 <span class="kpi-sub">+browser-audit</span></div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Standard Workflows</div>
-          <div class="kpi-value">43 <span class="kpi-sub">+live audits</span></div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Verified Test Pass</div>
-          <div class="kpi-value">482 <span class="kpi-sub">100% Passing</span></div>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Search & Filter Controls -->
-    <section class="controls-wrapper" aria-label="Search and filter controls">
-      <div class="search-row">
-        <svg class="search-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-        <input 
-          type="text" 
-          id="searchInput" 
-          class="search-input" 
-          placeholder="Filter releases by keyword, RFC, agent, or feature (e.g., 'sdd', 'react 19', 'uuid v7', 'plugins')..." 
-          aria-label="Search releases"
-        >
-        <div class="search-shortcut" title="Press forward slash to focus search">
-          <span>/</span> to search
-        </div>
-      </div>
+      <!-- Main Content Area: Sidebar Rail + Release Feed -->
+      <main class="content-layout">
+        <!-- Sticky Version Rail -->
+        <aside class="timeline-rail" aria-label="Release timeline jump menu">
+          <div class="rail-heading">Release Versions</div>
+          <a href="#v9.1.0" class="rail-link active" data-target="v9.1.0">
+            <span>v9.1.0</span>
+            <span class="rail-tag">Latest</span>
+          </a>
+          <a href="#v9.0.0" class="rail-link" data-target="v9.0.0">
+            <span>v9.0.0</span>
+            <span class="rail-tag">Hyperion</span>
+          </a>
+          <a href="#v8.0.0" class="rail-link" data-target="v8.0.0">
+            <span>v8.0.0</span>
+            <span class="rail-tag">Swarm</span>
+          </a>
+          <a href="#v7.0.0" class="rail-link" data-target="v7.0.0">
+            <span>v7.0.0</span>
+            <span class="rail-tag">Covenant</span>
+          </a>
+          <a href="#v6.0.0" class="rail-link" data-target="v6.0.0">
+            <span>v6.0.0</span>
+            <span class="rail-tag">Governance</span>
+          </a>
+          <a href="#v5.0.0" class="rail-link" data-target="v5.0.0">
+            <span>v5.0.0</span>
+            <span class="rail-tag">AST</span>
+          </a>
+        </aside>
 
-      <div class="filter-pills" role="tablist" aria-label="Category filters">
-        <button class="filter-pill active" data-filter="all" role="tab" aria-selected="true">
-          <span>All Releases</span>
-          <span class="pill-count" id="countAll">10</span>
-        </button>
-        <button class="filter-pill" data-filter="browser" role="tab" aria-selected="false">
-          <span>🌐 Browser Intel</span>
-          <span class="pill-count">1</span>
-        </button>
-        <button class="filter-pill" data-filter="plugins" role="tab" aria-selected="false">
-          <span>🔌 Plugins & SDD</span>
-          <span class="pill-count">3</span>
-        </button>
-        <button class="filter-pill" data-filter="skills" role="tab" aria-selected="false">
-          <span>🌐 Skills Corpus</span>
-          <span class="pill-count">3</span>
-        </button>
-        <button class="filter-pill" data-filter="workflows" role="tab" aria-selected="false">
-          <span>📋 Workflows</span>
-          <span class="pill-count">4</span>
-        </button>
-        <button class="filter-pill" data-filter="runtime" role="tab" aria-selected="false">
-          <span>⚡ 2026 Runtime</span>
-          <span class="pill-count">3</span>
-        </button>
-        <button class="filter-pill" data-filter="quality" role="tab" aria-selected="false">
-          <span>🧹 Quality & Hardening</span>
-          <span class="pill-count">4</span>
-        </button>
-        <button class="filter-pill" data-filter="testing" role="tab" aria-selected="false">
-          <span>🧪 Tests & CI</span>
-          <span class="pill-count">5</span>
-        </button>
-      </div>
-    </section>
-
-    <!-- Main Content Area: Sidebar Rail + Release Feed -->
-    <main class="content-layout">
-
-      <!-- Sticky Version Rail -->
-      <aside class="timeline-rail" aria-label="Release timeline jump menu">
-        <div class="rail-heading">Release Versions</div>
-        <a href="#v9.1.0" class="rail-link active" data-target="v9.1.0">
-          <span>v9.1.0</span>
-          <span class="rail-tag">Latest</span>
-        </a>
-        <a href="#v9.0.0" class="rail-link" data-target="v9.0.0">
-          <span>v9.0.0</span>
-          <span class="rail-tag">Hyperion</span>
-        </a>
-        <a href="#v8.0.0" class="rail-link" data-target="v8.0.0">
-          <span>v8.0.0</span>
-          <span class="rail-tag">Swarm</span>
-        </a>
-        <a href="#v7.0.0" class="rail-link" data-target="v7.0.0">
-          <span>v7.0.0</span>
-          <span class="rail-tag">Covenant</span>
-        </a>
-        <a href="#v6.0.0" class="rail-link" data-target="v6.0.0">
-          <span>v6.0.0</span>
-          <span class="rail-tag">Governance</span>
-        </a>
-        <a href="#v5.0.0" class="rail-link" data-target="v5.0.0">
-          <span>v5.0.0</span>
-          <span class="rail-tag">AST</span>
-        </a>
-      </aside>
-
-      <!-- Release Feed -->
-      <div class="release-feed" id="releaseFeed">
-
-        <!-- ==========================================
+        <!-- Release Feed -->
+        <div class="release-feed" id="releaseFeed">
+          <!-- ==========================================
              RELEASE: v9.1.0 (FEATURED)
              ========================================== -->
-        <article class="release-card featured" id="v9.1.0" data-version="9.1.0">
-          <div class="release-header">
-            <div class="version-meta">
-              <h2 class="version-pill">v9.1.0</h2>
-              <span class="codename-badge">🌐 Autonomous Browser Intelligence & Empirical Case Law</span>
-              <span class="release-date">2026-09-13</span>
+          <article class="release-card featured" id="v9.1.0" data-version="9.1.0">
+            <div class="release-header">
+              <div class="version-meta">
+                <h2 class="version-pill">v9.1.0</h2>
+                <span class="codename-badge"
+                  >🌐 Autonomous Browser Intelligence & Empirical Case Law</span
+                >
+                <span class="release-date">2026-09-13</span>
+              </div>
+              <div class="release-actions">
+                <button
+                  class="copy-tag-btn"
+                  data-copy="v9.1.0"
+                  title="Copy version tag v9.1.0"
+                  aria-label="Copy version tag v9.1.0"
+                >
+                  <svg
+                    aria-hidden="true"
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Tag</span>
+                </button>
+              </div>
             </div>
-            <div class="release-actions">
-              <button class="copy-tag-btn" data-copy="v9.1.0" title="Copy version tag v9.1.0" aria-label="Copy version tag v9.1.0">
-                <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                <span>Tag</span>
-              </button>
-            </div>
-          </div>
 
-          <div class="release-callout">
-            <svg class="callout-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-            <div>
-              <strong>Major Milestone:</strong> Release 9.1.0 introduces a zero-dependency native browser intelligence subsystem to Tribunal Kit. Inspired by PinchTab's token-pruned CDP control, this release adds <strong>Component Synapse</strong> (reverse-engineering live DOM into React TSX + Tailwind), <strong>Empirical Case Law Bridge</strong> (codifying live audit failures into binding precedents), <strong>Runtime Sentinel</strong> (hunting dev-server error overlays), <strong>SDD Prompt Isolation</strong> (structural XML delimiter sandboxing), <strong>Super-Prompt Compiler Taxonomy Expansion</strong>, and <strong>Proxy DoS Protection</strong>.
+            <div class="release-callout">
+              <svg
+                class="callout-icon"
+                aria-hidden="true"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <div>
+                <strong>Major Milestone:</strong> Release 9.1.0 introduces a zero-dependency native
+                browser intelligence subsystem to Tribunal Kit. Inspired by PinchTab's token-pruned
+                CDP control, this release adds
+                <strong>Component Synapse</strong> (reverse-engineering live DOM into React TSX +
+                Tailwind), <strong>Empirical Case Law Bridge</strong> (codifying live audit failures
+                into binding precedents), <strong>Runtime Sentinel</strong> (hunting dev-server
+                error overlays), <strong>SDD Prompt Isolation</strong> (structural XML delimiter
+                sandboxing), <strong>Super-Prompt Compiler Taxonomy Expansion</strong>, and
+                <strong>Proxy DoS Protection</strong>.
+              </div>
             </div>
-          </div>
 
-          <!-- Section: Browser Intelligence -->
-          <div class="release-group" data-category="browser">
-            <div class="group-header">
-              <span class="group-badge browser">Browser Intel</span>
-              <span>Zero-Dependency Native Browser Intelligence Engine (dist/browser/)</span>
+            <!-- Section: Browser Intelligence -->
+            <div class="release-group" data-category="browser">
+              <div class="group-header">
+                <span class="group-badge browser">Browser Intel</span>
+                <span>Zero-Dependency Native Browser Intelligence Engine (dist/browser/)</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong
+                    >Node 22 Native WebSocket CDP Engine (<code>dist/browser/cdp.js</code>)</strong
+                  >: Zero-dependency Chrome DevTools Protocol client using Node 22 native
+                  <code>WebSocket</code>. Supports Page, Runtime, DOM, Accessibility, and Network
+                  domains without Playwright or Puppeteer.
+                </li>
+                <li class="release-item">
+                  <strong
+                    >CSRF-Protected Tab Allocation & Dynamic Ephemeral Ports
+                    (<code>dist/browser/launcher.js</code>)</strong
+                  >: Added <code>getFreePort()</code> dynamic port assignment to avoid socket
+                  TIME_WAIT lockouts in concurrent test environments, alongside robust HTTP PUT
+                  /json/new tab spawning.
+                </li>
+                <li class="release-item">
+                  <strong
+                    >Fabel Token-Pruned Trimmer & IDPI Firewall
+                    (<code>dist/browser/trimmer.js</code>, <code>idpi.js</code>)</strong
+                  >: Pure Node.js port of PinchTab's <code>htmltrim</code> pruning DOM to &lt; 4,000
+                  UTF-8 bytes. Scans scraped web content against injection vectors and isolates in
+                  <code>&lt;untrusted_web_content&gt;</code> sandboxes.
+                </li>
+                <li class="release-item">
+                  <strong
+                    >Proprietary Component Synapse (<code>dist/browser/synapse.js</code>)</strong
+                  >: Reverse-engineers any live DOM element into production-ready React TSX with
+                  Tailwind CSS classes by extracting computed CSSOM properties.
+                </li>
+                <li class="release-item">
+                  <strong
+                    >Empirical Case Law Bridge (<code>dist/browser/case_bridge.js</code>)</strong
+                  >: Ingests live WCAG 2.2, console, and security audit violations and codifies them
+                  into permanent binding precedents in <code>.agent/history/case-law/</code>.
+                </li>
+                <li class="release-item">
+                  <strong
+                    >Runtime Sentinel Error Hunter (<code>dist/browser/sentinel.js</code>)</strong
+                  >: Connects to local dev servers (Next.js, Vite, CRA), parses error overlays and
+                  stack traces to locate source files, and verifies candidate fixes.
+                </li>
+                <li class="release-item">
+                  <strong>Five New Browser CLI Commands</strong>: Shipped <code>tk browse</code>,
+                  <code>tk audit-web [--codify]</code>, <code>tk compare-web</code>,
+                  <code>tk deconstruct</code>, and <code>tk heal</code>.
+                </li>
+                <li class="release-item">
+                  <strong>Seven Native Browser MCP Tools</strong>: Registered
+                  <code>tk_browser_navigate</code>, <code>tk_browser_audit</code>,
+                  <code>tk_browser_compare</code>, <code>tk_browser_screenshot</code>,
+                  <code>tk_deconstruct_component</code>, <code>tk_heal_runtime_errors</code>, and
+                  <code>tk_codify_browser_audit</code> in <code>bin/mcp-server.js</code>.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>Node 22 Native WebSocket CDP Engine (<code>dist/browser/cdp.js</code>)</strong>: Zero-dependency Chrome DevTools Protocol client using Node 22 native <code>WebSocket</code>. Supports Page, Runtime, DOM, Accessibility, and Network domains without Playwright or Puppeteer.
-              </li>
-              <li class="release-item">
-                <strong>CSRF-Protected Tab Allocation & Dynamic Ephemeral Ports (<code>dist/browser/launcher.js</code>)</strong>: Added <code>getFreePort()</code> dynamic port assignment to avoid socket TIME_WAIT lockouts in concurrent test environments, alongside robust HTTP PUT /json/new tab spawning.
-              </li>
-              <li class="release-item">
-                <strong>Fabel Token-Pruned Trimmer & IDPI Firewall (<code>dist/browser/trimmer.js</code>, <code>idpi.js</code>)</strong>: Pure Node.js port of PinchTab's <code>htmltrim</code> pruning DOM to &lt; 4,000 UTF-8 bytes. Scans scraped web content against injection vectors and isolates in <code>&lt;untrusted_web_content&gt;</code> sandboxes.
-              </li>
-              <li class="release-item">
-                <strong>Proprietary Component Synapse (<code>dist/browser/synapse.js</code>)</strong>: Reverse-engineers any live DOM element into production-ready React TSX with Tailwind CSS classes by extracting computed CSSOM properties.
-              </li>
-              <li class="release-item">
-                <strong>Empirical Case Law Bridge (<code>dist/browser/case_bridge.js</code>)</strong>: Ingests live WCAG 2.2, console, and security audit violations and codifies them into permanent binding precedents in <code>.agent/history/case-law/</code>.
-              </li>
-              <li class="release-item">
-                <strong>Runtime Sentinel Error Hunter (<code>dist/browser/sentinel.js</code>)</strong>: Connects to local dev servers (Next.js, Vite, CRA), parses error overlays and stack traces to locate source files, and verifies candidate fixes.
-              </li>
-              <li class="release-item">
-                <strong>Five New Browser CLI Commands</strong>: Shipped <code>tk browse</code>, <code>tk audit-web [--codify]</code>, <code>tk compare-web</code>, <code>tk deconstruct</code>, and <code>tk heal</code>.
-              </li>
-              <li class="release-item">
-                <strong>Seven Native Browser MCP Tools</strong>: Registered <code>tk_browser_navigate</code>, <code>tk_browser_audit</code>, <code>tk_browser_compare</code>, <code>tk_browser_screenshot</code>, <code>tk_deconstruct_component</code>, <code>tk_heal_runtime_errors</code>, and <code>tk_codify_browser_audit</code> in <code>bin/mcp-server.js</code>.
-              </li>
-            </ul>
-          </div>
 
-          <!-- Section: Plugins & SDD -->
-          <div class="release-group" data-category="plugins">
-            <div class="group-header">
-              <span class="group-badge plugins">Plugins & SDD</span>
-              <span>Subagent-Driven Development Prompt Isolation & XML Delimiter Sandboxing</span>
+            <!-- Section: Plugins & SDD -->
+            <div class="release-group" data-category="plugins">
+              <div class="group-header">
+                <span class="group-badge plugins">Plugins & SDD</span>
+                <span>Subagent-Driven Development Prompt Isolation & XML Delimiter Sandboxing</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>Structural XML Envelopes (<code>.agent/templates/sdd/</code>)</strong>:
+                  Wrapped SDD prompts in <code>&lt;context_envelope&gt;</code>,
+                  <code>&lt;task_specification&gt;</code>, <code>&lt;diff_envelope&gt;</code>, and
+                  <code>&lt;evaluation_criteria&gt;</code> tags to shield AI agents against prompt
+                  injection from untrusted files and diffs.
+                </li>
+                <li class="release-item">
+                  <strong>Anti-Hallucination & Epistemic Protocol</strong>: Injected mandatory
+                  pre-flight constraints requiring implementers to verify every imported method or
+                  package against <code>package.json</code>/lockfile, mandate
+                  <code>// VERIFY</code> annotations, and strictly ban speculative APIs.
+                </li>
+                <li class="release-item">
+                  <strong>Subagent & Process Isolation</strong>: Enforced runtime process isolation
+                  banning implementers from spawning rogue subagents or self-reviewers, preserving
+                  controller-mediated wave review boundaries.
+                </li>
+                <li class="release-item">
+                  <strong>Machine-Readable Review Verdicts</strong>: Standardized reviewer output
+                  contract with structured JSON summaries (<code>critical_count</code>,
+                  <code>important_count</code>, <code>minor_count</code>) and anchored file/line
+                  citations.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>Structural XML Envelopes (<code>.agent/templates/sdd/</code>)</strong>: Wrapped SDD prompts in <code>&lt;context_envelope&gt;</code>, <code>&lt;task_specification&gt;</code>, <code>&lt;diff_envelope&gt;</code>, and <code>&lt;evaluation_criteria&gt;</code> tags to shield AI agents against prompt injection from untrusted files and diffs.
-              </li>
-              <li class="release-item">
-                <strong>Anti-Hallucination & Epistemic Protocol</strong>: Injected mandatory pre-flight constraints requiring implementers to verify every imported method or package against <code>package.json</code>/lockfile, mandate <code>// VERIFY</code> annotations, and strictly ban speculative APIs.
-              </li>
-              <li class="release-item">
-                <strong>Subagent & Process Isolation</strong>: Enforced runtime process isolation banning implementers from spawning rogue subagents or self-reviewers, preserving controller-mediated wave review boundaries.
-              </li>
-              <li class="release-item">
-                <strong>Machine-Readable Review Verdicts</strong>: Standardized reviewer output contract with structured JSON summaries (<code>critical_count</code>, <code>important_count</code>, <code>minor_count</code>) and anchored file/line citations.
-              </li>
-            </ul>
-          </div>
 
-          <!-- Section: 2026 Runtime -->
-          <div class="release-group" data-category="runtime">
-            <div class="group-header">
-              <span class="group-badge runtime">2026 Runtime</span>
-              <span>Super-Prompt Compiler Hardening, Impact Tier Engine & Proxy Resilience</span>
+            <!-- Section: 2026 Runtime -->
+            <div class="release-group" data-category="runtime">
+              <div class="group-header">
+                <span class="group-badge runtime">2026 Runtime</span>
+                <span>Super-Prompt Compiler Hardening, Impact Tier Engine & Proxy Resilience</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong
+                    >Expanded Stack Taxonomy
+                    (<code>.agent/scripts/prompt_compiler.js</code>)</strong
+                  >: Added 27 modern technologies to routing index (FastAPI, Django, GraphQL, Rust,
+                  Docker, Kubernetes, AWS, Terraform, Redis, Supabase, Playwright, Vitest, React
+                  Native, C#/.NET, SQLite, OpenTelemetry, WebGPU, LLM, RAG).
+                </li>
+                <li class="release-item">
+                  <strong>Governance Impact Tier Classifier (<code>inferImpactTier</code>)</strong>:
+                  Programmatically classifies tasks into Tiers 0-3 based on action risk and domain
+                  sensitivity (auth, JWT, migrations, schema = Tier 3).
+                </li>
+                <li class="release-item">
+                  <strong
+                    >Adversarial Jailbreak Neutralization (<code>sanitizeUserInput</code>)</strong
+                  >: Neutralizes bypass and override patterns (<code
+                    >disregard previous instructions</code
+                  >, <code>DAN/jailbreak</code>) into isolated
+                  <code>&lt;untrusted_user_input&gt;</code> blocks.
+                </li>
+                <li class="release-item">
+                  <strong>Proxy Server 413 Payload Guard (<code>bin/proxy-server.js</code>)</strong
+                  >: Added 5MB cutoff protecting proxy interception against memory exhaustion, with
+                  clean content-length recalculation and 502 Bad Gateway handling.
+                </li>
+                <li class="release-item">
+                  <strong
+                    >Cross-Platform Spawning & Binary Execution (<code>bin/spawn-agent.js</code>,
+                    <code>bin/wrapper.js</code>)</strong
+                  >: Native Windows shell compatibility, signal code forwarding (<code
+                    >128 + signal</code
+                  >), and <code>TK_AUTO_BUILD=1</code> gated compilation.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>Expanded Stack Taxonomy (<code>.agent/scripts/prompt_compiler.js</code>)</strong>: Added 27 modern technologies to routing index (FastAPI, Django, GraphQL, Rust, Docker, Kubernetes, AWS, Terraform, Redis, Supabase, Playwright, Vitest, React Native, C#/.NET, SQLite, OpenTelemetry, WebGPU, LLM, RAG).
-              </li>
-              <li class="release-item">
-                <strong>Governance Impact Tier Classifier (<code>inferImpactTier</code>)</strong>: Programmatically classifies tasks into Tiers 0-3 based on action risk and domain sensitivity (auth, JWT, migrations, schema = Tier 3).
-              </li>
-              <li class="release-item">
-                <strong>Adversarial Jailbreak Neutralization (<code>sanitizeUserInput</code>)</strong>: Neutralizes bypass and override patterns (<code>disregard previous instructions</code>, <code>DAN/jailbreak</code>) into isolated <code>&lt;untrusted_user_input&gt;</code> blocks.
-              </li>
-              <li class="release-item">
-                <strong>Proxy Server 413 Payload Guard (<code>bin/proxy-server.js</code>)</strong>: Added 5MB cutoff protecting proxy interception against memory exhaustion, with clean content-length recalculation and 502 Bad Gateway handling.
-              </li>
-              <li class="release-item">
-                <strong>Cross-Platform Spawning & Binary Execution (<code>bin/spawn-agent.js</code>, <code>bin/wrapper.js</code>)</strong>: Native Windows shell compatibility, signal code forwarding (<code>128 + signal</code>), and <code>TK_AUTO_BUILD=1</code> gated compilation.
-              </li>
-            </ul>
-          </div>
 
-          <!-- Section: Skills & Workflows -->
-          <div class="release-group" data-category="skills">
-            <div class="group-header">
-              <span class="group-badge skills">Skills Corpus</span>
-              <span>185 Skills & 43 Audited Workflows</span>
+            <!-- Section: Skills & Workflows -->
+            <div class="release-group" data-category="skills">
+              <div class="group-header">
+                <span class="group-badge skills">Skills Corpus</span>
+                <span>185 Skills & 43 Audited Workflows</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>New Skill: <code>browser-audit</code></strong
+                  >: Added dedicated browser-audit skill in
+                  <code>.agent/skills/browser-audit/SKILL.md</code> covering live WCAG 2.2 contrast
+                  auditing, console exception capture, and security headers.
+                </li>
+                <li class="release-item">
+                  <strong
+                    >New Workflows: <code>/audit-live</code> & <code>/compare-web</code></strong
+                  >: Added live browser auditing and visual regression differ workflows in
+                  <code>.agent/workflows/</code> with mandatory pre-flight loaders.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>New Skill: <code>browser-audit</code></strong>: Added dedicated browser-audit skill in <code>.agent/skills/browser-audit/SKILL.md</code> covering live WCAG 2.2 contrast auditing, console exception capture, and security headers.
-              </li>
-              <li class="release-item">
-                <strong>New Workflows: <code>/audit-live</code> & <code>/compare-web</code></strong>: Added live browser auditing and visual regression differ workflows in <code>.agent/workflows/</code> with mandatory pre-flight loaders.
-              </li>
-            </ul>
-          </div>
 
-          <!-- Section: Quality & Packaging -->
-          <div class="release-group" data-category="quality">
-            <div class="group-header">
-              <span class="group-badge quality">Quality & Hardening</span>
-              <span>Packaging Hygiene, Self-Uninstall Guard & Dependency Pruning</span>
+            <!-- Section: Quality & Packaging -->
+            <div class="release-group" data-category="quality">
+              <div class="group-header">
+                <span class="group-badge quality">Quality & Hardening</span>
+                <span>Packaging Hygiene, Self-Uninstall Guard & Dependency Pruning</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>Self-Uninstall Guard (<code>dist/commands/uninstall.js</code>)</strong>:
+                  Added <code>isSelfInstall</code> check preventing accidental deletion when
+                  <code>tk uninstall</code> is executed within tribunal-kit itself.
+                </li>
+                <li class="release-item">
+                  <strong
+                    >Python Cache Purge on Prepack (<code>scripts/clean-pycache.js</code>)</strong
+                  >: Wired <code>clean:pycache</code> into <code>npm run prepack</code> to purge
+                  <code>__pycache__</code> and <code>.pyc</code> artifacts from published packages.
+                </li>
+                <li class="release-item">
+                  <strong>Dependency Pruning</strong>: Removed unused
+                  <code>better-sqlite3</code> from production dependencies.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>Self-Uninstall Guard (<code>dist/commands/uninstall.js</code>)</strong>: Added <code>isSelfInstall</code> check preventing accidental deletion when <code>tk uninstall</code> is executed within tribunal-kit itself.
-              </li>
-              <li class="release-item">
-                <strong>Python Cache Purge on Prepack (<code>scripts/clean-pycache.js</code>)</strong>: Wired <code>clean:pycache</code> into <code>npm run prepack</code> to purge <code>__pycache__</code> and <code>.pyc</code> artifacts from published packages.
-              </li>
-              <li class="release-item">
-                <strong>Dependency Pruning</strong>: Removed unused <code>better-sqlite3</code> from production dependencies.
-              </li>
-            </ul>
-          </div>
 
-          <!-- Section: Tests & CI -->
-          <div class="release-group" data-category="testing">
-            <div class="group-header">
-              <span class="group-badge testing">Tests & CI</span>
-              <span>482 Tests 100% Passing Across 42 Unit, 11 Integration, and 33 Rust Suites</span>
+            <!-- Section: Tests & CI -->
+            <div class="release-group" data-category="testing">
+              <div class="group-header">
+                <span class="group-badge testing">Tests & CI</span>
+                <span
+                  >482 Tests 100% Passing Across 42 Unit, 11 Integration, and 33 Rust Suites</span
+                >
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>Browser Unit & Integration Test Suites</strong>: Added 7 new test suites
+                  covering CSSOM-to-Tailwind mapping, runtime error hunting, prompt injection
+                  sanitization, token budgeting, and live headless navigation.
+                </li>
+                <li class="release-item">
+                  <strong>Compiler & MCP Verification</strong>: Verified compiler taxonomy and 7
+                  browser MCP tool registrations in <code>prompt_compiler.test.js</code> and
+                  <code>mcp_server.test.js</code>.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>Browser Unit & Integration Test Suites</strong>: Added 7 new test suites covering CSSOM-to-Tailwind mapping, runtime error hunting, prompt injection sanitization, token budgeting, and live headless navigation.
-              </li>
-              <li class="release-item">
-                <strong>Compiler & MCP Verification</strong>: Verified compiler taxonomy and 7 browser MCP tool registrations in <code>prompt_compiler.test.js</code> and <code>mcp_server.test.js</code>.
-              </li>
-            </ul>
-          </div>
-        </article>
+          </article>
 
-        <!-- ==========================================
+          <!-- ==========================================
              RELEASE: v9.0.0
              ========================================== -->
-        <article class="release-card" id="v9.0.0" data-version="9.0.0">
-          <div class="release-header">
-            <div class="version-meta">
-              <h2 class="version-pill">v9.0.0</h2>
-              <span class="codename-badge">🏛️ Hyperion Corpus & Universal Governance</span>
-              <span class="release-date">2026-09-08</span>
+          <article class="release-card" id="v9.0.0" data-version="9.0.0">
+            <div class="release-header">
+              <div class="version-meta">
+                <h2 class="version-pill">v9.0.0</h2>
+                <span class="codename-badge">🏛️ Hyperion Corpus & Universal Governance</span>
+                <span class="release-date">2026-09-08</span>
+              </div>
+              <div class="release-actions">
+                <button
+                  class="copy-tag-btn"
+                  data-copy="v9.0.0"
+                  title="Copy version tag v9.0.0"
+                  aria-label="Copy version tag v9.0.0"
+                >
+                  <svg
+                    aria-hidden="true"
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Tag</span>
+                </button>
+              </div>
             </div>
-            <div class="release-actions">
-              <button class="copy-tag-btn" data-copy="v9.0.0" title="Copy version tag v9.0.0" aria-label="Copy version tag v9.0.0">
-                <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                <span>Tag</span>
-              </button>
-            </div>
-          </div>
 
-          <div class="release-callout">
-            <svg class="callout-icon" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-            <div>
-              <strong>Major Milestone:</strong> Release 9.0.0 establishes universal governance across 9 major agent harnesses, introduces native Rust Spec-Driven Development (<code>tk sdd</code>), brings 100% workflow standardization across all 41 workflows, and modernizes the entire 184-skill corpus under the V4 specification.
+            <div class="release-callout">
+              <svg
+                class="callout-icon"
+                aria-hidden="true"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <div>
+                <strong>Major Milestone:</strong> Release 9.0.0 establishes universal governance
+                across 9 major agent harnesses, introduces native Rust Spec-Driven Development
+                (<code>tk sdd</code>), brings 100% workflow standardization across all 41 workflows,
+                and modernizes the entire 184-skill corpus under the V4 specification.
+              </div>
             </div>
-          </div>
 
-          <!-- Section: Plugins & SDD -->
-          <div class="release-group" data-category="plugins">
-            <div class="group-header">
-              <span class="group-badge plugins">Plugins & SDD</span>
-              <span>Universal Multi-Harness Plugin Architecture & Spec-Driven Development</span>
+            <!-- Section: Plugins & SDD -->
+            <div class="release-group" data-category="plugins">
+              <div class="group-header">
+                <span class="group-badge plugins">Plugins & SDD</span>
+                <span>Universal Multi-Harness Plugin Architecture & Spec-Driven Development</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>Universal Agent Ecosystem Support (9 Harnesses)</strong>: Integrated
+                  full-spectrum plugin definitions and manifests across 9 major agent environments:
+                  <ul class="sub-list">
+                    <li>
+                      <strong>Claude Code</strong>: <code>.claude-plugin/plugin.json</code> &
+                      <code>marketplace.json</code>
+                    </li>
+                    <li>
+                      <strong>Cursor</strong>: <code>.cursor-plugin/plugin.json</code> &
+                      <code>hooks/hooks-cursor.json</code>
+                    </li>
+                    <li><strong>OpenAI Codex</strong>: <code>.codex-plugin/plugin.json</code></li>
+                    <li><strong>Devin CLI</strong>: <code>.devin-plugin/plugin.json</code></li>
+                    <li>
+                      <strong>Hermes Agent</strong>: <code>.hermes-plugin/plugin.yaml</code> &
+                      Python bridge
+                    </li>
+                    <li><strong>Kimi Code</strong>: <code>.kimi-plugin/plugin.json</code></li>
+                    <li><strong>OpenCode</strong>: <code>.opencode/plugins/tribunal.js</code></li>
+                    <li><strong>Pi Agent</strong>: <code>.pi/extensions/tribunal.ts</code></li>
+                    <li><strong>Google Gemini</strong>: <code>gemini-extension.json</code></li>
+                  </ul>
+                </li>
+                <li class="release-item">
+                  <strong>Unified Hook Lifecycle Architecture (<code>hooks/</code>)</strong>: Built
+                  runtime lifecycle interceptors (<code>session-start.js</code>,
+                  <code>pre-command.js</code>, <code>post-command.js</code>) to dynamically inject
+                  rules, session state, and security boundaries across any CLI or editor agent.
+                </li>
+                <li class="release-item">
+                  <strong
+                    >Native Rust CLI <code>sdd</code> Subcommand
+                    (<code>crates/core/src/commands/sdd.rs</code>)</strong
+                  >: Implemented the native Spec-Driven Development subcommand in Rust core, wired
+                  through CLI entrypoints and surfaced via <code>bin/wrapper.js</code>.
+                </li>
+                <li class="release-item">
+                  <strong>Spec-Driven Development Workflow & Templates</strong>: Added
+                  <code>.agent/workflows/sdd.md</code> and standard prompt templates in
+                  <code>.agent/templates/sdd/</code> (architect, implementer, reviewer) enforcing
+                  structured phases.
+                </li>
+                <li class="release-item">
+                  <strong>Verification Before Completion (VBC) Protocol</strong>: Shipped dedicated
+                  skill <code>verification-before-completion</code> and systematic debugging
+                  deep-dive guides.
+                </li>
+                <li class="release-item">
+                  <strong>SDD Integration Test Suite</strong>: Added
+                  <code>test/unit/sdd_integration.test.js</code> with 6 automated tests validating
+                  CLI execution, schema compliance, and template existence.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>Universal Agent Ecosystem Support (9 Harnesses)</strong>: Integrated full-spectrum plugin definitions and manifests across 9 major agent environments:
-                <ul class="sub-list">
-                  <li><strong>Claude Code</strong>: <code>.claude-plugin/plugin.json</code> & <code>marketplace.json</code></li>
-                  <li><strong>Cursor</strong>: <code>.cursor-plugin/plugin.json</code> & <code>hooks/hooks-cursor.json</code></li>
-                  <li><strong>OpenAI Codex</strong>: <code>.codex-plugin/plugin.json</code></li>
-                  <li><strong>Devin CLI</strong>: <code>.devin-plugin/plugin.json</code></li>
-                  <li><strong>Hermes Agent</strong>: <code>.hermes-plugin/plugin.yaml</code> & Python bridge</li>
-                  <li><strong>Kimi Code</strong>: <code>.kimi-plugin/plugin.json</code></li>
-                  <li><strong>OpenCode</strong>: <code>.opencode/plugins/tribunal.js</code></li>
-                  <li><strong>Pi Agent</strong>: <code>.pi/extensions/tribunal.ts</code></li>
-                  <li><strong>Google Gemini</strong>: <code>gemini-extension.json</code></li>
-                </ul>
-              </li>
-              <li class="release-item">
-                <strong>Unified Hook Lifecycle Architecture (<code>hooks/</code>)</strong>: Built runtime lifecycle interceptors (<code>session-start.js</code>, <code>pre-command.js</code>, <code>post-command.js</code>) to dynamically inject rules, session state, and security boundaries across any CLI or editor agent.
-              </li>
-              <li class="release-item">
-                <strong>Native Rust CLI <code>sdd</code> Subcommand (<code>crates/core/src/commands/sdd.rs</code>)</strong>: Implemented the native Spec-Driven Development subcommand in Rust core, wired through CLI entrypoints and surfaced via <code>bin/wrapper.js</code>.
-              </li>
-              <li class="release-item">
-                <strong>Spec-Driven Development Workflow & Templates</strong>: Added <code>.agent/workflows/sdd.md</code> and standard prompt templates in <code>.agent/templates/sdd/</code> (architect, implementer, reviewer) enforcing structured phases.
-              </li>
-              <li class="release-item">
-                <strong>Verification Before Completion (VBC) Protocol</strong>: Shipped dedicated skill <code>verification-before-completion</code> and systematic debugging deep-dive guides.
-              </li>
-              <li class="release-item">
-                <strong>SDD Integration Test Suite</strong>: Added <code>test/unit/sdd_integration.test.js</code> with 6 automated tests validating CLI execution, schema compliance, and template existence.
-              </li>
-            </ul>
-          </div>
 
-          <!-- Section: Workflows -->
-          <div class="release-group" data-category="workflows">
-            <div class="group-header">
-              <span class="group-badge workflows">Workflows</span>
-              <span>100% Corpus-Wide Workflow Standardization & Explicit Skill Loading</span>
+            <!-- Section: Workflows -->
+            <div class="release-group" data-category="workflows">
+              <div class="group-header">
+                <span class="group-badge workflows">Workflows</span>
+                <span>100% Corpus-Wide Workflow Standardization & Explicit Skill Loading</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>Complete 41/41 Workflow Catalog Audit</strong>: Audited all 41 workflow
+                  definitions in <code>.agent/workflows/</code> for structural integrity and valid
+                  dependencies.
+                </li>
+                <li class="release-item">
+                  <strong>Frontmatter Schema Normalization</strong>: Repaired missing frontmatter in
+                  <code>contract.md</code> and <code>sdd.md</code> to conform to the v3.0.0
+                  specification (<code>required-skills</code>, <code>scripts-binding</code>).
+                </li>
+                <li class="release-item">
+                  <strong>Broken Skill Reference Remediation</strong>: Eliminated 11 invalid/broken
+                  skill references across workflows (e.g. mapping <code>project-planner</code> →
+                  <code>plan-writing</code>, <code>database-architect</code> →
+                  <code>database-design</code>).
+                </li>
+                <li class="release-item">
+                  <strong>Universal Explicit Skill Loaders</strong>: Injected mandatory Pre-Flight
+                  skill-loading instructions into all 38 workflows previously lacking them,
+                  achieving 100% (41 of 41) compliance.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>Complete 41/41 Workflow Catalog Audit</strong>: Audited all 41 workflow definitions in <code>.agent/workflows/</code> for structural integrity and valid dependencies.
-              </li>
-              <li class="release-item">
-                <strong>Frontmatter Schema Normalization</strong>: Repaired missing frontmatter in <code>contract.md</code> and <code>sdd.md</code> to conform to the v3.0.0 specification (<code>required-skills</code>, <code>scripts-binding</code>).
-              </li>
-              <li class="release-item">
-                <strong>Broken Skill Reference Remediation</strong>: Eliminated 11 invalid/broken skill references across workflows (e.g. mapping <code>project-planner</code> → <code>plan-writing</code>, <code>database-architect</code> → <code>database-design</code>).
-              </li>
-              <li class="release-item">
-                <strong>Universal Explicit Skill Loaders</strong>: Injected mandatory Pre-Flight skill-loading instructions into all 38 workflows previously lacking them, achieving 100% (41 of 41) compliance.
-              </li>
-            </ul>
-          </div>
 
-          <!-- Section: Skills -->
-          <div class="release-group" data-category="skills">
-            <div class="group-header">
-              <span class="group-badge skills">Skills Corpus</span>
-              <span>Corpus-Wide V4 Hybrid Skill Modernization (184 Skills)</span>
+            <!-- Section: Skills -->
+            <div class="release-group" data-category="skills">
+              <div class="group-header">
+                <span class="group-badge skills">Skills Corpus</span>
+                <span>Corpus-Wide V4 Hybrid Skill Modernization (184 Skills)</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>V4 Hybrid Skill Schema</strong>: Upgraded the entire 184-skill corpus in
+                  <code>.agent/skills/</code> to the V4 specification, integrating clean metadata,
+                  automated scripts bindings, anti-pattern tables, and VBC Protocol.
+                </li>
+                <li class="release-item">
+                  <strong
+                    >Idempotent Skill Modernizer (<code>scripts/modernize_skills.js</code>)</strong
+                  >: Shipped an automated deduplication and schema validation engine with
+                  <code>--validate</code>, <code>--fix</code>, and
+                  <code>--sync-to-root</code> flags.
+                </li>
+                <li class="release-item">
+                  <strong>Deterministic Activation Boundaries</strong>: Added strict
+                  <code>Activate when:</code> and <code>DO NOT activate when:</code> boundaries
+                  across skills to eliminate false-positive activations.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>V4 Hybrid Skill Schema</strong>: Upgraded the entire 184-skill corpus in <code>.agent/skills/</code> to the V4 specification, integrating clean metadata, automated scripts bindings, anti-pattern tables, and VBC Protocol.
-              </li>
-              <li class="release-item">
-                <strong>Idempotent Skill Modernizer (<code>scripts/modernize_skills.js</code>)</strong>: Shipped an automated deduplication and schema validation engine with <code>--validate</code>, <code>--fix</code>, and <code>--sync-to-root</code> flags.
-              </li>
-              <li class="release-item">
-                <strong>Deterministic Activation Boundaries</strong>: Added strict <code>Activate when:</code> and <code>DO NOT activate when:</code> boundaries across skills to eliminate false-positive activations.
-              </li>
-            </ul>
-          </div>
 
-          <!-- Section: 2026 Runtime -->
-          <div class="release-group" data-category="runtime">
-            <div class="group-header">
-              <span class="group-badge runtime">2026 Runtime</span>
-              <span>2026 LTS Runtime Standards & Performance Invariants</span>
+            <!-- Section: 2026 Runtime -->
+            <div class="release-group" data-category="runtime">
+              <div class="group-header">
+                <span class="group-badge runtime">2026 Runtime</span>
+                <span>2026 LTS Runtime Standards & Performance Invariants</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>React 19 & Next.js 15 Integration</strong>: Enforced native direct
+                  <code>ref</code> prop (banned legacy <code>forwardRef</code>), async dynamic APIs
+                  (<code>await params</code>, <code>await cookies()</code>), and
+                  <code>useActionState</code> / <code>useOptimistic</code>.
+                </li>
+                <li class="release-item">
+                  <strong>Node.js 22+ LTS Standards</strong>: Enforced built-in
+                  <code>node:sqlite</code> (<code>DatabaseSync</code>), native test runner
+                  <code>node:test</code>, and stream backpressure management via
+                  <code>pipeline()</code>.
+                </li>
+                <li class="release-item">
+                  <strong>Advanced TypeScript 5.5+</strong>: Inferred type predicates,
+                  <code>isolatedDeclarations</code>, and interface inheritance over quadratic deep
+                  intersection types.
+                </li>
+                <li class="release-item">
+                  <strong>Python 3.12+ Systems</strong>: PEP 695 native
+                  <code>type</code> statements, generic functions, and structured concurrency via
+                  <code>asyncio.TaskGroup</code>.
+                </li>
+                <li class="release-item">
+                  <strong>High-Throughput SQL & Relational Architecture</strong>: Standardized on
+                  RFC 9562 UUID v7 for sequential B-tree indexing and keyset cursor pagination
+                  (banned deep <code>OFFSET</code>).
+                </li>
+                <li class="release-item">
+                  <strong>AI Security Hardening</strong>: Dual-LLM pattern for sandboxing untrusted
+                  context, random nonce XML framing, timing attack defense via
+                  <code>crypto.timingSafeEqual()</code>, and strict JWT algorithm pinning.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>React 19 & Next.js 15 Integration</strong>: Enforced native direct <code>ref</code> prop (banned legacy <code>forwardRef</code>), async dynamic APIs (<code>await params</code>, <code>await cookies()</code>), and <code>useActionState</code> / <code>useOptimistic</code>.
-              </li>
-              <li class="release-item">
-                <strong>Node.js 22+ LTS Standards</strong>: Enforced built-in <code>node:sqlite</code> (<code>DatabaseSync</code>), native test runner <code>node:test</code>, and stream backpressure management via <code>pipeline()</code>.
-              </li>
-              <li class="release-item">
-                <strong>Advanced TypeScript 5.5+</strong>: Inferred type predicates, <code>isolatedDeclarations</code>, and interface inheritance over quadratic deep intersection types.
-              </li>
-              <li class="release-item">
-                <strong>Python 3.12+ Systems</strong>: PEP 695 native <code>type</code> statements, generic functions, and structured concurrency via <code>asyncio.TaskGroup</code>.
-              </li>
-              <li class="release-item">
-                <strong>High-Throughput SQL & Relational Architecture</strong>: Standardized on RFC 9562 UUID v7 for sequential B-tree indexing and keyset cursor pagination (banned deep <code>OFFSET</code>).
-              </li>
-              <li class="release-item">
-                <strong>AI Security Hardening</strong>: Dual-LLM pattern for sandboxing untrusted context, random nonce XML framing, timing attack defense via <code>crypto.timingSafeEqual()</code>, and strict JWT algorithm pinning.
-              </li>
-            </ul>
-          </div>
 
-          <!-- Section: Quality Hardening -->
-          <div class="release-group" data-category="quality">
-            <div class="group-header">
-              <span class="group-badge quality">Quality</span>
-              <span>Thermo-Nuclear Quality Hardening & Dead Code Elimination</span>
+            <!-- Section: Quality Hardening -->
+            <div class="release-group" data-category="quality">
+              <div class="group-header">
+                <span class="group-badge quality">Quality</span>
+                <span>Thermo-Nuclear Quality Hardening & Dead Code Elimination</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>Zero-Tolerance ESLint Governance</strong>: Configured
+                  <code>eslint.config.js</code> for <code>.opencode/</code> and
+                  <code>.mjs</code> files; cleaned all dead imports, unused functions, and unhandled
+                  variables across 72 files.
+                </li>
+                <li class="release-item">
+                  <strong>Cross-Repository Metadata Synchronization</strong>: Synchronized version
+                  <code>9.0.0</code> and exact counts (52 agents, 28 reviewers, 184 skills, 41
+                  workflows, 41 scripts) across all manifests.
+                </li>
+                <li class="release-item">
+                  <strong>Public API Type Seams</strong>: Added missing declaration
+                  <code>cmdImpactTier</code> in <code>dist/index.d.ts</code>.
+                </li>
+                <li class="release-item">
+                  <strong>Dead Code Purged</strong>: Removed disconnected Vite starter boilerplate
+                  in <code>src/ui/</code> and deleted legacy 680 KB tarball archive.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>Zero-Tolerance ESLint Governance</strong>: Configured <code>eslint.config.js</code> for <code>.opencode/</code> and <code>.mjs</code> files; cleaned all dead imports, unused functions, and unhandled variables across 72 files.
-              </li>
-              <li class="release-item">
-                <strong>Cross-Repository Metadata Synchronization</strong>: Synchronized version <code>9.0.0</code> and exact counts (52 agents, 28 reviewers, 184 skills, 41 workflows, 41 scripts) across all manifests.
-              </li>
-              <li class="release-item">
-                <strong>Public API Type Seams</strong>: Added missing declaration <code>cmdImpactTier</code> in <code>dist/index.d.ts</code>.
-              </li>
-              <li class="release-item">
-                <strong>Dead Code Purged</strong>: Removed disconnected Vite starter boilerplate in <code>src/ui/</code> and deleted legacy 680 KB tarball archive.
-              </li>
-            </ul>
-          </div>
 
-          <!-- Section: Testing -->
-          <div class="release-group" data-category="testing">
-            <div class="group-header">
-              <span class="group-badge testing">Testing</span>
-              <span>Tooling & Test Suite Resilience (100% Green Pass)</span>
+            <!-- Section: Testing -->
+            <div class="release-group" data-category="testing">
+              <div class="group-header">
+                <span class="group-badge testing">Testing</span>
+                <span>Tooling & Test Suite Resilience (100% Green Pass)</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>100% Passing Test Suite Across All Engines</strong>: 36 JS unit test
+                  suites (368 tests passing), 10 JS integration test suites (54 tests passing), 33
+                  Rust unit tests passing, and 0 ESLint warnings.
+                </li>
+                <li class="release-item">
+                  <strong>Windows Test Suite Stability</strong>: Calibrated
+                  <code>test/unit/learn.test.js</code> with a 15,000 ms timeout to protect async
+                  process spawning from premature timeout.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>100% Passing Test Suite Across All Engines</strong>: 36 JS unit test suites (368 tests passing), 10 JS integration test suites (54 tests passing), 33 Rust unit tests passing, and 0 ESLint warnings.
-              </li>
-              <li class="release-item">
-                <strong>Windows Test Suite Stability</strong>: Calibrated <code>test/unit/learn.test.js</code> with a 15,000 ms timeout to protect async process spawning from premature timeout.
-              </li>
-            </ul>
-          </div>
-        </article>
+          </article>
 
-        <!-- ==========================================
+          <!-- ==========================================
              RELEASE: v8.0.0
              ========================================== -->
-        <article class="release-card" id="v8.0.0" data-version="8.0.0">
-          <div class="release-header">
-            <div class="version-meta">
-              <h2 class="version-pill">v8.0.0</h2>
-              <span class="codename-badge">⚡ Leviathan Orchestrator & Semantic AOT</span>
-              <span class="release-date">2026-08-30</span>
+          <article class="release-card" id="v8.0.0" data-version="8.0.0">
+            <div class="release-header">
+              <div class="version-meta">
+                <h2 class="version-pill">v8.0.0</h2>
+                <span class="codename-badge">⚡ Leviathan Orchestrator & Semantic AOT</span>
+                <span class="release-date">2026-08-30</span>
+              </div>
+              <div class="release-actions">
+                <button
+                  class="copy-tag-btn"
+                  data-copy="v8.0.0"
+                  title="Copy version tag v8.0.0"
+                  aria-label="Copy version tag v8.0.0"
+                >
+                  <svg
+                    aria-hidden="true"
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Tag</span>
+                </button>
+              </div>
             </div>
-            <div class="release-actions">
-              <button class="copy-tag-btn" data-copy="v8.0.0" title="Copy version tag v8.0.0" aria-label="Copy version tag v8.0.0">
-                <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                <span>Tag</span>
-              </button>
-            </div>
-          </div>
 
-          <div class="release-group" data-category="plugins">
-            <div class="group-header">
-              <span class="group-badge plugins">Orchestrator</span>
-              <span>Swarm Orchestrator & Wave-Based Execution (Phase 3)</span>
+            <div class="release-group" data-category="plugins">
+              <div class="group-header">
+                <span class="group-badge plugins">Orchestrator</span>
+                <span>Swarm Orchestrator & Wave-Based Execution (Phase 3)</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>SwarmOrchestrator Class</strong>: Upgraded
+                  <code>swarm_dispatcher.js</code> from a simulated UI to a fully functional
+                  wave-based orchestrator.
+                </li>
+                <li class="release-item">
+                  <strong>3-Wave Execution Pipeline</strong>: Deployed execution waves
+                  (<code>wave-1-core</code>, <code>wave-2-security</code>,
+                  <code>wave-3-domain</code>) to execute reviewers with strict failure mode
+                  partitioning.
+                </li>
+                <li class="release-item">
+                  <strong>Prompt Injection Defense</strong>: Implemented
+                  <code>sanitizeUserInput</code> in <code>prompt_compiler.js</code> to strip
+                  HTML/XML tags and safely wrap user inputs in strict delimiters.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>SwarmOrchestrator Class</strong>: Upgraded <code>swarm_dispatcher.js</code> from a simulated UI to a fully functional wave-based orchestrator.
-              </li>
-              <li class="release-item">
-                <strong>3-Wave Execution Pipeline</strong>: Deployed execution waves (<code>wave-1-core</code>, <code>wave-2-security</code>, <code>wave-3-domain</code>) to execute reviewers with strict failure mode partitioning.
-              </li>
-              <li class="release-item">
-                <strong>Prompt Injection Defense</strong>: Implemented <code>sanitizeUserInput</code> in <code>prompt_compiler.js</code> to strip HTML/XML tags and safely wrap user inputs in strict delimiters.
-              </li>
-            </ul>
-          </div>
 
-          <div class="release-group" data-category="skills">
-            <div class="group-header">
-              <span class="group-badge skills">Skills</span>
-              <span>Skill Format v4 — Stratified Density Architecture</span>
+            <div class="release-group" data-category="skills">
+              <div class="group-header">
+                <span class="group-badge skills">Skills</span>
+                <span>Skill Format v4 — Stratified Density Architecture</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>Tier Boundary Markers</strong>: HTML comment markers (<code
+                    >&lt;!-- TIER:RECIPES --&gt;</code
+                  >) separate assertion tiers from on-demand recipes, reducing skill tokens by
+                  60-85%.
+                </li>
+                <li class="release-item">
+                  <strong>Shared Guardrails Deduplication</strong>: Extracted VBC Protocol,
+                  Pre-Flight Checklist, and LLM Traps into
+                  <code>.agent/skills/_shared/guardrails.md</code>, eliminating 36,600 wasted
+                  tokens.
+                </li>
+              </ul>
             </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>Tier Boundary Markers</strong>: HTML comment markers (<code>&lt;!-- TIER:RECIPES --&gt;</code>) separate assertion tiers from on-demand recipes, reducing skill tokens by 60-85%.
-              </li>
-              <li class="release-item">
-                <strong>Shared Guardrails Deduplication</strong>: Extracted VBC Protocol, Pre-Flight Checklist, and LLM Traps into <code>.agent/skills/_shared/guardrails.md</code>, eliminating 36,600 wasted tokens.
-              </li>
-            </ul>
-          </div>
-        </article>
+          </article>
 
-        <!-- ==========================================
+          <!-- ==========================================
              RELEASE: v7.0.0
              ========================================== -->
-        <article class="release-card" id="v7.0.0" data-version="7.0.0">
-          <div class="release-header">
-            <div class="version-meta">
-              <h2 class="version-pill">v7.0.0</h2>
-              <span class="codename-badge">🛡️ Sovereign Covenant & Sentinel CI</span>
-              <span class="release-date">2026-08-09</span>
+          <article class="release-card" id="v7.0.0" data-version="7.0.0">
+            <div class="release-header">
+              <div class="version-meta">
+                <h2 class="version-pill">v7.0.0</h2>
+                <span class="codename-badge">🛡️ Sovereign Covenant & Sentinel CI</span>
+                <span class="release-date">2026-08-09</span>
+              </div>
+              <div class="release-actions">
+                <button
+                  class="copy-tag-btn"
+                  data-copy="v7.0.0"
+                  title="Copy version tag v7.0.0"
+                  aria-label="Copy version tag v7.0.0"
+                >
+                  <svg
+                    aria-hidden="true"
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>Tag</span>
+                </button>
+              </div>
             </div>
-            <div class="release-actions">
-              <button class="copy-tag-btn" data-copy="v7.0.0" title="Copy version tag v7.0.0" aria-label="Copy version tag v7.0.0">
-                <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                <span>Tag</span>
-              </button>
+
+            <div class="release-group" data-category="workflows">
+              <div class="group-header">
+                <span class="group-badge workflows">CI/CD Defense</span>
+                <span>CI/CD Pipeline Defense Suite & Sovereign Covenant Protocol</span>
+              </div>
+              <ul class="release-list">
+                <li class="release-item">
+                  <strong>Pre-Deploy CI/CD Tribunal Gate (<code>/tribunal-cicd</code>)</strong>:
+                  Added 5-reviewer gate for auditing GitHub Actions and GitLab CI configurations
+                  before merge.
+                </li>
+                <li class="release-item">
+                  <strong>AI Agent Behavioral Contract Testing (<code>tk contract</code>)</strong>:
+                  Created zero-dependency contract engine enforcing team invariants and structural
+                  boundaries before code commits.
+                </li>
+                <li class="release-item">
+                  <strong>Automated CI Failure Diagnosis (<code>/fix-ci</code>)</strong>: Automated
+                  log parsing for lockfile drift, matrix incompatibilities, and test timeouts with
+                  minimal repair synthesis.
+                </li>
+              </ul>
             </div>
+          </article>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-title">No matching releases or features found</div>
+          <div class="empty-desc">
+            Try clearing your search query or choosing another category filter.
           </div>
+          <button class="clear-search-btn" id="clearSearchBtn">Reset Search & Filters</button>
+        </div>
+      </main>
 
-          <div class="release-group" data-category="workflows">
-            <div class="group-header">
-              <span class="group-badge workflows">CI/CD Defense</span>
-              <span>CI/CD Pipeline Defense Suite & Sovereign Covenant Protocol</span>
-            </div>
-            <ul class="release-list">
-              <li class="release-item">
-                <strong>Pre-Deploy CI/CD Tribunal Gate (<code>/tribunal-cicd</code>)</strong>: Added 5-reviewer gate for auditing GitHub Actions and GitLab CI configurations before merge.
-              </li>
-              <li class="release-item">
-                <strong>AI Agent Behavioral Contract Testing (<code>tk contract</code>)</strong>: Created zero-dependency contract engine enforcing team invariants and structural boundaries before code commits.
-              </li>
-              <li class="release-item">
-                <strong>Automated CI Failure Diagnosis (<code>/fix-ci</code>)</strong>: Automated log parsing for lockfile drift, matrix incompatibilities, and test timeouts with minimal repair synthesis.
-              </li>
-            </ul>
-          </div>
-        </article>
+      <!-- Footer -->
+      <footer class="footer">
+        <div>
+          <span>Tribunal Kit © 2026. Distributed under the MIT License.</span>
+        </div>
+        <div class="footer-links">
+          <a href="https://github.com" class="footer-link" target="_blank" rel="noopener">GitHub</a>
+          <a href="API_REFERENCE.md" class="footer-link">API Docs</a>
+          <a href="AUTHORING_GUIDE.md" class="footer-link">Authoring Guide</a>
+          <a href="#top" class="footer-link">Back to Top ↑</a>
+        </div>
+      </footer>
+    </div>
 
-      </div>
-
-      <!-- Empty State -->
-      <div class="empty-state" id="emptyState">
-        <div class="empty-title">No matching releases or features found</div>
-        <div class="empty-desc">Try clearing your search query or choosing another category filter.</div>
-        <button class="clear-search-btn" id="clearSearchBtn">Reset Search & Filters</button>
-      </div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div>
-        <span>Tribunal Kit © 2026. Distributed under the MIT License.</span>
-      </div>
-      <div class="footer-links">
-        <a href="https://github.com" class="footer-link" target="_blank" rel="noopener">GitHub</a>
-        <a href="API_REFERENCE.md" class="footer-link">API Docs</a>
-        <a href="AUTHORING_GUIDE.md" class="footer-link">Authoring Guide</a>
-        <a href="#top" class="footer-link">Back to Top ↑</a>
-      </div>
-    </footer>
-
-  </div>
-
-  <!-- ==========================================================================
+    <!-- ==========================================================================
        VANILLA JS APPLICATION LOGIC (Instant, Zero Dependencies, Tactile)
        ========================================================================== -->
-  <script>
-    (function () {
-      'use strict';
+    <script>
+      (function () {
+        'use strict';
 
-      // ── Elements ──────────────────────────────────────────
-      const htmlEl = document.documentElement;
-      const themeToggleBtn = document.getElementById('themeToggleBtn');
-      const cliCopyBtn = document.getElementById('cliCopyBtn');
-      const cliBtnText = document.getElementById('cliBtnText');
-      const searchInput = document.getElementById('searchInput');
-      const filterPills = document.querySelectorAll('.filter-pill');
-      const releaseCards = document.querySelectorAll('.release-card');
-      const emptyState = document.getElementById('emptyState');
-      const clearSearchBtn = document.getElementById('clearSearchBtn');
-      const railLinks = document.querySelectorAll('.rail-link');
-      const copyTagBtns = document.querySelectorAll('.copy-tag-btn');
+        // ── Elements ──────────────────────────────────────────
+        const htmlEl = document.documentElement;
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const cliCopyBtn = document.getElementById('cliCopyBtn');
+        const cliBtnText = document.getElementById('cliBtnText');
+        const searchInput = document.getElementById('searchInput');
+        const filterPills = document.querySelectorAll('.filter-pill');
+        const releaseCards = document.querySelectorAll('.release-card');
+        const emptyState = document.getElementById('emptyState');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const railLinks = document.querySelectorAll('.rail-link');
+        const copyTagBtns = document.querySelectorAll('.copy-tag-btn');
 
-      // ── 1. Theme Management (Dark -> Light -> OLED -> Dark) ──
-      const themes = ['dark', 'light', 'oled'];
-      let currentTheme = localStorage.getItem('tk_changelog_theme') || 'dark';
-      applyTheme(currentTheme);
-
-      themeToggleBtn.addEventListener('click', () => {
-        const nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
-        currentTheme = themes[nextIndex];
-        localStorage.setItem('tk_changelog_theme', currentTheme);
+        // ── 1. Theme Management (Dark -> Light -> OLED -> Dark) ──
+        const themes = ['dark', 'light', 'oled'];
+        let currentTheme = localStorage.getItem('tk_changelog_theme') || 'dark';
         applyTheme(currentTheme);
-      });
 
-      function applyTheme(theme) {
-        htmlEl.setAttribute('data-theme', theme);
-        themeToggleBtn.title = `Current Theme: ${theme.toUpperCase()} (Click to toggle)`;
-      }
-
-      // ── 2. Copy CLI Command ──────────────────────────────────
-      cliCopyBtn.addEventListener('click', () => {
-        const cmd = 'npx tribunal-kit@latest';
-        navigator.clipboard.writeText(cmd).then(() => {
-          cliCopyBtn.classList.add('copied');
-          cliBtnText.textContent = 'Copied to clipboard!';
-          setTimeout(() => {
-            cliCopyBtn.classList.remove('copied');
-            cliBtnText.textContent = cmd;
-          }, 2000);
-        }).catch(() => {
-          cliBtnText.textContent = 'Press Ctrl+C to copy';
+        themeToggleBtn.addEventListener('click', () => {
+          const nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
+          currentTheme = themes[nextIndex];
+          localStorage.setItem('tk_changelog_theme', currentTheme);
+          applyTheme(currentTheme);
         });
-      });
 
-      // ── 3. Copy Version Tag ──────────────────────────────────
-      copyTagBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const tag = btn.getAttribute('data-copy');
-          navigator.clipboard.writeText(tag).then(() => {
-            const span = btn.querySelector('span');
-            const original = span.textContent;
-            span.textContent = 'Copied!';
-            btn.setAttribute('aria-label', `Copied tag ${tag}`);
-            btn.style.borderColor = 'var(--accent-emerald)';
-            btn.style.color = 'var(--accent-emerald)';
-            setTimeout(() => {
-              span.textContent = original;
-              btn.setAttribute('aria-label', `Copy version tag ${tag}`);
-              btn.style.borderColor = '';
-              btn.style.color = '';
-            }, 1800);
-          });
-        });
-      });
+        function applyTheme(theme) {
+          htmlEl.setAttribute('data-theme', theme);
+          themeToggleBtn.title = `Current Theme: ${theme.toUpperCase()} (Click to toggle)`;
+        }
 
-      // ── 4. Real-Time Search & Category Filtering ─────────────
-      let activeFilter = 'all';
-      let activeQuery = '';
-
-      function filterReleases() {
-        const query = activeQuery.toLowerCase().trim();
-        let visibleCount = 0;
-
-        releaseCards.forEach(card => {
-          const version = card.getAttribute('data-version') || '';
-          const cardText = card.textContent.toLowerCase();
-          const groups = card.querySelectorAll('.release-group');
-
-          let cardMatchesQuery = !query || cardText.includes(query) || version.includes(query);
-          let cardMatchesCategory = (activeFilter === 'all');
-
-          if (activeFilter !== 'all') {
-            let hasMatchingGroup = false;
-            groups.forEach(grp => {
-              const grpCat = grp.getAttribute('data-category');
-              if (grpCat === activeFilter) {
-                hasMatchingGroup = true;
-                grp.style.display = '';
-              } else {
-                grp.style.display = 'none';
-              }
+        // ── 2. Copy CLI Command ──────────────────────────────────
+        cliCopyBtn.addEventListener('click', () => {
+          const cmd = 'npx tribunal-kit@latest';
+          navigator.clipboard
+            .writeText(cmd)
+            .then(() => {
+              cliCopyBtn.classList.add('copied');
+              cliBtnText.textContent = 'Copied to clipboard!';
+              setTimeout(() => {
+                cliCopyBtn.classList.remove('copied');
+                cliBtnText.textContent = cmd;
+              }, 2000);
+            })
+            .catch(() => {
+              cliBtnText.textContent = 'Press Ctrl+C to copy';
             });
-            cardMatchesCategory = hasMatchingGroup;
-          } else {
-            groups.forEach(grp => grp.style.display = '');
-          }
-
-          if (cardMatchesQuery && cardMatchesCategory) {
-            card.style.display = '';
-            visibleCount++;
-          } else {
-            card.style.display = 'none';
-          }
         });
 
-        // Toggle empty state
-        if (visibleCount === 0) {
-          emptyState.style.display = 'flex';
-        } else {
-          emptyState.style.display = 'none';
-        }
-
-        // Live region announcement for assistive tech (WCAG 4.1.3)
-        const searchAnnounce = document.getElementById('searchAnnounce');
-        if (searchAnnounce) {
-          if (visibleCount === 0) {
-            searchAnnounce.textContent = 'No matching releases found.';
-          } else {
-            searchAnnounce.textContent = `Showing ${visibleCount} release${visibleCount === 1 ? '' : 's'}.`;
-          }
-        }
-      }
-
-      // Search input handler with debounce
-      let debounceTimeout;
-      searchInput.addEventListener('input', (e) => {
-        clearTimeout(debounceTimeout);
-        debounceTimeout = setTimeout(() => {
-          activeQuery = e.target.value;
-          filterReleases();
-        }, 80);
-      });
-
-      // Category filter pills & WAI-ARIA arrow navigation
-      const filterPillsArray = Array.from(filterPills);
-      filterPillsArray.forEach((pill, index) => {
-        pill.addEventListener('click', () => {
-          filterPillsArray.forEach(p => {
-            p.classList.remove('active');
-            p.setAttribute('aria-selected', 'false');
+        // ── 3. Copy Version Tag ──────────────────────────────────
+        copyTagBtns.forEach(btn => {
+          btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const tag = btn.getAttribute('data-copy');
+            navigator.clipboard.writeText(tag).then(() => {
+              const span = btn.querySelector('span');
+              const original = span.textContent;
+              span.textContent = 'Copied!';
+              btn.setAttribute('aria-label', `Copied tag ${tag}`);
+              btn.style.borderColor = 'var(--accent-emerald)';
+              btn.style.color = 'var(--accent-emerald)';
+              setTimeout(() => {
+                span.textContent = original;
+                btn.setAttribute('aria-label', `Copy version tag ${tag}`);
+                btn.style.borderColor = '';
+                btn.style.color = '';
+              }, 1800);
+            });
           });
-          pill.classList.add('active');
-          pill.setAttribute('aria-selected', 'true');
-          activeFilter = pill.getAttribute('data-filter');
-          filterReleases();
         });
 
-        pill.addEventListener('keydown', (e) => {
-          let targetIndex = null;
-          if (e.key === 'ArrowRight') {
-            targetIndex = (index + 1) % filterPillsArray.length;
-          } else if (e.key === 'ArrowLeft') {
-            targetIndex = (index - 1 + filterPillsArray.length) % filterPillsArray.length;
-          } else if (e.key === 'Home') {
-            targetIndex = 0;
-          } else if (e.key === 'End') {
-            targetIndex = filterPillsArray.length - 1;
-          }
+        // ── 4. Real-Time Search & Category Filtering ─────────────
+        let activeFilter = 'all';
+        let activeQuery = '';
 
-          if (targetIndex !== null) {
-            e.preventDefault();
-            filterPillsArray[targetIndex].focus();
-            filterPillsArray[targetIndex].click();
-          }
-        });
-      });
+        function filterReleases() {
+          const query = activeQuery.toLowerCase().trim();
+          let visibleCount = 0;
 
-      // Clear search button in empty state
-      clearSearchBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        activeQuery = '';
-        activeFilter = 'all';
-        filterPills.forEach(p => {
-          p.classList.toggle('active', p.getAttribute('data-filter') === 'all');
-        });
-        filterReleases();
-        searchInput.focus();
-      });
+          releaseCards.forEach(card => {
+            const version = card.getAttribute('data-version') || '';
+            const cardText = card.textContent.toLowerCase();
+            const groups = card.querySelectorAll('.release-group');
 
-      // ── 5. Keyboard Navigation Shortcuts ─────────────────────
-      window.addEventListener('keydown', (e) => {
-        // Press '/' to focus search (if not already focused)
-        if (e.key === '/' && document.activeElement !== searchInput) {
-          e.preventDefault();
-          searchInput.focus();
-          searchInput.select();
-        }
-        // Press 'Escape' to clear and blur search
-        if (e.key === 'Escape' && document.activeElement === searchInput) {
-          searchInput.value = '';
-          activeQuery = '';
-          filterReleases();
-          searchInput.blur();
-        }
-      });
+            let cardMatchesQuery = !query || cardText.includes(query) || version.includes(query);
+            let cardMatchesCategory = activeFilter === 'all';
 
-      // ── 6. Active Scroll Spy on Version Rail ─────────────────
-      window.addEventListener('scroll', () => {
-        let currentActive = '';
-        releaseCards.forEach(card => {
-          const rect = card.getBoundingClientRect();
-          if (rect.top <= 260 && rect.bottom >= 260) {
-            currentActive = card.id;
-          }
-        });
-
-        if (currentActive) {
-          railLinks.forEach(link => {
-            if (link.getAttribute('data-target') === currentActive) {
-              link.classList.add('active');
+            if (activeFilter !== 'all') {
+              let hasMatchingGroup = false;
+              groups.forEach(grp => {
+                const grpCat = grp.getAttribute('data-category');
+                if (grpCat === activeFilter) {
+                  hasMatchingGroup = true;
+                  grp.style.display = '';
+                } else {
+                  grp.style.display = 'none';
+                }
+              });
+              cardMatchesCategory = hasMatchingGroup;
             } else {
-              link.classList.remove('active');
+              groups.forEach(grp => (grp.style.display = ''));
+            }
+
+            if (cardMatchesQuery && cardMatchesCategory) {
+              card.style.display = '';
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
             }
           });
-        }
-      }, { passive: true });
 
-    })();
-  </script>
-</body>
+          // Toggle empty state
+          if (visibleCount === 0) {
+            emptyState.style.display = 'flex';
+          } else {
+            emptyState.style.display = 'none';
+          }
+
+          // Live region announcement for assistive tech (WCAG 4.1.3)
+          const searchAnnounce = document.getElementById('searchAnnounce');
+          if (searchAnnounce) {
+            if (visibleCount === 0) {
+              searchAnnounce.textContent = 'No matching releases found.';
+            } else {
+              searchAnnounce.textContent = `Showing ${visibleCount} release${visibleCount === 1 ? '' : 's'}.`;
+            }
+          }
+        }
+
+        // Search input handler with debounce
+        let debounceTimeout;
+        searchInput.addEventListener('input', e => {
+          clearTimeout(debounceTimeout);
+          debounceTimeout = setTimeout(() => {
+            activeQuery = e.target.value;
+            filterReleases();
+          }, 80);
+        });
+
+        // Category filter pills & WAI-ARIA arrow navigation
+        const filterPillsArray = Array.from(filterPills);
+        filterPillsArray.forEach((pill, index) => {
+          pill.addEventListener('click', () => {
+            filterPillsArray.forEach(p => {
+              p.classList.remove('active');
+              p.setAttribute('aria-selected', 'false');
+            });
+            pill.classList.add('active');
+            pill.setAttribute('aria-selected', 'true');
+            activeFilter = pill.getAttribute('data-filter');
+            filterReleases();
+          });
+
+          pill.addEventListener('keydown', e => {
+            let targetIndex = null;
+            if (e.key === 'ArrowRight') {
+              targetIndex = (index + 1) % filterPillsArray.length;
+            } else if (e.key === 'ArrowLeft') {
+              targetIndex = (index - 1 + filterPillsArray.length) % filterPillsArray.length;
+            } else if (e.key === 'Home') {
+              targetIndex = 0;
+            } else if (e.key === 'End') {
+              targetIndex = filterPillsArray.length - 1;
+            }
+
+            if (targetIndex !== null) {
+              e.preventDefault();
+              filterPillsArray[targetIndex].focus();
+              filterPillsArray[targetIndex].click();
+            }
+          });
+        });
+
+        // Clear search button in empty state
+        clearSearchBtn.addEventListener('click', () => {
+          searchInput.value = '';
+          activeQuery = '';
+          activeFilter = 'all';
+          filterPills.forEach(p => {
+            p.classList.toggle('active', p.getAttribute('data-filter') === 'all');
+          });
+          filterReleases();
+          searchInput.focus();
+        });
+
+        // ── 5. Keyboard Navigation Shortcuts ─────────────────────
+        window.addEventListener('keydown', e => {
+          // Press '/' to focus search (if not already focused)
+          if (e.key === '/' && document.activeElement !== searchInput) {
+            e.preventDefault();
+            searchInput.focus();
+            searchInput.select();
+          }
+          // Press 'Escape' to clear and blur search
+          if (e.key === 'Escape' && document.activeElement === searchInput) {
+            searchInput.value = '';
+            activeQuery = '';
+            filterReleases();
+            searchInput.blur();
+          }
+        });
+
+        // ── 6. Active Scroll Spy on Version Rail ─────────────────
+        window.addEventListener(
+          'scroll',
+          () => {
+            let currentActive = '';
+            releaseCards.forEach(card => {
+              const rect = card.getBoundingClientRect();
+              if (rect.top <= 260 && rect.bottom >= 260) {
+                currentActive = card.id;
+              }
+            });
+
+            if (currentActive) {
+              railLinks.forEach(link => {
+                if (link.getAttribute('data-target') === currentActive) {
+                  link.classList.add('active');
+                } else {
+                  link.classList.remove('active');
+                }
+              });
+            }
+          },
+          { passive: true },
+        );
+      })();
+    </script>
+  </body>
 </html>

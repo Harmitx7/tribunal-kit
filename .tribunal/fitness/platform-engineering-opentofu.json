@@ -1,0 +1,14 @@
+{
+  "skill_name": "platform-engineering-opentofu",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9988798276218812,
+  "dedup_score": 0.08199999999999996,
+  "trap_density": 0.42328042328042337,
+  "recency_score": 1.0,
+  "section_depth": 0.68125,
+  "composite_fitness": 0.7277555290164397,
+  "total_tokens_estimate": 1776,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "skill_name": "typescript-advanced",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9990869214309358,
+  "dedup_score": 0.09399999999999997,
+  "trap_density": 0.8292095760331684,
+  "recency_score": 1.0,
+  "section_depth": 0.9638888888888889,
+  "composite_fitness": 0.8328821540244957,
+  "total_tokens_estimate": 3915,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

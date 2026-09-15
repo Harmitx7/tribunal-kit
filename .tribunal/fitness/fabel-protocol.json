@@ -1,0 +1,14 @@
+{
+  "skill_name": "fabel-protocol",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9993958914834902,
+  "dedup_score": 0.06800000000000006,
+  "trap_density": 0.4980434009249377,
+  "recency_score": 1.0,
+  "section_depth": 0.996875,
+  "composite_fitness": 0.7843169384354387,
+  "total_tokens_estimate": 4382,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "skill_name": "delight",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9982610292869821,
+  "dedup_score": 0.08199999999999996,
+  "trap_density": 0.3692657292998154,
+  "recency_score": 1.0,
+  "section_depth": 0.60625,
+  "composite_fitness": 0.7082795652523687,
+  "total_tokens_estimate": 1887,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}

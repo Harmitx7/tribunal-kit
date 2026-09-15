@@ -1,0 +1,14 @@
+{
+  "skill_name": "gsap-timeline",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9467246482917933,
+  "dedup_score": 0.08199999999999996,
+  "trap_density": 0.46161565479177125,
+  "recency_score": 1.0,
+  "section_depth": 0.48235294117647054,
+  "composite_fitness": 0.6932402190535949,
+  "total_tokens_estimate": 2636,
+  "recommendations": [
+    "High duplication detected in domain 'motion'"
+  ]
+}

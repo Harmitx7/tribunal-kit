@@ -628,8 +628,9 @@ function runManualChecks(code, spec) {
 
   // Check 4: SQL injection (string interpolation in queries)
   if (
-    /\$\{.*\}.*(?:SELECT|INSERT|UPDATE|DELETE|WHERE)/i.test(code) ||
-    /['"].*\+.*(?:SELECT|INSERT|UPDATE|DELETE|WHERE)/i.test(code)
+    /(?:SELECT|INSERT|UPDATE|DELETE|WHERE).*?\$\{.*?\}/i.test(code) ||
+    /(?:SELECT|INSERT|UPDATE|DELETE|WHERE).*?['"].*\+.*?/i.test(code) ||
+    /\$\{.*?\}.*?(?:SELECT|INSERT|UPDATE|DELETE|WHERE)/i.test(code)
   ) {
     issues.push({
       source: 'pipeline_validator',

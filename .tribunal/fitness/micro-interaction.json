@@ -1,0 +1,15 @@
+{
+  "skill_name": "micro-interaction",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9993290867903686,
+  "dedup_score": 0.16600000000000004,
+  "trap_density": 0.20717721050684426,
+  "recency_score": 1.0,
+  "section_depth": 1.0,
+  "composite_fitness": 0.7558423989341004,
+  "total_tokens_estimate": 3497,
+  "recommendations": [
+    "Low trap density: Add LLM anti-pattern traps",
+    "High duplication detected in domain 'meta'"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "skill_name": "thermo-nuclear-code-quality-review",
+  "coverage_score": 1.0,
+  "specificity_score": 0.9982271485841147,
+  "dedup_score": 0.19399999999999995,
+  "trap_density": 0.4125979920231055,
+  "recency_score": 1.0,
+  "section_depth": 0.70625,
+  "composite_fitness": 0.7465726285202888,
+  "total_tokens_estimate": 1928,
+  "recommendations": [
+    "High duplication detected in domain 'meta'"
+  ]
+}
