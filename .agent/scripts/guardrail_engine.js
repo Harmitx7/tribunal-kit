@@ -410,6 +410,52 @@ function ruleImportPhantom(content, _manifest, ctx) {
   ]);
 
   // Find require() and import statements for external packages
+  // Phase 2: Try Rust AST Extraction first for higher accuracy
+  let extractedImports = null;
+  if (filePath) {
+    try {
+      const absPath = path.resolve(projectRoot || process.cwd(), filePath);
+      const binName = process.platform === 'win32' ? 'tribunal-core.exe' : 'tribunal-core';
+      let corePath = path.join(__dirname, '..', '..', 'crates', 'core', 'target', 'release', binName);
+      if (!fs.existsSync(corePath)) {
+          corePath = path.join(__dirname, '..', '..', 'crates', 'core', 'target', 'debug', binName);
+      }
+      if (fs.existsSync(corePath)) {
+        const result = require('child_process').execSync(`"${corePath}" ast-extract --file "${absPath}"`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 500 });
+        const data = JSON.parse(result);
+        if (data && data.success) {
+           extractedImports = data.imports;
+        }
+      }
+    } catch(e) {
+      // Fallback
+    }
+  }
+
+  const checkPackageName = (pkgName, locationString) => {
+      if (!builtins.has(pkgName) && !deps.has(pkgName)) {
+        violations.push({
+          rule: 'import-phantom',
+          severity: 'info',
+          location: locationString,
+          message: `Package "${pkgName}" is not in package.json`,
+          suggestion: `Verify "${pkgName}" is installed or add it to dependencies`,
+          autoFixable: false,
+        });
+      }
+  };
+
+  if (extractedImports) {
+     extractedImports.forEach(imp => {
+        const pkg = imp.source;
+        if (!pkg.startsWith('.') && !pkg.startsWith('/')) { // Only check external packages
+           const pkgName = pkg.startsWith('@') ? pkg.split('/').slice(0, 2).join('/') : pkg.split('/')[0];
+           checkPackageName(pkgName, `import from: "${pkg}"`);
+        }
+     });
+     return violations;
+  }
+
   const requireRegex = /require\s*\(\s*['"]([^'"./][^'"]*)['"]\s*\)/g;
   const importRegex = /import\s+(?:[\s\S]*?\s+from\s+)?['"]([^'"./][^'"]*)['"]/g;
 
@@ -422,16 +468,7 @@ function ruleImportPhantom(content, _manifest, ctx) {
         ? pkg.split('/').slice(0, 2).join('/')
         : pkg.split('/')[0];
 
-      if (!builtins.has(pkgName) && !deps.has(pkgName)) {
-        violations.push({
-          rule: 'import-phantom',
-          severity: 'info',
-          location: `content match: "${match[0]}"`,
-          message: `Package "${pkgName}" is not in package.json`,
-          suggestion: `Verify "${pkgName}" is installed or add it to dependencies`,
-          autoFixable: false,
-        });
-      }
+      checkPackageName(pkgName, `content match: "${match[0]}"`);
     }
   };
 
@@ -471,7 +508,7 @@ function ruleRustModuleRegistration(content, manifest, _ctx) {
   const wrapperJs = path.join(root, 'bin', 'wrapper.js');
   if (fs.existsSync(wrapperJs)) {
     const wrapperContent = fs.readFileSync(wrapperJs, 'utf8');
-    if (!wrapperContent.includes('"context-broker"')) {
+    if (!wrapperContent.includes('"context-broker"') && !wrapperContent.includes("'context-broker'")) {
       violations.push({
         rule: 'rust-module-registration',
         severity: 'warning',

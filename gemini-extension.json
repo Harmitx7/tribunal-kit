@@ -1,6 +1,6 @@
 {
   "name": "tribunal-kit",
   "description": "Enterprise-grade governance layer and anti-hallucination engine: 52 specialists, 28 parallel reviewers, Rust core, and SDD workflows.",
-  "version": "9.2.1",
+  "version": "9.2.2",
   "contextFileName": ".agent/rules/GEMINI.md"
 }

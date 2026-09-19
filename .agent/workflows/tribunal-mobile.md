@@ -24,7 +24,7 @@ Before auditing React Native, Expo, or native mobile code, you MUST inspect:
 
 1. Native Configuration Manifests (`app.json`, `app.config.js`, `package.json`) → Verify Expo SDK version, Reanimated dependencies, and permissions
 2. Gesture & 60fps Motion Rules → Enforce `react-native-reanimated` worklets on UI thread; ban JavaScript bridge layout thrashing
-3. 3-Reviewer Mobile Gate → Run logic-reviewer, security-auditor, and mobile-reviewer before approving mobile component diffs
+3. 28-Reviewer Mobile Gate → Run logic-reviewer, security-auditor, and mobile-reviewer before approving mobile component diffs
 
 4. Required Skills → Before executing, load and follow procedural rules from:
    - `building-native-ui` (.agent/skills/building-native-ui/SKILL.md): Native UI component patterns for cross-platform apps

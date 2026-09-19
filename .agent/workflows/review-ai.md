@@ -24,7 +24,7 @@ Before auditing LLM integrations, prompt templates, or AI API calls, you MUST in
 
 1. Target AI Code & SDK Manifests (`package.json`) → Verify official AI SDK versions (Vercel AI SDK `ai`, `@langchain/core`, `openai`, `@google/genai`)
 2. Prompt Injection Boundary Check → Confirm user inputs are strictly passed via message roles or delimited blocks; ban string concatenation into system prompts
-3. 3-Reviewer AI Integration Gate → Run ai-code-reviewer, logic-reviewer, and security-auditor before approving AI code diffs
+3. 28-Reviewer AI Integration Gate → Run ai-code-reviewer, logic-reviewer, and security-auditor before approving AI code diffs
 
 4. Required Skills → Before executing, load and follow procedural rules from:
    - `llm-engineering` (.agent/skills/llm-engineering/SKILL.md): LLM integration patterns, prompt engineering, and cost optimization

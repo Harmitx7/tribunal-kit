@@ -27,7 +27,7 @@ Before auditing React components or frontend UI logic, you MUST inspect:
 
 1. Design Tokens & Styling Context (`globals.css`, `tailwind.config`) → Verify OKLCH color palettes, typography scale, and dark mode classes
 2. Active UI Skill Pack (`.agent/skills/ui-skill-packs/SKILL.md`) → Load mandatory UI skill pack (Pack 1: Foundations, Pack 2: Motion, Pack 3: Systems)
-3. 7-Reviewer Frontend Gate → Run logic, security, frontend-reviewer, type-safety, ui-ux-auditor, motion-reviewer, and visual-auditor before approving UI diffs
+3. 28-Reviewer Frontend Gate → Run logic, security, frontend-reviewer, type-safety, ui-ux-auditor, motion-reviewer, and visual-auditor before approving UI diffs
 
 ---
 

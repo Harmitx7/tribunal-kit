@@ -4,6 +4,7 @@ const {
   validateWorkerRequest,
   validateWorkerResult,
   validateSwarmPayload,
+  SwarmOrchestrator,
 } = require('../../.agent/scripts/swarm_dispatcher.js');
 
 describe('swarm_dispatcher.js', () => {
@@ -58,4 +59,23 @@ describe('swarm_dispatcher.js', () => {
     const agentsDir = path.join(__dirname, '../../.agent/agents');
     expect(validateSwarmPayload(payload, agentsDir)).toBe(true);
   });
+
+  it('should execute deterministic reviewer workers instantly without mock delay', async () => {
+    const orchestrator = new SwarmOrchestrator(null);
+    const worker = {
+      agent: 'security-auditor',
+      files: ['package.json'],
+    };
+
+    const startTime = Date.now();
+    const result = await orchestrator.executeWorker(worker, 5000);
+    const duration = Date.now() - startTime;
+
+    expect(result.status).toBe('success');
+    expect(result.agent).toBe('security-auditor');
+    expect(result.output).toContain('Security audit completed');
+    // Execution must be deterministic and fast (under 500ms, not 1000-3000ms mock delay)
+    expect(duration).toBeLessThan(500);
+  });
 });
+

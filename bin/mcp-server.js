@@ -55,6 +55,9 @@ class ToolRepeatGuard {
         }
         return sorted;
       }
+      if (typeof obj === 'string') {
+        return obj.trim().toLowerCase().replace(/\s+/g, ' ');
+      }
       return obj;
     };
 
@@ -745,33 +748,25 @@ async function handleRequest(req) {
         const check = req.params?.arguments?.check;
 
         try {
-          const compiler = require('../scripts/context_compiler');
           const workspaceRoot = process.cwd();
-
+          
           if (check) {
-            const drift = compiler.checkDrift(workspaceRoot);
+            const { spawn } = require('child_process');
+            const result = await new Promise((resolve, reject) => {
+               const child = spawn(process.execPath, [path.join(__dirname, '../scripts/context_compiler.js'), '--check', '--json'], { cwd: workspaceRoot, encoding: 'utf8' });
+               let out = '';
+               child.stdout.on('data', d => out += d);
+               child.stderr.on('data', d => out += d);
+               child.on('close', code => resolve(out));
+               child.on('error', reject);
+            });
             return {
               content: [
                 {
                   type: 'text',
-                  text: JSON.stringify(drift, null, 2),
+                  text: result,
                 },
               ],
-            };
-          }
-
-          if (target && compareWith) {
-            const bridge = compiler.analyzeMultiFileBridge(target, compareWith, workspaceRoot);
-            const md = compiler.renderBridgeDossier(bridge);
-            if (write) {
-              const outName = `${path.basename(target).replace(/\.[^.]+$/, '')}__${path.basename(compareWith).replace(/\.[^.]+$/, '')}.bridge.md`;
-              const dest = path.join(workspaceRoot, 'docs', 'context', outName);
-              fs.mkdirSync(path.dirname(dest), { recursive: true });
-              fs.writeFileSync(dest, md, 'utf8');
-              compiler.syncVaultIndex(workspaceRoot);
-            }
-            return {
-              content: [{ type: 'text', text: md }],
             };
           }
 
@@ -782,33 +777,33 @@ async function handleRequest(req) {
             );
           }
 
-          const absTarget = path.isAbsolute(target) ? target : path.resolve(workspaceRoot, target);
-          if (fs.existsSync(absTarget) && fs.statSync(absTarget).isDirectory()) {
-            const dirData = compiler.analyzeDirectory(absTarget, workspaceRoot);
-            const md = compiler.renderDirectoryDossier(dirData);
-            if (write) {
-              const outName = `${path.basename(absTarget)}.context.md`;
-              const dest = path.join(workspaceRoot, 'docs', 'context', outName);
-              fs.mkdirSync(path.dirname(dest), { recursive: true });
-              fs.writeFileSync(dest, md, 'utf8');
-              compiler.syncVaultIndex(workspaceRoot);
-            }
-            return {
-              content: [{ type: 'text', text: md }],
-            };
+          // We use scripts/context_compiler.js to parse AST without blocking the event loop
+          const { spawn } = require('child_process');
+          const args = [path.join(__dirname, '../scripts/context_compiler.js')];
+          
+          if (compareWith) {
+             args.push('--multi', target, compareWith);
+          } else {
+             args.push(target);
+          }
+          
+          if (write) {
+             args.push('--write');
           }
 
-          const fileData = compiler.analyzeSingleFile(target, workspaceRoot);
-          const md = compiler.renderSingleFileDossier(fileData);
-          if (write) {
-            const outName = `${path.basename(target).replace(/\.[^.]+$/, '')}.context.md`;
-            const dest = path.join(workspaceRoot, 'docs', 'context', outName);
-            fs.mkdirSync(path.dirname(dest), { recursive: true });
-            fs.writeFileSync(dest, md, 'utf8');
-            compiler.syncVaultIndex(workspaceRoot);
-          }
+          const result = await new Promise((resolve, reject) => {
+             const child = spawn(process.execPath, args, { cwd: workspaceRoot, encoding: 'utf8' });
+             let out = '';
+             child.stdout.on('data', d => out += d);
+             child.stderr.on('data', d => out += d);
+             child.on('close', code => {
+                 resolve(out);
+             });
+             child.on('error', reject);
+          });
+          
           return {
-            content: [{ type: 'text', text: md }],
+            content: [{ type: 'text', text: result }],
           };
         } catch (e) {
           return {
@@ -1329,10 +1324,40 @@ async function handleRequest(req) {
         }
 
         try {
-          const brokerScript = path.join(agentDest, 'scripts', 'context_broker.js');
-          const { broker } = require(brokerScript);
-          const brokerResult = broker(task, files, model, agentDest);
-          return { content: [{ type: 'text', text: stripBoilerplate(brokerResult.promptText) }] };
+          const workspaceRoot = process.cwd();
+          const { spawn } = require('child_process');
+          const args = [path.join(__dirname, 'wrapper.js'), 'context-broker', '--repo-path', workspaceRoot];
+          if (files && files.length > 0) {
+             args.push('--target-file');
+             args.push(files[0]);
+          }
+
+          const result = await new Promise((resolve, reject) => {
+             const child = spawn(process.execPath, args, { cwd: workspaceRoot, encoding: 'utf8' });
+             let out = '';
+             child.stdout.on('data', d => out += d);
+             child.stderr.on('data', d => out += d);
+             child.on('close', code => {
+                 resolve(out);
+             });
+             child.on('error', reject);
+          });
+          
+          let finalOutput = '';
+          try {
+             const parsed = JSON.parse(result);
+             finalOutput = `# Tribunal Context Broker\n\n`;
+             if (task) {
+                finalOutput += `Task: ${task}\n\n`;
+             }
+             if (parsed.context_snapshot) {
+                finalOutput += parsed.context_snapshot;
+             }
+          } catch (e) {
+             finalOutput = result;
+          }
+
+          return { content: [{ type: 'text', text: stripBoilerplate(finalOutput) }] };
         } catch (e) {
           return {
             content: [{ type: 'text', text: `Failed to retrieve sparse context: ${e.message}` }],

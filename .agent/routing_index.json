@@ -499,7 +499,7 @@
       "command": "/tribunal-full",
       "name": "tribunal-full",
       "file": "workflows/tribunal-full.md",
-      "description": "Comprehensive 21-reviewer parallel audit",
+      "description": "Comprehensive 28-reviewer parallel audit",
       "routing_domain": "general",
       "routing_tier": "expert",
       "trigger_keywords": ["tribunal full", "full review", "pre-merge audit"]

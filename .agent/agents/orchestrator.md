@@ -67,11 +67,13 @@ If total context > 80k tokens → split into smaller waves.
 The Orchestrator no longer routes every task flatly. Instead, leverage a **Strategic → Tactical** hierarchy for complex payloads.
 
 When dispatching workers, use the `tier` and `coordinator` fields in the `SwarmPayloadSchema`:
+
 - **tier: "strategic"**: Spawn a high-level Domain Architect (e.g. `frontend-architect`, `backend-architect`). These architects are tasked with analyzing the requirement and spawning their own sub-swarm of tactical leaf-agents.
 - **tier: "tactical"**: Spawn specific leaf agents directly (e.g. `react-specialist`, `python-pro`). Use this when the work is already well-scoped and doesn't require a domain architect to break it down.
 
 **Example of Strategic Delegation:**
 You receive a full-stack request. Instead of spawning 10 tactical agents, you spawn 2 strategic architects.
+
 ```json
 {
   "target_agent": "frontend-architect",

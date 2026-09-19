@@ -7,10 +7,6 @@ required-skills:
   - skill-creator
   - llm-engineering
   - clean-code
-scripts-binding:
-  - scripts/skill_enhancement_engine.js
-  - scripts/validate-payload.js
-  - scripts/audit_skill_sdo.js
 ---
 
 # /skill-enhancement-engine — State-of-the-Art Skill Architecture
@@ -55,20 +51,20 @@ Every enhanced skill incorporates the 18-part architectural framework:
 
 ```bash
 # Preview changes across all skills
-node scripts/skill_enhancement_engine.js --all --dry-run
+node runners/skill_enhancement_engine.js --all --dry-run
 
 # Enhance a single skill
-node scripts/skill_enhancement_engine.js --skill <skill-name> --fix
+node runners/skill_enhancement_engine.js --skill <skill-name> --fix
 
 # Enhance all skills within a domain cluster (motion, frontend, backend, security, devops, database, testing, mobile)
-node scripts/skill_enhancement_engine.js --domain motion --fix
+node runners/skill_enhancement_engine.js --domain motion --fix
 
 # Enhance all 185 skills and mirror changes to workspace root
-node scripts/skill_enhancement_engine.js --all --fix --sync-to-root
+node runners/skill_enhancement_engine.js --all --fix --sync-to-root
 
 # Validate payload and SDO triggers
-node scripts/validate-payload.js
-node scripts/audit_skill_sdo.js
+node runners/validate-payload.js
+node runners/audit_skill_sdo.js
 ```
 
 ---

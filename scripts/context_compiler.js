@@ -91,6 +91,51 @@ function extractFileSkeleton(filePath, rawContent) {
 
   // 2. Language-Specific Parsers
   if (ext === '.ts' || ext === '.tsx' || ext === '.js' || ext === '.jsx' || ext === '.mjs') {
+    // Phase 1: Try Rust AST Extraction
+    try {
+      const absPath = path.resolve(process.cwd(), filePath);
+      let corePath = null;
+      try {
+        const { getBinaryPath } = require('../.agent/scripts/_utils');
+        corePath = getBinaryPath();
+      } catch (_) {
+        try {
+          const { getBinaryPath } = require('./_utils');
+          corePath = getBinaryPath();
+        } catch (_2) {
+          try {
+            const wrapper = require('../bin/wrapper');
+            corePath = wrapper.getBinaryPath ? wrapper.getBinaryPath() : null;
+          } catch (_3) {}
+        }
+      }
+
+      if (!corePath && process.env.TRIBUNAL_CORE_PATH && fs.existsSync(process.env.TRIBUNAL_CORE_PATH)) {
+        corePath = process.env.TRIBUNAL_CORE_PATH;
+      }
+
+      if (corePath && fs.existsSync(corePath)) {
+        const result = require('child_process').execSync(`"${corePath}" ast-extract --file "${absPath}"`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+        const data = JSON.parse(result);
+        if (data && data.success) {
+           // We map the Rust JSON into the exact format expected by the rest of the JS code
+           const mappedImports = data.imports.map(i => ({ source: i.source, specifiers: i.specifiers, line: 0 }));
+           const mappedExports = data.exports.map(e => ({ kind: e.kind, name: e.name, signature: e.signature, line: 0 }));
+           const mappedTypes = data.types.map(t => ({ kind: t.kind, name: t.name, signature: t.signature, line: 0 }));
+           
+           return {
+             imports: mappedImports,
+             exports: mappedExports,
+             types: mappedTypes,
+             landmines: data.landmines,
+             interfaceHash: computeInterfaceHash(mappedExports.concat(mappedTypes))
+           };
+        }
+      }
+    } catch(e) {
+      // Silent fallback to Regex parsing
+    }
+
     lines.forEach((line, idx) => {
       const trimmed = line.trim();
 
@@ -954,6 +999,10 @@ function main() {
 
   if (args.includes('--check')) {
     const drift = checkDrift(workspaceRoot);
+    if (args.includes('--json')) {
+      console.log(JSON.stringify(drift));
+      process.exit(0);
+    }
     console.log(`\n${C.BOLD}═══ Context Vault Drift Audit ═══${C.RESET}`);
     console.log(`Total Dossiers: ${drift.total}`);
     console.log(`🟢 Fresh:       ${drift.fresh}`);

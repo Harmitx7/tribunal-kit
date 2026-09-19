@@ -101,7 +101,9 @@ function run() {
   if (dryRun) {
     console.log('\n  [DRY RUN] Would archive these monthly summaries:');
     for (const [month, bucket] of Object.entries(monthlyBuckets)) {
-      console.log(`    ${month}: ${bucket.total_dispatches} events, ${bucket.total_tokens} tokens`);
+      console.info(
+        `    ${month}: ${bucket.total_dispatches} events, ${bucket.total_tokens} tokens`,
+      );
     }
     console.log(`  [DRY RUN] Would retain ${retained.length} recent events.\n`);
     return;

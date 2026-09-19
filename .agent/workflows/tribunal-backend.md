@@ -25,7 +25,7 @@ Before auditing backend routes or server logic, you MUST inspect:
 
 1. Target Backend Source & Contracts → Read target route handlers, Server Actions, or controller methods
 2. Dependencies & Environment (`package.json`, `.env.example`) → Check backend framework versions, secret key placeholders, and ORM schemas
-3. 6-Reviewer Parallel Gate → Execute logic-reviewer, security-auditor, dependency-analyzer, type-safety, resilience-reviewer, and schema-reviewer before approving diffs
+3. 28-Reviewer Parallel Gate → Execute logic-reviewer, security-auditor, dependency-analyzer, type-safety, resilience-reviewer, and schema-reviewer before approving diffs
 
 4. Required Skills → Before executing, load and follow procedural rules from:
    - `backend-security-expert` (.agent/skills/backend-security-expert/SKILL.md): Server-side security, auth, JWT, ORM injection, RBAC

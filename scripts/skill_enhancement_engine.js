@@ -413,13 +413,9 @@ function buildEnhancedSkill(skillName, originalContent) {
   coreBody = coreBody.replace(/(\n---\s*)+$/, '').trim();
 
   // Format frontmatter with SDO trigger guarantee
-  let desc = meta.description || `${skillName} mastery.`;
-  if (
-    !desc.toLowerCase().startsWith('use when') &&
-    !desc.toLowerCase().startsWith('activate when')
-  ) {
-    desc = `Use when ${desc.replace(/^["']|["']$/g, '')}`;
-  }
+  let desc = (meta.description || `${skillName} mastery.`).replace(/^["']|["']$/g, '');
+  desc = desc.replace(/^(use\s+when\s+)+/i, '').trim();
+  desc = `Use when ${desc}`;
 
   // Ensure scripts-binding
   const scripts = Array.isArray(meta['scripts-binding'])
@@ -433,7 +429,7 @@ function buildEnhancedSkill(skillName, originalContent) {
   const formattedFrontmatter = [
     '---',
     `name: ${skillName}`,
-    `description: ${desc}`,
+    `description: "${desc.replace(/"/g, '\\"')}"`,
     `version: 5.0.0`,
     `last-updated: 2026-09-13`,
     meta.skills && meta.skills.length
@@ -509,34 +505,12 @@ ${preflights.join('\n')}
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.`;
 
-  // Assemble the complete enhanced document
+  // Assemble the complete enhanced document (Boilerplate stripped)
   const enhancedContent = `${formattedFrontmatter}
 
 # ${title}
 
-${section1_Preflight}
-
-${section2_Boundaries}
-
-${section3_ExecutionProtocol}
-
----
-
-## 🛠️ Technical Architecture & Reference Recipes
-
 ${coreBody}
-
----
-
-${section4_EdgeCases}
-
----
-
-${section5_Traps}
-
----
-
-${section6_Tribunal}
 `;
 
   return enhancedContent.trim() + '\n';

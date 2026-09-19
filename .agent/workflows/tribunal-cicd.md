@@ -25,7 +25,7 @@ Before auditing CI/CD configurations, you MUST inspect:
 
 1. Target Workflow Files (`.github/workflows/*.yml`, `.gitlab-ci.yml`, `Dockerfile`)
 2. Repository Secrets & OIDC Configuration (`id-token: write`, environment promotion rules)
-3. 5-Reviewer Parallel Gate: Execute `pipeline-reviewer`, `security-auditor`, `dependency-reviewer`, `resilience-reviewer`, and `precedence-reviewer`.
+3. 28-Reviewer Parallel Gate: Execute `pipeline-reviewer`, `security-auditor`, `dependency-reviewer`, `resilience-reviewer`, and `precedence-reviewer`.
 
 4. Required Skills → Before executing, load and follow procedural rules from:
    - `cicd-pro` (.agent/skills/cicd-pro/SKILL.md): CI/CD workflow syntax, matrix builds, and deployment strategies

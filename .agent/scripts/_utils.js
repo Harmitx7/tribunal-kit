@@ -280,6 +280,82 @@ function runCommand(cmd, args = [], opts = {}) {
   };
 }
 
+// ── Native Binary Resolution ────────────────────────────────────────────────
+
+/**
+ * Determine the path to the compiled Rust tribunal-core binary.
+ * Checks environment overrides, bin/wrapper.js, production optionalDependencies,
+ * and local dev target directories.
+ *
+ * @param {string} [startDir]
+ * @returns {string|null} Absolute path to executable or null.
+ */
+function getBinaryPath(startDir) {
+  if (process.env.TRIBUNAL_FORCE_JS === '1' || process.env.TRIBUNAL_FORCE_JS === 'true') {
+    return null;
+  }
+
+  if (process.env.TRIBUNAL_CORE_PATH && fs.existsSync(process.env.TRIBUNAL_CORE_PATH)) {
+    return process.env.TRIBUNAL_CORE_PATH;
+  }
+
+  // Try wrapper if accessible
+  const wrapperCandidates = [
+    path.resolve(__dirname, '..', '..', 'bin', 'wrapper.js'),
+    path.resolve(__dirname, '..', 'bin', 'wrapper.js'),
+    path.resolve(process.cwd(), 'bin', 'wrapper.js'),
+    path.resolve(process.cwd(), 'tribunal-kit', 'bin', 'wrapper.js'),
+  ];
+  for (const candidate of wrapperCandidates) {
+    if (fs.existsSync(candidate)) {
+      try {
+        const wrapper = require(candidate);
+        if (typeof wrapper.getBinaryPath === 'function') {
+          const bin = wrapper.getBinaryPath();
+          if (bin && fs.existsSync(bin)) {
+            return bin;
+          }
+        }
+      } catch {}
+    }
+  }
+
+  const isWindows = process.platform === 'win32';
+  const ext = isWindows ? '.exe' : '';
+  const platform = process.platform;
+  const arch = process.arch;
+
+  // Try optionalDependencies
+  const pkgName = `@tribunal-kit/core-${platform}-${arch}`;
+  try {
+    const pkgPath = require.resolve(`${pkgName}/package.json`);
+    const pkgDir = path.dirname(pkgPath);
+    const binPath = path.resolve(pkgDir, `bin/tribunal-core${ext}`);
+    if (fs.existsSync(binPath)) return binPath;
+    const rootBinPath = path.resolve(pkgDir, `tribunal-core${ext}`);
+    if (fs.existsSync(rootBinPath)) return rootBinPath;
+  } catch {}
+
+  // Direct candidate locations
+  const searchRoots = [
+    __dirname,
+    path.resolve(__dirname, '..'),
+    path.resolve(__dirname, '..', '..'),
+    process.cwd(),
+    path.resolve(process.cwd(), 'tribunal-kit'),
+  ];
+  if (startDir) searchRoots.unshift(path.resolve(startDir));
+
+  for (const root of searchRoots) {
+    const releaseCandidate = path.resolve(root, 'target', 'release', `tribunal-core${ext}`);
+    if (fs.existsSync(releaseCandidate)) return releaseCandidate;
+    const debugCandidate = path.resolve(root, 'target', 'debug', `tribunal-core${ext}`);
+    if (fs.existsSync(debugCandidate)) return debugCandidate;
+  }
+
+  return null;
+}
+
 module.exports = {
   // Agent discovery
   findAgentDir,
@@ -296,4 +372,6 @@ module.exports = {
   // Commands
   normalizeCommand,
   runCommand,
+  // Native binary resolution
+  getBinaryPath,
 };

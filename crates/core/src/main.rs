@@ -322,6 +322,13 @@ enum Commands {
         #[arg(long, default_value_t = false)]
         dry_run: bool,
     },
+
+    /// Extract AST metadata (imports, exports, types) from a TS/JS file
+    AstExtract {
+        /// Path to the TS/JS file
+        #[arg(short, long)]
+        file: String,
+    },
 }
 
 #[derive(Subcommand)]
@@ -620,6 +627,8 @@ async fn main() -> Result<()> {
         Commands::Compile { skills_dir, skills } => cmd_compile(&skills_dir, &skills).await,
 
         Commands::Purge { skills_dir, dry_run } => cmd_purge(&skills_dir, dry_run).await,
+
+        Commands::AstExtract { file } => cmd_ast_extract(&file).await,
     }
 }
 
@@ -629,6 +638,19 @@ async fn cmd_compile(skills_dir: &str, skills: &str) -> Result<()> {
 
 async fn cmd_purge(skills_dir: &str, dry_run: bool) -> Result<()> {
     commands::purge::cmd_purge(skills_dir, dry_run)
+}
+
+async fn cmd_ast_extract(file: &str) -> Result<()> {
+    match commands::ast_extractor::extract_ast(file) {
+        Ok(json_output) => {
+            println!("{}", json_output);
+            Ok(())
+        }
+        Err(e) => {
+            eprintln!("✖ AST extraction failed: {:#}", e);
+            std::process::exit(1);
+        }
+    }
 }
 
 async fn cmd_sdd(action: SddAction) -> Result<()> {

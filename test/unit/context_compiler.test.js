@@ -115,7 +115,7 @@ describe('Context Compiler Engine', () => {
 });
 
 describe('MCP Server Integration for tribunal_get_context', () => {
-  const targetFile = 'tribunal-kit/crates/core/src/commands/context_compress.rs';
+  const targetFile = 'crates/core/src/commands/context_compress.rs';
 
   test('invokes tribunal_get_context tool and receives markdown payload', async () => {
     process.env.NODE_ENV = 'test';

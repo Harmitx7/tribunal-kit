@@ -1,5 +1,5 @@
 ---
-description: Runs ALL 21 parallel reviewers simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
+description: Runs ALL 28 parallel reviewers simultaneously. Maximum hallucination coverage. Use before merging any AI-generated code, before production deployments, or when maximum confidence is required.
 tools: Read, Grep, Glob, Bash, Edit, Write
 version: 3.0.0
 last-updated: 2026-07-30
@@ -20,7 +20,7 @@ scripts-binding:
   - .agent/scripts/verify_all.js
 ---
 
-# /tribunal-full — Complete 21-Reviewer Audit
+# /tribunal-full — Complete 28-Reviewer Audit
 
 $ARGUMENTS
 
@@ -28,11 +28,11 @@ $ARGUMENTS
 
 ## Mandatory Pre-Flight Context Inspection
 
-Before launching the full 21-reviewer audit, you MUST inspect:
+Before launching the full 28-reviewer audit, you MUST inspect:
 
 1. Pending Code Modifications (`git diff` / modified files) → Inspect diffs across all domains (frontend, backend, database, mobile)
 2. Workspace Configuration Context (`package.json`, `tsconfig.json`, `tailwind.config`) → Verify project build contracts
-3. 21-Reviewer Synthesis Gate → Execute all 21 specialized reviewers in parallel; halt on any security violation or critical bug before Human Gate approval
+3. 28-Reviewer Synthesis Gate → Execute all 28 specialized reviewers in parallel; halt on any security violation or critical bug before Human Gate approval
 
 4. Required Skills → Before executing, load and follow procedural rules from:
    - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
@@ -56,9 +56,9 @@ Before launching the full 21-reviewer audit, you MUST inspect:
 
 ---
 
-## 21 Reviewers — Stage-Partitioned Execution (3 Waves)
+## 28 Reviewers — Stage-Partitioned Execution (3 Waves)
 
-To eliminate context window saturation and reviewer attention dilution, the 21 reviewers execute in 3 partitioned passes:
+To eliminate context window saturation and reviewer attention dilution, the 28 reviewers execute in 3 partitioned passes:
 
 ```
 Wave 1: Core Integrity & Precedences (Pass 1)
@@ -92,7 +92,7 @@ Wave 3: Domain, UI & Performance (Pass 3)
 
 ## Active Reviewers by Code Type
 
-Not all 21 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
+Not all 28 reviewers produce meaningful findings on all code types. Active reviewers detect their first finding immediately — inactive reviewers auto-pass with "N/A for this code type."
 
 | Code Under Review   | Critical Reviewers                                                |
 | :------------------ | :---------------------------------------------------------------- |
@@ -110,7 +110,7 @@ Not all 21 reviewers produce meaningful findings on all code types. Active revie
 ## Verdict Aggregation
 
 ```
-All 21 verdicts are collected. Aggregated result:
+All 28 verdicts are collected. Aggregated result:
 
 If ANY reviewer = ❌ REJECTED → Global verdict: ❌ REJECTED (must fix before Human Gate)
 If any reviewer = ⚠️ WARNING  → Global verdict: ⚠️ WARNINGS (proceed with attention)
@@ -148,7 +148,7 @@ After 3 failed attempts:
 
 | Outcome                    | Next Command                                   |
 | :------------------------- | :--------------------------------------------- |
-| All 21 reviewers approve   | → `/deploy` — highest confidence state         |
+| All 28 reviewers approve   | → `/deploy` — highest confidence state         |
 | Reject with multiple fixes | → `/fix` for simple issues, `/debug` for logic |
 | Performance rejection      | → `/tribunal-speed` for granular profiling     |
 | Security rejection         | → Immediate `/tribunal-backend` to resolve     |

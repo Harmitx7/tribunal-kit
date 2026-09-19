@@ -26,7 +26,7 @@ Before executing dedicated UI/UX audits or design-system reviews, you MUST inspe
 
 1. Active Design Tokens & Guidelines (`DESIGN.md`, CSS custom properties) → Confirm typography scale, color system, and corner radius tokens
 2. Product Domain Category → Select category heuristics (Dashboard, E-Commerce, Landing Page, Mobile App, Marketing)
-3. 7-Reviewer Dedicated UI Gate → Run ux-auditor, visual-auditor, interaction-auditor, anti-pattern-auditor, product-heuristics, a11y-auditor, and visual-auditor before passing designs
+3. 28-Reviewer Dedicated UI Gate → Run ux-auditor, visual-auditor, interaction-auditor, anti-pattern-auditor, product-heuristics, a11y-auditor, and visual-auditor before passing designs
 
 4. Required Skills → Before executing, load and follow procedural rules from:
    - `ui-reasoning-engine` (.agent/skills/ui-reasoning-engine/SKILL.md): 16-step cognitive pipeline for layout and styling decisions

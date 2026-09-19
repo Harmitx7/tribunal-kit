@@ -39,6 +39,7 @@ const RUST_COMMANDS = new Set([
   'genome',
   'compile',
   'purge',
+  'ast-extract',
 ]);
 
 // Determine the path to the compiled Rust binary
@@ -199,4 +200,12 @@ function main() {
   runLegacyFallback();
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  getBinaryPath,
+  runRustBinary,
+  RUST_COMMANDS,
+};

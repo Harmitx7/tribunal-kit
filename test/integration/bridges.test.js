@@ -82,4 +82,14 @@ describe('IDE Bridge File Generation', () => {
     runCLI(['init', '--path', tmpDir, '--dry-run', '--skip-update-check']);
     expect(fs.existsSync(path.join(tmpDir, '.cursorrules'))).toBe(false);
   });
+
+  test('bridge files use lean kernel saving context tokens (< 5KB vs 22KB GEMINI.md)', () => {
+    runCLI(['init', '--path', tmpDir, '--skip-update-check']);
+    const cursorRules = path.join(tmpDir, '.cursorrules');
+    const stats = fs.statSync(cursorRules);
+    // Lean kernel bridge should be well under 5KB (~3.6KB) instead of the 22KB GEMINI.md
+    expect(stats.size).toBeLessThan(5000);
+    const content = fs.readFileSync(cursorRules, 'utf8');
+    expect(content).toContain('kernel.md');
+  });
 });

@@ -16,3 +16,4 @@ pub mod benchmark;
 pub mod genome;
 pub mod compiler;
 pub mod purge;
+pub mod ast_extractor;

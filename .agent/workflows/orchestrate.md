@@ -28,7 +28,7 @@ Before dispatching multi-agent orchestrations or parallel sub-task workers, you 
 
 4. Required Skills → Before executing, load and follow procedural rules from:
    - `agent-organizer` (.agent/skills/agent-organizer/SKILL.md): Multi-agent coordination and task decomposition
-   - `parallel-agents` (.agent/skills/parallel-agents/SKILL.md): Parallel agent dispatch patterns and fan-in synthesis
+   - `parallel-agents` (the parallel-agents skill): Parallel agent dispatch patterns and fan-in synthesis
    - `agentic-patterns` (.agent/skills/agentic-patterns/SKILL.md): Agentic design patterns for multi-agent systems
 
 ---

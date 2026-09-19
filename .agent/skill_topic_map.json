@@ -1,6 +1,6 @@
 {
   "version": "3.0.0",
-  "total_skills": 183,
+  "total_skills": 185,
   "description": "Lightweight 2-tier domain routing map for Tribunal Agent Kit v3.0.0",
   "domain_routes": {
     "frontend": [
@@ -45,7 +45,12 @@
       "apple-design",
       "shadcn-ui-expert",
       "tailwind-patterns",
-      "building-native-ui"
+      "building-native-ui",
+      "adapt",
+      "better-typography",
+      "soft-skill",
+      "build-primitive",
+      "react-doctor"
     ],
     "motion": [
       "12-principles-of-animation",
@@ -93,10 +98,10 @@
       "generative-ui-expert",
       "realtime-patterns",
       "context-engineering-pro",
-      "agentic-workflows-2026"
+      "agentic-workflows-2026",
+      "error-resilience"
     ],
     "database": [
-      "database-architect",
       "database-design",
       "sql-pro",
       "supabase-postgres-best-practices",
@@ -106,7 +111,6 @@
       "duckdb-analytical-sql"
     ],
     "mobile": [
-      "mobile-developer",
       "mobile-design",
       "swiftui-expert",
       "expo-router-v4",
@@ -124,7 +128,8 @@
       "cicd-pro",
       "deployment-procedures",
       "platform-engineering-opentofu",
-      "opentelemetry-observability"
+      "opentelemetry-observability",
+      "config-validator"
     ],
     "security": [
       "ai-prompt-injection-defense",
@@ -142,7 +147,8 @@
       "code-review-checklist",
       "thermo-nuclear-code-quality-review",
       "zero-trust-passkeys",
-      "ai-app-hardening"
+      "ai-app-hardening",
+      "authentication-best-practices"
     ],
     "testing": [
       "testing-patterns",
@@ -195,7 +201,10 @@
       "geo-fundamentals",
       "git-pro",
       "github-operations",
-      "design-lab"
+      "design-lab",
+      "game-design-expert",
+      "game-engineering-expert",
+      "verification-before-completion"
     ]
   },
   "file_extensions": {
@@ -214,25 +223,65 @@
       "opentelemetry-observability",
       "property-based-testing"
     ],
-    ".jsx": ["react-specialist", "frontend-design"],
-    ".js": ["nodejs-best-practices", "clean-code", "opentelemetry-observability"],
-    ".vue": ["vue-expert", "frontend-design"],
-    ".py": ["python-pro", "python-patterns", "duckdb-analytical-sql", "property-based-testing"],
-    ".rs": ["rust-pro"],
-    ".cs": ["csharp-developer"],
+    ".jsx": [
+      "react-specialist",
+      "frontend-design"
+    ],
+    ".js": [
+      "nodejs-best-practices",
+      "clean-code",
+      "opentelemetry-observability"
+    ],
+    ".vue": [
+      "vue-expert",
+      "frontend-design"
+    ],
+    ".py": [
+      "python-pro",
+      "python-patterns",
+      "duckdb-analytical-sql",
+      "property-based-testing"
+    ],
+    ".rs": [
+      "rust-pro"
+    ],
+    ".cs": [
+      "csharp-developer"
+    ],
     ".sql": [
       "sql-pro",
-      "database-architect",
+      "database-design",
       "supabase-postgres-best-practices",
       "vector-search-pgvector",
       "duckdb-analytical-sql"
     ],
-    ".prisma": ["database-architect", "database-design", "vector-search-pgvector"],
-    ".css": ["frontend-design", "better-colors", "better-typography", "swiss-design"],
-    ".sh": ["bash-linux"],
-    ".ps1": ["powershell-windows"],
-    ".swift": ["swiftui-expert", "mobile-developer", "edge-ai-mobile"],
-    ".tf": ["platform-engineering-opentofu"],
-    ".tofu": ["platform-engineering-opentofu"]
+    ".prisma": [
+      "data-validation-schemas",
+      "database-design",
+      "vector-search-pgvector"
+    ],
+    ".css": [
+      "frontend-design",
+      "better-colors",
+      "better-typography",
+      "swiss-design"
+    ],
+    ".sh": [
+      "bash-linux"
+    ],
+    ".ps1": [
+      "powershell-windows"
+    ],
+    ".swift": [
+      "swiftui-expert",
+      "mobile-design",
+      "edge-ai-mobile"
+    ],
+    ".tf": [
+      "platform-engineering-opentofu"
+    ],
+    ".tofu": [
+      "platform-engineering-opentofu"
+    ]
   }
 }

@@ -2,27 +2,26 @@
 /**
  * memory_engine.js — Tribunal Kit 4-Type Taxonomy Persistent Memory Engine
  * ==============================================================================
- * SQLite-backed memory storage with budget-constrained recall.
+ * Persistent, file-backed memory storage with atomic locking, budget-constrained
+ * recall, and human-readable MEMORY.md projection.
+ *
+ * Fully unified and cross-compatible with:
+ *   - Rust Core: crates/core/src/commands/memory.rs
+ *   - TypeScript CLI: dist/commands/memory.js
+ *   - Tribunal MCP Server
  *
  * Memory Types:
- *   - semantic: Permanent facts (no expiration)
- *   - procedural: How-to recipes (no expiration)
- *   - episodic: Events with 30-day TTL
- *   - working: Session scratch (cleared on restart)
+ *   - semantic:   Permanent project facts and rules (no expiration)
+ *   - procedural: How-to recipes and steps (no expiration)
+ *   - episodic:   Session events and decisions (auto-decays after 30 days)
+ *   - working:    Current session scratchpad (cleared on gc/session reset)
  *
- * Recall Algorithm:
- *   score = relevance × recency × priority
- *   where relevance = token overlap with query
- *         recency = -0.1 × days since last access
- *         priority = explicit priority (default: 1.0)
+ * Storage Architecture:
+ *   - Index:      .agent/history/memory/.memory.idx (atomic JSON index)
+ *   - Projection: .agent/history/memory/MEMORY.md   (human-readable markdown)
+ *   - Lock:       .agent/history/memory/.memory.idx.lock
  *
- * Usage:
- *   const { MemoryEngine } = require('./memory_engine');
- *   const mem = new MemoryEngine(agentDir);
- *   mem.store('semantic', 'User prefers TypeScript', ['typescript', 'preference']);
- *   const { results } = mem.recall('typescript', 2000);
- *
- * Zero external dependencies beyond better-sqlite3 (already installed).
+ * Zero external dependencies beyond native Node.js core modules.
  */
 
 'use strict';
@@ -30,120 +29,117 @@
 const fs = require('fs');
 const path = require('path');
 
-// Lazy-load better-sqlite3 (optional dependency for environments without native compilation)
-let Database = null;
-try {
-  Database = require('better-sqlite3');
-} catch (_err) {
-  // Fallback to in-memory storage if better-sqlite3 not available
-  console.warn('[Memory] better-sqlite3 not available, using in-memory fallback');
-}
+// ─── Constants & Configuration ────────────────────────────────────────────────
 
-// ─── Memory Types ─────────────────────────────────────────────────────────────
+const MEMORY_DIR = path.join('history', 'memory');
+const INDEX_FILE = '.memory.idx';
+const PROJECTION_FILE = 'MEMORY.md';
+const MAX_ENTRIES = 500;
+const EPISODIC_TTL_DAYS = 30;
+const DEFAULT_BUDGET = 2000;
 
 const MEMORY_TYPES = {
-  SEMANTIC: 'semantic', // Permanent facts
-  PROCEDURAL: 'procedural', // How-to recipes
-  EPISODIC: 'episodic', // Events (30-day TTL)
-  WORKING: 'working', // Session scratch
+  SEMANTIC: 'semantic',
+  PROCEDURAL: 'procedural',
+  EPISODIC: 'episodic',
+  WORKING: 'working',
 };
 
 const VALID_TYPES = Object.values(MEMORY_TYPES);
 
-// ─── In-Memory Fallback Storage ───────────────────────────────────────────────
+const TYPE_PRIORITY = {
+  semantic: 1.0,
+  procedural: 0.9,
+  episodic: 0.7,
+  working: 0.5,
+};
 
-class InMemoryStore {
-  constructor() {
-    this.memories = new Map();
-    this.nextId = 1;
+// ─── Utility Helpers ──────────────────────────────────────────────────────────
+
+function estimateTokens(text) {
+  if (!text) return 0;
+  return Math.ceil(text.length / 4);
+}
+
+function nowEpochStr() {
+  return `${Math.floor(Date.now() / 1000)}Z`;
+}
+
+function daysSince(ts) {
+  if (!ts) return 0;
+  const created = parseInt(String(ts).replace('Z', ''), 10) || 0;
+  const now = Math.floor(Date.now() / 1000);
+  return Math.max(0, Math.floor((now - created) / 86400));
+}
+
+// ─── Lock Management ──────────────────────────────────────────────────────────
+
+function acquireLock(indexPath) {
+  const lockPath = indexPath + '.lock';
+  const maxRetries = 10;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const fd = fs.openSync(lockPath, 'wx');
+      fs.closeSync(fd);
+      return lockPath;
+    } catch (err) {
+      if (err.code !== 'EEXIST') {
+        throw err;
+      }
+      const waitBuf = new Int32Array(new SharedArrayBuffer(4));
+      Atomics.wait(waitBuf, 0, 0, 50);
+    }
   }
 
-  prepare(sql) {
-    const self = this;
+  // Check for stale lock (older than 10s)
+  try {
+    const stats = fs.statSync(lockPath);
+    if (Date.now() - stats.mtimeMs > 10000) {
+      fs.unlinkSync(lockPath);
+      const fd = fs.openSync(lockPath, 'wx');
+      fs.closeSync(fd);
+      return lockPath;
+    }
+  } catch {}
 
-    // Simple SQL-like operations on in-memory Map
-    return {
-      run(...params) {
-        // INSERT
-        if (sql.includes('INSERT INTO memories')) {
-          const [type, content, tags, priority, expiresAt] = params;
-          const id = self.nextId++;
-          self.memories.set(id, {
-            id,
-            type,
-            content,
-            tags: JSON.parse(tags),
-            priority,
-            created_at: new Date().toISOString(),
-            accessed_at: new Date().toISOString(),
-            expires_at: expiresAt,
-            access_count: 0,
-          });
-          return { lastInsertRowid: id, changes: 1 };
-        }
-        // UPDATE
-        if (sql.includes('UPDATE memories')) {
-          for (const [_id, mem] of self.memories) {
-            mem.accessed_at = new Date().toISOString();
-            mem.access_count++;
-          }
-          return { changes: self.memories.size };
-        }
-        // DELETE
-        if (sql.includes('DELETE FROM memories')) {
-          const before = self.memories.size;
-          for (const [id, mem] of self.memories) {
-            if (
-              mem.type === 'episodic' &&
-              mem.expires_at &&
-              new Date(mem.expires_at) < new Date()
-            ) {
-              self.memories.delete(id);
-            }
-          }
-          return { changes: before - self.memories.size };
-        }
-        return { changes: 0 };
-      },
+  throw new Error('Could not acquire lock for memory index');
+}
 
-      all(...params) {
-        const [query] = params;
-        const results = [];
+function releaseLock(lockPath) {
+  try {
+    if (lockPath && fs.existsSync(lockPath)) {
+      fs.unlinkSync(lockPath);
+    }
+  } catch {}
+}
 
-        for (const [_id, mem] of self.memories) {
-          // Filter expired
-          if (mem.expires_at && new Date(mem.expires_at) < new Date()) {
-            continue;
-          }
+// ─── Scoring Engine ───────────────────────────────────────────────────────────
 
-          // Calculate score
-          const relevance = (
-            mem.content.toLowerCase().match(new RegExp(query.toLowerCase(), 'g')) || []
-          ).length;
-          const daysSinceAccess =
-            (Date.now() - new Date(mem.accessed_at).getTime()) / (1000 * 60 * 60 * 24);
-          const score = relevance * 3.0 + daysSinceAccess * -0.1 + mem.priority;
+function computeScore(entry, query) {
+  if (!query || !entry.content) return 0;
+  const queryLower = query.toLowerCase();
+  const contentLower = entry.content.toLowerCase();
 
-          results.push({ ...mem, score });
-        }
-
-        return results.sort((a, b) => b.score - a.score);
-      },
-
-      get(...params) {
-        const [id] = params;
-        return self.memories.get(id) || undefined;
-      },
-    };
+  let relevance = 0;
+  if (contentLower.includes(queryLower)) {
+    relevance = 1.0;
+  } else if (entry.tags && entry.tags.some(t => t.toLowerCase().includes(queryLower))) {
+    relevance = 0.8;
+  } else if (queryLower.split(/\s+/).some(word => word.length > 2 && contentLower.includes(word))) {
+    relevance = 0.3;
   }
 
-  exec(_sql) {
-    // No-op for in-memory
-  }
+  if (relevance === 0) return 0;
 
-  close() {
-    this.memories.clear();
+  const priority = entry.priority != null ? entry.priority : (TYPE_PRIORITY[entry.memory_type] || 0.5);
+  let recency = 0;
+  if (entry.memory_type === 'episodic') {
+    const age = daysSince(entry.created_at);
+    recency = Math.exp(-age / 30);
   }
+  const freqBoost = Math.max(0, Math.log(entry.access_count || 1)) * 0.05;
+
+  return (relevance * priority) + recency + freqBoost;
 }
 
 // ─── Memory Engine Class ──────────────────────────────────────────────────────
@@ -151,300 +147,436 @@ class InMemoryStore {
 class MemoryEngine {
   /**
    * Initialize the Memory Engine.
-   * @param {string} agentDir - Path to .agent/ directory
-   * @param {object} options - Configuration options
+   * @param {string} agentDir - Path to .agent/ directory or workspace root
+   * @param {object} [options] - Configuration options
    */
   constructor(agentDir, options = {}) {
-    this.agentDir = agentDir;
-    this.dbPath = path.join(agentDir, 'history', 'memory.db');
+    let resolved = path.resolve(agentDir || process.cwd());
+    // Auto-detect .agent directory if parent workspace given
+    if (!resolved.endsWith('.agent') && !resolved.endsWith('.agent' + path.sep)) {
+      const nested = path.join(resolved, '.agent');
+      if (fs.existsSync(nested) && fs.statSync(nested).isDirectory()) {
+        resolved = nested;
+      }
+    }
+
+    this.agentDir = resolved;
+    this.memoryDir = path.join(this.agentDir, MEMORY_DIR);
+    this.indexPath = path.join(this.memoryDir, INDEX_FILE);
+    this.projectionPath = path.join(this.memoryDir, PROJECTION_FILE);
     this.options = {
-      defaultTTL: 30 * 24 * 60 * 60 * 1000, // 30 days for episodic
-      maxWorkingMemorySize: 100, // Max working memory entries
+      defaultTTL: EPISODIC_TTL_DAYS * 24 * 60 * 60 * 1000,
+      maxEntries: MAX_ENTRIES,
       ...options,
     };
 
-    // Ensure history directory exists
-    const historyDir = path.dirname(this.dbPath);
-    if (!fs.existsSync(historyDir)) {
-      fs.mkdirSync(historyDir, { recursive: true });
+    if (!fs.existsSync(this.memoryDir)) {
+      fs.mkdirSync(this.memoryDir, { recursive: true });
     }
-
-    // Initialize database
-    this.db = this.initDatabase();
-    this.initSchema();
   }
 
   /**
-   * Initialize database connection (SQLite or in-memory fallback).
+   * Load index from disk safely.
+   * @returns {{ version: number, entries: Array<object>, next_id: number }}
    */
-  initDatabase() {
-    if (Database) {
-      return new Database(this.dbPath);
+  loadIndex() {
+    if (!fs.existsSync(this.indexPath)) {
+      return { version: 1, entries: [], next_id: 1 };
     }
-    return new InMemoryStore();
+    try {
+      const content = fs.readFileSync(this.indexPath, 'utf8');
+      return JSON.parse(content);
+    } catch {
+      return { version: 1, entries: [], next_id: 1 };
+    }
   }
 
   /**
-   * Create database schema if not exists.
+   * Atomically persist index to disk.
+   * @param {object} index
    */
-  initSchema() {
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS memories (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        type TEXT NOT NULL CHECK(type IN ('semantic', 'procedural', 'episodic', 'working')),
-        content TEXT NOT NULL,
-        tags TEXT,
-        priority REAL DEFAULT 1.0,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        accessed_at TEXT DEFAULT CURRENT_TIMESTAMP,
-        expires_at TEXT,
-        access_count INTEGER DEFAULT 0
-      );
-
-      CREATE INDEX IF NOT EXISTS idx_memories_type ON memories(type);
-      CREATE INDEX IF NOT EXISTS idx_memories_accessed ON memories(accessed_at);
-    `);
+  saveIndex(index) {
+    fs.mkdirSync(this.memoryDir, { recursive: true });
+    const tmpPath = this.indexPath + '.tmp';
+    fs.writeFileSync(tmpPath, JSON.stringify(index, null, 2), 'utf8');
+    fs.renameSync(tmpPath, this.indexPath);
   }
 
   /**
    * Store a new memory entry.
-   * @param {string} type - Memory type (semantic, procedural, episodic, working)
+   * @param {string} type - 'semantic' | 'procedural' | 'episodic' | 'working'
    * @param {string} content - Memory content
-   * @param {string[]} tags - Searchable tags
-   * @param {object} options - Additional options (priority, expiresIn)
+   * @param {string[]} [tags] - Searchable tags
+   * @param {object} [options] - Additional options (priority, source, sessionId)
    * @returns {{ id: number, type: string, token_estimate: number }}
    */
   store(type, content, tags = [], options = {}) {
-    // Validate type
     if (!VALID_TYPES.includes(type)) {
       throw new Error(`Invalid memory type: "${type}". Must be one of: ${VALID_TYPES.join(', ')}`);
     }
 
-    // Validate content
-    if (!content || typeof content !== 'string') {
-      throw new Error('Memory content must be a non-empty string');
+    if (!content || typeof content !== 'string' || content.trim().length === 0) {
+      throw new Error('Memory content cannot be empty');
     }
 
-    // Calculate expiration
-    let expiresAt = null;
-    if (type === MEMORY_TYPES.EPISODIC) {
-      const expiresIn = options.expiresIn || this.options.defaultTTL;
-      expiresAt = new Date(Date.now() + expiresIn).toISOString();
-    }
+    const lockPath = acquireLock(this.indexPath);
+    try {
+      const index = this.loadIndex();
 
-    // Insert into database
-    const stmt = this.db.prepare(`
-      INSERT INTO memories (type, content, tags, priority, expires_at)
-      VALUES (?, ?, ?, ?, ?)
-    `);
-
-    const result = stmt.run(
-      type,
-      content,
-      JSON.stringify(tags),
-      options.priority || 1.0,
-      expiresAt,
-    );
-
-    return {
-      id: result.lastInsertRowid,
-      type,
-      token_estimate: this.estimateTokens(content),
-    };
-  }
-
-  /**
-   * Recall memories matching a query, within token budget.
-   * @param {string} query - Search query
-   * @param {number} budget - Maximum token budget
-   * @returns {{ results: array, tokens_used: number }}
-   */
-  recall(query, budget = 2000) {
-    const _tokens = this.tokenize(query);
-
-    // Score by relevance × recency × priority
-    const memories = this.db
-      .prepare(
-        `
-      SELECT *, (
-        (length(content) - length(replace(lower(content), lower(?), ''))) / length(?) * 3.0
-        + (julianday('now') - julianday(accessed_at)) * -0.1
-        + priority
-      ) as score
-      FROM memories
-      WHERE expires_at IS NULL OR expires_at > datetime('now')
-      ORDER BY score DESC
-    `,
-      )
-      .all(query, query);
-
-    // Fit within budget
-    const selected = [];
-    let usedTokens = 0;
-
-    for (const mem of memories) {
-      const tokens = this.estimateTokens(mem.content);
-      if (usedTokens + tokens <= budget) {
-        selected.push({
-          id: mem.id,
-          memory_type: mem.type,
-          content: mem.content,
-          tags: mem.tags ? JSON.parse(mem.tags) : [],
-          priority: mem.priority,
-          score: mem.score,
-        });
-        usedTokens += tokens;
-
-        // Update access stats
-        this.db
-          .prepare(
-            `
-          UPDATE memories
-          SET accessed_at = CURRENT_TIMESTAMP, access_count = access_count + 1
-          WHERE id = ?
-        `,
-          )
-          .run(mem.id);
+      // Enforce capacity (500)
+      if (index.entries.length >= this.options.maxEntries) {
+        index.entries = index.entries.filter(e => e.memory_type !== 'working');
+        if (index.entries.length >= this.options.maxEntries) {
+          index.entries = index.entries.filter(e => {
+            if (e.memory_type === 'episodic') {
+              return daysSince(e.created_at) < EPISODIC_TTL_DAYS;
+            }
+            return true;
+          });
+        }
+        if (index.entries.length >= this.options.maxEntries) {
+          throw new Error(`Memory at capacity (${this.options.maxEntries}). Run: tk memory gc`);
+        }
       }
-    }
 
-    return { results: selected, tokens_used: usedTokens };
+      const now = nowEpochStr();
+      const nextId = index.next_id || (index.entries.length > 0 ? Math.max(...index.entries.map(e => e.id)) + 1 : 1);
+      const cleanTags = Array.isArray(tags)
+        ? tags.filter(t => typeof t === 'string' && t.trim().length > 0).map(t => t.trim())
+        : [];
+
+      const entry = {
+        id: nextId,
+        memory_type: type,
+        content: content.trim(),
+        tags: cleanTags,
+        created_at: now,
+        last_accessed: now,
+        access_count: 0,
+        token_estimate: estimateTokens(content),
+        source: options.source || (type === 'working' ? 'session' : 'manual'),
+        session_id: options.sessionId || options.session_id || null,
+        priority: typeof options.priority === 'number' ? options.priority : 1.0,
+      };
+
+      index.entries.push(entry);
+      index.next_id = nextId + 1;
+
+      this.saveIndex(index);
+      this.generateProjection(index);
+
+      return {
+        id: entry.id,
+        type: entry.memory_type,
+        token_estimate: entry.token_estimate,
+      };
+    } finally {
+      releaseLock(lockPath);
+    }
   }
 
   /**
-   * Get a specific memory by ID.
-   * @param {number} id - Memory ID
+   * Recall memories matching a query within a token budget.
+   * @param {string} query - Search query
+   * @param {number} [budget] - Token budget (default 2000)
+   * @returns {{ results: Array<object>, tokens_used: number, budget: number }}
+   */
+  recall(query, budget = DEFAULT_BUDGET) {
+    const lockPath = acquireLock(this.indexPath);
+    try {
+      const index = this.loadIndex();
+
+      const scored = index.entries
+        .map(entry => ({ entry, score: computeScore(entry, query) }))
+        .filter(s => s.score > 0)
+        .sort((a, b) => b.score - a.score);
+
+      let totalTokens = 0;
+      const results = [];
+      let indexModified = false;
+
+      for (const { entry, score } of scored) {
+        if (totalTokens + entry.token_estimate > budget) break;
+        totalTokens += entry.token_estimate;
+
+        entry.last_accessed = nowEpochStr();
+        entry.access_count = (entry.access_count || 0) + 1;
+        indexModified = true;
+
+        results.push({
+          id: entry.id,
+          memory_type: entry.memory_type,
+          content: entry.content,
+          tags: entry.tags || [],
+          priority: entry.priority != null ? entry.priority : 1.0,
+          score,
+          token_estimate: entry.token_estimate,
+          created_at: entry.created_at,
+          last_accessed: entry.last_accessed,
+          access_count: entry.access_count,
+        });
+      }
+
+      if (indexModified) {
+        this.saveIndex(index);
+      }
+
+      return { results, tokens_used: totalTokens, budget };
+    } finally {
+      releaseLock(lockPath);
+    }
+  }
+
+  /**
+   * Retrieve a specific memory entry by ID.
+   * @param {number} id
    * @returns {object|null}
    */
   get(id) {
-    const mem = this.db
-      .prepare(
-        `
-      SELECT * FROM memories WHERE id = ?
-    `,
-      )
-      .get(id);
-
-    if (!mem) return null;
+    const targetId = Number(id);
+    const index = this.loadIndex();
+    const entry = index.entries.find(e => e.id === targetId);
+    if (!entry) return null;
 
     return {
-      id: mem.id,
-      memory_type: mem.type,
-      content: mem.content,
-      tags: mem.tags ? JSON.parse(mem.tags) : [],
-      priority: mem.priority,
-      created_at: mem.created_at,
-      accessed_at: mem.accessed_at,
-      access_count: mem.access_count,
-      expires_at: mem.expires_at,
+      id: entry.id,
+      memory_type: entry.memory_type,
+      content: entry.content,
+      tags: entry.tags || [],
+      priority: entry.priority != null ? entry.priority : 1.0,
+      created_at: entry.created_at,
+      last_accessed: entry.last_accessed,
+      access_count: entry.access_count || 0,
+      token_estimate: entry.token_estimate,
+      source: entry.source,
+      session_id: entry.session_id,
     };
   }
 
   /**
-   * Delete a memory by ID.
-   * @param {number} id - Memory ID
-   * @returns {boolean} True if deleted
+   * Delete a memory entry by ID.
+   * @param {number} id
+   * @returns {boolean} True if deleted, false if not found
    */
   delete(id) {
-    const result = this.db
-      .prepare(
-        `
-      DELETE FROM memories WHERE id = ?
-    `,
-      )
-      .run(id);
+    const targetId = Number(id);
+    const lockPath = acquireLock(this.indexPath);
+    try {
+      const index = this.loadIndex();
+      const before = index.entries.length;
+      index.entries = index.entries.filter(e => e.id !== targetId);
 
-    return result.changes > 0;
+      if (index.entries.length === before) {
+        return false;
+      }
+
+      this.saveIndex(index);
+      this.generateProjection(index);
+      return true;
+    } finally {
+      releaseLock(lockPath);
+    }
   }
 
   /**
-   * Clear all working memories (session scratch).
+   * Clear all working memories (session scratchpad).
+   * @returns {number} Number of cleared entries
    */
   clearWorking() {
-    this.db
-      .prepare(
-        `
-      DELETE FROM memories WHERE type = 'working'
-    `,
-      )
-      .run();
+    const lockPath = acquireLock(this.indexPath);
+    try {
+      const index = this.loadIndex();
+      const before = index.entries.length;
+      index.entries = index.entries.filter(e => e.memory_type !== 'working');
+      const removed = before - index.entries.length;
+
+      if (removed > 0) {
+        this.saveIndex(index);
+        this.generateProjection(index);
+      }
+
+      return removed;
+    } finally {
+      releaseLock(lockPath);
+    }
   }
 
   /**
-   * Auto-expire episodic memories.
+   * Expire old memories and perform garbage collection.
+   * Clears all working memories and episodic memories older than 30 days.
+   * @returns {{ working_removed: number, episodic_removed: number, before: number, after: number }}
    */
   expire() {
-    this.db
-      .prepare(
-        `
-      DELETE FROM memories
-      WHERE type = 'episodic' AND expires_at < datetime('now')
-    `,
-      )
-      .run();
+    const lockPath = acquireLock(this.indexPath);
+    try {
+      const index = this.loadIndex();
+      const before = index.entries.length;
+
+      let workingRemoved = 0;
+      let episodicRemoved = 0;
+
+      index.entries = index.entries.filter(e => {
+        if (e.memory_type === 'working') {
+          workingRemoved++;
+          return false;
+        }
+        if (e.memory_type === 'episodic' && daysSince(e.created_at) >= EPISODIC_TTL_DAYS) {
+          episodicRemoved++;
+          return false;
+        }
+        return true;
+      });
+
+      this.saveIndex(index);
+      this.generateProjection(index);
+
+      return {
+        working_removed: workingRemoved,
+        episodic_removed: episodicRemoved,
+        before,
+        after: index.entries.length,
+      };
+    } finally {
+      releaseLock(lockPath);
+    }
   }
 
   /**
-   * Get memory statistics.
+   * Alias for expire() to match CLI terminology.
+   */
+  gc() {
+    return this.expire();
+  }
+
+  /**
+   * Compute memory statistics.
+   * @returns {object}
    */
   stats() {
-    const stats = this.db
-      .prepare(
-        `
-      SELECT
-        type,
-        COUNT(*) as count,
-        SUM(length(content)) as total_chars
-      FROM memories
-      WHERE expires_at IS NULL OR expires_at > datetime('now')
-      GROUP BY type
-    `,
-      )
-      .all();
+    const index = this.loadIndex();
+    const total = index.entries.length;
+    const semantic = index.entries.filter(e => e.memory_type === 'semantic').length;
+    const procedural = index.entries.filter(e => e.memory_type === 'procedural').length;
+    const episodic = index.entries.filter(e => e.memory_type === 'episodic').length;
+    const working = index.entries.filter(e => e.memory_type === 'working').length;
+    const totalTokens = index.entries.reduce((sum, e) => sum + (e.token_estimate || 0), 0);
 
-    const result = {
-      total: 0,
-      by_type: {},
-    };
-
-    for (const stat of stats) {
-      result.total += stat.count;
-      result.by_type[stat.type] = {
-        count: stat.count,
-        total_chars: stat.total_chars,
-        estimated_tokens: Math.ceil(stat.total_chars / 4),
+    const byType = {};
+    for (const type of VALID_TYPES) {
+      const typeEntries = index.entries.filter(e => e.memory_type === type);
+      const typeChars = typeEntries.reduce((sum, e) => sum + (e.content ? e.content.length : 0), 0);
+      const typeTokens = typeEntries.reduce((sum, e) => sum + (e.token_estimate || 0), 0);
+      byType[type] = {
+        count: typeEntries.length,
+        total_chars: typeChars,
+        estimated_tokens: typeTokens,
       };
     }
 
-    return result;
+    return {
+      total,
+      semantic,
+      procedural,
+      episodic,
+      working,
+      total_tokens: totalTokens,
+      capacity: this.options.maxEntries,
+      by_type: byType,
+    };
   }
 
   /**
-   * Close database connection.
+   * Generate human-readable Markdown projection (MEMORY.md).
+   * @param {object} [index]
+   * @returns {string} Absolute path to projection file
    */
-  close() {
-    if (this.db && this.db.close) {
-      this.db.close();
+  generateProjection(index) {
+    if (!index) index = this.loadIndex();
+
+    let md = '# 🧠 Tribunal Memory Index\n';
+    md += '> Auto-generated by `tribunal-kit memory export`. Do not edit manually.\n';
+
+    const sem = index.entries.filter(e => e.memory_type === 'semantic');
+    const proc = index.entries.filter(e => e.memory_type === 'procedural');
+    const ep = index.entries.filter(e => e.memory_type === 'episodic');
+    const work = index.entries.filter(e => e.memory_type === 'working');
+
+    md += `> Entries: ${index.entries.length} | Semantic: ${sem.length} | Procedural: ${proc.length} | Episodic: ${ep.length} | Working: ${work.length}\n\n`;
+
+    if (sem.length > 0) {
+      md += '## SEMANTIC (Permanent Facts)\n';
+      md += '| ID | Content | Tags | Source | Created |\n';
+      md += '|----|---------|------|--------|---------|\n';
+      for (const e of sem) {
+        md += `| ${e.id} | ${e.content.replace(/\|/g, '\\|')} | ${(e.tags || []).join(', ')} | ${e.source || 'manual'} | ${e.created_at} |\n`;
+      }
+      md += '\n';
     }
+
+    if (proc.length > 0) {
+      md += '## PROCEDURAL (How-To Recipes)\n';
+      md += '| ID | Content | Tags | Source | Created |\n';
+      md += '|----|---------|------|--------|---------|\n';
+      for (const e of proc) {
+        md += `| ${e.id} | ${e.content.replace(/\|/g, '\\|')} | ${(e.tags || []).join(', ')} | ${e.source || 'manual'} | ${e.created_at} |\n`;
+      }
+      md += '\n';
+    }
+
+    if (ep.length > 0) {
+      md += '## EPISODIC (Session History — auto-decays after 30 days)\n';
+      md += '| ID | Content | Tags | Source | Created | Days Remaining |\n';
+      md += '|----|---------|------|--------|---------|----------------|\n';
+      for (const e of ep) {
+        const remaining = Math.max(0, EPISODIC_TTL_DAYS - daysSince(e.created_at));
+        md += `| ${e.id} | ${e.content.replace(/\|/g, '\\|')} | ${(e.tags || []).join(', ')} | ${e.source || 'manual'} | ${e.created_at} | ${remaining} |\n`;
+      }
+      md += '\n';
+    }
+
+    if (work.length > 0) {
+      md += '## WORKING (Current Session — cleared on GC)\n';
+      md += '| ID | Content | Tags | Session |\n';
+      md += '|----|---------|------|---------|\n';
+      for (const e of work) {
+        md += `| ${e.id} | ${e.content.replace(/\|/g, '\\|')} | ${(e.tags || []).join(', ')} | ${e.session_id || '—'} |\n`;
+      }
+      md += '\n';
+    }
+
+    if (index.entries.length === 0) {
+      md += '*No memories recorded yet. Run `tk memory store` to add your first memory.*\n';
+    }
+
+    fs.mkdirSync(path.dirname(this.projectionPath), { recursive: true });
+    fs.writeFileSync(this.projectionPath, md, 'utf8');
+
+    return this.projectionPath;
   }
 
-  // ─── Helpers ───────────────────────────────────────────────────────────────
+  /**
+   * Export the markdown projection text.
+   * @returns {string}
+   */
+  export() {
+    this.generateProjection();
+    return fs.readFileSync(this.projectionPath, 'utf8');
+  }
 
   /**
-   * Estimate token count for text.
-   * Uses rough approximation: 1 token ≈ 4 characters.
+   * Estimate token count.
+   * @param {string} text
+   * @returns {number}
    */
   estimateTokens(text) {
-    if (!text) return 0;
-    return Math.ceil(text.length / 4);
+    return estimateTokens(text);
   }
 
   /**
-   * Tokenize text into lowercase words.
+   * Close connection (no-op for file-backed storage, preserved for API parity).
    */
-  tokenize(text) {
-    if (!text) return [];
-    return (text.match(/\b[a-zA-Z_][a-zA-Z0-9_]{2,}\b/g) || []).map(t => t.toLowerCase());
+  close() {
+    // No-op for file-backed engine
   }
 }
 
@@ -454,6 +586,8 @@ module.exports = {
   MemoryEngine,
   MEMORY_TYPES,
   VALID_TYPES,
+  TYPE_PRIORITY,
+  estimateTokens,
 };
 
 // ─── CLI Entry Point ───────────────────────────────────────────────────────────
@@ -466,18 +600,20 @@ if (require.main === module) {
 \x1b[1mmemory_engine.js\x1b[0m — Tribunal Kit 4-Type Taxonomy Persistent Memory Engine
 
 \x1b[1mUsage:\x1b[0m
-  node .agent/scripts/memory_engine.js store <type> <content> [--tags tag1,tag2]
+  node .agent/scripts/memory_engine.js store <type> <content> [--tags tag1,tag2] [--source manual]
   node .agent/scripts/memory_engine.js recall <query> [--budget 2000]
   node .agent/scripts/memory_engine.js get <id>
   node .agent/scripts/memory_engine.js delete <id>
   node .agent/scripts/memory_engine.js stats
   node .agent/scripts/memory_engine.js expire
+  node .agent/scripts/memory_engine.js gc
+  node .agent/scripts/memory_engine.js export
 
 \x1b[1mMemory Types:\x1b[0m
   semantic    — Permanent facts (no expiration)
   procedural  — How-to recipes (no expiration)
   episodic    — Events with 30-day TTL
-  working     — Session scratch (cleared on restart)
+  working     — Session scratch (cleared on GC)
 
 \x1b[1mExamples:\x1b[0m
   node .agent/scripts/memory_engine.js store semantic "User prefers TypeScript strict mode" --tags typescript,preference
@@ -487,11 +623,15 @@ if (require.main === module) {
     process.exit(0);
   }
 
-  const { findAgentDir } = require('./_utils');
-  const agentDir = findAgentDir() || path.resolve(__dirname, '..');
+  let agentDir = null;
+  try {
+    const { findAgentDir } = require('./_utils');
+    agentDir = findAgentDir();
+  } catch (_) {
+    agentDir = path.resolve(process.cwd(), '.agent');
+  }
 
   const mem = new MemoryEngine(agentDir);
-
   const command = args[0];
 
   try {
@@ -504,8 +644,10 @@ if (require.main === module) {
           tagsIdx !== -1 && args[tagsIdx + 1]
             ? args[tagsIdx + 1].split(',').map(t => t.trim())
             : [];
+        const sourceIdx = args.indexOf('--source');
+        const source = sourceIdx !== -1 && args[sourceIdx + 1] ? args[sourceIdx + 1] : undefined;
 
-        const result = mem.store(type, content, tags);
+        const result = mem.store(type, content, tags, { source });
         console.log(
           `\x1b[32m✓\x1b[0m Memory stored: #${result.id} (${result.type}, ~${result.token_estimate} tokens)`,
         );
@@ -514,6 +656,10 @@ if (require.main === module) {
 
       case 'recall': {
         const query = args[1];
+        if (!query) {
+          console.error('\x1b[31m✖ Missing search query\x1b[0m');
+          process.exit(1);
+        }
         const budgetIdx = args.indexOf('--budget');
         const budget =
           budgetIdx !== -1 && args[budgetIdx + 1] ? parseInt(args[budgetIdx + 1], 10) : 2000;
@@ -524,7 +670,7 @@ if (require.main === module) {
         );
         for (const entry of results) {
           console.log(`- **[${entry.memory_type.toUpperCase()}]** #${entry.id}: ${entry.content}`);
-          if (entry.tags.length > 0) console.log(`  _(${entry.tags.join(', ')})_`);
+          if (entry.tags && entry.tags.length > 0) console.log(`  _(${entry.tags.join(', ')})_`);
         }
         break;
       }
@@ -562,9 +708,24 @@ if (require.main === module) {
         break;
       }
 
+      case 'gc':
       case 'expire': {
-        mem.expire();
-        console.log(`\x1b[32m✓\x1b[0m Expired episodic memories cleaned up`);
+        const res = mem.expire();
+        console.log(
+          `\x1b[32m✓\x1b[0m Memory GC complete: ${res.working_removed} working, ${res.episodic_removed} episodic removed (${res.before} -> ${res.after})`,
+        );
+        break;
+      }
+
+      case 'clear-working': {
+        const cleared = mem.clearWorking();
+        console.log(`\x1b[32m✓\x1b[0m Cleared ${cleared} working memory entries`);
+        break;
+      }
+
+      case 'export': {
+        const proj = mem.export();
+        console.log(proj);
         break;
       }
 

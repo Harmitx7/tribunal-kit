@@ -24,12 +24,7 @@ function validateMarkdownFile(filePath) {
     // Exclude templates and documentation that aren't strict skills
     if (!filePath.includes('SKILL.md')) return errors;
 
-    if (!content.includes('Pre-Flight Checklist') && !content.includes('Pre-Flight')) {
-      errors.push('Missing mandatory header/section: Pre-Flight Checklist');
-    }
-    if (!content.includes('VBC Protocol') && !content.includes('VBC')) {
-      errors.push('Missing mandatory header/section: VBC Protocol');
-    }
+    // Removed Pre-Flight and VBC checks as they are now centralized in system prompts to save tokens.
   }
 
   return errors;

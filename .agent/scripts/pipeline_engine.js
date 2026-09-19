@@ -518,9 +518,35 @@ function validatePhase(code, spec, opts = {}) {
     }
   }
 
-  // ── Manual Pattern Checks (always run, no dependencies) ────────────────────
-  const manualIssues = runManualChecks(code, spec);
-  issues.push(...manualIssues);
+  // ── Guardrail Engine (structural integrity checks) ───────────────────────────
+  const guardrailEngine = _getGuardrailEngine();
+  if (guardrailEngine && typeof guardrailEngine.validate === 'function') {
+    try {
+      let manifest = { agents: { all: [] }, skills: { names: [] }, cross_references: [], numeric_claims: [], scripts: { files: {} } };
+      try {
+        const manifestPath = path.join(process.cwd(), '.agent', 'history', 'integrity_manifest.json');
+        if (fs.existsSync(manifestPath)) {
+          manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        }
+      } catch (e) {}
+
+      const grResult = guardrailEngine.validate(code, manifest, { context: { projectRoot: process.cwd(), filePath: spec.target_file } });
+      if (grResult && grResult.violations) {
+        for (const v of grResult.violations) {
+          issues.push({
+            source: 'guardrail_engine',
+            severity: v.severity || 'medium',
+            category: v.rule || 'unknown',
+            line: null,
+            message: v.message || 'Unnamed guardrail issue',
+            fix: v.suggestion || null,
+          });
+        }
+      }
+    } catch {
+      // Guardrail engine not available or errored
+    }
+  }
 
   // ── Classify verdict ───────────────────────────────────────────────────────
   const criticalCount = issues.filter(i => i.severity === 'critical').length;
@@ -582,109 +608,6 @@ function detectLang(spec) {
   return map[ext] || 'js';
 }
 
-/**
- * Run lightweight manual pattern checks that don't require external scripts.
- * These catch the most common AI code generation mistakes.
- */
-function runManualChecks(code, spec) {
-  const issues = [];
-  const lines = code.split('\n');
-
-  // Check 1: eval() usage
-  if (/\beval\s*\(/.test(code)) {
-    issues.push({
-      source: 'pipeline_validator',
-      severity: 'critical',
-      category: 'Code Injection',
-      line: findLineNumber(lines, /\beval\s*\(/),
-      message: 'eval() is a code injection vector — never use in production',
-      fix: 'Use JSON.parse(), new Function(), or a proper parser instead',
-    });
-  }
-
-  // Check 2: Hardcoded secrets
-  if (/(?:password|secret|api[_-]?key)\s*[:=]\s*["'][^"']{4,}["']/i.test(code)) {
-    issues.push({
-      source: 'pipeline_validator',
-      severity: 'critical',
-      category: 'Hardcoded Secret',
-      line: findLineNumber(lines, /(?:password|secret|api[_-]?key)\s*[:=]\s*["']/i),
-      message: 'Hardcoded secret detected — use environment variables',
-      fix: 'Replace with process.env.SECRET_NAME or equivalent',
-    });
-  }
-
-  // Check 3: innerHTML XSS
-  if (/\.innerHTML\s*=/.test(code) && !code.includes('DOMPurify')) {
-    issues.push({
-      source: 'pipeline_validator',
-      severity: 'high',
-      category: 'XSS',
-      line: findLineNumber(lines, /\.innerHTML\s*=/),
-      message: 'Direct innerHTML assignment without sanitization',
-      fix: "Use textContent, DOMPurify.sanitize(), or React's JSX instead",
-    });
-  }
-
-  // Check 4: SQL injection (string interpolation in queries)
-  if (
-    /(?:SELECT|INSERT|UPDATE|DELETE|WHERE).*?\$\{.*?\}/i.test(code) ||
-    /(?:SELECT|INSERT|UPDATE|DELETE|WHERE).*?['"].*\+.*?/i.test(code) ||
-    /\$\{.*?\}.*?(?:SELECT|INSERT|UPDATE|DELETE|WHERE)/i.test(code)
-  ) {
-    issues.push({
-      source: 'pipeline_validator',
-      severity: 'critical',
-      category: 'SQL Injection',
-      line: null,
-      message: 'Possible SQL injection — string interpolation in SQL query',
-      fix: 'Use parameterized queries ($1, ?) or an ORM',
-    });
-  }
-
-  // Check 5: Console.log in production code (warning, not blocking)
-  const consoleCount = (code.match(/console\.(log|debug|info)\(/g) || []).length;
-  if (consoleCount > 3) {
-    issues.push({
-      source: 'pipeline_validator',
-      severity: 'low',
-      category: 'Code Quality',
-      line: null,
-      message: `${consoleCount} console.log statements found — remove before production`,
-      fix: 'Use a proper logger (winston, pino) or remove debug logs',
-    });
-  }
-
-  // Check 6: Empty catch blocks
-  if (/catch\s*\([^)]*\)\s*\{[\s\n]*\}/.test(code)) {
-    issues.push({
-      source: 'pipeline_validator',
-      severity: 'medium',
-      category: 'Error Handling',
-      line: findLineNumber(lines, /catch\s*\([^)]*\)\s*\{[\s\n]*\}/),
-      message: 'Empty catch block swallows errors silently',
-      fix: 'At minimum, log the error: catch(err) { console.error(err); }',
-    });
-  }
-
-  // Check 7: TypeScript `any` usage (if TS file)
-  const lang = detectLang(spec);
-  if ((lang === 'ts' || lang === 'tsx') && /:\s*any\b/.test(code)) {
-    const anyCount = (code.match(/:\s*any\b/g) || []).length;
-    if (anyCount > 2) {
-      issues.push({
-        source: 'pipeline_validator',
-        severity: 'medium',
-        category: 'Type Safety',
-        line: null,
-        message: `${anyCount} uses of 'any' type — reduces type safety`,
-        fix: "Replace with specific types or use 'unknown' with type guards",
-      });
-    }
-  }
-
-  return issues;
-}
 
 /**
  * Find the first line number matching a regex pattern.

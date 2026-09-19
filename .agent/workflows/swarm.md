@@ -27,7 +27,7 @@ Before decomposing goals into worker sub-tasks or triggering swarm execution, yo
 3. `Promise.allSettled()` Fan-In Protocol → Collect all worker status reports and synthesize final deliverable before Human Gate confirmation
 
 4. Required Skills → Before executing, load and follow procedural rules from:
-   - `parallel-agents` (.agent/skills/parallel-agents/SKILL.md): Parallel agent dispatch patterns and fan-in synthesis
+   - `parallel-agents` (the parallel-agents skill): Parallel agent dispatch patterns and fan-in synthesis
    - `agent-organizer` (.agent/skills/agent-organizer/SKILL.md): Multi-agent coordination and task decomposition
    - `agentic-workflows-2026` (.agent/skills/agentic-workflows-2026/SKILL.md): Advanced agent loops, ReAct planning, and structured tool calling
 
