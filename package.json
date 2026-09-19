@@ -1,6 +1,6 @@
 {
   "name": "tribunal-kit",
-  "version": "9.2.2",
+  "version": "9.2.3",
   "description": "Tribunal Kit is the governance layer for AI coding agents that stops AI hallucinations and npm ghost packages before they hit disk. Works with Cursor, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
@@ -154,12 +154,12 @@
     "ws": "^8.21.3"
   },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^9.2.2",
-    "@tribunal-kit/core-darwin-x64": "^9.2.2",
-    "@tribunal-kit/core-linux-arm64": "^9.2.2",
-    "@tribunal-kit/core-linux-x64": "^9.2.2",
-    "@tribunal-kit/core-win32-arm64": "^9.2.2",
-    "@tribunal-kit/core-win32-x64": "^9.2.2"
+    "@tribunal-kit/core-darwin-arm64": "^9.2.3",
+    "@tribunal-kit/core-darwin-x64": "^9.2.3",
+    "@tribunal-kit/core-linux-arm64": "^9.2.3",
+    "@tribunal-kit/core-linux-x64": "^9.2.3",
+    "@tribunal-kit/core-win32-arm64": "^9.2.3",
+    "@tribunal-kit/core-win32-x64": "^9.2.3"
   },
   "jest": {
     "testMatch": [
