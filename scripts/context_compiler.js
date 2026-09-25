@@ -132,7 +132,7 @@ function extractFileSkeleton(filePath, rawContent) {
            };
         }
       }
-    } catch(e) {
+    } catch(_e) {
       // Silent fallback to Regex parsing
     }
 

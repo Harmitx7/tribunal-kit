@@ -267,7 +267,7 @@ function runCommand(cmd, args = [], opts = {}) {
     encoding: 'utf8',
     timeout: opts.timeout || 120000,
     cwd: opts.cwd || process.cwd(),
-    shell: process.platform === 'win32',
+    shell: false,
     stdio: opts.stdio || 'pipe',
     ...opts,
   });

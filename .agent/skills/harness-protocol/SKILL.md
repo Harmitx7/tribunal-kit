@@ -38,3 +38,11 @@ scripts-binding:
 ## VBC Protocol
 
 - Verify task is complete before marking pass
+
+
+## 4. Ultrawork and Continuous Validation
+
+The Harness supports "Ultrawork" — long-running autonomous batch processing and background continuous validation inspired by Oh-My-OpenAgent (OmO) Team Mode.
+- **Background Execution**: Agents in a marathon session should execute autonomously in the background via the Durable Session Log.
+- **Continuous Validation**: Sub-agents continually validate output via the VBC protocol without polling the user.
+- **Human-in-the-Loop (HitL)**: Interrupt execution and request user approval *only* at explicit Human Gates (e.g., executing a destructive command or finalizing a milestone). Do not yield to the user for intermediate successes.

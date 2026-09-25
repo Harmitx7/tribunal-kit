@@ -78,7 +78,7 @@ function runCheck(label, cmd, cwd) {
       stdio: 'pipe',
       timeout: 60000,
       encoding: 'utf8',
-      shell: process.platform === 'win32',
+      shell: false,
     });
     trackOk(`${label} passed`, elapsed());
     return true;

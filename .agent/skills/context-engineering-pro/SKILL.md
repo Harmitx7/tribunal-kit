@@ -60,3 +60,10 @@ constraints:
   - runtime: node20
 output_format: json_only
 ```
+
+
+### 4. Durable Context Architecture (getEvents API)
+
+Never attempt to read massive `.jsonl` session files entirely into the context cache. Instead, use the `getEvents(startIndex, endIndex)` API to selectively interrogate the durable session log (`.agent/.tribunal/session.jsonl`).
+- By relying on positional slicing and event-sourced logs, you avoid making irreversible context compaction or summarization decisions in a single prompt. 
+- Always load only the specific event ranges you need to determine the state of the task.

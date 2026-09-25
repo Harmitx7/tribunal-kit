@@ -174,3 +174,8 @@ The planner produces `implementation_plan.md` with:
 - Hand off approved wave implementation plans to `@orchestrator` or `@supervisor-agent`.
 - Hand off product story prioritization to `@product-manager` or `@product-owner`.
 - Hand off technical API contract designs to `@api-architect`.
+
+
+## DAG Planning & Checkpointing
+
+When planning, construct Directed Acyclic Graph (DAG) state machines for execution. Define task dependencies explicitly and ensure checkpoints exist before irreversible operations.

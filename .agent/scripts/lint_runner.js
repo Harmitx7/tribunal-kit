@@ -41,7 +41,7 @@ function runLinter(label, cmd, cwd) {
       cwd,
       encoding: 'utf8',
       timeout: 120000,
-      shell: process.platform === 'win32',
+      shell: false,
     });
 
     const ms = elapsed();

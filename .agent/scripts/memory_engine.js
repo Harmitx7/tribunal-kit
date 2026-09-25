@@ -115,23 +115,43 @@ function releaseLock(lockPath) {
 
 // ─── Scoring Engine ───────────────────────────────────────────────────────────
 
-function computeScore(entry, query) {
+function computeScore(entry, query, corpus = []) {
   if (!query || !entry.content) return 0;
-  const queryLower = query.toLowerCase();
+  const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+  if (queryWords.length === 0) return 0;
   const contentLower = entry.content.toLowerCase();
 
   let relevance = 0;
-  if (contentLower.includes(queryLower)) {
-    relevance = 1.0;
-  } else if (entry.tags && entry.tags.some(t => t.toLowerCase().includes(queryLower))) {
-    relevance = 0.8;
-  } else if (queryLower.split(/\s+/).some(word => word.length > 2 && contentLower.includes(word))) {
-    relevance = 0.3;
+  const k1 = 1.2;
+  const b = 0.75;
+  const avgdl_raw = corpus.length > 0 ? corpus.reduce((sum, e) => sum + (e.content ? e.content.length : 0), 0) / corpus.length : 100;
+  const avgdl = avgdl_raw || 100;
+  const dl = contentLower.length;
+
+  for (const word of queryWords) {
+    const termFreq = contentLower.split(word).length - 1;
+    if (termFreq === 0 && (!entry.tags || !entry.tags.some(t => t.toLowerCase().includes(word)))) continue;
+    
+    // Effective TF including tag boost
+    const tf = termFreq + (entry.tags && entry.tags.some(t => t.toLowerCase().includes(word)) ? 2 : 0);
+    
+    const docFreq = corpus.filter(e => e.content && e.content.toLowerCase().includes(word)).length;
+    // IDF
+    const idf = Math.log((corpus.length - docFreq + 0.5) / (docFreq + 0.5) + 1.0);
+    
+    relevance += idf * (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * (dl / avgdl)));
+  }
+
+  // Exact phrase match bonus
+  if (contentLower.includes(query.toLowerCase())) {
+    relevance += 2.0;
   }
 
   if (relevance === 0) return 0;
 
   const priority = entry.priority != null ? entry.priority : (TYPE_PRIORITY[entry.memory_type] || 0.5);
+  const confidence = typeof entry.confidence === 'number' ? entry.confidence : 1.0;
+  
   let recency = 0;
   if (entry.memory_type === 'episodic') {
     const age = daysSince(entry.created_at);
@@ -139,7 +159,7 @@ function computeScore(entry, query) {
   }
   const freqBoost = Math.max(0, Math.log(entry.access_count || 1)) * 0.05;
 
-  return (relevance * priority) + recency + freqBoost;
+  return (relevance * priority * confidence) + recency + freqBoost;
 }
 
 // ─── Memory Engine Class ──────────────────────────────────────────────────────
@@ -257,6 +277,8 @@ class MemoryEngine {
         source: options.source || (type === 'working' ? 'session' : 'manual'),
         session_id: options.sessionId || options.session_id || null,
         priority: typeof options.priority === 'number' ? options.priority : 1.0,
+        relations: Array.isArray(options.relations) ? options.relations : [],
+        confidence: typeof options.confidence === 'number' ? options.confidence : (options.source === 'learned' ? 0.5 : 1.0),
       };
 
       index.entries.push(entry);
@@ -287,9 +309,22 @@ class MemoryEngine {
       const index = this.loadIndex();
 
       const scored = index.entries
-        .map(entry => ({ entry, score: computeScore(entry, query) }))
-        .filter(s => s.score > 0)
-        .sort((a, b) => b.score - a.score);
+        .map(entry => ({ entry, score: computeScore(entry, query, index.entries) }))
+        .filter(s => s.score > 0);
+
+      // Apply relational boosting
+      for (const s of scored) {
+        if (s.entry.relations) {
+          for (const relId of s.entry.relations) {
+             const related = scored.find(r => String(r.entry.id) === String(relId));
+             if (related) {
+               related.score += s.score * 0.2; // 20% boost from incoming relation
+             }
+          }
+        }
+      }
+
+      scored.sort((a, b) => b.score - a.score);
 
       let totalTokens = 0;
       const results = [];
@@ -350,6 +385,8 @@ class MemoryEngine {
       token_estimate: entry.token_estimate,
       source: entry.source,
       session_id: entry.session_id,
+      relations: entry.relations || [],
+      confidence: typeof entry.confidence === 'number' ? entry.confidence : 1.0,
     };
   }
 
@@ -505,31 +542,34 @@ class MemoryEngine {
 
     if (sem.length > 0) {
       md += '## SEMANTIC (Permanent Facts)\n';
-      md += '| ID | Content | Tags | Source | Created |\n';
-      md += '|----|---------|------|--------|---------|\n';
+      md += '| ID | Content | Tags | Source | Conf | Created |\n';
+      md += '|----|---------|------|--------|------|---------|\n';
       for (const e of sem) {
-        md += `| ${e.id} | ${e.content.replace(/\|/g, '\\|')} | ${(e.tags || []).join(', ')} | ${e.source || 'manual'} | ${e.created_at} |\n`;
+        const conf = typeof e.confidence === 'number' ? e.confidence.toFixed(1) : '1.0';
+        md += `| ${e.id} | ${e.content.replace(/\|/g, '\\|')} | ${(e.tags || []).join(', ')} | ${e.source || 'manual'} | ${conf} | ${e.created_at} |\n`;
       }
       md += '\n';
     }
 
     if (proc.length > 0) {
       md += '## PROCEDURAL (How-To Recipes)\n';
-      md += '| ID | Content | Tags | Source | Created |\n';
-      md += '|----|---------|------|--------|---------|\n';
+      md += '| ID | Content | Tags | Source | Conf | Created |\n';
+      md += '|----|---------|------|--------|------|---------|\n';
       for (const e of proc) {
-        md += `| ${e.id} | ${e.content.replace(/\|/g, '\\|')} | ${(e.tags || []).join(', ')} | ${e.source || 'manual'} | ${e.created_at} |\n`;
+        const conf = typeof e.confidence === 'number' ? e.confidence.toFixed(1) : '1.0';
+        md += `| ${e.id} | ${e.content.replace(/\|/g, '\\|')} | ${(e.tags || []).join(', ')} | ${e.source || 'manual'} | ${conf} | ${e.created_at} |\n`;
       }
       md += '\n';
     }
 
     if (ep.length > 0) {
       md += '## EPISODIC (Session History — auto-decays after 30 days)\n';
-      md += '| ID | Content | Tags | Source | Created | Days Remaining |\n';
-      md += '|----|---------|------|--------|---------|----------------|\n';
+      md += '| ID | Content | Tags | Source | Conf | Created | Days Remaining |\n';
+      md += '|----|---------|------|--------|------|---------|----------------|\n';
       for (const e of ep) {
         const remaining = Math.max(0, EPISODIC_TTL_DAYS - daysSince(e.created_at));
-        md += `| ${e.id} | ${e.content.replace(/\|/g, '\\|')} | ${(e.tags || []).join(', ')} | ${e.source || 'manual'} | ${e.created_at} | ${remaining} |\n`;
+        const conf = typeof e.confidence === 'number' ? e.confidence.toFixed(1) : '1.0';
+        md += `| ${e.id} | ${e.content.replace(/\|/g, '\\|')} | ${(e.tags || []).join(', ')} | ${e.source || 'manual'} | ${conf} | ${e.created_at} | ${remaining} |\n`;
       }
       md += '\n';
     }

@@ -2,7 +2,7 @@
   "mcpServers": {
     "tribunal-kit": {
       "command": "node",
-      "args": ["bin/mcp-server.js"],
+      "args": [".agent/scripts/mcp_server.js"],
       "env": {
         "NODE_ENV": "production"
       }

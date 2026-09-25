@@ -44,7 +44,7 @@ function runTests(label, cmd, cwd) {
       cwd,
       encoding: 'utf8',
       timeout: 300000, // 5m
-      shell: process.platform === 'win32',
+      shell: false,
     });
 
     const ms = elapsed();

@@ -63,14 +63,14 @@ function trackSkip(label, reason) {
 function run(label, cmd, cwd) {
   const elapsed = timer();
   try {
-    const isWindows = process.platform === 'win32';
+    const _isWindows = process.platform === 'win32';
 
     execFileSync(cmd[0], cmd.slice(1), {
       cwd,
       stdio: 'pipe',
       timeout: 120000,
       encoding: 'utf8',
-      shell: isWindows,
+      shell: false,
     });
     trackOk(label, elapsed());
     return true;

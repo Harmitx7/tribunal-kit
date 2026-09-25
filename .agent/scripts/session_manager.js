@@ -17,6 +17,12 @@
 
 const fs = require('fs');
 const path = require('path');
+let sessionLogger = null;
+try {
+  sessionLogger = require('./session_logger');
+} catch (_e) {
+  // Graceful fallback if session_logger is not present
+}
 
 const STATE_FILE = '.agent_session.json';
 
@@ -60,6 +66,10 @@ function cmdSave(note) {
   state.history.push(entry);
   state.current = entry;
   saveState(state);
+
+  if (sessionLogger) {
+    sessionLogger.appendEvent('SessionStarted', { note, tags: [] }, 'session_manager', entry.session);
+  }
 
   console.log(`${GREEN}✅ Session saved:${RESET} ${note}`);
   console.log(`   Time:    ${entry.timestamp}`);

@@ -197,3 +197,8 @@ app.use((err: Error, req, res, next) => {
 - Verify model strings against official current lists (no invented names like `claude-4-opus` or `gpt-5`).
 - Ensure all LLM API calls are asynchronous and properly awaited.
 - Check that output parsing is wrapped in try-catch blocks and parses structured JSON safely.
+
+
+## AgentShield Auditing
+
+Beyond application security, the auditor must check the agent harness itself. This includes prompt injection via repository files, unsafe MCP integration parameters, and sandbox boundary violations.

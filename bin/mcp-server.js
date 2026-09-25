@@ -757,7 +757,7 @@ async function handleRequest(req) {
                let out = '';
                child.stdout.on('data', d => out += d);
                child.stderr.on('data', d => out += d);
-               child.on('close', code => resolve(out));
+               child.on('close', _code => resolve(out));
                child.on('error', reject);
             });
             return {
@@ -796,7 +796,7 @@ async function handleRequest(req) {
              let out = '';
              child.stdout.on('data', d => out += d);
              child.stderr.on('data', d => out += d);
-             child.on('close', code => {
+             child.on('close', _code => {
                  resolve(out);
              });
              child.on('error', reject);
@@ -1309,7 +1309,7 @@ async function handleRequest(req) {
       if (toolName === 'get_sparse_context') {
         const task = req.params?.arguments?.task;
         const files = req.params?.arguments?.files || [];
-        const model = req.params?.arguments?.model || 'large';
+        const _model = req.params?.arguments?.model || 'large';
 
         if (!task) throw new RpcError(-32602, 'Missing required argument: task');
 
@@ -1337,7 +1337,7 @@ async function handleRequest(req) {
              let out = '';
              child.stdout.on('data', d => out += d);
              child.stderr.on('data', d => out += d);
-             child.on('close', code => {
+             child.on('close', _code => {
                  resolve(out);
              });
              child.on('error', reject);
@@ -1353,7 +1353,7 @@ async function handleRequest(req) {
              if (parsed.context_snapshot) {
                 finalOutput += parsed.context_snapshot;
              }
-          } catch (e) {
+          } catch (_e) {
              finalOutput = result;
           }
 

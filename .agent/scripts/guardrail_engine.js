@@ -427,7 +427,7 @@ function ruleImportPhantom(content, _manifest, ctx) {
            extractedImports = data.imports;
         }
       }
-    } catch(e) {
+    } catch(_e) {
       // Fallback
     }
   }

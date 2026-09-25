@@ -47,6 +47,12 @@ const {
 } = require('./_colors');
 const { findAgentDir, parseArgs, loadJson } = require('./_utils');
 
+let sessionLogger = null;
+try {
+  sessionLogger = require('./session_logger');
+} catch (_e) {}
+
+
 // ── Lazy-load sibling scripts (avoid circular deps) ─────────────────────────
 let _contextBroker = null;
 function getContextBroker() {
@@ -528,7 +534,7 @@ function validatePhase(code, spec, opts = {}) {
         if (fs.existsSync(manifestPath)) {
           manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
         }
-      } catch (e) {}
+      } catch (_e) {}
 
       const grResult = guardrailEngine.validate(code, manifest, { context: { projectRoot: process.cwd(), filePath: spec.target_file } });
       if (grResult && grResult.violations) {
@@ -612,7 +618,7 @@ function detectLang(spec) {
 /**
  * Find the first line number matching a regex pattern.
  */
-function findLineNumber(lines, pattern) {
+function _findLineNumber(lines, pattern) {
   for (let i = 0; i < lines.length; i++) {
     if (pattern.test(lines[i])) return i + 1;
   }
@@ -648,6 +654,15 @@ function fullPipeline(task, files = [], opts = {}) {
   // Pass 3: Return validator as a callable
   // The caller invokes validate(code) after the LLM generates the code
   const validate = code => validatePhase(code, spec, { lang: detectLang(spec) });
+
+  if (sessionLogger) {
+    sessionLogger.appendEvent('AgentDispatched', {
+      task,
+      files,
+      promptTokens: builderResult.tokenEstimate,
+      skills: builderResult.skillsLoaded,
+    }, 'pipeline_engine');
+  }
 
   return {
     spec,

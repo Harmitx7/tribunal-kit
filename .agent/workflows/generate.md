@@ -209,3 +209,8 @@ Write to disk?  Y = approve | N = discard | R = revise with feedback
 /generate a GSAP ScrollTrigger timeline with useGSAP React hook
 /generate an OpenAI structured output call with Zod schema validation
 ```
+
+
+## Brain-Hands Separation & Durable Logging
+
+During code generation, the model (Brain) issues tool requests, and the harness (Hands) executes them. Every tool execution is recorded in the durable log. Verification must complete before Human Gate approval.

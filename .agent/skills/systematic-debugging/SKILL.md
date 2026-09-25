@@ -122,3 +122,8 @@ Do not skim. Stack traces tell the exact sequence of destruction.
 1. **Top line:** The final fatal blow (e.g., `TypeError: Cannot read properties of undefined (reading 'map')`).
 2. **First Application Function:** Scroll down past `node_modules` and framework internals. Find the absolute top-most function call that YOU wrote (e.g., `at UserList (src/components/UserList.tsx:45)`).
 3. **The Parameter Conclusion:** Therefore, line 45 invoked `.map` on a variable that was `undefined`. Why did the parent layer pass `undefined` instead of `[]`?
+
+
+## Integration with Durable Session Log
+
+When debugging fails, the agent MUST read the `.agent/.tribunal/session.jsonl` durable log to understand exactly where the previous wave crashed. Do not guess; read the event trace to see the exact sequence of tool calls and errors that led to the crash. You can grep this file or parse it to extract the latest `ErrorEncountered` or failed `ToolCompleted` events.

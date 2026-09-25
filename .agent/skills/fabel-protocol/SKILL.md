@@ -275,3 +275,8 @@ Before finalizing any response, ask yourself:
 □ Did I over-format my response? → Simplify. Prose first.
 □ Did I ask a question I could have answered myself? → Remove it.
 ```
+
+
+## 8. Brain vs Hands Decoupling Boundary
+
+Agents are explicitly forbidden from attempting to read environment variables, OS tokens, or secrets directly from the shell. The "Brain" (LLM) plans, but the "Hands" (harness manager) executes securely via the Agent Syscall Registry. Do not attempt to bypass this sandbox.

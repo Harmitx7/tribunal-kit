@@ -443,7 +443,7 @@ function buildEnhancedSkill(skillName, originalContent) {
     .join('\n');
 
   // Build the 18-Section Architecture
-  const section1_Preflight = `## Mandatory Pre-Flight Context Inspection
+  const _section1_Preflight = `## Mandatory Pre-Flight Context Inspection
 
 Before generating, refactoring, or reviewing code in the \`${skillName}\` domain, inspect these 5 critical parameters:
 
@@ -453,12 +453,12 @@ Before generating, refactoring, or reviewing code in the \`${skillName}\` domain
 4. **Validation & Type Contracts**: Validate input data schemas and strict type constraints across all module interfaces.
 5. **Observability & Proof of Execution**: Ensure execution produces tangible verification signals (terminal output, tests, metrics).`;
 
-  const section2_Boundaries = `## Activation Boundaries
+  const _section2_Boundaries = `## Activation Boundaries
 
 - **Activate when:** ${desc}
 - **DO NOT activate when:** The task falls outside the \`${skillName}\` domain or is managed by a different dedicated specialist.`;
 
-  const section3_ExecutionProtocol = `## 🔁 Multi-Pass Execution Protocol
+  const _section3_ExecutionProtocol = `## 🔁 Multi-Pass Execution Protocol
 
 Execute all non-trivial tasks through this 7-pass cognitive loop:
 
@@ -472,7 +472,7 @@ Execute all non-trivial tasks through this 7-pass cognitive loop:
 | **Pass 6** | **Improve** | Eliminate discovered friction, optimize performance, and harden error boundaries. |
 | **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. |`;
 
-  const section4_EdgeCases = `## 🚨 Edge-Case & Failure Mode Matrix
+  const _section4_EdgeCases = `## 🚨 Edge-Case & Failure Mode Matrix
 
 | Scenario | Risk | Mitigation Strategy |
 |:---|:---|:---|
@@ -482,13 +482,13 @@ Execute all non-trivial tasks through this 7-pass cognitive loop:
 | **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection | Validate boundary payloads with Zod/Pydantic schemas prior to execution |
 | **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |`;
 
-  const section5_Traps = `## 🤖 LLM-Specific Traps Table
+  const _section5_Traps = `## 🤖 LLM-Specific Traps Table
 
 | Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
 |:---|:---|:---|
 ${traps.map(t => `| **${t.trope}** | ${t.bad} | ${t.good} |`).join('\n')}`;
 
-  const section6_Tribunal = `## 🏛️ Tribunal Verification & Guardrails
+  const _section6_Tribunal = `## 🏛️ Tribunal Verification & Guardrails
 
 **Active Reviewers:** ${reviewers.map(r => `\`${r}\``).join(' · ')}
 **Slash Command:** \`/review\` or \`/tribunal-full\`

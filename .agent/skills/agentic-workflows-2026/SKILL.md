@@ -81,3 +81,11 @@ export async function runAgentLoop(task: string, maxTurns = 10) {
        ├── Dispatch Worker B (Database) ──> WorkerResult B ──┼─> [Promise.allSettled Synthesis]
        └── Dispatch Worker C (Frontend) ──> WorkerResult C ──┘
 ```
+
+
+## 4. Checkpointing and State Persistence (LangGraph-style)
+
+Shift focus away from clever prompt-engineering tricks and towards structured, graph-based agent topologies (e.g., LangGraph state machines) that support deterministic pausing and resuming.
+- **Durable Event Sourcing**: Every tool call, generated payload, and Human Gate decision must be checkpointed to the Durable Session Log.
+- **Graph-based Topologies**: Organize sub-agents into a Directed Acyclic Graph (DAG) where nodes represent agent execution states and edges represent data flow. 
+- **Resume Capability**: If the LLM context limit is hit or an error occurs, the orchestrator should be able to `/resume` perfectly by replaying the serialized graph state from the session log.

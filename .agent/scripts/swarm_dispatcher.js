@@ -410,6 +410,63 @@ class SwarmOrchestrator {
     return results;
   }
 
+  async executeDAG(payload) {
+    const tasks = (typeof payload === 'object' && payload.tasks) ? payload.tasks : [];
+    if (tasks.length === 0) {
+      return [];
+    }
+
+    this.workers = tasks;
+    this.results = [];
+    
+    if (this.dashboard) {
+      this.dashboard.workers = this.workers.map(w => ({
+        name: w.agent || w.id || 'Worker',
+        task: (w.goal || w.task_description || '').slice(0, 40) + '...',
+        status: '⏳ Pending',
+        color: '\x1b[33m'
+      }));
+      this.dashboard.start();
+    }
+
+    const completed = new Set();
+    const inProgress = new Set();
+
+    while (completed.size < tasks.length) {
+      const availableTasks = tasks.filter(t => 
+        !completed.has(t.id) && 
+        !inProgress.has(t.id) &&
+        (t.deps || []).every(dep => completed.has(dep))
+      );
+
+      if (availableTasks.length === 0 && inProgress.size === 0) {
+        if (this.dashboard) this.dashboard.stop();
+        throw new Error("DAG deadlock detected.");
+      }
+
+      if (availableTasks.length === 0) {
+        await new Promise(r => setTimeout(r, 100));
+        continue;
+      }
+
+      availableTasks.forEach(t => inProgress.add(t.id));
+      
+      const batchPromises = availableTasks.map(t => 
+        this.executeWorker(t, 60000).then(result => {
+          inProgress.delete(t.id);
+          completed.add(t.id);
+          this.results.push(result);
+          return result;
+        })
+      );
+      
+      await Promise.allSettled(batchPromises);
+    }
+    
+    if (this.dashboard) this.dashboard.stop();
+    return this.results;
+  }
+
   async executeWorker(worker, timeout) {
     const workerIndex = this.workers.indexOf(worker);
     if (this.dashboard && workerIndex !== -1) {
@@ -770,7 +827,7 @@ function main() {
       useTui = true;
     } else if (arg === '-h' || arg === '--help') {
       console.log(
-        'Usage: swarm_dispatcher.js [--payload <json>] [--file <path>] [--workspace <dir>] [--mode legacy|swarm] [--tui]',
+        'Usage: swarm_dispatcher.js [--payload <json>] [--file <path>] [--workspace <dir>] [--mode legacy|swarm|dag] [--tui]',
       );
       process.exit(0);
     }
@@ -855,6 +912,22 @@ function main() {
       })
       .catch(err => {
         console.error(`ERROR: Swarm orchestration failed: ${err.message}`);
+        process.exit(1);
+      });
+  } else if (mode === 'dag') {
+    const orchestrator = new SwarmOrchestrator(useTui ? new SwarmDashboard([]) : null);
+    orchestrator.executeDAG(payloadData)
+      .then(results => {
+        if (!useTui) {
+          console.log('INFO: DAG orchestration successful.');
+          console.log('--- EXECUTION PLAN (MOCK RESULTS) ---');
+          console.log(JSON.stringify(results, null, 2));
+        } else {
+          console.log('\n\x1b[32m✔ DAG orchestration complete.\x1b[0m\n');
+        }
+      })
+      .catch(err => {
+        console.error(`ERROR: DAG orchestration failed: ${err.message}`);
         process.exit(1);
       });
   } else {

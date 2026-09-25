@@ -62,7 +62,13 @@ pub struct MemoryEntry {
     pub source: MemorySource,
     #[serde(default)]
     pub session_id: Option<String>,
+    #[serde(default)]
+    pub relations: Vec<String>,
+    #[serde(default = "default_confidence")]
+    pub confidence: f64,
 }
+
+fn default_confidence() -> f64 { 1.0 }
 
 // ── Memory Index ────────────────────────────────────────────────────────────
 // The full in-memory representation of the index file.
@@ -191,25 +197,43 @@ fn type_priority(memory_type: &MemoryType) -> f64 {
     }
 }
 
-fn compute_score(entry: &MemoryEntry, query_lower: &str) -> f64 {
+fn compute_score(entry: &MemoryEntry, query_lower: &str, corpus: &[MemoryEntry]) -> f64 {
     let content_lower = entry.content.to_lowercase();
+    let query_words: Vec<&str> = query_lower.split_whitespace().filter(|w| w.len() > 2).collect();
+    if query_words.is_empty() { return 0.0; }
 
-    // Relevance: exact substring match = 1.0, tag match = 0.8, partial = 0.3
-    let relevance = if content_lower.contains(query_lower) {
-        1.0
-    } else if entry.tags.iter().any(|t| t.to_lowercase().contains(query_lower)) {
-        0.8
-    } else if query_lower.split_whitespace().any(|word| content_lower.contains(word)) {
-        0.3
-    } else {
-        0.0 // No match at all — will be filtered out
-    };
+    let mut relevance = 0.0;
+    let k1 = 1.2;
+    let b = 0.75;
+    
+    let total_len: usize = corpus.iter().map(|e| e.content.len()).sum();
+    let mut avgdl = if corpus.is_empty() { 100.0 } else { (total_len as f64) / (corpus.len() as f64) };
+    if avgdl == 0.0 { avgdl = 100.0; }
+    let dl = content_lower.len() as f64;
+
+    for word in &query_words {
+        let term_freq = content_lower.matches(word).count() as f64;
+        let tag_match = entry.tags.iter().any(|t| t.to_lowercase().contains(word));
+        if term_freq == 0.0 && !tag_match { continue; }
+        
+        let tf = term_freq + if tag_match { 2.0 } else { 0.0 };
+        
+        let doc_freq = corpus.iter().filter(|e| e.content.to_lowercase().contains(word)).count() as f64;
+        let idf = ((corpus.len() as f64 - doc_freq + 0.5) / (doc_freq + 0.5) + 1.0).ln();
+        
+        relevance += idf * (tf * (k1 + 1.0)) / (tf + k1 * (1.0 - b + b * (dl / avgdl)));
+    }
+
+    if content_lower.contains(query_lower) {
+        relevance += 2.0;
+    }
 
     if relevance == 0.0 {
         return 0.0;
     }
 
     let priority = type_priority(&entry.memory_type);
+    let confidence = entry.confidence;
 
     // Recency boost for episodic entries (decays exponentially)
     let recency = match entry.memory_type {
@@ -223,7 +247,7 @@ fn compute_score(entry: &MemoryEntry, query_lower: &str) -> f64 {
     // Frequency boost: more accessed = slightly higher score
     let freq_boost = (entry.access_count as f64).ln().max(0.0) * 0.05;
 
-    (relevance * priority) + recency + freq_boost
+    (relevance * priority * confidence) + recency + freq_boost
 }
 
 // ── Core Operations ─────────────────────────────────────────────────────────
@@ -275,8 +299,10 @@ pub fn store_entry(
         last_accessed: now,
         access_count: 0,
         token_estimate: token_est,
-        source,
+        source: source.clone(),
         session_id,
+        relations: vec![],
+        confidence: if source == MemorySource::Learned { 0.5 } else { 1.0 },
     };
 
     index.entries.push(entry);
@@ -293,16 +319,32 @@ pub fn recall_entries(
 ) -> Vec<(MemoryEntry, f64)> {
     let query_lower = query.to_lowercase();
 
+    let corpus_clone = index.entries.clone();
     // Score all entries
     let mut scored: Vec<ScoredEntry> = index
         .entries
         .iter()
         .map(|e| ScoredEntry {
             entry: e.clone(),
-            score: compute_score(e, &query_lower),
+            score: compute_score(e, &query_lower, &corpus_clone),
         })
         .filter(|s| s.score > 0.0) // Drop non-matching
         .collect();
+
+    // Relational boosting
+    let mut boosts: std::collections::HashMap<u32, f64> = std::collections::HashMap::new();
+    for s in &scored {
+        for rel in &s.entry.relations {
+            if let Ok(rel_id) = rel.parse::<u32>() {
+                *boosts.entry(rel_id).or_insert(0.0) += s.score * 0.2;
+            }
+        }
+    }
+    for s in &mut scored {
+        if let Some(boost) = boosts.get(&s.entry.id) {
+            s.score += boost;
+        }
+    }
 
     // Sort by score descending
     scored.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
@@ -377,15 +419,16 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
     let semantic: Vec<&MemoryEntry> = index.entries.iter().filter(|e| e.memory_type == MemoryType::Semantic).collect();
     if !semantic.is_empty() {
         md.push_str("## SEMANTIC (Permanent Facts)\n");
-        md.push_str("| ID | Content | Tags | Source | Created |\n");
-        md.push_str("|----|---------|------|--------|---------|\n");
+        md.push_str("| ID | Content | Tags | Source | Conf | Created |\n");
+        md.push_str("|----|---------|------|--------|------|---------|\n");
         for e in &semantic {
             md.push_str(&format!(
-                "| {} | {} | {} | {} | {} |\n",
+                "| {} | {} | {} | {} | {:.1} | {} |\n",
                 e.id,
                 e.content.replace('|', "\\|"),
                 e.tags.join(", "),
                 format!("{:?}", e.source).to_lowercase(),
+                e.confidence,
                 e.created_at,
             ));
         }
@@ -396,15 +439,16 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
     let procedural: Vec<&MemoryEntry> = index.entries.iter().filter(|e| e.memory_type == MemoryType::Procedural).collect();
     if !procedural.is_empty() {
         md.push_str("## PROCEDURAL (How-To Recipes)\n");
-        md.push_str("| ID | Content | Tags | Source | Created |\n");
-        md.push_str("|----|---------|------|--------|---------|\n");
+        md.push_str("| ID | Content | Tags | Source | Conf | Created |\n");
+        md.push_str("|----|---------|------|--------|------|---------|\n");
         for e in &procedural {
             md.push_str(&format!(
-                "| {} | {} | {} | {} | {} |\n",
+                "| {} | {} | {} | {} | {:.1} | {} |\n",
                 e.id,
                 e.content.replace('|', "\\|"),
                 e.tags.join(", "),
                 format!("{:?}", e.source).to_lowercase(),
+                e.confidence,
                 e.created_at,
             ));
         }
@@ -415,17 +459,18 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
     let episodic: Vec<&MemoryEntry> = index.entries.iter().filter(|e| e.memory_type == MemoryType::Episodic).collect();
     if !episodic.is_empty() {
         md.push_str("## EPISODIC (Session History — auto-decays after 30 days)\n");
-        md.push_str("| ID | Content | Tags | Source | Created | Days Remaining |\n");
-        md.push_str("|----|---------|------|--------|---------|----------------|\n");
+        md.push_str("| ID | Content | Tags | Source | Conf | Created | Days Remaining |\n");
+        md.push_str("|----|---------|------|--------|------|---------|----------------|\n");
         for e in &episodic {
             let age = days_since(&e.created_at);
             let remaining = EPISODIC_TTL_DAYS - age;
             md.push_str(&format!(
-                "| {} | {} | {} | {} | {} | {} |\n",
+                "| {} | {} | {} | {} | {:.1} | {} | {} |\n",
                 e.id,
                 e.content.replace('|', "\\|"),
                 e.tags.join(", "),
                 format!("{:?}", e.source).to_lowercase(),
+                e.confidence,
                 e.created_at,
                 remaining.max(0),
             ));
@@ -487,6 +532,8 @@ mod tests {
             token_estimate: estimate_tokens(content),
             source: MemorySource::Manual,
             session_id: None,
+            relations: vec![],
+            confidence: 1.0,
         }
     }
 
@@ -592,8 +639,8 @@ mod tests {
         let semantic = make_entry(1, MemoryType::Semantic, "database config for project", vec!["db"]);
         let working = make_entry(2, MemoryType::Working, "database debug session", vec!["db"]);
 
-        let s_score = compute_score(&semantic, "database");
-        let w_score = compute_score(&working, "database");
+        let s_score = compute_score(&semantic, "database", &[]);
+        let w_score = compute_score(&working, "database", &[]);
 
         assert!(s_score > w_score, "Semantic ({}) should score higher than Working ({})", s_score, w_score);
     }
