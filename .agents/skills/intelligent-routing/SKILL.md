@@ -49,10 +49,10 @@ scripts-binding:
                     └────┬─────┘  Load co-requires automatically
                          │
                     ┌────▼─────┐
-                    │ PHASE 3  │  Agent Activation
-                    │ Dispatch │  Route to specialist agent
-                    └──────────┘  Announce & load skills
-```
+                    │ PHASE 3  │  Agent Activation & Dynamic Topologies
+                    │ Dispatch │  Route to dynamic micro-teams (Team Mode)
+                    └──────────┘  based on AST impact.
+                                  (e.g., Frontend + Security parallel wave)
 
 ---
 
@@ -196,3 +196,9 @@ When keywords belong to multiple domains, use these explicit rules:
 ## 6. Regenerating the Index
 
 When new skills are added or existing frontmatter is modified, the index regenerates automatically.
+
+
+## 7. Dynamic Sub-Agent Delegation (Team Mode)
+
+The router MUST NOT dump files into a static 3-wave pipeline. Instead, it must selectively route tasks to micro-teams (Team Mode) based on file impact and topological graph dependencies. 
+- Example: If the AST diff impacts `db/schema.prisma` and `src/components/User.tsx`, the router spawns a `database-architect` sub-agent and a `frontend-specialist` sub-agent in a parallel DAG wave, instead of running the entire 28-reviewer gauntlet on both files.
