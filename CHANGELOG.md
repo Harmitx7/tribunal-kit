@@ -4,13 +4,41 @@
 [![SemVer](https://img.shields.io/badge/SemVer-2.0.0-green.svg?style=flat-square)](https://semver.org/)
 [![Specialists](https://img.shields.io/badge/Specialists-52-cyan.svg?style=flat-square)](#)
 [![Reviewers](https://img.shields.io/badge/Reviewers-28-emerald.svg?style=flat-square)](#)
-[![Skills Corpus](https://img.shields.io/badge/Corpus-185%20Skills-teal.svg?style=flat-square)](#)
+[![Skills Corpus](https://img.shields.io/badge/Corpus-210%20Skills-teal.svg?style=flat-square)](#)
 [![Workflows](https://img.shields.io/badge/Workflows-44%20Audited-indigo.svg?style=flat-square)](#)
 [![Harnesses](https://img.shields.io/badge/Harnesses-9%20Supported-orange.svg?style=flat-square)](#)
 [![Test Suite](<https://img.shields.io/badge/Tests-100%25%20Passing%20(489%20tests)-brightgreen.svg?style=flat-square>)](#)
 
 All notable changes to **Tribunal Kit** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
+
+## [10.0.0] — 2026-09-25 — 🏛️ Codename: Tribunal OS (Sovereign Governance & Memory Singularity)
+
+> [!IMPORTANT]
+> **Release 10.0.0** introduces the **Tribunal OS** architecture, completing the Brain-Hands decoupling boundary, Durable Session Logging, and Team Mode dynamic topologies. It also finalizes the **Hybrid Compiled Context** memory architecture (Approach D) with a zero-dependency BM25/TF-IDF scoring engine, hardening the persistent `.memory.idx` storage against zero-division faults and RegExp injection.
+
+### Added
+- **Subagent-Driven Development (SDD) & Team Mode**: Introduced `subagent-driven-development` skill and `harness-manager` agent to support dynamic micro-teams (Team Mode) based on file impact and Topological DAG routing.
+- **Tribunal Instincts Memory**: Added `tribunal-instincts-memory` skill and `memory-archivist` agent to continuously learn from Human Gate rejections and avoid repeating hallucinations.
+- **Durable Session Logs & Checkpointing**: Implemented `/resume` workflow and `session-log-interrogation` skill to persist agent state across sessions using `.jsonl` event logs, preventing context loss on crashes.
+- **Agent Syscall & Security Shield**: Introduced `agent-syscall-guidelines` and `agentshield-security` to enforce a strict Brain vs Hands decoupling boundary, routing external tool calls through secure MCP servers and sandboxes.
+- **Hugging Face Skills Integration**: Seamlessly imported 25 specialized Hugging Face skills into the Tribunal Kit `.agent/skills/` corpus (raising the total to 210 skills). Registered the new `"huggingface"` domain route within the lazy-loading engine (`skill_topic_map.json`).
+- **Skill Hardening**: Hardened the `huggingface-trackio` skill by injecting mandatory Tribunal guardrails: Pre-Flight Context Inspection, Socratic Gates (for privacy controls), and Verification-Before-Completion (VBC) constraints.
+- **Hybrid Compiled Context Memory**: Added rigid schemas for `relations` (knowledge graph edge traversal) and `confidence` penalties on all memory entries across `memory_engine.js` and `crates/core/src/commands/memory.rs`.
+- **Zero-Dependency BM25 TF-IDF Search**: Implemented a pure, crash-proof scoring function `((relevance * priority * confidence) + recency + freq_boost)`. Replaced vulnerable RegExp pattern matching with safe string-splitting to mitigate query injection faults.
+- **Relational Graph Boosting**: Search queries now apply a mathematical 20% score boost recursively to all sibling targets mapped within an entry's `relations` array.
+- **Offline Memory Compaction**: Shipped `.agent/scripts/memory_consolidator.js` to enable explicit offline pruning and GC of `.memory.idx` without spinning up the orchestrator harness.
+
+### Changed
+- **Global Governance Rules**: Updated `GEMINI.md` to strictly enforce the **HitL Impact Template** for executing Tier 2/3 tasks, and `kernel.md` to enforce **Context Window Budgets** using `getEvents()` API.
+- **Orchestrator Architecture**: Rewrote `orchestrator.md` and `intelligent-routing` to support Topological DAG routing instead of a static 3-wave pipeline.
+- **Workflow Overhauls**: Upgraded `/generate`, `/marathon`, and `/audit` workflows to utilize the new Durable Session Log, Ultrawork continuous validation, and AgentShield security passes.
+- **Documentation SEO**: Improved general repository SEO with optimized metadata and structured articles.
+- **Hybrid Context Testing**: Expanded the unit testing suite in `test/unit/memory_engine.test.js` to robustly assert confidence degradation (`source: learned` defaults to 0.5) and BM25 relational ranking hierarchy.
+
+### Fixed
+- **Zero-Division Panics**: Added strict fallback limits (`avgdl || 100`) in both Node.js and Rust BM25 engine implementations, guaranteeing deterministic math resolution even on totally empty corpus nodes.
+- **ESLint Compliance**: Eliminated unused `fs` and `path` dependencies and hardened variable reassignment rules across all memory engine scripts.
 
 ## [9.2.2] — 2026-09-19 — 🧠 Codename: Bedrock (Native AST Extraction, Memory Engine Unification & Deterministic Swarm Architecture)
 
