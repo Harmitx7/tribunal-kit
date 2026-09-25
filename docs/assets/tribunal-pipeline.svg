@@ -1,252 +1,301 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
   <defs>
     <!-- Master Background -->
-    <linearGradient id="pipeBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#06070a"/>
-      <stop offset="50%" stop-color="#0e1118"/>
-      <stop offset="100%" stop-color="#050608"/>
+    <linearGradient id="void-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#060709"/>
+      <stop offset="100%" stop-color="#0e1117"/>
     </linearGradient>
 
-    <!-- Node Gradients -->
-    <linearGradient id="nodeDark" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#141722"/>
-      <stop offset="100%" stop-color="#0a0c13"/>
-    </linearGradient>
-
-    <linearGradient id="nodeFlame" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#240e0c"/>
-      <stop offset="100%" stop-color="#120706"/>
-    </linearGradient>
-
-    <linearGradient id="nodePass" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#182414"/>
-      <stop offset="100%" stop-color="#0c140a"/>
-    </linearGradient>
-
-    <!-- Halftone for Pipeline -->
-    <pattern id="pipeDots" width="8" height="8" patternUnits="userSpaceOnUse">
-      <circle cx="4" cy="4" r="1.5" fill="#ff3300" fill-opacity="0.3"/>
+    <!-- Faint Engineered Dot Grid -->
+    <pattern id="dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="12" cy="12" r="1.5" fill="#222634" opacity="0.4" />
     </pattern>
 
-    <filter id="pShadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.8"/>
+    <!-- Industrial Calibration Tape -->
+    <pattern id="calibration-tape" width="120" height="10" patternUnits="userSpaceOnUse">
+      <rect width="120" height="10" fill="#0e1117" />
+      <line x1="0" y1="0" x2="120" y2="0" stroke="#222634" stroke-width="2" />
+      <!-- Ticks -->
+      <line x1="0" y1="0" x2="0" y2="10" stroke="#ff3300" stroke-width="1.5" opacity="0.9" />
+      <line x1="12" y1="0" x2="12" y2="4" stroke="#8a92a3" stroke-width="1" opacity="0.5" />
+      <line x1="24" y1="0" x2="24" y2="4" stroke="#8a92a3" stroke-width="1" opacity="0.5" />
+      <line x1="36" y1="0" x2="36" y2="4" stroke="#8a92a3" stroke-width="1" opacity="0.5" />
+      <line x1="48" y1="0" x2="48" y2="4" stroke="#8a92a3" stroke-width="1" opacity="0.5" />
+      <line x1="60" y1="0" x2="60" y2="8" stroke="#ff3300" stroke-width="1.5" opacity="0.7" />
+      <line x1="72" y1="0" x2="72" y2="4" stroke="#8a92a3" stroke-width="1" opacity="0.5" />
+      <line x1="84" y1="0" x2="84" y2="4" stroke="#8a92a3" stroke-width="1" opacity="0.5" />
+      <line x1="96" y1="0" x2="96" y2="4" stroke="#8a92a3" stroke-width="1" opacity="0.5" />
+      <line x1="108" y1="0" x2="108" y2="4" stroke="#8a92a3" stroke-width="1" opacity="0.5" />
+    </pattern>
+
+    <!-- Node Shadows & Effects -->
+    <filter id="node-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
     </filter>
 
-    <pattern id="pGrid" width="36" height="36" patternUnits="userSpaceOnUse">
-      <path d="M 36 0 L 0 0 0 36" fill="none" stroke="#181c28" stroke-width="0.75" stroke-opacity="0.4"/>
-    </pattern>
+    <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
   </defs>
 
   <style>
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
-    .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-    .extended { font-family: -apple-system, BlinkMacSystemFont, 'Impact', 'Arial Black', sans-serif; }
-
+    .title-text { font-family: 'Inter', sans-serif; font-weight: 900; letter-spacing: 2px; }
+    .subtitle-text { font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: 1px; }
+    .body-text { font-family: 'Inter', sans-serif; font-weight: 500; }
+    .mono-text { font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace; font-size: 11px; letter-spacing: 1.5px; }
+    
     @keyframes wireFlow {
       0% { stroke-dashoffset: 40; }
       100% { stroke-dashoffset: 0; }
     }
+    @keyframes wireFlowReverse {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 40; }
+    }
     .flow-wire {
-      stroke-dasharray: 6 6;
-      animation: wireFlow 1.8s linear infinite;
+      stroke-dasharray: 8 8;
+      animation: wireFlow 1s linear infinite;
+    }
+    .flow-wire-reverse {
+      stroke-dasharray: 8 8;
+      animation: wireFlowReverse 1s linear infinite;
+    }
+
+    .keycap-highlight { fill: #ffffff; opacity: 0.08; }
+    .keycap-shadow { fill: #000000; opacity: 0.3; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .flow-wire, .flow-wire-reverse { animation: none !important; stroke-dasharray: none !important; }
     }
   </style>
 
   <!-- Background Base -->
-  <rect width="1200" height="520" rx="16" fill="url(#pipeBg)"/>
-  <rect width="1200" height="520" rx="16" fill="url(#pGrid)"/>
-  <rect width="1198" height="518" x="1" y="1" rx="15" fill="none" stroke="#222634" stroke-width="1.2"/>
+  <rect width="1200" height="520" fill="url(#void-bg)"/>
+  <rect width="1200" height="520" fill="url(#dot-grid)"/>
 
-  <!-- Top MarCardona Inspection Decal Header -->
-  <g transform="translate(40, 30)">
-    <rect width="1120" height="34" rx="4" fill="#0d1017" stroke="#262b3a" stroke-width="1"/>
-    <!-- 8-Point Asterism -->
-    <path d="M 20 17 L 22 10 L 24 17 L 31 19 L 24 21 L 22 28 L 20 21 L 13 19 Z" fill="#ff3300"/>
-    <text x="38" y="22" font-size="11" font-weight="900" fill="#f5f2eb" letter-spacing="1.5" class="mono">
-      TRIBUNAL PIPELINE ARCHITECTURE
-    </text>
-    <text x="320" y="22" font-size="10" font-weight="600" fill="#8a92a3" letter-spacing="1" class="mono">
-      // 5-STAGE ZERO-TRUST VERIFICATION CONVEYOR (LATENCY BUDGET: &lt;15ms)
-    </text>
+  <!-- Top & Bottom Tape Borders -->
+  <rect x="0" y="0" width="1200" height="10" fill="url(#calibration-tape)" />
+  <rect x="0" y="510" width="1200" height="10" fill="url(#calibration-tape)" transform="scale(1, -1) translate(0, -520)" />
 
-    <!-- Barcode Strip Right -->
-    <g transform="translate(980, 8)">
-      <rect x="0" y="0" width="2" height="18" fill="#d4d8e0"/>
-      <rect x="4" y="0" width="3" height="18" fill="#d4d8e0"/>
-      <rect x="9" y="0" width="1" height="18" fill="#d4d8e0"/>
-      <rect x="12" y="0" width="5" height="18" fill="#d4d8e0"/>
-      <rect x="19" y="0" width="2" height="18" fill="#d4d8e0"/>
-      <rect x="23" y="0" width="4" height="18" fill="#d4d8e0"/>
-      <rect x="29" y="0" width="2" height="18" fill="#d4d8e0"/>
-      <rect x="33" y="0" width="6" height="18" fill="#d4d8e0"/>
-      <rect x="41" y="0" width="3" height="18" fill="#d4d8e0"/>
-      <rect x="46" y="0" width="1" height="18" fill="#d4d8e0"/>
-      <rect x="49" y="0" width="4" height="18" fill="#d4d8e0"/>
-      <rect x="55" y="0" width="2" height="18" fill="#d4d8e0"/>
+  <!-- Inner Frame -->
+  <rect x="24" y="24" width="1152" height="472" fill="none" stroke="#222634" stroke-width="1.5" rx="4" />
+
+  <!-- ==================== HEADER STRIP ==================== -->
+  <g transform="translate(48, 48)">
+    <rect width="1104" height="40" rx="4" fill="#0d1017" stroke="#262b3a" stroke-width="1"/>
+    
+    <!-- 8-Point Asterism Mini -->
+    <g transform="translate(24, 20) scale(0.25)">
+      <path d="M 0 -68 L 14 -14 L 68 0 L 14 14 L 0 68 L -14 14 L -68 0 L -14 -14 Z" fill="#ff3300" />
+      <path d="M 0 -50 L 10 -10 L 50 0 L 10 10 L 0 50 L -10 10 L -50 0 L -10 -10 Z" fill="#060709" />
+      <path d="M 0 -28 L 6 -6 L 28 0 L 6 6 L 0 28 L -6 6 L -28 0 L -6 -6 Z" fill="#f5f2eb" />
+    </g>
+
+    <text x="56" y="24" font-size="13" fill="#f5f2eb" class="title-text">TRIBUNAL PIPELINE ARCHITECTURE</text>
+    <text x="360" y="24" font-size="11" fill="#8a92a3" class="mono-text">// 5-STAGE ZERO-TRUST VERIFICATION CONVEYOR</text>
+
+    <!-- Barcode Deco Right -->
+    <g transform="translate(980, 10)">
+      <rect x="0" y="0" width="2" height="20" fill="#222634"/>
+      <rect x="6" y="0" width="4" height="20" fill="#222634"/>
+      <rect x="14" y="0" width="2" height="20" fill="#222634"/>
+      <rect x="20" y="0" width="1" height="20" fill="#222634"/>
+      <rect x="25" y="0" width="6" height="20" fill="#222634"/>
+      <rect x="35" y="0" width="3" height="20" fill="#ff3300" opacity="0.8"/>
+      <rect x="42" y="0" width="8" height="20" fill="#222634"/>
+      <rect x="54" y="0" width="2" height="20" fill="#222634"/>
+      <rect x="60" y="0" width="4" height="20" fill="#222634"/>
+      <rect x="68" y="0" width="1" height="20" fill="#ff3300" opacity="0.8"/>
+      <rect x="73" y="0" width="5" height="20" fill="#222634"/>
+      <rect x="82" y="0" width="3" height="20" fill="#222634"/>
+      <rect x="89" y="0" width="2" height="20" fill="#222634"/>
     </g>
   </g>
 
-  <!-- ==================== CONDUIT WIRES ==================== -->
-  <line x1="190" y1="225" x2="260" y2="225" stroke="#ff3300" stroke-width="2" class="flow-wire"/>
-  <line x1="440" y1="225" x2="510" y2="225" stroke="#ff3300" stroke-width="2" class="flow-wire"/>
-  <line x1="690" y1="225" x2="760" y2="225" stroke="#ff3300" stroke-width="2" class="flow-wire"/>
-  <line x1="980" y1="225" x2="1040" y2="225" stroke="#ff3300" stroke-width="2" class="flow-wire"/>
+  <!-- ==================== CONDUIT WIRES (DATA BUS) ==================== -->
+  <!-- Horizontal Links -->
+  <line x1="208" y1="230" x2="278" y2="230" stroke="#ff3300" stroke-width="2.5" class="flow-wire"/>
+  <line x1="458" y1="230" x2="528" y2="230" stroke="#ff3300" stroke-width="2.5" class="flow-wire"/>
+  <line x1="708" y1="230" x2="778" y2="230" stroke="#ff3300" stroke-width="2.5" class="flow-wire"/>
+  <line x1="998" y1="230" x2="1058" y2="230" stroke="#ff3300" stroke-width="2.5" class="flow-wire"/>
 
-  <!-- Inner Loop Re-Prompt Wire (Back to Agent) -->
-  <path d="M 870 375 
-           L 870 455 
-           L 115 455 
-           L 115 295" 
-        fill="none" 
-        stroke="#ff3300" 
-        stroke-width="2" 
-        class="flow-wire"/>
-  <rect x="380" y="442" width="330" height="26" rx="4" fill="#200a0e" stroke="#ff3300" stroke-width="1"/>
-  <text x="545" y="459" text-anchor="middle" font-size="10" font-weight="900" fill="#ff4d6a" letter-spacing="1" class="mono">
-    ⚡ INNER-LOOP AUTO-CORRECT: RE-PROMPT AGENT WITH LIVE AST EVIDENCE
+  <!-- Inner Loop Re-Prompt Wire (Feedback) -->
+  <path d="M 888 380 L 888 450 L 138 450 L 138 310" fill="none" stroke="#ff3300" stroke-width="2" class="flow-wire-reverse"/>
+  <rect x="360" y="438" width="380" height="24" rx="4" fill="#1f0907" stroke="#ff3300" stroke-width="1"/>
+  <text x="550" y="454" text-anchor="middle" fill="#ff4d1a" class="mono-text" font-weight="bold">
+    ⚡ INNER-LOOP AUTO-CORRECT: RE-PROMPT AGENT WITH LIVE EVIDENCE
   </text>
 
   <!-- ==================== STAGE 01: AGENT INTENT ==================== -->
-  <g transform="translate(40, 155)" filter="url(#pShadow)">
-    <rect width="150" height="140" rx="8" fill="url(#nodeDark)" stroke="#262b3a" stroke-width="1.2"/>
-    <rect width="150" height="26" rx="8" fill="#181c28"/>
-    <rect y="16" width="150" height="10" fill="#181c28"/>
-    <text x="75" y="18" text-anchor="middle" font-size="9.5" font-weight="900" fill="#f5f2eb" class="mono">STAGE 01</text>
+  <g transform="translate(48, 150)" filter="url(#node-shadow)">
+    <rect width="160" height="160" rx="6" fill="#0b0e14" stroke="#222634" stroke-width="1.5"/>
+    <rect width="160" height="32" rx="6" fill="#161924"/>
+    <rect y="26" width="160" height="6" fill="#161924"/> <!-- hide bottom corners -->
+    <text x="80" y="21" text-anchor="middle" fill="#f5f2eb" font-weight="900" class="mono-text">STAGE 01</text>
 
-    <!-- Keycap Glyphs [A] [G] [T] -->
-    <g transform="translate(25, 45)">
-      <rect width="30" height="30" rx="4" fill="#0d1017" stroke="#2a3042" stroke-width="1"/>
-      <text x="15" y="20" text-anchor="middle" font-size="11" font-weight="800" fill="#ff3300" class="mono">A</text>
-      <rect x="35" y="0" width="30" height="30" rx="4" fill="#0d1017" stroke="#2a3042" stroke-width="1"/>
-      <text x="50" y="20" text-anchor="middle" font-size="11" font-weight="800" fill="#ff3300" class="mono">G</text>
-      <rect x="70" y="0" width="30" height="30" rx="4" fill="#0d1017" stroke="#2a3042" stroke-width="1"/>
-      <text x="85" y="20" text-anchor="middle" font-size="11" font-weight="800" fill="#ff3300" class="mono">T</text>
+    <!-- 3D Keycaps [A] [G] [T] -->
+    <g transform="translate(24, 48)">
+      <!-- A -->
+      <rect x="0" y="0" width="32" height="32" rx="4" fill="#0e1117" stroke="#222634" stroke-width="1"/>
+      <rect x="3" y="2" width="26" height="26" rx="3" fill="#1c1f2a" stroke="#2d3342" stroke-width="1"/>
+      <path d="M 3 2 L 29 2 L 27 6 L 5 6 Z" class="keycap-highlight" />
+      <path d="M 3 28 L 29 28 L 27 24 L 5 24 Z" class="keycap-shadow" />
+      <text x="16" y="20" fill="#ff3300" font-weight="bold" font-size="14" class="mono-text" text-anchor="middle">A</text>
+      
+      <!-- G -->
+      <rect x="40" y="0" width="32" height="32" rx="4" fill="#0e1117" stroke="#222634" stroke-width="1"/>
+      <rect x="43" y="2" width="26" height="26" rx="3" fill="#1c1f2a" stroke="#2d3342" stroke-width="1"/>
+      <path d="M 43 2 L 69 2 L 67 6 L 45 6 Z" class="keycap-highlight" />
+      <path d="M 43 28 L 69 28 L 67 24 L 45 24 Z" class="keycap-shadow" />
+      <text x="56" y="20" fill="#ff3300" font-weight="bold" font-size="14" class="mono-text" text-anchor="middle">G</text>
+      
+      <!-- T -->
+      <rect x="80" y="0" width="32" height="32" rx="4" fill="#0e1117" stroke="#222634" stroke-width="1"/>
+      <rect x="83" y="2" width="26" height="26" rx="3" fill="#1c1f2a" stroke="#2d3342" stroke-width="1"/>
+      <path d="M 83 2 L 109 2 L 107 6 L 85 6 Z" class="keycap-highlight" />
+      <path d="M 83 28 L 109 28 L 107 24 L 85 24 Z" class="keycap-shadow" />
+      <text x="96" y="20" fill="#ff3300" font-weight="bold" font-size="14" class="mono-text" text-anchor="middle">T</text>
     </g>
 
-    <text x="75" y="98" text-anchor="middle" font-size="12.5" font-weight="800" fill="#f5f2eb" class="sans">AI Coding Agent</text>
-    <text x="75" y="114" text-anchor="middle" font-size="9" fill="#8a92a3" class="mono">Cursor / Claude / Cline</text>
-    <rect x="25" y="122" width="100" height="12" rx="2" fill="#ff3300" fill-opacity="0.2"/>
-    <text x="75" y="131" text-anchor="middle" font-size="8" font-weight="800" fill="#ff3300" class="mono">RAW CODE STREAM</text>
+    <text x="80" y="106" text-anchor="middle" font-size="14" fill="#f5f2eb" class="subtitle-text">AI Coding Agent</text>
+    <text x="80" y="122" text-anchor="middle" font-size="10" fill="#8a92a3" class="mono-text">Cursor / Claude</text>
+    
+    <rect x="25" y="134" width="110" height="16" rx="2" fill="#ff3300" fill-opacity="0.1" stroke="#ff3300" stroke-width="1"/>
+    <text x="80" y="145" text-anchor="middle" font-size="9" fill="#ff4d1a" font-weight="bold" class="mono-text">RAW CODE STREAM</text>
   </g>
 
   <!-- ==================== STAGE 02: AST CONTEXT BROKER ==================== -->
-  <g transform="translate(260, 135)" filter="url(#pShadow)">
-    <rect width="180" height="180" rx="8" fill="url(#nodeDark)" stroke="#262b3a" stroke-width="1.2"/>
-    <rect width="180" height="26" rx="8" fill="#181c28"/>
-    <rect y="16" width="180" height="10" fill="#181c28"/>
-    <text x="90" y="18" text-anchor="middle" font-size="9.5" font-weight="900" fill="#f5f2eb" class="mono">STAGE 02 // BROKER</text>
+  <g transform="translate(278, 130)" filter="url(#node-shadow)">
+    <rect width="180" height="200" rx="6" fill="#0b0e14" stroke="#222634" stroke-width="1.5"/>
+    <rect width="180" height="32" rx="6" fill="#161924"/>
+    <rect y="26" width="180" height="6" fill="#161924"/>
+    <text x="90" y="21" text-anchor="middle" fill="#f5f2eb" font-weight="900" class="mono-text">STAGE 02 // BROKER</text>
 
-    <text x="90" y="52" text-anchor="middle" font-size="13" font-weight="800" fill="#f5f2eb" class="sans">Context Broker</text>
-    <line x1="20" y1="62" x2="160" y2="62" stroke="#252b3a" stroke-width="1"/>
+    <text x="90" y="60" text-anchor="middle" font-size="15" fill="#f5f2eb" class="subtitle-text">Context Broker</text>
+    <line x1="20" y1="72" x2="160" y2="72" stroke="#222634" stroke-width="1"/>
 
     <!-- Swiss Metadata Checklist -->
-    <text x="24" y="84" font-size="9.5" fill="#a4adc4" class="mono">📂 Live Workspace AST</text>
-    <text x="24" y="104" font-size="9.5" fill="#a4adc4" class="mono">📦 package.json Deps</text>
-    <text x="24" y="124" font-size="9.5" fill="#a4adc4" class="mono">⚖️ Precedent Index</text>
-    <text x="24" y="144" font-size="9.5" fill="#a4adc4" class="mono">📜 Covenant Rules</text>
+    <text x="24" y="94" font-size="11" fill="#a4adc4" class="mono-text">📂 Live Workspace</text>
+    <text x="24" y="114" font-size="11" fill="#a4adc4" class="mono-text">📦 Pkg Dependencies</text>
+    <text x="24" y="134" font-size="11" fill="#a4adc4" class="mono-text">⚖️ Precedent Index</text>
+    <text x="24" y="154" font-size="11" fill="#a4adc4" class="mono-text">📜 Covenant Rules</text>
 
-    <rect x="20" y="154" width="140" height="18" rx="3" fill="#0e131d" stroke="#262b3a" stroke-width="0.8"/>
-    <text x="90" y="166" text-anchor="middle" font-size="8.5" font-weight="800" fill="#d4d8e0" class="mono">GROUND TRUTH INGEST</text>
+    <rect x="20" y="168" width="140" height="20" rx="3" fill="#1c1f2a" stroke="#222634" stroke-width="1"/>
+    <text x="90" y="182" text-anchor="middle" font-size="10" fill="#d4d8e0" font-weight="bold" class="mono-text">GROUND TRUTH INGEST</text>
   </g>
 
   <!-- ==================== STAGE 03: COMPILED RUST CORE ==================== -->
-  <g transform="translate(510, 125)" filter="url(#pShadow)">
-    <rect width="180" height="200" rx="8" fill="url(#nodeFlame)" stroke="#ff3300" stroke-width="1.5"/>
-    <rect width="180" height="26" rx="8" fill="#2d120d"/>
-    <rect y="16" width="180" height="10" fill="#2d120d"/>
-    <text x="90" y="18" text-anchor="middle" font-size="9.5" font-weight="900" fill="#ff3300" class="mono">STAGE 03 // RUST CORE</text>
+  <g transform="translate(528, 120)" filter="url(#node-shadow)">
+    <rect width="180" height="220" rx="6" fill="#120706" stroke="#ff3300" stroke-width="1.5"/>
+    <rect width="180" height="32" rx="6" fill="#2d120d"/>
+    <rect y="26" width="180" height="6" fill="#2d120d"/>
+    <text x="90" y="21" text-anchor="middle" fill="#ff3300" font-weight="900" class="mono-text">STAGE 03 // CORE</text>
 
-    <text x="90" y="52" text-anchor="middle" font-size="14">🦀</text>
-    <text x="90" y="74" text-anchor="middle" font-size="13" font-weight="900" fill="#f5f2eb" class="extended">tribunal-core</text>
-    <text x="90" y="88" text-anchor="middle" font-size="8.5" font-weight="800" fill="#ff3300" class="mono">NATIVE COMPILED BINARY</text>
-    <line x1="20" y1="98" x2="160" y2="98" stroke="#4a1c12" stroke-width="1"/>
+    <text x="90" y="64" text-anchor="middle" font-size="18">🦀</text>
+    <text x="90" y="86" text-anchor="middle" font-size="16" fill="#f5f2eb" class="title-text">tribunal-core</text>
+    <text x="90" y="102" text-anchor="middle" font-size="9" fill="#ff3300" font-weight="bold" class="mono-text">NATIVE COMPILED BINARY</text>
+    <line x1="20" y1="114" x2="160" y2="114" stroke="#4a1c12" stroke-width="1"/>
 
-    <text x="24" y="118" font-size="9" fill="#f5f2eb" class="mono">⚡ SHA-256 Hash Diff</text>
-    <text x="24" y="136" font-size="9" fill="#f5f2eb" class="mono">🧬 Levenshtein Dedup</text>
-    <text x="24" y="154" font-size="9" fill="#f5f2eb" class="mono">🛡️ Slopsquatting Scan</text>
+    <text x="24" y="136" font-size="11" fill="#f5f2eb" class="mono-text">⚡ SHA-256 Diff</text>
+    <text x="24" y="156" font-size="11" fill="#f5f2eb" class="mono-text">🧬 Levenshtein Dedup</text>
+    <text x="24" y="176" font-size="11" fill="#f5f2eb" class="mono-text">🛡️ Slopsquat Scan</text>
 
-    <rect x="20" y="168" width="140" height="22" rx="3" fill="#ff3300" fill-opacity="0.25"/>
-    <text x="90" y="182" text-anchor="middle" font-size="9.5" font-weight="900" fill="#ff3300" class="mono">LATENCY &lt; 10ms</text>
+    <rect x="20" y="190" width="140" height="20" rx="3" fill="#ff3300" fill-opacity="0.2"/>
+    <text x="90" y="204" text-anchor="middle" font-size="10" fill="#ff3300" font-weight="bold" class="mono-text">LATENCY &lt; 10ms</text>
   </g>
 
   <!-- ==================== STAGE 04: PARALLEL REVIEWER SWARM ==================== -->
-  <g transform="translate(760, 95)" filter="url(#pShadow)">
-    <rect width="220" height="260" rx="8" fill="url(#nodeDark)" stroke="#ff3300" stroke-width="1.5"/>
-    <rect width="220" height="26" rx="8" fill="#1e1013"/>
-    <rect y="16" width="220" height="10" fill="#1e1013"/>
-    <text x="110" y="18" text-anchor="middle" font-size="9.5" font-weight="900" fill="#ff4d6a" class="mono">STAGE 04 // 28 REVIEWERS</text>
+  <g transform="translate(778, 90)" filter="url(#node-shadow)">
+    <rect width="220" height="280" rx="6" fill="#0b0e14" stroke="#ff3300" stroke-width="1.5"/>
+    <rect width="220" height="32" rx="6" fill="#1c0a0c"/>
+    <rect y="26" width="220" height="6" fill="#1c0a0c"/>
+    <text x="110" y="21" text-anchor="middle" fill="#ff4d1a" font-weight="900" class="mono-text">STAGE 04 // 28 REVIEWERS</text>
 
-    <text x="110" y="50" text-anchor="middle" font-size="13.5" font-weight="900" fill="#f5f2eb" class="extended">Reviewer Swarm</text>
-    <text x="110" y="65" text-anchor="middle" font-size="8.5" font-weight="800" fill="#ff3300" class="mono">ZERO-TRUST VERIFICATION</text>
+    <text x="110" y="58" text-anchor="middle" font-size="16" fill="#f5f2eb" class="title-text">REVIEWER SWARM</text>
+    <text x="110" y="74" text-anchor="middle" font-size="9" fill="#ff3300" font-weight="bold" class="mono-text">ZERO-TRUST VERIFICATION</text>
 
-    <!-- MarCardona 5 Reviewer Decal Strips with Shield Decomposition -->
-    <g transform="translate(15, 78)">
-      <!-- Strip 1: Logic (Solid Shield) -->
-      <rect width="190" height="24" rx="3" fill="#0d1017" stroke="#252a3a" stroke-width="0.8"/>
-      <path d="M 12 6 L 18 9 L 18 15 C 18 19, 15 22, 12 23 C 9 22, 6 19, 6 15 L 6 9 Z" fill="#ff3300"/>
-      <text x="26" y="16" font-size="9.5" font-weight="700" fill="#f5f2eb" class="mono">logic-reviewer</text>
-      <text x="180" y="16" text-anchor="end" font-size="9" fill="#8a92a3" class="mono">AST</text>
+    <!-- Reviewer Decal Strips -->
+    <g transform="translate(16, 90)">
+      <!-- Strip 1: Logic -->
+      <rect width="188" height="26" rx="3" fill="#131620" stroke="#222634" stroke-width="1"/>
+      <rect x="8" y="8" width="10" height="10" fill="#ff3300" />
+      <text x="26" y="17" fill="#f5f2eb" class="mono-text" font-weight="bold">logic-reviewer</text>
+      <text x="180" y="17" text-anchor="end" fill="#8a92a3" font-size="9" class="mono-text">AST</text>
 
-      <!-- Strip 2: Security (Halftone Shield) -->
-      <g transform="translate(0, 28)">
-        <rect width="190" height="24" rx="3" fill="#0d1017" stroke="#252a3a" stroke-width="0.8"/>
-        <path d="M 12 6 L 18 9 L 18 15 C 18 19, 15 22, 12 23 C 9 22, 6 19, 6 15 L 6 9 Z" fill="url(#pipeDots)"/>
-        <text x="26" y="16" font-size="9.5" font-weight="700" fill="#f5f2eb" class="mono">security-auditor</text>
-        <text x="180" y="16" text-anchor="end" font-size="9" fill="#ff4d6a" class="mono">OWASP</text>
+      <!-- Strip 2: Security -->
+      <g transform="translate(0, 32)">
+        <rect width="188" height="26" rx="3" fill="#131620" stroke="#222634" stroke-width="1"/>
+        <rect x="8" y="8" width="10" height="10" fill="url(#dot-grid)" />
+        <rect x="8" y="8" width="10" height="10" fill="none" stroke="#ff3300" stroke-width="1" />
+        <text x="26" y="17" fill="#f5f2eb" class="mono-text" font-weight="bold">security-auditor</text>
+        <text x="180" y="17" text-anchor="end" fill="#ff4d1a" font-size="9" class="mono-text">OWASP</text>
       </g>
 
-      <!-- Strip 3: Precedence (Contour Shield) -->
-      <g transform="translate(0, 56)">
-        <rect width="190" height="24" rx="3" fill="#0d1017" stroke="#ff3300" stroke-width="0.8"/>
-        <path d="M 12 6 L 18 9 L 18 15 C 18 19, 15 22, 12 23 C 9 22, 6 19, 6 15 L 6 9 Z" fill="none" stroke="#ff3300" stroke-width="1.2"/>
-        <text x="26" y="16" font-size="9.5" font-weight="700" fill="#f5f2eb" class="mono">precedence-reviewer</text>
-        <text x="180" y="16" text-anchor="end" font-size="9" fill="#ff3300" class="mono">CASES</text>
+      <!-- Strip 3: Precedence -->
+      <g transform="translate(0, 64)">
+        <rect width="188" height="26" rx="3" fill="#131620" stroke="#ff3300" stroke-width="1"/>
+        <rect x="8" y="8" width="10" height="10" fill="none" stroke="#ff3300" stroke-width="2" />
+        <text x="26" y="17" fill="#f5f2eb" class="mono-text" font-weight="bold">precedence-reviewer</text>
+        <text x="180" y="17" text-anchor="end" fill="#ff3300" font-size="9" class="mono-text">CASES</text>
       </g>
 
-      <!-- Strip 4: Schema (Stippled Shield) -->
-      <g transform="translate(0, 84)">
-        <rect width="190" height="24" rx="3" fill="#0d1017" stroke="#252a3a" stroke-width="0.8"/>
-        <path d="M 12 6 L 18 9 L 18 15 C 18 19, 15 22, 12 23 C 9 22, 6 19, 6 15 L 6 9 Z" fill="none" stroke="#8a92a3" stroke-width="1" stroke-dasharray="2 2"/>
-        <text x="26" y="16" font-size="9.5" font-weight="700" fill="#f5f2eb" class="mono">schema-reviewer</text>
-        <text x="180" y="16" text-anchor="end" font-size="9" fill="#8a92a3" class="mono">SQL</text>
+      <!-- Strip 4: Schema -->
+      <g transform="translate(0, 96)">
+        <rect width="188" height="26" rx="3" fill="#131620" stroke="#222634" stroke-width="1"/>
+        <rect x="8" y="8" width="10" height="10" fill="none" stroke="#8a92a3" stroke-width="1.5" stroke-dasharray="2 2" />
+        <text x="26" y="17" fill="#f5f2eb" class="mono-text" font-weight="bold">schema-reviewer</text>
+        <text x="180" y="17" text-anchor="end" fill="#8a92a3" font-size="9" class="mono-text">SQL</text>
       </g>
 
-      <!-- Strip 5: Resilience (Wireframe Shield) -->
-      <g transform="translate(0, 112)">
-        <rect width="190" height="24" rx="3" fill="#0d1017" stroke="#252a3a" stroke-width="0.8"/>
-        <path d="M 12 6 L 18 9 L 18 15 C 18 19, 15 22, 12 23 C 9 22, 6 19, 6 15 L 6 9 Z" fill="none" stroke="#ff3300" stroke-width="0.8"/>
-        <text x="26" y="16" font-size="9.5" font-weight="700" fill="#f5f2eb" class="mono">resilience-reviewer</text>
-        <text x="180" y="16" text-anchor="end" font-size="9" fill="#8a92a3" class="mono">ASYNC</text>
+      <!-- Strip 5: Resilience -->
+      <g transform="translate(0, 128)">
+        <rect width="188" height="26" rx="3" fill="#131620" stroke="#222634" stroke-width="1"/>
+        <rect x="8" y="8" width="10" height="10" fill="none" stroke="#ff3300" stroke-width="1" />
+        <text x="26" y="17" fill="#f5f2eb" class="mono-text" font-weight="bold">resilience-reviewer</text>
+        <text x="180" y="17" text-anchor="end" fill="#8a92a3" font-size="9" class="mono-text">ASYNC</text>
       </g>
     </g>
 
-    <rect x="25" y="228" width="170" height="20" rx="3" fill="#ff3300" fill-opacity="0.2"/>
-    <text x="110" y="242" text-anchor="middle" font-size="9" font-weight="900" fill="#ff3300" class="mono">ALL 28 GATES MUST PASS</text>
+    <rect x="16" y="248" width="188" height="22" rx="3" fill="#ff3300" fill-opacity="0.1" stroke="#ff3300" stroke-width="1"/>
+    <text x="110" y="262" text-anchor="middle" font-size="10" fill="#ff4d1a" font-weight="900" class="mono-text">ALL 28 GATES MUST PASS</text>
   </g>
 
-  <!-- ==================== STAGE 05: COMMIT TO DISK ==================== -->
-  <g transform="translate(1040, 135)" filter="url(#pShadow)">
-    <rect width="120" height="180" rx="8" fill="url(#nodePass)" stroke="#ff3300" stroke-width="1.5"/>
-    <rect width="120" height="26" rx="8" fill="#142410"/>
-    <rect y="16" width="120" height="10" fill="#142410"/>
-    <text x="60" y="18" text-anchor="middle" font-size="9.5" font-weight="900" fill="#86efac" class="mono">STAGE 05</text>
+  <!-- ==================== STAGE 05: HUMAN GATE (COMMIT) ==================== -->
+  <g transform="translate(1058, 130)" filter="url(#node-shadow)">
+    <rect width="120" height="200" rx="6" fill="#0b0e14" stroke="#222634" stroke-width="1.5"/>
+    <rect width="120" height="32" rx="6" fill="#161924"/>
+    <rect y="26" width="120" height="6" fill="#161924"/>
+    <text x="60" y="21" text-anchor="middle" fill="#f5f2eb" font-weight="900" class="mono-text">STAGE 05</text>
 
-    <!-- Keycap Seal [O][K] -->
-    <g transform="translate(30, 42)">
-      <rect width="28" height="28" rx="4" fill="#0c170d" stroke="#22c55e" stroke-width="1"/>
-      <text x="14" y="19" text-anchor="middle" font-size="11" font-weight="800" fill="#86efac" class="mono">O</text>
-      <rect x="32" y="0" width="28" height="28" rx="4" fill="#0c170d" stroke="#22c55e" stroke-width="1"/>
-      <text x="46" y="19" text-anchor="middle" font-size="11" font-weight="800" fill="#86efac" class="mono">K</text>
+    <!-- 3D Keycaps [O] [K] -->
+    <g transform="translate(24, 52)">
+      <!-- O -->
+      <rect x="0" y="0" width="32" height="32" rx="4" fill="#0e1117" stroke="#222634" stroke-width="1"/>
+      <rect x="3" y="2" width="26" height="26" rx="3" fill="#1c1f2a" stroke="#2d3342" stroke-width="1"/>
+      <path d="M 3 2 L 29 2 L 27 6 L 5 6 Z" class="keycap-highlight" />
+      <path d="M 3 28 L 29 28 L 27 24 L 5 24 Z" class="keycap-shadow" />
+      <text x="16" y="20" fill="#f5f2eb" font-weight="bold" font-size="14" class="mono-text" text-anchor="middle">O</text>
+      
+      <!-- K -->
+      <rect x="40" y="0" width="32" height="32" rx="4" fill="#0e1117" stroke="#222634" stroke-width="1"/>
+      <rect x="43" y="2" width="26" height="26" rx="3" fill="#1c1f2a" stroke="#2d3342" stroke-width="1"/>
+      <path d="M 43 2 L 69 2 L 67 6 L 45 6 Z" class="keycap-highlight" />
+      <path d="M 43 28 L 69 28 L 67 24 L 45 24 Z" class="keycap-shadow" />
+      <text x="56" y="20" fill="#f5f2eb" font-weight="bold" font-size="14" class="mono-text" text-anchor="middle">K</text>
     </g>
 
-    <text x="60" y="92" text-anchor="middle" font-size="11.5" font-weight="900" fill="#f5f2eb" class="sans">Human Gate</text>
-    <text x="60" y="106" text-anchor="middle" font-size="8.5" fill="#86efac" class="mono">Explicit Approval</text>
-    <line x1="15" y1="116" x2="105" y2="116" stroke="#254d24" stroke-width="1"/>
+    <text x="60" y="106" text-anchor="middle" font-size="13" fill="#f5f2eb" class="subtitle-text">Human Gate</text>
+    <text x="60" y="122" text-anchor="middle" font-size="10" fill="#8a92a3" class="mono-text">Manual Approval</text>
+    <line x1="16" y1="134" x2="104" y2="134" stroke="#222634" stroke-width="1"/>
 
-    <text x="60" y="136" text-anchor="middle" font-size="10" font-weight="900" fill="#ff3300" class="mono">SAFE COMMIT</text>
-    <text x="60" y="150" text-anchor="middle" font-size="8" fill="#f5f2eb" class="mono">Atomic Disk Write</text>
+    <text x="60" y="152" text-anchor="middle" font-size="11" fill="#f5f2eb" font-weight="bold" class="mono-text">SAFE COMMIT</text>
+    <text x="60" y="168" text-anchor="middle" font-size="9" fill="#8a92a3" class="mono-text">Atomic Disk Write</text>
 
-    <rect x="12" y="156" width="96" height="16" rx="2" fill="#ff3300" fill-opacity="0.2"/>
-    <text x="60" y="168" text-anchor="middle" font-size="7.5" font-weight="900" fill="#ff3300" class="mono">100% SHIPPED</text>
+    <rect x="12" y="178" width="96" height="16" rx="2" fill="#f5f2eb"/>
+    <text x="60" y="189" text-anchor="middle" font-size="9" fill="#060709" font-weight="900" class="mono-text">100% SHIPPED</text>
   </g>
 </svg>

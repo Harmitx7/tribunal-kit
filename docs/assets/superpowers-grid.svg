@@ -1,247 +1,267 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 350" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
   <defs>
     <!-- Master Background -->
-    <linearGradient id="spBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#06070a"/>
-      <stop offset="100%" stop-color="#040507"/>
+    <linearGradient id="void-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#060709"/>
+      <stop offset="100%" stop-color="#0e1117"/>
     </linearGradient>
 
     <!-- Card Background Gradient -->
-    <linearGradient id="cardDark" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#12151e"/>
-      <stop offset="100%" stop-color="#0a0c12"/>
+    <linearGradient id="card-dark" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0b0e14"/>
+      <stop offset="100%" stop-color="#06070a"/>
     </linearGradient>
+
+    <!-- Faint Engineered Dot Grid -->
+    <pattern id="dot-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="12" cy="12" r="1.5" fill="#222634" opacity="0.4" />
+    </pattern>
 
     <!-- Halftone for Scale Motif -->
     <pattern id="spDots" width="6" height="6" patternUnits="userSpaceOnUse">
       <circle cx="3" cy="3" r="1.2" fill="#ff3300" fill-opacity="0.5"/>
     </pattern>
 
-    <filter id="spShadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.8"/>
+    <filter id="node-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000000" flood-opacity="0.6"/>
     </filter>
-
-    <pattern id="cardGridPattern" width="20" height="20" patternUnits="userSpaceOnUse">
-      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#161a26" stroke-width="0.5" stroke-opacity="0.4"/>
-    </pattern>
   </defs>
 
   <style>
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace; }
-    .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-    .extended { font-family: -apple-system, BlinkMacSystemFont, 'Impact', 'Arial Black', sans-serif; }
+    .title-text { font-family: 'Inter', sans-serif; font-weight: 900; letter-spacing: 0.5px; }
+    .body-text { font-family: 'Inter', sans-serif; font-weight: 500; }
+    .mono-text { font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace; font-size: 10px; letter-spacing: 1px; }
+    
+    .keycap-highlight { fill: #ffffff; opacity: 0.08; }
+    .keycap-shadow { fill: #000000; opacity: 0.3; }
   </style>
 
   <!-- Background Base -->
-  <rect width="1200" height="350" rx="16" fill="url(#spBg)"/>
-  <rect width="1200" height="350" rx="16" fill="url(#cardGridPattern)"/>
-  <rect width="1198" height="348" x="1" y="1" rx="15" fill="none" stroke="#222634" stroke-width="1.2"/>
+  <rect width="1200" height="350" fill="url(#void-bg)"/>
+  <rect width="1200" height="350" fill="url(#dot-grid)"/>
+  <rect width="1198" height="348" x="1" y="1" rx="4" fill="none" stroke="#222634" stroke-width="1.2"/>
 
   <!-- ==================== CARD 1: SUPREME COURT CASE LAW ==================== -->
-  <g transform="translate(25, 25)" filter="url(#spShadow)">
-    <rect width="270" height="300" rx="10" fill="url(#cardDark)"/>
-    <rect width="270" height="300" rx="10" fill="none" stroke="#ff3300" stroke-width="1.2"/>
+  <g transform="translate(25, 25)" filter="url(#node-shadow)">
+    <rect width="270" height="300" rx="8" fill="url(#card-dark)"/>
+    <rect width="270" height="300" rx="8" fill="none" stroke="#ff3300" stroke-width="1.2" stroke-opacity="0.8"/>
 
-    <!-- MarCardona Tape Header -->
-    <rect width="270" height="32" rx="10" fill="#1b1012"/>
-    <rect y="22" width="270" height="10" fill="#1b1012"/>
-    <line x1="0" y1="32" x2="270" y2="32" stroke="#ff3300" stroke-width="1"/>
+    <!-- Brutalist Card Header -->
+    <rect width="270" height="36" rx="8" fill="#13080a"/>
+    <rect y="28" width="270" height="8" fill="#13080a"/> <!-- hide bottom corners -->
+    <line x1="0" y1="36" x2="270" y2="36" stroke="#ff3300" stroke-width="1" stroke-opacity="0.8"/>
 
-    <!-- 8-Point Asterism and Tag -->
-    <path d="M 16 16 L 18 10 L 20 16 L 26 18 L 20 20 L 18 26 L 16 20 L 10 18 Z" fill="#ff3300"/>
-    <text x="32" y="21" font-size="9.5" font-weight="800" fill="#ff3300" letter-spacing="1.5" class="mono">
-      POWER 01 // CASE LAW
-    </text>
-    <text x="252" y="21" text-anchor="end" font-size="12">⚖️</text>
+    <!-- 8-Point Asterism Mini -->
+    <g transform="translate(20, 18) scale(0.18)">
+      <path d="M 0 -68 L 14 -14 L 68 0 L 14 14 L 0 68 L -14 14 L -68 0 L -14 -14 Z" fill="#ff3300" />
+      <path d="M 0 -50 L 10 -10 L 50 0 L 10 10 L 0 50 L -10 10 L -50 0 L -10 -10 Z" fill="#060709" />
+      <path d="M 0 -28 L 6 -6 L 28 0 L 6 6 L 0 28 L -6 6 L -28 0 L -6 -6 Z" fill="#f5f2eb" />
+    </g>
+
+    <text x="38" y="21" fill="#ff3300" font-weight="900" class="mono-text">POWER 01 // CASE LAW</text>
+    <text x="252" y="22" text-anchor="end" font-size="14">⚖️</text>
 
     <!-- Title -->
-    <text x="18" y="66" font-size="16" font-weight="900" fill="#f5f2eb" class="extended">
-      Supreme Court
-    </text>
-    <text x="18" y="86" font-size="13.5" font-weight="800" fill="#ff3300" class="mono">
-      tk case
-    </text>
+    <text x="20" y="70" font-size="18" fill="#f5f2eb" class="title-text">Supreme Court</text>
+    <text x="20" y="90" font-size="12" fill="#ff3300" font-weight="800" class="mono-text">tk case</text>
 
     <!-- Halftone Texture Inlay Box -->
-    <rect x="18" y="102" width="234" height="40" rx="4" fill="#08090d" stroke="#242938" stroke-width="0.8"/>
-    <rect x="20" y="104" width="60" height="36" rx="3" fill="url(#spDots)"/>
-    <text x="90" y="125" font-size="9.5" font-weight="700" fill="#d4d8e0" class="mono">
-      PRECEDENT DB:
-    </text>
-    <text x="90" y="137" font-size="8.5" fill="#8a92a3" class="mono">
-      UNCONSTITUTIONAL
-    </text>
+    <rect x="20" y="106" width="230" height="42" rx="4" fill="#08090d" stroke="#222634" stroke-width="1"/>
+    <rect x="22" y="108" width="60" height="38" rx="3" fill="url(#spDots)"/>
+    <text x="90" y="123" fill="#d4d8e0" font-weight="900" class="mono-text">PRECEDENT DB:</text>
+    <text x="90" y="137" fill="#ff4d1a" class="mono-text">UNCONSTITUTIONAL</text>
 
     <!-- Description -->
-    <text x="18" y="165" font-size="11.5" fill="#a4adc4" class="sans">
-      <tspan x="18" dy="0">Permanent repository memory.</tspan>
-      <tspan x="18" dy="18">Every AI blunder is filed as an</tspan>
-      <tspan x="18" dy="18">actionable legal precedent.</tspan>
-      <tspan x="18" dy="18">Mistakes are never repeated.</tspan>
+    <text x="20" y="176" font-size="12.5" fill="#a4adc4" class="body-text">
+      <tspan x="20" dy="0">Permanent repository memory.</tspan>
+      <tspan x="20" dy="20">Every AI blunder is filed as an</tspan>
+      <tspan x="20" dy="20">actionable legal precedent.</tspan>
+      <tspan x="20" dy="20">Mistakes are never repeated.</tspan>
     </text>
 
     <!-- Metric Pill -->
-    <rect x="18" y="246" width="234" height="38" rx="4" fill="#140d10" stroke="#ff3300" stroke-width="1"/>
-    <text x="28" y="262" font-size="8.5" font-weight="700" fill="#8a92a3" class="mono">PERMANENT MEMORY</text>
-    <text x="28" y="276" font-size="11" font-weight="900" fill="#ff3300" class="mono">∞ PRECEDENTS ENFORCED</text>
+    <rect x="20" y="246" width="230" height="38" rx="4" fill="#1b120c" stroke="#ff3300" stroke-width="1"/>
+    <text x="30" y="262" fill="#8a92a3" class="mono-text">PERMANENT MEMORY</text>
+    <text x="30" y="276" fill="#ff3300" font-weight="900" font-size="11" class="mono-text">∞ PRECEDENTS ENFORCED</text>
   </g>
 
   <!-- ==================== CARD 2: PHANTOM GUARDRAILS ==================== -->
-  <g transform="translate(315, 25)" filter="url(#spShadow)">
-    <rect width="270" height="300" rx="10" fill="url(#cardDark)"/>
-    <rect width="270" height="300" rx="10" fill="none" stroke="#262b3a" stroke-width="1.2"/>
+  <g transform="translate(315, 25)" filter="url(#node-shadow)">
+    <rect width="270" height="300" rx="8" fill="url(#card-dark)"/>
+    <rect width="270" height="300" rx="8" fill="none" stroke="#222634" stroke-width="1.2"/>
 
-    <!-- MarCardona Tape Header -->
-    <rect width="270" height="32" rx="10" fill="#161822"/>
-    <rect y="22" width="270" height="10" fill="#161822"/>
-    <line x1="0" y1="32" x2="270" y2="32" stroke="#ff3300" stroke-width="1"/>
+    <!-- Brutalist Card Header -->
+    <rect width="270" height="36" rx="8" fill="#131620"/>
+    <rect y="28" width="270" height="8" fill="#131620"/>
+    <line x1="0" y1="36" x2="270" y2="36" stroke="#222634" stroke-width="1"/>
 
-    <!-- 8-Point Asterism and Tag -->
-    <path d="M 16 16 L 18 10 L 20 16 L 26 18 L 20 20 L 18 26 L 16 20 L 10 18 Z" fill="#ff3300"/>
-    <text x="32" y="21" font-size="9.5" font-weight="800" fill="#f5f2eb" letter-spacing="1.5" class="mono">
-      POWER 02 // GUARDRAIL
-    </text>
-    <text x="252" y="21" text-anchor="end" font-size="12">🛡️</text>
+    <!-- 8-Point Asterism Mini (Monochrome) -->
+    <g transform="translate(20, 18) scale(0.18)">
+      <path d="M 0 -68 L 14 -14 L 68 0 L 14 14 L 0 68 L -14 14 L -68 0 L -14 -14 Z" fill="#8a92a3" />
+      <path d="M 0 -50 L 10 -10 L 50 0 L 10 10 L 0 50 L -10 10 L -50 0 L -10 -10 Z" fill="#060709" />
+      <path d="M 0 -28 L 6 -6 L 28 0 L 6 6 L 0 28 L -6 6 L -28 0 L -6 -6 Z" fill="#d4d8e0" />
+    </g>
+
+    <text x="38" y="21" fill="#f5f2eb" font-weight="900" class="mono-text">POWER 02 // GUARDRAIL</text>
+    <text x="252" y="22" text-anchor="end" font-size="14">🛡️</text>
 
     <!-- Title -->
-    <text x="18" y="66" font-size="16" font-weight="900" fill="#f5f2eb" class="extended">
-      Phantom Guardrails
-    </text>
-    <text x="18" y="86" font-size="13.5" font-weight="800" fill="#f5f2eb" class="mono">
-      tk guardrail
-    </text>
+    <text x="20" y="70" font-size="18" fill="#f5f2eb" class="title-text">Phantom Guardrails</text>
+    <text x="20" y="90" font-size="12" fill="#d4d8e0" font-weight="800" class="mono-text">tk guardrail</text>
 
     <!-- Hazard Tape Stripe Box -->
-    <g transform="translate(18, 102)">
-      <rect width="234" height="40" rx="4" fill="#1c0d10" stroke="#4a1820" stroke-width="0.8"/>
+    <g transform="translate(20, 106)">
+      <rect width="230" height="42" rx="4" fill="#1c0d10" stroke="#ff3300" stroke-width="0.8" stroke-opacity="0.5"/>
       <!-- Hazard Stripes -->
-      <path d="M 8 0 L 16 0 L 6 40 L -2 40 Z" fill="#ff3300" fill-opacity="0.3"/>
-      <path d="M 24 0 L 32 0 L 22 40 L 14 40 Z" fill="#ff3300" fill-opacity="0.3"/>
-      <path d="M 40 0 L 48 0 L 38 40 L 30 40 Z" fill="#ff3300" fill-opacity="0.3"/>
-      <text x="60" y="22" font-size="9" font-weight="800" fill="#ff4d6a" class="mono">SLOPSQUATTING SHIELD</text>
-      <text x="60" y="33" font-size="8" fill="#fca5a5" class="mono">ACTIVE AST INTERCEPT</text>
+      <path d="M 8 0 L 18 0 L 6 42 L -4 42 Z" fill="#ff3300" fill-opacity="0.2"/>
+      <path d="M 28 0 L 38 0 L 26 42 L 16 42 Z" fill="#ff3300" fill-opacity="0.2"/>
+      <path d="M 48 0 L 58 0 L 46 42 L 36 42 Z" fill="#ff3300" fill-opacity="0.2"/>
+      <text x="64" y="22" fill="#ff4d1a" font-weight="900" class="mono-text">SLOPSQUATTING SHIELD</text>
+      <text x="64" y="34" fill="#fca5a5" class="mono-text">ACTIVE AST INTERCEPT</text>
     </g>
 
     <!-- Description -->
-    <text x="18" y="165" font-size="11.5" fill="#a4adc4" class="sans">
-      <tspan x="18" dy="0">Halts invented npm/pip packages</tspan>
-      <tspan x="18" dy="18">before they reach disk or git.</tspan>
-      <tspan x="18" dy="18">Enforces strict // VERIFY checks</tspan>
-      <tspan x="18" dy="18">on all uncertain function calls.</tspan>
+    <text x="20" y="176" font-size="12.5" fill="#a4adc4" class="body-text">
+      <tspan x="20" dy="0">Halts invented npm/pip packages</tspan>
+      <tspan x="20" dy="20">before they reach disk or git.</tspan>
+      <tspan x="20" dy="20">Enforces strict // VERIFY checks</tspan>
+      <tspan x="20" dy="20">on all uncertain function calls.</tspan>
     </text>
 
     <!-- Metric Pill -->
-    <rect x="18" y="246" width="234" height="38" rx="4" fill="#0d1017" stroke="#252a3a" stroke-width="1"/>
-    <text x="28" y="262" font-size="8.5" font-weight="700" fill="#8a92a3" class="mono">SUPPLY CHAIN INTEGRITY</text>
-    <text x="28" y="276" font-size="11" font-weight="900" fill="#f5f2eb" class="mono">0 PHANTOM PACKAGES</text>
+    <rect x="20" y="246" width="230" height="38" rx="4" fill="#0d1017" stroke="#222634" stroke-width="1"/>
+    <text x="30" y="262" fill="#8a92a3" class="mono-text">SUPPLY CHAIN INTEGRITY</text>
+    <text x="30" y="276" fill="#f5f2eb" font-weight="900" font-size="11" class="mono-text">0 PHANTOM PACKAGES</text>
   </g>
 
   <!-- ==================== CARD 3: SKILLOPT EVOLUTION ==================== -->
-  <g transform="translate(605, 25)" filter="url(#spShadow)">
-    <rect width="270" height="300" rx="10" fill="url(#cardDark)"/>
-    <rect width="270" height="300" rx="10" fill="none" stroke="#262b3a" stroke-width="1.2"/>
+  <g transform="translate(605, 25)" filter="url(#node-shadow)">
+    <rect width="270" height="300" rx="8" fill="url(#card-dark)"/>
+    <rect width="270" height="300" rx="8" fill="none" stroke="#222634" stroke-width="1.2"/>
 
-    <!-- MarCardona Tape Header -->
-    <rect width="270" height="32" rx="10" fill="#161822"/>
-    <rect y="22" width="270" height="10" fill="#161822"/>
-    <line x1="0" y1="32" x2="270" y2="32" stroke="#ff3300" stroke-width="1"/>
+    <!-- Brutalist Card Header -->
+    <rect width="270" height="36" rx="8" fill="#131620"/>
+    <rect y="28" width="270" height="8" fill="#131620"/>
+    <line x1="0" y1="36" x2="270" y2="36" stroke="#222634" stroke-width="1"/>
 
-    <!-- 8-Point Asterism and Tag -->
-    <path d="M 16 16 L 18 10 L 20 16 L 26 18 L 20 20 L 18 26 L 16 20 L 10 18 Z" fill="#ff3300"/>
-    <text x="32" y="21" font-size="9.5" font-weight="800" fill="#f5f2eb" letter-spacing="1.5" class="mono">
-      POWER 03 // SKILLOPT
-    </text>
-    <text x="252" y="21" text-anchor="end" font-size="12">🧬</text>
+    <!-- 8-Point Asterism Mini (Monochrome) -->
+    <g transform="translate(20, 18) scale(0.18)">
+      <path d="M 0 -68 L 14 -14 L 68 0 L 14 14 L 0 68 L -14 14 L -68 0 L -14 -14 Z" fill="#8a92a3" />
+      <path d="M 0 -50 L 10 -10 L 50 0 L 10 10 L 0 50 L -10 10 L -50 0 L -10 -10 Z" fill="#060709" />
+      <path d="M 0 -28 L 6 -6 L 28 0 L 6 6 L 0 28 L -6 6 L -28 0 L -6 -6 Z" fill="#d4d8e0" />
+    </g>
+
+    <text x="38" y="21" fill="#f5f2eb" font-weight="900" class="mono-text">POWER 03 // SKILLOPT</text>
+    <text x="252" y="22" text-anchor="end" font-size="14">🧬</text>
 
     <!-- Title -->
-    <text x="18" y="66" font-size="16" font-weight="900" fill="#f5f2eb" class="extended">
-      SkillOpt Evolution
-    </text>
-    <text x="18" y="86" font-size="13.5" font-weight="800" fill="#f5f2eb" class="mono">
-      tk optimize-skill
-    </text>
+    <text x="20" y="70" font-size="18" fill="#f5f2eb" class="title-text">SkillOpt Evolution</text>
+    <text x="20" y="90" font-size="12" fill="#d4d8e0" font-weight="800" class="mono-text">tk optimize-skill</text>
 
-    <!-- Setlife Speed Cuts Inlay Box -->
-    <g transform="translate(18, 102)">
-      <rect width="234" height="40" rx="4" fill="#0d111a" stroke="#252c3d" stroke-width="0.8"/>
+    <!-- Speed Cuts Inlay Box -->
+    <g transform="translate(20, 106)">
+      <rect width="230" height="42" rx="4" fill="#0d111a" stroke="#222634" stroke-width="1"/>
       <!-- Speed Lines -->
       <rect x="12" y="14" width="35" height="3" rx="1" fill="#ff3300"/>
       <rect x="52" y="14" width="15" height="3" rx="1" fill="#ff3300"/>
-      <rect x="12" y="22" width="20" height="3" rx="1" fill="#ff3300"/>
-      <rect x="36" y="22" width="40" height="3" rx="1" fill="#ff3300"/>
-      <text x="85" y="22" font-size="9" font-weight="800" fill="#f5f2eb" class="mono">GENETIC MUTATION</text>
-      <text x="85" y="33" font-size="8" fill="#8a92a3" class="mono">HARNESS BENCHMARKED</text>
+      <rect x="12" y="24" width="20" height="3" rx="1" fill="#ff3300"/>
+      <rect x="36" y="24" width="40" height="3" rx="1" fill="#ff3300"/>
+      <text x="85" y="22" fill="#f5f2eb" font-weight="900" class="mono-text">GENETIC MUTATION</text>
+      <text x="85" y="34" fill="#8a92a3" class="mono-text">HARNESS BENCHMARKED</text>
     </g>
 
     <!-- Description -->
-    <text x="18" y="165" font-size="11.5" fill="#a4adc4" class="sans">
-      <tspan x="18" dy="0">Self-evolving genetic engine</tspan>
-      <tspan x="18" dy="18">for prompt instruction skills.</tspan>
-      <tspan x="18" dy="18">Mutates and benchmarks prompts</tspan>
-      <tspan x="18" dy="18">directly against test suites.</tspan>
+    <text x="20" y="176" font-size="12.5" fill="#a4adc4" class="body-text">
+      <tspan x="20" dy="0">Self-evolving genetic engine</tspan>
+      <tspan x="20" dy="20">for prompt instruction skills.</tspan>
+      <tspan x="20" dy="20">Mutates and benchmarks prompts</tspan>
+      <tspan x="20" dy="20">directly against test suites.</tspan>
     </text>
 
     <!-- Metric Pill -->
-    <rect x="18" y="246" width="234" height="38" rx="4" fill="#0d1017" stroke="#252a3a" stroke-width="1"/>
-    <text x="28" y="262" font-size="8.5" font-weight="700" fill="#8a92a3" class="mono">PROMPT EVOLUTION</text>
-    <text x="28" y="276" font-size="11" font-weight="900" fill="#f5f2eb" class="mono">AUTOMATED RE-PROMPTING</text>
+    <rect x="20" y="246" width="230" height="38" rx="4" fill="#0d1017" stroke="#222634" stroke-width="1"/>
+    <text x="30" y="262" fill="#8a92a3" class="mono-text">PROMPT EVOLUTION</text>
+    <text x="30" y="276" fill="#f5f2eb" font-weight="900" font-size="11" class="mono-text">AUTOMATED RE-PROMPTING</text>
   </g>
 
   <!-- ==================== CARD 4: COMPILED RUST CORE ==================== -->
-  <g transform="translate(895, 25)" filter="url(#spShadow)">
-    <rect width="270" height="300" rx="10" fill="url(#cardDark)"/>
-    <rect width="270" height="300" rx="10" fill="none" stroke="#ff3300" stroke-width="1.2"/>
+  <g transform="translate(895, 25)" filter="url(#node-shadow)">
+    <rect width="270" height="300" rx="8" fill="url(#card-dark)"/>
+    <rect width="270" height="300" rx="8" fill="none" stroke="#ff3300" stroke-width="1.2" stroke-opacity="0.8"/>
 
-    <!-- MarCardona Tape Header -->
-    <rect width="270" height="32" rx="10" fill="#1a110d"/>
-    <rect y="22" width="270" height="10" fill="#1a110d"/>
-    <line x1="0" y1="32" x2="270" y2="32" stroke="#ff3300" stroke-width="1"/>
+    <!-- Brutalist Card Header -->
+    <rect width="270" height="36" rx="8" fill="#13080a"/>
+    <rect y="28" width="270" height="8" fill="#13080a"/>
+    <line x1="0" y1="36" x2="270" y2="36" stroke="#ff3300" stroke-width="1" stroke-opacity="0.8"/>
 
-    <!-- 8-Point Asterism and Tag -->
-    <path d="M 16 16 L 18 10 L 20 16 L 26 18 L 20 20 L 18 26 L 16 20 L 10 18 Z" fill="#ff3300"/>
-    <text x="32" y="21" font-size="9.5" font-weight="800" fill="#ff3300" letter-spacing="1.5" class="mono">
-      POWER 04 // RUST CORE
-    </text>
-    <text x="252" y="21" text-anchor="end" font-size="12">🦀</text>
+    <!-- 8-Point Asterism Mini -->
+    <g transform="translate(20, 18) scale(0.18)">
+      <path d="M 0 -68 L 14 -14 L 68 0 L 14 14 L 0 68 L -14 14 L -68 0 L -14 -14 Z" fill="#ff3300" />
+      <path d="M 0 -50 L 10 -10 L 50 0 L 10 10 L 0 50 L -10 10 L -50 0 L -10 -10 Z" fill="#060709" />
+      <path d="M 0 -28 L 6 -6 L 28 0 L 6 6 L 0 28 L -6 6 L -28 0 L -6 -6 Z" fill="#f5f2eb" />
+    </g>
+
+    <text x="38" y="21" fill="#ff3300" font-weight="900" class="mono-text">POWER 04 // RUST CORE</text>
+    <text x="252" y="22" text-anchor="end" font-size="14">🦀</text>
 
     <!-- Title -->
-    <text x="18" y="66" font-size="16" font-weight="900" fill="#f5f2eb" class="extended">
-      Compiled Rust Core
-    </text>
-    <text x="18" y="86" font-size="13.5" font-weight="800" fill="#ff3300" class="mono">
-      tribunal-core
-    </text>
+    <text x="20" y="70" font-size="18" fill="#f5f2eb" class="title-text">Compiled Rust Core</text>
+    <text x="20" y="90" font-size="12" fill="#ff3300" font-weight="800" class="mono-text">tribunal-core</text>
 
-    <!-- Keycaps Hardware Inlay Box [R][U][S][T] -->
-    <g transform="translate(18, 102)">
-      <rect width="234" height="40" rx="4" fill="#08090d" stroke="#381c16" stroke-width="0.8"/>
+    <!-- 3D Keycaps Hardware Inlay Box [R][U][S][T] -->
+    <g transform="translate(20, 106)">
+      <rect width="230" height="42" rx="4" fill="#08090d" stroke="#381c16" stroke-width="1"/>
+      
       <!-- Key R -->
-      <rect x="8" y="8" width="24" height="24" rx="3" fill="#181418" stroke="#ff3300" stroke-width="0.8"/>
-      <text x="20" y="24" text-anchor="middle" font-size="10" font-weight="800" fill="#ff3300" class="mono">R</text>
-      <!-- Key U -->
-      <rect x="36" y="8" width="24" height="24" rx="3" fill="#181418" stroke="#ff3300" stroke-width="0.8"/>
-      <text x="48" y="24" text-anchor="middle" font-size="10" font-weight="800" fill="#ff3300" class="mono">U</text>
-      <!-- Key S -->
-      <rect x="64" y="8" width="24" height="24" rx="3" fill="#181418" stroke="#ff3300" stroke-width="0.8"/>
-      <text x="76" y="24" text-anchor="middle" font-size="10" font-weight="800" fill="#ff3300" class="mono">S</text>
-      <!-- Key T -->
-      <rect x="92" y="8" width="24" height="24" rx="3" fill="#181418" stroke="#ff3300" stroke-width="0.8"/>
-      <text x="104" y="24" text-anchor="middle" font-size="10" font-weight="800" fill="#ff3300" class="mono">T</text>
+      <g transform="translate(8, 7)">
+        <rect width="28" height="28" rx="4" fill="#0e1117" stroke="#ff3300" stroke-width="0.8" stroke-opacity="0.5"/>
+        <rect x="2" y="2" width="24" height="24" rx="3" fill="#1c0a0c" stroke="#3d161d" stroke-width="1"/>
+        <path d="M 2 2 L 26 2 L 24 5 L 4 5 Z" class="keycap-highlight" />
+        <path d="M 2 26 L 26 26 L 24 23 L 4 23 Z" class="keycap-shadow" />
+        <text x="14" y="18" fill="#ff3300" font-weight="bold" text-anchor="middle" class="mono-text">R</text>
+      </g>
 
-      <text x="130" y="24" font-size="9" font-weight="800" fill="#ff3300" class="mono">&lt;10ms AOT</text>
+      <!-- Key U -->
+      <g transform="translate(42, 7)">
+        <rect width="28" height="28" rx="4" fill="#0e1117" stroke="#ff3300" stroke-width="0.8" stroke-opacity="0.5"/>
+        <rect x="2" y="2" width="24" height="24" rx="3" fill="#1c0a0c" stroke="#3d161d" stroke-width="1"/>
+        <path d="M 2 2 L 26 2 L 24 5 L 4 5 Z" class="keycap-highlight" />
+        <path d="M 2 26 L 26 26 L 24 23 L 4 23 Z" class="keycap-shadow" />
+        <text x="14" y="18" fill="#ff3300" font-weight="bold" text-anchor="middle" class="mono-text">U</text>
+      </g>
+
+      <!-- Key S -->
+      <g transform="translate(76, 7)">
+        <rect width="28" height="28" rx="4" fill="#0e1117" stroke="#ff3300" stroke-width="0.8" stroke-opacity="0.5"/>
+        <rect x="2" y="2" width="24" height="24" rx="3" fill="#1c0a0c" stroke="#3d161d" stroke-width="1"/>
+        <path d="M 2 2 L 26 2 L 24 5 L 4 5 Z" class="keycap-highlight" />
+        <path d="M 2 26 L 26 26 L 24 23 L 4 23 Z" class="keycap-shadow" />
+        <text x="14" y="18" fill="#ff3300" font-weight="bold" text-anchor="middle" class="mono-text">S</text>
+      </g>
+
+      <!-- Key T -->
+      <g transform="translate(110, 7)">
+        <rect width="28" height="28" rx="4" fill="#0e1117" stroke="#ff3300" stroke-width="0.8" stroke-opacity="0.5"/>
+        <rect x="2" y="2" width="24" height="24" rx="3" fill="#1c0a0c" stroke="#3d161d" stroke-width="1"/>
+        <path d="M 2 2 L 26 2 L 24 5 L 4 5 Z" class="keycap-highlight" />
+        <path d="M 2 26 L 26 26 L 24 23 L 4 23 Z" class="keycap-shadow" />
+        <text x="14" y="18" fill="#ff3300" font-weight="bold" text-anchor="middle" class="mono-text">T</text>
+      </g>
+
+      <text x="148" y="24" fill="#ff4d1a" font-weight="900" class="mono-text">&lt;10ms AOT</text>
     </g>
 
     <!-- Description -->
-    <text x="18" y="165" font-size="11.5" fill="#a4adc4" class="sans">
-      <tspan x="18" dy="0">Compiled native AOT binary.</tspan>
-      <tspan x="18" dy="18">Incremental SHA-256 hash diffs,</tspan>
-      <tspan x="18" dy="18">AST extraction, and 64-thread</tspan>
-      <tspan x="18" dy="18">parallelism for monorepos.</tspan>
+    <text x="20" y="176" font-size="12.5" fill="#a4adc4" class="body-text">
+      <tspan x="20" dy="0">Compiled native AOT binary.</tspan>
+      <tspan x="20" dy="20">Incremental SHA-256 hash diffs,</tspan>
+      <tspan x="20" dy="20">AST extraction, and 64-thread</tspan>
+      <tspan x="20" dy="20">parallelism for monorepos.</tspan>
     </text>
 
     <!-- Metric Pill -->
-    <rect x="18" y="246" width="234" height="38" rx="4" fill="#1b100c" stroke="#ff3300" stroke-width="1"/>
-    <text x="28" y="262" font-size="8.5" font-weight="700" fill="#8a92a3" class="mono">SYNCHRONIZATION SPEED</text>
-    <text x="28" y="276" font-size="11" font-weight="900" fill="#ff3300" class="mono">95% FASTER CLI SYNC</text>
+    <rect x="20" y="246" width="230" height="38" rx="4" fill="#1b120c" stroke="#ff3300" stroke-width="1"/>
+    <text x="30" y="262" fill="#8a92a3" class="mono-text">SYNCHRONIZATION SPEED</text>
+    <text x="30" y="276" fill="#ff3300" font-weight="900" font-size="11" class="mono-text">95% FASTER CLI SYNC</text>
   </g>
 </svg>
