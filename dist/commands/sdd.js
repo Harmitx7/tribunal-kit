@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 const { c, err, log } = require("../utils/logger");
 
 function getOption(args, names) {
@@ -18,7 +18,8 @@ function getOption(args, names) {
 
 function findRepoRoot() {
   try {
-    const gitRoot = execSync("git rev-parse --show-toplevel", {
+    // SECURITY: Use execFileSync to avoid shell interpretation
+    const gitRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "ignore"],
     }).trim();
@@ -131,19 +132,44 @@ function sddBrief(planFile, taskNum, outFile) {
   return targetOut;
 }
 
+function sddScratchpad(planFile, taskNum, outFile) {
+  if (!planFile) throw new Error("Missing required argument: --plan <plan_file>");
+  if (taskNum === null || taskNum === undefined || isNaN(taskNum)) {
+    throw new Error("Missing required argument: --task <number>");
+  }
+
+  let targetOut;
+  if (outFile) {
+    targetOut = path.resolve(process.cwd(), outFile);
+  } else {
+    const ws = sddWorkspace(planFile);
+    targetOut = path.join(ws, `task-${taskNum}-scratchpad.md`);
+  }
+
+  if (!fs.existsSync(targetOut)) {
+    const content = `# Scratchpad - Task ${taskNum}\n\n## 1. Goal\n\n## 2. Execution Plan\n\n## 3. Current Context\n\n## 4. Attempt Log\n`;
+    fs.mkdirSync(path.dirname(targetOut), { recursive: true });
+    fs.writeFileSync(targetOut, content, "utf8");
+  }
+
+  return targetOut;
+}
+
 function sddDiff(planFile, base, head, outFile) {
   if (!planFile) throw new Error("Missing required argument: --plan <plan_file>");
   if (!base) throw new Error("Missing required argument: --base <revision>");
   if (!head) throw new Error("Missing required argument: --head <revision>");
 
+  // SECURITY: Use execFileSync with argument arrays to prevent command injection
+  // via user-supplied --base/--head parameters (CWE-78).
   try {
-    execSync(`git rev-parse --verify --quiet "${base}"`, { stdio: "ignore" });
+    execFileSync("git", ["rev-parse", "--verify", "--quiet", base], { stdio: "ignore" });
   } catch {
     throw new Error(`Invalid BASE git revision: ${base}`);
   }
 
   try {
-    execSync(`git rev-parse --verify --quiet "${head}"`, { stdio: "ignore" });
+    execFileSync("git", ["rev-parse", "--verify", "--quiet", head], { stdio: "ignore" });
   } catch {
     throw new Error(`Invalid HEAD git revision: ${head}`);
   }
@@ -158,7 +184,8 @@ function sddDiff(planFile, base, head, outFile) {
     targetOut = path.join(ws, `review-${shortBase}..${shortHead}.diff`);
   }
 
-  const diffContent = execSync(`git diff "${base}..${head}"`, {
+  // SECURITY: Use execFileSync to avoid shell interpretation of base/head args
+  const diffContent = execFileSync("git", ["diff", `${base}..${head}`], {
     encoding: "utf8",
     maxBuffer: 10 * 1024 * 1024,
   });
@@ -179,6 +206,7 @@ async function cmdSdd(flags, processArgs, quiet = false) {
       log(`  ${c("gray", "─".repeat(45))}`);
       log(`  ${c("cyan", "sdd workspace".padEnd(20))} ${c("gray", "Ensure plan-scoped workspace (.tribunal/sdd/<slug>)")}`);
       log(`  ${c("cyan", "sdd brief".padEnd(20))} ${c("gray", "Extract task brief out-of-band (--plan, --task, [--out])")}`);
+      log(`  ${c("cyan", "sdd scratchpad".padEnd(20))} ${c("gray", "Initialize task scratchpad (--plan, --task, [--out])")}`);
       log(`  ${c("cyan", "sdd diff".padEnd(20))} ${c("gray", "Generate diff package (--plan, --base, --head, [--out])")}`);
     }
     return;
@@ -204,6 +232,15 @@ async function cmdSdd(flags, processArgs, quiet = false) {
       return;
     }
 
+    if (subcommand === "scratchpad") {
+      const taskRaw = getOption(args, ["--task", "-t"]);
+      const taskNum = taskRaw ? parseInt(taskRaw, 10) : null;
+      const scratchpadPath = sddScratchpad(planArg, taskNum, outArg);
+      if (!quiet) log(c("green", `✔ SDD Task Scratchpad: ${scratchpadPath}`));
+      else console.log(scratchpadPath);
+      return;
+    }
+
     if (subcommand === "diff") {
       const base = getOption(args, ["--base"]);
       const head = getOption(args, ["--head"]);
@@ -225,5 +262,6 @@ module.exports = {
   cmdSdd,
   sddWorkspace,
   sddBrief,
+  sddScratchpad,
   sddDiff,
 };
