@@ -1,7 +1,7 @@
 'use strict';
 
-const { cmdLearn } = require('../../dist/commands/learn');
-const { getKitAgent: _getKitAgent } = require('../../dist/utils/helpers');
+const { cmdLearn } = require('../../src/commands/learn');
+const { getKitAgent: _getKitAgent } = require('../../src/utils/helpers');
 
 describe('cmdLearn command', () => {
   test('exports cmdLearn function', () => {

@@ -112,9 +112,9 @@ describe('Platform Download & Multi-Agent Installation Audit', () => {
     expect(content).toContain('Master Rules');
   });
 
-  test('marketplace.json exists at root and in .claude-plugin with local source', () => {
-    const rootMkt = path.join(repoRoot, 'marketplace.json');
-    const pluginMkt = path.join(repoRoot, '.claude-plugin', 'marketplace.json');
+  test('marketplace.json exists at root and in plugins/claude with local source', () => {
+    const rootMkt = path.join(repoRoot, 'plugins', 'marketplace.json');
+    const pluginMkt = path.join(repoRoot, 'plugins', 'claude', 'marketplace.json');
 
     expect(fs.existsSync(rootMkt)).toBe(true);
     expect(fs.existsSync(pluginMkt)).toBe(true);
@@ -157,16 +157,16 @@ describe('Platform Download & Multi-Agent Installation Audit', () => {
 
   test('platform configurations reference the correct repository', () => {
     const kimi = JSON.parse(
-      fs.readFileSync(path.join(repoRoot, '.kimi-plugin', 'plugin.json'), 'utf8'),
+      fs.readFileSync(path.join(repoRoot, 'plugins', 'kimi', 'plugin.json'), 'utf8'),
     );
     expect(kimi.homepage).toBe('https://github.com/Harmitx7/tribunal-kit');
     expect(kimi.author.name).toBe('Harmitx7');
 
-    const opencodeInstall = fs.readFileSync(path.join(repoRoot, '.opencode', 'INSTALL.md'), 'utf8');
+    const opencodeInstall = fs.readFileSync(path.join(repoRoot, 'plugins', 'opencode', 'INSTALL.md'), 'utf8');
     expect(opencodeInstall).not.toContain('github.com/sunrise/tribunal-kit');
     expect(opencodeInstall).toContain('github.com/Harmitx7/tribunal-kit');
 
-    const hermes = fs.readFileSync(path.join(repoRoot, '.hermes-plugin', 'plugin.yaml'), 'utf8');
+    const hermes = fs.readFileSync(path.join(repoRoot, 'plugins', 'hermes', 'plugin.yaml'), 'utf8');
     expect(hermes).toContain('author: Harmitx7');
   });
 });

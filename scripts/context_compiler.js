@@ -17,7 +17,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { execSync } = require('child_process');
+
 
 // Optional ANSI colors
 let C = {
@@ -115,7 +115,7 @@ function extractFileSkeleton(filePath, rawContent) {
       }
 
       if (corePath && fs.existsSync(corePath)) {
-        const result = require('child_process').execSync(`"${corePath}" ast-extract --file "${absPath}"`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+        const result = require('child_process').execFileSync(corePath, ['ast-extract', '--file', absPath], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
         const data = JSON.parse(result);
         if (data && data.success) {
            // We map the Rust JSON into the exact format expected by the rest of the JS code
@@ -343,11 +343,14 @@ function findInboundCallers(targetFilePath, exportNames, workspaceRoot = process
   // Try using git grep or ripgrep if available
   const grepOutputs = [];
   try {
+    const { execFileSync } = require('child_process');
     for (const token of searchTokens) {
       if (!token || token.length < 3) continue;
       try {
-        const cmd = `git grep -n -I "${token}" -- ":!docs/" ":!node_modules/" ":!dist/" ":!target/" ":!*.lock"`;
-        const res = execSync(cmd, {
+        const res = execFileSync('git', [
+          'grep', '-n', '-I', '-e', token, '--',
+          ':!docs/', ':!node_modules/', ':!src/', ':!target/', ':!*.lock'
+        ], {
           cwd: workspaceRoot,
           stdio: ['ignore', 'pipe', 'ignore'],
           encoding: 'utf8',
@@ -356,8 +359,10 @@ function findInboundCallers(targetFilePath, exportNames, workspaceRoot = process
       } catch {
         // Ripgrep fallback
         try {
-          const cmd = `rg -n --no-heading --color=never "${token}" -g "!docs/**" -g "!node_modules/**" -g "!target/**" -g "!dist/**"`;
-          const res = execSync(cmd, {
+          const res = execFileSync('rg', [
+            '-n', '--no-heading', '--color=never', '-e', token,
+            '-g', '!docs/**', '-g', '!node_modules/**', '-g', '!target/**', '-g', '!src/**'
+          ], {
             cwd: workspaceRoot,
             stdio: ['ignore', 'pipe', 'ignore'],
             encoding: 'utf8',

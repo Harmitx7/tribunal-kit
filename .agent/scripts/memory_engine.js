@@ -7,7 +7,7 @@
  *
  * Fully unified and cross-compatible with:
  *   - Rust Core: crates/core/src/commands/memory.rs
- *   - TypeScript CLI: dist/commands/memory.js
+ *   - TypeScript CLI: src/commands/memory.js
  *   - Tribunal MCP Server
  *
  * Memory Types:

@@ -4,7 +4,7 @@ const {
   findBrowser,
   findPinchTabBinary,
   detectBrowserType,
-} = require('../../dist/browser/discovery');
+} = require('../../src/browser/discovery');
 
 describe('Browser & Binary Discovery', () => {
   test('discovers an installed browser on this system', () => {

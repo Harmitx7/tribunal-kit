@@ -34,13 +34,11 @@ async function cmdCase(flags, processArgs, quiet = false) {
     }
     const caseLawScript = path_1.default.join(agentDest, 'scripts', 'case_law_manager.js');
     // Make shorthand aliases
-    let pyArgs = args;
-    if (pyArgs.startsWith('add'))
-        pyArgs = pyArgs.replace(/^add/, 'add-case');
-    if (pyArgs.startsWith('search'))
-        pyArgs = pyArgs.replace(/^search/, 'search-cases');
+    let pyArgs = processArgs.slice(3);
+    if (pyArgs[0] === 'add') pyArgs[0] = 'add-case';
+    if (pyArgs[0] === 'search') pyArgs[0] = 'search-cases';
     try {
-        await (0, helpers_1.runShellAsync)(`node "${caseLawScript}" ${pyArgs}`, { stdio: 'inherit', cwd: targetDir });
+        await (0, helpers_1.runShellAsync)('node', [caseLawScript, ...pyArgs], { stdio: 'inherit', cwd: targetDir });
         // Memory Bridge: When a case is added, auto-store a SEMANTIC memory
         if (args.startsWith('add')) {
             try {

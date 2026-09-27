@@ -22,7 +22,7 @@ async function cmdMutate(flags, processArgs) {
     }
     const mutateScript = path_1.default.join(agentDest, 'scripts', 'mutation_runner.js');
     try {
-        await (0, helpers_1.runShellAsync)(`node "${mutateScript}" ${args.join(' ')}`, { stdio: 'inherit', cwd: targetDir });
+        await (0, helpers_1.runShellAsync)('node', [mutateScript, ...args], { stdio: 'inherit', cwd: targetDir });
     }
     catch {
         process.exit(1);

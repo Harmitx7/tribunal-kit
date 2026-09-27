@@ -40,7 +40,7 @@ const {
   _memoryGc,
   _memoryStats,
   _generateProjection,
-} = require('../../dist/commands/memory');
+} = require('../../src/commands/memory');
 
 // ── Store Tests ─────────────────────────────────────────────────────────────
 

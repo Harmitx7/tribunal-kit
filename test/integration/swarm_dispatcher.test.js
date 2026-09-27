@@ -34,7 +34,15 @@ describe('swarm_dispatcher.js legacy mode', () => {
     const subDir = path.join(tmpDir, 'src', 'deep');
     fs.mkdirSync(subDir, { recursive: true });
 
+    const originalExistsSync = fs.existsSync;
+    const existsSyncSpy = jest.spyOn(fs, 'existsSync').mockImplementation((p) => {
+      // Treat anything outside tmpDir as not existing
+      if (!p.startsWith(tmpDir)) return false;
+      return originalExistsSync(p);
+    });
+
     expect(findAgentDir(subDir)).toBeNull();
+    existsSyncSpy.mockRestore();
   });
 
   test('validatePayload valid', () => {

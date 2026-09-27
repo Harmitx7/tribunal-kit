@@ -8,13 +8,13 @@ const VERSION = PKG.version;
 
 function updateFiles() {
   const filesToUpdate = [
-    'plugin.json',
-    'gemini-extension.json',
+    'plugins/core-plugin.json',
+    'plugins/gemini/extension.json',
     'npm/core-template/package.json',
     'README.md',
     'crates/core/Cargo.toml',
     'bin/adapter-install.js',
-    'dist/tui/banner.js',
+    'src/tui/banner.js',
   ];
 
   for (const relPath of filesToUpdate) {
@@ -34,7 +34,7 @@ function updateFiles() {
       } else if (relPath === 'README.md') {
         content = content.replace(/Release-v([0-9]+\.[0-9]+\.[0-9]+)/g, `Release-v${VERSION}`);
         fs.writeFileSync(fullPath, content);
-      } else if (relPath === 'bin/adapter-install.js' || relPath === 'dist/tui/banner.js') {
+      } else if (relPath === 'bin/adapter-install.js' || relPath === 'src/tui/banner.js') {
         content = content.replace(/v\d+\.\d+\.\d+/g, `v${VERSION}`);
         content = content.replace(/version = '\d+\.\d+\.\d+'/g, `version = '${VERSION}'`);
         fs.writeFileSync(fullPath, content);

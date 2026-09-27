@@ -421,7 +421,7 @@ function ruleImportPhantom(content, _manifest, ctx) {
           corePath = path.join(__dirname, '..', '..', 'crates', 'core', 'target', 'debug', binName);
       }
       if (fs.existsSync(corePath)) {
-        const result = require('child_process').execSync(`"${corePath}" ast-extract --file "${absPath}"`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 500 });
+        const result = require('child_process').execFileSync(corePath, ['ast-extract', '--file', absPath], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 500 });
         const data = JSON.parse(result);
         if (data && data.success) {
            extractedImports = data.imports;

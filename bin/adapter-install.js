@@ -16,7 +16,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 const ADAPTERS = {
   'claude-code': {
@@ -132,8 +132,8 @@ const ADAPTERS = {
 function commandExists(cmd) {
   try {
     const isWin = os.platform() === 'win32';
-    const check = isWin ? `where ${cmd}` : `which ${cmd}`;
-    execSync(check, { stdio: 'ignore' });
+    const check = isWin ? 'where' : 'which';
+    execFileSync(check, [cmd], { stdio: 'ignore' });
     return true;
   } catch {
     return false;
@@ -142,7 +142,7 @@ function commandExists(cmd) {
 
 function hasGhExtension(ext) {
   try {
-    const output = execSync('gh extension list', { encoding: 'utf8' });
+    const output = execFileSync('gh', ['extension', 'list'], { encoding: 'utf8' });
     return output.includes(ext);
   } catch {
     return false;
@@ -204,7 +204,7 @@ function main() {
   console.log('');
   console.log('┌─────────────────────────────────────────────┐');
   console.log('│  🔱 Tribunal Kit — Universal Agent Adapter  │');
-  console.log('│  v9.2.4 · 52 specialists · 185 skills       │');
+  console.log('│  v9.2.5 · 52 specialists · 185 skills       │');
   console.log('└─────────────────────────────────────────────┘');
   console.log('');
 

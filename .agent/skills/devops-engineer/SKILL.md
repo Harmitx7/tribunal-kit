@@ -60,7 +60,7 @@ ENV NODE_ENV=production
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
   CMD wget --quiet --tries=1 --spider http://localhost:3000/health || exit 1
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "src/index.js"]
 ```
 
 ```dockerfile

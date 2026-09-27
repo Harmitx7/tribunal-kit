@@ -111,7 +111,7 @@ jobs:
           test -f bin/wrapper.js
           test -f bin/tribunal-kit.js
           test -f bin/mcp-server.js
-          test -f dist/cli.js
+          test -f src/cli.js
         shell: bash
 
       - name: Upload coverage report

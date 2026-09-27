@@ -33,8 +33,10 @@ async function cmdLearn(flags, quiet = false) {
     }
     else {
         try {
-            const cmd = `node "${evoScript}" digest ${dryRun} ${useHead}`.trim();
-            await (0, helpers_1.runShellAsync)(cmd, { stdio: 'inherit', cwd: targetDir });
+            const args = [evoScript, 'digest'];
+            if (dryRun) args.push('--dry-run');
+            if (useHead) args.push('--head');
+            await (0, helpers_1.runShellAsync)('node', args, { stdio: 'inherit', cwd: targetDir });
         }
         catch (e) {
             if (e instanceof Error) {

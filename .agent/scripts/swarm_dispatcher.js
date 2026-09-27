@@ -8,7 +8,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+
 const {
   WorkerRequestSchema: _WorkerRequestSchema,
   WorkerResultSchema: _WorkerResultSchema,
@@ -248,14 +248,16 @@ function buildWorkerPrompts(payloadData, workspaceRoot) {
     let compiledSkills = '';
     if (skills.length > 0) {
       try {
-        const res = execSync(
-          `node bin/wrapper.js compile --skills-dir .agent/skills --skills ${skills.join(',')}`,
+        const { execFileSync } = require('child_process');
+        const res = execFileSync(
+          'node',
+          ['bin/wrapper.js', 'compile', '--skills-dir', '.agent/skills', '--skills', skills.join(',')],
           {
             cwd: workspaceRoot,
             stdio: 'pipe',
+            encoding: 'utf8'
           },
         )
-          .toString()
           .trim();
         if (res) {
           compiledSkills = `\n\n[Super-Prompt (Compiled Skills)]:\n${res}`;
@@ -311,6 +313,7 @@ const TRIBUNAL_WAVES = {
       'vitals-reviewer',
       'db-latency-auditor',
       'throughput-optimizer',
+      'architecture-auditor',
     ],
     maxParallel: 8,
     timeout: 60000,
@@ -514,10 +517,11 @@ class SwarmOrchestrator {
       : [];
     const cwd = this.workspaceRoot || process.cwd();
 
-    // 1. Explicit shell command override
     if (worker.command) {
-      const { execSync } = require('child_process');
-      const stdout = execSync(worker.command, {
+      const { execFileSync } = require('child_process');
+      const args = typeof worker.command === 'string' ? worker.command.trim().split(/\s+/) : worker.command;
+      const cmd = args.shift();
+      const stdout = execFileSync(cmd, args, {
         cwd,
         timeout: timeout || 30000,
         encoding: 'utf8',

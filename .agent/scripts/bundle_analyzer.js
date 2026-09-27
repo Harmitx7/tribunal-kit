@@ -4,7 +4,7 @@
  *
  * Analyzes build output for:
  *   - Total bundle size
- *   - Largest files in dist/
+ *   - Largest files in src/
  *   - Suggested tree-shaking opportunities
  *   - Bundler-specific analysis (Vite / Webpack)
  *
@@ -221,7 +221,7 @@ function main() {
   let distResult = null;
 
   if (!distDir) {
-    skip('No build output directory found (dist/, build/, .next/, out/)');
+    skip('No build output directory found (src/, build/, .next/, out/)');
     skip('Run with --build to create a build first, or build manually');
   } else {
     console.log(sectionHeader(`Bundle Size Analysis (${path.relative(projectRoot, distDir)}/)`));

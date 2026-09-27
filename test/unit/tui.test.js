@@ -13,7 +13,7 @@ const {
   ALL_REVIEWERS,
   WizardPrompt,
   renderBanner,
-} = require('../../dist/tui');
+} = require('../../src/tui');
 
 describe('TUI System & Brainless Components', () => {
   let logSpy;

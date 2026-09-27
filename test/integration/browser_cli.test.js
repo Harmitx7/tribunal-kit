@@ -1,7 +1,7 @@
 'use strict';
 
 const http = require('http');
-const { browse, auditURL } = require('../../dist/browser');
+const { browse, auditURL } = require('../../src/browser');
 
 // Polyfill WebSocket for Node < 21
 if (typeof global.WebSocket === 'undefined') {

@@ -303,8 +303,6 @@ function getBinaryPath(startDir) {
   const wrapperCandidates = [
     path.resolve(__dirname, '..', '..', 'bin', 'wrapper.js'),
     path.resolve(__dirname, '..', 'bin', 'wrapper.js'),
-    path.resolve(process.cwd(), 'bin', 'wrapper.js'),
-    path.resolve(process.cwd(), 'tribunal-kit', 'bin', 'wrapper.js'),
   ];
   for (const candidate of wrapperCandidates) {
     if (fs.existsSync(candidate)) {
@@ -341,8 +339,6 @@ function getBinaryPath(startDir) {
     __dirname,
     path.resolve(__dirname, '..'),
     path.resolve(__dirname, '..', '..'),
-    process.cwd(),
-    path.resolve(process.cwd(), 'tribunal-kit'),
   ];
   if (startDir) searchRoots.unshift(path.resolve(startDir));
 

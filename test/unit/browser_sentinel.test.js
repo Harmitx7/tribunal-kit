@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const { extractSourceLocations } = require('../../dist/browser/sentinel');
+const { extractSourceLocations } = require('../../src/browser/sentinel');
 
 describe('browser/sentinel.js — Runtime Sentinel', () => {
   describe('extractSourceLocations', () => {

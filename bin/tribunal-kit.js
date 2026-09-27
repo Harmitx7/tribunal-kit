@@ -30,14 +30,14 @@
 
 const path = require('path');
 
-// Delegate core execution to the modular dist/ entry point
-const { main } = require('../dist/cli.js');
+// Delegate core execution to the modular src/ entry point
+const { main } = require('../src/cli.js');
 
 // Utilities re-exported for backwards compatibility with tests
-const { compareSemver } = require('../dist/utils/version');
-const { copyDir, countDir, isSelfInstall: _isSelfInstall } = require('../dist/utils/fs');
-const { CORE_AGENTS, CORE_SKILLS, generateIDEBridges } = require('../dist/commands/init');
-const { cmdMarathon: _cmdMarathon } = require('../dist/commands/marathon');
+const { compareSemver } = require('../src/utils/version');
+const { copyDir, countDir, isSelfInstall: _isSelfInstall } = require('../src/utils/fs');
+const { CORE_AGENTS, CORE_SKILLS, generateIDEBridges } = require('../src/commands/init');
+const { cmdMarathon: _cmdMarathon } = require('../src/commands/marathon');
 
 function cmdMarathon(flags, processArgs = process.argv) {
   return _cmdMarathon(flags, processArgs, flags?.quiet || false);

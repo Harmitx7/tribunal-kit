@@ -153,7 +153,7 @@ packages:
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["src/**", ".next/**", "!.next/cache/**"]
     },
     "dev": {
       "cache": false,

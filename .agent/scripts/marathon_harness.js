@@ -23,7 +23,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const { findAgentDir } = require('./_utils');
 
 const {
@@ -148,7 +148,7 @@ function isActive() {
  */
 function getGitLog(count = 20) {
   try {
-    const output = execSync(`git log --oneline -${count}`, {
+    const output = execFileSync('git', ['log', '--oneline', `-${count}`], {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
     });
@@ -164,7 +164,7 @@ function getGitLog(count = 20) {
  */
 function getGitBranch() {
   try {
-    return execSync('git branch --show-current', {
+    return execFileSync('git', ['branch', '--show-current'], {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
     }).trim();
@@ -765,7 +765,7 @@ function cmdSessionEnd(summary) {
   let sessionCommits = [];
   try {
     const since = currentSession.startedAt;
-    const output = execSync(`git log --oneline --since="${since}"`, {
+    const output = execFileSync('git', ['log', '--oneline', `--since=${since}`], {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
     });

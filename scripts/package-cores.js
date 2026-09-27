@@ -14,7 +14,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const TEMPLATE_PKG = path.join(ROOT, 'npm', 'core-template', 'package.json');
@@ -101,7 +101,7 @@ function buildPackages(shouldPack = false) {
 
     if (shouldPack) {
       try {
-        execSync('npm pack', { cwd: pkgDir, stdio: 'ignore' });
+        execFileSync('npm', ['pack'], { cwd: pkgDir, stdio: 'ignore' });
         console.log(`    ↳ Packed .tgz`);
       } catch (e) {
         console.error(`    ↳ Failed to pack: ${e.message}`);

@@ -597,8 +597,8 @@ describe('PRODUCTION RELEASE SUITABILITY: Structural Integrity', () => {
       'bin/wrapper.js',
       'bin/mcp-server.js',
       'bin/tribunal-kit.js',
-      'dist/cli.js',
-      'dist/index.d.ts',
+      'src/cli.js',
+      'src/index.d.ts',
       'Cargo.toml',
       'crates/core/Cargo.toml',
       'crates/core/src/main.rs',
@@ -628,12 +628,12 @@ describe('PRODUCTION RELEASE SUITABILITY: Structural Integrity', () => {
   test('package.json exports are correctly defined', async () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
 
-    expect(pkg.main).toBe('dist/cli.js');
-    expect(pkg.types).toBe('dist/index.d.ts');
+    expect(pkg.main).toBe('src/cli.js');
+    expect(pkg.types).toBe('src/index.d.ts');
     expect(pkg.exports['.']).toBeDefined();
-    expect(pkg.exports['.'].types).toBe('./dist/index.d.ts');
-    expect(pkg.exports['.'].import).toBe('./dist/esm/index.mjs');
-    expect(pkg.exports['.'].require).toBe('./dist/cli.js');
+    expect(pkg.exports['.'].types).toBe('./src/index.d.ts');
+    expect(pkg.exports['.'].import).toBe('./src/esm/index.mjs');
+    expect(pkg.exports['.'].require).toBe('./src/cli.js');
   });
 
   test('package.json bin entries point to existing files', async () => {
@@ -664,7 +664,7 @@ describe('PRODUCTION RELEASE SUITABILITY: Structural Integrity', () => {
       'bin/wrapper.js',
       'bin/mcp-server.js',
       'bin/tribunal-kit.js',
-      'dist/cli.js',
+      'src/cli.js',
       '.agent/scripts/context_broker.js',
       '.agent/scripts/guardrail_engine.js',
     ];

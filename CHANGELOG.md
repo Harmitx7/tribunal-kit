@@ -5,17 +5,38 @@
 [![Specialists](https://img.shields.io/badge/Specialists-52-cyan.svg?style=flat-square)](#)
 [![Reviewers](https://img.shields.io/badge/Reviewers-28-emerald.svg?style=flat-square)](#)
 [![Skills Corpus](https://img.shields.io/badge/Corpus-210%20Skills-teal.svg?style=flat-square)](#)
-[![Workflows](https://img.shields.io/badge/Workflows-44%20Audited-indigo.svg?style=flat-square)](#)
+[![Workflows](https://img.shields.io/badge/Workflows-49%20Audited-indigo.svg?style=flat-square)](#)
 [![Harnesses](https://img.shields.io/badge/Harnesses-9%20Supported-orange.svg?style=flat-square)](#)
-[![Test Suite](<https://img.shields.io/badge/Tests-100%25%20Passing%20(489%20tests)-brightgreen.svg?style=flat-square>)](#)
+[![Test Suite](<https://img.shields.io/badge/Tests-100%25%20Passing%20(490%20tests)-brightgreen.svg?style=flat-square>)](#)
 
 All notable changes to **Tribunal Kit** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
 
-## [10.0.0] — 2026-09-25 — 🏛️ Codename: Tribunal OS (Sovereign Governance & Memory Singularity)
+## [9.2.5] — 2026-09-27 — 🏛️ System Architecture Intelligence Layer
 
 > [!IMPORTANT]
-> **Release 10.0.0** introduces the **Tribunal OS** architecture, completing the Brain-Hands decoupling boundary, Durable Session Logging, and Team Mode dynamic topologies. It also finalizes the **Hybrid Compiled Context** memory architecture (Approach D) with a zero-dependency BM25/TF-IDF scoring engine, hardening the persistent `.memory.idx` storage against zero-division faults and RegExp injection.
+> **Release 9.2.5** introduces the **System Architecture Intelligence Layer**, elevating Tribunal Kit's capabilities from local code-level review to full-system macro-architecture reasoning. This release transitions system design from hallucination-prone LLM speculation to evidence-driven deterministic extraction.
+
+### Added
+- **Deterministic System Modeling**: Created `architecture_mapper.js` to statically extract a machine-readable `architecture.idx.json` representing API routes, data stores, events, and auth boundaries.
+- **Architecture Auditor**: Added `architecture-auditor` to the Wave 3 Tribunal pipeline to automatically review PR diffs for architectural drift, boundary violations, and anti-patterns.
+- **Architecture Drift Detection**: Introduced the `architecture-drift` skill to algorithmically compare actual implementation against ADRs.
+- **Architectural Memory**: Seeded `.agent/ADRs/` directory and mandated the `system-architect` agent to generate Architecture Decision Records for structural decisions.
+
+### Changed
+- **Enhanced System Architect**: Upgraded `system-architect` to require consulting the deterministic System Model before proposing design changes.
+- **System Design Pro Overhaul**: Deeply rewritten the `system-design-pro` skill from a theoretical interview framework into a production-grade Principal Systems Engineering reasoning loop (featuring Anti-Overengineering Guards, Blast Radius Analysis, and Failure-First Thinking).
+- **Tribunal Capacity**: Increased parallel reviewers from 29 to 30 and total specialist agents to 58.
+
+### Security
+- **Command Injection Remediation**: Resolved a critical command injection vulnerability in `.agent/scripts/context_compiler.js` and other scripts by converting all `execSync` occurrences to `execFileSync` and explicitly disabling `shell: true` in `spawn` and `spawnSync` calls across the entire repository. (Reported by security researcher Michael K Onyekwere).
+- **Supply Chain Hardening**: Mitigated a local directory hijacking vector in `bin/wrapper.js` by forcing the Rust binary resolution to use `__dirname` instead of `process.cwd()`, ensuring the legitimately installed binary is always executed.
+- **Test Integrity**: Ensured sandboxing of `.agent` directory lookups during testing to prevent environment state leaks, and added deterministic regression tests to validate isolation of arbitrary command parameters.
+
+## [9.2.4] — 2026-09-25 — 🏛️ Codename: Tribunal OS (Sovereign Governance & Memory Singularity)
+
+> [!IMPORTANT]
+> **Release 9.2.4** introduces the **Tribunal OS** architecture, completing the Brain-Hands decoupling boundary, Durable Session Logging, and Team Mode dynamic topologies. It also finalizes the **Hybrid Compiled Context** memory architecture (Approach D) with a zero-dependency BM25/TF-IDF scoring engine, hardening the persistent `.memory.idx` storage against zero-division faults and RegExp injection.
 
 ### Added
 - **Subagent-Driven Development (SDD) & Team Mode**: Introduced `subagent-driven-development` skill and `harness-manager` agent to support dynamic micro-teams (Team Mode) based on file impact and Topological DAG routing.
@@ -54,7 +75,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [S
 - **Comprehensive Test Coverage**: Added dedicated test suites for `memory_engine.js` (12 tests), `swarm_dispatcher.js` deterministic reviewer benchmarks, and `bridges.test.js` context token savings assertions.
 
 ### Changed
-- **IDE Bridge Synthesis (`dist/commands/init.js`)**: Updated `generateIDEBridges()` to source rules from `kernel.md` for `.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`, `CLAUDE.md`, and `AGENTS.md`, reclaiming ~18KB (~4,500 tokens) per bridge file while preserving full backwards compatibility.
+- **IDE Bridge Synthesis (`src/commands/init.js`)**: Updated `generateIDEBridges()` to source rules from `kernel.md` for `.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`, `CLAUDE.md`, and `AGENTS.md`, reclaiming ~18KB (~4,500 tokens) per bridge file while preserving full backwards compatibility.
 - **Swarm Dispatcher Export & Performance**: Exported `SwarmOrchestrator` in `module.exports` and lowered reviewer runtimes from 1,000–3,000ms mock delays down to ~49ms deterministic validation.
 - **Native Binary Discovery (`wrapper.js` & `_utils.js`)**: Added `'ast-extract'` to `RUST_COMMANDS` and exported `getBinaryPath(startDir)` across `scripts/` and `.agent/scripts/` for unified multi-tier binary resolution.
 - **Context Compiler Upgrade**: Updated `scripts/context_compiler.js` to route parsing natively through the Rust binary, significantly improving precision on dynamic imports and aliased exports. Added a `--json` output flag to `checkDrift` for programmatic assertions.
@@ -188,25 +209,25 @@ To ensure pristine execution across varying environments and toolchains, this re
 
 ---
 
-### 🌐 [BROWSER] Zero-Dependency Native Browser Intelligence Engine (`dist/browser/`)
+### 🌐 [BROWSER] Zero-Dependency Native Browser Intelligence Engine (`src/browser/`)
 
-- **Node 22 Native WebSocket CDP Engine (`dist/browser/cdp.js`)**: Implemented a zero-dependency Chrome DevTools Protocol client using Node 22's native `WebSocket`. Supports `Page`, `Runtime`, `DOM`, `Accessibility`, and `Network` domains without requiring Playwright or Puppeteer.
+- **Node 22 Native WebSocket CDP Engine (`src/browser/cdp.js`)**: Implemented a zero-dependency Chrome DevTools Protocol client using Node 22's native `WebSocket`. Supports `Page`, `Runtime`, `DOM`, `Accessibility`, and `Network` domains without requiring Playwright or Puppeteer.
 - **CSRF-Protected Tab Lifecycle**: Uses HTTP `PUT /json/new` with a robust fallback to `GET /json/list` to ensure tab allocation works reliably across modern Chrome/Edge versions.
-- **Dynamic Ephemeral Port Allocation (`dist/browser/launcher.js`)**: Added `getFreePort()` logic to dynamically allocate free OS sockets when no explicit port is supplied, eliminating socket `TIME_WAIT` lockouts and race conditions during high-concurrency parallel test runs.
-- **Fabel Token-Pruned Trimmer (`dist/browser/trimmer.js`)**: Pure Node.js port of PinchTab's `htmltrim` algorithm. Strips non-semantic tags, comments, styles, SVG paths, and data URIs; truncates output at exactly 4,000 UTF-8 bytes to guarantee compliance with the Fabel Protocol.
-- **Indirect Prompt Injection (IDPI) Firewall (`dist/browser/idpi.js`)**: Scans all scraped web content against known prompt-injection triggers, enforces local-first allowlists (`localhost`, `127.0.0.1`), and wraps extracted DOM into isolated `<untrusted_web_content>` security sandboxes.
+- **Dynamic Ephemeral Port Allocation (`src/browser/launcher.js`)**: Added `getFreePort()` logic to dynamically allocate free OS sockets when no explicit port is supplied, eliminating socket `TIME_WAIT` lockouts and race conditions during high-concurrency parallel test runs.
+- **Fabel Token-Pruned Trimmer (`src/browser/trimmer.js`)**: Pure Node.js port of PinchTab's `htmltrim` algorithm. Strips non-semantic tags, comments, styles, SVG paths, and data URIs; truncates output at exactly 4,000 UTF-8 bytes to guarantee compliance with the Fabel Protocol.
+- **Indirect Prompt Injection (IDPI) Firewall (`src/browser/idpi.js`)**: Scans all scraped web content against known prompt-injection triggers, enforces local-first allowlists (`localhost`, `127.0.0.1`), and wraps extracted DOM into isolated `<untrusted_web_content>` security sandboxes.
 
 ---
 
 ### ⚡ [PROPRIETARY] Component Synapse, Case Law Bridge & Runtime Sentinel
 
-- **Component Synapse (`dist/browser/synapse.js`)**: Reverse-engineers any live DOM element into typed React TypeScript components styled with Tailwind CSS by extracting computed CSSOM properties (geometry, flexbox/grid layout, typography, elevation, and interactive states).
-- **Empirical Case Law Bridge (`dist/browser/case_bridge.js`)**: Ingests live browser audit findings (WCAG 2.2 accessibility failures, missing security headers, uncaught console exceptions) and automatically persists them as binding legal precedents in `.agent/history/case-law/` with cryptographic content hashing and deduplication.
-- **Runtime Sentinel (`dist/browser/sentinel.js`)**: Connects to a running dev server (Next.js, Vite, CRA, Webpack), captures uncaught exceptions and framework error overlays, extracts stack traces to locate source files (`file:line:col`), and provides automated fix verification (`verifyRuntimeFix`).
+- **Component Synapse (`src/browser/synapse.js`)**: Reverse-engineers any live DOM element into typed React TypeScript components styled with Tailwind CSS by extracting computed CSSOM properties (geometry, flexbox/grid layout, typography, elevation, and interactive states).
+- **Empirical Case Law Bridge (`src/browser/case_bridge.js`)**: Ingests live browser audit findings (WCAG 2.2 accessibility failures, missing security headers, uncaught console exceptions) and automatically persists them as binding legal precedents in `.agent/history/case-law/` with cryptographic content hashing and deduplication.
+- **Runtime Sentinel (`src/browser/sentinel.js`)**: Connects to a running dev server (Next.js, Vite, CRA, Webpack), captures uncaught exceptions and framework error overlays, extracts stack traces to locate source files (`file:line:col`), and provides automated fix verification (`verifyRuntimeFix`).
 
 ---
 
-### 🛠️ [CLI] Five New Browser Governance Commands (`dist/commands/` & `dist/cli.js`)
+### 🛠️ [CLI] Five New Browser Governance Commands (`src/commands/` & `src/cli.js`)
 
 - **`tk browse <url>`**: Navigates headlessly to a URL, applies IDPI security scanning, and outputs token-pruned semantic markdown (< 4k bytes).
 - **`tk audit-web <url> [--codify]`**: Runs live WCAG 2.2 accessibility, console error, and security header audits. With `--codify`, automatically registers violations into Case Law.
@@ -259,8 +280,8 @@ To ensure pristine execution across varying environments and toolchains, this re
 
 ### 📦 [CLI & PACKAGING] Packaging Hygiene, Self-Protection & Clean Distribution
 
-- **Self-Uninstall Guard (`dist/commands/uninstall.js`)**: Implemented `isSelfInstall` check preventing accidental self-destruction when `tk uninstall` is invoked from within the tribunal-kit repo itself.
-- **Extended CLI Arguments (`dist/cli.js`)**: Added parser support for `--branch`, `--log`, and `--strategy` flags across governance commands.
+- **Self-Uninstall Guard (`src/commands/uninstall.js`)**: Implemented `isSelfInstall` check preventing accidental self-destruction when `tk uninstall` is invoked from within the tribunal-kit repo itself.
+- **Extended CLI Arguments (`src/cli.js`)**: Added parser support for `--branch`, `--log`, and `--strategy` flags across governance commands.
 - **Python Cache Purge & Prepack Hook**: Added `scripts/clean-pycache.js` and wired `npm run prepack` to eliminate `__pycache__` and `.pyc` files before publishing.
 - **Dependency Pruning**: Removed unused `better-sqlite3` from production runtime dependencies.
 - **Precompiled Core Packaging**: Added `scripts/package-cores.js` to bundle multi-platform Rust pre-compiled binaries into target-specific packages.
@@ -369,7 +390,7 @@ To ensure pristine execution across varying environments and toolchains, this re
 
 - **Zero-Tolerance ESLint Governance**: Configured `eslint.config.js` to parse `.opencode/**/*.js` and `**/*.mjs`. Cleaned dead imports (`os`), stripped unused function `normalizePath`, and resolved all unused argument/variable warnings in `.opencode/plugins/tribunal.js`, `hooks/session-start.js`, and `scripts/audit_skill_sdo.js`.
 - **Cross-Repository Metadata Synchronization**: Synchronized version `9.0.0` and resource totals (52 agents, 28 reviewers, 184 skills, 41 workflows, 41 scripts) across `package.json`, `README.md`, `CONTRIBUTING.md`, `.agent/config/plugin.json`, `.agent/config/system-prompt.md`, and `npm/core-template/package.json`.
-- **Public API Type Seams**: Added missing declaration `cmdImpactTier` in `dist/index.d.ts`.
+- **Public API Type Seams**: Added missing declaration `cmdImpactTier` in `src/index.d.ts`.
 - **Windows Test Suite Reliability**: Hardened `test/unit/learn.test.js` with a 15,000 ms timeout to prevent premature process termination under Windows.
 - **Dead Code Purge**: Purged disconnected Vite starter boilerplate in `src/ui/` (`counter.ts`, `main.ts`, `style.css`, `index.html`, etc.), deleted legacy `tribunal-kit-5.0.0.tgz` archive (680 KB), and removed unreferenced scratch artifacts.
 
@@ -451,7 +472,7 @@ To ensure pristine execution across varying environments and toolchains, this re
 - **MCP Server Proactive Tool (`verify_contracts`)**: Registered `verify_contracts` in `bin/mcp-server.js` allowing AI coding agents in Cursor, VSCode, Windsurf, or Claude Desktop to self-verify code against team behavioral contracts _before_ making edits.
 - **Case Law Bridge (`tk contract generate --from-case <id>`)**: Built a seamless bridge from Case Law precedents (`tk case`) to auto-generate contract rules, preventing past AI coding errors from recurring.
 - **Slash Workflow Command (`/contract`)**: Created `.agent/workflows/contract.md` workflow guide for one-command contract administration and validation.
-- **Workspace Status & Pre-Push Hook Integration**: Extended `npx tribunal-kit status` to report active contract rule counts and updated `dist/index.d.ts` with complete TypeScript interfaces (`Contract`, `ContractViolation`, `VerifyContractsInput`, `cmdContract`).
+- **Workspace Status & Pre-Push Hook Integration**: Extended `npx tribunal-kit status` to report active contract rule counts and updated `src/index.d.ts` with complete TypeScript interfaces (`Contract`, `ContractViolation`, `VerifyContractsInput`, `cmdContract`).
 
 ### 🛡️ Codebase Quality, Audit Resolution & Test Infrastructure
 
@@ -465,13 +486,13 @@ To ensure pristine execution across varying environments and toolchains, this re
 
 - **HyperSparse Skill Router (`skill_topic_map.json`)**: Integrated lightweight 2-tier domain routing map indexing all 185 skills across 9 domain routes and file extension affinities (`.tsx`, `.ts`, `.py`, `.sql`, `.prisma`, `.tf`, `.tofu`, `.swift`). Cuts startup context overhead by **95%** (~3,000 tokens vs ~85,000) with **0 skills excluded**.
 - **MCP Server Protocol Modernization (`2025-03-26`)**: Upgraded `bin/mcp-server.js` to protocol 2025-03-26. Exposes dynamic **MCP Resources** (`tribunal://agent/{name}`, `tribunal://skill/{name}`, `tribunal://workflow/{name}`) and **MCP Prompts** for all 36 workflows alongside tools. Replaced fragile shell eval in `sync_ide_bridges` with direct in-process invocation.
-- **ESM Exports & Type Declarations Alignment**: Added missing exports for 8 CLI commands (`cmdGuardrail`, `cmdOptimizeSkill`, `cmdMinimal`, `cmdValidate`, `cmdMinContext`, `cmdDagSchedule`, `cmdContextCompress`, `cmdOptimizeStep`) in `dist/esm/index.mjs` and `dist/index.d.ts`.
-- **Governance Impact Tier Engine (`impact-tier`)**: Fully registered `impact-tier` command across `bin/wrapper.js`, `dist/cli.js`, and `dist/commands/native.js` with JS fallback logic (Tier 0: Fast-Pass, Tier 1: Express Pass, Tier 2: Targeted Audit, Tier 3: Full Gauntlet).
+- **ESM Exports & Type Declarations Alignment**: Added missing exports for 8 CLI commands (`cmdGuardrail`, `cmdOptimizeSkill`, `cmdMinimal`, `cmdValidate`, `cmdMinContext`, `cmdDagSchedule`, `cmdContextCompress`, `cmdOptimizeStep`) in `src/esm/index.mjs` and `src/index.d.ts`.
+- **Governance Impact Tier Engine (`impact-tier`)**: Fully registered `impact-tier` command across `bin/wrapper.js`, `src/cli.js`, and `src/commands/native.js` with JS fallback logic (Tier 0: Fast-Pass, Tier 1: Express Pass, Tier 2: Targeted Audit, Tier 3: Full Gauntlet).
 - **Skill Profiling (`--profile`)**: Added `--profile` support (`full`, `minimal`, `web`, `mobile`, `backend`, `ai`) to CLI argument parsing and TypeScript definitions for profile-scoped asset installation.
 - **Tri-Phase Wave Governance (`/tribunal-full`)**: Refactored the 21 parallel reviewers into 3 clean execution waves (Wave 1: Core Integrity, Wave 2: Security & Types, Wave 3: Domain & Performance), eliminating context window saturation and reviewer attention dilution.
 - **14 Essential 2026–2027 Skills Addition (Kit Total 171 → 185)**: Created and enriched high-impact skills across AI, Database, Mobile, DevOps, Security, and Testing domains (`context-engineering-pro`, `agentic-workflows-2026`, `vector-search-pgvector`, `duckdb-analytical-sql`, `expo-router-v4`, `edge-ai-mobile`, `platform-engineering-opentofu`, `opentelemetry-observability`, `zero-trust-passkeys`, `ai-app-hardening`, `playwright-ai-e2e`, `property-based-testing`, etc.).
 - **Code Quality, Prettier & ESLint Upgrade**: Enabled `"checkJs": true` in `tsconfig.json`, configured Prettier (`.prettierrc`), added `npm run format` & `npm run format:check` scripts, and expanded ESLint rules from 2 to 12 rules.
-- **Non-Blocking Memory Lock**: Replaced event loop spin lock in `dist/commands/memory.js` with non-blocking `Atomics.wait()`.
+- **Non-Blocking Memory Lock**: Replaced event loop spin lock in `src/commands/memory.js` with non-blocking `Atomics.wait()`.
 - **CI Matrix & Rust Test Automation**: Upgraded `.github/workflows/ci.yml` to 3-platform matrix (Ubuntu, Windows, macOS), added an ESLint step, and added dedicated Rust test execution (`cargo test`).
 - **Comprehensive Documentation Suite**: Created `docs/API_REFERENCE.md`, `docs/MCP_GUIDE.md`, and `docs/AUTHORING_GUIDE.md` covering programmatic imports, MCP server integration, and custom asset authoring.
 - **Unit Test Suite Expansion**: Created unit tests for `learn`, `compile`, and `native` fallback commands (`test/unit/learn.test.js`, `test/unit/compile.test.js`, `test/unit/native.test.js`), achieving 28 passing test suites (313 unit tests).
@@ -507,14 +528,14 @@ To ensure pristine execution across varying environments and toolchains, this re
 
 - **DAG-Based Multi-Agent Wave Scheduler**: Implemented Kahn's topological sorting algorithm in native Rust (`crates/core/src/commands/dag_scheduler.rs`) to compute dynamic worker execution waves (`wave_1`, `wave_2`, etc.) from agent task dependency graphs. Eliminates idle waiting by executing non-dependent reviewers concurrently.
 - **Native Context Compression Engine**: Developed `tribunal-core context-compress` (`crates/core/src/commands/context_compress.rs`) to minify code and markdown context files before ingestion by LLM agent prompts. Saves 30–50% on token payloads while preserving critical `// VERIFY` assertions for anti-hallucination compliance.
-- **CLI Subcommand Expansion**: Added `DagSchedule`, `ContextCompress`, `MinContext`, and `OptimizeStep` subcommands to the Rust core binary (`crates/core/src/main.rs`) and registered them in `bin/wrapper.js` `RUST_COMMANDS` and `dist/cli.js`.
+- **CLI Subcommand Expansion**: Added `DagSchedule`, `ContextCompress`, `MinContext`, and `OptimizeStep` subcommands to the Rust core binary (`crates/core/src/main.rs`) and registered them in `bin/wrapper.js` `RUST_COMMANDS` and `src/cli.js`.
 - **Swarm Dispatcher DAG Integration**: Updated `.agent/scripts/swarm_dispatcher.js` with `computeDagWaves` algorithm to calculate and validate DAG waves across all multi-agent swarm payloads.
 - **Workflow & Benchmark Upgrades**: Updated `/swarm` workflow (`.agent/workflows/swarm.md`) to mandate Stage 1/Stage 2 wave decomposition and context compression, and added wave scheduling latency checks to `scripts/benchmark.js`.
 
 ### 🐛 Bug Fixes & Architecture Hardening
 
-- **Pure JavaScript `validate` Command Fallback**: Created `dist/commands/validate.js` and registered `validate` in `dist/cli.js` so `npx tribunal-kit validate` works seamlessly on environments without the Rust binary compiled. Eliminates `Unknown command: "validate"` crashes on pure JS fallbacks.
-- **MCP Server Unification & Fallback Protection**: Refactored `dist/mcp/server.js` to delegate cleanly to `bin/mcp-server.js` and updated `runTribunalAudit()` in `bin/mcp-server.js` to execute in-process via `integrity_manifest.js`. Corrected inaccurate comments regarding process spawning.
+- **Pure JavaScript `validate` Command Fallback**: Created `src/commands/validate.js` and registered `validate` in `src/cli.js` so `npx tribunal-kit validate` works seamlessly on environments without the Rust binary compiled. Eliminates `Unknown command: "validate"` crashes on pure JS fallbacks.
+- **MCP Server Unification & Fallback Protection**: Refactored `src/mcp/server.js` to delegate cleanly to `bin/mcp-server.js` and updated `runTribunalAudit()` in `bin/mcp-server.js` to execute in-process via `integrity_manifest.js`. Corrected inaccurate comments regarding process spawning.
 - **Windows Executable Shim Normalization**: Refactored `normalizeCommand` in `.agent/scripts/_utils.js` using `WINDOWS_CMD_SHIMS` (`npm`, `npx`, `pnpm`, `yarn`, `bun`, `bunx`), ensuring standard executables (`node`, `git`, `cargo`, `python`) are not corrupted with `.cmd` suffixes on Windows.
 - **Neurosymbolic Reviewer Count Disambiguation**: Updated `ruleReviewerCount` in `guardrail_engine.js` to specifically match `reviewers` claims while leaving total agent claims (e.g. `"44 specialist agents"`) intact. Prevents `--fix` from corrupting agent counts.
 - **Dynamic Subdirectory Path Resolution**: Replaced static CWD `path.resolve(".agent", ...)` in `marathon_harness.js` with `findAgentDir(startDir)`. Eliminates path resolution failures when running `tk marathon` inside subdirectories.
@@ -529,14 +550,14 @@ To ensure pristine execution across varying environments and toolchains, this re
 - **Zero-Exception Skill Reading Protocol**: Updated master system rules (`GEMINI.md`) and agent specifications (`frontend-specialist.md`, `backend-specialist.md`, `logic-reviewer.md`) requiring agents to view `SKILL.md` before generating code, announce skill usage with `📖 Reading skill @[skill-name]...`, enforce `package.json` package grounding, and write `// VERIFY: [reason]` comments on unverified APIs.
 - **Domain-Specific LLM Trap Tables**: Replaced generic trap text across core framework skills (`nextjs-react-expert`, `react-specialist`, `python-pro`, `vue-expert`) with high-precision tables contrasting common AI failure patterns against modern framework standards (Next.js 15 App Router vs Page Router, React 19 hooks, Python 3.12+ type hints, Pydantic v2 migration, Vue 3.5+ Composition API, Nuxt 4 auto-imports).
 - **Skill Guardrail Completeness Rule**: Added `Rule 9: skill-guardrail-completeness` (`ruleSkillGuardrailCompleteness`) to `guardrail_engine.js` to deterministically audit and verify that all `SKILL.md` files contain domain-specific LLM Traps tables, Pre-Flight Self-Audits, and VBC Protocols.
-- **CLI Architecture Refactoring & Decomposed Forwarder**: Refactored monolithic 1,535-line `bin/tribunal-kit.js` into a lightweight, 115-line entry point delegating to `dist/cli.js`. Reduces file size by **92.5% (-1,420 lines)** while preserving 100% test export compatibility (`parseArgs`, `compareSemver`, `copyDir`, `countDir`, `isSelfInstall`, `CORE_AGENTS`, `CORE_SKILLS`, `generateIDEBridges`, `cmdMarathon`).
+- **CLI Architecture Refactoring & Decomposed Forwarder**: Refactored monolithic 1,535-line `bin/tribunal-kit.js` into a lightweight, 115-line entry point delegating to `src/cli.js`. Reduces file size by **92.5% (-1,420 lines)** while preserving 100% test export compatibility (`parseArgs`, `compareSemver`, `copyDir`, `countDir`, `isSelfInstall`, `CORE_AGENTS`, `CORE_SKILLS`, `generateIDEBridges`, `cmdMarathon`).
 - **Canonical Helper Deduplication**: Replaced duplicate inline `findAgentDir` implementations across `case_law_manager.js`, `context_broker.js`, `skill_integrator.js`, `swarm_dispatcher.js`, and `skill_evolution.js` with canonical imports from `_utils.js`.
-- **Zero-Latency Async Version Check**: Integrated `dist/utils/version.js`'s non-blocking background fetch and 1-hour local disk cache (`.tribunal-kit-update-cache.json`) into the legacy CLI path, eliminating 5-second HTTP delays on startup.
+- **Zero-Latency Async Version Check**: Integrated `src/utils/version.js`'s non-blocking background fetch and 1-hour local disk cache (`.tribunal-kit-update-cache.json`) into the legacy CLI path, eliminating 5-second HTTP delays on startup.
 - **Expanded Command Parity**: Enabled native access to all 17 CLI commands (including `align`, `compile`, `memory`, `guardrail`, and `optimize-skill`) through the `bin/tribunal-kit.js` entry point.
 - **SkillOpt Self-Evolution Engine**: Implemented the full SkillOpt pipeline from the _Automated Skill Optimization for Large Language Models_ research paper. A new `optimize-skill` CLI subcommand (`tk optimize-skill --target <skill> "<harness>"`) runs multi-epoch optimization loops that automatically refine any SKILL.md using LLM-proposed patches, harness-evaluated scoring, and Rust-accelerated deduplication — all without external API dependencies beyond the user's existing LLM key.
 - **Hybrid Rust Core + JS Harness Architecture**: The optimization loop is split between a high-performance Rust core (`optimize.rs`) for deterministic patch merging, Levenshtein similarity deduplication, and strict schema validation, and a JS orchestrator (`optimize.js`) for LLM calls, harness execution, and epoch management. This ensures sub-millisecond merge/dedup operations while keeping LLM interaction flexible.
 - **Rust `optimize-step` Subcommand**: Added `OptimizeStep` to the Rust `tribunal-core` binary with `merge-patches` and `dedup-patches` actions. Merge applies multiple text patches sequentially to a base document. Dedup uses normalized Levenshtein similarity (configurable threshold, default 0.85) to eliminate near-duplicate patch proposals.
-- **CLI Routing**: Added `optimize-skill` command to `cli.js` with lazy-loaded `dist/commands/optimize.js` module. Supports `--target`, `--epochs`, `--candidates`, `--threshold`, and `--harness-timeout` flags.
+- **CLI Routing**: Added `optimize-skill` command to `cli.js` with lazy-loaded `src/commands/optimize.js` module. Supports `--target`, `--epochs`, `--candidates`, `--threshold`, and `--harness-timeout` flags.
 - **Environment Auto-Detection**: Automatically detects available LLM API keys (`GEMINI_API_KEY`, `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`) with zero additional configuration required.
 - **Layered Anti-Hallucination Defense**: Implemented a comprehensive neurosymbolic guardrail system to prevent AI hallucination and instruction drift. Added a new `tk guardrail` CLI command to scan the `.agent` context payload against a dynamic `integrity_manifest.js` to detect missing scripts, hallucinated agent names, and unresolved `// VERIFY:` tags.
 - **Guardrail Engine**: Developed `guardrail_engine.js` with 9 strict integrity rules (e.g., `ruleNumericConsistency`, `ruleAgentExists`, `ruleSkillExists`, `ruleScriptExtension`, `ruleSkillGuardrailCompleteness`). The engine prevents execution if the AI references non-existent files or hallucinates capability claims.
@@ -582,8 +603,8 @@ To ensure pristine execution across varying environments and toolchains, this re
 - **Structured Log Signal Detector**: Deployed the new `signal_detector.js` utility, parsing JS/TS stack traces, Python stack trace files, Rust compiler issues, ESLint inline logs, and performance query warnings into typed signals.
 - **Precedent Solidification**: Integrated the Case Law engine programmatically to automatically record new Case Precedents (Capsules) from detected log signals.
 - **CLI Docs & Examples**: Updated CLI help output, commands documentation, and example usages for log-based learning.
-- **First-Class TypeScript Declarations**: Shipped `dist/index.d.ts` with complete type coverage for the public API — CLI flags, all 15 command functions, logger utilities, MCP server types (memory entries, tool inputs, tool names union), and helper functions. Enables IDE autocomplete and the TypeScript badge on npm.
-- **Dual ESM + CommonJS Builds**: Added `dist/esm/index.mjs` as an ESM entry point using `createRequire` wrapper pattern. Modern `import` statements now resolve correctly alongside existing `require()` usage. No breaking changes to CJS consumers.
+- **First-Class TypeScript Declarations**: Shipped `src/index.d.ts` with complete type coverage for the public API — CLI flags, all 15 command functions, logger utilities, MCP server types (memory entries, tool inputs, tool names union), and helper functions. Enables IDE autocomplete and the TypeScript badge on npm.
+- **Dual ESM + CommonJS Builds**: Added `src/esm/index.mjs` as an ESM entry point using `createRequire` wrapper pattern. Modern `import` statements now resolve correctly alongside existing `require()` usage. No breaking changes to CJS consumers.
 - **Package.json Modernization**: Added `"types"`, `"main"`, and conditional `"exports"` fields with `types`/`import`/`require` conditions for proper resolution by modern bundlers (webpack 5, Vite, Rollup, esbuild).
 - **Positioning Pivot**: Rebranded package description from "Anti-Hallucination AI Agent Kit" to "The operating system for AI software engineering" — positioning Tribunal Kit as the governance and orchestration layer for all coding agents.
 
@@ -591,7 +612,7 @@ To ensure pristine execution across varying environments and toolchains, this re
 
 - **JS Stack Trace Path Truncation**: Fixed a greediness bug in the stack trace regex (`jsStackRegex`) of `signal_detector.js` where parenthesized function matching was consuming path segments, returning `/utils.js` instead of `src/utils.js`.
 - **Core Binary Alignment**: Aligned all platform-specific native dependencies in `optionalDependencies` to `^5.8.2`.
-- **Critical `.npmignore` Fix**: Removed the `dist/` exclusion from `.npmignore` that was silently preventing TypeScript declarations and the modular CLI from being published to npm. Added exclusions for Rust build artifacts (`target/`, `crates/`, `Cargo.*`), stale tarballs (`*.tgz`), and dev config files to reduce install size.
+- **Critical `.npmignore` Fix**: Removed the `src/` exclusion from `.npmignore` that was silently preventing TypeScript declarations and the modular CLI from being published to npm. Added exclusions for Rust build artifacts (`target/`, `crates/`, `Cargo.*`), stale tarballs (`*.tgz`), and dev config files to reduce install size.
 
 ### 📦 Infrastructure
 
@@ -645,7 +666,7 @@ To ensure pristine execution across varying environments and toolchains, this re
 
 ### 🐛 Fixes
 
-- **`windsurfRules is not defined`**: Fixed a critical `ReferenceError` in `dist/commands/init.js` where 5 IDE bridge variables (`windsurfRules`, `geminiSettings`, `geminiRulesBridge`, `copilotInstructions`, `claudeRules`) were referenced but never defined. Ported the missing definitions from `bin/tribunal-kit.js`.
+- **`windsurfRules is not defined`**: Fixed a critical `ReferenceError` in `src/commands/init.js` where 5 IDE bridge variables (`windsurfRules`, `geminiSettings`, `geminiRulesBridge`, `copilotInstructions`, `claudeRules`) were referenced but never defined. Ported the missing definitions from `bin/tribunal-kit.js`.
 
 ## [5.7.0] — 2026-06-29 — ⚡ Codename: The Quantum Update
 

@@ -7,7 +7,7 @@ required-skills:
   - browser-audit
   - web-quality-audit
 scripts-binding:
-  - dist/commands/compare-web.js
+  - src/commands/compare-web.js
 ---
 
 # /compare-web — Visual Regression & Layout Diffing

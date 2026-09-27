@@ -159,7 +159,7 @@ Short version:
 
 - **Gradio patterns** (themes, `gr.Examples`, streaming, custom HTML components, `gr.Server`): [`references/gradio.md`](references/gradio.md).
 - **Docker**: https://huggingface.co/docs/hub/spaces-sdks-docker. Examples: `hf spaces list --filter docker`.
-- **Static**: https://huggingface.co/docs/hub/spaces-sdks-static. For built SPAs, set `app_build_command: npm run build` and `app_file: dist/index.html` in frontmatter.
+- **Static**: https://huggingface.co/docs/hub/spaces-sdks-static. For built SPAs, set `app_build_command: npm run build` and `app_file: src/index.html` in frontmatter.
 - **ZeroGPU specifics** (decorator semantics, sizing, AoTI, generators, concurrency, pickle / `gr.State` across the worker boundary): [`references/zerogpu.md`](references/zerogpu.md) — read this whenever the Space targets ZeroGPU.
 
 

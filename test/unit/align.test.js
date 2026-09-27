@@ -1,6 +1,6 @@
 'use strict';
 
-const { alignText, validateCodeContent } = require('../../dist/commands/align');
+const { alignText, validateCodeContent } = require('../../src/commands/align');
 
 describe('alignText', () => {
   test('strips standard conversational intro slop', () => {

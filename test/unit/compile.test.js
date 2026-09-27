@@ -1,6 +1,6 @@
 'use strict';
 
-const { cmdCompile } = require('../../dist/commands/compile');
+const { cmdCompile } = require('../../src/commands/compile');
 
 describe('cmdCompile command', () => {
   test('exports cmdCompile function', () => {

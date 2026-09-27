@@ -36,7 +36,7 @@ async function main() {
   }
 
   try {
-    const { auditURL } = require('../../dist/browser');
+    const { auditURL } = require('../../src/browser');
     const report = await auditURL(url);
 
     if (isJson) {

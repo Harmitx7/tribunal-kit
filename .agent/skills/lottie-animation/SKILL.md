@@ -30,7 +30,7 @@ scripts-binding:
 ```tsx
 import React, { useRef } from 'react';
 import { DotLottiePlayer, Controls } from '@dotlottie/react-player';
-import '@dotlottie/react-player/dist/index.css';
+import '@dotlottie/react-player/src/index.css';
 
 export function InteractiveLottieIcon() {
   const lottieRef = useRef<any>(null);

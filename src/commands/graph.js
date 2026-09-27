@@ -20,8 +20,8 @@ async function cmdGraph(flags, quiet = false) {
     const visualizerScript = path_1.default.join(agentDest, 'scripts', 'graph_visualizer.js');
     const htmlFile = path_1.default.join(agentDest, 'history', 'architecture-explorer.html');
     try {
-        await (0, helpers_1.runShellAsync)(`node "${builderScript}"`, { stdio: 'inherit', cwd: targetDir });
-        await (0, helpers_1.runShellAsync)(`node "${visualizerScript}"`, { stdio: 'inherit', cwd: targetDir });
+        await (0, helpers_1.runShellAsync)('node', [builderScript], { stdio: 'inherit', cwd: targetDir });
+        await (0, helpers_1.runShellAsync)('node', [visualizerScript], { stdio: 'inherit', cwd: targetDir });
         (0, logger_1.log)(`  ${(0, logger_1.c)('cyan', '▸')} Opening visualizer in browser...`);
         const child_process = require('child_process');
         if (process.platform === 'win32') {

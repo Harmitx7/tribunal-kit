@@ -78,14 +78,12 @@ function getBinaryPath() {
 
   // Second, try to find the binary in local dev target directories
   const candidatePaths = [
+    path.resolve(__dirname, '..', 'crates', 'core', 'target', 'release', `tribunal-core${ext}`),
+    path.resolve(__dirname, '..', 'crates', 'core', 'target', 'debug', `tribunal-core${ext}`),
     path.resolve(__dirname, '..', 'target', 'release', `tribunal-core${ext}`),
     path.resolve(__dirname, '..', 'target', 'debug', `tribunal-core${ext}`),
     path.resolve(__dirname, '..', '..', 'target', 'release', `tribunal-core${ext}`),
     path.resolve(__dirname, '..', '..', 'target', 'debug', `tribunal-core${ext}`),
-    path.resolve(process.cwd(), 'target', 'release', `tribunal-core${ext}`),
-    path.resolve(process.cwd(), 'target', 'debug', `tribunal-core${ext}`),
-    path.resolve(process.cwd(), 'tribunal-kit', 'target', 'release', `tribunal-core${ext}`),
-    path.resolve(process.cwd(), 'tribunal-kit', 'target', 'debug', `tribunal-core${ext}`),
   ];
 
   for (const candidate of candidatePaths) {
@@ -153,9 +151,9 @@ function runRustBinary(binPath, args) {
 }
 
 function runLegacyFallback() {
-  // Use the modular dist/ CLI with lazy-loaded commands for faster cold-start.
+  // Use the modular src/ CLI with lazy-loaded commands for faster cold-start.
   // Each command module is require()'d only when invoked (~70% fewer files loaded).
-  const { main } = require('../dist/cli.js');
+  const { main } = require('../src/cli.js');
   main().catch(err => {
     console.error(`\x1b[91m✖ Fatal Error:\x1b[0m ${err.message || err}`);
     process.exit(1);

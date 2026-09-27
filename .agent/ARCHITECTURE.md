@@ -1,4 +1,4 @@
-# 🏛️ Tribunal Anti-Hallucination Kit v6.0.1 — Architecture
+# 🏛️ Tribunal Anti-Hallucination Kit v9.2.5 — Architecture
 
 Works natively in **Antigravity**, **Cursor**, **Windsurf**, and any AI IDE that indexes `.agent/` folders.
 
@@ -38,17 +38,17 @@ flowchart TD
 
 ### Subsystem A: 2-Tier Lazy Skill Routing Engine
 
-- **Lightweight Index (`skill_topic_map.json`):** 218 skills indexed across 9 domain routes and file extensions (~500 tokens).
+- **Lightweight Index (`skill_topic_map.json`):** 219 skills indexed across 9 domain routes and file extensions (~500 tokens).
 - **Startup Overhead:** ~2,500 – 3,500 startup tokens vs 85,000 tokens previously (95% token reduction).
-- **Zero Exclusions:** All 218 skills remain indexed on disk; target skills are fetched dynamically on-demand via `view_file`.
+- **Zero Exclusions:** All 219 skills remain indexed on disk; target skills are fetched dynamically on-demand via `view_file`.
 
 ### Subsystem C: Stage-Partitioned Tribunal Pipeline
 
-- **57 Specialist Agents** (29 Parallel Reviewers + 28 Domain Specialists).
-- **3 Execution Waves:** Replaces monolithic fan-out with 3 partitioned passes (29 reviewers total):
+- **58 Specialist Agents** (30 Parallel Reviewers + 28 Domain Specialists).
+- **3 Execution Waves:** Replaces monolithic fan-out with 3 partitioned passes (30 reviewers total):
   - **Wave 1 (Core Integrity):** `precedence-reviewer`, `logic-reviewer`, `schema-reviewer`, `resilience-reviewer`
   - **Wave 2 (Security & Types):** `security-auditor`, `dependency-reviewer`, `type-safety-reviewer`, `complexity-reviewer`, `sql-reviewer`, `pipeline-reviewer`
-  - **Wave 3 (Domain & Performance):** `frontend-reviewer`, `performance-reviewer`, `mobile-reviewer`, `ai-code-reviewer`, `test-coverage-reviewer`, `accessibility-reviewer`, `ui-ux-auditor`, `review-animations`, `vitals-reviewer`, `db-latency-auditor`, `throughput-optimizer`
+  - **Wave 3 (Domain & Performance):** `frontend-reviewer`, `performance-reviewer`, `mobile-reviewer`, `ai-code-reviewer`, `test-coverage-reviewer`, `accessibility-reviewer`, `ui-ux-auditor`, `review-animations`, `vitals-reviewer`, `db-latency-auditor`, `throughput-optimizer`, `architecture-auditor`
 - **Attention Preservation:** Reviewers execute in scoped evaluation pairs of 4 to 8 specialists, eliminating hallucination risks and attention dilution.
 
 ---

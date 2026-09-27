@@ -84,7 +84,7 @@ Always announce the active specialist:
 
 ## 4. Skills & Tool Integration
 
-Tribunal Kit provides 185 deep skill modules located in:
+Tribunal Kit provides 219 deep skill modules located in:
 
 - `./skills/<skill-name>/SKILL.md`
 - `./.agent/skills/<skill-name>/SKILL.md`

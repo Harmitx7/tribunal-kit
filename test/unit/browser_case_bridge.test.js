@@ -1,7 +1,7 @@
 'use strict';
 
 const caseLaw = require('../../.agent/scripts/case_law_manager');
-const { codifyAuditViolations } = require('../../dist/browser/case_bridge');
+const { codifyAuditViolations } = require('../../src/browser/case_bridge');
 
 describe('browser/case_bridge.js — Empirical Case Law Bridge', () => {
   let mockIndex;

@@ -5,7 +5,7 @@ const {
   sanitizeContent,
   sandboxWebContent,
   isDomainAllowed,
-} = require('../../dist/browser/idpi');
+} = require('../../src/browser/idpi');
 
 describe('Indirect Prompt Injection (IDPI) Firewall', () => {
   test('flags overt prompt injection commands', () => {

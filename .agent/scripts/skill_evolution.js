@@ -27,7 +27,7 @@
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const readline = require('readline');
 
 // ── Colours ──────────────────────────────────────────────────────────────────
@@ -178,11 +178,11 @@ function semanticDelta(diffText, minWeight = 2) {
 // ── Git helpers ────────────────────────────────────────────────────────────────
 function getGitDiff(mode = 'staged') {
   try {
-    let cmd;
-    if (mode === 'staged') cmd = 'git diff --cached --unified=3';
-    else if (mode === 'head') cmd = 'git diff HEAD~1 HEAD --unified=3';
-    else cmd = 'git diff --unified=3';
-    return execSync(cmd, {
+    let args = [];
+    if (mode === 'staged') args = ['diff', '--cached', '--unified=3'];
+    else if (mode === 'head') args = ['diff', 'HEAD~1', 'HEAD', '--unified=3'];
+    else args = ['diff', '--unified=3'];
+    return execFileSync('git', args, {
       encoding: 'utf8',
       timeout: 10000,
       stdio: ['pipe', 'pipe', 'pipe'],

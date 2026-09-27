@@ -37,7 +37,7 @@ async function cmdMarathon(flags, processArgs, quiet = false) {
     }
     const marathonScript = path_1.default.join(agentDest, 'scripts', 'marathon_harness.js');
     try {
-        await (0, helpers_1.runShellAsync)(`node "${marathonScript}" ${argsStr}`, { stdio: 'inherit', cwd: targetDir });
+        await (0, helpers_1.runShellAsync)('node', [marathonScript, ...args], { stdio: 'inherit', cwd: targetDir });
     }
     catch {
         process.exit(1);

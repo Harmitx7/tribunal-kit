@@ -10,10 +10,10 @@ const child_process_1 = require("child_process");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const logger_1 = require("./logger");
-function runShellAsync(command, options) {
+function runShellAsync(command, args = [], options = {}) {
     return new Promise((resolve, reject) => {
         const timeoutMs = (options && options.timeout) || 120000;
-        const child = (0, child_process_1.spawn)(command, [], { ...options, shell: true });
+        const child = (0, child_process_1.spawn)(command, args, { ...options, shell: false });
         const timer = setTimeout(() => {
             child.kill('SIGTERM');
             reject(new Error(`Command timed out after ${timeoutMs}ms: ${command}`));
@@ -32,7 +32,7 @@ function runShellAsync(command, options) {
     });
 }
 function getKitAgent() {
-    // When installed via npm, the .agent/ folder is next to this script's package (two directories up from dist/commands)
+    // When installed via npm, the .agent/ folder is next to this script's package (two directories up from src/commands)
     // In src/utils, __dirname is .../src/utils. We go up to src, then to root. So path.resolve(__dirname, '../../.agent')
     const kitRoot = path_1.default.resolve(__dirname, '../..');
     const agentDir = path_1.default.join(kitRoot, '.agent');

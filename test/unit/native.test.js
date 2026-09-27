@@ -6,7 +6,7 @@ const {
   cmdContextCompress: _cmdContextCompress,
   cmdOptimizeStep: _cmdOptimizeStep,
   cmdImpactTier,
-} = require('../../dist/commands/native');
+} = require('../../src/commands/native');
 
 describe('native commands JS fallbacks', () => {
   test('cmdDagSchedule computes concurrent execution waves using topological sort', () => {

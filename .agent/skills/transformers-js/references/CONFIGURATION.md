@@ -215,7 +215,7 @@ Configure ONNX Runtime Web Assembly backend settings.
 import { env } from '@huggingface/transformers';
 
 // Set custom WASM paths
-env.backends.onnx.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/';
+env.backends.onnx.wasm.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web/src/';
 
 // Configure number of threads (Node.js only)
 env.backends.onnx.wasm.numThreads = 4;

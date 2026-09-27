@@ -34,7 +34,7 @@ describe('Minimal Change Governance Integration', () => {
 
   test('pipeline_engine.js integrates Minimal Change Gate in planPhase', () => {
     const pipeline = require('../../.agent/scripts/pipeline_engine');
-    const result = pipeline.planPhase('add retry policy', ['dist/cli.js']);
+    const result = pipeline.planPhase('add retry policy', ['src/cli.js']);
     expect(result).toHaveProperty('minimal_change');
     expect(result.minimal_change).not.toBeNull();
     expect(result.minimal_change).toHaveProperty('minimality_classification');

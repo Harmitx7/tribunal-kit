@@ -1,6 +1,6 @@
 module.exports = [
   {
-    ignores: ['dist/**', '**/dist/**', 'node_modules/**', 'target/**', 'coverage/**', 'scratch/**'],
+    ignores: ['node_modules/**', 'target/**', 'coverage/**', 'scratch/**'],
   },
   {
     files: ['**/*.js'],
@@ -22,6 +22,8 @@ module.exports = [
         setImmediate: 'readonly',
         performance: 'readonly',
         Buffer: 'readonly',
+        URL: 'readonly',
+        WebSocket: 'readonly',
         describe: 'readonly',
         test: 'readonly',
         it: 'readonly',
@@ -56,7 +58,7 @@ module.exports = [
     },
   },
   {
-    files: ['.opencode/**/*.js', '**/*.mjs'],
+    files: ['plugins/opencode/**/*.js', '**/*.mjs'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',

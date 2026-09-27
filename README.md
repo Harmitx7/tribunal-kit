@@ -15,7 +15,7 @@
   <!-- BADGES -->
   <div style="margin-bottom: 25px;">
     <a href="https://github.com/Harmitx7/tribunal-kit/releases">
-      <img src="https://img.shields.io/badge/Release-v9.2.4-blue?style=for-the-badge" alt="Release" />
+      <img src="https://img.shields.io/badge/Release-v9.2.5-blue?style=for-the-badge" alt="Release" />
     </a>
     <a href="https://www.npmjs.com/package/tribunal-kit">
       <img src="https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white&color=ff1637" alt="NPM Version" />
@@ -55,7 +55,7 @@ Tribunal Kit acts as a **neurosymbolic verification envelope**. It intercepts AI
 
 ## ⚡ Core Capabilities
 
-- **Parallel Review Pipeline:** 29 domain-specific reviewers analyze generated code simultaneously before the write operation.
+- **Parallel Review Pipeline:** 30 domain-specific reviewers analyze generated code simultaneously before the write operation.
 - **Compiled Rust Core:** Sub-10ms AST parsing, semantic graph extraction, and file synchronization using SHA-256 diffs.
 - **Phantom Package Guardrails:** Blocks "slopsquatting" and non-existent npm package imports during generation.
 - **Cross-Session Memory:** "Supreme Court Case Law" (`tk case`) records past AI mistakes so they are never repeated across sessions.
@@ -73,7 +73,7 @@ Tribunal Kit operates as a fast, intercepting middleware layer between the AI ge
 graph LR
     A[User Request] --> B[Context Broker]
     B --> C[Compiled Rust Core<br/>AST / Graph extraction]
-    C --> D[29 Parallel Reviewers]
+    C --> D[30 Parallel Reviewers]
     D -->|Violation| E[Inner-Loop Auto-Correct]
     E -.-> B
     D -->|Passed| F[Human Gate]
@@ -165,7 +165,7 @@ tribunal-kit/
 │   └── workflows/       # Slash command executions (e.g., /orchestrate)
 ├── bin/                 # CLI entry points (wrapper.js)
 ├── crates/core/         # Compiled Rust semantic engine
-├── dist/                # JS Fallback CLI runtime
+├── src/                # JS Fallback CLI runtime
 ├── docs/                # Project documentation and assets
 └── AGENTS.md            # Master Fabel protocol and rule registry
 ```

@@ -9,7 +9,7 @@ const fs = __importDefault(require("fs"));
 const path = __importDefault(require("path"));
 const os = __importDefault(require("os"));
 const https = __importDefault(require("https"));
-const { execSync, spawnSync } = require("child_process");
+const { execFileSync, spawnSync } = require("child_process");
 const logger = require("../utils/logger");
 const helpers = require("../utils/helpers");
 
@@ -195,7 +195,9 @@ async function cmdOptimizeSkill(flags, processArgs, quiet = false) {
         let rolloutLogs = "";
         let rolloutSuccess = true;
         try {
-            rolloutLogs = execSync(harnessCmd, { encoding: 'utf8', cwd: targetDir, stdio: 'pipe' });
+            const args = harnessCmd.trim().split(/\s+/);
+            const cmd = args.shift();
+            rolloutLogs = execFileSync(cmd, args, { encoding: 'utf8', cwd: targetDir, stdio: 'pipe' });
         } catch (e) {
             rolloutLogs = e.stdout + "\n" + e.stderr;
             rolloutSuccess = false;
@@ -293,7 +295,9 @@ Each edit must follow this schema:
         logger.log(`    ${logger.c('gray', '●')} Evaluating candidate skill against validation split...`);
         let valSuccess = true;
         try {
-            execSync(harnessCmd, { encoding: 'utf8', cwd: targetDir, stdio: 'pipe' });
+            const args = harnessCmd.trim().split(/\s+/);
+            const cmd = args.shift();
+            execFileSync(cmd, args, { encoding: 'utf8', cwd: targetDir, stdio: 'pipe' });
         } catch {
             valSuccess = false;
         }

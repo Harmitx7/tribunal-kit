@@ -6,7 +6,7 @@ const {
   truncateUTF8Bytes,
   toSemanticMarkdown,
   MAX_TRIMMED_BYTES,
-} = require('../../dist/browser/trimmer');
+} = require('../../src/browser/trimmer');
 
 describe('Browser Token Trimmer (htmltrim)', () => {
   test('strips scripts, styles, and HTML comments', () => {

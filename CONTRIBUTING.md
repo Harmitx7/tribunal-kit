@@ -35,14 +35,14 @@ tribunal-kit/
 │   ├── wrapper.js          # Main entry: routes to Rust binary or JS fallback
 │   ├── tribunal-kit.js     # Legacy JS CLI (1,500+ lines)
 │   └── mcp-server.js       # MCP server over JSON-RPC 2.0 / stdio
-├── dist/                   # Modular CLI (lazy-loaded commands)
+├── src/                   # Modular CLI (lazy-loaded commands)
 │   ├── cli.js              # CLI core with command routing
 │   ├── commands/           # Individual command modules
 │   ├── utils/              # Logger, helpers, version checker, hasher
 │   └── index.d.ts          # TypeScript declarations
 ├── crates/core/            # Rust core engine (Tokio-based)
 ├── .agent/                 # The intelligence payload (agents, skills, workflows)
-│   ├── agents/             # 57 specialist and reviewer agent definitions
+│   ├── agents/             # 58 specialist and reviewer agent definitions
 │   ├── skills/             # Reusable skill packs
 │   ├── workflows/          # 49 workflow definitions
 │   └── scripts/            # Automation scripts

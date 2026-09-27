@@ -195,7 +195,9 @@ function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
   console.log(`Max/type:     ${maxMutantsPerType}`);
   console.log(`\nExecuting baseline test run...`);
 
-  const baseline = spawnSync(testCommand, { shell: true, stdio: 'pipe' });
+  const cmdArgs = testCommand.trim().split(/\s+/);
+  const cmd = cmdArgs.shift();
+  const baseline = spawnSync(cmd, cmdArgs, { shell: false, stdio: 'pipe' });
   if (baseline.status !== 0) {
     console.error(`ERROR: Baseline test failed! Fix your tests before mutating.`);
     console.error(baseline.stderr.toString());
@@ -248,7 +250,7 @@ function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
       fs.writeFileSync(targetFile, mutatedContent, 'utf-8');
 
       process.stdout.write(`  [Mutant #${totalMutants}] ${mutation.name} (L${lineNum}) ... `);
-      const run = spawnSync(testCommand, { shell: true, stdio: 'pipe' });
+      const run = spawnSync(cmd, cmdArgs, { shell: false, stdio: 'pipe' });
 
       if (run.status !== 0) {
         console.log(`✅ KILLED`);

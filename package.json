@@ -1,6 +1,6 @@
 {
   "name": "tribunal-kit",
-  "version": "9.2.4",
+  "version": "9.2.5",
   "description": "Tribunal Kit is the governance layer for AI coding agents that stops AI hallucinations and npm ghost packages before they hit disk. Works with Cursor, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
@@ -60,13 +60,13 @@
   },
   "author": "Harmitx7",
   "license": "MIT",
-  "types": "dist/index.d.ts",
-  "main": "dist/cli.js",
+  "types": "src/index.d.ts",
+  "main": "src/cli.js",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/esm/index.mjs",
-      "require": "./dist/cli.js"
+      "types": "./src/index.d.ts",
+      "import": "./src/esm/index.mjs",
+      "require": "./src/cli.js"
     },
     "./package.json": "./package.json"
   },
@@ -78,26 +78,16 @@
   },
   "files": [
     "bin/",
-    "dist/",
+    "src/",
     "scripts/",
     "hooks/",
-    ".claude-plugin/",
-    ".cursor-plugin/",
-    ".codex-plugin/",
-    ".devin-plugin/",
-    ".hermes-plugin/",
-    ".kimi-plugin/",
-    ".opencode/",
+    "plugins/",
     ".agents/",
-    ".pi/",
-    "gemini-extension.json",
     ".agent/",
     ".claude/CLAUDE.md",
     "CLAUDE.md",
     "AGENTS.md",
     "skills/",
-    "marketplace.json",
-    "plugin.json",
     "README.md",
     "LICENSE",
     "SECURITY.md",
@@ -124,7 +114,7 @@
     "test:unit": "jest test/unit --coverage --forceExit",
     "test:integration": "jest test/integration --coverage --forceExit",
     "preversion": "node scripts/sync-version.js",
-    "version": "node scripts/apply-version.js && cargo build --release && node scripts/changelog.js && git add CHANGELOG.md plugin.json gemini-extension.json npm/core-template/package.json README.md crates/core/Cargo.toml Cargo.lock bin/adapter-install.js dist/tui/banner.js scripts/apply-version.js",
+    "version": "node scripts/apply-version.js && cargo build --release && node scripts/changelog.js && git add CHANGELOG.md plugins/core-plugin.json plugins/gemini/extension.json npm/core-template/package.json README.md crates/core/Cargo.toml Cargo.lock bin/adapter-install.js src/tui/banner.js scripts/apply-version.js",
     "changelog": "node scripts/changelog.js",
     "changelog:preview": "node scripts/changelog.js --preview",
     "sync": "node scripts/sync-version.js",
@@ -154,12 +144,12 @@
     "ws": "^8.21.3"
   },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^9.2.4",
-    "@tribunal-kit/core-darwin-x64": "^9.2.4",
-    "@tribunal-kit/core-linux-arm64": "^9.2.4",
-    "@tribunal-kit/core-linux-x64": "^9.2.4",
-    "@tribunal-kit/core-win32-arm64": "^9.2.4",
-    "@tribunal-kit/core-win32-x64": "^9.2.4"
+    "@tribunal-kit/core-darwin-arm64": "^9.2.5",
+    "@tribunal-kit/core-darwin-x64": "^9.2.5",
+    "@tribunal-kit/core-linux-arm64": "^9.2.5",
+    "@tribunal-kit/core-linux-x64": "^9.2.5",
+    "@tribunal-kit/core-win32-arm64": "^9.2.5",
+    "@tribunal-kit/core-win32-x64": "^9.2.5"
   },
   "jest": {
     "testMatch": [
@@ -170,7 +160,7 @@
     "collectCoverageFrom": [
       "bin/**/*.js",
       ".agent/scripts/**/*.js",
-      "dist/**/*.js"
+      "src/**/*.js"
     ]
   },
   "dependencies": {

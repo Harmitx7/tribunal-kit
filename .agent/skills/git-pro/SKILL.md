@@ -112,7 +112,7 @@ git worktree remove ../hotfix-v2.3.1
   "pipeline": {
     "build": {
       "dependsOn": ["^build"], // ← ^ means "build dependencies first"
-      "outputs": ["dist/**", ".next/**"]
+      "outputs": ["src/**", ".next/**"]
     },
     "test": {
       "dependsOn": ["build"],

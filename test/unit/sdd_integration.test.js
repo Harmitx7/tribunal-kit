@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 describe('Subagent-Driven Development (SDD) & Plugin Integration', () => {
   const repoRoot = path.resolve(__dirname, '..', '..');
@@ -22,7 +22,7 @@ describe('Subagent-Driven Development (SDD) & Plugin Integration', () => {
 
   test('SessionStart hook emits valid JSON with master governance', () => {
     const hookScript = path.join(repoRoot, 'hooks', 'session-start.js');
-    const output = execSync(`node "${hookScript}"`, { cwd: repoRoot, encoding: 'utf8' });
+    const output = execFileSync('node', [hookScript], { cwd: repoRoot, encoding: 'utf8' });
     const json = JSON.parse(output);
 
     expect(json).toHaveProperty('additionalContext');
@@ -32,7 +32,7 @@ describe('Subagent-Driven Development (SDD) & Plugin Integration', () => {
 
   test('SessionStart hook adapts output format when CURSOR_PLUGIN_ROOT is present', () => {
     const hookScript = path.join(repoRoot, 'hooks', 'session-start.js');
-    const output = execSync(`node "${hookScript}"`, {
+    const output = execFileSync('node', [hookScript], {
       cwd: repoRoot,
       encoding: 'utf8',
       env: { ...process.env, CURSOR_PLUGIN_ROOT: repoRoot },
@@ -66,7 +66,7 @@ describe('Subagent-Driven Development (SDD) & Plugin Integration', () => {
     const outPath = path.join(tempDir, 'task-2-extracted.md');
     const wrapperScript = path.join(repoRoot, 'bin', 'wrapper.js');
 
-    execSync(`node "${wrapperScript}" sdd brief --plan "${planPath}" --task 2 --out "${outPath}"`, {
+    execFileSync('node', [wrapperScript, 'sdd', 'brief', '--plan', planPath, '--task', '2', '--out', outPath], {
       cwd: repoRoot,
       encoding: 'utf8',
     });
@@ -93,14 +93,14 @@ describe('Subagent-Driven Development (SDD) & Plugin Integration', () => {
 
   test('all plugin manifests exist and are valid JSON', () => {
     const manifests = [
-      path.join(repoRoot, '.claude-plugin', 'plugin.json'),
-      path.join(repoRoot, '.claude-plugin', 'marketplace.json'),
-      path.join(repoRoot, '.cursor-plugin', 'plugin.json'),
-      path.join(repoRoot, '.codex-plugin', 'plugin.json'),
-      path.join(repoRoot, '.devin-plugin', 'plugin.json'),
-      path.join(repoRoot, '.kimi-plugin', 'plugin.json'),
-      path.join(repoRoot, '.agents', 'plugins', 'marketplace.json'),
-      path.join(repoRoot, 'gemini-extension.json'),
+      path.join(repoRoot, 'plugins', 'core-plugin.json'),
+      path.join(repoRoot, 'plugins', 'claude', 'plugin.json'),
+      path.join(repoRoot, 'plugins', 'claude', 'marketplace.json'),
+      path.join(repoRoot, 'plugins', 'cursor', 'plugin.json'),
+      path.join(repoRoot, 'plugins', 'codex', 'plugin.json'),
+      path.join(repoRoot, 'plugins', 'devin', 'plugin.json'),
+      path.join(repoRoot, 'plugins', 'kimi', 'plugin.json'),
+      path.join(repoRoot, 'plugins', 'gemini', 'extension.json'),
       path.join(repoRoot, 'hooks', 'hooks.json'),
       path.join(repoRoot, 'hooks', 'hooks-cursor.json'),
     ];
@@ -113,11 +113,11 @@ describe('Subagent-Driven Development (SDD) & Plugin Integration', () => {
   });
 
   test('Hermes, OpenCode, and Pi plugin integration files exist and are valid', () => {
-    const hermesYaml = path.join(repoRoot, '.hermes-plugin', 'plugin.yaml');
-    const hermesPy = path.join(repoRoot, '.hermes-plugin', '__init__.py');
-    const openCodeJs = path.join(repoRoot, '.opencode', 'plugins', 'tribunal.js');
-    const openCodeInstall = path.join(repoRoot, '.opencode', 'INSTALL.md');
-    const piExt = path.join(repoRoot, '.pi', 'extensions', 'tribunal.ts');
+    const hermesYaml = path.join(repoRoot, 'plugins', 'hermes', 'plugin.yaml');
+    const hermesPy = path.join(repoRoot, 'plugins', 'hermes', '__init__.py');
+    const openCodeJs = path.join(repoRoot, 'plugins', 'opencode', 'plugins', 'tribunal.js');
+    const openCodeInstall = path.join(repoRoot, 'plugins', 'opencode', 'INSTALL.md');
+    const piExt = path.join(repoRoot, 'plugins', 'pi', 'extensions', 'tribunal.ts');
 
     expect(fs.existsSync(hermesYaml)).toBe(true);
     expect(fs.existsSync(hermesPy)).toBe(true);

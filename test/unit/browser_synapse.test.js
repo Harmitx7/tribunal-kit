@@ -4,7 +4,7 @@ const {
   mapStylesToTailwind,
   synthesizeReactComponent,
   sanitizeComponentName,
-} = require('../../dist/browser/synapse');
+} = require('../../src/browser/synapse');
 
 describe('browser/synapse.js — Component Synapse Engine', () => {
   describe('sanitizeComponentName', () => {

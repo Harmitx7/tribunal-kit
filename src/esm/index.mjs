@@ -2,7 +2,7 @@
  * tribunal-kit ESM entry point.
  *
  * This thin wrapper re-exports the CJS modules as ESM using createRequire.
- * The actual implementation remains in CommonJS (dist/cli.js) to avoid
+ * The actual implementation remains in CommonJS (src/cli.js) to avoid
  * a full migration while providing ESM compatibility for modern bundlers.
  */
 

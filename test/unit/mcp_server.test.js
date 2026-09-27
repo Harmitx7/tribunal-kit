@@ -120,8 +120,20 @@ describe('MCP Server handleRequest', () => {
       },
     };
 
-    // We mock process.cwd or make sure .agent/ exists
-    // The test runs from the project root where .agent/ actually exists!
+    const cp = require('child_process');
+    const spawnSpy = jest.spyOn(cp, 'spawn').mockImplementation(() => {
+      const { EventEmitter } = require('events');
+      const child = new EventEmitter();
+      child.stdout = new EventEmitter();
+      child.stderr = new EventEmitter();
+      
+      process.nextTick(() => {
+        child.stdout.emit('data', JSON.stringify({ success: true }));
+        child.emit('close', 0);
+      });
+      return child;
+    });
+
     const result = await handleRequest(req);
     expect(result.content).toBeDefined();
     expect(result.content[0].type).toBe('text');
@@ -129,8 +141,9 @@ describe('MCP Server handleRequest', () => {
     const text = result.content[0].text;
     expect(text).toContain('Tribunal Context Broker');
     expect(text).toContain('Task: Build JWT authentication API with Hono');
-    // Ensure duplicate boilerplate is stripped from the returned prompt
     expect(text).not.toContain('AI coding assistants often fall into specific bad habits');
+    
+    spawnSpy.mockRestore();
   });
 
   test('get_tribunal_skill strips boilerplate', async () => {

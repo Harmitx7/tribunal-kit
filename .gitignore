@@ -101,3 +101,7 @@ logs/
 .cursorrules
 .windsurfrules
 
+skills/
+.agents/
+.agent_session.json
+.aider.conf.yml

@@ -1,6 +1,6 @@
 'use strict';
 
-const { cmdOptimizeSkill } = require('../../dist/commands/optimize');
+const { cmdOptimizeSkill } = require('../../src/commands/optimize');
 const fs = require('fs');
 const _path = require('path');
 const _child_process = require('child_process');

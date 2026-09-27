@@ -4,9 +4,9 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-// Test against the modular dist/ init command
-const { cmdInit, generateIDEBridges } = require('../../dist/commands/init');
-const { isSelfInstall, copyDir, countDir } = require('../../dist/utils/fs');
+// Test against the modular src/ init command
+const { cmdInit, generateIDEBridges } = require('../../src/commands/init');
+const { isSelfInstall, copyDir, countDir } = require('../../src/utils/fs');
 
 function makeTempDir(prefix = 'tk-init-test-') {
   return fs.mkdtempSync(path.join(os.tmpdir(), prefix));
@@ -58,7 +58,7 @@ function _createFakeAgentSource(dir) {
   return dir;
 }
 
-describe('dist/commands/init — cmdInit', () => {
+describe('src/commands/init — cmdInit', () => {
   let tmpTarget;
   let _originalCwd;
   let mockConsoleLog;
@@ -175,7 +175,7 @@ describe('dist/commands/init — cmdInit', () => {
   });
 });
 
-describe('dist/utils/fs — isSelfInstall', () => {
+describe('src/utils/fs — isSelfInstall', () => {
   test('returns true when target matches kitRoot path', () => {
     const kitRoot = path.resolve(__dirname, '../../');
     expect(isSelfInstall(kitRoot, 'tribunal-kit', kitRoot)).toBe(true);
@@ -211,7 +211,7 @@ describe('dist/utils/fs — isSelfInstall', () => {
   });
 });
 
-describe('dist/utils/fs — copyDir', () => {
+describe('src/utils/fs — copyDir', () => {
   let srcDir;
   let destDir;
 
@@ -264,7 +264,7 @@ describe('dist/utils/fs — copyDir', () => {
   });
 });
 
-describe('dist/utils/fs — countDir', () => {
+describe('src/utils/fs — countDir', () => {
   let tmpDir;
 
   beforeEach(() => {

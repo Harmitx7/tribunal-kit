@@ -42,6 +42,24 @@ describe('Context Compiler Engine', () => {
     expect(meta.skills).toContain('rust-pro');
   });
 
+  test('security: handles shell metacharacters in filenames safely (no command injection)', () => {
+    // Create a temporary file with shell metacharacters
+    const exploitName = 'exploit$(mkdir INJECTED).rs';
+    const exploitPath = path.resolve(workspaceRoot, 'scratch', exploitName);
+    fs.mkdirSync(path.dirname(exploitPath), { recursive: true });
+    fs.writeFileSync(exploitPath, 'pub fn test_exploit() {}', 'utf8');
+
+    // Run analysis - it should not crash or execute the injection
+    const meta = analyzeSingleFile(exploitPath, workspaceRoot);
+
+    expect(meta.mode).toBe('single_file');
+    // Ensure the injected directory was NOT created (checking safe execution)
+    const injectedDirPath = path.resolve(workspaceRoot, 'INJECTED');
+    expect(fs.existsSync(injectedDirPath)).toBe(false);
+    
+    fs.unlinkSync(exploitPath);
+  });
+
   test('renders high-grade Flight Data HUD Markdown dossier', () => {
     const meta = analyzeSingleFile(targetFile, workspaceRoot);
     const md = renderSingleFileDossier(meta);

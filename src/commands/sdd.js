@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const { execSync } = require("child_process");
+const { execFileSync } = require("child_process");
 const { c, err, log } = require("../utils/logger");
 
 function getOption(args, names) {
@@ -18,7 +18,7 @@ function getOption(args, names) {
 
 function findRepoRoot() {
   try {
-    const gitRoot = execSync("git rev-parse --show-toplevel", {
+    const gitRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "ignore"],
     }).trim();
@@ -137,13 +137,13 @@ function sddDiff(planFile, base, head, outFile) {
   if (!head) throw new Error("Missing required argument: --head <revision>");
 
   try {
-    execSync(`git rev-parse --verify --quiet "${base}"`, { stdio: "ignore" });
+    execFileSync('git', ['rev-parse', '--verify', '--quiet', base], { stdio: "ignore" });
   } catch {
     throw new Error(`Invalid BASE git revision: ${base}`);
   }
 
   try {
-    execSync(`git rev-parse --verify --quiet "${head}"`, { stdio: "ignore" });
+    execFileSync('git', ['rev-parse', '--verify', '--quiet', head], { stdio: "ignore" });
   } catch {
     throw new Error(`Invalid HEAD git revision: ${head}`);
   }
@@ -158,7 +158,7 @@ function sddDiff(planFile, base, head, outFile) {
     targetOut = path.join(ws, `review-${shortBase}..${shortHead}.diff`);
   }
 
-  const diffContent = execSync(`git diff "${base}..${head}"`, {
+  const diffContent = execFileSync('git', ['diff', `${base}..${head}`], {
     encoding: "utf8",
     maxBuffer: 10 * 1024 * 1024,
   });

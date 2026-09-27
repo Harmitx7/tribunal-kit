@@ -20,7 +20,7 @@
 
 'use strict';
 
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -42,25 +42,25 @@ const CATEGORIES = {
 };
 
 // ── Git Helpers ──────────────────────────────────────────
-function git(cmd) {
+
+
+function git(args) {
   try {
-    return execSync(`git ${cmd}`, { encoding: 'utf8', timeout: 10000 }).trim();
+    return execFileSync('git', args, { encoding: 'utf8', timeout: 10000, stdio: ['ignore', 'pipe', 'ignore'] }).trim();
   } catch {
     return '';
   }
 }
 
 function getLatestTag() {
-  return (
-    git('describe --tags --abbrev=0 2>nul') || git('describe --tags --abbrev=0 2>/dev/null') || ''
-  );
+  return git(['describe', '--tags', '--abbrev=0']);
 }
 
 function getCommits(since) {
   const range = since ? `${since}..HEAD` : 'HEAD';
   const MAX_COMMITS = 500;
   const format = '--format=%H||%s||%an||%ai';
-  const raw = git(`log ${range} ${format} --no-merges -n ${MAX_COMMITS}`);
+  const raw = git(['log', range, format, '--no-merges', '-n', MAX_COMMITS.toString()]);
   if (!raw) return [];
 
   return raw

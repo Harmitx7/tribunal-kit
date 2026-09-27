@@ -70,7 +70,7 @@ npm/packages/
 # DO NOT exclude these — they are required for tribunal-kit to function:
 # .agent/  → intelligence payload
 # bin/     → CLI entry points
-# dist/    → modular CLI + TypeScript types
+# src/    → modular CLI + TypeScript types
 # scripts/ → sync/changelog utilities
 
 # Exclude agent history

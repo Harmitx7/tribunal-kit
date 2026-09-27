@@ -835,7 +835,7 @@ async function handleRequest(req) {
           throw new RpcError(-32602, 'Missing required argument: url (string)');
         }
         try {
-          const { browse } = require('../dist/browser');
+          const { browse } = require('../src/browser');
           const result = await browse(url);
           return {
             content: [
@@ -859,7 +859,7 @@ async function handleRequest(req) {
           throw new RpcError(-32602, 'Missing required argument: url (string)');
         }
         try {
-          const { auditURL } = require('../dist/browser');
+          const { auditURL } = require('../src/browser');
           const report = await auditURL(url);
           return {
             content: [
@@ -885,7 +885,7 @@ async function handleRequest(req) {
           throw new RpcError(-32602, 'Missing required arguments: url1 and url2 (strings)');
         }
         try {
-          const { compareURLs } = require('../dist/browser');
+          const { compareURLs } = require('../src/browser');
           const result = await compareURLs(url1, url2, { maxDiffPercent });
           return {
             content: [
@@ -909,7 +909,7 @@ async function handleRequest(req) {
           throw new RpcError(-32602, 'Missing required argument: url (string)');
         }
         try {
-          const { launchBrowser, CdpClient, createNewTab, closeTab } = require('../dist/browser');
+          const { launchBrowser, CdpClient, createNewTab, closeTab } = require('../src/browser');
           const browser = await launchBrowser();
           let client = null;
           let tab = null;
@@ -949,7 +949,7 @@ async function handleRequest(req) {
           throw new RpcError(-32602, 'Missing required arguments: url and selector (strings)');
         }
         try {
-          const { deconstructElement } = require('../dist/browser');
+          const { deconstructElement } = require('../src/browser');
           const result = await deconstructElement(url, selector, { name });
           return {
             content: [
@@ -974,7 +974,7 @@ async function handleRequest(req) {
           throw new RpcError(-32602, 'Missing required argument: url (string)');
         }
         try {
-          const { captureRuntimeErrors, verifyRuntimeFix } = require('../dist/browser');
+          const { captureRuntimeErrors, verifyRuntimeFix } = require('../src/browser');
           const result = verify ? await verifyRuntimeFix(url) : await captureRuntimeErrors(url);
           return {
             content: [
@@ -998,7 +998,7 @@ async function handleRequest(req) {
           throw new RpcError(-32602, 'Missing required argument: url (string)');
         }
         try {
-          const { auditURL, codifyAuditViolations } = require('../dist/browser');
+          const { auditURL, codifyAuditViolations } = require('../src/browser');
           const report = await auditURL(url);
           const codified = codifyAuditViolations(report);
           return {
@@ -1211,7 +1211,7 @@ async function handleRequest(req) {
         }
         try {
           const { generateIDEBridges } = require(
-            path.resolve(__dirname, '../dist/commands/init.js'),
+            path.resolve(__dirname, '../src/commands/init.js'),
           );
           // generateIDEBridges is async
           await generateIDEBridges(cwd, agentDest, true);
@@ -1381,7 +1381,7 @@ async function handleRequest(req) {
           };
         }
         try {
-          const { _memoryRecall } = require('../dist/commands/memory.js');
+          const { _memoryRecall } = require('../src/commands/memory.js');
           const { results, tokens_used } = _memoryRecall(agentDest, query, budget);
           if (results.length === 0) {
             return { content: [{ type: 'text', text: `No memories match query: "${query}"` }] };
@@ -1422,7 +1422,7 @@ async function handleRequest(req) {
           };
         }
         try {
-          const { _memoryStore } = require('../dist/commands/memory.js');
+          const { _memoryStore } = require('../src/commands/memory.js');
           const result = _memoryStore(agentDest, memType, content, tags, null);
           return {
             content: [
@@ -1461,7 +1461,7 @@ async function handleRequest(req) {
           throw new RpcError(-32602, 'Missing or invalid required argument: text (string)');
         }
         try {
-          const { alignText, validateCodeContent } = require('../dist/commands/align.js');
+          const { alignText, validateCodeContent } = require('../src/commands/align.js');
           const aligned = alignText(text);
           const warnings = validateCodeContent(aligned);
 
