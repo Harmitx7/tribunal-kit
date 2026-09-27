@@ -116,6 +116,7 @@ function cmdHelp(quiet = false) {
     (0, logger_1.log)(cmd('heal', 'Runtime Sentinel error hunter & live fix verifier'));
     (0, logger_1.log)(cmd('sdd', 'Subagent-Driven Development workspace & brief slicing (workspace, brief, diff)'));
     (0, logger_1.log)(cmd('uninstall', 'Remove .agent/ folder from project'));
+    (0, logger_1.log)(cmd('system1', 'Manage Laya System-1 inference engine (enable, disable, status, clean)'));
     console.log();
     (0, logger_1.log)((0, logger_1.bold)('  Options'));
     (0, logger_1.log)(`  ${(0, logger_1.c)('gray', '─'.repeat(40))}`);
@@ -313,7 +314,12 @@ async function runWithUpdateCheck(command, flags) {
         }
         case 'impact-tier': {
             const cmdImpactTier = loadCmd('./commands/native', 'cmdImpactTier');
-            cmdImpactTier(process.argv, quiet);
+            await cmdImpactTier(process.argv, quiet);
+            break;
+        }
+        case 'system1': {
+            const cmdSystem1 = loadCmd('./commands/system1', 'cmdSystem1');
+            await cmdSystem1(flags, process.argv, quiet);
             break;
         }
         case 'browse': {

@@ -86,6 +86,11 @@ Before executing dedicated UI/UX audits or design-system reviews, you MUST inspe
 - **Focus:** Screenshot or DOM layout verification.
 - **Check:** Checks vertical overflow, layout shifts (CLS), alignment shifts, and contrast ratios.
 
+### 8. anti-slop-auditor (Wave 3)
+
+- **Focus:** Enforcing Purpose-Gates and Liveliness Dials.
+- **Check:** Rejects generic AI clichés and blocks Purpose-Gated techniques (gradients, glassmorphism) if a justification is missing.
+
 ---
 
 ## Verdict System

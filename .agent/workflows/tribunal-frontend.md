@@ -96,6 +96,12 @@ Before auditing React components or frontend UI logic, you MUST inspect:
 - Elements appearing from `scale(0)` instead of `0.95`
 - Non-interruptible motion or missing hover/active states
 
+### anti-slop-auditor (Wave 3)
+
+- Enforces the Purpose-Gate (requires explicit reason for gradients, glassmorphism, etc.)
+- Enforces the Liveliness Dials (Energy, Rhythm, Motion must be declared)
+- Rejects generic AI clichés, fake statistics, and card-in-card mud
+
 ---
 
 ## Verdict System

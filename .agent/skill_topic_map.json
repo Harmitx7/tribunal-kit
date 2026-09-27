@@ -1,9 +1,10 @@
 {
   "version": "3.0.0",
-  "total_skills": 210,
+  "total_skills": 211,
   "description": "Lightweight 2-tier domain routing map for Tribunal Agent Kit v3.0.0",
   "domain_routes": {
     "frontend": [
+      "anti-slop-enforcement",
       "react-specialist",
       "nextjs-react-expert",
       "vue-expert",

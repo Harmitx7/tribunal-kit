@@ -167,6 +167,22 @@ function main() {
   // Extract the command (the first non-flag argument)
   const command = args.find(a => !a.startsWith('-'));
 
+  // SYSTEM-1 LAYA INTERCEPTION
+  // If Laya is explicitly enabled globally, route impact-tier to JS fallback
+  if (command === 'impact-tier') {
+    try {
+      const layaConfigPath = path.join(os.homedir(), '.tribunal-kit', 'laya', 'config.json');
+      if (fs.existsSync(layaConfigPath)) {
+        const layaConfig = JSON.parse(fs.readFileSync(layaConfigPath, 'utf8'));
+        if (layaConfig.enabled) {
+          RUST_COMMANDS.delete('impact-tier');
+        }
+      }
+    } catch {
+      // Safely ignore corrupted config; defaults to Rust path
+    }
+  }
+
   if (command && RUST_COMMANDS.has(command)) {
     const binPath = getBinaryPath();
 

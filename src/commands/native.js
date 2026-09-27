@@ -219,13 +219,43 @@ function cmdOptimizeStep(processArgs, quiet = false) {
   console.log(JSON.stringify(result));
   return true;
 }
-function cmdImpactTier(processArgs, quiet = false) {
+async function cmdImpactTier(processArgs, quiet = false) {
   const args = processArgs.slice(3);
   const files = getOption(args, ["--files"]) || "";
   const lines = parseInt(getOption(args, ["--lines"]) || "0", 10);
   const task = getOption(args, ["--task"]) || "";
 
   const fileList = files ? files.split(",").map(f => f.trim()).filter(Boolean) : [];
+  
+  // -- LAYA SYSTEM-1 INTERCEPTION --
+  try {
+    const { System1Provider } = require('../system1/provider');
+    const provider = new System1Provider();
+    if (provider.isAvailable()) {
+      if (process.env.TK_VERBOSE || process.env.VERBOSE) {
+        console.error(`\x1b[90m⚡ System-1 Laya active. Routing impact classification to local ONNX model...\x1b[0m`);
+      }
+      const layaTier = await provider.classifyImpact(fileList, task);
+      const tierNames = ["Fast-Pass", "Express Pass", "Targeted Audit", "Full Gauntlet"];
+      const result = {
+        tier: layaTier,
+        tier_name: tierNames[layaTier],
+        file_count: fileList.length,
+        line_count: lines,
+        socratic_gate: layaTier >= 3 ? "required" : layaTier >= 2 ? "conditional" : "bypass",
+        _provider: "laya"
+      };
+      if (!quiet) console.error(`✓ Impact Tier: ${layaTier} (${tierNames[layaTier]}) [Laya]`);
+      console.log(JSON.stringify(result));
+      return true;
+    }
+  } catch (err) {
+    if (process.env.TK_VERBOSE || process.env.VERBOSE) {
+      console.error(`\x1b[93m⚠ Laya System-1 failure: ${err.message}. Falling back to deterministic heuristic.\x1b[0m`);
+    }
+  }
+  // -- END LAYA INTERCEPTION --
+
   const fileCount = fileList.length;
 
   // Tier classification heuristics (mirrors Rust ImpactTier logic)

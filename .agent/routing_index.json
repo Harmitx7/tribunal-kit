@@ -2,9 +2,9 @@
   "version": "3.0.0",
   "last_updated": "2026-07-30",
   "summary": {
-    "total_agents": 52,
+    "total_agents": 53,
     "total_workflows": 45,
-    "total_skills": 185
+    "total_skills": 186
   },
   "agents": [
     {
@@ -24,6 +24,15 @@
       "routing_tier": "core",
       "description": "OWASP Top 10 security scanner and vulnerability auditor.",
       "trigger_keywords": ["security", "owasp", "injection", "vulnerability", "auth"]
+    },
+    {
+      "name": "anti-slop-auditor",
+      "file": "agents/anti-slop-auditor.md",
+      "type": "reviewer",
+      "routing_domain": "frontend",
+      "routing_tier": "specialized",
+      "description": "Anti-slop rules, Purpose-Gates, and Liveliness Dials auditor.",
+      "trigger_keywords": ["anti-slop", "cliche", "generic", "ui audit", "purpose-gate"]
     },
     {
       "name": "pipeline-reviewer",

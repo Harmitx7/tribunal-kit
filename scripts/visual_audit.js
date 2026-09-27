@@ -35,6 +35,23 @@ function runVisualAudit(filePath) {
     score -= 25;
   }
 
+  // 1.5 Anti-Slop Copywriting check
+  const SLOP_PHRASES = [
+    "10,000+ users", "10K+ users", "99.9% uptime", "AI Powered", 
+    "Revolutionary", "Next Generation", "Seamless experience", "Cutting Edge", 
+    "SOC 2 compliant", "Enterprise-grade security", "300% faster"
+  ];
+  const foundSlop = SLOP_PHRASES.find(phrase => content.toLowerCase().includes(phrase.toLowerCase()));
+  if (foundSlop) {
+    violations.push({
+      rule: 'ANTI_SLOP_COPYWRITING',
+      severity: 'REJECTED',
+      description: `Fabricated claim or cliché phrase found: "${foundSlop}". Use real data or honest placeholders.`,
+      impact: -25,
+    });
+    score -= 25;
+  }
+
   // 2. Raw Hex without OKLCH or design tokens
   const rawHexRegex = /#[0-9a-fA-F]{6}\b/g;
   const hexMatches = content.match(rawHexRegex) || [];

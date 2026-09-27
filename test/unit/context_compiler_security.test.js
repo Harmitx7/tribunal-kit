@@ -304,8 +304,8 @@ describe('Security: execFileSync is used instead of execSync for grep', () => {
     expect(source).toMatch(/\bexecFileSync\b/);
   });
 
-  test('dist/commands/sdd.js uses execFileSync for git operations with user input', () => {
-    const sourcePath = path.resolve(__dirname, '../../dist/commands/sdd.js');
+  test('src/commands/sdd.js uses execFileSync for git operations with user input', () => {
+    const sourcePath = path.resolve(__dirname, '../../src/commands/sdd.js');
     const source = fs.readFileSync(sourcePath, 'utf8');
 
     // sdd.js should NOT have template-literal git commands with user input
@@ -313,8 +313,8 @@ describe('Security: execFileSync is used instead of execSync for grep', () => {
     expect(source).not.toMatch(/execSync\s*\(\s*`git diff.*\$\{/);
 
     // Verify execFileSync is used for git rev-parse and git diff
-    expect(source).toMatch(/execFileSync\s*\(\s*"git",\s*\["rev-parse"/);
-    expect(source).toMatch(/execFileSync\s*\(\s*"git",\s*\["diff"/);
+    expect(source).toMatch(/execFileSync\s*\(\s*['"]git['"],\s*\[['"]rev-parse['"]/);
+    expect(source).toMatch(/execFileSync\s*\(\s*['"]git['"],\s*\[['"]diff['"]/);
   });
 });
 

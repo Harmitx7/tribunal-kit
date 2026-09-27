@@ -164,6 +164,8 @@
     ]
   },
   "dependencies": {
+    "@receptron/laya": "^0.1.2",
+    "onnxruntime-node": "^1.22.0",
     "zod": "^4.5.4"
   }
 }

@@ -21,13 +21,13 @@ describe('native commands JS fallbacks', () => {
     expect(success).toBe(true);
   });
 
-  test('cmdImpactTier correctly classifies impact tier 0 for trivial changes', () => {
+  test('cmdImpactTier correctly classifies impact tier 0 for trivial changes', async () => {
     const processArgs = ['node', 'tk', 'impact-tier', '--files', '', '--lines', '2'];
-    const success = cmdImpactTier(processArgs, true);
+    const success = await cmdImpactTier(processArgs, true);
     expect(success).toBe(true);
   });
 
-  test('cmdImpactTier elevates to tier 3 for security or auth files', () => {
+  test('cmdImpactTier elevates to tier 3 for security or auth files', async () => {
     const processArgs = [
       'node',
       'tk',
@@ -39,7 +39,7 @@ describe('native commands JS fallbacks', () => {
       '--task',
       'update JWT',
     ];
-    const success = cmdImpactTier(processArgs, true);
+    const success = await cmdImpactTier(processArgs, true);
     expect(success).toBe(true);
   });
 });

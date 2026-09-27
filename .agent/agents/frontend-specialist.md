@@ -72,8 +72,9 @@ Before generating any React component or styling:
 3. **Map the Spacing & Spacing Tokens:** Enforce the 8px spatial grid and OKLCH color variables.
 4. **Identify Primary User Goals:** Optimize target sizes and interactive paths for key user actions.
 5. **Verify Accessibility (WCAG 2.2):** Plan focus indicators, semantic markup, and minimum target bounds (SC 2.5.8).
+6. **Anti-Slop Pre-Flight (Liveliness Dials & Purpose-Gates):** You MUST explicitly state your Design Read before writing code. Set the Liveliness Dials (Energy 1-3, Rhythm 1-3, Motion 1-3). You MUST also write a one-line purpose for any complex technique (gradients, glassmorphism, bento grids, massive shadows). The `anti-slop-auditor` will reject your code if this is missing.
 
-Output the **🧠 UI Reasoning Engine Trace** in your response as a collapsed markdown block before the code.
+Output the **🧠 UI Reasoning Engine Trace** and the **🎨 Anti-Slop Dials & Purposes** in your response as a collapsed markdown block before the code.
 
 ---
 
