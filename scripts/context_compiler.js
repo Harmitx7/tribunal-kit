@@ -17,7 +17,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 // Optional ANSI colors
 let C = {
@@ -110,29 +110,51 @@ function extractFileSkeleton(filePath, rawContent) {
         }
       }
 
-      if (!corePath && process.env.TRIBUNAL_CORE_PATH && fs.existsSync(process.env.TRIBUNAL_CORE_PATH)) {
+      if (
+        !corePath &&
+        process.env.TRIBUNAL_CORE_PATH &&
+        fs.existsSync(process.env.TRIBUNAL_CORE_PATH)
+      ) {
         corePath = process.env.TRIBUNAL_CORE_PATH;
       }
 
       if (corePath && fs.existsSync(corePath)) {
-        const result = require('child_process').execSync(`"${corePath}" ast-extract --file "${absPath}"`, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+        // SECURITY: Use execFileSync with argument array to prevent command injection via absPath
+        const result = execFileSync(corePath, ['ast-extract', '--file', absPath], {
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'ignore'],
+        });
         const data = JSON.parse(result);
         if (data && data.success) {
-           // We map the Rust JSON into the exact format expected by the rest of the JS code
-           const mappedImports = data.imports.map(i => ({ source: i.source, specifiers: i.specifiers, line: 0 }));
-           const mappedExports = data.exports.map(e => ({ kind: e.kind, name: e.name, signature: e.signature, line: 0 }));
-           const mappedTypes = data.types.map(t => ({ kind: t.kind, name: t.name, signature: t.signature, line: 0 }));
-           
-           return {
-             imports: mappedImports,
-             exports: mappedExports,
-             types: mappedTypes,
-             landmines: data.landmines,
-             interfaceHash: computeInterfaceHash(mappedExports.concat(mappedTypes))
-           };
+          // We map the Rust JSON into the exact format expected by the rest of the JS code
+          const mappedImports = data.imports.map(i => ({
+            source: i.source,
+            specifiers: i.specifiers,
+            line: 0,
+          }));
+          const mappedExports = data.exports.map(e => ({
+            kind: e.kind,
+            name: e.name,
+            signature: e.signature,
+            line: 0,
+          }));
+          const mappedTypes = data.types.map(t => ({
+            kind: t.kind,
+            name: t.name,
+            signature: t.signature,
+            line: 0,
+          }));
+
+          return {
+            imports: mappedImports,
+            exports: mappedExports,
+            types: mappedTypes,
+            landmines: data.landmines,
+            interfaceHash: computeInterfaceHash(mappedExports.concat(mappedTypes)),
+          };
         }
       }
-    } catch(_e) {
+    } catch (_e) {
       // Silent fallback to Regex parsing
     }
 
@@ -341,27 +363,63 @@ function findInboundCallers(targetFilePath, exportNames, workspaceRoot = process
   exportNames.slice(0, 8).forEach(n => searchTokens.add(n));
 
   // Try using git grep or ripgrep if available
+  // SECURITY: Use execFileSync with argument arrays to prevent OS command injection (CWE-78).
+  // The token is derived from the filename and may contain shell metacharacters like $(...).
+  // Using execFileSync bypasses the shell entirely, so no interpolation attack is possible.
   const grepOutputs = [];
   try {
     for (const token of searchTokens) {
       if (!token || token.length < 3) continue;
       try {
-        const cmd = `git grep -n -I "${token}" -- ":!docs/" ":!node_modules/" ":!dist/" ":!target/" ":!*.lock"`;
-        const res = execSync(cmd, {
-          cwd: workspaceRoot,
-          stdio: ['ignore', 'pipe', 'ignore'],
-          encoding: 'utf8',
-        });
+        // Use -e to prevent tokens starting with '-' from being parsed as options
+        const res = execFileSync(
+          'git',
+          [
+            'grep',
+            '-n',
+            '-I',
+            '-e',
+            token,
+            '--',
+            ':!docs/',
+            ':!node_modules/',
+            ':!dist/',
+            ':!target/',
+            ':!*.lock',
+          ],
+          {
+            cwd: workspaceRoot,
+            stdio: ['ignore', 'pipe', 'ignore'],
+            encoding: 'utf8',
+          },
+        );
         if (res) grepOutputs.push(...res.split('\n').filter(Boolean));
       } catch {
         // Ripgrep fallback
         try {
-          const cmd = `rg -n --no-heading --color=never "${token}" -g "!docs/**" -g "!node_modules/**" -g "!target/**" -g "!dist/**"`;
-          const res = execSync(cmd, {
-            cwd: workspaceRoot,
-            stdio: ['ignore', 'pipe', 'ignore'],
-            encoding: 'utf8',
-          });
+          const res = execFileSync(
+            'rg',
+            [
+              '--line-number',
+              '--no-heading',
+              '--color=never',
+              '-g',
+              '!docs/**',
+              '-g',
+              '!node_modules/**',
+              '-g',
+              '!target/**',
+              '-g',
+              '!dist/**',
+              '-e',
+              token,
+            ],
+            {
+              cwd: workspaceRoot,
+              stdio: ['ignore', 'pipe', 'ignore'],
+              encoding: 'utf8',
+            },
+          );
           if (res) grepOutputs.push(...res.split('\n').filter(Boolean));
         } catch {
           // Silent catch
