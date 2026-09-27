@@ -15,7 +15,7 @@
   <!-- BADGES -->
   <div style="margin-bottom: 25px;">
     <a href="https://github.com/Harmitx7/tribunal-kit/releases">
-      <img src="https://img.shields.io/badge/Release-v9.2.4-blue?style=for-the-badge" alt="Release" />
+      <img src="https://img.shields.io/badge/Release-v9.2.5-blue?style=for-the-badge" alt="Release" />
     </a>
     <a href="https://www.npmjs.com/package/tribunal-kit">
       <img src="https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white&color=ff1637" alt="NPM Version" />
