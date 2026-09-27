@@ -4,9 +4,9 @@
 
 | Version | Supported              |
 | ------- | ---------------------- |
-| 7.x     | ✅ Active support      |
-| 6.x     | ⚠️ Critical fixes only |
-| < 6.0   | ❌ End of life         |
+| 9.x     | ✅ Active support      |
+| 8.x     | ⚠️ Critical fixes only |
+| < 8.0   | ❌ End of life         |
 
 ## Reporting a Vulnerability
 
