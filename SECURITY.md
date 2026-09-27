@@ -50,3 +50,9 @@ Tribunal Kit follows these security principles:
 - All releases are published from CI via GitHub Actions
 - Platform binaries are built in GitHub-hosted runners with pinned action versions
 - The package uses `npm provenance` for verifiable supply chain attestation
+
+## Acknowledgments
+
+We would like to thank the following security researchers for responsibly disclosing vulnerabilities:
+
+- **Michel** — For identifying and responsibly disclosing a command injection vulnerability (fixed in v9.2.4).
