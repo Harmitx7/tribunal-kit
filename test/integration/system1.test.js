@@ -64,7 +64,7 @@ describe('System-1 CLI & Fallback routing', () => {
     if (!fs.existsSync(layaDir)) fs.mkdirSync(layaDir, { recursive: true });
     
     // Create a dummy config
-    fs.writeFileSync(configPath, JSON.stringify({ enabled: true }));
+    fs.writeFileSync(configPath, JSON.stringify({ enabled: true, mocked: true }));
     
     const result = runWrapper(['system1', 'disable']);
     expect(result.status).toBe(0);
@@ -84,7 +84,7 @@ describe('System-1 CLI & Fallback routing', () => {
     if (!fs.existsSync(layaDir)) fs.mkdirSync(layaDir, { recursive: true });
     
     // Explicitly enable Laya globally to trigger interception in wrapper.js
-    fs.writeFileSync(configPath, JSON.stringify({ enabled: true }));
+    fs.writeFileSync(configPath, JSON.stringify({ enabled: true, mocked: true }));
     
     // Create a dummy model so isAvailable() returns true and classification is attempted
     const modelsDir = path.join(layaDir, 'models');

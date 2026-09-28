@@ -221,7 +221,7 @@ The Human Gate is never skipped. No code is written to a file without explicit u
 | Mobile/Cross-platform | logic + security + mobile-reviewer + type-safety + complexity-reviewer                              |
 | CI/CD / DevOps        | pipeline-reviewer + security + dependency + resilience + complexity-reviewer                        |
 | Any domain            | + performance (if optimization)                                                                     |
-| Before merge          | /tribunal-full (all 30 reviewers)                                                                   |
+| Before merge          | /tribunal-full (all 31 reviewers)                                                                   |
 
 ---
 

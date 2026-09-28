@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@receptron/laya": "^0.1.2",
-    "onnxruntime-node": "^1.22.0"
+    "@receptron/laya": "0.1.2",
+    "onnxruntime-node": "1.22.0"
   }
 }

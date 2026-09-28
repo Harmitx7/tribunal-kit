@@ -60,10 +60,23 @@ async function cmdSystem1Enable(quiet) {
 
     try {
         if (!fs.existsSync(layaDir)) fs.mkdirSync(layaDir, { recursive: true });
-        if (!fs.existsSync(modelsDir)) fs.mkdirSync(modelsDir, { recursive: true });
+        
+        // Concurrency Lock: Prevent multiple processes from running npm ci or downloading simultaneously
+        const lockDir = path.join(layaDir, '.install.lock');
+        try {
+            fs.mkdirSync(lockDir);
+        } catch (err) {
+            if (err.code === 'EEXIST') {
+                throw new Error("System-1 installation is currently in progress by another process. Please wait.");
+            }
+            throw err;
+        }
 
-        // 1. Install @receptron/laya with strictly reproducible dependency tree
-        if (!quiet) log(`  ${c('yellow', '1.')} Installing local runtime dependency (clean install)...`);
+        try {
+            if (!fs.existsSync(modelsDir)) fs.mkdirSync(modelsDir, { recursive: true });
+
+            // 1. Install @receptron/laya with strictly reproducible dependency tree
+            if (!quiet) log(`  ${c('yellow', '1.')} Installing local runtime dependency (clean install)...`);
         
         fs.copyFileSync(path.join(__dirname, '../system1/laya-package.json'), path.join(layaDir, 'package.json'));
         fs.copyFileSync(path.join(__dirname, '../system1/laya-package-lock.json'), path.join(layaDir, 'package-lock.json'));
@@ -73,16 +86,26 @@ async function cmdSystem1Enable(quiet) {
             throw new Error(`Invalid path characters in Laya directory: ${layaDir}`);
         }
 
-        // Use npm prefix to isolate installation
-        const npmExec = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-        child_process.execFileSync(npmExec, [
-            'ci',
-            '--prefix', layaDir,
-            '--no-audit',
-            '--no-fund'
-        ], {
+        let cmd;
+        let args;
+        
+        if (process.platform === 'win32') {
+            const nodeDir = path.dirname(process.execPath);
+            const defaultNpmCli = path.join(nodeDir, 'node_modules', 'npm', 'bin', 'npm-cli.js');
+            
+            if (!fs.existsSync(defaultNpmCli)) {
+                throw new Error("Could not securely locate npm-cli.js for direct execution on Windows.");
+            }
+            cmd = process.execPath;
+            args = [defaultNpmCli, 'ci', '--prefix', layaDir, '--no-audit', '--no-fund'];
+        } else {
+            cmd = 'npm';
+            args = ['ci', '--prefix', layaDir, '--no-audit', '--no-fund'];
+        }
+
+        child_process.execFileSync(cmd, args, {
             stdio: quiet ? 'ignore' : 'pipe',
-            shell: process.platform === 'win32'
+            shell: false
         });
 
         // 2. Download model safely without initializing ONNX Runtime
@@ -145,6 +168,9 @@ async function cmdSystem1Enable(quiet) {
         if (!quiet) {
             log(`\n  ${c('green', '✓')} System-1 successfully enabled!`);
             dim(`  Impact tier resolution will now use local inference.`);
+        }
+        } finally {
+            try { fs.rmdirSync(lockDir, { recursive: true }); } catch (e) {}
         }
     } catch (error) {
         err(`\n  ✖ Failed to enable System-1: ${error.message}`);

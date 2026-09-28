@@ -3,7 +3,7 @@ version: 2.0.0
 source_file: "crates/core/src/commands/context_compress.rs"
 source_hash: "8f71783b939cf30b"
 interface_hash: "609c7c37428121cc"
-last_synced: "2026-09-27"
+last_synced: "2026-09-28"
 domain_layer: "Command / Dispatch Layer"
 associated_skills:
   - rust-pro

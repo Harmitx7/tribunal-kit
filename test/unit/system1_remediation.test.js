@@ -14,8 +14,9 @@ describe('System-1 Laya Security Remediations', () => {
     });
 
     test('Test B: Shell disabled', () => {
-        // Assert that we use process.platform check to pick executable and shell: false
-        expect(system1Src).toContain(`const npmExec = process.platform === 'win32' ? 'npm.cmd' : 'npm';`);
+        // Assert that we use process.execPath for win32 and shell: false
+        expect(system1Src).toContain(`cmd = process.execPath;`);
+        expect(system1Src).toContain(`cmd = 'npm';`);
         expect(system1Src).toContain(`shell: false`);
         expect(system1Src).not.toContain(`shell: process.platform === 'win32'`);
         expect(system1Src).not.toContain(`shell: true`);
