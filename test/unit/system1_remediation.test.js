@@ -13,13 +13,12 @@ describe('System-1 Laya Security Remediations', () => {
         expect(system1Src).toContain('const RECEPTRON_LAYA_VERSION = "0.1.2"');
     });
 
-    test('Test B: Shell disabled', () => {
-        // Assert that we use process.execPath for win32 and shell: false
-        expect(system1Src).toContain(`cmd = process.execPath;`);
+    test('Test B: Windows NPM Resolution', () => {
+        // Assert that we use npm.cmd for win32 and shell: true for Windows
+        expect(system1Src).toContain(`cmd = 'npm.cmd';`);
+        expect(system1Src).toContain(`shell = true; // Windows requires shell: true for .cmd files`);
         expect(system1Src).toContain(`cmd = 'npm';`);
-        expect(system1Src).toContain(`shell: false`);
-        expect(system1Src).not.toContain(`shell: process.platform === 'win32'`);
-        expect(system1Src).not.toContain(`shell: true`);
+        expect(system1Src).toContain(`shell: shell`);
     });
 
     describe('SHA-256 verification', () => {

@@ -61,15 +61,47 @@ async function cmdSystem1Enable(quiet) {
     try {
         if (!fs.existsSync(layaDir)) fs.mkdirSync(layaDir, { recursive: true });
         
-        // Concurrency Lock: Prevent multiple processes from running npm ci or downloading simultaneously
         const lockDir = path.join(layaDir, '.install.lock');
+        const lockPidFile = path.join(lockDir, 'pid');
         try {
             fs.mkdirSync(lockDir);
+            fs.writeFileSync(lockPidFile, String(process.pid));
         } catch (err) {
             if (err.code === 'EEXIST') {
-                throw new Error("System-1 installation is currently in progress by another process. Please wait.");
+                let isStale = false;
+                try {
+                    const pidStr = fs.readFileSync(lockPidFile, 'utf8');
+                    const pid = parseInt(pidStr, 10);
+                    if (pid > 0) {
+                        try {
+                            process.kill(pid, 0);
+                        } catch (e) {
+                            if (e.code === 'ESRCH') isStale = true;
+                        }
+                    } else {
+                        const stat = fs.statSync(lockPidFile);
+                        if (Date.now() - stat.mtimeMs > 900000) isStale = true;
+                    }
+                } catch (e) {
+                    try {
+                        const stat = fs.statSync(lockDir);
+                        if (Date.now() - stat.mtimeMs > 900000) isStale = true;
+                    } catch (e2) {
+                        isStale = true;
+                    }
+                }
+                
+                if (isStale) {
+                    if (!quiet) log(`  ${c('yellow', '⚠')} Found stale lock from previous crash. Recovering...`);
+                    fs.rmSync(lockDir, { recursive: true, force: true });
+                    fs.mkdirSync(lockDir);
+                    fs.writeFileSync(lockPidFile, String(process.pid));
+                } else {
+                    throw new Error("System-1 installation is currently in progress by another process (PID is active). Please wait.");
+                }
+            } else {
+                throw err;
             }
-            throw err;
         }
 
         try {
@@ -87,25 +119,19 @@ async function cmdSystem1Enable(quiet) {
         }
 
         let cmd;
-        let args;
+        let args = ['ci', '--prefix', layaDir, '--no-audit', '--no-fund'];
+        let shell = false;
         
         if (process.platform === 'win32') {
-            const nodeDir = path.dirname(process.execPath);
-            const defaultNpmCli = path.join(nodeDir, 'node_modules', 'npm', 'bin', 'npm-cli.js');
-            
-            if (!fs.existsSync(defaultNpmCli)) {
-                throw new Error("Could not securely locate npm-cli.js for direct execution on Windows.");
-            }
-            cmd = process.execPath;
-            args = [defaultNpmCli, 'ci', '--prefix', layaDir, '--no-audit', '--no-fund'];
+            cmd = 'npm.cmd';
+            shell = true; // Windows requires shell: true for .cmd files
         } else {
             cmd = 'npm';
-            args = ['ci', '--prefix', layaDir, '--no-audit', '--no-fund'];
         }
 
         child_process.execFileSync(cmd, args, {
             stdio: quiet ? 'ignore' : 'pipe',
-            shell: false
+            shell: shell
         });
 
         // 2. Download model safely without initializing ONNX Runtime
@@ -170,7 +196,7 @@ async function cmdSystem1Enable(quiet) {
             dim(`  Impact tier resolution will now use local inference.`);
         }
         } finally {
-            try { fs.rmdirSync(lockDir, { recursive: true }); } catch (e) {}
+            try { fs.rmSync(lockDir, { recursive: true, force: true }); } catch (e) {}
         }
     } catch (error) {
         err(`\n  ✖ Failed to enable System-1: ${error.message}`);

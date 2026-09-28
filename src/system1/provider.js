@@ -28,8 +28,10 @@ class System1Provider {
     isAvailable() {
         if (!fs.existsSync(this.configPath)) return false;
         try {
-            const config = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
-            if (!config.enabled) return false;
+            if (!this.config) {
+                this.config = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
+            }
+            if (!this.config.enabled) return false;
             
             const modelPath = path.join(this.layaDir, 'models', 'laya.onnx');
             if (!fs.existsSync(modelPath)) return false;
@@ -70,8 +72,7 @@ class System1Provider {
         await this._initSession();
 
         // If the configuration tells us it is mocked, gracefully fallback (for tests)
-        const config = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
-        if (config.mocked) {
+        if (this.config && this.config.mocked) {
             throw new Error("Laya model tokenization and tensor metadata missing from repository. Inference blocked until production model integrated.");
         }
 
