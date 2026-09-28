@@ -1,3 +1,14 @@
+## [9.2.7] — 2026-09-28
+
+### 🐛 Bug Fixes
+
+- production audit remediations (`7a27e04`)
+
+### 📝 Documentation
+
+- update changelog for 9.2.6 (`aefb95c`)
+
+
 # 🏛️ Tribunal Kit — Changelog
 
 [![Keep a Changelog](https://img.shields.io/badge/Changelog-Keep%20a%20Changelog%20v1.1.0-blue.svg?style=flat-square)](https://keepachangelog.com/)
