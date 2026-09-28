@@ -12,6 +12,35 @@
 All notable changes to **Tribunal Kit** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
 
+## [9.2.6] — 2026-09-28 — 🛡️ System-1 Laya Security & Anti-Slop Audit Integration
+
+> [!IMPORTANT]
+> **Release 9.2.6** focuses on critical security remediation for the Laya System-1 implementation and integrates the highly requested Anti-Slop Purpose-Gate into the Tribunal UI pipeline. It introduces robust cross-platform model verification, locks dependencies, eliminates Windows shell execution vulnerabilities, and establishes a structural dual-tier defense against generic AI UI clichés.
+
+### Added
+- **Anti-Slop Enforcement Skill (`anti-slop-enforcement`)**: Codified strict anti-slop rules, distinguishing between subjective design aesthetics and objective slop heuristics (Purpose-Gates and Liveliness Dials).
+- **Anti-Slop Auditor Agent (`anti-slop-auditor`)**: Added a dedicated Wave 3 reviewer to the Tribunal frontend pipeline to aggressively audit generated UI code for cliché AI slop patterns.
+
+### Changed
+- **System-1 Concurrency Protection**: Implemented atomic directory-based mutual exclusion (`.install.lock`) during the System-1 installation sequence (`tk system1 enable`). This prevents overlapping terminal processes from causing `EPERM` collisions and DLL corruption during model acquisition and ONNX compilation on Windows.
+- **Deterministic Mock Inference**: Explicitly updated test suite setups to require `TK_MOCK_LAYA_DOWNLOAD=1` alongside `mocked: true` local configurations to guarantee deterministic fallback testing without incurring network overhead.
+- **Frontend Specialist Restraints**: Augmented the `frontend-specialist` (Maker) prompt to natively respect anti-slop guidelines during code generation, heavily discouraging fake statistics, unmotivated motion, and generic gradient branding without explicit user authorization.
+- **Visual Audit Determinism (`scripts/visual_audit.js`)**: Expanded the existing deterministic UI static scanner to catch fabricated copywriting claims ("Revolutionary", "Cutting Edge", "Seamless experience") and cliché hex codes (e.g., `#8B5CF6` purple). This scanner acts as a hard zero-LLM pre-flight gate.
+- **Workflow Pipeline Expansion**: Integrated the `anti-slop-auditor` as a mandatory parallel reviewer within the `/tribunal-frontend` and `/tribunal-ui` workflows.
+
+### Fixed
+- **Architectural Duplication**: Deleted redundant `anti_slop_scanner.js` script, unifying all static pre-flight UI gating into the central `visual_audit.js` parser to eliminate overlapping filesystem traversals.
+- **False-Positive Copywriting Guards**: Tuned static detection rules to prevent legitimate technical comments (e.g., "seamless fallback") from triggering anti-slop layout failures.
+
+### Security
+- **Windows Shell Execution Vulnerability**: Resolved an `EINVAL` issue on Windows where `spawnSync npm.cmd` with `shell: false` would fail. Migrated the `npm ci` installation process to use `process.execPath` alongside `npm-cli.js`, permanently closing command injection attack vectors.
+- **Supply-Chain Dependency Pinning**: Locked `@receptron/laya` dependencies to exact versions (`0.1.2` and `onnxruntime-node@1.22.0`) via an isolated `laya-package-lock.json`, preventing upstream dependency injection.
+- **Model Integrity Verification**: Implemented a mandatory pre-load SHA-256 integrity validation for `laya.onnx` and `laya.onnx.data` downloaded from Hugging Face before initializing the ONNX runtime, guaranteeing that no unverified model bytes enter the engine.
+- **Tarball Isolation**: Excluded the 1.7 GB downloaded Laya model artifacts and node_modules from the production `tribunal-kit-9.2.6.tgz` npm package.
+
+### Known Issues
+- **Provider Fallback Defect**: Identified a technical flaw in `System1Provider.isAvailable()` where the runtime expects the model at `models/laya.onnx`, but the downloaded model resides deep in the Hugging Face cache structure (`models/receptron--laya-onnx/...`). This causes Laya verification to fail and silently fallback to Tier-0 impact assessment despite a successful model download.
+
 ## [9.2.5] — 2026-09-27 — 🏛️ System Architecture Intelligence Layer
 
 > [!IMPORTANT]
