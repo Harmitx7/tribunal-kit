@@ -17,7 +17,7 @@ const { CdpClient, createNewTab, closeTab } = require('./cdp');
  * @param {object} options
  * @returns {Promise<object>}
  */
-async function auditURL(url, options = {}) {
+async function auditURL(url, _options = {}) {
   const browser = await launchBrowser();
   let client = null;
   let tab = null;
@@ -33,7 +33,7 @@ async function auditURL(url, options = {}) {
     await client.initDomains();
 
     // Listen for console logs & uncaught exceptions
-    client.on('Console.messageAdded', (params) => {
+    client.on('Console.messageAdded', params => {
       const msg = params?.message;
       if (msg && (msg.level === 'error' || msg.level === 'warning')) {
         consoleErrors.push({
@@ -45,7 +45,7 @@ async function auditURL(url, options = {}) {
       }
     });
 
-    client.on('Runtime.exceptionThrown', (params) => {
+    client.on('Runtime.exceptionThrown', params => {
       const details = params?.exceptionDetails;
       if (details) {
         consoleErrors.push({
@@ -58,7 +58,7 @@ async function auditURL(url, options = {}) {
     });
 
     // Listen for network failures
-    client.on('Network.responseReceived', (params) => {
+    client.on('Network.responseReceived', params => {
       const res = params?.response;
       if (res) {
         if (params.type === 'Document') {
@@ -74,7 +74,7 @@ async function auditURL(url, options = {}) {
       }
     });
 
-    client.on('Network.loadingFailed', (params) => {
+    client.on('Network.loadingFailed', params => {
       networkFailures.push({
         url: params.requestId,
         error: params.errorText,
@@ -212,8 +212,12 @@ async function auditURL(url, options = {}) {
       },
       summary: {
         passed: (pageMetrics?.a11yScore || 100) >= 80 && consoleErrors.length === 0,
-        totalIssues: (pageMetrics?.issues?.length || 0) + securityIssues.length + consoleErrors.length + networkFailures.length,
-      }
+        totalIssues:
+          (pageMetrics?.issues?.length || 0) +
+          securityIssues.length +
+          consoleErrors.length +
+          networkFailures.length,
+      },
     };
 
     return report;

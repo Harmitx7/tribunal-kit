@@ -166,7 +166,6 @@ No files are modified without explicit approval.
 
 ---
 
-
 ## Harness vs Application Auditing
 
 The `/audit` command now explicitly distinguishes between Application Security (OWASP, SQLi) and Harness Security (AgentShield prompt injection, MCP configuration risks).

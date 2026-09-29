@@ -9,5 +9,7 @@ scratch
 *.tgz
 Cargo.lock
 package-lock.json
+*-lock.json
+src/system1/laya-package.json
 benchmark-results.json
 benchmark-stress-results.json

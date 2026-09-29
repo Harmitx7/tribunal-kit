@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
-const { execFileSync } = require("child_process");
-const { c, err, log } = require("../utils/logger");
+const fs = require('fs');
+const path = require('path');
+const { execFileSync } = require('child_process');
+const { c, err, log } = require('../utils/logger');
 
 function getOption(args, names) {
   for (let i = 0; i < args.length; i++) {
@@ -18,9 +18,9 @@ function getOption(args, names) {
 
 function findRepoRoot() {
   try {
-    const gitRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "ignore"],
+    const gitRoot = execFileSync('git', ['rev-parse', '--show-toplevel'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
     }).trim();
     if (gitRoot && fs.existsSync(gitRoot)) {
       return gitRoot;
@@ -31,7 +31,7 @@ function findRepoRoot() {
 
   let current = process.cwd();
   while (true) {
-    if (fs.existsSync(path.join(current, ".git"))) {
+    if (fs.existsSync(path.join(current, '.git'))) {
       return current;
     }
     const parent = path.dirname(current);
@@ -43,7 +43,7 @@ function findRepoRoot() {
 
 function sddWorkspace(planFile) {
   if (!planFile) {
-    throw new Error("Missing required argument: --plan <plan_file>");
+    throw new Error('Missing required argument: --plan <plan_file>');
   }
   const resolvedPlan = path.resolve(process.cwd(), planFile);
   if (!fs.existsSync(resolvedPlan)) {
@@ -52,23 +52,23 @@ function sddWorkspace(planFile) {
 
   const fileStem = path.parse(resolvedPlan).name;
   const repoRoot = findRepoRoot();
-  const base = path.join(repoRoot, ".tribunal", "sdd");
+  const base = path.join(repoRoot, '.tribunal', 'sdd');
   const workspace = path.join(base, fileStem);
 
   fs.mkdirSync(workspace, { recursive: true });
 
-  const gitignorePath = path.join(base, ".gitignore");
+  const gitignorePath = path.join(base, '.gitignore');
   if (!fs.existsSync(gitignorePath)) {
-    fs.writeFileSync(gitignorePath, "*\n", "utf8");
+    fs.writeFileSync(gitignorePath, '*\n', 'utf8');
   }
 
   return workspace;
 }
 
 function sddBrief(planFile, taskNum, outFile) {
-  if (!planFile) throw new Error("Missing required argument: --plan <plan_file>");
+  if (!planFile) throw new Error('Missing required argument: --plan <plan_file>');
   if (taskNum === null || taskNum === undefined || isNaN(taskNum)) {
-    throw new Error("Missing required argument: --task <number>");
+    throw new Error('Missing required argument: --task <number>');
   }
 
   const resolvedPlan = path.resolve(process.cwd(), planFile);
@@ -76,7 +76,7 @@ function sddBrief(planFile, taskNum, outFile) {
     throw new Error(`Plan file not found: ${planFile}`);
   }
 
-  const content = fs.readFileSync(resolvedPlan, "utf8");
+  const content = fs.readFileSync(resolvedPlan, 'utf8');
   const lines = content.split(/\r?\n/);
 
   let targetOut;
@@ -96,12 +96,12 @@ function sddBrief(planFile, taskNum, outFile) {
 
   for (const line of lines) {
     const trimmed = line.trim();
-    if (trimmed.startsWith("```")) {
+    if (trimmed.startsWith('```')) {
       inCodeBlock = !inCodeBlock;
     }
 
-    if (!inCodeBlock && trimmed.startsWith("#")) {
-      const headingText = trimmed.replace(/^#+\s*/, "").trim();
+    if (!inCodeBlock && trimmed.startsWith('#')) {
+      const headingText = trimmed.replace(/^#+\s*/, '').trim();
       if (
         headingText.startsWith(targetPrefixColon) ||
         headingText.startsWith(targetPrefix) ||
@@ -110,7 +110,7 @@ function sddBrief(planFile, taskNum, outFile) {
         inTargetTask = true;
         extractedLines.push(line);
         continue;
-      } else if (inTargetTask && headingText.toLowerCase().startsWith("task ")) {
+      } else if (inTargetTask && headingText.toLowerCase().startsWith('task ')) {
         break;
       }
     }
@@ -121,20 +121,22 @@ function sddBrief(planFile, taskNum, outFile) {
   }
 
   if (extractedLines.length === 0) {
-    throw new Error(`Task ${taskNum} not found in ${planFile} (no heading matching 'Task ${taskNum}')`);
+    throw new Error(
+      `Task ${taskNum} not found in ${planFile} (no heading matching 'Task ${taskNum}')`,
+    );
   }
 
-  const briefContent = extractedLines.join("\n") + "\n";
+  const briefContent = extractedLines.join('\n') + '\n';
   fs.mkdirSync(path.dirname(targetOut), { recursive: true });
-  fs.writeFileSync(targetOut, briefContent, "utf8");
+  fs.writeFileSync(targetOut, briefContent, 'utf8');
 
   return targetOut;
 }
 
 function sddScratchpad(planFile, taskNum, outFile) {
-  if (!planFile) throw new Error("Missing required argument: --plan <plan_file>");
+  if (!planFile) throw new Error('Missing required argument: --plan <plan_file>');
   if (taskNum === null || taskNum === undefined || isNaN(taskNum)) {
-    throw new Error("Missing required argument: --task <number>");
+    throw new Error('Missing required argument: --task <number>');
   }
 
   let targetOut;
@@ -148,27 +150,27 @@ function sddScratchpad(planFile, taskNum, outFile) {
   if (!fs.existsSync(targetOut)) {
     const content = `# Scratchpad - Task ${taskNum}\n\n## 1. Goal\n\n## 2. Execution Plan\n\n## 3. Current Context\n\n## 4. Attempt Log\n`;
     fs.mkdirSync(path.dirname(targetOut), { recursive: true });
-    fs.writeFileSync(targetOut, content, "utf8");
+    fs.writeFileSync(targetOut, content, 'utf8');
   }
 
   return targetOut;
 }
 
 function sddDiff(planFile, base, head, outFile) {
-  if (!planFile) throw new Error("Missing required argument: --plan <plan_file>");
-  if (!base) throw new Error("Missing required argument: --base <revision>");
-  if (!head) throw new Error("Missing required argument: --head <revision>");
+  if (!planFile) throw new Error('Missing required argument: --plan <plan_file>');
+  if (!base) throw new Error('Missing required argument: --base <revision>');
+  if (!head) throw new Error('Missing required argument: --head <revision>');
 
   // SECURITY: Use execFileSync with argument arrays to prevent command injection
   // via user-supplied --base/--head parameters (CWE-78).
   try {
-    execFileSync('git', ['rev-parse', '--verify', '--quiet', base], { stdio: "ignore" });
+    execFileSync('git', ['rev-parse', '--verify', '--quiet', base], { stdio: 'ignore' });
   } catch {
     throw new Error(`Invalid BASE git revision: ${base}`);
   }
 
   try {
-    execFileSync('git', ['rev-parse', '--verify', '--quiet', head], { stdio: "ignore" });
+    execFileSync('git', ['rev-parse', '--verify', '--quiet', head], { stdio: 'ignore' });
   } catch {
     throw new Error(`Invalid HEAD git revision: ${head}`);
   }
@@ -184,66 +186,74 @@ function sddDiff(planFile, base, head, outFile) {
   }
 
   const diffContent = execFileSync('git', ['diff', `${base}..${head}`], {
-    encoding: "utf8",
+    encoding: 'utf8',
     maxBuffer: 10 * 1024 * 1024,
   });
 
   fs.mkdirSync(path.dirname(targetOut), { recursive: true });
-  fs.writeFileSync(targetOut, diffContent, "utf8");
+  fs.writeFileSync(targetOut, diffContent, 'utf8');
 
   return targetOut;
 }
 
 async function cmdSdd(flags, processArgs, quiet = false) {
   const args = processArgs.slice(3);
-  const subcommand = args.find((a) => !a.startsWith("-")) || "help";
+  const subcommand = args.find(a => !a.startsWith('-')) || 'help';
 
-  if (subcommand === "help" || subcommand === "--help" || subcommand === "-h") {
+  if (subcommand === 'help' || subcommand === '--help' || subcommand === '-h') {
     if (!quiet) {
-      log(c("cyan", "  Subagent-Driven Development (SDD) — Commands"));
-      log(`  ${c("gray", "─".repeat(45))}`);
-      log(`  ${c("cyan", "sdd workspace".padEnd(20))} ${c("gray", "Ensure plan-scoped workspace (.tribunal/sdd/<slug>)")}`);
-      log(`  ${c("cyan", "sdd brief".padEnd(20))} ${c("gray", "Extract task brief out-of-band (--plan, --task, [--out])")}`);
-      log(`  ${c("cyan", "sdd scratchpad".padEnd(20))} ${c("gray", "Initialize task scratchpad (--plan, --task, [--out])")}`);
-      log(`  ${c("cyan", "sdd diff".padEnd(20))} ${c("gray", "Generate diff package (--plan, --base, --head, [--out])")}`);
+      log(c('cyan', '  Subagent-Driven Development (SDD) — Commands'));
+      log(`  ${c('gray', '─'.repeat(45))}`);
+      log(
+        `  ${c('cyan', 'sdd workspace'.padEnd(20))} ${c('gray', 'Ensure plan-scoped workspace (.tribunal/sdd/<slug>)')}`,
+      );
+      log(
+        `  ${c('cyan', 'sdd brief'.padEnd(20))} ${c('gray', 'Extract task brief out-of-band (--plan, --task, [--out])')}`,
+      );
+      log(
+        `  ${c('cyan', 'sdd scratchpad'.padEnd(20))} ${c('gray', 'Initialize task scratchpad (--plan, --task, [--out])')}`,
+      );
+      log(
+        `  ${c('cyan', 'sdd diff'.padEnd(20))} ${c('gray', 'Generate diff package (--plan, --base, --head, [--out])')}`,
+      );
     }
     return;
   }
 
-  const planArg = getOption(args, ["--plan", "-p"]) || args[1];
-  const outArg = getOption(args, ["--out", "-o"]);
+  const planArg = getOption(args, ['--plan', '-p']) || args[1];
+  const outArg = getOption(args, ['--out', '-o']);
 
   try {
-    if (subcommand === "workspace") {
+    if (subcommand === 'workspace') {
       const ws = sddWorkspace(planArg);
-      if (!quiet) log(c("green", `✔ SDD Workspace: ${ws}`));
+      if (!quiet) log(c('green', `✔ SDD Workspace: ${ws}`));
       else console.log(ws);
       return;
     }
 
-    if (subcommand === "brief") {
-      const taskRaw = getOption(args, ["--task", "-t"]);
+    if (subcommand === 'brief') {
+      const taskRaw = getOption(args, ['--task', '-t']);
       const taskNum = taskRaw ? parseInt(taskRaw, 10) : null;
       const briefPath = sddBrief(planArg, taskNum, outArg);
-      if (!quiet) log(c("green", `✔ SDD Task Brief: ${briefPath}`));
+      if (!quiet) log(c('green', `✔ SDD Task Brief: ${briefPath}`));
       else console.log(briefPath);
       return;
     }
 
-    if (subcommand === "scratchpad") {
-      const taskRaw = getOption(args, ["--task", "-t"]);
+    if (subcommand === 'scratchpad') {
+      const taskRaw = getOption(args, ['--task', '-t']);
       const taskNum = taskRaw ? parseInt(taskRaw, 10) : null;
       const scratchpadPath = sddScratchpad(planArg, taskNum, outArg);
-      if (!quiet) log(c("green", `✔ SDD Task Scratchpad: ${scratchpadPath}`));
+      if (!quiet) log(c('green', `✔ SDD Task Scratchpad: ${scratchpadPath}`));
       else console.log(scratchpadPath);
       return;
     }
 
-    if (subcommand === "diff") {
-      const base = getOption(args, ["--base"]);
-      const head = getOption(args, ["--head"]);
+    if (subcommand === 'diff') {
+      const base = getOption(args, ['--base']);
+      const head = getOption(args, ['--head']);
       const diffPath = sddDiff(planArg, base, head, outArg);
-      if (!quiet) log(c("green", `✔ SDD Diff Package: ${diffPath}`));
+      if (!quiet) log(c('green', `✔ SDD Diff Package: ${diffPath}`));
       else console.log(diffPath);
       return;
     }

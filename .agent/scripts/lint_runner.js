@@ -36,12 +36,14 @@ const RESULTS = [];
 function runLinter(label, cmd, cwd) {
   const elapsed = timer();
   try {
-    const executable = process.platform === 'win32' && cmd[0] === 'npx' ? 'npx.cmd' : cmd[0];
+    const isWindows = process.platform === 'win32';
+    const executable =
+      isWindows && (cmd[0] === 'npx' || cmd[0] === 'npm') ? `${cmd[0]}.cmd` : cmd[0];
     const result = spawnSync(executable, cmd.slice(1), {
       cwd,
       encoding: 'utf8',
       timeout: 120000,
-      shell: false,
+      shell: isWindows,
     });
 
     const ms = elapsed();

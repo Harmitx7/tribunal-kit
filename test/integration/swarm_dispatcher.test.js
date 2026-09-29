@@ -35,7 +35,7 @@ describe('swarm_dispatcher.js legacy mode', () => {
     fs.mkdirSync(subDir, { recursive: true });
 
     const originalExistsSync = fs.existsSync;
-    const existsSyncSpy = jest.spyOn(fs, 'existsSync').mockImplementation((p) => {
+    const existsSyncSpy = jest.spyOn(fs, 'existsSync').mockImplementation(p => {
       // Treat anything outside tmpDir as not existing
       if (!p.startsWith(tmpDir)) return false;
       return originalExistsSync(p);

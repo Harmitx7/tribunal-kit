@@ -23,23 +23,23 @@
     <a href="https://github.com/Harmitx7/tribunal-kit/actions/workflows/ci.yml">
       <img src="https://img.shields.io/github/actions/workflow/status/Harmitx7/tribunal-kit/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=CI" alt="CI Status" />
     </a>
-    <a href="LICENSE">
-      <img src="https://img.shields.io/badge/License-MIT-1a1a1f?style=for-the-badge&color=2d2d30" alt="License" />
+    <a href="#">
+      <img src="https://img.shields.io/badge/Skills-235_Modular-teal?style=for-the-badge" alt="Skills Corpus" />
     </a>
-    <a href="package.json">
-      <img src="https://img.shields.io/badge/Dependencies-Minimal-ff3300?style=for-the-badge&color=111111&logoColor=ff3300" alt="Minimal Dependencies" />
+    <a href="#">
+      <img src="https://img.shields.io/badge/Reviewers-28_Parallel-emerald?style=for-the-badge" alt="Reviewers" />
     </a>
     <a href="crates/core">
       <img src="https://img.shields.io/badge/Core-Rust_10ms-DEA584?style=for-the-badge&logo=rust&logoColor=white" alt="Rust Core" />
     </a>
-    <a href="mcp_config.json">
-      <img src="https://img.shields.io/badge/MCP-Ready-00c2ff?style=for-the-badge&logo=openai&logoColor=111" alt="MCP Server" />
+    <a href="LICENSE">
+      <img src="https://img.shields.io/badge/License-MIT-1a1a1f?style=for-the-badge&color=2d2d30" alt="License" />
     </a>
   </div>
 
   <p>
     <strong>Universal Compatibility:</strong>
-    <code>Cursor</code> • <code>Claude Code</code> • <code>Windsurf</code> • <code>VS Code</code> • <code>Aider</code> • <code>Devin</code>
+    <code>Cursor</code> • <code>Claude Code</code> • <code>Windsurf</code> • <code>VS Code</code> • <code>Aider</code> • <code>Devin</code> • <code>Gemini</code>
   </p>
 </div>
 
@@ -47,20 +47,30 @@
 
 ## 🛡️ Value Proposition
 
-AI coding assistants frequently hallucinate dependencies, deprecated framework hooks, and incorrect database columns. Linters and typecheckers catch these errors only *after* the code is written, failing to understand semantic intent during generation.
+AI coding assistants frequently hallucinate dependencies, deprecated framework hooks, and incorrect database columns. Linters and typecheckers catch these errors only _after_ the code is written, failing to understand semantic intent during generation.
 
-Tribunal Kit acts as a **neurosymbolic verification envelope**. It intercepts AI output locally in **&lt; 10ms**, validates it against your live repository AST, and prevents hallucinated code and phantom packages from ever touching your disk. 
+Tribunal Kit acts as a **neurosymbolic verification envelope**. It intercepts AI output locally in **&lt; 10ms**, validates it against your live repository AST, and prevents hallucinated code and phantom packages from ever touching your disk.
+
+---
+
+## ⚡ What's New in v9.2.6
+
+- **Backend Intelligence Trust Boundary:** Strict validation engine output isolation. LLMs can no longer self-authorize findings; evidence requires verifiable provenance hashes and terminal command records.
+- **Universal 18-Section Governance Standard:** All 235 modular skills upgraded to enforce Tri-State Evidence classification (`[OBSERVED]`, `[INFERRED]`, `[UNVERIFIED]`) and non-negotiable **Verification-Before-Completion (VBC)** gates.
+- **Anti-Slop Purpose-Gate:** Added the dedicated `anti-slop-auditor` (Wave 3) and `anti-slop-enforcement` skill to eradicate cliché AI design copy, gratuitous animations, and generic purple gradients.
+- **System-1 Concurrency & Isolation:** Atomic directory-based installation locks, isolated dependency packaging (~150MB overhead eliminated), and SHA-256 model verification for local ONNX inference.
+- **Zero-Trust Architecture Intelligence (`tk arch`):** Deterministic fact extraction (TAFE), blast-radius computation, circular dependency detection, and interactive HTML architecture projections.
 
 ---
 
 ## ⚡ Core Capabilities
 
-- **Parallel Review Pipeline:** 31 domain-specific reviewers analyze generated code simultaneously before the write operation.
+- **Parallel Review Pipeline:** 28 domain-specific reviewers analyze generated code simultaneously across 3 waves (Logic, Security, Domain) before writing to disk.
 - **Compiled Rust Core:** Sub-10ms AST parsing, semantic graph extraction, and file synchronization using SHA-256 diffs.
-- **Phantom Package Guardrails:** Blocks "slopsquatting" and non-existent npm package imports during generation.
-- **Cross-Session Memory:** "Supreme Court Case Law" (`tk case`) records past AI mistakes so they are never repeated across sessions.
+- **Phantom Package Guardrails:** Blocks "slopsquatting" and non-existent npm package imports during code generation.
+- **Cross-Session Memory:** "Supreme Court Case Law" (`tk case`) and key-value memory (`tk memory`) record past AI mistake precedents.
 - **Subagent-Driven Development (SDD):** Orchestrates multi-agent fan-out and synthesis, strictly isolating context windows to prevent token bloat.
-- **Minimal Dependencies:** The Node.js CLI runtime requires almost zero production dependencies, protecting your supply chain.
+- **Minimal Dependencies:** The production CLI runtime requires zero heavy dependencies, protecting your supply chain.
 - **Native MCP Server:** Exposes real-time repository AST and team contract rules to Model Context Protocol compatible clients.
 
 ---
@@ -72,8 +82,8 @@ Tribunal Kit operates as a fast, intercepting middleware layer between the AI ge
 ```mermaid
 graph LR
     A[User Request] --> B[Context Broker]
-    B --> C[Compiled Rust Core<br/>AST / Graph extraction]
-    C --> D[31 Parallel Reviewers]
+    B --> C[Compiled Rust Core<br/>AST / Graph Extraction]
+    C --> D[28 Parallel Reviewers<br/>Waves 1, 2 & 3]
     D -->|Violation| E[Inner-Loop Auto-Correct]
     E -.-> B
     D -->|Passed| F[Human Gate]
@@ -85,9 +95,9 @@ graph LR
 
 ### Data Flow
 
-1. **Input:** An LLM agent generates a code change proposal (or triggers a workflow like `/generate`).
-2. **Processing:** The Rust Core extracts the current AST and validates the semantic bounds. The proposal is dispatched to parallel Reviewers (e.g., `logic-reviewer`, `security-auditor`).
-3. **Output:** If valid, it passes to the Human Gate or writes directly to disk. If invalid, the process is halted, and feedback is fed back into the agent's context loop.
+1. **Input:** An LLM agent generates a code change proposal (or triggers a workflow like `/generate` or `/sdd`).
+2. **Processing:** The Rust Core extracts the current AST and validates semantic bounds. The proposal is dispatched to parallel Reviewers (e.g., `logic-reviewer`, `security-auditor`, `anti-slop-auditor`).
+3. **Output:** If valid, it passes to the Human Gate or writes directly to disk. If invalid, the process is halted, and structured feedback is fed back into the agent's context loop.
 
 ---
 
@@ -108,6 +118,7 @@ npx tribunal-kit status
 
 **Using a CLI Agent?**
 Install the native adapter for Claude Code or Aider:
+
 ```bash
 npx tribunal-kit tk-adapt claude
 # or
@@ -120,18 +131,24 @@ npx tribunal-kit tk-adapt aider
 
 Tribunal Kit CLI operations are routed through the compiled Rust binary when supported, falling back to the JavaScript engine gracefully.
 
-| Command | Arguments | Description |
-| :--- | :--- | :--- |
-| `init` | `[--force]` | Initializes the `.agent/` configuration payload. |
-| `sync` | — | Syncs rules with IDEs (.cursorrules, .windsurfrules). |
-| `status` | — | Evaluates workspace rules and checks for violations. |
-| `guardrail` | `[--file <path>]` | Scans changes for phantom packages and `// VERIFY` tags. |
-| `tk-adapt` | `[claude\|aider\|--global]` | Installs universal CLI agent adapters. |
-| `hook` | — | Installs the automated Git pre-push governance hook. |
-| `memory` | `store \| recall \| gc` | Manages persistent cross-session AI memory. |
-| `case` | `add \| search <q>` | Records or searches for AI mistake precedents. |
+| Command     | Arguments                   | Description                                                      |
+| :---------- | :-------------------------- | :--------------------------------------------------------------- |
+| `init`      | `[--force]`                 | Initializes the `.agent/` configuration payload.                 |
+| `sync`      | —                           | Syncs rules with IDEs (.cursorrules, .windsurfrules).            |
+| `status`    | —                           | Evaluates workspace rules and checks for violations.             |
+| `validate`  | `[--file <path>]`           | Validates `.agent/` payload structure with live reviewer swarm.  |
+| `guardrail` | `[--file <path>]`           | Scans changes for phantom packages and `// VERIFY` tags.         |
+| `arch`      | `map \| verify \| impact \| diff \| audit \| project` | Verifiable Architecture Intelligence & Blast Radius engine. |
+| `system1`   | `enable \| disable \| status` | Manages local ONNX neural tier assessment and model weights.     |
+| `sdd`       | `run \| status`             | Subagent-Driven Development execution with reviewer waves.       |
+| `minimal`   | `[--prompt <text>]`         | Analyzes change requests for minimal viable diffs (Decision 0-7).|
+| `contract`  | `init \| verify \| list`    | AI agent behavioral contract validation and trace replay.        |
+| `memory`    | `store \| recall \| gc`     | Manages persistent cross-session AI memory.                      |
+| `case`      | `add \| search <q>`         | Records or searches for AI mistake precedents.                   |
+| `tk-adapt`  | `[claude\|aider\|--global]` | Installs universal CLI agent adapters.                           |
+| `hook`      | —                           | Installs the automated Git pre-push governance hook.             |
 
-*(For workflow execution, Tribunal Kit monitors for slash commands like `/orchestrate`, `/audit`, or `/deploy` inside your AI context).*
+_(For workflow execution, Tribunal Kit monitors for slash commands like `/orchestrate`, `/audit`, `/sdd`, or `/deploy` inside your AI context)._
 
 ---
 
@@ -140,6 +157,7 @@ Tribunal Kit CLI operations are routed through the compiled Rust binary when sup
 Tribunal Kit is largely zero-config, driven by the `.agent/` directory, but exposes settings via `mcp_config.json` and `package.json`.
 
 **Example MCP Configuration (`mcp_config.json`)**
+
 ```json
 {
   "mcpServers": {
@@ -174,14 +192,14 @@ tribunal-kit/
 
 ## 🔗 Integrations
 
-| Environment / Tool | Integration Type | Status |
-| :--- | :--- | :--- |
-| **Cursor IDE** | Plugin & `.cursorrules` bridge | Supported |
+| Environment / Tool        | Integration Type                              | Status    |
+| :------------------------ | :-------------------------------------------- | :-------- |
+| **Cursor IDE**            | Plugin & `.cursorrules` bridge                | Supported |
 | **Anthropic Claude Code** | Native Marketplace Plugin (`.claude-plugin/`) | Supported |
-| **Windsurf** | Native `.windsurfrules` sync | Supported |
-| **Cognition Devin** | Native Plugin (`.devin-plugin/`) | Supported |
-| **Aider CLI** | Conventions Bridge (`tk-adapt`) | Supported |
-| **Google Gemini CLI** | Extension Manifest (`gemini-extension.json`) | Supported |
+| **Windsurf**              | Native `.windsurfrules` sync                  | Supported |
+| **Cognition Devin**       | Native Plugin (`.devin-plugin/`)              | Supported |
+| **Aider CLI**             | Conventions Bridge (`tk-adapt`)               | Supported |
+| **Google Gemini CLI**     | Extension Manifest (`gemini-extension.json`)  | Supported |
 
 ---
 
@@ -198,24 +216,28 @@ tribunal-kit/
 Tribunal Kit employs rigorous continuous integration.
 
 ```bash
-# Run payload validation and the Jest test suite
-npm run test:all
+# Run payload validation and the full test suite
+npm test
+
+# Run the full 7-gate verification suite (Secret scan, Types, Lint, Tests, Build, Audit, Rust)
+node .agent/scripts/verify_all.js
 
 # Run the Rust core test suite
 npm run test:rust
 ```
 
-The validation pipeline enforces `validate-payload.js` checks to ensure every specialist agent, workflow, and skill definition conforms to the strict schema before compilation.
+The validation pipeline enforces `validate-payload.js` and `integrity_manifest.js` checks to ensure every specialist agent, workflow, and skill definition conforms to the strict schema before compilation.
 
 ---
 
 ## ⚡ Performance
 
 By offloading AST evaluation and file hashing to the `tribunal-core` Rust binary, Tribunal Kit achieves:
+
 - **Sub-10ms** execution overhead for the `guardrail` and `sync` commands.
 - Up to **95% faster** context validation compared to standard Node.js implementations traversing large monorepos.
 
-*(Benchmarks available via `npm run benchmark:rust` locally)*.
+_(Benchmarks available via `npm run benchmark:rust` locally)_.
 
 ---
 

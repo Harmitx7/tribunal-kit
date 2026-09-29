@@ -1,0 +1,6922 @@
+{
+  "stats": {
+    "total": 234,
+    "byDomain": {
+      "motion": 28,
+      "frontend": 49,
+      "meta": 54,
+      "backend": 18,
+      "security": 21,
+      "database": 14,
+      "devops": 13,
+      "testing": 8,
+      "mobile": 4,
+      "huggingface": 25
+    },
+    "weakSkills": [],
+    "bloatedSkills": [
+      "huggingface-llm-trainer",
+      "huggingface-paper-publisher",
+      "huggingface-vision-trainer",
+      "rust-pro",
+      "sql-pro",
+      "tailwind-patterns",
+      "transformers-js"
+    ],
+    "stubSkills": [
+      "agent-syscall-guidelines",
+      "agentshield-security",
+      "backend-alembic",
+      "backend-architecture-auditor",
+      "backend-mongodb",
+      "backend-mysql",
+      "backend-performance-auditor",
+      "backend-postgresql",
+      "backend-redis",
+      "backend-sqlalchemy",
+      "backend-sqlite",
+      "backend-testing-auditor",
+      "fastapi-pro",
+      "graph-engineering",
+      "human-gate-negotiation",
+      "semantic-filesystem-navigation",
+      "session-log-interrogation",
+      "subagent-driven-development",
+      "thinking-protocol",
+      "tribunal-instincts-memory"
+    ],
+    "missingVBC": 215,
+    "missingEvidenceStd": 229,
+    "missingEdgeCases": 223,
+    "missingChecklist": 215,
+    "missingReviewers": 231
+  },
+  "skillMap": {
+    "12-principles-of-animation": {
+      "name": "12-principles-of-animation",
+      "domain": "motion",
+      "lineCount": 52,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "60fps-animation": {
+      "name": "60fps-animation",
+      "domain": "motion",
+      "lineCount": 92,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "accessible-animation": {
+      "name": "accessible-animation",
+      "domain": "motion",
+      "lineCount": 190,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "adapt": {
+      "name": "adapt",
+      "domain": "frontend",
+      "lineCount": 57,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "adr-generation": {
+      "name": "adr-generation",
+      "domain": "meta",
+      "lineCount": 58,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "advanced-rag-pipelines": {
+      "name": "advanced-rag-pipelines",
+      "domain": "backend",
+      "lineCount": 95,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "agent-organizer": {
+      "name": "agent-organizer",
+      "domain": "meta",
+      "lineCount": 118,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "agent-syscall-guidelines": {
+      "name": "agent-syscall-guidelines",
+      "domain": "frontend",
+      "lineCount": 26,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "agentic-patterns": {
+      "name": "agentic-patterns",
+      "domain": "meta",
+      "lineCount": 282,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "agentic-workflows-2026": {
+      "name": "agentic-workflows-2026",
+      "domain": "backend",
+      "lineCount": 92,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "agentshield-security": {
+      "name": "agentshield-security",
+      "domain": "security",
+      "lineCount": 27,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "ai-app-hardening": {
+      "name": "ai-app-hardening",
+      "domain": "security",
+      "lineCount": 52,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "ai-prompt-injection-defense": {
+      "name": "ai-prompt-injection-defense",
+      "domain": "security",
+      "lineCount": 163,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "animation-on-scroll": {
+      "name": "animation-on-scroll",
+      "domain": "motion",
+      "lineCount": 197,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "animation-systems": {
+      "name": "animation-systems",
+      "domain": "motion",
+      "lineCount": 199,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "antfu-conventions": {
+      "name": "antfu-conventions",
+      "domain": "meta",
+      "lineCount": 55,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "anti-slop-enforcement": {
+      "name": "anti-slop-enforcement",
+      "domain": "frontend",
+      "lineCount": 43,
+      "purpose": "Tribunal extraction of the anti-slop rule sets. Enforces Purpose-Gates, Hard-Gates, and Liveliness Dials for UI engineering.",
+      "triggers": "Tribunal extraction of the anti-slop rule sets. Enforces Purpose-Gates, Hard-Gates, and Liveliness Dials for UI engineering.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "api-patterns": {
+      "name": "api-patterns",
+      "domain": "backend",
+      "lineCount": 219,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "api-security-auditor": {
+      "name": "api-security-auditor",
+      "domain": "backend",
+      "lineCount": 164,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "app-builder": {
+      "name": "app-builder",
+      "domain": "meta",
+      "lineCount": 536,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "templates"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "appflow-wireframe": {
+      "name": "appflow-wireframe",
+      "domain": "frontend",
+      "lineCount": 97,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "apple-design": {
+      "name": "apple-design",
+      "domain": "frontend",
+      "lineCount": 90,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "architecture": {
+      "name": "architecture",
+      "domain": "meta",
+      "lineCount": 189,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "architecture-drift": {
+      "name": "architecture-drift",
+      "domain": "meta",
+      "lineCount": 46,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "audit-and-fix": {
+      "name": "audit-and-fix",
+      "domain": "security",
+      "lineCount": 101,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "authentication-best-practices": {
+      "name": "authentication-best-practices",
+      "domain": "security",
+      "lineCount": 158,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "autonomous-execution": {
+      "name": "autonomous-execution",
+      "domain": "meta",
+      "lineCount": 77,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "backend-alembic": {
+      "name": "backend-alembic",
+      "domain": "database",
+      "lineCount": 18,
+      "purpose": "Use when analyzing Alembic migration history, consistency, and database schema drift.",
+      "triggers": "analyzing Alembic migration history, consistency, and database schema drift.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "backend-architecture-auditor": {
+      "name": "backend-architecture-auditor",
+      "domain": "security",
+      "lineCount": 19,
+      "purpose": "Use when analyzing backend architecture, domain logic, service boundaries, and coupling.",
+      "triggers": "analyzing backend architecture, domain logic, service boundaries, and coupling.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "backend-mongodb": {
+      "name": "backend-mongodb",
+      "domain": "database",
+      "lineCount": 16,
+      "purpose": "Use when analyzing MongoDB schemas, documents, indexes, and queries.",
+      "triggers": "analyzing MongoDB schemas, documents, indexes, and queries.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "backend-mysql": {
+      "name": "backend-mysql",
+      "domain": "database",
+      "lineCount": 18,
+      "purpose": "Use when analyzing MySQL database schemas, indexes, queries, and constraints.",
+      "triggers": "analyzing MySQL database schemas, indexes, queries, and constraints.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "backend-performance-auditor": {
+      "name": "backend-performance-auditor",
+      "domain": "security",
+      "lineCount": 17,
+      "purpose": "Use when analyzing backend performance, queries, async execution, and external API calls.",
+      "triggers": "analyzing backend performance, queries, async execution, and external API calls.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "backend-postgresql": {
+      "name": "backend-postgresql",
+      "domain": "database",
+      "lineCount": 21,
+      "purpose": "Use when analyzing PostgreSQL database schemas, indexes, queries, and constraints.",
+      "triggers": "analyzing PostgreSQL database schemas, indexes, queries, and constraints.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "backend-redis": {
+      "name": "backend-redis",
+      "domain": "database",
+      "lineCount": 16,
+      "purpose": "Use when analyzing Redis usage for caching, sessions, locks, queues, and rate limiting.",
+      "triggers": "analyzing Redis usage for caching, sessions, locks, queues, and rate limiting.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "backend-security-expert": {
+      "name": "backend-security-expert",
+      "domain": "backend",
+      "lineCount": 74,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "backend-sqlalchemy": {
+      "name": "backend-sqlalchemy",
+      "domain": "database",
+      "lineCount": 22,
+      "purpose": "Use when analyzing SQLAlchemy ORM models, relationships, session management, and query construction.",
+      "triggers": "analyzing SQLAlchemy ORM models, relationships, session management, and query construction.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "backend-sqlite": {
+      "name": "backend-sqlite",
+      "domain": "database",
+      "lineCount": 15,
+      "purpose": "Use when analyzing SQLite databases for concurrency, locking, and schemas.",
+      "triggers": "analyzing SQLite databases for concurrency, locking, and schemas.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "backend-testing-auditor": {
+      "name": "backend-testing-auditor",
+      "domain": "security",
+      "lineCount": 16,
+      "purpose": "Use when analyzing backend tests, unit tests, integration tests, and test coverage.",
+      "triggers": "analyzing backend tests, unit tests, integration tests, and test coverage.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "baseline-ui": {
+      "name": "baseline-ui",
+      "domain": "frontend",
+      "lineCount": 56,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "bash-linux": {
+      "name": "bash-linux",
+      "domain": "devops",
+      "lineCount": 140,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "behavioral-modes": {
+      "name": "behavioral-modes",
+      "domain": "meta",
+      "lineCount": 201,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "better-colors": {
+      "name": "better-colors",
+      "domain": "frontend",
+      "lineCount": 117,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "better-typography": {
+      "name": "better-typography",
+      "domain": "frontend",
+      "lineCount": 91,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "better-ui": {
+      "name": "better-ui",
+      "domain": "frontend",
+      "lineCount": 131,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "bolder": {
+      "name": "bolder",
+      "domain": "frontend",
+      "lineCount": 50,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "brainstorming": {
+      "name": "brainstorming",
+      "domain": "meta",
+      "lineCount": 461,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "browser-audit": {
+      "name": "browser-audit",
+      "domain": "testing",
+      "lineCount": 103,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "browser-native-ai": {
+      "name": "browser-native-ai",
+      "domain": "backend",
+      "lineCount": 73,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "build-primitive": {
+      "name": "build-primitive",
+      "domain": "frontend",
+      "lineCount": 51,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "building-native-ui": {
+      "name": "building-native-ui",
+      "domain": "frontend",
+      "lineCount": 163,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "cicd-pro": {
+      "name": "cicd-pro",
+      "domain": "devops",
+      "lineCount": 413,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": true
+    },
+    "clarify": {
+      "name": "clarify",
+      "domain": "frontend",
+      "lineCount": 56,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "clean-code": {
+      "name": "clean-code",
+      "domain": "security",
+      "lineCount": 368,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "cloud-architect": {
+      "name": "cloud-architect",
+      "domain": "devops",
+      "lineCount": 410,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "cobejs": {
+      "name": "cobejs",
+      "domain": "meta",
+      "lineCount": 71,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "code-review-checklist": {
+      "name": "code-review-checklist",
+      "domain": "security",
+      "lineCount": 164,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": true,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "codebase-design": {
+      "name": "codebase-design",
+      "domain": "meta",
+      "lineCount": 77,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "colorize": {
+      "name": "colorize",
+      "domain": "frontend",
+      "lineCount": 58,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "compact-landing": {
+      "name": "compact-landing",
+      "domain": "frontend",
+      "lineCount": 51,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "company-logos": {
+      "name": "company-logos",
+      "domain": "frontend",
+      "lineCount": 55,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "config-validator": {
+      "name": "config-validator",
+      "domain": "devops",
+      "lineCount": 126,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "containerization-pro": {
+      "name": "containerization-pro",
+      "domain": "devops",
+      "lineCount": 423,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "context-engineering-pro": {
+      "name": "context-engineering-pro",
+      "domain": "backend",
+      "lineCount": 70,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "create-design-md": {
+      "name": "create-design-md",
+      "domain": "frontend",
+      "lineCount": 93,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "critique": {
+      "name": "critique",
+      "domain": "frontend",
+      "lineCount": 80,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "csharp-developer": {
+      "name": "csharp-developer",
+      "domain": "backend",
+      "lineCount": 479,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "data-validation-schemas": {
+      "name": "data-validation-schemas",
+      "domain": "database",
+      "lineCount": 298,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "database-design": {
+      "name": "database-design",
+      "domain": "database",
+      "lineCount": 220,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "delight": {
+      "name": "delight",
+      "domain": "frontend",
+      "lineCount": 47,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "deployment-procedures": {
+      "name": "deployment-procedures",
+      "domain": "devops",
+      "lineCount": 133,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "design-lab": {
+      "name": "design-lab",
+      "domain": "meta",
+      "lineCount": 43,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "devops-engineer": {
+      "name": "devops-engineer",
+      "domain": "devops",
+      "lineCount": 306,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "devops-incident-responder": {
+      "name": "devops-incident-responder",
+      "domain": "devops",
+      "lineCount": 104,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "diagnosing-bugs": {
+      "name": "diagnosing-bugs",
+      "domain": "meta",
+      "lineCount": 173,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": true,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "distill": {
+      "name": "distill",
+      "domain": "frontend",
+      "lineCount": 46,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "documentation-templates": {
+      "name": "documentation-templates",
+      "domain": "meta",
+      "lineCount": 252,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": true,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "domain-modeling": {
+      "name": "domain-modeling",
+      "domain": "database",
+      "lineCount": 62,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "duckdb-analytical-sql": {
+      "name": "duckdb-analytical-sql",
+      "domain": "database",
+      "lineCount": 52,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "edge-ai-mobile": {
+      "name": "edge-ai-mobile",
+      "domain": "mobile",
+      "lineCount": 43,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "edge-computing": {
+      "name": "edge-computing",
+      "domain": "backend",
+      "lineCount": 144,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "emil-design-eng": {
+      "name": "emil-design-eng",
+      "domain": "meta",
+      "lineCount": 135,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "error-resilience": {
+      "name": "error-resilience",
+      "domain": "backend",
+      "lineCount": 404,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "expo-router-v4": {
+      "name": "expo-router-v4",
+      "domain": "mobile",
+      "lineCount": 73,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "extract-design-system": {
+      "name": "extract-design-system",
+      "domain": "frontend",
+      "lineCount": 121,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "fabel-protocol": {
+      "name": "fabel-protocol",
+      "domain": "meta",
+      "lineCount": 283,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Tri-state evidence findings",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": true,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "failure-mode-analysis": {
+      "name": "failure-mode-analysis",
+      "domain": "meta",
+      "lineCount": 49,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": true,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "fastapi-pro": {
+      "name": "fastapi-pro",
+      "domain": "backend",
+      "lineCount": 21,
+      "purpose": "Use when analyzing FastAPI applications for security, correctness, dependencies, endpoints, middleware, and architecture.",
+      "triggers": "analyzing FastAPI applications for security, correctness, dependencies, endpoints, middleware, and architecture.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "fixing-accessibility": {
+      "name": "fixing-accessibility",
+      "domain": "security",
+      "lineCount": 88,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "fixing-metadata": {
+      "name": "fixing-metadata",
+      "domain": "security",
+      "lineCount": 84,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "fixing-motion-performance": {
+      "name": "fixing-motion-performance",
+      "domain": "motion",
+      "lineCount": 79,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "framer-motion-expert": {
+      "name": "framer-motion-expert",
+      "domain": "motion",
+      "lineCount": 238,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "frontend-design": {
+      "name": "frontend-design",
+      "domain": "frontend",
+      "lineCount": 104,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "frontend-security-expert": {
+      "name": "frontend-security-expert",
+      "domain": "security",
+      "lineCount": 57,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "game-design-expert": {
+      "name": "game-design-expert",
+      "domain": "meta",
+      "lineCount": 93,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "game-engineering-expert": {
+      "name": "game-engineering-expert",
+      "domain": "meta",
+      "lineCount": 109,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "generative-ui-expert": {
+      "name": "generative-ui-expert",
+      "domain": "backend",
+      "lineCount": 101,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "geo-fundamentals": {
+      "name": "geo-fundamentals",
+      "domain": "meta",
+      "lineCount": 109,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "git-pro": {
+      "name": "git-pro",
+      "domain": "meta",
+      "lineCount": 402,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "github-operations": {
+      "name": "github-operations",
+      "domain": "meta",
+      "lineCount": 296,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "gpt-taste": {
+      "name": "gpt-taste",
+      "domain": "frontend",
+      "lineCount": 51,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "graph-engineering": {
+      "name": "graph-engineering",
+      "domain": "meta",
+      "lineCount": 29,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "gsap-core": {
+      "name": "gsap-core",
+      "domain": "motion",
+      "lineCount": 278,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "gsap-frameworks": {
+      "name": "gsap-frameworks",
+      "domain": "motion",
+      "lineCount": 169,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "gsap-performance": {
+      "name": "gsap-performance",
+      "domain": "motion",
+      "lineCount": 95,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "gsap-plugins": {
+      "name": "gsap-plugins",
+      "domain": "motion",
+      "lineCount": 442,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "gsap-react": {
+      "name": "gsap-react",
+      "domain": "motion",
+      "lineCount": 214,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": true
+    },
+    "gsap-scrolltrigger": {
+      "name": "gsap-scrolltrigger",
+      "domain": "motion",
+      "lineCount": 313,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "gsap-timeline": {
+      "name": "gsap-timeline",
+      "domain": "motion",
+      "lineCount": 123,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "gsap-utils": {
+      "name": "gsap-utils",
+      "domain": "motion",
+      "lineCount": 300,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "harden": {
+      "name": "harden",
+      "domain": "frontend",
+      "lineCount": 56,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "harness-protocol": {
+      "name": "harness-protocol",
+      "domain": "meta",
+      "lineCount": 49,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "hf-cli": {
+      "name": "hf-cli",
+      "domain": "huggingface",
+      "lineCount": 240,
+      "purpose": "Hugging Face Hub CLI (`hf`) for downloading, uploading, and managing models, datasets, spaces, buckets, repos, papers, jobs, and more on the Hugging Face Hub. Use when: handling authentication; managing local cache; managing Hugging Face Buckets; running or scheduling jobs on Hugging Face infrastructure; managing Hugging Face repos; discussions and pull requests; browsing models, datasets and spaces; reading, searching, or browsing academic papers; managing collections; querying datasets; configuring spaces; setting up webhooks; or deploying and managing HF Inference Endpoints. Make sure to use this skill whenever the user mentions 'hf', 'huggingface', 'Hugging Face', 'huggingface-cli', or 'hugging face cli', or wants to do anything related to the Hugging Face ecosystem and to AI and ML in general. Also use for cloud storage needs like training checkpoints, data pipelines, or agent traces. Use even if the user doesn't explicitly ask for a CLI command. Replaces the deprecated `huggingface-cli`.",
+      "triggers": "Hugging Face Hub CLI (`hf`) for downloading, uploading, and managing models, datasets, spaces, buckets, repos, papers, jobs, and more on the Hugging Face Hub. Use when: handling authentication; managing local cache; managing Hugging Face Buckets; running or scheduling jobs on Hugging Face infrastructure; managing Hugging Face repos; discussions and pull requests; browsing models, datasets and spaces; reading, searching, or browsing academic papers; managing collections; querying datasets; configuring spaces; setting up webhooks; or deploying and managing HF Inference Endpoints. Make sure to use this skill whenever the user mentions 'hf', 'huggingface', 'Hugging Face', 'huggingface-cli', or 'hugging face cli', or wants to do anything related to the Hugging Face ecosystem and to AI and ML in general. Also use for cloud storage needs like training checkpoints, data pipelines, or agent traces. Use even if the user doesn't explicitly ask for a CLI command. Replaces the deprecated `huggingface-cli`.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "hf-cloud-aws-context-discovery": {
+      "name": "hf-cloud-aws-context-discovery",
+      "domain": "huggingface",
+      "lineCount": 75,
+      "purpose": "Discover the user's local AWS context (active profile, region, account ID, caller identity) at the start of any AWS task. Use this skill before any other AWS work — deploying to SageMaker, creating resources, calling AWS APIs, or anything that touches an AWS account. Use it especially when the user has not specified a region or profile explicitly, when they say things like \"use my AWS account\", \"deploy to AWS\", \"use my profile\", or when about to make any AWS CLI or SDK call. Never guess the region or account ID — always use this skill to read it from the local configuration first.",
+      "triggers": "Discover the user's local AWS context (active profile, region, account ID, caller identity) at the start of any AWS task. Use this skill before any other AWS work — deploying to SageMaker, creating resources, calling AWS APIs, or anything that touches an AWS account. Use it especially when the user has not specified a region or profile explicitly, when they say things like \"use my AWS account\", \"deploy to AWS\", \"use my profile\", or when about to make any AWS CLI or SDK call. Never guess the region or account ID — always use this skill to read it from the local configuration first.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "hf-cloud-python-env-setup": {
+      "name": "hf-cloud-python-env-setup",
+      "domain": "huggingface",
+      "lineCount": 91,
+      "purpose": "Set up an isolated Python environment for SageMaker / AWS work, with the right Python version and current boto3. Use this skill whenever Python code will be executed for a SageMaker deployment, training job, or any AWS automation — including when about to run `pip install`, when about to invoke `boto3`, when creating or activating a virtualenv, or when the user asks to \"set up the environment\". Never use system Python and never `pip install` into it. Always isolate. This skill prevents the most common failure modes: wrong Python version, dependency conflicts, and stale SDKs.",
+      "triggers": "Set up an isolated Python environment for SageMaker / AWS work, with the right Python version and current boto3. Use this skill whenever Python code will be executed for a SageMaker deployment, training job, or any AWS automation — including when about to run `pip install`, when about to invoke `boto3`, when creating or activating a virtualenv, or when the user asks to \"set up the environment\". Never use system Python and never `pip install` into it. Always isolate. This skill prevents the most common failure modes: wrong Python version, dependency conflicts, and stale SDKs.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "requirements.txt",
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": true,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "hf-cloud-sagemaker-deployment-planner": {
+      "name": "hf-cloud-sagemaker-deployment-planner",
+      "domain": "huggingface",
+      "lineCount": 91,
+      "purpose": "Plan and coordinate the deployment of a model to Amazon SageMaker AI. Use this skill whenever the user wants to deploy, host, serve, or expose a model on SageMaker or AWS — including phrases like \"deploy a model\", \"host this LLM on AWS\", \"serve this embedding model\", \"deploy a reranker\", \"deploy a text-to-image / diffusion model\", \"host this for async inference\", \"create an endpoint\", \"serve my fine-tuned model\", or any request that involves making a model available for inference on AWS. Use this even when the user is vague (e.g. \"I just want to get this running on AWS, you figure it out\"). Works for text-generation LLMs, embedding models, rerankers, classifiers, text-to-image / diffusion models — picks the right serving stack and chooses between real-time and async inference. This is the entry-point skill for SageMaker deployment work — it asks clarifying questions, picks a deployment pathway, and coordinates the other deployment skills.",
+      "triggers": "Plan and coordinate the deployment of a model to Amazon SageMaker AI. Use this skill whenever the user wants to deploy, host, serve, or expose a model on SageMaker or AWS — including phrases like \"deploy a model\", \"host this LLM on AWS\", \"serve this embedding model\", \"deploy a reranker\", \"deploy a text-to-image / diffusion model\", \"host this for async inference\", \"create an endpoint\", \"serve my fine-tuned model\", or any request that involves making a model available for inference on AWS. Use this even when the user is vague (e.g. \"I just want to get this running on AWS, you figure it out\"). Works for text-generation LLMs, embedding models, rerankers, classifiers, text-to-image / diffusion models — picks the right serving stack and chooses between real-time and async inference. This is the entry-point skill for SageMaker deployment work — it asks clarifying questions, picks a deployment pathway, and coordinates the other deployment skills.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "hf-cloud-sagemaker-iam-preflight": {
+      "name": "hf-cloud-sagemaker-iam-preflight",
+      "domain": "huggingface",
+      "lineCount": 103,
+      "purpose": "Ensure a usable SageMaker execution role exists before deploying or training. Use this skill whenever about to create a SageMaker endpoint, model, training job, or any resource that requires an execution role. Use it especially when the user has not provided a role ARN explicitly, when scripts are about to call `iam:CreateRole`, or when an AccessDenied error mentions an IAM action. Never blindly call `iam:CreateRole` — always check for existing roles first. This skill prevents the most common SageMaker deployment failure: trying to create IAM resources from an SSO principal that has no IAM write permissions.",
+      "triggers": "Ensure a usable SageMaker execution role exists before deploying or training. Use this skill whenever about to create a SageMaker endpoint, model, training job, or any resource that requires an execution role. Use it especially when the user has not provided a role ARN explicitly, when scripts are about to call `iam:CreateRole`, or when an AccessDenied error mentions an IAM action. Never blindly call `iam:CreateRole` — always check for existing roles first. This skill prevents the most common SageMaker deployment failure: trying to create IAM resources from an SSO principal that has no IAM write permissions.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "references",
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "hf-cloud-sagemaker-production-defaults": {
+      "name": "hf-cloud-sagemaker-production-defaults",
+      "domain": "huggingface",
+      "lineCount": 420,
+      "purpose": "Create a SageMaker endpoint (real-time, real-time scale-to-zero, or async) with autoscaling, CloudWatch alarms, and tagging enabled by default. Use this skill whenever about to create a SageMaker endpoint, write deployment code that calls `create_endpoint`, or finalize a deployment after the image URI and IAM role are known. Provides deploy.py for real-time endpoints, deploy_ic.py for real-time endpoints that scale to zero instances via inference components, and deploy_async.py for async endpoints (also scale-to-zero). This is the last step in the SageMaker deployment workflow. Never generate a bare `create_endpoint` call without these defaults — endpoints without autoscaling or alarms are demos, not deployments.",
+      "triggers": "Create a SageMaker endpoint (real-time, real-time scale-to-zero, or async) with autoscaling, CloudWatch alarms, and tagging enabled by default. Use this skill whenever about to create a SageMaker endpoint, write deployment code that calls `create_endpoint`, or finalize a deployment after the image URI and IAM role are known. Provides deploy.py for real-time endpoints, deploy_ic.py for real-time endpoints that scale to zero instances via inference components, and deploy_async.py for async endpoints (also scale-to-zero). This is the last step in the SageMaker deployment workflow. Never generate a bare `create_endpoint` call without these defaults — endpoints without autoscaling or alarms are demos, not deployments.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "references",
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "hf-cloud-serving-image-selection": {
+      "name": "hf-cloud-serving-image-selection",
+      "domain": "huggingface",
+      "lineCount": 221,
+      "purpose": "Pick the right serving container for a SageMaker model deployment and find its current image URI. Use this skill whenever about to deploy a model to a SageMaker endpoint and an image URI needs to be chosen — including when the user says \"deploy this LLM\", \"host this HuggingFace model\", \"serve this fine-tuned model\", \"deploy this embedding model\", \"host a reranker\", \"serve a sentence-transformers model\", or when about to hardcode any container URI in deployment code. HuggingFace-curated Deep Learning Containers are ALWAYS preferred: HuggingFace vLLM (LLMs and generative rerankers), HuggingFace vLLM-Omni (multimodal), TEI (embeddings/cross-encoder rerankers), HF Inference Toolkit (other transformers). Generic images (AWS vLLM, DJL-LMI, SGLang) are used only when no HuggingFace image is compatible — never merely because they carry a newer version. Never hardcode a container URI from memory and never default to TGI. Prevents stale-image failures and wrong-region URIs.",
+      "triggers": "Pick the right serving container for a SageMaker model deployment and find its current image URI. Use this skill whenever about to deploy a model to a SageMaker endpoint and an image URI needs to be chosen — including when the user says \"deploy this LLM\", \"host this HuggingFace model\", \"serve this fine-tuned model\", \"deploy this embedding model\", \"host a reranker\", \"serve a sentence-transformers model\", or when about to hardcode any container URI in deployment code. HuggingFace-curated Deep Learning Containers are ALWAYS preferred: HuggingFace vLLM (LLMs and generative rerankers), HuggingFace vLLM-Omni (multimodal), TEI (embeddings/cross-encoder rerankers), HF Inference Toolkit (other transformers). Generic images (AWS vLLM, DJL-LMI, SGLang) are used only when no HuggingFace image is compatible — never merely because they carry a newer version. Never hardcode a container URI from memory and never default to TGI. Prevents stale-image failures and wrong-region URIs.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Tri-state evidence findings",
+      "dependencies": [
+        "references",
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": true,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "hf-mem": {
+      "name": "hf-mem",
+      "domain": "huggingface",
+      "lineCount": 80,
+      "purpose": "Hugging Face CLI to estimate the required memory to load Safetensors or GGUF model weights for inference from the Hugging Face Hub",
+      "triggers": "Hugging Face CLI to estimate the required memory to load Safetensors or GGUF model weights for inference from the Hugging Face Hub",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-best": {
+      "name": "huggingface-best",
+      "domain": "huggingface",
+      "lineCount": 135,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-community-evals": {
+      "name": "huggingface-community-evals",
+      "domain": "huggingface",
+      "lineCount": 208,
+      "purpose": "Run evaluations for Hugging Face Hub models using inspect-ai and lighteval on local hardware. Use for backend selection, local GPU evals, and choosing between vLLM / Transformers / accelerate. Not for HF Jobs orchestration, model-card PRs, .eval_results publication, or community-evals automation.",
+      "triggers": "Run evaluations for Hugging Face Hub models using inspect-ai and lighteval on local hardware. Use for backend selection, local GPU evals, and choosing between vLLM / Transformers / accelerate. Not for HF Jobs orchestration, model-card PRs, .eval_results publication, or community-evals automation.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "examples",
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-datasets": {
+      "name": "huggingface-datasets",
+      "domain": "huggingface",
+      "lineCount": 108,
+      "purpose": "Use this skill for Hugging Face Dataset Viewer API workflows that fetch subset/split metadata, paginate rows, search text, apply filters, download parquet URLs, and read size or statistics.",
+      "triggers": "Use this skill for Hugging Face Dataset Viewer API workflows that fetch subset/split metadata, paginate rows, search text, apply filters, download parquet URLs, and read size or statistics.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-gradio": {
+      "name": "huggingface-gradio",
+      "domain": "huggingface",
+      "lineCount": 299,
+      "purpose": "Build Gradio web UIs and demos in Python. Use when creating or editing Gradio apps, components, event listeners, layouts, or chatbots.",
+      "triggers": "Build Gradio web UIs and demos in Python. Use when creating or editing Gradio apps, components, event listeners, layouts, or chatbots.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "examples.md"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-llm-trainer": {
+      "name": "huggingface-llm-trainer",
+      "domain": "huggingface",
+      "lineCount": 739,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "references",
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": true,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-local-models": {
+      "name": "huggingface-local-models",
+      "domain": "huggingface",
+      "lineCount": 114,
+      "purpose": "Use to select models to run locally with llama.cpp and GGUF on CPU, Mac Metal, CUDA, or ROCm. Covers finding GGUFs, quant selection, running servers, exact GGUF file lookup, conversion, and OpenAI-compatible local serving.",
+      "triggers": "Use to select models to run locally with llama.cpp and GGUF on CPU, Mac Metal, CUDA, or ROCm. Covers finding GGUFs, quant selection, running servers, exact GGUF file lookup, conversion, and OpenAI-compatible local serving.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "references"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-lora-space-builder": {
+      "name": "huggingface-lora-space-builder",
+      "domain": "huggingface",
+      "lineCount": 394,
+      "purpose": "Build and publish a Gradio demo on Hugging Face Spaces for a user-provided LoRA. Use when someone asks to create, generate, ship, or publish a Space, demo, Gradio app, or playground for a LoRA — including LoRAs for Qwen-Image, Qwen-Image-Edit, LTX-Video, Wan, FLUX, SDXL, or other diffusion base models. Also triggers when someone describes a LoRA they trained or hosts on the Hub and wants to share it. Covers picking the right base pipeline and `diffusers` inference recipe, designing a UI tailored to the LoRA's task and inputs (Union/multi-task control, edit, video, image, etc.), respecting model-card recommendations (trigger words, steps, guidance, LoRA scale, example inputs), and shipping to ZeroGPU hardware as a private Space by default.",
+      "triggers": "Build and publish a Gradio demo on Hugging Face Spaces for a user-provided LoRA. Use when someone asks to create, generate, ship, or publish a Space, demo, Gradio app, or playground for a LoRA — including LoRAs for Qwen-Image, Qwen-Image-Edit, LTX-Video, Wan, FLUX, SDXL, or other diffusion base models. Also triggers when someone describes a LoRA they trained or hosts on the Hub and wants to share it. Covers picking the right base pipeline and `diffusers` inference recipe, designing a UI tailored to the LoRA's task and inputs (Union/multi-task control, edit, video, image, etc.), respecting model-card recommendations (trigger words, steps, guidance, LoRA scale, example inputs), and shipping to ZeroGPU hardware as a private Space by default.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Tri-state evidence findings",
+      "dependencies": [
+        "references"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": true,
+      "hasEdges": true,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-paper-publisher": {
+      "name": "huggingface-paper-publisher",
+      "domain": "huggingface",
+      "lineCount": 625,
+      "purpose": "Publish and manage research papers on Hugging Face Hub. Supports creating paper pages, linking papers to models/datasets, claiming authorship, and generating professional markdown-based research articles.",
+      "triggers": "Publish and manage research papers on Hugging Face Hub. Supports creating paper pages, linking papers to models/datasets, claiming authorship, and generating professional markdown-based research articles.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "examples",
+        "references",
+        "scripts",
+        "templates"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-papers": {
+      "name": "huggingface-papers",
+      "domain": "huggingface",
+      "lineCount": 239,
+      "purpose": "Look up and read Hugging Face paper pages in markdown, and use the papers API for structured metadata such as authors, linked models/datasets/spaces, Github repo and project page. Use when the user shares a Hugging Face paper page URL, an arXiv URL or ID, or asks to summarize, explain, or analyze an AI research paper.",
+      "triggers": "Look up and read Hugging Face paper pages in markdown, and use the papers API for structured metadata such as authors, linked models/datasets/spaces, Github repo and project page. Use when the user shares a Hugging Face paper page URL, an arXiv URL or ID, or asks to summarize, explain, or analyze an AI research paper.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-spaces": {
+      "name": "huggingface-spaces",
+      "domain": "huggingface",
+      "lineCount": 243,
+      "purpose": "Build, deploy, and maintain applications on Hugging Face Spaces — Gradio / Docker / Static SDKs, ZeroGPU and dedicated hardware, model loading, debugging, buckets, inference providers, community grants. Use whenever the user asks to create or host an app on Hugging Face, port code onto ZeroGPU, fix a Space that won't build or run, or otherwise work with `hf spaces …`, `@spaces.GPU`, Space README frontmatter, or the `spaces` Python package.",
+      "triggers": "Build, deploy, and maintain applications on Hugging Face Spaces — Gradio / Docker / Static SDKs, ZeroGPU and dedicated hardware, model loading, debugging, buckets, inference providers, community grants. Use whenever the user asks to create or host an app on Hugging Face, port code onto ZeroGPU, fix a Space that won't build or run, or otherwise work with `hf spaces …`, `@spaces.GPU`, Space README frontmatter, or the `spaces` Python package.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "README.md",
+        "references"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-tool-builder": {
+      "name": "huggingface-tool-builder",
+      "domain": "huggingface",
+      "lineCount": 121,
+      "purpose": "Use this skill when the user wants to build tool/scripts or achieve a task where using data from the Hugging Face API would help. This is especially useful when chaining or combining API calls or the task will be repeated/automated. This Skill creates a reusable script to fetch, enrich or process data.",
+      "triggers": "Use this skill when the user wants to build tool/scripts or achieve a task where using data from the Hugging Face API would help. This is especially useful when chaining or combining API calls or the task will be repeated/automated. This Skill creates a reusable script to fetch, enrich or process data.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "references"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-trackio": {
+      "name": "huggingface-trackio",
+      "domain": "huggingface",
+      "lineCount": 143,
+      "purpose": "Track and visualize ML training experiments with Trackio. Use when logging metrics during training (Python API), firing alerts for training diagnostics, or retrieving/analyzing logged metrics (CLI). Supports real-time dashboard visualization, alerts with webhooks, HF Space syncing, and JSON output for automation.",
+      "triggers": "Track and visualize ML training experiments with Trackio. Use when logging metrics during training (Python API), firing alerts for training diagnostics, or retrieving/analyzing logged metrics (CLI). Supports real-time dashboard visualization, alerts with webhooks, HF Space syncing, and JSON output for automation.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [
+        "references"
+      ],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "huggingface-vision-trainer": {
+      "name": "huggingface-vision-trainer",
+      "domain": "huggingface",
+      "lineCount": 594,
+      "purpose": "Trains and fine-tunes vision models for object detection (D-FINE, RT-DETR v2, DETR, YOLOS), image classification (timm models — MobileNetV3, MobileViT, ResNet, ViT/DINOv3 — plus any Transformers classifier), and SAM/SAM2 segmentation using Hugging Face Transformers on Hugging Face Jobs cloud GPUs. Covers COCO-format dataset preparation, Albumentations augmentation, mAP/mAR evaluation, accuracy metrics, SAM segmentation with bbox/point prompts, DiceCE loss, hardware selection, cost estimation, Trackio monitoring, and Hub persistence. Use when users mention training object detection, image classification, SAM, SAM2, segmentation, image matting, DETR, D-FINE, RT-DETR, ViT, timm, MobileNet, ResNet, bounding box models, or fine-tuning vision models on Hugging Face Jobs.",
+      "triggers": "Trains and fine-tunes vision models for object detection (D-FINE, RT-DETR v2, DETR, YOLOS), image classification (timm models — MobileNetV3, MobileViT, ResNet, ViT/DINOv3 — plus any Transformers classifier), and SAM/SAM2 segmentation using Hugging Face Transformers on Hugging Face Jobs cloud GPUs. Covers COCO-format dataset preparation, Albumentations augmentation, mAP/mAR evaluation, accuracy metrics, SAM segmentation with bbox/point prompts, DiceCE loss, hardware selection, cost estimation, Trackio monitoring, and Hub persistence. Use when users mention training object detection, image classification, SAM, SAM2, segmentation, image matting, DETR, D-FINE, RT-DETR, ViT, timm, MobileNet, ResNet, bounding box models, or fine-tuning vision models on Hugging Face Jobs.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "references",
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": true,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "huggingface-zerogpu": {
+      "name": "huggingface-zerogpu",
+      "domain": "huggingface",
+      "lineCount": 290,
+      "purpose": "AI demos and GPU compute with Gradio Spaces and Hugging Face Spaces ZeroGPU. Use when writing or reviewing code that uses `@spaces.GPU`, configuring `python_version` or `requirements.txt` for a ZeroGPU Space, or handling ZeroGPU-specific code constraints — pickle-based process isolation, `gr.State` semantics across the worker boundary, no `torch.compile` (use AoTI instead), CUDA wheel-only builds (no `nvcc` at build or runtime), large vs xlarge sizing, and dynamic duration callables. Make sure to use this skill whenever the user mentions ZeroGPU, `@spaces.GPU`, or the `spaces` Python package, or hits ZeroGPU-specific code errors like `PicklingError` across the worker boundary, `illegal duration`, or `flash-attn` wheel-build failures — even when the user does not explicitly ask for ZeroGPU coding guidance. Trigger on `import spaces` or `@spaces.GPU` in code.",
+      "triggers": "AI demos and GPU compute with Gradio Spaces and Hugging Face Spaces ZeroGPU. Use when writing or reviewing code that uses `@spaces.GPU`, configuring `python_version` or `requirements.txt` for a ZeroGPU Space, or handling ZeroGPU-specific code constraints — pickle-based process isolation, `gr.State` semantics across the worker boundary, no `torch.compile` (use AoTI instead), CUDA wheel-only builds (no `nvcc` at build or runtime), large vs xlarge sizing, and dynamic duration callables. Make sure to use this skill whenever the user mentions ZeroGPU, `@spaces.GPU`, or the `spaces` Python package, or hits ZeroGPU-specific code errors like `PicklingError` across the worker boundary, `illegal duration`, or `flash-attn` wheel-build failures — even when the user does not explicitly ask for ZeroGPU coding guidance. Trigger on `import spaces` or `@spaces.GPU` in code.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "references"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": true,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "human-gate-negotiation": {
+      "name": "human-gate-negotiation",
+      "domain": "meta",
+      "lineCount": 31,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "i18n-localization": {
+      "name": "i18n-localization",
+      "domain": "meta",
+      "lineCount": 135,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "impeccable": {
+      "name": "impeccable",
+      "domain": "frontend",
+      "lineCount": 53,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "improve-codebase-architecture": {
+      "name": "improve-codebase-architecture",
+      "domain": "meta",
+      "lineCount": 49,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "improve-ui": {
+      "name": "improve-ui",
+      "domain": "frontend",
+      "lineCount": 71,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "intelligent-routing": {
+      "name": "intelligent-routing",
+      "domain": "meta",
+      "lineCount": 205,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "knowledge-graph": {
+      "name": "knowledge-graph",
+      "domain": "meta",
+      "lineCount": 72,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "landing-page": {
+      "name": "landing-page",
+      "domain": "frontend",
+      "lineCount": 66,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "lint-and-validate": {
+      "name": "lint-and-validate",
+      "domain": "security",
+      "lineCount": 225,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "llm-engineering": {
+      "name": "llm-engineering",
+      "domain": "backend",
+      "lineCount": 361,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "local-first": {
+      "name": "local-first",
+      "domain": "meta",
+      "lineCount": 139,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "local-first-architecture": {
+      "name": "local-first-architecture",
+      "domain": "meta",
+      "lineCount": 63,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "lottie-animation": {
+      "name": "lottie-animation",
+      "domain": "motion",
+      "lineCount": 63,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "marquee-loop": {
+      "name": "marquee-loop",
+      "domain": "motion",
+      "lineCount": 73,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "masked-reveal": {
+      "name": "masked-reveal",
+      "domain": "motion",
+      "lineCount": 231,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "mcp-builder": {
+      "name": "mcp-builder",
+      "domain": "meta",
+      "lineCount": 106,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "micro-interaction": {
+      "name": "micro-interaction",
+      "domain": "motion",
+      "lineCount": 254,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "mobile-design": {
+      "name": "mobile-design",
+      "domain": "mobile",
+      "lineCount": 246,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "monorepo-management": {
+      "name": "monorepo-management",
+      "domain": "meta",
+      "lineCount": 296,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "morphing-icons": {
+      "name": "morphing-icons",
+      "domain": "motion",
+      "lineCount": 349,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "motion-engineering": {
+      "name": "motion-engineering",
+      "domain": "motion",
+      "lineCount": 198,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "nextjs-react-expert": {
+      "name": "nextjs-react-expert",
+      "domain": "frontend",
+      "lineCount": 219,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "nodejs-best-practices": {
+      "name": "nodejs-best-practices",
+      "domain": "backend",
+      "lineCount": 543,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "observability": {
+      "name": "observability",
+      "domain": "meta",
+      "lineCount": 304,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "opentelemetry-observability": {
+      "name": "opentelemetry-observability",
+      "domain": "devops",
+      "lineCount": 52,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "page-transition-animation": {
+      "name": "page-transition-animation",
+      "domain": "motion",
+      "lineCount": 87,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "parallel-agents": {
+      "name": "parallel-agents",
+      "domain": "meta",
+      "lineCount": 111,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": true
+    },
+    "performance-profiling": {
+      "name": "performance-profiling",
+      "domain": "meta",
+      "lineCount": 231,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "plan-writing": {
+      "name": "plan-writing",
+      "domain": "meta",
+      "lineCount": 128,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": true,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "platform-engineer": {
+      "name": "platform-engineer",
+      "domain": "devops",
+      "lineCount": 109,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "platform-engineering-opentofu": {
+      "name": "platform-engineering-opentofu",
+      "domain": "devops",
+      "lineCount": 60,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "playwright-ai-e2e": {
+      "name": "playwright-ai-e2e",
+      "domain": "testing",
+      "lineCount": 53,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "playwright-best-practices": {
+      "name": "playwright-best-practices",
+      "domain": "testing",
+      "lineCount": 150,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "polish": {
+      "name": "polish",
+      "domain": "frontend",
+      "lineCount": 40,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "powershell-windows": {
+      "name": "powershell-windows",
+      "domain": "devops",
+      "lineCount": 123,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "pricing-page": {
+      "name": "pricing-page",
+      "domain": "frontend",
+      "lineCount": 49,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "product-aware-heuristics": {
+      "name": "product-aware-heuristics",
+      "domain": "frontend",
+      "lineCount": 391,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "progressive-blur": {
+      "name": "progressive-blur",
+      "domain": "motion",
+      "lineCount": 81,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "project-idioms": {
+      "name": "project-idioms",
+      "domain": "meta",
+      "lineCount": 92,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "property-based-testing": {
+      "name": "property-based-testing",
+      "domain": "testing",
+      "lineCount": 51,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "python-patterns": {
+      "name": "python-patterns",
+      "domain": "backend",
+      "lineCount": 221,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "python-pro": {
+      "name": "python-pro",
+      "domain": "backend",
+      "lineCount": 306,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "quieter": {
+      "name": "quieter",
+      "domain": "frontend",
+      "lineCount": 50,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "react-doctor": {
+      "name": "react-doctor",
+      "domain": "frontend",
+      "lineCount": 52,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "react-specialist": {
+      "name": "react-specialist",
+      "domain": "frontend",
+      "lineCount": 281,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "readme-builder": {
+      "name": "readme-builder",
+      "domain": "meta",
+      "lineCount": 271,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "realtime-patterns": {
+      "name": "realtime-patterns",
+      "domain": "backend",
+      "lineCount": 284,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "red-team-tactics": {
+      "name": "red-team-tactics",
+      "domain": "security",
+      "lineCount": 192,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "redesign-skill": {
+      "name": "redesign-skill",
+      "domain": "frontend",
+      "lineCount": 47,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "review-animations": {
+      "name": "review-animations",
+      "domain": "motion",
+      "lineCount": 46,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "STANDARDS.md"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "rust-pro": {
+      "name": "rust-pro",
+      "domain": "backend",
+      "lineCount": 653,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "semantic-filesystem-navigation": {
+      "name": "semantic-filesystem-navigation",
+      "domain": "meta",
+      "lineCount": 25,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "seo-fundamentals": {
+      "name": "seo-fundamentals",
+      "domain": "meta",
+      "lineCount": 140,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "server-management": {
+      "name": "server-management",
+      "domain": "devops",
+      "lineCount": 179,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "session-log-interrogation": {
+      "name": "session-log-interrogation",
+      "domain": "meta",
+      "lineCount": 30,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "shadcn-ui-expert": {
+      "name": "shadcn-ui-expert",
+      "domain": "frontend",
+      "lineCount": 197,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "shape": {
+      "name": "shape",
+      "domain": "frontend",
+      "lineCount": 57,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "skill-creator": {
+      "name": "skill-creator",
+      "domain": "meta",
+      "lineCount": 178,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "soft-skill": {
+      "name": "soft-skill",
+      "domain": "frontend",
+      "lineCount": 54,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "sounds-on-the-web": {
+      "name": "sounds-on-the-web",
+      "domain": "motion",
+      "lineCount": 77,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "sql-pro": {
+      "name": "sql-pro",
+      "domain": "database",
+      "lineCount": 625,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "subagent-driven-development": {
+      "name": "subagent-driven-development",
+      "domain": "meta",
+      "lineCount": 33,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "supabase-postgres-best-practices": {
+      "name": "supabase-postgres-best-practices",
+      "domain": "database",
+      "lineCount": 58,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "svg-animation": {
+      "name": "svg-animation",
+      "domain": "motion",
+      "lineCount": 357,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "swiftui-expert": {
+      "name": "swiftui-expert",
+      "domain": "mobile",
+      "lineCount": 165,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Tri-state evidence findings",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": true,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "swiss-design": {
+      "name": "swiss-design",
+      "domain": "frontend",
+      "lineCount": 45,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "system-design-pro": {
+      "name": "system-design-pro",
+      "domain": "meta",
+      "lineCount": 189,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Tri-state evidence findings",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": true,
+      "hasEdges": true,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "systematic-debugging": {
+      "name": "systematic-debugging",
+      "domain": "meta",
+      "lineCount": 130,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "condition-based-waiting.md",
+        "defense-in-depth.md",
+        "root-cause-tracing.md"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "tailwind-patterns": {
+      "name": "tailwind-patterns",
+      "domain": "frontend",
+      "lineCount": 584,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "taste-skill": {
+      "name": "taste-skill",
+      "domain": "frontend",
+      "lineCount": 53,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "tdd-workflow": {
+      "name": "tdd-workflow",
+      "domain": "testing",
+      "lineCount": 106,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "test-result-analyzer": {
+      "name": "test-result-analyzer",
+      "domain": "testing",
+      "lineCount": 271,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "testing-patterns": {
+      "name": "testing-patterns",
+      "domain": "testing",
+      "lineCount": 535,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "thermo-nuclear-code-quality-review": {
+      "name": "thermo-nuclear-code-quality-review",
+      "domain": "security",
+      "lineCount": 63,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "thinking-protocol": {
+      "name": "thinking-protocol",
+      "domain": "meta",
+      "lineCount": 22,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "to-spring-or-not-to-spring": {
+      "name": "to-spring-or-not-to-spring",
+      "domain": "motion",
+      "lineCount": 44,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "train-sentence-transformers": {
+      "name": "train-sentence-transformers",
+      "domain": "huggingface",
+      "lineCount": 110,
+      "purpose": "Train or fine-tune sentence-transformers models across `SentenceTransformer` (bi-encoder, dense or static embedding model for retrieval, similarity, clustering, classification, paraphrase mining, dedup, multimodal), `CrossEncoder` (reranker, pair scoring for two-stage retrieval / pair classification), `SparseEncoder` (SPLADE, sparse embedding model for learned-sparse retrieval), and `MultiVectorEncoder` (ColBERT / late-interaction, per-token embeddings scored with MaxSim). Covers loss selection, hard-negative mining, evaluators, distillation, LoRA, Matryoshka, and Hugging Face Hub publishing. Use for any sentence-transformers training task.",
+      "triggers": "Train or fine-tune sentence-transformers models across `SentenceTransformer` (bi-encoder, dense or static embedding model for retrieval, similarity, clustering, classification, paraphrase mining, dedup, multimodal), `CrossEncoder` (reranker, pair scoring for two-stage retrieval / pair classification), `SparseEncoder` (SPLADE, sparse embedding model for learned-sparse retrieval), and `MultiVectorEncoder` (ColBERT / late-interaction, per-token embeddings scored with MaxSim). Covers loss selection, hard-negative mining, evaluators, distillation, LoRA, Matryoshka, and Hugging Face Hub publishing. Use for any sentence-transformers training task.",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "references",
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "transformers-js": {
+      "name": "transformers-js",
+      "domain": "huggingface",
+      "lineCount": 693,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "references"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "transitions-dev": {
+      "name": "transitions-dev",
+      "domain": "motion",
+      "lineCount": 91,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "trend-researcher": {
+      "name": "trend-researcher",
+      "domain": "meta",
+      "lineCount": 199,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "tribunal-instincts-memory": {
+      "name": "tribunal-instincts-memory",
+      "domain": "meta",
+      "lineCount": 32,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "trl-training": {
+      "name": "trl-training",
+      "domain": "huggingface",
+      "lineCount": 319,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "typescript-advanced": {
+      "name": "typescript-advanced",
+      "domain": "meta",
+      "lineCount": 307,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "typeset": {
+      "name": "typeset",
+      "domain": "frontend",
+      "lineCount": 61,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "ui-reasoning-engine": {
+      "name": "ui-reasoning-engine",
+      "domain": "frontend",
+      "lineCount": 156,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "ui-skill-packs": {
+      "name": "ui-skill-packs",
+      "domain": "frontend",
+      "lineCount": 58,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "ui-skills-root": {
+      "name": "ui-skills-root",
+      "domain": "frontend",
+      "lineCount": 70,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "ui-ux-pro-max": {
+      "name": "ui-ux-pro-max",
+      "domain": "frontend",
+      "lineCount": 111,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "ui-ux-researcher": {
+      "name": "ui-ux-researcher",
+      "domain": "frontend",
+      "lineCount": 200,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "vector-search-pgvector": {
+      "name": "vector-search-pgvector",
+      "domain": "database",
+      "lineCount": 71,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "verification-before-completion": {
+      "name": "verification-before-completion",
+      "domain": "meta",
+      "lineCount": 108,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Multi-pass execution with VBC",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": true,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "vue-expert": {
+      "name": "vue-expert",
+      "domain": "frontend",
+      "lineCount": 260,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "vulnerability-scanner": {
+      "name": "vulnerability-scanner",
+      "domain": "security",
+      "lineCount": 379,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "web-accessibility-auditor": {
+      "name": "web-accessibility-auditor",
+      "domain": "security",
+      "lineCount": 180,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "web-design-guidelines": {
+      "name": "web-design-guidelines",
+      "domain": "security",
+      "lineCount": 50,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "web-quality-audit": {
+      "name": "web-quality-audit",
+      "domain": "security",
+      "lineCount": 48,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "webapp-testing": {
+      "name": "webapp-testing",
+      "domain": "testing",
+      "lineCount": 129,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [
+        "scripts"
+      ],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "webgpu-performance": {
+      "name": "webgpu-performance",
+      "domain": "meta",
+      "lineCount": 89,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": true,
+      "hasRev": false
+    },
+    "whimsy-injector": {
+      "name": "whimsy-injector",
+      "domain": "frontend",
+      "lineCount": 306,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "workflow-optimizer": {
+      "name": "workflow-optimizer",
+      "domain": "meta",
+      "lineCount": 189,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    },
+    "zero-trust-passkeys": {
+      "name": "zero-trust-passkeys",
+      "domain": "security",
+      "lineCount": 83,
+      "purpose": "Domain specialized execution.",
+      "triggers": "",
+      "inputs": [
+        "Codebase files",
+        "User instructions",
+        "Target schemas"
+      ],
+      "tools": [
+        "Read",
+        "Grep",
+        "Glob",
+        "Bash",
+        "Edit",
+        "Write"
+      ],
+      "workflow": "Ad-hoc execution",
+      "output": "Unstructured text",
+      "dependencies": [],
+      "relatedSkills": [],
+      "hasVbc": false,
+      "hasEv": false,
+      "hasEdges": false,
+      "hasChecklist": false,
+      "hasRev": false
+    }
+  }
+}

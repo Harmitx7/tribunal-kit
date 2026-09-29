@@ -22,7 +22,7 @@ const { captureRuntimeErrors, verifyRuntimeFix } = require('./sentinel');
  * @param {object} options
  * @returns {Promise<{ url: string, markdown: string, sandboxed: string, isClean: boolean, threatLevel: string }>}
  */
-async function browse(url, options = {}) {
+async function browse(url, _options = {}) {
   const browser = await launchBrowser();
   let client = null;
   let tab = null;

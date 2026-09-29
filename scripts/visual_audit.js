@@ -37,11 +37,21 @@ function runVisualAudit(filePath) {
 
   // 1.5 Anti-Slop Copywriting check
   const SLOP_PHRASES = [
-    "10,000+ users", "10K+ users", "99.9% uptime", "AI Powered", 
-    "Revolutionary", "Next Generation", "Seamless experience", "Cutting Edge", 
-    "SOC 2 compliant", "Enterprise-grade security", "300% faster"
+    '10,000+ users',
+    '10K+ users',
+    '99.9% uptime',
+    'AI Powered',
+    'Revolutionary',
+    'Next Generation',
+    'Seamless experience',
+    'Cutting Edge',
+    'SOC 2 compliant',
+    'Enterprise-grade security',
+    '300% faster',
   ];
-  const foundSlop = SLOP_PHRASES.find(phrase => content.toLowerCase().includes(phrase.toLowerCase()));
+  const foundSlop = SLOP_PHRASES.find(phrase =>
+    content.toLowerCase().includes(phrase.toLowerCase()),
+  );
   if (foundSlop) {
     violations.push({
       rule: 'ANTI_SLOP_COPYWRITING',

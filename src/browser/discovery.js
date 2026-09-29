@@ -17,12 +17,24 @@ const http = require('http');
  */
 const WINDOWS_PATHS = [
   // Chrome 64-bit & 32-bit
-  path.join(process.env['ProgramFiles'] || 'C:\\Program Files', 'Google\\Chrome\\Application\\chrome.exe'),
-  path.join(process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)', 'Google\\Chrome\\Application\\chrome.exe'),
+  path.join(
+    process.env['ProgramFiles'] || 'C:\\Program Files',
+    'Google\\Chrome\\Application\\chrome.exe',
+  ),
+  path.join(
+    process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)',
+    'Google\\Chrome\\Application\\chrome.exe',
+  ),
   path.join(process.env['LocalAppData'] || '', 'Google\\Chrome\\Application\\chrome.exe'),
   // Edge
-  path.join(process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)', 'Microsoft\\Edge\\Application\\msedge.exe'),
-  path.join(process.env['ProgramFiles'] || 'C:\\Program Files', 'Microsoft\\Edge\\Application\\msedge.exe'),
+  path.join(
+    process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)',
+    'Microsoft\\Edge\\Application\\msedge.exe',
+  ),
+  path.join(
+    process.env['ProgramFiles'] || 'C:\\Program Files',
+    'Microsoft\\Edge\\Application\\msedge.exe',
+  ),
   path.join(process.env['LocalAppData'] || '', 'Microsoft\\Edge\\Application\\msedge.exe'),
 ];
 
@@ -48,18 +60,16 @@ const LINUX_PATHS = [
  */
 function findBrowser() {
   // 1. Check explicit environment override
-  const envPath = process.env.CHROME_PATH || process.env.BROWSER_PATH || process.env.PINCHTAB_BROWSER_BINARY;
+  const envPath =
+    process.env.CHROME_PATH || process.env.BROWSER_PATH || process.env.PINCHTAB_BROWSER_BINARY;
   if (envPath && fs.existsSync(envPath)) {
     return { path: envPath, type: detectBrowserType(envPath) };
   }
 
   // 2. Platform-specific paths
   const platform = os.platform();
-  const candidates = platform === 'win32'
-    ? WINDOWS_PATHS
-    : platform === 'darwin'
-      ? DARWIN_PATHS
-      : LINUX_PATHS;
+  const candidates =
+    platform === 'win32' ? WINDOWS_PATHS : platform === 'darwin' ? DARWIN_PATHS : LINUX_PATHS;
 
   for (const candidate of candidates) {
     if (candidate && fs.existsSync(candidate)) {
@@ -120,8 +130,8 @@ function findPinchTabBinary() {
  * @returns {Promise<boolean>}
  */
 function isPortOpen(port = 9222, host = '127.0.0.1') {
-  return new Promise((resolve) => {
-    const req = http.get({ host, port, path: '/json/version', timeout: 500 }, (res) => {
+  return new Promise(resolve => {
+    const req = http.get({ host, port, path: '/json/version', timeout: 500 }, res => {
       resolve(res.statusCode === 200);
     });
     req.on('error', () => resolve(false));

@@ -59,7 +59,7 @@ node runners/skill_enhancement_engine.js --skill <skill-name> --fix
 # Enhance all skills within a domain cluster (motion, frontend, backend, security, devops, database, testing, mobile)
 node runners/skill_enhancement_engine.js --domain motion --fix
 
-# Enhance all 185 skills and mirror changes to workspace root
+# Enhance all 235 skills and mirror changes to workspace root
 node runners/skill_enhancement_engine.js --all --fix --sync-to-root
 
 # Validate payload and SDO triggers

@@ -117,29 +117,37 @@ function releaseLock(lockPath) {
 
 function computeScore(entry, query, corpus = []) {
   if (!query || !entry.content) return 0;
-  const queryWords = query.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+  const queryWords = query
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(w => w.length > 2);
   if (queryWords.length === 0) return 0;
   const contentLower = entry.content.toLowerCase();
 
   let relevance = 0;
   const k1 = 1.2;
   const b = 0.75;
-  const avgdl_raw = corpus.length > 0 ? corpus.reduce((sum, e) => sum + (e.content ? e.content.length : 0), 0) / corpus.length : 100;
+  const avgdl_raw =
+    corpus.length > 0
+      ? corpus.reduce((sum, e) => sum + (e.content ? e.content.length : 0), 0) / corpus.length
+      : 100;
   const avgdl = avgdl_raw || 100;
   const dl = contentLower.length;
 
   for (const word of queryWords) {
     const termFreq = contentLower.split(word).length - 1;
-    if (termFreq === 0 && (!entry.tags || !entry.tags.some(t => t.toLowerCase().includes(word)))) continue;
-    
+    if (termFreq === 0 && (!entry.tags || !entry.tags.some(t => t.toLowerCase().includes(word))))
+      continue;
+
     // Effective TF including tag boost
-    const tf = termFreq + (entry.tags && entry.tags.some(t => t.toLowerCase().includes(word)) ? 2 : 0);
-    
+    const tf =
+      termFreq + (entry.tags && entry.tags.some(t => t.toLowerCase().includes(word)) ? 2 : 0);
+
     const docFreq = corpus.filter(e => e.content && e.content.toLowerCase().includes(word)).length;
     // IDF
     const idf = Math.log((corpus.length - docFreq + 0.5) / (docFreq + 0.5) + 1.0);
-    
-    relevance += idf * (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * (dl / avgdl)));
+
+    relevance += (idf * (tf * (k1 + 1))) / (tf + k1 * (1 - b + b * (dl / avgdl)));
   }
 
   // Exact phrase match bonus
@@ -149,9 +157,10 @@ function computeScore(entry, query, corpus = []) {
 
   if (relevance === 0) return 0;
 
-  const priority = entry.priority != null ? entry.priority : (TYPE_PRIORITY[entry.memory_type] || 0.5);
+  const priority =
+    entry.priority != null ? entry.priority : TYPE_PRIORITY[entry.memory_type] || 0.5;
   const confidence = typeof entry.confidence === 'number' ? entry.confidence : 1.0;
-  
+
   let recency = 0;
   if (entry.memory_type === 'episodic') {
     const age = daysSince(entry.created_at);
@@ -159,7 +168,7 @@ function computeScore(entry, query, corpus = []) {
   }
   const freqBoost = Math.max(0, Math.log(entry.access_count || 1)) * 0.05;
 
-  return (relevance * priority * confidence) + recency + freqBoost;
+  return relevance * priority * confidence + recency + freqBoost;
 }
 
 // ─── Memory Engine Class ──────────────────────────────────────────────────────
@@ -260,7 +269,9 @@ class MemoryEngine {
       }
 
       const now = nowEpochStr();
-      const nextId = index.next_id || (index.entries.length > 0 ? Math.max(...index.entries.map(e => e.id)) + 1 : 1);
+      const nextId =
+        index.next_id ||
+        (index.entries.length > 0 ? Math.max(...index.entries.map(e => e.id)) + 1 : 1);
       const cleanTags = Array.isArray(tags)
         ? tags.filter(t => typeof t === 'string' && t.trim().length > 0).map(t => t.trim())
         : [];
@@ -278,7 +289,12 @@ class MemoryEngine {
         session_id: options.sessionId || options.session_id || null,
         priority: typeof options.priority === 'number' ? options.priority : 1.0,
         relations: Array.isArray(options.relations) ? options.relations : [],
-        confidence: typeof options.confidence === 'number' ? options.confidence : (options.source === 'learned' ? 0.5 : 1.0),
+        confidence:
+          typeof options.confidence === 'number'
+            ? options.confidence
+            : options.source === 'learned'
+              ? 0.5
+              : 1.0,
       };
 
       index.entries.push(entry);
@@ -316,10 +332,10 @@ class MemoryEngine {
       for (const s of scored) {
         if (s.entry.relations) {
           for (const relId of s.entry.relations) {
-             const related = scored.find(r => String(r.entry.id) === String(relId));
-             if (related) {
-               related.score += s.score * 0.2; // 20% boost from incoming relation
-             }
+            const related = scored.find(r => String(r.entry.id) === String(relId));
+            if (related) {
+              related.score += s.score * 0.2; // 20% boost from incoming relation
+            }
           }
         }
       }

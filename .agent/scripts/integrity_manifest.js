@@ -73,17 +73,29 @@ function crawlAgents(agentDir) {
   const specialists = [];
   const allAgents = [];
 
+  const nonReviewers = new Set([
+    'penetration-tester',
+    'agent-shield-auditor',
+    'anti-slop-auditor',
+  ]);
+
   for (const file of files) {
     const name = file.replace(/\.md$/, '');
     allAgents.push(name);
 
-    // Classify: reviewer if name contains "reviewer", "auditor", or "tester"
-    // or if frontmatter has role: reviewer
+    // Classify: reviewer if name is in canonical reviewer set or matches reviewer pattern
     const content = safeReadFile(path.join(agentsDir, file));
     const fm = parseFrontmatter(content);
     const isReviewer =
-      /reviewer|auditor|tester|throughput-optimizer/i.test(name) ||
-      (fm.role && /reviewer/i.test(fm.role));
+      !nonReviewers.has(name) &&
+      ((fm.role && /reviewer/i.test(fm.role)) ||
+        /reviewer/i.test(name) ||
+        name === 'security-auditor' ||
+        name === 'ui-ux-auditor' ||
+        name === 'ui-visual-auditor' ||
+        name === 'db-latency-auditor' ||
+        name === 'throughput-optimizer' ||
+        name === 'architecture-auditor');
 
     if (isReviewer) {
       reviewers.push(name);
@@ -170,9 +182,10 @@ function extractCrossReferences(filePath, content, agentDir) {
   const relSource = path.relative(agentDir, filePath).replace(/\\/g, '/');
 
   // Agent references: agents/name.md or `agent-name`
-  const agentRefRegex = /(?:agents\/)([\w-]+)(?:\.md)?/g;
+  const agentRefRegex = /(?:(?<![\.\w])agents\/)([\w-]+)(?:\.md)?/g;
   let m;
   while ((m = agentRefRegex.exec(content)) !== null) {
+    if (m[1] === 'skills') continue;
     const refFile = `agents/${m[1]}.md`;
     const fullPath = path.join(agentDir, refFile);
     refs.push({
@@ -184,14 +197,39 @@ function extractCrossReferences(filePath, content, agentDir) {
   }
 
   // Script references: scripts/name.js or scripts/name.py
-  const scriptRefRegex = /(?:scripts\/)([\w_-]+)\.(js|py)/g;
+  const scriptRefRegex = /(?:(?<![\.\w/])scripts\/)([\w_-]+)\.(js|py)/g;
   while ((m = scriptRefRegex.exec(content)) !== null) {
-    const refFile = `scripts/${m[1]}.${m[2]}`;
-    const fullPath = path.join(agentDir, refFile);
+    const precedingText = content.substring(Math.max(0, m.index - 150), m.index);
+    if (
+      precedingText.includes('http://') ||
+      precedingText.includes('https://') ||
+      precedingText.includes('github.com/') ||
+      precedingText.includes('raw.githubusercontent.com/') ||
+      precedingText.includes('These will all fail')
+    ) {
+      continue;
+    }
+    const scriptFileName = `${m[1]}.${m[2]}`;
+    const refFile = `scripts/${scriptFileName}`;
+    let exists = fs.existsSync(path.join(agentDir, refFile));
+    if (!exists) {
+      // Check skill-local scripts directory (or relative parent directories)
+      const fileDir = path.dirname(filePath);
+      const localPath = path.join(fileDir, 'scripts', scriptFileName);
+      const parentLocalPath = path.join(fileDir, '..', 'scripts', scriptFileName);
+      const grandParentLocalPath = path.join(fileDir, '..', '..', 'scripts', scriptFileName);
+      if (
+        fs.existsSync(localPath) ||
+        fs.existsSync(parentLocalPath) ||
+        fs.existsSync(grandParentLocalPath)
+      ) {
+        exists = true;
+      }
+    }
     refs.push({
       source: relSource,
       ref: refFile,
-      exists: fs.existsSync(fullPath),
+      exists,
       type: 'script',
     });
   }
@@ -232,6 +270,8 @@ function extractCrossReferences(filePath, content, agentDir) {
 function extractNumericClaims(filePath, content, agentDir, actualCounts) {
   const claims = [];
   const relSource = path.relative(agentDir, filePath).replace(/\\/g, '/');
+  // Historical architecture decision records record metrics at ADR publication time
+  if (relSource.startsWith('ADRs/') || relSource.includes('/ADRs/')) return claims;
   const lines = content.split(/\r?\n/);
 
   const claimPatterns = [

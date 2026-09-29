@@ -44,39 +44,43 @@ function saveInstincts(instincts) {
 function archiveSession() {
   const events = readEvents();
   const instincts = loadInstincts();
-  
+
   let currentError = null;
   let newInstinctsCount = 0;
 
   for (const evt of events) {
     if (evt.type === 'ErrorEncountered') {
       currentError = evt;
-    } else if (evt.type === 'ToolCompleted' && currentError && evt.sessionId === currentError.sessionId) {
-      // If we see a successful tool completion shortly after an error in the same session, 
+    } else if (
+      evt.type === 'ToolCompleted' &&
+      currentError &&
+      evt.sessionId === currentError.sessionId
+    ) {
+      // If we see a successful tool completion shortly after an error in the same session,
       // we assume it's a resolution. In a real LLM setup, we'd use an AI pass here to summarize the fix.
       // For now, we stub the instinct generation based on the error.
-      
+
       const errorMsg = currentError.payload.message || 'Unknown error';
-      
+
       // Avoid duplicates
       const exists = instincts.find(i => i.evidence.failedEventId === currentError.eventId);
-      
+
       if (!exists && errorMsg !== 'Unknown error') {
         const newInstinct = {
           id: `instinct_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
-          domain: "auto-archived",
+          domain: 'auto-archived',
           rule: `Avoid pattern that caused: ${errorMsg}`,
           evidence: {
             failedEventId: currentError.eventId,
-            resolutionEventId: evt.eventId
+            resolutionEventId: evt.eventId,
           },
-          confidence: "L3" // L3 because it's auto-generated without human verification
+          confidence: 'L3', // L3 because it's auto-generated without human verification
         };
-        
+
         instincts.push(newInstinct);
         newInstinctsCount++;
       }
-      
+
       // Reset error tracker
       currentError = null;
     }
@@ -84,7 +88,9 @@ function archiveSession() {
 
   if (newInstinctsCount > 0) {
     saveInstincts(instincts);
-    console.log(`✅ Memory Archivist mined ${newInstinctsCount} new instincts from the session log.`);
+    console.log(
+      `✅ Memory Archivist mined ${newInstinctsCount} new instincts from the session log.`,
+    );
   } else {
     console.log(`ℹ️ Memory Archivist found no new verifiable patterns in the session log.`);
   }

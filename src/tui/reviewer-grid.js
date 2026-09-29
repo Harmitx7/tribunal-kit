@@ -46,7 +46,7 @@ function renderReviewerGrid(completedCount = 28) {
 
   const g = GLYPHS;
   const cols = getColumns();
-  const numCols = cols >= 100 ? 3 : (cols >= 68 ? 2 : 1);
+  const numCols = cols >= 100 ? 3 : cols >= 68 ? 2 : 1;
   const colWidth = Math.floor(Math.max(20, cols - 6) / numCols);
 
   console.log();
@@ -63,13 +63,9 @@ function renderReviewerGrid(completedCount = 28) {
       const [name] = ALL_REVIEWERS[idx];
       const isDone = idx < completedCount;
 
-      const icon = isDone
-        ? color(RGB.EMERALD, g.success)
-        : color(RGB.FLAME, '⠋');
+      const icon = isDone ? color(RGB.EMERALD, g.success) : color(RGB.FLAME, '⠋');
 
-      const nameColored = isDone
-        ? color(RGB.WHITE, name)
-        : color(RGB.ZINC_500, name);
+      const nameColored = isDone ? color(RGB.WHITE, name) : color(RGB.ZINC_500, name);
 
       const itemStr = `${icon} ${nameColored}`;
       const rawLen = 2 + name.length;

@@ -64,6 +64,14 @@ const NODE_BUILTINS = new Set([
   'worker_threads',
   'timers',
   'v8',
+  'module',
+  'vm',
+  'async_hooks',
+  'inspector',
+  'diagnostics_channel',
+  'test',
+  'console',
+  'wasi',
   'node:fs',
   'node:path',
   'node:os',
@@ -85,14 +93,22 @@ const NODE_BUILTINS = new Set([
   'node:perf_hooks',
   'node:worker_threads',
   'node:timers',
+  'node:module',
+  'node:vm',
+  'node:async_hooks',
+  'node:inspector',
+  'node:diagnostics_channel',
+  'node:test',
+  'node:console',
+  'node:wasi',
 ]);
 
 function extractImports(projectRoot) {
   const imports = new Set();
   const importPatterns = [
-    /(?:import|export)\s+.*?\s+from\s+["']([^"'.][^"']*)["']/g,
-    /require\s*\(\s*["']([^"'.][^"']*)["']/g,
-    /import\s*\(\s*["']([^"'.][^"']*)["']/g,
+    /(?:import|export)\s+.*?\s+from\s+["']([^"'.\r\n][^"'\r\n]*)["']/g,
+    /require\s*\(\s*["']([^"'.\r\n][^"'\r\n]*)["']\s*\)/g,
+    /import\s*\(\s*["']([^"'.\r\n][^"'\r\n]*)["']\s*\)/g,
   ];
 
   // Use shared walkDir from _utils.js (excluding test directories)
@@ -117,11 +133,17 @@ function extractImports(projectRoot) {
       continue;
     }
 
+    // Strip template literals and comments to prevent matching mock diffs and generated templates
+    const sanitized = content
+      .replace(/`[\s\S]*?`/g, '""')
+      .replace(/\/\*[\s\S]*?\*\//g, '')
+      .replace(/\/\/.*$/gm, '');
+
     for (const pattern of importPatterns) {
       // Reset regex state for each file
       pattern.lastIndex = 0;
       let match;
-      while ((match = pattern.exec(content)) !== null) {
+      while ((match = pattern.exec(sanitized)) !== null) {
         let pkg = match[1];
         if (pkg.startsWith('@')) {
           const parts = pkg.split('/');

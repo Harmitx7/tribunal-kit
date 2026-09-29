@@ -6,7 +6,7 @@
  */
 
 const readline = require('readline');
-const { isTTY, hasColor, RGB, GLYPHS, color, bold } = require('./theme');
+const { isTTY, RGB, GLYPHS, color, bold } = require('./theme');
 
 class WizardPrompt {
   displaySummary(question, options) {
@@ -16,9 +16,7 @@ class WizardPrompt {
     console.log(`  ${prefix} ${boldQ}`);
 
     for (const opt of options) {
-      const check = opt.selected
-        ? color(RGB.EMERALD, g.check)
-        : color(RGB.ZINC_600, g.uncheck);
+      const check = opt.selected ? color(RGB.EMERALD, g.check) : color(RGB.ZINC_600, g.uncheck);
 
       const labelColored = opt.selected
         ? color(RGB.WHITE, opt.label)
@@ -57,7 +55,7 @@ class WizardPrompt {
       const render = (isFinal = false) => {
         // Move back up lines if not initial render
         const totalLines = options.length + 3;
-        
+
         let out = '';
         const prefix = color(RGB.AMBER, '?');
         out += `  ${prefix} ${bold(question)}\n`;
@@ -65,9 +63,7 @@ class WizardPrompt {
         options.forEach((opt, idx) => {
           const isCursor = idx === cursor;
           const pointer = isCursor ? color(RGB.FLAME, g.chevron) : ' ';
-          const check = opt.selected
-            ? color(RGB.EMERALD, g.check)
-            : color(RGB.ZINC_600, g.uncheck);
+          const check = opt.selected ? color(RGB.EMERALD, g.check) : color(RGB.ZINC_600, g.uncheck);
 
           const labelColored = opt.selected
             ? color(RGB.WHITE, bold(opt.label))

@@ -61,10 +61,13 @@ function scanContent(content) {
     const isHidden = HIDDEN_ELEMENT_CSS.some(css => css.test(style));
     if (isHidden) {
       // Hidden text exists — check if it contains commands
-      const hasInstruction = INJECTION_PATTERNS.some(p => p.test(innerText)) ||
+      const hasInstruction =
+        INJECTION_PATTERNS.some(p => p.test(innerText)) ||
         /(instruction|password|secret|execute|override|ignore)/i.test(innerText);
       if (hasInstruction) {
-        threats.push(`Hidden element injection: style="${style}", text="${innerText.slice(0, 60)}"`);
+        threats.push(
+          `Hidden element injection: style="${style}", text="${innerText.slice(0, 60)}"`,
+        );
       }
     }
   }
@@ -93,7 +96,7 @@ function sanitizeContent(content) {
   // Strip hidden elements containing suspicious text
   sanitized = sanitized.replace(
     /<([a-z0-9]+)\b[^>]*style=["'][^"']*(?:display\s*:\s*none|visibility\s*:\s*hidden|font-size\s*:\s*0)[^"']*["'][^>]*>[\s\S]*?<\/\1>/gi,
-    '[REDACTED_HIDDEN_CONTENT]'
+    '[REDACTED_HIDDEN_CONTENT]',
   );
 
   return sanitized;

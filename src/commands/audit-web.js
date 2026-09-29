@@ -55,8 +55,14 @@ async function cmdAuditWeb(flags, processArgs, quiet = false) {
     console.log(`  ${c('bold', 'Duration:')} ${report.durationMs}ms\n`);
 
     // Scores
-    const a11yColor = report.scores.accessibility >= 80 ? 'green' : report.scores.accessibility >= 60 ? 'yellow' : 'red';
-    const secColor = report.scores.security >= 80 ? 'green' : report.scores.security >= 60 ? 'yellow' : 'red';
+    const a11yColor =
+      report.scores.accessibility >= 80
+        ? 'green'
+        : report.scores.accessibility >= 60
+          ? 'yellow'
+          : 'red';
+    const secColor =
+      report.scores.security >= 80 ? 'green' : report.scores.security >= 60 ? 'yellow' : 'red';
 
     console.log(`  ${c('bold', 'Scores:')}`);
     console.log(`    Accessibility:   ${c(a11yColor, `${report.scores.accessibility}/100`)}`);
@@ -89,16 +95,24 @@ async function cmdAuditWeb(flags, processArgs, quiet = false) {
     }
 
     if (report.summary.passed) {
-      console.log(`  ${c('green', '✔ Web audit passed')} — Accessibility >= 80 and zero console errors.\n`);
+      console.log(
+        `  ${c('green', '✔ Web audit passed')} — Accessibility >= 80 and zero console errors.\n`,
+      );
     } else {
-      console.log(`  ${c('yellow', '⚠ Web audit completed')} with ${report.summary.totalIssues} issue(s) identified.\n`);
+      console.log(
+        `  ${c('yellow', '⚠ Web audit completed')} with ${report.summary.totalIssues} issue(s) identified.\n`,
+      );
     }
 
     if (codified) {
       if (codified.codifiedCount > 0) {
-        console.log(`  ${c('green', '✔')} Case Law: Codified ${c('bold', String(codified.codifiedCount))} violation(s) into binding precedents in ${c('cyan', '.agent/history/case-law/')}.\n`);
+        console.log(
+          `  ${c('green', '✔')} Case Law: Codified ${c('bold', String(codified.codifiedCount))} violation(s) into binding precedents in ${c('cyan', '.agent/history/case-law/')}.\n`,
+        );
       } else {
-        console.log(`  ${c('gray', 'ℹ')} Case Law: No new violations to codify (or all matches already exist in precedents).\n`);
+        console.log(
+          `  ${c('gray', 'ℹ')} Case Law: No new violations to codify (or all matches already exist in precedents).\n`,
+        );
       }
     }
   } catch (err) {

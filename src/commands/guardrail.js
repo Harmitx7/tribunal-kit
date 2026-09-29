@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * guardrail.js — CLI command handler for `tk guardrail`
  *
@@ -11,46 +11,44 @@
  *   tk guardrail --fix              → Auto-fix simple violations
  *   tk guardrail --json             → Output as JSON
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.cmdGuardrail = cmdGuardrail;
 
-const fs = require("fs");
-const path = require("path");
-const logger_1 = require("../utils/logger");
+const fs = require('fs');
+const path = require('path');
+const logger_1 = require('../utils/logger');
 
 async function cmdGuardrail(flags, argv, quiet) {
   const projectRoot = flags.path || process.cwd();
-  const agentDir = path.join(projectRoot, ".agent");
+  const agentDir = path.join(projectRoot, '.agent');
 
   if (!fs.existsSync(agentDir)) {
-    (0, logger_1.err)("No .agent/ directory found. Run `tk init` first.");
+    (0, logger_1.err)('No .agent/ directory found. Run `tk init` first.');
     process.exit(1);
   }
 
   // Resolve script paths (installed vs local development)
-  const scriptsDir = path.join(agentDir, "scripts");
-  const manifestScript = path.join(scriptsDir, "integrity_manifest.js");
-  const guardrailScript = path.join(scriptsDir, "guardrail_engine.js");
+  const scriptsDir = path.join(agentDir, 'scripts');
+  const manifestScript = path.join(scriptsDir, 'integrity_manifest.js');
+  const guardrailScript = path.join(scriptsDir, 'guardrail_engine.js');
 
   if (!fs.existsSync(manifestScript)) {
     (0, logger_1.err)(
-      "integrity_manifest.js not found in .agent/scripts/. Your installation may be outdated — run `tk update`.",
+      'integrity_manifest.js not found in .agent/scripts/. Your installation may be outdated — run `tk update`.',
     );
     process.exit(1);
   }
 
   if (!fs.existsSync(guardrailScript)) {
     (0, logger_1.err)(
-      "guardrail_engine.js not found in .agent/scripts/. Your installation may be outdated — run `tk update`.",
+      'guardrail_engine.js not found in .agent/scripts/. Your installation may be outdated — run `tk update`.',
     );
     process.exit(1);
   }
 
   // Step 1: Generate manifest
   if (!quiet) {
-    (0, logger_1.log)(
-      `  ${(0, logger_1.c)("cyan", "◆")} Generating integrity manifest...`,
-    );
+    (0, logger_1.log)(`  ${(0, logger_1.c)('cyan', '◆')} Generating integrity manifest...`);
   }
 
   const { generateManifest, saveManifest } = require(manifestScript);
@@ -67,8 +65,8 @@ async function cmdGuardrail(flags, argv, quiet) {
   // Step 2: Determine files to validate
   const { validate } = require(guardrailScript);
   const fileArg = extractFileArg(argv);
-  const fixMode = flags.write || argv.includes("--fix");
-  const jsonMode = argv.includes("--json");
+  const fixMode = flags.write || argv.includes('--fix');
+  const jsonMode = argv.includes('--json');
 
   let filesToCheck = [];
 
@@ -85,9 +83,7 @@ async function cmdGuardrail(flags, argv, quiet) {
   }
 
   if (!quiet) {
-    (0, logger_1.log)(
-      `  ${(0, logger_1.c)("cyan", "◆")} Scanning ${filesToCheck.length} files...`,
-    );
+    (0, logger_1.log)(`  ${(0, logger_1.c)('cyan', '◆')} Scanning ${filesToCheck.length} files...`);
   }
 
   // Step 3: Run guardrail engine
@@ -97,7 +93,7 @@ async function cmdGuardrail(flags, argv, quiet) {
   const allResults = [];
 
   for (const file of filesToCheck) {
-    const content = fs.readFileSync(file, "utf8");
+    const content = fs.readFileSync(file, 'utf8');
     const result = validate(content, manifest, {
       autoFix: fixMode,
       context: { projectRoot, filePath: file },
@@ -105,9 +101,7 @@ async function cmdGuardrail(flags, argv, quiet) {
 
     if (result.violations.length > 0) {
       totalViolations += result.violations.length;
-      totalCritical += result.violations.filter(
-        (v) => v.severity === "critical",
-      ).length;
+      totalCritical += result.violations.filter(v => v.severity === 'critical').length;
 
       allResults.push({
         file: path.relative(projectRoot, file),
@@ -115,12 +109,8 @@ async function cmdGuardrail(flags, argv, quiet) {
       });
 
       // Apply auto-fix
-      if (
-        fixMode &&
-        result.autoFixedContent &&
-        result.autoFixedContent !== content
-      ) {
-        fs.writeFileSync(file, result.autoFixedContent, "utf8");
+      if (fixMode && result.autoFixedContent && result.autoFixedContent !== content) {
+        fs.writeFileSync(file, result.autoFixedContent, 'utf8');
         totalAutoFixed++;
       }
     }
@@ -159,58 +149,44 @@ async function cmdGuardrail(flags, argv, quiet) {
   // Human-readable output
   console.log();
   console.log(
-    `  ${(0, logger_1.c)("cyan", "🛡️")}  ${(0, logger_1.bold)("Guardrail Validation Report")}`,
+    `  ${(0, logger_1.c)('cyan', '🛡️')}  ${(0, logger_1.bold)('Guardrail Validation Report')}`,
   );
-  console.log(`  ${(0, logger_1.c)("gray", "─".repeat(40))}`);
+  console.log(`  ${(0, logger_1.c)('gray', '─'.repeat(40))}`);
   console.log(
-    `  Agents:       ${(0, logger_1.c)("white", String(manifest.agents.total))} (${manifest.agents.reviewer_count} reviewers)`,
+    `  Agents:       ${(0, logger_1.c)('white', String(manifest.agents.total))} (${manifest.agents.reviewer_count} reviewers)`,
   );
+  console.log(`  Skills:       ${(0, logger_1.c)('white', String(manifest.skills.total))}`);
+  console.log(`  Scripts:      ${(0, logger_1.c)('white', String(manifest.scripts.total))}`);
+  console.log(`  Workflows:    ${(0, logger_1.c)('white', String(manifest.workflows.total))}`);
+  console.log(`  ${(0, logger_1.c)('gray', '─'.repeat(40))}`);
+  console.log(`  Files scanned: ${(0, logger_1.c)('white', String(filesToCheck.length))}`);
   console.log(
-    `  Skills:       ${(0, logger_1.c)("white", String(manifest.skills.total))}`,
-  );
-  console.log(
-    `  Scripts:      ${(0, logger_1.c)("white", String(manifest.scripts.total))}`,
-  );
-  console.log(
-    `  Workflows:    ${(0, logger_1.c)("white", String(manifest.workflows.total))}`,
-  );
-  console.log(`  ${(0, logger_1.c)("gray", "─".repeat(40))}`);
-  console.log(
-    `  Files scanned: ${(0, logger_1.c)("white", String(filesToCheck.length))}`,
+    `  Violations:    ${totalViolations > 0 ? (0, logger_1.c)('yellow', String(totalViolations)) : (0, logger_1.c)('green', '0')}`,
   );
   console.log(
-    `  Violations:    ${totalViolations > 0 ? (0, logger_1.c)("yellow", String(totalViolations)) : (0, logger_1.c)("green", "0")}`,
-  );
-  console.log(
-    `  Critical:      ${totalCritical > 0 ? (0, logger_1.c)("red", String(totalCritical)) : (0, logger_1.c)("green", "0")}`,
+    `  Critical:      ${totalCritical > 0 ? (0, logger_1.c)('red', String(totalCritical)) : (0, logger_1.c)('green', '0')}`,
   );
 
   if (fixMode && totalAutoFixed > 0) {
-    console.log(
-      `  Auto-fixed:    ${(0, logger_1.c)("green", String(totalAutoFixed))}`,
-    );
+    console.log(`  Auto-fixed:    ${(0, logger_1.c)('green', String(totalAutoFixed))}`);
   }
 
-  console.log(`  ${(0, logger_1.c)("gray", "─".repeat(40))}`);
+  console.log(`  ${(0, logger_1.c)('gray', '─'.repeat(40))}`);
 
   // Show violations
   for (const result of allResults) {
-    console.log(
-      `\n  📄 ${(0, logger_1.c)("cyan", result.file)} — ${result.summary}`,
-    );
+    console.log(`\n  📄 ${(0, logger_1.c)('cyan', result.file)} — ${result.summary}`);
     for (const v of result.violations) {
       const icon =
-        v.severity === "critical"
-          ? (0, logger_1.c)("red", "●")
-          : v.severity === "warning"
-            ? (0, logger_1.c)("yellow", "●")
-            : (0, logger_1.c)("blue", "●");
-      console.log(
-        `     ${icon} [${(0, logger_1.c)("gray", v.rule)}] ${v.message}`,
-      );
+        v.severity === 'critical'
+          ? (0, logger_1.c)('red', '●')
+          : v.severity === 'warning'
+            ? (0, logger_1.c)('yellow', '●')
+            : (0, logger_1.c)('blue', '●');
+      console.log(`     ${icon} [${(0, logger_1.c)('gray', v.rule)}] ${v.message}`);
       if (v.suggestion) {
         console.log(
-          `        ${(0, logger_1.c)("gray", "💡")} ${(0, logger_1.c)("gray", v.suggestion)}`,
+          `        ${(0, logger_1.c)('gray', '💡')} ${(0, logger_1.c)('gray', v.suggestion)}`,
         );
       }
     }
@@ -218,7 +194,7 @@ async function cmdGuardrail(flags, argv, quiet) {
 
   if (totalViolations === 0) {
     console.log(
-      `\n  ${(0, logger_1.c)("green", "✅")} All files clean. Zero phantom references. Zero count mismatches.`,
+      `\n  ${(0, logger_1.c)('green', '✅')} All files clean. Zero phantom references. Zero count mismatches.`,
     );
   }
 
@@ -230,13 +206,13 @@ async function cmdGuardrail(flags, argv, quiet) {
 
 function extractFileArg(argv) {
   const raw = argv.slice(2);
-  const fileIdx = raw.indexOf("--file");
+  const fileIdx = raw.indexOf('--file');
   if (fileIdx !== -1 && raw[fileIdx + 1]) {
     return raw[fileIdx + 1];
   }
   // Also check for positional arg after 'guardrail'
   for (const arg of raw) {
-    if (arg === "guardrail" || arg.startsWith("--")) continue;
+    if (arg === 'guardrail' || arg.startsWith('--')) continue;
     if (fs.existsSync(arg)) return arg;
   }
   return null;
@@ -248,11 +224,7 @@ function walkAgentFiles(dir, fileList = []) {
   try {
     const entries = fs.readdirSync(dir);
     for (const entry of entries) {
-      if (
-        ["node_modules", ".git", "history", ".backups", ".shared"].includes(
-          entry,
-        )
-      ) {
+      if (['node_modules', '.git', 'history', '.backups', '.shared'].includes(entry)) {
         continue;
       }
       const fullPath = path.join(dir, entry);
@@ -260,7 +232,7 @@ function walkAgentFiles(dir, fileList = []) {
         const stat = fs.statSync(fullPath);
         if (stat.isDirectory()) {
           walkAgentFiles(fullPath, fileList);
-        } else if (entry.endsWith(".md") || entry.endsWith(".json")) {
+        } else if (entry.endsWith('.md') || entry.endsWith('.json')) {
           fileList.push(fullPath);
         }
       } catch {

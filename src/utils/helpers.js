@@ -1,53 +1,52 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+const __importDefault =
+  (this && this.__importDefault) ||
+  function (mod) {
+    return mod && mod.__esModule ? mod : { default: mod };
+  };
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.runShellAsync = runShellAsync;
 exports.getKitAgent = getKitAgent;
 exports.banner = banner;
-const child_process_1 = require("child_process");
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const logger_1 = require("./logger");
+const child_process_1 = require('child_process');
+const fs_1 = __importDefault(require('fs'));
+const path_1 = __importDefault(require('path'));
+const logger_1 = require('./logger');
 function runShellAsync(command, args = [], options = {}) {
-    return new Promise((resolve, reject) => {
-        const timeoutMs = (options && options.timeout) || 120000;
-        const child = (0, child_process_1.spawn)(command, args, { ...options, shell: false });
-        const timer = setTimeout(() => {
-            child.kill('SIGTERM');
-            reject(new Error(`Command timed out after ${timeoutMs}ms: ${command}`));
-        }, timeoutMs);
-        child.on('close', code => {
-            clearTimeout(timer);
-            if (code !== 0)
-                reject(new Error(`Command failed with exit code ${code}`));
-            else
-                resolve();
-        });
-        child.on('error', err => {
-            clearTimeout(timer);
-            reject(err);
-        });
+  return new Promise((resolve, reject) => {
+    const timeoutMs = (options && options.timeout) || 120000;
+    const child = (0, child_process_1.spawn)(command, args, { ...options, shell: false });
+    const timer = setTimeout(() => {
+      child.kill('SIGTERM');
+      reject(new Error(`Command timed out after ${timeoutMs}ms: ${command}`));
+    }, timeoutMs);
+    child.on('close', code => {
+      clearTimeout(timer);
+      if (code !== 0) reject(new Error(`Command failed with exit code ${code}`));
+      else resolve();
     });
+    child.on('error', err => {
+      clearTimeout(timer);
+      reject(err);
+    });
+  });
 }
 function getKitAgent() {
-    // When installed via npm, the .agent/ folder is next to this script's package (two directories up from src/commands)
-    // In src/utils, __dirname is .../src/utils. We go up to src, then to root. So path.resolve(__dirname, '../../.agent')
-    const kitRoot = path_1.default.resolve(__dirname, '../..');
-    const agentDir = path_1.default.join(kitRoot, '.agent');
-    if (!fs_1.default.existsSync(agentDir)) {
-        (0, logger_1.err)(`Kit .agent/ folder not found at: ${agentDir}`);
-        (0, logger_1.err)('The package may be corrupted. Try: npm install -g tribunal-kit');
-        process.exit(1);
-    }
-    return agentDir;
+  // When installed via npm, the .agent/ folder is next to this script's package (two directories up from src/commands)
+  // In src/utils, __dirname is .../src/utils. We go up to src, then to root. So path.resolve(__dirname, '../../.agent')
+  const kitRoot = path_1.default.resolve(__dirname, '../..');
+  const agentDir = path_1.default.join(kitRoot, '.agent');
+  if (!fs_1.default.existsSync(agentDir)) {
+    (0, logger_1.err)(`Kit .agent/ folder not found at: ${agentDir}`);
+    (0, logger_1.err)('The package may be corrupted. Try: npm install -g tribunal-kit');
+    process.exit(1);
+  }
+  return agentDir;
 }
 const { renderBanner } = require('../tui/banner');
 
 function banner(quiet) {
-    if (quiet) return;
-    const PKG = require('../../package.json');
-    renderBanner(PKG.version, quiet);
+  if (quiet) return;
+  const PKG = require('../../package.json');
+  renderBanner(PKG.version, quiet);
 }
-

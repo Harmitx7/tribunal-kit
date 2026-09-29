@@ -8,7 +8,6 @@
  * into binding Case Law precedents stored in .agent/history/case-law/
  */
 
-const path = require('path');
 const caseLaw = require('../../.agent/scripts/case_law_manager');
 
 /**
@@ -24,7 +23,7 @@ function codifyAuditViolations(auditReport, options = {}) {
   }
 
   const index = caseLaw.loadIndex();
-  const existingFingerprints = new Set(index.cases.map((c) => c.fingerprint));
+  const existingFingerprints = new Set(index.cases.map(c => c.fingerprint));
   const newCases = [];
   const now = new Date().toISOString().slice(0, 19);
   const targetUrl = auditReport.url || 'http://localhost';
@@ -46,7 +45,9 @@ function codifyAuditViolations(auditReport, options = {}) {
 
     const caseId = index.next_id;
     const reason = `[Web Audit] Accessibility violation: ${issue.message} on ${targetUrl}`;
-    const tags = caseLaw.extractTags(`accessibility wcag a11y ${issue.message} ${issue.category || ''}`);
+    const tags = caseLaw.extractTags(
+      `accessibility wcag a11y ${issue.message} ${issue.category || ''}`,
+    );
 
     const caseRecord = {
       id: caseId,

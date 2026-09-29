@@ -18,7 +18,6 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-
 // Optional ANSI colors
 let C = {
   GREEN: '\x1b[92m',
@@ -119,7 +118,11 @@ function extractFileSkeleton(filePath, rawContent) {
       }
 
       if (corePath && fs.existsSync(corePath)) {
-        const result = require('child_process').execFileSync(corePath, ['ast-extract', '--file', absPath], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+        const result = require('child_process').execFileSync(
+          corePath,
+          ['ast-extract', '--file', absPath],
+          { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+        );
         const data = JSON.parse(result);
         if (data && data.success) {
           // We map the Rust JSON into the exact format expected by the rest of the JS code
@@ -368,26 +371,54 @@ function findInboundCallers(targetFilePath, exportNames, workspaceRoot = process
     for (const token of searchTokens) {
       if (!token || token.length < 3) continue;
       try {
-        const res = execFileSync('git', [
-          'grep', '-n', '-I', '-e', token, '--',
-          ':!docs/', ':!node_modules/', ':!src/', ':!target/', ':!*.lock'
-        ], {
-          cwd: workspaceRoot,
-          stdio: ['ignore', 'pipe', 'ignore'],
-          encoding: 'utf8',
-        });
+        const res = execFileSync(
+          'git',
+          [
+            'grep',
+            '-n',
+            '-I',
+            '-e',
+            token,
+            '--',
+            ':!docs/',
+            ':!node_modules/',
+            ':!src/',
+            ':!target/',
+            ':!*.lock',
+          ],
+          {
+            cwd: workspaceRoot,
+            stdio: ['ignore', 'pipe', 'ignore'],
+            encoding: 'utf8',
+          },
+        );
         if (res) grepOutputs.push(...res.split('\n').filter(Boolean));
       } catch {
         // Ripgrep fallback
         try {
-          const res = execFileSync('rg', [
-            '-n', '--no-heading', '--color=never', '-e', token,
-            '-g', '!docs/**', '-g', '!node_modules/**', '-g', '!target/**', '-g', '!src/**'
-          ], {
-            cwd: workspaceRoot,
-            stdio: ['ignore', 'pipe', 'ignore'],
-            encoding: 'utf8',
-          });
+          const res = execFileSync(
+            'rg',
+            [
+              '-n',
+              '--no-heading',
+              '--color=never',
+              '-e',
+              token,
+              '-g',
+              '!docs/**',
+              '-g',
+              '!node_modules/**',
+              '-g',
+              '!target/**',
+              '-g',
+              '!src/**',
+            ],
+            {
+              cwd: workspaceRoot,
+              stdio: ['ignore', 'pipe', 'ignore'],
+              encoding: 'utf8',
+            },
+          );
           if (res) grepOutputs.push(...res.split('\n').filter(Boolean));
         } catch {
           // Silent catch

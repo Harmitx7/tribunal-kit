@@ -1,55 +1,74 @@
-## [9.2.7] — 2026-09-28
-
-### 🐛 Bug Fixes
-
-- production audit remediations (`7a27e04`)
-
-### 📝 Documentation
-
-- update changelog for 9.2.6 (`aefb95c`)
-
-
 # 🏛️ Tribunal Kit — Changelog
 
 [![Keep a Changelog](https://img.shields.io/badge/Changelog-Keep%20a%20Changelog%20v1.1.0-blue.svg?style=flat-square)](https://keepachangelog.com/)
 [![SemVer](https://img.shields.io/badge/SemVer-2.0.0-green.svg?style=flat-square)](https://semver.org/)
 [![Specialists](https://img.shields.io/badge/Specialists-52-cyan.svg?style=flat-square)](#)
 [![Reviewers](https://img.shields.io/badge/Reviewers-28-emerald.svg?style=flat-square)](#)
-[![Skills Corpus](https://img.shields.io/badge/Corpus-210%20Skills-teal.svg?style=flat-square)](#)
+[![Skills Corpus](https://img.shields.io/badge/Corpus-234%20Skills-teal.svg?style=flat-square)](#)
 [![Workflows](https://img.shields.io/badge/Workflows-49%20Audited-indigo.svg?style=flat-square)](#)
 [![Harnesses](https://img.shields.io/badge/Harnesses-9%20Supported-orange.svg?style=flat-square)](#)
-[![Test Suite](<https://img.shields.io/badge/Tests-100%25%20Passing%20(490%20tests)-brightgreen.svg?style=flat-square>)](#)
+[![Test Suite](<https://img.shields.io/badge/Tests-100%25%20Passing%20(502%20tests)-brightgreen.svg?style=flat-square>)](#)
 
 All notable changes to **Tribunal Kit** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
 
-## [9.2.6] — 2026-09-28 — 🛡️ System-1 Laya Security & Anti-Slop Audit Integration
+## [9.2.6] — 2026-09-28 — 🛡️ System-1 Laya Security, Backend Intelligence & Extreme Skill Optimization
 
 > [!IMPORTANT]
-> **Release 9.2.6** focuses on critical security remediation for the Laya System-1 implementation and integrates the highly requested Anti-Slop Purpose-Gate into the Tribunal UI pipeline. It introduces robust cross-platform model verification, locks dependencies, eliminates Windows shell execution vulnerabilities, and establishes a structural dual-tier defense against generic AI UI clichés.
+> **Release 9.2.6** delivers an extensive hardening and optimization across Tribunal Kit's core layers: it executes a complete architectural overhaul of all 234 skills under the 18-Section Governance Standard, establishes the Backend Intelligence Trust Boundary, resolves critical Laya System-1 packaging bloat (~150MB eliminated), hardens cross-platform Windows execution, and integrates the Anti-Slop Purpose-Gate into the Tribunal frontend pipeline.
 
 ### Added
+
+- **Reconstruction of 20 Foundational Stubs**: Rebuilt 20 previously empty or under-specified skills into production-grade execution engines with zero-placeholder recipes, code examples, edge-case matrices, adversarial traps, and verification commands:
+  - **Backend & Database**: `backend-postgresql`, `backend-mongodb`, `backend-redis`, `backend-mysql`, `backend-sqlite`, `backend-sqlalchemy`, `backend-alembic`, `fastapi-pro`, `backend-architecture-auditor`, `backend-performance-auditor`, `backend-testing-auditor`.
+  - **Runtime & Security**: `agent-syscall-guidelines`, `agentshield-security`, `subagent-driven-development`, `human-gate-negotiation`, `graph-engineering`, `semantic-filesystem-navigation`, `session-log-interrogation`, `thinking-protocol`, `tribunal-instincts-memory`.
+- **Tri-State Evidence Standard**: Codified mandatory factual classification (`[OBSERVED]`, `[INFERRED]`, `[UNVERIFIED]`) across all 234 skills to eliminate subjective, unsubstantiated assertions and force verifiable proof.
+- **Verification-Before-Completion (VBC) Protocol**: Integrated non-negotiable operational closeout gates across every skill, forbidding agents from declaring completion without providing terminal output, passing test suites, or compiler proof.
+- **Domain-Calibrated Pre-Flight Checklists & Traps**: Tailored 5-point inspection checklists and anti-pattern comparison tables across 10 specialized domains (Frontend, Motion, Backend, Database, Security, DevOps, Testing, Mobile, HuggingFace, Meta).
+- **Backend Intelligence Trust Boundary**: Implemented strict validation engine output isolation, ensuring LLMs can no longer self-authorize findings as `VERIFIED`. `VERIFIED` status is now exclusively granted by the engine using explicit provenance records (command, exit code, tool output).
+- **Evidence Verifier**: Added `evidence_verifier.js` to automatically check claimed source code locations against the repository and compute content hashes to detect stale evidence or hallucinated files/lines.
+- **Secret Redactor**: Implemented `secret_redactor.js` to automatically scrub API keys, JWTs, Database URIs, and passwords from findings and evidence before they reach the generated report.
 - **Anti-Slop Enforcement Skill (`anti-slop-enforcement`)**: Codified strict anti-slop rules, distinguishing between subjective design aesthetics and objective slop heuristics (Purpose-Gates and Liveliness Dials).
 - **Anti-Slop Auditor Agent (`anti-slop-auditor`)**: Added a dedicated Wave 3 reviewer to the Tribunal frontend pipeline to aggressively audit generated UI code for cliché AI slop patterns.
 
 ### Changed
+
+- **Universal 18-Section Governance Standard**: Upgraded all 234 skills to enforce clean frontmatter (`v6.0.0`), explicit activation boundaries (`Activate when` vs `DO NOT activate when`), and 7-pass cognitive loops with adaptive execution modes (`FAST`, `STANDARD`, `DEEP`).
+- **Skill Topic Routing Overhaul (`skill_topic_map.json`)**: Expanded domain mapping from 210 to 234 registered skills, resolving 23 previously unmapped and unreachable skills across the 2-tier lazy resolution router.
+- **Skill Enhancement Engine (`scripts/skill_enhancement_engine.js`)**: Upgraded the compilation engine to v6.0.0 with automatic 18-section generation, multi-platform synchronization, and defensive AST parsing.
 - **System-1 Concurrency Protection**: Implemented atomic directory-based mutual exclusion (`.install.lock`) during the System-1 installation sequence (`tk system1 enable`). This prevents overlapping terminal processes from causing `EPERM` collisions and DLL corruption during model acquisition and ONNX compilation on Windows.
 - **Deterministic Mock Inference**: Explicitly updated test suite setups to require `TK_MOCK_LAYA_DOWNLOAD=1` alongside `mocked: true` local configurations to guarantee deterministic fallback testing without incurring network overhead.
 - **Frontend Specialist Restraints**: Augmented the `frontend-specialist` (Maker) prompt to natively respect anti-slop guidelines during code generation, heavily discouraging fake statistics, unmotivated motion, and generic gradient branding without explicit user authorization.
 - **Visual Audit Determinism (`scripts/visual_audit.js`)**: Expanded the existing deterministic UI static scanner to catch fabricated copywriting claims ("Revolutionary", "Cutting Edge", "Seamless experience") and cliché hex codes (e.g., `#8B5CF6` purple). This scanner acts as a hard zero-LLM pre-flight gate.
 - **Workflow Pipeline Expansion**: Integrated the `anti-slop-auditor` as a mandatory parallel reviewer within the `/tribunal-frontend` and `/tribunal-ui` workflows.
+- **Badges & Metrics**: Updated Skills Corpus badge from 210 to **234 Skills** and Test Suite badge to **100% Passing (502 tests)**.
 
 ### Fixed
+
+- **Consecutive Horizontal Rule & Header Duplication**: Resolved 112 instances of double `---` dividers and repeated technical architecture headings left by legacy scripts.
+- **Platform Incompatibilities**: Replaced brittle shell commands (`cat ~/.cache/...`, raw pipes to `jq`) in AI skills with portable environment variable checks and native JSON handling.
+- **Multi-Platform Drift**: Synchronized the canonical `.agent/skills/` library across `skills/`, `.agents/skills/`, and the workspace root `.agent/skills/`.
+- **NPM Packaging Bloat**: Moved heavy Laya System-1 dependencies (`@receptron/laya`, `onnxruntime-node`) to `devDependencies` and removed dev-only `scripts/` from the `package.json` `"files"` array. This ensures downstream users do not incur a ~150MB C++ binary payload globally unless they explicitly opt into the out-of-band installation.
+- **Fragile Windows NPM Resolution**: Replaced the brittle `process.execPath` + `npm-cli.js` resolution with a secure `npm.cmd` (with `shell: true`) execution in `system1.js`. This resolves catastrophic failures for Windows users managing Node via `nvm-windows` or `Volta`.
+- **Stale Lock Check Race Condition**: Increased the fallback `mtime` staleness timeout during the 1.7GB model download from 60 seconds to 15 minutes, preventing parallel CLI invocations from incorrectly detecting the lock as stale and corrupting the installation on slower network connections.
+- **Synchronous I/O on CLI Hot Path**: Deduplicated the `config.json` reads by caching the parsed config directly on the `System1Provider` instance in `provider.js`, eliminating a redundant blocking `fs.readFileSync` during `impact-tier` evaluations.
+- **Correlator False Merges**: Completely rewrote the `cross_agent_correlator.js` logic to strictly require same-file matching and prevent cross-file hallucinated merges based on similar evidence descriptions.
+- **Resource Exhaustion Limits**: Enforced strict size limits (5000 max findings, 100 max evidence items, 10KB string fields) in `findings_validator.js` to protect the pipeline against O(N²) DOS attacks.
 - **Architectural Duplication**: Deleted redundant `anti_slop_scanner.js` script, unifying all static pre-flight UI gating into the central `visual_audit.js` parser to eliminate overlapping filesystem traversals.
 - **False-Positive Copywriting Guards**: Tuned static detection rules to prevent legitimate technical comments (e.g., "seamless fallback") from triggering anti-slop layout failures.
 
 ### Security
+
+- **Report Markdown Sanitization**: Hardened `backend_report_generator.js` to escape HTML tags, heading injection (`#`), and `javascript:` URIs from LLM-generated finding fields.
+- **Path Traversal Protection**: Added path boundary enforcement (`--root`) in `backend_audit.js` to reject attempts by the LLM to scan arbitrary directories outside the intended workspace.
+- **Schema Strictness**: Activated `.strict()` on the Zod schema in `finding_schema.js` to aggressively quarantine any finding containing unknown or malicious payload keys instead of silently stripping them.
 - **Windows Shell Execution Vulnerability**: Resolved an `EINVAL` issue on Windows where `spawnSync npm.cmd` with `shell: false` would fail. Migrated the `npm ci` installation process to use `process.execPath` alongside `npm-cli.js`, permanently closing command injection attack vectors.
 - **Supply-Chain Dependency Pinning**: Locked `@receptron/laya` dependencies to exact versions (`0.1.2` and `onnxruntime-node@1.22.0`) via an isolated `laya-package-lock.json`, preventing upstream dependency injection.
 - **Model Integrity Verification**: Implemented a mandatory pre-load SHA-256 integrity validation for `laya.onnx` and `laya.onnx.data` downloaded from Hugging Face before initializing the ONNX runtime, guaranteeing that no unverified model bytes enter the engine.
 - **Tarball Isolation**: Excluded the 1.7 GB downloaded Laya model artifacts and node_modules from the production `tribunal-kit-9.2.6.tgz` npm package.
 
 ### Known Issues
+
 - **Provider Fallback Defect**: Identified a technical flaw in `System1Provider.isAvailable()` where the runtime expects the model at `models/laya.onnx`, but the downloaded model resides deep in the Hugging Face cache structure (`models/receptron--laya-onnx/...`). This causes Laya verification to fail and silently fallback to Tier-0 impact assessment despite a successful model download.
 
 ## [9.2.5] — 2026-09-27 — 🏛️ System Architecture Intelligence Layer
@@ -58,17 +77,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [S
 > **Release 9.2.5** introduces the **System Architecture Intelligence Layer**, elevating Tribunal Kit's capabilities from local code-level review to full-system macro-architecture reasoning. This release transitions system design from hallucination-prone LLM speculation to evidence-driven deterministic extraction.
 
 ### Added
+
 - **Deterministic System Modeling**: Created `architecture_mapper.js` to statically extract a machine-readable `architecture.idx.json` representing API routes, data stores, events, and auth boundaries.
 - **Architecture Auditor**: Added `architecture-auditor` to the Wave 3 Tribunal pipeline to automatically review PR diffs for architectural drift, boundary violations, and anti-patterns.
 - **Architecture Drift Detection**: Introduced the `architecture-drift` skill to algorithmically compare actual implementation against ADRs.
 - **Architectural Memory**: Seeded `.agent/ADRs/` directory and mandated the `system-architect` agent to generate Architecture Decision Records for structural decisions.
 
 ### Changed
+
 - **Enhanced System Architect**: Upgraded `system-architect` to require consulting the deterministic System Model before proposing design changes.
 - **System Design Pro Overhaul**: Deeply rewritten the `system-design-pro` skill from a theoretical interview framework into a production-grade Principal Systems Engineering reasoning loop (featuring Anti-Overengineering Guards, Blast Radius Analysis, and Failure-First Thinking).
 - **Tribunal Capacity**: Increased parallel reviewers from 29 to 30 and total specialist agents to 58.
 
 ### Security
+
 - **Command Injection Remediation**: Resolved a critical command injection vulnerability in `.agent/scripts/context_compiler.js` and other scripts by converting all `execSync` occurrences to `execFileSync` and explicitly disabling `shell: true` in `spawn` and `spawnSync` calls across the entire repository. (Reported by security researcher Michael K Onyekwere).
 - **Supply Chain Hardening**: Mitigated a local directory hijacking vector in `bin/wrapper.js` by forcing the Rust binary resolution to use `__dirname` instead of `process.cwd()`, ensuring the legitimately installed binary is always executed.
 - **Test Integrity**: Ensured sandboxing of `.agent` directory lookups during testing to prevent environment state leaks, and added deterministic regression tests to validate isolation of arbitrary command parameters.
@@ -79,6 +101,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [S
 > **Release 9.2.4** introduces the **Tribunal OS** architecture, completing the Brain-Hands decoupling boundary, Durable Session Logging, and Team Mode dynamic topologies. It also finalizes the **Hybrid Compiled Context** memory architecture (Approach D) with a zero-dependency BM25/TF-IDF scoring engine, hardening the persistent `.memory.idx` storage against zero-division faults and RegExp injection.
 
 ### Added
+
 - **Subagent-Driven Development (SDD) & Team Mode**: Introduced `subagent-driven-development` skill and `harness-manager` agent to support dynamic micro-teams (Team Mode) based on file impact and Topological DAG routing.
 - **Tribunal Instincts Memory**: Added `tribunal-instincts-memory` skill and `memory-archivist` agent to continuously learn from Human Gate rejections and avoid repeating hallucinations.
 - **Durable Session Logs & Checkpointing**: Implemented `/resume` workflow and `session-log-interrogation` skill to persist agent state across sessions using `.jsonl` event logs, preventing context loss on crashes.
@@ -91,6 +114,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [S
 - **Offline Memory Compaction**: Shipped `.agent/scripts/memory_consolidator.js` to enable explicit offline pruning and GC of `.memory.idx` without spinning up the orchestrator harness.
 
 ### Changed
+
 - **Global Governance Rules**: Updated `GEMINI.md` to strictly enforce the **HitL Impact Template** for executing Tier 2/3 tasks, and `kernel.md` to enforce **Context Window Budgets** using `getEvents()` API.
 - **Orchestrator Architecture**: Rewrote `orchestrator.md` and `intelligent-routing` to support Topological DAG routing instead of a static 3-wave pipeline.
 - **Workflow Overhauls**: Upgraded `/generate`, `/marathon`, and `/audit` workflows to utilize the new Durable Session Log, Ultrawork continuous validation, and AgentShield security passes.
@@ -98,6 +122,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [S
 - **Hybrid Context Testing**: Expanded the unit testing suite in `test/unit/memory_engine.test.js` to robustly assert confidence degradation (`source: learned` defaults to 0.5) and BM25 relational ranking hierarchy.
 
 ### Fixed
+
 - **Zero-Division Panics**: Added strict fallback limits (`avgdl || 100`) in both Node.js and Rust BM25 engine implementations, guaranteeing deterministic math resolution even on totally empty corpus nodes.
 - **ESLint Compliance**: Eliminated unused `fs` and `path` dependencies and hardened variable reassignment rules across all memory engine scripts.
 
@@ -107,6 +132,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [S
 > **Release 9.2.2** delivers major architectural unifications across the Tribunal Kit core: native Rust AST extraction via `oxc`, a unified JSON-backed memory engine decoupled from SQLite, real deterministic static analysis in the swarm orchestrator (slashing reviewer delays from 3s to 49ms), and a lean governance kernel (`kernel.md`) that reclaims ~18KB (~4,500 prompt tokens) per IDE bridge file.
 
 ### Added
+
 - **Native JS/TS AST Extraction**: Implemented a blazing-fast `oxc`-based AST parser in the Rust core (`ast-extract`) to accurately extract imports, exports, types, and landmines, replacing fragile regex fallbacks.
 - **Unified Memory Engine (`memory_engine.js`)**: Completely decoupled from non-existent `better-sqlite3` and volatile in-memory storage, standardizing on the canonical `.agent/history/memory/.memory.idx` JSON index and `MEMORY.md` markdown projection with cross-process file locking (`.memory.idx.lock`) and stale lock eviction.
 - **High-Density Governance Kernel (`kernel.md`)**: Authored a ~3.5KB (~850 tokens) lean kernel capturing Fabel epistemic checks, anti-hallucination non-negotiables, specialist routing tables, and SDD/TDD protocols.
@@ -115,6 +141,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [S
 - **Comprehensive Test Coverage**: Added dedicated test suites for `memory_engine.js` (12 tests), `swarm_dispatcher.js` deterministic reviewer benchmarks, and `bridges.test.js` context token savings assertions.
 
 ### Changed
+
 - **IDE Bridge Synthesis (`src/commands/init.js`)**: Updated `generateIDEBridges()` to source rules from `kernel.md` for `.cursorrules`, `.windsurfrules`, `.github/copilot-instructions.md`, `CLAUDE.md`, and `AGENTS.md`, reclaiming ~18KB (~4,500 tokens) per bridge file while preserving full backwards compatibility.
 - **Swarm Dispatcher Export & Performance**: Exported `SwarmOrchestrator` in `module.exports` and lowered reviewer runtimes from 1,000–3,000ms mock delays down to ~49ms deterministic validation.
 - **Native Binary Discovery (`wrapper.js` & `_utils.js`)**: Added `'ast-extract'` to `RUST_COMMANDS` and exported `getBinaryPath(startDir)` across `scripts/` and `.agent/scripts/` for unified multi-tier binary resolution.
@@ -123,13 +150,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [S
 - **Semantic Tool Repeat Guard**: Enhanced the `ToolRepeatGuard` within the MCP Server with deterministic semantic hashing (alphabetizing keys and normalizing strings) to block duplicate tool calls and prevent LLM loop hallucinations.
 
 ### Fixed
+
 - **Memory Engine Subsystem Parity**: Standardized memory operations across all 4 taxonomy types (`semantic`, `procedural`, `episodic`, `working`), ensuring atomic persistence, mathematical scoring `(relevance * priority) + recency + freqBoost`, budget gating, and auto-expiration without external native database dependencies.
 - **Dead Phantom Subprocesses**: Removed obsolete `python -m code_review_graph review-delta` subprocess spawns across CLI runners and swarm dispatcher blocks.
 - **Phantom Import Detection**: Hardened `.agent/scripts/guardrail_engine.js` by transitioning away from regex pattern matching toward robust, true AST-based phantom dependency detection.
 - **Validation Strictness**: Corrected a missing `VBC Protocol` header within the `skill-creator` skill to ensure it strictly passes payload validations.
 - **Guardrail False-Positives**: Resolved structural configuration drift and phantom file alerts in `.agent/workflows/` (e.g., `skill-enhancement-engine.md`, `orchestrate.md`) by adjusting command text to bypass overzealous string matching.
 - **Numeric Inconsistencies**: Automatically synchronized workflow reviewer counts across all 16 `.md` workflow files to match the updated `28 reviewers` manifest standard.
-
 
 ## [9.2.1] — 2026-09-15 — 🧠 Codename: Sovereign Intelligence (Drop 1: The Foundation)
 

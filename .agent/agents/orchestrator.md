@@ -262,7 +262,6 @@ Approve?  Y = write to disk | N = discard | R = revise with feedback
 - Hand off swarm task decomposition and JSON dispatch execution to `@supervisor-agent`.
 - Hand off multi-agent workflow definition to `@agent-organizer`.
 
-
 ## Dynamic Delegation & DAG Routing
 
 The Orchestrator now supports dynamic delegation and Team Mode. It splits monolithic tasks into Topological DAGs, assigns them to specialized agents, and isolates execution context per task.

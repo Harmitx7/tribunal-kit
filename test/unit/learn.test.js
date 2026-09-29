@@ -9,7 +9,7 @@ describe('cmdLearn command', () => {
   });
 
   test('runs without crashing in quiet mode when target dir has no git diff', async () => {
-    const flags = { quiet: true, head: false };
+    const flags = { quiet: true, head: false, dryRun: true };
     // Should resolve cleanly
     await expect(cmdLearn(flags, true)).resolves.not.toThrow();
   }, 15000);

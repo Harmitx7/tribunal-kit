@@ -60,10 +60,10 @@ Your request
     │
     ▼
 Context scan (MANDATORY before first line of code)
-├── Read package.json → verify all imports exist
-├── Read tsconfig.json → understand strictness, paths aliases
-├── Read referenced files → understand actual data shapes
-└── Read .env.example → know available environment variables
+├── Search package.json (via grep) → verify specifically required dependencies only. Do NOT read the entire file.
+├── Search tsconfig.json (via grep) → verify specific strictness or path aliases. Do NOT read the entire file.
+├── Read only relevant excerpts of referenced files → understand actual data shapes
+└── Search .env.example (via grep) → verify specifically required environment variables
     │
     ▼
 Maker generates at temperature 0.1
@@ -115,30 +115,36 @@ When unsure: write `// VERIFY: [specific reason]` instead of hallucinating.
 
 ## Reviewer Auto-Selection
 
-**Always active:**
+**System-1 Fast-Pass Routing (MANDATORY)**
+
+Before selecting reviewers, you MUST run `tk impact-tier` to determine the risk level:
+
+- **Tier 0 (Fast-Pass) & Tier 1 (Express Pass):** Bypass ALL LLM Tribunal Reviewers. Run deterministic scripts only. Show Human Gate (or auto-apply if configured).
+- **Tier 2 (Targeted Audit):** Run deterministic scripts + max 1-2 specialized domain reviewers.
+- **Tier 3 (Full Gauntlet):** Run full suite + Human Gate.
+
+**Always active (For Tier 2+):**
 
 ```
 precedence-reviewer→ Enforces repository Case Law and past rejections (Runs First)
-logic-reviewer     → Hallucinated methods, undefined refs, impossible logic
 security-auditor   → OWASP vulnerabilities, hardcoded secrets, injection
-complexity-reviewer→ Enforces the Dependency Ladder to prevent over-engineering
 ```
 
 **Auto-activated by keywords:**
 
-| Keyword in request                                          | Additional Reviewers                                           |
-| :---------------------------------------------------------- | :------------------------------------------------------------- |
-| `api`, `route`, `endpoint`, `handler`, `server action`      | `dependency-reviewer` + `type-safety-reviewer`                 |
-| `sql`, `query`, `database`, `prisma`, `drizzle`, `orm`      | `sql-reviewer`                                                 |
-| `component`, `hook`, `react`, `vue`, `jsx`, `tsx`           | `frontend-reviewer` + `type-safety-reviewer` + `ui-ux-auditor` |
-| `ui`, `design`, `landing`, `page`, `layout`, `style`, `css` | `ui-ux-auditor` + `accessibility-reviewer`                     |
-| `animation`, `gsap`, `framer`, `motion`, `scroll`           | `frontend-reviewer` + `performance-reviewer` + `ui-ux-auditor` |
-| `test`, `spec`, `vitest`, `jest`, `playwright`              | `test-coverage-reviewer`                                       |
-| `slow`, `optimize`, `cache`, `performance`, `bundle`        | `performance-reviewer`                                         |
-| `mobile`, `react native`, `expo`                            | `mobile-reviewer`                                              |
-| `llm`, `openai`, `anthropic`, `gemini`, `embedding`, `ai`   | `ai-code-reviewer`                                             |
-| `aria`, `wcag`, `a11y`, `accessibility`                     | `accessibility-reviewer` + `ui-ux-auditor`                     |
-| `import`, `package`, `npm`, `require`                       | `dependency-reviewer`                                          |
+| Keyword in request                                          | Additional Reviewers (Max 2 for Tier 2)        |
+| :---------------------------------------------------------- | :--------------------------------------------- |
+| `api`, `route`, `endpoint`, `handler`, `server action`      | `backend-specialist` + `type-safety-reviewer`  |
+| `sql`, `query`, `database`, `prisma`, `drizzle`, `orm`      | `sql-reviewer`                                 |
+| `component`, `hook`, `react`, `vue`, `jsx`, `tsx`           | `frontend-reviewer` + `type-safety-reviewer`   |
+| `ui`, `design`, `landing`, `page`, `layout`, `style`, `css` | `frontend-reviewer` + `accessibility-reviewer` |
+| `animation`, `gsap`, `framer`, `motion`, `scroll`           | `frontend-reviewer` + `performance-reviewer`   |
+| `test`, `spec`, `vitest`, `jest`, `playwright`              | `test-coverage-reviewer`                       |
+| `slow`, `optimize`, `cache`, `performance`, `bundle`        | `performance-reviewer`                         |
+| `mobile`, `react native`, `expo`                            | `mobile-reviewer`                              |
+| `llm`, `openai`, `anthropic`, `gemini`, `embedding`, `ai`   | `ai-code-reviewer`                             |
+| `aria`, `wcag`, `a11y`, `accessibility`                     | `accessibility-reviewer`                       |
+| `import`, `package`, `npm`, `require`                       | `dependency-reviewer`                          |
 
 > For maximum safety on critical code: use `/tribunal-full` for all 28 reviewers simultaneously.
 
@@ -209,7 +215,6 @@ Write to disk?  Y = approve | N = discard | R = revise with feedback
 /generate a GSAP ScrollTrigger timeline with useGSAP React hook
 /generate an OpenAI structured output call with Zod schema validation
 ```
-
 
 ## Brain-Hands Separation & Durable Logging
 

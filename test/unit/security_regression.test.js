@@ -29,7 +29,7 @@ describe('Security Regression: Command Injection in context_compiler', () => {
   test('analyzeSingleFile should use execFileSync with argument arrays, not shell strings', () => {
     const maliciousInput = 'test_file"; touch malicious_file.txt; echo ".txt';
     const workspace = path.resolve(__dirname, '../../');
-    
+
     try {
       analyzeSingleFile(maliciousInput, workspace);
     } catch (_e) {

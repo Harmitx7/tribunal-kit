@@ -285,7 +285,6 @@ node .agent/scripts/marathon_harness.js reset
 
 ---
 
-
 ## Long-Running State & Interruption
 
 Marathon workflows maintain long-running task state via frequent checkpoints. If interrupted, the workflow can be restarted cleanly using `/resume` without losing validated state.

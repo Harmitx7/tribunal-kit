@@ -24,7 +24,8 @@ function extractSourceLocations(stackText, projectRoot = process.cwd()) {
   const locations = [];
   const lines = stackText.split('\n');
 
-  const fileRegex = /(?:at\s+(?:.*?\s+)?\(?|webpack-internal:\/\/\/\.?\/)(https?:\/\/[^\/]+)?(\/[^\s:)]+):(\d+):(\d+)\)?/g;
+  const fileRegex =
+    /(?:at\s+(?:.*?\s+)?\(?|webpack-internal:\/\/\/\.?\/)(https?:\/\/[^\/]+)?(\/[^\s:)]+):(\d+):(\d+)\)?/g;
 
   for (const line of lines) {
     let match;
@@ -81,14 +82,17 @@ async function captureRuntimeErrors(url, options = {}) {
     await client.connect(tab.webSocketDebuggerUrl);
     await client.initDomains();
 
-    client.on('Runtime.exceptionThrown', (params) => {
+    client.on('Runtime.exceptionThrown', params => {
       const details = params?.exceptionDetails;
       if (!details) return;
 
       const text = details.text || details.exception?.description || 'Uncaught exception';
       const stack = details.stackTrace
         ? details.stackTrace.callFrames
-            ?.map((f) => `    at ${f.functionName || '<anonymous>'} (${f.url}:${f.lineNumber}:${f.columnNumber})`)
+            ?.map(
+              f =>
+                `    at ${f.functionName || '<anonymous>'} (${f.url}:${f.lineNumber}:${f.columnNumber})`,
+            )
             .join('\n')
         : details.exception?.description || '';
 
@@ -102,7 +106,7 @@ async function captureRuntimeErrors(url, options = {}) {
       });
     });
 
-    client.on('Console.messageAdded', (params) => {
+    client.on('Console.messageAdded', params => {
       const msg = params?.message;
       if (msg && msg.level === 'error') {
         consoleErrors.push({
@@ -111,12 +115,14 @@ async function captureRuntimeErrors(url, options = {}) {
           url: msg.url,
           line: msg.line,
           column: msg.column,
-          locations: extractSourceLocations(msg.text + (msg.url ? `\n at ${msg.url}:${msg.line}:0` : '')),
+          locations: extractSourceLocations(
+            msg.text + (msg.url ? `\n at ${msg.url}:${msg.line}:0` : ''),
+          ),
         });
       }
     });
 
-    client.on('Network.responseReceived', (params) => {
+    client.on('Network.responseReceived', params => {
       const res = params?.response;
       if (res && res.status >= 400) {
         networkFailures.push({
@@ -130,7 +136,7 @@ async function captureRuntimeErrors(url, options = {}) {
     const startTime = Date.now();
     await client.navigate(url);
     const settleWaitMs = options.settleWaitMs || 1000;
-    await new Promise((r) => setTimeout(r, settleWaitMs));
+    await new Promise(r => setTimeout(r, settleWaitMs));
 
     // Check for standard error overlays (Next.js, Vite, CRA)
     const overlayInfo = await client.evaluate(`

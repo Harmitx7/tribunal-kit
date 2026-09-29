@@ -36,7 +36,7 @@ function appendEvent(type, payload = {}, source = 'system', sessionId = 'default
     sessionId,
     type,
     source,
-    payload
+    payload,
   };
 
   const line = JSON.stringify(event) + '\n';
@@ -83,10 +83,10 @@ function rehydrateState() {
         startedAt: null,
         endedAt: null,
         events: [],
-        status: 'active'
+        status: 'active',
       };
     }
-    
+
     const sess = state.sessions[evt.sessionId];
     sess.events.push(evt);
 
@@ -111,5 +111,5 @@ module.exports = {
   appendEvent,
   readEvents,
   rehydrateState,
-  SESSION_FILE
+  SESSION_FILE,
 };

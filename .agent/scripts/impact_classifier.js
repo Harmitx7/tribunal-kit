@@ -78,11 +78,12 @@ function classifyImpact(opts = {}) {
   let score = 0.2; // Base baseline score
   const reasoning = [];
 
-  // Check 1: Critical File Patterns
+  // Check 1: Critical File Patterns & Diff
   const isCriticalFile = files.some(file => CRITICAL_PATTERNS.some(pat => pat.test(file)));
   const isCriticalTask = CRITICAL_PATTERNS.some(pat => pat.test(task));
+  const isCriticalDiff = diff && CRITICAL_PATTERNS.some(pat => pat.test(diff));
 
-  if (isCriticalFile || isCriticalTask) {
+  if (isCriticalFile || isCriticalTask || isCriticalDiff) {
     score += 0.6;
     reasoning.push('Critical path detected (auth/security/schema/payment)');
   }
@@ -135,15 +136,15 @@ function classifyImpact(opts = {}) {
   let maxReviewers = 1;
   let requireGate = false;
 
-  if (score < 0.15 && !isCriticalFile && !isCriticalTask) {
+  if (score < 0.15 && !isCriticalFile && !isCriticalTask && !isCriticalDiff) {
     tier = 0;
     maxReviewers = 0;
     requireGate = false;
-  } else if (score < 0.35 && !isCriticalFile && !isCriticalTask) {
+  } else if (score < 0.35 && !isCriticalFile && !isCriticalTask && !isCriticalDiff) {
     tier = 1;
     maxReviewers = 1;
     requireGate = false;
-  } else if (score < 0.7 && !isCriticalFile) {
+  } else if (score < 0.7 && !isCriticalFile && !isCriticalDiff) {
     tier = 2;
     maxReviewers = 2;
     requireGate = true; // Conditional gate

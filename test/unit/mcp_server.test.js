@@ -126,7 +126,7 @@ describe('MCP Server handleRequest', () => {
       const child = new EventEmitter();
       child.stdout = new EventEmitter();
       child.stderr = new EventEmitter();
-      
+
       process.nextTick(() => {
         child.stdout.emit('data', JSON.stringify({ success: true }));
         child.emit('close', 0);
@@ -142,7 +142,7 @@ describe('MCP Server handleRequest', () => {
     expect(text).toContain('Tribunal Context Broker');
     expect(text).toContain('Task: Build JWT authentication API with Hono');
     expect(text).not.toContain('AI coding assistants often fall into specific bad habits');
-    
+
     spawnSpy.mockRestore();
   });
 

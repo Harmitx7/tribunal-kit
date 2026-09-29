@@ -66,10 +66,14 @@ describe('Subagent-Driven Development (SDD) & Plugin Integration', () => {
     const outPath = path.join(tempDir, 'task-2-extracted.md');
     const wrapperScript = path.join(repoRoot, 'bin', 'wrapper.js');
 
-    execFileSync('node', [wrapperScript, 'sdd', 'brief', '--plan', planPath, '--task', '2', '--out', outPath], {
-      cwd: repoRoot,
-      encoding: 'utf8',
-    });
+    execFileSync(
+      'node',
+      [wrapperScript, 'sdd', 'brief', '--plan', planPath, '--task', '2', '--out', outPath],
+      {
+        cwd: repoRoot,
+        encoding: 'utf8',
+      },
+    );
 
     expect(fs.existsSync(outPath)).toBe(true);
     const extracted = fs.readFileSync(outPath, 'utf8');

@@ -1,8 +1,8 @@
 ---
 name: game-design-expert
-description: "Use when Game Design, UX, and Flow State mastery. Replaces fragmented legacy skills. Core gameplay loop design, 3Cs (Character, Camera, Controls), input buffering, coyote time, juice (game feel), telemetry tracking, narrative alignment, and audio spatialization integration. Use when crafting player experience, progression arcs, or systemic balance."
-version: 5.0.0
-last-updated: 2026-09-13
+description: "Use when executing, coordinating, planning, or reviewing game design expert agent workflows, cognitive loops, and architecture standards."
+version: 6.0.0
+last-updated: 2026-09-29
 skills:
   - game-engineering-expert
   - 12-principles-of-animation
@@ -15,11 +15,36 @@ scripts-binding:
 
 # Game Design Expert — Player Experience & Flow Mastery
 
+## Mandatory Pre-Flight Context Inspection
+Before reading, generating, or refactoring code in the `game-design-expert` domain, inspect these 5 critical parameters:
+1. **System Boundaries & Dependencies**: Verify that all required dependencies exist in target package manifests and environment paths.
+2. **Runtime Context & Platform Invariants**: Confirm target platform constraints (Node.js, Browser, Mobile OS, Edge runtime) before applying APIs.
+3. **Execution Guardrails**: Identify potential side-effects, state mutations, and unhandled asynchronous exceptions.
+4. **Validation & Type Contracts**: Validate input data schemas and strict type constraints across all module interfaces.
+5. **Observability & Proof of Execution**: Ensure execution produces tangible verification signals (terminal output, tests, metrics).
+
+
+## Activation Boundaries
+- **Activate when:** Use when executing, coordinating, planning, or reviewing game design expert agent workflows, cognitive loops, and architecture standards.
+- **DO NOT activate when:** The task falls outside the `game-design-expert` domain or is managed by a different dedicated specialist agent.
+
+
+## 🔁 Multi-Pass Execution Protocol
+
+| Pass | Phase | Core Action | Adaptive Depth |
+|:---|:---|:---|:---|
+| **Pass 1** | **Understand** | Deconstruct the user's explicit objective, implicit requirements, and platform constraints. | Fast / Standard / Deep |
+| **Pass 2** | **Plan** | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls. | Standard / Deep |
+| **Pass 3** | **Execute** | Implement solution with production-grade craft, zero placeholders, and strict typing. | All Modes |
+| **Pass 4** | **Verify** | Run linters, unit tests, or compiler checks to validate structural correctness. | All Modes |
+| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep |
+| **Pass 6** | **Harden** | Eliminate discovered friction, optimize performance, and harden error boundaries. | Standard / Deep |
+| **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. | All Modes |
+
+
 ---
 
 ## 🛠️ Technical Architecture & Reference Recipes
-
----
 
 ## Hallucination Traps (Read First)
 
@@ -28,9 +53,6 @@ scripts-binding:
 - ❌ Adding mechanics without testing the core loop first -> ✅ Core loop must be fun in isolation before adding complexity
 
 ---
-
----
-
 ## 1. The 3Cs (Character, Camera, Controls)
 
 Before designing enemies, levels, or UI, the foundation of the player's interaction MUST feel flawless. If the player cannot intrinsically trust the controls, the entire system collapses.
@@ -90,3 +112,39 @@ Game design is not segregated from Audio. Audio is the primary vector for tempor
 Design is hypotheses. Playtests are the reality.
 
 Never rely on developers "feeling" the game. You must systematically log death coordinates (heatmaps). If 80% of players die at Level 2 Trap B, your design intent (teaching the mechanic) has failed.
+
+## 🚨 Edge-Case & Failure Mode Matrix
+
+| Scenario | Risk | Production Mitigation |
+|:---|:---|:---|
+| **Empty or Null Inputs** | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers |
+| **Network Timeout / Latency** | Hanging operations or duplicate side-effects | Implement bounded abort controllers, exponential backoff, and idempotency keys |
+| **Concurrency / Race Conditions** | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls |
+| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection | Validate boundary payloads with Zod/Pydantic schemas prior to execution |
+| **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
+
+
+## 🏛️ Tribunal Verification & Guardrails
+
+**Active Reviewers:** `orchestrator` · `agent-organizer` · `logic-reviewer`
+**Slash Command:** `/review` or `/tribunal-full`
+
+### 🔬 Evidence Standard (Tri-State Verification)
+Every finding, audit statement, or completion claim must classify its factual certainty:
+- **`[OBSERVED]`**: Directly confirmed in the codebase or verified via executed terminal command.
+- **`[INFERRED]`**: Logically deduced from code patterns, architectural data flow, or schema relations.
+- **`[UNVERIFIED]`**: Speculative hypothesis or runtime possibility requiring active testing or measurement.
+
+### ✅ Pre-Flight Self-Audit Checklist
+```
+✅ Did I deconstruct the root objective before proposing architecture?
+✅ Did I identify dependencies, bottlenecks, and parallelizable sub-tasks?
+✅ Did I avoid over-engineering and select the simplest effective pattern?
+✅ Did I verify assumptions with concrete file reads instead of speculation?
+✅ Did I establish measurable verification criteria before completion?
+```
+
+### 🛑 Verification-Before-Completion (VBC) Protocol
+**CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+- ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
+- ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.

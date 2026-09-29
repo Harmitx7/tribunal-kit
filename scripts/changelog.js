@@ -43,10 +43,13 @@ const CATEGORIES = {
 
 // ── Git Helpers ──────────────────────────────────────────
 
-
 function git(args) {
   try {
-    return execFileSync('git', args, { encoding: 'utf8', timeout: 10000, stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+    return execFileSync('git', args, {
+      encoding: 'utf8',
+      timeout: 10000,
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
   } catch {
     return '';
   }

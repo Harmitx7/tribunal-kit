@@ -11,20 +11,20 @@ const colorTerm = (process.env.COLORTERM || '').toLowerCase();
 const term = (process.env.TERM || '').toLowerCase();
 
 const hasColor = !noColor && (isTTY || Boolean(process.env.FORCE_COLOR));
-const hasTrueColor = hasColor && (
-  colorTerm === 'truecolor' ||
-  colorTerm === '24bit' ||
-  term.includes('256color') ||
-  term.includes('xterm') ||
-  process.platform === 'win32'
-);
+const hasTrueColor =
+  hasColor &&
+  (colorTerm === 'truecolor' ||
+    colorTerm === '24bit' ||
+    term.includes('256color') ||
+    term.includes('xterm') ||
+    process.platform === 'win32');
 
-const isUtf8 = !noColor && (
-  Boolean(process.env.WT_SESSION) ||
-  Boolean(process.env.TERM_PROGRAM) ||
-  (process.env.LANG || '').toLowerCase().includes('utf') ||
-  process.platform !== 'win32'
-);
+const isUtf8 =
+  !noColor &&
+  (Boolean(process.env.WT_SESSION) ||
+    Boolean(process.env.TERM_PROGRAM) ||
+    (process.env.LANG || '').toLowerCase().includes('utf') ||
+    process.platform !== 'win32');
 
 const RGB = {
   SLATE_900: [13, 13, 15],
@@ -37,16 +37,16 @@ const RGB = {
   WHITE: [237, 237, 237],
 
   // Accents (Flame / Amber / Coral)
-  FLAME: [205, 105, 74],        // #cd694a
+  FLAME: [205, 105, 74], // #cd694a
   CORAL_BRIGHT: [231, 148, 117], // #e79475
-  AMBER: [245, 158, 11],        // #f59e0b
-  GOLD: [255, 215, 0],          // #ffd700
+  AMBER: [245, 158, 11], // #f59e0b
+  GOLD: [255, 215, 0], // #ffd700
 
   // Status
-  EMERALD: [78, 169, 111],      // #4ea96f
-  CYAN: [125, 207, 255],        // #7dcfff
-  ROSE: [244, 63, 94],          // #f43f5e
-  PURPLE: [177, 167, 255],      // #b1a7ff
+  EMERALD: [78, 169, 111], // #4ea96f
+  CYAN: [125, 207, 255], // #7dcfff
+  ROSE: [244, 63, 94], // #f43f5e
+  PURPLE: [177, 167, 255], // #b1a7ff
 };
 
 const UTF8_GLYPHS = {

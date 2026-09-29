@@ -749,16 +749,20 @@ async function handleRequest(req) {
 
         try {
           const workspaceRoot = process.cwd();
-          
+
           if (check) {
             const { spawn } = require('child_process');
             const result = await new Promise((resolve, reject) => {
-               const child = spawn(process.execPath, [path.join(__dirname, '../scripts/context_compiler.js'), '--check', '--json'], { cwd: workspaceRoot, encoding: 'utf8' });
-               let out = '';
-               child.stdout.on('data', d => out += d);
-               child.stderr.on('data', d => out += d);
-               child.on('close', _code => resolve(out));
-               child.on('error', reject);
+              const child = spawn(
+                process.execPath,
+                [path.join(__dirname, '../scripts/context_compiler.js'), '--check', '--json'],
+                { cwd: workspaceRoot, encoding: 'utf8' },
+              );
+              let out = '';
+              child.stdout.on('data', d => (out += d));
+              child.stderr.on('data', d => (out += d));
+              child.on('close', _code => resolve(out));
+              child.on('error', reject);
             });
             return {
               content: [
@@ -780,28 +784,28 @@ async function handleRequest(req) {
           // We use scripts/context_compiler.js to parse AST without blocking the event loop
           const { spawn } = require('child_process');
           const args = [path.join(__dirname, '../scripts/context_compiler.js')];
-          
+
           if (compareWith) {
-             args.push('--multi', target, compareWith);
+            args.push('--multi', target, compareWith);
           } else {
-             args.push(target);
+            args.push(target);
           }
-          
+
           if (write) {
-             args.push('--write');
+            args.push('--write');
           }
 
           const result = await new Promise((resolve, reject) => {
-             const child = spawn(process.execPath, args, { cwd: workspaceRoot, encoding: 'utf8' });
-             let out = '';
-             child.stdout.on('data', d => out += d);
-             child.stderr.on('data', d => out += d);
-             child.on('close', _code => {
-                 resolve(out);
-             });
-             child.on('error', reject);
+            const child = spawn(process.execPath, args, { cwd: workspaceRoot, encoding: 'utf8' });
+            let out = '';
+            child.stdout.on('data', d => (out += d));
+            child.stderr.on('data', d => (out += d));
+            child.on('close', _code => {
+              resolve(out);
+            });
+            child.on('error', reject);
           });
-          
+
           return {
             content: [{ type: 'text', text: result }],
           };
@@ -1326,35 +1330,40 @@ async function handleRequest(req) {
         try {
           const workspaceRoot = process.cwd();
           const { spawn } = require('child_process');
-          const args = [path.join(__dirname, 'wrapper.js'), 'context-broker', '--repo-path', workspaceRoot];
+          const args = [
+            path.join(__dirname, 'wrapper.js'),
+            'context-broker',
+            '--repo-path',
+            workspaceRoot,
+          ];
           if (files && files.length > 0) {
-             args.push('--target-file');
-             args.push(files[0]);
+            args.push('--target-file');
+            args.push(files[0]);
           }
 
           const result = await new Promise((resolve, reject) => {
-             const child = spawn(process.execPath, args, { cwd: workspaceRoot, encoding: 'utf8' });
-             let out = '';
-             child.stdout.on('data', d => out += d);
-             child.stderr.on('data', d => out += d);
-             child.on('close', _code => {
-                 resolve(out);
-             });
-             child.on('error', reject);
+            const child = spawn(process.execPath, args, { cwd: workspaceRoot, encoding: 'utf8' });
+            let out = '';
+            child.stdout.on('data', d => (out += d));
+            child.stderr.on('data', d => (out += d));
+            child.on('close', _code => {
+              resolve(out);
+            });
+            child.on('error', reject);
           });
-          
+
           let finalOutput = '';
           try {
-             const parsed = JSON.parse(result);
-             finalOutput = `# Tribunal Context Broker\n\n`;
-             if (task) {
-                finalOutput += `Task: ${task}\n\n`;
-             }
-             if (parsed.context_snapshot) {
-                finalOutput += parsed.context_snapshot;
-             }
+            const parsed = JSON.parse(result);
+            finalOutput = `# Tribunal Context Broker\n\n`;
+            if (task) {
+              finalOutput += `Task: ${task}\n\n`;
+            }
+            if (parsed.context_snapshot) {
+              finalOutput += parsed.context_snapshot;
+            }
           } catch (_e) {
-             finalOutput = result;
+            finalOutput = result;
           }
 
           return { content: [{ type: 'text', text: stripBoilerplate(finalOutput) }] };

@@ -52,7 +52,6 @@ try {
   sessionLogger = require('./session_logger');
 } catch (_e) {}
 
-
 // ── Lazy-load sibling scripts (avoid circular deps) ─────────────────────────
 let _contextBroker = null;
 function getContextBroker() {
@@ -528,15 +527,28 @@ function validatePhase(code, spec, opts = {}) {
   const guardrailEngine = _getGuardrailEngine();
   if (guardrailEngine && typeof guardrailEngine.validate === 'function') {
     try {
-      let manifest = { agents: { all: [] }, skills: { names: [] }, cross_references: [], numeric_claims: [], scripts: { files: {} } };
+      let manifest = {
+        agents: { all: [] },
+        skills: { names: [] },
+        cross_references: [],
+        numeric_claims: [],
+        scripts: { files: {} },
+      };
       try {
-        const manifestPath = path.join(process.cwd(), '.agent', 'history', 'integrity_manifest.json');
+        const manifestPath = path.join(
+          process.cwd(),
+          '.agent',
+          'history',
+          'integrity_manifest.json',
+        );
         if (fs.existsSync(manifestPath)) {
           manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
         }
       } catch (_e) {}
 
-      const grResult = guardrailEngine.validate(code, manifest, { context: { projectRoot: process.cwd(), filePath: spec.target_file } });
+      const grResult = guardrailEngine.validate(code, manifest, {
+        context: { projectRoot: process.cwd(), filePath: spec.target_file },
+      });
       if (grResult && grResult.violations) {
         for (const v of grResult.violations) {
           issues.push({
@@ -614,7 +626,6 @@ function detectLang(spec) {
   return map[ext] || 'js';
 }
 
-
 /**
  * Find the first line number matching a regex pattern.
  */
@@ -656,12 +667,16 @@ function fullPipeline(task, files = [], opts = {}) {
   const validate = code => validatePhase(code, spec, { lang: detectLang(spec) });
 
   if (sessionLogger) {
-    sessionLogger.appendEvent('AgentDispatched', {
-      task,
-      files,
-      promptTokens: builderResult.tokenEstimate,
-      skills: builderResult.skillsLoaded,
-    }, 'pipeline_engine');
+    sessionLogger.appendEvent(
+      'AgentDispatched',
+      {
+        task,
+        files,
+        promptTokens: builderResult.tokenEstimate,
+        skills: builderResult.skillsLoaded,
+      },
+      'pipeline_engine',
+    );
   }
 
   return {

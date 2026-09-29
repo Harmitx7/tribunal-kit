@@ -12,7 +12,11 @@ const os = require('os');
  * and maintains 100% interoperability with the core memory system.
  */
 
-const { MemoryEngine, VALID_TYPES, MEMORY_TYPES: _MEMORY_TYPES } = require('../../.agent/scripts/memory_engine');
+const {
+  MemoryEngine,
+  VALID_TYPES,
+  MEMORY_TYPES: _MEMORY_TYPES,
+} = require('../../.agent/scripts/memory_engine');
 
 function createTempAgent() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tk-mem-engine-test-'));
@@ -144,8 +148,8 @@ describe('MemoryEngine Class', () => {
       memory_type: 'episodic',
       content: 'Ancient decision from 60 days ago',
       tags: ['decision'],
-      created_at: `${Math.floor(Date.now() / 1000) - (60 * 86400)}Z`,
-      last_accessed: `${Math.floor(Date.now() / 1000) - (60 * 86400)}Z`,
+      created_at: `${Math.floor(Date.now() / 1000) - 60 * 86400}Z`,
+      last_accessed: `${Math.floor(Date.now() / 1000) - 60 * 86400}Z`,
       access_count: 0,
       token_estimate: 8,
       source: 'manual',
@@ -186,10 +190,10 @@ describe('MemoryEngine Class', () => {
   test('assigns confidence penalty to learned source memories', () => {
     const r1 = mem.store('semantic', 'Manual fact', [], { source: 'manual' });
     const r2 = mem.store('semantic', 'Learned fact', [], { source: 'learned' });
-    
+
     const m1 = mem.get(r1.id);
     const m2 = mem.get(r2.id);
-    
+
     expect(m1.confidence).toBe(1.0);
     expect(m2.confidence).toBe(0.5);
   });
@@ -198,17 +202,17 @@ describe('MemoryEngine Class', () => {
     const r1 = mem.store('semantic', 'Node is a runtime', ['js']);
     const r2 = mem.store('semantic', 'Python is a runtime', ['py']);
     const _r3 = mem.store('semantic', 'Node uses npm', ['js'], { relations: [r1.id] });
-    
+
     // query "npm runtime". r3 matches npm. r1 and r2 match runtime.
     // r3 has relation to r1. So r1 should get a relational boost and score higher than r2.
     const recallNpm = mem.recall('npm runtime', 2000);
     const results = recallNpm.results;
-    
+
     expect(results.length).toBeGreaterThanOrEqual(2);
-    
+
     const r1Index = results.findIndex(r => r.id === r1.id);
     const r2Index = results.findIndex(r => r.id === r2.id);
-    
+
     if (r2Index !== -1 && r1Index !== -1) {
       expect(r1Index).toBeLessThan(r2Index); // r1 ranks higher than r2
     }

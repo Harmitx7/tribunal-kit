@@ -10,7 +10,7 @@ exports.cmdValidate = cmdValidate;
 
 const fs = require('fs');
 const path = require('path');
-const { color, bold, dim, RGB, GLYPHS, renderReviewerGrid, ActionTree } = require('../tui');
+const { color, bold, RGB, GLYPHS, renderReviewerGrid, ActionTree } = require('../tui');
 
 async function cmdValidate(flags, quiet = false) {
   const projectRoot = flags.path ? path.resolve(flags.path) : process.cwd();
@@ -19,7 +19,9 @@ async function cmdValidate(flags, quiet = false) {
   const tree = new ActionTree();
 
   if (!fs.existsSync(agentDir)) {
-    console.error(`  ${color(RGB.ROSE, g.failure)} ${bold('No .agent/ directory found.')} Run ${color(RGB.CYAN, 'tk init')} first.`);
+    console.error(
+      `  ${color(RGB.ROSE, g.failure)} ${bold('No .agent/ directory found.')} Run ${color(RGB.CYAN, 'tk init')} first.`,
+    );
     process.exit(1);
   }
 
@@ -28,7 +30,9 @@ async function cmdValidate(flags, quiet = false) {
   if (fileToValidate) {
     const fullPath = path.resolve(fileToValidate);
     if (!fs.existsSync(fullPath)) {
-      console.error(`  ${color(RGB.ROSE, g.failure)} ${bold('File not found for validation:')} ${fileToValidate}`);
+      console.error(
+        `  ${color(RGB.ROSE, g.failure)} ${bold('File not found for validation:')} ${fileToValidate}`,
+      );
       process.exit(1);
     }
     try {
@@ -36,11 +40,15 @@ async function cmdValidate(flags, quiet = false) {
       if (fullPath.endsWith('.json')) {
         JSON.parse(content);
         if (!quiet) {
-          console.log(`  ${color(RGB.EMERALD, g.success)} ${bold('Valid JSON payload:')} ${color(RGB.CYAN, fullPath)}`);
+          console.log(
+            `  ${color(RGB.EMERALD, g.success)} ${bold('Valid JSON payload:')} ${color(RGB.CYAN, fullPath)}`,
+          );
         }
       } else {
         if (!quiet) {
-          console.log(`  ${color(RGB.EMERALD, g.success)} ${bold('File validated successfully:')} ${color(RGB.CYAN, fullPath)}`);
+          console.log(
+            `  ${color(RGB.EMERALD, g.success)} ${bold('File validated successfully:')} ${color(RGB.CYAN, fullPath)}`,
+          );
         }
       }
       return;

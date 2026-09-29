@@ -18,7 +18,9 @@ async function cmdHeal(flags, processArgs, quiet = false) {
 
   if (!quiet && !flags.json) {
     banner(quiet);
-    console.log(`  ${c('cyan', '🛡 Runtime Sentinel:')} Scanning ${c('white', url)} for live runtime errors...\n`);
+    console.log(
+      `  ${c('cyan', '🛡 Runtime Sentinel:')} Scanning ${c('white', url)} for live runtime errors...\n`,
+    );
   }
 
   try {
@@ -30,9 +32,13 @@ async function cmdHeal(flags, processArgs, quiet = false) {
       }
 
       if (verification.isFixed) {
-        console.log(`  ${c('green', '✔ Verification Passed!')} Runtime errors cleared on ${c('bold', url)}.\n`);
+        console.log(
+          `  ${c('green', '✔ Verification Passed!')} Runtime errors cleared on ${c('bold', url)}.\n`,
+        );
       } else {
-        console.log(`  ${c('red', '✖ Verification Failed:')} ${verification.remainingIssues} issue(s) still remaining.\n`);
+        console.log(
+          `  ${c('red', '✖ Verification Failed:')} ${verification.remainingIssues} issue(s) still remaining.\n`,
+        );
       }
       return;
     }
@@ -45,14 +51,18 @@ async function cmdHeal(flags, processArgs, quiet = false) {
     }
 
     if (report.healthy) {
-      console.log(`  ${c('green', '✔ Runtime Healthy:')} Zero uncaught exceptions or error overlays detected on ${c('bold', url)}.\n`);
+      console.log(
+        `  ${c('green', '✔ Runtime Healthy:')} Zero uncaught exceptions or error overlays detected on ${c('bold', url)}.\n`,
+      );
       return;
     }
 
     console.log(`  ${c('red', '✖ Runtime Errors Detected:')}\n`);
 
     if (report.overlay.hasOverlay) {
-      console.log(`    ${c('red', '• Dev Error Overlay Active:')} ${c('yellow', report.overlay.overlayType || 'Generic Framework Overlay')}`);
+      console.log(
+        `    ${c('red', '• Dev Error Overlay Active:')} ${c('yellow', report.overlay.overlayType || 'Generic Framework Overlay')}`,
+      );
       if (report.overlay.bodyText) {
         console.log(`      ${c('gray', report.overlay.bodyText.slice(0, 160))}...\n`);
       }

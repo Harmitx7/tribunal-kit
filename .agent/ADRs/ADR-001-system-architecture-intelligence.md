@@ -1,6 +1,6 @@
 ---
 id: ADR-001
-title: "System Architecture Intelligence Layer"
+title: 'System Architecture Intelligence Layer'
 status: Accepted
 date: 2026-09-27
 ---

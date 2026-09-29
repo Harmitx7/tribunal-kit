@@ -75,6 +75,7 @@ For each ADR with status "Accepted":
 ```
 
 Example:
+
 - ADR says: "All database access goes through the Repository pattern"
 - Diff adds: raw SQL query inside an API route handler
 - Finding: DRIFT — direct database access bypasses Repository layer
@@ -83,14 +84,14 @@ Example:
 
 Detect evidence-backed architectural anti-patterns by analyzing the System Model:
 
-| Anti-Pattern | Detection Method |
-|:---|:---|
-| **God Service** | Component with > 15 files or > 5 capability types |
-| **Circular Dependency** | Cycle detection in import graph |
-| **Shared Mutable State** | Multiple components writing to same data store without isolation |
-| **Tight Coupling** | Component with > 10 direct dependents (blastRadius from graph) |
-| **Distributed Monolith** | Multiple "services" sharing a single database |
-| **Dual Writes** | Same file writing to both database and cache without transactional guarantee |
+| Anti-Pattern             | Detection Method                                                             |
+| :----------------------- | :--------------------------------------------------------------------------- |
+| **God Service**          | Component with > 15 files or > 5 capability types                            |
+| **Circular Dependency**  | Cycle detection in import graph                                              |
+| **Shared Mutable State** | Multiple components writing to same data store without isolation             |
+| **Tight Coupling**       | Component with > 10 direct dependents (blastRadius from graph)               |
+| **Distributed Monolith** | Multiple "services" sharing a single database                                |
+| **Dual Writes**          | Same file writing to both database and cache without transactional guarantee |
 
 ### 4. Trust Boundary Crossings
 
@@ -124,25 +125,25 @@ Every finding MUST follow this structure:
 
 ```yaml
 finding:
-  title: "[Short descriptive title]"
-  category: "Boundary Violation | Architecture Drift | Anti-Pattern | Trust Boundary | Blast Radius"
-  severity: "CRITICAL | HIGH | MEDIUM | LOW"
-  confidence: "CONFIRMED | HIGH_CONFIDENCE | MEDIUM_CONFIDENCE | LOW_CONFIDENCE | UNKNOWN"
+  title: '[Short descriptive title]'
+  category: 'Boundary Violation | Architecture Drift | Anti-Pattern | Trust Boundary | Blast Radius'
+  severity: 'CRITICAL | HIGH | MEDIUM | LOW'
+  confidence: 'CONFIRMED | HIGH_CONFIDENCE | MEDIUM_CONFIDENCE | LOW_CONFIDENCE | UNKNOWN'
 
-  claim: "[What architectural rule is being violated]"
+  claim: '[What architectural rule is being violated]'
 
   evidence:
-    - file: "[exact file path]"
+    - file: '[exact file path]'
       line: [line number]
-      observation: "[what the code does]"
+      observation: '[what the code does]'
 
-  root_cause: "[Why this is architecturally problematic]"
+  root_cause: '[Why this is architecturally problematic]'
 
-  blast_radius: "[What downstream components are affected]"
+  blast_radius: '[What downstream components are affected]'
 
-  recommendation: "[Specific, actionable fix]"
+  recommendation: '[Specific, actionable fix]'
 
-  verification: "[How to verify the fix is correct]"
+  verification: '[How to verify the fix is correct]'
 ```
 
 ---

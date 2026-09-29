@@ -22,7 +22,9 @@ async function cmdBrowse(flags, processArgs, quiet = false) {
 
   if (!quiet && !flags.json) {
     banner(quiet);
-    console.log(`  ${c('cyan', '🌐 Browsing:')} ${c('white', url)} (extracting semantic tokens)...\n`);
+    console.log(
+      `  ${c('cyan', '🌐 Browsing:')} ${c('white', url)} (extracting semantic tokens)...\n`,
+    );
   }
 
   try {
@@ -34,7 +36,9 @@ async function cmdBrowse(flags, processArgs, quiet = false) {
     }
 
     if (result.threatLevel !== 'clean') {
-      console.log(`  ${c('yellow', '⚠ IDPI Warning:')} Potential prompt injection detected (${result.threatLevel}):`);
+      console.log(
+        `  ${c('yellow', '⚠ IDPI Warning:')} Potential prompt injection detected (${result.threatLevel}):`,
+      );
       for (const t of result.threats) {
         console.log(`    ${c('red', '•')} ${t}`);
       }
@@ -44,7 +48,9 @@ async function cmdBrowse(flags, processArgs, quiet = false) {
     console.log(c('gray', '─────────────────────────────────────────────────────────────'));
     console.log(result.markdown);
     console.log(c('gray', '─────────────────────────────────────────────────────────────'));
-    console.log(`  ${c('green', '✔')} Extracted page content (${Buffer.byteLength(result.markdown, 'utf8')} bytes, < 1.5k tokens).\n`);
+    console.log(
+      `  ${c('green', '✔')} Extracted page content (${Buffer.byteLength(result.markdown, 'utf8')} bytes, < 1.5k tokens).\n`,
+    );
   } catch (err) {
     console.error(`  ${c('red', '✖ Browser error:')} ${err.message}`);
     process.exit(1);

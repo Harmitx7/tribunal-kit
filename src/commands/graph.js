@@ -1,44 +1,52 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+const __importDefault =
+  (this && this.__importDefault) ||
+  function (mod) {
+    return mod && mod.__esModule ? mod : { default: mod };
+  };
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.cmdGraph = cmdGraph;
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const logger_1 = require("../utils/logger");
-const helpers_1 = require("../utils/helpers");
+const fs_1 = __importDefault(require('fs'));
+const path_1 = __importDefault(require('path'));
+const logger_1 = require('../utils/logger');
+const helpers_1 = require('../utils/helpers');
 async function cmdGraph(flags, quiet = false) {
-    const targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
-    const agentDest = path_1.default.join(targetDir, '.agent');
-    if (!fs_1.default.existsSync(agentDest)) {
-        (0, logger_1.err)('.agent/ not found. Run: npx tribunal-kit init');
-        process.exit(1);
+  const targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
+  const agentDest = path_1.default.join(targetDir, '.agent');
+  if (!fs_1.default.existsSync(agentDest)) {
+    (0, logger_1.err)('.agent/ not found. Run: npx tribunal-kit init');
+    process.exit(1);
+  }
+  (0, helpers_1.banner)(quiet);
+  const builderScript = path_1.default.join(agentDest, 'scripts', 'graph_builder.js');
+  const visualizerScript = path_1.default.join(agentDest, 'scripts', 'graph_visualizer.js');
+  const htmlFile = path_1.default.join(agentDest, 'history', 'architecture-explorer.html');
+  try {
+    await (0, helpers_1.runShellAsync)('node', [builderScript], {
+      stdio: 'inherit',
+      cwd: targetDir,
+    });
+    await (0, helpers_1.runShellAsync)('node', [visualizerScript], {
+      stdio: 'inherit',
+      cwd: targetDir,
+    });
+    (0, logger_1.log)(`  ${(0, logger_1.c)('cyan', '▸')} Opening visualizer in browser...`);
+    const child_process = require('child_process');
+    if (process.platform === 'win32') {
+      child_process
+        .spawn('cmd.exe', ['/c', 'start', '', htmlFile], { stdio: 'ignore', detached: true })
+        .unref();
+    } else if (process.platform === 'darwin') {
+      child_process.spawn('open', [htmlFile], { stdio: 'ignore', detached: true }).unref();
+    } else {
+      child_process.spawn('xdg-open', [htmlFile], { stdio: 'ignore', detached: true }).unref();
     }
-    (0, helpers_1.banner)(quiet);
-    const builderScript = path_1.default.join(agentDest, 'scripts', 'graph_builder.js');
-    const visualizerScript = path_1.default.join(agentDest, 'scripts', 'graph_visualizer.js');
-    const htmlFile = path_1.default.join(agentDest, 'history', 'architecture-explorer.html');
-    try {
-        await (0, helpers_1.runShellAsync)('node', [builderScript], { stdio: 'inherit', cwd: targetDir });
-        await (0, helpers_1.runShellAsync)('node', [visualizerScript], { stdio: 'inherit', cwd: targetDir });
-        (0, logger_1.log)(`  ${(0, logger_1.c)('cyan', '▸')} Opening visualizer in browser...`);
-        const child_process = require('child_process');
-        if (process.platform === 'win32') {
-            child_process.spawn('cmd.exe', ['/c', 'start', '', htmlFile], { stdio: 'ignore', detached: true }).unref();
-        } else if (process.platform === 'darwin') {
-            child_process.spawn('open', [htmlFile], { stdio: 'ignore', detached: true }).unref();
-        } else {
-            child_process.spawn('xdg-open', [htmlFile], { stdio: 'ignore', detached: true }).unref();
-        }
+  } catch (e) {
+    if (e instanceof Error) {
+      (0, logger_1.err)(`Graph generation failed: ${e.message}`);
+    } else {
+      (0, logger_1.err)(`Graph generation failed: ${String(e)}`);
     }
-    catch (e) {
-        if (e instanceof Error) {
-            (0, logger_1.err)(`Graph generation failed: ${e.message}`);
-        }
-        else {
-            (0, logger_1.err)(`Graph generation failed: ${String(e)}`);
-        }
-        process.exit(1);
-    }
+    process.exit(1);
+  }
 }

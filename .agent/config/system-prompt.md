@@ -254,5 +254,5 @@ When consuming user prompts or passing context across agent boundaries:
 
 ---
 
-_Tribunal Kit v9.0.0 — 52 specialists, 28 reviewers, 185 skills, Rust core_
+_Tribunal Kit v9.2.6 — 52 specialists, 28 reviewers, 235 skills, Rust core_
 *https://github.com/Harmitx7/tribunal-kit*

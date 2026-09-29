@@ -17,7 +17,9 @@ async function cmdCompareWeb(flags, processArgs, quiet = false) {
   const url2 = processArgs[4] || flags.url2;
 
   if (!url1 || !url2) {
-    console.error(`  ${c('red', '✖ Error:')} Missing target URLs. Usage: tk compare-web <url1> <url2>`);
+    console.error(
+      `  ${c('red', '✖ Error:')} Missing target URLs. Usage: tk compare-web <url1> <url2>`,
+    );
     process.exit(1);
   }
 
@@ -40,14 +42,20 @@ async function cmdCompareWeb(flags, processArgs, quiet = false) {
 
     const diffColor = result.passed ? 'green' : 'red';
 
-    console.log(`  Visual Mismatch: ${c(diffColor, `${result.diffPercentage}%`)} (Allowed Threshold: ${maxDiff}%)`);
+    console.log(
+      `  Visual Mismatch: ${c(diffColor, `${result.diffPercentage}%`)} (Allowed Threshold: ${maxDiff}%)`,
+    );
     console.log(`  Compared Bytes:  ${result.totalPixelsCompared}`);
 
     if (result.passed) {
-      console.log(`\n  ${c('green', '✔ Visual comparison passed')} — Difference is within acceptable threshold.\n`);
+      console.log(
+        `\n  ${c('green', '✔ Visual comparison passed')} — Difference is within acceptable threshold.\n`,
+      );
       process.exit(0);
     } else {
-      console.log(`\n  ${c('red', '✖ Visual regression detected!')} Diff ${result.diffPercentage}% exceeds max allowed ${maxDiff}%.\n`);
+      console.log(
+        `\n  ${c('red', '✖ Visual regression detected!')} Diff ${result.diffPercentage}% exceeds max allowed ${maxDiff}%.\n`,
+      );
       process.exit(1);
     }
   } catch (err) {

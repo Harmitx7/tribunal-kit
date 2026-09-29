@@ -40,7 +40,9 @@ function loadCommand(modulePath, functionName, ...args) {
     const mod = require(modulePath);
     return mod[functionName](...args);
   } catch (err) {
-    throw new Error(`Tribunal ESM wrapper failed to load command '${functionName}' from '${modulePath}': ${err.message}`);
+    throw new Error(
+      `Tribunal ESM wrapper failed to load command '${functionName}' from '${modulePath}': ${err.message}`,
+    );
   }
 }
 

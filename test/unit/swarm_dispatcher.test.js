@@ -78,4 +78,3 @@ describe('swarm_dispatcher.js', () => {
     expect(duration).toBeLessThan(500);
   });
 });
-

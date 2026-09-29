@@ -41,8 +41,14 @@ function cleanupAll() {
 }
 
 process.on('exit', cleanupAll);
-process.on('SIGINT', () => { cleanupAll(); process.exit(130); });
-process.on('SIGTERM', () => { cleanupAll(); process.exit(143); });
+process.on('SIGINT', () => {
+  cleanupAll();
+  process.exit(130);
+});
+process.on('SIGTERM', () => {
+  cleanupAll();
+  process.exit(143);
+});
 
 /**
  * Launches an isolated headless Chrome instance.

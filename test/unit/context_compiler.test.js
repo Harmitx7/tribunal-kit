@@ -56,7 +56,7 @@ describe('Context Compiler Engine', () => {
     // Ensure the injected directory was NOT created (checking safe execution)
     const injectedDirPath = path.resolve(workspaceRoot, 'INJECTED');
     expect(fs.existsSync(injectedDirPath)).toBe(false);
-    
+
     fs.unlinkSync(exploitPath);
   });
 

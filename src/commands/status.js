@@ -37,13 +37,23 @@ function cmdStatus(flags, quiet = false) {
     ? fs.readdirSync(path.join(agentDest, 'scripts')).filter(f => f.endsWith('.js')).length
     : 0;
 
-  console.log(`  ${color(RGB.EMERALD, g.success)} ${bold(color(RGB.EMERALD, 'Installed & Active'))}  ${dim('→')}  ${dim(agentDest)}`);
+  console.log(
+    `  ${color(RGB.EMERALD, g.success)} ${bold(color(RGB.EMERALD, 'Installed & Active'))}  ${dim('→')}  ${dim(agentDest)}`,
+  );
   console.log();
 
-  console.log(`    ${color(RGB.FLAME, '🤖')}  ${color(RGB.WHITE, 'Agents'.padEnd(12))}  ${color(RGB.CYAN, String(agentsCount).padStart(3))} ${dim('specialists')}`);
-  console.log(`    ${color(RGB.AMBER, '⚡')}  ${color(RGB.WHITE, 'Workflows'.padEnd(12))}  ${color(RGB.CYAN, String(workflowsCount).padStart(3))} ${dim('commands')}`);
-  console.log(`    ${color(RGB.PURPLE, '🧠')}  ${color(RGB.WHITE, 'Skills'.padEnd(12))}  ${color(RGB.CYAN, String(skillsCount).padStart(3))} ${dim('injected')}`);
-  console.log(`    ${color(RGB.EMERALD, '🔧')}  ${color(RGB.WHITE, 'Scripts'.padEnd(12))}  ${color(RGB.CYAN, String(scriptsCount).padStart(3))} ${dim('enforcers')}`);
+  console.log(
+    `    ${color(RGB.FLAME, '🤖')}  ${color(RGB.WHITE, 'Agents'.padEnd(12))}  ${color(RGB.CYAN, String(agentsCount).padStart(3))} ${dim('specialists')}`,
+  );
+  console.log(
+    `    ${color(RGB.AMBER, '⚡')}  ${color(RGB.WHITE, 'Workflows'.padEnd(12))}  ${color(RGB.CYAN, String(workflowsCount).padStart(3))} ${dim('commands')}`,
+  );
+  console.log(
+    `    ${color(RGB.PURPLE, '🧠')}  ${color(RGB.WHITE, 'Skills'.padEnd(12))}  ${color(RGB.CYAN, String(skillsCount).padStart(3))} ${dim('injected')}`,
+  );
+  console.log(
+    `    ${color(RGB.EMERALD, '🔧')}  ${color(RGB.WHITE, 'Scripts'.padEnd(12))}  ${color(RGB.CYAN, String(scriptsCount).padStart(3))} ${dim('enforcers')}`,
+  );
   console.log();
 
   // IDE Bridges Check

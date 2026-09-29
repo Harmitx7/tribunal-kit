@@ -14,8 +14,10 @@ const WS_OPEN = 1;
 
 function getNativeWebSocket() {
   if (typeof WebSocket !== 'undefined') return WebSocket;
-  if (typeof globalThis !== 'undefined' && typeof globalThis.WebSocket !== 'undefined') return globalThis.WebSocket;
-  if (typeof global !== 'undefined' && typeof global.WebSocket !== 'undefined') return global.WebSocket;
+  if (typeof globalThis !== 'undefined' && typeof globalThis.WebSocket !== 'undefined')
+    return globalThis.WebSocket;
+  if (typeof global !== 'undefined' && typeof global.WebSocket !== 'undefined')
+    return global.WebSocket;
   return null;
 }
 
@@ -111,7 +113,7 @@ function createNodeWebSocket(wsUrl) {
 
     let buffer = head && head.length > 0 ? Buffer.from(head) : Buffer.alloc(0);
 
-    socket.on('data', (chunk) => {
+    socket.on('data', chunk => {
       buffer = Buffer.concat([buffer, chunk]);
 
       while (buffer.length >= 2) {
@@ -176,7 +178,7 @@ function createNodeWebSocket(wsUrl) {
       }
     });
 
-    socket.on('error', (err) => {
+    socket.on('error', err => {
       if (ws.onerror) {
         try {
           ws.onerror(err);
@@ -206,7 +208,7 @@ function createNodeWebSocket(wsUrl) {
     }
   });
 
-  req.on('error', (err) => {
+  req.on('error', err => {
     ws.readyState = 3;
     if (ws.onerror) {
       try {
@@ -253,11 +255,11 @@ class CdpClient {
         resolve();
       };
 
-      socket.onerror = (err) => {
+      socket.onerror = err => {
         reject(new Error(`CDP WebSocket error: ${err.message || 'connection failed'}`));
       };
 
-      socket.onmessage = (event) => {
+      socket.onmessage = event => {
         try {
           const msg = JSON.parse(event.data);
           if (msg.id && this.pending.has(msg.id)) {
@@ -273,12 +275,12 @@ class CdpClient {
             for (const handler of listeners) {
               try {
                 handler(msg.params);
-              } catch (e) {
+              } catch (_e) {
                 // Ignore listener error
               }
             }
           }
-        } catch (e) {
+        } catch (_e) {
           // Ignore parse errors
         }
       };
@@ -313,11 +315,11 @@ class CdpClient {
       }, 30000);
 
       this.pending.set(id, {
-        resolve: (val) => {
+        resolve: val => {
           clearTimeout(timeout);
           resolve(val);
         },
-        reject: (err) => {
+        reject: err => {
           clearTimeout(timeout);
           reject(err);
         },
@@ -340,6 +342,17 @@ class CdpClient {
   }
 
   /**
+   * Deregister an event listener for CDP events.
+   * @param {string} event
+   * @param {Function} handler
+   */
+  off(event, handler) {
+    if (!this.eventListeners.has(event)) return;
+    const list = this.eventListeners.get(event).filter(h => h !== handler);
+    this.eventListeners.set(event, list);
+  }
+
+  /**
    * Initialize standard domains (Page, Runtime, DOM, Network, Console)
    */
   async initDomains() {
@@ -358,28 +371,24 @@ class CdpClient {
    * @returns {Promise<void>}
    */
   async navigate(url) {
-    return new Promise(async (resolve, reject) => {
-      let timeoutId;
-
-      const onLoad = () => {
-        clearTimeout(timeoutId);
-        resolve();
-      };
-
+    let timeoutId = null;
+    let onLoad = null;
+    const loadPromise = new Promise(resolve => {
+      onLoad = () => resolve();
       timeoutId = setTimeout(() => {
         // Fallback resolve after 15s even if load event stalls
         resolve();
       }, 15000);
-
       this.on('Page.loadEventFired', onLoad);
-
-      try {
-        await this.send('Page.navigate', { url });
-      } catch (err) {
-        clearTimeout(timeoutId);
-        reject(err);
-      }
     });
+
+    try {
+      await this.send('Page.navigate', { url });
+      await loadPromise;
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+      if (onLoad) this.off('Page.loadEventFired', onLoad);
+    }
   }
 
   /**
@@ -444,9 +453,9 @@ function createNewTab(port = 9222, host = '127.0.0.1') {
         path: '/json/new',
         method: 'PUT',
       },
-      (res) => {
+      res => {
         let data = '';
-        res.on('data', (chunk) => (data += chunk));
+        res.on('data', chunk => (data += chunk));
         res.on('end', () => {
           try {
             const tab = JSON.parse(data);
@@ -474,23 +483,25 @@ function createNewTab(port = 9222, host = '127.0.0.1') {
  */
 function getExistingTab(port = 9222, host = '127.0.0.1') {
   return new Promise((resolve, reject) => {
-    http.get(`http://${host}:${port}/json/list`, (res) => {
-      let data = '';
-      res.on('data', chunk => (data += chunk));
-      res.on('end', () => {
-        try {
-          const list = JSON.parse(data);
-          const pageTab = list.find(t => t.type === 'page' && t.webSocketDebuggerUrl) || list[0];
-          if (pageTab && pageTab.webSocketDebuggerUrl) {
-            resolve(pageTab);
-          } else {
-            reject(new Error('No valid page target found in /json/list'));
+    http
+      .get(`http://${host}:${port}/json/list`, res => {
+        let data = '';
+        res.on('data', chunk => (data += chunk));
+        res.on('end', () => {
+          try {
+            const list = JSON.parse(data);
+            const pageTab = list.find(t => t.type === 'page' && t.webSocketDebuggerUrl) || list[0];
+            if (pageTab && pageTab.webSocketDebuggerUrl) {
+              resolve(pageTab);
+            } else {
+              reject(new Error('No valid page target found in /json/list'));
+            }
+          } catch (e) {
+            reject(e);
           }
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }).on('error', reject);
+        });
+      })
+      .on('error', reject);
   });
 }
 
@@ -501,8 +512,10 @@ function getExistingTab(port = 9222, host = '127.0.0.1') {
  * @param {string} host
  */
 function closeTab(targetId, port = 9222, host = '127.0.0.1') {
-  return new Promise((resolve) => {
-    http.get(`http://${host}:${port}/json/close/${targetId}`, () => resolve()).on('error', () => resolve());
+  return new Promise(resolve => {
+    http
+      .get(`http://${host}:${port}/json/close/${targetId}`, () => resolve())
+      .on('error', () => resolve());
   });
 }
 

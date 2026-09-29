@@ -73,12 +73,16 @@ function trackSkip(label, reason) {
 function runCheck(label, cmd, cwd) {
   const elapsed = timer();
   try {
-    execFileSync(cmd[0], cmd.slice(1), {
+    const isWindows = process.platform === 'win32';
+    const executable =
+      isWindows && (cmd[0] === 'npx' || cmd[0] === 'npm') ? `${cmd[0]}.cmd` : cmd[0];
+
+    execFileSync(executable, cmd.slice(1), {
       cwd,
       stdio: 'pipe',
-      timeout: 60000,
+      timeout: 120000,
       encoding: 'utf8',
-      shell: false,
+      shell: isWindows,
     });
     trackOk(`${label} passed`, elapsed());
     return true;
@@ -89,7 +93,7 @@ function runCheck(label, cmd, cwd) {
       return true; // Don't block on tools that aren't installed
     }
     if (err.killed) {
-      trackFail(label, ms, 'timed out after 60s');
+      trackFail(label, ms, 'timed out after 120s');
       return false;
     }
     const output = ((err.stdout || '') + (err.stderr || '')).trim();

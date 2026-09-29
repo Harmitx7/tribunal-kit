@@ -155,30 +155,37 @@ Revise if necessary.
 ## System Design: [Name]
 
 ### Current State (from System Model)
+
 - Components: [N]
 - API Routes: [N]
 - Data Stores: [technologies]
 - Existing ADRs: [list or "none"]
 
 ### Scale Estimates
+
 - DAU: [N or UNKNOWN]
 - Read QPS: [N] | Write QPS: [N]
 - Storage: [N GB/TB] / year
 - Latency SLO: [N ms]
 
 ### Proposed Changes
+
 [What changes and why, referencing current components]
 
 ### Architecture Decision
+
 [The core decision being made]
 
 ### Trade-offs
+
 [Explicit trade-off analysis]
 
 ### Failure Analysis
+
 [What breaks if this component fails? Detection → Recovery]
 
 ### Verification
+
 [How to prove this design works]
 ```
 
@@ -189,7 +196,7 @@ All significant decisions must be persisted as ADRs in `.agent/ADRs/`:
 ```markdown
 ---
 id: ADR-[NNN]
-title: "[Decision Title]"
+title: '[Decision Title]'
 status: Accepted
 date: [YYYY-MM-DD]
 ---
@@ -197,26 +204,33 @@ date: [YYYY-MM-DD]
 # ADR-[NNN]: [Decision Title]
 
 ## Context
+
 [Problem + constraints]
 
 ## Decision
+
 [What was chosen — be specific]
 
 ## Rationale
+
 [Why — tied to requirements]
 
 ## Trade-offs
+
 [What is consciously given up]
 
 ## Consequences
+
 - Positive: [Benefits]
 - Negative: [Costs]
 - Mitigation: [How to address negatives]
 
 ## Verification
+
 [How to verify this decision is being followed]
 
 ## Revisit When
+
 [Trigger conditions]
 ```
 

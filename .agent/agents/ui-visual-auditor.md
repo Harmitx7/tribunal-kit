@@ -8,6 +8,11 @@ skills:
   - frontend-design
 ---
 
+# ⚠️ DEPRECATED (REDUNDANT)
+
+> This micro-persona has been deprecated to improve token efficiency and reduce simulated parallelism latency. Its core design governance and validation heuristics have been completely subsumed by `frontend-reviewer`.
+> **Action:** Ensure workflows route to `frontend-reviewer` instead.
+
 # UI Visual Auditor — Rendered Screenshot & Layout Reviewer
 
 > **Tribunal Reviewer Position:** Closed-loop visual validator. Evaluates rendered screenshots or DOM layout properties.

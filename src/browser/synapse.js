@@ -165,7 +165,7 @@ function mapStylesToTailwind(styles) {
 /**
  * Synthesizes production-grade React + TypeScript component code.
  */
-function synthesizeReactComponent(componentName, data, options = {}) {
+function synthesizeReactComponent(componentName, data, _options = {}) {
   const { tagName, text, styles } = data;
   const twClasses = mapStylesToTailwind(styles);
 

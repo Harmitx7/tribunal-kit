@@ -68,7 +68,12 @@ function cmdSave(note) {
   saveState(state);
 
   if (sessionLogger) {
-    sessionLogger.appendEvent('SessionStarted', { note, tags: [] }, 'session_manager', entry.session);
+    sessionLogger.appendEvent(
+      'SessionStarted',
+      { note, tags: [] },
+      'session_manager',
+      entry.session,
+    );
   }
 
   console.log(`${GREEN}✅ Session saved:${RESET} ${note}`);

@@ -11,6 +11,11 @@ skills:
   - web-design-guidelines
 ---
 
+# ⚠️ DEPRECATED (REDUNDANT)
+
+> This micro-persona has been deprecated to improve token efficiency and reduce simulated parallelism latency. Its core design governance and validation heuristics have been completely subsumed by `frontend-reviewer`.
+> **Action:** Ensure workflows route to `frontend-reviewer` instead.
+
 # UI/UX Auditor — Premium Design Governance
 
 > **Tribunal Supervisor Position:** Activated for all frontend, component, and UI-related code.

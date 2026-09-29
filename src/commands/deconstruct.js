@@ -19,13 +19,17 @@ async function cmdDeconstruct(flags, processArgs, quiet = false) {
   const selector = flags.selector || processArgs[4];
 
   if (!url || !selector) {
-    console.error(`  ${c('red', '✖ Error:')} Missing URL or selector. Usage: tk deconstruct <url> --selector "<css-selector>"`);
+    console.error(
+      `  ${c('red', '✖ Error:')} Missing URL or selector. Usage: tk deconstruct <url> --selector "<css-selector>"`,
+    );
     process.exit(1);
   }
 
   if (!quiet && !flags.json) {
     banner(quiet);
-    console.log(`  ${c('cyan', '⚡ Component Synapse Deconstructing:')} ${c('white', selector)} on ${c('gray', url)}...\n`);
+    console.log(
+      `  ${c('cyan', '⚡ Component Synapse Deconstructing:')} ${c('white', selector)} on ${c('gray', url)}...\n`,
+    );
   }
 
   try {
@@ -40,12 +44,20 @@ async function cmdDeconstruct(flags, processArgs, quiet = false) {
       const outPath = path.resolve(flags.output);
       fs.mkdirSync(path.dirname(outPath), { recursive: true });
       fs.writeFileSync(outPath, result.code, 'utf8');
-      console.log(`  ${c('green', '✔ Synthesized React component saved to:')} ${c('bold', outPath)}\n`);
+      console.log(
+        `  ${c('green', '✔ Synthesized React component saved to:')} ${c('bold', outPath)}\n`,
+      );
     } else {
-      console.log(c('gray', '────────────────── Synthesized React TSX Component ──────────────────'));
+      console.log(
+        c('gray', '────────────────── Synthesized React TSX Component ──────────────────'),
+      );
       console.log(result.code);
-      console.log(c('gray', '─────────────────────────────────────────────────────────────────────'));
-      console.log(`  ${c('green', '✔')} Extracted computed CSSOM and synthesized ${c('bold', result.componentName)}.\n`);
+      console.log(
+        c('gray', '─────────────────────────────────────────────────────────────────────'),
+      );
+      console.log(
+        `  ${c('green', '✔')} Extracted computed CSSOM and synthesized ${c('bold', result.componentName)}.\n`,
+      );
     }
   } catch (err) {
     console.error(`  ${c('red', '✖ Deconstruction failed:')} ${err.message}`);

@@ -3,7 +3,7 @@ version: 2.0.0
 source_file: "crates/core/src/commands/context_compress.rs"
 source_hash: "8f71783b939cf30b"
 interface_hash: "609c7c37428121cc"
-last_synced: "2026-09-28"
+last_synced: "2026-09-29"
 domain_layer: "Command / Dispatch Layer"
 associated_skills:
   - rust-pro
@@ -84,8 +84,8 @@ graph LR
 ### Inbound Consumer Sites
 | Caller File | Line Snippet | Vector |
 | :--- | :--- | :--- |
-| `.agent/scripts/guardrail_engine.js:493` | `const requiredMods = ['context_broker', 'dag_scheduler', 'context_compress'];` | Direct Import |
-| `CHANGELOG.md:530` | `- **Native Context Compression Engine**: Developed `tribunal-core context-compress` (`crates/core/sr` | Symbol Reference |
+| `.agent/scripts/guardrail_engine.js:509` | `const requiredMods = ['context_broker', 'dag_scheduler', 'context_compress'];` | Direct Import |
+| `CHANGELOG.md:597` | `- **Native Context Compression Engine**: Developed `tribunal-core context-compress` (`crates/core/sr` | Symbol Reference |
 | `crates/core/src/commands/mod.rs:4` | `pub mod context_compress;` | Symbol Reference |
 | `crates/core/src/main.rs:599` | `Commands::ContextCompress { file, max_lines } => cmd_context_compress(&file, max_lines).await,` | Symbol Reference |
 | `crates/core/src/main.rs:879` | `async fn cmd_context_compress(file: &str, max_lines: Option<usize>) -> Result<()> {` | Symbol Reference |

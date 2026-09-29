@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
 /**
  * Compatibility entry point for the historical src/mcp/server.js path.
  * bin/mcp-server.js is the single canonical MCP implementation.
  */
-module.exports = require("../../bin/mcp-server.js");
+module.exports = require('../../bin/mcp-server.js');

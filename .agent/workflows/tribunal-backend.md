@@ -8,9 +8,13 @@ required-skills:
   - nodejs-best-practices
   - api-patterns
 scripts-binding:
+  - .agent/scripts/backend_audit.js
   - .agent/scripts/security_scan.js
   - .agent/scripts/dependency_analyzer.js
   - .agent/scripts/schema_validator.js
+  - .agent/scripts/cross_agent_correlator.js
+  - .agent/scripts/validation_engine.js
+  - .agent/scripts/backend_report_generator.js
 ---
 
 # /tribunal-backend — Backend Code Audit
@@ -27,10 +31,17 @@ Before auditing backend routes or server logic, you MUST inspect:
 2. Dependencies & Environment (`package.json`, `.env.example`) → Check backend framework versions, secret key placeholders, and ORM schemas
 3. 28-Reviewer Parallel Gate → Execute logic-reviewer, security-auditor, dependency-analyzer, type-safety, resilience-reviewer, and schema-reviewer before approving diffs
 
-4. Required Skills → Before executing, load and follow procedural rules from:
-   - `backend-security-expert` (.agent/skills/backend-security-expert/SKILL.md): Server-side security, auth, JWT, ORM injection, RBAC
-   - `nodejs-best-practices` (.agent/skills/nodejs-best-practices/SKILL.md): Node.js patterns, async handling, and error management
-   - `api-patterns` (.agent/skills/api-patterns/SKILL.md): REST/GraphQL API design, versioning, and error contracts
+4. Required Skills → Before executing, run \`.agent/scripts/backend_audit.js\` to detect the backend stack (Python, FastAPI, Node.js, databases) and load the specific dynamically recommended skills from the script output.
+   - You MUST load every skill output by \`backend_audit.js\`.
+   - Examples of dynamically loaded skills include \`fastapi-pro\`, \`backend-postgresql\`, \`backend-architecture-auditor\`, etc.
+
+5. Backend Correlation & Validation Pipeline →
+   - Output all your findings across agents into Evidence-First JSON format.
+   - Save to files (e.g., `findings_sec.json`, `findings_db.json`).
+   - Run \`.agent/scripts/cross_agent_correlator.js findings_sec.json findings_db.json --out=correlated.json\`.
+   - Run \`.agent/scripts/validation_engine.js --in=correlated.json --out=validated.json\`.
+   - Run \`.agent/scripts/backend_report_generator.js --in=validated.json --out=backend_report.md\`.
+   - Present \`backend_report.md\` to the user as the final outcome.
 
 ---
 
@@ -46,13 +57,13 @@ Before auditing backend routes or server logic, you MUST inspect:
 
 ---
 
-## 6 Active Reviewers (All Run Simultaneously)
+## 8 Active Reviewers (All Run Simultaneously)
 
 ### precedence-reviewer → Checks local repo Case Law for past rejections
 
-logic-reviewer
+### logic-reviewer
 
-- Hallucinated Express/Hono/Fastify methods
+- Hallucinated Express/Hono/Fastify/FastAPI methods
 - Missing awaits on async operations
 - Unreachable code after return statements
 - Race conditions in sequential state mutations
@@ -143,6 +154,7 @@ const payload = jwt.verify(token, secret); // Correct
 | :--------------------------- | :------------------------------------------------ |
 | All checks pass              | → `/deploy` or merge code                         |
 | Reviewers reject with fixes  | → Apply fixes, then run `/tribunal-backend` again |
+| Architecture concerns raised | → `/plan` to propose a structural refactor        |
 | Performance concerns raised  | → `/tribunal-performance` for deep profiling      |
 | Need test coverage for logic | → `/test` to generate backend tests               |
 

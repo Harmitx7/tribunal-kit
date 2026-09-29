@@ -39,35 +39,79 @@ const CACHE_FILE = path.join(HISTORY_DIR, 'arch-mapper-cache.json');
 
 const ROUTE_PATTERNS = [
   // Express / Fastify / Koa style
-  { regex: /(?:app|router|server)\.(get|post|put|patch|delete|all)\s*\(\s*['"`]([^'"`]+)['"`]/gi, type: 'api_route' },
+  {
+    regex: /(?:app|router|server)\.(get|post|put|patch|delete|all)\s*\(\s*['"`]([^'"`]+)['"`]/gi,
+    type: 'api_route',
+  },
   // Next.js App Router (file-based — detected by path)
-  { regex: /export\s+(?:async\s+)?function\s+(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s*\(/g, type: 'api_route' },
+  {
+    regex: /export\s+(?:async\s+)?function\s+(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s*\(/g,
+    type: 'api_route',
+  },
   // Hono / ElysiaJS
   { regex: /\.(get|post|put|patch|delete)\s*\(\s*['"`]([^'"`]+)['"`]/gi, type: 'api_route' },
 ];
 
 const DB_PATTERNS = [
   // Prisma
-  { regex: /prisma\.\w+\.(findMany|findUnique|findFirst|create|update|delete|upsert|aggregate|groupBy|count)\s*\(/g, type: 'database', subtype: 'prisma' },
+  {
+    regex:
+      /prisma\.\w+\.(findMany|findUnique|findFirst|create|update|delete|upsert|aggregate|groupBy|count)\s*\(/g,
+    type: 'database',
+    subtype: 'prisma',
+  },
   // Drizzle
-  { regex: /(?:db|drizzle)\.(select|insert|update|delete)\s*\(/g, type: 'database', subtype: 'drizzle' },
+  {
+    regex: /(?:db|drizzle)\.(select|insert|update|delete)\s*\(/g,
+    type: 'database',
+    subtype: 'drizzle',
+  },
   // Raw SQL
-  { regex: /\.(query|execute|raw|sql)\s*\(\s*['"`]?\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|TRUNCATE)/gi, type: 'database', subtype: 'raw_sql' },
+  {
+    regex:
+      /\.(query|execute|raw|sql)\s*\(\s*['"`]?\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|TRUNCATE)/gi,
+    type: 'database',
+    subtype: 'raw_sql',
+  },
   // Mongoose
-  { regex: /\.(find|findOne|findById|save|create|updateOne|deleteOne|aggregate)\s*\(/g, type: 'database', subtype: 'mongoose' },
+  {
+    regex: /\.(find|findOne|findById|save|create|updateOne|deleteOne|aggregate)\s*\(/g,
+    type: 'database',
+    subtype: 'mongoose',
+  },
   // Sequelize
-  { regex: /\.(findAll|findByPk|bulkCreate|destroy)\s*\(/g, type: 'database', subtype: 'sequelize' },
+  {
+    regex: /\.(findAll|findByPk|bulkCreate|destroy)\s*\(/g,
+    type: 'database',
+    subtype: 'sequelize',
+  },
 ];
 
 const EXTERNAL_SERVICE_PATTERNS = [
   // fetch / axios / got
-  { regex: /(?:fetch|axios|got|ky|ofetch)\s*\(\s*['"`]?(https?:\/\/[^'"`\s,)]+)/gi, type: 'external_service', subtype: 'http_client' },
-  { regex: /(?:fetch|axios|got|ky|ofetch)\s*[.(]/g, type: 'external_service', subtype: 'http_client' },
+  {
+    regex: /(?:fetch|axios|got|ky|ofetch)\s*\(\s*['"`]?(https?:\/\/[^'"`\s,)]+)/gi,
+    type: 'external_service',
+    subtype: 'http_client',
+  },
+  {
+    regex: /(?:fetch|axios|got|ky|ofetch)\s*[.(]/g,
+    type: 'external_service',
+    subtype: 'http_client',
+  },
   // AWS SDK
-  { regex: /new\s+(?:AWS\.)?(?:S3|DynamoDB|SQS|SNS|Lambda|SES|CloudWatch)\s*\(/g, type: 'external_service', subtype: 'aws_sdk' },
+  {
+    regex: /new\s+(?:AWS\.)?(?:S3|DynamoDB|SQS|SNS|Lambda|SES|CloudWatch)\s*\(/g,
+    type: 'external_service',
+    subtype: 'aws_sdk',
+  },
   { regex: /@aws-sdk\/client-(\w+)/g, type: 'external_service', subtype: 'aws_sdk' },
   // Firebase
-  { regex: /(?:firebase|firestore|getFirestore|initializeApp)\s*\(/g, type: 'external_service', subtype: 'firebase' },
+  {
+    regex: /(?:firebase|firestore|getFirestore|initializeApp)\s*\(/g,
+    type: 'external_service',
+    subtype: 'firebase',
+  },
   // Stripe
   { regex: /(?:stripe|Stripe)\s*\(/g, type: 'external_service', subtype: 'stripe' },
   // SendGrid / Twilio / Resend
@@ -77,7 +121,11 @@ const EXTERNAL_SERVICE_PATTERNS = [
 const CACHE_PATTERNS = [
   // Redis
   { regex: /(?:redis|ioredis|createClient)\s*\(/gi, type: 'data_store', subtype: 'redis' },
-  { regex: /\.(?:get|set|del|hget|hset|expire|incr|lpush|rpush|publish|subscribe)\s*\(/g, type: 'data_store', subtype: 'redis_ops' },
+  {
+    regex: /\.(?:get|set|del|hget|hset|expire|incr|lpush|rpush|publish|subscribe)\s*\(/g,
+    type: 'data_store',
+    subtype: 'redis_ops',
+  },
   // In-memory cache
   { regex: /(?:lru-cache|node-cache|Map)\s*\(/g, type: 'data_store', subtype: 'in_memory_cache' },
 ];
@@ -90,25 +138,35 @@ const QUEUE_PATTERNS = [
   // Kafka
   { regex: /new\s+Kafka\s*\(/g, type: 'queue', subtype: 'kafka' },
   // Event emitters
-  { regex: /\.(?:emit|on|once|addListener)\s*\(\s*['"`](\w+)['"`]/g, type: 'event', subtype: 'event_emitter' },
+  {
+    regex: /\.(?:emit|on|once|addListener)\s*\(\s*['"`](\w+)['"`]/g,
+    type: 'event',
+    subtype: 'event_emitter',
+  },
 ];
 
 const AUTH_PATTERNS = [
   // JWT
   { regex: /(?:jwt|jsonwebtoken)\.(?:sign|verify|decode)\s*\(/g, type: 'auth', subtype: 'jwt' },
   // next-auth / auth.js
-  { regex: /(?:NextAuth|getServerSession|auth\(\)|getSession)\s*\(/g, type: 'auth', subtype: 'next_auth' },
+  {
+    regex: /(?:NextAuth|getServerSession|auth\(\)|getSession)\s*\(/g,
+    type: 'auth',
+    subtype: 'next_auth',
+  },
   // Passport
   { regex: /passport\.(?:authenticate|use|initialize)\s*\(/g, type: 'auth', subtype: 'passport' },
   // bcrypt / argon2
-  { regex: /(?:bcrypt|argon2)\.(?:hash|compare|verify)\s*\(/g, type: 'auth', subtype: 'password_hashing' },
+  {
+    regex: /(?:bcrypt|argon2)\.(?:hash|compare|verify)\s*\(/g,
+    type: 'auth',
+    subtype: 'password_hashing',
+  },
   // Clerk
   { regex: /(?:clerkMiddleware|currentUser|ClerkProvider)\s*/g, type: 'auth', subtype: 'clerk' },
 ];
 
 const ENV_PATTERN = /process\.env\.([A-Z_][A-Z0-9_]*)/g;
-
-
 
 // ── Content Hashing ──────────────────────────────────────────────────────────
 function getFileHash(filePath) {
@@ -122,9 +180,7 @@ function analyzeFile(filePath, relativePath, content) {
   const envVars = new Set();
 
   // Strip comments for cleaner matching
-  const cleaned = content
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/\/\/.*$/gm, '');
+  const cleaned = content.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
 
   // Detect API routes
   for (const pattern of ROUTE_PATTERNS) {
@@ -145,7 +201,8 @@ function analyzeFile(filePath, relativePath, content) {
   // Detect Next.js App Router routes by file path
   if (/\/route\.(ts|js|tsx|jsx)$/.test(relativePath) || /\/api\//.test(relativePath)) {
     const methods = [];
-    const methodRegex = /export\s+(?:async\s+)?function\s+(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s*\(/g;
+    const methodRegex =
+      /export\s+(?:async\s+)?function\s+(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s*\(/g;
     let m;
     while ((m = methodRegex.exec(cleaned)) !== null) {
       methods.push(m[1]);
@@ -523,7 +580,9 @@ function main() {
   if (fs.existsSync(CACHE_FILE)) {
     try {
       cache = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf8'));
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
 
   const totalTimer = timer();
@@ -540,13 +599,18 @@ function main() {
         const full = path.join(dir, entry.name);
         if (entry.isDirectory()) {
           const base = entry.name;
-          if (['node_modules', '.git', '.next', 'dist', 'build', 'coverage', '.agent'].includes(base)) continue;
+          if (
+            ['node_modules', '.git', '.next', 'dist', 'build', 'coverage', '.agent'].includes(base)
+          )
+            continue;
           walkExtra(full);
         } else if (/\.(py|go|rb|rs)$/.test(entry.name)) {
           additionalFiles.push(full);
         }
       }
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
   walkExtra(process.cwd());
 
@@ -605,7 +669,9 @@ function main() {
   console.log(`  ${CYAN}Queues/Events:${RESET}    ${model.summary.total_queues_events}`);
   console.log(`  ${CYAN}Auth Boundaries:${RESET}  ${model.summary.total_auth_boundaries}`);
   console.log(`  ${CYAN}Env Variables:${RESET}    ${model.summary.total_env_variables}`);
-  console.log(`  ${CYAN}Technologies:${RESET}     ${model.summary.detected_technologies.join(', ') || 'none detected'}`);
+  console.log(
+    `  ${CYAN}Technologies:${RESET}     ${model.summary.detected_technologies.join(', ') || 'none detected'}`,
+  );
   console.log(`\n  ${DIM}Saved to: ${IDX_FILE}${RESET}\n`);
 }
 

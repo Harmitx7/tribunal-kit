@@ -30,6 +30,8 @@ const DEFAULT_SKIP_DIRS = new Set([
   '.svelte-kit',
   '.nuxt',
   '.output',
+  'scratch',
+  'target',
 ]);
 
 // ── Default Source Extensions ───────────────────────────────────────────────
@@ -262,12 +264,15 @@ function normalizeCommand(cmd, platform = process.platform) {
 function runCommand(cmd, args = [], opts = {}) {
   const { spawnSync } = require('child_process');
   const executable = normalizeCommand(cmd);
+  const isCmdShim =
+    process.platform === 'win32' &&
+    (executable.toLowerCase().endsWith('.cmd') || executable.toLowerCase().endsWith('.bat'));
 
   const result = spawnSync(executable, args, {
     encoding: 'utf8',
     timeout: opts.timeout || 120000,
     cwd: opts.cwd || process.cwd(),
-    shell: false,
+    shell: opts.shell !== undefined ? opts.shell : isCmdShim,
     stdio: opts.stdio || 'pipe',
     ...opts,
   });

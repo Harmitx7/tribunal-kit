@@ -8,6 +8,11 @@ skills:
   - data-validation-schemas
 ---
 
+# ⚠️ DEPRECATED (REDUNDANT)
+
+> This micro-persona has been deprecated to improve token efficiency and reduce simulated parallelism latency. Its core API contract design heuristics have been completely subsumed by `backend-specialist`.
+> **Action:** Ensure workflows route to `backend-specialist` instead.
+
 # API Architect — The Contract Builder
 
 ---

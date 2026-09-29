@@ -251,14 +251,20 @@ function buildWorkerPrompts(payloadData, workspaceRoot) {
         const { execFileSync } = require('child_process');
         const res = execFileSync(
           'node',
-          ['bin/wrapper.js', 'compile', '--skills-dir', '.agent/skills', '--skills', skills.join(',')],
+          [
+            'bin/wrapper.js',
+            'compile',
+            '--skills-dir',
+            '.agent/skills',
+            '--skills',
+            skills.join(','),
+          ],
           {
             cwd: workspaceRoot,
             stdio: 'pipe',
-            encoding: 'utf8'
+            encoding: 'utf8',
           },
-        )
-          .trim();
+        ).trim();
         if (res) {
           compiledSkills = `\n\n[Super-Prompt (Compiled Skills)]:\n${res}`;
         }
@@ -414,20 +420,20 @@ class SwarmOrchestrator {
   }
 
   async executeDAG(payload) {
-    const tasks = (typeof payload === 'object' && payload.tasks) ? payload.tasks : [];
+    const tasks = typeof payload === 'object' && payload.tasks ? payload.tasks : [];
     if (tasks.length === 0) {
       return [];
     }
 
     this.workers = tasks;
     this.results = [];
-    
+
     if (this.dashboard) {
       this.dashboard.workers = this.workers.map(w => ({
         name: w.agent || w.id || 'Worker',
         task: (w.goal || w.task_description || '').slice(0, 40) + '...',
         status: '⏳ Pending',
-        color: '\x1b[33m'
+        color: '\x1b[33m',
       }));
       this.dashboard.start();
     }
@@ -436,15 +442,16 @@ class SwarmOrchestrator {
     const inProgress = new Set();
 
     while (completed.size < tasks.length) {
-      const availableTasks = tasks.filter(t => 
-        !completed.has(t.id) && 
-        !inProgress.has(t.id) &&
-        (t.deps || []).every(dep => completed.has(dep))
+      const availableTasks = tasks.filter(
+        t =>
+          !completed.has(t.id) &&
+          !inProgress.has(t.id) &&
+          (t.deps || []).every(dep => completed.has(dep)),
       );
 
       if (availableTasks.length === 0 && inProgress.size === 0) {
         if (this.dashboard) this.dashboard.stop();
-        throw new Error("DAG deadlock detected.");
+        throw new Error('DAG deadlock detected.');
       }
 
       if (availableTasks.length === 0) {
@@ -453,19 +460,19 @@ class SwarmOrchestrator {
       }
 
       availableTasks.forEach(t => inProgress.add(t.id));
-      
-      const batchPromises = availableTasks.map(t => 
+
+      const batchPromises = availableTasks.map(t =>
         this.executeWorker(t, 60000).then(result => {
           inProgress.delete(t.id);
           completed.add(t.id);
           this.results.push(result);
           return result;
-        })
+        }),
       );
-      
+
       await Promise.allSettled(batchPromises);
     }
-    
+
     if (this.dashboard) this.dashboard.stop();
     return this.results;
   }
@@ -513,13 +520,14 @@ class SwarmOrchestrator {
     const agentName = worker.agent || worker.target_agent || 'general-reviewer';
     const agentLower = String(agentName).toLowerCase();
     const files = Array.isArray(worker.files || worker.files_attached)
-      ? (worker.files || worker.files_attached)
+      ? worker.files || worker.files_attached
       : [];
     const cwd = this.workspaceRoot || process.cwd();
 
     if (worker.command) {
       const { execFileSync } = require('child_process');
-      const args = typeof worker.command === 'string' ? worker.command.trim().split(/\s+/) : worker.command;
+      const args =
+        typeof worker.command === 'string' ? worker.command.trim().split(/\s+/) : worker.command;
       const cmd = args.shift();
       const stdout = execFileSync(cmd, args, {
         cwd,
@@ -920,7 +928,8 @@ function main() {
       });
   } else if (mode === 'dag') {
     const orchestrator = new SwarmOrchestrator(useTui ? new SwarmDashboard([]) : null);
-    orchestrator.executeDAG(payloadData)
+    orchestrator
+      .executeDAG(payloadData)
       .then(results => {
         if (!useTui) {
           console.log('INFO: DAG orchestration successful.');

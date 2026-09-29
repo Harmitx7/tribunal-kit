@@ -12,30 +12,30 @@ const { spawnSync } = require('child_process');
 
 // Define allowed syscalls and their corresponding scripts
 const SYSCALL_MAP = {
-  'run_audit': {
+  run_audit: {
     script: 'checklist.js',
-    allowedArgs: ['--strict', '--fix', '.']
+    allowedArgs: ['--strict', '--fix', '.'],
   },
-  'security_scan': {
+  security_scan: {
     script: 'security_scan.js',
-    allowedArgs: ['.']
+    allowedArgs: ['.'],
   },
-  'lint_runner': {
+  lint_runner: {
     script: 'lint_runner.js',
-    allowedArgs: ['--fix', '.']
+    allowedArgs: ['--fix', '.'],
   },
-  'schema_validator': {
+  schema_validator: {
     script: 'schema_validator.js',
-    allowedArgs: ['.']
+    allowedArgs: ['.'],
   },
-  'test_runner': {
+  test_runner: {
     script: 'test_runner.js',
-    allowedArgs: ['--coverage', '.']
+    allowedArgs: ['--coverage', '.'],
   },
-  'dependency_analyzer': {
+  dependency_analyzer: {
     script: 'dependency_analyzer.js',
-    allowedArgs: ['--audit', '.']
-  }
+    allowedArgs: ['--audit', '.'],
+  },
 };
 
 /**
@@ -46,22 +46,27 @@ const SYSCALL_MAP = {
  */
 function executeSyscall(syscall, args = []) {
   const config = SYSCALL_MAP[syscall];
-  
+
   if (!config) {
     return {
       exitCode: 1,
       stdout: '',
-      stderr: `Security Exception: Syscall '${syscall}' is not recognized or permitted.`
+      stderr: `Security Exception: Syscall '${syscall}' is not recognized or permitted.`,
     };
   }
 
   // Argument validation: only allow arguments pre-approved in allowedArgs
-  const invalidArgs = args.filter(arg => !config.allowedArgs.includes(arg) && !arg.startsWith('--target=') && !arg.startsWith('--file='));
+  const invalidArgs = args.filter(
+    arg =>
+      !config.allowedArgs.includes(arg) &&
+      !arg.startsWith('--target=') &&
+      !arg.startsWith('--file='),
+  );
   if (invalidArgs.length > 0) {
     return {
       exitCode: 1,
       stdout: '',
-      stderr: `Security Exception: Invalid arguments for syscall '${syscall}': ${invalidArgs.join(', ')}`
+      stderr: `Security Exception: Invalid arguments for syscall '${syscall}': ${invalidArgs.join(', ')}`,
     };
   }
 
@@ -72,34 +77,34 @@ function executeSyscall(syscall, args = []) {
     return {
       exitCode: 1,
       stdout: '',
-      stderr: `Security Exception: Unsafe shell metacharacters detected in arguments.`
+      stderr: `Security Exception: Unsafe shell metacharacters detected in arguments.`,
     };
   }
 
   const scriptPath = path.join(__dirname, config.script);
-  
+
   try {
     const result = spawnSync('node', [scriptPath, ...args], {
       cwd: process.cwd(),
       encoding: 'utf8',
-      timeout: 300000 // 5 minutes max execution time
+      timeout: 300000, // 5 minutes max execution time
     });
 
     return {
       exitCode: result.status !== null ? result.status : 1,
       stdout: result.stdout || '',
-      stderr: result.stderr || (result.error ? result.error.message : '')
+      stderr: result.stderr || (result.error ? result.error.message : ''),
     };
   } catch (err) {
     return {
       exitCode: 1,
       stdout: '',
-      stderr: `Syscall execution failed: ${err.message}`
+      stderr: `Syscall execution failed: ${err.message}`,
     };
   }
 }
 
 module.exports = {
   SYSCALL_MAP,
-  executeSyscall
+  executeSyscall,
 };

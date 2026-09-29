@@ -50,9 +50,7 @@ class ShimmerSpinner {
       const elapsed = ((Date.now() - this.startTime) / 1000).toFixed(1);
       const spinnerChar = braille[this.frame % braille.length];
 
-      const shimmerVerb = hasTrueColor
-        ? renderShimmerText(this.verb, this.frame)
-        : bold(this.verb);
+      const shimmerVerb = hasTrueColor ? renderShimmerText(this.verb, this.frame) : bold(this.verb);
 
       const dot = color(RGB.FLAME, '·');
       const timerText = color(RGB.ZINC_500, `(${elapsed}s · ${this.details})`);

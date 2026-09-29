@@ -30,12 +30,13 @@ function trimHTML(html, maxBytes = MAX_TRIMMED_BYTES) {
   cleaned = stripSVG(cleaned);
 
   // 3. Strip long data URIs
-  cleaned = cleaned.replace(/(data:[a-z\d.+-]+\/[a-z\d.+-]+;base64,[A-Za-z\d+/=]{30,})/gi, '[data-uri]');
+  cleaned = cleaned.replace(
+    /(data:[a-z\d.+-]+\/[a-z\d.+-]+;base64,[A-Za-z\d+/=]{30,})/gi,
+    '[data-uri]',
+  );
 
   // 4. Collapse excess whitespace
-  cleaned = cleaned
-    .replace(/[ \t]+/g, ' ')
-    .replace(/\n{3,}/g, '\n\n');
+  cleaned = cleaned.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n');
 
   // 5. Trim lines and filter empty
   const lines = cleaned
@@ -172,9 +173,14 @@ function toSemanticMarkdown(html) {
     const attrs = m[1];
     const typeMatch = attrs.match(/type=["']([^"']+)["']/i) || attrs.match(/type=([^"'\s]+)/i);
     const nameMatch = attrs.match(/name=["']([^"']+)["']/i) || attrs.match(/name=([^"'\s]+)/i);
-    const placeholderMatch = attrs.match(/placeholder=["']([^"']+)["']/i) || attrs.match(/placeholder=([^"'\s]+)/i);
+    const placeholderMatch =
+      attrs.match(/placeholder=["']([^"']+)["']/i) || attrs.match(/placeholder=([^"'\s]+)/i);
     const type = typeMatch ? typeMatch[1] : 'text';
-    const desc = placeholderMatch ? `placeholder="${placeholderMatch[1]}"` : nameMatch ? `name="${nameMatch[1]}"` : type;
+    const desc = placeholderMatch
+      ? `placeholder="${placeholderMatch[1]}"`
+      : nameMatch
+        ? `name="${nameMatch[1]}"`
+        : type;
     output.push(`- [Input #${ref++}] type="${type}" (${desc})`);
   }
 
@@ -198,7 +204,10 @@ function toSemanticMarkdown(html) {
  * Helper to strip HTML tags
  */
 function stripTags(str) {
-  return str.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&');
+  return str
+    .replace(/<[^>]*>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&');
 }
 
 module.exports = {
