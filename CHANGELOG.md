@@ -2,15 +2,47 @@
 
 [![Keep a Changelog](https://img.shields.io/badge/Changelog-Keep%20a%20Changelog%20v1.1.0-blue.svg?style=flat-square)](https://keepachangelog.com/)
 [![SemVer](https://img.shields.io/badge/SemVer-2.0.0-green.svg?style=flat-square)](https://semver.org/)
-[![Specialists](https://img.shields.io/badge/Specialists-52-cyan.svg?style=flat-square)](#)
-[![Reviewers](https://img.shields.io/badge/Reviewers-28-emerald.svg?style=flat-square)](#)
-[![Skills Corpus](https://img.shields.io/badge/Corpus-234%20Skills-teal.svg?style=flat-square)](#)
-[![Workflows](https://img.shields.io/badge/Workflows-49%20Audited-indigo.svg?style=flat-square)](#)
+[![Specialists](https://img.shields.io/badge/Specialists-60-cyan.svg?style=flat-square)](#)
+[![Reviewers](https://img.shields.io/badge/Reviewers-31-emerald.svg?style=flat-square)](#)
+[![Skills Corpus](https://img.shields.io/badge/Corpus-235%20Skills-teal.svg?style=flat-square)](#)
+[![Workflows](https://img.shields.io/badge/Workflows-51%20Audited-indigo.svg?style=flat-square)](#)
 [![Harnesses](https://img.shields.io/badge/Harnesses-9%20Supported-orange.svg?style=flat-square)](#)
-[![Test Suite](<https://img.shields.io/badge/Tests-100%25%20Passing%20(502%20tests)-brightgreen.svg?style=flat-square>)](#)
+[![Test Suite](<https://img.shields.io/badge/Tests-100%25%20Passing%20(966%20tests)-brightgreen.svg?style=flat-square>)](#)
 
 All notable changes to **Tribunal Kit** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
+
+## [9.2.7] — 2026-10-02 — 🧠 Skill Intelligence Engine & System-1 Expansion
+
+> [!IMPORTANT]
+> **Release 9.2.7** delivers a massive expansion to the System-1 cognitive core and introduces the unified **Skill Intelligence Engine**. This release adds robust decision engines, autonomous browser intelligence, adaptive capability evolution, and deep architecture verification, firmly establishing advanced analytical primitives across the entire agent lifecycle.
+
+### Added
+
+- **Skill Intelligence Engine**: Introduced a comprehensive suite of intelligence scripts (`skill_intelligence.js`, `concept_extractor.js`, `validation_engine.js`, `simulation_engine.js`, `judgment_engine.js`) alongside a dedicated slash command workflow (`/skill-intelligence`) to autonomously discover, validate, and compose AI agent skills.
+- **System-1 Core Primitives**: Expanded the `src/system1/` core with specialized processing modules:
+  - `browser_intelligence.js` for enhanced web semantics.
+  - `decision_engine.js` and `evidence_engine.js` for deterministic impact tiering and evidence collection.
+  - `evolution_pipeline.js` to support continuous agent capability evolution.
+  - `reviewer_orchestrator.js` for robust cross-domain reviewer coordination.
+- **Advanced Execution Frameworks**: Added new execution controllers including `adaptive_execution.js`, `cross_domain_engine.js`, and `outcome_optimization_engine.js` to dynamically scale agent strictness based on task complexity.
+- **Deep Architectural Verifiers**: Shipped `blast_radius_engine.js`, `architecture_health.js`, and `architecture_verifier.js` within `.agent/scripts/` to autonomously map, verify, and restrict changes that threaten core macro-architecture boundaries.
+- **Adversarial & Chaos Testing**: Introduced deep adversarial test suites such as `full_spectrum_adversarial_chaos.test.js`, `long_run_lifecycle_continuity.test.js`, and `system1_invariant_mutation.test.js` to harden System-1 behavior against hallucinations and execution drift.
+- **New Documentation**: Added `docs/SKILL_INTELLIGENCE_ENGINE.md` capturing the 7-check New Skill Creation Gate and engine operations.
+
+### Changed
+
+- **Architecture Extractor**: Refined `.agent/scripts/architecture_extractor.js` and `src/commands/arch.js` to provide tighter deterministic mapping of system boundaries.
+- **Context Ranking & Compression**: Upgraded `src/context/ranker.js` and `context_compress.context.md` for more efficient BM25 context routing and token compression.
+- **Evolution Engine**: Hardened `src/evolution/engine.js` and `claim_check_separator.js` to strictly enforce the Tri-State Evidence Standard across all dynamically generated proposals.
+- **Formatting Standardization**: Applied widespread Prettier formatting fixes across multiple `test/unit/` suites to ensure strict AST determinism and lint compliance.
+
+### Fixed
+
+- **Windows Process-Tree Reaping & Failsafe Cleanup**: Implemented `terminateProcessTree` in `src/browser/launcher.js` with cross-platform and Windows `taskkill /T /F` integration and graceful exception swallowing for already-dead/missing PIDs.
+- **Atomic Persistence & Windows Lock Safety**: Added `writeFileSyncAtomic` to `src/utils/fs.js` with fallback unlink-and-rename logic to prevent `EEXIST` / `EPERM` collisions on Windows.
+- **Session-Scoped Working Memory Isolation**: Upgraded `memoryRecall` in `src/commands/memory.js` to enforce strict session isolation, guaranteeing working memories from one session do not leak into another or into unscoped recalls.
+- **Dependency Hygiene**: Purged obsolete, dead devDependency `zod` from `package.json` and `package-lock.json`, maintaining strict zero-dependency runtime integrity.
 
 ## [9.2.6] — 2026-09-28 — 🛡️ System-1 Laya Security, Backend Intelligence & Extreme Skill Optimization
 

@@ -13,11 +13,27 @@ describe('Tribunal Architecture Intelligence — Adversarial Verification Suite'
   test('Adversarial 1: False dependency is rejected and flagged as contradicted', () => {
     const model = {
       entities: [
-        { id: 'mod.a', name: 'src/cli.js', kind: 'module', sources: [{ file: 'src/cli.js', startLine: 1 }] },
-        { id: 'mod.phantom', name: 'src/nonexistent.js', kind: 'module', sources: [{ file: 'src/nonexistent.js', startLine: 1 }] },
+        {
+          id: 'mod.a',
+          name: 'src/cli.js',
+          kind: 'module',
+          sources: [{ file: 'src/cli.js', startLine: 1 }],
+        },
+        {
+          id: 'mod.phantom',
+          name: 'src/nonexistent.js',
+          kind: 'module',
+          sources: [{ file: 'src/nonexistent.js', startLine: 1 }],
+        },
       ],
       relationships: [
-        { id: 'rel.fake', sourceId: 'mod.a', targetId: 'mod.phantom', relationType: 'calls', evidence: [{ file: 'src/nonexistent.js', startLine: 1 }] },
+        {
+          id: 'rel.fake',
+          sourceId: 'mod.a',
+          targetId: 'mod.phantom',
+          relationType: 'calls',
+          evidence: [{ file: 'src/nonexistent.js', startLine: 1 }],
+        },
       ],
     };
 
@@ -34,11 +50,27 @@ describe('Tribunal Architecture Intelligence — Adversarial Verification Suite'
   test('Adversarial 2: Dynamic dependency via event bus is correctly classified as decoupled', () => {
     const model = {
       entities: [
-        { id: 'mod.producer', name: 'producer.js', kind: 'module', sources: [{ file: 'src/cli.js', startLine: 1 }] },
-        { id: 'queue.events', name: 'OrderEvents', kind: 'event_bus', sources: [{ file: 'src/cli.js', startLine: 1 }] },
+        {
+          id: 'mod.producer',
+          name: 'producer.js',
+          kind: 'module',
+          sources: [{ file: 'src/cli.js', startLine: 1 }],
+        },
+        {
+          id: 'queue.events',
+          name: 'OrderEvents',
+          kind: 'event_bus',
+          sources: [{ file: 'src/cli.js', startLine: 1 }],
+        },
       ],
       relationships: [
-        { id: 'rel.dynamic', sourceId: 'mod.producer', targetId: 'queue.events', relationType: 'publishes', protocol: 'event_emitter' },
+        {
+          id: 'rel.dynamic',
+          sourceId: 'mod.producer',
+          targetId: 'queue.events',
+          relationType: 'publishes',
+          protocol: 'event_emitter',
+        },
       ],
     };
 
@@ -53,16 +85,32 @@ describe('Tribunal Architecture Intelligence — Adversarial Verification Suite'
   test('Adversarial 3: Contradictory claims surface as first-class architectural conflicts', () => {
     const conflictingModel = {
       entities: [
-        { id: 'mod.auth', name: 'auth.js', kind: 'module', sources: [{ file: 'src/cli.js', startLine: 1 }] },
-        { id: 'db.redis', name: 'Redis', kind: 'datastore', sources: [{ file: 'src/cli.js', startLine: 1 }] },
+        {
+          id: 'mod.auth',
+          name: 'auth.js',
+          kind: 'module',
+          sources: [{ file: 'src/cli.js', startLine: 1 }],
+        },
+        {
+          id: 'db.redis',
+          name: 'Redis',
+          kind: 'datastore',
+          sources: [{ file: 'src/cli.js', startLine: 1 }],
+        },
       ],
       relationships: [],
       contradictions: [
         {
           id: 'conflict.auth_redis',
           entityOrRelationId: 'mod.auth',
-          claimA: { agent: 'backend-specialist', claim: 'Auth middleware uses Redis for token blacklisting' },
-          claimB: { agent: 'security-auditor', claim: 'JWT tokens are verified purely statelessly with no Redis calls' },
+          claimA: {
+            agent: 'backend-specialist',
+            claim: 'Auth middleware uses Redis for token blacklisting',
+          },
+          claimB: {
+            agent: 'security-auditor',
+            claim: 'JWT tokens are verified purely statelessly with no Redis calls',
+          },
           conflictType: 'static_vs_runtime',
           resolution: 'pending',
         },
@@ -101,7 +149,7 @@ describe('Tribunal Architecture Intelligence — Adversarial Verification Suite'
     const report = verifier.verifyModel(staleModel);
 
     expect(report.stats.staleEntities).toBe(1);
-    const staleDiag = report.diagnostics.find((d) => d.code === 'ARCH_EVIDENCE_STALE');
+    const staleDiag = report.diagnostics.find(d => d.code === 'ARCH_EVIDENCE_STALE');
     expect(staleDiag).toBeDefined();
     expect(staleDiag.severity).toBe('warning');
   });
@@ -151,7 +199,7 @@ describe('Tribunal Architecture Intelligence — Adversarial Verification Suite'
     const auditor = new ArchitectureHealthAuditor(circularModel);
     const report = auditor.audit();
 
-    const cycle = report.signals.find((s) => s.code === 'ARCH_CIRCULAR_DEPENDENCY');
+    const cycle = report.signals.find(s => s.code === 'ARCH_CIRCULAR_DEPENDENCY');
     expect(cycle).toBeDefined();
     expect(cycle.entities).toContain('node1');
     expect(cycle.entities).toContain('node2');
@@ -161,18 +209,21 @@ describe('Tribunal Architecture Intelligence — Adversarial Verification Suite'
   test('Adversarial 7: Unauthenticated public access to datastore triggers critical security signal', () => {
     const model = {
       entities: [
-        { id: 'ep.open', name: 'GET /unprotected', kind: 'endpoint', trustZone: 'public_untrusted' },
+        {
+          id: 'ep.open',
+          name: 'GET /unprotected',
+          kind: 'endpoint',
+          trustZone: 'public_untrusted',
+        },
         { id: 'db.users', name: 'Users DB', kind: 'datastore', trustZone: 'isolated_datastore' },
       ],
-      relationships: [
-        { sourceId: 'ep.open', targetId: 'db.users', relationType: 'reads' },
-      ],
+      relationships: [{ sourceId: 'ep.open', targetId: 'db.users', relationType: 'reads' }],
     };
 
     const auditor = new ArchitectureHealthAuditor(model);
     const report = auditor.audit();
 
-    const secSignal = report.signals.find((s) => s.code === 'ARCH_SECURITY_BOUNDARY_VIOLATION');
+    const secSignal = report.signals.find(s => s.code === 'ARCH_SECURITY_BOUNDARY_VIOLATION');
     expect(secSignal).toBeDefined();
     expect(secSignal.severity).toBe('CRITICAL');
   });

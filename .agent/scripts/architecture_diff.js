@@ -20,7 +20,18 @@
 'use strict';
 
 const fs = require('fs');
-const { GREEN, YELLOW, CYAN, RED, BOLD, RESET, BOX, banner, timer, formatMs } = require('./_colors');
+const {
+  GREEN,
+  YELLOW,
+  CYAN,
+  RED,
+  BOLD,
+  RESET,
+  BOX,
+  banner,
+  timer,
+  formatMs,
+} = require('./_colors');
 const { BlastRadiusEngine } = require('./blast_radius_engine');
 
 class ArchitectureDiffer {
@@ -28,11 +39,15 @@ class ArchitectureDiffer {
     this.base = baseModel;
     this.head = headModel;
 
-    this.baseEntities = new Map((baseModel.entities || []).map((e) => [e.id, e]));
-    this.headEntities = new Map((headModel.entities || []).map((e) => [e.id, e]));
+    this.baseEntities = new Map((baseModel.entities || []).map(e => [e.id, e]));
+    this.headEntities = new Map((headModel.entities || []).map(e => [e.id, e]));
 
-    this.baseRelations = new Map((baseModel.relationships || []).map((r) => [r.id || `${r.sourceId}->${r.targetId}`, r]));
-    this.headRelations = new Map((headModel.relationships || []).map((r) => [r.id || `${r.sourceId}->${r.targetId}`, r]));
+    this.baseRelations = new Map(
+      (baseModel.relationships || []).map(r => [r.id || `${r.sourceId}->${r.targetId}`, r]),
+    );
+    this.headRelations = new Map(
+      (headModel.relationships || []).map(r => [r.id || `${r.sourceId}->${r.targetId}`, r]),
+    );
   }
 
   compare() {
@@ -76,9 +91,18 @@ class ArchitectureDiffer {
         if (baseEntity.role !== headEntity.role) modified.push('role');
         if (modified.length > 0) {
           diff.summary.entitiesModified++;
-          diff.entityChanges.push({ status: 'modified', id, fields: modified, base: baseEntity, head: headEntity });
+          diff.entityChanges.push({
+            status: 'modified',
+            id,
+            fields: modified,
+            base: baseEntity,
+            head: headEntity,
+          });
 
-          if (baseEntity.trustZone === 'isolated_datastore' && headEntity.trustZone !== 'isolated_datastore') {
+          if (
+            baseEntity.trustZone === 'isolated_datastore' &&
+            headEntity.trustZone !== 'isolated_datastore'
+          ) {
             diff.trustBoundaryViolations.push({
               severity: 'CRITICAL',
               message: `Entity ${headEntity.name} was moved out of isolated_datastore to ${headEntity.trustZone}!`,
@@ -108,7 +132,8 @@ class ArchitectureDiffer {
 
         if (sourceEntity && targetEntity) {
           if (
-            (sourceEntity.trustZone === 'public_untrusted' || sourceEntity.trustZone === 'dmz_gateway') &&
+            (sourceEntity.trustZone === 'public_untrusted' ||
+              sourceEntity.trustZone === 'dmz_gateway') &&
             targetEntity.trustZone === 'isolated_datastore'
           ) {
             diff.trustBoundaryViolations.push({
@@ -206,7 +231,9 @@ if (require.main === module) {
   console.log(banner('Tribunal Semantic Architecture Change Differ'));
 
   if (!baseFile || !headFile) {
-    console.error(`  ${YELLOW}Usage:${RESET} node architecture_diff.js <base-model.json> <head-model.json>\n`);
+    console.error(
+      `  ${YELLOW}Usage:${RESET} node architecture_diff.js <base-model.json> <head-model.json>\n`,
+    );
     process.exit(1);
   }
 
@@ -224,12 +251,24 @@ if (require.main === module) {
   const riskColors = { CRITICAL: RED, HIGH: YELLOW, MEDIUM: CYAN, LOW: GREEN };
   const rColor = riskColors[diff.summary.riskLevel] || GREEN;
 
-  console.log(`  Architectural Risk:     ${rColor}${BOLD}${diff.summary.riskLevel} (${diff.summary.architecturalImpactScore})${RESET}`);
-  console.log(`  Entities Changed:       +${diff.summary.entitiesAdded} / -${diff.summary.entitiesRemoved} / ~${diff.summary.entitiesModified}`);
-  console.log(`  Relationships Changed:  +${diff.summary.relationshipsAdded} / -${diff.summary.relationshipsRemoved}`);
-  console.log(`  Trust Violations:       ${diff.trustBoundaryViolations.length > 0 ? RED : GREEN}${diff.trustBoundaryViolations.length}${RESET}`);
-  console.log(`  Resilience Regressions: ${diff.resilienceRegressions.length > 0 ? YELLOW : GREEN}${diff.resilienceRegressions.length}${RESET}`);
-  console.log(`  Blast Radius Shifts:    ${diff.blastRadiusShifts.length > 0 ? YELLOW : GREEN}${diff.blastRadiusShifts.length}${RESET}`);
+  console.log(
+    `  Architectural Risk:     ${rColor}${BOLD}${diff.summary.riskLevel} (${diff.summary.architecturalImpactScore})${RESET}`,
+  );
+  console.log(
+    `  Entities Changed:       +${diff.summary.entitiesAdded} / -${diff.summary.entitiesRemoved} / ~${diff.summary.entitiesModified}`,
+  );
+  console.log(
+    `  Relationships Changed:  +${diff.summary.relationshipsAdded} / -${diff.summary.relationshipsRemoved}`,
+  );
+  console.log(
+    `  Trust Violations:       ${diff.trustBoundaryViolations.length > 0 ? RED : GREEN}${diff.trustBoundaryViolations.length}${RESET}`,
+  );
+  console.log(
+    `  Resilience Regressions: ${diff.resilienceRegressions.length > 0 ? YELLOW : GREEN}${diff.resilienceRegressions.length}${RESET}`,
+  );
+  console.log(
+    `  Blast Radius Shifts:    ${diff.blastRadiusShifts.length > 0 ? YELLOW : GREEN}${diff.blastRadiusShifts.length}${RESET}`,
+  );
 
   if (diff.trustBoundaryViolations.length > 0) {
     console.log(`\n  ${RED}${BOLD}Trust Boundary Violations:${RESET}`);
@@ -248,11 +287,15 @@ if (require.main === module) {
   if (diff.blastRadiusShifts.length > 0) {
     console.log(`\n  ${CYAN}${BOLD}Blast Radius Expansions:${RESET}`);
     for (const b of diff.blastRadiusShifts) {
-      console.log(`    ${CYAN}▸${RESET} ${b.name}: ${b.baseTransitive} -> ${b.headTransitive} dependents (+${b.expansionPct}%)`);
+      console.log(
+        `    ${CYAN}▸${RESET} ${b.name}: ${b.baseTransitive} -> ${b.headTransitive} dependents (+${b.expansionPct}%)`,
+      );
     }
   }
 
-  console.log(`\n  ${GREEN}${BOX.check} Semantic Architecture Diff Complete${RESET} in ${formatMs(t())}\n`);
+  console.log(
+    `\n  ${GREEN}${BOX.check} Semantic Architecture Diff Complete${RESET} in ${formatMs(t())}\n`,
+  );
 }
 
 module.exports = {

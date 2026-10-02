@@ -31,8 +31,10 @@ describe('Capability 4: Controlled Self-Evolution Engine', () => {
     const proposal = createEvolutionProposal({
       target: 'context-weights',
       currentBehavior: 'Documentation files receive weight 0.25',
-      observedEvidence: 'Telemetry showed 45% of agent prompts exceeded token budget on pure code refactors due to loading README files.',
-      proposedChange: 'Lower documentation weight from 0.25 to 0.10 when refactor task keyword is active.',
+      observedEvidence:
+        'Telemetry showed 45% of agent prompts exceeded token budget on pure code refactors due to loading README files.',
+      proposedChange:
+        'Lower documentation weight from 0.25 to 0.10 when refactor task keyword is active.',
       expectedEffect: 'Reduces prompt token overhead by ~15% on code refactors.',
       risk: 'LOW',
       testsRequired: ['test/unit/context_ranking.test.js'],
@@ -53,7 +55,8 @@ describe('Capability 4: Controlled Self-Evolution Engine', () => {
     const proposal = createEvolutionProposal({
       target: 'skill-instructions',
       currentBehavior: 'Reviewer checks SQL queries',
-      observedEvidence: 'An AI reviewer mentioned that it felt the guidelines should mention SQLite',
+      observedEvidence:
+        'An AI reviewer mentioned that it felt the guidelines should mention SQLite',
       proposedChange: 'Add SQLite guidelines to skill',
       expectedEffect: 'Subjective style preference',
       risk: 'LOW',
@@ -107,7 +110,8 @@ describe('Capability 4: Controlled Self-Evolution Engine', () => {
     const proposal = createEvolutionProposal({
       target: 'reviewer-routing',
       currentBehavior: '7 reviewers dispatched for backend tasks',
-      observedEvidence: 'Measured benchmark run showing 0 unique findings from type-safety-reviewer on pure Python diffs.',
+      observedEvidence:
+        'Measured benchmark run showing 0 unique findings from type-safety-reviewer on pure Python diffs.',
       proposedChange: 'Route Python tasks to python-pro and skip type-safety-reviewer',
       expectedEffect: 'Saves 2,400 tokens per review cycle with 100% finding recall',
       risk: 'MEDIUM',
@@ -127,7 +131,11 @@ describe('Capability 4: Controlled Self-Evolution Engine', () => {
     expect(loaded[0].status).toBe('PROPOSED');
 
     // 3. Human Gate approval
-    const approved = approveEvolutionProposal(proposal.proposal_id, 'Harmit (Lead Architect)', tmpAgentDir);
+    const approved = approveEvolutionProposal(
+      proposal.proposal_id,
+      'Harmit (Lead Architect)',
+      tmpAgentDir,
+    );
     expect(approved.status).toBe('APPROVED');
     expect(approved.approval.approved_by).toBe('Harmit (Lead Architect)');
     expect(approved.approval.human_gate_cleared).toBe(true);
@@ -163,16 +171,23 @@ describe('Capability 4: Controlled Self-Evolution Engine', () => {
   });
 
   test('Evidence hierarchy verification', () => {
-    expect(EVIDENCE_HIERARCHY.VERIFIED_TEST_RESULT).toBeGreaterThan(EVIDENCE_HIERARCHY.DETERMINISTIC_TELEMETRY);
-    expect(EVIDENCE_HIERARCHY.DETERMINISTIC_TELEMETRY).toBeGreaterThan(EVIDENCE_HIERARCHY.REPRODUCIBLE_PATTERN);
-    expect(EVIDENCE_HIERARCHY.REPRODUCIBLE_PATTERN).toBeGreaterThan(EVIDENCE_HIERARCHY.REVIEWER_CLAIM);
+    expect(EVIDENCE_HIERARCHY.VERIFIED_TEST_RESULT).toBeGreaterThan(
+      EVIDENCE_HIERARCHY.DETERMINISTIC_TELEMETRY,
+    );
+    expect(EVIDENCE_HIERARCHY.DETERMINISTIC_TELEMETRY).toBeGreaterThan(
+      EVIDENCE_HIERARCHY.REPRODUCIBLE_PATTERN,
+    );
+    expect(EVIDENCE_HIERARCHY.REPRODUCIBLE_PATTERN).toBeGreaterThan(
+      EVIDENCE_HIERARCHY.REVIEWER_CLAIM,
+    );
   });
 
   test('Case D — Duplicate proposal detection references existing proposal without duplicating', () => {
     const proposal1 = createEvolutionProposal({
       target: 'reviewer-routing',
       currentBehavior: 'Dispatch 7 reviewers on all tasks',
-      observedEvidence: 'Telemetry showed 0 findings from accessibility reviewer on pure SQL migrations across 50 runs.',
+      observedEvidence:
+        'Telemetry showed 0 findings from accessibility reviewer on pure SQL migrations across 50 runs.',
       proposedChange: 'Skip accessibility reviewer on pure SQL migrations',
       expectedEffect: 'Reduces latency by 1,200ms on SQL tasks',
       risk: 'LOW',
@@ -187,7 +202,8 @@ describe('Capability 4: Controlled Self-Evolution Engine', () => {
     const proposal2 = createEvolutionProposal({
       target: 'reviewer-routing',
       currentBehavior: 'Dispatch 7 reviewers on all tasks',
-      observedEvidence: 'Another run confirmed 0 findings from accessibility reviewer on pure SQL migrations.',
+      observedEvidence:
+        'Another run confirmed 0 findings from accessibility reviewer on pure SQL migrations.',
       proposedChange: 'Skip accessibility reviewer on pure SQL migrations',
       expectedEffect: 'Reduces latency by 1,200ms on SQL tasks',
       risk: 'LOW',
@@ -210,7 +226,9 @@ describe('Capability 4: Controlled Self-Evolution Engine', () => {
     }
 
     // 2. Non-throwing mode returns duplicate reference payload
-    const nonThrowingResult = saveEvolutionProposal(proposal2, tmpAgentDir, { throwOnDuplicate: false });
+    const nonThrowingResult = saveEvolutionProposal(proposal2, tmpAgentDir, {
+      throwOnDuplicate: false,
+    });
     expect(nonThrowingResult.saved).toBe(false);
     expect(nonThrowingResult.duplicate).toBe(true);
     expect(nonThrowingResult.existing_proposal_id).toBe(proposal1.proposal_id);
@@ -221,4 +239,3 @@ describe('Capability 4: Controlled Self-Evolution Engine', () => {
     expect(loaded[0].proposal_id).toBe(proposal1.proposal_id);
   });
 });
-

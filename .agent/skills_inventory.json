@@ -58,19 +58,8 @@
       "lineCount": 52,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -87,19 +76,8 @@
       "lineCount": 92,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -116,19 +94,8 @@
       "lineCount": 190,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -145,19 +112,8 @@
       "lineCount": 57,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -174,19 +130,8 @@
       "lineCount": 58,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -203,19 +148,8 @@
       "lineCount": 95,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -232,19 +166,8 @@
       "lineCount": 118,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -261,19 +184,8 @@
       "lineCount": 26,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -290,19 +202,8 @@
       "lineCount": 282,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -319,19 +220,8 @@
       "lineCount": 92,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -348,19 +238,8 @@
       "lineCount": 27,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -377,19 +256,8 @@
       "lineCount": 52,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -406,19 +274,8 @@
       "lineCount": 163,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -435,19 +292,8 @@
       "lineCount": 197,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -464,19 +310,8 @@
       "lineCount": 199,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -493,19 +328,8 @@
       "lineCount": 55,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -522,19 +346,8 @@
       "lineCount": 43,
       "purpose": "Tribunal extraction of the anti-slop rule sets. Enforces Purpose-Gates, Hard-Gates, and Liveliness Dials for UI engineering.",
       "triggers": "Tribunal extraction of the anti-slop rule sets. Enforces Purpose-Gates, Hard-Gates, and Liveliness Dials for UI engineering.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -551,24 +364,11 @@
       "lineCount": 219,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -582,19 +382,8 @@
       "lineCount": 164,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -611,24 +400,11 @@
       "lineCount": 536,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "templates"
-      ],
+      "dependencies": ["templates"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -642,19 +418,8 @@
       "lineCount": 97,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -671,19 +436,8 @@
       "lineCount": 90,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -700,19 +454,8 @@
       "lineCount": 189,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -729,19 +472,8 @@
       "lineCount": 46,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -758,19 +490,8 @@
       "lineCount": 101,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -787,19 +508,8 @@
       "lineCount": 158,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -816,19 +526,8 @@
       "lineCount": 77,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -845,19 +544,8 @@
       "lineCount": 18,
       "purpose": "Use when analyzing Alembic migration history, consistency, and database schema drift.",
       "triggers": "analyzing Alembic migration history, consistency, and database schema drift.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -874,19 +562,8 @@
       "lineCount": 19,
       "purpose": "Use when analyzing backend architecture, domain logic, service boundaries, and coupling.",
       "triggers": "analyzing backend architecture, domain logic, service boundaries, and coupling.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -903,19 +580,8 @@
       "lineCount": 16,
       "purpose": "Use when analyzing MongoDB schemas, documents, indexes, and queries.",
       "triggers": "analyzing MongoDB schemas, documents, indexes, and queries.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -932,19 +598,8 @@
       "lineCount": 18,
       "purpose": "Use when analyzing MySQL database schemas, indexes, queries, and constraints.",
       "triggers": "analyzing MySQL database schemas, indexes, queries, and constraints.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -961,19 +616,8 @@
       "lineCount": 17,
       "purpose": "Use when analyzing backend performance, queries, async execution, and external API calls.",
       "triggers": "analyzing backend performance, queries, async execution, and external API calls.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -990,19 +634,8 @@
       "lineCount": 21,
       "purpose": "Use when analyzing PostgreSQL database schemas, indexes, queries, and constraints.",
       "triggers": "analyzing PostgreSQL database schemas, indexes, queries, and constraints.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1019,19 +652,8 @@
       "lineCount": 16,
       "purpose": "Use when analyzing Redis usage for caching, sessions, locks, queues, and rate limiting.",
       "triggers": "analyzing Redis usage for caching, sessions, locks, queues, and rate limiting.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1048,19 +670,8 @@
       "lineCount": 74,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1077,19 +688,8 @@
       "lineCount": 22,
       "purpose": "Use when analyzing SQLAlchemy ORM models, relationships, session management, and query construction.",
       "triggers": "analyzing SQLAlchemy ORM models, relationships, session management, and query construction.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1106,19 +706,8 @@
       "lineCount": 15,
       "purpose": "Use when analyzing SQLite databases for concurrency, locking, and schemas.",
       "triggers": "analyzing SQLite databases for concurrency, locking, and schemas.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1135,19 +724,8 @@
       "lineCount": 16,
       "purpose": "Use when analyzing backend tests, unit tests, integration tests, and test coverage.",
       "triggers": "analyzing backend tests, unit tests, integration tests, and test coverage.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1164,19 +742,8 @@
       "lineCount": 56,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1193,19 +760,8 @@
       "lineCount": 140,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1222,19 +778,8 @@
       "lineCount": 201,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1251,19 +796,8 @@
       "lineCount": 117,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1280,19 +814,8 @@
       "lineCount": 91,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1309,19 +832,8 @@
       "lineCount": 131,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1338,19 +850,8 @@
       "lineCount": 50,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1367,19 +868,8 @@
       "lineCount": 461,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1396,19 +886,8 @@
       "lineCount": 103,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1425,19 +904,8 @@
       "lineCount": 73,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1454,19 +922,8 @@
       "lineCount": 51,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1483,19 +940,8 @@
       "lineCount": 163,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1512,19 +958,8 @@
       "lineCount": 413,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1541,19 +976,8 @@
       "lineCount": 56,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1570,19 +994,8 @@
       "lineCount": 368,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1599,19 +1012,8 @@
       "lineCount": 410,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1628,19 +1030,8 @@
       "lineCount": 71,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1657,19 +1048,8 @@
       "lineCount": 164,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1686,19 +1066,8 @@
       "lineCount": 77,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1715,19 +1084,8 @@
       "lineCount": 58,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1744,19 +1102,8 @@
       "lineCount": 51,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1773,19 +1120,8 @@
       "lineCount": 55,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1802,19 +1138,8 @@
       "lineCount": 126,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1831,19 +1156,8 @@
       "lineCount": 423,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1860,19 +1174,8 @@
       "lineCount": 70,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1889,19 +1192,8 @@
       "lineCount": 93,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1918,19 +1210,8 @@
       "lineCount": 80,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1947,19 +1228,8 @@
       "lineCount": 479,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -1976,19 +1246,8 @@
       "lineCount": 298,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2005,24 +1264,11 @@
       "lineCount": 220,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -2036,19 +1282,8 @@
       "lineCount": 47,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2065,19 +1300,8 @@
       "lineCount": 133,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2094,19 +1318,8 @@
       "lineCount": 43,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2123,19 +1336,8 @@
       "lineCount": 306,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2152,19 +1354,8 @@
       "lineCount": 104,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2181,19 +1372,8 @@
       "lineCount": 173,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2210,19 +1390,8 @@
       "lineCount": 46,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2239,19 +1408,8 @@
       "lineCount": 252,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2268,19 +1426,8 @@
       "lineCount": 62,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2297,19 +1444,8 @@
       "lineCount": 52,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2326,19 +1462,8 @@
       "lineCount": 43,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2355,19 +1480,8 @@
       "lineCount": 144,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2384,19 +1498,8 @@
       "lineCount": 135,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2413,19 +1516,8 @@
       "lineCount": 404,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2442,19 +1534,8 @@
       "lineCount": 73,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2471,19 +1552,8 @@
       "lineCount": 121,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2500,19 +1570,8 @@
       "lineCount": 283,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Tri-state evidence findings",
       "dependencies": [],
@@ -2529,19 +1588,8 @@
       "lineCount": 49,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2558,19 +1606,8 @@
       "lineCount": 21,
       "purpose": "Use when analyzing FastAPI applications for security, correctness, dependencies, endpoints, middleware, and architecture.",
       "triggers": "analyzing FastAPI applications for security, correctness, dependencies, endpoints, middleware, and architecture.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2587,19 +1624,8 @@
       "lineCount": 88,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2616,19 +1642,8 @@
       "lineCount": 84,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2645,19 +1660,8 @@
       "lineCount": 79,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2674,19 +1678,8 @@
       "lineCount": 238,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2703,24 +1696,11 @@
       "lineCount": 104,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -2734,19 +1714,8 @@
       "lineCount": 57,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2763,19 +1732,8 @@
       "lineCount": 93,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2792,19 +1750,8 @@
       "lineCount": 109,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2821,19 +1768,8 @@
       "lineCount": 101,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2850,24 +1786,11 @@
       "lineCount": 109,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -2881,19 +1804,8 @@
       "lineCount": 402,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2910,19 +1822,8 @@
       "lineCount": 296,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2939,19 +1840,8 @@
       "lineCount": 51,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2968,19 +1858,8 @@
       "lineCount": 29,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -2997,19 +1876,8 @@
       "lineCount": 278,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3026,19 +1894,8 @@
       "lineCount": 169,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3055,19 +1912,8 @@
       "lineCount": 95,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3084,19 +1930,8 @@
       "lineCount": 442,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3113,19 +1948,8 @@
       "lineCount": 214,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3142,19 +1966,8 @@
       "lineCount": 313,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3171,19 +1984,8 @@
       "lineCount": 123,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3200,19 +2002,8 @@
       "lineCount": 300,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3229,19 +2020,8 @@
       "lineCount": 56,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3258,19 +2038,8 @@
       "lineCount": 49,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3287,19 +2056,8 @@
       "lineCount": 240,
       "purpose": "Hugging Face Hub CLI (`hf`) for downloading, uploading, and managing models, datasets, spaces, buckets, repos, papers, jobs, and more on the Hugging Face Hub. Use when: handling authentication; managing local cache; managing Hugging Face Buckets; running or scheduling jobs on Hugging Face infrastructure; managing Hugging Face repos; discussions and pull requests; browsing models, datasets and spaces; reading, searching, or browsing academic papers; managing collections; querying datasets; configuring spaces; setting up webhooks; or deploying and managing HF Inference Endpoints. Make sure to use this skill whenever the user mentions 'hf', 'huggingface', 'Hugging Face', 'huggingface-cli', or 'hugging face cli', or wants to do anything related to the Hugging Face ecosystem and to AI and ML in general. Also use for cloud storage needs like training checkpoints, data pipelines, or agent traces. Use even if the user doesn't explicitly ask for a CLI command. Replaces the deprecated `huggingface-cli`.",
       "triggers": "Hugging Face Hub CLI (`hf`) for downloading, uploading, and managing models, datasets, spaces, buckets, repos, papers, jobs, and more on the Hugging Face Hub. Use when: handling authentication; managing local cache; managing Hugging Face Buckets; running or scheduling jobs on Hugging Face infrastructure; managing Hugging Face repos; discussions and pull requests; browsing models, datasets and spaces; reading, searching, or browsing academic papers; managing collections; querying datasets; configuring spaces; setting up webhooks; or deploying and managing HF Inference Endpoints. Make sure to use this skill whenever the user mentions 'hf', 'huggingface', 'Hugging Face', 'huggingface-cli', or 'hugging face cli', or wants to do anything related to the Hugging Face ecosystem and to AI and ML in general. Also use for cloud storage needs like training checkpoints, data pipelines, or agent traces. Use even if the user doesn't explicitly ask for a CLI command. Replaces the deprecated `huggingface-cli`.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3316,19 +2074,8 @@
       "lineCount": 75,
       "purpose": "Discover the user's local AWS context (active profile, region, account ID, caller identity) at the start of any AWS task. Use this skill before any other AWS work — deploying to SageMaker, creating resources, calling AWS APIs, or anything that touches an AWS account. Use it especially when the user has not specified a region or profile explicitly, when they say things like \"use my AWS account\", \"deploy to AWS\", \"use my profile\", or when about to make any AWS CLI or SDK call. Never guess the region or account ID — always use this skill to read it from the local configuration first.",
       "triggers": "Discover the user's local AWS context (active profile, region, account ID, caller identity) at the start of any AWS task. Use this skill before any other AWS work — deploying to SageMaker, creating resources, calling AWS APIs, or anything that touches an AWS account. Use it especially when the user has not specified a region or profile explicitly, when they say things like \"use my AWS account\", \"deploy to AWS\", \"use my profile\", or when about to make any AWS CLI or SDK call. Never guess the region or account ID — always use this skill to read it from the local configuration first.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3345,25 +2092,11 @@
       "lineCount": 91,
       "purpose": "Set up an isolated Python environment for SageMaker / AWS work, with the right Python version and current boto3. Use this skill whenever Python code will be executed for a SageMaker deployment, training job, or any AWS automation — including when about to run `pip install`, when about to invoke `boto3`, when creating or activating a virtualenv, or when the user asks to \"set up the environment\". Never use system Python and never `pip install` into it. Always isolate. This skill prevents the most common failure modes: wrong Python version, dependency conflicts, and stale SDKs.",
       "triggers": "Set up an isolated Python environment for SageMaker / AWS work, with the right Python version and current boto3. Use this skill whenever Python code will be executed for a SageMaker deployment, training job, or any AWS automation — including when about to run `pip install`, when about to invoke `boto3`, when creating or activating a virtualenv, or when the user asks to \"set up the environment\". Never use system Python and never `pip install` into it. Always isolate. This skill prevents the most common failure modes: wrong Python version, dependency conflicts, and stale SDKs.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "requirements.txt",
-        "scripts"
-      ],
+      "dependencies": ["requirements.txt", "scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -3377,19 +2110,8 @@
       "lineCount": 91,
       "purpose": "Plan and coordinate the deployment of a model to Amazon SageMaker AI. Use this skill whenever the user wants to deploy, host, serve, or expose a model on SageMaker or AWS — including phrases like \"deploy a model\", \"host this LLM on AWS\", \"serve this embedding model\", \"deploy a reranker\", \"deploy a text-to-image / diffusion model\", \"host this for async inference\", \"create an endpoint\", \"serve my fine-tuned model\", or any request that involves making a model available for inference on AWS. Use this even when the user is vague (e.g. \"I just want to get this running on AWS, you figure it out\"). Works for text-generation LLMs, embedding models, rerankers, classifiers, text-to-image / diffusion models — picks the right serving stack and chooses between real-time and async inference. This is the entry-point skill for SageMaker deployment work — it asks clarifying questions, picks a deployment pathway, and coordinates the other deployment skills.",
       "triggers": "Plan and coordinate the deployment of a model to Amazon SageMaker AI. Use this skill whenever the user wants to deploy, host, serve, or expose a model on SageMaker or AWS — including phrases like \"deploy a model\", \"host this LLM on AWS\", \"serve this embedding model\", \"deploy a reranker\", \"deploy a text-to-image / diffusion model\", \"host this for async inference\", \"create an endpoint\", \"serve my fine-tuned model\", or any request that involves making a model available for inference on AWS. Use this even when the user is vague (e.g. \"I just want to get this running on AWS, you figure it out\"). Works for text-generation LLMs, embedding models, rerankers, classifiers, text-to-image / diffusion models — picks the right serving stack and chooses between real-time and async inference. This is the entry-point skill for SageMaker deployment work — it asks clarifying questions, picks a deployment pathway, and coordinates the other deployment skills.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3406,25 +2128,11 @@
       "lineCount": 103,
       "purpose": "Ensure a usable SageMaker execution role exists before deploying or training. Use this skill whenever about to create a SageMaker endpoint, model, training job, or any resource that requires an execution role. Use it especially when the user has not provided a role ARN explicitly, when scripts are about to call `iam:CreateRole`, or when an AccessDenied error mentions an IAM action. Never blindly call `iam:CreateRole` — always check for existing roles first. This skill prevents the most common SageMaker deployment failure: trying to create IAM resources from an SSO principal that has no IAM write permissions.",
       "triggers": "Ensure a usable SageMaker execution role exists before deploying or training. Use this skill whenever about to create a SageMaker endpoint, model, training job, or any resource that requires an execution role. Use it especially when the user has not provided a role ARN explicitly, when scripts are about to call `iam:CreateRole`, or when an AccessDenied error mentions an IAM action. Never blindly call `iam:CreateRole` — always check for existing roles first. This skill prevents the most common SageMaker deployment failure: trying to create IAM resources from an SSO principal that has no IAM write permissions.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "references",
-        "scripts"
-      ],
+      "dependencies": ["references", "scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -3438,25 +2146,11 @@
       "lineCount": 420,
       "purpose": "Create a SageMaker endpoint (real-time, real-time scale-to-zero, or async) with autoscaling, CloudWatch alarms, and tagging enabled by default. Use this skill whenever about to create a SageMaker endpoint, write deployment code that calls `create_endpoint`, or finalize a deployment after the image URI and IAM role are known. Provides deploy.py for real-time endpoints, deploy_ic.py for real-time endpoints that scale to zero instances via inference components, and deploy_async.py for async endpoints (also scale-to-zero). This is the last step in the SageMaker deployment workflow. Never generate a bare `create_endpoint` call without these defaults — endpoints without autoscaling or alarms are demos, not deployments.",
       "triggers": "Create a SageMaker endpoint (real-time, real-time scale-to-zero, or async) with autoscaling, CloudWatch alarms, and tagging enabled by default. Use this skill whenever about to create a SageMaker endpoint, write deployment code that calls `create_endpoint`, or finalize a deployment after the image URI and IAM role are known. Provides deploy.py for real-time endpoints, deploy_ic.py for real-time endpoints that scale to zero instances via inference components, and deploy_async.py for async endpoints (also scale-to-zero). This is the last step in the SageMaker deployment workflow. Never generate a bare `create_endpoint` call without these defaults — endpoints without autoscaling or alarms are demos, not deployments.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "references",
-        "scripts"
-      ],
+      "dependencies": ["references", "scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -3470,25 +2164,11 @@
       "lineCount": 221,
       "purpose": "Pick the right serving container for a SageMaker model deployment and find its current image URI. Use this skill whenever about to deploy a model to a SageMaker endpoint and an image URI needs to be chosen — including when the user says \"deploy this LLM\", \"host this HuggingFace model\", \"serve this fine-tuned model\", \"deploy this embedding model\", \"host a reranker\", \"serve a sentence-transformers model\", or when about to hardcode any container URI in deployment code. HuggingFace-curated Deep Learning Containers are ALWAYS preferred: HuggingFace vLLM (LLMs and generative rerankers), HuggingFace vLLM-Omni (multimodal), TEI (embeddings/cross-encoder rerankers), HF Inference Toolkit (other transformers). Generic images (AWS vLLM, DJL-LMI, SGLang) are used only when no HuggingFace image is compatible — never merely because they carry a newer version. Never hardcode a container URI from memory and never default to TGI. Prevents stale-image failures and wrong-region URIs.",
       "triggers": "Pick the right serving container for a SageMaker model deployment and find its current image URI. Use this skill whenever about to deploy a model to a SageMaker endpoint and an image URI needs to be chosen — including when the user says \"deploy this LLM\", \"host this HuggingFace model\", \"serve this fine-tuned model\", \"deploy this embedding model\", \"host a reranker\", \"serve a sentence-transformers model\", or when about to hardcode any container URI in deployment code. HuggingFace-curated Deep Learning Containers are ALWAYS preferred: HuggingFace vLLM (LLMs and generative rerankers), HuggingFace vLLM-Omni (multimodal), TEI (embeddings/cross-encoder rerankers), HF Inference Toolkit (other transformers). Generic images (AWS vLLM, DJL-LMI, SGLang) are used only when no HuggingFace image is compatible — never merely because they carry a newer version. Never hardcode a container URI from memory and never default to TGI. Prevents stale-image failures and wrong-region URIs.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Tri-state evidence findings",
-      "dependencies": [
-        "references",
-        "scripts"
-      ],
+      "dependencies": ["references", "scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": true,
@@ -3502,19 +2182,8 @@
       "lineCount": 80,
       "purpose": "Hugging Face CLI to estimate the required memory to load Safetensors or GGUF model weights for inference from the Hugging Face Hub",
       "triggers": "Hugging Face CLI to estimate the required memory to load Safetensors or GGUF model weights for inference from the Hugging Face Hub",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3531,19 +2200,8 @@
       "lineCount": 135,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3560,25 +2218,11 @@
       "lineCount": 208,
       "purpose": "Run evaluations for Hugging Face Hub models using inspect-ai and lighteval on local hardware. Use for backend selection, local GPU evals, and choosing between vLLM / Transformers / accelerate. Not for HF Jobs orchestration, model-card PRs, .eval_results publication, or community-evals automation.",
       "triggers": "Run evaluations for Hugging Face Hub models using inspect-ai and lighteval on local hardware. Use for backend selection, local GPU evals, and choosing between vLLM / Transformers / accelerate. Not for HF Jobs orchestration, model-card PRs, .eval_results publication, or community-evals automation.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "examples",
-        "scripts"
-      ],
+      "dependencies": ["examples", "scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -3592,19 +2236,8 @@
       "lineCount": 108,
       "purpose": "Use this skill for Hugging Face Dataset Viewer API workflows that fetch subset/split metadata, paginate rows, search text, apply filters, download parquet URLs, and read size or statistics.",
       "triggers": "Use this skill for Hugging Face Dataset Viewer API workflows that fetch subset/split metadata, paginate rows, search text, apply filters, download parquet URLs, and read size or statistics.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3621,24 +2254,11 @@
       "lineCount": 299,
       "purpose": "Build Gradio web UIs and demos in Python. Use when creating or editing Gradio apps, components, event listeners, layouts, or chatbots.",
       "triggers": "Build Gradio web UIs and demos in Python. Use when creating or editing Gradio apps, components, event listeners, layouts, or chatbots.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "examples.md"
-      ],
+      "dependencies": ["examples.md"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -3652,25 +2272,11 @@
       "lineCount": 739,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "references",
-        "scripts"
-      ],
+      "dependencies": ["references", "scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -3684,24 +2290,11 @@
       "lineCount": 114,
       "purpose": "Use to select models to run locally with llama.cpp and GGUF on CPU, Mac Metal, CUDA, or ROCm. Covers finding GGUFs, quant selection, running servers, exact GGUF file lookup, conversion, and OpenAI-compatible local serving.",
       "triggers": "Use to select models to run locally with llama.cpp and GGUF on CPU, Mac Metal, CUDA, or ROCm. Covers finding GGUFs, quant selection, running servers, exact GGUF file lookup, conversion, and OpenAI-compatible local serving.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "references"
-      ],
+      "dependencies": ["references"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -3715,24 +2308,11 @@
       "lineCount": 394,
       "purpose": "Build and publish a Gradio demo on Hugging Face Spaces for a user-provided LoRA. Use when someone asks to create, generate, ship, or publish a Space, demo, Gradio app, or playground for a LoRA — including LoRAs for Qwen-Image, Qwen-Image-Edit, LTX-Video, Wan, FLUX, SDXL, or other diffusion base models. Also triggers when someone describes a LoRA they trained or hosts on the Hub and wants to share it. Covers picking the right base pipeline and `diffusers` inference recipe, designing a UI tailored to the LoRA's task and inputs (Union/multi-task control, edit, video, image, etc.), respecting model-card recommendations (trigger words, steps, guidance, LoRA scale, example inputs), and shipping to ZeroGPU hardware as a private Space by default.",
       "triggers": "Build and publish a Gradio demo on Hugging Face Spaces for a user-provided LoRA. Use when someone asks to create, generate, ship, or publish a Space, demo, Gradio app, or playground for a LoRA — including LoRAs for Qwen-Image, Qwen-Image-Edit, LTX-Video, Wan, FLUX, SDXL, or other diffusion base models. Also triggers when someone describes a LoRA they trained or hosts on the Hub and wants to share it. Covers picking the right base pipeline and `diffusers` inference recipe, designing a UI tailored to the LoRA's task and inputs (Union/multi-task control, edit, video, image, etc.), respecting model-card recommendations (trigger words, steps, guidance, LoRA scale, example inputs), and shipping to ZeroGPU hardware as a private Space by default.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Tri-state evidence findings",
-      "dependencies": [
-        "references"
-      ],
+      "dependencies": ["references"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": true,
@@ -3746,27 +2326,11 @@
       "lineCount": 625,
       "purpose": "Publish and manage research papers on Hugging Face Hub. Supports creating paper pages, linking papers to models/datasets, claiming authorship, and generating professional markdown-based research articles.",
       "triggers": "Publish and manage research papers on Hugging Face Hub. Supports creating paper pages, linking papers to models/datasets, claiming authorship, and generating professional markdown-based research articles.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "examples",
-        "references",
-        "scripts",
-        "templates"
-      ],
+      "dependencies": ["examples", "references", "scripts", "templates"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -3780,19 +2344,8 @@
       "lineCount": 239,
       "purpose": "Look up and read Hugging Face paper pages in markdown, and use the papers API for structured metadata such as authors, linked models/datasets/spaces, Github repo and project page. Use when the user shares a Hugging Face paper page URL, an arXiv URL or ID, or asks to summarize, explain, or analyze an AI research paper.",
       "triggers": "Look up and read Hugging Face paper pages in markdown, and use the papers API for structured metadata such as authors, linked models/datasets/spaces, Github repo and project page. Use when the user shares a Hugging Face paper page URL, an arXiv URL or ID, or asks to summarize, explain, or analyze an AI research paper.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3809,25 +2362,11 @@
       "lineCount": 243,
       "purpose": "Build, deploy, and maintain applications on Hugging Face Spaces — Gradio / Docker / Static SDKs, ZeroGPU and dedicated hardware, model loading, debugging, buckets, inference providers, community grants. Use whenever the user asks to create or host an app on Hugging Face, port code onto ZeroGPU, fix a Space that won't build or run, or otherwise work with `hf spaces …`, `@spaces.GPU`, Space README frontmatter, or the `spaces` Python package.",
       "triggers": "Build, deploy, and maintain applications on Hugging Face Spaces — Gradio / Docker / Static SDKs, ZeroGPU and dedicated hardware, model loading, debugging, buckets, inference providers, community grants. Use whenever the user asks to create or host an app on Hugging Face, port code onto ZeroGPU, fix a Space that won't build or run, or otherwise work with `hf spaces …`, `@spaces.GPU`, Space README frontmatter, or the `spaces` Python package.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "README.md",
-        "references"
-      ],
+      "dependencies": ["README.md", "references"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -3841,24 +2380,11 @@
       "lineCount": 121,
       "purpose": "Use this skill when the user wants to build tool/scripts or achieve a task where using data from the Hugging Face API would help. This is especially useful when chaining or combining API calls or the task will be repeated/automated. This Skill creates a reusable script to fetch, enrich or process data.",
       "triggers": "Use this skill when the user wants to build tool/scripts or achieve a task where using data from the Hugging Face API would help. This is especially useful when chaining or combining API calls or the task will be repeated/automated. This Skill creates a reusable script to fetch, enrich or process data.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "references"
-      ],
+      "dependencies": ["references"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -3872,24 +2398,11 @@
       "lineCount": 143,
       "purpose": "Track and visualize ML training experiments with Trackio. Use when logging metrics during training (Python API), firing alerts for training diagnostics, or retrieving/analyzing logged metrics (CLI). Supports real-time dashboard visualization, alerts with webhooks, HF Space syncing, and JSON output for automation.",
       "triggers": "Track and visualize ML training experiments with Trackio. Use when logging metrics during training (Python API), firing alerts for training diagnostics, or retrieving/analyzing logged metrics (CLI). Supports real-time dashboard visualization, alerts with webhooks, HF Space syncing, and JSON output for automation.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
-      "dependencies": [
-        "references"
-      ],
+      "dependencies": ["references"],
       "relatedSkills": [],
       "hasVbc": true,
       "hasEv": false,
@@ -3903,25 +2416,11 @@
       "lineCount": 594,
       "purpose": "Trains and fine-tunes vision models for object detection (D-FINE, RT-DETR v2, DETR, YOLOS), image classification (timm models — MobileNetV3, MobileViT, ResNet, ViT/DINOv3 — plus any Transformers classifier), and SAM/SAM2 segmentation using Hugging Face Transformers on Hugging Face Jobs cloud GPUs. Covers COCO-format dataset preparation, Albumentations augmentation, mAP/mAR evaluation, accuracy metrics, SAM segmentation with bbox/point prompts, DiceCE loss, hardware selection, cost estimation, Trackio monitoring, and Hub persistence. Use when users mention training object detection, image classification, SAM, SAM2, segmentation, image matting, DETR, D-FINE, RT-DETR, ViT, timm, MobileNet, ResNet, bounding box models, or fine-tuning vision models on Hugging Face Jobs.",
       "triggers": "Trains and fine-tunes vision models for object detection (D-FINE, RT-DETR v2, DETR, YOLOS), image classification (timm models — MobileNetV3, MobileViT, ResNet, ViT/DINOv3 — plus any Transformers classifier), and SAM/SAM2 segmentation using Hugging Face Transformers on Hugging Face Jobs cloud GPUs. Covers COCO-format dataset preparation, Albumentations augmentation, mAP/mAR evaluation, accuracy metrics, SAM segmentation with bbox/point prompts, DiceCE loss, hardware selection, cost estimation, Trackio monitoring, and Hub persistence. Use when users mention training object detection, image classification, SAM, SAM2, segmentation, image matting, DETR, D-FINE, RT-DETR, ViT, timm, MobileNet, ResNet, bounding box models, or fine-tuning vision models on Hugging Face Jobs.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "references",
-        "scripts"
-      ],
+      "dependencies": ["references", "scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -3935,24 +2434,11 @@
       "lineCount": 290,
       "purpose": "AI demos and GPU compute with Gradio Spaces and Hugging Face Spaces ZeroGPU. Use when writing or reviewing code that uses `@spaces.GPU`, configuring `python_version` or `requirements.txt` for a ZeroGPU Space, or handling ZeroGPU-specific code constraints — pickle-based process isolation, `gr.State` semantics across the worker boundary, no `torch.compile` (use AoTI instead), CUDA wheel-only builds (no `nvcc` at build or runtime), large vs xlarge sizing, and dynamic duration callables. Make sure to use this skill whenever the user mentions ZeroGPU, `@spaces.GPU`, or the `spaces` Python package, or hits ZeroGPU-specific code errors like `PicklingError` across the worker boundary, `illegal duration`, or `flash-attn` wheel-build failures — even when the user does not explicitly ask for ZeroGPU coding guidance. Trigger on `import spaces` or `@spaces.GPU` in code.",
       "triggers": "AI demos and GPU compute with Gradio Spaces and Hugging Face Spaces ZeroGPU. Use when writing or reviewing code that uses `@spaces.GPU`, configuring `python_version` or `requirements.txt` for a ZeroGPU Space, or handling ZeroGPU-specific code constraints — pickle-based process isolation, `gr.State` semantics across the worker boundary, no `torch.compile` (use AoTI instead), CUDA wheel-only builds (no `nvcc` at build or runtime), large vs xlarge sizing, and dynamic duration callables. Make sure to use this skill whenever the user mentions ZeroGPU, `@spaces.GPU`, or the `spaces` Python package, or hits ZeroGPU-specific code errors like `PicklingError` across the worker boundary, `illegal duration`, or `flash-attn` wheel-build failures — even when the user does not explicitly ask for ZeroGPU coding guidance. Trigger on `import spaces` or `@spaces.GPU` in code.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "references"
-      ],
+      "dependencies": ["references"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -3966,19 +2452,8 @@
       "lineCount": 31,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -3995,24 +2470,11 @@
       "lineCount": 135,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -4026,19 +2488,8 @@
       "lineCount": 53,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4055,19 +2506,8 @@
       "lineCount": 49,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4084,19 +2524,8 @@
       "lineCount": 71,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4113,19 +2542,8 @@
       "lineCount": 205,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4142,19 +2560,8 @@
       "lineCount": 72,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4171,19 +2578,8 @@
       "lineCount": 66,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4200,24 +2596,11 @@
       "lineCount": 225,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": true,
       "hasEv": false,
@@ -4231,19 +2614,8 @@
       "lineCount": 361,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4260,19 +2632,8 @@
       "lineCount": 139,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4289,19 +2650,8 @@
       "lineCount": 63,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4318,19 +2668,8 @@
       "lineCount": 63,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4347,19 +2686,8 @@
       "lineCount": 73,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4376,19 +2704,8 @@
       "lineCount": 231,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4405,19 +2722,8 @@
       "lineCount": 106,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4434,19 +2740,8 @@
       "lineCount": 254,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4463,24 +2758,11 @@
       "lineCount": 246,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -4494,19 +2776,8 @@
       "lineCount": 296,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4523,19 +2794,8 @@
       "lineCount": 349,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4552,19 +2812,8 @@
       "lineCount": 198,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4581,24 +2830,11 @@
       "lineCount": 219,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -4612,19 +2848,8 @@
       "lineCount": 543,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4641,19 +2866,8 @@
       "lineCount": 304,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4670,19 +2884,8 @@
       "lineCount": 52,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4699,19 +2902,8 @@
       "lineCount": 87,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4728,19 +2920,8 @@
       "lineCount": 111,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4757,24 +2938,11 @@
       "lineCount": 231,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -4788,19 +2956,8 @@
       "lineCount": 128,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4817,19 +2974,8 @@
       "lineCount": 109,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4846,19 +2992,8 @@
       "lineCount": 60,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4875,19 +3010,8 @@
       "lineCount": 53,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4904,19 +3028,8 @@
       "lineCount": 150,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4933,19 +3046,8 @@
       "lineCount": 40,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4962,19 +3064,8 @@
       "lineCount": 123,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -4991,19 +3082,8 @@
       "lineCount": 49,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5020,19 +3100,8 @@
       "lineCount": 391,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5049,19 +3118,8 @@
       "lineCount": 81,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5078,19 +3136,8 @@
       "lineCount": 92,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5107,19 +3154,8 @@
       "lineCount": 51,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5136,19 +3172,8 @@
       "lineCount": 221,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5165,19 +3190,8 @@
       "lineCount": 306,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5194,19 +3208,8 @@
       "lineCount": 50,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5223,19 +3226,8 @@
       "lineCount": 52,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5252,19 +3244,8 @@
       "lineCount": 281,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5281,19 +3262,8 @@
       "lineCount": 271,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5310,19 +3280,8 @@
       "lineCount": 284,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5339,19 +3298,8 @@
       "lineCount": 192,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5368,19 +3316,8 @@
       "lineCount": 47,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5397,24 +3334,11 @@
       "lineCount": 46,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "STANDARDS.md"
-      ],
+      "dependencies": ["STANDARDS.md"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -5428,19 +3352,8 @@
       "lineCount": 653,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5457,19 +3370,8 @@
       "lineCount": 25,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5486,24 +3388,11 @@
       "lineCount": 140,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -5517,19 +3406,8 @@
       "lineCount": 179,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5546,19 +3424,8 @@
       "lineCount": 30,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5575,19 +3442,8 @@
       "lineCount": 197,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5604,19 +3460,8 @@
       "lineCount": 57,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5633,19 +3478,8 @@
       "lineCount": 178,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5662,19 +3496,8 @@
       "lineCount": 54,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5691,19 +3514,8 @@
       "lineCount": 77,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5720,19 +3532,8 @@
       "lineCount": 625,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5749,19 +3550,8 @@
       "lineCount": 33,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5778,19 +3568,8 @@
       "lineCount": 58,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5807,19 +3586,8 @@
       "lineCount": 357,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5836,19 +3604,8 @@
       "lineCount": 165,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Tri-state evidence findings",
       "dependencies": [],
@@ -5865,19 +3622,8 @@
       "lineCount": 45,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5894,19 +3640,8 @@
       "lineCount": 189,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Tri-state evidence findings",
       "dependencies": [],
@@ -5923,19 +3658,8 @@
       "lineCount": 130,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [
@@ -5956,19 +3680,8 @@
       "lineCount": 584,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -5985,19 +3698,8 @@
       "lineCount": 53,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6014,19 +3716,8 @@
       "lineCount": 106,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6043,19 +3734,8 @@
       "lineCount": 271,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6072,24 +3752,11 @@
       "lineCount": 535,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -6103,19 +3770,8 @@
       "lineCount": 63,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6132,19 +3788,8 @@
       "lineCount": 22,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6161,19 +3806,8 @@
       "lineCount": 44,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6190,25 +3824,11 @@
       "lineCount": 110,
       "purpose": "Train or fine-tune sentence-transformers models across `SentenceTransformer` (bi-encoder, dense or static embedding model for retrieval, similarity, clustering, classification, paraphrase mining, dedup, multimodal), `CrossEncoder` (reranker, pair scoring for two-stage retrieval / pair classification), `SparseEncoder` (SPLADE, sparse embedding model for learned-sparse retrieval), and `MultiVectorEncoder` (ColBERT / late-interaction, per-token embeddings scored with MaxSim). Covers loss selection, hard-negative mining, evaluators, distillation, LoRA, Matryoshka, and Hugging Face Hub publishing. Use for any sentence-transformers training task.",
       "triggers": "Train or fine-tune sentence-transformers models across `SentenceTransformer` (bi-encoder, dense or static embedding model for retrieval, similarity, clustering, classification, paraphrase mining, dedup, multimodal), `CrossEncoder` (reranker, pair scoring for two-stage retrieval / pair classification), `SparseEncoder` (SPLADE, sparse embedding model for learned-sparse retrieval), and `MultiVectorEncoder` (ColBERT / late-interaction, per-token embeddings scored with MaxSim). Covers loss selection, hard-negative mining, evaluators, distillation, LoRA, Matryoshka, and Hugging Face Hub publishing. Use for any sentence-transformers training task.",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "references",
-        "scripts"
-      ],
+      "dependencies": ["references", "scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -6222,24 +3842,11 @@
       "lineCount": 693,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "references"
-      ],
+      "dependencies": ["references"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -6253,19 +3860,8 @@
       "lineCount": 91,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6282,19 +3878,8 @@
       "lineCount": 199,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6311,19 +3896,8 @@
       "lineCount": 32,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6340,19 +3914,8 @@
       "lineCount": 319,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6369,19 +3932,8 @@
       "lineCount": 307,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6398,19 +3950,8 @@
       "lineCount": 61,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6427,19 +3968,8 @@
       "lineCount": 156,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6456,19 +3986,8 @@
       "lineCount": 58,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6485,19 +4004,8 @@
       "lineCount": 70,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6514,19 +4022,8 @@
       "lineCount": 111,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6543,19 +4040,8 @@
       "lineCount": 200,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6572,19 +4058,8 @@
       "lineCount": 71,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6601,19 +4076,8 @@
       "lineCount": 108,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Multi-pass execution with VBC",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6630,19 +4094,8 @@
       "lineCount": 260,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6659,24 +4112,11 @@
       "lineCount": 379,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -6690,19 +4130,8 @@
       "lineCount": 180,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6719,19 +4148,8 @@
       "lineCount": 50,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6748,19 +4166,8 @@
       "lineCount": 48,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6777,24 +4184,11 @@
       "lineCount": 129,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
-      "dependencies": [
-        "scripts"
-      ],
+      "dependencies": ["scripts"],
       "relatedSkills": [],
       "hasVbc": false,
       "hasEv": false,
@@ -6808,19 +4202,8 @@
       "lineCount": 89,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6837,19 +4220,8 @@
       "lineCount": 306,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6866,19 +4238,8 @@
       "lineCount": 189,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],
@@ -6895,19 +4256,8 @@
       "lineCount": 83,
       "purpose": "Domain specialized execution.",
       "triggers": "",
-      "inputs": [
-        "Codebase files",
-        "User instructions",
-        "Target schemas"
-      ],
-      "tools": [
-        "Read",
-        "Grep",
-        "Glob",
-        "Bash",
-        "Edit",
-        "Write"
-      ],
+      "inputs": ["Codebase files", "User instructions", "Target schemas"],
+      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
       "workflow": "Ad-hoc execution",
       "output": "Unstructured text",
       "dependencies": [],

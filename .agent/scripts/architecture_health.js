@@ -21,12 +21,24 @@
 
 const fs = require('fs');
 const path = require('path');
-const { GREEN, YELLOW, CYAN, RED, BOLD, DIM, RESET, BOX, banner, timer, formatMs } = require('./_colors');
+const {
+  GREEN,
+  YELLOW,
+  CYAN,
+  RED,
+  BOLD,
+  DIM,
+  RESET,
+  BOX,
+  banner,
+  timer,
+  formatMs,
+} = require('./_colors');
 
 class ArchitectureHealthAuditor {
   constructor(model) {
     this.model = model;
-    this.entities = new Map((model.entities || []).map((e) => [e.id, e]));
+    this.entities = new Map((model.entities || []).map(e => [e.id, e]));
     this.adjList = new Map(); // source -> array of target IDs
     this.inDegree = new Map(); // target -> count
     this.outDegree = new Map(); // source -> count
@@ -56,7 +68,7 @@ class ArchitectureHealthAuditor {
     // 1. Detect Circular Dependencies (Tarjan's SCC)
     const cycles = this.findCycles();
     for (const cycle of cycles) {
-      const names = cycle.map((id) => this.entities.get(id)?.name || id).join(' → ');
+      const names = cycle.map(id => this.entities.get(id)?.name || id).join(' → ');
       signals.push({
         code: 'ARCH_CIRCULAR_DEPENDENCY',
         severity: 'HIGH',
@@ -64,7 +76,8 @@ class ArchitectureHealthAuditor {
         title: 'Circular Dependency Detected',
         message: `Circular dependency loop identified: ${names}`,
         entities: cycle,
-        recommendation: 'Break cycle by inverting dependency, introducing an interface, or extracting common logic.',
+        recommendation:
+          'Break cycle by inverting dependency, introducing an interface, or extracting common logic.',
       });
     }
 
@@ -79,7 +92,8 @@ class ArchitectureHealthAuditor {
           title: 'High Centrality Bottleneck (SPOF)',
           message: `Component "${entity.name}" has ${count} direct callers. Any breaking change will impact a large portion of the system.`,
           entities: [id],
-          recommendation: 'Ensure 100% unit test coverage, freeze interface contracts, and consider modular partitioning.',
+          recommendation:
+            'Ensure 100% unit test coverage, freeze interface contracts, and consider modular partitioning.',
         });
       }
     }
@@ -87,7 +101,13 @@ class ArchitectureHealthAuditor {
     // 3. Detect Excessive Coupling (High Fan-Out God Modules)
     for (const [id, count] of this.outDegree.entries()) {
       const entity = this.entities.get(id);
-      if (entity && entity.kind === 'module' && !entity.tags?.includes('skill') && count >= 15 && !entity.scope.includes('test')) {
+      if (
+        entity &&
+        entity.kind === 'module' &&
+        !entity.tags?.includes('skill') &&
+        count >= 15 &&
+        !entity.scope.includes('test')
+      ) {
         signals.push({
           code: 'ARCH_EXCESSIVE_COUPLING',
           severity: 'MEDIUM',
@@ -114,7 +134,8 @@ class ArchitectureHealthAuditor {
             message: `Public component "${src.name}" directly communicates with isolated datastore "${tgt.name}" without passing through an authenticated service mesh or API gateway.`,
             entities: [src.id, tgt.id],
             evidence: rel.evidence || [],
-            recommendation: 'Route request through authenticated API middleware and isolate direct database connections.',
+            recommendation:
+              'Route request through authenticated API middleware and isolate direct database connections.',
           });
         }
       }
@@ -135,7 +156,8 @@ class ArchitectureHealthAuditor {
             message: `Component "${src?.name || rel.sourceId}" calls external provider "${tgt.name}" without an explicit timeout or AbortController. Network hangs can exhaust server worker pools.`,
             entities: [rel.sourceId, rel.targetId],
             evidence: rel.evidence || [],
-            recommendation: 'Wrap external call with an AbortSignal.timeout(ms) or circuit breaker.',
+            recommendation:
+              'Wrap external call with an AbortSignal.timeout(ms) or circuit breaker.',
           });
         }
       }
@@ -143,11 +165,15 @@ class ArchitectureHealthAuditor {
 
     // 6. Detect Critical Path Test Coverage Gaps
     for (const [id, entity] of this.entities.entries()) {
-      if (entity.kind === 'module' && !entity.tags?.includes('skill') && (entity.blastRadius?.riskScore >= 0.7 || this.inDegree.get(id) >= 10)) {
+      if (
+        entity.kind === 'module' &&
+        !entity.tags?.includes('skill') &&
+        (entity.blastRadius?.riskScore >= 0.7 || this.inDegree.get(id) >= 10)
+      ) {
         // Check if any test suite imports this entity
         const isTested = Array.from(this.adjList.entries()).some(([srcId, targets]) => {
           const src = this.entities.get(srcId);
-          return src && src.kind === 'test_suite' && targets.some((t) => t.targetId === id);
+          return src && src.kind === 'test_suite' && targets.some(t => t.targetId === id);
         });
 
         if (!isTested) {
@@ -158,7 +184,8 @@ class ArchitectureHealthAuditor {
             title: 'Test Coverage Gap on High-Centrality Component',
             message: `Critical component "${entity.name}" (risk score ${entity.blastRadius?.riskScore || 0.8}, ${this.inDegree.get(id)} callers) has no direct test suite coverage in the architecture graph.`,
             entities: [id],
-            recommendation: 'Add unit and integration tests covering the public interfaces of this component.',
+            recommendation:
+              'Add unit and integration tests covering the public interfaces of this component.',
           });
         }
       }
@@ -168,10 +195,10 @@ class ArchitectureHealthAuditor {
       timestamp: new Date().toISOString(),
       summary: {
         totalSignals: signals.length,
-        critical: signals.filter((s) => s.severity === 'CRITICAL').length,
-        high: signals.filter((s) => s.severity === 'HIGH').length,
-        medium: signals.filter((s) => s.severity === 'MEDIUM').length,
-        low: signals.filter((s) => s.severity === 'LOW').length,
+        critical: signals.filter(s => s.severity === 'CRITICAL').length,
+        high: signals.filter(s => s.severity === 'HIGH').length,
+        medium: signals.filter(s => s.severity === 'MEDIUM').length,
+        low: signals.filter(s => s.severity === 'LOW').length,
       },
       signals,
     };
@@ -183,7 +210,7 @@ class ArchitectureHealthAuditor {
     const cycles = [];
     const pathStack = [];
 
-    const dfs = (nodeId) => {
+    const dfs = nodeId => {
       visited.add(nodeId);
       recStack.add(nodeId);
       pathStack.push(nodeId);
@@ -225,7 +252,9 @@ if (require.main === module) {
   console.log(banner('Tribunal Architectural Health & Risk Auditor'));
 
   if (!fs.existsSync(modelFile)) {
-    console.error(`  ${RED}✖ architecture-model.json not found.${RESET} Run architecture_extractor.js first.`);
+    console.error(
+      `  ${RED}✖ architecture-model.json not found.${RESET} Run architecture_extractor.js first.`,
+    );
     process.exit(1);
   }
 
@@ -234,9 +263,15 @@ if (require.main === module) {
   const report = auditor.audit();
 
   console.log(`  Signals Found:          ${report.summary.totalSignals}`);
-  console.log(`  Critical Violations:    ${report.summary.critical > 0 ? RED : GREEN}${report.summary.critical}${RESET}`);
-  console.log(`  High Risk Issues:       ${report.summary.high > 0 ? YELLOW : GREEN}${report.summary.high}${RESET}`);
-  console.log(`  Medium Smells:          ${report.summary.medium > 0 ? CYAN : GREEN}${report.summary.medium}${RESET}`);
+  console.log(
+    `  Critical Violations:    ${report.summary.critical > 0 ? RED : GREEN}${report.summary.critical}${RESET}`,
+  );
+  console.log(
+    `  High Risk Issues:       ${report.summary.high > 0 ? YELLOW : GREEN}${report.summary.high}${RESET}`,
+  );
+  console.log(
+    `  Medium Smells:          ${report.summary.medium > 0 ? CYAN : GREEN}${report.summary.medium}${RESET}`,
+  );
 
   if (report.signals.length > 0) {
     console.log(`\n  ${BOLD}Top Architectural Signals:${RESET}`);
@@ -248,7 +283,9 @@ if (require.main === module) {
     }
   }
 
-  console.log(`  ${GREEN}${BOX.check} Architectural Health Audit Complete${RESET} in ${formatMs(t())}\n`);
+  console.log(
+    `  ${GREEN}${BOX.check} Architectural Health Audit Complete${RESET} in ${formatMs(t())}\n`,
+  );
 }
 
 module.exports = {

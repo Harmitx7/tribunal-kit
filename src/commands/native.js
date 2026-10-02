@@ -252,9 +252,15 @@ function resolveMonotonicImpactTier(options = {}) {
   const files = Array.isArray(rawFiles)
     ? rawFiles.filter(Boolean)
     : typeof rawFiles === 'string' && rawFiles.length > 0
-      ? rawFiles.split(',').map(f => f.trim()).filter(Boolean)
+      ? rawFiles
+          .split(',')
+          .map(f => f.trim())
+          .filter(Boolean)
       : [];
-  const lines = typeof opts.lines === 'number' && !isNaN(opts.lines) ? opts.lines : parseInt(opts.lines, 10) || 0;
+  const lines =
+    typeof opts.lines === 'number' && !isNaN(opts.lines)
+      ? opts.lines
+      : parseInt(opts.lines, 10) || 0;
   const task = typeof opts.task === 'string' ? opts.task : '';
   const diff = typeof opts.diff === 'string' ? opts.diff : '';
   const layaTier = opts.layaTier;
@@ -283,7 +289,10 @@ function resolveMonotonicImpactTier(options = {}) {
   const secretOrExecPatterns =
     /(?:-----BEGIN [A-Z ]+KEY-----|eyJ[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+|(?:api[_-]?key|secret|password|bearer|auth[_-]?token)\s*[:=]\s*['"][^'"]{6,}['"])/i;
 
-  const diffHasCode = /^\+[ \t]*(?:const|let|var|function|def|import|require|class|export|db\.|SELECT|UPDATE|DELETE|INSERT|jwt\.|auth\.)/mi.test(diff);
+  const diffHasCode =
+    /^\+[ \t]*(?:const|let|var|function|def|import|require|class|export|db\.|SELECT|UPDATE|DELETE|INSERT|jwt\.|auth\.)/im.test(
+      diff,
+    );
   const diffMatchesHighRiskCode = diffHasCode && HIGH_RISK_PATTERNS.test(diff);
 
   const diffHasHighRisk =

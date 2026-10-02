@@ -20,7 +20,18 @@
 
 const fs = require('fs');
 const path = require('path');
-const { GREEN, YELLOW, CYAN, RED, BOLD, RESET, BOX, banner, timer, formatMs } = require('./_colors');
+const {
+  GREEN,
+  YELLOW,
+  CYAN,
+  RED,
+  BOLD,
+  RESET,
+  BOX,
+  banner,
+  timer,
+  formatMs,
+} = require('./_colors');
 
 class BlastRadiusEngine {
   constructor(model) {
@@ -59,7 +70,7 @@ class BlastRadiusEngine {
     // Path or partial match
     for (const [id, e] of this.entityMap.entries()) {
       if (e.name === clean || e.scope === clean) return e;
-      if (e.sources && e.sources.some((s) => s.file === clean || s.file.endsWith(clean))) return e;
+      if (e.sources && e.sources.some(s => s.file === clean || s.file.endsWith(clean))) return e;
       if (id.toLowerCase().includes(clean.toLowerCase())) return e;
     }
     return null;
@@ -111,15 +122,21 @@ class BlastRadiusEngine {
 
     // Collect all affected entities (excluding root)
     const affectedEntities = Array.from(visited)
-      .filter((id) => id !== rootEntity.id)
-      .map((id) => this.entityMap.get(id))
+      .filter(id => id !== rootEntity.id)
+      .map(id => this.entityMap.get(id))
       .filter(Boolean);
 
     // Categorize Impact
-    const affectedEndpoints = affectedEntities.filter((e) => e.kind === 'endpoint');
-    const affectedDatastores = affectedEntities.filter((e) => e.kind === 'datastore' || e.kind === 'cache');
-    const affectedQueues = affectedEntities.filter((e) => e.kind === 'queue' || e.kind === 'event_bus');
-    const affectedTests = affectedEntities.filter((e) => e.kind === 'test_suite' || e.scope?.includes('test'));
+    const affectedEndpoints = affectedEntities.filter(e => e.kind === 'endpoint');
+    const affectedDatastores = affectedEntities.filter(
+      e => e.kind === 'datastore' || e.kind === 'cache',
+    );
+    const affectedQueues = affectedEntities.filter(
+      e => e.kind === 'queue' || e.kind === 'event_bus',
+    );
+    const affectedTests = affectedEntities.filter(
+      e => e.kind === 'test_suite' || e.scope?.includes('test'),
+    );
 
     // Check Trust Zone Crossings
     const rootZone = rootEntity.trustZone || 'unknown';
@@ -135,7 +152,8 @@ class BlastRadiusEngine {
     const totalEntities = this.entityMap.size || 1;
     const impactRatio = affectedEntities.length / totalEntities;
     const directCoupling = directDependents.size;
-    const securityPenalty = crossedZones.has('public_untrusted') || crossedZones.has('dmz_gateway') ? 0.3 : 0.1;
+    const securityPenalty =
+      crossedZones.has('public_untrusted') || crossedZones.has('dmz_gateway') ? 0.3 : 0.1;
 
     let riskScore = Math.min(1.0, impactRatio * 2.5 + directCoupling * 0.05 + securityPenalty);
     riskScore = Math.round(riskScore * 100) / 100;
@@ -162,10 +180,10 @@ class BlastRadiusEngine {
         riskTier,
       },
       impactBreakdown: {
-        endpoints: affectedEndpoints.map((e) => ({ id: e.id, name: e.name, scope: e.scope })),
-        datastores: affectedDatastores.map((e) => ({ id: e.id, name: e.name })),
-        queues: affectedQueues.map((e) => ({ id: e.id, name: e.name })),
-        testSuites: affectedTests.map((e) => ({ id: e.id, name: e.name, scope: e.scope })),
+        endpoints: affectedEndpoints.map(e => ({ id: e.id, name: e.name, scope: e.scope })),
+        datastores: affectedDatastores.map(e => ({ id: e.id, name: e.name })),
+        queues: affectedQueues.map(e => ({ id: e.id, name: e.name })),
+        testSuites: affectedTests.map(e => ({ id: e.id, name: e.name, scope: e.scope })),
         securityZonesCrossed: Array.from(crossedZones),
       },
       transitiveRings,
@@ -182,12 +200,16 @@ if (require.main === module) {
   const query = process.argv[2];
   if (!query) {
     console.log(banner('Tribunal Architectural Blast Radius Engine'));
-    console.error(`  ${YELLOW}Usage:${RESET} node blast_radius_engine.js <component-id-or-filepath>\n`);
+    console.error(
+      `  ${YELLOW}Usage:${RESET} node blast_radius_engine.js <component-id-or-filepath>\n`,
+    );
     process.exit(1);
   }
 
   if (!fs.existsSync(modelFile)) {
-    console.error(`  ${RED}✖ architecture-model.json not found.${RESET} Run architecture_extractor.js first.`);
+    console.error(
+      `  ${RED}✖ architecture-model.json not found.${RESET} Run architecture_extractor.js first.`,
+    );
     process.exit(1);
   }
 
@@ -210,23 +232,41 @@ if (require.main === module) {
   };
   const color = tierColors[result.metrics.riskTier] || GREEN;
 
-  console.log(`  Target:                 ${BOLD}${result.target.name}${RESET} (${result.target.id})`);
-  console.log(`  Kind:                   ${CYAN}${result.target.kind}${RESET} | Trust Zone: ${YELLOW}${result.target.trustZone}${RESET}`);
-  console.log(`  Blast Radius Risk:      ${color}${BOLD}${result.metrics.riskTier} (${result.metrics.riskScore})${RESET}`);
+  console.log(
+    `  Target:                 ${BOLD}${result.target.name}${RESET} (${result.target.id})`,
+  );
+  console.log(
+    `  Kind:                   ${CYAN}${result.target.kind}${RESET} | Trust Zone: ${YELLOW}${result.target.trustZone}${RESET}`,
+  );
+  console.log(
+    `  Blast Radius Risk:      ${color}${BOLD}${result.metrics.riskTier} (${result.metrics.riskScore})${RESET}`,
+  );
   console.log(`  Direct Callers:         ${BOLD}${result.metrics.directDependentsCount}${RESET}`);
-  console.log(`  Transitive Dependents:  ${BOLD}${result.metrics.transitiveDependentsCount}${RESET} across ${result.metrics.maxDepthReached} depth rings`);
-  console.log(`  Impacted Endpoints:     ${result.impactBreakdown.endpoints.length > 0 ? YELLOW : GREEN}${result.impactBreakdown.endpoints.length}${RESET}`);
-  console.log(`  Impacted Test Suites:   ${CYAN}${result.impactBreakdown.testSuites.length}${RESET}`);
-  console.log(`  Zones Crossed:          ${result.impactBreakdown.securityZonesCrossed.join(', ') || 'None'}`);
+  console.log(
+    `  Transitive Dependents:  ${BOLD}${result.metrics.transitiveDependentsCount}${RESET} across ${result.metrics.maxDepthReached} depth rings`,
+  );
+  console.log(
+    `  Impacted Endpoints:     ${result.impactBreakdown.endpoints.length > 0 ? YELLOW : GREEN}${result.impactBreakdown.endpoints.length}${RESET}`,
+  );
+  console.log(
+    `  Impacted Test Suites:   ${CYAN}${result.impactBreakdown.testSuites.length}${RESET}`,
+  );
+  console.log(
+    `  Zones Crossed:          ${result.impactBreakdown.securityZonesCrossed.join(', ') || 'None'}`,
+  );
 
   if (result.transitiveRings.length > 0) {
     console.log(`\n  ${BOLD}Concentric Blast Rings:${RESET}`);
     for (const ring of result.transitiveRings) {
-      console.log(`    Ring ${ring.depth} (depth ${ring.depth}): ${BOLD}${ring.count}${RESET} downstream components`);
+      console.log(
+        `    Ring ${ring.depth} (depth ${ring.depth}): ${BOLD}${ring.count}${RESET} downstream components`,
+      );
     }
   }
 
-  console.log(`\n  ${GREEN}${BOX.check} Blast Radius Analysis Complete${RESET} in ${formatMs(t())}\n`);
+  console.log(
+    `\n  ${GREEN}${BOX.check} Blast Radius Analysis Complete${RESET} in ${formatMs(t())}\n`,
+  );
 }
 
 module.exports = {

@@ -64,24 +64,63 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
     fs.mkdirSync(path.join(tmpRepo, 'test'), { recursive: true });
 
     // Populate mock files
-    fs.writeFileSync(path.join(tmpRepo, 'SECURITY.md'), '# Security Policy\nContact: sec@org.com\n');
-    fs.writeFileSync(path.join(tmpRepo, 'package.json'), '{\n  "name": "fixture-app",\n  "version": "1.0.0"\n}\n');
-    fs.writeFileSync(path.join(tmpRepo, 'jest.config.js'), 'module.exports = { testTimeout: 5000 };\n');
+    fs.writeFileSync(
+      path.join(tmpRepo, 'SECURITY.md'),
+      '# Security Policy\nContact: sec@org.com\n',
+    );
+    fs.writeFileSync(
+      path.join(tmpRepo, 'package.json'),
+      '{\n  "name": "fixture-app",\n  "version": "1.0.0"\n}\n',
+    );
+    fs.writeFileSync(
+      path.join(tmpRepo, 'jest.config.js'),
+      'module.exports = { testTimeout: 5000 };\n',
+    );
     fs.writeFileSync(path.join(tmpRepo, 'README.md'), '# Fixture App\nOverview of application.\n');
     fs.writeFileSync(path.join(tmpRepo, 'src', 'styles', 'theme.css'), 'button { color: #000; }\n');
-    fs.writeFileSync(path.join(tmpRepo, 'src', 'components', 'SubmitButton.jsx'), 'export const Btn = () => <button>Submit</button>;\n');
-    fs.writeFileSync(path.join(tmpRepo, 'src', 'api', 'products.js'), 'module.exports = { getProducts: () => [] };\n');
-    fs.writeFileSync(path.join(tmpRepo, 'src', 'validators', 'user_age.js'), 'module.exports = { isAgeValid: () => true };\n');
-    fs.writeFileSync(path.join(tmpRepo, 'src', 'schemas', 'user.js'), 'module.exports = { schema: {} };\n');
-    fs.writeFileSync(path.join(tmpRepo, 'src', 'auth', 'jwt.js'), 'module.exports = { signToken: () => "t" };\n');
-    fs.writeFileSync(path.join(tmpRepo, 'src', 'middleware', 'rbac.js'), 'module.exports = { checkRole: () => true };\n');
+    fs.writeFileSync(
+      path.join(tmpRepo, 'src', 'components', 'SubmitButton.jsx'),
+      'export const Btn = () => <button>Submit</button>;\n',
+    );
+    fs.writeFileSync(
+      path.join(tmpRepo, 'src', 'api', 'products.js'),
+      'module.exports = { getProducts: () => [] };\n',
+    );
+    fs.writeFileSync(
+      path.join(tmpRepo, 'src', 'validators', 'user_age.js'),
+      'module.exports = { isAgeValid: () => true };\n',
+    );
+    fs.writeFileSync(
+      path.join(tmpRepo, 'src', 'schemas', 'user.js'),
+      'module.exports = { schema: {} };\n',
+    );
+    fs.writeFileSync(
+      path.join(tmpRepo, 'src', 'auth', 'jwt.js'),
+      'module.exports = { signToken: () => "t" };\n',
+    );
+    fs.writeFileSync(
+      path.join(tmpRepo, 'src', 'middleware', 'rbac.js'),
+      'module.exports = { checkRole: () => true };\n',
+    );
     fs.writeFileSync(path.join(tmpRepo, 'prisma', 'schema.prisma'), 'model User { id Int @id }\n');
     fs.writeFileSync(path.join(tmpRepo, 'src', 'db', 'billing.sql'), 'SELECT * FROM billing;\n');
-    fs.writeFileSync(path.join(tmpRepo, 'src', 'vault', 'secrets.js'), 'module.exports = { getSecret: () => "s" };\n');
-    fs.writeFileSync(path.join(tmpRepo, '.github', 'workflows', 'deploy.yml'), 'name: Deploy\non: push\n');
-    fs.writeFileSync(path.join(tmpRepo, 'src', 'security', 'crypto_policy.js'), 'module.exports = { algo: "aes" };\n');
+    fs.writeFileSync(
+      path.join(tmpRepo, 'src', 'vault', 'secrets.js'),
+      'module.exports = { getSecret: () => "s" };\n',
+    );
+    fs.writeFileSync(
+      path.join(tmpRepo, '.github', 'workflows', 'deploy.yml'),
+      'name: Deploy\non: push\n',
+    );
+    fs.writeFileSync(
+      path.join(tmpRepo, 'src', 'security', 'crypto_policy.js'),
+      'module.exports = { algo: "aes" };\n',
+    );
     fs.writeFileSync(path.join(tmpRepo, 'docs', 'readme.md'), '# Documentation\nDetails.\n');
-    fs.writeFileSync(path.join(tmpRepo, 'src', 'auth', 'token_verifier.js'), 'module.exports = { verify: () => true };\n');
+    fs.writeFileSync(
+      path.join(tmpRepo, 'src', 'auth', 'token_verifier.js'),
+      'module.exports = { verify: () => true };\n',
+    );
   });
 
   afterAll(() => {
@@ -107,12 +146,7 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
     const rankResult = rankContext({
       repoRoot: tmpRepo,
       targetFiles: fixture.files,
-      candidateFiles: [
-        'SECURITY.md',
-        'package.json',
-        ...fixture.files,
-        'docs/readme.md',
-      ],
+      candidateFiles: ['SECURITY.md', 'package.json', ...fixture.files, 'docs/readme.md'],
       maxItems: 4,
     });
 
@@ -154,8 +188,12 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
       impactTier,
       selectedContext,
       mandatoryContext,
-      deterministicChecks: fixture.deterministicChecks ? fixture.deterministicChecks.map(c => `${c.check}:${c.result}`) : [],
-      llmClaims: fixture.reviewerClaims ? fixture.reviewerClaims.map(c => `${c.reviewer}:${c.assertion.slice(0, 35)}...`) : [],
+      deterministicChecks: fixture.deterministicChecks
+        ? fixture.deterministicChecks.map(c => `${c.check}:${c.result}`)
+        : [],
+      llmClaims: fixture.reviewerClaims
+        ? fixture.reviewerClaims.map(c => `${c.reviewer}:${c.assertion.slice(0, 35)}...`)
+        : [],
       conflicts: synthesis.conflicts.map(cf => cf.type),
       finalDisposition,
       evolutionObservation,
@@ -178,10 +216,17 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: '+ Fix typo in section 2\n- Fix typpo in section 2',
         layaTier: 0,
         deterministicChecks: [
-          createImplementationCheck({ check: 'lint', command: 'node lint_runner.js', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'lint',
+            command: 'node lint_runner.js',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'documentation-writer', assertion: 'Markdown grammar corrected' }),
+          createEvidenceClaim({
+            reviewer: 'documentation-writer',
+            assertion: 'Markdown grammar corrected',
+          }),
         ],
       });
 
@@ -201,10 +246,17 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: '+ button:hover { background-color: #3b82f6; }\n- button:hover { background-color: #1d4ed8; }',
         layaTier: 0,
         deterministicChecks: [
-          createImplementationCheck({ check: 'lint', command: 'node lint_runner.js', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'lint',
+            command: 'node lint_runner.js',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'ui-ux-auditor', assertion: 'Hover color meets contrast guidelines' }),
+          createEvidenceClaim({
+            reviewer: 'ui-ux-auditor',
+            assertion: 'Hover color meets contrast guidelines',
+          }),
         ],
       });
 
@@ -223,11 +275,22 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: '+ <button>Submit Order</button>\n- <button>Submit</button>',
         layaTier: 1,
         deterministicChecks: [
-          createImplementationCheck({ check: 'lint', command: 'node lint_runner.js', result: 'PASSED' }),
-          createImplementationCheck({ check: 'test', command: 'node test_runner.js', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'lint',
+            command: 'node lint_runner.js',
+            result: 'PASSED',
+          }),
+          createImplementationCheck({
+            check: 'test',
+            command: 'node test_runner.js',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'frontend-specialist', assertion: 'Label updated cleanly without style breaks' }),
+          createEvidenceClaim({
+            reviewer: 'frontend-specialist',
+            assertion: 'Label updated cleanly without style breaks',
+          }),
         ],
       });
 
@@ -249,10 +312,17 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: '+ const { limit = 20, cursor } = req.query;\n+ const items = fetchPage(cursor, limit);',
         layaTier: 2,
         deterministicChecks: [
-          createImplementationCheck({ check: 'api_tests', command: 'npm test api', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'api_tests',
+            command: 'npm test api',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'api-architect', assertion: 'Pagination params comply with REST guidelines' }),
+          createEvidenceClaim({
+            reviewer: 'api-architect',
+            assertion: 'Pagination params comply with REST guidelines',
+          }),
         ],
       });
 
@@ -271,10 +341,17 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: '+ const isAgeValid = (age) => age >= 0 && age <= 120;',
         layaTier: 2,
         deterministicChecks: [
-          createImplementationCheck({ check: 'validation_tests', command: 'npm test validate', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'validation_tests',
+            command: 'npm test validate',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'backend-specialist', assertion: 'Age bounds correctly restricted' }),
+          createEvidenceClaim({
+            reviewer: 'backend-specialist',
+            assertion: 'Age bounds correctly restricted',
+          }),
         ],
       });
 
@@ -293,10 +370,17 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: '+ module.exports = { testTimeout: 10000 };',
         layaTier: 2,
         deterministicChecks: [
-          createImplementationCheck({ check: 'lint', command: 'node lint_runner.js', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'lint',
+            command: 'node lint_runner.js',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'devops-engineer', assertion: 'Jest timeout adjusted safely' }),
+          createEvidenceClaim({
+            reviewer: 'devops-engineer',
+            assertion: 'Jest timeout adjusted safely',
+          }),
         ],
       });
 
@@ -315,10 +399,17 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: '+   "date-fns": "^2.30.0"\n-   "date-fns": "^2.29.0"',
         layaTier: 2,
         deterministicChecks: [
-          createImplementationCheck({ check: 'dependency_audit', command: 'node dependency_analyzer.js', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'dependency_audit',
+            command: 'node dependency_analyzer.js',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'dependency-reviewer', assertion: 'No CVEs detected in date-fns 2.30.0' }),
+          createEvidenceClaim({
+            reviewer: 'dependency-reviewer',
+            assertion: 'No CVEs detected in date-fns 2.30.0',
+          }),
         ],
       });
 
@@ -340,11 +431,22 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: "+ const token = jwt.sign({ id: user.id }, secret, { expiresIn: '1h' });",
         layaTier: 3,
         deterministicChecks: [
-          createImplementationCheck({ check: 'security_scan', command: 'node security_scan.js', result: 'PASSED' }),
-          createImplementationCheck({ check: 'auth_tests', command: 'npm test auth', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'security_scan',
+            command: 'node security_scan.js',
+            result: 'PASSED',
+          }),
+          createImplementationCheck({
+            check: 'auth_tests',
+            command: 'npm test auth',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'security-auditor', assertion: 'JWT expiration correctly enforced' }),
+          createEvidenceClaim({
+            reviewer: 'security-auditor',
+            assertion: 'JWT expiration correctly enforced',
+          }),
         ],
       });
 
@@ -363,10 +465,17 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: "+ if (!req.user.roles.includes('ADMIN')) throw new UnauthorizedError();",
         layaTier: 3,
         deterministicChecks: [
-          createImplementationCheck({ check: 'rbac_tests', command: 'npm test rbac', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'rbac_tests',
+            command: 'npm test rbac',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'security-auditor', assertion: 'RBAC boundary verified' }),
+          createEvidenceClaim({
+            reviewer: 'security-auditor',
+            assertion: 'RBAC boundary verified',
+          }),
         ],
       });
 
@@ -385,10 +494,17 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: '+   user User @relation(fields: [userId], references: [id])',
         layaTier: 3,
         deterministicChecks: [
-          createImplementationCheck({ check: 'schema_validator', command: 'node schema_validator.js', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'schema_validator',
+            command: 'node schema_validator.js',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'database-architect', assertion: 'Schema relationship valid and indexable' }),
+          createEvidenceClaim({
+            reviewer: 'database-architect',
+            assertion: 'Schema relationship valid and indexable',
+          }),
         ],
       });
 
@@ -407,10 +523,17 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: '+ SELECT u.id, SUM(b.amount) FROM users u JOIN billing b ON u.id = b.user_id GROUP BY u.id;',
         layaTier: 3,
         deterministicChecks: [
-          createImplementationCheck({ check: 'sql_security_scan', command: 'node security_scan.js', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'sql_security_scan',
+            command: 'node security_scan.js',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'sql-pro', assertion: 'Query syntax and joins validated' }),
+          createEvidenceClaim({
+            reviewer: 'sql-pro',
+            assertion: 'Query syntax and joins validated',
+          }),
         ],
       });
 
@@ -429,10 +552,17 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: '+ const masterKey = await kms.decrypt({ CiphertextBlob: encryptedSecret });',
         layaTier: 3,
         deterministicChecks: [
-          createImplementationCheck({ check: 'vault_tests', command: 'npm test vault', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'vault_tests',
+            command: 'npm test vault',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'security-auditor', assertion: 'KMS decrypt follows zero-trust pattern' }),
+          createEvidenceClaim({
+            reviewer: 'security-auditor',
+            assertion: 'KMS decrypt follows zero-trust pattern',
+          }),
         ],
       });
 
@@ -451,10 +581,17 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: '+   - name: Docker Build\n+     run: docker build -t app:v2 .',
         layaTier: 3,
         deterministicChecks: [
-          createImplementationCheck({ check: 'cicd_validator', command: 'node cicd_validator.js', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'cicd_validator',
+            command: 'node cicd_validator.js',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'devops-engineer', assertion: 'CI build step conforms to syntax standard' }),
+          createEvidenceClaim({
+            reviewer: 'devops-engineer',
+            assertion: 'CI build step conforms to syntax standard',
+          }),
         ],
       });
 
@@ -473,10 +610,17 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
         diff: "+ const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);",
         layaTier: 3,
         deterministicChecks: [
-          createImplementationCheck({ check: 'crypto_tests', command: 'npm test crypto', result: 'PASSED' }),
+          createImplementationCheck({
+            check: 'crypto_tests',
+            command: 'npm test crypto',
+            result: 'PASSED',
+          }),
         ],
         reviewerClaims: [
-          createEvidenceClaim({ reviewer: 'security-auditor', assertion: 'AES-256-GCM authenticated cipher verified' }),
+          createEvidenceClaim({
+            reviewer: 'security-auditor',
+            assertion: 'AES-256-GCM authenticated cipher verified',
+          }),
         ],
       });
 
@@ -615,9 +759,21 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
 
     test('Invariant 3 — Claims Cannot Become Facts: Unverified LLM claims cannot self-upgrade to VERIFIED', () => {
       const glowingClaims = [
-        createEvidenceClaim({ reviewer: 'reviewer-1', assertion: 'Code is 100% bug-free and tested', confidence: 0.999 }),
-        createEvidenceClaim({ reviewer: 'reviewer-2', assertion: 'Security approved with zero issues', confidence: 0.999 }),
-        createEvidenceClaim({ reviewer: 'reviewer-3', assertion: 'Performance is optimal', confidence: 0.999 }),
+        createEvidenceClaim({
+          reviewer: 'reviewer-1',
+          assertion: 'Code is 100% bug-free and tested',
+          confidence: 0.999,
+        }),
+        createEvidenceClaim({
+          reviewer: 'reviewer-2',
+          assertion: 'Security approved with zero issues',
+          confidence: 0.999,
+        }),
+        createEvidenceClaim({
+          reviewer: 'reviewer-3',
+          assertion: 'Performance is optimal',
+          confidence: 0.999,
+        }),
       ];
 
       // Synthesis with zero deterministic checks
@@ -711,8 +867,19 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
           candidateFiles: candidates,
         });
         const synthesis = synthesizeReviewResults({
-          checks: [createImplementationCheck({ check: 'api_tests', command: 'npm test api', result: 'PASSED' })],
-          claims: [createEvidenceClaim({ reviewer: 'api-architect', assertion: 'Valid pagination design' })],
+          checks: [
+            createImplementationCheck({
+              check: 'api_tests',
+              command: 'npm test api',
+              result: 'PASSED',
+            }),
+          ],
+          claims: [
+            createEvidenceClaim({
+              reviewer: 'api-architect',
+              assertion: 'Valid pagination design',
+            }),
+          ],
         });
         return {
           tier,
@@ -761,4 +928,3 @@ describe('System-1 Phase 6: 15-Fixture End-to-End Integration Matrix', () => {
     });
   });
 });
-

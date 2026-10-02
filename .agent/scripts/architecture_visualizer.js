@@ -835,7 +835,8 @@ class ArchitectureVisualizer {
   }
 
   saveHtml(outputPath) {
-    const dest = outputPath || path.join(process.cwd(), '.agent', 'history', 'architecture-intelligence.html');
+    const dest =
+      outputPath || path.join(process.cwd(), '.agent', 'history', 'architecture-intelligence.html');
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     const html = this.generateHtml();
     fs.writeFileSync(dest, html, 'utf8');
@@ -853,19 +854,25 @@ if (require.main === module) {
   console.log(banner('Tribunal Architecture Intelligence Visualizer'));
 
   if (!fs.existsSync(modelFile)) {
-    console.error(`  ${RED}✖ architecture-model.json not found.${RESET} Run architecture_extractor.js first.`);
+    console.error(
+      `  ${RED}✖ architecture-model.json not found.${RESET} Run architecture_extractor.js first.`,
+    );
     process.exit(1);
   }
 
   const model = JSON.parse(fs.readFileSync(modelFile, 'utf8'));
-  const verification = fs.existsSync(verifFile) ? JSON.parse(fs.readFileSync(verifFile, 'utf8')) : null;
+  const verification = fs.existsSync(verifFile)
+    ? JSON.parse(fs.readFileSync(verifFile, 'utf8'))
+    : null;
 
   const visualizer = new ArchitectureVisualizer(model, verification);
   const outPath = visualizer.saveHtml();
 
   console.log(`  ${GREEN}${BOX.check} Interactive Architecture Explorer Generated!${RESET}`);
   console.log(`  ${DIM}File:${RESET} ${CYAN}${outPath}${RESET} (${formatMs(t())})`);
-  console.log(`  ${DIM}Projections Enabled:${RESET} Topology, Security Zones, Failure Modes, Blast Simulator\n`);
+  console.log(
+    `  ${DIM}Projections Enabled:${RESET} Topology, Security Zones, Failure Modes, Blast Simulator\n`,
+  );
 }
 
 module.exports = {

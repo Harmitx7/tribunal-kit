@@ -139,7 +139,7 @@ async function launchBrowser(options = {}) {
 
   const close = async () => {
     activeInstances.delete(proc);
-    proc.kill();
+    terminateProcessTree(proc);
     try {
       fs.rmSync(tempProfileDir, { recursive: true, force: true });
     } catch {
@@ -154,7 +154,47 @@ async function launchBrowser(options = {}) {
   };
 }
 
+/**
+ * Cleanly terminates a process and its child process tree cross-platform.
+ * Handles null, dead, or invalid processes gracefully without throwing.
+ * @param {any} proc - ChildProcess instance or object with pid
+ */
+function terminateProcessTree(proc) {
+  if (!proc || typeof proc !== 'object' || !proc.pid) return;
+  const pid = proc.pid;
+  try {
+    if (process.platform === 'win32') {
+      try {
+        const { execSync } = require('child_process');
+        execSync(`taskkill /pid ${pid} /T /F`, { stdio: 'ignore' });
+      } catch (_) {}
+      try {
+        if (typeof proc.kill === 'function') {
+          proc.kill('SIGKILL');
+        } else {
+          process.kill(pid, 'SIGKILL');
+        }
+      } catch (_) {}
+    } else {
+      try {
+        process.kill(-pid, 'SIGKILL');
+      } catch (_) {
+        try {
+          if (typeof proc.kill === 'function') {
+            proc.kill('SIGKILL');
+          } else {
+            process.kill(pid, 'SIGKILL');
+          }
+        } catch (_) {}
+      }
+    }
+  } catch (_) {
+    // Graceful error handling for missing, invalid, or already-dead process
+  }
+}
+
 module.exports = {
   launchBrowser,
   cleanupAll,
+  terminateProcessTree,
 };

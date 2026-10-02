@@ -73,11 +73,7 @@ function crawlAgents(agentDir) {
   const specialists = [];
   const allAgents = [];
 
-  const nonReviewers = new Set([
-    'penetration-tester',
-    'agent-shield-auditor',
-    'anti-slop-auditor',
-  ]);
+  const nonReviewers = new Set(['penetration-tester', 'agent-shield-auditor', 'anti-slop-auditor']);
 
   for (const file of files) {
     const name = file.replace(/\.md$/, '');

@@ -43,10 +43,7 @@ describe('Capability 2: Deterministic Context Ranking Engine', () => {
     );
 
     // Unrelated test
-    fs.writeFileSync(
-      path.join(tmpRepo, 'test', 'unrelated.test.js'),
-      `test('other', () => {});`,
-    );
+    fs.writeFileSync(path.join(tmpRepo, 'test', 'unrelated.test.js'), `test('other', () => {});`);
 
     // Critical security boundary (not directly modified)
     fs.writeFileSync(
@@ -89,11 +86,7 @@ describe('Capability 2: Deterministic Context Ranking Engine', () => {
     const result = rankContext({
       repoRoot: tmpRepo,
       targetFiles: ['src/auth/session.js'],
-      candidateFiles: [
-        'src/auth/session.js',
-        'src/utils/formatter.js',
-        'docs/readme.md',
-      ],
+      candidateFiles: ['src/auth/session.js', 'src/utils/formatter.js', 'docs/readme.md'],
     });
 
     const sessionItem = result.ranked_items.find(i => i.path === 'src/auth/session.js');
@@ -110,10 +103,7 @@ describe('Capability 2: Deterministic Context Ranking Engine', () => {
     const result = rankContext({
       repoRoot: tmpRepo,
       targetFiles: ['src/auth/session.js'],
-      candidateFiles: [
-        'src/utils/crypto.js',
-        'src/utils/formatter.js',
-      ],
+      candidateFiles: ['src/utils/crypto.js', 'src/utils/formatter.js'],
     });
 
     const cryptoItem = result.ranked_items.find(i => i.path === 'src/utils/crypto.js');
@@ -127,10 +117,7 @@ describe('Capability 2: Deterministic Context Ranking Engine', () => {
     const result = rankContext({
       repoRoot: tmpRepo,
       targetFiles: ['src/auth/session.js'],
-      candidateFiles: [
-        'src/auth/login.js',
-        'src/utils/formatter.js',
-      ],
+      candidateFiles: ['src/auth/login.js', 'src/utils/formatter.js'],
     });
 
     const loginItem = result.ranked_items.find(i => i.path === 'src/auth/login.js');
@@ -144,11 +131,7 @@ describe('Capability 2: Deterministic Context Ranking Engine', () => {
     const result = rankContext({
       repoRoot: tmpRepo,
       targetFiles: ['src/utils/formatter.js'],
-      candidateFiles: [
-        'src/utils/formatter.js',
-        'SECURITY.md',
-        'docs/readme.md',
-      ],
+      candidateFiles: ['src/utils/formatter.js', 'SECURITY.md', 'docs/readme.md'],
     });
 
     const secItem = result.ranked_items.find(i => i.path === 'SECURITY.md');
@@ -161,10 +144,7 @@ describe('Capability 2: Deterministic Context Ranking Engine', () => {
     const result = rankContext({
       repoRoot: tmpRepo,
       targetFiles: ['src/auth/session.js'],
-      candidateFiles: [
-        'test/session.test.js',
-        'test/unrelated.test.js',
-      ],
+      candidateFiles: ['test/session.test.js', 'test/unrelated.test.js'],
     });
 
     const sessionTest = result.ranked_items.find(i => i.path === 'test/session.test.js');
@@ -186,18 +166,22 @@ describe('Capability 2: Deterministic Context Ranking Engine', () => {
       'test/session.test.js',
     ];
 
-    const run1 = JSON.stringify(rankContext({
-      repoRoot: tmpRepo,
-      targetFiles: ['src/auth/session.js'],
-      candidateFiles: candidates,
-    }));
-
-    for (let i = 0; i < 10; i++) {
-      const runN = JSON.stringify(rankContext({
+    const run1 = JSON.stringify(
+      rankContext({
         repoRoot: tmpRepo,
         targetFiles: ['src/auth/session.js'],
         candidateFiles: candidates,
-      }));
+      }),
+    );
+
+    for (let i = 0; i < 10; i++) {
+      const runN = JSON.stringify(
+        rankContext({
+          repoRoot: tmpRepo,
+          targetFiles: ['src/auth/session.js'],
+          candidateFiles: candidates,
+        }),
+      );
       expect(runN).toBe(run1);
     }
   });
@@ -233,21 +217,16 @@ describe('Capability 2: Deterministic Context Ranking Engine', () => {
     // Metrics are populated with exact measurements
     expect(result.metrics.context_items_before).toBe(candidates.length);
     expect(result.metrics.context_items_after).toBe(result.ranked_items.length);
-    expect(result.metrics.estimated_tokens_before).toBeGreaterThan(result.metrics.estimated_tokens_after);
+    expect(result.metrics.estimated_tokens_before).toBeGreaterThan(
+      result.metrics.estimated_tokens_after,
+    );
     expect(result.metrics.critical_evidence_retained).toBe(2);
   });
 
   test('CLI integration via cmdContextRank produces valid payload', () => {
     const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
-    const processArgs = [
-      'node',
-      'tk',
-      'context-rank',
-      '--target',
-      'src/auth/session.js',
-      '--json',
-    ];
+    const processArgs = ['node', 'tk', 'context-rank', '--target', 'src/auth/session.js', '--json'];
 
     const result = cmdContextRank({ path: tmpRepo, json: true }, processArgs, true);
     expect(result).toBeDefined();

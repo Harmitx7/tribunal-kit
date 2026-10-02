@@ -15,7 +15,7 @@
   <!-- BADGES -->
   <div style="margin-bottom: 25px;">
     <a href="https://github.com/Harmitx7/tribunal-kit/releases">
-      <img src="https://img.shields.io/badge/Release-v9.2.6-blue?style=for-the-badge" alt="Release" />
+      <img src="https://img.shields.io/badge/Release-v9.2.7-blue?style=for-the-badge" alt="Release" />
     </a>
     <a href="https://www.npmjs.com/package/tribunal-kit">
       <img src="https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white&color=ff1637" alt="NPM Version" />
@@ -53,19 +53,19 @@ Tribunal Kit acts as a **neurosymbolic verification envelope**. It intercepts AI
 
 ---
 
-## ⚡ What's New in v9.2.6
+## ⚡ What's New in v9.2.7
 
+- **Skill Intelligence Engine (`tk skill-intel`):** Autonomous discovery, composition, and gating across 235+ engineering skills with concept extraction, DAG pipeline compilation, and 11-point creation gate.
+- **System-1 Expansion Core:** Added specialized processing modules including browser intelligence, deterministic decision & evidence engines, and adaptive evolution pipeline.
+- **Cross-Domain & Outcome Optimization:** Real-time second-order effect detection, emergent failure prediction, and non-downgrade monotonic security invariants.
 - **Backend Intelligence Trust Boundary:** Strict validation engine output isolation. LLMs can no longer self-authorize findings; evidence requires verifiable provenance hashes and terminal command records.
-- **Universal 18-Section Governance Standard:** All 235 modular skills upgraded to enforce Tri-State Evidence classification (`[OBSERVED]`, `[INFERRED]`, `[UNVERIFIED]`) and non-negotiable **Verification-Before-Completion (VBC)** gates.
-- **Anti-Slop Purpose-Gate:** Added the dedicated `anti-slop-auditor` (Wave 3) and `anti-slop-enforcement` skill to eradicate cliché AI design copy, gratuitous animations, and generic purple gradients.
-- **System-1 Concurrency & Isolation:** Atomic directory-based installation locks, isolated dependency packaging (~150MB overhead eliminated), and SHA-256 model verification for local ONNX inference.
-- **Zero-Trust Architecture Intelligence (`tk arch`):** Deterministic fact extraction (TAFE), blast-radius computation, circular dependency detection, and interactive HTML architecture projections.
+- **Universal 18-Section Governance Standard:** All 235 modular skills enforce Tri-State Evidence classification (`[OBSERVED]`, `[INFERRED]`, `[UNVERIFIED]`) and non-negotiable **Verification-Before-Completion (VBC)** gates.
 
 ---
 
 ## ⚡ Core Capabilities
 
-- **Parallel Review Pipeline:** 28 domain-specific reviewers analyze generated code simultaneously across 3 waves (Logic, Security, Domain) before writing to disk.
+- **Parallel Review Pipeline:** 31 domain-specific reviewers analyze generated code simultaneously across 3 waves (Logic, Security, Domain) before writing to disk.
 - **Compiled Rust Core:** Sub-10ms AST parsing, semantic graph extraction, and file synchronization using SHA-256 diffs.
 - **Phantom Package Guardrails:** Blocks "slopsquatting" and non-existent npm package imports during code generation.
 - **Cross-Session Memory:** "Supreme Court Case Law" (`tk case`) and key-value memory (`tk memory`) record past AI mistake precedents.
@@ -83,7 +83,7 @@ Tribunal Kit operates as a fast, intercepting middleware layer between the AI ge
 graph LR
     A[User Request] --> B[Context Broker]
     B --> C[Compiled Rust Core<br/>AST / Graph Extraction]
-    C --> D[28 Parallel Reviewers<br/>Waves 1, 2 & 3]
+    C --> D[31 Parallel Reviewers<br/>Waves 1, 2 & 3]
     D -->|Violation| E[Inner-Loop Auto-Correct]
     E -.-> B
     D -->|Passed| F[Human Gate]
@@ -131,22 +131,22 @@ npx tribunal-kit tk-adapt aider
 
 Tribunal Kit CLI operations are routed through the compiled Rust binary when supported, falling back to the JavaScript engine gracefully.
 
-| Command     | Arguments                   | Description                                                      |
-| :---------- | :-------------------------- | :--------------------------------------------------------------- |
-| `init`      | `[--force]`                 | Initializes the `.agent/` configuration payload.                 |
-| `sync`      | —                           | Syncs rules with IDEs (.cursorrules, .windsurfrules).            |
-| `status`    | —                           | Evaluates workspace rules and checks for violations.             |
-| `validate`  | `[--file <path>]`           | Validates `.agent/` payload structure with live reviewer swarm.  |
-| `guardrail` | `[--file <path>]`           | Scans changes for phantom packages and `// VERIFY` tags.         |
-| `arch`      | `map \| verify \| impact \| diff \| audit \| project` | Verifiable Architecture Intelligence & Blast Radius engine. |
-| `system1`   | `enable \| disable \| status` | Manages local ONNX neural tier assessment and model weights.     |
-| `sdd`       | `run \| status`             | Subagent-Driven Development execution with reviewer waves.       |
-| `minimal`   | `[--prompt <text>]`         | Analyzes change requests for minimal viable diffs (Decision 0-7).|
-| `contract`  | `init \| verify \| list`    | AI agent behavioral contract validation and trace replay.        |
-| `memory`    | `store \| recall \| gc`     | Manages persistent cross-session AI memory.                      |
-| `case`      | `add \| search <q>`         | Records or searches for AI mistake precedents.                   |
-| `tk-adapt`  | `[claude\|aider\|--global]` | Installs universal CLI agent adapters.                           |
-| `hook`      | —                           | Installs the automated Git pre-push governance hook.             |
+| Command     | Arguments                                             | Description                                                       |
+| :---------- | :---------------------------------------------------- | :---------------------------------------------------------------- |
+| `init`      | `[--force]`                                           | Initializes the `.agent/` configuration payload.                  |
+| `sync`      | —                                                     | Syncs rules with IDEs (.cursorrules, .windsurfrules).             |
+| `status`    | —                                                     | Evaluates workspace rules and checks for violations.              |
+| `validate`  | `[--file <path>]`                                     | Validates `.agent/` payload structure with live reviewer swarm.   |
+| `guardrail` | `[--file <path>]`                                     | Scans changes for phantom packages and `// VERIFY` tags.          |
+| `arch`      | `map \| verify \| impact \| diff \| audit \| project` | Verifiable Architecture Intelligence & Blast Radius engine.       |
+| `system1`   | `enable \| disable \| status`                         | Manages local ONNX neural tier assessment and model weights.      |
+| `sdd`       | `run \| status`                                       | Subagent-Driven Development execution with reviewer waves.        |
+| `minimal`   | `[--prompt <text>]`                                   | Analyzes change requests for minimal viable diffs (Decision 0-7). |
+| `contract`  | `init \| verify \| list`                              | AI agent behavioral contract validation and trace replay.         |
+| `memory`    | `store \| recall \| gc`                               | Manages persistent cross-session AI memory.                       |
+| `case`      | `add \| search <q>`                                   | Records or searches for AI mistake precedents.                    |
+| `tk-adapt`  | `[claude\|aider\|--global]`                           | Installs universal CLI agent adapters.                            |
+| `hook`      | —                                                     | Installs the automated Git pre-push governance hook.              |
 
 _(For workflow execution, Tribunal Kit monitors for slash commands like `/orchestrate`, `/audit`, `/sdd`, or `/deploy` inside your AI context)._
 

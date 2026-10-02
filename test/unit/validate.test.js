@@ -8,7 +8,7 @@ describe('cmdValidate command', () => {
   let exitMock;
 
   beforeEach(() => {
-    exitMock = jest.spyOn(process, 'exit').mockImplementation((code) => {
+    exitMock = jest.spyOn(process, 'exit').mockImplementation(code => {
       throw new Error(`process.exit: ${code}`);
     });
   });

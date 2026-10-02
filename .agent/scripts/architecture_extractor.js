@@ -96,7 +96,8 @@ const ROUTE_DETECTORS = [
 
 const DATASTORE_DETECTORS = [
   {
-    regex: /prisma\.(\w+)\.(findMany|findUnique|findFirst|create|update|delete|upsert|aggregate|groupBy|count)\s*\(/g,
+    regex:
+      /prisma\.(\w+)\.(findMany|findUnique|findFirst|create|update|delete|upsert|aggregate|groupBy|count)\s*\(/g,
     engine: 'postgres_prisma',
     kind: 'datastore',
   },
@@ -106,7 +107,8 @@ const DATASTORE_DETECTORS = [
     kind: 'datastore',
   },
   {
-    regex: /\.(query|execute|raw|sql)\s*\(\s*['"`]?\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|TRUNCATE)/gi,
+    regex:
+      /\.(query|execute|raw|sql)\s*\(\s*['"`]?\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|TRUNCATE)/gi,
     engine: 'raw_sql',
     kind: 'datastore',
   },
@@ -116,7 +118,8 @@ const DATASTORE_DETECTORS = [
     kind: 'cache',
   },
   {
-    regex: /(?:redis|client|redisClient|kv)\.(?:get|set|del|hget|hset|expire|incr|lpush|rpush|publish|subscribe)\s*\(|\.(?:hget|hset|expire|incr|lpush|rpush)\s*\(/g,
+    regex:
+      /(?:redis|client|redisClient|kv)\.(?:get|set|del|hget|hset|expire|incr|lpush|rpush|publish|subscribe)\s*\(|\.(?:hget|hset|expire|incr|lpush|rpush)\s*\(/g,
     engine: 'redis_ops',
     kind: 'cache',
   },
@@ -191,7 +194,8 @@ const AUTH_DETECTORS = [
   },
 ];
 
-const IMPORT_DETECTOR = /(?:import\s+(?:[\w*\s{},]+)\s+from\s+['"`]([^'"`]+)['"`]|require\s*\(\s*['"`]([^'"`]+)['"`]\))/g;
+const IMPORT_DETECTOR =
+  /(?:import\s+(?:[\w*\s{},]+)\s+from\s+['"`]([^'"`]+)['"`]|require\s*\(\s*['"`]([^'"`]+)['"`]\))/g;
 
 // ── Architecture Extractor Class ──────────────────────────────────────────────
 class ArchitectureExtractor {
@@ -219,7 +223,10 @@ class ArchitectureExtractor {
   registerRelation(relation) {
     const key = `${relation.sourceId}->${relation.targetId}:${relation.relationType}`;
     if (!this.relations.has(key)) {
-      this.relations.set(key, { id: `rel.${crypto.createHash('md5').update(key).digest('hex').slice(0, 10)}`, ...relation });
+      this.relations.set(key, {
+        id: `rel.${crypto.createHash('md5').update(key).digest('hex').slice(0, 10)}`,
+        ...relation,
+      });
     } else {
       const existing = this.relations.get(key);
       if (relation.evidence) {
@@ -251,16 +258,29 @@ class ArchitectureExtractor {
       // Register Module Entity
       const entityId = `mod.${file.relPath.replace(/[^a-zA-Z0-9_.-]/g, '_')}`;
       const isTest = file.relPath.includes('test') || file.relPath.includes('spec');
-      const isRoute = file.relPath.includes('route') || file.relPath.includes('api') || file.relPath.includes('controllers');
-      const isSkill = file.relPath.startsWith('skills/') || file.relPath.startsWith('.agents/skills/');
+      const isRoute =
+        file.relPath.includes('route') ||
+        file.relPath.includes('api') ||
+        file.relPath.includes('controllers');
+      const isSkill =
+        file.relPath.startsWith('skills/') || file.relPath.startsWith('.agents/skills/');
 
       this.registerEntity({
         id: entityId,
         kind: isRoute ? 'endpoint' : isTest ? 'test_suite' : 'module',
         name: path.basename(file.relPath),
         scope: path.dirname(file.relPath),
-        role: isSkill ? 'Skill Template / Resource' : isRoute ? 'API Route Handler' : isTest ? 'Test Suite' : 'Internal Component',
-        tags: [isTest ? 'test' : isSkill ? 'skill' : 'core', path.extname(file.relPath).replace('.', '')],
+        role: isSkill
+          ? 'Skill Template / Resource'
+          : isRoute
+            ? 'API Route Handler'
+            : isTest
+              ? 'Test Suite'
+              : 'Internal Component',
+        tags: [
+          isTest ? 'test' : isSkill ? 'skill' : 'core',
+          path.extname(file.relPath).replace('.', ''),
+        ],
         trustZone: isRoute ? 'dmz_gateway' : 'internal_service',
         sources: [
           {
@@ -293,11 +313,18 @@ class ArchitectureExtractor {
         if (importTarget && importTarget.startsWith('.')) {
           // Local import
           const resolvedRel = normalizePosixPath(
-            path.relative(this.repoRoot, path.resolve(path.dirname(fileInfo.fullPath), importTarget))
+            path.relative(
+              this.repoRoot,
+              path.resolve(path.dirname(fileInfo.fullPath), importTarget),
+            ),
           );
           // Try finding matching file
           const targetKey = Array.from(fileDataMap.keys()).find(
-            (k) => k === resolvedRel || k.startsWith(resolvedRel + '.') || k === resolvedRel + '/index.js' || k === resolvedRel + '/index.ts'
+            k =>
+              k === resolvedRel ||
+              k.startsWith(resolvedRel + '.') ||
+              k === resolvedRel + '/index.js' ||
+              k === resolvedRel + '/index.ts',
           );
 
           if (targetKey) {
@@ -335,7 +362,8 @@ class ArchitectureExtractor {
           let routeMatch;
           while ((routeMatch = detector.regex.exec(content)) !== null) {
             const method = routeMatch[1]?.toUpperCase() || 'GET';
-            const endpointPath = routeMatch[2] || `/${relPath.replace(/^src\//, '').replace(/\.[^.]+$/, '')}`;
+            const endpointPath =
+              routeMatch[2] || `/${relPath.replace(/^src\//, '').replace(/\.[^.]+$/, '')}`;
             const lineNum = content.slice(0, routeMatch.index).split('\n').length;
 
             const endpointEntityId = `endpoint.${method.toLowerCase()}.${endpointPath.replace(/[^a-zA-Z0-9_.-]/g, '_')}`;
@@ -484,7 +512,10 @@ class ArchitectureExtractor {
           this.registerRelation({
             sourceId: sourceEntityId,
             targetId: qEntityId,
-            relationType: content.includes('.on(') || content.includes('.subscribe(') ? 'subscribes' : 'publishes',
+            relationType:
+              content.includes('.on(') || content.includes('.subscribe(')
+                ? 'subscribes'
+                : 'publishes',
             protocol: detector.engine,
             evidence: [
               {
@@ -540,9 +571,14 @@ class ArchitectureExtractor {
           });
 
           // Check for Failure Resilience (try/catch, timeout, retry)
-          const surroundingContext = lines.slice(Math.max(0, lineNum - 5), Math.min(lines.length, lineNum + 5)).join('\n');
-          const hasTryCatch = surroundingContext.includes('try') || surroundingContext.includes('.catch');
-          const hasTimeout = surroundingContext.includes('timeout') || surroundingContext.includes('AbortController');
+          const surroundingContext = lines
+            .slice(Math.max(0, lineNum - 5), Math.min(lines.length, lineNum + 5))
+            .join('\n');
+          const hasTryCatch =
+            surroundingContext.includes('try') || surroundingContext.includes('.catch');
+          const hasTimeout =
+            surroundingContext.includes('timeout') ||
+            surroundingContext.includes('AbortController');
 
           this.registerRelation({
             sourceId: sourceEntityId,
@@ -566,7 +602,9 @@ class ArchitectureExtractor {
             failureMode: {
               hasTimeout,
               hasRetry: surroundingContext.includes('retry'),
-              hasCircuitBreaker: surroundingContext.includes('circuitBreaker') || surroundingContext.includes('opossum'),
+              hasCircuitBreaker:
+                surroundingContext.includes('circuitBreaker') ||
+                surroundingContext.includes('opossum'),
               fallbackTarget: hasTryCatch ? 'handled_exception' : undefined,
             },
           });
@@ -706,10 +744,11 @@ class ArchitectureExtractor {
         totalEntities: entitiesArr.length,
         totalRelations: relationsArr.length,
         totalTrustZones: trustArr.length,
-        endpointsCount: entitiesArr.filter((e) => e.kind === 'endpoint').length,
-        datastoresCount: entitiesArr.filter((e) => e.kind === 'datastore' || e.kind === 'cache').length,
-        queuesCount: entitiesArr.filter((e) => e.kind === 'queue' || e.kind === 'event_bus').length,
-        externalServicesCount: entitiesArr.filter((e) => e.kind === 'external_api').length,
+        endpointsCount: entitiesArr.filter(e => e.kind === 'endpoint').length,
+        datastoresCount: entitiesArr.filter(e => e.kind === 'datastore' || e.kind === 'cache')
+          .length,
+        queuesCount: entitiesArr.filter(e => e.kind === 'queue' || e.kind === 'event_bus').length,
+        externalServicesCount: entitiesArr.filter(e => e.kind === 'external_api').length,
       },
       entities: entitiesArr,
       relationships: relationsArr,

@@ -18,10 +18,7 @@ const {
   createEvidenceClaim,
   synthesizeReviewResults,
 } = require('../src/synthesis/claim_check_separator');
-const {
-  createEvolutionProposal,
-  validateEvolutionProposal,
-} = require('../src/evolution/engine');
+const { createEvolutionProposal, validateEvolutionProposal } = require('../src/evolution/engine');
 
 function computePercentiles(arr) {
   const sorted = [...arr].sort((a, b) => a - b);
@@ -37,7 +34,10 @@ fs.mkdirSync(path.join(tmpRepo, 'src', 'auth'), { recursive: true });
 fs.mkdirSync(path.join(tmpRepo, 'docs'), { recursive: true });
 fs.writeFileSync(path.join(tmpRepo, 'SECURITY.md'), '# Policy\n');
 fs.writeFileSync(path.join(tmpRepo, 'package.json'), '{"name":"perf"}');
-fs.writeFileSync(path.join(tmpRepo, 'src', 'auth', 'jwt.js'), 'const a = 1;\nmodule.exports = { a };');
+fs.writeFileSync(
+  path.join(tmpRepo, 'src', 'auth', 'jwt.js'),
+  'const a = 1;\nmodule.exports = { a };',
+);
 fs.writeFileSync(path.join(tmpRepo, 'docs', 'readme.md'), '# Docs\n' + 'line\n'.repeat(50));
 
 const ITERATIONS = 100;
@@ -81,14 +81,30 @@ for (let i = 0; i < ITERATIONS; i++) {
 
   // 3. Deterministic Checks Execution
   const t4 = performance.now();
-  const check1 = createImplementationCheck({ check: 'tests_passed', command: 'npm test', result: 'PASSED' });
-  const check2 = createImplementationCheck({ check: 'security_scan', command: 'node sec.js', result: 'FAILED' });
+  const check1 = createImplementationCheck({
+    check: 'tests_passed',
+    command: 'npm test',
+    result: 'PASSED',
+  });
+  const check2 = createImplementationCheck({
+    check: 'security_scan',
+    command: 'node sec.js',
+    result: 'FAILED',
+  });
   const t5 = performance.now();
   checkTimes.push(t5 - t4);
 
   // 4. Claims & Synthesis
-  const claim1 = createEvidenceClaim({ reviewer: 'security-auditor', assertion: 'Security approved', category: 'security' });
-  const claim2 = createEvidenceClaim({ reviewer: 'code-reviewer', assertion: 'Clean code', category: 'logic' });
+  const claim1 = createEvidenceClaim({
+    reviewer: 'security-auditor',
+    assertion: 'Security approved',
+    category: 'security',
+  });
+  const claim2 = createEvidenceClaim({
+    reviewer: 'code-reviewer',
+    assertion: 'Clean code',
+    category: 'logic',
+  });
   const t6 = performance.now();
   const synth = synthesizeReviewResults({
     checks: [check1, check2],
@@ -120,7 +136,9 @@ fs.rmSync(tmpRepo, { recursive: true, force: true });
 
 const avgCandTokens = Math.round(totalCandTokens / ITERATIONS);
 const avgSelTokens = Math.round(totalSelTokens / ITERATIONS);
-const tokenReductionPercent = parseFloat((((avgCandTokens - avgSelTokens) / avgCandTokens) * 100).toFixed(1));
+const tokenReductionPercent = parseFloat(
+  (((avgCandTokens - avgSelTokens) / avgCandTokens) * 100).toFixed(1),
+);
 
 const telemetry = {
   iterations: ITERATIONS,

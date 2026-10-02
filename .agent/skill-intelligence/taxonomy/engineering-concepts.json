@@ -1,0 +1,555 @@
+{
+  "version": "1.0.0",
+  "taxonomy_version": "2026-Q4",
+  "categories_count": 35,
+  "concepts": [
+    {
+      "id": "idempotency",
+      "name": "Idempotency",
+      "domain": "backend",
+      "category": "distributed-systems",
+      "aliases": [
+        "idempotent mutation",
+        "duplicate request protection",
+        "retry safety",
+        "request deduplication",
+        "exactly-once semantics"
+      ],
+      "parent": "api-reliability",
+      "children": ["idempotent-consumer", "idempotency-key-store"],
+      "related": ["transaction-integrity", "concurrency-control", "distributed-locking"],
+      "failure_modes": [
+        "duplicate-execution",
+        "double-charge",
+        "retry-after-timeout",
+        "race-on-insert"
+      ],
+      "quality_attributes": ["correctness", "consistency", "reliability"],
+      "common_skills": ["api-patterns", "error-resilience"]
+    },
+    {
+      "id": "transaction-integrity",
+      "name": "Transaction Integrity & ACID",
+      "domain": "database",
+      "category": "databases",
+      "aliases": [
+        "acid compliance",
+        "atomic operations",
+        "database transactions",
+        "isolation levels",
+        "two-phase commit"
+      ],
+      "parent": "data-integrity",
+      "children": [
+        "distributed-transactions",
+        "saga-pattern",
+        "optimistic-locking",
+        "pessimistic-locking"
+      ],
+      "related": ["idempotency", "consistency", "deadlock-prevention"],
+      "failure_modes": ["partial-write", "dirty-read", "phantom-read", "deadlock", "lost-update"],
+      "quality_attributes": ["consistency", "durability", "correctness"],
+      "common_skills": ["database-design", "sql-pro", "error-resilience"]
+    },
+    {
+      "id": "concurrency-control",
+      "name": "Concurrency Control & Synchronization",
+      "domain": "distributed-systems",
+      "category": "distributed-systems",
+      "aliases": ["race conditions", "mutex", "locking", "atomic operations", "thread safety"],
+      "parent": "distributed-systems",
+      "children": ["optimistic-concurrency", "distributed-locks", "semaphores"],
+      "related": ["transaction-integrity", "idempotency"],
+      "failure_modes": [
+        "race-condition",
+        "deadlock",
+        "data-corruption",
+        "starvation",
+        "split-brain"
+      ],
+      "quality_attributes": ["correctness", "safety", "consistency"],
+      "common_skills": ["error-resilience", "system-design-pro"]
+    },
+    {
+      "id": "retry-and-backoff",
+      "name": "Retry Strategies & Circuit Breaking",
+      "domain": "backend",
+      "category": "reliability",
+      "aliases": [
+        "retry",
+        "retries",
+        "retry strategies",
+        "exponential backoff",
+        "jitter",
+        "circuit breaker",
+        "retry storm protection",
+        "fault tolerance"
+      ],
+      "parent": "reliability",
+      "children": ["circuit-breaker", "hedged-requests", "deadline-propagation"],
+      "related": ["idempotency", "timeout-management", "rate-limiting"],
+      "failure_modes": [
+        "retry-storm",
+        "cascading-failure",
+        "thundering-herd",
+        "resource-exhaustion"
+      ],
+      "quality_attributes": ["availability", "resilience", "robustness"],
+      "common_skills": ["error-resilience", "api-patterns"]
+    },
+    {
+      "id": "query-optimization",
+      "name": "Query Optimization & Indexing",
+      "domain": "database",
+      "category": "databases",
+      "aliases": [
+        "slow queries",
+        "explain analyze",
+        "index tuning",
+        "n+1 prevention",
+        "query planner"
+      ],
+      "parent": "databases",
+      "children": ["b-tree-indexing", "composite-indexes", "connection-pooling", "partitioning"],
+      "related": ["caching", "database-design", "latency"],
+      "failure_modes": [
+        "full-table-scan",
+        "unindexed-lookup",
+        "connection-pool-exhaustion",
+        "lock-contention"
+      ],
+      "quality_attributes": ["performance", "latency", "throughput", "scalability"],
+      "common_skills": ["database-design", "sql-pro", "backend-postgresql"]
+    },
+    {
+      "id": "authentication-and-authorization",
+      "name": "Authentication & Access Control (AuthN / AuthZ)",
+      "domain": "security",
+      "category": "security",
+      "aliases": [
+        "auth",
+        "jwt",
+        "session",
+        "oauth2",
+        "rbac",
+        "abac",
+        "token-validation",
+        "identity"
+      ],
+      "parent": "security",
+      "children": ["jwt-verification", "mfa", "session-revocation", "permission-checks"],
+      "related": ["api-security", "least-privilege", "audit-logging"],
+      "failure_modes": [
+        "broken-auth",
+        "privilege-escalation",
+        "token-replay",
+        "unauthorized-access",
+        "csrf"
+      ],
+      "quality_attributes": ["security", "confidentiality", "integrity"],
+      "common_skills": ["agentshield-security", "audit-and-fix", "authentication-best-practices"]
+    },
+    {
+      "id": "input-validation-and-sanitization",
+      "name": "Input Validation & Injection Prevention",
+      "domain": "security",
+      "category": "security",
+      "aliases": [
+        "schema validation",
+        "sanitization",
+        "xss prevention",
+        "sql injection defense",
+        "zod schema",
+        "pydantic"
+      ],
+      "parent": "security",
+      "children": ["sql-injection-defense", "xss-filtering", "path-traversal-defense"],
+      "related": ["authentication-and-authorization", "api-design"],
+      "failure_modes": [
+        "sql-injection",
+        "xss",
+        "command-injection",
+        "buffer-overflow",
+        "type-juggling"
+      ],
+      "quality_attributes": ["security", "robustness", "correctness"],
+      "common_skills": ["agentshield-security", "audit-and-fix", "clean-code"]
+    },
+    {
+      "id": "caching-and-invalidation",
+      "name": "Caching & Invalidation Strategies",
+      "domain": "backend",
+      "category": "caching",
+      "aliases": [
+        "cache invalidation",
+        "redis",
+        "memcached",
+        "cache-aside",
+        "write-through",
+        "ttl",
+        "stale-while-revalidate"
+      ],
+      "parent": "caching",
+      "children": ["distributed-cache", "lru-cache", "http-cache-headers"],
+      "related": ["query-optimization", "data-consistency", "latency"],
+      "failure_modes": ["cache-stampede", "stale-data", "cache-penetration", "invalidation-race"],
+      "quality_attributes": ["performance", "latency", "scalability"],
+      "common_skills": ["backend-redis", "system-design-pro"]
+    },
+    {
+      "id": "rate-limiting-and-throttling",
+      "name": "Rate Limiting & Traffic Shaping",
+      "domain": "backend",
+      "category": "networking",
+      "aliases": ["throttling", "token bucket", "leaky bucket", "ddos mitigation", "api quota"],
+      "parent": "networking",
+      "children": ["token-bucket", "sliding-window-rate-limit"],
+      "related": ["api-patterns", "security", "reliability"],
+      "failure_modes": ["service-starvation", "dos-saturation", "api-abuse"],
+      "quality_attributes": ["availability", "fairness", "resilience"],
+      "common_skills": ["api-patterns", "agentshield-security"]
+    },
+    {
+      "id": "structured-observability",
+      "name": "Observability, Telemetry & Tracing",
+      "domain": "devops",
+      "category": "observability",
+      "aliases": [
+        "metrics",
+        "logging",
+        "distributed tracing",
+        "opentelemetry",
+        "audit logging",
+        "correlation-id"
+      ],
+      "parent": "observability",
+      "children": ["distributed-tracing", "structured-logging", "apm-monitoring"],
+      "related": ["incident-response", "alerting", "performance-profiling"],
+      "failure_modes": [
+        "blind-failures",
+        "untraceable-errors",
+        "log-spam",
+        "metric-cardinality-explosion"
+      ],
+      "quality_attributes": ["observability", "operability", "maintainability"],
+      "common_skills": ["observability", "opentelemetry-observability"]
+    },
+    {
+      "id": "test-driven-development",
+      "name": "TDD & Automated Verification",
+      "domain": "testing",
+      "category": "testing",
+      "aliases": [
+        "tdd",
+        "unit tests",
+        "integration tests",
+        "regression suite",
+        "test coverage",
+        "verification"
+      ],
+      "parent": "testing",
+      "children": ["unit-testing", "integration-testing", "property-based-testing", "e2e-testing"],
+      "related": ["verification-before-completion", "code-quality"],
+      "failure_modes": ["undetected-regression", "flaky-test", "mock-drift", "false-confidence"],
+      "quality_attributes": ["correctness", "maintainability", "testability"],
+      "common_skills": ["tdd-workflow", "testing-patterns", "verification-before-completion"]
+    },
+    {
+      "id": "responsive-ui-and-accessibility",
+      "name": "Responsive UI & Web Accessibility (a11y)",
+      "domain": "frontend",
+      "category": "frontend",
+      "aliases": [
+        "responsive design",
+        "mobile-first",
+        "accessibility",
+        "wcag",
+        "aria",
+        "layout shift",
+        "cls"
+      ],
+      "parent": "frontend",
+      "children": ["fluid-typography", "aria-roles", "keyboard-navigation", "color-contrast"],
+      "related": ["ui-architecture", "mobile-design", "performance"],
+      "failure_modes": [
+        "horizontal-overflow",
+        "unusable-mobile",
+        "screen-reader-blocker",
+        "layout-shift"
+      ],
+      "quality_attributes": ["usability", "accessibility", "maintainability"],
+      "common_skills": ["adapt", "better-ui", "web-accessibility-auditor"]
+    },
+    {
+      "id": "realtime-collaboration-and-sync",
+      "name": "Real-time Collaboration & State Sync",
+      "domain": "distributed-systems",
+      "category": "messaging",
+      "aliases": [
+        "websockets",
+        "crdt",
+        "ot",
+        "operational transformation",
+        "state synchronization",
+        "presence",
+        "collaborative editing"
+      ],
+      "parent": "messaging",
+      "children": ["crdt-sync", "websocket-transport", "conflict-free-resolution"],
+      "related": ["concurrency-control", "data-consistency", "offline-support"],
+      "failure_modes": [
+        "desynchronization",
+        "dropped-socket-reconnect",
+        "conflicting-edits",
+        "split-state"
+      ],
+      "quality_attributes": ["consistency", "low-latency", "interactivity"],
+      "common_skills": ["realtime-patterns", "system-design-pro"]
+    },
+    {
+      "id": "file-upload-and-storage",
+      "name": "Secure File Upload & Object Storage",
+      "domain": "backend",
+      "category": "storage",
+      "aliases": [
+        "file upload",
+        "multipart",
+        "s3",
+        "blob storage",
+        "mime validation",
+        "presigned url",
+        "chunked upload"
+      ],
+      "parent": "storage",
+      "children": ["presigned-upload", "resumable-upload", "mime-sniffing-defense"],
+      "related": ["input-validation-and-sanitization", "security"],
+      "failure_modes": [
+        "unrestricted-file-upload",
+        "zip-bomb",
+        "mime-spoofing",
+        "storage-saturation"
+      ],
+      "quality_attributes": ["security", "durability", "scalability"],
+      "common_skills": ["api-patterns", "agentshield-security"]
+    },
+    {
+      "id": "ai-agent-security-and-sandboxing",
+      "name": "AI Agent Security, Tool Boundaries & Sandboxing",
+      "domain": "ai",
+      "category": "llm-engineering",
+      "aliases": [
+        "tool execution safety",
+        "sandboxing",
+        "prompt injection defense",
+        "privilege boundary",
+        "command injection"
+      ],
+      "parent": "llm-engineering",
+      "children": ["prompt-sanitization", "isolated-subprocess", "permission-gate"],
+      "related": ["security", "least-privilege", "audit-logging"],
+      "failure_modes": [
+        "prompt-injection",
+        "arbitrary-code-execution",
+        "unbounded-tool-access",
+        "data-exfiltration"
+      ],
+      "quality_attributes": ["security", "safety", "containment"],
+      "common_skills": [
+        "ai-prompt-injection-defense",
+        "anti-slop-enforcement",
+        "agent-syscall-guidelines"
+      ]
+    },
+    {
+      "id": "cicd-and-deployment-safety",
+      "name": "CI/CD & Deployment Safety",
+      "domain": "devops",
+      "category": "devops",
+      "aliases": [
+        "ci/cd",
+        "github actions",
+        "docker",
+        "blue-green",
+        "canary",
+        "zero-downtime",
+        "rollback"
+      ],
+      "parent": "devops",
+      "children": ["canary-deployment", "database-migration-rollback", "automated-smoke-tests"],
+      "related": ["reliability", "infrastructure"],
+      "failure_modes": [
+        "deployment-failure",
+        "breaking-schema-migration",
+        "downtime",
+        "config-drift"
+      ],
+      "quality_attributes": ["reliability", "recoverability", "operability"],
+      "common_skills": ["cicd-pro", "devops-engineer"]
+    },
+    {
+      "id": "distributed-job-processing",
+      "name": "Distributed Job Processing & Queue Workers",
+      "domain": "distributed-systems",
+      "category": "messaging",
+      "aliases": [
+        "job queue",
+        "background worker",
+        "dead-letter queue",
+        "worker pool",
+        "task scheduling",
+        "at-least-once"
+      ],
+      "parent": "distributed-systems",
+      "children": ["dead-letter-queue", "priority-scheduling", "worker-concurrency"],
+      "related": ["idempotency", "retry-and-backoff", "concurrency-control"],
+      "failure_modes": [
+        "queue-saturation",
+        "poison-pill",
+        "worker-crash",
+        "duplicate-job-execution"
+      ],
+      "quality_attributes": ["reliability", "scalability", "durability"],
+      "common_skills": ["system-design-pro", "error-resilience"]
+    },
+    {
+      "id": "rag-and-vector-retrieval",
+      "name": "RAG, Vector Indexing & Grounded Retrieval",
+      "domain": "ai",
+      "category": "llm-engineering",
+      "aliases": [
+        "rag",
+        "vector search",
+        "embeddings",
+        "pgvector",
+        "chunking",
+        "retrieval augmented generation",
+        "semantic search"
+      ],
+      "parent": "llm-engineering",
+      "children": ["hybrid-search", "chunking-strategy", "reranking", "vector-distance"],
+      "related": ["ai-agent-security-and-sandboxing", "search-indexing-and-ranking"],
+      "failure_modes": [
+        "hallucination",
+        "retrieval-miss",
+        "context-window-overflow",
+        "stale-embeddings"
+      ],
+      "quality_attributes": ["accuracy", "groundedness", "relevance"],
+      "common_skills": ["advanced-rag-pipelines", "vector-search-pgvector"]
+    },
+    {
+      "id": "event-driven-data-pipelines",
+      "name": "Event-Driven Data Pipelines & Streaming",
+      "domain": "data-engineering",
+      "category": "data-engineering",
+      "aliases": [
+        "data pipeline",
+        "etl",
+        "event streaming",
+        "backpressure",
+        "batch processing",
+        "partitioning"
+      ],
+      "parent": "data-engineering",
+      "children": ["stream-processing", "batch-etl", "schema-evolution"],
+      "related": ["distributed-job-processing", "transaction-integrity"],
+      "failure_modes": [
+        "pipeline-lag",
+        "schema-drift",
+        "backpressure-overflow",
+        "data-duplication"
+      ],
+      "quality_attributes": ["throughput", "consistency", "reliability"],
+      "common_skills": ["system-design-pro", "error-resilience"]
+    },
+    {
+      "id": "notification-delivery-and-dispatch",
+      "name": "Notification Dispatch, Fanout & Rate Limits",
+      "domain": "backend",
+      "category": "messaging",
+      "aliases": [
+        "notification service",
+        "email dispatch",
+        "push notifications",
+        "webhook delivery",
+        "fanout",
+        "sms"
+      ],
+      "parent": "messaging",
+      "children": ["fanout-worker", "template-rendering", "provider-failover"],
+      "related": ["rate-limiting-and-throttling", "retry-and-backoff", "idempotency"],
+      "failure_modes": ["notification-spam", "provider-rate-limit-breach", "delivery-loss"],
+      "quality_attributes": ["availability", "reliability", "timeliness"],
+      "common_skills": ["api-patterns", "error-resilience"]
+    },
+    {
+      "id": "search-indexing-and-ranking",
+      "name": "Search Indexing, Tokenization & Relevance Ranking",
+      "domain": "search",
+      "category": "search",
+      "aliases": [
+        "search index",
+        "full-text search",
+        "inverted index",
+        "bm25",
+        "relevance scoring",
+        "fuzzy search"
+      ],
+      "parent": "search",
+      "children": ["tokenizer", "synonym-filter", "ranking-algorithm"],
+      "related": ["rag-and-vector-retrieval", "query-optimization"],
+      "failure_modes": ["index-staleness", "slow-fuzzy-lookup", "zero-result-drift"],
+      "quality_attributes": ["latency", "recall", "precision"],
+      "common_skills": ["sql-pro", "system-design-pro"]
+    },
+    {
+      "id": "multi-region-consistency-and-replication",
+      "name": "Multi-Region Replication, Routing & Consistency",
+      "domain": "distributed-systems",
+      "category": "distributed-systems",
+      "aliases": [
+        "multi-region",
+        "geo-replication",
+        "geo-routing",
+        "replication lag",
+        "cross-region",
+        "active-active"
+      ],
+      "parent": "distributed-systems",
+      "children": ["conflict-free-replication", "geo-dns", "read-replica-routing"],
+      "related": ["transaction-integrity", "concurrency-control"],
+      "failure_modes": ["split-brain", "replication-lag-inconsistency", "cross-region-partition"],
+      "quality_attributes": ["availability", "durability", "fault-tolerance"],
+      "common_skills": ["system-design-pro", "cloud-architect"]
+    },
+    {
+      "id": "responsive-ui-and-accessibility",
+      "name": "Responsive UI, Accessibility & CDN Edge Delivery",
+      "domain": "frontend",
+      "category": "frontend",
+      "aliases": [
+        "frontend",
+        "responsive",
+        "accessible",
+        "accessibility",
+        "a11y",
+        "wcag",
+        "cdn",
+        "viewport",
+        "mobile layout",
+        "keyboard navigation"
+      ],
+      "parent": "frontend",
+      "children": ["aria-attributes", "contrast-ratios", "cdn-caching", "responsive-grid"],
+      "related": ["web-vitals", "core-web-vitals", "performance"],
+      "failure_modes": [
+        "broken-mobile-layout",
+        "unfocusable-elements",
+        "screen-reader-incompatible",
+        "slow-cdn-cache-hit"
+      ],
+      "quality_attributes": ["accessibility", "responsiveness", "performance", "usability"],
+      "common_skills": ["frontend-design", "baseline-ui", "adapt", "web-accessibility-auditor"]
+    }
+  ]
+}

@@ -24,7 +24,10 @@ const crypto = require('crypto');
 const { GREEN, YELLOW, CYAN, RED, DIM, RESET, BOX, banner, timer, formatMs } = require('./_colors');
 
 function computeSha256(str) {
-  return crypto.createHash('sha256').update(str || '').digest('hex');
+  return crypto
+    .createHash('sha256')
+    .update(str || '')
+    .digest('hex');
 }
 
 class ArchitectureVerifier {
@@ -148,7 +151,8 @@ class ArchitectureVerifier {
       if (check.stale) anyStale = true;
     }
 
-    if (anyMissing) return { status: 'fabricated', details: { reason: 'Cited file or line does not exist' } };
+    if (anyMissing)
+      return { status: 'fabricated', details: { reason: 'Cited file or line does not exist' } };
     if (anyStale) return { status: 'stale', details: { reason: 'File content hash has drifted' } };
     return { status: 'verified', details: {} };
   }
@@ -158,10 +162,18 @@ class ArchitectureVerifier {
     const target = entityIndex.get(rel.targetId);
 
     if (!source) {
-      return { status: 'contradicted', conflictType: 'missing_source_entity', reason: `Source entity ${rel.sourceId} not found.` };
+      return {
+        status: 'contradicted',
+        conflictType: 'missing_source_entity',
+        reason: `Source entity ${rel.sourceId} not found.`,
+      };
     }
     if (!target) {
-      return { status: 'contradicted', conflictType: 'missing_target_entity', reason: `Target entity ${rel.targetId} not found.` };
+      return {
+        status: 'contradicted',
+        conflictType: 'missing_target_entity',
+        reason: `Target entity ${rel.targetId} not found.`,
+      };
     }
 
     // Check evidence call site if present
@@ -206,7 +218,10 @@ class ArchitectureVerifier {
     const lines = content.split('\n');
     if (lineNum !== undefined && lineNum !== null) {
       if (lineNum < 1 || lineNum > lines.length) {
-        return { exists: false, reason: `Line ${lineNum} out of range (file has ${lines.length} lines)` };
+        return {
+          exists: false,
+          reason: `Line ${lineNum} out of range (file has ${lines.length} lines)`,
+        };
       }
 
       if (expectedHash) {
@@ -223,7 +238,12 @@ class ArchitectureVerifier {
   }
 
   saveReport(outputPath) {
-    const defaultPath = path.join(this.repoRoot, '.agent', 'history', 'architecture-verification.json');
+    const defaultPath = path.join(
+      this.repoRoot,
+      '.agent',
+      'history',
+      'architecture-verification.json',
+    );
     const dest = outputPath || defaultPath;
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.writeFileSync(dest, JSON.stringify(this.results, null, 2), 'utf8');
@@ -240,7 +260,9 @@ if (require.main === module) {
   console.log(banner('Tribunal Architecture Zero-Trust Verifier'));
 
   if (!fs.existsSync(modelFile)) {
-    console.error(`  ${RED}✖ architecture-model.json not found.${RESET} Run architecture_extractor.js first.`);
+    console.error(
+      `  ${RED}✖ architecture-model.json not found.${RESET} Run architecture_extractor.js first.`,
+    );
     process.exit(1);
   }
 
@@ -249,15 +271,26 @@ if (require.main === module) {
   const results = verifier.verifyModel(model);
   const reportPath = verifier.saveReport();
 
-  const isOk = results.verified && results.diagnostics.filter((d) => d.severity === 'error').length === 0;
+  const isOk =
+    results.verified && results.diagnostics.filter(d => d.severity === 'error').length === 0;
   const statusColor = isOk ? GREEN : RED;
   const statusIcon = isOk ? BOX.check : BOX.cross_mark;
 
-  console.log(`  ${statusColor}${statusIcon} Verification ${isOk ? 'PASSED' : 'FLAGGED ISSUES'}${RESET} in ${formatMs(t())}`);
-  console.log(`  ${DIM}Entities Verified:${RESET}      ${GREEN}${results.stats.verifiedEntities}${RESET} / ${results.stats.totalEntities}`);
-  console.log(`  ${DIM}Stale Evidence:${RESET}         ${results.stats.staleEntities > 0 ? YELLOW : GREEN}${results.stats.staleEntities}${RESET}`);
-  console.log(`  ${DIM}Contradictions Surfaced:${RESET} ${results.contradictions.length > 0 ? RED : GREEN}${results.contradictions.length}${RESET}`);
-  console.log(`  ${DIM}Confidence (L1 Facts):${RESET}   ${CYAN}${results.confidenceDistribution.L1}${RESET}`);
+  console.log(
+    `  ${statusColor}${statusIcon} Verification ${isOk ? 'PASSED' : 'FLAGGED ISSUES'}${RESET} in ${formatMs(t())}`,
+  );
+  console.log(
+    `  ${DIM}Entities Verified:${RESET}      ${GREEN}${results.stats.verifiedEntities}${RESET} / ${results.stats.totalEntities}`,
+  );
+  console.log(
+    `  ${DIM}Stale Evidence:${RESET}         ${results.stats.staleEntities > 0 ? YELLOW : GREEN}${results.stats.staleEntities}${RESET}`,
+  );
+  console.log(
+    `  ${DIM}Contradictions Surfaced:${RESET} ${results.contradictions.length > 0 ? RED : GREEN}${results.contradictions.length}${RESET}`,
+  );
+  console.log(
+    `  ${DIM}Confidence (L1 Facts):${RESET}   ${CYAN}${results.confidenceDistribution.L1}${RESET}`,
+  );
   console.log(`  ${DIM}Saved Report:${RESET}            ${CYAN}${reportPath}${RESET}\n`);
 
   if (!isOk && process.argv.includes('--strict')) {

@@ -24,13 +24,27 @@ function cmdContextRank(flags, processArgs, quiet = false) {
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (arg === '--target' && args[i + 1]) {
-      targetFiles = args[++i].split(',').map(f => f.trim()).filter(Boolean);
+      targetFiles = args[++i]
+        .split(',')
+        .map(f => f.trim())
+        .filter(Boolean);
     } else if (arg.startsWith('--target=')) {
-      targetFiles = arg.split('=')[1].split(',').map(f => f.trim()).filter(Boolean);
+      targetFiles = arg
+        .split('=')[1]
+        .split(',')
+        .map(f => f.trim())
+        .filter(Boolean);
     } else if (arg === '--candidates' && args[i + 1]) {
-      candidateFiles = args[++i].split(',').map(f => f.trim()).filter(Boolean);
+      candidateFiles = args[++i]
+        .split(',')
+        .map(f => f.trim())
+        .filter(Boolean);
     } else if (arg.startsWith('--candidates=')) {
-      candidateFiles = arg.split('=')[1].split(',').map(f => f.trim()).filter(Boolean);
+      candidateFiles = arg
+        .split('=')[1]
+        .split(',')
+        .map(f => f.trim())
+        .filter(Boolean);
     } else if (arg === '--max-tokens' && args[i + 1]) {
       maxTokens = parseInt(args[++i], 10);
     } else if (arg.startsWith('--max-tokens=')) {
@@ -59,9 +73,15 @@ function cmdContextRank(flags, processArgs, quiet = false) {
 
   if (!quiet) {
     console.log(`\n━━━ Deterministic Context Ranking ━━━━━━━━━━━━━━━━━━━━━━━━`);
-    console.log(`  Items Evaluated:  ${result.metrics.context_items_before} -> ${result.metrics.context_items_after} retained`);
-    console.log(`  Token Budget:     ~${result.metrics.estimated_tokens_before} -> ~${result.metrics.estimated_tokens_after} tokens`);
-    console.log(`  Critical Evidence: ${result.metrics.critical_evidence_retained} mandatory file(s) retained\n`);
+    console.log(
+      `  Items Evaluated:  ${result.metrics.context_items_before} -> ${result.metrics.context_items_after} retained`,
+    );
+    console.log(
+      `  Token Budget:     ~${result.metrics.estimated_tokens_before} -> ~${result.metrics.estimated_tokens_after} tokens`,
+    );
+    console.log(
+      `  Critical Evidence: ${result.metrics.critical_evidence_retained} mandatory file(s) retained\n`,
+    );
 
     console.log(`  Ranked Evidence Items:`);
     for (const item of result.ranked_items) {
@@ -153,4 +173,3 @@ function cmdContext(flags, processArgs) {
     process.exit(1);
   }
 }
-

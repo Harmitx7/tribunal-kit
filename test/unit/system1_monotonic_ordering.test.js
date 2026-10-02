@@ -1,9 +1,6 @@
 'use strict';
 
-const {
-  resolveMonotonicImpactTier,
-  cmdImpactTier,
-} = require('../../src/commands/native');
+const { resolveMonotonicImpactTier, cmdImpactTier } = require('../../src/commands/native');
 
 describe('Capability 1: Deterministic Monotonic Impact-Tier Ordering', () => {
   describe('Adversarial Security Fixtures', () => {
@@ -233,7 +230,17 @@ describe('Capability 1: Deterministic Monotonic Impact-Tier Ordering', () => {
       const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
       const errSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-      const argv = ['node', 'tk', 'impact-tier', '--files', 'src/auth/jwt.js', '--lines', '10', '--task', 'Fix JWT expiry'];
+      const argv = [
+        'node',
+        'tk',
+        'impact-tier',
+        '--files',
+        'src/auth/jwt.js',
+        '--lines',
+        '10',
+        '--task',
+        'Fix JWT expiry',
+      ];
       const ok = await cmdImpactTier(argv, true);
       expect(ok).toBe(true);
 
@@ -277,27 +284,73 @@ describe('Capability 1: Deterministic Monotonic Impact-Tier Ordering', () => {
 
     test('Phase 3 Step Transitions: T0->T0, T1->T1, T1->T2, T1->T3, T2->T2, T2->T3, T3->T3', () => {
       // T0 -> T0: Pure documentation remains Fast-Pass
-      expect(resolveMonotonicImpactTier({ files: ['README.md'], lines: 4, task: 'fix typo' })).toBe(0);
+      expect(resolveMonotonicImpactTier({ files: ['README.md'], lines: 4, task: 'fix typo' })).toBe(
+        0,
+      );
 
       // T1 -> T1: Single non-critical file <= 50 lines remains Express Pass
-      expect(resolveMonotonicImpactTier({ files: ['src/button.jsx'], lines: 10, task: 'update button color' })).toBe(1);
+      expect(
+        resolveMonotonicImpactTier({
+          files: ['src/button.jsx'],
+          lines: 10,
+          task: 'update button color',
+        }),
+      ).toBe(1);
 
       // T1 -> T2: Single non-critical file promoted to Targeted Audit via line volume (> 50 lines) or Laya T2
-      expect(resolveMonotonicImpactTier({ files: ['src/button.jsx'], lines: 60, task: 'update button layout' })).toBe(2);
-      expect(resolveMonotonicImpactTier({ files: ['src/button.jsx'], lines: 10, task: 'update button layout', layaTier: 2 })).toBe(2);
+      expect(
+        resolveMonotonicImpactTier({
+          files: ['src/button.jsx'],
+          lines: 60,
+          task: 'update button layout',
+        }),
+      ).toBe(2);
+      expect(
+        resolveMonotonicImpactTier({
+          files: ['src/button.jsx'],
+          lines: 10,
+          task: 'update button layout',
+          layaTier: 2,
+        }),
+      ).toBe(2);
 
       // T1 -> T3: Single file promoted to Full Gauntlet via high-risk file/diff/keyword
-      expect(resolveMonotonicImpactTier({ files: ['src/button.jsx'], lines: 10, task: 'update button', diff: '+ const jwt = token;' })).toBe(3);
+      expect(
+        resolveMonotonicImpactTier({
+          files: ['src/button.jsx'],
+          lines: 10,
+          task: 'update button',
+          diff: '+ const jwt = token;',
+        }),
+      ).toBe(3);
 
       // T2 -> T2: Multi-file non-critical change remains Targeted Audit
-      expect(resolveMonotonicImpactTier({ files: ['src/button.jsx', 'src/card.jsx'], lines: 40, task: 'align widgets' })).toBe(2);
+      expect(
+        resolveMonotonicImpactTier({
+          files: ['src/button.jsx', 'src/card.jsx'],
+          lines: 40,
+          task: 'align widgets',
+        }),
+      ).toBe(2);
 
       // T2 -> T3: Multi-file change promoted to Full Gauntlet via schema/secret evidence
-      expect(resolveMonotonicImpactTier({ files: ['src/button.jsx', 'prisma/schema.prisma'], lines: 40, task: 'align widgets' })).toBe(3);
+      expect(
+        resolveMonotonicImpactTier({
+          files: ['src/button.jsx', 'prisma/schema.prisma'],
+          lines: 40,
+          task: 'align widgets',
+        }),
+      ).toBe(3);
 
       // T3 -> T3: Full Gauntlet cannot be downgraded by benign wording or T0 Laya output
-      expect(resolveMonotonicImpactTier({ files: ['src/auth.js'], lines: 5, task: 'simple typo', layaTier: 0 })).toBe(3);
+      expect(
+        resolveMonotonicImpactTier({
+          files: ['src/auth.js'],
+          lines: 5,
+          task: 'simple typo',
+          layaTier: 0,
+        }),
+      ).toBe(3);
     });
   });
 });
-

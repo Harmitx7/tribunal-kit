@@ -4,7 +4,23 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const child_process = require('child_process');
+const readline = require('readline');
 const { log, err, dim, c, bold } = require('../utils/logger');
+
+function promptConfirm(question) {
+  if (process.env.NODE_ENV === 'test') return Promise.resolve(true);
+  return new Promise(resolve => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+    rl.question(question, answer => {
+      rl.close();
+      const lower = answer.trim().toLowerCase();
+      resolve(lower === 'y' || lower === 'yes');
+    });
+  });
+}
 const { getLayaDir, getConfigPath } = require('../system1/provider');
 
 function verifyChecksum(filePath, expectedHash) {
@@ -40,6 +56,35 @@ async function cmdSystem1Enable(quiet) {
   const configPath = getConfigPath();
   const modelsDir = path.join(layaDir, 'models');
 
+  let currentConfig = null;
+  if (fs.existsSync(configPath)) {
+    try {
+      currentConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    } catch {}
+  }
+
+  const isInstalled = fs.existsSync(layaDir) && fs.existsSync(path.join(modelsDir, 'laya.onnx'));
+  const currentLaya = isInstalled ? currentConfig?.laya_version || 'Unknown' : 'None';
+  const currentOnnx = isInstalled ? currentConfig?.onnxruntime_version || 'Unknown' : 'None';
+  const currentModel = isInstalled ? currentConfig?.model_version || 'Unknown' : 'None';
+
+  const targetLaya = RECEPTRON_LAYA_VERSION;
+  const targetOnnx = ONNXRUNTIME_NODE_VERSION;
+  const targetModel = 'v1.0.0';
+
+  let action = null;
+  if (!isInstalled) {
+    action = 'newly installed';
+  } else if (
+    currentLaya !== targetLaya ||
+    currentOnnx !== targetOnnx ||
+    currentModel !== targetModel
+  ) {
+    action = 'updated (version change)';
+  } else {
+    action = 'reinstalled / verified';
+  }
+
   if (!quiet) {
     log(`\n  ${c('cyan', '⚡')} ${bold('Tribunal Kit Laya System-1 Initialization')}`);
     dim('  --------------------------------------------------');
@@ -47,6 +92,21 @@ async function cmdSystem1Enable(quiet) {
     dim('  - Engine: @receptron/laya & onnxruntime-node');
     dim('  - Model: convaiinnovations/laya (~1.7GB)');
     dim(`  - Path: ${layaDir}`);
+    log('');
+  }
+
+  if (!process.env.TK_MOCK_LAYA_DOWNLOAD) {
+    log(`  Action: System-1 will be ${action}.`);
+    log(`  Current - Laya: ${currentLaya}, ONNX: ${currentOnnx}, Model: ${currentModel}`);
+    log(`  Target  - Laya: ${targetLaya}, ONNX: ${targetOnnx}, Model: ${targetModel}`);
+
+    const confirmed = await promptConfirm(
+      `\n  Do you want to proceed with this modification? [y/N] `,
+    );
+    if (!confirmed) {
+      log(`\n  ${c('yellow', '⚠')} Operation cancelled by user. Existing installation unchanged.`);
+      return;
+    }
     log('');
   }
 
@@ -197,13 +257,41 @@ async function cmdSystem1Enable(quiet) {
       });
       await laya.close();
 
-      // 4. Save config
+      // Verify installed dependency version
+      if (!quiet) log(`  ${c('yellow', '5.')} Verifying installed versions...`);
+      const pkgLockPath = path.join(layaDir, 'package-lock.json');
+      let installedLayaVer = 'Unknown';
+      let installedOnnxVer = 'Unknown';
+      if (fs.existsSync(pkgLockPath)) {
+        const pkgLock = JSON.parse(fs.readFileSync(pkgLockPath, 'utf8'));
+        installedLayaVer =
+          pkgLock.dependencies?.['@receptron/laya']?.version ||
+          pkgLock.packages?.['node_modules/@receptron/laya']?.version ||
+          'Unknown';
+        installedOnnxVer =
+          pkgLock.dependencies?.['onnxruntime-node']?.version ||
+          pkgLock.packages?.['node_modules/onnxruntime-node']?.version ||
+          'Unknown';
+      }
+
+      if (
+        process.env.NODE_ENV !== 'test' &&
+        (installedLayaVer !== targetLaya || installedOnnxVer !== targetOnnx)
+      ) {
+        throw new Error(
+          `Version verification failed. Expected Laya: ${targetLaya}, ONNX: ${targetOnnx}. Got Laya: ${installedLayaVer}, ONNX: ${installedOnnxVer}.`,
+        );
+      }
+
+      // 6. Save config
       fs.writeFileSync(
         configPath,
         JSON.stringify(
           {
             enabled: true,
-            model_version: 'v1.0.0',
+            model_version: targetModel,
+            laya_version: targetLaya,
+            onnxruntime_version: targetOnnx,
             checksum_verified: true,
             installed_at: new Date().toISOString(),
           },
@@ -270,9 +358,22 @@ function cmdSystem1Status(quiet) {
   }
 }
 
-function cmdSystem1Clean(quiet) {
+async function cmdSystem1Clean(quiet) {
   const layaDir = getLayaDir();
   if (fs.existsSync(layaDir)) {
+    if (!process.env.TK_MOCK_LAYA_DOWNLOAD) {
+      log(`  Action: System-1 will be completely removed.`);
+      const confirmed = await promptConfirm(
+        `\n  Do you want to proceed with this modification? [y/N] `,
+      );
+      if (!confirmed) {
+        log(
+          `\n  ${c('yellow', '⚠')} Operation cancelled by user. Existing installation unchanged.`,
+        );
+        return;
+      }
+      log('');
+    }
     fs.rmSync(layaDir, { recursive: true, force: true });
     if (!quiet) log(`  ${c('green', '✓')} System-1 installation completely removed.`);
   } else {
@@ -295,7 +396,7 @@ async function cmdSystem1(flags, args, quiet) {
       cmdSystem1Status(quiet);
       break;
     case 'clean':
-      cmdSystem1Clean(quiet);
+      await cmdSystem1Clean(quiet);
       break;
     default:
       err(`Unknown system1 command: "${subCommand || ''}"`);

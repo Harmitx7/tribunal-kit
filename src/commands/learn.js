@@ -28,7 +28,10 @@ async function cmdLearn(flags, quiet = false) {
   if (flags.approve) {
     try {
       const p = approveEvolutionProposal(String(flags.approve), 'Human Developer', agentDest);
-      if (!quiet) (0, logger_1.log)(`  ${(0, logger_1.c)('green', '✓')} Approved evolution proposal: ${(0, logger_1.bold)(p.proposal_id)} [${p.target}]`);
+      if (!quiet)
+        (0, logger_1.log)(
+          `  ${(0, logger_1.c)('green', '✓')} Approved evolution proposal: ${(0, logger_1.bold)(p.proposal_id)} [${p.target}]`,
+        );
       return;
     } catch (e) {
       (0, logger_1.err)(`Failed to approve proposal: ${e.message}`);
@@ -38,8 +41,15 @@ async function cmdLearn(flags, quiet = false) {
 
   if (flags.reject) {
     try {
-      const p = rejectEvolutionProposal(String(flags.reject), flags.reason || 'Rejected by developer', agentDest);
-      if (!quiet) (0, logger_1.log)(`  ${(0, logger_1.c)('yellow', '✓')} Rejected evolution proposal: ${(0, logger_1.bold)(p.proposal_id)}`);
+      const p = rejectEvolutionProposal(
+        String(flags.reject),
+        flags.reason || 'Rejected by developer',
+        agentDest,
+      );
+      if (!quiet)
+        (0, logger_1.log)(
+          `  ${(0, logger_1.c)('yellow', '✓')} Rejected evolution proposal: ${(0, logger_1.bold)(p.proposal_id)}`,
+        );
       return;
     } catch (e) {
       (0, logger_1.err)(`Failed to reject proposal: ${e.message}`);
@@ -49,14 +59,19 @@ async function cmdLearn(flags, quiet = false) {
 
   if (flags.status || flags.proposals) {
     const proposals = loadEvolutionProposals(agentDest);
-    (0, logger_1.log)(`\n  ${(0, logger_1.bold)('Tribunal Evolution Proposals')} (${proposals.length} total)`);
+    (0, logger_1.log)(
+      `\n  ${(0, logger_1.bold)('Tribunal Evolution Proposals')} (${proposals.length} total)`,
+    );
     (0, logger_1.dim)('  ──────────────────────────────────────────────────');
     if (proposals.length === 0) {
       (0, logger_1.dim)('  No evolution proposals recorded yet.');
     } else {
       for (const p of proposals) {
-        const color = p.status === 'APPROVED' ? 'green' : p.status === 'REJECTED' ? 'red' : 'yellow';
-        (0, logger_1.log)(`  ${(0, logger_1.c)(color, `[${p.status}]`)} ${(0, logger_1.bold)(p.proposal_id)} — Target: ${(0, logger_1.c)('cyan', p.target)} (Risk: ${p.risk})`);
+        const color =
+          p.status === 'APPROVED' ? 'green' : p.status === 'REJECTED' ? 'red' : 'yellow';
+        (0, logger_1.log)(
+          `  ${(0, logger_1.c)(color, `[${p.status}]`)} ${(0, logger_1.bold)(p.proposal_id)} — Target: ${(0, logger_1.c)('cyan', p.target)} (Risk: ${p.risk})`,
+        );
         (0, logger_1.dim)(`    Evidence: ${p.observed_evidence}`);
         (0, logger_1.dim)(`    Change:   ${p.proposed_change}`);
       }

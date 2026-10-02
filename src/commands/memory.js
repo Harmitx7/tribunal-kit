@@ -210,12 +210,21 @@ function memoryStore(agentDest, type, content, tags, sessionId) {
 
 // ── Recall ──────────────────────────────────────────────────────────────────
 
-function memoryRecall(agentDest, query, budget = 2000) {
+function memoryRecall(agentDest, query, budget = 2000, options = {}) {
   const lockPath = acquireLock(agentDest);
   try {
     const index = loadIndex(agentDest);
+    const targetSessionId = options && typeof options === 'object' ? options.sessionId : null;
 
     const scored = index.entries
+      .filter(entry => {
+        if (entry.memory_type === 'working') {
+          if (entry.session_id) {
+            if (!targetSessionId || entry.session_id !== targetSessionId) return false;
+          }
+        }
+        return true;
+      })
       .map(entry => ({ entry, score: computeScore(entry, query) }))
       .filter(s => s.score > 0)
       .sort((a, b) => b.score - a.score);

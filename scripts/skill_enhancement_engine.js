@@ -54,15 +54,65 @@ function getSkillDomain(skillName) {
   for (const [domain, list] of Object.entries(domainRoutes)) {
     if (list.includes(skillName)) return domain;
   }
-  if (skillName.includes('anim') || skillName.includes('motion') || skillName.includes('gsap')) return 'motion';
-  if (skillName.includes('react') || skillName.includes('ui') || skillName.includes('css') || skillName.includes('design') || skillName.includes('color') || skillName.includes('typeset')) return 'frontend';
-  if (skillName.includes('sql') || skillName.includes('db') || skillName.includes('data') || skillName.includes('mongo') || skillName.includes('postgres') || skillName.includes('sqlite') || skillName.includes('redis') || skillName.includes('alembic')) return 'database';
-  if (skillName.includes('security') || skillName.includes('audit') || skillName.includes('vulnerab') || skillName.includes('shield') || skillName.includes('passkey')) return 'security';
-  if (skillName.includes('test') || skillName.includes('qa') || skillName.includes('playwright')) return 'testing';
-  if (skillName.includes('devops') || skillName.includes('ci') || skillName.includes('cloud') || skillName.includes('bash') || skillName.includes('docker') || skillName.includes('infra')) return 'devops';
-  if (skillName.includes('mobile') || skillName.includes('swift') || skillName.includes('expo')) return 'mobile';
-  if (skillName.includes('api') || skillName.includes('python') || skillName.includes('rust') || skillName.includes('backend') || skillName.includes('fastapi') || skillName.includes('node')) return 'backend';
-  if (skillName.startsWith('hf-') || skillName.startsWith('huggingface-') || skillName.includes('transformers') || skillName.includes('trl-')) return 'huggingface';
+  if (skillName.includes('anim') || skillName.includes('motion') || skillName.includes('gsap'))
+    return 'motion';
+  if (
+    skillName.includes('react') ||
+    skillName.includes('ui') ||
+    skillName.includes('css') ||
+    skillName.includes('design') ||
+    skillName.includes('color') ||
+    skillName.includes('typeset')
+  )
+    return 'frontend';
+  if (
+    skillName.includes('sql') ||
+    skillName.includes('db') ||
+    skillName.includes('data') ||
+    skillName.includes('mongo') ||
+    skillName.includes('postgres') ||
+    skillName.includes('sqlite') ||
+    skillName.includes('redis') ||
+    skillName.includes('alembic')
+  )
+    return 'database';
+  if (
+    skillName.includes('security') ||
+    skillName.includes('audit') ||
+    skillName.includes('vulnerab') ||
+    skillName.includes('shield') ||
+    skillName.includes('passkey')
+  )
+    return 'security';
+  if (skillName.includes('test') || skillName.includes('qa') || skillName.includes('playwright'))
+    return 'testing';
+  if (
+    skillName.includes('devops') ||
+    skillName.includes('ci') ||
+    skillName.includes('cloud') ||
+    skillName.includes('bash') ||
+    skillName.includes('docker') ||
+    skillName.includes('infra')
+  )
+    return 'devops';
+  if (skillName.includes('mobile') || skillName.includes('swift') || skillName.includes('expo'))
+    return 'mobile';
+  if (
+    skillName.includes('api') ||
+    skillName.includes('python') ||
+    skillName.includes('rust') ||
+    skillName.includes('backend') ||
+    skillName.includes('fastapi') ||
+    skillName.includes('node')
+  )
+    return 'backend';
+  if (
+    skillName.startsWith('hf-') ||
+    skillName.startsWith('huggingface-') ||
+    skillName.includes('transformers') ||
+    skillName.includes('trl-')
+  )
+    return 'huggingface';
   return 'meta';
 }
 
@@ -354,7 +404,10 @@ function parseFrontmatter(content) {
         isList = false;
       }
     } else if (isList && trimmed.startsWith('-')) {
-      const item = trimmed.slice(1).trim().replace(/^['"]|['"]$/g, '');
+      const item = trimmed
+        .slice(1)
+        .trim()
+        .replace(/^['"]|['"]$/g, '');
       if (Array.isArray(meta[currentKey])) {
         meta[currentKey].push(item);
       }
@@ -414,18 +467,26 @@ function buildEnhancedSkill(skillName, originalContent) {
 
   // Strip broken duplicate horizontal rules or artifact headers
   coreBody = coreBody.replace(/^---\s*(\r?\n---\s*)+/g, '').trim();
-  coreBody = coreBody.replace(/## 🛠️ Technical Architecture & Reference Recipes\s*(\r?\n---\s*)+/g, '## 🛠️ Technical Architecture & Reference Recipes\n\n').trim();
+  coreBody = coreBody
+    .replace(
+      /## 🛠️ Technical Architecture & Reference Recipes\s*(\r?\n---\s*)+/g,
+      '## 🛠️ Technical Architecture & Reference Recipes\n\n',
+    )
+    .trim();
 
   // Detect existing sections
   const alreadyHasPreflight = coreBody.includes('## Mandatory Pre-Flight Context Inspection');
   const alreadyHasBoundaries = coreBody.includes('## Activation Boundaries');
   const alreadyHasProtocol = coreBody.includes('## 🔁 Multi-Pass Execution Protocol');
   const alreadyHasEdgeCases = coreBody.includes('## 🚨 Edge-Case & Failure Mode Matrix');
-  const alreadyHasTraps = coreBody.includes('## 🤖 LLM-Specific Traps Table') || coreBody.includes('## Hallucination Traps');
+  const alreadyHasTraps =
+    coreBody.includes('## 🤖 LLM-Specific Traps Table') ||
+    coreBody.includes('## Hallucination Traps');
   const alreadyHasTribunal = coreBody.includes('## 🏛️ Tribunal Verification & Guardrails');
 
   // Strip legacy footers
-  const oldFooterRegex = /\n---\s*\n+(\*\*Slash command: `\/review`|## 🏛️ Tribunal Integration \(Anti-Hallucination\)|\*\*Active reviewers: `logic-reviewer` · `security-auditor`\*\*)[\s\S]*$/;
+  const oldFooterRegex =
+    /\n---\s*\n+(\*\*Slash command: `\/review`|## 🏛️ Tribunal Integration \(Anti-Hallucination\)|\*\*Active reviewers: `logic-reviewer` · `security-auditor`\*\*)[\s\S]*$/;
   coreBody = coreBody.replace(oldFooterRegex, '').trim();
 
   // Clean repetitive consecutive ---
@@ -435,15 +496,19 @@ function buildEnhancedSkill(skillName, originalContent) {
   const desc = enrichDescription(skillName, domain, meta.description);
 
   // Frontmatter formatting
-  const scripts = Array.isArray(meta['scripts-binding']) && meta['scripts-binding'].length > 0
-    ? meta['scripts-binding']
-    : ['.agent/scripts/lint_runner.js', '.agent/scripts/verify_all.js'];
-  if (!scripts.includes('.agent/scripts/lint_runner.js')) scripts.push('.agent/scripts/lint_runner.js');
-  if (!scripts.includes('.agent/scripts/verify_all.js')) scripts.push('.agent/scripts/verify_all.js');
+  const scripts =
+    Array.isArray(meta['scripts-binding']) && meta['scripts-binding'].length > 0
+      ? meta['scripts-binding']
+      : ['.agent/scripts/lint_runner.js', '.agent/scripts/verify_all.js'];
+  if (!scripts.includes('.agent/scripts/lint_runner.js'))
+    scripts.push('.agent/scripts/lint_runner.js');
+  if (!scripts.includes('.agent/scripts/verify_all.js'))
+    scripts.push('.agent/scripts/verify_all.js');
 
-  const skillsList = Array.isArray(meta.skills) && meta.skills.length > 0
-    ? `skills:\n${meta.skills.map(s => `  - ${s}`).join('\n')}`
-    : null;
+  const skillsList =
+    Array.isArray(meta.skills) && meta.skills.length > 0
+      ? `skills:\n${meta.skills.map(s => `  - ${s}`).join('\n')}`
+      : null;
 
   const formattedFrontmatter = [
     '---',
@@ -455,10 +520,14 @@ function buildEnhancedSkill(skillName, originalContent) {
     `tools: Read, Grep, Glob, Bash, Edit, Write`,
     `scripts-binding:\n${scripts.map(s => `  - ${s}`).join('\n')}`,
     '---',
-  ].filter(Boolean).join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   // Section templates
-  const preflightSection = alreadyHasPreflight ? '' : `## Mandatory Pre-Flight Context Inspection
+  const preflightSection = alreadyHasPreflight
+    ? ''
+    : `## Mandatory Pre-Flight Context Inspection
 Before reading, generating, or refactoring code in the \`${skillName}\` domain, inspect these 5 critical parameters:
 1. **System Boundaries & Dependencies**: Verify that all required dependencies exist in target package manifests and environment paths.
 2. **Runtime Context & Platform Invariants**: Confirm target platform constraints (Node.js, Browser, Mobile OS, Edge runtime) before applying APIs.
@@ -467,12 +536,16 @@ Before reading, generating, or refactoring code in the \`${skillName}\` domain, 
 5. **Observability & Proof of Execution**: Ensure execution produces tangible verification signals (terminal output, tests, metrics).
 `;
 
-  const boundarySection = alreadyHasBoundaries ? '' : `## Activation Boundaries
+  const boundarySection = alreadyHasBoundaries
+    ? ''
+    : `## Activation Boundaries
 - **Activate when:** ${desc}
 - **DO NOT activate when:** The task falls outside the \`${skillName}\` domain or is managed by a different dedicated specialist agent.
 `;
 
-  const protocolSection = alreadyHasProtocol ? '' : `## 🔁 Multi-Pass Execution Protocol
+  const protocolSection = alreadyHasProtocol
+    ? ''
+    : `## 🔁 Multi-Pass Execution Protocol
 
 | Pass | Phase | Core Action | Adaptive Depth |
 |:---|:---|:---|:---|
@@ -485,7 +558,9 @@ Before reading, generating, or refactoring code in the \`${skillName}\` domain, 
 | **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. | All Modes |
 `;
 
-  const edgeCasesSection = alreadyHasEdgeCases ? '' : `## 🚨 Edge-Case & Failure Mode Matrix
+  const edgeCasesSection = alreadyHasEdgeCases
+    ? ''
+    : `## 🚨 Edge-Case & Failure Mode Matrix
 
 | Scenario | Risk | Production Mitigation |
 |:---|:---|:---|
@@ -496,14 +571,18 @@ Before reading, generating, or refactoring code in the \`${skillName}\` domain, 
 | **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
 `;
 
-  const trapsSection = alreadyHasTraps ? '' : `## 🤖 LLM-Specific Traps Table
+  const trapsSection = alreadyHasTraps
+    ? ''
+    : `## 🤖 LLM-Specific Traps Table
 
 | Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
 |:---|:---|:---|
 ${traps.map(t => `| **${t.trope}** | ${t.bad} | ${t.good} |`).join('\n')}
 `;
 
-  const tribunalSection = alreadyHasTribunal ? '' : `## 🏛️ Tribunal Verification & Guardrails
+  const tribunalSection = alreadyHasTribunal
+    ? ''
+    : `## 🏛️ Tribunal Verification & Guardrails
 
 **Active Reviewers:** ${reviewers.map(r => `\`${r}\``).join(' · ')}
 **Slash Command:** \`/review\` or \`/tribunal-full\`
@@ -537,7 +616,7 @@ ${preflights.join('\n')}
     '',
     edgeCasesSection,
     trapsSection,
-    tribunalSection
+    tribunalSection,
   ].filter(p => p !== '');
 
   let result = parts.join('\n\n').trim() + '\n';
@@ -571,7 +650,9 @@ function run() {
   console.log(`\n🚀 Tribunal Kit State-of-the-Art Skill Enhancement Engine v6.0.0`);
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
   console.log(`Target Skills: ${skillDirs.length}`);
-  console.log(`Execution Mode: ${DRY_RUN ? 'DRY RUN (preview only)' : FIX ? 'FIX (writing changes)' : 'VALIDATE ONLY'}`);
+  console.log(
+    `Execution Mode: ${DRY_RUN ? 'DRY RUN (preview only)' : FIX ? 'FIX (writing changes)' : 'VALIDATE ONLY'}`,
+  );
   console.log(`Sync to Root: ${SYNC_TO_ROOT ? 'YES' : 'NO'}\n`);
 
   let enhancedCount = 0;
@@ -632,4 +713,10 @@ if (require.main === module) {
   run();
 }
 
-module.exports = { buildEnhancedSkill, getSkillDomain, DOMAIN_REVIEWERS, DOMAIN_PREFLIGHT, DOMAIN_TRAPS };
+module.exports = {
+  buildEnhancedSkill,
+  getSkillDomain,
+  DOMAIN_REVIEWERS,
+  DOMAIN_PREFLIGHT,
+  DOMAIN_TRAPS,
+};

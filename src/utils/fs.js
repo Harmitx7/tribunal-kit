@@ -8,6 +8,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 exports.copyDir = copyDir;
 exports.countDir = countDir;
 exports.isSelfInstall = isSelfInstall;
+exports.writeFileSyncAtomic = writeFileSyncAtomic;
 const fs_1 = __importDefault(require('fs'));
 const path_1 = __importDefault(require('path'));
 const logger_1 = require('./logger');
@@ -100,4 +101,30 @@ function isSelfInstall(targetDir, pkgName, kitRoot) {
     }
   }
   return false;
+}
+
+/**
+ * Atomically writes data to a file by writing to a temporary file in the same directory
+ * and renaming it into place. Handles cross-platform and Windows locking cleanly.
+ */
+function writeFileSyncAtomic(filePath, data, encoding = 'utf8') {
+  const dir = path_1.default.dirname(filePath);
+  if (!fs_1.default.existsSync(dir)) fs_1.default.mkdirSync(dir, { recursive: true });
+  const tmpPath = path_1.default.join(
+    dir,
+    `.${path_1.default.basename(filePath)}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 6)}.tmp`,
+  );
+  fs_1.default.writeFileSync(tmpPath, data, encoding);
+  try {
+    fs_1.default.renameSync(tmpPath, filePath);
+  } catch (err) {
+    if (process.platform === 'win32' && (err.code === 'EEXIST' || err.code === 'EPERM')) {
+      try {
+        fs_1.default.unlinkSync(filePath);
+      } catch (_) {}
+      fs_1.default.renameSync(tmpPath, filePath);
+    } else {
+      throw err;
+    }
+  }
 }

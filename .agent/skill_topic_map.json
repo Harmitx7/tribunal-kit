@@ -121,12 +121,7 @@
       "supabase-postgres-best-practices",
       "vector-search-pgvector"
     ],
-    "mobile": [
-      "edge-ai-mobile",
-      "expo-router-v4",
-      "mobile-design",
-      "swiftui-expert"
-    ],
+    "mobile": ["edge-ai-mobile", "expo-router-v4", "mobile-design", "swiftui-expert"],
     "devops": [
       "bash-linux",
       "cicd-pro",
@@ -274,19 +269,9 @@
       "opentelemetry-observability",
       "property-based-testing"
     ],
-    ".jsx": [
-      "react-specialist",
-      "frontend-design"
-    ],
-    ".js": [
-      "nodejs-best-practices",
-      "clean-code",
-      "opentelemetry-observability"
-    ],
-    ".vue": [
-      "vue-expert",
-      "frontend-design"
-    ],
+    ".jsx": ["react-specialist", "frontend-design"],
+    ".js": ["nodejs-best-practices", "clean-code", "opentelemetry-observability"],
+    ".vue": ["vue-expert", "frontend-design"],
     ".py": [
       "python-pro",
       "python-patterns",
@@ -296,12 +281,8 @@
       "backend-sqlalchemy",
       "backend-alembic"
     ],
-    ".rs": [
-      "rust-pro"
-    ],
-    ".cs": [
-      "csharp-developer"
-    ],
+    ".rs": ["rust-pro"],
+    ".cs": ["csharp-developer"],
     ".sql": [
       "sql-pro",
       "database-design",
@@ -309,33 +290,12 @@
       "vector-search-pgvector",
       "duckdb-analytical-sql"
     ],
-    ".prisma": [
-      "data-validation-schemas",
-      "database-design",
-      "vector-search-pgvector"
-    ],
-    ".css": [
-      "frontend-design",
-      "better-colors",
-      "better-typography",
-      "swiss-design"
-    ],
-    ".sh": [
-      "bash-linux"
-    ],
-    ".ps1": [
-      "powershell-windows"
-    ],
-    ".swift": [
-      "swiftui-expert",
-      "mobile-design",
-      "edge-ai-mobile"
-    ],
-    ".tf": [
-      "platform-engineering-opentofu"
-    ],
-    ".tofu": [
-      "platform-engineering-opentofu"
-    ]
+    ".prisma": ["data-validation-schemas", "database-design", "vector-search-pgvector"],
+    ".css": ["frontend-design", "better-colors", "better-typography", "swiss-design"],
+    ".sh": ["bash-linux"],
+    ".ps1": ["powershell-windows"],
+    ".swift": ["swiftui-expert", "mobile-design", "edge-ai-mobile"],
+    ".tf": ["platform-engineering-opentofu"],
+    ".tofu": ["platform-engineering-opentofu"]
   }
 }

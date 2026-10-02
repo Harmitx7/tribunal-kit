@@ -130,7 +130,9 @@ function cmdHelp(quiet = false) {
     cmd('contract', 'AI Agent Behavioral Contract Testing (init, verify, list, trace, replay)'),
   );
   (0, logger_1.log)(cmd('impact-tier', 'Classify task governance impact tier (0-3)'));
-  (0, logger_1.log)(cmd('context-rank', 'Deterministic evidence-driven context ranking and token budgeting'));
+  (0, logger_1.log)(
+    cmd('context-rank', 'Deterministic evidence-driven context ranking and token budgeting'),
+  );
   (0, logger_1.log)(cmd('browse', 'Token-efficient page reader (pruned to <4k bytes)'));
   (0, logger_1.log)(cmd('audit-web', 'Live browser accessibility, console & vitals auditor'));
   (0, logger_1.log)(cmd('compare-web', 'Visual regression differ for CI & release gating'));

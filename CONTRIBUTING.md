@@ -42,9 +42,9 @@ tribunal-kit/
 │   └── index.d.ts          # TypeScript declarations
 ├── crates/core/            # Rust core engine (Tokio-based)
 ├── .agent/                 # The intelligence payload (agents, skills, workflows)
-│   ├── agents/             # 58 specialist and reviewer agent definitions
+│   ├── agents/             # 60 specialist and reviewer agent definitions
 │   ├── skills/             # Reusable skill packs
-│   ├── workflows/          # 49 workflow definitions
+│   ├── workflows/          # 51 workflow definitions
 │   └── scripts/            # Automation scripts
 ├── test/
 │   ├── unit/               # Unit tests (Jest)

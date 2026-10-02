@@ -35,11 +35,46 @@ async function runBenchmark() {
 
   // 1. IMPACT-TIER MONOTONIC CLASSIFIER BENCHMARK
   const classifierFixtures = [
-    { name: 'Trivial Doc', files: ['README.md'], lines: 5, task: 'Fix typo', diff: '+ fixed', expected: 0 },
-    { name: 'Single File UI', files: ['src/tui/banner.js'], lines: 20, task: 'Update banner color', diff: '+ color', expected: 1 },
-    { name: 'Multi-file Feature', files: ['src/tui/banner.js', 'src/tui/theme.js'], lines: 80, task: 'Refactor themes', diff: '+ theme', expected: 2 },
-    { name: 'Critical Auth Path', files: ['src/auth.js'], lines: 5, task: 'update token verification', diff: '+ verify()', expected: 3 },
-    { name: 'Adversarial Evasion Diff', files: ['README.md'], lines: 5, task: 'Update docs', diff: '+ const jwt = token;', expected: 3 },
+    {
+      name: 'Trivial Doc',
+      files: ['README.md'],
+      lines: 5,
+      task: 'Fix typo',
+      diff: '+ fixed',
+      expected: 0,
+    },
+    {
+      name: 'Single File UI',
+      files: ['src/tui/banner.js'],
+      lines: 20,
+      task: 'Update banner color',
+      diff: '+ color',
+      expected: 1,
+    },
+    {
+      name: 'Multi-file Feature',
+      files: ['src/tui/banner.js', 'src/tui/theme.js'],
+      lines: 80,
+      task: 'Refactor themes',
+      diff: '+ theme',
+      expected: 2,
+    },
+    {
+      name: 'Critical Auth Path',
+      files: ['src/auth.js'],
+      lines: 5,
+      task: 'update token verification',
+      diff: '+ verify()',
+      expected: 3,
+    },
+    {
+      name: 'Adversarial Evasion Diff',
+      files: ['README.md'],
+      lines: 5,
+      task: 'Update docs',
+      diff: '+ const jwt = token;',
+      expected: 3,
+    },
   ];
 
   let falseLowTier = 0;
@@ -69,7 +104,9 @@ async function runBenchmark() {
   console.log(`   - Iterations:             ${classifierIterations} runs (MEASURED)`);
   console.log(`   - Total Latency:          ${totalClassifierMs.toFixed(2)} ms (MEASURED)`);
   console.log(`   - Average Latency:        ${avgClassifierLatencyUs.toFixed(2)} μs/op (MEASURED)`);
-  console.log(`   - False-Low-Tier Cases:   ${falseLowTier} (${falseLowTier === 0 ? '0% - IMMUNE' : falseLowTier}) (MEASURED)`);
+  console.log(
+    `   - False-Low-Tier Cases:   ${falseLowTier} (${falseLowTier === 0 ? '0% - IMMUNE' : falseLowTier}) (MEASURED)`,
+  );
   console.log(`   - False-High-Tier Cases:  ${falseHighTier} (MEASURED)`);
   console.log('');
 
@@ -103,30 +140,55 @@ async function runBenchmark() {
   });
 
   const tokenReductionPercent = (
-    ((rankingBudgeted.metrics.estimated_tokens_before - rankingBudgeted.metrics.estimated_tokens_after) /
+    ((rankingBudgeted.metrics.estimated_tokens_before -
+      rankingBudgeted.metrics.estimated_tokens_after) /
       rankingBudgeted.metrics.estimated_tokens_before) *
     100
   ).toFixed(1);
 
   console.log('2. DETERMINISTIC CONTEXT RANKING & BUDGETING');
-  console.log(`   - Context Items Before:   ${rankingBudgeted.metrics.context_items_before} items (MEASURED)`);
-  console.log(`   - Context Items After:    ${rankingBudgeted.metrics.context_items_after} items (MEASURED)`);
-  console.log(`   - Estimated Tokens Before: ~${rankingBudgeted.metrics.estimated_tokens_before} tokens (ESTIMATED)`);
-  console.log(`   - Estimated Tokens After:  ~${rankingBudgeted.metrics.estimated_tokens_after} tokens (ESTIMATED)`);
+  console.log(
+    `   - Context Items Before:   ${rankingBudgeted.metrics.context_items_before} items (MEASURED)`,
+  );
+  console.log(
+    `   - Context Items After:    ${rankingBudgeted.metrics.context_items_after} items (MEASURED)`,
+  );
+  console.log(
+    `   - Estimated Tokens Before: ~${rankingBudgeted.metrics.estimated_tokens_before} tokens (ESTIMATED)`,
+  );
+  console.log(
+    `   - Estimated Tokens After:  ~${rankingBudgeted.metrics.estimated_tokens_after} tokens (ESTIMATED)`,
+  );
   console.log(`   - Token Reduction Ratio:   ${tokenReductionPercent}% reduction (MEASURED)`);
-  console.log(`   - Critical Evidence Kept:  ${rankingBudgeted.metrics.critical_evidence_retained} mandatory files retained (MEASURED)`);
+  console.log(
+    `   - Critical Evidence Kept:  ${rankingBudgeted.metrics.critical_evidence_retained} mandatory files retained (MEASURED)`,
+  );
   console.log('');
 
   // 3. SYNTHESIS: CHECKS VS CLAIMS BENCHMARK
   const checks = [
     createImplementationCheck({ check: 'tests_passed', command: 'npm test', result: 'PASSED' }),
     createImplementationCheck({ check: 'lint_passed', command: 'eslint .', result: 'PASSED' }),
-    createImplementationCheck({ check: 'security_scan_passed', command: 'node security_scan.js', result: 'PASSED' }),
+    createImplementationCheck({
+      check: 'security_scan_passed',
+      command: 'node security_scan.js',
+      result: 'PASSED',
+    }),
   ];
 
   const claims = [
-    createEvidenceClaim({ reviewer: 'security-auditor', assertion: 'All input sanitized', category: 'security', confidence: 'L2' }),
-    createEvidenceClaim({ reviewer: 'logic-reviewer', assertion: 'State transitions correct', category: 'logic', confidence: 'L3' }),
+    createEvidenceClaim({
+      reviewer: 'security-auditor',
+      assertion: 'All input sanitized',
+      category: 'security',
+      confidence: 'L2',
+    }),
+    createEvidenceClaim({
+      reviewer: 'logic-reviewer',
+      assertion: 'State transitions correct',
+      category: 'logic',
+      confidence: 'L3',
+    }),
   ];
 
   const startSynthesis = process.hrtime.bigint();
@@ -180,12 +242,16 @@ async function runBenchmark() {
   console.log('4. CONTROLLED SELF-EVOLUTION ENGINE');
   console.log(`   - Proposals Created:      1 (MEASURED)`);
   console.log(`   - Proposals Approved:     1 (Human Gate Cleared) (MEASURED)`);
-  console.log(`   - Malicious Poison Attack: ${poisonBlocked ? 'BLOCKED & REJECTED' : 'FAILED'} (MEASURED)`);
+  console.log(
+    `   - Malicious Poison Attack: ${poisonBlocked ? 'BLOCKED & REJECTED' : 'FAILED'} (MEASURED)`,
+  );
   console.log('');
 
   // 5. UNAVAILABLE EXTERNAL METRICS
   console.log('5. SYSTEM TELEMETRY (CROSS-SESSION)');
-  console.log(`   - Reviewer Live Tokens:   UNVERIFIED (Requires active Anthropic/OpenRouter API key)`);
+  console.log(
+    `   - Reviewer Live Tokens:   UNVERIFIED (Requires active Anthropic/OpenRouter API key)`,
+  );
   console.log(`   - Live LLM Latency:       UNVERIFIED (Offline evaluation)`);
   console.log('');
 

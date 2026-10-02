@@ -84,9 +84,17 @@ function createEvidenceClaim({
 
   let normConfidence = 'UNAVAILABLE';
   if (confidence !== 'UNAVAILABLE' && confidence !== null && confidence !== undefined) {
-    if (typeof confidence === 'number' && !isNaN(confidence) && confidence >= 0 && confidence <= 1) {
+    if (
+      typeof confidence === 'number' &&
+      !isNaN(confidence) &&
+      confidence >= 0 &&
+      confidence <= 1
+    ) {
       normConfidence = parseFloat(confidence.toFixed(2));
-    } else if (typeof confidence === 'string' && ['L1', 'L2', 'L3', 'L4', 'L5'].includes(confidence.toUpperCase())) {
+    } else if (
+      typeof confidence === 'string' &&
+      ['L1', 'L2', 'L3', 'L4', 'L5'].includes(confidence.toUpperCase())
+    ) {
       normConfidence = confidence.toUpperCase();
     }
   }
@@ -112,12 +120,7 @@ function createEvidenceClaim({
 /**
  * Correlates and synthesizes implementation checks with reviewer claims.
  */
-function synthesizeReviewResults({
-  checks = [],
-  claims = [],
-  runId = null,
-  timestamp = null,
-}) {
+function synthesizeReviewResults({ checks = [], claims = [], runId = null, timestamp = null }) {
   const ts = timestamp || new Date().toISOString();
   const synthesisId = runId || `syn_${crypto.randomBytes(6).toString('hex')}`;
 
@@ -145,7 +148,11 @@ function synthesizeReviewResults({
     const claimText = (claim.assertion + ' ' + (claim.provenance?.evidence || '')).toLowerCase();
 
     // Conflict Scenario 1: Check passed but reviewer claims failure/vulnerability in that area
-    if (claim.category === 'test' && claimText.includes('fail') && passedChecks.some(c => c.check === 'tests_passed')) {
+    if (
+      claim.category === 'test' &&
+      claimText.includes('fail') &&
+      passedChecks.some(c => c.check === 'tests_passed')
+    ) {
       conflicts.push({
         type: 'CHECK_PASSED_CLAIM_FAILED',
         description: `Reviewer ${claim.reviewer} claimed tests failed, but tests_passed check PASSED deterministically.`,
@@ -154,7 +161,11 @@ function synthesizeReviewResults({
         resolution: 'DETERMINISTIC_CHECK_PRESERVED',
       });
       claim.status = 'CLAIM_OVERRULED_BY_CHECK';
-    } else if (claim.category === 'lint' && claimText.includes('fail') && passedChecks.some(c => c.check === 'lint_passed')) {
+    } else if (
+      claim.category === 'lint' &&
+      claimText.includes('fail') &&
+      passedChecks.some(c => c.check === 'lint_passed')
+    ) {
       conflicts.push({
         type: 'CHECK_PASSED_CLAIM_FAILED',
         description: `Reviewer ${claim.reviewer} claimed lint failed, but lint_passed check PASSED deterministically.`,
@@ -166,7 +177,11 @@ function synthesizeReviewResults({
     }
 
     // Conflict Scenario 2: Check failed but reviewer claims success or approves
-    if (claimText.includes('passed') || claimText.includes('success') || claimText.includes('approved')) {
+    if (
+      claimText.includes('passed') ||
+      claimText.includes('success') ||
+      claimText.includes('approved')
+    ) {
       const relatedFailedCheck = failedChecks.find(fc => {
         const checkBase = fc.check.replace('_passed', '').toLowerCase();
         const checkSpace = checkBase.replace(/_/g, ' ');
@@ -218,8 +233,16 @@ function synthesizeReviewResults({
       const textA = revA.assertion.toLowerCase();
       const textB = revB.assertion.toLowerCase();
 
-      const aSaysIssue = textA.includes('vulnerab') || textA.includes('insecure') || textA.includes('bug') || textA.includes('error');
-      const bSaysSafe = textB.includes('safe') || textB.includes('correct') || textB.includes('approved') || textB.includes('clean');
+      const aSaysIssue =
+        textA.includes('vulnerab') ||
+        textA.includes('insecure') ||
+        textA.includes('bug') ||
+        textA.includes('error');
+      const bSaysSafe =
+        textB.includes('safe') ||
+        textB.includes('correct') ||
+        textB.includes('approved') ||
+        textB.includes('clean');
 
       if ((aSaysIssue && bSaysSafe) || (textA.includes('safe') && textB.includes('bug'))) {
         conflicts.push({

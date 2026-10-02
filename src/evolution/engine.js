@@ -153,7 +153,8 @@ function validateEvolutionProposal(proposal) {
   ) {
     return {
       valid: false,
-      reason: 'Observed evidence is too short or vacuous. Measurable, concrete evidence is required.',
+      reason:
+        'Observed evidence is too short or vacuous. Measurable, concrete evidence is required.',
     };
   }
 

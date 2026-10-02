@@ -5,7 +5,7 @@
  */
 
 const { findBrowser, findPinchTabBinary, isPortOpen } = require('./discovery');
-const { launchBrowser, cleanupAll } = require('./launcher');
+const { launchBrowser, cleanupAll, terminateProcessTree } = require('./launcher');
 const { CdpClient, createNewTab, closeTab } = require('./cdp');
 const { trimHTML, toSemanticMarkdown, truncateUTF8Bytes, MAX_TRIMMED_BYTES } = require('./trimmer');
 const { scanContent, sanitizeContent, sandboxWebContent, isDomainAllowed } = require('./idpi');
@@ -66,6 +66,7 @@ module.exports = {
   isPortOpen,
   launchBrowser,
   cleanupAll,
+  terminateProcessTree,
   CdpClient,
   createNewTab,
   closeTab,

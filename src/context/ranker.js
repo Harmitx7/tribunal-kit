@@ -33,20 +33,14 @@ const CONFIG_PATTERNS = [
   /[\\/](?:docker-compose|\.github[\\/]workflows)/i,
 ];
 
-const DOC_PATTERNS = [
-  /\.(?:md|markdown|txt|rst|adoc)$/i,
-  /[\\/]docs[\\/]/i,
-];
+const DOC_PATTERNS = [/\.(?:md|markdown|txt|rst|adoc)$/i, /[\\/]docs[\\/]/i];
 
 const TEST_PATTERNS = [
   /\.(?:test|spec)\.[a-zA-Z0-9]+$/i,
   /[\\/](?:__tests__|tests?|fixtures?)[\\/]/i,
 ];
 
-const ENTRY_PATTERNS = [
-  /[\\/](?:index|main|cli|app|server)\.[a-zA-Z0-9]+$/i,
-  /[\\/]api[\\/]/i,
-];
+const ENTRY_PATTERNS = [/[\\/](?:index|main|cli|app|server)\.[a-zA-Z0-9]+$/i, /[\\/]api[\\/]/i];
 
 function normalizePath(filePath) {
   return filePath.replace(/\\/g, '/').replace(/^\.\//, '');
@@ -67,7 +61,8 @@ function estimateTokens(textOrBytes) {
  */
 function extractImports(code) {
   const imports = new Set();
-  const importRegex = /(?:import\s+(?:[\w*\s{},]*\s+from\s+)?['"]([^'"]+)['"]|require\s*\(\s*['"]([^'"]+)['"]\s*\))/g;
+  const importRegex =
+    /(?:import\s+(?:[\w*\s{},]*\s+from\s+)?['"]([^'"]+)['"]|require\s*\(\s*['"]([^'"]+)['"]\s*\))/g;
   let match;
   while ((match = importRegex.exec(code)) !== null) {
     const target = match[1] || match[2];
@@ -180,7 +175,8 @@ function rankContext(options = {}) {
     totalTokensBefore += estimatedTokens;
 
     const isDirectlyModified = targetFiles.includes(norm);
-    const isRootSecurityBoundary = /[\\/]SECURITY\.md$/i.test('/' + norm) || /[\\/]\.env/i.test('/' + norm);
+    const isRootSecurityBoundary =
+      /[\\/]SECURITY\.md$/i.test('/' + norm) || /[\\/]\.env/i.test('/' + norm);
     const isSecurityDomain = SECURITY_PATTERNS.some(pat => pat.test('/' + norm));
     const isConfig = CONFIG_PATTERNS.some(pat => pat.test('/' + norm));
     const isDoc = DOC_PATTERNS.some(pat => pat.test('/' + norm));
@@ -189,7 +185,7 @@ function rankContext(options = {}) {
 
     // Signal 1: Directly modified file (1.00, mandatory)
     if (isDirectlyModified) {
-      score = Math.max(score, 1.00);
+      score = Math.max(score, 1.0);
       reasons.push('directly modified');
       isMandatory = true;
     }
@@ -200,7 +196,7 @@ function rankContext(options = {}) {
       reasons.push('security boundary');
       isMandatory = true;
     } else if (isSecurityDomain && !isDirectlyModified) {
-      score = Math.max(score, 0.90);
+      score = Math.max(score, 0.9);
       reasons.push('security domain module');
     }
 
@@ -213,7 +209,7 @@ function rankContext(options = {}) {
         reasons.push(`direct importer of ${path.basename(tf)}`);
       }
       if (isDirectDependency) {
-        score = Math.max(score, 0.80);
+        score = Math.max(score, 0.8);
         reasons.push(`direct dependency of ${path.basename(tf)}`);
       }
     }
@@ -226,14 +222,14 @@ function rankContext(options = {}) {
         score = Math.max(score, 0.75);
         reasons.push('test covering changed behavior');
       } else {
-        score = Math.max(score, 0.20);
+        score = Math.max(score, 0.2);
         reasons.push('unrelated test suite');
       }
     }
 
     // Signal 6: Configuration controlling behavior (0.70)
     if (isConfig) {
-      score = Math.max(score, 0.70);
+      score = Math.max(score, 0.7);
       reasons.push('configuration controlling behavior');
     }
 
@@ -245,7 +241,7 @@ function rankContext(options = {}) {
 
     // Signal 8: Architectural parent / sibling directory (0.50)
     if (!isDirectlyModified && targetFiles.some(tf => path.dirname(tf) === path.dirname(norm))) {
-      score = Math.max(score, 0.50);
+      score = Math.max(score, 0.5);
       reasons.push('architectural sibling/parent');
     }
 
@@ -281,8 +277,10 @@ function rankContext(options = {}) {
   });
 
   // Apply budget constraints (maxTokens, maxItems)
-  const maxTokens = typeof options.maxTokens === 'number' && options.maxTokens > 0 ? options.maxTokens : Infinity;
-  const maxItems = typeof options.maxItems === 'number' && options.maxItems > 0 ? options.maxItems : Infinity;
+  const maxTokens =
+    typeof options.maxTokens === 'number' && options.maxTokens > 0 ? options.maxTokens : Infinity;
+  const maxItems =
+    typeof options.maxItems === 'number' && options.maxItems > 0 ? options.maxItems : Infinity;
 
   const rankedItems = [];
   const truncatedItems = [];
@@ -299,8 +297,8 @@ function rankContext(options = {}) {
 
   // Step 2: Include optional items up to the budget limits
   for (const item of optionalItems) {
-    const wouldExceedTokens = (currentTokens + item.estimated_tokens) > maxTokens;
-    const wouldExceedItems = (rankedItems.length + 1) > maxItems;
+    const wouldExceedTokens = currentTokens + item.estimated_tokens > maxTokens;
+    const wouldExceedItems = rankedItems.length + 1 > maxItems;
 
     if (!wouldExceedTokens && !wouldExceedItems) {
       rankedItems.push(item);

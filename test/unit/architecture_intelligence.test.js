@@ -21,7 +21,7 @@ describe('Tribunal Architecture Intelligence — Core Unit Tests', () => {
       expect(model.relationships.length).toBeGreaterThan(10);
       expect(model.trustBoundaries.length).toBe(5);
 
-      const endpoint = model.entities.find((e) => e.kind === 'endpoint');
+      const endpoint = model.entities.find(e => e.kind === 'endpoint');
       expect(endpoint).toBeDefined();
       expect(endpoint.sources[0].verified).toBe(true);
       expect(endpoint.confidence).toBe('L1');
@@ -70,13 +70,15 @@ describe('Tribunal Architecture Intelligence — Core Unit Tests', () => {
       const engine = new BlastRadiusEngine(model);
 
       // Find an entity with callers, e.g. logger
-      const loggerEntity = model.entities.find((e) => e.name === 'logger.js');
+      const loggerEntity = model.entities.find(e => e.name === 'logger.js');
       expect(loggerEntity).toBeDefined();
 
       const result = engine.computeBlastRadius('logger.js');
       expect(result.found).toBe(true);
       expect(result.metrics.directDependentsCount).toBeGreaterThan(0);
-      expect(result.metrics.transitiveDependentsCount).toBeGreaterThanOrEqual(result.metrics.directDependentsCount);
+      expect(result.metrics.transitiveDependentsCount).toBeGreaterThanOrEqual(
+        result.metrics.directDependentsCount,
+      );
       expect(result.transitiveRings.length).toBeGreaterThan(0);
       expect(typeof result.metrics.riskScore).toBe('number');
     });
@@ -101,9 +103,16 @@ describe('Tribunal Architecture Intelligence — Core Unit Tests', () => {
       const headModel = {
         entities: [
           { id: 'mod.a', name: 'a.js', kind: 'module', trustZone: 'internal_service' },
-          { id: 'ext.stripe', name: 'Stripe SaaS', kind: 'external_api', trustZone: 'external_untrusted' },
+          {
+            id: 'ext.stripe',
+            name: 'Stripe SaaS',
+            kind: 'external_api',
+            trustZone: 'external_untrusted',
+          },
         ],
-        relationships: [{ id: 'rel.1', sourceId: 'mod.a', targetId: 'ext.stripe', relationType: 'calls' }],
+        relationships: [
+          { id: 'rel.1', sourceId: 'mod.a', targetId: 'ext.stripe', relationType: 'calls' },
+        ],
       };
 
       const differ = new ArchitectureDiffer(baseModel, headModel);
@@ -119,16 +128,28 @@ describe('Tribunal Architecture Intelligence — Core Unit Tests', () => {
       const baseModel = {
         entities: [
           { id: 'ep.public', name: 'GET /public', kind: 'endpoint', trustZone: 'public_untrusted' },
-          { id: 'db.prod', name: 'Postgres DB', kind: 'datastore', trustZone: 'isolated_datastore' },
+          {
+            id: 'db.prod',
+            name: 'Postgres DB',
+            kind: 'datastore',
+            trustZone: 'isolated_datastore',
+          },
         ],
         relationships: [],
       };
       const headModel = {
         entities: [
           { id: 'ep.public', name: 'GET /public', kind: 'endpoint', trustZone: 'public_untrusted' },
-          { id: 'db.prod', name: 'Postgres DB', kind: 'datastore', trustZone: 'isolated_datastore' },
+          {
+            id: 'db.prod',
+            name: 'Postgres DB',
+            kind: 'datastore',
+            trustZone: 'isolated_datastore',
+          },
         ],
-        relationships: [{ id: 'rel.bypass', sourceId: 'ep.public', targetId: 'db.prod', relationType: 'reads' }],
+        relationships: [
+          { id: 'rel.bypass', sourceId: 'ep.public', targetId: 'db.prod', relationType: 'reads' },
+        ],
       };
 
       const differ = new ArchitectureDiffer(baseModel, headModel);
@@ -158,7 +179,7 @@ describe('Tribunal Architecture Intelligence — Core Unit Tests', () => {
       const auditor = new ArchitectureHealthAuditor(modelWithCycle);
       const report = auditor.audit();
 
-      const cycleSignal = report.signals.find((s) => s.code === 'ARCH_CIRCULAR_DEPENDENCY');
+      const cycleSignal = report.signals.find(s => s.code === 'ARCH_CIRCULAR_DEPENDENCY');
       expect(cycleSignal).toBeDefined();
       expect(cycleSignal.severity).toBe('HIGH');
       expect(cycleSignal.entities).toEqual(['mod.x', 'mod.y', 'mod.z', 'mod.x']);
