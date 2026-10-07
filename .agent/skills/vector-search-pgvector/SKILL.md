@@ -12,6 +12,16 @@ scripts-binding:
   - .agent/scripts/schema_validator.js
   - .agent/scripts/lint_runner.js
   - .agent/scripts/verify_all.js
+inputs:
+  task: "string"
+  target_file: "string"
+outputs:
+  result: "string"
+  verification_status: "boolean"
+trigger:
+  - "vector"
+  - "search"
+  - "pgvector"
 ---
 
 # Vector Search & pgvector 0.8.0+ — 2026 Database Standards

@@ -15,7 +15,7 @@
   <!-- BADGES -->
   <div style="margin-bottom: 25px;">
     <a href="https://github.com/Harmitx7/tribunal-kit/releases">
-      <img src="https://img.shields.io/badge/Release-v9.2.7-blue?style=for-the-badge" alt="Release" />
+      <img src="https://img.shields.io/badge/Release-v9.2.8-blue?style=for-the-badge" alt="Release" />
     </a>
     <a href="https://www.npmjs.com/package/tribunal-kit">
       <img src="https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white&color=ff1637" alt="NPM Version" />
@@ -24,7 +24,7 @@
       <img src="https://img.shields.io/github/actions/workflow/status/Harmitx7/tribunal-kit/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=CI" alt="CI Status" />
     </a>
     <a href="#">
-      <img src="https://img.shields.io/badge/Skills-235_Modular-teal?style=for-the-badge" alt="Skills Corpus" />
+      <img src="https://img.shields.io/badge/Skills-234_Modular-teal?style=for-the-badge" alt="Skills Corpus" />
     </a>
     <a href="#">
       <img src="https://img.shields.io/badge/Reviewers-28_Parallel-emerald?style=for-the-badge" alt="Reviewers" />
@@ -55,11 +55,11 @@ Tribunal Kit acts as a **neurosymbolic verification envelope**. It intercepts AI
 
 ## ⚡ What's New in v9.2.7
 
-- **Skill Intelligence Engine (`tk skill-intel`):** Autonomous discovery, composition, and gating across 235+ engineering skills with concept extraction, DAG pipeline compilation, and 11-point creation gate.
+- **Skill Intelligence Engine (`tk skill-intel`):** Autonomous discovery, composition, and gating across 234+ engineering skills with concept extraction, DAG pipeline compilation, and 11-point creation gate.
 - **System-1 Expansion Core:** Added specialized processing modules including browser intelligence, deterministic decision & evidence engines, and adaptive evolution pipeline.
 - **Cross-Domain & Outcome Optimization:** Real-time second-order effect detection, emergent failure prediction, and non-downgrade monotonic security invariants.
 - **Backend Intelligence Trust Boundary:** Strict validation engine output isolation. LLMs can no longer self-authorize findings; evidence requires verifiable provenance hashes and terminal command records.
-- **Universal 18-Section Governance Standard:** All 235 modular skills enforce Tri-State Evidence classification (`[OBSERVED]`, `[INFERRED]`, `[UNVERIFIED]`) and non-negotiable **Verification-Before-Completion (VBC)** gates.
+- **Universal 18-Section Governance Standard:** All 234 modular skills enforce Tri-State Evidence classification (`[OBSERVED]`, `[INFERRED]`, `[UNVERIFIED]`) and non-negotiable **Verification-Before-Completion (VBC)** gates.
 
 ---
 

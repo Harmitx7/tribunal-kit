@@ -11,6 +11,15 @@ scripts-binding:
   - .agent/scripts/verify_all.js
   - .agent/scripts/checklist.js
   - .agent/scripts/lint_runner.js
+inputs:
+  task: "string"
+  target_file: "string"
+outputs:
+  result: "string"
+  verification_status: "boolean"
+trigger:
+  - "before"
+  - "completion"
 ---
 
 # Verification Before Completion

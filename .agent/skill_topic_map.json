@@ -201,7 +201,6 @@
       "intelligent-routing",
       "knowledge-graph",
       "local-first",
-      "local-first-architecture",
       "mcp-builder",
       "monorepo-management",
       "observability",
@@ -223,7 +222,8 @@
       "typescript-advanced",
       "verification-before-completion",
       "webgpu-performance",
-      "workflow-optimizer"
+      "workflow-optimizer",
+      "architecture-intelligence"
     ],
     "huggingface": [
       "hf-cli",

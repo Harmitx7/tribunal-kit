@@ -17,11 +17,13 @@ describe('System-1 Laya Security Remediations', () => {
   });
 
   test('Test B: Windows NPM Resolution', () => {
-    // Assert that we use npm.cmd for win32 and shell: true for Windows
-    expect(system1Src).toContain(`cmd = 'npm.cmd';`);
-    expect(system1Src).toContain(`shell = true; // Windows requires shell: true for .cmd files`);
+    // Assert that we avoid shell execution on Windows
+    expect(system1Src).not.toContain(`cmd = 'npm.cmd';`);
+    expect(system1Src).not.toContain(`shell: true`);
     expect(system1Src).toContain(`cmd = 'npm';`);
-    expect(system1Src).toContain(`shell: shell`);
+    expect(system1Src).toContain(`shell: false`);
+    expect(system1Src).toContain(`process.execPath`);
+    expect(system1Src).toContain(`npm-cli.js`);
   });
 
   describe('SHA-256 verification', () => {

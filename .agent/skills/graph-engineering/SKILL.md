@@ -11,6 +11,16 @@ scripts-binding:
   - .agent/scripts/swarm_dispatcher.js
   - .agent/scripts/verify_all.js
   - .agent/scripts/lint_runner.js
+inputs:
+  task: "string"
+  target_file: "string"
+outputs:
+  result: "string"
+  verification_status: "boolean"
+trigger:
+  - "graph"
+  - "engineering"
+  - "compiling"
 ---
 
 # Graph Engineering — DAG Orchestration & Topological Execution
@@ -114,3 +124,9 @@ Every finding, audit statement, or completion claim must classify its factual ce
 | **Hallucinated Tool Capabilities** | Assuming an external library or CLI command exists without verification | Run a verification check or verify package.json before referencing tools |
 | **Premature Completion Claim** | Declaring a task finished because code was generated without verification | Execute tests, linters, or terminal commands to provide concrete proof |
 | **Context Bloat Dumping** | Pasting entire multi-thousand-line files into prompt context | Extract targeted excerpts, symbols, and signatures to preserve tokens |
+
+
+## Verification (Auto-Remediated)
+
+- [ ] **Verify Execution**: Ensure the output matches the original task requirements.
+- [ ] **Safety Check**: Validate that no destructive actions occurred outside the requested scope.

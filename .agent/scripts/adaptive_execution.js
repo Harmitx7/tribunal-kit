@@ -26,13 +26,24 @@ class DynamicCapabilityGraph {
     this.mutationHistory = [];
   }
 
+  hasNode(nodeName) {
+    for (const node of this.nodes) {
+      if (Array.isArray(node)) {
+        if (node.includes(nodeName)) return true;
+      } else if (node === nodeName) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   getNodes() {
     return [...this.nodes];
   }
 
   addNode(node, positionIndex = -1, reason = 'Additional capability required.') {
     if (!node) return this;
-    if (this.nodes.includes(node)) return this;
+    if (this.hasNode(node)) return this;
 
     if (positionIndex >= 0 && positionIndex < this.nodes.length) {
       this.nodes.splice(positionIndex, 0, node);
@@ -52,16 +63,34 @@ class DynamicCapabilityGraph {
   }
 
   removeNode(node, reason = 'Capability deemed redundant or invalid.') {
-    const idx = this.nodes.indexOf(node);
-    if (idx !== -1) {
-      this.nodes.splice(idx, 1);
-      this.mutationHistory.push({
-        action: 'REMOVE',
-        node,
-        previous_position: idx,
-        reason,
-        timestamp: new Date().toISOString(),
-      });
+    for (let i = 0; i < this.nodes.length; i++) {
+      if (Array.isArray(this.nodes[i])) {
+        const subIdx = this.nodes[i].indexOf(node);
+        if (subIdx !== -1) {
+          this.nodes[i].splice(subIdx, 1);
+          if (this.nodes[i].length === 0) {
+            this.nodes.splice(i, 1); // Remove empty parallel block
+          }
+          this.mutationHistory.push({
+            action: 'REMOVE',
+            node,
+            previous_position: i,
+            reason,
+            timestamp: new Date().toISOString(),
+          });
+          return this;
+        }
+      } else if (this.nodes[i] === node) {
+        this.nodes.splice(i, 1);
+        this.mutationHistory.push({
+          action: 'REMOVE',
+          node,
+          previous_position: i,
+          reason,
+          timestamp: new Date().toISOString(),
+        });
+        return this;
+      }
     }
     return this;
   }
@@ -101,17 +130,7 @@ class DynamicCapabilityGraph {
   }
 
   skipNode(node, reason = 'Node preconditions already satisfied or non-material.') {
-    const idx = this.nodes.indexOf(node);
-    if (idx !== -1) {
-      this.nodes.splice(idx, 1);
-      this.mutationHistory.push({
-        action: 'SKIP',
-        node,
-        reason,
-        timestamp: new Date().toISOString(),
-      });
-    }
-    return this;
+    return this.removeNode(node, reason);
   }
 
   branch(
@@ -122,7 +141,7 @@ class DynamicCapabilityGraph {
   ) {
     const chosen = condition ? trueNodes : falseNodes;
     for (const node of chosen) {
-      if (!this.nodes.includes(node)) {
+      if (!this.hasNode(node)) {
         this.nodes.push(node);
       }
     }
@@ -139,7 +158,7 @@ class DynamicCapabilityGraph {
   merge(otherGraph, reason = 'Merging complementary capability subgraphs.') {
     if (!otherGraph || !Array.isArray(otherGraph.nodes)) return this;
     for (const node of otherGraph.nodes) {
-      if (!this.nodes.includes(node)) {
+      if (!this.hasNode(node)) {
         this.nodes.push(node);
       }
     }
@@ -150,6 +169,71 @@ class DynamicCapabilityGraph {
       timestamp: new Date().toISOString(),
     });
     return this;
+  }
+
+  handoff(fromNode, toNode, reason = 'Explicit contextual handoff triggered.') {
+    let targetIdx = -1;
+    for (let i = 0; i < this.nodes.length; i++) {
+      if (
+        Array.isArray(this.nodes[i]) ? this.nodes[i].includes(fromNode) : this.nodes[i] === fromNode
+      ) {
+        targetIdx = i;
+        break;
+      }
+    }
+
+    if (targetIdx !== -1 && !this.hasNode(toNode)) {
+      this.nodes.splice(targetIdx + 1, 0, toNode);
+      this.mutationHistory.push({
+        action: 'HANDOFF',
+        from: fromNode,
+        to: toNode,
+        reason,
+        timestamp: new Date().toISOString(),
+      });
+    }
+    return this;
+  }
+
+  parallel(nodes = [], reason = 'Parallel capability execution requested.') {
+    const validNodes = nodes.filter(n => !this.hasNode(n));
+    if (validNodes.length > 0) {
+      // Represent parallel block as a sub-array to distinguish from sequential nodes
+      this.nodes.push(validNodes);
+      this.mutationHistory.push({
+        action: 'PARALLEL',
+        nodes: validNodes,
+        reason,
+        timestamp: new Date().toISOString(),
+      });
+    }
+    return this;
+  }
+
+  validateDAG(maxDepth = 20) {
+    let depth = 0;
+    const seen = new Set();
+
+    for (const node of this.nodes) {
+      depth++;
+      if (depth > maxDepth) {
+        throw new Error(`DAG Validation Failed: Maximum execution depth of ${maxDepth} exceeded.`);
+      }
+
+      const checkNode = n => {
+        if (seen.has(n)) {
+          throw new Error(`DAG Validation Failed: Cycle detected at capability '${n}'.`);
+        }
+        seen.add(n);
+      };
+
+      if (Array.isArray(node)) {
+        node.forEach(checkNode);
+      } else {
+        checkNode(node);
+      }
+    }
+    return true;
   }
 }
 
@@ -180,7 +264,7 @@ function adaptPipelineOnSignal(currentPipeline, signal = {}) {
       signalText,
     )
   ) {
-    if (!graph.getNodes().includes('agentshield-security')) {
+    if (!graph.hasNode('agentshield-security')) {
       graph.addNode(
         'agentshield-security',
         0,
@@ -188,7 +272,7 @@ function adaptPipelineOnSignal(currentPipeline, signal = {}) {
       );
       additions.push('agentshield-security');
     }
-    if (!graph.getNodes().includes('api-security-auditor')) {
+    if (!graph.hasNode('api-security-auditor')) {
       graph.addNode(
         'api-security-auditor',
         1,
@@ -204,7 +288,7 @@ function adaptPipelineOnSignal(currentPipeline, signal = {}) {
       signalText,
     )
   ) {
-    if (!graph.getNodes().includes('error-resilience')) {
+    if (!graph.hasNode('error-resilience')) {
       graph.addNode(
         'error-resilience',
         -1,
@@ -220,7 +304,7 @@ function adaptPipelineOnSignal(currentPipeline, signal = {}) {
       signalText,
     )
   ) {
-    if (graph.getNodes().includes('backend-redis')) {
+    if (graph.hasNode('backend-redis')) {
       graph.removeNode(
         'backend-redis',
         'SIGNAL: Benchmark evidence proved baseline DB handles required throughput without cache complexity.',
@@ -500,6 +584,114 @@ function runFinalEngineeringReview(outcomeContract, outcomeReport, options = {})
   };
 }
 
+// ============================================================================
+// 6. PROGRESSIVE CONTEXT LOADER (PHASE 3)
+// ============================================================================
+
+/**
+ * Builds a context payload incrementally based on canonical contracts.
+ *
+ * Order: Explicit Anchors -> Contract Context -> Dynamic Memory -> Fallback.
+ * Tracks allocations against `context.budget.max_tokens`.
+ *
+ * @param {Array<Object>} selectedSkills - Skills selected by router (must contain frontmatter context)
+ * @param {Object} options - Options including user anchors, dynamic memory, etc.
+ * @returns {Object} Structured context trace and final context payload
+ */
+function buildProgressiveContext(selectedSkills = [], options = {}) {
+  const anchors = options.anchors || [];
+  const dynamicMemory = options.dynamicMemory || [];
+
+  let totalAllocatedTokens = 0;
+  const contextTrace = [];
+  const contextPayload = {
+    anchors: [],
+    contractContext: [],
+    dynamicMemory: [],
+    fallback: [],
+  };
+
+  // 1. Explicit Anchors (Highest Priority)
+  for (const anchor of anchors) {
+    const anchorTokens = Math.ceil((anchor.content || anchor.id || anchor).length / 4);
+    contextPayload.anchors.push(anchor);
+    totalAllocatedTokens += anchorTokens;
+    contextTrace.push({
+      stage: 'ANCHORS',
+      item: anchor.id || anchor,
+      tokens: anchorTokens,
+      status: 'INJECTED',
+    });
+  }
+
+  // 2. Contract-mandated context (Guided by Canonical Contract budgets)
+  for (const skill of selectedSkills) {
+    const budget = skill.frontmatter?.context?.budget?.max_tokens || 4000;
+    const strategy = skill.frontmatter?.context?.strategy || 'bulk';
+
+    // Simplistic token estimation: 1 token ~ 4 chars
+    const contentToInject =
+      strategy === 'progressive'
+        ? skill.keyRules || skill.content.substring(0, 1000)
+        : skill.content;
+    const skillTokens = Math.ceil((contentToInject || '').length / 4);
+
+    if (skillTokens > budget) {
+      contextTrace.push({
+        stage: 'CONTRACT',
+        item: skill.name,
+        requested: skillTokens,
+        allowed: budget,
+        status: 'TRUNCATED',
+      });
+      contextPayload.contractContext.push({
+        name: skill.name,
+        content: contentToInject.substring(0, budget * 4),
+      });
+      totalAllocatedTokens += budget;
+    } else {
+      contextTrace.push({
+        stage: 'CONTRACT',
+        item: skill.name,
+        requested: skillTokens,
+        allowed: budget,
+        status: 'INJECTED',
+      });
+      contextPayload.contractContext.push({ name: skill.name, content: contentToInject });
+      totalAllocatedTokens += skillTokens;
+    }
+  }
+
+  // 3. Dynamic Memory
+  for (const memory of dynamicMemory) {
+    const memTokens = Math.ceil((memory.content || '').length / 4);
+    if (totalAllocatedTokens + memTokens <= 16000) {
+      // Arbitrary safety ceiling
+      contextPayload.dynamicMemory.push(memory);
+      totalAllocatedTokens += memTokens;
+      contextTrace.push({
+        stage: 'MEMORY',
+        item: memory.title || 'memory',
+        tokens: memTokens,
+        status: 'INJECTED',
+      });
+    } else {
+      contextTrace.push({
+        stage: 'MEMORY',
+        item: memory.title || 'memory',
+        requested: memTokens,
+        status: 'SKIPPED_BUDGET_EXHAUSTED',
+      });
+    }
+  }
+
+  return {
+    contextTrace,
+    totalAllocatedTokens,
+    contextPayload,
+  };
+}
+
 module.exports = {
   DynamicCapabilityGraph,
   adaptPipelineOnSignal,
@@ -508,4 +700,5 @@ module.exports = {
   recallRelevantLessons,
   evaluateSkillEffectiveness,
   runFinalEngineeringReview,
+  buildProgressiveContext,
 };

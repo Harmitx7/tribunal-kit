@@ -11,6 +11,16 @@ scripts-binding:
   - .agent/scripts/security_scan.js
   - .agent/scripts/verify_all.js
   - .agent/scripts/lint_runner.js
+inputs:
+  task: "string"
+  target_file: "string"
+outputs:
+  result: "string"
+  verification_status: "boolean"
+trigger:
+  - "agentshield"
+  - "security"
+  - "agents"
 ---
 
 # AgentShield Security Protocol — Adversarial Agent Defense
@@ -83,3 +93,9 @@ ${closeTag}
 | **Hardcoded Secret Pattern** | Committing API keys, tokens, or private salts into source code | Load credentials strictly via runtime environment variables and secret stores |
 | **Prompt Injection Surface** | Directly concatenating untrusted user input into LLM system prompts | Wrap user content in isolated delimiters and strip injection control sequences |
 | **Missing Authorization Check** | Relying only on authentication token presence without checking tenant/object RBAC | Verify user permissions against the specific target record ID before mutation |
+
+
+## Verification (Auto-Remediated)
+
+- [ ] **Verify Execution**: Ensure the output matches the original task requirements.
+- [ ] **Safety Check**: Validate that no destructive actions occurred outside the requested scope.

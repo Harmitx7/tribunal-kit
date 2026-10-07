@@ -14,6 +14,7 @@ const fs_2 = require('../utils/fs');
 const helpers_1 = require('../utils/helpers');
 const hasher_1 = require('../utils/hasher');
 const { ActionTree } = require('../tui');
+
 // Core agents to install in --minimal mode
 const CORE_AGENTS = new Set([
   'backend-specialist.md',
@@ -38,6 +39,7 @@ const CORE_AGENTS = new Set([
   'anti-pattern-reviewer.md',
   'product-reviewer.md',
 ]);
+
 // Core skills to install in --minimal mode
 const CORE_SKILLS = new Set([
   'clean-code',
@@ -60,6 +62,7 @@ const CORE_SKILLS = new Set([
   'product-aware-heuristics',
   'web-design-guidelines',
 ]);
+
 async function cmdInit(flags, quiet = false) {
   const agentSrc = (0, helpers_1.getKitAgent)();
   const targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
@@ -70,6 +73,7 @@ async function cmdInit(flags, quiet = false) {
     'utf8',
   );
   const pkg = JSON.parse(pkgStr);
+
   // ── Self-install guard ──────────────────────────────────
   if ((0, fs_2.isSelfInstall)(targetDir, pkg.name, path_1.default.resolve(__dirname, '../..'))) {
     (0, logger_1.err)('Cannot run init/update inside the tribunal-kit package itself.');
@@ -83,6 +87,7 @@ async function cmdInit(flags, quiet = false) {
     console.log();
     process.exit(1);
   }
+
   // ────────────────────────────────────────────────────────
   let diff = null;
   let incremental = false;
@@ -122,7 +127,6 @@ async function cmdInit(flags, quiet = false) {
         (0, logger_1.log)(`    Syncing: [${bar}] ${totalChanges} files`);
       }
 
-      // Backup ONLY changed or removed files
       const toBackup = [...diff.changed, ...diff.removed];
       if (toBackup.length > 0) {
         const backupDir = path_1.default.join(agentDest, '.backups', `backup-${Date.now()}`);
@@ -142,7 +146,6 @@ async function cmdInit(flags, quiet = false) {
         );
       }
 
-      // Remove removed files
       for (const file of diff.removed) {
         const target = path_1.default.join(agentDest, file);
         if (fs_1.default.existsSync(target)) {
@@ -150,7 +153,6 @@ async function cmdInit(flags, quiet = false) {
         }
       }
     } else {
-      // Legacy full backup
       const backupDir = path_1.default.join(agentDest, '.backups', `backup-${Date.now()}`);
       fs_1.default.mkdirSync(backupDir, { recursive: true });
       const subdirs = ['agents', 'workflows', 'skills', 'scripts', '.shared', 'rules'];
@@ -166,18 +168,18 @@ async function cmdInit(flags, quiet = false) {
       );
     }
   }
-  // ────────────────────────────────────────────────────────
+
   (0, helpers_1.banner)(quiet);
   if (dryRun) {
     (0, logger_1.log)((0, logger_1.colorize)('yellow', '  DRY RUN — no files will be written'));
     console.log();
   }
-  // Check target exists
+
   if (!fs_1.default.existsSync(targetDir)) {
     (0, logger_1.err)(`Target directory not found: ${targetDir}`);
     process.exit(1);
   }
-  // Check if .agent already exists
+
   if (fs_1.default.existsSync(agentDest) && !flags.force) {
     (0, logger_1.warn)('.agent/ already exists in this project.');
     (0, logger_1.log)(
@@ -189,7 +191,7 @@ async function cmdInit(flags, quiet = false) {
     console.log();
     process.exit(0);
   }
-  // Ensure history dirs exist (Case Law + Skill Evolution)
+
   if (!dryRun) {
     const caseDir = path_1.default.join(agentDest, 'history', 'case-law', 'cases');
     const evoDir = path_1.default.join(agentDest, 'history', 'skill-evolution');
@@ -200,7 +202,7 @@ async function cmdInit(flags, quiet = false) {
     if (!fs_1.default.existsSync(gkCase)) fs_1.default.writeFileSync(gkCase, '');
     if (!fs_1.default.existsSync(gkEvo)) fs_1.default.writeFileSync(gkEvo, '');
   }
-  // Count what we're installing
+
   const isMinimal = flags.minimal || false;
   if (isMinimal) {
     (0, logger_1.log)(
@@ -215,15 +217,15 @@ async function cmdInit(flags, quiet = false) {
   (0, logger_1.log)(
     `  ${(0, logger_1.c)('gray', '▸')} Scanning ${(0, logger_1.c)('white', String(totalFiles))} files  ${(0, logger_1.c)('gray', '→')}  ${(0, logger_1.c)('gray', agentDest)}`,
   );
+
   try {
-    // Build filter for --minimal mode
     let filterFunc = isMinimal
       ? (name, parentDir, isDir) => {
-          if (isDir) return true; // always traverse directories
+          if (isDir) return true;
           const parentName = path_1.default.basename(parentDir);
           if (parentName === 'agents') return CORE_AGENTS.has(name);
           if (parentName === 'skills') return CORE_SKILLS.has(name);
-          return true; // everything else passes
+          return true;
         }
       : null;
 
@@ -243,7 +245,7 @@ async function cmdInit(flags, quiet = false) {
     }
 
     const copied = await (0, fs_2.copyDir)(agentSrc, agentDest, dryRun, filterFunc);
-    // Generate and save hash manifest for incremental future updates
+
     if (!dryRun) {
       try {
         const manifest = await (0, hasher_1.generateManifest)(agentSrc);
@@ -280,6 +282,117 @@ async function cmdInit(flags, quiet = false) {
       await generateIDEBridges(targetDir, agentDest, dryRun, isMinimal);
       await scaffoldDesignSystem(targetDir, agentSrc, dryRun);
       tree.complete(`Tribunal-Kit v${pkg.version} initialized successfully at ${targetDir}`);
+
+      if (!quiet && !dryRun) {
+        // System-1 Installation Flow
+        const { System1Provider } = require('../system1/provider');
+        const system1 = new System1Provider();
+        
+        let needsPrompt = false;
+        let isUpdate = false;
+        let isCorrupt = false;
+        
+        if (system1.isAvailable()) {
+          const { checkHealth, getTargetVersion, getInstalledVersion } = require('./system1');
+          const healthy = await checkHealth();
+          if (healthy) {
+            const installed = getInstalledVersion();
+            const target = getTargetVersion();
+            if (installed.model === target.model && installed.laya === target.laya && installed.onnx === target.onnx) {
+              console.log();
+              (0, logger_1.log)('Checking System-1...');
+              console.log();
+              (0, logger_1.log)(`  ${(0, logger_1.c)('green', '✓')} System-1 detected`);
+              (0, logger_1.log)(`  ${(0, logger_1.c)('green', '✓')} Model integrity verified`);
+              (0, logger_1.log)(`  ${(0, logger_1.c)('green', '✓')} Runtime compatible`);
+              (0, logger_1.log)('');
+              (0, logger_1.log)('  System-1 is ready.');
+              (0, logger_1.log)('  No additional download required.');
+            } else {
+              isUpdate = true;
+              needsPrompt = true;
+            }
+          } else {
+            isCorrupt = true;
+            needsPrompt = true;
+          }
+        } else {
+          needsPrompt = true;
+        }
+
+        if (needsPrompt) {
+          if (process.stdout.isTTY) {
+            if (isCorrupt) {
+              console.log();
+              (0, logger_1.log)('  System-1 installation appears corrupted.');
+            } else if (isUpdate) {
+              const { getTargetVersion, getInstalledVersion } = require('./system1');
+              const installed = getInstalledVersion();
+              const target = getTargetVersion();
+              console.log();
+              (0, logger_1.log)('  System-1 installation detected.');
+              (0, logger_1.log)('');
+              (0, logger_1.log)(`  Version:  ${installed.laya || 'Unknown'}`);
+              (0, logger_1.log)(`  Required: ${target.laya}`);
+              (0, logger_1.log)('');
+              (0, logger_1.log)('  System-1 requires an update.');
+            } else {
+              console.log();
+              (0, logger_1.log)('  System-1 was not detected.');
+              (0, logger_1.log)('');
+              (0, logger_1.log)('  System-1 provides:');
+              (0, logger_1.log)('    • local decision intelligence');
+              (0, logger_1.log)('    • deterministic-first routing');
+              (0, logger_1.log)('    • reduced unnecessary LLM calls');
+              (0, logger_1.log)('    • faster impact classification');
+              (0, logger_1.log)('');
+            }
+            
+            const readline = require('readline');
+            const rl = readline.createInterface({
+              input: process.stdin,
+              output: process.stdout,
+            });
+
+            await new Promise(resolve => {
+              let promptStr = '  Install System-1 now? [Y/n] ';
+              if (isUpdate) promptStr = '  Update System-1 now? [Y/n] ';
+              if (isCorrupt) promptStr = '  Repair System-1 now? [Y/n] ';
+
+              rl.question(promptStr, async answer => {
+                rl.close();
+                const lower = answer.trim().toLowerCase();
+                if (lower === 'y' || lower === 'yes' || lower === '') {
+                  const { cmdSystem1 } = require('./system1');
+                  let cmd = 'setup';
+                  if (isUpdate) cmd = 'update';
+                  if (isCorrupt) cmd = 'repair';
+                  await cmdSystem1(flags, ['node', 'tk', 'system1', cmd], quiet);
+                } else {
+                  (0, logger_1.log)('');
+                  (0, logger_1.log)('  System-1 installation skipped.');
+                  (0, logger_1.log)('');
+                  (0, logger_1.log)('  Tribunal Kit will continue using its deterministic fallback.');
+                  (0, logger_1.log)('');
+                  (0, logger_1.log)('  You can install System-1 later with:');
+                  (0, logger_1.log)('    tk system1 setup');
+                }
+                resolve();
+              });
+            });
+          } else {
+            // Non-interactive fallback
+            console.log();
+            (0, logger_1.log)('  System-1: NOT INSTALLED');
+            (0, logger_1.log)('  Interactive setup unavailable.');
+            (0, logger_1.log)('');
+            (0, logger_1.log)('  Tribunal Kit will use deterministic fallback.');
+            (0, logger_1.log)('');
+            (0, logger_1.log)('  Run:');
+            (0, logger_1.log)('    tk system1 setup');
+          }
+        }
+      }
     }
     console.log();
   } catch (e) {
@@ -291,6 +404,7 @@ async function cmdInit(flags, quiet = false) {
     process.exit(1);
   }
 }
+
 async function generateIDEBridges(targetDir, agentDest, dryRun = false, isMinimal = false) {
   const rulesFilename = isMinimal ? 'kernel.md' : 'GEMINI.md';
   const rulesFile = path_1.default.join(agentDest, 'rules', rulesFilename);
@@ -300,7 +414,7 @@ async function generateIDEBridges(targetDir, agentDest, dryRun = false, isMinima
   } catch {
     // rules file doesn't exist
   }
-  // Bridge files consume the high-density kernel rules to save tokens, falling back to GEMINI.md
+  
   const kernelFile = path_1.default.join(agentDest, 'rules', 'kernel.md');
   let bridgeRulesContent = '';
   let bridgeSource = rulesFilename;
@@ -313,7 +427,7 @@ async function generateIDEBridges(targetDir, agentDest, dryRun = false, isMinima
   if (!bridgeRulesContent) {
     bridgeRulesContent = rulesContent;
   }
-  // Helper: write a bridge file only if it doesn't already exist
+  
   const writeBridge = async (filePath, content, label) => {
     if (dryRun) {
       (0, logger_1.dbg)(`  would create: ${filePath}`);
@@ -333,21 +447,9 @@ async function generateIDEBridges(targetDir, agentDest, dryRun = false, isMinima
       }
     }
   };
-  // ── 1. Cursor (.cursorrules) ──────────────────────────
-  const cursorRules = `# Tribunal Kit — Cursor Bridge
-# Auto-generated by tribunal-kit init. Do not edit manually.
-# Source: .agent/rules/${bridgeSource}
 
-${bridgeRulesContent}
-`;
-  // ── 2. Windsurf (.windsurfrules) ─────────────────────
-  const windsurfRules = `# Tribunal Kit — Windsurf Bridge
-# Auto-generated by tribunal-kit init. Do not edit manually.
-# Source: .agent/rules/${bridgeSource}
-
-${bridgeRulesContent}
-`;
-  // ── 3. Gemini / Antigravity (.gemini/settings.json) ──
+  const cursorRules = `# Tribunal Kit — Cursor Bridge\n# Auto-generated by tribunal-kit init. Do not edit manually.\n# Source: .agent/rules/${bridgeSource}\n\n${bridgeRulesContent}\n`;
+  const windsurfRules = `# Tribunal Kit — Windsurf Bridge\n# Auto-generated by tribunal-kit init. Do not edit manually.\n# Source: .agent/rules/${bridgeSource}\n\n${bridgeRulesContent}\n`;
   const geminiSettings =
     JSON.stringify(
       {
@@ -359,39 +461,11 @@ ${bridgeRulesContent}
       null,
       2,
     ) + '\n';
-  // ── Also create .gemini/GEMINI.md as a direct rules file ──
-  const geminiRulesBridge = `---
-trigger: always_on
----
+  const geminiRulesBridge = `---\ntrigger: always_on\n---\n\n# Tribunal Kit — Gemini Bridge\n# Auto-generated by tribunal-kit init.\n# Full rules: .agent/rules/${rulesFilename}\n\n${bridgeRulesContent}\n`;
+  const copilotInstructions = `# Tribunal Kit — Copilot Bridge\n# Auto-generated by tribunal-kit init. Do not edit manually.\n# Source: .agent/rules/${bridgeSource}\n\n${bridgeRulesContent}\n`;
+  const claudeRules = `# Tribunal Kit — Claude Bridge\n# Auto-generated by tribunal-kit init. Do not edit manually.\n# Source: .agent/rules/${bridgeSource}\n\n${bridgeRulesContent}\n`;
+  const codexRules = `# Tribunal Kit — Codex Bridge\n# Auto-generated by tribunal-kit init. Do not edit manually.\n# Source: .agent/rules/${bridgeSource}\n\n${bridgeRulesContent}\n`;
 
-# Tribunal Kit — Gemini Bridge
-# Auto-generated by tribunal-kit init.
-# Full rules: .agent/rules/${rulesFilename}
-
-${bridgeRulesContent}
-`;
-  // ── 4. GitHub Copilot (.github/copilot-instructions.md) ──
-  const copilotInstructions = `# Tribunal Kit — Copilot Bridge
-# Auto-generated by tribunal-kit init. Do not edit manually.
-# Source: .agent/rules/${bridgeSource}
-
-${bridgeRulesContent}
-`;
-  // ── 5. Claude (.claude/CLAUDE.md & CLAUDE.md) ───────
-  const claudeRules = `# Tribunal Kit — Claude Bridge
-# Auto-generated by tribunal-kit init. Do not edit manually.
-# Source: .agent/rules/${bridgeSource}
-
-${bridgeRulesContent}
-`;
-  // ── 6. Codex & Universal Agents (AGENTS.md) ──────────
-  const codexRules = `# Tribunal Kit — Codex Bridge
-# Auto-generated by tribunal-kit init. Do not edit manually.
-# Source: .agent/rules/${bridgeSource}
-
-${bridgeRulesContent}
-`;
-  // Fire ALL bridge writes concurrently via Promise.all
   const bridges = [
     { path: path_1.default.join(targetDir, '.cursorrules'), content: cursorRules, label: 'Cursor' },
     {
@@ -433,6 +507,7 @@ ${bridgeRulesContent}
   await Promise.all(bridges.map(b => writeBridge(b.path, b.content, b.label)));
   console.log();
 }
+
 async function scaffoldDesignSystem(targetDir, agentSrc, dryRun = false) {
   const designMdSrc = path_1.default.join(agentSrc, 'templates', 'DESIGN.md');
   const designTokensSrc = path_1.default.join(agentSrc, 'templates', 'design-tokens.json');
@@ -458,5 +533,6 @@ async function scaffoldDesignSystem(targetDir, agentSrc, dryRun = false) {
   await copyIfMissing(designMdSrc, designMdDest, 'DESIGN.md System');
   await copyIfMissing(designTokensSrc, designTokensDest, 'Design Tokens');
 }
+
 exports.CORE_AGENTS = CORE_AGENTS;
 exports.CORE_SKILLS = CORE_SKILLS;

@@ -5,7 +5,8 @@
  * Animates all 28 Tribunal reviewers running concurrently.
  */
 
-const { isTTY, hasColor, RGB, GLYPHS, color, bold, getColumns } = require('./theme');
+const { isTTY, hasColor, RGB, GLYPHS, color, bold, dim, getColumns } = require('./theme');
+const { renderProgressBar } = require('./progress');
 
 const ALL_REVIEWERS = [
   ['logic-auditor', 'Logic & Correctness'],
@@ -40,19 +41,19 @@ const ALL_REVIEWERS = [
 
 function renderReviewerGrid(completedCount = 28) {
   if (!isTTY && !hasColor) {
-    console.log('  ✔ 28/28 Reviewers passed verification gates.');
+    console.log(`  ✔ ${completedCount}/${ALL_REVIEWERS.length} Reviewers passed verification gates.`);
     return;
   }
 
   const g = GLYPHS;
   const cols = getColumns();
-  const numCols = cols >= 100 ? 3 : cols >= 68 ? 2 : 1;
-  const colWidth = Math.floor(Math.max(20, cols - 6) / numCols);
+  const numCols = cols >= 110 ? 3 : cols >= 72 ? 2 : 1;
+  const colWidth = Math.floor(Math.max(25, cols - 6) / numCols);
 
   console.log();
-  const headerTitle = `  🛡️  Tribunal Parallel Reviewer Swarm (28 Reviewers)`;
-  console.log(bold(headerTitle));
-  console.log(`  ${color(RGB.SLATE_700, g.boxH.repeat(Math.min(84, cols - 4)))}`);
+  const pct = (completedCount / ALL_REVIEWERS.length) * 100;
+  console.log(renderProgressBar('Tribunal Swarm', pct, { width: 30, color: RGB.CYAN, labelWidth: 16 }));
+  console.log();
 
   for (let r = 0; r < Math.ceil(ALL_REVIEWERS.length / numCols); r++) {
     let line = '  ';
@@ -64,8 +65,7 @@ function renderReviewerGrid(completedCount = 28) {
       const isDone = idx < completedCount;
 
       const icon = isDone ? color(RGB.EMERALD, g.success) : color(RGB.FLAME, '⠋');
-
-      const nameColored = isDone ? color(RGB.WHITE, name) : color(RGB.ZINC_500, name);
+      const nameColored = isDone ? color(RGB.ZINC_200, name) : dim(name);
 
       const itemStr = `${icon} ${nameColored}`;
       const rawLen = 2 + name.length;
@@ -76,7 +76,6 @@ function renderReviewerGrid(completedCount = 28) {
     console.log(line);
   }
 
-  console.log(`  ${color(RGB.SLATE_700, g.boxH.repeat(Math.min(84, cols - 4)))}`);
   console.log();
 }
 

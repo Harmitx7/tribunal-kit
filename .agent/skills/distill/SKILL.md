@@ -11,6 +11,14 @@ tools: Read, Grep, Glob, Bash, Edit, Write
 scripts-binding:
   - .agent/scripts/lint_runner.js
   - .agent/scripts/verify_all.js
+inputs:
+  task: "string"
+  target_file: "string"
+outputs:
+  result: "string"
+  verification_status: "boolean"
+trigger:
+  - "distill"
 ---
 
 # Distill — UX Simplification & Decluttering

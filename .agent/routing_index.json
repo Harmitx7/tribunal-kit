@@ -868,13 +868,6 @@
       "trigger_keywords": ["60fps", "animation", "fps", "performance", "transform", "opacity"]
     },
     {
-      "name": "Knowledge Graph Analyzer",
-      "description": "Understands architecture, blast radius, and dependencies with 27x Context Snapshots.",
-      "routing_domain": "general",
-      "routing_tier": "core",
-      "trigger_keywords": ["knowledge graph", "architecture", "blast radius", "dependencies"]
-    },
-    {
       "name": "accessible-animation",
       "description": "Tiered reduced-motion patterns for CSS, GSAP, Framer Motion, and View Transitions.",
       "routing_domain": "motion",
@@ -1205,13 +1198,6 @@
       "trigger_keywords": ["delight", "tactile feedback", "confetti", "micro delight"]
     },
     {
-      "name": "dependency-ladder",
-      "description": "Framework for minimizing code complexity and enforcing 6 Rungs of the Dependency Ladder.",
-      "routing_domain": "general",
-      "routing_tier": "core",
-      "trigger_keywords": ["dependency ladder", "overengineering", "keep it simple"]
-    },
-    {
       "name": "deployment-procedures",
       "description": "Production deployment procedures, rollback baselines, and pre-flight validation.",
       "routing_domain": "devops",
@@ -1485,13 +1471,6 @@
       "trigger_keywords": ["intelligent routing", "agent selection", "router"]
     },
     {
-      "name": "interface-design",
-      "description": "Interface design principles for intuitive and coherent user interfaces.",
-      "routing_domain": "frontend",
-      "routing_tier": "specialized",
-      "trigger_keywords": ["interface design", "ui layout", "visual coherence"]
-    },
-    {
       "name": "knowledge-graph",
       "description": "Codebase risk blast radius analysis and dependency topology visualization.",
       "routing_domain": "general",
@@ -1525,13 +1504,6 @@
       "routing_domain": "backend",
       "routing_tier": "expert",
       "trigger_keywords": ["local first", "crdt", "offline sync", "indexeddb"]
-    },
-    {
-      "name": "local-first-architecture",
-      "description": "Local-first architecture guidance for instant web apps, IndexedDB sync engines, and CRDTs.",
-      "routing_domain": "backend",
-      "routing_tier": "expert",
-      "trigger_keywords": ["local first architecture", "instant UI", "offline operation"]
     },
     {
       "name": "lottie-animation",
@@ -1926,13 +1898,6 @@
       "trigger_keywords": ["thinking protocol", "problem decomposition", "reasoning"]
     },
     {
-      "name": "threejs-fundamentals",
-      "description": "Three.js 3D graphics for web, scene setup, lighting, materials, geometries, and WebGL.",
-      "routing_domain": "motion",
-      "routing_tier": "specialized",
-      "trigger_keywords": ["threejs", "webgl 3d", "3d scene", "lighting"]
-    },
-    {
       "name": "to-spring-or-not-to-spring",
       "description": "Audit physics-based spring animations vs duration-based cubic-bezier easing curves.",
       "routing_domain": "motion",
@@ -2064,6 +2029,402 @@
       "routing_domain": "orchestration",
       "routing_tier": "specialized",
       "trigger_keywords": ["workflow optimizer", "tool calling efficiency", "agent performance"]
+    },
+    {
+      "name": "adr-generation",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "agent-syscall-guidelines",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "agentic-workflows-2026",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "agentshield-security",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "ai-app-hardening",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "anti-slop-enforcement",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "architecture-drift",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "architecture-intelligence",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "autonomous-execution",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "backend-alembic",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "backend-architecture-auditor",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "backend-mongodb",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "backend-mysql",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "backend-performance-auditor",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "backend-postgresql",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "backend-redis",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "backend-sqlalchemy",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "backend-sqlite",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "backend-testing-auditor",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "browser-audit",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "context-engineering-pro",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "devops-engineer",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "devops-incident-responder",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "duckdb-analytical-sql",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "edge-ai-mobile",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "expo-router-v4",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "failure-mode-analysis",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "fastapi-pro",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "graph-engineering",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "hf-cli",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "hf-cloud-aws-context-discovery",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "hf-cloud-python-env-setup",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "hf-cloud-sagemaker-deployment-planner",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "hf-cloud-sagemaker-iam-preflight",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "hf-cloud-sagemaker-production-defaults",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "hf-cloud-serving-image-selection",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "hf-mem",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-best",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-community-evals",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-datasets",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-gradio",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-llm-trainer",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-local-models",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-lora-space-builder",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-paper-publisher",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-papers",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-spaces",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-tool-builder",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-trackio",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-vision-trainer",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "huggingface-zerogpu",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "human-gate-negotiation",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "opentelemetry-observability",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "platform-engineering-opentofu",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "playwright-ai-e2e",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "property-based-testing",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "semantic-filesystem-navigation",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "session-log-interrogation",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "subagent-driven-development",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "train-sentence-transformers",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "transformers-js",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "tribunal-instincts-memory",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "trl-training",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "vector-search-pgvector",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "verification-before-completion",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
+    },
+    {
+      "name": "zero-trust-passkeys",
+      "description": "Auto-recovered during Phase 11",
+      "routing_domain": "meta",
+      "trigger_keywords": []
     }
   ]
 }

@@ -2644,24 +2644,6 @@
       "hasChecklist": false,
       "hasRev": false
     },
-    "local-first-architecture": {
-      "name": "local-first-architecture",
-      "domain": "meta",
-      "lineCount": 63,
-      "purpose": "Domain specialized execution.",
-      "triggers": "",
-      "inputs": ["Codebase files", "User instructions", "Target schemas"],
-      "tools": ["Read", "Grep", "Glob", "Bash", "Edit", "Write"],
-      "workflow": "Ad-hoc execution",
-      "output": "Unstructured text",
-      "dependencies": [],
-      "relatedSkills": [],
-      "hasVbc": false,
-      "hasEv": false,
-      "hasEdges": false,
-      "hasChecklist": false,
-      "hasRev": false
-    },
     "lottie-animation": {
       "name": "lottie-animation",
       "domain": "motion",
@@ -4267,6 +4249,9 @@
       "hasEdges": false,
       "hasChecklist": false,
       "hasRev": false
+    },
+    "architecture-intelligence": {
+      "description": "Auto-recovered during Phase 11"
     }
   }
 }

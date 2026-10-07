@@ -79,6 +79,14 @@ class ToolRepeatGuard {
 }
 const repeatGuard = new ToolRepeatGuard();
 
+// Instantiate ControlledWriteService for MCP
+const { ControlledWriteService } = require('../src/execution/controlled_write_service');
+const controlledWriteService = new ControlledWriteService({ workspaceRoot: process.cwd() });
+
+// Instantiate CorrectionRunEngine
+const { CorrectionRunEngine } = require('../src/execution/correction_run_engine');
+const correctionEngine = new CorrectionRunEngine({ controlledWriteService });
+
 class RpcError extends Error {
   constructor(code, message) {
     super(message);
@@ -347,6 +355,62 @@ async function handleRequest(req) {
     return {
       tools: [
         {
+          name: 'tribunal_request_write',
+          description: 'Request a repository mutation. Generates a preview and token.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              files: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    path: { type: 'string' },
+                    operation: { type: 'string', enum: ['CREATE', 'MODIFY', 'DELETE'] },
+                    content: { type: 'string' },
+                    expectedHash: { type: 'string' },
+                  },
+                  required: ['path', 'operation'],
+                },
+              },
+              reason: { type: 'string' },
+              dryRun: { type: 'boolean' },
+            },
+            required: ['files', 'reason'],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: 'tribunal_preview_write',
+          description: 'Preview an approved or pending write transaction.',
+          inputSchema: {
+            type: 'object',
+            properties: { token: { type: 'string' } },
+            required: ['token'],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: 'tribunal_commit_write',
+          description: 'Commit an approved write transaction.',
+          inputSchema: {
+            type: 'object',
+            properties: { token: { type: 'string' } },
+            required: ['token'],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: 'tribunal_approve_write',
+          description: 'Approve a transaction requiring human approval (Simulated via token).',
+          inputSchema: {
+            type: 'object',
+            properties: { token: { type: 'string' }, signature: { type: 'string' } },
+            required: ['token'],
+            additionalProperties: false,
+          },
+        },
+        {
           name: 'run_tribunal_audit',
           description: 'Runs a full anti-hallucination audit across the workspace.',
           inputSchema: {
@@ -362,6 +426,76 @@ async function handleRequest(req) {
             type: 'object',
             properties: {},
             additionalProperties: false,
+          },
+        },
+        {
+          name: 'tribunal_analyze_finding',
+          description: 'Initializes a correction run for a finding.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              finding: { type: 'object' },
+              workspaceId: { type: 'string' },
+            },
+            required: ['finding'],
+          },
+        },
+        {
+          name: 'tribunal_plan_correction',
+          description: 'Generates a correction plan and proposals.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              runId: { type: 'string' },
+              proposalContext: { type: 'object' },
+            },
+            required: ['runId'],
+          },
+        },
+        {
+          name: 'tribunal_execute_correction',
+          description: 'Executes the correction plan via ControlledWriteService.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              runId: { type: 'string' },
+              files: { type: 'array' },
+            },
+            required: ['runId', 'files'],
+          },
+        },
+        {
+          name: 'tribunal_verify_correction',
+          description: 'Verifies the executed correction.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              runId: { type: 'string' },
+            },
+            required: ['runId'],
+          },
+        },
+        {
+          name: 'tribunal_run_validation',
+          description: 'Run a specific validation command securely.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              validationId: { type: 'string' },
+              customArgs: { type: 'array', items: { type: 'string' } },
+            },
+            required: ['validationId'],
+          },
+        },
+        {
+          name: 'tribunal_get_resolution_certificate',
+          description: 'Get the cryptographically signed resolution certificate for a run.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              runId: { type: 'string' },
+            },
+            required: ['runId'],
           },
         },
         {
@@ -741,6 +875,67 @@ async function handleRequest(req) {
     const reminder = repeatGuard.observe(toolName, argsObj);
 
     const executeTool = async () => {
+      if (toolName === 'tribunal_request_write') {
+        const files = req.params?.arguments?.files;
+        const reason = req.params?.arguments?.reason;
+        const dryRun = req.params?.arguments?.dryRun;
+        try {
+          const result = await controlledWriteService.requestWrite(
+            {
+              requestId: `req_${Date.now()}`,
+              workspaceId: 'mcp-workspace',
+              agentId: 'MCP_CLIENT',
+              files,
+              reason,
+            },
+            { dryRun },
+          );
+          return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Write request error: ${e.message}` }],
+            isError: true,
+          };
+        }
+      }
+
+      if (toolName === 'tribunal_preview_write') {
+        try {
+          const result = controlledWriteService.previewWrite(req.params?.arguments?.token);
+          return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Preview error: ${e.message}` }],
+            isError: true,
+          };
+        }
+      }
+
+      if (toolName === 'tribunal_commit_write') {
+        try {
+          const result = await controlledWriteService.commitWrite(req.params?.arguments?.token);
+          return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        } catch (e) {
+          return { content: [{ type: 'text', text: `Commit error: ${e.message}` }], isError: true };
+        }
+      }
+
+      if (toolName === 'tribunal_approve_write') {
+        try {
+          const result = controlledWriteService.approveWrite(
+            req.params?.arguments?.token,
+            'human',
+            req.params?.arguments?.signature,
+          );
+          return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+        } catch (e) {
+          return {
+            content: [{ type: 'text', text: `Approve error: ${e.message}` }],
+            isError: true,
+          };
+        }
+      }
+
       if (toolName === 'tribunal_get_context') {
         const target = req.params?.arguments?.target;
         const compareWith = req.params?.arguments?.compareWith;
@@ -1192,6 +1387,60 @@ async function handleRequest(req) {
             return { content: [{ type: 'text', text: `Payload validation failed: ${e.message}` }] };
           }
         }
+      }
+
+      if (toolName === 'tribunal_analyze_finding') {
+        const runId = correctionEngine.createRun(argsObj.finding, {
+          workspaceId: argsObj.workspaceId,
+        });
+        return {
+          content: [
+            { type: 'text', text: JSON.stringify({ runId, status: 'INITIALIZED' }, null, 2) },
+          ],
+        };
+      }
+
+      if (toolName === 'tribunal_plan_correction') {
+        const result = await correctionEngine.planCorrection(
+          argsObj.runId,
+          argsObj.proposalContext,
+        );
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      if (toolName === 'tribunal_execute_correction') {
+        const result = await correctionEngine.executeCorrection(argsObj.runId, argsObj.files);
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      if (toolName === 'tribunal_verify_correction') {
+        const result = await correctionEngine.verifyCorrection(argsObj.runId);
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      if (toolName === 'tribunal_run_validation') {
+        const { ValidationRunner } = require('../src/execution/validation_runner');
+        const runner = new ValidationRunner({ workspaceRoot: process.cwd() });
+        const result = await runner.run(argsObj.validationId, argsObj.customArgs);
+        return {
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      if (toolName === 'tribunal_get_resolution_certificate') {
+        const runState = correctionEngine.activeRuns.get(argsObj.runId);
+        if (!runState || !runState.certificate) {
+          return { content: [{ type: 'text', text: 'Certificate not found or run incomplete.' }] };
+        }
+        return {
+          content: [{ type: 'text', text: JSON.stringify(runState.certificate, null, 2) }],
+        };
       }
 
       if (toolName === 'run_tribunal_audit') {

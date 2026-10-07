@@ -1,6 +1,8 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.cmdReview = cmdReview;
+exports.FIXTURES = null;
+exports.REVIEWER_CONFIGS = null;
 
 /**
  * tk review — EXPERIMENTAL Reviewer Execution Harness
@@ -26,6 +28,10 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const { log, err, ok, c, bold } = require('../utils/logger');
+const { ReviewExecutor } = require('../execution/review_executor');
+const { VerdictAggregator } = require('../execution/verdict_aggregator');
+const { ProviderAdapter } = require('../execution/provider_adapter');
+const { evaluateDecision } = require('../system1/decision_engine');
 
 // ─── LLM CLIENT (EXPERIMENTAL ONLY) ─────────────────────────────────────────
 
@@ -634,7 +640,8 @@ function analyzeRuns(runFiles) {
 // ─── CLI COMMAND ─────────────────────────────────────────────────────────────
 
 async function cmdReview(flags, argv, quiet) {
-  const args = argv.slice(2);
+  const rawArgv = Array.isArray(argv) ? argv : process.argv;
+  const args = rawArgv.slice(2);
 
   // Parse review-specific args
   let configKey = null;
@@ -644,10 +651,39 @@ async function cmdReview(flags, argv, quiet) {
   let analyzeFiles = [];
   let listFixtures = false;
   let outputDir = '.tk-review-runs';
+  let modePlan = false;
+  let modeExecute = false;
+  let outputJson = false;
+  let isMock = false;
+  let reviewersArg = null;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (arg === 'review') continue;
+    if (arg === '--plan') {
+      modePlan = true;
+      continue;
+    }
+    if (arg === '--execute') {
+      modeExecute = true;
+      continue;
+    }
+    if (arg === '--json') {
+      outputJson = true;
+      continue;
+    }
+    if (arg === '--mock') {
+      isMock = true;
+      continue;
+    }
+    if (arg === '--reviewers' && args[i + 1]) {
+      reviewersArg = args[++i];
+      continue;
+    }
+    if (arg.startsWith('--reviewers=')) {
+      reviewersArg = arg.split('=')[1];
+      continue;
+    }
     if (arg === '--config' && args[i + 1]) {
       configKey = args[++i].toUpperCase();
       continue;
@@ -699,6 +735,201 @@ async function cmdReview(flags, argv, quiet) {
     if (arg === '--run-all-live') {
       argv.runAllLive = true;
       continue;
+    }
+  }
+
+  // Handle Phase 1 Governance: --plan or --execute
+  if (modePlan || modeExecute) {
+    let customDiff = '';
+    let files = [];
+    let task = taskDesc || '';
+
+    if (fixtureId) {
+      const fixture = FIXTURES[fixtureId];
+      if (!fixture) {
+        err(`Unknown fixture: ${fixtureId}. Use tk review --list to see available fixtures.`);
+        process.exit(1);
+      }
+      task = taskDesc || fixture.task;
+      customDiff = fixture.diff;
+      files = fixture.files || [];
+    } else if (diffPath) {
+      if (!fs.existsSync(diffPath)) {
+        err(`Diff file not found: ${diffPath}`);
+        process.exit(1);
+      }
+      customDiff = fs.readFileSync(diffPath, 'utf8');
+      task = taskDesc || 'Review proposed code change';
+      const extracted = [];
+      for (const line of customDiff.split('\n')) {
+        if (line.startsWith('+++ b/')) {
+          extracted.push(line.slice(6).trim());
+        } else if (line.startsWith('+++ ') && !line.startsWith('+++ /dev/null')) {
+          extracted.push(line.slice(4).trim());
+        }
+      }
+      files = extracted.length > 0 ? extracted : ['src/unknown'];
+    } else {
+      err('Missing required change input. Provide --fixture <name> or --diff <path>');
+      log(`  ${c('gray', 'Example: tk review --plan --fixture mfa-implementation')}`);
+      log(`  ${c('gray', 'Example: tk review --execute --fixture mfa-implementation --mock')}`);
+      process.exit(1);
+    }
+
+    // 1. Run deterministic decision engine
+    const decision = evaluateDecision({
+      task,
+      diff: customDiff,
+      files,
+    });
+
+    const forcedReviewers = reviewersArg
+      ? reviewersArg
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean)
+      : null;
+
+    const selectedReviewers = forcedReviewers ||
+      decision.reviewers?.selected?.map(r =>
+        typeof r === 'string' ? r : r.reviewer || r.name,
+      ) || ['security-auditor', 'logic-reviewer'];
+
+    // 2. Mode: PLAN
+    if (modePlan) {
+      if (outputJson) {
+        console.log(
+          JSON.stringify(
+            {
+              mode: 'plan',
+              decision_id: decision.decision_id,
+              tier: decision.tier,
+              tier_name: decision.tier_name,
+              routing: decision.routing,
+              socratic_gate: decision.socratic_gate,
+              selected_reviewers: selectedReviewers,
+              signals: decision.signals,
+              evidence_summary: decision.evidence_summary,
+              explanation: decision.explanation,
+              timestamp: new Date().toISOString(),
+            },
+            null,
+            2,
+          ),
+        );
+      } else {
+        log('');
+        log(bold('  ⚖️  Tribunal Review Plan'));
+        log(`  ${c('gray', '─'.repeat(50))}`);
+        log(`  Decision Tier:   ${c('cyan', `Tier ${decision.tier} (${decision.tier_name})`)}`);
+        log(`  Routing:         ${c('cyan', decision.routing)}`);
+        log(`  Socratic Gate:   ${c('cyan', decision.socratic_gate)}`);
+        log(`  Selected Reviewers:`);
+        for (const r of selectedReviewers) {
+          log(`    ${c('green', '✓')} ${r}`);
+        }
+        log(`  ${c('gray', '─'.repeat(50))}`);
+        log(
+          `  Signals:         ${decision.signals?.change_files_count || files.length} file(s), ${decision.signals?.change_lines || 0} line(s)`,
+        );
+        log(
+          `  Evidence:        ${decision.evidence_summary?.total_selected || 0} fact(s) selected`,
+        );
+        log(
+          `  Reason:          ${decision.explanation?.why_tier_selected || 'Classified by volume and risk patterns.'}`,
+        );
+        log('');
+      }
+      return;
+    }
+
+    // 3. Mode: EXECUTE
+    if (modeExecute) {
+      const provider = new ProviderAdapter({ provider: isMock ? 'mock' : undefined });
+      const executor = new ReviewExecutor({
+        provider,
+        maxConcurrency: 3,
+        timeoutMs: 30000,
+      });
+
+      const execRes = await executor.executeReview({
+        decision,
+        code: customDiff,
+        task,
+        reviewers: selectedReviewers,
+      });
+
+      const aggregated = VerdictAggregator.aggregate({
+        results: execRes.results,
+        decision,
+        tier: decision.tier,
+        reviewRunId: execRes.reviewRunId,
+      });
+
+      if (outputJson) {
+        console.log(
+          JSON.stringify(
+            {
+              mode: 'execute',
+              reviewRunId: execRes.reviewRunId,
+              decision_id: decision.decision_id,
+              tier: decision.tier,
+              tier_name: decision.tier_name,
+              reviewers: selectedReviewers,
+              execution: {
+                duration_ms: execRes.durationMs,
+                telemetry: execRes.telemetry,
+                results: execRes.results,
+              },
+              aggregated,
+            },
+            null,
+            2,
+          ),
+        );
+      } else {
+        log('');
+        log(bold('  Tribunal Review'));
+        log('');
+        log(bold('  Decision:'));
+        log(`  Tier: Tier ${decision.tier} (${decision.tier_name})`);
+        log('');
+        log(bold('  Reviewers:'));
+        for (const r of aggregated.reviewersExecuted) {
+          log(`  ${c('green', '✓')} ${r}`);
+        }
+        log('');
+        log(bold('  Execution:'));
+        log(`  ${execRes.results.length} reviewer(s)`);
+        log(`  ${(execRes.durationMs / 1000).toFixed(2)}s`);
+        log(
+          `  ${execRes.telemetry.totalTokens !== 'UNAVAILABLE' ? execRes.telemetry.totalTokens.toLocaleString() + ' tokens' : 'Tokens: UNAVAILABLE'}`,
+        );
+        log('');
+        log(bold('  Findings:'));
+        log(`  ${aggregated.findingsCount.critical} Critical`);
+        log(`  ${aggregated.findingsCount.high} High`);
+        log(`  ${aggregated.findingsCount.medium} Medium`);
+        log(`  ${aggregated.findingsCount.low} Low`);
+        log('');
+        log(bold('  Final Verdict:'));
+        const verdictColor =
+          aggregated.verdict === 'APPROVED'
+            ? 'green'
+            : aggregated.verdict === 'WARNING'
+              ? 'yellow'
+              : 'red';
+        log(`  ${c(verdictColor, bold(aggregated.verdict))}`);
+        log('');
+        log(bold('  Reason:'));
+        log(`  ${aggregated.reason}`);
+        log('');
+      }
+
+      if (aggregated.verdict === 'REJECTED') {
+        process.exitCode = 1;
+      }
+      return;
     }
   }
 
@@ -969,3 +1200,6 @@ async function runLiveExecution(configKey, fixtureId, outputDir) {
 
   return true;
 }
+
+exports.FIXTURES = FIXTURES;
+exports.REVIEWER_CONFIGS = REVIEWER_CONFIGS;

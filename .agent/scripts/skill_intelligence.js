@@ -135,40 +135,6 @@ const {
   Phase6MetricsTracker,
   getPhase6MetricsTracker,
 } = require('./simulation_engine');
-const {
-  RELATIONSHIP_TYPES,
-  INTERACTION_PRIORITY,
-  INTERACTION_CONFIDENCE,
-  runCrossDomainAnalysis,
-  Phase9MetricsTracker,
-  getPhase9MetricsTracker,
-} = require('./cross_domain_engine');
-const {
-  OUTCOME_INVARIANT,
-  REQUIREMENT_SOURCES,
-  REQUIREMENT_CATEGORIES,
-  REQUIREMENT_PRIORITY: PHASE10_REQUIREMENT_PRIORITY,
-  COMPLEXITY_BUDGETS,
-  ASSUMPTION_STATUS,
-  REVERSIBILITY_LEVELS: PHASE10_REVERSIBILITY_LEVELS,
-  CAPABILITY_DEPTH,
-  REASONING_DEPTH,
-  discoverRequirements,
-  evaluateComplexityBudget,
-  auditArchitectureJustification,
-  generateDecisionRecords,
-  analyzeAssumptionsAndUnknowns,
-  buildSolutionShape,
-  verifyOutcomeAndRegressions,
-  runOutcomeOptimization,
-  evaluateSkillSelection,
-  Phase10OutcomeMemory,
-  getPhase10OutcomeMemory,
-  runAntiShortcutCheck,
-  runAntiOverengineeringCheck,
-  Phase10MetricsTracker,
-  getPhase10MetricsTracker,
-} = require('./outcome_optimization_engine');
 
 const _skillsCache = new Map();
 
@@ -365,11 +331,14 @@ function loadAllSkills(agentDir) {
   return list;
 }
 
-function discoverSkills(taskQuery, agentDir) {
+function discoverSkills(taskQuery, agentDir, options = {}) {
   const allSkills = loadAllSkills(agentDir);
   const q = taskQuery.toLowerCase();
   const rawTokens = q.split(/\W+/).filter(t => t.length > 2);
   const queryTokens = rawTokens.filter(t => !STOP_WORDS.has(t));
+
+  const explicitIncludes = options.explicitIncludes || [];
+  const explicitExcludes = options.explicitExcludes || [];
 
   // Evaluate failure mode hits
   const failureSkills = new Set();
@@ -379,58 +348,104 @@ function discoverSkills(taskQuery, agentDir) {
     }
   }
 
+  const routingDecision = {
+    requestId: options.requestId || `REQ-${Date.now()}`,
+    candidates: [],
+    selected: [],
+    policy: {
+      priority: options.priority || 'standard',
+      conflictResolution: 'explicit-wins',
+    },
+  };
+
   const scored = [];
 
   for (const skill of allSkills) {
     let score = 0;
+    const signals = {
+      keyword: false,
+      domain: false,
+      concept: false,
+      semantic: false,
+      dependency: false,
+    };
     const sName = skill.name.toLowerCase();
     const sDesc = skill.description.toLowerCase();
+    let rejected = false;
+    let rejectionReason = null;
+    let isExplicit = false;
 
-    // Exact skill name in query
-    if (q.includes(sName.replace(/-/g, ' ')) || q.includes(sName)) {
-      score += 15;
-    }
-
-    // Token matches in skill name
-    for (const token of queryTokens) {
-      if (sName === token) {
-        score += 12;
-      } else if (sName.includes(token)) {
-        score += 6;
+    if (explicitExcludes.includes(skill.name)) {
+      rejected = true;
+      rejectionReason = 'Explicitly excluded by user';
+    } else if (explicitIncludes.includes(skill.name)) {
+      score += 100;
+      isExplicit = true;
+      signals.keyword = true;
+    } else {
+      // Exact skill name in query
+      if (q.includes(sName.replace(/-/g, ' ')) || q.includes(sName)) {
+        score += 15;
+        signals.keyword = true;
       }
 
-      // Trigger matches
-      if (skill.triggers.some(tr => tr.includes(token))) {
-        score += 8;
+      // Token matches in skill name
+      for (const token of queryTokens) {
+        if (sName === token) {
+          score += 12;
+          signals.keyword = true;
+        } else if (sName.includes(token)) {
+          score += 6;
+          signals.keyword = true;
+        }
+
+        // Trigger matches
+        if (skill.triggers.some(tr => tr.includes(token))) {
+          score += 8;
+          signals.concept = true;
+        }
+
+        // Description token match (exact word boundary)
+        const wordRegex = new RegExp(`\\b${token}\\b`, 'i');
+        if (wordRegex.test(sDesc)) {
+          score += 3;
+          signals.semantic = true;
+        }
       }
 
-      // Description token match (exact word boundary)
-      const wordRegex = new RegExp(`\\b${token}\\b`, 'i');
-      if (wordRegex.test(sDesc)) {
-        score += 3;
+      // Failure mode signal boost
+      if (failureSkills.has(skill.name)) {
+        score += 10;
+        signals.domain = true;
       }
     }
 
-    // Failure mode signal boost
-    if (failureSkills.has(skill.name)) {
-      score += 10;
-    }
-
-    if (score >= 4) {
+    if (score >= 4 || rejected) {
       let state = 'OPTIONAL';
-      if (score >= 12) {
+      if (score >= 12 || isExplicit) {
         state = 'MANDATORY';
       } else if (score >= 6) {
         state = 'RECOMMENDED';
       }
 
-      scored.push({
-        skill: skill.name,
+      routingDecision.candidates.push({
+        skillId: skill.name,
         score,
-        state,
-        domain: skill.domain,
-        description: skill.description,
+        signals,
+        matched: !rejected,
+        rejected,
+        rejectionReason,
       });
+
+      if (!rejected) {
+        scored.push({
+          skill: skill.name,
+          score,
+          state,
+          domain: skill.domain,
+          description: skill.description,
+        });
+      }
     }
   }
 
@@ -447,6 +462,12 @@ function discoverSkills(taskQuery, agentDir) {
     return orderA - orderB;
   });
 
+  routingDecision.selected = pipelineCandidates.map(p => ({
+    skillId: p.skill,
+    score: p.score,
+    confidence: p.state,
+  }));
+
   return {
     query: taskQuery,
     totalDiscovered: scored.length,
@@ -454,6 +475,7 @@ function discoverSkills(taskQuery, agentDir) {
     recommended: scored.filter(s => s.state === 'RECOMMENDED'),
     optional: scored.filter(s => s.state === 'OPTIONAL'),
     pipeline: pipeline.map(p => p.skill),
+    routingDecision,
   };
 }
 
@@ -602,7 +624,7 @@ function analyzeTask(taskQuery, agentDir, options = {}) {
     }
   }
 
-  const discoveredSkills = discoverSkills(taskQuery, agentDir);
+  const discoveredSkills = discoverSkills(taskQuery, agentDir, options);
   const allSkills = loadAllSkills(agentDir);
   const coverageData = evaluateCoverage(conceptData, discoveredSkills, allSkills);
 
@@ -716,44 +738,6 @@ function analyzeTask(taskQuery, agentDir, options = {}) {
     }
   }
 
-  // Phase 9: Cross-Domain Engineering Intelligence
-  const crossDomainAnalysis = runCrossDomainAnalysis(taskQuery, conceptData, options);
-
-  // Integrate cross-domain validation requirements into verification plan
-  if (!crossDomainAnalysis.skipped) {
-    for (const vr of crossDomainAnalysis.validation_requirements || []) {
-      if (!verificationPlan.some(v => v.test === vr.test)) {
-        verificationPlan.push({
-          target: vr.source,
-          test: vr.test,
-          action: `[CROSS-DOMAIN VERIFICATION] ${vr.reason}`,
-          status: 'pending',
-        });
-      }
-    }
-  }
-
-  // Phase 10: Engineering Outcome Optimization
-  const outcomeOptimization = runOutcomeOptimization(taskQuery, {
-    conceptData,
-    considerationsData: considerations,
-    crossDomainAnalysis,
-    preMortem,
-    options,
-  });
-
-  // Integrate Phase 10 validation requirements into verification plan
-  for (const vr of outcomeOptimization.validation_requirements || []) {
-    if (!verificationPlan.some(v => v.test === vr.test)) {
-      verificationPlan.push({
-        target: vr.source,
-        test: vr.test,
-        action: `[OUTCOME OPTIMIZATION VERIFICATION] ${vr.reason}`,
-        status: 'pending',
-      });
-    }
-  }
-
   return {
     task: {
       query: taskQuery,
@@ -789,36 +773,11 @@ function analyzeTask(taskQuery, agentDir, options = {}) {
     unsupported_claims: unsupportedClaims,
     simulation_plan: preMortem.simulation_plan,
     phase6_metrics: phase6Tracker.getMetrics(),
-    // Phase 9: Cross-Domain Engineering Intelligence
-    cross_domain_analysis: crossDomainAnalysis.skipped
-      ? null
-      : {
-          interactions: crossDomainAnalysis.interactions,
-          second_order_effects: crossDomainAnalysis.second_order_effects,
-          failure_propagation: crossDomainAnalysis.failure_propagation,
-          resource_contention: crossDomainAnalysis.resource_contention,
-          security_boundaries: crossDomainAnalysis.security_boundaries,
-          constraint_conflicts: crossDomainAnalysis.constraint_conflicts,
-          emergent_failures: crossDomainAnalysis.emergent_failures,
-          tradeoff_graph: crossDomainAnalysis.tradeoffs,
-          blind_spots: crossDomainAnalysis.blind_spots,
-          validation_requirements: crossDomainAnalysis.validation_requirements,
-          summary: crossDomainAnalysis.summary,
-        },
-    phase9_metrics: crossDomainAnalysis.phase9_metrics || null,
-    // Phase 10: Engineering Outcome Optimization
-    outcome_optimization: outcomeOptimization,
-    outcome_requirements: outcomeOptimization.requirements,
-    engineering_options: outcomeOptimization.engineering_options,
-    decision_records: outcomeOptimization.decision_records,
-    solution_shape: outcomeOptimization.solution_shape,
-    early_validations: outcomeOptimization.early_validations,
-    anti_slop_audit: outcomeOptimization.architecture_audit,
-    phase10_metrics: outcomeOptimization.phase10_metrics,
     risks: considerations.risks,
     failure_modes: considerations.failure_modes,
     quality_attributes: considerations.quality_attributes,
     skills: skillsList,
+    routing_decision: discoveredSkills.routingDecision,
     coverage: coverageData.coverage_matrix,
     coverage_summary: {
       full: coverageData.full.length,
@@ -1334,36 +1293,6 @@ module.exports = {
   comparePredictionsWithObserved,
   Phase6MetricsTracker,
   getPhase6MetricsTracker,
-  // Phase 9: Cross-Domain Engineering Intelligence
-  RELATIONSHIP_TYPES,
-  INTERACTION_PRIORITY,
-  INTERACTION_CONFIDENCE,
-  runCrossDomainAnalysis,
-  Phase9MetricsTracker,
-  getPhase9MetricsTracker,
-  // Phase 10: Engineering Outcome Optimization Engine
-  OUTCOME_INVARIANT,
-  REQUIREMENT_SOURCES,
-  REQUIREMENT_CATEGORIES,
-  COMPLEXITY_BUDGETS,
-  ASSUMPTION_STATUS,
-  CAPABILITY_DEPTH,
-  REASONING_DEPTH,
-  discoverRequirements,
-  evaluateComplexityBudget,
-  auditArchitectureJustification,
-  generateDecisionRecords,
-  analyzeAssumptionsAndUnknowns,
-  buildSolutionShape,
-  verifyOutcomeAndRegressions,
-  runOutcomeOptimization,
-  evaluateSkillSelection,
-  Phase10OutcomeMemory,
-  getPhase10OutcomeMemory,
-  runAntiShortcutCheck,
-  runAntiOverengineeringCheck,
-  Phase10MetricsTracker,
-  getPhase10MetricsTracker,
 };
 
 if (require.main === module) {

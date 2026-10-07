@@ -12,6 +12,15 @@ scripts-binding:
   - .agent/scripts/test_runner.js
   - .agent/scripts/lint_runner.js
   - .agent/scripts/verify_all.js
+inputs:
+  task: "string"
+  target_file: "string"
+outputs:
+  result: "string"
+  verification_status: "boolean"
+trigger:
+  - "opentelemetry"
+  - "observability"
 ---
 
 # OpenTelemetry Observability — 2026 Telemetry Standards

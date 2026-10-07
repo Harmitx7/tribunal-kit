@@ -10,6 +10,8 @@ const tree = require('./tree');
 const shimmer = require('./shimmer');
 const reviewerGrid = require('./reviewer-grid');
 const wizard = require('./wizard');
+const panel = require('./panel');
+const progress = require('./progress');
 
 module.exports = {
   ...theme,
@@ -18,4 +20,6 @@ module.exports = {
   ...shimmer,
   ...reviewerGrid,
   ...wizard,
+  ...panel,
+  ...progress,
 };

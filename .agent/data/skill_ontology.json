@@ -1,0 +1,138 @@
+{
+  "version": "1.0.0",
+  "skills": {
+    "landing-page": {
+      "parents": ["frontend-design"],
+      "children": [],
+      "siblings": ["dashboard-ui", "component-design"],
+      "specializes": ["frontend-design"],
+      "related": [],
+      "conflicts": []
+    },
+    "frontend-design": {
+      "parents": [],
+      "children": ["landing-page", "dashboard-ui", "component-design"],
+      "siblings": ["react-specialist"],
+      "specializes": [],
+      "related": ["react-specialist"],
+      "conflicts": []
+    },
+    "react-specialist": {
+      "parents": [],
+      "children": ["nextjs-react-expert"],
+      "siblings": ["frontend-design"],
+      "specializes": [],
+      "related": ["frontend-design"],
+      "conflicts": []
+    },
+    "nextjs-react-expert": {
+      "parents": ["react-specialist"],
+      "children": [],
+      "siblings": [],
+      "specializes": ["react-specialist"],
+      "related": [],
+      "conflicts": []
+    },
+    "devops-engineer": {
+      "parents": [],
+      "children": ["deployment-procedures", "docker-specialist"],
+      "siblings": ["cloud-architect"],
+      "specializes": [],
+      "related": ["cloud-architect"],
+      "conflicts": []
+    },
+    "deployment-procedures": {
+      "parents": ["devops-engineer"],
+      "children": [],
+      "siblings": ["docker-specialist"],
+      "specializes": ["devops-engineer"],
+      "related": [],
+      "conflicts": []
+    },
+    "backend-architecture-auditor": {
+      "parents": [],
+      "children": ["api-patterns", "backend-redis"],
+      "siblings": [],
+      "specializes": [],
+      "related": [],
+      "conflicts": []
+    },
+    "api-patterns": {
+      "parents": ["backend-architecture-auditor"],
+      "children": [],
+      "siblings": ["backend-redis"],
+      "specializes": ["backend-architecture-auditor"],
+      "related": [],
+      "conflicts": []
+    },
+    "backend-redis": {
+      "parents": ["backend-architecture-auditor"],
+      "children": [],
+      "siblings": ["api-patterns"],
+      "specializes": ["backend-architecture-auditor"],
+      "related": [],
+      "conflicts": []
+    },
+    "database-architect": {
+      "parents": [],
+      "children": ["sql-pro", "duckdb-analytical-sql"],
+      "siblings": [],
+      "specializes": [],
+      "related": [],
+      "conflicts": []
+    },
+    "sql-pro": {
+      "parents": ["database-architect"],
+      "children": [],
+      "siblings": ["duckdb-analytical-sql"],
+      "specializes": ["database-architect"],
+      "related": [],
+      "conflicts": []
+    },
+    "duckdb-analytical-sql": {
+      "parents": ["database-architect"],
+      "children": [],
+      "siblings": ["sql-pro"],
+      "specializes": ["database-architect"],
+      "related": [],
+      "conflicts": []
+    },
+    "security-auditor": {
+      "parents": [],
+      "children": ["api-security-auditor", "ai-app-hardening", "red-team-tactics"],
+      "siblings": [],
+      "specializes": [],
+      "related": [],
+      "conflicts": []
+    },
+    "api-security-auditor": {
+      "parents": ["security-auditor"],
+      "children": [],
+      "siblings": ["ai-app-hardening", "red-team-tactics"],
+      "specializes": ["security-auditor"],
+      "related": [],
+      "conflicts": []
+    },
+    "ai-app-hardening": {
+      "parents": ["security-auditor"],
+      "children": [],
+      "siblings": ["api-security-auditor", "red-team-tactics"],
+      "specializes": ["security-auditor"],
+      "related": [],
+      "conflicts": []
+    },
+    "architecture": {
+      "parents": [],
+      "children": [
+        "backend-architecture-auditor",
+        "frontend-design",
+        "database-architect",
+        "cloud-architect"
+      ],
+      "siblings": [],
+      "specializes": [],
+      "related": [],
+      "conflicts": []
+    }
+  }
+}

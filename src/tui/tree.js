@@ -1,14 +1,16 @@
 'use strict';
 
 /**
- * Hierarchical action tree nodes (⏺ / ⎿) matching the Brainless agent specification.
+ * Hierarchical action tree nodes matching the Pro-Max design system.
+ * Uses connected timeline visuals to group steps contextually.
  */
 
-const { isTTY, RGB, GLYPHS, color, bold } = require('./theme');
+const { isTTY, RGB, GLYPHS, color, bold, dim } = require('./theme');
 
 class ActionTree {
   constructor(options = {}) {
     this.staggerMs = isTTY ? (options.staggerMs ?? 15) : 0;
+    this.inProgress = false;
   }
 
   sleep(ms) {
@@ -16,18 +18,33 @@ class ActionTree {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  _drawConnector(glyph, itemColor, indent = '  ') {
+    return `${indent}${color(itemColor, glyph)}`;
+  }
+
+  _printLine(line) {
+    if (line === undefined) {
+      console.log();
+    } else {
+      console.log(line);
+    }
+  }
+
   async action(verb, target = null) {
-    const g = GLYPHS;
-    const bullet = color(RGB.EMERALD, g.bullet);
-    const coloredVerb = color(RGB.WHITE, bold(verb));
+    if (this.inProgress) {
+      // Close previous action visually if it was left open
+      this._printLine(`  ${color(RGB.SLATE_700, GLYPHS.boxV)}`);
+    }
+    this.inProgress = true;
+    
+    const bullet = color(RGB.EMERALD, GLYPHS.bullet);
+    const coloredVerb = bold(color(RGB.WHITE, verb));
 
     if (target) {
-      const openParen = color(RGB.ZINC_600, '(');
       const coloredTarget = color(RGB.CYAN, target);
-      const closeParen = color(RGB.ZINC_600, ')');
-      console.log(`  ${bullet} ${coloredVerb}${openParen}${coloredTarget}${closeParen}`);
+      this._printLine(`  ${bullet} ${coloredVerb} ${dim('➜')} ${coloredTarget}`);
     } else {
-      console.log(`  ${bullet} ${coloredVerb}`);
+      this._printLine(`  ${bullet} ${coloredVerb}`);
     }
 
     if (this.staggerMs > 0) {
@@ -36,10 +53,12 @@ class ActionTree {
   }
 
   async branch(message) {
-    const g = GLYPHS;
-    const branchGlyph = color(RGB.ZINC_600, g.branch);
+    const pipe = color(RGB.SLATE_700, GLYPHS.boxV);
+    const branchGlyph = color(RGB.ZINC_600, GLYPHS.treeMid);
     const coloredMsg = color(RGB.ZINC_400, message);
-    console.log(`    ${branchGlyph} ${coloredMsg}`);
+    
+    this._printLine(`  ${pipe}`);
+    this._printLine(`  ${pipe} ${branchGlyph} ${coloredMsg}`);
 
     if (this.staggerMs > 0) {
       await this.sleep(this.staggerMs);
@@ -47,15 +66,17 @@ class ActionTree {
   }
 
   async itemSuccess(title, detail = null) {
-    const g = GLYPHS;
-    const check = color(RGB.EMERALD, g.success);
+    const pipe = color(RGB.SLATE_700, GLYPHS.boxV);
+    const check = color(RGB.EMERALD, GLYPHS.success);
     const coloredTitle = color(RGB.WHITE, title);
+    const connector = color(RGB.ZINC_600, GLYPHS.treeMid);
 
+    this._printLine(`  ${pipe}`);
     if (detail) {
       const coloredDetail = color(RGB.ZINC_500, detail);
-      console.log(`    ${check} ${coloredTitle} ${coloredDetail}`);
+      this._printLine(`  ${pipe} ${connector} ${check} ${coloredTitle} ${coloredDetail}`);
     } else {
-      console.log(`    ${check} ${coloredTitle}`);
+      this._printLine(`  ${pipe} ${connector} ${check} ${coloredTitle}`);
     }
 
     if (this.staggerMs > 0) {
@@ -64,27 +85,34 @@ class ActionTree {
   }
 
   itemWarning(message) {
-    const g = GLYPHS;
-    const warn = color(RGB.AMBER, g.warning);
+    const pipe = color(RGB.SLATE_700, GLYPHS.boxV);
+    const warn = color(RGB.AMBER, GLYPHS.warning);
     const coloredMsg = color(RGB.AMBER, message);
-    console.log(`    ${warn} ${coloredMsg}`);
+    const connector = color(RGB.ZINC_600, GLYPHS.treeMid);
+    this._printLine(`  ${pipe}`);
+    this._printLine(`  ${pipe} ${connector} ${warn} ${coloredMsg}`);
   }
 
   itemError(message) {
-    const g = GLYPHS;
-    const err = color(RGB.ROSE, g.failure);
+    const pipe = color(RGB.SLATE_700, GLYPHS.boxV);
+    const err = color(RGB.ROSE, GLYPHS.failure);
     const coloredMsg = color(RGB.ROSE, message);
-    console.log(`    ${err} ${coloredMsg}`);
+    const connector = color(RGB.ZINC_600, GLYPHS.treeEnd);
+    this._printLine(`  ${pipe}`);
+    this._printLine(`  ${pipe} ${connector} ${err} ${coloredMsg}`);
+    this.inProgress = false;
   }
 
   complete(message) {
-    const g = GLYPHS;
-    const check = color(RGB.EMERALD, g.success);
-    const boldMsg = bold(message);
-    const colored = color(RGB.WHITE, boldMsg);
-    console.log();
-    console.log(`  ${check} ${colored}`);
-    console.log();
+    this.inProgress = false;
+    const check = color(RGB.EMERALD, GLYPHS.success);
+    const colored = bold(color(RGB.PURE_WHITE, message));
+    
+    // Cap off the timeline
+    this._printLine(`  ${color(RGB.SLATE_700, GLYPHS.treeEnd)}`);
+    this._printLine();
+    this._printLine(`  ${check} ${colored}`);
+    this._printLine();
   }
 }
 

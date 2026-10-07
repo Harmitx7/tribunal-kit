@@ -50,6 +50,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
+const { extractIntent } = require('./intent_extractor');
 
 // ── Colours & Shared Utilities ────────────────────────────────────────────────
 const { GREEN, YELLOW, CYAN, RED, BOLD, DIM, RESET } = require('./_colors');
@@ -283,15 +284,35 @@ function parseFrontmatter(content) {
   if (!match) return null;
   const yaml = match[1];
   const obj = {};
+  let currentArrayKey = null;
+
   for (const line of yaml.split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    // Check if it's an array item
+    if (trimmed.startsWith('- ') && currentArrayKey) {
+      const val = trimmed
+        .slice(2)
+        .trim()
+        .replace(/^["']|["']$/g, '');
+      obj[currentArrayKey].push(val);
+      continue;
+    }
+
     const sep = line.indexOf(':');
     if (sep === -1) continue;
+
     const key = line.slice(0, sep).trim();
-    const val = line
-      .slice(sep + 1)
-      .trim()
-      .replace(/^["']|["']$/g, '');
-    obj[key] = val;
+    const val = line.slice(sep + 1).trim();
+
+    if (val === '') {
+      currentArrayKey = key;
+      obj[key] = [];
+    } else {
+      currentArrayKey = null;
+      obj[key] = val.replace(/^["']|["']$/g, '');
+    }
   }
   return obj;
 }
@@ -326,6 +347,11 @@ function loadSkills(agentDir) {
     return _loadedSkillsCache;
   }
 
+  let responsibilities = {};
+  try {
+    responsibilities = require('../../phase14/baseline/responsibility.json');
+  } catch (e) {}
+
   const skillsDir = path.join(agentDir, 'skills');
   if (!fs.existsSync(skillsDir)) return [];
 
@@ -345,6 +371,7 @@ function loadSkills(agentDir) {
       const frontmatter = parseFrontmatter(content) || {};
       const keyRules = extractKeyRules(content);
       const description = frontmatter.description || '';
+      const triggers = frontmatter.trigger || [];
       const skillText = (entry.name + ' ' + description).toLowerCase();
       const tokens = new Set(tokenize(skillText));
 
@@ -355,7 +382,9 @@ function loadSkills(agentDir) {
         content,
         keyRules,
         description,
+        triggers,
         tokens,
+        responsibility: responsibilities[entry.name] || {},
       });
     } catch {
       // Skip unreadable skills silently
@@ -374,6 +403,28 @@ function loadSkills(agentDir) {
  * @param {string} text
  * @returns {string[]}
  */
+const STOP_WORDS = new Set([
+  'the',
+  'and',
+  'for',
+  'with',
+  'this',
+  'that',
+  'from',
+  'when',
+  'what',
+  'how',
+  'use',
+  'using',
+  'can',
+  'not',
+  'you',
+  'are',
+  'your',
+  'has',
+  'have',
+]);
+
 function tokenize(text) {
   const str =
     typeof text === 'string'
@@ -381,7 +432,9 @@ function tokenize(text) {
       : text && typeof text === 'object'
         ? text.task || text.spec || JSON.stringify(text)
         : String(text || '');
-  return (str.match(/\b[a-zA-Z_][a-zA-Z0-9_]{2,}\b/g) || []).map(t => t.toLowerCase());
+  return (str.match(/\b[a-zA-Z_][a-zA-Z0-9_]{2,}\b/g) || [])
+    .map(t => t.toLowerCase())
+    .filter(t => !STOP_WORDS.has(t));
 }
 
 /**
@@ -401,6 +454,7 @@ function tokenize(text) {
  */
 function scoreSkill(skill, task, fileExts, taskTokens) {
   let score = 0;
+  const signals = { keyword: [], semantic: [], domain: [], explicit: [], concept: [] };
   const taskStr =
     typeof task === 'string'
       ? task
@@ -409,32 +463,192 @@ function scoreSkill(skill, task, fileExts, taskTokens) {
         : String(task || '');
   const taskLower = taskStr.toLowerCase();
 
+  // Phase 14: Intent Extraction
+  const intent = extractIntent(taskStr);
+  const primaryTokens = new Set(
+    (intent.clauses.primary.match(/\b[a-zA-Z_][a-zA-Z0-9_]{2,}\b/g) || []).map(t =>
+      t.toLowerCase(),
+    ),
+  );
+  const contextualTokens = new Set(
+    (intent.clauses.contextual.match(/\b[a-zA-Z_][a-zA-Z0-9_]{2,}\b/g) || []).map(t =>
+      t.toLowerCase(),
+    ),
+  );
+
+  // 0. Explicit invocation
+  const nameSpaced = skill.name.replace(/-/g, ' ');
+  if (
+    taskLower.includes(`/use ${skill.name}`) ||
+    taskLower.includes(`/invoke ${skill.name}`) ||
+    taskLower.includes(`@${skill.name}`) ||
+    (skill.name.includes('-') && taskLower.includes(skill.name)) ||
+    (skill.name.includes('-') && taskLower.includes(nameSpaced))
+  ) {
+    // Adversarial guard: Check if the request is trying to misdirect by using a skill name as a passing tool,
+    // e.g., "Build a dashboard using sql-pro patterns" is harder to guard against just with keyword,
+    // but explicit exact match usually means user intent.
+    score += 50;
+    signals.explicit.push(skill.name);
+  }
+
   // 1. Token overlap (lightweight TF match using pre-built Set)
   const skillSet =
     skill.tokens || new Set(tokenize((skill.name + ' ' + skill.description).toLowerCase()));
   for (const token of taskTokens) {
-    if (skillSet.has(token)) score += 1;
+    if (skillSet.has(token)) {
+      score += 1;
+      signals.keyword.push(token);
+    }
+  }
+
+  // 1.5 Semantic Trigger match (Heavy TF-IDF boost)
+  if (skill.triggers && Array.isArray(skill.triggers)) {
+    for (const trigger of skill.triggers) {
+      if (taskLower.includes(trigger.toLowerCase())) {
+        score += 5; // Heavy weight for explicit trigger matches
+        signals.semantic.push(trigger);
+      }
+    }
   }
 
   // 2. Domain affinity boost
   for (const affinity of DOMAIN_AFFINITIES) {
-    const keywordMatch = affinity.keywords.some(k => taskLower.includes(k));
+    const keywordMatch = affinity.keywords.find(k => taskLower.includes(k));
     if (!keywordMatch) continue;
     if (affinity.skills.includes(skill.name)) {
-      score += affinity.weight;
+      // Phase 14: Incidental Penalty / Primary Boost
+      // If the keyword match is purely in the contextual clause (e.g. "using Redis")
+      // we reduce the weight. If it's in the primary clause, we keep/boost it.
+      let weight = affinity.weight;
+      if (!contextualTokens) console.error('contextualTokens is undefined!', { intent });
+      if (!primaryTokens) console.error('primaryTokens is undefined!', { intent });
+      if (contextualTokens.has(keywordMatch) && !primaryTokens.has(keywordMatch)) {
+        weight = Math.max(1, weight - 2); // Demote incidental technologies
+      } else if (primaryTokens.has(keywordMatch)) {
+        weight += 1; // Boost primary responsibilities
+      }
+
+      score += weight;
+      signals.domain.push(keywordMatch);
+    }
+  }
+
+  // Phase 14: Action Match & Artifact Match
+  if (skill.responsibility) {
+    // If skill explicitly matches the requested primary action
+    if (
+      skill.responsibility.actions &&
+      skill.responsibility.actions.includes(intent.action.primary)
+    ) {
+      score += 5;
+      signals.concept.push(`action:${intent.action.primary}`);
+    }
+
+    // If skill produces the requested artifact
+    const artifactNames = Object.keys(intent.artifact);
+    if (artifactNames.length > 0 && skill.responsibility.outputs) {
+      if (skill.responsibility.outputs.some(out => artifactNames.includes(out))) {
+        score += 8; // Heavy boost for producing the exact requested artifact
+        signals.concept.push(`artifact:${artifactNames[0]}`);
+      }
+    }
+
+    // If skill handles the requested subject
+    if (skill.responsibility.subjects) {
+      const STOP_WORDS = [
+        'to',
+        'or',
+        'not',
+        'on',
+        'the',
+        'for',
+        'in',
+        'of',
+        'and',
+        'with',
+        'using',
+        'by',
+        'is',
+        'a',
+        'an',
+        'at',
+        'web',
+      ];
+      for (const subject of skill.responsibility.subjects) {
+        if (STOP_WORDS.includes(subject)) continue;
+        const cleanTask = taskLower.replace(/\./g, '');
+        if (new RegExp(`\\b${subject}\\b`, 'i').test(cleanTask)) {
+          const genericSubjects = [
+            'architecture',
+            'design',
+            'code',
+            'project',
+            'system',
+            'app',
+            'application',
+            'ui',
+            'component',
+            'pipeline',
+            'caching',
+          ];
+          if (genericSubjects.includes(subject)) continue;
+
+          let subWeight = 15;
+          if (
+            ['architecture', 'orchestrator', 'debugger'].includes(skill.name) ||
+            BASELINE_SKILLS.includes(skill.name)
+          ) {
+            subWeight = 5;
+          } else if (contextualTokens.has(subject) && !primaryTokens.has(subject)) {
+            subWeight = 5; // Demote incidental technologies
+          }
+          score += subWeight;
+          signals.concept.push(`subject:${subject}`);
+        }
+      }
     }
   }
 
   // 3. File extension boost
   for (const ext of fileExts) {
     const extSkills = EXT_AFFINITIES[ext] || [];
-    if (extSkills.includes(skill.name)) score += 2;
+    if (extSkills.includes(skill.name)) {
+      score += 2;
+      signals.domain.push(`ext:${ext}`);
+    }
+  }
+
+  // Phase 14: Negative Evidence Penalty
+  if (skill.responsibility && skill.responsibility.negative) {
+    for (const neg of skill.responsibility.negative) {
+      if (taskLower.includes(neg)) {
+        score -= 10; // Heavy penalty for explicitly forbidden contexts
+        signals.concept.push(`negative:${neg}`);
+      }
+    }
   }
 
   // 4. Baseline skill safety net
   if (BASELINE_SKILLS.includes(skill.name)) score += 1;
 
-  return score;
+  // Phase 16: Hierarchy Compatibility (Specificity)
+  try {
+    const { getSpecificity } = require('./skill_ontology_engine');
+    const specificity = getSpecificity(skill.name);
+    // Only boost specificity if the skill actually matches the request context
+    if (specificity > 1 && score >= 5) {
+      score += specificity * 2;
+      signals.concept.push(`specificity:${specificity}`);
+    }
+  } catch (e) {
+    // Ontology engine might not be loaded yet during tests
+  }
+
+  // Prevent negative scores from bubbling up unless explicit
+  if (score < 0) score = 0;
+
+  return { score, signals };
 }
 
 /**
@@ -459,20 +673,90 @@ function selectSkills(task, files = [], model = 'large', skills = []) {
     .filter(Boolean);
 
   // Score every available skill
-  const scored = skills.map(skill => ({
-    ...skill,
-    score: scoreSkill(skill, taskStr, fileExts, taskTokens),
-  }));
+  const scored = skills.map(skill => {
+    const evaluation = scoreSkill(skill, taskStr, fileExts, taskTokens);
+    let confidence = 'LOW';
+    if (evaluation.score >= 10 || evaluation.signals.explicit.length > 0) confidence = 'HIGH';
+    else if (evaluation.score >= 5) confidence = 'MEDIUM';
+
+    return {
+      ...skill,
+      score: evaluation.score,
+      signals: evaluation.signals,
+      confidence,
+    };
+  });
   scored.sort((a, b) => b.score - a.score);
 
   // Determine tier thresholds
-  const maxScore = scored[0]?.score || 1;
+  let maxScore = scored[0]?.score || 0;
+
+  // Phase 14: Conflict Resolution & Ambiguity
+  const secondScore = scored.length > 1 ? scored[1].score : 0;
+  let margin = maxScore - secondScore;
+  const isAmbiguous =
+    maxScore > 0 &&
+    margin < 3 &&
+    (!scored[0].signals.explicit || scored[0].signals.explicit.length === 0);
+
+  let conflictResolution = null;
+  if (isAmbiguous && scored.length > 1) {
+    const top = scored[0];
+    const second = scored[1];
+
+    // Responsibility wins over pure lexical keyword matching
+    const topHasResponsibility = top.signals.concept.length > 0;
+    const secondHasResponsibility = second.signals.concept.length > 0;
+
+    if (!topHasResponsibility && secondHasResponsibility) {
+      // Conflict resolved: second has responsibility match, first doesn't
+      conflictResolution = {
+        trigger: 'lexical_conflict',
+        responsibility: 'second_candidate',
+        candidate: top.name,
+        competing: [second.name],
+        resolution: 'responsibility_wins',
+      };
+      // Tie-breaker: If ambiguous, prefer the skill with a matching responsibility domain
+      if (
+        top.skill.responsibility &&
+        top.skill.responsibility.domain &&
+        second.skill.responsibility &&
+        second.skill.responsibility.domain
+      ) {
+        // Did the top skill have domain signal?
+        const topHasDomain = top.signals.domain.length > 0;
+        const secondHasDomain = second.signals.domain.length > 0;
+
+        if (secondHasDomain && !topHasDomain) {
+          // Swap them if the second has domain affinity and first doesn't
+          const temp = top.score;
+          top.score = second.score;
+          second.score = temp;
+
+          scored.sort((a, b) => b.score - a.score);
+          maxScore = scored[0].score;
+          margin = maxScore - scored[1].score;
+        }
+      }
+    }
+  }
+
+  // Abstention check
+  const isConfidentMatch = maxScore >= 3;
+
   const tier0Cut = Math.max(maxScore * 0.65, 2); // Essential: top 65%+ of max score
   const tier1Cut = Math.max(maxScore * 0.3, 1); // Supplementary: 30–65%
 
   const essential = scored.filter(s => s.score >= tier0Cut).slice(0, 10);
   const supplementary = scored.filter(s => s.score < tier0Cut && s.score >= tier1Cut).slice(0, 8);
   const available = scored.filter(s => s.score < tier1Cut && s.score > 0).slice(0, 10);
+
+  // Primary and Supporting distinction
+  const primarySkills = essential.filter(
+    s => s.score >= tier0Cut * 1.2 || s.signals?.explicit?.length > 0,
+  );
+  const supportingSkills = [...essential.filter(s => !primarySkills.includes(s)), ...supplementary];
 
   // Ensure baseline skills always appear at minimum in supplementary
   for (const base of BASELINE_SKILLS) {
@@ -484,17 +768,57 @@ function selectSkills(task, files = [], model = 'large', skills = []) {
     }
   }
 
+  // Format Traces for Top Skills
+  const trace = [];
+  if (isConfidentMatch) {
+    for (let i = 0; i < Math.min(scored.length, 5); i++) {
+      const s = scored[i];
+      if (s.score === 0) continue;
+      trace.push({
+        candidate: s.name,
+        score: s.score,
+        confidence: s.confidence,
+        signals: s.signals,
+        role: primarySkills.includes(s) ? 'PRIMARY' : 'SUPPORTING',
+        status: essential.includes(s) ? 'SELECTED' : 'REJECTED',
+      });
+    }
+  }
+
+  const match_status = isConfidentMatch
+    ? isAmbiguous
+      ? 'AMBIGUOUS_MATCH'
+      : 'CONFIDENT_MATCH'
+    : 'NO_CONFIDENT_MATCH';
+
   // For small models: collapse supplementary into available
   if (model === 'small') {
     return {
+      match_status,
+      margin,
+      conflict_resolution: conflictResolution,
+      primary: primarySkills.map(s => s.name),
+      supporting: supportingSkills.map(s => s.name),
       essential: essential.slice(0, 6),
       supplementary: [],
       available: [...supplementary, ...available].slice(0, 8),
       scores: buildScoreMap(scored),
+      trace,
     };
   }
 
-  return { essential, supplementary, available, scores: buildScoreMap(scored) };
+  return {
+    match_status,
+    margin,
+    conflict_resolution: conflictResolution,
+    primary: primarySkills.map(s => s.name),
+    supporting: supportingSkills.map(s => s.name),
+    essential,
+    supplementary,
+    available,
+    scores: buildScoreMap(scored),
+    trace,
+  };
 }
 
 function buildScoreMap(scored) {
@@ -608,20 +932,41 @@ function formatPrompt(task, model, selection) {
     '',
   ];
 
+  // Token limits (approx 4 chars per token)
+  const maxChars = (selection.maxTokenLimit || (model === 'large' ? 12000 : 4000)) * 4;
+  let currentChars = lines.join('\n').length;
+  let truncated = false;
+
   if (selection.essential.length) {
     lines.push('## Level 0 — Essential Skills (Full Context)');
     lines.push('');
     for (const s of selection.essential) {
-      lines.push(`### Skill: ${s.name}`);
-      lines.push('');
-      if (model === 'large') {
-        lines.push(s.content || s.keyRules);
+      if (truncated) break;
+      const header = `### Skill: ${s.name}\n\n`;
+      const content = model === 'large' ? s.content || s.keyRules : s.keyRules;
+      const footer = '\n\n---\n\n';
+
+      const payload = header + content + footer;
+      if (currentChars + payload.length > maxChars) {
+        // Enforce hard bound
+        const allowedLength = maxChars - currentChars - 100; // 100 for safety buffer
+        if (allowedLength > 200) {
+          lines.push(
+            payload.slice(0, allowedLength) + '\n\n...[TRUNCATED BY TOKEN LIMIT]...\n\n---\n\n',
+          );
+          currentChars += allowedLength;
+        }
+        truncated = true;
+        break;
       } else {
-        lines.push(s.keyRules);
+        lines.push(header.trim());
+        lines.push('');
+        lines.push(content);
+        lines.push('');
+        lines.push('---');
+        lines.push('');
+        currentChars += payload.length;
       }
-      lines.push('');
-      lines.push('---');
-      lines.push('');
     }
   }
 
@@ -629,12 +974,32 @@ function formatPrompt(task, model, selection) {
     lines.push('## Level 1 — Supplementary Skills (Key Rules)');
     lines.push('');
     for (const s of selection.supplementary) {
-      lines.push(`### Skill: ${s.name} (condensed)`);
-      lines.push('');
-      lines.push(s.keyRules);
-      lines.push('');
-      lines.push('---');
-      lines.push('');
+      if (truncated) break;
+      const header = `### Skill: ${s.name} (condensed)\n\n`;
+      const content = s.keyRules;
+      const footer = '\n\n---\n\n';
+
+      const payload = header + content + footer;
+      if (currentChars + payload.length > maxChars) {
+        // Enforce hard bound
+        const allowedLength = maxChars - currentChars - 100;
+        if (allowedLength > 200) {
+          lines.push(
+            payload.slice(0, allowedLength) + '\n\n...[TRUNCATED BY TOKEN LIMIT]...\n\n---\n\n',
+          );
+          currentChars += allowedLength;
+        }
+        truncated = true;
+        break;
+      } else {
+        lines.push(header.trim());
+        lines.push('');
+        lines.push(content);
+        lines.push('');
+        lines.push('---');
+        lines.push('');
+        currentChars += payload.length;
+      }
     }
   }
 
@@ -862,6 +1227,7 @@ module.exports = {
   findAgentDir,
   extractKeyRules,
   tryNativeContextBroker,
+  formatPrompt,
 };
 
 // ── CLI Entry ─────────────────────────────────────────────────────────────────

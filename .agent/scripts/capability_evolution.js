@@ -437,6 +437,105 @@ function getPhase5MetricsTracker() {
 }
 
 // ============================================================================
+// 5. OBSERVABILITY & TELEMETRY SPANS (PILLAR 9)
+// ============================================================================
+
+class ObservabilityEngine {
+  constructor() {
+    this.activeSpans = new Map();
+    this.completedSpans = [];
+  }
+
+  startSkillSpan(skillName, context = {}) {
+    const spanId = `span_${skillName}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const span = {
+      span_id: spanId,
+      skill: skillName,
+      status: 'RUNNING',
+      start_time: Date.now(),
+      context,
+    };
+    this.activeSpans.set(spanId, span);
+    return spanId;
+  }
+
+  endSkillSpan(spanId, outcome = {}, error = null) {
+    const span = this.activeSpans.get(spanId);
+    if (!span) return null;
+
+    span.status = error ? 'FAILED' : 'COMPLETED';
+    span.end_time = Date.now();
+    span.duration_ms = span.end_time - span.start_time;
+    span.outcome = outcome;
+    if (error) span.error = error.message || String(error);
+
+    this.activeSpans.delete(spanId);
+    this.completedSpans.push(span);
+
+    // Track telemetry seamlessly
+    const registry = getSkillTelemetryRegistry();
+    registry.recordSkillExecution(span.skill, {
+      is_material: outcome.material_considerations_found > 0 || !error,
+      findings_count: outcome.findings || 0,
+      verified_findings_count: outcome.verified_findings || 0,
+      task: span.context.task_id || 'unknown',
+    });
+
+    return span;
+  }
+}
+
+let _globalObservabilityEngine = null;
+function getObservabilityEngine() {
+  if (!_globalObservabilityEngine) _globalObservabilityEngine = new ObservabilityEngine();
+  return _globalObservabilityEngine;
+}
+
+// ============================================================================
+// 6. PRUNING & LIFECYCLE (PILLAR 10)
+// ============================================================================
+
+class LifecycleManager {
+  constructor(telemetryRegistry) {
+    this.registry = telemetryRegistry;
+  }
+
+  /**
+   * Scans telemetry for unused or poorly performing skills and marks them for deprecation.
+   * @param {number} thresholdDays
+   */
+  evaluateSkillLifecycle(thresholdDays = 30) {
+    const now = Date.now();
+    const thresholdMs = thresholdDays * 24 * 60 * 60 * 1000;
+    const deprecated = [];
+
+    for (const [skillName, telemetry] of this.registry.records.entries()) {
+      let lastActiveMs = 0;
+      if (telemetry.tasks && telemetry.tasks.length > 0) {
+        const lastTask = telemetry.tasks[telemetry.tasks.length - 1];
+        lastActiveMs = new Date(lastTask.recorded_at).getTime();
+      }
+
+      const isUnused =
+        now - lastActiveMs > thresholdMs && (telemetry.activations === 0 || lastActiveMs === 0);
+      const isLowPrecision =
+        telemetry.activations > 10 &&
+        (telemetry.findings > 0 ? telemetry.verified_findings / telemetry.findings < 0.2 : false);
+
+      if (isUnused || isLowPrecision) {
+        deprecated.push({
+          skill: skillName,
+          reason: isUnused ? 'Dormant beyond threshold' : 'Chronic low verification precision',
+          metrics: telemetry,
+        });
+      }
+    }
+
+    return deprecated;
+  }
+}
+
+// ============================================================================
 // EXPORTS
 // ============================================================================
 
@@ -450,4 +549,7 @@ module.exports = {
   getSkillImprovementManager,
   Phase5MetricsTracker,
   getPhase5MetricsTracker,
+  ObservabilityEngine,
+  getObservabilityEngine,
+  LifecycleManager,
 };

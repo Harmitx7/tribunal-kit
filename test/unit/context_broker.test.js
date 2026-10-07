@@ -56,8 +56,13 @@ describe('context_broker.js', () => {
         'Build a React component with hooks',
         [],
         taskTokens,
-      );
-      const sqlScore = scoreSkill(sqlSkill, 'Build a React component with hooks', [], taskTokens);
+      ).score;
+      const sqlScore = scoreSkill(
+        sqlSkill,
+        'Build a React component with hooks',
+        [],
+        taskTokens,
+      ).score;
 
       expect(reactScore).toBeGreaterThan(sqlScore);
     });
@@ -66,8 +71,8 @@ describe('context_broker.js', () => {
       const taskTokens = tokenize('Fix the login page');
       const reactSkill = makeSkill('react-specialist', 'React components and hooks');
 
-      const withoutExt = scoreSkill(reactSkill, 'Fix the login page', [], taskTokens);
-      const withExt = scoreSkill(reactSkill, 'Fix the login page', ['.tsx'], taskTokens);
+      const withoutExt = scoreSkill(reactSkill, 'Fix the login page', [], taskTokens).score;
+      const withExt = scoreSkill(reactSkill, 'Fix the login page', ['.tsx'], taskTokens).score;
 
       expect(withExt).toBeGreaterThanOrEqual(withoutExt);
     });
@@ -76,7 +81,7 @@ describe('context_broker.js', () => {
       const taskTokens = tokenize('Deploy to Kubernetes');
       const gameSkill = makeSkill('game-design-expert', 'Game design and player experience');
 
-      const score = scoreSkill(gameSkill, 'Deploy to Kubernetes', [], taskTokens);
+      const score = scoreSkill(gameSkill, 'Deploy to Kubernetes', [], taskTokens).score;
       expect(score).toBeLessThanOrEqual(1);
     });
 
@@ -85,7 +90,7 @@ describe('context_broker.js', () => {
       // clean-code is a baseline skill
       const cleanCode = makeSkill('clean-code', 'Clean code mastery');
 
-      const score = scoreSkill(cleanCode, 'random unrelated task', [], taskTokens);
+      const score = scoreSkill(cleanCode, 'random unrelated task', [], taskTokens).score;
       // Baseline skills get +1 regardless of match
       expect(score).toBeGreaterThanOrEqual(1);
     });
@@ -167,6 +172,52 @@ describe('context_broker.js', () => {
       const result = selectSkills('Test something', [], 'large', mockSkills);
       expect(result.scores).toBeInstanceOf(Map);
       expect(result.scores.size).toBe(mockSkills.length);
+    });
+  });
+
+  // ── formatPrompt Token Limits ──────────────────────────────────────────
+  describe('formatPrompt()', () => {
+    const { formatPrompt } = require('../../.agent/scripts/context_broker');
+
+    it('should enforce maxTokenLimit and truncate gracefully', () => {
+      const veryLongContent = 'A'.repeat(5000);
+      const selection = {
+        maxTokenLimit: 1000, // 4000 chars
+        essential: [
+          { name: 'skill1', keyRules: veryLongContent },
+          { name: 'skill2', keyRules: veryLongContent },
+        ],
+        supplementary: [],
+        available: [],
+      };
+
+      const result = formatPrompt('test task', 'small', selection);
+
+      expect(result).toMatch(/\[TRUNCATED BY TOKEN LIMIT\]/);
+      // It should truncate in the first skill or at least before the second skill
+      expect(result).not.toMatch(/### Skill: skill2/);
+      expect(result.length).toBeLessThanOrEqual(4200); // 4000 max + buffer + original lines
+    });
+
+    it('should enforce maxTokenLimit in supplementary skills', () => {
+      const veryLongContent = 'A'.repeat(5000);
+      const selection = {
+        maxTokenLimit: 1000, // 4000 chars
+        essential: [],
+        supplementary: [
+          { name: 'skill1', keyRules: 'short content' },
+          { name: 'skill2', keyRules: veryLongContent },
+          { name: 'skill3', keyRules: 'should be excluded' },
+        ],
+        available: [],
+      };
+
+      const result = formatPrompt('test task', 'large', selection);
+
+      expect(result).toMatch(/### Skill: skill1/);
+      expect(result).toMatch(/\[TRUNCATED BY TOKEN LIMIT\]/);
+      expect(result).not.toMatch(/### Skill: skill3/);
+      expect(result.length).toBeLessThanOrEqual(4200);
     });
   });
 });

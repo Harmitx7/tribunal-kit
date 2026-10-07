@@ -58,8 +58,6 @@ jobs:
 
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: crates/core
 
       - name: Install cross-compilation tools (Linux ARM64)
         if: matrix.target == 'aarch64-unknown-linux-gnu'

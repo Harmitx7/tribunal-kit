@@ -123,6 +123,15 @@ function generateOutcomeContract(
     });
   }
 
+  if (options && options.anchors && options.anchors.length > 0) {
+    for (const a of options.anchors) {
+      requirements.push({
+        type: 'USER_ANCHOR',
+        description: `Strictly adhere to explicit user anchor: ${a.id || a.name || a}`,
+      });
+    }
+  }
+
   // Verification requirements derived from material considerations
   const verificationReqs = [];
   const successConditions = [];
@@ -180,6 +189,12 @@ function generateOutcomeContract(
     successConditions.push(
       'No regressions or unhandled exceptions introduced in baseline workflows.',
     );
+  }
+
+  if (options && options.anchors && options.anchors.length > 0) {
+    for (const a of options.anchors) {
+      successConditions.push(`User anchor '${a.id || a.name || a}' must be verifiably satisfied.`);
+    }
   }
 
   // Non-goals to prevent overengineering

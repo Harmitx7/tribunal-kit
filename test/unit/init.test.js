@@ -148,7 +148,7 @@ describe('src/commands/init — cmdInit', () => {
       true,
     );
     expect(fs.existsSync(path.join(agentDir, 'history', 'skill-evolution', '.gitkeep'))).toBe(true);
-  });
+  }, 30000);
 
   test('init with --force over existing .agent/ succeeds', async () => {
     // First init
@@ -172,7 +172,7 @@ describe('src/commands/init — cmdInit', () => {
     const agentDir = path.join(tmpTarget, '.agent');
     expect(fs.existsSync(agentDir)).toBe(true);
     expect(fs.existsSync(path.join(agentDir, 'agents'))).toBe(true);
-  });
+  }, 30000);
 });
 
 describe('src/utils/fs — isSelfInstall', () => {

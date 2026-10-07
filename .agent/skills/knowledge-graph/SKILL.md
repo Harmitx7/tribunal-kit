@@ -13,6 +13,15 @@ scripts-binding:
   - .agent/scripts/graph_zoom.js
   - .agent/scripts/verify_all.js
   - .agent/scripts/lint_runner.js
+inputs:
+  task: "string"
+  target_file: "string"
+outputs:
+  result: "string"
+  verification_status: "boolean"
+trigger:
+  - "knowledge"
+  - "graph"
 ---
 
 # /graph — Knowledge Graph Skill v3.0

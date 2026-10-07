@@ -11,6 +11,16 @@ tools: Read, Grep, Glob, Bash, Edit, Write
 scripts-binding:
   - .agent/scripts/lint_runner.js
   - .agent/scripts/verify_all.js
+inputs:
+  task: "string"
+  target_file: "string"
+outputs:
+  result: "string"
+  verification_status: "boolean"
+trigger:
+  - "game"
+  - "engineering"
+  - "expert"
 ---
 
 # Game Engineering Expert — Performance & State Mastery
@@ -164,3 +174,9 @@ Every finding, audit statement, or completion claim must classify its factual ce
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.
+
+
+## Verification (Auto-Remediated)
+
+- [ ] **Verify Execution**: Ensure the output matches the original task requirements.
+- [ ] **Safety Check**: Validate that no destructive actions occurred outside the requested scope.

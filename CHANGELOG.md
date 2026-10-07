@@ -4,13 +4,40 @@
 [![SemVer](https://img.shields.io/badge/SemVer-2.0.0-green.svg?style=flat-square)](https://semver.org/)
 [![Specialists](https://img.shields.io/badge/Specialists-60-cyan.svg?style=flat-square)](#)
 [![Reviewers](https://img.shields.io/badge/Reviewers-31-emerald.svg?style=flat-square)](#)
-[![Skills Corpus](https://img.shields.io/badge/Corpus-235%20Skills-teal.svg?style=flat-square)](#)
+[![Skills Corpus](https://img.shields.io/badge/Corpus-234%20Skills-teal.svg?style=flat-square)](#)
 [![Workflows](https://img.shields.io/badge/Workflows-51%20Audited-indigo.svg?style=flat-square)](#)
 [![Harnesses](https://img.shields.io/badge/Harnesses-9%20Supported-orange.svg?style=flat-square)](#)
 [![Test Suite](<https://img.shields.io/badge/Tests-100%25%20Passing%20(966%20tests)-brightgreen.svg?style=flat-square>)](#)
 
 All notable changes to **Tribunal Kit** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
+
+## [9.2.8] — 2026-10-07 — 🚀 Premium TUI, Skill Engineering & Security Remediation
+
+> [!IMPORTANT]
+> **Release 9.2.8** introduces a completely overhauled Premium Terminal User Interface (TUI) with enhanced tree visualizations, a refined color palette, and streamlined interactive wizards. It expands the Tribunal Kit Skill Engineering ecosystem with advanced certification and validation pipelines, resolves critical Windows shell execution vulnerabilities, and improves execution boundaries for the `tk review` command.
+
+### Security
+
+- **Windows Shell Execution Hardening:** Mitigated command injection risks during `tk system1 enable` on Windows by executing `npm-cli.js` directly via `process.execPath` instead of relying on `npm.cmd` with `shell: true`.
+
+### Added
+
+- **Terminal UI Redesign:** Rebuilt TUI primitives (`wizard.js`, `tree.js`, `theme.js`, `reviewer-grid.js`) providing a more structured, readable, and premium console experience.
+- **Advanced Skill Engineering Framework:** Deployed over 40 new analytical and execution engines (e.g., `skill_certification_engine.js`, `corpus_validation_engine.js`, `skill_behavior_classifier.js`) to evaluate, score, and govern agent skills across complex domains.
+- **Review Execution Flags:** Added `--plan`, `--execute`, `--json`, and `--mock` arguments to `tk review`, allowing fine-grained control over Tribunal execution stages.
+- **Extensive Test Coverage:** Added dozens of unit and integration test suites specifically ensuring deterministic validation and robust recovery in the newly added behavior engines.
+
+### Changed
+
+- **CLI Initialization & Review Flows:** Decoupled prompt handling and system interaction within `src/commands/init.js` and `src/commands/review.js` to conform to the new Pro-Max terminal aesthetics.
+- **Dependency Topology:** Promoted `zod` to a runtime dependency to securely back schema validations across the new engineering orchestration modules.
+
+### Fixed
+
+- **TUI Color Mapping:** Corrected an inconsistent RGB mapping for `SLATE_900` in the test suite to match the updated UI token constants.
+- **Skill Count Discrepancy:** Synchronized project documentation and badges to accurately reflect the 234 active modular skills, resolving metadata validation warnings.
+- **Repository Hygiene:** Pruned stale experiment documents, redundant test manifests, and isolated diagnostic files from the distributed package.
 
 ## [9.2.7] — 2026-10-02 — 🧠 Skill Intelligence Engine & System-1 Expansion
 

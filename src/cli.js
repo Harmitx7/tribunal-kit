@@ -366,6 +366,24 @@ async function runWithUpdateCheck(command, flags) {
       await cmdSystem1(flags, process.argv, quiet);
       break;
     }
+    case 'intelligence':
+    case 'cases':
+    case 'case':
+    case 'similar':
+    case 'failures':
+    case 'risk':
+    case 'review-plan':
+    case 'evidence-plan':
+    case 'reviewer-stats':
+    case 'governance-drift':
+    case 'simulate-policy':
+    case 'policy-proposals': {
+      const { cmdIntelligence } = require('./commands/intelligence');
+      const realArgs = process.argv.slice(2).filter(a => !a.startsWith('-'));
+      // The command is the first non-flag arg; the sub-args are subsequent
+      await cmdIntelligence(command, realArgs.slice(1));
+      break;
+    }
     case 'browse': {
       const cmdBrowse = loadCmd('./commands/browse', 'cmdBrowse');
       await cmdBrowse(flags, process.argv, quiet);

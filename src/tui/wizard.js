@@ -3,23 +3,26 @@
 /**
  * Zero-dependency interactive terminal multi-select wizard.
  * Handles keyboard navigation, space-to-toggle, and non-TTY fallback.
+ * Upgraded for Pro-Max design.
  */
 
 const readline = require('readline');
-const { isTTY, RGB, GLYPHS, color, bold } = require('./theme');
+const { isTTY, RGB, GLYPHS, color, bold, bg, inverse } = require('./theme');
 
 class WizardPrompt {
   displaySummary(question, options) {
     const g = GLYPHS;
     const prefix = color(RGB.AMBER, '?');
-    const boldQ = bold(question);
+    const boldQ = bold(color(RGB.WHITE, question));
+    console.log();
     console.log(`  ${prefix} ${boldQ}`);
+    console.log();
 
     for (const opt of options) {
       const check = opt.selected ? color(RGB.EMERALD, g.check) : color(RGB.ZINC_600, g.uncheck);
 
       const labelColored = opt.selected
-        ? color(RGB.WHITE, opt.label)
+        ? color(RGB.PURE_WHITE, opt.label)
         : color(RGB.ZINC_500, opt.label);
 
       const detailColored = color(RGB.ZINC_600, opt.detail || '');
@@ -28,8 +31,7 @@ class WizardPrompt {
     }
 
     const hint = '[Space] Toggle · [Enter] Confirm · [A] Select All';
-    console.log(`  ${color(RGB.ZINC_600, hint)}`);
-    console.log();
+    console.log(`\n  ${color(RGB.ZINC_600, hint)}\n`);
   }
 
   async selectMultiple(question, initialOptions) {
@@ -53,34 +55,36 @@ class WizardPrompt {
       process.stdout.write('\x1b[?25l');
 
       const render = (isFinal = false) => {
-        // Move back up lines if not initial render
-        const totalLines = options.length + 3;
-
         let out = '';
         const prefix = color(RGB.AMBER, '?');
-        out += `  ${prefix} ${bold(question)}\n`;
+        out += `\n  ${prefix} ${bold(color(RGB.WHITE, question))}\n\n`;
 
         options.forEach((opt, idx) => {
           const isCursor = idx === cursor;
-          const pointer = isCursor ? color(RGB.FLAME, g.chevron) : ' ';
+          const pointer = isCursor ? color(RGB.FLAME, g.pointer) : '  ';
           const check = opt.selected ? color(RGB.EMERALD, g.check) : color(RGB.ZINC_600, g.uncheck);
 
-          const labelColored = opt.selected
-            ? color(RGB.WHITE, bold(opt.label))
-            : color(RGB.ZINC_400, opt.label);
+          let labelColored = opt.label;
+          if (isCursor) {
+             labelColored = inverse(bold(` ${labelColored} `));
+          } else if (opt.selected) {
+             labelColored = color(RGB.PURE_WHITE, ` ${labelColored} `);
+          } else {
+             labelColored = color(RGB.ZINC_500, ` ${labelColored} `);
+          }
 
           const detailColored = color(RGB.ZINC_600, opt.detail || '');
           out += `  ${pointer} ${check} ${labelColored} ${detailColored}\n`;
         });
 
         if (isFinal) {
-          out += `  ${color(RGB.EMERALD, '✔ Configuration selected.')}\n`;
+          out += `\n  ${color(RGB.EMERALD, '✔ Configuration locked.')}\n`;
         } else {
           const hint = '[Space] Toggle · [Enter] Confirm · [A] All · [↑/↓] Move';
-          out += `  ${color(RGB.ZINC_600, hint)}\n`;
+          out += `\n  ${color(RGB.ZINC_600, hint)}\n`;
         }
 
-        return { out, totalLines };
+        return { out };
       };
 
       let renderedOnce = false;
@@ -88,8 +92,8 @@ class WizardPrompt {
       const draw = (isFinal = false) => {
         const { out } = render(isFinal);
         if (renderedOnce) {
-          // Clear and rewrite lines
-          process.stdout.write(`\x1b[${options.length + 2}A\r`);
+          // Clear and rewrite lines (options length + 5 lines of headers/footers)
+          process.stdout.write(`\x1b[${options.length + 5}A\r`);
         }
         process.stdout.write(out);
         renderedOnce = true;

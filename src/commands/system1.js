@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const child_process = require('child_process');
 const readline = require('readline');
 const { log, err, dim, c, bold } = require('../utils/logger');
+const { getLayaDir, getConfigPath } = require('../system1/provider');
 
 function promptConfirm(question) {
   if (process.env.NODE_ENV === 'test') return Promise.resolve(true);
@@ -21,7 +22,6 @@ function promptConfirm(question) {
     });
   });
 }
-const { getLayaDir, getConfigPath } = require('../system1/provider');
 
 function verifyChecksum(filePath, expectedHash) {
   return new Promise((resolve, reject) => {
@@ -47,67 +47,137 @@ function verifyChecksum(filePath, expectedHash) {
   });
 }
 
-// Pinned dependencies for reproducible installations
 const RECEPTRON_LAYA_VERSION = '0.1.2';
 const ONNXRUNTIME_NODE_VERSION = '1.22.0';
+const TARGET_MODEL_VERSION = 'v1.0.0';
 
-async function cmdSystem1Enable(quiet) {
+class Spinner {
+  constructor(text, totalSteps, currentStep, quiet) {
+    this.text = text;
+    this.quiet = quiet;
+    this.frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+    this.idx = 0;
+    this.timer = null;
+    this.stepStr = totalSteps ? `[${currentStep}/${totalSteps}] ` : '';
+    if (!quiet) log(`\n${this.stepStr}${this.text}`);
+  }
+  start(subtext = 'Processing...') {
+    if (this.quiet) return;
+    this.subtext = subtext;
+    if (process.stdout.isTTY && process.env.NODE_ENV !== 'test') {
+      process.stdout.write(`\x1B[?25l`);
+      this.timer = setInterval(() => {
+        process.stdout.write(`\r      ${this.frames[this.idx]} ${this.subtext}`);
+        this.idx = (this.idx + 1) % this.frames.length;
+      }, 80);
+    } else {
+      log(`      ... ${this.subtext}`);
+    }
+  }
+  update(subtext) {
+    if (this.quiet) return;
+    this.subtext = subtext;
+  }
+  succeed(text) {
+    if (this.quiet) return;
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+      process.stdout.write(`\r      ✓ ${text}\x1B[K\n`);
+      process.stdout.write(`\x1B[?25h`);
+    } else {
+      log(`      ✓ ${text}`);
+    }
+  }
+  fail(text) {
+    if (this.quiet) return;
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+      process.stdout.write(`\r      ✖ ${text}\x1B[K\n`);
+      process.stdout.write(`\x1B[?25h`);
+    } else {
+      err(`      ✖ ${text}`);
+    }
+  }
+}
+
+function getTargetVersion() {
+  return {
+    laya: RECEPTRON_LAYA_VERSION,
+    onnx: ONNXRUNTIME_NODE_VERSION,
+    model: TARGET_MODEL_VERSION
+  };
+}
+
+function getInstalledVersion() {
+  const configPath = getConfigPath();
+  const pkgLockPath = path.join(getLayaDir(), 'package-lock.json');
+  let config = {};
+  if (fs.existsSync(configPath)) {
+    try {
+      config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    } catch {}
+  }
+  
+  let installedLayaVer = config.laya_version || 'Unknown';
+  let installedOnnxVer = config.onnxruntime_version || 'Unknown';
+  let modelVer = config.model_version || 'Unknown';
+
+  if (fs.existsSync(pkgLockPath)) {
+    try {
+       const pkgLock = JSON.parse(fs.readFileSync(pkgLockPath, 'utf8'));
+       installedLayaVer =
+         pkgLock.dependencies?.['@receptron/laya']?.version ||
+         pkgLock.packages?.['node_modules/@receptron/laya']?.version ||
+         installedLayaVer;
+       installedOnnxVer =
+         pkgLock.dependencies?.['onnxruntime-node']?.version ||
+         pkgLock.packages?.['node_modules/onnxruntime-node']?.version ||
+         installedOnnxVer;
+    } catch {}
+  }
+
+  return { laya: installedLayaVer, onnx: installedOnnxVer, model: modelVer, enabled: !!config.enabled };
+}
+
+async function checkHealth() {
+  const layaDir = getLayaDir();
+  const modelsDir = path.join(layaDir, 'models');
+  if (!fs.existsSync(modelsDir)) return false;
+  
+  const expectedHashes = {
+    'laya.onnx': 'a874eb254b58b0fcb1e7ad56fbb188c29d64e08c9a46b689433e1f52c66dba1e',
+    'laya.onnx.data': '487746363a8da57bcadb4345352997d22a0fb90d70aa22c6856668d023242aba',
+  };
+  for (const filename of Object.keys(expectedHashes)) {
+    const artifactPath = path.join(modelsDir, filename);
+    if (!fs.existsSync(artifactPath)) return false;
+  }
+  for (const filename of ['tokenizer/tokenizer.json', 'tokenizer/tokenizer_config.json']) {
+    if (!fs.existsSync(path.join(modelsDir, filename))) return false;
+  }
+  return true;
+}
+
+async function cmdSystem1Setup(quiet, mode = 'setup') {
   const layaDir = getLayaDir();
   const configPath = getConfigPath();
   const modelsDir = path.join(layaDir, 'models');
 
-  let currentConfig = null;
-  if (fs.existsSync(configPath)) {
-    try {
-      currentConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    } catch {}
-  }
-
-  const isInstalled = fs.existsSync(layaDir) && fs.existsSync(path.join(modelsDir, 'laya.onnx'));
-  const currentLaya = isInstalled ? currentConfig?.laya_version || 'Unknown' : 'None';
-  const currentOnnx = isInstalled ? currentConfig?.onnxruntime_version || 'Unknown' : 'None';
-  const currentModel = isInstalled ? currentConfig?.model_version || 'Unknown' : 'None';
-
   const targetLaya = RECEPTRON_LAYA_VERSION;
   const targetOnnx = ONNXRUNTIME_NODE_VERSION;
-  const targetModel = 'v1.0.0';
-
-  let action = null;
-  if (!isInstalled) {
-    action = 'newly installed';
-  } else if (
-    currentLaya !== targetLaya ||
-    currentOnnx !== targetOnnx ||
-    currentModel !== targetModel
-  ) {
-    action = 'updated (version change)';
-  } else {
-    action = 'reinstalled / verified';
-  }
+  const targetModel = TARGET_MODEL_VERSION;
 
   if (!quiet) {
-    log(`\n  ${c('cyan', '⚡')} ${bold('Tribunal Kit Laya System-1 Initialization')}`);
-    dim('  --------------------------------------------------');
-    dim('  This will install the local Laya ONNX decision engine.');
-    dim('  - Engine: @receptron/laya & onnxruntime-node');
-    dim('  - Model: convaiinnovations/laya (~1.7GB)');
-    dim(`  - Path: ${layaDir}`);
-    log('');
-  }
-
-  if (!process.env.TK_MOCK_LAYA_DOWNLOAD) {
-    log(`  Action: System-1 will be ${action}.`);
-    log(`  Current - Laya: ${currentLaya}, ONNX: ${currentOnnx}, Model: ${currentModel}`);
-    log(`  Target  - Laya: ${targetLaya}, ONNX: ${targetOnnx}, Model: ${targetModel}`);
-
-    const confirmed = await promptConfirm(
-      `\n  Do you want to proceed with this modification? [y/N] `,
-    );
-    if (!confirmed) {
-      log(`\n  ${c('yellow', '⚠')} Operation cancelled by user. Existing installation unchanged.`);
-      return;
+    if (mode === 'setup' || mode === 'update' || mode === 'repair' || mode === 'enable') {
+      log(`┌──────────────────────────────────────────────┐`);
+      log(`│              TRIBUNAL KIT                    │`);
+      log(`│             SYSTEM-1 SETUP                   │`);
+      log(`└──────────────────────────────────────────────┘`);
+      log('');
+      log(`System-1 Setup`);
     }
-    log('');
   }
 
   if (process.env.TK_MOCK_LAYA_DOWNLOAD) {
@@ -115,7 +185,7 @@ async function cmdSystem1Enable(quiet) {
     if (!fs.existsSync(modelsDir)) fs.mkdirSync(modelsDir, { recursive: true });
     fs.writeFileSync(path.join(modelsDir, 'laya.onnx'), 'mock');
     fs.writeFileSync(configPath, JSON.stringify({ enabled: true, mocked: true }));
-    if (!quiet) log(`  ${c('green', '✓')} System-1 successfully mocked!`);
+    if (!quiet) log(`\n  ${c('green', '✓')} System-1 successfully mocked!`);
     return;
   }
 
@@ -154,7 +224,7 @@ async function cmdSystem1Enable(quiet) {
 
         if (isStale) {
           if (!quiet)
-            log(`  ${c('yellow', '⚠')} Found stale lock from previous crash. Recovering...`);
+            log(`\n  ${c('yellow', '⚠')} Found stale lock from previous crash. Recovering...`);
           fs.rmSync(lockDir, { recursive: true, force: true });
           fs.mkdirSync(lockDir);
           fs.writeFileSync(lockPidFile, String(process.pid));
@@ -171,10 +241,10 @@ async function cmdSystem1Enable(quiet) {
     try {
       if (!fs.existsSync(modelsDir)) fs.mkdirSync(modelsDir, { recursive: true });
 
-      // 1. Install @receptron/laya with strictly reproducible dependency tree
-      if (!quiet)
-        log(`  ${c('yellow', '1.')} Installing local runtime dependency (clean install)...`);
-
+      // Step 1: Installing isolated runtime
+      const s1 = new Spinner('Installing isolated runtime', 5, 1, quiet);
+      s1.start('Installing dependencies...');
+      
       fs.copyFileSync(
         path.join(__dirname, '../system1/laya-package.json'),
         path.join(layaDir, 'package.json'),
@@ -184,44 +254,50 @@ async function cmdSystem1Enable(quiet) {
         path.join(layaDir, 'package-lock.json'),
       );
 
-      // Validate layaDir to prevent shell injection on Windows
       if (/[&|";<>]/.test(layaDir)) {
         throw new Error(`Invalid path characters in Laya directory: ${layaDir}`);
       }
 
       let cmd;
-      const args = ['ci', '--prefix', layaDir, '--no-audit', '--no-fund'];
-      let shell = false;
+      let args;
 
       if (process.platform === 'win32') {
-        cmd = 'npm.cmd';
-        shell = true; // Windows requires shell: true for .cmd files
+        const nodeDir = path.dirname(process.execPath);
+        const defaultNpmCli = path.join(nodeDir, 'node_modules', 'npm', 'bin', 'npm-cli.js');
+        if (!fs.existsSync(defaultNpmCli)) {
+          throw new Error("Could not securely locate npm-cli.js for direct execution on Windows.");
+        }
+        cmd = process.execPath;
+        args = [defaultNpmCli, 'ci', '--prefix', layaDir, '--no-audit', '--no-fund'];
       } else {
         cmd = 'npm';
+        args = ['ci', '--prefix', layaDir, '--no-audit', '--no-fund'];
       }
 
       child_process.execFileSync(cmd, args, {
-        stdio: quiet ? 'ignore' : 'pipe',
-        shell: shell,
+        stdio: 'ignore',
+        shell: false,
       });
+      s1.succeed('Dependencies verified');
 
-      // 2. Download model safely without initializing ONNX Runtime
-      if (!quiet)
-        log(`  ${c('yellow', '2.')} Downloading model weights (~1.7GB, this may take a while)...`);
+      // Step 2: Acquiring model
+      const s2 = new Spinner('Acquiring model', 5, 2, quiet);
+      s2.start('Downloading...');
 
       const layaPkgPath = path.join(layaDir, 'node_modules', '@receptron', 'laya');
       const { Laya, ensureBundle } = require(layaPkgPath);
 
-      // This natively downloads via huggingface_hub using pinned commit SHA
       const revision = '68f27dfe5a27a54fb2b1fefc432f43f972e90868';
       const downloadedModelDir = await ensureBundle({
         repo: 'receptron/laya-onnx',
         revision: revision,
         cacheDir: modelsDir,
       });
+      s2.succeed('Model acquired');
 
-      // 3. Verify SHA-256 for artifacts BEFORE consumption
-      if (!quiet) log(`  ${c('yellow', '3.')} Verifying artifact integrity (SHA-256)...`);
+      // Step 3: Verifying model
+      const s3 = new Spinner('Verifying model', 5, 3, quiet);
+      s3.start('Verifying SHA-256...');
 
       const expectedHashes = {
         'laya.onnx': 'a874eb254b58b0fcb1e7ad56fbb188c29d64e08c9a46b689433e1f52c66dba1e',
@@ -233,32 +309,37 @@ async function cmdSystem1Enable(quiet) {
         try {
           await verifyChecksum(artifactPath, expectedHash);
         } catch (err) {
-          // If validation fails, completely purge the corrupted installation to prevent bypass
           fs.rmSync(layaDir, { recursive: true, force: true });
+          s3.fail('SHA-256 mismatch');
           throw new Error(
             `Integrity check failed: ${err.message}\nInstallation aborted and quarantined.`,
           );
         }
       }
 
-      // Also ensure tokenizer files exist
       for (const filename of ['tokenizer/tokenizer.json', 'tokenizer/tokenizer_config.json']) {
         if (!fs.existsSync(path.join(downloadedModelDir, filename))) {
           fs.rmSync(layaDir, { recursive: true, force: true });
+          s3.fail('Missing tokenizer');
           throw new Error(`Integrity check failed: Missing ${filename}`);
         }
       }
+      s3.succeed('SHA-256 verified');
 
-      // 4. Initialize model safely (only after verification)
-      if (!quiet) log(`  ${c('yellow', '4.')} Initializing model...`);
+      // Step 4: Initializing model
+      const s4 = new Spinner('Initializing ONNX Runtime', 5, 4, quiet);
+      s4.start('Initializing...');
       const laya = await Laya.load({
         modelDir: downloadedModelDir,
         executionProviders: ['cpu'],
       });
       await laya.close();
+      s4.succeed('Runtime initialized');
 
-      // Verify installed dependency version
-      if (!quiet) log(`  ${c('yellow', '5.')} Verifying installed versions...`);
+      // Step 5: Health Check
+      const s5 = new Spinner('Running health check', 5, 5, quiet);
+      s5.start('Verifying...');
+      
       const pkgLockPath = path.join(layaDir, 'package-lock.json');
       let installedLayaVer = 'Unknown';
       let installedOnnxVer = 'Unknown';
@@ -278,12 +359,13 @@ async function cmdSystem1Enable(quiet) {
         process.env.NODE_ENV !== 'test' &&
         (installedLayaVer !== targetLaya || installedOnnxVer !== targetOnnx)
       ) {
+        s5.fail('Version mismatch');
         throw new Error(
           `Version verification failed. Expected Laya: ${targetLaya}, ONNX: ${targetOnnx}. Got Laya: ${installedLayaVer}, ONNX: ${installedOnnxVer}.`,
         );
       }
+      s5.succeed('Health check passed');
 
-      // 6. Save config
       fs.writeFileSync(
         configPath,
         JSON.stringify(
@@ -301,8 +383,16 @@ async function cmdSystem1Enable(quiet) {
       );
 
       if (!quiet) {
-        log(`\n  ${c('green', '✓')} System-1 successfully enabled!`);
-        dim(`  Impact tier resolution will now use local inference.`);
+        log('');
+        log('──────────────────────────────────────────────');
+        log('');
+        log('SYSTEM-1 READY');
+        log('');
+        log(`Provider     Laya`);
+        log(`Runtime      ONNX Runtime`);
+        log(`Integrity    VERIFIED`);
+        log(`Cache        ${layaDir}`);
+        log(`Status       READY`);
       }
     } finally {
       try {
@@ -310,7 +400,22 @@ async function cmdSystem1Enable(quiet) {
       } catch (_e) {}
     }
   } catch (error) {
-    err(`\n  ✖ Failed to enable System-1: ${error.message}`);
+    if (!quiet) {
+      log('');
+      log('System-1 installation failed.');
+      log('');
+      log('Reason:');
+      log(error.message);
+      log('');
+      log('Tribunal Kit remains fully usable using deterministic fallback.');
+      log('No incomplete System-1 installation was activated.');
+      log('');
+      log('You can retry with:');
+      log('  tk system1 setup');
+      log('');
+      log('For diagnostics:');
+      log('  tk system1 status');
+    }
     process.exitCode = 1;
   }
 }
@@ -333,27 +438,46 @@ function cmdSystem1Disable(quiet) {
   }
 }
 
-function cmdSystem1Status(quiet) {
+async function cmdSystem1Status(quiet) {
   const configPath = getConfigPath();
   const layaDir = getLayaDir();
   const modelPath = path.join(layaDir, 'models', 'laya.onnx');
   const runtimePath = path.join(layaDir, 'node_modules', '@receptron', 'laya');
-
+  
   let config = null;
   if (fs.existsSync(configPath)) {
     try {
       config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     } catch {}
   }
+  
+  const healthy = await checkHealth();
+  const installed = getInstalledVersion();
+  const target = getTargetVersion();
+
+  let state = 'NOT_INSTALLED';
+  if (config) {
+    if (healthy) {
+      if (installed.model !== target.model || installed.laya !== target.laya) {
+        state = 'INCOMPATIBLE';
+      } else {
+        state = 'READY';
+      }
+    } else {
+      state = 'CORRUPT';
+    }
+  }
 
   if (!quiet) {
-    log(`\n  ${bold('System-1 Status')}`);
-    dim('  --------------------------------------------------');
-    log(`  Provider:      ${c('white', 'Laya (ONNX CPU)')}`);
+    log(`\n  System-1 Status\n`);
+    log(`  Installation:  ${state === 'READY' ? c('green', 'READY') : c('yellow', state)}`);
+    log(`  Provider:      Laya`);
+    log(`  Runtime:       ONNX Runtime`);
     log(`  Enabled:       ${config?.enabled ? c('green', 'Yes') : c('yellow', 'No')}`);
-    log(`  Config path:   ${configPath}`);
-    log(`  Model found:   ${fs.existsSync(modelPath) ? c('green', 'Yes') : c('red', 'No')}`);
-    log(`  Runtime found: ${fs.existsSync(runtimePath) ? c('green', 'Yes') : c('red', 'No')}`);
+    log(`  Model:         ${installed.model || 'Unknown'}`);
+    log(`  Integrity:     ${healthy ? 'VERIFIED' : 'UNVERIFIED'}`);
+    log(`  Cache:         ${layaDir}`);
+    log(`  Fallback:      AVAILABLE`);
     log('');
   }
 }
@@ -381,26 +505,48 @@ async function cmdSystem1Clean(quiet) {
   }
 }
 
+async function cmdSystem1Verify(quiet) {
+  const healthy = await checkHealth();
+  if (healthy) {
+    if (!quiet) log(`  ${c('green', '✓')} System-1 model and runtime verified.`);
+  } else {
+    if (!quiet) err(`  ✖ System-1 is missing or corrupt. Run 'tk system1 repair'.`);
+    process.exitCode = 1;
+  }
+}
+
 async function cmdSystem1(flags, args, quiet) {
   const rawArgs = args.slice(2);
   const subCommand = rawArgs.find(a => !a.startsWith('-') && a !== 'system1');
 
   switch (subCommand) {
     case 'enable':
-      await cmdSystem1Enable(quiet);
+    case 'setup':
+      await cmdSystem1Setup(quiet, 'setup');
+      break;
+    case 'update':
+      await cmdSystem1Setup(quiet, 'update');
+      break;
+    case 'repair':
+      fs.rmSync(getLayaDir(), { recursive: true, force: true });
+      await cmdSystem1Setup(quiet, 'repair');
+      break;
+    case 'verify':
+      await cmdSystem1Verify(quiet);
       break;
     case 'disable':
       cmdSystem1Disable(quiet);
       break;
     case 'status':
-      cmdSystem1Status(quiet);
+      await cmdSystem1Status(quiet);
       break;
     case 'clean':
+    case 'uninstall':
       await cmdSystem1Clean(quiet);
       break;
     default:
       err(`Unknown system1 command: "${subCommand || ''}"`);
-      dim('Available: enable, disable, status, clean');
+      dim('Available: setup, update, repair, verify, disable, status, uninstall');
       process.exitCode = 1;
   }
 }
@@ -410,4 +556,7 @@ module.exports = {
   verifyChecksum,
   RECEPTRON_LAYA_VERSION,
   ONNXRUNTIME_NODE_VERSION,
+  checkHealth,
+  getTargetVersion,
+  getInstalledVersion
 };

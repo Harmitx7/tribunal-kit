@@ -1,74 +1,53 @@
 'use strict';
 
 /**
- * Minimalist framed header cards and status banners.
- * Parity with Brainless & Claude Code design tokens.
+ * Minimalist header cards and status banners.
+ * Redesigned for Pro-Max Aesthetic.
  */
 
-const { isTTY, hasColor, hasTrueColor, RGB, GLYPHS, color, bold, getColumns } = require('./theme');
+const { isTTY, hasColor, hasTrueColor, RGB, color, bold, dim, inverse, getColumns } = require('./theme');
 
-function renderBanner(version = '9.2.7', quiet = false) {
+function renderBanner(version = '9.2.8', quiet = false) {
   if (quiet) return;
   if (!isTTY && !hasColor) {
     console.error(`TRIBUNAL-KIT v${version} — Anti-Hallucination Governance Layer`);
     return;
   }
 
-  const g = GLYPHS;
   const cols = getColumns();
   const width = Math.min(84, Math.max(64, cols));
-  const innerWidth = width - 4;
 
-  const titleLeft = `🛡️  TRIBUNAL-KIT  v${version}`;
-  const rightPill = '[Fortress Mode · ⚡ Rust Core]';
-  const leftLen = titleLeft.length; // emojis and text
-  const rightLen = rightPill.length;
-
-  const spaces = innerWidth > leftLen + rightLen ? innerWidth - (leftLen + rightLen) : 2;
-
-  const borderTop = `  ${g.boxTl}${g.boxH.repeat(innerWidth + 2)}${g.boxTr}`;
-  const borderBottom = `  ${g.boxBl}${g.boxH.repeat(innerWidth + 2)}${g.boxBr}`;
-
-  const coloredBorderTop = color(RGB.SLATE_700, borderTop);
-  const coloredBorderBottom = color(RGB.SLATE_700, borderBottom);
-  const pipe = color(RGB.SLATE_700, g.boxV);
-
-  // Gradient title line
-  let boldTitle;
+  const titleText = ` TRIBUNAL-KIT `;
+  let styledTitle;
   if (hasTrueColor) {
-    let res = '🛡️  ';
-    const text = `TRIBUNAL-KIT  v${version}`;
-    const len = text.length;
-    for (let i = 0; i < len; i++) {
-      const ratio = i / len;
-      const r = 255;
-      const gVal = Math.floor(105 + ratio * 80);
-      const bVal = Math.floor(74 - ratio * 30);
-      res += `\x1b[38;2;${r};${gVal};${bVal}m\x1b[1m${text[i]}\x1b[0m`;
-    }
-    boldTitle = res;
+    styledTitle = `\x1b[48;2;${RGB.FLAME[0]};${RGB.FLAME[1]};${RGB.FLAME[2]}m\x1b[38;2;${RGB.PURE_WHITE[0]};${RGB.PURE_WHITE[1]};${RGB.PURE_WHITE[2]}m\x1b[1m${titleText}\x1b[0m`;
   } else {
-    boldTitle = bold(titleLeft);
+    styledTitle = inverse(bold(titleText));
   }
 
-  const coloredRightPill = color(RGB.ZINC_500, rightPill);
-  const subtitle = 'Autonomous Anti-Hallucination Governance Layer for AI Coding Agents';
-  const subSpaces = Math.max(0, innerWidth - subtitle.length);
-  const coloredSubtitle = color(RGB.ZINC_400, subtitle);
+  const versionTag = dim(`v${version}`);
+  const rightPill = dim('[Fortress Mode · Rust Core]');
+  const leftLen = titleText.length + versionTag.length - (hasTrueColor ? 0 : 0); 
+  
+  // Roughly calculate spaces
+  const spaces = Math.max(2, width - titleText.length - `v${version}`.length - '[Fortress Mode · Rust Core]'.length - 4);
+
+  const subtitle = 'Autonomous Anti-Hallucination Governance Layer';
+  const subtitleColored = color(RGB.ZINC_400, subtitle);
 
   console.log();
-  console.log(coloredBorderTop);
-  console.log(`  ${pipe} ${boldTitle}${' '.repeat(spaces)}${coloredRightPill} ${pipe}`);
-  console.log(`  ${pipe} ${coloredSubtitle}${' '.repeat(subSpaces)} ${pipe}`);
-  console.log(coloredBorderBottom);
+  console.log(`  ${styledTitle}  ${versionTag}${' '.repeat(spaces)}${rightPill}`);
+  console.log(`  ${subtitleColored}`);
   console.log();
 }
 
-function renderSectionHeader(title) {
-  const g = GLYPHS;
-  const prefix = color(RGB.FLAME, g.chevron);
-  const boldTitle = bold(title);
-  console.log(`  ${prefix} ${boldTitle}`);
+function renderSectionHeader(title, subtitle = '') {
+  const boldTitle = bold(color(RGB.WHITE, title));
+  if (subtitle) {
+    console.log(`\n  ${boldTitle}  ${dim(subtitle)}\n`);
+  } else {
+    console.log(`\n  ${boldTitle}\n`);
+  }
 }
 
 module.exports = {

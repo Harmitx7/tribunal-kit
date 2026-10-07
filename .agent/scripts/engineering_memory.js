@@ -1286,6 +1286,132 @@ function extractEngineeringMemory(
 }
 
 // ============================================================================
+// 12. STATE & RECOVERY (PHASE 5)
+// ============================================================================
+
+const STATE_STATUS = {
+  RUNNING: 'RUNNING',
+  PAUSED: 'PAUSED',
+  FAILED: 'FAILED',
+  ROLLED_BACK: 'ROLLED_BACK',
+  COMPLETED: 'COMPLETED',
+};
+
+class ExecutionStateStore {
+  constructor(storePath) {
+    this.storePath =
+      storePath || path.join(require('os').homedir(), '.tribunal', 'execution_states.json');
+    this.states = new Map();
+    this.load();
+  }
+
+  load() {
+    try {
+      if (fs.existsSync(this.storePath)) {
+        const raw = fs.readFileSync(this.storePath, 'utf8');
+        const parsed = JSON.parse(raw);
+        for (const [taskId, state] of Object.entries(parsed)) {
+          this.states.set(taskId, state);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load ExecutionStateStore:', e.message);
+    }
+  }
+
+  save() {
+    try {
+      const dir = path.dirname(this.storePath);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      const serialized = Object.fromEntries(this.states.entries());
+      fs.writeFileSync(this.storePath, JSON.stringify(serialized, null, 2), 'utf8');
+    } catch (e) {
+      console.warn('Failed to save ExecutionStateStore:', e.message);
+    }
+  }
+
+  checkpoint(taskId, executionStep, context, artifacts = []) {
+    const existing = this.states.get(taskId) || {
+      task_id: taskId,
+      history: [],
+      created_at: new Date().toISOString(),
+    };
+
+    const cp = {
+      step: executionStep,
+      context,
+      artifacts,
+      timestamp: new Date().toISOString(),
+    };
+
+    existing.history.push(cp);
+    existing.current_step = executionStep;
+    existing.status = STATE_STATUS.RUNNING;
+    existing.last_updated = cp.timestamp;
+
+    this.states.set(taskId, existing);
+    this.save();
+    return cp;
+  }
+
+  pause(taskId, reason) {
+    const state = this.states.get(taskId);
+    if (!state) throw new Error(`Cannot pause: Task ${taskId} not found.`);
+    state.status = STATE_STATUS.PAUSED;
+    state.pause_reason = reason;
+    state.last_updated = new Date().toISOString();
+    this.save();
+    return state;
+  }
+
+  resume(taskId) {
+    const state = this.states.get(taskId);
+    if (!state) throw new Error(`Cannot resume: Task ${taskId} not found.`);
+    if (state.status === STATE_STATUS.COMPLETED)
+      throw new Error(`Cannot resume: Task ${taskId} is already completed.`);
+
+    state.status = STATE_STATUS.RUNNING;
+    state.last_updated = new Date().toISOString();
+    this.save();
+    return state;
+  }
+
+  rollback(taskId) {
+    const state = this.states.get(taskId);
+    if (!state || state.history.length === 0)
+      throw new Error(`Cannot rollback: No history for Task ${taskId}.`);
+
+    // Remove current step
+    state.history.pop();
+    state.status = STATE_STATUS.ROLLED_BACK;
+
+    const previous = state.history.length > 0 ? state.history[state.history.length - 1] : null;
+    state.current_step = previous ? previous.step : null;
+    state.last_updated = new Date().toISOString();
+    this.save();
+
+    return { state, previous_checkpoint: previous };
+  }
+
+  complete(taskId) {
+    const state = this.states.get(taskId);
+    if (!state) return null;
+    state.status = STATE_STATUS.COMPLETED;
+    state.last_updated = new Date().toISOString();
+    this.save();
+    return state;
+  }
+}
+
+let _executionStateStoreInstance = null;
+function getExecutionStateStore(storePath = null) {
+  if (!_executionStateStoreInstance || storePath) {
+    _executionStateStoreInstance = new ExecutionStateStore(storePath);
+  }
+  return _executionStateStoreInstance;
+}
+
+// ============================================================================
 // EXPORTS
 // ============================================================================
 
@@ -1310,4 +1436,7 @@ module.exports = {
   getEngineeringMemoryStore,
   retrieveRelevantMemories,
   extractEngineeringMemory,
+  ExecutionStateStore,
+  getExecutionStateStore,
+  STATE_STATUS,
 };

@@ -31,10 +31,10 @@ describe('TUI System & Brainless Components', () => {
 
   describe('Theme & Color Palette', () => {
     test('defines required RGB constants for Brainless tokens', () => {
-      expect(RGB.SLATE_900).toEqual([13, 13, 15]);
-      expect(RGB.FLAME).toEqual([205, 105, 74]);
-      expect(RGB.EMERALD).toEqual([78, 169, 111]);
-      expect(RGB.CYAN).toEqual([125, 207, 255]);
+      expect(RGB.SLATE_900).toEqual([15, 15, 20]);
+      expect(RGB.FLAME).toEqual([225, 75, 45]);
+      expect(RGB.EMERALD).toEqual([35, 195, 105]);
+      expect(RGB.CYAN).toEqual([56, 189, 248]);
     });
 
     test('formats text with colors and weights', () => {

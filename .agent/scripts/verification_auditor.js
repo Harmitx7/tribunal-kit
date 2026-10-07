@@ -260,7 +260,87 @@ function generateImprovementProposal(targetSkillOrGap, context = {}, agentDir) {
   };
 }
 
+/**
+ * Formalized Schema Validation per Skill (Phase 5/6)
+ * Validates skill inputs/outputs against Canonical Contracts dynamically using Zod.
+ *
+ * @param {Object} skillContract - The loaded Canonical Skill Contract (YAML/JSON parsed)
+ * @param {Object} payload - The input or output payload to validate
+ * @param {string} payloadType - 'input' | 'output'
+ * @returns {{ valid: boolean, errors: Array<string> }}
+ */
+function validateSkillSchema(skillContract, payload, payloadType = 'input') {
+  if (!skillContract || typeof skillContract !== 'object') {
+    return { valid: false, errors: ['Invalid skill contract provided for validation.'] };
+  }
+
+  const contractDefinition = skillContract.contract || skillContract;
+
+  // If the skill doesn't formally define inputs/outputs, it is technically "valid" by lack of constraints,
+  // but we flag it as an unverified boundary.
+  if (!contractDefinition.inputs && payloadType === 'input') {
+    return { valid: true, errors: ['WARNING: Skill lacks formal input schema contract.'] };
+  }
+  if (!contractDefinition.outputs && payloadType === 'output') {
+    return { valid: true, errors: ['WARNING: Skill lacks formal output schema contract.'] };
+  }
+
+  const schemaDef =
+    payloadType === 'input' ? contractDefinition.inputs : contractDefinition.outputs;
+  if (!schemaDef) {
+    return { valid: true, errors: [] };
+  }
+
+  try {
+    const { z } = require('zod');
+
+    // Dynamically build a Zod object schema based on the skill contract definition
+    const shape = {};
+    for (const [key, fieldDef] of Object.entries(schemaDef)) {
+      let zType = z.any();
+
+      const typeStr = (fieldDef.type || 'string').toLowerCase();
+      if (typeStr === 'string') zType = z.string();
+      else if (typeStr === 'number') zType = z.number();
+      else if (typeStr === 'boolean') zType = z.boolean();
+      else if (typeStr === 'array') zType = z.array(z.any());
+      else if (typeStr === 'object') zType = z.record(z.any());
+
+      if (fieldDef.required !== false) {
+        // Assume required by default unless explicitly false
+      } else {
+        zType = zType.optional();
+      }
+
+      if (fieldDef.description) {
+        zType = zType.describe(fieldDef.description);
+      }
+
+      shape[key] = zType;
+    }
+
+    const schema = z.object(shape).strict(); // Strict to prevent payload poisoning
+
+    try {
+      schema.parse(payload);
+      return { valid: true, errors: [] };
+    } catch (e) {
+      if (e && Array.isArray(e.errors)) {
+        return {
+          valid: false,
+          errors: e.errors.map(err => `${(err.path || []).join('.')}: ${err.message}`),
+        };
+      }
+      return { valid: false, errors: [e.message] };
+    }
+  } catch (err) {
+    // If Zod is unavailable, fallback gracefully
+    return { valid: false, errors: [`Schema validation engine error: ${err.message}`] };
+  }
+}
+
 module.exports = {
   auditPostExecution,
   generateImprovementProposal,
+  validateSkillSchema,
 };
