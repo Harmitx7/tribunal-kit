@@ -41,7 +41,9 @@ const ALL_REVIEWERS = [
 
 function renderReviewerGrid(completedCount = 28) {
   if (!isTTY && !hasColor) {
-    console.log(`  ✔ ${completedCount}/${ALL_REVIEWERS.length} Reviewers passed verification gates.`);
+    console.log(
+      `  ✔ ${completedCount}/${ALL_REVIEWERS.length} Reviewers passed verification gates.`,
+    );
     return;
   }
 
@@ -52,7 +54,9 @@ function renderReviewerGrid(completedCount = 28) {
 
   console.log();
   const pct = (completedCount / ALL_REVIEWERS.length) * 100;
-  console.log(renderProgressBar('Tribunal Swarm', pct, { width: 30, color: RGB.CYAN, labelWidth: 16 }));
+  console.log(
+    renderProgressBar('Tribunal Swarm', pct, { width: 30, color: RGB.CYAN, labelWidth: 16 }),
+  );
   console.log();
 
   for (let r = 0; r < Math.ceil(ALL_REVIEWERS.length / numCols); r++) {

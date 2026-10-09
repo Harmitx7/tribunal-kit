@@ -5,7 +5,17 @@
  * Redesigned for Pro-Max Aesthetic.
  */
 
-const { isTTY, hasColor, hasTrueColor, RGB, color, bold, dim, inverse, getColumns } = require('./theme');
+const {
+  isTTY,
+  hasColor,
+  hasTrueColor,
+  RGB,
+  color,
+  bold,
+  dim,
+  inverse,
+  getColumns,
+} = require('./theme');
 
 function renderBanner(version = '9.2.8', quiet = false) {
   if (quiet) return;
@@ -27,10 +37,13 @@ function renderBanner(version = '9.2.8', quiet = false) {
 
   const versionTag = dim(`v${version}`);
   const rightPill = dim('[Fortress Mode · Rust Core]');
-  const leftLen = titleText.length + versionTag.length - (hasTrueColor ? 0 : 0); 
-  
+  const leftLen = titleText.length + versionTag.length - (hasTrueColor ? 0 : 0);
+
   // Roughly calculate spaces
-  const spaces = Math.max(2, width - titleText.length - `v${version}`.length - '[Fortress Mode · Rust Core]'.length - 4);
+  const spaces = Math.max(
+    2,
+    width - titleText.length - `v${version}`.length - '[Fortress Mode · Rust Core]'.length - 4,
+  );
 
   const subtitle = 'Autonomous Anti-Hallucination Governance Layer';
   const subtitleColored = color(RGB.ZINC_400, subtitle);

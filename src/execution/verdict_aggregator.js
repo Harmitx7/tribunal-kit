@@ -142,12 +142,23 @@ class VerdictAggregator {
 
     // 5. Epistemic Confidence Calculation
     let confidence = 'L1';
-    if (hasError) {
-      confidence = 'L3';
-    } else if (hasCritical || hasHigh) {
-      confidence = 'L1';
-    } else if (decision.confidence) {
-      confidence = decision.confidence;
+    if (params.confidence_decision) {
+      // Convert numeric score to epistemic levels
+      if (params.confidence_decision.score >= 0.8) confidence = 'L1';
+      else if (params.confidence_decision.score >= 0.5) confidence = 'L2';
+      else confidence = 'L3';
+
+      // If error, force lower confidence unless already L3
+      if (hasError && confidence !== 'L3') confidence = 'L3';
+    } else {
+      // Legacy fallback
+      if (hasError) {
+        confidence = 'L3';
+      } else if (hasCritical || hasHigh) {
+        confidence = 'L1';
+      } else if (decision.confidence) {
+        confidence = decision.confidence;
+      }
     }
 
     return {

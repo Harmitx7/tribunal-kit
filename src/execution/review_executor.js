@@ -241,6 +241,7 @@ class ReviewExecutor {
     const diff = request.code || request.diff || '';
     const task = request.task || 'Review proposed code change';
     const evidence = request.evidence || decision.evidence || [];
+    const evidenceMap = request.evidenceMap || {};
 
     // Determine reviewers to run:
     // 1. Explicit request.reviewers
@@ -272,7 +273,7 @@ class ReviewExecutor {
           reviewerId,
           task,
           diff,
-          evidence,
+          evidence: evidenceMap[reviewerId] || evidence,
           decisionId,
           reviewRunId,
           signal: request.signal,

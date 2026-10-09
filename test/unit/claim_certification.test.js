@@ -12,7 +12,10 @@ const {
 describe('Claim-Level Certification Unit Tests', () => {
   const skillName = 'api-patterns';
   const skillFile = './.agent/skills/api-patterns/SKILL.md';
-  const realHash = crypto.createHash('sha256').update(fs.readFileSync(skillFile, 'utf8')).digest('hex');
+  const realHash = crypto
+    .createHash('sha256')
+    .update(fs.readFileSync(skillFile, 'utf8'))
+    .digest('hex');
 
   it('1. Assigns discrete claim statuses based on test review and execution state', () => {
     const claims = [
@@ -42,7 +45,11 @@ describe('Claim-Level Certification Unit Tests', () => {
         reviewer: 'Human QA',
         review_date: new Date().toISOString(),
         source_evidence: [{ source_hash: realHash }],
-        independence_analysis: { verified: true, expectation_source: 'contract.outputs', implementation_source: 'skill.runtime_execution' },
+        independence_analysis: {
+          verified: true,
+          expectation_source: 'contract.outputs',
+          implementation_source: 'skill.runtime_execution',
+        },
       },
       'TEST-2': {
         review_decision: 'REJECTED',
@@ -61,7 +68,12 @@ describe('Claim-Level Certification Unit Tests', () => {
       'TEST-2': null,
     };
 
-    const claimStates = evaluateClaimStates(claims, testInventory, reviewPackages, executionResults);
+    const claimStates = evaluateClaimStates(
+      claims,
+      testInventory,
+      reviewPackages,
+      executionResults,
+    );
 
     expect(claimStates['CLM-1'].status).toBe(CLAIM_STATUS.VERIFIED);
     expect(claimStates['CLM-1'].certifying).toBe(true);

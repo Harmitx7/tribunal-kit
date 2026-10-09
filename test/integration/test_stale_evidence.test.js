@@ -15,12 +15,18 @@ describe('Stale Evidence Invalidation Integration', () => {
     const skillName = 'api-patterns';
     const claims = extractTestableClaims(skillName, { name: skillName });
     const claim = claims[0];
-    const test = generateTestSpecification(skillName, { name: skillName }, claim, TEST_TYPES.POSITIVE);
+    const test = generateTestSpecification(
+      skillName,
+      { name: skillName },
+      claim,
+      TEST_TYPES.POSITIVE,
+    );
     const pkg = prepareReviewPackage(test);
     approveSpecification(pkg, test, REVIEW_STATES.APPROVED, 'Reviewer', 'Approved');
 
     // Simulate stale hash
-    test.evidence_sources[0].source_hash = '0000000000000000000000000000000000000000000000000000000000000000';
+    test.evidence_sources[0].source_hash =
+      '0000000000000000000000000000000000000000000000000000000000000000';
 
     const staleCheck = checkStaleTests(test);
     expect(staleCheck.is_stale).toBe(true);
@@ -32,7 +38,12 @@ describe('Stale Evidence Invalidation Integration', () => {
     const skillName = 'api-patterns';
     const claims = extractTestableClaims(skillName, { name: skillName });
     const claim = claims[0];
-    const test = generateTestSpecification(skillName, { name: skillName }, claim, TEST_TYPES.POSITIVE);
+    const test = generateTestSpecification(
+      skillName,
+      { name: skillName },
+      claim,
+      TEST_TYPES.POSITIVE,
+    );
 
     const staleCheck = checkStaleTests(test);
     expect(staleCheck.is_stale).toBe(false);

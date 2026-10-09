@@ -28,9 +28,21 @@ describe('Skill Certification Pipeline Integration', () => {
     for (const name of pilot) {
       const result = acquireEvidenceForSkill(name);
       expect(result.state).toBeDefined();
-      expect(['UNPROVABLE', 'EVIDENCE_FOUND', 'SCENARIO_READY', 'AWAITING_VALIDATION',
-        'READY_FOR_EXECUTION', 'EXECUTING', 'OBSERVED', 'REPEATABILITY_PENDING',
-        'CERTIFIED', 'FAILED', 'QUARANTINED', 'STALE', 'NOT_FOUND']).toContain(result.state);
+      expect([
+        'UNPROVABLE',
+        'EVIDENCE_FOUND',
+        'SCENARIO_READY',
+        'AWAITING_VALIDATION',
+        'READY_FOR_EXECUTION',
+        'EXECUTING',
+        'OBSERVED',
+        'REPEATABILITY_PENDING',
+        'CERTIFIED',
+        'FAILED',
+        'QUARANTINED',
+        'STALE',
+        'NOT_FOUND',
+      ]).toContain(result.state);
     }
   });
 });

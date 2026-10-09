@@ -66,11 +66,11 @@ class WizardPrompt {
 
           let labelColored = opt.label;
           if (isCursor) {
-             labelColored = inverse(bold(` ${labelColored} `));
+            labelColored = inverse(bold(` ${labelColored} `));
           } else if (opt.selected) {
-             labelColored = color(RGB.PURE_WHITE, ` ${labelColored} `);
+            labelColored = color(RGB.PURE_WHITE, ` ${labelColored} `);
           } else {
-             labelColored = color(RGB.ZINC_500, ` ${labelColored} `);
+            labelColored = color(RGB.ZINC_500, ` ${labelColored} `);
           }
 
           const detailColored = color(RGB.ZINC_600, opt.detail || '');

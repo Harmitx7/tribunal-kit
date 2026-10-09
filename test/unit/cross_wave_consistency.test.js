@@ -23,7 +23,12 @@ describe('Phase 26 — Cross-Wave Consistency Unit Tests', () => {
       status: 'BEHAVIORALLY_CERTIFIED',
     };
 
-    const result = valEngine.validateCertificationConsistency('test-skill', claims, claimStates, validCert);
+    const result = valEngine.validateCertificationConsistency(
+      'test-skill',
+      claims,
+      claimStates,
+      validCert,
+    );
     expect(result.consistent).toBe(true);
   });
 
@@ -41,7 +46,12 @@ describe('Phase 26 — Cross-Wave Consistency Unit Tests', () => {
       status: 'PARTIAL',
     };
 
-    const result = valEngine.validateCertificationConsistency('test-skill', claims, claimStates, invalidCert);
+    const result = valEngine.validateCertificationConsistency(
+      'test-skill',
+      claims,
+      claimStates,
+      invalidCert,
+    );
     expect(result.consistent).toBe(false);
     expect(result.code).toBe('COVERAGE_MISMATCH');
   });
@@ -60,7 +70,12 @@ describe('Phase 26 — Cross-Wave Consistency Unit Tests', () => {
       status: 'BEHAVIORALLY_CERTIFIED',
     };
 
-    const result = valEngine.validateCertificationConsistency('test-skill', claims, claimStates, invalidCert);
+    const result = valEngine.validateCertificationConsistency(
+      'test-skill',
+      claims,
+      claimStates,
+      invalidCert,
+    );
     expect(result.consistent).toBe(false);
     expect(result.code).toBe('STATUS_MISMATCH');
   });

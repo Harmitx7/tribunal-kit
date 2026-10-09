@@ -11,7 +11,12 @@ describe('Test Quality Score Unit Tests', () => {
   it('1. Computes deterministic quality score with all 6 dimensions', () => {
     const claims = extractTestableClaims('api-patterns', { name: 'api-patterns' });
     const claim = claims.find(c => c.type === 'OUTPUT_CONFORMANCE') || claims[0];
-    const test = generateTestSpecification('api-patterns', { name: 'api-patterns' }, claim, TEST_TYPES.POSITIVE);
+    const test = generateTestSpecification(
+      'api-patterns',
+      { name: 'api-patterns' },
+      claim,
+      TEST_TYPES.POSITIVE,
+    );
 
     const quality = calculateTestQualityScore(test);
 

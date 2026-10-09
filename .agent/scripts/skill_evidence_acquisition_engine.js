@@ -61,10 +61,18 @@ function transition(currentState, targetState) {
 }
 
 // ─── Evidence Provenance ────────────────────────────────────────────────────
-function createEvidenceRecord(sourceType, sourcePath, skillId, scenarioHash, expectationHash, trustLevel) {
-  const sourceHash = sourcePath && fs.existsSync(sourcePath)
-    ? crypto.createHash('sha256').update(fs.readFileSync(sourcePath)).digest('hex')
-    : 'NO_FILE';
+function createEvidenceRecord(
+  sourceType,
+  sourcePath,
+  skillId,
+  scenarioHash,
+  expectationHash,
+  trustLevel,
+) {
+  const sourceHash =
+    sourcePath && fs.existsSync(sourcePath)
+      ? crypto.createHash('sha256').update(fs.readFileSync(sourcePath)).digest('hex')
+      : 'NO_FILE';
 
   return {
     evidence_id: `EV-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
@@ -90,7 +98,8 @@ function isStaleEvidence(evidenceRecord) {
   if (!evidenceRecord.source_path || !fs.existsSync(evidenceRecord.source_path)) {
     return true;
   }
-  const currentHash = crypto.createHash('sha256')
+  const currentHash = crypto
+    .createHash('sha256')
     .update(fs.readFileSync(evidenceRecord.source_path))
     .digest('hex');
   return currentHash !== evidenceRecord.source_hash;
@@ -169,12 +178,19 @@ function generateCertificationScenarios(skillName, skillRaw, classification, evi
   const scenarios = [];
 
   for (const source of evidenceSources) {
-    const scenarioContent = JSON.stringify({ skill: skillName, source: source.type, trust: source.trust });
+    const scenarioContent = JSON.stringify({
+      skill: skillName,
+      source: source.type,
+      trust: source.trust,
+    });
     const scenarioHash = crypto.createHash('sha256').update(scenarioContent).digest('hex');
 
     // Resolve expectations independently — NEVER from implementation output
     const expectations = resolveExpectations(skillRaw);
-    const expectationHash = crypto.createHash('sha256').update(JSON.stringify(expectations)).digest('hex');
+    const expectationHash = crypto
+      .createHash('sha256')
+      .update(JSON.stringify(expectations))
+      .digest('hex');
 
     // Independence check: expectation source must differ from observation source
     const independent = source.type !== 'IMPLEMENTATION';
@@ -279,7 +295,12 @@ function acquireEvidenceForSkill(skillName) {
   certState = t1.state;
 
   // Step 2: Generate scenarios
-  const scenarios = generateCertificationScenarios(skillName, skill, classification, evidenceSources);
+  const scenarios = generateCertificationScenarios(
+    skillName,
+    skill,
+    classification,
+    evidenceSources,
+  );
 
   // Filter out circular evidence scenarios
   const independentScenarios = scenarios.filter(s => s.independence.verified);
@@ -371,12 +392,15 @@ function acquireEvidenceForSkill(skillName) {
   // Step 6: Determine certification
   const allDeterministic = scenarioResults.every(r => r.repeatability === 'DETERMINISTIC');
   const allPassed = scenarioResults.every(r => r.comparison === 'PASS');
-  const verifiedScenarios = scenarioResults.filter(r => r.comparison === 'PASS' && r.repeatability === 'DETERMINISTIC');
+  const verifiedScenarios = scenarioResults.filter(
+    r => r.comparison === 'PASS' && r.repeatability === 'DETERMINISTIC',
+  );
 
   // Calculate coverage
-  const coverage = independentScenarios.length > 0
-    ? Math.round((verifiedScenarios.length / independentScenarios.length) * 100)
-    : 0;
+  const coverage =
+    independentScenarios.length > 0
+      ? Math.round((verifiedScenarios.length / independentScenarios.length) * 100)
+      : 0;
 
   let finalState;
   if (allPassed && allDeterministic && verifiedScenarios.length > 0) {
@@ -404,14 +428,16 @@ function acquireEvidenceForSkill(skillName) {
     certification: {
       structural: { status: 'CERTIFIED' },
       behavioral: {
-        status: finalState === 'CERTIFIED' ? 'VERIFIED' : (coverage > 0 ? 'PARTIAL' : 'UNPROVABLE'),
+        status: finalState === 'CERTIFIED' ? 'VERIFIED' : coverage > 0 ? 'PARTIAL' : 'UNPROVABLE',
         coverage,
         verified_behaviors: verifiedScenarios.map(s => s.scenario_id),
-        unverified_behaviors: scenarioResults.filter(r => r.comparison !== 'PASS').map(s => s.scenario_id),
+        unverified_behaviors: scenarioResults
+          .filter(r => r.comparison !== 'PASS')
+          .map(s => s.scenario_id),
       },
       safety: { status: 'CERTIFIED' },
       overall: {
-        status: finalState === 'CERTIFIED' ? 'CERTIFIED' : (coverage > 0 ? 'PARTIAL' : 'UNPROVABLE'),
+        status: finalState === 'CERTIFIED' ? 'CERTIFIED' : coverage > 0 ? 'PARTIAL' : 'UNPROVABLE',
       },
     },
     scenario_results: scenarioResults,
@@ -431,7 +457,10 @@ function selectPilot() {
   // Category finders
   const find = (predicate, reason) => {
     const s = sorted.find(sk => predicate(sk) && !pilot.includes(sk.name));
-    if (s) { pilot.push(s.name); reasons[s.name] = reason; }
+    if (s) {
+      pilot.push(s.name);
+      reasons[s.name] = reason;
+    }
   };
 
   // 1. Executable skill
@@ -466,7 +495,10 @@ function selectPilot() {
 
   // 7. Skill with existing tests
   const repoRoot = path.join(agentDir, '..');
-  find(s => fs.existsSync(path.join(repoRoot, 'test', 'unit', `${s.name}.test.js`)), 'Has existing unit test');
+  find(
+    s => fs.existsSync(path.join(repoRoot, 'test', 'unit', `${s.name}.test.js`)),
+    'Has existing unit test',
+  );
 
   // 8. Skill with partial evidence
   find(s => {
@@ -475,7 +507,10 @@ function selectPilot() {
   }, 'Partial evidence available');
 
   // 9. Skill with stale evidence (approximation: old skills with no recent tests)
-  find(s => s.name.includes('legacy') || s.name.includes('deprecated'), 'Potentially stale evidence');
+  find(
+    s => s.name.includes('legacy') || s.name.includes('deprecated'),
+    'Potentially stale evidence',
+  );
 
   // 10. Requires human validation
   find(s => {
@@ -484,7 +519,10 @@ function selectPilot() {
   }, 'No mechanical expectations — requires human validation');
 
   // 11. Deterministic file mutation
-  find(s => s.content && (s.content.includes('fs.write') || s.content.includes('mkdir')), 'Deterministic file mutation detected');
+  find(
+    s => s.content && (s.content.includes('fs.write') || s.content.includes('mkdir')),
+    'Deterministic file mutation detected',
+  );
 
   // 12. Deliberately unprovable
   find(s => {
@@ -504,7 +542,10 @@ if (require.main === module) {
     const agentDir = path.join(__dirname, '..');
     const skills = loadSkills(agentDir);
     const skill = skills.find(s => s.name === skillName);
-    if (!skill) { console.log('Skill not found'); process.exit(1); }
+    if (!skill) {
+      console.log('Skill not found');
+      process.exit(1);
+    }
     console.log(JSON.stringify(discoverEvidenceForSkill(skillName, skill), null, 2));
   } else if (cmd === 'acquire') {
     const skillName = process.argv[3];
@@ -512,7 +553,9 @@ if (require.main === module) {
   } else if (cmd === 'pilot') {
     console.log(JSON.stringify(selectPilot(), null, 2));
   } else {
-    console.log('Usage: node skill_evidence_acquisition_engine.js <discover|acquire|pilot> [skillName]');
+    console.log(
+      'Usage: node skill_evidence_acquisition_engine.js <discover|acquire|pilot> [skillName]',
+    );
   }
 }
 

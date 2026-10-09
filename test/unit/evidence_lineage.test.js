@@ -31,7 +31,7 @@ describe('Phase 26 — Evidence Lineage Validation Unit Tests', () => {
       baseRecord.evidence,
       baseRecord.testSpec,
       baseRecord.reviewPkg,
-      baseRecord.execResult
+      baseRecord.execResult,
     );
     expect(res.valid).toBe(true);
   });
@@ -42,7 +42,7 @@ describe('Phase 26 — Evidence Lineage Validation Unit Tests', () => {
       corruptedEvidence,
       baseRecord.testSpec,
       baseRecord.reviewPkg,
-      baseRecord.execResult
+      baseRecord.execResult,
     );
     expect(res.valid).toBe(false);
     expect(res.reason).toContain('claim_id mismatch');
@@ -54,7 +54,7 @@ describe('Phase 26 — Evidence Lineage Validation Unit Tests', () => {
       corruptedEvidence,
       baseRecord.testSpec,
       baseRecord.reviewPkg,
-      baseRecord.execResult
+      baseRecord.execResult,
     );
     expect(res.valid).toBe(false);
     expect(res.reason).toContain('reviewer mismatch');
@@ -66,7 +66,7 @@ describe('Phase 26 — Evidence Lineage Validation Unit Tests', () => {
       corruptedEvidence,
       baseRecord.testSpec,
       baseRecord.reviewPkg,
-      baseRecord.execResult
+      baseRecord.execResult,
     );
     expect(res.valid).toBe(false);
     expect(res.reason).toContain('execution_hash mismatch');

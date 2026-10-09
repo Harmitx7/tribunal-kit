@@ -26,7 +26,12 @@ describe('Test Authoring Pipeline Integration', () => {
 
       for (const claim of testableClaims) {
         // Author positive test
-        const posTest = generateTestSpecification(skillName, { name: skillName }, claim, TEST_TYPES.POSITIVE);
+        const posTest = generateTestSpecification(
+          skillName,
+          { name: skillName },
+          claim,
+          TEST_TYPES.POSITIVE,
+        );
         const val = validateSpecification(posTest);
         expect(val.valid).toBe(true);
 

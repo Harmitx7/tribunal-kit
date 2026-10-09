@@ -311,7 +311,10 @@ function buildCorpusInventory(options = {}) {
       behavior_class: classification.behavior_class,
       contract_status: contract ? 'VALID' : 'MISSING',
       claim_count: claims.length,
-      testability: classification.behavior_class === ELIGIBILITY_CLASSES.REFERENCE_ONLY ? 'UNTESTABLE' : 'DIRECT',
+      testability:
+        classification.behavior_class === ELIGIBILITY_CLASSES.REFERENCE_ONLY
+          ? 'UNTESTABLE'
+          : 'DIRECT',
       current_certification: currentCert,
       routing_usage: (s.triggers || []).length,
       routing_importance: skillName.includes('pro') || skillName.includes('specialist') ? 6 : 2,
@@ -320,7 +323,8 @@ function buildCorpusInventory(options = {}) {
       strong_contract: !!hasStrongContract,
       has_external_tests: fs.existsSync(path.join(agentDir, 'skills', skillName, 'tests')),
       is_pilot: isPilot,
-      eligible: !isPilot && !EXCLUDED_CLASSES.includes(classification.behavior_class) && claims.length > 0,
+      eligible:
+        !isPilot && !EXCLUDED_CLASSES.includes(classification.behavior_class) && claims.length > 0,
     };
 
     const scoring = calculatePriorityScore(record);
@@ -337,7 +341,9 @@ function buildCorpusInventory(options = {}) {
 // ─── Section 10 & 12: Wave Selection ─────────────────────────────────────────
 function selectWave(waveNumber = 1, inventory = [], options = {}) {
   const maxWaveSize = options.maxWaveSize || 25;
-  const eligibleSkills = inventory.filter(s => s.eligible && s.current_certification === 'UNPROVABLE');
+  const eligibleSkills = inventory.filter(
+    s => s.eligible && s.current_certification === 'UNPROVABLE',
+  );
 
   // Deterministic sort: descending priority score, tie-breaker: skill_id
   const sorted = [...eligibleSkills].sort((a, b) => {
@@ -356,8 +362,8 @@ function selectWave(waveNumber = 1, inventory = [], options = {}) {
     reason: s.is_pilot
       ? 'Already evaluated in pilot corpus'
       : EXCLUDED_CLASSES.includes(s.behavior_class)
-      ? `Excluded class: ${s.behavior_class}`
-      : 'Deferred to later waves (capacity threshold)',
+        ? `Excluded class: ${s.behavior_class}`
+        : 'Deferred to later waves (capacity threshold)',
     automated_certification: false,
   }));
 
@@ -380,7 +386,10 @@ function selectWave(waveNumber = 1, inventory = [], options = {}) {
 // ─── Section 27-28: Wave Snapshots & Atomicity ───────────────────────────────
 function createWaveSnapshot(currentCertificationSnapshot, options = {}) {
   return {
-    snapshot_hash: crypto.createHash('sha256').update(JSON.stringify(currentCertificationSnapshot)).digest('hex'),
+    snapshot_hash: crypto
+      .createHash('sha256')
+      .update(JSON.stringify(currentCertificationSnapshot))
+      .digest('hex'),
     timestamp: new Date().toISOString(),
     skills: JSON.parse(JSON.stringify(currentCertificationSnapshot.skills || {})),
     summary: JSON.parse(JSON.stringify(currentCertificationSnapshot.summary || {})),
@@ -406,7 +415,7 @@ function rollbackWave(waveNumber, preSnapshot, targetCertPath) {
         restored_hash: preSnapshot.snapshot_hash,
         timestamp: new Date().toISOString(),
       }) + '\n',
-      'utf8'
+      'utf8',
     );
   }
 

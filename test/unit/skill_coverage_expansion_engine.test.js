@@ -33,7 +33,7 @@ describe('Phase 24 — Skill Coverage Expansion Engine Unit Tests', () => {
     // Human certified officer succeeds
     const reviewPkg = engine.reviewExpansionTest(
       testSpec,
-      'Tribunal Certified Security Officer (STD-100)'
+      'Tribunal Certified Security Officer (STD-100)',
     );
     expect(reviewPkg.review_decision).toBe('APPROVED');
     expect(testSpec.review.status).toBe('APPROVED');

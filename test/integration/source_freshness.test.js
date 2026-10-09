@@ -16,10 +16,12 @@ describe('Source Freshness Integration Tests', () => {
       skill_id: 'lint-and-validate',
       claim: { id: 'CLM-1', statement: 'Check lint' },
       review: { status: 'APPROVED' },
-      independence: { verified: true, expectation_source: 'contract.outputs', implementation_source: 'skill.runtime_execution' },
-      evidence_sources: [
-        { source_hash: 'DRIFTED_HASH_1234567890abcdef1234567890abcdef' },
-      ],
+      independence: {
+        verified: true,
+        expectation_source: 'contract.outputs',
+        implementation_source: 'skill.runtime_execution',
+      },
+      evidence_sources: [{ source_hash: 'DRIFTED_HASH_1234567890abcdef1234567890abcdef' }],
     };
 
     const reviewPkg = {
@@ -41,7 +43,9 @@ describe('Source Freshness Integration Tests', () => {
 
     // Confirm event recorded in ledger
     const events = readLedgerEvents('lint-and-validate');
-    const staleEvt = events.find(e => e.event === 'SOURCE_STALE' && e.test_id === 'TEST-stale-drift');
+    const staleEvt = events.find(
+      e => e.event === 'SOURCE_STALE' && e.test_id === 'TEST-stale-drift',
+    );
     expect(staleEvt).toBeDefined();
   });
 
@@ -55,7 +59,11 @@ describe('Source Freshness Integration Tests', () => {
       skill_id: 'lint-and-validate',
       claim: { id: 'CLM-fresh', statement: 'Check lint' },
       review: { status: 'APPROVED' },
-      independence: { verified: true, expectation_source: 'contract.outputs', implementation_source: 'skill.runtime_execution' },
+      independence: {
+        verified: true,
+        expectation_source: 'contract.outputs',
+        implementation_source: 'skill.runtime_execution',
+      },
       evidence_sources: [{ source_hash: realHash }],
     };
 

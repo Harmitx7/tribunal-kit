@@ -10,6 +10,7 @@
  * 3. Adaptive Reviewer Orchestration (`reviewer_orchestrator.js`)
  * 4. Self-Evolution Pipeline (`evolution_pipeline.js`)
  * 5. Browser / Interaction Intelligence (`browser_intelligence.js`)
+ * 6. Decision Plan (`decision_plan.js`)
  * + Laya Local ONNX Provider (`provider.js`)
  */
 
@@ -30,6 +31,11 @@ const {
   TIER_NAMES,
   ROUTING_NAMES,
 } = require('./decision_engine');
+const { buildDecisionPlan, validateDecisionPlan } = require('./decision_plan');
+const { dynamicReviewerSelection } = require('./reviewer_selection');
+const { progressiveContextExpansion } = require('./progressive_context');
+const { executeWithEvidenceRequests, resolveEvidenceRequests } = require('./evidence_resolver');
+const { evaluateConfidence, executeWithConfidenceEscalation } = require('./confidence_evaluator');
 const {
   orchestrateReviewers,
   detectRequiredDomains,
@@ -74,6 +80,24 @@ module.exports = {
   HIGH_RISK_EXTENSIONS,
   TIER_NAMES,
   ROUTING_NAMES,
+
+  // Capability 2.1: Decision Plan
+  buildDecisionPlan,
+  validateDecisionPlan,
+
+  // Capability 2.2: Dynamic Reviewer Selection
+  dynamicReviewerSelection,
+
+  // Capability 2.3: Progressive Context Expansion
+  progressiveContextExpansion,
+
+  // Capability 2.4: Evidence Requests
+  executeWithEvidenceRequests,
+  resolveEvidenceRequests,
+
+  // Capability 2.5: Confidence Evaluation
+  evaluateConfidence,
+  executeWithConfidenceEscalation,
 
   // Capability 3: Reviewer Orchestration
   orchestrateReviewers,

@@ -137,6 +137,7 @@ function parseAndValidateReviewerOutput(rawOutput, reviewerId = 'reviewer') {
       confidence: 0.0,
       findings: [],
       recommendations: [],
+      evidence_requests: [],
       error: 'EMPTY_OUTPUT: Model returned null or undefined.',
     };
   }
@@ -153,6 +154,7 @@ function parseAndValidateReviewerOutput(rawOutput, reviewerId = 'reviewer') {
         confidence: 0.0,
         findings: [],
         recommendations: [],
+        evidence_requests: [],
         error: 'EMPTY_PAYLOAD: No valid JSON block detected in model response.',
       };
     }
@@ -268,6 +270,117 @@ function parseAndValidateReviewerOutput(rawOutput, reviewerId = 'reviewer') {
     }
   }
 
+  // 4a. Validate evidence_requests
+  const evidence_requests = [];
+  if (parsed.evidence_requests !== undefined && parsed.evidence_requests !== null) {
+    if (!Array.isArray(parsed.evidence_requests)) {
+      return {
+        isValid: false,
+        verdict: 'ERROR',
+        confidence: 0.0,
+        findings: [],
+        recommendations: [],
+        evidence_requests: [],
+        error: 'INVALID_EVIDENCE_REQUESTS: "evidence_requests" must be an array.',
+        rawParsed: parsed,
+      };
+    }
+    for (let i = 0; i < parsed.evidence_requests.length; i++) {
+      const req = parsed.evidence_requests[i];
+      if (!req || typeof req !== 'object' || Array.isArray(req)) {
+        return {
+          isValid: false,
+          verdict: 'ERROR',
+          confidence: 0.0,
+          findings: [],
+          recommendations: [],
+          evidence_requests: [],
+          error: `INVALID_EVIDENCE_REQUEST: Request at index ${i} must be an object.`,
+          rawParsed: parsed,
+        };
+      }
+
+      const reason = typeof req.reason === 'string' ? req.reason.trim() : '';
+      const evidence_type =
+        typeof req.evidence_type === 'string' ? req.evidence_type.trim().toLowerCase() : '';
+      const target = typeof req.target === 'string' ? req.target.trim() : '';
+      const scope = typeof req.scope === 'string' ? req.scope.trim() : '';
+      const priority =
+        typeof req.priority === 'string' ? req.priority.trim().toUpperCase() : 'NORMAL';
+
+      if (!reason || !evidence_type || !target) {
+        return {
+          isValid: false,
+          verdict: 'ERROR',
+          confidence: 0.0,
+          findings: [],
+          recommendations: [],
+          evidence_requests: [],
+          error: `INVALID_EVIDENCE_REQUEST: Request at index ${i} is missing reason, evidence_type, or target.`,
+          rawParsed: parsed,
+        };
+      }
+
+      // Basic evidence_type validation (more robust validation happens in resolution phase)
+      const validTypes = new Set([
+        'file',
+        'directory',
+        'symbol',
+        'test',
+        'configuration',
+        'dependency',
+        'package metadata',
+        'diff',
+        'call site',
+        'reference',
+        'documentation',
+      ]);
+      if (!validTypes.has(evidence_type)) {
+        return {
+          isValid: false,
+          verdict: 'ERROR',
+          confidence: 0.0,
+          findings: [],
+          recommendations: [],
+          evidence_requests: [],
+          error: `INVALID_EVIDENCE_REQUEST: Unsupported evidence_type "${evidence_type}".`,
+          rawParsed: parsed,
+        };
+      }
+
+      // Basic target validation (no absolute paths or shell commands)
+      if (
+        target.startsWith('/') ||
+        target.includes('..') ||
+        target.includes(';') ||
+        target.includes('&') ||
+        target.includes('|')
+      ) {
+        return {
+          isValid: false,
+          verdict: 'ERROR',
+          confidence: 0.0,
+          findings: [],
+          recommendations: [],
+          evidence_requests: [],
+          error: `INVALID_EVIDENCE_REQUEST: Invalid or potentially unsafe target path: "${target}".`,
+          rawParsed: parsed,
+        };
+      }
+
+      evidence_requests.push({
+        reviewer_id: reviewerId,
+        reason,
+        evidence_type,
+        target,
+        scope,
+        priority,
+        required: true,
+        status: 'pending',
+      });
+    }
+  }
+
   // 5. Invariant check: If reviewer claims APPROVED but includes CRITICAL or HIGH findings,
   // that is a contradictory malformed response. Coerce to REJECTED.
   const hasCritical = findings.some(f => f.severity === 'CRITICAL');
@@ -284,6 +397,7 @@ function parseAndValidateReviewerOutput(rawOutput, reviewerId = 'reviewer') {
     confidence,
     findings,
     recommendations,
+    evidence_requests,
     rawParsed: parsed,
   };
 }

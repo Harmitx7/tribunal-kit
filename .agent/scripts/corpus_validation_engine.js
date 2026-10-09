@@ -47,7 +47,11 @@ function validateEvidenceLineage(evidenceRecord, testSpec, reviewPkg = null, exe
   }
 
   // 3. Execution hash linkage
-  if (execResult && execResult.evidence?.hash && evidenceRecord.execution_hash !== execResult.evidence.hash) {
+  if (
+    execResult &&
+    execResult.evidence?.hash &&
+    evidenceRecord.execution_hash !== execResult.evidence.hash
+  ) {
     return {
       valid: false,
       reason: `BROKEN_LINEAGE: execution_hash mismatch (${evidenceRecord.execution_hash} !== ${execResult.evidence.hash})`,
@@ -149,25 +153,31 @@ function checkCrossWaveSourceFreshness(evidenceList = [], agentDir) {
 }
 
 // ─── Section 21: Certification Consistency Check ─────────────────────────────
-function validateCertificationConsistency(skillId, applicableClaims = [], claimStates = {}, skillCert = {}) {
+function validateCertificationConsistency(
+  skillId,
+  applicableClaims = [],
+  claimStates = {},
+  skillCert = {},
+) {
   const verifiedCount = Object.values(claimStates).filter(
-    cs => cs.status === certEngine.CLAIM_STATUS.VERIFIED
+    cs => cs.status === certEngine.CLAIM_STATUS.VERIFIED,
   ).length;
 
   const failedCount = Object.values(claimStates).filter(
     cs =>
       cs.status === certEngine.CLAIM_STATUS.EXECUTION_FAILED ||
-      cs.status === certEngine.CLAIM_STATUS.TEST_REJECTED
+      cs.status === certEngine.CLAIM_STATUS.TEST_REJECTED,
   ).length;
 
   const staleCount = Object.values(claimStates).filter(
-    cs => cs.status === certEngine.CLAIM_STATUS.STALE
+    cs => cs.status === certEngine.CLAIM_STATUS.STALE,
   ).length;
 
   const expectedCoverage =
     applicableClaims.length > 0 ? Math.round((verifiedCount / applicableClaims.length) * 100) : 0;
 
-  const actualCoverage = skillCert.coverage !== undefined ? skillCert.coverage : skillCert.coverage_percentage;
+  const actualCoverage =
+    skillCert.coverage !== undefined ? skillCert.coverage : skillCert.coverage_percentage;
 
   // 1. Coverage consistency
   if (actualCoverage !== expectedCoverage) {
@@ -238,7 +248,12 @@ function detectCrossWaveRegression(baselineSnapshot, currentSnapshot) {
   const regressions = result.regressions.map(r => ({
     ...r,
     skill_id: r.skill || r.skill_id,
-    type: r.current_state === 'PARTIAL' ? 'DOWNGRADE_TO_PARTIAL' : (r.current_state === 'STALE' ? 'STALE' : 'DEGRADATION'),
+    type:
+      r.current_state === 'PARTIAL'
+        ? 'DOWNGRADE_TO_PARTIAL'
+        : r.current_state === 'STALE'
+          ? 'STALE'
+          : 'DEGRADATION',
   }));
 
   return {
@@ -264,7 +279,7 @@ function validateWave(waveData, previousSnapshot, options = {}) {
         record.evidence,
         record.testSpec,
         record.reviewPkg,
-        record.execResult
+        record.execResult,
       );
       if (!lineage.valid) {
         errors.push(`LINEAGE_ERROR [${record.evidence?.evidence_id}]: ${lineage.reason}`);
@@ -276,7 +291,9 @@ function validateWave(waveData, previousSnapshot, options = {}) {
   if (waveData.promotedEvidence) {
     const freshness = checkCrossWaveSourceFreshness(waveData.promotedEvidence, options.agentDir);
     if (!freshness.fresh) {
-      errors.push(`STALE_EVIDENCE_ERROR: ${freshness.stale_count} evidence records have stale source hashes`);
+      errors.push(
+        `STALE_EVIDENCE_ERROR: ${freshness.stale_count} evidence records have stale source hashes`,
+      );
     }
   }
 
@@ -286,7 +303,9 @@ function validateWave(waveData, previousSnapshot, options = {}) {
   if (previousSnapshot && currSnap) {
     regCheck = detectCrossWaveRegression(previousSnapshot, currSnap);
     if (regCheck.regressed) {
-      errors.push(`REGRESSION_ERROR: Detected ${regCheck.regressions.length} regressions across wave boundary`);
+      errors.push(
+        `REGRESSION_ERROR: Detected ${regCheck.regressions.length} regressions across wave boundary`,
+      );
     }
   }
 

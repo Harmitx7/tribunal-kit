@@ -36,7 +36,7 @@ class ActionTree {
       this._printLine(`  ${color(RGB.SLATE_700, GLYPHS.boxV)}`);
     }
     this.inProgress = true;
-    
+
     const bullet = color(RGB.EMERALD, GLYPHS.bullet);
     const coloredVerb = bold(color(RGB.WHITE, verb));
 
@@ -56,7 +56,7 @@ class ActionTree {
     const pipe = color(RGB.SLATE_700, GLYPHS.boxV);
     const branchGlyph = color(RGB.ZINC_600, GLYPHS.treeMid);
     const coloredMsg = color(RGB.ZINC_400, message);
-    
+
     this._printLine(`  ${pipe}`);
     this._printLine(`  ${pipe} ${branchGlyph} ${coloredMsg}`);
 
@@ -107,7 +107,7 @@ class ActionTree {
     this.inProgress = false;
     const check = color(RGB.EMERALD, GLYPHS.success);
     const colored = bold(color(RGB.PURE_WHITE, message));
-    
+
     // Cap off the timeline
     this._printLine(`  ${color(RGB.SLATE_700, GLYPHS.treeEnd)}`);
     this._printLine();

@@ -19,7 +19,9 @@ describe('Certification Revocation Unit Tests', () => {
 
     // Read ledger to confirm record persisted
     const events = readLedgerEvents(skillId);
-    const revEvent = events.find(e => e.event === 'CERTIFICATION_REVOKED' && e.skill_id === skillId);
+    const revEvent = events.find(
+      e => e.event === 'CERTIFICATION_REVOKED' && e.skill_id === skillId,
+    );
     expect(revEvent).toBeDefined();
     expect(revEvent.revoked_by).toBe(reviewer);
   });

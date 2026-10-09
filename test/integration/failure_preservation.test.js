@@ -13,7 +13,10 @@ const {
 describe('Failure Preservation Integration Tests', () => {
   it('1. Preserves failed execution in claim state history and refuses promotion', () => {
     const skillPath = './.agent/skills/api-patterns/SKILL.md';
-    const realHash = crypto.createHash('sha256').update(fs.readFileSync(skillPath, 'utf8')).digest('hex');
+    const realHash = crypto
+      .createHash('sha256')
+      .update(fs.readFileSync(skillPath, 'utf8'))
+      .digest('hex');
 
     const failedResult = {
       test_id: 'TEST-preserve-fail',
@@ -32,7 +35,11 @@ describe('Failure Preservation Integration Tests', () => {
       skill_id: 'api-patterns',
       claim: { id: failedResult.claim_id, statement: 'Must succeed' },
       review: { status: 'APPROVED' },
-      independence: { verified: true, expectation_source: 'contract.outputs', implementation_source: 'skill.runtime_execution' },
+      independence: {
+        verified: true,
+        expectation_source: 'contract.outputs',
+        implementation_source: 'skill.runtime_execution',
+      },
       evidence_sources: [{ source_hash: realHash }],
     };
 
@@ -46,9 +53,18 @@ describe('Failure Preservation Integration Tests', () => {
     expect(promo.reason).toContain('EXECUTION_FAILED');
 
     // Claim state evaluation preserves failed status
-    const claims = [{ id: failedResult.claim_id, statement: 'Must succeed', testability: 'DIRECT' }];
-    const testInventory = [{ test_id: testSpec.id, skill_id: testSpec.skill_id, claim_id: failedResult.claim_id }];
-    const claimStates = evaluateClaimStates(claims, testInventory, { [testSpec.id]: reviewPkg }, { [testSpec.id]: failedResult });
+    const claims = [
+      { id: failedResult.claim_id, statement: 'Must succeed', testability: 'DIRECT' },
+    ];
+    const testInventory = [
+      { test_id: testSpec.id, skill_id: testSpec.skill_id, claim_id: failedResult.claim_id },
+    ];
+    const claimStates = evaluateClaimStates(
+      claims,
+      testInventory,
+      { [testSpec.id]: reviewPkg },
+      { [testSpec.id]: failedResult },
+    );
 
     expect(claimStates[failedResult.claim_id].status).toBe(CLAIM_STATUS.EXECUTION_FAILED);
     expect(claimStates[failedResult.claim_id].certifying).toBe(false);

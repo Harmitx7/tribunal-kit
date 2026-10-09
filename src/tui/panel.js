@@ -5,7 +5,7 @@ const { isTTY, hasColor, RGB, GLYPHS, color, bold, dim, getColumns } = require('
 /**
  * Render a bordered panel with an optional title and content.
  * Follows the Pro-Max high-density aesthetic with subtle borders.
- * 
+ *
  * @param {string} title The title of the panel
  * @param {string[]} lines Array of strings to render inside the panel
  * @param {object} options
@@ -29,9 +29,11 @@ function renderPanel(title, lines, options = {}) {
     const accessory = options.accessory ? dim(options.accessory) : '';
     // Strip ANSI codes to calculate actual text length for padding
     const titleLen = title.replace(/\x1b\[[0-9;]*m/g, '').length;
-    const accessoryLen = options.accessory ? options.accessory.replace(/\x1b\[[0-9;]*m/g, '').length : 0;
+    const accessoryLen = options.accessory
+      ? options.accessory.replace(/\x1b\[[0-9;]*m/g, '').length
+      : 0;
     const spaceCount = Math.max(1, innerWidth - titleLen - accessoryLen);
-    
+
     console.log(`  ${topBorder}`);
     console.log(`  ${pipe} ${boldTitle}${' '.repeat(spaceCount)}${accessory} ${pipe}`);
     console.log(`  ${color(RGB.SLATE_700, g.treeMid + g.boxH.repeat(innerWidth + 2) + '┤')}`);

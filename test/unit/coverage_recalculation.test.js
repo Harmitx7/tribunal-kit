@@ -19,7 +19,11 @@ describe('Phase 24 — Coverage Recalculation Unit Tests', () => {
       C4: { status: 'UNTESTED' },
     };
 
-    const resPartial = engine.recalculateCertification('dummy-skill', mockClaims, claimStatesPartial);
+    const resPartial = engine.recalculateCertification(
+      'dummy-skill',
+      mockClaims,
+      claimStatesPartial,
+    );
     expect(resPartial.coverage).toBe(50);
     expect(resPartial.status).toBe('PARTIAL');
 
@@ -49,11 +53,9 @@ describe('Phase 24 — Coverage Recalculation Unit Tests', () => {
   });
 
   test('reference-only skills remain strictly UNPROVABLE at 0% coverage', () => {
-    const resRef = engine.recalculateCertification(
-      'apple-design',
-      mockClaims,
-      { C1: { status: 'VERIFIED' } }
-    );
+    const resRef = engine.recalculateCertification('apple-design', mockClaims, {
+      C1: { status: 'VERIFIED' },
+    });
     expect(resRef.status).toBe('UNPROVABLE');
     expect(resRef.coverage).toBe(0);
   });

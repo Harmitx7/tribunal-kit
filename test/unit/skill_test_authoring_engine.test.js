@@ -31,7 +31,10 @@ describe('skill_test_authoring_engine unit tests', () => {
   });
 
   it('2. extractTestableClaims extracts contract inputs, outputs, and invariants', () => {
-    const claims = extractTestableClaims('api-patterns', { name: 'api-patterns', version: '6.0.0' });
+    const claims = extractTestableClaims('api-patterns', {
+      name: 'api-patterns',
+      version: '6.0.0',
+    });
     expect(claims.length).toBeGreaterThan(0);
 
     const inputClaim = claims.find(c => c.type === 'INPUT_VALIDATION');
@@ -60,7 +63,12 @@ describe('skill_test_authoring_engine unit tests', () => {
     const claims = extractTestableClaims('lint-and-validate', { name: 'lint-and-validate' });
     const claim = claims.find(c => c.type === 'OUTPUT_CONFORMANCE') || claims[0];
 
-    const testSpec = generateTestSpecification('lint-and-validate', { name: 'lint-and-validate' }, claim, TEST_TYPES.POSITIVE);
+    const testSpec = generateTestSpecification(
+      'lint-and-validate',
+      { name: 'lint-and-validate' },
+      claim,
+      TEST_TYPES.POSITIVE,
+    );
 
     expect(testSpec.id).toMatch(/^TEST-lint-and-validate-positive-/);
     expect(testSpec.questions.what).toBeDefined();

@@ -16,17 +16,17 @@ function record(p) {
   }
 }
 
-fs.readFileSync = function(p, options) {
+fs.readFileSync = function (p, options) {
   record(p);
   return originalReadFileSync.apply(this, arguments);
 };
 
-fs.existsSync = function(p) {
+fs.existsSync = function (p) {
   record(p);
   return originalExistsSync.apply(this, arguments);
 };
 
-fs.readdirSync = function(p, options) {
+fs.readdirSync = function (p, options) {
   record(p);
   return originalReaddirSync.apply(this, arguments);
 };

@@ -51,7 +51,7 @@ function analyzeCoverageGaps(skillId, existingInventory = [], options = {}) {
     skillTests,
     reviewPackages,
     executionResults,
-    options
+    options,
   );
 
   const gaps = [];
@@ -85,7 +85,11 @@ function analyzeCoverageGaps(skillId, existingInventory = [], options = {}) {
       staleClaims.push({ ...claim, status });
       gaps.push({ ...claim, status, priority: assignClaimPriority(claim) });
     } else {
-      gaps.push({ ...claim, status: certEngine.CLAIM_STATUS.UNTESTED, priority: assignClaimPriority(claim) });
+      gaps.push({
+        ...claim,
+        status: certEngine.CLAIM_STATUS.UNTESTED,
+        priority: assignClaimPriority(claim),
+      });
     }
   }
 
@@ -183,7 +187,10 @@ function authorExpansionTest(skillName, claim, testType = 'POSITIVE', options = 
     .digest('hex')
     .slice(0, 8)}`;
 
-  let parameters = { task: 'Authoritative secondary claim verification', target_file: 'manifest.json' };
+  let parameters = {
+    task: 'Authoritative secondary claim verification',
+    target_file: 'manifest.json',
+  };
   let expectedOutputs = [];
   let expectedExitStatus = 0;
   let forbiddenOutputs = [];
@@ -215,9 +222,13 @@ function authorExpansionTest(skillName, claim, testType = 'POSITIVE', options = 
     ];
     failureDefinition = `Output parameter '${claim.field}' missing or type mismatch`;
   } else if (claim.type === 'SAFETY_INVARIANT') {
-    parameters = { task: 'Validate network and filesystem containment', target_file: 'sandbox.env' };
+    parameters = {
+      task: 'Validate network and filesystem containment',
+      target_file: 'sandbox.env',
+    };
     expectedExitStatus = 0;
-    failureDefinition = 'Violation of containment boundary or unauthorized external resource access';
+    failureDefinition =
+      'Violation of containment boundary or unauthorized external resource access';
   } else if (claim.type === 'BEHAVIORAL_SPEC') {
     parameters = { task: 'Verify domain activation boundaries', target_file: 'contract.md' };
     expectedExitStatus = 0;
@@ -291,7 +302,7 @@ function authorExpansionTest(skillName, claim, testType = 'POSITIVE', options = 
   const minQuality = isSecurity ? 90 : 80;
   if (quality.score < minQuality) {
     throw new Error(
-      `Test quality ${quality.score} is below required threshold ${minQuality} for ${skillName}`
+      `Test quality ${quality.score} is below required threshold ${minQuality} for ${skillName}`,
     );
   }
 
@@ -303,9 +314,13 @@ function reviewExpansionTest(test, reviewerName, options = {}) {
   const isSecurity = test.risk === 'CRITICAL';
 
   if (isSecurity) {
-    if (!reviewerName || reviewerName.toLowerCase().includes('auto') || reviewerName.toLowerCase().includes('bot')) {
+    if (
+      !reviewerName ||
+      reviewerName.toLowerCase().includes('auto') ||
+      reviewerName.toLowerCase().includes('bot')
+    ) {
       throw new Error(
-        'SECURITY_GATE_VIOLATION: Security-classified tests require explicit human review (Tribunal Certified Security Officer)'
+        'SECURITY_GATE_VIOLATION: Security-classified tests require explicit human review (Tribunal Certified Security Officer)',
       );
     }
   }
@@ -315,7 +330,8 @@ function reviewExpansionTest(test, reviewerName, options = {}) {
     skill_id: test.skill_id,
     review_decision: 'APPROVED',
     reviewer: reviewerName || 'Tribunal Senior QA Reviewer',
-    review_reason: 'Specification independently authored from authoritative contract and verified for non-circularity',
+    review_reason:
+      'Specification independently authored from authoritative contract and verified for non-circularity',
     review_date: new Date().toISOString(),
     source_evidence: test.evidence_sources,
     independence_analysis: test.independence,
@@ -349,7 +365,7 @@ function executeExpansionTest(test, options = {}) {
     try {
       let exitCode = test.expected.exit_status;
       let outputs = {};
-      let sideEffects = [];
+      const sideEffects = [];
 
       if (test.test_type === 'NEGATIVE') {
         exitCode = 1;
@@ -371,9 +387,13 @@ function executeExpansionTest(test, options = {}) {
 
       // Check exit code
       if (obs.exit_code === test.expected.exit_status) {
-        assertionsPassed.push(`exit_status_match: expected ${test.expected.exit_status}, got ${obs.exit_code}`);
+        assertionsPassed.push(
+          `exit_status_match: expected ${test.expected.exit_status}, got ${obs.exit_code}`,
+        );
       } else {
-        assertionsFailed.push(`exit_status_mismatch: expected ${test.expected.exit_status}, got ${obs.exit_code}`);
+        assertionsFailed.push(
+          `exit_status_mismatch: expected ${test.expected.exit_status}, got ${obs.exit_code}`,
+        );
       }
 
       // Check outputs
@@ -384,7 +404,9 @@ function executeExpansionTest(test, options = {}) {
             if (actualType === expOut.type) {
               assertionsPassed.push(`output_type_match: ${expOut.field} is ${expOut.type}`);
             } else {
-              assertionsFailed.push(`output_type_mismatch: ${expOut.field} expected ${expOut.type}, got ${actualType}`);
+              assertionsFailed.push(
+                `output_type_mismatch: ${expOut.field} expected ${expOut.type}, got ${actualType}`,
+              );
             }
           } else {
             assertionsFailed.push(`output_missing: ${expOut.field}`);
@@ -417,7 +439,9 @@ function executeExpansionTest(test, options = {}) {
   }
 
   const allPassed = runs.every(r => r.passed);
-  const repClass = allPassed ? certEngine.REPEATABILITY.DETERMINISTIC : certEngine.REPEATABILITY.FAILED;
+  const repClass = allPassed
+    ? certEngine.REPEATABILITY.DETERMINISTIC
+    : certEngine.REPEATABILITY.FAILED;
 
   return {
     test_id: test.id,

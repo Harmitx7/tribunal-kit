@@ -15,10 +15,17 @@ describe('Evidence Promotion Engine Unit Tests', () => {
     claim: { id: 'CLM-promo-1', statement: 'Output format verified' },
     test_type: 'POSITIVE',
     review: { status: 'APPROVED' },
-    independence: { verified: true, expectation_source: 'contract.outputs', implementation_source: 'skill.runtime_execution' },
+    independence: {
+      verified: true,
+      expectation_source: 'contract.outputs',
+      implementation_source: 'skill.runtime_execution',
+    },
     evidence_sources: [
       {
-        source_hash: crypto.createHash('sha256').update(fs.readFileSync('./.agent/skills/api-patterns/SKILL.md', 'utf8')).digest('hex'),
+        source_hash: crypto
+          .createHash('sha256')
+          .update(fs.readFileSync('./.agent/skills/api-patterns/SKILL.md', 'utf8'))
+          .digest('hex'),
       },
     ],
   };
@@ -51,7 +58,11 @@ describe('Evidence Promotion Engine Unit Tests', () => {
       review: { status: 'DRAFT' },
     };
 
-    const promo = promoteEvidence(unapprovedSpec, { review_decision: 'PENDING' }, validExecutionResult);
+    const promo = promoteEvidence(
+      unapprovedSpec,
+      { review_decision: 'PENDING' },
+      validExecutionResult,
+    );
     expect(promo.promoted).toBe(false);
     expect(promo.code).toBe('PROMOTION_REJECTED');
     expect(promo.reason).toContain('UNAPPROVED_TEST');

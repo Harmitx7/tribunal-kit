@@ -17,10 +17,23 @@ describe('Skill Certification Pipeline Integration', () => {
     const claims = extractTestableClaims(skillName, { name: skillName });
 
     const results = [];
-    for (const claim of claims.filter(c => c.testability === 'DIRECT' || c.testability === 'DERIVABLE')) {
-      const test = generateTestSpecification(skillName, { name: skillName }, claim, TEST_TYPES.POSITIVE);
+    for (const claim of claims.filter(
+      c => c.testability === 'DIRECT' || c.testability === 'DERIVABLE',
+    )) {
+      const test = generateTestSpecification(
+        skillName,
+        { name: skillName },
+        claim,
+        TEST_TYPES.POSITIVE,
+      );
       const pkg = prepareReviewPackage(test);
-      approveSpecification(pkg, test, REVIEW_STATES.APPROVED, 'Lead Reviewer', 'Verified independent expectation');
+      approveSpecification(
+        pkg,
+        test,
+        REVIEW_STATES.APPROVED,
+        'Lead Reviewer',
+        'Verified independent expectation',
+      );
       const res = executeApprovedTest(test);
       results.push(res);
     }

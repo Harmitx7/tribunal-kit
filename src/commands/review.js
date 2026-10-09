@@ -32,6 +32,12 @@ const { ReviewExecutor } = require('../execution/review_executor');
 const { VerdictAggregator } = require('../execution/verdict_aggregator');
 const { ProviderAdapter } = require('../execution/provider_adapter');
 const { evaluateDecision } = require('../system1/decision_engine');
+const { buildDecisionPlan } = require('../system1/decision_plan');
+const { dynamicReviewerSelection } = require('../system1/reviewer_selection');
+const { progressiveContextExpansion } = require('../system1/progressive_context');
+const { executeWithEvidenceRequests } = require('../system1/evidence_resolver');
+const { executeWithConfidenceEscalation } = require('../system1/confidence_evaluator');
+const { REVIEWER_CATALOG } = require('../system1/reviewer_orchestrator');
 
 // ─── LLM CLIENT (EXPERIMENTAL ONLY) ─────────────────────────────────────────
 
@@ -776,12 +782,20 @@ async function cmdReview(flags, argv, quiet) {
       process.exit(1);
     }
 
-    // 1. Run deterministic decision engine
+    // 1. Run deterministic decision engine -> Decision Plan -> Pruning
     const decision = evaluateDecision({
       task,
       diff: customDiff,
       files,
     });
+
+    const decisionPlan = buildDecisionPlan({
+      task,
+      diff: customDiff,
+      files,
+    });
+
+    const selection = dynamicReviewerSelection(decisionPlan, REVIEWER_CATALOG);
 
     const forcedReviewers = reviewersArg
       ? reviewersArg
@@ -790,10 +804,15 @@ async function cmdReview(flags, argv, quiet) {
           .filter(Boolean)
       : null;
 
-    const selectedReviewers = forcedReviewers ||
-      decision.reviewers?.selected?.map(r =>
-        typeof r === 'string' ? r : r.reviewer || r.name,
-      ) || ['security-auditor', 'logic-reviewer'];
+    const selectedReviewers = forcedReviewers || selection.selected_reviewers;
+
+    const contextExpansion = progressiveContextExpansion({
+      decisionPlan,
+      selectedReviewers,
+      task,
+      diff: customDiff,
+      files,
+    });
 
     // 2. Mode: PLAN
     if (modePlan) {
@@ -808,6 +827,8 @@ async function cmdReview(flags, argv, quiet) {
               routing: decision.routing,
               socratic_gate: decision.socratic_gate,
               selected_reviewers: selectedReviewers,
+              pruning_contract: selection,
+              context_expansion: contextExpansion,
               signals: decision.signals,
               evidence_summary: decision.evidence_summary,
               explanation: decision.explanation,
@@ -838,6 +859,17 @@ async function cmdReview(flags, argv, quiet) {
         log(
           `  Reason:          ${decision.explanation?.why_tier_selected || 'Classified by volume and risk patterns.'}`,
         );
+        log(`  ${c('gray', '─'.repeat(50))}`);
+        log(
+          `  Context Level:   ${c('cyan', contextExpansion.expansion_level)} (${contextExpansion.source})`,
+        );
+        log(
+          `  Context Items:   ${contextExpansion.budget.actual_items} / ${contextExpansion.budget.max_items}`,
+        );
+        log(
+          `  Context Tokens:  ${contextExpansion.budget.actual_tokens} / ${contextExpansion.budget.max_tokens}`,
+        );
+        log(`  Stop Condition:  ${contextExpansion.stop_condition}`);
         log('');
       }
       return;
@@ -852,11 +884,15 @@ async function cmdReview(flags, argv, quiet) {
         timeoutMs: 30000,
       });
 
-      const execRes = await executor.executeReview({
+      const execRes = await executeWithConfidenceEscalation({
+        executor,
         decision,
-        code: customDiff,
+        decisionPlan: decision,
+        pruningContract: selection,
+        customDiff,
         task,
-        reviewers: selectedReviewers,
+        initialReviewers: selectedReviewers,
+        files,
       });
 
       const aggregated = VerdictAggregator.aggregate({
@@ -864,6 +900,7 @@ async function cmdReview(flags, argv, quiet) {
         decision,
         tier: decision.tier,
         reviewRunId: execRes.reviewRunId,
+        confidence_decision: execRes.confidence_decision,
       });
 
       if (outputJson) {
@@ -876,9 +913,11 @@ async function cmdReview(flags, argv, quiet) {
               tier: decision.tier,
               tier_name: decision.tier_name,
               reviewers: selectedReviewers,
+              confidence: execRes.confidence_decision,
               execution: {
                 duration_ms: execRes.durationMs,
                 telemetry: execRes.telemetry,
+                evidence_requests: execRes.evidence_requests,
                 results: execRes.results,
               },
               aggregated,

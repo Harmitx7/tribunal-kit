@@ -12,6 +12,29 @@
 All notable changes to **Tribunal Kit** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
 
+## [9.2.9] — 2026-10-08 — 🚀 System-1 Capabilities 1-5 & Forensic Audit Hardening
+
+> [!IMPORTANT]
+> **Release 9.2.9** implements and certifies the core Tribunal Kit Capabilities 1 through 5, establishing a deeply deterministic, secure, and progressively expanding context architecture for the System-1 cognitive core. This release includes the integration of an explicit Decision Plan, Dynamic Reviewer Pruning, Progressive Context Expansion, Evidence Requests, and Confidence-Driven Review Depth, immediately followed by a hostile forensic audit resolving P0, P1, and P2 boundary bypass vulnerabilities.
+
+### Security & Hardening
+
+- **Progressive Context Fallback Budget (P0):** Hardened `_buildFallbackContext` within `progressive_context.js` to strictly enforce safety execution boundaries, terminating execution with `SYSTEM_ERROR` when structural minimums breach token budgets instead of silently bypassing.
+- **Deduplication Canonicalization Bypass (P2):** Hardened `resolveEvidenceRequests` within `evidence_resolver.js` to explicitly canonicalize target paths _before_ deduplication generation, ensuring path-traversal-obfuscated files are structurally prevented from spanning boundaries.
+
+### Added
+
+- **Explicit Decision Plan (Capability 1):** Codified deterministic, isolated decision plans routing execution constraints directly into reviewer orchestration.
+- **Dynamic Reviewer Pruning (Capability 2):** Introduced deterministic omission of reviewers lacking operational relevancy, maximizing execution throughput.
+- **Progressive Context Expansion (Capability 3):** Established a rigorous tiered extraction model isolating reviewer payload sizes securely within budget restraints.
+- **Reviewer Evidence Requests (Capability 4):** Integrated dynamic and secure evidence requests resolved actively across strict normalization checks.
+- **Confidence-Driven Review Depth (Capability 5):** Enabled deterministic score validation where insufficient confidence safely escalates resolution operations.
+
+### Fixed
+
+- **Fingerprint Non-Determinism (P1):** Removed temporal identifiers (`reviewRunId`) from generating semantic fingerprints across `confidence_evaluator.js`, locking behavioral hashes to pure deterministic 100/100 outputs.
+- **Repository Hygiene:** Executed deep repository pruning of temporary `benchmark-stress-results.json`, localized `certify_cap5_determinism.js` audit tools, and transient `scratch/` execution boundaries generated during active testing.
+
 ## [9.2.8] — 2026-10-07 — 🚀 Premium TUI, Skill Engineering & Security Remediation
 
 > [!IMPORTANT]

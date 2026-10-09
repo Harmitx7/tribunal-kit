@@ -287,18 +287,22 @@ async function cmdInit(flags, quiet = false) {
         // System-1 Installation Flow
         const { System1Provider } = require('../system1/provider');
         const system1 = new System1Provider();
-        
+
         let needsPrompt = false;
         let isUpdate = false;
         let isCorrupt = false;
-        
+
         if (system1.isAvailable()) {
           const { checkHealth, getTargetVersion, getInstalledVersion } = require('./system1');
           const healthy = await checkHealth();
           if (healthy) {
             const installed = getInstalledVersion();
             const target = getTargetVersion();
-            if (installed.model === target.model && installed.laya === target.laya && installed.onnx === target.onnx) {
+            if (
+              installed.model === target.model &&
+              installed.laya === target.laya &&
+              installed.onnx === target.onnx
+            ) {
               console.log();
               (0, logger_1.log)('Checking System-1...');
               console.log();
@@ -347,7 +351,7 @@ async function cmdInit(flags, quiet = false) {
               (0, logger_1.log)('    • faster impact classification');
               (0, logger_1.log)('');
             }
-            
+
             const readline = require('readline');
             const rl = readline.createInterface({
               input: process.stdin,
@@ -372,7 +376,9 @@ async function cmdInit(flags, quiet = false) {
                   (0, logger_1.log)('');
                   (0, logger_1.log)('  System-1 installation skipped.');
                   (0, logger_1.log)('');
-                  (0, logger_1.log)('  Tribunal Kit will continue using its deterministic fallback.');
+                  (0, logger_1.log)(
+                    '  Tribunal Kit will continue using its deterministic fallback.',
+                  );
                   (0, logger_1.log)('');
                   (0, logger_1.log)('  You can install System-1 later with:');
                   (0, logger_1.log)('    tk system1 setup');
@@ -414,7 +420,7 @@ async function generateIDEBridges(targetDir, agentDest, dryRun = false, isMinima
   } catch {
     // rules file doesn't exist
   }
-  
+
   const kernelFile = path_1.default.join(agentDest, 'rules', 'kernel.md');
   let bridgeRulesContent = '';
   let bridgeSource = rulesFilename;
@@ -427,7 +433,7 @@ async function generateIDEBridges(targetDir, agentDest, dryRun = false, isMinima
   if (!bridgeRulesContent) {
     bridgeRulesContent = rulesContent;
   }
-  
+
   const writeBridge = async (filePath, content, label) => {
     if (dryRun) {
       (0, logger_1.dbg)(`  would create: ${filePath}`);

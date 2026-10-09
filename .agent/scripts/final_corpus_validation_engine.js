@@ -49,7 +49,11 @@ function validateClaimUniqueness(claimRegistry = []) {
     if (normStatement) {
       const key = `${claim.skill_id}::${normStatement}`;
       if (seenStatements.has(key)) {
-        duplicateStatements.push({ skill_id: claim.skill_id, statement: normStatement, original: seenStatements.get(key) });
+        duplicateStatements.push({
+          skill_id: claim.skill_id,
+          statement: normStatement,
+          original: seenStatements.get(key),
+        });
       } else {
         seenStatements.set(key, claim.claim_id);
       }
@@ -98,7 +102,11 @@ function validateEvidenceUniqueness(evidenceRegistry = []) {
 }
 
 // ─── 2. Evidence Lineage Graph Validation ────────────────────────────────────
-function validateEvidenceLineageGraph(evidenceRegistry = [], claimRegistry = [], testRegistry = []) {
+function validateEvidenceLineageGraph(
+  evidenceRegistry = [],
+  claimRegistry = [],
+  testRegistry = [],
+) {
   const claimMap = new Map();
   for (const c of claimRegistry) claimMap.set(c.claim_id, c);
 
@@ -167,7 +175,10 @@ function validateSourceFreshness(skills = [], evidenceRegistry = [], agentDir = 
     if (!currentHash) {
       const skillPath = path.join(baseDir, ev.skill_id, 'SKILL.md');
       if (fs.existsSync(skillPath)) {
-        currentHash = crypto.createHash('sha256').update(fs.readFileSync(skillPath, 'utf8')).digest('hex');
+        currentHash = crypto
+          .createHash('sha256')
+          .update(fs.readFileSync(skillPath, 'utf8'))
+          .digest('hex');
         sourceCache.set(ev.skill_id, currentHash);
       }
     }
@@ -206,7 +217,7 @@ function validateReviewerAuthority(evidenceRegistry = [], reviewPackages = []) {
       ev.skill_id.includes('audit-and-fix') ||
       ev.skill_id.includes('zero-trust');
 
-    const reviewer = ev.reviewer || (reviewMap.get(ev.test_id)?.reviewer);
+    const reviewer = ev.reviewer || reviewMap.get(ev.test_id)?.reviewer;
 
     if (!reviewer) {
       invalidReviews.push({ evidence_id: ev.evidence_id, error: 'MISSING_REVIEWER' });
@@ -215,10 +226,18 @@ function validateReviewerAuthority(evidenceRegistry = [], reviewPackages = []) {
 
     if (isSecurity) {
       if (reviewer.toLowerCase().includes('auto') || reviewer.toLowerCase().includes('bot')) {
-        invalidReviews.push({ evidence_id: ev.evidence_id, reviewer, error: 'AUTOMATED_SECURITY_REVIEW' });
+        invalidReviews.push({
+          evidence_id: ev.evidence_id,
+          reviewer,
+          error: 'AUTOMATED_SECURITY_REVIEW',
+        });
       }
       if (ev.trust_level !== 'E5') {
-        invalidReviews.push({ evidence_id: ev.evidence_id, trust_level: ev.trust_level, error: 'SECURITY_E5_REQUIRED' });
+        invalidReviews.push({
+          evidence_id: ev.evidence_id,
+          trust_level: ev.trust_level,
+          error: 'SECURITY_E5_REQUIRED',
+        });
       }
     }
   }
@@ -267,7 +286,9 @@ function validateTerminalClassifications(terminalClassifications = [], totalCorp
   }
 
   if (seenSkills.size !== totalCorpusCount) {
-    errors.push(`CORPUS_SIZE_MISMATCH: Expected ${totalCorpusCount} classified skills, found ${seenSkills.size}`);
+    errors.push(
+      `CORPUS_SIZE_MISMATCH: Expected ${totalCorpusCount} classified skills, found ${seenSkills.size}`,
+    );
   }
 
   const valid = errors.length === 0 && counts.PARTIAL === 0 && counts.UNCLASSIFIED === 0;

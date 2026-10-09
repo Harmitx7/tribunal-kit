@@ -29,7 +29,11 @@ describe('Phase 26 — Duplicate Claim Detection Unit Tests', () => {
   });
 
   test('detectDuplicateClaims detects equivalent claim statement', () => {
-    const candidate = { id: 'CLM-NEW-99', skill_id: 'test-skill', statement: 'Parameter foo must be string' };
+    const candidate = {
+      id: 'CLM-NEW-99',
+      skill_id: 'test-skill',
+      statement: 'Parameter foo must be string',
+    };
     const res = valEngine.detectDuplicateClaims(existingClaims, candidate);
     expect(res.duplicate).toBe(true);
     expect(res.code).toBe('DUPLICATE_CLAIM_STATEMENT');

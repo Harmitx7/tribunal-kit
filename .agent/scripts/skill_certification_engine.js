@@ -103,7 +103,13 @@ function checkSourceFreshness(testSpecification, agentDir = null) {
 }
 
 // ─── Evidence Promotion Gate (Section 13) ───────────────────────────────────
-function promoteEvidence(testSpecification, reviewPackage, executionResult, skillRaw = {}, options = {}) {
+function promoteEvidence(
+  testSpecification,
+  reviewPackage,
+  executionResult,
+  skillRaw = {},
+  options = {},
+) {
   const skillId = testSpecification.skill_id;
   const isSecurity =
     skillId.includes('security') ||
@@ -113,7 +119,10 @@ function promoteEvidence(testSpecification, reviewPackage, executionResult, skil
     skillId.includes('zero-trust');
 
   // Gate 1: Test Review Validation
-  if (testSpecification.review?.status !== 'APPROVED' || reviewPackage?.review_decision !== 'APPROVED') {
+  if (
+    testSpecification.review?.status !== 'APPROVED' ||
+    reviewPackage?.review_decision !== 'APPROVED'
+  ) {
     return {
       promoted: false,
       code: 'PROMOTION_REJECTED',
@@ -124,11 +133,16 @@ function promoteEvidence(testSpecification, reviewPackage, executionResult, skil
   // Gate 2: Security Human Approval Gate
   if (isSecurity) {
     const reviewer = String(reviewPackage.reviewer || '');
-    if (!reviewer || reviewer.toLowerCase().includes('auto') || reviewer.toLowerCase().includes('bot')) {
+    if (
+      !reviewer ||
+      reviewer.toLowerCase().includes('auto') ||
+      reviewer.toLowerCase().includes('bot')
+    ) {
       return {
         promoted: false,
         code: 'PROMOTION_REJECTED',
-        reason: 'SECURITY_GATE_FAILED: Security-classified skills require verified human reviewer approval',
+        reason:
+          'SECURITY_GATE_FAILED: Security-classified skills require verified human reviewer approval',
       };
     }
   }
@@ -138,7 +152,8 @@ function promoteEvidence(testSpecification, reviewPackage, executionResult, skil
     return {
       promoted: false,
       code: 'PROMOTION_REJECTED',
-      reason: 'CIRCULAR_OR_DEPENDENT: Expectation is not independently verified from implementation',
+      reason:
+        'CIRCULAR_OR_DEPENDENT: Expectation is not independently verified from implementation',
     };
   }
 
@@ -281,7 +296,13 @@ function revokeCertification(skillId, reason, reviewerName = 'Tribunal Security 
 }
 
 // ─── Claim-Level Evaluation & Aggregation (Sections 6-8) ────────────────────
-function evaluateClaimStates(claims, testInventory, reviewPackages, executionResults, options = {}) {
+function evaluateClaimStates(
+  claims,
+  testInventory,
+  reviewPackages,
+  executionResults,
+  options = {},
+) {
   const claimStates = {};
 
   for (const claim of claims) {
@@ -452,7 +473,11 @@ function evaluateSkillCertification(skillName, claims, claimStates, options = {}
     }
 
     if (cs.status === CLAIM_STATUS.VERIFIED) verifiedCount++;
-    else if (cs.status === CLAIM_STATUS.EXECUTION_FAILED || cs.status === CLAIM_STATUS.TEST_REJECTED) failedCount++;
+    else if (
+      cs.status === CLAIM_STATUS.EXECUTION_FAILED ||
+      cs.status === CLAIM_STATUS.TEST_REJECTED
+    )
+      failedCount++;
     else if (cs.status === CLAIM_STATUS.STALE) staleCount++;
     else unprovableCount++;
   }

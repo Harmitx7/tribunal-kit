@@ -32,7 +32,7 @@ const RGB = {
   SLATE_900: [15, 15, 20],
   SLATE_800: [28, 28, 35],
   SLATE_700: [45, 45, 55],
-  
+
   ZINC_600: [82, 82, 91],
   ZINC_500: [113, 113, 122],
   ZINC_400: [161, 161, 170],
@@ -41,17 +41,17 @@ const RGB = {
   PURE_WHITE: [255, 255, 255],
 
   // Accents
-  FLAME: [225, 75, 45],       // Punchier Orange-Red
+  FLAME: [225, 75, 45], // Punchier Orange-Red
   FLAME_MUTED: [180, 60, 40],
-  CORAL_BRIGHT: [245, 120, 95], 
-  AMBER: [245, 158, 11], 
-  GOLD: [255, 215, 0], 
+  CORAL_BRIGHT: [245, 120, 95],
+  AMBER: [245, 158, 11],
+  GOLD: [255, 215, 0],
 
   // Status
-  EMERALD: [35, 195, 105],    // Sharper Green
+  EMERALD: [35, 195, 105], // Sharper Green
   EMERALD_DIM: [20, 90, 50],
-  CYAN: [56, 189, 248], 
-  ROSE: [244, 63, 94], 
+  CYAN: [56, 189, 248],
+  ROSE: [244, 63, 94],
   PURPLE: [168, 85, 247],
 };
 

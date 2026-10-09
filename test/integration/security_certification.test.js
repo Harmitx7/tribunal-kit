@@ -10,14 +10,21 @@ const {
 describe('Security Skill Certification Integration Tests', () => {
   const securitySkill = 'api-security-auditor';
   const skillFile = './.agent/skills/api-security-auditor/SKILL.md';
-  const sourceHash = crypto.createHash('sha256').update(fs.readFileSync(skillFile, 'utf8')).digest('hex');
+  const sourceHash = crypto
+    .createHash('sha256')
+    .update(fs.readFileSync(skillFile, 'utf8'))
+    .digest('hex');
 
   const baseSecuritySpec = {
     id: 'TEST-sec-gate-1',
     skill_id: securitySkill,
     claim: { id: 'CLM-sec-1', statement: 'API auth enforcement' },
     review: { status: 'APPROVED' },
-    independence: { verified: true, expectation_source: 'contract.invariants', implementation_source: 'skill.runtime_execution' },
+    independence: {
+      verified: true,
+      expectation_source: 'contract.invariants',
+      implementation_source: 'skill.runtime_execution',
+    },
     evidence_sources: [{ source_hash: sourceHash }],
   };
 

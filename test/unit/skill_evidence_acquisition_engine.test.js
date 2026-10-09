@@ -87,7 +87,14 @@ describe('Skill Evidence Acquisition Engine', () => {
     });
 
     it('14. Stale evidence is detected when source file is missing', () => {
-      const ev = createEvidenceRecord('TEST', '/nonexistent/file.js', 'test-skill', 'h1', 'h2', 'E2');
+      const ev = createEvidenceRecord(
+        'TEST',
+        '/nonexistent/file.js',
+        'test-skill',
+        'h1',
+        'h2',
+        'E2',
+      );
       expect(isStaleEvidence(ev)).toBe(true);
     });
   });

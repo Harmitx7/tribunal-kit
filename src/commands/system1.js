@@ -7,6 +7,12 @@ const child_process = require('child_process');
 const readline = require('readline');
 const { log, err, dim, c, bold } = require('../utils/logger');
 const { getLayaDir, getConfigPath } = require('../system1/provider');
+const {
+  buildDecisionPlan,
+  validateDecisionPlan,
+  dynamicReviewerSelection,
+  REVIEWER_CATALOG,
+} = require('../system1/index');
 
 function promptConfirm(question) {
   if (process.env.NODE_ENV === 'test') return Promise.resolve(true);
@@ -106,7 +112,7 @@ function getTargetVersion() {
   return {
     laya: RECEPTRON_LAYA_VERSION,
     onnx: ONNXRUNTIME_NODE_VERSION,
-    model: TARGET_MODEL_VERSION
+    model: TARGET_MODEL_VERSION,
   };
 }
 
@@ -119,33 +125,38 @@ function getInstalledVersion() {
       config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     } catch {}
   }
-  
+
   let installedLayaVer = config.laya_version || 'Unknown';
   let installedOnnxVer = config.onnxruntime_version || 'Unknown';
-  let modelVer = config.model_version || 'Unknown';
+  const modelVer = config.model_version || 'Unknown';
 
   if (fs.existsSync(pkgLockPath)) {
     try {
-       const pkgLock = JSON.parse(fs.readFileSync(pkgLockPath, 'utf8'));
-       installedLayaVer =
-         pkgLock.dependencies?.['@receptron/laya']?.version ||
-         pkgLock.packages?.['node_modules/@receptron/laya']?.version ||
-         installedLayaVer;
-       installedOnnxVer =
-         pkgLock.dependencies?.['onnxruntime-node']?.version ||
-         pkgLock.packages?.['node_modules/onnxruntime-node']?.version ||
-         installedOnnxVer;
+      const pkgLock = JSON.parse(fs.readFileSync(pkgLockPath, 'utf8'));
+      installedLayaVer =
+        pkgLock.dependencies?.['@receptron/laya']?.version ||
+        pkgLock.packages?.['node_modules/@receptron/laya']?.version ||
+        installedLayaVer;
+      installedOnnxVer =
+        pkgLock.dependencies?.['onnxruntime-node']?.version ||
+        pkgLock.packages?.['node_modules/onnxruntime-node']?.version ||
+        installedOnnxVer;
     } catch {}
   }
 
-  return { laya: installedLayaVer, onnx: installedOnnxVer, model: modelVer, enabled: !!config.enabled };
+  return {
+    laya: installedLayaVer,
+    onnx: installedOnnxVer,
+    model: modelVer,
+    enabled: !!config.enabled,
+  };
 }
 
 async function checkHealth() {
   const layaDir = getLayaDir();
   const modelsDir = path.join(layaDir, 'models');
   if (!fs.existsSync(modelsDir)) return false;
-  
+
   const expectedHashes = {
     'laya.onnx': 'a874eb254b58b0fcb1e7ad56fbb188c29d64e08c9a46b689433e1f52c66dba1e',
     'laya.onnx.data': '487746363a8da57bcadb4345352997d22a0fb90d70aa22c6856668d023242aba',
@@ -244,7 +255,7 @@ async function cmdSystem1Setup(quiet, mode = 'setup') {
       // Step 1: Installing isolated runtime
       const s1 = new Spinner('Installing isolated runtime', 5, 1, quiet);
       s1.start('Installing dependencies...');
-      
+
       fs.copyFileSync(
         path.join(__dirname, '../system1/laya-package.json'),
         path.join(layaDir, 'package.json'),
@@ -265,7 +276,7 @@ async function cmdSystem1Setup(quiet, mode = 'setup') {
         const nodeDir = path.dirname(process.execPath);
         const defaultNpmCli = path.join(nodeDir, 'node_modules', 'npm', 'bin', 'npm-cli.js');
         if (!fs.existsSync(defaultNpmCli)) {
-          throw new Error("Could not securely locate npm-cli.js for direct execution on Windows.");
+          throw new Error('Could not securely locate npm-cli.js for direct execution on Windows.');
         }
         cmd = process.execPath;
         args = [defaultNpmCli, 'ci', '--prefix', layaDir, '--no-audit', '--no-fund'];
@@ -339,7 +350,7 @@ async function cmdSystem1Setup(quiet, mode = 'setup') {
       // Step 5: Health Check
       const s5 = new Spinner('Running health check', 5, 5, quiet);
       s5.start('Verifying...');
-      
+
       const pkgLockPath = path.join(layaDir, 'package-lock.json');
       let installedLayaVer = 'Unknown';
       let installedOnnxVer = 'Unknown';
@@ -443,14 +454,14 @@ async function cmdSystem1Status(quiet) {
   const layaDir = getLayaDir();
   const modelPath = path.join(layaDir, 'models', 'laya.onnx');
   const runtimePath = path.join(layaDir, 'node_modules', '@receptron', 'laya');
-  
+
   let config = null;
   if (fs.existsSync(configPath)) {
     try {
       config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     } catch {}
   }
-  
+
   const healthy = await checkHealth();
   const installed = getInstalledVersion();
   const target = getTargetVersion();
@@ -515,6 +526,99 @@ async function cmdSystem1Verify(quiet) {
   }
 }
 
+async function cmdSystem1Plan(flags, args, quiet) {
+  const isJson = flags.json || args.includes('--json');
+  const task =
+    flags.task || 'Build a structured Decision Plan for the existing System-1 implementation.';
+  const files = flags.files ? flags.files.split(',') : ['src/system1/decision_plan.js'];
+
+  const plan = buildDecisionPlan({
+    task,
+    files,
+    diff: flags.diff || '',
+    layaTier: flags.layaTier ? parseInt(flags.layaTier, 10) : null,
+  });
+
+  const validation = validateDecisionPlan(plan);
+  if (!validation.valid) {
+    if (isJson) {
+      console.log(JSON.stringify({ error: validation.error }, null, 2));
+    } else {
+      err(`Decision Plan Validation Failed: ${validation.error}`);
+    }
+    process.exitCode = 1;
+    return;
+  }
+
+  if (isJson) {
+    console.log(JSON.stringify(plan, null, 2));
+  } else {
+    log(`\nSYSTEM-1 DECISION PLAN\n`);
+    log(`Impact       T${plan.tier}`);
+    log(`Risk         ${plan.risk}`);
+    log(`Domains      ${plan.domains.join(', ').toUpperCase()}`);
+    log(`Ambiguity    ${plan.ambiguity}\n`);
+
+    log(`Review Policy`);
+    log(`  Required   ${plan.required_reviewers.join(', ')}`);
+    log(`  Optional   ${plan.optional_reviewers.join(', ')}\n`);
+
+    log(`Context`);
+    log(`  Budget     ${plan.context_budget.max_tokens} tokens`);
+    log(`  Evidence   ${plan.evidence_mode}\n`);
+
+    log(`Verification`);
+    plan.verification_requirements.forEach(v => log(`  ${v}`));
+    log('');
+
+    log(`Human Gate`);
+    log(`  ${plan.human_gate.required ? 'REQUIRED' : 'NOT REQUIRED'}\n`);
+
+    log(`Source`);
+    log(
+      `  ${plan.source === 'deterministic_fallback' ? 'DETERMINISTIC FALLBACK' : 'LAYA + DETERMINISTIC'}\n`,
+    );
+  }
+}
+
+async function cmdSystem1Reviewers(flags, args, quiet) {
+  const isJson = flags.json || args.includes('--json');
+  const task = flags.task || 'Add new MFA endpoint';
+  const files = flags.files ? flags.files.split(',') : ['src/auth/mfa.js'];
+
+  const plan = buildDecisionPlan({
+    task,
+    files,
+    diff: flags.diff || '',
+    layaTier: flags.layaTier ? parseInt(flags.layaTier, 10) : null,
+  });
+
+  const selection = dynamicReviewerSelection(plan, REVIEWER_CATALOG);
+
+  if (isJson) {
+    console.log(JSON.stringify(selection, null, 2));
+  } else {
+    log(`\nDYNAMIC REVIEWER PLAN\n`);
+    log(`Required`);
+    selection.required_reviewers.forEach(r => log(`  ${r}`));
+    if (selection.required_reviewers.length === 0) log(`  (none)`);
+    log('');
+    log(`Selected`);
+    selection.selected_reviewers.forEach(r => log(`  ${r}`));
+    if (selection.selected_reviewers.length === 0) log(`  (none)`);
+    log('');
+    log(`Pruned`);
+    selection.pruned_reviewers.forEach(r => log(`  ${r}`));
+    if (selection.pruned_reviewers.length === 0) log(`  (none)`);
+    log('');
+    log(`Reasons`);
+    selection.pruning_reasons.forEach(r => log(`  ${r}`));
+    log('');
+    log(`Source`);
+    log(`  ${selection.selection_source.toUpperCase()}\n`);
+  }
+}
+
 async function cmdSystem1(flags, args, quiet) {
   const rawArgs = args.slice(2);
   const subCommand = rawArgs.find(a => !a.startsWith('-') && a !== 'system1');
@@ -540,13 +644,19 @@ async function cmdSystem1(flags, args, quiet) {
     case 'status':
       await cmdSystem1Status(quiet);
       break;
+    case 'plan':
+      await cmdSystem1Plan(flags, args, quiet);
+      break;
+    case 'reviewers':
+      await cmdSystem1Reviewers(flags, args, quiet);
+      break;
     case 'clean':
     case 'uninstall':
       await cmdSystem1Clean(quiet);
       break;
     default:
       err(`Unknown system1 command: "${subCommand || ''}"`);
-      dim('Available: setup, update, repair, verify, disable, status, uninstall');
+      dim('Available: setup, update, repair, verify, disable, status, plan, uninstall');
       process.exitCode = 1;
   }
 }
@@ -558,5 +668,5 @@ module.exports = {
   ONNXRUNTIME_NODE_VERSION,
   checkHealth,
   getTargetVersion,
-  getInstalledVersion
+  getInstalledVersion,
 };

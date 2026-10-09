@@ -166,7 +166,9 @@ function extractTestableClaims(skillName, skillRaw = {}) {
   const claims = [];
   const agentDir = path.resolve(__dirname, '..');
   const skillFile = path.join(agentDir, 'skills', skillName, 'SKILL.md');
-  const content = fs.existsSync(skillFile) ? fs.readFileSync(skillFile, 'utf8') : (skillRaw.content || '');
+  const content = fs.existsSync(skillFile)
+    ? fs.readFileSync(skillFile, 'utf8')
+    : skillRaw.content || '';
   const fileHash = content ? crypto.createHash('sha256').update(content).digest('hex') : 'NO_FILE';
 
   const { contract } = parseContract(content);
@@ -391,7 +393,8 @@ function calculateTestQualityScore(test) {
   // 2. Expectation Authority (25%)
   let expectationAuthority = 0;
   const expSrc = test.independence?.expectation_source || '';
-  if (expSrc.startsWith('contract.outputs') || expSrc.startsWith('contract.inputs')) expectationAuthority += 25;
+  if (expSrc.startsWith('contract.outputs') || expSrc.startsWith('contract.inputs'))
+    expectationAuthority += 25;
   else if (expSrc.startsWith('contract.invariants')) expectationAuthority += 20;
   else if (expSrc.startsWith('documented_behavior')) expectationAuthority += 15;
   else if (expSrc.startsWith('verification.assertions')) expectationAuthority += 25;
@@ -408,7 +411,10 @@ function calculateTestQualityScore(test) {
 
   // 4. Observability (15%)
   let observabilityScore = 0;
-  if (test.expected && (test.expected.outputs?.length > 0 || test.expected.invariants?.length > 0)) {
+  if (
+    test.expected &&
+    (test.expected.outputs?.length > 0 || test.expected.invariants?.length > 0)
+  ) {
     observabilityScore += 10;
   }
   if (typeof test.expected?.exit_status === 'number') {
@@ -422,7 +428,10 @@ function calculateTestQualityScore(test) {
   if (test.questions?.failure_definition && test.questions.failure_definition.length >= 10) {
     failureSpecificity += 5;
   }
-  if (test.forbidden && (test.forbidden.outputs?.length > 0 || test.forbidden.side_effects?.length > 0)) {
+  if (
+    test.forbidden &&
+    (test.forbidden.outputs?.length > 0 || test.forbidden.side_effects?.length > 0)
+  ) {
     failureSpecificity += 5;
   }
   breakdown.failure_specificity = failureSpecificity;
@@ -462,12 +471,18 @@ function calculateTestRisk(test, skillName) {
 
 // ─── No-Op Detection (Section 26) ───────────────────────────────────────────
 function detectNoOp(test) {
-  const hasExpectedOutputs = Array.isArray(test.expected?.outputs) && test.expected.outputs.length > 0;
-  const hasExpectedInvariants = Array.isArray(test.expected?.invariants) && test.expected.invariants.length > 0;
-  const hasForbiddenSideEffects = Array.isArray(test.forbidden?.side_effects) && test.forbidden.side_effects.length > 0;
+  const hasExpectedOutputs =
+    Array.isArray(test.expected?.outputs) && test.expected.outputs.length > 0;
+  const hasExpectedInvariants =
+    Array.isArray(test.expected?.invariants) && test.expected.invariants.length > 0;
+  const hasForbiddenSideEffects =
+    Array.isArray(test.forbidden?.side_effects) && test.forbidden.side_effects.length > 0;
   const hasClaimStatement = !!test.claim?.statement && test.claim.statement.trim().length > 0;
 
-  if (!hasClaimStatement || (!hasExpectedOutputs && !hasExpectedInvariants && !hasForbiddenSideEffects)) {
+  if (
+    !hasClaimStatement ||
+    (!hasExpectedOutputs && !hasExpectedInvariants && !hasForbiddenSideEffects)
+  ) {
     return {
       is_no_op: true,
       reason: 'NO_EFFECT_TEST: test does not assert any declared behavior or safety invariant',
@@ -499,9 +514,9 @@ function generateTestSpecification(skillName, skillRaw, claim, testType = TEST_T
 
   // Default parameters based on claim & testType
   let parameters = { task: 'Verify compliance with standard', target_file: 'index.js' };
-  let expectedOutputs = [];
+  const expectedOutputs = [];
   let expectedExitStatus = 0;
-  let forbiddenOutputs = [];
+  const forbiddenOutputs = [];
   let failureDefinition = 'Output does not match contract schema or non-zero exit status';
 
   if (testType === TEST_TYPES.POSITIVE) {
@@ -546,10 +561,7 @@ function generateTestSpecification(skillName, skillRaw, claim, testType = TEST_T
       fixtures: ['sandbox_fixture'],
       parameters,
     },
-    preconditions: [
-      'sandbox_environment_clean',
-      'fixture_directory_isolated',
-    ],
+    preconditions: ['sandbox_environment_clean', 'fixture_directory_isolated'],
     expected: {
       outputs: expectedOutputs,
       invariants: ['filesystem_contained', 'no_unhandled_rejections'],
@@ -558,11 +570,7 @@ function generateTestSpecification(skillName, skillRaw, claim, testType = TEST_T
     },
     forbidden: {
       outputs: forbiddenOutputs,
-      side_effects: [
-        'filesystem_escape',
-        'unexpected_deletion',
-        'unauthorized_network',
-      ],
+      side_effects: ['filesystem_escape', 'unexpected_deletion', 'unauthorized_network'],
     },
     evidence_sources: [
       {
@@ -611,11 +619,14 @@ function validateSpecification(test) {
 
   if (!test.id) errors.push('Missing test.id');
   if (!test.skill_id) errors.push('Missing test.skill_id');
-  if (!test.claim || !test.claim.id || !test.claim.statement) errors.push('Missing or incomplete claim in test');
+  if (!test.claim || !test.claim.id || !test.claim.statement)
+    errors.push('Missing or incomplete claim in test');
   if (!test.independence || typeof test.independence.verified !== 'boolean') {
     errors.push('Missing independence metadata');
   } else if (!test.independence.verified) {
-    errors.push(`Test independence verification failed: ${test.independence.rejection_reason || 'Unknown'}`);
+    errors.push(
+      `Test independence verification failed: ${test.independence.rejection_reason || 'Unknown'}`,
+    );
   }
 
   const noOp = detectNoOp(test);
@@ -643,7 +654,10 @@ function prepareReviewPackage(test) {
 
   const testHash = crypto.createHash('sha256').update(JSON.stringify(test)).digest('hex');
   const sourceHash = test.evidence_sources[0]?.source_hash || 'NO_HASH';
-  const expectationHash = crypto.createHash('sha256').update(JSON.stringify(test.expected)).digest('hex');
+  const expectationHash = crypto
+    .createHash('sha256')
+    .update(JSON.stringify(test.expected))
+    .digest('hex');
 
   const reviewPackage = {
     test_id: test.id,
@@ -665,9 +679,7 @@ function prepareReviewPackage(test) {
     quality_score: quality,
     review_status: REVIEW_STATES.REVIEW_REQUIRED,
     review_decision: 'PENDING',
-    implementation_references: [
-      `.agent/skills/${test.skill_id}/SKILL.md`,
-    ],
+    implementation_references: [`.agent/skills/${test.skill_id}/SKILL.md`],
     hashes: {
       test_hash: testHash,
       source_hash: sourceHash,
@@ -687,7 +699,9 @@ function approveSpecification(reviewPkg, test, decision, reviewerName, reason) {
 
   // Section 27: Security boundary requires human reviewer
   if (test.risk === 'CRITICAL' && (!reviewerName || reviewerName.toLowerCase().includes('auto'))) {
-    throw new Error('Security-classified skills require explicit human approval, not automated approval');
+    throw new Error(
+      'Security-classified skills require explicit human approval, not automated approval',
+    );
   }
 
   reviewPkg.review_decision = decision;
@@ -696,7 +710,9 @@ function approveSpecification(reviewPkg, test, decision, reviewerName, reason) {
   reviewPkg.review_date = new Date().toISOString();
   reviewPkg.review_hash = crypto
     .createHash('sha256')
-    .update(JSON.stringify({ decision, reviewerName, reason, test_hash: reviewPkg.hashes.test_hash }))
+    .update(
+      JSON.stringify({ decision, reviewerName, reason, test_hash: reviewPkg.hashes.test_hash }),
+    )
     .digest('hex');
 
   test.review.status = decision;
@@ -710,7 +726,9 @@ function approveSpecification(reviewPkg, test, decision, reviewerName, reason) {
 // ─── Test Execution with Repeatability (Sections 18-20) ─────────────────────
 function executeApprovedTest(test) {
   if (test.review.status !== REVIEW_STATES.APPROVED) {
-    throw new Error(`Cannot execute test with status '${test.review.status}'. Must be '${REVIEW_STATES.APPROVED}'`);
+    throw new Error(
+      `Cannot execute test with status '${test.review.status}'. Must be '${REVIEW_STATES.APPROVED}'`,
+    );
   }
 
   if (test.independence.verified !== true) {
@@ -728,7 +746,7 @@ function executeApprovedTest(test) {
       // Execute in isolated sandbox
       let exitCode = 0;
       let outputs = {};
-      let sideEffects = [];
+      const sideEffects = [];
 
       if (test.test_type === TEST_TYPES.NEGATIVE || test.test_type === TEST_TYPES.BOUNDARY) {
         // Missing parameters correctly trigger exit status 1
@@ -755,9 +773,13 @@ function executeApprovedTest(test) {
 
       // 1. Exit status assertion
       if (obs.exit_code === test.expected.exit_status) {
-        assertionsPassed.push(`exit_status_match: expected ${test.expected.exit_status}, got ${obs.exit_code}`);
+        assertionsPassed.push(
+          `exit_status_match: expected ${test.expected.exit_status}, got ${obs.exit_code}`,
+        );
       } else {
-        assertionsFailed.push(`exit_status_mismatch: expected ${test.expected.exit_status}, got ${obs.exit_code}`);
+        assertionsFailed.push(
+          `exit_status_mismatch: expected ${test.expected.exit_status}, got ${obs.exit_code}`,
+        );
       }
 
       // 2. Expected outputs assertion
@@ -768,7 +790,9 @@ function executeApprovedTest(test) {
             if (actualType === expOut.type) {
               assertionsPassed.push(`output_type_match: ${expOut.field} is ${expOut.type}`);
             } else {
-              assertionsFailed.push(`output_type_mismatch: ${expOut.field} expected ${expOut.type}, got ${actualType}`);
+              assertionsFailed.push(
+                `output_type_mismatch: ${expOut.field} expected ${expOut.type}, got ${actualType}`,
+              );
             }
           } else {
             assertionsFailed.push(`output_missing: ${expOut.field}`);
@@ -777,7 +801,9 @@ function executeApprovedTest(test) {
       }
 
       // 3. Side effects assertion
-      const hasForbiddenSideEffect = sideEffects.some(se => test.forbidden.side_effects.includes(se));
+      const hasForbiddenSideEffect = sideEffects.some(se =>
+        test.forbidden.side_effects.includes(se),
+      );
       if (!hasForbiddenSideEffect) {
         assertionsPassed.push('forbidden_side_effects_avoided: zero violations');
       } else {
@@ -821,8 +847,14 @@ function executeApprovedTest(test) {
   }
 
   const finalStatus = allPassed ? 'PASS' : 'FAIL';
-  const obsHash = crypto.createHash('sha256').update(JSON.stringify(runs.map(r => r.output_hash))).digest('hex');
-  const evidenceHash = crypto.createHash('sha256').update(`${test.id}:${obsHash}:${repClass}`).digest('hex');
+  const obsHash = crypto
+    .createHash('sha256')
+    .update(JSON.stringify(runs.map(r => r.output_hash)))
+    .digest('hex');
+  const evidenceHash = crypto
+    .createHash('sha256')
+    .update(`${test.id}:${obsHash}:${repClass}`)
+    .digest('hex');
 
   const result = {
     test_id: test.id,
@@ -947,9 +979,7 @@ function evaluateCertification(skillName, testResults, claims) {
   }
 
   const passedResults = testResults.filter(
-    r =>
-      r.status === 'PASS' &&
-      r.repeatability?.classification === REPEATABILITY.DETERMINISTIC,
+    r => r.status === 'PASS' && r.repeatability?.classification === REPEATABILITY.DETERMINISTIC,
   );
 
   const verifiedCount = passedResults.length;
@@ -982,7 +1012,9 @@ function evaluateCertification(skillName, testResults, claims) {
     results_summary: {
       total_executed: testResults.length,
       passed: passedResults.length,
-      deterministic: passedResults.filter(r => r.repeatability?.classification === REPEATABILITY.DETERMINISTIC).length,
+      deterministic: passedResults.filter(
+        r => r.repeatability?.classification === REPEATABILITY.DETERMINISTIC,
+      ).length,
     },
   };
 }
