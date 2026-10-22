@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { c, err, log } = require('../utils/logger');
+const { assertWithinRoot } = require('../security/boundary');
 
 function getOption(args, names) {
   for (let i = 0; i < args.length; i++) {
@@ -81,7 +82,7 @@ function sddBrief(planFile, taskNum, outFile) {
 
   let targetOut;
   if (outFile) {
-    targetOut = path.resolve(process.cwd(), outFile);
+    targetOut = assertWithinRoot(process.cwd(), outFile);
   } else {
     const ws = sddWorkspace(planFile);
     targetOut = path.join(ws, `task-${taskNum}-brief.md`);
@@ -141,7 +142,7 @@ function sddScratchpad(planFile, taskNum, outFile) {
 
   let targetOut;
   if (outFile) {
-    targetOut = path.resolve(process.cwd(), outFile);
+    targetOut = assertWithinRoot(process.cwd(), outFile);
   } else {
     const ws = sddWorkspace(planFile);
     targetOut = path.join(ws, `task-${taskNum}-scratchpad.md`);
@@ -161,23 +162,33 @@ function sddDiff(planFile, base, head, outFile) {
   if (!base) throw new Error('Missing required argument: --base <revision>');
   if (!head) throw new Error('Missing required argument: --head <revision>');
 
-  // SECURITY: Use execFileSync with argument arrays to prevent command injection
-  // via user-supplied --base/--head parameters (CWE-78).
+  if (typeof base !== 'string' || base.startsWith('-')) {
+    throw new Error(`Security Violation: Invalid BASE git revision: ${base}`);
+  }
+  if (typeof head !== 'string' || head.startsWith('-')) {
+    throw new Error(`Security Violation: Invalid HEAD git revision: ${head}`);
+  }
+
+  // SECURITY: Use execFileSync with argument arrays and -- to prevent option/command injection
   try {
-    execFileSync('git', ['rev-parse', '--verify', '--quiet', base], { stdio: 'ignore' });
+    execFileSync('git', ['rev-parse', '--verify', '--quiet', '--', `${base}^{commit}`], {
+      stdio: 'ignore',
+    });
   } catch {
     throw new Error(`Invalid BASE git revision: ${base}`);
   }
 
   try {
-    execFileSync('git', ['rev-parse', '--verify', '--quiet', head], { stdio: 'ignore' });
+    execFileSync('git', ['rev-parse', '--verify', '--quiet', '--', `${head}^{commit}`], {
+      stdio: 'ignore',
+    });
   } catch {
     throw new Error(`Invalid HEAD git revision: ${head}`);
   }
 
   let targetOut;
   if (outFile) {
-    targetOut = path.resolve(process.cwd(), outFile);
+    targetOut = assertWithinRoot(process.cwd(), outFile);
   } else {
     const ws = sddWorkspace(planFile);
     const shortBase = base.length > 7 ? base.slice(0, 7) : base;
@@ -185,7 +196,7 @@ function sddDiff(planFile, base, head, outFile) {
     targetOut = path.join(ws, `review-${shortBase}..${shortHead}.diff`);
   }
 
-  const diffContent = execFileSync('git', ['diff', `${base}..${head}`], {
+  const diffContent = execFileSync('git', ['diff', '--', `${base}..${head}`], {
     encoding: 'utf8',
     maxBuffer: 10 * 1024 * 1024,
   });

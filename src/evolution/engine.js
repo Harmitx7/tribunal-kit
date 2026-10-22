@@ -18,6 +18,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { validateResourceId, assertWithinRoot } = require('../security/boundary');
 
 const ALLOWED_TARGETS = new Set([
   'reviewer-routing',
@@ -62,7 +63,12 @@ function createEvolutionProposal({
   regressionRequirements = [],
   evidenceType = 'DETERMINISTIC_TELEMETRY',
   proposalId = null,
+  targetFile = null,
+  metadata = {},
 }) {
+  if (proposalId) {
+    validateResourceId(proposalId);
+  }
   const id = proposalId || `EVO-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`;
 
   const proposal = {
@@ -84,6 +90,8 @@ function createEvolutionProposal({
     status: 'PROPOSED',
     created_at: new Date().toISOString(),
     approval: null,
+    target_file: targetFile || null,
+    metadata: metadata || {},
   };
 
   return proposal;
@@ -117,6 +125,12 @@ function validateEvolutionProposal(proposal) {
         reason: `Missing required proposal field: "${field}". Every proposal must be backed by evidence.`,
       };
     }
+  }
+
+  try {
+    validateResourceId(proposal.proposal_id);
+  } catch (err) {
+    return { valid: false, reason: `Security Violation: Invalid proposal_id: ${err.message}` };
   }
 
   // 2. Security boundary enforcement: Forbidden targets cannot evolve automatically
@@ -211,7 +225,8 @@ function saveEvolutionProposal(proposal, agentDir, options = {}) {
     };
   }
 
-  const filePath = path.join(dir, `${proposal.proposal_id}.json`);
+  validateResourceId(proposal.proposal_id);
+  const filePath = assertWithinRoot(dir, path.join(dir, `${proposal.proposal_id}.json`));
   fs.writeFileSync(filePath, JSON.stringify(proposal, null, 2), 'utf8');
   return filePath;
 }
@@ -241,8 +256,9 @@ function approveEvolutionProposal(proposalId, approverName, agentDir) {
     throw new Error('Human approval requires an explicit approver name/signature.');
   }
 
+  validateResourceId(proposalId);
   const dir = getProposalsDir(agentDir);
-  const filePath = path.join(dir, `${proposalId}.json`);
+  const filePath = assertWithinRoot(dir, path.join(dir, `${proposalId}.json`));
 
   if (!fs.existsSync(filePath)) {
     throw new Error(`Evolution proposal not found: ${proposalId}`);
@@ -264,8 +280,9 @@ function approveEvolutionProposal(proposalId, approverName, agentDir) {
  * Reject an evolution proposal.
  */
 function rejectEvolutionProposal(proposalId, reason, agentDir) {
+  validateResourceId(proposalId);
   const dir = getProposalsDir(agentDir);
-  const filePath = path.join(dir, `${proposalId}.json`);
+  const filePath = assertWithinRoot(dir, path.join(dir, `${proposalId}.json`));
 
   if (!fs.existsSync(filePath)) {
     throw new Error(`Evolution proposal not found: ${proposalId}`);

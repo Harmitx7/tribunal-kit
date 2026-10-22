@@ -82,6 +82,7 @@ const repeatGuard = new ToolRepeatGuard();
 // Instantiate ControlledWriteService for MCP
 const { ControlledWriteService } = require('../src/execution/controlled_write_service');
 const controlledWriteService = new ControlledWriteService({ workspaceRoot: process.cwd() });
+const { assertWithinRoot, validateResourceId, sanitizeErrorMessage } = require('../src/security/boundary');
 
 // Instantiate CorrectionRunEngine
 const { CorrectionRunEngine } = require('../src/execution/correction_run_engine');
@@ -273,13 +274,18 @@ async function handleRequest(req) {
 
     if (uri.startsWith('tribunal://agent/')) {
       const name = uri.replace('tribunal://agent/', '');
-      filePath = path.join(agentDir, 'agents', `${name}.md`);
+      validateResourceId(name);
+      filePath = assertWithinRoot(path.join(agentDir, 'agents'), path.join(agentDir, 'agents', `${name}.md`));
     } else if (uri.startsWith('tribunal://skill/')) {
       const name = uri.replace('tribunal://skill/', '');
-      filePath = path.join(agentDir, 'skills', name, 'SKILL.md');
+      validateResourceId(name);
+      filePath = assertWithinRoot(path.join(agentDir, 'skills'), path.join(agentDir, 'skills', name, 'SKILL.md'));
     } else if (uri.startsWith('tribunal://workflow/')) {
       const name = uri.replace('tribunal://workflow/', '');
-      filePath = path.join(agentDir, 'workflows', `${name}.md`);
+      validateResourceId(name);
+      filePath = assertWithinRoot(path.join(agentDir, 'workflows'), path.join(agentDir, 'workflows', `${name}.md`));
+    } else {
+      throw new Error(`Security Violation: Invalid or unsupported resource URI: ${uri}`);
     }
 
     if (!filePath || !fs.existsSync(filePath)) {
@@ -328,9 +334,16 @@ async function handleRequest(req) {
     const name = req.params && req.params.name;
     const task = (req.params && req.params.arguments && req.params.arguments.task) || '';
     if (!name) throw new Error('Missing prompt name parameter');
+    validateResourceId(name);
+    if (name.startsWith('-')) {
+      throw new Error(`Security Violation: Invalid prompt identifier: ${name}`);
+    }
 
     const agentDir = getAgentDir();
-    const workflowPath = path.join(agentDir, 'workflows', `${name}.md`);
+    const workflowPath = assertWithinRoot(
+      path.join(agentDir, 'workflows'),
+      path.join(agentDir, 'workflows', `${name}.md`),
+    );
     if (!fs.existsSync(workflowPath)) {
       throw new Error(`Prompt workflow not found: ${name}`);
     }
@@ -976,6 +989,47 @@ async function handleRequest(req) {
             );
           }
 
+          if (typeof target !== 'string' || target.startsWith('-')) {
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: 'Security Violation: Invalid target argument: target cannot start with \'-\'',
+                },
+              ],
+              isError: true,
+            };
+          }
+
+          if (compareWith && (typeof compareWith !== 'string' || compareWith.startsWith('-'))) {
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: 'Security Violation: Invalid compareWith argument: argument cannot start with \'-\'',
+                },
+              ],
+              isError: true,
+            };
+          }
+
+          try {
+            assertWithinRoot(workspaceRoot, target);
+            if (compareWith) {
+              assertWithinRoot(workspaceRoot, compareWith);
+            }
+          } catch (err) {
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: `Security Violation: Path outside authorized workspace: ${err.message}`,
+                },
+              ],
+              isError: true,
+            };
+          }
+
           // We use scripts/context_compiler.js to parse AST without blocking the event loop
           const { spawn } = require('child_process');
           const args = [path.join(__dirname, '../scripts/context_compiler.js')];
@@ -1247,13 +1301,46 @@ async function handleRequest(req) {
         try {
           let _payloadData;
           if (file) {
-            const filePath = path.resolve(workspace, file);
+            const workspaceRoot = process.cwd();
+            const filePath = assertWithinRoot(workspaceRoot, path.resolve(workspace, file));
             if (!fs.existsSync(filePath)) {
               throw new Error(`File not found: ${filePath}`);
             }
-            _payloadData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            try {
+              _payloadData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            } catch (err) {
+              const sanitized = sanitizeErrorMessage(err);
+              throw new Error(sanitized);
+            }
           } else {
-            _payloadData = JSON.parse(payload);
+            try {
+              _payloadData = JSON.parse(payload);
+            } catch (err) {
+              const sanitized = sanitizeErrorMessage(err);
+              throw new Error(sanitized);
+            }
+          }
+
+          if (mode === 'dag') {
+            const { DAGPayloadSchema, validatePayload } = require(path.join(
+              agentDir,
+              'scripts',
+              'payload_schemas.js',
+            ));
+            const val = validatePayload(_payloadData, DAGPayloadSchema);
+            if (!val.valid) {
+              const errMsgs = val.errors
+                ? val.errors.map(e => e.message).join(', ')
+                : 'Validation failed';
+              return {
+                content: [
+                  {
+                    type: 'text',
+                    text: `Swarm dispatch failed: Invalid DAG payload: ${errMsgs}`,
+                  },
+                ],
+              };
+            }
           }
 
           // Import swarm dispatcher functions

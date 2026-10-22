@@ -117,6 +117,29 @@ const SwarmPayloadSchema = z.object({
     .describe('Additional metadata for the swarm execution'),
 });
 
+// Strict DAG Task and Payload Schemas
+// Rejects dangerous or unknown fields like arbitrary `command` execution.
+const DAGTaskSchema = z
+  .object({
+    id: z.string().min(1, 'task id must be a non-empty string'),
+    agent: z.string().optional(),
+    target_agent: z.string().optional(),
+    goal: z.string().optional(),
+    task_description: z.string().optional(),
+    deps: z.array(z.string()).optional().default([]),
+    files: z.array(z.string()).optional(),
+    files_attached: z.array(z.string()).optional(),
+    syscall: z.string().optional(),
+    args: z.array(z.string()).optional(),
+  })
+  .strict();
+
+const DAGPayloadSchema = z
+  .object({
+    tasks: z.array(DAGTaskSchema).min(1, 'tasks must contain at least 1 task'),
+  })
+  .strict();
+
 /**
  * Validate a payload against a Zod schema
  * @param {Object} payload - The payload to validate
@@ -159,6 +182,9 @@ module.exports = {
   WorkerRequestSchema,
   WorkerResultSchema,
   SwarmPayloadSchema,
+  DAGTaskSchema,
+  DAGPayloadSchema,
   validatePayload,
   validatePayloadOrThrow,
 };
+

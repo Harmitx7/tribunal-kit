@@ -104,7 +104,9 @@ Once the governance layer is installed, your AI coding agent automatically benef
 | `tk memory store`        | Save project context                     |
 | `tk memory recall`       | Retrieve relevant memories               |
 | `tk learn`               | Distill project idioms from Git history  |
-| `tk optimize-skill`      | Self-evolve a skill file                 |
+| `tk optimize-skill`      | Self-evolve a skill file (Loop 1)        |
+| `tk evalopt`             | Adversarial red-team mutations (Loop 2)  |
+| `tk evolve`              | Continuous Dual-Loop Auto-Tuning loop    |
 | `tk graph`               | Map codebase dependencies                |
 | `tk marathon init`       | Start a long-running autonomous task     |
 
@@ -138,5 +140,5 @@ This exposes tools like `run_tribunal_audit`, `search_case_law`, `get_tribunal_s
 
 - **Issues**: [GitHub Issues](https://github.com/Harmitx7/tribunal-kit/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/Harmitx7/tribunal-kit/discussions)
-- **Contributing**: See [CONTRIBUTING.md](CONTRIBUTING.md)
-- **Security**: See [SECURITY.md](SECURITY.md)
+- **Contributing**: See [CONTRIBUTING.md](../CONTRIBUTING.md)
+- **Security**: See [SECURITY.md](../SECURITY.md)

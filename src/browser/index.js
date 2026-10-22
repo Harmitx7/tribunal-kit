@@ -14,6 +14,7 @@ const { compareURLs } = require('./compare');
 const { deconstructElement, mapStylesToTailwind, synthesizeReactComponent } = require('./synapse');
 const { codifyAuditViolations } = require('./case_bridge');
 const { captureRuntimeErrors, verifyRuntimeFix } = require('./sentinel');
+const { validateBrowserUrl } = require('../security/boundary');
 
 /**
  * High-level helper: browse a URL and return token-pruned semantic markdown.
@@ -23,7 +24,8 @@ const { captureRuntimeErrors, verifyRuntimeFix } = require('./sentinel');
  * @returns {Promise<{ url: string, markdown: string, sandboxed: string, isClean: boolean, threatLevel: string }>}
  */
 async function browse(url, _options = {}) {
-  const browser = await launchBrowser();
+  validateBrowserUrl(url, _options);
+  const browser = await launchBrowser(_options);
   let client = null;
   let tab = null;
 
@@ -33,7 +35,7 @@ async function browse(url, _options = {}) {
     await client.connect(tab.webSocketDebuggerUrl);
     await client.initDomains();
 
-    await client.navigate(url);
+    await client.navigate(url, _options);
     const html = await client.getHTML();
 
     // 1. Scan for prompt injection

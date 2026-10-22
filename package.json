@@ -1,6 +1,6 @@
 {
   "name": "tribunal-kit",
-  "version": "9.2.8",
+  "version": "9.2.9",
   "description": "Tribunal Kit is the governance layer for AI coding agents that stops AI hallucinations and npm ghost packages before they hit disk. Works with Cursor, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
@@ -112,6 +112,9 @@
     "test": "npm run validate-payload && jest --runInBand --coverage --forceExit",
     "test:unit": "jest test/unit --coverage --forceExit",
     "test:integration": "jest test/integration --coverage --forceExit",
+    "test:phase9": "node tests/test_cross_domain_engine.js",
+    "test:phase10": "node tests/test_outcome_optimization_engine.js",
+    "test:engines": "node tests/test_cross_domain_engine.js && node tests/test_outcome_optimization_engine.js",
     "preversion": "node scripts/sync-version.js",
     "version": "node scripts/apply-version.js && cargo build --release && node scripts/changelog.js && git add CHANGELOG.md plugins/core-plugin.json plugins/gemini/extension.json npm/core-template/package.json README.md crates/core/Cargo.toml Cargo.lock bin/adapter-install.js src/tui/banner.js scripts/apply-version.js",
     "changelog": "node scripts/changelog.js",
@@ -146,12 +149,12 @@
     "yaml": "^2.9.1"
   },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^9.2.8",
-    "@tribunal-kit/core-darwin-x64": "^9.2.8",
-    "@tribunal-kit/core-linux-arm64": "^9.2.8",
-    "@tribunal-kit/core-linux-x64": "^9.2.8",
-    "@tribunal-kit/core-win32-arm64": "^9.2.8",
-    "@tribunal-kit/core-win32-x64": "^9.2.8"
+    "@tribunal-kit/core-darwin-arm64": "^9.2.9",
+    "@tribunal-kit/core-darwin-x64": "^9.2.9",
+    "@tribunal-kit/core-linux-arm64": "^9.2.9",
+    "@tribunal-kit/core-linux-x64": "^9.2.9",
+    "@tribunal-kit/core-win32-arm64": "^9.2.9",
+    "@tribunal-kit/core-win32-x64": "^9.2.9"
   },
   "jest": {
     "testMatch": [

@@ -3,6 +3,7 @@
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const { assertWithinRoot } = require('../security/boundary');
 const TransactionManager = require('./transaction_manager');
 const { WritePolicyEngine } = require('./write_policy_engine');
 const { evaluateDecision } = require('../system1/decision_engine');
@@ -46,10 +47,7 @@ class ControlledWriteService {
       }
       if (!f.path) throw new Error('File path missing');
 
-      const fullPath = path.resolve(this.workspaceRoot, f.path);
-      if (!fullPath.startsWith(this.workspaceRoot)) {
-        throw new Error(`Path outside workspace: ${f.path}`);
-      }
+      const fullPath = assertWithinRoot(this.workspaceRoot, f.path);
       f.fullPath = fullPath;
     }
   }

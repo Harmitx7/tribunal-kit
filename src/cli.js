@@ -75,6 +75,38 @@ function parseArgs(argv) {
       args.flags.strategy = arg.split('=').slice(1).join('=');
     } else if (arg === '--strategy') {
       args.flags.strategy = raw[++i];
+    } else if (arg.startsWith('--fuzz-depth=')) {
+      args.flags['fuzz-depth'] = parseInt(arg.split('=').slice(1).join('='), 10);
+    } else if (arg === '--fuzz-depth') {
+      args.flags['fuzz-depth'] = parseInt(raw[++i], 10);
+    } else if (arg.startsWith('--promote=')) {
+      args.flags.promote = arg.split('=').slice(1).join('=');
+    } else if (arg === '--promote') {
+      args.flags.promote = raw[++i];
+    } else if (arg === '--status') {
+      args.flags.status = true;
+    } else if (arg === '--sandbox') {
+      args.flags.sandbox = true;
+    } else if (arg === '--no-sandbox') {
+      args.flags['no-sandbox'] = true;
+    } else if (arg.startsWith('--rounds=')) {
+      args.flags.rounds = parseInt(arg.split('=').slice(1).join('='), 10);
+    } else if (arg === '--rounds') {
+      args.flags.rounds = parseInt(raw[++i], 10);
+    } else if (arg.startsWith('--harness=')) {
+      args.flags.harness = arg.split('=').slice(1).join('=');
+    } else if (arg === '--harness') {
+      args.flags.harness = raw[++i];
+    } else if (arg.startsWith('--harness-cmd=')) {
+      args.flags['harness-cmd'] = arg.split('=').slice(1).join('=');
+    } else if (arg === '--harness-cmd') {
+      args.flags['harness-cmd'] = raw[++i];
+    } else if (arg === '--auto-promote') {
+      args.flags['auto-promote'] = true;
+    } else if (arg === '--bridge') {
+      args.flags.bridge = true;
+    } else if (arg === '--no-bridge') {
+      args.flags.bridge = false;
     }
   }
   return args;
@@ -116,6 +148,14 @@ function cmdHelp(quiet = false) {
   (0, logger_1.log)(
     cmd('optimize-skill', 'Optimize project skills actively using SkillOpt validation gates'),
   );
+  (0, logger_1.log)(
+    cmd('evalopt', 'Automated adversarial red-teaming & evaluation mutation (Loop 2)'),
+  );
+  (0, logger_1.log)(cmd('redteam', 'Alias for evalopt'));
+  (0, logger_1.log)(
+    cmd('evolve', 'Continuous Asymmetric Dual-Loop Auto-Tuning (Loop 1 + Loop 2)'),
+  );
+  (0, logger_1.log)(cmd('auto-tune', 'Alias for evolve'));
   (0, logger_1.log)(cmd('validate', 'Validate a JSON payload against a Tribunal schema'));
   (0, logger_1.log)(cmd('min-context', 'Remove empty lines from a context file'));
   (0, logger_1.log)(cmd('dag-schedule', 'Compute parallel execution waves from task dependencies'));
@@ -314,6 +354,18 @@ async function runWithUpdateCheck(command, flags) {
     case 'optimize-skill': {
       const cmdOptimizeSkill = loadCmd('./commands/optimize', 'cmdOptimizeSkill');
       await cmdOptimizeSkill(flags, process.argv, quiet);
+      break;
+    }
+    case 'evalopt':
+    case 'redteam': {
+      const cmdEvalOpt = loadCmd('./commands/evalopt', 'cmdEvalOpt');
+      await cmdEvalOpt(flags, process.argv, quiet);
+      break;
+    }
+    case 'evolve':
+    case 'auto-tune': {
+      const cmdEvolve = loadCmd('./commands/evolve', 'cmdEvolve');
+      await cmdEvolve(flags, process.argv, quiet);
       break;
     }
     case 'guardrail': {

@@ -81,12 +81,13 @@ def run_linter(linter: dict, cwd: Path) -> dict:
     try:
         cmd = linter["cmd"]
         
-        # Windows compatibility for npm/npx
+        # Windows compatibility: resolve executable without shell=True
         if platform.system() == "Windows":
-            if cmd[0] in ["npm", "npx"]:
-                # Force .cmd extension on Windows
-                if not cmd[0].lower().endswith(".cmd"):
-                    cmd[0] = f"{cmd[0]}.cmd"
+            resolved_bin = shutil.which(cmd[0])
+            if resolved_bin:
+                cmd[0] = resolved_bin
+            elif cmd[0] in ["npm", "npx"] and not cmd[0].lower().endswith(".cmd"):
+                cmd[0] = f"{cmd[0]}.cmd"
         
         proc = subprocess.run(
             cmd,
@@ -96,7 +97,7 @@ def run_linter(linter: dict, cwd: Path) -> dict:
             encoding='utf-8',
             errors='replace',
             timeout=120,
-            shell=platform.system() == "Windows" # Shell=True often helps with path resolution on Windows
+            shell=False
         )
         
         result["output"] = proc.stdout[:2000] if proc.stdout else ""

@@ -9,6 +9,11 @@
 
 const http = require('http');
 const crypto = require('crypto');
+const {
+  validateBrowserUrl,
+  validateBrowserUrlAsync,
+  isProhibitedIp,
+} = require('../security/boundary');
 
 const WS_OPEN = 1;
 
@@ -313,6 +318,9 @@ class CdpClient {
           reject(new Error(`CDP command timed out: ${method}`));
         }
       }, 30000);
+      if (typeof timeout.unref === 'function') {
+        timeout.unref();
+      }
 
       this.pending.set(id, {
         resolve: val => {
@@ -367,27 +375,116 @@ class CdpClient {
 
   /**
    * Navigate to a URL and wait for load.
+   * Intercepts HTTP redirects and subresources via CDP Fetch domain to prevent SSRF bypasses.
+   *
    * @param {string} url
+   * @param {object} [options]
    * @returns {Promise<void>}
    */
-  async navigate(url) {
+  async navigate(url, options = {}) {
+    // 1. Synchronously validate destination syntax, protocol, ports, and metadata domains
+    validateBrowserUrl(url, options);
+
+    // 2. Asynchronously validate DNS resolution against rebinding
+    if (options.skipDns !== true) {
+      await validateBrowserUrlAsync(url, options);
+    }
+
     let timeoutId = null;
     let onLoad = null;
+    let onRequestPaused = null;
+    let onResponseReceived = null;
+    let securityViolation = null;
+
+    // 3. Enable CDP Fetch domain for active request & redirect interception (fail closed)
+    try {
+      await this.send('Fetch.enable', {
+        patterns: [{ requestStage: 'Request' }],
+      });
+    } catch (err) {
+      throw new Error(`Browser security error: Failed to enable CDP request interception (${err.message}).`);
+    }
+
+    onRequestPaused = async params => {
+      const reqId = params?.requestId;
+      const targetUrl = params?.request?.url;
+      if (!reqId) return;
+
+      try {
+        validateBrowserUrl(targetUrl, options);
+        await this.send('Fetch.continueRequest', { requestId: reqId });
+      } catch (err) {
+        securityViolation = err;
+        try {
+          await this.send('Fetch.failRequest', {
+            requestId: reqId,
+            errorReason: 'AccessDenied',
+          });
+        } catch {
+          // Ignore if connection already closed
+        }
+      }
+    };
+    this.on('Fetch.requestPaused', onRequestPaused);
+
+    // 4. Register connection-time IP inspection on Network.responseReceived to prevent DNS rebinding
+    onResponseReceived = async params => {
+      const remoteIp = params?.response?.remoteIPAddress;
+      if (remoteIp && isProhibitedIp(remoteIp, options)) {
+        securityViolation = new Error(
+          `Connection-time SSRF detected: remote host connected to prohibited IP address "${remoteIp}". Destination connection aborted.`,
+        );
+        try {
+          await this.send('Page.stopLoading');
+        } catch {
+          // Ignore
+        }
+        try {
+          await this.send('Page.navigate', { url: 'about:blank' });
+        } catch {
+          // Ignore
+        }
+      }
+    };
+    this.on('Network.responseReceived', onResponseReceived);
+
     const loadPromise = new Promise(resolve => {
       onLoad = () => resolve();
       timeoutId = setTimeout(() => {
         // Fallback resolve after 15s even if load event stalls
         resolve();
       }, 15000);
+      if (typeof timeoutId.unref === 'function') {
+        timeoutId.unref();
+      }
       this.on('Page.loadEventFired', onLoad);
     });
 
     try {
       await this.send('Page.navigate', { url });
       await loadPromise;
+      if (securityViolation) {
+        if (securityViolation.message.includes('Connection-time SSRF detected')) {
+          throw securityViolation;
+        }
+        throw new Error(
+          `Browser destination error: Prohibited redirect or subresource request detected (${securityViolation.message}).`,
+        );
+      }
     } finally {
       if (timeoutId) clearTimeout(timeoutId);
       if (onLoad) this.off('Page.loadEventFired', onLoad);
+      if (onRequestPaused) {
+        this.off('Fetch.requestPaused', onRequestPaused);
+        try {
+          await this.send('Fetch.disable');
+        } catch {
+          // Ignore
+        }
+      }
+      if (onResponseReceived) {
+        this.off('Network.responseReceived', onResponseReceived);
+      }
     }
   }
 

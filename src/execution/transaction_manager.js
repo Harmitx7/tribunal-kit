@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { assertWithinRoot } = require('../security/boundary');
 
 /**
  * Phase 2B: Transaction Manager
@@ -42,7 +43,18 @@ class TransactionManager {
       if (fs.existsSync(mapPath)) {
         const mapping = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
         for (const [realPath, backupName] of Object.entries(mapping)) {
+          assertWithinRoot(this.workspace, realPath);
           const backupPath = path.join(this.undoDir, backupName);
+          assertWithinRoot(this.undoDir, backupPath);
+          if (fs.existsSync(realPath)) {
+            try {
+              const lstat = fs.lstatSync(realPath);
+              if (lstat.isSymbolicLink()) {
+                const real = fs.realpathSync(realPath);
+                assertWithinRoot(this.workspace, real);
+              }
+            } catch (_) {}
+          }
           if (backupName === '__DELETED__') {
             if (fs.existsSync(realPath)) fs.unlinkSync(realPath);
           } else if (fs.existsSync(backupPath)) {
@@ -123,20 +135,14 @@ class TransactionManager {
   prepareWrite(targetPath, data, encoding = 'utf8') {
     if (this.state !== 'PREPARING')
       throw new Error('Can only prepare operations in PREPARING state.');
-    const resolvedPath = path.resolve(this.workspace, targetPath);
-    if (!resolvedPath.startsWith(path.resolve(this.workspace))) {
-      throw new Error('Path security violation: Cannot modify files outside workspace.');
-    }
+    const resolvedPath = assertWithinRoot(this.workspace, targetPath);
     this.operations.push({ action: 'WRITE', path: resolvedPath, data, encoding });
   }
 
   prepareDelete(targetPath) {
     if (this.state !== 'PREPARING')
       throw new Error('Can only prepare operations in PREPARING state.');
-    const resolvedPath = path.resolve(this.workspace, targetPath);
-    if (!resolvedPath.startsWith(path.resolve(this.workspace))) {
-      throw new Error('Path security violation: Cannot modify files outside workspace.');
-    }
+    const resolvedPath = assertWithinRoot(this.workspace, targetPath);
     this.operations.push({ action: 'DELETE', path: resolvedPath });
   }
 
@@ -150,7 +156,17 @@ class TransactionManager {
     const mapping = {};
     for (let i = 0; i < this.operations.length; i++) {
       const op = this.operations[i];
+      assertWithinRoot(this.workspace, op.path);
       if (fs.existsSync(op.path)) {
+        try {
+          const lstat = fs.lstatSync(op.path);
+          if (lstat.isSymbolicLink()) {
+            const real = fs.realpathSync(op.path);
+            assertWithinRoot(this.workspace, real);
+          }
+        } catch (e) {
+          if (e.message.includes('Security Violation') || e.message.includes('Path security violation')) throw e;
+        }
         const backupName = `backup_${i}_${path.basename(op.path)}`;
         const backupPath = path.join(this.undoDir, backupName);
         fs.copyFileSync(op.path, backupPath);
@@ -181,12 +197,26 @@ class TransactionManager {
 
     try {
       for (const op of this.operations) {
+        assertWithinRoot(this.workspace, op.path);
         if (op.action === 'WRITE') {
           const dir = path.dirname(op.path);
           if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+          assertWithinRoot(this.workspace, dir);
+          if (fs.existsSync(op.path)) {
+            const lstat = fs.lstatSync(op.path);
+            if (lstat.isSymbolicLink()) {
+              const real = fs.realpathSync(op.path);
+              assertWithinRoot(this.workspace, real);
+            }
+          }
           fs.writeFileSync(op.path, op.data, op.encoding);
         } else if (op.action === 'DELETE') {
           if (fs.existsSync(op.path)) {
+            const lstat = fs.lstatSync(op.path);
+            if (lstat.isSymbolicLink()) {
+              const real = fs.realpathSync(op.path);
+              assertWithinRoot(this.workspace, real);
+            }
             fs.unlinkSync(op.path);
           }
         }

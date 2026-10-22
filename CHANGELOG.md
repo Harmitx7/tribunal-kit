@@ -12,28 +12,42 @@
 All notable changes to **Tribunal Kit** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
 
-## [9.2.9] — 2026-10-08 — 🚀 System-1 Capabilities 1-5 & Forensic Audit Hardening
+## [9.2.9] — 2026-10-21 — 🔄 Recursive Self-Improvement Engine (RSIE) & Dual-Loop Co-Evolution
 
 > [!IMPORTANT]
-> **Release 9.2.9** implements and certifies the core Tribunal Kit Capabilities 1 through 5, establishing a deeply deterministic, secure, and progressively expanding context architecture for the System-1 cognitive core. This release includes the integration of an explicit Decision Plan, Dynamic Reviewer Pruning, Progressive Context Expansion, Evidence Requests, and Confidence-Driven Review Depth, immediately followed by a hostile forensic audit resolving P0, P1, and P2 boundary bypass vulnerabilities.
+> **Release 9.2.9** implements the **Recursive Self-Improvement Engine (RSIE)** for Tribunal Kit, establishing an autonomous, evidence-driven, dual-loop co-evolution system. System-1 (Skills & Prompts) and System-2 (Evaluators & Benchmark Scenarios) co-evolve within hermetic sandboxes governed by cryptographic anti-eval-hacking benchmark oracles, Negative Case-Based Reasoning (CBR) memory, adversarial red-team fuzzing, and anti-weakening invariant verification. Following complete 4-phase implementation, the release underwent a rigorous Universal Brutal Code Audit Engine (U-BCAE v1.0) audit remediating 8 security and runtime boundary defects.
 
 ### Security & Hardening
 
-- **Progressive Context Fallback Budget (P0):** Hardened `_buildFallbackContext` within `progressive_context.js` to strictly enforce safety execution boundaries, terminating execution with `SYSTEM_ERROR` when structural minimums breach token budgets instead of silently bypassing.
-- **Deduplication Canonicalization Bypass (P2):** Hardened `resolveEvidenceRequests` within `evidence_resolver.js` to explicitly canonicalize target paths _before_ deduplication generation, ensuring path-traversal-obfuscated files are structurally prevented from spanning boundaries.
+- **Host Workspace Zero-Pollution Guard:** Hardened in-place execution within `WorktreeSandbox` with automatic backup snapshotting and guaranteed restoration on failure/rejection, ensuring that test candidate runs without git worktree isolation cannot contaminate or leave dirty artifacts in the developer's working directory.
+- **Windows Child Process Shell Isolation (CVE-2024-27980 Defense):** Implemented strict binary classification via `shouldRunInShell(cmd)`. Windows batch files (`.cmd`, `.bat`) execute safely through `cmd.exe /d /s /c` with quoted arguments, while binary executables (`node.exe`, `git.exe`) are executed with `shell: false` to eliminate argument injection and shell pipe-chaining (`&&`, `||`, `|`) vulnerabilities.
+- **Fail-Closed Worktree Sandbox Policy:** Enforced fail-closed execution in `WorktreeSandbox` and `EvaluationRunner`—if sandbox isolation is requested and git worktree creation fails, execution terminates immediately with a descriptive error instead of unsafely degrading to in-place host execution.
+- **Immutable Security Boundary Shield:** Hardened `CoEvolutionOrchestrator` to strictly block mutations targeting security-critical core files (`src/security/boundary.js`, shell execution policies, package manifests, and human approval gates), preventing autonomous tampering with security policies.
+- **Negative CBR Enforcement in Orchestrator:** Integrated `NegativeMemory.hasFailedBefore()` directly into the candidate hardening loop of `CoEvolutionOrchestrator._executeHardeningWave`, structurally forbidding repeated execution of previously rejected mutations.
 
 ### Added
 
-- **Explicit Decision Plan (Capability 1):** Codified deterministic, isolated decision plans routing execution constraints directly into reviewer orchestration.
-- **Dynamic Reviewer Pruning (Capability 2):** Introduced deterministic omission of reviewers lacking operational relevancy, maximizing execution throughput.
-- **Progressive Context Expansion (Capability 3):** Established a rigorous tiered extraction model isolating reviewer payload sizes securely within budget restraints.
-- **Reviewer Evidence Requests (Capability 4):** Integrated dynamic and secure evidence requests resolved actively across strict normalization checks.
-- **Confidence-Driven Review Depth (Capability 5):** Enabled deterministic score validation where insufficient confidence safely escalates resolution operations.
+- **Hermetic Worktree Sandbox (`WorktreeSandbox`):** Disposable git worktrees (`rsie/<uuid>`) ensuring mutation testing cannot contaminate the host working tree or commit history, featuring automated lifecycle teardown on exit or rejection.
+- **Anti-Eval-Hacking Benchmark Oracle (`BenchmarkOracle`):** Cryptographic baseline snapshotting with SHA-256 integrity verification for evaluation fixtures and test files, preventing "reward hacking", test mutation tampering, and self-serving benchmark modifications.
+- **Scenario Registry (`ScenarioRegistry`):** Pluggable, metadata-driven benchmark scenario catalog loaded from `benchmarks/scenarios/` with strict input schema validation.
+- **Evaluation Runner (`EvaluationRunner`):** Synchronous and asynchronous candidate benchmark execution harness measuring pass rates, execution latencies, and regression deltas against frozen oracle baselines.
+- **Negative Case-Based Reasoning Memory (`NegativeMemory`):** Persistent CBR memory storing failed prompt/skill mutations, regression diffs, and rejection fingerprints. Employs token and Levenshtein similarity distance checks to proactively suppress known anti-patterns and prevent regression looping.
+- **System-1 Skill Optimization (`tk optimize`):** Autonomous System-1 optimization pipeline executing candidate mutations, running oracle benchmarks, checking negative memory, and gating promotion behind human approval.
+- **Instinct & Failure Learning Commands (`tk learn`):** Enhanced `tk learn --approve` and `tk learn --reject` commands for manual and scripted curation of positive instinct rules and negative failure memories into Tribunal Kit's persistent knowledge store.
+- **EvalOpt Adversarial Mutator (`AdversarialMutator`):** Automated test scenario fuzzing engine across 4 adversarial mutation operators: Boundary Extrema (zero/max/overflow integers, empty strings, null bytes), Security Injections (SQLi, prompt injections, shell metacharacters, path traversal), Type Confusion (unexpected shapes, arrays, booleans), and Resource DoS (deeply nested JSON, massive payloads).
+- **Anti-Weakening Invariant Verifier (`InvariantVerifier`):** Formal invariant verification validating **Ground-Truth Soundness** (mutated evaluations must consistently fail on known buggy code) and **Discriminative Sharpness** (evaluations must not become trivial vacuous pass-alls or impossible brick walls).
+- **Co-Evolution Bridge (`CoEvolutionBridge`):** Bi-directional coordination bridge propagating newly discovered red-team failure scenarios from EvalOpt into the System-1 hardening backlog.
+- **EvalOpt CLI Command (`tk evalopt` / `tk redteam`):** CLI commands supporting `--fuzz-depth`, `--mutations`, `--invariants`, and `--sandbox`.
+- **Co-Evolution Orchestrator (`CoEvolutionOrchestrator`):** Orchestrates synchronized multi-round adversarial evolution: **Wave A** (EvalOpt red-teams evaluators and discovers coverage gaps) → **Wave B** (SkillOpt hardens agents/skills against discovered flaws while checking Negative CBR) → **Wave C** (Cross-evaluation verifies Pareto improvements across both System-1 and System-2).
+- **Anti-Regression Circuit Breaker:** Automatically halts co-evolution cycles if 2 consecutive regression rounds occur or if candidate mutations violate baseline pass-rate thresholds.
+- **Co-Evolution CLI Command (`tk evolve` / `tk auto-tune`):** CLI commands supporting `--rounds`, `--harness`, `--harness-cmd`, `--auto-promote`, and `--sandbox`.
 
 ### Fixed
 
-- **Fingerprint Non-Determinism (P1):** Removed temporal identifiers (`reviewRunId`) from generating semantic fingerprints across `confidence_evaluator.js`, locking behavioral hashes to pure deterministic 100/100 outputs.
-- **Repository Hygiene:** Executed deep repository pruning of temporary `benchmark-stress-results.json`, localized `certify_cap5_determinism.js` audit tools, and transient `scratch/` execution boundaries generated during active testing.
+- **Invariant Assertion Reference Equality:** Replaced reference equality (`===`) with deep recursive value equality for object and array assertions in `InvariantVerifier` and scenario baseline checks.
+- **Quoted CLI Harness Argument Parsing:** Implemented quote-aware tokenization in `parseCommandLine` within `optimize.js` and `evolve.js`, resolving argument splitting bugs when passing complex flags like `--harness-cmd "node run.js --flag"`.
+- **Positional Command Parameter Resolution:** Fixed argument extraction in `cli.js` (`cmdEvolve` / `cmdEvalOpt`) ensuring positional target arguments (e.g., `tk evolve <target>`) and options are consistently resolved.
+- **Test Suite Determinism & Coverage:** Added comprehensive unit tests in `test/unit/ubcae_audit_remediation.test.js`, bringing the test suite to 117 passing unit test suites across all RSIE subsystems.
 
 ## [9.2.8] — 2026-10-07 — 🚀 Premium TUI, Skill Engineering & Security Remediation
 

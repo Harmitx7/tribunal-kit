@@ -28,6 +28,18 @@ async function cmdLearn(flags, quiet = false) {
   if (flags.approve) {
     try {
       const p = approveEvolutionProposal(String(flags.approve), 'Human Developer', agentDest);
+      if (p.target === 'skill-instructions' && p.target_file && p.proposed_change) {
+        const dest = path_1.default.isAbsolute(p.target_file)
+          ? p.target_file
+          : path_1.default.join(agentDest, p.target_file);
+        if (fs_1.default.existsSync(path_1.default.dirname(dest))) {
+          fs_1.default.writeFileSync(dest, p.proposed_change, 'utf8');
+          if (!quiet)
+            (0, logger_1.log)(
+              `  ${(0, logger_1.c)('green', '✓')} Applied certified changes to ${(0, logger_1.bold)(path_1.default.relative(targetDir, dest))}`,
+            );
+        }
+      }
       if (!quiet)
         (0, logger_1.log)(
           `  ${(0, logger_1.c)('green', '✓')} Approved evolution proposal: ${(0, logger_1.bold)(p.proposal_id)} [${p.target}]`,

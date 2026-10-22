@@ -525,16 +525,18 @@ class SwarmOrchestrator {
     const cwd = this.workspaceRoot || process.cwd();
 
     if (worker.command) {
-      const { execFileSync } = require('child_process');
-      const args =
-        typeof worker.command === 'string' ? worker.command.trim().split(/\s+/) : worker.command;
-      const cmd = args.shift();
-      const stdout = execFileSync(cmd, args, {
-        cwd,
-        timeout: timeout || 30000,
-        encoding: 'utf8',
-      });
-      return stdout.trim() || `Command completed for ${agentName}`;
+      throw new Error(
+        `Security Exception: Arbitrary worker.command execution is strictly forbidden. Disallowed command on agent "${agentName}".`,
+      );
+    }
+
+    if (worker.syscall) {
+      const { executeSyscall } = require('./syscall_registry.js');
+      const res = executeSyscall(worker.syscall, worker.args || []);
+      if (res.exitCode !== 0) {
+        throw new Error(`Syscall ${worker.syscall} failed: ${res.stderr || res.stdout}`);
+      }
+      return res.stdout || `Syscall ${worker.syscall} completed for ${agentName}`;
     }
 
     // 2. Security Auditor & Penetration Tester
@@ -927,6 +929,14 @@ function main() {
         process.exit(1);
       });
   } else if (mode === 'dag') {
+    const { DAGPayloadSchema, validatePayloadOrThrow } = require('./payload_schemas');
+    try {
+      validatePayloadOrThrow(payloadData, DAGPayloadSchema);
+    } catch (valErr) {
+      console.error(`ERROR: DAG payload validation failed: ${valErr.message}`);
+      process.exit(1);
+    }
+
     const orchestrator = new SwarmOrchestrator(useTui ? new SwarmDashboard([]) : null);
     orchestrator
       .executeDAG(payloadData)

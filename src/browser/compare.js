@@ -9,6 +9,7 @@
 
 const { launchBrowser } = require('./launcher');
 const { CdpClient, createNewTab, closeTab } = require('./cdp');
+const { validateBrowserUrl } = require('../security/boundary');
 
 /**
  * Compares two URLs visually.
@@ -21,11 +22,13 @@ const { CdpClient, createNewTab, closeTab } = require('./cdp');
  * @returns {Promise<object>}
  */
 async function compareURLs(url1, url2, options = {}) {
+  validateBrowserUrl(url1, options);
+  validateBrowserUrl(url2, options);
   const maxDiff = options.maxDiffPercent !== undefined ? options.maxDiffPercent : 1.0;
   const width = options.width || 1280;
   const height = options.height || 800;
 
-  const browser = await launchBrowser();
+  const browser = await launchBrowser(options);
   let client = null;
   let tab = null;
 
@@ -44,12 +47,12 @@ async function compareURLs(url1, url2, options = {}) {
     });
 
     // Capture 1
-    await client.navigate(url1);
+    await client.navigate(url1, options);
     await new Promise(r => setTimeout(r, 500)); // Allow animations to settle
     const shot1 = await client.captureScreenshot('png');
 
     // Capture 2
-    await client.navigate(url2);
+    await client.navigate(url2, options);
     await new Promise(r => setTimeout(r, 500));
     const shot2 = await client.captureScreenshot('png');
 

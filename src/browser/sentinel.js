@@ -12,6 +12,7 @@ const path = require('path');
 const fs = require('fs');
 const { launchBrowser } = require('./launcher');
 const { CdpClient, createNewTab, closeTab } = require('./cdp');
+const { validateBrowserUrl } = require('../security/boundary');
 
 /**
  * Parses stack trace string to find local source file references.
@@ -68,7 +69,9 @@ function extractSourceLocations(stackText, projectRoot = process.cwd()) {
  * @returns {Promise<object>} Diagnostic report
  */
 async function captureRuntimeErrors(url, options = {}) {
-  const browser = await launchBrowser();
+  const navOptions = { allowLoopback: true, ...options };
+  validateBrowserUrl(url, navOptions);
+  const browser = await launchBrowser(navOptions);
   let client = null;
   let tab = null;
 
@@ -134,7 +137,7 @@ async function captureRuntimeErrors(url, options = {}) {
     });
 
     const startTime = Date.now();
-    await client.navigate(url);
+    await client.navigate(url, navOptions);
     const settleWaitMs = options.settleWaitMs || 1000;
     await new Promise(r => setTimeout(r, settleWaitMs));
 

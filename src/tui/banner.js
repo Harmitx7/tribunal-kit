@@ -17,7 +17,7 @@ const {
   getColumns,
 } = require('./theme');
 
-function renderBanner(version = '9.2.8', quiet = false) {
+function renderBanner(version = '9.2.9', quiet = false) {
   if (quiet) return;
   if (!isTTY && !hasColor) {
     console.error(`TRIBUNAL-KIT v${version} — Anti-Hallucination Governance Layer`);

@@ -10,6 +10,7 @@
 
 const { launchBrowser } = require('./launcher');
 const { CdpClient, createNewTab, closeTab } = require('./cdp');
+const { validateBrowserUrl } = require('../security/boundary');
 
 /**
  * Extracts computed styles and structure for an element on a live page.
@@ -19,7 +20,8 @@ const { CdpClient, createNewTab, closeTab } = require('./cdp');
  * @returns {Promise<object>}
  */
 async function deconstructElement(url, selector, options = {}) {
-  const browser = await launchBrowser();
+  validateBrowserUrl(url, options);
+  const browser = await launchBrowser(options);
   let client = null;
   let tab = null;
 
@@ -29,7 +31,7 @@ async function deconstructElement(url, selector, options = {}) {
     await client.connect(tab.webSocketDebuggerUrl);
     await client.initDomains();
 
-    await client.navigate(url);
+    await client.navigate(url, options);
     await new Promise(r => setTimeout(r, 600)); // Allow hydration and fonts to settle
 
     const extracted = await client.evaluate(`

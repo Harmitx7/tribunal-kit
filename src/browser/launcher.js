@@ -13,6 +13,7 @@ const path = require('path');
 const os = require('os');
 const net = require('net');
 const { findBrowser, isPortOpen } = require('./discovery');
+const { createControlledProxy } = require('./proxy');
 
 const activeInstances = new Set();
 
@@ -88,6 +89,15 @@ async function launchBrowser(options = {}) {
   // Create isolated temp user data directory
   const tempProfileDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tk-browser-profile-'));
 
+  let proxy = null;
+  if (options.useProxy !== false) {
+    proxy = await createControlledProxy({
+      allowLoopback: options.allowLoopback === true,
+      allowPrivateNetwork: options.allowPrivateNetwork === true,
+      dnsLookup: options.dnsLookup,
+    });
+  }
+
   const args = [
     `--remote-debugging-port=${port}`,
     `--user-data-dir=${tempProfileDir}`,
@@ -102,6 +112,9 @@ async function launchBrowser(options = {}) {
     '--disable-gpu',
     '--metrics-recording-only',
     '--mute-audio',
+    '--disable-features=DnsOverHttps',
+    proxy ? `--proxy-server=http://127.0.0.1:${proxy.port}` : '',
+    proxy ? '--proxy-bypass-list=<-loopback>' : '',
     'about:blank',
   ].filter(Boolean);
 
@@ -114,6 +127,9 @@ async function launchBrowser(options = {}) {
 
   proc.on('exit', () => {
     activeInstances.delete(proc);
+    if (proxy) {
+      proxy.close().catch(() => {});
+    }
     try {
       fs.rmSync(tempProfileDir, { recursive: true, force: true });
     } catch {
@@ -134,12 +150,20 @@ async function launchBrowser(options = {}) {
 
   if (!ready) {
     proc.kill();
+    if (proxy) await proxy.close().catch(() => {});
     throw new Error(`Chrome spawned on port ${port} but failed to respond within 20 seconds`);
   }
 
   const close = async () => {
     activeInstances.delete(proc);
     terminateProcessTree(proc);
+    if (proxy) {
+      try {
+        await proxy.close();
+      } catch {
+        // Ignore
+      }
+    }
     try {
       fs.rmSync(tempProfileDir, { recursive: true, force: true });
     } catch {
@@ -151,6 +175,7 @@ async function launchBrowser(options = {}) {
     port,
     process: proc,
     close,
+    proxy,
   };
 }
 
@@ -161,12 +186,13 @@ async function launchBrowser(options = {}) {
  */
 function terminateProcessTree(proc) {
   if (!proc || typeof proc !== 'object' || !proc.pid) return;
-  const pid = proc.pid;
+  const pid = Number(proc.pid);
+  if (!Number.isInteger(pid) || pid <= 0) return;
   try {
     if (process.platform === 'win32') {
       try {
-        const { execSync } = require('child_process');
-        execSync(`taskkill /pid ${pid} /T /F`, { stdio: 'ignore' });
+        const { execFileSync } = require('child_process');
+        execFileSync('taskkill', ['/pid', String(pid), '/T', '/F'], { stdio: 'ignore' });
       } catch (_) {}
       try {
         if (typeof proc.kill === 'function') {

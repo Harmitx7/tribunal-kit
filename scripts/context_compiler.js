@@ -17,6 +17,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { assertWithinRoot } = require('../src/security/boundary');
 
 // Optional ANSI colors
 let C = {
@@ -559,48 +560,29 @@ function resolveSkills(targetFilePath, content) {
 }
 
 function resolvePath(targetPath, workspaceRoot = process.cwd()) {
+  if (!targetPath || typeof targetPath !== 'string') {
+    throw new Error('Security Violation: Invalid target path provided.');
+  }
   const clean = targetPath.replace(/^['"]|['"]$/g, '');
-  if (path.isAbsolute(clean) && fs.existsSync(clean)) return clean;
-
-  const direct = path.resolve(workspaceRoot, clean);
-  if (fs.existsSync(direct)) return direct;
-
-  if (clean.startsWith('tribunal-kit/') || clean.startsWith('tribunal-kit\\')) {
-    const stripped = clean.replace(/^tribunal-kit[/\\]/, '');
-    const strippedPath = path.resolve(workspaceRoot, stripped);
-    if (fs.existsSync(strippedPath)) return strippedPath;
+  if (clean.startsWith('-')) {
+    throw new Error(`Security Violation: Flag injection detected in path target: "${clean}".`);
   }
 
-  const parentPath = path.resolve(workspaceRoot, '..', clean);
-  if (fs.existsSync(parentPath)) return parentPath;
+  let candidate = path.resolve(workspaceRoot, clean);
+  if (!fs.existsSync(candidate) && (clean.startsWith('tribunal-kit/') || clean.startsWith('tribunal-kit\\'))) {
+    const stripped = clean.replace(/^tribunal-kit[/\\]/, '');
+    const strippedCandidate = path.resolve(workspaceRoot, stripped);
+    if (fs.existsSync(strippedCandidate)) {
+      candidate = strippedCandidate;
+    }
+  }
 
-  return direct;
+  return assertWithinRoot(workspaceRoot, candidate);
 }
 
 function getDocsDir(workspaceRoot = process.cwd()) {
   const local = path.join(workspaceRoot, 'docs', 'context');
-  if (fs.existsSync(local)) {
-    try {
-      const files = fs
-        .readdirSync(local)
-        .filter(f => f.endsWith('.context.md') || f.endsWith('.bridge.md'));
-      if (files.length > 0) return local;
-    } catch {
-      // fallback
-    }
-  }
-  const parent = path.join(workspaceRoot, '..', 'docs', 'context');
-  if (fs.existsSync(parent)) {
-    try {
-      const files = fs
-        .readdirSync(parent)
-        .filter(f => f.endsWith('.context.md') || f.endsWith('.bridge.md'));
-      if (files.length > 0) return parent;
-    } catch {
-      // fallback
-    }
-  }
-  return local;
+  return assertWithinRoot(workspaceRoot, local);
 }
 
 // ── Single-File Context Analysis ────────────────────────────────────────────
@@ -1078,15 +1060,32 @@ function main() {
 
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--file' && args[i + 1]) {
-      fileArg = args[++i];
+      const nextArg = args[++i];
+      if (nextArg.startsWith('-')) {
+        console.error(`${C.RED}Error: --file argument cannot start with "-"${C.RESET}`);
+        process.exit(1);
+      }
+      fileArg = nextArg;
     } else if (args[i] === '--dir' && args[i + 1]) {
-      dirArg = args[++i];
+      const nextArg = args[++i];
+      if (nextArg.startsWith('-')) {
+        console.error(`${C.RED}Error: --dir argument cannot start with "-"${C.RESET}`);
+        process.exit(1);
+      }
+      dirArg = nextArg;
     } else if (args[i] === '--multi' && args[i + 1] && args[i + 2]) {
-      multiArgs = [args[++i], args[++i]];
-    } else if (!args[i].startsWith('--')) {
+      const argA = args[++i];
+      const argB = args[++i];
+      if (argA.startsWith('-') || argB.startsWith('-')) {
+        console.error(`${C.RED}Error: --multi arguments cannot start with "-"${C.RESET}`);
+        process.exit(1);
+      }
+      multiArgs = [argA, argB];
+    } else if (!args[i].startsWith('-')) {
       if (!fileArg && !dirArg) {
         // Autodetect positional arg
         const candidate = args[i].replace(/^['"]|['"]$/g, '');
+        if (candidate.startsWith('-')) continue;
         if (fs.existsSync(candidate)) {
           if (fs.statSync(candidate).isDirectory()) {
             dirArg = candidate;
@@ -1098,6 +1097,8 @@ function main() {
     }
   }
 
+  const { assertWithinRoot } = require('../src/security/boundary');
+
   if (multiArgs.length === 2) {
     const result = analyzeMultiFileBridge(multiArgs[0], multiArgs[1], workspaceRoot);
     if (jsonFlag) {
@@ -1106,7 +1107,7 @@ function main() {
       const md = renderBridgeDossier(result);
       if (writeFlag) {
         const outName = `${path.basename(multiArgs[0]).replace(/\.[^.]+$/, '')}__${path.basename(multiArgs[1]).replace(/\.[^.]+$/, '')}.bridge.md`;
-        const dest = path.join(workspaceRoot, 'docs', 'context', outName);
+        const dest = assertWithinRoot(workspaceRoot, path.join(getDocsDir(workspaceRoot), outName));
         fs.mkdirSync(path.dirname(dest), { recursive: true });
         fs.writeFileSync(dest, md, 'utf8');
         syncVaultIndex(workspaceRoot);
@@ -1123,7 +1124,7 @@ function main() {
       const md = renderDirectoryDossier(result);
       if (writeFlag) {
         const outName = `${path.basename(dirArg)}.context.md`;
-        const dest = path.join(workspaceRoot, 'docs', 'context', outName);
+        const dest = assertWithinRoot(workspaceRoot, path.join(getDocsDir(workspaceRoot), outName));
         fs.mkdirSync(path.dirname(dest), { recursive: true });
         fs.writeFileSync(dest, md, 'utf8');
         syncVaultIndex(workspaceRoot);
@@ -1140,7 +1141,7 @@ function main() {
       const md = renderSingleFileDossier(result);
       if (writeFlag) {
         const outName = `${path.basename(fileArg).replace(/\.[^.]+$/, '')}.context.md`;
-        const dest = path.join(workspaceRoot, 'docs', 'context', outName);
+        const dest = assertWithinRoot(workspaceRoot, path.join(getDocsDir(workspaceRoot), outName));
         fs.mkdirSync(path.dirname(dest), { recursive: true });
         fs.writeFileSync(dest, md, 'utf8');
         syncVaultIndex(workspaceRoot);

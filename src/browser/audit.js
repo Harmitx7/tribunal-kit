@@ -10,6 +10,7 @@
 
 const { launchBrowser } = require('./launcher');
 const { CdpClient, createNewTab, closeTab } = require('./cdp');
+const { validateBrowserUrl } = require('../security/boundary');
 
 /**
  * Audits a live URL using native CDP.
@@ -18,7 +19,8 @@ const { CdpClient, createNewTab, closeTab } = require('./cdp');
  * @returns {Promise<object>}
  */
 async function auditURL(url, _options = {}) {
-  const browser = await launchBrowser();
+  validateBrowserUrl(url, _options);
+  const browser = await launchBrowser(_options);
   let client = null;
   let tab = null;
 
@@ -82,7 +84,7 @@ async function auditURL(url, _options = {}) {
     });
 
     const startTime = Date.now();
-    await client.navigate(url);
+    await client.navigate(url, _options);
     const loadDurationMs = Date.now() - startTime;
 
     // Run in-page accessibility and metadata inspection script

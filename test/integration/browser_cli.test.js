@@ -51,7 +51,7 @@ describe('Browser Live Integration & Auditing', () => {
   }, 15000);
 
   test('browse() navigates headlessly and extracts semantic markdown', async () => {
-    const result = await browse(TEST_URL);
+    const result = await browse(TEST_URL, { allowLoopback: true });
 
     expect(result.url).toBe(TEST_URL);
     expect(result.isClean).toBe(true);
@@ -65,7 +65,7 @@ describe('Browser Live Integration & Auditing', () => {
   }, 25000);
 
   test('auditURL() conducts live accessibility, timing, and security checks', async () => {
-    const report = await auditURL(TEST_URL);
+    const report = await auditURL(TEST_URL, { allowLoopback: true });
 
     expect(report.url).toBe(TEST_URL);
     expect(report.page.title).toBe('Tribunal Test Benchmark');
