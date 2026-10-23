@@ -3,7 +3,7 @@ version: 2.0.0
 source_file: "crates/core/src/commands/context_compress.rs"
 source_hash: "8f71783b939cf30b"
 interface_hash: "609c7c37428121cc"
-last_synced: "2026-10-22"
+last_synced: "2026-10-23"
 domain_layer: "Command / Dispatch Layer"
 associated_skills:
   - rust-pro
@@ -85,12 +85,12 @@ graph LR
 | Caller File | Line Snippet | Vector |
 | :--- | :--- | :--- |
 | `.agent/scripts/guardrail_engine.js:509` | `const requiredMods = ['context_broker', 'dag_scheduler', 'context_compress'];` | Direct Import |
-| `CHANGELOG.md:100` | `- **Context Ranking & Compression**: Upgraded `src/context/ranker.js` and `context_compress.context.` | Symbol Reference |
-| `CHANGELOG.md:693` | `- **Native Context Compression Engine**: Developed `tribunal-core context-compress` (`crates/core/sr` | Symbol Reference |
+| `CHANGELOG.md:118` | `- **Context Ranking & Compression**: Upgraded `src/context/ranker.js` and `context_compress.context.` | Symbol Reference |
+| `CHANGELOG.md:711` | `- **Native Context Compression Engine**: Developed `tribunal-core context-compress` (`crates/core/sr` | Symbol Reference |
 | `crates/core/src/commands/mod.rs:4` | `pub mod context_compress;` | Symbol Reference |
-| `crates/core/src/main.rs:599` | `Commands::ContextCompress { file, max_lines } => cmd_context_compress(&file, max_lines).await,` | Symbol Reference |
-| `crates/core/src/main.rs:879` | `async fn cmd_context_compress(file: &str, max_lines: Option<usize>) -> Result<()> {` | Symbol Reference |
-| `crates/core/src/main.rs:880` | `match commands::context_compress::compress_context(file, max_lines) {` | Symbol Reference |
+| `crates/core/src/main.rs:607` | `Commands::ContextCompress { file, max_lines } => cmd_context_compress(&file, max_lines).await,` | Symbol Reference |
+| `crates/core/src/main.rs:887` | `async fn cmd_context_compress(file: &str, max_lines: Option<usize>) -> Result<()> {` | Symbol Reference |
+| `crates/core/src/main.rs:888` | `match commands::context_compress::compress_context(file, max_lines) {` | Symbol Reference |
 | `test/unit/context_compiler.test.js:19` | `const targetFile = path.resolve(__dirname, '../../crates/core/src/commands/context_compress.rs');` | Symbol Reference |
 | `test/unit/context_compiler.test.js:120` | `const outPath = path.resolve(workspaceRoot, 'docs/context/context_compress.context.md');` | Symbol Reference |
 | `test/unit/context_compiler.test.js:136` | `const targetFile = 'crates/core/src/commands/context_compress.rs';` | Symbol Reference |

@@ -93,6 +93,7 @@ logs/
 .agent/.backups/
 .agent/history/
 .agent/history/snapshots/
+.agent/evolution/wal/
 *.pen
 
 # AI IDE Configuration

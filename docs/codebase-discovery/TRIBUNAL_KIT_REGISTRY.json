@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "audit_date": "2026-10-23",
+  "repository": {"path": "tribunal-kit", "branch": "main...origin/main", "version": "9.2.9"},
+  "features": [
+    {"id":"FEAT-001","name":"installation and IDE bridges","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-003","COMP-004","COMP-005"],"files":["src/commands/init.js","crates/core/src/main.rs"],"tests":["test/integration/init.test.js"]},
+    {"id":"FEAT-003","name":"governance payload validation","status":"IMPLEMENTED_AND_VERIFIED","components":["COMP-005"],"files":["scripts/validate-payload.js"],"tests":["node scripts/validate-payload.js"]},
+    {"id":"FEAT-011","name":"review/correction pipeline","status":"PARTIALLY_IMPLEMENTED","components":["COMP-004","COMP-006"],"files":["src/commands/review.js","src/execution/*.js"],"tests":["test/unit/review_executor.test.js"]},
+    {"id":"FEAT-012","name":"skill intelligence","status":"PRESENT_BUT_NOT_INVOKED","components":["COMP-003","COMP-004"],"files":["src/commands/skill-intelligence.js"],"findings":["FIND-001"],"tasks":["TASK-002"]},
+    {"id":"FEAT-015","name":"native command utilities","status":"IMPLEMENTED_AND_VERIFIED","components":["COMP-003","COMP-004","COMP-014"],"files":["src/commands/native.js","src/commands/validate.js"],"tests":["test/unit/args.test.js","test/unit/validate.test.js"]},
+    {"id":"FEAT-016","name":"System-1 local inference tier","status":"PARTIALLY_IMPLEMENTED","components":["COMP-008"],"files":["src/system1/*.js","src/commands/system1.js"],"tests":["test/unit/system1_decision_engine.test.js"]},
+    {"id":"FEAT-020","name":"MCP protocol server","status":"IMPLEMENTED_AND_VERIFIED","components":["COMP-012","COMP-013"],"files":["bin/mcp-server.js","src/mcp/server.js"],"tests":["test/unit/mcp_server.test.js"]},
+    {"id":"FEAT-022","name":"Rust native core","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-014"],"files":["crates/core/src/**/*.rs"],"tests":["cargo test --manifest-path crates/core/Cargo.toml"]}
+  ],
+  "feature_index": [
+    {"id":"FEAT-002","name":"package update/status/uninstall","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-003","COMP-004"]},
+    {"id":"FEAT-004","name":"case-law memory","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-004","COMP-007"]},
+    {"id":"FEAT-005","name":"taxonomy memory","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-004","COMP-014"]},
+    {"id":"FEAT-006","name":"architecture graph/intelligence","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-004","COMP-009"]},
+    {"id":"FEAT-007","name":"context retrieval/ranking/compression","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-004","COMP-009","COMP-014"]},
+    {"id":"FEAT-008","name":"governance alignment/minimal change","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-004","COMP-005"]},
+    {"id":"FEAT-009","name":"learning and git hook","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-004","COMP-015"]},
+    {"id":"FEAT-010","name":"compile/sync adapter payload","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-004","COMP-005","COMP-015"]},
+    {"id":"FEAT-013","name":"skill optimization/evolution/red team","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-004","COMP-011"]},
+    {"id":"FEAT-014","name":"contracts/guardrails/mutation","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-004","COMP-006","COMP-012"]},
+    {"id":"FEAT-017","name":"intelligence queries","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-004","COMP-007"]},
+    {"id":"FEAT-018","name":"browser audit/compare/deconstruct/heal","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-004","COMP-010"]},
+    {"id":"FEAT-019","name":"SDD workspace/brief/diff","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-004","COMP-005","COMP-006"]},
+    {"id":"FEAT-021","name":"HTTP egress proxy","status":"IMPLEMENTED_BUT_UNVERIFIED","components":["COMP-012","COMP-015"]}
+  ],
+  "components": [
+    {"id":"COMP-001","name":"package entrypoints","files":["package.json"]},{"id":"COMP-002","name":"wrapper/native resolver","files":["bin/wrapper.js"]},{"id":"COMP-003","name":"JS CLI router","files":["src/cli.js"]},{"id":"COMP-004","name":"command adapters","files":["src/commands/*.js"]},{"id":"COMP-005","name":"governance payload","files":[".agent/**"]},{"id":"COMP-006","name":"execution pipeline","files":["src/execution/*.js"]},{"id":"COMP-007","name":"intelligence subsystem","files":["src/intelligence/*.js"]},{"id":"COMP-008","name":"System-1 subsystem","files":["src/system1/*.js"]},{"id":"COMP-009","name":"context subsystem","files":["src/context/*.js"]},{"id":"COMP-010","name":"browser subsystem","files":["src/browser/*.js"]},{"id":"COMP-011","name":"evaluation/evolution","files":["src/evaluation/*.js","src/evolution/*.js"]},{"id":"COMP-012","name":"security boundary","files":["src/security/boundary.js","src/utils/path_containment.js"]},{"id":"COMP-013","name":"MCP server","files":["bin/mcp-server.js"]},{"id":"COMP-014","name":"Rust core","files":["crates/core/src/**/*.rs"]},{"id":"COMP-015","name":"integration adapters","files":["plugins/**","hooks/**","bin/adapter-install.js"]},{"id":"COMP-016","name":"quality/release tooling","files":["scripts/*.js",".github/workflows/*.yml"]}
+  ],
+  "findings": [
+    {"id":"FIND-001","severity":"HIGH","features":["FEAT-012"],"components":["COMP-003","COMP-004"],"tasks":["TASK-002"]},{"id":"FIND-002","severity":"MEDIUM","files":["scripts/sync-version.js"],"tasks":["TASK-001"]},{"id":"FIND-003","severity":"MEDIUM","tasks":["TASK-003"]},{"id":"FIND-004","severity":"MEDIUM","tasks":["TASK-005"]},{"id":"FIND-005","severity":"LOW","tasks":["TASK-004","TASK-007"]},{"id":"FIND-006","severity":"LOW","tasks":["TASK-006"]}
+  ],
+  "tasks": [
+    {"id":"TASK-001","priority":"P1","prerequisites":["user approval"]},{"id":"TASK-002","priority":"P1","prerequisites":["user approval"]},{"id":"TASK-003","priority":"P1","prerequisites":["TASK-001","TASK-002"]},{"id":"TASK-004","priority":"P2","prerequisites":["TASK-003"]},{"id":"TASK-005","priority":"P2","prerequisites":["TASK-003"]},{"id":"TASK-006","priority":"P2","prerequisites":["TASK-003"]},{"id":"TASK-007","priority":"P3","prerequisites":["TASK-004"]}
+  ]
+}

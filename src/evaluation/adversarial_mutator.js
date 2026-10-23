@@ -18,6 +18,7 @@ const ATTACK_CATEGORIES = {
   SECURITY_INJECTIONS: 'SECURITY_INJECTIONS',
   TYPE_CONFUSION: 'TYPE_CONFUSION',
   RESOURCE_DOS: 'RESOURCE_DOS',
+  ANTI_HALLUCINATION: 'ANTI_HALLUCINATION',
 };
 
 const PAYLOAD_CATALOG = {
@@ -53,6 +54,12 @@ const PAYLOAD_CATALOG = {
     'a'.repeat(2000),
     [[[[[[[[1]]]]]]]],
     'a'.repeat(100) + '!',
+  ],
+  [ATTACK_CATEGORIES.ANTI_HALLUCINATION]: [
+    'ghost-npm-package-does-not-exist',
+    'Array.prototype.inventedMethod',
+    'String.prototype.inventedMethod',
+    'fs.readFileAsJsonSync',
   ],
 };
 

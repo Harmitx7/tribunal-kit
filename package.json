@@ -129,6 +129,7 @@
     "build:rust": "cargo build --release",
     "build:core": "cargo build --release --manifest-path crates/core/Cargo.toml",
     "test:rust": "cargo test --manifest-path crates/core/Cargo.toml",
+    "test:fast": "jest --no-coverage --maxWorkers=2",
     "test:all": "npm run validate-payload && npm run test:rust && jest --runInBand --coverage --forceExit",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

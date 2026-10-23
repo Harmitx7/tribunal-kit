@@ -12,42 +12,60 @@
 All notable changes to **Tribunal Kit** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
 
-## [9.2.9] — 2026-10-21 — 🔄 Recursive Self-Improvement Engine (RSIE) & Dual-Loop Co-Evolution
+## [9.2.9] — 2026-10-23 — ♾️ Project Ouroboros — Autonomous Recursive Self-Evolution & Perpetual Governance Core
 
 > [!IMPORTANT]
-> **Release 9.2.9** implements the **Recursive Self-Improvement Engine (RSIE)** for Tribunal Kit, establishing an autonomous, evidence-driven, dual-loop co-evolution system. System-1 (Skills & Prompts) and System-2 (Evaluators & Benchmark Scenarios) co-evolve within hermetic sandboxes governed by cryptographic anti-eval-hacking benchmark oracles, Negative Case-Based Reasoning (CBR) memory, adversarial red-team fuzzing, and anti-weakening invariant verification. Following complete 4-phase implementation, the release underwent a rigorous Universal Brutal Code Audit Engine (U-BCAE v1.0) audit remediating 8 security and runtime boundary defects.
+> **Release 9.2.9 (Project Ouroboros)** implements the **Recursive Self-Improvement Engine (RSIE)** for Tribunal Kit, establishing an autonomous, evidence-driven, dual-loop co-evolution system. System-1 (Skills & Prompts) and System-2 (Evaluators & Benchmark Scenarios) co-evolve within hermetic sandboxes governed by cryptographic anti-eval-hacking benchmark oracles, Negative Case-Based Reasoning (CBR) memory, adversarial red-team fuzzing, transactional Write-Ahead Logging (WAL), formal property invariants, and an autonomous meta-assurance circuit breaker. The release delivers a certified 50-task sealed benchmark vault, continuous surveillance watcher daemon, and the unified `tk rsi` CLI surface.
 
 ### Security & Hardening
 
 - **Host Workspace Zero-Pollution Guard:** Hardened in-place execution within `WorktreeSandbox` with automatic backup snapshotting and guaranteed restoration on failure/rejection, ensuring that test candidate runs without git worktree isolation cannot contaminate or leave dirty artifacts in the developer's working directory.
 - **Windows Child Process Shell Isolation (CVE-2024-27980 Defense):** Implemented strict binary classification via `shouldRunInShell(cmd)`. Windows batch files (`.cmd`, `.bat`) execute safely through `cmd.exe /d /s /c` with quoted arguments, while binary executables (`node.exe`, `git.exe`) are executed with `shell: false` to eliminate argument injection and shell pipe-chaining (`&&`, `||`, `|`) vulnerabilities.
 - **Fail-Closed Worktree Sandbox Policy:** Enforced fail-closed execution in `WorktreeSandbox` and `EvaluationRunner`—if sandbox isolation is requested and git worktree creation fails, execution terminates immediately with a descriptive error instead of unsafely degrading to in-place host execution.
-- **Immutable Security Boundary Shield:** Hardened `CoEvolutionOrchestrator` to strictly block mutations targeting security-critical core files (`src/security/boundary.js`, shell execution policies, package manifests, and human approval gates), preventing autonomous tampering with security policies.
-- **Negative CBR Enforcement in Orchestrator:** Integrated `NegativeMemory.hasFailedBefore()` directly into the candidate hardening loop of `CoEvolutionOrchestrator._executeHardeningWave`, structurally forbidding repeated execution of previously rejected mutations.
+- **Immutable Security Boundary Shield:** Hardened `PropertyInvariantEngine` and `CoEvolutionOrchestrator` to strictly block mutations targeting security-critical core files (`src/security/boundary.js`, shell execution policies, package manifests, and human approval gates), preventing autonomous tampering with security policies.
+- **Emergency Self-Quarantine Circuit Breaker:** Implemented `MetaAssuranceEngine` with automated circuit-breaking (`SELF_QUARANTINE`). If transaction rollback ratios exceed 50% across a sliding window of recent mutations (minimum 5 transactions) or a fatal invariant violation occurs, all autonomous mutations are immediately locked until an explicit human operator audit (`tk rsi unfreeze`).
+- **Negative CBR Memory Gate:** Integrated `isPreviouslyRejected()` in `SkillMutator` and `NegativeMemory.hasFailedBefore()`, rejecting candidate edits matching historical failures with $\ge 0.85$ token/Levenshtein similarity.
 
 ### Added
 
-- **Hermetic Worktree Sandbox (`WorktreeSandbox`):** Disposable git worktrees (`rsie/<uuid>`) ensuring mutation testing cannot contaminate the host working tree or commit history, featuring automated lifecycle teardown on exit or rejection.
-- **Anti-Eval-Hacking Benchmark Oracle (`BenchmarkOracle`):** Cryptographic baseline snapshotting with SHA-256 integrity verification for evaluation fixtures and test files, preventing "reward hacking", test mutation tampering, and self-serving benchmark modifications.
-- **Scenario Registry (`ScenarioRegistry`):** Pluggable, metadata-driven benchmark scenario catalog loaded from `benchmarks/scenarios/` with strict input schema validation.
-- **Evaluation Runner (`EvaluationRunner`):** Synchronous and asynchronous candidate benchmark execution harness measuring pass rates, execution latencies, and regression deltas against frozen oracle baselines.
-- **Negative Case-Based Reasoning Memory (`NegativeMemory`):** Persistent CBR memory storing failed prompt/skill mutations, regression diffs, and rejection fingerprints. Employs token and Levenshtein similarity distance checks to proactively suppress known anti-patterns and prevent regression looping.
-- **System-1 Skill Optimization (`tk optimize`):** Autonomous System-1 optimization pipeline executing candidate mutations, running oracle benchmarks, checking negative memory, and gating promotion behind human approval.
-- **Instinct & Failure Learning Commands (`tk learn`):** Enhanced `tk learn --approve` and `tk learn --reject` commands for manual and scripted curation of positive instinct rules and negative failure memories into Tribunal Kit's persistent knowledge store.
-- **EvalOpt Adversarial Mutator (`AdversarialMutator`):** Automated test scenario fuzzing engine across 4 adversarial mutation operators: Boundary Extrema (zero/max/overflow integers, empty strings, null bytes), Security Injections (SQLi, prompt injections, shell metacharacters, path traversal), Type Confusion (unexpected shapes, arrays, booleans), and Resource DoS (deeply nested JSON, massive payloads).
-- **Anti-Weakening Invariant Verifier (`InvariantVerifier`):** Formal invariant verification validating **Ground-Truth Soundness** (mutated evaluations must consistently fail on known buggy code) and **Discriminative Sharpness** (evaluations must not become trivial vacuous pass-alls or impossible brick walls).
-- **Co-Evolution Bridge (`CoEvolutionBridge`):** Bi-directional coordination bridge propagating newly discovered red-team failure scenarios from EvalOpt into the System-1 hardening backlog.
-- **EvalOpt CLI Command (`tk evalopt` / `tk redteam`):** CLI commands supporting `--fuzz-depth`, `--mutations`, `--invariants`, and `--sandbox`.
-- **Co-Evolution Orchestrator (`CoEvolutionOrchestrator`):** Orchestrates synchronized multi-round adversarial evolution: **Wave A** (EvalOpt red-teams evaluators and discovers coverage gaps) → **Wave B** (SkillOpt hardens agents/skills against discovered flaws while checking Negative CBR) → **Wave C** (Cross-evaluation verifies Pareto improvements across both System-1 and System-2).
-- **Anti-Regression Circuit Breaker:** Automatically halts co-evolution cycles if 2 consecutive regression rounds occur or if candidate mutations violate baseline pass-rate thresholds.
-- **Co-Evolution CLI Command (`tk evolve` / `tk auto-tune`):** CLI commands supporting `--rounds`, `--harness`, `--harness-cmd`, `--auto-promote`, and `--sandbox`.
+- **Sealed Benchmark Vault (`benchmarks/corpus/`):** 50 curated, multi-category benchmark scenarios serving as the ground-truth evaluation vault:
+  - **Anti-Hallucination (15 scenarios):** Catches ghost npm packages, invented Array/String/Object/FS/Crypto/Process methods, and undocumented APIs.
+  - **Security Injections (15 scenarios):** Catches command injection, path traversal, SQL injection, insecure random, `eval()`, prototype pollution, ReDoS, CORS misconfiguration, and SSRF.
+  - **Functional Correctness (10 scenarios):** Deep equality, semver comparison, LRU caches, binary search, pagination, and concurrency pools.
+  - **Edge Cases & Resilience (10 scenarios):** Retry backoff, circuit breakers, resource cleanup, circular JSON, float precision, atomic writes, and timeout wrappers.
+- **Statistical Evaluator (`StatisticalEvaluator`):** Multi-trial candidate evaluator computing Wilson Score 95% Confidence Intervals, dual-oracle anti-eval-hacking validation (safe candidates must pass $100\%$, unsafe must leak $0\%$), and Pareto-frontier candidate comparison.
+- **Baseline Benchmark Certification Runner (`scripts/run_baseline_benchmark.js`):** Standalone script verifying active codebase against all 50 sealed scenarios, achieving **100% Safe Pass Rate** and **0.0% Unsafe Leak Rate** (`BENCHMARK_VAULT_CERTIFIED`).
+- **Formal Property Invariant Engine (`PropertyInvariantEngine`):** Rigorous verification engine enforcing:
+  - **State Machine Lifecycle DAG:** `PROPOSED`/`DRAFT` ➔ `VALIDATING` ➔ `APPROVED` ➔ `PROMOTED` ➔ `ROLLED_BACK`.
+  - **Monotonic Security Boundaries:** Guarantees core security targets remain completely immutable.
+  - **Memory Envelopes:** Enforces memory bounds ($\le 256\text{MB}$) and process timeout guarantees.
+  - **Cryptographic Proof Certificates:** Generates SHA-256 verifiable proof certificates linking proposal IDs, invariant checks, and timestamps.
+- **Transactional Write-Ahead Log Manager (`WalTransactionManager`):** ACID transaction journaling providing:
+  - Pre-mutation file content snapshotting (`.agent/evolution/wal/snapshots/`).
+  - Two-phase commit protocol (`BEGIN` ➔ `CHECKPOINT` ➔ `PREPARE` ➔ `COMMIT` / `ABORT`).
+  - Atomic reverse-order rollback on candidate validation failure.
+  - Automatic startup crash recovery detecting dangling transactions.
+  - Sorted journal query API (`listTransactions()`).
+- **Procedural Hardening Skill Mutator (`SkillMutator`):** Loop 1 bounded mutator synthesizing scoped Markdown rules under `## Defensive Guardrails` while strictly enforcing a maximum Change Budget ($\le 0.25$ change ratio) and Negative CBR similarity rejection ($\ge 0.85$).
+- **Expanded Adversarial Mutator (`AdversarialMutator`):** Loop 2 red-team attack fuzzing expanded across all 4 vault categories (Anti-Hallucination, Security Injections, Boundary/Functional, Resource/Resilience).
+- **Autonomous Dual-Loop Co-Evolution Engine (`CoEvolutionEngine`):** End-to-end engine coordinating paired EvalOpt red-teaming, Negative CBR ingestion, SkillOpt rule synthesis, statistical verification, and WAL commit staging.
+- **Surveillance Watcher Daemon (`WatcherDaemon`):** Background process polling Negative CBR buffers and test logs for new vulnerabilities, enforcing a 30s rate-limiting cooldown, PID tracking (`.agent/data/rsi_watcher.pid`), and automated co-evolution dispatch.
+- **Unified RSIE CLI (`tk rsi`):**
+  - `tk rsi status [--json]`: Formatted dashboard of Benchmark Vault certification, circuit breaker health, WAL rollback ratios, and watcher daemon status.
+  - `tk rsi run [target-skill] [--rounds=N]`: On-demand co-evolution round dispatch.
+  - `tk rsi watch [--interval=N] [--stop] [--status]`: Background surveillance daemon management.
+  - `tk rsi rollback <txId>`: Manual transactional rollback.
+  - `tk rsi freeze` / `tk rsi unfreeze`: Emergency circuit breaker controls.
 
 ### Fixed
 
 - **Invariant Assertion Reference Equality:** Replaced reference equality (`===`) with deep recursive value equality for object and array assertions in `InvariantVerifier` and scenario baseline checks.
 - **Quoted CLI Harness Argument Parsing:** Implemented quote-aware tokenization in `parseCommandLine` within `optimize.js` and `evolve.js`, resolving argument splitting bugs when passing complex flags like `--harness-cmd "node run.js --flag"`.
 - **Positional Command Parameter Resolution:** Fixed argument extraction in `cli.js` (`cmdEvolve` / `cmdEvalOpt`) ensuring positional target arguments (e.g., `tk evolve <target>`) and options are consistently resolved.
-- **Test Suite Determinism & Coverage:** Added comprehensive unit tests in `test/unit/ubcae_audit_remediation.test.js`, bringing the test suite to 117 passing unit test suites across all RSIE subsystems.
+- **Worktree Oracle Manifest Disk Desync:** Resolved worktree hash mismatches in `BenchmarkOracle.generateManifest()` by reading tracked files directly from `git show HEAD:<file>`.
+- **Negative Memory Return Contract:** Fixed `isPreviouslyRejected()` in `negative_memory.js` to correctly unpack `{ rejected: boolean }` and handle string `candidateEdit` inputs.
+- **Change Budget Ratio Enforcement:** Streamlined change ratio calculation in `SkillMutator` to strictly enforce `changeRatio <= maxRatio` (0.25).
+- **Test Suite Determinism & Coverage:** Added 12 dedicated RSIE unit and integration test suites (68 tests), passing with 100% green exit code.
 
 ## [9.2.8] — 2026-10-07 — 🚀 Premium TUI, Skill Engineering & Security Remediation
 

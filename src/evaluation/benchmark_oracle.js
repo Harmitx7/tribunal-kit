@@ -28,6 +28,7 @@ class BenchmarkOracle {
     this.repoRoot = path.resolve(options.repoRoot || process.cwd());
     this.protectedPatterns = options.protectedPatterns || [
       'test/unit/**/*.test.js',
+      'benchmarks/corpus/**/*.js',
     ];
     this.manifestPath =
       options.manifestPath ||
@@ -127,6 +128,23 @@ class BenchmarkOracle {
     return false;
   }
 
+  _hashGitObjectOrFile(relPath, fullPath, tracked) {
+    if (tracked && tracked.has(relPath)) {
+      try {
+        const { execFileSync } = require('child_process');
+        const content = execFileSync('git', ['show', `HEAD:${relPath}`], {
+          cwd: this.repoRoot,
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'ignore'],
+        }).replace(/\r\n/g, '\n');
+        return crypto.createHash('sha256').update(content, 'utf8').digest('hex');
+      } catch {
+        // Fall back to disk
+      }
+    }
+    return this._hashFile(fullPath);
+  }
+
   /**
    * Generates the baseline ground-truth manifest from the trusted repository root.
    */
@@ -137,8 +155,8 @@ class BenchmarkOracle {
 
     for (const relPath of files) {
       const fullPath = path.join(this.repoRoot, relPath);
-      const hash = this._hashFile(fullPath);
-      const stats = fs.statSync(fullPath);
+      const hash = this._hashGitObjectOrFile(relPath, fullPath, tracked);
+      const stats = fs.existsSync(fullPath) ? fs.statSync(fullPath) : { size: 0 };
 
       entries[relPath] = {
         hash,

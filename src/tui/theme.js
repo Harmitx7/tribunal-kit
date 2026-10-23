@@ -43,9 +43,18 @@ const RGB = {
   // Accents
   FLAME: [225, 75, 45], // Punchier Orange-Red
   FLAME_MUTED: [180, 60, 40],
+  FLAME_VERMILION: [255, 51, 0], // Kinetic Neo-Brutalist Flame
   CORAL_BRIGHT: [245, 120, 95],
   AMBER: [245, 158, 11],
   GOLD: [255, 215, 0],
+
+  // Industrial & Surface (DESIGN.md Neo-Brutalist alignment)
+  INK_VOID: [6, 7, 9],
+  INK_CHARCOAL: [14, 17, 23],
+  INK_SURFACE: [20, 24, 34],
+  INK_BORDER: [34, 38, 52],
+  TAPE_STEEL: [138, 146, 163],
+  TAPE_SILVER: [212, 216, 224],
 
   // Status
   EMERALD: [35, 195, 105], // Sharper Green
@@ -65,12 +74,16 @@ const UTF8_GLYPHS = {
   treeEnd: '└──',
   chevron: '❯',
   diamond: '◆',
+  star: '✦',
   boxTl: '╭',
   boxTr: '╮',
   boxBl: '╰',
   boxBr: '╯',
   boxH: '─',
   boxV: '│',
+  teeL: '├',
+  teeR: '┤',
+  cross: '┼',
   dot: '·',
   check: '[✔]',
   uncheck: '[ ]',
@@ -89,12 +102,16 @@ const ASCII_GLYPHS = {
   treeEnd: '`--',
   chevron: '>',
   diamond: '*',
+  star: '*',
   boxTl: '+',
   boxTr: '+',
   boxBl: '+',
   boxBr: '+',
   boxH: '-',
   boxV: '|',
+  teeL: '+',
+  teeR: '+',
+  cross: '+',
   dot: '.',
   check: '[x]',
   uncheck: '[ ]',
@@ -104,6 +121,19 @@ const ASCII_GLYPHS = {
 };
 
 const GLYPHS = isUtf8 ? UTF8_GLYPHS : ASCII_GLYPHS;
+
+// Comprehensive ANSI stripping regex handling SGR, TrueColor, cursor movement, OSC 8 links
+const ANSI_REGEX =
+  /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]|(?:\x1b\][^\x07\x1b]*(?:\x07|\x1b\\))/g;
+
+function stripAnsi(text) {
+  if (typeof text !== 'string') return String(text || '');
+  return text.replace(ANSI_REGEX, '');
+}
+
+function visibleLength(text) {
+  return stripAnsi(text).length;
+}
 
 function color(rgb, text) {
   if (!hasColor) return String(text);
@@ -141,6 +171,11 @@ function italic(text) {
   return `\x1b[3m${text}\x1b[0m`;
 }
 
+function underline(text) {
+  if (!hasColor) return String(text);
+  return `\x1b[4m${text}\x1b[0m`;
+}
+
 function getColumns() {
   return (process.stdout && process.stdout.columns) || 80;
 }
@@ -168,6 +203,9 @@ module.exports = {
   dim,
   inverse,
   italic,
+  underline,
+  stripAnsi,
+  visibleLength,
   getColumns,
   cursor,
 };

@@ -54,12 +54,50 @@ class WizardPrompt {
       // Hide cursor
       process.stdout.write('\x1b[?25l');
 
+      let prevLineCount = 0;
+      let renderedOnce = false;
+
+      const cleanup = () => {
+        process.stdin.removeListener('keypress', onKeypress);
+        process.removeListener('SIGINT', sigintHandler);
+        if (process.stdin.isTTY) {
+          process.stdin.setRawMode(false);
+        }
+        process.stdin.pause();
+        process.stdout.write('\x1b[?25h'); // restore cursor
+      };
+
+      const sigintHandler = () => {
+        cleanup();
+        process.exit(130);
+      };
+      process.once('SIGINT', sigintHandler);
+
       const render = (isFinal = false) => {
         let out = '';
+        let lineCount = 0;
         const prefix = color(RGB.AMBER, '?');
         out += `\n  ${prefix} ${bold(color(RGB.WHITE, question))}\n\n`;
+        lineCount += 3;
 
-        options.forEach((opt, idx) => {
+        const maxVisible = Math.max(4, Math.min(12, (process.stdout.rows || 24) - 8));
+        const total = options.length;
+        let start = 0;
+        let end = total;
+
+        if (total > maxVisible) {
+          const half = Math.floor(maxVisible / 2);
+          start = Math.max(0, Math.min(cursor - half, total - maxVisible));
+          end = Math.min(total, start + maxVisible);
+        }
+
+        if (start > 0) {
+          out += `    ${color(RGB.ZINC_600, `↑ ... (${start} more above)`)}\n`;
+          lineCount++;
+        }
+
+        for (let idx = start; idx < end; idx++) {
+          const opt = options[idx];
           const isCursor = idx === cursor;
           const pointer = isCursor ? color(RGB.FLAME, g.pointer) : '  ';
           const check = opt.selected ? color(RGB.EMERALD, g.check) : color(RGB.ZINC_600, g.uncheck);
@@ -75,27 +113,33 @@ class WizardPrompt {
 
           const detailColored = color(RGB.ZINC_600, opt.detail || '');
           out += `  ${pointer} ${check} ${labelColored} ${detailColored}\n`;
-        });
+          lineCount++;
+        }
+
+        if (end < total) {
+          out += `    ${color(RGB.ZINC_600, `↓ ... (${total - end} more below)`)}\n`;
+          lineCount++;
+        }
 
         if (isFinal) {
           out += `\n  ${color(RGB.EMERALD, '✔ Configuration locked.')}\n`;
+          lineCount += 2;
         } else {
           const hint = '[Space] Toggle · [Enter] Confirm · [A] All · [↑/↓] Move';
           out += `\n  ${color(RGB.ZINC_600, hint)}\n`;
+          lineCount += 2;
         }
 
-        return { out };
+        return { out, lineCount };
       };
 
-      let renderedOnce = false;
-
       const draw = (isFinal = false) => {
-        const { out } = render(isFinal);
-        if (renderedOnce) {
-          // Clear and rewrite lines (options length + 5 lines of headers/footers)
-          process.stdout.write(`\x1b[${options.length + 5}A\r`);
+        const { out, lineCount } = render(isFinal);
+        if (renderedOnce && prevLineCount > 0) {
+          process.stdout.write(`\x1b[${prevLineCount}A\r`);
         }
         process.stdout.write(out);
+        prevLineCount = lineCount;
         renderedOnce = true;
       };
 
@@ -127,15 +171,6 @@ class WizardPrompt {
           draw(true);
           resolve(options);
         }
-      };
-
-      const cleanup = () => {
-        process.stdin.removeListener('keypress', onKeypress);
-        if (process.stdin.isTTY) {
-          process.stdin.setRawMode(false);
-        }
-        process.stdin.pause();
-        process.stdout.write('\x1b[?25h'); // restore cursor
       };
 
       process.stdin.on('keypress', onKeypress);

@@ -146,4 +146,40 @@ describe('TUI System & Brainless Components', () => {
       expect(logs).toContain('Windsurf');
     });
   });
+
+  describe('ANSI Utilities & Geometric Alignment', () => {
+    const { stripAnsi, visibleLength, renderPanel } = require('../../src/tui');
+
+    test('stripAnsi correctly removes SGR, TrueColor, and cursor escape sequences', () => {
+      const styled = '\x1b[38;2;225;75;45m\x1b[1mTribunal\x1b[0m \x1b[2K\x1b[?25lTest';
+      expect(stripAnsi(styled)).toBe('Tribunal Test');
+      expect(visibleLength(styled)).toBe(13);
+    });
+
+    test('renderPanel produces identical visible length for top, mid, content, and bottom rows', () => {
+      const lines = [
+        'Status: Operational',
+        `${color(RGB.EMERALD, '✔')} Verification complete with 28 reviewers active`,
+      ];
+      const output = renderPanel('System Telemetry', lines, {
+        width: 70,
+        accessory: '[NOMINAL]',
+        returnLines: true,
+      });
+
+      // All 5 rows: top border, title, divider, content line 1, content line 2, bottom border
+      const lengths = output.map(line => stripAnsi(line).length);
+      const expectedLength = lengths[0];
+
+      lengths.forEach((len) => {
+        expect(len).toBe(expectedLength);
+      });
+    });
+
+    test('renderBanner supports compact narrow view without throwing', () => {
+      expect(() => {
+        renderBanner('9.2.9', false, { subtitle: 'Test Subtitle' });
+      }).not.toThrow();
+    });
+  });
 });

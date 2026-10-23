@@ -33,6 +33,8 @@ const {
   FORBIDDEN_TARGETS,
   EVIDENCE_HIERARCHY,
 } = require('../evolution/engine');
+const { PropertyInvariantEngine } = require('../evaluation/property_invariant_engine');
+const { WalTransactionManager } = require('../evolution/wal_transaction_manager');
 
 const VALID_SOURCES = new Set([
   'SYSTEM1_CLASSIFICATION',
@@ -66,12 +68,33 @@ function validateCandidateId(id) {
 function writeFileSyncAtomic(filePath, data, encoding = 'utf8') {
   const dir = path.dirname(filePath);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  const randomSuffix = crypto.randomBytes(4).toString('hex');
   const tmpPath = path.join(
     dir,
-    `.${path.basename(filePath)}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 6)}.tmp`,
+    `.${path.basename(filePath)}.${process.pid}.${Date.now()}.${randomSuffix}.tmp`,
   );
   fs.writeFileSync(tmpPath, data, encoding);
-  fs.renameSync(tmpPath, filePath);
+  try {
+    try {
+      fs.renameSync(tmpPath, filePath);
+    } catch (err) {
+      if (process.platform === 'win32' && (err.code === 'EEXIST' || err.code === 'EPERM')) {
+        try {
+          fs.unlinkSync(filePath);
+        } catch (_) {}
+        fs.renameSync(tmpPath, filePath);
+      } else {
+        throw err;
+      }
+    }
+  } catch (err) {
+    try {
+      if (fs.existsSync(tmpPath)) {
+        fs.unlinkSync(tmpPath);
+      }
+    } catch (_) {}
+    throw err;
+  }
 }
 
 function getEvolutionDir(agentDir = path.join(process.cwd(), '.agent')) {
@@ -242,6 +265,14 @@ async function validateCandidateAgainstCorpus(candidate, testSuite = []) {
     );
   }
 
+  const invariantEngine = new PropertyInvariantEngine();
+  if (candidate.status !== 'VALIDATING') {
+    invariantEngine.verifyStateTransition(candidate.status, 'VALIDATING');
+  }
+  if (candidate.target) {
+    invariantEngine.verifySecurityBoundaries(candidate.target);
+  }
+
   candidate.status = 'VALIDATING';
   const passed = [];
   const failed = [];
@@ -321,6 +352,9 @@ function approveCandidate(candidate, approverName, agentDir) {
     );
   }
 
+  const invariantEngine = new PropertyInvariantEngine();
+  invariantEngine.verifyStateTransition(candidate.status, 'APPROVED');
+
   if (candidate.tests_failed && candidate.tests_failed.length > 0) {
     throw new Error(
       `Cannot approve candidate ${candidate.candidate_id}: failing regression tests exist.`,
@@ -343,6 +377,9 @@ function approveCandidate(candidate, approverName, agentDir) {
     approved_at: new Date().toISOString(),
     human_gate_cleared: true,
   };
+  candidate.proof_certificate = invariantEngine.generateProofCertificate(candidate, {
+    approver: approverName,
+  });
 
   if (agentDir) {
     saveCandidate(candidate, agentDir);
@@ -364,6 +401,9 @@ function promoteCandidate(candidate, agentDir = path.join(process.cwd(), '.agent
     );
   }
 
+  const invariantEngine = new PropertyInvariantEngine();
+  invariantEngine.verifyStateTransition(candidate.status, 'PROMOTED');
+
   validateCandidateId(candidate.candidate_id);
   if (FORBIDDEN_KEYS.has(candidate.target)) {
     throw new Error(`Dangerous target key "${candidate.target}" rejected.`);
@@ -382,8 +422,18 @@ function promoteCandidate(candidate, agentDir = path.join(process.cwd(), '.agent
   const activePath = getActiveEvolutionsPath(agentDir);
   if (!fs.existsSync(rollbacksDir)) fs.mkdirSync(rollbacksDir, { recursive: true });
 
+  const wal = new WalTransactionManager({ agentDir });
+  const tx = wal.beginTransaction(candidate.candidate_id, {
+    action: 'PROMOTE',
+    target: candidate.target,
+  });
+
   const lock = acquireEvolutionLock(agentDir);
   try {
+    if (fs.existsSync(activePath)) {
+      wal.checkpointFile(tx.txId, activePath);
+    }
+
     // 1. Read existing active evolutions
     let active = {};
     if (fs.existsSync(activePath)) {
@@ -400,6 +450,7 @@ function promoteCandidate(candidate, agentDir = path.join(process.cwd(), '.agent
       target: candidate.target,
       previous_state: active[candidate.target] ?? candidate.rollback_data?.previous_state ?? null,
       promoted_at: new Date().toISOString(),
+      wal_tx_id: tx.txId,
     };
     writeFileSyncAtomic(
       path.join(rollbacksDir, `${candidate.candidate_id}.rollback.json`),
@@ -413,12 +464,20 @@ function promoteCandidate(candidate, agentDir = path.join(process.cwd(), '.agent
       proposed_change: candidate.proposed_change,
       promoted_at: new Date().toISOString(),
       approved_by: candidate.approval?.approved_by || 'Human Gate',
+      wal_tx_id: tx.txId,
     };
     writeFileSyncAtomic(activePath, JSON.stringify(active, null, 2), 'utf8');
 
     candidate.status = 'PROMOTED';
     candidate.promoted_at = new Date().toISOString();
+    candidate.wal_tx_id = tx.txId;
     saveCandidate(candidate, agentDir);
+
+    wal.prepareTransaction(tx.txId, { status: 'PROMOTED', target: candidate.target });
+    wal.commitTransaction(tx.txId);
+  } catch (err) {
+    wal.rollbackTransaction(tx.txId, err.message);
+    throw err;
   } finally {
     releaseEvolutionLock(lock);
   }
@@ -428,6 +487,7 @@ function promoteCandidate(candidate, agentDir = path.join(process.cwd(), '.agent
     candidate_id: candidate.candidate_id,
     target: candidate.target,
     rollback_available: true,
+    wal_tx_id: tx.txId,
   };
 }
 

@@ -35,6 +35,8 @@ const {
   approveEvolutionProposal,
   FORBIDDEN_TARGETS,
 } = require('./engine');
+const { WalTransactionManager } = require('./wal_transaction_manager');
+const { PropertyInvariantEngine } = require('../evaluation/property_invariant_engine');
 
 function isForbiddenTarget(target) {
   if (!target || typeof target !== 'string') return true;
@@ -94,6 +96,8 @@ class CoEvolutionOrchestrator {
     this.harnessCmd = options.harnessCmd || 'node -e "process.exit(0)"';
     this.mutator = new AdversarialMutator();
     this.verifier = new InvariantVerifier();
+    this.wal = new WalTransactionManager({ agentDir: path.join(this.repoRoot, '.agent') });
+    this.invariantEngine = new PropertyInvariantEngine();
   }
 
   /**
@@ -103,6 +107,7 @@ class CoEvolutionOrchestrator {
    */
   async run() {
     // 1. Security boundary check
+    this.invariantEngine.verifySecurityBoundaries(this.targetSkill);
     if (isForbiddenTarget(this.targetSkill)) {
       throw new Error(
         `Target "${this.targetSkill}" is a protected security boundary. Co-evolution is strictly forbidden.`,
@@ -152,6 +157,15 @@ class CoEvolutionOrchestrator {
         roundsExecuted = round;
         const priorSkillText = currentSkillText;
 
+        // ── WAL Transaction Journaling ────────────────────────────────────
+        const walTx = this.wal.beginTransaction(this.targetSkill, {
+          round,
+          targetSkill: this.targetSkill,
+        });
+        if (fs.existsSync(skillPath)) {
+          this.wal.checkpointFile(walTx.txId, skillPath);
+        }
+
         // ── WAVE A: Adversarial Red-Team Fuzzing (EvalOpt) ──────────────────
         const redTeamResult = await this._executeRedTeamWave(round, runDir);
         if (initialResilience === null) {
@@ -182,6 +196,7 @@ class CoEvolutionOrchestrator {
 
         if (!baselinePassed) {
           // Baseline Regression: Revert candidate immediately
+          this.wal.rollbackTransaction(walTx.txId, `Baseline regression in round ${round}`);
           currentSkillText = priorSkillText;
           fs.writeFileSync(runSkillPath, priorSkillText, 'utf8');
           consecutiveRollbacks++;
@@ -240,6 +255,13 @@ class CoEvolutionOrchestrator {
           fs.writeFileSync(skillPath, currentSkillText, 'utf8');
         }
 
+        this.wal.prepareTransaction(walTx.txId, {
+          round,
+          finalResilience: currentResilience,
+          proposalId: proposal.proposal_id,
+        });
+        this.wal.commitTransaction(walTx.txId);
+
         roundTelemetry.push({
           round,
           baselinePassed: true,
@@ -248,6 +270,7 @@ class CoEvolutionOrchestrator {
           resilienceGain,
           proposalId: proposal.proposal_id,
           action: this.autoPromote ? 'PROMOTED' : 'STAGED',
+          walTxId: walTx.txId,
         });
 
         if (currentResilience >= 100.0) {

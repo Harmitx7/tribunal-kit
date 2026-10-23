@@ -85,6 +85,8 @@ function parseArgs(argv) {
       args.flags.promote = raw[++i];
     } else if (arg === '--status') {
       args.flags.status = true;
+    } else if (arg === '--json') {
+      args.flags.json = true;
     } else if (arg === '--sandbox') {
       args.flags.sandbox = true;
     } else if (arg === '--no-sandbox') {
@@ -113,138 +115,79 @@ function parseArgs(argv) {
 }
 function cmdHelp(quiet = false) {
   (0, helpers_1.banner)(quiet);
+  const { color, bold, dim, RGB, GLYPHS } = require('./tui');
+
   const cmd = (name, desc) =>
-    `  ${(0, logger_1.c)('cyan', name.padEnd(10))}  ${(0, logger_1.c)('gray', desc)}`;
+    `    ${color(RGB.CYAN, name.padEnd(16))} ${dim(desc)}`;
   const opt = (flag, desc) =>
-    `  ${(0, logger_1.c)('yellow', flag.padEnd(22))}  ${(0, logger_1.c)('gray', desc)}`;
-  const ex = s => `  ${(0, logger_1.c)('gray', '▸')} ${(0, logger_1.c)('white', s)}`;
-  (0, logger_1.log)((0, logger_1.bold)('  Commands'));
-  (0, logger_1.log)(`  ${(0, logger_1.c)('gray', '─'.repeat(40))}`);
-  (0, logger_1.log)(cmd('init', 'Install .agent/ into current project'));
-  (0, logger_1.log)(cmd('update', 'Re-install to get latest version'));
-  (0, logger_1.log)(cmd('status', 'Check if .agent/ is installed'));
-  (0, logger_1.log)(cmd('learn', 'Evolve project idioms based on git diffs'));
-  (0, logger_1.log)(
-    cmd('case', 'Manage Case Law precedents (add, search, list, show, stats, overrule)'),
-  );
-  (0, logger_1.log)(cmd('graph', 'Build and visualize the architecture graph'));
-  (0, logger_1.log)(
-    cmd('arch', 'Architecture Intelligence (map, verify, impact, diff, audit, project)'),
-  );
-  (0, logger_1.log)(cmd('mutate', 'Run the Mutation Engine to test test-suite reliability'));
-  (0, logger_1.log)(cmd('context', 'Retrieve a highly-optimized Context Snapshot for a file'));
-  (0, logger_1.log)(cmd('sync', 'Synchronize IDE bridge files with current rules'));
-  (0, logger_1.log)(
-    cmd('align', 'Clean AI outputs (strip slop, collapse lists, validate code traps)'),
-  );
-  (0, logger_1.log)(cmd('marathon', 'Long-running agent harness (init, status, next, mark)'));
-  (0, logger_1.log)(cmd('hook', 'Install pre-push git hook for auto-learning'));
-  (0, logger_1.log)(
-    cmd('compile', 'Compile rules into a static instruction file for terminal agents'),
-  );
-  (0, logger_1.log)(
-    cmd('memory', '4-Type Taxonomy Persistent Memory Engine (store, recall, gc, stats, export)'),
-  );
-  (0, logger_1.log)(
-    cmd('optimize-skill', 'Optimize project skills actively using SkillOpt validation gates'),
-  );
-  (0, logger_1.log)(
-    cmd('evalopt', 'Automated adversarial red-teaming & evaluation mutation (Loop 2)'),
-  );
-  (0, logger_1.log)(cmd('redteam', 'Alias for evalopt'));
-  (0, logger_1.log)(
-    cmd('evolve', 'Continuous Asymmetric Dual-Loop Auto-Tuning (Loop 1 + Loop 2)'),
-  );
-  (0, logger_1.log)(cmd('auto-tune', 'Alias for evolve'));
-  (0, logger_1.log)(cmd('validate', 'Validate a JSON payload against a Tribunal schema'));
-  (0, logger_1.log)(cmd('min-context', 'Remove empty lines from a context file'));
-  (0, logger_1.log)(cmd('dag-schedule', 'Compute parallel execution waves from task dependencies'));
-  (0, logger_1.log)(
-    cmd('context-compress', 'Compress a context file while retaining VERIFY comments'),
-  );
-  (0, logger_1.log)(cmd('optimize-step', 'Apply bounded SkillOpt edits from a JSON payload'));
-  (0, logger_1.log)(
-    cmd('guardrail', 'Validate .agent/ integrity (phantom refs, count mismatches, drift)'),
-  );
-  (0, logger_1.log)(
-    cmd('contract', 'AI Agent Behavioral Contract Testing (init, verify, list, trace, replay)'),
-  );
-  (0, logger_1.log)(cmd('impact-tier', 'Classify task governance impact tier (0-3)'));
-  (0, logger_1.log)(
-    cmd('context-rank', 'Deterministic evidence-driven context ranking and token budgeting'),
-  );
-  (0, logger_1.log)(cmd('browse', 'Token-efficient page reader (pruned to <4k bytes)'));
-  (0, logger_1.log)(cmd('audit-web', 'Live browser accessibility, console & vitals auditor'));
-  (0, logger_1.log)(cmd('compare-web', 'Visual regression differ for CI & release gating'));
-  (0, logger_1.log)(
-    cmd('deconstruct', 'Reverse-engineer live web elements into React TSX + Tailwind'),
-  );
-  (0, logger_1.log)(cmd('heal', 'Runtime Sentinel error hunter & live fix verifier'));
-  (0, logger_1.log)(
-    cmd('sdd', 'Subagent-Driven Development workspace & brief slicing (workspace, brief, diff)'),
-  );
-  (0, logger_1.log)(cmd('uninstall', 'Remove .agent/ folder from project'));
-  (0, logger_1.log)(
-    cmd('system1', 'Manage Laya System-1 inference engine (enable, disable, status, clean)'),
-  );
-  console.log();
-  (0, logger_1.log)((0, logger_1.bold)('  Options'));
-  (0, logger_1.log)(`  ${(0, logger_1.c)('gray', '─'.repeat(40))}`);
-  (0, logger_1.log)(opt('--force', 'Overwrite existing .agent/ folder'));
-  (0, logger_1.log)(opt('--path <dir>', 'Install in specific directory'));
-  (0, logger_1.log)(opt('--target <name>', 'Target terminal agent for compile (e.g. aider)'));
-  (0, logger_1.log)(opt('--quiet', 'Suppress all output'));
-  (0, logger_1.log)(opt('--verbose', 'Show detailed debug logging'));
-  (0, logger_1.log)(opt('--dry-run', 'Preview actions without executing'));
-  (0, logger_1.log)(opt('--minimal', 'Install core agents/skills only (~13 agents)'));
-  (0, logger_1.log)(opt('--skip-update-check', 'Skip auto-update version check'));
-  (0, logger_1.log)(opt('--head', '(learn) Diff against last commit instead of staged'));
-  (0, logger_1.log)(opt('--write', '(align) Write aligned output in-place to the target file'));
-  (0, logger_1.log)(opt('--version, -v', 'Print installed version'));
-  console.log();
-  (0, logger_1.log)((0, logger_1.bold)('  Aliases'));
-  (0, logger_1.log)(`  ${(0, logger_1.c)('gray', '─'.repeat(40))}`);
-  (0, logger_1.log)(
-    `  ${(0, logger_1.c)('cyan', 'tk')}  ${(0, logger_1.c)('gray', 'Shorthand for tribunal-kit (e.g., tk init, tk status)')}`,
-  );
-  console.log();
-  (0, logger_1.log)((0, logger_1.bold)('  Examples'));
-  (0, logger_1.log)(`  ${(0, logger_1.c)('gray', '─'.repeat(40))}`);
-  (0, logger_1.log)(ex('npx tribunal-kit init'));
-  (0, logger_1.log)(ex('tk init --force'));
-  (0, logger_1.log)(ex('tk init --path ./my-app'));
-  (0, logger_1.log)(ex('npx tribunal-kit init --dry-run'));
-  (0, logger_1.log)(ex('tk update'));
-  (0, logger_1.log)(ex('tk status'));
-  (0, logger_1.log)(ex('tk learn'));
-  (0, logger_1.log)(ex('tk learn --dry-run'));
-  (0, logger_1.log)(ex('tk learn --head'));
-  (0, logger_1.log)(ex('tk case add'));
-  (0, logger_1.log)(ex('tk case search "useEffect"'));
-  (0, logger_1.log)(ex('tk case list'));
-  (0, logger_1.log)(ex('tk case show --id 1'));
-  (0, logger_1.log)(ex('tk case stats'));
-  (0, logger_1.log)(ex('tk case export'));
-  (0, logger_1.log)(ex('tk case overrule --id 1'));
-  (0, logger_1.log)(ex('tk graph'));
-  (0, logger_1.log)(ex('tk mutate src/utils.js "npm test"'));
-  (0, logger_1.log)(ex('tk marathon init "Build a todo app"'));
-  (0, logger_1.log)(ex('tk marathon status'));
-  (0, logger_1.log)(ex('tk marathon next'));
-  (0, logger_1.log)(ex('tk marathon mark 5 pass'));
-  (0, logger_1.log)(ex('tk hook'));
-  (0, logger_1.log)(ex('tk compile'));
-  (0, logger_1.log)(ex('echo "Certainly! Here is - item 1" | tk align'));
-  (0, logger_1.log)(ex('tk align output.md --write'));
-  (0, logger_1.log)(
-    ex('tk memory store --type semantic --content "Uses PostgreSQL" --tags db,orm'),
-  );
-  (0, logger_1.log)(ex('tk optimize-skill --target project-idioms "npm test"'));
-  (0, logger_1.log)(ex('tk memory recall --query "database" --budget 2000'));
-  (0, logger_1.log)(ex('tk memory gc'));
-  (0, logger_1.log)(ex('tk memory stats'));
-  (0, logger_1.log)(ex('tk memory export'));
-  (0, logger_1.log)(ex('tk uninstall'));
+    `    ${color(RGB.AMBER, flag.padEnd(24))} ${dim(desc)}`;
+  const ex = s => `    ${color(RGB.FLAME, '▸')} ${color(RGB.WHITE, s)}`;
+  const section = (title, icon = '✦') => {
+    console.log();
+    console.log(`  ${color(RGB.FLAME, icon)} ${bold(color(RGB.WHITE, title))}`);
+    console.log(`  ${dim('─'.repeat(48))}`);
+  };
+
+  section('Core Lifecycle & Platform', '⚡');
+  console.log(cmd('init', 'Install .agent/ into current workspace'));
+  console.log(cmd('status', 'Display high-density architecture cockpit'));
+  console.log(cmd('update', 'Re-install to upgrade to latest engine'));
+  console.log(cmd('sync', 'Synchronize IDE bridge files (.cursorrules, etc.)'));
+  console.log(cmd('guardrail', 'Validate .agent/ integrity & detect drift'));
+  console.log(cmd('uninstall', 'Remove .agent/ folder from current project'));
+
+  section('Governance & Architecture Intelligence', '🛡');
+  console.log(cmd('validate', 'Verify JSON payloads or .agent/ with 28-reviewer grid'));
+  console.log(cmd('arch', 'Architecture Intelligence (map, verify, impact, audit)'));
+  console.log(cmd('graph', 'Build and visualize dependency architecture graph'));
+  console.log(cmd('contract', 'AI Agent Behavioral Contract Testing (verify, replay)'));
+  console.log(cmd('impact-tier', 'Classify task governance impact tier (0-3)'));
+
+  section('Recursive Self-Improvement & Learning', '🏛');
+  console.log(cmd('rsi', 'Recursive Self-Improvement Engine (status, run, watch)'));
+  console.log(cmd('evolve', 'Continuous Asymmetric Dual-Loop Auto-Tuning'));
+  console.log(cmd('learn', 'Evolve project idioms based on git diffs'));
+  console.log(cmd('case', 'Case Law Precedent Engine (add, search, list, overrule)'));
+  console.log(cmd('memory', '4-Type Taxonomy Persistent Memory Engine'));
+  console.log(cmd('mutate', 'Mutation Engine to test test-suite reliability'));
+  console.log(cmd('evalopt', 'Adversarial red-teaming & evaluation mutation'));
+
+  section('Agentic Context & Subagent Workflows', '🧠');
+  console.log(cmd('marathon', 'Long-running autonomous agent harness'));
+  console.log(cmd('sdd', 'Subagent-Driven Development workspace & brief slicing'));
+  console.log(cmd('skill-intel', 'Autonomous Skill Intelligence Engine (discover, gate)'));
+  console.log(cmd('compile', 'Compile rules into static instructions for CLI agents'));
+  console.log(cmd('context', 'Retrieve highly-optimized Context Snapshot for a file'));
+  console.log(cmd('align', 'Clean AI outputs (strip slop, collapse lists)'));
+
+  section('Web & Browser Intelligence', '🌐');
+  console.log(cmd('browse', 'Token-efficient web reader (pruned to <4k bytes)'));
+  console.log(cmd('audit-web', 'Live browser accessibility, console & vitals auditor'));
+  console.log(cmd('compare-web', 'Visual regression differ for CI & release gating'));
+  console.log(cmd('deconstruct', 'Reverse-engineer live web elements into React TSX'));
+  console.log(cmd('heal', 'Runtime Sentinel error hunter & live fix verifier'));
+
+  section('Options & Flags', '⚙');
+  console.log(opt('--force', 'Overwrite existing .agent/ folder'));
+  console.log(opt('--path <dir>', 'Target specific directory'));
+  console.log(opt('--json', 'Emit machine-readable JSON output'));
+  console.log(opt('--quiet', 'Suppress all non-essential output'));
+  console.log(opt('--verbose', 'Show detailed debug logging'));
+  console.log(opt('--dry-run', 'Preview actions without writing disk changes'));
+  console.log(opt('--minimal', 'Install core agents & skills only (~13 specialists)'));
+  console.log(opt('--version, -v', 'Print installed package version'));
+
+  section('Aliases & Shortcuts', '❯');
+  console.log(`    ${color(RGB.CYAN, 'tk')}            ${dim('Shorthand for tribunal-kit (e.g., tk status, tk rsi)')}`);
+
+  section('Key Examples', '💡');
+  console.log(ex('tk status'));
+  console.log(ex('tk init --force'));
+  console.log(ex('tk validate --file payload.json'));
+  console.log(ex('tk rsi status'));
+  console.log(ex('tk skill-intel "Build payment idempotency API"'));
+  console.log(ex('tk case search "useEffect"'));
+  console.log(ex('tk marathon init "Implement user billing"'));
   console.log();
 }
 // ── Lazy Loaders ─────────────────────────────────────────
@@ -373,6 +316,11 @@ async function runWithUpdateCheck(command, flags) {
       await cmdGuardrail(flags, process.argv, quiet);
       break;
     }
+    case 'rsi': {
+      const cmdRsi = loadCmd('./commands/rsi', 'cmdRsi');
+      await cmdRsi(flags, process.argv, quiet);
+      break;
+    }
     case 'contract': {
       const cmdContract = loadCmd('./commands/contract', 'cmdContract');
       await cmdContract(flags, process.argv, quiet);
@@ -469,6 +417,12 @@ async function runWithUpdateCheck(command, flags) {
     case 'sdd': {
       const cmdSdd = loadCmd('./commands/sdd', 'cmdSdd');
       await cmdSdd(flags, process.argv, quiet);
+      break;
+    }
+    case 'skill-intel':
+    case 'skill-intelligence': {
+      const cmdSkillIntel = loadCmd('./commands/skill-intelligence', 'cmdSkillIntel');
+      await cmdSkillIntel(flags, process.argv, quiet);
       break;
     }
     case 'help':

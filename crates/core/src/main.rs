@@ -69,6 +69,14 @@ enum Commands {
         /// Target directory to check (defaults to current directory)
         #[arg(default_value = ".")]
         path: String,
+
+        /// Output machine-readable JSON
+        #[arg(long, default_value_t = false)]
+        json: bool,
+
+        /// Suppress non-essential output
+        #[arg(long, default_value_t = false)]
+        quiet: bool,
     },
 
     /// Sync IDE bridge configurations
@@ -580,7 +588,7 @@ async fn main() -> Result<()> {
 
         Commands::Validate { file, schema } => cmd_validate(&file, &schema).await,
 
-        Commands::Status { path } => cmd_status(&path).await,
+        Commands::Status { path, json, quiet } => cmd_status(&path, json, quiet).await,
 
         Commands::Sync { path, quiet } => cmd_sync(&path, quiet).await,
 
@@ -1143,7 +1151,7 @@ async fn cmd_min_context(file: &str, max_lines: Option<usize>) -> Result<()> {
     Ok(())
 }
 
-async fn cmd_status(path: &str) -> Result<()> {
+async fn cmd_status(path: &str, json: bool, quiet: bool) -> Result<()> {
     let target = PathBuf::from(path);
     let agent_dir = target.join(".agent");
 
@@ -1188,6 +1196,7 @@ async fn cmd_status(path: &str) -> Result<()> {
     };
 
     let mut bridge_statuses: Vec<serde_json::Value> = Vec::new();
+    let mut bridge_lines: Vec<String> = Vec::new();
     for (ide_name, rel_path) in &bridge_defs {
         let bridge_path = target.join(rel_path);
         let (status_icon, status_label) = if bridge_path.exists() {
@@ -1211,7 +1220,7 @@ async fn cmd_status(path: &str) -> Result<()> {
                 "stale" => format!("{}", status_icon.yellow()),
                 _ => format!("{}", status_icon.red()),
             };
-            eprintln!("│  {}  {:>10}:  {}", colored_icon, ide_name.dimmed(), rel_path);
+            bridge_lines.push(format!("│  {}  {:>11}:  {}", colored_icon, ide_name.dimmed(), rel_path));
         }
     }
 
@@ -1251,43 +1260,6 @@ async fn cmd_status(path: &str) -> Result<()> {
     }
     let total_reviewers = known_reviewers.len() as u32;
 
-    // ── Human-Readable Output ──
-    if installed {
-        eprintln!("\n╭─ {} ──────────────────", format!("Tribunal-Kit v{}", env!("CARGO_PKG_VERSION")).bold());
-        eprintln!("│");
-        eprintln!("│  ● {}:    {}", "Status".dimmed(), "Active & Guarded".green().bold());
-        eprintln!("│  ● {}:      {}", "Path".dimmed(), agent_dir.display());
-        eprintln!("│");
-        eprintln!("│  ◇ {:>10}:  {:>3}", "Agents".magenta(), agents);
-        eprintln!("│  ◇ {:>10}:  {:>3}", "Workflows".yellow(), workflows);
-        eprintln!("│  ◇ {:>10}:  {:>3}", "Skills".blue(), skills);
-        eprintln!("│  ◇ {:>10}:  {:>3}", "Scripts".green(), scripts);
-        eprintln!("│");
-        eprintln!("│  ◆ {:>10}:  {:>3}  {}", "Memories".cyan(), mem_total,
-            format!("({}S {}P {}E {}W | ~{}tok)", mem_sem, mem_proc, mem_ep, mem_work, mem_tokens).dimmed());
-        eprintln!("│");
-        eprintln!("│  ─── IDE Bridges ───");
-        // Bridge statuses already printed above during iteration
-        eprintln!("│");
-        eprintln!("│  ◆ {:>10}:  ~{} tokens", "Context".cyan(), context_tokens);
-        let readiness_color = if reviewers_ready == total_reviewers {
-            format!("{}/{} ready", reviewers_ready, total_reviewers).green().to_string()
-        } else {
-            format!("{}/{} ready", reviewers_ready, total_reviewers).yellow().to_string()
-        };
-        eprintln!("│  ◆ {:>10}:  {}", "Reviewers".magenta(), readiness_color);
-        eprintln!("│");
-        eprintln!("╰────────────────────────────────────────\n");
-    } else {
-        eprintln!("\n╭─ {} ──────────────────", "Tribunal-Kit Status".bold());
-        eprintln!("│");
-        eprintln!("│  ● {} in this project", "Not installed".red().bold());
-        eprintln!("│  ● Run: {}", "npx tribunal-kit init".cyan());
-        eprintln!("│");
-        eprintln!("╰────────────────────────────────────────\n");
-    }
-
-    // Machine-readable JSON on stdout
     let output = serde_json::json!({
         "installed": installed,
         "path": agent_dir.display().to_string(),
@@ -1311,7 +1283,51 @@ async fn cmd_status(path: &str) -> Result<()> {
         },
     });
 
-    println!("{}", serde_json::to_string(&output)?);
+    if !quiet && !json {
+        if installed {
+            eprintln!("\n╭─ {} ──────────────────", format!("Tribunal-Kit v{}", env!("CARGO_PKG_VERSION")).bold());
+            eprintln!("│");
+            eprintln!("│  ● {}:    {}", "Status".dimmed(), "Active & Guarded".green().bold());
+            eprintln!("│  ● {}:      {}", "Path".dimmed(), agent_dir.display());
+            eprintln!("│");
+            eprintln!("│  ◇ {:>11}:  {:>3}", "Agents".magenta(), agents);
+            eprintln!("│  ◇ {:>11}:  {:>3}", "Workflows".yellow(), workflows);
+            eprintln!("│  ◇ {:>11}:  {:>3}", "Skills".blue(), skills);
+            eprintln!("│  ◇ {:>11}:  {:>3}", "Scripts".green(), scripts);
+            eprintln!("│");
+            eprintln!("│  ◆ {:>11}:  {:>3}  {}", "Memories".cyan(), mem_total,
+                format!("({}S {}P {}E {}W | ~{}tok)", mem_sem, mem_proc, mem_ep, mem_work, mem_tokens).dimmed());
+            eprintln!("│");
+            eprintln!("│  ─── IDE Bridges ───");
+            for line in &bridge_lines {
+                eprintln!("{}", line);
+            }
+            eprintln!("│");
+            eprintln!("│  ◆ {:>11}:  ~{} tokens", "Context".cyan(), context_tokens);
+            let readiness_color = if reviewers_ready == total_reviewers {
+                format!("{}/{} ready", reviewers_ready, total_reviewers).green().to_string()
+            } else {
+                format!("{}/{} ready", reviewers_ready, total_reviewers).yellow().to_string()
+            };
+            eprintln!("│  ◆ {:>11}:  {}", "Reviewers".magenta(), readiness_color);
+            eprintln!("│");
+            eprintln!("╰────────────────────────────────────────\n");
+        } else {
+            eprintln!("\n╭─ {} ──────────────────", "Tribunal-Kit Status".bold());
+            eprintln!("│");
+            eprintln!("│  ● {} in this project", "Not installed".red().bold());
+            eprintln!("│  ● Run: {}", "npx tribunal-kit init".cyan());
+            eprintln!("│");
+            eprintln!("╰────────────────────────────────────────\n");
+        }
+    }
+
+    if json {
+        println!("{}", serde_json::to_string_pretty(&output)?);
+    } else {
+        println!("{}", serde_json::to_string(&output)?);
+    }
+
     Ok(())
 }
 

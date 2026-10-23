@@ -11,6 +11,7 @@ exports.isSelfInstall = isSelfInstall;
 exports.writeFileSyncAtomic = writeFileSyncAtomic;
 const fs_1 = __importDefault(require('fs'));
 const path_1 = __importDefault(require('path'));
+const crypto_1 = __importDefault(require('crypto'));
 const logger_1 = require('./logger');
 // Concurrency limit for parallel file operations to avoid fd exhaustion
 const COPY_CONCURRENCY = 32;
@@ -110,21 +111,31 @@ function isSelfInstall(targetDir, pkgName, kitRoot) {
 function writeFileSyncAtomic(filePath, data, encoding = 'utf8') {
   const dir = path_1.default.dirname(filePath);
   if (!fs_1.default.existsSync(dir)) fs_1.default.mkdirSync(dir, { recursive: true });
+  const randomSuffix = crypto_1.default.randomBytes(4).toString('hex');
   const tmpPath = path_1.default.join(
     dir,
-    `.${path_1.default.basename(filePath)}.${process.pid}.${Date.now()}.${Math.random().toString(36).slice(2, 6)}.tmp`,
+    `.${path_1.default.basename(filePath)}.${process.pid}.${Date.now()}.${randomSuffix}.tmp`,
   );
   fs_1.default.writeFileSync(tmpPath, data, encoding);
   try {
-    fs_1.default.renameSync(tmpPath, filePath);
-  } catch (err) {
-    if (process.platform === 'win32' && (err.code === 'EEXIST' || err.code === 'EPERM')) {
-      try {
-        fs_1.default.unlinkSync(filePath);
-      } catch (_) {}
+    try {
       fs_1.default.renameSync(tmpPath, filePath);
-    } else {
-      throw err;
+    } catch (err) {
+      if (process.platform === 'win32' && (err.code === 'EEXIST' || err.code === 'EPERM')) {
+        try {
+          fs_1.default.unlinkSync(filePath);
+        } catch (_) {}
+        fs_1.default.renameSync(tmpPath, filePath);
+      } else {
+        throw err;
+      }
     }
+  } catch (err) {
+    try {
+      if (fs_1.default.existsSync(tmpPath)) {
+        fs_1.default.unlinkSync(tmpPath);
+      }
+    } catch (_) {}
+    throw err;
   }
 }

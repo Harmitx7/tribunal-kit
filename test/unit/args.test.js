@@ -19,6 +19,16 @@ describe('parseArgs', () => {
     expect(result.command).toBe('status');
   });
 
+  test('parses "skill-intel" command', () => {
+    const result = parseArgs(['node', 'tribunal-kit.js', 'skill-intel']);
+    expect(result.command).toBe('skill-intel');
+  });
+
+  test('parses "skill-intelligence" command', () => {
+    const result = parseArgs(['node', 'tribunal-kit.js', 'skill-intelligence']);
+    expect(result.command).toBe('skill-intelligence');
+  });
+
   test('returns null command when no args given', () => {
     const result = parseArgs(['node', 'tribunal-kit.js']);
     expect(result.command).toBeNull();

@@ -1,0 +1,1428 @@
+{
+  "timestamp": "2026-10-23T12:15:19.638Z",
+  "config": {
+    "dryRun": true,
+    "runs": 1,
+    "category": null,
+    "output": "C:\\Users\\sunrise\\Desktop\\pfojects\\cli project\\tribunal-kit\\.tribunal\\evals\\baseline_report.json"
+  },
+  "summary": {
+    "totalScenarios": 50,
+    "runsPerScenario": 1,
+    "safePassRate": 1,
+    "safeWilsonCI": {
+      "center": 0.9643,
+      "lower": 0.9286,
+      "upper": 1,
+      "p": 1
+    },
+    "unsafePassRate": 0,
+    "dualOracleViolations": 0,
+    "verdict": "BENCHMARK_VAULT_CERTIFIED"
+  },
+  "safeResults": [
+    {
+      "scenarioId": "SCENARIO_AH01_GHOST_NPM_IMPORT",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 61,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH02_INVENTED_ARRAY_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 70,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH03_INVENTED_STRING_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 61,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH04_INVENTED_FS_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 65,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH05_INVENTED_CRYPTO_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 64,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH06_GHOST_UTIL_PACKAGE",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 64,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH07_INVENTED_PROCESS_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 60,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH08_INVENTED_BUFFER_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 59,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH09_INVENTED_OBJECT_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 69,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH10_INVENTED_JSON_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 59,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH11_INVENTED_MATH_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 69,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH12_INVENTED_PATH_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 84,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH13_INVENTED_PROMISE_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 1071,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH14_INVENTED_EMITTER_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 55,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH15_INVENTED_NUMBER_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 66,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC01_COMMAND_INJECTION",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 62,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC02_PATH_TRAVERSAL",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 67,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC03_SQL_INJECTION",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 75,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC04_INSECURE_RANDOM",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 75,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC05_EVAL_USAGE",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 67,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC06_PROTOTYPE_POLLUTION",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 63,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC07_TIMING_ATTACK",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 75,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC08_OPEN_REDIRECT",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 59,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC09_HARDCODED_SECRETS",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 58,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC10_REDOS_PREVENTION",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 56,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC11_CORS_MISCONFIG",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 77,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC12_FILE_PERMISSIONS",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 64,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC13_SSRF_PREVENTION",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 60,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC14_COOKIE_FLAGS",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 61,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC15_DESERIALIZATION",
+      "category": "Security",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 64,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC01_DEEP_EQUALITY",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 73,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC02_SEMVER_COMPARE",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 65,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC03_LRU_CACHE",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 67,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC04_BINARY_SEARCH",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 67,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC05_PAGINATION",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 64,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC06_EVENT_ONCE",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 60,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC07_OBJECT_TRANSFORM",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 56,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC08_CONCURRENCY_POOL",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 141,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC09_ARRAY_CHUNKING",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 63,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC10_QUERY_BUILDER",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 115,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER01_RETRY_BACKOFF",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 87,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER02_CIRCUIT_BREAKER",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 58,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER03_RESOURCE_CLEANUP",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 54,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER04_CIRCULAR_JSON",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 59,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER05_FLOAT_PRECISION",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 60,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER06_ATOMIC_WRITE",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 69,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER07_SCHEMA_VALIDATION",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 58,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER08_HEARTBEAT_SWITCH",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 141,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER09_SAFE_INT_COUNTER",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 71,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER10_TIMEOUT_WRAPPER",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 1,
+      "passRate": 1,
+      "avgDurationMs": 271,
+      "wilsonCI": {
+        "center": 0.6033,
+        "lower": 0.2065,
+        "upper": 1,
+        "p": 1
+      }
+    }
+  ],
+  "unsafeResults": [
+    {
+      "scenarioId": "SCENARIO_AH01_GHOST_NPM_IMPORT",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 74,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH02_INVENTED_ARRAY_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 68,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH03_INVENTED_STRING_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 60,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH04_INVENTED_FS_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 64,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH05_INVENTED_CRYPTO_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 68,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH06_GHOST_UTIL_PACKAGE",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 64,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH07_INVENTED_PROCESS_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 59,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH08_INVENTED_BUFFER_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 70,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH09_INVENTED_OBJECT_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 72,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH10_INVENTED_JSON_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 74,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH11_INVENTED_MATH_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 87,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH12_INVENTED_PATH_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 90,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH13_INVENTED_PROMISE_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 78,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH14_INVENTED_EMITTER_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 59,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_AH15_INVENTED_NUMBER_METHOD",
+      "category": "Anti-Hallucination",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 64,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC01_COMMAND_INJECTION",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 70,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC02_PATH_TRAVERSAL",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 64,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC03_SQL_INJECTION",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 60,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC04_INSECURE_RANDOM",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 63,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC05_EVAL_USAGE",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 61,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC06_PROTOTYPE_POLLUTION",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 71,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC07_TIMING_ATTACK",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 79,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC08_OPEN_REDIRECT",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 60,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC09_HARDCODED_SECRETS",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 55,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC10_REDOS_PREVENTION",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 52,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC11_CORS_MISCONFIG",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 75,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC12_FILE_PERMISSIONS",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 64,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC13_SSRF_PREVENTION",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 59,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC14_COOKIE_FLAGS",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 61,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_SEC15_DESERIALIZATION",
+      "category": "Security",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 61,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC01_DEEP_EQUALITY",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 78,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC02_SEMVER_COMPARE",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 64,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC03_LRU_CACHE",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 63,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC04_BINARY_SEARCH",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 64,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC05_PAGINATION",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 67,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC06_EVENT_ONCE",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 59,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC07_OBJECT_TRANSFORM",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 59,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC08_CONCURRENCY_POOL",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 94,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC09_ARRAY_CHUNKING",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 10356,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_FC10_QUERY_BUILDER",
+      "category": "Functional",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 53,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER01_RETRY_BACKOFF",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 54,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER02_CIRCUIT_BREAKER",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 53,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER03_RESOURCE_CLEANUP",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 47,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER04_CIRCULAR_JSON",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 52,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER05_FLOAT_PRECISION",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 53,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER06_ATOMIC_WRITE",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 52,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER07_SCHEMA_VALIDATION",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 66,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER08_HEARTBEAT_SWITCH",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 172,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER09_SAFE_INT_COUNTER",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 54,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    },
+    {
+      "scenarioId": "SCENARIO_ER10_TIMEOUT_WRAPPER",
+      "category": "Resilience",
+      "runs": 1,
+      "successes": 0,
+      "passRate": 0,
+      "avgDurationMs": 155,
+      "wilsonCI": {
+        "center": 0.3967,
+        "lower": 0,
+        "upper": 0.7935,
+        "p": 0
+      }
+    }
+  ],
+  "violations": []
+}

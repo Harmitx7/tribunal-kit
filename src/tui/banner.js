@@ -1,10 +1,3 @@
-'use strict';
-
-/**
- * Minimalist header cards and status banners.
- * Redesigned for Pro-Max Aesthetic.
- */
-
 const {
   isTTY,
   hasColor,
@@ -15,9 +8,10 @@ const {
   dim,
   inverse,
   getColumns,
+  visibleLength,
 } = require('./theme');
 
-function renderBanner(version = '9.2.9', quiet = false) {
+function renderBanner(version = '9.2.9', quiet = false, options = {}) {
   if (quiet) return;
   if (!isTTY && !hasColor) {
     console.error(`TRIBUNAL-KIT v${version} — Anti-Hallucination Governance Layer`);
@@ -25,9 +19,7 @@ function renderBanner(version = '9.2.9', quiet = false) {
   }
 
   const cols = getColumns();
-  const width = Math.min(84, Math.max(64, cols));
-
-  const titleText = ` TRIBUNAL-KIT `;
+  const titleText = ' TRIBUNAL-KIT ';
   let styledTitle;
   if (hasTrueColor) {
     styledTitle = `\x1b[48;2;${RGB.FLAME[0]};${RGB.FLAME[1]};${RGB.FLAME[2]}m\x1b[38;2;${RGB.PURE_WHITE[0]};${RGB.PURE_WHITE[1]};${RGB.PURE_WHITE[2]}m\x1b[1m${titleText}\x1b[0m`;
@@ -36,21 +28,28 @@ function renderBanner(version = '9.2.9', quiet = false) {
   }
 
   const versionTag = dim(`v${version}`);
-  const rightPill = dim('[Fortress Mode · Rust Core]');
-  const leftLen = titleText.length + versionTag.length - (hasTrueColor ? 0 : 0);
+  const rightPillText = options.rightPill || '[Fortress Mode · Rust Core]';
+  const rightPill = dim(rightPillText);
 
-  // Roughly calculate spaces
-  const spaces = Math.max(
-    2,
-    width - titleText.length - `v${version}`.length - '[Fortress Mode · Rust Core]'.length - 4,
-  );
-
-  const subtitle = 'Autonomous Anti-Hallucination Governance Layer';
+  const subtitle = options.subtitle || 'Autonomous Anti-Hallucination Governance Layer';
   const subtitleColored = color(RGB.ZINC_400, subtitle);
 
   console.log();
-  console.log(`  ${styledTitle}  ${versionTag}${' '.repeat(spaces)}${rightPill}`);
-  console.log(`  ${subtitleColored}`);
+  if (cols < 58) {
+    // Narrow terminal compact stacked header
+    console.log(`  ${styledTitle} ${versionTag}`);
+    console.log(`  ${rightPill}`);
+    console.log(`  ${subtitleColored}`);
+  } else {
+    // Standard and wide responsive layout
+    const width = Math.min(84, cols - 4);
+    const leftLen = visibleLength(titleText) + visibleLength(`v${version}`) + 2;
+    const rightLen = visibleLength(rightPillText);
+    const spaces = Math.max(2, width - leftLen - rightLen);
+
+    console.log(`  ${styledTitle}  ${versionTag}${' '.repeat(spaces)}${rightPill}`);
+    console.log(`  ${subtitleColored}`);
+  }
   console.log();
 }
 
