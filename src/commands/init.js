@@ -64,6 +64,10 @@ const CORE_SKILLS = new Set([
 ]);
 
 async function cmdInit(flags, quiet = false) {
+  if (flags.path && (typeof flags.path !== 'string' || flags.path.includes('\0'))) {
+    (0, logger_1.err)('Security Violation: Invalid target path specified.');
+    process.exit(1);
+  }
   const agentSrc = (0, helpers_1.getKitAgent)();
   const targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
   const agentDest = path_1.default.join(targetDir, '.agent');
@@ -221,10 +225,12 @@ async function cmdInit(flags, quiet = false) {
   try {
     let filterFunc = isMinimal
       ? (name, parentDir, isDir) => {
-          if (isDir) return true;
           const parentName = path_1.default.basename(parentDir);
+          if (isDir) {
+            if (parentName === 'skills') return CORE_SKILLS.has(name);
+            return true;
+          }
           if (parentName === 'agents') return CORE_AGENTS.has(name);
-          if (parentName === 'skills') return CORE_SKILLS.has(name);
           return true;
         }
       : null;
