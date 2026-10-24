@@ -16,7 +16,7 @@ Instead, please report vulnerabilities privately using one of these methods:
 
 1. **GitHub Security Advisory** (preferred): Use [GitHub's private vulnerability reporting](https://github.com/Harmitx7/tribunal-kit/security/advisories/new) to submit a confidential report.
 
-2. **Email**: Send details to the maintainer via the email listed in the npm package.
+2. **Email**: Send confidential vulnerability details directly to the primary maintainer at `harmitkalal7@gmail.com`.
 
 ### What to include
 
@@ -42,7 +42,7 @@ Tribunal Kit follows these security principles:
 - **No network requests at runtime** — The CLI operates entirely offline. The only network call is an optional npm registry version check during `init`/`update`, which can be skipped with `--skip-update-check`.
 - **No code execution from user input** — CLI arguments are parsed without `eval()` or shell interpolation. All subprocess spawning uses array-based arguments (never string concatenation).
 - **No secrets stored** — Tribunal Kit does not store, read, or transmit API keys, tokens, or credentials.
-- **Minimal dependencies** — Zero production dependencies. Only `jest`, `eslint`, and `typescript` as devDependencies.
+- **Minimal production dependencies** — Exactly 1 production runtime dependency (`zod: "^4.6.7"` for deterministic schema validation). Zero extraneous or unvetted packages. Prebuilt native binaries are distributed as optional platform packages (`@tribunal-kit/core-*`) with full pure JavaScript fallback.
 - **Platform binaries are optional** — The Rust core binary is distributed as optional dependencies. The CLI falls back to pure JavaScript if binaries are unavailable.
 
 ## Supply Chain
