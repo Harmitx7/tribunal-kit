@@ -23,6 +23,11 @@ const TARGET_AGENTS_SKILLS = path.join(ROOT, '.agents', 'skills');
 const TOPIC_MAP = path.join(ROOT, '.agent', 'skill_topic_map.json');
 const REFERENCES_DIR = path.join(ROOT, '.agent', 'references');
 
+const { syncSkills } = require('./sync-skills');
+if (!fs.existsSync(TARGET_SKILLS) || !fs.existsSync(TARGET_AGENTS_SKILLS)) {
+  syncSkills();
+}
+
 let errors = [];
 let warnings = [];
 let checkedSkills = 0;

@@ -58,6 +58,11 @@ describe('System Design Ecosystem: Metadata & Directory Conventions', () => {
     const rootRefs = path.join(ROOT, 'references', 'domains', 'system-design');
     const agentRefs = path.join(ROOT, '.agents', 'references', 'domains', 'system-design');
 
+    if (!fs.existsSync(rootRefs) || !fs.existsSync(agentRefs)) {
+      const { syncSkills } = require('../../scripts/sync-skills');
+      syncSkills();
+    }
+
     expect(fs.existsSync(rootRefs)).toBe(true);
     expect(fs.existsSync(agentRefs)).toBe(true);
 
