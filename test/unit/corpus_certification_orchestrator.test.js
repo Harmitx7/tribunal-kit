@@ -3,15 +3,15 @@
 const orch = require('../../.agent/scripts/corpus_certification_orchestrator');
 
 describe('Phase 25 — Corpus Certification Orchestrator Unit Tests', () => {
-  test('buildCorpusInventory returns complete corpus of 234 skills with accurate metadata', () => {
+  test('buildCorpusInventory returns complete corpus of 235 skills with accurate metadata', () => {
     const inventory = orch.buildCorpusInventory();
-    expect(inventory.length).toBe(234);
+    expect(inventory.length).toBe(235);
 
     const pilotCount = inventory.filter(s => s.is_pilot).length;
     expect(pilotCount).toBe(25);
 
     const nonPilotCount = inventory.filter(s => !s.is_pilot).length;
-    expect(nonPilotCount).toBe(209);
+    expect(nonPilotCount).toBe(210);
   });
 
   test('createWaveSnapshot creates immutable snapshot hash of certification state', () => {

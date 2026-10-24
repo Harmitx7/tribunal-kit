@@ -22,18 +22,117 @@
       <circle cx="3" cy="3" r="1.2" fill="#ff3300" fill-opacity="0.5"/>
     </pattern>
 
+    <!-- Hazard Tape Moving Pattern -->
+    <pattern id="hazardPattern" width="20" height="42" patternUnits="userSpaceOnUse">
+      <rect width="20" height="42" fill="#1c0d10"/>
+      <polygon points="0,0 8,0 0,16" fill="#ff3300" fill-opacity="0.3"/>
+      <polygon points="12,0 20,0 0,40 0,24" fill="#ff3300" fill-opacity="0.3"/>
+      <polygon points="20,8 20,24 8,42 0,42" fill="#ff3300" fill-opacity="0.3"/>
+      <polygon points="20,32 20,42 16,42" fill="#ff3300" fill-opacity="0.3"/>
+    </pattern>
+
+    <clipPath id="hazardClip">
+      <rect width="230" height="42" rx="4"/>
+    </clipPath>
+
+    <clipPath id="precedentClip">
+      <rect width="230" height="42" rx="4"/>
+    </clipPath>
+
     <filter id="node-shadow" x="-10%" y="-10%" width="120%" height="120%">
       <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+
+    <filter id="laser-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
     </filter>
   </defs>
 
   <style>
-    .title-text { font-family: 'Inter', sans-serif; font-weight: 900; letter-spacing: 0.5px; }
-    .body-text { font-family: 'Inter', sans-serif; font-weight: 500; }
+    .title-text { font-family: 'Inter', -apple-system, sans-serif; font-weight: 900; letter-spacing: 0.5px; }
+    .body-text { font-family: 'Inter', -apple-system, sans-serif; font-weight: 500; }
     .mono-text { font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace; font-size: 10px; letter-spacing: 1px; }
     
     .keycap-highlight { fill: #ffffff; opacity: 0.08; }
     .keycap-shadow { fill: #000000; opacity: 0.3; }
+
+    /* Card 01 Precedent Radar Sweep */
+    .radar-beam {
+      animation: sweepRadar 3s ease-in-out infinite;
+    }
+    @keyframes sweepRadar {
+      0%, 100% { transform: translateX(0px); opacity: 0.7; }
+      50% { transform: translateX(226px); opacity: 0.2; }
+    }
+
+    /* Card 02 Hazard Conveyor Motion */
+    .hazard-stripes {
+      animation: scrollHazard 1.5s linear infinite;
+    }
+    @keyframes scrollHazard {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(20px); }
+    }
+
+    /* Card 03 Genetic Speed Lines */
+    .speed-streak-1 {
+      animation: streakOne 1.6s ease-in-out infinite;
+      transform-origin: left;
+    }
+    .speed-streak-2 {
+      animation: streakTwo 1.6s ease-in-out infinite 0.4s;
+      transform-origin: left;
+    }
+    @keyframes streakOne {
+      0%, 100% { transform: scaleX(1); opacity: 0.7; }
+      50% { transform: scaleX(1.4) translateX(4px); opacity: 1; }
+    }
+    @keyframes streakTwo {
+      0%, 100% { transform: scaleX(1); opacity: 0.9; }
+      50% { transform: scaleX(0.7) translateX(-2px); opacity: 0.4; }
+    }
+
+    /* Card 04 Rust Thermal Breathing Glow */
+    .rust-core-card {
+      animation: rustGlow 3s ease-in-out infinite;
+    }
+    @keyframes rustGlow {
+      0%, 100% {
+        stroke: #ff3300;
+        stroke-opacity: 0.7;
+        filter: drop-shadow(0 0 4px rgba(255,51,0,0.2));
+      }
+      50% {
+        stroke: #ff5500;
+        stroke-opacity: 1;
+        filter: drop-shadow(0 0 10px rgba(255,51,0,0.5));
+      }
+    }
+
+    /* Live Telemetry Pulse Diodes */
+    .card-diode {
+      animation: diodeFlash 2s ease-in-out infinite;
+    }
+    .card-diode-alt {
+      animation: diodeFlash 2s ease-in-out infinite 0.7s;
+    }
+    @keyframes diodeFlash {
+      0%, 100% { opacity: 0.95; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.85); }
+    }
+
+    /* Accessibility Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      .radar-beam, .hazard-stripes, .speed-streak-1, .speed-streak-2, .rust-core-card, .card-diode, .card-diode-alt {
+        animation: none !important;
+        transform: none !important;
+        filter: none !important;
+      }
+    }
   </style>
 
   <!-- Background Base -->
@@ -65,11 +164,14 @@
     <text x="20" y="70" font-size="18" fill="#f5f2eb" class="title-text">Supreme Court</text>
     <text x="20" y="90" font-size="12" fill="#ff3300" font-weight="800" class="mono-text">tk case</text>
 
-    <!-- Halftone Texture Inlay Box -->
-    <rect x="20" y="106" width="230" height="42" rx="4" fill="#08090d" stroke="#222634" stroke-width="1"/>
-    <rect x="22" y="108" width="60" height="38" rx="3" fill="url(#spDots)"/>
-    <text x="90" y="123" fill="#d4d8e0" font-weight="900" class="mono-text">PRECEDENT DB:</text>
-    <text x="90" y="137" fill="#ff4d1a" class="mono-text">UNCONSTITUTIONAL</text>
+    <!-- Halftone Texture Inlay Box with Live Radar Sweep -->
+    <g transform="translate(20, 106)" clip-path="url(#precedentClip)">
+      <rect width="230" height="42" rx="4" fill="#08090d" stroke="#222634" stroke-width="1"/>
+      <rect x="2" y="2" width="60" height="38" rx="3" fill="url(#spDots)"/>
+      <line x1="2" y1="2" x2="2" y2="40" stroke="#ff3300" stroke-width="1.5" class="radar-beam" filter="url(#laser-glow)"/>
+      <text x="90" y="17" fill="#d4d8e0" font-weight="900" class="mono-text">PRECEDENT DB:</text>
+      <text x="90" y="31" fill="#ff4d1a" class="mono-text">UNCONSTITUTIONAL</text>
+    </g>
 
     <!-- Description -->
     <text x="20" y="176" font-size="12.5" fill="#a4adc4" class="body-text">
@@ -81,6 +183,7 @@
 
     <!-- Metric Pill -->
     <rect x="20" y="246" width="230" height="38" rx="4" fill="#1b120c" stroke="#ff3300" stroke-width="1"/>
+    <circle cx="215" cy="265" r="3" fill="#ff3300" class="card-diode"/>
     <text x="30" y="262" fill="#8a92a3" class="mono-text">PERMANENT MEMORY</text>
     <text x="30" y="276" fill="#ff3300" font-weight="900" font-size="11" class="mono-text">∞ PRECEDENTS ENFORCED</text>
   </g>
@@ -109,15 +212,18 @@
     <text x="20" y="70" font-size="18" fill="#f5f2eb" class="title-text">Phantom Guardrails</text>
     <text x="20" y="90" font-size="12" fill="#d4d8e0" font-weight="800" class="mono-text">tk guardrail</text>
 
-    <!-- Hazard Tape Stripe Box -->
-    <g transform="translate(20, 106)">
-      <rect width="230" height="42" rx="4" fill="#1c0d10" stroke="#ff3300" stroke-width="0.8" stroke-opacity="0.5"/>
-      <!-- Hazard Stripes -->
-      <path d="M 8 0 L 18 0 L 6 42 L -4 42 Z" fill="#ff3300" fill-opacity="0.2"/>
-      <path d="M 28 0 L 38 0 L 26 42 L 16 42 Z" fill="#ff3300" fill-opacity="0.2"/>
-      <path d="M 48 0 L 58 0 L 46 42 L 36 42 Z" fill="#ff3300" fill-opacity="0.2"/>
-      <text x="64" y="22" fill="#ff4d1a" font-weight="900" class="mono-text">SLOPSQUATTING SHIELD</text>
-      <text x="64" y="34" fill="#fca5a5" class="mono-text">ACTIVE AST INTERCEPT</text>
+    <!-- Animated Hazard Tape Stripe Box -->
+    <g transform="translate(20, 106)" clip-path="url(#hazardClip)">
+      <rect width="230" height="42" fill="#1c0d10" stroke="#ff3300" stroke-width="0.8" stroke-opacity="0.5"/>
+      <!-- Conveyor Stripes Layer -->
+      <g class="hazard-stripes" transform="translate(-20, 0)">
+        <rect x="0" y="0" width="260" height="42" fill="url(#hazardPattern)"/>
+      </g>
+      <!-- Text Foreground -->
+      <rect x="58" y="4" width="166" height="34" rx="2" fill="#1c0d10" fill-opacity="0.8"/>
+      <circle cx="68" cy="18" r="2.5" fill="#ff4d1a" class="card-diode"/>
+      <text x="76" y="22" fill="#ff4d1a" font-weight="900" class="mono-text">SLOPSQUATTING SHIELD</text>
+      <text x="76" y="34" fill="#fca5a5" class="mono-text">ACTIVE AST INTERCEPT</text>
     </g>
 
     <!-- Description -->
@@ -130,6 +236,7 @@
 
     <!-- Metric Pill -->
     <rect x="20" y="246" width="230" height="38" rx="4" fill="#0d1017" stroke="#222634" stroke-width="1"/>
+    <circle cx="215" cy="265" r="3" fill="#00ff66" class="card-diode-alt"/>
     <text x="30" y="262" fill="#8a92a3" class="mono-text">SUPPLY CHAIN INTEGRITY</text>
     <text x="30" y="276" fill="#f5f2eb" font-weight="900" font-size="11" class="mono-text">0 PHANTOM PACKAGES</text>
   </g>
@@ -158,14 +265,16 @@
     <text x="20" y="70" font-size="18" fill="#f5f2eb" class="title-text">SkillOpt Evolution</text>
     <text x="20" y="90" font-size="12" fill="#d4d8e0" font-weight="800" class="mono-text">tk optimize-skill</text>
 
-    <!-- Speed Cuts Inlay Box -->
+    <!-- Dynamic Speed Cuts Inlay Box -->
     <g transform="translate(20, 106)">
       <rect width="230" height="42" rx="4" fill="#0d111a" stroke="#222634" stroke-width="1"/>
-      <!-- Speed Lines -->
-      <rect x="12" y="14" width="35" height="3" rx="1" fill="#ff3300"/>
-      <rect x="52" y="14" width="15" height="3" rx="1" fill="#ff3300"/>
-      <rect x="12" y="24" width="20" height="3" rx="1" fill="#ff3300"/>
-      <rect x="36" y="24" width="40" height="3" rx="1" fill="#ff3300"/>
+      <!-- Animated Speed Lines -->
+      <g>
+        <rect x="12" y="14" width="35" height="3" rx="1" fill="#ff3300" class="speed-streak-1"/>
+        <rect x="52" y="14" width="15" height="3" rx="1" fill="#ff3300" class="speed-streak-2"/>
+        <rect x="12" y="24" width="20" height="3" rx="1" fill="#ff3300" class="speed-streak-2"/>
+        <rect x="36" y="24" width="40" height="3" rx="1" fill="#ff3300" class="speed-streak-1"/>
+      </g>
       <text x="85" y="22" fill="#f5f2eb" font-weight="900" class="mono-text">GENETIC MUTATION</text>
       <text x="85" y="34" fill="#8a92a3" class="mono-text">HARNESS BENCHMARKED</text>
     </g>
@@ -180,6 +289,7 @@
 
     <!-- Metric Pill -->
     <rect x="20" y="246" width="230" height="38" rx="4" fill="#0d1017" stroke="#222634" stroke-width="1"/>
+    <circle cx="215" cy="265" r="3" fill="#ffaa00" class="card-diode"/>
     <text x="30" y="262" fill="#8a92a3" class="mono-text">PROMPT EVOLUTION</text>
     <text x="30" y="276" fill="#f5f2eb" font-weight="900" font-size="11" class="mono-text">AUTOMATED RE-PROMPTING</text>
   </g>
@@ -187,7 +297,7 @@
   <!-- ==================== CARD 4: COMPILED RUST CORE ==================== -->
   <g transform="translate(895, 25)" filter="url(#node-shadow)">
     <rect width="270" height="300" rx="8" fill="url(#card-dark)"/>
-    <rect width="270" height="300" rx="8" fill="none" stroke="#ff3300" stroke-width="1.2" stroke-opacity="0.8"/>
+    <rect width="270" height="300" rx="8" fill="none" stroke="#ff3300" stroke-width="1.2" class="rust-core-card"/>
 
     <!-- Brutalist Card Header -->
     <rect width="270" height="36" rx="8" fill="#13080a"/>
@@ -248,7 +358,8 @@
         <text x="14" y="18" fill="#ff3300" font-weight="bold" text-anchor="middle" class="mono-text">T</text>
       </g>
 
-      <text x="148" y="24" fill="#ff4d1a" font-weight="900" class="mono-text">&lt;10ms AOT</text>
+      <circle cx="154" cy="21" r="2.5" fill="#ff4d1a" class="card-diode"/>
+      <text x="162" y="24" fill="#ff4d1a" font-weight="900" class="mono-text">&lt;10ms AOT</text>
     </g>
 
     <!-- Description -->
@@ -261,6 +372,7 @@
 
     <!-- Metric Pill -->
     <rect x="20" y="246" width="230" height="38" rx="4" fill="#1b120c" stroke="#ff3300" stroke-width="1"/>
+    <circle cx="215" cy="265" r="3" fill="#ff3300" class="card-diode"/>
     <text x="30" y="262" fill="#8a92a3" class="mono-text">SYNCHRONIZATION SPEED</text>
     <text x="30" y="276" fill="#ff3300" font-weight="900" font-size="11" class="mono-text">95% FASTER CLI SYNC</text>
   </g>

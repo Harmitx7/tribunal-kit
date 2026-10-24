@@ -113,8 +113,11 @@ fn parse_skill_frontmatter(content: &str, skill_name: &str, file_size: usize) ->
 
         // Handle list items within routing block
         if in_routing && line.starts_with("    ") && in_list {
-            if trimmed.starts_with('-') {
-                let item = trimmed[1..].trim().trim_matches(|c| c == '\'' || c == '"').to_string();
+            if let Some(stripped) = trimmed.strip_prefix('-') {
+                let item = stripped
+                    .trim()
+                    .trim_matches(|c| c == '\'' || c == '"')
+                    .to_string();
                 if !item.is_empty() {
                     match current_key.as_str() {
                         "co_requires" => co_requires.push(item),
@@ -142,7 +145,10 @@ fn parse_skill_frontmatter(content: &str, skill_name: &str, file_size: usize) ->
 
         // Handle top-level skills list items (these act as co-requires)
         if in_list && current_key == "skills" && trimmed.starts_with('-') {
-            let item = trimmed[1..].trim().trim_matches(|c| c == '\'' || c == '"').to_string();
+            let item = trimmed[1..]
+                .trim()
+                .trim_matches(|c| c == '\'' || c == '"')
+                .to_string();
             if !item.is_empty() {
                 co_requires.push(item);
             }
@@ -167,14 +173,35 @@ fn parse_skill_frontmatter(content: &str, skill_name: &str, file_size: usize) ->
 
 fn detect_domain_from_name(name: &str) -> String {
     let n = name.to_lowercase();
-    if n.contains("anim") || n.contains("motion") || n.contains("gsap") { return "motion".to_string(); }
-    if n.contains("react") || n.contains("ui") || n.contains("css") || n.contains("frontend") || n.contains("vue") { return "frontend".to_string(); }
-    if n.contains("sql") || n.contains("db") || n.contains("data") || n.contains("supabase") { return "database".to_string(); }
-    if n.contains("security") || n.contains("audit") || n.contains("vulnerab") { return "security".to_string(); }
-    if n.contains("test") || n.contains("qa") || n.contains("playwright") { return "testing".to_string(); }
-    if n.contains("devops") || n.contains("ci") || n.contains("cloud") || n.contains("docker") { return "devops".to_string(); }
-    if n.contains("mobile") || n.contains("swift") || n.contains("expo") { return "mobile".to_string(); }
-    if n.contains("python") || n.contains("rust") || n.contains("backend") || n.contains("node") { return "backend".to_string(); }
+    if n.contains("anim") || n.contains("motion") || n.contains("gsap") {
+        return "motion".to_string();
+    }
+    if n.contains("react")
+        || n.contains("ui")
+        || n.contains("css")
+        || n.contains("frontend")
+        || n.contains("vue")
+    {
+        return "frontend".to_string();
+    }
+    if n.contains("sql") || n.contains("db") || n.contains("data") || n.contains("supabase") {
+        return "database".to_string();
+    }
+    if n.contains("security") || n.contains("audit") || n.contains("vulnerab") {
+        return "security".to_string();
+    }
+    if n.contains("test") || n.contains("qa") || n.contains("playwright") {
+        return "testing".to_string();
+    }
+    if n.contains("devops") || n.contains("ci") || n.contains("cloud") || n.contains("docker") {
+        return "devops".to_string();
+    }
+    if n.contains("mobile") || n.contains("swift") || n.contains("expo") {
+        return "mobile".to_string();
+    }
+    if n.contains("python") || n.contains("rust") || n.contains("backend") || n.contains("node") {
+        return "backend".to_string();
+    }
     "meta".to_string()
 }
 
@@ -208,7 +235,9 @@ pub fn build_skill_graph(skills_dir: &str) -> Result<String> {
             let file_size = content.len();
             if let Some(node) = parse_skill_frontmatter(&content, &skill_name, file_size) {
                 edges_co_requires += node.co_requires.len();
-                if node.supersedes.is_some() { edges_supersedes += 1; }
+                if node.supersedes.is_some() {
+                    edges_supersedes += 1;
+                }
                 edges_conflicts += node.conflicts_with.len();
                 nodes.push(node);
             }
@@ -290,9 +319,8 @@ pub fn resolve_skills(skills_dir: &str, requested_skills: &[String]) -> Result<S
     }
 
     // Phase 3: Detect conflicts
-    let all_resolved: Vec<&String> = resolved_set.iter().collect();
-    for i in 0..all_resolved.len() {
-        if let Some(node) = node_map.get(all_resolved[i]) {
+    for name in &resolved_set {
+        if let Some(node) = node_map.get(name) {
             for conflict in &node.conflicts_with {
                 if resolved_set.contains(conflict) {
                     conflicts_detected.push(format!(
@@ -305,7 +333,8 @@ pub fn resolve_skills(skills_dir: &str, requested_skills: &[String]) -> Result<S
     }
 
     // Phase 4: Estimate token cost
-    let estimated_tokens: usize = resolved_set.iter()
+    let estimated_tokens: usize = resolved_set
+        .iter()
         .filter_map(|name| node_map.get(name))
         .map(|node| node.file_size_bytes / 4) // ~4 chars per token
         .sum();
@@ -332,7 +361,10 @@ mod tests {
     fn create_skill(dir: &Path, name: &str, frontmatter: &str) {
         let skill_dir = dir.join(name);
         fs::create_dir_all(&skill_dir).unwrap();
-        let content = format!("---\n{}\n---\n\n# {}\n\nSome content here.\n", frontmatter, name);
+        let content = format!(
+            "---\n{}\n---\n\n# {}\n\nSome content here.\n",
+            frontmatter, name
+        );
         fs::write(skill_dir.join("SKILL.md"), content).unwrap();
     }
 
@@ -341,12 +373,13 @@ mod tests {
         let temp_dir = std::env::temp_dir().join(format!("resolver_basic_{}", std::process::id()));
         fs::create_dir_all(&temp_dir).unwrap();
 
-        create_skill(&temp_dir, "skill-a", "name: skill-a\ndescription: Test skill A");
+        create_skill(
+            &temp_dir,
+            "skill-a",
+            "name: skill-a\ndescription: Test skill A",
+        );
 
-        let result = resolve_skills(
-            temp_dir.to_str().unwrap(),
-            &["skill-a".to_string()],
-        ).unwrap();
+        let result = resolve_skills(temp_dir.to_str().unwrap(), &["skill-a".to_string()]).unwrap();
         let resolved: ResolvedSkillSet = serde_json::from_str(&result).unwrap();
 
         assert!(resolved.success);
@@ -364,12 +397,13 @@ mod tests {
 
         create_skill(&temp_dir, "skill-a", "name: skill-a\nskills:\n  - skill-b");
         create_skill(&temp_dir, "skill-b", "name: skill-b\nskills:\n  - skill-c");
-        create_skill(&temp_dir, "skill-c", "name: skill-c\ndescription: Leaf skill");
+        create_skill(
+            &temp_dir,
+            "skill-c",
+            "name: skill-c\ndescription: Leaf skill",
+        );
 
-        let result = resolve_skills(
-            temp_dir.to_str().unwrap(),
-            &["skill-a".to_string()],
-        ).unwrap();
+        let result = resolve_skills(temp_dir.to_str().unwrap(), &["skill-a".to_string()]).unwrap();
         let resolved: ResolvedSkillSet = serde_json::from_str(&result).unwrap();
 
         assert!(resolved.success);
@@ -386,13 +420,19 @@ mod tests {
         let temp_dir = std::env::temp_dir().join(format!("resolver_super_{}", std::process::id()));
         fs::create_dir_all(&temp_dir).unwrap();
 
-        create_skill(&temp_dir, "basic-skill", "name: basic-skill\ndescription: Basic");
-        create_skill(&temp_dir, "pro-skill", "name: pro-skill\nrouting:\n  tier: pro\n  supersedes: basic-skill");
+        create_skill(
+            &temp_dir,
+            "basic-skill",
+            "name: basic-skill\ndescription: Basic",
+        );
+        create_skill(
+            &temp_dir,
+            "pro-skill",
+            "name: pro-skill\nrouting:\n  tier: pro\n  supersedes: basic-skill",
+        );
 
-        let result = resolve_skills(
-            temp_dir.to_str().unwrap(),
-            &["basic-skill".to_string()],
-        ).unwrap();
+        let result =
+            resolve_skills(temp_dir.to_str().unwrap(), &["basic-skill".to_string()]).unwrap();
         let resolved: ResolvedSkillSet = serde_json::from_str(&result).unwrap();
 
         assert!(resolved.success);
@@ -405,16 +445,26 @@ mod tests {
 
     #[test]
     fn test_conflict_detection() {
-        let temp_dir = std::env::temp_dir().join(format!("resolver_conflict_{}", std::process::id()));
+        let temp_dir =
+            std::env::temp_dir().join(format!("resolver_conflict_{}", std::process::id()));
         fs::create_dir_all(&temp_dir).unwrap();
 
-        create_skill(&temp_dir, "skill-x", "name: skill-x\nrouting:\n  conflicts-with:\n    - skill-y");
-        create_skill(&temp_dir, "skill-y", "name: skill-y\ndescription: Conflicting skill");
+        create_skill(
+            &temp_dir,
+            "skill-x",
+            "name: skill-x\nrouting:\n  conflicts-with:\n    - skill-y",
+        );
+        create_skill(
+            &temp_dir,
+            "skill-y",
+            "name: skill-y\ndescription: Conflicting skill",
+        );
 
         let result = resolve_skills(
             temp_dir.to_str().unwrap(),
             &["skill-x".to_string(), "skill-y".to_string()],
-        ).unwrap();
+        )
+        .unwrap();
         let resolved: ResolvedSkillSet = serde_json::from_str(&result).unwrap();
 
         assert!(resolved.success);
@@ -425,17 +475,15 @@ mod tests {
 
     #[test]
     fn test_circular_dependency() {
-        let temp_dir = std::env::temp_dir().join(format!("resolver_circular_{}", std::process::id()));
+        let temp_dir =
+            std::env::temp_dir().join(format!("resolver_circular_{}", std::process::id()));
         fs::create_dir_all(&temp_dir).unwrap();
 
         // A requires B, B requires A — should not infinite loop
         create_skill(&temp_dir, "cycle-a", "name: cycle-a\nskills:\n  - cycle-b");
         create_skill(&temp_dir, "cycle-b", "name: cycle-b\nskills:\n  - cycle-a");
 
-        let result = resolve_skills(
-            temp_dir.to_str().unwrap(),
-            &["cycle-a".to_string()],
-        ).unwrap();
+        let result = resolve_skills(temp_dir.to_str().unwrap(), &["cycle-a".to_string()]).unwrap();
         let resolved: ResolvedSkillSet = serde_json::from_str(&result).unwrap();
 
         // BFS with HashSet prevents infinite loop
@@ -452,7 +500,11 @@ mod tests {
 
         create_skill(&temp_dir, "alpha", "name: alpha\nskills:\n  - beta");
         create_skill(&temp_dir, "beta", "name: beta\ndescription: Beta skill");
-        create_skill(&temp_dir, "gamma", "name: gamma\nrouting:\n  supersedes: beta");
+        create_skill(
+            &temp_dir,
+            "gamma",
+            "name: gamma\nrouting:\n  supersedes: beta",
+        );
 
         let result = build_skill_graph(temp_dir.to_str().unwrap()).unwrap();
         let graph: SkillGraph = serde_json::from_str(&result).unwrap();

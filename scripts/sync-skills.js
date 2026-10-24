@@ -19,6 +19,10 @@ const CANONICAL_SKILLS = path.join(ROOT, '.agent', 'skills');
 const TARGET_SKILLS = path.join(ROOT, 'skills');
 const TARGET_AGENTS_SKILLS = path.join(ROOT, '.agents', 'skills');
 
+const CANONICAL_REFS = path.join(ROOT, '.agent', 'references');
+const TARGET_REFS = path.join(ROOT, 'references');
+const TARGET_AGENTS_REFS = path.join(ROOT, '.agents', 'references');
+
 function copyDirRecursive(src, dest) {
   if (!fs.existsSync(dest)) {
     fs.mkdirSync(dest, { recursive: true });
@@ -38,7 +42,7 @@ function copyDirRecursive(src, dest) {
 }
 
 function syncSkills() {
-  console.log('\n  🔱 Syncing Tribunal Skills across platform conventions...');
+  console.log('\n  🔱 Syncing Tribunal Skills & References across platform conventions...');
 
   if (!fs.existsSync(CANONICAL_SKILLS)) {
     console.error('  ✖ Error: Canonical skills directory .agent/skills not found!');
@@ -51,7 +55,15 @@ function syncSkills() {
   copyDirRecursive(CANONICAL_SKILLS, TARGET_AGENTS_SKILLS);
   console.log(`  ✓ Mirrored to ${path.relative(ROOT, TARGET_AGENTS_SKILLS)}/`);
 
-  console.log('  ✔ All skills synchronized.\n');
+  if (fs.existsSync(CANONICAL_REFS)) {
+    copyDirRecursive(CANONICAL_REFS, TARGET_REFS);
+    console.log(`  ✓ Mirrored references to ${path.relative(ROOT, TARGET_REFS)}/`);
+
+    copyDirRecursive(CANONICAL_REFS, TARGET_AGENTS_REFS);
+    console.log(`  ✓ Mirrored references to ${path.relative(ROOT, TARGET_AGENTS_REFS)}/`);
+  }
+
+  console.log('  ✔ All skills & references synchronized.\n');
 }
 
 if (require.main === module) {

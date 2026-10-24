@@ -23,15 +23,20 @@ pub fn run_benchmark(skills_dir: &str, repo_path: &str, publish: bool) -> Result
         serde_json::from_str(&summary_json)?;
 
     // 2. Evaluate Telemetry
-    let telemetry_path = Path::new(repo_path).join(".tribunal").join("telemetry").join("dispatch.jsonl");
-    
+    let telemetry_path = Path::new(repo_path)
+        .join(".tribunal")
+        .join("telemetry")
+        .join("dispatch.jsonl");
+
     let mut total_dispatches = 0;
     let mut successful_dispatches = 0;
-    
+
     if telemetry_path.exists() {
         let content = fs::read_to_string(&telemetry_path)?;
         for line in content.lines() {
-            if line.trim().is_empty() { continue; }
+            if line.trim().is_empty() {
+                continue;
+            }
             total_dispatches += 1;
             if let Ok(event) = serde_json::from_str::<serde_json::Value>(line) {
                 if let Some(outcome) = event.get("outcome").and_then(|v| v.as_str()) {
@@ -64,7 +69,11 @@ pub fn run_benchmark(skills_dir: &str, repo_path: &str, publish: bool) -> Result
     let partial_json = serde_json::to_string(&report)?;
     let mut hasher = Sha256::new();
     hasher.update(partial_json.as_bytes());
-    report.integrity_hash = hasher.finalize().iter().map(|b| format!("{:02x}", b)).collect::<String>();
+    report.integrity_hash = hasher
+        .finalize()
+        .iter()
+        .map(|b| format!("{:02x}", b))
+        .collect::<String>();
 
     let out_json = serde_json::to_string_pretty(&report)?;
 
@@ -73,8 +82,15 @@ pub fn run_benchmark(skills_dir: &str, repo_path: &str, publish: bool) -> Result
         fs::create_dir_all(&benchmarks_dir)?;
         let file_name = format!("benchmark-{}.json", report.integrity_hash);
         fs::write(benchmarks_dir.join(&file_name), &out_json)?;
-        
-        println!("{}", format!("✅ Benchmark published to .tribunal/benchmarks/{}", file_name).bright_green());
+
+        println!(
+            "{}",
+            format!(
+                "✅ Benchmark published to .tribunal/benchmarks/{}",
+                file_name
+            )
+            .bright_green()
+        );
         println!("Integrity Hash: {}", report.integrity_hash.bright_yellow());
     }
 

@@ -31,9 +31,8 @@ pub fn resolve_context(repo_path: &str, target_file: Option<&str>) -> Result<Str
     let mut rules = Vec::new();
     let mut skills_matched = 0;
 
-    let target_ext = target_file.and_then(|tf| {
-        Path::new(tf).extension().and_then(|ext| ext.to_str())
-    });
+    let target_ext =
+        target_file.and_then(|tf| Path::new(tf).extension().and_then(|ext| ext.to_str()));
 
     // 1. Scan .agent/rules/
     let rules_dir = agent_dir.join("rules");
@@ -42,7 +41,11 @@ pub fn resolve_context(repo_path: &str, target_file: Option<&str>) -> Result<Str
             for entry in entries.flatten() {
                 let path = entry.path();
                 if path.is_file() && path.extension().and_then(|e| e.to_str()) == Some("md") {
-                    let file_name = path.file_name().unwrap_or_default().to_string_lossy().to_string();
+                    let file_name = path
+                        .file_name()
+                        .unwrap_or_default()
+                        .to_string_lossy()
+                        .to_string();
                     if let Ok(content) = fs::read_to_string(&path) {
                         rules.push(MatchedRule {
                             name: file_name.clone(),
@@ -71,7 +74,10 @@ pub fn resolve_context(repo_path: &str, target_file: Option<&str>) -> Result<Str
     // 3. Assemble compressed context snapshot
     let rules_matched = rules.len();
     let mut snapshot_lines = Vec::with_capacity(rules_matched * 16 + 4);
-    snapshot_lines.push(format!("# Context Snapshot for: {}", target_file.unwrap_or("Global Workspace")));
+    snapshot_lines.push(format!(
+        "# Context Snapshot for: {}",
+        target_file.unwrap_or("Global Workspace")
+    ));
     if let Some(ext) = target_ext {
         snapshot_lines.push(format!("Target Extension: .{}", ext));
     }
@@ -123,8 +129,8 @@ mod tests {
         let rules_dir = agent_dir.join("rules");
         let skills_dir = agent_dir.join("skills");
         fs::create_dir_all(&rules_dir).unwrap();
-        fs::create_dir_all(&skills_dir.join("skill-1")).unwrap();
-        fs::create_dir_all(&skills_dir.join("skill-2")).unwrap();
+        fs::create_dir_all(skills_dir.join("skill-1")).unwrap();
+        fs::create_dir_all(skills_dir.join("skill-2")).unwrap();
 
         let rule_file = rules_dir.join("test_rule.md");
         fs::write(&rule_file, "# Test Rule\nRule content goes here.").unwrap();

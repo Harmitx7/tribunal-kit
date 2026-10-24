@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 // ── Memory Type Taxonomy ────────────────────────────────────────────────────
 // Only 4 types exist. serde rejects anything else at deserialization time.
@@ -68,7 +68,9 @@ pub struct MemoryEntry {
     pub confidence: f64,
 }
 
-fn default_confidence() -> f64 { 1.0 }
+fn default_confidence() -> f64 {
+    1.0
+}
 
 // ── Memory Index ────────────────────────────────────────────────────────────
 // The full in-memory representation of the index file.
@@ -148,16 +150,16 @@ fn days_since(ts: &str) -> i64 {
 
 // ── Index I/O ───────────────────────────────────────────────────────────────
 
-fn index_path(agent_dir: &PathBuf) -> PathBuf {
+fn index_path(agent_dir: &Path) -> PathBuf {
     agent_dir.join("history").join("memory").join(".memory.idx")
 }
 
 #[allow(dead_code)]
-fn projection_path(agent_dir: &PathBuf) -> PathBuf {
+fn projection_path(agent_dir: &Path) -> PathBuf {
     agent_dir.join("history").join("memory").join("MEMORY.md")
 }
 
-pub fn load_index(agent_dir: &PathBuf) -> Result<MemoryIndex> {
+pub fn load_index(agent_dir: &Path) -> Result<MemoryIndex> {
     let path = index_path(agent_dir);
     if !path.exists() {
         return Ok(MemoryIndex::new());
@@ -169,7 +171,7 @@ pub fn load_index(agent_dir: &PathBuf) -> Result<MemoryIndex> {
     Ok(index)
 }
 
-pub fn save_index(agent_dir: &PathBuf, index: &MemoryIndex) -> Result<()> {
+pub fn save_index(agent_dir: &Path, index: &MemoryIndex) -> Result<()> {
     let path = index_path(agent_dir);
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;
@@ -199,28 +201,44 @@ fn type_priority(memory_type: &MemoryType) -> f64 {
 
 fn compute_score(entry: &MemoryEntry, query_lower: &str, corpus: &[MemoryEntry]) -> f64 {
     let content_lower = entry.content.to_lowercase();
-    let query_words: Vec<&str> = query_lower.split_whitespace().filter(|w| w.len() > 2).collect();
-    if query_words.is_empty() { return 0.0; }
+    let query_words: Vec<&str> = query_lower
+        .split_whitespace()
+        .filter(|w| w.len() > 2)
+        .collect();
+    if query_words.is_empty() {
+        return 0.0;
+    }
 
     let mut relevance = 0.0;
     let k1 = 1.2;
     let b = 0.75;
-    
+
     let total_len: usize = corpus.iter().map(|e| e.content.len()).sum();
-    let mut avgdl = if corpus.is_empty() { 100.0 } else { (total_len as f64) / (corpus.len() as f64) };
-    if avgdl == 0.0 { avgdl = 100.0; }
+    let mut avgdl = if corpus.is_empty() {
+        100.0
+    } else {
+        (total_len as f64) / (corpus.len() as f64)
+    };
+    if avgdl == 0.0 {
+        avgdl = 100.0;
+    }
     let dl = content_lower.len() as f64;
 
     for word in &query_words {
         let term_freq = content_lower.matches(word).count() as f64;
         let tag_match = entry.tags.iter().any(|t| t.to_lowercase().contains(word));
-        if term_freq == 0.0 && !tag_match { continue; }
-        
+        if term_freq == 0.0 && !tag_match {
+            continue;
+        }
+
         let tf = term_freq + if tag_match { 2.0 } else { 0.0 };
-        
-        let doc_freq = corpus.iter().filter(|e| e.content.to_lowercase().contains(word)).count() as f64;
+
+        let doc_freq = corpus
+            .iter()
+            .filter(|e| e.content.to_lowercase().contains(word))
+            .count() as f64;
         let idf = ((corpus.len() as f64 - doc_freq + 0.5) / (doc_freq + 0.5) + 1.0).ln();
-        
+
         relevance += idf * (tf * (k1 + 1.0)) / (tf + k1 * (1.0 - b + b * (dl / avgdl)));
     }
 
@@ -265,10 +283,14 @@ pub fn store_entry(
     if index.entries.len() >= MAX_ENTRIES {
         // Auto-GC: remove oldest WORKING first, then oldest EPISODIC
         let before = index.entries.len();
-        index.entries.retain(|e| e.memory_type != MemoryType::Working);
+        index
+            .entries
+            .retain(|e| e.memory_type != MemoryType::Working);
         if index.entries.len() >= MAX_ENTRIES {
             // Remove oldest episodic entries
-            index.entries.sort_by(|a, b| a.created_at.cmp(&b.created_at));
+            index
+                .entries
+                .sort_by(|a, b| a.created_at.cmp(&b.created_at));
             index.entries.retain(|e| {
                 if e.memory_type == MemoryType::Episodic {
                     days_since(&e.created_at) < EPISODIC_TTL_DAYS
@@ -302,7 +324,11 @@ pub fn store_entry(
         source: source.clone(),
         session_id,
         relations: vec![],
-        confidence: if source == MemorySource::Learned { 0.5 } else { 1.0 },
+        confidence: if source == MemorySource::Learned {
+            0.5
+        } else {
+            1.0
+        },
     };
 
     index.entries.push(entry);
@@ -347,7 +373,11 @@ pub fn recall_entries(
     }
 
     // Sort by score descending
-    scored.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
+    scored.sort_by(|a, b| {
+        b.score
+            .partial_cmp(&a.score)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
 
     // Budget gate: accumulate tokens until budget is exhausted
     let mut total_tokens: u32 = 0;
@@ -386,11 +416,10 @@ pub fn garbage_collect(index: &mut MemoryIndex) -> (u32, u32) {
                 working_removed += 1;
                 false // Remove all working entries
             }
-            MemoryType::Episodic
-                if days_since(&e.created_at) >= EPISODIC_TTL_DAYS => {
-                    episodic_removed += 1;
-                    false // Expired
-                }
+            MemoryType::Episodic if days_since(&e.created_at) >= EPISODIC_TTL_DAYS => {
+                episodic_removed += 1;
+                false // Expired
+            }
             _ => true, // SEMANTIC and PROCEDURAL are permanent
         }
     });
@@ -405,10 +434,26 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
     md.push_str("> Auto-generated by `tribunal-core memory export`. Do not edit manually.\n");
 
     let total = index.entries.len();
-    let semantic_count = index.entries.iter().filter(|e| e.memory_type == MemoryType::Semantic).count();
-    let procedural_count = index.entries.iter().filter(|e| e.memory_type == MemoryType::Procedural).count();
-    let episodic_count = index.entries.iter().filter(|e| e.memory_type == MemoryType::Episodic).count();
-    let working_count = index.entries.iter().filter(|e| e.memory_type == MemoryType::Working).count();
+    let semantic_count = index
+        .entries
+        .iter()
+        .filter(|e| e.memory_type == MemoryType::Semantic)
+        .count();
+    let procedural_count = index
+        .entries
+        .iter()
+        .filter(|e| e.memory_type == MemoryType::Procedural)
+        .count();
+    let episodic_count = index
+        .entries
+        .iter()
+        .filter(|e| e.memory_type == MemoryType::Episodic)
+        .count();
+    let working_count = index
+        .entries
+        .iter()
+        .filter(|e| e.memory_type == MemoryType::Working)
+        .count();
 
     md.push_str(&format!(
         "> Entries: {} | Semantic: {} | Procedural: {} | Episodic: {} | Working: {}\n\n",
@@ -416,7 +461,11 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
     ));
 
     // SEMANTIC section
-    let semantic: Vec<&MemoryEntry> = index.entries.iter().filter(|e| e.memory_type == MemoryType::Semantic).collect();
+    let semantic: Vec<&MemoryEntry> = index
+        .entries
+        .iter()
+        .filter(|e| e.memory_type == MemoryType::Semantic)
+        .collect();
     if !semantic.is_empty() {
         md.push_str("## SEMANTIC (Permanent Facts)\n");
         md.push_str("| ID | Content | Tags | Source | Conf | Created |\n");
@@ -436,7 +485,11 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
     }
 
     // PROCEDURAL section
-    let procedural: Vec<&MemoryEntry> = index.entries.iter().filter(|e| e.memory_type == MemoryType::Procedural).collect();
+    let procedural: Vec<&MemoryEntry> = index
+        .entries
+        .iter()
+        .filter(|e| e.memory_type == MemoryType::Procedural)
+        .collect();
     if !procedural.is_empty() {
         md.push_str("## PROCEDURAL (How-To Recipes)\n");
         md.push_str("| ID | Content | Tags | Source | Conf | Created |\n");
@@ -456,7 +509,11 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
     }
 
     // EPISODIC section
-    let episodic: Vec<&MemoryEntry> = index.entries.iter().filter(|e| e.memory_type == MemoryType::Episodic).collect();
+    let episodic: Vec<&MemoryEntry> = index
+        .entries
+        .iter()
+        .filter(|e| e.memory_type == MemoryType::Episodic)
+        .collect();
     if !episodic.is_empty() {
         md.push_str("## EPISODIC (Session History — auto-decays after 30 days)\n");
         md.push_str("| ID | Content | Tags | Source | Conf | Created | Days Remaining |\n");
@@ -479,7 +536,11 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
     }
 
     // WORKING section
-    let working: Vec<&MemoryEntry> = index.entries.iter().filter(|e| e.memory_type == MemoryType::Working).collect();
+    let working: Vec<&MemoryEntry> = index
+        .entries
+        .iter()
+        .filter(|e| e.memory_type == MemoryType::Working)
+        .collect();
     if !working.is_empty() {
         md.push_str("## WORKING (Current Session — cleared on GC)\n");
         md.push_str("| ID | Content | Tags | Session |\n");
@@ -497,7 +558,9 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
     }
 
     if index.entries.is_empty() {
-        md.push_str("*No memories recorded yet. Run `tk memory store` to add your first memory.*\n");
+        md.push_str(
+            "*No memories recorded yet. Run `tk memory store` to add your first memory.*\n",
+        );
     }
 
     md
@@ -506,10 +569,26 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
 /// Get memory statistics for status display.
 pub fn get_stats(index: &MemoryIndex) -> (usize, usize, usize, usize, usize, u32) {
     let total = index.entries.len();
-    let semantic = index.entries.iter().filter(|e| e.memory_type == MemoryType::Semantic).count();
-    let procedural = index.entries.iter().filter(|e| e.memory_type == MemoryType::Procedural).count();
-    let episodic = index.entries.iter().filter(|e| e.memory_type == MemoryType::Episodic).count();
-    let working = index.entries.iter().filter(|e| e.memory_type == MemoryType::Working).count();
+    let semantic = index
+        .entries
+        .iter()
+        .filter(|e| e.memory_type == MemoryType::Semantic)
+        .count();
+    let procedural = index
+        .entries
+        .iter()
+        .filter(|e| e.memory_type == MemoryType::Procedural)
+        .count();
+    let episodic = index
+        .entries
+        .iter()
+        .filter(|e| e.memory_type == MemoryType::Episodic)
+        .count();
+    let working = index
+        .entries
+        .iter()
+        .filter(|e| e.memory_type == MemoryType::Working)
+        .count();
     let total_tokens: u32 = index.entries.iter().map(|e| e.token_estimate).sum();
     (total, semantic, procedural, episodic, working, total_tokens)
 }
@@ -542,14 +621,20 @@ mod tests {
         // A hallucinated memory type "super_semantic" must be rejected by serde
         let invalid = r#"{"id":1,"memory_type":"super_semantic","content":"test","tags":[],"created_at":"0Z","last_accessed":"0Z","access_count":0,"token_estimate":1,"source":"manual"}"#;
         let result: Result<MemoryEntry, _> = serde_json::from_str(invalid);
-        assert!(result.is_err(), "Hallucinated memory type 'super_semantic' must be rejected");
+        assert!(
+            result.is_err(),
+            "Hallucinated memory type 'super_semantic' must be rejected"
+        );
     }
 
     #[test]
     fn test_hallucinated_source_rejected() {
         let invalid = r#"{"id":1,"memory_type":"semantic","content":"test","tags":[],"created_at":"0Z","last_accessed":"0Z","access_count":0,"token_estimate":1,"source":"imaginary_source"}"#;
         let result: Result<MemoryEntry, _> = serde_json::from_str(invalid);
-        assert!(result.is_err(), "Hallucinated source 'imaginary_source' must be rejected");
+        assert!(
+            result.is_err(),
+            "Hallucinated source 'imaginary_source' must be rejected"
+        );
     }
 
     #[test]
@@ -570,7 +655,11 @@ mod tests {
                 type_str
             );
             let result: Result<MemoryEntry, _> = serde_json::from_str(&json);
-            assert!(result.is_ok(), "Memory type '{}' should be accepted", type_str);
+            assert!(
+                result.is_ok(),
+                "Memory type '{}' should be accepted",
+                type_str
+            );
         }
     }
 
@@ -582,7 +671,11 @@ mod tests {
         // Longer text
         let text = "This is a longer piece of text that should estimate to about 15 tokens";
         let est = estimate_tokens(text);
-        assert!(est > 10 && est < 25, "Token estimate {} should be between 10 and 25", est);
+        assert!(
+            est > 10 && est < 25,
+            "Token estimate {} should be between 10 and 25",
+            est
+        );
     }
 
     #[test]
@@ -595,7 +688,8 @@ mod tests {
             vec!["test".to_string()],
             MemorySource::Manual,
             None,
-        ).unwrap();
+        )
+        .unwrap();
         let id2 = store_entry(
             &mut index,
             MemoryType::Procedural,
@@ -603,7 +697,8 @@ mod tests {
             vec!["test".to_string()],
             MemorySource::Manual,
             None,
-        ).unwrap();
+        )
+        .unwrap();
         assert_eq!(id1, 1);
         assert_eq!(id2, 2);
         assert_eq!(index.entries.len(), 2);
@@ -621,36 +716,79 @@ mod tests {
                 vec!["database".to_string()],
                 MemorySource::Manual,
                 None,
-            ).unwrap();
+            )
+            .unwrap();
         }
 
         // Recall with a tiny budget — should get fewer than 3 results
         let results = recall_entries(&mut index, "database", 15);
         // Each entry is ~10 tokens, budget is 15, so max 1 entry
-        assert!(results.len() <= 2, "Budget of 15 tokens should limit results, got {}", results.len());
+        assert!(
+            results.len() <= 2,
+            "Budget of 15 tokens should limit results, got {}",
+            results.len()
+        );
 
         // Recall with large budget — should get all 3
         let results_all = recall_entries(&mut index, "database", 2000);
-        assert_eq!(results_all.len(), 3, "Large budget should return all matching entries");
+        assert_eq!(
+            results_all.len(),
+            3,
+            "Large budget should return all matching entries"
+        );
     }
 
     #[test]
     fn test_scoring_semantic_beats_working() {
-        let semantic = make_entry(1, MemoryType::Semantic, "database config for project", vec!["db"]);
+        let semantic = make_entry(
+            1,
+            MemoryType::Semantic,
+            "database config for project",
+            vec!["db"],
+        );
         let working = make_entry(2, MemoryType::Working, "database debug session", vec!["db"]);
 
         let s_score = compute_score(&semantic, "database", &[]);
         let w_score = compute_score(&working, "database", &[]);
 
-        assert!(s_score > w_score, "Semantic ({}) should score higher than Working ({})", s_score, w_score);
+        assert!(
+            s_score > w_score,
+            "Semantic ({}) should score higher than Working ({})",
+            s_score,
+            w_score
+        );
     }
 
     #[test]
     fn test_gc_clears_all_working() {
         let mut index = MemoryIndex::new();
-        store_entry(&mut index, MemoryType::Working, "temp1".to_string(), vec![], MemorySource::Session, None).unwrap();
-        store_entry(&mut index, MemoryType::Working, "temp2".to_string(), vec![], MemorySource::Session, None).unwrap();
-        store_entry(&mut index, MemoryType::Semantic, "permanent".to_string(), vec![], MemorySource::Manual, None).unwrap();
+        store_entry(
+            &mut index,
+            MemoryType::Working,
+            "temp1".to_string(),
+            vec![],
+            MemorySource::Session,
+            None,
+        )
+        .unwrap();
+        store_entry(
+            &mut index,
+            MemoryType::Working,
+            "temp2".to_string(),
+            vec![],
+            MemorySource::Session,
+            None,
+        )
+        .unwrap();
+        store_entry(
+            &mut index,
+            MemoryType::Semantic,
+            "permanent".to_string(),
+            vec![],
+            MemorySource::Manual,
+            None,
+        )
+        .unwrap();
 
         let (working_removed, _) = garbage_collect(&mut index);
         assert_eq!(working_removed, 2);
@@ -661,36 +799,86 @@ mod tests {
     #[test]
     fn test_no_match_returns_empty() {
         let mut index = MemoryIndex::new();
-        store_entry(&mut index, MemoryType::Semantic, "database config".to_string(), vec!["db".to_string()], MemorySource::Manual, None).unwrap();
+        store_entry(
+            &mut index,
+            MemoryType::Semantic,
+            "database config".to_string(),
+            vec!["db".to_string()],
+            MemorySource::Manual,
+            None,
+        )
+        .unwrap();
 
         let results = recall_entries(&mut index, "authentication", 2000);
-        assert!(results.is_empty(), "Non-matching query should return empty results");
+        assert!(
+            results.is_empty(),
+            "Non-matching query should return empty results"
+        );
     }
 
     #[test]
     fn test_projection_generation() {
         let mut index = MemoryIndex::new();
-        store_entry(&mut index, MemoryType::Semantic, "Uses PostgreSQL".to_string(), vec!["db".to_string()], MemorySource::Manual, None).unwrap();
-        store_entry(&mut index, MemoryType::Procedural, "Deploy with vercel".to_string(), vec!["deploy".to_string()], MemorySource::Learned, None).unwrap();
+        store_entry(
+            &mut index,
+            MemoryType::Semantic,
+            "Uses PostgreSQL".to_string(),
+            vec!["db".to_string()],
+            MemorySource::Manual,
+            None,
+        )
+        .unwrap();
+        store_entry(
+            &mut index,
+            MemoryType::Procedural,
+            "Deploy with vercel".to_string(),
+            vec!["deploy".to_string()],
+            MemorySource::Learned,
+            None,
+        )
+        .unwrap();
 
         let md = generate_projection(&index);
-        assert!(md.contains("SEMANTIC"), "Projection should contain SEMANTIC section");
-        assert!(md.contains("PROCEDURAL"), "Projection should contain PROCEDURAL section");
-        assert!(md.contains("Uses PostgreSQL"), "Projection should contain entry content");
-        assert!(md.contains("Deploy with vercel"), "Projection should contain entry content");
+        assert!(
+            md.contains("SEMANTIC"),
+            "Projection should contain SEMANTIC section"
+        );
+        assert!(
+            md.contains("PROCEDURAL"),
+            "Projection should contain PROCEDURAL section"
+        );
+        assert!(
+            md.contains("Uses PostgreSQL"),
+            "Projection should contain entry content"
+        );
+        assert!(
+            md.contains("Deploy with vercel"),
+            "Projection should contain entry content"
+        );
     }
 
     #[test]
     fn test_empty_projection() {
         let index = MemoryIndex::new();
         let md = generate_projection(&index);
-        assert!(md.contains("No memories recorded yet"), "Empty index should show hint message");
+        assert!(
+            md.contains("No memories recorded yet"),
+            "Empty index should show hint message"
+        );
     }
 
     #[test]
     fn test_index_serialization_roundtrip() {
         let mut index = MemoryIndex::new();
-        store_entry(&mut index, MemoryType::Semantic, "roundtrip test".to_string(), vec!["test".to_string()], MemorySource::Manual, None).unwrap();
+        store_entry(
+            &mut index,
+            MemoryType::Semantic,
+            "roundtrip test".to_string(),
+            vec!["test".to_string()],
+            MemorySource::Manual,
+            None,
+        )
+        .unwrap();
 
         let json = serde_json::to_string(&index).unwrap();
         let deserialized: MemoryIndex = serde_json::from_str(&json).unwrap();
@@ -702,7 +890,15 @@ mod tests {
     #[test]
     fn test_tag_based_search() {
         let mut index = MemoryIndex::new();
-        store_entry(&mut index, MemoryType::Semantic, "Some configuration details".to_string(), vec!["auth".to_string(), "jwt".to_string()], MemorySource::Manual, None).unwrap();
+        store_entry(
+            &mut index,
+            MemoryType::Semantic,
+            "Some configuration details".to_string(),
+            vec!["auth".to_string(), "jwt".to_string()],
+            MemorySource::Manual,
+            None,
+        )
+        .unwrap();
 
         // Search by tag (content doesn't match but tag does)
         let results = recall_entries(&mut index, "auth", 2000);
@@ -712,10 +908,42 @@ mod tests {
     #[test]
     fn test_get_stats() {
         let mut index = MemoryIndex::new();
-        store_entry(&mut index, MemoryType::Semantic, "fact".to_string(), vec![], MemorySource::Manual, None).unwrap();
-        store_entry(&mut index, MemoryType::Procedural, "recipe".to_string(), vec![], MemorySource::Manual, None).unwrap();
-        store_entry(&mut index, MemoryType::Episodic, "event".to_string(), vec![], MemorySource::Manual, None).unwrap();
-        store_entry(&mut index, MemoryType::Working, "scratch".to_string(), vec![], MemorySource::Session, None).unwrap();
+        store_entry(
+            &mut index,
+            MemoryType::Semantic,
+            "fact".to_string(),
+            vec![],
+            MemorySource::Manual,
+            None,
+        )
+        .unwrap();
+        store_entry(
+            &mut index,
+            MemoryType::Procedural,
+            "recipe".to_string(),
+            vec![],
+            MemorySource::Manual,
+            None,
+        )
+        .unwrap();
+        store_entry(
+            &mut index,
+            MemoryType::Episodic,
+            "event".to_string(),
+            vec![],
+            MemorySource::Manual,
+            None,
+        )
+        .unwrap();
+        store_entry(
+            &mut index,
+            MemoryType::Working,
+            "scratch".to_string(),
+            vec![],
+            MemorySource::Session,
+            None,
+        )
+        .unwrap();
 
         let (total, sem, proc_, ep, work, _tokens) = get_stats(&index);
         assert_eq!(total, 4);

@@ -14,12 +14,51 @@
     <filter id="tapeShadow" x="-10%" y="-10%" width="120%" height="120%">
       <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.8"/>
     </filter>
+
+    <filter id="nodeGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
 
   <style>
-    .title-text { font-family: 'Inter', sans-serif; font-weight: 900; letter-spacing: 0.5px; }
-    .subtitle-text { font-family: 'Inter', sans-serif; }
+    .title-text { font-family: 'Inter', -apple-system, sans-serif; font-weight: 900; letter-spacing: 0.5px; }
+    .subtitle-text { font-family: 'Inter', -apple-system, sans-serif; }
     .mono-text { font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace; letter-spacing: 1px; }
+
+    /* Sequential AST Progression Wave */
+    .prog-node-1 { animation: nodePulse 2.5s ease-in-out infinite 0.0s; }
+    .prog-node-2 { animation: nodePulse 2.5s ease-in-out infinite 0.4s; }
+    .prog-node-3 { animation: nodePulse 2.5s ease-in-out infinite 0.8s; }
+    .prog-node-4 { animation: nodePulse 2.5s ease-in-out infinite 1.2s; }
+    .prog-node-5 { animation: nodePulse 2.5s ease-in-out infinite 1.6s; }
+
+    @keyframes nodePulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.25); opacity: 1; filter: drop-shadow(0 0 5px rgba(255,51,0,0.8)); }
+    }
+
+    /* Live Heartbeat Diode */
+    .seal-diode {
+      animation: heartbeatPulse 1.8s ease-in-out infinite;
+    }
+    @keyframes heartbeatPulse {
+      0%, 100% { opacity: 0.95; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Accessibility Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      .prog-node-1, .prog-node-2, .prog-node-3, .prog-node-4, .prog-node-5, .seal-diode {
+        animation: none !important;
+        transform: none !important;
+        filter: none !important;
+        opacity: 1 !important;
+      }
+    }
   </style>
 
   <!-- Base Decal Body -->
@@ -32,7 +71,11 @@
   <!-- Left Circular Seal Stamp -->
   <g transform="translate(60, 75)" filter="url(#tapeShadow)">
     <circle cx="0" cy="0" r="34" fill="#0b0e14" stroke="#ff3300" stroke-width="1.5"/>
-    <circle cx="0" cy="0" r="28" fill="none" stroke="#222634" stroke-width="1.5" stroke-dasharray="3 3"/>
+    
+    <!-- Rotating Dashed Orbit Ring (SMIL rock-solid rotation) -->
+    <circle cx="0" cy="0" r="28" fill="none" stroke="#ff3300" stroke-width="1.5" stroke-dasharray="3 3">
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="24s" repeatCount="indefinite"/>
+    </circle>
     
     <!-- 8-Point Asterism Mini -->
     <g transform="translate(0, -6) scale(0.18)">
@@ -47,7 +90,8 @@
 
   <!-- Center Content -->
   <g transform="translate(120, 36)">
-    <!-- Top Meta Label -->
+    <!-- Top Meta Label with Diode -->
+    <circle cx="-10" cy="-3" r="2.5" fill="#ff3300" class="seal-diode"/>
     <text x="0" y="0" font-size="9" font-weight="900" fill="#ff3300" class="mono-text">
       AI SUPPLY CHAIN SECURITY SEAL // ARTICLE IV
     </text>
@@ -64,29 +108,34 @@
 
     <!-- Architectural Progression Strip -->
     <g transform="translate(0, 62)">
-      <!-- Target Rings instead of weird shields -->
-      <g transform="translate(8, 12)">
-        <circle cx="0" cy="0" r="8" fill="#ff3300"/>
+      <!-- Node 1: Ingest -->
+      <g transform="translate(8, 12)" class="prog-node-1">
+        <circle cx="0" cy="0" r="8" fill="#ff3300" filter="url(#nodeGlow)"/>
       </g>
-      <line x1="16" y1="12" x2="26" y2="12" stroke="#222634" stroke-width="1.5" />
+      <line x1="16" y1="12" x2="26" y2="12" stroke="#ff3300" stroke-width="1.5" stroke-opacity="0.8"/>
       
-      <g transform="translate(34, 12)">
+      <!-- Node 2: Extract -->
+      <g transform="translate(34, 12)" class="prog-node-2">
         <circle cx="0" cy="0" r="8" fill="url(#shieldDots)"/>
         <circle cx="0" cy="0" r="8" fill="none" stroke="#ff3300" stroke-width="1.5"/>
       </g>
-      <line x1="42" y1="12" x2="52" y2="12" stroke="#222634" stroke-width="1.5" />
+      <line x1="42" y1="12" x2="52" y2="12" stroke="#ff3300" stroke-width="1.5" stroke-opacity="0.8"/>
 
-      <g transform="translate(60, 12)">
+      <!-- Node 3: Inspect -->
+      <g transform="translate(60, 12)" class="prog-node-3">
         <circle cx="0" cy="0" r="8" fill="none" stroke="#ff3300" stroke-width="2"/>
+        <circle cx="0" cy="0" r="3" fill="#ff3300"/>
       </g>
-      <line x1="68" y1="12" x2="78" y2="12" stroke="#222634" stroke-width="1.5" />
+      <line x1="68" y1="12" x2="78" y2="12" stroke="#222634" stroke-width="1.5"/>
 
-      <g transform="translate(86, 12)">
+      <!-- Node 4: Verify -->
+      <g transform="translate(86, 12)" class="prog-node-4">
         <circle cx="0" cy="0" r="8" fill="none" stroke="#8a92a3" stroke-width="1.5" stroke-dasharray="2 2"/>
       </g>
-      <line x1="94" y1="12" x2="104" y2="12" stroke="#222634" stroke-width="1.5" />
+      <line x1="94" y1="12" x2="104" y2="12" stroke="#222634" stroke-width="1.5"/>
 
-      <g transform="translate(112, 12)">
+      <!-- Node 5: Commit -->
+      <g transform="translate(112, 12)" class="prog-node-5">
         <circle cx="0" cy="0" r="8" fill="none" stroke="#8a92a3" stroke-width="1"/>
         <line x1="-8" y1="0" x2="8" y2="0" stroke="#8a92a3" stroke-width="1"/>
         <line x1="0" y1="-8" x2="0" y2="8" stroke="#8a92a3" stroke-width="1"/>
@@ -108,7 +157,15 @@
     <rect y="12" width="210" height="8" fill="#131620"/>
     <line x1="0" y1="20" x2="210" y2="20" stroke="#222634" stroke-width="1"/>
     <text x="10" y="14" font-size="8" font-weight="900" fill="#8a92a3" class="mono-text">EMBED DECAL</text>
-    <circle cx="196" cy="10" r="3" fill="#ff3300"/>
+    
+    <!-- Active Status Beacon with Ping Ring -->
+    <g transform="translate(196, 10)">
+      <circle cx="0" cy="0" r="3" fill="none" stroke="#00ff66" stroke-width="1">
+        <animate attributeName="r" values="3;8" dur="1.8s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.8;0" dur="1.8s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="0" cy="0" r="3" fill="#00ff66" class="seal-diode"/>
+    </g>
 
     <!-- Dual Badge Preview Pill -->
     <g transform="translate(10, 30)">

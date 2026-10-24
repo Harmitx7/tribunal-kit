@@ -20,11 +20,11 @@ fn levenshtein(a: &str, b: &str) -> usize {
     let n = b_chars.len();
     let mut dp = vec![vec![0; n + 1]; m + 1];
 
-    for i in 0..=m {
-        dp[i][0] = i;
+    for (i, row) in dp.iter_mut().enumerate().take(m + 1) {
+        row[0] = i;
     }
-    for j in 0..=n {
-        dp[0][j] = j;
+    for (j, item) in dp[0].iter_mut().enumerate().take(n + 1) {
+        *item = j;
     }
 
     for i in 1..=m {
@@ -32,10 +32,8 @@ fn levenshtein(a: &str, b: &str) -> usize {
             if a_chars[i - 1] == b_chars[j - 1] {
                 dp[i][j] = dp[i - 1][j - 1];
             } else {
-                dp[i][j] = 1 + std::cmp::min(
-                    dp[i - 1][j],
-                    std::cmp::min(dp[i][j - 1], dp[i - 1][j - 1]),
-                );
+                dp[i][j] =
+                    1 + std::cmp::min(dp[i - 1][j], std::cmp::min(dp[i][j - 1], dp[i - 1][j - 1]));
             }
         }
     }
@@ -58,7 +56,7 @@ fn is_duplicate(content: &str, file_text: &str, threshold: f64) -> bool {
     if content_stripped.is_empty() {
         return true;
     }
-    
+
     // Exact check
     if file_text.contains(content_stripped) {
         return true;
@@ -67,7 +65,9 @@ fn is_duplicate(content: &str, file_text: &str, threshold: f64) -> bool {
     // Paragraph/Line check
     for line in file_text.lines() {
         let line_stripped = line.trim();
-        if !line_stripped.is_empty() && normalized_similarity(content_stripped, line_stripped) >= threshold {
+        if !line_stripped.is_empty()
+            && normalized_similarity(content_stripped, line_stripped) >= threshold
+        {
             return true;
         }
     }
@@ -75,13 +75,10 @@ fn is_duplicate(content: &str, file_text: &str, threshold: f64) -> bool {
     false
 }
 
-pub fn optimize_skill_step(
-    skill_path: &str,
-    edits_json: &str,
-    budget: u32,
-) -> Result<String> {
+pub fn optimize_skill_step(skill_path: &str, edits_json: &str, budget: u32) -> Result<String> {
     let path = Path::new(skill_path);
-    let skill_name = path.parent()
+    let skill_name = path
+        .parent()
         .and_then(|p| p.file_name())
         .and_then(|n| n.to_str())
         .unwrap_or("unknown");
@@ -93,8 +90,8 @@ pub fn optimize_skill_step(
         String::new()
     };
 
-    let edits: Vec<PatchEdit> = serde_json::from_str(edits_json)
-        .with_context(|| "Failed to parse edits JSON")?;
+    let edits: Vec<PatchEdit> =
+        serde_json::from_str(edits_json).with_context(|| "Failed to parse edits JSON")?;
 
     let slow_start_marker = "<!-- SLOW_UPDATE_START -->";
     let slow_end_marker = "<!-- SLOW_UPDATE_END -->";
@@ -136,7 +133,9 @@ pub fn optimize_skill_step(
             "delete" => {
                 if let Some(target) = &edit.target {
                     if let Some(pos) = new_content.find(target) {
-                        if is_in_protected_region(base, pos) { return None; }
+                        if is_in_protected_region(base, pos) {
+                            return None;
+                        }
                         return Some(new_content.replace(target, ""));
                     }
                 }
@@ -144,7 +143,9 @@ pub fn optimize_skill_step(
             "replace" => {
                 if let (Some(target), Some(content)) = (&edit.target, &edit.content) {
                     if let Some(pos) = new_content.find(target) {
-                        if is_in_protected_region(base, pos) { return None; }
+                        if is_in_protected_region(base, pos) {
+                            return None;
+                        }
                         return Some(new_content.replace(target, content));
                     }
                 }
@@ -152,13 +153,19 @@ pub fn optimize_skill_step(
             "insert_after" => {
                 if let (Some(target), Some(content)) = (&edit.target, &edit.content) {
                     if let Some(pos) = new_content.find(target) {
-                        if is_in_protected_region(base, pos) { return None; }
+                        if is_in_protected_region(base, pos) {
+                            return None;
+                        }
                         let insert_pos = pos + target.len();
                         let mut next_skill = String::new();
                         next_skill.push_str(&new_content[..insert_pos]);
-                        if !content.starts_with('\n') { next_skill.push('\n'); }
+                        if !content.starts_with('\n') {
+                            next_skill.push('\n');
+                        }
                         next_skill.push_str(content);
-                        if !content.ends_with('\n') { next_skill.push('\n'); }
+                        if !content.ends_with('\n') {
+                            next_skill.push('\n');
+                        }
                         next_skill.push_str(&new_content[insert_pos..]);
                         return Some(next_skill);
                     }
@@ -174,7 +181,8 @@ pub fn optimize_skill_step(
     let mut candidates: Vec<(f64, String, PatchEdit)> = Vec::new();
     for edit in edits {
         if let Some(mutated_content) = apply_edit(&base_skill_content, &edit) {
-            let report = crate::commands::fitness_scorer::score_skill_content(skill_name, &mutated_content);
+            let report =
+                crate::commands::fitness_scorer::score_skill_content(skill_name, &mutated_content);
             candidates.push((report.composite_fitness, mutated_content, edit));
         }
     }
@@ -189,26 +197,39 @@ pub fn optimize_skill_step(
     // Greedily apply top N mutations (if budget allows, though usually they are conflicting so we just take the best one)
     // To support budget > 1 properly, we should re-evaluate, but for simplicity we'll just apply the absolute best candidate.
     // If budget > 1, we iteratively apply the best edit if it still cleanly applies.
-    let mut current_fitness = crate::commands::fitness_scorer::score_skill_content(skill_name, &final_content).composite_fitness;
+    let mut current_fitness =
+        crate::commands::fitness_scorer::score_skill_content(skill_name, &final_content)
+            .composite_fitness;
 
     for (candidate_fitness, _mutated, edit) in candidates.into_iter().take(budget as usize) {
         if candidate_fitness > current_fitness {
             // Re-apply to current final_content to ensure it still works
             if let Some(next_content) = apply_edit(&final_content, &edit) {
-                let next_fitness = crate::commands::fitness_scorer::score_skill_content(skill_name, &next_content).composite_fitness;
+                let next_fitness =
+                    crate::commands::fitness_scorer::score_skill_content(skill_name, &next_content)
+                        .composite_fitness;
                 if next_fitness > current_fitness {
                     final_content = next_content;
                     current_fitness = next_fitness;
                     applied_count += 1;
-                    reports.push(format!("applied: {} (fitness: {:.3})", edit.op, current_fitness));
+                    reports.push(format!(
+                        "applied: {} (fitness: {:.3})",
+                        edit.op, current_fitness
+                    ));
                 } else {
-                    reports.push(format!("skip: {} (did not improve fitness after prior edits)", edit.op));
+                    reports.push(format!(
+                        "skip: {} (did not improve fitness after prior edits)",
+                        edit.op
+                    ));
                 }
             } else {
                 reports.push(format!("skip: {} (failed to apply cleanly)", edit.op));
             }
         } else {
-            reports.push(format!("skip: {} (fitness {:.3} <= current {:.3})", edit.op, candidate_fitness, current_fitness));
+            reports.push(format!(
+                "skip: {} (fitness {:.3} <= current {:.3})",
+                edit.op, candidate_fitness, current_fitness
+            ));
         }
     }
 

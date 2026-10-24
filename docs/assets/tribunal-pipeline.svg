@@ -28,48 +28,120 @@
       <line x1="108" y1="0" x2="108" y2="4" stroke="#8a92a3" stroke-width="1" opacity="0.5" />
     </pattern>
 
-    <!-- Node Shadows & Effects -->
+    <!-- Node Shadows & Luminous Effects -->
     <filter id="node-shadow" x="-10%" y="-10%" width="120%" height="120%">
       <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.6"/>
     </filter>
 
-    <filter id="neon-glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="8" result="blur" />
+    <filter id="packet-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.5" result="blur" />
       <feMerge>
         <feMergeNode in="blur" />
         <feMergeNode in="SourceGraphic" />
       </feMerge>
     </filter>
+
+    <filter id="laser-glow" x="-20%" y="-100%" width="140%" height="300%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <linearGradient id="laserBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff3300" stop-opacity="0"/>
+      <stop offset="15%" stop-color="#ff3300" stop-opacity="0.8"/>
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="85%" stop-color="#ff3300" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#ff3300" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Core Reactor Gradient -->
+    <linearGradient id="reactorPulse" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a0c08"/>
+      <stop offset="100%" stop-color="#120706"/>
+    </linearGradient>
   </defs>
 
   <style>
-    .title-text { font-family: 'Inter', sans-serif; font-weight: 900; letter-spacing: 2px; }
-    .subtitle-text { font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: 1px; }
-    .body-text { font-family: 'Inter', sans-serif; font-weight: 500; }
+    .title-text { font-family: 'Inter', -apple-system, sans-serif; font-weight: 900; letter-spacing: 2px; }
+    .subtitle-text { font-family: 'Inter', -apple-system, sans-serif; font-weight: 700; letter-spacing: 1px; }
+    .body-text { font-family: 'Inter', -apple-system, sans-serif; font-weight: 500; }
     .mono-text { font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace; font-size: 11px; letter-spacing: 1.5px; }
     
     @keyframes wireFlow {
-      0% { stroke-dashoffset: 40; }
+      0% { stroke-dashoffset: 32; }
       100% { stroke-dashoffset: 0; }
     }
     @keyframes wireFlowReverse {
       0% { stroke-dashoffset: 0; }
-      100% { stroke-dashoffset: 40; }
+      100% { stroke-dashoffset: 32; }
     }
     .flow-wire {
       stroke-dasharray: 8 8;
-      animation: wireFlow 1s linear infinite;
+      animation: wireFlow 0.8s linear infinite;
     }
     .flow-wire-reverse {
       stroke-dasharray: 8 8;
-      animation: wireFlowReverse 1s linear infinite;
+      animation: wireFlowReverse 0.8s linear infinite;
+    }
+
+    /* Core Thermal Resonance */
+    .core-reactor {
+      animation: coreResonance 3s ease-in-out infinite;
+    }
+    @keyframes coreResonance {
+      0%, 100% {
+        stroke: #ff3300;
+        stroke-opacity: 0.8;
+        filter: drop-shadow(0 0 6px rgba(255,51,0,0.3));
+      }
+      50% {
+        stroke: #ff5500;
+        stroke-opacity: 1;
+        filter: drop-shadow(0 0 16px rgba(255,51,0,0.7));
+      }
+    }
+
+    /* Laser Scanner Beam */
+    .laser-line {
+      animation: scanSweep 3.6s ease-in-out infinite;
+    }
+    @keyframes scanSweep {
+      0%, 100% { transform: translateY(0px); opacity: 0.85; }
+      50% { transform: translateY(148px); opacity: 1; }
+    }
+
+    /* Live Diode Pulses */
+    .diode-pulse-fast {
+      animation: diodeFlash 1.2s ease-in-out infinite;
+    }
+    .diode-pulse-med {
+      animation: diodeFlash 1.8s ease-in-out infinite 0.3s;
+    }
+    .diode-pulse-slow {
+      animation: diodeFlash 2.4s ease-in-out infinite 0.6s;
+    }
+    @keyframes diodeFlash {
+      0%, 100% { opacity: 0.9; transform: scale(1); }
+      50% { opacity: 0.25; transform: scale(0.85); }
     }
 
     .keycap-highlight { fill: #ffffff; opacity: 0.08; }
     .keycap-shadow { fill: #000000; opacity: 0.3; }
 
+    /* Accessibility: Reduced Motion Override */
     @media (prefers-reduced-motion: reduce) {
-      .flow-wire, .flow-wire-reverse { animation: none !important; stroke-dasharray: none !important; }
+      .flow-wire, .flow-wire-reverse, .core-reactor, .laser-line, .diode-pulse-fast, .diode-pulse-med, .diode-pulse-slow {
+        animation: none !important;
+        stroke-dasharray: none !important;
+        filter: none !important;
+        transform: none !important;
+      }
+      .packet-group {
+        display: none !important;
+      }
     }
   </style>
 
@@ -98,7 +170,7 @@
     <text x="56" y="24" font-size="13" fill="#f5f2eb" class="title-text">TRIBUNAL PIPELINE ARCHITECTURE</text>
     <text x="360" y="24" font-size="11" fill="#8a92a3" class="mono-text">// 5-STAGE ZERO-TRUST VERIFICATION CONVEYOR</text>
 
-    <!-- Barcode Deco Right -->
+    <!-- Barcode Decal Right -->
     <g transform="translate(980, 10)">
       <rect x="0" y="0" width="2" height="20" fill="#222634"/>
       <rect x="6" y="0" width="4" height="20" fill="#222634"/>
@@ -117,16 +189,62 @@
   </g>
 
   <!-- ==================== CONDUIT WIRES (DATA BUS) ==================== -->
-  <!-- Horizontal Links -->
+  <!-- Wire Guides -->
+  <line x1="208" y1="230" x2="278" y2="230" stroke="#33130d" stroke-width="4"/>
   <line x1="208" y1="230" x2="278" y2="230" stroke="#ff3300" stroke-width="2.5" class="flow-wire"/>
+
+  <line x1="458" y1="230" x2="528" y2="230" stroke="#33130d" stroke-width="4"/>
   <line x1="458" y1="230" x2="528" y2="230" stroke="#ff3300" stroke-width="2.5" class="flow-wire"/>
+
+  <line x1="708" y1="230" x2="778" y2="230" stroke="#33130d" stroke-width="4"/>
   <line x1="708" y1="230" x2="778" y2="230" stroke="#ff3300" stroke-width="2.5" class="flow-wire"/>
+
+  <line x1="998" y1="230" x2="1058" y2="230" stroke="#33130d" stroke-width="4"/>
   <line x1="998" y1="230" x2="1058" y2="230" stroke="#ff3300" stroke-width="2.5" class="flow-wire"/>
 
-  <!-- Inner Loop Re-Prompt Wire (Feedback) -->
-  <path d="M 888 380 L 888 450 L 138 450 L 138 310" fill="none" stroke="#ff3300" stroke-width="2" class="flow-wire-reverse"/>
+  <!-- Live Moving Energy Packets (Data Bus in Flight) -->
+  <g class="packet-group">
+    <!-- Packet 1: 01 -> 02 -->
+    <circle cx="208" cy="230" r="4" fill="#ffffff" filter="url(#packet-glow)">
+      <animate attributeName="cx" from="208" to="278" dur="1s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1s" repeatCount="indefinite" />
+    </circle>
+    
+    <!-- Packet 2: 02 -> 03 -->
+    <circle cx="458" cy="230" r="4" fill="#ffffff" filter="url(#packet-glow)">
+      <animate attributeName="cx" from="458" to="528" dur="1s" begin="0.25s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1s" begin="0.25s" repeatCount="indefinite" />
+    </circle>
+
+    <!-- Packet 3: 03 -> 04 -->
+    <circle cx="708" cy="230" r="4" fill="#ffffff" filter="url(#packet-glow)">
+      <animate attributeName="cx" from="708" to="778" dur="1s" begin="0.5s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1s" begin="0.5s" repeatCount="indefinite" />
+    </circle>
+
+    <!-- Packet 4: 04 -> 05 -->
+    <circle cx="998" cy="230" r="4" fill="#ffffff" filter="url(#packet-glow)">
+      <animate attributeName="cx" from="998" to="1058" dur="1s" begin="0.75s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="1s" begin="0.75s" repeatCount="indefinite" />
+    </circle>
+  </g>
+
+  <!-- Inner Loop Re-Prompt Wire (Feedback Bus) -->
+  <path d="M 888 370 L 888 450 L 138 450 L 138 310" fill="none" stroke="#2d120d" stroke-width="4"/>
+  <path d="M 888 370 L 888 450 L 138 450 L 138 310" fill="none" stroke="#ff3300" stroke-width="2" class="flow-wire-reverse"/>
+
+  <!-- Live Reverse Feedback Energy Pulse -->
+  <g class="packet-group">
+    <circle r="4.5" fill="#ffaa00" filter="url(#packet-glow)">
+      <animateMotion path="M 888 370 L 888 450 L 138 450 L 138 310" dur="2.4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.05;0.95;1" dur="2.4s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Feedback Banner Box -->
   <rect x="360" y="438" width="380" height="24" rx="4" fill="#1f0907" stroke="#ff3300" stroke-width="1"/>
-  <text x="550" y="454" text-anchor="middle" fill="#ff4d1a" class="mono-text" font-weight="bold">
+  <circle cx="375" cy="450" r="3" fill="#ff3300" class="diode-pulse-fast"/>
+  <text x="555" y="454" text-anchor="middle" fill="#ff4d1a" class="mono-text" font-weight="bold">
     ⚡ INNER-LOOP AUTO-CORRECT: RE-PROMPT AGENT WITH LIVE EVIDENCE
   </text>
 
@@ -134,7 +252,8 @@
   <g transform="translate(48, 150)" filter="url(#node-shadow)">
     <rect width="160" height="160" rx="6" fill="#0b0e14" stroke="#222634" stroke-width="1.5"/>
     <rect width="160" height="32" rx="6" fill="#161924"/>
-    <rect y="26" width="160" height="6" fill="#161924"/> <!-- hide bottom corners -->
+    <rect y="26" width="160" height="6" fill="#161924"/>
+    <circle cx="20" cy="16" r="3" fill="#ff3300" class="diode-pulse-fast"/>
     <text x="80" y="21" text-anchor="middle" fill="#f5f2eb" font-weight="900" class="mono-text">STAGE 01</text>
 
     <!-- 3D Keycaps [A] [G] [T] -->
@@ -165,7 +284,8 @@
     <text x="80" y="122" text-anchor="middle" font-size="10" fill="#8a92a3" class="mono-text">Cursor / Claude</text>
     
     <rect x="25" y="134" width="110" height="16" rx="2" fill="#ff3300" fill-opacity="0.1" stroke="#ff3300" stroke-width="1"/>
-    <text x="80" y="145" text-anchor="middle" font-size="9" fill="#ff4d1a" font-weight="bold" class="mono-text">RAW CODE STREAM</text>
+    <circle cx="34" cy="142" r="2.5" fill="#ff3300" class="diode-pulse-fast"/>
+    <text x="82" y="145" text-anchor="middle" font-size="9" fill="#ff4d1a" font-weight="bold" class="mono-text">RAW CODE STREAM</text>
   </g>
 
   <!-- ==================== STAGE 02: AST CONTEXT BROKER ==================== -->
@@ -173,16 +293,26 @@
     <rect width="180" height="200" rx="6" fill="#0b0e14" stroke="#222634" stroke-width="1.5"/>
     <rect width="180" height="32" rx="6" fill="#161924"/>
     <rect y="26" width="180" height="6" fill="#161924"/>
+    <circle cx="20" cy="16" r="3" fill="#8a92a3" class="diode-pulse-med"/>
     <text x="90" y="21" text-anchor="middle" fill="#f5f2eb" font-weight="900" class="mono-text">STAGE 02 // BROKER</text>
 
     <text x="90" y="60" text-anchor="middle" font-size="15" fill="#f5f2eb" class="subtitle-text">Context Broker</text>
     <line x1="20" y1="72" x2="160" y2="72" stroke="#222634" stroke-width="1"/>
 
     <!-- Swiss Metadata Checklist -->
-    <text x="24" y="94" font-size="11" fill="#a4adc4" class="mono-text">📂 Live Workspace</text>
-    <text x="24" y="114" font-size="11" fill="#a4adc4" class="mono-text">📦 Pkg Dependencies</text>
-    <text x="24" y="134" font-size="11" fill="#a4adc4" class="mono-text">⚖️ Precedent Index</text>
-    <text x="24" y="154" font-size="11" fill="#a4adc4" class="mono-text">📜 Covenant Rules</text>
+    <g transform="translate(24, 82)">
+      <circle cx="4" cy="10" r="2" fill="#ff3300" opacity="0.8"/>
+      <text x="14" y="13" font-size="11" fill="#a4adc4" class="mono-text">Live Workspace</text>
+
+      <circle cx="4" cy="30" r="2" fill="#ff3300" opacity="0.8"/>
+      <text x="14" y="33" font-size="11" fill="#a4adc4" class="mono-text">Pkg Dependencies</text>
+
+      <circle cx="4" cy="50" r="2" fill="#ff3300" opacity="0.8"/>
+      <text x="14" y="53" font-size="11" fill="#a4adc4" class="mono-text">Precedent Index</text>
+
+      <circle cx="4" cy="70" r="2" fill="#ff3300" opacity="0.8"/>
+      <text x="14" y="73" font-size="11" fill="#a4adc4" class="mono-text">Covenant Rules</text>
+    </g>
 
     <rect x="20" y="168" width="140" height="20" rx="3" fill="#1c1f2a" stroke="#222634" stroke-width="1"/>
     <text x="90" y="182" text-anchor="middle" font-size="10" fill="#d4d8e0" font-weight="bold" class="mono-text">GROUND TRUTH INGEST</text>
@@ -190,9 +320,10 @@
 
   <!-- ==================== STAGE 03: COMPILED RUST CORE ==================== -->
   <g transform="translate(528, 120)" filter="url(#node-shadow)">
-    <rect width="180" height="220" rx="6" fill="#120706" stroke="#ff3300" stroke-width="1.5"/>
+    <rect width="180" height="220" rx="6" fill="url(#reactorPulse)" class="core-reactor" stroke="#ff3300" stroke-width="1.5"/>
     <rect width="180" height="32" rx="6" fill="#2d120d"/>
     <rect y="26" width="180" height="6" fill="#2d120d"/>
+    <circle cx="20" cy="16" r="3.5" fill="#ff3300" class="diode-pulse-fast"/>
     <text x="90" y="21" text-anchor="middle" fill="#ff3300" font-weight="900" class="mono-text">STAGE 03 // CORE</text>
 
     <text x="90" y="64" text-anchor="middle" font-size="18">🦀</text>
@@ -205,7 +336,8 @@
     <text x="24" y="176" font-size="11" fill="#f5f2eb" class="mono-text">🛡️ Slopsquat Scan</text>
 
     <rect x="20" y="190" width="140" height="20" rx="3" fill="#ff3300" fill-opacity="0.2"/>
-    <text x="90" y="204" text-anchor="middle" font-size="10" fill="#ff3300" font-weight="bold" class="mono-text">LATENCY &lt; 10ms</text>
+    <circle cx="32" cy="200" r="2.5" fill="#ff5500" class="diode-pulse-fast"/>
+    <text x="94" y="204" text-anchor="middle" font-size="10" fill="#ff3300" font-weight="bold" class="mono-text">LATENCY &lt; 10ms</text>
   </g>
 
   <!-- ==================== STAGE 04: PARALLEL REVIEWER SWARM ==================== -->
@@ -213,6 +345,7 @@
     <rect width="220" height="280" rx="6" fill="#0b0e14" stroke="#ff3300" stroke-width="1.5"/>
     <rect width="220" height="32" rx="6" fill="#1c0a0c"/>
     <rect y="26" width="220" height="6" fill="#1c0a0c"/>
+    <circle cx="20" cy="16" r="3.5" fill="#ff3300" class="diode-pulse-fast"/>
     <text x="110" y="21" text-anchor="middle" fill="#ff4d1a" font-weight="900" class="mono-text">STAGE 04 // 28 REVIEWERS</text>
 
     <text x="110" y="58" text-anchor="middle" font-size="16" fill="#f5f2eb" class="title-text">REVIEWER SWARM</text>
@@ -224,6 +357,7 @@
       <rect width="188" height="26" rx="3" fill="#131620" stroke="#222634" stroke-width="1"/>
       <rect x="8" y="8" width="10" height="10" fill="#ff3300" />
       <text x="26" y="17" fill="#f5f2eb" class="mono-text" font-weight="bold">logic-reviewer</text>
+      <circle cx="152" cy="13" r="2.5" fill="#00ff66" class="diode-pulse-fast"/>
       <text x="180" y="17" text-anchor="end" fill="#8a92a3" font-size="9" class="mono-text">AST</text>
 
       <!-- Strip 2: Security -->
@@ -232,6 +366,7 @@
         <rect x="8" y="8" width="10" height="10" fill="url(#dot-grid)" />
         <rect x="8" y="8" width="10" height="10" fill="none" stroke="#ff3300" stroke-width="1" />
         <text x="26" y="17" fill="#f5f2eb" class="mono-text" font-weight="bold">security-auditor</text>
+        <circle cx="140" cy="13" r="2.5" fill="#00ff66" class="diode-pulse-med"/>
         <text x="180" y="17" text-anchor="end" fill="#ff4d1a" font-size="9" class="mono-text">OWASP</text>
       </g>
 
@@ -240,6 +375,7 @@
         <rect width="188" height="26" rx="3" fill="#131620" stroke="#ff3300" stroke-width="1"/>
         <rect x="8" y="8" width="10" height="10" fill="none" stroke="#ff3300" stroke-width="2" />
         <text x="26" y="17" fill="#f5f2eb" class="mono-text" font-weight="bold">precedence-reviewer</text>
+        <circle cx="144" cy="13" r="2.5" fill="#00ff66" class="diode-pulse-fast"/>
         <text x="180" y="17" text-anchor="end" fill="#ff3300" font-size="9" class="mono-text">CASES</text>
       </g>
 
@@ -248,6 +384,7 @@
         <rect width="188" height="26" rx="3" fill="#131620" stroke="#222634" stroke-width="1"/>
         <rect x="8" y="8" width="10" height="10" fill="none" stroke="#8a92a3" stroke-width="1.5" stroke-dasharray="2 2" />
         <text x="26" y="17" fill="#f5f2eb" class="mono-text" font-weight="bold">schema-reviewer</text>
+        <circle cx="152" cy="13" r="2.5" fill="#00ff66" class="diode-pulse-slow"/>
         <text x="180" y="17" text-anchor="end" fill="#8a92a3" font-size="9" class="mono-text">SQL</text>
       </g>
 
@@ -256,7 +393,13 @@
         <rect width="188" height="26" rx="3" fill="#131620" stroke="#222634" stroke-width="1"/>
         <rect x="8" y="8" width="10" height="10" fill="none" stroke="#ff3300" stroke-width="1" />
         <text x="26" y="17" fill="#f5f2eb" class="mono-text" font-weight="bold">resilience-reviewer</text>
+        <circle cx="144" cy="13" r="2.5" fill="#00ff66" class="diode-pulse-med"/>
         <text x="180" y="17" text-anchor="end" fill="#8a92a3" font-size="9" class="mono-text">ASYNC</text>
+      </g>
+
+      <!-- Active Laser Scanner Sweep Across the Swarm -->
+      <g class="laser-line">
+        <line x1="0" y1="0" x2="188" y2="0" stroke="url(#laserBeamGrad)" stroke-width="2.5" filter="url(#laser-glow)"/>
       </g>
     </g>
 
@@ -269,6 +412,7 @@
     <rect width="120" height="200" rx="6" fill="#0b0e14" stroke="#222634" stroke-width="1.5"/>
     <rect width="120" height="32" rx="6" fill="#161924"/>
     <rect y="26" width="120" height="6" fill="#161924"/>
+    <circle cx="18" cy="16" r="3" fill="#00ff66" class="diode-pulse-slow"/>
     <text x="60" y="21" text-anchor="middle" fill="#f5f2eb" font-weight="900" class="mono-text">STAGE 05</text>
 
     <!-- 3D Keycaps [O] [K] -->

@@ -44,8 +44,8 @@ pub fn render_leaderboard(skills_dir: &str, repo_path: &str, limit: usize) -> Re
         summary.total_skills.bold().cyan(),
         summary.average_fitness.bold().yellow()
     ));
-    
-    out.push_str(&"┌────┬──────────────────────────────────────┬───────┬───────┬───────┐\n".to_string());
+
+    out.push_str("┌────┬──────────────────────────────────────┬───────┬───────┬───────┐\n");
     out.push_str(&format!(
         "│ {}  │ {:<36} │ {} │ {} │ {} │\n",
         "#".bold(),
@@ -54,10 +54,9 @@ pub fn render_leaderboard(skills_dir: &str, repo_path: &str, limit: usize) -> Re
         "Traps".bold(),
         "Tokens".bold()
     ));
-    out.push_str(&"├────┼──────────────────────────────────────┼───────┼───────┼───────┤\n".to_string());
+    out.push_str("├────┼──────────────────────────────────────┼───────┼───────┼───────┤\n");
 
-    let mut rank = 1;
-    for report in summary.reports.iter().take(limit) {
+    for (rank, report) in (1..).zip(summary.reports.iter().take(limit)) {
         let score_str = format!("{:.2}", report.composite_fitness);
         let score_color = if report.composite_fitness > 0.90 {
             score_str.bright_green().to_string()
@@ -75,10 +74,9 @@ pub fn render_leaderboard(skills_dir: &str, repo_path: &str, limit: usize) -> Re
             report.trap_density,
             report.total_tokens_estimate
         ));
-        rank += 1;
     }
 
-    out.push_str(&"└────┴──────────────────────────────────────┴───────┴───────┴───────┘\n".to_string());
+    out.push_str("└────┴──────────────────────────────────────┴───────┴───────┴───────┘\n");
 
     Ok(out)
 }

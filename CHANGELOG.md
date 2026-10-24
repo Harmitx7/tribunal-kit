@@ -4,13 +4,64 @@
 [![SemVer](https://img.shields.io/badge/SemVer-2.0.0-green.svg?style=flat-square)](https://semver.org/)
 [![Specialists](https://img.shields.io/badge/Specialists-60-cyan.svg?style=flat-square)](#)
 [![Reviewers](https://img.shields.io/badge/Reviewers-31-emerald.svg?style=flat-square)](#)
-[![Skills Corpus](https://img.shields.io/badge/Corpus-234%20Skills-teal.svg?style=flat-square)](#)
+[![Skills Corpus](https://img.shields.io/badge/Corpus-235%20Skills-teal.svg?style=flat-square)](#)
 [![Workflows](https://img.shields.io/badge/Workflows-51%20Audited-indigo.svg?style=flat-square)](#)
 [![Harnesses](https://img.shields.io/badge/Harnesses-9%20Supported-orange.svg?style=flat-square)](#)
 [![Test Suite](<https://img.shields.io/badge/Tests-100%25%20Passing%20(966%20tests)-brightgreen.svg?style=flat-square>)](#)
 
 All notable changes to **Tribunal Kit** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
+
+## [9.3.0] — 2026-10-24 — ⚡ Dual-Engine Convergence — Native Core Hardening, CLI Route Parity & Zero-Dependency Governance
+
+> [!IMPORTANT]
+> **Release 9.3.0 (Dual-Engine Convergence)** delivers full behavioral parity and security hardening between the high-performance native Rust core (`tribunal-core`) and the modular JavaScript runtime. This release closes architectural discrepancies across command routing, schema deserialization, validation pipelines, and repository hygiene. It enforces strict Serde deserialization boundaries across all worker and case-law models, establishes complete structural and payload validation parity in `tk validate`, introduces `--minimal` template filtering in the Rust engine, restores zero-dependency runtime purity by removing phantom packages, and stabilizes UNIX pipeline stream separation.
+
+### Security & Hardening
+
+- **Serde Anti-Hallucination Deserialization Boundary:** Enforced `#[serde(deny_unknown_fields)]` across all core Rust schemas in `crates/core/src/main.rs` (`MicroWorkerDispatch`, `MicroWorkerPayload`, `WorkerRequest`, `SwarmPayload`, `AgentSchema`, `CaseLawEntry`, and `MarathonFeature`). Prevents hallucinated or corrupted agent fields from silently passing verification gates.
+- **Fail-Safe CLI Command Routing:** Pruned incomplete Rust stubs (`hook`, `uninstall`, `compile`) from `RUST_COMMANDS` in `bin/wrapper.js`. Commands now route reliably to their mature JavaScript implementations, preventing unintended operational failures during `tk uninstall` (ensuring self-install guards and backup generation), `tk hook` (installing git pre-push hooks), and `tk compile` (compiling static Markdown instructions).
+- **Zero-Dependency Runtime Footprint:** Purged unused `"zod"` production dependency from `package.json`, reinstating Tribunal Kit's pure zero-dependency runtime powered exclusively by Node.js standard libraries and optional native binaries.
+- **AI IDE Configuration Path Anchoring:** Anchored `/skills/` in `.gitignore` under `# AI IDE Configuration`, preventing nested skill directories and test fixtures across the project from being unintentionally ignored by git.
+
+### Added
+
+- **Dual-Engine Structural & Schema Validation (`tk validate`):**
+  - **Native Core:** `cmd_validate` now accepts optional file and schema arguments (`--file`, `--schema`). When invoked without a file, it executes comprehensive structural integrity checks across `.agent/` directories (`agents`, `workflows`, `skills`, `scripts`, `rules`) and master governance rules (`GEMINI.md` / `kernel.md`). When invoked with a file, it auto-detects schemas (`MicroWorker`, `Swarm`, `CaseLaw`, `Marathon`, `Memory`, `Agent`, generic JSON) and validates payload structure.
+  - **JavaScript Engine:** Added `--file` / `--file=` flag parsing in `src/cli.js` `parseArgs` and updated `cmdValidate` to support both single-file JSON payload validation and full `.agent/` 28-reviewer structural checks.
+- **Native Minimal Initialization (`tk init --minimal`):** Ported `--minimal` mode filtering to the Rust native core in `cmd_init` and `copy_dir_all_inner`, restricting installation to essential `CORE_AGENTS` (21 agents) and `CORE_SKILLS` (19 skills) with concurrent semaphore throttling.
+- **Design System Template Scaffolding:** Integrated automated scaffolding of `docs/DESIGN.md` and `.agent/templates/design-tokens.json` directly into native `cmd_init`.
+- **Top-Level Version Flags:** Added first-class instant version output (`tk --version` and `tk -v`) in both `bin/wrapper.js` and `src/cli.js`, returning `9.3.0` without requiring subcommands.
+- **Dynamic CLI Flag Normalization:** Added seamless translation in `bin/wrapper.js` converting `--path <dir>` and `--path=<dir>` into positional arguments expected by the native core engine.
+- **Architecture Intelligence Fallback:** Added resilient fallback in `src/commands/arch.js` to automatically utilize bundled kit scripts in `.agent/scripts/architecture_extractor.js` when invoked against uninitialized external repositories.
+- **Wrapper Integration Test Suite:** Added end-to-end integration tests in `test/integration/wrapper.test.js` validating `--version`, `-v`, and non-Rust command dispatch.
+- **Hybrid Skill Reference Architecture (Model C):** Established 23 authoritative, zero-hallucination reference specifications (<1,500 tokens each) across 9 production domains under `.agent/references/`:
+  - **Security (2):** OWASP Top 10 API Security Risks, WebAuthn & Passkey Authentication.
+  - **Database (3):** PostgreSQL pgvector & HNSW Tuning, Zero-Downtime Schema Migrations, SQL Indexing & Query Plan Tuning.
+  - **Motion (2):** GSAP v3 Timeline Architecture & Memory Lifecycle, 60fps Web Animation & GPU Composite Layers.
+  - **Frontend (3):** React 19 RSC & Server Actions, WAI-ARIA APG Patterns & Keyboard Navigation, Tailwind CSS v4 Native Token Architecture.
+  - **DevOps & Cloud (3):** Hardened GitHub Actions Workflows & OIDC, Docker Container Security & Rootless Deployment, OpenTofu & Terraform State Governance.
+  - **Mobile (2):** Expo Router v4 Deep Linking & Layouts, Mobile Ergonomics & Apple HIG Guidelines.
+  - **Backend (3):** FastAPI & Pydantic v2 Async Concurrency, Node.js Event Loop & Stream Architecture, Redis Caching Strategies & Distributed Locks.
+  - **AI Systems (2):** RAG Hybrid Search & Cross-Encoder Re-ranking, Model Context Protocol (MCP) Server Specification.
+  - **Observability (1):** OpenTelemetry Semantic Conventions & Distributed Tracing.
+  - **Shared Standards (2):** RFC 9110 HTTP API Semantics & Status Codes, Playwright E2E Testing & Selector Reliability.
+  - **System Design & Distributed Systems (16):** Full reference specifications covering Fundamentals, Quantitative Estimation & Little's Law, Architecture Patterns & C4 Modeling, Distributed Systems Primitives (Raft/Paxos/Quorums), Polyglot Data Architecture & Sharding, Communication & In-Memory Caching, Event-Driven Messaging (Kafka/Partitioning), Scalability & Traffic Management (L4/L7/Rate Limiting), Security Architecture (STRIDE/Zero-Trust/RLS), Reliability & Latency Percentiles (SLO/Error Budgets), Observability & Distributed Tracing, Cloud Infrastructure & IaC, Global Multi-Region & FinOps, Migration Architecture (Strangler Fig/ADRs), Real-World Production Blueprints (8 Scenarios), and Authoritative Source Catalog.
+  - All specifications integrated into `.agent/skill_topic_map.json` under `domain_references["system-design"]` and `domain_routes["system-design"]`.
+- **Advanced System Design Skills Ecosystem (`system-design-pro`):** Upgraded `system-design-pro/SKILL.md` to the complete 18-Section Tribunal Governance Standard, incorporating quantitative calculation formulas, Little's Law concurrency bounds, Pareto 80/20 cache sizing, and explicit links across the 16 System Design references.
+- **System Design Automated Scenario Test Suite (`system_design_ecosystem.test.js`):** Added comprehensive automated test suite verifying metadata integrity, token budgets (<2,000 tokens), relative link resolution, quantitative mathematical models, and full coverage of the 8 required production scenarios (URL Shortener, Real-Time Chat, Multi-Tenant SaaS, High-Throughput Stream Ingestion, Database Scaling, Global Multi-Region DR, Monolith Decomposition, and AI Inference Platform).
+- **Automated Reference Validator (`validate-references.js`):** Added automated validation script verifying frontmatter, directory parity, link integrity with code-block boundary isolation, and reference token budgets (<2,000 tokens), chained directly into `npm run validate-payload`.
+- **Reference Mirror Synchronization (`sync-skills.js`):** Extended `sync-skills.js` to automatically mirror `.agent/references/` across `references/` and `.agents/references/`.
+
+### Fixed
+
+- **Canonical Skill Corpus Synchronization (`local-first-architecture`):** Restored missing canonical skill file in `.agent/skills/local-first-architecture/SKILL.md` and registered it in `.agent/skill_topic_map.json`, reconciling total skills corpus to 235 across all mirrors (`.agent/skills/`, `skills/`, `.agents/skills/`).
+- **GSAP Utils Markdown Link Syntax:** Corrected malformed unescaped parentheses in `skills/gsap-utils/SKILL.md` and canonical `.agent/skills/gsap-utils/SKILL.md` line 68.
+- **Corpus Certification Test Parity:** Updated `test/unit/corpus_certification_orchestrator.test.js` to assert the reconciled 235 skills corpus.
+- **Case Law Help Clean Exit:** Fixed `src/commands/case.js` to return cleanly with exit code 0 when invoked with `tk case --help` instead of falling through to the `add` sub-command.
+- **Async Router Await in CLI:** Fixed `src/cli.js` to `await cmdValidate(flags, quiet)` and corrected argument ordering so `process.argv` is no longer mistakenly evaluated as the `quiet` boolean flag.
+- **Minimal Parent Directory Resolution:** Corrected parent directory string resolution in `src/commands/init.js` so `--minimal` properly identifies `agents/` and `skills/` folders.
+- **Pipeline Stream Separation:** Synchronized `cmd_status` in `crates/core/src/main.rs` to write compact machine-readable JSON to `stdout` and human-readable high-density TUI formatting to `stderr`, preserving compatibility with UNIX pipeline filters, jq, and automated test runners.
 
 ## [9.2.9] — 2026-10-23 — ♾️ Project Ouroboros — Autonomous Recursive Self-Evolution & Perpetual Governance Core
 

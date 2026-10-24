@@ -1,9 +1,9 @@
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
-use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
-use owo_colors::OwoColorize;
 use indicatif::{ProgressBar, ProgressStyle};
+use owo_colors::OwoColorize;
+use serde::{Deserialize, Serialize};
+use std::path::{Path, PathBuf};
 
 mod commands;
 mod tui;
@@ -53,15 +53,15 @@ enum Commands {
         source_dir: String,
     },
 
-    /// Validate a JSON payload against strict tribunal schemas
+    /// Validate a JSON payload or .agent/ structure against strict tribunal schemas
     Validate {
-        /// Path to the JSON file to validate
+        /// Path to the JSON file to validate (optional, validates .agent/ if omitted)
         #[arg(short, long)]
-        file: String,
+        file: Option<String>,
 
-        /// Schema type to validate against
+        /// Schema type to validate against (optional, auto-detected if omitted)
         #[arg(short, long)]
-        schema: SchemaType,
+        schema: Option<SchemaType>,
     },
 
     /// Check installation status
@@ -84,7 +84,7 @@ enum Commands {
         /// Target directory to sync (defaults to current directory)
         #[arg(default_value = ".")]
         path: String,
-        
+
         /// Suppress output
         #[arg(long, default_value_t = false)]
         quiet: bool,
@@ -102,11 +102,11 @@ enum Commands {
         /// Target directory
         #[arg(default_value = ".")]
         path: String,
-        
+
         /// Preview actions without writing any files
         #[arg(long, default_value_t = false)]
         dry_run: bool,
-        
+
         /// Suppress output
         #[arg(long, default_value_t = false)]
         quiet: bool,
@@ -277,7 +277,7 @@ enum Commands {
         /// Target repository path
         #[arg(long, default_value = ".")]
         repo_path: String,
-        
+
         /// Limit number of skills to display
         #[arg(long, default_value_t = 20)]
         limit: usize,
@@ -292,7 +292,7 @@ enum Commands {
         /// Target repository path
         #[arg(long, default_value = ".")]
         repo_path: String,
-        
+
         /// Publish benchmark results
         #[arg(long, default_value_t = false)]
         publish: bool,
@@ -454,6 +454,7 @@ enum SchemaType {
 // This is the mathematical guarantee against internal hallucination.
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 struct MicroWorkerDispatch {
     target_agent: String,
     #[serde(default)]
@@ -465,11 +466,13 @@ struct MicroWorkerDispatch {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 struct MicroWorkerPayload {
     dispatch_micro_workers: Vec<MicroWorkerDispatch>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 struct WorkerRequest {
     #[serde(default)]
     task_id: String,
@@ -486,6 +489,7 @@ struct WorkerRequest {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 struct SwarmPayload {
     #[serde(default)]
     workers: Vec<WorkerRequest>,
@@ -517,6 +521,7 @@ enum InitStatus {
 
 /// Schema for validating agent definition files.
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 struct AgentSchema {
     name: String,
     description: String,
@@ -528,6 +533,7 @@ struct AgentSchema {
 
 /// Schema for validating case law entries.
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 struct CaseLawEntry {
     id: u32,
     domain: String,
@@ -552,6 +558,7 @@ enum Severity {
 
 /// Schema for marathon feature specs.
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(deny_unknown_fields)]
 struct MarathonFeature {
     id: u32,
     category: String,
@@ -586,7 +593,7 @@ async fn main() -> Result<()> {
             source_dir,
         } => cmd_init(&path, force, dry_run, quiet, minimal, &source_dir).await,
 
-        Commands::Validate { file, schema } => cmd_validate(&file, &schema).await,
+        Commands::Validate { file, schema } => cmd_validate(file.as_deref(), schema.as_ref()).await,
 
         Commands::Status { path, json, quiet } => cmd_status(&path, json, quiet).await,
 
@@ -594,19 +601,36 @@ async fn main() -> Result<()> {
 
         Commands::Hook { path } => cmd_hook(&path).await,
 
-        Commands::Uninstall { path, dry_run, quiet } => cmd_uninstall(&path, dry_run, quiet).await,
+        Commands::Uninstall {
+            path,
+            dry_run,
+            quiet,
+        } => cmd_uninstall(&path, dry_run, quiet).await,
 
-        Commands::Memory { action, path, quiet } => cmd_memory(&path, action, quiet).await,
+        Commands::Memory {
+            action,
+            path,
+            quiet,
+        } => cmd_memory(&path, action, quiet).await,
 
-        Commands::OptimizeStep { skill_path, edits_json, budget } => cmd_optimize_step(&skill_path, &edits_json, budget).await,
+        Commands::OptimizeStep {
+            skill_path,
+            edits_json,
+            budget,
+        } => cmd_optimize_step(&skill_path, &edits_json, budget).await,
 
         Commands::MinContext { file, max_lines } => cmd_min_context(&file, max_lines).await,
 
         Commands::DagSchedule { tasks } => cmd_dag_schedule(&tasks).await,
 
-        Commands::ContextCompress { file, max_lines } => cmd_context_compress(&file, max_lines).await,
+        Commands::ContextCompress { file, max_lines } => {
+            cmd_context_compress(&file, max_lines).await
+        }
 
-        Commands::ContextBroker { repo_path, target_file } => cmd_context_broker(&repo_path, target_file.as_deref()).await,
+        Commands::ContextBroker {
+            repo_path,
+            target_file,
+        } => cmd_context_broker(&repo_path, target_file.as_deref()).await,
 
         Commands::ImpactTier { files, lines, task } => cmd_impact_tier(&files, lines, &task).await,
 
@@ -614,27 +638,49 @@ async fn main() -> Result<()> {
 
         Commands::Sdd { action } => cmd_sdd(action).await,
 
-        Commands::Fitness { skills_dir, skill, repo_path } => cmd_fitness(&skills_dir, skill.as_deref(), &repo_path).await,
+        Commands::Fitness {
+            skills_dir,
+            skill,
+            repo_path,
+        } => cmd_fitness(&skills_dir, skill.as_deref(), &repo_path).await,
 
-        Commands::TelemetryRecord { event, repo_path } => cmd_telemetry_record(&event, &repo_path).await,
+        Commands::TelemetryRecord { event, repo_path } => {
+            cmd_telemetry_record(&event, &repo_path).await
+        }
 
         Commands::TelemetrySummary { repo_path } => cmd_telemetry_summary(&repo_path).await,
 
-        Commands::ResolveSkills { skills_dir, skills } => cmd_resolve_skills(&skills_dir, &skills).await,
+        Commands::ResolveSkills { skills_dir, skills } => {
+            cmd_resolve_skills(&skills_dir, &skills).await
+        }
 
         Commands::Heatmap { repo_path } => cmd_heatmap(&repo_path).await,
 
         Commands::Pollinate { skills_dir } => cmd_pollinate(&skills_dir).await,
-        
-        Commands::Leaderboard { skills_dir, repo_path, limit } => cmd_leaderboard(&skills_dir, &repo_path, limit).await,
-        
-        Commands::Benchmark { skills_dir, repo_path, publish } => cmd_benchmark(&skills_dir, &repo_path, publish).await,
-        
-        Commands::Genome { skills_dir, repo_path } => cmd_genome(&skills_dir, &repo_path).await,
+
+        Commands::Leaderboard {
+            skills_dir,
+            repo_path,
+            limit,
+        } => cmd_leaderboard(&skills_dir, &repo_path, limit).await,
+
+        Commands::Benchmark {
+            skills_dir,
+            repo_path,
+            publish,
+        } => cmd_benchmark(&skills_dir, &repo_path, publish).await,
+
+        Commands::Genome {
+            skills_dir,
+            repo_path,
+        } => cmd_genome(&skills_dir, &repo_path).await,
 
         Commands::Compile { skills_dir, skills } => cmd_compile(&skills_dir, &skills).await,
 
-        Commands::Purge { skills_dir, dry_run } => cmd_purge(&skills_dir, dry_run).await,
+        Commands::Purge {
+            skills_dir,
+            dry_run,
+        } => cmd_purge(&skills_dir, dry_run).await,
 
         Commands::AstExtract { file } => cmd_ast_extract(&file).await,
     }
@@ -673,7 +719,12 @@ async fn cmd_sdd(action: SddAction) -> Result<()> {
             println!("{}", path.display());
             Ok(())
         }
-        SddAction::Diff { plan, base, head, out } => {
+        SddAction::Diff {
+            plan,
+            base,
+            head,
+            out,
+        } => {
             let path = commands::sdd::sdd_diff(&plan, &base, &head, out.as_deref())?;
             println!("{}", path.display());
             Ok(())
@@ -746,7 +797,10 @@ async fn cmd_telemetry_summary(repo_path: &str) -> Result<()> {
 }
 
 async fn cmd_resolve_skills(skills_dir: &str, skills_str: &str) -> Result<()> {
-    let requested: Vec<String> = skills_str.split(',').map(|s| s.trim().to_string()).collect();
+    let requested: Vec<String> = skills_str
+        .split(',')
+        .map(|s| s.trim().to_string())
+        .collect();
     match commands::skill_resolver::resolve_skills(skills_dir, &requested) {
         Ok(json_output) => {
             println!("{}", json_output);
@@ -907,9 +961,15 @@ fn print_banner(quiet: bool) {
     tui::render_banner(&caps, env!("CARGO_PKG_VERSION"));
 }
 
-async fn cmd_init(path: &str, force: bool, dry_run: bool, quiet: bool, _minimal: bool, source_dir: &str) -> Result<()> {
+async fn cmd_init(
+    path: &str,
+    force: bool,
+    dry_run: bool,
+    quiet: bool,
+    minimal: bool,
+    source_dir: &str,
+) -> Result<()> {
     print_banner(quiet);
-
 
     let target = PathBuf::from(path);
     let agent_dest = target.join(".agent");
@@ -957,7 +1017,10 @@ async fn cmd_init(path: &str, force: bool, dry_run: bool, quiet: bool, _minimal:
             scripts_count: 0,
         };
         if !quiet {
-            eprintln!("[DRY RUN] Would initialize .agent/ at: {}", target.display());
+            eprintln!(
+                "[DRY RUN] Would initialize .agent/ at: {}",
+                target.display()
+            );
         }
         println!("{}", serde_json::to_string(&result)?);
         return Ok(());
@@ -969,14 +1032,23 @@ async fn cmd_init(path: &str, force: bool, dry_run: bool, quiet: bool, _minimal:
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap_or_default()
             .as_millis();
-        let backup_dir = agent_dest.join(".backups").join(format!("backup-{}", timestamp));
+        let backup_dir = agent_dest
+            .join(".backups")
+            .join(format!("backup-{}", timestamp));
         tokio::fs::create_dir_all(&backup_dir).await?;
 
-        let subdirs = ["agents", "workflows", "skills", "scripts", ".shared", "rules"];
+        let subdirs = [
+            "agents",
+            "workflows",
+            "skills",
+            "scripts",
+            ".shared",
+            "rules",
+        ];
         for sub in subdirs {
             let sub_path = agent_dest.join(sub);
             if sub_path.exists() {
-                copy_dir_all(&sub_path, &backup_dir.join(sub)).await?;
+                copy_dir_all(&sub_path, &backup_dir.join(sub), false).await?;
                 tokio::fs::remove_dir_all(&sub_path).await?;
             }
         }
@@ -1001,7 +1073,7 @@ async fn cmd_init(path: &str, force: bool, dry_run: bool, quiet: bool, _minimal:
         None
     };
 
-    let files_copied = copy_dir_all(&source_path, &agent_dest).await?;
+    let files_copied = copy_dir_all(&source_path, &agent_dest, minimal).await?;
 
     // ── History Dirs ──
     let case_dir = agent_dest.join("history").join("case-law").join("cases");
@@ -1025,6 +1097,18 @@ async fn cmd_init(path: &str, force: bool, dry_run: bool, quiet: bool, _minimal:
         pb.set_message("Generating IDE bridge files...");
     }
     generate_ide_bridges(&target, &agent_dest).await?;
+
+    // ── Design System Templates (DEF-012 Parity) ──
+    let design_md_src = source_path.join("templates").join("DESIGN.md");
+    let design_tokens_src = source_path.join("templates").join("design-tokens.json");
+    let design_md_dest = target.join("DESIGN.md");
+    let design_tokens_dest = target.join("design-tokens.json");
+    if design_md_src.exists() && !design_md_dest.exists() {
+        let _ = tokio::fs::copy(&design_md_src, &design_md_dest).await;
+    }
+    if design_tokens_src.exists() && !design_tokens_dest.exists() {
+        let _ = tokio::fs::copy(&design_tokens_src, &design_tokens_dest).await;
+    }
 
     if let Some(pb) = pb {
         pb.finish_and_clear();
@@ -1052,70 +1136,208 @@ async fn cmd_init(path: &str, force: bool, dry_run: bool, quiet: bool, _minimal:
     if !quiet {
         let caps = tui::TermCaps::probe();
         let tree = tui::ActionTree::new(&caps);
-        tree.action("Initializing Anti-Hallucination Barrier", Some(&target.display().to_string()));
+        tree.action(
+            "Initializing Anti-Hallucination Barrier",
+            Some(&target.display().to_string()),
+        );
         tree.branch(&format!("{} Core Specialists active in registry", agents));
-        tree.branch(&format!("{} Agentic Skills mapped via lazy routing", skills));
-        tree.branch(&format!("{} Workflows and {} enforcement scripts installed", workflows, scripts));
+        tree.branch(&format!(
+            "{} Agentic Skills mapped via lazy routing",
+            skills
+        ));
+        tree.branch(&format!(
+            "{} Workflows and {} enforcement scripts installed",
+            workflows, scripts
+        ));
         tree.branch("IDE Bridges synthesized (.cursorrules, .windsurfrules, CLAUDE.md)");
-        tree.complete(&format!("Tribunal-Kit v{} initialized successfully at {}", env!("CARGO_PKG_VERSION"), target.display()));
+        tree.complete(&format!(
+            "Tribunal-Kit v{} initialized successfully at {}",
+            env!("CARGO_PKG_VERSION"),
+            target.display()
+        ));
     }
 
     Ok(())
 }
 
-async fn cmd_validate(file: &str, schema: &SchemaType) -> Result<()> {
-    let content = tokio::fs::read_to_string(file)
-        .await
-        .with_context(|| format!("Failed to read file: {}", file))?;
+async fn cmd_validate(file: Option<&str>, schema: Option<&SchemaType>) -> Result<()> {
+    match file {
+        None => {
+            // General .agent structural validation
+            let agent_dir = std::path::Path::new(".agent");
+            if !agent_dir.exists() {
+                eprintln!(
+                    "{} {}",
+                    "✖".red(),
+                    "No .agent/ directory found. Run tk init first.".bold()
+                );
+                std::process::exit(1);
+            }
+            let subdirs = ["agents", "workflows", "skills", "scripts", "rules"];
+            let mut missing = Vec::new();
+            for sub in &subdirs {
+                if !agent_dir.join(sub).exists() {
+                    missing.push(*sub);
+                }
+            }
+            if !missing.is_empty() {
+                eprintln!(
+                    "{} Validation failed: Missing required .agent/ subdirectories: {}",
+                    "✖".red(),
+                    missing.join(", ").bold()
+                );
+                std::process::exit(1);
+            }
+            let rules_gemini = agent_dir.join("rules").join("GEMINI.md");
+            let rules_kernel = agent_dir.join("rules").join("kernel.md");
+            if !rules_gemini.exists() && !rules_kernel.exists() {
+                eprintln!("{} Validation failed: No master rules found in .agent/rules/ (GEMINI.md or kernel.md).", "✖".red());
+                std::process::exit(1);
+            }
+            eprintln!(
+                "{} {}",
+                "✔".green(),
+                ".agent/ payload structure verified successfully".bold()
+            );
+            let output = serde_json::json!({
+                "valid": true,
+                "target": ".agent",
+                "subdirectories": subdirs,
+            });
+            println!("{}", serde_json::to_string(&output)?);
+            Ok(())
+        }
+        Some(file_path) => {
+            let content = tokio::fs::read_to_string(file_path)
+                .await
+                .with_context(|| format!("Failed to read file: {}", file_path))?;
 
-    // The beauty of serde: if the JSON doesn't match the exact struct shape,
-    // it returns a precise error describing WHAT is wrong and WHERE.
-    // No hallucinated fields can survive this gate.
-    match schema {
-        SchemaType::Agent => {
-            let _parsed: AgentSchema = serde_json::from_str(&content)
-                .with_context(|| "Agent schema validation failed")?;
-            eprintln!("{} {}", "✔".green(), "Valid agent schema".bold());
-        }
-        SchemaType::CaseLaw => {
-            let _parsed: CaseLawEntry = serde_json::from_str(&content)
-                .with_context(|| "Case law schema validation failed")?;
-            eprintln!("{} {}", "✔".green(), "Valid case law entry".bold());
-        }
-        SchemaType::Marathon => {
-            let _parsed: MarathonFeature = serde_json::from_str(&content)
-                .with_context(|| "Marathon feature schema validation failed")?;
-            eprintln!("{} {}", "✔".green(), "Valid marathon feature".bold());
-        }
-        SchemaType::Memory => {
-            let _parsed: commands::memory::MemoryEntry = serde_json::from_str(&content)
-                .with_context(|| "Memory entry schema validation failed")?;
-            eprintln!("{} {}", "✔".green(), "Valid memory entry".bold());
-        }
-        SchemaType::Swarm => {
-            let _parsed: SwarmPayload = serde_json::from_str(&content)
-                .with_context(|| "Swarm payload schema validation failed")?;
-            eprintln!("{} {}", "✔".green(), "Valid swarm payload".bold());
-        }
-        SchemaType::MicroWorker => {
-            let _parsed: MicroWorkerPayload = serde_json::from_str(&content)
-                .with_context(|| "MicroWorker payload schema validation failed")?;
-            eprintln!("{} {}", "✔".green(), "Valid micro-worker payload".bold());
-        }
-        SchemaType::Workflow | SchemaType::Skill => {
-            eprintln!("{} {}", "⚠".yellow(), "Workflow/Skill validation requires YAML frontmatter parsing (coming in Wave 3)".yellow().dimmed());
+            let resolved_schema_name: String;
+            match schema {
+                Some(SchemaType::Agent) => {
+                    let _parsed: AgentSchema = serde_json::from_str(&content)
+                        .with_context(|| "Agent schema validation failed")?;
+                    eprintln!("{} {}", "✔".green(), "Valid agent schema".bold());
+                    resolved_schema_name = "Agent".to_string();
+                }
+                Some(SchemaType::CaseLaw) => {
+                    let _parsed: CaseLawEntry = serde_json::from_str(&content)
+                        .with_context(|| "Case law schema validation failed")?;
+                    eprintln!("{} {}", "✔".green(), "Valid case law entry".bold());
+                    resolved_schema_name = "CaseLaw".to_string();
+                }
+                Some(SchemaType::Marathon) => {
+                    let _parsed: MarathonFeature = serde_json::from_str(&content)
+                        .with_context(|| "Marathon feature schema validation failed")?;
+                    eprintln!("{} {}", "✔".green(), "Valid marathon feature".bold());
+                    resolved_schema_name = "Marathon".to_string();
+                }
+                Some(SchemaType::Memory) => {
+                    let _parsed: commands::memory::MemoryEntry = serde_json::from_str(&content)
+                        .with_context(|| "Memory entry schema validation failed")?;
+                    eprintln!("{} {}", "✔".green(), "Valid memory entry".bold());
+                    resolved_schema_name = "Memory".to_string();
+                }
+                Some(SchemaType::Swarm) => {
+                    let _parsed: SwarmPayload = serde_json::from_str(&content)
+                        .with_context(|| "Swarm payload schema validation failed")?;
+                    eprintln!("{} {}", "✔".green(), "Valid swarm payload".bold());
+                    resolved_schema_name = "Swarm".to_string();
+                }
+                Some(SchemaType::MicroWorker) => {
+                    let _parsed: MicroWorkerPayload = serde_json::from_str(&content)
+                        .with_context(|| "MicroWorker payload schema validation failed")?;
+                    eprintln!("{} {}", "✔".green(), "Valid micro-worker payload".bold());
+                    resolved_schema_name = "MicroWorker".to_string();
+                }
+                Some(SchemaType::Workflow) | Some(SchemaType::Skill) => {
+                    eprintln!("{} {}", "⚠".yellow(), "Workflow/Skill validation requires YAML frontmatter parsing (coming in Wave 3)".yellow().dimmed());
+                    resolved_schema_name = "Workflow/Skill".to_string();
+                }
+                None => {
+                    let value: serde_json::Value = serde_json::from_str(&content)
+                        .with_context(|| format!("File is not valid JSON: {}", file_path))?;
+                    if value.get("dispatch_micro_workers").is_some() {
+                        let _parsed: MicroWorkerPayload = serde_json::from_value(value)
+                            .with_context(|| {
+                                "Auto-detected MicroWorker schema validation failed"
+                            })?;
+                        eprintln!(
+                            "{} {}",
+                            "✔".green(),
+                            "Valid micro-worker payload (auto-detected)".bold()
+                        );
+                        resolved_schema_name = "MicroWorker (auto-detected)".to_string();
+                    } else if value.get("workers").is_some() {
+                        let _parsed: SwarmPayload = serde_json::from_value(value)
+                            .with_context(|| "Auto-detected Swarm schema validation failed")?;
+                        eprintln!(
+                            "{} {}",
+                            "✔".green(),
+                            "Valid swarm payload (auto-detected)".bold()
+                        );
+                        resolved_schema_name = "Swarm (auto-detected)".to_string();
+                    } else if value.get("violation").is_some() {
+                        let _parsed: CaseLawEntry = serde_json::from_value(value)
+                            .with_context(|| "Auto-detected CaseLaw schema validation failed")?;
+                        eprintln!(
+                            "{} {}",
+                            "✔".green(),
+                            "Valid case law entry (auto-detected)".bold()
+                        );
+                        resolved_schema_name = "CaseLaw (auto-detected)".to_string();
+                    } else if value.get("category").is_some() && value.get("steps").is_some() {
+                        let _parsed: MarathonFeature = serde_json::from_value(value)
+                            .with_context(|| "Auto-detected Marathon schema validation failed")?;
+                        eprintln!(
+                            "{} {}",
+                            "✔".green(),
+                            "Valid marathon feature (auto-detected)".bold()
+                        );
+                        resolved_schema_name = "Marathon (auto-detected)".to_string();
+                    } else if value.get("memory_type").is_some() && value.get("content").is_some() {
+                        let _parsed: commands::memory::MemoryEntry = serde_json::from_value(value)
+                            .with_context(|| "Auto-detected Memory schema validation failed")?;
+                        eprintln!(
+                            "{} {}",
+                            "✔".green(),
+                            "Valid memory entry (auto-detected)".bold()
+                        );
+                        resolved_schema_name = "Memory (auto-detected)".to_string();
+                    } else if value.get("name").is_some()
+                        && value.get("description").is_some()
+                        && (value.get("skills").is_some() || value.get("triggers").is_some())
+                    {
+                        let _parsed: AgentSchema = serde_json::from_value(value)
+                            .with_context(|| "Auto-detected Agent schema validation failed")?;
+                        eprintln!(
+                            "{} {}",
+                            "✔".green(),
+                            "Valid agent schema (auto-detected)".bold()
+                        );
+                        resolved_schema_name = "Agent (auto-detected)".to_string();
+                    } else {
+                        eprintln!(
+                            "{} {}",
+                            "✔".green(),
+                            format!("Valid JSON payload: {}", file_path).bold()
+                        );
+                        resolved_schema_name = "JSON (generic)".to_string();
+                    }
+                }
+            }
+
+            // Structured output for machine consumption
+            let output = serde_json::json!({
+                "valid": true,
+                "file": file_path,
+                "schema": resolved_schema_name,
+            });
+            println!("{}", serde_json::to_string(&output)?);
+
+            Ok(())
         }
     }
-
-    // Structured output for machine consumption
-    let output = serde_json::json!({
-        "valid": true,
-        "file": file,
-        "schema": format!("{:?}", schema),
-    });
-    println!("{}", serde_json::to_string(&output)?);
-
-    Ok(())
 }
 
 async fn cmd_min_context(file: &str, max_lines: Option<usize>) -> Result<()> {
@@ -1170,7 +1392,8 @@ async fn cmd_status(path: &str, json: bool, quiet: bool) -> Result<()> {
 
     // ── Memory Stats ──
     let (mem_total, mem_sem, mem_proc, mem_ep, mem_work, mem_tokens) = if installed {
-        let mem_index = commands::memory::load_index(&agent_dir).unwrap_or_else(|_| commands::memory::MemoryIndex::new());
+        let mem_index = commands::memory::load_index(&agent_dir)
+            .unwrap_or_else(|_| commands::memory::MemoryIndex::new());
         commands::memory::get_stats(&mem_index)
     } else {
         (0, 0, 0, 0, 0, 0)
@@ -1190,7 +1413,10 @@ async fn cmd_status(path: &str, json: bool, quiet: bool) -> Result<()> {
 
     let rules_mtime = if installed {
         let rules_path = agent_dir.join("rules").join("GEMINI.md");
-        tokio::fs::metadata(&rules_path).await.ok().and_then(|m| m.modified().ok())
+        tokio::fs::metadata(&rules_path)
+            .await
+            .ok()
+            .and_then(|m| m.modified().ok())
     } else {
         None
     };
@@ -1200,7 +1426,10 @@ async fn cmd_status(path: &str, json: bool, quiet: bool) -> Result<()> {
     for (ide_name, rel_path) in &bridge_defs {
         let bridge_path = target.join(rel_path);
         let (status_icon, status_label) = if bridge_path.exists() {
-            let bridge_mtime = tokio::fs::metadata(&bridge_path).await.ok().and_then(|m| m.modified().ok());
+            let bridge_mtime = tokio::fs::metadata(&bridge_path)
+                .await
+                .ok()
+                .and_then(|m| m.modified().ok());
             match (bridge_mtime, rules_mtime) {
                 (Some(b), Some(r)) if b >= r => ("✔", "fresh"),
                 (Some(_), Some(_)) => ("⚠", "stale"),
@@ -1220,19 +1449,22 @@ async fn cmd_status(path: &str, json: bool, quiet: bool) -> Result<()> {
                 "stale" => format!("{}", status_icon.yellow()),
                 _ => format!("{}", status_icon.red()),
             };
-            bridge_lines.push(format!("│  {}  {:>11}:  {}", colored_icon, ide_name.dimmed(), rel_path));
+            bridge_lines.push(format!(
+                "│  {}  {:>11}:  {}",
+                colored_icon,
+                ide_name.dimmed(),
+                rel_path
+            ));
         }
     }
 
     // ── Context Token Stats ──
     let context_tokens: usize = if installed {
         match commands::context_broker::resolve_context(path, None) {
-            Ok(json_str) => {
-                serde_json::from_str::<serde_json::Value>(&json_str)
-                    .ok()
-                    .and_then(|v| v["total_tokens_estimate"].as_u64())
-                    .unwrap_or(0) as usize
-            }
+            Ok(json_str) => serde_json::from_str::<serde_json::Value>(&json_str)
+                .ok()
+                .and_then(|v| v["total_tokens_estimate"].as_u64())
+                .unwrap_or(0) as usize,
             Err(_) => 0,
         }
     } else {
@@ -1241,12 +1473,25 @@ async fn cmd_status(path: &str, json: bool, quiet: bool) -> Result<()> {
 
     // ── Reviewer Readiness ──
     let known_reviewers = [
-        "logic-reviewer", "security-auditor", "complexity-reviewer",
-        "frontend-specialist", "type-safety-reviewer", "ui-ux-auditor",
-        "resilience-reviewer", "schema-reviewer", "dependency-reviewer",
-        "performance-optimizer", "mobile-reviewer", "review-animations",
-        "ai-code-reviewer", "precedence-reviewer", "ui-visual-auditor",
-        "documentation-writer", "test-engineer", "debugger", "explorer-agent",
+        "logic-reviewer",
+        "security-auditor",
+        "complexity-reviewer",
+        "frontend-specialist",
+        "type-safety-reviewer",
+        "ui-ux-auditor",
+        "resilience-reviewer",
+        "schema-reviewer",
+        "dependency-reviewer",
+        "performance-optimizer",
+        "mobile-reviewer",
+        "review-animations",
+        "ai-code-reviewer",
+        "precedence-reviewer",
+        "ui-visual-auditor",
+        "documentation-writer",
+        "test-engineer",
+        "debugger",
+        "explorer-agent",
     ];
     let mut reviewers_ready: u32 = 0;
     if installed {
@@ -1285,9 +1530,16 @@ async fn cmd_status(path: &str, json: bool, quiet: bool) -> Result<()> {
 
     if !quiet && !json {
         if installed {
-            eprintln!("\n╭─ {} ──────────────────", format!("Tribunal-Kit v{}", env!("CARGO_PKG_VERSION")).bold());
+            eprintln!(
+                "\n╭─ {} ──────────────────",
+                format!("Tribunal-Kit v{}", env!("CARGO_PKG_VERSION")).bold()
+            );
             eprintln!("│");
-            eprintln!("│  ● {}:    {}", "Status".dimmed(), "Active & Guarded".green().bold());
+            eprintln!(
+                "│  ● {}:    {}",
+                "Status".dimmed(),
+                "Active & Guarded".green().bold()
+            );
             eprintln!("│  ● {}:      {}", "Path".dimmed(), agent_dir.display());
             eprintln!("│");
             eprintln!("│  ◇ {:>11}:  {:>3}", "Agents".magenta(), agents);
@@ -1295,8 +1547,16 @@ async fn cmd_status(path: &str, json: bool, quiet: bool) -> Result<()> {
             eprintln!("│  ◇ {:>11}:  {:>3}", "Skills".blue(), skills);
             eprintln!("│  ◇ {:>11}:  {:>3}", "Scripts".green(), scripts);
             eprintln!("│");
-            eprintln!("│  ◆ {:>11}:  {:>3}  {}", "Memories".cyan(), mem_total,
-                format!("({}S {}P {}E {}W | ~{}tok)", mem_sem, mem_proc, mem_ep, mem_work, mem_tokens).dimmed());
+            eprintln!(
+                "│  ◆ {:>11}:  {:>3}  {}",
+                "Memories".cyan(),
+                mem_total,
+                format!(
+                    "({}S {}P {}E {}W | ~{}tok)",
+                    mem_sem, mem_proc, mem_ep, mem_work, mem_tokens
+                )
+                .dimmed()
+            );
             eprintln!("│");
             eprintln!("│  ─── IDE Bridges ───");
             for line in &bridge_lines {
@@ -1305,9 +1565,13 @@ async fn cmd_status(path: &str, json: bool, quiet: bool) -> Result<()> {
             eprintln!("│");
             eprintln!("│  ◆ {:>11}:  ~{} tokens", "Context".cyan(), context_tokens);
             let readiness_color = if reviewers_ready == total_reviewers {
-                format!("{}/{} ready", reviewers_ready, total_reviewers).green().to_string()
+                format!("{}/{} ready", reviewers_ready, total_reviewers)
+                    .green()
+                    .to_string()
             } else {
-                format!("{}/{} ready", reviewers_ready, total_reviewers).yellow().to_string()
+                format!("{}/{} ready", reviewers_ready, total_reviewers)
+                    .yellow()
+                    .to_string()
             };
             eprintln!("│  ◆ {:>11}:  {}", "Reviewers".magenta(), readiness_color);
             eprintln!("│");
@@ -1344,7 +1608,11 @@ async fn cmd_sync(path: &str, quiet: bool) -> Result<()> {
         });
         println!("{}", serde_json::to_string(&error_json)?);
         if !quiet {
-            eprintln!("{} {}", "✖".red(), ".agent/ not found. Run: npx tribunal-kit init".bold());
+            eprintln!(
+                "{} {}",
+                "✖".red(),
+                ".agent/ not found. Run: npx tribunal-kit init".bold()
+            );
         }
         std::process::exit(1);
     }
@@ -1357,7 +1625,11 @@ async fn cmd_sync(path: &str, quiet: bool) -> Result<()> {
         });
         println!("{}", serde_json::to_string(&error_json)?);
         if !quiet {
-            eprintln!("{} {}", "✖".red(), ".agent/rules/GEMINI.md not found.".bold());
+            eprintln!(
+                "{} {}",
+                "✖".red(),
+                ".agent/rules/GEMINI.md not found.".bold()
+            );
         }
         std::process::exit(1);
     }
@@ -1375,10 +1647,22 @@ async fn cmd_sync(path: &str, quiet: bool) -> Result<()> {
     let bridge_files = vec![
         (".cursorrules", target.join(".cursorrules")),
         (".windsurfrules", target.join(".windsurfrules")),
-        (".gemini/settings.json", target.join(".gemini").join("settings.json")),
-        (".gemini/GEMINI.md", target.join(".gemini").join("GEMINI.md")),
-        (".github/copilot-instructions.md", target.join(".github").join("copilot-instructions.md")),
-        (".claude/CLAUDE.md", target.join(".claude").join("CLAUDE.md")),
+        (
+            ".gemini/settings.json",
+            target.join(".gemini").join("settings.json"),
+        ),
+        (
+            ".gemini/GEMINI.md",
+            target.join(".gemini").join("GEMINI.md"),
+        ),
+        (
+            ".github/copilot-instructions.md",
+            target.join(".github").join("copilot-instructions.md"),
+        ),
+        (
+            ".claude/CLAUDE.md",
+            target.join(".claude").join("CLAUDE.md"),
+        ),
         ("CLAUDE.md", target.join("CLAUDE.md")),
         ("AGENTS.md", target.join("AGENTS.md")),
     ];
@@ -1420,7 +1704,9 @@ async fn cmd_sync(path: &str, quiet: bool) -> Result<()> {
 /// this always overwrites to ensure bridge content stays fresh with the source rules.
 async fn sync_ide_bridges(target: &std::path::Path, agent_dir: &std::path::Path) -> Result<()> {
     let rules_file = agent_dir.join("rules").join("GEMINI.md");
-    let rules_content = tokio::fs::read_to_string(&rules_file).await.unwrap_or_default();
+    let rules_content = tokio::fs::read_to_string(&rules_file)
+        .await
+        .unwrap_or_default();
 
     async fn force_write_bridge(file_path: PathBuf, content: String) {
         if let Some(p) = file_path.parent() {
@@ -1474,10 +1760,19 @@ async fn sync_ide_bridges(target: &std::path::Path, agent_dir: &std::path::Path)
     tokio::join!(
         force_write_bridge(target.join(".cursorrules"), cursor_rules),
         force_write_bridge(target.join(".windsurfrules"), windsurf_rules),
-        force_write_bridge(target.join(".gemini").join("settings.json"), serde_json::to_string_pretty(&gemini_settings).unwrap()),
+        force_write_bridge(
+            target.join(".gemini").join("settings.json"),
+            serde_json::to_string_pretty(&gemini_settings).unwrap()
+        ),
         force_write_bridge(target.join(".gemini").join("GEMINI.md"), gemini_md),
-        force_write_bridge(target.join(".github").join("copilot-instructions.md"), copilot_instructions),
-        force_write_bridge(target.join(".claude").join("CLAUDE.md"), claude_rules.clone()),
+        force_write_bridge(
+            target.join(".github").join("copilot-instructions.md"),
+            copilot_instructions
+        ),
+        force_write_bridge(
+            target.join(".claude").join("CLAUDE.md"),
+            claude_rules.clone()
+        ),
         force_write_bridge(target.join("CLAUDE.md"), claude_rules),
         force_write_bridge(target.join("AGENTS.md"), codex_rules),
     );
@@ -1502,12 +1797,21 @@ async fn cmd_memory(path: &str, action: MemoryAction, quiet: bool) -> Result<()>
     let agent_dir = target.join(".agent");
 
     if !agent_dir.exists() {
-        eprintln!("{} {}", "✖".red(), ".agent/ not found. Run: npx tribunal-kit init".bold());
+        eprintln!(
+            "{} {}",
+            "✖".red(),
+            ".agent/ not found. Run: npx tribunal-kit init".bold()
+        );
         std::process::exit(1);
     }
 
     match action {
-        MemoryAction::Store { r#type, content, tags, session_id } => {
+        MemoryAction::Store {
+            r#type,
+            content,
+            tags,
+            session_id,
+        } => {
             let mut index = commands::memory::load_index(&agent_dir)?;
             let tag_list: Vec<String> = tags
                 .split(',')
@@ -1537,7 +1841,13 @@ async fn cmd_memory(path: &str, action: MemoryAction, quiet: bool) -> Result<()>
             tokio::fs::write(&proj_path, &projection).await?;
 
             if !quiet {
-                eprintln!("{} {} #{} ({})", "✔".green(), "Memory stored".bold(), id, r#type);
+                eprintln!(
+                    "{} {} #{} ({})",
+                    "✔".green(),
+                    "Memory stored".bold(),
+                    id,
+                    r#type
+                );
                 eprintln!("  {} {}", "▶".dimmed(), content.dimmed());
                 if !tag_list.is_empty() {
                     eprintln!("  {} Tags: {}", "▶".dimmed(), tag_list.join(", ").dimmed());
@@ -1565,11 +1875,17 @@ async fn cmd_memory(path: &str, action: MemoryAction, quiet: bool) -> Result<()>
                 if results.is_empty() {
                     eprintln!("{} No memories match query: \"{}\"", "⚠".yellow(), query);
                 } else {
-                    eprintln!("{} {} memories recalled (budget: {} tokens)", "✔".green(), results.len(), budget);
+                    eprintln!(
+                        "{} {} memories recalled (budget: {} tokens)",
+                        "✔".green(),
+                        results.len(),
+                        budget
+                    );
                     let mut total_tokens: u32 = 0;
                     for (entry, score) in &results {
                         total_tokens += entry.token_estimate;
-                        eprintln!("  {} [{}] #{}: {} {}",
+                        eprintln!(
+                            "  {} [{}] #{}: {} {}",
                             "▶".dimmed(),
                             entry.memory_type.to_string().to_uppercase().cyan(),
                             entry.id,
@@ -1577,21 +1893,29 @@ async fn cmd_memory(path: &str, action: MemoryAction, quiet: bool) -> Result<()>
                             format!("(score: {:.2}, ~{}tok)", score, entry.token_estimate).dimmed(),
                         );
                     }
-                    eprintln!("  {} Total: ~{} tokens used of {} budget", "▶".dimmed(), total_tokens, budget);
+                    eprintln!(
+                        "  {} Total: ~{} tokens used of {} budget",
+                        "▶".dimmed(),
+                        total_tokens,
+                        budget
+                    );
                 }
             }
 
             // Machine-readable JSON — this is what agents consume
-            let entries_json: Vec<serde_json::Value> = results.iter().map(|(e, score)| {
-                serde_json::json!({
-                    "id": e.id,
-                    "memory_type": format!("{}", e.memory_type),
-                    "content": e.content,
-                    "tags": e.tags,
-                    "score": score,
-                    "token_estimate": e.token_estimate,
+            let entries_json: Vec<serde_json::Value> = results
+                .iter()
+                .map(|(e, score)| {
+                    serde_json::json!({
+                        "id": e.id,
+                        "memory_type": format!("{}", e.memory_type),
+                        "content": e.content,
+                        "tags": e.tags,
+                        "score": score,
+                        "token_estimate": e.token_estimate,
+                    })
                 })
-            }).collect();
+                .collect();
 
             let total_tokens: u32 = results.iter().map(|(e, _)| e.token_estimate).sum();
             let output = serde_json::json!({
@@ -1620,7 +1944,12 @@ async fn cmd_memory(path: &str, action: MemoryAction, quiet: bool) -> Result<()>
                 eprintln!("{} {}", "✔".green(), "Garbage collection complete".bold());
                 eprintln!("  {} Working removed: {}", "▶".dimmed(), working_removed);
                 eprintln!("  {} Episodic expired: {}", "▶".dimmed(), episodic_removed);
-                eprintln!("  {} Entries: {} → {}", "▶".dimmed(), before, index.entries.len());
+                eprintln!(
+                    "  {} Entries: {} → {}",
+                    "▶".dimmed(),
+                    before,
+                    index.entries.len()
+                );
             }
 
             let output = serde_json::json!({
@@ -1638,13 +1967,21 @@ async fn cmd_memory(path: &str, action: MemoryAction, quiet: bool) -> Result<()>
             let (total, sem, proc_, ep, work, tokens) = commands::memory::get_stats(&index);
 
             if !quiet {
-                eprintln!("\n{}  {}", "🧠", "Tribunal Memory Index".bold());
+                eprintln!("\n🧠  {}", "Tribunal Memory Index".bold());
                 eprintln!("  {} Total entries: {}", "▶".dimmed(), total);
                 eprintln!("  {} Semantic:      {} (permanent)", "▶".dimmed(), sem);
                 eprintln!("  {} Procedural:    {} (permanent)", "▶".dimmed(), proc_);
                 eprintln!("  {} Episodic:      {} (30-day TTL)", "▶".dimmed(), ep);
-                eprintln!("  {} Working:       {} (session-scoped)", "▶".dimmed(), work);
-                eprintln!("  {} Token budget:  ~{} tokens indexed", "▶".dimmed(), tokens);
+                eprintln!(
+                    "  {} Working:       {} (session-scoped)",
+                    "▶".dimmed(),
+                    work
+                );
+                eprintln!(
+                    "  {} Token budget:  ~{} tokens indexed",
+                    "▶".dimmed(),
+                    tokens
+                );
                 eprintln!("  {} Capacity:      {}/{}\n", "▶".dimmed(), total, 500);
             }
 
@@ -1668,7 +2005,12 @@ async fn cmd_memory(path: &str, action: MemoryAction, quiet: bool) -> Result<()>
             tokio::fs::write(&proj_path, &projection).await?;
 
             if !quiet {
-                eprintln!("{} {} → {}", "✔".green(), "MEMORY.md exported".bold(), proj_path.display());
+                eprintln!(
+                    "{} {} → {}",
+                    "✔".green(),
+                    "MEMORY.md exported".bold(),
+                    proj_path.display()
+                );
             }
 
             let output = serde_json::json!({
@@ -1695,24 +2037,87 @@ fn count_dir_entries(dir: &PathBuf) -> u32 {
     }
 }
 
-use std::pin::Pin;
 use std::future::Future;
+use std::pin::Pin;
 use std::sync::Arc;
 use tokio::sync::Semaphore;
 
 /// Maximum concurrent file copy operations to avoid fd exhaustion.
 const COPY_CONCURRENCY: usize = 64;
 
-fn copy_dir_all<'a>(src: &'a PathBuf, dst: &'a PathBuf) -> Pin<Box<dyn Future<Output = Result<u32>> + Send + 'a>> {
+const CORE_AGENTS: &[&str] = &[
+    "backend-specialist.md",
+    "frontend-specialist.md",
+    "database-architect.md",
+    "debugger.md",
+    "security-auditor.md",
+    "logic-reviewer.md",
+    "dependency-reviewer.md",
+    "type-safety-reviewer.md",
+    "performance-reviewer.md",
+    "orchestrator.md",
+    "explorer-agent.md",
+    "project-planner.md",
+    "test-engineer.md",
+    "ui-ux-auditor.md",
+    "ui-visual-auditor.md",
+    "accessibility-reviewer.md",
+    "ux-reviewer.md",
+    "visual-reviewer.md",
+    "interaction-reviewer.md",
+    "anti-pattern-reviewer.md",
+    "product-reviewer.md",
+];
+
+const CORE_SKILLS: &[&str] = &[
+    "clean-code",
+    "architecture",
+    "testing-patterns",
+    "systematic-debugging",
+    "frontend-design",
+    "database-design",
+    "api-patterns",
+    "nodejs-best-practices",
+    "vulnerability-scanner",
+    "typescript-advanced",
+    "python-pro",
+    "nextjs-react-expert",
+    "react-specialist",
+    "performance-profiling",
+    "lint-and-validate",
+    "ui-ux-pro-max",
+    "ui-reasoning-engine",
+    "product-aware-heuristics",
+    "web-design-guidelines",
+];
+
+fn copy_dir_all<'a>(
+    src: &'a Path,
+    dst: &'a Path,
+    minimal: bool,
+) -> Pin<Box<dyn Future<Output = Result<u32>> + Send + 'a>> {
     // Create a shared semaphore for the top-level call
     let sem = Arc::new(Semaphore::new(COPY_CONCURRENCY));
-    Box::pin(copy_dir_all_inner(src.clone(), dst.clone(), sem))
+    Box::pin(copy_dir_all_inner(
+        src.to_path_buf(),
+        dst.to_path_buf(),
+        sem,
+        minimal,
+    ))
 }
 
-fn copy_dir_all_inner(src: PathBuf, dst: PathBuf, sem: Arc<Semaphore>) -> Pin<Box<dyn Future<Output = Result<u32>> + Send>> {
+fn copy_dir_all_inner(
+    src: PathBuf,
+    dst: PathBuf,
+    sem: Arc<Semaphore>,
+    minimal: bool,
+) -> Pin<Box<dyn Future<Output = Result<u32>> + Send>> {
     Box::pin(async move {
         if !src.exists() {
-            return Err(anyhow::anyhow!("Source directory does not exist: {}", src.display()));
+            return Err(anyhow::anyhow!(
+                "Source directory does not exist: {}",
+                src.display()
+            ));
         }
         tokio::fs::create_dir_all(&dst).await?;
 
@@ -1720,14 +2125,32 @@ fn copy_dir_all_inner(src: PathBuf, dst: PathBuf, sem: Arc<Semaphore>) -> Pin<Bo
         let mut file_tasks = tokio::task::JoinSet::new();
         let mut dir_tasks = tokio::task::JoinSet::new();
 
+        let parent_name = src
+            .file_name()
+            .map(|n| n.to_string_lossy().to_string())
+            .unwrap_or_default();
+
         while let Ok(Some(entry)) = entries.next_entry().await {
             let file_type = entry.file_type().await?;
             let src_path = entry.path();
-            let dst_path = dst.join(entry.file_name());
+            let file_name = entry.file_name();
+            let file_name_str = file_name.to_string_lossy();
+            let dst_path = dst.join(&file_name);
+
+            if minimal {
+                if file_type.is_dir() {
+                    if parent_name == "skills" && !CORE_SKILLS.contains(&file_name_str.as_ref()) {
+                        continue;
+                    }
+                } else if parent_name == "agents" && !CORE_AGENTS.contains(&file_name_str.as_ref())
+                {
+                    continue;
+                }
+            }
 
             if file_type.is_dir() {
                 let sem_clone = sem.clone();
-                dir_tasks.spawn(copy_dir_all_inner(src_path, dst_path, sem_clone));
+                dir_tasks.spawn(copy_dir_all_inner(src_path, dst_path, sem_clone, minimal));
             } else {
                 let sem_clone = sem.clone();
                 file_tasks.spawn(async move {
@@ -1754,9 +2177,14 @@ fn copy_dir_all_inner(src: PathBuf, dst: PathBuf, sem: Arc<Semaphore>) -> Pin<Bo
     })
 }
 
-async fn generate_ide_bridges(target: &std::path::Path, agent_dest: &std::path::Path) -> Result<()> {
+async fn generate_ide_bridges(
+    target: &std::path::Path,
+    agent_dest: &std::path::Path,
+) -> Result<()> {
     let rules_file = agent_dest.join("rules").join("GEMINI.md");
-    let rules_content = tokio::fs::read_to_string(&rules_file).await.unwrap_or_default();
+    let rules_content = tokio::fs::read_to_string(&rules_file)
+        .await
+        .unwrap_or_default();
 
     /// Write a bridge file if it doesn't already exist.
     async fn write_bridge(file_path: PathBuf, content: String) {
@@ -1813,10 +2241,19 @@ async fn generate_ide_bridges(target: &std::path::Path, agent_dest: &std::path::
     tokio::join!(
         write_bridge(target.join(".cursorrules"), cursor_rules),
         write_bridge(target.join(".windsurfrules"), windsurf_rules),
-        write_bridge(target.join(".gemini").join("settings.json"), serde_json::to_string_pretty(&gemini_settings).unwrap()),
+        write_bridge(
+            target.join(".gemini").join("settings.json"),
+            serde_json::to_string_pretty(&gemini_settings).unwrap()
+        ),
         write_bridge(target.join(".gemini").join("GEMINI.md"), gemini_md),
-        write_bridge(target.join(".github").join("copilot-instructions.md"), copilot_instructions),
-        write_bridge(target.join(".claude").join("CLAUDE.md"), claude_rules.clone()),
+        write_bridge(
+            target.join(".github").join("copilot-instructions.md"),
+            copilot_instructions
+        ),
+        write_bridge(
+            target.join(".claude").join("CLAUDE.md"),
+            claude_rules.clone()
+        ),
         write_bridge(target.join("CLAUDE.md"), claude_rules),
         write_bridge(target.join("AGENTS.md"), codex_rules),
     );
@@ -1867,12 +2304,22 @@ mod tests {
 
     #[test]
     fn test_hallucinated_agent_schema_rejected() {
-        // This JSON has an extra "hallucinated_field" that doesn't exist in AgentSchema.
-        // serde will accept it (extra fields are ignored by default) but the REQUIRED
-        // fields must be present. Missing "name" should fail:
-        let hallucinated = r#"{"description": "test", "hallucinated_field": true}"#;
+        // Unknown/hallucinated fields must be strictly rejected by deny_unknown_fields
+        let hallucinated =
+            r#"{"name": "test-agent", "description": "test", "hallucinated_field": true}"#;
         let result: Result<AgentSchema, _> = serde_json::from_str(hallucinated);
-        assert!(result.is_err(), "Missing required 'name' field should be rejected");
+        assert!(
+            result.is_err(),
+            "Hallucinated unknown field must be strictly rejected"
+        );
+
+        // Missing required field must also fail
+        let missing = r#"{"description": "test"}"#;
+        let result_missing: Result<AgentSchema, _> = serde_json::from_str(missing);
+        assert!(
+            result_missing.is_err(),
+            "Missing required 'name' field should be rejected"
+        );
     }
 
     #[test]
@@ -1896,7 +2343,10 @@ mod tests {
             "timestamp": "2026-01-01T00:00:00Z"
         }"#;
         let result: Result<CaseLawEntry, _> = serde_json::from_str(invalid);
-        assert!(result.is_err(), "Hallucinated severity 'super_critical' must be rejected");
+        assert!(
+            result.is_err(),
+            "Hallucinated severity 'super_critical' must be rejected"
+        );
     }
 
     #[test]

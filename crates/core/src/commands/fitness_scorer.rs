@@ -76,31 +76,31 @@ const GENERIC_PHRASES: &[&str] = &[
 // ── Domain-Specific Indicators (reward these) ───────────────────────────────
 
 const SPECIFIC_INDICATORS: &[&str] = &[
-    "```",          // Code blocks
-    "z.object",     // Zod schemas
-    "Pydantic",     // Python validation
-    "EXPLAIN ANALYZE", // SQL
-    "useEffect",    // React hooks
-    "async fn",     // Rust async
-    "SELECT ",      // SQL
-    "npm ",         // Package manager commands
-    "cargo ",       // Rust tooling
-    "pytest",       // Python testing
-    "jest",         // JS testing
-    "ARIA",         // Accessibility
-    "WCAG",         // Web content accessibility
-    "OWASP",        // Security
-    "WebSocket",    // Real-time
-    "gRPC",         // RPC protocol
-    "GraphQL",      // Query language
-    "Prisma",       // ORM
-    "Drizzle",      // ORM
-    "FastAPI",      // Python web framework
-    "Next.js",      // React framework
-    "Reanimated",   // React Native animation
-    "transform:",   // CSS
-    "opacity:",     // CSS animation
-    "border-radius",// CSS
+    "```",                    // Code blocks
+    "z.object",               // Zod schemas
+    "Pydantic",               // Python validation
+    "EXPLAIN ANALYZE",        // SQL
+    "useEffect",              // React hooks
+    "async fn",               // Rust async
+    "SELECT ",                // SQL
+    "npm ",                   // Package manager commands
+    "cargo ",                 // Rust tooling
+    "pytest",                 // Python testing
+    "jest",                   // JS testing
+    "ARIA",                   // Accessibility
+    "WCAG",                   // Web content accessibility
+    "OWASP",                  // Security
+    "WebSocket",              // Real-time
+    "gRPC",                   // RPC protocol
+    "GraphQL",                // Query language
+    "Prisma",                 // ORM
+    "Drizzle",                // ORM
+    "FastAPI",                // Python web framework
+    "Next.js",                // React framework
+    "Reanimated",             // React Native animation
+    "transform:",             // CSS
+    "opacity:",               // CSS animation
+    "border-radius",          // CSS
     "prefers-reduced-motion", // Accessibility
 ];
 
@@ -112,22 +112,28 @@ fn levenshtein(a: &str, b: &str) -> usize {
     let m = a_chars.len();
     let n = b_chars.len();
 
-    if m == 0 { return n; }
-    if n == 0 { return m; }
+    if m == 0 {
+        return n;
+    }
+    if n == 0 {
+        return m;
+    }
 
     let mut dp = vec![vec![0usize; n + 1]; m + 1];
-    for i in 0..=m { dp[i][0] = i; }
-    for j in 0..=n { dp[0][j] = j; }
+    for (i, row) in dp.iter_mut().enumerate().take(m + 1) {
+        row[0] = i;
+    }
+    for (j, item) in dp[0].iter_mut().enumerate().take(n + 1) {
+        *item = j;
+    }
 
     for i in 1..=m {
         for j in 1..=n {
             if a_chars[i - 1] == b_chars[j - 1] {
                 dp[i][j] = dp[i - 1][j - 1];
             } else {
-                dp[i][j] = 1 + std::cmp::min(
-                    dp[i - 1][j],
-                    std::cmp::min(dp[i][j - 1], dp[i - 1][j - 1]),
-                );
+                dp[i][j] =
+                    1 + std::cmp::min(dp[i - 1][j], std::cmp::min(dp[i][j - 1], dp[i - 1][j - 1]));
             }
         }
     }
@@ -137,7 +143,9 @@ fn levenshtein(a: &str, b: &str) -> usize {
 fn normalized_similarity(a: &str, b: &str) -> f64 {
     let a_len = a.chars().count();
     let b_len = b.chars().count();
-    if a_len == 0 && b_len == 0 { return 1.0; }
+    if a_len == 0 && b_len == 0 {
+        return 1.0;
+    }
     let max_len = std::cmp::max(a_len, b_len);
     1.0 - (levenshtein(a, b) as f64 / max_len as f64)
 }
@@ -199,14 +207,16 @@ fn compute_specificity(body: &str) -> f64 {
     let body_lower = body.to_lowercase();
     let total_words = body.split_whitespace().count().max(1) as f64;
 
-    let generic_count: usize = GENERIC_PHRASES.iter()
+    let generic_count: usize = GENERIC_PHRASES
+        .iter()
         .map(|phrase| {
             let phrase_lower = phrase.to_lowercase();
             body_lower.matches(&phrase_lower).count()
         })
         .sum();
 
-    let specific_count: usize = SPECIFIC_INDICATORS.iter()
+    let specific_count: usize = SPECIFIC_INDICATORS
+        .iter()
         .map(|indicator| body.matches(indicator).count())
         .sum();
 
@@ -219,7 +229,7 @@ fn compute_specificity(body: &str) -> f64 {
         return 0.5; // neutral
     }
     let raw = specific_density / (specific_density + generic_density + 0.001);
-    raw.max(0.0).min(1.0)
+    raw.clamp(0.0, 1.0)
 }
 
 fn compute_trap_density(body: &str) -> f64 {
@@ -227,23 +237,32 @@ fn compute_trap_density(body: &str) -> f64 {
 
     // Count trap indicators
     let trap_markers = [
-        "❌", "✅", "Anti-Pattern", "What AI Commonly Does Wrong",
-        "VERIFY:", "// VERIFY", "hallucinate", "Hallucination",
-        "trap", "Trap", "forbidden", "NEVER",
+        "❌",
+        "✅",
+        "Anti-Pattern",
+        "What AI Commonly Does Wrong",
+        "VERIFY:",
+        "// VERIFY",
+        "hallucinate",
+        "Hallucination",
+        "trap",
+        "Trap",
+        "forbidden",
+        "NEVER",
     ];
 
-    let trap_count: usize = trap_markers.iter()
+    let trap_count: usize = trap_markers
+        .iter()
         .map(|marker| body.matches(marker).count())
         .sum();
 
     // Normalize: traps per 1000 tokens, clamped to 0-1
     let density = (trap_count as f64 / total_tokens) * 1000.0;
-    (density / 20.0).max(0.0).min(1.0) // 20 traps per 1000 tokens = perfect score
+    (density / 20.0).clamp(0.0, 1.0) // 20 traps per 1000 tokens = perfect score
 }
 
 fn compute_recency(content: &str) -> f64 {
-    let last_updated = extract_frontmatter_field(content, "last-updated")
-        .unwrap_or_default();
+    let last_updated = extract_frontmatter_field(content, "last-updated").unwrap_or_default();
 
     // Parse YYYY-MM-DD format
     if last_updated.len() >= 10 {
@@ -256,7 +275,7 @@ fn compute_recency(content: &str) -> f64 {
                 } else {
                     (2026 - year) * 12 + 9 - month
                 };
-                return (1.0 - (age_months as f64 / 24.0)).max(0.0).min(1.0);
+                return (1.0 - (age_months as f64 / 24.0)).clamp(0.0, 1.0);
             }
         }
     }
@@ -270,7 +289,8 @@ fn compute_section_depth(body: &str) -> f64 {
         return 0.1;
     }
 
-    let depths: Vec<usize> = sections.iter()
+    let depths: Vec<usize> = sections
+        .iter()
         .skip(1) // skip content before first ##
         .map(|s| s.lines().count())
         .collect();
@@ -281,7 +301,7 @@ fn compute_section_depth(body: &str) -> f64 {
 
     let avg_depth = depths.iter().sum::<usize>() as f64 / depths.len() as f64;
     // Normalize: 20+ lines per section = excellent
-    (avg_depth / 20.0).max(0.0).min(1.0)
+    (avg_depth / 20.0).clamp(0.0, 1.0)
 }
 
 // ── Main Scoring Functions ──────────────────────────────────────────────────
@@ -291,7 +311,8 @@ pub fn score_skill(skill_path: &str) -> Result<String> {
     let content = fs::read_to_string(path)
         .with_context(|| format!("Failed to read skill file: {}", skill_path))?;
 
-    let skill_name = path.parent()
+    let skill_name = path
+        .parent()
         .and_then(|p| p.file_name())
         .and_then(|n| n.to_str())
         .unwrap_or("unknown")
@@ -314,20 +335,28 @@ pub fn score_skill_content(skill_name: &str, content: &str) -> FitnessReport {
     let dedup_score = 1.0;
 
     if specificity_score < 0.4 {
-        recommendations.push("Low specificity: Add more concrete code examples and framework-specific patterns".to_string());
+        recommendations.push(
+            "Low specificity: Add more concrete code examples and framework-specific patterns"
+                .to_string(),
+        );
     }
     if trap_density < 0.3 {
-        recommendations.push("Low trap density: Add more LLM-specific anti-pattern traps with ❌/✅ pairs".to_string());
+        recommendations.push(
+            "Low trap density: Add more LLM-specific anti-pattern traps with ❌/✅ pairs"
+                .to_string(),
+        );
     }
     if recency_score < 0.5 {
         recommendations.push("Stale skill: Update `last-updated` field and refresh content for current framework versions".to_string());
     }
     if section_depth < 0.3 {
-        recommendations.push("Shallow sections: Expand sections with deeper technical content and code examples".to_string());
+        recommendations.push(
+            "Shallow sections: Expand sections with deeper technical content and code examples"
+                .to_string(),
+        );
     }
 
-    let composite_fitness =
-        0.25 * coverage_score
+    let composite_fitness = 0.25 * coverage_score
         + 0.20 * specificity_score
         + 0.15 * dedup_score
         + 0.15 * trap_density
@@ -372,7 +401,9 @@ pub fn score_all_skills(skills_dir: &str, repo_path: &str) -> Result<String> {
         if let Ok(content) = fs::read_to_string(&skill_md) {
             let skill_name = entry.file_name().to_string_lossy().to_string();
             let domain = detect_domain(&skill_name);
-            domain_contents.entry(domain).or_default()
+            domain_contents
+                .entry(domain)
+                .or_default()
                 .push((skill_name, content));
         }
     }
@@ -392,7 +423,9 @@ pub fn score_all_skills(skills_dir: &str, repo_path: &str) -> Result<String> {
             // Compute dedup score: max similarity against all siblings in same domain
             let mut max_similarity: f64 = 0.0;
             for (j, (_, other_content)) in skills.iter().enumerate() {
-                if i == j { continue; }
+                if i == j {
+                    continue;
+                }
                 let other_body = extract_body(other_content);
                 // Compare first 500 chars for efficiency
                 let a_sample: String = body.chars().take(500).collect();
@@ -414,8 +447,7 @@ pub fn score_all_skills(skills_dir: &str, repo_path: &str) -> Result<String> {
                 recommendations.push(format!("High duplication detected in domain '{}'", domain));
             }
 
-            let composite_fitness =
-                0.25 * coverage_score
+            let composite_fitness = 0.25 * coverage_score
                 + 0.20 * specificity_score
                 + 0.15 * dedup_score
                 + 0.15 * trap_density
@@ -438,7 +470,11 @@ pub fn score_all_skills(skills_dir: &str, repo_path: &str) -> Result<String> {
     }
 
     // Sort by composite fitness descending
-    reports.sort_by(|a, b| b.composite_fitness.partial_cmp(&a.composite_fitness).unwrap_or(std::cmp::Ordering::Equal));
+    reports.sort_by(|a, b| {
+        b.composite_fitness
+            .partial_cmp(&a.composite_fitness)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
 
     let total_skills = reports.len();
     let average_fitness = if total_skills > 0 {
@@ -482,21 +518,66 @@ pub fn score_all_skills(skills_dir: &str, repo_path: &str) -> Result<String> {
 
 fn detect_domain(skill_name: &str) -> String {
     let name = skill_name.to_lowercase();
-    if name.contains("anim") || name.contains("motion") || name.contains("gsap") || name.contains("lottie") || name.contains("spring") {
+    if name.contains("anim")
+        || name.contains("motion")
+        || name.contains("gsap")
+        || name.contains("lottie")
+        || name.contains("spring")
+    {
         "motion".to_string()
-    } else if name.contains("react") || name.contains("ui") || name.contains("css") || name.contains("design") || name.contains("frontend") || name.contains("vue") || name.contains("landing") || name.contains("typography") {
+    } else if name.contains("react")
+        || name.contains("ui")
+        || name.contains("css")
+        || name.contains("design")
+        || name.contains("frontend")
+        || name.contains("vue")
+        || name.contains("landing")
+        || name.contains("typography")
+    {
         "frontend".to_string()
-    } else if name.contains("sql") || name.contains("db") || name.contains("data") || name.contains("supabase") || name.contains("prisma") || name.contains("vector") {
+    } else if name.contains("sql")
+        || name.contains("db")
+        || name.contains("data")
+        || name.contains("supabase")
+        || name.contains("prisma")
+        || name.contains("vector")
+    {
         "database".to_string()
-    } else if name.contains("security") || name.contains("audit") || name.contains("vulnerab") || name.contains("red-team") || name.contains("passkey") || name.contains("injection") {
+    } else if name.contains("security")
+        || name.contains("audit")
+        || name.contains("vulnerab")
+        || name.contains("red-team")
+        || name.contains("passkey")
+        || name.contains("injection")
+    {
         "security".to_string()
-    } else if name.contains("test") || name.contains("qa") || name.contains("playwright") || name.contains("tdd") {
+    } else if name.contains("test")
+        || name.contains("qa")
+        || name.contains("playwright")
+        || name.contains("tdd")
+    {
         "testing".to_string()
-    } else if name.contains("devops") || name.contains("ci") || name.contains("cloud") || name.contains("bash") || name.contains("docker") || name.contains("terraform") {
+    } else if name.contains("devops")
+        || name.contains("ci")
+        || name.contains("cloud")
+        || name.contains("bash")
+        || name.contains("docker")
+        || name.contains("terraform")
+    {
         "devops".to_string()
-    } else if name.contains("mobile") || name.contains("swift") || name.contains("expo") || name.contains("flutter") {
+    } else if name.contains("mobile")
+        || name.contains("swift")
+        || name.contains("expo")
+        || name.contains("flutter")
+    {
         "mobile".to_string()
-    } else if name.contains("api") || name.contains("python") || name.contains("rust") || name.contains("backend") || name.contains("node") || name.contains("csharp") {
+    } else if name.contains("api")
+        || name.contains("python")
+        || name.contains("rust")
+        || name.contains("backend")
+        || name.contains("node")
+        || name.contains("csharp")
+    {
         "backend".to_string()
     } else {
         "meta".to_string()
@@ -607,30 +688,47 @@ Some basic content without any structured sections.
         let result = score_skill(skill_path.to_str().unwrap()).unwrap();
         let report: FitnessReport = serde_json::from_str(&result).unwrap();
 
-        assert!(report.composite_fitness > 0.5, "Well-formed skill should score > 0.5, got {}", report.composite_fitness);
-        assert!(report.coverage_score > 0.7, "Coverage should be > 0.7, got {}", report.coverage_score);
+        assert!(
+            report.composite_fitness > 0.5,
+            "Well-formed skill should score > 0.5, got {}",
+            report.composite_fitness
+        );
+        assert!(
+            report.coverage_score > 0.7,
+            "Coverage should be > 0.7, got {}",
+            report.coverage_score
+        );
 
         let _ = fs::remove_dir_all(&temp_dir);
     }
 
     #[test]
     fn test_score_minimal_skill() {
-        let temp_dir = std::env::temp_dir().join(format!("fitness_test_min_{}", std::process::id()));
+        let temp_dir =
+            std::env::temp_dir().join(format!("fitness_test_min_{}", std::process::id()));
         create_minimal_skill(&temp_dir);
         let skill_path = temp_dir.join("minimal-skill").join("SKILL.md");
 
         let result = score_skill(skill_path.to_str().unwrap()).unwrap();
         let report: FitnessReport = serde_json::from_str(&result).unwrap();
 
-        assert!(report.composite_fitness < 0.5, "Minimal skill should score < 0.5, got {}", report.composite_fitness);
-        assert!(report.recommendations.len() > 0, "Should have recommendations");
+        assert!(
+            report.composite_fitness < 0.5,
+            "Minimal skill should score < 0.5, got {}",
+            report.composite_fitness
+        );
+        assert!(
+            !report.recommendations.is_empty(),
+            "Should have recommendations"
+        );
 
         let _ = fs::remove_dir_all(&temp_dir);
     }
 
     #[test]
     fn test_score_all_skills() {
-        let temp_dir = std::env::temp_dir().join(format!("fitness_test_all_{}", std::process::id()));
+        let temp_dir =
+            std::env::temp_dir().join(format!("fitness_test_all_{}", std::process::id()));
         let skills_dir = temp_dir.join("skills");
         fs::create_dir_all(&skills_dir).unwrap();
 
@@ -640,10 +738,8 @@ Some basic content without any structured sections.
         let repo_dir = temp_dir.join("repo");
         fs::create_dir_all(&repo_dir).unwrap();
 
-        let result = score_all_skills(
-            skills_dir.to_str().unwrap(),
-            repo_dir.to_str().unwrap(),
-        ).unwrap();
+        let result =
+            score_all_skills(skills_dir.to_str().unwrap(), repo_dir.to_str().unwrap()).unwrap();
         let summary: FitnessSummary = serde_json::from_str(&result).unwrap();
 
         assert!(summary.success);
@@ -651,24 +747,25 @@ Some basic content without any structured sections.
         assert!(summary.average_fitness > 0.0);
 
         // Verify files were written
-        assert!(repo_dir.join(".tribunal/fitness/fitness-summary.json").exists());
+        assert!(repo_dir
+            .join(".tribunal/fitness/fitness-summary.json")
+            .exists());
 
         let _ = fs::remove_dir_all(&temp_dir);
     }
 
     #[test]
     fn test_empty_skills_dir() {
-        let temp_dir = std::env::temp_dir().join(format!("fitness_test_empty_{}", std::process::id()));
+        let temp_dir =
+            std::env::temp_dir().join(format!("fitness_test_empty_{}", std::process::id()));
         let skills_dir = temp_dir.join("empty_skills");
         fs::create_dir_all(&skills_dir).unwrap();
 
         let repo_dir = temp_dir.join("repo");
         fs::create_dir_all(&repo_dir).unwrap();
 
-        let result = score_all_skills(
-            skills_dir.to_str().unwrap(),
-            repo_dir.to_str().unwrap(),
-        ).unwrap();
+        let result =
+            score_all_skills(skills_dir.to_str().unwrap(), repo_dir.to_str().unwrap()).unwrap();
         let summary: FitnessSummary = serde_json::from_str(&result).unwrap();
 
         assert!(summary.success);

@@ -58,9 +58,18 @@ pub fn render_reviewer_grid(caps: &TermCaps, completed_count: usize) {
     let col_width = (caps.columns.saturating_sub(6)) / num_cols;
 
     eprintln!();
-    let header_title = format!("  {}  Tribunal Parallel Reviewer Swarm (28 Reviewers)", "🛡️");
+    let header_title = format!(
+        "  {}  Tribunal Parallel Reviewer Swarm (28 Reviewers)",
+        "🛡️"
+    );
     eprintln!("{}", caps.bold(&header_title));
-    eprintln!("  {}", caps.color(Rgb::SLATE_700, &g.box_h.repeat(caps.columns.min(84).saturating_sub(4))));
+    eprintln!(
+        "  {}",
+        caps.color(
+            Rgb::SLATE_700,
+            &g.box_h.repeat(caps.columns.min(84).saturating_sub(4))
+        )
+    );
 
     let chunks: Vec<&[(&str, &str)]> = ALL_REVIEWERS.chunks(num_cols).collect();
 
@@ -85,13 +94,19 @@ pub fn render_reviewer_grid(caps: &TermCaps, completed_count: usize) {
             let item_str = format!("{} {}", icon, name_colored);
             let raw_len = 2 + name.chars().count();
             let pad = col_width.saturating_sub(raw_len);
-            
+
             line.push_str(&item_str);
             line.push_str(&" ".repeat(pad));
         }
         eprintln!("{}", line);
     }
 
-    eprintln!("  {}", caps.color(Rgb::SLATE_700, &g.box_h.repeat(caps.columns.min(84).saturating_sub(4))));
+    eprintln!(
+        "  {}",
+        caps.color(
+            Rgb::SLATE_700,
+            &g.box_h.repeat(caps.columns.min(84).saturating_sub(4))
+        )
+    );
     eprintln!();
 }

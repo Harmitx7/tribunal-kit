@@ -5,20 +5,23 @@ use super::theme::{Rgb, TermCaps};
 
 pub fn render_banner(caps: &TermCaps, version: &str) {
     if !caps.is_tty && !caps.has_color {
-        eprintln!("TRIBUNAL-KIT v{} — Anti-Hallucination Governance Layer", version);
+        eprintln!(
+            "TRIBUNAL-KIT v{} — Anti-Hallucination Governance Layer",
+            version
+        );
         return;
     }
 
     let g = caps.glyphs();
-    let width = caps.columns.min(84).max(64);
+    let width = caps.columns.clamp(64, 84);
 
     let title_line = format!("{}  TRIBUNAL-KIT  v{}", "🛡️", version);
     let right_pill = "[Fortress Mode · ⚡ Rust Core]";
-    
+
     let inner_width = width.saturating_sub(4);
     let left_len = title_line.chars().count() + 1; // +1 for emoji display width correction
     let right_len = right_pill.chars().count();
-    
+
     let spaces = if inner_width > left_len + right_len {
         inner_width - (left_len + right_len)
     } else {
@@ -52,7 +55,10 @@ pub fn render_banner(caps: &TermCaps, version: &str) {
             let r = 255;
             let g_val = (105.0 + ratio * 80.0) as u8;
             let b_val = (74.0 - ratio * 30.0) as u8;
-            res.push_str(&format!("\x1b[38;2;{};{};{}m\x1b[1m{}\x1b[0m", r, g_val, b_val, c));
+            res.push_str(&format!(
+                "\x1b[38;2;{};{};{}m\x1b[1m{}\x1b[0m",
+                r, g_val, b_val, c
+            ));
         }
         res
     } else {
@@ -67,8 +73,21 @@ pub fn render_banner(caps: &TermCaps, version: &str) {
 
     eprintln!();
     eprintln!("{}", colored_border_top);
-    eprintln!("  {} {}{}{} {}", pipe, bold_title, " ".repeat(spaces), colored_right_pill, pipe);
-    eprintln!("  {} {}{} {}", pipe, colored_subtitle, " ".repeat(sub_spaces), pipe);
+    eprintln!(
+        "  {} {}{}{} {}",
+        pipe,
+        bold_title,
+        " ".repeat(spaces),
+        colored_right_pill,
+        pipe
+    );
+    eprintln!(
+        "  {} {}{} {}",
+        pipe,
+        colored_subtitle,
+        " ".repeat(sub_spaces),
+        pipe
+    );
     eprintln!("{}", colored_border_bottom);
     eprintln!();
 }

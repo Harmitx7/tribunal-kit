@@ -5,7 +5,10 @@ use std::process::Command;
 
 /// Find repository root by checking git rev-parse or walking up looking for .git
 pub fn find_repo_root() -> Result<PathBuf> {
-    if let Ok(output) = Command::new("git").args(["rev-parse", "--show-toplevel"]).output() {
+    if let Ok(output) = Command::new("git")
+        .args(["rev-parse", "--show-toplevel"])
+        .output()
+    {
         if output.status.success() {
             let path_str = String::from_utf8_lossy(&output.stdout).trim().to_string();
             if !path_str.is_empty() {
@@ -131,7 +134,12 @@ pub fn sdd_brief(plan_file: &str, task_num: u32, out_file: Option<&str>) -> Resu
 }
 
 /// Generate out-of-band diff review package for Tribunal reviewer waves
-pub fn sdd_diff(plan_file: &str, base: &str, head: &str, out_file: Option<&str>) -> Result<PathBuf> {
+pub fn sdd_diff(
+    plan_file: &str,
+    base: &str,
+    head: &str,
+    out_file: Option<&str>,
+) -> Result<PathBuf> {
     let target_out = match out_file {
         Some(path) => PathBuf::from(path),
         None => {
@@ -227,7 +235,12 @@ mod tests {
         f.write_all(content.as_bytes()).unwrap();
 
         let out_file = temp_dir.join("task-2-brief.md");
-        let result = sdd_brief(plan_file.to_str().unwrap(), 2, Some(out_file.to_str().unwrap())).unwrap();
+        let result = sdd_brief(
+            plan_file.to_str().unwrap(),
+            2,
+            Some(out_file.to_str().unwrap()),
+        )
+        .unwrap();
 
         assert!(result.exists());
         let brief = fs::read_to_string(result).unwrap();

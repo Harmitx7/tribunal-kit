@@ -30,26 +30,52 @@ fn detect_domain_from_files(files: &[String], task: &str) -> String {
     let task_lower = task.to_lowercase();
 
     // Check task keywords first (highest signal)
-    if task_lower.contains("auth") || task_lower.contains("security") || task_lower.contains("injection") || task_lower.contains("xss") || task_lower.contains("csrf") {
+    if task_lower.contains("auth")
+        || task_lower.contains("security")
+        || task_lower.contains("injection")
+        || task_lower.contains("xss")
+        || task_lower.contains("csrf")
+    {
         return "security".to_string();
     }
-    if task_lower.contains("schema") || task_lower.contains("migration") || task_lower.contains("database") || task_lower.contains("sql") || task_lower.contains("prisma") {
+    if task_lower.contains("schema")
+        || task_lower.contains("migration")
+        || task_lower.contains("database")
+        || task_lower.contains("sql")
+        || task_lower.contains("prisma")
+    {
         return "database".to_string();
     }
-    if task_lower.contains("deploy") || task_lower.contains("docker") || task_lower.contains("ci/cd") || task_lower.contains("pipeline") || task_lower.contains("terraform") {
+    if task_lower.contains("deploy")
+        || task_lower.contains("docker")
+        || task_lower.contains("ci/cd")
+        || task_lower.contains("pipeline")
+        || task_lower.contains("terraform")
+    {
         return "devops".to_string();
     }
-    if task_lower.contains("test") || task_lower.contains("spec") || task_lower.contains("coverage") {
+    if task_lower.contains("test") || task_lower.contains("spec") || task_lower.contains("coverage")
+    {
         return "testing".to_string();
     }
 
     // Check file extensions
     for file in files {
         let f = file.to_lowercase();
-        if f.ends_with(".tsx") || f.ends_with(".jsx") || f.ends_with(".css") || f.ends_with(".scss") || f.ends_with(".vue") || f.ends_with(".svelte") {
+        if f.ends_with(".tsx")
+            || f.ends_with(".jsx")
+            || f.ends_with(".css")
+            || f.ends_with(".scss")
+            || f.ends_with(".vue")
+            || f.ends_with(".svelte")
+        {
             return "frontend".to_string();
         }
-        if f.ends_with(".sql") || f.contains("migration") || f.contains("schema.prisma") || f.contains("drizzle") {
+        if f.ends_with(".sql")
+            || f.contains("migration")
+            || f.contains("schema.prisma")
+            || f.contains("drizzle")
+        {
             return "database".to_string();
         }
         if f.ends_with(".py") || f.contains("fastapi") || f.contains("django") {
@@ -58,10 +84,19 @@ fn detect_domain_from_files(files: &[String], task: &str) -> String {
         if f.ends_with(".rs") {
             return "backend".to_string();
         }
-        if f.ends_with(".swift") || f.ends_with(".kt") || f.contains("expo") || f.contains("react-native") {
+        if f.ends_with(".swift")
+            || f.ends_with(".kt")
+            || f.contains("expo")
+            || f.contains("react-native")
+        {
             return "mobile".to_string();
         }
-        if f.contains("dockerfile") || f.contains(".yml") || f.contains(".yaml") || f.contains("terraform") || f.contains(".tf") {
+        if f.contains("dockerfile")
+            || f.contains(".yml")
+            || f.contains(".yaml")
+            || f.contains("terraform")
+            || f.contains(".tf")
+        {
             return "devops".to_string();
         }
         if f.contains(".test.") || f.contains(".spec.") || f.contains("__tests__") {
@@ -74,11 +109,19 @@ fn detect_domain_from_files(files: &[String], task: &str) -> String {
         let f = file.to_lowercase();
         if f.ends_with(".ts") || f.ends_with(".js") {
             // Check if it's a route/API file
-            if f.contains("api/") || f.contains("route") || f.contains("server") || f.contains("middleware") {
+            if f.contains("api/")
+                || f.contains("route")
+                || f.contains("server")
+                || f.contains("middleware")
+            {
                 return "backend".to_string();
             }
             // Check if it's a component/page
-            if f.contains("component") || f.contains("page") || f.contains("layout") || f.contains("app/") {
+            if f.contains("component")
+                || f.contains("page")
+                || f.contains("layout")
+                || f.contains("app/")
+            {
                 return "frontend".to_string();
             }
         }
@@ -94,26 +137,87 @@ fn get_reviewers_for_domain(domain: &str, tier: u8) -> Vec<String> {
     }
 
     let all_reviewers: Vec<&str> = match domain {
-        "frontend" => vec!["logic-reviewer", "type-safety-reviewer", "frontend-reviewer", "ui-ux-auditor", "accessibility-reviewer", "visual-reviewer", "interaction-reviewer", "complexity-reviewer"],
-        "backend" => vec!["logic-reviewer", "security-auditor", "type-safety-reviewer", "resilience-reviewer", "schema-reviewer", "dependency-reviewer", "performance-reviewer", "complexity-reviewer"],
-        "database" => vec!["logic-reviewer", "security-auditor", "sql-reviewer", "schema-reviewer", "db-latency-auditor", "complexity-reviewer"],
-        "security" => vec!["security-auditor", "logic-reviewer", "penetration-tester", "resilience-reviewer", "dependency-reviewer", "complexity-reviewer"],
-        "devops" => vec!["pipeline-reviewer", "security-auditor", "resilience-reviewer", "dependency-reviewer", "complexity-reviewer"],
-        "testing" => vec!["logic-reviewer", "test-coverage-reviewer", "type-safety-reviewer", "complexity-reviewer"],
-        "mobile" => vec!["logic-reviewer", "mobile-reviewer", "frontend-reviewer", "type-safety-reviewer", "performance-reviewer", "complexity-reviewer"],
-        "motion" => vec!["frontend-reviewer", "visual-reviewer", "interaction-reviewer", "ui-ux-auditor"],
-        _ => vec!["logic-reviewer", "security-auditor", "type-safety-reviewer", "complexity-reviewer"],
+        "frontend" => vec![
+            "logic-reviewer",
+            "type-safety-reviewer",
+            "frontend-reviewer",
+            "ui-ux-auditor",
+            "accessibility-reviewer",
+            "visual-reviewer",
+            "interaction-reviewer",
+            "complexity-reviewer",
+        ],
+        "backend" => vec![
+            "logic-reviewer",
+            "security-auditor",
+            "type-safety-reviewer",
+            "resilience-reviewer",
+            "schema-reviewer",
+            "dependency-reviewer",
+            "performance-reviewer",
+            "complexity-reviewer",
+        ],
+        "database" => vec![
+            "logic-reviewer",
+            "security-auditor",
+            "sql-reviewer",
+            "schema-reviewer",
+            "db-latency-auditor",
+            "complexity-reviewer",
+        ],
+        "security" => vec![
+            "security-auditor",
+            "logic-reviewer",
+            "penetration-tester",
+            "resilience-reviewer",
+            "dependency-reviewer",
+            "complexity-reviewer",
+        ],
+        "devops" => vec![
+            "pipeline-reviewer",
+            "security-auditor",
+            "resilience-reviewer",
+            "dependency-reviewer",
+            "complexity-reviewer",
+        ],
+        "testing" => vec![
+            "logic-reviewer",
+            "test-coverage-reviewer",
+            "type-safety-reviewer",
+            "complexity-reviewer",
+        ],
+        "mobile" => vec![
+            "logic-reviewer",
+            "mobile-reviewer",
+            "frontend-reviewer",
+            "type-safety-reviewer",
+            "performance-reviewer",
+            "complexity-reviewer",
+        ],
+        "motion" => vec![
+            "frontend-reviewer",
+            "visual-reviewer",
+            "interaction-reviewer",
+            "ui-ux-auditor",
+        ],
+        _ => vec![
+            "logic-reviewer",
+            "security-auditor",
+            "type-safety-reviewer",
+            "complexity-reviewer",
+        ],
     };
 
     // Adaptive wave sizing by tier
     let max_count = match tier {
-        1 => 3,  // Express: top 3 reviewers
-        2 => 6,  // Targeted: top 6 reviewers
+        1 => 3,                   // Express: top 3 reviewers
+        2 => 6,                   // Targeted: top 6 reviewers
         3 => all_reviewers.len(), // Gauntlet: all domain reviewers
         _ => 0,
     };
 
-    all_reviewers.into_iter()
+    all_reviewers
+        .into_iter()
         .take(max_count)
         .map(|s| s.to_string())
         .collect()
@@ -155,7 +259,7 @@ pub fn classify_impact(files: &[String], diff_lines: usize, task: &str) -> Impac
         reasoning.push("Simple edit signal in task text".to_string());
     }
 
-    let clamped_score = score.max(0.0).min(1.0);
+    let clamped_score = score.clamp(0.0, 1.0);
     let domain_hint = detect_domain_from_files(files, task);
 
     if clamped_score < 0.15 && !is_critical {
@@ -237,8 +341,12 @@ mod tests {
         let files = vec!["src/api/users.ts".to_string()];
         let result = classify_impact(&files, 50, "add user API endpoint");
         assert_eq!(result.domain_hint, "backend");
-        assert!(result.recommended_reviewers.contains(&"logic-reviewer".to_string()));
-        assert!(result.recommended_reviewers.contains(&"security-auditor".to_string()));
+        assert!(result
+            .recommended_reviewers
+            .contains(&"logic-reviewer".to_string()));
+        assert!(result
+            .recommended_reviewers
+            .contains(&"security-auditor".to_string()));
     }
 
     #[test]
@@ -266,4 +374,3 @@ mod tests {
         assert_eq!(result.domain_hint, "security");
     }
 }
-

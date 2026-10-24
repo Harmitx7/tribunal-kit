@@ -20,7 +20,13 @@ async function cmdArch(flags, rawArgv, quiet = false) {
 
   (0, helpers_1.banner)(quiet);
 
-  const scriptsDir = path_1.default.join(targetDir, '.agent', 'scripts');
+  let scriptsDir = path_1.default.join(targetDir, '.agent', 'scripts');
+  if (!fs_1.default.existsSync(path_1.default.join(scriptsDir, 'architecture_extractor.js'))) {
+    const kitScripts = path_1.default.join((0, helpers_1.getKitAgent)(), 'scripts');
+    if (fs_1.default.existsSync(path_1.default.join(kitScripts, 'architecture_extractor.js'))) {
+      scriptsDir = kitScripts;
+    }
+  }
   const historyDir = path_1.default.join(targetDir, '.agent', 'history');
   const modelFile = path_1.default.join(historyDir, 'architecture-model.json');
 

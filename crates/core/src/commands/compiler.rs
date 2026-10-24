@@ -17,8 +17,8 @@ pub fn cmd_compile(skills_dir: &str, target_skills_raw: &str) -> Result<()> {
 
     // 1. Build the graph to get all nodes
     let graph_json = build_skill_graph(skills_dir)?;
-    let graph: super::skill_resolver::SkillGraph = serde_json::from_str(&graph_json)
-        .context("Failed to parse skill graph for compilation")?;
+    let graph: super::skill_resolver::SkillGraph =
+        serde_json::from_str(&graph_json).context("Failed to parse skill graph for compilation")?;
 
     // We don't do full dependency resolution here for simplicity,
     // assuming the input `target_skills` are already resolved by the caller.
@@ -29,9 +29,7 @@ pub fn cmd_compile(skills_dir: &str, target_skills_raw: &str) -> Result<()> {
 
     for skill_name in target_skills {
         if let Some(node) = graph.nodes.iter().find(|n| n.name == skill_name) {
-            let skill_file_path = Path::new(skills_dir)
-                .join(&node.name)
-                .join("SKILL.md");
+            let skill_file_path = Path::new(skills_dir).join(&node.name).join("SKILL.md");
 
             if let Ok(content) = fs::read_to_string(&skill_file_path) {
                 let compressed = compress_skill_markdown(&content, &node.name);
@@ -48,7 +46,7 @@ pub fn cmd_compile(skills_dir: &str, target_skills_raw: &str) -> Result<()> {
 
 fn compress_skill_markdown(markdown: &str, skill_name: &str) -> String {
     let mut out = format!("    - name: {}\n", skill_name);
-    
+
     let mut in_traps = false;
     let mut in_rules = false;
     let mut has_traps = false;
@@ -59,7 +57,7 @@ fn compress_skill_markdown(markdown: &str, skill_name: &str) -> String {
 
     for line in markdown.lines() {
         let trimmed = line.trim();
-        
+
         // Headers trigger mode switches
         if trimmed.starts_with("##") {
             let lower = trimmed.to_lowercase();
@@ -67,7 +65,10 @@ fn compress_skill_markdown(markdown: &str, skill_name: &str) -> String {
                 in_traps = true;
                 in_rules = false;
                 continue;
-            } else if lower.contains("invariant") || lower.contains("rule") || lower.contains("core api") {
+            } else if lower.contains("invariant")
+                || lower.contains("rule")
+                || lower.contains("core api")
+            {
                 in_rules = true;
                 in_traps = false;
                 continue;
@@ -83,12 +84,12 @@ fn compress_skill_markdown(markdown: &str, skill_name: &str) -> String {
                 traps_block.push_str(&format!("        - \"{}\"\n", clean));
                 has_traps = true;
             }
-        } else if in_rules {
-            if trimmed.starts_with(|c: char| c.is_ascii_digit()) || trimmed.starts_with("- ") {
-                let clean = trimmed.replace("\"", "\\\"");
-                rules_block.push_str(&format!("        - \"{}\"\n", clean));
-                has_rules = true;
-            }
+        } else if in_rules
+            && (trimmed.starts_with(|c: char| c.is_ascii_digit()) || trimmed.starts_with("- "))
+        {
+            let clean = trimmed.replace("\"", "\\\"");
+            rules_block.push_str(&format!("        - \"{}\"\n", clean));
+            has_rules = true;
         }
     }
 

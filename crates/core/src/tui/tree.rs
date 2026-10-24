@@ -32,7 +32,10 @@ impl<'a> ActionTree<'a> {
             let open_paren = self.caps.color(Rgb::ZINC_600, "(");
             let colored_target = self.caps.color(Rgb::CYAN, t);
             let close_paren = self.caps.color(Rgb::ZINC_600, ")");
-            eprintln!("  {} {}{}{}{}", bullet, colored_verb, open_paren, colored_target, close_paren);
+            eprintln!(
+                "  {} {}{}{}{}",
+                bullet, colored_verb, open_paren, colored_target, close_paren
+            );
         } else {
             eprintln!("  {} {}", bullet, colored_verb);
         }
@@ -59,7 +62,7 @@ impl<'a> ActionTree<'a> {
         let g = self.caps.glyphs();
         let check = self.caps.color(Rgb::EMERALD, g.success);
         let colored_title = self.caps.color(Rgb::WHITE, title);
-        
+
         if let Some(d) = detail {
             let colored_detail = self.caps.color(Rgb::ZINC_500, d);
             eprintln!("    {} {} {}", check, colored_title, colored_detail);

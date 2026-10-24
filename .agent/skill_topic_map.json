@@ -1,6 +1,6 @@
 {
-  "version": "6.0.0",
-  "total_skills": 234,
+  "version": "6.1.0",
+  "total_skills": 235,
   "description": "Lightweight 2-tier domain routing map for Tribunal Agent Kit v3.0.0",
   "domain_routes": {
     "frontend": [
@@ -201,6 +201,7 @@
       "intelligent-routing",
       "knowledge-graph",
       "local-first",
+      "local-first-architecture",
       "mcp-builder",
       "monorepo-management",
       "observability",
@@ -251,6 +252,76 @@
       "train-sentence-transformers",
       "transformers-js",
       "trl-training"
+    ],
+    "system-design": [
+      "system-design-pro",
+      "architecture",
+      "architecture-intelligence",
+      "architecture-drift",
+      "cloud-architect"
+    ]
+  },
+  "domain_references": {
+    "system-design": [
+      ".agent/references/domains/system-design/fundamentals.md",
+      ".agent/references/domains/system-design/quantitative-estimation.md",
+      ".agent/references/domains/system-design/architecture-patterns.md",
+      ".agent/references/domains/system-design/distributed-systems.md",
+      ".agent/references/domains/system-design/data-architecture.md",
+      ".agent/references/domains/system-design/communication-caching.md",
+      ".agent/references/domains/system-design/event-driven-messaging.md",
+      ".agent/references/domains/system-design/scalability-traffic.md",
+      ".agent/references/domains/system-design/security-threat-modeling.md",
+      ".agent/references/domains/system-design/reliability-performance.md",
+      ".agent/references/domains/system-design/observability-operations.md",
+      ".agent/references/domains/system-design/cloud-infrastructure.md",
+      ".agent/references/domains/system-design/global-multi-region.md",
+      ".agent/references/domains/system-design/migration-governance.md",
+      ".agent/references/domains/system-design/real-world-blueprints.md",
+      ".agent/references/domains/system-design/source-index.md"
+    ],
+    "security": [
+      ".agent/references/domains/security/owasp-top-10.md",
+      ".agent/references/domains/security/webauthn-passkeys.md"
+    ],
+    "database": [
+      ".agent/references/domains/database/postgres-pgvector.md",
+      ".agent/references/domains/database/zero-downtime-migrations.md",
+      ".agent/references/domains/database/sql-indexing-tuning.md"
+    ],
+    "motion": [
+      ".agent/references/domains/motion/gsap-v3-lifecycle.md",
+      ".agent/references/domains/motion/motion-performance.md"
+    ],
+    "frontend": [
+      ".agent/references/domains/frontend/react19-rsc.md",
+      ".agent/references/domains/frontend/accessibility-apg.md",
+      ".agent/references/domains/frontend/tailwind-v4-tokens.md"
+    ],
+    "devops": [
+      ".agent/references/domains/devops/github-actions-security.md",
+      ".agent/references/domains/devops/docker-container-hardening.md",
+      ".agent/references/domains/devops/opentofu-iac-patterns.md"
+    ],
+    "mobile": [
+      ".agent/references/domains/mobile/expo-router-v4-navigation.md",
+      ".agent/references/domains/mobile/mobile-ergonomics-hig.md"
+    ],
+    "backend": [
+      ".agent/references/domains/backend/fastapi-pydantic-v2.md",
+      ".agent/references/domains/backend/nodejs-event-loop-streams.md",
+      ".agent/references/domains/backend/redis-cache-strategies.md"
+    ],
+    "ai-systems": [
+      ".agent/references/domains/ai-systems/rag-hybrid-search-rerank.md",
+      ".agent/references/domains/ai-systems/model-context-protocol-spec.md"
+    ],
+    "observability": [
+      ".agent/references/domains/observability/opentelemetry-semantic-conventions.md"
+    ],
+    "shared": [
+      ".agent/references/shared/http-api-semantics.md",
+      ".agent/references/shared/playwright-testing-guide.md"
     ]
   },
   "file_extensions": {

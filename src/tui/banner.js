@@ -11,7 +11,7 @@ const {
   visibleLength,
 } = require('./theme');
 
-function renderBanner(version = '9.2.9', quiet = false, options = {}) {
+function renderBanner(version = '9.3.0', quiet = false, options = {}) {
   if (quiet) return;
   if (!isTTY && !hasColor) {
     console.error(`TRIBUNAL-KIT v${version} — Anti-Hallucination Governance Layer`);

@@ -36,10 +36,18 @@
       <rect x="-20" y="-26" width="800" height="100" />
     </clipPath>
 
+    <filter id="core-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
     <!-- Typography & Styles -->
     <style>
       .title-text { 
-        font-family: 'Inter', 'Helvetica Neue', sans-serif; 
+        font-family: 'Inter', -apple-system, sans-serif; 
         font-weight: 900; 
         letter-spacing: -2px; 
         text-transform: uppercase;
@@ -50,37 +58,54 @@
         letter-spacing: 2px; 
       }
       .subtitle-text { 
-        font-family: 'Inter', sans-serif; 
+        font-family: 'Inter', -apple-system, sans-serif; 
         font-weight: 700; 
         letter-spacing: 6px; 
       }
       
-      /* Subtle Motion Design */
-      .spin-slow { 
-        animation: spin 20s linear infinite; 
-        transform-origin: center; 
-      }
-      .spin-slow-reverse { 
-        animation: spin 30s linear infinite reverse; 
-        transform-origin: center; 
-      }
-      @keyframes spin { 100% { transform: rotate(360deg); } }
-      
+      /* Asterism Harmonic Core Glow */
       .core-pulse { 
-        animation: pulse 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
+        animation: pulseCore 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
       }
-      @keyframes pulse { 
-        0%, 100% { filter: drop-shadow(0 0 8px rgba(255,51,0,0.3)); } 
-        50% { filter: drop-shadow(0 0 20px rgba(255,51,0,0.8)); } 
+      @keyframes pulseCore { 
+        0%, 100% { 
+          filter: drop-shadow(0 0 6px rgba(255,51,0,0.35)); 
+          transform: scale(1);
+        } 
+        50% { 
+          filter: drop-shadow(0 0 22px rgba(255,51,0,0.85)); 
+          transform: scale(1.02);
+        } 
       }
       
-      .kinetic-slice { 
-        stroke-dasharray: 200 800; 
-        animation: slice 4s cubic-bezier(0.19, 1, 0.22, 1) infinite; 
+      /* Harmonic Expanding Radiance Ring */
+      .harmonic-radiance {
+        animation: radiateRing 4s ease-out infinite;
+        transform-origin: 0 0;
       }
-      @keyframes slice { 
+      @keyframes radiateRing {
+        0% { transform: scale(0.6); opacity: 0.8; }
+        80% { transform: scale(1.15); opacity: 0; }
+        100% { transform: scale(1.15); opacity: 0; }
+      }
+
+      /* Kinetic Header Slice Stream */
+      .kinetic-slice { 
+        stroke-dasharray: 180 820; 
+        animation: sliceTravel 3.2s cubic-bezier(0.19, 1, 0.22, 1) infinite; 
+      }
+      @keyframes sliceTravel { 
         0% { stroke-dashoffset: 1000; } 
         100% { stroke-dashoffset: -200; } 
+      }
+
+      /* Telemetry Diode */
+      .diode-beacon {
+        animation: diodeBlink 1.8s ease-in-out infinite;
+      }
+      @keyframes diodeBlink {
+        0%, 100% { opacity: 0.95; }
+        50% { opacity: 0.2; }
       }
       
       /* Hardware Bevel */
@@ -88,10 +113,14 @@
       .keycap-shadow { fill: #000000; opacity: 0.3; }
 
       @media (prefers-reduced-motion: reduce) {
-        .spin-slow, .spin-slow-reverse, .core-pulse, .kinetic-slice { 
+        .core-pulse, .harmonic-radiance, .kinetic-slice, .diode-beacon { 
           animation: none !important; 
           filter: none !important; 
           stroke-dasharray: none !important;
+          transform: none !important;
+        }
+        .kinetic-photon {
+          display: none !important;
         }
       }
     </style>
@@ -119,13 +148,20 @@
   <!-- ========================================== -->
   <g transform="translate(200, 160)">
     
-    <!-- Outer Precision Orbit (Rotating) -->
+    <!-- Outer Precision Orbit (Rock-solid SMIL Rotation) -->
     <circle cx="0" cy="0" r="95" fill="none" stroke="#1f232e" stroke-width="1" />
-    <circle cx="0" cy="0" r="95" fill="none" stroke="#ff3300" stroke-width="2" stroke-dasharray="4 24" class="spin-slow" />
+    <circle cx="0" cy="0" r="95" fill="none" stroke="#ff3300" stroke-width="2" stroke-dasharray="4 24">
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="20s" repeatCount="indefinite"/>
+    </circle>
     
-    <!-- Inner Orbit (Counter-Rotating) -->
-    <circle cx="0" cy="0" r="82" fill="none" stroke="#222634" stroke-width="3" stroke-dasharray="60 15" class="spin-slow-reverse" />
+    <!-- Inner Orbit (Counter-Rotating with High Precision) -->
+    <circle cx="0" cy="0" r="82" fill="none" stroke="#222634" stroke-width="3" stroke-dasharray="60 15">
+      <animateTransform attributeName="transform" type="rotate" from="360 0 0" to="0 0 0" dur="30s" repeatCount="indefinite"/>
+    </circle>
     
+    <!-- Harmonic Radiance Ring -->
+    <circle cx="0" cy="0" r="70" fill="none" stroke="#ff3300" stroke-width="1.2" class="harmonic-radiance"/>
+
     <!-- Geometric Crosshairs -->
     <line x1="-110" y1="0" x2="-80" y2="0" stroke="#ff3300" stroke-width="1.5" opacity="0.6" />
     <line x1="80" y1="0" x2="110" y2="0" stroke="#ff3300" stroke-width="1.5" opacity="0.6" />
@@ -153,7 +189,8 @@
   <!-- ========================================== -->
   <g transform="translate(370, 160)">
     
-    <!-- Top Metadata Track -->
+    <!-- Top Metadata Track with Diode Indicator -->
+    <circle cx="-14" cy="-74" r="3" fill="#ff3300" class="diode-beacon"/>
     <text x="0" y="-70" fill="#8a92a3" class="mono-text">ESTD. 2026 // ARTICLE IV § 12 // MINIMAL DEPENDENCIES</text>
     
     <!-- Bisected Kinetic Header -->
@@ -165,9 +202,16 @@
       <text x="3" y="0" fill="#ffffff" font-size="72" class="title-text" clip-path="url(#clip-bottom)" opacity="0.95">TRIBUNAL KIT</text>
       
       <!-- Kinetic Speed Line Cutting Through the Axis -->
-      <line x1="-50" y1="-26" x2="550" y2="-26" stroke="#ff3300" stroke-width="3" class="kinetic-slice" />
-      <!-- Static axis line underneath for stable presence -->
       <line x1="-50" y1="-26" x2="550" y2="-26" stroke="#222634" stroke-width="1" opacity="0.5" />
+      <line x1="-50" y1="-26" x2="550" y2="-26" stroke="#ff3300" stroke-width="3" class="kinetic-slice" />
+      
+      <!-- Traveling Photon Bead Along the Axis Cut -->
+      <g class="kinetic-photon">
+        <circle r="3.5" fill="#ffffff" filter="url(#core-glow)">
+          <animateMotion path="M -50 -26 L 550 -26" dur="3.2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.1;0.9;1" dur="3.2s" repeatCount="indefinite"/>
+        </circle>
+      </g>
     </g>
     
     <!-- Subtitle Track -->
@@ -205,17 +249,21 @@
         <text x="20" y="23" fill="#f5f2eb" class="mono-text" font-size="16" font-weight="bold" text-anchor="middle">T</text>
       </g>
 
-      <!-- Industrial Label / Verification Status -->
+      <!-- Industrial Label / Verification Status with Radar Ping -->
       <g transform="translate(160, 8)">
         <rect x="0" y="0" width="115" height="24" rx="2" fill="#ff3300" opacity="0.1" />
         <rect x="0" y="0" width="115" height="24" rx="2" fill="none" stroke="#ff3300" stroke-width="1" />
         
-        <!-- Animated Recording Dot -->
-        <circle cx="12" cy="12" r="4" fill="#ff3300">
-          <animate attributeName="opacity" values="1;0.2;1" dur="2s" repeatCount="indefinite" />
+        <!-- Animated Sonar Ping Ring -->
+        <circle cx="12" cy="12" r="4" fill="none" stroke="#ff3300" stroke-width="1">
+          <animate attributeName="r" values="4;11" dur="1.8s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.8;0" dur="1.8s" repeatCount="indefinite" />
         </circle>
+
+        <!-- Core Diode -->
+        <circle cx="12" cy="12" r="3.5" fill="#ff3300" class="diode-beacon" />
         
-        <text x="24" y="16" fill="#ff4d1a" class="mono-text" font-weight="bold">VERIFIED_9</text>
+        <text x="26" y="16" fill="#ff4d1a" class="mono-text" font-weight="bold">VERIFIED_9</text>
       </g>
     </g>
   </g>

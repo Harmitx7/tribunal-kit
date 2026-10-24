@@ -16,6 +16,17 @@ function runWrapper(args = [], extraEnv = {}) {
 }
 
 describe('wrapper.js fallback routing', () => {
+  test('outputs package version on --version and -v flags', () => {
+    const PKG = require('../../package.json');
+    const resLong = runWrapper(['--version']);
+    expect(resLong.status).toBe(0);
+    expect(resLong.stdout.trim()).toBe(PKG.version);
+
+    const resShort = runWrapper(['-v']);
+    expect(resShort.status).toBe(0);
+    expect(resShort.stdout.trim()).toBe(PKG.version);
+  });
+
   test('routes unknown commands to JS implementation directly', () => {
     const result = runWrapper(['unknown-command-test']);
     // The JS implementation outputs 'Tribunal Kit' when run without args or unhandled command

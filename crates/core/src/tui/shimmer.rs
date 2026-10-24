@@ -38,7 +38,7 @@ impl ShimmerSpinner {
             while !signal_clone.load(Ordering::Relaxed) {
                 let elapsed = start.elapsed().as_secs_f32();
                 let spinner_char = braille[frame % braille.len()];
-                
+
                 // Construct shimmering verb
                 let shimmer_verb = if caps.has_truecolor {
                     render_shimmer_text(verb, frame)
@@ -47,11 +47,15 @@ impl ShimmerSpinner {
                 };
 
                 let dot = caps.color(Rgb::FLAME, "·");
-                let timer_text = caps.color(Rgb::ZINC_500, &format!("({:.1}s · {})", elapsed, details));
+                let timer_text =
+                    caps.color(Rgb::ZINC_500, &format!("({:.1}s · {})", elapsed, details));
                 let spin_colored = caps.color(Rgb::FLAME, spinner_char);
 
                 // Clear current line and write in-place
-                eprint!("\r\x1b[2K  {} {} {} {}", dot, spin_colored, shimmer_verb, timer_text);
+                eprint!(
+                    "\r\x1b[2K  {} {} {} {}",
+                    dot, spin_colored, shimmer_verb, timer_text
+                );
                 let _ = io::stderr().flush();
 
                 frame = frame.wrapping_add(1);

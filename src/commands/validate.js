@@ -58,7 +58,25 @@ async function cmdValidate(flags, quiet = false) {
     }
   }
 
-  // General .agent validation with parallel reviewer swarm display
+  // General .agent structural validation
+  const requiredSubdirs = ['agents', 'workflows', 'skills', 'scripts', 'rules'];
+  const missing = requiredSubdirs.filter(sub => !fs.existsSync(path.join(agentDir, sub)));
+  if (missing.length > 0) {
+    console.error(
+      `  ${color(RGB.ROSE, g.failure)} ${bold('Validation failed:')} Missing required .agent/ subdirectories: ${missing.join(', ')}`,
+    );
+    process.exit(1);
+  }
+
+  const rulesFile = path.join(agentDir, 'rules', 'GEMINI.md');
+  const kernelFile = path.join(agentDir, 'rules', 'kernel.md');
+  if (!fs.existsSync(rulesFile) && !fs.existsSync(kernelFile)) {
+    console.error(
+      `  ${color(RGB.ROSE, g.failure)} ${bold('Validation failed:')} No master rules found in .agent/rules/ (GEMINI.md or kernel.md).`,
+    );
+    process.exit(1);
+  }
+
   if (!quiet) {
     renderReviewerGrid(28);
     tree.complete('.agent/ payload structure & 28 parallel reviewers verified successfully');

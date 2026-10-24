@@ -63,8 +63,9 @@ pub struct TelemetrySummary {
 fn ensure_telemetry_dir(repo_path: &str) -> Result<std::path::PathBuf> {
     let telemetry_dir = Path::new(repo_path).join(".tribunal").join("telemetry");
     if !telemetry_dir.exists() {
-        fs::create_dir_all(&telemetry_dir)
-            .with_context(|| format!("Failed to create telemetry directory: {:?}", telemetry_dir))?;
+        fs::create_dir_all(&telemetry_dir).with_context(|| {
+            format!("Failed to create telemetry directory: {:?}", telemetry_dir)
+        })?;
     }
     Ok(telemetry_dir)
 }
@@ -78,8 +79,8 @@ fn get_dispatch_log_path(repo_path: &str) -> Result<std::path::PathBuf> {
 
 pub fn record_dispatch(event_json: &str, repo_path: &str) -> Result<String> {
     // Validate the event JSON
-    let event: DispatchEvent = serde_json::from_str(event_json)
-        .with_context(|| "Failed to parse dispatch event JSON")?;
+    let event: DispatchEvent =
+        serde_json::from_str(event_json).with_context(|| "Failed to parse dispatch event JSON")?;
 
     let log_path = get_dispatch_log_path(repo_path)?;
 
@@ -132,7 +133,9 @@ pub fn summarize_telemetry(repo_path: &str) -> Result<String> {
     for line in reader.lines() {
         let line = line?;
         let trimmed = line.trim();
-        if trimmed.is_empty() { continue; }
+        if trimmed.is_empty() {
+            continue;
+        }
         match serde_json::from_str::<DispatchEvent>(trimmed) {
             Ok(event) => events.push(event),
             Err(_) => continue, // Skip malformed lines gracefully
@@ -162,10 +165,17 @@ pub fn summarize_telemetry(repo_path: &str) -> Result<String> {
     let mut tier_breakdown: HashMap<String, usize> = HashMap::new();
 
     for event in &events {
-        agent_data.entry(event.agent_name.clone()).or_default().push(event);
-        *classification_breakdown.entry(event.task_classification.clone()).or_insert(0) += 1;
+        agent_data
+            .entry(event.agent_name.clone())
+            .or_default()
+            .push(event);
+        *classification_breakdown
+            .entry(event.task_classification.clone())
+            .or_insert(0) += 1;
         *outcome_breakdown.entry(event.outcome.clone()).or_insert(0) += 1;
-        *tier_breakdown.entry(format!("tier_{}", event.impact_tier)).or_insert(0) += 1;
+        *tier_breakdown
+            .entry(format!("tier_{}", event.impact_tier))
+            .or_insert(0) += 1;
     }
 
     let mut agent_stats: Vec<AgentStat> = Vec::new();
@@ -174,11 +184,21 @@ pub fn summarize_telemetry(repo_path: &str) -> Result<String> {
 
     for (agent_name, agent_events) in &agent_data {
         let count = agent_events.len();
-        let successes = agent_events.iter().filter(|e| e.outcome == "COMPLETE").count();
+        let successes = agent_events
+            .iter()
+            .filter(|e| e.outcome == "COMPLETE")
+            .count();
         let success_rate = successes as f64 / count as f64;
         let avg_dur = agent_events.iter().map(|e| e.duration_ms).sum::<u64>() as f64 / count as f64;
-        let avg_rev = agent_events.iter().map(|e| e.revision_count as f64).sum::<f64>() / count as f64;
-        let total_tokens = agent_events.iter().map(|e| e.token_budget_used as u64).sum::<u64>();
+        let avg_rev = agent_events
+            .iter()
+            .map(|e| e.revision_count as f64)
+            .sum::<f64>()
+            / count as f64;
+        let total_tokens = agent_events
+            .iter()
+            .map(|e| e.token_budget_used as u64)
+            .sum::<u64>();
 
         total_success += successes;
         total_duration += agent_events.iter().map(|e| e.duration_ms).sum::<u64>();
@@ -194,7 +214,7 @@ pub fn summarize_telemetry(repo_path: &str) -> Result<String> {
     }
 
     // Sort by dispatch count descending
-    agent_stats.sort_by(|a, b| b.dispatch_count.cmp(&a.dispatch_count));
+    agent_stats.sort_by_key(|b| std::cmp::Reverse(b.dispatch_count));
 
     let avg_approval_rate = total_success as f64 / total_dispatches as f64;
     let avg_duration_ms = total_duration as f64 / total_dispatches as f64;
@@ -236,7 +256,8 @@ mod tests {
             "revision_count": 0,
             "token_budget_used": 1500,
             "duration_ms": duration
-        }).to_string()
+        })
+        .to_string()
     }
 
     #[test]
@@ -245,11 +266,31 @@ mod tests {
         fs::create_dir_all(&temp_dir).unwrap();
 
         // Record 5 events
-        record_dispatch(&sample_event("frontend-specialist", "COMPLETE", 1200), temp_dir.to_str().unwrap()).unwrap();
-        record_dispatch(&sample_event("frontend-specialist", "COMPLETE", 800), temp_dir.to_str().unwrap()).unwrap();
-        record_dispatch(&sample_event("backend-specialist", "COMPLETE", 600), temp_dir.to_str().unwrap()).unwrap();
-        record_dispatch(&sample_event("backend-specialist", "ERROR", 2000), temp_dir.to_str().unwrap()).unwrap();
-        record_dispatch(&sample_event("security-auditor", "COMPLETE", 3000), temp_dir.to_str().unwrap()).unwrap();
+        record_dispatch(
+            &sample_event("frontend-specialist", "COMPLETE", 1200),
+            temp_dir.to_str().unwrap(),
+        )
+        .unwrap();
+        record_dispatch(
+            &sample_event("frontend-specialist", "COMPLETE", 800),
+            temp_dir.to_str().unwrap(),
+        )
+        .unwrap();
+        record_dispatch(
+            &sample_event("backend-specialist", "COMPLETE", 600),
+            temp_dir.to_str().unwrap(),
+        )
+        .unwrap();
+        record_dispatch(
+            &sample_event("backend-specialist", "ERROR", 2000),
+            temp_dir.to_str().unwrap(),
+        )
+        .unwrap();
+        record_dispatch(
+            &sample_event("security-auditor", "COMPLETE", 3000),
+            temp_dir.to_str().unwrap(),
+        )
+        .unwrap();
 
         // Summarize
         let result = summarize_telemetry(temp_dir.to_str().unwrap()).unwrap();
@@ -261,11 +302,19 @@ mod tests {
         assert!(summary.avg_approval_rate > 0.7); // 4/5 = 0.8
 
         // Check agent stats
-        let frontend_stat = summary.agent_stats.iter().find(|s| s.agent_name == "frontend-specialist").unwrap();
+        let frontend_stat = summary
+            .agent_stats
+            .iter()
+            .find(|s| s.agent_name == "frontend-specialist")
+            .unwrap();
         assert_eq!(frontend_stat.dispatch_count, 2);
         assert!((frontend_stat.success_rate - 1.0).abs() < 0.001);
 
-        let backend_stat = summary.agent_stats.iter().find(|s| s.agent_name == "backend-specialist").unwrap();
+        let backend_stat = summary
+            .agent_stats
+            .iter()
+            .find(|s| s.agent_name == "backend-specialist")
+            .unwrap();
         assert_eq!(backend_stat.dispatch_count, 2);
         assert!((backend_stat.success_rate - 0.5).abs() < 0.001);
 

@@ -24,7 +24,12 @@ function parseArgs(argv) {
       }
       continue;
     }
-    if (arg === '--force') {
+    if (arg === '--version' || arg === '-v') {
+      args.flags.version = true;
+      if (!args.command) {
+        args.command = '--version';
+      }
+    } else if (arg === '--force') {
       args.flags.force = true;
     } else if (arg === '--quiet') {
       args.flags.quiet = true;
@@ -54,6 +59,15 @@ function parseArgs(argv) {
         process.exit(1);
       }
       args.flags.path = nextVal;
+    } else if (arg.startsWith('--file=')) {
+      args.flags.file = arg.split('=').slice(1).join('=');
+    } else if (arg === '--file') {
+      const nextVal = raw[++i];
+      if (!nextVal || nextVal.startsWith('--')) {
+        console.error(`  \x1b[91m✖ --file requires an argument\x1b[0m`);
+        process.exit(1);
+      }
+      args.flags.file = nextVal;
     } else if (arg.startsWith('--target=')) {
       args.flags.target = arg.split('=').slice(1).join('=');
     } else if (arg === '--target') {
@@ -328,7 +342,7 @@ async function runWithUpdateCheck(command, flags) {
     }
     case 'validate': {
       const cmdValidate = loadCmd('./commands/validate', 'cmdValidate');
-      cmdValidate(flags, process.argv, quiet);
+      await cmdValidate(flags, quiet);
       break;
     }
     case 'min-context': {

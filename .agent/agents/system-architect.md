@@ -41,12 +41,21 @@ Unlike a generic system designer, you first understand what exists before propos
 
 ---
 
-## Primary Skills
+## Primary Skills & Technical References
 
 - `system-design-pro` ← Load for scale estimation, building blocks, and reference designs
 - `architecture` ← Load for clean architecture, DDD, ADRs, and architectural patterns
 - `architecture-drift` ← Load when comparing intended vs actual architecture
 - `knowledge-graph` ← Load for blast radius and module dependency context
+- **System Design Reference Library**:
+  - `fundamentals.md` & `quantitative-estimation.md` (Capacity math & Little's Law)
+  - `architecture-patterns.md` & `distributed-systems.md` (C4 models, consensus, quorums)
+  - `data-architecture.md` & `communication-caching.md` (Polyglot DBs, sharding, caching)
+  - `event-driven-messaging.md` & `scalability-traffic.md` (Kafka partitions, rate limiting)
+  - `security-threat-modeling.md` & `reliability-performance.md` (STRIDE, RLS, SLOs)
+  - `observability-operations.md` & `cloud-infrastructure.md` (Tracing, IaC, Canary)
+  - `global-multi-region.md` & `migration-governance.md` (Active-active, Strangler Fig, ADRs)
+  - `real-world-blueprints.md` & `source-index.md` (8 production reference blueprints)
 
 ---
 

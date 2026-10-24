@@ -18,8 +18,6 @@ const RUST_COMMANDS = new Set([
   'validate',
   'status',
   'sync',
-  'hook',
-  'uninstall',
   'memory',
   'min-context',
   'dag-schedule',
@@ -37,7 +35,6 @@ const RUST_COMMANDS = new Set([
   'leaderboard',
   'benchmark',
   'genome',
-  'compile',
   'purge',
   'ast-extract',
 ]);
@@ -164,6 +161,13 @@ function main() {
   // Skip 'node' and 'wrapper.js'
   const args = process.argv.slice(2);
 
+  // Immediate version handling if --version or -v is passed
+  if (!args.some(a => !a.startsWith('-')) && (args.includes('--version') || args.includes('-v'))) {
+    const PKG = require('../package.json');
+    console.log(PKG.version);
+    return;
+  }
+
   // Extract the command (the first non-flag argument)
   const command = args.find(a => !a.startsWith('-'));
 
@@ -187,6 +191,22 @@ function main() {
     const binPath = getBinaryPath();
 
     if (binPath) {
+      // Normalize --path <val> or --path=<val> to positional argument for Rust commands
+      const pathIdx = args.findIndex(a => a === '--path' || a.startsWith('--path='));
+      if (pathIdx !== -1) {
+        let pathVal;
+        if (args[pathIdx].startsWith('--path=')) {
+          pathVal = args[pathIdx].split('=').slice(1).join('=');
+          args.splice(pathIdx, 1);
+        } else {
+          pathVal = args[pathIdx + 1];
+          args.splice(pathIdx, 2);
+        }
+        if (pathVal) {
+          args.push(pathVal);
+        }
+      }
+
       // For the init command, Rust needs to know where the .agent template folder is.
       if (command === 'init') {
         const sourceDir = path.resolve(__dirname, '..', '.agent');

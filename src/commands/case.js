@@ -48,7 +48,7 @@ async function cmdCase(flags, processArgs, quiet = false) {
       `  ${(0, logger_1.c)('cyan', 'overrule'.padEnd(10))}  ${(0, logger_1.c)('gray', 'Overrule a past precedent (e.g., overrule --id 1)')}`,
     );
     console.log();
-    process.exit(1);
+    return;
   }
   const caseLawScript = path_1.default.join(agentDest, 'scripts', 'case_law_manager.js');
   // Make shorthand aliases

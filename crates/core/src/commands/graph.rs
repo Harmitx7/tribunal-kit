@@ -1,12 +1,12 @@
 use anyhow::Result;
-use serde::Serialize;
-use std::path::Path;
-use std::fs;
 use ignore::WalkBuilder;
 use oxc_allocator::Allocator;
+use oxc_ast::ast::*;
 use oxc_parser::Parser;
 use oxc_span::SourceType;
-use oxc_ast::ast::*;
+use serde::Serialize;
+use std::fs;
+use std::path::Path;
 
 #[derive(Serialize, Debug)]
 pub struct GraphNode {
@@ -20,8 +20,6 @@ pub struct GraphNode {
 pub struct SemanticGraph {
     pub nodes: Vec<GraphNode>,
 }
-
-
 
 pub fn generate_graph(path: &str) -> Result<String> {
     let mut nodes = Vec::new();
@@ -60,12 +58,10 @@ pub fn generate_graph(path: &str) -> Result<String> {
                         if let Some(source) = &export.source {
                             imports.push(source.value.to_string());
                         }
-                        if let Some(decl) = &export.declaration {
-                            if let Declaration::FunctionDeclaration(func) = decl {
-                                if let Some(id) = &func.id {
-                                    exports.push(id.name.to_string());
-                                    functions.push(id.name.to_string());
-                                }
+                        if let Some(Declaration::FunctionDeclaration(func)) = &export.declaration {
+                            if let Some(id) = &func.id {
+                                exports.push(id.name.to_string());
+                                functions.push(id.name.to_string());
                             }
                         }
                     }
@@ -92,7 +88,7 @@ pub fn generate_graph(path: &str) -> Result<String> {
 
     let graph = SemanticGraph { nodes };
     let json = serde_json::to_string(&graph)?;
-    
+
     // Save to .tribunal/graph.json
     let tribunal_dir = Path::new(path).join(".tribunal");
     if !tribunal_dir.exists() {
@@ -106,6 +102,6 @@ pub fn generate_graph(path: &str) -> Result<String> {
         "nodes": graph.nodes.len(),
         "graph_path": tribunal_dir.join("graph.json").display().to_string()
     });
-    
+
     Ok(serde_json::to_string(&output)?)
 }

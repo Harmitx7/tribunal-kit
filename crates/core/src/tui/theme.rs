@@ -18,22 +18,22 @@ impl Rgb {
     pub const WHITE: Rgb = Rgb(237, 237, 237);
 
     // Accent colors (Flame / Coral / Amber)
-    pub const FLAME: Rgb = Rgb(205, 105, 74);      // #cd694a (Claude / Flame)
+    pub const FLAME: Rgb = Rgb(205, 105, 74); // #cd694a (Claude / Flame)
     pub const CORAL_BRIGHT: Rgb = Rgb(231, 148, 117); // #e79475
-    pub const AMBER: Rgb = Rgb(245, 158, 11);     // #f59e0b
-    pub const GOLD: Rgb = Rgb(255, 215, 0);       // #ffd700
+    pub const AMBER: Rgb = Rgb(245, 158, 11); // #f59e0b
+    pub const GOLD: Rgb = Rgb(255, 215, 0); // #ffd700
 
     // Semantic status colors
-    pub const EMERALD: Rgb = Rgb(78, 169, 111);   // #4ea96f (Success / Green)
-    pub const CYAN: Rgb = Rgb(125, 207, 255);     // #7dcfff (Blue / Token / Accent)
-    pub const ROSE: Rgb = Rgb(244, 63, 94);       // #f43f5e (Error / Red)
-    pub const PURPLE: Rgb = Rgb(177, 167, 255);   // #b1a7ff (Codex Soft Purple)
+    pub const EMERALD: Rgb = Rgb(78, 169, 111); // #4ea96f (Success / Green)
+    pub const CYAN: Rgb = Rgb(125, 207, 255); // #7dcfff (Blue / Token / Accent)
+    pub const ROSE: Rgb = Rgb(244, 63, 94); // #f43f5e (Error / Red)
+    pub const PURPLE: Rgb = Rgb(177, 167, 255); // #b1a7ff (Codex Soft Purple)
 
-    pub fn to_fg_ansi(&self) -> String {
+    pub fn to_fg_ansi(self) -> String {
         format!("\x1b[38;2;{};{};{}m", self.0, self.1, self.2)
     }
 
-    pub fn to_bg_ansi(&self) -> String {
+    pub fn to_bg_ansi(self) -> String {
         format!("\x1b[48;2;{};{};{}m", self.0, self.1, self.2)
     }
 }
@@ -114,19 +114,29 @@ pub struct TermCaps {
 impl TermCaps {
     pub fn probe() -> Self {
         let is_tty = std::io::stdout().is_terminal() || std::io::stderr().is_terminal();
-        
+
         let no_color = env::var("NO_COLOR").is_ok() || env::var("CI").is_ok();
         let colorterm = env::var("COLORTERM").unwrap_or_default();
         let term = env::var("TERM").unwrap_or_default();
-        
+
         let has_color = !no_color && (is_tty || env::var("FORCE_COLOR").is_ok());
-        let has_truecolor = has_color && (colorterm == "truecolor" || colorterm == "24bit" || term.contains("256color") || term.contains("xterm") || cfg!(windows));
-        
+        let has_truecolor = has_color
+            && (colorterm == "truecolor"
+                || colorterm == "24bit"
+                || term.contains("256color")
+                || term.contains("xterm")
+                || cfg!(windows));
+
         // On Windows Terminal or UTF-8 locales, enable rich unicode
         let lang = env::var("LANG").unwrap_or_default();
         let wt = env::var("WT_SESSION").is_ok();
-        let has_unicode = !no_color && (wt || lang.contains("UTF-8") || lang.contains("utf8") || !cfg!(windows) || env::var("TERM_PROGRAM").is_ok());
-        
+        let has_unicode = !no_color
+            && (wt
+                || lang.contains("UTF-8")
+                || lang.contains("utf8")
+                || !cfg!(windows)
+                || env::var("TERM_PROGRAM").is_ok());
+
         let columns = term_columns().unwrap_or(80);
 
         Self {

@@ -39,7 +39,10 @@ pub fn schedule_dag(tasks_json: &str) -> Result<String> {
 
     for task in &tasks {
         all_ids.insert(task.id.clone());
-        tier_map.insert(task.id.clone(), task.tier.clone().unwrap_or_else(|| "fast".to_string()));
+        tier_map.insert(
+            task.id.clone(),
+            task.tier.clone().unwrap_or_else(|| "fast".to_string()),
+        );
         in_degree.entry(task.id.clone()).or_insert(0);
         adj_list.entry(task.id.clone()).or_default();
     }
@@ -48,7 +51,10 @@ pub fn schedule_dag(tasks_json: &str) -> Result<String> {
         if let Some(deps) = &task.dependencies {
             for dep in deps {
                 if all_ids.contains(dep) {
-                    adj_list.entry(dep.clone()).or_default().push(task.id.clone());
+                    adj_list
+                        .entry(dep.clone())
+                        .or_default()
+                        .push(task.id.clone());
                     *in_degree.entry(task.id.clone()).or_insert(0) += 1;
                 }
             }
@@ -159,7 +165,10 @@ mod tests {
         assert_eq!(res.total_waves, 2);
         assert_eq!(res.waves[0], vec!["lint-runner", "type-safety"]);
         assert_eq!(res.waves[1], vec!["security-auditor"]);
-        assert_eq!(res.wave_groups[0].fast_tasks, vec!["lint-runner", "type-safety"]);
+        assert_eq!(
+            res.wave_groups[0].fast_tasks,
+            vec!["lint-runner", "type-safety"]
+        );
         assert_eq!(res.wave_groups[1].deep_tasks, vec!["security-auditor"]);
     }
 

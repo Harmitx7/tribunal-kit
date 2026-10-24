@@ -33,10 +33,9 @@ pub fn compress_context(file_path: &str, max_lines: Option<usize>) -> Result<Str
         }
 
         // Strip single line comments for code contexts
-        if is_code
-            && trimmed.starts_with("//") && !trimmed.contains("// VERIFY") {
-                continue;
-            }
+        if is_code && trimmed.starts_with("//") && !trimmed.contains("// VERIFY") {
+            continue;
+        }
 
         lines.push(line.to_string());
     }
@@ -45,7 +44,10 @@ pub fn compress_context(file_path: &str, max_lines: Option<usize>) -> Result<Str
         if lines.len() > limit {
             let omitted = lines.len() - limit;
             lines.truncate(limit);
-            lines.push(format!("// ... [Truncated {} lines for agent context optimization]", omitted));
+            lines.push(format!(
+                "// ... [Truncated {} lines for agent context optimization]",
+                omitted
+            ));
         }
     }
 

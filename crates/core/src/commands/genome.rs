@@ -93,7 +93,7 @@ pub fn generate_genome_svg(skills_dir: &str, repo_path: &str) -> Result<String> 
                 ));
             }
         }
-        
+
         // Conflicts edges
         for target in &node.conflicts_with {
             if let Some(&(x2, y2)) = node_positions.get(target) {
@@ -108,17 +108,17 @@ pub fn generate_genome_svg(skills_dir: &str, repo_path: &str) -> Result<String> 
     // Draw Nodes
     for node in &sorted_nodes {
         let &(x, y) = node_positions.get(&node.name).unwrap();
-        
+
         let color = match node.domain.as_str() {
             "frontend" => "#3b82f6", // blue
-            "backend" => "#10b981", // green
+            "backend" => "#10b981",  // green
             "database" => "#f59e0b", // yellow
-            "motion" => "#8b5cf6", // purple
-            "testing" => "#f43f5e", // rose
+            "motion" => "#8b5cf6",   // purple
+            "testing" => "#f43f5e",  // rose
             "security" => "#ef4444", // red
-            "devops" => "#06b6d4", // cyan
-            "meta" => "#94a3b8", // slate
-            _ => "#64748b", // slate
+            "devops" => "#06b6d4",   // cyan
+            "meta" => "#94a3b8",     // slate
+            _ => "#64748b",          // slate
         };
 
         svg.push_str(&format!(
@@ -138,7 +138,10 @@ pub fn generate_genome_svg(skills_dir: &str, repo_path: &str) -> Result<String> 
     let out_path = genome_dir.join("skill-genome.svg");
     fs::write(&out_path, &svg)?;
 
-    println!("{}", format!("🧬 Skill Genome generated at {}", out_path.display()).bright_magenta());
+    println!(
+        "{}",
+        format!("🧬 Skill Genome generated at {}", out_path.display()).bright_magenta()
+    );
 
     Ok(svg)
 }

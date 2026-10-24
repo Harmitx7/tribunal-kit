@@ -14,14 +14,18 @@ pub fn pollinate_skills(skills_dir: &str) -> Result<String> {
     let mut skill_files = Vec::new();
 
     // 1. Scan all SKILL.md files and extract traps
-    for entry in walkdir::WalkDir::new(dir).into_iter().filter_map(|e| e.ok()) {
+    for entry in walkdir::WalkDir::new(dir)
+        .into_iter()
+        .filter_map(|e| e.ok())
+    {
         if entry.file_name() == "SKILL.md" {
             let path = entry.path().to_path_buf();
             skill_files.push(path.clone());
-            
+
             if let Ok(content) = fs::read_to_string(&path) {
-                let domain = extract_primary_domain(&content).unwrap_or_else(|| "global".to_string());
-                
+                let domain =
+                    extract_primary_domain(&content).unwrap_or_else(|| "global".to_string());
+
                 let traps = extract_traps(&content);
                 let entry = domain_traps.entry(domain).or_default();
                 for trap in traps {
@@ -40,17 +44,17 @@ pub fn pollinate_skills(skills_dir: &str) -> Result<String> {
             let domain = extract_primary_domain(&content).unwrap_or_else(|| "global".to_string());
             if let Some(domain_pool) = domain_traps.get(&domain) {
                 let existing_traps = extract_traps(&content);
-                
+
                 // Find traps in the domain pool that are NOT in this skill
                 let mut new_traps: Vec<&String> = domain_pool
                     .iter()
                     .filter(|t| !existing_traps.contains(*t))
                     .collect();
-                
+
                 if !new_traps.is_empty() {
                     new_traps.sort(); // Deterministic ordering
                     let mut updated_content = content.clone();
-                    
+
                     // Append to the file
                     if !updated_content.contains("## Epistemic Traps") {
                         if !updated_content.ends_with('\n') {
@@ -70,8 +74,18 @@ pub fn pollinate_skills(skills_dir: &str) -> Result<String> {
 
                     if fs::write(&path, &updated_content).is_ok() {
                         updated_count += 1;
-                        let skill_name = path.parent().unwrap().file_name().unwrap().to_str().unwrap();
-                        reports.push(format!("Pollinated {} new traps into {}", new_traps.len(), skill_name));
+                        let skill_name = path
+                            .parent()
+                            .unwrap()
+                            .file_name()
+                            .unwrap()
+                            .to_str()
+                            .unwrap();
+                        reports.push(format!(
+                            "Pollinated {} new traps into {}",
+                            new_traps.len(),
+                            skill_name
+                        ));
                     }
                 }
             }

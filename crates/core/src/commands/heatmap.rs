@@ -1,25 +1,29 @@
-use anyhow::{Context, Result};
 use crate::commands::telemetry::TelemetrySummary;
+use anyhow::{Context, Result};
 
 pub fn generate_heatmap(repo_path: &str) -> Result<String> {
     let summary_json = crate::commands::telemetry::summarize_telemetry(repo_path)
         .context("Failed to get telemetry summary")?;
-    
-    let summary: TelemetrySummary = serde_json::from_str(&summary_json)
-        .context("Failed to parse telemetry summary")?;
+
+    let summary: TelemetrySummary =
+        serde_json::from_str(&summary_json).context("Failed to parse telemetry summary")?;
 
     let mut out = String::new();
-    out.push_str("\n\x1b[1m\x1b[36m━━━ Tribunal Agent Performance Heatmap ━━━━━━━━━━━━━━━━━━━\x1b[0m\n\n");
+    out.push_str(
+        "\n\x1b[1m\x1b[36m━━━ Tribunal Agent Performance Heatmap ━━━━━━━━━━━━━━━━━━━\x1b[0m\n\n",
+    );
 
     if summary.total_dispatches == 0 {
         out.push_str("  No telemetry data found. Run some tasks first.\n\n");
     } else {
-        out.push_str("  \x1b[1mAgent Name                | Dispatches | Success % | Avg Time \x1b[0m\n");
+        out.push_str(
+            "  \x1b[1mAgent Name                | Dispatches | Success % | Avg Time \x1b[0m\n",
+        );
         out.push_str("  --------------------------+------------+-----------+----------\n");
 
         let mut stats = summary.agent_stats;
         // Sort by dispatch count descending
-        stats.sort_by(|a, b| b.dispatch_count.cmp(&a.dispatch_count));
+        stats.sort_by_key(|b| std::cmp::Reverse(b.dispatch_count));
 
         for stat in stats {
             // Color code the success rate
@@ -48,7 +52,9 @@ pub fn generate_heatmap(repo_path: &str) -> Result<String> {
         }
     }
 
-    out.push_str("\n\x1b[1m\x1b[36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n");
+    out.push_str(
+        "\n\x1b[1m\x1b[36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\x1b[0m\n",
+    );
 
     // Wrap in JSON for the wrapper to parse if it wants, or just return raw text.
     let report_json = serde_json::json!({

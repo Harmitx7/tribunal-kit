@@ -1,8 +1,8 @@
 use anyhow::{Context, Result};
 use oxc_allocator::Allocator;
+use oxc_ast::ast::*;
 use oxc_parser::Parser;
 use oxc_span::SourceType;
-use oxc_ast::ast::*;
 use serde::Serialize;
 use std::fs;
 use std::path::Path;
@@ -45,10 +45,10 @@ pub fn extract_ast(file_path: &str) -> Result<String> {
     let source_text = fs::read_to_string(path).context("Failed to read file")?;
     let allocator = Allocator::default();
     let source_type = SourceType::from_path(path).unwrap_or_default();
-    
+
     // Parse the file
     let ret = Parser::new(&allocator, &source_text, source_type).parse();
-    
+
     let mut imports = Vec::new();
     let mut exports = Vec::new();
     let mut types = Vec::new();
@@ -58,15 +58,21 @@ pub fn extract_ast(file_path: &str) -> Result<String> {
     for comment in ret.trivias.comments() {
         let text = comment.1.source_text(&source_text);
         let upper = text.to_uppercase();
-        if upper.contains("VERIFY") || upper.contains("NOTE") || upper.contains("HACK") || upper.contains("CAUTION") || upper.contains("INVARIANT") || upper.contains("DO NOT") {
-                // Approximate line number by counting newlines before the comment
-                let prefix = &source_text[..comment.1.start as usize];
-                let line = prefix.chars().filter(|&c| c == '\n').count() + 1;
-                landmines.push(ExtractedComment {
-                    line,
-                    content: text.trim().to_string(),
-                });
-            }
+        if upper.contains("VERIFY")
+            || upper.contains("NOTE")
+            || upper.contains("HACK")
+            || upper.contains("CAUTION")
+            || upper.contains("INVARIANT")
+            || upper.contains("DO NOT")
+        {
+            // Approximate line number by counting newlines before the comment
+            let prefix = &source_text[..comment.1.start as usize];
+            let line = prefix.chars().filter(|&c| c == '\n').count() + 1;
+            landmines.push(ExtractedComment {
+                line,
+                content: text.trim().to_string(),
+            });
+        }
     }
 
     for stmt in &ret.program.body {
@@ -78,16 +84,16 @@ pub fn extract_ast(file_path: &str) -> Result<String> {
                     for spec in specs {
                         match spec {
                             ImportDeclarationSpecifier::ImportSpecifier(s) => {
-                                specifiers.push_str(&s.imported.name().to_string());
+                                specifiers.push_str(s.imported.name().as_ref());
                                 specifiers.push_str(", ");
                             }
                             ImportDeclarationSpecifier::ImportDefaultSpecifier(s) => {
-                                specifiers.push_str(&s.local.name.to_string());
+                                specifiers.push_str(s.local.name.as_ref());
                                 specifiers.push_str(", ");
                             }
                             ImportDeclarationSpecifier::ImportNamespaceSpecifier(s) => {
                                 specifiers.push_str("* as ");
-                                specifiers.push_str(&s.local.name.to_string());
+                                specifiers.push_str(s.local.name.as_ref());
                                 specifiers.push_str(", ");
                             }
                         }
@@ -146,35 +152,33 @@ pub fn extract_ast(file_path: &str) -> Result<String> {
                     }
                 }
             }
-            Statement::ExportDefaultDeclaration(export) => {
-                match &export.declaration {
-                    ExportDefaultDeclarationKind::FunctionDeclaration(func) => {
-                        if let Some(id) = &func.id {
-                            exports.push(ExtractedSymbol {
-                                kind: "function".to_string(),
-                                name: id.name.to_string(),
-                                signature: format!("default function {}", id.name),
-                            });
-                        } else {
-                            exports.push(ExtractedSymbol {
-                                kind: "function".to_string(),
-                                name: "default".to_string(),
-                                signature: "default function".to_string(),
-                            });
-                        }
+            Statement::ExportDefaultDeclaration(export) => match &export.declaration {
+                ExportDefaultDeclarationKind::FunctionDeclaration(func) => {
+                    if let Some(id) = &func.id {
+                        exports.push(ExtractedSymbol {
+                            kind: "function".to_string(),
+                            name: id.name.to_string(),
+                            signature: format!("default function {}", id.name),
+                        });
+                    } else {
+                        exports.push(ExtractedSymbol {
+                            kind: "function".to_string(),
+                            name: "default".to_string(),
+                            signature: "default function".to_string(),
+                        });
                     }
-                    ExportDefaultDeclarationKind::ClassDeclaration(cls) => {
-                        if let Some(id) = &cls.id {
-                            exports.push(ExtractedSymbol {
-                                kind: "class".to_string(),
-                                name: id.name.to_string(),
-                                signature: format!("default class {}", id.name),
-                            });
-                        }
-                    }
-                    _ => {}
                 }
-            }
+                ExportDefaultDeclarationKind::ClassDeclaration(cls) => {
+                    if let Some(id) = &cls.id {
+                        exports.push(ExtractedSymbol {
+                            kind: "class".to_string(),
+                            name: id.name.to_string(),
+                            signature: format!("default class {}", id.name),
+                        });
+                    }
+                }
+                _ => {}
+            },
             _ => {}
         }
     }

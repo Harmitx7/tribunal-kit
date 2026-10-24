@@ -102,7 +102,7 @@ logs/
 .cursorrules
 .windsurfrules
 
-skills/
+/skills/
 .agents/
 .agent_session.json
 .aider.conf.yml
