@@ -55,11 +55,12 @@ npm/packages/
 
 # Exclude env secrets
 .env
-.env.local
-.env.production
-.env.*.local
+.env*
+**/.env*
 *.pem
+**/*.pem
 *.key
+**/*.key
 
 # Exclude AI IDE Configuration (user-project files, not part of the kit)
 .gemini/
