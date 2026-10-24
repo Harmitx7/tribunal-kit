@@ -141,7 +141,7 @@
     "build": "npm run build:rust"
   },
   "devDependencies": {
-    "@receptron/laya": "^0.1.2",
+    "@receptron/laya": "^0.2.0",
     "eslint": "^9.1.1",
     "jest": "^30.4.2",
     "onnxruntime-node": "^1.22.0",
