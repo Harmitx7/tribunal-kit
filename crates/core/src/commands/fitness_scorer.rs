@@ -54,6 +54,17 @@ const CRITICAL_SECTIONS: &[&str] = &[
     "Verification-Before-Completion",
 ];
 
+const CRITICAL_SECTIONS_LOWER: &[&str] = &[
+    "## mandatory pre-flight context inspection",
+    "## activation boundaries",
+    "multi-pass execution protocol",
+    "technical architecture",
+    "edge-case",
+    "llm-specific traps",
+    "tribunal verification",
+    "verification-before-completion",
+];
+
 // ── Generic Filler Phrases (penalize these) ─────────────────────────────────
 
 const GENERIC_PHRASES: &[&str] = &[
@@ -119,25 +130,21 @@ fn levenshtein(a: &str, b: &str) -> usize {
         return m;
     }
 
-    let mut dp = vec![vec![0usize; n + 1]; m + 1];
-    for (i, row) in dp.iter_mut().enumerate().take(m + 1) {
-        row[0] = i;
-    }
-    for (j, item) in dp[0].iter_mut().enumerate().take(n + 1) {
-        *item = j;
-    }
+    let mut prev: Vec<usize> = (0..=n).collect();
+    let mut curr: Vec<usize> = vec![0; n + 1];
 
-    for i in 1..=m {
-        for j in 1..=n {
-            if a_chars[i - 1] == b_chars[j - 1] {
-                dp[i][j] = dp[i - 1][j - 1];
+    for (i, &ca) in a_chars.iter().enumerate() {
+        curr[0] = i + 1;
+        for (j, &cb) in b_chars.iter().enumerate() {
+            if ca == cb {
+                curr[j + 1] = prev[j];
             } else {
-                dp[i][j] =
-                    1 + std::cmp::min(dp[i - 1][j], std::cmp::min(dp[i][j - 1], dp[i - 1][j - 1]));
+                curr[j + 1] = 1 + std::cmp::min(prev[j + 1], std::cmp::min(curr[j], prev[j]));
             }
         }
+        std::mem::swap(&mut prev, &mut curr);
     }
-    dp[m][n]
+    prev[n]
 }
 
 fn normalized_similarity(a: &str, b: &str) -> f64 {
@@ -164,7 +171,12 @@ fn extract_frontmatter_field(content: &str, field: &str) -> Option<String> {
         if let Some(rest) = trimmed.strip_prefix(field) {
             let rest = rest.trim_start();
             if let Some(value) = rest.strip_prefix(':') {
-                return Some(value.trim().to_string());
+                return Some(
+                    value
+                        .trim()
+                        .trim_matches(|c| c == '"' || c == '\'')
+                        .to_string(),
+                );
             }
         }
     }
@@ -177,8 +189,9 @@ fn extract_body(content: &str) -> &str {
     }
     if let Some(end_idx) = content[3..].find("\n---") {
         let body_start = 3 + end_idx + 4; // skip past "\n---"
-        if body_start < content.len() {
-            return &content[body_start..];
+        if body_start <= content.len() {
+            let rem = &content[body_start..];
+            return rem.trim_start_matches(['\r', '\n']);
         }
     }
     content
@@ -191,8 +204,8 @@ fn compute_coverage(body: &str) -> (f64, Vec<String>) {
     let mut found = 0;
     let mut missing = Vec::new();
 
-    for section in CRITICAL_SECTIONS {
-        if body_lower.contains(&section.to_lowercase()) {
+    for (idx, &section) in CRITICAL_SECTIONS.iter().enumerate() {
+        if body_lower.contains(CRITICAL_SECTIONS_LOWER[idx]) {
             found += 1;
         } else {
             missing.push(format!("Missing section: {}", section));
@@ -209,10 +222,7 @@ fn compute_specificity(body: &str) -> f64 {
 
     let generic_count: usize = GENERIC_PHRASES
         .iter()
-        .map(|phrase| {
-            let phrase_lower = phrase.to_lowercase();
-            body_lower.matches(&phrase_lower).count()
-        })
+        .map(|phrase| body_lower.matches(phrase).count())
         .sum();
 
     let specific_count: usize = SPECIFIC_INDICATORS
@@ -269,12 +279,10 @@ fn compute_recency(content: &str) -> f64 {
         let parts: Vec<&str> = last_updated.split('-').collect();
         if parts.len() >= 3 {
             if let (Ok(year), Ok(month)) = (parts[0].parse::<u32>(), parts[1].parse::<u32>()) {
-                // Score based on how recent (2026 is current year)
-                let age_months = if year >= 2026 {
-                    (2026u32.saturating_sub(year)) * 12 + 9u32.saturating_sub(month)
-                } else {
-                    (2026 - year) * 12 + 9 - month
-                };
+                // Score based on how recent (2026 is current year, month 9)
+                let current_months = 2026u32 * 12 + 9;
+                let date_months = year.saturating_mul(12).saturating_add(month);
+                let age_months = current_months.saturating_sub(date_months);
                 return (1.0 - (age_months as f64 / 24.0)).clamp(0.0, 1.0);
             }
         }
@@ -410,8 +418,16 @@ pub fn score_all_skills(skills_dir: &str, repo_path: &str) -> Result<String> {
 
     // Phase 2: Score each skill with dedup awareness
     for (domain, skills) in &domain_contents {
-        for (i, (skill_name, content)) in skills.iter().enumerate() {
-            let body = extract_body(content);
+        let skill_data: Vec<(&str, &str, &str, String)> = skills
+            .iter()
+            .map(|(name, content)| {
+                let body = extract_body(content);
+                let sample: String = body.chars().take(500).collect();
+                (name.as_str(), content.as_str(), body, sample)
+            })
+            .collect();
+
+        for (i, (skill_name, content, body, a_sample)) in skill_data.iter().enumerate() {
             let total_tokens = content.len() / 4;
 
             let (coverage_score, mut recommendations) = compute_coverage(body);
@@ -422,15 +438,11 @@ pub fn score_all_skills(skills_dir: &str, repo_path: &str) -> Result<String> {
 
             // Compute dedup score: max similarity against all siblings in same domain
             let mut max_similarity: f64 = 0.0;
-            for (j, (_, other_content)) in skills.iter().enumerate() {
+            for (j, (_, _, _, b_sample)) in skill_data.iter().enumerate() {
                 if i == j {
                     continue;
                 }
-                let other_body = extract_body(other_content);
-                // Compare first 500 chars for efficiency
-                let a_sample: String = body.chars().take(500).collect();
-                let b_sample: String = other_body.chars().take(500).collect();
-                let sim = normalized_similarity(&a_sample, &b_sample);
+                let sim = normalized_similarity(a_sample, b_sample);
                 if sim > max_similarity {
                     max_similarity = sim;
                 }
@@ -455,7 +467,7 @@ pub fn score_all_skills(skills_dir: &str, repo_path: &str) -> Result<String> {
                 + 0.15 * section_depth;
 
             reports.push(FitnessReport {
-                skill_name: skill_name.clone(),
+                skill_name: skill_name.to_string(),
                 coverage_score,
                 specificity_score,
                 dedup_score,
@@ -777,14 +789,38 @@ Some basic content without any structured sections.
     #[test]
     fn test_recency_scoring() {
         let content_recent = "---\nlast-updated: 2026-09-13\n---\n# Test";
+        let content_quoted = "---\nlast-updated: \"2026-09-13\"\n---\n# Test";
         let content_old = "---\nlast-updated: 2024-01-01\n---\n# Test";
         let content_none = "---\nname: test\n---\n# Test";
+        let content_overflow_prevent = "---\nlast-updated: 2025-99-01\n---\n# Test";
 
         let recent = compute_recency(content_recent);
+        let quoted = compute_recency(content_quoted);
         let old = compute_recency(content_old);
         let none = compute_recency(content_none);
+        let overflow = compute_recency(content_overflow_prevent);
 
         assert!(recent > old, "Recent should score higher than old");
+        assert_eq!(
+            recent, quoted,
+            "Quoted date should parse identically to unquoted"
+        );
         assert_eq!(none, 0.3, "Missing date should default to 0.3");
+        assert!(
+            overflow <= 1.0,
+            "Malformed month should not panic or overflow"
+        );
+    }
+
+    #[test]
+    fn test_extract_body_crlf_and_lf() {
+        let lf_content = "---\nname: test\n---\n# Header\nContent";
+        assert_eq!(extract_body(lf_content), "# Header\nContent");
+
+        let crlf_content = "---\r\nname: test\r\n---\r\n# Header\r\nContent";
+        assert_eq!(extract_body(crlf_content), "# Header\r\nContent");
+
+        let no_frontmatter = "# Header\nContent";
+        assert_eq!(extract_body(no_frontmatter), "# Header\nContent");
     }
 }

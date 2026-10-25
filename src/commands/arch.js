@@ -14,9 +14,27 @@ const child_process_1 = require('child_process');
 const logger_1 = require('../utils/logger');
 const helpers_1 = require('../utils/helpers');
 
-async function cmdArch(flags, rawArgv, quiet = false) {
+async function cmdArch(flags = {}, rawArgv, quiet = false) {
+  if (typeof rawArgv === 'boolean') {
+    quiet = rawArgv;
+    rawArgv = process.argv;
+  } else if (!Array.isArray(rawArgv)) {
+    rawArgv = process.argv;
+  }
+
   const targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
-  const subCommand = rawArgv[3] || 'help';
+  let subCommand = 'help';
+  if (Array.isArray(rawArgv)) {
+    const archIdx = rawArgv.findIndex(a => a === 'arch');
+    if (archIdx !== -1 && rawArgv[archIdx + 1] && !rawArgv[archIdx + 1].startsWith('-')) {
+      subCommand = rawArgv[archIdx + 1];
+    } else if (rawArgv[3] && !rawArgv[3].startsWith('-')) {
+      subCommand = rawArgv[3];
+    }
+  }
+  if (flags.subcommand) {
+    subCommand = flags.subcommand;
+  }
 
   (0, helpers_1.banner)(quiet);
 

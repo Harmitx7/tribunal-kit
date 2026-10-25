@@ -26,10 +26,16 @@ pub fn generate_heatmap(repo_path: &str) -> Result<String> {
         stats.sort_by_key(|b| std::cmp::Reverse(b.dispatch_count));
 
         for stat in stats {
+            let success_pct = if stat.success_rate <= 1.0 {
+                stat.success_rate * 100.0
+            } else {
+                stat.success_rate
+            };
+
             // Color code the success rate
-            let success_color = if stat.success_rate >= 90.0 {
+            let success_color = if success_pct >= 90.0 {
                 "\x1b[32m" // Green
-            } else if stat.success_rate >= 70.0 {
+            } else if success_pct >= 70.0 {
                 "\x1b[33m" // Yellow
             } else {
                 "\x1b[31m" // Red
@@ -45,7 +51,7 @@ pub fn generate_heatmap(repo_path: &str) -> Result<String> {
                 stat.agent_name,
                 stat.dispatch_count,
                 success_color,
-                stat.success_rate,
+                success_pct,
                 stat.avg_duration_ms,
                 heatmap_bar
             ));
@@ -63,4 +69,52 @@ pub fn generate_heatmap(repo_path: &str) -> Result<String> {
     });
 
     Ok(serde_json::to_string(&report_json)?)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+
+    #[test]
+    fn test_generate_heatmap_empty_repo() {
+        let temp_dir = std::env::temp_dir().join(format!("heatmap_empty_{}", std::process::id()));
+        fs::create_dir_all(&temp_dir).unwrap();
+
+        let res_json = generate_heatmap(temp_dir.to_str().unwrap()).unwrap();
+        let res: serde_json::Value = serde_json::from_str(&res_json).unwrap();
+
+        assert_eq!(res["success"], true);
+        assert!(res["ansi_output"]
+            .as_str()
+            .unwrap()
+            .contains("No telemetry data found"));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_generate_heatmap_with_data() {
+        let temp_dir = std::env::temp_dir().join(format!("heatmap_data_{}", std::process::id()));
+        let telemetry_dir = temp_dir.join(".tribunal").join("telemetry");
+        fs::create_dir_all(&telemetry_dir).unwrap();
+
+        let event1 = r#"{"timestamp":"2026-10-25T10:00:00Z","agent_name":"backend-specialist","outcome":"COMPLETE","duration_ms":120}"#;
+        let event2 = r#"{"timestamp":"2026-10-25T10:01:00Z","agent_name":"backend-specialist","outcome":"FAILED","duration_ms":180}"#;
+        fs::write(
+            telemetry_dir.join("dispatch.jsonl"),
+            format!("{}\n{}\n", event1, event2),
+        )
+        .unwrap();
+
+        let res_json = generate_heatmap(temp_dir.to_str().unwrap()).unwrap();
+        let res: serde_json::Value = serde_json::from_str(&res_json).unwrap();
+
+        assert_eq!(res["success"], true);
+        let out = res["ansi_output"].as_str().unwrap();
+        assert!(out.contains("backend-specialist"));
+        assert!(out.contains("50.0%"));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
 }

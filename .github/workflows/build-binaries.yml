@@ -106,7 +106,7 @@ jobs:
 
       - name: Package Platform NPM Tarballs
         run: |
-          node scripts/package-cores.js --pack
+          node scripts/package-cores.js --pack --strict
 
       - name: Generate Checksums
         run: sha256sum tribunal-core-* > checksums.txt

@@ -142,3 +142,64 @@ export function cmdContextCompress(argv, quiet) {
 export function cmdOptimizeStep(argv, quiet) {
   return loadCommand('../commands/native.js', 'cmdOptimizeStep', argv, quiet);
 }
+
+export async function cmdImpactTier(argv, quiet) {
+  return loadCommand('../commands/native.js', 'cmdImpactTier', argv, quiet);
+}
+
+export async function cmdArch(flags, argv, quiet) {
+  return loadCommand('../commands/arch.js', 'cmdArch', flags, argv, quiet);
+}
+
+export async function cmdContract(flags, argv, quiet) {
+  return loadCommand('../commands/contract.js', 'cmdContract', flags, argv, quiet);
+}
+
+export async function cmdSdd(flags, argv, quiet) {
+  return loadCommand('../commands/sdd.js', 'cmdSdd', flags, argv, quiet);
+}
+
+export async function cmdSystem1(flags, argv, quiet) {
+  return loadCommand('../commands/system1.js', 'cmdSystem1', flags, argv, quiet);
+}
+
+export async function cmdReview(flags, argv, quiet) {
+  return loadCommand('../commands/review.js', 'cmdReview', flags, argv, quiet);
+}
+
+export async function cmdBrowse(flags, argv, quiet) {
+  return loadCommand('../commands/browse.js', 'cmdBrowse', flags, argv, quiet);
+}
+
+export async function cmdAuditWeb(flags, argv, quiet) {
+  return loadCommand('../commands/audit-web.js', 'cmdAuditWeb', flags, argv, quiet);
+}
+
+export async function cmdCompareWeb(flags, argv, quiet) {
+  return loadCommand('../commands/compare-web.js', 'cmdCompareWeb', flags, argv, quiet);
+}
+
+export async function cmdDeconstruct(flags, argv, quiet) {
+  return loadCommand('../commands/deconstruct.js', 'cmdDeconstruct', flags, argv, quiet);
+}
+
+export async function cmdHeal(flags, argv, quiet) {
+  return loadCommand('../commands/heal.js', 'cmdHeal', flags, argv, quiet);
+}
+
+export async function cmdSkillIntel(flags, argv, quiet) {
+  return loadCommand('../commands/skill-intelligence.js', 'cmdSkillIntel', flags, argv, quiet);
+}
+
+export async function cmdEvalOpt(flags, argv, quiet) {
+  return loadCommand('../commands/evalopt.js', 'cmdEvalOpt', flags, argv, quiet);
+}
+
+export async function cmdEvolve(flags, argv, quiet) {
+  return loadCommand('../commands/evolve.js', 'cmdEvolve', flags, argv, quiet);
+}
+
+export async function cmdRsi(flags, argv, quiet) {
+  return loadCommand('../commands/rsi.js', 'cmdRsi', flags, argv, quiet);
+}
+

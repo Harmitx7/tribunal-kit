@@ -8,10 +8,11 @@
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { execSync } = require('child_process');
 
 const SCRIPTS = path.join(__dirname, '../../.agent/scripts');
-const TMP = path.join(__dirname, 'tmp_redteam');
+const TMP = path.join(os.tmpdir(), `tribunal_tmp_redteam_${process.pid}`);
 
 function run(script, args = '') {
   return execSync(`node "${path.join(SCRIPTS, script)}" ${args}`, {

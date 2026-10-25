@@ -1393,10 +1393,14 @@ async function handleRequest(req) {
       }
 
       if (toolName === 'get_ast_context') {
-        const targetPath = req.params?.arguments?.targetPath || process.cwd();
+        const rawTarget = req.params?.arguments?.targetPath || process.cwd();
+        if (typeof rawTarget !== 'string' || rawTarget.startsWith('-')) {
+          throw new RpcError(-32602, 'Invalid targetPath: argument cannot be an option flag');
+        }
         try {
+          const targetPath = assertWithinRoot(process.cwd(), rawTarget);
           const result = spawnSync(
-            'node',
+            process.execPath,
             [path.join(__dirname, '../scripts/build-graph.js'), targetPath],
             {
               encoding: 'utf8',
@@ -1409,6 +1413,7 @@ async function handleRequest(req) {
           return { content: [{ type: 'text', text: `Failed to query graph: ${e.message}` }] };
         }
       }
+
 
       if (toolName === 'validate_payload') {
         const payloadStr = req.params?.arguments?.payload;
@@ -1603,12 +1608,19 @@ async function handleRequest(req) {
         const name = req.params?.arguments?.name;
         if (!name || typeof name !== 'string')
           throw new RpcError(-32602, 'Missing or invalid argument: name (string)');
-        const sanitizedName = path.basename(name);
-        const agentsDir = path.resolve(getAgentDir(), 'agents');
-        const agentPath = path.resolve(agentsDir, `${sanitizedName}.md`);
-        // Path containment: ensure resolved path stays within agents directory
-        if (!agentPath.startsWith(agentsDir))
+        let sanitizedName;
+        try {
+          sanitizedName = validateResourceId(name);
+        } catch {
           throw new RpcError(-32602, 'Invalid agent name: path traversal detected');
+        }
+        const agentsDir = path.resolve(getAgentDir(), 'agents');
+        let agentPath;
+        try {
+          agentPath = assertWithinRoot(agentsDir, `${sanitizedName}.md`);
+        } catch {
+          throw new RpcError(-32602, 'Invalid agent name: path traversal detected');
+        }
         if (!fs.existsSync(agentPath))
           return { content: [{ type: 'text', text: `Agent '${sanitizedName}' not found.` }] };
         const text = fs.readFileSync(agentPath, 'utf8');
@@ -1634,17 +1646,25 @@ async function handleRequest(req) {
         const name = req.params?.arguments?.name;
         if (!name || typeof name !== 'string')
           throw new RpcError(-32602, 'Missing or invalid argument: name (string)');
-        const sanitizedName = path.basename(name);
-        const skillsDir = path.resolve(getAgentDir(), 'skills');
-        const skillPath = path.resolve(skillsDir, sanitizedName, 'SKILL.md');
-        // Path containment: ensure resolved path stays within skills directory
-        if (!skillPath.startsWith(skillsDir))
+        let sanitizedName;
+        try {
+          sanitizedName = validateResourceId(name);
+        } catch {
           throw new RpcError(-32602, 'Invalid skill name: path traversal detected');
+        }
+        const skillsDir = path.resolve(getAgentDir(), 'skills');
+        let skillPath;
+        try {
+          skillPath = assertWithinRoot(skillsDir, path.join(sanitizedName, 'SKILL.md'));
+        } catch {
+          throw new RpcError(-32602, 'Invalid skill name: path traversal detected');
+        }
         if (!fs.existsSync(skillPath))
           return { content: [{ type: 'text', text: `Skill '${sanitizedName}' not found.` }] };
         const text = fs.readFileSync(skillPath, 'utf8');
         return { content: [{ type: 'text', text: stripBoilerplate(text) }] };
       }
+
 
       if (toolName === 'get_sparse_context') {
         const task = req.params?.arguments?.task;
@@ -1783,10 +1803,14 @@ async function handleRequest(req) {
       }
 
       if (toolName === 'query_semantic_graph') {
-        const targetPath = req.params?.arguments?.targetPath || process.cwd();
+        const rawTarget = req.params?.arguments?.targetPath || process.cwd();
+        if (typeof rawTarget !== 'string' || rawTarget.startsWith('-')) {
+          throw new RpcError(-32602, 'Invalid targetPath: argument cannot be an option flag');
+        }
         try {
+          const targetPath = assertWithinRoot(process.cwd(), rawTarget);
           const result = spawnSync(
-            'node',
+            process.execPath,
             [path.join(__dirname, '../scripts/build-graph.js'), targetPath],
             {
               encoding: 'utf8',
@@ -1836,7 +1860,9 @@ async function handleRequest(req) {
 
         try {
           const projectRoot = process.cwd();
+          assertWithinRoot(projectRoot, file);
           const contractEnginePath = path.join(getAgentDir(), 'scripts', 'contract_engine.js');
+
           if (!require('fs').existsSync(contractEnginePath)) {
             return {
               content: [

@@ -22,6 +22,7 @@ const DEFAULT_SKIP_DIRS = new Set([
   'build',
   '.next',
   '.agent',
+  '.agents',
   '__pycache__',
   '.venv',
   'venv',
@@ -32,6 +33,7 @@ const DEFAULT_SKIP_DIRS = new Set([
   '.output',
   'scratch',
   'target',
+  'benchmarks',
 ]);
 
 // ── Default Source Extensions ───────────────────────────────────────────────

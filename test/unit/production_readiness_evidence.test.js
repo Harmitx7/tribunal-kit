@@ -232,28 +232,24 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
   });
 
   describe('MCP Server — path traversal defense', () => {
-    test('get_tribunal_agent sanitizes path traversal attempts', async () => {
+    test('get_tribunal_agent rejects path traversal attempts with security RpcError', async () => {
       const req = {
         jsonrpc: '2.0',
         id: 1,
         method: 'tools/call',
         params: { name: 'get_tribunal_agent', arguments: { name: '../../etc/passwd' } },
       };
-      // Should not throw a path traversal error — path.basename strips traversal
-      // Should return "not found" because "passwd" is not an agent
-      const result = await handleRequest(req);
-      expect(result.content[0].text).toContain('not found');
+      await expect(handleRequest(req)).rejects.toThrow(/Invalid agent name: path traversal detected/);
     });
 
-    test('get_tribunal_skill sanitizes path traversal attempts', async () => {
+    test('get_tribunal_skill rejects path traversal attempts with security RpcError', async () => {
       const req = {
         jsonrpc: '2.0',
         id: 1,
         method: 'tools/call',
         params: { name: 'get_tribunal_skill', arguments: { name: '../../../etc/shadow' } },
       };
-      const result = await handleRequest(req);
-      expect(result.content[0].text).toContain('not found');
+      await expect(handleRequest(req)).rejects.toThrow(/Invalid skill name: path traversal detected/);
     });
   });
 

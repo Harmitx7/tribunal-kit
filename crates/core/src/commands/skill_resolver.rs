@@ -4,8 +4,7 @@
 //! graph from `co-requires`, `supersedes`, and `conflicts-with` metadata, then resolves
 //! the minimal, deduplicated skill set for a given task.
 //!
-//! Resolution Algorithm:
-//! 1. Parse all SKILL.md frontmatter in skills_dir
+//! Resoluti
 //! 2. Build adjacency graph from co-requires edges
 //! 3. For each requested skill:
 //!    a. Check if a pro-tier skill supersedes it → swap
@@ -207,7 +206,7 @@ fn detect_domain_from_name(name: &str) -> String {
 
 // ── Build Skill Graph ───────────────────────────────────────────────────────
 
-pub fn build_skill_graph(skills_dir: &str) -> Result<String> {
+pub fn build_skill_graph_internal(skills_dir: &str) -> Result<SkillGraph> {
     let skills_path = Path::new(skills_dir);
     if !skills_path.exists() || !skills_path.is_dir() {
         anyhow::bail!("Skills directory not found: {}", skills_dir);
@@ -244,24 +243,26 @@ pub fn build_skill_graph(skills_dir: &str) -> Result<String> {
         }
     }
 
-    let graph = SkillGraph {
+    Ok(SkillGraph {
         success: true,
         total_skills: nodes.len(),
         nodes,
         edges_co_requires,
         edges_supersedes,
         edges_conflicts,
-    };
+    })
+}
 
+pub fn build_skill_graph(skills_dir: &str) -> Result<String> {
+    let graph = build_skill_graph_internal(skills_dir)?;
     Ok(serde_json::to_string_pretty(&graph)?)
 }
 
 // ── Resolve Skills ──────────────────────────────────────────────────────────
 
 pub fn resolve_skills(skills_dir: &str, requested_skills: &[String]) -> Result<String> {
-    // Build the full graph first
-    let graph_json = build_skill_graph(skills_dir)?;
-    let graph: SkillGraph = serde_json::from_str(&graph_json)?;
+    // Build the full graph directly without JSON serialize/deserialize overhead
+    let graph = build_skill_graph_internal(skills_dir)?;
 
     // Index nodes by name for fast lookup
     let mut node_map: HashMap<String, &SkillNode> = HashMap::new();
@@ -306,13 +307,22 @@ pub fn resolve_skills(skills_dir: &str, requested_skills: &[String]) -> Result<S
     while let Some(current) = queue.pop_front() {
         if let Some(node) = node_map.get(&current) {
             for dep in &node.co_requires {
-                if resolved_set.insert(dep.clone()) {
-                    // Check if this dep exists in the graph
-                    if node_map.contains_key(dep) {
-                        queue.push_back(dep.clone());
-                        auto_loaded.push(dep.clone());
+                let target_dep = if let Some(pro) = supersedes_map.get(dep) {
+                    if node_map.contains_key(pro) {
+                        if !superseded.iter().any(|s| s.starts_with(dep)) {
+                            superseded.push(format!("{} → superseded by {}", dep, pro));
+                        }
+                        pro
+                    } else {
+                        dep
                     }
-                    // If dep doesn't exist, silently skip (lenient mode)
+                } else {
+                    dep
+                };
+
+                if node_map.contains_key(target_dep) && resolved_set.insert(target_dep.clone()) {
+                    queue.push_back(target_dep.clone());
+                    auto_loaded.push(target_dep.clone());
                 }
             }
         }
@@ -513,6 +523,71 @@ mod tests {
         assert_eq!(graph.total_skills, 3);
         assert!(graph.edges_co_requires >= 1);
         assert!(graph.edges_supersedes >= 1);
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_ghost_dependency_filtering() {
+        let temp_dir = std::env::temp_dir().join(format!("resolver_ghost_{}", std::process::id()));
+        fs::create_dir_all(&temp_dir).unwrap();
+
+        create_skill(
+            &temp_dir,
+            "skill-with-ghost",
+            "name: skill-with-ghost\nskills:\n  - non-existent-ghost-skill",
+        );
+
+        let result = resolve_skills(
+            temp_dir.to_str().unwrap(),
+            &["skill-with-ghost".to_string()],
+        )
+        .unwrap();
+        let resolved: ResolvedSkillSet = serde_json::from_str(&result).unwrap();
+
+        assert!(resolved.success);
+        assert_eq!(resolved.total_skills, 1);
+        assert!(!resolved
+            .auto_loaded
+            .contains(&"non-existent-ghost-skill".to_string()));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_transitive_superseding() {
+        let temp_dir =
+            std::env::temp_dir().join(format!("resolver_trans_super_{}", std::process::id()));
+        fs::create_dir_all(&temp_dir).unwrap();
+
+        create_skill(
+            &temp_dir,
+            "caller-skill",
+            "name: caller-skill\nskills:\n  - old-lib",
+        );
+        create_skill(
+            &temp_dir,
+            "old-lib",
+            "name: old-lib\ndescription: Old library",
+        );
+        create_skill(
+            &temp_dir,
+            "new-lib",
+            "name: new-lib\nrouting:\n  tier: pro\n  supersedes: old-lib",
+        );
+
+        let result =
+            resolve_skills(temp_dir.to_str().unwrap(), &["caller-skill".to_string()]).unwrap();
+        let resolved: ResolvedSkillSet = serde_json::from_str(&result).unwrap();
+
+        assert!(resolved.success);
+        assert_eq!(resolved.total_skills, 2);
+        assert!(resolved.auto_loaded.contains(&"new-lib".to_string()));
+        assert!(!resolved.auto_loaded.contains(&"old-lib".to_string()));
+        assert!(resolved
+            .superseded
+            .iter()
+            .any(|s| s.contains("old-lib → superseded by new-lib")));
 
         let _ = fs::remove_dir_all(&temp_dir);
     }

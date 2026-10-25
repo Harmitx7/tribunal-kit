@@ -95,6 +95,8 @@ logs/
 .agent/history/snapshots/
 .agent/evolution/wal/
 *.pen
+.tribunal/
+**/.tribunal/
 
 # AI IDE Configuration
 .gemini/

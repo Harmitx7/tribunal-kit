@@ -80,3 +80,52 @@ pub fn render_leaderboard(skills_dir: &str, repo_path: &str, limit: usize) -> Re
 
     Ok(out)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+
+    #[test]
+    fn test_render_leaderboard_with_skills() {
+        let temp_dir =
+            std::env::temp_dir().join(format!("leaderboard_test_{}", std::process::id()));
+        let skills_dir = temp_dir.join("skills");
+        let skill1 = skills_dir.join("leader-skill");
+        fs::create_dir_all(&skill1).unwrap();
+
+        let md = r#"---
+name: leader-skill
+routing:
+  domain: frontend
+---
+# Leader Skill
+"#;
+        fs::write(skill1.join("SKILL.md"), md).unwrap();
+
+        let table = render_leaderboard(skills_dir.to_str().unwrap(), temp_dir.to_str().unwrap(), 5)
+            .unwrap();
+        assert!(table.contains("Tribunal Kit Skill Leaderboard"));
+        assert!(table.contains("Total Skills:"));
+        assert!(table.contains("Avg Fitness:"));
+        assert!(table.contains("leader-skill"));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_render_leaderboard_empty_dir() {
+        let temp_dir =
+            std::env::temp_dir().join(format!("leaderboard_empty_{}", std::process::id()));
+        let skills_dir = temp_dir.join("skills");
+        fs::create_dir_all(&skills_dir).unwrap();
+
+        let table = render_leaderboard(skills_dir.to_str().unwrap(), temp_dir.to_str().unwrap(), 5)
+            .unwrap();
+        assert!(table.contains("Tribunal Kit Skill Leaderboard"));
+        assert!(table.contains("Total Skills:"));
+        assert!(table.contains("Avg Fitness:"));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+}

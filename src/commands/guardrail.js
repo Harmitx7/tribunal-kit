@@ -17,8 +17,17 @@ exports.cmdGuardrail = cmdGuardrail;
 const fs = require('fs');
 const path = require('path');
 const logger_1 = require('../utils/logger');
+const { assertWithinRoot } = require('../security/boundary');
 
-async function cmdGuardrail(flags, argv, quiet) {
+
+async function cmdGuardrail(flags = {}, argv, quiet = false) {
+  if (typeof argv === 'boolean') {
+    quiet = argv;
+    argv = process.argv;
+  } else if (!Array.isArray(argv)) {
+    argv = process.argv;
+  }
+
   const projectRoot = flags.path || process.cwd();
   const agentDir = path.join(projectRoot, '.agent');
 
@@ -71,13 +80,20 @@ async function cmdGuardrail(flags, argv, quiet) {
   let filesToCheck = [];
 
   if (fileArg) {
-    const resolved = path.resolve(fileArg);
+    let resolved;
+    try {
+      resolved = assertWithinRoot(projectRoot, fileArg);
+    } catch (e) {
+      (0, logger_1.err)(e.message);
+      process.exit(1);
+    }
     if (!fs.existsSync(resolved)) {
       (0, logger_1.err)(`File not found: ${fileArg}`);
       process.exit(1);
     }
     filesToCheck.push(resolved);
   } else {
+
     // Scan all .agent/ markdown files
     filesToCheck = walkAgentFiles(agentDir);
   }

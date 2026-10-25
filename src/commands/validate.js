@@ -18,13 +18,6 @@ async function cmdValidate(flags, quiet = false) {
   const g = GLYPHS;
   const tree = new ActionTree();
 
-  if (!fs.existsSync(agentDir)) {
-    console.error(
-      `  ${color(RGB.ROSE, g.failure)} ${bold('No .agent/ directory found.')} Run ${color(RGB.CYAN, 'tk init')} first.`,
-    );
-    process.exit(1);
-  }
-
   const fileToValidate = flags.file || flags.target;
 
   if (fileToValidate) {
@@ -56,6 +49,13 @@ async function cmdValidate(flags, quiet = false) {
       console.error(`  ${color(RGB.ROSE, g.failure)} ${bold('Validation failed:')} ${err.message}`);
       process.exit(1);
     }
+  }
+
+  if (!fs.existsSync(agentDir)) {
+    console.error(
+      `  ${color(RGB.ROSE, g.failure)} ${bold('No .agent/ directory found.')} Run ${color(RGB.CYAN, 'tk init')} first.`,
+    );
+    process.exit(1);
   }
 
   // General .agent structural validation

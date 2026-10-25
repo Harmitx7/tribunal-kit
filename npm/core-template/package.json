@@ -1,6 +1,12 @@
 {
   "name": "@tribunal-kit/core-${PLATFORM}-${ARCH}",
   "version": "9.3.0",
+  "license": "MIT",
+  "description": "Precompiled native Rust binary of Tribunal Core for ${PLATFORM} (${ARCH})",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Harmitx7/tribunal-kit.git"
+  },
   "os": [
     "${PLATFORM}"
   ],
@@ -8,6 +14,9 @@
     "${ARCH}"
   ],
   "main": "bin/tribunal-core${EXT}",
+  "bin": {
+    "tribunal-core": "bin/tribunal-core${EXT}"
+  },
   "publishConfig": {
     "access": "public"
   }

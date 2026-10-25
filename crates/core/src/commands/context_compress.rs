@@ -19,10 +19,32 @@ pub fn compress_context(file_path: &str, max_lines: Option<usize>) -> Result<Str
         .with_context(|| format!("Failed to read file for compression: {}", file_path))?;
 
     let original_bytes = raw_content.len();
-    let is_code = file_path.ends_with(".ts")
-        || file_path.ends_with(".js")
-        || file_path.ends_with(".rs")
-        || file_path.ends_with(".json");
+    let is_code = path.extension().is_some_and(|ext| {
+        let e = ext.to_string_lossy().to_ascii_lowercase();
+        matches!(
+            e.as_str(),
+            "ts" | "tsx"
+                | "js"
+                | "jsx"
+                | "mjs"
+                | "cjs"
+                | "rs"
+                | "json"
+                | "go"
+                | "cs"
+                | "java"
+                | "cpp"
+                | "c"
+                | "h"
+                | "hpp"
+                | "swift"
+                | "kt"
+                | "vue"
+                | "svelte"
+                | "scala"
+                | "dart"
+        )
+    });
 
     let mut lines: Vec<String> = Vec::new();
 
@@ -140,6 +162,42 @@ mod tests {
         assert!(res.success);
         assert_eq!(res.original_bytes, 0);
         assert_eq!(res.compression_ratio, 1.0);
+        let _ = std::fs::remove_file(file_path);
+    }
+
+    #[test]
+    fn test_compress_context_tsx() {
+        let file_path =
+            std::env::temp_dir().join(format!("tribunal-compress-tsx-{}.tsx", std::process::id()));
+        let mut file = File::create(&file_path).unwrap();
+        writeln!(file, "// Strip tsx comment").unwrap();
+        writeln!(file, "export const Component = () => <div>Hello</div>;").unwrap();
+        drop(file);
+
+        let res_str = compress_context(file_path.to_str().unwrap(), None).unwrap();
+        let res: CompressResult = serde_json::from_str(&res_str).unwrap();
+
+        assert!(res.success);
+        assert!(!res.compressed_content.contains("// Strip tsx comment"));
+        assert!(res.compressed_content.contains("Component"));
+        let _ = std::fs::remove_file(file_path);
+    }
+
+    #[test]
+    fn test_compress_context_case_insensitive_extension() {
+        let file_path =
+            std::env::temp_dir().join(format!("tribunal-compress-upper-{}.TS", std::process::id()));
+        let mut file = File::create(&file_path).unwrap();
+        writeln!(file, "// Comment in uppercase extension").unwrap();
+        writeln!(file, "const x: number = 42;").unwrap();
+        drop(file);
+
+        let res_str = compress_context(file_path.to_str().unwrap(), None).unwrap();
+        let res: CompressResult = serde_json::from_str(&res_str).unwrap();
+
+        assert!(res.success);
+        assert!(!res.compressed_content.contains("// Comment in uppercase extension"));
+        assert!(res.compressed_content.contains("const x: number = 42;"));
         let _ = std::fs::remove_file(file_path);
     }
 }

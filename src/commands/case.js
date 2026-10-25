@@ -10,7 +10,14 @@ const fs_1 = __importDefault(require('fs'));
 const path_1 = __importDefault(require('path'));
 const logger_1 = require('../utils/logger');
 const helpers_1 = require('../utils/helpers');
-async function cmdCase(flags, processArgs, quiet = false) {
+async function cmdCase(flags = {}, processArgs, quiet = false) {
+  if (typeof processArgs === 'boolean') {
+    quiet = processArgs;
+    processArgs = process.argv;
+  } else if (!Array.isArray(processArgs)) {
+    processArgs = process.argv;
+  }
+
   const targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
   const agentDest = path_1.default.join(targetDir, '.agent');
   if (!fs_1.default.existsSync(agentDest)) {

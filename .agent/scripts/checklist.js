@@ -80,7 +80,7 @@ function runCheck(label, cmd, cwd) {
     execFileSync(executable, cmd.slice(1), {
       cwd,
       stdio: 'pipe',
-      timeout: 120000,
+      timeout: 300000,
       encoding: 'utf8',
       shell: isWindows,
     });
@@ -93,7 +93,7 @@ function runCheck(label, cmd, cwd) {
       return true; // Don't block on tools that aren't installed
     }
     if (err.killed) {
-      trackFail(label, ms, 'timed out after 120s');
+      trackFail(label, ms, 'timed out after 300s');
       return false;
     }
     const output = ((err.stdout || '') + (err.stderr || '')).trim();

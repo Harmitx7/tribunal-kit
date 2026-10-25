@@ -75,6 +75,27 @@ pub fn extract_ast(file_path: &str) -> Result<String> {
         }
     }
 
+    // Resilient fallback: If parsing errors prevented comment trivia recovery,
+    // scan source lines directly so critical landmines/invariants are never dropped.
+    if landmines.is_empty() {
+        for (idx, line) in source_text.lines().enumerate() {
+            let upper = line.to_uppercase();
+            if (line.contains("//") || line.contains("/*") || line.trim_start().starts_with('*'))
+                && (upper.contains("VERIFY")
+                    || upper.contains("NOTE")
+                    || upper.contains("HACK")
+                    || upper.contains("CAUTION")
+                    || upper.contains("INVARIANT")
+                    || upper.contains("DO NOT"))
+            {
+                landmines.push(ExtractedComment {
+                    line: idx + 1,
+                    content: line.trim().to_string(),
+                });
+            }
+        }
+    }
+
     for stmt in &ret.program.body {
         match stmt {
             Statement::ImportDeclaration(import) => {
@@ -193,4 +214,157 @@ pub fn extract_ast(file_path: &str) -> Result<String> {
     };
 
     Ok(serde_json::to_string(&result)?)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::Write;
+
+    #[test]
+    fn test_extract_ast_full_typescript() {
+        let temp_dir = std::env::temp_dir().join(format!("ast_test_{}", std::process::id()));
+        fs::create_dir_all(&temp_dir).unwrap();
+        let file_path = temp_dir.join("sample.ts");
+
+        let code = r#"
+            // NOTE: Initial setup comment
+            import defaultHelper, { namedA, namedB as aliasB } from "./helper";
+            import * as utils from "./utils";
+
+            // VERIFY: Ensure invariant holds
+            export function processTask(id: string): boolean {
+                return true;
+            }
+
+            // HACK: Temporary workaround
+            export const MAX_RETRY = 5;
+
+            // CAUTION: Thread safety
+            export class WorkerPool {}
+
+            export default function runMain() {}
+
+            // INVARIANT: Positive numbers only
+            export type UserId = string | number;
+
+            // DO NOT: Remove this interface
+            export interface ConfigOptions {
+                timeout: number;
+            }
+        "#;
+
+        let mut f = fs::File::create(&file_path).unwrap();
+        f.write_all(code.as_bytes()).unwrap();
+        drop(f);
+
+        let res_json = extract_ast(file_path.to_str().unwrap()).unwrap();
+        let res: serde_json::Value = serde_json::from_str(&res_json).unwrap();
+
+        assert_eq!(res["success"], true);
+        assert_eq!(res["file_path"], file_path.to_str().unwrap());
+
+        // Verify imports
+        let imports = res["imports"].as_array().unwrap();
+        assert_eq!(imports.len(), 2);
+        assert!(imports.iter().any(|i| i["source"] == "./helper"));
+        assert!(imports.iter().any(|i| i["source"] == "./utils"));
+
+        // Verify exports
+        let exports = res["exports"].as_array().unwrap();
+        assert!(exports
+            .iter()
+            .any(|e| e["name"] == "processTask" && e["kind"] == "function"));
+        assert!(exports
+            .iter()
+            .any(|e| e["name"] == "MAX_RETRY" && e["kind"] == "variable"));
+        assert!(exports
+            .iter()
+            .any(|e| e["name"] == "WorkerPool" && e["kind"] == "class"));
+        assert!(exports
+            .iter()
+            .any(|e| e["name"] == "runMain" && e["kind"] == "function"));
+
+        // Verify types
+        let types = res["types"].as_array().unwrap();
+        assert!(types
+            .iter()
+            .any(|t| t["name"] == "UserId" && t["kind"] == "type"));
+        assert!(types
+            .iter()
+            .any(|t| t["name"] == "ConfigOptions" && t["kind"] == "interface"));
+
+        // Verify landmines
+        let landmines = res["landmines"].as_array().unwrap();
+        assert_eq!(landmines.len(), 6);
+        assert!(landmines
+            .iter()
+            .any(|l| l["content"].as_str().unwrap().contains("NOTE:")));
+        assert!(landmines
+            .iter()
+            .any(|l| l["content"].as_str().unwrap().contains("VERIFY:")));
+        assert!(landmines
+            .iter()
+            .any(|l| l["content"].as_str().unwrap().contains("HACK:")));
+        assert!(landmines
+            .iter()
+            .any(|l| l["content"].as_str().unwrap().contains("CAUTION:")));
+        assert!(landmines
+            .iter()
+            .any(|l| l["content"].as_str().unwrap().contains("INVARIANT:")));
+        assert!(landmines
+            .iter()
+            .any(|l| l["content"].as_str().unwrap().contains("DO NOT:")));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_extract_ast_empty_file() {
+        let temp_dir = std::env::temp_dir().join(format!("ast_test_empty_{}", std::process::id()));
+        fs::create_dir_all(&temp_dir).unwrap();
+        let file_path = temp_dir.join("empty.js");
+        fs::write(&file_path, "").unwrap();
+
+        let res_json = extract_ast(file_path.to_str().unwrap()).unwrap();
+        let res: serde_json::Value = serde_json::from_str(&res_json).unwrap();
+
+        assert_eq!(res["success"], true);
+        assert_eq!(res["imports"].as_array().unwrap().len(), 0);
+        assert_eq!(res["exports"].as_array().unwrap().len(), 0);
+        assert_eq!(res["types"].as_array().unwrap().len(), 0);
+        assert_eq!(res["landmines"].as_array().unwrap().len(), 0);
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_extract_ast_missing_file() {
+        let res = extract_ast("non_existent_file_ast_xyz.ts");
+        assert!(res.is_err());
+        assert!(res.unwrap_err().to_string().contains("File not found"));
+    }
+
+    #[test]
+    fn test_extract_ast_syntax_error_resilience() {
+        let temp_dir = std::env::temp_dir().join(format!("ast_test_syntax_{}", std::process::id()));
+        fs::create_dir_all(&temp_dir).unwrap();
+        let file_path = temp_dir.join("broken.js");
+        fs::write(
+            &file_path,
+            "function broken( { let x = ; // VERIFY: still alive",
+        )
+        .unwrap();
+
+        let res_json = extract_ast(file_path.to_str().unwrap()).unwrap();
+        let res: serde_json::Value = serde_json::from_str(&res_json).unwrap();
+
+        assert_eq!(res["success"], true);
+        let landmines = res["landmines"].as_array().unwrap();
+        assert!(landmines
+            .iter()
+            .any(|l| l["content"].as_str().unwrap().contains("VERIFY:")));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
 }

@@ -166,8 +166,11 @@ pub fn load_index(agent_dir: &Path) -> Result<MemoryIndex> {
     }
     let content = std::fs::read_to_string(&path)
         .with_context(|| format!("Failed to read memory index: {}", path.display()))?;
-    let index: MemoryIndex = serde_json::from_str(&content)
+    let mut index: MemoryIndex = serde_json::from_str(&content)
         .with_context(|| "Memory index schema validation failed — file may be corrupted")?;
+    if index.next_id == 0 {
+        index.next_id = index.entries.iter().map(|e| e.id).max().unwrap_or(0) + 1;
+    }
     Ok(index)
 }
 
@@ -199,32 +202,23 @@ fn type_priority(memory_type: &MemoryType) -> f64 {
     }
 }
 
-fn compute_score(entry: &MemoryEntry, query_lower: &str, corpus: &[MemoryEntry]) -> f64 {
-    let content_lower = entry.content.to_lowercase();
-    let query_words: Vec<&str> = query_lower
-        .split_whitespace()
-        .filter(|w| w.len() > 2)
-        .collect();
-    if query_words.is_empty() {
+fn compute_score_with_context(
+    entry: &MemoryEntry,
+    content_lower: &str,
+    query_lower: &str,
+    query_words_idf: &[(&str, f64)],
+    avgdl: f64,
+) -> f64 {
+    if query_words_idf.is_empty() {
         return 0.0;
     }
 
     let mut relevance = 0.0;
     let k1 = 1.2;
     let b = 0.75;
-
-    let total_len: usize = corpus.iter().map(|e| e.content.len()).sum();
-    let mut avgdl = if corpus.is_empty() {
-        100.0
-    } else {
-        (total_len as f64) / (corpus.len() as f64)
-    };
-    if avgdl == 0.0 {
-        avgdl = 100.0;
-    }
     let dl = content_lower.len() as f64;
 
-    for word in &query_words {
+    for &(word, idf) in query_words_idf {
         let term_freq = content_lower.matches(word).count() as f64;
         let tag_match = entry.tags.iter().any(|t| t.to_lowercase().contains(word));
         if term_freq == 0.0 && !tag_match {
@@ -232,13 +226,6 @@ fn compute_score(entry: &MemoryEntry, query_lower: &str, corpus: &[MemoryEntry])
         }
 
         let tf = term_freq + if tag_match { 2.0 } else { 0.0 };
-
-        let doc_freq = corpus
-            .iter()
-            .filter(|e| e.content.to_lowercase().contains(word))
-            .count() as f64;
-        let idf = ((corpus.len() as f64 - doc_freq + 0.5) / (doc_freq + 0.5) + 1.0).ln();
-
         relevance += idf * (tf * (k1 + 1.0)) / (tf + k1 * (1.0 - b + b * (dl / avgdl)));
     }
 
@@ -266,6 +253,43 @@ fn compute_score(entry: &MemoryEntry, query_lower: &str, corpus: &[MemoryEntry])
     let freq_boost = (entry.access_count as f64).ln().max(0.0) * 0.05;
 
     (relevance * priority * confidence) + recency + freq_boost
+}
+
+#[cfg(test)]
+fn compute_score(entry: &MemoryEntry, query_lower: &str, corpus: &[MemoryEntry]) -> f64 {
+    let content_lower = entry.content.to_lowercase();
+    let query_words: Vec<&str> = query_lower
+        .split_whitespace()
+        .filter(|w| w.len() > 2)
+        .collect();
+    if query_words.is_empty() {
+        return 0.0;
+    }
+
+    let total_len: usize = corpus.iter().map(|e| e.content.len()).sum();
+    let mut avgdl = if corpus.is_empty() {
+        100.0
+    } else {
+        (total_len as f64) / (corpus.len() as f64)
+    };
+    if avgdl == 0.0 {
+        avgdl = 100.0;
+    }
+
+    let corpus_len = corpus.len() as f64;
+    let query_words_idf: Vec<(&str, f64)> = query_words
+        .into_iter()
+        .map(|word| {
+            let doc_freq = corpus
+                .iter()
+                .filter(|e| e.content.to_lowercase().contains(word))
+                .count() as f64;
+            let idf = ((corpus_len - doc_freq + 0.5) / (doc_freq + 0.5) + 1.0).ln();
+            (word, idf)
+        })
+        .collect();
+
+    compute_score_with_context(entry, &content_lower, query_lower, &query_words_idf, avgdl)
 }
 
 // ── Core Operations ─────────────────────────────────────────────────────────
@@ -308,6 +332,10 @@ pub fn store_entry(
         }
     }
 
+    if index.next_id == 0 {
+        index.next_id = index.entries.iter().map(|e| e.id).max().unwrap_or(0) + 1;
+    }
+
     let token_est = estimate_tokens(&content);
     let now = now_iso8601();
     let id = index.next_id;
@@ -344,17 +372,64 @@ pub fn recall_entries(
     budget: u32,
 ) -> Vec<(MemoryEntry, f64)> {
     let query_lower = query.to_lowercase();
+    let query_words: Vec<&str> = query_lower
+        .split_whitespace()
+        .filter(|w| w.len() > 2)
+        .collect();
 
-    let corpus_clone = index.entries.clone();
-    // Score all entries
+    if query_words.is_empty() || index.entries.is_empty() {
+        return Vec::new();
+    }
+
+    // Precompute lowercase contents once for all entries
+    let lower_contents: Vec<String> = index
+        .entries
+        .iter()
+        .map(|e| e.content.to_lowercase())
+        .collect();
+
+    let total_len: usize = index.entries.iter().map(|e| e.content.len()).sum();
+    let mut avgdl = (total_len as f64) / (index.entries.len() as f64);
+    if avgdl == 0.0 {
+        avgdl = 100.0;
+    }
+
+    // Precompute IDF for each query word once
+    let corpus_len = index.entries.len() as f64;
+    let query_words_idf: Vec<(&str, f64)> = query_words
+        .into_iter()
+        .map(|word| {
+            let doc_freq = lower_contents
+                .iter()
+                .filter(|c| c.contains(word))
+                .count() as f64;
+            let idf = ((corpus_len - doc_freq + 0.5) / (doc_freq + 0.5) + 1.0).ln();
+            (word, idf)
+        })
+        .collect();
+
+    // Score all entries without cloning the corpus
     let mut scored: Vec<ScoredEntry> = index
         .entries
         .iter()
-        .map(|e| ScoredEntry {
-            entry: e.clone(),
-            score: compute_score(e, &query_lower, &corpus_clone),
+        .enumerate()
+        .filter_map(|(i, e)| {
+            let score = compute_score_with_context(
+                e,
+                &lower_contents[i],
+                &query_lower,
+                &query_words_idf,
+                avgdl,
+            );
+            if score > 0.0 {
+                Some(ScoredEntry {
+                    entry: e.clone(),
+                    score,
+                })
+            } else {
+                None
+            }
         })
-        .filter(|s| s.score > 0.0) // Drop non-matching
         .collect();
 
     // Relational boosting
@@ -951,5 +1026,35 @@ mod tests {
         assert_eq!(proc_, 1);
         assert_eq!(ep, 1);
         assert_eq!(work, 1);
+    }
+
+    #[test]
+    fn test_zero_next_id_recovery() {
+        let mut index = MemoryIndex::new();
+        // Simulate missing next_id from deserialization
+        index.next_id = 0;
+        let id1 = store_entry(
+            &mut index,
+            MemoryType::Semantic,
+            "entry 1".to_string(),
+            vec![],
+            MemorySource::Manual,
+            None,
+        )
+        .unwrap();
+        assert_eq!(id1, 1);
+        assert_eq!(index.next_id, 2);
+
+        let id2 = store_entry(
+            &mut index,
+            MemoryType::Semantic,
+            "entry 2".to_string(),
+            vec![],
+            MemorySource::Manual,
+            None,
+        )
+        .unwrap();
+        assert_eq!(id2, 2);
+        assert_eq!(index.next_id, 3);
     }
 }

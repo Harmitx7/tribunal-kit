@@ -74,7 +74,69 @@ Cleans AI responses by stripping introductory/outro slop, collapsing single-item
 
 Classifies a task into governance Impact Tiers (0: Fast-Pass, 1: Express Pass, 2: Targeted Audit, 3: Full Gauntlet).
 
+- **Parameters:**
+  - `processArgs` (`string[]`): Command line argument array (e.g. `['--files', 'src/api.js', '--lines', '45']`).
+  - `quiet` (`boolean`): If true, suppresses human-readable progress.
+- **Returns:** `Promise<boolean>`
+
 ---
+
+### `cmdArch(flags, argv, quiet)`
+
+Runs Zero-Trust Architecture Intelligence (mapping modules, verifying boundaries, calculating blast radius, or running architectural audits).
+
+- **Parameters:**
+  - `flags` (`CliFlags`): Path and execution flags.
+  - `argv` (`string[]`): Subcommand array (e.g. `['map']`, `['verify']`, `['impact', 'src/auth.ts']`).
+  - `quiet` (`boolean`): If true, suppresses stdout.
+- **Returns:** `Promise<void>`
+
+---
+
+### `cmdContract(flags, argv, quiet)`
+
+AI Agent Behavioral Contract Testing and failure trace replay.
+
+- **Parameters:**
+  - `flags` (`CliFlags`): Options.
+  - `argv` (`string[]`): Subcommand (`['verify']`, `['init']`, `['list']`, `['replay', '<trace-id>']`).
+  - `quiet` (`boolean`): If true, suppresses logs.
+- **Returns:** `Promise<void>`
+
+---
+
+### `cmdSdd(flags, argv, quiet)`
+
+Subagent-Driven Development (SDD) workspace management, task brief extraction, and isolated context diff packaging.
+
+- **Parameters:**
+  - `flags` (`CliFlags`): Execution options.
+  - `argv` (`string[]`): Subcommand (`['brief', '<plan>']`, `['workspace']`, `['diff']`).
+  - `quiet` (`boolean`): If true, suppresses output.
+- **Returns:** `Promise<void>`
+
+---
+
+### `cmdValidate(flags, argv, quiet)`
+
+Validates workspace integrity, rule structure, and Serde schemas across the `.agent/` payload.
+
+- **Parameters:**
+  - `flags` (`CliFlags`): Target file and schema options.
+  - `argv` (`string[]`): Subcommand arguments.
+  - `quiet` (`boolean`): If true, suppresses output.
+- **Returns:** `boolean | Promise<void>`
+
+---
+
+### `cmdContextCompress(argv, quiet)`
+
+Extracts token-compressed file context by stripping non-semantic comments and empty lines while preserving code structure and `// VERIFY` tags.
+
+- **Parameters:**
+  - `argv` (`string[]`): File path and maximum line count options.
+  - `quiet` (`boolean`): If true, suppresses logs.
+- **Returns:** `boolean`
 
 ## Type Definitions
 

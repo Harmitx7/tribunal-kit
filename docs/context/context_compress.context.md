@@ -1,9 +1,9 @@
 ---
 version: 2.0.0
 source_file: "crates/core/src/commands/context_compress.rs"
-source_hash: "f4d7372310d2257a"
+source_hash: "83b6bb4b4f44ba54"
 interface_hash: "609c7c37428121cc"
-last_synced: "2026-10-24"
+last_synced: "2026-10-25"
 domain_layer: "Command / Dispatch Layer"
 associated_skills:
   - rust-pro
@@ -26,11 +26,11 @@ associated_tests:
 <!-- AI_QUICK_INJECT_END -->
 
 # 🧭 FILE DOSSIER: `context_compress.rs`
-`crates/core/src/commands/context_compress.rs` • **Command / Dispatch Layer** • **Hash:** `f4d7372310d2257a`
+`crates/core/src/commands/context_compress.rs` • **Command / Dispatch Layer** • **Hash:** `83b6bb4b4f44ba54`
 
 | Freshness | Blast Radius | Exports Count | Test Coverage | Primary Callers |
 | :--- | :--- | :--- | :--- | :--- |
-| 🟢 **Fresh** (`f4d7372310d2257a`) | **12 Callers** | **1 Symbols** | ⚠️ Unlinked | `.agent/scripts/guardrail_engine.js` |
+| 🟢 **Fresh** (`83b6bb4b4f44ba54`) | **12 Callers** | **1 Symbols** | ⚠️ Unlinked | `.agent/scripts/guardrail_engine.js` |
 
 ---
 
@@ -88,12 +88,12 @@ graph LR
 | `CHANGELOG.md:169` | `- **Context Ranking & Compression**: Upgraded `src/context/ranker.js` and `context_compress.context.` | Symbol Reference |
 | `CHANGELOG.md:762` | `- **Native Context Compression Engine**: Developed `tribunal-core context-compress` (`crates/core/sr` | Symbol Reference |
 | `crates/core/src/commands/mod.rs:5` | `pub mod context_compress;` | Symbol Reference |
-| `crates/core/src/main.rs:627` | `cmd_context_compress(&file, max_lines).await` | Symbol Reference |
-| `crates/core/src/main.rs:941` | `async fn cmd_context_compress(file: &str, max_lines: Option<usize>) -> Result<()> {` | Symbol Reference |
-| `crates/core/src/main.rs:942` | `match commands::context_compress::compress_context(file, max_lines) {` | Symbol Reference |
+| `crates/core/src/main.rs:631` | `cmd_context_compress(&file, max_lines).await` | Symbol Reference |
+| `crates/core/src/main.rs:945` | `async fn cmd_context_compress(file: &str, max_lines: Option<usize>) -> Result<()> {` | Symbol Reference |
+| `crates/core/src/main.rs:946` | `match commands::context_compress::compress_context(file, max_lines) {` | Symbol Reference |
 | `test/unit/context_compiler.test.js:19` | `const targetFile = path.resolve(__dirname, '../../crates/core/src/commands/context_compress.rs');` | Symbol Reference |
-| `test/unit/context_compiler.test.js:120` | `const outPath = path.resolve(workspaceRoot, 'docs/context/context_compress.context.md');` | Symbol Reference |
-| `test/unit/context_compiler.test.js:136` | `const targetFile = 'crates/core/src/commands/context_compress.rs';` | Symbol Reference |
+| `test/unit/context_compiler.test.js:118` | `const outPath = path.resolve(workspaceRoot, 'docs/context/context_compress.context.md');` | Symbol Reference |
+| `test/unit/context_compiler.test.js:143` | `const targetFile = 'crates/core/src/commands/context_compress.rs';` | Symbol Reference |
 | `test/unit/context_compiler.test.js:32` | `expect(exportNames).toContain('compress_context');` | Symbol Reference |
 | `test/unit/context_compiler.test.js:83` | `expect(md).toContain('compress_context');` | Symbol Reference |
 
@@ -102,10 +102,10 @@ graph LR
 ## ⚠️ Chesterton's Fences & Non-Obvious Quirks
 
 > [!CAUTION]
-> **Line 36:** `if is_code && trimmed.starts_with("//") && !trimmed.contains("// VERIFY") {`
+> **Line 58:** `if is_code && trimmed.starts_with("//") && !trimmed.contains("// VERIFY") {`
 
 > [!CAUTION]
-> **Line 94:** `writeln!(file, "  // VERIFY: keep this comment").unwrap();`
+> **Line 116:** `writeln!(file, "  // VERIFY: keep this comment").unwrap();`
 
 ---
 

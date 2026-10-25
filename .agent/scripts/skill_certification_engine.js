@@ -47,24 +47,38 @@ const REPEATABILITY = {
 
 const LEDGER_PATH = path.resolve(__dirname, '..', 'data', 'skill_certification_ledger.jsonl');
 
+let inMemoryTestEvents = [];
+
 // ─── Immutable Certification Ledger (Section 15) ───────────────────────────
-function appendLedgerEvent(event) {
+function appendLedgerEvent(event, customLedgerPath = null) {
   const fullEvent = {
     event_id: `EVT-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
     timestamp: new Date().toISOString(),
     ...event,
   };
 
+  if (process.env.NODE_ENV === 'test' && !process.env.TRIBUNAL_WRITE_TEST_LEDGER && !customLedgerPath) {
+    inMemoryTestEvents.push(fullEvent);
+    return fullEvent;
+  }
+
+  const targetPath = customLedgerPath || LEDGER_PATH;
   const line = JSON.stringify(fullEvent) + '\n';
-  fs.mkdirSync(path.dirname(LEDGER_PATH), { recursive: true });
-  fs.appendFileSync(LEDGER_PATH, line, 'utf8');
+  fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+  fs.appendFileSync(targetPath, line, 'utf8');
   return fullEvent;
 }
 
-function readLedgerEvents(filterSkillId = null) {
-  if (!fs.existsSync(LEDGER_PATH)) return [];
-  const lines = fs.readFileSync(LEDGER_PATH, 'utf8').trim().split('\n').filter(Boolean);
-  const events = lines.map(l => JSON.parse(l));
+function readLedgerEvents(filterSkillId = null, customLedgerPath = null) {
+  const targetPath = customLedgerPath || LEDGER_PATH;
+  let events = [];
+  if (fs.existsSync(targetPath)) {
+    const lines = fs.readFileSync(targetPath, 'utf8').trim().split('\n').filter(Boolean);
+    events = lines.map(l => JSON.parse(l));
+  }
+  if (process.env.NODE_ENV === 'test' && !process.env.TRIBUNAL_WRITE_TEST_LEDGER && !customLedgerPath) {
+    events = [...events, ...inMemoryTestEvents];
+  }
   if (filterSkillId) return events.filter(e => e.skill_id === filterSkillId);
   return events;
 }

@@ -188,7 +188,7 @@ function cmdHelp(quiet = false) {
   console.log(opt('--quiet', 'Suppress all non-essential output'));
   console.log(opt('--verbose', 'Show detailed debug logging'));
   console.log(opt('--dry-run', 'Preview actions without writing disk changes'));
-  console.log(opt('--minimal', 'Install core agents & skills only (~13 specialists)'));
+  console.log(opt('--minimal', 'Install core agents & skills only (~21 specialists)'));
   console.log(opt('--version, -v', 'Print installed package version'));
 
   section('Aliases & Shortcuts', '❯');
@@ -437,6 +437,15 @@ async function runWithUpdateCheck(command, flags) {
     case 'skill-intelligence': {
       const cmdSkillIntel = loadCmd('./commands/skill-intelligence', 'cmdSkillIntel');
       await cmdSkillIntel(flags, process.argv, quiet);
+      break;
+    }
+    case 'adapt':
+    case 'tk-adapt': {
+      const path = require('path');
+      const child_process = require('child_process');
+      const adapterScript = path.resolve(__dirname, '..', 'bin', 'adapter-install.js');
+      const subArgs = process.argv.slice(3);
+      child_process.fork(adapterScript, subArgs, { stdio: 'inherit' });
       break;
     }
     case 'help':

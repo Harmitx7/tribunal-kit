@@ -285,11 +285,11 @@ function searchRepositoryForCapability(query, searchDir) {
     for (const entry of entries) {
       const fullPath = path.join(dir, entry.name);
       if (entry.isDirectory()) {
-        if (DEFAULT_SKIP_DIRS.has(entry.name) || entry.name === 'target') {
+        if (DEFAULT_SKIP_DIRS.has(entry.name) || entry.name === 'target' || entry.name === 'docs') {
           continue;
         }
         scan(fullPath);
-      } else if (entry.isFile() && /\.(js|ts|tsx|jsx|json|md)$/.test(entry.name)) {
+      } else if (entry.isFile() && /\.(js|ts|tsx|jsx|mjs|cjs)$/.test(entry.name)) {
         try {
           const content = fs.readFileSync(fullPath, 'utf8');
           const lower = content.toLowerCase();

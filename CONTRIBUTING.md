@@ -31,19 +31,21 @@ node bin/wrapper.js --help
 
 ```
 tribunal-kit/
-├── bin/                    # CLI entry points (JS monolith + MCP server)
-│   ├── wrapper.js          # Main entry: routes to Rust binary or JS fallback
-│   ├── tribunal-kit.js     # Legacy JS CLI (1,500+ lines)
-│   └── mcp-server.js       # MCP server over JSON-RPC 2.0 / stdio
+├── bin/                    # CLI entry points
+│   ├── wrapper.js          # Primary CLI router (Rust binary dispatch + JS fallback)
+│   ├── adapter-install.js  # Universal CLI agent adapter installer (tk-adapt)
+│   ├── mcp-server.js       # Native Model Context Protocol stdio server
+│   ├── tk-proxy.js         # Interception proxy for agent workflows
+│   └── tribunal-kit.js     # Direct JavaScript CLI entrypoint
 ├── src/                   # Modular CLI (lazy-loaded commands)
 │   ├── cli.js              # CLI core with command routing
-│   ├── commands/           # Individual command modules
+│   ├── commands/           # 35 individual command modules
 │   ├── utils/              # Logger, helpers, version checker, hasher
 │   └── index.d.ts          # TypeScript declarations
-├── crates/core/            # Rust core engine (Tokio-based)
+├── crates/core/            # Rust core engine (Tokio, Clap, Serde, OXC)
 ├── .agent/                 # The intelligence payload (agents, skills, workflows)
 │   ├── agents/             # 60 specialist and reviewer agent definitions
-│   ├── skills/             # Reusable skill packs
+│   ├── skills/             # 235 schema-validated engineering skills
 │   ├── workflows/          # 51 workflow definitions
 │   └── scripts/            # Automation scripts
 ├── test/

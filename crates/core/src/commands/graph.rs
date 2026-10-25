@@ -4,11 +4,11 @@ use oxc_allocator::Allocator;
 use oxc_ast::ast::*;
 use oxc_parser::Parser;
 use oxc_span::SourceType;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct GraphNode {
     pub file_path: String,
     pub imports: Vec<String>,
@@ -16,7 +16,7 @@ pub struct GraphNode {
     pub functions: Vec<String>,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct SemanticGraph {
     pub nodes: Vec<GraphNode>,
 }
@@ -104,4 +104,60 @@ pub fn generate_graph(path: &str) -> Result<String> {
     });
 
     Ok(serde_json::to_string(&output)?)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_generate_graph_with_sample_files() {
+        let temp_dir = std::env::temp_dir().join(format!("graph_test_{}", std::process::id()));
+        fs::create_dir_all(&temp_dir).unwrap();
+
+        let sample_ts = temp_dir.join("service.ts");
+        let code = r#"
+            import { db } from "./db";
+            export function handleService() {
+                return 42;
+            }
+            function internalHelper() {}
+        "#;
+        fs::write(&sample_ts, code).unwrap();
+
+        let res_json = generate_graph(temp_dir.to_str().unwrap()).unwrap();
+        let res: serde_json::Value = serde_json::from_str(&res_json).unwrap();
+
+        assert_eq!(res["success"], true);
+        assert_eq!(res["nodes"], 1);
+
+        let graph_file = temp_dir.join(".tribunal").join("graph.json");
+        assert!(graph_file.exists());
+
+        let graph_content = fs::read_to_string(&graph_file).unwrap();
+        let graph: SemanticGraph = serde_json::from_str(&graph_content).unwrap();
+
+        assert_eq!(graph.nodes.len(), 1);
+        let node = &graph.nodes[0];
+        assert!(node.imports.contains(&"./db".to_string()));
+        assert!(node.exports.contains(&"handleService".to_string()));
+        assert!(node.functions.contains(&"handleService".to_string()));
+        assert!(node.functions.contains(&"internalHelper".to_string()));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_generate_graph_empty_directory() {
+        let temp_dir = std::env::temp_dir().join(format!("graph_empty_{}", std::process::id()));
+        fs::create_dir_all(&temp_dir).unwrap();
+
+        let res_json = generate_graph(temp_dir.to_str().unwrap()).unwrap();
+        let res: serde_json::Value = serde_json::from_str(&res_json).unwrap();
+
+        assert_eq!(res["success"], true);
+        assert_eq!(res["nodes"], 0);
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
 }

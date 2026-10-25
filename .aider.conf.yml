@@ -163,7 +163,7 @@ The Socratic Gate is **adaptive** based on the task's **Impact Tier** evaluated 
 
 ## Universal Code Standards (All Agents, Always)
 
-### Anti-Hallucination (Non-Negotiable)
+### Anti-Hallucination Protocol (Non-Negotiable)
 
 ```
 Only import packages verified in package.json
@@ -192,7 +192,7 @@ Self-documenting names — no abbreviations without context
 No over-engineering — solve the stated problem, not imagined future problems
 Error handling on every async function
 TypeScript: no any without an explanation comment
-Tests: every change that is logic-bearing gets a test
+Tests: Iron Law of TDD — every change that is logic-bearing gets a test
 ```
 
 ### Security (Always Active)

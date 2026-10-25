@@ -119,11 +119,11 @@ enum Commands {
         action: MemoryAction,
 
         /// Target directory (defaults to current directory)
-        #[arg(long, default_value = ".")]
+        #[arg(long, global = true, default_value = ".")]
         path: String,
 
         /// Suppress output
-        #[arg(long, default_value_t = false)]
+        #[arg(long, global = true, default_value_t = false)]
         quiet: bool,
     },
 
@@ -408,7 +408,11 @@ enum MemoryAction {
     Recall {
         /// Search query
         #[arg(long)]
-        query: String,
+        query: Option<String>,
+
+        /// Search query (positional)
+        #[arg(value_name = "QUERY")]
+        positional_query: Option<String>,
 
         /// Maximum token budget for recall (default: 2000)
         #[arg(long, default_value_t = 2000)]
@@ -1864,7 +1868,12 @@ async fn cmd_memory(path: &str, action: MemoryAction, quiet: bool) -> Result<()>
             println!("{}", serde_json::to_string(&output)?);
         }
 
-        MemoryAction::Recall { query, budget } => {
+        MemoryAction::Recall {
+            query,
+            positional_query,
+            budget,
+        } => {
+            let query = query.or(positional_query).unwrap_or_default();
             let mut index = commands::memory::load_index(&agent_dir)?;
             let results = commands::memory::recall_entries(&mut index, &query, budget);
 

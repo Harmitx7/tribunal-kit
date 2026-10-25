@@ -49,4 +49,15 @@ describe('cmdValidate command', () => {
     };
     await expect(cmdValidate(flags, true)).rejects.toThrow('process.exit: 1');
   });
+
+  test('validates file even when target path has no .agent directory', async () => {
+    const fakeDir = path.join(repoRoot, 'non_existent_dir_12345');
+    const flags = {
+      path: fakeDir,
+      file: path.join(repoRoot, 'package.json'),
+      quiet: true,
+    };
+    await expect(cmdValidate(flags, true)).resolves.not.toThrow();
+  });
 });
+

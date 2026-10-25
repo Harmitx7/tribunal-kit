@@ -96,3 +96,52 @@ pub fn run_benchmark(skills_dir: &str, repo_path: &str, publish: bool) -> Result
 
     Ok(out_json)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_run_benchmark_publish_and_hash() {
+        let temp_dir = std::env::temp_dir().join(format!("benchmark_test_{}", std::process::id()));
+        let skills_dir = temp_dir.join("skills");
+        let skill1 = skills_dir.join("test-skill");
+        fs::create_dir_all(&skill1).unwrap();
+
+        let md = r#"---
+name: test-skill
+routing:
+  domain: general
+---
+# Test Skill
+"#;
+        fs::write(skill1.join("SKILL.md"), md).unwrap();
+
+        // 1. Without publish
+        let res1_str = run_benchmark(
+            skills_dir.to_str().unwrap(),
+            temp_dir.to_str().unwrap(),
+            false,
+        )
+        .unwrap();
+        let report1: BenchmarkReport = serde_json::from_str(&res1_str).unwrap();
+        assert!(!report1.integrity_hash.is_empty());
+        assert_eq!(report1.total_skills_evaluated, 1);
+
+        // 2. With publish
+        let res2_str = run_benchmark(
+            skills_dir.to_str().unwrap(),
+            temp_dir.to_str().unwrap(),
+            true,
+        )
+        .unwrap();
+        let report2: BenchmarkReport = serde_json::from_str(&res2_str).unwrap();
+        let pub_file = temp_dir
+            .join(".tribunal")
+            .join("benchmarks")
+            .join(format!("benchmark-{}.json", report2.integrity_hash));
+        assert!(pub_file.exists());
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+}

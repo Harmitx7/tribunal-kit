@@ -15,5 +15,6 @@ pub mod optimize;
 pub mod pollinator;
 pub mod purge;
 pub mod sdd;
+pub mod security;
 pub mod skill_resolver;
 pub mod telemetry;

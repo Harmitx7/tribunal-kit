@@ -12,7 +12,13 @@ const path_1 = __importDefault(require('path'));
 const logger_1 = require('../utils/logger');
 const { rankContext } = require('../context/ranker');
 
-function cmdContextRank(flags, processArgs, quiet = false) {
+function cmdContextRank(flags = {}, processArgs, quiet = false) {
+  if (typeof processArgs === 'boolean') {
+    quiet = processArgs;
+    processArgs = process.argv;
+  } else if (!Array.isArray(processArgs)) {
+    processArgs = process.argv;
+  }
   const targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
   const args = processArgs.slice(3);
 
@@ -104,7 +110,10 @@ function cmdContextRank(flags, processArgs, quiet = false) {
   return result;
 }
 
-function cmdContext(flags, processArgs) {
+function cmdContext(flags = {}, processArgs) {
+  if (!Array.isArray(processArgs)) {
+    processArgs = process.argv;
+  }
   if (flags.rank || processArgs.includes('--rank')) {
     return cmdContextRank(flags, processArgs);
   }
@@ -115,25 +124,26 @@ function cmdContext(flags, processArgs) {
     (0, logger_1.err)('.agent/ not found. Run: npx tribunal-kit init');
     process.exit(1);
   }
-  const args = processArgs.slice(3);
-  if (args.length === 0 || args[0] === 'help' || args[0] === '--help') {
+  const args = processArgs.slice(3).filter(a => !a.startsWith('--'));
+  const targetFile = flags.target || flags.file || args[0];
+  if (!targetFile || targetFile === 'help' || targetFile === '--help') {
     console.error('Usage: npx tribunal-kit context <target_file>');
     process.exit(1);
   }
-  const resolvedTarget = path_1.default.resolve(targetDir, args[0]);
+  const resolvedTarget = path_1.default.resolve(targetDir, targetFile);
   const relativePath = path_1.default.relative(targetDir, resolvedTarget).replace(/\\/g, '/');
   if (
     relativePath.startsWith('../') ||
     relativePath === '..' ||
     path_1.default.isAbsolute(relativePath)
   ) {
-    console.error('  \x1b[91m✖\x1b[0m File must be within the project directory: ' + args[0]);
+    console.error('  \x1b[91m✖\x1b[0m File must be within the project directory: ' + targetFile);
     process.exit(1);
   }
   const snapshotName = relativePath.replace(/[\\\/]/g, '__') + '.json';
   const snapshotPath = path_1.default.join(agentDest, 'history', 'snapshots', snapshotName);
   if (!fs_1.default.existsSync(snapshotPath)) {
-    console.error('  \x1b[91m✖\x1b[0m Context Snapshot not found for: ' + args[0]);
+    console.error('  \x1b[91m✖\x1b[0m Context Snapshot not found for: ' + targetFile);
     console.log('    Run: npx tribunal-kit graph  (to generate snapshots)');
     process.exit(1);
   }

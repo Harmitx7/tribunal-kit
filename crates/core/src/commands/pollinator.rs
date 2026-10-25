@@ -138,3 +138,56 @@ fn extract_traps(content: &str) -> HashSet<String> {
     }
     traps
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_pollinate_skills_success() {
+        let temp_dir = std::env::temp_dir().join(format!("pollinate_test_{}", std::process::id()));
+        let skill_a = temp_dir.join("sql-master");
+        let skill_b = temp_dir.join("db-latency");
+        fs::create_dir_all(&skill_a).unwrap();
+        fs::create_dir_all(&skill_b).unwrap();
+
+        let content_a = r#"---
+domain: database
+---
+# SQL Master
+## Traps
+- ❌ Never string-interpolate SQL
+"#;
+
+        let content_b = r#"---
+domain: database
+---
+# DB Latency
+"#;
+
+        fs::write(skill_a.join("SKILL.md"), content_a).unwrap();
+        fs::write(skill_b.join("SKILL.md"), content_b).unwrap();
+
+        let res_json = pollinate_skills(temp_dir.to_str().unwrap()).unwrap();
+        let res: serde_json::Value = serde_json::from_str(&res_json).unwrap();
+
+        assert_eq!(res["success"], true);
+        assert_eq!(res["skills_updated"], 1);
+
+        let updated_b = fs::read_to_string(skill_b.join("SKILL.md")).unwrap();
+        assert!(updated_b.contains("## Epistemic Traps"));
+        assert!(updated_b.contains("Never string-interpolate SQL"));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_pollinate_missing_dir() {
+        let res = pollinate_skills("non_existent_pollinate_dir_xyz");
+        assert!(res.is_err());
+        assert!(res
+            .unwrap_err()
+            .to_string()
+            .contains("Skills directory not found"));
+    }
+}

@@ -3,7 +3,7 @@
 
 | Source Target | Domain Layer | Hash Snapshot | Status |
 | :--- | :--- | :--- | :--- |
-| [`crates/core/src/commands/context_compress.rs`](context_compress.context.md) | Command / Dispatch Layer | `f4d7372310d2257a` | 🟢 Fresh |
+| [`crates/core/src/commands/context_compress.rs`](context_compress.context.md) | Command / Dispatch Layer | `83b6bb4b4f44ba54` | 🟢 Fresh |
 | [`tribunal-kit/crates/core`](core.context.md) | Subsystem Cluster | `n/a` | 🟢 Active |
 | [`tribunal-kit/.agent/scripts/graph_zoom.js <--> tribunal-kit/crates/core/src/commands/graph.rs`](graph_zoom__graph.bridge.md) | Interface Bridge | `n/a` | 🟢 Linked |
 

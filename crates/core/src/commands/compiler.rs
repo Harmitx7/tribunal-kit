@@ -109,3 +109,62 @@ fn compress_skill_markdown(markdown: &str, skill_name: &str) -> String {
 
     out
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_compress_skill_markdown_with_traps_and_rules() {
+        let md = r#"
+# Test Skill
+
+## Epistemic Traps
+- ❌ Do not invent API methods
+- Always check documentation
+
+## Core API Rules
+1. Never bypass JWT validation
+- Parameterize all SQL queries
+"#;
+
+        let res = compress_skill_markdown(md, "test-skill");
+        assert!(res.contains("- name: test-skill"));
+        assert!(res.contains("traps:"));
+        assert!(res.contains("Do not invent API methods"));
+        assert!(res.contains("Always check documentation"));
+        assert!(res.contains("rules:"));
+        assert!(res.contains("1. Never bypass JWT validation"));
+        assert!(res.contains("Parameterize all SQL queries"));
+    }
+
+    #[test]
+    fn test_compress_skill_markdown_fallback() {
+        let md = r#"
+# Minimal Skill
+Just a description of the skill without traps or rules.
+"#;
+        let res = compress_skill_markdown(md, "minimal-skill");
+        assert!(res.contains("- name: minimal-skill"));
+        assert!(res.contains("loaded: true"));
+        assert!(!res.contains("traps:"));
+        assert!(!res.contains("rules:"));
+    }
+
+    #[test]
+    fn test_cmd_compile_empty_skills() {
+        let res1 = cmd_compile("non_existent_dir", "");
+        assert!(res1.is_err());
+        assert!(res1
+            .unwrap_err()
+            .to_string()
+            .contains("No skills provided for compilation"));
+
+        let res2 = cmd_compile("non_existent_dir", "  , ,  ");
+        assert!(res2.is_err());
+        assert!(res2
+            .unwrap_err()
+            .to_string()
+            .contains("No skills provided for compilation"));
+    }
+}

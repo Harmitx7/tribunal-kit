@@ -138,12 +138,21 @@ function validateCodeContent(text) {
   return warnings;
 }
 
-async function cmdAlign(flags, argv, quiet) {
+async function cmdAlign(flags = {}, argv, quiet = false) {
+  if (typeof argv === 'boolean') {
+    quiet = argv;
+    argv = process.argv;
+  } else if (!Array.isArray(argv)) {
+    argv = process.argv;
+  }
+
   let inputSource = null;
 
   // Find if a file path is specified
   const positionalArgs = argv.slice(3).filter(arg => !arg.startsWith('--'));
-  if (positionalArgs.length > 0) {
+  if (flags.file) {
+    inputSource = flags.file;
+  } else if (positionalArgs.length > 0) {
     inputSource = positionalArgs[0];
   } else if (flags.path) {
     inputSource = flags.path;
@@ -165,7 +174,6 @@ async function cmdAlign(flags, argv, quiet) {
       let data = '';
       const rl = readline.createInterface({
         input: process.stdin,
-        output: process.stdout,
         terminal: false,
       });
       rl.on('line', line => {

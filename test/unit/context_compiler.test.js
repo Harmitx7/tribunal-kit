@@ -115,20 +115,27 @@ describe('Context Compiler Engine', () => {
 
   test('maintains living vault registry and executes drift audit', () => {
     // Generate a test dossier to ensure the vault isn't empty in CI
-    const meta = analyzeSingleFile(targetFile, workspaceRoot);
-    const md = renderSingleFileDossier(meta);
     const outPath = path.resolve(workspaceRoot, 'docs/context/context_compress.context.md');
-    fs.mkdirSync(path.dirname(outPath), { recursive: true });
-    fs.writeFileSync(outPath, md, 'utf8');
+    const originalContent = fs.existsSync(outPath) ? fs.readFileSync(outPath, 'utf8') : null;
+    try {
+      const meta = analyzeSingleFile(targetFile, workspaceRoot);
+      const md = renderSingleFileDossier(meta);
+      fs.mkdirSync(path.dirname(outPath), { recursive: true });
+      fs.writeFileSync(outPath, md, 'utf8');
 
-    const sync = syncVaultIndex(workspaceRoot);
-    expect(sync.indexedCount).toBeGreaterThan(0);
-    expect(fs.existsSync(sync.indexFile)).toBe(true);
+      const sync = syncVaultIndex(workspaceRoot);
+      expect(sync.indexedCount).toBeGreaterThan(0);
+      expect(fs.existsSync(sync.indexFile)).toBe(true);
 
-    const drift = checkDrift(workspaceRoot);
-    expect(drift.total).toBeGreaterThan(0);
-    expect(drift.fresh).toBeGreaterThanOrEqual(1);
-    expect(drift.isHealthy).toBe(true);
+      const drift = checkDrift(workspaceRoot);
+      expect(drift.total).toBeGreaterThan(0);
+      expect(drift.fresh).toBeGreaterThanOrEqual(1);
+      expect(drift.isHealthy).toBe(true);
+    } finally {
+      if (originalContent !== null) {
+        fs.writeFileSync(outPath, originalContent, 'utf8');
+      }
+    }
   });
 });
 

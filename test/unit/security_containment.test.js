@@ -358,7 +358,15 @@ describe('Security Containment & Boundary Hardening (Phase 2 TDD)', () => {
       expect(() => validateProcessArgs(['--file', 'test.txt | dir'], true)).toThrow(
         /Security Violation: Argument ".*" contains dangerous cmd\.exe metacharacters/,
       );
+      // Double quote injection (BatBadBut vulnerability prevention)
+      expect(() => validateProcessArgs(['--param', 'evil" & calc.exe'], true)).toThrow(
+        /Security Violation: Argument ".*" contains dangerous cmd\.exe metacharacters/,
+      );
+      expect(() => validateProcessArgs(['--param', '"quoted"'], true)).toThrow(
+        /Security Violation: Argument ".*" contains dangerous cmd\.exe metacharacters/,
+      );
     });
+
 
     it('resolves binary executables to shell: false', () => {
       const res = resolveExecutable('node');

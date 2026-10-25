@@ -167,4 +167,75 @@ describe('MCP Server handleRequest', () => {
     expect(text).not.toContain('AI coding assistants often fall into specific bad habits');
     expect(text).not.toContain('VBC Protocol');
   });
+
+  test('SEC-003: get_tribunal_agent and get_tribunal_skill reject path traversal and invalid identifiers', async () => {
+    // get_tribunal_agent with path traversal
+    const reqAgent = {
+      jsonrpc: '2.0',
+      id: 6,
+      method: 'tools/call',
+      params: {
+        name: 'get_tribunal_agent',
+        arguments: { name: '../../evil' },
+      },
+    };
+    await expect(handleRequest(reqAgent)).rejects.toThrow(/Invalid agent name: path traversal detected/);
+
+    // get_tribunal_skill with path traversal
+    const reqSkill = {
+      jsonrpc: '2.0',
+      id: 7,
+      method: 'tools/call',
+      params: {
+        name: 'get_tribunal_skill',
+        arguments: { name: '../bad_skill' },
+      },
+    };
+    await expect(handleRequest(reqSkill)).rejects.toThrow(/Invalid skill name: path traversal detected/);
+  });
+
+  test('SEC-003: get_ast_context and query_semantic_graph reject flag injection and traversal', async () => {
+    // get_ast_context with flag option
+    const reqAstFlag = {
+      jsonrpc: '2.0',
+      id: 8,
+      method: 'tools/call',
+      params: {
+        name: 'get_ast_context',
+        arguments: { targetPath: '--output=evil' },
+      },
+    };
+    await expect(handleRequest(reqAstFlag)).rejects.toThrow(/Invalid targetPath/);
+
+    // query_semantic_graph with flag option
+    const reqGraphFlag = {
+      jsonrpc: '2.0',
+      id: 9,
+      method: 'tools/call',
+      params: {
+        name: 'query_semantic_graph',
+        arguments: { targetPath: '-v' },
+      },
+    };
+    await expect(handleRequest(reqGraphFlag)).rejects.toThrow(/Invalid targetPath/);
+  });
+
+  test('SEC-003: verify_contracts rejects file path traversal escaping projectRoot', async () => {
+    const reqContracts = {
+      jsonrpc: '2.0',
+      id: 10,
+      method: 'tools/call',
+      params: {
+        name: 'verify_contracts',
+        arguments: {
+          file: '../../outside_secret.ts',
+          content: 'export const secret = 42;',
+        },
+      },
+    };
+    const result = await handleRequest(reqContracts);
+    expect(result.content[0].text).toMatch(/Path security violation|Path traversal detected/);
+  });
 });
+
+

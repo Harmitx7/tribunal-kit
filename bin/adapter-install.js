@@ -204,7 +204,7 @@ function main() {
   console.log('');
   console.log('┌─────────────────────────────────────────────┐');
   console.log('│  🔱 Tribunal Kit — Universal Agent Adapter  │');
-  console.log('│  v9.3.0 · 52 specialists · 185 skills       │');
+  console.log('│  v9.3.0 · 60 specialists · 235 skills       │');
   console.log('└─────────────────────────────────────────────┘');
   console.log('');
 
@@ -220,7 +220,8 @@ function main() {
   let detected = 0;
 
   for (const [name, adapter] of Object.entries(ADAPTERS)) {
-    if (targetAgent && name !== targetAgent) continue;
+    const matchesTarget = !targetAgent || name === targetAgent || name.startsWith(targetAgent) || targetAgent === name.replace('-code', '').replace('-cli', '');
+    if (!matchesTarget) continue;
 
     const isDetected = adapter.detect();
     if (isDetected) detected++;

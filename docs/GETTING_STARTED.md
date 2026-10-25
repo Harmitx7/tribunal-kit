@@ -17,13 +17,13 @@ npx tribunal-kit init
 
 This installs the `.agent/` intelligence payload into your project:
 
-- **51 specialist agents** — domain-specific coding guidelines
-- **27 parallel reviewers** — the Tribunal pipeline
-- **171 reusable skills** — deep knowledge packs for every framework
-- **37 slash workflows** — one-command operations
+- **60 specialist agents** — domain-specific coding guidelines
+- **31 parallel reviewers** — the Tribunal pipeline
+- **235 reusable skills** — deep knowledge packs for every framework
+- **51 slash workflows** — one-command operations
 - **Automation scripts** — guardrails, checklist, and verification
 
-> **Zero dependencies.** Tribunal Kit has zero production dependencies and makes no network requests at runtime.
+> **Minimal dependencies.** Tribunal Kit maintains a minimal supply-chain footprint with exactly 1 production dependency (`zod`) for deterministic schema validation, making no network requests at runtime.
 
 ## Step 2: Bridge with Your IDE
 
@@ -78,7 +78,7 @@ This installs a `pre-push` Git hook that automatically runs `tk guardrail` befor
 
 Once the governance layer is installed, your AI coding agent automatically benefits from:
 
-1. **Better code generation** — 171 skills teach your AI framework-specific best practices, preventing common mistakes (React 19 hook constraints, Next.js 15 route headers, Drizzle ORM filters)
+1. **Better code generation** — 235 skills teach your AI framework-specific best practices, preventing common mistakes (React 19 hook constraints, Next.js 15 route headers, Drizzle ORM filters)
 
 2. **Multi-reviewer pipeline** — Use slash commands like `/generate`, `/tribunal-full`, or `/audit` to route code through parallel domain-specific reviewers
 

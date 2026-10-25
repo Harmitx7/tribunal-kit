@@ -61,6 +61,40 @@ pub fn sdd_workspace(plan_file: &str) -> Result<PathBuf> {
     Ok(workspace)
 }
 
+fn is_matching_task_heading(heading_text: &str, task_num: u32) -> bool {
+    let prefix = format!("task {}", task_num);
+    let lower = heading_text.to_lowercase();
+    if lower == prefix {
+        return true;
+    }
+    if let Some(rest) = lower.strip_prefix(&prefix) {
+        if let Some(first_char) = rest.chars().next() {
+            return !first_char.is_ascii_digit();
+        }
+        return true;
+    }
+    false
+}
+
+fn resolve_safe_out_file(plan_path: &Path, out_file: &str) -> Result<PathBuf> {
+    let repo_root = find_repo_root().unwrap_or_else(|_| PathBuf::from("."));
+    let target = Path::new(out_file);
+    let plan_dir = plan_path.parent().unwrap_or(Path::new("."));
+
+    match crate::commands::security::assert_within_root(&repo_root, target) {
+        Ok(resolved) => Ok(resolved),
+        Err(e) => {
+            if plan_dir.exists()
+                && crate::commands::security::assert_within_root(plan_dir, target).is_ok()
+            {
+                crate::commands::security::assert_within_root(plan_dir, target)
+            } else {
+                Err(e)
+            }
+        }
+    }
+}
+
 /// Extract task brief out-of-band to prevent coordinator context saturation
 pub fn sdd_brief(plan_file: &str, task_num: u32, out_file: Option<&str>) -> Result<PathBuf> {
     let plan_path = Path::new(plan_file);
@@ -72,7 +106,7 @@ pub fn sdd_brief(plan_file: &str, task_num: u32, out_file: Option<&str>) -> Resu
         .with_context(|| format!("Failed to read plan file: {}", plan_file))?;
 
     let target_out = match out_file {
-        Some(path) => PathBuf::from(path),
+        Some(path) => resolve_safe_out_file(plan_path, path)?,
         None => {
             let ws = sdd_workspace(plan_file)?;
             ws.join(format!("task-{}-brief.md", task_num))
@@ -83,9 +117,6 @@ pub fn sdd_brief(plan_file: &str, task_num: u32, out_file: Option<&str>) -> Resu
     let mut in_code_block = false;
     let mut extracted_lines = Vec::new();
 
-    let target_prefix = format!("Task {}", task_num);
-    let target_prefix_colon = format!("Task {}:", task_num);
-
     for line in content.lines() {
         let trimmed = line.trim();
         if trimmed.starts_with("```") {
@@ -95,10 +126,7 @@ pub fn sdd_brief(plan_file: &str, task_num: u32, out_file: Option<&str>) -> Resu
         if !in_code_block && trimmed.starts_with('#') {
             // Check header level and heading text
             let heading_text = trimmed.trim_start_matches('#').trim();
-            if heading_text.starts_with(&target_prefix_colon)
-                || heading_text.starts_with(&target_prefix)
-                || heading_text == target_prefix
-            {
+            if is_matching_task_heading(heading_text, task_num) {
                 in_target_task = true;
                 extracted_lines.push(line);
                 continue;
@@ -140,8 +168,9 @@ pub fn sdd_diff(
     head: &str,
     out_file: Option<&str>,
 ) -> Result<PathBuf> {
+    let plan_path = Path::new(plan_file);
     let target_out = match out_file {
-        Some(path) => PathBuf::from(path),
+        Some(path) => resolve_safe_out_file(plan_path, path)?,
         None => {
             let ws = sdd_workspace(plan_file)?;
             let short_base = if base.len() > 7 { &base[..7] } else { base };
@@ -150,9 +179,18 @@ pub fn sdd_diff(
         }
     };
 
-    // Verify revisions exist
+    crate::commands::security::validate_git_revision(base, "BASE")?;
+    crate::commands::security::validate_git_revision(head, "HEAD")?;
+
+    // Verify revisions exist using -- to prevent option injection
     let verify_base = Command::new("git")
-        .args(["rev-parse", "--verify", "--quiet", base])
+        .args([
+            "rev-parse",
+            "--verify",
+            "--quiet",
+            "--",
+            &format!("{}^{{commit}}", base),
+        ])
         .output()
         .context("Failed to run git rev-parse for base")?;
     if !verify_base.status.success() {
@@ -160,31 +198,37 @@ pub fn sdd_diff(
     }
 
     let verify_head = Command::new("git")
-        .args(["rev-parse", "--verify", "--quiet", head])
+        .args([
+            "rev-parse",
+            "--verify",
+            "--quiet",
+            "--",
+            &format!("{}^{{commit}}", head),
+        ])
         .output()
         .context("Failed to run git rev-parse for head")?;
     if !verify_head.status.success() {
         return Err(anyhow!("Invalid HEAD git revision: {}", head));
     }
 
-    // git log --oneline base..head
+    // git log --oneline -- base..head
     let range = format!("{}..{}", base, head);
     let log_out = Command::new("git")
-        .args(["log", "--oneline", &range])
+        .args(["log", "--oneline", "--", &range])
         .output()
         .context("Failed to run git log")?;
     let log_str = String::from_utf8_lossy(&log_out.stdout);
 
-    // git diff --stat base..head
+    // git diff --stat -- base..head
     let stat_out = Command::new("git")
-        .args(["diff", "--stat", &range])
+        .args(["diff", "--stat", "--", &range])
         .output()
         .context("Failed to run git diff --stat")?;
     let stat_str = String::from_utf8_lossy(&stat_out.stdout);
 
-    // git diff -U10 base..head
+    // git diff -U10 -- base..head
     let diff_out = Command::new("git")
-        .args(["diff", "-U10", &range])
+        .args(["diff", "-U10", "--", &range])
         .output()
         .context("Failed to run git diff -U10")?;
     let diff_str = String::from_utf8_lossy(&diff_out.stdout);
@@ -227,6 +271,11 @@ mod tests {
 - Create: src/api.ts
 - [ ] Step 1: Write API test
 
+### Task 10: Deploy Production Infrastructure
+**Files:**
+- Create: deploy.tf
+- [ ] Step 1: Run terraform
+
 ### Task 3: Final Verification
 - [ ] Step 1: Run tests
 "#;
@@ -246,7 +295,107 @@ mod tests {
         let brief = fs::read_to_string(result).unwrap();
         assert!(brief.contains("Task 2: Implement User API"));
         assert!(!brief.contains("Task 1: Initialize Database"));
+        assert!(!brief.contains("Task 10: Deploy Production Infrastructure"));
         assert!(!brief.contains("Task 3: Final Verification"));
+
+        // Verify Task 1 does NOT match Task 10
+        let out_file_1 = temp_dir.join("task-1-brief.md");
+        let result_1 = sdd_brief(
+            plan_file.to_str().unwrap(),
+            1,
+            Some(out_file_1.to_str().unwrap()),
+        )
+        .unwrap();
+        let brief_1 = fs::read_to_string(result_1).unwrap();
+        assert!(brief_1.contains("Task 1: Initialize Database"));
+        assert!(!brief_1.contains("Task 10: Deploy Production Infrastructure"));
+
+        // Verify Task 10 extracts cleanly
+        let out_file_10 = temp_dir.join("task-10-brief.md");
+        let result_10 = sdd_brief(
+            plan_file.to_str().unwrap(),
+            10,
+            Some(out_file_10.to_str().unwrap()),
+        )
+        .unwrap();
+        let brief_10 = fs::read_to_string(result_10).unwrap();
+        assert!(brief_10.contains("Task 10: Deploy Production Infrastructure"));
+        assert!(!brief_10.contains("Task 1: Initialize Database"));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_sdd_diff_rejects_option_injection() {
+        let temp_dir = std::env::temp_dir().join("tribunal_sdd_sec_diff");
+        let _ = fs::create_dir_all(&temp_dir);
+        let plan_file = temp_dir.join("plan.md");
+        fs::write(&plan_file, "# Plan\n### Task 1: Demo\n").unwrap();
+
+        // Option injection in base
+        let err1 = sdd_diff(plan_file.to_str().unwrap(), "-o/tmp/evil", "HEAD", None);
+        assert!(err1.is_err());
+        assert!(err1
+            .unwrap_err()
+            .to_string()
+            .contains("cannot start with hyphen"));
+
+        // Option injection in head
+        let err2 = sdd_diff(plan_file.to_str().unwrap(), "HEAD", "--output=evil", None);
+        assert!(err2.is_err());
+        assert!(err2
+            .unwrap_err()
+            .to_string()
+            .contains("cannot start with hyphen"));
+
+        // Metacharacter injection
+        let err3 = sdd_diff(plan_file.to_str().unwrap(), "HEAD; rm -rf", "HEAD", None);
+        assert!(err3.is_err());
+        assert!(err3
+            .unwrap_err()
+            .to_string()
+            .contains("disallowed metacharacters"));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_sdd_brief_rejects_path_traversal() {
+        let temp_dir = std::env::temp_dir().join("tribunal_sdd_sec_brief");
+        let _ = fs::create_dir_all(&temp_dir);
+        let plan_file = temp_dir.join("plan.md");
+        fs::write(&plan_file, "# Plan\n### Task 1: Demo\nContent\n").unwrap();
+
+        let malicious_out = "../../outside_root_evil.md";
+        let err = sdd_brief(plan_file.to_str().unwrap(), 1, Some(malicious_out));
+        assert!(err.is_err());
+        assert!(err
+            .unwrap_err()
+            .to_string()
+            .contains("Path security violation"));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_sdd_diff_rejects_path_traversal() {
+        let temp_dir = std::env::temp_dir().join("tribunal_sdd_sec_diff_trav");
+        let _ = fs::create_dir_all(&temp_dir);
+        let plan_file = temp_dir.join("plan.md");
+        fs::write(&plan_file, "# Plan\n### Task 1: Demo\n").unwrap();
+
+        let malicious_out = "../../outside_root_evil.diff";
+        let err = sdd_diff(
+            plan_file.to_str().unwrap(),
+            "HEAD",
+            "HEAD",
+            Some(malicious_out),
+        );
+        assert!(err.is_err());
+        assert!(err
+            .unwrap_err()
+            .to_string()
+            .contains("Path security violation"));
 
         let _ = fs::remove_dir_all(&temp_dir);
     }

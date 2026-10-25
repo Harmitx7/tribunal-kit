@@ -193,9 +193,9 @@ Compilers and linters catch these errors only **after** the code is already writ
       <td><code>crates/core</code></td>
     </tr>
     <tr>
-      <td><b>Zero Runtime Footprint</b></td>
-      <td><code>[0-DEPS]</code></td>
-      <td>Production npm package has exactly <b>0 runtime dependencies</b>. Completely neutralizes supply chain risk.</td>
+      <td><b>Minimal Supply-Chain Footprint</b></td>
+      <td><code>[MIN-DEPS]</code></td>
+      <td>Production npm package has exactly <b>1 vetted dependency</b> (<code>zod</code> for schema validation). Completely isolates supply chain risk.</td>
       <td><code>package.json</code></td>
     </tr>
     <tr>
@@ -345,19 +345,21 @@ npx tribunal-kit sync
 ```
 
 <a id="cli-adapters"></a>
-### CLI Agent Adapters (`tk-adapt`)
+### CLI Agent Adapters (`tk-adapt` / `tk adapt`)
 
 For developers using terminal-based AI coding agents, install native bridges with a single command:
 
 ```bash
 # Auto-detect all installed CLI agents and configure them
-npx tribunal-kit tk-adapt
+npx tk-adapt
+# Or via main CLI
+npx tribunal-kit adapt
 
-# Or install for a specific CLI agent
-npx tribunal-kit tk-adapt claude     # Claude Code CLI (.claude/CLAUDE.md + MCP)
-npx tribunal-kit tk-adapt aider      # Aider CLI (.aider.conf.yml + CONVENTIONS.md)
-npx tribunal-kit tk-adapt codex      # OpenAI Codex CLI (AGENTS.md)
-npx tribunal-kit tk-adapt gemini-cli # Google Gemini CLI (.gemini/rules/GEMINI.md)
+# Or configure for a specific CLI agent
+npx tk-adapt claude     # Claude Code CLI (.claude/CLAUDE.md + MCP)
+npx tk-adapt aider      # Aider CLI (.aider.conf.yml + CONVENTIONS.md)
+npx tk-adapt codex      # OpenAI Codex CLI (AGENTS.md)
+npx tk-adapt gemini-cli # Google Gemini CLI (.gemini/rules/GEMINI.md)
 ```
 
 <a id="minimal-mode"></a>
@@ -695,7 +697,7 @@ The browser and web intelligence engine enforces strict outbound network policie
 <a id="zero-deps"></a>
 ### 3. Supply-Chain Purity & Minimal Dependencies
 
-- **Minimal Production Dependencies:** Exactly 1 vetted production dependency (`zod: "^4.6.7"` for deterministic schema validation and boundary guarantees). Zero extraneous dependencies or deep dependency trees.
+- **Minimal Production Dependencies:** Exactly 1 vetted production runtime dependency (`zod: "^4.6.7"` for deterministic schema validation and boundary guarantees). Zero extraneous dependencies or deep dependency trees.
 - **Zero Install Lifecycle Scripts:** `package.json` contains no `preinstall`, `install`, or `postinstall` scripts, preventing arbitrary code execution during installation.
 - **Verifiable SLSA Provenance:** All releases are built via pinned GitHub Actions workflows and signed with Sigstore provenance (`npm publish --provenance`).
 - **Runtime Network Neutrality:** The CLI operates **100% offline** by default. It performs zero telemetry, zero analytics, and zero phone-home calls. The only network request is an optional npm version check during `init`, which is completely skippable via `--skip-update-check` or `TK_SKIP_UPDATE_CHECK=1`.
@@ -744,7 +746,7 @@ npm install
 # Run unit tests with Jest
 npm run test:unit
 
-# Run native Rust core test suite (53 tests)
+# Run native Rust core test suite (89 tests)
 npm run test:rust
 
 # Validate .agent/ payload integrity and reference links

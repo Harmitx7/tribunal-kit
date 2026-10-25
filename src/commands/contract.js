@@ -20,10 +20,17 @@ const fs = require('fs');
 const path = require('path');
 const logger_1 = require('../utils/logger');
 
-async function cmdContract(flags, argv, quiet = false) {
+async function cmdContract(flags = {}, argv, quiet = false) {
+  if (typeof argv === 'boolean') {
+    quiet = argv;
+    argv = process.argv;
+  } else if (!Array.isArray(argv)) {
+    argv = process.argv;
+  }
+
   const projectRoot = flags.path ? path.resolve(flags.path) : process.cwd();
-  const rawArgs = argv.slice(3);
-  const subCmd = rawArgs[0] || 'verify';
+  const rawArgs = argv.slice(3).filter(a => !a.startsWith('--'));
+  const subCmd = flags.subcommand || rawArgs[0] || 'verify';
 
   if (subCmd === 'help' || subCmd === '--help' || subCmd === '-h') {
     showContractHelp(quiet);

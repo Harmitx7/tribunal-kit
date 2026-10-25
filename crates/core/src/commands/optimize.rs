@@ -18,26 +18,29 @@ fn levenshtein(a: &str, b: &str) -> usize {
     let b_chars: Vec<char> = b.chars().collect();
     let m = a_chars.len();
     let n = b_chars.len();
-    let mut dp = vec![vec![0; n + 1]; m + 1];
 
-    for (i, row) in dp.iter_mut().enumerate().take(m + 1) {
-        row[0] = i;
+    if m == 0 {
+        return n;
     }
-    for (j, item) in dp[0].iter_mut().enumerate().take(n + 1) {
-        *item = j;
+    if n == 0 {
+        return m;
     }
 
-    for i in 1..=m {
-        for j in 1..=n {
-            if a_chars[i - 1] == b_chars[j - 1] {
-                dp[i][j] = dp[i - 1][j - 1];
+    let mut prev: Vec<usize> = (0..=n).collect();
+    let mut curr: Vec<usize> = vec![0; n + 1];
+
+    for (i, &ca) in a_chars.iter().enumerate() {
+        curr[0] = i + 1;
+        for (j, &cb) in b_chars.iter().enumerate() {
+            if ca == cb {
+                curr[j + 1] = prev[j];
             } else {
-                dp[i][j] =
-                    1 + std::cmp::min(dp[i - 1][j], std::cmp::min(dp[i][j - 1], dp[i - 1][j - 1]));
+                curr[j + 1] = 1 + std::cmp::min(prev[j + 1], std::cmp::min(curr[j], prev[j]));
             }
         }
+        std::mem::swap(&mut prev, &mut curr);
     }
-    dp[m][n]
+    prev[n]
 }
 
 fn normalized_similarity(a: &str, b: &str) -> f64 {
@@ -76,7 +79,13 @@ fn is_duplicate(content: &str, file_text: &str, threshold: f64) -> bool {
 }
 
 pub fn optimize_skill_step(skill_path: &str, edits_json: &str, budget: u32) -> Result<String> {
-    let path = Path::new(skill_path);
+    let repo_root = match crate::commands::sdd::find_repo_root() {
+        Ok(r) => r,
+        Err(_) => std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from(".")),
+    };
+    let verified_path =
+        crate::commands::security::assert_within_root(&repo_root, Path::new(skill_path))?;
+    let path = verified_path.as_path();
     let skill_name = path
         .parent()
         .and_then(|p| p.file_name())
@@ -272,5 +281,15 @@ mod tests {
         let text = "This is a custom procedural rule.";
         assert!(is_duplicate("procedural rule", text, 0.7));
         assert!(!is_duplicate("completely different text", text, 0.7));
+    }
+
+    #[test]
+    fn test_optimize_skill_step_rejects_path_traversal() {
+        let result = optimize_skill_step("../../../outside.md", "[]", 5);
+        assert!(result.is_err());
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("Path security violation"));
     }
 }

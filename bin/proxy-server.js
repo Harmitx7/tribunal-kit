@@ -101,10 +101,12 @@ function startProxyServer(port) {
       });
     });
 
-    proxyServer.listen(port, () => {
-      console.log(`[Tribunal Proxy] Listening on http://localhost:${port}`);
-      resolve(port);
+    proxyServer.listen(port, '127.0.0.1', () => {
+      const actualPort = proxyServer.address().port;
+      console.log(`[Tribunal Proxy] Listening on http://127.0.0.1:${actualPort}`);
+      resolve(actualPort);
     });
+
 
     proxyServer.on('error', reject);
   });
@@ -116,7 +118,13 @@ function stopProxyServer() {
   }
 }
 
+function getProxyServer() {
+  return proxyServer;
+}
+
 module.exports = {
   startProxyServer,
   stopProxyServer,
+  getProxyServer,
 };
+

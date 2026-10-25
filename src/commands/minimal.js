@@ -11,7 +11,8 @@ const path_1 = __importDefault(require('path'));
 const logger_1 = require('../utils/logger');
 const helpers_1 = require('../utils/helpers');
 
-function cmdMinimal(flags, quiet = false) {
+function cmdMinimal(flags = {}, argvOrQuiet = false, maybeQuiet = false) {
+  const quiet = typeof argvOrQuiet === 'boolean' ? argvOrQuiet : Boolean(maybeQuiet);
   const targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
   const agentDest = path_1.default.join(targetDir, '.agent');
   (0, helpers_1.banner)(quiet);

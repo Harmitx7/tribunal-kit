@@ -30,20 +30,28 @@ pub fn cmd_purge(skills_dir: &str, dry_run: bool) -> Result<()> {
             );
 
             if !dry_run {
-                // Find the skill directory
+                // Find the skill directory: check direct child first, then nested subdirectories
                 let mut found_path = None;
-                for entry in fs::read_dir(skills_path)?.flatten() {
-                    if entry.path().is_dir() && entry.file_name() != "_deprecated" {
-                        let potential_path = entry.path().join(&report.skill_name);
-                        if potential_path.exists() {
-                            found_path = Some(potential_path);
-                            break;
+                let direct_path = skills_path.join(&report.skill_name);
+                if direct_path.is_dir() {
+                    found_path = Some(direct_path);
+                } else if let Ok(entries) = fs::read_dir(skills_path) {
+                    for entry in entries.flatten() {
+                        if entry.path().is_dir() && entry.file_name() != "_deprecated" {
+                            let potential_path = entry.path().join(&report.skill_name);
+                            if potential_path.is_dir() {
+                                found_path = Some(potential_path);
+                                break;
+                            }
                         }
                     }
                 }
 
                 if let Some(src_path) = found_path {
                     let dest_path = deprecated_dir.join(&report.skill_name);
+                    if dest_path.exists() {
+                        let _ = fs::remove_dir_all(&dest_path);
+                    }
                     if let Err(e) = fs::rename(&src_path, &dest_path) {
                         eprintln!("Failed to move skill {}: {}", report.skill_name, e);
                     } else {
@@ -72,4 +80,48 @@ pub fn cmd_purge(skills_dir: &str, dry_run: bool) -> Result<()> {
     println!("Skills recommending fission: {}", fission_count);
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn create_low_fitness_skill(dir: &Path, name: &str) {
+        let skill_dir = dir.join(name);
+        fs::create_dir_all(&skill_dir).unwrap();
+        let content = format!(
+            "---\nname: {}\nlast-updated: 2020-01-01\n---\n\n# {}\n\nmake sure to ensure quality and follow guidelines as needed.\n",
+            name, name
+        );
+        fs::write(skill_dir.join("SKILL.md"), content).unwrap();
+    }
+
+    #[test]
+    fn test_purge_dry_run_and_actual() {
+        let temp_dir = std::env::temp_dir().join(format!("purge_test_{}", std::process::id()));
+        let skills_dir = temp_dir.join("skills");
+        fs::create_dir_all(&skills_dir).unwrap();
+
+        create_low_fitness_skill(&skills_dir, "useless-skill");
+
+        // Dry run: should NOT move the skill
+        let res_dry = cmd_purge(skills_dir.to_str().unwrap(), true);
+        assert!(res_dry.is_ok());
+        assert!(skills_dir.join("useless-skill").exists());
+        assert!(!skills_dir
+            .join("_deprecated")
+            .join("useless-skill")
+            .exists());
+
+        // Actual run: should move the skill to _deprecated
+        let res_actual = cmd_purge(skills_dir.to_str().unwrap(), false);
+        assert!(res_actual.is_ok());
+        assert!(!skills_dir.join("useless-skill").exists());
+        assert!(skills_dir
+            .join("_deprecated")
+            .join("useless-skill")
+            .exists());
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
 }

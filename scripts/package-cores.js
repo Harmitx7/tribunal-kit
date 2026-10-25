@@ -19,6 +19,7 @@ const { execFileSync } = require('child_process');
 const ROOT = path.resolve(__dirname, '..');
 const TEMPLATE_PKG = path.join(ROOT, 'npm', 'core-template', 'package.json');
 const OUTPUT_DIR = path.join(ROOT, 'npm', 'packages');
+const LICENSE_PATH = path.join(ROOT, 'LICENSE');
 const PKG = require(path.join(ROOT, 'package.json'));
 const VERSION = PKG.version;
 
@@ -51,7 +52,7 @@ function findBinary(platform, ext, rustTarget) {
   return null;
 }
 
-function buildPackages(shouldPack = false) {
+function buildPackages(shouldPack = false, strict = false) {
   if (!fs.existsSync(TEMPLATE_PKG)) {
     console.error(`Missing template: ${TEMPLATE_PKG}`);
     process.exit(1);
@@ -61,6 +62,7 @@ function buildPackages(shouldPack = false) {
   ensureDir(OUTPUT_DIR);
 
   console.log(`\n  🔱 Packaging Tribunal Core Platform Packages (v${VERSION})\n`);
+  let hasError = false;
 
   for (const target of PLATFORMS) {
     const pkgName = `core-${target.platform}-${target.arch}`;
@@ -84,6 +86,11 @@ function buildPackages(shouldPack = false) {
       `# @tribunal-kit/${pkgName}\n\nPrecompiled native Rust binary of Tribunal Core for ${target.platform} (${target.arch}).\n`,
     );
 
+    // Include LICENSE file for legal and distribution compliance
+    if (fs.existsSync(LICENSE_PATH)) {
+      fs.copyFileSync(LICENSE_PATH, path.join(pkgDir, 'LICENSE'));
+    }
+
     // Copy binary if available
     const binarySource = findBinary(target.platform, target.ext, target.rustTarget);
     const destBinary = path.join(binDir, `tribunal-core${target.ext}`);
@@ -95,21 +102,50 @@ function buildPackages(shouldPack = false) {
       }
       console.log(`  ✓ Built ${pkgName} (with binary)`);
     } else {
-      console.log(`  ⚠ Built ${pkgName} (staged, binary not found in build tree)`);
+      if (strict) {
+        console.error(`  ✖ Error: Required binary for ${pkgName} not found in build tree.`);
+        hasError = true;
+      } else {
+        console.log(`  ⚠ Built ${pkgName} (staged, binary not found in build tree)`);
+      }
     }
 
     if (shouldPack) {
-      try {
-        execFileSync('npm', ['pack'], { cwd: pkgDir, stdio: 'ignore' });
-        console.log(`    ↳ Packed .tgz`);
-      } catch (e) {
-        console.error(`    ↳ Failed to pack: ${e.message}`);
+      if (!binarySource && strict) {
+        console.error(`  ✖ Skipping pack for ${pkgName} due to missing binary.`);
+        hasError = true;
+      } else {
+        try {
+          execFileSync('npm', ['pack'], { cwd: pkgDir, stdio: 'ignore' });
+          console.log(`    ↳ Packed .tgz`);
+        } catch (e) {
+          console.error(`    ↳ Failed to pack ${pkgName}: ${e.message}`);
+          hasError = true;
+        }
       }
     }
+  }
+
+  if (hasError) {
+    console.error(`\n  ✖ Packaging failed with errors.`);
+    if (require.main === module) {
+      process.exit(1);
+    }
+    throw new Error('Packaging failed with errors');
   }
 
   console.log(`\n  ✓ Generated 6 platform packages in ${OUTPUT_DIR}\n`);
 }
 
-const isPack = process.argv.includes('--pack');
-buildPackages(isPack);
+if (require.main === module) {
+  const isPack = process.argv.includes('--pack');
+  const isStrict = process.argv.includes('--strict') || process.argv.includes('--require-binaries');
+  buildPackages(isPack, isStrict);
+}
+
+module.exports = {
+  buildPackages,
+  findBinary,
+  PLATFORMS,
+};
+

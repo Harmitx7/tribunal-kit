@@ -32,9 +32,11 @@ function validateProcessArgs(args, isBatch = false) {
       throw new Error('Security Violation: Control characters / null bytes detected in arguments.');
     }
     // When executing batch scripts on Windows, cmd.exe can interpret special characters
-    if (isBatch && /[&|<>^%]/.test(arg)) {
+    // Double quotes are rejected to prevent BatBadBut (CVE-2024-24576) argument delimiter breakout
+    if (isBatch && /[&|<>^%"]/.test(arg)) {
       throw new Error(`Security Violation: Argument "${arg}" contains dangerous cmd.exe metacharacters.`);
     }
+
   }
   return args;
 }

@@ -1,36 +1,13 @@
 use anyhow::{Context, Result};
 use owo_colors::OwoColorize;
-use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::f64::consts::PI;
 use std::fs;
 use std::path::Path;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct SkillNode {
-    pub name: String,
-    pub domain: String,
-    pub tier: String,
-    pub co_requires: Vec<String>,
-    pub supersedes: Option<String>,
-    pub conflicts_with: Vec<String>,
-    pub file_size_bytes: usize,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct SkillGraph {
-    pub success: bool,
-    pub total_skills: usize,
-    pub nodes: Vec<SkillNode>,
-    pub edges_co_requires: usize,
-    pub edges_supersedes: usize,
-    pub edges_conflicts: usize,
-}
-
 pub fn generate_genome_svg(skills_dir: &str, repo_path: &str) -> Result<String> {
-    let graph_json = crate::commands::skill_resolver::build_skill_graph(skills_dir)
+    let graph = crate::commands::skill_resolver::build_skill_graph_internal(skills_dir)
         .context("Failed to build skill graph for genome visualization")?;
-    let graph: SkillGraph = serde_json::from_str(&graph_json)?;
 
     let genome_dir = Path::new(repo_path).join(".tribunal").join("genome");
     fs::create_dir_all(&genome_dir)?;
@@ -144,4 +121,55 @@ pub fn generate_genome_svg(skills_dir: &str, repo_path: &str) -> Result<String> 
     );
 
     Ok(svg)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_generate_genome_svg_with_skills() {
+        let temp_dir = std::env::temp_dir().join(format!("genome_test_{}", std::process::id()));
+        let skills_dir = temp_dir.join("skills");
+        let skill1_dir = skills_dir.join("skill-alpha");
+        fs::create_dir_all(&skill1_dir).unwrap();
+
+        let md = r#"---
+name: skill-alpha
+routing:
+  domain: backend
+  tier: pro
+---
+# Skill Alpha
+"#;
+        fs::write(skill1_dir.join("SKILL.md"), md).unwrap();
+
+        let svg =
+            generate_genome_svg(skills_dir.to_str().unwrap(), temp_dir.to_str().unwrap()).unwrap();
+        assert!(svg.contains("<svg"));
+        assert!(svg.contains("</svg>"));
+        assert!(svg.contains("skill-alpha"));
+
+        let out_file = temp_dir
+            .join(".tribunal")
+            .join("genome")
+            .join("skill-genome.svg");
+        assert!(out_file.exists());
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_generate_genome_svg_empty_dir() {
+        let temp_dir = std::env::temp_dir().join(format!("genome_empty_{}", std::process::id()));
+        let skills_dir = temp_dir.join("skills");
+        fs::create_dir_all(&skills_dir).unwrap();
+
+        let svg =
+            generate_genome_svg(skills_dir.to_str().unwrap(), temp_dir.to_str().unwrap()).unwrap();
+        assert!(svg.contains("<svg"));
+        assert!(svg.contains("</svg>"));
+
+        let _ = fs::remove_dir_all(&temp_dir);
+    }
 }
