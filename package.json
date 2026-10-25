@@ -147,7 +147,7 @@
     "jest": "^30.4.2",
     "onnxruntime-node": "^1.22.0",
     "prettier": "^3.2.5",
-    "typescript": "^5.4.5",
+    "typescript": "^7.0.2",
     "ws": "^8.21.3",
     "yaml": "^2.9.1"
   },
