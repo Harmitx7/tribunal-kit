@@ -37,6 +37,8 @@ const RUST_COMMANDS = new Set([
   'genome',
   'purge',
   'ast-extract',
+  'hook',
+  'uninstall',
 ]);
 
 // Determine the path to the compiled Rust binary

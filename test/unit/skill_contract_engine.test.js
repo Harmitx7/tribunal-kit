@@ -9,7 +9,7 @@ const {
   scoreCompleteness,
   diffContracts,
   reconcileWithRegistry,
-} = require('../../../.agent/scripts/skill_contract_engine');
+} = require('../../.agent/scripts/skill_contract_engine');
 
 describe('Skill Contract Engine', () => {
   it('should parse simple frontmatter into JSON', () => {

@@ -8,6 +8,78 @@
  */
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.main = main;
+
+// ── Lazy Command Exports (Programmatic API parity with ESM & index.d.ts) ──
+exports.cmdInit = (flags, quiet) => loadCmd('./commands/init', 'cmdInit')(flags, quiet);
+exports.cmdUpdate = (flags) => loadCmd('./commands/update', 'cmdUpdate')(flags);
+exports.cmdStatus = (flags, quiet) => loadCmd('./commands/status', 'cmdStatus')(flags, quiet);
+exports.cmdLearn = (flags, quiet) => loadCmd('./commands/learn', 'cmdLearn')(flags, quiet);
+exports.cmdCase = (flags, argv, quiet) => loadCmd('./commands/case', 'cmdCase')(flags, argv, quiet);
+exports.cmdHook = (flags) => loadCmd('./commands/hook', 'cmdHook')(flags);
+exports.cmdGraph = (flags, quiet) => loadCmd('./commands/graph', 'cmdGraph')(flags, quiet);
+exports.cmdArch = (flags, argv, quiet) => loadCmd('./commands/arch', 'cmdArch')(flags, argv, quiet);
+exports.cmdMutate = (flags, argv) => loadCmd('./commands/mutate', 'cmdMutate')(flags, argv);
+exports.cmdContext = (flags, argv) => loadCmd('./commands/context', 'cmdContext')(flags, argv);
+exports.cmdSync = () => loadCmd('./commands/sync', 'cmdSync')();
+exports.cmdAlign = (flags, argv, quiet) => loadCmd('./commands/align', 'cmdAlign')(flags, argv, quiet);
+exports.alignText = (text) => loadCmd('./commands/align', 'alignText')(text);
+exports.cmdMarathon = (flags, argv, quiet) => loadCmd('./commands/marathon', 'cmdMarathon')(flags, argv, quiet);
+exports.cmdMinimal = (flags, quiet) => loadCmd('./commands/minimal', 'cmdMinimal')(flags, quiet);
+exports.cmdCompile = (flags, quiet) => loadCmd('./commands/compile', 'cmdCompile')(flags, quiet);
+exports.cmdUninstall = (flags, quiet) => loadCmd('./commands/uninstall', 'cmdUninstall')(flags, quiet);
+exports.cmdMemory = (flags, argv, quiet) => loadCmd('./commands/memory', 'cmdMemory')(flags, argv, quiet);
+exports.cmdOptimizeSkill = (flags, argv, quiet) => loadCmd('./commands/optimize', 'cmdOptimizeSkill')(flags, argv, quiet);
+exports.cmdEvalOpt = (flags, argv, quiet) => loadCmd('./commands/evalopt', 'cmdEvalOpt')(flags, argv, quiet);
+exports.cmdEvolve = (flags, argv, quiet) => loadCmd('./commands/evolve', 'cmdEvolve')(flags, argv, quiet);
+exports.cmdGuardrail = (flags, argv, quiet) => loadCmd('./commands/guardrail', 'cmdGuardrail')(flags, argv, quiet);
+exports.cmdRsi = (flags, argv, quiet) => loadCmd('./commands/rsi', 'cmdRsi')(flags, argv, quiet);
+exports.cmdContract = (flags, argv, quiet) => loadCmd('./commands/contract', 'cmdContract')(flags, argv, quiet);
+exports.cmdValidate = (flags, argv, quiet) => loadCmd('./commands/validate', 'cmdValidate')(flags, argv, quiet);
+exports.cmdMinContext = (argv, quiet) => loadCmd('./commands/native', 'cmdMinContext')(argv, quiet);
+exports.cmdDagSchedule = (argv, quiet) => loadCmd('./commands/native', 'cmdDagSchedule')(argv, quiet);
+exports.cmdContextCompress = (argv, quiet) => loadCmd('./commands/native', 'cmdContextCompress')(argv, quiet);
+exports.cmdOptimizeStep = (argv, quiet) => loadCmd('./commands/native', 'cmdOptimizeStep')(argv, quiet);
+exports.cmdImpactTier = (argv, quiet) => loadCmd('./commands/native', 'cmdImpactTier')(argv, quiet);
+exports.cmdContextRank = (flags, argv, quiet) => loadCmd('./commands/context', 'cmdContextRank')(flags, argv, quiet);
+exports.cmdSystem1 = (flags, argv, quiet) => loadCmd('./commands/system1', 'cmdSystem1')(flags, argv, quiet);
+exports.cmdBrowse = (flags, argv, quiet) => loadCmd('./commands/browse', 'cmdBrowse')(flags, argv, quiet);
+exports.cmdAuditWeb = (flags, argv, quiet) => loadCmd('./commands/audit-web', 'cmdAuditWeb')(flags, argv, quiet);
+exports.cmdCompareWeb = (flags, argv, quiet) => loadCmd('./commands/compare-web', 'cmdCompareWeb')(flags, argv, quiet);
+exports.cmdDeconstruct = (flags, argv, quiet) => loadCmd('./commands/deconstruct', 'cmdDeconstruct')(flags, argv, quiet);
+exports.cmdHeal = (flags, argv, quiet) => loadCmd('./commands/heal', 'cmdHeal')(flags, argv, quiet);
+exports.cmdReview = (flags, argv, quiet) => loadCmd('./commands/review', 'cmdReview')(flags, argv, quiet);
+exports.cmdSdd = (flags, argv, quiet) => loadCmd('./commands/sdd', 'cmdSdd')(flags, argv, quiet);
+exports.cmdSkillIntel = (flags, argv, quiet) => loadCmd('./commands/skill-intelligence', 'cmdSkillIntel')(flags, argv, quiet);
+exports.cmdActivity = (flags, argv, quiet) => loadCmd('./commands/activity', 'cmdActivity')(flags, argv, quiet);
+exports.cmdUnderstand = (flags, argv, quiet) => loadCmd('./commands/understand', 'cmdUnderstand')(flags, argv, quiet);
+
+
+let _activityCache = null;
+function getActivity() {
+  if (!_activityCache) {
+    _activityCache = require('./activity');
+  }
+  return _activityCache;
+}
+
+const baseExports = exports;
+module.exports = new Proxy(baseExports, {
+  get(target, prop) {
+    if (prop === 'activity') return getActivity();
+    if (prop in target) return target[prop];
+    return getActivity()[prop];
+  },
+  has(target, prop) {
+    return prop in target || prop in getActivity();
+  },
+  ownKeys(target) {
+    return Array.from(new Set([...Reflect.ownKeys(target), ...Reflect.ownKeys(getActivity())]));
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    if (prop in target) return Reflect.getOwnPropertyDescriptor(target, prop);
+    return Reflect.getOwnPropertyDescriptor(getActivity(), prop);
+  },
+});
 const logger_1 = require('./utils/logger');
 const helpers_1 = require('./utils/helpers');
 const PKG = require('../package.json');
@@ -55,7 +127,7 @@ function parseArgs(argv) {
     } else if (arg === '--path') {
       const nextVal = raw[++i];
       if (!nextVal || nextVal.startsWith('--')) {
-        console.error(`  \x1b[91m✖ --path requires a directory argument\x1b[0m`);
+        (0, logger_1.err)('--path requires a directory argument');
         process.exit(1);
       }
       args.flags.path = nextVal;
@@ -64,7 +136,7 @@ function parseArgs(argv) {
     } else if (arg === '--file') {
       const nextVal = raw[++i];
       if (!nextVal || nextVal.startsWith('--')) {
-        console.error(`  \x1b[91m✖ --file requires an argument\x1b[0m`);
+        (0, logger_1.err)('--file requires an argument');
         process.exit(1);
       }
       args.flags.file = nextVal;
@@ -73,7 +145,7 @@ function parseArgs(argv) {
     } else if (arg === '--target') {
       const nextVal = raw[++i];
       if (!nextVal || nextVal.startsWith('--')) {
-        console.error(`  \x1b[91m✖ --target requires an argument\x1b[0m`);
+        (0, logger_1.err)('--target requires an argument');
         process.exit(1);
       }
       args.flags.target = nextVal;
@@ -123,13 +195,23 @@ function parseArgs(argv) {
       args.flags.bridge = true;
     } else if (arg === '--no-bridge') {
       args.flags.bridge = false;
+    } else if (arg.startsWith('--')) {
+      const eqIdx = arg.indexOf('=');
+      if (eqIdx > 2) {
+        const key = arg.slice(2, eqIdx);
+        const val = arg.slice(eqIdx + 1);
+        args.flags[key] = val;
+      } else {
+        const key = arg.slice(2);
+        args.flags[key] = true;
+      }
     }
   }
   return args;
 }
 function cmdHelp(quiet = false) {
   (0, helpers_1.banner)(quiet);
-  const { color, bold, dim, RGB, GLYPHS } = require('./tui');
+  const { color, bold, dim, RGB } = require('./tui');
 
   const cmd = (name, desc) =>
     `    ${color(RGB.CYAN, name.padEnd(16))} ${dim(desc)}`;
@@ -221,7 +303,7 @@ async function runWithUpdateCheck(command, flags) {
       process.exit(0);
     }
   }
-  const quiet = flags.quiet || false;
+  const quiet = Boolean(flags.quiet || flags.json);
   switch (command) {
     case 'init': {
       const cmdInit = loadCmd('./commands/init', 'cmdInit');
@@ -261,6 +343,12 @@ async function runWithUpdateCheck(command, flags) {
     case 'arch': {
       const cmdArch = loadCmd('./commands/arch', 'cmdArch');
       await cmdArch(flags, process.argv, quiet);
+      break;
+    }
+    case 'understand':
+    case 'tribunal-understand': {
+      const cmdUnderstand = loadCmd('./commands/understand', 'cmdUnderstand');
+      await cmdUnderstand(flags, process.argv, quiet);
       break;
     }
     case 'mutate': {
@@ -448,6 +536,11 @@ async function runWithUpdateCheck(command, flags) {
       child_process.fork(adapterScript, subArgs, { stdio: 'inherit' });
       break;
     }
+    case 'activity': {
+      const cmdActivity = loadCmd('./commands/activity', 'cmdActivity');
+      await cmdActivity(flags, process.argv, quiet);
+      break;
+    }
     case 'help':
     case '--help':
     case '-h':
@@ -468,12 +561,12 @@ async function runWithUpdateCheck(command, flags) {
 // ── Main ──────────────────────────────────────────────────
 async function main() {
   const { command, flags } = parseArgs(process.argv);
-  (0, logger_1.setLogLevels)(flags.quiet || false, flags.verbose || false);
+  (0, logger_1.setLogLevels)(Boolean(flags.quiet || flags.json), flags.verbose || false);
   await runWithUpdateCheck(command, flags);
 }
 if (require.main === module) {
   main().catch(err => {
-    console.error(`\x1b[91m✖ Fatal Error:\x1b[0m ${err.message || err}`);
+    (0, logger_1.err)(`Fatal Error: ${err.message || err}`);
     process.exit(1);
   });
 }

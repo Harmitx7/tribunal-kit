@@ -53,18 +53,43 @@ if (!fs.existsSync(CANONICAL_SKILLS)) {
     }
   }
 
-  // 2. Topic Map Parity
+  // 2. Topic Map Parity & Structural Invariants
   if (fs.existsSync(TOPIC_MAP)) {
     try {
       const map = JSON.parse(fs.readFileSync(TOPIC_MAP, 'utf8'));
       const registered = new Set();
-      for (const list of Object.values(map.domain_routes || {})) {
-        list.forEach(s => registered.add(s));
+      const canonicalSet = new Set(canonicalEntries);
+
+      for (const [domain, list] of Object.entries(map.domain_routes || {})) {
+        if (!Array.isArray(list)) {
+          errors.push(`Domain route '${domain}' in .agent/skill_topic_map.json is not an array`);
+          continue;
+        }
+        const seenInRoute = new Set();
+        for (const s of list) {
+          if (seenInRoute.has(s)) {
+            errors.push(`Duplicate skill '${s}' found in domain route '${domain}' in .agent/skill_topic_map.json`);
+          }
+          seenInRoute.add(s);
+          registered.add(s);
+
+          if (!canonicalSet.has(s)) {
+            errors.push(`Stale reference: Skill '${s}' in domain route '${domain}' does not exist on disk`);
+          }
+        }
       }
+
       for (const skill of canonicalEntries) {
         if (!registered.has(skill)) {
           errors.push(`Skill '${skill}' not registered in .agent/skill_topic_map.json`);
         }
+      }
+
+      if (typeof map.total_skills === 'number' && map.total_skills !== registered.size) {
+        errors.push(`Declared total_skills (${map.total_skills}) does not match actual unique registered skills (${registered.size}) in .agent/skill_topic_map.json`);
+      }
+      if (registered.size !== canonicalEntries.length) {
+        errors.push(`Unique registered skills (${registered.size}) does not match canonical disk count (${canonicalEntries.length})`);
       }
     } catch (e) {
       errors.push(`Failed to parse .agent/skill_topic_map.json: ${e.message}`);

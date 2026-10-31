@@ -5,9 +5,7 @@
  */
 const { CaseMemory } = require('../intelligence/case_memory');
 const { CaseIndexer } = require('../intelligence/case_indexer');
-const { CaseSimilarity } = require('../intelligence/case_similarity');
 const { FailureIntelligence } = require('../intelligence/failure_intelligence');
-const { RiskPredictionEngine } = require('../intelligence/risk_prediction_engine');
 const { CaseBasedReasoningEngine } = require('../intelligence/cbr_engine');
 const { ReviewerPerformance } = require('../intelligence/reviewer_performance');
 const { GovernanceDriftDetector } = require('../intelligence/governance_drift_detector');
@@ -28,7 +26,6 @@ async function cmdIntelligence(subcommand, argsArray) {
   switch (subcommand) {
     case 'cases': {
       // Output format supports human readable and JSON
-      const out = '';
       const allIds = Array.from(idx.listCaseIds());
       output(allIds, `Total cases stored: ${allIds.length}`);
       break;

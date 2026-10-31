@@ -45,8 +45,8 @@ tribunal-kit/
 ├── crates/core/            # Rust core engine (Tokio, Clap, Serde, OXC)
 ├── .agent/                 # The intelligence payload (agents, skills, workflows)
 │   ├── agents/             # 60 specialist and reviewer agent definitions
-│   ├── skills/             # 235 schema-validated engineering skills
-│   ├── workflows/          # 51 workflow definitions
+│   ├── skills/             # 398 schema-validated engineering skills
+│   ├── workflows/          # 52 workflow definitions
 │   └── scripts/            # Automation scripts
 ├── test/
 │   ├── unit/               # Unit tests (Jest)

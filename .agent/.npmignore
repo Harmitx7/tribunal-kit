@@ -1,0 +1,9 @@
+# Tribunal Kit — Subdirectory npmignore for .agent/
+# Ensures local development logs, sessions, and caches are never packed
+
+history/
+.tribunal/
+.backups/
+cache/
+plans/
+

@@ -39,11 +39,20 @@ function ensureDir(dir) {
 function findBinary(platform, ext, rustTarget) {
   const binaryName = `tribunal-core${ext}`;
   const arch = rustTarget.includes('arm64') || rustTarget.includes('aarch64') ? 'arm64' : 'x64';
+  const isHost = platform === process.platform && arch === process.arch;
+
   const candidates = [
     path.join(ROOT, 'target', rustTarget, 'release', binaryName),
-    path.join(ROOT, 'target', 'release', binaryName),
+    path.join(ROOT, 'crates', 'core', 'target', rustTarget, 'release', binaryName),
+    ...(isHost
+      ? [
+          path.join(ROOT, 'target', 'release', binaryName),
+          path.join(ROOT, 'crates', 'core', 'target', 'release', binaryName),
+        ]
+      : []),
     path.join(ROOT, `tribunal-core-${platform}-${arch}${ext}`),
     path.join(ROOT, `tribunal-core-${platform === 'win32' ? 'win' : platform}-${arch}${ext}`),
+    path.join(ROOT, 'npm', 'packages', `core-${platform}-${arch}`, 'bin', binaryName),
   ];
 
   for (const cand of candidates) {
@@ -116,7 +125,9 @@ function buildPackages(shouldPack = false, strict = false) {
         hasError = true;
       } else {
         try {
-          execFileSync('npm', ['pack'], { cwd: pkgDir, stdio: 'ignore' });
+          const isWin = process.platform === 'win32';
+          const npmCmd = isWin ? 'npm.cmd' : 'npm';
+          execFileSync(npmCmd, ['pack'], { cwd: pkgDir, stdio: 'ignore', shell: isWin });
           console.log(`    ↳ Packed .tgz`);
         } catch (e) {
           console.error(`    ↳ Failed to pack ${pkgName}: ${e.message}`);
@@ -148,4 +159,3 @@ module.exports = {
   findBinary,
   PLATFORMS,
 };
-

@@ -7,7 +7,7 @@
  */
 
 const readline = require('readline');
-const { isTTY, RGB, GLYPHS, color, bold, bg, inverse } = require('./theme');
+const { isTTY, RGB, GLYPHS, color, bold, inverse } = require('./theme');
 
 class WizardPrompt {
   displaySummary(question, options) {

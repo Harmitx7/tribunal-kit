@@ -13,3 +13,5 @@ package-lock.json
 src/system1/laya-package.json
 benchmark-results.json
 benchmark-stress-results.json
+test/fixtures/**
+**/fixtures/**

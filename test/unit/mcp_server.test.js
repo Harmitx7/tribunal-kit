@@ -5,7 +5,7 @@ process.env.NODE_ENV = 'test';
 
 const _path = require('path');
 const _fs = require('fs');
-const { handleRequest, stripBoilerplate, runTribunalAudit } = require('../../bin/mcp-server');
+const { handleRequest, processSingleRequest, stripBoilerplate, runTribunalAudit, ToolRepeatGuard } = require('../../bin/mcp-server');
 
 describe('MCP Server Boilerplate Stripper', () => {
   test('strips standard duplicate boilerplate blocks from text', async () => {
@@ -236,6 +236,67 @@ describe('MCP Server handleRequest', () => {
     const result = await handleRequest(reqContracts);
     expect(result.content[0].text).toMatch(/Path security violation|Path traversal detected/);
   });
+
+  test('tk_format_activity tool is listed and handles formatting calls', async () => {
+    const reqList = {
+      jsonrpc: '2.0',
+      id: 20,
+      method: 'tools/list',
+      params: {},
+    };
+    const listResult = await handleRequest(reqList);
+    const activityTool = listResult.tools.find(t => t.name === 'tk_format_activity');
+    expect(activityTool).toBeDefined();
+    expect(activityTool.description).toContain('activity presentation format');
+
+    const reqCall = {
+      jsonrpc: '2.0',
+      id: 21,
+      method: 'tools/call',
+      params: {
+        name: 'tk_format_activity',
+        arguments: {
+          state: 'tests_running',
+          title: 'Codebase Intelligence Test Suites',
+          current: 8,
+          total: 12,
+          unit: 'suites',
+          nextAction: 'Verify baseline exit codes',
+        },
+      },
+    };
+    const callResult = await handleRequest(reqCall);
+    expect(callResult.content[0].text).toContain('› **Testing** · Codebase Intelligence Test Suites');
+    expect(callResult.content[0].text).toContain('Progress: 8/12 suites (67%) · 4 pending');
+    expect(callResult.content[0].text).toContain('Next: Verify baseline exit codes');
+  });
+
+  test('JSON-RPC 2.0: processSingleRequest never responds to notifications even on error', async () => {
+    // Valid notification -> returns null
+    const validNotification = {
+      jsonrpc: '2.0',
+      method: 'notifications/initialized',
+    };
+    const validRes = await processSingleRequest(validNotification);
+    expect(validRes).toBeNull();
+
+    // Erroneous notification (unknown method, no id) -> MUST return null per JSON-RPC 2.0 §4.1
+    const errorNotification = {
+      jsonrpc: '2.0',
+      method: 'nonexistent/notification',
+    };
+    const errorRes = await processSingleRequest(errorNotification);
+    expect(errorRes).toBeNull();
+  });
+
+  test('ToolRepeatGuard handles circular argument structures safely without stack overflow', () => {
+    const guard = new ToolRepeatGuard();
+    const circularObj = { a: 1 };
+    circularObj.self = circularObj;
+
+    expect(() => {
+      const warning = guard.observe('test_tool', circularObj);
+      expect(warning).toBeNull();
+    }).not.toThrow();
+  });
 });
-
-

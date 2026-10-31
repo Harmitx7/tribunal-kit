@@ -27,6 +27,7 @@ const {
   loadCandidateScenarios,
   promoteCandidateScenario,
 } = require('../evaluation/coevolution_bridge');
+const { assertSafeShellArgs } = require('../evolution/coevolution_orchestrator');
 
 function shouldRunInShell(cmd) {
   if (process.platform !== 'win32') return false;
@@ -162,6 +163,7 @@ async function cmdEvalOpt(flags, processArgs, quiet = false) {
         let cmdRes = { exitCode: 0, stdout: '', stderr: '', reason: '' };
         try {
           const vCmd = scenario.verificationCommand;
+          assertSafeShellArgs(vCmd.cmd, vCmd.args || []);
           const stdout = execFileSync(vCmd.cmd, vCmd.args || [], {
             encoding: 'utf8',
             cwd: runDir,

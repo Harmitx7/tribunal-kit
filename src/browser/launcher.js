@@ -7,12 +7,12 @@
  * clean temporary profiles, and failsafe orphan process reaping.
  */
 
-const { spawn } = require('child_process');
+const cp = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const net = require('net');
-const { findBrowser, isPortOpen } = require('./discovery');
+const discovery = require('./discovery');
 const { createControlledProxy } = require('./proxy');
 
 const activeInstances = new Set();
@@ -59,14 +59,14 @@ process.on('SIGTERM', () => {
  * @returns {Promise<{ port: number, process: any, close: Function }>}
  */
 async function launchBrowser(options = {}) {
-  const browserInfo = findBrowser();
+  const browserInfo = discovery.findBrowser();
   if (!browserInfo) {
     throw new Error('No supported browser (Google Chrome or Microsoft Edge) found on this machine');
   }
 
   let port = options.port;
   if (!port) {
-    const defaultOpen = await isPortOpen(9222);
+    const defaultOpen = await discovery.isPortOpen(9222);
     if (defaultOpen) {
       return {
         port: 9222,
@@ -76,7 +76,7 @@ async function launchBrowser(options = {}) {
     }
     port = await getFreePort();
   } else {
-    const alreadyOpen = await isPortOpen(port);
+    const alreadyOpen = await discovery.isPortOpen(port);
     if (alreadyOpen) {
       return {
         port,
@@ -110,6 +110,9 @@ async function launchBrowser(options = {}) {
     '--disable-sync',
     '--disable-translate',
     '--disable-gpu',
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
     '--metrics-recording-only',
     '--mute-audio',
     '--disable-features=DnsOverHttps',
@@ -118,7 +121,7 @@ async function launchBrowser(options = {}) {
     'about:blank',
   ].filter(Boolean);
 
-  const proc = spawn(browserInfo.path, args, {
+  const proc = cp.spawn(browserInfo.path, args, {
     detached: false,
     stdio: 'ignore',
   });
@@ -142,7 +145,7 @@ async function launchBrowser(options = {}) {
   let ready = false;
   for (let i = 0; i < maxAttempts; i++) {
     await new Promise(r => setTimeout(r, 150));
-    if (await isPortOpen(port)) {
+    if (await discovery.isPortOpen(port)) {
       ready = true;
       break;
     }

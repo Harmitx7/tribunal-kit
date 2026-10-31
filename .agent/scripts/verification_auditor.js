@@ -30,7 +30,7 @@ const path = require('path');
  */
 function auditPostExecution(taskIntelligenceOrQuery, executionEvidence, options = {}) {
   let taskIntelligence;
-  const agentDir = options.agentDir || path.resolve(__dirname, '..', '.agent');
+  const agentDir = options.agentDir || path.resolve(__dirname, '..');
 
   if (typeof taskIntelligenceOrQuery === 'string') {
     const { analyzeTask } = require('./skill_intelligence');

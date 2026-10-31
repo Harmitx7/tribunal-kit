@@ -34,6 +34,7 @@ const DEFAULT_SKIP_DIRS = new Set([
   'scratch',
   'target',
   'benchmarks',
+  '.tribunal',
 ]);
 
 // ── Default Source Extensions ───────────────────────────────────────────────

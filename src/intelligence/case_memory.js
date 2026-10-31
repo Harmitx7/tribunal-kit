@@ -43,7 +43,24 @@ class CaseMemory {
   }
 
   _getCasePath(caseId) {
-    return path.join(this.casesDir, `${caseId}.json`);
+    if (!caseId || typeof caseId !== 'string') {
+      throw new Error('Security Violation: Invalid case identifier: must be a non-empty string.');
+    }
+    const cleanId = caseId.trim();
+    if (
+      cleanId.includes('..') ||
+      cleanId.includes('/') ||
+      cleanId.includes('\\') ||
+      cleanId.includes('\0')
+    ) {
+      throw new Error(`Security Violation: Path traversal detected in caseId: "${caseId}".`);
+    }
+    const resolved = path.resolve(this.casesDir, `${cleanId}.json`);
+    const rel = path.relative(this.casesDir, resolved);
+    if (rel.startsWith('..') || path.isAbsolute(rel)) {
+      throw new Error(`Security Violation: Path traversal detected in caseId: "${caseId}".`);
+    }
+    return resolved;
   }
 
   /**

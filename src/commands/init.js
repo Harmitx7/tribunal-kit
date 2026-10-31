@@ -451,7 +451,7 @@ async function generateIDEBridges(targetDir, agentDest, dryRun = false, isMinima
       await fs_1.default.promises.stat(filePath);
       (0, logger_1.dbg)(`  skip (exists): ${path_1.default.basename(filePath)}`);
     } catch (statErr) {
-      if (statErr instanceof Error && statErr.code === 'ENOENT') {
+      if (statErr && statErr.code === 'ENOENT') {
         await fs_1.default.promises.writeFile(filePath, content, 'utf8');
         (0, logger_1.ok)(
           `${label} → ${(0, logger_1.c)('gray', path_1.default.relative(targetDir, filePath))}`,

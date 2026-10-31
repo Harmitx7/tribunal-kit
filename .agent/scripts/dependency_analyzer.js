@@ -106,7 +106,7 @@ const NODE_BUILTINS = new Set([
 function extractImports(projectRoot) {
   const imports = new Set();
   const importPatterns = [
-    /(?:import|export)\s+.*?\s+from\s+["']([^"'.\r\n][^"'\r\n]*)["']/g,
+    /(?:^|[;\n\r{}])\s*(?:import|export)\s+.*?\s+from\s+["']([^"'.\r\n][^"'\r\n]*)["']/gm,
     /require\s*\(\s*["']([^"'.\r\n][^"'\r\n]*)["']\s*\)/g,
     /import\s*\(\s*["']([^"'.\r\n][^"'\r\n]*)["']\s*\)/g,
   ];

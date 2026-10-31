@@ -1,0 +1,172 @@
+---
+name: audit
+description: Full project audit combining security scan, lint, schema validation, test coverage, dependency analysis, and bundle analysis. Runs all scripts in priority order. Human review required before applying any fixes.
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - vulnerability-scanner
+  - clean-code
+  - code-review-checklist
+scripts-binding:
+  - .agent/scripts/security_scan.js
+  - .agent/scripts/dependency_analyzer.js
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/schema_validator.js
+  - .agent/scripts/test_runner.js
+  - .agent/scripts/bundle_analyzer.js
+---
+
+# /audit — Complete Project Health Assessment
+
+$ARGUMENTS
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before triggering a full project audit, you MUST inspect:
+
+1. Workspace Package Manifest (`package.json`) → Verify installed test frameworks, linters, and dependencies
+2. Executable Scripts Inventory (`.agent/scripts/`) → Verify presence of `security_scan.js`, `lint_runner.js`, and `test_runner.js`
+3. Pipeline Execution Constraints → Confirm fixed execution order (Security → Dependencies → Type Check → Lint → Schema → Tests → Bundle) and HALT rules on critical CVE findings
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `vulnerability-scanner` (.agent/skills/vulnerability-scanner/SKILL.md): OWASP vulnerability scanning patterns and severity classification
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+   - `code-review-checklist` (.agent/skills/code-review-checklist/SKILL.md): Code quality, security, and best practice review gates
+
+---
+
+## When to Use /audit
+
+| Use `/audit` when...             | Use something else when...                    |
+| :------------------------------- | :-------------------------------------------- |
+| Before a major release or launch | Single file review → `/review`                |
+| After a security incident        | Just lint errors → `/fix`                     |
+| Onboarding to a new codebase     | Performance only → `/performance-benchmarker` |
+| Weekly/monthly health check      | Testing only → `/test`                        |
+| Before major dependency updates  |                                               |
+
+---
+
+## Execution Order (Fixed — Do Not Reorder)
+
+Security failures early in the pipeline halt subsequent steps. Lint/test failures continue with flags.
+
+```
+Priority 1 — Security (HALT if critical finding)
+  node .agent/scripts/security_scan.js .
+
+Priority 2 — Dependencies (HALT if exploitable CVE found)
+  node .agent/scripts/dependency_analyzer.js . --audit
+
+Priority 3 — Type Checking (CONTINUE but flag)
+  npx tsc --noEmit
+
+Priority 4 — Lint (CONTINUE but flag as deployment blocker)
+  node .agent/scripts/lint_runner.js .
+
+Priority 5 — Schema Validation (CONTINUE but flag)
+  node .agent/scripts/schema_validator.js .
+
+Priority 6 — Tests (CONTINUE but mark incomplete)
+  node .agent/scripts/test_runner.js . --coverage
+
+Priority 7 — Bundle Analysis (INFORM only)
+  node .agent/scripts/bundle_analyzer.js . --build
+```
+
+### Cascade Failure Rules
+
+| Check                              | Failure Behavior                          |
+| :--------------------------------- | :---------------------------------------- |
+| Security scan (critical)           | **HALT** — all subsequent steps cancelled |
+| Dependency audit (exploitable CVE) | **HALT** — fix before proceeding          |
+| Lint + type errors                 | **CONTINUE** — flag as deployment blocker |
+| Tests failing                      | **CONTINUE** — mark task as incomplete    |
+| Bundle analysis (large)            | **INFORM** — no blocking                  |
+
+---
+
+## Script Retry Protocol
+
+```
+Script exits 0:     Success — continue pipeline
+Script exits 1:     Failure — report and decide: retry or skip?
+Script not found:   Skip with warning — do not block pipeline
+Script times out:   Kill after 5 min — report timeout — continue
+Script crashes:     Catch exception — report stack trace — continue
+```
+
+**Hard limit: 3 retries per script.** After 3 failures, report to human and continue with remaining scripts.
+
+---
+
+## Audit Report Format
+
+```
+━━━ Audit Report: [Project Name] ━━━━━━━━━━━━━━━━━━━━
+
+Score: [N/7 checks passed]
+
+1. Security Scan:         ✅ PASSED | ❌ FAILED (CRITICAL — HALTED) | ⚠️ WARNINGS
+2. Dependency Audit:      ✅ PASSED | ❌ FAILED (CVE-XXXX-XXXX found) | ⚠️ WARNINGS
+3. TypeScript:            ✅ PASSED | ❌ FAILED (N errors)
+4. Lint:                  ✅ PASSED | ❌ FAILED (N errors, M warnings)
+5. Schema Validation:     ✅ PASSED | ❌ FAILED | N/A
+6. Test Coverage:         ✅ PASSED | ❌ FAILED (N% — below 80% threshold)
+7. Bundle Size:           ✅ GOOD (310kb) | ⚠️ LARGE (>500kb) | ❌ CRITICAL (>1mb)
+
+━━━ Critical Issues (Fix Before Deploy) ━━━━━━━━━━━━━
+- [CRITICAL] SQL injection in src/routes/users.ts:47
+- [HIGH] JWT secret from hardcoded fallback in src/lib/auth.ts:12
+
+━━━ Important Issues (Fix Before Release) ━━━━━━━━━━
+- [MEDIUM] 4 TypeScript 'any' types in src/components/
+- [MEDIUM] Test coverage: 58% (target: 80%)
+
+━━━ Recommendations ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Update lodash 4.17.20 → 4.17.21 (Prototype pollution CVE)
+- Add @types/node to devDependencies (missing)
+- Bundle size: chart library causes +240kb — use dynamic import
+
+━━━ Suggested Next Steps ━━━━━━━━━━━━━━━━━━━━━━━━━━
+Critical items → /tribunal-backend to fix injection and JWT issues
+Test gaps → /test to add coverage for checkout and auth flows
+Bundle → /enhance to add dynamic import for chart component
+```
+
+---
+
+## Human Review Gate
+
+After the audit report is produced:
+
+```
+Human Gate required before any fixes are applied.
+
+Approve a fix plan?
+Y = proceed with automated fixes where safe
+N = report only, no changes
+S = select specific items to fix
+```
+
+No files are modified without explicit approval.
+
+---
+
+## After /audit — Next Steps
+
+| Outcome                      | Next Command                                    |
+| :--------------------------- | :---------------------------------------------- |
+| Security/Dependency failures | → `/tribunal-backend` to implement secure fixes |
+| Lint/Type errors             | → `/fix` for automated cleanup                  |
+| Test coverage missing        | → `/test` to generate missing tests             |
+| Audit clean                  | → `/deploy` if preparing for release            |
+
+---
+
+## Harness vs Application Auditing
+
+The `/audit` command now explicitly distinguishes between Application Security (OWASP, SQLi) and Harness Security (AgentShield prompt injection, MCP configuration risks).

@@ -94,7 +94,7 @@ function main() {
     }
 
     // Check string length limits
-    const stringFields = ['title', 'impact', 'remediation'];
+    const stringFields = ['title', 'impact', 'remediation', 'description'];
     let oversized = false;
     for (const field of stringFields) {
       if (

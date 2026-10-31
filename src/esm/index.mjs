@@ -91,6 +91,10 @@ export async function cmdAlign(flags, argv, quiet) {
   return loadCommand('../commands/align.js', 'cmdAlign', flags, argv, quiet);
 }
 
+export function alignText(text) {
+  return loadCommand('../commands/align.js', 'alignText', text);
+}
+
 export async function cmdMarathon(flags, argv, quiet) {
   return loadCommand('../commands/marathon.js', 'cmdMarathon', flags, argv, quiet);
 }

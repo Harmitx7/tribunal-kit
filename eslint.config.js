@@ -1,6 +1,6 @@
 module.exports = [
   {
-    ignores: ['node_modules/**', 'target/**', 'coverage/**', 'scratch/**'],
+    ignores: [, 'test/fixtures/**', '.tribunal/**'],
   },
   {
     files: ['**/*.js'],
@@ -24,6 +24,7 @@ module.exports = [
         Buffer: 'readonly',
         URL: 'readonly',
         WebSocket: 'readonly',
+        AbortController: 'readonly',
         describe: 'readonly',
         test: 'readonly',
         it: 'readonly',

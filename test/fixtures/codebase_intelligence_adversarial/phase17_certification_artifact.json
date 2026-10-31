@@ -1,0 +1,82 @@
+{
+  "phase": 17,
+  "title": "Incremental Intelligence, Change-Aware Analysis & Repository Freshness",
+  "subsystem": "Codebase Intelligence",
+  "version": "9.3.0",
+  "git": {
+    "branch": "main",
+    "commit": "781959cac3104b450981a9a1039e9e44993b5f79"
+  },
+  "timestamp": "2026-10-30T08:17:15.081Z",
+  "verdict": "RELEASE_READY",
+  "checksums": {
+    "codebase_intelligence_sha256": "04276641FC6741629EF42FC0C7DDE66461E7CACFC9F823B2AF90381297D04D67",
+    "architecture_extractor_sha256": "FFB5F0044249FF2622E35D3EEF9F0D886514A0747AA8857B4E8564B69200763C"
+  },
+  "metrics": {
+    "baseline_full_scan_ms": 433,
+    "incremental_fresh_cache_ms": 8,
+    "incremental_update_single_file_ms": 31,
+    "cache_verification_speedup": "54x",
+    "incremental_recomputation_speedup": "14x",
+    "oracle_agreement_discrepancies": 0
+  },
+  "gates": {
+    "P17-G1": {
+      "status": "PASS",
+      "details": "Actual repository state inspected (main, 781959c, 14 tracked modifications preserved)"
+    },
+    "P17-G2": {
+      "status": "PASS",
+      "details": "Phase 16 prerequisites verified with 15/15 gates passing and semantic probe verified"
+    },
+    "P17-G3": {
+      "status": "PASS",
+      "details": "Existing incremental capabilities audited; identified lack of disk freshness check and fine-grained invalidation"
+    },
+    "P17-G4": {
+      "status": "PASS",
+      "details": "Repository change semantics defined: created, modified (comment-only vs AST/exports), deleted, and manifest changes"
+    },
+    "P17-G5": {
+      "status": "PASS",
+      "details": "Invalidation behavior verified for comment edits, export changes, import changes, and file deletions"
+    },
+    "P17-G6": {
+      "status": "PASS",
+      "details": "Incremental results agree 100% with independently checked full-analysis results (0 discrepancies)"
+    },
+    "P17-G7": {
+      "status": "PASS",
+      "details": "Freshness-aware evidence validation active; stale evidence marked STALE/L4_UNKNOWN with recorded vs current hash mismatch"
+    },
+    "P17-G8": {
+      "status": "PASS",
+      "details": "Performance measured under equivalent conditions: 31ms incremental update vs 433ms baseline full scan"
+    },
+    "P17-G9": {
+      "status": "PASS",
+      "details": "Resource limits and failure handling tested; safe fallback to full scan on manifest changes or corrupted files"
+    },
+    "P17-G10": {
+      "status": "PASS",
+      "details": "Read-only invariants satisfied; zero files written during codebase intelligence analysis"
+    },
+    "P17-G11": {
+      "status": "PASS",
+      "details": "Existing CLI, MCP, and workflow contracts remain 100% backward compatible"
+    },
+    "P17-G12": {
+      "status": "PASS",
+      "details": "100% SHA-256 hash parity verified between canonical inner and mirrored outer scripts"
+    },
+    "P17-G13": {
+      "status": "PASS",
+      "details": "Final reporting distinguishes directly observed evidence (L1) from inference (L3) and unknown (L4)"
+    },
+    "P17-G14": {
+      "status": "PASS",
+      "details": "Zero unauthorized commits, tags, pushes, or package publications; working tree preserved"
+    }
+  }
+}

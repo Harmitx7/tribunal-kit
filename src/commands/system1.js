@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const child_process = require('child_process');
 const readline = require('readline');
 const { log, err, dim, c, bold } = require('../utils/logger');
-const { getLayaDir, getConfigPath } = require('../system1/provider');
+const { getLayaDir, getConfigPath, EXPECTED_MODEL_HASHES } = require('../system1/provider');
 const {
   buildDecisionPlan,
   validateDecisionPlan,
@@ -157,10 +157,7 @@ async function checkHealth() {
   const modelsDir = path.join(layaDir, 'models');
   if (!fs.existsSync(modelsDir)) return false;
 
-  const expectedHashes = {
-    'laya.onnx': 'a874eb254b58b0fcb1e7ad56fbb188c29d64e08c9a46b689433e1f52c66dba1e',
-    'laya.onnx.data': '487746363a8da57bcadb4345352997d22a0fb90d70aa22c6856668d023242aba',
-  };
+  const expectedHashes = EXPECTED_MODEL_HASHES;
   for (const filename of Object.keys(expectedHashes)) {
     const artifactPath = path.join(modelsDir, filename);
     if (!fs.existsSync(artifactPath)) return false;
@@ -669,4 +666,5 @@ module.exports = {
   checkHealth,
   getTargetVersion,
   getInstalledVersion,
+  EXPECTED_MODEL_HASHES,
 };

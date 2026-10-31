@@ -3,6 +3,43 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const crypto = require('crypto');
+
+const EXPECTED_MODEL_HASHES = {
+  'laya.onnx': 'a874eb254b58b0fcb1e7ad56fbb188c29d64e08c9a46b689433e1f52c66dba1e',
+  'laya.onnx.data': '487746363a8da57bcadb4345352997d22a0fb90d70aa22c6856668d023242aba',
+};
+
+// Process-level cache for model integrity verification
+// Map<filePath, { mtimeMs: number, size: number, verified: boolean }>
+const _modelHashCache = new Map();
+
+function verifyModelFileHash(filePath, expectedHash) {
+  if (!fs.existsSync(filePath)) return false;
+  try {
+    const stat = fs.statSync(filePath);
+    const cached = _modelHashCache.get(filePath);
+    if (cached && cached.mtimeMs === stat.mtimeMs && cached.size === stat.size) {
+      return cached.verified;
+    }
+
+    const hash = crypto.createHash('sha256');
+    const buffer = fs.readFileSync(filePath);
+    hash.update(buffer);
+    const actual = hash.digest('hex');
+    const verified = (actual.toLowerCase() === expectedHash.toLowerCase());
+
+    _modelHashCache.set(filePath, {
+      mtimeMs: stat.mtimeMs,
+      size: stat.size,
+      verified,
+    });
+
+    return verified;
+  } catch {
+    return false;
+  }
+}
 
 function getLayaDir() {
   return path.join(os.homedir(), '.tribunal-kit', 'laya');
@@ -21,7 +58,7 @@ class System1Provider {
   }
 
   /**
-   * Checks if Laya is explicitly enabled and installed.
+   * Checks if Laya is explicitly enabled, installed, and cryptographic integrity is intact.
    * @returns {boolean}
    */
   isAvailable() {
@@ -35,7 +72,13 @@ class System1Provider {
       const modelPath = path.join(this.layaDir, 'models', 'laya.onnx');
       if (!fs.existsSync(modelPath)) return false;
 
-      return true;
+      // Allow mocked configuration in test environments
+      if (this.config.mocked || process.env.TK_MOCK_LAYA_DOWNLOAD) {
+        return true;
+      }
+
+      // Verify SHA-256 integrity of the model file
+      return verifyModelFileHash(modelPath, EXPECTED_MODEL_HASHES['laya.onnx']);
     } catch {
       return false;
     }
@@ -75,6 +118,17 @@ class System1Provider {
       throw new Error(
         'Laya model tokenization and tensor metadata missing from repository. Inference blocked until production model integrated.',
       );
+    }
+
+    const modelPath = path.join(this.layaDir, 'models', 'laya.onnx');
+    if (!this.config?.mocked && !process.env.TK_MOCK_LAYA_DOWNLOAD) {
+      if (!verifyModelFileHash(modelPath, EXPECTED_MODEL_HASHES['laya.onnx'])) {
+        throw new Error(`System-1 model integrity check failed: SHA-256 hash mismatch for ${modelPath}`);
+      }
+      const dataPath = path.join(this.layaDir, 'models', 'laya.onnx.data');
+      if (fs.existsSync(dataPath) && !verifyModelFileHash(dataPath, EXPECTED_MODEL_HASHES['laya.onnx.data'])) {
+        throw new Error(`System-1 model data integrity check failed: SHA-256 hash mismatch for ${dataPath}`);
+      }
     }
 
     try {
@@ -124,4 +178,6 @@ module.exports = {
   System1Provider,
   getLayaDir,
   getConfigPath,
+  EXPECTED_MODEL_HASHES,
+  verifyModelFileHash,
 };

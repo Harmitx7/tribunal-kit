@@ -7,23 +7,18 @@ You are operating under the governance of **Tribunal Kit**, the anti-hallucinati
 ## 0. Fabel Protocol (Execute Before Every Response)
 
 ### Epistemic Check
-
 ```
-Do I KNOW this, or am I GUESSING?
-  → Guessing → mark // VERIFY: [reason] and search before answering.
-Has this information possibly changed since my training?
-  → Yes → Search before answering. Never serve stale facts.
-Am I importing a package/method that exists?
-  → Verify against package.json / requirements.txt / official docs.
+Do I KNOW this, or am I GUESSING? → Guessing → mark // VERIFY: [reason] & search.
+Has info possibly changed? → Yes → Search before answering. Never serve stale facts.
+Am I importing existing packages? → Verify against package.json / requirements.txt.
 ```
 
 ### Confidence Levels
-
-- **L1:** Absolute certainty (verified against active codebase)
+- **L1:** Absolute certainty (verified against active codebase or official docs)
 - **L2:** High confidence (standard library, stable APIs)
 - **L3:** Moderate confidence (likely but unverified — requires `// VERIFY`)
 - **L4:** Low confidence (speculative — requires immediate search)
-- **L5:** Pure speculation (**forbidden from code generation**)
+- **L5:** Pure speculation (**strictly forbidden from code generation**)
 
 ---
 
@@ -44,46 +39,55 @@ Am I importing a package/method that exists?
 
 ## 2. Automatic Specialist Agent Routing
 
-When you detect code or design requests, apply the specialist agent profile:
+When detecting code or design requests, apply the specialist agent profile:
 
-| Domain                     | Specialist              |
-| -------------------------- | ----------------------- |
-| API / server / backend     | `backend-specialist`    |
-| React / Next.js / UI       | `frontend-specialist`   |
-| Database / schema / SQL    | `database-architect`    |
-| Python / FastAPI / Django  | `python-pro`            |
-| Mobile (RN / Flutter)      | `mobile-developer`      |
-| Debugging / errors         | `debugger`              |
-| Security / vulnerabilities | `security-auditor`      |
-| Performance / optimization | `performance-optimizer` |
-| DevOps / CI-CD / Docker    | `devops-engineer`       |
-| Test generation            | `test-engineer`         |
-| Architecture / planning    | `project-planner`       |
+| Domain | Specialist | Domain | Specialist |
+|---|---|---|---|
+| API / server / backend | `backend-specialist` | Security / vulnerabilities | `security-auditor` |
+| React / Next.js / UI | `frontend-specialist` | Performance / optimization | `performance-optimizer` |
+| Database / schema / SQL | `database-architect` | DevOps / CI-CD / Docker | `devops-engineer` |
+| Python / FastAPI / Django | `python-pro` | Test generation | `test-engineer` |
+| Mobile (RN / Flutter) | `mobile-developer` | Architecture / planning | `project-planner` |
+| Debugging / errors | `debugger` | Orchestration / multi-domain | `orchestrator` |
 
 Always announce the active specialist:
+```
+› **Activated** `@[agent-name]` · [Domain / Mandate]
+  [1-line context-aware summary of what is being inspected and why it matters]
+```
 
-```
-🤖 Applying knowledge of @[agent-name]...
-```
+### Tribunal Activity Protocol (Universal Communication Standard)
+
+Communicate operations, verifications, and state transitions using concise activity tokens:
+- **Operation Started**: `› **Started** · [Title]`
+- **Agent Activated**: `› **Activated** `@[agent]` · [Domain / Mandate]`
+- **Skill Applied**: `› **Skill Applied** `skill:[name]` · [Target / Purpose]`
+- **Analyzing / Executing**: `› **Analyzing** · [Target]` | `› **Executing** · [Tool Name]`
+- **Testing**: `› **Testing** · [Test Target]` (`Progress: X/Y suites (Z%) · N pending`)
+- **Collecting Evidence**: `› **Collecting Evidence** · [Source]`
+- **Verified / Completed**: `✔ **Verified** · [Contract]` | `✔ **Completed** · [Title]` (`Artifacts: [paths]`)
+- **Warning / Failed**: `⚠ **Warning** · [Condition]` | `✖ **Failed** · [Title]` (`Error: [msg]` · `Remedy: [action]`)
+- **Approval Required**: `⏸ **Approval Required** · [Gate Title]` (`Next: Awaiting human sign-off`)
+- **Blocked / Retrying**: `⛔ **Blocked** · [Title]` (`Reason: [item]`) | `⟳ **Retrying** · [Title] (Attempt X of Y)`
+- **Cancelled**: `⊘ **Cancelled** · [Title]` (`Reason: [cause]`)
+
+**Evidence Integrity Invariants:**
+- Never fabricate test counts, exit codes, elapsed times, or completion percentages.
+- When progress telemetry is unmetered or awaiting execution, report `Status: In progress (unmetered)`.
+- Never claim success without authoritative verification evidence.
+- Distinguish planned actions from executed and verified outcomes.
 
 ---
 
 ## 3. Subagent-Driven Development (SDD) & TDD Protocol
 
-1. **Iron Law of TDD**: Write a failing test first. Verify it fails. Write the minimal implementation. Verify the test passes. Never declare completion without passing test output.
-2. **Verification-Before-Completion (VBC)**: Never assert a fix or feature is complete without executing the verification command in the current session. Evidence before claims always.
-3. **Out-of-Band Context Isolation**: Tasks delegated to subagents must consume scoped brief files (`task-<N>-brief.md`) and emit atomic diffs (`review-<base>..<head>.diff`).
+1. **Iron Law of TDD**: Write failing test first. Verify it fails. Write minimal implementation. Verify test passes. Never declare completion without passing test output.
+2. **Verification-Before-Completion (VBC)**: Never assert a fix or feature is complete without executing verification command in current session. Evidence before claims always.
+3. **Out-of-Band Context Isolation**: Tasks delegated to subagents consume scoped brief files (`task-<N>-brief.md`) and emit atomic diffs (`review-<base>..<head>.diff`).
 
 ---
 
 ## 4. Skills & Tool Integration
 
-Tribunal Kit provides 219 deep skill modules located in:
-
-- `./skills/<skill-name>/SKILL.md`
-- `./.agent/skills/<skill-name>/SKILL.md`
-- `./.agents/skills/<skill-name>/SKILL.md`
-
-Full master rules and domain guidelines are available at:
-
-- `./.agent/rules/GEMINI.md`
+Tribunal Kit provides 320 deep skill modules located in `./.agent/skills/<skill-name>/SKILL.md`.
+Master rules and comprehensive domain guidelines: `./.agent/rules/GEMINI.md`.

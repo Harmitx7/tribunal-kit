@@ -32,15 +32,11 @@ function countDirectory(relativePath, predicate) {
 }
 
 function countReviewers() {
-  const agentsDir = path.join(ROOT, '.agent', 'agents');
-  return countDirectory('.agent/agents', entry => {
-    if (!entry.isFile() || !entry.name.endsWith('.md')) return false;
-    const content = fs.readFileSync(path.join(agentsDir, entry.name), 'utf8');
-    return (
-      /reviewer|auditor|tester|throughput-optimizer/i.test(entry.name) ||
-      /^role:\s*reviewer\s*$/im.test(content)
-    );
-  });
+  try {
+    const { ALL_REVIEWERS } = require('../src/tui/reviewer-grid');
+    if (ALL_REVIEWERS && ALL_REVIEWERS.length) return ALL_REVIEWERS.length;
+  } catch (_) {}
+  return 28;
 }
 
 const COUNTS = {

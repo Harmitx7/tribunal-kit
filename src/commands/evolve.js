@@ -22,7 +22,6 @@ const { loadEvolutionProposals, FORBIDDEN_TARGETS } = require('../evolution/engi
 async function cmdEvolve(flags = {}, processArgs = [], quiet = false) {
   const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
   const agentDest = path.join(targetDir, '.agent');
-  const tribunalDest = path.join(targetDir, '.tribunal');
 
   if (!fs.existsSync(agentDest)) {
     logger.err('.agent/ not found. Run: npx tribunal-kit init');

@@ -23,17 +23,33 @@ async function cmdArch(flags = {}, rawArgv, quiet = false) {
   }
 
   const targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
-  let subCommand = 'help';
-  if (Array.isArray(rawArgv)) {
-    const archIdx = rawArgv.findIndex(a => a === 'arch');
-    if (archIdx !== -1 && rawArgv[archIdx + 1] && !rawArgv[archIdx + 1].startsWith('-')) {
-      subCommand = rawArgv[archIdx + 1];
-    } else if (rawArgv[3] && !rawArgv[3].startsWith('-')) {
-      subCommand = rawArgv[3];
+  const allArgs = Array.isArray(rawArgv) ? rawArgv : [];
+  let subCommand = flags.subcommand || null;
+  const positionals = [];
+
+  const archIdx = allArgs.findIndex(a => a === 'arch');
+  const searchArgs = archIdx !== -1 ? allArgs.slice(archIdx + 1) : allArgs.slice(2);
+
+  for (let i = 0; i < searchArgs.length; i++) {
+    const a = searchArgs[i];
+    if (a.startsWith('--')) {
+      if (['--path', '--target', '--file'].includes(a)) {
+        i++;
+      }
+      continue;
+    }
+    if (a.startsWith('-')) {
+      continue;
+    }
+    if (!subCommand) {
+      subCommand = a;
+    } else {
+      positionals.push(a);
     }
   }
-  if (flags.subcommand) {
-    subCommand = flags.subcommand;
+
+  if (!subCommand) {
+    subCommand = 'help';
   }
 
   (0, helpers_1.banner)(quiet);
@@ -102,7 +118,8 @@ async function cmdArch(flags = {}, rawArgv, quiet = false) {
     }
 
     case 'impact': {
-      const targetQuery = rawArgv[4];
+      const targetQuery =
+        positionals[0] || (rawArgv && rawArgv[4] && !rawArgv[4].startsWith('-') ? rawArgv[4] : null);
       if (!targetQuery) {
         (0, logger_1.err)('Usage: tk arch impact <component-id-or-filepath>');
         process.exit(1);
@@ -149,8 +166,10 @@ async function cmdArch(flags = {}, rawArgv, quiet = false) {
     }
 
     case 'diff': {
-      const baseFile = rawArgv[4];
-      const headFile = rawArgv[5];
+      const baseFile =
+        positionals[0] || (rawArgv && rawArgv[4] && !rawArgv[4].startsWith('-') ? rawArgv[4] : null);
+      const headFile =
+        positionals[1] || (rawArgv && rawArgv[5] && !rawArgv[5].startsWith('-') ? rawArgv[5] : null);
       if (!baseFile || !headFile) {
         (0, logger_1.err)('Usage: tk arch diff <base-model.json> <head-model.json>');
         process.exit(1);
@@ -237,6 +256,9 @@ async function cmdArch(flags = {}, rawArgv, quiet = false) {
       if (rawArgv.includes('--open') || flags.open) {
         (0, logger_1.log)(`  ${(0, logger_1.c)('cyan', '▸')} Opening in browser...`);
         if (process.platform === 'win32') {
+          if (/[&|<>^%\r\n]/.test(htmlPath)) {
+            throw new Error('Security Violation: html path contains unsafe shell metacharacters.');
+          }
           (0, child_process_1.spawn)('cmd.exe', ['/c', 'start', '', htmlPath], {
             stdio: 'ignore',
             detached: true,

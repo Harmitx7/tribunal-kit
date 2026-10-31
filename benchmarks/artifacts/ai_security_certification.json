@@ -1,0 +1,64 @@
+{
+  "domain": "ai-agent-security-governance",
+  "domainDisplayName": "AI Agent Security & Governance",
+  "version": "1.0.0",
+  "certifiedAt": "2026-10-30T16:09:37.590Z",
+  "gitCommit": "781959c",
+  "verdict": "RELEASE_READY_AND_CERTIFIED",
+  "releaseGates": {
+    "GateA_ThreatModelTraceability": "MET",
+    "GateB_AdversarialDatasetIntegrity": "MET",
+    "GateC_PromptInjectionDefense": "MET",
+    "GateD_LeastPrivilegeToolGovernance": "MET",
+    "GateE_CanaryDataLeakageScrubbing": "MET",
+    "GateF_ExecutionSafetyContainment": "MET",
+    "GateG_MultiAgentTrustInvariants": "MET",
+    "GateH_NonMaskingSafetyRegression": "MET"
+  },
+  "threatRegisterSummary": {
+    "totalCoreThreats": 16,
+    "severityCounts": {
+      "CRITICAL": 8,
+      "HIGH": 7,
+      "MEDIUM": 1,
+      "LOW": 0,
+      "INFO": 0
+    },
+    "mitigatingControlsEnforced": 16
+  },
+  "adversarialEvaluation": {
+    "datasetId": "ai-security-adversarial-dataset-v1",
+    "totalCases": 16,
+    "blockedAttacks": 16,
+    "bypassCount": 0,
+    "detectionRate": 1
+  },
+  "skillsAudited": {
+    "totalSkillsInDomain": 12,
+    "skills": [
+      "ai-agent-threat-modeler",
+      "prompt-injection-security-auditor",
+      "agent-tool-permission-auditor",
+      "ai-data-leakage-auditor",
+      "agent-execution-safety-auditor",
+      "agent-memory-and-retrieval-security-auditor",
+      "mcp-and-tool-supply-chain-security-auditor",
+      "multi-agent-trust-boundary-auditor",
+      "ai-security-control-verifier",
+      "ai-security-incident-analyst",
+      "ai-security-policy-auditor",
+      "ai-agent-security-regression-tester"
+    ],
+    "certificationStatus": "BEHAVIORALLY_CERTIFIED"
+  },
+  "enginesVerified": [
+    "src/security/threat_model_schemas.js",
+    "src/security/prompt_injection_engine.js",
+    "src/security/tool_permission_engine.js",
+    "src/security/data_leakage_engine.js",
+    "src/security/execution_safety_engine.js",
+    "src/security/multi_agent_governance_engine.js",
+    "src/security/boundary.js",
+    "src/security/index.js"
+  ]
+}

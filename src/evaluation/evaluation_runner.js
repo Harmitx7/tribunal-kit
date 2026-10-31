@@ -48,12 +48,12 @@ class EvaluationRunner {
    * @param {object} [options]
    * @returns {Promise<{ scenarioId: string, verdict: 'APPROVED'|'REJECTED'|'QUARANTINED', exitCode: number, durationMs: number, timedOut: boolean, reason: string }>}
    */
-  async evaluateCandidate(scenario, candidateCode, options = {}) {
+  async evaluateCandidate(scenario, candidateCode, _options = {}) {
     if (!scenario || !scenario.scenarioId) {
       throw new Error('Invalid scenario provided to evaluateCandidate.');
     }
 
-    return await WorktreeSandbox.withSandbox(this.sandboxOptions, async sandbox => {
+    return WorktreeSandbox.withSandbox(this.sandboxOptions, async sandbox => {
       // 1. Initial anti-eval-hacking check: ensure worktree begins untampered
       const initialIntegrity = this.oracle.verifyIntegrity(sandbox.worktreePath);
       if (!initialIntegrity.valid) {

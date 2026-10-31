@@ -1,0 +1,1 @@
+export const tsVar: string = 'ts';

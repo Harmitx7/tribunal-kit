@@ -1,6 +1,6 @@
 ---
 name: better-typography
-description: "Use when building, styling, optimizing, and auditing better typography components, responsive layouts, design systems, and frontend state."
+description: "Fluid typography engineering & typographic hierarchy authority. Enforces CSS clamp() scales, optical line-length bounds (45ch-75ch), text-wrap balance, and font-display strategies."
 version: 6.0.0
 last-updated: 2026-09-29
 tools: Read, Grep, Glob, Bash, Edit, Write

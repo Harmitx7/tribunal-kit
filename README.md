@@ -31,10 +31,10 @@
       <img src="https://img.shields.io/github/actions/workflow/status/Harmitx7/tribunal-kit/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=CI&color=10b981" alt="CI Status" />
     </a>
     <a href=".agent/skills">
-      <img src="https://img.shields.io/badge/Skills-235_Modular-0284c7?style=for-the-badge&logoColor=white" alt="235 Modular Skills" />
+      <img src="https://img.shields.io/badge/Skills-398_Modular-0284c7?style=for-the-badge&logoColor=white" alt="398 Modular Skills" />
     </a>
     <a href=".agent/workflows/tribunal-full.md">
-      <img src="https://img.shields.io/badge/Reviewers-31_Parallel-059669?style=for-the-badge&logoColor=white" alt="31 Parallel Reviewers" />
+      <img src="https://img.shields.io/badge/Reviewers-28_Parallel-059669?style=for-the-badge&logoColor=white" alt="28 Parallel Reviewers" />
     </a>
     <a href="crates/core">
       <img src="https://img.shields.io/badge/Core-Rust_<10ms-d97706?style=for-the-badge&logo=rust&logoColor=white" alt="Compiled Rust Core" />
@@ -65,7 +65,7 @@
     <a href="#overview"><b>[ ⚡ Overview ]</b></a> &nbsp;•&nbsp;
     <a href="#quick-start"><b>[ 🚀 Quick Start ]</b></a> &nbsp;•&nbsp;
     <a href="#cli-cockpit"><b>[ 💻 CLI Reference ]</b></a> &nbsp;•&nbsp;
-    <a href="#reviewers"><b>[ 🛡 31 Reviewers ]</b></a> &nbsp;•&nbsp;
+    <a href="#reviewers"><b>[ 🛡 28 Reviewers ]</b></a> &nbsp;•&nbsp;
     <a href="#architecture"><b>[ 🏗 Architecture ]</b></a> &nbsp;•&nbsp;
     <a href="#security"><b>[ 🔒 Security ]</b></a> &nbsp;•&nbsp;
     <a href="#mcp"><b>[ 🔌 MCP Server ]</b></a>
@@ -101,7 +101,7 @@
       <ul>
         <li><a href="#cli-cockpit">Command Cockpit & CLI Surface</a></li>
         <li><a href="#global-flags">Global Execution Flags</a></li>
-        <li><a href="#reviewers">The 31 Reviewers (3 Waves)</a></li>
+        <li><a href="#reviewers">The 28 Reviewers (3 Waves)</a></li>
         <li><a href="#reviewer-matrix">Domain Activation Matrix</a></li>
       </ul>
       <b>04 // Integrations & Protocol</b>
@@ -149,7 +149,7 @@ AI coding assistants hallucinate. They invent packages that do not exist on publ
 
 Compilers and linters catch these errors only **after** the code is already written to disk—completely blind to multi-file semantic intent or agent task planning during generation.
 
-**Tribunal Kit acts as a neurosymbolic verification envelope.** It intercepts AI agent outputs locally before disk writes, validates proposals against your repository's live AST and schema models, and evaluates them with a deterministic 31-reviewer swarm running across 3 partitioned waves.
+**Tribunal Kit acts as a neurosymbolic verification envelope.** It intercepts AI agent outputs locally before disk writes, validates proposals against your repository's live AST and schema models, and evaluates them with a deterministic 28-reviewer swarm running across 3 partitioned waves.
 
 <div align="center">
   <br>
@@ -164,7 +164,7 @@ Compilers and linters catch these errors only **after** the code is already writ
 | **Supply Chain / Slopsquatting** | Agent imports fictional npm/pip packages vulnerable to malicious namespace hijacking. | **`tk guardrail`** parses AST imports and checks package manifests before changes reach disk. |
 | **Cognitive Amnesia Loops** | Agent repeats the exact same rejected architectural blunder across subsequent sessions. | **`tk case` & `tk memory`** record rejections as binding legal precedents injected into future context. |
 | **Context Saturation & Hallucination** | Massive context dumps saturate the LLM window, causing hallucination spikes. | **`tk context`** extracts strict AST call-graphs and compresses payloads to bounded token budgets. |
-| **Late Failure Detection** | CI workflows and linters catch broken contracts hours later after code is merged. | **Stage-Partitioned Waves** run 31 reviewers in sub-second parallel passes prior to human gate. |
+| **Late Failure Detection** | CI workflows and linters catch broken contracts hours later after code is merged. | **Stage-Partitioned Waves** run 28 reviewers in sub-second parallel passes prior to human gate. |
 | **Transitive Regressions** | Refactoring one service breaks distant consumers across the monorepo silently. | **`tk arch impact`** maps blast radiuses and transitive callers through graph extraction. |
 
 ---
@@ -260,7 +260,7 @@ flowchart TD
     Router -->|Memory| C3["case • memory • rsi • learn"]
     Router -->|Agentic| C4["sdd • marathon • skill-intel • context"]
 
-    C2 --> Swarm["31 Parallel Reviewers Swarm"]
+    C2 --> Swarm["28 Parallel Reviewers Swarm"]
 
     subgraph Waves [Stage-Partitioned Review Waves]
         W1["Wave 1: Core Integrity & Precedences"]
@@ -436,9 +436,9 @@ tk <command> [subcommand] [flags]
 ---
 
 <a id="reviewers"></a>
-## 04 // The 31-Reviewer Verification Swarm
+## 04 // The 28-Reviewer Verification Swarm
 
-When code is checked via `tk validate`, `/tribunal-full`, or git pre-push hooks, Tribunal Kit invokes **31 specialized domain reviewers**. To eliminate context window dilution, reviewers execute in three stage-partitioned waves.
+When code is checked via `tk validate`, `/tribunal-full`, or git pre-push hooks, Tribunal Kit invokes **28 specialized domain reviewers**. To eliminate context window dilution, reviewers execute in three stage-partitioned waves.
 
 <a id="3-wave-execution-stage-partitioning"></a>
 ### 3-Wave Execution Stage Partitioning
@@ -583,12 +583,12 @@ Tribunal Kit provides a production-grade MCP server (`bin/mcp-server.js`) commun
 <a id="skills-standard"></a>
 ## 06 // Skills Corpus & Technical References
 
-Tribunal Kit includes a curated, schema-validated corpus of **235 modular engineering skills** located in `.agent/skills/`.
+Tribunal Kit includes a curated, schema-validated corpus of **398 modular engineering skills** located in `.agent/skills/`.
 
 <a id="18-section-governance-standard"></a>
 ### 18-Section Governance Standard
 
-All 235 skills adhere to a strict 18-section governance architecture designed to eliminate LLM ambiguity:
+All 398 skills adhere to a strict 18-section governance architecture designed to eliminate LLM ambiguity:
 
 1. **Frontmatter:** Strict YAML metadata (`name`, `description`, `version`, `domain`, `triggers`).
 2. **Mental Sandbox:** Epistemic confidence levels (L1–L5) and anti-hallucination guardrails.
@@ -794,10 +794,10 @@ tribunal-kit/
 │   ├── system1/                     # Optional local ONNX neural assessment provider
 │   └── tui/                         # Progress bars, reviewer grid matrix, banner
 ├── .agent/                          # Intelligence & Governance Payload
-│   ├── agents/                      # 60 specialist agents (31 reviewers)
-│   ├── skills/                      # 235 schema-validated engineering skills
+│   ├── agents/                      # 60 specialist agents (28 reviewers)
+│   ├── skills/                      # 398 schema-validated engineering skills
 │   ├── references/                  # 23 zero-hallucination domain specifications
-│   ├── workflows/                   # 51 audited slash-command workflows
+│   ├── workflows/                   # 52 audited slash-command workflows
 │   ├── rules/                       # Master governance rules (GEMINI.md, kernel.md)
 │   └── scripts/                     # 106 automated verification & audit scripts
 ├── docs/                            # Visual assets, architecture diagrams & documentation

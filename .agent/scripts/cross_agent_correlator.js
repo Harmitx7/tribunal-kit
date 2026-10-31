@@ -124,71 +124,109 @@ function titleSimilarity(a, b) {
 }
 
 function correlateFindings(findings) {
-  const correlated = [];
-  const processed = new Set();
+  // Performance Optimization (O(N) file-bucketing):
+  // Findings can only correlate if they share the exact same location.file.
+  // Bucketing by file reduces global comparisons from O(N^2) to O(N + sum(M_k^2)) where M_k << N.
+  const fileBuckets = new Map();
+  const unlocated = [];
 
   for (let i = 0; i < findings.length; i++) {
-    if (processed.has(i)) continue;
-    const base = findings[i];
-    const mergedGroup = [base];
-    processed.add(i);
-
-    for (let j = i + 1; j < findings.length; j++) {
-      if (processed.has(j)) continue;
-      const other = findings[j];
-
-      if (shouldCorrelate(base, other)) {
-        mergedGroup.push(other);
-        processed.add(j);
+    const f = findings[i];
+    const file = f.location?.file;
+    if (file) {
+      let bucket = fileBuckets.get(file);
+      if (!bucket) {
+        bucket = [];
+        fileBuckets.set(file, bucket);
       }
-    }
-
-    if (mergedGroup.length > 1) {
-      const merged = { ...base };
-
-      // Merge evidence (deduplicated by description+location key)
-      const allEvidence = new Map();
-      mergedGroup.forEach(f => {
-        (f.evidence || []).forEach(e =>
-          allEvidence.set(e.description + '||' + (e.location || ''), e),
-        );
-      });
-      merged.evidence = Array.from(allEvidence.values());
-
-      // Track related findings
-      merged.related_findings = mergedGroup.map(f => f.id).filter(id => id !== merged.id);
-
-      // Merge agents
-      merged.agents = [...new Set(mergedGroup.map(f => f._source_agent))];
-
-      // Handle confidence and conflicts
-      const statuses = new Set(mergedGroup.map(f => f.status));
-      if (statuses.size > 1) {
-        merged.status = 'UNVERIFIED';
-        merged.confidence = 0.5;
-        merged.title = `[CONFLICTED] ${base.title}`;
-      } else {
-        merged.title = `[CORRELATED] ${base.title}`;
-        merged.confidence = Math.max(
-          ...mergedGroup.map(f => (typeof f.confidence === 'number' ? f.confidence : 0.8)),
-        );
-      }
-
-      // Severity: take the highest — but ONLY within the same vulnerability type
-      const severityOrder = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'INFO'];
-      const lowestIndex = Math.min(
-        ...mergedGroup.map(f => {
-          const idx = severityOrder.indexOf((f.severity || '').toUpperCase());
-          return idx === -1 ? 4 : idx;
-        }),
-      );
-      merged.severity = severityOrder[lowestIndex];
-
-      correlated.push(merged);
+      bucket.push(f);
     } else {
-      base.agents = [base._source_agent];
-      correlated.push(base);
+      unlocated.push(f);
     }
+  }
+
+  const correlated = [];
+
+  // Correlate within each file bucket
+  for (const bucket of fileBuckets.values()) {
+    if (bucket.length === 1) {
+      const single = bucket[0];
+      single.agents = [single._source_agent];
+      correlated.push(single);
+      continue;
+    }
+
+    const processed = new Set();
+    for (let i = 0; i < bucket.length; i++) {
+      if (processed.has(i)) continue;
+      const base = bucket[i];
+      const mergedGroup = [base];
+      processed.add(i);
+
+      for (let j = i + 1; j < bucket.length; j++) {
+        if (processed.has(j)) continue;
+        const other = bucket[j];
+
+        if (shouldCorrelate(base, other)) {
+          mergedGroup.push(other);
+          processed.add(j);
+        }
+      }
+
+      if (mergedGroup.length > 1) {
+        const merged = { ...base };
+
+        // Merge evidence (deduplicated by description+location key)
+        const allEvidence = new Map();
+        mergedGroup.forEach(f => {
+          (f.evidence || []).forEach(e =>
+            allEvidence.set(e.description + '||' + (e.location || ''), e),
+          );
+        });
+        merged.evidence = Array.from(allEvidence.values());
+
+        // Track related findings
+        merged.related_findings = mergedGroup.map(f => f.id).filter(id => id !== merged.id);
+
+        // Merge agents
+        merged.agents = [...new Set(mergedGroup.map(f => f._source_agent))];
+
+        // Handle confidence and conflicts
+        const statuses = new Set(mergedGroup.map(f => f.status));
+        if (statuses.size > 1) {
+          merged.status = 'UNVERIFIED';
+          merged.confidence = 0.5;
+          merged.title = `[CONFLICTED] ${base.title}`;
+        } else {
+          merged.title = `[CORRELATED] ${base.title}`;
+          merged.confidence = Math.max(
+            ...mergedGroup.map(f => (typeof f.confidence === 'number' ? f.confidence : 0.8)),
+          );
+        }
+
+        // Severity: take the highest — but ONLY within the same vulnerability type
+        const severityOrder = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'INFO'];
+        const lowestIndex = Math.min(
+          ...mergedGroup.map(f => {
+            const idx = severityOrder.indexOf((f.severity || '').toUpperCase());
+            return idx === -1 ? 4 : idx;
+          }),
+        );
+        merged.severity = severityOrder[lowestIndex];
+
+        correlated.push(merged);
+      } else {
+        base.agents = [base._source_agent];
+        correlated.push(base);
+      }
+    }
+  }
+
+  // Unlocated findings can never correlate with any other finding
+  for (let i = 0; i < unlocated.length; i++) {
+    const single = unlocated[i];
+    single.agents = [single._source_agent];
+    correlated.push(single);
   }
 
   return correlated;
@@ -221,3 +259,10 @@ function main() {
 if (require.main === module) {
   main();
 }
+
+module.exports = {
+  correlateFindings,
+  shouldCorrelate,
+  parseFindings,
+  titleSimilarity,
+};

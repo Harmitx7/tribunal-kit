@@ -1,0 +1,50 @@
+{
+  "domain": "software-verification-formal-methods",
+  "domainDisplayName": "Software Verification & Formal Methods",
+  "version": "1.0.0",
+  "certifiedAt": "2026-10-30T16:09:37.364Z",
+  "gitCommit": "781959c",
+  "verdict": "RELEASE_READY_AND_CERTIFIED",
+  "releaseGates": {
+    "GateA_RepositoryIntegrity": "MET",
+    "GateB_SkillQuality": "MET",
+    "GateC_RequirementTraceability": "MET",
+    "GateD_ResultIntegrity": "MET",
+    "GateE_BehavioralVerification": "MET",
+    "GateF_TestEffectivenessMutation": "MET",
+    "GateG_Compatibility": "MET",
+    "GateH_PerformanceAndFSM": "MET"
+  },
+  "verificationDatasetSummary": {
+    "totalCases": 12,
+    "defectClassesCovered": 12,
+    "evaluationStatus": "100% VERIFIED"
+  },
+  "skillsAudited": {
+    "totalSkillsInDomain": 12,
+    "skills": [
+      "requirements-verification-auditor",
+      "design-by-contract-auditor",
+      "static-program-analysis-auditor",
+      "property-based-testing-engineer",
+      "mutation-testing-auditor",
+      "state-machine-verification-engineer",
+      "differential-and-metamorphic-testing-auditor",
+      "api-contract-verification-auditor",
+      "concurrency-and-race-condition-auditor",
+      "regression-impact-verification-auditor",
+      "formal-specification-auditor",
+      "test-quality-and-coverage-auditor"
+    ],
+    "certificationStatus": "BEHAVIORALLY_CERTIFIED"
+  },
+  "enginesVerified": [
+    "src/verification/verification_schemas.js",
+    "src/verification/contract_engine.js",
+    "src/verification/property_testing_engine.js",
+    "src/verification/state_machine_engine.js",
+    "src/verification/mutation_testing_engine.js",
+    "src/verification/differential_testing_engine.js",
+    "src/verification/index.js"
+  ]
+}

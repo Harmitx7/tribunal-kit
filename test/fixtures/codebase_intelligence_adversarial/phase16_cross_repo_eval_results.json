@@ -1,0 +1,187 @@
+{
+  "timestamp": "2026-10-30T07:31:01.618Z",
+  "fixturesCount": 6,
+  "fixtures": {
+    "reexport_heavy": {
+      "name": "Re-Export Heavy Barrel Architecture",
+      "deadExportsFound": [
+        "logout@src/features/auth.js",
+        "unusedAuthHelper@src/features/auth.js"
+      ],
+      "checks": [
+        {
+          "symbol": "unusedAuthHelper@src/features/auth.js",
+          "expected": "DEAD",
+          "actual": "DEAD",
+          "passed": true,
+          "type": "PASS"
+        },
+        {
+          "symbol": "logout@src/features/auth.js",
+          "expected": "DEAD",
+          "actual": "DEAD",
+          "passed": true,
+          "type": "PASS"
+        },
+        {
+          "symbol": "login@src/features/auth.js",
+          "expected": "LIVE",
+          "actual": "LIVE",
+          "passed": true,
+          "type": "PASS"
+        }
+      ]
+    },
+    "duplicate_symbols": {
+      "name": "Duplicate Symbol Names Across Modules",
+      "deadExportsFound": [
+        "calculateTax@services/analytics.js",
+        "formatCurrency@services/billing.js"
+      ],
+      "checks": [
+        {
+          "symbol": "calculateTax@services/analytics.js",
+          "expected": "DEAD",
+          "actual": "DEAD",
+          "passed": true,
+          "type": "PASS"
+        },
+        {
+          "symbol": "formatCurrency@services/billing.js",
+          "expected": "DEAD",
+          "actual": "DEAD",
+          "passed": true,
+          "type": "PASS"
+        },
+        {
+          "symbol": "calculateTax@services/billing.js",
+          "expected": "LIVE",
+          "actual": "LIVE",
+          "passed": true,
+          "type": "PASS"
+        },
+        {
+          "symbol": "recordMetric@services/analytics.js",
+          "expected": "LIVE",
+          "actual": "LIVE",
+          "passed": true,
+          "type": "PASS"
+        }
+      ]
+    },
+    "shadowed_and_comments": {
+      "name": "Shadowed Identifiers & Misleading Comments",
+      "deadExportsFound": [
+        "hashPassword@lib/crypto.js",
+        "signPayload@lib/crypto.js"
+      ],
+      "checks": [
+        {
+          "symbol": "hashPassword@lib/crypto.js",
+          "expected": "DEAD",
+          "actual": "DEAD",
+          "passed": true,
+          "type": "PASS"
+        },
+        {
+          "symbol": "signPayload@lib/crypto.js",
+          "expected": "DEAD",
+          "actual": "DEAD",
+          "passed": true,
+          "type": "PASS"
+        },
+        {
+          "symbol": "exec@main.js",
+          "expected": "LIVE",
+          "actual": "LIVE",
+          "passed": true,
+          "type": "PASS"
+        }
+      ]
+    },
+    "circular_deps": {
+      "name": "Circular Dependency Cycles",
+      "deadExportsFound": [
+        "deadA@moduleA.js",
+        "callA@moduleB.js",
+        "deadB@moduleB.js"
+      ],
+      "checks": [
+        {
+          "symbol": "deadA@moduleA.js",
+          "expected": "DEAD",
+          "actual": "DEAD",
+          "passed": true,
+          "type": "PASS"
+        },
+        {
+          "symbol": "deadB@moduleB.js",
+          "expected": "DEAD",
+          "actual": "DEAD",
+          "passed": true,
+          "type": "PASS"
+        },
+        {
+          "symbol": "callB@moduleA.js",
+          "expected": "LIVE",
+          "actual": "LIVE",
+          "passed": true,
+          "type": "PASS"
+        },
+        {
+          "symbol": "getB@moduleB.js",
+          "expected": "LIVE",
+          "actual": "LIVE",
+          "passed": true,
+          "type": "PASS"
+        }
+      ]
+    },
+    "monorepo_packages": {
+      "name": "Monorepo Multi-Package Workspace Structure",
+      "deadExportsFound": [
+        "runCli@packages/cli/bin.js",
+        "unusedCoreUtil@packages/core/index.js"
+      ],
+      "checks": [
+        {
+          "symbol": "unusedCoreUtil@packages/core/index.js",
+          "expected": "DEAD",
+          "actual": "DEAD",
+          "passed": true,
+          "type": "PASS"
+        },
+        {
+          "symbol": "coreUtil@packages/core/index.js",
+          "expected": "LIVE",
+          "actual": "LIVE",
+          "passed": true,
+          "type": "PASS"
+        }
+      ]
+    },
+    "dynamic_behavior": {
+      "name": "Dynamic Imports & Runtime Property Access",
+      "deadExportsFound": [
+        "initializePlugin@plugins/pluginA.js",
+        "unreferencedPluginHelper@plugins/pluginA.js"
+      ],
+      "checks": [
+        {
+          "symbol": "unreferencedPluginHelper@plugins/pluginA.js",
+          "expected": "DEAD",
+          "actual": "DEAD",
+          "passed": true,
+          "type": "PASS"
+        }
+      ]
+    }
+  },
+  "summary": {
+    "totalChecks": 17,
+    "passedChecks": 17,
+    "falsePositives": 0,
+    "falseNegatives": 0,
+    "passRate": "100.0%"
+  }
+}

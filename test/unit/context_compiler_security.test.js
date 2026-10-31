@@ -265,7 +265,10 @@ describe('Security: Command Injection Regression Tests (CWE-78)', () => {
 
 describe('Security: execFileSync is used instead of execSync for grep', () => {
   test('context_compiler.js does not use shell-interpolated execSync for grep commands', () => {
-    const sourcePath = path.resolve(__dirname, '../../scripts/context_compiler.js');
+    const canonicalPath = path.resolve(__dirname, '../../.agent/scripts/context_compiler.js');
+    const sourcePath = fs.existsSync(canonicalPath)
+      ? canonicalPath
+      : path.resolve(__dirname, '../../scripts/context_compiler.js');
     const source = fs.readFileSync(sourcePath, 'utf8');
 
     // Verify no shell-interpolated git grep or rg commands remain
@@ -282,7 +285,10 @@ describe('Security: execFileSync is used instead of execSync for grep', () => {
   });
 
   test('context_compiler.js does not use shell-interpolated execSync for AST extraction', () => {
-    const sourcePath = path.resolve(__dirname, '../../scripts/context_compiler.js');
+    const canonicalPath = path.resolve(__dirname, '../../.agent/scripts/context_compiler.js');
+    const sourcePath = fs.existsSync(canonicalPath)
+      ? canonicalPath
+      : path.resolve(__dirname, '../../scripts/context_compiler.js');
     const source = fs.readFileSync(sourcePath, 'utf8');
 
     // The old vulnerable pattern was:
@@ -295,7 +301,10 @@ describe('Security: execFileSync is used instead of execSync for grep', () => {
   });
 
   test('context_compiler.js does not use execSync at all', () => {
-    const sourcePath = path.resolve(__dirname, '../../scripts/context_compiler.js');
+    const canonicalPath = path.resolve(__dirname, '../../.agent/scripts/context_compiler.js');
+    const sourcePath = fs.existsSync(canonicalPath)
+      ? canonicalPath
+      : path.resolve(__dirname, '../../scripts/context_compiler.js');
     const source = fs.readFileSync(sourcePath, 'utf8');
 
     // The context compiler should only use execFileSync (no shell)
@@ -320,7 +329,10 @@ describe('Security: execFileSync is used instead of execSync for grep', () => {
 
 describe('Security: findInboundCallers argument structure', () => {
   test('git grep uses -e flag to prevent option injection via dash-prefixed tokens', () => {
-    const sourcePath = path.resolve(__dirname, '../../scripts/context_compiler.js');
+    const canonicalPath = path.resolve(__dirname, '../../.agent/scripts/context_compiler.js');
+    const sourcePath = fs.existsSync(canonicalPath)
+      ? canonicalPath
+      : path.resolve(__dirname, '../../scripts/context_compiler.js');
     const source = fs.readFileSync(sourcePath, 'utf8');
 
     // The -e flag must appear before the token in the argument array
@@ -329,7 +341,10 @@ describe('Security: findInboundCallers argument structure', () => {
   });
 
   test('git grep uses -- separator to isolate pathspec arguments', () => {
-    const sourcePath = path.resolve(__dirname, '../../scripts/context_compiler.js');
+    const canonicalPath = path.resolve(__dirname, '../../.agent/scripts/context_compiler.js');
+    const sourcePath = fs.existsSync(canonicalPath)
+      ? canonicalPath
+      : path.resolve(__dirname, '../../scripts/context_compiler.js');
     const source = fs.readFileSync(sourcePath, 'utf8');
 
     // The -- separator must appear in the argument array
@@ -337,7 +352,10 @@ describe('Security: findInboundCallers argument structure', () => {
   });
 
   test('ripgrep fallback uses -e flag for safe pattern passing', () => {
-    const sourcePath = path.resolve(__dirname, '../../scripts/context_compiler.js');
+    const canonicalPath = path.resolve(__dirname, '../../.agent/scripts/context_compiler.js');
+    const sourcePath = fs.existsSync(canonicalPath)
+      ? canonicalPath
+      : path.resolve(__dirname, '../../scripts/context_compiler.js');
     const source = fs.readFileSync(sourcePath, 'utf8');
 
     // The ripgrep invocation must also use -e for the search pattern

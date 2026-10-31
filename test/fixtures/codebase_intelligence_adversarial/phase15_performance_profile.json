@@ -1,0 +1,83 @@
+{
+  "timestamp": "2026-10-30T07:20:46.719Z",
+  "nodeVersion": "v22.23.2",
+  "platform": "win32",
+  "arch": "x64",
+  "measurements": {
+    "coldScan": {
+      "durationMs": 419,
+      "heapDeltaMB": 26.4
+    },
+    "warmScan": {
+      "durationMs": 0
+    },
+    "operations": {
+      "overview": {
+        "durationMs": 462,
+        "target": null
+      },
+      "trace": {
+        "durationMs": 362,
+        "target": "src/cli.js"
+      },
+      "dependencies": {
+        "durationMs": 315,
+        "target": "src/cli.js"
+      },
+      "relevant-files": {
+        "durationMs": 321,
+        "target": "authentication"
+      },
+      "impact": {
+        "durationMs": 320,
+        "target": ".agent/scripts/codebase_intelligence.js"
+      },
+      "dead-code": {
+        "durationMs": 707,
+        "target": null
+      },
+      "onboard": {
+        "durationMs": 321,
+        "target": null
+      },
+      "prepare": {
+        "durationMs": 358,
+        "target": "add rate limiting support"
+      }
+    },
+    "routing": {
+      "totalQueries": 30,
+      "totalMs": 11.35,
+      "avgMs": 0.38,
+      "maxMs": 6.15,
+      "minMs": 0.01,
+      "p50Ms": 0.03,
+      "p99Ms": 6.15
+    },
+    "memoryStability": {
+      "startHeapMB": 92.2,
+      "endHeapMB": 128.9,
+      "growthMB": 36.7,
+      "samples": [
+        92.2,
+        111.4,
+        40.9,
+        44.9,
+        64,
+        83.2,
+        86.8,
+        106.2,
+        125.5,
+        128.9
+      ]
+    },
+    "modelSize": {
+      "entities": 619,
+      "relationships": 717,
+      "files": 619,
+      "frameworks": 0,
+      "datastores": 3,
+      "routes": 13
+    }
+  }
+}

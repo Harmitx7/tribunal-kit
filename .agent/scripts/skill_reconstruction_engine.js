@@ -7,11 +7,11 @@ const { evaluateAllSkills } = require('./skill_quality_engine');
 const { loadSkills } = require('./context_broker');
 
 const AGENT_DIR = path.join(__dirname, '..');
-const RECONSTRUCTION_QUEUE_PATH = path.join(AGENT_DIR, '../phase19/reconstruction_queue.json');
+const RECONSTRUCTION_QUEUE_PATH = process.env.RECONSTRUCTION_QUEUE_PATH || path.join(AGENT_DIR, 'data/reconstruction_queue.json');
 const HISTORY_PATH = path.join(AGENT_DIR, 'data/reconstruction_history.jsonl');
 const EVIDENCE_HISTORY_PATH = path.join(AGENT_DIR, 'data/skill_behavior_history.jsonl');
 
-function generateQueue() {
+function generateQueue(writeToDisk = !process.env.JEST_WORKER_ID) {
   const skills = loadSkills(AGENT_DIR);
   const queue = {
     A: [], // High evidence, low risk (eligible for automated)
@@ -46,8 +46,10 @@ function generateQueue() {
     }
   }
 
-  fs.mkdirSync(path.dirname(RECONSTRUCTION_QUEUE_PATH), { recursive: true });
-  fs.writeFileSync(RECONSTRUCTION_QUEUE_PATH, JSON.stringify(queue, null, 2));
+  if (writeToDisk) {
+    fs.mkdirSync(path.dirname(RECONSTRUCTION_QUEUE_PATH), { recursive: true });
+    fs.writeFileSync(RECONSTRUCTION_QUEUE_PATH, JSON.stringify(queue, null, 2));
+  }
   return queue;
 }
 

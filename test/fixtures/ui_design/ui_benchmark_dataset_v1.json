@@ -1,0 +1,168 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-10-30T14:40:00.000Z",
+  "domain": "ui-design-engineering",
+  "tasks": [
+    {
+      "id": "bm-saas-landing",
+      "category": "B2B_SAAS",
+      "title": "Premium SaaS Landing Page",
+      "viewports": [375, 768, 1440],
+      "antiSlopRequired": true,
+      "expectedTokens": {
+        "visualDirection": "MODERN_PRODUCT_CRAFT",
+        "containerPadding": 20,
+        "innerRadius": 8,
+        "outerRadius": 28
+      }
+    },
+    {
+      "id": "bm-dev-dashboard",
+      "category": "DEV_TOOL",
+      "title": "Developer Platform Observability Dashboard",
+      "viewports": [1024, 1440],
+      "antiSlopRequired": true,
+      "expectedTokens": {
+        "visualDirection": "TECHNICAL_UTILITARIAN",
+        "containerPadding": 16,
+        "innerRadius": 2,
+        "outerRadius": 18
+      }
+    },
+    {
+      "id": "bm-analytics-charts",
+      "category": "ANALYTICS",
+      "title": "Analytics Interface with Filters",
+      "viewports": [768, 1440],
+      "antiSlopRequired": true,
+      "expectedTokens": {
+        "visualDirection": "DENSE_ANALYTICAL",
+        "containerPadding": 16,
+        "innerRadius": 4,
+        "outerRadius": 20
+      }
+    },
+    {
+      "id": "bm-ecommerce-pdp",
+      "category": "CONSUMER_ECOMMERCE",
+      "title": "E-Commerce Product Detail Page",
+      "viewports": [375, 1440],
+      "antiSlopRequired": true,
+      "expectedTokens": {
+        "visualDirection": "SOFT_APPROACHABLE",
+        "containerPadding": 24,
+        "innerRadius": 12,
+        "outerRadius": 36
+      }
+    },
+    {
+      "id": "bm-mobile-app",
+      "category": "CONSUMER_ECOMMERCE",
+      "title": "Mobile-First Task & Social Screen",
+      "viewports": [375, 428],
+      "antiSlopRequired": true,
+      "expectedTokens": {
+        "visualDirection": "SOFT_APPROACHABLE",
+        "containerPadding": 24,
+        "innerRadius": 12,
+        "outerRadius": 36
+      }
+    },
+    {
+      "id": "bm-editorial-portfolio",
+      "category": "EDITORIAL_PORTFOLIO",
+      "title": "Editorial / Portfolio Website",
+      "viewports": [375, 1440],
+      "antiSlopRequired": true,
+      "expectedTokens": {
+        "visualDirection": "MINIMAL_EDITORIAL",
+        "containerPadding": 24,
+        "innerRadius": 4,
+        "outerRadius": 28
+      }
+    },
+    {
+      "id": "bm-settings-config",
+      "category": "B2B_SAAS",
+      "title": "Multi-Tab Settings & Account Screen",
+      "viewports": [768, 1440],
+      "antiSlopRequired": true,
+      "expectedTokens": {
+        "visualDirection": "MODERN_PRODUCT_CRAFT",
+        "containerPadding": 20,
+        "innerRadius": 8,
+        "outerRadius": 28
+      }
+    },
+    {
+      "id": "bm-multistep-form",
+      "category": "B2B_SAAS",
+      "title": "Multi-Step Onboarding Wizard",
+      "viewports": [375, 1440],
+      "antiSlopRequired": true,
+      "expectedTokens": {
+        "visualDirection": "MODERN_PRODUCT_CRAFT",
+        "containerPadding": 20,
+        "innerRadius": 8,
+        "outerRadius": 28
+      }
+    },
+    {
+      "id": "bm-dense-finance",
+      "category": "ANALYTICS",
+      "title": "Data-Dense Professional Financial Table",
+      "viewports": [1440, 1920],
+      "antiSlopRequired": true,
+      "expectedTokens": {
+        "visualDirection": "DENSE_ANALYTICAL",
+        "containerPadding": 16,
+        "innerRadius": 4,
+        "outerRadius": 20
+      }
+    },
+    {
+      "id": "bm-responsive-shell",
+      "category": "DEV_TOOL",
+      "title": "Application Navigation & Responsive Shell",
+      "viewports": [375, 768, 1440],
+      "antiSlopRequired": true,
+      "expectedTokens": {
+        "visualDirection": "TECHNICAL_UTILITARIAN",
+        "containerPadding": 16,
+        "innerRadius": 2,
+        "outerRadius": 18
+      }
+    },
+    {
+      "id": "bm-states-resilience",
+      "category": "B2B_SAAS",
+      "title": "Empty, Loading Skeletons, and Error States",
+      "viewports": [375, 1440],
+      "antiSlopRequired": true,
+      "expectedTokens": {
+        "visualDirection": "MODERN_PRODUCT_CRAFT",
+        "containerPadding": 20,
+        "innerRadius": 8,
+        "outerRadius": 28
+      }
+    },
+    {
+      "id": "bm-redesign-legacy",
+      "category": "B2B_SAAS",
+      "title": "Legacy Table Component Token Modernization",
+      "viewports": [1440],
+      "antiSlopRequired": true,
+      "expectedTokens": {
+        "visualDirection": "MODERN_PRODUCT_CRAFT",
+        "containerPadding": 20,
+        "innerRadius": 8,
+        "outerRadius": 28
+      }
+    }
+  ],
+  "codeSnippets": {
+    "positive": "<div className=\"p-5 rounded-[28px] bg-surface-0 border border-border-subtle\"><button className=\"px-4 py-2 rounded-lg bg-action hover:bg-action-hover focus-visible:outline-2 active:scale-[0.98] disabled:opacity-50\">Confirm</button></div>",
+    "negative": "<div className=\"p-5 rounded-md bg-[#ffffff]\"><table className=\"w-full\"></table><button className=\"bg-purple-500 hover:bg-indigo-600 transition-all outline-none\">Click Me</button></div>"
+  }
+}
+

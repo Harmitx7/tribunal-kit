@@ -1,0 +1,86 @@
+{
+  "phase": 18,
+  "version": "9.3.0",
+  "title": "Autonomous Investigation & Evidence-Grounded Reasoning Certification",
+  "timestamp": "2026-10-30T08:36:46.211Z",
+  "durationSeconds": 35.82,
+  "verdict": "RELEASE_READY",
+  "totalGates": 15,
+  "gatesPassed": 15,
+  "dualWorkspaceParity": {
+    "canonicalInnerSha256": "8A3B88B9AF654FE4A4BD4775A9EF9E2D3D30824C40D9342EE662CFC15D8D9994",
+    "outerMirrorSha256": "8A3B88B9AF654FE4A4BD4775A9EF9E2D3D30824C40D9342EE662CFC15D8D9994",
+    "parityMatch": true
+  },
+  "releaseGates": {
+    "P18-G1": {
+      "status": "PASS",
+      "details": "Branch \"main\" at commit 781959cac3104b450981a9a1039e9e44993b5f79. Preserved 133 pre-existing modified files without destructive resets."
+    },
+    "P18-G2": {
+      "status": "PASS",
+      "details": "Phase 17 certified as RELEASE_READY with all 14/14 gates passing."
+    },
+    "P18-G3": {
+      "status": "PASS",
+      "details": "Audited existing capabilities: InvestigationBudget, InvestigationPlanner, InvestigationEngine, and execute() gateway."
+    },
+    "P18-G4": {
+      "status": "PASS",
+      "details": "Every planned step contains unique stepId, operation, explicit objective, and dependency references."
+    },
+    "P18-G5": {
+      "status": "PASS",
+      "details": "All claims backed by L1_OBSERVED or L2_CORROBORATED evidence records with source path references."
+    },
+    "P18-G6": {
+      "status": "PASS",
+      "details": "Competing hypotheses maintained simultaneously. Conflicting findings result in explicit CONTRADICTION_DETECTED status."
+    },
+    "P18-G7": {
+      "status": "PASS",
+      "details": "Statically unprovable queries (latency, memory leaks) trigger honest abstention with calibrated L4_UNKNOWN confidence."
+    },
+    "P18-G8": {
+      "status": "PASS",
+      "details": "InvestigationBudget enforces maxIterations, maxToolCalls, maxFiles, and timeoutMs with safe partial-evidence degradation."
+    },
+    "P18-G9": {
+      "status": "PASS",
+      "details": "All returned evidence audited against working tree hashes via validateEvidenceFreshness() to catch stale or manipulated claims."
+    },
+    "P18-G10": {
+      "status": "PASS",
+      "details": "resolveRoute() sanitizes dangerous command injections and flags UNTRUSTED_INJECTION before execution."
+    },
+    "P18-G11": {
+      "status": "PASS",
+      "details": "Zero repository file mutations permitted during investigation lifecycle."
+    },
+    "P18-G12": {
+      "status": "PASS",
+      "details": "Executed codebase_intelligence_phase18_investigation.test.js with 30 passed tests."
+    },
+    "P18-G13": {
+      "status": "PASS",
+      "details": "100% backward compatibility maintained for Phase 13 legacy scenarios and existing /understand subcommands."
+    },
+    "P18-G14": {
+      "status": "PASS",
+      "details": "All 18 deterministic scenarios in phase18_investigation_eval_dataset.json passed successfully."
+    },
+    "P18-G15": {
+      "status": "PASS",
+      "details": "Every unverified hypothesis or runtime-dependent question explicitly surfaces unresolved_assumptions."
+    }
+  },
+  "evaluationMetrics": {
+    "scenariosEvaluated": 18,
+    "scenariosPassed": 18,
+    "passRate": "100.0%",
+    "honestAbstentionScenarios": 3,
+    "promptInjectionNeutralizedScenarios": 1,
+    "budgetExhaustionScenarios": 2,
+    "hypothesesEvaluatedCount": 36
+  }
+}

@@ -15,6 +15,14 @@
 
 const path = require('path');
 const { spawnSync } = require('child_process');
+const {
+  formatActivity,
+} = require('../src/activity');
+
+const {
+  serializeResponse,
+  formatErrorResponse,
+} = require('../src/mcp/response_optimizer');
 
 const PKG = require(path.resolve(__dirname, '../package.json'));
 
@@ -46,12 +54,20 @@ class ToolRepeatGuard {
   }
 
   observe(toolName, argsObj) {
-    const canonicalize = obj => {
-      if (Array.isArray(obj)) return obj.map(canonicalize);
+    const seen = new WeakSet();
+    const canonicalize = (obj, depth = 0) => {
+      if (depth > 10) return '[MaxDepth]';
+      if (Array.isArray(obj)) {
+        if (seen.has(obj)) return '[Circular]';
+        seen.add(obj);
+        return obj.map(item => canonicalize(item, depth + 1));
+      }
       if (obj !== null && typeof obj === 'object') {
+        if (seen.has(obj)) return '[Circular]';
+        seen.add(obj);
         const sorted = {};
         for (const key of Object.keys(obj).sort()) {
-          sorted[key] = canonicalize(obj[key]);
+          sorted[key] = canonicalize(obj[key], depth + 1);
         }
         return sorted;
       }
@@ -61,8 +77,13 @@ class ToolRepeatGuard {
       return obj;
     };
 
-    const canonicalArgs = JSON.stringify(canonicalize(argsObj) || {});
-    const key = `${toolName}::${canonicalArgs}`;
+    let canonicalArgs = '{}';
+    try {
+      canonicalArgs = JSON.stringify(canonicalize(argsObj) || {});
+    } catch {
+      canonicalArgs = '{}';
+    }
+    const key = `${toolName || 'unknown'}::${canonicalArgs}`;
 
     const currentCount = (this.history.get(key) || 0) + 1;
     this.history.clear();
@@ -98,12 +119,7 @@ class RpcError extends Error {
 
 // Minimal JSON-RPC 2.0 over stdio
 const readline = require('readline');
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-  terminal: false,
-});
+let rl = null;
 
 /**
  * Run the workspace integrity audit without invoking the CLI schema validator.
@@ -415,11 +431,15 @@ async function handleRequest(req) {
         },
         {
           name: 'tribunal_approve_write',
-          description: 'Approve a transaction requiring human approval (Simulated via token).',
+          description: 'Approve a transaction requiring human approval with explicit approver ID and signature.',
           inputSchema: {
             type: 'object',
-            properties: { token: { type: 'string' }, signature: { type: 'string' } },
-            required: ['token'],
+            properties: {
+              token: { type: 'string', description: 'Write transaction token' },
+              approverId: { type: 'string', description: 'Identity of the human approver (AI agents cannot self-approve)' },
+              signature: { type: 'string', description: 'Human confirmation approval signature' },
+            },
+            required: ['token', 'approverId', 'signature'],
             additionalProperties: false,
           },
         },
@@ -874,6 +894,85 @@ async function handleRequest(req) {
             additionalProperties: false,
           },
         },
+        {
+          name: 'tk_format_activity',
+          description:
+            'Formats an operational state, agent activation, progress update, or completion into the premium Tribunal-Kit activity presentation format.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              state: {
+                type: 'string',
+                description:
+                  'Operational state: operation_started, agent_activated, skill_activated, analysis_in_progress, tool_executing, tests_running, evidence_collecting, validation_passed, validation_failed, warning_detected, human_approval_required, operation_blocked, retry_in_progress, operation_completed, operation_cancelled',
+              },
+              title: { type: 'string', description: 'Crisp title or headline' },
+              summary: { type: 'string', description: 'Concise 1-2 sentence context or mandate' },
+              agent: { type: 'string', description: 'Optional agent name (e.g. resilience-reviewer)' },
+              skill: { type: 'string', description: 'Optional skill name (e.g. error-resilience)' },
+              domain: { type: 'string', description: 'Optional domain focus' },
+              current: { type: 'number', description: 'Authoritative completed count' },
+              total: { type: 'number', description: 'Authoritative total count' },
+              unit: { type: 'string', description: 'Unit of progress (e.g. suites, tests, files)' },
+              nextAction: { type: 'string', description: 'Actionable next step' },
+              evidence: { description: 'Verified evidence string, object, or array' },
+              error: { type: 'string', description: 'Failure or error message' },
+              warning: { type: 'string', description: 'Warning message' },
+              format: {
+                type: 'string',
+                enum: ['markdown', 'terminal', 'plaintext', 'json'],
+                default: 'markdown',
+              },
+            },
+            required: ['state', 'title'],
+            additionalProperties: false,
+          },
+        },
+        {
+          name: 'tribunal_understand',
+          description:
+            'Execute deterministic, read-only architectural exploration, feature tracing, dependency analysis, impact estimation, dead-code detection, guided onboarding, and change preparation.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              subcommand: {
+                type: 'string',
+                description:
+                  'Operation to execute: overview, trace, dependencies, relevant-files, impact, dead-code, onboard, prepare (default: overview).',
+                enum: [
+                  'overview',
+                  'trace',
+                  'dependencies',
+                  'relevant-files',
+                  'impact',
+                  'dead-code',
+                  'onboard',
+                  'prepare',
+                  'change-impact',
+                  'investigate',
+                ],
+              },
+              target: {
+                type: 'string',
+                description: 'Target feature, symbol, file path, route, or task description.',
+              },
+              depth: {
+                type: 'integer',
+                description: 'Traversal depth limit (default: 3).',
+              },
+              focus: {
+                type: 'string',
+                description: 'Restricts analysis scope to a specific subdirectory.',
+              },
+              json: {
+                type: 'boolean',
+                description:
+                  'Whether to return machine-readable JSON result envelope instead of markdown dossier.',
+              },
+            },
+            additionalProperties: false,
+          },
+        },
       ],
     };
   }
@@ -903,49 +1002,51 @@ async function handleRequest(req) {
             },
             { dryRun },
           );
-          return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+          return serializeResponse(result, { compact: req.params?.arguments?.compact });
         } catch (e) {
-          return {
-            content: [{ type: 'text', text: `Write request error: ${e.message}` }],
-            isError: true,
-          };
+          return formatErrorResponse(e, { prefix: 'Write request error' });
         }
       }
 
       if (toolName === 'tribunal_preview_write') {
         try {
           const result = controlledWriteService.previewWrite(req.params?.arguments?.token);
-          return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+          return serializeResponse(result, { compact: req.params?.arguments?.compact });
         } catch (e) {
-          return {
-            content: [{ type: 'text', text: `Preview error: ${e.message}` }],
-            isError: true,
-          };
+          return formatErrorResponse(e, { prefix: 'Preview error' });
         }
       }
 
       if (toolName === 'tribunal_commit_write') {
         try {
           const result = await controlledWriteService.commitWrite(req.params?.arguments?.token);
-          return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+          return serializeResponse(result, { compact: req.params?.arguments?.compact });
         } catch (e) {
-          return { content: [{ type: 'text', text: `Commit error: ${e.message}` }], isError: true };
+          return formatErrorResponse(e, { prefix: 'Commit error' });
         }
       }
 
       if (toolName === 'tribunal_approve_write') {
+        const token = req.params?.arguments?.token;
+        const approverId = req.params?.arguments?.approverId;
+        const signature = req.params?.arguments?.signature;
+
+        if (!approverId) {
+          return formatErrorResponse(
+            new Error('Security Violation: Human approval via MCP requires explicit approverId (AI clients cannot self-approve).'),
+            { prefix: 'Approve error' },
+          );
+        }
+
         try {
           const result = controlledWriteService.approveWrite(
-            req.params?.arguments?.token,
-            'human',
-            req.params?.arguments?.signature,
+            token,
+            approverId,
+            signature,
           );
-          return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+          return serializeResponse(result, { compact: req.params?.arguments?.compact });
         } catch (e) {
-          return {
-            content: [{ type: 'text', text: `Approve error: ${e.message}` }],
-            isError: true,
-          };
+          return formatErrorResponse(e, { prefix: 'Approve error' });
         }
       }
 
@@ -1037,7 +1138,17 @@ async function handleRequest(req) {
           if (compareWith) {
             args.push('--multi', target, compareWith);
           } else {
-            args.push(target);
+            const fsMod = require('fs');
+            try {
+              const resolved = path.resolve(workspaceRoot, target);
+              if (fsMod.existsSync(resolved) && fsMod.statSync(resolved).isDirectory()) {
+                args.push('--dir', target);
+              } else {
+                args.push('--file', target);
+              }
+            } catch {
+              args.push(target);
+            }
           }
 
           if (write) {
@@ -1063,6 +1174,83 @@ async function handleRequest(req) {
             content: [{ type: 'text', text: `Context Compiler Error: ${e.message}` }],
             isError: true,
           };
+        }
+      }
+
+      if (toolName === 'tk_format_activity') {
+        const args = req.params?.arguments || {};
+        const progress = (args.current !== undefined && args.total !== undefined) ? {
+          current: args.current,
+          total: args.total,
+          unit: args.unit || 'steps',
+          isAuthoritative: true,
+        } : null;
+
+        const eventPayload = {
+          eventType: args.state,
+          title: args.title,
+          summary: args.summary || null,
+          agent: args.agent || null,
+          skill: args.skill || null,
+          domain: args.domain || null,
+          progress,
+          nextAction: args.nextAction || null,
+          evidence: args.evidence || null,
+          error: args.error ? { message: args.error } : null,
+          warning: args.warning ? { message: args.warning } : null,
+        };
+
+        const rendered = formatActivity(eventPayload, args.format || 'markdown');
+        return {
+          content: [{ type: 'text', text: rendered }],
+        };
+      }
+
+      if (toolName === 'tribunal_understand') {
+        const subcommand = req.params?.arguments?.subcommand || 'overview';
+        const target = req.params?.arguments?.target;
+        const depth = req.params?.arguments?.depth;
+        const focus = req.params?.arguments?.focus;
+        const asJson = req.params?.arguments?.json;
+
+        try {
+          const workspaceRoot = process.cwd();
+          if (focus) {
+            assertWithinRoot(workspaceRoot, focus);
+          }
+          if (target && typeof target === 'string' && target.includes('..')) {
+            throw new RpcError(-32602, 'Path traversal detected in target argument');
+          }
+
+          const { runCodebaseIntelligence } = require('../.agent/scripts/codebase_intelligence');
+          const flags = {
+            depth: depth !== undefined ? depth : undefined,
+            focus: focus || undefined,
+            json: !!asJson,
+          };
+
+          const result = await runCodebaseIntelligence({
+            subcommand,
+            target,
+            flags,
+            repoRoot: workspaceRoot,
+          });
+
+          if (asJson) {
+            const resp = serializeResponse(result.data, { compact: req.params?.arguments?.compact });
+            if (result.status === 'FAILED' || result.status === 'UNSUPPORTED') {
+              resp.isError = true;
+            }
+            return resp;
+          }
+
+          return {
+            content: [{ type: 'text', text: result.markdown }],
+            isError: result.status === 'FAILED' || result.status === 'UNSUPPORTED',
+          };
+        } catch (e) {
+          if (e instanceof RpcError) throw e;
+          return formatErrorResponse(e, { prefix: 'Codebase intelligence error' });
         }
       }
 
@@ -1114,19 +1302,9 @@ async function handleRequest(req) {
         try {
           const { auditURL } = require('../src/browser');
           const report = await auditURL(url);
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(report, null, 2),
-              },
-            ],
-          };
+          return serializeResponse(report, { compact: req.params?.arguments?.compact });
         } catch (e) {
-          return {
-            content: [{ type: 'text', text: `Browser audit error: ${e.message}` }],
-            isError: true,
-          };
+          return formatErrorResponse(e, { prefix: 'Browser audit error' });
         }
       }
 
@@ -1140,19 +1318,9 @@ async function handleRequest(req) {
         try {
           const { compareURLs } = require('../src/browser');
           const result = await compareURLs(url1, url2, { maxDiffPercent });
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(result, null, 2),
-              },
-            ],
-          };
+          return serializeResponse(result, { compact: req.params?.arguments?.compact });
         } catch (e) {
-          return {
-            content: [{ type: 'text', text: `Browser compare error: ${e.message}` }],
-            isError: true,
-          };
+          return formatErrorResponse(e, { prefix: 'Browser compare error' });
         }
       }
 
@@ -1229,19 +1397,9 @@ async function handleRequest(req) {
         try {
           const { captureRuntimeErrors, verifyRuntimeFix } = require('../src/browser');
           const result = verify ? await verifyRuntimeFix(url) : await captureRuntimeErrors(url);
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify(result, null, 2),
-              },
-            ],
-          };
+          return serializeResponse(result, { compact: req.params?.arguments?.compact });
         } catch (e) {
-          return {
-            content: [{ type: 'text', text: `Runtime Sentinel error: ${e.message}` }],
-            isError: true,
-          };
+          return formatErrorResponse(e, { prefix: 'Runtime Sentinel error' });
         }
       }
 
@@ -1254,19 +1412,9 @@ async function handleRequest(req) {
           const { auditURL, codifyAuditViolations } = require('../src/browser');
           const report = await auditURL(url);
           const codified = codifyAuditViolations(report);
-          return {
-            content: [
-              {
-                type: 'text',
-                text: JSON.stringify({ report, codified }, null, 2),
-              },
-            ],
-          };
+          return serializeResponse({ report, codified }, { compact: req.params?.arguments?.compact });
         } catch (e) {
-          return {
-            content: [{ type: 'text', text: `Audit & codify error: ${e.message}` }],
-            isError: true,
-          };
+          return formatErrorResponse(e, { prefix: 'Audit & codify error' });
         }
       }
 
@@ -1386,9 +1534,7 @@ async function handleRequest(req) {
             ],
           };
         } catch (e) {
-          return {
-            content: [{ type: 'text', text: `Swarm dispatch failed: ${e.message}` }],
-          };
+          return formatErrorResponse(e, { prefix: 'Swarm dispatch failed' });
         }
       }
 
@@ -1410,7 +1556,7 @@ async function handleRequest(req) {
           if (result.error) throw result.error;
           return { content: [{ type: 'text', text: result.stdout || result.stderr }] };
         } catch (e) {
-          return { content: [{ type: 'text', text: `Failed to query graph: ${e.message}` }] };
+          return formatErrorResponse(e, { prefix: 'Failed to query graph' });
         }
       }
 
@@ -1464,20 +1610,20 @@ async function handleRequest(req) {
           }
 
           const validatedData = validatePayloadOrThrow(payloadData, schema);
+          const formattedPayload = req.params?.arguments?.compact === false
+            ? JSON.stringify(validatedData, null, 2)
+            : JSON.stringify(validatedData);
           return {
             content: [
               {
                 type: 'text',
-                text: `Payload validation successful.\n\nValidated payload:\n${JSON.stringify(validatedData, null, 2)}`,
+                text: `Payload validation successful.\n\nValidated payload:\n${formattedPayload}`,
               },
             ],
           };
         } catch (e) {
-          if (e instanceof SyntaxError) {
-            return { content: [{ type: 'text', text: `Invalid JSON payload: ${e.message}` }] };
-          } else {
-            return { content: [{ type: 'text', text: `Payload validation failed: ${e.message}` }] };
-          }
+          const prefix = e instanceof SyntaxError ? 'Invalid JSON payload' : 'Payload validation failed';
+          return formatErrorResponse(e, { prefix });
         }
       }
 
@@ -1485,11 +1631,7 @@ async function handleRequest(req) {
         const runId = correctionEngine.createRun(argsObj.finding, {
           workspaceId: argsObj.workspaceId,
         });
-        return {
-          content: [
-            { type: 'text', text: JSON.stringify({ runId, status: 'INITIALIZED' }, null, 2) },
-          ],
-        };
+        return serializeResponse({ runId, status: 'INITIALIZED' }, { compact: argsObj?.compact });
       }
 
       if (toolName === 'tribunal_plan_correction') {
@@ -1497,42 +1639,32 @@ async function handleRequest(req) {
           argsObj.runId,
           argsObj.proposalContext,
         );
-        return {
-          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-        };
+        return serializeResponse(result, { compact: argsObj?.compact });
       }
 
       if (toolName === 'tribunal_execute_correction') {
         const result = await correctionEngine.executeCorrection(argsObj.runId, argsObj.files);
-        return {
-          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-        };
+        return serializeResponse(result, { compact: argsObj?.compact });
       }
 
       if (toolName === 'tribunal_verify_correction') {
         const result = await correctionEngine.verifyCorrection(argsObj.runId);
-        return {
-          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-        };
+        return serializeResponse(result, { compact: argsObj?.compact });
       }
 
       if (toolName === 'tribunal_run_validation') {
         const { ValidationRunner } = require('../src/execution/validation_runner');
         const runner = new ValidationRunner({ workspaceRoot: process.cwd() });
         const result = await runner.run(argsObj.validationId, argsObj.customArgs);
-        return {
-          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
-        };
+        return serializeResponse(result, { compact: argsObj?.compact });
       }
 
       if (toolName === 'tribunal_get_resolution_certificate') {
         const runState = correctionEngine.activeRuns.get(argsObj.runId);
         if (!runState || !runState.certificate) {
-          return { content: [{ type: 'text', text: 'Certificate not found or run incomplete.' }] };
+          return formatErrorResponse('Certificate not found or run incomplete.');
         }
-        return {
-          content: [{ type: 'text', text: JSON.stringify(runState.certificate, null, 2) }],
-        };
+        return serializeResponse(runState.certificate, { compact: argsObj?.compact });
       }
 
       if (toolName === 'run_tribunal_audit') {
@@ -1724,9 +1856,7 @@ async function handleRequest(req) {
 
           return { content: [{ type: 'text', text: stripBoilerplate(finalOutput) }] };
         } catch (e) {
-          return {
-            content: [{ type: 'text', text: `Failed to retrieve sparse context: ${e.message}` }],
-          };
+          return formatErrorResponse(e, { prefix: 'Failed to retrieve sparse context' });
         }
       }
 
@@ -1759,7 +1889,7 @@ async function handleRequest(req) {
           }
           return { content: [{ type: 'text', text }] };
         } catch (e) {
-          return { content: [{ type: 'text', text: `Memory recall failed: ${e.message}` }] };
+          return formatErrorResponse(e, { prefix: 'Memory recall failed' });
         }
       }
 
@@ -1914,9 +2044,7 @@ async function handleRequest(req) {
 
           return { content: [{ type: 'text', text: report }] };
         } catch (e) {
-          return {
-            content: [{ type: 'text', text: `Contract verification failed: ${e.message}` }],
-          };
+          return formatErrorResponse(e, { prefix: 'Contract verification failed' });
         }
       }
 
@@ -1932,7 +2060,7 @@ async function handleRequest(req) {
     } catch (e) {
       if (e.message === 'TOOL_TIMEOUT') {
         const errorMsg = `Error: Tool execution timed out after ${GENERAL_TOOL_TIMEOUT_MS}ms`;
-        const result = { content: [{ type: 'text', text: errorMsg }] };
+        const result = { content: [{ type: 'text', text: errorMsg }], isError: true };
         if (reminder) result.content.push({ type: 'text', text: '\n\n' + reminder });
         return result;
       }
@@ -1947,29 +2075,26 @@ async function processSingleRequest(req) {
   try {
     const result = await handleRequest(req);
     // If it's a notification, do not send a response
-    if (req.id === undefined || req.id === null) {
+    if (req && (req.id === undefined || req.id === null)) {
       return null;
     }
     return { jsonrpc: '2.0', id: req.id, result };
   } catch (e) {
+    // JSON-RPC 2.0 §4.1: The Server MUST NOT reply to a Notification
+    if (req && (req.id === undefined || req.id === null)) {
+      return null;
+    }
     const code = e && typeof e.code === 'number' ? e.code : -32603;
     const message = e && e.message ? e.message : 'Internal server error';
-    if (req.id === undefined || req.id === null) {
-      return {
-        jsonrpc: '2.0',
-        id: null,
-        error: { code, message },
-      };
-    }
     return {
       jsonrpc: '2.0',
-      id: req.id,
+      id: req ? req.id : null,
       error: { code, message },
     };
   }
 }
 
-rl.on('line', async line => {
+async function handleLineInput(line) {
   if (line.length > 1048576) {
     // 1MB limit
     const errorRes = {
@@ -2013,12 +2138,40 @@ rl.on('line', async line => {
       console.log(JSON.stringify(response));
     }
   }
-});
+}
+
+function startServer() {
+  if (rl) return rl;
+  rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false,
+  });
+  rl.on('line', handleLineInput);
+  return rl;
+}
+
+function stopServer() {
+  if (rl) {
+    rl.close();
+    rl = null;
+  }
+}
+
+// Auto-start when executed directly or not in test environment
+if (require.main === module || process.env.NODE_ENV !== 'test') {
+  startServer();
+}
 
 if (process.env.NODE_ENV === 'test') {
   module.exports = {
     handleRequest,
+    processSingleRequest,
+    handleLineInput,
     stripBoilerplate,
     runTribunalAudit,
+    startServer,
+    stopServer,
+    ToolRepeatGuard,
   };
 }

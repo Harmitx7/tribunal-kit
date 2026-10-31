@@ -1,5 +1,17 @@
 ---
 description: Tribunal Architecture Intelligence — Autonomous architecture extraction, zero-trust verification, blast radius simulation, semantic diffing, and health auditing.
+required-skills:
+  - architecture-intelligence
+  - architecture
+  - architecture-drift
+  - clean-code
+scripts-binding:
+  - .agent/scripts/architecture_extractor.js
+  - .agent/scripts/architecture_verifier.js
+  - .agent/scripts/blast_radius_engine.js
+  - .agent/scripts/architecture_diff.js
+  - .agent/scripts/architecture_health.js
+  - .agent/scripts/architecture_visualizer.js
 ---
 
 # /arch — Tribunal Architecture Intelligence

@@ -12,6 +12,7 @@ const reviewerGrid = require('./reviewer-grid');
 const wizard = require('./wizard');
 const panel = require('./panel');
 const progress = require('./progress');
+const activity = require('../activity');
 
 module.exports = {
   ...theme,
@@ -22,4 +23,9 @@ module.exports = {
   ...wizard,
   ...panel,
   ...progress,
+  activity,
+  formatActivity: activity.formatActivity,
+  announceAgent: activity.announceAgent,
+  announceSkill: activity.announceSkill,
+  ActivityTracker: activity.ActivityTracker,
 };

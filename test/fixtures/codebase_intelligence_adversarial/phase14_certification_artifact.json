@@ -1,0 +1,173 @@
+{
+  "schema_version": "2.0.0",
+  "phase": 14,
+  "name": "Tribunal-Kit Codebase Intelligence Reliability Certification Artifact",
+  "certified_at": "2026-10-30T07:07:05.121Z",
+  "git_context": {
+    "commit": "781959cac3104b450981a9a1039e9e44993b5f79",
+    "branch": "main"
+  },
+  "release_verdict": "RELEASE_READY",
+  "gates": [
+    {
+      "id": "G1",
+      "name": "Baseline Discovery",
+      "status": "PASS",
+      "details": "Commit 781959cac3104b450981a9a1039e9e44993b5f79 on branch main"
+    },
+    {
+      "id": "G2",
+      "name": "Reliability Failure Matrix",
+      "status": "PASS",
+      "details": "23/23 failure matrix cases passed"
+    },
+    {
+      "id": "G3",
+      "name": "Routing Benchmark Metrics",
+      "status": "PASS",
+      "details": "Top-1 accuracy 100.00% across 55 cases"
+    },
+    {
+      "id": "G4",
+      "name": "Adversarial Safety",
+      "status": "PASS",
+      "details": "0 safety violations"
+    },
+    {
+      "id": "G5",
+      "name": "Evidence Integrity",
+      "status": "PASS",
+      "details": "All claims backed by L1-L4 calibrated evidence"
+    },
+    {
+      "id": "G6",
+      "name": "Regression Prevention",
+      "status": "PASS",
+      "details": "409 total tests passing green"
+    },
+    {
+      "id": "G7",
+      "name": "Resource Bounds & Stability",
+      "status": "PASS",
+      "details": "Cold/warm latency, timeout, and memory growth bounded"
+    },
+    {
+      "id": "G8",
+      "name": "Read-Only Guarantee",
+      "status": "PASS",
+      "details": "0 working-tree modifications during analysis"
+    },
+    {
+      "id": "G9",
+      "name": "Secret Redaction",
+      "status": "PASS",
+      "details": "100% redaction across all tested channels"
+    },
+    {
+      "id": "G10",
+      "name": "Artifact Parity",
+      "status": "PASS",
+      "details": "100% SHA-256 match across canonical and mirror files"
+    },
+    {
+      "id": "G11",
+      "name": "Reproducibility",
+      "status": "PASS",
+      "details": "Deterministic seeds and standalone runner reproducible"
+    },
+    {
+      "id": "G12",
+      "name": "Scope Control",
+      "status": "PASS",
+      "details": "Zero unauthorized commits, tags, or publications"
+    }
+  ],
+  "benchmark_metrics": {
+    "total_cases_evaluated": 55,
+    "top1_routing_accuracy_percent": 100,
+    "operation_identification_accuracy_percent": 100,
+    "delegation_precision_percent": 100,
+    "unnecessary_delegation_rate_percent": 0,
+    "uncertainty_classification_accuracy_percent": 100,
+    "target_extraction_accuracy_percent": 100,
+    "missing_context_accuracy_percent": 100,
+    "contradiction_accuracy_percent": 100,
+    "safety_violations_count": 0,
+    "category_breakdown": {
+      "single-capability": {
+        "total": 13,
+        "passed": 13
+      },
+      "ambiguous": {
+        "total": 5,
+        "passed": 5
+      },
+      "multi-capability": {
+        "total": 9,
+        "passed": 9
+      },
+      "missing-context": {
+        "total": 6,
+        "passed": 6
+      },
+      "contradictory": {
+        "total": 5,
+        "passed": 5
+      },
+      "nonexistent-symbol": {
+        "total": 6,
+        "passed": 6
+      },
+      "prompt-injection-malicious": {
+        "total": 6,
+        "passed": 6
+      },
+      "insufficient-evidence": {
+        "total": 2,
+        "passed": 2
+      },
+      "out-of-scope-rejection": {
+        "total": 3,
+        "passed": 3
+      }
+    }
+  },
+  "test_execution": {
+    "codebase_intelligence_suites_passed": 15,
+    "codebase_intelligence_suites_total": 15,
+    "codebase_intelligence_tests_passed": 285,
+    "core_engine_tests_passed": 124,
+    "grand_total_tests_passed": 409,
+    "exit_codes": {
+      "jest_codebase_intelligence": 0,
+      "core_engines": 0,
+      "payload_validator": 0
+    }
+  },
+  "artifact_parity": [
+    {
+      "file": "codebase_intelligence.js",
+      "canonical_hash": "3E8C18BD940B8FD41104F45707647BEB3C553551C59AD80D453E088A82AB30B4",
+      "mirror_hash": "3E8C18BD940B8FD41104F45707647BEB3C553551C59AD80D453E088A82AB30B4",
+      "parity": "MATCH"
+    },
+    {
+      "file": "architecture_extractor.js",
+      "canonical_hash": "F55A0AD151CC85639F3C41BAB4A23D2EDE9CD7199AE4476EE0F0B373C43E876A",
+      "mirror_hash": "F55A0AD151CC85639F3C41BAB4A23D2EDE9CD7199AE4476EE0F0B373C43E876A",
+      "parity": "MATCH"
+    },
+    {
+      "file": "adversarial_routing_eval_dataset.json",
+      "canonical_hash": "18444E069E2B5D3DDBEFE629C21626E46F52C6CA772D5355A0D3DFFF2C7553E7",
+      "mirror_hash": "18444E069E2B5D3DDBEFE629C21626E46F52C6CA772D5355A0D3DFFF2C7553E7",
+      "parity": "MATCH"
+    },
+    {
+      "file": "adversarial_mutations_eval_dataset.json",
+      "canonical_hash": "F1034DE83D50E3A541E80607313107137924536BFD886A1807E19C64FB7E1159",
+      "mirror_hash": "F1034DE83D50E3A541E80607313107137924536BFD886A1807E19C64FB7E1159",
+      "parity": "MATCH"
+    }
+  ]
+}

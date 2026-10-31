@@ -14,7 +14,6 @@
  */
 
 const crypto = require('crypto');
-const path = require('path');
 const { FORBIDDEN_TARGETS, ALLOWED_TARGETS } = require('../evolution/engine');
 
 /**
@@ -43,8 +42,15 @@ class PropertyInvariantEngine {
    * @param {object} [options.resourceLimits] - Custom execution resource limits
    */
   constructor(options = {}) {
-    this.forbiddenTargets = options.forbiddenTargets || FORBIDDEN_TARGETS;
-    this.allowedTargets = options.allowedTargets || ALLOWED_TARGETS;
+    const toSet = (val, defaultVal) => {
+      if (val instanceof Set) return val;
+      if (Array.isArray(val)) return new Set(val);
+      if (defaultVal instanceof Set) return defaultVal;
+      if (Array.isArray(defaultVal)) return new Set(defaultVal);
+      return new Set();
+    };
+    this.forbiddenTargets = toSet(options.forbiddenTargets, FORBIDDEN_TARGETS);
+    this.allowedTargets = toSet(options.allowedTargets, ALLOWED_TARGETS);
     this.resourceLimits = { ...DEFAULT_RESOURCE_LIMITS, ...(options.resourceLimits || {}) };
   }
 
@@ -133,16 +139,28 @@ class PropertyInvariantEngine {
    * @returns {{ valid: boolean, metrics: object }}
    */
   verifyResourceEnvelope(metrics = {}) {
-    if (metrics.durationMs !== undefined && metrics.durationMs > this.resourceLimits.maxDurationMs) {
-      throw new Error(
-        `Invariant Violation: Execution duration (${metrics.durationMs}ms) exceeded maximum ceiling of ${this.resourceLimits.maxDurationMs}ms.`,
-      );
+    if (metrics.durationMs !== undefined) {
+      if (
+        typeof metrics.durationMs !== 'number' ||
+        Number.isNaN(metrics.durationMs) ||
+        metrics.durationMs > this.resourceLimits.maxDurationMs
+      ) {
+        throw new Error(
+          `Invariant Violation: Execution duration (${metrics.durationMs}ms) exceeded maximum ceiling of ${this.resourceLimits.maxDurationMs}ms.`,
+        );
+      }
     }
 
-    if (metrics.heapDeltaMb !== undefined && metrics.heapDeltaMb > this.resourceLimits.maxHeapDeltaMb) {
-      throw new Error(
-        `Invariant Violation: Heap memory growth (${metrics.heapDeltaMb}MB) exceeded maximum limit of ${this.resourceLimits.maxHeapDeltaMb}MB.`,
-      );
+    if (metrics.heapDeltaMb !== undefined) {
+      if (
+        typeof metrics.heapDeltaMb !== 'number' ||
+        Number.isNaN(metrics.heapDeltaMb) ||
+        metrics.heapDeltaMb > this.resourceLimits.maxHeapDeltaMb
+      ) {
+        throw new Error(
+          `Invariant Violation: Heap memory growth (${metrics.heapDeltaMb}MB) exceeded maximum limit of ${this.resourceLimits.maxHeapDeltaMb}MB.`,
+        );
+      }
     }
 
     return { valid: true, metrics };
@@ -158,15 +176,15 @@ class PropertyInvariantEngine {
   verifyDualOracleSoundness(evaluationReport = {}) {
     const { safePassRate, unsafePassRate } = evaluationReport;
 
-    if (safePassRate === undefined || safePassRate < 1.0) {
+    if (typeof safePassRate !== 'number' || Number.isNaN(safePassRate) || safePassRate < 1.0) {
       throw new Error(
-        `Invariant Violation: Ground-truth soundness check failed. Safe proposal pass rate was ${safePassRate !== undefined ? safePassRate * 100 : 0}%, but must be strictly 100%.`,
+        `Invariant Violation: Ground-truth soundness check failed. Safe proposal pass rate was ${typeof safePassRate === 'number' && !Number.isNaN(safePassRate) ? safePassRate * 100 : 0}%, but must be strictly 100%.`,
       );
     }
 
-    if (unsafePassRate === undefined || unsafePassRate > 0.0) {
+    if (typeof unsafePassRate !== 'number' || Number.isNaN(unsafePassRate) || unsafePassRate > 0.0) {
       throw new Error(
-        `Invariant Violation: Discriminative sharpness check failed. Unsafe proposal leaked ${unsafePassRate * 100}%, but must be strictly 0.0%.`,
+        `Invariant Violation: Discriminative sharpness check failed. Unsafe proposal leaked ${typeof unsafePassRate === 'number' && !Number.isNaN(unsafePassRate) ? unsafePassRate * 100 : 'invalid'}%, but must be strictly 0.0%.`,
       );
     }
 

@@ -1,6 +1,6 @@
 ---
 name: better-ui
-description: "Use when building, styling, optimizing, and auditing better ui components, responsive layouts, design systems, and frontend state."
+description: "Enforces 2026 UI design engineering invariants: nested border radius formulas (R_outer = R_inner + Padding), multi-layer ambient shadows, tactile active-press feedback (active:scale-[0.98]), and OKLCH color palettes."
 version: 6.0.0
 last-updated: 2026-09-29
 skills:
@@ -33,7 +33,7 @@ Before reading, generating, or refactoring code in the `better-ui` domain, inspe
 
 
 ## Activation Boundaries
-- **Activate when:** Use when building, styling, optimizing, and auditing better ui components, responsive layouts, design systems, and frontend state.
+- **Activate when:** Enforcing modern UI design engineering invariants: nested border radius geometry, multi-layer ambient lighting, tactile active press feedback, and OKLCH color palettes.
 - **DO NOT activate when:** The task falls outside the `better-ui` domain or is managed by a different dedicated specialist agent.
 
 

@@ -1,6 +1,5 @@
 'use strict';
 
-const path = require('path');
 
 const DEFAULT_SENSITIVE_PATTERNS = [
   /\.env.*/i,

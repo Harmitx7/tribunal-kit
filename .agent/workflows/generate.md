@@ -52,7 +52,7 @@ Your request
     │
     ▼
 [Phase 6] Context Broker — Skill Selection
-├── Scores all 90+ skills against your task keywords
+├── Scores all 320 skills against your task keywords
 ├── Level 0 (Essential): top skills — full content, injected first
 ├── Level 1 (Supplementary): medium relevance — key rules only
 ├── Level 2 (Available): listed for reference only

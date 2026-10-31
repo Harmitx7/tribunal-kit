@@ -8,6 +8,7 @@
 const { isTTY, hasColor, hasTrueColor, RGB, GLYPHS, color, bold } = require('./theme');
 
 function renderShimmerText(text, frame) {
+  if (process.env.NO_COLOR) return String(text || '');
   let out = '';
   const numChars = text.length;
   const wavePos = ((frame * 0.18) % (numChars + 4)) - 2;
@@ -33,6 +34,7 @@ class ShimmerSpinner {
     this.timer = null;
     this.frame = 0;
     this.startTime = Date.now();
+    this._sigintHandler = null;
   }
 
   start() {
@@ -45,6 +47,13 @@ class ShimmerSpinner {
 
     // Hide cursor to prevent flicker
     process.stderr.write('\x1b[?25l');
+
+    // Register cleanup on interruption to restore cursor
+    this._sigintHandler = () => {
+      this.finish();
+      process.exit(130);
+    };
+    process.once('SIGINT', this._sigintHandler);
 
     this.timer = setInterval(() => {
       const elapsed = ((Date.now() - this.startTime) / 1000).toFixed(1);
@@ -60,6 +69,10 @@ class ShimmerSpinner {
       this.frame++;
     }, 60);
 
+    if (this.timer.unref) {
+      this.timer.unref();
+    }
+
     return this;
   }
 
@@ -67,6 +80,11 @@ class ShimmerSpinner {
     if (this.timer) {
       clearInterval(this.timer);
       this.timer = null;
+    }
+
+    if (this._sigintHandler) {
+      process.removeListener('SIGINT', this._sigintHandler);
+      this._sigintHandler = null;
     }
 
     if (isTTY && hasColor) {
@@ -78,12 +96,14 @@ class ShimmerSpinner {
       const g = GLYPHS;
       const check = color(RGB.EMERALD, g.success);
       const boldMsg = bold(successMsg);
-      console.log(`  ${check} ${color(RGB.WHITE, boldMsg)}`);
+      console.log(`  ${check} ${boldMsg}`);
     }
+
+    return this;
   }
 }
 
 module.exports = {
-  ShimmerSpinner,
   renderShimmerText,
+  ShimmerSpinner,
 };

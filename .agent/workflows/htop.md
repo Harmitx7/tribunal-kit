@@ -1,7 +1,13 @@
 ---
 name: htop
-description: 'Inspect active agent execution metrics, task telemetry, and syscall status.'
+description: "Inspect active agent execution metrics, task telemetry, and syscall status."
 version: 1.0.0
+required-skills:
+  - htop
+  - agent-syscall-guidelines
+scripts-binding:
+  - .agent/scripts/session_logger.js
+  - .agent/scripts/harness_manager.js
 ---
 
 # HTOP (SYSCALL MONITOR)

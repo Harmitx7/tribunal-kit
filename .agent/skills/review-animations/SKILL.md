@@ -1,6 +1,6 @@
 ---
 name: review-animations
-description: "Use when implementing, optimizing, and timing 60fps/120fps review animations animations, transitions, gesture physics, and reduced-motion fallbacks."
+description: "Audits and times UI micro-interactions, spring physics, and gesture transitions. Enforces <=300ms budgets, tactile active-press feedback, ease-out entry curves, and prefers-reduced-motion compliance."
 version: 6.0.0
 last-updated: 2026-09-29
 skills:

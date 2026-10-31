@@ -196,7 +196,9 @@ mod tests {
         let res: CompressResult = serde_json::from_str(&res_str).unwrap();
 
         assert!(res.success);
-        assert!(!res.compressed_content.contains("// Comment in uppercase extension"));
+        assert!(!res
+            .compressed_content
+            .contains("// Comment in uppercase extension"));
         assert!(res.compressed_content.contains("const x: number = 42;"));
         let _ = std::fs::remove_file(file_path);
     }

@@ -32,7 +32,7 @@ class TransactionManager {
     try {
       const stats = fs.statSync(this.lockPath);
       return Date.now() - stats.mtimeMs > 15000; // 15 seconds stale
-    } catch (e) {
+    } catch (_e) {
       return false;
     }
   }
@@ -44,8 +44,6 @@ class TransactionManager {
         const mapping = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
         for (const [realPath, backupName] of Object.entries(mapping)) {
           assertWithinRoot(this.workspace, realPath);
-          const backupPath = path.join(this.undoDir, backupName);
-          assertWithinRoot(this.undoDir, backupPath);
           if (fs.existsSync(realPath)) {
             try {
               const lstat = fs.lstatSync(realPath);
@@ -57,8 +55,12 @@ class TransactionManager {
           }
           if (backupName === '__DELETED__') {
             if (fs.existsSync(realPath)) fs.unlinkSync(realPath);
-          } else if (fs.existsSync(backupPath)) {
-            fs.copyFileSync(backupPath, realPath);
+          } else {
+            const backupPath = path.join(this.undoDir, backupName);
+            assertWithinRoot(this.undoDir, backupPath);
+            if (fs.existsSync(backupPath)) {
+              fs.copyFileSync(backupPath, realPath);
+            }
           }
         }
       }
@@ -76,12 +78,18 @@ class TransactionManager {
           let wal;
           try {
             wal = JSON.parse(fs.readFileSync(this.walPath, 'utf8'));
-          } catch (e) {
+          } catch (_e) {
             wal = null;
           }
-          if (wal && wal.state !== 'COMMITTED') {
+          if (!wal || wal.state !== 'COMMITTED') {
             this._applyUndoLog();
+          } else {
+            // Transaction committed before crash; clean up undo and wal
+            if (fs.existsSync(this.undoDir)) fs.rmSync(this.undoDir, { recursive: true, force: true });
+            if (fs.existsSync(this.walPath)) fs.unlinkSync(this.walPath);
           }
+        } else if (fs.existsSync(this.undoDir)) {
+          this._applyUndoLog();
         }
         this._releaseLock();
       } else {
@@ -113,7 +121,7 @@ class TransactionManager {
         try {
           const waitBuf = new Int32Array(new SharedArrayBuffer(4));
           Atomics.wait(waitBuf, 0, 0, 30);
-        } catch (e) {} // fallback if Atomics unavailable or blocked
+        } catch (_e) {} // fallback if Atomics unavailable or blocked
       }
     }
 
@@ -157,6 +165,10 @@ class TransactionManager {
     for (let i = 0; i < this.operations.length; i++) {
       const op = this.operations[i];
       assertWithinRoot(this.workspace, op.path);
+      // Retain earliest pre-transaction backup for each unique path
+      if (op.path in mapping) {
+        continue;
+      }
       if (fs.existsSync(op.path)) {
         try {
           const lstat = fs.lstatSync(op.path);

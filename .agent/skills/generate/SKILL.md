@@ -1,0 +1,222 @@
+---
+name: generate
+description: Generate code using the full Tribunal Anti-Hallucination pipeline. Maker generates grounded in real project context at low temperature → domain-selected reviewers audit in parallel → Human Gate for final approval. Nothing is written to disk without explicit approval.
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - clean-code
+  - codebase-design
+  - lint-and-validate
+scripts-binding:
+  - .agent/scripts/lint_runner.js
+  - .agent/scripts/security_scan.js
+  - .agent/scripts/verify_all.js
+---
+
+# /generate — Hallucination-Free Code Generation
+
+$ARGUMENTS
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before generating code modules or invoking the Maker pipeline, you MUST inspect:
+
+1. Workspace Package Dependencies (`package.json`) → Confirm all imported libraries exist; ban unverified phantom imports
+2. Type Definitions & Path Aliases (`tsconfig.json`) → Verify module resolution paths and compiler strictness
+3. Parallel Tribunal Review Assignment → Select relevant domain reviewers (`logic`, `security`, `frontend`, `backend`, `database`, `mobile`) prior to Human Gate submission
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `clean-code` (.agent/skills/clean-code/SKILL.md): Self-documenting naming, no over-engineering, error handling patterns
+   - `codebase-design` (.agent/skills/codebase-design/SKILL.md): Deep module design with small interfaces and clean seams
+   - `lint-and-validate` (.agent/skills/lint-and-validate/SKILL.md): ESLint, Prettier, and code quality enforcement rules
+
+---
+
+## When to Use /generate
+
+| Use `/generate` when...                      | Use something else when...                     |
+| :------------------------------------------- | :--------------------------------------------- |
+| New code needs to be written from scratch    | Existing code needs modification → `/enhance`  |
+| A single focused piece of code is needed     | Multi-domain build → `/create` or `/swarm`     |
+| A safe, reviewed snippet is required         | You want to understand options first → `/plan` |
+| You need a quick but Tribunal-reviewed piece | Full project structure needed → `/create`      |
+
+---
+
+## Pipeline Flow
+
+```
+Your request
+    │
+    ▼
+[Phase 6] Context Broker — Skill Selection
+├── Scores all 90+ skills against your task keywords
+├── Level 0 (Essential): top skills — full content, injected first
+├── Level 1 (Supplementary): medium relevance — key rules only
+├── Level 2 (Available): listed for reference only
+└── Large models: Essential + Supplementary | Small models: Essential only
+    │
+    ▼
+Context scan (MANDATORY before first line of code)
+├── Search package.json (via grep) → verify specifically required dependencies only. Do NOT read the entire file.
+├── Search tsconfig.json (via grep) → verify specific strictness or path aliases. Do NOT read the entire file.
+├── Read only relevant excerpts of referenced files → understand actual data shapes
+└── Search .env.example (via grep) → verify specifically required environment variables
+    │
+    ▼
+Maker generates at temperature 0.1
+├── Only methods verified in official docs
+├── Only packages in package.json
+├── // VERIFY: [reason] on any uncertain call
+└── No full application generation — modules only
+    │
+    ▼
+[Phase 6] Inner-Loop Validator (AUTO — runs before you see the code)
+├── Scans generated snippet for OWASP patterns (critical/high/medium/low)
+├── Runs structural heuristics (empty catch, throw strings, env without fallback)
+├── Verdict: APPROVED / WARNING / REJECTED
+│   ├── APPROVED → continues to Tribunal Review
+│   ├── WARNING  → noted, continues with flag
+│   └── REJECTED → Maker auto-corrects (up to 2 inner-loop attempts)
+└── Only clean code reaches the Tribunal reviewers
+    │
+    ▼
+Tribunal Reviewers run in parallel (auto-selected by keyword)
+    │
+    ▼
+Human Gate — verdicts shown + unified diff
+Y = write to disk | N = discard | R = revise with feedback
+```
+
+---
+
+## What the Maker Is Not Allowed to Do
+
+```
+❌ Import a package not in package.json
+❌ Call a method not verified in official documentation
+❌ Use TypeScript 'any' without an explanation comment
+❌ Generate an entire application in one shot
+❌ Guess at database column or table names (read schema first)
+❌ Fabricate API response shapes (read existing types first)
+❌ Assume environment variables exist (read .env.example first)
+❌ Use Next.js 14 patterns in a Next.js 15 project (check version!)
+❌ Use React 18 hooks in a React 19 project (useFormState → useActionState)
+❌ Use framer-motion v6 API in a v12 project (exitBeforeEnter → mode="wait")
+❌ Use raw useEffect for GSAP — always useGSAP from @gsap/react
+❌ Hallucinate LLM model names — verify against provider's current model list
+```
+
+When unsure: write `// VERIFY: [specific reason]` instead of hallucinating.
+
+---
+
+## Reviewer Auto-Selection
+
+**System-1 Fast-Pass Routing (MANDATORY)**
+
+Before selecting reviewers, you MUST run `tk impact-tier` to determine the risk level:
+
+- **Tier 0 (Fast-Pass) & Tier 1 (Express Pass):** Bypass ALL LLM Tribunal Reviewers. Run deterministic scripts only. Show Human Gate (or auto-apply if configured).
+- **Tier 2 (Targeted Audit):** Run deterministic scripts + max 1-2 specialized domain reviewers.
+- **Tier 3 (Full Gauntlet):** Run full suite + Human Gate.
+
+**Always active (For Tier 2+):**
+
+```
+precedence-reviewer→ Enforces repository Case Law and past rejections (Runs First)
+security-auditor   → OWASP vulnerabilities, hardcoded secrets, injection
+```
+
+**Auto-activated by keywords:**
+
+| Keyword in request                                          | Additional Reviewers (Max 2 for Tier 2)        |
+| :---------------------------------------------------------- | :--------------------------------------------- |
+| `api`, `route`, `endpoint`, `handler`, `server action`      | `backend-specialist` + `type-safety-reviewer`  |
+| `sql`, `query`, `database`, `prisma`, `drizzle`, `orm`      | `sql-reviewer`                                 |
+| `component`, `hook`, `react`, `vue`, `jsx`, `tsx`           | `frontend-reviewer` + `type-safety-reviewer`   |
+| `ui`, `design`, `landing`, `page`, `layout`, `style`, `css` | `frontend-reviewer` + `accessibility-reviewer` |
+| `animation`, `gsap`, `framer`, `motion`, `scroll`           | `frontend-reviewer` + `performance-reviewer`   |
+| `test`, `spec`, `vitest`, `jest`, `playwright`              | `test-coverage-reviewer`                       |
+| `slow`, `optimize`, `cache`, `performance`, `bundle`        | `performance-reviewer`                         |
+| `mobile`, `react native`, `expo`                            | `mobile-reviewer`                              |
+| `llm`, `openai`, `anthropic`, `gemini`, `embedding`, `ai`   | `ai-code-reviewer`                             |
+| `aria`, `wcag`, `a11y`, `accessibility`                     | `accessibility-reviewer`                       |
+| `import`, `package`, `npm`, `require`                       | `dependency-reviewer`                          |
+
+> For maximum safety on critical code: use `/tribunal-full` for all 28 reviewers simultaneously.
+
+---
+
+## Reviewer Verdicts
+
+| Verdict       | Meaning            | What Happens                              |
+| :------------ | :----------------- | :---------------------------------------- |
+| `✅ APPROVED` | No issues found    | Proceeds to Human Gate                    |
+| `⚠️ WARNING`  | Non-blocking issue | Human Gate shown with warning highlighted |
+| `❌ REJECTED` | Blocking issue     | Maker revises before Human Gate           |
+
+**Retry limit:** Maker is revised up to 3 times per REJECTED verdict. After 3 failures, the session halts and reports to the user with full failure history. No silent failures.
+
+---
+
+## Output Format
+
+```
+━━━ Tribunal: [Domain] ━━━━━━━━━━━━━━━━━━━━━━
+
+Active reviewers: logic · security · [others]
+
+[Generated code with // VERIFY: tags where uncertain]
+
+━━━ Verdicts ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+logic-reviewer:      ✅ APPROVED
+security-auditor:    ✅ APPROVED
+dependency-reviewer: ⚠️ WARNING — lodash not in package.json
+
+━━━ Warnings ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+dependency-reviewer:
+  ⚠️ Medium — Line 3: 'lodash' imported but not in package.json
+  Fix: npm install lodash  OR  use built-in Array methods
+
+━━━ Human Gate ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Write to disk?  Y = approve | N = discard | R = revise with feedback
+```
+
+---
+
+| After /generate shows...             | Go to                                 |
+| :----------------------------------- | :------------------------------------ |
+| Multiple files need changing         | `/enhance` for impact-zone analysis   |
+| Security-critical code was generated | `/tribunal-full` for maximum coverage |
+| DB queries were generated            | `/tribunal-database`                  |
+| New API routes were generated        | `/tribunal-backend`                   |
+| Animation/motion code generated      | `/tribunal-frontend`                  |
+| Tests need to be written next        | `/test`                               |
+| Something was rejected 3 times       | Escalate to human with failure report |
+
+---
+
+## Usage Examples
+
+```
+/generate a JWT middleware for Express with HS256 algorithm enforcement
+/generate a Prisma query for users with their published posts in last 30 days
+/generate a debounced search hook in React 19 using useDeferredValue
+/generate a parameterized SQL query for paginated order history
+/generate a Zod schema for email + password + role login input
+/generate a Server Action for creating a product with image upload
+/generate a rate-limited fetch wrapper using @upstash/ratelimit
+/generate a Framer Motion page transition with shared element (layoutId)
+/generate a GSAP ScrollTrigger timeline with useGSAP React hook
+/generate an OpenAI structured output call with Zod schema validation
+```
+
+## Brain-Hands Separation & Durable Logging
+
+During code generation, the model (Brain) issues tool requests, and the harness (Hands) executes them. Every tool execution is recorded in the durable log. Verification must complete before Human Gate approval.

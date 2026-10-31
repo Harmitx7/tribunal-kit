@@ -14,5 +14,5 @@
     "rootDir": "."
   },
   "include": ["**/*.js"],
-  "exclude": ["node_modules", "dist", "target", "coverage"]
+  "exclude": ["node_modules", "dist", "target", "coverage", "test/fixtures"]
 }

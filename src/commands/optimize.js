@@ -26,7 +26,7 @@ const {
   formatNegativeConstraints,
   isPreviouslyRejected,
 } = require('../evolution/negative_memory');
-const { parseCommandLine } = require('../evolution/coevolution_orchestrator');
+const { parseCommandLine, assertSafeShellArgs } = require('../evolution/coevolution_orchestrator');
 
 function shouldRunInShell(cmd) {
   if (process.platform !== 'win32') return false;
@@ -245,6 +245,7 @@ async function cmdOptimizeSkill(flags, processArgs, quiet = false) {
         const args = parseCommandLine(harnessCmd);
         if (args.length > 0) {
           const cmd = args.shift();
+          assertSafeShellArgs(cmd, args);
           rolloutLogs = execFileSync(cmd, args, { encoding: 'utf8', cwd: runDir, stdio: 'pipe', shell: shouldRunInShell(cmd) });
         }
       } catch (e) {
@@ -397,6 +398,7 @@ Each edit must follow this schema:
         const args = parseCommandLine(harnessCmd);
         if (args.length > 0) {
           const cmd = args.shift();
+          assertSafeShellArgs(cmd, args);
           execFileSync(cmd, args, { encoding: 'utf8', cwd: runDir, stdio: 'pipe', shell: shouldRunInShell(cmd) });
         }
       } catch {

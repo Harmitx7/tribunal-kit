@@ -19,7 +19,6 @@
  * 7. Certified proposals are staged with cryptographic proof certificates.
  */
 
-const fs = require('fs');
 const path = require('path');
 const { AdversarialMutator } = require('../evaluation/adversarial_mutator');
 const { InvariantVerifier } = require('../evaluation/invariant_verifier');

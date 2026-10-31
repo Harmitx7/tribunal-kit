@@ -15,23 +15,23 @@ describe('Release Audit Verification & Counts', () => {
     expect(fs.existsSync(routingIndexPath)).toBe(true);
 
     const routingIndex = JSON.parse(fs.readFileSync(routingIndexPath, 'utf8'));
-    const { summary: _summary } = routingIndex;
+    const { summary } = routingIndex;
 
-    const _agentFiles = fs
+    const agentFiles = fs
       .readdirSync(path.join(agentDir, 'agents'))
       .filter(f => f.endsWith('.md'));
-    const _workflowFiles = fs
+    const workflowFiles = fs
       .readdirSync(path.join(agentDir, 'workflows'))
       .filter(f => f.endsWith('.md'));
-    const _skillDirs = fs
+    const skillDirs = fs
       .readdirSync(path.join(agentDir, 'skills'), { withFileTypes: true })
       .filter(
         d => d.isDirectory() && fs.existsSync(path.join(agentDir, 'skills', d.name, 'SKILL.md')),
       );
 
-    // expect(summary.total_agents).toBe(agentFiles.length);
-    // expect(summary.total_workflows).toBe(workflowFiles.length);
-    // expect(summary.total_skills).toBe(skillDirs.length);
+    expect(summary.total_agents).toBe(agentFiles.length);
+    expect(summary.total_workflows).toBe(workflowFiles.length);
+    expect(summary.total_skills).toBe(skillDirs.length);
   });
 
   test('MCP Server handles resources/list and prompts/list correctly according to spec', async () => {

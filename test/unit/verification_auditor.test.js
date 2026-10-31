@@ -1,4 +1,4 @@
-const { validateSkillSchema } = require('../../.agent/scripts/verification_auditor');
+const { validateSkillSchema, auditPostExecution } = require('../../.agent/scripts/verification_auditor');
 
 describe('verification_auditor - Phase 5/6 Verification', () => {
   const dummySkill = {
@@ -12,6 +12,14 @@ describe('verification_auditor - Phase 5/6 Verification', () => {
       },
     },
   };
+
+  it('resolves default agentDir correctly without nested .agent/.agent', () => {
+    const result = auditPostExecution('security audit', {
+      tests_executed: [{ name: 'sec-test', passed: true }],
+    });
+    expect(result).toBeDefined();
+    expect(result.audit_summary).toBeDefined();
+  });
 
   it('validates correct input payload', () => {
     const res = validateSkillSchema(dummySkill, { target_file: 'app.js' }, 'input');

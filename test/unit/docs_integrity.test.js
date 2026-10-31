@@ -164,16 +164,16 @@ describe('Phase 9 — Documentation Integrity & Developer Experience Validation'
         .readdirSync(path.join(repoRoot, '.agent', 'workflows'))
         .filter(f => f.endsWith('.md')).length;
 
-      expect(skillsCount).toBe(235);
+      expect(skillsCount).toBe(398);
       expect(agentsCount).toBe(60);
-      expect(workflowsCount).toBe(51);
+      expect(workflowsCount).toBe(52);
 
       // Verify GETTING_STARTED.md uses these exact numbers
       const gettingStarted = fs.readFileSync(path.join(repoRoot, 'docs', 'GETTING_STARTED.md'), 'utf8');
       expect(gettingStarted).toContain('60 specialist agents');
-      expect(gettingStarted).toContain('31 parallel reviewers');
-      expect(gettingStarted).toContain('235 reusable skills');
-      expect(gettingStarted).toContain('51 slash workflows');
+      expect(gettingStarted).toContain('28 parallel reviewers');
+      expect(gettingStarted).toContain('398 reusable skills');
+      expect(gettingStarted).toContain('52 slash workflows');
     });
   });
 });

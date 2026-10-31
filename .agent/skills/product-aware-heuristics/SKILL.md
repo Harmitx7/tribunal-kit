@@ -5,7 +5,7 @@ version: 6.0.0
 last-updated: 2026-09-29
 skills:
   - ui-reasoning-engine
-  - interface-design
+  - frontend-design
   - baseline-ui
   - better-ui
 tools: Read, Grep, Glob, Bash, Edit, Write

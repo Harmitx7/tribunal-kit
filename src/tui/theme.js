@@ -131,8 +131,106 @@ function stripAnsi(text) {
   return text.replace(ANSI_REGEX, '');
 }
 
+/**
+ * Calculates visible terminal column width for a string.
+ * Accurately handles ANSI escape sequences, CJK full-width ideographs, emojis,
+ * and zero-width combining marks.
+ */
+function visibleWidth(text) {
+  if (typeof text !== 'string') text = String(text || '');
+  const clean = stripAnsi(text);
+  let width = 0;
+
+  for (let i = 0; i < clean.length; i++) {
+    const code = clean.charCodeAt(i);
+
+    // Control characters and DEL
+    if (code < 32 || (code >= 0x7F && code < 0xA0)) {
+      continue;
+    }
+
+    // Zero-width characters (zero-width space, joiners, BOM)
+    if (code === 0x200B || code === 0x200C || code === 0x200D || code === 0xFEFF) {
+      continue;
+    }
+
+    // Combining diacritical marks
+    if (code >= 0x0300 && code <= 0x036F) {
+      continue;
+    }
+
+    // Surrogate pair (emojis and supplemental characters)
+    if (code >= 0xD800 && code <= 0xDBFF) {
+      const nextCode = clean.charCodeAt(i + 1);
+      if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
+        i++;
+        width += 2; // Emojis and extended plane ideographs occupy 2 terminal columns
+        continue;
+      }
+    }
+
+    // CJK and Fullwidth forms
+    if (
+      (code >= 0x1100 && code <= 0x115F) ||
+      (code >= 0x2E80 && code <= 0x9FFF) ||
+      (code >= 0xAC00 && code <= 0xD7A3) ||
+      (code >= 0xF900 && code <= 0xFAFF) ||
+      (code >= 0xFE10 && code <= 0xFE19) ||
+      (code >= 0xFE30 && code <= 0xFE6F) ||
+      (code >= 0xFF00 && code <= 0xFF60) ||
+      (code >= 0xFFE0 && code <= 0xFFE6)
+    ) {
+      width += 2;
+      continue;
+    }
+
+    width += 1;
+  }
+
+  return width;
+}
+
 function visibleLength(text) {
-  return stripAnsi(text).length;
+  return visibleWidth(text);
+}
+
+/**
+ * Sanitizes untrusted text before terminal rendering.
+ * Neutralizes destructive escape codes, carriage return log spoofing,
+ * redacts secrets, and bounds runaway strings.
+ */
+function sanitizeTerminal(input, options = {}) {
+  if (input === null || input === undefined) return '';
+  let str = typeof input === 'string' ? input : JSON.stringify(input);
+
+  // 1. Secret redaction
+  if (options.redactSecrets !== false) {
+    str = str
+      .replace(/Bearer\s+[A-Za-z0-9\-._~+/]+=*/g, 'Bearer [REDACTED_TOKEN]')
+      .replace(/ghp_[A-Za-z0-9]{36,}/g, 'ghp_[REDACTED_GITHUB_TOKEN]')
+      .replace(/sk-ant-[A-Za-z0-9\-._~]+/g, 'sk-ant-[REDACTED_API_KEY]')
+      .replace(/sk-proj-[A-Za-z0-9\-._~]+/g, 'sk-proj-[REDACTED_API_KEY]')
+      .replace(/eyJ[A-Za-z0-9\-_]+\.eyJ[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+/g, '[REDACTED_JWT]')
+      .replace(/-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g, '[REDACTED_PRIVATE_KEY]');
+  }
+
+  // 2. Neutralize dangerous terminal control codes & escape sequences
+  str = str.replace(/\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)/g, ''); // OSC title/palette sequences
+  str = str.replace(/\r\n/g, '\n').replace(/\r/g, ' '); // Neutralize \r log spoofing
+  str = str.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, ''); // Non-printable control characters
+
+  // 3. Optional ANSI stripping for untrusted message inputs
+  if (options.stripAnsi) {
+    str = stripAnsi(str);
+  }
+
+  // 4. Bounded length check
+  const maxLen = options.maxLength || 4096;
+  if (str.length > maxLen) {
+    str = str.slice(0, Math.max(0, maxLen - 3)) + '...';
+  }
+
+  return str;
 }
 
 function color(rgb, text) {
@@ -197,6 +295,8 @@ module.exports = {
   isUtf8,
   RGB,
   GLYPHS,
+  UTF8_GLYPHS,
+  ASCII_GLYPHS,
   color,
   bg,
   bold,
@@ -205,7 +305,9 @@ module.exports = {
   italic,
   underline,
   stripAnsi,
+  visibleWidth,
   visibleLength,
+  sanitizeTerminal,
   getColumns,
   cursor,
 };

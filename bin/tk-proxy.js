@@ -7,10 +7,12 @@ const { spawnAgent } = require('./spawn-agent');
 async function main() {
   const args = process.argv.slice(2);
 
-  if (args.length === 0) {
-    console.error('Usage: tk-proxy <command> [args...]');
-    console.error('Example: tk-proxy claude-code');
-    process.exit(1);
+  if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
+    const isHelp = args.includes('--help') || args.includes('-h');
+    const out = isHelp ? console.log : console.error;
+    out('Usage: tk-proxy <command> [args...]');
+    out('Example: tk-proxy claude-code');
+    process.exit(isHelp ? 0 : 1);
   }
 
   // 1. Initialize the global rules database

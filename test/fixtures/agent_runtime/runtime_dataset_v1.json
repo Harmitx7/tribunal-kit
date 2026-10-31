@@ -1,0 +1,103 @@
+{
+  "version": "1.0.0",
+  "description": "Safe, deterministic synthetic fixtures for Agent Runtime Reliability & Recovery testing",
+  "validExecutionRecord": {
+    "id": "exec-task-001",
+    "agentId": "security-reviewer",
+    "taskType": "code_review",
+    "state": "PENDING",
+    "attempt": 1,
+    "maxAttempts": 3,
+    "createdAt": "2026-10-30T12:00:00Z",
+    "updatedAt": "2026-10-30T12:00:00Z",
+    "metadata": {
+      "targetFile": "src/auth/jwt.js"
+    }
+  },
+  "validCheckpoint": {
+    "checkpointId": "ckpt_20261030_001",
+    "executionId": "wf-exec-999",
+    "stateRevision": 1,
+    "schemaVersion": "1.0.0",
+    "codeRevision": "9.3.0",
+    "completedTasks": ["task-1", "task-2"],
+    "pendingTasks": ["task-3", "task-4"],
+    "partialResults": {
+      "task-1": { "status": "SUCCEEDED", "findings": 0 },
+      "task-2": { "status": "SUCCEEDED", "findings": 1 }
+    },
+    "idempotencyKeys": ["key-task-1", "key-task-2"],
+    "timestamp": "2026-10-30T12:05:00Z",
+    "integrityHash": "260e2a8460ff784333981daa479232f4715773ae3ed7d49816b64eb188ad7e16"
+  },
+  "tamperedCheckpoint": {
+    "checkpointId": "ckpt_tampered_002",
+    "executionId": "wf-exec-999",
+    "stateRevision": 1,
+    "schemaVersion": "1.0.0",
+    "codeRevision": "9.3.0",
+    "completedTasks": ["task-1", "task-2", "injected-fake-task"],
+    "pendingTasks": ["task-3"],
+    "partialResults": {},
+    "idempotencyKeys": [],
+    "timestamp": "2026-10-30T12:05:00Z",
+    "integrityHash": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "retryPolicyConfig": {
+    "maxAttempts": 3,
+    "initialDelayMs": 50,
+    "maxDelayMs": 500,
+    "backoffFactor": 2.0,
+    "jitter": false,
+    "retryDeadlineMs": 2000,
+    "retryableCategories": [
+      "TRANSIENT_NETWORK",
+      "RATE_LIMITED",
+      "MALFORMED_OUTPUT",
+      "MODEL_FAILURE"
+    ],
+    "idempotentOnly": true
+  },
+  "quorumPolicies": {
+    "strictRequired": {
+      "policyType": "ALL_REQUIRED",
+      "requiredAgents": ["security-auditor", "logic-reviewer"],
+      "optionalAgents": ["docs-reviewer"],
+      "minSuccessThreshold": 1.0,
+      "allowPartialResults": false
+    },
+    "permissiveThreshold": {
+      "policyType": "THRESHOLD_QUORUM",
+      "requiredAgents": ["security-auditor"],
+      "optionalAgents": ["performance-reviewer", "style-reviewer"],
+      "minSuccessThreshold": 0.66,
+      "allowPartialResults": true
+    }
+  },
+  "faultScenarios": {
+    "rateLimit": {
+      "type": "RATE_LIMIT",
+      "status": 429,
+      "retryAfterMs": 100
+    },
+    "networkDrop": {
+      "type": "NETWORK",
+      "code": "ECONNRESET"
+    },
+    "timeout": {
+      "type": "TIMEOUT"
+    },
+    "malformedJson": {
+      "type": "MALFORMED"
+    },
+    "toolCrash": {
+      "type": "CRASH",
+      "exitCode": 137
+    }
+  },
+  "deadlockWaitGraph": {
+    "agent-A": ["agent-B"],
+    "agent-B": ["agent-C"],
+    "agent-C": ["agent-A"]
+  }
+}

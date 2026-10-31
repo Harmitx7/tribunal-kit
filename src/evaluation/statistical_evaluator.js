@@ -17,7 +17,6 @@
  */
 
 const { EvaluationRunner } = require('./evaluation_runner');
-const { BenchmarkOracle } = require('./benchmark_oracle');
 
 /**
  * Computes the Wilson Score confidence interval for a binomial proportion.

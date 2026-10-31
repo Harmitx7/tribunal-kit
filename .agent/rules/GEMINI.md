@@ -119,7 +119,8 @@ Every code or design request activates an agent. This is not optional.
 **When activated, announce the agent:**
 
 ```
-🤖 Applying knowledge of @[agent-name]...
+› **Activated** `@[agent-name]` · [Domain / Mandate]
+  [1-line context-aware summary of what is being inspected and why it matters]
 
 [continue with response]
 ```
@@ -156,6 +157,33 @@ The Socratic Gate is **adaptive** based on the task's **Impact Tier** evaluated 
 ---
 
 ## Universal Code Standards (All Agents, Always)
+
+### Tribunal Activity Protocol (Universal Communication Standard)
+
+Communicate internal operations, verification checks, and state transitions using concise, high-density activity messages instead of raw developer logs or verbose narrative:
+
+- **Operation Started**: `› **Started** · [Operation Title]`
+- **Agent Activated**: `› **Activated** `@[agent]` · [Domain / Mandate]`
+- **Skill Applied**: `› **Skill Applied** `skill:[name]` · [Target / Purpose]`
+- **Analyzing**: `› **Analyzing** · [Target / Boundary]`
+- **Tool Executing**: `› **Executing** · [Tool Name]`
+- **Testing**: `› **Testing** · [Test Target]` (with authoritative progress `Progress: X/Y suites (Z%) · N pending`)
+- **Collecting Evidence**: `› **Collecting Evidence** · [Source]`
+- **Verified**: `✔ **Verified** · [Contract / Invariant]` (with verified findings `Evidence: [authoritative findings]`)
+- **Failed**: `✖ **Failed** · [Operation Title]` (with `Error: [message]` and `Remedy: [suggested action]`)
+- **Warning**: `⚠ **Warning** · [Condition]` (with `Impact: [impact description]`)
+- **Approval Required**: `⏸ **Approval Required** · [Gate Title]` (with `Next: Awaiting human sign-off`)
+- **Blocked**: `⛔ **Blocked** · [Operation Title]` (with `Reason: [missing item]` and `Remedy: [unblock step]`)
+- **Retrying**: `⟳ **Retrying** · [Operation Title] (Attempt X of Y)` (with `Reason: [cause]`)
+- **Completed**: `✔ **Completed** · [Operation Title]` (with `Artifacts: [paths]`)
+- **Cancelled**: `⊘ **Cancelled** · [Operation Title]` (with `Reason: [cause]`)
+
+**Evidence Integrity Invariants:**
+- Never fabricate test counts, exit codes, elapsed times, or completion percentages.
+- When progress telemetry is unmetered or awaiting execution, report `Status: In progress (unmetered)` or `Awaiting execution result`.
+- Never claim success without authoritative verification evidence.
+- Distinguish planned actions from executed and verified outcomes.
+
 
 ### Anti-Hallucination Protocol (Non-Negotiable)
 
@@ -221,7 +249,7 @@ The Human Gate is never skipped. No code is written to a file without explicit u
 | Mobile/Cross-platform | logic + security + mobile-reviewer + type-safety + complexity-reviewer                              |
 | CI/CD / DevOps        | pipeline-reviewer + security + dependency + resilience + complexity-reviewer                        |
 | Any domain            | + performance (if optimization)                                                                     |
-| Before merge          | /tribunal-full (all 31 reviewers)                                                                   |
+| Before merge          | /tribunal-full (all 28 reviewers)                                                                   |
 
 ---
 
@@ -245,14 +273,10 @@ Attempt 4  → HALT. Report to human with full failure history.
 When reporting a failure to the user:
 
 ```
-⚠️ Agent Failure Report
-━━━━━━━━━━━━━━━━━━━━━
-Agent:       [agent name]
-Task:        [what was attempted]
-Attempts:    [N of 3]
-Last Error:  [specific error message or reason]
-Context:     [what was passed to the agent]
-Suggestion:  [what the human should check or try]
+✖ **Failed** · [Task what was attempted] (`@[agent-name]`)
+  Error: [specific error message or reason] (Attempt [N] of 3)
+  Context: [what was passed to the agent]
+  Remedy: [what the human should check or try]
 ```
 
 ### Script Failure Handling

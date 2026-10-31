@@ -33,6 +33,9 @@ async function cmdGraph(flags, quiet = false) {
     (0, logger_1.log)(`  ${(0, logger_1.c)('cyan', '▸')} Opening visualizer in browser...`);
     const child_process = require('child_process');
     if (process.platform === 'win32') {
+      if (/[&|<>^%\r\n]/.test(htmlFile)) {
+        throw new Error('Security Violation: html path contains unsafe shell metacharacters.');
+      }
       child_process
         .spawn('cmd.exe', ['/c', 'start', '', htmlFile], { stdio: 'ignore', detached: true })
         .unref();

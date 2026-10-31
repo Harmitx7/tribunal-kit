@@ -1,10 +1,32 @@
 {
   "commands": [
     {
+      "name": "/tribunal-understand",
+      "description": "Deterministic, read-only codebase intelligence: architecture overview, feature execution tracing, dependency analysis, relevant files checklist, blast radius impact, dead-code analysis, and developer onboarding.",
+      "usage": "/tribunal-understand [overview|trace|dependencies|relevant-files|impact|dead-code|onboard|prepare] [target] [--depth <n>] [--focus <dir>] [--json]",
+      "aliases": [
+        "/understand"
+      ],
+      "examples": [
+        "/understand",
+        "/understand overview",
+        "/understand trace \"POST /api/checkout\"",
+        "/understand dependencies src/utils",
+        "/understand relevant-files \"add OAuth login\"",
+        "/understand impact src/security/boundary.js",
+        "/understand dead-code src/commands",
+        "/understand onboard",
+        "/understand prepare \"add payment idempotency key support\""
+      ]
+    },
+    {
       "name": "/context",
       "description": "Generate an elite Flight Data HUD context dossier for any file, multi-file pair, or project folder. Maintains living codebase context vault.",
       "usage": "/context <file_or_folder_path> [--crawl] [--check] [--link]",
-      "aliases": ["/file-context", "/digest"],
+      "aliases": [
+        "/file-context",
+        "/digest"
+      ],
       "examples": [
         "/context src/services/auth.ts",
         "/context src/components/Button.tsx src/theme/tokens.ts",
@@ -16,7 +38,9 @@
       "name": "/tribunal",
       "description": "Run full Tribunal review on the current file or selection. All 28 reviewers audit in parallel.",
       "usage": "/tribunal [file_path]",
-      "aliases": ["/tribunal-full"]
+      "aliases": [
+        "/tribunal-full"
+      ]
     },
     {
       "name": "/tribunal-backend",
@@ -42,13 +66,21 @@
       "name": "/summon",
       "description": "Summon a specific specialist agent by name. Routes to .agent/agents/{name}.md.",
       "usage": "/summon <specialist_name>",
-      "examples": ["/summon security-auditor", "/summon logic-reviewer", "/summon debugger"]
+      "examples": [
+        "/summon security-auditor",
+        "/summon logic-reviewer",
+        "/summon debugger"
+      ]
     },
     {
       "name": "/skill",
       "description": "Load a specific skill on-demand from the 185-skill library.",
       "usage": "/skill <skill_name>",
-      "examples": ["/skill react-specialist", "/skill python-pro", "/skill nextjs-react-expert"]
+      "examples": [
+        "/skill react-specialist",
+        "/skill python-pro",
+        "/skill nextjs-react-expert"
+      ]
     },
     {
       "name": "/audit",
@@ -110,6 +142,181 @@
         "strict": "Maximum enforcement. All 28 reviewers on every change. Human Gate mandatory.",
         "paranoid": "Strict + security scan + dependency audit on every file write."
       }
+    },
+    {
+      "name": "/acf",
+      "description": "Agent Context Format Distiller",
+      "usage": "/acf [arguments]"
+    },
+    {
+      "name": "/api-tester",
+      "description": "Automated API Testing",
+      "usage": "/api-tester [arguments]"
+    },
+    {
+      "name": "/arch",
+      "description": "Tribunal Architecture Intelligence",
+      "usage": "/arch [arguments]"
+    },
+    {
+      "name": "/assimilate",
+      "description": "ASSIMILATE (LEARNING PIPELINE)",
+      "usage": "/assimilate [arguments]"
+    },
+    {
+      "name": "/audit-live",
+      "description": "Live Website Health & Accessibility Audit",
+      "usage": "/audit-live [arguments]"
+    },
+    {
+      "name": "/brainstorm",
+      "description": "Structured Idea Exploration",
+      "usage": "/brainstorm [arguments]"
+    },
+    {
+      "name": "/changelog",
+      "description": "Git History to Changelog",
+      "usage": "/changelog [arguments]"
+    },
+    {
+      "name": "/compare-web",
+      "description": "Visual Regression & Layout Diffing",
+      "usage": "/compare-web [arguments]"
+    },
+    {
+      "name": "/contract",
+      "description": "AI Agent Behavioral Contract Testing & Trace Replay",
+      "usage": "/contract [arguments]"
+    },
+    {
+      "name": "/deploy",
+      "description": "Production Deployment",
+      "usage": "/deploy [arguments]"
+    },
+    {
+      "name": "/fix-ci",
+      "description": "Automated Pipeline Failure Resolution",
+      "usage": "/fix-ci [arguments]"
+    },
+    {
+      "name": "/fix",
+      "description": "Automated Error Resolution",
+      "usage": "/fix [arguments]"
+    },
+    {
+      "name": "/htop",
+      "description": "HTOP (SYSCALL MONITOR)",
+      "usage": "/htop [arguments]"
+    },
+    {
+      "name": "/migrate",
+      "description": "Safe Migration Execution",
+      "usage": "/migrate [arguments]"
+    },
+    {
+      "name": "/minimal",
+      "description": "Minimal Change Governance Workflow",
+      "usage": "/minimal [arguments]"
+    },
+    {
+      "name": "/orchestrate",
+      "description": "Multi-Agent Coordination",
+      "usage": "/orchestrate [arguments]"
+    },
+    {
+      "name": "/performance-benchmarker",
+      "description": "Evidence-Based Performance Measurement",
+      "usage": "/performance-benchmarker [arguments]"
+    },
+    {
+      "name": "/plan",
+      "description": "Strategic Implementation Planning",
+      "usage": "/plan [arguments]"
+    },
+    {
+      "name": "/preview",
+      "description": "Local Development Server",
+      "usage": "/preview [arguments]"
+    },
+    {
+      "name": "/refactor",
+      "description": "Dependency-Safe Structural Improvement",
+      "usage": "/refactor [arguments]"
+    },
+    {
+      "name": "/resume",
+      "description": "RESUME WORKFLOW",
+      "usage": "/resume [arguments]"
+    },
+    {
+      "name": "/review-ai",
+      "description": "AI Integration Code Audit",
+      "usage": "/review-ai [arguments]"
+    },
+    {
+      "name": "/sdd",
+      "description": "Subagent-Driven Development (SDD) with Tribunal Review Waves",
+      "usage": "/sdd [arguments]"
+    },
+    {
+      "name": "/session",
+      "description": "Session State Management",
+      "usage": "/session [arguments]"
+    },
+    {
+      "name": "/skill-enhancement-engine",
+      "description": "State-of-the-Art Skill Architecture",
+      "usage": "/skill-enhancement-engine [arguments]"
+    },
+    {
+      "name": "/skill-intelligence",
+      "description": "Tribunal Skill Intelligence Engine",
+      "usage": "/skill-intelligence [arguments]"
+    },
+    {
+      "name": "/strengthen-skills",
+      "description": "Skill Hardening Pipeline",
+      "usage": "/strengthen-skills [arguments]"
+    },
+    {
+      "name": "/super-prompt",
+      "description": "Tokenless Prompt Compiler & Governance Envelope",
+      "usage": "/super-prompt [arguments]"
+    },
+    {
+      "name": "/team-mode",
+      "description": "TEAM MODE (DAG ORCHESTRATION)",
+      "usage": "/team-mode [arguments]"
+    },
+    {
+      "name": "/test",
+      "description": "Test Generation & Execution",
+      "usage": "/test [arguments]"
+    },
+    {
+      "name": "/tribunal-cicd",
+      "description": "Pipeline & Workflow Audit",
+      "usage": "/tribunal-cicd [arguments]"
+    },
+    {
+      "name": "/tribunal-mobile",
+      "description": "Mobile Code Audit",
+      "usage": "/tribunal-mobile [arguments]"
+    },
+    {
+      "name": "/tribunal-speed",
+      "description": "Full-Stack Performance Swarm",
+      "usage": "/tribunal-speed [arguments]"
+    },
+    {
+      "name": "/tribunal-ui",
+      "description": "Dedicated UI/UX Review Pipeline",
+      "usage": "/tribunal-ui [arguments]"
+    },
+    {
+      "name": "/ui-ux-pro-max",
+      "description": "Advanced UI/UX Design",
+      "usage": "/ui-ux-pro-max [arguments]"
     }
   ]
 }

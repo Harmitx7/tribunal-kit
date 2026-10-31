@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 const { cmdValidate } = require('../../src/commands/validate');
 
@@ -59,5 +60,46 @@ describe('cmdValidate command', () => {
     };
     await expect(cmdValidate(flags, true)).resolves.not.toThrow();
   });
-});
 
+  test('rejects malformed swarm payload with exit code 1', async () => {
+    const tempFile = path.join(repoRoot, 'scratch_invalid_swarm.json');
+    fs.writeFileSync(tempFile, JSON.stringify({ workers: 'not-an-array' }));
+    try {
+      const flags = {
+        path: repoRoot,
+        file: tempFile,
+        quiet: true,
+      };
+      await expect(cmdValidate(flags, true)).rejects.toThrow('process.exit: 1');
+    } finally {
+      if (fs.existsSync(tempFile)) fs.unlinkSync(tempFile);
+    }
+  });
+
+  test('validates conformant swarm payload successfully', async () => {
+    const tempFile = path.join(repoRoot, 'scratch_valid_swarm.json');
+    const validPayload = {
+      workers: [
+        {
+          task_id: 'task-1',
+          type: 'research',
+          agent: 'research',
+          goal: 'Investigate build system integrity',
+          context: 'Focus on validate command parity',
+        },
+      ],
+      wave: 'full',
+    };
+    fs.writeFileSync(tempFile, JSON.stringify(validPayload));
+    try {
+      const flags = {
+        path: repoRoot,
+        file: tempFile,
+        quiet: true,
+      };
+      await expect(cmdValidate(flags, true)).resolves.not.toThrow();
+    } finally {
+      if (fs.existsSync(tempFile)) fs.unlinkSync(tempFile);
+    }
+  });
+});

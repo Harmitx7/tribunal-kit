@@ -1,0 +1,94 @@
+{
+  "domain": "supply-chain-intelligence",
+  "displayName": "Supply Chain Intelligence",
+  "version": "9.3.0",
+  "gitCommit": "781959c",
+  "timestamp": "2026-10-30T16:09:37.162Z",
+  "decision": "CERTIFIED_FOR_PRODUCTION_RELEASE",
+  "verdict": "PASS",
+  "durationMs": 45,
+  "metrics": {
+    "totalGates": 10,
+    "passedGates": 10,
+    "failedGates": 0,
+    "canonicalSkillsCount": 12,
+    "totalRepositorySkills": 398,
+    "threatCategoriesCovered": 12
+  },
+  "gates": [
+    {
+      "gate": "A",
+      "name": "Repository & Manifest Integrity",
+      "status": "PASS",
+      "evidence": "package.json: true, package-lock.json: true, Cargo.toml: true"
+    },
+    {
+      "gate": "B",
+      "name": "Shared Supply Chain Engine Architecture",
+      "status": "PASS",
+      "evidence": "8/8 engine modules present in src/supply_chain/"
+    },
+    {
+      "gate": "C",
+      "name": "Canonical Skill Portfolio (12/12)",
+      "status": "PASS",
+      "evidence": "12/12 skills verified with valid frontmatter"
+    },
+    {
+      "gate": "D",
+      "name": "Topic Map & Routing Integration",
+      "status": "PASS",
+      "evidence": "domain_skills_mapped: true (12/12), no_duplicates: true, on_disk: true, declared: 398, unique_in_map: 398, disk_count: 398"
+    },
+    {
+      "gate": "E",
+      "name": "Dependency Graph & DAG Cycle Verification",
+      "status": "PASS",
+      "evidence": "DAG nodes: 4, cycle detected: true"
+    },
+    {
+      "gate": "F",
+      "name": "Vulnerability Intelligence & Semver Matching",
+      "status": "PASS",
+      "evidence": "scanned: 2, findings: 1, severity: CRITICAL"
+    },
+    {
+      "gate": "G",
+      "name": "Package Integrity & Lockfile Poisoning Detection",
+      "status": "PASS",
+      "evidence": "lockfile poisoning detected: true, SLSA verified: true"
+    },
+    {
+      "gate": "H",
+      "name": "SBOM Generation & Conformance (CycloneDX/SPDX)",
+      "status": "PASS",
+      "evidence": "CycloneDX v1.5: true, SPDX v2.3: true"
+    },
+    {
+      "gate": "I",
+      "name": "License Compliance & Policy Enforcement",
+      "status": "PASS",
+      "evidence": "prohibited license flagged: true"
+    },
+    {
+      "gate": "J",
+      "name": "Malicious Package & CI Action Auditing",
+      "status": "PASS",
+      "evidence": "hook flagged: true, typosquat: true, unpinned action: true"
+    }
+  ],
+  "skills": [
+    "dependency-risk-intelligence-auditor",
+    "malicious-package-and-typosquatting-auditor",
+    "dependency-provenance-and-integrity-auditor",
+    "sbom-generation-and-validation-auditor",
+    "license-compliance-and-policy-auditor",
+    "dependency-update-risk-auditor",
+    "build-and-ci-supply-chain-auditor",
+    "dependency-maintenance-and-abandonment-auditor",
+    "dependency-confusion-and-registry-security-auditor",
+    "dependency-vulnerability-remediation-auditor",
+    "artifact-and-release-integrity-auditor",
+    "supply-chain-policy-and-exception-auditor"
+  ]
+}

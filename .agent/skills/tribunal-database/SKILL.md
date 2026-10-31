@@ -1,0 +1,143 @@
+---
+name: tribunal-database
+description: Database-specific Tribunal. Runs Logic + Security + SQL reviewers. Use for Prisma queries, raw SQL, schema migrations, ORM operations, and database transaction code.
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - database-design
+  - sql-pro
+  - supabase-postgres-best-practices
+scripts-binding:
+  - .agent/scripts/schema_validator.js
+  - .agent/scripts/security_scan.js
+---
+
+# /tribunal-database — Database Code Audit
+
+$ARGUMENTS
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before auditing database queries, migrations, or ORM transactions, you MUST inspect:
+
+1. ORM Schema Source of Truth (`prisma/schema.prisma` or SQL schema) → Verify active table schemas, indexes, and relations
+2. SQL Parameterization Inspection → Flag all raw SQL queries attempting string interpolation; enforce parameterized queries
+3. 28-Reviewer Database Gate → Execute logic-reviewer, security-auditor, and sql-pro before approving database modifications
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `database-design` (.agent/skills/database-design/SKILL.md): Schema normalization, indexing, migration strategy
+   - `sql-pro` (.agent/skills/sql-pro/SKILL.md): Advanced SQL queries, window functions, and query optimization
+   - `supabase-postgres-best-practices` (.agent/skills/supabase-postgres-best-practices/SKILL.md): RLS, edge functions, real-time, performant schema design
+
+---
+
+## When to Use /tribunal-database
+
+| Use `/tribunal-database` when...      | Use something else when...                  |
+| :------------------------------------ | :------------------------------------------ |
+| Prisma queries and schema             | Frontend queries → `/tribunal-frontend`     |
+| Raw SQL with pg/mysql2/better-sqlite3 | API routes calling DB → `/tribunal-backend` |
+| Database migrations                   | Full audit → `/tribunal-full`               |
+| ORM schema changes                    |                                             |
+| Transaction boundaries                |                                             |
+
+---
+
+## 4 Active Reviewers (All Run Simultaneously)
+
+### precedence-reviewer → Checks local repo Case Law for past rejections
+
+logic-reviewer
+
+- Prisma methods that don't exist (`findOne` was removed — use `findUnique`)
+- Transaction that should be `$transaction` but isn't
+- Pagination query missing total count (returns wrong metadata)
+- `.findMany()` with no `take` limit (unbounded query)
+
+### security-auditor
+
+- SQL injection via `$queryRaw` with template literals and user input
+- Row-level security bypass (no WHERE clause on user-scoped query)
+- Mass assignment via `prisma.user.update({ data: req.body })` (unrestricted)
+- Prisma `$executeRaw` with string interpolation
+
+### sql-reviewer
+
+- N+1 pattern (loop with prisma query inside)
+- Foreign key columns without `@@index`
+- No index on ORDER BY column for large tables
+- Unscoped UPDATE/DELETE without WHERE clause
+- Missing rollback in raw SQL catch block
+- Expand vs contract migration not followed
+
+### schema-reviewer
+
+- Missing input validation before DB persistence
+- Schema out of sync with code validation logic
+- Prisma schema lacking proper relational constraints
+- Enum types not matching between app and database
+
+---
+
+## Verdict System
+
+```
+If ANY reviewer → ❌ REJECTED: fix before Human Gate
+If any reviewer → ⚠️ WARNING:  proceed with flagged items
+If all reviewers → ✅ APPROVED: Human Gate
+```
+
+---
+
+## Database-Specific Hallucination Traps (Common LLM Mistakes)
+
+```typescript
+// ❌ Prisma: findOne was REMOVED — doesn't exist in any version
+const user = await prisma.user.findOne({ where: { id } });
+// ✅ Correct
+const user = await prisma.user.findUnique({ where: { id } });
+
+// ❌ Prisma: upsertMany doesn't exist
+await prisma.product.upsertMany({ data: products });         // Doesn't exist
+// ✅ Use createMany or transaction with multiple upserts
+await prisma.$transaction(products.map(p => prisma.product.upsert({ ... })));
+
+// ❌ Migration fails silently: adding NOT NULL column to populated table
+ALTER TABLE users ADD COLUMN phone VARCHAR(20) NOT NULL; // Error on existing rows
+// ✅ Always add nullable first, backfill, then add constraint
+
+// ❌ Missing rollback in raw SQL
+try {
+  await db.query('BEGIN');
+  await db.query('UPDATE ...');
+} catch (e) {
+  // Missing: await db.query('ROLLBACK');
+}
+```
+
+---
+
+## Usage Examples
+
+```
+/tribunal-database the createOrder function with Stripe idempotency
+/tribunal-database the user registration with email uniqueness check
+/tribunal-database the migration file adding phoneNumber to users
+/tribunal-database the paginated product query with category filter
+```
+
+---
+
+## After /tribunal-database — Next Steps
+
+| Outcome                     | Next Command                                       |
+| :-------------------------- | :------------------------------------------------- |
+| All checks pass             | → Safe to run migrations or deploy                 |
+| Reviewers reject with fixes | → Apply fixes, then run `/tribunal-database` again |
+| Slow queries identified     | → `/tribunal-speed` for latency profiling          |
+| Major schema changes needed | → `/migrate` for safe expand-and-contract          |
+
+---

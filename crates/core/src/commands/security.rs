@@ -108,9 +108,11 @@ pub fn assert_within_root(root: &Path, target: &Path) -> Result<PathBuf> {
         }
     }
 
-    // If target exists on filesystem, verify canonical realpath does not escape root (symlinks)
-    if target.exists() {
-        if let Ok(real_target) = target.canonicalize() {
+    // If target exists on filesystem, verify canonical realpath does not escape root (symlinks).
+    // Note: Must check normalized.exists() and normalized.canonicalize(), because target may be a
+    // relative path against a non-CWD root directory.
+    if normalized.exists() {
+        if let Ok(real_target) = normalized.canonicalize() {
             let real_target = strip_verbatim_prefix(&real_target);
             #[cfg(windows)]
             {
@@ -199,6 +201,20 @@ mod tests {
         let temp_dir = std::env::temp_dir().join("tribunal_sec_test_root");
         let _ = std::fs::create_dir_all(&temp_dir);
         let result = assert_within_root(&temp_dir, Path::new("sub/file.txt"));
+        assert!(result.is_ok());
+        let _ = std::fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_assert_within_root_relative_target_in_non_cwd_root() {
+        let temp_dir = std::env::temp_dir().join("tribunal_sec_test_relative_root");
+        let sub_dir = temp_dir.join("nested");
+        let _ = std::fs::create_dir_all(&sub_dir);
+        let target_file = sub_dir.join("data.txt");
+        let _ = std::fs::write(&target_file, "payload");
+
+        // Target is relative to temp_dir, which is distinct from CWD
+        let result = assert_within_root(&temp_dir, Path::new("nested/data.txt"));
         assert!(result.is_ok());
         let _ = std::fs::remove_dir_all(&temp_dir);
     }

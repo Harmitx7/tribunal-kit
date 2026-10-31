@@ -136,6 +136,40 @@ const {
   getPhase6MetricsTracker,
 } = require('./simulation_engine');
 
+const {
+  RELATIONSHIP_TYPES,
+  INTERACTION_PRIORITY,
+  INTERACTION_CONFIDENCE,
+  runCrossDomainAnalysis,
+  Phase9MetricsTracker,
+  getPhase9MetricsTracker,
+} = require('./cross_domain_engine');
+const {
+  OUTCOME_INVARIANT,
+  REQUIREMENT_SOURCES,
+  REQUIREMENT_CATEGORIES,
+  REQUIREMENT_PRIORITY: PHASE10_REQUIREMENT_PRIORITY,
+  COMPLEXITY_BUDGETS,
+  ASSUMPTION_STATUS,
+  REVERSIBILITY_LEVELS: PHASE10_REVERSIBILITY_LEVELS,
+  CAPABILITY_DEPTH,
+  REASONING_DEPTH,
+  discoverRequirements,
+  evaluateComplexityBudget,
+  auditArchitectureJustification,
+  generateDecisionRecords,
+  analyzeAssumptionsAndUnknowns,
+  buildSolutionShape,
+  verifyOutcomeAndRegressions,
+  runOutcomeOptimization,
+  evaluateSkillSelection,
+  Phase10OutcomeMemory,
+  getPhase10OutcomeMemory,
+  runAntiShortcutCheck,
+  runAntiOverengineeringCheck,
+  Phase10MetricsTracker,
+  getPhase10MetricsTracker,
+} = require('./outcome_optimization_engine');
 const _skillsCache = new Map();
 
 function clearSkillsCache() {
@@ -738,6 +772,44 @@ function analyzeTask(taskQuery, agentDir, options = {}) {
     }
   }
 
+  // Phase 9: Cross-Domain Engineering Intelligence
+  const crossDomainAnalysis = runCrossDomainAnalysis(taskQuery, conceptData, options);
+
+  // Integrate cross-domain validation requirements into verification plan
+  if (!crossDomainAnalysis.skipped) {
+    for (const vr of crossDomainAnalysis.validation_requirements || []) {
+      if (!verificationPlan.some(v => v.test === vr.test)) {
+        verificationPlan.push({
+          target: vr.source,
+          test: vr.test,
+          action: `[CROSS-DOMAIN VERIFICATION] ${vr.reason}`,
+          status: 'pending',
+        });
+      }
+    }
+  }
+
+  // Phase 10: Engineering Outcome Optimization
+  const outcomeOptimization = runOutcomeOptimization(taskQuery, {
+    conceptData,
+    considerationsData: considerations,
+    crossDomainAnalysis,
+    preMortem,
+    options,
+  });
+
+  // Integrate Phase 10 validation requirements into verification plan
+  for (const vr of outcomeOptimization.validation_requirements || []) {
+    if (!verificationPlan.some(v => v.test === vr.test)) {
+      verificationPlan.push({
+        target: vr.source,
+        test: vr.test,
+        action: `[OUTCOME OPTIMIZATION VERIFICATION] ${vr.reason}`,
+        status: 'pending',
+      });
+    }
+  }
+
   return {
     task: {
       query: taskQuery,
@@ -773,7 +845,32 @@ function analyzeTask(taskQuery, agentDir, options = {}) {
     unsupported_claims: unsupportedClaims,
     simulation_plan: preMortem.simulation_plan,
     phase6_metrics: phase6Tracker.getMetrics(),
-    risks: considerations.risks,
+    // Phase 9: Cross-Domain Engineering Intelligence
+    cross_domain_analysis: crossDomainAnalysis.skipped
+      ? null
+      : {
+          interactions: crossDomainAnalysis.interactions,
+          second_order_effects: crossDomainAnalysis.second_order_effects,
+          failure_propagation: crossDomainAnalysis.failure_propagation,
+          resource_contention: crossDomainAnalysis.resource_contention,
+          security_boundaries: crossDomainAnalysis.security_boundaries,
+          constraint_conflicts: crossDomainAnalysis.constraint_conflicts,
+          emergent_failures: crossDomainAnalysis.emergent_failures,
+          tradeoff_graph: crossDomainAnalysis.tradeoffs,
+          blind_spots: crossDomainAnalysis.blind_spots,
+          validation_requirements: crossDomainAnalysis.validation_requirements,
+          summary: crossDomainAnalysis.summary,
+        },
+    phase9_metrics: crossDomainAnalysis.phase9_metrics || null,
+    // Phase 10: Engineering Outcome Optimization
+    outcome_optimization: outcomeOptimization,
+    outcome_requirements: outcomeOptimization.requirements,
+    engineering_options: outcomeOptimization.engineering_options,
+    decision_records: outcomeOptimization.decision_records,
+    solution_shape: outcomeOptimization.solution_shape,
+    early_validations: outcomeOptimization.early_validations,
+    anti_slop_audit: outcomeOptimization.architecture_audit,
+    phase10_metrics: outcomeOptimization.phase10_metrics,    risks: considerations.risks,
     failure_modes: considerations.failure_modes,
     quality_attributes: considerations.quality_attributes,
     skills: skillsList,
@@ -1293,8 +1390,35 @@ module.exports = {
   comparePredictionsWithObserved,
   Phase6MetricsTracker,
   getPhase6MetricsTracker,
+  // Phase 9: Cross-Domain Intelligence
+  RELATIONSHIP_TYPES,
+  INTERACTION_PRIORITY,
+  INTERACTION_CONFIDENCE,
+  runCrossDomainAnalysis,
+  Phase9MetricsTracker,
+  getPhase9MetricsTracker,
+  // Phase 10: Engineering Outcome Optimization
+  OUTCOME_INVARIANT,
+  REQUIREMENT_SOURCES,
+  REQUIREMENT_CATEGORIES,
+  COMPLEXITY_BUDGETS,
+  discoverRequirements,
+  evaluateComplexityBudget,
+  auditArchitectureJustification,
+  generateDecisionRecords,
+  analyzeAssumptionsAndUnknowns,
+  buildSolutionShape,
+  verifyOutcomeAndRegressions,
+  runOutcomeOptimization,
+  evaluateSkillSelection,
+  Phase10OutcomeMemory,
+  getPhase10OutcomeMemory,
+  runAntiShortcutCheck,
+  runAntiOverengineeringCheck,
+  Phase10MetricsTracker,
+  getPhase10MetricsTracker,
 };
 
-if (require.main === module) {
+if (require.main === module || (require.main && path.basename(require.main.filename) === 'skill_intelligence.js')) {
   main();
 }

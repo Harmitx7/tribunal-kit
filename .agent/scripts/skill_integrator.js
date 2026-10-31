@@ -26,37 +26,69 @@ const REPORT_FILE = 'skill-integration-report.md';
 
 const { findAgentDir } = require('./_utils');
 
+const CORE_META_MAPPINGS = {
+  'arch': '.agent/scripts/architecture_intelligence.js',
+  'assimilate': '.agent/scripts/skill_evolution.js',
+  'htop': '.agent/scripts/syscall_registry.js',
+  'resume': '.agent/scripts/session_manager.js',
+  'skill-enhancement-engine': 'scripts/skill_enhancement_engine.js',
+  'team-mode': '.agent/scripts/swarm_dispatcher.js',
+};
+
 function getAssociatedScript(skillDir, scriptsDir) {
   /** Check if the skill has an explicit frontmatter script or an implicit script file. */
   const skillName = path.basename(skillDir);
+  const normalizedName = skillName.replace(/-/g, '_');
 
-  // 1. Implicit check: does a script with the same name exist? (Check for both .js and .py)
-  const implicitJsScript = path.join(scriptsDir, `${skillName}.js`);
-  if (fs.existsSync(implicitJsScript)) {
-    return `.agent/scripts/${skillName}.js`;
+  // 1. Implicit check: does a script with the same name exist? (both hyphen and underscore)
+  const candidates = [
+    path.join(scriptsDir, skillName + '.js'),
+    path.join(scriptsDir, normalizedName + '.js'),
+    path.join(scriptsDir, skillName + '.py'),
+    path.join(scriptsDir, normalizedName + '.py'),
+  ];
+  for (const c of candidates) {
+    if (fs.existsSync(c)) {
+      return '.agent/scripts/' + path.basename(c);
+    }
   }
 
-  const implicitPyScript = path.join(scriptsDir, `${skillName}.py`);
-  if (fs.existsSync(implicitPyScript)) {
-    return `.agent/scripts/${skillName}.py`;
-  }
-
-  // 2. Explicit check: does the SKILL.md define 'script:' in its frontmatter?
+  // 2. Explicit check: does the SKILL.md define 'scripts-binding:' or 'script:' in its frontmatter?
   const skillMd = path.join(skillDir, 'SKILL.md');
   if (fs.existsSync(skillMd)) {
     try {
       const content = fs.readFileSync(skillMd, 'utf8');
-      const match = content.match(/---([\s\S]*?)---/);
+      const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
       if (match) {
         const frontmatter = match[1];
+        // Check scripts-binding:
+        const sbMatch = frontmatter.match(/scripts-binding:\s*([\s\S]*?)(?=\n[a-zA-Z0-9_-]+:|$)/);
+        if (sbMatch) {
+          const lines = sbMatch[1].split('\n').filter(l => l.trim().startsWith('- '));
+          for (const l of lines) {
+            const sPath = l.replace(/^[\s-]*\s*/, '').trim();
+            if (sPath && fs.existsSync(path.resolve(sPath))) {
+              return sPath.replace(/\\/g, '/');
+            }
+          }
+        }
+        // Check script:
         const scriptMatch = frontmatter.match(/(?:^|\n)script:\s*([^\n]+)/);
         if (scriptMatch) {
-          return scriptMatch[1].trim();
+          const sPath = scriptMatch[1].trim();
+          if (sPath && fs.existsSync(path.resolve(sPath))) {
+            return sPath.replace(/\\/g, '/');
+          }
         }
       }
     } catch {
       // ignore
     }
+  }
+
+  // 3. Fallback to platform meta-mappings
+  if (CORE_META_MAPPINGS[skillName] && fs.existsSync(path.resolve(CORE_META_MAPPINGS[skillName]))) {
+    return CORE_META_MAPPINGS[skillName];
   }
 
   return null;

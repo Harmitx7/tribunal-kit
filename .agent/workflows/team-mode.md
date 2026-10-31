@@ -1,25 +1,69 @@
 ---
 name: team-mode
-description: 'Enable dynamic multi-agent task execution, DAG routing, and parallel reviews.'
-version: 1.0.0
+description: "Enable dynamic multi-agent task execution, DAG routing, and parallel reviews."
+version: 1.1.0
+required-skills:
+  - team-mode
+  - agent-organizer
+  - parallel-agents
+  - swarm
+scripts-binding:
+  - .agent/scripts/swarm_dispatcher.js
 ---
 
-# TEAM MODE (DAG ORCHESTRATION)
+# /team-mode — Dynamic Multi-Agent DAG Orchestration
 
-## Invocation
+$ARGUMENTS
 
-`/team-mode [task_prompt]`
+---
 
-## Behavior
+## Mandatory Pre-Flight Context Inspection
 
-Activates the `swarm_dispatcher.js` using the `--mode dag` flag to execute highly complex, multi-domain tasks.
+Before dispatching multi-agent team mode:
+1. Validate subagent payload contracts with `swarm_dispatcher.js`.
+2. Inspect task boundaries to guarantee worker files do not overlap.
+3. Enforce context window budgets: pass scoped `context_summary` per worker.
 
-1. **Decomposition**: The Orchestrator agent splits the `task_prompt` into a Topological DAG.
-2. **Delegation**: Specialized agents (e.g., `frontend-specialist`, `database-architect`) are assigned specific nodes in the graph.
-3. **Parallel Execution**: Independent tasks execute simultaneously.
-4. **Handoffs**: Output from a database task is explicitly passed as context to the dependent frontend task.
-5. **Review**: The entire output is passed through `/tribunal-full` before being marked complete.
+---
 
-## Guardrails
+## Phase 1 — Scope Decomposition & DAG Scheduling
 
-Team Mode cannot bypass the Human Gate. If any subagent proposes a destructive action, the entire DAG is paused, and the Human Gate Negotiator is summoned.
+1. Decompose the incoming goal into atomic, non-overlapping worker subtasks.
+2. Structure dependencies into a Directed Acyclic Graph (DAG) using `dag_scheduler`.
+3. Check for circular dependencies; reject invalid cycles before dispatch.
+
+---
+
+## Phase 2 — Parallel Wave Dispatch & Execution
+
+1. Dispatch independent wave nodes simultaneously via `Promise.allSettled()`.
+2. Assign specialized agents based on domain mandates:
+   - Backend/API → `backend-specialist`
+   - Database/Schema → `database-architect`
+   - UI/Components → `frontend-specialist`
+   - Security/Auth → `security-auditor`
+3. Intercept worker status transitions: `DISCOVERED → SELECTED → INVOKED → EXECUTED → OUTPUT VALIDATED → VERIFIED`.
+
+---
+
+## Phase 3 — Result Transfer & Synthesis
+
+1. Validate intermediate outputs against domain schemas before handoff.
+2. Pass verified artifacts from upstream stages to downstream dependent workers.
+3. Merge findings by severity; resolve conflicts with concrete file evidence.
+
+---
+
+## Error Recovery & BLOCKED Protocol
+
+- **Worker Failure**: Single worker failure does not abort sibling nodes (`allSettled` pattern).
+- **Context Missing**: If worker reports `BLOCKED`, supervisor supplies missing context or escalates to human.
+- **Human Gate**: Destructive actions (deletions, schema drops) trigger immediate pause and summon `human-gate-negotiator`.
+
+---
+
+## Final Verification & Exit Criteria
+
+- [ ] All DAG tasks completed or cleanly failed with diagnostics.
+- [ ] Multi-perspective review verified with authoritative evidence.
+- [ ] No unhandled worker crashes or unvalidated handoffs.

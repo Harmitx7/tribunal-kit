@@ -1,6 +1,6 @@
 ---
 name: critique
-description: "Use when building, styling, optimizing, and auditing critique components, responsive layouts, design systems, and frontend state."
+description: "Structured UI/UX critic evaluating visual hierarchy, optical balance, typography line lengths, spatial grid alignment, and WCAG AA accessibility compliance."
 version: 6.0.0
 last-updated: 2026-09-29
 skills:

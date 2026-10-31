@@ -105,6 +105,16 @@ describe('TRUST BOUNDARY — Backend Intelligence Pipeline', () => {
       expect(result.reason).toContain('Path traversal');
     });
 
+    it('rejects sibling directory traversal with common prefix in evidence locations', () => {
+      const siblingPath = `../${path.basename(FIXTURES)}-sibling/secret.py:1`;
+      const result = verifyEvidence(
+        { type: 'source', description: 'sibling traversal', location: siblingPath },
+        FIXTURES,
+      );
+      expect(result.verified).toBe(false);
+      expect(result.reason).toContain('Path traversal');
+    });
+
     it('marks finding with ALL_FABRICATED when no evidence locations exist', () => {
       const finding = validFinding({
         evidence: [
@@ -201,6 +211,8 @@ describe('TRUST BOUNDARY — Backend Intelligence Pipeline', () => {
       // Must NOT be VERIFIED — LLM cannot self-authorize
       expect(result.findings[0].status).not.toBe('VERIFIED');
       expect(result.findings[0].status).toBe('DETECTED');
+      expect(result.findings[0]._original_status).toBe('VERIFIED');
+      expect(result.findings[0]._isolation_note).toMatch(/Status "VERIFIED" was demoted to DETECTED/);
     });
 
     it('demotes LLM-assigned FIXED to DETECTED', () => {
@@ -216,6 +228,8 @@ describe('TRUST BOUNDARY — Backend Intelligence Pipeline', () => {
       run('validation_engine.js', `--in="${inFile}" --out="${out}"`);
       const result = JSON.parse(fs.readFileSync(out, 'utf8'));
       expect(result.findings[0].status).toBe('DETECTED');
+      expect(result.findings[0]._original_status).toBe('FIXED');
+      expect(result.findings[0]._isolation_note).toMatch(/Status "FIXED" was demoted to DETECTED/);
     });
 
     it('demotes LLM-assigned REGRESSION-PROTECTED to DETECTED', () => {
@@ -231,6 +245,8 @@ describe('TRUST BOUNDARY — Backend Intelligence Pipeline', () => {
       run('validation_engine.js', `--in="${inFile}" --out="${out}"`);
       const result = JSON.parse(fs.readFileSync(out, 'utf8'));
       expect(result.findings[0].status).toBe('DETECTED');
+      expect(result.findings[0]._original_status).toBe('REGRESSION-PROTECTED');
+      expect(result.findings[0]._isolation_note).toMatch(/Status "REGRESSION-PROTECTED" was demoted to DETECTED/);
     });
   });
 

@@ -51,20 +51,20 @@ Every enhanced skill incorporates the 18-part architectural framework:
 
 ```bash
 # Preview changes across all skills
-node runners/skill_enhancement_engine.js --all --dry-run
+node scripts/skill_enhancement_engine.js --all --dry-run
 
 # Enhance a single skill
-node runners/skill_enhancement_engine.js --skill <skill-name> --fix
+node scripts/skill_enhancement_engine.js --skill <skill-name> --fix
 
 # Enhance all skills within a domain cluster (motion, frontend, backend, security, devops, database, testing, mobile)
-node runners/skill_enhancement_engine.js --domain motion --fix
+node scripts/skill_enhancement_engine.js --domain motion --fix
 
-# Enhance all 235 skills and mirror changes to workspace root
-node runners/skill_enhancement_engine.js --all --fix --sync-to-root
+# Enhance all 320 skills and mirror changes to workspace root
+node scripts/skill_enhancement_engine.js --all --fix --sync-to-root
 
 # Validate payload and SDO triggers
-node runners/validate-payload.js
-node runners/audit_skill_sdo.js
+node scripts/validate-payload.js
+node scripts/audit_skill_sdo.js
 ```
 
 ---

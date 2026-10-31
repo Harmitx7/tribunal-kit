@@ -1,0 +1,15 @@
+{
+  "name": "fixture-app",
+  "version": "1.0.0",
+  "description": "Test fixture application for behavioral certification",
+  "bin": {
+    "fixture-cli": "./bin/app-cli.js"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

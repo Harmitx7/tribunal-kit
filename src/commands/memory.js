@@ -376,8 +376,22 @@ function generateProjection(agentDest, index) {
 
 // ── CLI Router ──────────────────────────────────────────────────────────────
 
-async function cmdMemory(flags, processArgs, quiet = false) {
-  const targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
+async function cmdMemory(flags = {}, processArgs = process.argv, quiet = false) {
+  const allArgs = Array.isArray(processArgs) ? processArgs.slice(2) : [];
+  if (flags.quiet || allArgs.includes('--quiet')) {
+    quiet = true;
+  }
+
+  let targetDir = flags.path ? path_1.default.resolve(flags.path) : process.cwd();
+  const pathIdx = allArgs.findIndex(a => a === '--path' || a.startsWith('--path='));
+  if (pathIdx !== -1) {
+    if (allArgs[pathIdx].startsWith('--path=')) {
+      targetDir = path_1.default.resolve(allArgs[pathIdx].split('=').slice(1).join('='));
+    } else if (allArgs[pathIdx + 1] && !allArgs[pathIdx + 1].startsWith('-')) {
+      targetDir = path_1.default.resolve(allArgs[pathIdx + 1]);
+    }
+  }
+
   const agentDest = path_1.default.join(targetDir, '.agent');
 
   if (!fs_1.default.existsSync(agentDest)) {
@@ -385,10 +399,43 @@ async function cmdMemory(flags, processArgs, quiet = false) {
     process.exit(1);
   }
 
-  const args = processArgs.slice(3);
-  const subcommand = args[0];
+  const memIdx = allArgs.indexOf('memory');
+  const searchArgs = memIdx !== -1 ? allArgs.slice(memIdx + 1) : allArgs;
 
-  if (!subcommand || subcommand === 'help' || subcommand === '--help' || subcommand === '-h') {
+  let subcommand = null;
+  const subPositional = [];
+
+  for (let i = 0; i < searchArgs.length; i++) {
+    const a = searchArgs[i];
+    if (a.startsWith('--')) {
+      if (
+        ['--path', '--budget', '--type', '--content', '--tags', '--session-id', '--query'].includes(
+          a,
+        )
+      ) {
+        i++;
+      }
+      continue;
+    }
+    if (a.startsWith('-')) {
+      continue;
+    }
+    if (!subcommand) {
+      subcommand = a;
+    } else {
+      subPositional.push(a);
+    }
+  }
+
+  const args = searchArgs;
+
+  if (
+    !subcommand ||
+    subcommand === 'help' ||
+    subcommand === '--help' ||
+    subcommand === '-h' ||
+    (allArgs.includes('--help') && !subcommand)
+  ) {
     (0, helpers_1.banner)(quiet);
     const W = 62;
     const title = '  Tribunal Memory — 4-Type Taxonomy Engine';
@@ -453,14 +500,38 @@ async function cmdMemory(flags, processArgs, quiet = false) {
 
   // Parse flags from remaining args
   function getFlag(name) {
-    const idx = args.indexOf(`--${name}`);
-    if (idx === -1) return null;
-    return args[idx + 1] || null;
+    for (let i = 0; i < args.length; i++) {
+      if (args[i] === `--${name}`) {
+        return args[i + 1] || null;
+      }
+      if (args[i].startsWith(`--${name}=`)) {
+        return args[i].slice(name.length + 3);
+      }
+    }
+    return flags[name] !== undefined ? String(flags[name]) : null;
   }
 
   try {
     switch (subcommand) {
       case 'store': {
+        if (
+          args.includes('--help') ||
+          args.includes('-h') ||
+          allArgs.includes('--help') ||
+          allArgs.includes('-h')
+        ) {
+          console.log(`Usage: tk memory store [OPTIONS] --type <TYPE> --content <CONTENT>
+
+Store a new memory entry
+
+Options:
+      --type <TYPE>        Memory type: episodic, semantic, procedural, working
+      --content <CONTENT>  The memory content to store
+      --tags <TAGS>        Comma-separated tags for searchability
+      --session-id <ID>    Session ID (for working memory)
+  -h, --help               Print help`);
+          process.exit(0);
+        }
         const type = getFlag('type');
         const content = getFlag('content');
         const tagsRaw = getFlag('tags') || '';
@@ -477,48 +548,64 @@ async function cmdMemory(flags, processArgs, quiet = false) {
           .filter(t => t.length > 0);
         const result = memoryStore(agentDest, type, content, tags, sessionId);
         if (!quiet) {
-          (0, logger_1.log)(
-            `  ${(0, logger_1.c)('green', '✔')} ${(0, logger_1.bold)('Memory stored')} #${result.id} (${type})`,
+          process.stderr.write(
+            `  ${(0, logger_1.c)('green', '✔')} ${(0, logger_1.bold)('Memory stored')} #${result.id} (${type})\n`,
           );
-          (0, logger_1.log)(
-            `    ${(0, logger_1.c)('gray', '▶')} ${(0, logger_1.c)('gray', content)}`,
+          process.stderr.write(
+            `    ${(0, logger_1.c)('gray', '▶')} ${(0, logger_1.c)('gray', content)}\n`,
           );
           if (tags.length > 0) {
-            (0, logger_1.log)(
-              `    ${(0, logger_1.c)('gray', '▶')} Tags: ${(0, logger_1.c)('gray', tags.join(', '))}`,
+            process.stderr.write(
+              `    ${(0, logger_1.c)('gray', '▶')} Tags: ${(0, logger_1.c)('gray', tags.join(', '))}\n`,
             );
           }
-          (0, logger_1.log)(`    ${(0, logger_1.c)('gray', '▶')} ~${result.token_estimate} tokens`);
+          process.stderr.write(`    ${(0, logger_1.c)('gray', '▶')} ~${result.token_estimate} tokens\n`);
         }
         break;
       }
 
       case 'recall': {
-        const query = getFlag('query');
+        if (
+          args.includes('--help') ||
+          args.includes('-h') ||
+          allArgs.includes('--help') ||
+          allArgs.includes('-h')
+        ) {
+          console.log(`Usage: tk memory recall [OPTIONS] [QUERY]
+
+Budget-constrained memory recall
+
+Arguments:
+  [QUERY]  Search query (positional)
+
+Options:
+  -q, --query <QUERY>    Search query
+      --budget <BUDGET>  Maximum token budget for recall [default: 2000]
+  -h, --help             Print help`);
+          process.exit(0);
+        }
+
+        const query = getFlag('query') || subPositional.join(' ') || '';
         const budgetStr = getFlag('budget');
         const budget = budgetStr ? parseInt(budgetStr, 10) : 2000;
-        if (!query) {
-          (0, logger_1.err)('Usage: tk memory recall --query "<search>" [--budget 2000]');
-          process.exit(1);
-        }
         const { results, tokens_used } = memoryRecall(agentDest, query, budget);
         if (!quiet) {
           if (results.length === 0) {
-            (0, logger_1.log)(
-              `  ${(0, logger_1.c)('yellow', '⚠')} No memories match query: "${query}"`,
+            process.stderr.write(
+              `  ${(0, logger_1.c)('yellow', '⚠')} No memories match query: "${query}"\n`,
             );
           } else {
-            (0, logger_1.log)(
-              `  ${(0, logger_1.c)('green', '✔')} ${results.length} memories recalled (budget: ${budget} tokens)`,
+            process.stderr.write(
+              `  ${(0, logger_1.c)('green', '✔')} ${results.length} memories recalled (budget: ${budget} tokens)\n`,
             );
             for (const entry of results) {
               const typeLabel = entry.memory_type.toUpperCase();
-              (0, logger_1.log)(
-                `    ${(0, logger_1.c)('gray', '▶')} [${(0, logger_1.c)('cyan', typeLabel)}] #${entry.id}: ${entry.content} ${(0, logger_1.c)('gray', `(score: ${entry.score.toFixed(2)}, ~${entry.token_estimate}tok)`)}`,
+              process.stderr.write(
+                `    ${(0, logger_1.c)('gray', '▶')} [${(0, logger_1.c)('cyan', typeLabel)}] #${entry.id}: ${entry.content} ${(0, logger_1.c)('gray', `(score: ${entry.score.toFixed(2)}, ~${entry.token_estimate}tok)`)}\n`,
               );
             }
-            (0, logger_1.log)(
-              `    ${(0, logger_1.c)('gray', '▶')} Total: ~${tokens_used} tokens used of ${budget} budget`,
+            process.stderr.write(
+              `    ${(0, logger_1.c)('gray', '▶')} Total: ~${tokens_used} tokens used of ${budget} budget\n`,
             );
           }
         }

@@ -61,7 +61,8 @@ When you detect code or design requests, route to the correct specialist:
 | AI/LLM integration           | `ai-code-reviewer`      |
 | System design / architecture | `system-architect`      |
 
-When activated, announce: `🤖 Applying knowledge of @[agent-name]...`
+When activated, announce: `› **Activated** `@[agent-name]` · [Domain / Mandate]
+  [1-line context-aware summary of what is being inspected and why it matters]`
 
 ---
 

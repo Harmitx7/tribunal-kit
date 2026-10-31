@@ -1,24 +1,65 @@
 ---
 name: assimilate
-description: 'Trigger the learning pipeline to extract, validate, and store Tribunal Instincts.'
-version: 1.0.0
+description: "Trigger the learning pipeline to extract, validate, and store Tribunal Instincts."
+version: 1.1.0
+required-skills:
+  - assimilate
+  - tribunal-instincts-memory
+  - clean-code
+scripts-binding:
+  - .agent/scripts/memory_archivist.js
+  - .agent/scripts/engineering_memory.js
 ---
 
-# ASSIMILATE (LEARNING PIPELINE)
+# /assimilate — Autonomous Learning & Instinct Synthesis
 
-## Invocation
+$ARGUMENTS
 
-`/assimilate` or `/learn`
+---
 
-## Behavior
+## Mandatory Pre-Flight Context Inspection
 
-Instead of learning in real-time and bloating the execution path, learning is an offline batch job.
+Before assimilating session logs into permanent engineering instincts:
+1. Confirm session log exists (`.agent/.tribunal/session.jsonl` or `.agent_session.json`).
+2. Verify read-only access to historical logs; prevent mutation of active session events.
+3. Require evidence-backed proof before persisting any candidate instinct.
 
-1. **Extraction**: Invokes the `memory_archivist.js` which reads the most recent session logs.
-2. **Analysis**: Searches for repeated errors, test failures, and ultimate successful fixes.
-3. **Validation**: Converts successful fixes into candidate "Tribunal Instincts".
-4. **Storage**: Saves the verified evidence-backed instinct into `instincts.json` where `context_broker.js` can retrieve it for future related tasks.
+---
 
-## Limits
+## Phase 1 — Extraction & Log Parsing
 
-Do not trigger this workflow automatically after every prompt. Use it specifically after a long debugging session or a complex architectural setup to persist the hard-earned lessons.
+1. Discover latest session traces using `memory_archivist.js`.
+2. Extract operational sequences: errors encountered, hypothesis iterations, and code changes that caused tests to pass.
+3. Filter out transient network drops or environment anomalies; isolate logic and design corrections.
+
+---
+
+## Phase 2 — Instinct Formulation & Evidence Verification
+
+1. Synthesize candidate "Tribunal Instincts" mapping `[Problem Pattern] → [Root Cause] → [Verified Remedy]`.
+2. Verify against test results: Instinct must have authoritative passing test evidence from the active session.
+3. Reject speculative or hallucinated insights lacking disk evidence.
+
+---
+
+## Phase 3 — Storage & Index Updating
+
+1. Append verified instincts to `.agent/instincts.json` with cryptographic SHA-256 event fingerprint.
+2. Update indexing in `context_broker.js` so future matching prompts retrieve relevant instincts.
+3. Bound storage budget: Maximum 500 active instincts with LRU eviction for superseded patterns.
+
+---
+
+## Error Recovery & BLOCKED Protocol
+
+- **Missing Session Log**: Yield `BLOCKED: No session events found to assimilate`.
+- **Inconclusive Evidence**: Reject candidate instincts with `UNVERIFIED: Fix lacked passing assertion evidence`.
+- **Parse Failure**: Halt gracefully without corrupting existing `instincts.json`.
+
+---
+
+## Final Verification & Exit Criteria
+
+- [ ] New instincts successfully validated against test evidence.
+- [ ] `instincts.json` schema validation passes.
+- [ ] No regression or corruption of prior learned instincts.

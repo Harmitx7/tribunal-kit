@@ -1,0 +1,70 @@
+{
+  "domain": "ai-reliability",
+  "displayName": "AI Reliability & Evaluation",
+  "version": "1.0.0",
+  "timestamp": "2026-10-30T16:09:36.645Z",
+  "executiveVerdict": "PASS",
+  "gitCommit": "781959c",
+  "packageVersion": "9.3.0",
+  "metrics": {
+    "totalSkills": 9,
+    "certifiedSkills": 9,
+    "benchmarkCases": 30,
+    "datasetIntegrityValid": true,
+    "brierScore": 0.125,
+    "expectedCalibrationError": 0.15,
+    "calibrationDiagnosis": "WELL_CALIBRATED",
+    "cohensKappa": 1,
+    "fleissKappa": 1,
+    "safetyInvariantEnforced": true,
+    "durationMs": 15
+  },
+  "skills": [
+    {
+      "id": "llm-evaluation-engineer",
+      "status": "BEHAVIORALLY_CERTIFIED"
+    },
+    {
+      "id": "hallucination-detection-auditor",
+      "status": "BEHAVIORALLY_CERTIFIED"
+    },
+    {
+      "id": "confidence-calibration-auditor",
+      "status": "BEHAVIORALLY_CERTIFIED"
+    },
+    {
+      "id": "agent-behavioral-testing",
+      "status": "BEHAVIORALLY_CERTIFIED"
+    },
+    {
+      "id": "llm-regression-evaluator",
+      "status": "BEHAVIORALLY_CERTIFIED"
+    },
+    {
+      "id": "reviewer-agreement-analyzer",
+      "status": "BEHAVIORALLY_CERTIFIED"
+    },
+    {
+      "id": "false-positive-false-negative-analyst",
+      "status": "BEHAVIORALLY_CERTIFIED"
+    },
+    {
+      "id": "evaluation-dataset-integrity-auditor",
+      "status": "BEHAVIORALLY_CERTIFIED"
+    },
+    {
+      "id": "evaluation-methodology-auditor",
+      "status": "BEHAVIORALLY_CERTIFIED"
+    }
+  ],
+  "gates": {
+    "gateA_repositoryIntegrity": "PASS",
+    "gateB_skillValidity": "PASS",
+    "gateC_evaluationCorrectness": "PASS",
+    "gateD_evidenceIntegrity": "PASS",
+    "gateE_security": "PASS",
+    "gateF_behavioralCertification": "PASS",
+    "gateG_regressionProtection": "PASS",
+    "gateH_releaseDecision": "PASS"
+  }
+}

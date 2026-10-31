@@ -14,6 +14,22 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
+let isPathContained;
+try {
+  ({ isPathContained } = require('../../src/utils/path_containment'));
+} catch {
+  isPathContained = function(canonicalRoot, canonicalTarget, options = {}) {
+    const rel = path.relative(canonicalRoot, canonicalTarget);
+    if (rel === '') return Boolean(options.allowRoot);
+    if (path.isAbsolute(rel)) return false;
+    if (rel === '..' || rel.startsWith('..' + path.sep) || rel.startsWith('../')) return false;
+    const rootWithSep = canonicalRoot.endsWith(path.sep) ? canonicalRoot : canonicalRoot + path.sep;
+    const targetNorm = process.platform === 'win32' ? canonicalTarget.toLowerCase() : canonicalTarget;
+    const rootNorm = process.platform === 'win32' ? rootWithSep.toLowerCase() : rootWithSep;
+    return targetNorm.startsWith(rootNorm);
+  };
+}
+
 /**
  * Parse an evidence location string into file and line.
  * Accepts formats: "file.py:42", "file.py", "path/to/file.py:100"
@@ -32,7 +48,7 @@ function parseEvidenceLocation(loc) {
  *   { verified: true, content_hash, actual_content }  — if file+line exist
  *   { verified: false, reason }                       — if fabricated/stale
  */
-function verifyEvidence(evidence, repoRoot) {
+function verifyEvidence(evidence, repoRoot = process.cwd()) {
   if (!evidence.location) {
     return { verified: false, reason: 'No location specified in evidence.' };
   }
@@ -43,10 +59,27 @@ function verifyEvidence(evidence, repoRoot) {
   }
 
   // Resolve and enforce path boundary
-  const resolvedFile = path.resolve(repoRoot, parsed.file);
   const normalizedRepo = path.resolve(repoRoot);
-  if (!resolvedFile.startsWith(normalizedRepo)) {
+  const resolvedFile = path.resolve(normalizedRepo, parsed.file);
+  if (!isPathContained(normalizedRepo, resolvedFile, { allowRoot: false })) {
     return { verified: false, reason: `Path traversal detected: ${parsed.file}` };
+  }
+
+  // Realpath symlink escape guard if file exists
+  if (fs.existsSync(resolvedFile)) {
+    try {
+      const realRoot = typeof fs.realpathSync.native === 'function'
+        ? fs.realpathSync.native(normalizedRepo)
+        : fs.realpathSync(normalizedRepo);
+      const realFile = typeof fs.realpathSync.native === 'function'
+        ? fs.realpathSync.native(resolvedFile)
+        : fs.realpathSync(resolvedFile);
+      if (!isPathContained(realRoot, realFile, { allowRoot: false })) {
+        return { verified: false, reason: `Path traversal detected: ${parsed.file}` };
+      }
+    } catch {
+      // Proceed if realpath fails
+    }
   }
 
   if (!fs.existsSync(resolvedFile)) {

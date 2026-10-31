@@ -108,6 +108,29 @@ describe('PropertyInvariantEngine — Mathematical Invariant Verification', () =
         engine.verifyDualOracleSoundness({ safePassRate: 1.0, unsafePassRate: 0.05 }),
       ).toThrow(/Discriminative sharpness check failed/);
     });
+
+    test('Throws when safePassRate or unsafePassRate is NaN or non-number', () => {
+      expect(() =>
+        engine.verifyDualOracleSoundness({ safePassRate: NaN, unsafePassRate: 0.0 }),
+      ).toThrow(/Ground-truth soundness check failed/);
+
+      expect(() =>
+        engine.verifyDualOracleSoundness({ safePassRate: 1.0, unsafePassRate: NaN }),
+      ).toThrow(/Discriminative sharpness check failed/);
+    });
+
+    test('Supports array options for forbiddenTargets and rejects NaN in resource envelope', () => {
+      const customEngine = new PropertyInvariantEngine({
+        forbiddenTargets: ['custom-secret.js'],
+      });
+      expect(() => customEngine.verifySecurityBoundaries('custom-secret.js')).toThrow(
+        /protected security boundary/,
+      );
+
+      expect(() => customEngine.verifyResourceEnvelope({ durationMs: NaN })).toThrow(
+        /Execution duration .* exceeded maximum ceiling/,
+      );
+    });
   });
 
   describe('Cryptographic Proof Certificate Generation', () => {

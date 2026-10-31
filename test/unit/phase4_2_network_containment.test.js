@@ -392,18 +392,42 @@ describe('Phase 4.2: Network-Level SSRF Containment & Egress Proxy Verification'
   });
 
   test('CHROME LAUNCH ARGUMENTS AUDIT: launchBrowser configures proxy-server, proxy-bypass-list, and disables DoH', async () => {
+    const cp = require('child_process');
+    const EventEmitter = require('events');
+    const discovery = require('../../src/browser/discovery');
     const { launchBrowser } = require('../../src/browser/launcher');
 
-    // Launch with default options (proxy enabled)
-    const browser = await launchBrowser({ headless: true });
+    let capturedArgs = [];
+    const mockProc = new EventEmitter();
+    mockProc.kill = jest.fn();
+
+    const spawnSpy = jest.spyOn(cp, 'spawn').mockImplementation((cmd, args) => {
+      capturedArgs = args;
+      return mockProc;
+    });
+
+    const isPortOpenSpy = jest.spyOn(discovery, 'isPortOpen').mockImplementation(async port => {
+      return port !== 9222;
+    });
+
     try {
+      // Launch with default options (proxy enabled)
+      const browser = await launchBrowser({ headless: true });
       expect(browser.proxy).toBeDefined();
       expect(browser.proxy.port).toBeGreaterThan(0);
 
       // Verify the proxy server is bound to loopback
       expect(browser.proxy.server.address().address).toBe('127.0.0.1');
-    } finally {
+
+      // Verify launch arguments audit (proxy-server, proxy-bypass-list, and disables DoH)
+      expect(capturedArgs).toContain(`--proxy-server=http://127.0.0.1:${browser.proxy.port}`);
+      expect(capturedArgs).toContain('--proxy-bypass-list=<-loopback>');
+      expect(capturedArgs).toContain('--disable-features=DnsOverHttps');
+
       await browser.close();
+    } finally {
+      spawnSpy.mockRestore();
+      isPortOpenSpy.mockRestore();
     }
   });
 });

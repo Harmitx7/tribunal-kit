@@ -231,6 +231,65 @@ function detectComplexityFlags(proposal = {}, _existingSymbols = [], mode = 'bal
   return flags;
 }
 
+// Module-level in-memory symbol cache with TTL to eliminate redundant full-repo filesystem traversal
+let _repoSymbolCache = null;
+let _repoSymbolCacheRoot = null;
+let _repoSymbolCacheTimestamp = 0;
+const REPO_CACHE_TTL_MS = 60000;
+
+function buildSymbolIndex(repoRoot) {
+  if (!fs.existsSync(repoRoot)) return [];
+  const symbols = [];
+  const queue = [repoRoot];
+
+  while (queue.length > 0) {
+    const currentDir = queue.shift();
+    let entries = [];
+    try {
+      entries = fs.readdirSync(currentDir, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+
+    for (const entry of entries) {
+      const fullPath = path.join(currentDir, entry.name);
+      if (entry.isDirectory()) {
+        if (
+          DEFAULT_SKIP_DIRS.has(entry.name) ||
+          entry.name === 'target' ||
+          entry.name === 'docs' ||
+          entry.name === '.tribunal'
+        ) {
+          continue;
+        }
+        queue.push(fullPath);
+      } else if (entry.isFile() && /\.(js|ts|tsx|jsx|mjs|cjs)$/.test(entry.name)) {
+        try {
+          const fileContent = fs.readFileSync(fullPath, 'utf8');
+          const relPath = path.relative(repoRoot, fullPath);
+          const symbolRegex =
+            /(?:export\s+(?:function|class|const|let|var|type|interface)|module\.exports\s*=)\s+([A-Za-z0-9_]+)/g;
+          let m;
+          while ((m = symbolRegex.exec(fileContent)) !== null) {
+            symbols.push({
+              type: 'symbol',
+              name: m[1],
+              nameLower: m[1].toLowerCase(),
+              file: relPath,
+              snippet: fileContent
+                .substring(Math.max(0, m.index - 40), m.index + 80)
+                .replace(/\r?\n/g, ' '),
+            });
+          }
+        } catch {
+          // Ignore unreadable files
+        }
+      }
+    }
+  }
+  return symbols;
+}
+
 /**
  * Inspects repository files to search for symbols, utilities, exports, and config.
  */
@@ -277,51 +336,31 @@ function searchRepositoryForCapability(query, searchDir) {
     }
   }
 
-  // Helper: recursive file scanner
-  function scan(dir) {
-    if (!fs.existsSync(dir)) return;
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
+  const now = Date.now();
+  if (
+    !_repoSymbolCache ||
+    _repoSymbolCacheRoot !== repoRoot ||
+    now - _repoSymbolCacheTimestamp > REPO_CACHE_TTL_MS
+  ) {
+    _repoSymbolCache = buildSymbolIndex(repoRoot);
+    _repoSymbolCacheRoot = repoRoot;
+    _repoSymbolCacheTimestamp = now;
+  }
 
-    for (const entry of entries) {
-      const fullPath = path.join(dir, entry.name);
-      if (entry.isDirectory()) {
-        if (DEFAULT_SKIP_DIRS.has(entry.name) || entry.name === 'target' || entry.name === 'docs') {
-          continue;
-        }
-        scan(fullPath);
-      } else if (entry.isFile() && /\.(js|ts|tsx|jsx|mjs|cjs)$/.test(entry.name)) {
-        try {
-          const content = fs.readFileSync(fullPath, 'utf8');
-          const lower = content.toLowerCase();
-
-          const hasMatch = searchKeywords.some(kw => lower.includes(kw));
-          if (hasMatch) {
-            const relPath = path.relative(repoRoot, fullPath);
-            // Extract function/class exports
-            const symbolRegex =
-              /(?:export\s+(?:function|class|const|let|var|type|interface)|module\.exports\s*=)\s+([A-Za-z0-9_]+)/g;
-            let m;
-            while ((m = symbolRegex.exec(content)) !== null) {
-              if (m[1].toLowerCase().includes(normalizedQuery)) {
-                matches.push({
-                  type: 'symbol',
-                  name: m[1],
-                  file: relPath,
-                  snippet: content
-                    .substring(Math.max(0, m.index - 40), m.index + 80)
-                    .replace(/\n/g, ' '),
-                });
-              }
-            }
-          }
-        } catch {
-          // Ignore unreadable files
-        }
-      }
+  for (const sym of _repoSymbolCache) {
+    if (
+      sym.nameLower.includes(normalizedQuery) ||
+      (searchKeywords.length > 0 && searchKeywords.some(k => sym.nameLower.includes(k)))
+    ) {
+      matches.push({
+        type: 'symbol',
+        name: sym.name,
+        file: sym.file,
+        snippet: sym.snippet,
+      });
     }
   }
 
-  scan(repoRoot);
   return matches;
 }
 

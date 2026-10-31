@@ -38,7 +38,9 @@ pub fn schedule_dag(tasks_json: &str) -> Result<String> {
     let mut all_ids: HashSet<String> = HashSet::new();
 
     for task in &tasks {
-        all_ids.insert(task.id.clone());
+        if !all_ids.insert(task.id.clone()) {
+            anyhow::bail!("Duplicate task ID detected in DAG: '{}'", task.id);
+        }
         tier_map.insert(
             task.id.clone(),
             task.tier.clone().unwrap_or_else(|| "fast".to_string()),
@@ -49,8 +51,16 @@ pub fn schedule_dag(tasks_json: &str) -> Result<String> {
 
     for task in &tasks {
         if let Some(deps) = &task.dependencies {
+            let mut unique_deps = HashSet::new();
             for dep in deps {
-                if all_ids.contains(dep) {
+                if !all_ids.contains(dep) {
+                    anyhow::bail!(
+                        "Task '{}' declares dependency on nonexistent task '{}'",
+                        task.id,
+                        dep
+                    );
+                }
+                if unique_deps.insert(dep) {
                     adj_list
                         .entry(dep.clone())
                         .or_default()
@@ -198,5 +208,43 @@ mod tests {
         assert!(res.success);
         assert_eq!(res.total_waves, 1);
         assert_eq!(res.waves[0], vec!["solo-task"]);
+    }
+
+    #[test]
+    fn test_dag_schedule_reject_duplicate_id() {
+        let json = r#"[
+            {"id": "task-dup", "dependencies": []},
+            {"id": "task-dup", "dependencies": []}
+        ]"#;
+
+        let res = schedule_dag(json);
+        assert!(res.is_err());
+        assert!(res.unwrap_err().to_string().contains("Duplicate task ID"));
+    }
+
+    #[test]
+    fn test_dag_schedule_reject_missing_dependency() {
+        let json = r#"[
+            {"id": "task-a", "dependencies": ["nonexistent-prereq"]}
+        ]"#;
+
+        let res = schedule_dag(json);
+        assert!(res.is_err());
+        assert!(res.unwrap_err().to_string().contains("nonexistent task"));
+    }
+
+    #[test]
+    fn test_dag_schedule_duplicate_dependency_dedup() {
+        let json = r#"[
+            {"id": "task-root", "dependencies": []},
+            {"id": "task-child", "dependencies": ["task-root", "task-root"]}
+        ]"#;
+
+        let res_str = schedule_dag(json).unwrap();
+        let res: DagScheduleResult = serde_json::from_str(&res_str).unwrap();
+        assert!(res.success);
+        assert_eq!(res.total_waves, 2);
+        assert_eq!(res.waves[0], vec!["task-root"]);
+        assert_eq!(res.waves[1], vec!["task-child"]);
     }
 }

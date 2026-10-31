@@ -371,11 +371,43 @@ pub fn recall_entries(
     query: &str,
     budget: u32,
 ) -> Vec<(MemoryEntry, f64)> {
+    let is_stopword = |w: &str| -> bool {
+        matches!(
+            w,
+            "a" | "an"
+                | "in"
+                | "to"
+                | "of"
+                | "on"
+                | "at"
+                | "by"
+                | "is"
+                | "it"
+                | "or"
+                | "as"
+                | "if"
+                | "no"
+                | "so"
+                | "we"
+                | "he"
+                | "my"
+                | "do"
+                | "me"
+        )
+    };
+
     let query_lower = query.to_lowercase();
-    let query_words: Vec<&str> = query_lower
+    let mut query_words: Vec<&str> = query_lower
         .split_whitespace()
-        .filter(|w| w.len() > 2)
+        .filter(|w| w.len() > 2 || (w.len() == 2 && !is_stopword(w)))
         .collect();
+
+    if query_words.is_empty() {
+        query_words = query_lower
+            .split_whitespace()
+            .filter(|w| w.len() >= 2)
+            .collect();
+    }
 
     if query_words.is_empty() || index.entries.is_empty() {
         return Vec::new();
@@ -399,10 +431,7 @@ pub fn recall_entries(
     let query_words_idf: Vec<(&str, f64)> = query_words
         .into_iter()
         .map(|word| {
-            let doc_freq = lower_contents
-                .iter()
-                .filter(|c| c.contains(word))
-                .count() as f64;
+            let doc_freq = lower_contents.iter().filter(|c| c.contains(word)).count() as f64;
             let idf = ((corpus_len - doc_freq + 0.5) / (doc_freq + 0.5) + 1.0).ln();
             (word, idf)
         })
@@ -447,11 +476,12 @@ pub fn recall_entries(
         }
     }
 
-    // Sort by score descending
+    // Sort by score descending with deterministic tie-breaker on entry ID
     scored.sort_by(|a, b| {
         b.score
             .partial_cmp(&a.score)
             .unwrap_or(std::cmp::Ordering::Equal)
+            .then_with(|| b.entry.id.cmp(&a.entry.id))
     });
 
     // Budget gate: accumulate tokens until budget is exhausted
@@ -811,6 +841,39 @@ mod tests {
             3,
             "Large budget should return all matching entries"
         );
+    }
+
+    #[test]
+    fn test_recall_technical_two_letter_keywords() {
+        let mut index = MemoryIndex::new();
+        store_entry(
+            &mut index,
+            MemoryType::Semantic,
+            "Primary database connection string for postgres".to_string(),
+            vec!["db".to_string(), "sql".to_string()],
+            MemorySource::Manual,
+            None,
+        )
+        .unwrap();
+
+        store_entry(
+            &mut index,
+            MemoryType::Procedural,
+            "Continuous integration pipeline setup".to_string(),
+            vec!["ci".to_string(), "devops".to_string()],
+            MemorySource::Manual,
+            None,
+        )
+        .unwrap();
+
+        // 2-letter technical queries must not be discarded
+        let db_results = recall_entries(&mut index, "db", 2000);
+        assert_eq!(db_results.len(), 1, "Should recall entry matching 'db'");
+        assert!(db_results[0].0.content.contains("Primary database"));
+
+        let ci_results = recall_entries(&mut index, "ci", 2000);
+        assert_eq!(ci_results.len(), 1, "Should recall entry matching 'ci'");
+        assert!(ci_results[0].0.content.contains("Continuous integration"));
     }
 
     #[test]

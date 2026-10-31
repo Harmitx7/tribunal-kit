@@ -1,6 +1,6 @@
 ---
 name: better-colors
-description: "Use when building, styling, optimizing, and auditing better colors components, responsive layouts, design systems, and frontend state."
+description: "Modern OKLCH color science & perceptual contrast engine. Computes lightness deltas for WCAG AA compliance (delta L >= 0.45) and generates CSS Relative Color Syntax tokens."
 version: 6.0.0
 last-updated: 2026-09-29
 skills:

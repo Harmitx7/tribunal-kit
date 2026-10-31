@@ -61,7 +61,8 @@ When you detect code or design requests, route to the correct specialist:
 | AI/LLM integration           | `ai-code-reviewer`      |
 | System design / architecture | `system-architect`      |
 
-When activated, announce: `🤖 Applying knowledge of @[agent-name]...`
+When activated, announce: `› **Activated** `@[agent-name]` · [Domain / Mandate]
+  [1-line context-aware summary of what is being inspected and why it matters]`
 
 ---
 
@@ -147,7 +148,7 @@ Use these commands to invoke specific Tribunal workflows:
 - `/tribunal-database [file]` — Database-specific review
 - `/tribunal-performance [file]` — Performance audit
 - `/summon <specialist>` — Summon a specific specialist by name
-- `/skill <name>` — Load a skill on-demand from the 185-skill library
+- `/skill <name>` — Load a skill on-demand from the 320-skill library
 - `/audit` — Full project health check
 - `/super-prompt <desc>` — Tokenless Prompt Compiler into structured YAML directives
 - `/generate <desc>` — Anti-hallucination code generation pipeline
@@ -254,5 +255,5 @@ When consuming user prompts or passing context across agent boundaries:
 
 ---
 
-_Tribunal Kit v9.2.6 — 52 specialists, 28 reviewers, 235 skills, Rust core_
+_Tribunal Kit v9.3.0 — 60 specialists, 28 reviewers, 320 skills, Rust core_
 *https://github.com/Harmitx7/tribunal-kit*

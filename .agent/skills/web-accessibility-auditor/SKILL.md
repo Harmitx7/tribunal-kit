@@ -1,6 +1,6 @@
 ---
 name: web-accessibility-auditor
-description: "Use when auditing, pen-testing, hardening, and verifying code against web accessibility auditor vulnerabilities, injection vectors, and auth flaws."
+description: "Audits interfaces against WCAG 2.2 AA and APCA criteria. Enforces 4.5:1 / 3:1 contrast ratios, visible :focus-visible rings, keyboard roving tab index, modal focus trapping, and ARIA semantics."
 version: 6.0.0
 last-updated: 2026-09-29
 skills:

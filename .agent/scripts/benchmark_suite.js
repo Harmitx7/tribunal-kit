@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 const FIXTURES = [
   // Tier 0
@@ -374,11 +374,15 @@ const FIXTURES = [
 function runImpactTier(files, lines, task, diffStr) {
   const start = Date.now();
   try {
-    const diffArg = diffStr ? ` --diff "${diffStr}"` : '';
-    const output = execSync(
-      `node bin/wrapper.js impact-tier --files "${files}" --lines ${lines} --task "${task}"${diffArg}`,
-      { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
-    );
+    const args = ['bin/wrapper.js', 'impact-tier', '--files', String(files), '--lines', String(lines), '--task', String(task)];
+    if (diffStr) {
+      args.push('--diff', String(diffStr));
+    }
+    const output = execFileSync(process.execPath, args, {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      shell: false,
+    });
     const duration = Date.now() - start;
     const jsonMatch = output.match(/\{.*\}/);
     if (jsonMatch) {

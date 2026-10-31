@@ -1,0 +1,26 @@
+{
+  "classA_shadowing": {
+    "symbol": "unusedUserExport",
+    "file": "users.js",
+    "expected": "UNREFERENCED_STATICALLY",
+    "actual": "UNREFERENCED_STATICALLY",
+    "hasDefect": false,
+    "category": "False Negative"
+  },
+  "classD_comments_strings": {
+    "symbol": "calculateRisk",
+    "file": "users.js",
+    "expected": "UNREFERENCED_STATICALLY",
+    "actual": "UNREFERENCED_STATICALLY",
+    "hasDefect": false,
+    "category": "False Negative"
+  },
+  "classE_aliased_import": {
+    "symbol": "validate",
+    "file": "users.js",
+    "expected": "REFERENCED",
+    "actual": "REFERENCED",
+    "hasDefect": false,
+    "category": "False Positive"
+  }
+}

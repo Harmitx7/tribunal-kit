@@ -1,0 +1,1 @@
+pub fn rs_func() -> i32 { 100 }

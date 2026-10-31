@@ -1,6 +1,6 @@
 ---
 name: frontend-design
-description: "Use when building, styling, optimizing, and auditing frontend design components, responsive layouts, design systems, and frontend state."
+description: "Translates design specifications into production frontend craft. Enforces semantic HTML, complete 5-state interactive targets, 8px grid discipline, and zero placeholder copy."
 version: 6.0.0
 last-updated: 2026-09-29
 skills:

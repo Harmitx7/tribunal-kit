@@ -5,7 +5,7 @@
  * Animates all 28 Tribunal reviewers running concurrently.
  */
 
-const { isTTY, hasColor, RGB, GLYPHS, color, bold, dim, getColumns } = require('./theme');
+const { isTTY, hasColor, isUtf8, RGB, GLYPHS, color, dim, getColumns, visibleWidth } = require('./theme');
 const { renderProgressBar } = require('./progress');
 
 const ALL_REVIEWERS = [
@@ -40,14 +40,14 @@ const ALL_REVIEWERS = [
 ];
 
 function renderReviewerGrid(completedCount = 28) {
+  const g = GLYPHS;
   if (!isTTY && !hasColor) {
     console.log(
-      `  ✔ ${completedCount}/${ALL_REVIEWERS.length} Reviewers passed verification gates.`,
+      `  ${g.success} ${completedCount}/${ALL_REVIEWERS.length} Reviewers passed verification gates.`,
     );
     return;
   }
 
-  const g = GLYPHS;
   const cols = getColumns();
   const numCols = cols >= 110 ? 3 : cols >= 72 ? 2 : 1;
   const colWidth = Math.floor(Math.max(25, cols - 6) / numCols);
@@ -68,11 +68,12 @@ function renderReviewerGrid(completedCount = 28) {
       const [name] = ALL_REVIEWERS[idx];
       const isDone = idx < completedCount;
 
-      const icon = isDone ? color(RGB.EMERALD, g.success) : color(RGB.FLAME, '⠋');
+      const spinnerChar = isUtf8 ? '⠋' : 'o';
+      const icon = isDone ? color(RGB.EMERALD, g.success) : color(RGB.FLAME, spinnerChar);
       const nameColored = isDone ? color(RGB.ZINC_200, name) : dim(name);
 
       const itemStr = `${icon} ${nameColored}`;
-      const rawLen = 2 + name.length;
+      const rawLen = 2 + visibleWidth(name);
       const pad = Math.max(1, colWidth - rawLen);
 
       line += itemStr + ' '.repeat(pad);

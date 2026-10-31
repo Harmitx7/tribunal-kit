@@ -1088,7 +1088,14 @@ function main() {
         // Autodetect positional arg
         const candidate = args[i].replace(/^['"]|['"]$/g, '');
         if (candidate.startsWith('-')) continue;
-        if (fs.existsSync(candidate)) {
+        const resolved = path.isAbsolute(candidate) ? candidate : path.resolve(workspaceRoot, candidate);
+        if (fs.existsSync(resolved)) {
+          if (fs.statSync(resolved).isDirectory()) {
+            dirArg = resolved;
+          } else {
+            fileArg = resolved;
+          }
+        } else if (fs.existsSync(candidate)) {
           if (fs.statSync(candidate).isDirectory()) {
             dirArg = candidate;
           } else {
@@ -1172,6 +1179,6 @@ module.exports = {
   checkDrift,
 };
 
-if (require.main === module) {
+if (require.main === module || (require.main && path.basename(require.main.filename) === 'context_compiler.js')) {
   main();
 }

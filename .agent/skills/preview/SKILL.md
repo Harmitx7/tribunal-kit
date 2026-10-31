@@ -1,0 +1,117 @@
+---
+name: preview
+description: Preview server start, stop, and status check. Local development server management. Uses auto_preview.js for automated lifecycle control. Shows current URL and hot-reload status.
+tools: Read, Grep, Glob, Bash, Edit, Write
+version: 3.0.0
+last-updated: 2026-07-30
+required-skills:
+  - bash-linux
+  - nextjs-react-expert
+  - devops-engineer
+scripts-binding:
+  - .agent/scripts/auto_preview.js
+---
+
+# /preview — Local Development Server
+
+$ARGUMENTS
+
+---
+
+## Mandatory Pre-Flight Context Inspection
+
+Before managing dev server lifecycle or starting preview servers, you MUST inspect:
+
+1. Workspace Dev Script Configuration (`package.json`) → Verify `npm run dev` or equivalent start script and framework server port
+2. Environment Configuration (`.env`) → Check port bindings and dev server host configs
+3. Dev Server Lifecycle Script (`.agent/scripts/auto_preview.js`) → Use automated script for process management, port collision detection, and health checks
+
+4. Required Skills → Before executing, load and follow procedural rules from:
+   - `bash-linux` (.agent/skills/bash-linux/SKILL.md): Shell scripting patterns and command-line automation
+   - `nextjs-react-expert` (.agent/skills/nextjs-react-expert/SKILL.md): Next.js 15+ App Router, Server Components, Server Actions, PPR
+   - `devops-engineer` (.agent/skills/devops-engineer/SKILL.md): CI/CD pipeline management and infrastructure automation
+
+---
+
+## Commands
+
+```
+/preview start    → Start the local dev server
+/preview stop     → Stop the local dev server
+/preview restart  → Restart the dev server (after config changes)
+/preview status   → Show current server status and URL
+```
+
+---
+
+## Execution
+
+```bash
+# Start
+node .agent/scripts/auto_preview.js start
+
+# Stop
+node .agent/scripts/auto_preview.js stop
+
+# Restart
+node .agent/scripts/auto_preview.js restart
+
+# Status
+node .agent/scripts/auto_preview.js status
+```
+
+---
+
+## Server Start Output
+
+```
+━━━ Dev Server Starting ━━━━━━━━━━━━━━━━━━
+
+Command:   npm run dev
+URL:       http://localhost:3000
+Status:    ✅ Running
+
+Hot reload: ✅ Enabled
+TypeScript: ✅ Type checking active
+```
+
+---
+
+## Common Issues
+
+```
+Port 3000 in use:
+  → Kill: taskkill /F /IM node.exe  (Windows)
+  → OR:   lsof -i:3000 && kill -9 [PID]  (Mac/Linux)
+  → OR:   Run on different port: PORT=3001 npm run dev
+
+Build error on start:
+  → Run: npx tsc --noEmit to see TypeScript errors
+  → Fix errors first, then /preview start
+
+Config change not reflected:
+  → /preview restart (hot reload doesn't pick up next.config.js changes)
+```
+
+---
+
+## When to Use /preview
+
+| Use `/preview` when...                   |                             |
+| :--------------------------------------- | :-------------------------- |
+| After code generation to visually verify | Start: `/preview start`     |
+| Config file was changed                  | Restart: `/preview restart` |
+| Done working for the session             | Stop: `/preview stop`       |
+| Checking if server is active             | Status: `/preview status`   |
+
+---
+
+## After /preview — Next Steps
+
+| Outcome               | Next Command                               |
+| :-------------------- | :----------------------------------------- |
+| Preview looks correct | → `/deploy` or commit code                 |
+| Preview shows errors  | → `/debug` to analyze console/network logs |
+| Changes not updating  | → `/preview restart` to bust cache         |
+
+---

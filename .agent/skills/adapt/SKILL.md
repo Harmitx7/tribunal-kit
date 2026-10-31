@@ -1,6 +1,6 @@
 ---
 name: adapt
-description: "Use when building, styling, optimizing, and auditing adapt components, responsive layouts, design systems, and frontend state."
+description: "Responsive layout and adaptive interface engineering. Enforces content-driven breakpoints, container queries (@container), CSS Subgrid, horizontal overflow containment, and touch target minimums (>=44px)."
 version: 6.0.0
 last-updated: 2026-09-29
 skills:

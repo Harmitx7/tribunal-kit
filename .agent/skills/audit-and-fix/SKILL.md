@@ -7,9 +7,9 @@ skills:
   - fixing-accessibility
   - build-primitive
   - baseline-ui
-  - cf-security-audit-core
-  - cf-web-protocol-and-auth
-  - cf-attack-classes
+  - vulnerability-scanner
+  - authentication-best-practices
+  - red-team-tactics
 tools: Read, Grep, Glob, Bash, Edit, Write
 scripts-binding:
   - .agent/scripts/lint_runner.js

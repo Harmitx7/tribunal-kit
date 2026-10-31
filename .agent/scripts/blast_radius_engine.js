@@ -206,14 +206,21 @@ if (require.main === module) {
     process.exit(1);
   }
 
-  if (!fs.existsSync(modelFile)) {
-    console.error(
-      `  ${RED}✖ architecture-model.json not found.${RESET} Run architecture_extractor.js first.`,
-    );
-    process.exit(1);
+  let model;
+  if (fs.existsSync(modelFile)) {
+    model = JSON.parse(fs.readFileSync(modelFile, 'utf8'));
+  } else {
+    try {
+      const { ArchitectureExtractor } = require('./architecture_extractor');
+      const extractor = new ArchitectureExtractor(repoRoot);
+      model = extractor.scan();
+    } catch (_err) {
+      console.error(
+        `  ${RED}✖ architecture-model.json not found and dynamic extraction failed.${RESET}`,
+      );
+      process.exit(1);
+    }
   }
-
-  const model = JSON.parse(fs.readFileSync(modelFile, 'utf8'));
   const engine = new BlastRadiusEngine(model);
   const result = engine.computeBlastRadius(query);
 

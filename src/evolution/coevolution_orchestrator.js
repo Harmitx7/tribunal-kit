@@ -69,10 +69,24 @@ function parseCommandLine(cmdStr) {
   return tokens;
 }
 
+const DANGEROUS_SHELL_CHARS_REGEX = /[&|<>^%\r\n]/;
+
 function shouldRunInShell(cmd) {
   if (process.platform !== 'win32') return false;
   const lower = (cmd || '').toLowerCase();
   return lower === 'npm' || lower === 'npx' || lower.endsWith('.cmd') || lower.endsWith('.bat');
+}
+
+function assertSafeShellArgs(cmd, args) {
+  if (process.platform === 'win32' && shouldRunInShell(cmd)) {
+    for (const arg of args) {
+      if (typeof arg === 'string' && DANGEROUS_SHELL_CHARS_REGEX.test(arg)) {
+        throw new Error(
+          `Security Violation: Argument "${arg}" contains dangerous shell metacharacters forbidden when invoking Windows shell.`,
+        );
+      }
+    }
+  }
 }
 
 class CoEvolutionOrchestrator {
@@ -188,6 +202,7 @@ class CoEvolutionOrchestrator {
           const args = parseCommandLine(this.harnessCmd);
           if (args.length > 0) {
             const cmd = args.shift();
+            assertSafeShellArgs(cmd, args);
             execFileSync(cmd, args, { encoding: 'utf8', cwd: runDir, stdio: 'pipe', shell: shouldRunInShell(cmd) });
           }
         } catch (_) {
@@ -340,7 +355,9 @@ class CoEvolutionOrchestrator {
 
         try {
           const vCmd = scenario.verificationCommand;
-          execFileSync(vCmd.cmd, vCmd.args || [], { encoding: 'utf8', cwd: runDir, stdio: 'pipe', shell: shouldRunInShell(vCmd.cmd) });
+          const vArgs = vCmd.args || [];
+          assertSafeShellArgs(vCmd.cmd, vArgs);
+          execFileSync(vCmd.cmd, vArgs, { encoding: 'utf8', cwd: runDir, stdio: 'pipe', shell: shouldRunInShell(vCmd.cmd) });
           return { exitCode: 0, verdict: 'APPROVED' };
         } catch (e) {
           return { exitCode: e.status || 1, verdict: 'REJECTED', reason: (e.stderr || e.message || '').trim() };
@@ -431,4 +448,10 @@ class CoEvolutionOrchestrator {
   }
 }
 
-module.exports = { CoEvolutionOrchestrator, parseCommandLine };
+module.exports = {
+  CoEvolutionOrchestrator,
+  parseCommandLine,
+  shouldRunInShell,
+  assertSafeShellArgs,
+  DANGEROUS_SHELL_CHARS_REGEX,
+};

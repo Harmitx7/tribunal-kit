@@ -1,11 +1,11 @@
 ---
 name: ui-reasoning-engine
-description: "Use when building, styling, optimizing, and auditing ui reasoning engine components, responsive layouts, design systems, and frontend state."
+description: "Cognitive design loop establishing product identity, audience mental models, art direction presets, and structured Design Decision Records (DDR) before code generation."
 version: 6.0.0
 last-updated: 2026-09-29
 skills:
   - product-aware-heuristics
-  - interface-design
+  - frontend-design
   - better-colors
   - better-ui
 tools: Read, Grep, Glob, Bash, Edit, Write

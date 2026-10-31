@@ -1,6 +1,8 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.cmdReview = cmdReview;
+exports.deduplicateFindings = deduplicateFindings;
+exports.compareToReference = compareToReference;
 exports.FIXTURES = null;
 exports.REVIEWER_CONFIGS = null;
 
@@ -35,7 +37,6 @@ const { evaluateDecision } = require('../system1/decision_engine');
 const { buildDecisionPlan } = require('../system1/decision_plan');
 const { dynamicReviewerSelection } = require('../system1/reviewer_selection');
 const { progressiveContextExpansion } = require('../system1/progressive_context');
-const { executeWithEvidenceRequests } = require('../system1/evidence_resolver');
 const { executeWithConfidenceEscalation } = require('../system1/confidence_evaluator');
 const { REVIEWER_CATALOG } = require('../system1/reviewer_orchestrator');
 
@@ -548,11 +549,12 @@ function deduplicateFindings(findings) {
   const duplicates = [];
 
   for (const f of findings) {
-    // Deterministic dedup by normalized issue text
-    if (seen.has(f.normalized)) {
+    // Deterministic dedup by location and normalized issue text
+    const key = f.location ? `${f.location}:${f.normalized}` : f.normalized;
+    if (seen.has(key)) {
       duplicates.push(f);
     } else {
-      seen.set(f.normalized, f);
+      seen.set(key, f);
       unique.push(f);
     }
   }
@@ -567,26 +569,36 @@ function deduplicateFindings(findings) {
 }
 
 function compareToReference(findings, referenceFindings) {
-  if (!referenceFindings) return { detected: 0, missed: 0, criticalMissed: 0, recall: 'N/A' };
+  if (!referenceFindings || !Array.isArray(referenceFindings) || referenceFindings.length === 0) {
+    return { detected: 0, missed: 0, criticalMissed: 0, recall: 'N/A' };
+  }
 
   const detected = [];
   const missed = [];
 
   for (const ref of referenceFindings) {
-    const refNorm = ref.desc
+    const refNorm = (ref.desc || '')
       .toLowerCase()
       .replace(/[^a-z0-9 ]/g, '')
-      .replace(/\s+/g, ' ');
+      .replace(/\s+/g, ' ')
+      .trim();
     // Check if any finding fuzzy-matches the reference
     const found = findings.some(f => {
-      // Simple word-overlap heuristic (NOT LLM-based)
-      const refWords = new Set(refNorm.split(' ').filter(w => w.length > 3));
-      const fWords = new Set(f.normalized.split(' ').filter(w => w.length > 3));
+      // Word-overlap heuristic (NOT LLM-based)
+      let refWords = new Set(refNorm.split(' ').filter(w => w.length > 3));
+      let fWords = new Set((f.normalized || '').split(' ').filter(w => w.length > 3));
+      if (refWords.size === 0) {
+        refWords = new Set(refNorm.split(' ').filter(Boolean));
+        fWords = new Set((f.normalized || '').split(' ').filter(Boolean));
+      }
+      if (refWords.size === 0) return false;
+
       let overlap = 0;
       for (const w of refWords) {
         if (fWords.has(w)) overlap++;
       }
-      return overlap >= Math.min(3, refWords.size * 0.5);
+      const threshold = Math.max(1, Math.min(3, Math.ceil(refWords.size * 0.5)));
+      return overlap >= threshold;
     });
 
     if (found) {

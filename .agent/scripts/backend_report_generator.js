@@ -24,8 +24,10 @@ function sanitize(text) {
   let safe = text;
   // Escape HTML tags
   safe = safe.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  // Strip javascript: URIs
+  // Strip dangerous URIs (javascript:, vbscript:, data:text/html)
   safe = safe.replace(/javascript\s*:/gi, 'blocked-js:');
+  safe = safe.replace(/vbscript\s*:/gi, 'blocked-vbs:');
+  safe = safe.replace(/data\s*:\s*text\/html/gi, 'blocked-data:');
   // Prevent heading injection: escape leading # at start of line
   safe = safe.replace(/^(#{1,6})\s/gm, '\\$1 ');
   // Redact secrets
@@ -159,3 +161,9 @@ function main() {
 if (require.main === module) {
   main();
 }
+
+module.exports = {
+  sanitize,
+  formatFinding,
+  generateReport,
+};

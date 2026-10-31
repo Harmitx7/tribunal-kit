@@ -349,6 +349,76 @@ function safeContainedPath(candidatePath, rootPath, options = {}) {
   }
 }
 
+/**
+ * Asserts that a target path is strictly contained within an authorized root directory.
+ * Unifies lexical path validation, null byte checks, Windows reserved device names,
+ * path traversal checks, and symlink containment into the canonical containment primitive.
+ *
+ * @param {string} root - Trusted root directory
+ * @param {string} targetPath - Relative or absolute target path
+ * @param {object} [options]
+ * @param {boolean} [options.checkSymlinks=true] - Verify realpath containment if path exists
+ * @returns {string} The fully resolved, authorized target path
+ * @throws {Error} If target escapes authorized root
+ */
+function assertWithinRoot(root, targetPath, options = {}) {
+  if (!root || typeof root !== 'string') {
+    throw new Error('Security Violation: Invalid root directory specified.');
+  }
+  if (!targetPath || typeof targetPath !== 'string') {
+    throw new Error('Security Violation: Invalid target path specified.');
+  }
+
+  // Reject null bytes immediately
+  if (targetPath.includes('\0') || root.includes('\0')) {
+    throw new Error('Security Violation: Null byte detected in path.');
+  }
+
+  const resolvedRoot = path.resolve(root);
+  const resolvedTarget = path.resolve(resolvedRoot, targetPath);
+
+  // Use centralized lexical containment
+  if (!isPathContained(resolvedRoot, resolvedTarget, { allowRoot: true })) {
+    throw new Error(
+      `Path security violation: Security Violation: Path traversal detected. Target "${targetPath}" escapes authorized root "${root}".`,
+    );
+  }
+
+  // Windows device name checks on segments
+  const normalized = targetPath.replace(/\\/g, '/');
+  for (const seg of normalized.split('/')) {
+    if (WINDOWS_RESERVED_DEVICE_REGEX.test(seg)) {
+      throw new Error(
+        `Path security violation: Security Violation: Path traversal detected. Target "${targetPath}" escapes authorized root "${root}".`,
+      );
+    }
+  }
+
+  // Symlink escape verification if the target or any parent exists
+  const checkSymlinks = options.checkSymlinks !== false;
+  if (checkSymlinks && fs.existsSync(resolvedTarget)) {
+    try {
+      const realRoot = resolveCanonicalRoot(resolvedRoot);
+      const realTarget = typeof fs.realpathSync.native === 'function'
+        ? fs.realpathSync.native(resolvedTarget)
+        : fs.realpathSync(resolvedTarget);
+
+      if (!isPathContained(realRoot, realTarget, { allowRoot: true })) {
+        throw new Error(
+          `Path security violation: Security Violation: Symlink target "${realTarget}" escapes authorized real root "${realRoot}".`,
+        );
+      }
+    } catch (e) {
+      if (e.message && e.message.includes('Security Violation: Symlink target')) {
+        throw e;
+      }
+      // If stat/realpath fails on nonexistent segment, lexical check stands
+    }
+  }
+
+  return resolvedTarget;
+}
+
 module.exports = {
   PathSecurityError,
   validateLexicalPath,
@@ -356,4 +426,5 @@ module.exports = {
   isPathContained,
   assertContainedPath,
   safeContainedPath,
+  assertWithinRoot,
 };

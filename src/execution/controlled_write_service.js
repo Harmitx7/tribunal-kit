@@ -40,14 +40,24 @@ class ControlledWriteService {
     if (!req.files || !Array.isArray(req.files) || req.files.length === 0)
       throw new Error('Missing files array');
 
+    const seenPaths = new Set();
     // Normalize and validate paths
     for (const f of req.files) {
       if (!['CREATE', 'MODIFY', 'DELETE'].includes(f.operation)) {
         throw new Error(`Unknown operation: ${f.operation}`);
       }
-      if (!f.path) throw new Error('File path missing');
+      if (!f.path || typeof f.path !== 'string') throw new Error('File path missing');
+
+      if ((f.operation === 'CREATE' || f.operation === 'MODIFY') && typeof f.content !== 'string') {
+        throw new Error(`File content must be a string for operation ${f.operation} on ${f.path}`);
+      }
 
       const fullPath = assertWithinRoot(this.workspaceRoot, f.path);
+      const normalizedKey = process.platform === 'win32' ? fullPath.toLowerCase() : fullPath;
+      if (seenPaths.has(normalizedKey)) {
+        throw new Error(`Duplicate file path in write request: ${f.path}`);
+      }
+      seenPaths.add(normalizedKey);
       f.fullPath = fullPath;
     }
   }
@@ -208,9 +218,35 @@ class ControlledWriteService {
       throw new Error('Approval not required or already approved/rejected');
     }
 
+    if (!approverId || typeof approverId !== 'string' || !approverId.trim()) {
+      throw new Error('Invalid or missing approverId');
+    }
+
+    const trimmedApprover = approverId.trim().toLowerCase();
+    // Anti-Self-Authorization Invariant (Domain E/B): AI agents and automated callers cannot self-approve writes requiring human approval
+    if (
+      trimmedApprover === 'ai' ||
+      trimmedApprover === 'agent' ||
+      trimmedApprover === 'mcp_client' ||
+      trimmedApprover === 'mcp' ||
+      trimmedApprover === 'automated' ||
+      trimmedApprover === 'bot' ||
+      trimmedApprover === 'unknown' ||
+      trimmedApprover.startsWith('agent-') ||
+      trimmedApprover.startsWith('ai-')
+    ) {
+      throw new Error('Security Violation: AI agents and automated callers cannot self-approve writes requiring human approval.');
+    }
+
+    if (state.requiresHumanApproval) {
+      if (!signature || typeof signature !== 'string' || !signature.trim()) {
+        throw new Error('Security Violation: Human approval requires a valid, non-empty confirmation signature.');
+      }
+    }
+
     state.humanApproval = {
-      approverId,
-      signature,
+      approverId: approverId.trim(),
+      signature: signature ? signature.trim() : null,
       timestamp: Date.now(),
     };
 
@@ -222,11 +258,8 @@ class ControlledWriteService {
     const state = this.activeRequests.get(token);
     if (!state) throw new Error('Invalid or expired token');
 
-    if (state.status === 'REJECTED') {
-      throw new Error('Cannot commit a REJECTED write');
-    }
-    if (state.status === 'HUMAN_APPROVAL_REQUIRED') {
-      throw new Error('Cannot commit: HUMAN_APPROVAL_REQUIRED');
+    if (state.status !== 'PENDING_COMMIT') {
+      throw new Error(`Cannot commit write in status '${state.status}': must be PENDING_COMMIT`);
     }
 
     // TOCTOU Protection

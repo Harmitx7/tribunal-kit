@@ -1,0 +1,95 @@
+{
+  "domain": "agent-runtime-reliability",
+  "displayName": "Agent Runtime Reliability & Recovery",
+  "version": "9.3.0",
+  "gitCommit": "781959c",
+  "timestamp": "2026-10-30T16:09:36.911Z",
+  "decision": "CERTIFIED_FOR_PRODUCTION_RELEASE",
+  "verdict": "PASS",
+  "durationMs": 65,
+  "metrics": {
+    "totalGates": 10,
+    "passedGates": 10,
+    "failedGates": 0,
+    "canonicalSkillsCount": 12,
+    "totalRepositorySkills": 398,
+    "canonicalStatesCount": 10,
+    "failureCategoriesCount": 14
+  },
+  "gates": [
+    {
+      "gate": "A",
+      "name": "Repository & Runtime Manifest Integrity",
+      "status": "PASS",
+      "evidence": "package.json: true, package-lock.json: true, Cargo.toml: true"
+    },
+    {
+      "gate": "B",
+      "name": "Shared Runtime Engine Architecture",
+      "status": "PASS",
+      "evidence": "10/10 engine modules present in src/runtime_reliability/"
+    },
+    {
+      "gate": "C",
+      "name": "Canonical Skill Portfolio (12/12)",
+      "status": "PASS",
+      "evidence": "12/12 skills verified with valid frontmatter"
+    },
+    {
+      "gate": "D",
+      "name": "Topic Map & Routing Integration",
+      "status": "PASS",
+      "evidence": "domain_skills_mapped: true (12/12), no_duplicates: true, on_disk: true, declared: 398, unique_in_map: 398, disk_count: 398"
+    },
+    {
+      "gate": "E",
+      "name": "Canonical State Machine & Terminal Immutability",
+      "status": "PASS",
+      "evidence": "state: SUCCEEDED, terminal immutability enforced: true"
+    },
+    {
+      "gate": "F",
+      "name": "Failure Classifier & Error Normalization",
+      "status": "PASS",
+      "evidence": "network classified: TRANSIENT_NETWORK, rate limit classified: RATE_LIMITED, categories count: 14"
+    },
+    {
+      "gate": "G",
+      "name": "Bounded Retry, Jitter & Idempotency Engine",
+      "status": "PASS",
+      "evidence": "recovered on attempt: 2, idempotency cached: true"
+    },
+    {
+      "gate": "H",
+      "name": "Hierarchical Cancellation & Timeout Propagation",
+      "status": "PASS",
+      "evidence": "child cancelled: true, abort signal: true, cleanup called: true"
+    },
+    {
+      "gate": "I",
+      "name": "Multi-Agent Quorum & Partial Failure Semantics",
+      "status": "PASS",
+      "evidence": "required fail verdict: FAILED (Non-Masking Invariant Preserved)"
+    },
+    {
+      "gate": "J",
+      "name": "Checkpoint Integrity & Chaos Recovery",
+      "status": "PASS",
+      "evidence": "valid ckpt: true, tampered detected: true, chaos intercepted: true"
+    }
+  ],
+  "skills": [
+    "agent-runtime-reliability-auditor",
+    "agent-timeout-and-cancellation-auditor",
+    "agent-retry-and-idempotency-auditor",
+    "agent-state-machine-integrity-auditor",
+    "multi-agent-partial-failure-auditor",
+    "agent-runtime-resource-guard-auditor",
+    "agent-recovery-and-resume-auditor",
+    "agent-observability-and-diagnostics-auditor",
+    "agent-fault-injection-engineer",
+    "agent-fallback-and-degradation-auditor",
+    "agent-runtime-deadlock-and-liveness-auditor",
+    "agent-runtime-regression-auditor"
+  ]
+}
