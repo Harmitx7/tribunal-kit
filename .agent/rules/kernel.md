@@ -89,5 +89,5 @@ Communicate operations, verifications, and state transitions using concise activ
 
 ## 4. Skills & Tool Integration
 
-Tribunal Kit provides 320 deep skill modules located in `./.agent/skills/<skill-name>/SKILL.md`.
+Tribunal Kit provides 398 deep skill modules located in `./.agent/skills/<skill-name>/SKILL.md`.
 Master rules and comprehensive domain guidelines: `./.agent/rules/GEMINI.md`.

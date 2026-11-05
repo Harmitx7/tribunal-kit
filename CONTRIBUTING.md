@@ -27,6 +27,8 @@ node bin/wrapper.js --help
 - **npm** >= 9
 - **Rust** (optional) — Only needed if modifying the Rust core engine in `crates/`
 
+The published package has one production runtime dependency: `zod` for schema validation. Development dependencies are installed with `npm install` and are listed separately in `package.json`.
+
 ### Project Structure
 
 ```

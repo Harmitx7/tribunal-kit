@@ -19,9 +19,13 @@ describe('src/utils/logger', () => {
   });
 
   test('colors and formatting functions return correct ANSI-wrapped strings', () => {
-    expect(logger.colorize('red', 'hello')).toBe('\x1b[91mhello\x1b[0m');
-    expect(logger.c('green', 'world')).toBe('\x1b[92mworld\x1b[0m');
-    expect(logger.bold('bold text')).toBe('\x1b[1mbold text\x1b[0m');
+    const expected = (color, text) =>
+      process.env.NO_COLOR ? text : `${logger.C[color]}${text}${logger.C.reset}`;
+    expect(logger.colorize('red', 'hello')).toBe(expected('red', 'hello'));
+    expect(logger.c('green', 'world')).toBe(expected('green', 'world'));
+    expect(logger.bold('bold text')).toBe(
+      process.env.NO_COLOR ? 'bold text' : `${logger.C.bold}bold text${logger.C.reset}`,
+    );
     expect(logger.C.reset).toBe('\x1b[0m');
   });
 

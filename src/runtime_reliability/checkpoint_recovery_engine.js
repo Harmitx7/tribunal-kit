@@ -42,7 +42,7 @@ function computeCheckpointHash(data) {
 class CheckpointRecoveryEngine {
   constructor(options = {}) {
     this.storageDir = options.storageDir || path.resolve(process.cwd(), '.agent/checkpoints');
-    this.currentCodeRevision = options.codeRevision || '9.3.0';
+    this.currentCodeRevision = options.codeRevision || '9.4.0';
   }
 
   /**

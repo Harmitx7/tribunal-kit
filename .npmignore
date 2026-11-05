@@ -77,3 +77,10 @@ npm/packages/
 # Exclude agent history
 .agent/history/
 .agent/.backups/
+
+.agent/.tribunal/
+.agent/cache/
+.agent/plans/
+.agents/
+skills/
+references/

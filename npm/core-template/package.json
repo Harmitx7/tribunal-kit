@@ -1,6 +1,6 @@
 {
   "name": "@tribunal-kit/core-${PLATFORM}-${ARCH}",
-  "version": "9.3.0",
+  "version": "9.4.0",
   "license": "MIT",
   "description": "Precompiled native Rust binary of Tribunal Core for ${PLATFORM} (${ARCH})",
   "repository": {

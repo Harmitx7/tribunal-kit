@@ -103,7 +103,11 @@ describe('TUI System & Brainless Components', () => {
       for (const ch of 'Thinking') {
         expect(shimmer).toContain(ch);
       }
-      expect(shimmer).toContain('\x1b[');
+      if (process.env.NO_COLOR) {
+        expect(shimmer).not.toContain('\x1b[');
+      } else {
+        expect(shimmer).toContain('\x1b[');
+      }
     });
 
     test('starts and finishes ShimmerSpinner cleanly', () => {

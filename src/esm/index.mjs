@@ -12,6 +12,7 @@ const require = createRequire(import.meta.url);
 const cli = require('../cli.js');
 const logger = require('../utils/logger.js');
 const helpers = require('../utils/helpers.js');
+const activityApi = require('../activity/index.js');
 
 // ── CLI Commands ─────────────────────────────────────────
 export const main = cli.main;
@@ -33,6 +34,10 @@ export const dbg = logger.dbg;
 export const runShellAsync = helpers.runShellAsync;
 export const getKitAgent = helpers.getKitAgent;
 export const banner = helpers.banner;
+export const activity = activityApi;
+export const ActivityTracker = activityApi.ActivityTracker;
+export const renderMarkdown = activityApi.renderMarkdown;
+export const deepClone = activityApi.deepClone;
 
 // Helper to wrap CommonJS requires in friendly error diagnostics
 function loadCommand(modulePath, functionName, ...args) {
@@ -149,6 +154,10 @@ export function cmdOptimizeStep(argv, quiet) {
 
 export async function cmdImpactTier(argv, quiet) {
   return loadCommand('../commands/native.js', 'cmdImpactTier', argv, quiet);
+}
+
+export async function cmdUnderstand(flags, argv, quiet) {
+  return loadCommand('../commands/understand.js', 'cmdUnderstand', flags, argv, quiet);
 }
 
 export async function cmdArch(flags, argv, quiet) {

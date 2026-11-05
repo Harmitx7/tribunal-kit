@@ -11,7 +11,7 @@
  *   3. All 52 Workflows Frontmatter & Required-Skill / Script-Binding Resolution
  *   4. Zero Deprecated Directories (runners/) or Stale Path References
  *   5. Reviewer Count Invariant (28 reviewers) across all Rule & Workflow Sources
- *   6. 320-Skill Inventory & Skill-Topic-Map 100% Registry Parity
+ *   6. Skill Inventory & Skill-Topic-Map 100% Registry Parity
  *   7. Absence of Legacy Announcement Format ("Applying knowledge of @") across all Bridges
  *   8. Deterministic Instruction Validator Engine & Adversarial Detection
  */
@@ -29,6 +29,7 @@ const {
 } = require('../../scripts/validate-instructions');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
+const PACKAGE_VERSION = require('../../package.json').version;
 
 describe('Phase 7: Workflow & Instruction Modernization', () => {
 
@@ -70,7 +71,7 @@ describe('Phase 7: Workflow & Instruction Modernization', () => {
       expect(content).toContain('Verification-Before-Completion (VBC)');
 
       // Inventory Pointer
-      expect(content).toContain('320 deep skill modules');
+      expect(content).toContain(`${EXPECTED_SKILL_COUNT} deep skill modules`);
       expect(content).toContain('.agent/skills/<skill-name>/SKILL.md');
       expect(content).toContain('.agent/rules/GEMINI.md');
     });
@@ -100,15 +101,16 @@ describe('Phase 7: Workflow & Instruction Modernization', () => {
       }
     });
 
-    test('system-prompt.md reflects 320 skills, 28 reviewers, and version 9.3.0', () => {
+    test('system-prompt.md reflects current skill count, 28 reviewers, and package version', () => {
       const spPath = path.join(REPO_ROOT, '.agent', 'config', 'system-prompt.md');
       const content = fs.readFileSync(spPath, 'utf8');
 
-      expect(content).toContain('320');
+      expect(content).toContain(String(EXPECTED_SKILL_COUNT));
       expect(content).not.toContain('185-skill library');
       expect(content).not.toContain('235 skills');
+      expect(content).not.toContain('320 skills');
       expect(content).not.toContain('v9.2.6');
-      expect(content).toContain('v9.3.0');
+      expect(content).toContain(`v${PACKAGE_VERSION}`);
     });
   });
 

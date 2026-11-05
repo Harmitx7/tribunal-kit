@@ -20,6 +20,7 @@ function runShellAsync(command, args = [], options = {}) {
       child.kill('SIGTERM');
       reject(new Error(`Command timed out after ${timeoutMs}ms: ${command}`));
     }, timeoutMs);
+    timer.unref();
     child.on('close', code => {
       clearTimeout(timer);
       if (code !== 0) reject(new Error(`Command failed with exit code ${code}`));

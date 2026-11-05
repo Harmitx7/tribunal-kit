@@ -176,8 +176,13 @@ function validateHostInstructions(repoRoot) {
   const systemPromptPath = path.join(repoRoot, '.agent', 'config', 'system-prompt.md');
   if (fs.existsSync(systemPromptPath)) {
     const spContent = fs.readFileSync(systemPromptPath, 'utf8');
-    if (spContent.includes('185-skill library') || spContent.includes('235 skills')) {
-      errors.push('system-prompt.md contains obsolete skill counts (should be 320)');
+    if (
+      spContent.includes('185-skill library') ||
+      spContent.includes('235 skills') ||
+      spContent.includes('320-skill library') ||
+      spContent.includes('320 skills')
+    ) {
+      errors.push(`system-prompt.md contains obsolete skill counts (should be ${EXPECTED_SKILL_COUNT})`);
     }
     if (spContent.includes('v9.2.6')) {
       errors.push('system-prompt.md contains obsolete version string v9.2.6');

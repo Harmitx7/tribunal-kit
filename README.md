@@ -6,14 +6,14 @@
   </a>
 
   <p align="center">
-    <code>ESTD. 2026 // ARTICLE IV § 12 // ZERO-DEPENDENCY GOVERNANCE ENGINE</code>
+    <code>ESTD. 2026 // ARTICLE IV § 12 // LOW-DEPENDENCY GOVERNANCE ENGINE</code>
   </p>
 
   <h1 style="font-size: 1.85em; color: #ffffff; font-weight: 800; margin: 12px 0 8px 0; letter-spacing: -0.6px;">
     Tribunal Kit
   </h1>
   <p style="font-size: 1.08em; color: #a4adc4; font-weight: 400; letter-spacing: 0.2px; margin: 0 auto 22px auto; max-width: 820px; line-height: 1.55;">
-    The zero-dependency governance layer and neurosymbolic verification envelope for AI coding agents. Intercepts AI hallucinations, phantom packages, and architectural regressions locally before code reaches disk.
+    A low-dependency governance layer with one production runtime dependency, zod, and a neurosymbolic verification envelope for AI coding agents. Intercepts AI hallucinations, phantom packages, and architectural regressions locally before code reaches disk.
   </p>
 
   <!-- BADGES ROW -->
@@ -22,7 +22,7 @@
       <img src="https://agentarmorhq.com/api/badge/harmitx7-tribunal-kit" alt="AgentArmor Risk Grade" />
     </a>
     <a href="https://github.com/Harmitx7/tribunal-kit/releases">
-      <img src="https://img.shields.io/badge/Release-v9.3.0-ff3300?style=for-the-badge&logoColor=white" alt="Release v9.3.0" />
+      <img src="https://img.shields.io/badge/Release-v9.4.0-ff3300?style=for-the-badge&logoColor=white" alt="Release v9.4.0" />
     </a>
     <a href="https://www.npmjs.com/package/tribunal-kit">
       <img src="https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white&color=0e1117" alt="NPM Version" />
@@ -307,10 +307,10 @@ Tribunal Kit enforces a **zero install-time lifecycle script** policy (`no prein
 
 ```bash
 # Execute directly via npx with script execution disabled
-npx -y --ignore-scripts tribunal-kit@9.3.0 init
+npx -y --ignore-scripts tribunal-kit@9.4.0 init
 
 # Or install globally with script isolation
-npm install -g --ignore-scripts tribunal-kit@9.3.0
+npm install -g --ignore-scripts tribunal-kit@9.4.0
 ```
 
 <a id="step-by-step"></a>
@@ -430,7 +430,7 @@ tk <command> [subcommand] [flags]
 --json               Emit machine-readable JSON output for CI pipelines
 --quiet              Suppress all non-essential banners and output
 --verbose            Show detailed debug logging and internal execution traces
---version, -v        Print installed package and native core version (9.3.0)
+--version, -v        Print installed package and native core version (9.4.0)
 ```
 
 ---

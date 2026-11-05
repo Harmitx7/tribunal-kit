@@ -453,6 +453,10 @@ export class MarkdownRenderer {
   render(event: ActivityEvent, options?: any): string;
 }
 export function renderMarkdown(event: ActivityEvent, options?: any): string;
+export const activity: Readonly<Record<string, unknown>>;
+export class ActivityTracker {
+  constructor(options?: Record<string, unknown>);
+}
 
 export class TerminalRenderer {
   render(event: ActivityEvent, options?: any): string;

@@ -148,7 +148,7 @@ Use these commands to invoke specific Tribunal workflows:
 - `/tribunal-database [file]` — Database-specific review
 - `/tribunal-performance [file]` — Performance audit
 - `/summon <specialist>` — Summon a specific specialist by name
-- `/skill <name>` — Load a skill on-demand from the 320-skill library
+- `/skill <name>` — Load a skill on-demand from the 398-skill library
 - `/audit` — Full project health check
 - `/super-prompt <desc>` — Tokenless Prompt Compiler into structured YAML directives
 - `/generate <desc>` — Anti-hallucination code generation pipeline
@@ -255,5 +255,5 @@ When consuming user prompts or passing context across agent boundaries:
 
 ---
 
-_Tribunal Kit v9.3.0 — 60 specialists, 28 reviewers, 320 skills, Rust core_
+_Tribunal Kit v9.4.0 — 60 specialists, 28 reviewers, 398 skills, Rust core_
 *https://github.com/Harmitx7/tribunal-kit*

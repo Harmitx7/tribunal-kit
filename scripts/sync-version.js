@@ -66,6 +66,12 @@ function fail(message) {
 
 function checkVersionMetadata() {
   const expectedOptionalVersion = `^${VERSION}`;
+  const coreDependencies = Object.entries(PKG.optionalDependencies || {}).filter(([name]) =>
+    name.startsWith('@tribunal-kit/core-'),
+  );
+  if (coreDependencies.length !== 6) {
+    fail(`package.json declares ${coreDependencies.length} @tribunal-kit/core-* packages, expected 6`);
+  }
   for (const [name, declaredVersion] of Object.entries(PKG.optionalDependencies || {})) {
     if (declaredVersion !== expectedOptionalVersion) {
       fail(
@@ -108,12 +114,49 @@ function checkVersionMetadata() {
   if (readmeRelease !== VERSION) {
     fail(`README release badge is ${readmeRelease || 'missing'}, expected ${VERSION}`);
   }
+  const readme = readText('README.md');
+  if (!readme.includes(`tribunal-kit@${VERSION}`)) {
+    fail(`README install examples do not reference tribunal-kit@${VERSION}`);
+  }
+  if (!readme.includes(`native core version (${VERSION})`)) {
+    fail(`README CLI version output does not reference ${VERSION}`);
+  }
+  const systemPrompt = readText('.agent/config/system-prompt.md');
+  if (!systemPrompt.includes(`Tribunal Kit v${VERSION}`)) {
+    fail(`.agent/config/system-prompt.md does not reference version ${VERSION}`);
+  }
+  const currentCodeDefaults = [
+    ['src/runtime_reliability/checkpoint_recovery_engine.js', `currentCodeRevision = options.codeRevision || '${VERSION}'`],
+    ['src/runtime_reliability/execution_state_schemas.js', `codeRevision: z.string().default('${VERSION}')`],
+    ['src/supply_chain/sbom_engine.js', `this.toolVersion = options.toolVersion || '${VERSION}'`],
+  ];
+  for (const [target, expected] of currentCodeDefaults) {
+    if (!readText(target).includes(expected)) fail(`${target} default version does not match ${VERSION}`);
+  }
+
+  const versionTargets = [
+    ['plugins/core-plugin.json', readJson('plugins/core-plugin.json').version],
+    ['plugins/gemini/extension.json', readJson('plugins/gemini/extension.json').version],
+    ['npm/core-template/package.json', readJson('npm/core-template/package.json').version],
+  ];
+  for (const [target, actual] of versionTargets) {
+    if (actual !== VERSION) fail(`${target} version is ${actual || 'missing'}, expected ${VERSION}`);
+  }
+  const adapter = readText('bin/adapter-install.js');
+  if (!adapter.includes(`v${VERSION}`) && !adapter.includes(`'${VERSION}'`)) {
+    fail(`bin/adapter-install.js does not contain version ${VERSION}`);
+  }
+  if (!readText('src/tui/banner.js').includes(`version = '${VERSION}'`)) {
+    fail(`src/tui/banner.js default version does not match ${VERSION}`);
+  }
 }
 
 const DOCUMENTS = [
   'README.md',
   '.agent/ARCHITECTURE.md',
   '.agent/rules/GEMINI.md',
+  '.agent/rules/kernel.md',
+  '.agent/config/system-prompt.md',
   'CONTRIBUTING.md',
 ];
 

@@ -6,17 +6,24 @@ const fs = require('fs');
 const os = require('os');
 
 const WRAPPER = path.resolve(__dirname, '../../bin/wrapper.js');
+const TEST_HOME = fs.mkdtempSync(path.join(os.tmpdir(), 'tribunal-system1-'));
 
 function runWrapper(args = [], extraEnv = {}) {
   return spawnSync(process.execPath, [WRAPPER, ...args], {
     encoding: 'utf8',
     timeout: 5000,
-    env: { ...process.env, TK_SKIP_UPDATE_CHECK: '1', ...extraEnv },
+    env: {
+      ...process.env,
+      USERPROFILE: TEST_HOME,
+      HOME: TEST_HOME,
+      TK_SKIP_UPDATE_CHECK: '1',
+      ...extraEnv,
+    },
   });
 }
 
 function getLayaDir() {
-  return path.join(os.homedir(), '.tribunal-kit', 'laya');
+  return path.join(TEST_HOME, '.tribunal-kit', 'laya');
 }
 
 function getConfigPath() {
@@ -24,24 +31,10 @@ function getConfigPath() {
 }
 
 describe('System-1 CLI & Fallback routing', () => {
-  let originalConfigState = null;
   const configPath = getConfigPath();
 
-  beforeAll(() => {
-    // Save original state to restore later
-    if (fs.existsSync(configPath)) {
-      originalConfigState = fs.readFileSync(configPath, 'utf8');
-    }
-  });
-
   afterAll(() => {
-    // Restore original config if it existed
-    if (originalConfigState !== null) {
-      if (!fs.existsSync(getLayaDir())) fs.mkdirSync(getLayaDir(), { recursive: true });
-      fs.writeFileSync(configPath, originalConfigState, 'utf8');
-    } else if (fs.existsSync(configPath)) {
-      fs.unlinkSync(configPath);
-    }
+    fs.rmSync(TEST_HOME, { recursive: true, force: true });
   });
 
   beforeEach(() => {

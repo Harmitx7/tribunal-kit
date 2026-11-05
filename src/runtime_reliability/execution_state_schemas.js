@@ -81,7 +81,7 @@ const CheckpointSchema = z.object({
   executionId: z.string().min(1, 'Execution id is required.'),
   stateRevision: z.number().int().positive().default(1),
   schemaVersion: z.enum(SUPPORTED_SCHEMA_VERSIONS).default('1.0.0'),
-  codeRevision: z.string().default('9.3.0'),
+  codeRevision: z.string().default('9.4.0'),
   completedTasks: z.array(z.string()).default([]),
   pendingTasks: z.array(z.string()).default([]),
   partialResults: z.record(z.string(), z.unknown()).default({}),

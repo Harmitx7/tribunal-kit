@@ -90,9 +90,13 @@ class WorktreeSandbox {
 
     // Create the Git worktree with a new dedicated branch
     try {
+      const gitArgs = ['worktree', 'add', '-b', this.branch, this.worktreePath, this.baseCommit];
+      if (process.platform === 'win32') {
+        gitArgs.unshift('-c', 'core.longpaths=true');
+      }
       execFileSync(
         'git',
-        ['worktree', 'add', '-b', this.branch, this.worktreePath, this.baseCommit],
+        gitArgs,
         {
           cwd: this.repoRoot,
           encoding: 'utf8',
@@ -197,7 +201,11 @@ class WorktreeSandbox {
 
     // Remove git worktree
     try {
-      execFileSync('git', ['worktree', 'remove', '--force', this.worktreePath], {
+      const removeArgs = ['worktree', 'remove', '--force', this.worktreePath];
+      if (process.platform === 'win32') {
+        removeArgs.unshift('-c', 'core.longpaths=true');
+      }
+      execFileSync('git', removeArgs, {
         cwd: this.repoRoot,
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'pipe'],
@@ -210,8 +218,8 @@ class WorktreeSandbox {
         fs.rmSync(this.worktreePath, {
           recursive: true,
           force: true,
-          maxRetries: 5,
-          retryDelay: 50,
+          maxRetries: 15,
+          retryDelay: 150,
         });
       }
     } catch (_) {}

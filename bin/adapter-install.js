@@ -204,7 +204,7 @@ function main() {
   console.log('');
   console.log('┌─────────────────────────────────────────────┐');
   console.log('│  🔱 Tribunal Kit — Universal Agent Adapter  │');
-  console.log('│  v9.3.0 · 60 specialists · 235 skills       │');
+  console.log('│  v9.4.0 · 60 specialists · 235 skills       │');
   console.log('└─────────────────────────────────────────────┘');
   console.log('');
 

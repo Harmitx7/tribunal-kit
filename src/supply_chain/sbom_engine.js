@@ -18,7 +18,7 @@ const { SupplyChainFindingSchema } = require('./component_inventory_schemas');
 class SbomEngine {
   constructor(options = {}) {
     this.toolName = options.toolName || 'tribunal-kit-sbom-engine';
-    this.toolVersion = options.toolVersion || '9.3.0';
+    this.toolVersion = options.toolVersion || '9.4.0';
   }
 
   /**

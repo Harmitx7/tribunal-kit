@@ -1,6 +1,6 @@
 {
   "name": "tribunal-kit",
-  "version": "9.3.0",
+  "version": "9.4.0",
   "description": "Tribunal Kit is the governance layer for AI coding agents that stops AI hallucinations and npm ghost packages before they hit disk. Works with Cursor, Windsurf, Claude Code, and Aider.",
   "keywords": [
     "ai",
@@ -100,26 +100,18 @@
     ".agent/config/slash-commands.json",
     ".agent/config/specialist-registry.json"
   ],
-  "pi": {
-    "extensions": [
-      "./.pi/extensions/tribunal.ts"
-    ],
-    "skills": [
-      "./.agent/skills"
-    ]
-  },
   "engines": {
     "node": ">=18.0.0"
   },
   "scripts": {
-    "test": "npm run validate-payload && jest --runInBand --coverage --forceExit",
-    "test:unit": "jest test/unit --coverage --forceExit",
+    "test": "npm run validate-payload && node --expose-gc ./node_modules/jest/bin/jest.js --runInBand --coverage --forceExit",
+    "test:unit": "node --expose-gc ./node_modules/jest/bin/jest.js test/unit --coverage --forceExit",
     "test:integration": "jest test/integration --coverage --forceExit",
     "test:phase9": "node tests/test_cross_domain_engine.js",
     "test:phase10": "node tests/test_outcome_optimization_engine.js",
     "test:engines": "node tests/test_cross_domain_engine.js && node tests/test_outcome_optimization_engine.js",
     "preversion": "node scripts/sync-version.js",
-    "version": "node scripts/apply-version.js && cargo build --release && node scripts/changelog.js && git add CHANGELOG.md plugins/core-plugin.json plugins/gemini/extension.json npm/core-template/package.json README.md crates/core/Cargo.toml Cargo.lock bin/adapter-install.js src/tui/banner.js scripts/apply-version.js",
+    "version": "node scripts/apply-version.js && node scripts/changelog.js && git add CHANGELOG.md package-lock.json plugins/core-plugin.json plugins/gemini/extension.json npm/core-template/package.json README.md crates/core/Cargo.toml Cargo.lock bin/adapter-install.js src/tui/banner.js scripts/apply-version.js",
     "changelog": "node scripts/changelog.js",
     "changelog:preview": "node scripts/changelog.js --preview",
     "sync": "node scripts/sync-version.js",
@@ -153,12 +145,12 @@
     "ws": "^8.21.3"
   },
   "optionalDependencies": {
-    "@tribunal-kit/core-darwin-arm64": "^9.3.0",
-    "@tribunal-kit/core-darwin-x64": "^9.3.0",
-    "@tribunal-kit/core-linux-arm64": "^9.3.0",
-    "@tribunal-kit/core-linux-x64": "^9.3.0",
-    "@tribunal-kit/core-win32-arm64": "^9.3.0",
-    "@tribunal-kit/core-win32-x64": "^9.3.0"
+    "@tribunal-kit/core-darwin-arm64": "^9.4.0",
+    "@tribunal-kit/core-darwin-x64": "^9.4.0",
+    "@tribunal-kit/core-linux-arm64": "^9.4.0",
+    "@tribunal-kit/core-linux-x64": "^9.4.0",
+    "@tribunal-kit/core-win32-arm64": "^9.4.0",
+    "@tribunal-kit/core-win32-x64": "^9.4.0"
   },
   "jest": {
     "testMatch": [

@@ -239,8 +239,8 @@ describe('PHASE 10 FINAL INTEGRATION & RELEASE CERTIFICATION WAR ROOM', () => {
       expect(aligned.startsWith('Sure!')).toBe(false);
     });
 
-    test('package.json version matches 9.3.0 with exactly 1 production dependency', () => {
-      expect(PKG.version).toBe('9.3.0');
+    test('package.json has a semantic version and exactly 1 production dependency', () => {
+      expect(PKG.version).toMatch(/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/);
       const deps = Object.keys(PKG.dependencies || {});
       expect(deps).toEqual(['zod']);
     });
