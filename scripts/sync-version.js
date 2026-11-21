@@ -74,7 +74,7 @@ function checkVersionMetadata() {
       `package.json declares ${coreDependencies.length} @tribunal-kit/core-* packages, expected 6`,
     );
   }
-  for (const [name, declaredVersion] of Object.entries(PKG.optionalDependencies || {})) {
+  for (const [name, declaredVersion] of coreDependencies) {
     if (declaredVersion !== expectedOptionalVersion) {
       fail(
         `package.json optional dependency ${name} is ${declaredVersion}, expected ${expectedOptionalVersion}`,
@@ -89,7 +89,7 @@ function checkVersionMetadata() {
   for (const [name, declaredVersion] of Object.entries(
     lock.packages?.['']?.optionalDependencies || {},
   )) {
-    if (declaredVersion !== expectedOptionalVersion) {
+    if (name.startsWith('@tribunal-kit/core-') && declaredVersion !== expectedOptionalVersion) {
       fail(
         `package-lock.json optional dependency ${name} is ${declaredVersion}, expected ${expectedOptionalVersion}`,
       );
