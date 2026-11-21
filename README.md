@@ -22,7 +22,7 @@
       <img src="https://agentarmorhq.com/api/badge/harmitx7-tribunal-kit" alt="AgentArmor Risk Grade" />
     </a>
     <a href="https://github.com/Harmitx7/tribunal-kit/releases">
-      <img src="https://img.shields.io/badge/Release-v9.4.0-ff3300?style=for-the-badge&logoColor=white" alt="Release v9.4.0" />
+      <img src="https://img.shields.io/badge/Release-v9.5.0-ff3300?style=for-the-badge&logoColor=white" alt="Release v9.5.0" />
     </a>
     <a href="https://www.npmjs.com/package/tribunal-kit">
       <img src="https://img.shields.io/npm/v/tribunal-kit?style=for-the-badge&logo=npm&logoColor=white&color=0e1117" alt="NPM Version" />
@@ -315,10 +315,10 @@ Tribunal Kit enforces a **zero install-time lifecycle script** policy (`no prein
 
 ```bash
 # Execute directly via npx with script execution disabled
-npx -y --ignore-scripts tribunal-kit@9.4.0 init
+npx -y --ignore-scripts tribunal-kit@9.5.0 init
 
 # Or install globally with script isolation
-npm install -g --ignore-scripts tribunal-kit@9.4.0
+npm install -g --ignore-scripts tribunal-kit@9.5.0
 ```
 
 <a id="step-by-step"></a>
@@ -444,7 +444,7 @@ tk <command> [subcommand] [flags]
 --json               Emit machine-readable JSON output for CI pipelines
 --quiet              Suppress all non-essential banners and output
 --verbose            Show detailed debug logging and internal execution traces
---version, -v        Print installed package and native core version (9.4.0)
+--version, -v        Print installed package and native core version (9.5.0)
 ```
 
 ---

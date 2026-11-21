@@ -1,3 +1,18 @@
+# Changelog
+
+All notable changes to Tribunal Kit are documented here.
+Format follows [Keep a Changelog](https://keepachangelog.com/).
+
+## [9.5.0] — 2026-11-21
+
+### 🐛 Bug Fixes
+
+- support optional ML dependencies and synchronize platform manifests in version scripts (`2789a79`)
+
+### 🔧 Chores
+
+- complete Phase 1-5 stabilization and hardening (`27a8839`)
+
 # 🏛️ Tribunal Kit — Changelog
 
 [![Keep a Changelog](https://img.shields.io/badge/Changelog-Keep%20a%20Changelog%20v1.1.0-blue.svg?style=flat-square)](https://keepachangelog.com/)
