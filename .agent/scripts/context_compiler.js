@@ -109,19 +109,11 @@ function extractFileSkeleton(filePath, rawContent) {
         }
       }
 
-      if (
-        !corePath &&
-        process.env.TRIBUNAL_CORE_PATH &&
-        fs.existsSync(process.env.TRIBUNAL_CORE_PATH)
-      ) {
-        corePath = process.env.TRIBUNAL_CORE_PATH;
-      }
-
       if (corePath && fs.existsSync(corePath)) {
         const result = require('child_process').execFileSync(
           corePath,
           ['ast-extract', '--file', absPath],
-          { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+          { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 30000 },
         );
         const data = JSON.parse(result);
         if (data && data.success) {
@@ -570,7 +562,10 @@ function resolvePath(targetPath, workspaceRoot = process.cwd()) {
   const { assertWithinRoot } = require('../../src/security/boundary');
 
   let candidate = path.resolve(workspaceRoot, clean);
-  if (!fs.existsSync(candidate) && (clean.startsWith('tribunal-kit/') || clean.startsWith('tribunal-kit\\'))) {
+  if (
+    !fs.existsSync(candidate) &&
+    (clean.startsWith('tribunal-kit/') || clean.startsWith('tribunal-kit\\'))
+  ) {
     const stripped = clean.replace(/^tribunal-kit[/\\]/, '');
     const strippedCandidate = path.resolve(workspaceRoot, stripped);
     if (fs.existsSync(strippedCandidate)) {
@@ -679,7 +674,7 @@ function analyzeMultiFileBridge(pathA, pathB, workspaceRoot = process.cwd()) {
 // ── Directory / Project Subsystem Analysis ──────────────────────────────────
 
 function analyzeDirectory(dirPath, workspaceRoot = process.cwd()) {
-  const absDir = path.isAbsolute(dirPath) ? dirPath : path.resolve(workspaceRoot, dirPath);
+  const absDir = resolvePath(dirPath, workspaceRoot);
   if (!fs.existsSync(absDir) || !fs.statSync(absDir).isDirectory()) {
     throw new Error(`Directory not found: ${absDir}`);
   }
@@ -1088,7 +1083,9 @@ function main() {
         // Autodetect positional arg
         const candidate = args[i].replace(/^['"]|['"]$/g, '');
         if (candidate.startsWith('-')) continue;
-        const resolved = path.isAbsolute(candidate) ? candidate : path.resolve(workspaceRoot, candidate);
+        const resolved = path.isAbsolute(candidate)
+          ? candidate
+          : path.resolve(workspaceRoot, candidate);
         if (fs.existsSync(resolved)) {
           if (fs.statSync(resolved).isDirectory()) {
             dirArg = resolved;
@@ -1179,6 +1176,9 @@ module.exports = {
   checkDrift,
 };
 
-if (require.main === module || (require.main && path.basename(require.main.filename) === 'context_compiler.js')) {
+if (
+  require.main === module ||
+  (require.main && path.basename(require.main.filename) === 'context_compiler.js')
+) {
   main();
 }

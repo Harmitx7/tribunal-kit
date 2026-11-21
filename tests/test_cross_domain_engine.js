@@ -66,7 +66,10 @@ function runSuites({ suite = defaultSuite, assert = defaultAssert } = {}) {
     assert(Object.keys(cde.INTERACTION_CONFIDENCE).length === 4, '4 confidence levels');
     assert(cde.INTERACTION_RULES.length >= 20, 'At least 20 interaction rules registered');
     assert(cde.EFFECT_CHAINS.length >= 8, 'At least 8 second-order effect chains defined');
-    assert(cde.EMERGENT_FAILURE_PATTERNS.length >= 8, 'At least 8 emergent failure patterns defined');
+    assert(
+      cde.EMERGENT_FAILURE_PATTERNS.length >= 8,
+      'At least 8 emergent failure patterns defined',
+    );
   });
 
   suite('Trivial Task Skip', () => {
@@ -229,8 +232,13 @@ function runSuites({ suite = defaultSuite, assert = defaultAssert } = {}) {
     );
     assert(tenantIsolation !== undefined, 'Tenant isolation concern detected');
 
-    const cacheSecConcern = r.security_boundaries.concerns.find(c => c.boundary === 'Cache Security');
-    assert(cacheSecConcern !== undefined, 'Cache security concern detected for auth + multi-tenant');
+    const cacheSecConcern = r.security_boundaries.concerns.find(
+      c => c.boundary === 'Cache Security',
+    );
+    assert(
+      cacheSecConcern !== undefined,
+      'Cache security concern detected for auth + multi-tenant',
+    );
   });
 
   suite('Constraint Conflict Detection', () => {
@@ -293,11 +301,21 @@ function runSuites({ suite = defaultSuite, assert = defaultAssert } = {}) {
     ];
     const security = {
       concerns: [
-        { boundary: 'Tenant', priority: 'CRITICAL', question: 'test?', components_to_verify: ['db'] },
+        {
+          boundary: 'Tenant',
+          priority: 'CRITICAL',
+          question: 'test?',
+          components_to_verify: ['db'],
+        },
       ],
     };
 
-    const reqs = cde.generateValidationRequirements(interactions, secondOrder, failureProp, security);
+    const reqs = cde.generateValidationRequirements(
+      interactions,
+      secondOrder,
+      failureProp,
+      security,
+    );
     assert(reqs.length >= 3, 'At least 3 validation requirements generated');
     assert(
       reqs.some(r => r.type === 'interaction'),
@@ -361,7 +379,10 @@ function runSuites({ suite = defaultSuite, assert = defaultAssert } = {}) {
       analysis.cross_domain_analysis.interactions !== undefined,
       'cross_domain_analysis has interactions',
     );
-    assert(analysis.cross_domain_analysis.summary !== undefined, 'cross_domain_analysis has summary');
+    assert(
+      analysis.cross_domain_analysis.summary !== undefined,
+      'cross_domain_analysis has summary',
+    );
     assert(analysis.phase9_metrics !== null, 'analyzeTask includes phase9_metrics');
 
     // Verify cross-domain validations were added to verification plan

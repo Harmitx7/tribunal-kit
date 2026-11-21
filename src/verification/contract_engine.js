@@ -98,7 +98,8 @@ function withContract(targetFn, contract = {}) {
     // 4. Verify Postconditions on result
     for (const post of postconditions) {
       const checkFn = typeof post === 'function' ? post : post.check;
-      const msg = post.message || 'Function implementation failed to satisfy guaranteed postcondition.';
+      const msg =
+        post.message || 'Function implementation failed to satisfy guaranteed postcondition.';
       ensures(checkFn(result, ...args), msg, { result, args });
     }
 
@@ -131,7 +132,8 @@ function auditContractCompleteness(codeSnippet) {
     issues.push({
       type: 'POTENTIAL_DIVISION_BY_ZERO',
       severity: 'HIGH',
-      description: 'Arithmetic division performed without precondition check against zero denominator.',
+      description:
+        'Arithmetic division performed without precondition check against zero denominator.',
     });
   }
 
@@ -140,7 +142,8 @@ function auditContractCompleteness(codeSnippet) {
     issues.push({
       type: 'UNCHECKED_ARRAY_INDEXING',
       severity: 'MEDIUM',
-      description: 'Direct array element indexing without length or bounds precondition verification.',
+      description:
+        'Direct array element indexing without length or bounds precondition verification.',
     });
   }
 

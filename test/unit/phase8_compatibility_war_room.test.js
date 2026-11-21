@@ -113,7 +113,16 @@ describe('PHASE 8 COMPATIBILITY & CROSS-PLATFORM WAR ROOM', () => {
   // ───────────────────────────────────────────────────────────────────────────
   describe('CLI Dual-Engine Fallback & Argument Handling', () => {
     test('RUST_COMMANDS contains core acceleration commands', () => {
-      const expectedRustCmds = ['init', 'status', 'sync', 'memory', 'dag-schedule', 'context-compress', 'ast-extract', 'validate'];
+      const expectedRustCmds = [
+        'init',
+        'status',
+        'sync',
+        'memory',
+        'dag-schedule',
+        'context-compress',
+        'ast-extract',
+        'validate',
+      ];
       for (const cmd of expectedRustCmds) {
         expect(RUST_COMMANDS.has(cmd)).toBe(true);
       }
@@ -138,7 +147,18 @@ describe('PHASE 8 COMPATIBILITY & CROSS-PLATFORM WAR ROOM', () => {
   // ───────────────────────────────────────────────────────────────────────────
   describe('Cross-Platform Path Containment (Windows, Linux, macOS)', () => {
     test('Rejects Windows reserved device names on all platforms', () => {
-      const reserved = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM9', 'LPT1', 'LPT9', 'con.txt', 'aux.json'];
+      const reserved = [
+        'CON',
+        'PRN',
+        'AUX',
+        'NUL',
+        'COM1',
+        'COM9',
+        'LPT1',
+        'LPT9',
+        'con.txt',
+        'aux.json',
+      ];
 
       for (const dev of reserved) {
         expect(() => validateLexicalPath(dev)).toThrow(PathSecurityError);

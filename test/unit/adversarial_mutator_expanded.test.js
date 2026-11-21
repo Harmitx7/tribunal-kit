@@ -6,7 +6,10 @@
  * Unit tests for expanded AdversarialMutator across the 4 benchmark categories.
  */
 
-const { AdversarialMutator, ATTACK_CATEGORIES } = require('../../src/evaluation/adversarial_mutator');
+const {
+  AdversarialMutator,
+  ATTACK_CATEGORIES,
+} = require('../../src/evaluation/adversarial_mutator');
 const { getCorpusScenarios } = require('../../benchmarks/corpus/index');
 
 describe('AdversarialMutator — Expanded 4-Category Mutation Engine', () => {

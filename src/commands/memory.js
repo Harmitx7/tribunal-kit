@@ -1,9 +1,7 @@
 'use strict';
-const __importDefault =
-  (this && this.__importDefault) ||
-  function (mod) {
-    return mod && mod.__esModule ? mod : { default: mod };
-  };
+const __importDefault = function (mod) {
+  return mod && mod.__esModule ? mod : { default: mod };
+};
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.cmdMemory = cmdMemory;
 const fs_1 = __importDefault(require('fs'));
@@ -58,7 +56,11 @@ function acquireLock(agentDest) {
       fs_1.default.closeSync(fd);
       return lockPath;
     }
-  } catch {}
+  } catch (err) {
+    if (err && err.code !== 'ENOENT') {
+      (0, logger_1.warn)(`Failed to inspect or break stale lock at ${lockPath}: ${err.message}`);
+    }
+  }
   throw new Error('Could not acquire lock for memory index');
 }
 
@@ -67,7 +69,11 @@ function releaseLock(lockPath) {
     if (lockPath && fs_1.default.existsSync(lockPath)) {
       fs_1.default.unlinkSync(lockPath);
     }
-  } catch {}
+  } catch (err) {
+    if (err && err.code !== 'ENOENT') {
+      (0, logger_1.warn)(`Failed to release lock at ${lockPath}: ${err.message}`);
+    }
+  }
 }
 
 function getMemoryDir(agentDest) {
@@ -210,11 +216,18 @@ function memoryStore(agentDest, type, content, tags, sessionId) {
 
 // ── Recall ──────────────────────────────────────────────────────────────────
 
+/**
+ * @param {string} agentDest
+ * @param {string} query
+ * @param {number} [budget=2000]
+ * @param {Record<string, any>} [options={}]
+ */
 function memoryRecall(agentDest, query, budget = 2000, options = {}) {
   const lockPath = acquireLock(agentDest);
   try {
     const index = loadIndex(agentDest);
-    const targetSessionId = options && typeof options === 'object' ? options.sessionId : null;
+    const targetSessionId =
+      options && typeof options === 'object' && 'sessionId' in options ? options.sessionId : null;
 
     const scored = index.entries
       .filter(entry => {
@@ -559,7 +572,9 @@ Options:
               `    ${(0, logger_1.c)('gray', '▶')} Tags: ${(0, logger_1.c)('gray', tags.join(', '))}\n`,
             );
           }
-          process.stderr.write(`    ${(0, logger_1.c)('gray', '▶')} ~${result.token_estimate} tokens\n`);
+          process.stderr.write(
+            `    ${(0, logger_1.c)('gray', '▶')} ~${result.token_estimate} tokens\n`,
+          );
         }
         break;
       }

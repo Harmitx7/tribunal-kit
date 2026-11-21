@@ -1,6 +1,8 @@
 'use strict';
 
-const { AgentBehavioralTestingEngine } = require('../../src/evaluation/agent_behavioral_testing_engine');
+const {
+  AgentBehavioralTestingEngine,
+} = require('../../src/evaluation/agent_behavioral_testing_engine');
 
 describe('Agent Behavioral Testing Engine', () => {
   let engine;

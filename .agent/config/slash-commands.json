@@ -4,9 +4,7 @@
       "name": "/tribunal-understand",
       "description": "Deterministic, read-only codebase intelligence: architecture overview, feature execution tracing, dependency analysis, relevant files checklist, blast radius impact, dead-code analysis, and developer onboarding.",
       "usage": "/tribunal-understand [overview|trace|dependencies|relevant-files|impact|dead-code|onboard|prepare] [target] [--depth <n>] [--focus <dir>] [--json]",
-      "aliases": [
-        "/understand"
-      ],
+      "aliases": ["/understand"],
       "examples": [
         "/understand",
         "/understand overview",
@@ -23,10 +21,7 @@
       "name": "/context",
       "description": "Generate an elite Flight Data HUD context dossier for any file, multi-file pair, or project folder. Maintains living codebase context vault.",
       "usage": "/context <file_or_folder_path> [--crawl] [--check] [--link]",
-      "aliases": [
-        "/file-context",
-        "/digest"
-      ],
+      "aliases": ["/file-context", "/digest"],
       "examples": [
         "/context src/services/auth.ts",
         "/context src/components/Button.tsx src/theme/tokens.ts",
@@ -38,9 +33,7 @@
       "name": "/tribunal",
       "description": "Run full Tribunal review on the current file or selection. All 28 reviewers audit in parallel.",
       "usage": "/tribunal [file_path]",
-      "aliases": [
-        "/tribunal-full"
-      ]
+      "aliases": ["/tribunal-full"]
     },
     {
       "name": "/tribunal-backend",
@@ -66,21 +59,13 @@
       "name": "/summon",
       "description": "Summon a specific specialist agent by name. Routes to .agent/agents/{name}.md.",
       "usage": "/summon <specialist_name>",
-      "examples": [
-        "/summon security-auditor",
-        "/summon logic-reviewer",
-        "/summon debugger"
-      ]
+      "examples": ["/summon security-auditor", "/summon logic-reviewer", "/summon debugger"]
     },
     {
       "name": "/skill",
       "description": "Load a specific skill on-demand from the 185-skill library.",
       "usage": "/skill <skill_name>",
-      "examples": [
-        "/skill react-specialist",
-        "/skill python-pro",
-        "/skill nextjs-react-expert"
-      ]
+      "examples": ["/skill react-specialist", "/skill python-pro", "/skill nextjs-react-expert"]
     },
     {
       "name": "/audit",

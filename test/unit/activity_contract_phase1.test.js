@@ -83,7 +83,10 @@ describe('Phase 1: Canonical Activity Contract & Renderer Foundation', () => {
         eventType: EVENT_TYPES.OPERATION_STARTED,
         status: STATUSES.RUNNING,
         title: 'Version check',
-        timestamps: { startedAt: '2026-10-30T10:00:00.000Z', updatedAt: '2026-10-30T10:00:00.000Z' },
+        timestamps: {
+          startedAt: '2026-10-30T10:00:00.000Z',
+          updatedAt: '2026-10-30T10:00:00.000Z',
+        },
       };
       const res = validateActivityEvent(event);
       expect(res.valid).toBe(false);
@@ -96,14 +99,24 @@ describe('Phase 1: Canonical Activity Contract & Renderer Foundation', () => {
         eventType: EVENT_TYPES.OPERATION_STARTED,
         status: STATUSES.RUNNING,
         title: 'ID check',
-        timestamps: { startedAt: '2026-10-30T10:00:00.000Z', updatedAt: '2026-10-30T10:00:00.000Z' },
+        timestamps: {
+          startedAt: '2026-10-30T10:00:00.000Z',
+          updatedAt: '2026-10-30T10:00:00.000Z',
+        },
       };
 
       // Too short
-      expect(validateActivityEvent({ ...base, eventId: 'ab', operationId: 'op_valid' }).valid).toBe(false);
+      expect(validateActivityEvent({ ...base, eventId: 'ab', operationId: 'op_valid' }).valid).toBe(
+        false,
+      );
       // Illegal characters (spaces, special chars)
-      expect(validateActivityEvent({ ...base, eventId: 'evt with space', operationId: 'op_valid' }).valid).toBe(false);
-      expect(validateActivityEvent({ ...base, eventId: 'evt_valid', operationId: 'bad/slash' }).valid).toBe(false);
+      expect(
+        validateActivityEvent({ ...base, eventId: 'evt with space', operationId: 'op_valid' })
+          .valid,
+      ).toBe(false);
+      expect(
+        validateActivityEvent({ ...base, eventId: 'evt_valid', operationId: 'bad/slash' }).valid,
+      ).toBe(false);
     });
 
     test('rejects invalid or missing timestamps', () => {
@@ -119,16 +132,23 @@ describe('Phase 1: Canonical Activity Contract & Renderer Foundation', () => {
       // Missing timestamps object
       expect(validateActivityEvent({ ...base }).valid).toBe(false);
       // Malformed ISO string
-      expect(validateActivityEvent({ ...base, timestamps: { startedAt: 'not-a-date', updatedAt: '2026-10-30T10:00:00.000Z' } }).valid).toBe(false);
+      expect(
+        validateActivityEvent({
+          ...base,
+          timestamps: { startedAt: 'not-a-date', updatedAt: '2026-10-30T10:00:00.000Z' },
+        }).valid,
+      ).toBe(false);
       // completedAt earlier than startedAt
-      expect(validateActivityEvent({
-        ...base,
-        timestamps: {
-          startedAt: '2026-10-30T12:00:00.000Z',
-          updatedAt: '2026-10-30T12:00:00.000Z',
-          completedAt: '2026-10-30T11:00:00.000Z',
-        },
-      }).valid).toBe(false);
+      expect(
+        validateActivityEvent({
+          ...base,
+          timestamps: {
+            startedAt: '2026-10-30T12:00:00.000Z',
+            updatedAt: '2026-10-30T12:00:00.000Z',
+            completedAt: '2026-10-30T11:00:00.000Z',
+          },
+        }).valid,
+      ).toBe(false);
     });
 
     test('rejects invalid progress values and inconsistent totals', () => {
@@ -139,21 +159,48 @@ describe('Phase 1: Canonical Activity Contract & Renderer Foundation', () => {
         eventType: EVENT_TYPES.PROGRESS_UPDATED,
         status: STATUSES.RUNNING,
         title: 'Progress check',
-        timestamps: { startedAt: '2026-10-30T10:00:00.000Z', updatedAt: '2026-10-30T10:00:00.000Z' },
+        timestamps: {
+          startedAt: '2026-10-30T10:00:00.000Z',
+          updatedAt: '2026-10-30T10:00:00.000Z',
+        },
       };
 
       // Negative current
-      expect(validateActivityEvent({ ...base, progress: { current: -1, total: 10, isAuthoritative: true } }).valid).toBe(false);
+      expect(
+        validateActivityEvent({
+          ...base,
+          progress: { current: -1, total: 10, isAuthoritative: true },
+        }).valid,
+      ).toBe(false);
       // Negative total
-      expect(validateActivityEvent({ ...base, progress: { current: 5, total: -10, isAuthoritative: true } }).valid).toBe(false);
+      expect(
+        validateActivityEvent({
+          ...base,
+          progress: { current: 5, total: -10, isAuthoritative: true },
+        }).valid,
+      ).toBe(false);
       // Current exceeds total
-      expect(validateActivityEvent({ ...base, progress: { current: 15, total: 10, isAuthoritative: true } }).valid).toBe(false);
+      expect(
+        validateActivityEvent({
+          ...base,
+          progress: { current: 15, total: 10, isAuthoritative: true },
+        }).valid,
+      ).toBe(false);
       // Percentage > 100
-      expect(validateActivityEvent({ ...base, progress: { percentage: 150, isAuthoritative: true } }).valid).toBe(false);
+      expect(
+        validateActivityEvent({ ...base, progress: { percentage: 150, isAuthoritative: true } })
+          .valid,
+      ).toBe(false);
       // Percentage < 0
-      expect(validateActivityEvent({ ...base, progress: { percentage: -5, isAuthoritative: true } }).valid).toBe(false);
+      expect(
+        validateActivityEvent({ ...base, progress: { percentage: -5, isAuthoritative: true } })
+          .valid,
+      ).toBe(false);
       // Unmetered progress with fabricated percentage
-      expect(validateActivityEvent({ ...base, progress: { percentage: 50, isAuthoritative: false } }).valid).toBe(false);
+      expect(
+        validateActivityEvent({ ...base, progress: { percentage: 50, isAuthoritative: false } })
+          .valid,
+      ).toBe(false);
     });
 
     test('handles unknown optional metadata safely without breaking validation', () => {
@@ -164,7 +211,10 @@ describe('Phase 1: Canonical Activity Contract & Renderer Foundation', () => {
         eventType: EVENT_TYPES.OPERATION_STARTED,
         status: STATUSES.RUNNING,
         title: 'Extra Metadata Test',
-        timestamps: { startedAt: '2026-10-30T10:00:00.000Z', updatedAt: '2026-10-30T10:00:00.000Z' },
+        timestamps: {
+          startedAt: '2026-10-30T10:00:00.000Z',
+          updatedAt: '2026-10-30T10:00:00.000Z',
+        },
         customEngineData: { runner: 'Jest', pid: 12345 },
       };
 
@@ -210,7 +260,10 @@ describe('Phase 1: Canonical Activity Contract & Renderer Foundation', () => {
         eventType: EVENT_TYPES.VALIDATION_PASSED,
         status: STATUSES.PASSED,
         title: 'Phantom Pass',
-        timestamps: { startedAt: '2026-10-30T10:00:00.000Z', updatedAt: '2026-10-30T10:00:00.000Z' },
+        timestamps: {
+          startedAt: '2026-10-30T10:00:00.000Z',
+          updatedAt: '2026-10-30T10:00:00.000Z',
+        },
       };
 
       const res = validateActivityEvent(unverified);
@@ -233,7 +286,10 @@ describe('Phase 1: Canonical Activity Contract & Renderer Foundation', () => {
         eventType: EVENT_TYPES.VALIDATION_FAILED,
         status: STATUSES.FAILED,
         title: 'Empty Failure',
-        timestamps: { startedAt: '2026-10-30T10:00:00.000Z', updatedAt: '2026-10-30T10:00:00.000Z' },
+        timestamps: {
+          startedAt: '2026-10-30T10:00:00.000Z',
+          updatedAt: '2026-10-30T10:00:00.000Z',
+        },
       };
 
       expect(validateActivityEvent(missingError).valid).toBe(false);
@@ -264,11 +320,13 @@ describe('Phase 1: Canonical Activity Contract & Renderer Foundation', () => {
       const callerInput = {
         eventType: EVENT_TYPES.OPERATION_STARTED,
         title: 'Connecting with key sk_live_abc1234567890',
-        summary: 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.supersecretkey',
+        summary:
+          'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.supersecretkey',
         evidence: {
           db: 'postgres://admin:pass123@cluster.com:5432/db',
           aws: 'AKIAIOSFODNN7EXAMPLE',
-          privateKey: '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASC\n-----END PRIVATE KEY-----',
+          privateKey:
+            '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASC\n-----END PRIVATE KEY-----',
         },
       };
 
@@ -349,7 +407,8 @@ describe('Phase 1: Canonical Activity Contract & Renderer Foundation', () => {
       const complexEvent = createActivityEvent({
         eventType: EVENT_TYPES.VALIDATION_FAILED,
         title: 'Unicode Test ⚡ 🔱 审查',
-        summary: 'Line 1: Analysis failed.\nLine 2: Missing edge definition.\nLine 3: Cycle detected.',
+        summary:
+          'Line 1: Analysis failed.\nLine 2: Missing edge definition.\nLine 3: Cycle detected.',
         error: {
           message: 'Graph cycle in module imports: A -> B -> C -> A',
           code: 'CYCLE_ERROR',

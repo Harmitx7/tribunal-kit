@@ -6,17 +6,17 @@ Losses are grouped by data shape. The #1 rule: **pick a loss that matches your d
 
 ## Top-line decision table
 
-| You have | Use |
-|---|---|
-| `(anchor, positive)` pairs | `MultipleNegativesRankingLoss` (or Cached variant for large batches) |
-| `(anchor, positive, negative)` triplets | `MultipleNegativesRankingLoss` (it handles triplets natively) |
-| `(text1, text2, score)` with `score ∈ [-1, 1]` or `[0, 1]` | `CoSENTLoss` (strongly recommended) |
-| `(text1, text2, label)` with `label ∈ {0, 1}` | `OnlineContrastiveLoss` |
-| `(text, class_id)` single-column with integer class | `BatchAllTripletLoss` |
-| `(query, positive, negative, score_diff)` | `MarginMSELoss` (distillation) |
-| `(text, teacher_embedding)` | `MSELoss` (embedding distillation) |
-| Want multiple output dims from one training | Wrap any of the above in `MatryoshkaLoss` |
-| No labels at all, just sentences | `DenoisingAutoEncoderLoss` or `ContrastiveTensionLossInBatchNegatives` |
+| You have                                                   | Use                                                                    |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------- |
+| `(anchor, positive)` pairs                                 | `MultipleNegativesRankingLoss` (or Cached variant for large batches)   |
+| `(anchor, positive, negative)` triplets                    | `MultipleNegativesRankingLoss` (it handles triplets natively)          |
+| `(text1, text2, score)` with `score ∈ [-1, 1]` or `[0, 1]` | `CoSENTLoss` (strongly recommended)                                    |
+| `(text1, text2, label)` with `label ∈ {0, 1}`              | `OnlineContrastiveLoss`                                                |
+| `(text, class_id)` single-column with integer class        | `BatchAllTripletLoss`                                                  |
+| `(query, positive, negative, score_diff)`                  | `MarginMSELoss` (distillation)                                         |
+| `(text, teacher_embedding)`                                | `MSELoss` (embedding distillation)                                     |
+| Want multiple output dims from one training                | Wrap any of the above in `MatryoshkaLoss`                              |
+| No labels at all, just sentences                           | `DenoisingAutoEncoderLoss` or `ContrastiveTensionLossInBatchNegatives` |
 
 ## Contrastive losses (pairs + triplets, no labels)
 
@@ -81,11 +81,11 @@ loss = TripletLoss(model, distance_metric=TripletDistanceMetric.EUCLIDEAN, tripl
 ```
 
 - Simpler than MNRL, less powerful when the batch has useful negatives.
-- Good for cases where you have *trusted* pre-mined triplets and want to avoid in-batch noise.
+- Good for cases where you have _trusted_ pre-mined triplets and want to avoid in-batch noise.
 
 ## Batch-triplet losses (single column + integer label)
 
-These mine triplets *within* the batch from samples sharing a label.
+These mine triplets _within_ the batch from samples sharing a label.
 
 ### `BatchAllTripletLoss`
 

@@ -28,7 +28,7 @@ class SbomEngine {
     const timestamp = new Date().toISOString();
     const serialNumber = `urn:uuid:${crypto.randomUUID()}`;
 
-    const cycloneComponents = components.map((c) => {
+    const cycloneComponents = components.map(c => {
       const hashes = [];
       if (c.hashes) {
         if (c.hashes.sha512) {
@@ -72,10 +72,10 @@ class SbomEngine {
           : undefined,
       },
       components: cycloneComponents,
-      dependencies: components.map((c) => ({
+      dependencies: components.map(c => ({
         ref: c.purl,
-        dependsOn: (c.dependencies || []).map((depName) => {
-          const match = components.find((candidate) => candidate.name === depName);
+        dependsOn: (c.dependencies || []).map(depName => {
+          const match = components.find(candidate => candidate.name === depName);
           return match ? match.purl : depName;
         }),
       })),
@@ -91,7 +91,7 @@ class SbomEngine {
     const timestamp = new Date().toISOString();
     const documentNamespace = `https://spdx.org/spdxdocs/tribunal-kit-${crypto.randomUUID()}`;
 
-    const packages = components.map((c) => {
+    const packages = components.map(c => {
       const spdxId = `SPDXRef-Package-${c.name.replace(/[^a-zA-Z0-9.-]/g, '-')}-${c.version.replace(/[^a-zA-Z0-9.-]/g, '-')}`;
       const checksums = [];
       if (c.hashes && c.hashes.sha256) {
@@ -160,7 +160,7 @@ class SbomEngine {
           evidence: `keys: [${Object.keys(sbomData).slice(0, 5).join(', ')}]`,
           remediation: 'Export SBOM using standard CycloneDX v1.5 or SPDX v2.3 JSON specification.',
           verdict: 'FAIL',
-        })
+        }),
       );
       return { status: 'FAIL', format, findingsCount: findings.length, findings };
     }
@@ -176,9 +176,10 @@ class SbomEngine {
           title: 'Empty SBOM components list',
           description: 'The SBOM document contains zero components or packages.',
           evidence: `items count: 0`,
-          remediation: 'Ensure package manager inventory generation includes direct and transitive dependencies.',
+          remediation:
+            'Ensure package manager inventory generation includes direct and transitive dependencies.',
           verdict: 'FAIL',
-        })
+        }),
       );
     }
 
@@ -195,11 +196,9 @@ class SbomEngine {
         hasLicense = Boolean(item.licenses && item.licenses.length > 0);
       } else {
         hasPurl = Boolean(
-          item.externalRefs && item.externalRefs.some((r) => r.referenceType === 'purl')
+          item.externalRefs && item.externalRefs.some(r => r.referenceType === 'purl'),
         );
-        hasLicense = Boolean(
-          item.licenseConcluded && item.licenseConcluded !== 'NOASSERTION'
-        );
+        hasLicense = Boolean(item.licenseConcluded && item.licenseConcluded !== 'NOASSERTION');
       }
 
       if (!hasPurl) {
@@ -215,7 +214,7 @@ class SbomEngine {
             evidence: `component: ${name}`,
             remediation: 'Include canonical PURL according to the Package URL specification.',
             verdict: 'FAIL',
-          })
+          }),
         );
       }
 
@@ -295,4 +294,3 @@ class SbomEngine {
 module.exports = {
   SbomEngine,
 };
-

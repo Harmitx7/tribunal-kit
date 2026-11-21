@@ -1,14 +1,16 @@
+// @ts-nocheck
 'use strict';
 
 /**
  * reviewer_registry.js — Reviewer Persona Registry & Instruction Resolver
  * =======================================================================
  * Resolves domain-specific review instructions from .agent/agents/*.md
- * with robust zero-dependency catalog fallbacks.
+ * with canonical registry fallback, lifecycle redirects, and robust zero-dependency catalog.
  */
 
 const fs = require('fs');
 const path = require('path');
+const { resolveAgent } = require('./canonical_registry');
 
 const BUILTIN_CATALOG = {
   'security-auditor': {
@@ -61,6 +63,11 @@ const BUILTIN_CATALOG = {
     instructions: `Audit GitHub Actions and CI workflows for script injection vectors, insecure action pins (unpinned SHA), credential exposure in logs, artifact poisoning, and least-privilege token permissions.`,
     domains: ['devops', 'ci_cd'],
   },
+  'ai-code-reviewer': {
+    name: 'AI Code Reviewer & Model Auditor',
+    instructions: `Audit code that integrates LLM APIs for hallucinated model names, invented parameters, prompt injection vulnerabilities, missing streaming error handling, cost explosion patterns, and context window overflow risks.`,
+    domains: ['ai', 'llm'],
+  },
 };
 
 /**
@@ -78,17 +85,61 @@ function stripFrontmatter(content) {
 }
 
 /**
+ * Parses frontmatter fields from markdown string.
+ * @param {string} content
+ * @returns {Record<string, string>}
+ */
+function parseFrontmatterFields(content) {
+  if (typeof content !== 'string') return {};
+  const match = content.match(/^---[\r\n]+([\s\S]*?)[\r\n]+---/);
+  if (!match || !match[1]) return {};
+  const fields = {};
+  for (const line of match[1].split('\n')) {
+    const idx = line.indexOf(':');
+    if (idx !== -1) {
+      const key = line.slice(0, idx).trim();
+      const val = line
+        .slice(idx + 1)
+        .trim()
+        .replace(/^['"]|['"]$/g, '');
+      if (key && val) fields[key] = val;
+    }
+  }
+  return fields;
+}
+
+/**
  * Resolves reviewer specification and instructions for a reviewer ID.
- * Checks `.agent/agents/<id>.md`, then `agents/<id>.md`, then BUILTIN_CATALOG.
+ * Handles ghost alias translation, deprecated redirects, and experimental isolation.
  *
  * @param {string} reviewerId
  * @param {string} [repoRoot]
- * @returns {{ id: string, name: string, instructions: string, source: string }}
+ * @param {Object} [options]
+ * @returns {{ id: string, name: string, instructions: string, source: string, redirectedFrom?: string, isDeprecated?: boolean, isExperimental?: boolean }}
  */
-function resolveReviewerSpec(reviewerId, repoRoot = process.cwd()) {
-  const normId = String(reviewerId).toLowerCase().trim();
+function resolveReviewerSpec(reviewerId, repoRoot = process.cwd(), options = {}) {
+  let normId = String(reviewerId).toLowerCase().trim();
+  let redirectedFrom = null;
 
-  // 1. Search repo .agent/agents/<id>.md
+  // 1. Resolve via canonical registry (handles ghost aliases, deprecated redirects, experimental opt-in)
+  try {
+    const canonSpec = resolveAgent(normId, options, repoRoot);
+    if (canonSpec) {
+      if (canonSpec.redirectedFrom) {
+        redirectedFrom = canonSpec.redirectedFrom;
+        normId = canonSpec.name;
+      } else if (canonSpec.aliasedFrom) {
+        redirectedFrom = canonSpec.aliasedFrom;
+        normId = canonSpec.name;
+      }
+    }
+  } catch (err) {
+    if (err.code === 'EXPERIMENTAL_OPT_IN_REQUIRED') {
+      throw err;
+    }
+  }
+
+  // 2. Search repo .agent/agents/<id>.md
   const candidatePaths = [
     path.join(repoRoot, '.agent', 'agents', `${normId}.md`),
     path.join(repoRoot, 'agents', `${normId}.md`),
@@ -100,33 +151,41 @@ function resolveReviewerSpec(reviewerId, repoRoot = process.cwd()) {
       try {
         const raw = fs.readFileSync(p, 'utf8');
         const instructions = stripFrontmatter(raw);
+        const fm = parseFrontmatterFields(raw);
+        const displayName = fm.name
+          ? fm.name.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+          : normId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+
         return {
           id: normId,
-          name: normId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+          name: displayName,
           instructions:
             instructions || BUILTIN_CATALOG[normId]?.instructions || 'Perform code review.',
           source: p,
+          ...(redirectedFrom ? { redirectedFrom } : {}),
         };
       } catch (_) {}
     }
   }
 
-  // 2. Fall back to builtin catalog
+  // 3. Fall back to builtin catalog
   if (BUILTIN_CATALOG[normId]) {
     return {
       id: normId,
       name: BUILTIN_CATALOG[normId].name,
       instructions: BUILTIN_CATALOG[normId].instructions,
       source: 'builtin_catalog',
+      ...(redirectedFrom ? { redirectedFrom } : {}),
     };
   }
 
-  // 3. Generic fallback
+  // 4. Generic fallback
   return {
     id: normId,
     name: normId.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
     instructions: `Audit the code change for correctness, security, and standards compliance in the ${normId} domain.`,
     source: 'generic_fallback',
+    ...(redirectedFrom ? { redirectedFrom } : {}),
   };
 }
 

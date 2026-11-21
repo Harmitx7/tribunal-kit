@@ -1,9 +1,6 @@
 'use strict';
 
-const {
-  auditDelegationHierarchy,
-  auditReviewerConsensus,
-} = require('../../src/security');
+const { auditDelegationHierarchy, auditReviewerConsensus } = require('../../src/security');
 
 describe('Multi-Agent Delegation & Trust Governance Engine', () => {
   test('validates safe hierarchical delegation with bounded capabilities', () => {
@@ -119,4 +116,3 @@ describe('Multi-Agent Delegation & Trust Governance Engine', () => {
     expect(consensus.unverifiedClaims[0].findingId).toBe('UNV-1');
   });
 });
-

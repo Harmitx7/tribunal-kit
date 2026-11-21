@@ -2,14 +2,16 @@
 
 > **Authority**: GitHub Security Best Practices & OpenSSF Scorecard  
 > **Applicable Domains**: DevOps, CI/CD Pipelines, Cloud Infrastructure  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
 ## 1. Top Vulnerabilities & Invariants
 
 ### 1. Script Injection in `run:` Expressions
+
 Never interpolate untrusted context directly inside inline shell scripts:
+
 ```yaml
 # ❌ VULNERABLE: Direct injection allows arbitrary code execution via PR title
 - run: echo "Processing PR: ${{ github.event.pull_request.title }}"
@@ -21,6 +23,7 @@ Never interpolate untrusted context directly inside inline shell scripts:
 ```
 
 ### 2. The `pull_request_target` Attack Vector
+
 - `pull_request` runs with the code of the incoming pull request, but with read-only permissions and **no secrets access**.
 - `pull_request_target` runs with repository write permissions and **full access to repository secrets**.
 - **Rule**: Never checkout untrusted pull request code in a `pull_request_target` workflow before running build scripts or tests!
@@ -67,7 +70,9 @@ jobs:
 ---
 
 ## 4. Full-Length Commit SHA Pinning
+
 Pin third-party GitHub Actions to immutable full commit SHAs to prevent supply chain poisoning:
+
 ```yaml
 # ✅ Immutable SHA Pinning
 - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1

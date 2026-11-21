@@ -12,17 +12,14 @@
  * 4. Maintain an immutable audit log of all state transitions with timestamps and causes.
  */
 
-const {
-  ExecutionRecordSchema,
-  TERMINAL_STATES,
-} = require('./execution_state_schemas');
+const { ExecutionRecordSchema, TERMINAL_STATES } = require('./execution_state_schemas');
 
 class IllegalStateTransitionError extends Error {
   constructor(executionId, fromState, toState, reason) {
     super(
       `Illegal state transition for execution '${executionId}': cannot transition from '${fromState}' to '${toState}'${
         reason ? ` (${reason})` : ''
-      }.`
+      }.`,
     );
     this.name = 'IllegalStateTransitionError';
     this.executionId = executionId;
@@ -81,7 +78,7 @@ class StateMachineEngine {
         this.record.id,
         currentState,
         targetState,
-        'Cannot transition out of a terminal state'
+        'Cannot transition out of a terminal state',
       );
     }
 
@@ -91,7 +88,7 @@ class StateMachineEngine {
         this.record.id,
         currentState,
         targetState,
-        `Not an authorized transition in legal transition table`
+        `Not an authorized transition in legal transition table`,
       );
     }
 
@@ -140,7 +137,7 @@ class StateMachineEngine {
       return this.fail(
         `Retry budget exhausted after ${this.record.attempt} attempts: ${error}`,
         failureCategory,
-        'Retry budget exhausted'
+        'Retry budget exhausted',
       );
     }
     this.record.attempt += 1;

@@ -141,7 +141,9 @@ describe('Phase 4.2: Network-Level SSRF Containment & Egress Proxy Verification'
     try {
       const connectPromise = new Promise(resolve => {
         const clientSocket = net.connect({ host: '127.0.0.1', port: proxy.port }, () => {
-          clientSocket.write(`CONNECT 127.0.0.1:${targetPort} HTTP/1.1\r\nHost: 127.0.0.1:${targetPort}\r\n\r\n`);
+          clientSocket.write(
+            `CONNECT 127.0.0.1:${targetPort} HTTP/1.1\r\nHost: 127.0.0.1:${targetPort}\r\n\r\n`,
+          );
         });
 
         let data = '';

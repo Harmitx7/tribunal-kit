@@ -33,7 +33,7 @@ class ResourceGuardEngine {
   async acquireSlot(taskId = 'task') {
     if (this.queue.length >= this.maxQueueDepth) {
       const err = new Error(
-        `Task queue capacity exceeded (${this.maxQueueDepth}). System applying backpressure load-shedding.`
+        `Task queue capacity exceeded (${this.maxQueueDepth}). System applying backpressure load-shedding.`,
       );
       err.failureCategory = 'RESOURCE_EXHAUSTED';
       throw err;
@@ -45,7 +45,7 @@ class ResourceGuardEngine {
     }
 
     // Queue task
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.queue.push({
         taskId,
         resolve: () => {
@@ -76,7 +76,7 @@ class ResourceGuardEngine {
 
     if (this.consumedTokens > this.tokenBudget) {
       const err = new Error(
-        `Token budget of ${this.tokenBudget} exceeded (consumed: ${this.consumedTokens}).`
+        `Token budget of ${this.tokenBudget} exceeded (consumed: ${this.consumedTokens}).`,
       );
       err.failureCategory = 'RESOURCE_EXHAUSTED';
       throw err;
@@ -120,7 +120,7 @@ class ResourceGuardEngine {
     const deadlocks = [];
     const path = [];
 
-    const dfs = (node) => {
+    const dfs = node => {
       visited.add(node);
       recStack.add(node);
       path.push(node);
@@ -161,7 +161,7 @@ class ResourceGuardEngine {
             evidence: `deadlock cycle: ${cycle.join(' -> ')}`,
             remediation: 'Eliminate cyclic wait dependencies; assign hierarchical task ordering.',
             verdict: 'FAIL',
-          })
+          }),
         );
       }
     }

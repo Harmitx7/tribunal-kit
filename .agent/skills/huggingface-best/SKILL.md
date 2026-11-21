@@ -1,6 +1,6 @@
 ---
 name: huggingface-best
-description: "Use when loading, evaluating, fine-tuning, and deploying huggingface best machine learning models, datasets, and inference pipelines."
+description: 'Use when loading, evaluating, fine-tuning, and deploying huggingface best machine learning models, datasets, and inference pipelines.'
 version: 6.0.0
 last-updated: 2026-09-29
 tools: Read, Grep, Glob, Bash, Edit, Write
@@ -8,44 +8,44 @@ scripts-binding:
   - .agent/scripts/lint_runner.js
   - .agent/scripts/verify_all.js
 inputs:
-  task: "string"
-  target_file: "string"
+  task: 'string'
+  target_file: 'string'
 outputs:
-  result: "string"
-  verification_status: "boolean"
+  result: 'string'
+  verification_status: 'boolean'
 trigger:
-  - "huggingface"
-  - "best"
+  - 'huggingface'
+  - 'best'
 ---
 
 # HuggingFace Best Model Finder
 
 ## Mandatory Pre-Flight Context Inspection
+
 Before reading, generating, or refactoring code in the `huggingface-best` domain, inspect these 5 critical parameters:
+
 1. **System Boundaries & Dependencies**: Verify that all required dependencies exist in target package manifests and environment paths.
 2. **Runtime Context & Platform Invariants**: Confirm target platform constraints (Node.js, Browser, Mobile OS, Edge runtime) before applying APIs.
 3. **Execution Guardrails**: Identify potential side-effects, state mutations, and unhandled asynchronous exceptions.
 4. **Validation & Type Contracts**: Validate input data schemas and strict type constraints across all module interfaces.
 5. **Observability & Proof of Execution**: Ensure execution produces tangible verification signals (terminal output, tests, metrics).
 
-
 ## Activation Boundaries
+
 - **Activate when:** Use when loading, evaluating, fine-tuning, and deploying huggingface best machine learning models, datasets, and inference pipelines.
 - **DO NOT activate when:** The task falls outside the `huggingface-best` domain or is managed by a different dedicated specialist agent.
 
-
 ## 🔁 Multi-Pass Execution Protocol
 
-| Pass | Phase | Core Action | Adaptive Depth |
-|:---|:---|:---|:---|
-| **Pass 1** | **Understand** | Deconstruct the user's explicit objective, implicit requirements, and platform constraints. | Fast / Standard / Deep |
-| **Pass 2** | **Plan** | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls. | Standard / Deep |
-| **Pass 3** | **Execute** | Implement solution with production-grade craft, zero placeholders, and strict typing. | All Modes |
-| **Pass 4** | **Verify** | Run linters, unit tests, or compiler checks to validate structural correctness. | All Modes |
-| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep |
-| **Pass 6** | **Harden** | Eliminate discovered friction, optimize performance, and harden error boundaries. | Standard / Deep |
-| **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. | All Modes |
-
+| Pass       | Phase                | Core Action                                                                                     | Adaptive Depth         |
+| :--------- | :------------------- | :---------------------------------------------------------------------------------------------- | :--------------------- |
+| **Pass 1** | **Understand**       | Deconstruct the user's explicit objective, implicit requirements, and platform constraints.     | Fast / Standard / Deep |
+| **Pass 2** | **Plan**             | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls.   | Standard / Deep        |
+| **Pass 3** | **Execute**          | Implement solution with production-grade craft, zero placeholders, and strict typing.           | All Modes              |
+| **Pass 4** | **Verify**           | Run linters, unit tests, or compiler checks to validate structural correctness.                 | All Modes              |
+| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep        |
+| **Pass 6** | **Harden**           | Eliminate discovered friction, optimize performance, and harden error boundaries.               | Standard / Deep        |
+| **Pass 7** | **Quality Gate**     | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing.    | All Modes              |
 
 Finds the best models for a task by querying official HF benchmark leaderboards, enriching
 results with model size data, filtering for what fits on the user's device, and returning a
@@ -56,6 +56,7 @@ comparison table with benchmark scores.
 ## Step 1: Parse the request
 
 Extract from the user's message:
+
 - **Task**: what they want the model to do (coding, math/reasoning, chat, OCR, RAG/retrieval, speech recognition, image classification, multimodal, agents, etc.)
 - **Device**: hardware constraints (MacBook M-series 8/16/32/64GB unified memory, RTX GPU with VRAM amount, CPU-only, cloud/no constraint, etc.)
 
@@ -112,6 +113,7 @@ hf models info org/model1 --json | jq '{safetensors, tags, cardData}'
 ```
 
 Extract from each response:
+
 - **Parameters**: `safetensors.total` → convert to B (e.g., 7_241_748_480 → "7.2B")
 - **License**: from model card tags (look for `license:apache-2.0`, `license:mit`, etc.)
 - If `safetensors` is absent, parse size from the model name (look for "7b", "8b", "13b", "70b", "72b", etc.)
@@ -121,6 +123,7 @@ Extract from each response:
 ## Step 5: Filter and rank
 
 **If a device was specified:**
+
 1. Remove models exceeding the fp16 parameter budget for the device
 2. Flag models that fit only with Q4 quantization (multiply budget by ~4 for Q4 capacity)
 3. If a highly-ranked model is slightly over budget, keep it with a "needs Q4" note — don't silently drop it
@@ -138,11 +141,11 @@ Include proprietary models (GPT-4, Claude, Gemini) if they appear on leaderboard
 ### Comparison table
 
 ```markdown
-| # | Model | Params | [Benchmark 1] | [Benchmark 2] | License | On device |
-|---|-------|--------|--------------|--------------|---------|-----------|
-| ⭐1 | [org/name](https://huggingface.co/org/name) | 7B | 85.2% | — | Apache 2.0 | Yes (fp16) |
-| 2 | [org/name](https://huggingface.co/org/name) | 13B | 83.1% | 71.5% | MIT | Q4 only |
-| 3 | [org/name](https://huggingface.co/org/name) | 70B | 90.0% | 81.0% | Llama | Too large |
+| #   | Model                                       | Params | [Benchmark 1] | [Benchmark 2] | License    | On device  |
+| --- | ------------------------------------------- | ------ | ------------- | ------------- | ---------- | ---------- |
+| ⭐1 | [org/name](https://huggingface.co/org/name) | 7B     | 85.2%         | —             | Apache 2.0 | Yes (fp16) |
+| 2   | [org/name](https://huggingface.co/org/name) | 13B    | 83.1%         | 71.5%         | MIT        | Q4 only    |
+| 3   | [org/name](https://huggingface.co/org/name) | 70B    | 90.0%         | 81.0%         | Llama      | Too large  |
 ```
 
 - Link model names to `https://huggingface.co/<model_id>`
@@ -155,6 +158,7 @@ Include proprietary models (GPT-4, Claude, Gemini) if they appear on leaderboard
 After presenting the table, ask the user: "Would you like to run **[top recommended model]**?"
 
 If they say yes, ask whether they'd prefer to:
+
 - **Run locally** — ask about their device if not already known, then give appropriate setup instructions
 - **Run on HF Jobs** — point them to the HF Jobs guide: https://huggingface.co/docs/huggingface_hub/en/guides/jobs
 
@@ -169,23 +173,21 @@ If they say yes, ask whether they'd prefer to:
 
 ## 🚨 Edge-Case & Failure Mode Matrix
 
-| Scenario | Risk | Production Mitigation |
-|:---|:---|:---|
-| **Empty or Null Inputs** | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers |
-| **Network Timeout / Latency** | Hanging operations or duplicate side-effects | Implement bounded abort controllers, exponential backoff, and idempotency keys |
-| **Concurrency / Race Conditions** | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls |
-| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection | Validate boundary payloads with Zod/Pydantic schemas prior to execution |
-| **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
-
+| Scenario                               | Risk                                                 | Production Mitigation                                                           |
+| :------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **Empty or Null Inputs**               | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers   |
+| **Network Timeout / Latency**          | Hanging operations or duplicate side-effects         | Implement bounded abort controllers, exponential backoff, and idempotency keys  |
+| **Concurrency / Race Conditions**      | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls          |
+| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection      | Validate boundary payloads with Zod/Pydantic schemas prior to execution         |
+| **Resource / Memory Saturation**       | OOM errors, frame drops, or memory leaks             | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
 
 ## 🤖 LLM-Specific Traps Table
 
-| Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
-|:---|:---|:---|
-| **Platform-Dependent Shell Commands** | Hardcoding $(cat ~/.cache/huggingface/token) or piping to jq | Use platform-agnostic token checks via env var HF_TOKEN and native JSON parsing |
-| **VRAM OOM Crash** | Loading 70B model weights on a consumer 16GB GPU without quantization | Calculate parameter bounds (fp16 = VRAM/2, Q4 = VRAM*2) and load with bitsandbytes/GGUF |
-| **Blocking Batch Generation** | Generating large batches synchronously without streaming or yield | Use TextIteratorStreamer or asynchronous generate workers to prevent request timeouts |
-
+| Anti-Pattern                          | What AI Commonly Does Wrong                                           | What Is Actually Correct                                                                |
+| :------------------------------------ | :-------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| **Platform-Dependent Shell Commands** | Hardcoding $(cat ~/.cache/huggingface/token) or piping to jq          | Use platform-agnostic token checks via env var HF_TOKEN and native JSON parsing         |
+| **VRAM OOM Crash**                    | Loading 70B model weights on a consumer 16GB GPU without quantization | Calculate parameter bounds (fp16 = VRAM/2, Q4 = VRAM*2) and load with bitsandbytes/GGUF |
+| **Blocking Batch Generation**         | Generating large batches synchronously without streaming or yield     | Use TextIteratorStreamer or asynchronous generate workers to prevent request timeouts   |
 
 ## 🏛️ Tribunal Verification & Guardrails
 
@@ -193,12 +195,15 @@ If they say yes, ask whether they'd prefer to:
 **Slash Command:** `/review` or `/tribunal-full`
 
 ### 🔬 Evidence Standard (Tri-State Verification)
+
 Every finding, audit statement, or completion claim must classify its factual certainty:
+
 - **`[OBSERVED]`**: Directly confirmed in the codebase or verified via executed terminal command.
 - **`[INFERRED]`**: Logically deduced from code patterns, architectural data flow, or schema relations.
 - **`[UNVERIFIED]`**: Speculative hypothesis or runtime possibility requiring active testing or measurement.
 
 ### ✅ Pre-Flight Self-Audit Checklist
+
 ```
 ✅ Are model architectures and weights verified to fit within target hardware VRAM budgets?
 ✅ Are pipeline requests guarded with bounded timeouts and retry backoffs?
@@ -208,6 +213,8 @@ Every finding, audit statement, or completion claim must classify its factual ce
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
+
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.

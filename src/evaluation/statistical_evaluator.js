@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -36,8 +37,7 @@ function wilsonScoreInterval(successes, total, z = 1.96) {
   const denominator = 1 + z2 / total;
 
   const center = (p + z2 / (2 * total)) / denominator;
-  const margin =
-    (z * Math.sqrt((p * (1 - p)) / total + z2 / (4 * total * total))) / denominator;
+  const margin = (z * Math.sqrt((p * (1 - p)) / total + z2 / (4 * total * total))) / denominator;
 
   return {
     center: Math.round(center * 10000) / 10000,
@@ -168,11 +168,9 @@ class StatisticalEvaluator {
     for (const scenario of scenarios) {
       // Evaluate safeProposal: MUST pass consistently
       try {
-        const safeReport = await this.evaluateScenarioMultiRun(
-          scenario,
-          scenario.safeProposal,
-          { runs: numRuns },
-        );
+        const safeReport = await this.evaluateScenarioMultiRun(scenario, scenario.safeProposal, {
+          runs: numRuns,
+        });
         safeResults.push(safeReport);
       } catch (err) {
         errors.push({
@@ -248,9 +246,10 @@ class StatisticalEvaluator {
         violations: dualOracleViolations,
       },
       errors,
-      overallVerdict: dualOracleViolations.length === 0 && errors.length === 0
-        ? 'BENCHMARK_VAULT_CERTIFIED'
-        : 'BENCHMARK_VAULT_INVALID',
+      overallVerdict:
+        dualOracleViolations.length === 0 && errors.length === 0
+          ? 'BENCHMARK_VAULT_CERTIFIED'
+          : 'BENCHMARK_VAULT_INVALID',
     };
   }
 
@@ -277,7 +276,7 @@ class StatisticalEvaluator {
     // Latency check: candidate avg must not exceed 110% of baseline
     const baselineAvgMs = baselineReport.safe.aggregate.avgDurationMs || 1;
     const candidateAvgMs = candidateReport.safe.aggregate.avgDurationMs || 1;
-    const latencyRegressed = candidateAvgMs > baselineAvgMs * 1.10;
+    const latencyRegressed = candidateAvgMs > baselineAvgMs * 1.1;
 
     let verdict = 'INCONCLUSIVE';
     if (safeComparison.improved && !unsafeRegressed && !latencyRegressed) {

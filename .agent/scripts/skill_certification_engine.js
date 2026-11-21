@@ -47,7 +47,7 @@ const REPEATABILITY = {
 
 const LEDGER_PATH = path.resolve(__dirname, '..', 'data', 'skill_certification_ledger.jsonl');
 
-let inMemoryTestEvents = [];
+const inMemoryTestEvents = [];
 
 // ─── Immutable Certification Ledger (Section 15) ───────────────────────────
 function appendLedgerEvent(event, customLedgerPath = null) {
@@ -57,7 +57,11 @@ function appendLedgerEvent(event, customLedgerPath = null) {
     ...event,
   };
 
-  if (process.env.NODE_ENV === 'test' && !process.env.TRIBUNAL_WRITE_TEST_LEDGER && !customLedgerPath) {
+  if (
+    process.env.NODE_ENV === 'test' &&
+    !process.env.TRIBUNAL_WRITE_TEST_LEDGER &&
+    !customLedgerPath
+  ) {
     inMemoryTestEvents.push(fullEvent);
     return fullEvent;
   }
@@ -76,7 +80,11 @@ function readLedgerEvents(filterSkillId = null, customLedgerPath = null) {
     const lines = fs.readFileSync(targetPath, 'utf8').trim().split('\n').filter(Boolean);
     events = lines.map(l => JSON.parse(l));
   }
-  if (process.env.NODE_ENV === 'test' && !process.env.TRIBUNAL_WRITE_TEST_LEDGER && !customLedgerPath) {
+  if (
+    process.env.NODE_ENV === 'test' &&
+    !process.env.TRIBUNAL_WRITE_TEST_LEDGER &&
+    !customLedgerPath
+  ) {
     events = [...events, ...inMemoryTestEvents];
   }
   if (filterSkillId) return events.filter(e => e.skill_id === filterSkillId);

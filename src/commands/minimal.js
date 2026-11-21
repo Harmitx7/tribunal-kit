@@ -1,9 +1,7 @@
 'use strict';
-const __importDefault =
-  (this && this.__importDefault) ||
-  function (mod) {
-    return mod && mod.__esModule ? mod : { default: mod };
-  };
+const __importDefault = function (mod) {
+  return mod && mod.__esModule ? mod : { default: mod };
+};
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.cmdMinimal = cmdMinimal;
 const fs_1 = __importDefault(require('fs'));

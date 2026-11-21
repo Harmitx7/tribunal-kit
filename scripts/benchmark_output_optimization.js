@@ -37,81 +37,99 @@ function estimateTokens(text) {
 
 function createTestExecutionWorkload() {
   const events = [];
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.OPERATION_STARTED,
-    title: 'Unit Test Execution Pipeline',
-    summary: 'Running 8 test suites across 4 worker threads',
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.OPERATION_STARTED,
+      title: 'Unit Test Execution Pipeline',
+      summary: 'Running 8 test suites across 4 worker threads',
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.AGENT_ACTIVATED,
-    agent: 'test-engineer',
-    domain: 'Test Strategy & Execution',
-    summary: 'Orchestrating test runners and asserting behavior contracts.',
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.AGENT_ACTIVATED,
+      agent: 'test-engineer',
+      domain: 'Test Strategy & Execution',
+      summary: 'Orchestrating test runners and asserting behavior contracts.',
+    }),
+  );
 
   for (let i = 1; i <= 8; i++) {
-    events.push(createActivityEvent({
-      eventType: EVENT_TYPES.PROGRESS_UPDATED,
-      title: 'Executing Jest Unit Test Suites',
-      progress: {
-        current: i,
-        total: 8,
-        percentage: Math.round((i / 8) * 100),
-        unit: 'suites',
-        isAuthoritative: true,
-      },
-    }));
+    events.push(
+      createActivityEvent({
+        eventType: EVENT_TYPES.PROGRESS_UPDATED,
+        title: 'Executing Jest Unit Test Suites',
+        progress: {
+          current: i,
+          total: 8,
+          percentage: Math.round((i / 8) * 100),
+          unit: 'suites',
+          isAuthoritative: true,
+        },
+      }),
+    );
   }
 
   for (let i = 1; i <= 4; i++) {
-    events.push(createActivityEvent({
-      eventType: EVENT_TYPES.TOOL_EXECUTING,
-      title: `Tool: test_runner suite_${i}`,
-      summary: `Subprocess executing test/unit/suite_${i}.test.js`,
-    }));
+    events.push(
+      createActivityEvent({
+        eventType: EVENT_TYPES.TOOL_EXECUTING,
+        title: `Tool: test_runner suite_${i}`,
+        summary: `Subprocess executing test/unit/suite_${i}.test.js`,
+      }),
+    );
   }
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.WARNING_DETECTED,
-    title: 'Deprecation Warning',
-    warning: {
-      message: 'Punycodes module is deprecated; use node:buffer or url module instead.',
-      impact: 'Will be removed in next Node runtime release.',
-    },
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.WARNING_DETECTED,
+      title: 'Deprecation Warning',
+      warning: {
+        message: 'Punycodes module is deprecated; use node:buffer or url module instead.',
+        impact: 'Will be removed in next Node runtime release.',
+      },
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.VALIDATION_PASSED,
-    title: 'Behavioral Contract Assertions',
-    evidence: { passedSuites: 8, passedTests: 142, failedTests: 0, durationMs: 1820 },
-    nextAction: 'Ready for integration deployment',
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.VALIDATION_PASSED,
+      title: 'Behavioral Contract Assertions',
+      evidence: { passedSuites: 8, passedTests: 142, failedTests: 0, durationMs: 1820 },
+      nextAction: 'Ready for integration deployment',
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.OPERATION_COMPLETED,
-    title: 'Unit Test Execution Pipeline',
-    summary: 'All 8 test suites passed with 142 assertions and 0 regressions.',
-    reportReferences: ['coverage/lcov.info', 'reports/test_summary.json'],
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.OPERATION_COMPLETED,
+      title: 'Unit Test Execution Pipeline',
+      summary: 'All 8 test suites passed with 142 assertions and 0 regressions.',
+      reportReferences: ['coverage/lcov.info', 'reports/test_summary.json'],
+    }),
+  );
 
   return events;
 }
 
 function createSecurityAuditWorkload() {
   const events = [];
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.OPERATION_STARTED,
-    title: 'Deep OWASP Source Code Security Audit',
-    summary: 'Analyzing AST for injection vectors, secret leaks, and prototype pollution.',
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.OPERATION_STARTED,
+      title: 'Deep OWASP Source Code Security Audit',
+      summary: 'Analyzing AST for injection vectors, secret leaks, and prototype pollution.',
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.SKILL_ACTIVATED,
-    skill: 'api-security-auditor',
-    domain: 'Application Security & Pen-Testing',
-    summary: 'Auditing route handlers and query parameters against OWASP Top 10.',
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.SKILL_ACTIVATED,
+      skill: 'api-security-auditor',
+      domain: 'Application Security & Pen-Testing',
+      summary: 'Auditing route handlers and query parameters against OWASP Top 10.',
+    }),
+  );
 
   // Large evidence payload with 30 findings
   const mockFindings = [];
@@ -126,99 +144,121 @@ function createSecurityAuditWorkload() {
     });
   }
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.ANALYSIS_STARTED,
-    title: 'AST Vulnerability Scanner',
-    summary: 'Scanning 84 endpoints across 12 services.',
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.ANALYSIS_STARTED,
+      title: 'AST Vulnerability Scanner',
+      summary: 'Scanning 84 endpoints across 12 services.',
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.EVIDENCE_COLLECTED,
-    title: 'Static Analysis Security Scanner Findings',
-    evidence: mockFindings,
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.EVIDENCE_COLLECTED,
+      title: 'Static Analysis Security Scanner Findings',
+      evidence: mockFindings,
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.WARNING_DETECTED,
-    title: 'Outdated Dependency Alert',
-    warning: {
-      message: 'Package "lodash" version 4.17.15 has moderate prototype pollution vulnerability.',
-      impact: 'Potential remote property injection if untrusted user objects are merged.',
-    },
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.WARNING_DETECTED,
+      title: 'Outdated Dependency Alert',
+      warning: {
+        message: 'Package "lodash" version 4.17.15 has moderate prototype pollution vulnerability.',
+        impact: 'Potential remote property injection if untrusted user objects are merged.',
+      },
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.VALIDATION_PASSED,
-    title: 'Zero High-Severity Security Vulnerabilities',
-    evidence: { scannedEndpoints: 84, critical: 0, high: 0, medium: 3, low: 27 },
-    nextAction: 'Generate SBOM report',
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.VALIDATION_PASSED,
+      title: 'Zero High-Severity Security Vulnerabilities',
+      evidence: { scannedEndpoints: 84, critical: 0, high: 0, medium: 3, low: 27 },
+      nextAction: 'Generate SBOM report',
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.OPERATION_COMPLETED,
-    title: 'Deep OWASP Source Code Security Audit',
-    summary: 'Repository passed security gate with 0 blocking CVEs.',
-    reportReferences: ['reports/security_audit.json', 'reports/sbom.spdx.json'],
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.OPERATION_COMPLETED,
+      title: 'Deep OWASP Source Code Security Audit',
+      summary: 'Repository passed security gate with 0 blocking CVEs.',
+      reportReferences: ['reports/security_audit.json', 'reports/sbom.spdx.json'],
+    }),
+  );
 
   return events;
 }
 
 function createFailureRecoveryWorkload() {
   const events = [];
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.OPERATION_STARTED,
-    title: 'Database Schema Migration Pipeline',
-    summary: 'Applying incremental migrations to production replica.',
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.OPERATION_STARTED,
+      title: 'Database Schema Migration Pipeline',
+      summary: 'Applying incremental migrations to production replica.',
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.TOOL_EXECUTING,
-    title: 'Tool: prisma_migrate',
-    summary: 'Executing migration 20261030_user_preferences',
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.TOOL_EXECUTING,
+      title: 'Tool: prisma_migrate',
+      summary: 'Executing migration 20261030_user_preferences',
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.VALIDATION_FAILED,
-    title: 'Migration Lock Acquisition Failure',
-    error: {
-      message: 'Deadlock detected: transaction waiting for ExclusiveLock on relation "users"',
-      code: 'PG_ERR_DEADLOCK',
-      suggestion: 'Retry migration with exponential backoff or terminate blocking query PID 4129',
-      stack: [
-        'DatabaseError: Deadlock detected',
-        '    at Query.handleError (node_modules/pg/lib/query.js:142:12)',
-        '    at Connection.parseE (node_modules/pg/lib/connection.js:612:15)',
-        '    at Connection.parseMessage (node_modules/pg/lib/connection.js:413:19)',
-        '    at Socket.<anonymous> (node_modules/pg/lib/connection.js:129:22)',
-      ].join('\n'),
-    },
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.VALIDATION_FAILED,
+      title: 'Migration Lock Acquisition Failure',
+      error: {
+        message: 'Deadlock detected: transaction waiting for ExclusiveLock on relation "users"',
+        code: 'PG_ERR_DEADLOCK',
+        suggestion: 'Retry migration with exponential backoff or terminate blocking query PID 4129',
+        stack: [
+          'DatabaseError: Deadlock detected',
+          '    at Query.handleError (node_modules/pg/lib/query.js:142:12)',
+          '    at Connection.parseE (node_modules/pg/lib/connection.js:612:15)',
+          '    at Connection.parseMessage (node_modules/pg/lib/connection.js:413:19)',
+          '    at Socket.<anonymous> (node_modules/pg/lib/connection.js:129:22)',
+        ].join('\n'),
+      },
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.RETRY_STARTED,
-    title: 'Retrying Migration Pipeline',
-    attempt: 1,
-    maxAttempts: 3,
-    summary: 'Backing off 500ms before retrying transaction.',
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.RETRY_STARTED,
+      title: 'Retrying Migration Pipeline',
+      attempt: 1,
+      maxAttempts: 3,
+      summary: 'Backing off 500ms before retrying transaction.',
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.APPROVAL_REQUIRED,
-    title: 'Manual DB Lock Clearance Gate',
-    summary: 'Awaiting operator sign-off to terminate blocking query PID 4129.',
-    evidence: { blockingPid: 4129, query: 'SELECT * FROM users FOR UPDATE', duration: '45s' },
-    nextAction: 'Operator must approve killing PID 4129 before retry 2',
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.APPROVAL_REQUIRED,
+      title: 'Manual DB Lock Clearance Gate',
+      summary: 'Awaiting operator sign-off to terminate blocking query PID 4129.',
+      evidence: { blockingPid: 4129, query: 'SELECT * FROM users FOR UPDATE', duration: '45s' },
+      nextAction: 'Operator must approve killing PID 4129 before retry 2',
+    }),
+  );
 
-  events.push(createActivityEvent({
-    eventType: EVENT_TYPES.OPERATION_BLOCKED,
-    title: 'Migration Halted Awaiting Lock Clearance',
-    error: {
-      message: 'Lock contention unresolved',
-      suggestion: 'Run "SELECT pg_terminate_backend(4129);" to unblock',
-    },
-  }));
+  events.push(
+    createActivityEvent({
+      eventType: EVENT_TYPES.OPERATION_BLOCKED,
+      title: 'Migration Halted Awaiting Lock Clearance',
+      error: {
+        message: 'Lock contention unresolved',
+        suggestion: 'Run "SELECT pg_terminate_backend(4129);" to unblock',
+      },
+    }),
+  );
 
   return events;
 }
@@ -233,8 +273,14 @@ function runBenchmark() {
 
   const workloads = {
     testExecution: { name: 'Workload 1: Test Execution', events: createTestExecutionWorkload() },
-    securityAudit: { name: 'Workload 2: Security Audit (Large Evidence)', events: createSecurityAuditWorkload() },
-    failureRecovery: { name: 'Workload 3: Failure & Retry Recovery', events: createFailureRecoveryWorkload() },
+    securityAudit: {
+      name: 'Workload 2: Security Audit (Large Evidence)',
+      events: createSecurityAuditWorkload(),
+    },
+    failureRecovery: {
+      name: 'Workload 3: Failure & Retry Recovery',
+      events: createFailureRecoveryWorkload(),
+    },
   };
 
   const results = {};
@@ -309,7 +355,10 @@ function runBenchmark() {
       durationMs: 1250,
       attempted: ['Pipeline execution'],
       succeeded: key !== 'failureRecovery' ? ['All invariants verified'] : [],
-      failed: key === 'failureRecovery' ? ['Deadlock detected: transaction waiting for ExclusiveLock'] : [],
+      failed:
+        key === 'failureRecovery'
+          ? ['Deadlock detected: transaction waiting for ExclusiveLock']
+          : [],
       verified: key !== 'failureRecovery' ? ['Checksums valid'] : [],
       diagnosticsRef: `op-${key}-001`,
     });
@@ -318,16 +367,30 @@ function runBenchmark() {
     // Reductions
     const byteReductionPct = Math.round(((baselineBytes - essentialBytes) / baselineBytes) * 100);
     const lineReductionPct = Math.round(((baselineLines - essentialLines) / baselineLines) * 100);
-    const msgReductionPct = Math.round(((wl.events.length - essentialMsgCount) / wl.events.length) * 100);
+    const msgReductionPct = Math.round(
+      ((wl.events.length - essentialMsgCount) / wl.events.length) * 100,
+    );
 
     console.log(`  Emitted Events:             ${wl.events.length}`);
-    console.log(`  Baseline Total Bytes:       ${baselineBytes} bytes (${estimateTokens(baselineOutputs.join('\n'))} tokens, ${baselineLines} lines)`);
-    console.log(`  Essential Mode Visible:     ${essentialBytes} bytes (${estimateTokens(essentialOutputs.join('\n'))} tokens, ${essentialLines} lines, ${essentialMsgCount} msgs)`);
-    console.log(`  Expanded Mode Visible:      ${expandedBytes} bytes (${expandedLines} lines, ${expandedMsgCount} msgs)`);
+    console.log(
+      `  Baseline Total Bytes:       ${baselineBytes} bytes (${estimateTokens(baselineOutputs.join('\n'))} tokens, ${baselineLines} lines)`,
+    );
+    console.log(
+      `  Essential Mode Visible:     ${essentialBytes} bytes (${estimateTokens(essentialOutputs.join('\n'))} tokens, ${essentialLines} lines, ${essentialMsgCount} msgs)`,
+    );
+    console.log(
+      `  Expanded Mode Visible:      ${expandedBytes} bytes (${expandedLines} lines, ${expandedMsgCount} msgs)`,
+    );
     console.log(`  Diagnostic Mode Visible:    ${diagBytes} bytes (${diagLines} lines)`);
-    console.log(`  Completion Summary Card:    ${summaryBytes} bytes (${summaryCard.split('\n').length} lines)`);
-    console.log(`  OUTPUT REDUCTION:           ${byteReductionPct}% byte reduction · ${lineReductionPct}% line reduction · ${msgReductionPct}% message reduction`);
-    console.log(`  Baseline Render Latency:    ${baselineLatencyMs.toFixed(3)} ms (${(baselineLatencyMs / wl.events.length).toFixed(4)} ms/event)`);
+    console.log(
+      `  Completion Summary Card:    ${summaryBytes} bytes (${summaryCard.split('\n').length} lines)`,
+    );
+    console.log(
+      `  OUTPUT REDUCTION:           ${byteReductionPct}% byte reduction · ${lineReductionPct}% line reduction · ${msgReductionPct}% message reduction`,
+    );
+    console.log(
+      `  Baseline Render Latency:    ${baselineLatencyMs.toFixed(3)} ms (${(baselineLatencyMs / wl.events.length).toFixed(4)} ms/event)`,
+    );
     console.log(`  Essential Render Latency:   ${essentialLatencyMs.toFixed(3)} ms\n`);
 
     results[key] = {
@@ -385,4 +448,3 @@ module.exports = {
   createSecurityAuditWorkload,
   createFailureRecoveryWorkload,
 };
-

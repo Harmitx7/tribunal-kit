@@ -4,7 +4,7 @@
 **Display Name:** AI Reliability & Evaluation  
 **Target Repository:** `tribunal-kit` v9.3.0  
 **Status:** Awaiting Human Approval (Gate Step)  
-**Active Agent:** `project-planner`  
+**Active Agent:** `project-planner`
 
 ---
 
@@ -59,21 +59,23 @@ Establish a production-grade, mathematically verified AI Reliability & Evaluatio
 ## 4. Phase 1 Architecture & Capability Boundaries
 
 ### 4.1 Skill Portfolio Decision Matrix
+
 All 9 proposed skills address verified capability gaps and will be established canonically:
 
-| Identifier | Domain | Canonical Path | Primary Responsibility |
-|:---|:---|:---|:---|
-| `llm-evaluation-engineer` | `ai-reliability` | `.agent/skills/llm-evaluation-engineer/SKILL.md` | Designs & executes reproducible evaluations; defines criteria & dataset sampling. |
-| `hallucination-detection-auditor` | `ai-reliability` | `.agent/skills/hallucination-detection-auditor/SKILL.md` | Deconstructs claims, checks line/AST proofs on disk, flags ghost packages, assigns 5-state verdicts. |
-| `confidence-calibration-auditor` | `ai-reliability` | `.agent/skills/confidence-calibration-auditor/SKILL.md` | Audits predicted confidence vs empirical accuracy using Brier score and binned ECE. |
-| `agent-behavioral-testing` | `ai-reliability` | `.agent/skills/agent-behavioral-testing/SKILL.md` | Tests agents/skills against positive invariants, negative traps, and forbidden side-effects. |
-| `llm-regression-evaluator` | `ai-reliability` | `.agent/skills/llm-regression-evaluator/SKILL.md` | Evaluates candidate revisions vs baseline; enforces Non-Masking Safety Invariant ($\Delta\text{Critical} = 0$). |
-| `reviewer-agreement-analyzer` | `ai-reliability` | `.agent/skills/reviewer-agreement-analyzer/SKILL.md` | Measures pairwise & multi-rater consensus using Cohen's & Fleiss' Kappa; isolates contradictions. |
-| `false-positive-false-negative-analyst` | `ai-reliability` | `.agent/skills/false-positive-false-negative-analyst/SKILL.md` | Calculates precision, recall, F1, FPR, FNR with safe denominators; categorizes error root causes. |
-| `evaluation-dataset-integrity-auditor` | `ai-reliability` | `.agent/skills/evaluation-dataset-integrity-auditor/SKILL.md` | Audits datasets for split leakage, near-duplicate prompts, and class imbalance. |
-| `evaluation-methodology-auditor` | `ai-reliability` | `.agent/skills/evaluation-methodology-auditor/SKILL.md` | Audits experimental validity, statistical power ($N \ge 30$), and guards against cherry-picking. |
+| Identifier                              | Domain           | Canonical Path                                                 | Primary Responsibility                                                                                          |
+| :-------------------------------------- | :--------------- | :------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `llm-evaluation-engineer`               | `ai-reliability` | `.agent/skills/llm-evaluation-engineer/SKILL.md`               | Designs & executes reproducible evaluations; defines criteria & dataset sampling.                               |
+| `hallucination-detection-auditor`       | `ai-reliability` | `.agent/skills/hallucination-detection-auditor/SKILL.md`       | Deconstructs claims, checks line/AST proofs on disk, flags ghost packages, assigns 5-state verdicts.            |
+| `confidence-calibration-auditor`        | `ai-reliability` | `.agent/skills/confidence-calibration-auditor/SKILL.md`        | Audits predicted confidence vs empirical accuracy using Brier score and binned ECE.                             |
+| `agent-behavioral-testing`              | `ai-reliability` | `.agent/skills/agent-behavioral-testing/SKILL.md`              | Tests agents/skills against positive invariants, negative traps, and forbidden side-effects.                    |
+| `llm-regression-evaluator`              | `ai-reliability` | `.agent/skills/llm-regression-evaluator/SKILL.md`              | Evaluates candidate revisions vs baseline; enforces Non-Masking Safety Invariant ($\Delta\text{Critical} = 0$). |
+| `reviewer-agreement-analyzer`           | `ai-reliability` | `.agent/skills/reviewer-agreement-analyzer/SKILL.md`           | Measures pairwise & multi-rater consensus using Cohen's & Fleiss' Kappa; isolates contradictions.               |
+| `false-positive-false-negative-analyst` | `ai-reliability` | `.agent/skills/false-positive-false-negative-analyst/SKILL.md` | Calculates precision, recall, F1, FPR, FNR with safe denominators; categorizes error root causes.               |
+| `evaluation-dataset-integrity-auditor`  | `ai-reliability` | `.agent/skills/evaluation-dataset-integrity-auditor/SKILL.md`  | Audits datasets for split leakage, near-duplicate prompts, and class imbalance.                                 |
+| `evaluation-methodology-auditor`        | `ai-reliability` | `.agent/skills/evaluation-methodology-auditor/SKILL.md`        | Audits experimental validity, statistical power ($N \ge 30$), and guards against cherry-picking.                |
 
 ### 4.2 Epistemic Invariants
+
 - **Deterministic Supremacy:** Observed execution ($E_2/E_5$) unconditionally overrides unverified AI claims ($E_0$).
 - **Non-Masking Safety Invariant:** High aggregate accuracy or improvement in non-critical metrics CANNOT permit or conceal a critical safety/security regression.
 
@@ -148,4 +150,3 @@ Wave 6 — Certification Artifacts & Release Audit
 - Modifying existing external CLI commands or npm distribution wrappers.
 - Deploying live cloud LLM APIs (all behavioral evaluations use deterministic mocks & clean worktree sandboxes).
 - Modifying pre-existing unrelated skills or reviewer rules.
-

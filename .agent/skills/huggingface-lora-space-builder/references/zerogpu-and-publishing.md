@@ -75,7 +75,7 @@ Decision tree:
 - **User already authenticated and the LoRA repo is private**: try `api.repo_info(repo_id, token=cached)`. If it succeeds, the existing token has the right scope — proceed. If it fails (token doesn't have access to that repo), ask for a token with broader access.
 - **No cached token**: ask the user. One ask, with the explanation: "I need a Hugging Face access token with **write** scope. Create one at https://huggingface.co/settings/tokens. Paste it here." The same token will be reused for publishing.
 
-The default flow on a Hugging Face Space, in a logged-in user's local environment with `huggingface-cli login`, or in any environment with `HF_TOKEN` set, will *not* require asking the user for a token. Asking is the fallback, not the default.
+The default flow on a Hugging Face Space, in a logged-in user's local environment with `huggingface-cli login`, or in any environment with `HF_TOKEN` set, will _not_ require asking the user for a token. Asking is the fallback, not the default.
 
 ### Reading the LoRA repo
 
@@ -176,7 +176,7 @@ When sharing the URL with the user:
 
 ## Publish-time failures (before the build starts)
 
-These happen during `create_repo` or `upload_file`, *before* the Space build pipeline runs. Diagnose by reading the exception, not the container logs (the container hasn't started yet).
+These happen during `create_repo` or `upload_file`, _before_ the Space build pipeline runs. Diagnose by reading the exception, not the container logs (the container hasn't started yet).
 
 - **`HfHubHTTPError: 400 Bad Request` from `https://huggingface.co/api/validate-yaml`.** The README's YAML frontmatter failed server-side validation. By far the most common cause is `short_description` exceeding the server's length cap (the cap isn't documented and may change; targeting ~60 characters keeps you well clear). Other causes include typos in field names (`hardware` vs `hardwre`), invalid color values in `colorFrom`/`colorTo`, an unrecognized `hardware` string, or a malformed `models:` list. Fix: open `README.md`, shorten `short_description`, double-check the other YAML fields, retry. If the user gave you a long description for the Space, put the long version in the README body below the YAML — that's the right home for prose.
 

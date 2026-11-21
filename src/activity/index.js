@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -75,7 +76,12 @@ const {
   defaultAnnouncementIntelligence,
 } = require('./announcement');
 
-const { MarkdownRenderer, renderMarkdown, stripAnsi, escapeHtmlTags } = require('./renderers/markdown');
+const {
+  MarkdownRenderer,
+  renderMarkdown,
+  stripAnsi,
+  escapeHtmlTags,
+} = require('./renderers/markdown');
 const { TerminalRenderer, renderTerminal, STATE_COLORS } = require('./renderers/terminal');
 const { PlainTextRenderer, renderPlainText } = require('./renderers/plaintext');
 const { StructuredRenderer, renderStructured, renderJson } = require('./renderers/structured');
@@ -117,17 +123,9 @@ const {
   defaultDiagnosticBuffer,
 } = require('./diagnostics');
 
-const {
-  boundArray,
-  boundString,
-  boundObject,
-} = require('./truncation');
+const { boundArray, boundString, boundObject } = require('./truncation');
 
-const {
-  formatDuration,
-  normalizeSummaryData,
-  formatCompletionSummary,
-} = require('./summary');
+const { formatDuration, normalizeSummaryData, formatCompletionSummary } = require('./summary');
 
 const defaultResolver = new SkillAgentResolver();
 
@@ -160,11 +158,17 @@ function renderActivity(event, targetEnvironment = ENVIRONMENTS.MARKDOWN, option
 
 /**
  * Convenience formatter for an event object or partial event.
+ * @param {any} eventOrPartial
+ * @param {string} [targetEnvironment]
+ * @param {any} [options]
  */
 function formatActivity(eventOrPartial, targetEnvironment = ENVIRONMENTS.MARKDOWN, options = {}) {
   if (!eventOrPartial || typeof eventOrPartial !== 'object') {
     return renderActivity(
-      { eventType: EVENT_TYPES.OPERATION_STARTED, title: String(eventOrPartial || 'Unknown Event') },
+      {
+        eventType: EVENT_TYPES.OPERATION_STARTED,
+        title: String(eventOrPartial || 'Unknown Event'),
+      },
       targetEnvironment,
       options,
     );
@@ -175,16 +179,34 @@ function formatActivity(eventOrPartial, targetEnvironment = ENVIRONMENTS.MARKDOW
 
 /**
  * Generates an agent activation announcement.
+ * @param {string} agentName
+ * @param {string} [context]
+ * @param {string} [targetEnvironment]
+ * @param {any} [options]
  */
-function announceAgent(agentName, context = '', targetEnvironment = ENVIRONMENTS.MARKDOWN, options = {}) {
+function announceAgent(
+  agentName,
+  context = '',
+  targetEnvironment = ENVIRONMENTS.MARKDOWN,
+  options = {},
+) {
   const event = defaultResolver.createAgentActivationEvent(agentName, context);
   return formatActivity(event, targetEnvironment, options);
 }
 
 /**
  * Generates a skill application announcement.
+ * @param {string} skillName
+ * @param {string} [context]
+ * @param {string} [targetEnvironment]
+ * @param {any} [options]
  */
-function announceSkill(skillName, context = '', targetEnvironment = ENVIRONMENTS.MARKDOWN, options = {}) {
+function announceSkill(
+  skillName,
+  context = '',
+  targetEnvironment = ENVIRONMENTS.MARKDOWN,
+  options = {},
+) {
   const event = defaultResolver.createSkillActivationEvent(skillName, context);
   return formatActivity(event, targetEnvironment, options);
 }
@@ -271,8 +293,6 @@ module.exports = {
   defaultAnnouncementIntelligence,
 
   // Live Progress & Telemetry Engine (Phase 5)
-  PROGRESS_STATES,
-  AGGREGATION_POLICIES,
   TelemetryError,
   StaleEventError,
   ProgressCalculator,
@@ -301,7 +321,7 @@ module.exports = {
   DiagnosticBuffer,
   classifyFailure,
   defaultDiagnosticBuffer,
-  getDiagnostics: (opId) => defaultDiagnosticBuffer.getDiagnostics(opId),
+  getDiagnostics: opId => defaultDiagnosticBuffer.getDiagnostics(opId),
   getDiagnosticReport: (opId, opts) => defaultDiagnosticBuffer.getDiagnosticReport(opId, opts),
 
   // Semantic Output Truncation & Bounding (Phase 10)

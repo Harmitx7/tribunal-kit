@@ -42,4 +42,3 @@ function auditInteractiveStates(elementId, classStringOrCss = '') {
 module.exports = {
   auditInteractiveStates,
 };
-

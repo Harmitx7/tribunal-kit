@@ -2,7 +2,7 @@
 
 > **Authority**: Martin Fowler (Strangler Fig) & Neal Ford (Evolutionary Architecture)  
 > **Applicable Domains**: Migration Architecture, Monolith Modernization, Architecture Governance  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -25,6 +25,7 @@ Never attempt a "Big Bang" architectural rewrite. Incrementally intercept and mi
 ```
 
 ### Execution Steps:
+
 1. **Identify the Bounded Context**: Choose an edge service with high business value and minimal inbound dependencies (e.g. Notifications, Authentication, or Checkout).
 2. **Deploy Interceptor / Gateway**: Route traffic at the ingress reverse proxy (Envoy/Nginx/Kong).
 3. **Data Replication**: Replicate data from monolith DB to new service DB via CDC (Change Data Capture) or asynchronous outbox event stream.
@@ -41,27 +42,36 @@ Every significant technical decision affecting boundaries, persistence, or proto
 # ADR-0004: Adoption of Apache Kafka for Asynchronous Order Processing
 
 ## Status
+
 ACCEPTED (Date: 2026-10-24)
 
 ## Context
+
 Our monolith database experiences connection exhaustion and lock contention during peak flash sales.
 The Order service currently makes synchronous HTTP calls to Inventory, Payment, and Notification services.
 A network timeout in Payment cascades into a 504 Gateway Timeout for the customer.
 
 ## Decision
+
 We adopt Apache Kafka as the central asynchronous event log for Order State transitions.
+
 - The Order service writes to PostgreSQL and publishes an `OrderCreated` event using the Transactional Outbox pattern.
 - Inventory and Notification services consume events independently at their own processing rate.
 
 ## Consequences
+
 ### Positive
+
 - Order placement latency drops from p99 850ms to p99 45ms.
 - Payment service downtime no longer blocks customers from placing orders (decoupled availability).
+
 ### Negative / Operational Cost
+
 - Increases infrastructure operational complexity (requires managed Kafka cluster / MSK).
 - Requires implementing consumer deduplication (idempotent consumers) to handle at-least-once delivery.
 
 ## Alternatives Considered
+
 - RabbitMQ: Rejected because we require 7-day event retention and stream replay capabilities.
 - Direct synchronous HTTP with retries: Rejected due to compounding tail latency and cascading failure risk.
 ```

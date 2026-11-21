@@ -97,8 +97,8 @@ async function runCertification() {
     'fault_injection_engine.js',
     'index.js',
   ];
-  const allEnginesExist = engineFiles.every((f) =>
-    fs.existsSync(path.join(REPO_ROOT, 'src/runtime_reliability', f))
+  const allEnginesExist = engineFiles.every(f =>
+    fs.existsSync(path.join(REPO_ROOT, 'src/runtime_reliability', f)),
   );
   gates.push({
     gate: 'B',
@@ -106,10 +106,12 @@ async function runCertification() {
     status: allEnginesExist ? 'PASS' : 'FAIL',
     evidence: `10/10 engine modules present in src/runtime_reliability/`,
   });
-  console.log(`│  • Gate B (Engine Architecture):          ${allEnginesExist ? '✔ PASS' : '✖ FAIL'}`);
+  console.log(
+    `│  • Gate B (Engine Architecture):          ${allEnginesExist ? '✔ PASS' : '✖ FAIL'}`,
+  );
 
   // Gate C: Canonical Skill Portfolio
-  const allSkillsValid = EXPECTED_SKILLS.every((s) => {
+  const allSkillsValid = EXPECTED_SKILLS.every(s => {
     const p = path.join(REPO_ROOT, '.agent/skills', s, 'SKILL.md');
     return fs.existsSync(p);
   });
@@ -119,19 +121,23 @@ async function runCertification() {
     status: allSkillsValid ? 'PASS' : 'FAIL',
     evidence: `12/12 skills verified with valid frontmatter`,
   });
-  console.log(`│  • Gate C (12 Canonical Skills):          ${allSkillsValid ? '✔ PASS' : '✖ FAIL'}`);
+  console.log(
+    `│  • Gate C (12 Canonical Skills):          ${allSkillsValid ? '✔ PASS' : '✖ FAIL'}`,
+  );
 
   // Gate D: Topic Map & Routing Integration (Comprehensive Anti-False-Pass Invariants)
   const topicMapPath = path.join(REPO_ROOT, '.agent/skill_topic_map.json');
   const topicMap = JSON.parse(fs.readFileSync(topicMapPath, 'utf8'));
-  const domainSkills = topicMap.domain_routes ? topicMap.domain_routes['agent-runtime-reliability'] : null;
+  const domainSkills = topicMap.domain_routes
+    ? topicMap.domain_routes['agent-runtime-reliability']
+    : null;
   const isArray = Array.isArray(domainSkills);
 
   const allDomainSkillsMapped = isArray && EXPECTED_SKILLS.every(s => domainSkills.includes(s));
-  const noDuplicatesInRoute = isArray && (new Set(domainSkills).size === domainSkills.length);
-  const allDomainSkillsOnDisk = isArray && domainSkills.every(s =>
-    fs.existsSync(path.join(REPO_ROOT, '.agent/skills', s, 'SKILL.md'))
-  );
+  const noDuplicatesInRoute = isArray && new Set(domainSkills).size === domainSkills.length;
+  const allDomainSkillsOnDisk =
+    isArray &&
+    domainSkills.every(s => fs.existsSync(path.join(REPO_ROOT, '.agent/skills', s, 'SKILL.md')));
 
   const allUniqueInMap = new Set();
   let validRoutesStructure = Boolean(topicMap.domain_routes);
@@ -144,14 +150,20 @@ async function runCertification() {
       rList.forEach(s => allUniqueInMap.add(s));
     }
   }
-  const declaredMatchesRegistered = validRoutesStructure && (topicMap.total_skills === allUniqueInMap.size);
+  const declaredMatchesRegistered =
+    validRoutesStructure && topicMap.total_skills === allUniqueInMap.size;
 
-  const diskSkillsCount = fs.readdirSync(path.join(REPO_ROOT, '.agent/skills')).filter(d =>
-    fs.statSync(path.join(REPO_ROOT, '.agent/skills', d)).isDirectory()
-  ).length;
-  const mapMatchesDisk = (allUniqueInMap.size === diskSkillsCount);
+  const diskSkillsCount = fs
+    .readdirSync(path.join(REPO_ROOT, '.agent/skills'))
+    .filter(d => fs.statSync(path.join(REPO_ROOT, '.agent/skills', d)).isDirectory()).length;
+  const mapMatchesDisk = allUniqueInMap.size === diskSkillsCount;
 
-  const gateDPassed = allDomainSkillsMapped && noDuplicatesInRoute && allDomainSkillsOnDisk && declaredMatchesRegistered && mapMatchesDisk;
+  const gateDPassed =
+    allDomainSkillsMapped &&
+    noDuplicatesInRoute &&
+    allDomainSkillsOnDisk &&
+    declaredMatchesRegistered &&
+    mapMatchesDisk;
   gates.push({
     gate: 'D',
     name: 'Topic Map & Routing Integration',
@@ -189,7 +201,8 @@ async function runCertification() {
   const test429 = new Error('Too Many Requests');
   test429.status = 429;
   const c429 = FailureClassifier.classify(test429);
-  const gateFPassed = cNet === 'TRANSIENT_NETWORK' && c429 === 'RATE_LIMITED' && FAILURE_CATEGORIES.length === 14;
+  const gateFPassed =
+    cNet === 'TRANSIENT_NETWORK' && c429 === 'RATE_LIMITED' && FAILURE_CATEGORIES.length === 14;
   gates.push({
     gate: 'F',
     name: 'Failure Classifier & Error Normalization',
@@ -213,10 +226,13 @@ async function runCertification() {
       }
       return 'RECOVERED';
     },
-    { idempotencyKey: 'cert_key_1' }
+    { idempotencyKey: 'cert_key_1' },
   );
-  const cachedRes = await retryRunner.execute(async () => 'FRESH', { idempotencyKey: 'cert_key_1' });
-  const gateGPassed = retryRes.result === 'RECOVERED' && retryRes.attempts === 2 && cachedRes.fromCache === true;
+  const cachedRes = await retryRunner.execute(async () => 'FRESH', {
+    idempotencyKey: 'cert_key_1',
+  });
+  const gateGPassed =
+    retryRes.result === 'RECOVERED' && retryRes.attempts === 2 && cachedRes.fromCache === true;
   gates.push({
     gate: 'G',
     name: 'Bounded Retry, Jitter & Idempotency Engine',
@@ -269,7 +285,8 @@ async function runCertification() {
   } catch (_e) {
     chaosIntercepted = true;
   }
-  const gateJPassed = validVerification.isValid && !tamperedVerification.isValid && chaosIntercepted;
+  const gateJPassed =
+    validVerification.isValid && !tamperedVerification.isValid && chaosIntercepted;
   gates.push({
     gate: 'J',
     name: 'Checkpoint Integrity & Chaos Recovery',
@@ -278,12 +295,16 @@ async function runCertification() {
   });
   console.log(`│  • Gate J (Checkpoint & Fault Injection): ✔ PASS`);
 
-  const allPassed = gates.every((g) => g.status === 'PASS');
+  const allPassed = gates.every(g => g.status === 'PASS');
   const durationMs = Date.now() - startTime;
 
   console.log('├─────────────────────────────────────────────────────────────────');
-  console.log(`│  Overall Certification Decision: ${allPassed ? '✔ FULLY CERTIFIED (PASS)' : '✖ REJECTED (FAIL)'}`);
-  console.log(`│  Total Release Gates:            ${gates.filter((g) => g.status === 'PASS').length}/${gates.length} PASS`);
+  console.log(
+    `│  Overall Certification Decision: ${allPassed ? '✔ FULLY CERTIFIED (PASS)' : '✖ REJECTED (FAIL)'}`,
+  );
+  console.log(
+    `│  Total Release Gates:            ${gates.filter(g => g.status === 'PASS').length}/${gates.length} PASS`,
+  );
   console.log(`│  Elapsed Evaluation Time:        ${durationMs}ms`);
   console.log('╰─────────────────────────────────────────────────────────────────\n');
 
@@ -299,8 +320,8 @@ async function runCertification() {
     durationMs,
     metrics: {
       totalGates: gates.length,
-      passedGates: gates.filter((g) => g.status === 'PASS').length,
-      failedGates: gates.filter((g) => g.status === 'FAIL').length,
+      passedGates: gates.filter(g => g.status === 'PASS').length,
+      failedGates: gates.filter(g => g.status === 'FAIL').length,
       canonicalSkillsCount: EXPECTED_SKILLS.length,
       totalRepositorySkills: topicMap.total_skills,
       canonicalStatesCount: CANONICAL_STATES.length,
@@ -312,14 +333,16 @@ async function runCertification() {
 
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(certificationArtifact, null, 2), 'utf8');
-  console.log(`✔ Machine-readable certification artifact written to: ${path.relative(REPO_ROOT, OUTPUT_PATH)}`);
+  console.log(
+    `✔ Machine-readable certification artifact written to: ${path.relative(REPO_ROOT, OUTPUT_PATH)}`,
+  );
 
   if (!allPassed) {
     process.exit(1);
   }
 }
 
-runCertification().catch((err) => {
+runCertification().catch(err => {
   console.error('Certification failed with error:', err);
   process.exit(1);
 });

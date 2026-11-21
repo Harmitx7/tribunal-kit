@@ -42,46 +42,77 @@ function injectRulesIntoAnthropicPayload(payloadString) {
   }
 }
 
-function startProxyServer(port) {
+const MAX_PAYLOAD_BYTES = 5 * 1024 * 1024; // 5MB
+
+function startProxyServer(port, options = {}) {
+  const upstreamUrl =
+    options.upstream || process.env.TK_PROXY_UPSTREAM || 'https://api.anthropic.com';
+  const interceptPath =
+    options.interceptPath || process.env.TK_PROXY_INTERCEPT_PATH || '/v1/messages';
+
+  let upstream;
+  try {
+    upstream = new URL(upstreamUrl.startsWith('http') ? upstreamUrl : `https://${upstreamUrl}`);
+  } catch {
+    upstream = new URL('https://api.anthropic.com');
+  }
+  const isHttps = upstream.protocol === 'https:';
+  const transport = isHttps ? https : http;
+  const upstreamPort = upstream.port ? parseInt(upstream.port, 10) : isHttps ? 443 : 80;
+
   return new Promise((resolve, reject) => {
     proxyServer = http.createServer((clientReq, clientRes) => {
-      let body = '';
+      const chunks = [];
+      let totalBytes = 0;
+      let aborted = false;
+
       clientReq.on('data', chunk => {
-        body += chunk.toString();
-        // 5MB payload limit to prevent memory exhaustion (DoS)
-        if (body.length > 5 * 1024 * 1024) {
-          console.error('[Tribunal Proxy] Request too large, aborting.');
+        if (aborted) return;
+        totalBytes += chunk.length;
+        // Byte-accurate 5MB payload limit to prevent memory exhaustion (DoS)
+        if (totalBytes > MAX_PAYLOAD_BYTES) {
+          aborted = true;
+          console.error('[Tribunal Proxy] Request too large (exceeded 5MB limit), aborting.');
           if (!clientRes.headersSent) {
             clientRes.writeHead(413, { 'Content-Type': 'text/plain' });
             clientRes.end('Payload Too Large');
           }
           clientReq.destroy();
+          return;
         }
+        chunks.push(chunk);
       });
 
       clientReq.on('end', () => {
-        if (clientReq.destroyed) return;
+        if (aborted || clientReq.destroyed) return;
+        const bodyBuffer = Buffer.concat(chunks);
+        const body = bodyBuffer.toString('utf8');
         let modifiedBody = body;
 
-        // Only intercept AI chat completion endpoints
-        if (clientReq.url && clientReq.url.includes('/v1/messages')) {
+        // Only intercept AI chat completion endpoints matching configured interceptPath
+        if (clientReq.url && clientReq.url.includes(interceptPath)) {
           console.log(`[Tribunal Proxy] Intercepting request to ${clientReq.url}`);
           modifiedBody = injectRulesIntoAnthropicPayload(body);
         }
 
-        const headers = { ...clientReq.headers, host: 'api.anthropic.com' };
+        const headers = { ...clientReq.headers, host: upstream.host };
         delete headers['transfer-encoding'];
-        headers['content-length'] = Buffer.byteLength(modifiedBody);
+        headers['content-length'] = String(Buffer.byteLength(modifiedBody));
 
-        const options = {
-          hostname: 'api.anthropic.com',
-          port: 443,
-          path: clientReq.url,
+        const targetPath =
+          upstream.pathname && upstream.pathname !== '/'
+            ? path.posix.join(upstream.pathname, clientReq.url)
+            : clientReq.url;
+
+        const proxyOptions = {
+          hostname: upstream.hostname,
+          port: upstreamPort,
+          path: targetPath,
           method: clientReq.method,
           headers,
         };
 
-        const proxyReq = https.request(options, proxyRes => {
+        const proxyReq = transport.request(proxyOptions, proxyRes => {
           clientRes.writeHead(proxyRes.statusCode, proxyRes.headers);
           proxyRes.pipe(clientRes, { end: true });
         });
@@ -107,7 +138,6 @@ function startProxyServer(port) {
       resolve(actualPort);
     });
 
-
     proxyServer.on('error', reject);
   });
 }
@@ -126,5 +156,6 @@ module.exports = {
   startProxyServer,
   stopProxyServer,
   getProxyServer,
+  MAX_PAYLOAD_BYTES,
+  injectRulesIntoAnthropicPayload,
 };
-

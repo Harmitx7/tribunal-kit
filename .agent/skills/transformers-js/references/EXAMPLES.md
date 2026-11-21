@@ -3,10 +3,12 @@
 Working examples showing how to use Transformers.js across different runtimes and frameworks.
 
 All examples use the same task and model for consistency:
+
 - **Task**: `feature-extraction`
 - **Model**: `onnx-community/all-MiniLM-L6-v2-ONNX`
 
 ## Table of Contents
+
 1. [Browser (Vanilla JS)](#browser-vanilla-js)
 2. [Node.js](#nodejs)
 3. [React](#react)
@@ -19,46 +21,43 @@ All examples use the same task and model for consistency:
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Feature Extraction</title>
-</head>
-<body>
-  <h1>Text Embedding Generator</h1>
-  <textarea id="input" placeholder="Enter text to embed..."></textarea>
-  <button onclick="generateEmbedding()">Generate Embedding</button>
-  <div id="result"></div>
-  <div id="loading" style="display:none;">Loading model...</div>
+  <head>
+    <title>Feature Extraction</title>
+  </head>
+  <body>
+    <h1>Text Embedding Generator</h1>
+    <textarea id="input" placeholder="Enter text to embed..."></textarea>
+    <button onclick="generateEmbedding()">Generate Embedding</button>
+    <div id="result"></div>
+    <div id="loading" style="display:none;">Loading model...</div>
 
-  <script type="module">
-    import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4';
-    
-    let extractor;
-    
-    // Initialize model on page load
-    document.getElementById('loading').style.display = 'block';
-    extractor = await pipeline(
-      'feature-extraction',
-      'onnx-community/all-MiniLM-L6-v2-ONNX'
-    );
-    document.getElementById('loading').style.display = 'none';
-    
-    window.generateEmbedding = async function() {
-      const text = document.getElementById('input').value;
-      const output = await extractor(text, { pooling: 'mean', normalize: true });
-      
-      document.getElementById('result').innerHTML = `
+    <script type="module">
+      import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4';
+
+      let extractor;
+
+      // Initialize model on page load
+      document.getElementById('loading').style.display = 'block';
+      extractor = await pipeline('feature-extraction', 'onnx-community/all-MiniLM-L6-v2-ONNX');
+      document.getElementById('loading').style.display = 'none';
+
+      window.generateEmbedding = async function () {
+        const text = document.getElementById('input').value;
+        const output = await extractor(text, { pooling: 'mean', normalize: true });
+
+        document.getElementById('result').innerHTML = `
         <h3>Embedding Generated:</h3>
         <p>Dimensions: ${output.data.length}</p>
         <p>First 5 values: ${Array.from(output.data).slice(0, 5).join(', ')}</p>
       `;
-    };
-    
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
-      if (extractor) extractor.dispose();
-    });
-  </script>
-</body>
+      };
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        if (extractor) extractor.dispose();
+      });
+    </script>
+  </body>
 </html>
 ```
 
@@ -67,61 +66,58 @@ All examples use the same task and model for consistency:
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Feature Extraction with Progress</title>
-  <style>
-    .file-progress {
-      margin: 10px 0;
-    }
-    .file-name {
-      font-size: 12px;
-      margin-bottom: 5px;
-    }
-    .progress-bar {
-      width: 100%;
-      height: 20px;
-      background: #f0f0f0;
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      background: #4CAF50;
-      transition: width 0.3s;
-    }
-  </style>
-</head>
-<body>
-  <h1>Text Embedding Generator</h1>
-  <div id="loading">
-    <p id="status">Loading model...</p>
-    <div id="progress-container"></div>
-  </div>
-  <div id="app" style="display:none;">
-    <textarea id="input" placeholder="Enter text..."></textarea>
-    <button onclick="generateEmbedding()">Generate</button>
-    <div id="result"></div>
-  </div>
+  <head>
+    <title>Feature Extraction with Progress</title>
+    <style>
+      .file-progress {
+        margin: 10px 0;
+      }
+      .file-name {
+        font-size: 12px;
+        margin-bottom: 5px;
+      }
+      .progress-bar {
+        width: 100%;
+        height: 20px;
+        background: #f0f0f0;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        background: #4caf50;
+        transition: width 0.3s;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Text Embedding Generator</h1>
+    <div id="loading">
+      <p id="status">Loading model...</p>
+      <div id="progress-container"></div>
+    </div>
+    <div id="app" style="display:none;">
+      <textarea id="input" placeholder="Enter text..."></textarea>
+      <button onclick="generateEmbedding()">Generate</button>
+      <div id="result"></div>
+    </div>
 
-  <script type="module">
-    import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4';
-    
-    let extractor;
-    const fileProgressBars = {};
-    const progressContainer = document.getElementById('progress-container');
-    
-    extractor = await pipeline(
-      'feature-extraction',
-      'onnx-community/all-MiniLM-L6-v2-ONNX',
-      {
-        progress_callback: (info) => {
+    <script type="module">
+      import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4';
+
+      let extractor;
+      const fileProgressBars = {};
+      const progressContainer = document.getElementById('progress-container');
+
+      extractor = await pipeline('feature-extraction', 'onnx-community/all-MiniLM-L6-v2-ONNX', {
+        progress_callback: info => {
           if (info.status === 'progress_total') {
             document.getElementById('status').textContent = `Total: ${info.progress.toFixed(1)}%`;
             return;
           }
 
           document.getElementById('status').textContent = `${info.status}: ${info.file ?? ''}`;
-          
+
           if (info.status === 'progress') {
             // Create progress bar for each file
             if (!fileProgressBars[info.file]) {
@@ -136,34 +132,33 @@ All examples use the same task and model for consistency:
               progressContainer.appendChild(fileDiv);
               fileProgressBars[info.file] = fileDiv.querySelector('.progress-fill');
             }
-            
+
             // Update progress
             fileProgressBars[info.file].style.width = `${info.progress}%`;
           }
-          
+
           if (info.status === 'ready') {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('app').style.display = 'block';
           }
-        }
-      }
-    );
-    
-    window.generateEmbedding = async function() {
-      const text = document.getElementById('input').value;
-      const output = await extractor(text, { pooling: 'mean', normalize: true });
-      
-      document.getElementById('result').innerHTML = `
+        },
+      });
+
+      window.generateEmbedding = async function () {
+        const text = document.getElementById('input').value;
+        const output = await extractor(text, { pooling: 'mean', normalize: true });
+
+        document.getElementById('result').innerHTML = `
         <p>Embedding: ${output.data.length} dimensions</p>
       `;
-    };
-    
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', () => {
-      if (extractor) extractor.dispose();
-    });
-  </script>
-</body>
+      };
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        if (extractor) extractor.dispose();
+      });
+    </script>
+  </body>
 </html>
 ```
 
@@ -176,17 +171,14 @@ All examples use the same task and model for consistency:
 import { pipeline } from '@huggingface/transformers';
 
 async function generateEmbedding(text) {
-  const extractor = await pipeline(
-    'feature-extraction',
-    'onnx-community/all-MiniLM-L6-v2-ONNX'
-  );
-  
+  const extractor = await pipeline('feature-extraction', 'onnx-community/all-MiniLM-L6-v2-ONNX');
+
   const output = await extractor(text, { pooling: 'mean', normalize: true });
-  
+
   console.log('Text:', text);
   console.log('Embedding dimensions:', output.data.length);
   console.log('First 5 values:', Array.from(output.data).slice(0, 5));
-  
+
   await extractor.dispose();
 }
 
@@ -201,43 +193,37 @@ import { pipeline } from '@huggingface/transformers';
 import fs from 'fs/promises';
 
 async function embedDocuments(documents) {
-  const extractor = await pipeline(
-    'feature-extraction',
-    'onnx-community/all-MiniLM-L6-v2-ONNX'
-  );
-  
+  const extractor = await pipeline('feature-extraction', 'onnx-community/all-MiniLM-L6-v2-ONNX');
+
   console.log(`Processing ${documents.length} documents...`);
-  
+
   const embeddings = [];
-  
+
   for (let i = 0; i < documents.length; i++) {
-    const output = await extractor(documents[i], { 
-      pooling: 'mean', 
-      normalize: true 
+    const output = await extractor(documents[i], {
+      pooling: 'mean',
+      normalize: true,
     });
-    
+
     embeddings.push({
       text: documents[i],
-      embedding: Array.from(output.data)
+      embedding: Array.from(output.data),
     });
-    
+
     console.log(`Processed ${i + 1}/${documents.length}`);
   }
-  
-  await fs.writeFile(
-    'embeddings.json',
-    JSON.stringify(embeddings, null, 2)
-  );
-  
+
+  await fs.writeFile('embeddings.json', JSON.stringify(embeddings, null, 2));
+
   console.log('Saved to embeddings.json');
-  
+
   await extractor.dispose();
 }
 
 const documents = [
   'The cat sat on the mat',
   'A dog played in the park',
-  'Machine learning is fascinating'
+  'Machine learning is fascinating',
 ];
 
 embedDocuments(documents);
@@ -251,50 +237,46 @@ import { pipeline } from '@huggingface/transformers';
 
 async function main() {
   const text = process.argv[2] || 'Hello, world!';
-  
-  console.log('Loading model...');
-  
-  const fileProgress = {};
-  
-  const extractor = await pipeline(
-    'feature-extraction',
-    'onnx-community/all-MiniLM-L6-v2-ONNX',
-    {
-      progress_callback: (info) => {
-        if (info.status === 'progress_total') {
-          process.stdout.write(`\r\x1b[KTotal: ${info.progress.toFixed(1)}%`);
-          return;
-        }
 
-        if (info.status === 'progress') {
-          fileProgress[info.file] = info.progress;
-          
-          // Show all files progress
-          const progressLines = Object.entries(fileProgress)
-            .map(([file, progress]) => `  ${file}: ${progress.toFixed(1)}%`)
-            .join('\n');
-          
-          process.stdout.write(`\r\x1b[K${progressLines}`);
-        }
-        
-        if (info.status === 'done') {
-          console.log(`\n✓ ${info.file} complete`);
-        }
-        
-        if (info.status === 'ready') {
-          console.log('\nModel ready!');
-        }
+  console.log('Loading model...');
+
+  const fileProgress = {};
+
+  const extractor = await pipeline('feature-extraction', 'onnx-community/all-MiniLM-L6-v2-ONNX', {
+    progress_callback: info => {
+      if (info.status === 'progress_total') {
+        process.stdout.write(`\r\x1b[KTotal: ${info.progress.toFixed(1)}%`);
+        return;
       }
-    }
-  );
-  
+
+      if (info.status === 'progress') {
+        fileProgress[info.file] = info.progress;
+
+        // Show all files progress
+        const progressLines = Object.entries(fileProgress)
+          .map(([file, progress]) => `  ${file}: ${progress.toFixed(1)}%`)
+          .join('\n');
+
+        process.stdout.write(`\r\x1b[K${progressLines}`);
+      }
+
+      if (info.status === 'done') {
+        console.log(`\n✓ ${info.file} complete`);
+      }
+
+      if (info.status === 'ready') {
+        console.log('\nModel ready!');
+      }
+    },
+  });
+
   console.log('Generating embedding...');
   const output = await extractor(text, { pooling: 'mean', normalize: true });
-  
+
   console.log(`\nText: "${text}"`);
   console.log(`Dimensions: ${output.data.length}`);
   console.log(`First 5 values: ${Array.from(output.data).slice(0, 5).join(', ')}`);
-  
+
   await extractor.dispose();
 }
 
@@ -318,20 +300,20 @@ export function EmbeddingGenerator() {
 
   const generate = async () => {
     if (!text) return;
-    
+
     setLoading(true);
-    
+
     // Load model on first generate
     if (!extractorRef.current) {
       extractorRef.current = await pipeline(
         'feature-extraction',
-        'onnx-community/all-MiniLM-L6-v2-ONNX'
+        'onnx-community/all-MiniLM-L6-v2-ONNX',
       );
     }
-    
-    const output = await extractorRef.current(text, { 
-      pooling: 'mean', 
-      normalize: true 
+
+    const output = await extractorRef.current(text, {
+      pooling: 'mean',
+      normalize: true,
     });
     setEmbedding(Array.from(output.data));
     setLoading(false);
@@ -349,18 +331,18 @@ export function EmbeddingGenerator() {
   return (
     <div>
       <h2>Text Embedding Generator</h2>
-      
+
       <textarea
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={e => setText(e.target.value)}
         placeholder="Enter text"
         disabled={loading}
       />
-      
+
       <button onClick={generate} disabled={loading || !text}>
         {loading ? 'Processing...' : 'Generate Embedding'}
       </button>
-      
+
       {embedding && (
         <div>
           <h3>Result:</h3>
@@ -390,44 +372,44 @@ export function EmbeddingGeneratorWithProgress() {
 
   const generate = async () => {
     if (!text) return;
-    
+
     setLoading(true);
-    
+
     // Load model on first generate
     if (!extractorRef.current) {
       setStatus('Loading model...');
-      
+
       extractorRef.current = await pipeline(
         'feature-extraction',
         'onnx-community/all-MiniLM-L6-v2-ONNX',
         {
-          progress_callback: (info) => {
+          progress_callback: info => {
             if (info.status === 'progress_total') {
               setStatus(`Total: ${info.progress.toFixed(1)}%`);
               return;
             }
 
             setStatus(`${info.status}: ${info.file ?? ''}`);
-            
+
             if (info.status === 'progress') {
               setFileProgress(prev => ({
                 ...prev,
-                [info.file]: info.progress
+                [info.file]: info.progress,
               }));
             }
-            
+
             if (info.status === 'ready') {
               setStatus('Model ready!');
             }
-          }
-        }
+          },
+        },
       );
     }
-    
+
     setStatus('Generating embedding...');
-    const output = await extractorRef.current(text, { 
-      pooling: 'mean', 
-      normalize: true 
+    const output = await extractorRef.current(text, {
+      pooling: 'mean',
+      normalize: true,
     });
     setEmbedding(Array.from(output.data));
     setStatus('Complete!');
@@ -446,39 +428,47 @@ export function EmbeddingGeneratorWithProgress() {
   return (
     <div>
       <h2>Text Embedding Generator</h2>
-      
+
       {loading && Object.keys(fileProgress).length > 0 && (
         <div>
           <p>{status}</p>
           {Object.entries(fileProgress).map(([file, progress]) => (
             <div key={file} style={{ margin: '10px 0' }}>
               <div style={{ fontSize: '12px', marginBottom: '5px' }}>{file}</div>
-              <div style={{ width: '100%', height: '20px', background: '#f0f0f0', borderRadius: '5px', overflow: 'hidden' }}>
-                <div 
-                  style={{ 
-                    width: `${progress}%`, 
-                    height: '100%', 
+              <div
+                style={{
+                  width: '100%',
+                  height: '20px',
+                  background: '#f0f0f0',
+                  borderRadius: '5px',
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    width: `${progress}%`,
+                    height: '100%',
                     background: '#4CAF50',
-                    transition: 'width 0.3s'
-                  }} 
+                    transition: 'width 0.3s',
+                  }}
                 />
               </div>
             </div>
           ))}
         </div>
       )}
-      
+
       <textarea
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={e => setText(e.target.value)}
         placeholder="Enter text"
         disabled={loading}
       />
-      
+
       <button onClick={generate} disabled={loading || !text}>
         {loading ? 'Processing...' : 'Generate Embedding'}
       </button>
-      
+
       {embedding && (
         <div>
           <h3>Result:</h3>
@@ -507,30 +497,27 @@ app.use(express.json());
 let extractor;
 (async () => {
   console.log('Loading model...');
-  extractor = await pipeline(
-    'feature-extraction',
-    'onnx-community/all-MiniLM-L6-v2-ONNX'
-  );
+  extractor = await pipeline('feature-extraction', 'onnx-community/all-MiniLM-L6-v2-ONNX');
   console.log('Model ready!');
 })();
 
 app.post('/embed', async (req, res) => {
   try {
     const { text } = req.body;
-    
+
     if (!text) {
       return res.status(400).json({ error: 'Text is required' });
     }
-    
-    const output = await extractor(text, { 
-      pooling: 'mean', 
-      normalize: true 
+
+    const output = await extractor(text, {
+      pooling: 'mean',
+      normalize: true,
     });
-    
+
     res.json({
       text,
       embedding: Array.from(output.data),
-      dimensions: output.data.length
+      dimensions: output.data.length,
     });
   } catch (error) {
     console.error('Error:', error);
@@ -558,29 +545,26 @@ let server;
 
 async function initialize() {
   console.log('Loading model...');
-  extractor = await pipeline(
-    'feature-extraction',
-    'onnx-community/all-MiniLM-L6-v2-ONNX'
-  );
+  extractor = await pipeline('feature-extraction', 'onnx-community/all-MiniLM-L6-v2-ONNX');
   console.log('Model ready!');
 }
 
 app.post('/embed', async (req, res) => {
   try {
     const { text } = req.body;
-    
+
     if (!text) {
       return res.status(400).json({ error: 'Text is required' });
     }
-    
-    const output = await extractor(text, { 
-      pooling: 'mean', 
-      normalize: true 
+
+    const output = await extractor(text, {
+      pooling: 'mean',
+      normalize: true,
     });
-    
+
     res.json({
       embedding: Array.from(output.data),
-      dimensions: output.data.length
+      dimensions: output.data.length,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -589,19 +573,19 @@ app.post('/embed', async (req, res) => {
 
 async function shutdown(signal) {
   console.log(`\n${signal} received. Shutting down...`);
-  
+
   if (server) {
     server.close(() => {
       console.log('HTTP server closed');
     });
   }
-  
+
   if (extractor) {
     console.log('Disposing model...');
     await extractor.dispose();
     console.log('Model disposed');
   }
-  
+
   process.exit(0);
 }
 

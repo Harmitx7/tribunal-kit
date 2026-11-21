@@ -1,9 +1,6 @@
 'use strict';
 
-const {
-  verifyFsmCompleteness,
-  createFsmInstance,
-} = require('../../src/verification');
+const { verifyFsmCompleteness, createFsmInstance } = require('../../src/verification');
 
 describe('State Machine Verification & Model Checking Engine', () => {
   const sampleFsm = {
@@ -12,11 +9,25 @@ describe('State Machine Verification & Model Checking Engine', () => {
     terminalStates: ['SUCCESS', 'ERROR'],
     transitions: [
       { from: 'IDLE', event: 'FETCH', to: 'LOADING' },
-      { from: 'LOADING', event: 'RESOLVE', to: 'SUCCESS', action: (ctx, p) => ({ ...ctx, data: p.data }) },
-      { from: 'LOADING', event: 'REJECT', to: 'ERROR', action: (ctx, p) => ({ ...ctx, error: p.error }) },
+      {
+        from: 'LOADING',
+        event: 'RESOLVE',
+        to: 'SUCCESS',
+        action: (ctx, p) => ({ ...ctx, data: p.data }),
+      },
+      {
+        from: 'LOADING',
+        event: 'REJECT',
+        to: 'ERROR',
+        action: (ctx, p) => ({ ...ctx, error: p.error }),
+      },
     ],
     invariants: [
-      { state: 'SUCCESS', check: (ctx) => ctx.data !== undefined, message: 'SUCCESS state must possess data' },
+      {
+        state: 'SUCCESS',
+        check: ctx => ctx.data !== undefined,
+        message: 'SUCCESS state must possess data',
+      },
     ],
   };
 
@@ -46,9 +57,7 @@ describe('State Machine Verification & Model Checking Engine', () => {
       states: ['START', 'STUCK', 'DONE'],
       initialState: 'START',
       terminalStates: ['DONE'], // STUCK is NOT marked terminal!
-      transitions: [
-        { from: 'START', event: 'GO', to: 'STUCK' },
-      ],
+      transitions: [{ from: 'START', event: 'GO', to: 'STUCK' }],
     };
 
     const report = verifyFsmCompleteness(fsmWithDeadlock);
@@ -78,7 +87,9 @@ describe('State Machine Verification & Model Checking Engine', () => {
     const instance = createFsmInstance(sampleFsm, {});
 
     // Cannot jump directly from IDLE to RESOLVE
-    expect(() => instance.transition('RESOLVE', { data: 'test' })).toThrow(/Invalid state transition/);
+    expect(() => instance.transition('RESOLVE', { data: 'test' })).toThrow(
+      /Invalid state transition/,
+    );
 
     instance.transition('FETCH');
     // Invariant failure: RESOLVE without data

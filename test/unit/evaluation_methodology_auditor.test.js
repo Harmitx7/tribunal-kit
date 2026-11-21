@@ -1,6 +1,8 @@
 'use strict';
 
-const { EvaluationMethodologyAuditor } = require('../../src/evaluation/evaluation_methodology_auditor');
+const {
+  EvaluationMethodologyAuditor,
+} = require('../../src/evaluation/evaluation_methodology_auditor');
 
 describe('Evaluation Methodology Auditor & Experimental Validity Gate', () => {
   let auditor;

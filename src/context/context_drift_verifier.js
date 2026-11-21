@@ -47,7 +47,10 @@ function sanitizeProvenanceMetadata(text) {
   return text
     .replace(/[\u200B-\u200D\uFEFF]/g, '')
     .replace(/<!--[\s\S]*?-->/g, '')
-    .replace(/(?:APPROVED|REJECTED|ESCALATED|OVERRIDE_GATE|SKIP_VALIDATION)/g, match => `[ESCAPED_${match}]`);
+    .replace(
+      /(?:APPROVED|REJECTED|ESCALATED|OVERRIDE_GATE|SKIP_VALIDATION)/g,
+      match => `[ESCAPED_${match}]`,
+    );
 }
 
 /**
@@ -163,15 +166,12 @@ function createProvenanceDossier(params = {}) {
  * }}
  */
 function verifyContextDrift(params = {}) {
-  const {
-    dossier,
-    repoRoot = process.cwd(),
-    submittedPrompt,
-    currentPackedUnits,
-  } = params;
+  const { dossier, repoRoot = process.cwd(), submittedPrompt, currentPackedUnits } = params;
 
   if (!dossier || !dossier.records || !Array.isArray(dossier.records)) {
-    throw new Error('INVALID_DOSSIER: Context drift verification requires a valid ProvenanceDossier.');
+    throw new Error(
+      'INVALID_DOSSIER: Context drift verification requires a valid ProvenanceDossier.',
+    );
   }
 
   const violations = [];
@@ -259,7 +259,10 @@ function verifyContextDrift(params = {}) {
   // 3. TRANSFORMATION DRIFT: Verify extracted units still match the actual line slice in source file
   for (const record of dossier.records) {
     if (!record.filePath || record.filePath === 'evidence:in-memory') continue;
-    if (record.packingMethod !== 'AST_STRUCTURAL' && record.packingMethod !== 'SYNTAX_FALLBACK_WINDOW') {
+    if (
+      record.packingMethod !== 'AST_STRUCTURAL' &&
+      record.packingMethod !== 'SYNTAX_FALLBACK_WINDOW'
+    ) {
       continue;
     }
 
@@ -323,7 +326,8 @@ function verifyContextDrift(params = {}) {
 
   // 5. REQUEST DRIFT: Verify submitted prompt matches approved context fingerprint
   if (submittedPrompt !== undefined && submittedPrompt !== null) {
-    const promptText = typeof submittedPrompt === 'string' ? submittedPrompt : JSON.stringify(submittedPrompt);
+    const promptText =
+      typeof submittedPrompt === 'string' ? submittedPrompt : JSON.stringify(submittedPrompt);
     const promptTokens = countTokens(promptText, { model: dossier.model }).tokens;
 
     // Check if the prompt contains the expected units or if its token usage unexpectedly exceeds approved limits
@@ -349,7 +353,8 @@ function verifyContextDrift(params = {}) {
         target: 'submitted_prompt',
         expected: dossier.approvedPromptHash,
         actual: promptHash,
-        description: 'Submitted provider prompt differs from the approved pipeline prompt (hash mismatch).',
+        description:
+          'Submitted provider prompt differs from the approved pipeline prompt (hash mismatch).',
       });
     }
   }

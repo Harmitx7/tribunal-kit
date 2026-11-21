@@ -18,11 +18,7 @@
  * INVARIANT: Never claims success without authoritative evidence.
  */
 
-const {
-  STATUSES,
-  LIFECYCLE_STATES,
-  ENVIRONMENTS,
-} = require('./types');
+const { STATUSES, LIFECYCLE_STATES, ENVIRONMENTS } = require('./types');
 
 const { boundArray } = require('./truncation');
 
@@ -99,16 +95,20 @@ function normalizeSummaryData(input = {}) {
 
   // If input is an OperationRecord
   if (input.operationId && input.statusHistory) {
-    const verified = (input.evidence || []).filter(e => e.verified).map(e => e.description || e.ref);
+    const verified = (input.evidence || [])
+      .filter(e => e.verified)
+      .map(e => e.description || e.ref);
     const failed = input.error ? [input.error.message || String(input.error)] : [];
     const succeeded = [];
     if (verified.length > 0 && failed.length === 0) {
       succeeded.push(`${verified.length} verification invariants verified`);
     }
 
-    const durationMs = input.timestamps && input.timestamps.completedAt && input.timestamps.startedAt
-      ? new Date(input.timestamps.completedAt).getTime() - new Date(input.timestamps.startedAt).getTime()
-      : null;
+    const durationMs =
+      input.timestamps && input.timestamps.completedAt && input.timestamps.startedAt
+        ? new Date(input.timestamps.completedAt).getTime() -
+          new Date(input.timestamps.startedAt).getTime()
+        : null;
 
     return {
       title: input.title,
@@ -132,13 +132,33 @@ function normalizeSummaryData(input = {}) {
     operationId: input.operationId || null,
     status: input.status || STATUSES.COMPLETED,
     durationMs: input.durationMs || null,
-    attempted: Array.isArray(input.attempted) ? input.attempted : (input.attempted ? [input.attempted] : []),
-    changed: Array.isArray(input.changed) ? input.changed : (input.changed ? [input.changed] : []),
-    succeeded: Array.isArray(input.succeeded) ? input.succeeded : (input.succeeded ? [input.succeeded] : []),
-    failed: Array.isArray(input.failed) ? input.failed : (input.failed ? [input.failed] : []),
-    verified: Array.isArray(input.verified) ? input.verified : (input.verified ? [input.verified] : []),
-    warnings: Array.isArray(input.warnings) ? input.warnings : (input.warnings ? [input.warnings] : []),
-    artifacts: Array.isArray(input.artifacts) ? input.artifacts : (input.artifacts ? [input.artifacts] : []),
+    attempted: Array.isArray(input.attempted)
+      ? input.attempted
+      : input.attempted
+        ? [input.attempted]
+        : [],
+    changed: Array.isArray(input.changed) ? input.changed : input.changed ? [input.changed] : [],
+    succeeded: Array.isArray(input.succeeded)
+      ? input.succeeded
+      : input.succeeded
+        ? [input.succeeded]
+        : [],
+    failed: Array.isArray(input.failed) ? input.failed : input.failed ? [input.failed] : [],
+    verified: Array.isArray(input.verified)
+      ? input.verified
+      : input.verified
+        ? [input.verified]
+        : [],
+    warnings: Array.isArray(input.warnings)
+      ? input.warnings
+      : input.warnings
+        ? [input.warnings]
+        : [],
+    artifacts: Array.isArray(input.artifacts)
+      ? input.artifacts
+      : input.artifacts
+        ? [input.artifacts]
+        : [],
     diagnosticsRef: input.diagnosticsRef || input.operationId || null,
     limitations: input.limitations || null,
     nextAction: input.nextAction || null,
@@ -160,8 +180,12 @@ function formatCompletionSummary(input, options = {}) {
     return JSON.stringify(data, null, 2);
   }
 
-  const isFailed = data.status === STATUSES.FAILED || data.status === LIFECYCLE_STATES.FAILED || data.failed.length > 0;
-  const isCancelled = data.status === STATUSES.CANCELLED || data.status === LIFECYCLE_STATES.CANCELLED;
+  const isFailed =
+    data.status === STATUSES.FAILED ||
+    data.status === LIFECYCLE_STATES.FAILED ||
+    data.failed.length > 0;
+  const isCancelled =
+    data.status === STATUSES.CANCELLED || data.status === LIFECYCLE_STATES.CANCELLED;
 
   const glyph = isFailed ? '✖' : isCancelled ? '⊘' : '✔';
   const verb = isFailed ? 'Failed' : isCancelled ? 'Cancelled' : 'Completed';
@@ -222,7 +246,9 @@ function formatCompletionSummary(input, options = {}) {
 
   if (data.changed.length > 0) {
     const bound = boundArray(data.changed, { maxItems: 4 });
-    lines.push(`  Changed: ${bound.items.join(', ')}${bound.pagination.isTruncated ? ` (${bound.pagination.omitted} more)` : ''}`);
+    lines.push(
+      `  Changed: ${bound.items.join(', ')}${bound.pagination.isTruncated ? ` (${bound.pagination.omitted} more)` : ''}`,
+    );
   }
 
   if (data.succeeded.length > 0) {
@@ -246,7 +272,9 @@ function formatCompletionSummary(input, options = {}) {
 
   if (data.warnings.length > 0) {
     lines.push(`  Attention:`);
-    data.warnings.slice(0, 2).forEach(w => lines.push(`    ⚠ ${typeof w === 'object' ? w.message : w}`));
+    data.warnings
+      .slice(0, 2)
+      .forEach(w => lines.push(`    ⚠ ${typeof w === 'object' ? w.message : w}`));
   }
 
   if (data.artifacts.length > 0) {
@@ -269,4 +297,3 @@ module.exports = {
   normalizeSummaryData,
   formatCompletionSummary,
 };
-

@@ -32,7 +32,6 @@ const { cmdUnderstand } = require('../../src/commands/understand');
 const { handleRequest } = require('../../bin/mcp-server');
 
 describe('Phase 9: API Stability, Backward Compatibility & Migration Certification', () => {
-
   // ── 1. PACKAGE ENTRY POINTS & EXPORTS ───────────────────────────────────────
   test('B1: CJS package main entry exports cmdUnderstand alongside main', () => {
     const pkg = require('../../src/cli.js');
@@ -190,6 +189,4 @@ describe('Phase 9: API Stability, Backward Compatibility & Migration Certificati
       'investigate',
     ]);
   });
-
 });
-

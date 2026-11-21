@@ -59,4 +59,3 @@ describe('Windows Shell Argument Injection Defense (Phase 3 Logic War Room)', ()
     expect(tokens).toEqual(['npm', 'test', '--', '--grep', 'test name']);
   });
 });
-

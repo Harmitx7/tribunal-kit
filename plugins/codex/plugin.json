@@ -1,7 +1,7 @@
 {
   "name": "tribunal-kit",
   "version": "9.0.0",
-  "description": "Enterprise-grade governance layer and anti-hallucination engine: 52 specialists, 28 parallel reviewers, Rust core, Subagent-Driven Development (SDD), and strict TDD workflows.",
+  "description": "Enterprise-grade governance layer and anti-hallucination engine: 58 specialists, 28 parallel reviewers, Rust core, Subagent-Driven Development (SDD), and strict TDD workflows.",
   "author": {
     "name": "Harmitx7",
     "email": "harmit@tribunalkit.com",

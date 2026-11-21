@@ -65,7 +65,9 @@ function validateScenario(scenario) {
   }
 
   if (scenario.difficulty && !VALID_DIFFICULTIES.has(scenario.difficulty)) {
-    errors.push(`Invalid difficulty "${scenario.difficulty}". Must be one of: ${[...VALID_DIFFICULTIES].join(', ')}.`);
+    errors.push(
+      `Invalid difficulty "${scenario.difficulty}". Must be one of: ${[...VALID_DIFFICULTIES].join(', ')}.`,
+    );
   }
 
   if (scenario.impactTier !== undefined && !VALID_TIERS.has(scenario.impactTier)) {

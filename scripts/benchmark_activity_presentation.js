@@ -119,15 +119,30 @@ function runBenchmark() {
   const structOps = Math.round(BENCH_ROUNDS / structSec);
 
   console.log(`[1] Renderer Throughput (25,000 iterations each):`);
-  console.log(`    Markdown (Rich Mode):     ${mdOps.toLocaleString()} ops/sec (${(mdSec * 1000).toFixed(2)} ms)`);
-  console.log(`    Markdown (Compact Mode):  ${compactOps.toLocaleString()} ops/sec (${(compactSec * 1000).toFixed(2)} ms)`);
-  console.log(`    Terminal (No-Color TTY):  ${termOps.toLocaleString()} ops/sec (${(termSec * 1000).toFixed(2)} ms)`);
-  console.log(`    PlainText (Clean ASCII):  ${plainOps.toLocaleString()} ops/sec (${(plainSec * 1000).toFixed(2)} ms)`);
-  console.log(`    Structured JSON:          ${structOps.toLocaleString()} ops/sec (${(structSec * 1000).toFixed(2)} ms)\n`);
+  console.log(
+    `    Markdown (Rich Mode):     ${mdOps.toLocaleString()} ops/sec (${(mdSec * 1000).toFixed(2)} ms)`,
+  );
+  console.log(
+    `    Markdown (Compact Mode):  ${compactOps.toLocaleString()} ops/sec (${(compactSec * 1000).toFixed(2)} ms)`,
+  );
+  console.log(
+    `    Terminal (No-Color TTY):  ${termOps.toLocaleString()} ops/sec (${(termSec * 1000).toFixed(2)} ms)`,
+  );
+  console.log(
+    `    PlainText (Clean ASCII):  ${plainOps.toLocaleString()} ops/sec (${(plainSec * 1000).toFixed(2)} ms)`,
+  );
+  console.log(
+    `    Structured JSON:          ${structOps.toLocaleString()} ops/sec (${(structSec * 1000).toFixed(2)} ms)\n`,
+  );
 
   console.log(`[2] Output Character Size & Estimated Token Footprint:`);
   console.log('----------------------------------------------------------------');
-  console.log(String('Event Type').padEnd(20) + String('Chars').padEnd(10) + String('Est. Tokens').padEnd(15) + 'Preview');
+  console.log(
+    String('Event Type').padEnd(20) +
+      String('Chars').padEnd(10) +
+      String('Est. Tokens').padEnd(15) +
+      'Preview',
+  );
   console.log('----------------------------------------------------------------');
 
   for (const [key, ev] of Object.entries(SAMPLE_EVENTS)) {
@@ -135,16 +150,24 @@ function runBenchmark() {
     const chars = rendered.length;
     const tokens = estimateTokens(rendered);
     const firstLine = rendered.split('\n')[0];
-    console.log(String(key).padEnd(20) + String(chars).padEnd(10) + String(tokens).padEnd(15) + firstLine);
+    console.log(
+      String(key).padEnd(20) + String(chars).padEnd(10) + String(tokens).padEnd(15) + firstLine,
+    );
   }
 
   // 4. Compact vs Rich Comparison
   const richTool = renderMarkdown(SAMPLE_EVENTS.tool, { compact: false });
   const compactTool = renderMarkdown(SAMPLE_EVENTS.tool, { compact: true });
   console.log('\n[3] Information Density Optimization (Compact vs Rich):');
-  console.log(`    Rich Mode Tool Execution:    ${richTool.length} chars (~${estimateTokens(richTool)} tokens) across 3 lines`);
-  console.log(`    Compact Mode Tool Execution: ${compactTool.length} chars (~${estimateTokens(compactTool)} tokens) in 1 line`);
-  console.log(`    Token reduction:             ${Math.round((1 - compactTool.length / richTool.length) * 100)}% savings for rapid status ticks`);
+  console.log(
+    `    Rich Mode Tool Execution:    ${richTool.length} chars (~${estimateTokens(richTool)} tokens) across 3 lines`,
+  );
+  console.log(
+    `    Compact Mode Tool Execution: ${compactTool.length} chars (~${estimateTokens(compactTool)} tokens) in 1 line`,
+  );
+  console.log(
+    `    Token reduction:             ${Math.round((1 - compactTool.length / richTool.length) * 100)}% savings for rapid status ticks`,
+  );
 
   console.log('\n================================================================');
   console.log(' Benchmark Completed Successfully');
@@ -152,4 +175,3 @@ function runBenchmark() {
 }
 
 runBenchmark();
-

@@ -13,11 +13,11 @@ Rather than mechanically shortening messages or hiding information, Phase 10 str
 
 Output detail is governed by three deterministic tiers:
 
-| Detail Level | Scope & Target | Visibility Rules |
-| :--- | :--- | :--- |
-| **`essential`** | Interactive chat & default CLI streams. | Displays primary state changes, user approvals, warnings, critical errors, and final outcomes. Routine intermediate progress updates and sub-tool executions are consolidated or suppressed. |
-| **`expanded`** | Completion cards, review milestones, and audit inspections. | Shows task details, verification evidence (up to 4 inline items), stage pipelines, non-blocking warnings, and actionable recommendations. |
-| **`diagnostic`** | Troubleshooting traces, `--verbose` flags, and debug investigation. | Full event sequences, uncollapsed stack traces, timestamp headers `[HH:MM:SS]`, operation IDs, raw parameter dumps, and memory retention metrics. |
+| Detail Level     | Scope & Target                                                      | Visibility Rules                                                                                                                                                                             |
+| :--------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`essential`**  | Interactive chat & default CLI streams.                             | Displays primary state changes, user approvals, warnings, critical errors, and final outcomes. Routine intermediate progress updates and sub-tool executions are consolidated or suppressed. |
+| **`expanded`**   | Completion cards, review milestones, and audit inspections.         | Shows task details, verification evidence (up to 4 inline items), stage pipelines, non-blocking warnings, and actionable recommendations.                                                    |
+| **`diagnostic`** | Troubleshooting traces, `--verbose` flags, and debug investigation. | Full event sequences, uncollapsed stack traces, timestamp headers `[HH:MM:SS]`, operation IDs, raw parameter dumps, and memory retention metrics.                                            |
 
 ### Priority Evaluation
 
@@ -84,16 +84,15 @@ Replaces uninformative "Execution finished" logs with high-density completion su
 
 ```markdown
 ✔ **Completed** · Full Repository Security Scan (2.45s)
-  Attempted: Static AST scan, Dependency CVE audit, Secret leak detector
-  Changed: package-lock.json, .agent/case_law.json
-  Succeeded:
-    ✔ Zero critical vulnerabilities
-  Verified:
-    - OWASP Top 10 compliance
-  Attention:
-    ⚠ Lodash 4.17.15 deprecation warning
-  Artifacts: `reports/security.json`, `reports/sbom.json`
-  Diagnostics: `op-sec-101`
+Attempted: Static AST scan, Dependency CVE audit, Secret leak detector
+Changed: package-lock.json, .agent/case_law.json
+Succeeded:
+✔ Zero critical vulnerabilities
+Verified: - OWASP Top 10 compliance
+Attention:
+⚠ Lodash 4.17.15 deprecation warning
+Artifacts: `reports/security.json`, `reports/sbom.json`
+Diagnostics: `op-sec-101`
 ```
 
 ### Truthfulness Invariant
@@ -106,14 +105,13 @@ A summary **never** claims that an operation succeeded unless verified evidence 
 
 Benchmarked across representative engineering workloads (`node scripts/benchmark_output_optimization.js`):
 
-| Workload | Emitted Events | Baseline Bytes | Essential Bytes | Byte Reduction | Line Reduction | Message Reduction |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Test Execution** | 17 events | 1,849 bytes (37 lines) | 842 bytes (15 lines) | **-54%** | **-59%** | **-65%** |
-| **Security Audit** | 7 events | 2,349 bytes (29 lines) | 951 bytes (15 lines) | **-60%** | **-48%** | **-14%** |
-| **Failure Recovery** | 6 events | 1,362 bytes (27 lines) | 1,279 bytes (25 lines) | **-6%** *(Failure details fully preserved)* | **-7%** | **-17%** |
+| Workload             | Emitted Events | Baseline Bytes         | Essential Bytes        | Byte Reduction                              | Line Reduction | Message Reduction |
+| :------------------- | :------------- | :--------------------- | :--------------------- | :------------------------------------------ | :------------- | :---------------- |
+| **Test Execution**   | 17 events      | 1,849 bytes (37 lines) | 842 bytes (15 lines)   | **-54%**                                    | **-59%**       | **-65%**          |
+| **Security Audit**   | 7 events       | 2,349 bytes (29 lines) | 951 bytes (15 lines)   | **-60%**                                    | **-48%**       | **-14%**          |
+| **Failure Recovery** | 6 events       | 1,362 bytes (27 lines) | 1,279 bytes (25 lines) | **-6%** _(Failure details fully preserved)_ | **-7%**        | **-17%**          |
 
 ### Throughput
 
 - **Renders per Second**: **55,448 renders/sec** (0.018 ms per render).
 - **Memory Footprint**: Strict $O(1)$ bounded memory per operation via circular ring buffers.
-

@@ -150,11 +150,11 @@ function computePayloadDigest(payload) {
 /**
  * Generates a deterministic cache key from input dependencies.
  *
- * @param {object} params
- * @param {string} params.artifact_type
- * @param {string} params.repository_id
- * @param {string} params.relative_path
- * @param {string} params.content_digest
+ * @param {object} [params]
+ * @param {string} [params.artifact_type]
+ * @param {string} [params.repository_id]
+ * @param {string} [params.relative_path]
+ * @param {string} [params.content_digest]
  * @param {string[]} [params.dependency_digests=[]]
  * @param {string} [params.producer_version='1.0.0']
  * @param {string} [params.configuration_fingerprint]
@@ -236,7 +236,11 @@ function validateCacheEntry(entry) {
     };
   }
 
-  if (typeof entry.cache_key !== 'string' || !entry.cache_key.startsWith('tk9_') || entry.cache_key.length > MAX_KEY_LENGTH) {
+  if (
+    typeof entry.cache_key !== 'string' ||
+    !entry.cache_key.startsWith('tk9_') ||
+    entry.cache_key.length > MAX_KEY_LENGTH
+  ) {
     return { valid: false, error: 'Invalid or missing cache_key' };
   }
 
@@ -297,10 +301,16 @@ function validateCacheEntry(entry) {
 
   const payloadStr = canonicalJsonStringify(entry.payload);
   if (Buffer.byteLength(payloadStr, 'utf8') > MAX_PAYLOAD_BYTES) {
-    return { valid: false, error: `Payload exceeds maximum size limit of ${MAX_PAYLOAD_BYTES} bytes` };
+    return {
+      valid: false,
+      error: `Payload exceeds maximum size limit of ${MAX_PAYLOAD_BYTES} bytes`,
+    };
   }
 
-  const computedPayloadDigest = crypto.createHash('sha256').update(payloadStr, 'utf8').digest('hex');
+  const computedPayloadDigest = crypto
+    .createHash('sha256')
+    .update(payloadStr, 'utf8')
+    .digest('hex');
   if (computedPayloadDigest !== entry.payload_digest) {
     return {
       valid: false,
@@ -339,7 +349,9 @@ function createCacheEntry(params = {}) {
   } = params;
 
   if (FORBIDDEN_ARTIFACT_TYPES.has(artifact_type)) {
-    throw new Error(`Governance violation: Cannot create cache entry for forbidden artifact_type "${artifact_type}"`);
+    throw new Error(
+      `Governance violation: Cannot create cache entry for forbidden artifact_type "${artifact_type}"`,
+    );
   }
   if (!ALLOWED_ARTIFACT_TYPES[artifact_type]) {
     throw new Error(`Disallowed artifact_type: "${artifact_type}"`);

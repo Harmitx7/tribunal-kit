@@ -197,13 +197,29 @@ class CoEvolutionOrchestrator {
         currentSkillText = hardeningResult.currentSkillText;
 
         // ── WAVE C: Cross-Evaluation & Baseline Regression Check ────────────
+        if (this.harnessCmd === 'SIMULATED_DRY_RUN') {
+          roundTelemetry.push({
+            round,
+            baselinePassed: null,
+            action: 'SIMULATED_DRY_RUN',
+            simulated: true,
+            simulatedSkillText: currentSkillText,
+          });
+          continue;
+        }
+
         let baselinePassed = true;
         try {
           const args = parseCommandLine(this.harnessCmd);
           if (args.length > 0) {
             const cmd = args.shift();
             assertSafeShellArgs(cmd, args);
-            execFileSync(cmd, args, { encoding: 'utf8', cwd: runDir, stdio: 'pipe', shell: shouldRunInShell(cmd) });
+            execFileSync(cmd, args, {
+              encoding: 'utf8',
+              cwd: runDir,
+              stdio: 'pipe',
+              shell: shouldRunInShell(cmd),
+            });
           }
         } catch (_) {
           baselinePassed = false;
@@ -262,11 +278,7 @@ class CoEvolutionOrchestrator {
         stagedProposals.push(proposal.proposal_id);
 
         if (this.autoPromote) {
-          approveEvolutionProposal(
-            proposal.proposal_id,
-            'AutoPromote CoEvolution Gate',
-            agentDest,
-          );
+          approveEvolutionProposal(proposal.proposal_id, 'AutoPromote CoEvolution Gate', agentDest);
           fs.writeFileSync(skillPath, currentSkillText, 'utf8');
         }
 
@@ -322,10 +334,11 @@ class CoEvolutionOrchestrator {
    */
   async _executeRedTeamWave(round, runDir) {
     const targetScenarios = SCENARIOS.filter(
-      s => s.taskDescription.toLowerCase().includes(this.targetSkill.toLowerCase()) ||
-           s.targetFile.toLowerCase().includes('eval') ||
-           s.category.toLowerCase().includes('security') ||
-           s.category.toLowerCase().includes('functional'),
+      s =>
+        s.taskDescription.toLowerCase().includes(this.targetSkill.toLowerCase()) ||
+        s.targetFile.toLowerCase().includes('eval') ||
+        s.category.toLowerCase().includes('security') ||
+        s.category.toLowerCase().includes('functional'),
     );
 
     const activeScenarios = targetScenarios.length > 0 ? targetScenarios : SCENARIOS.slice(0, 2);
@@ -357,10 +370,19 @@ class CoEvolutionOrchestrator {
           const vCmd = scenario.verificationCommand;
           const vArgs = vCmd.args || [];
           assertSafeShellArgs(vCmd.cmd, vArgs);
-          execFileSync(vCmd.cmd, vArgs, { encoding: 'utf8', cwd: runDir, stdio: 'pipe', shell: shouldRunInShell(vCmd.cmd) });
+          execFileSync(vCmd.cmd, vArgs, {
+            encoding: 'utf8',
+            cwd: runDir,
+            stdio: 'pipe',
+            shell: shouldRunInShell(vCmd.cmd),
+          });
           return { exitCode: 0, verdict: 'APPROVED' };
         } catch (e) {
-          return { exitCode: e.status || 1, verdict: 'REJECTED', reason: (e.stderr || e.message || '').trim() };
+          return {
+            exitCode: e.status || 1,
+            verdict: 'REJECTED',
+            reason: (e.stderr || e.message || '').trim(),
+          };
         }
       },
     };
@@ -370,7 +392,11 @@ class CoEvolutionOrchestrator {
         const mutations = this.mutator.generateMutations(baseScenario, { depth: this.fuzzDepth });
         for (const mutation of mutations) {
           totalTested++;
-          const verification = await this.verifier.verifyMutation(baseScenario, mutation, runnerAdapter);
+          const verification = await this.verifier.verifyMutation(
+            baseScenario,
+            mutation,
+            runnerAdapter,
+          );
 
           if (verification.valid) {
             certifiedCount++;

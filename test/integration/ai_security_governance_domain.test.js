@@ -66,7 +66,8 @@ describe('AI Agent Security & Governance Domain — End-to-End Pipeline Integrat
     expect(pathCheck.isContained).toBe(false);
 
     // 8. Model outputs review response — Data Leakage Engine verifies zero leaks
-    const simulatedCleanOutput = 'Review complete: Identified security vulnerabilities in PR README.';
+    const simulatedCleanOutput =
+      'Review complete: Identified security vulnerabilities in PR README.';
     const leakAudit = scanForDataLeakage(simulatedCleanOutput, { canaries: [canaryToken] });
     expect(leakAudit.leaksDetected).toBe(false);
 

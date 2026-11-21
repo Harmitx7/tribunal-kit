@@ -78,7 +78,8 @@ describe('Phase 6: MCP Response Optimizer & Structured Output Intelligence', () 
       const sensitiveData = {
         apiKey: 'sk_test_abcdef1234567890abcdef1234567890',
         auth: 'Bearer dGVzdF90b2tlbl9leGFtcGxlX3ZhbHVlXzEyMzQ1Njc4OTA=',
-        rawJwt: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+        rawJwt:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
         dbUrl: 'postgres://admin:super_secret_pw@localhost:5432/db',
       };
 
@@ -95,7 +96,9 @@ describe('Phase 6: MCP Response Optimizer & Structured Output Intelligence', () 
     });
 
     test('redacts secrets from error messages and removes stack traces', () => {
-      const err = new Error('Database query failed on postgres://user:secretPass123@db.internal:5432/prod');
+      const err = new Error(
+        'Database query failed on postgres://user:secretPass123@db.internal:5432/prod',
+      );
       err.stack = 'Error: Database query failed\n    at query (/app/src/db.js:42:15)';
 
       const errResponse = formatErrorResponse(err, { prefix: 'Storage Error' });
@@ -227,7 +230,7 @@ describe('Phase 6: MCP Response Optimizer & Structured Output Intelligence', () 
           id: 4,
           method: 'tools/call',
           params: { name: 'non_existent_tool_xyz' },
-        })
+        }),
       ).rejects.toMatchObject({ code: -32601 });
     });
   });

@@ -23,17 +23,17 @@ The engine communicates honest, evidence-grounded progress across AI coding inte
 
 Execution progress is governed by 9 authoritative states:
 
-| State | Status | Description |
-|---|---|---|
-| `queued` | `pending` | Task has been scheduled or enqueued, awaiting worker availability |
-| `starting` | `running` | Initialization, container spin-up, or worker handshake in progress |
-| `running` | `running` | Actively executing work (metered or unmetered) |
-| `waiting` | `waiting` | Suspended awaiting human gate approval, rate limiter window, or upstream dependency |
-| `completed` | `passed` / `completed` | Terminal state: work finished and verified against acceptance criteria |
-| `failed` | `failed` | Terminal state: work halted due to unrecoverable error or test failure |
-| `cancelled` | `cancelled` | Terminal state: work cancelled by user or upstream supervisor |
-| `interrupted` | `failed` | Terminal state: abnormal process termination or subprocess crash |
-| `unknown` | `warning` | Telemetry or heartbeat data insufficient to assert definitive state |
+| State         | Status                 | Description                                                                         |
+| ------------- | ---------------------- | ----------------------------------------------------------------------------------- |
+| `queued`      | `pending`              | Task has been scheduled or enqueued, awaiting worker availability                   |
+| `starting`    | `running`              | Initialization, container spin-up, or worker handshake in progress                  |
+| `running`     | `running`              | Actively executing work (metered or unmetered)                                      |
+| `waiting`     | `waiting`              | Suspended awaiting human gate approval, rate limiter window, or upstream dependency |
+| `completed`   | `passed` / `completed` | Terminal state: work finished and verified against acceptance criteria              |
+| `failed`      | `failed`               | Terminal state: work halted due to unrecoverable error or test failure              |
+| `cancelled`   | `cancelled`            | Terminal state: work cancelled by user or upstream supervisor                       |
+| `interrupted` | `failed`               | Terminal state: abnormal process termination or subprocess crash                    |
+| `unknown`     | `warning`              | Telemetry or heartbeat data insufficient to assert definitive state                 |
 
 ---
 
@@ -54,6 +54,7 @@ const unmetered = ProgressCalculator.calculate({ current: null, total: null });
 ```
 
 ### Invariants Enforced:
+
 - **Bounds Check**: Throws `TelemetryError` if `current > total`.
 - **Terminal Confirmation Guard**: When `requireTerminalConfirmation: true` and `isTerminal: false`, percentage is capped at 99% even if `current === total` (preventing premature 100% claims before teardown).
 - **Monotonic Progress**: When `previousPercentage` is provided, percentage never regresses within the same execution attempt.
@@ -72,7 +73,7 @@ const { ProgressCoalescer, EVENT_TYPES } = require('tribunal-kit/activity');
 const coalescer = new ProgressCoalescer({
   windowMs: 50,
   maxBurstSize: 100,
-  onFlush: (event) => console.log('Dispatched:', event),
+  onFlush: event => console.log('Dispatched:', event),
 });
 
 // Pushes 50 rapid progress updates
@@ -87,7 +88,9 @@ for (let i = 1; i <= 50; i++) {
 ```
 
 ### Critical Event Bypass:
+
 When a critical operational event occurs (`validation_failed`, `approval_required`, `operation_blocked`, `operation_completed`, `stall_suspected`):
+
 1. Any buffered progress ticks for that operation are immediately flushed.
 2. The critical event is dispatched synchronously without delay.
 
@@ -105,7 +108,7 @@ const { StallDetector } = require('tribunal-kit/activity');
 const detector = new StallDetector({
   stallThresholdMs: 30000, // 30s silence threshold
   checkIntervalMs: 5000,
-  onStall: (stallEvent) => {
+  onStall: stallEvent => {
     // Dispatches warning with diagnostic suggestion
   },
 });
@@ -119,10 +122,11 @@ detector.heartbeat('op_build');
 ```
 
 ### Diagnostic Output:
+
 ```markdown
 ⚠ **Stall Suspected** · Native Binary Build
-  No activity detected for 32s. The underlying subprocess or reviewer pipeline may be blocked or unmetered.
-  Next: Verify process liveness, check subprocess stderr, or confirm network/gate availability
+No activity detected for 32s. The underlying subprocess or reviewer pipeline may be blocked or unmetered.
+Next: Verify process liveness, check subprocess stderr, or confirm network/gate availability
 ```
 
 ---
@@ -132,7 +136,11 @@ detector.heartbeat('op_build');
 For multi-worker waves and parallel review pipelines, `ParallelProgressAggregator` computes composite execution health across child tasks:
 
 ```javascript
-const { ParallelProgressAggregator, AGGREGATION_POLICIES, PROGRESS_STATES } = require('tribunal-kit/activity');
+const {
+  ParallelProgressAggregator,
+  AGGREGATION_POLICIES,
+  PROGRESS_STATES,
+} = require('tribunal-kit/activity');
 
 const aggregator = new ParallelProgressAggregator({
   parentOperationId: 'orchestrator_wave_1',
@@ -151,11 +159,13 @@ const snapshot = aggregator.getSnapshot();
 ```
 
 ### Pluggable Aggregation Policies:
+
 1. `ALL_MUST_PASS`: Strict policy. If any non-optional child fails, the parent is immediately marked `failed`.
 2. `PERMIT_PARTIAL_SUCCESS`: Permits partial success if all required tasks pass and overall completed ratio meets `partialSuccessThreshold` (e.g., 0.8).
 3. `ANY_PASS`: Composite passes if at least 1 child task completes successfully.
 
 ### Out-of-Order & Stale Event Protection:
+
 - Incoming child updates carry `sequenceNum`. Updates with `sequenceNum <= child.lastSequenceNum` are dropped.
 - Once a child reaches a terminal state (`completed`, `failed`, `cancelled`), subsequent non-terminal updates cannot resurrect it.
 
@@ -165,13 +175,13 @@ const snapshot = aggregator.getSnapshot();
 
 Benchmarked via `node scripts/benchmark_activity_telemetry.js` under high load:
 
-| Component | Benchmark Metric | Result |
-|---|---|---|
-| `ProgressCalculator` | Throughput (50k rounds) | **6,001,825 ops/sec** (8.33 ms total) |
-| `ProgressCoalescer` | Burst throughput & noise suppression | **981,239 ticks/sec** (99.98% chat noise eliminated) |
-| `StallDetector` | Heartbeat update speed | **3,169,431 ops/sec** |
-| `StallDetector` | Periodic scan overhead (1,000 active ops) | **0.473 ms** total check time |
-| `ParallelProgressAggregator` | Composite multi-worker waves | **253,855 subtasks/sec** (2,000 subtasks in 7.88 ms) |
+| Component                    | Benchmark Metric                          | Result                                               |
+| ---------------------------- | ----------------------------------------- | ---------------------------------------------------- |
+| `ProgressCalculator`         | Throughput (50k rounds)                   | **6,001,825 ops/sec** (8.33 ms total)                |
+| `ProgressCoalescer`          | Burst throughput & noise suppression      | **981,239 ticks/sec** (99.98% chat noise eliminated) |
+| `StallDetector`              | Heartbeat update speed                    | **3,169,431 ops/sec**                                |
+| `StallDetector`              | Periodic scan overhead (1,000 active ops) | **0.473 ms** total check time                        |
+| `ParallelProgressAggregator` | Composite multi-worker waves              | **253,855 subtasks/sec** (2,000 subtasks in 7.88 ms) |
 
 ---
 
@@ -201,4 +211,3 @@ const parallelAggregator = tracker.createParallelAggregator({
 tracker.complete('Migration finished');
 tracker.dispose();
 ```
-

@@ -81,7 +81,7 @@ class PackageIntegrityEngine {
             evidence: `location: ${locationKey}, resolved: ${resolved || 'none'}, integrity: null`,
             remediation: `Re-generate the lockfile with 'npm install --package-lock-only' to populate integrity checksums.`,
             verdict: 'FAIL',
-          })
+          }),
         );
       } else if (!integrity.startsWith('sha512-') && !integrity.startsWith('sha256-')) {
         findings.push(
@@ -95,7 +95,7 @@ class PackageIntegrityEngine {
             evidence: `integrity: ${integrity}`,
             remediation: `Upgrade lockfile to modern lockfileVersion (v2 or v3) with sha512 checksums.`,
             verdict: 'FAIL',
-          })
+          }),
         );
       }
 
@@ -113,11 +113,11 @@ class PackageIntegrityEngine {
               evidence: `resolved: ${resolved}`,
               remediation: `Replace unencrypted HTTP resolved URLs with verified HTTPS registry endpoints.`,
               verdict: 'FAIL',
-            })
+            }),
           );
         } else if (resolved.startsWith('https://')) {
-          const matchesApproved = this.approvedRegistries.some((approved) =>
-            resolved.startsWith(approved)
+          const matchesApproved = this.approvedRegistries.some(approved =>
+            resolved.startsWith(approved),
           );
           if (!matchesApproved) {
             findings.push(
@@ -131,7 +131,7 @@ class PackageIntegrityEngine {
                 evidence: `resolved: ${resolved}, approved: [${this.approvedRegistries.join(', ')}]`,
                 remediation: `Verify and point resolved URLs strictly to approved registry mirrors.`,
                 verdict: 'FAIL',
-              })
+              }),
             );
           }
         }
@@ -175,8 +175,8 @@ class PackageIntegrityEngine {
     const findings = [];
 
     // Verify builder ID
-    const builderMatches = this.allowedBuilders.some((allowed) =>
-      validated.builderId.startsWith(allowed)
+    const builderMatches = this.allowedBuilders.some(allowed =>
+      validated.builderId.startsWith(allowed),
     );
     if (!builderMatches) {
       findings.push(
@@ -190,7 +190,7 @@ class PackageIntegrityEngine {
           evidence: `builderId: ${validated.builderId}`,
           remediation: `Ensure builds are produced by verified GitHub Actions workflows or trusted build workers.`,
           verdict: 'FAIL',
-        })
+        }),
       );
     }
 
@@ -208,7 +208,7 @@ class PackageIntegrityEngine {
             evidence: `attested: ${validated.commitSha}, expected: ${expectedOptions.expectedCommit}`,
             remediation: `Investigate build pipeline tampering; do not release unverified artifact.`,
             verdict: 'FAIL',
-          })
+          }),
         );
       }
     }
@@ -227,7 +227,7 @@ class PackageIntegrityEngine {
           evidence: `slsaLevel: ${validated.slsaLevel}, required: ${requiredLevel}`,
           remediation: `Configure build isolation and hermetic build environments to achieve higher SLSA level.`,
           verdict: 'FAIL',
-        })
+        }),
       );
     }
 
@@ -245,4 +245,3 @@ module.exports = {
   verifySriHash,
   PackageIntegrityEngine,
 };
-

@@ -150,13 +150,11 @@ function createFsmInstance(fsm, initialContext = {}) {
     },
 
     transition(event, payload = {}) {
-      const candidates = fsm.transitions.filter(
-        t => t.from === currentState && t.event === event
-      );
+      const candidates = fsm.transitions.filter(t => t.from === currentState && t.event === event);
 
       if (candidates.length === 0) {
         throw new Error(
-          `Invalid state transition: No transition defined for event "${event}" from state "${currentState}".`
+          `Invalid state transition: No transition defined for event "${event}" from state "${currentState}".`,
         );
       }
 
@@ -168,7 +166,7 @@ function createFsmInstance(fsm, initialContext = {}) {
 
       if (!validTransition) {
         throw new Error(
-          `Transition guard rejected: Event "${event}" from state "${currentState}" did not satisfy guard condition.`
+          `Transition guard rejected: Event "${event}" from state "${currentState}" did not satisfy guard condition.`,
         );
       }
 
@@ -186,7 +184,7 @@ function createFsmInstance(fsm, initialContext = {}) {
           if (inv.state === currentState || inv.state === '*') {
             if (typeof inv.check === 'function' && !inv.check(context)) {
               throw new Error(
-                `State invariant violated in state "${currentState}": ${inv.message || 'Invariant check failed'}`
+                `State invariant violated in state "${currentState}": ${inv.message || 'Invariant check failed'}`,
               );
             }
           }

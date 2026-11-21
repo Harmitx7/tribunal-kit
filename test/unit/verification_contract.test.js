@@ -63,22 +63,15 @@ describe('Design-by-Contract (DbC) Engine', () => {
     let balance = 100;
 
     const withdraw = withContract(
-      (amount) => {
+      amount => {
         balance -= amount;
         return balance;
       },
       {
-        pre: [
-          (amount) => amount > 0,
-          (amount) => amount <= balance,
-        ],
-        post: [
-          (newBal, amount) => newBal >= 0,
-        ],
-        invariants: [
-          () => balance >= 0,
-        ],
-      }
+        pre: [amount => amount > 0, amount => amount <= balance],
+        post: [(newBal, amount) => newBal >= 0],
+        invariants: [() => balance >= 0],
+      },
     );
 
     // Valid withdrawal

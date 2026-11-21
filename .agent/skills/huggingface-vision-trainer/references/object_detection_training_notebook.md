@@ -1,6 +1,7 @@
 # Object Detection Training Reference
 
 ## Contents
+
 - Load the CPPE-5 dataset
 - Preprocess the data (augmentation with Albumentations, COCO annotation formatting)
 - Preparing function to compute mAP
@@ -19,10 +20,10 @@ Other applications include counting objects in images, image search, and more.
 
 In this guide, you will learn how to:
 
- 1. Finetune [DETR](https://huggingface.co/docs/transformers/model_doc/detr), a model that combines a convolutional
- backbone with an encoder-decoder Transformer, on the [CPPE-5](https://huggingface.co/datasets/cppe-5)
- dataset.
- 2. Use your finetuned model for inference.
+1.  Finetune [DETR](https://huggingface.co/docs/transformers/model_doc/detr), a model that combines a convolutional
+    backbone with an encoder-decoder Transformer, on the [CPPE-5](https://huggingface.co/datasets/cppe-5)
+    dataset.
+2.  Use your finetuned model for inference.
 
 To see all architectures and checkpoints compatible with this task, we recommend checking the [task-page](https://huggingface.co/tasks/object-detection)
 
@@ -161,8 +162,6 @@ To get an even better understanding of the data, visualize an example in the dat
 >>> image
 ```
 
-    
-
 To visualize the bounding boxes with associated labels, you can get the labels from the dataset's metadata, specifically
 the `category` field.
 You'll also want to create dictionaries that map a label id to a label class (`id2label`) and the other way around (`label2id`).
@@ -232,7 +231,7 @@ and it uses the exact same dataset as an example. Apply some geometric and color
 ```
 
 The `image_processor` expects the annotations to be in the following format: `{'image_id': int, 'annotations': list[Dict]}`,
- where each dictionary is a COCO object annotation. Let's add a function to reformat annotations for a single example:
+where each dictionary is a COCO object annotation. Let's add a function to reformat annotations for a single example:
 
 ```py
 >>> def format_image_annotations_as_coco(image_id, categories, areas, bboxes):
@@ -567,24 +566,24 @@ Finally, bring everything together, and call [train()](/docs/transformers/v5.1.0
 
 Training runs for 30 epochs (~26 minutes on a T4 GPU for CPPE-5). Final epoch 30 results:
 
-| Metric | Value |
-|--------|-------|
-| Training Loss | 0.994 |
+| Metric          | Value |
+| --------------- | ----- |
+| Training Loss   | 0.994 |
 | Validation Loss | 1.346 |
-| mAP | 0.277 |
-| mAP@50 | 0.555 |
-| mAP@75 | 0.253 |
-| mAR@100 | 0.443 |
+| mAP             | 0.277 |
+| mAP@50          | 0.555 |
+| mAP@75          | 0.253 |
+| mAR@100         | 0.443 |
 
 Per-class mAP at epoch 30: Coverall 0.530, Face Shield 0.276, Gloves 0.175, Goggles 0.157, Mask 0.249.
 
 Key observations:
+
 - mAP improves rapidly in early epochs (0.009 at epoch 1 → 0.18 by epoch 10), then gradually converges
 - Large objects are detected better (mAP_large=0.524) than small objects (mAP_small=0.148)
 - Class imbalance visible: Coverall highest mAP (0.530), Goggles lowest (0.157)
 
 <!-- Full per-epoch training metrics table omitted for brevity. -->
-
 
 If you have set `push_to_hub` to `True` in the `training_args`, the training checkpoints are pushed to the
 Hugging Face Hub. Upon training completion, push the final model to the Hub as well by calling the [push_to_hub()](/docs/transformers/v5.1.0/en/main_classes/trainer#transformers.Trainer.push_to_hub) method.
@@ -695,6 +694,3 @@ Let's plot the result:
 
 >>> image
 ```
-
-    
-

@@ -126,4 +126,3 @@ describe('Phase 14E: Resource Bounds and Stability', () => {
     expect(() => ac.abort()).not.toThrow();
   });
 });
-

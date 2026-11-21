@@ -19,7 +19,7 @@ export interface CliFlags {
   verbose?: boolean;
   /** Preview actions without executing. */
   dryRun?: boolean;
-  /** Install core agents/skills only (~13 agents). */
+  /** Install core agents/skills only (~21 specialists). */
   minimal?: boolean;
   /** Install in a specific directory. */
   path?: string;
@@ -388,14 +388,7 @@ export type ActivityEventType =
   | 'operation_cancelled';
 
 export type ActivityStatus =
-  | 'pending'
-  | 'running'
-  | 'passed'
-  | 'failed'
-  | 'warning'
-  | 'blocked'
-  | 'completed'
-  | 'cancelled';
+  'pending' | 'running' | 'passed' | 'failed' | 'warning' | 'blocked' | 'completed' | 'cancelled';
 
 export interface ActivityTimestamps {
   startedAt: string;
@@ -474,11 +467,26 @@ export class StructuredRenderer {
 export function renderStructured(event: ActivityEvent, options?: any): string;
 export function renderActivity(event: ActivityEvent, environment?: string, options?: any): string;
 
-export function formatActivity(event: Partial<ActivityEvent>, targetEnvironment?: 'markdown' | 'terminal' | 'plaintext' | 'structured' | 'json', options?: any): string;
-export function announceAgent(agentName: string, context?: string, targetEnvironment?: string, options?: any): string;
-export function announceSkill(skillName: string, context?: string, targetEnvironment?: string, options?: any): string;
+export function formatActivity(
+  event: Partial<ActivityEvent>,
+  targetEnvironment?: string,
+  options?: any,
+): string;
+export function announceAgent(
+  agentName: string,
+  context?: string,
+  targetEnvironment?: string,
+  options?: any,
+): string;
+export function announceSkill(
+  skillName: string,
+  context?: string,
+  targetEnvironment?: string,
+  options?: any,
+): string;
 
-export type LifecycleState = 'pending' | 'running' | 'waiting' | 'blocked' | 'retrying' | 'completed' | 'failed' | 'cancelled';
+export type LifecycleState =
+  'pending' | 'running' | 'waiting' | 'blocked' | 'retrying' | 'completed' | 'failed' | 'cancelled';
 export type AgentSkillState = 'selected' | 'activated' | 'executing' | 'finished' | 'failed';
 export type ToolState = 'started' | 'executing' | 'completed' | 'failed';
 
@@ -494,7 +502,11 @@ export class IllegalStateTransitionError extends Error {
 }
 
 export function canTransition(fromState: string, toState: string): boolean;
-export function assertValidTransition(fromState: string, toState: string, operationId?: string | null): void;
+export function assertValidTransition(
+  fromState: string,
+  toState: string,
+  operationId?: string | null,
+): void;
 export function isTerminalState(state: string): boolean;
 export function getLegalNextStates(state: string): string[];
 
@@ -514,15 +526,44 @@ export class OperationRecord {
   timestamps: { startedAt: string; updatedAt: string; completedAt?: string | null };
   attempt: number;
   maxAttempts: number;
-  retries: Array<{ attempt: number; failedAt: string; reason: string; error?: any; durationMs?: number | null }>;
+  retries: Array<{
+    attempt: number;
+    failedAt: string;
+    reason: string;
+    error?: any;
+    durationMs?: number | null;
+  }>;
   progress?: ActivityProgress | null;
-  activeAgent?: { name: string; state: AgentSkillState; context?: string | null; timestamp: string } | null;
-  activeSkill?: { name: string; state: AgentSkillState; context?: string | null; timestamp: string } | null;
+  activeAgent?: {
+    name: string;
+    state: AgentSkillState;
+    context?: string | null;
+    timestamp: string;
+  } | null;
+  activeSkill?: {
+    name: string;
+    state: AgentSkillState;
+    context?: string | null;
+    timestamp: string;
+  } | null;
   agentHistory: Array<any>;
   skillHistory: Array<any>;
   stages: Array<{ name: string; status: string }>;
-  tools: Array<{ toolName: string; status: ToolState; startedAt: string; completedAt?: string | null; durationMs?: number | null; resultRef?: string | null }>;
-  evidence: Array<{ ref: string; hash?: string | null; description?: string | null; verified: boolean; collectedAt: string }>;
+  tools: Array<{
+    toolName: string;
+    status: ToolState;
+    startedAt: string;
+    completedAt?: string | null;
+    durationMs?: number | null;
+    resultRef?: string | null;
+  }>;
+  evidence: Array<{
+    ref: string;
+    hash?: string | null;
+    description?: string | null;
+    verified: boolean;
+    collectedAt: string;
+  }>;
   verified: boolean;
   events: ActivityEvent[];
   error?: { message: string; code?: string | null; suggestion?: string | null } | null;
@@ -552,8 +593,20 @@ export class OperationRegistry {
   has(operationId: string): boolean;
   transition(operationId: string, targetStatus: LifecycleState, metadata?: any): OperationRecord;
   updateProgress(operationId: string, progressData: any): any;
-  recordAgentState(operationId: string, agentName: string, state: AgentSkillState, context?: string | null, error?: any): any;
-  recordSkillState(operationId: string, skillName: string, state: AgentSkillState, context?: string | null, error?: any): any;
+  recordAgentState(
+    operationId: string,
+    agentName: string,
+    state: AgentSkillState,
+    context?: string | null,
+    error?: any,
+  ): any;
+  recordSkillState(
+    operationId: string,
+    skillName: string,
+    state: AgentSkillState,
+    context?: string | null,
+    error?: any,
+  ): any;
   recordToolExecution(operationId: string, toolName: string, status: ToolState, options?: any): any;
   recordEvidence(operationId: string, evidenceItem: any): any;
   recordRetry(operationId: string, options?: any): any;
@@ -563,7 +616,11 @@ export class OperationRegistry {
   listCompleted(): OperationRecord[];
   getChildren(parentOperationId: string): OperationRecord[];
   query(filters?: any): OperationRecord[];
-  cleanup(options?: { maxCompleted?: number; ttlMs?: number }): { evictedCount: number; activeCount: number; completedCount: number };
+  cleanup(options?: { maxCompleted?: number; ttlMs?: number }): {
+    evictedCount: number;
+    activeCount: number;
+    completedCount: number;
+  };
   reset(): void;
 }
 
@@ -595,7 +652,10 @@ export class AnnouncementDeduplicator {
 export class AnnouncementIntelligence {
   constructor();
   getDeduplicator(operationId: string): AnnouncementDeduplicator;
-  evaluate(event: ActivityEvent, options?: any): { shouldAnnounce: boolean; verdict: AnnouncementDecision; reason: string };
+  evaluate(
+    event: ActivityEvent,
+    options?: any,
+  ): { shouldAnnounce: boolean; verdict: AnnouncementDecision; reason: string };
   cleanup(operationId: string): void;
   reset(): void;
 }
@@ -630,7 +690,10 @@ export class TelemetryError extends Error {
 export class StaleEventError extends TelemetryError {}
 
 export class ProgressCalculator {
-  static calculate(input: any, options?: any): {
+  static calculate(
+    input: any,
+    options?: any,
+  ): {
     current: number | null;
     total: number | null;
     percentage: number | null;
@@ -649,7 +712,10 @@ export class ProgressCoalescer {
   });
   windowMs: number;
   maxBurstSize: number;
-  push(event: ActivityEvent, options?: any): { coalesced: boolean; immediate: boolean; sampleCount?: number; event?: ActivityEvent };
+  push(
+    event: ActivityEvent,
+    options?: any,
+  ): { coalesced: boolean; immediate: boolean; sampleCount?: number; event?: ActivityEvent };
   flush(operationId?: string | null): ActivityEvent | ActivityEvent[] | null;
   dispose(): void;
 }
@@ -709,11 +775,20 @@ export interface TerminalSanitizeOptions {
 export function visibleWidth(text: string): number;
 export function visibleLength(text: string): number;
 export function sanitizeTerminal(input: any, options?: TerminalSanitizeOptions): string;
-export function renderPanel(title: string, lines?: (string | null | undefined)[], options?: PanelOptions): void;
+export function renderPanel(
+  title: string,
+  lines?: (string | null | undefined)[],
+  options?: PanelOptions,
+): void;
 export function renderProgressBar(
   label: string,
   percentage: number | null,
-  options?: { width?: number; color?: [number, number, number]; labelWidth?: number; requireTerminalConfirmation?: boolean }
+  options?: {
+    width?: number;
+    color?: [number, number, number];
+    labelWidth?: number;
+    requireTerminalConfirmation?: boolean;
+  },
 ): string;
 export function renderReviewerGrid(completedCount?: number): void;
 
@@ -748,8 +823,15 @@ export interface HostCapabilities {
 export const HOSTS: Record<string, HostType>;
 export const BASE_HOST_CAPABILITIES: Record<HostType, HostCapabilities>;
 
-export function detectHost(options?: { host?: HostType; isMcp?: boolean; isCi?: boolean }, env?: NodeJS.ProcessEnv): HostType;
-export function getHostCapabilities(host?: HostType | null, options?: any, env?: NodeJS.ProcessEnv): HostCapabilities;
+export function detectHost(
+  options?: { host?: HostType; isMcp?: boolean; isCi?: boolean },
+  env?: NodeJS.ProcessEnv,
+): HostType;
+export function getHostCapabilities(
+  host?: HostType | null,
+  options?: any,
+  env?: NodeJS.ProcessEnv,
+): HostCapabilities;
 export function resolveEnvironment(options?: any, env?: NodeJS.ProcessEnv): string;
 
 // ── Progressive Disclosure & Output Optimization (Phase 10) ───────────────────
@@ -765,7 +847,7 @@ export function getEventPriority(event: any): PriorityLevel;
 export function shouldDisplayEvent(
   event: any,
   detailLevel?: DetailLevel,
-  options?: any
+  options?: any,
 ): { visible: boolean; reason: string; priority: string };
 
 export const FAILURE_CATEGORIES: Record<string, string>;
@@ -780,7 +862,13 @@ export class OperationDiagnosticRecord {
   failureCategory: string | null;
   remedy: string | null;
   push(event: any): void;
-  getRetentionInfo(): { operationId: string; retainedCount: number; truncatedCount: number; capacity: number; isTruncated: boolean };
+  getRetentionInfo(): {
+    operationId: string;
+    retainedCount: number;
+    truncatedCount: number;
+    capacity: number;
+    isTruncated: boolean;
+  };
 }
 
 export class DiagnosticBuffer {
@@ -799,7 +887,7 @@ export function getDiagnosticReport(operationId?: string, options?: any): string
 
 export function boundArray<T = any>(
   items: T[],
-  options?: { maxItems?: number; diagnosticRef?: string; verboseHint?: boolean }
+  options?: { maxItems?: number; diagnosticRef?: string; verboseHint?: boolean },
 ): {
   items: T[];
   pagination: {
@@ -813,7 +901,7 @@ export function boundArray<T = any>(
 
 export function boundString(
   text: string,
-  options?: { maxLength?: number; headRatio?: number; diagnosticRef?: string }
+  options?: { maxLength?: number; headRatio?: number; diagnosticRef?: string },
 ): {
   text: string;
   isTruncated: boolean;
@@ -826,6 +914,3 @@ export function boundObject(obj: any, options?: any): any;
 export function formatDuration(ms: number | null | undefined): string;
 export function normalizeSummaryData(input: any): any;
 export function formatCompletionSummary(input: any, options?: any): string;
-
-
-

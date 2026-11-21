@@ -25,10 +25,10 @@ describe('CLI Contract & Routing Integrity', () => {
       .map(f => path.basename(f, '.js'));
 
     const knownAliases = {
-      'evalopt': ['evalopt', 'redteam'],
-      'evolve': ['evolve', 'auto-tune'],
-      'optimize': ['optimize-skill'],
-      'native': ['min-context', 'dag-schedule', 'context-compress', 'optimize-step', 'impact-tier'],
+      evalopt: ['evalopt', 'redteam'],
+      evolve: ['evolve', 'auto-tune'],
+      optimize: ['optimize-skill'],
+      native: ['min-context', 'dag-schedule', 'context-compress', 'optimize-step', 'impact-tier'],
       'skill-intelligence': ['skill-intel', 'skill-intelligence'],
     };
 
@@ -50,7 +50,11 @@ describe('CLI Contract & Routing Integrity', () => {
     const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
 
     expect(() => {
-      cmdSkillIntel({ path: path.resolve(__dirname, '../..') }, ['node', 'tk', 'skill-intel', '--help'], true);
+      cmdSkillIntel(
+        { path: path.resolve(__dirname, '../..') },
+        ['node', 'tk', 'skill-intel', '--help'],
+        true,
+      );
     }).not.toThrow();
 
     logSpy.mockRestore();

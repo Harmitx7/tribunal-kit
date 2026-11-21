@@ -136,11 +136,7 @@ class CoEvolutionEngine {
       telemetry.adversarialFindings = findings.length;
 
       // 4. Loop 1: SkillOpt Procedural Rule Synthesis
-      const mutationResult = this.skillMutator.mutateSkill(
-        currentSkillText,
-        targetSkill,
-        findings,
-      );
+      const mutationResult = this.skillMutator.mutateSkill(currentSkillText, targetSkill, findings);
       telemetry.appliedRules = mutationResult.appliedRules;
       telemetry.rejectedCount = mutationResult.rejectedCount;
       telemetry.changeRatio = mutationResult.changeRatio;
@@ -212,13 +208,7 @@ class CoEvolutionEngine {
     const roundResults = [];
 
     for (let round = 1; round <= this.maxRounds; round++) {
-      const result = await this.executeRound(
-        round,
-        targetSkill,
-        currentText,
-        scenarios,
-        runner,
-      );
+      const result = await this.executeRound(round, targetSkill, currentText, scenarios, runner);
       roundResults.push(result);
 
       if (result.verdict === 'SUCCESS' && result.newSkillText) {

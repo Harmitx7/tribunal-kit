@@ -40,19 +40,28 @@ describe('Phase 16: Cross-Repository Generalization & Semantic Evidence Verifica
   test('G-16.1: Local identifier shadowing does not cause false negative (Failure Class A)', () => {
     const projDir = path.join(tempRoot, 'shadowing_test');
     fs.mkdirSync(projDir, { recursive: true });
-    fs.writeFileSync(path.join(projDir, 'package.json'), JSON.stringify({ name: 'shadowing-test', main: 'main.js' }));
+    fs.writeFileSync(
+      path.join(projDir, 'package.json'),
+      JSON.stringify({ name: 'shadowing-test', main: 'main.js' }),
+    );
 
     // users.js: exports truly dead function
-    fs.writeFileSync(path.join(projDir, 'users.js'), 'export function deadFunction() { return 1; }');
+    fs.writeFileSync(
+      path.join(projDir, 'users.js'),
+      'export function deadFunction() { return 1; }',
+    );
 
     // main.js: defines a local variable named deadFunction, never imports users.js
-    fs.writeFileSync(path.join(projDir, 'main.js'), `
+    fs.writeFileSync(
+      path.join(projDir, 'main.js'),
+      `
 function test() {
   const deadFunction = 42;
   return deadFunction;
 }
 export function run() { return test(); }
-`);
+`,
+    );
 
     const ci = new CodebaseIntelligence(projDir);
     const res = ci.deadCode();
@@ -63,19 +72,31 @@ export function run() { return test(); }
   test('G-16.2: Same-name symbols in different modules are resolved independently (Failure Class B)', () => {
     const projDir = path.join(tempRoot, 'same_name_test');
     fs.mkdirSync(path.join(projDir, 'services'), { recursive: true });
-    fs.writeFileSync(path.join(projDir, 'package.json'), JSON.stringify({ name: 'same-name-test', main: 'app.js' }));
+    fs.writeFileSync(
+      path.join(projDir, 'package.json'),
+      JSON.stringify({ name: 'same-name-test', main: 'app.js' }),
+    );
 
     // billing.js: exports calculateTax (called by app.js)
-    fs.writeFileSync(path.join(projDir, 'services', 'billing.js'), 'export function calculateTax(x) { return x * 0.2; }');
+    fs.writeFileSync(
+      path.join(projDir, 'services', 'billing.js'),
+      'export function calculateTax(x) { return x * 0.2; }',
+    );
 
     // analytics.js: exports calculateTax (NEVER imported by any file!)
-    fs.writeFileSync(path.join(projDir, 'services', 'analytics.js'), 'export function calculateTax(x) { return x * 0.1; }');
+    fs.writeFileSync(
+      path.join(projDir, 'services', 'analytics.js'),
+      'export function calculateTax(x) { return x * 0.1; }',
+    );
 
     // app.js: only imports calculateTax from billing.js
-    fs.writeFileSync(path.join(projDir, 'app.js'), `
+    fs.writeFileSync(
+      path.join(projDir, 'app.js'),
+      `
 import { calculateTax } from './services/billing.js';
 export function main() { return calculateTax(50); }
-`);
+`,
+    );
 
     const ci = new CodebaseIntelligence(projDir);
     const res = ci.deadCode();
@@ -90,17 +111,26 @@ export function main() { return calculateTax(50); }
   test('G-16.3: Comments and string literals do not mark dead symbols as live (Failure Class D)', () => {
     const projDir = path.join(tempRoot, 'comments_test');
     fs.mkdirSync(projDir, { recursive: true });
-    fs.writeFileSync(path.join(projDir, 'package.json'), JSON.stringify({ name: 'comments-test', main: 'index.js' }));
+    fs.writeFileSync(
+      path.join(projDir, 'package.json'),
+      JSON.stringify({ name: 'comments-test', main: 'index.js' }),
+    );
 
     // dead.js: exports unusedCalculation
-    fs.writeFileSync(path.join(projDir, 'dead.js'), 'export function unusedCalculation() { return 100; }');
+    fs.writeFileSync(
+      path.join(projDir, 'dead.js'),
+      'export function unusedCalculation() { return 100; }',
+    );
 
     // index.js: mentions unusedCalculation in comment and string literal only
-    fs.writeFileSync(path.join(projDir, 'index.js'), `
+    fs.writeFileSync(
+      path.join(projDir, 'index.js'),
+      `
 // Note: We used to call unusedCalculation() before v2
 const doc = "unusedCalculation() is now deprecated";
 export function start() { return "ok"; }
-`);
+`,
+    );
 
     const ci = new CodebaseIntelligence(projDir);
     const res = ci.deadCode();
@@ -111,16 +141,25 @@ export function start() { return "ok"; }
   test('G-16.4: Aliased imports are correctly tracked as live (Failure Class E)', () => {
     const projDir = path.join(tempRoot, 'alias_test');
     fs.mkdirSync(projDir, { recursive: true });
-    fs.writeFileSync(path.join(projDir, 'package.json'), JSON.stringify({ name: 'alias-test', main: 'index.js' }));
+    fs.writeFileSync(
+      path.join(projDir, 'package.json'),
+      JSON.stringify({ name: 'alias-test', main: 'index.js' }),
+    );
 
     // math.js: exports addNumbers
-    fs.writeFileSync(path.join(projDir, 'math.js'), 'export function addNumbers(a, b) { return a + b; }');
+    fs.writeFileSync(
+      path.join(projDir, 'math.js'),
+      'export function addNumbers(a, b) { return a + b; }',
+    );
 
     // index.js: imports addNumbers as add
-    fs.writeFileSync(path.join(projDir, 'index.js'), `
+    fs.writeFileSync(
+      path.join(projDir, 'index.js'),
+      `
 import { addNumbers as add } from './math.js';
 export function run() { return add(1, 2); }
-`);
+`,
+    );
 
     const ci = new CodebaseIntelligence(projDir);
     const res = ci.deadCode();
@@ -131,24 +170,36 @@ export function run() { return add(1, 2); }
   test('G-16.5: Re-export barrel chains distinguish consumed vs unconsumed exports', () => {
     const projDir = path.join(tempRoot, 'barrel_test');
     fs.mkdirSync(path.join(projDir, 'features'), { recursive: true });
-    fs.writeFileSync(path.join(projDir, 'package.json'), JSON.stringify({ name: 'barrel-test', main: 'app.js' }));
+    fs.writeFileSync(
+      path.join(projDir, 'package.json'),
+      JSON.stringify({ name: 'barrel-test', main: 'app.js' }),
+    );
 
     // features/auth.js: exports login (consumed) and logout (unconsumed)
-    fs.writeFileSync(path.join(projDir, 'features', 'auth.js'), `
+    fs.writeFileSync(
+      path.join(projDir, 'features', 'auth.js'),
+      `
 export function login() { return "token"; }
 export function logout() { return true; }
-`);
+`,
+    );
 
     // features/index.js: barrel re-export
-    fs.writeFileSync(path.join(projDir, 'features', 'index.js'), `
+    fs.writeFileSync(
+      path.join(projDir, 'features', 'index.js'),
+      `
 export { login, logout } from './auth.js';
-`);
+`,
+    );
 
     // app.js: only imports login from barrel
-    fs.writeFileSync(path.join(projDir, 'app.js'), `
+    fs.writeFileSync(
+      path.join(projDir, 'app.js'),
+      `
 import { login } from './features/index.js';
 export function start() { return login(); }
-`);
+`,
+    );
 
     const ci = new CodebaseIntelligence(projDir);
     const res = ci.deadCode();
@@ -171,4 +222,3 @@ export function start() { return login(); }
     expect(res.evidenceRecords.length).toBeGreaterThan(0);
   });
 });
-

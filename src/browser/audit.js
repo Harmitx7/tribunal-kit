@@ -15,12 +15,12 @@ const { validateBrowserUrl } = require('../security/boundary');
 /**
  * Audits a live URL using native CDP.
  * @param {string} url
- * @param {object} options
+ * @param {object} [options]
  * @returns {Promise<object>}
  */
-async function auditURL(url, _options = {}) {
-  validateBrowserUrl(url, _options);
-  const browser = await launchBrowser(_options);
+async function auditURL(url, options = {}) {
+  validateBrowserUrl(url, options);
+  const browser = await launchBrowser(options);
   let client = null;
   let tab = null;
 
@@ -84,7 +84,7 @@ async function auditURL(url, _options = {}) {
     });
 
     const startTime = Date.now();
-    await client.navigate(url, _options);
+    await client.navigate(url, options);
     const loadDurationMs = Date.now() - startTime;
 
     // Run in-page accessibility and metadata inspection script

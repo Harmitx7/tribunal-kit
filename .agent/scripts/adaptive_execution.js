@@ -335,7 +335,7 @@ function adaptPipelineOnSignal(currentPipeline, signal = {}) {
  * @param {Object} [repoContext]
  * @returns {Object} Comprehensive change impact dossier
  */
-function analyzeChangeImpact(proposedChange, repoContext = {}) {
+function analyzeChangeImpact(proposedChange, _repoContext = {}) {
   const text = (proposedChange || '').toLowerCase();
 
   const affectedComponents = [];
@@ -451,7 +451,7 @@ function recordEngineeringLesson(pattern, observation, lesson) {
       evidence: [{ type: PROVENANCE_TYPES.VERIFIED_IMPLEMENTATION, source: observation }],
       status: TRUST_STATES.VERIFIED,
     });
-  } catch (e) {}
+  } catch (_e) {}
   return item;
 }
 
@@ -495,7 +495,7 @@ function evaluateSkillEffectiveness(skillName, outcomeEvidence = {}) {
       is_material: contributed,
       task: outcomeEvidence.task || 'evaluated_task',
     });
-  } catch (e) {}
+  } catch (_e) {}
 
   return {
     skill: skillName,
@@ -522,7 +522,7 @@ function evaluateSkillEffectiveness(skillName, outcomeEvidence = {}) {
  * @param {Object} [options]
  * @returns {Object} Comprehensive engineering review dossier
  */
-function runFinalEngineeringReview(outcomeContract, outcomeReport, options = {}) {
+function runFinalEngineeringReview(outcomeContract, outcomeReport, _options = {}) {
   const contract = outcomeContract || {};
   const report = outcomeReport || {};
 

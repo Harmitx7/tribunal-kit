@@ -1,6 +1,6 @@
 ---
 name: transformers-js
-description: "Use when loading, evaluating, fine-tuning, and deploying transformers js machine learning models, datasets, and inference pipelines."
+description: 'Use when loading, evaluating, fine-tuning, and deploying transformers js machine learning models, datasets, and inference pipelines.'
 version: 6.0.0
 last-updated: 2026-09-29
 tools: Read, Grep, Glob, Bash, Edit, Write
@@ -8,49 +8,50 @@ scripts-binding:
   - .agent/scripts/lint_runner.js
   - .agent/scripts/verify_all.js
 inputs:
-  task: "string"
-  target_file: "string"
+  task: 'string'
+  target_file: 'string'
 outputs:
-  result: "string"
-  verification_status: "boolean"
+  result: 'string'
+  verification_status: 'boolean'
 trigger:
-  - "transformers"
+  - 'transformers'
 ---
 
 # Transformers.js - Machine Learning for JavaScript
 
 ## Mandatory Pre-Flight Context Inspection
+
 Before reading, generating, or refactoring code in the `transformers-js` domain, inspect these 5 critical parameters:
+
 1. **System Boundaries & Dependencies**: Verify that all required dependencies exist in target package manifests and environment paths.
 2. **Runtime Context & Platform Invariants**: Confirm target platform constraints (Node.js, Browser, Mobile OS, Edge runtime) before applying APIs.
 3. **Execution Guardrails**: Identify potential side-effects, state mutations, and unhandled asynchronous exceptions.
 4. **Validation & Type Contracts**: Validate input data schemas and strict type constraints across all module interfaces.
 5. **Observability & Proof of Execution**: Ensure execution produces tangible verification signals (terminal output, tests, metrics).
 
-
 ## Activation Boundaries
+
 - **Activate when:** Use when loading, evaluating, fine-tuning, and deploying transformers js machine learning models, datasets, and inference pipelines.
 - **DO NOT activate when:** The task falls outside the `transformers-js` domain or is managed by a different dedicated specialist agent.
 
-
 ## 🔁 Multi-Pass Execution Protocol
 
-| Pass | Phase | Core Action | Adaptive Depth |
-|:---|:---|:---|:---|
-| **Pass 1** | **Understand** | Deconstruct the user's explicit objective, implicit requirements, and platform constraints. | Fast / Standard / Deep |
-| **Pass 2** | **Plan** | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls. | Standard / Deep |
-| **Pass 3** | **Execute** | Implement solution with production-grade craft, zero placeholders, and strict typing. | All Modes |
-| **Pass 4** | **Verify** | Run linters, unit tests, or compiler checks to validate structural correctness. | All Modes |
-| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep |
-| **Pass 6** | **Harden** | Eliminate discovered friction, optimize performance, and harden error boundaries. | Standard / Deep |
-| **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. | All Modes |
-
+| Pass       | Phase                | Core Action                                                                                     | Adaptive Depth         |
+| :--------- | :------------------- | :---------------------------------------------------------------------------------------------- | :--------------------- |
+| **Pass 1** | **Understand**       | Deconstruct the user's explicit objective, implicit requirements, and platform constraints.     | Fast / Standard / Deep |
+| **Pass 2** | **Plan**             | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls.   | Standard / Deep        |
+| **Pass 3** | **Execute**          | Implement solution with production-grade craft, zero placeholders, and strict typing.           | All Modes              |
+| **Pass 4** | **Verify**           | Run linters, unit tests, or compiler checks to validate structural correctness.                 | All Modes              |
+| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep        |
+| **Pass 6** | **Harden**           | Eliminate discovered friction, optimize performance, and harden error boundaries.               | Standard / Deep        |
+| **Pass 7** | **Quality Gate**     | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing.    | All Modes              |
 
 Transformers.js enables running state-of-the-art machine learning models directly in JavaScript across browsers and server-side runtimes (Node.js, Bun, Deno), with no Python server required.
 
 ## When to Use This Skill
 
 Use this skill when you need to:
+
 - Run ML models for text analysis, generation, or translation in JavaScript
 - Perform image classification, object detection, or segmentation
 - Implement speech recognition or audio processing
@@ -60,20 +61,23 @@ Use this skill when you need to:
 ## Installation
 
 ### NPM Installation
+
 ```bash
 npm install @huggingface/transformers
 ```
 
 ### Browser Usage (CDN)
+
 ```javascript
 <script type="module">
-  import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers';
+  import {pipeline} from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers';
 </script>
 ```
 
 ## Core Concepts
 
 ### 1. Pipeline API
+
 The pipeline API is the easiest way to use models. It groups together preprocessing, model inference, and postprocessing:
 
 ```javascript
@@ -93,18 +97,20 @@ await pipe.dispose();
 **⚠️ Memory Management:** All pipelines must be disposed with `pipe.dispose()` when finished to prevent memory leaks. See examples in [Code Examples](./references/EXAMPLES.md) for cleanup patterns across different environments.
 
 ### 2. Model Selection
+
 You can specify a custom model as the second argument:
 
 ```javascript
 const pipe = await pipeline(
   'sentiment-analysis',
-  'Xenova/bert-base-multilingual-uncased-sentiment'
+  'Xenova/bert-base-multilingual-uncased-sentiment',
 );
 ```
 
 **Finding Models:**
 
 Browse available Transformers.js models on Hugging Face Hub:
+
 - **All models**: https://huggingface.co/models?library=transformers.js&sort=trending
 - **By task**: Add `pipeline_tag` parameter
   - Text generation: https://huggingface.co/models?pipeline_tag=text-generation&library=transformers.js&sort=trending
@@ -114,6 +120,7 @@ Browse available Transformers.js models on Hugging Face Hub:
 **Tip:** Filter by task type, sort by trending/downloads, and check model cards for performance metrics and usage examples.
 
 ### 3. Device Selection
+
 Choose where to run the model:
 
 ```javascript
@@ -127,12 +134,13 @@ const pipe = await pipeline('sentiment-analysis', 'model-id', {
 ```
 
 ### 4. Quantization Options
+
 Control model precision vs. performance:
 
 ```javascript
 // Use quantized model (faster, smaller)
 const pipe = await pipeline('sentiment-analysis', 'model-id', {
-  dtype: 'q4',  // Options: 'fp32', 'fp16', 'q8', 'q4'
+  dtype: 'q4', // Options: 'fp32', 'fp16', 'q8', 'q4'
 });
 ```
 
@@ -143,36 +151,41 @@ const pipe = await pipeline('sentiment-analysis', 'model-id', {
 ### Natural Language Processing
 
 #### Text Classification
+
 ```javascript
 const classifier = await pipeline('text-classification');
 const result = await classifier('This movie was amazing!');
 ```
 
 #### Named Entity Recognition (NER)
+
 ```javascript
 const ner = await pipeline('token-classification');
 const entities = await ner('My name is John and I live in New York.');
 ```
 
 #### Question Answering
+
 ```javascript
 const qa = await pipeline('question-answering');
 const answer = await qa({
   question: 'What is the capital of France?',
-  context: 'Paris is the capital and largest city of France.'
+  context: 'Paris is the capital and largest city of France.',
 });
 ```
 
 #### Text Generation
+
 ```javascript
 const generator = await pipeline('text-generation', 'onnx-community/gemma-3-270m-it-ONNX');
 const text = await generator('Once upon a time', {
   max_new_tokens: 100,
-  temperature: 0.7
+  temperature: 0.7,
 });
 ```
 
 **For streaming and chat:** See **[Text Generation Guide](./references/TEXT_GENERATION.md)** for:
+
 - Streaming token-by-token output with `TextStreamer`
 - Chat/conversation format with system/user/assistant roles
 - Generation parameters (temperature, top_k, top_p)
@@ -180,32 +193,40 @@ const text = await generator('Once upon a time', {
 - React components and API endpoints
 
 #### Translation
+
 ```javascript
 const translator = await pipeline('translation', 'Xenova/nllb-200-distilled-600M');
 const output = await translator('Hello, how are you?', {
   src_lang: 'eng_Latn',
-  tgt_lang: 'fra_Latn'
+  tgt_lang: 'fra_Latn',
 });
 ```
 
 #### Summarization
+
 ```javascript
 const summarizer = await pipeline('summarization');
 const summary = await summarizer(longText, {
   max_length: 100,
-  min_length: 30
+  min_length: 30,
 });
 ```
 
 #### Zero-Shot Classification
+
 ```javascript
 const classifier = await pipeline('zero-shot-classification');
-const result = await classifier('This is a story about sports.', ['politics', 'sports', 'technology']);
+const result = await classifier('This is a story about sports.', [
+  'politics',
+  'sports',
+  'technology',
+]);
 ```
 
 ### Computer Vision
 
 #### Image Classification
+
 ```javascript
 const classifier = await pipeline('image-classification');
 const result = await classifier('https://example.com/image.jpg');
@@ -214,6 +235,7 @@ const result = await classifier(imageUrl);
 ```
 
 #### Object Detection
+
 ```javascript
 const detector = await pipeline('object-detection');
 const objects = await detector('https://example.com/image.jpg');
@@ -221,18 +243,21 @@ const objects = await detector('https://example.com/image.jpg');
 ```
 
 #### Image Segmentation
+
 ```javascript
 const segmenter = await pipeline('image-segmentation');
 const segments = await segmenter('https://example.com/image.jpg');
 ```
 
 #### Depth Estimation
+
 ```javascript
 const depthEstimator = await pipeline('depth-estimation');
 const depth = await depthEstimator('https://example.com/image.jpg');
 ```
 
 #### Zero-Shot Image Classification
+
 ```javascript
 const classifier = await pipeline('zero-shot-image-classification');
 const result = await classifier('image.jpg', ['cat', 'dog', 'bird']);
@@ -241,6 +266,7 @@ const result = await classifier('image.jpg', ['cat', 'dog', 'bird']);
 ### Audio Processing
 
 #### Automatic Speech Recognition
+
 ```javascript
 const transcriber = await pipeline('automatic-speech-recognition');
 const result = await transcriber('audio.wav');
@@ -248,34 +274,39 @@ const result = await transcriber('audio.wav');
 ```
 
 #### Audio Classification
+
 ```javascript
 const classifier = await pipeline('audio-classification');
 const result = await classifier('audio.wav');
 ```
 
 #### Text-to-Speech
+
 ```javascript
 const synthesizer = await pipeline('text-to-speech', 'Xenova/speecht5_tts');
 const audio = await synthesizer('Hello, this is a test.', {
-  speaker_embeddings: speakerEmbeddings
+  speaker_embeddings: speakerEmbeddings,
 });
 ```
 
 ### Multimodal
 
 #### Image-to-Text (Image Captioning)
+
 ```javascript
 const captioner = await pipeline('image-to-text');
 const caption = await captioner('image.jpg');
 ```
 
 #### Document Question Answering
+
 ```javascript
 const docQA = await pipeline('document-question-answering');
 const answer = await docQA('document-image.jpg', 'What is the total amount?');
 ```
 
 #### Zero-Shot Object Detection
+
 ```javascript
 const detector = await pipeline('zero-shot-object-detection');
 const objects = await detector('image.jpg', ['person', 'car', 'tree']);
@@ -300,29 +331,31 @@ const embeddings = await extractor('Text to embed', { pooling: 'mean', normalize
 Discover compatible Transformers.js models on Hugging Face Hub:
 
 **Base URL (all models):**
+
 ```
 https://huggingface.co/models?library=transformers.js&sort=trending
 ```
 
 **Filter by task** using the `pipeline_tag` parameter:
 
-| Task | URL |
-|------|-----|
-| **Text Generation** | https://huggingface.co/models?pipeline_tag=text-generation&library=transformers.js&sort=trending |
-| **Text Classification** | https://huggingface.co/models?pipeline_tag=text-classification&library=transformers.js&sort=trending |
-| **Translation** | https://huggingface.co/models?pipeline_tag=translation&library=transformers.js&sort=trending |
-| **Summarization** | https://huggingface.co/models?pipeline_tag=summarization&library=transformers.js&sort=trending |
-| **Question Answering** | https://huggingface.co/models?pipeline_tag=question-answering&library=transformers.js&sort=trending |
-| **Image Classification** | https://huggingface.co/models?pipeline_tag=image-classification&library=transformers.js&sort=trending |
-| **Object Detection** | https://huggingface.co/models?pipeline_tag=object-detection&library=transformers.js&sort=trending |
-| **Image Segmentation** | https://huggingface.co/models?pipeline_tag=image-segmentation&library=transformers.js&sort=trending |
-| **Speech Recognition** | https://huggingface.co/models?pipeline_tag=automatic-speech-recognition&library=transformers.js&sort=trending |
-| **Audio Classification** | https://huggingface.co/models?pipeline_tag=audio-classification&library=transformers.js&sort=trending |
-| **Image-to-Text** | https://huggingface.co/models?pipeline_tag=image-to-text&library=transformers.js&sort=trending |
-| **Feature Extraction** | https://huggingface.co/models?pipeline_tag=feature-extraction&library=transformers.js&sort=trending |
-| **Zero-Shot Classification** | https://huggingface.co/models?pipeline_tag=zero-shot-classification&library=transformers.js&sort=trending |
+| Task                         | URL                                                                                                           |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Text Generation**          | https://huggingface.co/models?pipeline_tag=text-generation&library=transformers.js&sort=trending              |
+| **Text Classification**      | https://huggingface.co/models?pipeline_tag=text-classification&library=transformers.js&sort=trending          |
+| **Translation**              | https://huggingface.co/models?pipeline_tag=translation&library=transformers.js&sort=trending                  |
+| **Summarization**            | https://huggingface.co/models?pipeline_tag=summarization&library=transformers.js&sort=trending                |
+| **Question Answering**       | https://huggingface.co/models?pipeline_tag=question-answering&library=transformers.js&sort=trending           |
+| **Image Classification**     | https://huggingface.co/models?pipeline_tag=image-classification&library=transformers.js&sort=trending         |
+| **Object Detection**         | https://huggingface.co/models?pipeline_tag=object-detection&library=transformers.js&sort=trending             |
+| **Image Segmentation**       | https://huggingface.co/models?pipeline_tag=image-segmentation&library=transformers.js&sort=trending           |
+| **Speech Recognition**       | https://huggingface.co/models?pipeline_tag=automatic-speech-recognition&library=transformers.js&sort=trending |
+| **Audio Classification**     | https://huggingface.co/models?pipeline_tag=audio-classification&library=transformers.js&sort=trending         |
+| **Image-to-Text**            | https://huggingface.co/models?pipeline_tag=image-to-text&library=transformers.js&sort=trending                |
+| **Feature Extraction**       | https://huggingface.co/models?pipeline_tag=feature-extraction&library=transformers.js&sort=trending           |
+| **Zero-Shot Classification** | https://huggingface.co/models?pipeline_tag=zero-shot-classification&library=transformers.js&sort=trending     |
 
 **Sort options:**
+
 - `&sort=trending` - Most popular recently
 - `&sort=downloads` - Most downloaded overall
 - `&sort=likes` - Most liked by community
@@ -333,12 +366,14 @@ https://huggingface.co/models?library=transformers.js&sort=trending
 Consider these factors when selecting a model:
 
 **1. Model Size**
+
 - **Small (< 100MB)**: Fast, suitable for browsers, limited accuracy
 - **Medium (100MB - 500MB)**: Balanced performance, good for most use cases
 - **Large (> 500MB)**: High accuracy, slower, better for Node.js or powerful devices
 
 **2. Quantization**
 Models are often available in different quantization levels:
+
 - `fp32` - Full precision (largest, most accurate)
 - `fp16` - Half precision (smaller, still accurate)
 - `q8` - 8-bit quantized (much smaller, slight accuracy loss)
@@ -346,6 +381,7 @@ Models are often available in different quantization levels:
 
 **3. Task Compatibility**
 Check the model card for:
+
 - Supported tasks (some models support multiple tasks)
 - Input/output formats
 - Language support (multilingual vs. English-only)
@@ -353,6 +389,7 @@ Check the model card for:
 
 **4. Performance Metrics**
 Model cards typically show:
+
 - Accuracy scores
 - Benchmark results
 - Inference speed
@@ -377,11 +414,11 @@ import { pipeline } from '@huggingface/transformers';
 const generator = await pipeline(
   'text-generation',
   'onnx-community/gemma-3-270m-it-ONNX',
-  { dtype: 'q4' } // Use quantized version for faster inference
+  { dtype: 'q4' }, // Use quantized version for faster inference
 );
 
 const output = await generator('Explain quantum computing in simple terms.', {
-  max_new_tokens: 100
+  max_new_tokens: 100,
 });
 
 await generator.dispose();
@@ -414,12 +451,12 @@ import { env, LogLevel } from '@huggingface/transformers';
 console.log(env.version); // e.g., '4.x'
 
 // Common settings
-env.allowRemoteModels = true;  // Load from Hugging Face Hub
-env.allowLocalModels = false;  // Load from file system
+env.allowRemoteModels = true; // Load from Hugging Face Hub
+env.allowLocalModels = false; // Load from file system
 env.localModelPath = '/models/'; // Local model directory
-env.useFSCache = true;         // Cache models on disk (Node.js)
-env.useBrowserCache = true;    // Cache models in browser
-env.cacheDir = './.cache';     // Cache directory location
+env.useFSCache = true; // Cache models on disk (Node.js)
+env.useBrowserCache = true; // Cache models in browser
+env.cacheDir = './.cache'; // Cache directory location
 // Optional: override logging level (default is LogLevel.WARNING)
 env.logLevel = LogLevel.INFO;
 
@@ -517,34 +554,32 @@ const outputs = await model(inputs);
 const classifier = await pipeline('sentiment-analysis');
 
 // Process multiple texts
-const results = await classifier([
-  'I love this!',
-  'This is terrible.',
-  'It was okay.'
-]);
+const results = await classifier(['I love this!', 'This is terrible.', 'It was okay.']);
 ```
 
 ## Runtime-Specific Considerations
 
 ### WebGPU Usage
+
 WebGPU provides GPU acceleration in browsers and server-side runtimes (when supported):
 
 ```javascript
 const pipe = await pipeline('text-generation', 'onnx-community/gemma-3-270m-it-ONNX', {
   device: 'webgpu',
-  dtype: 'fp32'
+  dtype: 'fp32',
 });
 ```
 
 **Note**: Use `webgpu` when available and fall back to WASM/CPU when not supported in the current runtime.
 
 ### WASM Performance
+
 WASM is the most compatible execution backend across runtimes:
 
 ```javascript
 // Optimized for browsers with quantization
 const pipe = await pipeline('sentiment-analysis', 'model-id', {
-  dtype: 'q8'  // or 'q4' for even smaller size
+  dtype: 'q8', // or 'q4' for even smaller size
 });
 ```
 
@@ -565,12 +600,12 @@ function onProgress(info) {
   }
 
   console.log(`${info.status}: ${info.file ?? ''}`);
-  
+
   if (info.status === 'progress') {
     fileProgress[info.file] = info.progress;
     console.log(`${info.file}: ${info.progress.toFixed(1)}%`);
   }
-  
+
   if (info.status === 'done') {
     console.log(`✓ ${info.file} complete`);
   }
@@ -578,7 +613,7 @@ function onProgress(info) {
 
 // Pass callback to pipeline
 const classifier = await pipeline('sentiment-analysis', null, {
-  progress_callback: onProgress
+  progress_callback: onProgress,
 });
 ```
 
@@ -587,11 +622,11 @@ const classifier = await pipeline('sentiment-analysis', null, {
 ```typescript
 interface ProgressInfo {
   status: 'initiate' | 'download' | 'progress' | 'progress_total' | 'done' | 'ready';
-  name: string;      // Model id or path
-  file?: string;     // File being processed (per-file events)
+  name: string; // Model id or path
+  file?: string; // File being processed (per-file events)
   progress?: number; // Percentage (0-100, for 'progress' and 'progress_total')
-  loaded?: number;   // Bytes downloaded (only for 'progress' status)
-  total?: number;    // Total bytes (only for 'progress' status)
+  loaded?: number; // Bytes downloaded (only for 'progress' status)
+  total?: number; // Total bytes (only for 'progress' status)
 }
 ```
 
@@ -633,10 +668,11 @@ try {
 ```javascript
 const pipe = await pipeline('sentiment-analysis');
 const result = await pipe('Great product!');
-await pipe.dispose();  // ✓ Free memory (100MB - several GB per model)
+await pipe.dispose(); // ✓ Free memory (100MB - several GB per model)
 ```
 
 **When to dispose:**
+
 - Application shutdown or component unmount
 - Before loading a different model
 - After batch processing in long-running apps
@@ -648,16 +684,19 @@ For detailed patterns (React cleanup, servers, browser), see **[Code Examples](.
 ## Troubleshooting
 
 ### Model Not Found
+
 - Verify model exists on Hugging Face Hub
 - Check model name spelling
 - Ensure model has ONNX files (look for `onnx` folder in model repo)
 
 ### Memory Issues
+
 - Use smaller models or quantized versions (`dtype: 'q4'`)
 - Reduce batch size
 - Limit sequence length with `max_length`
 
 ### WebGPU Errors
+
 - Check browser compatibility (Chrome 113+, Edge 113+)
 - Try `dtype: 'fp16'` if `fp32` fails
 - Fall back to WASM if WebGPU unavailable
@@ -665,6 +704,7 @@ For detailed patterns (React cleanup, servers, browser), see **[Code Examples](.
 ## Reference Documentation
 
 ### This Skill
+
 - **[Pipeline Options](./references/PIPELINE_OPTIONS.md)** - Configure `pipeline()` with `progress_callback`, `device`, `dtype`, etc.
 - **[Configuration Reference](./references/CONFIGURATION.md)** - Global `env` configuration for caching and model loading
 - **[ModelRegistry Reference](./references/MODEL_REGISTRY.md)** - Inspect files, cache status, dtypes, and clear cache before loading pipelines
@@ -674,6 +714,7 @@ For detailed patterns (React cleanup, servers, browser), see **[Code Examples](.
 - **[Code Examples](./references/EXAMPLES.md)** - Real-world implementations for different runtimes
 
 ### Official Transformers.js
+
 - Official docs: https://huggingface.co/docs/transformers.js
 - API reference: https://huggingface.co/docs/transformers.js/api/pipelines
 - Model hub: https://huggingface.co/models?library=transformers.js
@@ -695,31 +736,31 @@ For detailed patterns (React cleanup, servers, browser), see **[Code Examples](.
 
 ## Quick Reference: Task IDs
 
-| Task | Task ID |
-|------|---------|
-| Text classification | `text-classification` or `sentiment-analysis` |
-| Token classification | `token-classification` or `ner` |
-| Question answering | `question-answering` |
-| Fill mask | `fill-mask` |
-| Summarization | `summarization` |
-| Translation | `translation` |
-| Text generation | `text-generation` |
-| Text-to-text generation | `text2text-generation` |
-| Zero-shot classification | `zero-shot-classification` |
-| Image classification | `image-classification` |
-| Image segmentation | `image-segmentation` |
-| Object detection | `object-detection` |
-| Depth estimation | `depth-estimation` |
-| Image-to-image | `image-to-image` |
-| Zero-shot image classification | `zero-shot-image-classification` |
-| Zero-shot object detection | `zero-shot-object-detection` |
-| Automatic speech recognition | `automatic-speech-recognition` |
-| Audio classification | `audio-classification` |
-| Text-to-speech | `text-to-speech` or `text-to-audio` |
-| Image-to-text | `image-to-text` |
-| Document question answering | `document-question-answering` |
-| Feature extraction | `feature-extraction` |
-| Sentence similarity | `sentence-similarity` |
+| Task                           | Task ID                                       |
+| ------------------------------ | --------------------------------------------- |
+| Text classification            | `text-classification` or `sentiment-analysis` |
+| Token classification           | `token-classification` or `ner`               |
+| Question answering             | `question-answering`                          |
+| Fill mask                      | `fill-mask`                                   |
+| Summarization                  | `summarization`                               |
+| Translation                    | `translation`                                 |
+| Text generation                | `text-generation`                             |
+| Text-to-text generation        | `text2text-generation`                        |
+| Zero-shot classification       | `zero-shot-classification`                    |
+| Image classification           | `image-classification`                        |
+| Image segmentation             | `image-segmentation`                          |
+| Object detection               | `object-detection`                            |
+| Depth estimation               | `depth-estimation`                            |
+| Image-to-image                 | `image-to-image`                              |
+| Zero-shot image classification | `zero-shot-image-classification`              |
+| Zero-shot object detection     | `zero-shot-object-detection`                  |
+| Automatic speech recognition   | `automatic-speech-recognition`                |
+| Audio classification           | `audio-classification`                        |
+| Text-to-speech                 | `text-to-speech` or `text-to-audio`           |
+| Image-to-text                  | `image-to-text`                               |
+| Document question answering    | `document-question-answering`                 |
+| Feature extraction             | `feature-extraction`                          |
+| Sentence similarity            | `sentence-similarity`                         |
 
 ---
 
@@ -727,23 +768,21 @@ This skill enables you to integrate state-of-the-art machine learning capabiliti
 
 ## 🚨 Edge-Case & Failure Mode Matrix
 
-| Scenario | Risk | Production Mitigation |
-|:---|:---|:---|
-| **Empty or Null Inputs** | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers |
-| **Network Timeout / Latency** | Hanging operations or duplicate side-effects | Implement bounded abort controllers, exponential backoff, and idempotency keys |
-| **Concurrency / Race Conditions** | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls |
-| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection | Validate boundary payloads with Zod/Pydantic schemas prior to execution |
-| **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
-
+| Scenario                               | Risk                                                 | Production Mitigation                                                           |
+| :------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **Empty or Null Inputs**               | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers   |
+| **Network Timeout / Latency**          | Hanging operations or duplicate side-effects         | Implement bounded abort controllers, exponential backoff, and idempotency keys  |
+| **Concurrency / Race Conditions**      | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls          |
+| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection      | Validate boundary payloads with Zod/Pydantic schemas prior to execution         |
+| **Resource / Memory Saturation**       | OOM errors, frame drops, or memory leaks             | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
 
 ## 🤖 LLM-Specific Traps Table
 
-| Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
-|:---|:---|:---|
-| **Platform-Dependent Shell Commands** | Hardcoding $(cat ~/.cache/huggingface/token) or piping to jq | Use platform-agnostic token checks via env var HF_TOKEN and native JSON parsing |
-| **VRAM OOM Crash** | Loading 70B model weights on a consumer 16GB GPU without quantization | Calculate parameter bounds (fp16 = VRAM/2, Q4 = VRAM*2) and load with bitsandbytes/GGUF |
-| **Blocking Batch Generation** | Generating large batches synchronously without streaming or yield | Use TextIteratorStreamer or asynchronous generate workers to prevent request timeouts |
-
+| Anti-Pattern                          | What AI Commonly Does Wrong                                           | What Is Actually Correct                                                                |
+| :------------------------------------ | :-------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| **Platform-Dependent Shell Commands** | Hardcoding $(cat ~/.cache/huggingface/token) or piping to jq          | Use platform-agnostic token checks via env var HF_TOKEN and native JSON parsing         |
+| **VRAM OOM Crash**                    | Loading 70B model weights on a consumer 16GB GPU without quantization | Calculate parameter bounds (fp16 = VRAM/2, Q4 = VRAM*2) and load with bitsandbytes/GGUF |
+| **Blocking Batch Generation**         | Generating large batches synchronously without streaming or yield     | Use TextIteratorStreamer or asynchronous generate workers to prevent request timeouts   |
 
 ## 🏛️ Tribunal Verification & Guardrails
 
@@ -751,12 +790,15 @@ This skill enables you to integrate state-of-the-art machine learning capabiliti
 **Slash Command:** `/review` or `/tribunal-full`
 
 ### 🔬 Evidence Standard (Tri-State Verification)
+
 Every finding, audit statement, or completion claim must classify its factual certainty:
+
 - **`[OBSERVED]`**: Directly confirmed in the codebase or verified via executed terminal command.
 - **`[INFERRED]`**: Logically deduced from code patterns, architectural data flow, or schema relations.
 - **`[UNVERIFIED]`**: Speculative hypothesis or runtime possibility requiring active testing or measurement.
 
 ### ✅ Pre-Flight Self-Audit Checklist
+
 ```
 ✅ Are model architectures and weights verified to fit within target hardware VRAM budgets?
 ✅ Are pipeline requests guarded with bounded timeouts and retry backoffs?
@@ -766,6 +808,8 @@ Every finding, audit statement, or completion claim must classify its factual ce
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
+
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.

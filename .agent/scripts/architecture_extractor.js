@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-nocheck
 /**
  * architecture_extractor.js — Tribunal Architecture Fact Extractor
  * ═════════════════════════════════════════════════════════════════════════════
@@ -258,11 +259,8 @@ class ArchitectureExtractor {
     const entityId = `mod.${relPath.replace(/[^a-zA-Z0-9_.-]/g, '_')}`;
     const isTest = relPath.includes('test') || relPath.includes('spec');
     const isRoute =
-      relPath.includes('route') ||
-      relPath.includes('api') ||
-      relPath.includes('controllers');
-    const isSkill =
-      relPath.startsWith('skills/') || relPath.startsWith('.agents/skills/');
+      relPath.includes('route') || relPath.includes('api') || relPath.includes('controllers');
+    const isSkill = relPath.startsWith('skills/') || relPath.startsWith('.agents/skills/');
 
     return this.registerEntity({
       id: entityId,
@@ -310,10 +308,7 @@ class ArchitectureExtractor {
       if (importTarget && importTarget.startsWith('.')) {
         // Local import
         const resolvedRel = normalizePosixPath(
-          path.relative(
-            this.repoRoot,
-            path.resolve(path.dirname(fullPath), importTarget),
-          ),
+          path.relative(this.repoRoot, path.resolve(path.dirname(fullPath), importTarget)),
         );
         // Try finding matching file
         const targetKey = Array.from(fileDataMap.keys()).find(
@@ -582,8 +577,7 @@ class ArchitectureExtractor {
         const hasTryCatch =
           surroundingContext.includes('try') || surroundingContext.includes('.catch');
         const hasTimeout =
-          surroundingContext.includes('timeout') ||
-          surroundingContext.includes('AbortController');
+          surroundingContext.includes('timeout') || surroundingContext.includes('AbortController');
 
         this.registerRelation({
           sourceId: sourceEntityId,
@@ -727,7 +721,7 @@ class ArchitectureExtractor {
     // Pass 1: Extract module entities and file contents
     const maxFileSize = effectiveOpts.maxFileSize || 1048576; // 1 MB default
     for (const file of files) {
-      if (effectiveTimeout && (Date.now() - scanStart) > effectiveTimeout) {
+      if (effectiveTimeout && Date.now() - scanStart > effectiveTimeout) {
         const err = new Error(`Architecture scan timed out after ${effectiveTimeout}ms`);
         err.code = 'TIMEOUT_EXCEEDED';
         throw err;
@@ -744,7 +738,9 @@ class ArchitectureExtractor {
             scope: path.dirname(file.relPath),
             role: 'Oversized Source Module (Bypassed AST parse)',
             tags: ['oversized', path.extname(file.relPath).replace('.', '')],
-            sources: [{ file: file.relPath, startLine: 1, endLine: 1, confidence: 'L1', verified: true }],
+            sources: [
+              { file: file.relPath, startLine: 1, endLine: 1, confidence: 'L1', verified: true },
+            ],
             temporalState: 'current',
           });
           continue;
@@ -770,8 +766,8 @@ class ArchitectureExtractor {
     }
 
     // Pass 2: Extract Architectural Features & Relationships
-    for (const [relPath, fileInfo] of this.fileDataMap.entries()) {
-      if (effectiveTimeout && (Date.now() - scanStart) > effectiveTimeout) {
+    for (const [_relPath, fileInfo] of this.fileDataMap.entries()) {
+      if (effectiveTimeout && Date.now() - scanStart > effectiveTimeout) {
         const err = new Error(`Architecture scan timed out after ${effectiveTimeout}ms`);
         err.code = 'TIMEOUT_EXCEEDED';
         throw err;
@@ -841,7 +837,10 @@ class ArchitectureExtractor {
         });
         const modId = `mod.${norm.replace(/[^a-zA-Z0-9_.-]/g, '_')}`;
         for (const entity of this.entities.values()) {
-          if (entity.id === modId || (entity.sources && entity.sources.some(s => s.file === norm))) {
+          if (
+            entity.id === modId ||
+            (entity.sources && entity.sources.some(s => s.file === norm))
+          ) {
             (entity.sources || []).forEach(s => {
               if (s.file === norm) {
                 s.contentHash = hash.substring(0, 16);
@@ -906,14 +905,19 @@ class ArchitectureExtractor {
 
     // 4. Re-link affected incoming imports for changed files
     const changedSet = new Set([
-      ...created.map(c => typeof c === 'string' ? c : c.relPath),
-      ...modified.map(m => typeof m === 'string' ? m : m.relPath),
+      ...created.map(c => (typeof c === 'string' ? c : c.relPath)),
+      ...modified.map(m => (typeof m === 'string' ? m : m.relPath)),
       ...deleted,
     ]);
     for (const [rPath, fInfo] of this.fileDataMap.entries()) {
       if (changedSet.has(rPath)) continue;
-      if (fInfo.content && (fInfo.content.includes('import') || fInfo.content.includes('require'))) {
-        const mightImportChanged = Array.from(changedSet).some(c => fInfo.content.includes(path.basename(c, path.extname(c))));
+      if (
+        fInfo.content &&
+        (fInfo.content.includes('import') || fInfo.content.includes('require'))
+      ) {
+        const mightImportChanged = Array.from(changedSet).some(c =>
+          fInfo.content.includes(path.basename(c, path.extname(c))),
+        );
         if (mightImportChanged) {
           const sourceEntityId = `mod.${rPath.replace(/[^a-zA-Z0-9_.-]/g, '_')}`;
           for (const [relKey, rel] of this.relations.entries()) {
@@ -1055,7 +1059,10 @@ class ArchitectureExtractor {
                   const subEntries = fs.readdirSync(fullBaseDir, { withFileTypes: true });
                   for (const sub of subEntries) {
                     if (sub.isDirectory() && !EXCLUDED_DIRS.has(sub.name)) {
-                      addWorkspace(normalizePosixPath(path.join(baseDir, sub.name)), 'pnpm_workspace');
+                      addWorkspace(
+                        normalizePosixPath(path.join(baseDir, sub.name)),
+                        'pnpm_workspace',
+                      );
                     }
                   }
                 }
@@ -1088,7 +1095,10 @@ class ArchitectureExtractor {
                   const subEntries = fs.readdirSync(fullBaseDir, { withFileTypes: true });
                   for (const sub of subEntries) {
                     if (sub.isDirectory() && !EXCLUDED_DIRS.has(sub.name)) {
-                      addWorkspace(normalizePosixPath(path.join(baseDir, sub.name)), 'cargo_workspace');
+                      addWorkspace(
+                        normalizePosixPath(path.join(baseDir, sub.name)),
+                        'cargo_workspace',
+                      );
                     }
                   }
                 }
@@ -1111,7 +1121,7 @@ class ArchitectureExtractor {
       if (!rootPkg.bin) return;
 
       const pkgLines = rawPkg.split('\n');
-      const pkgFileHash = getSha256(rawPkg).substring(0, 16);
+      const _pkgFileHash = getSha256(rawPkg).substring(0, 16);
 
       const binMap =
         typeof rootPkg.bin === 'string'

@@ -17354,12 +17354,7 @@
     },
     "brokenReferences": [],
     "circularDependencies": [
-      [
-        "12-principles-of-animation",
-        "motion-engineering",
-        "60fps-animation",
-        "motion-engineering"
-      ],
+      ["12-principles-of-animation", "motion-engineering", "60fps-animation", "motion-engineering"],
       [
         "12-principles-of-animation",
         "motion-engineering",
@@ -17765,18 +17760,8 @@
         "gsap-performance",
         "motion-engineering"
       ],
-      [
-        "12-principles-of-animation",
-        "motion-engineering",
-        "gsap-react",
-        "motion-engineering"
-      ],
-      [
-        "adapt",
-        "mobile-design",
-        "building-native-ui",
-        "mobile-design"
-      ],
+      ["12-principles-of-animation", "motion-engineering", "gsap-react", "motion-engineering"],
+      ["adapt", "mobile-design", "building-native-ui", "mobile-design"],
       [
         "adapt",
         "mobile-design",
@@ -17803,11 +17788,7 @@
         "react-doctor",
         "nextjs-react-expert"
       ],
-      [
-        "adapt",
-        "mobile-design",
-        "adapt"
-      ],
+      ["adapt", "mobile-design", "adapt"],
       [
         "adr-generation",
         "fabel-protocol",
@@ -17936,13 +17917,7 @@
         "workflow-optimizer",
         "fabel-protocol"
       ],
-      [
-        "adr-generation",
-        "fabel-protocol",
-        "agentic-patterns",
-        "agent-organizer",
-        "fabel-protocol"
-      ],
+      ["adr-generation", "fabel-protocol", "agentic-patterns", "agent-organizer", "fabel-protocol"],
       [
         "adr-generation",
         "fabel-protocol",
@@ -17950,12 +17925,7 @@
         "agent-organizer",
         "agentic-patterns"
       ],
-      [
-        "adr-generation",
-        "fabel-protocol",
-        "agentic-patterns",
-        "fabel-protocol"
-      ],
+      ["adr-generation", "fabel-protocol", "agentic-patterns", "fabel-protocol"],
       [
         "adr-generation",
         "fabel-protocol",
@@ -18356,23 +18326,14 @@
         "tdd-workflow",
         "clean-code"
       ],
-      [
-        "adr-generation",
-        "fabel-protocol",
-        "knowledge-graph",
-        "fabel-protocol"
-      ],
+      ["adr-generation", "fabel-protocol", "knowledge-graph", "fabel-protocol"],
       [
         "advanced-rag-pipelines",
         "llm-engineering",
         "ai-prompt-injection-defense",
         "llm-engineering"
       ],
-      [
-        "advanced-rag-pipelines",
-        "llm-engineering",
-        "advanced-rag-pipelines"
-      ],
+      ["advanced-rag-pipelines", "llm-engineering", "advanced-rag-pipelines"],
       [
         "agent-fallback-and-degradation-auditor",
         "error-resilience",
@@ -18477,11 +18438,7 @@
         "repository-reconnaissance",
         "codebase-intelligence"
       ],
-      [
-        "architecture-mapping",
-        "codebase-intelligence",
-        "architecture-mapping"
-      ],
+      ["architecture-mapping", "codebase-intelligence", "architecture-mapping"],
       [
         "architecture-mapping",
         "codebase-intelligence",
@@ -18506,18 +18463,8 @@
         "evidence-backed-onboarding",
         "codebase-intelligence"
       ],
-      [
-        "audit-and-fix",
-        "fixing-accessibility",
-        "audit-and-fix"
-      ],
-      [
-        "backend-alembic",
-        "backend-sqlalchemy",
-        "python-pro",
-        "python-patterns",
-        "python-pro"
-      ],
+      ["audit-and-fix", "fixing-accessibility", "audit-and-fix"],
+      ["backend-alembic", "backend-sqlalchemy", "python-pro", "python-patterns", "python-pro"],
       [
         "backend-performance-auditor",
         "performance-profiling",
@@ -18614,22 +18561,9 @@
         "typeset",
         "swiss-design"
       ],
-      [
-        "bash-linux",
-        "server-management",
-        "bash-linux"
-      ],
-      [
-        "documentation-templates",
-        "readme-builder",
-        "documentation-templates"
-      ],
-      [
-        "documentation-templates",
-        "readme-builder",
-        "geo-fundamentals",
-        "readme-builder"
-      ],
+      ["bash-linux", "server-management", "bash-linux"],
+      ["documentation-templates", "readme-builder", "documentation-templates"],
+      ["documentation-templates", "readme-builder", "geo-fundamentals", "readme-builder"],
       [
         "documentation-templates",
         "readme-builder",
@@ -18637,27 +18571,13 @@
         "git-pro",
         "github-operations"
       ],
-      [
-        "game-design-expert",
-        "game-engineering-expert",
-        "game-design-expert"
-      ],
-      [
-        "harden",
-        "polish",
-        "harden"
-      ],
-      [
-        "morphing-icons",
-        "svg-animation",
-        "morphing-icons"
-      ]
+      ["game-design-expert", "game-engineering-expert", "game-design-expert"],
+      ["harden", "polish", "harden"],
+      ["morphing-icons", "svg-animation", "morphing-icons"]
     ]
   },
   "issues": [],
-  "warnings": [
-    "Detected 127 potential cyclic references across hard skill dependencies"
-  ],
+  "warnings": ["Detected 127 potential cyclic references across hard skill dependencies"],
   "summary": {
     "skills": 398,
     "workflows": 52,

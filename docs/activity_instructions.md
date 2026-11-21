@@ -57,6 +57,7 @@ The modernized instruction system operates across five deliberate tiers:
 ## 2. Key Modernizations & Verified Fixes
 
 ### A. Lean Kernel Context Budget (< 5,000 bytes)
+
 Previously, host bridge files (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, etc.) were populated with the entire 24.3KB `GEMINI.md` file, forcing AI coding agents (Claude, Codex, Cursor, Windsurf) to burn ~6,000 tokens on every single turn. Furthermore, when running in environments like Antigravity that load both `AGENTS.md` and `.agent/rules/GEMINI.md`, duplicate rules consumed over 12,000 tokens.
 
 - **Solution**: Streamlined `kernel.md` to 4,851 bytes (total bridge size: 4,979 bytes).
@@ -64,23 +65,27 @@ Previously, host bridge files (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, etc.) w
 - **Context Savings**: ~4,800 tokens saved per turn (~80% token reduction in bridge files).
 
 ### B. Reviewer Count Invariant Parity (28 Reviewers)
+
 - **Problem**: Multiple rule files (`GEMINI.md`, `AGENTS.md`, `CLAUDE.md`, `.cursorrules`) claimed `/tribunal-full (all 31 reviewers)`, contradicting `tribunal-full.md`, `system-prompt.md`, and `reviewer-grid.js` which enforce 28 reviewers.
 - **Solution**: Standardized all governance files to **28 reviewers**.
 
 ### C. Skill Count Parity (320 Skills)
+
 - **Problem**: Outdated documentation referenced `185 skills`, `219 deep skill modules`, and `235 skills`.
 - **Solution**: Verified and aligned all references to the active repository count of **320 skills** across `kernel.md`, `system-prompt.md`, `generate.md`, and `skill-enhancement-engine.md`.
 
 ### D. Deprecated Directory Path Correction (`runners/`)
+
 - **Problem**: `skill-enhancement-engine.md` and related skill documents instructed invoking `node runners/skill_enhancement_engine.js`, `runners/validate-payload.js`, and `runners/audit_skill_sdo.js`—a non-existent directory.
 - **Solution**: Corrected all execution commands to point to their verified locations in `scripts/`.
 
 ### E. Elimination of Legacy Status Announcements
+
 - **Problem**: Legacy announcement syntax (`🤖 Applying knowledge of @[agent-name]...`) remained in `.cursorrules`, `.windsurfrules`, and `.github/copilot-instructions.md`.
 - **Solution**: Replaced all occurrences with the standardized context-aware format:
   ```markdown
   › **Activated** `@[agent-name]` · [Domain / Mandate]
-    [1-line context-aware summary of what is being inspected and why it matters]
+  [1-line context-aware summary of what is being inspected and why it matters]
   ```
 
 ---
@@ -109,4 +114,3 @@ All Phase 7 capabilities and invariants are covered by dedicated automated tests
 - **Integration Test Suite**: `test/integration/bridges.test.js` (8 tests, verifying `< 5,000` byte bridge generation)
 - **Regression Suite**: All 10 test suites (206 total tests) pass with zero failures.
 - **Type Checking**: `npx tsc --noEmit` exits `0` with zero typing errors.
-

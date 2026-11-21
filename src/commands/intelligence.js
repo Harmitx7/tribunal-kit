@@ -26,7 +26,7 @@ async function cmdIntelligence(subcommand, argsArray) {
   switch (subcommand) {
     case 'cases': {
       // Output format supports human readable and JSON
-      const allIds = Array.from(idx.listCaseIds());
+      const allIds = Array.from(mem.listCaseIds());
       output(allIds, `Total cases stored: ${allIds.length}`);
       break;
     }

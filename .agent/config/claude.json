@@ -9,16 +9,10 @@
   "type": "hybrid",
   "mcp_server": {
     "command": "node",
-    "args": [
-      "bin/mcp-server.js"
-    ],
+    "args": ["bin/mcp-server.js"],
     "transport": "stdio"
   },
   "slash_commands": "slash-commands.json",
   "specialist_registry": "specialist-registry.json",
-  "permissions": [
-    "read_files",
-    "write_files",
-    "execute_commands"
-  ]
+  "permissions": ["read_files", "write_files", "execute_commands"]
 }

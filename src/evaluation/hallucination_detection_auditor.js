@@ -63,7 +63,10 @@ function auditClaim(claim, repoRoot = process.cwd()) {
   // 1. Check for Known Ghost Packages
   for (const ghost of KNOWN_GHOST_PACKAGES) {
     const regex = new RegExp(`\\b${ghost}\\b`, 'i');
-    if (regex.test(assertionText) || (claim.evidence && JSON.stringify(claim.evidence).includes(ghost))) {
+    if (
+      regex.test(assertionText) ||
+      (claim.evidence && JSON.stringify(claim.evidence).includes(ghost))
+    ) {
       return {
         claimId,
         verdict: 'CONTRADICTED',
@@ -91,7 +94,11 @@ function auditClaim(claim, repoRoot = process.cwd()) {
   const evidenceList = Array.isArray(claim.evidence)
     ? claim.evidence
     : claim.location
-      ? [{ location: `${claim.location.file}${claim.location.line ? ':' + claim.location.line : ''}` }]
+      ? [
+          {
+            location: `${claim.location.file}${claim.location.line ? ':' + claim.location.line : ''}`,
+          },
+        ]
       : [];
 
   if (evidenceList.length === 0) {
@@ -116,7 +123,11 @@ function auditClaim(claim, repoRoot = process.cwd()) {
     if (check.verified) {
       verifiedCount++;
     } else {
-      if (check.reason && (check.reason.includes('File does not exist') || check.reason.includes('Path traversal detected'))) {
+      if (
+        check.reason &&
+        (check.reason.includes('File does not exist') ||
+          check.reason.includes('Path traversal detected'))
+      ) {
         missingFileCount++;
       } else if (check.reason && check.reason.includes('Line')) {
         staleLineCount++;
@@ -147,7 +158,11 @@ function auditClaim(claim, repoRoot = process.cwd()) {
   // 4. Check Entailment Between Verification Command Output and Claim
   if (claim.verification) {
     const v = claim.verification;
-    if (v.exit_code !== undefined && v.exit_code !== 0 && /pass(ed)?|success/i.test(assertionText)) {
+    if (
+      v.exit_code !== undefined &&
+      v.exit_code !== 0 &&
+      /pass(ed)?|success/i.test(assertionText)
+    ) {
       return {
         claimId,
         verdict: 'CONTRADICTED',

@@ -2,15 +2,15 @@
 
 > **Authority**: OpenTelemetry Semantic Conventions v1.26 & Brendan Gregg (USE Method)  
 > **Applicable Domains**: Observability, Telemetry, Distributed Tracing, Incident Operations  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
 ## 1. Metrics Frameworks: RED vs USE Methods
 
-| Framework | Core Metric Signals | Primary Focus | Best Applied To |
-|:---|:---|:---|:---|
-| **RED Method** (Tom Wilkie) | **Rate**: Requests processed per second<br>**Errors**: Failed requests per second<br>**Duration**: Request latency distributions | User-facing application services & API endpoints | Stateless web servers, microservices, RPC endpoints |
+| Framework                      | Core Metric Signals                                                                                                                   | Primary Focus                                            | Best Applied To                                          |
+| :----------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------- | :------------------------------------------------------- |
+| **RED Method** (Tom Wilkie)    | **Rate**: Requests processed per second<br>**Errors**: Failed requests per second<br>**Duration**: Request latency distributions      | User-facing application services & API endpoints         | Stateless web servers, microservices, RPC endpoints      |
 | **USE Method** (Brendan Gregg) | **Utilization**: % time resource was busy<br>**Saturation**: Queue length / work waiting<br>**Errors**: Error count / hardware faults | Underlying physical and virtual infrastructure resources | CPU, RAM, Disk I/O, Network interfaces, Connection pools |
 
 ---
@@ -28,8 +28,10 @@ In a microservice call chain, distributed tracing correlates log entries and per
 ```
 
 ### The W3C `traceparent` Header Specification (RFC):
+
 $$\text{version}-\text{trace\_id}-\text{parent\_id}-\text{trace\_flags}$$
 $$\text{Example: } \mathbf{00}\text{-}\mathbf{4bf92f3577b34da6a3ce929d0e0e4736}\text{-}\mathbf{00f067aa0ba902b7}\text{-}\mathbf{01}$$
+
 - `version`: `00` (Current standard).
 - `trace_id`: 16-byte array formatted as 32 hex characters (Globally unique to the entire end-to-end request).
 - `parent_id` (Span ID): 8-byte array formatted as 16 hex characters (Identifies the calling caller).
@@ -40,10 +42,13 @@ $$\text{Example: } \mathbf{00}\text{-}\mathbf{4bf92f3577b34da6a3ce929d0e0e4736}\
 ## 3. High Cardinality & Telemetry Cost Control
 
 ### The Cardinality Explosion Trap
+
 A metric with tags like `user_id` or `order_id` creates a unique time-series stream for every user, multiplying database memory by millions ($100\text{ metrics} \times 1\text{M users} = 100\text{M time-series}$), crashing Prometheus/Datadog and incurring massive cloud bills.
+
 - **Rule**: High-cardinality values belong in **Structured Logs and Distributed Traces**, NEVER in metric labels/dimensions.
 
 ### Trace Sampling Strategies
+
 1. **Head-Based Sampling**: The ingress gateway flips a coin at the start of a request (e.g. sample $1\%$ of traffic). Inexpensive, but misses rare error traces ($0.01\%$ edge-case exceptions).
 2. **Tail-Based Sampling**: The tracing collector buffers all spans for a request in memory until completion. If an error occurs ($HTTP \ge 500$) or latency exceeds $p95$, the trace is sampled at $100\%$; healthy low-latency traces are discarded.
 

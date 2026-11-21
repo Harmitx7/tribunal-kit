@@ -85,4 +85,3 @@ describe('AI Security Control Verifier', () => {
     expect(consensus.status).toBe('REJECTED_SAFETY_GATE');
   });
 });
-

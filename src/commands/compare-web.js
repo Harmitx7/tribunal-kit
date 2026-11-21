@@ -9,17 +9,33 @@
  */
 
 const { compareURLs } = require('../browser');
+const { ensureBrowserAvailable } = require('../browser/discovery');
 const { c } = require('../utils/logger');
-const { banner } = require('../utils/helpers');
+const { banner, extractPositionalArgs } = require('../utils/helpers');
 
-async function cmdCompareWeb(flags, processArgs, quiet = false) {
-  const url1 = processArgs[3] || flags.url1;
-  const url2 = processArgs[4] || flags.url2;
+async function cmdCompareWeb(flags = {}, processArgs = process.argv, quiet = false) {
+  const positionals = extractPositionalArgs(processArgs, 'compare-web', [
+    '--max-diff',
+    '--maxDiff',
+    '--width',
+    '--height',
+    '--url1',
+    '--url2',
+  ]);
+  const url1 = flags.url1 || positionals[0];
+  const url2 = flags.url2 || positionals[1];
 
   if (!url1 || !url2) {
     console.error(
       `  ${c('red', '✖ Error:')} Missing target URLs. Usage: tk compare-web <url1> <url2>`,
     );
+    process.exit(1);
+  }
+
+  try {
+    ensureBrowserAvailable();
+  } catch (browserErr) {
+    console.error(`  ${c('red', '✖ Browser unavailable:')} ${browserErr.message}`);
     process.exit(1);
   }
 

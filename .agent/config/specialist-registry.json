@@ -1,610 +1,607 @@
 {
+  "version": "9.4.0",
+  "description": "Canonical registry of Tribunal Kit specialized agents and reviewers.",
+  "summary": {
+    "total": 64,
+    "active_production": 60,
+    "reviewers": 28,
+    "active_reviewers": 26,
+    "specialists": 36,
+    "active_specialists": 34,
+    "deprecated": 3,
+    "experimental": 1
+  },
   "specialists": [
     {
       "name": "logic-reviewer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "reviewer",
       "priority": "critical",
-      "description": "Catches hallucinated APIs, invented methods, impossible control flow."
+      "description": "Catches hallucinated APIs, invented methods, impossible control flow.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "security-auditor",
-      "domain": [
-        "backend",
-        "frontend",
-        "all"
-      ],
+      "domain": ["backend", "frontend", "all"],
       "type": "reviewer",
       "priority": "critical",
-      "description": "OWASP 2025 enforcer. Injection, auth, crypto, SSRF, IDOR."
+      "description": "OWASP 2025 enforcer. Injection, auth, crypto, SSRF, IDOR.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "type-safety-reviewer",
-      "domain": [
-        "backend",
-        "frontend"
-      ],
+      "domain": ["backend", "frontend"],
       "type": "reviewer",
       "priority": "high",
-      "description": "TypeScript strict mode, no `any`, generic constraints."
+      "description": "TypeScript strict mode, no `any`, generic constraints.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "dependency-reviewer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "reviewer",
       "priority": "high",
-      "description": "Phantom deps, unused imports, CVE scanning."
+      "description": "Phantom deps, unused imports, CVE scanning.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "resilience-reviewer",
-      "domain": [
-        "backend"
-      ],
+      "domain": ["backend"],
       "type": "reviewer",
       "priority": "high",
-      "description": "Error boundaries, retry logic, circuit breakers, graceful degradation."
+      "description": "Error boundaries, retry logic, circuit breakers, graceful degradation.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "schema-reviewer",
-      "domain": [
-        "backend",
-        "database"
-      ],
+      "domain": ["backend", "database"],
       "type": "reviewer",
       "priority": "high",
-      "description": "Zod/Pydantic validation, input sanitization at API boundaries."
+      "description": "Zod/Pydantic validation, input sanitization at API boundaries.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "complexity-reviewer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "reviewer",
       "priority": "medium",
-      "description": "Cyclomatic complexity, deep nesting, god functions."
+      "description": "Cyclomatic complexity, deep nesting, god functions.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "frontend-reviewer",
-      "domain": [
-        "frontend"
-      ],
+      "domain": ["frontend"],
       "type": "reviewer",
       "priority": "high",
-      "description": "React patterns, hook rules, render optimization."
+      "description": "React patterns, hook rules, render optimization.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "performance-reviewer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "reviewer",
       "priority": "medium",
-      "description": "Bundle size, lazy loading, memo optimization, N+1 queries."
+      "description": "Bundle size, lazy loading, memo optimization, N+1 queries.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "sql-reviewer",
-      "domain": [
-        "database"
-      ],
+      "domain": ["database"],
       "type": "reviewer",
       "priority": "critical",
-      "description": "SQL injection, missing indexes, N+1, transaction isolation."
+      "description": "SQL injection, missing indexes, N+1, transaction isolation.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "pipeline-reviewer",
-      "domain": [
-        "devops"
-      ],
+      "domain": ["devops"],
       "type": "reviewer",
       "priority": "high",
-      "description": "CI/CD security, workflow syntax, secret handling."
+      "description": "CI/CD security, workflow syntax, secret handling.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "mobile-reviewer",
-      "domain": [
-        "mobile"
-      ],
+      "domain": ["mobile"],
       "type": "reviewer",
       "priority": "high",
-      "description": "React Native, gesture handlers, animations, navigation."
+      "description": "React Native, gesture handlers, animations, navigation.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "test-coverage-reviewer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "reviewer",
       "priority": "medium",
-      "description": "Testing Trophy strategy, coverage gaps, flaky test detection."
+      "description": "Testing Trophy strategy, coverage gaps, flaky test detection.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "accessibility-reviewer",
-      "domain": [
-        "frontend"
-      ],
+      "domain": ["frontend"],
       "type": "reviewer",
       "priority": "high",
-      "description": "WCAG 2.2 AA, ARIA, keyboard navigation, focus management."
+      "description": "WCAG 2.2 AA, ARIA, keyboard navigation, focus management.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "visual-reviewer",
-      "domain": [
-        "frontend"
-      ],
+      "domain": ["frontend"],
       "type": "reviewer",
       "priority": "medium",
-      "description": "Visual consistency, spacing, color contrast, typography."
+      "description": "Visual consistency, spacing, color contrast, typography.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "interaction-reviewer",
-      "domain": [
-        "frontend"
-      ],
+      "domain": ["frontend"],
       "type": "reviewer",
       "priority": "medium",
-      "description": "Hover states, transitions, micro-interactions, motion quality."
+      "description": "Hover states, transitions, micro-interactions, motion quality.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "ux-reviewer",
-      "domain": [
-        "frontend"
-      ],
+      "domain": ["frontend"],
       "type": "reviewer",
       "priority": "medium",
-      "description": "Cognitive load, information architecture, user flow."
+      "description": "Cognitive load, information architecture, user flow.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "ui-ux-auditor",
-      "domain": [
-        "frontend"
-      ],
+      "domain": ["frontend"],
       "type": "reviewer",
       "priority": "medium",
-      "description": "Design heuristics, anti-patterns, visual hierarchy."
+      "description": "Design heuristics, anti-patterns, visual hierarchy.",
+      "status": "deprecated",
+      "active": false,
+      "successor": "frontend-reviewer",
+      "deprecation_notice": "Subsumed by frontend-reviewer."
     },
     {
       "name": "ui-visual-auditor",
-      "domain": [
-        "frontend"
-      ],
+      "domain": ["frontend"],
       "type": "reviewer",
       "priority": "medium",
-      "description": "Pixel-level visual audit, alignment, dark mode consistency."
+      "description": "Pixel-level visual audit, alignment, dark mode consistency.",
+      "status": "deprecated",
+      "active": false,
+      "successor": "frontend-reviewer",
+      "deprecation_notice": "Subsumed by frontend-reviewer."
     },
     {
       "name": "anti-pattern-reviewer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "reviewer",
       "priority": "medium",
-      "description": "Code smell detection, anti-pattern flagging."
+      "description": "Code smell detection, anti-pattern flagging.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "precedence-reviewer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "reviewer",
       "priority": "high",
-      "description": "Rule priority enforcement, agent routing validation."
+      "description": "Rule priority enforcement, agent routing validation.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "minimalist-reviewer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "reviewer",
       "priority": "medium",
-      "description": "Over-engineering detection, YAGNI enforcement."
+      "description": "Over-engineering detection, YAGNI enforcement.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "product-reviewer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "reviewer",
       "priority": "low",
-      "description": "Product heuristics, feature value assessment."
+      "description": "Product heuristics, feature value assessment.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "vitals-reviewer",
-      "domain": [
-        "frontend"
-      ],
+      "domain": ["frontend"],
       "type": "reviewer",
       "priority": "high",
-      "description": "Core Web Vitals: LCP, CLS, INP optimization."
+      "description": "Core Web Vitals: LCP, CLS, INP optimization.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "backend-specialist",
-      "domain": [
-        "backend"
-      ],
+      "domain": ["backend"],
       "type": "specialist",
       "priority": "high",
-      "description": "API design, server logic, middleware, auth."
+      "description": "API design, server logic, middleware, auth.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "frontend-specialist",
-      "domain": [
-        "frontend"
-      ],
+      "domain": ["frontend"],
       "type": "specialist",
       "priority": "high",
-      "description": "React, Next.js, CSS, component architecture."
+      "description": "React, Next.js, CSS, component architecture.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "database-architect",
-      "domain": [
-        "database"
-      ],
+      "domain": ["database"],
       "type": "specialist",
       "priority": "high",
-      "description": "Schema design, migrations, query optimization."
+      "description": "Schema design, migrations, query optimization.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "debugger",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "critical",
-      "description": "4-phase root cause investigation."
+      "description": "4-phase root cause investigation.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "performance-optimizer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "medium",
-      "description": "Bundle analysis, latency reduction, caching."
+      "description": "Bundle analysis, latency reduction, caching.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "devops-engineer",
-      "domain": [
-        "devops"
-      ],
+      "domain": ["devops"],
       "type": "specialist",
       "priority": "high",
-      "description": "CI/CD, Docker, deployment pipelines."
+      "description": "CI/CD, Docker, deployment pipelines.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "mobile-developer",
-      "domain": [
-        "mobile"
-      ],
+      "domain": ["mobile"],
       "type": "specialist",
       "priority": "high",
-      "description": "React Native, Expo, Flutter, cross-platform."
+      "description": "React Native, Expo, Flutter, cross-platform.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "test-engineer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "medium",
-      "description": "Test strategy, coverage, Testing Trophy."
+      "description": "Test strategy, coverage, Testing Trophy.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "documentation-writer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "low",
-      "description": "README, API docs, code comments."
+      "description": "README, API docs, code comments.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "orchestrator",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "high",
-      "description": "Multi-domain coordination, agent dispatch."
+      "description": "Multi-domain coordination, agent dispatch.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "explorer-agent",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "medium",
-      "description": "Unknown codebase navigation and mapping."
+      "description": "Unknown codebase navigation and mapping.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "code-archaeologist",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "medium",
-      "description": "Legacy code analysis, dependency archaeology."
+      "description": "Legacy code analysis, dependency archaeology.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "project-planner",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "medium",
-      "description": "4-phase planning: Analyze → Plan → Solution → Implement."
+      "description": "4-phase planning: Analyze → Plan → Solution → Implement.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "product-manager",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "low",
-      "description": "Feature prioritization, product strategy."
+      "description": "Feature prioritization, product strategy.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "product-owner",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "low",
-      "description": "User stories, backlog management."
+      "description": "User stories, backlog management.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "seo-specialist",
-      "domain": [
-        "frontend"
-      ],
+      "domain": ["frontend"],
       "type": "specialist",
       "priority": "medium",
-      "description": "Meta tags, structured data, crawlability."
+      "description": "Meta tags, structured data, crawlability.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "penetration-tester",
-      "domain": [
-        "security"
-      ],
+      "domain": ["security"],
       "type": "specialist",
       "priority": "high",
-      "description": "MITRE ATT&CK, red team tactics, attack surface."
+      "description": "MITRE ATT&CK, red team tactics, attack surface.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "ai-code-reviewer",
-      "domain": [
-        "ai"
-      ],
-      "type": "specialist",
+      "domain": ["ai"],
+      "type": "reviewer",
       "priority": "high",
-      "description": "LLM integration audit, prompt injection defense."
+      "description": "LLM integration audit, prompt injection defense.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "system-architect",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "high",
-      "description": "System design, scale, capacity planning."
+      "description": "System design, scale, capacity planning.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "cloud-engineer",
-      "domain": [
-        "devops"
-      ],
+      "domain": ["devops"],
       "type": "specialist",
       "priority": "high",
-      "description": "AWS, Terraform, Docker, cloud infrastructure."
+      "description": "AWS, Terraform, Docker, cloud infrastructure.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "api-architect",
-      "domain": [
-        "backend"
-      ],
+      "domain": ["backend"],
       "type": "specialist",
       "priority": "high",
-      "description": "REST, GraphQL, API contract design."
+      "description": "REST, GraphQL, API contract design.",
+      "status": "deprecated",
+      "active": false,
+      "successor": "backend-specialist",
+      "deprecation_notice": "Subsumed by backend-specialist."
     },
     {
       "name": "throughput-optimizer",
-      "domain": [
-        "backend"
-      ],
+      "domain": ["backend"],
       "type": "specialist",
       "priority": "medium",
-      "description": "Latency, load optimization, connection pooling."
+      "description": "Latency, load optimization, connection pooling.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "db-latency-auditor",
-      "domain": [
-        "database"
-      ],
+      "domain": ["database"],
       "type": "specialist",
       "priority": "medium",
-      "description": "Slow queries, index analysis, explain plans."
+      "description": "Slow queries, index analysis, explain plans.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "qa-automation-engineer",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "medium",
-      "description": "E2E testing, Playwright, Cypress automation."
+      "description": "E2E testing, Playwright, Cypress automation.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "game-developer",
-      "domain": [
-        "game"
-      ],
+      "domain": ["game"],
       "type": "specialist",
       "priority": "low",
-      "description": "Unity, Godot, game loop, physics."
+      "description": "Unity, Godot, game loop, physics.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "supervisor-agent",
-      "domain": [
-        "all"
-      ],
+      "domain": ["all"],
       "type": "specialist",
       "priority": "high",
-      "description": "Swarm supervisor, task decomposition, worker dispatch."
-    },
-    {
-      "name": "swarm-worker-registry",
-      "domain": [
-        "all"
-      ],
-      "type": "specialist",
-      "priority": "medium",
-      "description": "Worker contract validation, registry management."
-    },
-    {
-      "name": "swarm-worker-contracts",
-      "domain": [
-        "all"
-      ],
-      "type": "specialist",
-      "priority": "medium",
-      "description": "Worker JSON contract definitions."
+      "description": "Swarm supervisor, task decomposition, worker dispatch.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "agent-shield-auditor",
-      "domain": [
-        "security",
-        "all"
-      ],
+      "domain": ["security", "all"],
       "type": "reviewer",
       "priority": "critical",
-      "description": "Identifies prompt injection risks, MCP vulnerabilities, and reviews untrusted content."
+      "description": "Identifies prompt injection risks, MCP vulnerabilities, and reviews untrusted content.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "anti-slop-auditor",
-      "domain": [
-        "frontend",
-        "ui"
-      ],
+      "domain": ["frontend", "ui"],
       "type": "reviewer",
       "priority": "high",
-      "description": "Anti-Slop Enforcer. Audits frontend UI against generic clichés, forces Purpose-Gate validation, and reads Liveliness Dials."
+      "description": "Anti-Slop Enforcer. Audits frontend UI against generic clichés, forces Purpose-Gate validation, and reads Liveliness Dials.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "architecture-auditor",
-      "domain": [
-        "architecture",
-        "all"
-      ],
+      "domain": ["architecture", "all"],
       "type": "reviewer",
       "priority": "high",
-      "description": "Audits Maker code diffs against System Model and ADRs. Catches boundary violations and circular dependencies."
+      "description": "Audits Maker code diffs against System Model and ADRs. Catches boundary violations and circular dependencies.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "backend-security-architect",
-      "domain": [
-        "backend",
-        "security",
-        "database"
-      ],
+      "domain": ["backend", "security", "database"],
       "type": "specialist",
       "priority": "high",
-      "description": "Consolidated domain reviewer for backend/security/database Tier 3 audits."
+      "description": "Consolidated domain reviewer for backend/security/database Tier 3 audits.",
+      "status": "experimental",
+      "active": false,
+      "experimental": true,
+      "opt_in_required": true
     },
     {
       "name": "harness-manager",
-      "domain": [
-        "infrastructure",
-        "security"
-      ],
+      "domain": ["infrastructure", "security"],
       "type": "specialist",
       "priority": "critical",
-      "description": "Intercepts direct shell execution from agents, providing a secure, event-sourced Brain-Hands decoupling boundary."
+      "description": "Intercepts direct shell execution from agents, providing a secure, event-sourced Brain-Hands decoupling boundary.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "human-gate-negotiator",
-      "domain": [
-        "governance",
-        "all"
-      ],
+      "domain": ["governance", "all"],
       "type": "specialist",
       "priority": "critical",
-      "description": "Prepares impact summaries and presents risks before human approval."
+      "description": "Prepares impact summaries and presents risks before human approval.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "kernel-scheduler",
-      "domain": [
-        "orchestration",
-        "architecture"
-      ],
+      "domain": ["orchestration", "architecture"],
       "type": "specialist",
       "priority": "critical",
-      "description": "Translates complex human requests into a Directed Acyclic Graph (DAG) for parallel, staged execution."
+      "description": "Translates complex human requests into a Directed Acyclic Graph (DAG) for parallel, staged execution.",
+      "status": "production",
+      "active": true
     },
     {
       "name": "memory-archivist",
-      "domain": [
-        "learning",
-        "memory"
-      ],
+      "domain": ["learning", "memory"],
       "type": "specialist",
       "priority": "medium",
-      "description": "Parses Durable Session Log (.jsonl) to extract, verify, and persist Tribunal Instincts."
+      "description": "Parses Durable Session Log (.jsonl) to extract, verify, and persist Tribunal Instincts.",
+      "status": "production",
+      "active": true
+    },
+    {
+      "name": "threat-modeler",
+      "domain": ["security", "architecture", "all"],
+      "type": "specialist",
+      "priority": "critical",
+      "description": "Specialist security architect performing structured threat modeling across trust boundaries, entry points, data flows, and attack surfaces using STRIDE and MITRE ATLAS methodologies.",
+      "status": "production",
+      "active": true
+    },
+    {
+      "name": "api-contract-engineer",
+      "domain": ["backend", "api", "architecture"],
+      "type": "specialist",
+      "priority": "critical",
+      "description": "Specialist API and contract engineer performing strict schema validation, backward-compatibility analysis, breaking change detection, and API contract verification across OpenAPI, JSON Schema, REST, GraphQL, and RPC boundaries.",
+      "status": "production",
+      "active": true
+    },
+    {
+      "name": "patch-proposal-agent",
+      "domain": ["architecture", "backend", "frontend", "security", "all"],
+      "type": "specialist",
+      "priority": "critical",
+      "description": "Specialist automated repair engineer analyzing verified defects, security vulnerabilities, and contract violations to produce minimal, structured, regression-safe code repair proposals.",
+      "status": "production",
+      "active": true
+    },
+    {
+      "name": "refactoring-engineer",
+      "domain": ["architecture", "backend", "frontend", "refactoring", "all"],
+      "type": "specialist",
+      "priority": "high",
+      "description": "Specialist refactoring architect analyzing existing code structures to produce minimal, behavior-preserving refactoring proposals, eliminating code smells, duplication, and excessive coupling while strictly preserving public contracts and runtime semantics.",
+      "status": "production",
+      "active": true
+    },
+    {
+      "name": "concurrency-analyst",
+      "domain": [
+        "architecture",
+        "backend",
+        "concurrency",
+        "performance",
+        "distributed-systems",
+        "all"
+      ],
+      "type": "specialist",
+      "priority": "high",
+      "description": "Specialist concurrency engineer and distributed systems architect analyzing concurrent execution, race conditions, synchronization primitives, resource contention, deadlocks, starvation, and asynchronous correctness to produce evidence-backed findings and deterministic remediation proposals.",
+      "status": "production",
+      "active": true
+    },
+    {
+      "name": "release-readiness-agent",
+      "domain": ["cicd", "release-engineering", "supply-chain", "security", "compliance", "all"],
+      "type": "specialist",
+      "priority": "high",
+      "description": "Principal release engineer, software supply chain security auditor, CI/CD architect, and independent certification authority evaluating test integrity, build reproducibility, security gates, dependency invariants, and package release readiness.",
+      "status": "production",
+      "active": true
     }
-  ],
-  "domain_routing": {
-    "backend": [
-      "logic-reviewer",
-      "security-auditor",
-      "dependency-reviewer",
-      "type-safety-reviewer",
-      "resilience-reviewer",
-      "schema-reviewer",
-      "complexity-reviewer"
-    ],
-    "frontend": [
-      "logic-reviewer",
-      "security-auditor",
-      "frontend-reviewer",
-      "type-safety-reviewer",
-      "ui-ux-auditor",
-      "interaction-reviewer",
-      "visual-reviewer",
-      "accessibility-reviewer",
-      "vitals-reviewer",
-      "complexity-reviewer"
-    ],
-    "database": [
-      "logic-reviewer",
-      "security-auditor",
-      "sql-reviewer",
-      "schema-reviewer",
-      "complexity-reviewer"
-    ],
-    "mobile": [
-      "logic-reviewer",
-      "security-auditor",
-      "mobile-reviewer",
-      "type-safety-reviewer",
-      "complexity-reviewer"
-    ],
-    "devops": [
-      "pipeline-reviewer",
-      "security-auditor",
-      "dependency-reviewer",
-      "resilience-reviewer",
-      "complexity-reviewer"
-    ],
-    "ai": [
-      "logic-reviewer",
-      "security-auditor",
-      "ai-code-reviewer",
-      "type-safety-reviewer"
-    ],
-    "full": [
-      "ALL"
-    ]
-  }
+  ]
 }

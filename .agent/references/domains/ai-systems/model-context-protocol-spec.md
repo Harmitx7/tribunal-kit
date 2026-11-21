@@ -2,7 +2,7 @@
 
 > **Authority**: Model Context Protocol Open Standard (`https://spec.modelcontextprotocol.io/`)  
 > **Applicable Domains**: AI Systems, Agentic Workflows, MCP Servers, LLM Tool Integration  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -10,10 +10,10 @@
 
 MCP establishes structured, bidirectional communication between AI host applications (clients) and local or remote data/tool providers (servers) via **JSON-RPC 2.0**:
 
-| Transport | Mechanism | Typical Use Case |
-|:---|:---|:---|
-| **stdio** | Standard input/output pipes | Local CLI tools, subprocesses, desktop agent integrations |
-| **SSE (HTTP)** | Server-Sent Events with HTTP POST | Remote services, multi-tenant cloud agent infrastructure |
+| Transport      | Mechanism                         | Typical Use Case                                          |
+| :------------- | :-------------------------------- | :-------------------------------------------------------- |
+| **stdio**      | Standard input/output pipes       | Local CLI tools, subprocesses, desktop agent integrations |
+| **SSE (HTTP)** | Server-Sent Events with HTTP POST | Remote services, multi-tenant cloud agent infrastructure  |
 
 ---
 
@@ -32,48 +32,54 @@ Servers declare capabilities during client-server initialization handshake:
 Tools must expose explicit JSON Schema definitions with validation rules:
 
 ```typescript
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
-import { z } from "zod";
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { z } from 'zod';
 
-const server = new Server({
-  name: "system-query-server",
-  version: "1.0.0"
-}, {
-  capabilities: { tools: {} }
-});
+const server = new Server(
+  {
+    name: 'system-query-server',
+    version: '1.0.0',
+  },
+  {
+    capabilities: { tools: {} },
+  },
+);
 
 // 1. Tool Listing
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [
     {
-      name: "fetch_system_metrics",
-      description: "Retrieve memory, CPU, and disk metrics for a host server.",
+      name: 'fetch_system_metrics',
+      description: 'Retrieve memory, CPU, and disk metrics for a host server.',
       inputSchema: {
-        type: "object",
+        type: 'object',
         properties: {
-          hostId: { type: "string", description: "Target host machine UUID" },
-          windowMinutes: { type: "integer", minimum: 1, maximum: 60, default: 5 }
+          hostId: { type: 'string', description: 'Target host machine UUID' },
+          windowMinutes: { type: 'integer', minimum: 1, maximum: 60, default: 5 },
         },
-        required: ["hostId"]
-      }
-    }
-  ]
+        required: ['hostId'],
+      },
+    },
+  ],
 }));
 
 // 2. Tool Invocation
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
-  if (request.params.name === "fetch_system_metrics") {
-    const { hostId, windowMinutes } = request.params.arguments as { hostId: string; windowMinutes?: number };
+server.setRequestHandler(CallToolRequestSchema, async request => {
+  if (request.params.name === 'fetch_system_metrics') {
+    const { hostId, windowMinutes } = request.params.arguments as {
+      hostId: string;
+      windowMinutes?: number;
+    };
     const metrics = await gatherMetrics(hostId, windowMinutes || 5);
     return {
       content: [
         {
-          type: "text",
-          text: JSON.stringify(metrics, null, 2)
-        }
-      ]
+          type: 'text',
+          text: JSON.stringify(metrics, null, 2),
+        },
+      ],
     };
   }
   throw new Error(`Tool not found: ${request.params.name}`);
@@ -86,13 +92,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 Standardized error codes must be returned when exceptions occur:
 
-| Code | Message | Cause |
-|:---|:---|:---|
-| `-32700` | Parse error | Invalid JSON received by the server |
-| `-32600` | Invalid Request | JSON sent is not a valid Request object |
+| Code     | Message          | Cause                                     |
+| :------- | :--------------- | :---------------------------------------- |
+| `-32700` | Parse error      | Invalid JSON received by the server       |
+| `-32600` | Invalid Request  | JSON sent is not a valid Request object   |
 | `-32601` | Method not found | Method does not exist or is not available |
-| `-32602` | Invalid params | Tool arguments fail schema validation |
-| `-32603` | Internal error | Unhandled server execution exception |
+| `-32602` | Invalid params   | Tool arguments fail schema validation     |
+| `-32603` | Internal error   | Unhandled server execution exception      |
 
 ---
 

@@ -71,7 +71,8 @@ describe('Phase 3: Premium AI Chat Presentation & Visual Design System', () => {
       const shortPath = 'src/index.js';
       expect(formatCompactPath(shortPath, 45)).toBe('src/index.js');
 
-      const deepPath = 'c:/Users/sunrise/Desktop/pfojects/cli project/tribunal-kit/src/activity/renderers/markdown.js';
+      const deepPath =
+        'c:/Users/sunrise/Desktop/pfojects/cli project/tribunal-kit/src/activity/renderers/markdown.js';
       const compacted = formatCompactPath(deepPath, 30);
       expect(compacted).toContain('markdown.js');
       expect(compacted).toContain('/.../');
@@ -102,7 +103,9 @@ describe('Phase 3: Premium AI Chat Presentation & Visual Design System', () => {
       });
 
       const md = renderMarkdown(event);
-      expect(md).toContain('› **Activated** `@resilience-reviewer` · Fault Tolerance & Error Recovery');
+      expect(md).toContain(
+        '› **Activated** `@resilience-reviewer` · Fault Tolerance & Error Recovery',
+      );
       expect(md).toContain('  Inspecting circuit breakers and retry policies.');
     });
 
@@ -195,7 +198,9 @@ describe('Phase 3: Premium AI Chat Presentation & Visual Design System', () => {
       const md = renderMarkdown(event);
       expect(md).toContain('⛔ **Blocked** · Database Connection Blocked');
       expect(md).toContain('Connection to [REDACTED_DB_URL] refused');
-      expect(md).toContain('Remedy: Start local PostgreSQL server via: docker-compose up -d postgres');
+      expect(md).toContain(
+        'Remedy: Start local PostgreSQL server via: docker-compose up -d postgres',
+      );
     });
 
     test('renders retry_in_progress with attempt counter and reason', () => {
@@ -266,13 +271,7 @@ describe('Phase 3: Premium AI Chat Presentation & Visual Design System', () => {
       const event = createActivityEvent({
         eventType: EVENT_TYPES.VALIDATION_PASSED,
         title: 'Large Evidence Set',
-        evidence: [
-          'Item 1',
-          'Item 2',
-          'Item 3',
-          'Item 4',
-          'Item 5',
-        ],
+        evidence: ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'],
       });
 
       const md = renderMarkdown(event, { progressiveDisclosure: false, maxInlineEvidence: 3 });
@@ -319,7 +318,9 @@ describe('Phase 3: Premium AI Chat Presentation & Visual Design System', () => {
       });
 
       const mdCompact = renderMarkdown(event, { compact: true });
-      expect(mdCompact).toContain('› **Executing** · git_diff (Comparing HEAD~1 against working directory · 50%)');
+      expect(mdCompact).toContain(
+        '› **Executing** · git_diff (Comparing HEAD~1 against working directory · 50%)',
+      );
       expect(mdCompact.split('\n')).toHaveLength(1);
     });
 

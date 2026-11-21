@@ -73,7 +73,7 @@ describe('Supply Chain Canonical Skills Behavioral Verification', () => {
     const engine = new PackageIntegrityEngine();
     const result = engine.auditLockfileIntegrity(fixtureData.poisonedLockfileJson);
     expect(result.status).toBe('FAIL');
-    expect(result.findings.some((f) => f.category === 'V5_LOCKFILE_POISONING')).toBe(true);
+    expect(result.findings.some(f => f.category === 'V5_LOCKFILE_POISONING')).toBe(true);
   });
 
   test('Skill 4: sbom-generation-and-validation-auditor behavioral execution', () => {
@@ -97,7 +97,7 @@ describe('Supply Chain Canonical Skills Behavioral Verification', () => {
     const sbomEngine = new SbomEngine();
     const diff = sbomEngine.diffComponents(
       [{ name: 'lodash', version: '3.0.0' }],
-      [{ name: 'lodash', version: '4.0.0' }]
+      [{ name: 'lodash', version: '4.0.0' }],
     );
     expect(diff.updatedCount).toBe(1);
     expect(diff.updated[0].fromVersion).toBe('3.0.0');
@@ -152,4 +152,3 @@ describe('Supply Chain Canonical Skills Behavioral Verification', () => {
     expect(expired.hasException).toBe(false);
   });
 });
-

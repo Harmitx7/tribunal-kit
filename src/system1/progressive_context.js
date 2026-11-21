@@ -19,6 +19,7 @@ const { countTokens } = require('../context/token_accounting');
  * @returns {Record<string, number[]>} Map of filePath -> array of 1-indexed line numbers
  */
 function parseDiffModifiedLines(diffText) {
+  /** @type {Record<string, number[]>} */
   const fileLines = {};
   if (!diffText || typeof diffText !== 'string') return fileLines;
 
@@ -31,7 +32,10 @@ function parseDiffModifiedLines(diffText) {
       currentFile = line.slice(6).trim();
       if (!fileLines[currentFile]) fileLines[currentFile] = [];
     } else if (line.startsWith('+++ ') && !line.startsWith('+++ b/')) {
-      currentFile = line.slice(4).trim().replace(/^[ab]\//, '');
+      currentFile = line
+        .slice(4)
+        .trim()
+        .replace(/^[ab]\//, '');
       if (!fileLines[currentFile]) fileLines[currentFile] = [];
     } else if (line.startsWith('@@')) {
       const match = line.match(/@@\s+-[0-9]+(?:,[0-9]+)?\s+\+([0-9]+)(?:,[0-9]+)?\s+@@/);
@@ -119,9 +123,16 @@ function progressiveContextExpansion(options = {}) {
     // Phase 4: AST-Aware Slicing and Compact Manifest Optimization
     const processedEvidence = allEvidence.map(item => {
       const processed = { ...item };
-      const itemPath = processed.path ? processed.path.replace(/\\/g, '/').replace(/^\.\//, '') : '';
-      const isChangedInDiff = Boolean(itemPath && diffModifiedLines[itemPath] && diffModifiedLines[itemPath].length > 0);
-      const isChangedFile = hasDiff ? isChangedInDiff : (Array.isArray(files) && files.some(f => f.replace(/\\/g, '/').replace(/^\.\//, '') === itemPath));
+      const itemPath = processed.path
+        ? processed.path.replace(/\\/g, '/').replace(/^\.\//, '')
+        : '';
+      const isChangedInDiff = Boolean(
+        itemPath && diffModifiedLines[itemPath] && diffModifiedLines[itemPath].length > 0,
+      );
+      const isChangedFile = hasDiff
+        ? isChangedInDiff
+        : Array.isArray(files) &&
+          files.some(f => f.replace(/\\/g, '/').replace(/^\.\//, '') === itemPath);
 
       if (isChangedFile) {
         // 1. Changed focal file: extract enclosing AST unit or diff focal window
@@ -312,7 +323,9 @@ function progressiveContextExpansion(options = {}) {
             }
             // Domain-specific relevance filtering
             if (
-              (item.path?.includes('schema.prisma') || item.path?.includes('migration') || item.path?.endsWith('.sql')) &&
+              (item.path?.includes('schema.prisma') ||
+                item.path?.includes('migration') ||
+                item.path?.endsWith('.sql')) &&
               !reviewerDomains.has('database') &&
               !reviewerDomains.has('backend') &&
               !reviewerDomains.has('logic') &&
@@ -321,7 +334,11 @@ function progressiveContextExpansion(options = {}) {
               isRelevantToReviewer = false;
             }
             if (
-              (item.path?.endsWith('.css') || item.path?.endsWith('.scss') || item.path?.includes('/ui/') || item.path?.endsWith('.jsx') || item.path?.endsWith('.tsx')) &&
+              (item.path?.endsWith('.css') ||
+                item.path?.endsWith('.scss') ||
+                item.path?.includes('/ui/') ||
+                item.path?.endsWith('.jsx') ||
+                item.path?.endsWith('.tsx')) &&
               !reviewerDomains.has('frontend') &&
               !reviewerDomains.has('ui') &&
               !reviewerDomains.has('all')
@@ -396,6 +413,7 @@ function _buildFallbackContext(options, reason) {
   const mandatoryTokens = mandatoryItems.reduce((acc, c) => acc + c.estimated_tokens, 0);
 
   if (mandatoryItems.length > maxFallbackItems || mandatoryTokens > maxFallbackTokens) {
+    /** @type {any} */
     const error = new Error(
       `SYSTEM_ERROR: Mandatory security context exceeds hard fallback limit (${mandatoryTokens} > ${maxFallbackTokens} tokens, or ${mandatoryItems.length} > ${maxFallbackItems} items).`,
     );
@@ -448,4 +466,3 @@ module.exports = {
   progressiveContextExpansion,
   parseDiffModifiedLines,
 };
-

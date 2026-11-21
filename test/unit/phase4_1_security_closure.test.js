@@ -228,9 +228,9 @@ describe('Phase 4.1: DNS Rebinding & Fail-Closed Security Closure', () => {
         }, 0);
       });
 
-      await expect(
-        client.navigate('https://example.com/', { skipDns: true }),
-      ).rejects.toThrow(/Failed to enable CDP request interception/i);
+      await expect(client.navigate('https://example.com/', { skipDns: true })).rejects.toThrow(
+        /Failed to enable CDP request interception/i,
+      );
     });
   });
 });

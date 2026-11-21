@@ -39,8 +39,8 @@ describe('Differential & Metamorphic Testing Engine', () => {
   });
 
   test('runDifferentialTest flags discrepancies when candidate deviates', () => {
-    const reference = (x) => x * 2;
-    const buggyCandidate = (x) => (x === 5 ? 11 : x * 2); // Bug on x = 5
+    const reference = x => x * 2;
+    const buggyCandidate = x => (x === 5 ? 11 : x * 2); // Bug on x = 5
 
     const inputs = [[1], [2], [5], [10]];
     const report = runDifferentialTest(buggyCandidate, reference, inputs);
@@ -60,16 +60,18 @@ describe('Differential & Metamorphic Testing Engine', () => {
       relationCheck: (yOriginal, yTransformed) => yOriginal === yTransformed,
     };
 
-    const inputGenerator = (run) => [(run - 25) * 4];
+    const inputGenerator = run => [(run - 25) * 4];
 
-    const report = verifyMetamorphicRelation(Math.abs, inputGenerator, idempotenceRelation, { runs: 50 });
+    const report = verifyMetamorphicRelation(Math.abs, inputGenerator, idempotenceRelation, {
+      runs: 50,
+    });
     expect(report.relationHeld).toBe(true);
     expect(report.violationCount).toBe(0);
   });
 
   test('verifyMetamorphicRelation catches broken metamorphic relations', () => {
     // Flawed function that increments each time: f(x) = x + 1 (NOT idempotent!)
-    const nonIdempotent = (x) => x + 1;
+    const nonIdempotent = x => x + 1;
 
     const idempotenceRelation = {
       name: 'Idempotence',
@@ -77,9 +79,11 @@ describe('Differential & Metamorphic Testing Engine', () => {
       relationCheck: (yOriginal, yTransformed) => yOriginal === yTransformed,
     };
 
-    const inputGenerator = (run) => [run];
+    const inputGenerator = run => [run];
 
-    const report = verifyMetamorphicRelation(nonIdempotent, inputGenerator, idempotenceRelation, { runs: 10 });
+    const report = verifyMetamorphicRelation(nonIdempotent, inputGenerator, idempotenceRelation, {
+      runs: 10,
+    });
     expect(report.relationHeld).toBe(false);
     expect(report.violationCount).toBe(10);
   });

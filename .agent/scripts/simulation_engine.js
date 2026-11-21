@@ -1473,6 +1473,9 @@ module.exports = {
   main,
 };
 
-if (require.main === module || (require.main && path.basename(require.main.filename) === 'simulation_engine.js')) {
+if (
+  require.main === module ||
+  (require.main && path.basename(require.main.filename) === 'simulation_engine.js')
+) {
   main();
 }

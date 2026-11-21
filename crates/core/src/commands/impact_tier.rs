@@ -15,6 +15,7 @@ pub enum ImpactTier {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ImpactResult {
     pub tier: u8,
+    pub tier_name: String,
     pub score: f32,
     pub require_gate: bool,
     pub max_reviewers: usize,
@@ -266,6 +267,7 @@ pub fn classify_impact(files: &[String], diff_lines: usize, task: &str) -> Impac
         let recommended_reviewers = get_reviewers_for_domain(&domain_hint, 0);
         ImpactResult {
             tier: 0,
+            tier_name: "Fast-Pass".to_string(),
             score: clamped_score,
             require_gate: false,
             max_reviewers: 0,
@@ -279,6 +281,7 @@ pub fn classify_impact(files: &[String], diff_lines: usize, task: &str) -> Impac
         let max_reviewers = recommended_reviewers.len();
         ImpactResult {
             tier: 1,
+            tier_name: "Express Pass".to_string(),
             score: clamped_score,
             require_gate: false,
             max_reviewers,
@@ -292,6 +295,7 @@ pub fn classify_impact(files: &[String], diff_lines: usize, task: &str) -> Impac
         let max_reviewers = recommended_reviewers.len();
         ImpactResult {
             tier: 2,
+            tier_name: "Targeted Audit".to_string(),
             score: clamped_score,
             require_gate: true,
             max_reviewers,
@@ -305,6 +309,7 @@ pub fn classify_impact(files: &[String], diff_lines: usize, task: &str) -> Impac
         let max_reviewers = recommended_reviewers.len();
         ImpactResult {
             tier: 3,
+            tier_name: "Full Gauntlet".to_string(),
             score: clamped_score,
             require_gate: true,
             max_reviewers,

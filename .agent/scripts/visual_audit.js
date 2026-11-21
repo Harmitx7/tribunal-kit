@@ -179,11 +179,15 @@ function runVisualAudit(filePath) {
   };
 }
 
-
 function main() {
   const args = process.argv.slice(2);
   const fileArgIndex = args.indexOf('--file');
-  const targetPath = fileArgIndex !== -1 ? args[fileArgIndex + 1] : (args[0] && !args[0].startsWith('-') && args[0] !== '.' ? args[0] : null);
+  const targetPath =
+    fileArgIndex !== -1
+      ? args[fileArgIndex + 1]
+      : args[0] && !args[0].startsWith('-') && args[0] !== '.'
+        ? args[0]
+        : null;
 
   if (targetPath) {
     const result = runVisualAudit(path.resolve(targetPath));
@@ -229,6 +233,9 @@ function main() {
 
 module.exports = { auditFile, runVisualAudit };
 
-if (require.main === module || (require.main && path.basename(require.main.filename) === 'visual_audit.js')) {
+if (
+  require.main === module ||
+  (require.main && path.basename(require.main.filename) === 'visual_audit.js')
+) {
   main();
 }

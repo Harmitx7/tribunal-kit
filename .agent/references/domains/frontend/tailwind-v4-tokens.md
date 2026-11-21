@@ -2,7 +2,7 @@
 
 > **Authority**: Tailwind CSS v4 Official Documentation (`https://tailwindcss.com/docs/`)  
 > **Applicable Domains**: Frontend Architecture, Design Systems, Modern CSS, Web UI  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -12,21 +12,21 @@ Tailwind CSS v4 abandons JavaScript configuration files (`tailwind.config.js`) i
 
 ```css
 /* main.css */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* Colors generate bg-*, text-*, border-* utilities */
   --color-primary-50: #f0fdf4;
   --color-primary-500: #22c55e;
   --color-primary-900: #14532d;
-  
+
   --color-surface-bg: #09090b;
   --color-surface-card: #18181b;
   --color-surface-border: #27272a;
 
   /* Typography */
-  --font-display: "Cabinet Grotesk", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-display: 'Cabinet Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 
   /* Elevation and Radius */
   --radius-subtle: 4px;

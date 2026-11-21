@@ -46,6 +46,10 @@ class ArchitectureVisualizer {
     this.verification = verification;
   }
 
+  renderHtml() {
+    return this.generateHtml();
+  }
+
   generateHtml() {
     const rawDataJson = JSON.stringify({
       model: this.model,
@@ -57,10 +61,8 @@ class ArchitectureVisualizer {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:;">
   <title>Tribunal Architecture Intelligence — Evidence Console</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script>
     (function () {
       try {
@@ -1458,17 +1460,48 @@ class ArchitectureVisualizer {
         document.getElementById('pass-role').textContent = entity.role || 'Component extracted deterministically from codebase AST with zero-trust provenance.';
 
         const evList = document.getElementById('pass-evidence-list');
+        evList.textContent = '';
         const sources = entity.sources || [];
         if (sources.length === 0) {
-          evList.innerHTML = '<div style="font-size:10px; color:var(--dim);">No file sources recorded.</div>';
+          const empty = document.createElement('div');
+          empty.style.cssText = 'font-size:10px; color:var(--dim);';
+          empty.textContent = 'No file sources recorded.';
+          evList.appendChild(empty);
         } else {
-          evList.innerHTML = sources.map(s =>
-            '<div class="evidence-card">' +
-              '<div class="evidence-path"><span>📄</span> ' + s.file + (s.startLine ? ':' + s.startLine + (s.endLine ? '-' + s.endLine : '') : '') + '</div>' +
-              (s.contentHash ? '<div style="color:var(--dim); font-size:9px;">Hash: <code>' + s.contentHash.slice(0, 16) + '…</code></div>' : '') +
-              (s.snippet ? '<div class="evidence-snippet">' + s.snippet.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>' : '') +
-            '</div>'
-          ).join('');
+          sources.forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'evidence-card';
+
+            const pathDiv = document.createElement('div');
+            pathDiv.className = 'evidence-path';
+            const icon = document.createElement('span');
+            icon.textContent = '📄 ';
+            pathDiv.appendChild(icon);
+            const pathText = document.createTextNode(
+              (s.file || '') + (s.startLine ? ':' + s.startLine + (s.endLine ? '-' + s.endLine : '') : '')
+            );
+            pathDiv.appendChild(pathText);
+            card.appendChild(pathDiv);
+
+            if (s.contentHash) {
+              const hashDiv = document.createElement('div');
+              hashDiv.style.cssText = 'color:var(--dim); font-size:9px;';
+              hashDiv.textContent = 'Hash: ';
+              const code = document.createElement('code');
+              code.textContent = s.contentHash.slice(0, 16) + '…';
+              hashDiv.appendChild(code);
+              card.appendChild(hashDiv);
+            }
+
+            if (s.snippet) {
+              const snippetDiv = document.createElement('div');
+              snippetDiv.className = 'evidence-snippet';
+              snippetDiv.textContent = s.snippet;
+              card.appendChild(snippetDiv);
+            }
+
+            evList.appendChild(card);
+          });
         }
       }
 
@@ -1606,16 +1639,30 @@ class ArchitectureVisualizer {
           ent.id.toLowerCase().includes(q) || ent.name.toLowerCase().includes(q) || (ent.kind && ent.kind.toLowerCase().includes(q))
         );
 
+        searchDropdown.textContent = '';
         if (matches.length > 0) {
-          searchDropdown.innerHTML = matches.slice(0, 8).map(m =>
-            '<div class="search-item" data-id="' + m.id + '">' +
-              '<strong>' + m.name + '</strong>' +
-              '<span class="dropdown-hint">' + m.kind.toUpperCase() + '</span>' +
-            '</div>'
-          ).join('');
+          matches.slice(0, 8).forEach(m => {
+            const item = document.createElement('div');
+            item.className = 'search-item';
+            item.setAttribute('data-id', m.id);
+
+            const nameStrong = document.createElement('strong');
+            nameStrong.textContent = m.name || '';
+            item.appendChild(nameStrong);
+
+            const hintSpan = document.createElement('span');
+            hintSpan.className = 'dropdown-hint';
+            hintSpan.textContent = (m.kind || '').toUpperCase();
+            item.appendChild(hintSpan);
+
+            searchDropdown.appendChild(item);
+          });
           searchDropdown.classList.add('open');
         } else {
-          searchDropdown.innerHTML = '<div style="padding:8px 12px; font-size:10px; color:var(--dim);">No components match</div>';
+          const empty = document.createElement('div');
+          empty.style.cssText = 'padding:8px 12px; font-size:10px; color:var(--dim);';
+          empty.textContent = 'No components match';
+          searchDropdown.appendChild(empty);
           searchDropdown.classList.add('open');
         }
 

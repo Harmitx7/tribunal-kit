@@ -40,11 +40,14 @@ Dependencies: All required packages are declared in PEP 723 header above.
 
 import os
 import sys
+import tempfile
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel
 from huggingface_hub import HfApi
 import subprocess
+
+LLAMA_CPP_PINNED_COMMIT = "b4500"
 
 
 def check_system_dependencies():
@@ -127,7 +130,7 @@ try:
         BASE_MODEL,
         dtype=torch.float16,
         device_map="auto",
-        trust_remote_code=True,
+        trust_remote_code=False,
     )
     print("   ✅ Base model loaded")
 except Exception as e:
@@ -149,15 +152,19 @@ except Exception as e:
 
 try:
     # Load tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(ADAPTER_MODEL, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(ADAPTER_MODEL, trust_remote_code=False)
     print("   ✅ Tokenizer loaded")
 except Exception as e:
     print(f"   ❌ Failed to load tokenizer: {e}")
     sys.exit(1)
 
-# Step 2: Save merged model temporarily
+# Step 2: Save merged model temporarily in safe temporary directory
 print("\n💾 Step 2: Saving merged model...")
-merged_dir = "/tmp/merged_model"
+_safe_tmp_workspace = tempfile.TemporaryDirectory(prefix="tribunal_gguf_")
+merged_dir = os.path.join(_safe_tmp_workspace.name, "merged_model")
+llama_cpp_dir = os.path.join(_safe_tmp_workspace.name, "llama.cpp")
+gguf_output_dir = os.path.join(_safe_tmp_workspace.name, "gguf_output")
+
 try:
     merged_model.save_pretrained(merged_dir, safe_serialization=True)
     tokenizer.save_pretrained(merged_dir)
@@ -169,23 +176,28 @@ except Exception as e:
 # Step 3: Install llama.cpp for conversion
 print("\n📥 Step 3: Setting up llama.cpp for GGUF conversion...")
 
-# Clone llama.cpp repository
+# Clone llama.cpp repository and checkout pinned commit
 if not run_command(
-    ["git", "clone", "https://github.com/ggerganov/llama.cpp.git", "/tmp/llama.cpp"],
+    ["git", "clone", "https://github.com/ggerganov/llama.cpp.git", llama_cpp_dir],
     "Cloning llama.cpp repository"
 ):
     print("   Trying alternative clone method...")
     # Try shallow clone
     if not run_command(
-        ["git", "clone", "--depth", "1", "https://github.com/ggerganov/llama.cpp.git", "/tmp/llama.cpp"],
+        ["git", "clone", "--depth", "1", "https://github.com/ggerganov/llama.cpp.git", llama_cpp_dir],
         "Cloning llama.cpp (shallow)"
     ):
         sys.exit(1)
 
+run_command(
+    ["git", "-C", llama_cpp_dir, "checkout", LLAMA_CPP_PINNED_COMMIT],
+    f"Checking out pinned llama.cpp commit ({LLAMA_CPP_PINNED_COMMIT})"
+)
+
 # Install Python dependencies
 print("   Installing Python dependencies...")
 if not run_command(
-    ["pip", "install", "-r", "/tmp/llama.cpp/requirements.txt"],
+    ["pip", "install", "-r", os.path.join(llama_cpp_dir, "requirements.txt")],
     "Installing llama.cpp requirements"
 ):
     print("   ⚠️  Some requirements may already be installed")
@@ -198,10 +210,9 @@ if not run_command(
 
 # Step 4: Convert to GGUF (FP16)
 print("\n🔄 Step 4: Converting to GGUF format (FP16)...")
-gguf_output_dir = "/tmp/gguf_output"
 os.makedirs(gguf_output_dir, exist_ok=True)
 
-convert_script = "/tmp/llama.cpp/convert_hf_to_gguf.py"
+convert_script = os.path.join(llama_cpp_dir, "convert_hf_to_gguf.py")
 model_name = ADAPTER_MODEL.split('/')[-1]
 gguf_file = f"{gguf_output_dir}/{model_name}-f16.gguf"
 
@@ -225,11 +236,12 @@ print("\n⚙️  Step 5: Creating quantized versions...")
 
 # Build quantize tool using CMake (more reliable than make)
 print("   Building quantize tool with CMake...")
-os.makedirs("/tmp/llama.cpp/build", exist_ok=True)
+build_dir = os.path.join(llama_cpp_dir, "build")
+os.makedirs(build_dir, exist_ok=True)
 
 # Configure with CMake
 if not run_command(
-    ["cmake", "-B", "/tmp/llama.cpp/build", "-S", "/tmp/llama.cpp",
+    ["cmake", "-B", build_dir, "-S", llama_cpp_dir,
      "-DGGML_CUDA=OFF"],
     "Configuring with CMake"
 ):
@@ -238,7 +250,7 @@ if not run_command(
 
 # Build just the quantize tool
 if not run_command(
-    ["cmake", "--build", "/tmp/llama.cpp/build", "--target", "llama-quantize", "-j", "4"],
+    ["cmake", "--build", build_dir, "--target", "llama-quantize", "-j", "4"],
     "Building llama-quantize"
 ):
     print("   ❌ Build failed!")
@@ -247,7 +259,7 @@ if not run_command(
 print("   ✅ Quantize tool built")
 
 # Use the CMake build output path
-quantize_bin = "/tmp/llama.cpp/build/bin/llama-quantize"
+quantize_bin = os.path.join(build_dir, "bin", "llama-quantize")
 
 # Common quantization formats
 quant_formats = [

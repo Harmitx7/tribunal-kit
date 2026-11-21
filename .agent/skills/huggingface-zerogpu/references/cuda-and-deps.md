@@ -20,12 +20,12 @@ flash_attn-2.8.0.post2+cu12torch2.8cxx11abiFALSE-cp312-cp312-linux_x86_64.whl
 
 encodes four build-time choices:
 
-| Tag | Meaning |
-|-----|---------|
-| `cu12` | CUDA major version |
-| `torch2.8` | torch major.minor the wheel was compiled against |
-| `cxx11abiFALSE` | C++ stdlib ABI choice (`TRUE` or `FALSE`) |
-| `cp312-cp312` | CPython version (3.12) |
+| Tag             | Meaning                                          |
+| --------------- | ------------------------------------------------ |
+| `cu12`          | CUDA major version                               |
+| `torch2.8`      | torch major.minor the wheel was compiled against |
+| `cxx11abiFALSE` | C++ stdlib ABI choice (`TRUE` or `FALSE`)        |
+| `cp312-cp312`   | CPython version (3.12)                           |
 
 The wheel's compiled C-extension will `ImportError` on ABI/symbol mismatches if any of these drift at install time.
 

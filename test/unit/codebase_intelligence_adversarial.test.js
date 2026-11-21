@@ -163,7 +163,10 @@ describe('Phase 6 — Category C: Malformed & Ambiguous Repositories', () => {
   test('C2: Gracefully handles corrupted/invalid JSON in package manifest without throwing', async () => {
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'tribunal-corrupted-'));
     try {
-      fs.writeFileSync(path.join(tmpDir, 'package.json'), '{\n  "name": "corrupted-test",\n  "version": 1.0.0 (SYNTAX ERROR),\n');
+      fs.writeFileSync(
+        path.join(tmpDir, 'package.json'),
+        '{\n  "name": "corrupted-test",\n  "version": 1.0.0 (SYNTAX ERROR),\n',
+      );
       fs.writeFileSync(path.join(tmpDir, 'index.js'), 'console.log("hello");\n');
 
       const res = await runCodebaseIntelligence({
@@ -302,7 +305,8 @@ describe('Phase 6 — Determinism & Zero-Mutation Invariant', () => {
           const full = path.join(curr, e.name);
           const rel = path.relative(dir, full).replace(/\\/g, '/');
           if (e.isDirectory()) walk(full);
-          else map.set(rel, crypto.createHash('sha256').update(fs.readFileSync(full)).digest('hex'));
+          else
+            map.set(rel, crypto.createHash('sha256').update(fs.readFileSync(full)).digest('hex'));
         }
       }
       walk(dir);
@@ -315,11 +319,23 @@ describe('Phase 6 — Determinism & Zero-Mutation Invariant', () => {
     await runCodebaseIntelligence({ subcommand: 'overview', repoRoot: DEP_REPO });
     await runCodebaseIntelligence({ subcommand: 'trace', target: 'startApp', repoRoot: DEP_REPO });
     await runCodebaseIntelligence({ subcommand: 'dependencies', repoRoot: DEP_REPO });
-    await runCodebaseIntelligence({ subcommand: 'relevant-files', target: 'run service', repoRoot: DEP_REPO });
-    await runCodebaseIntelligence({ subcommand: 'impact', target: 'src/service.js', repoRoot: DEP_REPO });
+    await runCodebaseIntelligence({
+      subcommand: 'relevant-files',
+      target: 'run service',
+      repoRoot: DEP_REPO,
+    });
+    await runCodebaseIntelligence({
+      subcommand: 'impact',
+      target: 'src/service.js',
+      repoRoot: DEP_REPO,
+    });
     await runCodebaseIntelligence({ subcommand: 'dead-code', repoRoot: STATIC_REPO });
     await runCodebaseIntelligence({ subcommand: 'onboard', repoRoot: MIXED_REPO });
-    await runCodebaseIntelligence({ subcommand: 'prepare', target: 'update feature', repoRoot: STATIC_REPO });
+    await runCodebaseIntelligence({
+      subcommand: 'prepare',
+      target: 'update feature',
+      repoRoot: STATIC_REPO,
+    });
 
     const after = snapshotDir(FIXTURES_ROOT);
 

@@ -20,7 +20,21 @@ const fs = require('fs');
 const path = require('path');
 const { MetaAssuranceEngine } = require('./meta_assurance');
 const { CoEvolutionEngine } = require('./coevolution_engine');
-const { getCorpusScenarios } = require('../../benchmarks/corpus/index');
+let getCorpusScenarios = () => [];
+try {
+  const corpusMod = require('../../benchmarks/corpus/index');
+  if (typeof corpusMod.getCorpusScenarios === 'function') {
+    getCorpusScenarios = corpusMod.getCorpusScenarios;
+  }
+} catch (err) {
+  if (
+    !err ||
+    (err.code !== 'MODULE_NOT_FOUND' &&
+      !(err.message && err.message.includes('Cannot find module')))
+  ) {
+    throw err;
+  }
+}
 const { loadRejections } = require('./negative_memory');
 
 const DEFAULT_WATCHER_CONFIG = Object.freeze({
@@ -41,7 +55,10 @@ class WatcherDaemon {
   constructor(options = {}) {
     this.repoRoot = path.resolve(options.repoRoot || process.cwd());
     this.agentDir = path.resolve(options.agentDir || path.join(this.repoRoot, '.agent'));
-    this.intervalMs = Math.max(Number(options.intervalMs) || DEFAULT_WATCHER_CONFIG.intervalMs, 100);
+    this.intervalMs = Math.max(
+      Number(options.intervalMs) || DEFAULT_WATCHER_CONFIG.intervalMs,
+      100,
+    );
     this.cooldownMs = Math.max(
       Number(options.cooldownMs) || DEFAULT_WATCHER_CONFIG.cooldownMs,
       500,

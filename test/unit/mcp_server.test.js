@@ -5,7 +5,13 @@ process.env.NODE_ENV = 'test';
 
 const _path = require('path');
 const _fs = require('fs');
-const { handleRequest, processSingleRequest, stripBoilerplate, runTribunalAudit, ToolRepeatGuard } = require('../../bin/mcp-server');
+const {
+  handleRequest,
+  processSingleRequest,
+  stripBoilerplate,
+  runTribunalAudit,
+  ToolRepeatGuard,
+} = require('../../bin/mcp-server');
 
 describe('MCP Server Boilerplate Stripper', () => {
   test('strips standard duplicate boilerplate blocks from text', async () => {
@@ -179,7 +185,9 @@ describe('MCP Server handleRequest', () => {
         arguments: { name: '../../evil' },
       },
     };
-    await expect(handleRequest(reqAgent)).rejects.toThrow(/Invalid agent name: path traversal detected/);
+    await expect(handleRequest(reqAgent)).rejects.toThrow(
+      /Invalid agent name: path traversal detected/,
+    );
 
     // get_tribunal_skill with path traversal
     const reqSkill = {
@@ -191,7 +199,9 @@ describe('MCP Server handleRequest', () => {
         arguments: { name: '../bad_skill' },
       },
     };
-    await expect(handleRequest(reqSkill)).rejects.toThrow(/Invalid skill name: path traversal detected/);
+    await expect(handleRequest(reqSkill)).rejects.toThrow(
+      /Invalid skill name: path traversal detected/,
+    );
   });
 
   test('SEC-003: get_ast_context and query_semantic_graph reject flag injection and traversal', async () => {
@@ -266,7 +276,9 @@ describe('MCP Server handleRequest', () => {
       },
     };
     const callResult = await handleRequest(reqCall);
-    expect(callResult.content[0].text).toContain('› **Testing** · Codebase Intelligence Test Suites');
+    expect(callResult.content[0].text).toContain(
+      '› **Testing** · Codebase Intelligence Test Suites',
+    );
     expect(callResult.content[0].text).toContain('Progress: 8/12 suites (67%) · 4 pending');
     expect(callResult.content[0].text).toContain('Next: Verify baseline exit codes');
   });

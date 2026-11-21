@@ -40,7 +40,9 @@ function runBenchmark() {
   let elapsedMs = Number(elapsedNs) / 1e6;
   let perOpUs = (elapsedMs / iterations) * 1000;
   let opsSec = Math.round((iterations / elapsedMs) * 1000);
-  console.log(`[Validation]           ${elapsedMs.toFixed(2)} ms total | ${perOpUs.toFixed(2)} µs/op | ${opsSec.toLocaleString()} ops/sec`);
+  console.log(
+    `[Validation]           ${elapsedMs.toFixed(2)} ms total | ${perOpUs.toFixed(2)} µs/op | ${opsSec.toLocaleString()} ops/sec`,
+  );
 
   // 2. Secret Redaction Benchmark
   t0 = process.hrtime.bigint();
@@ -51,7 +53,9 @@ function runBenchmark() {
   elapsedMs = Number(elapsedNs) / 1e6;
   perOpUs = (elapsedMs / iterations) * 1000;
   opsSec = Math.round((iterations / elapsedMs) * 1000);
-  console.log(`[Secret Redaction]     ${elapsedMs.toFixed(2)} ms total | ${perOpUs.toFixed(2)} µs/op | ${opsSec.toLocaleString()} ops/sec`);
+  console.log(
+    `[Secret Redaction]     ${elapsedMs.toFixed(2)} ms total | ${perOpUs.toFixed(2)} µs/op | ${opsSec.toLocaleString()} ops/sec`,
+  );
 
   // 3. MarkdownRenderer Benchmark
   t0 = process.hrtime.bigint();
@@ -62,7 +66,9 @@ function runBenchmark() {
   elapsedMs = Number(elapsedNs) / 1e6;
   perOpUs = (elapsedMs / iterations) * 1000;
   opsSec = Math.round((iterations / elapsedMs) * 1000);
-  console.log(`[MarkdownRenderer]     ${elapsedMs.toFixed(2)} ms total | ${perOpUs.toFixed(2)} µs/op | ${opsSec.toLocaleString()} ops/sec`);
+  console.log(
+    `[MarkdownRenderer]     ${elapsedMs.toFixed(2)} ms total | ${perOpUs.toFixed(2)} µs/op | ${opsSec.toLocaleString()} ops/sec`,
+  );
 
   // 4. TerminalRenderer Benchmark
   t0 = process.hrtime.bigint();
@@ -73,7 +79,9 @@ function runBenchmark() {
   elapsedMs = Number(elapsedNs) / 1e6;
   perOpUs = (elapsedMs / iterations) * 1000;
   opsSec = Math.round((iterations / elapsedMs) * 1000);
-  console.log(`[TerminalRenderer]     ${elapsedMs.toFixed(2)} ms total | ${perOpUs.toFixed(2)} µs/op | ${opsSec.toLocaleString()} ops/sec`);
+  console.log(
+    `[TerminalRenderer]     ${elapsedMs.toFixed(2)} ms total | ${perOpUs.toFixed(2)} µs/op | ${opsSec.toLocaleString()} ops/sec`,
+  );
 
   // 5. PlainTextRenderer Benchmark
   t0 = process.hrtime.bigint();
@@ -84,7 +92,9 @@ function runBenchmark() {
   elapsedMs = Number(elapsedNs) / 1e6;
   perOpUs = (elapsedMs / iterations) * 1000;
   opsSec = Math.round((iterations / elapsedMs) * 1000);
-  console.log(`[PlainTextRenderer]    ${elapsedMs.toFixed(2)} ms total | ${perOpUs.toFixed(2)} µs/op | ${opsSec.toLocaleString()} ops/sec`);
+  console.log(
+    `[PlainTextRenderer]    ${elapsedMs.toFixed(2)} ms total | ${perOpUs.toFixed(2)} µs/op | ${opsSec.toLocaleString()} ops/sec`,
+  );
 
   // 6. StructuredRenderer Benchmark
   t0 = process.hrtime.bigint();
@@ -95,7 +105,9 @@ function runBenchmark() {
   elapsedMs = Number(elapsedNs) / 1e6;
   perOpUs = (elapsedMs / iterations) * 1000;
   opsSec = Math.round((iterations / elapsedMs) * 1000);
-  console.log(`[StructuredRenderer]   ${elapsedMs.toFixed(2)} ms total | ${perOpUs.toFixed(2)} µs/op | ${opsSec.toLocaleString()} ops/sec`);
+  console.log(
+    `[StructuredRenderer]   ${elapsedMs.toFixed(2)} ms total | ${perOpUs.toFixed(2)} µs/op | ${opsSec.toLocaleString()} ops/sec`,
+  );
 
   // 7. Token and Payload Footprint
   const mdOutput = renderMarkdown(sampleEvent);
@@ -103,11 +115,16 @@ function runBenchmark() {
   const jsonOutput = renderStructured(sampleEvent, { pretty: false });
 
   console.log('\n--- Output Footprint ---');
-  console.log(`Markdown Output:   ${mdOutput.length} chars (~${Math.ceil(mdOutput.length / 4)} tokens)`);
-  console.log(`PlainText Output:  ${plainOutput.length} chars (~${Math.ceil(plainOutput.length / 4)} tokens)`);
-  console.log(`JSON Output:       ${jsonOutput.length} chars (~${Math.ceil(jsonOutput.length / 4)} tokens)`);
+  console.log(
+    `Markdown Output:   ${mdOutput.length} chars (~${Math.ceil(mdOutput.length / 4)} tokens)`,
+  );
+  console.log(
+    `PlainText Output:  ${plainOutput.length} chars (~${Math.ceil(plainOutput.length / 4)} tokens)`,
+  );
+  console.log(
+    `JSON Output:       ${jsonOutput.length} chars (~${Math.ceil(jsonOutput.length / 4)} tokens)`,
+  );
   console.log('\nBenchmark completed successfully.\n');
 }
 
 runBenchmark();
-

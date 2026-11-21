@@ -55,10 +55,10 @@ function sanitizeInput(raw, maxLen) {
  *
  * This function never throws. All errors result in graceful fallback.
  *
- * @param {Object} options
- * @param {string[]} options.files
- * @param {string} options.task
- * @param {Object|null} options.provider - Optional pre-constructed System1Provider
+ * @param {Object} [options]
+ * @param {string[]} [options.files]
+ * @param {string} [options.task]
+ * @param {Object|null} [options.provider] - Optional pre-constructed System1Provider
  * @returns {{ layaTier: number|null, fallbackReason: string|null }}
  */
 function attemptLayaClassification(options = {}) {
@@ -74,7 +74,10 @@ function attemptLayaClassification(options = {}) {
       // Phase 1 constraint: Laya integration is synchronous-safe only when
       // the caller pre-resolves the tier and passes it as options.layaTier.
       // This function serves as documentation and future integration point.
-      return { layaTier: null, fallbackReason: 'Synchronous Laya call not supported in Phase 1; use options.layaTier' };
+      return {
+        layaTier: null,
+        fallbackReason: 'Synchronous Laya call not supported in Phase 1; use options.layaTier',
+      };
     } catch (err) {
       return { layaTier: null, fallbackReason: `Provider check failed: ${err.message}` };
     }
@@ -89,7 +92,10 @@ function attemptLayaClassification(options = {}) {
     }
     // Phase 1: Laya.classifyImpact is async; synchronous buildDecisionPlan
     // cannot await it. Callers should pre-resolve via options.layaTier.
-    return { layaTier: null, fallbackReason: 'Synchronous Laya call not supported in Phase 1; use options.layaTier' };
+    return {
+      layaTier: null,
+      fallbackReason: 'Synchronous Laya call not supported in Phase 1; use options.layaTier',
+    };
   } catch (err) {
     return { layaTier: null, fallbackReason: `System-1 provider load failed: ${err.message}` };
   }
@@ -116,13 +122,19 @@ function buildDecisionPlan(options = {}) {
   const sanitizedTask = sanitizeInput(options.task, MAX_TASK_LENGTH);
   const sanitizedDiff = sanitizeInput(options.diff, MAX_DIFF_LENGTH);
 
+  const normalizedFiles = Array.isArray(options.files)
+    ? options.files
+    : typeof options.files === 'string'
+      ? options.files.split(',')
+      : [];
+
   // 1. Attempt Laya classification if not pre-resolved
   let layaTier = options.layaTier ?? null;
   let fallbackReason = null;
 
   if (layaTier === null) {
     const layaResult = attemptLayaClassification({
-      files: options.files,
+      files: normalizedFiles,
       task: sanitizedTask,
       provider: options.provider || null,
     });
@@ -159,7 +171,7 @@ function buildDecisionPlan(options = {}) {
 
   // 4. Domains
   const domains = detectRequiredDomains({
-    files: options.files,
+    files: normalizedFiles,
     diff: sanitizedDiff,
     task: sanitizedTask,
     evidence: options.evidence,
@@ -274,7 +286,9 @@ function buildDecisionPlan(options = {}) {
     laya_available: layaTier !== null,
     laya_tier: layaTier,
     fallback_used: decision.explanation.fallback_used,
-    fallback_reason: fallbackReason || (decision.explanation.fallback_used ? 'Laya not provided or unavailable' : null),
+    fallback_reason:
+      fallbackReason ||
+      (decision.explanation.fallback_used ? 'Laya not provided or unavailable' : null),
     monotonic_safeguards: decision.explanation.monotonic_safeguards_applied || [],
   };
 
@@ -406,7 +420,12 @@ function validateDecisionPlan(plan) {
   if (plan.schema_version !== 1) {
     return { valid: false, error: 'Invalid schema_version' };
   }
-  if (typeof plan.tier !== 'number' || plan.tier < 0 || plan.tier > 3 || !Number.isInteger(plan.tier)) {
+  if (
+    typeof plan.tier !== 'number' ||
+    plan.tier < 0 ||
+    plan.tier > 3 ||
+    !Number.isInteger(plan.tier)
+  ) {
     return { valid: false, error: 'Invalid tier' };
   }
   if (!['LOW', 'MEDIUM', 'HIGH'].includes(plan.risk)) {
@@ -455,7 +474,12 @@ function validateDecisionPlan(plan) {
     return { valid: false, error: 'Verification requirements must be an array' };
   }
   // Validate verification requirement values
-  const VALID_VERIFICATION = ['DETERMINISTIC_CHECKS', 'EXECUTABLE_CHECKS', 'SECURITY_CHECKS', 'FULL_VALIDATION'];
+  const VALID_VERIFICATION = [
+    'DETERMINISTIC_CHECKS',
+    'EXECUTABLE_CHECKS',
+    'SECURITY_CHECKS',
+    'FULL_VALIDATION',
+  ];
   if (plan.verification_requirements.some(v => !VALID_VERIFICATION.includes(v))) {
     return { valid: false, error: 'Invalid verification requirement value' };
   }
@@ -464,7 +488,10 @@ function validateDecisionPlan(plan) {
   }
   // Monotonic safety: if risk is HIGH or tier >= 3, human_gate MUST be required
   if ((plan.risk === 'HIGH' || plan.tier >= 3) && !plan.human_gate.required) {
-    return { valid: false, error: 'Human Gate must be required for HIGH risk or Tier 3 operations' };
+    return {
+      valid: false,
+      error: 'Human Gate must be required for HIGH risk or Tier 3 operations',
+    };
   }
   if (plan.source !== 'system1' && plan.source !== 'deterministic_fallback') {
     return { valid: false, error: 'Invalid source' };
@@ -480,7 +507,10 @@ function validateDecisionPlan(plan) {
     if (typeof plan.decision_source !== 'object') {
       return { valid: false, error: 'decision_source must be an object' };
     }
-    if (plan.decision_source.engine !== 'system1' && plan.decision_source.engine !== 'deterministic_fallback') {
+    if (
+      plan.decision_source.engine !== 'system1' &&
+      plan.decision_source.engine !== 'deterministic_fallback'
+    ) {
       return { valid: false, error: 'Invalid decision_source.engine' };
     }
     if (typeof plan.decision_source.laya_available !== 'boolean') {

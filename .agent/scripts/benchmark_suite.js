@@ -374,7 +374,16 @@ const FIXTURES = [
 function runImpactTier(files, lines, task, diffStr) {
   const start = Date.now();
   try {
-    const args = ['bin/wrapper.js', 'impact-tier', '--files', String(files), '--lines', String(lines), '--task', String(task)];
+    const args = [
+      'bin/wrapper.js',
+      'impact-tier',
+      '--files',
+      String(files),
+      '--lines',
+      String(lines),
+      '--task',
+      String(task),
+    ];
     if (diffStr) {
       args.push('--diff', String(diffStr));
     }

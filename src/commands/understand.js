@@ -8,7 +8,10 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-const { runCodebaseIntelligenceCli, resolveRoute } = require('../../.agent/scripts/codebase_intelligence');
+const {
+  runCodebaseIntelligenceCli,
+  resolveRoute,
+} = require('../../.agent/scripts/codebase_intelligence');
 
 exports.cmdUnderstand = cmdUnderstand;
 exports.resolveRoute = resolveRoute;
@@ -26,7 +29,6 @@ const SUPPORTED_SUBCOMMANDS = [
   'investigate',
 ];
 exports.SUPPORTED_SUBCOMMANDS = SUPPORTED_SUBCOMMANDS;
-
 
 /**
  * Executes codebase intelligence exploration, feature tracing, dependency analysis,
@@ -52,4 +54,3 @@ async function cmdUnderstand(flags = {}, rawArgv, quiet = false) {
 
   return runCodebaseIntelligenceCli(argv, flags, quiet);
 }
-

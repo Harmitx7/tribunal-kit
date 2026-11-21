@@ -12,16 +12,16 @@ Rather than relying on improvised status messages, speculative narration, or ter
 
 An operation exists in exactly one lifecycle state at any point in time:
 
-| State | Semantic Meaning | Terminal? | Allowed Target States |
-|---|---|---|---|
-| `pending` | Operation registered but execution has not begun | No | `pending`, `running`, `cancelled` |
-| `running` | Actively executing tasks, analyses, or subprocesses | No | `running`, `waiting`, `blocked`, `retrying`, `completed`, `failed`, `cancelled` |
-| `waiting` | Paused awaiting external input, network reply, or child completion | No | `waiting`, `running`, `blocked`, `failed`, `cancelled` |
-| `blocked` | Halted on an unmet dependency or mandatory human approval gate | No | `blocked`, `running`, `failed`, `cancelled` |
-| `retrying` | Preparing or backing off prior to launching a retry attempt | No | `retrying`, `running`, `failed`, `cancelled` |
-| `completed` | Successfully finished operation | **Yes** | `completed` (idempotent confirmation) |
-| `failed` | Terminated with unrecoverable failure | **Yes\*** | `failed`, `retrying` (\*only when retry initiated) |
-| `cancelled` | Aborted by human operator or timeout | **Yes** | `cancelled` (idempotent confirmation) |
+| State       | Semantic Meaning                                                   | Terminal? | Allowed Target States                                                           |
+| ----------- | ------------------------------------------------------------------ | --------- | ------------------------------------------------------------------------------- |
+| `pending`   | Operation registered but execution has not begun                   | No        | `pending`, `running`, `cancelled`                                               |
+| `running`   | Actively executing tasks, analyses, or subprocesses                | No        | `running`, `waiting`, `blocked`, `retrying`, `completed`, `failed`, `cancelled` |
+| `waiting`   | Paused awaiting external input, network reply, or child completion | No        | `waiting`, `running`, `blocked`, `failed`, `cancelled`                          |
+| `blocked`   | Halted on an unmet dependency or mandatory human approval gate     | No        | `blocked`, `running`, `failed`, `cancelled`                                     |
+| `retrying`  | Preparing or backing off prior to launching a retry attempt        | No        | `retrying`, `running`, `failed`, `cancelled`                                    |
+| `completed` | Successfully finished operation                                    | **Yes**   | `completed` (idempotent confirmation)                                           |
+| `failed`    | Terminated with unrecoverable failure                              | **Yes\*** | `failed`, `retrying` (\*only when retry initiated)                              |
+| `cancelled` | Aborted by human operator or timeout                               | **Yes**   | `cancelled` (idempotent confirmation)                                           |
 
 ### Transition Invariants
 
@@ -109,10 +109,10 @@ To prevent memory leaks during long-running sessions, `OperationRegistry.cleanup
 
 Authoritative benchmark measurements (`benchmark_activity_lifecycle.js`):
 
-| Operation | Throughput | Latency |
-|---|---|---|
-| Lifecycle Transition Checks | **16,561,364 ops/sec** | ~0.06 µs / check |
-| Operation Registration & Lookup | **250,182 ops/sec** | ~4.0 µs / pair |
-| Monotonic Progress Updates | **541,398 ops/sec** | ~1.8 µs / update |
-| End-to-End Operational Lifecycle | **78,452 operations/sec** | ~12.7 µs / lifecycle |
-| Bounded Retention Eviction | **4,500 operations evicted in <2ms** | Heap ~63 MB |
+| Operation                        | Throughput                           | Latency              |
+| -------------------------------- | ------------------------------------ | -------------------- |
+| Lifecycle Transition Checks      | **16,561,364 ops/sec**               | ~0.06 µs / check     |
+| Operation Registration & Lookup  | **250,182 ops/sec**                  | ~4.0 µs / pair       |
+| Monotonic Progress Updates       | **541,398 ops/sec**                  | ~1.8 µs / update     |
+| End-to-End Operational Lifecycle | **78,452 operations/sec**            | ~12.7 µs / lifecycle |
+| Bounded Retention Eviction       | **4,500 operations evicted in <2ms** | Heap ~63 MB          |

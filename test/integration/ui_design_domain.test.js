@@ -17,7 +17,8 @@ describe('UI Engineering & Design Intelligence Domain (Integration)', () => {
           </button>
         </div>
       `,
-      buttonClasses: 'px-3 py-1.5 rounded-sm bg-action hover:bg-action-hover focus-visible:outline-2 active:scale-[0.98] disabled:opacity-50',
+      buttonClasses:
+        'px-3 py-1.5 rounded-sm bg-action hover:bg-action-hover focus-visible:outline-2 active:scale-[0.98] disabled:opacity-50',
     };
 
     const outcome = await executeDesignQualityLoop(input);
@@ -55,4 +56,3 @@ describe('UI Engineering & Design Intelligence Domain (Integration)', () => {
     expect(outcome.defects.some(d => d.severity === 'P1_CRITICAL')).toBe(true);
   });
 });
-

@@ -1,13 +1,12 @@
 'use strict';
-const __importDefault =
-  (this && this.__importDefault) ||
-  function (mod) {
-    return mod && mod.__esModule ? mod : { default: mod };
-  };
+const __importDefault = function (mod) {
+  return mod && mod.__esModule ? mod : { default: mod };
+};
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.runShellAsync = runShellAsync;
 exports.getKitAgent = getKitAgent;
 exports.banner = banner;
+exports.extractPositionalArgs = extractPositionalArgs;
 const child_process_1 = require('child_process');
 const fs_1 = __importDefault(require('fs'));
 const path_1 = __importDefault(require('path'));
@@ -50,4 +49,30 @@ function banner(quiet) {
   if (quiet) return;
   const PKG = require('../../package.json');
   renderBanner(PKG.version, quiet);
+}
+
+function extractPositionalArgs(argv = process.argv, commandName, optionsWithValues = []) {
+  if (!Array.isArray(argv)) return [];
+  const valueOptions = new Set(optionsWithValues);
+  const raw = argv.slice(2);
+  const positionals = [];
+  let skippedCommand = !commandName;
+
+  for (let i = 0; i < raw.length; i++) {
+    const token = raw[i];
+    if (!skippedCommand && token === commandName) {
+      skippedCommand = true;
+      continue;
+    }
+    if (typeof token === 'string' && token.startsWith('-')) {
+      if (!token.includes('=')) {
+        if (valueOptions.has(token)) {
+          i++;
+        }
+      }
+      continue;
+    }
+    positionals.push(token);
+  }
+  return positionals;
 }

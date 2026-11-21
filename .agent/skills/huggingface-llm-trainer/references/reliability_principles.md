@@ -114,6 +114,7 @@ subprocess.run([
 ### Real-World Example
 
 **The `torch.compile` failure:**
+
 - Added for "20% speedup" on H100
 - **Failed fatally on T4-medium** with cryptic error
 - Misdiagnosed as dataset issue (cost hours)
@@ -193,6 +194,7 @@ subprocess.run(["git", "clone", "https://github.com/ggerganov/llama.cpp.git", "/
 ### Real-World Example
 
 **The `sentencepiece` failure:**
+
 - Original script had it: worked fine
 - "Simplified" version removed it: "doesn't look necessary"
 - **GGUF conversion failed silently** - tokenizer couldn't convert
@@ -320,6 +322,7 @@ TEST_BASE = "Qwen/Qwen2.5-0.5B"  # Compatible base
 Before submitting ANY job:
 
 ### Pre-Flight Checks
+
 - [ ] **Verified** all repos/datasets exist (hub_repo_details)
 - [ ] **Tested** with known-good inputs if new code
 - [ ] **Using** proven hardware/configuration
@@ -330,6 +333,7 @@ Before submitting ANY job:
 - [ ] **Added** clear error handling
 
 ### Script Quality
+
 - [ ] Self-contained (no external setup needed)
 - [ ] Complete dependencies listed
 - [ ] Build tools installed by script
@@ -338,6 +342,7 @@ Before submitting ANY job:
 - [ ] Configuration logged at start
 
 ### Job Configuration
+
 - [ ] Timeout > expected runtime + 30% buffer
 - [ ] Hardware appropriate for model size
 - [ ] Secrets include HF_TOKEN
@@ -352,13 +357,13 @@ Before submitting ANY job:
 
 Sometimes reliability and performance conflict. Here's how to choose:
 
-| Scenario | Choose | Rationale |
-|----------|--------|-----------|
-| Demo/test | Reliability | Fast failure is worse than slow success |
-| Production (first run) | Reliability | Prove it works before optimizing |
-| Production (proven) | Performance | Safe to optimize after validation |
-| Time-critical | Reliability | Failures cause more delay than slow runs |
-| Cost-critical | Balanced | Test with small model, then optimize |
+| Scenario               | Choose      | Rationale                                |
+| ---------------------- | ----------- | ---------------------------------------- |
+| Demo/test              | Reliability | Fast failure is worse than slow success  |
+| Production (first run) | Reliability | Prove it works before optimizing         |
+| Production (proven)    | Performance | Safe to optimize after validation        |
+| Time-critical          | Reliability | Failures cause more delay than slow runs |
+| Cost-critical          | Balanced    | Test with small model, then optimize     |
 
 **General rule:** Reliability first, optimize second.
 

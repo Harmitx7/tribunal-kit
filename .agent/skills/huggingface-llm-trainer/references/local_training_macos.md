@@ -4,33 +4,33 @@ Run small LoRA fine-tuning jobs locally on Mac for smoke tests and quick iterati
 
 ## When to Use Local Mac vs HF Jobs
 
-| Local Mac | HF Jobs / Cloud GPU |
-|-----------|-------------------|
-| Model ≤3B, text-only | Model 7B+ |
-| LoRA/PEFT only | QLoRA 4-bit (CUDA/bitsandbytes) |
-| Short context (≤1024) | Long context / full fine-tuning |
-| Smoke tests, dataset validation | Production runs, VLMs |
+| Local Mac                       | HF Jobs / Cloud GPU             |
+| ------------------------------- | ------------------------------- |
+| Model ≤3B, text-only            | Model 7B+                       |
+| LoRA/PEFT only                  | QLoRA 4-bit (CUDA/bitsandbytes) |
+| Short context (≤1024)           | Long context / full fine-tuning |
+| Smoke tests, dataset validation | Production runs, VLMs           |
 
 **Typical workflow:** local smoke test → HF Jobs with same config → export/quantize ([gguf_conversion.md](gguf_conversion.md))
 
 ## Recommended Defaults
 
-| Setting | Value | Notes |
-|---------|-------|-------|
-| Model size | 0.5B–1.5B first run | Scale up after verifying |
-| Max seq length | 512–1024 | Lower = less memory |
-| Batch size | 1 | Scale via gradient accumulation |
-| Gradient accumulation | 8–16 | Effective batch = 8–16 |
-| LoRA rank (r) | 8–16 | alpha = 2×r |
-| Dtype | float32 | fp16 causes NaN on MPS; bf16 only on M1 Pro+ and M2/M3/M4 |
+| Setting               | Value               | Notes                                                     |
+| --------------------- | ------------------- | --------------------------------------------------------- |
+| Model size            | 0.5B–1.5B first run | Scale up after verifying                                  |
+| Max seq length        | 512–1024            | Lower = less memory                                       |
+| Batch size            | 1                   | Scale via gradient accumulation                           |
+| Gradient accumulation | 8–16                | Effective batch = 8–16                                    |
+| LoRA rank (r)         | 8–16                | alpha = 2×r                                               |
+| Dtype                 | float32             | fp16 causes NaN on MPS; bf16 only on M1 Pro+ and M2/M3/M4 |
 
 ### Memory by hardware
 
-| Unified RAM | Max Model Size |
-|-------------|---------------|
-| 16 GB | ~0.5B–1.5B |
-| 32 GB | ~1.5B–3B |
-| 64 GB | ~3B (short context) |
+| Unified RAM | Max Model Size      |
+| ----------- | ------------------- |
+| 16 GB       | ~0.5B–1.5B          |
+| 32 GB       | ~1.5B–3B            |
+| 64 GB       | ~3B (short context) |
 
 ## Setup
 
@@ -42,11 +42,13 @@ pip install -U "torch>=2.2" "transformers>=4.40" "trl>=0.12" "peft>=0.10" \
 ```
 
 Verify MPS:
+
 ```bash
 python -c "import torch; print(torch.__version__, '| MPS:', torch.backends.mps.is_available())"
 ```
 
 Optional — configure Accelerate for local Mac (no distributed, no mixed precision, MPS device):
+
 ```bash
 accelerate config
 ```
@@ -157,12 +159,28 @@ PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0 python train_lora_sft.py      # disable MPS
 ```
 
 **Local JSONL format** — chat messages or plain text:
+
 ```jsonl
-{"messages": [{"role": "user", "content": "Hello"}, {"role": "assistant", "content": "Hi!"}]}
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hello"
+    },
+    {
+      "role": "assistant",
+      "content": "Hi!"
+    }
+  ]
+}
 ```
+
 ```jsonl
-{"text": "User: Hello\nAssistant: Hi!"}
+{
+  "text": "User: Hello\nAssistant: Hi!"
+}
 ```
+
 For plain text: `DATA_FILES="file.jsonl" TEXT_FIELD="text" MESSAGES_FIELD="" python train_lora_sft.py`
 
 ### Verify Success
@@ -202,22 +220,22 @@ print(tokenizer.decode(out[0], skip_special_tokens=True))
 
 For general training issues, see [troubleshooting.md](troubleshooting.md).
 
-| Problem | Fix |
-|---------|-----|
-| MPS unsupported op / crash | `PYTORCH_ENABLE_MPS_FALLBACK=1` |
-| OOM / system instability | Reduce `MAX_SEQ_LENGTH`, use smaller model, set `PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0` (caution) |
-| fp16 NaN / loss explosion | Keep `fp16=False` (default), lower learning rate |
-| LoRA "module not found" | Print `model.named_modules()` to find correct target names |
-| TRL TypeError on args | Check TRL version; script uses `SFTConfig` + `processing_class` (TRL ≥0.12) |
-| Intel Mac | No MPS — use HF Jobs instead |
+| Problem                    | Fix                                                                                              |
+| -------------------------- | ------------------------------------------------------------------------------------------------ |
+| MPS unsupported op / crash | `PYTORCH_ENABLE_MPS_FALLBACK=1`                                                                  |
+| OOM / system instability   | Reduce `MAX_SEQ_LENGTH`, use smaller model, set `PYTORCH_MPS_HIGH_WATERMARK_RATIO=0.0` (caution) |
+| fp16 NaN / loss explosion  | Keep `fp16=False` (default), lower learning rate                                                 |
+| LoRA "module not found"    | Print `model.named_modules()` to find correct target names                                       |
+| TRL TypeError on args      | Check TRL version; script uses `SFTConfig` + `processing_class` (TRL ≥0.12)                      |
+| Intel Mac                  | No MPS — use HF Jobs instead                                                                     |
 
 **Common LoRA target modules by architecture:**
 
-| Architecture | target_modules |
-|-------------|---------------|
+| Architecture       | target_modules                         |
+| ------------------ | -------------------------------------- |
 | Llama/Qwen/Mistral | `q_proj`, `k_proj`, `v_proj`, `o_proj` |
-| GPT-2/GPT-J | `c_attn`, `c_proj` |
-| BLOOM | `query_key_value`, `dense` |
+| GPT-2/GPT-J        | `c_attn`, `c_proj`                     |
+| BLOOM              | `query_key_value`, `dense`             |
 
 ## MLX Alternative
 

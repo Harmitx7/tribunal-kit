@@ -3,6 +3,9 @@ name: ui-visual-auditor
 description: Automated visual auditor that reviews rendered screenshots and DOM hierarchies for alignment, layout shifts, overflow, contrast, and responsive breakpoint reflow. Activates on /tribunal-ui and /tribunal-full.
 version: 3.0.0
 last-updated: 2026-07-29
+status: deprecated
+successor: frontend-reviewer
+deprecation_notice: Subsumed by frontend-reviewer for pixel-level visual, DOM, and responsive reflow audit.
 skills:
   - ui-reasoning-engine
   - frontend-design

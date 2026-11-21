@@ -9,12 +9,31 @@
  *   tk heal http://localhost:3000 --json
  */
 
-const { captureRuntimeErrors, verifyRuntimeFix } = require('../browser/sentinel');
+const sentinel = require('../browser/sentinel');
+const { ensureBrowserAvailable } = require('../browser/discovery');
 const { c } = require('../utils/logger');
-const { banner } = require('../utils/helpers');
+const { banner, extractPositionalArgs } = require('../utils/helpers');
 
-async function cmdHeal(flags, processArgs, quiet = false) {
-  const url = processArgs[3] || flags.url || 'http://localhost:3000';
+async function cmdHeal(flags = {}, processArgs = process.argv, quiet = false) {
+  const positionals = extractPositionalArgs(processArgs, 'heal', ['--url']);
+  let url = flags.url || positionals[0];
+
+  if (!url) {
+    url = 'http://localhost:3000';
+    if (!quiet) {
+      console.warn(
+        `  ${c('yellow', '⚠ Warning:')} No target URL specified. Defaulting to ${c('bold', url)}. ` +
+          `To target a different server, run 'tk heal <url>'.\n`,
+      );
+    }
+  }
+
+  try {
+    ensureBrowserAvailable();
+  } catch (browserErr) {
+    console.error(`  ${c('red', '✖ Browser unavailable:')} ${browserErr.message}`);
+    process.exit(1);
+  }
 
   if (!quiet && !flags.json) {
     banner(quiet);
@@ -25,7 +44,7 @@ async function cmdHeal(flags, processArgs, quiet = false) {
 
   try {
     if (flags.verify) {
-      const verification = await verifyRuntimeFix(url, flags);
+      const verification = await sentinel.verifyRuntimeFix(url, flags);
       if (flags.json) {
         console.log(JSON.stringify(verification, null, 2));
         return;
@@ -43,7 +62,7 @@ async function cmdHeal(flags, processArgs, quiet = false) {
       return;
     }
 
-    const report = await captureRuntimeErrors(url, flags);
+    const report = await sentinel.captureRuntimeErrors(url, flags);
 
     if (flags.json) {
       console.log(JSON.stringify(report, null, 2));
@@ -99,7 +118,19 @@ async function cmdHeal(flags, processArgs, quiet = false) {
     console.log(`    2. Apply targeted fix.`);
     console.log(`    3. Run ${c('bold', `tk heal ${url} --verify`)} to confirm resolution.\n`);
   } catch (err) {
-    console.error(`  ${c('red', '✖ Sentinel scan failed:')} ${err.message}`);
+    if (
+      err.message &&
+      (err.message.includes('ERR_CONNECTION_REFUSED') ||
+        err.message.includes('ECONNREFUSED') ||
+        err.message.includes('net::ERR_NAME_NOT_RESOLVED'))
+    ) {
+      console.error(
+        `  ${c('red', '✖ Connection refused:')} Nothing is listening at ${c('bold', url)}.\n` +
+          `  Ensure your target development server is running (e.g. 'npm run dev') before running 'tk heal'.`,
+      );
+    } else {
+      console.error(`  ${c('red', '✖ Sentinel scan failed:')} ${err.message}`);
+    }
     process.exit(1);
   }
 }

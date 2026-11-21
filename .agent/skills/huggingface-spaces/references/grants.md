@@ -26,7 +26,7 @@ Free personal accounts already get 2 ZeroGPU Spaces, so a grant is now for the c
    ```
    Description of the app: one paragraph on what it does + who it's for.
    Justification: one paragraph on why this should run on ZeroGPU
-   (open-source, research, educational, etc.). 
+   (open-source, research, educational, etc.).
    ```
 
    If the user didn't give you a justification, a reasonable default is "Public open-source demo, can't cover the hardware cost — happy to provide more context if helpful."

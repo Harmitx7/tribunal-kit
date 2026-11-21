@@ -18,7 +18,8 @@
 const SECRET_PATTERNS = [
   // API keys with common prefixes (including OpenAI sk-proj, Anthropic sk-ant)
   {
-    pattern: /\b(sk_live_|sk_test_|pk_live_|pk_test_|api_key_|key_|sk-ant-|sk-proj-|sk-)[A-Za-z0-9_\-]{8,}\b/g,
+    pattern:
+      /\b(sk_live_|sk_test_|pk_live_|pk_test_|api_key_|key_|sk-ant-|sk-proj-|sk-)[A-Za-z0-9_\-]{8,}\b/g,
     label: '[REDACTED_API_KEY]',
   },
   // GitHub access tokens (ghp, gho, ghu, ghs, ghr)

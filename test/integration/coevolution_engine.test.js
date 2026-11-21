@@ -46,12 +46,7 @@ describe('CoEvolutionEngine — Dual-Loop Co-Evolution Integration', () => {
         50,
       );
 
-    const result = await engine.executeRound(
-      1,
-      'secure-coding',
-      initialSkillText,
-      corpus,
-    );
+    const result = await engine.executeRound(1, 'secure-coding', initialSkillText, corpus);
 
     expect(result.verdict).toBe('SUCCESS');
     expect(result.adversarialFindings).toBeGreaterThan(0);
@@ -83,11 +78,7 @@ describe('CoEvolutionEngine — Dual-Loop Co-Evolution Integration', () => {
         50,
       );
 
-    const campaign = await engine.runCampaign(
-      'robust-services',
-      initialSkillText,
-      corpus,
-    );
+    const campaign = await engine.runCampaign('robust-services', initialSkillText, corpus);
 
     expect(campaign.roundsCompleted).toBe(2);
     expect(campaign.converged).toBe(true);
@@ -103,8 +94,8 @@ describe('CoEvolutionEngine — Dual-Loop Co-Evolution Integration', () => {
 
   test('Security boundary invariant prevents co-evolution of protected targets', async () => {
     const protectedSkill = 'security-boundaries';
-    await expect(
-      engine.executeRound(1, protectedSkill, '# Protected', corpus),
-    ).rejects.toThrow(/protected security boundary/);
+    await expect(engine.executeRound(1, protectedSkill, '# Protected', corpus)).rejects.toThrow(
+      /protected security boundary/,
+    );
   });
 });

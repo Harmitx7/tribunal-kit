@@ -2,35 +2,39 @@
 
 > **Authority**: Martin Fowler Architecture Catalog & Simon Brown C4 Model  
 > **Applicable Domains**: Architecture Design, Structural Patterns, High/Low-Level Design  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
 ## 1. Primary Architecture Archetypes
 
-| Archetype | Structural Model | Primary Strengths | Severe Anti-Patterns | Ideal Context |
-|:---|:---|:---|:---|:---|
-| **Monolith** | Single deployable binary; in-memory calls | Fast initial velocity, trivial transactions, simple debugging | Unbounded sprawl, slow builds, tight coupling | Early stage, single team (<10 devs), unproven product |
-| **Modular Monolith** | Single binary; strict enforced module boundaries | Monolith deployability with clean domain isolation | Bypassing public APIs via direct SQL joins | Mid-size systems, clear bounded contexts |
-| **Microservices** | Independent deployables communicating over network | Independent scaling, team autonomy, isolated deployments | Distributed monolith (shared DB, synchronous call chains) | Large orgs (50+ devs), distinct scaling bottlenecks |
-| **Event-Driven (EDA)**| Asynchronous publisher-subscriber via event broker | Extreme decoupling, temporal decoupling, high burst absorption | Eventual consistency lag, event ordering failures | Async workflows, telemetry, high-throughput pipelines |
-| **Serverless** | Ephemeral, stateless compute triggered by cloud events | Zero idle cost, automatic horizontal scaling | Cold start latency, connection pool exhaustion | Sporadic traffic, webhook handlers, batch jobs |
+| Archetype              | Structural Model                                       | Primary Strengths                                              | Severe Anti-Patterns                                      | Ideal Context                                         |
+| :--------------------- | :----------------------------------------------------- | :------------------------------------------------------------- | :-------------------------------------------------------- | :---------------------------------------------------- |
+| **Monolith**           | Single deployable binary; in-memory calls              | Fast initial velocity, trivial transactions, simple debugging  | Unbounded sprawl, slow builds, tight coupling             | Early stage, single team (<10 devs), unproven product |
+| **Modular Monolith**   | Single binary; strict enforced module boundaries       | Monolith deployability with clean domain isolation             | Bypassing public APIs via direct SQL joins                | Mid-size systems, clear bounded contexts              |
+| **Microservices**      | Independent deployables communicating over network     | Independent scaling, team autonomy, isolated deployments       | Distributed monolith (shared DB, synchronous call chains) | Large orgs (50+ devs), distinct scaling bottlenecks   |
+| **Event-Driven (EDA)** | Asynchronous publisher-subscriber via event broker     | Extreme decoupling, temporal decoupling, high burst absorption | Eventual consistency lag, event ordering failures         | Async workflows, telemetry, high-throughput pipelines |
+| **Serverless**         | Ephemeral, stateless compute triggered by cloud events | Zero idle cost, automatic horizontal scaling                   | Cold start latency, connection pool exhaustion            | Sporadic traffic, webhook handlers, batch jobs        |
 
 ---
 
 ## 2. Distributed Data Consistency Patterns
 
 ### A. Saga Pattern (Distributed Transactions)
+
 Compensating transaction sequences replacing two-phase commit (2PC):
+
 1. **Choreography**: Each service publishes an event triggering the next service.
-   - *Pros*: Simple, loose coupling, no coordinator bottleneck.
-   - *Cons*: Cyclic dependency risk, hard to trace workflow state.
+   - _Pros_: Simple, loose coupling, no coordinator bottleneck.
+   - _Cons_: Cyclic dependency risk, hard to trace workflow state.
 2. **Orchestration**: A central Saga orchestrator sends commands and handles failures via compensation triggers.
-   - *Pros*: Explicit state machine, easy monitoring, simple rollback coordination.
-   - *Cons*: Orchestrator can become a single point of failure and bottleneck.
+   - _Pros_: Explicit state machine, easy monitoring, simple rollback coordination.
+   - _Cons_: Orchestrator can become a single point of failure and bottleneck.
 
 ### B. Transactional Outbox Pattern
+
 Guarantees **at-least-once** message publication without dual-write inconsistency:
+
 ```sql
 -- Step 1: Execute business logic and insert outbox record in ONE local ACID transaction
 BEGIN;
@@ -44,7 +48,9 @@ COMMIT;
 ```
 
 ### C. CQRS (Command Query Responsibility Segregation)
+
 Separates read and write data paths:
+
 - **Write Model (Command)**: Normalized OLTP store optimized for business invariants and atomic writes.
 - **Read Model (Query)**: Denormalized read-optimized stores (Elasticsearch, Redis, Read Replicas) populated asynchronously via CDC or domain events.
 
@@ -74,6 +80,7 @@ Document architectures across 4 standardized zoom levels:
 ```
 
 ### Context Diagram Example (Mermaid)
+
 ```mermaid
 graph TD
     User([Customer]) -->|HTTPS/REST| WebApp[Single Page Application]

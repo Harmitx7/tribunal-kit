@@ -1,6 +1,6 @@
 ---
 name: huggingface-llm-trainer
-description: "Use when loading, evaluating, fine-tuning, and deploying huggingface llm trainer machine learning models, datasets, and inference pipelines."
+description: 'Use when loading, evaluating, fine-tuning, and deploying huggingface llm trainer machine learning models, datasets, and inference pipelines.'
 version: 6.0.0
 last-updated: 2026-09-29
 tools: Read, Grep, Glob, Bash, Edit, Write
@@ -8,57 +8,59 @@ scripts-binding:
   - .agent/scripts/lint_runner.js
   - .agent/scripts/verify_all.js
 inputs:
-  task: "string"
-  target_file: "string"
+  task: 'string'
+  target_file: 'string'
 outputs:
-  result: "string"
-  verification_status: "boolean"
+  result: 'string'
+  verification_status: 'boolean'
 trigger:
-  - "huggingface"
-  - "llm"
-  - "trainer"
+  - 'huggingface'
+  - 'llm'
+  - 'trainer'
 ---
 
 # TRL Training on Hugging Face Jobs
 
 ## Mandatory Pre-Flight Context Inspection
+
 Before reading, generating, or refactoring code in the `huggingface-llm-trainer` domain, inspect these 5 critical parameters:
+
 1. **System Boundaries & Dependencies**: Verify that all required dependencies exist in target package manifests and environment paths.
 2. **Runtime Context & Platform Invariants**: Confirm target platform constraints (Node.js, Browser, Mobile OS, Edge runtime) before applying APIs.
 3. **Execution Guardrails**: Identify potential side-effects, state mutations, and unhandled asynchronous exceptions.
 4. **Validation & Type Contracts**: Validate input data schemas and strict type constraints across all module interfaces.
 5. **Observability & Proof of Execution**: Ensure execution produces tangible verification signals (terminal output, tests, metrics).
 
-
 ## Activation Boundaries
+
 - **Activate when:** Use when loading, evaluating, fine-tuning, and deploying huggingface llm trainer machine learning models, datasets, and inference pipelines.
 - **DO NOT activate when:** The task falls outside the `huggingface-llm-trainer` domain or is managed by a different dedicated specialist agent.
 
-
 ## 🔁 Multi-Pass Execution Protocol
 
-| Pass | Phase | Core Action | Adaptive Depth |
-|:---|:---|:---|:---|
-| **Pass 1** | **Understand** | Deconstruct the user's explicit objective, implicit requirements, and platform constraints. | Fast / Standard / Deep |
-| **Pass 2** | **Plan** | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls. | Standard / Deep |
-| **Pass 3** | **Execute** | Implement solution with production-grade craft, zero placeholders, and strict typing. | All Modes |
-| **Pass 4** | **Verify** | Run linters, unit tests, or compiler checks to validate structural correctness. | All Modes |
-| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep |
-| **Pass 6** | **Harden** | Eliminate discovered friction, optimize performance, and harden error boundaries. | Standard / Deep |
-| **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. | All Modes |
-
+| Pass       | Phase                | Core Action                                                                                     | Adaptive Depth         |
+| :--------- | :------------------- | :---------------------------------------------------------------------------------------------- | :--------------------- |
+| **Pass 1** | **Understand**       | Deconstruct the user's explicit objective, implicit requirements, and platform constraints.     | Fast / Standard / Deep |
+| **Pass 2** | **Plan**             | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls.   | Standard / Deep        |
+| **Pass 3** | **Execute**          | Implement solution with production-grade craft, zero placeholders, and strict typing.           | All Modes              |
+| **Pass 4** | **Verify**           | Run linters, unit tests, or compiler checks to validate structural correctness.                 | All Modes              |
+| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep        |
+| **Pass 6** | **Harden**           | Eliminate discovered friction, optimize performance, and harden error boundaries.               | Standard / Deep        |
+| **Pass 7** | **Quality Gate**     | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing.    | All Modes              |
 
 ## Overview
 
 Train language models using TRL (Transformer Reinforcement Learning) on fully managed Hugging Face infrastructure. No local GPU setup required—models train on cloud GPUs and results are automatically saved to the Hugging Face Hub.
 
 **TRL provides multiple training methods:**
+
 - **SFT** (Supervised Fine-Tuning) - Standard instruction tuning
 - **DPO** (Direct Preference Optimization) - Alignment from preference data
 - **GRPO** (Group Relative Policy Optimization) - Online RL training
 - **Reward Modeling** - Train reward models for RLHF
 
 **For detailed TRL method documentation:**
+
 ```python
 hf_doc_search("your query", product="trl")
 hf_doc_fetch("https://huggingface.co/docs/trl/sft_trainer")  # SFT
@@ -71,6 +73,7 @@ hf_doc_fetch("https://huggingface.co/docs/trl/dpo_trainer")  # DPO
 ## When to Use This Skill
 
 Use this skill when users want to:
+
 - Fine-tune language models on cloud GPUs without local infrastructure
 - Train with TRL methods (SFT, DPO, GRPO, etc.)
 - Run training jobs on Hugging Face Jobs infrastructure
@@ -81,6 +84,7 @@ Use this skill when users want to:
 ### When to Use Unsloth
 
 Use **Unsloth** (`references/unsloth.md`) instead of standard TRL when:
+
 - **Limited GPU memory** - Unsloth uses ~60% less VRAM
 - **Speed matters** - Unsloth is ~2x faster
 - Training **large models (>13B)** - memory efficiency is critical
@@ -103,6 +107,7 @@ When assisting with training jobs:
 ## Local Script Execution
 
 Repository scripts use PEP 723 inline dependencies. Run them with `uv run`:
+
 ```bash
 uv run scripts/estimate_cost.py --help
 uv run scripts/dataset_inspector.py --help
@@ -113,20 +118,23 @@ uv run scripts/dataset_inspector.py --help
 Before starting any training job, verify:
 
 ### ✅ **Account & Authentication**
+
 - Hugging Face Account with [Pro](https://hf.co/pro), [Team](https://hf.co/enterprise), or [Enterprise](https://hf.co/enterprise) plan (Jobs require paid plan)
 - Authenticated login: Check with `hf_whoami()`
 - **HF_TOKEN for Hub Push** ⚠️ CRITICAL - Training environment is ephemeral, must push to Hub or ALL training results are lost
-- Token must have write permissions  
+- Token must have write permissions
 - **MUST pass `secrets={"HF_TOKEN": "$HF_TOKEN"}` in job config** to make token available (the `$HF_TOKEN` syntax
   references your actual token value)
 
 ### ✅ **Dataset Requirements**
+
 - Dataset must exist on Hub or be loadable via `datasets.load_dataset()`
 - Format must match training method (SFT: "messages"/text/prompt-completion; DPO: chosen/rejected; GRPO: prompt-only)
 - **ALWAYS validate unknown datasets** before GPU training to prevent format failures (see Dataset Validation section below)
 - Size appropriate for hardware (Demo: 50-100 examples on t4-small; Production: 1K-10K+ on a10g-large/a100-large)
 
 ### ⚠️ **Critical Settings**
+
 - **Timeout must exceed expected training time** - Default 30min is TOO SHORT for most training. Minimum recommended: 1-2 hours. Job fails and loses all progress if timeout is exceeded.
 - **Hub push must be enabled** - Config: `push_to_hub=True`, `hub_model_id="username/model-name"`; Job: `secrets={"HF_TOKEN": "$HF_TOKEN"}`
 
@@ -137,12 +145,14 @@ Before starting any training job, verify:
 ### Action Required
 
 **When user requests training:**
+
 1. **Create the training script** with Trackio included (use `scripts/train_sft_example.py` as template)
 2. **Submit immediately** using `hf_jobs()` MCP tool with script content inline - don't save to file unless user requests
 3. **Report submission** with job ID, monitoring URL, and estimated time
 4. **Wait for user** to request status checks - don't poll automatically
 
 ### Ground Rules
+
 - **Jobs run in background** - Submission returns immediately; training continues independently
 - **Initial logs delayed** - Can take 30-60 seconds for logs to appear
 - **User checks status** - Wait for user to request status updates
@@ -151,12 +161,14 @@ Before starting any training job, verify:
 ### After Submission
 
 **Provide to user:**
+
 - ✅ Job ID and monitoring URL
 - ✅ Expected completion time
 - ✅ Trackio dashboard URL
 - ✅ Note that user can request status checks later
 
 **Example Response:**
+
 ```
 ✅ Job submitted successfully!
 
@@ -189,6 +201,7 @@ SFTConfig(max_seq_length=512)  # TypeError!
 **Default behavior:** `max_length=1024` (truncates from right). This works well for most training.
 
 **When to override:**
+
 - **Longer context**: Set higher (e.g., `max_length=2048`)
 - **Memory constraints**: Set lower (e.g., `max_length=512`)
 - **Vision models**: Set `max_length=None` (prevents cutting image tokens)
@@ -252,11 +265,13 @@ trainer.push_to_hub()
 
 **Why local paths don't work:**
 Jobs run in isolated Docker containers without access to your local filesystem. Scripts must be:
+
 - Inline code (recommended for custom training)
 - Publicly accessible URLs
 - Private repo URLs (with HF_TOKEN)
 
 **Common mistakes:**
+
 ```python
 # ❌ These will all fail
 hf_jobs("uv", {"script": "train.py"})
@@ -265,6 +280,7 @@ hf_jobs("uv", {"script": "/path/to/train.py"})
 ```
 
 **Correct approaches:**
+
 ```python
 # ✅ Inline code (recommended)
 hf_jobs("uv", {"script": "# /// script\n# dependencies = [...]\n# ///\n\n<your code>"})
@@ -280,6 +296,7 @@ hf_jobs("uv", {"script": "https://gist.githubusercontent.com/user/id/raw/train.p
 ```
 
 **To use local scripts:** Upload to HF Hub first:
+
 ```bash
 hf repos create my-training-scripts --type model
 hf upload my-training-scripts ./train.py train.py
@@ -345,12 +362,14 @@ hf jobs uv run --secret HF_TOKEN "https://example.com/train.py"
 ```
 
 **Key syntax rules:**
+
 1. Command order is `hf jobs uv run` (NOT `hf jobs run uv`)
 2. All flags (`--flavor`, `--timeout`, `--secrets`) must come BEFORE the script URL
 3. Use `--secrets` (plural), not `--secret`
 4. Script URL must be the last positional argument
 
 **Complete CLI example:**
+
 ```bash
 hf jobs uv run \
   --flavor a10g-large \
@@ -360,6 +379,7 @@ hf jobs uv run \
 ```
 
 **Check job status via CLI:**
+
 ```bash
 hf jobs ps                        # List all jobs
 hf jobs logs <job-id>             # View logs
@@ -386,17 +406,18 @@ uvx trl-jobs sft \
 
 ## Hardware Selection
 
-| Model Size | Recommended Hardware | Cost (approx/hr) | Use Case |
-|------------|---------------------|------------------|----------|
-| <1B params | `t4-small` | ~$0.75 | Demos, quick tests only without eval steps |
-| 1-3B params | `t4-medium`, `l4x1` | ~$1.50-2.50 | Development |
-| 3-7B params | `a10g-small`, `a10g-large` | ~$3.50-5.00 | Production training |
-| 7-13B params | `a10g-large`, `a100-large` | ~$5-10 | Large models (use LoRA) |
-| 13B+ params | `a100-large`, `a10g-largex2` | ~$10-20 | Very large (use LoRA) |
+| Model Size   | Recommended Hardware         | Cost (approx/hr) | Use Case                                   |
+| ------------ | ---------------------------- | ---------------- | ------------------------------------------ |
+| <1B params   | `t4-small`                   | ~$0.75           | Demos, quick tests only without eval steps |
+| 1-3B params  | `t4-medium`, `l4x1`          | ~$1.50-2.50      | Development                                |
+| 3-7B params  | `a10g-small`, `a10g-large`   | ~$3.50-5.00      | Production training                        |
+| 7-13B params | `a10g-large`, `a100-large`   | ~$5-10           | Large models (use LoRA)                    |
+| 13B+ params  | `a100-large`, `a10g-largex2` | ~$10-20          | Very large (use LoRA)                      |
 
 **GPU Flavors:** cpu-basic/upgrade/performance/xl, t4-small/medium, l4x1/x4, a10g-small/large/largex2/largex4, a100-large, h100/h100x8
 
 **Guidelines:**
+
 - Use **LoRA/PEFT** for models >7B to reduce memory
 - Multi-GPU automatically handled by TRL/Accelerate
 - Start with smaller hardware for testing
@@ -412,6 +433,7 @@ The Jobs environment is temporary. All files are deleted when the job ends. If t
 ### Required Configuration
 
 **In training script/config:**
+
 ```python
 SFTConfig(
     push_to_hub=True,
@@ -421,6 +443,7 @@ SFTConfig(
 ```
 
 **In job submission:**
+
 ```python
 {
     "secrets": {"HF_TOKEN": "$HF_TOKEN"}  # Enables authentication
@@ -430,6 +453,7 @@ SFTConfig(
 ### Verification Checklist
 
 Before submitting:
+
 - [ ] `push_to_hub=True` set in config
 - [ ] `hub_model_id` includes username/repo-name
 - [ ] `secrets` parameter includes HF_TOKEN
@@ -451,12 +475,12 @@ Before submitting:
 
 ### Timeout Guidelines
 
-| Scenario | Recommended | Notes |
-|----------|-------------|-------|
-| Quick demo (50-100 examples) | 10-30 min | Verify setup |
-| Development training | 1-2 hours | Small datasets |
-| Production (3-7B model) | 4-6 hours | Full datasets |
-| Large model with LoRA | 3-6 hours | Depends on dataset |
+| Scenario                     | Recommended | Notes              |
+| ---------------------------- | ----------- | ------------------ |
+| Quick demo (50-100 examples) | 10-30 min   | Verify setup       |
+| Development training         | 1-2 hours   | Small datasets     |
+| Production (3-7B model)      | 4-6 hours   | Full datasets      |
+| Large model with LoRA        | 3-6 hours   | Depends on dataset |
 
 **Always add 20-30% buffer** for model/dataset loading, checkpoint saving, Hub push operations, and network delays.
 
@@ -474,11 +498,12 @@ uv run scripts/hf_benchmarks.py --help
 ```
 
 ### Example -- choosing an OCR base model
+
 ```bash
 # Search for benchmarks containing whose name contains the text `ocr`
 uv run scripts/hf_benchmarks.py search --query ocr
 
-# Get the ranked leaderboard for the allenai/olmOCR-bench benchmark 
+# Get the ranked leaderboard for the allenai/olmOCR-bench benchmark
 uv run scripts/hf_benchmarks.py leaderboard allenai/olmOCR-bench
 ```
 
@@ -516,6 +541,7 @@ These scripts demonstrate proper Hub saving, Trackio integration, checkpoint man
 **Trackio** provides real-time metrics visualization. See `references/trackio_guide.md` for complete setup guide.
 
 **Key points:**
+
 - Add `trackio` to dependencies
 - Configure trainer with `report_to="trackio" and run_name="meaningful_name"`
 
@@ -524,13 +550,13 @@ These scripts demonstrate proper Hub saving, Trackio integration, checkpoint man
 **Use sensible defaults unless user specifies otherwise.** When generating training scripts with Trackio:
 
 **Default Configuration:**
+
 - **Space ID**: `{username}/trackio` (use "trackio" as default space name)
 - **Run naming**: Unless otherwise specified, name the run in a way the user will recognize (e.g., descriptive of the task, model, or purpose)
 - **Config**: Keep minimal - only include hyperparameters and model/dataset info
-- **Project Name**: Use a Project Name to associate runs with a particular Project 
+- **Project Name**: Use a Project Name to associate runs with a particular Project
 
 **User overrides:** If user requests specific trackio configuration (custom space, run naming, grouping, or additional config), apply their preferences instead of defaults.
-
 
 This is useful for managing multiple jobs with the same configuration or keeping training scripts portable.
 
@@ -565,11 +591,13 @@ hf_jobs("logs", {"job_id": "your-job-id"})
 ### When to Validate
 
 **ALWAYS validate for:**
+
 - Unknown or custom datasets
 - DPO training (CRITICAL - 90% of datasets need mapping)
 - Any dataset not explicitly TRL-compatible
 
 **Skip validation for known TRL datasets:**
+
 - `trl-lib/ultrachat_200k`, `trl-lib/Capybara`, `HuggingFaceH4/ultrachat_200k`, etc.
 
 ### Usage
@@ -635,12 +663,14 @@ The validator detects this and provides exact mapping code to fix it.
 After training, convert models to **GGUF format** for use with llama.cpp, Ollama, LM Studio, and other local inference tools.
 
 **What is GGUF:**
+
 - Optimized for CPU/GPU inference with llama.cpp
 - Supports quantization (4-bit, 5-bit, 8-bit) to reduce model size
 - Compatible with Ollama, LM Studio, Jan, GPT4All, llama.cpp
 - Typically 2-8GB for 7B models (vs 14GB unquantized)
 
 **When to convert:**
+
 - Running models locally with Ollama or LM Studio
 - Reducing model size with quantization
 - Deploying to edge devices
@@ -649,6 +679,7 @@ After training, convert models to **GGUF format** for use with llama.cpp, Ollama
 **See:** `references/gguf_conversion.md` for complete conversion guide, including production-ready conversion script, quantization options, hardware requirements, usage examples, and troubleshooting.
 
 **Quick conversion:**
+
 ```python
 hf_jobs("uv", {
     "script": "<see references/gguf_conversion.md for complete script>",
@@ -666,6 +697,7 @@ hf_jobs("uv", {
 ## Common Training Patterns
 
 See `references/training_patterns.md` for detailed examples including:
+
 - Quick demo (5-10 minutes)
 - Production with checkpoints
 - Multi-GPU training
@@ -677,13 +709,15 @@ See `references/training_patterns.md` for detailed examples including:
 ### Out of Memory (OOM)
 
 **Fix (try in order):**
-1. Reduce batch size: `per_device_train_batch_size=1`, increase `gradient_accumulation_steps=8`. Effective batch size is `per_device_train_batch_size` x `gradient_accumulation_steps`. For best performance keep effective batch size close to 128. 
+
+1. Reduce batch size: `per_device_train_batch_size=1`, increase `gradient_accumulation_steps=8`. Effective batch size is `per_device_train_batch_size` x `gradient_accumulation_steps`. For best performance keep effective batch size close to 128.
 2. Enable: `gradient_checkpointing=True`
-3. Upgrade hardware: t4-small → l4x1, a10g-small → a10g-large etc. 
+3. Upgrade hardware: t4-small → l4x1, a10g-small → a10g-large etc.
 
 ### Dataset Misformatted
 
 **Fix:**
+
 1. Validate first with dataset inspector:
    ```bash
    uv run https://huggingface.co/datasets/mcp-tools/skills/raw/main/dataset_inspector.py \
@@ -695,6 +729,7 @@ See `references/training_patterns.md` for detailed examples including:
 ### Job Timeout
 
 **Fix:**
+
 1. Check logs for actual runtime: `hf_jobs("logs", {"job_id": "..."})`
 2. Increase timeout with buffer: `"timeout": "3h"` (add 30% to estimated time)
 3. Or reduce training: lower `num_train_epochs`, use smaller dataset, enable `max_steps`
@@ -705,6 +740,7 @@ See `references/training_patterns.md` for detailed examples including:
 ### Hub Push Failures
 
 **Fix:**
+
 1. Add to job: `secrets={"HF_TOKEN": "$HF_TOKEN"}`
 2. Add to config: `push_to_hub=True`, `hub_model_id="username/model-name"`
 3. Verify auth: `mcp__huggingface__hf_whoami()`
@@ -714,6 +750,7 @@ See `references/training_patterns.md` for detailed examples including:
 
 **Fix:**
 Add to PEP 723 header:
+
 ```python
 # /// script
 # dependencies = ["trl>=0.12.0", "peft>=0.7.0", "trackio", "missing-package"]
@@ -723,6 +760,7 @@ Add to PEP 723 header:
 ## Troubleshooting
 
 **Common issues:**
+
 - Job times out → Increase timeout, reduce epochs/dataset, use smaller model/LoRA
 - Model not saved to Hub → Check push_to_hub=True, hub_model_id, secrets=HF_TOKEN
 - Out of Memory (OOM) → Reduce batch size, increase gradient accumulation, enable LoRA, use larger GPU
@@ -735,6 +773,7 @@ Add to PEP 723 header:
 ## Resources
 
 ### References (In This Skill)
+
 - `references/training_methods.md` - Overview of SFT, DPO, GRPO, KTO, PPO, Reward Modeling
 - `references/training_patterns.md` - Common training patterns and examples
 - `references/unsloth.md` - Unsloth for fast VLM training (~2x speed, 60% less VRAM)
@@ -746,6 +785,7 @@ Add to PEP 723 header:
 - `references/local_training_macos.md` - Local training on macOS
 
 ### Scripts (In This Skill)
+
 - `scripts/train_sft_example.py` - Production SFT template
 - `scripts/train_dpo_example.py` - Production DPO template
 - `scripts/train_grpo_example.py` - Production GRPO template
@@ -755,9 +795,11 @@ Add to PEP 723 header:
 - `scripts/hf_benchmarks.py` - Search for benchmark results and leaderboards by task, alias or free text.
 
 ### External Scripts
+
 - [Dataset Inspector](https://huggingface.co/datasets/mcp-tools/skills/raw/main/dataset_inspector.py) - Validate dataset format before training (use via `uv run` or `hf_jobs`)
 
 ### External Links
+
 - [TRL Documentation](https://huggingface.co/docs/trl)
 - [TRL Jobs Training Guide](https://huggingface.co/docs/trl/en/jobs_training)
 - [TRL Jobs Package](https://github.com/huggingface/trl-jobs)
@@ -781,23 +823,21 @@ Add to PEP 723 header:
 
 ## 🚨 Edge-Case & Failure Mode Matrix
 
-| Scenario | Risk | Production Mitigation |
-|:---|:---|:---|
-| **Empty or Null Inputs** | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers |
-| **Network Timeout / Latency** | Hanging operations or duplicate side-effects | Implement bounded abort controllers, exponential backoff, and idempotency keys |
-| **Concurrency / Race Conditions** | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls |
-| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection | Validate boundary payloads with Zod/Pydantic schemas prior to execution |
-| **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
-
+| Scenario                               | Risk                                                 | Production Mitigation                                                           |
+| :------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **Empty or Null Inputs**               | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers   |
+| **Network Timeout / Latency**          | Hanging operations or duplicate side-effects         | Implement bounded abort controllers, exponential backoff, and idempotency keys  |
+| **Concurrency / Race Conditions**      | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls          |
+| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection      | Validate boundary payloads with Zod/Pydantic schemas prior to execution         |
+| **Resource / Memory Saturation**       | OOM errors, frame drops, or memory leaks             | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
 
 ## 🤖 LLM-Specific Traps Table
 
-| Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
-|:---|:---|:---|
-| **Platform-Dependent Shell Commands** | Hardcoding $(cat ~/.cache/huggingface/token) or piping to jq | Use platform-agnostic token checks via env var HF_TOKEN and native JSON parsing |
-| **VRAM OOM Crash** | Loading 70B model weights on a consumer 16GB GPU without quantization | Calculate parameter bounds (fp16 = VRAM/2, Q4 = VRAM*2) and load with bitsandbytes/GGUF |
-| **Blocking Batch Generation** | Generating large batches synchronously without streaming or yield | Use TextIteratorStreamer or asynchronous generate workers to prevent request timeouts |
-
+| Anti-Pattern                          | What AI Commonly Does Wrong                                           | What Is Actually Correct                                                                |
+| :------------------------------------ | :-------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| **Platform-Dependent Shell Commands** | Hardcoding $(cat ~/.cache/huggingface/token) or piping to jq          | Use platform-agnostic token checks via env var HF_TOKEN and native JSON parsing         |
+| **VRAM OOM Crash**                    | Loading 70B model weights on a consumer 16GB GPU without quantization | Calculate parameter bounds (fp16 = VRAM/2, Q4 = VRAM*2) and load with bitsandbytes/GGUF |
+| **Blocking Batch Generation**         | Generating large batches synchronously without streaming or yield     | Use TextIteratorStreamer or asynchronous generate workers to prevent request timeouts   |
 
 ## 🏛️ Tribunal Verification & Guardrails
 
@@ -805,12 +845,15 @@ Add to PEP 723 header:
 **Slash Command:** `/review` or `/tribunal-full`
 
 ### 🔬 Evidence Standard (Tri-State Verification)
+
 Every finding, audit statement, or completion claim must classify its factual certainty:
+
 - **`[OBSERVED]`**: Directly confirmed in the codebase or verified via executed terminal command.
 - **`[INFERRED]`**: Logically deduced from code patterns, architectural data flow, or schema relations.
 - **`[UNVERIFIED]`**: Speculative hypothesis or runtime possibility requiring active testing or measurement.
 
 ### ✅ Pre-Flight Self-Audit Checklist
+
 ```
 ✅ Are model architectures and weights verified to fit within target hardware VRAM budgets?
 ✅ Are pipeline requests guarded with bounded timeouts and retry backoffs?
@@ -820,6 +863,8 @@ Every finding, audit statement, or completion claim must classify its factual ce
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
+
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.

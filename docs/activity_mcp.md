@@ -87,6 +87,7 @@ try {
 ```
 
 Produces:
+
 ```json
 {
   "content": [
@@ -111,6 +112,7 @@ const boundedFindings = McpResponseOptimizer.boundArray(findings, 50, {
 ```
 
 When truncated, an explicit `_pagination` descriptor is attached:
+
 ```json
 {
   "_pagination": {
@@ -128,15 +130,15 @@ When truncated, an explicit `_pagination` descriptor is attached:
 
 Prevents accidental leakage of environment credentials or authorization headers in MCP responses:
 
-| Pattern | Redaction Output |
-|---|---|
-| `Bearer eyJhbGci...` | `Bearer [REDACTED_TOKEN]` |
-| `ghp_1234567890abcdef...` | `ghp_[REDACTED_GITHUB_TOKEN]` |
-| `sk-ant-api03-...` | `sk-ant-[REDACTED_API_KEY]` |
-| `sk-proj-...` | `sk-proj-[REDACTED_API_KEY]` |
-| `eyJhbGciOi...` (JWT) | `[REDACTED_JWT]` |
-| `-----BEGIN PRIVATE KEY-----` | `[REDACTED_PRIVATE_KEY]` |
-| Password / Secret fields in objects | `[REDACTED_SECRET]` |
+| Pattern                             | Redaction Output              |
+| ----------------------------------- | ----------------------------- |
+| `Bearer eyJhbGci...`                | `Bearer [REDACTED_TOKEN]`     |
+| `ghp_1234567890abcdef...`           | `ghp_[REDACTED_GITHUB_TOKEN]` |
+| `sk-ant-api03-...`                  | `sk-ant-[REDACTED_API_KEY]`   |
+| `sk-proj-...`                       | `sk-proj-[REDACTED_API_KEY]`  |
+| `eyJhbGciOi...` (JWT)               | `[REDACTED_JWT]`              |
+| `-----BEGIN PRIVATE KEY-----`       | `[REDACTED_PRIVATE_KEY]`      |
+| Password / Secret fields in objects | `[REDACTED_SECRET]`           |
 
 ### E. Token & Payload Telemetry (`measurePayload`)
 
@@ -164,11 +166,11 @@ Empirical measurements gathered via `tribunal-kit/scripts/benchmark_mcp_response
 
 ### Context Efficiency Across Payload Tiers
 
-| Payload Tier | Representative Tool | Baseline Size | Optimized Size | Bytes Saved | Token Reduction | Roundtrip Integrity |
-|---|---|---|---|---|---|---|
-| **Small** | `tribunal_analyze_finding` | 305 bytes (~77 tokens) | 255 bytes (~64 tokens) | 50 B (16.39%) | ~13 tokens | 100% verified |
-| **Medium** | `tribunal_commit_write` | 989 bytes (~248 tokens) | 742 bytes (~186 tokens) | 247 B (24.97%) | ~62 tokens | 100% verified |
-| **Large** | `tribunal_understand` (Audit) | 10,480 bytes (~2,620 tokens) | 7,754 bytes (~1,939 tokens) | 2,726 B (26.01%) | ~681 tokens | 100% verified |
+| Payload Tier | Representative Tool           | Baseline Size                | Optimized Size              | Bytes Saved      | Token Reduction | Roundtrip Integrity |
+| ------------ | ----------------------------- | ---------------------------- | --------------------------- | ---------------- | --------------- | ------------------- |
+| **Small**    | `tribunal_analyze_finding`    | 305 bytes (~77 tokens)       | 255 bytes (~64 tokens)      | 50 B (16.39%)    | ~13 tokens      | 100% verified       |
+| **Medium**   | `tribunal_commit_write`       | 989 bytes (~248 tokens)      | 742 bytes (~186 tokens)     | 247 B (24.97%)   | ~62 tokens      | 100% verified       |
+| **Large**    | `tribunal_understand` (Audit) | 10,480 bytes (~2,620 tokens) | 7,754 bytes (~1,939 tokens) | 2,726 B (26.01%) | ~681 tokens     | 100% verified       |
 
 ### Serialization Throughput
 
@@ -187,4 +189,3 @@ The optimized responses adhere strictly to the **MCP Protocol Specification (202
 - **Antigravity**: Native parsing of compact MCP tool results. Zero deserialization errors.
 - **Cursor & Windsurf**: Compatible with standard stdio JSON-RPC transport and content blocks.
 - **Backward Compatibility**: Any client calling `JSON.parse(content[0].text)` receives the exact object schema expected by legacy workflows.
-

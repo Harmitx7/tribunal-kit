@@ -83,8 +83,8 @@ function runBenchmark() {
     },
     findings: Array.from({ length: 25 }, (_, i) => ({
       id: `FIND-${1000 + i}`,
-      category: i % 4 === 0 ? 'security' : (i % 3 === 0 ? 'performance' : 'architecture'),
-      severity: i === 0 ? 'critical' : (i < 5 ? 'high' : 'medium'),
+      category: i % 4 === 0 ? 'security' : i % 3 === 0 ? 'performance' : 'architecture',
+      severity: i === 0 ? 'critical' : i < 5 ? 'high' : 'medium',
       file: `src/subsystems/module_${i % 6}/handler.ts`,
       line: 10 + i * 5,
       message: `Heuristic check finding #${i + 1} with context and recommendations`,
@@ -110,9 +110,15 @@ function runBenchmark() {
     const optimizedEst = estimateTokens(JSON.stringify(data));
 
     console.log(`[Fixture] ${name}:`);
-    console.log(`  Baseline Size:    ${metrics.baselineBytes.toLocaleString()} bytes (~${baselineEst.estimatedTokens.toLocaleString()} tokens)`);
-    console.log(`  Optimized Size:   ${metrics.optimizedBytes.toLocaleString()} bytes (~${optimizedEst.estimatedTokens.toLocaleString()} tokens)`);
-    console.log(`  Bytes Saved:      ${metrics.bytesSaved.toLocaleString()} bytes (${metrics.reductionPercent}% reduction)`);
+    console.log(
+      `  Baseline Size:    ${metrics.baselineBytes.toLocaleString()} bytes (~${baselineEst.estimatedTokens.toLocaleString()} tokens)`,
+    );
+    console.log(
+      `  Optimized Size:   ${metrics.optimizedBytes.toLocaleString()} bytes (~${optimizedEst.estimatedTokens.toLocaleString()} tokens)`,
+    );
+    console.log(
+      `  Bytes Saved:      ${metrics.bytesSaved.toLocaleString()} bytes (${metrics.reductionPercent}% reduction)`,
+    );
     console.log(`  Tokens Saved:     ~${metrics.tokensSaved.toLocaleString()} tokens`);
     console.log(`  Data Integrity:   100% (roundtrip JSON.parse matches original)\n`);
   }
@@ -140,4 +146,3 @@ function runBenchmark() {
 }
 
 runBenchmark();
-

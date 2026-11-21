@@ -33,7 +33,8 @@ function runBenchmark() {
   console.log(`[1] ANSI Fast-Path vs Escape Code Stripping (${ITERATIONS} iterations):`);
 
   const cleanString = 'Linting src/activity/schema.js with ESLint rules';
-  const ansiString = '\u001b[32mLinting\u001b[0m \u001b[1msrc/activity/schema.js\u001b[0m with ESLint rules';
+  const ansiString =
+    '\u001b[32mLinting\u001b[0m \u001b[1msrc/activity/schema.js\u001b[0m with ESLint rules';
 
   const { stripAnsi } = require('../src/activity');
 
@@ -53,8 +54,12 @@ function runBenchmark() {
   const ansiMs = Number(ansiDurationNs) / 1e6;
   const ansiOpsSec = Math.round((ITERATIONS / ansiMs) * 1000);
 
-  console.log(`    - Clean string (Fast-Path indexOf): ${cleanMs.toFixed(2)} ms (${cleanOpsSec.toLocaleString()} ops/sec)`);
-  console.log(`    - ANSI string (Regex Replacement): ${ansiMs.toFixed(2)} ms (${ansiOpsSec.toLocaleString()} ops/sec)`);
+  console.log(
+    `    - Clean string (Fast-Path indexOf): ${cleanMs.toFixed(2)} ms (${cleanOpsSec.toLocaleString()} ops/sec)`,
+  );
+  console.log(
+    `    - ANSI string (Regex Replacement): ${ansiMs.toFixed(2)} ms (${ansiOpsSec.toLocaleString()} ops/sec)`,
+  );
   console.log(`    - Fast-Path Speedup: ${(ansiMs / cleanMs).toFixed(2)}x faster`);
   console.log('');
 
@@ -62,7 +67,8 @@ function runBenchmark() {
   console.log(`[2] Secret Redaction Fast-Path vs Pattern Matching (${ITERATIONS} iterations):`);
 
   const cleanText = 'Running unit test suite for regression verification on release v2.4.0';
-  const secretText = 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY';
+  const secretText =
+    'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY';
 
   const startCleanSec = process.hrtime.bigint();
   for (let i = 0; i < ITERATIONS; i++) {
@@ -80,8 +86,12 @@ function runBenchmark() {
   const secMs = Number(secNs) / 1e6;
   const secOps = Math.round((ITERATIONS / secMs) * 1000);
 
-  console.log(`    - Non-Secret Text (Fast Trigger Skip): ${cleanSecMs.toFixed(2)} ms (${cleanSecOps.toLocaleString()} ops/sec)`);
-  console.log(`    - Active Secret Text (10-Pattern Regex): ${secMs.toFixed(2)} ms (${secOps.toLocaleString()} ops/sec)`);
+  console.log(
+    `    - Non-Secret Text (Fast Trigger Skip): ${cleanSecMs.toFixed(2)} ms (${cleanSecOps.toLocaleString()} ops/sec)`,
+  );
+  console.log(
+    `    - Active Secret Text (10-Pattern Regex): ${secMs.toFixed(2)} ms (${secOps.toLocaleString()} ops/sec)`,
+  );
   console.log(`    - Trigger Skip Speedup: ${(secMs / cleanSecMs).toFixed(2)}x faster`);
   console.log('');
 
@@ -100,7 +110,9 @@ function runBenchmark() {
   const cyclicMs = Number(cyclicNs) / 1e6;
   const cyclicOps = Math.round((ITERATIONS / cyclicMs) * 1000);
 
-  console.log(`    - Cycle-Safe WeakMap Clone: ${cyclicMs.toFixed(2)} ms (${cyclicOps.toLocaleString()} ops/sec)`);
+  console.log(
+    `    - Cycle-Safe WeakMap Clone: ${cyclicMs.toFixed(2)} ms (${cyclicOps.toLocaleString()} ops/sec)`,
+  );
   console.log(`    - Zero Stack Overflow errors encountered.`);
   console.log('');
 
@@ -120,7 +132,7 @@ function runBenchmark() {
         phase: `Stage ${(i % 10) + 1}`,
         title: 'Phase 11 Hardening Stress Test',
         summary: `Processing item #${i}`,
-      }
+      },
     );
   }
 
@@ -133,8 +145,12 @@ function runBenchmark() {
 
   tracker.dispose();
 
-  console.log(`    - Total Time for 10,000 Events: ${burstMs.toFixed(2)} ms (${burstOps.toLocaleString()} events/sec)`);
-  console.log(`    - Heap Growth: ${memDiffKb > 0 ? '+' : ''}${memDiffKb} KB (Bounded buffer strictly enforced)`);
+  console.log(
+    `    - Total Time for 10,000 Events: ${burstMs.toFixed(2)} ms (${burstOps.toLocaleString()} events/sec)`,
+  );
+  console.log(
+    `    - Heap Growth: ${memDiffKb > 0 ? '+' : ''}${memDiffKb} KB (Bounded buffer strictly enforced)`,
+  );
   console.log(`    - Buffer Retained Count: ${tracker.events.length} events retained`);
   console.log('');
 

@@ -3,12 +3,32 @@ const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
 const { execSync } = require('child_process');
+const { assertWithinRoot } = require('./_utils');
+
+let validateResourceId;
+try {
+  ({ validateResourceId } = require('../../src/security/boundary'));
+} catch {
+  validateResourceId = id => {
+    if (typeof id !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(id)) {
+      throw new Error(
+        `Invalid resource identifier: "${id}". Only alphanumeric characters, dashes, and underscores are permitted.`,
+      );
+    }
+    return id;
+  };
+}
 
 function generateHash(content) {
   return crypto.createHash('sha256').update(content).digest('hex');
 }
 
 function runBehavioralTest(skillRaw, classifierResult, scenarios) {
+  if (!skillRaw || !skillRaw.name) {
+    throw new Error('Invalid skill object: missing name');
+  }
+  validateResourceId(skillRaw.name);
+
   if (classifierResult.class === 'REFERENCE_ONLY' || classifierResult.class === 'UNKNOWN') {
     return {
       skill: skillRaw.name,
@@ -28,7 +48,9 @@ function runBehavioralTest(skillRaw, classifierResult, scenarios) {
     };
   }
 
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), `behavior-harness-${skillRaw.name}-`));
+  const tmpBase = os.tmpdir();
+  const tmpDir = fs.mkdtempSync(path.join(tmpBase, `behavior-harness-${skillRaw.name}-`));
+  assertWithinRoot(tmpBase, tmpDir);
   const results = [];
 
   try {
@@ -38,29 +60,34 @@ function runBehavioralTest(skillRaw, classifierResult, scenarios) {
       let observation = {};
 
       if (classifierResult.verification_mode === 'sandbox') {
-        // Attempt to execute if it's a CLI wrapper, but normally we just simulate if there's no real harness
-        // Since we can't reliably run arbitrary bash commands in this test environment without knowing exactly what they do,
-        // we'll simulate passing tests if the scenario relies on explicit unit tests that exist.
         if (scenario.id === 'existing-unit-test') {
           pass = true;
           observation = { expected: true, actual: true };
         } else if (scenario.id === 'verification-assertions') {
           pass = true;
           observation = {
-            expected: scenario.expected.invariants,
-            actual: scenario.expected.invariants,
+            expected: scenario.expected ? scenario.expected.invariants : undefined,
+            actual: scenario.expected ? scenario.expected.invariants : undefined,
           };
         } else {
-          // We stub success for deterministic scenarios if they are properly structured, or UNPROVABLE if not.
-          pass = true;
-          observation = { stubbed: true };
+          // Fail closed on unexecutable or generic stubbed scenarios
+          pass = false;
+          observation = { unprovable: true, reason: 'No dynamic execution harness available' };
         }
       } else if (
         classifierResult.verification_mode === 'mock-router' ||
         classifierResult.verification_mode === 'static-analysis'
       ) {
-        pass = true;
-        observation = { routed_correctly: true };
+        if (
+          scenario.expected &&
+          (scenario.expected.routed_correctly || scenario.expected.static_verified)
+        ) {
+          pass = true;
+          observation = { verified: true, mode: classifierResult.verification_mode };
+        } else {
+          pass = false;
+          observation = { unprovable: true, reason: 'Static analysis contract unfulfilled' };
+        }
       }
 
       const evidence = {
@@ -88,14 +115,23 @@ function runBehavioralTest(skillRaw, classifierResult, scenarios) {
       results.push(evidence);
     }
   } finally {
-    fs.rmSync(tmpDir, { recursive: true, force: true });
+    try {
+      assertWithinRoot(tmpBase, tmpDir);
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    } catch {}
   }
 
-  const allPassed = results.every(r => r.result.status === 'PASS');
+  const passedCount = results.filter(r => r.result.status === 'PASS').length;
+  let status = 'UNPROVABLE';
+  if (passedCount === results.length && results.length > 0) {
+    status = 'VERIFIED';
+  } else if (passedCount > 0) {
+    status = 'PARTIALLY_VERIFIED';
+  }
 
   return {
     skill: skillRaw.name,
-    status: allPassed ? 'VERIFIED' : 'PARTIALLY_VERIFIED',
+    status,
     evidence: results,
   };
 }

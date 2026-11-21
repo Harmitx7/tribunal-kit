@@ -5,9 +5,30 @@ const { deriveScenarios } = require('./skill_scenario_engine');
 const { runBehavioralTest } = require('./skill_behavior_harness');
 const { evaluateAllSkills } = require('./skill_quality_engine');
 const { loadSkills } = require('./context_broker');
+const { assertWithinRoot } = require('./_utils');
+
+let validateResourceId;
+try {
+  ({ validateResourceId } = require('../../src/security/boundary'));
+} catch {
+  validateResourceId = id => {
+    if (typeof id !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(id)) {
+      throw new Error(
+        `Invalid resource identifier: "${id}". Only alphanumeric characters, dashes, and underscores are permitted.`,
+      );
+    }
+    return id;
+  };
+}
 
 const AGENT_DIR = path.join(__dirname, '..');
-const RECONSTRUCTION_QUEUE_PATH = process.env.RECONSTRUCTION_QUEUE_PATH || path.join(AGENT_DIR, 'data/reconstruction_queue.json');
+function getReconstructionQueuePath() {
+  const defaultPath = path.join(AGENT_DIR, 'data/reconstruction_queue.json');
+  const target = process.env.RECONSTRUCTION_QUEUE_PATH || defaultPath;
+  const workspaceRoot = path.dirname(AGENT_DIR);
+  return assertWithinRoot(workspaceRoot, target);
+}
+const RECONSTRUCTION_QUEUE_PATH = getReconstructionQueuePath();
 const HISTORY_PATH = path.join(AGENT_DIR, 'data/reconstruction_history.jsonl');
 const EVIDENCE_HISTORY_PATH = path.join(AGENT_DIR, 'data/skill_behavior_history.jsonl');
 
@@ -54,6 +75,7 @@ function generateQueue(writeToDisk = !process.env.JEST_WORKER_ID) {
 }
 
 function reconstructSkill(skillName) {
+  validateResourceId(skillName);
   const skills = loadSkills(AGENT_DIR);
   const skill = skills.find(s => s.name === skillName);
   if (!skill) throw new Error('Skill not found');
@@ -76,6 +98,7 @@ function reconstructSkill(skillName) {
 
   // Simulate reconstruction
   const skillFile = path.join(AGENT_DIR, 'skills', skillName, 'SKILL.md');
+  assertWithinRoot(path.join(AGENT_DIR, 'skills'), skillFile);
   const originalContent = fs.existsSync(skillFile) ? fs.readFileSync(skillFile, 'utf8') : '';
 
   // Extract assertions from evidence

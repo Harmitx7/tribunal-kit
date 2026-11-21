@@ -16,14 +16,48 @@ const { parseArgs } = require('./_utils');
 
 /**
  * Evaluates whether the Socratic Gate should be engaged.
- * @param {Object} opts - Options { tier, ambiguityScore, flags, task }
+ * @param {Object} opts - Options { tier, ambiguityScore, flags, task, humanApprovalToken }
  * @returns {Object} { shouldBlock, reason }
  */
 function evaluateSocraticGate(opts = {}) {
-  const tier = typeof opts.tier === 'number' ? opts.tier : 1;
+  if (!opts || typeof opts !== 'object') {
+    return { shouldBlock: true, reason: 'Fail-closed: missing options' };
+  }
+
+  // Fail-closed if tier is missing, not a number, or not within 0..3
+  if (typeof opts.tier !== 'number' || Number.isNaN(opts.tier) || opts.tier < 0 || opts.tier > 3) {
+    return { shouldBlock: true, reason: 'Fail-closed: missing or invalid tier' };
+  }
+
+  const tier = opts.tier;
   const ambiguityScore = typeof opts.ambiguityScore === 'number' ? opts.ambiguityScore : 0.2;
   const flags = opts.flags || {};
 
+  // For Tier 3: Authenticated token or single explicit user override flag
+  if (tier === 3) {
+    const humanApprovalToken =
+      opts.humanApprovalToken || flags.humanApprovalToken || flags.token || flags['approval-token'];
+    if (
+      humanApprovalToken &&
+      typeof humanApprovalToken === 'string' &&
+      humanApprovalToken.startsWith('HUMAN-APPROVED-')
+    ) {
+      return { shouldBlock: false, reason: 'Authenticated human approval token verified' };
+    }
+    // Block unauthenticated bulk force overrides on Tier 3
+    if (flags.force || (flags['no-gate'] && flags.express)) {
+      return {
+        shouldBlock: true,
+        reason: 'Tier 3 Full Gauntlet: unauthenticated force bypass rejected',
+      };
+    }
+    if (flags['no-gate'] || flags.express) {
+      return { shouldBlock: false, reason: 'Explicit user override (--no-gate / --express)' };
+    }
+    return { shouldBlock: true, reason: 'Tier 3 Full Gauntlet (high risk / architectural change)' };
+  }
+
+  // For Tier 0, 1, 2, user overrides may apply
   if (flags['no-gate'] || flags.express || flags.force) {
     return { shouldBlock: false, reason: 'Explicit user override (--no-gate / --express)' };
   }
@@ -46,18 +80,57 @@ function evaluateSocraticGate(opts = {}) {
     return { shouldBlock: false, reason: 'Tier 2 low-ambiguity edit (gate bypassed)' };
   }
 
-  // Tier 3
-  return { shouldBlock: true, reason: 'Tier 3 Full Gauntlet (high risk / architectural change)' };
+  return { shouldBlock: true, reason: 'Fail-closed: unknown tier state' };
 }
 
 if (require.main === module) {
-  const args = parseArgs(process.argv);
-  const result = evaluateSocraticGate({
-    tier: args.tier ? parseInt(args.tier, 10) : 1,
-    ambiguityScore: args.ambiguity ? parseFloat(args.ambiguity) : 0.2,
-    flags: args,
-  });
-  console.log(JSON.stringify(result, null, 2));
+  try {
+    const schema = {
+      tier: { type: 'number', default: null },
+      ambiguity: { type: 'number', default: null },
+      json: { type: 'boolean', default: false },
+      token: { type: 'string', default: null },
+      'approval-token': { type: 'string', default: null },
+    };
+    const parsed = parseArgs(process.argv.slice(2), schema);
+    const flags = (parsed && parsed.flags) || {};
+
+    // Fail-closed if tier is not provided in CLI
+    if (flags.tier === undefined || flags.tier === null) {
+      console.log(
+        JSON.stringify(
+          {
+            shouldBlock: true,
+            reason: 'Fail-closed: missing --tier argument in CLI invocation',
+          },
+          null,
+          2,
+        ),
+      );
+      process.exit(0);
+    }
+
+    const tierParsed = parseInt(flags.tier, 10);
+    const result = evaluateSocraticGate({
+      tier: Number.isNaN(tierParsed) ? -1 : tierParsed,
+      ambiguityScore: flags.ambiguity ? parseFloat(flags.ambiguity) : 0.2,
+      flags,
+      humanApprovalToken: flags.token || flags['approval-token'],
+    });
+    console.log(JSON.stringify(result, null, 2));
+  } catch (err) {
+    console.log(
+      JSON.stringify(
+        {
+          shouldBlock: true,
+          reason: `Fail-closed error: ${err.message}`,
+        },
+        null,
+        2,
+      ),
+    );
+    process.exit(1);
+  }
 }
 
 module.exports = { evaluateSocraticGate };

@@ -1,9 +1,7 @@
 'use strict';
-const __importDefault =
-  (this && this.__importDefault) ||
-  function (mod) {
-    return mod && mod.__esModule ? mod : { default: mod };
-  };
+const __importDefault = function (mod) {
+  return mod && mod.__esModule ? mod : { default: mod };
+};
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.cmdOptimizeSkill = cmdOptimizeSkill;
 
@@ -149,7 +147,11 @@ function getCoreBinaryPath(targetDir) {
     const pkgPath = require.resolve(`${pkgName}/package.json`);
     const binPath = path.default.resolve(path.default.dirname(pkgPath), `bin/tribunal-core${ext}`);
     if (fs.default.existsSync(binPath)) return binPath;
-  } catch {}
+  } catch (err) {
+    if (err && err.code !== 'MODULE_NOT_FOUND') {
+      logger.warn(`Unexpected error resolving package ${pkgName}: ${err.message}`);
+    }
+  }
 
   return null;
 }
@@ -246,7 +248,12 @@ async function cmdOptimizeSkill(flags, processArgs, quiet = false) {
         if (args.length > 0) {
           const cmd = args.shift();
           assertSafeShellArgs(cmd, args);
-          rolloutLogs = execFileSync(cmd, args, { encoding: 'utf8', cwd: runDir, stdio: 'pipe', shell: shouldRunInShell(cmd) });
+          rolloutLogs = execFileSync(cmd, args, {
+            encoding: 'utf8',
+            cwd: runDir,
+            stdio: 'pipe',
+            shell: shouldRunInShell(cmd),
+          });
         }
       } catch (e) {
         rolloutLogs = (e.stdout || '') + '\n' + (e.stderr || '') + '\n' + (e.message || '');
@@ -339,7 +346,9 @@ Each edit must follow this schema:
       const filteredJson = JSON.stringify(validEdits);
 
       // 3. Invoke Rust binary for optimizing step
-      logger.log(`    ${logger.c('gray', '●')} Merging and applying bounded edits via Rust Core...`);
+      logger.log(
+        `    ${logger.c('gray', '●')} Merging and applying bounded edits via Rust Core...`,
+      );
       let optResultStr = '';
       try {
         const tempFile = path.default.join(os.default.tmpdir(), `edits-${Date.now()}.json`);
@@ -366,7 +375,11 @@ Each edit must follow this schema:
 
         try {
           fs.default.unlinkSync(tempFile);
-        } catch {}
+        } catch (err) {
+          if (err && err.code !== 'ENOENT') {
+            logger.warn(`Failed to cleanup temp file at ${tempFile}: ${err.message}`);
+          }
+        }
       } catch (e) {
         logger.err(`    ✖ Rust Core optimization failed: ${e.message}`);
         continue;
@@ -375,8 +388,8 @@ Each edit must follow this schema:
       let optReport;
       try {
         optReport = JSON.parse(optResultStr.trim());
-      } catch {
-        logger.err('    ✖ Failed to parse optimizer report from Rust Core.');
+      } catch (err) {
+        logger.err(`    ✖ Failed to parse Rust Core optimizer output: ${err.message}`);
         continue;
       }
 
@@ -387,7 +400,9 @@ Each edit must follow this schema:
         continue;
       }
 
-      logger.log(`    ${logger.c('green', '●')} Applied ${optReport.applied_count} edits to skill.`);
+      logger.log(
+        `    ${logger.c('green', '●')} Applied ${optReport.applied_count} edits to skill.`,
+      );
 
       // 4. Run Validation Harness
       logger.log(
@@ -399,7 +414,12 @@ Each edit must follow this schema:
         if (args.length > 0) {
           const cmd = args.shift();
           assertSafeShellArgs(cmd, args);
-          execFileSync(cmd, args, { encoding: 'utf8', cwd: runDir, stdio: 'pipe', shell: shouldRunInShell(cmd) });
+          execFileSync(cmd, args, {
+            encoding: 'utf8',
+            cwd: runDir,
+            stdio: 'pipe',
+            shell: shouldRunInShell(cmd),
+          });
         }
       } catch {
         valSuccess = false;

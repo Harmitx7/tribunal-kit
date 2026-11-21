@@ -44,11 +44,11 @@ flowchart TD
 
 ### Subsystem C: Stage-Partitioned Tribunal Pipeline
 
-- **60 Specialist Agents** (28 Parallel Reviewers + 32 Domain Specialists).
+- **64 Specialist Agents** (28 Parallel Reviewers + 36 Domain Specialists).
 - **3 Execution Waves:** Replaces monolithic fan-out with 3 partitioned passes (28 reviewers total):
   - **Wave 1 (Core Integrity):** `precedence-reviewer`, `logic-reviewer`, `schema-reviewer`, `resilience-reviewer`
   - **Wave 2 (Security & Types):** `security-auditor`, `dependency-reviewer`, `type-safety-reviewer`, `complexity-reviewer`, `sql-reviewer`, `pipeline-reviewer`
-  - **Wave 3 (Domain & Performance):** `frontend-reviewer`, `performance-reviewer`, `mobile-reviewer`, `ai-code-reviewer`, `test-coverage-reviewer`, `accessibility-reviewer`, `ui-ux-auditor`, `review-animations`, `vitals-reviewer`, `db-latency-auditor`, `throughput-optimizer`, `architecture-auditor`
+  - **Wave 3 (Domain & Performance):** `frontend-reviewer`, `performance-reviewer`, `mobile-reviewer`, `ai-code-reviewer`, `test-coverage-reviewer`, `accessibility-reviewer`, `anti-slop-auditor`, `agent-shield-auditor`, `vitals-reviewer`, `db-latency-auditor`, `throughput-optimizer`, `architecture-auditor`
 - **Attention Preservation:** Reviewers execute in scoped evaluation pairs of 4 to 8 specialists, eliminating hallucination risks and attention dilution.
 
 ---

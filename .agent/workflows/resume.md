@@ -1,6 +1,6 @@
 ---
 name: resume
-description: "Resume a recoverable Tribunal Kit session from the durable event log."
+description: 'Resume a recoverable Tribunal Kit session from the durable event log.'
 version: 1.1.0
 required-skills:
   - resume
@@ -18,6 +18,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before resuming an interrupted or crashed workflow:
+
 1. Validate durable event log integrity at `.agent_session.json` or `.agent/.tribunal/session.jsonl`.
 2. Inspect cryptographic checkpoint hash against repository HEAD.
 3. Check for external drift or concurrent manual modifications since the interruption.

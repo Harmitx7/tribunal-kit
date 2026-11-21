@@ -44,8 +44,8 @@ async function executeResilientWorkflow(taskDescriptors, options = {}) {
     maxConcurrency: options.maxConcurrency || 5,
   });
 
-  const requiredAgents = taskDescriptors.filter((t) => t.isRequired).map((t) => t.id);
-  const optionalAgents = taskDescriptors.filter((t) => !t.isRequired).map((t) => t.id);
+  const requiredAgents = taskDescriptors.filter(t => t.isRequired).map(t => t.id);
+  const optionalAgents = taskDescriptors.filter(t => !t.isRequired).map(t => t.id);
 
   const quorum = new quorumEngine.QuorumAndAggregationEngine({
     requiredAgents,
@@ -58,7 +58,7 @@ async function executeResilientWorkflow(taskDescriptors, options = {}) {
   const allFindings = [];
 
   // Execute tasks with bounded concurrency
-  const taskPromises = taskDescriptors.map(async (task) => {
+  const taskPromises = taskDescriptors.map(async task => {
     const taskSm = new stateMachine.StateMachineEngine({
       id: task.id,
       agentId: task.agentId || task.id,
@@ -82,7 +82,7 @@ async function executeResilientWorkflow(taskDescriptors, options = {}) {
           idempotencyKey: task.idempotencyKey || task.id,
           signal: childContext.signal,
           taskTimeoutMs: task.timeoutMs || 30000,
-        }
+        },
       );
 
       taskSm.complete({ attempts: execResult.attempts });
@@ -130,10 +130,10 @@ async function executeResilientWorkflow(taskDescriptors, options = {}) {
     allFindings.push(...deadlockCheck.findings);
   }
 
-  const succeededCount = taskResults.filter((r) => r.status === 'SUCCEEDED').length;
-  const failedCount = taskResults.filter((r) => r.status === 'FAILED').length;
-  const timedOutCount = taskResults.filter((r) => r.status === 'TIMED_OUT').length;
-  const cancelledCount = taskResults.filter((r) => r.status === 'CANCELLED').length;
+  const succeededCount = taskResults.filter(r => r.status === 'SUCCEEDED').length;
+  const failedCount = taskResults.filter(r => r.status === 'FAILED').length;
+  const timedOutCount = taskResults.filter(r => r.status === 'TIMED_OUT').length;
+  const cancelledCount = taskResults.filter(r => r.status === 'CANCELLED').length;
 
   let finalStatus = 'PASS';
   if (quorumEval.status === 'FAILED') finalStatus = 'FAIL';

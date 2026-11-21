@@ -1,6 +1,6 @@
 # Tasks: per-task baseline UI patterns
 
-This file describes the *baseline* UI shape for each task category. Use it after the LoRA's task is identified, as a starting skeleton. Then read `adapting-to-the-lora.md` to shape the actual UI to the specific LoRA — the baseline is rarely the right final answer.
+This file describes the _baseline_ UI shape for each task category. Use it after the LoRA's task is identified, as a starting skeleton. Then read `adapting-to-the-lora.md` to shape the actual UI to the specific LoRA — the baseline is rarely the right final answer.
 
 The five tasks: text-to-image, image-to-image, text-to-video, image-to-video, video-to-video.
 
@@ -88,7 +88,7 @@ Walk this ladder in order. Stop at the first rung that fits the LoRA's input sha
 
 **2. Hub custom components.** A `pip install` and an import, no JS to maintain:
 
-- `gradio_image_annotation` — bbox/point annotation on top of an image. Right when the LoRA literally needs box *coordinates* as structured input (e.g. drag-and-drop "move from box A to box B" LoRAs, region-tagged edits). Wrong when the LoRA wants a painted region — use `gr.ImageEditor` instead.
+- `gradio_image_annotation` — bbox/point annotation on top of an image. Right when the LoRA literally needs box _coordinates_ as structured input (e.g. drag-and-drop "move from box A to box B" LoRAs, region-tagged edits). Wrong when the LoRA wants a painted region — use `gr.ImageEditor` instead.
 - `gradio_imageslider` — alternative before/after slider with extra controls.
 - `gradio_modal` — modal dialogs.
 - `gradio_rangeslider` — dual-handle range slider.
@@ -119,6 +119,6 @@ The current `sdk_version` (6.x at time of writing — verify with `pip index ver
 
 - **Some component kwargs were removed.** `gr.Image` no longer accepts `show_download_button` (the same change affects a handful of other components). The Space fails at import with `TypeError: __init__() got an unexpected keyword argument 'show_download_button'` — not surfaced until the container actually starts. When in doubt, web-fetch the current docs for the specific component before passing non-obvious kwargs.
 
-- **The Gradio version the Space runs at is set by `sdk_version:` in the README YAML, *not* by `requirements.txt`.** Pinning `gradio` in `requirements.txt` is at best ignored and at worst causes a runtime mismatch; set the version once, in the README, and write `app.py` against that version.
+- **The Gradio version the Space runs at is set by `sdk_version:` in the README YAML, _not_ by `requirements.txt`.** Pinning `gradio` in `requirements.txt` is at best ignored and at worst causes a runtime mismatch; set the version once, in the README, and write `app.py` against that version.
 
 If the first build fails on a `TypeError` or signature mismatch in a Gradio component, this is the most common cause — read `/logs/container` (build) or `/logs/run` (runtime), look at the line in `app.py`, and check the current component signature.

@@ -73,7 +73,14 @@ const InteractiveStateContractSchema = z.object({
 const DesignDecisionRecordSchema = z.object({
   version: z.literal('1.0.0').default('1.0.0'),
   productName: z.string().min(1),
-  productCategory: z.enum(['DEV_TOOL', 'B2B_SAAS', 'ANALYTICS', 'CONSUMER_ECOMMERCE', 'EDITORIAL_PORTFOLIO', 'CUSTOM']),
+  productCategory: z.enum([
+    'DEV_TOOL',
+    'B2B_SAAS',
+    'ANALYTICS',
+    'CONSUMER_ECOMMERCE',
+    'EDITORIAL_PORTFOLIO',
+    'CUSTOM',
+  ]),
   targetAudience: z.string().min(1),
   visualDirection: z.enum([
     'MINIMAL_EDITORIAL',
@@ -81,7 +88,7 @@ const DesignDecisionRecordSchema = z.object({
     'MODERN_PRODUCT_CRAFT',
     'DENSE_ANALYTICAL',
     'SOFT_APPROACHABLE',
-    'CUSTOM_BRANDED'
+    'CUSTOM_BRANDED',
   ]),
   palette: ColorPaletteSchema,
   typography: FluidTypographyScaleSchema,
@@ -93,7 +100,16 @@ const DesignDecisionRecordSchema = z.object({
 // 7. Visual Defect Schema
 const VisualDefectSchema = z.object({
   id: z.string(),
-  severity: z.enum(['P0_FATAL', 'P1_CRITICAL', 'P2_HIGH', 'P3_HIGH', 'P4_MEDIUM', 'P5_MEDIUM', 'P6_LOW', 'P7_POLISH']),
+  severity: z.enum([
+    'P0_FATAL',
+    'P1_CRITICAL',
+    'P2_HIGH',
+    'P3_HIGH',
+    'P4_MEDIUM',
+    'P5_MEDIUM',
+    'P6_LOW',
+    'P7_POLISH',
+  ]),
   category: z.enum([
     'BROKEN_FUNCTIONALITY',
     'MAJOR_LAYOUT_COLLAPSE',
@@ -102,7 +118,7 @@ const VisualDefectSchema = z.object({
     'RESPONSIVE_DEFICIENCY',
     'SPATIAL_RADIUS_MISMATCH',
     'COMPONENT_INCONSISTENCY',
-    'SLOP_CLICHE_DETECTED'
+    'SLOP_CLICHE_DETECTED',
   ]),
   file: z.string().optional(),
   line: z.number().optional(),
@@ -144,4 +160,3 @@ module.exports = {
   VisualDefectSchema,
   DesignBenchmarkResultSchema,
 };
-

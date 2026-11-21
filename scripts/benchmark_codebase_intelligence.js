@@ -42,13 +42,17 @@ const C = {
   gray: '\x1b[90m',
   magenta: '\x1b[95m',
 };
-function c(color, text) { return `${C[color]}${text}${C.reset}`; }
-function bold(text) { return `${C.bold}${text}${C.reset}`; }
+function c(color, text) {
+  return `${C[color]}${text}${C.reset}`;
+}
+function bold(text) {
+  return `${C.bold}${text}${C.reset}`;
+}
 
 // Deterministic Pseudo-Random Generator (Linear Congruential Generator)
 function createLcg(seed = 42) {
   let s = seed;
-  return function() {
+  return function () {
     s = (s * 1664525 + 1013904223) % 4294967296;
     return s / 4294967296;
   };
@@ -93,7 +97,10 @@ function generateSyntheticRepository(targetDir, fileCount = 100, seed = 42) {
   fs.writeFileSync(path.join(ignoredDir, 'index.js'), 'module.exports = { secret: "ignored" };\n');
 
   // CLI Binary
-  fs.writeFileSync(path.join(binDir, 'cli.js'), '#!/usr/bin/env node\nconsole.log("CLI running");\n');
+  fs.writeFileSync(
+    path.join(binDir, 'cli.js'),
+    '#!/usr/bin/env node\nconsole.log("CLI running");\n',
+  );
 
   // Subsystem module directories
   const moduleCount = Math.max(3, Math.floor(fileCount / 20));
@@ -122,7 +129,9 @@ function generateSyntheticRepository(targetDir, fileCount = 100, seed = 42) {
       let importStatement = '';
       if (allCreatedFiles.length > 1 && rand() > 0.3) {
         const targetRel = allCreatedFiles[Math.floor(rand() * (allCreatedFiles.length - 1))];
-        const relativeImport = path.relative(modDir, path.join(targetDir, targetRel)).replace(/\\/g, '/');
+        const relativeImport = path
+          .relative(modDir, path.join(targetDir, targetRel))
+          .replace(/\\/g, '/');
         const cleanImport = relativeImport.startsWith('.') ? relativeImport : `./${relativeImport}`;
         importStatement = `const dep = require('${cleanImport}');\n`;
       }
@@ -147,19 +156,22 @@ function generateSyntheticRepository(targetDir, fileCount = 100, seed = 42) {
     }
 
     // Barrel index.js for module
-    fs.writeFileSync(path.join(modDir, 'index.js'), `module.exports = require('./service_0.js');\n`);
+    fs.writeFileSync(
+      path.join(modDir, 'index.js'),
+      `module.exports = require('./service_0.js');\n`,
+    );
   }
 
   // Root entry point
   fs.writeFileSync(
     path.join(srcDir, 'index.js'),
-    `'use strict';\nconst m0 = require('./module_0');\nmodule.exports = { m0 };\n`
+    `'use strict';\nconst m0 = require('./module_0');\nmodule.exports = { m0 };\n`,
   );
 
   // Test files
   fs.writeFileSync(
     path.join(testDir, 'app.test.js'),
-    `const app = require('../src/index');\ntest('app loads', () => expect(app).toBeDefined());\n`
+    `const app = require('../src/index');\ntest('app loads', () => expect(app).toBeDefined());\n`,
   );
 
   return { targetDir, fileCount };
@@ -271,12 +283,30 @@ async function benchmarkOperation(repoRoot, opName, target, runs = 3) {
  * Run full benchmark suite across all profiles
  */
 async function runFullBenchmark(profiles = [100, 1000]) {
-  console.log(bold('\n══════════════════════════════════════════════════════════════════════════════'));
+  console.log(
+    bold('\n══════════════════════════════════════════════════════════════════════════════'),
+  );
   console.log(bold('  Tribunal-Kit v9.3.0 Codebase Intelligence Performance Benchmark'));
-  console.log(c('gray', `  Node: ${process.version} | Platform: ${os.platform()} ${os.arch()} | CPUs: ${os.cpus().length}`));
-  console.log(bold('══════════════════════════════════════════════════════════════════════════════\n'));
+  console.log(
+    c(
+      'gray',
+      `  Node: ${process.version} | Platform: ${os.platform()} ${os.arch()} | CPUs: ${os.cpus().length}`,
+    ),
+  );
+  console.log(
+    bold('══════════════════════════════════════════════════════════════════════════════\n'),
+  );
 
-  const ops = ['overview', 'trace', 'dependencies', 'relevant-files', 'impact', 'dead-code', 'onboard', 'prepare'];
+  const ops = [
+    'overview',
+    'trace',
+    'dependencies',
+    'relevant-files',
+    'impact',
+    'dead-code',
+    'onboard',
+    'prepare',
+  ];
   const profileResults = {};
 
   for (const fileCount of profiles) {
@@ -294,8 +324,8 @@ async function runFullBenchmark(profiles = [100, 1000]) {
       opResults.push(stats);
       console.log(
         `${c('green', stats.coldMs.toFixed(1) + ' ms')} (cold) | ` +
-        `${c('yellow', stats.warmMedianMs.toFixed(1) + ' ms')} (warm) | ` +
-        `${c('gray', stats.estimatedTokens + ' tokens')}`
+          `${c('yellow', stats.warmMedianMs.toFixed(1) + ' ms')} (warm) | ` +
+          `${c('gray', stats.estimatedTokens + ' tokens')}`,
       );
     }
 
@@ -330,4 +360,3 @@ module.exports = {
   benchmarkOperation,
   runFullBenchmark,
 };
-

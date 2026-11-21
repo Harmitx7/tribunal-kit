@@ -1,10 +1,6 @@
 'use strict';
 
-const {
-  runSupplyChainAudit,
-  SbomEngine,
-  THREAT_CATEGORIES,
-} = require('../../src/supply_chain');
+const { runSupplyChainAudit, SbomEngine, THREAT_CATEGORIES } = require('../../src/supply_chain');
 
 const fixtureData = require('../fixtures/supply_chain/supply_chain_dataset_v1.json');
 
@@ -16,7 +12,7 @@ describe('Supply Chain Intelligence Domain Integration Tests', () => {
       {
         advisories: fixtureData.advisoriesDataset,
         licensePolicy: fixtureData.licensePolicyDataset,
-      }
+      },
     );
 
     expect(auditResult.status).toBe('PASS');
@@ -33,8 +29,8 @@ describe('Supply Chain Intelligence Domain Integration Tests', () => {
       name: 'vulnerable-app',
       version: '1.0.0',
       dependencies: {
-        'lodash': '4.17.20', // V1: Known CVE
-        'loadash': '1.0.0', // V3: Typosquat
+        lodash: '4.17.20', // V1: Known CVE
+        loadash: '1.0.0', // V3: Typosquat
         'bad-copyleft': '1.0.0', // V8: License violation
         'internal-secret-service': '1.0.0', // V4: Dependency confusion
       },
@@ -90,7 +86,7 @@ describe('Supply Chain Intelligence Domain Integration Tests', () => {
     expect(auditResult.findings.length).toBeGreaterThanOrEqual(5);
 
     // Verify presence of threat categories
-    const foundCategories = new Set(auditResult.findings.map((f) => f.category));
+    const foundCategories = new Set(auditResult.findings.map(f => f.category));
     expect(foundCategories.has('V1_KNOWN_CVE')).toBe(true);
     expect(foundCategories.has('V2_MALICIOUS_PACKAGE_HOOK')).toBe(true);
     expect(foundCategories.has('V3_TYPOSQUATTING')).toBe(true);
@@ -131,4 +127,3 @@ describe('Supply Chain Intelligence Domain Integration Tests', () => {
     expect(spdxVal.status).toBe('PASS');
   });
 });
-

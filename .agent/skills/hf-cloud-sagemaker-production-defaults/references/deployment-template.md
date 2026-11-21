@@ -4,14 +4,14 @@ These defaults turn a working demo into something you can leave running. They fa
 
 ## Autoscaling — enabled, target tracking on invocations
 
-| Setting | Default | Why |
-|---|---|---|
-| `MinCapacity` | 1 | Keep one warm. Min=0 enables scale-to-zero but adds cold-start latency on every gap. |
-| `MaxCapacity` | 4 | Cap on scale-out. Raise for known peaks. |
-| Target metric | `SageMakerVariantInvocationsPerInstance` | Scales on actual request load, not noisy GPU/CPU. |
-| Target value | 20 invocations/min/instance | Conservative. Tune to model latency: faster model = higher target. |
-| `ScaleInCooldown` | 300s | Long enough to avoid flapping. |
-| `ScaleOutCooldown` | 60s | Scale out faster than in — under spikes, you want capacity now. |
+| Setting            | Default                                  | Why                                                                                  |
+| ------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------ |
+| `MinCapacity`      | 1                                        | Keep one warm. Min=0 enables scale-to-zero but adds cold-start latency on every gap. |
+| `MaxCapacity`      | 4                                        | Cap on scale-out. Raise for known peaks.                                             |
+| Target metric      | `SageMakerVariantInvocationsPerInstance` | Scales on actual request load, not noisy GPU/CPU.                                    |
+| Target value       | 20 invocations/min/instance              | Conservative. Tune to model latency: faster model = higher target.                   |
+| `ScaleInCooldown`  | 300s                                     | Long enough to avoid flapping.                                                       |
+| `ScaleOutCooldown` | 60s                                      | Scale out faster than in — under spikes, you want capacity now.                      |
 
 For LLMs, the right target depends heavily on latency. A 100ms model handles 600/min easily; a 5s model maxes at ~12/min. 20 is a safe default for typical LLM latencies.
 
@@ -33,13 +33,13 @@ When enabled: 100% sampling, both input and output captured. URI defaults to `s3
 
 ## Resource tagging
 
-| Tag | Value |
-|---|---|
-| `Project` | User-supplied or model name |
-| `Owner` | Caller ARN's user/email portion |
-| `Environment` | `dev` (default) |
-| `CreatedBy` | `agentic-deploy-skills` |
-| `ModelArtifact` | S3 URI of the model |
+| Tag             | Value                           |
+| --------------- | ------------------------------- |
+| `Project`       | User-supplied or model name     |
+| `Owner`         | Caller ARN's user/email portion |
+| `Environment`   | `dev` (default)                 |
+| `CreatedBy`     | `agentic-deploy-skills`         |
+| `ModelArtifact` | S3 URI of the model             |
 
 `CreatedBy` matters most — `aws resourcegroupstaggingapi get-resources --tag-filters Key=CreatedBy,Values=agentic-deploy-skills` finds every resource these skills created.
 

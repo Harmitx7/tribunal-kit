@@ -6,9 +6,11 @@ const PKG_PATH = path.join(ROOT, 'package.json');
 const PKG = JSON.parse(fs.readFileSync(PKG_PATH, 'utf8'));
 const VERSION = PKG.version;
 const SKILLS_DIR = path.join(ROOT, '.agent', 'skills');
-const SKILL_COUNT = fs.readdirSync(SKILLS_DIR, { withFileTypes: true }).filter(entry =>
-  entry.isDirectory() && fs.existsSync(path.join(SKILLS_DIR, entry.name, 'SKILL.md')),
-).length;
+const SKILL_COUNT = fs
+  .readdirSync(SKILLS_DIR, { withFileTypes: true })
+  .filter(
+    entry => entry.isDirectory() && fs.existsSync(path.join(SKILLS_DIR, entry.name, 'SKILL.md')),
+  ).length;
 
 if (!/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(VERSION)) {
   throw new Error(`Invalid package version: ${VERSION}`);
@@ -43,23 +45,44 @@ function updateFiles() {
         fs.writeFileSync(fullPath, content);
       } else if (relPath === 'README.md') {
         content = content.replace(/Release-v([0-9]+\.[0-9]+\.[0-9]+)/g, `Release-v${VERSION}`);
-        content = content.replace(/alt="Release v[0-9]+\.[0-9]+\.[0-9]+"/g, `alt="Release v${VERSION}"`);
-        content = content.replace(/tribunal-kit@[0-9]+\.[0-9]+\.[0-9]+/g, `tribunal-kit@${VERSION}`);
-        content = content.replace(/native core version \([0-9]+\.[0-9]+\.[0-9]+\)/g, `native core version (${VERSION})`);
+        content = content.replace(
+          /alt="Release v[0-9]+\.[0-9]+\.[0-9]+"/g,
+          `alt="Release v${VERSION}"`,
+        );
+        content = content.replace(
+          /tribunal-kit@[0-9]+\.[0-9]+\.[0-9]+/g,
+          `tribunal-kit@${VERSION}`,
+        );
+        content = content.replace(
+          /native core version \([0-9]+\.[0-9]+\.[0-9]+\)/g,
+          `native core version (${VERSION})`,
+        );
         fs.writeFileSync(fullPath, content);
       } else if (relPath === '.agent/config/system-prompt.md') {
-        content = content.replace(/Tribunal Kit v[0-9]+\.[0-9]+\.[0-9]+/g, `Tribunal Kit v${VERSION}`);
+        content = content.replace(
+          /Tribunal Kit v[0-9]+\.[0-9]+\.[0-9]+/g,
+          `Tribunal Kit v${VERSION}`,
+        );
         content = content.replace(/\b[0-9]+-skill library/g, `${SKILL_COUNT}-skill library`);
         content = content.replace(/\b[0-9]+ skills\b/g, `${SKILL_COUNT} skills`);
         fs.writeFileSync(fullPath, content);
       } else if (relPath === 'src/runtime_reliability/checkpoint_recovery_engine.js') {
-        content = content.replace(/(currentCodeRevision = options\.codeRevision \|\| ')[0-9]+\.[0-9]+\.[0-9]+(')/, `$1${VERSION}$2`);
+        content = content.replace(
+          /(currentCodeRevision = options\.codeRevision \|\| ')[0-9]+\.[0-9]+\.[0-9]+(')/,
+          `$1${VERSION}$2`,
+        );
         fs.writeFileSync(fullPath, content);
       } else if (relPath === 'src/runtime_reliability/execution_state_schemas.js') {
-        content = content.replace(/(codeRevision: z\.string\(\)\.default\(')[0-9]+\.[0-9]+\.[0-9]+(')/, `$1${VERSION}$2`);
+        content = content.replace(
+          /(codeRevision: z\.string\(\)\.default\(')[0-9]+\.[0-9]+\.[0-9]+(')/,
+          `$1${VERSION}$2`,
+        );
         fs.writeFileSync(fullPath, content);
       } else if (relPath === 'src/supply_chain/sbom_engine.js') {
-        content = content.replace(/(this\.toolVersion = options\.toolVersion \|\| ')[0-9]+\.[0-9]+\.[0-9]+(')/, `$1${VERSION}$2`);
+        content = content.replace(
+          /(this\.toolVersion = options\.toolVersion \|\| ')[0-9]+\.[0-9]+\.[0-9]+(')/,
+          `$1${VERSION}$2`,
+        );
         fs.writeFileSync(fullPath, content);
       } else if (relPath === 'bin/adapter-install.js' || relPath === 'src/tui/banner.js') {
         content = content.replace(/v\d+\.\d+\.\d+/g, `v${VERSION}`);

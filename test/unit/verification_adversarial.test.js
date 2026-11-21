@@ -17,7 +17,10 @@ const {
 } = require('../../src/verification');
 
 describe('Software Verification Adversarial Dataset (12/12 Defect Classes)', () => {
-  const fixturePath = path.resolve(__dirname, '../fixtures/software_verification/verification_cases_dataset_v1.json');
+  const fixturePath = path.resolve(
+    __dirname,
+    '../fixtures/software_verification/verification_cases_dataset_v1.json',
+  );
   const dataset = JSON.parse(fs.readFileSync(fixturePath, 'utf8'));
 
   test('dataset loads and contains all 12 canonical verification cases', () => {
@@ -44,10 +47,7 @@ describe('Software Verification Adversarial Dataset (12/12 Defect Classes)', () 
 
   // VERIF-CASE-02: Precondition violation
   test('VERIF-CASE-02: Precondition violation on zero denominator is caught', () => {
-    const safeDivide = withContract(
-      (a, b) => a / b,
-      { pre: [(a, b) => b !== 0] }
-    );
+    const safeDivide = withContract((a, b) => a / b, { pre: [(a, b) => b !== 0] });
 
     expect(() => safeDivide(10, 0)).toThrow(ContractViolationError);
   });
@@ -56,11 +56,11 @@ describe('Software Verification Adversarial Dataset (12/12 Defect Classes)', () 
   test('VERIF-CASE-03: Postcondition violation on balance overdraft is caught', () => {
     let balance = 50;
     const withdraw = withContract(
-      (amt) => {
+      amt => {
         balance -= amt;
         return balance;
       },
-      { post: [(res) => res >= 0] }
+      { post: [res => res >= 0] },
     );
 
     expect(() => withdraw(100)).toThrow(ContractViolationError);
@@ -73,29 +73,36 @@ describe('Software Verification Adversarial Dataset (12/12 Defect Classes)', () 
       initialState: 'UNAUTH',
       terminalStates: [],
       transitions: [
-        { from: 'UNAUTH', event: 'LOGIN', to: 'AUTHENTICATED', action: (ctx, p) => ({ ...ctx, userId: p.userId }) },
+        {
+          from: 'UNAUTH',
+          event: 'LOGIN',
+          to: 'AUTHENTICATED',
+          action: (ctx, p) => ({ ...ctx, userId: p.userId }),
+        },
       ],
       invariants: [
-        { state: 'AUTHENTICATED', check: (ctx) => ctx.userId !== null && ctx.userId !== undefined },
+        { state: 'AUTHENTICATED', check: ctx => ctx.userId !== null && ctx.userId !== undefined },
       ],
     };
 
     const instance = createFsmInstance(fsm, {});
     // Login with null userId violates state invariant!
-    expect(() => instance.transition('LOGIN', { userId: null })).toThrow(/State invariant violated/);
+    expect(() => instance.transition('LOGIN', { userId: null })).toThrow(
+      /State invariant violated/,
+    );
   });
 
   // VERIF-CASE-05: Property-based sorting
   test('VERIF-CASE-05: Universal property of sorting idempotence holds', () => {
-    const sortFn = (arr) => [...arr].sort((a, b) => a - b);
+    const sortFn = arr => [...arr].sort((a, b) => a - b);
     const result = assertProperty(
       [arb.array(arb.integer({ min: -100, max: 100 }))],
-      (arr) => {
+      arr => {
         const sorted = sortFn(arr);
         const doubleSorted = sortFn(sorted);
         return JSON.stringify(sorted) === JSON.stringify(doubleSorted);
       },
-      { runs: 50, seed: 1234 }
+      { runs: 50, seed: 1234 },
     );
 
     expect(result.passed).toBe(true);
@@ -114,7 +121,7 @@ describe('Software Verification Adversarial Dataset (12/12 Defect Classes)', () 
   // VERIF-CASE-07: Killed mutant
   test('VERIF-CASE-07: All mutants KILLED under comprehensive test suite', async () => {
     const code = 'function isOver18(age) { if (age >= 18) return true; return false; }';
-    const strictRunner = (mutatedCode) => {
+    const strictRunner = mutatedCode => {
       const sandbox = {};
       vm.createContext(sandbox);
       vm.runInContext(mutatedCode, sandbox, { timeout: 1000 });
@@ -167,14 +174,10 @@ describe('Software Verification Adversarial Dataset (12/12 Defect Classes)', () 
 
   // VERIF-CASE-10: Differential equivalence
   test('VERIF-CASE-10: Differential equivalence verified across reference implementations', () => {
-    const ref = (str) => JSON.parse(str);
-    const cand = (str) => JSON.parse(str);
+    const ref = str => JSON.parse(str);
+    const cand = str => JSON.parse(str);
 
-    const report = runDifferentialTest(cand, ref, [
-      ['{}'],
-      ['{"a":1}'],
-      ['{"b":[1,2,3]}'],
-    ]);
+    const report = runDifferentialTest(cand, ref, [['{}'], ['{"a":1}'], ['{"b":[1,2,3]}']]);
 
     expect(report.isEquivalent).toBe(true);
     expect(report.matchCount).toBe(3);
@@ -188,8 +191,8 @@ describe('Software Verification Adversarial Dataset (12/12 Defect Classes)', () 
       relationCheck: (y1, y2) => y1 === y2,
     };
 
-    const gen = (i) => [`   test-${i}   `];
-    const report = verifyMetamorphicRelation((s) => s.trim(), gen, relation, { runs: 20 });
+    const gen = i => [`   test-${i}   `];
+    const report = verifyMetamorphicRelation(s => s.trim(), gen, relation, { runs: 20 });
 
     expect(report.relationHeld).toBe(true);
   });
@@ -199,7 +202,9 @@ describe('Software Verification Adversarial Dataset (12/12 Defect Classes)', () 
     const baseline = { id: 'string', email: 'string' };
     const breakingCandidate = { id: 'string' }; // Removed email!
 
-    const isBreaking = Object.keys(baseline).some(k => !Object.prototype.hasOwnProperty.call(breakingCandidate, k));
+    const isBreaking = Object.keys(baseline).some(
+      k => !Object.prototype.hasOwnProperty.call(breakingCandidate, k),
+    );
     expect(isBreaking).toBe(true);
   });
 });

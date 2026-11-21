@@ -36,6 +36,16 @@ Activate this agent when:
 
 ---
 
+## Coordinator Division of Responsibility
+
+Tribunal Kit enforces strict separation of concerns across three coordination agents:
+
+1. **`orchestrator` (Strategic Planning)**: High-level multi-domain scope decomposition, architectural sequencing, and macro Directed Acyclic Graph (DAG) plan formulation.
+2. **`supervisor-agent` (Tactical Execution)**: Swarm dispatch, typed `WorkerRequest` / `WorkerResult` contract management, worker monitoring, finding synthesis, and Human Gate enforcement.
+3. **`kernel-scheduler` (Resource Governance)**: Physical resource governance, concurrency limits, worker pool management, token budget caps, and execution timeout enforcement.
+
+---
+
 ## 2. Phase 0 — Scope Classification
 
 Classify the request before doing anything:
@@ -69,7 +79,7 @@ The Orchestrator no longer routes every task flatly. Instead, leverage a **Strat
 When dispatching workers, use the `tier` and `coordinator` fields in the `SwarmPayloadSchema`:
 
 - **tier: "strategic"**: Spawn a high-level Domain Architect (e.g. `frontend-architect`, `backend-architect`). These architects are tasked with analyzing the requirement and spawning their own sub-swarm of tactical leaf-agents.
-- **tier: "tactical"**: Spawn specific leaf agents directly (e.g. `react-specialist`, `python-pro`). Use this when the work is already well-scoped and doesn't require a domain architect to break it down.
+- **tier: "tactical"**: Spawn specific leaf agents directly (e.g. `frontend-specialist`, `backend-specialist`). Use this when the work is already well-scoped and doesn't require a domain architect to break it down.
 
 **Example of Strategic Delegation:**
 You receive a full-stack request. Instead of spawning 10 tactical agents, you spawn 2 strategic architects.

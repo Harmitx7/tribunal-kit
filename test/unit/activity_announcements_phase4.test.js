@@ -90,7 +90,10 @@ describe('Phase 4: Context-Aware Agent & Skill Announcements', () => {
       expect(first.formatted).toContain('› **Activated** `@resilience-reviewer`');
 
       // Immediate second activation in same attempt is cleanly suppressed
-      const second = tracker.activateAgent('resilience-reviewer', 'Checking error boundaries again');
+      const second = tracker.activateAgent(
+        'resilience-reviewer',
+        'Checking error boundaries again',
+      );
       expect(second.isDuplicate).toBe(true);
       expect(second.formatted).toBeNull();
       expect(second.suppressedReason).toBe(ANNOUNCEMENT_REASONS.DUPLICATE_SUPPRESSED);
@@ -120,7 +123,7 @@ describe('Phase 4: Context-Aware Agent & Skill Announcements', () => {
       tracker.activateAgent('security-auditor');
       const forced = tracker._dispatch(
         resolver.createAgentActivationEvent('security-auditor', 'Mandatory re-audit'),
-        { force: true }
+        { force: true },
       );
 
       expect(forced.isDuplicate).toBe(false);
@@ -146,7 +149,9 @@ describe('Phase 4: Context-Aware Agent & Skill Announcements', () => {
       expect(meta.displayName).toBe('Custom Compliance Auditor');
       expect(meta.domain).toBe('Custom Compliance Auditor Specialist');
       expect(meta.source).toBe('fallback');
-      expect(meta.mandate).toBe('Enforcing custom compliance auditor invariants and engineering standards.');
+      expect(meta.mandate).toBe(
+        'Enforcing custom compliance auditor invariants and engineering standards.',
+      );
     });
 
     test('handles null, undefined, or empty agent names safely', () => {
@@ -161,7 +166,7 @@ describe('Phase 4: Context-Aware Agent & Skill Announcements', () => {
     test('generates context-aware summaries integrating task context with agent mandate', () => {
       const event = resolver.createAgentActivationEvent(
         'security-auditor',
-        'Auditing JWT signature verification and expiry algorithms'
+        'Auditing JWT signature verification and expiry algorithms',
       );
 
       expect(event.agent).toBe('security-auditor');
@@ -214,7 +219,10 @@ describe('Phase 4: Context-Aware Agent & Skill Announcements', () => {
       expect(tracker.getOperation().attempt).toBe(2);
 
       // Attempt 2: security-auditor activated again for retry
-      const retryActivation = tracker.activateAgent('security-auditor', 'Retry attempt verification');
+      const retryActivation = tracker.activateAgent(
+        'security-auditor',
+        'Retry attempt verification',
+      );
       expect(retryActivation.isDuplicate).toBe(false);
       expect(retryActivation.formatted).not.toBeNull();
     });
@@ -303,7 +311,7 @@ describe('Phase 4: Context-Aware Agent & Skill Announcements', () => {
 
       const res = tracker.activateAgent(
         'security-auditor',
-        'Testing token Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.doNotLeakThisToken'
+        'Testing token Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.doNotLeakThisToken',
       );
 
       expect(res.formatted).not.toContain('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9');
@@ -313,9 +321,9 @@ describe('Phase 4: Context-Aware Agent & Skill Announcements', () => {
       const resJwt = tracker._dispatch(
         resolver.createAgentActivationEvent(
           'security-auditor',
-          'Direct token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.doNotLeakThisToken'
+          'Direct token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.doNotLeakThisToken',
         ),
-        { force: true }
+        { force: true },
       );
       expect(resJwt.formatted).toContain('[REDACTED_JWT]');
     });

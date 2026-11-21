@@ -13,13 +13,9 @@
  * - Failures are categorized accurately with evidence-backed remedies.
  */
 
-const {
-  EVENT_TYPES,
-} = require('./types');
+const { EVENT_TYPES } = require('./types');
 
-const {
-  sanitizeActivityEvent,
-} = require('./schema');
+const { sanitizeActivityEvent } = require('./schema');
 
 const DEFAULT_MAX_OPERATIONS = 20;
 const DEFAULT_MAX_EVENTS_PER_OPERATION = 50;
@@ -47,7 +43,8 @@ const FAILURE_CATEGORIES = Object.freeze({
 class OperationDiagnosticRecord {
   constructor(operationId, options = {}) {
     this.operationId = operationId;
-    this.maxEvents = typeof options.maxEvents === 'number' ? options.maxEvents : DEFAULT_MAX_EVENTS_PER_OPERATION;
+    this.maxEvents =
+      typeof options.maxEvents === 'number' ? options.maxEvents : DEFAULT_MAX_EVENTS_PER_OPERATION;
     this.events = [];
     this.truncatedCount = 0;
     this.createdAt = new Date().toISOString();
@@ -132,25 +129,57 @@ function classifyFailure(error = {}, event = {}) {
   if (code.includes('EACCES') || code.includes('EPERM') || msg.includes('permission denied')) {
     return FAILURE_CATEGORIES.PERMISSION_ERROR;
   }
-  if (code.includes('TIMEOUT') || code.includes('ETIMEDOUT') || msg.includes('timed out') || event.eventType === EVENT_TYPES.STALL_SUSPECTED) {
+  if (
+    code.includes('TIMEOUT') ||
+    code.includes('ETIMEDOUT') ||
+    msg.includes('timed out') ||
+    event.eventType === EVENT_TYPES.STALL_SUSPECTED
+  ) {
     return FAILURE_CATEGORIES.TIMEOUT_OR_STALL;
   }
-  if (msg.includes('abort') || msg.includes('cancel') || event.eventType === EVENT_TYPES.OPERATION_CANCELLED) {
+  if (
+    msg.includes('abort') ||
+    msg.includes('cancel') ||
+    event.eventType === EVENT_TYPES.OPERATION_CANCELLED
+  ) {
     return FAILURE_CATEGORIES.CANCELLATION;
   }
-  if (msg.includes('jest') || msg.includes('test failed') || msg.includes('assertion') || /\bexpected\b/.test(msg) || event.eventType === EVENT_TYPES.TESTS_RUNNING) {
+  if (
+    msg.includes('jest') ||
+    msg.includes('test failed') ||
+    msg.includes('assertion') ||
+    /\bexpected\b/.test(msg) ||
+    event.eventType === EVENT_TYPES.TESTS_RUNNING
+  ) {
     return FAILURE_CATEGORIES.TEST_FAILURE;
   }
-  if (msg.includes('module not found') || msg.includes('cannot find module') || msg.includes('dependency') || code.includes('MODULE_NOT_FOUND')) {
+  if (
+    msg.includes('module not found') ||
+    msg.includes('cannot find module') ||
+    msg.includes('dependency') ||
+    code.includes('MODULE_NOT_FOUND')
+  ) {
     return FAILURE_CATEGORIES.DEPENDENCY_FAILURE;
   }
-  if (msg.includes('config') || msg.includes('missing flag') || msg.includes('not found') && msg.includes('.json')) {
+  if (
+    msg.includes('config') ||
+    msg.includes('missing flag') ||
+    (msg.includes('not found') && msg.includes('.json'))
+  ) {
     return FAILURE_CATEGORIES.MISSING_CONFIG;
   }
-  if (event.eventType === EVENT_TYPES.VALIDATION_FAILED || msg.includes('validation') || msg.includes('schema mismatch')) {
+  if (
+    event.eventType === EVENT_TYPES.VALIDATION_FAILED ||
+    msg.includes('validation') ||
+    msg.includes('schema mismatch')
+  ) {
     return FAILURE_CATEGORIES.VALIDATION_FAILURE;
   }
-  if (msg.includes('invalid argument') || msg.includes('invalid option') || msg.includes('syntax error')) {
+  if (
+    msg.includes('invalid argument') ||
+    msg.includes('invalid option') ||
+    msg.includes('syntax error')
+  ) {
     return FAILURE_CATEGORIES.INVALID_INPUT;
   }
 
@@ -162,10 +191,12 @@ function classifyFailure(error = {}, event = {}) {
  */
 class DiagnosticBuffer {
   constructor(options = {}) {
-    this.maxOperations = typeof options.maxOperations === 'number' ? options.maxOperations : DEFAULT_MAX_OPERATIONS;
-    this.maxEventsPerOperation = typeof options.maxEventsPerOperation === 'number'
-      ? options.maxEventsPerOperation
-      : DEFAULT_MAX_EVENTS_PER_OPERATION;
+    this.maxOperations =
+      typeof options.maxOperations === 'number' ? options.maxOperations : DEFAULT_MAX_OPERATIONS;
+    this.maxEventsPerOperation =
+      typeof options.maxEventsPerOperation === 'number'
+        ? options.maxEventsPerOperation
+        : DEFAULT_MAX_EVENTS_PER_OPERATION;
 
     this.operations = new Map();
   }
@@ -202,7 +233,12 @@ class DiagnosticBuffer {
       return {
         operationId,
         events: [],
-        retention: { retainedCount: 0, truncatedCount: 0, capacity: this.maxEventsPerOperation, isTruncated: false },
+        retention: {
+          retainedCount: 0,
+          truncatedCount: 0,
+          capacity: this.maxEventsPerOperation,
+          isTruncated: false,
+        },
         error: null,
       };
     }
@@ -232,7 +268,9 @@ class DiagnosticBuffer {
 
     const lines = [];
     lines.push(`### Diagnostic Report: \`${operationId}\``);
-    lines.push(`- **Events Retained**: ${data.retention.retainedCount} of ${data.retention.capacity}${data.retention.isTruncated ? ` (${data.retention.truncatedCount} older events evicted)` : ''}`);
+    lines.push(
+      `- **Events Retained**: ${data.retention.retainedCount} of ${data.retention.capacity}${data.retention.isTruncated ? ` (${data.retention.truncatedCount} older events evicted)` : ''}`,
+    );
 
     if (data.error) {
       lines.push(`- **Failure Category**: \`${data.failureCategory || 'unknown'}\``);
@@ -254,7 +292,9 @@ class DiagnosticBuffer {
       const statusPart = ev.status ? ` (${ev.status})` : '';
       lines.push(`${idx + 1}.${timePart} **${ev.eventType}** · ${ev.title}${statusPart}`);
       if (ev.evidence && options.verbose) {
-        lines.push(`   - Evidence: ${typeof ev.evidence === 'object' ? JSON.stringify(ev.evidence) : ev.evidence}`);
+        lines.push(
+          `   - Evidence: ${typeof ev.evidence === 'object' ? JSON.stringify(ev.evidence) : ev.evidence}`,
+        );
       }
     });
 

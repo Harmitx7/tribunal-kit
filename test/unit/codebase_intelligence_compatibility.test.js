@@ -110,7 +110,10 @@ describe('Phase 4: Controlled Failure & Error Handling Contracts', () => {
     expect(traceRes.data.data.error).toMatch(/Trace command requires a target/);
 
     // relevant-files requires task description
-    const relRes = await runCodebaseIntelligence({ subcommand: 'relevant-files', repoRoot: FIXTURE_DIR });
+    const relRes = await runCodebaseIntelligence({
+      subcommand: 'relevant-files',
+      repoRoot: FIXTURE_DIR,
+    });
     expect(relRes.status).toBe('FAILED');
     expect(relRes.data.data.error).toMatch(/relevant-files requires a task description/);
 
@@ -126,10 +129,18 @@ describe('Phase 4: Controlled Failure & Error Handling Contracts', () => {
   });
 
   test('whitespace-only arguments are treated as missing arguments and return FAILED envelope', async () => {
-    const traceRes = await runCodebaseIntelligence({ subcommand: 'trace', target: '   ', repoRoot: FIXTURE_DIR });
+    const traceRes = await runCodebaseIntelligence({
+      subcommand: 'trace',
+      target: '   ',
+      repoRoot: FIXTURE_DIR,
+    });
     expect(traceRes.status).toBe('FAILED');
 
-    const prepRes = await runCodebaseIntelligence({ subcommand: 'prepare', target: ' \t\n ', repoRoot: FIXTURE_DIR });
+    const prepRes = await runCodebaseIntelligence({
+      subcommand: 'prepare',
+      target: ' \t\n ',
+      repoRoot: FIXTURE_DIR,
+    });
     expect(prepRes.status).toBe('FAILED');
   });
 
@@ -274,10 +285,14 @@ describe('Phase 4: CLI Compatibility & Exit Code Certification', () => {
   });
 
   test('Natural language task query with spaces correctly dispatches to relevant-files', () => {
-    const res = cp.spawnSync(process.execPath, [cliPath, 'understand', 'add', 'OAuth', 'login', 'support', '--json'], {
-      cwd: REPO_ROOT,
-      encoding: 'utf8',
-    });
+    const res = cp.spawnSync(
+      process.execPath,
+      [cliPath, 'understand', 'add', 'OAuth', 'login', 'support', '--json'],
+      {
+        cwd: REPO_ROOT,
+        encoding: 'utf8',
+      },
+    );
     expect(res.status).toBe(0);
     const parsed = JSON.parse(res.stdout);
     expect(parsed.operation).toBe('relevant-files');
@@ -341,7 +356,9 @@ describe('Phase 4: MCP Tool Integration & Safety Boundary Compatibility', () => 
       params: { name: 'tribunal_get_context', arguments: { target: '../../outside_secret.txt' } },
     });
     expect(travRes.isError).toBe(true);
-    expect(travRes.content[0].text).toContain('Security Violation: Path outside authorized workspace');
+    expect(travRes.content[0].text).toContain(
+      'Security Violation: Path outside authorized workspace',
+    );
   });
 
   test('MCP tribunal_get_context executes check mode cleanly', async () => {
@@ -361,7 +378,8 @@ describe('Phase 4: MCP Tool Integration & Safety Boundary Compatibility', () => 
 
 describe('Phase 4: Adversarial Secret Redaction & Read-Only Invariant', () => {
   test('DEF-02: Secret redaction sanitizes all credentials across envelope and markdown', async () => {
-    const rawSecret = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.do_not_leak_this_secret';
+    const rawSecret =
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.do_not_leak_this_secret';
     const res = await runCodebaseIntelligence({
       subcommand: 'relevant-files',
       target: `fix checkout with token ${rawSecret}`,
@@ -380,13 +398,29 @@ describe('Phase 4: Adversarial Secret Redaction & Read-Only Invariant', () => {
     const beforeFiles = fs.readdirSync(targetDir, { recursive: true });
 
     await runCodebaseIntelligence({ subcommand: 'overview', repoRoot: targetDir });
-    await runCodebaseIntelligence({ subcommand: 'trace', target: 'POST /checkout', repoRoot: targetDir });
+    await runCodebaseIntelligence({
+      subcommand: 'trace',
+      target: 'POST /checkout',
+      repoRoot: targetDir,
+    });
     await runCodebaseIntelligence({ subcommand: 'dependencies', repoRoot: targetDir });
-    await runCodebaseIntelligence({ subcommand: 'relevant-files', target: 'login', repoRoot: targetDir });
-    await runCodebaseIntelligence({ subcommand: 'impact', target: 'service/checkout.js', repoRoot: targetDir });
+    await runCodebaseIntelligence({
+      subcommand: 'relevant-files',
+      target: 'login',
+      repoRoot: targetDir,
+    });
+    await runCodebaseIntelligence({
+      subcommand: 'impact',
+      target: 'service/checkout.js',
+      repoRoot: targetDir,
+    });
     await runCodebaseIntelligence({ subcommand: 'dead-code', repoRoot: targetDir });
     await runCodebaseIntelligence({ subcommand: 'onboard', repoRoot: targetDir });
-    await runCodebaseIntelligence({ subcommand: 'prepare', target: 'refactor', repoRoot: targetDir });
+    await runCodebaseIntelligence({
+      subcommand: 'prepare',
+      target: 'refactor',
+      repoRoot: targetDir,
+    });
 
     const afterFiles = fs.readdirSync(targetDir, { recursive: true });
     expect(afterFiles).toEqual(beforeFiles);

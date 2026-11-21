@@ -30,9 +30,9 @@ function generateAssessmentId() {
 /**
  * Evaluates a versioned Confidence Assessment (Schema v1) implementing the 10 safeguards.
  *
- * @param {Object} params
- * @param {Object} params.execRes - Execution results ({ results, evidence_requests })
- * @param {Object} params.decisionPlan - Decision plan
+ * @param {Object} [params]
+ * @param {Object} [params.execRes] - Execution results ({ results, evidence_requests })
+ * @param {Object} [params.decisionPlan] - Decision plan
  * @param {Object} [params.evidencePack] - Shared evidence pack
  * @param {Array<string>} [params.files] - Files under review
  * @param {string} [params.task] - Task description
@@ -44,7 +44,7 @@ function evaluateConfidenceAssessment(params = {}) {
   const execRes = params.execRes || {};
   const decisionPlan = params.decisionPlan || {};
   const evidencePack = params.evidencePack || null;
-  const files = Array.isArray(params.files) ? params.files : (decisionPlan.files || []);
+  const files = Array.isArray(params.files) ? params.files : decisionPlan.files || [];
   const task = params.task || decisionPlan.task || '';
   const budgetManager = params.budgetManager || new ConfidenceEscalationBudgetManager();
   const fallbackHash = crypto
@@ -55,14 +55,21 @@ function evaluateConfidenceAssessment(params = {}) {
   const reviewRunId = params.reviewRunId || execRes.reviewRunId || `run_${fallbackHash}`;
 
   const results = Array.isArray(execRes.results) ? execRes.results : [];
-  const evidenceRequests = Array.isArray(execRes.evidence_requests) ? execRes.evidence_requests : [];
+  const evidenceRequests = Array.isArray(execRes.evidence_requests)
+    ? execRes.evidence_requests
+    : [];
 
   // Determine security-sensitive and risk characteristics
   const isSecuritySensitive =
     decisionPlan.security_sensitive === true ||
     HIGH_RISK_PATTERNS.test(task) ||
     files.some(f => HIGH_RISK_PATTERNS.test(f));
-  const riskTier = typeof decisionPlan.tier === 'number' ? decisionPlan.tier : (decisionPlan.risk === 'HIGH' ? 3 : 1);
+  const riskTier =
+    typeof decisionPlan.tier === 'number'
+      ? decisionPlan.tier
+      : decisionPlan.risk === 'HIGH'
+        ? 3
+        : 1;
   const isHighRisk = decisionPlan.risk === 'HIGH' || riskTier >= 3;
   const isHighAmbiguity = decisionPlan.ambiguity === 'HIGH';
 
@@ -85,7 +92,9 @@ function evaluateConfidenceAssessment(params = {}) {
   const hasWarnings = results.some(r => r.verdict === 'WARNING');
   const hasSevereContradiction = hasApproved && hasRejections;
   const hasWarningDisagreement = hasApproved && hasWarnings && !hasRejections;
-  const hasCriticalFindings = results.some(r => (r.findings || []).some(f => f.severity === 'CRITICAL'));
+  const hasCriticalFindings = results.some(r =>
+    (r.findings || []).some(f => f.severity === 'CRITICAL'),
+  );
 
   // Unverified findings or unsupported assertions check
   const hasUnverifiedClaims =
@@ -95,8 +104,10 @@ function evaluateConfidenceAssessment(params = {}) {
         f =>
           f.unverified === true ||
           (typeof f.title === 'string' && /(unverified|unsupported|unconfirmed)/i.test(f.title)) ||
-          (!f.evidence_id && (!Array.isArray(f.evidence_ids) || f.evidence_ids.length === 0) && f.severity !== 'INFO')
-      )
+          (!f.evidence_id &&
+            (!Array.isArray(f.evidence_ids) || f.evidence_ids.length === 0) &&
+            f.severity !== 'INFO'),
+      ),
     );
 
   const hasUnresolvedRequests = evidenceRequests.some(
@@ -107,7 +118,10 @@ function evaluateConfidenceAssessment(params = {}) {
   let hasCorrelatedReviewers = false;
   if (results.length >= 2) {
     const findingsSignatures = results.map(r => {
-      const fTitles = (r.findings || []).map(f => (f.title || f.message || '').trim()).sort().join('::');
+      const fTitles = (r.findings || [])
+        .map(f => (f.title || f.message || '').trim())
+        .sort()
+        .join('::');
       return `${r.verdict}__${fTitles}`;
     });
     const uniqueSigs = new Set(findingsSignatures);
@@ -213,7 +227,9 @@ function evaluateConfidenceAssessment(params = {}) {
   // Reviewer reported confidence (sanitized against NaN, infinity, negative)
   const validConfs = results
     .map(r => r.confidence)
-    .filter(c => typeof c === 'number' && Number.isFinite(c) && !Number.isNaN(c) && c >= 0.0 && c <= 1.0);
+    .filter(
+      c => typeof c === 'number' && Number.isFinite(c) && !Number.isNaN(c) && c >= 0.0 && c <= 1.0,
+    );
   if (validConfs.length > 0) {
     const minLlmConf = Math.min(...validConfs);
     if (minLlmConf < 0.8) {
@@ -266,7 +282,7 @@ function evaluateConfidenceAssessment(params = {}) {
     // Precedence 4: Severe Reviewer Contradiction (Approved vs Rejected)
     reviewDepth = 'DEEP';
     reasonCodes.push('REVIEWER_CONTRADICTION');
-  } else if (score < 0.50) {
+  } else if (score < 0.5) {
     // Precedence 5: Low Confidence Floor (< 0.50)
     reviewDepth = 'DEEP';
     reasonCodes.push('LOW_CONFIDENCE_DEEP_SCRUTINY');
@@ -290,7 +306,7 @@ function evaluateConfidenceAssessment(params = {}) {
     // Precedence 10: Deterministic Risk Tier 2
     reviewDepth = 'EXPANDED';
     reasonCodes.push('TIER_2_EXPANDED_AUDIT');
-  } else if (score < 0.80) {
+  } else if (score < 0.8) {
     // Precedence 11: Moderate Confidence (0.50 <= score < 0.80)
     reviewDepth = 'EXPANDED';
     reasonCodes.push('MODERATE_CONFIDENCE_EXPANSION');
@@ -565,12 +581,17 @@ async function executeWithConfidenceEscalation(options = {}) {
     // Check loop termination / deduplication
     const recorded = budgetManager.recordFingerprint(lastAssessment.fingerprint);
     if (!recorded) {
-      lastAssessment.stopping_reason = 'Deduplication: identical confidence state reached across rounds';
+      lastAssessment.stopping_reason =
+        'Deduplication: identical confidence state reached across rounds';
       break;
     }
 
     // Stopping conditions
-    if (lastAssessment.next_action === 'STOP' || lastAssessment.next_action === 'UNRESOLVED' || lastAssessment.next_action === 'CONTINUE') {
+    if (
+      lastAssessment.next_action === 'STOP' ||
+      lastAssessment.next_action === 'UNRESOLVED' ||
+      lastAssessment.next_action === 'CONTINUE'
+    ) {
       break;
     }
 
@@ -631,11 +652,20 @@ async function executeWithConfidenceEscalation(options = {}) {
     confidence: lastAssessment.score,
     confidence_level: lastAssessment.level,
     review_depth: lastAssessment.review_depth,
-    required_depth: lastAssessment.review_depth === 'DEEP' ? 2 : (lastAssessment.review_depth === 'EXPANDED' ? 1 : 0),
+    required_depth:
+      lastAssessment.review_depth === 'DEEP'
+        ? 2
+        : lastAssessment.review_depth === 'EXPANDED'
+          ? 1
+          : 0,
     escalation: budgetManager.currentRound > 1 || budgetManager.additionalReviewersExecuted > 0,
     reason_codes: lastAssessment.reason_codes,
-    evidence_state: allEvidenceRequests.some(r => r.status === 'unavailable') ? 'INCOMPLETE' : 'COMPLETE',
-    verification_state: lastAssessment.reason_codes.includes('FAILED_VERIFICATION') ? 'FAILED' : 'VERIFIED',
+    evidence_state: allEvidenceRequests.some(r => r.status === 'unavailable')
+      ? 'INCOMPLETE'
+      : 'COMPLETE',
+    verification_state: lastAssessment.reason_codes.includes('FAILED_VERIFICATION')
+      ? 'FAILED'
+      : 'VERIFIED',
     fingerprint: lastAssessment.fingerprint,
     assessment: lastAssessment,
   };

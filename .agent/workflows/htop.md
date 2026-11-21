@@ -1,6 +1,6 @@
 ---
 name: htop
-description: "Inspect active agent execution metrics, task telemetry, and syscall status."
+description: 'Inspect active agent execution metrics, task telemetry, and syscall status.'
 version: 1.0.0
 required-skills:
   - htop

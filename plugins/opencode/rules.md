@@ -51,7 +51,7 @@ When you detect code or design requests, route to the correct specialist:
 | API / server / backend       | `backend-specialist`    |
 | React / Next.js / UI         | `frontend-specialist`   |
 | Database / schema / SQL      | `database-architect`    |
-| Python / FastAPI / Django    | `python-pro`            |
+| Python / FastAPI / Django    | `backend-specialist`    |
 | Mobile (RN / Flutter)        | `mobile-developer`      |
 | Debugging / errors           | `debugger`              |
 | Security / vulnerabilities   | `security-auditor`      |
@@ -255,5 +255,5 @@ When consuming user prompts or passing context across agent boundaries:
 
 ---
 
-_Tribunal Kit v9.0.0 — 52 specialists, 28 reviewers, 185 skills, Rust core_
+_Tribunal Kit v9.4.0 — 58 specialists, 28 reviewers, 398 skills, Rust core_
 *https://github.com/Harmitx7/tribunal-kit*

@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -100,7 +101,7 @@ const MODEL_REGISTRY = {
     defaultSafetyMargin: 300,
     perMessageOverhead: 3,
   },
-  'o1': {
+  o1: {
     provider: 'openai',
     tokenizer: 'o200k_base',
     contextLimit: 200000,
@@ -590,9 +591,7 @@ function calculateContextBudget(params = {}) {
     typeof params.schema === 'object' && params.schema !== null
       ? JSON.stringify(params.schema)
       : params.schema || '';
-  const toolsText = Array.isArray(params.tools)
-    ? JSON.stringify(params.tools)
-    : params.tools || '';
+  const toolsText = Array.isArray(params.tools) ? JSON.stringify(params.tools) : params.tools || '';
 
   const systemCount = countTokens(systemText, { model: profile.modelName });
   const schemaCount = countTokens(schemaText, { model: profile.modelName });

@@ -28,7 +28,6 @@ const { handleRequest } = require('../../bin/mcp-server');
 const REPO_ROOT = path.resolve(__dirname, '../..');
 
 describe('Phase 10: Observability, Diagnostics & Failure-Recovery Certification', () => {
-
   // ── 1. CANONICAL ERROR CLASSIFICATION ───────────────────────────────────────
   test('D1: classifyError maps diverse exceptions into standard error categories', () => {
     // 1. Unsupported operation
@@ -39,13 +38,20 @@ describe('Phase 10: Observability, Diagnostics & Failure-Recovery Certification'
     expect(e1.suggested_action).toContain('Choose one of:');
 
     // 2. Invalid input / missing target
-    const e2 = classifyError(new Error('Trace command requires a target route, feature, or symbol name'), 'trace');
+    const e2 = classifyError(
+      new Error('Trace command requires a target route, feature, or symbol name'),
+      'trace',
+    );
     expect(e2.code).toBe('INVALID_INPUT');
     expect(e2.severity).toBe('ERROR');
     expect(e2.recoverable).toBe(true);
 
     // 3. Access denied / path traversal
-    const e3 = classifyError(new Error('Security Violation: Path traversal detected outside root'), 'overview', '../../etc/passwd');
+    const e3 = classifyError(
+      new Error('Security Violation: Path traversal detected outside root'),
+      'overview',
+      '../../etc/passwd',
+    );
     expect(e3.code).toBe('ACCESS_DENIED');
     expect(e3.severity).toBe('ERROR');
     expect(e3.recoverable).toBe(false);
@@ -56,7 +62,10 @@ describe('Phase 10: Observability, Diagnostics & Failure-Recovery Certification'
     expect(e4.severity).toBe('ERROR');
 
     // 5. Configuration error
-    const e5 = classifyError(new Error('Malformed package.json manifest in repository'), 'overview');
+    const e5 = classifyError(
+      new Error('Malformed package.json manifest in repository'),
+      'overview',
+    );
     expect(e5.code).toBe('CONFIGURATION_ERROR');
     expect(e5.severity).toBe('ERROR');
 
@@ -98,7 +107,8 @@ describe('Phase 10: Observability, Diagnostics & Failure-Recovery Certification'
 
   // ── 3. SECRET REDACTION IN DIAGNOSTICS & ERROR CHANNELS ─────────────────────
   test('D3: Synthetic credentials in error triggers are thoroughly redacted across all diagnostics', async () => {
-    const sensitiveQuery = 'trace password = "SecretPassword!999" in route eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-ID';
+    const sensitiveQuery =
+      'trace password = "SecretPassword!999" in route eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-ID';
 
     const res = await runCodebaseIntelligence({
       subcommand: 'unsupported_secret_cmd',
@@ -211,5 +221,4 @@ describe('Phase 10: Observability, Diagnostics & Failure-Recovery Certification'
       expect(afterFiles.has(f)).toBe(true);
     }
   });
-
 });

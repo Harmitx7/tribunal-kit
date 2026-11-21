@@ -18,7 +18,10 @@ const {
 } = require('../../src/evaluation');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-const DATASET_PATH = path.join(REPO_ROOT, 'test/fixtures/ai_reliability/evaluation_dataset_v1.json');
+const DATASET_PATH = path.join(
+  REPO_ROOT,
+  'test/fixtures/ai_reliability/evaluation_dataset_v1.json',
+);
 
 describe('AI Reliability & Evaluation Domain — End-to-End Integration Suite', () => {
   let dataset;
@@ -112,7 +115,12 @@ describe('AI Reliability & Evaluation Domain — End-to-End Integration Suite', 
       { caseId: 'FORMAT-01', verdict: 'FAIL', severity: 'LOW' },
     ];
     const candidate = [
-      { caseId: 'SEC-CRIT-01', verdict: 'FAIL', severity: 'CRITICAL', failureDetails: { reason: 'Missed vulnerability' } },
+      {
+        caseId: 'SEC-CRIT-01',
+        verdict: 'FAIL',
+        severity: 'CRITICAL',
+        failureDetails: { reason: 'Missed vulnerability' },
+      },
       { caseId: 'FORMAT-01', verdict: 'PASS', severity: 'LOW' },
     ];
 

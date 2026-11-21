@@ -70,6 +70,9 @@ function httpsPost(hostname, apiPath, headers, body) {
   });
 }
 
+/**
+ * @param {{ prompt: string, model?: string, temperature?: number, maxTokens?: number }} options
+ */
 async function runPrompt({ prompt, model, temperature, maxTokens }) {
   const start = Date.now();
   let provider = null;
@@ -954,7 +957,7 @@ async function cmdReview(flags, argv, quiet) {
         log(`  ${execRes.results.length} reviewer(s)`);
         log(`  ${(execRes.durationMs / 1000).toFixed(2)}s`);
         log(
-          `  ${execRes.telemetry.totalTokens !== 'UNAVAILABLE' ? execRes.telemetry.totalTokens.toLocaleString() + ' tokens' : 'Tokens: UNAVAILABLE'}`,
+          `  ${typeof execRes.telemetry.totalTokens === 'number' ? execRes.telemetry.totalTokens.toLocaleString() + ' tokens' : 'Tokens: UNAVAILABLE'}`,
         );
         log('');
         log(bold('  Findings:'));

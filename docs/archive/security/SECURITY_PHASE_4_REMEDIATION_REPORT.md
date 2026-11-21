@@ -1,4 +1,5 @@
 # Tribunal Kit v9.2.8 — Security Audit Phase 4
+
 ## Evidence-Driven Residual Vulnerability Remediation & Security Regression Closure
 
 **Audited Repository:** `Harmitx7/tribunal-kit`  
@@ -13,18 +14,21 @@
 ## 1. Audited Revision & Preflight Summary
 
 ### 1.1 Revision Metadata
-| Property | Value |
-| :--- | :--- |
-| **Git Branch** | `main` (tracking `origin/main`, ahead 1 commit) |
-| **HEAD Commit** | `7f2895d189d8d47d57fede3f72dc17f77fbdb1b8` |
-| **Commit Message** | `style: apply auto-fixes for formatting` |
-| **Node.js Runtime** | `v22.23.2` |
-| **npm Version** | `10.9.8` |
-| **Active Target OS** | Windows 11 Enterprise x64 (Build 10.0.26100) |
-| **Test Framework** | Jest `30.4.2` (`ts-jest` / native JS runner) |
+
+| Property             | Value                                           |
+| :------------------- | :---------------------------------------------- |
+| **Git Branch**       | `main` (tracking `origin/main`, ahead 1 commit) |
+| **HEAD Commit**      | `7f2895d189d8d47d57fede3f72dc17f77fbdb1b8`      |
+| **Commit Message**   | `style: apply auto-fixes for formatting`        |
+| **Node.js Runtime**  | `v22.23.2`                                      |
+| **npm Version**      | `10.9.8`                                        |
+| **Active Target OS** | Windows 11 Enterprise x64 (Build 10.0.26100)    |
+| **Test Framework**   | Jest `30.4.2` (`ts-jest` / native JS runner)    |
 
 ### 1.2 Baseline Security Suite Execution
+
 Before remediation modifications, the Phase 3 adversarial regression suite was executed:
+
 - `test/unit/phase3_adversarial_verification.test.js`: 63 PASS, 1 FAIL (reproducing the unresolved `TK-SEC-07` metadata hostname bypass).
 - `test/unit/security_containment.test.js`: 28 PASS.
 - Total Baseline Tests: 91 PASS, 1 FAIL (100% reproducible gap).
@@ -35,10 +39,10 @@ Before remediation modifications, the Phase 3 adversarial regression suite was e
 
 In accordance with Phase 3 verification results (`SECURITY_PHASE_3_VERIFICATION_REPORT.md`), the remediation queue was prioritized:
 
-| Finding ID | Priority | Severity | Category | Description | Phase 3 Status | Phase 4 Target |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **TK-SEC-07** | **P1** | **High** | Browser SSRF & CDP Gaps | `validateBrowserUrl` allowed cloud metadata hostnames (`metadata.google.internal`), hex/octal/decimal IP representations, and failed to prevent DNS rebinding or HTTP 301/302 redirects during Chrome CDP navigation. | **PARTIALLY FIXED** | **FIXED — VERIFIED** |
-| **Invariant 6** | **P1** | **High** | Security Invariant | URL restrictions remain effective across redirects and DNS resolution. | **FAIL** | **PASS** |
+| Finding ID      | Priority | Severity | Category                | Description                                                                                                                                                                                                           | Phase 3 Status      | Phase 4 Target       |
+| :-------------- | :------- | :------- | :---------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------ | :------------------- |
+| **TK-SEC-07**   | **P1**   | **High** | Browser SSRF & CDP Gaps | `validateBrowserUrl` allowed cloud metadata hostnames (`metadata.google.internal`), hex/octal/decimal IP representations, and failed to prevent DNS rebinding or HTTP 301/302 redirects during Chrome CDP navigation. | **PARTIALLY FIXED** | **FIXED — VERIFIED** |
+| **Invariant 6** | **P1**   | **High** | Security Invariant      | URL restrictions remain effective across redirects and DNS resolution.                                                                                                                                                | **FAIL**            | **PASS**             |
 
 All other primary findings (`TK-SEC-01` through `TK-SEC-06`, `TK-SEC-08`, `TK-SEC-09`, `TK-SEC-10`, `TK-PART-01`, `TK-PART-02`) were confirmed **FIXED — VERIFIED** in Phase 3 and retained full test coverage throughout Phase 4.
 
@@ -47,7 +51,9 @@ All other primary findings (`TK-SEC-01` through `TK-SEC-06`, `TK-SEC-08`, `TK-SE
 ## 3. Root-Cause Remediation Architecture
 
 ### 3.1 Synchronous Hostname & IP Gating (`src/security/boundary.js`)
+
 The centralized `validateBrowserUrl` function was significantly hardened against static evasion vectors:
+
 1. **Cloud Metadata Hostnames**: Added strict matching for `metadata.google.internal`, `*.metadata.google.internal`, `metadata.goog`, and `instance-data`.
 2. **Internal & Reserved TLD Suffixes**: Prohibited hostnames ending with `.local`, `.internal`, `.lan`, `.corp`, and `.onion`. Loopback domain `.localhost` is blocked unless `allowLoopback: true` is explicitly passed.
 3. **Debugger Port Defense**: Prohibits Chrome DevTools Protocol management port `9222` and Node.js V8 inspector port `9229`.
@@ -63,14 +69,18 @@ The centralized `validateBrowserUrl` function was significantly hardened against
    - Documentation & Benchmark Ranges: `192.0.2.0/24`, `198.51.100.0/24`, `203.0.113.0/24`, `198.18.0.0/15`.
 
 ### 3.2 Asynchronous DNS Resolution & Rebinding Defense (`validateBrowserUrlAsync`)
+
 Implemented `validateBrowserUrlAsync(urlString, options)`:
+
 1. Performs static synchronous syntax and IP literal validation first.
 2. If the destination is a hostname, resolves all IPv4 and IPv6 addresses via `dns.promises.lookup(hostname, { all: true })` (or injected `options.dnsLookup`).
 3. Iterates over all resolved address records. If **any** returned IP address falls within a prohibited range (e.g. attacker domain returning both `93.184.216.34` and `127.0.0.1`), the navigation is rejected with an explicit SSRF security error before any network request is issued.
 4. Non-resolving hostnames (`ENOTFOUND`, `EAI_AGAIN`) are safely handled without throwing false positive SSRF exceptions.
 
 ### 3.3 CDP Active Request & Redirect Interception (`src/browser/cdp.js`)
+
 Headless Chrome's network stack automatically follows HTTP 301, 302, 307, and 308 redirects. To eliminate redirect-based SSRF:
+
 1. Before navigation, `CdpClient.navigate(url, options)` engages the Chrome DevTools Protocol `Fetch` domain:
    ```javascript
    await this.send('Fetch.enable', {
@@ -86,7 +96,9 @@ Headless Chrome's network stack automatically follows HTTP 301, 302, 307, and 30
 5. Cleanup in `finally` guarantees that `Fetch.requestPaused` event listeners are detached and `Fetch.disable` is issued, preventing hanging connections.
 
 ### 3.4 Subsystem Options & Validation Wiring
+
 Updated browser consumers to pass security options and enforce validation:
+
 - `src/browser/audit.js`: Passed `_options` to `client.navigate(url, _options)`.
 - `src/browser/compare.js`: Passed `options` to `client.navigate(url1, options)` and `client.navigate(url2, options)`.
 - `src/browser/index.js`: Passed `_options` to `client.navigate(url, _options)`.
@@ -99,11 +111,13 @@ Updated browser consumers to pass security options and enforce validation:
 ## 4. Regression Test Evidence
 
 ### 4.1 Phase 4 Dedicated Regression Suite (`test/unit/phase4_security_regression.test.js`)
+
 Created a standalone, 33-test regression suite directly verifying Phase 4 fixes under the Iron Law of TDD:
 
 ```bash
 npx jest test/unit/phase4_security_regression.test.js
 ```
+
 ```text
 PASS test/unit/phase4_security_regression.test.js
   Phase 4: Browser SSRF, DNS Rebinding & Redirect Interception (TK-SEC-07)
@@ -152,7 +166,9 @@ Time:        0.834 s
 ```
 
 ### 4.2 Comprehensive Security Suite Execution
+
 Executed all 7 security test suites simultaneously:
+
 ```bash
 npx jest \
   test/unit/phase4_security_regression.test.js \
@@ -163,6 +179,7 @@ npx jest \
   test/unit/case_memory.security.test.js \
   test/integration/browser_cli.test.js
 ```
+
 ```text
 PASS test/unit/case_memory.security.test.js (5 tests)
 PASS test/unit/security_regression.test.js (1 test)
@@ -182,33 +199,33 @@ Time:        3.791 s
 
 ## 5. Updated Remediation Ledger
 
-| Finding ID | Severity | Location | Vulnerability Summary | Phase 3 Status | Phase 4 Status | Verification Command |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **TK-SEC-01** | High | `bin/mcp-server.js` (`resources/read`) | Path traversal escaping workspace root via `tribunal://` URIs | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-01"` |
-| **TK-SEC-02** | High | `bin/mcp-server.js` (`prompts/get`) | Path traversal reading `.md` files outside `workflows/` | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-02"` |
-| **TK-SEC-03** | High | `bin/mcp-server.js` (`dispatch_swarm`) | Arbitrary file read & V8 SyntaxError file content disclosure | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-03"` |
-| **TK-SEC-04** | Critical | `.agent/scripts/swarm_dispatcher.js` | Arbitrary subprocess execution via `worker.command` | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-04"` |
-| **TK-SEC-05** | High | `src/execution/controlled_write_service.js` | Sibling directory prefix collision & transaction atomicity | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-05"` |
-| **TK-SEC-06** | Medium | `bin/mcp-server.js` & `context_compiler.js` | Positional CLI flag injection (`-f`, `--write`) | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-06"` |
-| **TK-SEC-07** | High | `src/browser/audit.js`, `cdp.js`, `boundary.js` | Browser SSRF, DNS rebinding, and HTTP redirect bypasses | PARTIALLY FIXED | **FIXED — VERIFIED** | `npx jest test/unit/phase4_security_regression.test.js` |
-| **TK-SEC-08** | High | `bin/spawn-agent.js`, `bin/tk-proxy.js` | Shell command injection via `shell: true` on Windows | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-08"` |
-| **TK-SEC-09** | Medium | `src/browser/launcher.js` | Unchecked PID tree kill in `terminateProcessTree` | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-09"` |
-| **TK-SEC-10** | Medium | `src/evolution/engine.js` | Path traversal via user-supplied `proposalId` | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-10"` |
-| **TK-PART-01** | Medium | `src/commands/sdd.js` | Option injection and traversal in git diff commands | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-PART-01"` |
-| **TK-PART-02** | Low | `.agent/data/skill_certification_ledger.jsonl` | Sibling collision in certification ledger | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/security_containment.test.js` |
+| Finding ID     | Severity | Location                                        | Vulnerability Summary                                         | Phase 3 Status   | Phase 4 Status       | Verification Command                                                         |
+| :------------- | :------- | :---------------------------------------------- | :------------------------------------------------------------ | :--------------- | :------------------- | :--------------------------------------------------------------------------- |
+| **TK-SEC-01**  | High     | `bin/mcp-server.js` (`resources/read`)          | Path traversal escaping workspace root via `tribunal://` URIs | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-01"`  |
+| **TK-SEC-02**  | High     | `bin/mcp-server.js` (`prompts/get`)             | Path traversal reading `.md` files outside `workflows/`       | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-02"`  |
+| **TK-SEC-03**  | High     | `bin/mcp-server.js` (`dispatch_swarm`)          | Arbitrary file read & V8 SyntaxError file content disclosure  | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-03"`  |
+| **TK-SEC-04**  | Critical | `.agent/scripts/swarm_dispatcher.js`            | Arbitrary subprocess execution via `worker.command`           | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-04"`  |
+| **TK-SEC-05**  | High     | `src/execution/controlled_write_service.js`     | Sibling directory prefix collision & transaction atomicity    | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-05"`  |
+| **TK-SEC-06**  | Medium   | `bin/mcp-server.js` & `context_compiler.js`     | Positional CLI flag injection (`-f`, `--write`)               | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-06"`  |
+| **TK-SEC-07**  | High     | `src/browser/audit.js`, `cdp.js`, `boundary.js` | Browser SSRF, DNS rebinding, and HTTP redirect bypasses       | PARTIALLY FIXED  | **FIXED — VERIFIED** | `npx jest test/unit/phase4_security_regression.test.js`                      |
+| **TK-SEC-08**  | High     | `bin/spawn-agent.js`, `bin/tk-proxy.js`         | Shell command injection via `shell: true` on Windows          | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-08"`  |
+| **TK-SEC-09**  | Medium   | `src/browser/launcher.js`                       | Unchecked PID tree kill in `terminateProcessTree`             | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-09"`  |
+| **TK-SEC-10**  | Medium   | `src/evolution/engine.js`                       | Path traversal via user-supplied `proposalId`                 | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-SEC-10"`  |
+| **TK-PART-01** | Medium   | `src/commands/sdd.js`                           | Option injection and traversal in git diff commands           | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/phase3_adversarial_verification.test.js -t "TK-PART-01"` |
+| **TK-PART-02** | Low      | `.agent/data/skill_certification_ledger.jsonl`  | Sibling collision in certification ledger                     | FIXED — VERIFIED | **FIXED — VERIFIED** | `npx jest test/unit/security_containment.test.js`                            |
 
 ---
 
 ## 6. Security Invariants Verification Status
 
-| Invariant # | Invariant Statement | Phase 3 Result | Phase 4 Result | Evidence & Enforcement Mechanism |
-| :---: | :--- | :---: | :---: | :--- |
-| **1** | No MCP client or tool caller can read files outside the designated workspace or package boundary. | **PASS** | **PASS** | Verified via `assertWithinRoot` path containment and `validateResourceId` character gating. |
-| **2** | No unauthenticated or tool-driven command can execute arbitrary shell commands or spawn unrestricted binaries. | **PASS** | **PASS** | `DAGTaskSchema` rejects arbitrary `worker.command`; `validateExecutableName` enforces binary whitelist; all subprocesses spawn with `shell: false`. |
-| **3** | Transaction rollbacks leave zero partial writes on failure. | **PASS** | **PASS** | Verified via `TransactionManager.abort()` backup restoration in `phase3_adversarial_verification.test.js`. |
-| **4** | Error messages do not disclose file contents or internal tokens. | **PASS** | **PASS** | `sanitizeErrorMessage` masks V8 SyntaxError snippet leakage to generic error string. |
-| **5** | Controlled write operations reject sibling path prefix collision attacks. | **PASS** | **PASS** | `path.relative` containment check in `assertWithinRoot` eliminates prefix collision vulnerabilities. |
-| **6** | URL restrictions remain effective across redirects and DNS resolution. | **FAIL** | **PASS** | **RESOLVED**: Static cloud metadata hostnames (`metadata.google.internal`, `*.metadata.google.internal`, `metadata.goog`, `instance-data`) and hex-chunked IPv4-mapped IPv6 literals blocked in `validateBrowserUrl`; DNS rebinding prevented via `validateBrowserUrlAsync`; HTTP 301/302 redirects and subresource requests intercepted via CDP `Fetch.enable` and terminated with `Fetch.failRequest(AccessDenied)`. |
+| Invariant # | Invariant Statement                                                                                            | Phase 3 Result | Phase 4 Result | Evidence & Enforcement Mechanism                                                                                                                                                                                                                                                                                                                                                                                       |
+| :---------: | :------------------------------------------------------------------------------------------------------------- | :------------: | :------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|    **1**    | No MCP client or tool caller can read files outside the designated workspace or package boundary.              |    **PASS**    |    **PASS**    | Verified via `assertWithinRoot` path containment and `validateResourceId` character gating.                                                                                                                                                                                                                                                                                                                            |
+|    **2**    | No unauthenticated or tool-driven command can execute arbitrary shell commands or spawn unrestricted binaries. |    **PASS**    |    **PASS**    | `DAGTaskSchema` rejects arbitrary `worker.command`; `validateExecutableName` enforces binary whitelist; all subprocesses spawn with `shell: false`.                                                                                                                                                                                                                                                                    |
+|    **3**    | Transaction rollbacks leave zero partial writes on failure.                                                    |    **PASS**    |    **PASS**    | Verified via `TransactionManager.abort()` backup restoration in `phase3_adversarial_verification.test.js`.                                                                                                                                                                                                                                                                                                             |
+|    **4**    | Error messages do not disclose file contents or internal tokens.                                               |    **PASS**    |    **PASS**    | `sanitizeErrorMessage` masks V8 SyntaxError snippet leakage to generic error string.                                                                                                                                                                                                                                                                                                                                   |
+|    **5**    | Controlled write operations reject sibling path prefix collision attacks.                                      |    **PASS**    |    **PASS**    | `path.relative` containment check in `assertWithinRoot` eliminates prefix collision vulnerabilities.                                                                                                                                                                                                                                                                                                                   |
+|    **6**    | URL restrictions remain effective across redirects and DNS resolution.                                         |    **FAIL**    |    **PASS**    | **RESOLVED**: Static cloud metadata hostnames (`metadata.google.internal`, `*.metadata.google.internal`, `metadata.goog`, `instance-data`) and hex-chunked IPv4-mapped IPv6 literals blocked in `validateBrowserUrl`; DNS rebinding prevented via `validateBrowserUrlAsync`; HTTP 301/302 redirects and subresource requests intercepted via CDP `Fetch.enable` and terminated with `Fetch.failRequest(AccessDenied)`. |
 
 ---
 

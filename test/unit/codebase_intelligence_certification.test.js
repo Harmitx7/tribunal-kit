@@ -113,11 +113,15 @@ describe('Codebase Intelligence — Behavioral Certification & Adversarial Audit
     expect(res.mode).toBe('project_wide');
 
     // undeclared-crypto-package is missing from package.json
-    const hasUndeclared = res.missingDependencies.some(m => m.package === 'undeclared-crypto-package');
+    const hasUndeclared = res.missingDependencies.some(
+      m => m.package === 'undeclared-crypto-package',
+    );
     expect(hasUndeclared).toBe(true);
 
     // ghost_module does not exist on disk
-    const hasUnresolvable = res.unresolvableImports.some(u => u.importPath.includes('ghost_module'));
+    const hasUnresolvable = res.unresolvableImports.some(u =>
+      u.importPath.includes('ghost_module'),
+    );
     expect(hasUnresolvable).toBe(true);
   });
 
@@ -140,7 +144,8 @@ describe('Codebase Intelligence — Behavioral Certification & Adversarial Audit
 
   // 10. SECRET-LIKE STRINGS REDACTION
   test('Case 10: Secret Redaction — redacts JWTs, AWS keys, and database credentials', () => {
-    const raw = 'Found JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-IDc and AWS: AKIAIOSFODNN7EXAMPLE and DB: postgres://admin:secret123@localhost:5432/db';
+    const raw =
+      'Found JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-IDc and AWS: AKIAIOSFODNN7EXAMPLE and DB: postgres://admin:secret123@localhost:5432/db';
     const redacted = redactSecrets(raw);
 
     expect(redacted).not.toContain('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-IDc');
@@ -210,13 +215,29 @@ describe('Codebase Intelligence — Behavioral Certification & Adversarial Audit
     const countBefore = getFileCount(fixtureAppRoot);
 
     await runCodebaseIntelligence({ subcommand: 'overview', repoRoot: fixtureAppRoot });
-    await runCodebaseIntelligence({ subcommand: 'trace', target: 'processData', repoRoot: fixtureAppRoot });
+    await runCodebaseIntelligence({
+      subcommand: 'trace',
+      target: 'processData',
+      repoRoot: fixtureAppRoot,
+    });
     await runCodebaseIntelligence({ subcommand: 'dependencies', repoRoot: fixtureAppRoot });
-    await runCodebaseIntelligence({ subcommand: 'relevant-files', target: 'service', repoRoot: fixtureAppRoot });
-    await runCodebaseIntelligence({ subcommand: 'impact', target: 'src/service.js', repoRoot: fixtureAppRoot });
+    await runCodebaseIntelligence({
+      subcommand: 'relevant-files',
+      target: 'service',
+      repoRoot: fixtureAppRoot,
+    });
+    await runCodebaseIntelligence({
+      subcommand: 'impact',
+      target: 'src/service.js',
+      repoRoot: fixtureAppRoot,
+    });
     await runCodebaseIntelligence({ subcommand: 'dead-code', repoRoot: fixtureAppRoot });
     await runCodebaseIntelligence({ subcommand: 'onboard', repoRoot: fixtureAppRoot });
-    await runCodebaseIntelligence({ subcommand: 'prepare', target: 'service', repoRoot: fixtureAppRoot });
+    await runCodebaseIntelligence({
+      subcommand: 'prepare',
+      target: 'service',
+      repoRoot: fixtureAppRoot,
+    });
 
     const countAfter = getFileCount(fixtureAppRoot);
     expect(countAfter).toBe(countBefore);
@@ -225,7 +246,8 @@ describe('Codebase Intelligence — Behavioral Certification & Adversarial Audit
   // 18. ZERO SECRET LEAKAGE
   test('Case 18 [Negative]: Zero Secret Leakage — evidence records never contain plaintext secrets', () => {
     const rec = createEvidenceRecord({
-      claim: 'Discovered token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-IDc with AWS AKIAIOSFODNN7EXAMPLE and password=supersecretpass123',
+      claim:
+        'Discovered token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-IDc with AWS AKIAIOSFODNN7EXAMPLE and password=supersecretpass123',
       source_path: 'src/credentials.js',
     });
 
@@ -261,7 +283,12 @@ describe('Codebase Intelligence — Behavioral Certification & Adversarial Audit
     });
 
     // Specifically verify that static hops use static-analysis terminology
-    const staticHops = res.evidenceRecords.filter(r => r.relationship === 'references' || r.relationship === 'imports' || r.relationship === 'routes_to');
+    const staticHops = res.evidenceRecords.filter(
+      r =>
+        r.relationship === 'references' ||
+        r.relationship === 'imports' ||
+        r.relationship === 'routes_to',
+    );
     expect(staticHops.length).toBe(res.evidenceRecords.length);
   });
 
@@ -298,10 +325,10 @@ describe('Codebase Intelligence — Behavioral Certification & Adversarial Audit
     expect(resError.target).toContain('[REDACTED_JWT_TOKEN]');
 
     // 3. Direct error message containing sensitive DB URI
-    const sensitiveError = 'Fatal: failed to connect to postgres://admin:secretPass123@prod-db.internal:5432/main';
+    const sensitiveError =
+      'Fatal: failed to connect to postgres://admin:secretPass123@prod-db.internal:5432/main';
     const safeError = redactSecrets(sensitiveError);
     expect(safeError).not.toContain('secretPass123');
     expect(safeError).toContain('[REDACTED_DB_URI]');
   });
 });
-

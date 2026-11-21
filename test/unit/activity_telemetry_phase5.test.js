@@ -96,14 +96,14 @@ describe('Phase 5: Live Progress & Execution Telemetry', () => {
       // If requireTerminalConfirmation is active and isTerminal is false, caps at 99%
       const p2 = ProgressCalculator.calculate(
         { current: 10, total: 10 },
-        { isTerminal: false, requireTerminalConfirmation: true }
+        { isTerminal: false, requireTerminalConfirmation: true },
       );
       expect(p2.percentage).toBe(99);
 
       // When confirmed terminal, reaches 100%
       const p3 = ProgressCalculator.calculate(
         { current: 10, total: 10 },
-        { isTerminal: true, requireTerminalConfirmation: true }
+        { isTerminal: true, requireTerminalConfirmation: true },
       );
       expect(p3.percentage).toBe(100);
     });
@@ -111,7 +111,7 @@ describe('Phase 5: Live Progress & Execution Telemetry', () => {
     test('enforces monotonic progress when previousPercentage is specified', () => {
       const p = ProgressCalculator.calculate(
         { current: 20, total: 100 },
-        { previousPercentage: 35 }
+        { previousPercentage: 35 },
       );
       expect(p.percentage).toBe(35); // Does not regress from 35 to 20
     });
@@ -123,7 +123,7 @@ describe('Phase 5: Live Progress & Execution Telemetry', () => {
       const flushedEvents = [];
       const coalescer = new ProgressCoalescer({
         windowMs: 40,
-        onFlush: (evt) => flushedEvents.push(evt),
+        onFlush: evt => flushedEvents.push(evt),
       });
 
       // Send a rapid burst of 20 progress updates
@@ -140,7 +140,7 @@ describe('Phase 5: Live Progress & Execution Telemetry', () => {
       expect(flushedEvents.length).toBe(0);
 
       // Wait for coalescing window to fire
-      await new Promise((r) => setTimeout(r, 60));
+      await new Promise(r => setTimeout(r, 60));
 
       expect(flushedEvents.length).toBe(1);
       const flushed = flushedEvents[0];
@@ -155,7 +155,7 @@ describe('Phase 5: Live Progress & Execution Telemetry', () => {
       const flushedEvents = [];
       const coalescer = new ProgressCoalescer({
         windowMs: 100,
-        onFlush: (evt) => flushedEvents.push(evt),
+        onFlush: evt => flushedEvents.push(evt),
       });
 
       // Buffer a progress event
@@ -192,7 +192,7 @@ describe('Phase 5: Live Progress & Execution Telemetry', () => {
       const coalescer = new ProgressCoalescer({
         windowMs: 500,
         maxBurstSize: 5,
-        onFlush: (evt) => flushedEvents.push(evt),
+        onFlush: evt => flushedEvents.push(evt),
       });
 
       for (let i = 1; i <= 5; i++) {
@@ -220,7 +220,7 @@ describe('Phase 5: Live Progress & Execution Telemetry', () => {
       const detector = new StallDetector({
         stallThresholdMs: 50,
         checkIntervalMs: 20,
-        onStall: (evt) => stallEvents.push(evt),
+        onStall: evt => stallEvents.push(evt),
       });
 
       detector.startMonitoring('op_stall_1', { title: 'Long DB Migration' });
@@ -440,7 +440,7 @@ describe('Phase 5: Live Progress & Execution Telemetry', () => {
         title: 'High-Frequency Build',
         enableCoalescing: true,
         coalescerOptions: { windowMs: 30 },
-        onEvent: (evt) => emittedEvents.push(evt),
+        onEvent: evt => emittedEvents.push(evt),
       });
 
       for (let i = 1; i <= 10; i++) {
@@ -449,7 +449,7 @@ describe('Phase 5: Live Progress & Execution Telemetry', () => {
 
       expect(emittedEvents.length).toBe(0);
 
-      await new Promise((r) => setTimeout(r, 50));
+      await new Promise(r => setTimeout(r, 50));
 
       expect(emittedEvents.length).toBe(1);
       expect(emittedEvents[0].progress.current).toBe(10);
@@ -481,12 +481,12 @@ describe('Phase 5: Live Progress & Execution Telemetry', () => {
       const emittedEvents = [];
       const tracker = new ActivityTracker({
         title: 'Remote API Fetch',
-        onEvent: (evt) => emittedEvents.push(evt),
+        onEvent: evt => emittedEvents.push(evt),
       });
 
       const { event } = tracker.stallSuspected(
         'Upstream endpoint did not respond within 45s',
-        'Check network connectivity or retry with increased timeout'
+        'Check network connectivity or retry with increased timeout',
       );
 
       expect(event.eventType).toBe(EVENT_TYPES.STALL_SUSPECTED);
@@ -502,7 +502,7 @@ describe('Phase 5: Live Progress & Execution Telemetry', () => {
         title: 'Batch Job',
         enableCoalescing: true,
         coalescerOptions: { windowMs: 100 },
-        onEvent: (evt) => emittedEvents.push(evt),
+        onEvent: evt => emittedEvents.push(evt),
       });
 
       tracker.coalesceProgress({ current: 5, total: 10 });
@@ -518,4 +518,3 @@ describe('Phase 5: Live Progress & Execution Telemetry', () => {
     });
   });
 });
-

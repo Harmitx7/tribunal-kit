@@ -3,6 +3,7 @@
 In Transformers.js v4, `ModelRegistry` provides a preflight API for model assets. You can inspect required files, estimate total download size, check cache state, and clear cached artifacts before calling `pipeline()`.
 
 This is useful for production UX where you want to:
+
 - show accurate download estimates before loading,
 - support offline-first flows,
 - avoid surprise bandwidth usage,
@@ -109,7 +110,7 @@ const modelOptions = { dtype: 'q8' };
 const files = await ModelRegistry.get_pipeline_files(task, modelId, modelOptions);
 
 const metadata = await Promise.all(
-  files.map((file) => ModelRegistry.get_file_metadata(modelId, file))
+  files.map(file => ModelRegistry.get_file_metadata(modelId, file)),
 );
 
 const totalBytes = metadata.reduce((sum, item) => sum + (item?.size ?? 0), 0);
@@ -120,7 +121,7 @@ console.log({ fileCount: files.length, totalMB, cached });
 
 const pipe = await pipeline(task, modelId, {
   ...modelOptions,
-  progress_callback: (info) => {
+  progress_callback: info => {
     if (info.status === 'progress_total') {
       console.log(`Loading: ${info.progress.toFixed(1)}%`);
     }
@@ -141,7 +142,7 @@ const task = 'text-generation';
 const modelId = 'onnx-community/Qwen2.5-0.5B-Instruct';
 
 const dtypes = await ModelRegistry.get_available_dtypes(modelId);
-const preferred = dtypes.includes('q4') ? 'q4' : dtypes[0] ?? 'fp32';
+const preferred = dtypes.includes('q4') ? 'q4' : (dtypes[0] ?? 'fp32');
 
 const generator = await pipeline(task, modelId, { dtype: preferred });
 // ... inference
@@ -156,7 +157,7 @@ import { ModelRegistry } from '@huggingface/transformers';
 await ModelRegistry.clear_pipeline_cache(
   'feature-extraction',
   'onnx-community/all-MiniLM-L6-v2-ONNX',
-  { dtype: 'fp32' }
+  { dtype: 'fp32' },
 );
 ```
 

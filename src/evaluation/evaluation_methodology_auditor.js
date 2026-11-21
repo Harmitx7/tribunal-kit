@@ -38,7 +38,9 @@ class EvaluationMethodologyAuditor {
     }
 
     if (!Array.isArray(plan.successCriteria) || plan.successCriteria.length === 0) {
-      risks.push('NO_SUCCESS_CRITERIA: Plan does not define measurable, testable success criteria.');
+      risks.push(
+        'NO_SUCCESS_CRITERIA: Plan does not define measurable, testable success criteria.',
+      );
     }
 
     // 2. Sample Size & Statistical Power
@@ -46,10 +48,14 @@ class EvaluationMethodologyAuditor {
     let powerAdequate = true;
 
     if (sampleSize < 10) {
-      risks.push(`INADEQUATE_SAMPLE_SIZE: Sample size (${sampleSize}) is too small for statistical validity (min 10 required, 30+ recommended).`);
+      risks.push(
+        `INADEQUATE_SAMPLE_SIZE: Sample size (${sampleSize}) is too small for statistical validity (min 10 required, 30+ recommended).`,
+      );
       powerAdequate = false;
     } else if (sampleSize < 30) {
-      recommendations.push(`MODEST_SAMPLE_SIZE: Sample size is ${sampleSize}; confidence intervals will be relatively wide.`);
+      recommendations.push(
+        `MODEST_SAMPLE_SIZE: Sample size is ${sampleSize}; confidence intervals will be relatively wide.`,
+      );
     }
 
     // 3. Metric Alignment
@@ -57,11 +63,23 @@ class EvaluationMethodologyAuditor {
     if (!Array.isArray(metrics) || metrics.length === 0) {
       risks.push('NO_METRICS_DEFINED: Evaluation fails to declare explicit mathematical metrics.');
     } else {
-      if (plan.taskType === 'CLASSIFICATION' && !metrics.some(m => ['precision', 'recall', 'f1', 'confusion_matrix'].includes(m.toLowerCase()))) {
-        risks.push('METRIC_MISALIGNMENT: Classification task lacks standard precision/recall/F1 metrics.');
+      if (
+        plan.taskType === 'CLASSIFICATION' &&
+        !metrics.some(m =>
+          ['precision', 'recall', 'f1', 'confusion_matrix'].includes(m.toLowerCase()),
+        )
+      ) {
+        risks.push(
+          'METRIC_MISALIGNMENT: Classification task lacks standard precision/recall/F1 metrics.',
+        );
       }
-      if (plan.taskType === 'PROBABILISTIC' && !metrics.some(m => ['brier', 'ece', 'log_loss', 'calibration'].includes(m.toLowerCase()))) {
-        risks.push('METRIC_MISALIGNMENT: Probabilistic prediction task lacks calibration/Brier metrics.');
+      if (
+        plan.taskType === 'PROBABILISTIC' &&
+        !metrics.some(m => ['brier', 'ece', 'log_loss', 'calibration'].includes(m.toLowerCase()))
+      ) {
+        risks.push(
+          'METRIC_MISALIGNMENT: Probabilistic prediction task lacks calibration/Brier metrics.',
+        );
       }
     }
 
@@ -69,17 +87,23 @@ class EvaluationMethodologyAuditor {
     if (plan.determinism === 'STOCHASTIC') {
       const runs = plan.repeatedRuns || 1;
       if (runs < 3) {
-        risks.push(`STOCHASTIC_UNDER_REPLICATION: Stochastic system evaluated with only ${runs} run(s). Minimum 3-5 runs required for variance estimation.`);
+        risks.push(
+          `STOCHASTIC_UNDER_REPLICATION: Stochastic system evaluated with only ${runs} run(s). Minimum 3-5 runs required for variance estimation.`,
+        );
       }
     }
 
     // 5. Cherry-Picking Defenses
     if (plan.filterNegativeCases === true || plan.excludeFailures === true) {
-      risks.push('CHERRY_PICKING_RISK: Plan explicitly filters out negative cases or failures, violating evaluation integrity.');
+      risks.push(
+        'CHERRY_PICKING_RISK: Plan explicitly filters out negative cases or failures, violating evaluation integrity.',
+      );
     }
 
     if (!plan.baselineId && !plan.hasBaseline) {
-      recommendations.push('NO_BASELINE_SPECIFIED: Plan lacks a baseline comparison. Absolute scores alone may be ungrounded.');
+      recommendations.push(
+        'NO_BASELINE_SPECIFIED: Plan lacks a baseline comparison. Absolute scores alone may be ungrounded.',
+      );
     }
 
     return {

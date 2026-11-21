@@ -1,6 +1,7 @@
 # Reliability Principles for Training Jobs
 
 ## Contents
+
 - Principle 1: Always Verify Before Use
 - Principle 2: Prioritize Reliability Over Performance
 - Principle 3: Create Atomic, Self-Contained Scripts
@@ -106,6 +107,7 @@ TrainingArguments(
 ### Real-World Example
 
 **The `torch.compile` failure:**
+
 - Added for "20% speedup" on H100
 - **Failed fatally on T4-medium** with cryptic error
 - Misdiagnosed as dataset issue (cost hours)
@@ -171,6 +173,7 @@ TrainingArguments(
 ### Real-World Example
 
 **The `albumentations` failure:**
+
 - Original script had it: augmentations and bbox clipping worked fine
 - "Simplified" version removed it: "not strictly needed for training"
 - **Training crashed on bbox augmentation** — no fallback for COCO-format bbox handling
@@ -264,6 +267,7 @@ except Exception as e:
 Before submitting ANY job:
 
 ### Pre-Flight Checks
+
 - [ ] **Verified** all repos/datasets exist (hub_repo_details)
 - [ ] **Tested** with known-good inputs if new code
 - [ ] **Using** proven hardware/configuration
@@ -274,6 +278,7 @@ Before submitting ANY job:
 - [ ] **Added** clear error handling
 
 ### Script Quality
+
 - [ ] Self-contained (no external setup needed)
 - [ ] Complete dependencies listed
 - [ ] Build tools installed by script
@@ -282,6 +287,7 @@ Before submitting ANY job:
 - [ ] Configuration logged at start
 
 ### Job Configuration
+
 - [ ] Timeout > expected runtime + 30% buffer
 - [ ] Hardware appropriate for model size
 - [ ] Secrets include HF_TOKEN (see SKILL.md directive #2 for syntax)
@@ -297,13 +303,13 @@ Before submitting ANY job:
 
 Sometimes reliability and performance conflict. Here's how to choose:
 
-| Scenario | Choose | Rationale |
-|----------|--------|-----------|
-| Demo/test | Reliability | Fast failure is worse than slow success |
-| Production (first run) | Reliability | Prove it works before optimizing |
-| Production (proven) | Performance | Safe to optimize after validation |
-| Time-critical | Reliability | Failures cause more delay than slow runs |
-| Cost-critical | Balanced | Test with small model, then optimize |
+| Scenario               | Choose      | Rationale                                |
+| ---------------------- | ----------- | ---------------------------------------- |
+| Demo/test              | Reliability | Fast failure is worse than slow success  |
+| Production (first run) | Reliability | Prove it works before optimizing         |
+| Production (proven)    | Performance | Safe to optimize after validation        |
+| Time-critical          | Reliability | Failures cause more delay than slow runs |
+| Cost-critical          | Balanced    | Test with small model, then optimize     |
 
 **General rule:** Reliability first, optimize second.
 

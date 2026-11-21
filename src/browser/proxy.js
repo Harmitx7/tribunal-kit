@@ -57,7 +57,8 @@ class ControlledBrowserProxy {
       this.server.on('error', reject);
 
       this.server.listen(port, '127.0.0.1', () => {
-        this.port = this.server.address().port;
+        const addr = this.server.address();
+        this.port = typeof addr === 'object' && addr ? addr.port : 0;
         resolve(this);
       });
     });
@@ -167,7 +168,7 @@ class ControlledBrowserProxy {
   /**
    * Handles HTTPS tunneling requests (CONNECT host:port).
    * @param {http.IncomingMessage} req
-   * @param {net.Socket} clientSocket
+   * @param {any} clientSocket
    * @param {Buffer} head
    */
   async handleHttpsConnect(req, clientSocket, head) {
@@ -181,7 +182,10 @@ class ControlledBrowserProxy {
       } catch {
         const lastColon = req.url.lastIndexOf(':');
         if (lastColon !== -1) {
-          hostname = req.url.slice(0, lastColon).replace(/^\[|\]$/g, '').toLowerCase();
+          hostname = req.url
+            .slice(0, lastColon)
+            .replace(/^\[|\]$/g, '')
+            .toLowerCase();
           port = parseInt(req.url.slice(lastColon + 1), 10) || 443;
         } else {
           hostname = req.url.replace(/^\[|\]$/g, '').toLowerCase();

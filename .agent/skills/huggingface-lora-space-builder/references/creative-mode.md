@@ -1,12 +1,12 @@
 # Creative mode: custom HTML/JS UIs in Gradio
 
-When a LoRA's natural input shape doesn't fit any standard Gradio component or Hub custom component, you can drop down to plain HTML/CSS/JS inside a Gradio app. This file is about *how* — the Gradio primitives that make it work, and the discipline that keeps it from turning into a tangled mess.
+When a LoRA's natural input shape doesn't fit any standard Gradio component or Hub custom component, you can drop down to plain HTML/CSS/JS inside a Gradio app. This file is about _how_ — the Gradio primitives that make it work, and the discipline that keeps it from turning into a tangled mess.
 
 This is the third rung of the component ladder (see `tasks.md` → "Picking components"):
 
 1. **Stock Gradio components.** First choice. Almost always enough for T2I and a lot of I2I.
 2. **Hub custom components.** `gradio_image_annotation`, `gradio_imageslider`, `gradio_modal`, `gradio_rangeslider`, etc. No JS, just a `pip install` and an import.
-3. **Creative mode (this file).** Custom HTML/JS, when the user's input shape is something none of the above expresses well — point sets, trajectories, brush strokes, region selections with metadata, timeline scrubbing, 3D rotation gizmos, color picking on regions, drag-resize handles on media, keyframed inputs, anything where the user manipulates *a thing on top of media*.
+3. **Creative mode (this file).** Custom HTML/JS, when the user's input shape is something none of the above expresses well — point sets, trajectories, brush strokes, region selections with metadata, timeline scrubbing, 3D rotation gizmos, color picking on regions, drag-resize handles on media, keyframed inputs, anything where the user manipulates _a thing on top of media_.
 
 Skipping rung 2 is a common mistake. If a Hub custom component fits, use it — `gradio_image_annotation` already covers bbox drawing, label assignment, and basic editing without a single line of JS.
 
@@ -23,20 +23,20 @@ Treat any `gradio_*` package from the Hub as load-bearing-and-untested-against-y
 Discipline before committing to a Hub component:
 
 1. **Check the package's last release date** (PyPI page or `pip index versions <pkg>`). If it's older than the Gradio release in your `sdk_version`, treat it as suspect.
-2. **Smoke-test the component in isolation** — a five-line Gradio app with just that one component, locally, *before* integrating it into the full app. If it renders, fine. If it's missing or blank, you've caught the breakage cheaply.
+2. **Smoke-test the component in isolation** — a five-line Gradio app with just that one component, locally, _before_ integrating it into the full app. If it renders, fine. If it's missing or blank, you've caught the breakage cheaply.
 3. **When a Hub component fails to render, don't iterate on its kwargs.** Drop to either (a) split stock components (e.g. `gr.Image` for upload + a sibling widget for the box coords) or (b) rung 3 (custom HTML/JS via `gr.HTML`). Twiddling `disable_edit_boxes` / `use_default_label` / `sources` is not going to bring a Svelte component back from a JS-side mount failure.
 
 The same discipline applies to less obviously "custom" components if they were added recently — `gr.ImageSlider`, for example, can render unexpectedly when paired with a custom component on the same page.
 
 ## When creative mode is the right call
 
-Reach for it when the user's *natural* input is structurally outside what stock components express:
+Reach for it when the user's _natural_ input is structurally outside what stock components express:
 
 - **Spatial input on top of media.** Drawing arrows on a frame, painting strokes on an image, dropping points along a trajectory, selecting irregular regions, drawing curves.
 - **Multi-shape annotation.** Source-and-destination box pairs, multiple labeled regions, ordered sequences of points/boxes that are semantically distinct.
 - **Continuous-with-snapping controls.** 3D rotation gizmos, dial/wheel controls, timeline scrubbers — anything where a slider would technically work but feel wrong.
 - **Composite controls bound together.** A canvas plus a color picker plus a brush-size dial that all feed the same structured input, where binding three separate components and reasoning about their joint state is uglier than rolling one widget.
-- **Live preview that depends on multiple inputs.** Something the user wants to see *immediately* as they manipulate, where a server roundtrip per change is too slow.
+- **Live preview that depends on multiple inputs.** Something the user wants to see _immediately_ as they manipulate, where a server roundtrip per change is too slow.
 
 If the input is "a number," "a string," or "an image," you don't need this. Don't build a custom canvas because it would look cool — build it because the LoRA's input shape demands it.
 
@@ -86,10 +86,10 @@ prompt_box = gr.Textbox(elem_id="my-prompt", elem_classes=["hidden-input"])
 ```
 
 ```javascript
-const promptBox = document.getElementById("my-prompt");
+const promptBox = document.getElementById('my-prompt');
 // Note: the Gradio component wraps an <input> or <textarea>;
 // you usually want the inner element:
-const inner = promptBox.querySelector("input, textarea");
+const inner = promptBox.querySelector('input, textarea');
 ```
 
 ### Two ways JS pushes state into Python
@@ -106,18 +106,17 @@ state_json = gr.Textbox(value="{}", elem_id="state-json", visible=False)
 function setGradioValue(elemId, value) {
   const container = document.getElementById(elemId);
   if (!container) return;
-  const el = container.querySelector("input, textarea");
+  const el = container.querySelector('input, textarea');
   if (!el) return;
-  const proto = el.tagName === "TEXTAREA"
-    ? HTMLTextAreaElement.prototype
-    : HTMLInputElement.prototype;
-  const setter = Object.getOwnPropertyDescriptor(proto, "value").set;
+  const proto =
+    el.tagName === 'TEXTAREA' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+  const setter = Object.getOwnPropertyDescriptor(proto, 'value').set;
   setter.call(el, value);
-  el.dispatchEvent(new Event("input",  { bubbles: true }));
-  el.dispatchEvent(new Event("change", { bubbles: true }));
+  el.dispatchEvent(new Event('input', { bubbles: true }));
+  el.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-setGradioValue("state-json", JSON.stringify(myState));
+setGradioValue('state-json', JSON.stringify(myState));
 ```
 
 The native setter dance (`Object.getOwnPropertyDescriptor(...).set.call(el, value)`) is necessary because React intercepts plain `el.value = ...` assignments and they won't trigger a re-render. The DOM event dispatch is what makes Gradio see the change.
@@ -214,10 +213,14 @@ These bite repeatedly. Read before writing.
 - **Silent mount failure of Hub custom components.** Covered in detail above. Worth restating because it's the failure mode that the API smoke-test cannot catch: the component imports, the page loads, and the widget is just absent from the DOM. Always verify in a browser; never trust "the build went green" as proof a Hub custom component renders.
 
 - **Init race with Gradio mount.** The `js_on_load` (B) or a top-level `<script>` injected via `head` may run before Gradio has rendered the DOM nodes you're trying to hook into. Guard with a short `setTimeout` or wait for the element to exist:
+
   ```javascript
   function init() {
-    const el = document.getElementById("my-widget");
-    if (!el) { setTimeout(init, 50); return; }
+    const el = document.getElementById('my-widget');
+    if (!el) {
+      setTimeout(init, 50);
+      return;
+    }
     // ... do work
   }
   init();
@@ -225,7 +228,7 @@ These bite repeatedly. Read before writing.
 
 - **Double init.** If the user navigates between tabs or Gradio re-renders, your init can fire twice. Stash a flag: `if (window.__myWidgetInited) return; window.__myWidgetInited = true;`.
 
-- **Base64 image transfer cost.** Sending a full-resolution image as a base64 string through a hidden Textbox is fine for previews but punishingly slow for 4K images. Downscale on the JS side before stuffing into state, or pass the image through a real `gr.Image` component and only send the *interaction state* (boxes, points) through the hidden channel.
+- **Base64 image transfer cost.** Sending a full-resolution image as a base64 string through a hidden Textbox is fine for previews but punishingly slow for 4K images. Downscale on the JS side before stuffing into state, or pass the image through a real `gr.Image` component and only send the _interaction state_ (boxes, points) through the hidden channel.
 
 - **File inputs don't roundtrip through hidden Textboxes.** A hidden `gr.File` won't accept arbitrary JS-set values. If the user uploads via a custom `<input type="file">`, you have two options: (a) read the file in JS, base64-encode, and write to a hidden Textbox; (b) wire the custom file input to programmatically click a real `gr.File` (`document.querySelector("#real-file input").click()` is brittle but works).
 
@@ -235,13 +238,13 @@ These bite repeatedly. Read before writing.
 
 - **ZeroGPU duration when payloads grow.** If the custom UI lets users submit large state (many points, big strokes, multiple boxes), the server-side processing time can grow with input size. Re-check `@spaces.GPU(duration=...)` against worst-case payloads.
 
-- **Custom run buttons.** If you build your own "Run" button in HTML and have it trigger a real Gradio button via `.click()`, make sure state-sync (write to hidden inputs) happens *before* the click, with enough delay for events to propagate (`setTimeout(() => realBtn.click(), 50)` is the usual fix).
+- **Custom run buttons.** If you build your own "Run" button in HTML and have it trigger a real Gradio button via `.click()`, make sure state-sync (write to hidden inputs) happens _before_ the click, with enough delay for events to propagate (`setTimeout(() => realBtn.click(), 50)` is the usual fix).
 
 - **CSS isolation.** Spaces inject their own CSS. If your widget styles get clobbered, increase specificity (`#my-widget .foo` instead of `.foo`) or use `!important` sparingly. Don't fight it with inline styles for everything — that gets unreadable fast.
 
 ## Smoke-test caveat — applies to rung 2 AND rung 3
 
-`gradio info` / `gradio predict` (Phase 6 of `SKILL.md`) only exercise the Python endpoint. They tell you nothing about what actually renders. For any Space that uses a Hub custom component (rung 2) or custom HTML/JS (rung 3), the Python side can be perfectly correct *and* the user can see a broken UI.
+`gradio info` / `gradio predict` (Phase 6 of `SKILL.md`) only exercise the Python endpoint. They tell you nothing about what actually renders. For any Space that uses a Hub custom component (rung 2) or custom HTML/JS (rung 3), the Python side can be perfectly correct _and_ the user can see a broken UI.
 
 The two distinct failure modes:
 

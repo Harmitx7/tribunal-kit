@@ -100,11 +100,15 @@ function syncSkills(options = {}) {
     const agentsSkillsDiff = verifyDirParity(CANONICAL_SKILLS, TARGET_AGENTS_SKILLS);
 
     if (skillsDiff.length > 0) {
-      console.error(`  ✖ Out-of-sync in skills/ (${skillsDiff.length} file(s)): ${skillsDiff.slice(0, 3).join(', ')}...`);
+      console.error(
+        `  ✖ Out-of-sync in skills/ (${skillsDiff.length} file(s)): ${skillsDiff.slice(0, 3).join(', ')}...`,
+      );
       hasParityErrors = true;
     }
     if (agentsSkillsDiff.length > 0) {
-      console.error(`  ✖ Out-of-sync in .agents/skills/ (${agentsSkillsDiff.length} file(s)): ${agentsSkillsDiff.slice(0, 3).join(', ')}...`);
+      console.error(
+        `  ✖ Out-of-sync in .agents/skills/ (${agentsSkillsDiff.length} file(s)): ${agentsSkillsDiff.slice(0, 3).join(', ')}...`,
+      );
       hasParityErrors = true;
     }
 
@@ -113,11 +117,15 @@ function syncSkills(options = {}) {
       const agentsRefsDiff = verifyDirParity(CANONICAL_REFS, TARGET_AGENTS_REFS);
 
       if (refsDiff.length > 0) {
-        console.error(`  ✖ Out-of-sync in references/ (${refsDiff.length} file(s)): ${refsDiff.slice(0, 3).join(', ')}...`);
+        console.error(
+          `  ✖ Out-of-sync in references/ (${refsDiff.length} file(s)): ${refsDiff.slice(0, 3).join(', ')}...`,
+        );
         hasParityErrors = true;
       }
       if (agentsRefsDiff.length > 0) {
-        console.error(`  ✖ Out-of-sync in .agents/references/ (${agentsRefsDiff.length} file(s)): ${agentsRefsDiff.slice(0, 3).join(', ')}...`);
+        console.error(
+          `  ✖ Out-of-sync in .agents/references/ (${agentsRefsDiff.length} file(s)): ${agentsRefsDiff.slice(0, 3).join(', ')}...`,
+        );
         hasParityErrors = true;
       }
     }
@@ -144,7 +152,9 @@ function syncSkills(options = {}) {
     console.log(`  ✓ Mirrored references to ${path.relative(ROOT, TARGET_REFS)}/ (${c3} updated)`);
 
     const c4 = copyDirRecursive(CANONICAL_REFS, TARGET_AGENTS_REFS);
-    console.log(`  ✓ Mirrored references to ${path.relative(ROOT, TARGET_AGENTS_REFS)}/ (${c4} updated)`);
+    console.log(
+      `  ✓ Mirrored references to ${path.relative(ROOT, TARGET_AGENTS_REFS)}/ (${c4} updated)`,
+    );
   }
 
   console.log('  ✔ All skills & references synchronized.\n');

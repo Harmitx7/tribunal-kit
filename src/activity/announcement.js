@@ -8,10 +8,7 @@
  * generic status noise across supported AI chat environments.
  */
 
-const {
-  EVENT_TYPES,
-  AGENT_SKILL_STATES,
-} = require('./types');
+const { EVENT_TYPES, AGENT_SKILL_STATES } = require('./types');
 
 /**
  * Announcement decision verdicts.
@@ -99,9 +96,10 @@ class AnnouncementDeduplicator {
       this.announcedAgents.add(event.agent);
       return {
         verdict: ANNOUNCEMENT_DECISIONS.ANNOUNCE,
-        reason: event.attempt && event.attempt > 1
-          ? ANNOUNCEMENT_REASONS.RETRY_ATTEMPT
-          : ANNOUNCEMENT_REASONS.FIRST_ACTIVATION,
+        reason:
+          event.attempt && event.attempt > 1
+            ? ANNOUNCEMENT_REASONS.RETRY_ATTEMPT
+            : ANNOUNCEMENT_REASONS.FIRST_ACTIVATION,
       };
     }
 
@@ -121,7 +119,10 @@ class AnnouncementDeduplicator {
     }
 
     // 5. Tool Execution Deduplication
-    if (event.eventType === EVENT_TYPES.TOOL_EXECUTING || event.eventType === EVENT_TYPES.TOOL_EXECUTION_STARTED) {
+    if (
+      event.eventType === EVENT_TYPES.TOOL_EXECUTING ||
+      event.eventType === EVENT_TYPES.TOOL_EXECUTION_STARTED
+    ) {
       const toolSig = `${event.title}::${event.summary || ''}`;
       if (toolSig === this.lastToolSignature && !event.progress) {
         return {
@@ -212,7 +213,11 @@ class AnnouncementIntelligence {
    */
   evaluate(event, options = {}) {
     if (!event || typeof event !== 'object') {
-      return { shouldAnnounce: false, verdict: ANNOUNCEMENT_DECISIONS.SUPPRESS, reason: 'invalid_event' };
+      return {
+        shouldAnnounce: false,
+        verdict: ANNOUNCEMENT_DECISIONS.SUPPRESS,
+        reason: 'invalid_event',
+      };
     }
 
     const deduplicator = this.getDeduplicator(event.operationId);
@@ -249,4 +254,3 @@ module.exports = {
   AnnouncementIntelligence,
   defaultAnnouncementIntelligence,
 };
-

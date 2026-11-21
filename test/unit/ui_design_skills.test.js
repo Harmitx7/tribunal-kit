@@ -49,31 +49,36 @@ describe('UI Design Skills Portfolio (Unit)', () => {
     expect(all21TargetSkills.length).toBe(21);
   });
 
-  it.each(all21TargetSkills)('verifies canonical inventory skill %s exists with valid frontmatter and VBC', (skillName) => {
-    const skillPath = path.join(skillsDir, skillName, 'SKILL.md');
-    expect(fs.existsSync(skillPath)).toBe(true);
+  it.each(all21TargetSkills)(
+    'verifies canonical inventory skill %s exists with valid frontmatter and VBC',
+    skillName => {
+      const skillPath = path.join(skillsDir, skillName, 'SKILL.md');
+      expect(fs.existsSync(skillPath)).toBe(true);
 
-    const content = fs.readFileSync(skillPath, 'utf8');
-    expect(content.startsWith('---')).toBe(true);
-    expect(content).toContain(`name: ${skillName}`);
-    expect(content).toContain('version: 1.0.0');
-    expect(content).toContain('trigger:');
-    expect(content).toContain('Mandatory Pre-Flight Context Inspection');
-    expect(content).toContain('Verification-Before-Completion');
-  });
+      const content = fs.readFileSync(skillPath, 'utf8');
+      expect(content.startsWith('---')).toBe(true);
+      expect(content).toContain(`name: ${skillName}`);
+      expect(content).toContain('version: 1.0.0');
+      expect(content).toContain('trigger:');
+      expect(content).toContain('Mandatory Pre-Flight Context Inspection');
+      expect(content).toContain('Verification-Before-Completion');
+    },
+  );
 
-  it.each(upgradedCoreSkills)('verifies upgraded core skill %s has non-boilerplate description', (skillName) => {
-    const skillPath = path.join(skillsDir, skillName, 'SKILL.md');
-    expect(fs.existsSync(skillPath)).toBe(true);
+  it.each(upgradedCoreSkills)(
+    'verifies upgraded core skill %s has non-boilerplate description',
+    skillName => {
+      const skillPath = path.join(skillsDir, skillName, 'SKILL.md');
+      expect(fs.existsSync(skillPath)).toBe(true);
 
-    const content = fs.readFileSync(skillPath, 'utf8');
-    const descMatch = content.match(/description:\s*([^\r\n]+)/);
-    expect(descMatch).toBeTruthy();
+      const content = fs.readFileSync(skillPath, 'utf8');
+      const descMatch = content.match(/description:\s*([^\r\n]+)/);
+      expect(descMatch).toBeTruthy();
 
-    const desc = descMatch[1].trim();
-    // Must NOT start with generic copy-pasted string
-    expect(desc).not.toMatch(/^"Use when building, styling, optimizing, and auditing/);
-    expect(desc).not.toMatch(/^"Use when implementing, optimizing, and timing 60fps/);
-  });
+      const desc = descMatch[1].trim();
+      // Must NOT start with generic copy-pasted string
+      expect(desc).not.toMatch(/^"Use when building, styling, optimizing, and auditing/);
+      expect(desc).not.toMatch(/^"Use when implementing, optimizing, and timing 60fps/);
+    },
+  );
 });
-

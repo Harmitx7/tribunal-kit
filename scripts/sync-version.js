@@ -70,7 +70,9 @@ function checkVersionMetadata() {
     name.startsWith('@tribunal-kit/core-'),
   );
   if (coreDependencies.length !== 6) {
-    fail(`package.json declares ${coreDependencies.length} @tribunal-kit/core-* packages, expected 6`);
+    fail(
+      `package.json declares ${coreDependencies.length} @tribunal-kit/core-* packages, expected 6`,
+    );
   }
   for (const [name, declaredVersion] of Object.entries(PKG.optionalDependencies || {})) {
     if (declaredVersion !== expectedOptionalVersion) {
@@ -126,12 +128,19 @@ function checkVersionMetadata() {
     fail(`.agent/config/system-prompt.md does not reference version ${VERSION}`);
   }
   const currentCodeDefaults = [
-    ['src/runtime_reliability/checkpoint_recovery_engine.js', `currentCodeRevision = options.codeRevision || '${VERSION}'`],
-    ['src/runtime_reliability/execution_state_schemas.js', `codeRevision: z.string().default('${VERSION}')`],
+    [
+      'src/runtime_reliability/checkpoint_recovery_engine.js',
+      `currentCodeRevision = options.codeRevision || '${VERSION}'`,
+    ],
+    [
+      'src/runtime_reliability/execution_state_schemas.js',
+      `codeRevision: z.string().default('${VERSION}')`,
+    ],
     ['src/supply_chain/sbom_engine.js', `this.toolVersion = options.toolVersion || '${VERSION}'`],
   ];
   for (const [target, expected] of currentCodeDefaults) {
-    if (!readText(target).includes(expected)) fail(`${target} default version does not match ${VERSION}`);
+    if (!readText(target).includes(expected))
+      fail(`${target} default version does not match ${VERSION}`);
   }
 
   const versionTargets = [
@@ -140,7 +149,8 @@ function checkVersionMetadata() {
     ['npm/core-template/package.json', readJson('npm/core-template/package.json').version],
   ];
   for (const [target, actual] of versionTargets) {
-    if (actual !== VERSION) fail(`${target} version is ${actual || 'missing'}, expected ${VERSION}`);
+    if (actual !== VERSION)
+      fail(`${target} version is ${actual || 'missing'}, expected ${VERSION}`);
   }
   const adapter = readText('bin/adapter-install.js');
   if (!adapter.includes(`v${VERSION}`) && !adapter.includes(`'${VERSION}'`)) {

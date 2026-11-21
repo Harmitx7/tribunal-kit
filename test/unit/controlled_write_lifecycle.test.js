@@ -113,4 +113,3 @@ describe('ControlledWriteService & TransactionManager Lifecycle Invariants (Phas
     fs.unlinkSync(targetFile);
   });
 });
-

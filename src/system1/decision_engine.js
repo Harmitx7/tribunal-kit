@@ -28,6 +28,9 @@ const { collectAndRankEvidence } = require('./evidence_engine');
 const { evaluateBrowserRequirement } = require('./browser_intelligence');
 const { orchestrateReviewers } = require('./reviewer_orchestrator');
 
+/**
+ * @param {Record<string, any>} [options]
+ */
 function resolveMonotonicImpactTier(options = {}) {
   const opts = options && typeof options === 'object' ? options : {};
   const rawFiles = opts.files;
@@ -139,6 +142,7 @@ function resolveMonotonicImpactTier(options = {}) {
  * @param {Array} [options.memory] - Optional memory items
  * @param {Array} [options.previousFindings] - Optional previous findings
  * @param {Object} [options.environment] - Optional environment overrides (e.g. browserFound)
+ * @param {Function} [options.tierResolver] - Optional tier resolver function
  * @returns {Object} Comprehensive Decision Payload
  */
 function evaluateDecision(options = {}) {
@@ -162,7 +166,7 @@ function evaluateDecision(options = {}) {
   const rawLines =
     typeof options.lines === 'number' && !isNaN(options.lines)
       ? options.lines
-      : parseInt(options.lines, 10) || (diff ? diff.split('\n').length : 0);
+      : parseInt(String(options.lines || '0'), 10) || (diff ? diff.split('\n').length : 0);
   const lines = Math.max(0, rawLines);
   const repoRoot = options.repoRoot || process.cwd();
   const layaTier = options.layaTier ?? null;

@@ -1,6 +1,6 @@
 /**
  * ecosystem_behavioral_harness.test.js — System-Wide Behavioral Test Harness
- * 
+ *
  * Master Behavioral Test Enforcing:
  * 1. Command-to-Workflow-to-Skill Resolution across all 55 commands
  * 2. Multi-Skill Execution Coordinator state-machine transitions and zero silent abandonment
@@ -17,6 +17,7 @@ const {
   SKILL_STATES,
 } = require('../../src/execution/skill_execution_coordinator');
 const { selectSkills, loadSkills } = require('../../.agent/scripts/context_broker');
+const { getRegistrySummary } = require('../../src/execution/canonical_registry');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const AGENT_DIR = path.join(ROOT, '.agent');
@@ -29,7 +30,10 @@ describe('Universal Ecosystem Behavioral Test Harness', () => {
   const slashConfig = JSON.parse(fs.readFileSync(SLASH_COMMANDS_PATH, 'utf8'));
   const allSkills = loadSkills(AGENT_DIR);
   const diskWorkflows = new Set(
-    fs.readdirSync(WORKFLOWS_DIR).filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''))
+    fs
+      .readdirSync(WORKFLOWS_DIR)
+      .filter(f => f.endsWith('.md'))
+      .map(f => f.replace('.md', '')),
   );
 
   describe('1. Universal Command-to-Workflow-to-Skill Resolution', () => {
@@ -53,7 +57,9 @@ describe('Universal Ecosystem Behavioral Test Harness', () => {
           expect(workflowContent.length).toBeGreaterThan(20);
 
           // Check if required-skills exist on disk
-          const reqMatch = workflowContent.match(/required-skills:[\r\n]+((?:\s+-\s+[^\r\n]+[\r\n]+)+)/);
+          const reqMatch = workflowContent.match(
+            /required-skills:[\r\n]+((?:\s+-\s+[^\r\n]+[\r\n]+)+)/,
+          );
           if (reqMatch) {
             const lines = reqMatch[1].trim().split('\n');
             for (const line of lines) {
@@ -67,7 +73,9 @@ describe('Universal Ecosystem Behavioral Test Harness', () => {
           }
 
           // Check if scripts-binding exist on disk
-          const scriptMatch = workflowContent.match(/scripts-binding:[\r\n]+((?:\s+-\s+[^\r\n]+[\r\n]+)+)/);
+          const scriptMatch = workflowContent.match(
+            /scripts-binding:[\r\n]+((?:\s+-\s+[^\r\n]+[\r\n]+)+)/,
+          );
           if (scriptMatch) {
             const lines = scriptMatch[1].trim().split('\n');
             for (const line of lines) {
@@ -128,9 +136,7 @@ describe('Universal Ecosystem Behavioral Test Harness', () => {
 
     it('enforces bounded retries and captures failure without crashing', async () => {
       let attempts = 0;
-      const plan = [
-        { skillName: 'flaky-worker', isRequired: true },
-      ];
+      const plan = [{ skillName: 'flaky-worker', isRequired: true }];
 
       const executor = async () => {
         attempts++;
@@ -152,15 +158,15 @@ describe('Universal Ecosystem Behavioral Test Harness', () => {
     });
 
     it('properly records terminal FAILED state for unrecoverable errors with zero silent abandonment', async () => {
-      const plan = [
-        { skillName: 'failing-task', isRequired: true },
-      ];
+      const plan = [{ skillName: 'failing-task', isRequired: true }];
 
       const executor = async () => {
         throw new Error('Fatal schema violation');
       };
 
-      await expect(coordinator.executeSequence(plan, executor)).rejects.toThrow('Fatal schema violation');
+      await expect(coordinator.executeSequence(plan, executor)).rejects.toThrow(
+        'Fatal schema violation',
+      );
 
       const audit = coordinator.getAuditLog();
       const rec = audit.records.find(r => r.skillName === 'failing-task');
@@ -177,7 +183,7 @@ describe('Universal Ecosystem Behavioral Test Harness', () => {
         { skillName: 'optional-task', isRequired: false },
       ];
 
-      const executor = async (name) => {
+      const executor = async name => {
         if (name === 'optional-task') {
           throw new Error('Optional resource unavailable');
         }
@@ -198,7 +204,11 @@ describe('Universal Ecosystem Behavioral Test Harness', () => {
 
       // Verify SKIPPED_OPTIONAL explicit transition
       coordinator.createRecord('unneeded-skill', { isRequired: false });
-      coordinator.transition('unneeded-skill', SKILL_STATES.SKIPPED_OPTIONAL, 'Out of scope for this pass');
+      coordinator.transition(
+        'unneeded-skill',
+        SKILL_STATES.SKIPPED_OPTIONAL,
+        'Out of scope for this pass',
+      );
       const updatedAudit = coordinator.getAuditLog();
       const skippedRec = updatedAudit.records.find(r => r.skillName === 'unneeded-skill');
       expect(skippedRec.state).toBe(SKILL_STATES.SKIPPED_OPTIONAL);
@@ -212,7 +222,7 @@ describe('Universal Ecosystem Behavioral Test Harness', () => {
         { skillName: 'worker-c', isRequired: false },
       ];
 
-      const executor = async (name) => {
+      const executor = async name => {
         return { worker: name, completed: true, valid: true };
       };
 
@@ -252,7 +262,7 @@ describe('Universal Ecosystem Behavioral Test Harness', () => {
       {
         domain: 'Software Verification',
         query: 'Run property-based testing and mutation testing with contract verification',
-      }
+      },
     ];
 
     test.each(testDomains)('resolves high-affinity skills for $domain ($query)', ({ query }) => {
@@ -263,7 +273,7 @@ describe('Universal Ecosystem Behavioral Test Harness', () => {
 
       const skillNames = [
         ...selection.essential.map(s => s.name.toLowerCase()),
-        ...selection.supplementary.map(s => s.name.toLowerCase())
+        ...selection.supplementary.map(s => s.name.toLowerCase()),
       ].join(' ');
 
       // At least one skill relevant to the domain or query should be selected
@@ -275,14 +285,15 @@ describe('Universal Ecosystem Behavioral Test Harness', () => {
     it('verifies routing_index.json reflects 100% of the repository ecosystem', () => {
       expect(fs.existsSync(ROUTING_INDEX_PATH)).toBe(true);
       const index = JSON.parse(fs.readFileSync(ROUTING_INDEX_PATH, 'utf8'));
+      const summary = getRegistrySummary(ROOT);
 
       expect(index.summary).toBeDefined();
       expect(index.summary.total_skills).toBe(398);
-      expect(index.summary.total_agents).toBe(60);
+      expect(index.summary.total_agents).toBe(summary.total);
       expect(index.summary.total_workflows).toBe(52);
 
       expect(index.skills.length).toBe(398);
-      expect(index.agents.length).toBe(60);
+      expect(index.agents.length).toBe(summary.total);
       expect(index.workflows.length).toBe(52);
 
       // Verify every skill in routing index has valid domains and metadata
@@ -311,4 +322,3 @@ describe('Universal Ecosystem Behavioral Test Harness', () => {
     });
   });
 });
-

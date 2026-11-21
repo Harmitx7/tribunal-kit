@@ -19,7 +19,6 @@ const path = require('path');
 const logger_1 = require('../utils/logger');
 const { assertWithinRoot } = require('../security/boundary');
 
-
 async function cmdGuardrail(flags = {}, argv, quiet = false) {
   if (typeof argv === 'boolean') {
     quiet = argv;
@@ -93,7 +92,6 @@ async function cmdGuardrail(flags = {}, argv, quiet = false) {
     }
     filesToCheck.push(resolved);
   } else {
-
     // Scan all .agent/ markdown files
     filesToCheck = walkAgentFiles(agentDir);
   }

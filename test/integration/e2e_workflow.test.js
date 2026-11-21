@@ -24,8 +24,8 @@ describe('Phase 10 — End-to-End Workflow & Integration Verification', () => {
           },
         },
         null,
-        2
-      )
+        2,
+      ),
     );
   });
 
@@ -95,7 +95,7 @@ describe('Phase 10 — End-to-End Workflow & Integration Verification', () => {
       {
         cwd: tempWorkspace,
         encoding: 'utf8',
-      }
+      },
     );
 
     expect(res.status).toBe(0);
@@ -135,7 +135,7 @@ describe('Phase 10 — End-to-End Workflow & Integration Verification', () => {
         cwd: tempWorkspace,
         encoding: 'utf8',
         env: { ...process.env, TRIBUNAL_FORCE_JS: '1' },
-      }
+      },
     );
     expect(addRes.status).toBe(0);
 
@@ -155,7 +155,7 @@ describe('Phase 10 — End-to-End Workflow & Integration Verification', () => {
       {
         cwd: tempWorkspace,
         encoding: 'utf8',
-      }
+      },
     );
 
     expect(res.status).toBe(0);

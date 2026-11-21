@@ -259,8 +259,12 @@ function ruleUnresolvedVerify(content, _manifest, ctx) {
 
   // Skip this check for the internal .agent files themselves
   // because they contain instructions/comments ABOUT the VERIFY tag.
-  if (ctx && ctx.filePath && ctx.filePath.includes('.agent')) {
-    return violations;
+  if (ctx && ctx.filePath) {
+    const root = ctx.projectRoot || process.cwd();
+    const rel = path.relative(root, path.resolve(root, ctx.filePath)).replace(/\\/g, '/');
+    if (rel === '.agent' || rel.startsWith('.agent/')) {
+      return violations;
+    }
   }
 
   const lines = content.split(/\r?\n/);
@@ -415,25 +419,16 @@ function ruleImportPhantom(content, _manifest, ctx) {
   if (filePath) {
     try {
       const absPath = path.resolve(projectRoot || process.cwd(), filePath);
-      const binName = process.platform === 'win32' ? 'tribunal-core.exe' : 'tribunal-core';
-      let corePath = path.join(
-        __dirname,
-        '..',
-        '..',
-        'crates',
-        'core',
-        'target',
-        'release',
-        binName,
-      );
-      if (!fs.existsSync(corePath)) {
-        corePath = path.join(__dirname, '..', '..', 'crates', 'core', 'target', 'debug', binName);
-      }
-      if (fs.existsSync(corePath)) {
+      let corePath = null;
+      try {
+        const { getBinaryPath } = require('./_utils');
+        corePath = getBinaryPath();
+      } catch (_) {}
+      if (corePath && fs.existsSync(corePath)) {
         const result = require('child_process').execFileSync(
           corePath,
           ['ast-extract', '--file', absPath],
-          { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 500 },
+          { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], timeout: 30000 },
         );
         const data = JSON.parse(result);
         if (data && data.success) {

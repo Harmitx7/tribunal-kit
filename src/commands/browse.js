@@ -8,15 +8,24 @@
  *   tk browse http://localhost:3000 --json
  */
 
-const { browse } = require('../browser');
+const browser = require('../browser');
+const { ensureBrowserAvailable } = require('../browser/discovery');
 const { c } = require('../utils/logger');
-const { banner } = require('../utils/helpers');
+const { banner, extractPositionalArgs } = require('../utils/helpers');
 
-async function cmdBrowse(flags, processArgs, quiet = false) {
-  const url = processArgs[3] || flags.url;
+async function cmdBrowse(flags = {}, processArgs = process.argv, quiet = false) {
+  const positionals = extractPositionalArgs(processArgs, 'browse');
+  const url = flags.url || positionals[0];
 
   if (!url) {
     console.error(`  ${c('red', '✖ Error:')} Missing target URL. Usage: tk browse <url>`);
+    process.exit(1);
+  }
+
+  try {
+    ensureBrowserAvailable();
+  } catch (browserErr) {
+    console.error(`  ${c('red', '✖ Browser unavailable:')} ${browserErr.message}`);
     process.exit(1);
   }
 
@@ -28,7 +37,7 @@ async function cmdBrowse(flags, processArgs, quiet = false) {
   }
 
   try {
-    const result = await browse(url);
+    const result = await browser.browse(url);
 
     if (flags.json) {
       console.log(JSON.stringify(result, null, 2));

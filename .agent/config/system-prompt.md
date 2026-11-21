@@ -51,7 +51,7 @@ When you detect code or design requests, route to the correct specialist:
 | API / server / backend       | `backend-specialist`    |
 | React / Next.js / UI         | `frontend-specialist`   |
 | Database / schema / SQL      | `database-architect`    |
-| Python / FastAPI / Django    | `python-pro`            |
+| Python / FastAPI / Django    | `backend-specialist`    |
 | Mobile (RN / Flutter)        | `mobile-developer`      |
 | Debugging / errors           | `debugger`              |
 | Security / vulnerabilities   | `security-auditor`      |

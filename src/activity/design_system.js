@@ -8,9 +8,7 @@
  * Linear, Cursor, and Vercel for AI chat windows.
  */
 
-const {
-  EVENT_TYPES,
-} = require('./types');
+const { EVENT_TYPES } = require('./types');
 
 /**
  * Visual badge and glyph definitions for operational states.
@@ -63,13 +61,15 @@ function formatProgressBar(percentage, barWidth = 10) {
  */
 function formatStagePipeline(stages) {
   if (!Array.isArray(stages) || stages.length === 0) return '';
-  return stages.map(s => {
-    let icon = '·';
-    if (s.status === 'completed') icon = '✔';
-    else if (s.status === 'running') icon = '›';
-    else if (s.status === 'failed') icon = '✖';
-    return `${icon} ${s.name}`;
-  }).join(' · ');
+  return stages
+    .map(s => {
+      let icon = '·';
+      if (s.status === 'completed') icon = '✔';
+      else if (s.status === 'running') icon = '›';
+      else if (s.status === 'failed') icon = '✖';
+      return `${icon} ${s.name}`;
+    })
+    .join(' · ');
 }
 
 /**
@@ -88,7 +88,7 @@ function formatCompactPath(fullPath, maxLen = 45) {
   if (parts.length <= 2) return normalized;
 
   const fileName = parts[parts.length - 1];
-  const rootDir = parts[0] ? parts[0] : (parts[1] ? `/${parts[1]}` : '');
+  const rootDir = parts[0] ? parts[0] : parts[1] ? `/${parts[1]}` : '';
   const candidate = `${rootDir}/.../${fileName}`;
 
   return candidate.length < normalized.length ? candidate : normalized;
@@ -108,7 +108,10 @@ function formatDisclosure(summary, content, allowHtml = true) {
   if (allowHtml) {
     return `<details>\n<summary>${summary}</summary>\n\n${content.trim()}\n</details>`;
   }
-  return `  ${summary}:\n${content.split('\n').map(l => `    ${l}`).join('\n')}`;
+  return `  ${summary}:\n${content
+    .split('\n')
+    .map(l => `    ${l}`)
+    .join('\n')}`;
 }
 
 module.exports = {
@@ -118,4 +121,3 @@ module.exports = {
   formatCompactPath,
   formatDisclosure,
 };
-

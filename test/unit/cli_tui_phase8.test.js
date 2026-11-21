@@ -117,7 +117,8 @@ describe('Phase 8: CLI & TUI Modernization & Terminal Experience', () => {
       expect(sanitizedKey).toContain('[REDACTED_API_KEY]');
       expect(sanitizedKey).not.toContain('sk-proj-abc1234567890abcdef1234567890');
 
-      const withPrivKey = '-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA...\n-----END RSA PRIVATE KEY-----';
+      const withPrivKey =
+        '-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA...\n-----END RSA PRIVATE KEY-----';
       const sanitizedPriv = sanitizeTerminal(withPrivKey);
       expect(sanitizedPriv).toContain('[REDACTED_PRIVATE_KEY]');
       expect(sanitizedPriv).not.toContain('BEGIN RSA PRIVATE KEY');
@@ -176,7 +177,8 @@ describe('Phase 8: CLI & TUI Modernization & Terminal Experience', () => {
     });
 
     test('truncates overflowing lines cleanly without breaking box layout', () => {
-      const longText = 'This is an extremely long string that definitely exceeds the 30-column panel limit';
+      const longText =
+        'This is an extremely long string that definitely exceeds the 30-column panel limit';
       const lines = renderPanel('Truncate', [longText], { width: 30, returnLines: true });
 
       // Content line is index 3

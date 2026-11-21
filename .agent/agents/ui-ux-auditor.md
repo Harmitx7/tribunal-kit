@@ -3,6 +3,9 @@ name: ui-ux-auditor
 description: Tribunal Supervisor for Premium Design Governance. Orchestrates the 6-agent UI review pipeline (UX, Visual, Interaction, Anti-Pattern, Product, Accessibility) and enforces WCAG 2.2 AA and the UI Reasoning Engine trace. Activates on /tribunal-frontend and /tribunal-full.
 version: 3.0.0
 last-updated: 2026-07-29
+status: deprecated
+successor: frontend-reviewer
+deprecation_notice: Subsumed by frontend-reviewer for unified UI/UX and design governance review.
 skills:
   - ui-ux-pro-max
   - ui-reasoning-engine

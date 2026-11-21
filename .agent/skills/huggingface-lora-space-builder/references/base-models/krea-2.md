@@ -2,12 +2,12 @@
 
 Krea 2 (K2) is a flow-matching **text-to-image** model: a 12B dense DiT (grouped-query attention) with a **Qwen3-VL** text encoder (multi-layer feature aggregation) and the **Qwen-Image VAE** (`AutoencoderKLQwenImage`). Pipeline class: `Krea2Pipeline`. It ships as two checkpoints designed to work together:
 
-| Repo | Role | Use it for |
-|------|------|------------|
-| [`krea/Krea-2-Turbo`](https://huggingface.co/krea/Krea-2-Turbo) | 8-step **distilled** | **Inference / demos** |
-| [`krea/Krea-2-Raw`](https://huggingface.co/krea/Krea-2-Raw) | base, non-distilled | **LoRA training** — *not* for inference |
+| Repo                                                            | Role                 | Use it for                              |
+| --------------------------------------------------------------- | -------------------- | --------------------------------------- |
+| [`krea/Krea-2-Turbo`](https://huggingface.co/krea/Krea-2-Turbo) | 8-step **distilled** | **Inference / demos**                   |
+| [`krea/Krea-2-Raw`](https://huggingface.co/krea/Krea-2-Raw)     | base, non-distilled  | **LoRA training** — _not_ for inference |
 
-**For a LoRA Space, load Turbo.** Krea 2 LoRAs are *trained on RAW but run on Turbo* (they "express strongly on Turbo"), and RAW is explicitly not meant for inference — expect poor quality if you load it directly. So a demo should almost always use `krea/Krea-2-Turbo`. The official LoRA cards confirm this ("To be used on `krea/Krea-2-Turbo`").
+**For a LoRA Space, load Turbo.** Krea 2 LoRAs are _trained on RAW but run on Turbo_ (they "express strongly on Turbo"), and RAW is explicitly not meant for inference — expect poor quality if you load it directly. So a demo should almost always use `krea/Krea-2-Turbo`. The official LoRA cards confirm this ("To be used on `krea/Krea-2-Turbo`").
 
 > Needs a `diffusers` build that includes `Krea2Pipeline` (both repos are `library_name: diffusers`). If `from diffusers import Krea2Pipeline` fails, the installed `diffusers` predates the integration — update it.
 

@@ -2,27 +2,28 @@
 
 > **Authority**: CNCF Cloud Native Definition & HashiCorp Terraform Architecture  
 > **Applicable Domains**: Cloud Infrastructure, Containers, Kubernetes, IaC, Deployment  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
 ## 1. Provider-Neutral Cloud Resource Mapping
 
-| Architectural Tier | Provider-Neutral Concept | AWS Implementation | Google Cloud (GCP) | Microsoft Azure |
-|:---|:---|:---|:---|:---|
-| **Virtual Network** | Isolated software-defined network | VPC (Virtual Private Cloud) | VPC Network (Global) | VNet (Virtual Network) |
-| **Compute (Containers)** | Managed Kubernetes / Container runtime | EKS / ECS Fargate | GKE / Cloud Run | AKS / Azure Container Apps |
-| **Serverless Functions** | Event-driven ephemeral FaaS | AWS Lambda | Cloud Functions / Cloud Run | Azure Functions |
-| **Object Storage** | Scalable blob storage | Amazon S3 | Google Cloud Storage (GCS) | Azure Blob Storage |
-| **Managed Relational** | Automated HA PostgreSQL/MySQL | Amazon RDS / Aurora | Cloud SQL / AlloyDB | Azure Database for PostgreSQL |
-| **Managed NoSQL** | Managed key-value / document | DynamoDB / DocumentDB | Cloud Bigtable / Firestore | Cosmos DB |
-| **Ingress Routing** | Layer 7 Application Load Balancer | Application Load Balancer (ALB) | Cloud Load Balancing | Azure Application Gateway |
+| Architectural Tier       | Provider-Neutral Concept               | AWS Implementation              | Google Cloud (GCP)          | Microsoft Azure               |
+| :----------------------- | :------------------------------------- | :------------------------------ | :-------------------------- | :---------------------------- |
+| **Virtual Network**      | Isolated software-defined network      | VPC (Virtual Private Cloud)     | VPC Network (Global)        | VNet (Virtual Network)        |
+| **Compute (Containers)** | Managed Kubernetes / Container runtime | EKS / ECS Fargate               | GKE / Cloud Run             | AKS / Azure Container Apps    |
+| **Serverless Functions** | Event-driven ephemeral FaaS            | AWS Lambda                      | Cloud Functions / Cloud Run | Azure Functions               |
+| **Object Storage**       | Scalable blob storage                  | Amazon S3                       | Google Cloud Storage (GCS)  | Azure Blob Storage            |
+| **Managed Relational**   | Automated HA PostgreSQL/MySQL          | Amazon RDS / Aurora             | Cloud SQL / AlloyDB         | Azure Database for PostgreSQL |
+| **Managed NoSQL**        | Managed key-value / document           | DynamoDB / DocumentDB           | Cloud Bigtable / Firestore  | Cosmos DB                     |
+| **Ingress Routing**      | Layer 7 Application Load Balancer      | Application Load Balancer (ALB) | Cloud Load Balancing        | Azure Application Gateway     |
 
 ---
 
 ## 2. Infrastructure as Code (IaC) & Drift Management
 
 ### The 4 Immutability Invariants:
+
 1. **Zero Manual Changes**: ClickOps in cloud consoles is strictly forbidden in production. Any manual change creates invisible configuration drift.
 2. **State Locking**: Remote state backend (S3 + DynamoDB lock table or OpenTofu state backend) prevents concurrent execution race conditions.
 3. **Module Encapsulation**: Expose clean variables (`vpc_cidr`, `instance_type`); hide provider internal plumbing.

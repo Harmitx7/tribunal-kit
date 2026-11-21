@@ -1,6 +1,61 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
+
+function validateSkillTarget(skillPath, cwd = process.cwd()) {
+  if (!skillPath || typeof skillPath !== 'string') {
+    throw new Error('Security Violation: Invalid skill path specified.');
+  }
+  if (skillPath.includes('\0')) {
+    throw new Error('Security Violation: Null byte detected in path.');
+  }
+
+  const skillsRoot = path.resolve(cwd, '.agent', 'skills');
+
+  let resolvedTarget;
+  if (path.isAbsolute(skillPath)) {
+    resolvedTarget = path.resolve(skillPath);
+  } else if (
+    skillPath.startsWith('.agent') ||
+    skillPath.startsWith('./.agent') ||
+    skillPath.startsWith('.\\agent')
+  ) {
+    resolvedTarget = path.resolve(cwd, skillPath);
+  } else {
+    resolvedTarget = path.resolve(skillsRoot, skillPath);
+  }
+
+  const rel = path.relative(skillsRoot, resolvedTarget);
+  if (rel.startsWith('..') || path.isAbsolute(rel)) {
+    throw new Error(
+      `Security Violation: Path traversal detected. Target "${skillPath}" escapes allowed skills root "${skillsRoot}".`,
+    );
+  }
+
+  if (fs.existsSync(resolvedTarget)) {
+    try {
+      const realTarget = fs.realpathSync.native
+        ? fs.realpathSync.native(resolvedTarget)
+        : fs.realpathSync(resolvedTarget);
+      const realSkillsRoot = fs.existsSync(skillsRoot)
+        ? fs.realpathSync.native
+          ? fs.realpathSync.native(skillsRoot)
+          : fs.realpathSync(skillsRoot)
+        : skillsRoot;
+      const realRel = path.relative(realSkillsRoot, realTarget);
+      if (realRel.startsWith('..') || path.isAbsolute(realRel)) {
+        throw new Error(
+          `Security Violation: Symlink path traversal detected. Target "${skillPath}" escapes allowed skills root.`,
+        );
+      }
+    } catch (e) {
+      if (e.message && e.message.startsWith('Security Violation')) throw e;
+    }
+  }
+
+  return resolvedTarget;
+}
 
 function getOption(args, names) {
   for (let index = 0; index < args.length; index += 1) {
@@ -11,6 +66,28 @@ function getOption(args, names) {
     }
   }
   return null;
+}
+
+function extractCommandArgs(processArgs, commandName) {
+  if (!Array.isArray(processArgs)) return [];
+  if (commandName) {
+    const cmdIndex = processArgs.indexOf(commandName);
+    if (cmdIndex !== -1) {
+      return processArgs.slice(cmdIndex + 1);
+    }
+  }
+  if (
+    processArgs.length >= 3 &&
+    (processArgs[0].endsWith('node') ||
+      processArgs[0].endsWith('node.exe') ||
+      processArgs[0] === 'node') &&
+    (processArgs[1].includes('cli.js') ||
+      processArgs[1].includes('tk') ||
+      processArgs[1].includes('tribunal-kit'))
+  ) {
+    return processArgs.slice(3);
+  }
+  return processArgs;
 }
 
 function fail(message) {
@@ -26,7 +103,7 @@ function parseMaxLines(value) {
 }
 
 function cmdMinContext(processArgs, quiet = false) {
-  const args = processArgs.slice(3);
+  const args = extractCommandArgs(processArgs, 'min-context');
   const file = getOption(args, ['--file', '-f']);
   const maxLines = parseMaxLines(getOption(args, ['--max-lines']));
   if (!file) return fail('Usage: tk min-context --file <path> [--max-lines <count>]');
@@ -58,7 +135,7 @@ function cmdMinContext(processArgs, quiet = false) {
 }
 
 function cmdDagSchedule(processArgs, quiet = false) {
-  const args = processArgs.slice(3);
+  const args = extractCommandArgs(processArgs, 'dag-schedule');
   const rawTasks = getOption(args, ['--tasks', '-t']);
   if (!rawTasks) return fail("Usage: tk dag-schedule --tasks '<json-array>'");
 
@@ -121,7 +198,7 @@ function cmdDagSchedule(processArgs, quiet = false) {
 }
 
 function cmdContextCompress(processArgs, quiet = false) {
-  const args = processArgs.slice(3);
+  const args = extractCommandArgs(processArgs, 'context-compress');
   const file = getOption(args, ['--file', '-f']);
   const maxLines = parseMaxLines(getOption(args, ['--max-lines']));
   if (!file) return fail('Usage: tk context-compress --file <path> [--max-lines <count>]');
@@ -160,16 +237,23 @@ function cmdContextCompress(processArgs, quiet = false) {
 }
 
 function cmdOptimizeStep(processArgs, quiet = false) {
-  const args = processArgs.slice(3);
-  const skillPath = getOption(args, ['--skill-path']);
+  const args = extractCommandArgs(processArgs, 'optimize-step');
+  const rawSkillPath = getOption(args, ['--skill-path']);
   const rawEdits = getOption(args, ['--edits-json']);
   const parsedBudget = parseMaxLines(getOption(args, ['--budget']));
   const budget = parsedBudget ?? 4;
-  if (!skillPath || !rawEdits)
+  if (!rawSkillPath || !rawEdits)
     return fail(
       "Usage: tk optimize-step --skill-path <path> --edits-json '<json-array>' [--budget <count>]",
     );
   if (parsedBudget === undefined) return fail('--budget must be a non-negative integer.');
+
+  let validatedSkillPath;
+  try {
+    validatedSkillPath = validateSkillTarget(rawSkillPath);
+  } catch (err) {
+    return fail(err.message);
+  }
 
   let edits;
   try {
@@ -179,7 +263,7 @@ function cmdOptimizeStep(processArgs, quiet = false) {
   }
   if (!Array.isArray(edits)) return fail('--edits-json must be a JSON array.');
 
-  let text = fs.existsSync(skillPath) ? fs.readFileSync(skillPath, 'utf8') : '';
+  let text = fs.existsSync(validatedSkillPath) ? fs.readFileSync(validatedSkillPath, 'utf8') : '';
   const protectedStart = text.indexOf('<!-- SLOW_UPDATE_START -->');
   const protectedEnd = text.indexOf('<!-- SLOW_UPDATE_END -->');
   const isProtected = position =>
@@ -236,7 +320,7 @@ function cmdOptimizeStep(processArgs, quiet = false) {
     } else reports.push(`skip: unknown or invalid operation ${String(operation)}`);
   }
 
-  if (appliedCount > 0) fs.writeFileSync(skillPath, text, 'utf8');
+  if (appliedCount > 0) fs.writeFileSync(validatedSkillPath, text, 'utf8');
   const result = { success: true, applied_count: appliedCount, reports };
   if (!quiet) console.error(`✓ Applied ${appliedCount} bounded SkillOpt edit(s)`);
   console.log(JSON.stringify(result));
@@ -246,6 +330,9 @@ const HIGH_RISK_PATTERNS =
   /\b(auth(?:entication|orization)?|login|sign-in|sso|oauth|identity|roles?|access-control|permissions?|ownership|admin|secrets?|credentials?|api keys?|signing-keys?|postgres|sql|schema|migration|transaction|pools?|database|db|containers?|privileges?|deployment|network polic(?:y|ies)|tls|certificates?|ci|redis|docker|passwords?|tokens?|jwt|rbac|infrastructure|provisioning|sessions?)\b/i;
 const HIGH_RISK_EXTENSIONS = /\.(sql|prisma|tf|tofu)$/i;
 
+/**
+ * @param {Record<string, any>} [options]
+ */
 function resolveMonotonicImpactTier(options = {}) {
   const opts = options && typeof options === 'object' ? options : {};
   const rawFiles = opts.files;
@@ -339,7 +426,7 @@ function resolveMonotonicImpactTier(options = {}) {
 }
 
 async function cmdImpactTier(processArgs, quiet = false) {
-  const args = processArgs.slice(3);
+  const args = extractCommandArgs(processArgs, 'impact-tier');
   const files = getOption(args, ['--files']) || '';
   const lines = parseInt(getOption(args, ['--lines']) || '0', 10);
   const task = getOption(args, ['--task']) || '';
@@ -411,8 +498,10 @@ module.exports = {
   cmdDagSchedule,
   cmdContextCompress,
   cmdOptimizeStep,
+  validateSkillTarget,
   cmdImpactTier,
   resolveMonotonicImpactTier,
+  extractCommandArgs,
   HIGH_RISK_PATTERNS,
   HIGH_RISK_EXTENSIONS,
 };

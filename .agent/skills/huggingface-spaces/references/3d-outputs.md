@@ -4,12 +4,12 @@
 
 **GLB is the default output format.** It's self-contained (geometry + materials + textures in one binary file), renders in every in-browser viewer, and is what all the major official 3D Spaces produce. Offer OBJ/PLY/STL as secondary downloads, not as the primary view.
 
-| Format | Carries | When to offer |
-|---|---|---|
-| GLB | geometry + normals + UVs + PBR materials + embedded textures | always — primary output |
-| OBJ (+MTL) | geometry, UVs; textures via sidecar files | DCC-tool users; note multi-file awkwardness in a web download |
-| PLY | geometry, vertex colors; also the container for gaussian splats (see `3d-gsplat.md`) | point clouds, vertex-colored meshes, splats |
-| STL | bare geometry | 3D-printing crowd |
+| Format     | Carries                                                                              | When to offer                                                 |
+| ---------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| GLB        | geometry + normals + UVs + PBR materials + embedded textures                         | always — primary output                                       |
+| OBJ (+MTL) | geometry, UVs; textures via sidecar files                                            | DCC-tool users; note multi-file awkwardness in a web download |
+| PLY        | geometry, vertex colors; also the container for gaussian splats (see `3d-gsplat.md`) | point clouds, vertex-colored meshes, splats                   |
+| STL        | bare geometry                                                                        | 3D-printing crowd                                             |
 
 Conversion is trimesh one-liners — the Hunyuan3D Spaces expose exactly this as an "export" accordion:
 
@@ -41,13 +41,13 @@ The exact rotation is per-model — copy it from the official Space's app (searc
 - **`gr.Model3D`** — built-in, zero extra deps, fine for untextured or baseColor meshes; also renders gaussian splat `.ply`/`.splat` natively (see `3d-gsplat.md`). Useful kwargs: `display_mode="solid"` (default point cloud rendering ruins meshes in some versions; ignored for splats), `clear_color=(0.25, 0.25, 0.25, 1.0)`, `height=...`. Default choice.
 - **`LitModel3D`** (`gradio_litmodel3d==0.0.1`, a Hub custom component) — adds image-based lighting with HDR environment maps. Worth the extra dep for **textured/PBR** output, where flat lighting hides the texture quality (SF3D and trellis-community both use it, SF3D with a selectable `.hdr` set). Textured model + plain `gr.Model3D` undersells the result.
 - **Custom `<model-viewer>` iframe + FastAPI static mount** — what the Hunyuan Spaces do. Maximum control, but requires abandoning `demo.launch()` for manual uvicorn plus a manual `spaces.zero.startup()` call. Don't build this fresh; only keep it when duplicating a Space that already has it.
-- **Turntable preview** — TRELLIS renders a 120-frame orbit video (`imageio.mimsave`, fps=15) shown in `gr.Video` *before* the user commits to GLB extraction; TRELLIS.2 uses a base64-JPEG JS orbiter. Good pattern when extraction is a separate, slower step; skip it for fast-tier models where the mesh is ready immediately.
+- **Turntable preview** — TRELLIS renders a 120-frame orbit video (`imageio.mimsave`, fps=15) shown in `gr.Video` _before_ the user commits to GLB extraction; TRELLIS.2 uses a base64-JPEG JS orbiter. Good pattern when extraction is a separate, slower step; skip it for fast-tier models where the mesh is ready immediately.
 
 Always pair the viewer with `gr.DownloadButton` for the raw file — the viewer is a preview, the file is the deliverable.
 
 ## Input preprocessing (image-to-3D)
 
-Every image-to-3D model expects a **segmented foreground object**, roughly centered, on neutral/transparent background. The shared recipe, run on CPU *outside* the GPU function:
+Every image-to-3D model expects a **segmented foreground object**, roughly centered, on neutral/transparent background. The shared recipe, run on CPU _outside_ the GPU function:
 
 1. **Respect an existing alpha channel.** If the upload is RGBA with a real alpha, skip segmentation (TRELLIS checks this first).
 2. **Otherwise remove the background** — `rembg` (u2net, onnxruntime; the common choice), `transparent-background` (InSPyReNet; SPAR3D), or BiRefNet. TRELLIS.2 outsources to the `briaai/BRIA-RMBG-2.0` Space via `gradio_client` — fine for an official Space, but a fragile external dependency for a user Space; prefer local rembg.
@@ -82,6 +82,7 @@ Blender shows up in 3D Spaces two ways: as the **`bpy` pip module** (`--extra-in
   ```
 
   ZeroGPU gotcha: **`import bpy` takes 30–60 s** — never import it inside a `@spaces.GPU` function (it burns the duration budget and aborts the task). Import at module scope, or run a persistent bpy worker in the main process (`VAST-AI/SkinTokens` does file-based IPC to one).
+
 - **A modern Blender binary (≥3.4) needs no xvfb either**: download the tarball at startup, run `blender -b -noaudio --python script.py -- <args>` as a subprocess (`MajorDaniel/UniRig` on ZeroGPU). `packages.txt` then carries the binary's shared-lib deps: `libx11-6 libxi6 libxrender1 libxxf86vm1 libfontconfig1 libsm6 libxkbcommon0 libxkbcommon-x11-0 libgl1-mesa-glx`. Blender's manual is explicit that CLI/background rendering needs no display; a GPU Cycles subprocess must be launched from **inside** `@spaces.GPU` (it inherits the worker's CUDA), while display/env setup is process-global and belongs at module scope.
 - **Reach for Xvfb only when forced**: a pinned pre-3.4 Blender binary (no EGL headless support yet), EEVEE on legacy setups, or non-Blender GL stacks (Open3D/VTK offscreen, pyglet). On the **gradio SDK**, don't launch raw `Xvfb :99 &` — the container lacks the `/tmp/.X11-unix` permissions for it (UniRig documents this) — use `pyvirtualdisplay` at module scope, the pattern `gradient-spaces/GuideFlow3D` uses to render Cycles through Blender 3.0.1 headlessly. `packages.txt`:
 
@@ -106,6 +107,7 @@ Blender shows up in 3D Spaces two ways: as the **`bpy` pip module** (`--extra-in
   ```
 
   On the **Docker SDK** you control the image: `xvfb-run -a -s '-screen 0 1024x768x24' <cmd>` (or `Xvfb :99 ... & export DISPLAY=:99`), adding Mesa software-GL env on CPU hardware (`LIBGL_ALWAYS_SOFTWARE=1`, `GALLIUM_DRIVER=llvm`).
+
 - **Keep Space renders on Cycles.** EEVEE is GPU-rasterization by design (no CPU path — headless EEVEE exists on Linux ≥3.4 via EGL, but under Xvfb/software-GL it crawls); Cycles renders fine on CPU or on CUDA inside `@spaces.GPU`.
 - **pyrender** (not Blender, but the same "needs GL" problem): use EGL, not Xvfb — `os.environ["PYOPENGL_PLATFORM"] = "egl"` with `libgl1-mesa-dev libglu1-mesa-dev freeglut3-dev mesa-common-dev` in packages.txt (`H-Liu1997/EMAGE` on ZeroGPU).
 

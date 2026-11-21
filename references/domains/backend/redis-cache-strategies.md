@@ -2,7 +2,7 @@
 
 > **Authority**: Redis Core Documentation (`https://redis.io/docs/latest/develop/use/`)  
 > **Applicable Domains**: Backend Architecture, Distributed Systems, In-Memory Caching  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -10,11 +10,11 @@
 
 Choose the pattern matching data consistency and latency requirements:
 
-| Strategy | Flow | Read Latency | Consistency | Best For |
-|:---|:---|:---|:---|:---|
-| **Cache-Aside** | App reads cache; on miss, loads DB and writes cache | Low on hit; high on miss | Eventual (risk of stale data) | General read-heavy workloads |
-| **Write-Through** | App writes to cache; cache immediately writes to DB | Higher write latency | Strong cache-DB sync | Sensitive profile/auth records |
-| **Write-Behind** | App writes to cache; cache batches async DB writes | Lowest write latency | Eventual (risk of loss on crash)| High-velocity telemetry, counters |
+| Strategy          | Flow                                                | Read Latency             | Consistency                      | Best For                          |
+| :---------------- | :-------------------------------------------------- | :----------------------- | :------------------------------- | :-------------------------------- |
+| **Cache-Aside**   | App reads cache; on miss, loads DB and writes cache | Low on hit; high on miss | Eventual (risk of stale data)    | General read-heavy workloads      |
+| **Write-Through** | App writes to cache; cache immediately writes to DB | Higher write latency     | Strong cache-DB sync             | Sensitive profile/auth records    |
+| **Write-Behind**  | App writes to cache; cache batches async DB writes  | Lowest write latency     | Eventual (risk of loss on crash) | High-velocity telemetry, counters |
 
 ---
 
@@ -29,7 +29,7 @@ async function getWithMutex<T>(
   redis: RedisClient,
   key: string,
   ttlSeconds: number,
-  fetchFn: () => Promise<T>
+  fetchFn: () => Promise<T>,
 ): Promise<T> {
   const cached = await redis.get(key);
   if (cached) return JSON.parse(cached);
@@ -54,6 +54,7 @@ async function getWithMutex<T>(
 ```
 
 ### Mitigation B: Probabilistic Early Expiration (XFetch)
+
 Recompute the cache entry before hard expiration based on compute delta:
 $$\Delta \times \beta \times \ln(\text{random}()) > \text{expiry} - \text{currentTime}$$
 
@@ -85,7 +86,7 @@ async function isRateLimited(
   redis: RedisClient,
   identifier: string,
   limit: number,
-  windowMs: number
+  windowMs: number,
 ): Promise<boolean> {
   const key = `ratelimit:${identifier}`;
   const now = Date.now();
@@ -93,8 +94,8 @@ async function isRateLimited(
 
   const multi = redis.multi();
   multi.zremrangebyscore(key, '-inf', windowStart); // Drop expired ticks
-  multi.zadd(key, now, `${now}-${Math.random()}`);   // Add current tick
-  multi.zcard(key);                                  // Count ticks in window
+  multi.zadd(key, now, `${now}-${Math.random()}`); // Add current tick
+  multi.zcard(key); // Count ticks in window
   multi.pexpire(key, windowMs);
 
   const results = await multi.exec();

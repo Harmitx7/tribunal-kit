@@ -3,6 +3,7 @@
 ## Essential Commands
 
 ### Paper Indexing
+
 ```bash
 # Index from arXiv
 uv run scripts/paper_manager.py index --arxiv-id "2301.12345"
@@ -12,6 +13,7 @@ uv run scripts/paper_manager.py check --arxiv-id "2301.12345"
 ```
 
 ### Linking Papers
+
 ```bash
 # Link to model
 uv run scripts/paper_manager.py link \
@@ -33,6 +35,7 @@ uv run scripts/paper_manager.py link \
 ```
 
 ### Creating Papers
+
 ```bash
 # Standard template
 uv run scripts/paper_manager.py create \
@@ -62,6 +65,7 @@ uv run scripts/paper_manager.py create \
 ```
 
 ### Citations
+
 ```bash
 # Generate BibTeX
 uv run scripts/paper_manager.py citation \
@@ -70,6 +74,7 @@ uv run scripts/paper_manager.py citation \
 ```
 
 ### Paper Info
+
 ```bash
 # JSON format
 uv run scripts/paper_manager.py info \
@@ -85,10 +90,12 @@ uv run scripts/paper_manager.py info \
 ## URL Formats
 
 ### Hugging Face Paper Pages
+
 - View paper: `https://huggingface.co/papers/{arxiv-id}`
 - Example: `https://huggingface.co/papers/2301.12345`
 
 ### arXiv
+
 - Abstract: `https://arxiv.org/abs/{arxiv-id}`
 - PDF: `https://arxiv.org/pdf/{arxiv-id}.pdf`
 - Example: `https://arxiv.org/abs/2301.12345`
@@ -96,6 +103,7 @@ uv run scripts/paper_manager.py info \
 ## YAML Metadata Format
 
 ### Model Card
+
 ```yaml
 ---
 language:
@@ -109,6 +117,7 @@ library_name: transformers
 ```
 
 ### Dataset Card
+
 ```yaml
 ---
 language:
@@ -124,6 +133,7 @@ size_categories:
 ## arXiv ID Formats
 
 All these formats work:
+
 - `2301.12345`
 - `arxiv:2301.12345`
 - `https://arxiv.org/abs/2301.12345`
@@ -132,11 +142,13 @@ All these formats work:
 ## Environment Setup
 
 ### Set Token
+
 ```bash
 export HF_TOKEN="your_token"
 ```
 
 ### Or use .env file
+
 ```bash
 echo "HF_TOKEN=your_token" > .env
 ```
@@ -144,12 +156,14 @@ echo "HF_TOKEN=your_token" > .env
 ## Common Workflows
 
 ### 1. Index & Link
+
 ```bash
 uv run scripts/paper_manager.py index --arxiv-id "2301.12345"
 uv run scripts/paper_manager.py link --repo-id "user/model" --arxiv-id "2301.12345"
 ```
 
 ### 2. Create & Publish
+
 ```bash
 uv run scripts/paper_manager.py create --template "modern" --title "Title" --output "paper.md"
 # Edit paper.md
@@ -159,6 +173,7 @@ uv run scripts/paper_manager.py link --repo-id "user/model" --arxiv-id "NEW_ID"
 ```
 
 ### 3. Batch Link
+
 ```bash
 for id in "2301.12345" "2302.67890"; do
   uv run scripts/paper_manager.py link --repo-id "user/model" --arxiv-id "$id"
@@ -168,12 +183,15 @@ done
 ## Troubleshooting
 
 ### Paper not found
+
 Visit `https://huggingface.co/papers/{arxiv-id}` to trigger indexing
 
 ### Permission denied
+
 Check `HF_TOKEN` is set and has write access
 
 ### arXiv API errors
+
 Wait a moment and retry - arXiv has rate limits
 
 ## Tips

@@ -29,20 +29,36 @@ const SKILL_STATES = Object.freeze({
   SKIPPED_OPTIONAL: 'SKIPPED_OPTIONAL',
 });
 
-const TERMINAL_STATES = Object.freeze(new Set([
-  SKILL_STATES.COMPLETED,
-  SKILL_STATES.FAILED,
-  SKILL_STATES.BLOCKED,
-  SKILL_STATES.TIMED_OUT,
-  SKILL_STATES.CANCELLED,
-  SKILL_STATES.SKIPPED_OPTIONAL,
-]));
+const TERMINAL_STATES = Object.freeze(
+  new Set([
+    SKILL_STATES.COMPLETED,
+    SKILL_STATES.FAILED,
+    SKILL_STATES.BLOCKED,
+    SKILL_STATES.TIMED_OUT,
+    SKILL_STATES.CANCELLED,
+    SKILL_STATES.SKIPPED_OPTIONAL,
+  ]),
+);
 
 const LEGAL_TRANSITIONS = Object.freeze({
   [SKILL_STATES.DISCOVERED]: new Set([SKILL_STATES.SELECTED, SKILL_STATES.CANCELLED]),
-  [SKILL_STATES.SELECTED]: new Set([SKILL_STATES.READY, SKILL_STATES.BLOCKED, SKILL_STATES.SKIPPED_OPTIONAL, SKILL_STATES.CANCELLED]),
-  [SKILL_STATES.READY]: new Set([SKILL_STATES.RUNNING, SKILL_STATES.BLOCKED, SKILL_STATES.CANCELLED]),
-  [SKILL_STATES.RUNNING]: new Set([SKILL_STATES.COMPLETED, SKILL_STATES.FAILED, SKILL_STATES.TIMED_OUT, SKILL_STATES.CANCELLED]),
+  [SKILL_STATES.SELECTED]: new Set([
+    SKILL_STATES.READY,
+    SKILL_STATES.BLOCKED,
+    SKILL_STATES.SKIPPED_OPTIONAL,
+    SKILL_STATES.CANCELLED,
+  ]),
+  [SKILL_STATES.READY]: new Set([
+    SKILL_STATES.RUNNING,
+    SKILL_STATES.BLOCKED,
+    SKILL_STATES.CANCELLED,
+  ]),
+  [SKILL_STATES.RUNNING]: new Set([
+    SKILL_STATES.COMPLETED,
+    SKILL_STATES.FAILED,
+    SKILL_STATES.TIMED_OUT,
+    SKILL_STATES.CANCELLED,
+  ]),
   [SKILL_STATES.COMPLETED]: new Set(),
   [SKILL_STATES.FAILED]: new Set([SKILL_STATES.READY]), // retry transition
   [SKILL_STATES.BLOCKED]: new Set([SKILL_STATES.READY, SKILL_STATES.CANCELLED]),
@@ -63,7 +79,10 @@ class SkillExecutionCoordinator extends EventEmitter {
   /**
    * Register a skill execution plan item.
    */
-  createRecord(skillName, { isRequired = true, reason = 'Direct routing', selector = 'Router', prerequisites = [] } = {}) {
+  createRecord(
+    skillName,
+    { isRequired = true, reason = 'Direct routing', selector = 'Router', prerequisites = [] } = {},
+  ) {
     const record = {
       id: `exec-${skillName}-${Date.now()}-${crypto.randomBytes(4).toString('hex')}`,
       skillName,
@@ -99,7 +118,9 @@ class SkillExecutionCoordinator extends EventEmitter {
 
     const allowed = LEGAL_TRANSITIONS[currentState];
     if (!allowed || !allowed.has(newState)) {
-      throw new Error(`Illegal state transition for skill '${skillName}' from '${currentState}' to '${newState}'`);
+      throw new Error(
+        `Illegal state transition for skill '${skillName}' from '${currentState}' to '${newState}'`,
+      );
     }
 
     record.state = newState;
@@ -134,13 +155,19 @@ class SkillExecutionCoordinator extends EventEmitter {
       });
 
       if (missingPrereqs.length > 0) {
-        this.transition(skillName, SKILL_STATES.BLOCKED, `Missing prerequisites: ${missingPrereqs.join(', ')}`);
+        this.transition(
+          skillName,
+          SKILL_STATES.BLOCKED,
+          `Missing prerequisites: ${missingPrereqs.join(', ')}`,
+        );
         record.failure = {
           category: 'DEPENDENCY_UNAVAILABLE',
           error: `Unsatisfied prerequisites: ${missingPrereqs.join(', ')}`,
         };
         if (isRequired) {
-          throw new Error(`Execution halted: Required skill '${skillName}' blocked by missing prerequisite(s): ${missingPrereqs.join(', ')}`);
+          throw new Error(
+            `Execution halted: Required skill '${skillName}' blocked by missing prerequisite(s): ${missingPrereqs.join(', ')}`,
+          );
         }
         continue;
       }
@@ -183,17 +210,27 @@ class SkillExecutionCoordinator extends EventEmitter {
           const isTimeout = err.message && err.message.includes('Timeout');
           if (attempt <= this.maxRetries) {
             record.retries++;
-            this.transition(skillName, isTimeout ? SKILL_STATES.TIMED_OUT : SKILL_STATES.FAILED, `Retrying: ${err.message}`);
+            this.transition(
+              skillName,
+              isTimeout ? SKILL_STATES.TIMED_OUT : SKILL_STATES.FAILED,
+              `Retrying: ${err.message}`,
+            );
             this.transition(skillName, SKILL_STATES.READY, 'Ready for retry');
           } else {
-            this.transition(skillName, isTimeout ? SKILL_STATES.TIMED_OUT : SKILL_STATES.FAILED, `Terminal error: ${err.message}`);
+            this.transition(
+              skillName,
+              isTimeout ? SKILL_STATES.TIMED_OUT : SKILL_STATES.FAILED,
+              `Terminal error: ${err.message}`,
+            );
             record.failure = {
               category: isTimeout ? 'TIMEOUT' : 'EXECUTION_FAILURE',
               error: err.message,
             };
 
             if (isRequired) {
-              throw new Error(`Required skill '${skillName}' failed terminally after ${attempt} attempts: ${err.message}`);
+              throw new Error(
+                `Required skill '${skillName}' failed terminally after ${attempt} attempts: ${err.message}`,
+              );
             } else {
               results.push({ skillName, success: false, error: err.message });
             }
@@ -206,14 +243,19 @@ class SkillExecutionCoordinator extends EventEmitter {
       }
     }
 
-    return { success: true, results, cumulativeContext, records: Array.from(this.executionRecords.values()) };
+    return {
+      success: true,
+      results,
+      cumulativeContext,
+      records: Array.from(this.executionRecords.values()),
+    };
   }
 
   /**
    * Execute skills in parallel and aggregate their results deterministically.
    */
   async executeParallel(skills, executorFn) {
-    const promises = skills.map(async (item) => {
+    const promises = skills.map(async item => {
       const { skillName, isRequired = true } = item;
       const record = this.createRecord(skillName, item);
       this.transition(skillName, SKILL_STATES.READY, 'Parallel dispatch ready');
@@ -243,7 +285,9 @@ class SkillExecutionCoordinator extends EventEmitter {
 
     const failedRequired = results.find(r => !r.success && r.isRequired);
     if (failedRequired) {
-      throw new Error(`Required parallel skill '${failedRequired.skillName}' failed: ${failedRequired.error}`);
+      throw new Error(
+        `Required parallel skill '${failedRequired.skillName}' failed: ${failedRequired.error}`,
+      );
     }
 
     return {
@@ -258,13 +302,20 @@ class SkillExecutionCoordinator extends EventEmitter {
    */
   getAuditLog() {
     const allRecords = Array.from(this.executionRecords.values());
-    const uncompletedRequired = allRecords.filter(r => r.isRequired && r.state !== SKILL_STATES.COMPLETED);
+    const uncompletedRequired = allRecords.filter(
+      r => r.isRequired && r.state !== SKILL_STATES.COMPLETED,
+    );
     const nonTerminal = allRecords.filter(r => !TERMINAL_STATES.has(r.state));
 
     return {
       totalSkillsAccounted: allRecords.length,
       allReachedTerminalState: nonTerminal.length === 0,
-      zeroSilentAbandonment: uncompletedRequired.every(r => r.state === SKILL_STATES.FAILED || r.state === SKILL_STATES.BLOCKED || r.state === SKILL_STATES.TIMED_OUT),
+      zeroSilentAbandonment: uncompletedRequired.every(
+        r =>
+          r.state === SKILL_STATES.FAILED ||
+          r.state === SKILL_STATES.BLOCKED ||
+          r.state === SKILL_STATES.TIMED_OUT,
+      ),
       records: allRecords,
     };
   }
@@ -276,4 +327,3 @@ module.exports = {
   TERMINAL_STATES,
   LEGAL_TRANSITIONS,
 };
-

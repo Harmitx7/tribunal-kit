@@ -72,7 +72,8 @@ const arb = {
   string(options = {}) {
     const minLen = options.minLength !== undefined ? options.minLength : 0;
     const maxLen = options.maxLength !== undefined ? options.maxLength : 20;
-    const chars = options.charset || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_- ';
+    const chars =
+      options.charset || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_- ';
     return {
       generate(rand, step = 0) {
         if (step === 0 && minLen === 0) return '';

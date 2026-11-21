@@ -4,22 +4,22 @@ The `trackio` CLI provides direct terminal access to query Trackio experiment tr
 
 ## Quick Command Reference
 
-| Task | Command |
-|------|---------|
-| List projects | `trackio list projects` |
-| List runs | `trackio list runs --project <name>` |
-| List metrics | `trackio list metrics --project <name> --run <name>` |
-| List system metrics | `trackio list system-metrics --project <name> --run <name>` |
-| List alerts | `trackio list alerts --project <name> [--run <name>] [--level <level>] [--since <timestamp>]` |
-| Get project summary | `trackio get project --project <name>` |
-| Get run summary | `trackio get run --project <name> --run <name>` |
-| Get metric values | `trackio get metric --project <name> --run <name> --metric <name>` |
-| Get metric at step | `trackio get metric ... --metric <name> --step <N>` |
-| Get metric around step | `trackio get metric ... --metric <name> --around <N> --window <W>` |
-| Get all metrics snapshot | `trackio get snapshot --project <name> --run <name> --step <N>` |
-| Get system metrics | `trackio get system-metric --project <name> --run <name>` |
-| Show dashboard | `trackio show [--project <name>]` |
-| Sync to Space | `trackio sync --project <name> --space-id <space_id>` |
+| Task                     | Command                                                                                       |
+| ------------------------ | --------------------------------------------------------------------------------------------- |
+| List projects            | `trackio list projects`                                                                       |
+| List runs                | `trackio list runs --project <name>`                                                          |
+| List metrics             | `trackio list metrics --project <name> --run <name>`                                          |
+| List system metrics      | `trackio list system-metrics --project <name> --run <name>`                                   |
+| List alerts              | `trackio list alerts --project <name> [--run <name>] [--level <level>] [--since <timestamp>]` |
+| Get project summary      | `trackio get project --project <name>`                                                        |
+| Get run summary          | `trackio get run --project <name> --run <name>`                                               |
+| Get metric values        | `trackio get metric --project <name> --run <name> --metric <name>`                            |
+| Get metric at step       | `trackio get metric ... --metric <name> --step <N>`                                           |
+| Get metric around step   | `trackio get metric ... --metric <name> --around <N> --window <W>`                            |
+| Get all metrics snapshot | `trackio get snapshot --project <name> --run <name> --step <N>`                               |
+| Get system metrics       | `trackio get system-metric --project <name> --run <name>`                                     |
+| Show dashboard           | `trackio show [--project <name>]`                                                             |
+| Sync to Space            | `trackio sync --project <name> --space-id <space_id>`                                         |
 
 ## Core Commands
 
@@ -200,16 +200,19 @@ All errors exit with non-zero status code and write to stderr.
 ## JSON Output Structure
 
 ### List Projects
+
 ```json
-{"projects": ["project1", "project2"]}
+{ "projects": ["project1", "project2"] }
 ```
 
 ### List Runs
+
 ```json
-{"project": "my-project", "runs": ["run1", "run2"]}
+{ "project": "my-project", "runs": ["run1", "run2"] }
 ```
 
 ### Project Summary
+
 ```json
 {
   "project": "my-project",
@@ -220,26 +223,28 @@ All errors exit with non-zero status code and write to stderr.
 ```
 
 ### Run Summary
+
 ```json
 {
   "project": "my-project",
   "run": "my-run",
   "num_logs": 50,
   "metrics": ["loss", "accuracy"],
-  "config": {"learning_rate": 0.001},
+  "config": { "learning_rate": 0.001 },
   "last_step": 49
 }
 ```
 
 ### Metric Values
+
 ```json
 {
   "project": "my-project",
   "run": "my-run",
   "metric": "loss",
   "values": [
-    {"step": 0, "timestamp": "2024-01-01T00:00:00", "value": 0.5},
-    {"step": 1, "timestamp": "2024-01-01T00:01:00", "value": 0.4}
+    { "step": 0, "timestamp": "2024-01-01T00:00:00", "value": 0.5 },
+    { "step": 1, "timestamp": "2024-01-01T00:01:00", "value": 0.4 }
   ]
 }
 ```
@@ -248,4 +253,3 @@ All errors exit with non-zero status code and write to stderr.
 
 - **Complete CLI documentation**: See [docs/source/cli_commands.md](docs/source/cli_commands.md)
 - **API and MCP Server**: See [docs/source/api_mcp_server.md](docs/source/api_mcp_server.md)
-

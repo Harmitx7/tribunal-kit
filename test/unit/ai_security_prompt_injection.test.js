@@ -102,4 +102,3 @@ describe('Prompt Injection & Smuggling Defense Engine', () => {
     expect(result.cleanChunks.length).toBe(2);
   });
 });
-

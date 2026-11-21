@@ -1,7 +1,7 @@
 ---
-title: {{TITLE}}
-authors: {{AUTHORS}}
-date: {{DATE}}
+title: { { TITLE } }
+authors: { { AUTHORS } }
+date: { { DATE } }
 type: ml-experiment-report
 tags: [machine-learning, experiment-report]
 ---
@@ -21,11 +21,13 @@ tags: [machine-learning, experiment-report]
 {{ABSTRACT}}
 
 ### Key Findings
+
 - Finding 1
 - Finding 2
 - Finding 3
 
 ### Recommendations
+
 - Recommendation 1
 - Recommendation 2
 
@@ -57,22 +59,22 @@ How will we measure success?
 
 ### 2.1 Data Description
 
-| Property | Value |
-|----------|-------|
-| **Name** | Dataset name |
-| **Source** | Origin of data |
-| **Size** | Number of examples |
+| Property     | Value                   |
+| ------------ | ----------------------- |
+| **Name**     | Dataset name            |
+| **Source**   | Origin of data          |
+| **Size**     | Number of examples      |
 | **Features** | Feature count and types |
-| **Target** | What we're predicting |
-| **License** | Usage rights |
+| **Target**   | What we're predicting   |
+| **License**  | Usage rights            |
 
 ### 2.2 Data Splits
 
-| Split | Size | Percentage |
-|-------|------|------------|
-| Train | X examples | Y% |
-| Validation | X examples | Y% |
-| Test | X examples | Y% |
+| Split      | Size       | Percentage |
+| ---------- | ---------- | ---------- |
+| Train      | X examples | Y%         |
+| Validation | X examples | Y%         |
+| Test       | X examples | Y%         |
 
 ### 2.3 Data Quality
 
@@ -103,13 +105,13 @@ Input → Layer 1 → Layer 2 → ... → Output
 
 ### 3.2 Model Specifications
 
-| Component | Configuration |
-|-----------|--------------|
-| **Type** | Model family |
-| **Parameters** | Total count |
-| **Layers** | Number and types |
-| **Activation** | Functions used |
-| **Dropout** | Regularization rate |
+| Component      | Configuration       |
+| -------------- | ------------------- |
+| **Type**       | Model family        |
+| **Parameters** | Total count         |
+| **Layers**     | Number and types    |
+| **Activation** | Functions used      |
+| **Dropout**    | Regularization rate |
 
 ### 3.3 Baseline Models
 
@@ -125,14 +127,14 @@ What are we comparing against?
 
 ### 4.1 Hyperparameters
 
-| Hyperparameter | Value | Rationale |
-|----------------|-------|-----------|
-| Learning Rate | 1e-4 | Tuned via grid search |
-| Batch Size | 32 | GPU memory constraint |
-| Epochs | 100 | Based on validation |
-| Optimizer | AdamW | Standard for transformers |
-| Weight Decay | 0.01 | Regularization |
-| LR Schedule | Cosine | Smooth convergence |
+| Hyperparameter | Value  | Rationale                 |
+| -------------- | ------ | ------------------------- |
+| Learning Rate  | 1e-4   | Tuned via grid search     |
+| Batch Size     | 32     | GPU memory constraint     |
+| Epochs         | 100    | Based on validation       |
+| Optimizer      | AdamW  | Standard for transformers |
+| Weight Decay   | 0.01   | Regularization            |
+| LR Schedule    | Cosine | Smooth convergence        |
 
 ### 4.2 Training Process
 
@@ -147,16 +149,17 @@ for epoch in range(num_epochs):
 
 ### 4.3 Computational Resources
 
-| Resource | Specification |
-|----------|--------------|
-| **Hardware** | GPU model and count |
-| **Memory** | RAM and VRAM |
-| **Training Time** | Hours/days |
-| **Cost** | Estimated compute cost |
+| Resource          | Specification          |
+| ----------------- | ---------------------- |
+| **Hardware**      | GPU model and count    |
+| **Memory**        | RAM and VRAM           |
+| **Training Time** | Hours/days             |
+| **Cost**          | Estimated compute cost |
 
 ### 4.4 Training Curves
 
 Include plots of:
+
 - Training loss over time
 - Validation loss over time
 - Learning rate schedule
@@ -168,11 +171,11 @@ Include plots of:
 
 ### 5.1 Quantitative Results
 
-| Model | Accuracy | Precision | Recall | F1 | AUC |
-|-------|----------|-----------|--------|-------|-----|
-| Baseline 1 | 0.65 | 0.64 | 0.66 | 0.65 | 0.70 |
-| Baseline 2 | 0.78 | 0.77 | 0.79 | 0.78 | 0.82 |
-| **Ours** | **0.89** | **0.88** | **0.90** | **0.89** | **0.93** |
+| Model      | Accuracy | Precision | Recall   | F1       | AUC      |
+| ---------- | -------- | --------- | -------- | -------- | -------- |
+| Baseline 1 | 0.65     | 0.64      | 0.66     | 0.65     | 0.70     |
+| Baseline 2 | 0.78     | 0.77      | 0.79     | 0.78     | 0.82     |
+| **Ours**   | **0.89** | **0.88**  | **0.90** | **0.89** | **0.93** |
 
 ### 5.2 Statistical Significance
 
@@ -182,11 +185,11 @@ Include plots of:
 
 ### 5.3 Per-Class Performance
 
-| Class | Precision | Recall | F1 | Support |
-|-------|-----------|--------|-----|---------|
-| Class 1 | 0.90 | 0.88 | 0.89 | 500 |
-| Class 2 | 0.87 | 0.91 | 0.89 | 450 |
-| Class 3 | 0.88 | 0.89 | 0.88 | 550 |
+| Class   | Precision | Recall | F1   | Support |
+| ------- | --------- | ------ | ---- | ------- |
+| Class 1 | 0.90      | 0.88   | 0.89 | 500     |
+| Class 2 | 0.87      | 0.91   | 0.89 | 450     |
+| Class 3 | 0.88      | 0.89   | 0.88 | 550     |
 
 ### 5.4 Qualitative Results
 
@@ -204,12 +207,12 @@ Examples where the model fails and why.
 
 ### 6.1 Ablation Study
 
-| Configuration | Score | Change |
-|---------------|-------|--------|
-| Full Model | 0.89 | - |
-| - Feature Set A | 0.85 | -0.04 |
-| - Feature Set B | 0.87 | -0.02 |
-| - Augmentation | 0.86 | -0.03 |
+| Configuration   | Score | Change |
+| --------------- | ----- | ------ |
+| Full Model      | 0.89  | -      |
+| - Feature Set A | 0.85  | -0.04  |
+| - Feature Set B | 0.87  | -0.02  |
+| - Augmentation  | 0.86  | -0.03  |
 
 ### 6.2 Error Analysis
 
@@ -223,11 +226,11 @@ What types of errors is the model making?
 
 Which features matter most?
 
-| Feature | Importance | Notes |
-|---------|------------|-------|
-| Feature 1 | 0.35 | Most predictive |
-| Feature 2 | 0.28 | Secondary signal |
-| Feature 3 | 0.15 | Marginal impact |
+| Feature   | Importance | Notes            |
+| --------- | ---------- | ---------------- |
+| Feature 1 | 0.35       | Most predictive  |
+| Feature 2 | 0.28       | Secondary signal |
+| Feature 3 | 0.15       | Marginal impact  |
 
 ---
 
@@ -237,11 +240,11 @@ Which features matter most?
 
 How does the model generalize to other datasets?
 
-| Dataset | Score | Notes |
-|---------|-------|-------|
-| Original | 0.89 | Training distribution |
-| Dataset A | 0.82 | Similar domain |
-| Dataset B | 0.71 | Different domain |
+| Dataset   | Score | Notes                 |
+| --------- | ----- | --------------------- |
+| Original  | 0.89  | Training distribution |
+| Dataset A | 0.82  | Similar domain        |
+| Dataset B | 0.71  | Different domain      |
 
 ### 7.2 Adversarial Robustness
 
@@ -264,10 +267,10 @@ Performance across demographic groups or sensitive attributes.
 ### 8.2 Inference Speed
 
 | Batch Size | Latency | Throughput |
-|------------|---------|------------|
-| 1 | 10ms | 100 QPS |
-| 8 | 45ms | 178 QPS |
-| 32 | 150ms | 213 QPS |
+| ---------- | ------- | ---------- |
+| 1          | 10ms    | 100 QPS    |
+| 8          | 45ms    | 178 QPS    |
+| 32         | 150ms   | 213 QPS    |
 
 ### 8.3 Production Requirements
 
@@ -286,9 +289,9 @@ Key takeaways from the experiment.
 
 ### 9.2 Did We Meet Objectives?
 
-| Objective | Status | Notes |
-|-----------|--------|-------|
-| Objective 1 | ✅ Met | Achieved target |
+| Objective   | Status     | Notes           |
+| ----------- | ---------- | --------------- |
+| Objective 1 | ✅ Met     | Achieved target |
 | Objective 2 | ⚠️ Partial | Close to target |
 | Objective 3 | ❌ Not Met | Needs more work |
 
@@ -345,6 +348,7 @@ Supplementary experiments not included in main text.
 ### C. Code
 
 Links to code repositories:
+
 - Training code: [link]
 - Evaluation code: [link]
 - Model checkpoint: [link]

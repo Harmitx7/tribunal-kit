@@ -10,13 +10,19 @@
  */
 function parseOklch(str) {
   if (typeof str !== 'string') return null;
-  const match = str.match(/oklch\(\s*([\d.]+%?)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+%?))?\s*\)/i);
+  const match = str.match(
+    /oklch\(\s*([\d.]+%?)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+%?))?\s*\)/i,
+  );
   if (!match) return null;
 
   const l = match[1].endsWith('%') ? parseFloat(match[1]) / 100 : parseFloat(match[1]);
   const c = parseFloat(match[2]);
   const h = parseFloat(match[3]);
-  const a = match[4] ? (match[4].endsWith('%') ? parseFloat(match[4]) / 100 : parseFloat(match[4])) : 1;
+  const a = match[4]
+    ? match[4].endsWith('%')
+      ? parseFloat(match[4]) / 100
+      : parseFloat(match[4])
+    : 1;
 
   return { lightness: l, chroma: c, hue: h, alpha: a };
 }
@@ -60,4 +66,3 @@ module.exports = {
   isWcagAaCompliant,
   generateRelativeColorTokens,
 };
-

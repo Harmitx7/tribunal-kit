@@ -32,7 +32,8 @@ function boundArray(items, options = {}) {
     };
   }
 
-  const maxItems = typeof options.maxItems === 'number' ? Math.max(1, options.maxItems) : DEFAULT_ARRAY_MAX_ITEMS;
+  const maxItems =
+    typeof options.maxItems === 'number' ? Math.max(1, options.maxItems) : DEFAULT_ARRAY_MAX_ITEMS;
   const total = items.length;
 
   if (total <= maxItems) {
@@ -50,7 +51,9 @@ function boundArray(items, options = {}) {
 
   const omitted = total - maxItems;
   const boundedItems = items.slice(0, maxItems);
-  const diagRefPart = options.diagnosticRef ? ` (retained in diagnostics: ${options.diagnosticRef})` : '';
+  const diagRefPart = options.diagnosticRef
+    ? ` (retained in diagnostics: ${options.diagnosticRef})`
+    : '';
   const verboseHint = options.verboseHint !== false ? '; use --verbose to view all' : '';
   const notice = `... and ${omitted} more verified findings${verboseHint}${diagRefPart}`;
 
@@ -79,13 +82,17 @@ function boundString(text, options = {}) {
   }
 
   const str = String(text);
-  const maxLength = typeof options.maxLength === 'number' ? Math.max(50, options.maxLength) : DEFAULT_STRING_MAX_LENGTH;
+  const maxLength =
+    typeof options.maxLength === 'number'
+      ? Math.max(50, options.maxLength)
+      : DEFAULT_STRING_MAX_LENGTH;
 
   if (str.length <= maxLength) {
     return { text: str, isTruncated: false, originalLength: str.length, truncatedChars: 0 };
   }
 
-  const headRatio = typeof options.headRatio === 'number' ? Math.min(0.9, Math.max(0.1, options.headRatio)) : 0.6;
+  const headRatio =
+    typeof options.headRatio === 'number' ? Math.min(0.9, Math.max(0.1, options.headRatio)) : 0.6;
   const tailRatio = 1.0 - headRatio;
 
   if (maxLength < 200) {
@@ -122,7 +129,9 @@ function boundString(text, options = {}) {
   }
 
   const truncatedChars = str.length - (headSlice.length + tailSlice.length);
-  const diagRefPart = options.diagnosticRef ? ` (complete output in diagnostics: ${options.diagnosticRef})` : '';
+  const diagRefPart = options.diagnosticRef
+    ? ` (complete output in diagnostics: ${options.diagnosticRef})`
+    : '';
   const marker = `\n\n[... ${truncatedChars.toLocaleString()} characters truncated for display${diagRefPart} ...]\n\n`;
 
   return {
@@ -161,13 +170,15 @@ function boundObject(obj, options = {}) {
 
   if (Array.isArray(obj)) {
     if (obj.length > maxArrayLength) {
-      const bounded = obj.slice(0, maxArrayLength).map(item =>
-        boundObject(item, { ...options, _depth: currentDepth + 1, _seen: seen })
-      );
+      const bounded = obj
+        .slice(0, maxArrayLength)
+        .map(item => boundObject(item, { ...options, _depth: currentDepth + 1, _seen: seen }));
       bounded.push(`[... ${obj.length - maxArrayLength} items omitted]`);
       return bounded;
     }
-    return obj.map(item => boundObject(item, { ...options, _depth: currentDepth + 1, _seen: seen }));
+    return obj.map(item =>
+      boundObject(item, { ...options, _depth: currentDepth + 1, _seen: seen }),
+    );
   }
 
   const result = {};
@@ -190,4 +201,3 @@ module.exports = {
   boundString,
   boundObject,
 };
-

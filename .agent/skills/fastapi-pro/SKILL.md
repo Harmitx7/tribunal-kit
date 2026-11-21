@@ -1,6 +1,6 @@
 ---
 name: fastapi-pro
-description: "Use when designing, building, auditing, and securing FastAPI applications. Covers Pydantic v2 schemas, async def vs def threadpool mechanics, dependency injection security (Depends), BOLA/IDOR prevention, middleware, and OpenAPI documentation."
+description: 'Use when designing, building, auditing, and securing FastAPI applications. Covers Pydantic v2 schemas, async def vs def threadpool mechanics, dependency injection security (Depends), BOLA/IDOR prevention, middleware, and OpenAPI documentation.'
 version: 6.0.0
 last-updated: 2026-09-29
 skills:
@@ -12,37 +12,37 @@ scripts-binding:
   - .agent/scripts/lint_runner.js
   - .agent/scripts/verify_all.js
 inputs:
-  task: "string"
-  target_file: "string"
+  task: 'string'
+  target_file: 'string'
 outputs:
-  result: "string"
-  verification_status: "boolean"
+  result: 'string'
+  verification_status: 'boolean'
 trigger:
-  - "fastapi"
-  - "pro"
+  - 'fastapi'
+  - 'pro'
 ---
 
 # FastAPI & Pydantic v2 Production Architecture Mastery
 
 ## Activation Boundaries
+
 - **Activate when:** Use when designing, building, auditing, and securing FastAPI applications. Covers Pydantic v2 schemas, async def vs def threadpool mechanics, dependency injection security (Depends), BOLA/IDOR prevention, middleware, and OpenAPI documentation.
 - **DO NOT activate when:** The task falls outside the `fastapi-pro` domain or is managed by a different dedicated specialist agent.
 
-
 ## 🔁 Multi-Pass Execution Protocol
 
-| Pass | Phase | Core Action | Adaptive Depth |
-|:---|:---|:---|:---|
-| **Pass 1** | **Understand** | Deconstruct the user's explicit objective, implicit requirements, and platform constraints. | Fast / Standard / Deep |
-| **Pass 2** | **Plan** | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls. | Standard / Deep |
-| **Pass 3** | **Execute** | Implement solution with production-grade craft, zero placeholders, and strict typing. | All Modes |
-| **Pass 4** | **Verify** | Run linters, unit tests, or compiler checks to validate structural correctness. | All Modes |
-| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep |
-| **Pass 6** | **Harden** | Eliminate discovered friction, optimize performance, and harden error boundaries. | Standard / Deep |
-| **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. | All Modes |
-
+| Pass       | Phase                | Core Action                                                                                     | Adaptive Depth         |
+| :--------- | :------------------- | :---------------------------------------------------------------------------------------------- | :--------------------- |
+| **Pass 1** | **Understand**       | Deconstruct the user's explicit objective, implicit requirements, and platform constraints.     | Fast / Standard / Deep |
+| **Pass 2** | **Plan**             | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls.   | Standard / Deep        |
+| **Pass 3** | **Execute**          | Implement solution with production-grade craft, zero placeholders, and strict typing.           | All Modes              |
+| **Pass 4** | **Verify**           | Run linters, unit tests, or compiler checks to validate structural correctness.                 | All Modes              |
+| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep        |
+| **Pass 6** | **Harden**           | Eliminate discovered friction, optimize performance, and harden error boundaries.               | Standard / Deep        |
+| **Pass 7** | **Quality Gate**     | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing.    | All Modes              |
 
 ## Mandatory Pre-Flight Context Inspection
+
 1. **Async vs Sync Function Signature**: Verify whether route handlers do blocking IO; `async def` with blocking calls freezes event loop.
 2. **Pydantic Version**: Confirm Pydantic v2 syntax (`model_dump()`, `model_validate()`, `field_validator`); reject v1 (`dict()`, `parse_obj()`).
 3. **Dependency Scopes**: Inspect `Depends()` hierarchies; verify authorization and database session boundaries are encapsulated cleanly.
@@ -52,6 +52,7 @@ trigger:
 ## 🛠️ Technical Architecture & Reference Recipes
 
 ### 1. Correct Async vs Sync Handler Architecture
+
 ```python
 from fastapi import FastAPI, Depends, HTTPException, status
 import time
@@ -79,6 +80,7 @@ async def good_async():
 ```
 
 ### 2. Secure Dependency Injection & Object-Level Authorization (BOLA/IDOR)
+
 ```python
 from pydantic import BaseModel, ConfigDict
 from typing import Annotated
@@ -114,19 +116,20 @@ async def read_project(project: Annotated[Project, Depends(get_project_for_user)
 
 ## 🚨 Edge-Case & Failure Mode Matrix
 
-| Scenario | Risk | Production Mitigation |
-|:---|:---|:---|
-| **Missing response_model** | Accidental return of ORM model exposes password hashes, salts, and internal keys | Always define explicit output schema on route decorator `@app.get(..., response_model=UserPublic)` |
-| **Wildcard CORS with Credentials** | `allow_origins=["*"]` with `allow_credentials=True` triggers browser security rejection | Explicitly declare exact trusted origins array from environment configuration |
-| **Payload Size Bomb** | Unbounded body uploads cause memory exhaustion | Enforce maximum content-length validation in custom middleware |
+| Scenario                           | Risk                                                                                    | Production Mitigation                                                                              |
+| :--------------------------------- | :-------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
+| **Missing response_model**         | Accidental return of ORM model exposes password hashes, salts, and internal keys        | Always define explicit output schema on route decorator `@app.get(..., response_model=UserPublic)` |
+| **Wildcard CORS with Credentials** | `allow_origins=["*"]` with `allow_credentials=True` triggers browser security rejection | Explicitly declare exact trusted origins array from environment configuration                      |
+| **Payload Size Bomb**              | Unbounded body uploads cause memory exhaustion                                          | Enforce maximum content-length validation in custom middleware                                     |
 
 ## 🤖 LLM-Specific Traps Table
 
-| Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
-|:---|:---|:---|
-| **Pydantic v1 Syntax** | Using `.dict()`, `.json()`, `validator` | Use Pydantic v2: `.model_dump()`, `.model_dump_json()`, `@field_validator` |
-| **Direct Request Body Extraction** | Manually parsing `await request.json()` | Use type-annotated Pydantic models in endpoint parameters |
+| Anti-Pattern                       | What AI Commonly Does Wrong             | What Is Actually Correct                                                   |
+| :--------------------------------- | :-------------------------------------- | :------------------------------------------------------------------------- |
+| **Pydantic v1 Syntax**             | Using `.dict()`, `.json()`, `validator` | Use Pydantic v2: `.model_dump()`, `.model_dump_json()`, `@field_validator` |
+| **Direct Request Body Extraction** | Manually parsing `await request.json()` | Use type-annotated Pydantic models in endpoint parameters                  |
 
 ## 🏛️ Tribunal Verification & Guardrails
+
 - **Active Reviewers:** `backend-specialist`, `security-auditor`, `api-architect`
 - **Evidence Standard:** Mark all findings as `[OBSERVED]`, `[INFERRED]`, or `[UNVERIFIED]`.

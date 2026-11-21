@@ -1,9 +1,6 @@
 'use strict';
 
-const {
-  levenshteinDistance,
-  MaliciousPackageEngine,
-} = require('../../src/supply_chain');
+const { levenshteinDistance, MaliciousPackageEngine } = require('../../src/supply_chain');
 
 const fixtureData = require('../fixtures/supply_chain/supply_chain_dataset_v1.json');
 
@@ -72,14 +69,13 @@ describe('Malicious Packages, Lifecycle Hooks, Typosquatting & CI Actions', () =
     // In snippet: checkout@v4 (unpinned) and cache@v3 (unpinned), while setup-node@b4ffde65... (pinned)
     expect(result.findingsCount).toBe(2);
 
-    const checkoutFinding = result.findings.find((f) => f.component === 'actions/checkout');
+    const checkoutFinding = result.findings.find(f => f.component === 'actions/checkout');
     expect(checkoutFinding).toBeDefined();
     expect(checkoutFinding.category).toBe('V11_UNPINNED_CI_ACTION');
     expect(checkoutFinding.version).toBe('v4');
 
-    const cacheFinding = result.findings.find((f) => f.component === 'actions/cache');
+    const cacheFinding = result.findings.find(f => f.component === 'actions/cache');
     expect(cacheFinding).toBeDefined();
     expect(cacheFinding.version).toBe('v3');
   });
 });
-

@@ -41,4 +41,3 @@ describe('UI Art Direction Engine (Unit)', () => {
     expect(ddr.typography.heading1).toContain('clamp(');
   });
 });
-

@@ -18,13 +18,13 @@ const {
  *
  * @param {string} title The title of the panel
  * @param {Array<string|object>} lines Array of strings/objects to render inside the panel
- * @param {object} options
- * @param {string} options.accessory Right-aligned text in the header
- * @param {number} options.width Max width of the panel (defaults to terminal width or 100)
- * @param {number[]} options.borderColor RGB array for border color
- * @param {number[]} options.titleColor RGB array for title color
- * @param {boolean} options.returnLines If true, returns array of lines instead of printing
- * @param {boolean} options.sanitize If true (default), sanitizes untrusted input against control codes
+ * @param {object} [options]
+ * @param {string} [options.accessory] Right-aligned text in the header
+ * @param {number} [options.width] Max width of the panel (defaults to terminal width or 100)
+ * @param {number[]} [options.borderColor] RGB array for border color
+ * @param {number[]} [options.titleColor] RGB array for title color
+ * @param {boolean} [options.returnLines] If true, returns array of lines instead of printing
+ * @param {boolean} [options.sanitize] If true (default), sanitizes untrusted input against control codes
  */
 function renderPanel(title, lines = [], options = {}) {
   const g = GLYPHS;

@@ -19,7 +19,10 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { correlateFindings, shouldCorrelate } = require('../../.agent/scripts/cross_agent_correlator');
+const {
+  correlateFindings,
+  shouldCorrelate,
+} = require('../../.agent/scripts/cross_agent_correlator');
 const { ReviewExecutor } = require('../../src/execution/review_executor');
 const { CaseMemory } = require('../../src/intelligence/case_memory');
 
@@ -81,7 +84,9 @@ describe('PHASE 7 PERFORMANCE & RESOURCE EFFICIENCY WAR ROOM', () => {
       expect(mergedGroup.agents).toContain('security-auditor');
       expect(mergedGroup.agents).toContain('logic-reviewer');
 
-      const separateGroup = correlated.find(f => f.location && f.location.file === 'src/handlers/user.js');
+      const separateGroup = correlated.find(
+        f => f.location && f.location.file === 'src/handlers/user.js',
+      );
       expect(separateGroup).toBeDefined();
       expect(separateGroup.agents).toContain('api-architect');
     });
@@ -188,7 +193,12 @@ describe('PHASE 7 PERFORMANCE & RESOURCE EFFICIENCY WAR ROOM', () => {
         maxConcurrency: 4,
       });
 
-      const reviewers = ['logic-reviewer', 'security-auditor', 'schema-reviewer', 'resilience-reviewer'];
+      const reviewers = [
+        'logic-reviewer',
+        'security-auditor',
+        'schema-reviewer',
+        'resilience-reviewer',
+      ];
       const res = await executor.executeReview({
         reviewers,
         diff: '+ const safe = true;',

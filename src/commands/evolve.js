@@ -36,10 +36,13 @@ async function cmdEvolve(flags = {}, processArgs = [], quiet = false) {
     logger.dim('  ─────────────────────────────────────────────────────────');
 
     if (proposals.length === 0) {
-      logger.dim('  No evolution proposals found. Run tk evolve to generate auto-tuning proposals.');
+      logger.dim(
+        '  No evolution proposals found. Run tk evolve to generate auto-tuning proposals.',
+      );
     } else {
       for (const p of proposals) {
-        const color = p.status === 'APPROVED' ? 'green' : p.status === 'REJECTED' ? 'red' : 'yellow';
+        const color =
+          p.status === 'APPROVED' ? 'green' : p.status === 'REJECTED' ? 'red' : 'yellow';
         logger.log(
           `  ${logger.c(color, `[${p.status}]`)} ${logger.bold(p.proposal_id)} — Target: ${logger.c('cyan', p.target)} [${p.risk} risk]`,
         );
@@ -82,7 +85,9 @@ async function cmdEvolve(flags = {}, processArgs = [], quiet = false) {
     targetSkill.toLowerCase().includes('package.json');
 
   if (isForbidden) {
-    logger.err(`Target "${targetSkill}" is a protected security boundary. Co-evolution is strictly forbidden.`);
+    logger.err(
+      `Target "${targetSkill}" is a protected security boundary. Co-evolution is strictly forbidden.`,
+    );
     process.exit(1);
   }
 
@@ -105,16 +110,38 @@ async function cmdEvolve(flags = {}, processArgs = [], quiet = false) {
     }
   }
   if (!harnessCmd) {
-    harnessCmd = 'node -e "process.exit(0)"';
+    if (flags['dry-run'] || flags.dryRun) {
+      harnessCmd = 'SIMULATED_DRY_RUN';
+      if (!quiet) {
+        logger.warn(
+          `  ${logger.c('yellow', '⚠ Warning:')} No verification harness supplied. Running in SIMULATED DRY-RUN mode. ` +
+            'Mutations will be evaluated but NOT certified or promoted.',
+        );
+      }
+    } else {
+      logger.err(
+        'Missing required test verification harness (--harness-cmd).\n' +
+          'Co-evolution requires a real test runner to verify mutations before certification.\n' +
+          'Usage: tk evolve <skill> --harness-cmd "<test-command>" (e.g. --harness-cmd "npm test")\n' +
+          '       tk evolve <skill> --dry-run (for simulated execution without certification)',
+      );
+      process.exit(1);
+    }
   }
 
   if (!quiet) {
     logger.log(`  ${logger.c('cyan', '∞')} Starting Dual-Loop Continuous Co-Evolution Campaign`);
     logger.log(`  ${logger.c('cyan', '∞')} Target Skill:        ${logger.bold(targetSkill)}`);
     logger.log(`  ${logger.c('cyan', '∞')} Max Rounds:          ${logger.bold(String(rounds))}`);
-    logger.log(`  ${logger.c('cyan', '∞')} Loop 2 Fuzz Depth:   ${logger.bold(String(fuzzDepth))} per vector`);
-    logger.log(`  ${logger.c('cyan', '∞')} Sandbox Isolation:    ${logger.bold(useSandbox ? 'Enabled (Worktree)' : 'Direct')}`);
-    logger.log(`  ${logger.c('cyan', '∞')} Promotion Policy:    ${logger.bold(autoPromote ? 'Auto-Promote (Bypass Gate)' : 'Human Gate Staged')}`);
+    logger.log(
+      `  ${logger.c('cyan', '∞')} Loop 2 Fuzz Depth:   ${logger.bold(String(fuzzDepth))} per vector`,
+    );
+    logger.log(
+      `  ${logger.c('cyan', '∞')} Sandbox Isolation:    ${logger.bold(useSandbox ? 'Enabled (Worktree)' : 'Direct')}`,
+    );
+    logger.log(
+      `  ${logger.c('cyan', '∞')} Promotion Policy:    ${logger.bold(autoPromote ? 'Auto-Promote (Bypass Gate)' : 'Human Gate Staged')}`,
+    );
     logger.log('');
   }
 
@@ -153,7 +180,9 @@ async function cmdEvolve(flags = {}, processArgs = [], quiet = false) {
       logger.dim('  ─────────────────────────────────────────────────────────');
       logger.log(`  Total Rounds Executed:    ${logger.bold(String(telemetry.roundsExecuted))}`);
       logger.log(`  Total Rollbacks:         ${logger.bold(String(telemetry.rollbacks))}`);
-      logger.log(`  Final Resilience:        ${logger.bold(telemetry.finalResilience.toFixed(1) + '%')}`);
+      logger.log(
+        `  Final Resilience:        ${logger.bold(telemetry.finalResilience.toFixed(1) + '%')}`,
+      );
       logger.log(
         `  Circuit Breaker:         ${telemetry.circuitBreakerTripped ? logger.c('red', 'TRIPPED (Halted Early)') : logger.c('green', 'NORMAL')}`,
       );
@@ -172,7 +201,9 @@ async function cmdEvolve(flags = {}, processArgs = [], quiet = false) {
             `  ${logger.c('yellow', '⚡')} Staged ${telemetry.stagedProposals.length} EvolutionProposal(s) awaiting Human Gate approval:`,
           );
           for (const pid of telemetry.stagedProposals) {
-            logger.log(`    ▸ ${logger.bold(pid)} — run: ${logger.c('cyan', `tk learn --approve ${pid}`)}`);
+            logger.log(
+              `    ▸ ${logger.bold(pid)} — run: ${logger.c('cyan', `tk learn --approve ${pid}`)}`,
+            );
           }
         }
       }

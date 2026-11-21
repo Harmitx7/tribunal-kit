@@ -2,14 +2,31 @@
  * Tribunal Kit System-1 Capability Suite Type Definitions
  */
 
-import {
-  EvidenceResult,
-  EvidenceItem,
-  DecisionPayload,
-  ReviewerOrchestrationResult,
-  BrowserRequirementResult,
-  EvolutionCandidate,
-} from '../index';
+export interface EvidenceResult {
+  evidence: any[];
+  summary?: any;
+  [key: string]: any;
+}
+
+export interface EvidenceItem {
+  [key: string]: any;
+}
+
+export interface DecisionPayload {
+  [key: string]: any;
+}
+
+export interface ReviewerOrchestrationResult {
+  [key: string]: any;
+}
+
+export interface BrowserRequirementResult {
+  [key: string]: any;
+}
+
+export interface EvolutionCandidate {
+  [key: string]: any;
+}
 
 export class System1Provider {
   constructor();
@@ -36,7 +53,7 @@ export function collectAndRankEvidence(options?: EvidenceOptions): EvidenceResul
 export function extractChangedSymbols(
   diff?: string,
   content?: string,
-): Array<{ name: string; type: string; line?: number }>;
+): Array<{ name: string; type: string; line?: number; diff_line?: number }>;
 export function extractBoundedSnippet(
   content: string,
   targetLine?: number | null,
@@ -66,6 +83,13 @@ export const HIGH_RISK_PATTERNS: RegExp;
 export const HIGH_RISK_EXTENSIONS: RegExp;
 export const TIER_NAMES: Record<number, string>;
 export const ROUTING_NAMES: Record<number, string>;
+
+// Capability 2.1: Decision Plan
+export function buildDecisionPlan(options?: any): any;
+export function validateDecisionPlan(plan: any): any;
+
+// Capability 2.2: Dynamic Reviewer Selection
+export function dynamicReviewerSelection(plan?: any, catalog?: any, options?: any): any;
 
 // Capability 3: Reviewer Orchestration
 export function orchestrateReviewers(

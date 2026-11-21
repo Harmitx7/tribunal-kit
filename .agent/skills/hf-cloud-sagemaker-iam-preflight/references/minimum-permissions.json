@@ -4,10 +4,7 @@
     {
       "Sid": "S3ModelArtifactAccess",
       "Effect": "Allow",
-      "Action": [
-        "s3:GetObject",
-        "s3:ListBucket"
-      ],
+      "Action": ["s3:GetObject", "s3:ListBucket"],
       "Resource": [
         "arn:aws:s3:::REPLACE_WITH_MODEL_BUCKET",
         "arn:aws:s3:::REPLACE_WITH_MODEL_BUCKET/*"
@@ -38,9 +35,7 @@
     {
       "Sid": "CloudWatchMetrics",
       "Effect": "Allow",
-      "Action": [
-        "cloudwatch:PutMetricData"
-      ],
+      "Action": ["cloudwatch:PutMetricData"],
       "Resource": "*"
     }
   ]

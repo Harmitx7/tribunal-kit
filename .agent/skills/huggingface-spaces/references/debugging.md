@@ -6,11 +6,11 @@ How to iterate cheaply, read logs, and smoke-test. Dev mode + SSH exists as a la
 
 Pick the cheapest update mechanism that fits the change. Going one rung too high wastes 30 s – 15 min per cycle.
 
-| Rung | When | Command | Cost |
-|---|---|---|---|
-| 1. Hot-reload | Pure Python edit on a Gradio Space (SDK 6.1+), **no new deps** | `hf spaces hot-reload <id> -f app.py` | seconds, no rebuild |
-| 2. `hf upload` | Code-only change hot-reload can't handle (`gr.Server`, Streamlit, Docker entrypoint, non-Python file) | `hf upload <id> . --repo-type space --include '<file>'` | 30–90 s app restart |
-| 3. Full rebuild | `requirements.txt`, `Dockerfile`, README frontmatter, or hardware change | `hf upload <id> . --repo-type space --exclude "**/__pycache__/**" && hf spaces logs <id> --build --follow` | 1–15 min |
+| Rung            | When                                                                                                  | Command                                                                                                    | Cost                |
+| --------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------- |
+| 1. Hot-reload   | Pure Python edit on a Gradio Space (SDK 6.1+), **no new deps**                                        | `hf spaces hot-reload <id> -f app.py`                                                                      | seconds, no rebuild |
+| 2. `hf upload`  | Code-only change hot-reload can't handle (`gr.Server`, Streamlit, Docker entrypoint, non-Python file) | `hf upload <id> . --repo-type space --include '<file>'`                                                    | 30–90 s app restart |
+| 3. Full rebuild | `requirements.txt`, `Dockerfile`, README frontmatter, or hardware change                              | `hf upload <id> . --repo-type space --exclude "**/__pycache__/**" && hf spaces logs <id> --build --follow` | 1–15 min            |
 
 `hf upload` defaults to a **model** repo — always pass `--repo-type space`, or it uploads to (and silently creates) a model repo of the same name. Also `--exclude "**/__pycache__/**"` so local bytecode caches don't get committed into the Space.
 | 4. Factory reboot | Container in inconsistent state (broken pip env, etc.) | `hf spaces restart <id> --factory-reboot` | full rebuild + cold start |
@@ -26,7 +26,7 @@ Independent of dev mode. Marked experimental in the CLI. Requires Gradio SDK 6.1
 ### Footguns
 
 - **Hot-reload poisons factory reboot.** A commit that's only a hot-reload leaves runtime metadata that's valid only while the hot process is alive. `--factory-reboot` on top of one can fail with `fatal: could not read Username for 'https://huggingface.co'`. Recovery: push any normal `hf upload` commit (even a one-line no-op) first, then restart.
-- **`runtime.sha` lags repo SHA on restart.** `hf upload` succeeds → repo updates → `hf spaces info` keeps reporting the *previous* commit's SHA under `runtime` for several minutes while the new container loads. Poll `runtime.sha`, not just `stage`, and don't issue another restart until it flips.
+- **`runtime.sha` lags repo SHA on restart.** `hf upload` succeeds → repo updates → `hf spaces info` keeps reporting the _previous_ commit's SHA under `runtime` for several minutes while the new container loads. Poll `runtime.sha`, not just `stage`, and don't issue another restart until it flips.
 - **Concurrent uploads or restart-while-uploading collide.** Wait for one to finish.
 - **"Let me try locally first"** for anything that depends on the Space's Python / torch / CUDA env. The Space environment is the only one that matters. `python3 -m py_compile app.py` is the maximum local check worth doing before pushing.
 

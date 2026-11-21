@@ -12,8 +12,8 @@ describe('AI Reliability Controlled Mutation Testing Suite', () => {
   describe('Mutation 1: Confusion Matrix Precision Denominator Tampering', () => {
     it('detects and fails if precision denominator were mutated to total count rather than (tp + fp)', () => {
       const pairs = [
-        { predicted: true, actual: true },   // TP
-        { predicted: true, actual: false },  // FP
+        { predicted: true, actual: true }, // TP
+        { predicted: true, actual: false }, // FP
         { predicted: false, actual: false }, // TN
         { predicted: false, actual: false }, // TN
       ];
@@ -99,7 +99,8 @@ describe('AI Reliability Controlled Mutation Testing Suite', () => {
 
       // Mutated ECE: unweighted average of bin diffs
       const activeBins = canonical.bins.filter(b => b.count > 0);
-      const mutatedUnweightedEce = activeBins.reduce((sum, b) => sum + b.diff, 0) / activeBins.length;
+      const mutatedUnweightedEce =
+        activeBins.reduce((sum, b) => sum + b.diff, 0) / activeBins.length;
 
       // Unweighted treats the 1-sample bin equally with the 9-sample bin: (0.1 + 0.9)/2 = 0.5
       // Weighted: 0.9*(0.1) + 0.1*(0.9) = 0.09 + 0.09 = 0.18

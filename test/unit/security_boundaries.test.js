@@ -116,7 +116,9 @@ describe('Security Boundaries & Containment Engine', () => {
     });
 
     test('prohibits non-HTTP/HTTPS schemes', () => {
-      expect(() => validateBrowserUrl('file:///etc/passwd')).toThrow(/Unsupported URL scheme "file:"/i);
+      expect(() => validateBrowserUrl('file:///etc/passwd')).toThrow(
+        /Unsupported URL scheme "file:"/i,
+      );
       expect(() => validateBrowserUrl('javascript:alert(1)')).toThrow(
         /Unsupported URL scheme "javascript:"/i,
       );

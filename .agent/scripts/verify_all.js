@@ -63,16 +63,47 @@ function trackSkip(label, reason) {
 function run(label, cmd, cwd) {
   const elapsed = timer();
   try {
-    const isWindows = process.platform === 'win32';
-    const executable =
-      isWindows && (cmd[0] === 'npx' || cmd[0] === 'npm') ? `${cmd[0]}.cmd` : cmd[0];
+    let executable = cmd[0];
+    const extraPrefix = [];
+    if (process.platform === 'win32') {
+      const lower = cmd[0].toLowerCase();
+      if (lower === 'npm' || lower === 'npm.cmd') {
+        const npmCli = path.join(
+          path.dirname(process.execPath),
+          'node_modules',
+          'npm',
+          'bin',
+          'npm-cli.js',
+        );
+        if (fs.existsSync(npmCli)) {
+          executable = process.execPath;
+          extraPrefix.push(npmCli);
+        }
+      } else if (lower === 'npx' || lower === 'npx.cmd') {
+        const npxCli = path.join(
+          path.dirname(process.execPath),
+          'node_modules',
+          'npm',
+          'bin',
+          'npx-cli.js',
+        );
+        if (fs.existsSync(npxCli)) {
+          executable = process.execPath;
+          extraPrefix.push(npxCli, '--no-install');
+        }
+      }
+    }
+    const fullArgs = [...extraPrefix, ...cmd.slice(1)];
+    if (cmd[0] === 'npx' && !fullArgs.includes('--no-install')) {
+      fullArgs.unshift('--no-install');
+    }
 
-    execFileSync(executable, cmd.slice(1), {
+    execFileSync(executable, fullArgs, {
       cwd,
       stdio: 'pipe',
       timeout: 120000,
       encoding: 'utf8',
-      shell: isWindows,
+      shell: false,
     });
     trackOk(label, elapsed());
     return true;

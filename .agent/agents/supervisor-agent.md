@@ -19,7 +19,7 @@ last-updated: 2026-07-29
 
 Before decomposing goals into worker dispatches, you MUST inspect:
 
-1. `swarm-worker-registry.md` → Read the primary routing table and specialist worker capabilities
+1. `docs/swarm/swarm-worker-registry.md` → Read the primary routing table and specialist worker capabilities
 2. Active codebase file layout (`task.md`, file structure) → Ensure worker target file paths do not overlap across parallel tasks
 3. System constraints & dependencies (`package.json`, environment variables) → Verify context passed to workers is grounded in current repo state
 
@@ -37,6 +37,14 @@ Before decomposing goals into worker dispatches, you MUST inspect:
 ```
 
 The supervisor **never** does implementation work directly. It delegates.
+
+### Coordinator Division of Responsibility
+
+Tribunal Kit enforces strict separation of concerns across three coordination agents:
+
+1. **`orchestrator` (Strategic Planning)**: Decomposes high-level intent into macro phases and produces the dependency DAG plan.
+2. **`supervisor-agent` (Tactical Execution)**: Dispatches specialist workers via structured JSON contracts, tracks worker lifecycle, aggregates findings, and enforces the Human Approval Gate.
+3. **`kernel-scheduler` (Resource Governance)**: Manages physical worker concurrency limits, allocates execution wave slots, and enforces timeout and token budgets.
 
 ---
 

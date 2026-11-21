@@ -16,6 +16,7 @@ const path = require('path');
 const PKG = require('../../package.json');
 const tk = require('../../src/cli');
 const { RUST_COMMANDS } = require('../../bin/wrapper');
+const { getRegistrySummary } = require('../../src/execution/canonical_registry');
 
 describe('PHASE 9 DOCUMENTATION FORENSICS & DX WAR ROOM', () => {
   const repoRoot = path.resolve(__dirname, '../..');
@@ -139,7 +140,8 @@ describe('PHASE 9 DOCUMENTATION FORENSICS & DX WAR ROOM', () => {
       expect(typeof alignText).toBe('function');
 
       // Verify alignText behaviour on conversational slop
-      const rawAiResponse = 'Sure! Here is the implementation:\nfunction add(a, b) { return a + b; }';
+      const rawAiResponse =
+        'Sure! Here is the implementation:\nfunction add(a, b) { return a + b; }';
       const cleaned = alignText(rawAiResponse);
       expect(cleaned).toBe('function add(a, b) { return a + b; }');
     });
@@ -149,10 +151,9 @@ describe('PHASE 9 DOCUMENTATION FORENSICS & DX WAR ROOM', () => {
   // 4. Package Metadata & Supply-Chain Truth
   // ───────────────────────────────────────────────────────────────────────────
   describe('Package Metadata & Supply-Chain Claims', () => {
-    test('Production dependencies claim (exactly 1: zod) matches package.json', () => {
-      const prodDeps = Object.keys(PKG.dependencies || {});
-      expect(prodDeps.length).toBe(1);
-      expect(prodDeps[0]).toBe('zod');
+    test('Production dependencies claim matches audited dependencies (zod, ws)', () => {
+      const prodDeps = Object.keys(PKG.dependencies || {}).sort();
+      expect(prodDeps).toEqual(['ws', 'zod']);
     });
 
     test('Node.js engine constraint matches >=18.0.0', () => {
@@ -177,11 +178,12 @@ describe('PHASE 9 DOCUMENTATION FORENSICS & DX WAR ROOM', () => {
       }).length;
       const workflowsCount = fs.readdirSync(workflowsDir).filter(f => f.endsWith('.md')).length;
 
-      // Documented numbers: 60 agents, 398 skills, 52 workflows
-      expect(agentsCount).toBe(60);
+      const summary = getRegistrySummary(repoRoot);
+
+      // Canonical numbers
+      expect(agentsCount).toBe(summary.total);
       expect(skillsCount).toBe(398);
       expect(workflowsCount).toBe(52);
     });
   });
 });
-

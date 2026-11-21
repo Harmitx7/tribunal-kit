@@ -18,6 +18,7 @@ uv run scripts/paper_manager.py info --arxiv-id "2301.12345"
 ```
 
 Expected output:
+
 ```json
 {
   "exists": true,
@@ -46,6 +47,7 @@ uv run scripts/paper_manager.py link \
 ```
 
 This will:
+
 1. Download the model's README.md
 2. Add or update YAML frontmatter
 3. Insert paper references with links
@@ -102,6 +104,7 @@ uv run scripts/paper_manager.py citation \
 ```
 
 Output:
+
 ```bibtex
 @article{arxiv2301_12345,
   title={Efficient Fine-Tuning of Large Language Models},

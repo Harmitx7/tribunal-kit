@@ -95,10 +95,7 @@ describe('Hallucination Detection & Source Verification Auditor', () => {
       const claim = {
         id: 'CLAIM-PARTIAL',
         assertion: 'Configuration spans package.json and non-existent file',
-        evidence: [
-          { location: 'package.json:2' },
-          { location: 'src/missing_file_001.js:1' },
-        ],
+        evidence: [{ location: 'package.json:2' }, { location: 'src/missing_file_001.js:1' }],
       };
       // Notice: when a missing file is present in multi-evidence, missing file check catches it or flags partial
       const report = auditClaim(claim, REPO_ROOT);

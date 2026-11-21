@@ -6,15 +6,15 @@ Cross-encoder losses fall into three families: **pointwise** (score each pair in
 
 ## Top-line decision table
 
-| You have | Use | Family |
-|---|---|---|
-| `(query, passage, label)` with `label ∈ {0, 1}` or `[0, 1]` | `BinaryCrossEntropyLoss` | Pointwise |
-| `(query, passage, class_id)` multi-class | `CrossEntropyLoss` | Pointwise |
-| `(query, passage)` with implicit positives, want contrastive | `CachedMultipleNegativesRankingLoss` | Contrastive |
-| `(query, passages, labels)` (one row per query, with parallel lists of candidate passages and their relevance scores) | `LambdaLoss` | Listwise |
-| Same listwise shape, want well-tested simpler loss | `ListNetLoss` or `ListMLELoss` | Listwise |
-| `(query, positive, negative)` pairwise | `RankNetLoss` | Pairwise |
-| `(query, passage, teacher_score)` distillation from stronger reranker | `MSELoss` or `MarginMSELoss` | Distillation |
+| You have                                                                                                              | Use                                  | Family       |
+| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------ |
+| `(query, passage, label)` with `label ∈ {0, 1}` or `[0, 1]`                                                           | `BinaryCrossEntropyLoss`             | Pointwise    |
+| `(query, passage, class_id)` multi-class                                                                              | `CrossEntropyLoss`                   | Pointwise    |
+| `(query, passage)` with implicit positives, want contrastive                                                          | `CachedMultipleNegativesRankingLoss` | Contrastive  |
+| `(query, passages, labels)` (one row per query, with parallel lists of candidate passages and their relevance scores) | `LambdaLoss`                         | Listwise     |
+| Same listwise shape, want well-tested simpler loss                                                                    | `ListNetLoss` or `ListMLELoss`       | Listwise     |
+| `(query, positive, negative)` pairwise                                                                                | `RankNetLoss`                        | Pairwise     |
+| `(query, passage, teacher_score)` distillation from stronger reranker                                                 | `MSELoss` or `MarginMSELoss`         | Distillation |
 
 ## Pointwise losses
 

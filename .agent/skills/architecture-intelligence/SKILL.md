@@ -1,6 +1,6 @@
 ---
 name: architecture-intelligence
-description: "Use when analyzing, extracting, verifying, diffing, or simulating blast radius and security trust boundaries for software architectures."
+description: 'Use when analyzing, extracting, verifying, diffing, or simulating blast radius and security trust boundaries for software architectures.'
 version: 1.0.0
 last-updated: 2026-09-29
 skills:
@@ -17,25 +17,27 @@ scripts-binding:
   - .agent/scripts/architecture_health.js
   - .agent/scripts/architecture_visualizer.js
 inputs:
-  task: "string"
-  target_file: "string"
+  task: 'string'
+  target_file: 'string'
 outputs:
-  result: "string"
-  verification_status: "boolean"
+  result: 'string'
+  verification_status: 'boolean'
 trigger:
-  - "architecture"
-  - "intelligence"
-  - "analyzing"
-  - "extracting"
+  - 'architecture'
+  - 'intelligence'
+  - 'analyzing'
+  - 'extracting'
 ---
 
 # Architecture Intelligence — Verifiable Topology & Impact Engine
 
 ## Prime Directive
+
 Architecture is not a decorative drawing. It is an **executable, verifiable Evidence Graph**.
 Never accept unverified architecture claims or hallucinated connections. Every edge must be grounded in real code AST, routes, database queries, or configuration evidence.
 
 ## Mandatory Pre-Flight Context Inspection
+
 1. **Fact Graph Authority**: Read `.agent/history/architecture-model.json`.
 2. **Provenance Check**: Verify that cited files, lines, and symbols exist in ground-truth source.
 3. **Epistemic Confidence**: Distinguish L1 Facts (proven in code) from L4/L5 Speculation.
@@ -43,6 +45,7 @@ Never accept unverified architecture claims or hallucinated connections. Every e
 5. **Blast Radius Impact**: Compute direct and transitive downstream dependents before approving edits.
 
 ## CLI Execution
+
 ```bash
 # Fact model extraction
 tk arch map
@@ -62,7 +65,6 @@ tk arch audit
 # Multi-projection interactive visual explorer
 tk arch project [--open]
 ```
-
 
 ## Verification (Auto-Remediated)
 

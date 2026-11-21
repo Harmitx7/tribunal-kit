@@ -81,7 +81,10 @@ class AgentBehavioralTestingEngine {
       // Execute with bounded timeout
       const executionPromise = candidateHandler(c.inputFixture);
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error(`EXECUTION_TIMED_OUT: Exceeded ${timeoutMs}ms limit.`)), timeoutMs)
+        setTimeout(
+          () => reject(new Error(`EXECUTION_TIMED_OUT: Exceeded ${timeoutMs}ms limit.`)),
+          timeoutMs,
+        ),
       );
 
       const actualOutput = await Promise.race([executionPromise, timeoutPromise]);
@@ -95,9 +98,12 @@ class AgentBehavioralTestingEngine {
       if (Array.isArray(c.expected.requiredProperties)) {
         for (const reqProp of c.expected.requiredProperties) {
           const propRegex = new RegExp(reqProp, 'i');
-          const outputStr = typeof actualOutput === 'string' ? actualOutput : JSON.stringify(actualOutput);
+          const outputStr =
+            typeof actualOutput === 'string' ? actualOutput : JSON.stringify(actualOutput);
           if (!propRegex.test(outputStr)) {
-            failures.push(`REQUIRED_PROPERTY_MISSING: Expected output to contain pattern "${reqProp}".`);
+            failures.push(
+              `REQUIRED_PROPERTY_MISSING: Expected output to contain pattern "${reqProp}".`,
+            );
           } else {
             evidence.push({
               type: 'DETERMINISTIC_CHECK',
@@ -112,9 +118,12 @@ class AgentBehavioralTestingEngine {
       if (Array.isArray(c.expected.forbiddenBehaviors)) {
         for (const forbProp of c.expected.forbiddenBehaviors) {
           const forbRegex = new RegExp(forbProp, 'i');
-          const outputStr = typeof actualOutput === 'string' ? actualOutput : JSON.stringify(actualOutput);
+          const outputStr =
+            typeof actualOutput === 'string' ? actualOutput : JSON.stringify(actualOutput);
           if (forbRegex.test(outputStr)) {
-            failures.push(`FORBIDDEN_BEHAVIOR_OBSERVED: Output matched forbidden pattern "${forbProp}".`);
+            failures.push(
+              `FORBIDDEN_BEHAVIOR_OBSERVED: Output matched forbidden pattern "${forbProp}".`,
+            );
           }
         }
       }

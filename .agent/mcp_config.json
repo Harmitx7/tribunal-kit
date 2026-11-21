@@ -7,11 +7,11 @@
     },
     "context7": {
       "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp", "--api-key", "YOUR_CONTEXT7_API_KEY"]
+      "args": ["@upstash/context7-mcp@1.0.1", "--api-key", "YOUR_CONTEXT7_API_KEY"]
     },
     "shadcn": {
       "command": "npx",
-      "args": ["shadcn@latest", "mcp"]
+      "args": ["shadcn@2.1.8", "mcp"]
     }
   }
 }

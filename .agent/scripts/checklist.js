@@ -70,19 +70,65 @@ function trackSkip(label, reason) {
  * @param {string} cwd - Working directory.
  * @returns {boolean}
  */
+function isWorkspaceTrusted(cwd, options = {}) {
+  if (options && (options.trusted === true || options['allow-untrusted-exec'] === true))
+    return true;
+  if (
+    process.env.TRIBUNAL_WORKSPACE_TRUST === '1' ||
+    process.env.TRIBUNAL_ALLOW_UNTRUSTED_EXEC === '1'
+  )
+    return true;
+  try {
+    const pkgPath = path.join(cwd, 'package.json');
+    if (fs.existsSync(pkgPath)) {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+      if (pkg.name === 'tribunal-kit') return true;
+    }
+  } catch {}
+  return false;
+}
+
+function resolveTool(cmd0) {
+  if (process.platform === 'win32') {
+    const lower = cmd0.toLowerCase();
+    if (lower === 'npm' || lower === 'npm.cmd') {
+      const npmCli = path.join(
+        path.dirname(process.execPath),
+        'node_modules',
+        'npm',
+        'bin',
+        'npm-cli.js',
+      );
+      if (fs.existsSync(npmCli)) return { bin: process.execPath, prefix: [npmCli] };
+    } else if (lower === 'npx' || lower === 'npx.cmd') {
+      const npxCli = path.join(
+        path.dirname(process.execPath),
+        'node_modules',
+        'npm',
+        'bin',
+        'npx-cli.js',
+      );
+      if (fs.existsSync(npxCli)) return { bin: process.execPath, prefix: [npxCli, '--no-install'] };
+    }
+  }
+  return { bin: cmd0, prefix: [] };
+}
+
 function runCheck(label, cmd, cwd) {
   const elapsed = timer();
   try {
-    const isWindows = process.platform === 'win32';
-    const executable =
-      isWindows && (cmd[0] === 'npx' || cmd[0] === 'npm') ? `${cmd[0]}.cmd` : cmd[0];
+    const { bin, prefix } = resolveTool(cmd[0]);
+    const fullArgs = [...prefix, ...cmd.slice(1)];
+    if (cmd[0] === 'npx' && !fullArgs.includes('--no-install')) {
+      fullArgs.unshift('--no-install');
+    }
 
-    execFileSync(executable, cmd.slice(1), {
+    execFileSync(bin, fullArgs, {
       cwd,
       stdio: 'pipe',
       timeout: 300000,
       encoding: 'utf8',
-      shell: isWindows,
+      shell: false,
     });
     trackOk(`${label} passed`, elapsed());
     return true;
@@ -162,7 +208,7 @@ function checkSecrets(projectRoot) {
  * @param {string[]} skipTiers - Tiers to skip.
  * @returns {number}
  */
-function runAll(projectRoot, url, skipTiers) {
+function runAll(projectRoot, url, skipTiers, options = {}) {
   let failures = 0;
   RESULTS.length = 0;
   const totalTimer = timer();
@@ -178,8 +224,15 @@ function runAll(projectRoot, url, skipTiers) {
   // Priority 2 — Lint
   if (!skipTiers.includes('lint')) {
     console.log(sectionHeader('Lint', 2));
-    if (!runCheck('ESLint', ['npx', 'eslint', '.', '--max-warnings=0'], projectRoot)) failures++;
-    if (!runCheck('TypeScript', ['npx', 'tsc', '--noEmit'], projectRoot)) failures++;
+    if (!isWorkspaceTrusted(projectRoot, options)) {
+      trackSkip(
+        'Lint (ESLint / TSC)',
+        'Workspace untrusted: skipped execution of repository linters. Pass --trusted to enable',
+      );
+    } else {
+      if (!runCheck('ESLint', ['npx', 'eslint', '.', '--max-warnings=0'], projectRoot)) failures++;
+      if (!runCheck('TypeScript', ['npx', 'tsc', '--noEmit'], projectRoot)) failures++;
+    }
   } else {
     trackSkip('Lint', 'skipped by flag');
   }
@@ -195,8 +248,15 @@ function runAll(projectRoot, url, skipTiers) {
   // Priority 4 — Tests
   if (!skipTiers.includes('tests')) {
     console.log(sectionHeader('Tests', 4));
-    if (!runCheck('Test suite', ['npm', 'test', '--', '--passWithNoTests'], projectRoot))
-      failures++;
+    if (!isWorkspaceTrusted(projectRoot, options)) {
+      trackSkip(
+        'Test suite',
+        'Workspace untrusted: skipped execution of repository test scripts. Pass --trusted to enable',
+      );
+    } else {
+      if (!runCheck('Test suite', ['npm', 'test', '--', '--passWithNoTests'], projectRoot))
+        failures++;
+    }
   } else {
     trackSkip('Tests', 'skipped by flag');
   }
@@ -256,11 +316,13 @@ function runAll(projectRoot, url, skipTiers) {
  * Parse CLI arguments manually (no external dependencies).
  */
 function parseArgs(argv) {
-  const args = { path: null, url: null, skip: [] };
+  const args = { path: null, url: null, skip: [], trusted: false };
   const raw = argv.slice(2);
 
   for (let i = 0; i < raw.length; i++) {
-    if (raw[i] === '--url' && raw[i + 1]) {
+    if (raw[i] === '--trusted' || raw[i] === '--allow-untrusted-exec') {
+      args.trusted = true;
+    } else if (raw[i] === '--url' && raw[i + 1]) {
       args.url = raw[++i];
     } else if (raw[i] === '--skip' && raw[i + 1]) {
       args.skip = raw[++i]
@@ -292,7 +354,7 @@ function main() {
 
   console.log(banner('checklist.js', { Project: projectRoot }));
 
-  const failures = runAll(projectRoot, args.url, args.skip);
+  const failures = runAll(projectRoot, args.url, args.skip, args);
   process.exit(failures > 0 ? 1 : 0);
 }
 

@@ -59,9 +59,7 @@ function generateMutants(sourceCode) {
 
       // Construct code with this single occurrence replaced
       const mutatedCode =
-        sourceCode.slice(0, matchIndex) +
-        op.replace +
-        sourceCode.slice(matchIndex + matchLength);
+        sourceCode.slice(0, matchIndex) + op.replace + sourceCode.slice(matchIndex + matchLength);
 
       // Compute line number
       const line = sourceCode.slice(0, matchIndex).split('\n').length;
@@ -138,7 +136,10 @@ async function evaluateMutants(sourceCode, testRunnerFn, options = {}) {
     survivedCount,
     survivingMutants: results.filter(r => r.status === 'SURVIVED'),
     allMutants: results,
-    verdict: mutationScore >= (options.threshold || 0.8) ? 'PASSED_EFFECTIVE_TESTS' : 'WEAK_TESTS_SURVIVING_MUTANTS',
+    verdict:
+      mutationScore >= (options.threshold || 0.8)
+        ? 'PASSED_EFFECTIVE_TESTS'
+        : 'WEAK_TESTS_SURVIVING_MUTANTS',
   };
 }
 

@@ -118,7 +118,11 @@ function verifyMetamorphicRelation(targetFn, inputGenerator, metamorphicRelation
   if (typeof targetFn !== 'function' || typeof inputGenerator !== 'function') {
     throw new Error('verifyMetamorphicRelation requires callable targetFn and inputGenerator.');
   }
-  if (!metamorphicRelation || typeof metamorphicRelation.transformInput !== 'function' || typeof metamorphicRelation.relationCheck !== 'function') {
+  if (
+    !metamorphicRelation ||
+    typeof metamorphicRelation.transformInput !== 'function' ||
+    typeof metamorphicRelation.relationCheck !== 'function'
+  ) {
     throw new Error('metamorphicRelation must provide transformInput and relationCheck functions.');
   }
 
@@ -143,7 +147,12 @@ function verifyMetamorphicRelation(targetFn, inputGenerator, metamorphicRelation
       continue;
     }
 
-    const holds = metamorphicRelation.relationCheck(yOriginal, yTransformed, originalArgs, transformedArgs);
+    const holds = metamorphicRelation.relationCheck(
+      yOriginal,
+      yTransformed,
+      originalArgs,
+      transformedArgs,
+    );
     if (!holds) {
       violations.push({
         run: i,

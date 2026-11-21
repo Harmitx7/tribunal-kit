@@ -184,9 +184,10 @@ describe('SkillOpt v2 — Closed-Loop Evidence-Certified Skill Optimization', ()
     expect(rejections[0].reason).toContain('Validation harness test suite failed');
 
     // Confirm that negative prompt formatting warns about this failed attempt
-    const formatted = require('../../src/evolution/negative_memory').formatNegativeConstraints(rejections);
+    const formatted = require('../../src/evolution/negative_memory').formatNegativeConstraints(
+      rejections,
+    );
     expect(formatted).toContain('Epoch 2 Failure');
     expect(formatted).toContain('Use raw any types everywhere');
   });
 });
-

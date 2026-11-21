@@ -2,7 +2,7 @@
 
 > **Authority**: Microsoft Playwright Documentation (`https://playwright.dev/docs/intro`)  
 > **Applicable Domains**: Testing, QA Automation, Web Quality Engineering  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -11,10 +11,12 @@
 Playwright automatically retries assertions until a condition is met or the timeout expires. Always use web-first assertions (`expect(locator).toBeVisible()`) instead of manual sleeping.
 
 ### Anti-Pattern Ban:
+
 - ❌ **STRICTLY BANNED**: `await page.waitForTimeout(3000);`  
   Hardcoded sleep timers cause test flakiness, inflate CI runtimes, and mask race conditions.
 
 ### Correct Assertion Replacements:
+
 ```typescript
 // ❌ FLAKY
 await page.click('button.submit');
@@ -41,6 +43,7 @@ Prioritize locators that mirror how actual users perceive and interact with the 
 3. **`page.getByPlaceholder(text)`**: For inputs without explicit labels.
 4. **`page.getByText(text)`**: For static content elements.
 5. **`page.getByTestId(id)`**: Fallback when text/role is dynamic or ambiguous (`data-testid="user-avatar"`).
+
 - ❌ **Avoid**: Fragile CSS selectors like `page.locator('div.container > div:nth-child(2) > span')`.
 
 ---
@@ -56,7 +59,7 @@ test('displays user profile on network success', async ({ page }) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ id: 'usr_123', name: 'Alice Developer', role: 'admin' })
+      body: JSON.stringify({ id: 'usr_123', name: 'Alice Developer', role: 'admin' }),
     });
   });
 

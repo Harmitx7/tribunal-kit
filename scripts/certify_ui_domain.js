@@ -36,7 +36,12 @@ try {
   const invExists = fs.existsSync(invPath);
   const content = invExists ? fs.readFileSync(invPath, 'utf8') : '';
   const passed = invExists && content.includes('Capability Map & Evaluation Matrix');
-  recordGate('A', 'Inventory Completeness', passed ? 'PASS' : 'FAIL', `inventory_exists: ${invExists}`);
+  recordGate(
+    'A',
+    'Inventory Completeness',
+    passed ? 'PASS' : 'FAIL',
+    `inventory_exists: ${invExists}`,
+  );
 } catch (e) {
   recordGate('A', 'Inventory Completeness', 'FAIL', e.message);
 }
@@ -45,8 +50,15 @@ try {
 try {
   const betterUiPath = path.join(cwd, '.agent/skills/better-ui/SKILL.md');
   const content = fs.readFileSync(betterUiPath, 'utf8');
-  const passed = !content.includes('Use when building, styling, optimizing, and auditing') && content.includes('nested border radius formulas');
-  recordGate('B', 'Existing Skill Improvement', passed ? 'PASS' : 'FAIL', `sharpened_frontmatter: ${passed}`);
+  const passed =
+    !content.includes('Use when building, styling, optimizing, and auditing') &&
+    content.includes('nested border radius formulas');
+  recordGate(
+    'B',
+    'Existing Skill Improvement',
+    passed ? 'PASS' : 'FAIL',
+    `sharpened_frontmatter: ${passed}`,
+  );
 } catch (e) {
   recordGate('B', 'Existing Skill Improvement', 'FAIL', e.message);
 }
@@ -76,17 +88,35 @@ try {
     'ui-low-llm-quality-optimizer',
     'ui-design-quality-benchmark-engineer',
   ];
-  const allExist = all21Skills.every(s => fs.existsSync(path.join(cwd, '.agent/skills', s, 'SKILL.md')));
-  recordGate('C', '21-Skill Inventory Completeness', allExist ? 'PASS' : 'FAIL', `21 distinct canonical skills verified: ${allExist}`);
+  const allExist = all21Skills.every(s =>
+    fs.existsSync(path.join(cwd, '.agent/skills', s, 'SKILL.md')),
+  );
+  recordGate(
+    'C',
+    '21-Skill Inventory Completeness',
+    allExist ? 'PASS' : 'FAIL',
+    `21 distinct canonical skills verified: ${allExist}`,
+  );
 } catch (e) {
   recordGate('C', '21-Skill Inventory Completeness', 'FAIL', e.message);
 }
 
 // Gate D: Design Specification Quality
 try {
-  const ddr = buildDesignDecisionRecord({ productCategory: 'DEV_TOOL', productName: 'CLI Console' });
-  const passed = ddr.visualDirection === 'TECHNICAL_UTILITARIAN' && ddr.spatial.formulaVerified && ddr.antiSlopExclusions.length > 0;
-  recordGate('D', 'Design Specification Quality', passed ? 'PASS' : 'FAIL', `ddr_direction: ${ddr.visualDirection}`);
+  const ddr = buildDesignDecisionRecord({
+    productCategory: 'DEV_TOOL',
+    productName: 'CLI Console',
+  });
+  const passed =
+    ddr.visualDirection === 'TECHNICAL_UTILITARIAN' &&
+    ddr.spatial.formulaVerified &&
+    ddr.antiSlopExclusions.length > 0;
+  recordGate(
+    'D',
+    'Design Specification Quality',
+    passed ? 'PASS' : 'FAIL',
+    `ddr_direction: ${ddr.visualDirection}`,
+  );
 } catch (e) {
   recordGate('D', 'Design Specification Quality', 'FAIL', e.message);
 }
@@ -95,25 +125,45 @@ try {
 try {
   const radiusCheck = verifyConcentricRadius(24, 8, 16);
   const passed = radiusCheck.isConcentric;
-  recordGate('E', 'Implementation Quality', passed ? 'PASS' : 'FAIL', `concentric_formula: ${passed}`);
+  recordGate(
+    'E',
+    'Implementation Quality',
+    passed ? 'PASS' : 'FAIL',
+    `concentric_formula: ${passed}`,
+  );
 } catch (e) {
   recordGate('E', 'Implementation Quality', 'FAIL', e.message);
 }
 
 // Gate F: Visual Verification
 try {
-  const { verifyBrowserRendering } = require('../src/design_intelligence/browser_verification_bridge');
+  const {
+    verifyBrowserRendering,
+  } = require('../src/design_intelligence/browser_verification_bridge');
   const passed = typeof verifyBrowserRendering === 'function';
-  recordGate('F', 'Visual Verification Bridge', passed ? 'PASS' : 'FAIL', `bridge_callable: ${passed}`);
+  recordGate(
+    'F',
+    'Visual Verification Bridge',
+    passed ? 'PASS' : 'FAIL',
+    `bridge_callable: ${passed}`,
+  );
 } catch (e) {
   recordGate('F', 'Visual Verification Bridge', 'FAIL', e.message);
 }
 
 // Gate G: Functional Correctness
 try {
-  const stateAudit = auditInteractiveStates('btn-test', 'px-4 py-2 hover:bg-surface-1 focus-visible:ring-2 active:scale-[0.98] disabled:opacity-50');
+  const stateAudit = auditInteractiveStates(
+    'btn-test',
+    'px-4 py-2 hover:bg-surface-1 focus-visible:ring-2 active:scale-[0.98] disabled:opacity-50',
+  );
   const passed = stateAudit.isCompliant && stateAudit.pressScaleFactor === 0.98;
-  recordGate('G', 'Functional Correctness & States', passed ? 'PASS' : 'FAIL', `state_contract_compliant: ${passed}`);
+  recordGate(
+    'G',
+    'Functional Correctness & States',
+    passed ? 'PASS' : 'FAIL',
+    `state_contract_compliant: ${passed}`,
+  );
 } catch (e) {
   recordGate('G', 'Functional Correctness & States', 'FAIL', e.message);
 }
@@ -133,16 +183,31 @@ try {
   const highContrast = isWcagAaCompliant('oklch(0.96 0.005 260)', 'oklch(0.14 0.01 260)');
   const lowContrast = isWcagAaCompliant('oklch(0.35 0.01 260)', 'oklch(0.14 0.01 260)');
   const passed = highContrast === true && lowContrast === false;
-  recordGate('I', 'Accessibility WCAG AA Contrast', passed ? 'PASS' : 'FAIL', `delta_l_enforced: ${passed}`);
+  recordGate(
+    'I',
+    'Accessibility WCAG AA Contrast',
+    passed ? 'PASS' : 'FAIL',
+    `delta_l_enforced: ${passed}`,
+  );
 } catch (e) {
   recordGate('I', 'Accessibility WCAG AA Contrast', 'FAIL', e.message);
 }
 
 // Gate J: Context Efficiency
 try {
-  const topicMap = JSON.parse(fs.readFileSync(path.join(cwd, '.agent/skill_topic_map.json'), 'utf8'));
-  const passed = topicMap.total_skills === 398 && Array.isArray(topicMap.domain_routes['ui-design-engineering']) && topicMap.domain_routes['ui-design-engineering'].length >= 21;
-  recordGate('J', 'Context Efficiency & Routing', passed ? 'PASS' : 'FAIL', `total_skills: ${topicMap.total_skills}, ui_skills_in_route: ${topicMap.domain_routes['ui-design-engineering'].length}`);
+  const topicMap = JSON.parse(
+    fs.readFileSync(path.join(cwd, '.agent/skill_topic_map.json'), 'utf8'),
+  );
+  const passed =
+    topicMap.total_skills === 398 &&
+    Array.isArray(topicMap.domain_routes['ui-design-engineering']) &&
+    topicMap.domain_routes['ui-design-engineering'].length >= 21;
+  recordGate(
+    'J',
+    'Context Efficiency & Routing',
+    passed ? 'PASS' : 'FAIL',
+    `total_skills: ${topicMap.total_skills}, ui_skills_in_route: ${topicMap.domain_routes['ui-design-engineering'].length}`,
+  );
 } catch (e) {
   recordGate('J', 'Context Efficiency & Routing', 'FAIL', e.message);
 }
@@ -153,16 +218,28 @@ try {
   const fixtureExists = fs.existsSync(fixturePath);
   const fixture = fixtureExists ? JSON.parse(fs.readFileSync(fixturePath, 'utf8')) : null;
   const passed = fixtureExists && fixture.tasks && fixture.tasks.length === 12;
-  recordGate('K', 'Benchmark Task Validity (12 Tasks)', passed ? 'PASS' : 'FAIL', `12_tasks_present: ${passed}`);
+  recordGate(
+    'K',
+    'Benchmark Task Validity (12 Tasks)',
+    passed ? 'PASS' : 'FAIL',
+    `12_tasks_present: ${passed}`,
+  );
 } catch (e) {
   recordGate('K', 'Benchmark Task Validity (12 Tasks)', 'FAIL', e.message);
 }
 
 // Gate L: Regression Integrity
 try {
-  const defects = analyzeVisualDefects('<div className="p-4 bg-[#fff]"><button className="transition-all outline-none">Click</button></div>');
+  const defects = analyzeVisualDefects(
+    '<div className="p-4 bg-[#fff]"><button className="transition-all outline-none">Click</button></div>',
+  );
   const passed = defects.length >= 3; // Catches hex, transition:all, and outline:none
-  recordGate('L', 'Regression Defect Detection', passed ? 'PASS' : 'FAIL', `defects_detected: ${defects.length}`);
+  recordGate(
+    'L',
+    'Regression Defect Detection',
+    passed ? 'PASS' : 'FAIL',
+    `defects_detected: ${defects.length}`,
+  );
 } catch (e) {
   recordGate('L', 'Regression Defect Detection', 'FAIL', e.message);
 }
@@ -172,19 +249,30 @@ async function evaluateGateM() {
   try {
     const outcome = await executeDesignQualityLoop({
       productCategory: 'DEV_TOOL',
-      codeSnippet: '<div className="overflow-x-auto p-4 rounded-[18px] bg-surface-0"><button className="px-3 py-1.5 hover:bg-surface-1 focus-visible:outline-2 active:scale-[0.98] disabled:opacity-50">Action</button></div>',
-      buttonClasses: 'px-3 py-1.5 hover:bg-surface-1 focus-visible:outline-2 active:scale-[0.98] disabled:opacity-50',
+      codeSnippet:
+        '<div className="overflow-x-auto p-4 rounded-[18px] bg-surface-0"><button className="px-3 py-1.5 hover:bg-surface-1 focus-visible:outline-2 active:scale-[0.98] disabled:opacity-50">Action</button></div>',
+      buttonClasses:
+        'px-3 py-1.5 hover:bg-surface-1 focus-visible:outline-2 active:scale-[0.98] disabled:opacity-50',
     });
     const passed = outcome.success && outcome.benchmarkResult.tier === 'EXEMPLARY';
-    recordGate('M', 'Independent Quality Certification', passed ? 'PASS' : 'FAIL', `loop_success: ${outcome.success}, tier: ${outcome.benchmarkResult.tier}`);
+    recordGate(
+      'M',
+      'Independent Quality Certification',
+      passed ? 'PASS' : 'FAIL',
+      `loop_success: ${outcome.success}, tier: ${outcome.benchmarkResult.tier}`,
+    );
 
     const elapsed = Date.now() - startTime;
     const allPassed = gateResults.every(g => g.status === 'PASS');
     const decision = allPassed ? 'CERTIFIED_FOR_PRODUCTION_RELEASE' : 'REJECTED';
 
     console.log('├─────────────────────────────────────────────────────────────────');
-    console.log(`│  Overall Certification Decision: ${allPassed ? '✔ FULLY CERTIFIED (PASS)' : '✖ REJECTED (FAIL)'}`);
-    console.log(`│  Total Release Gates:            ${gateResults.filter(g => g.status === 'PASS').length}/${gateResults.length} PASS`);
+    console.log(
+      `│  Overall Certification Decision: ${allPassed ? '✔ FULLY CERTIFIED (PASS)' : '✖ REJECTED (FAIL)'}`,
+    );
+    console.log(
+      `│  Total Release Gates:            ${gateResults.filter(g => g.status === 'PASS').length}/${gateResults.length} PASS`,
+    );
     console.log(`│  Elapsed Evaluation Time:        ${elapsed}ms`);
     console.log('╰─────────────────────────────────────────────────────────────────\n');
 
@@ -249,7 +337,9 @@ async function evaluateGateM() {
     fs.mkdirSync(outDir, { recursive: true });
     const outPath = path.join(outDir, 'ui_domain_certification.json');
     fs.writeFileSync(outPath, JSON.stringify(artifact, null, 2), 'utf8');
-    console.log(`✔ Machine-readable certification artifact written to: ${path.relative(cwd, outPath)}`);
+    console.log(
+      `✔ Machine-readable certification artifact written to: ${path.relative(cwd, outPath)}`,
+    );
 
     process.exit(allPassed ? 0 : 1);
   } catch (err) {
@@ -259,4 +349,3 @@ async function evaluateGateM() {
 }
 
 evaluateGateM();
-

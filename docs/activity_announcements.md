@@ -12,16 +12,16 @@ By introducing an **Announcement Intelligence Engine** and expanding the **Core 
 
 The announcement system strictly distinguishes between execution states:
 
-| Execution State | Decision | Rationale |
-|---|---|---|
-| `considered` | **SUPPRESS** | Internal candidate evaluation; never visible in developer chat |
-| `selected` | **SUPPRESS** / Deferred | Agent/skill selected by router; held until actual task execution starts |
-| `activated` | **ANNOUNCE** (Once per attempt) | Agent or skill assigned to task with verified domain and mandate |
-| `executing` | **ANNOUNCE** (Milestones only) | Emits tool/analysis status; deduplicates identical 0-delta progress ticks |
-| `finished` | **ANNOUNCE** | Meaningful completion with verification artifacts or findings |
-| `failed` | **ANNOUNCE** (Always) | Critical failure state; provides error code and actionable remedy |
-| `blocked` | **ANNOUNCE** (Always) | Critical gating condition; provides unblocking directive |
-| `retrying` | **ANNOUNCE** (Always) | New attempt counter with backoff reason; resets attempt-scoped deduplication |
+| Execution State | Decision                        | Rationale                                                                    |
+| --------------- | ------------------------------- | ---------------------------------------------------------------------------- |
+| `considered`    | **SUPPRESS**                    | Internal candidate evaluation; never visible in developer chat               |
+| `selected`      | **SUPPRESS** / Deferred         | Agent/skill selected by router; held until actual task execution starts      |
+| `activated`     | **ANNOUNCE** (Once per attempt) | Agent or skill assigned to task with verified domain and mandate             |
+| `executing`     | **ANNOUNCE** (Milestones only)  | Emits tool/analysis status; deduplicates identical 0-delta progress ticks    |
+| `finished`      | **ANNOUNCE**                    | Meaningful completion with verification artifacts or findings                |
+| `failed`        | **ANNOUNCE** (Always)           | Critical failure state; provides error code and actionable remedy            |
+| `blocked`       | **ANNOUNCE** (Always)           | Critical gating condition; provides unblocking directive                     |
+| `retrying`      | **ANNOUNCE** (Always)           | New attempt counter with backoff reason; resets attempt-scoped deduplication |
 
 ---
 
@@ -78,6 +78,7 @@ The built-in registry resolves 31 core Tribunal specialist agents with zero file
 - `debugger`: Systematic Bug Diagnosis
 
 ### Safe Fallback for Custom or Unknown Agents
+
 Unknown agents (e.g. `@cloud-migration-reviewer`) are dynamically humanized into display names (`Cloud Migration Reviewer`) and domains (`Cloud Migration Reviewer Specialist`) without crashing or guessing unverified facts.
 
 ---
@@ -87,15 +88,17 @@ Unknown agents (e.g. `@cloud-migration-reviewer`) are dynamically humanized into
 Legacy announcements like `🤖 Applying knowledge of @[agent-name]...` have been completely replaced across all instruction files (`.claude/CLAUDE.md`, `.gemini/GEMINI.md`, `AGENTS.md`, `kernel.md`).
 
 ### Canonical Activated Pattern
+
 ```markdown
 › **Activated** `@[agent-name]` · [Domain / Mandate]
-  [Context-aware task summary focusing on domain standards.]
+[Context-aware task summary focusing on domain standards.]
 ```
 
 ### Example: Security Auditor on JWT Check
+
 ```markdown
 › **Activated** `@security-auditor` · Application Security & OWASP Defense
-  Auditing JWT signature verification and algorithm enforcement. Focus: Audits injection vectors, auth barriers, secrets exposure, and input sanitization.
+Auditing JWT signature verification and algorithm enforcement. Focus: Audits injection vectors, auth barriers, secrets exposure, and input sanitization.
 ```
 
 ---
@@ -104,10 +107,9 @@ Legacy announcements like `🤖 Applying knowledge of @[agent-name]...` have bee
 
 Authoritative measurements from `scripts/benchmark_announcements.js`:
 
-| Scenario | Workload | Elapsed | Measured Throughput |
-|---|---|---|---|
-| **Metadata Resolution** | 150,000 lookups | 121.14 ms | **1,238,285 ops/sec** (~0.81 µs/op) |
-| **Announcement Decision (`shouldAnnounce`)** | 50,000 checks | 10.67 ms | **4,686,167 ops/sec** (~0.21 µs/op) |
-| **Duplicate Stream Suppression** | 10,000 activations | 673.01 ms | **100% duplicate noise suppressed** |
-| **Concurrent Operation Isolation** | 1,000 independent ops | 88.11 ms | **11,349 ops/sec** (Zero cross-talk) |
-
+| Scenario                                     | Workload              | Elapsed   | Measured Throughput                  |
+| -------------------------------------------- | --------------------- | --------- | ------------------------------------ |
+| **Metadata Resolution**                      | 150,000 lookups       | 121.14 ms | **1,238,285 ops/sec** (~0.81 µs/op)  |
+| **Announcement Decision (`shouldAnnounce`)** | 50,000 checks         | 10.67 ms  | **4,686,167 ops/sec** (~0.21 µs/op)  |
+| **Duplicate Stream Suppression**             | 10,000 activations    | 673.01 ms | **100% duplicate noise suppressed**  |
+| **Concurrent Operation Isolation**           | 1,000 independent ops | 88.11 ms  | **11,349 ops/sec** (Zero cross-talk) |

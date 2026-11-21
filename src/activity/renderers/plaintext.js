@@ -10,7 +10,11 @@
 
 const { EVENT_TYPES, ASCII_GLYPHS } = require('../types');
 const { sanitizeActivityEvent } = require('../schema');
-const { resolveDetailLevel, DETAIL_LEVELS, shouldDisplayEvent } = require('../progressive_disclosure');
+const {
+  resolveDetailLevel,
+  DETAIL_LEVELS,
+  shouldDisplayEvent,
+} = require('../progressive_disclosure');
 
 const ANSI_REGEX =
   /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]|(?:\x1b\][^\x07\x1b]*(?:\x07|\x1b\\))/g;
@@ -48,11 +52,17 @@ function renderPlainText(rawEvent, options = {}) {
 
   const glyph = ASCII_GLYPHS[event.eventType] || '>';
 
-  const cleanTitle = stripAnsi(event.title || '').replace(/[\r\n]+/g, ' ').trim();
+  const cleanTitle = stripAnsi(event.title || '')
+    .replace(/[\r\n]+/g, ' ')
+    .trim();
   const cleanSummary = event.summary ? stripAnsi(event.summary) : null;
   const cleanAgent = event.agent ? stripAnsi(event.agent).trim() : null;
   const cleanSkill = event.skill ? stripAnsi(event.skill).trim() : null;
-  const cleanDomain = event.domain ? stripAnsi(event.domain).replace(/[\r\n]+/g, ' ').trim() : null;
+  const cleanDomain = event.domain
+    ? stripAnsi(event.domain)
+        .replace(/[\r\n]+/g, ' ')
+        .trim()
+    : null;
 
   let header = '';
   if (event.eventType === EVENT_TYPES.AGENT_ACTIVATED && cleanAgent) {
@@ -67,7 +77,9 @@ function renderPlainText(rawEvent, options = {}) {
   }
 
   if (detailLevel === DETAIL_LEVELS.DIAGNOSTIC) {
-    const timeBadge = event.timestamp ? ` [${event.timestamp.split('T')[1]?.slice(0, 8) || ''}]` : '';
+    const timeBadge = event.timestamp
+      ? ` [${event.timestamp.split('T')[1]?.slice(0, 8) || ''}]`
+      : '';
     const opBadge = event.operationId ? ` (${event.operationId})` : '';
     header = `${header}${opBadge}${timeBadge}`;
   }
@@ -97,13 +109,22 @@ function renderPlainText(rawEvent, options = {}) {
     if (typeof event.evidence === 'string') {
       rawEv = event.evidence;
     } else if (Array.isArray(event.evidence)) {
-      rawEv = event.evidence.map(e => (typeof e === 'string' ? stripAnsi(e) : JSON.stringify(e))).join(', ');
+      rawEv = event.evidence
+        .map(e => (typeof e === 'string' ? stripAnsi(e) : JSON.stringify(e)))
+        .join(', ');
     } else {
       rawEv = JSON.stringify(event.evidence);
     }
     const cleanEv = stripAnsi(rawEv);
-    const maxChars = detailLevel === DETAIL_LEVELS.ESSENTIAL ? 120 : (detailLevel === DETAIL_LEVELS.DIAGNOSTIC ? 500 : 250);
-    lines.push(`  Evidence: ${cleanEv.slice(0, maxChars)}${cleanEv.length > maxChars ? '...' : ''}`);
+    const maxChars =
+      detailLevel === DETAIL_LEVELS.ESSENTIAL
+        ? 120
+        : detailLevel === DETAIL_LEVELS.DIAGNOSTIC
+          ? 500
+          : 250;
+    lines.push(
+      `  Evidence: ${cleanEv.slice(0, maxChars)}${cleanEv.length > maxChars ? '...' : ''}`,
+    );
   }
 
   if (event.warning) {

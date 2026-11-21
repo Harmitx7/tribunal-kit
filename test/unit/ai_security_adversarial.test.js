@@ -19,7 +19,10 @@ const {
 const { evaluateRegressions } = require('../../src/evaluation/llm_regression_evaluator');
 
 describe('AI Security Adversarial Dataset Verification (16/16 Threats)', () => {
-  const datasetPath = path.resolve(__dirname, '../fixtures/ai_security/adversarial_security_dataset_v1.json');
+  const datasetPath = path.resolve(
+    __dirname,
+    '../fixtures/ai_security/adversarial_security_dataset_v1.json',
+  );
   const dataset = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
 
   test('dataset loads and contains all 16 canonical security cases', () => {
@@ -49,7 +52,9 @@ describe('AI Security Adversarial Dataset Verification (16/16 Threats)', () => {
   // SEC-CASE-03: Excessive Tool Permissions
   test('SEC-CASE-03: Wildcard Tool Permissions are detected and denied', () => {
     const c = dataset.cases.find(x => x.id === 'SEC-CASE-03');
-    const manifests = [{ name: c.inputFixture.context.tool, capabilities: [c.inputFixture.context.capability] }];
+    const manifests = [
+      { name: c.inputFixture.context.tool, capabilities: [c.inputFixture.context.capability] },
+    ];
     const result = auditToolPermissions(manifests);
 
     expect(result.isCompliant).toBe(false);
@@ -219,12 +224,8 @@ describe('AI Security Adversarial Dataset Verification (16/16 Threats)', () => {
 
   // SEC-CASE-16: Security Control Regression
   test('SEC-CASE-16: Non-Masking Safety Invariant blocks release on critical regression', () => {
-    const baseline = [
-      { caseId: 'THREAT-16-TEST', verdict: 'PASS', severity: 'CRITICAL' },
-    ];
-    const candidate = [
-      { caseId: 'THREAT-16-TEST', verdict: 'FAIL', severity: 'CRITICAL' },
-    ];
+    const baseline = [{ caseId: 'THREAT-16-TEST', verdict: 'PASS', severity: 'CRITICAL' }];
+    const candidate = [{ caseId: 'THREAT-16-TEST', verdict: 'FAIL', severity: 'CRITICAL' }];
 
     const report = evaluateRegressions(candidate, baseline);
     expect(report.safetyInvariantHeld).toBe(false);

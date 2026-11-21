@@ -15,6 +15,8 @@ const {
   SwarmPayloadSchema,
   validatePayloadOrThrow,
 } = require('./payload_schemas');
+const { assertWithinRoot } = require('../../src/utils/path_containment');
+const { validateResourceId } = require('../../src/security/boundary');
 
 // ─── ANSI TUI Renderer ────────────────────────────────────────────────────────
 class SwarmDashboard {
@@ -94,20 +96,12 @@ const MAX_CONTEXT_LENGTH = 800;
 const _MAX_WORKERS_PER_SWARM = 10;
 
 function getBinaryPath() {
-  if (process.env.TRIBUNAL_FORCE_JS === '1') return null;
-  const isWindows = process.platform === 'win32';
-  const ext = isWindows ? '.exe' : '';
-  const candidates = [
-    process.env.TRIBUNAL_CORE_PATH,
-    path.resolve(__dirname, '..', '..', 'tribunal-kit', 'target', 'release', `tribunal-core${ext}`),
-    path.resolve(__dirname, '..', '..', 'target', 'release', `tribunal-core${ext}`),
-    path.resolve(process.cwd(), 'target', 'release', `tribunal-core${ext}`),
-    path.resolve(process.cwd(), 'tribunal-kit', 'target', 'release', `tribunal-core${ext}`),
-  ];
-  for (const c of candidates) {
-    if (c && fs.existsSync(c)) return c;
+  try {
+    const { getBinaryPath: resolvedGetBinaryPath } = require('./_utils');
+    return resolvedGetBinaryPath();
+  } catch {
+    return null;
   }
-  return null;
 }
 
 function nativeValidate(file, schemaType) {
@@ -117,6 +111,7 @@ function nativeValidate(file, schemaType) {
     const { spawnSync } = require('child_process');
     const res = spawnSync(bin, ['validate', '--file', file, '--schema', schemaType], {
       encoding: 'utf-8',
+      timeout: 30000,
     });
     if (res.status === 0) {
       return true;
@@ -180,10 +175,8 @@ async function executeWithRetry(fn, _context = {}) {
 
 function validatePayload(payloadData, workspaceRoot, agentsDir, payloadFile = null) {
   if (payloadFile) {
-    const nativeResult = nativeValidate(payloadFile, 'micro-worker');
-    if (nativeResult === true) {
-      return true;
-    }
+    nativeValidate(payloadFile, 'micro-worker');
+    // TK-SEC-001: Do not skip JS validation on native status 0
   }
 
   if (!payloadData.dispatch_micro_workers) {
@@ -314,8 +307,8 @@ const TRIBUNAL_WAVES = {
       'ai-code-reviewer',
       'test-coverage-reviewer',
       'accessibility-reviewer',
-      'ui-ux-auditor',
-      'review-animations',
+      'anti-slop-auditor',
+      'agent-shield-auditor',
       'vitals-reviewer',
       'db-latency-auditor',
       'throughput-optimizer',
@@ -424,6 +417,27 @@ class SwarmOrchestrator {
     if (tasks.length === 0) {
       return [];
     }
+    if (tasks.length > 50) {
+      throw new Error(`Task limit exceeded: Maximum 50 DAG tasks allowed, got ${tasks.length}`);
+    }
+
+    // Validate agent names and path containment across all tasks
+    const agentsDir = path.resolve(__dirname, '..', 'agents');
+    for (const t of tasks) {
+      const agentName = t.agent || t.target_agent;
+      if (agentName) {
+        validateResourceId(agentName);
+        const agentFile = path.join(agentsDir, `${agentName}.md`);
+        assertWithinRoot(agentsDir, agentFile);
+        if (!fs.existsSync(agentFile)) {
+          throw new Error(`Unauthorized or unregistered agent: "${agentName}"`);
+        }
+      }
+      const files = [...(t.files || []), ...(t.files_attached || [])];
+      for (const f of files) {
+        assertWithinRoot(process.cwd(), f);
+      }
+    }
 
     this.workers = tasks;
     this.results = [];
@@ -459,18 +473,25 @@ class SwarmOrchestrator {
         continue;
       }
 
-      availableTasks.forEach(t => inProgress.add(t.id));
+      const MAX_CONCURRENCY = 4;
+      const capacity = Math.max(0, MAX_CONCURRENCY - inProgress.size);
+      if (capacity === 0) {
+        await new Promise(r => setTimeout(r, 50));
+        continue;
+      }
+      const tasksToRun = availableTasks.slice(0, capacity);
+      tasksToRun.forEach(t => inProgress.add(t.id));
 
-      const batchPromises = availableTasks.map(t =>
+      tasksToRun.forEach(t => {
         this.executeWorker(t, 60000).then(result => {
           inProgress.delete(t.id);
           completed.add(t.id);
           this.results.push(result);
           return result;
-        }),
-      );
+        });
+      });
 
-      await Promise.allSettled(batchPromises);
+      await new Promise(r => setTimeout(r, 50));
     }
 
     if (this.dashboard) this.dashboard.stop();
@@ -550,7 +571,7 @@ class SwarmOrchestrator {
         if (files.length > 0 && Array.isArray(secScan.PATTERNS)) {
           let issuesFound = 0;
           for (const f of files) {
-            const abs = path.resolve(cwd, f);
+            const abs = assertWithinRoot(cwd, f);
             if (fs.existsSync(abs) && fs.statSync(abs).isFile()) {
               const content = fs.readFileSync(abs, 'utf8');
               for (const [regex] of secScan.PATTERNS) {
@@ -749,10 +770,8 @@ function validateSwarmPayload(payloadData, agentsDir, payloadFile = null, opts =
   if (opts && (opts.quiet || opts.silent)) quiet = true;
 
   if (payloadFile) {
-    const nativeResult = nativeValidate(payloadFile, 'swarm');
-    if (nativeResult === true) {
-      return true;
-    }
+    nativeValidate(payloadFile, 'swarm');
+    // TK-SEC-001: Do not skip JS validation on native status 0
   }
 
   // Validate using Zod schema

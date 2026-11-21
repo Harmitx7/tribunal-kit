@@ -23,9 +23,9 @@ const AGENTS_SKILLS = path.join(ROOT, '.agents', 'skills');
 const TOPIC_MAP_PATH = path.join(ROOT, '.agent', 'skill_topic_map.json');
 
 describe('Universal Skill Competence & Structure Suite (All 398 Skills)', () => {
-  const skillDirs = fs.readdirSync(CANONICAL_SKILLS).filter(d => 
-    fs.statSync(path.join(CANONICAL_SKILLS, d)).isDirectory()
-  );
+  const skillDirs = fs
+    .readdirSync(CANONICAL_SKILLS)
+    .filter(d => fs.statSync(path.join(CANONICAL_SKILLS, d)).isDirectory());
 
   const topicMap = JSON.parse(fs.readFileSync(TOPIC_MAP_PATH, 'utf8'));
   const mappedSkills = new Set();
@@ -37,7 +37,7 @@ describe('Universal Skill Competence & Structure Suite (All 398 Skills)', () => 
     expect(skillDirs.length).toBe(398);
   });
 
-  describe.each(skillDirs)('Skill: %s', (skill) => {
+  describe.each(skillDirs)('Skill: %s', skill => {
     const skillPath = path.join(CANONICAL_SKILLS, skill, 'SKILL.md');
     const mirrorPath = path.join(MIRROR_SKILLS, skill, 'SKILL.md');
     const agentsPath = path.join(AGENTS_SKILLS, skill, 'SKILL.md');
@@ -53,7 +53,7 @@ describe('Universal Skill Competence & Structure Suite (All 398 Skills)', () => 
       const frontmatterMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
       expect(frontmatterMatch).not.toBeNull();
       const fm = frontmatterMatch[1];
-      
+
       const nameMatch = fm.match(/name:\s*([^\r\n]+)/);
       expect(nameMatch).not.toBeNull();
       const declaredName = nameMatch[1].trim().replace(/^['"]|['"]$/g, '');
@@ -80,4 +80,3 @@ describe('Universal Skill Competence & Structure Suite (All 398 Skills)', () => 
     });
   });
 });
-

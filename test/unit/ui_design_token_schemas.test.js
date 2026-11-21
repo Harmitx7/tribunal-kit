@@ -114,4 +114,3 @@ describe('UI Design Token Schemas (Unit)', () => {
     expect(() => DesignBenchmarkResultSchema.parse(result)).not.toThrow();
   });
 });
-

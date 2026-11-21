@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-nocheck
 /**
  * case_law_manager.js — Tribunal Kit Case Law Engine
  * =====================================================

@@ -72,9 +72,18 @@ def find_base_python(version: str) -> str | None:
 
 
 def main() -> int:
-    venv_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(".venv")
+    raw_venv_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(".venv")
     python_version = sys.argv[2] if len(sys.argv) > 2 else "3.12"
 
+    workspace_root = Path.cwd().resolve()
+    resolved_venv = (workspace_root / raw_venv_dir).resolve()
+    try:
+        resolved_venv.relative_to(workspace_root)
+    except ValueError:
+        log(f"ERROR: venv_dir '{raw_venv_dir}' escapes workspace root '{workspace_root}'")
+        return 1
+
+    venv_dir = resolved_venv
     ver = parse_version(python_version)
     if not (SUPPORTED_MIN <= ver <= SUPPORTED_MAX):
         lo = ".".join(map(str, SUPPORTED_MIN))
@@ -96,6 +105,10 @@ def main() -> int:
     else:
         if current is not None:
             log(f"Env at {venv_dir} uses Python {current} (wanted {python_version}) — recreating")
+            cfg_file = venv_dir / "pyvenv.cfg"
+            if not cfg_file.is_file():
+                log(f"ERROR: Refusing to delete '{venv_dir}': missing 'pyvenv.cfg' (not a verified virtualenv)")
+                return 1
             shutil.rmtree(venv_dir)
 
         if installer == "uv":

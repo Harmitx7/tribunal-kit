@@ -30,7 +30,9 @@ const { assertContainedPath } = require('../utils/path_containment');
 
 function calculateMedian(numbers) {
   if (!Array.isArray(numbers) || numbers.length === 0) return 0;
-  const sorted = [...numbers].filter(n => typeof n === 'number' && Number.isFinite(n)).sort((a, b) => a - b);
+  const sorted = [...numbers]
+    .filter(n => typeof n === 'number' && Number.isFinite(n))
+    .sort((a, b) => a - b);
   if (sorted.length === 0) return 0;
   const mid = Math.floor(sorted.length / 2);
   if (sorted.length % 2 !== 0) {
@@ -93,14 +95,30 @@ function evaluateComparability(currentRun, candidateRun) {
 function detectExplanatoryFactors(currentRun, baselineRuns) {
   const factors = new Set();
   for (const b of baselineRuns) {
-    if (b.environment.model_id && currentRun.environment.model_id && b.environment.model_id !== currentRun.environment.model_id) {
+    if (
+      b.environment.model_id &&
+      currentRun.environment.model_id &&
+      b.environment.model_id !== currentRun.environment.model_id
+    ) {
       factors.add(`MODEL_CHANGED: ${b.environment.model_id} -> ${currentRun.environment.model_id}`);
     }
-    if (b.environment.prompt_version && currentRun.environment.prompt_version && b.environment.prompt_version !== currentRun.environment.prompt_version) {
-      factors.add(`PROMPT_VERSION_CHANGED: ${b.environment.prompt_version} -> ${currentRun.environment.prompt_version}`);
+    if (
+      b.environment.prompt_version &&
+      currentRun.environment.prompt_version &&
+      b.environment.prompt_version !== currentRun.environment.prompt_version
+    ) {
+      factors.add(
+        `PROMPT_VERSION_CHANGED: ${b.environment.prompt_version} -> ${currentRun.environment.prompt_version}`,
+      );
     }
-    if (b.environment.policy_hash && currentRun.environment.policy_hash && b.environment.policy_hash !== currentRun.environment.policy_hash) {
-      factors.add(`POLICY_CONFIG_CHANGED: ${b.environment.policy_hash} -> ${currentRun.environment.policy_hash}`);
+    if (
+      b.environment.policy_hash &&
+      currentRun.environment.policy_hash &&
+      b.environment.policy_hash !== currentRun.environment.policy_hash
+    ) {
+      factors.add(
+        `POLICY_CONFIG_CHANGED: ${b.environment.policy_hash} -> ${currentRun.environment.policy_hash}`,
+      );
     }
   }
   return Array.from(factors);
@@ -114,7 +132,7 @@ class AnomalyDetectionEngine {
   constructor(options = {}) {
     this.minBaselineSamples = options.minBaselineSamples || MIN_BASELINE_SAMPLES;
     this.detectorVersion = 1;
-    this.tokenDriftThreshold = options.tokenDriftThreshold || 0.50; // 50% surge
+    this.tokenDriftThreshold = options.tokenDriftThreshold || 0.5; // 50% surge
     this.latencyDriftThreshold = options.latencyDriftThreshold || 3.0; // 3x median
   }
 
@@ -152,7 +170,10 @@ class AnomalyDetectionEngine {
     // -------------------------------------------------------------------------
 
     // A. POLICY_EXECUTION_DRIFT: Check for high-risk review depth downgrade
-    if (currentRun.decision.risk_tier >= 3 && currentRun.confidence_assessment.review_depth === 'STANDARD') {
+    if (
+      currentRun.decision.risk_tier >= 3 &&
+      currentRun.confidence_assessment.review_depth === 'STANDARD'
+    ) {
       const anomaly = {
         anomaly_id: `anom_pol_${Date.now()}_${hex.slice(0, 4)}`,
         schema_version: DRIFT_SCHEMA_VERSION,
@@ -176,7 +197,8 @@ class AnomalyDetectionEngine {
         },
         reason_codes: ['POLICY_EXECUTION_DRIFT', 'MANDATORY_DEPTH_VIOLATION'],
         supporting_record_ids: comparableBaseline.slice(0, 5).map(r => r.review_run_id),
-        recommended_action: 'Investigate confidence controller: Tier 3 change received STANDARD depth, violating non-negotiable risk policy.',
+        recommended_action:
+          'Investigate confidence controller: Tier 3 change received STANDARD depth, violating non-negotiable risk policy.',
         potential_explanatory_factors: explanatoryFactors,
         detector_version: this.detectorVersion,
       };
@@ -186,7 +208,8 @@ class AnomalyDetectionEngine {
     // B. CONFIDENCE_EVIDENCE_DRIFT: High confidence with unverified claims
     if (
       currentRun.confidence_assessment.score >= 0.85 &&
-      (currentRun.evidence_summary.unverified_count > 0 || currentRun.confidence_assessment.reason_codes.includes('UNVERIFIED_EVIDENCE_CLAIM'))
+      (currentRun.evidence_summary.unverified_count > 0 ||
+        currentRun.confidence_assessment.reason_codes.includes('UNVERIFIED_EVIDENCE_CLAIM'))
     ) {
       const anomaly = {
         anomaly_id: `anom_conf_${Date.now()}_${hex.slice(0, 4)}`,
@@ -211,7 +234,8 @@ class AnomalyDetectionEngine {
         },
         reason_codes: ['CONFIDENCE_EVIDENCE_DRIFT', 'UNVERIFIED_EVIDENCE_CLAIM'],
         supporting_record_ids: comparableBaseline.slice(0, 5).map(r => r.review_run_id),
-        recommended_action: 'Audit confidence evaluator: high confidence (> 0.85) was emitted despite presence of unverified evidence claims.',
+        recommended_action:
+          'Audit confidence evaluator: high confidence (> 0.85) was emitted despite presence of unverified evidence claims.',
         potential_explanatory_factors: explanatoryFactors,
         detector_version: this.detectorVersion,
       };
@@ -223,9 +247,10 @@ class AnomalyDetectionEngine {
     if (baselineSize < this.minBaselineSamples) {
       return {
         status: anomalies.length > 0 ? 'DETECTED' : 'INSUFFICIENT_BASELINE',
-        message: baselineSize < this.minBaselineSamples
-          ? `Baseline sample size (${baselineSize}) is below minimum required (${this.minBaselineSamples}). Statistical checks omitted.`
-          : 'Baseline sufficient.',
+        message:
+          baselineSize < this.minBaselineSamples
+            ? `Baseline sample size (${baselineSize}) is below minimum required (${this.minBaselineSamples}). Statistical checks omitted.`
+            : 'Baseline sufficient.',
         baseline_sample_size: baselineSize,
         minimum_required: this.minBaselineSamples,
         anomalies,
@@ -236,8 +261,14 @@ class AnomalyDetectionEngine {
 
     // C. REVIEW_QUALITY_DRIFT: Fixed fixture defect recall regression
     if (currentRun.fixture_id) {
-      const baselineCriticalRuns = comparableBaseline.filter(r => r.findings_summary.critical_count > 0);
-      if (baselineCriticalRuns.length >= 2 && currentRun.findings_summary.critical_count === 0 && currentRun.governance_outcome.final_verdict === 'APPROVED') {
+      const baselineCriticalRuns = comparableBaseline.filter(
+        r => r.findings_summary.critical_count > 0,
+      );
+      if (
+        baselineCriticalRuns.length >= 2 &&
+        currentRun.findings_summary.critical_count === 0 &&
+        currentRun.governance_outcome.final_verdict === 'APPROVED'
+      ) {
         const anomaly = {
           anomaly_id: `anom_qual_${Date.now()}_${hex.slice(0, 4)}`,
           schema_version: DRIFT_SCHEMA_VERSION,
@@ -254,14 +285,17 @@ class AnomalyDetectionEngine {
           },
           metrics: {
             observed_value: currentRun.findings_summary.critical_count,
-            baseline_value: calculateMedian(baselineCriticalRuns.map(r => r.findings_summary.critical_count)),
+            baseline_value: calculateMedian(
+              baselineCriticalRuns.map(r => r.findings_summary.critical_count),
+            ),
             deviation: 'MISSED_CRITICAL_DEFECT_ON_BENCHMARK',
             threshold: 'RECALL_100%_ON_KNOWN_VULNERABILITY',
             method: 'DISCRETE_INVARIANT',
           },
           reason_codes: ['REVIEW_QUALITY_DRIFT', 'CRITICAL_DEFECT_MISSED'],
           supporting_record_ids: baselineCriticalRuns.map(r => r.review_run_id),
-          recommended_action: 'Urgent investigation: stable benchmark fixture defect was missed. Review recent prompt, model, or parser updates.',
+          recommended_action:
+            'Urgent investigation: stable benchmark fixture defect was missed. Review recent prompt, model, or parser updates.',
           potential_explanatory_factors: explanatoryFactors,
           detector_version: this.detectorVersion,
         };
@@ -272,7 +306,10 @@ class AnomalyDetectionEngine {
     // D. REVIEWER_BEHAVIOR_DRIFT: Timeouts or execution failures
     const baselineTimeouts = comparableBaseline.map(r => r.reviewers.timeouts.length);
     const medTimeouts = calculateMedian(baselineTimeouts);
-    if (currentRun.reviewers.timeouts.length > 0 && currentRun.reviewers.timeouts.length > medTimeouts) {
+    if (
+      currentRun.reviewers.timeouts.length > 0 &&
+      currentRun.reviewers.timeouts.length > medTimeouts
+    ) {
       const anomaly = {
         anomaly_id: `anom_beh_to_${Date.now()}_${hex.slice(0, 4)}`,
         schema_version: DRIFT_SCHEMA_VERSION,
@@ -303,9 +340,14 @@ class AnomalyDetectionEngine {
     }
 
     // Reviewer contradiction surge
-    const baselineContradictions = comparableBaseline.filter(r => r.confidence_assessment.reason_codes.includes('REVIEWER_CONTRADICTION')).length;
+    const baselineContradictions = comparableBaseline.filter(r =>
+      r.confidence_assessment.reason_codes.includes('REVIEWER_CONTRADICTION'),
+    ).length;
     const baselineContradictionRate = baselineContradictions / baselineSize;
-    if (currentRun.confidence_assessment.reason_codes.includes('REVIEWER_CONTRADICTION') && baselineContradictionRate < 0.20) {
+    if (
+      currentRun.confidence_assessment.reason_codes.includes('REVIEWER_CONTRADICTION') &&
+      baselineContradictionRate < 0.2
+    ) {
       const anomaly = {
         anomaly_id: `anom_beh_con_${Date.now()}_${hex.slice(0, 4)}`,
         schema_version: DRIFT_SCHEMA_VERSION,
@@ -328,7 +370,8 @@ class AnomalyDetectionEngine {
         },
         reason_codes: ['REVIEWER_BEHAVIOR_DRIFT', 'REVIEWER_CONTRADICTION'],
         supporting_record_ids: comparableBaseline.slice(0, 5).map(r => r.review_run_id),
-        recommended_action: 'Examine conflicting reviewer prompts and context slices: reviewers emitted opposing verdicts (APPROVED vs REJECTED).',
+        recommended_action:
+          'Examine conflicting reviewer prompts and context slices: reviewers emitted opposing verdicts (APPROVED vs REJECTED).',
         potential_explanatory_factors: explanatoryFactors,
         detector_version: this.detectorVersion,
       };
@@ -366,7 +409,8 @@ class AnomalyDetectionEngine {
           },
           reason_codes: ['RESOURCE_DRIFT', 'TOKEN_BUDGET_SURGE'],
           supporting_record_ids: comparableBaseline.slice(0, 5).map(r => r.review_run_id),
-          recommended_action: 'Inspect AST slicing and evidence packaging: prompt tokens increased significantly for equivalent task risk.',
+          recommended_action:
+            'Inspect AST slicing and evidence packaging: prompt tokens increased significantly for equivalent task risk.',
           potential_explanatory_factors: explanatoryFactors,
           detector_version: this.detectorVersion,
         };
@@ -375,9 +419,14 @@ class AnomalyDetectionEngine {
     }
 
     // F. VERIFICATION_DRIFT: Regressions in deterministic verification
-    const baselineErrors = comparableBaseline.filter(r => r.confidence_assessment.reason_codes.includes('FAILED_VERIFICATION')).length;
+    const baselineErrors = comparableBaseline.filter(r =>
+      r.confidence_assessment.reason_codes.includes('FAILED_VERIFICATION'),
+    ).length;
     const baselineErrorRate = baselineErrors / baselineSize;
-    if (currentRun.confidence_assessment.reason_codes.includes('FAILED_VERIFICATION') && baselineErrorRate === 0) {
+    if (
+      currentRun.confidence_assessment.reason_codes.includes('FAILED_VERIFICATION') &&
+      baselineErrorRate === 0
+    ) {
       const anomaly = {
         anomaly_id: `anom_ver_${Date.now()}_${hex.slice(0, 4)}`,
         schema_version: DRIFT_SCHEMA_VERSION,
@@ -400,7 +449,8 @@ class AnomalyDetectionEngine {
         },
         reason_codes: ['VERIFICATION_DRIFT', 'FAILED_VERIFICATION'],
         supporting_record_ids: comparableBaseline.slice(0, 5).map(r => r.review_run_id),
-        recommended_action: 'Inspect local syntax/test verification runners: execution errors occurred where baseline runs succeeded.',
+        recommended_action:
+          'Inspect local syntax/test verification runners: execution errors occurred where baseline runs succeeded.',
         potential_explanatory_factors: explanatoryFactors,
         detector_version: this.detectorVersion,
       };
@@ -556,7 +606,9 @@ class DriftStore {
 
       // Prevent duplicate run ID replay
       if (records.some(r => r.review_run_id === runRecord.review_run_id)) {
-        throw new Error(`Duplicate review_run_id "${runRecord.review_run_id}" already exists in drift store`);
+        throw new Error(
+          `Duplicate review_run_id "${runRecord.review_run_id}" already exists in drift store`,
+        );
       }
 
       records.push(runRecord);

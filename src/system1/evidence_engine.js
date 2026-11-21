@@ -66,7 +66,7 @@ function redactSecrets(text) {
  * Extract symbols/functions modified in diff or file
  * @param {string} diff
  * @param {string} content
- * @returns {Array<{ name: string, type: string, line?: number }>}
+ * @returns {Array<{ name: string, type: string, line?: number, diff_line?: number }>}
  */
 function extractChangedSymbols(diff = '', content = '') {
   const symbols = [];

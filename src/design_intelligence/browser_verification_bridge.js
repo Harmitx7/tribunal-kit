@@ -47,4 +47,3 @@ async function verifyBrowserRendering(targetUrl = 'http://localhost:3000', optio
 module.exports = {
   verifyBrowserRendering,
 };
-

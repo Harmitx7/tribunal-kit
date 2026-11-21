@@ -55,6 +55,7 @@ These come from `hf spaces logs <id> --tail 500`.
 
 **Cause**: Something triggered CUDA init in the main process before `import spaces`. Usually wrong import order; sometimes a third-party lib eagerly initializing CUDA at import time (e.g. `numba.cuda`).
 **Fix**: Reorder so `import spaces` is first. For numba-using stacks (NeMo, RAPIDS bits):
+
 ```python
 import os
 os.environ.setdefault("NUMBA_DISABLE_CUDA", "1")
@@ -65,37 +66,43 @@ import spaces
 
 **Cause**: The function bound to `.click(fn=...)` / `.submit(...)` isn't decorated. Decorating an inner helper doesn't count — the startup scan only walks Gradio's registered handlers.
 **Fix**: Decorate the function Gradio binds. If that conflicts with another decorator, wrap explicitly:
+
 ```python
 @spaces.GPU(duration=60)
 def gpu_inner(...): ...
 def gradio_handler(...): return gpu_inner(...)
 ```
+
 (Or just decorate `gradio_handler` directly.)
 
 ### `ImportError: cannot import name 'HfFolder' from 'huggingface_hub'`
 
 **Cause**: Old gradio (`4.44` and similar) imports `HfFolder` from `huggingface_hub`, which was removed in recent hub releases.
 **Fix**: Two options.
+
 - Pin `huggingface-hub==0.25.0` in `requirements.txt` (keeps old gradio happy).
 - Bump `sdk_version` in README to `5.x` or `6.x` (also fixes a lot of other API breaks).
-If a Gradio custom component locks the major (`gradio-image-prompter`, `gradio_litmodel3d`, …), install it with `--no-deps` so its `gradio<5.0` requirement doesn't bind.
+  If a Gradio custom component locks the major (`gradio-image-prompter`, `gradio_litmodel3d`, …), install it with `--no-deps` so its `gradio<5.0` requirement doesn't bind.
 
 ### `ImportError: cannot import name 'is_traceable_wrapper_subclass' from 'torch.utils._python_dispatch'`
 
 **Cause**: A dep with `torchaudio<2.1` / `torch<2` in its `setup.py` (e.g. `demucs`, `audiocraft`) downgraded torch silently. The build succeeded, the app booted, and `import spaces` then died on a missing torch symbol.
-**Fix**: Install the offender from `app.py` with `--no-deps` *before* `import spaces`:
+**Fix**: Install the offender from `app.py` with `--no-deps` _before_ `import spaces`:
+
 ```python
 import subprocess, sys
 subprocess.run([sys.executable, "-m", "pip", "install", "--no-deps",
                 "git+https://github.com/facebookresearch/demucs"], check=True)
 import spaces
 ```
+
 List its actual runtime deps (`dora-search einops julius lameenc openunmix pyyaml tqdm` for demucs) yourself in `requirements.txt`.
 
 ### `_pickle.UnpicklingError: Weights only load failed`
 
 **Cause**: `torch.load` weights-only default flipped to `True` in torch 2.6. Old checkpoints pickling numpy/object globals fail.
 **Fix**: For trusted upstream checkpoints, monkey-patch before the package import:
+
 ```python
 import torch
 _orig = torch.load
@@ -147,12 +154,14 @@ These appear in `hf spaces logs <id> --follow` while a request is running.
 
 **Cause**: Allocator fragmentation under transient memory spikes (high-res pixel-space ops, large attention activations, SR models, video DiTs). Not a clean OOM.
 **Fix**: Set expandable segments at the **very top** of `app.py`, before any torch import:
+
 ```python
 import os
 os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 import spaces
 import torch
 ```
+
 Usually a single-line fix that replaces lowering resolution or moving to `xlarge`.
 
 ### Call hangs forever on first `@spaces.GPU` entry

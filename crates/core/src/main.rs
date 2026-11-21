@@ -1488,7 +1488,7 @@ async fn cmd_status(path: &str, json: bool, quiet: bool) -> Result<()> {
         "dependency-reviewer",
         "performance-optimizer",
         "mobile-reviewer",
-        "review-animations",
+        "frontend-reviewer",
         "ai-code-reviewer",
         "precedence-reviewer",
         "ui-visual-auditor",

@@ -33,18 +33,47 @@ const {
 
 const { loadJson } = require('./_utils');
 
+const SHELL_META_REGEX = /[;&|><$`\\%^!"()\r\n]/;
+
+function resolveTestTool(cmd0) {
+  if (process.platform === 'win32') {
+    const lower = cmd0.toLowerCase();
+    if (lower === 'npm' || lower === 'npm.cmd') {
+      const npmCli = path.join(
+        path.dirname(process.execPath),
+        'node_modules',
+        'npm',
+        'bin',
+        'npm-cli.js',
+      );
+      if (fs.existsSync(npmCli)) return { bin: process.execPath, prefix: [npmCli] };
+    } else if (lower === 'npx' || lower === 'npx.cmd') {
+      const npxCli = path.join(
+        path.dirname(process.execPath),
+        'node_modules',
+        'npm',
+        'bin',
+        'npx-cli.js',
+      );
+      if (fs.existsSync(npxCli)) return { bin: process.execPath, prefix: [npxCli, '--no-install'] };
+    }
+  }
+  return { bin: cmd0, prefix: [] };
+}
+
 function runTests(label, cmd, cwd) {
   const elapsed = timer();
   try {
-    const executable =
-      process.platform === 'win32' && (cmd[0] === 'npx' || cmd[0] === 'npm')
-        ? `${cmd[0]}.cmd`
-        : cmd[0];
-    const result = spawnSync(executable, cmd.slice(1), {
+    const { bin, prefix } = resolveTestTool(cmd[0]);
+    const fullArgs = [...prefix, ...cmd.slice(1)];
+    if (cmd[0] === 'npx' && !fullArgs.includes('--no-install')) {
+      fullArgs.unshift('--no-install');
+    }
+    const result = spawnSync(bin, fullArgs, {
       cwd,
       encoding: 'utf8',
       timeout: 300000, // 5m
-      shell: process.platform === 'win32',
+      shell: false,
     });
 
     const ms = elapsed();
@@ -131,8 +160,18 @@ function main() {
   while (i < args.length) {
     if (args[i] === '--coverage') coverageFlag = true;
     else if (args[i] === '--watch') watchFlag = true;
-    else if (args[i] === '--file' && i + 1 < args.length) fileArg = args[++i];
-    else if (!targetPath && !args[i].startsWith('-')) targetPath = args[i];
+    else if (args[i] === '--file' && i + 1 < args.length) {
+      const candidate = args[++i];
+      if (candidate.startsWith('-')) {
+        fail(`Security Violation: File argument cannot start with dash: ${candidate}`);
+        process.exit(1);
+      }
+      if (SHELL_META_REGEX.test(candidate)) {
+        fail(`Security Violation: Shell metacharacter detected in file argument: ${candidate}`);
+        process.exit(1);
+      }
+      fileArg = candidate;
+    } else if (!targetPath && !args[i].startsWith('-')) targetPath = args[i];
     i++;
   }
 
@@ -169,7 +208,10 @@ function main() {
     if (framework === 'vitest') {
       cmd = watchFlag ? ['npx', 'vitest'] : ['npx', 'vitest', 'run'];
       if (coverageFlag) cmd.push('--coverage');
-      if (fileArg) cmd.push(fileArg);
+      if (fileArg) {
+        cmd.push('--');
+        cmd.push(fileArg);
+      }
     } else if (framework === 'jest') {
       cmd = ['npx', 'jest'];
       if (coverageFlag) cmd.push('--coverage');

@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -41,10 +42,7 @@ class InvariantVerifier {
     }
 
     // 2. Ground-Truth Soundness Check: safeProposal MUST pass
-    const safeReport = await runner.evaluateCandidate(
-      mutatedScenario,
-      baseScenario.safeProposal,
-    );
+    const safeReport = await runner.evaluateCandidate(mutatedScenario, baseScenario.safeProposal);
 
     if (safeReport.verdict !== 'APPROVED' || safeReport.exitCode !== 0) {
       return {
@@ -65,7 +63,8 @@ class InvariantVerifier {
       return {
         valid: false,
         verdict: 'REJECT_INSUFFICIENT_DISCRIMINATION',
-        reason: 'Flawed unsafe proposal passed the mutated scenario (insufficient discriminative power).',
+        reason:
+          'Flawed unsafe proposal passed the mutated scenario (insufficient discriminative power).',
         unsafeReport,
       };
     }

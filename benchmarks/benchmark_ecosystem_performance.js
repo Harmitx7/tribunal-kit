@@ -37,7 +37,7 @@ function runBenchmarks() {
     'Audit prompt injection vulnerabilities in AI agent tool-calling pipeline',
     'Run property-based mutation tests with Stryker and isolate flakiness',
     'Map system architecture blast radius and detect circular dependency cycles',
-    'Train sentence-transformers with LoRA and track evals with huggingface'
+    'Train sentence-transformers with LoRA and track evals with huggingface',
   ];
 
   const iterations = 100;
@@ -52,9 +52,13 @@ function runBenchmarks() {
   const totalRoutingTime = performance.now() - t0Routing;
   const avgRoutingLatency = totalRoutingTime / iterations;
 
-  console.log(`✔ Executed ${iterations} routing resolutions in ${totalRoutingTime.toFixed(2)}ms (Avg: ${avgRoutingLatency.toFixed(2)}ms / query)`);
+  console.log(
+    `✔ Executed ${iterations} routing resolutions in ${totalRoutingTime.toFixed(2)}ms (Avg: ${avgRoutingLatency.toFixed(2)}ms / query)`,
+  );
   if (avgRoutingLatency > 50) {
-    console.warn(`⚠ Warning: Routing latency (${avgRoutingLatency.toFixed(2)}ms) exceeded 50ms threshold`);
+    console.warn(
+      `⚠ Warning: Routing latency (${avgRoutingLatency.toFixed(2)}ms) exceeded 50ms threshold`,
+    );
   } else {
     console.log(`  Target Met: < 50ms latency (Achieved: ${avgRoutingLatency.toFixed(2)}ms)`);
   }
@@ -64,22 +68,33 @@ function runBenchmarks() {
   const graphResult = auditGraph();
   const graphDuration = performance.now() - t0Graph;
 
-  console.log(`\n✔ Built and audited canonical system execution graph (${graphResult.summary.edgesCount} edges mapped) in ${graphDuration.toFixed(2)}ms`);
+  console.log(
+    `\n✔ Built and audited canonical system execution graph (${graphResult.summary.edgesCount} edges mapped) in ${graphDuration.toFixed(2)}ms`,
+  );
   if (graphDuration > 2000) {
-    console.warn(`⚠ Warning: Graph audit time (${graphDuration.toFixed(2)}ms) exceeded 2000ms threshold`);
+    console.warn(
+      `⚠ Warning: Graph audit time (${graphDuration.toFixed(2)}ms) exceeded 2000ms threshold`,
+    );
   } else {
     console.log(`  Target Met: < 2000ms graph audit (Achieved: ${graphDuration.toFixed(2)}ms)`);
   }
 
   // 4. Token Bounding Benchmark (Large vs Small tier)
-  const testQuery = 'Design an enterprise microservice backend with PostgreSQL, Redis cache, JWT auth, and Docker CI/CD';
+  const testQuery =
+    'Design an enterprise microservice backend with PostgreSQL, Redis cache, JWT auth, and Docker CI/CD';
   const largeSelection = selectSkills(testQuery, [], 'large', allSkills);
   const smallSelection = selectSkills(testQuery, [], 'small', allSkills);
 
   console.log('\n✔ Token Budget Bounding:');
-  console.log(`  • Large Tier:  ${largeSelection.essential.length} essential, ${largeSelection.supplementary.length} supplementary`);
-  console.log(`  • Small Tier:  ${smallSelection.essential.length} essential, ${smallSelection.supplementary.length} supplementary`);
-  console.log(`  • Small tier is more compact than Large: ${smallSelection.essential.length <= largeSelection.essential.length}`);
+  console.log(
+    `  • Large Tier:  ${largeSelection.essential.length} essential, ${largeSelection.supplementary.length} supplementary`,
+  );
+  console.log(
+    `  • Small Tier:  ${smallSelection.essential.length} essential, ${smallSelection.supplementary.length} supplementary`,
+  );
+  console.log(
+    `  • Small tier is more compact than Large: ${smallSelection.essential.length <= largeSelection.essential.length}`,
+  );
 
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('✔ All Performance & Latency Benchmarks PASSED');

@@ -50,7 +50,7 @@ class QuorumAndAggregationEngine {
           evidence: `duplicate agents: [${Array.from(duplicateAgents).join(', ')}]`,
           remediation: 'Verify orchestration task scheduler does not double-dispatch reviewers.',
           verdict: 'FAIL',
-        })
+        }),
       );
     }
 
@@ -104,7 +104,9 @@ class QuorumAndAggregationEngine {
       const details = [];
       if (missingRequired.length > 0) details.push(`missing: [${missingRequired.join(', ')}]`);
       if (failedRequired.length > 0)
-        details.push(`failed: [${failedRequired.map((f) => `${f.agentId} (${f.status})`).join(', ')}]`);
+        details.push(
+          `failed: [${failedRequired.map(f => `${f.agentId} (${f.status})`).join(', ')}]`,
+        );
 
       findings.push(
         RuntimeFindingSchema.parse({
@@ -115,9 +117,10 @@ class QuorumAndAggregationEngine {
           title: 'Required reviewers failed or missing from review quorum',
           description: `Required reviewers failed to complete: ${details.join('; ')}.`,
           evidence: `required expected: [${this.policy.requiredAgents.join(', ')}], ${details.join('; ')}`,
-          remediation: 'Investigate reviewer crashes or timeouts; required coverage cannot be waived.',
+          remediation:
+            'Investigate reviewer crashes or timeouts; required coverage cannot be waived.',
           verdict: 'FAIL',
-        })
+        }),
       );
     }
 
@@ -143,7 +146,7 @@ class QuorumAndAggregationEngine {
           evidence: `successRatio: ${successRatio}, minThreshold: ${this.policy.minSuccessThreshold}`,
           remediation: 'Increase reviewer execution timeouts or reduce concurrency pressure.',
           verdict: 'FAIL',
-        })
+        }),
       );
     } else if (failedOptional.length > 0) {
       // Required passed, threshold met, but some optional failed
@@ -158,8 +161,8 @@ class QuorumAndAggregationEngine {
       finalStatus === 'SUCCEEDED'
         ? `Quorum satisfied: ${totalObservedSuccesses}/${totalExpectedAgents} agents succeeded (${(successRatio * 100).toFixed(1)}%).`
         : finalStatus === 'PARTIAL'
-        ? `Partial quorum: ${totalObservedSuccesses}/${totalExpectedAgents} agents succeeded with allowable omissions.`
-        : `Quorum FAILED: ${missingRequired.length + failedRequired.length} required reviewers failed or missing.`;
+          ? `Partial quorum: ${totalObservedSuccesses}/${totalExpectedAgents} agents succeeded with allowable omissions.`
+          : `Quorum FAILED: ${missingRequired.length + failedRequired.length} required reviewers failed or missing.`;
 
     return {
       status: finalStatus,

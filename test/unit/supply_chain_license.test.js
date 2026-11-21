@@ -1,9 +1,6 @@
 'use strict';
 
-const {
-  normalizeSpdxLicense,
-  LicenseComplianceEngine,
-} = require('../../src/supply_chain');
+const { normalizeSpdxLicense, LicenseComplianceEngine } = require('../../src/supply_chain');
 
 const fixtureData = require('../fixtures/supply_chain/supply_chain_dataset_v1.json');
 
@@ -72,9 +69,8 @@ describe('License Compliance & Policy Auditor Engine', () => {
     expect(result.exceptionCount).toBe(1);
     expect(result.findingsCount).toBe(2); // bad-copyleft and expired-exception-lib
 
-    const badCopyleftFinding = result.findings.find((f) => f.component === 'bad-copyleft');
+    const badCopyleftFinding = result.findings.find(f => f.component === 'bad-copyleft');
     expect(badCopyleftFinding.category).toBe('V8_LICENSE_VIOLATION');
     expect(badCopyleftFinding.severity).toBe('CRITICAL');
   });
 });
-

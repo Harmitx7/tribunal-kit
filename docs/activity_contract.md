@@ -3,6 +3,7 @@
 ## Overview
 
 The Tribunal-Kit Activity Presentation System provides a canonical, validated event representation (`ActivityEvent`) and deterministic rendering layer across four target environments:
+
 1. **Markdown**: High-density, minimalist presentation optimized for AI chat windows (Antigravity, Claude Code, Cursor, Windsurf, Copilot, Codex).
 2. **Terminal**: TrueColor ANSI formatting for local CLI terminals, respecting `NO_COLOR` and non-TTY outputs.
 3. **PlainText**: Plain ASCII formatting for raw logs and CI environments with zero ANSI or markdown decoration.
@@ -12,26 +13,26 @@ The Tribunal-Kit Activity Presentation System provides a canonical, validated ev
 
 ## Canonical ActivityEvent Schema (`schemaVersion: "1.0.0"`)
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `schemaVersion` | `'1.0.0'` | **Yes** | Strict contract version. Unsupported versions are rejected. |
-| `eventId` | `string` | **Yes** | Alphanumeric identifier (`/^[a-zA-Z0-9_\-\.]{3,64}$/`). |
-| `operationId` | `string` | **Yes** | Correlating identifier grouping related lifecycle events. |
-| `eventType` | `ActivityEventType` | **Yes** | One of the 14 operational event types. |
-| `status` | `ActivityStatus` | **Yes** | Observed reality (`pending`, `running`, `passed`, `failed`, `warning`, `blocked`, `completed`, `cancelled`). |
-| `title` | `string` | **Yes** | Non-empty string (1–200 characters). |
-| `summary` | `string \| null` | Optional | Context or mandate description (max 2000 characters). |
-| `phase` | `string \| null` | Optional | Stage or phase label (e.g., `'Phase 1'`). |
-| `agent` | `string \| null` | Optional | Specialist agent identifier (e.g., `'resilience-reviewer'`). |
-| `skill` | `string \| null` | Optional | Applied skill identifier (e.g., `'clean-code'`). |
-| `domain` | `string \| null` | Optional | Domain specialization focus. |
-| `progress` | `ActivityProgress` | Optional | Authoritative execution progress counters. |
-| `evidence` | `any` | Optional | Authoritative verification findings. **Mandatory for `validation_passed`**. |
-| `error` | `object \| null` | Optional | Failure message, code, and remedy. **Mandatory for `validation_failed`**. |
-| `warning` | `object \| null` | Optional | Warning condition and impact assessment. |
-| `nextAction` | `string \| null` | Optional | Prescribed next action. |
-| `reportReferences` | `string[]` | Optional | Array of file paths to generated artifacts or reports. |
-| `timestamps` | `object` | **Yes** | `{ startedAt: string, updatedAt: string, completedAt?: string \| null }`. |
+| Field              | Type                | Required | Description                                                                                                  |
+| ------------------ | ------------------- | -------- | ------------------------------------------------------------------------------------------------------------ |
+| `schemaVersion`    | `'1.0.0'`           | **Yes**  | Strict contract version. Unsupported versions are rejected.                                                  |
+| `eventId`          | `string`            | **Yes**  | Alphanumeric identifier (`/^[a-zA-Z0-9_\-\.]{3,64}$/`).                                                      |
+| `operationId`      | `string`            | **Yes**  | Correlating identifier grouping related lifecycle events.                                                    |
+| `eventType`        | `ActivityEventType` | **Yes**  | One of the 14 operational event types.                                                                       |
+| `status`           | `ActivityStatus`    | **Yes**  | Observed reality (`pending`, `running`, `passed`, `failed`, `warning`, `blocked`, `completed`, `cancelled`). |
+| `title`            | `string`            | **Yes**  | Non-empty string (1–200 characters).                                                                         |
+| `summary`          | `string \| null`    | Optional | Context or mandate description (max 2000 characters).                                                        |
+| `phase`            | `string \| null`    | Optional | Stage or phase label (e.g., `'Phase 1'`).                                                                    |
+| `agent`            | `string \| null`    | Optional | Specialist agent identifier (e.g., `'resilience-reviewer'`).                                                 |
+| `skill`            | `string \| null`    | Optional | Applied skill identifier (e.g., `'clean-code'`).                                                             |
+| `domain`           | `string \| null`    | Optional | Domain specialization focus.                                                                                 |
+| `progress`         | `ActivityProgress`  | Optional | Authoritative execution progress counters.                                                                   |
+| `evidence`         | `any`               | Optional | Authoritative verification findings. **Mandatory for `validation_passed`**.                                  |
+| `error`            | `object \| null`    | Optional | Failure message, code, and remedy. **Mandatory for `validation_failed`**.                                    |
+| `warning`          | `object \| null`    | Optional | Warning condition and impact assessment.                                                                     |
+| `nextAction`       | `string \| null`    | Optional | Prescribed next action.                                                                                      |
+| `reportReferences` | `string[]`          | Optional | Array of file paths to generated artifacts or reports.                                                       |
+| `timestamps`       | `object`            | **Yes**  | `{ startedAt: string, updatedAt: string, completedAt?: string \| null }`.                                    |
 
 ---
 
@@ -106,4 +107,3 @@ const termOutput = renderTerminal(event);
 const plainOutput = renderPlainText(event);
 const jsonOutput = renderStructured(event);
 ```
-

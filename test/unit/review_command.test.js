@@ -6,7 +6,12 @@
  * Phase 1N & 1O: Testing CLI Plan and Execute Modes with JSON Telemetry
  */
 
-const { cmdReview, deduplicateFindings, compareToReference, FIXTURES } = require('../../src/commands/review');
+const {
+  cmdReview,
+  deduplicateFindings,
+  compareToReference,
+  FIXTURES,
+} = require('../../src/commands/review');
 
 describe('Phase 1N & 1O: tk review CLI Command Modes', () => {
   let originalExitCode;

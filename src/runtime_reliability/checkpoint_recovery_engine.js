@@ -50,7 +50,8 @@ class CheckpointRecoveryEngine {
    */
   createCheckpoint(data) {
     const timestamp = new Date().toISOString();
-    const checkpointId = data.checkpointId || `ckpt_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+    const checkpointId =
+      data.checkpointId || `ckpt_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
 
     const raw = {
       checkpointId,
@@ -93,7 +94,7 @@ class CheckpointRecoveryEngine {
           evidence: `error: ${err.message}`,
           remediation: 'Do not restore from malformed checkpoints; restart workflow cleanly.',
           verdict: 'FAIL',
-        })
+        }),
       );
       return { isValid: false, findingsCount: findings.length, findings };
     }
@@ -102,7 +103,7 @@ class CheckpointRecoveryEngine {
     const expectedHash = computeCheckpointHash(validated);
     const matches = crypto.timingSafeEqual(
       Buffer.from(validated.integrityHash, 'hex'),
-      Buffer.from(expectedHash, 'hex')
+      Buffer.from(expectedHash, 'hex'),
     );
 
     if (!matches) {
@@ -117,7 +118,7 @@ class CheckpointRecoveryEngine {
           evidence: `declaredHash: ${validated.integrityHash}, computedHash: ${expectedHash}`,
           remediation: 'Reject corrupt checkpoint and investigate disk or storage tampering.',
           verdict: 'FAIL',
-        })
+        }),
       );
       return { isValid: false, findingsCount: findings.length, findings };
     }
@@ -135,7 +136,7 @@ class CheckpointRecoveryEngine {
           evidence: `schemaVersion: ${validated.schemaVersion}`,
           remediation: 'Migrate checkpoint schema or upgrade Tribunal-Kit runtime.',
           verdict: 'FAIL',
-        })
+        }),
       );
       return { isValid: false, findingsCount: findings.length, findings };
     }
@@ -155,13 +156,13 @@ class CheckpointRecoveryEngine {
     const verification = this.verifyCheckpoint(checkpointData);
     if (!verification.isValid) {
       throw new Error(
-        `Cannot recover from invalid checkpoint: ${verification.findings[0]?.description || 'Integrity failure'}`
+        `Cannot recover from invalid checkpoint: ${verification.findings[0]?.description || 'Integrity failure'}`,
       );
     }
 
     const ckpt = verification.checkpoint;
     const completedSet = new Set(ckpt.completedTasks);
-    const tasksToResume = ckpt.pendingTasks.filter((taskId) => !completedSet.has(taskId));
+    const tasksToResume = ckpt.pendingTasks.filter(taskId => !completedSet.has(taskId));
 
     return {
       canResume: true,

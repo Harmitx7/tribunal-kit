@@ -2,7 +2,7 @@
 
 > **Authority**: OpenTelemetry Specification (`https://opentelemetry.io/docs/specs/semconv/`)  
 > **Applicable Domains**: Observability, Distributed Tracing, Metrics, Site Reliability Engineering  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -30,37 +30,42 @@ import { trace, SpanKind, SpanStatusCode } from '@opentelemetry/api';
 const tracer = trace.getTracer('api-gateway', '1.0.0');
 
 export async function handleRequest(req: Request): Promise<Response> {
-  return tracer.startActiveSpan('HTTP ' + req.method, {
-    kind: SpanKind.SERVER,
-    attributes: {
-      'http.request.method': req.method,
-      'url.full': req.url,
-      'url.path': new URL(req.url).pathname,
-      'user_agent.original': req.headers.get('user-agent') || 'unknown',
-      'network.peer.address': req.headers.get('x-forwarded-for') || 'unknown',
-    }
-  }, async (span) => {
-    try {
-      const response = await routeRequest(req);
-      span.setAttribute('http.response.status_code', response.status);
-      if (response.status >= 500) {
-        span.setStatus({ code: SpanStatusCode.ERROR, message: `HTTP ${response.status}` });
+  return tracer.startActiveSpan(
+    'HTTP ' + req.method,
+    {
+      kind: SpanKind.SERVER,
+      attributes: {
+        'http.request.method': req.method,
+        'url.full': req.url,
+        'url.path': new URL(req.url).pathname,
+        'user_agent.original': req.headers.get('user-agent') || 'unknown',
+        'network.peer.address': req.headers.get('x-forwarded-for') || 'unknown',
+      },
+    },
+    async span => {
+      try {
+        const response = await routeRequest(req);
+        span.setAttribute('http.response.status_code', response.status);
+        if (response.status >= 500) {
+          span.setStatus({ code: SpanStatusCode.ERROR, message: `HTTP ${response.status}` });
+        }
+        return response;
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          span.recordException(err);
+          span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
+        }
+        throw err;
+      } finally {
+        span.end();
       }
-      return response;
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        span.recordException(err);
-        span.setStatus({ code: SpanStatusCode.ERROR, message: err.message });
-      }
-      throw err;
-    } finally {
-      span.end();
-    }
-  });
+    },
+  );
 }
 ```
 
 ### Database Spans
+
 - `db.system`: `"postgresql"`, `"mysql"`, `"redis"`, `"mongodb"`
 - `db.operation`: `"SELECT"`, `"INSERT"`, `"UPDATE"`
 - `db.collection.name`: Target table or collection name
@@ -80,16 +85,21 @@ const meter = metrics.getMeter('order-service', '1.0.0');
 // 1. Rate (Total Requests)
 const requestCounter = meter.createCounter('http.server.requests', {
   description: 'Total number of HTTP requests processed',
-  unit: '{request}'
+  unit: '{request}',
 });
 
 // 2. Duration (Latency Distribution)
 const durationHistogram = meter.createHistogram('http.server.duration', {
   description: 'Duration of HTTP requests',
-  unit: 'ms'
+  unit: 'ms',
 });
 
-export function recordTelemetry(method: string, route: string, status: number, durationMs: number): void {
+export function recordTelemetry(
+  method: string,
+  route: string,
+  status: number,
+  durationMs: number,
+): void {
   const labels = { 'http.method': method, 'http.route': route, 'http.status_code': status };
   requestCounter.add(1, labels);
   durationHistogram.record(durationMs, labels);
@@ -101,6 +111,7 @@ export function recordTelemetry(method: string, route: string, status: number, d
 ## 4. Sensitive Data Masking & PII Redaction
 
 Attributes stored in traces and metrics are broadcast to downstream observability collectors:
+
 - **Forbidden in Spans**: Passwords, API tokens, JWTs, credit card numbers, authorization headers.
 - Sanitize URLs: Strip query strings containing sensitive query parameters (e.g. `?token=...`).
 

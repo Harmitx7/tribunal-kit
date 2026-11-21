@@ -3,6 +3,9 @@ name: api-architect
 description: Builder agent specializing in designing robust API contracts. Generates REST, GraphQL, and tRPC structures based on modern patterns (cursor pagination, RFC 9457 errors, versioning, idempotent design). Works closely with api-patterns and data-validation-schemas skills. Use when planning a new API or extending an existing one.
 version: 3.0.0
 last-updated: 2026-07-29
+status: deprecated
+successor: backend-specialist
+deprecation_notice: Subsumed by backend-specialist to improve token efficiency and unify backend API architecture.
 skills:
   - api-patterns
   - data-validation-schemas

@@ -76,9 +76,10 @@ function evaluate() {
       // Flexible: actual target contains expected or vice versa
       const actualLower = (route.target || '').toLowerCase();
       const expectedLower = tc.expectedTarget.toLowerCase();
-      targetMatch = actualLower.includes(expectedLower) ||
-                    expectedLower.includes(actualLower) ||
-                    actualLower === expectedLower;
+      targetMatch =
+        actualLower.includes(expectedLower) ||
+        expectedLower.includes(actualLower) ||
+        actualLower === expectedLower;
     }
     detail.pass.target = targetMatch;
     if (targetMatch) results.targetCorrect++;
@@ -132,15 +133,27 @@ function evaluate() {
   const outOfScopeCases = dataset.cases.filter(c => c.category === 'out-of-scope').length;
 
   results.metrics = {
-    operationAccuracy: `${results.operationCorrect}/${results.total} (${(results.operationCorrect/results.total*100).toFixed(1)}%)`,
-    skillAccuracy: `${results.skillCorrect}/${results.total} (${(results.skillCorrect/results.total*100).toFixed(1)}%)`,
-    targetAccuracy: `${results.targetCorrect}/${results.total} (${(results.targetCorrect/results.total*100).toFixed(1)}%)`,
-    uncertaintyAccuracy: `${results.uncertaintyCorrect}/${results.total} (${(results.uncertaintyCorrect/results.total*100).toFixed(1)}%)`,
-    securityDetection: securityCases > 0 ? `${results.securityCorrect}/${securityCases} (${(results.securityCorrect/securityCases*100).toFixed(1)}%)` : 'N/A',
-    ambiguityDetection: ambiguousCases > 0 ? `${results.ambiguityCorrect}/${ambiguousCases} (${(results.ambiguityCorrect/ambiguousCases*100).toFixed(1)}%)` : 'N/A',
-    contradictionDetection: contradictionCases > 0 ? `${results.contradictionCorrect}/${contradictionCases} (${(results.contradictionCorrect/contradictionCases*100).toFixed(1)}%)` : 'N/A',
-    outOfScopeDetection: outOfScopeCases > 0 ? `${results.outOfScopeCorrect}/${outOfScopeCases} (${(results.outOfScopeCorrect/outOfScopeCases*100).toFixed(1)}%)` : 'N/A',
-    overallPassRate: `${results.total - results.failures.length}/${results.total} (${((results.total - results.failures.length)/results.total*100).toFixed(1)}%)`,
+    operationAccuracy: `${results.operationCorrect}/${results.total} (${((results.operationCorrect / results.total) * 100).toFixed(1)}%)`,
+    skillAccuracy: `${results.skillCorrect}/${results.total} (${((results.skillCorrect / results.total) * 100).toFixed(1)}%)`,
+    targetAccuracy: `${results.targetCorrect}/${results.total} (${((results.targetCorrect / results.total) * 100).toFixed(1)}%)`,
+    uncertaintyAccuracy: `${results.uncertaintyCorrect}/${results.total} (${((results.uncertaintyCorrect / results.total) * 100).toFixed(1)}%)`,
+    securityDetection:
+      securityCases > 0
+        ? `${results.securityCorrect}/${securityCases} (${((results.securityCorrect / securityCases) * 100).toFixed(1)}%)`
+        : 'N/A',
+    ambiguityDetection:
+      ambiguousCases > 0
+        ? `${results.ambiguityCorrect}/${ambiguousCases} (${((results.ambiguityCorrect / ambiguousCases) * 100).toFixed(1)}%)`
+        : 'N/A',
+    contradictionDetection:
+      contradictionCases > 0
+        ? `${results.contradictionCorrect}/${contradictionCases} (${((results.contradictionCorrect / contradictionCases) * 100).toFixed(1)}%)`
+        : 'N/A',
+    outOfScopeDetection:
+      outOfScopeCases > 0
+        ? `${results.outOfScopeCorrect}/${outOfScopeCases} (${((results.outOfScopeCorrect / outOfScopeCases) * 100).toFixed(1)}%)`
+        : 'N/A',
+    overallPassRate: `${results.total - results.failures.length}/${results.total} (${(((results.total - results.failures.length) / results.total) * 100).toFixed(1)}%)`,
   };
 
   return results;
@@ -160,21 +173,33 @@ Object.entries(results.metrics).forEach(([k, v]) => {
 if (results.failures.length > 0) {
   console.log(`\nFailures (${results.failures.length}):`);
   results.failures.forEach(f => {
-    const failedChecks = Object.entries(f.pass).filter(([_, v]) => !v).map(([k]) => k);
+    const failedChecks = Object.entries(f.pass)
+      .filter(([_, v]) => !v)
+      .map(([k]) => k);
     console.log(`  ${f.id} [${f.category}]: failed {${failedChecks.join(', ')}}`);
-    console.log(`    Expected op=${f.expected.operation} skill=${f.expected.skill} target=${JSON.stringify(f.expected.target)} unc=${f.expected.uncertainty}`);
-    console.log(`    Actual   op=${f.actual.operation} skill=${f.actual.skill} target=${JSON.stringify(f.actual.target)} unc=${f.actual.uncertainty}`);
+    console.log(
+      `    Expected op=${f.expected.operation} skill=${f.expected.skill} target=${JSON.stringify(f.expected.target)} unc=${f.expected.uncertainty}`,
+    );
+    console.log(
+      `    Actual   op=${f.actual.operation} skill=${f.actual.skill} target=${JSON.stringify(f.actual.target)} unc=${f.actual.uncertainty}`,
+    );
   });
 }
 
 console.log('\n══════════════════════════════════════════════════════════════\n');
 
 // Output machine-readable JSON
-const outputPath = path.join(__dirname, '..', 'test', 'fixtures', 'codebase_intelligence_adversarial', 'phase15_heldout_eval_results.json');
+const outputPath = path.join(
+  __dirname,
+  '..',
+  'test',
+  'fixtures',
+  'codebase_intelligence_adversarial',
+  'phase15_heldout_eval_results.json',
+);
 require('fs').writeFileSync(outputPath, JSON.stringify(results, null, 2));
 console.log(`Results written to: ${outputPath}`);
 
 // Exit with code based on pass rate
 const passRate = (results.total - results.failures.length) / results.total;
 process.exit(passRate >= 0.7 ? 0 : 1);
-

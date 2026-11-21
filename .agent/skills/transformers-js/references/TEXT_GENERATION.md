@@ -16,11 +16,9 @@ Guide to generating text with Transformers.js, including streaming and chat form
 ```javascript
 import { pipeline } from '@huggingface/transformers';
 
-const generator = await pipeline(
-  'text-generation',
-  'onnx-community/Qwen2.5-0.5B-Instruct',
-  { dtype: 'q4' }
-);
+const generator = await pipeline('text-generation', 'onnx-community/Qwen2.5-0.5B-Instruct', {
+  dtype: 'q4',
+});
 
 const result = await generator('Once upon a time', {
   max_new_tokens: 100,
@@ -42,16 +40,14 @@ Stream tokens as they're generated for better UX. Once you understand streaming,
 ```javascript
 import { pipeline, TextStreamer } from '@huggingface/transformers';
 
-const generator = await pipeline(
-  'text-generation',
-  'onnx-community/Qwen2.5-0.5B-Instruct',
-  { dtype: 'q4' }
-);
+const generator = await pipeline('text-generation', 'onnx-community/Qwen2.5-0.5B-Instruct', {
+  dtype: 'q4',
+});
 
 const streamer = new TextStreamer(generator.tokenizer, {
   skip_prompt: true,
   skip_special_tokens: true,
-  callback_function: (token) => {
+  callback_function: token => {
     process.stdout.write(token);
   },
 });
@@ -68,41 +64,42 @@ await generator('Tell me a story', {
 ```html
 <!DOCTYPE html>
 <html>
-<body>
-  <textarea id="prompt" placeholder="Enter prompt..."></textarea>
-  <button onclick="generate()">Generate</button>
-  <div id="output"></div>
+  <body>
+    <textarea id="prompt" placeholder="Enter prompt..."></textarea>
+    <button onclick="generate()">Generate</button>
+    <div id="output"></div>
 
-  <script type="module">
-    import { pipeline, TextStreamer } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4';
-    
-    const generator = await pipeline(
-      'text-generation',
-      'onnx-community/Qwen2.5-0.5B-Instruct',
-      { dtype: 'q4' }
-    );
-    
-    window.generate = async function() {
-      const prompt = document.getElementById('prompt').value;
-      const outputDiv = document.getElementById('output');
-      outputDiv.textContent = '';
-      
-      const streamer = new TextStreamer(generator.tokenizer, {
-        skip_prompt: true,
-        skip_special_tokens: true,
-        callback_function: (token) => {
-          outputDiv.textContent += token;
-        },
+    <script type="module">
+      import {
+        pipeline,
+        TextStreamer,
+      } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4';
+
+      const generator = await pipeline('text-generation', 'onnx-community/Qwen2.5-0.5B-Instruct', {
+        dtype: 'q4',
       });
-      
-      await generator(prompt, {
-        max_new_tokens: 200,
-        temperature: 0.7,
-        streamer,
-      });
-    };
-  </script>
-</body>
+
+      window.generate = async function () {
+        const prompt = document.getElementById('prompt').value;
+        const outputDiv = document.getElementById('output');
+        outputDiv.textContent = '';
+
+        const streamer = new TextStreamer(generator.tokenizer, {
+          skip_prompt: true,
+          skip_special_tokens: true,
+          callback_function: token => {
+            outputDiv.textContent += token;
+          },
+        });
+
+        await generator(prompt, {
+          max_new_tokens: 200,
+          temperature: 0.7,
+          streamer,
+        });
+      };
+    </script>
+  </body>
 </html>
 ```
 
@@ -117,26 +114,26 @@ function StreamingGenerator() {
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleGenerate = async (prompt) => {
+  const handleGenerate = async prompt => {
     if (!prompt) return;
-    
+
     setLoading(true);
     setOutput('');
-    
+
     // Load model on first generate
     if (!generatorRef.current) {
       generatorRef.current = await pipeline(
         'text-generation',
         'onnx-community/Qwen2.5-0.5B-Instruct',
-        { dtype: 'q4' }
+        { dtype: 'q4' },
       );
     }
-    
+
     const streamer = new TextStreamer(generatorRef.current.tokenizer, {
       skip_prompt: true,
       skip_special_tokens: true,
-      callback_function: (token) => {
-        setOutput((prev) => prev + token);
+      callback_function: token => {
+        setOutput(prev => prev + token);
       },
     });
 
@@ -145,7 +142,7 @@ function StreamingGenerator() {
       temperature: 0.7,
       streamer,
     });
-    
+
     setLoading(false);
   };
 
@@ -178,15 +175,13 @@ Use structured messages for conversations. Works with both basic generation and 
 ```javascript
 import { pipeline } from '@huggingface/transformers';
 
-const generator = await pipeline(
-  'text-generation',
-  'onnx-community/Qwen2.5-0.5B-Instruct',
-  { dtype: 'q4' }
-);
+const generator = await pipeline('text-generation', 'onnx-community/Qwen2.5-0.5B-Instruct', {
+  dtype: 'q4',
+});
 
 const messages = [
   { role: 'system', content: 'You are a helpful assistant.' },
-  { role: 'user', content: 'How do I create an async function?' }
+  { role: 'user', content: 'How do I create an async function?' },
 ];
 
 const result = await generator(messages, {
@@ -204,7 +199,7 @@ const conversation = [
   { role: 'system', content: 'You are a helpful assistant.' },
   { role: 'user', content: 'What is JavaScript?' },
   { role: 'assistant', content: 'JavaScript is a programming language...' },
-  { role: 'user', content: 'Can you show an example?' }
+  { role: 'user', content: 'Can you show an example?' },
 ];
 
 const result = await generator(conversation, {
@@ -223,27 +218,28 @@ const result = await generator(conversation, {
 ```javascript
 await generator(prompt, {
   // Token limits
-  max_new_tokens: 512,        // Maximum tokens to generate
-  min_new_tokens: 0,          // Minimum tokens to generate
-  
+  max_new_tokens: 512, // Maximum tokens to generate
+  min_new_tokens: 0, // Minimum tokens to generate
+
   // Sampling
-  temperature: 0.7,           // Randomness (0.0-2.0)
-  top_k: 50,                  // Consider top K tokens
-  top_p: 0.95,                // Nucleus sampling
-  do_sample: true,            // Use random sampling (false = always pick most likely token)
-  
+  temperature: 0.7, // Randomness (0.0-2.0)
+  top_k: 50, // Consider top K tokens
+  top_p: 0.95, // Nucleus sampling
+  do_sample: true, // Use random sampling (false = always pick most likely token)
+
   // Repetition control
-  repetition_penalty: 1.0,    // Penalty for repeating (1.0 = no penalty)
-  no_repeat_ngram_size: 0,    // Prevent repeating n-grams
-  
+  repetition_penalty: 1.0, // Penalty for repeating (1.0 = no penalty)
+  no_repeat_ngram_size: 0, // Prevent repeating n-grams
+
   // Streaming
-  streamer: streamer,         // TextStreamer instance
+  streamer: streamer, // TextStreamer instance
 });
 ```
 
 ### Parameter Effects
 
 **Temperature:**
+
 - Low (0.1-0.5): More focused and deterministic
 - Medium (0.6-0.9): Balanced creativity and coherence
 - High (1.0-2.0): More creative and random
@@ -260,23 +256,23 @@ await generator(prompt, { temperature: 1.2, max_new_tokens: 100 });
 
 ```javascript
 // Greedy (deterministic)
-await generator(prompt, { 
+await generator(prompt, {
   do_sample: false,
-  max_new_tokens: 100 
+  max_new_tokens: 100,
 });
 
 // Top-k sampling
-await generator(prompt, { 
+await generator(prompt, {
   top_k: 50,
   temperature: 0.7,
-  max_new_tokens: 100 
+  max_new_tokens: 100,
 });
 
 // Top-p (nucleus) sampling
-await generator(prompt, { 
+await generator(prompt, {
   top_p: 0.95,
   temperature: 0.7,
-  max_new_tokens: 100 
+  max_new_tokens: 100,
 });
 ```
 
@@ -293,6 +289,7 @@ Browse available text generation models on Hugging Face Hub:
 - **Large models (> 3B params)**: High quality, slower, best for Node.js with `dtype: 'fp16'`
 
 Check model cards for:
+
 - Parameter count and model size
 - Supported languages
 - Benchmark scores

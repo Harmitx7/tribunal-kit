@@ -145,24 +145,24 @@ function visibleWidth(text) {
     const code = clean.charCodeAt(i);
 
     // Control characters and DEL
-    if (code < 32 || (code >= 0x7F && code < 0xA0)) {
+    if (code < 32 || (code >= 0x7f && code < 0xa0)) {
       continue;
     }
 
     // Zero-width characters (zero-width space, joiners, BOM)
-    if (code === 0x200B || code === 0x200C || code === 0x200D || code === 0xFEFF) {
+    if (code === 0x200b || code === 0x200c || code === 0x200d || code === 0xfeff) {
       continue;
     }
 
     // Combining diacritical marks
-    if (code >= 0x0300 && code <= 0x036F) {
+    if (code >= 0x0300 && code <= 0x036f) {
       continue;
     }
 
     // Surrogate pair (emojis and supplemental characters)
-    if (code >= 0xD800 && code <= 0xDBFF) {
+    if (code >= 0xd800 && code <= 0xdbff) {
       const nextCode = clean.charCodeAt(i + 1);
-      if (nextCode >= 0xDC00 && nextCode <= 0xDFFF) {
+      if (nextCode >= 0xdc00 && nextCode <= 0xdfff) {
         i++;
         width += 2; // Emojis and extended plane ideographs occupy 2 terminal columns
         continue;
@@ -171,14 +171,14 @@ function visibleWidth(text) {
 
     // CJK and Fullwidth forms
     if (
-      (code >= 0x1100 && code <= 0x115F) ||
-      (code >= 0x2E80 && code <= 0x9FFF) ||
-      (code >= 0xAC00 && code <= 0xD7A3) ||
-      (code >= 0xF900 && code <= 0xFAFF) ||
-      (code >= 0xFE10 && code <= 0xFE19) ||
-      (code >= 0xFE30 && code <= 0xFE6F) ||
-      (code >= 0xFF00 && code <= 0xFF60) ||
-      (code >= 0xFFE0 && code <= 0xFFE6)
+      (code >= 0x1100 && code <= 0x115f) ||
+      (code >= 0x2e80 && code <= 0x9fff) ||
+      (code >= 0xac00 && code <= 0xd7a3) ||
+      (code >= 0xf900 && code <= 0xfaff) ||
+      (code >= 0xfe10 && code <= 0xfe19) ||
+      (code >= 0xfe30 && code <= 0xfe6f) ||
+      (code >= 0xff00 && code <= 0xff60) ||
+      (code >= 0xffe0 && code <= 0xffe6)
     ) {
       width += 2;
       continue;
@@ -211,7 +211,10 @@ function sanitizeTerminal(input, options = {}) {
       .replace(/sk-ant-[A-Za-z0-9\-._~]+/g, 'sk-ant-[REDACTED_API_KEY]')
       .replace(/sk-proj-[A-Za-z0-9\-._~]+/g, 'sk-proj-[REDACTED_API_KEY]')
       .replace(/eyJ[A-Za-z0-9\-_]+\.eyJ[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+/g, '[REDACTED_JWT]')
-      .replace(/-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g, '[REDACTED_PRIVATE_KEY]');
+      .replace(
+        /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g,
+        '[REDACTED_PRIVATE_KEY]',
+      );
   }
 
   // 2. Neutralize dangerous terminal control codes & escape sequences

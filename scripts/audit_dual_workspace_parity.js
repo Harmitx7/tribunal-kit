@@ -53,13 +53,41 @@ function syncAndAuditParity() {
   console.log(`│  • Outer Workspace: ${OUTER_ROOT}`);
 
   const targets = [
-    { inner: path.join(INNER_ROOT, '.agent', 'skill_topic_map.json'), outer: path.join(OUTER_ROOT, '.agent', 'skill_topic_map.json'), isFile: true },
-    { inner: path.join(INNER_ROOT, '.agent', 'config'), outer: path.join(OUTER_ROOT, '.agent', 'config'), isFile: false },
-    { inner: path.join(INNER_ROOT, '.agent', 'workflows'), outer: path.join(OUTER_ROOT, '.agent', 'workflows'), isFile: false },
-    { inner: path.join(INNER_ROOT, '.agent', 'rules'), outer: path.join(OUTER_ROOT, '.agent', 'rules'), isFile: false },
-    { inner: path.join(INNER_ROOT, '.agent', 'agents'), outer: path.join(OUTER_ROOT, '.agent', 'agents'), isFile: false },
-    { inner: path.join(INNER_ROOT, '.agent', 'skills'), outer: path.join(OUTER_ROOT, '.agent', 'skills'), isFile: false },
-    { inner: path.join(INNER_ROOT, 'skills'), outer: path.join(OUTER_ROOT, 'skills'), isFile: false },
+    {
+      inner: path.join(INNER_ROOT, '.agent', 'skill_topic_map.json'),
+      outer: path.join(OUTER_ROOT, '.agent', 'skill_topic_map.json'),
+      isFile: true,
+    },
+    {
+      inner: path.join(INNER_ROOT, '.agent', 'config'),
+      outer: path.join(OUTER_ROOT, '.agent', 'config'),
+      isFile: false,
+    },
+    {
+      inner: path.join(INNER_ROOT, '.agent', 'workflows'),
+      outer: path.join(OUTER_ROOT, '.agent', 'workflows'),
+      isFile: false,
+    },
+    {
+      inner: path.join(INNER_ROOT, '.agent', 'rules'),
+      outer: path.join(OUTER_ROOT, '.agent', 'rules'),
+      isFile: false,
+    },
+    {
+      inner: path.join(INNER_ROOT, '.agent', 'agents'),
+      outer: path.join(OUTER_ROOT, '.agent', 'agents'),
+      isFile: false,
+    },
+    {
+      inner: path.join(INNER_ROOT, '.agent', 'skills'),
+      outer: path.join(OUTER_ROOT, '.agent', 'skills'),
+      isFile: false,
+    },
+    {
+      inner: path.join(INNER_ROOT, 'skills'),
+      outer: path.join(OUTER_ROOT, 'skills'),
+      isFile: false,
+    },
   ];
 
   let totalFiles = 0;
@@ -126,4 +154,3 @@ if (require.main === module) {
 }
 
 module.exports = { syncAndAuditParity };
-

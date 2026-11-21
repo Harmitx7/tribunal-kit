@@ -32,18 +32,47 @@ const {
 } = require('./_colors');
 
 const RESULTS = [];
+const SHELL_META_REGEX = /[;&|><$`\\%^!"()\r\n]/;
+
+function resolveLinterTool(cmd0) {
+  if (process.platform === 'win32') {
+    const lower = cmd0.toLowerCase();
+    if (lower === 'npm' || lower === 'npm.cmd') {
+      const npmCli = path.join(
+        path.dirname(process.execPath),
+        'node_modules',
+        'npm',
+        'bin',
+        'npm-cli.js',
+      );
+      if (fs.existsSync(npmCli)) return { bin: process.execPath, prefix: [npmCli] };
+    } else if (lower === 'npx' || lower === 'npx.cmd') {
+      const npxCli = path.join(
+        path.dirname(process.execPath),
+        'node_modules',
+        'npm',
+        'bin',
+        'npx-cli.js',
+      );
+      if (fs.existsSync(npxCli)) return { bin: process.execPath, prefix: [npxCli, '--no-install'] };
+    }
+  }
+  return { bin: cmd0, prefix: [] };
+}
 
 function runLinter(label, cmd, cwd) {
   const elapsed = timer();
   try {
-    const isWindows = process.platform === 'win32';
-    const executable =
-      isWindows && (cmd[0] === 'npx' || cmd[0] === 'npm') ? `${cmd[0]}.cmd` : cmd[0];
-    const result = spawnSync(executable, cmd.slice(1), {
+    const { bin, prefix } = resolveLinterTool(cmd[0]);
+    const fullArgs = [...prefix, ...cmd.slice(1)];
+    if (cmd[0] === 'npx' && !fullArgs.includes('--no-install')) {
+      fullArgs.unshift('--no-install');
+    }
+    const result = spawnSync(bin, fullArgs, {
       cwd,
       encoding: 'utf8',
       timeout: 120000,
-      shell: isWindows,
+      shell: false,
     });
 
     const ms = elapsed();
@@ -123,10 +152,19 @@ function main() {
     if (args[i] === '--fix') fixFlag = true;
     else if (args[i] === '--files') {
       i++;
-      while (i < args.length && !args[i].startsWith('--')) {
-        fileArgs.push(args[i++]);
+      while (i < args.length) {
+        const candidate = args[i++];
+        if (candidate.startsWith('-')) {
+          fail(`Security Violation: File argument cannot start with dash: ${candidate}`);
+          process.exit(1);
+        }
+        if (SHELL_META_REGEX.test(candidate)) {
+          fail(`Security Violation: Shell metacharacter detected in file argument: ${candidate}`);
+          process.exit(1);
+        }
+        fileArgs.push(candidate);
       }
-      continue;
+      break;
     } else if (!targetPath && !args[i].startsWith('-')) {
       targetPath = args[i];
     }

@@ -142,10 +142,16 @@ function computeRequestFingerprint(req) {
     return crypto.createHash('sha256').update('invalid').digest('hex');
   }
 
-  const reviewerId = String(req.reviewer_id || '').trim().toLowerCase();
+  const reviewerId = String(req.reviewer_id || '')
+    .trim()
+    .toLowerCase();
   const target = normalizeTargetPath(String(req.target || '')).toLowerCase();
-  const targetType = String(req.target_type || req.evidence_type || 'file').trim().toLowerCase();
-  const category = String(req.category || '').trim().toUpperCase();
+  const targetType = String(req.target_type || req.evidence_type || 'file')
+    .trim()
+    .toLowerCase();
+  const category = String(req.category || '')
+    .trim()
+    .toUpperCase();
   const symbol = String(req.symbol || '').trim();
   const lines = String(req.requested_lines || '').trim();
   const evidenceIds = Array.isArray(req.evidence_ids)
@@ -210,7 +216,10 @@ function validateEvidenceRequest(rawReq, context = {}) {
 
   // 2. Schema version check
   if (rawReq.schema_version !== undefined && rawReq.schema_version !== null) {
-    if (rawReq.schema_version !== EVIDENCE_REQUEST_SCHEMA_VERSION && rawReq.schema_version !== '1') {
+    if (
+      rawReq.schema_version !== EVIDENCE_REQUEST_SCHEMA_VERSION &&
+      rawReq.schema_version !== '1'
+    ) {
       return {
         valid: false,
         error: `Unsupported schema_version: ${rawReq.schema_version}. Expected ${EVIDENCE_REQUEST_SCHEMA_VERSION}.`,
@@ -230,9 +239,10 @@ function validateEvidenceRequest(rawReq, context = {}) {
   }
 
   if (context.activeReviewers) {
-    const activeSet = context.activeReviewers instanceof Set
-      ? context.activeReviewers
-      : new Set(context.activeReviewers);
+    const activeSet =
+      context.activeReviewers instanceof Set
+        ? context.activeReviewers
+        : new Set(context.activeReviewers);
     if (!activeSet.has(rawReviewerId)) {
       return {
         valid: false,
@@ -290,11 +300,12 @@ function validateEvidenceRequest(rawReq, context = {}) {
   }
 
   // 7. Target type validation
-  const rawTargetType = typeof rawReq.target_type === 'string' && rawReq.target_type.trim()
-    ? rawReq.target_type.trim().toLowerCase()
-    : typeof rawReq.evidence_type === 'string' && rawReq.evidence_type.trim()
-      ? rawReq.evidence_type.trim().toLowerCase()
-      : 'file';
+  const rawTargetType =
+    typeof rawReq.target_type === 'string' && rawReq.target_type.trim()
+      ? rawReq.target_type.trim().toLowerCase()
+      : typeof rawReq.evidence_type === 'string' && rawReq.evidence_type.trim()
+        ? rawReq.evidence_type.trim().toLowerCase()
+        : 'file';
 
   if (!VALID_TARGET_TYPES_SET.has(rawTargetType)) {
     return {
@@ -418,9 +429,10 @@ function validateEvidenceRequest(rawReq, context = {}) {
     evidence_ids: evidenceIds,
   };
   const fingerprint = computeRequestFingerprint(normalizedCandidate);
-  const requestId = typeof rawReq.request_id === 'string' && rawReq.request_id.trim()
-    ? rawReq.request_id.trim().slice(0, 64)
-    : `req_${fingerprint.slice(0, 12)}`;
+  const requestId =
+    typeof rawReq.request_id === 'string' && rawReq.request_id.trim()
+      ? rawReq.request_id.trim().slice(0, 64)
+      : `req_${fingerprint.slice(0, 12)}`;
 
   const validatedRequest = {
     request_id: requestId,
@@ -500,19 +512,37 @@ class EvidenceRequestBudgetManager {
       ),
       maxTokensPerRequest: Math.min(
         HARD_CEILINGS.maxTokensPerRequest,
-        Math.max(1, options.maxTokensPerRequest !== undefined ? options.maxTokensPerRequest : DEFAULT_BUDGETS.maxTokensPerRequest),
+        Math.max(
+          1,
+          options.maxTokensPerRequest !== undefined
+            ? options.maxTokensPerRequest
+            : DEFAULT_BUDGETS.maxTokensPerRequest,
+        ),
       ),
       maxTokensPerReviewer: Math.min(
         HARD_CEILINGS.maxTokensPerReviewer,
-        Math.max(1, options.maxTokensPerReviewer !== undefined ? options.maxTokensPerReviewer : DEFAULT_BUDGETS.maxTokensPerReviewer),
+        Math.max(
+          1,
+          options.maxTokensPerReviewer !== undefined
+            ? options.maxTokensPerReviewer
+            : DEFAULT_BUDGETS.maxTokensPerReviewer,
+        ),
       ),
       maxTokensPerRun: Math.min(
         HARD_CEILINGS.maxTokensPerRun,
-        Math.max(1, options.maxTokensPerRun !== undefined ? options.maxTokensPerRun : DEFAULT_BUDGETS.maxTokensPerRun),
+        Math.max(
+          1,
+          options.maxTokensPerRun !== undefined
+            ? options.maxTokensPerRun
+            : DEFAULT_BUDGETS.maxTokensPerRun,
+        ),
       ),
       maxFailedAttemptsPerTarget: Math.min(
         HARD_CEILINGS.maxFailedAttemptsPerTarget,
-        Math.max(1, options.maxFailedAttemptsPerTarget || DEFAULT_BUDGETS.maxFailedAttemptsPerTarget),
+        Math.max(
+          1,
+          options.maxFailedAttemptsPerTarget || DEFAULT_BUDGETS.maxFailedAttemptsPerTarget,
+        ),
       ),
       timeoutMs: Math.min(
         HARD_CEILINGS.timeoutMs,

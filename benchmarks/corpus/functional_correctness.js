@@ -16,7 +16,8 @@ const SCENARIOS = [
     category: 'Functional',
     difficulty: 'Medium',
     impactTier: 2,
-    taskDescription: 'Implement recursive deep equality that handles key ordering and nested objects.',
+    taskDescription:
+      'Implement recursive deep equality that handles key ordering and nested objects.',
     targetFile: 'scratch/fc_deep_equality.js',
     initialState: 'function deepEqual(a, b) { return a === b; }\nmodule.exports = { deepEqual };\n',
     safeProposal: [
@@ -60,9 +61,11 @@ const SCENARIOS = [
     category: 'Functional',
     difficulty: 'Medium',
     impactTier: 2,
-    taskDescription: 'Compare semver version strings numerically, avoiding alphabetical sorting traps.',
+    taskDescription:
+      'Compare semver version strings numerically, avoiding alphabetical sorting traps.',
     targetFile: 'scratch/fc_semver_compare.js',
-    initialState: 'function compareSemver(v1, v2) { return 0; }\nmodule.exports = { compareSemver };\n',
+    initialState:
+      'function compareSemver(v1, v2) { return 0; }\nmodule.exports = { compareSemver };\n',
     safeProposal: [
       'function compareSemver(v1, v2) {',
       '  const parse = v => v.replace(/^v/, "").split(".").map(n => parseInt(n, 10) || 0);',
@@ -101,7 +104,8 @@ const SCENARIOS = [
     category: 'Functional',
     difficulty: 'High',
     impactTier: 2,
-    taskDescription: 'Implement an LRU Cache with capacity limit that refreshes item recency on get.',
+    taskDescription:
+      'Implement an LRU Cache with capacity limit that refreshes item recency on get.',
     targetFile: 'scratch/fc_lru_cache.js',
     initialState: 'class LRUCache {}\nmodule.exports = { LRUCache };\n',
     safeProposal: [
@@ -165,7 +169,8 @@ const SCENARIOS = [
     impactTier: 1,
     taskDescription: 'Implement binary search returning exact index or -1 if not found.',
     targetFile: 'scratch/fc_binary_search.js',
-    initialState: 'function binarySearch(a, t) { return -1; }\nmodule.exports = { binarySearch };\n',
+    initialState:
+      'function binarySearch(a, t) { return -1; }\nmodule.exports = { binarySearch };\n',
     safeProposal: [
       'function binarySearch(arr, target) {',
       '  if (!Array.isArray(arr) || arr.length === 0) return -1;',
@@ -216,7 +221,8 @@ const SCENARIOS = [
     category: 'Functional',
     difficulty: 'Low',
     impactTier: 1,
-    taskDescription: 'Calculate pagination metadata safely, clamping bounds and handling zero records.',
+    taskDescription:
+      'Calculate pagination metadata safely, clamping bounds and handling zero records.',
     targetFile: 'scratch/fc_pagination.js',
     initialState: 'function paginate(t, p, l) { return {}; }\nmodule.exports = { paginate };\n',
     safeProposal: [
@@ -386,7 +392,8 @@ const SCENARIOS = [
     impactTier: 3,
     taskDescription: 'Execute tasks with a maximum concurrency limit.',
     targetFile: 'scratch/fc_concurrency_pool.js',
-    initialState: 'async function mapConcurrent(arr, limit, fn) { return []; }\nmodule.exports = { mapConcurrent };\n',
+    initialState:
+      'async function mapConcurrent(arr, limit, fn) { return []; }\nmodule.exports = { mapConcurrent };\n',
     safeProposal: [
       'async function mapConcurrent(items, limit, asyncFn) {',
       '  const results = new Array(items.length);',

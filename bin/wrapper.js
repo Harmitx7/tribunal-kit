@@ -100,8 +100,16 @@ function getBinaryPath() {
       _cachedBinaryPath = rootBinPath;
       return rootBinPath;
     }
-  } catch {
-    // Package not found, ignore and fall back to local dev targets
+  } catch (err) {
+    if (err && err.code === 'MODULE_NOT_FOUND') {
+      if (process.env.TK_VERBOSE === '1' || process.env.VERBOSE === '1') {
+        console.debug(`\x1b[90m[wrapper] Optional native package ${pkgName} not found.\x1b[0m`);
+      }
+    } else {
+      console.warn(
+        `\x1b[93m⚠ Unexpected error resolving native package ${pkgName}: ${err ? err.message : err}\x1b[0m`,
+      );
+    }
   }
 
   // Second, try to find the binary in local dev target directories
@@ -136,9 +144,18 @@ function getBinaryPath() {
             return candidate;
           }
         }
+      } else {
+        const exitMsg = buildResult.signal
+          ? `killed by signal ${buildResult.signal}`
+          : `exit code ${buildResult.status}`;
+        console.warn(
+          `\x1b[93m⚠ Native build failed (${exitMsg}). Falling back to JS engine.\x1b[0m`,
+        );
       }
-    } catch {
-      // cargo not available or build failed, fallback gracefully
+    } catch (err) {
+      console.warn(
+        `\x1b[93m⚠ Native build execution error (${err.message}). Falling back to JS engine.\x1b[0m`,
+      );
     }
   }
 
@@ -150,8 +167,10 @@ function runRustBinary(binPath, args) {
   if (os.platform() !== 'win32') {
     try {
       fs.chmodSync(binPath, 0o755);
-    } catch {
-      // Best-effort permission check
+    } catch (err) {
+      console.warn(
+        `\x1b[93m⚠ Failed to chmod 0755 ${binPath} (${err.code || err.message}).\x1b[0m`,
+      );
     }
   }
 
@@ -224,7 +243,14 @@ function main() {
 
     if (binPath) {
       // Normalize --path <val> or --path=<val> to positional argument ONLY for commands that expect a positional path
-      const POSITIONAL_PATH_COMMANDS = new Set(['init', 'status', 'sync', 'hook', 'uninstall', 'graph']);
+      const POSITIONAL_PATH_COMMANDS = new Set([
+        'init',
+        'status',
+        'sync',
+        'hook',
+        'uninstall',
+        'graph',
+      ]);
       if (POSITIONAL_PATH_COMMANDS.has(command)) {
         const pathIdx = args.findIndex(a => a === '--path' || a.startsWith('--path='));
         if (pathIdx !== -1) {

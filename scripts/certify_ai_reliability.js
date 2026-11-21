@@ -30,7 +30,10 @@ const {
 } = require('../src/evaluation');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
-const DATASET_PATH = path.join(REPO_ROOT, 'test/fixtures/ai_reliability/evaluation_dataset_v1.json');
+const DATASET_PATH = path.join(
+  REPO_ROOT,
+  'test/fixtures/ai_reliability/evaluation_dataset_v1.json',
+);
 const OUTPUT_DIR = path.join(REPO_ROOT, 'benchmarks/artifacts');
 const OUTPUT_PATH = path.join(OUTPUT_DIR, 'ai_reliability_certification.json');
 
@@ -50,7 +53,9 @@ function runCertification() {
     process.exit(1);
   }
   const integrityCheck = auditDatasetIntegrity(dataset);
-  console.log(`│  • Dataset Integrity:        ${integrityCheck.valid ? 'VALID' : 'INVALID'} (${dataset.cases.length} cases across 30 categories)`);
+  console.log(
+    `│  • Dataset Integrity:        ${integrityCheck.valid ? 'VALID' : 'INVALID'} (${dataset.cases.length} cases across 30 categories)`,
+  );
 
   // 2. Audit Mathematical Calibration
   const brierCheck = calculateBrierScore([
@@ -59,13 +64,18 @@ function runCertification() {
     { probability: 0.5, outcome: 1 },
     { probability: 0.5, outcome: 0 },
   ]);
-  const eceCheck = calculateExpectedCalibrationError([
-    { confidence: 0.9, correct: true },
-    { confidence: 0.8, correct: true },
-    { confidence: 0.2, correct: false },
-    { confidence: 0.1, correct: false },
-  ], 5);
-  console.log(`│  • Probabilistic Scoring:    Brier: ${brierCheck.brierScore}, ECE: ${eceCheck.ece} (${eceCheck.diagnosis})`);
+  const eceCheck = calculateExpectedCalibrationError(
+    [
+      { confidence: 0.9, correct: true },
+      { confidence: 0.8, correct: true },
+      { confidence: 0.2, correct: false },
+      { confidence: 0.1, correct: false },
+    ],
+    5,
+  );
+  console.log(
+    `│  • Probabilistic Scoring:    Brier: ${brierCheck.brierScore}, ECE: ${eceCheck.ece} (${eceCheck.diagnosis})`,
+  );
 
   // 3. Audit Reviewer Agreement
   const kappaCheck = calculateCohensKappa([
@@ -77,27 +87,41 @@ function runCertification() {
     { SAFE: 3, VULNERABLE: 0 },
     { SAFE: 0, VULNERABLE: 3 },
   ]);
-  console.log(`│  • Reviewer Agreement:       Cohen's κ: ${kappaCheck.kappa}, Fleiss' κ: ${fleissCheck.kappa}`);
+  console.log(
+    `│  • Reviewer Agreement:       Cohen's κ: ${kappaCheck.kappa}, Fleiss' κ: ${fleissCheck.kappa}`,
+  );
 
   // 4. Audit Hallucination Detection & Ghost Packages
-  const ghostAudit = auditClaim({
-    id: 'CERT-GHOST',
-    assertion: 'Import ultravalidate for security',
-  }, REPO_ROOT);
-  const realAudit = auditClaim({
-    id: 'CERT-REAL',
-    assertion: 'Project main is src/cli.js',
-    evidence: [{ location: 'package.json:64' }],
-  }, REPO_ROOT);
-  console.log(`│  • Hallucination Auditor:    Ghost PKG: ${ghostAudit.verdict}, Disk Proof: ${realAudit.verdict}`);
+  const ghostAudit = auditClaim(
+    {
+      id: 'CERT-GHOST',
+      assertion: 'Import ultravalidate for security',
+    },
+    REPO_ROOT,
+  );
+  const realAudit = auditClaim(
+    {
+      id: 'CERT-REAL',
+      assertion: 'Project main is src/cli.js',
+      evidence: [{ location: 'package.json:64' }],
+    },
+    REPO_ROOT,
+  );
+  console.log(
+    `│  • Hallucination Auditor:    Ghost PKG: ${ghostAudit.verdict}, Disk Proof: ${realAudit.verdict}`,
+  );
 
   // 5. Audit Non-Masking Safety Invariant
   const safetyAudit = evaluateRegressions(
     [{ caseId: 'CRIT-01', verdict: 'FAIL', severity: 'CRITICAL' }],
-    [{ caseId: 'CRIT-01', verdict: 'PASS', severity: 'CRITICAL' }]
+    [{ caseId: 'CRIT-01', verdict: 'PASS', severity: 'CRITICAL' }],
   );
-  const safetyEnforced = !safetyAudit.safetyInvariantHeld && safetyAudit.releaseDecision === 'REJECTED_WITH_SAFETY_REGRESSION';
-  console.log(`│  • Safety Gate Invariant:    ${safetyEnforced ? 'ENFORCED' : 'FAILED'} (${safetyAudit.releaseDecision})`);
+  const safetyEnforced =
+    !safetyAudit.safetyInvariantHeld &&
+    safetyAudit.releaseDecision === 'REJECTED_WITH_SAFETY_REGRESSION';
+  console.log(
+    `│  • Safety Gate Invariant:    ${safetyEnforced ? 'ENFORCED' : 'FAILED'} (${safetyAudit.releaseDecision})`,
+  );
 
   // Verify Expected Skills on Disk
   const expectedSkills = [
@@ -112,15 +136,23 @@ function runCertification() {
     'evaluation-methodology-auditor',
   ];
   const skillsOnDisk = expectedSkills.every(s =>
-    fs.existsSync(path.join(REPO_ROOT, '.agent', 'skills', s, 'SKILL.md'))
+    fs.existsSync(path.join(REPO_ROOT, '.agent', 'skills', s, 'SKILL.md')),
   );
 
   const gates = {
-    gateA_repositoryIntegrity: fs.existsSync(DATASET_PATH) && fs.existsSync(path.join(REPO_ROOT, 'package.json')) ? 'PASS' : 'FAIL',
+    gateA_repositoryIntegrity:
+      fs.existsSync(DATASET_PATH) && fs.existsSync(path.join(REPO_ROOT, 'package.json'))
+        ? 'PASS'
+        : 'FAIL',
     gateB_skillValidity: skillsOnDisk ? 'PASS' : 'FAIL',
-    gateC_evaluationCorrectness: integrityCheck.valid && brierCheck.brierScore !== null && eceCheck.ece !== null ? 'PASS' : 'FAIL',
-    gateD_evidenceIntegrity: kappaCheck.kappa !== null && fleissCheck.kappa !== null ? 'PASS' : 'FAIL',
-    gateE_security: ghostAudit.verdict === 'CONTRADICTED' && realAudit.verdict === 'SUPPORTED' ? 'PASS' : 'FAIL',
+    gateC_evaluationCorrectness:
+      integrityCheck.valid && brierCheck.brierScore !== null && eceCheck.ece !== null
+        ? 'PASS'
+        : 'FAIL',
+    gateD_evidenceIntegrity:
+      kappaCheck.kappa !== null && fleissCheck.kappa !== null ? 'PASS' : 'FAIL',
+    gateE_security:
+      ghostAudit.verdict === 'CONTRADICTED' && realAudit.verdict === 'SUPPORTED' ? 'PASS' : 'FAIL',
     gateF_behavioralCertification: dataset.cases && dataset.cases.length >= 30 ? 'PASS' : 'FAIL',
     gateG_regressionProtection: safetyEnforced ? 'PASS' : 'FAIL',
   };

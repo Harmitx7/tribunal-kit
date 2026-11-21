@@ -23,7 +23,9 @@ class IllegalStateTransitionError extends Error {
   constructor(fromState, toState, operationId = null, reason = null) {
     const opPart = operationId ? ` for operation '${operationId}'` : '';
     const reasonPart = reason ? `: ${reason}` : '';
-    super(`Illegal lifecycle state transition${opPart} from '${fromState}' to '${toState}'${reasonPart}`);
+    super(
+      `Illegal lifecycle state transition${opPart} from '${fromState}' to '${toState}'${reasonPart}`,
+    );
     this.name = 'IllegalStateTransitionError';
     this.code = 'ILLEGAL_STATE_TRANSITION';
     this.fromState = fromState;
@@ -81,10 +83,9 @@ const LIFECYCLE_TRANSITIONS = Object.freeze({
   ]),
 });
 
-const TERMINAL_STATES = Object.freeze(new Set([
-  LIFECYCLE_STATES.COMPLETED,
-  LIFECYCLE_STATES.CANCELLED,
-]));
+const TERMINAL_STATES = Object.freeze(
+  new Set([LIFECYCLE_STATES.COMPLETED, LIFECYCLE_STATES.CANCELLED]),
+);
 
 /**
  * Checks whether transitioning from `fromState` to `toState` is legally permitted.
@@ -118,7 +119,7 @@ function assertValidTransition(fromState, toState, operationId = null) {
       fromState,
       toState,
       operationId,
-      `Allowed target states from '${fromState}': [${validTargets}]`
+      `Allowed target states from '${fromState}': [${validTargets}]`,
     );
   }
 }
@@ -130,8 +131,7 @@ function assertValidTransition(fromState, toState, operationId = null) {
  * @returns {boolean}
  */
 function isTerminalState(state) {
-  return state === LIFECYCLE_STATES.COMPLETED ||
-         state === LIFECYCLE_STATES.CANCELLED;
+  return state === LIFECYCLE_STATES.COMPLETED || state === LIFECYCLE_STATES.CANCELLED;
 }
 
 /**

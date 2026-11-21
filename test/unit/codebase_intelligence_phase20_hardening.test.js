@@ -49,7 +49,7 @@ describe('Phase 20: Architecture Hardening & Failure-Injection Gauntlet', () => 
   describe('1. Artifact Failure Injection & Rejection Reliability', () => {
     test('P20-T1.1: Certification logic rejects missing Phase 19 artifact', () => {
       const nonExistentPath = path.join(tempRoot, 'missing_phase19_artifact.json');
-      const validateArtifact = (filePath) => {
+      const validateArtifact = filePath => {
         if (!fs.existsSync(filePath)) {
           throw new Error(`Missing required artifact: ${filePath}`);
         }
@@ -72,18 +72,22 @@ describe('Phase 20: Architecture Hardening & Failure-Injection Gauntlet', () => 
           verdict: 'CERTIFICATION_INCOMPLETE',
           totalGates: 19,
           gatesPassed: 17,
-        })
+        }),
       );
 
-      const validateArtifact = (filePath) => {
+      const validateArtifact = filePath => {
         const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
         if (data.verdict !== 'RELEASE_READY' || data.gatesPassed !== data.totalGates) {
-          throw new Error(`Artifact failed release readiness: ${data.gatesPassed}/${data.totalGates}`);
+          throw new Error(
+            `Artifact failed release readiness: ${data.gatesPassed}/${data.totalGates}`,
+          );
         }
         return true;
       };
 
-      expect(() => validateArtifact(corruptArtifactPath)).toThrow('Artifact failed release readiness: 17/19');
+      expect(() => validateArtifact(corruptArtifactPath)).toThrow(
+        'Artifact failed release readiness: 17/19',
+      );
     });
   });
 
@@ -92,7 +96,10 @@ describe('Phase 20: Architecture Hardening & Failure-Injection Gauntlet', () => 
     test('P20-T2.1: Missing package.json in analyzed repository does not crash engine', () => {
       const noPkgDir = path.join(tempRoot, 'no_pkg_repo');
       fs.mkdirSync(path.join(noPkgDir, 'src'), { recursive: true });
-      fs.writeFileSync(path.join(noPkgDir, 'src', 'index.js'), 'export const hello = () => "world";');
+      fs.writeFileSync(
+        path.join(noPkgDir, 'src', 'index.js'),
+        'export const hello = () => "world";',
+      );
 
       const ci = new CodebaseIntelligence(noPkgDir);
       const overview = ci.overview();
@@ -111,10 +118,13 @@ describe('Phase 20: Architecture Hardening & Failure-Injection Gauntlet', () => 
     test('P20-T2.2: Unresolvable relative imports produce UNRESOLVABLE_STATIC_PATH diagnostic', () => {
       const brokenImportDir = path.join(tempRoot, 'broken_imports');
       fs.mkdirSync(path.join(brokenImportDir, 'src'), { recursive: true });
-      fs.writeFileSync(path.join(brokenImportDir, 'package.json'), JSON.stringify({ name: 'broken-imports' }));
+      fs.writeFileSync(
+        path.join(brokenImportDir, 'package.json'),
+        JSON.stringify({ name: 'broken-imports' }),
+      );
       fs.writeFileSync(
         path.join(brokenImportDir, 'src', 'app.js'),
-        'import { ghost } from "./non_existent_file.js"; export const x = 1;'
+        'import { ghost } from "./non_existent_file.js"; export const x = 1;',
       );
 
       const ci = new CodebaseIntelligence(brokenImportDir);
@@ -133,11 +143,26 @@ describe('Phase 20: Architecture Hardening & Failure-Injection Gauntlet', () => 
       fs.writeFileSync(path.join(cycleDir, 'package.json'), JSON.stringify({ name: 'cycle-5' }));
 
       // Ring: a -> b -> c -> d -> e -> a
-      fs.writeFileSync(path.join(cycleDir, 'src', 'a.js'), 'import { b } from "./b.js"; export const a = 1;');
-      fs.writeFileSync(path.join(cycleDir, 'src', 'b.js'), 'import { c } from "./c.js"; export const b = 2;');
-      fs.writeFileSync(path.join(cycleDir, 'src', 'c.js'), 'import { d } from "./d.js"; export const c = 3;');
-      fs.writeFileSync(path.join(cycleDir, 'src', 'd.js'), 'import { e } from "./e.js"; export const d = 4;');
-      fs.writeFileSync(path.join(cycleDir, 'src', 'e.js'), 'import { a } from "./a.js"; export const e = 5;');
+      fs.writeFileSync(
+        path.join(cycleDir, 'src', 'a.js'),
+        'import { b } from "./b.js"; export const a = 1;',
+      );
+      fs.writeFileSync(
+        path.join(cycleDir, 'src', 'b.js'),
+        'import { c } from "./c.js"; export const b = 2;',
+      );
+      fs.writeFileSync(
+        path.join(cycleDir, 'src', 'c.js'),
+        'import { d } from "./d.js"; export const c = 3;',
+      );
+      fs.writeFileSync(
+        path.join(cycleDir, 'src', 'd.js'),
+        'import { e } from "./e.js"; export const d = 4;',
+      );
+      fs.writeFileSync(
+        path.join(cycleDir, 'src', 'e.js'),
+        'import { a } from "./a.js"; export const e = 5;',
+      );
 
       const ci = new CodebaseIntelligence(cycleDir);
       const deps = ci.dependencies();
@@ -188,7 +213,10 @@ describe('Phase 20: Architecture Hardening & Failure-Injection Gauntlet', () => 
   describe('5. Budget & Timeout Failure Injection', () => {
     test('P20-T5.1: Investigation aborts with BUDGET_EXHAUSTED when step allocation is 1', async () => {
       const ci = new CodebaseIntelligence(REPO_ROOT);
-      const res = await ci.investigate('Exhaust iteration budget on deep multi-step feature investigation', { maxIterations: 1, maxToolCalls: 1 });
+      const res = await ci.investigate(
+        'Exhaust iteration budget on deep multi-step feature investigation',
+        { maxIterations: 1, maxToolCalls: 1 },
+      );
       expect(res.status).toBe('BUDGET_EXHAUSTED');
       expect(res.summary).toMatch(/Budget exhausted/i);
       expect(res.data.budgetUsage.isExhausted).toBe(true);
@@ -248,8 +276,14 @@ describe('Phase 20: Architecture Hardening & Failure-Injection Gauntlet', () => 
       const innerEngine = path.join(REPO_ROOT, '.agent/scripts/codebase_intelligence.js');
       const outerEngine = path.join(OUTER_ROOT, '.agent/scripts/codebase_intelligence.js');
 
-      const hashInner = crypto.createHash('sha256').update(fs.readFileSync(innerEngine)).digest('hex');
-      const hashOuter = crypto.createHash('sha256').update(fs.readFileSync(outerEngine)).digest('hex');
+      const hashInner = crypto
+        .createHash('sha256')
+        .update(fs.readFileSync(innerEngine))
+        .digest('hex');
+      const hashOuter = crypto
+        .createHash('sha256')
+        .update(fs.readFileSync(outerEngine))
+        .digest('hex');
 
       expect(hashInner).toBe(hashOuter);
 

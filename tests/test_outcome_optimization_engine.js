@@ -293,7 +293,9 @@ function runSuites({ suite = defaultSuite, test = defaultTest } = {}) {
       const budget = { budget: ooe.COMPLEXITY_BUDGETS.LOW };
       const selection = ooe.evaluateSkillSelection(discovered, [], budget);
 
-      assert(selection.required.some(s => s.skill.includes('resilience') || s.skill.includes('sql')));
+      assert(
+        selection.required.some(s => s.skill.includes('resilience') || s.skill.includes('sql')),
+      );
       assert(selection.not_justified.some(s => s.skill.includes('k8s')));
     });
   });
@@ -338,7 +340,9 @@ function runSuites({ suite = defaultSuite, test = defaultTest } = {}) {
       assert(
         r.architecture_audit.justified_components.some(c => c.component.includes('Transaction')),
       );
-      assert(r.architecture_audit.justified_components.some(c => c.component.includes('Audit Log')));
+      assert(
+        r.architecture_audit.justified_components.some(c => c.component.includes('Audit Log')),
+      );
     });
 
     test('Benchmark 2: Static Website rejects Kafka, Redis, microservices, Kubernetes', () => {
@@ -357,7 +361,9 @@ function runSuites({ suite = defaultSuite, test = defaultTest } = {}) {
       const r = ooe.runOutcomeOptimization('Build an AI agent that can execute shell commands');
       assert(r.architecture_audit.justified_components.some(c => c.component.includes('Sandbox')));
       assert(
-        r.architecture_audit.justified_components.some(c => c.component.includes('Prompt Injection')),
+        r.architecture_audit.justified_components.some(c =>
+          c.component.includes('Prompt Injection'),
+        ),
       );
     });
 
@@ -408,7 +414,9 @@ function runAllCli() {
   runSuites({ suite: defaultSuite, test: defaultTest });
 
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log(`  PHASE 10 TEST RESULTS: ${passedTests}/${totalTests} passed, ${failedTests} failed`);
+  console.log(
+    `  PHASE 10 TEST RESULTS: ${passedTests}/${totalTests} passed, ${failedTests} failed`,
+  );
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
   return { passedTests, failedTests, totalTests };

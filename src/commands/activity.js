@@ -24,7 +24,8 @@ async function cmdActivity(flags = {}, argv = process.argv, quiet = false) {
         err('Usage: tk activity announce <agent-name> [context]');
         process.exit(1);
       }
-      const context = subArgs.slice(2).join(' ') || (typeof flags.context === 'string' ? flags.context : '');
+      const context =
+        subArgs.slice(2).join(' ') || (typeof flags.context === 'string' ? flags.context : '');
       const output = announceAgent(agentName, context, targetEnv);
       if (!quiet) console.log(output);
       break;
@@ -36,7 +37,8 @@ async function cmdActivity(flags = {}, argv = process.argv, quiet = false) {
         err('Usage: tk activity skill <skill-name> [context]');
         process.exit(1);
       }
-      const context = subArgs.slice(2).join(' ') || (typeof flags.context === 'string' ? flags.context : '');
+      const context =
+        subArgs.slice(2).join(' ') || (typeof flags.context === 'string' ? flags.context : '');
       const output = announceSkill(skillName, context, targetEnv);
       if (!quiet) console.log(output);
       break;
@@ -46,20 +48,26 @@ async function cmdActivity(flags = {}, argv = process.argv, quiet = false) {
       const state = flags.state || ACTIVITY_STATES.OPERATION_STARTED;
       const title = flags.title || subArgs.slice(1).join(' ') || 'Operational Event';
       const summary = flags.summary || null;
-      const progress = flags.current !== undefined && flags.total !== undefined ? {
-        current: Number(flags.current),
-        total: Number(flags.total),
-        unit: flags.unit || 'steps',
-        isAuthoritative: true,
-      } : null;
+      const progress =
+        flags.current !== undefined && flags.total !== undefined
+          ? {
+              current: Number(flags.current),
+              total: Number(flags.total),
+              unit: flags.unit || 'steps',
+              isAuthoritative: true,
+            }
+          : null;
 
-      const output = formatActivity({
-        eventType: state,
-        title,
-        summary,
-        progress,
-        nextAction: flags.next || null,
-      }, targetEnv);
+      const output = formatActivity(
+        {
+          eventType: state,
+          title,
+          summary,
+          progress,
+          nextAction: flags.next || null,
+        },
+        targetEnv,
+      );
 
       if (!quiet) console.log(output);
       break;
@@ -75,4 +83,3 @@ async function cmdActivity(flags = {}, argv = process.argv, quiet = false) {
     }
   }
 }
-

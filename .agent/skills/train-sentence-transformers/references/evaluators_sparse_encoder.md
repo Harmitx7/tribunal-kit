@@ -4,17 +4,17 @@ All sparse-encoder evaluators live in `sentence_transformers.sparse_encoder.eval
 
 ## Choosing the right evaluator
 
-| Task | Evaluator |
-|---|---|
-| Retrieval (nDCG, MRR, Recall), fast default | `SparseNanoBEIREvaluator` |
-| Retrieval on your own corpus / qrels | `SparseInformationRetrievalEvaluator` |
-| STS / continuous similarity | `SparseEmbeddingSimilarityEvaluator` |
-| Binary classification | `SparseBinaryClassificationEvaluator` |
-| Triplet accuracy | `SparseTripletEvaluator` |
-| Reranking (from retrieval candidates) | `SparseRerankingEvaluator` |
-| MSE vs. teacher (distillation) | `SparseMSEEvaluator` |
-| Translation (cross-lingual alignment) | `SparseTranslationEvaluator` |
-| Hybrid BM25 + sparse retrieval | `ReciprocalRankFusionEvaluator` |
+| Task                                        | Evaluator                             |
+| ------------------------------------------- | ------------------------------------- |
+| Retrieval (nDCG, MRR, Recall), fast default | `SparseNanoBEIREvaluator`             |
+| Retrieval on your own corpus / qrels        | `SparseInformationRetrievalEvaluator` |
+| STS / continuous similarity                 | `SparseEmbeddingSimilarityEvaluator`  |
+| Binary classification                       | `SparseBinaryClassificationEvaluator` |
+| Triplet accuracy                            | `SparseTripletEvaluator`              |
+| Reranking (from retrieval candidates)       | `SparseRerankingEvaluator`            |
+| MSE vs. teacher (distillation)              | `SparseMSEEvaluator`                  |
+| Translation (cross-lingual alignment)       | `SparseTranslationEvaluator`          |
+| Hybrid BM25 + sparse retrieval              | `ReciprocalRankFusionEvaluator`       |
 
 Wrap multiple in `SequentialEvaluator` (from `sentence_transformers.base.evaluation`):
 
@@ -109,6 +109,7 @@ For cross-lingual / `make_multilingual`-style alignment checking with sparse emb
 ## Writing `metric_for_best_model`
 
 Pattern: `f"eval_{evaluator.primary_metric}"`. Inspect after construction: `print(evaluator.primary_metric)`. Common values:
+
 - `eval_NanoBEIR_mean_dot_ndcg@10`: `SparseNanoBEIREvaluator` default
 - `eval_{name}_dot_ndcg@10`: `SparseInformationRetrievalEvaluator`
 - `eval_{name}_spearman_dot`: `SparseEmbeddingSimilarityEvaluator`

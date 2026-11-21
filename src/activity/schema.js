@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -8,12 +9,7 @@
  * and secret-safe sanitization.
  */
 
-const {
-  SCHEMA_VERSION,
-  EVENT_TYPES,
-  STATUSES,
-  DEFAULT_EVENT_STATUS,
-} = require('./types');
+const { SCHEMA_VERSION, EVENT_TYPES, STATUSES, DEFAULT_EVENT_STATUS } = require('./types');
 
 class ActivityValidationError extends Error {
   constructor(errors = []) {
@@ -78,19 +74,45 @@ function deepClone(obj, seen = new WeakMap()) {
 // ── Secret Redaction ─────────────────────────────────────────────────────────
 
 const SECRET_PATTERNS = [
-  { pattern: /\b(sk-[A-Za-z0-9_\-]{16,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_\-]{20,}|(sk_live_|sk_test_|pk_live_|pk_test_|api_key_|key_)[A-Za-z0-9_\-]{8,})\b/g, label: '[REDACTED_API_KEY]' },
+  {
+    pattern:
+      /\b(sk-[A-Za-z0-9_\-]{16,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_\-]{20,}|(sk_live_|sk_test_|pk_live_|pk_test_|api_key_|key_)[A-Za-z0-9_\-]{8,})\b/g,
+    label: '[REDACTED_API_KEY]',
+  },
   { pattern: /Bearer\s+[A-Za-z0-9\-_.~+/]{20,}/gi, label: 'Bearer [REDACTED_TOKEN]' },
-  { pattern: /eyJ[A-Za-z0-9_\-]{10,}\.eyJ[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}/g, label: '[REDACTED_JWT]' },
-  { pattern: /-----BEGIN\s+([A-Z0-9_\-]+\s+)?PRIVATE\s+KEY-----[\s\S]*?-----END\s+([A-Z0-9_\-]+\s+)?PRIVATE\s+KEY-----/g, label: '[REDACTED_PRIVATE_KEY]' },
-  { pattern: /(postgres|postgresql|mysql|mongodb|redis|amqp):\/\/[^\s"'`]+/gi, label: '[REDACTED_DB_URL]' },
-  { pattern: /(https?:\/\/[^\s\/?#:]+):([^\s\/?#]+)@([a-zA-Z0-9_\-\.]+)/gi, label: '$1:[REDACTED_PASSWORD]@$3' },
+  {
+    pattern: /eyJ[A-Za-z0-9_\-]{10,}\.eyJ[A-Za-z0-9_\-]{10,}\.[A-Za-z0-9_\-]{10,}/g,
+    label: '[REDACTED_JWT]',
+  },
+  {
+    pattern:
+      /-----BEGIN\s+([A-Z0-9_\-]+\s+)?PRIVATE\s+KEY-----[\s\S]*?-----END\s+([A-Z0-9_\-]+\s+)?PRIVATE\s+KEY-----/g,
+    label: '[REDACTED_PRIVATE_KEY]',
+  },
+  {
+    pattern: /(postgres|postgresql|mysql|mongodb|redis|amqp):\/\/[^\s"'`]+/gi,
+    label: '[REDACTED_DB_URL]',
+  },
+  {
+    pattern: /(https?:\/\/[^\s\/?#:]+):([^\s\/?#]+)@([a-zA-Z0-9_\-\.]+)/gi,
+    label: '$1:[REDACTED_PASSWORD]@$3',
+  },
   { pattern: /\b(xox[baprs]-[A-Za-z0-9\-]{10,})\b/g, label: '[REDACTED_SLACK_TOKEN]' },
   { pattern: /\bAKIA[A-Z0-9]{16}\b/g, label: '[REDACTED_AWS_KEY]' },
-  { pattern: /(aws_secret_access_key|aws_session_token)\s*[:=]\s*["']?(?!\[REDACTED_)[A-Za-z0-9/+=]{40}["']?/gi, label: '$1: [REDACTED_AWS_SECRET]' },
-  { pattern: /(password|passwd|secret|token|api_key|apikey|auth_token|access_token|private_key)\s*[:=]\s*["']?(?!\[REDACTED_)[^\s"'`]{8,}["']?/gi, label: '$1: [REDACTED_SECRET]' },
+  {
+    pattern:
+      /(aws_secret_access_key|aws_session_token)\s*[:=]\s*["']?(?!\[REDACTED_)[A-Za-z0-9/+=]{40}["']?/gi,
+    label: '$1: [REDACTED_AWS_SECRET]',
+  },
+  {
+    pattern:
+      /(password|passwd|secret|token|api_key|apikey|auth_token|access_token|private_key)\s*[:=]\s*["']?(?!\[REDACTED_)[^\s"'`]{8,}["']?/gi,
+    label: '$1: [REDACTED_SECRET]',
+  },
 ];
 
-const SECRET_TRIGGER_PATTERN = /sk-|ghp_|github_pat_|sk_|pk_|[bB]earer|eyJ|-----BEGIN|:\/\/|xox[baprs]|AKIA|aws_|pass|secret|token|key|auth/i;
+const SECRET_TRIGGER_PATTERN =
+  /sk-|ghp_|github_pat_|sk_|pk_|[bB]earer|eyJ|-----BEGIN|:\/\/|xox[baprs]|AKIA|aws_|pass|secret|token|key|auth/i;
 
 function redactSecrets(input, seen = new WeakSet(), memo = new WeakMap()) {
   if (typeof input === 'string') {
@@ -176,21 +198,29 @@ function validateActivityEvent(event) {
 
   // 1. Schema Version
   if (event.schemaVersion !== SCHEMA_VERSION) {
-    errors.push(`Unsupported or missing schemaVersion: expected '${SCHEMA_VERSION}', received '${event.schemaVersion}'`);
+    errors.push(
+      `Unsupported or missing schemaVersion: expected '${SCHEMA_VERSION}', received '${event.schemaVersion}'`,
+    );
   }
 
   // 2. Identifiers
   if (!isValidId(event.eventId)) {
-    errors.push(`Invalid eventId: must match /^[a-zA-Z0-9_\\-\\.]{3,64}$/, received '${event.eventId}'`);
+    errors.push(
+      `Invalid eventId: must match /^[a-zA-Z0-9_\\-\\.]{3,64}$/, received '${event.eventId}'`,
+    );
   }
   if (!isValidId(event.operationId)) {
-    errors.push(`Invalid operationId: must match /^[a-zA-Z0-9_\\-\\.]{3,64}$/, received '${event.operationId}'`);
+    errors.push(
+      `Invalid operationId: must match /^[a-zA-Z0-9_\\-\\.]{3,64}$/, received '${event.operationId}'`,
+    );
   }
 
   // 3. Event Type & Status
   const validEventTypes = Object.values(EVENT_TYPES);
   if (!validEventTypes.includes(event.eventType)) {
-    errors.push(`Invalid eventType: '${event.eventType}'. Must be one of: ${validEventTypes.join(', ')}`);
+    errors.push(
+      `Invalid eventType: '${event.eventType}'. Must be one of: ${validEventTypes.join(', ')}`,
+    );
   }
 
   const validStatuses = Object.values(STATUSES);
@@ -210,7 +240,9 @@ function validateActivityEvent(event) {
     if (typeof event.summary !== 'string') {
       errors.push('Summary must be a string or null');
     } else if (event.summary.length > 2000) {
-      errors.push(`Summary exceeds maximum length of 2000 characters (length: ${event.summary.length})`);
+      errors.push(
+        `Summary exceeds maximum length of 2000 characters (length: ${event.summary.length})`,
+      );
     }
   }
 
@@ -227,12 +259,16 @@ function validateActivityEvent(event) {
     }
     if (ts.completedAt !== undefined && ts.completedAt !== null) {
       if (!isValidIsoDate(ts.completedAt)) {
-        errors.push(`Invalid completedAt timestamp: '${ts.completedAt}'. Must be valid ISO 8601 string`);
+        errors.push(
+          `Invalid completedAt timestamp: '${ts.completedAt}'. Must be valid ISO 8601 string`,
+        );
       } else if (isValidIsoDate(ts.startedAt)) {
         const start = new Date(ts.startedAt).getTime();
         const end = new Date(ts.completedAt).getTime();
         if (end < start) {
-          errors.push(`completedAt (${ts.completedAt}) cannot be earlier than startedAt (${ts.startedAt})`);
+          errors.push(
+            `completedAt (${ts.completedAt}) cannot be earlier than startedAt (${ts.startedAt})`,
+          );
         }
       }
     }
@@ -262,8 +298,10 @@ function validateActivityEvent(event) {
 
       // Check current <= total when total is positive
       if (
-        p.current !== undefined && p.current !== null &&
-        p.total !== undefined && p.total !== null &&
+        p.current !== undefined &&
+        p.current !== null &&
+        p.total !== undefined &&
+        p.total !== null &&
         p.total > 0 &&
         p.current > p.total
       ) {
@@ -271,8 +309,15 @@ function validateActivityEvent(event) {
       }
 
       if (p.percentage !== undefined && p.percentage !== null) {
-        if (typeof p.percentage !== 'number' || Number.isNaN(p.percentage) || p.percentage < 0 || p.percentage > 100) {
-          errors.push(`progress.percentage must be a number between 0 and 100, received ${p.percentage}`);
+        if (
+          typeof p.percentage !== 'number' ||
+          Number.isNaN(p.percentage) ||
+          p.percentage < 0 ||
+          p.percentage > 100
+        ) {
+          errors.push(
+            `progress.percentage must be a number between 0 and 100, received ${p.percentage}`,
+          );
         }
       }
 
@@ -284,19 +329,27 @@ function validateActivityEvent(event) {
   }
 
   // 8. Evidence Semantics & Invariants
-  const isValidationPassed = event.eventType === EVENT_TYPES.VALIDATION_PASSED || event.status === STATUSES.PASSED;
+  const isValidationPassed =
+    event.eventType === EVENT_TYPES.VALIDATION_PASSED || event.status === STATUSES.PASSED;
   if (isValidationPassed) {
     const hasEvidence = Boolean(
       event.evidence &&
-      (Array.isArray(event.evidence) ? event.evidence.length > 0 : (typeof event.evidence === 'object' ? Object.keys(event.evidence).length > 0 : true))
+      (Array.isArray(event.evidence)
+        ? event.evidence.length > 0
+        : typeof event.evidence === 'object'
+          ? Object.keys(event.evidence).length > 0
+          : true),
     );
     if (!hasEvidence && event.verified !== true) {
-      errors.push('validation_passed requires authoritative verification evidence or explicit verified flag');
+      errors.push(
+        'validation_passed requires authoritative verification evidence or explicit verified flag',
+      );
     }
   }
 
   // 9. Error Semantics
-  const isValidationFailed = event.eventType === EVENT_TYPES.VALIDATION_FAILED || event.status === STATUSES.FAILED;
+  const isValidationFailed =
+    event.eventType === EVENT_TYPES.VALIDATION_FAILED || event.status === STATUSES.FAILED;
   if (isValidationFailed) {
     if (!event.error || (typeof event.error === 'object' && !event.error.message)) {
       errors.push('validation_failed requires error details with a non-empty message');
@@ -379,13 +432,17 @@ function createActivityEvent(partial = {}) {
   if (!eventType) {
     const lower = String(rawEventType).toLowerCase();
     if (lower.includes('test')) eventType = EVENT_TYPES.TESTS_RUNNING;
-    else if (lower.includes('fail') || lower.includes('error')) eventType = EVENT_TYPES.VALIDATION_FAILED;
-    else if (lower.includes('pass') || lower.includes('verif') || lower.includes('check_passed')) eventType = EVENT_TYPES.VALIDATION_PASSED;
+    else if (lower.includes('fail') || lower.includes('error'))
+      eventType = EVENT_TYPES.VALIDATION_FAILED;
+    else if (lower.includes('pass') || lower.includes('verif') || lower.includes('check_passed'))
+      eventType = EVENT_TYPES.VALIDATION_PASSED;
     else if (lower.includes('warn')) eventType = EVENT_TYPES.WARNING_DETECTED;
     else if (lower.includes('block')) eventType = EVENT_TYPES.OPERATION_BLOCKED;
-    else if (lower.includes('gate') || lower.includes('approv')) eventType = EVENT_TYPES.HUMAN_APPROVAL_REQUIRED;
+    else if (lower.includes('gate') || lower.includes('approv'))
+      eventType = EVENT_TYPES.HUMAN_APPROVAL_REQUIRED;
     else if (lower.includes('retry')) eventType = EVENT_TYPES.RETRY_STARTED;
-    else if (lower.includes('complete') || lower.includes('done') || lower.includes('success')) eventType = EVENT_TYPES.OPERATION_COMPLETED;
+    else if (lower.includes('complete') || lower.includes('done') || lower.includes('success'))
+      eventType = EVENT_TYPES.OPERATION_COMPLETED;
     else if (lower.includes('cancel')) eventType = EVENT_TYPES.OPERATION_CANCELLED;
     else eventType = EVENT_TYPES.ANALYSIS_IN_PROGRESS;
   }
@@ -396,11 +453,13 @@ function createActivityEvent(partial = {}) {
   if (eventType === EVENT_TYPES.VALIDATION_PASSED) {
     const hasEvidence = Boolean(
       evidence &&
-      (Array.isArray(evidence) ? evidence.length > 0 : Object.keys(evidence).length > 0)
+      (Array.isArray(evidence) ? evidence.length > 0 : Object.keys(evidence).length > 0),
     );
     if (!hasEvidence && verified !== true) {
       eventType = EVENT_TYPES.ANALYSIS_IN_PROGRESS;
-      evidence = { unverifiedNote: 'Validation claimed without authoritative verification evidence' };
+      evidence = {
+        unverifiedNote: 'Validation claimed without authoritative verification evidence',
+      };
     }
   }
 

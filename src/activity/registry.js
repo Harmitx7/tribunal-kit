@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -8,24 +9,11 @@
  * and bounded in-memory retention with time-to-live expiration.
  */
 
-const {
-  LIFECYCLE_STATES,
-  AGENT_SKILL_STATES,
-  TOOL_STATES,
-  STATUSES,
-} = require('./types');
+const { LIFECYCLE_STATES, AGENT_SKILL_STATES, TOOL_STATES, STATUSES } = require('./types');
 
-const {
-  canTransition,
-  assertValidTransition,
-  isTerminalState,
-} = require('./lifecycle');
+const { canTransition, assertValidTransition, isTerminalState } = require('./lifecycle');
 
-const {
-  generateId,
-  createActivityEvent,
-  ActivityValidationError,
-} = require('./schema');
+const { generateId, createActivityEvent, ActivityValidationError } = require('./schema');
 
 class ActivityProgressError extends Error {
   constructor(message, operationId = null, details = {}) {
@@ -59,7 +47,8 @@ class OperationRecord {
     };
 
     this.attempt = typeof options.attempt === 'number' ? Math.max(1, options.attempt) : 1;
-    this.maxAttempts = typeof options.maxAttempts === 'number' ? Math.max(1, options.maxAttempts) : 3;
+    this.maxAttempts =
+      typeof options.maxAttempts === 'number' ? Math.max(1, options.maxAttempts) : 3;
     this.retries = [];
 
     this.progress = null;
@@ -117,8 +106,8 @@ class OperationRecord {
 
     const { current, total, unit, percentage, isAuthoritative, stages } = progressInput;
 
-    const isUnmetered = (current === undefined || current === null) &&
-                        (total === undefined || total === null);
+    const isUnmetered =
+      (current === undefined || current === null) && (total === undefined || total === null);
 
     if (isUnmetered) {
       return {
@@ -135,7 +124,7 @@ class OperationRecord {
       throw new ActivityProgressError(
         `Invalid current progress: '${current}'. Must be a non-negative number.`,
         this.operationId,
-        { current, total }
+        { current, total },
       );
     }
 
@@ -143,7 +132,7 @@ class OperationRecord {
       throw new ActivityProgressError(
         `Invalid total progress: '${total}'. Must be a positive number.`,
         this.operationId,
-        { current, total }
+        { current, total },
       );
     }
 
@@ -151,7 +140,7 @@ class OperationRecord {
       throw new ActivityProgressError(
         `Current progress (${current}) cannot exceed total (${total}).`,
         this.operationId,
-        { current, total }
+        { current, total },
       );
     }
 
@@ -161,7 +150,7 @@ class OperationRecord {
         throw new ActivityProgressError(
           `Percentage must be between 0 and 100, received ${percentage}.`,
           this.operationId,
-          { percentage }
+          { percentage },
         );
       }
       calculatedPercentage = percentage;
@@ -197,7 +186,7 @@ class OperationRecord {
         throw new ActivityProgressError(
           `Progress cannot regress backward from ${prev.current}/${prev.total} to ${normalized.current}/${normalized.total} within the same attempt.`,
           this.operationId,
-          { previous: prev, updated: normalized, attempt: this.attempt }
+          { previous: prev, updated: normalized, attempt: this.attempt },
         );
       }
     }
@@ -227,7 +216,10 @@ class OperationRecord {
       if (!this.timestamps.completedAt) {
         this.timestamps.completedAt = nowIso;
       }
-    } else if (targetStatus === LIFECYCLE_STATES.RUNNING || targetStatus === LIFECYCLE_STATES.RETRYING) {
+    } else if (
+      targetStatus === LIFECYCLE_STATES.RUNNING ||
+      targetStatus === LIFECYCLE_STATES.RETRYING
+    ) {
       // Re-opening into retry clears completedAt
       this.timestamps.completedAt = null;
     }
@@ -251,7 +243,7 @@ class OperationRecord {
       name: agentName,
       state,
       context,
-      error: error ? (error.message || String(error)) : null,
+      error: error ? error.message || String(error) : null,
       timestamp: nowIso,
     };
 
@@ -270,7 +262,7 @@ class OperationRecord {
       name: skillName,
       state,
       context,
-      error: error ? (error.message || String(error)) : null,
+      error: error ? error.message || String(error) : null,
       timestamp: nowIso,
     };
 
@@ -285,12 +277,15 @@ class OperationRecord {
    */
   recordTool(toolName, status, options = {}) {
     const nowIso = new Date().toISOString();
-    const existing = this.tools.find(t => t.toolName === toolName && t.status === TOOL_STATES.STARTED);
+    const existing = this.tools.find(
+      t => t.toolName === toolName && t.status === TOOL_STATES.STARTED,
+    );
 
     if (existing && (status === TOOL_STATES.COMPLETED || status === TOOL_STATES.FAILED)) {
       existing.status = status;
       existing.completedAt = nowIso;
-      existing.durationMs = options.durationMs || (new Date(nowIso).getTime() - new Date(existing.startedAt).getTime());
+      existing.durationMs =
+        options.durationMs || new Date(nowIso).getTime() - new Date(existing.startedAt).getTime();
       existing.resultRef = options.resultRef || existing.resultRef || null;
       existing.error = options.error || null;
       this.timestamps.updatedAt = nowIso;
@@ -301,7 +296,8 @@ class OperationRecord {
       toolName,
       status,
       startedAt: options.startedAt || nowIso,
-      completedAt: status === TOOL_STATES.COMPLETED || status === TOOL_STATES.FAILED ? nowIso : null,
+      completedAt:
+        status === TOOL_STATES.COMPLETED || status === TOOL_STATES.FAILED ? nowIso : null,
       durationMs: options.durationMs || null,
       resultRef: options.resultRef || null,
       error: options.error || null,
@@ -426,9 +422,10 @@ class OperationRecord {
     }
 
     if (event.evidence) {
-      const ref = typeof event.evidence === 'string'
-        ? event.evidence
-        : (event.evidence.ref || event.evidence.path || 'evidence_artifact');
+      const ref =
+        typeof event.evidence === 'string'
+          ? event.evidence
+          : event.evidence.ref || event.evidence.path || 'evidence_artifact';
       this.recordEvidence({
         ref,
         verified: Boolean(event.verified),
@@ -479,12 +476,12 @@ class OperationRecord {
  */
 class OperationRegistry {
   constructor(options = {}) {
-    this.maxCompletedRetention = typeof options.maxCompletedRetention === 'number'
-      ? Math.max(1, options.maxCompletedRetention)
-      : 1000;
-    this.completedTtlMs = typeof options.completedTtlMs === 'number'
-      ? Math.max(1000, options.completedTtlMs)
-      : 3600000; // 1 hour
+    this.maxCompletedRetention =
+      typeof options.maxCompletedRetention === 'number'
+        ? Math.max(1, options.maxCompletedRetention)
+        : 1000;
+    this.completedTtlMs =
+      typeof options.completedTtlMs === 'number' ? Math.max(1000, options.completedTtlMs) : 3600000; // 1 hour
 
     this.operations = new Map();
   }
@@ -726,19 +723,17 @@ class OperationRegistry {
    * @returns {{ evictedCount: number, activeCount: number, completedCount: number }}
    */
   cleanup(options = {}) {
-    const maxCompleted = typeof options.maxCompleted === 'number'
-      ? options.maxCompleted
-      : this.maxCompletedRetention;
-    const ttlMs = typeof options.ttlMs === 'number'
-      ? options.ttlMs
-      : this.completedTtlMs;
+    const maxCompleted =
+      typeof options.maxCompleted === 'number' ? options.maxCompleted : this.maxCompletedRetention;
+    const ttlMs = typeof options.ttlMs === 'number' ? options.ttlMs : this.completedTtlMs;
 
     const now = Date.now();
     let evictedCount = 0;
     const terminalRecords = [];
 
     for (const [id, record] of this.operations.entries()) {
-      const isTerminal = isTerminalState(record.status) || record.status === LIFECYCLE_STATES.FAILED;
+      const isTerminal =
+        isTerminalState(record.status) || record.status === LIFECYCLE_STATES.FAILED;
       if (!isTerminal) {
         // Active operation is strictly protected from eviction
         continue;

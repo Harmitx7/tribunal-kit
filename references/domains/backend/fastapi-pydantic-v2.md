@@ -2,7 +2,7 @@
 
 > **Authority**: FastAPI Official Documentation (`https://fastapi.tiangolo.com/`) & Pydantic v2  
 > **Applicable Domains**: Backend Engineering, Python APIs, Async Systems  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -10,10 +10,10 @@
 
 FastAPI treats `async def` and plain `def` endpoints fundamentally differently:
 
-| Route Definition | Execution Thread | When to Use |
-|:---|:---|:---|
-| `async def endpoint(...)` | Runs directly on the **Main Event Loop** | Non-blocking async libraries (`asyncpg`, `httpx`, `aiofiles`) |
-| `def endpoint(...)` | Offloaded to an external **Thread Pool** | Blocking synchronous libraries (`requests`, standard `psycopg2`, CPU math) |
+| Route Definition          | Execution Thread                         | When to Use                                                                |
+| :------------------------ | :--------------------------------------- | :------------------------------------------------------------------------- |
+| `async def endpoint(...)` | Runs directly on the **Main Event Loop** | Non-blocking async libraries (`asyncpg`, `httpx`, `aiofiles`)              |
+| `def endpoint(...)`       | Offloaded to an external **Thread Pool** | Blocking synchronous libraries (`requests`, standard `psycopg2`, CPU math) |
 
 > ⚠️ **Catastrophic Failure**: Calling blocking code (e.g. `time.sleep()`, synchronous database calls) inside an `async def` function blocks the single main event loop, causing all concurrent requests to stall!
 

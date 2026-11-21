@@ -44,9 +44,9 @@ function loadCommand(modulePath, functionName, ...args) {
   try {
     const mod = require(modulePath);
     return mod[functionName](...args);
-  } catch (err) {
+  } catch (loadErr) {
     throw new Error(
-      `Tribunal ESM wrapper failed to load command '${functionName}' from '${modulePath}': ${err.message}`,
+      `Tribunal ESM wrapper failed to load command '${functionName}' from '${modulePath}': ${loadErr.message}`,
     );
   }
 }
@@ -215,4 +215,3 @@ export async function cmdEvolve(flags, argv, quiet) {
 export async function cmdRsi(flags, argv, quiet) {
   return loadCommand('../commands/rsi.js', 'cmdRsi', flags, argv, quiet);
 }
-

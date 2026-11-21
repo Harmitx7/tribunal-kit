@@ -1,6 +1,7 @@
 # Image classification
 
 ## Contents
+
 - Load Food-101 dataset
 - Preprocess (ViT image processor, torchvision transforms)
 - Evaluate (accuracy metric, compute_metrics)
@@ -231,8 +232,6 @@ Load an image you'd like to run inference on:
 >>> ds = load_dataset("ethz/food101", split="validation[:10]")
 >>> image = ds["image"][0]
 ```
-
-    
 
 The simplest way to try out your finetuned model for inference is to use it in a [pipeline()](/docs/transformers/v5.2.0/en/main_classes/pipelines#transformers.pipeline). Instantiate a `pipeline` for image classification with your model, and pass your image to it:
 

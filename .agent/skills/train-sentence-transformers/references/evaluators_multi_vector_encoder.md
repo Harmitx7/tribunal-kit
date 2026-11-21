@@ -4,13 +4,13 @@ All evaluators live in `sentence_transformers.multi_vector_encoder.evaluation`. 
 
 ## Top-line pick
 
-| Task | Evaluator |
-|---|---|
-| Retrieval on a suite of common English IR benchmarks | `MultiVectorNanoBEIREvaluator` |
+| Task                                                      | Evaluator                                  |
+| --------------------------------------------------------- | ------------------------------------------ |
+| Retrieval on a suite of common English IR benchmarks      | `MultiVectorNanoBEIREvaluator`             |
 | Custom retrieval corpus (your own docs / queries / qrels) | `MultiVectorInformationRetrievalEvaluator` |
-| Distillation from a cross-encoder teacher | `MultiVectorDistillationEvaluator` |
-| Reranking a fixed candidate list per query | `MultiVectorRerankingEvaluator` |
-| Triplet accuracy (does anchor score positive > negative?) | `MultiVectorTripletEvaluator` |
+| Distillation from a cross-encoder teacher                 | `MultiVectorDistillationEvaluator`         |
+| Reranking a fixed candidate list per query                | `MultiVectorRerankingEvaluator`            |
+| Triplet accuracy (does anchor score positive > negative?) | `MultiVectorTripletEvaluator`              |
 
 **Default recommendation for training**: `MultiVectorNanoBEIREvaluator` on a subset of NanoBEIR datasets (e.g. `["msmarco", "nq", "fiqa2018"]`) during training, and the full suite at end-of-run. Cheap, well-calibrated, and the metric key format is stable.
 
@@ -55,7 +55,7 @@ evaluator = MultiVectorInformationRetrievalEvaluator(
 
 **primary_metric**: `"maxsim_ndcg@10"` by default (built from `score_function="maxsim"` and `max(ndcg_at_k)`).
 
-**`metric_for_best_model` key** with `name="my-eval"`:  `"eval_my-eval_maxsim_ndcg@10"`.
+**`metric_for_best_model` key** with `name="my-eval"`: `"eval_my-eval_maxsim_ndcg@10"`.
 
 - `main_score_function` overrides the score used in `primary_metric` if you set a non-default. Default is `None`, which resolves to `maxsim` from the model's `similarity_fn_name` at call time. For MVE just leave it as `None`.
 - Reports MRR@k, nDCG@k, Recall@k, Precision@k, MAP@k for the k-values you pass (`mrr_at_k`, `ndcg_at_k`, etc.).

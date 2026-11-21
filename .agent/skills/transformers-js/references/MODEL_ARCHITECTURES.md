@@ -5,6 +5,7 @@ This document lists the model architectures currently supported by Transformers.
 ## Natural Language Processing
 
 ### Text Models
+
 - **ALBERT** - A Lite BERT for Self-supervised Learning
 - **BERT** - Bidirectional Encoder Representations from Transformers
 - **CamemBERT** - French language model based on RoBERTa
@@ -26,6 +27,7 @@ This document lists the model architectures currently supported by Transformers.
 - **XLM-RoBERTa** - Multilingual RoBERTa
 
 ### Sequence-to-Sequence
+
 - **BART** - Denoising Sequence-to-Sequence Pre-training
 - **Blenderbot** - Open-domain chatbot
 - **BlenderbotSmall** - Smaller Blenderbot variant
@@ -38,6 +40,7 @@ This document lists the model architectures currently supported by Transformers.
 ## Computer Vision
 
 ### Image Classification
+
 - **BEiT** - BERT Pre-Training of Image Transformers
 - **ConvNeXT** - Modern ConvNet architecture
 - **ConvNeXTV2** - Improved ConvNeXT
@@ -53,6 +56,7 @@ This document lists the model architectures currently supported by Transformers.
 - **ViT** - Vision Transformer
 
 ### Object Detection
+
 - **DETR** - Detection Transformer
 - **D-FINE** - Fine-grained Distribution Refinement for object detection
 - **DINO** - DETR with Improved deNoising anchOr boxes
@@ -60,12 +64,14 @@ This document lists the model architectures currently supported by Transformers.
 - **YOLOS** - You Only Look at One Sequence
 
 ### Segmentation
+
 - **CLIPSeg** - Image segmentation with text prompts
 - **Mask2Former** - Universal image segmentation
 - **SAM** - Segment Anything Model
 - **EdgeTAM** - On-Device Track Anything Model
 
 ### Depth & Pose
+
 - **DPT** - Dense Prediction Transformer
 - **Depth Anything** - Monocular depth estimation
 - **Depth Pro** - Sharp monocular metric depth
@@ -74,21 +80,25 @@ This document lists the model architectures currently supported by Transformers.
 ## Audio
 
 ### Speech Recognition
+
 - **Wav2Vec2** - Self-supervised speech representations
 - **Whisper** - Robust speech recognition (multilingual)
 - **HuBERT** - Self-supervised speech representation learning
 
 ### Audio Processing
+
 - **Audio Spectrogram Transformer** - Audio classification
 - **DAC** - Descript Audio Codec
 
 ### Text-to-Speech
+
 - **SpeechT5** - Unified speech and text pre-training
 - **VITS** - Conditional Variational Autoencoder with adversarial learning
 
 ## Multimodal
 
 ### Vision-Language
+
 - **CLIP** - Contrastive Language-Image Pre-training
 - **Chinese-CLIP** - Chinese version of CLIP
 - **ALIGN** - Large-scale noisy image-text pairs
@@ -98,12 +108,14 @@ This document lists the model architectures currently supported by Transformers.
 - **Moondream** - Tiny vision-language model
 
 ### Document Understanding
+
 - **DiT** - Document Image Transformer
 - **Donut** - OCR-free Document Understanding
 - **LayoutLM** - Pre-training for document understanding
 - **TrOCR** - Transformer-based OCR
 
 ### Audio-Language
+
 - **CLAP** - Contrastive Language-Audio Pre-training
 
 ## Embeddings & Similarity
@@ -118,36 +130,43 @@ This document lists the model architectures currently supported by Transformers.
 ## Specialized Models
 
 ### Code
+
 - **CodeBERT** - Pre-trained model for code
 - **GraphCodeBERT** - Code structure understanding
 - **StarCoder** - Code generation
 
 ### Scientific
+
 - **SciBERT** - Scientific text
 - **BioBERT** - Biomedical text
 
 ### Retrieval
+
 - **ColBERT** - Contextualized late interaction over BERT
 - **DPR** - Dense Passage Retrieval
 
 ## Model Selection Tips
 
 ### For Text Tasks
+
 - **Small & Fast**: DistilBERT, MobileBERT
 - **Balanced**: BERT-base, RoBERTa-base
 - **High Accuracy**: RoBERTa-large, DeBERTa-v3-large
 - **Multilingual**: XLM-RoBERTa, mBERT
 
 ### For Vision Tasks
+
 - **Mobile/Browser**: MobileNet, EfficientNet-B0
 - **Balanced**: DeiT-base, ConvNeXT-tiny
 - **High Accuracy**: Swin-large, DINOv2-large
 
 ### For Audio Tasks
+
 - **Speech Recognition**: Whisper-tiny (fast), Whisper-large (accurate)
 - **Audio Classification**: Audio Spectrogram Transformer
 
 ### For Multimodal
+
 - **Vision-Language**: CLIP (general), Florence-2 (comprehensive)
 - **Document AI**: Donut, LayoutLM
 - **OCR**: TrOCR
@@ -155,11 +174,13 @@ This document lists the model architectures currently supported by Transformers.
 ## Finding Models on Hugging Face Hub
 
 Search for compatible models:
+
 ```
 https://huggingface.co/models?library=transformers.js
 ```
 
 Filter by task:
+
 ```
 https://huggingface.co/models?pipeline_tag=text-classification&library=transformers.js
 ```

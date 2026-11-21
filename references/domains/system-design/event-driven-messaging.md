@@ -2,20 +2,20 @@
 
 > **Authority**: Apache Kafka Architecture Documentation & Enterprise Integration Patterns  
 > **Applicable Domains**: Messaging, Event Streaming, Asynchronous Pipelines, Stream Processing  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
 ## 1. Message Broker vs Distributed Commit Log
 
-| Attribute | Message Queue (RabbitMQ, AWS SQS) | Distributed Event Log (Apache Kafka, Redpanda) |
-|:---|:---|:---|
-| **Storage Model** | Ephemeral: Messages deleted after consumer ACK | Append-only immutable disk log with configurable retention (days/weeks) |
-| **Ordering** | FIFO within single queue; lost if multiple competing consumers | Strict order guaranteed **within a partition**; unordered across partitions |
-| **Consumer Tracking** | Broker tracks message state (ACK/NACK) per message | Consumer maintains its own reading offset in the partition |
-| **Event Replay** | Cannot replay consumed messages | Replay historical events by resetting consumer offset |
-| **Scale Model** | Competing consumers pulling from shared queue | Horizontal partition scaling per consumer group |
-| **Ideal For** | Task distribution, discrete job execution | High-throughput telemetry, event sourcing, CDC, log pipelines |
+| Attribute             | Message Queue (RabbitMQ, AWS SQS)                              | Distributed Event Log (Apache Kafka, Redpanda)                              |
+| :-------------------- | :------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| **Storage Model**     | Ephemeral: Messages deleted after consumer ACK                 | Append-only immutable disk log with configurable retention (days/weeks)     |
+| **Ordering**          | FIFO within single queue; lost if multiple competing consumers | Strict order guaranteed **within a partition**; unordered across partitions |
+| **Consumer Tracking** | Broker tracks message state (ACK/NACK) per message             | Consumer maintains its own reading offset in the partition                  |
+| **Event Replay**      | Cannot replay consumed messages                                | Replay historical events by resetting consumer offset                       |
+| **Scale Model**       | Competing consumers pulling from shared queue                  | Horizontal partition scaling per consumer group                             |
+| **Ideal For**         | Task distribution, discrete job execution                      | High-throughput telemetry, event sourcing, CDC, log pipelines               |
 
 ---
 
@@ -40,8 +40,9 @@ Topic: [Orders] (4 Partitions)
 ## 3. Delivery Semantics & Idempotent Consumers
 
 ### Delivery Guarantees:
-1. **At-Most-Once**: Consumer commits offset *before* processing message. If pod crashes mid-processing, message is lost forever.
-2. **At-Least-Once (Default)**: Consumer processes message and commits offset *after* completion. If pod crashes before offset commit, message will be re-delivered on restart.
+
+1. **At-Most-Once**: Consumer commits offset _before_ processing message. If pod crashes mid-processing, message is lost forever.
+2. **At-Least-Once (Default)**: Consumer processes message and commits offset _after_ completion. If pod crashes before offset commit, message will be re-delivered on restart.
 3. **Effectively Once (Idempotent Consumer)**:
    - Since network retries make duplicates inevitable, every consumer MUST be idempotent.
    - Dedup store pattern: Store processed `message_id` in Redis with TTL or in database unique constraint within local transaction.
@@ -79,8 +80,8 @@ async function processEvent(event: DomainEvent, db: DatabaseClient): Promise<voi
 ## 5. Stream Processing & Windowing
 
 - **Event Time vs Processing Time**:
-  - *Event Time*: When the event originally occurred at the source (timestamp in payload).
-  - *Processing Time*: When the stream processing node observes the message.
+  - _Event Time_: When the event originally occurred at the source (timestamp in payload).
+  - _Processing Time_: When the stream processing node observes the message.
 - **Watermarks**: A threshold indicating that no events older than timestamp $T$ are expected to arrive, allowing safe closure of temporal windows.
 - **Window Types**:
   - **Tumbling Window**: Fixed, non-overlapping windows (e.g. $00:00\text{–}00:05$, $00:05\text{–}00:10$).

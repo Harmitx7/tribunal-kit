@@ -20,8 +20,8 @@ const CANONICAL_SPDX_ALIASES = {
   'apache 2': 'Apache-2.0',
   'apache-2': 'Apache-2.0',
   'apache-2.0': 'Apache-2.0',
-  'apache2': 'Apache-2.0',
-  'mit': 'MIT',
+  apache2: 'Apache-2.0',
+  mit: 'MIT',
   'mit license': 'MIT',
   'bsd-3-clause': 'BSD-3-Clause',
   'bsd 3-clause': 'BSD-3-Clause',
@@ -29,11 +29,11 @@ const CANONICAL_SPDX_ALIASES = {
   'bsd 3': 'BSD-3-Clause',
   'bsd-2-clause': 'BSD-2-Clause',
   'bsd 2-clause': 'BSD-2-Clause',
-  'bsd': 'BSD-2-Clause',
-  'isc': 'ISC',
+  bsd: 'BSD-2-Clause',
+  isc: 'ISC',
   'cc0-1.0': 'CC0-1.0',
-  'cc0': 'CC0-1.0',
-  'unlicense': 'Unlicense',
+  cc0: 'CC0-1.0',
+  unlicense: 'Unlicense',
   'mpl-2.0': 'MPL-2.0',
   'mpl 2.0': 'MPL-2.0',
   'epl-2.0': 'EPL-2.0',
@@ -41,11 +41,11 @@ const CANONICAL_SPDX_ALIASES = {
   'lgpl-3.0': 'LGPL-3.0-only',
   'gpl-2.0': 'GPL-2.0-only',
   'gpl-3.0': 'GPL-3.0-only',
-  'gplv3': 'GPL-3.0-only',
+  gplv3: 'GPL-3.0-only',
   'agpl-3.0': 'AGPL-3.0-only',
-  'agplv3': 'AGPL-3.0-only',
+  agplv3: 'AGPL-3.0-only',
   'sspl-1.0': 'SSPL-1.0',
-  'sspl': 'SSPL-1.0',
+  sspl: 'SSPL-1.0',
 };
 
 /**
@@ -54,7 +54,11 @@ const CANONICAL_SPDX_ALIASES = {
 function normalizeSpdxLicense(licenseStr) {
   if (!licenseStr || typeof licenseStr !== 'string') return 'UNKNOWN';
   const trimmed = licenseStr.trim();
-  if (trimmed === '' || trimmed.toUpperCase() === 'UNKNOWN' || trimmed.toUpperCase() === 'NOASSERTION') {
+  if (
+    trimmed === '' ||
+    trimmed.toUpperCase() === 'UNKNOWN' ||
+    trimmed.toUpperCase() === 'NOASSERTION'
+  ) {
     return 'UNKNOWN';
   }
 
@@ -102,9 +106,9 @@ class LicenseComplianceEngine {
       const parts = normalized
         .replace(/[()]/g, '')
         .split(' OR ')
-        .map((p) => normalizeSpdxLicense(p.trim()));
+        .map(p => normalizeSpdxLicense(p.trim()));
 
-      const tiers = parts.map((p) => this.classifyLicense(p));
+      const tiers = parts.map(p => this.classifyLicense(p));
       if (tiers.includes('PERMISSIVE')) {
         return {
           compliant: true,
@@ -124,9 +128,9 @@ class LicenseComplianceEngine {
       const parts = normalized
         .replace(/[()]/g, '')
         .split(' AND ')
-        .map((p) => normalizeSpdxLicense(p.trim()));
+        .map(p => normalizeSpdxLicense(p.trim()));
 
-      const tiers = parts.map((p) => this.classifyLicense(p));
+      const tiers = parts.map(p => this.classifyLicense(p));
       if (tiers.includes('PROHIBITED') || tiers.includes('STRONG_COPYLEFT')) {
         return {
           compliant: false,
@@ -134,7 +138,7 @@ class LicenseComplianceEngine {
           details: `Conjunctive license imposes copyleft obligations (${parts.join(' AND ')})`,
         };
       }
-      const allPermissive = tiers.every((t) => t === 'PERMISSIVE');
+      const allPermissive = tiers.every(t => t === 'PERMISSIVE');
       return {
         compliant: allPermissive,
         effectiveTier: allPermissive ? 'PERMISSIVE' : 'UNCLASSIFIED',
@@ -158,8 +162,9 @@ class LicenseComplianceEngine {
    */
   checkException(packageName, license) {
     const today = new Date().toISOString().slice(0, 10);
-    const match = this.policy.exceptions.find((ex) => {
-      const pkgMatches = ex.package === '*' || ex.package.toLowerCase() === packageName.toLowerCase();
+    const match = this.policy.exceptions.find(ex => {
+      const pkgMatches =
+        ex.package === '*' || ex.package.toLowerCase() === packageName.toLowerCase();
       const licMatches = ex.license === '*' || ex.license.toLowerCase() === license.toLowerCase();
       return pkgMatches && licMatches;
     });
@@ -197,7 +202,10 @@ class LicenseComplianceEngine {
 
       if (!evalResult.compliant) {
         let severity = 'HIGH';
-        if (evalResult.effectiveTier === 'PROHIBITED' || evalResult.effectiveTier === 'STRONG_COPYLEFT') {
+        if (
+          evalResult.effectiveTier === 'PROHIBITED' ||
+          evalResult.effectiveTier === 'STRONG_COPYLEFT'
+        ) {
           severity = 'CRITICAL';
         } else if (evalResult.effectiveTier === 'UNKNOWN') {
           severity = 'MEDIUM';
@@ -215,7 +223,7 @@ class LicenseComplianceEngine {
             evidence: `license: ${rawLicense}, normalized: ${normalized}, tier: ${evalResult.effectiveTier}`,
             remediation: `Replace ${comp.name} with a permissively licensed alternative or request an approved compliance exception.`,
             verdict: 'FAIL',
-          })
+          }),
         );
       } else {
         compliantCount++;
@@ -239,4 +247,3 @@ module.exports = {
   normalizeSpdxLicense,
   LicenseComplianceEngine,
 };
-

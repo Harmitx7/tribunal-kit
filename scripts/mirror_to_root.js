@@ -32,7 +32,7 @@ const filesToCopy = [
   '.agent/workflows/team-mode.md',
   '.agent/workflows/understand.md',
   'README.md',
-  'docs/GETTING_STARTED.md'
+  'docs/GETTING_STARTED.md',
 ];
 
 let copied = 0;
@@ -53,7 +53,7 @@ for (const rel of filesToCopy) {
 const benchmarkArtifacts = [
   'canonical_execution_graph.json',
   'complete_skill_dependency_graph.json',
-  'ecosystem_integration_certification_report.md'
+  'ecosystem_integration_certification_report.md',
 ];
 
 for (const artifact of benchmarkArtifacts) {

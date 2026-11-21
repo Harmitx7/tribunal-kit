@@ -12,24 +12,26 @@ scripts-binding:
   - .agent/scripts/lint_runner.js
   - .agent/scripts/verify_all.js
 inputs:
-  interactiveElements: "array"
-  motionBudgetMs: "number"
-  springPhysicsConfig: "object"
+  interactiveElements: 'array'
+  motionBudgetMs: 'number'
+  springPhysicsConfig: 'object'
 outputs:
-  interactionContract: "object"
-  motionCss: "string"
-  reducedMotionStyles: "string"
+  interactionContract: 'object'
+  motionCss: 'string'
+  reducedMotionStyles: 'string'
 trigger:
-  - "interaction-motion"
-  - "spring-physics"
-  - "micro-interaction"
-  - "motion-engineer"
+  - 'interaction-motion'
+  - 'spring-physics'
+  - 'micro-interaction'
+  - 'motion-engineer'
 ---
 
 # UI Interaction & Motion Engineer — Tactile Feedback & Spring Physics
 
 ## Mandatory Pre-Flight Context Inspection
+
 Before adding or adjusting transitions and animations, inspect these 5 critical parameters:
+
 1. **Property Targeting Invariant**: Never use `transition: all`. Target only `transform`, `opacity`, `background-color`, and `border-color` to prevent layout recalculation thrashing.
 2. **Tactile Press Physics**: All primary and secondary clickable elements must feature physical click feedback (`active:scale-[0.98]` or 1px translateY depression).
 3. **Reduced-Motion Obligation**: Every animation must respect `@media (prefers-reduced-motion: reduce)` by substituting crossfades (`opacity`) or disabling transforms entirely.
@@ -37,24 +39,26 @@ Before adding or adjusting transitions and animations, inspect these 5 critical 
 5. **No Visual Vanishing**: Forbid `scale(0)` on collapsible panels or tooltips as it causes disorienting optical distortion; use `scale(0.95)` with `opacity` fade.
 
 ## Activation Boundaries
+
 - **Activate when:** Creating micro-interactions, button hover/press states, modal transitions, accordion drawers, list reordering, or motion accessibility fallbacks.
 - **DO NOT activate when:** Structuring non-animated data tables, building purely static emails, or designing server data pipelines.
 
 ## 🔁 Multi-Pass Interaction & Motion Protocol
 
-| Pass | Phase | Core Action | Observable Target |
-|:---|:---|:---|:---|
-| **Pass 1** | **Affordance Mapping** | Identify all interactive targets (buttons, links, inputs, cards, switches). | Interaction Inventory |
-| **Pass 2** | **Tactile Physics Injection** | Add `active:scale-[0.98]` and micro-spring curves to button and link targets. | Tactile Press Physics |
-| **Pass 3** | **Property Isolation** | Audit styles to ensure transitions strictly target transform and opacity. | Zero Layout Shifts |
-| **Pass 4** | **Frame Budget Profiling** | Verify 60fps execution using CSS hardware transforms (`transform: translateZ(0)`). | 16.6ms Frame Budget |
-| **Pass 5** | **Reduced-Motion Fallbacks** | Wrap all animations in `@media (prefers-reduced-motion: no-preference)` or fallback rules. | WCAG 2.3.3 Compliance |
+| Pass       | Phase                         | Core Action                                                                                | Observable Target     |
+| :--------- | :---------------------------- | :----------------------------------------------------------------------------------------- | :-------------------- |
+| **Pass 1** | **Affordance Mapping**        | Identify all interactive targets (buttons, links, inputs, cards, switches).                | Interaction Inventory |
+| **Pass 2** | **Tactile Physics Injection** | Add `active:scale-[0.98]` and micro-spring curves to button and link targets.              | Tactile Press Physics |
+| **Pass 3** | **Property Isolation**        | Audit styles to ensure transitions strictly target transform and opacity.                  | Zero Layout Shifts    |
+| **Pass 4** | **Frame Budget Profiling**    | Verify 60fps execution using CSS hardware transforms (`transform: translateZ(0)`).         | 16.6ms Frame Budget   |
+| **Pass 5** | **Reduced-Motion Fallbacks**  | Wrap all animations in `@media (prefers-reduced-motion: no-preference)` or fallback rules. | WCAG 2.3.3 Compliance |
 
 ---
 
 ## 🛠️ Technical Architecture & Motion Recipes
 
 ### 1. Ergonomic Tactile Button Contract
+
 ```html
 <!-- Interactive button with tactile spring feedback -->
 <button
@@ -76,6 +80,7 @@ Before adding or adjusting transitions and animations, inspect these 5 critical 
 ```
 
 ### 2. Spring Physics Dialog Transition (Accessible)
+
 ```css
 /* Dialog overlay & surface transition */
 .ui-dialog-backdrop {
@@ -87,7 +92,9 @@ Before adding or adjusting transitions and animations, inspect these 5 critical 
 .ui-dialog-surface {
   transform: scale(1) translateY(0);
   opacity: 1;
-  transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease-out;
+  transition:
+    transform 250ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 200ms ease-out;
 }
 
 /* Reduced motion preference */
@@ -106,7 +113,7 @@ Before adding or adjusting transitions and animations, inspect these 5 critical 
 ## 🏛️ Tribunal Verification & Guardrails
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
+
 1. Scan code with `analyzeVisualDefects()` to verify zero instances of `transition-all`.
 2. Verify all interactive components include explicit `active:scale-[0.98]` or tactile press equivalent.
 3. Confirm presence of `@media (prefers-reduced-motion: reduce)` fallbacks for all keyframe animations.
-

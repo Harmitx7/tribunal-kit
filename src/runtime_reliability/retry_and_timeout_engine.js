@@ -110,7 +110,7 @@ class RetryAndTimeoutEngine {
       const elapsed = Date.now() - startTime;
       if (attempt > 1 && elapsed >= this.policy.retryDeadlineMs) {
         const timeoutErr = new Error(
-          `Total retry deadline of ${this.policy.retryDeadlineMs}ms exceeded after ${attempt - 1} attempts.`
+          `Total retry deadline of ${this.policy.retryDeadlineMs}ms exceeded after ${attempt - 1} attempts.`,
         );
         timeoutErr.failureCategory = 'TIMEOUT';
         throw timeoutErr;
@@ -132,7 +132,9 @@ class RetryAndTimeoutEngine {
             taskFn(attempt),
             new Promise((_, reject) => {
               const timer = setTimeout(() => {
-                const err = new Error(`Task attempt ${attempt} timed out after ${taskOptions.taskTimeoutMs}ms`);
+                const err = new Error(
+                  `Task attempt ${attempt} timed out after ${taskOptions.taskTimeoutMs}ms`,
+                );
                 err.failureCategory = 'TIMEOUT';
                 reject(err);
               }, taskOptions.taskTimeoutMs);

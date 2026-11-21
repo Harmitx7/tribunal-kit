@@ -26,10 +26,7 @@ const {
   arb,
 } = require('../../src/verification');
 
-const {
-  auditClaim,
-  evaluateRegressions,
-} = require('../../src/evaluation');
+const { auditClaim, evaluateRegressions } = require('../../src/evaluation');
 
 const {
   scanForPromptInjection,
@@ -92,9 +89,9 @@ describe('Phase 2.5: False Certification & Fail-Closed Invariants', () => {
         throw err;
       };
 
-      await expect(
-        engine.execute(failingFn, { isIdempotent: false })
-      ).rejects.toThrow('Auth token rejected (FATAL)');
+      await expect(engine.execute(failingFn, { isIdempotent: false })).rejects.toThrow(
+        'Auth token rejected (FATAL)',
+      );
 
       expect(attempts).toBe(1); // Halts on attempt 1, does NOT burn retries
     });
@@ -122,7 +119,7 @@ describe('Phase 2.5: False Certification & Fail-Closed Invariants', () => {
     test('Property testing catches invariant violations and shrinks counterexample', () => {
       const intArb = arb.integer({ min: 0, max: 100 });
       // Property: all non-negative integers are < 50 (falsifiable)
-      const report = assertProperty([intArb], (n) => n < 50, { runs: 50 });
+      const report = assertProperty([intArb], n => n < 50, { runs: 50 });
       expect(report.passed).toBe(false);
       expect(report.shrunkCounterexample[0]).toBe(50); // Shrunk to minimal boundary
     });

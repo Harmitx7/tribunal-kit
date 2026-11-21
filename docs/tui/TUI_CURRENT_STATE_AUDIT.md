@@ -10,6 +10,7 @@
 ## 1. Executive Summary
 
 Tribunal-Kit currently operates a hybrid command-line presentation system:
+
 1. A **legacy 16-color standard logger** (`src/utils/logger.js`) utilized by older CLI commands (`tk help`, `tk learn`, `tk case`, etc.).
 2. A **bespoke, zero-dependency ANSI TrueColor TUI subsystem** (`src/tui/`) providing brand banners, action trees, braille shimmer spinners, reviewer swarm matrices, bordered panels, and interactive multi-select wizards.
 3. A **mirrored Rust native TUI engine** (`crates/core/src/tui/`) providing token parity in the compiled binary core.
@@ -21,6 +22,7 @@ While the existing `src/tui` implementation demonstrates high taste and fast sta
 ## 2. Codebase Discovery & Entry Point Inventory
 
 ### 2.1 CLI Dispatch & Entry Points
+
 - **`bin/wrapper.js`**: Primary binary wrapper executed by `npm` or global install. Attempts to execute the native Rust core (`crates/core`) when installed; falls back to Node.js runtime `src/cli.js`.
 - **`src/cli.js`**: Core Node.js CLI dispatcher. Uses custom argument parser (`parseArgs`) and lazy-loads command handlers (`loadCmd`) on demand to keep startup I/O under ~15ms.
 - **`bin/tk-proxy.js`**: Interception proxy for AI agent tool calls and command wrappers.
@@ -28,18 +30,19 @@ While the existing `src/tui` implementation demonstrates high taste and fast sta
 - **`crates/core/src/main.rs`**: Rust native CLI binary mirroring CLI commands for ultra-fast native execution.
 
 ### 2.2 TUI Component Architecture (`src/tui/`)
+
 The current presentation layer is entirely custom-crafted with **zero runtime npm dependencies** (beyond standard Node.js stdlib `readline`, `child_process`, `fs`, `path`):
 
-| Module | LOC | Primary Responsibility | Current Status |
-| :--- | :--- | :--- | :--- |
-| `theme.js` | 174 | Color palettes (Slate, Zinc, Flame, Emerald), TrueColor/TTY detection, UTF-8/ASCII glyph sets, ANSI formatting helpers, cursor escape sequences | Stable, but lacks 256-color fallback palette; detection logic for UTF-8 has Windows CMD edge-cases |
-| `banner.js` | 70 | Brand header card (`renderBanner`), Flame-colored pill badge, version display, section headers (`renderSectionHeader`) | Functional, but layout calculation uses fixed 64-84 column bounds; right pill spacing calculation has minor arithmetic flaws |
-| `panel.js` | 58 | Bordered content boxes (`renderPanel`) with header titles and accessory metadata | **Defect identified:** Divider line uses `treeMid` (`├──`, 3 chars) + `boxH` repeat, causing horizontal overflow by 2 characters |
-| `progress.js` | 43 | Horizontal bar visualization (`renderProgressBar`), key-value metric formatting (`renderMetric`) | Functional, basic linear fill (`█` / `░`) |
-| `reviewer-grid.js` | 90 | 1 to 3 column matrix rendering status for all 28 Tribunal reviewers running concurrently | Functional, but non-interactive; renders as static dump or simple fallback |
-| `shimmer.js` | 90 | Real-time braille spinner (`ShimmerSpinner`), sinusoidal RGB TrueColor wave gradient text (`renderShimmerText`) | Visually impressive (Brainless style), but lacks non-TTY timer cleanup on abnormal process interruption |
-| `tree.js` | 122 | Hierarchical action tree (`ActionTree`) with timed stagger steps, connecting timeline pipes, success/warning/error nodes | High usability; standard across `tk init`, `tk validate` |
-| `wizard.js` | 149 | Interactive terminal checklist (`WizardPrompt`) with raw mode `readline`, arrow keys, Space toggle, non-TTY fallback | High utility; lacks page-scrolling for long lists (> terminal height); lacks resize re-draw |
+| Module             | LOC | Primary Responsibility                                                                                                                          | Current Status                                                                                                                   |
+| :----------------- | :-- | :---------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| `theme.js`         | 174 | Color palettes (Slate, Zinc, Flame, Emerald), TrueColor/TTY detection, UTF-8/ASCII glyph sets, ANSI formatting helpers, cursor escape sequences | Stable, but lacks 256-color fallback palette; detection logic for UTF-8 has Windows CMD edge-cases                               |
+| `banner.js`        | 70  | Brand header card (`renderBanner`), Flame-colored pill badge, version display, section headers (`renderSectionHeader`)                          | Functional, but layout calculation uses fixed 64-84 column bounds; right pill spacing calculation has minor arithmetic flaws     |
+| `panel.js`         | 58  | Bordered content boxes (`renderPanel`) with header titles and accessory metadata                                                                | **Defect identified:** Divider line uses `treeMid` (`├──`, 3 chars) + `boxH` repeat, causing horizontal overflow by 2 characters |
+| `progress.js`      | 43  | Horizontal bar visualization (`renderProgressBar`), key-value metric formatting (`renderMetric`)                                                | Functional, basic linear fill (`█` / `░`)                                                                                        |
+| `reviewer-grid.js` | 90  | 1 to 3 column matrix rendering status for all 28 Tribunal reviewers running concurrently                                                        | Functional, but non-interactive; renders as static dump or simple fallback                                                       |
+| `shimmer.js`       | 90  | Real-time braille spinner (`ShimmerSpinner`), sinusoidal RGB TrueColor wave gradient text (`renderShimmerText`)                                 | Visually impressive (Brainless style), but lacks non-TTY timer cleanup on abnormal process interruption                          |
+| `tree.js`          | 122 | Hierarchical action tree (`ActionTree`) with timed stagger steps, connecting timeline pipes, success/warning/error nodes                        | High usability; standard across `tk init`, `tk validate`                                                                         |
+| `wizard.js`        | 149 | Interactive terminal checklist (`WizardPrompt`) with raw mode `readline`, arrow keys, Space toggle, non-TTY fallback                            | High utility; lacks page-scrolling for long lists (> terminal height); lacks resize re-draw                                      |
 
 ---
 
@@ -69,6 +72,7 @@ Existing commands follow three distinct presentation tiers:
 ```
 
 ### Architectural Fragmentation
+
 - **Inconsistent Theme Abstractions**: `src/utils/logger.js` defines `C.cyan`, `C.gray`, `ok()`, `warn()`, `err()` using 16-color ANSI escapes (`\x1b[96m`), whereas `src/tui/theme.js` defines TrueColor RGB arrays (`RGB.SLATE_900`, `RGB.FLAME`) using 24-bit sequences (`\x1b[38;2;R;G;Bm`).
 - **Uncoordinated Output Channels**: `logger.js` writes `ok()` and `log()` to `console.log` and `err()` to `console.error`. `ShimmerSpinner` writes progress to `process.stderr`. `WizardPrompt` writes to `process.stdout`.
 - **Command-Specific Rendering Duplication**: `src/commands/rsi.js` and `src/commands/status.js` hand-craft their own divider lines (`─`.repeat(58)) and spacing rather than utilizing a shared `renderPanel` or unified metric card primitive.
@@ -79,16 +83,20 @@ Existing commands follow three distinct presentation tiers:
 
 1. **Divider Alignment Defect in `panel.js`**:
    Line 39 of `src/tui/panel.js`:
+
    ```javascript
    console.log(`  ${color(RGB.SLATE_700, g.treeMid + g.boxH.repeat(innerWidth + 2) + '┤')}`);
    ```
+
    `g.treeMid` is `'├──'` (3 glyphs). The top border is `'╭' + g.boxH.repeat(innerWidth + 2) + '╮'`. Because `'├──'` is 3 characters while `'╭'` is 1 character, the horizontal separator is 2 characters wider than the box itself, breaking terminal geometry on boxed displays.
 
 2. **Incomplete ANSI Stripping Regex**:
    Padding calculations in `panel.js` and `banner.js` rely on:
+
    ```javascript
-   text.replace(/\x1b\[[0-9;]*m/g, '')
+   text.replace(/\x1b\[[0-9;]*m/g, '');
    ```
+
    This regex fails to strip cursor positioning sequences (`\x1b[2K`, `\x1b[?25l`), 24-bit background color resets, or URL hyperlink escapes (`OSC 8`), resulting in misaligned right borders whenever styled substrings are passed.
 
 3. **Terminal Resize Blindness (`SIGWINCH`)**:
@@ -96,9 +104,11 @@ Existing commands follow three distinct presentation tiers:
 
 4. **Wizard Overflow on Small Viewports**:
    `WizardPrompt` computes re-draw line clearance using:
+
    ```javascript
    process.stdout.write(`\x1b[${options.length + 5}A\r`);
    ```
+
    If the list of options exceeds `process.stdout.rows - 5`, the cursor moves above the scroll buffer, causing runaway terminal corruption and duplicate lines.
 
 5. **Monochrome / Accessibility Gaps**:

@@ -46,16 +46,17 @@ FLIGHT DATA HUD / CHANGE PREPARATION DOSSIER
 ---
 
 ## Integrated Skill Architecture
+
 `/tribunal-understand` delegates to the `codebase-intelligence` orchestrator and routes specific intents to specialized supporting skills:
 
-| Subcommand | Specialized Skill | Primary Responsibility |
-| :--- | :--- | :--- |
-| `overview` | `repository-reconnaissance` | Repository structure, workspaces, tech stack, and entry points |
-| `dependencies` | `architecture-mapping` | Module dependency topology, fan-in hubs, and circular cycles |
-| `trace` | `execution-flow-tracing` | Evidence-backed control/data flow tracing from ingress to test |
-| `relevant-files` / `prepare` | `code-relevance-analysis` | Task-driven relevant file retrieval and change inspection slicing |
-| `impact` | `change-impact-analysis` | Concentric blast-radius calculation and downstream risk tiers |
-| `onboard` | `evidence-backed-onboarding` | Guided developer onboarding and verified setup recipes |
+| Subcommand                   | Specialized Skill            | Primary Responsibility                                            |
+| :--------------------------- | :--------------------------- | :---------------------------------------------------------------- |
+| `overview`                   | `repository-reconnaissance`  | Repository structure, workspaces, tech stack, and entry points    |
+| `dependencies`               | `architecture-mapping`       | Module dependency topology, fan-in hubs, and circular cycles      |
+| `trace`                      | `execution-flow-tracing`     | Evidence-backed control/data flow tracing from ingress to test    |
+| `relevant-files` / `prepare` | `code-relevance-analysis`    | Task-driven relevant file retrieval and change inspection slicing |
+| `impact`                     | `change-impact-analysis`     | Concentric blast-radius calculation and downstream risk tiers     |
+| `onboard`                    | `evidence-backed-onboarding` | Guided developer onboarding and verified setup recipes            |
 
 ---
 
@@ -70,6 +71,7 @@ FLIGHT DATA HUD / CHANGE PREPARATION DOSSIER
 ```
 
 Produces the **System Topology Dossier**:
+
 - Repository structure, monorepo workspaces, languages & frameworks
 - Primary entry points (CLI binaries, HTTP routes, server scripts)
 - Datastores, message queues, and external APIs
@@ -88,12 +90,13 @@ Produces the **System Topology Dossier**:
 ```
 
 Produces the **Execution Flow Chronicle**:
+
 - Step 1: Ingress Trigger (CLI command / HTTP route dispatch)
 - Step 2: Middleware & security guards
 - Step 3: Handler and business logic
 - Step 4: Datastores and third-party API calls
 - Step 5: Covering test suites and verification recipes
-- *Note:* Static analysis does not guarantee runtime invocation.
+- _Note:_ Static analysis does not guarantee runtime invocation.
 
 ---
 
@@ -105,6 +108,7 @@ Produces the **Execution Flow Chronicle**:
 ```
 
 Produces the **Dependency Topology Matrix**:
+
 - Inbound callers (Fan-In) & Outbound calls (Fan-Out)
 - Transitive coupling depth
 - Circular dependency cycle detection & path alerts
@@ -121,6 +125,7 @@ Produces the **Dependency Topology Matrix**:
 ```
 
 Produces the **Targeted File Inspection Checklist**:
+
 - Classified file list: `INSPECT`, `LIKELY_CHANGE_TARGET`, `CONTRACT_TO_PRESERVE`, `DEPENDENT_TO_VERIFY`, `TEST_TO_REVIEW`
 - Evidence explanations for each recommendation
 - Exact verification command to run before submitting PR
@@ -135,6 +140,7 @@ Produces the **Targeted File Inspection Checklist**:
 ```
 
 Produces the **Blast Radius Assessment**:
+
 - Canonical Risk Tier: `🟢 LOW` | `🟡 MEDIUM` | `🟠 HIGH` | `🔴 CRITICAL` | `⚪ INDETERMINATE`
 - Concentric Rings: Ring 1 (direct callers), Ring 2..N (transitive callers)
 - Impacted public endpoints, datastores, and test suites
@@ -150,10 +156,11 @@ Produces the **Blast Radius Assessment**:
 ```
 
 Produces the **Code Relevance Inventory**:
+
 - Classified findings: `UNREFERENCED_STATICALLY`, `POSSIBLY_ORPHANED`, `PROTECTED`
 - Protected entry point registry (`bin/`, `package.json` `main`/`exports`)
 - Chesterton's fences (`// VERIFY` landmines to preserve)
-- *Invariant:* Dead-code findings never trigger automated deletion.
+- _Invariant:_ Dead-code findings never trigger automated deletion.
 
 ---
 
@@ -164,11 +171,12 @@ Produces the **Code Relevance Inventory**:
 ```
 
 Produces the **Developer Onboarding Dossier**:
+
 - Project purpose and 30-second mental model
 - Guided Reading Order:
-  - *Day 1:* System Entry Points & Configuration
-  - *Day 2:* Core Domain & Architectural Hubs
-  - *Day 3:* Integrations & Verification Suites
+  - _Day 1:_ System Entry Points & Configuration
+  - _Day 2:_ Core Domain & Architectural Hubs
+  - _Day 3:_ Integrations & Verification Suites
 - 1-Line Verification Recipes (build, test, lint)
 
 ---
@@ -181,6 +189,7 @@ Produces the **Developer Onboarding Dossier**:
 ```
 
 Produces the **Change Preparation Dossier**:
+
 - Proposed change analysis and likely change targets (`LIKELY_CHANGE_TARGET`)
 - Contracts and schemas to preserve (`CONTRACT_TO_PRESERVE`)
 - Dependent callers requiring verification (`DEPENDENT_TO_VERIFY`)
@@ -194,6 +203,7 @@ Produces the **Change Preparation Dossier**:
 ---
 
 ## Global Flags
+
 - `--depth <n>`: Traversal depth limit (default: 3, max: 15).
 - `--focus <dir>`: Restricts analysis scope to a specific subdirectory.
 - `--json`: Emits raw machine-readable JSON result envelope.

@@ -54,13 +54,21 @@ function parseFrontmatter(content) {
     if (!line) continue;
     if (line.startsWith('- ') && currentKey) {
       if (!Array.isArray(result[currentKey])) result[currentKey] = [];
-      result[currentKey].push(line.slice(2).trim().replace(/^["']|["']$/g, ''));
+      result[currentKey].push(
+        line
+          .slice(2)
+          .trim()
+          .replace(/^["']|["']$/g, ''),
+      );
       continue;
     }
     const idx = line.indexOf(':');
     if (idx !== -1) {
       const key = line.slice(0, idx).trim();
-      const val = line.slice(idx + 1).trim().replace(/^["']|["']$/g, '');
+      const val = line
+        .slice(idx + 1)
+        .trim()
+        .replace(/^["']|["']$/g, '');
       currentKey = key;
       if (val === '') {
         result[key] = [];
@@ -78,17 +86,23 @@ function auditGraph() {
 
   // 1. Discover all disk skills
   const diskSkills = new Set(
-    fs.readdirSync(SKILLS_DIR).filter(d => fs.statSync(path.join(SKILLS_DIR, d)).isDirectory())
+    fs.readdirSync(SKILLS_DIR).filter(d => fs.statSync(path.join(SKILLS_DIR, d)).isDirectory()),
   );
 
   // 2. Discover all disk workflows
   const diskWorkflows = new Set(
-    fs.readdirSync(WORKFLOWS_DIR).filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''))
+    fs
+      .readdirSync(WORKFLOWS_DIR)
+      .filter(f => f.endsWith('.md'))
+      .map(f => f.replace('.md', '')),
   );
 
   // 3. Discover all disk agents
   const diskAgents = new Set(
-    fs.readdirSync(AGENTS_DIR).filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''))
+    fs
+      .readdirSync(AGENTS_DIR)
+      .filter(f => f.endsWith('.md'))
+      .map(f => f.replace('.md', '')),
   );
 
   // 4. Load Topic Map
@@ -101,10 +115,10 @@ function auditGraph() {
   // 5. Load Slash Commands
   const slashConfig = JSON.parse(fs.readFileSync(SLASH_COMMANDS_PATH, 'utf8'));
   const registeredCommands = new Map();
-  for (const cmd of (slashConfig.commands || [])) {
+  for (const cmd of slashConfig.commands || []) {
     const primary = cmd.name.replace(/^\//, '');
     registeredCommands.set(primary, cmd);
-    for (const alias of (cmd.aliases || [])) {
+    for (const alias of cmd.aliases || []) {
       registeredCommands.set(alias.replace(/^\//, ''), cmd);
     }
   }
@@ -168,26 +182,38 @@ function auditGraph() {
   for (const skill of topicMappedSkills) {
     if (!diskSkills.has(skill)) {
       issues.push(`Skill '${skill}' in skill_topic_map.json does NOT exist on disk`);
-      graph.brokenReferences.push({ source: 'skill_topic_map.json', target: skill, type: 'missing_skill' });
+      graph.brokenReferences.push({
+        source: 'skill_topic_map.json',
+        target: skill,
+        type: 'missing_skill',
+      });
     }
   }
 
   // Check 2: Agents vs Specialist Registry
   for (const agent of diskAgents) {
     if (!registeredSpecialists.has(agent)) {
-      warnings.push(`Agent '${agent}' exists in .agent/agents/ but is missing from specialist-registry.json`);
+      warnings.push(
+        `Agent '${agent}' exists in .agent/agents/ but is missing from specialist-registry.json`,
+      );
       graph.orphans.unregisteredAgents.push(agent);
     }
   }
   for (const regAgent of registeredSpecialists) {
     if (!diskAgents.has(regAgent)) {
-      issues.push(`Agent '${regAgent}' in specialist-registry.json does NOT exist in .agent/agents/`);
-      graph.brokenReferences.push({ source: 'specialist-registry.json', target: regAgent, type: 'missing_agent' });
+      issues.push(
+        `Agent '${regAgent}' in specialist-registry.json does NOT exist in .agent/agents/`,
+      );
+      graph.brokenReferences.push({
+        source: 'specialist-registry.json',
+        target: regAgent,
+        type: 'missing_agent',
+      });
     }
   }
 
   // Check 3: Commands -> Workflows or Directives
-  for (const cmdObj of (slashConfig.commands || [])) {
+  for (const cmdObj of slashConfig.commands || []) {
     const primaryName = cmdObj.name.replace(/^\//, '');
     const aliases = (cmdObj.aliases || []).map(a => a.replace(/^\//, ''));
     const allNames = [primaryName, ...aliases];
@@ -202,15 +228,36 @@ function auditGraph() {
     }
 
     if (matchingWf) {
-      addEdge(`command:${primaryName}`, `workflow:${matchingWf}`, 'command_invokes_workflow', `Primary command ${cmdObj.name} maps to workflows/${matchingWf}.md`);
+      addEdge(
+        `command:${primaryName}`,
+        `workflow:${matchingWf}`,
+        'command_invokes_workflow',
+        `Primary command ${cmdObj.name} maps to workflows/${matchingWf}.md`,
+      );
       for (const alias of aliases) {
-        addEdge(`command:${alias}`, `workflow:${matchingWf}`, 'command_alias_invokes_workflow', `Alias /${alias} maps to workflows/${matchingWf}.md`);
+        addEdge(
+          `command:${alias}`,
+          `workflow:${matchingWf}`,
+          'command_alias_invokes_workflow',
+          `Alias /${alias} maps to workflows/${matchingWf}.md`,
+        );
       }
     } else if (['summon', 'skill', 'intensity'].includes(primaryName)) {
-      addEdge(`command:${primaryName}`, `platform:directive`, 'command_dynamic_directive', `Interactive environment directive: ${cmdObj.description}`);
+      addEdge(
+        `command:${primaryName}`,
+        `platform:directive`,
+        'command_dynamic_directive',
+        `Interactive environment directive: ${cmdObj.description}`,
+      );
     } else {
-      warnings.push(`Command '${primaryName}' has no matching markdown workflow in .agent/workflows/`);
-      graph.brokenReferences.push({ source: `command:${primaryName}`, target: `workflow:${primaryName}`, type: 'unresolved_workflow' });
+      warnings.push(
+        `Command '${primaryName}' has no matching markdown workflow in .agent/workflows/`,
+      );
+      graph.brokenReferences.push({
+        source: `command:${primaryName}`,
+        target: `workflow:${primaryName}`,
+        type: 'unresolved_workflow',
+      });
     }
   }
 
@@ -221,7 +268,9 @@ function auditGraph() {
     const content = fs.readFileSync(path.join(WORKFLOWS_DIR, `${wf}.md`), 'utf8');
     const hasCommand = registeredCommands.has(wf);
     if (!hasCommand) {
-      warnings.push(`Workflow '${wf}.md' has no corresponding slash command registered in slash-commands.json`);
+      warnings.push(
+        `Workflow '${wf}.md' has no corresponding slash command registered in slash-commands.json`,
+      );
       graph.orphans.unregisteredWorkflows.push(wf);
     }
 
@@ -229,14 +278,28 @@ function auditGraph() {
     for (const skill of diskSkills) {
       if (content.includes(`skills/${skill}`) || content.includes(`\`${skill}\``)) {
         invokedSkills.add(skill);
-        addEdge(`workflow:${wf}`, `skill:${skill}`, 'workflow_invokes_skill', `Cited in workflows/${wf}.md`);
+        addEdge(
+          `workflow:${wf}`,
+          `skill:${skill}`,
+          'workflow_invokes_skill',
+          `Cited in workflows/${wf}.md`,
+        );
       }
     }
 
     // Scan for agent references (@[agent-name], agents/<agent>, or `agent-name`)
     for (const agent of diskAgents) {
-      if (content.includes(`agents/${agent}`) || content.includes(`\`${agent}\``) || content.includes(`@[${agent}]`)) {
-        addEdge(`workflow:${wf}`, `agent:${agent}`, 'workflow_invokes_agent', `Cited in workflows/${wf}.md`);
+      if (
+        content.includes(`agents/${agent}`) ||
+        content.includes(`\`${agent}\``) ||
+        content.includes(`@[${agent}]`)
+      ) {
+        addEdge(
+          `workflow:${wf}`,
+          `agent:${agent}`,
+          'workflow_invokes_agent',
+          `Cited in workflows/${wf}.md`,
+        );
       }
     }
   }
@@ -266,12 +329,28 @@ function auditGraph() {
       for (const reqSkill of fm.skills) {
         if (diskSkills.has(reqSkill)) {
           deps.add(reqSkill);
-          addEdge(`skill:${skill}`, `skill:${reqSkill}`, 'skill_requires_skill', `Declared in frontmatter skills: of ${skill}/SKILL.md`);
+          addEdge(
+            `skill:${skill}`,
+            `skill:${reqSkill}`,
+            'skill_requires_skill',
+            `Declared in frontmatter skills: of ${skill}/SKILL.md`,
+          );
         } else if (diskAgents.has(reqSkill)) {
-          addEdge(`skill:${skill}`, `agent:${reqSkill}`, 'skill_governed_by_agent', `Governing specialist agent declared in frontmatter skills: of ${skill}/SKILL.md`);
+          addEdge(
+            `skill:${skill}`,
+            `agent:${reqSkill}`,
+            'skill_governed_by_agent',
+            `Governing specialist agent declared in frontmatter skills: of ${skill}/SKILL.md`,
+          );
         } else {
-          issues.push(`Skill '${skill}' requires non-existent skill or agent '${reqSkill}' in frontmatter`);
-          graph.brokenReferences.push({ source: `skill:${skill}`, target: `skill:${reqSkill}`, type: 'missing_dependency' });
+          issues.push(
+            `Skill '${skill}' requires non-existent skill or agent '${reqSkill}' in frontmatter`,
+          );
+          graph.brokenReferences.push({
+            source: `skill:${skill}`,
+            target: `skill:${reqSkill}`,
+            type: 'missing_dependency',
+          });
         }
       }
     }
@@ -280,7 +359,13 @@ function auditGraph() {
     const associatedScript = getAssociatedScript(skillDir, SCRIPTS_DIR);
     if (associatedScript) {
       const scriptExists = fs.existsSync(path.resolve(ROOT, associatedScript));
-      addEdge(`skill:${skill}`, `script:${associatedScript}`, 'skill_invokes_script', `Mapped script binding for ${skill}`, scriptExists ? 'VERIFIED' : 'INVALID');
+      addEdge(
+        `skill:${skill}`,
+        `script:${associatedScript}`,
+        'skill_invokes_script',
+        `Mapped script binding for ${skill}`,
+        scriptExists ? 'VERIFIED' : 'INVALID',
+      );
       if (!scriptExists) {
         issues.push(`Skill '${skill}' binds to missing script '${associatedScript}'`);
       }
@@ -289,8 +374,16 @@ function auditGraph() {
     // 5c. Contextual documentation cross-references
     for (const otherSkill of diskSkills) {
       if (otherSkill === skill) continue;
-      if (!deps.has(otherSkill) && (content.includes(`skills/${otherSkill}`) || content.includes(`\`${otherSkill}\``))) {
-        addEdge(`skill:${skill}`, `skill:${otherSkill}`, 'skill_references_skill', `Referenced in markdown body of ${skill}/SKILL.md`);
+      if (
+        !deps.has(otherSkill) &&
+        (content.includes(`skills/${otherSkill}`) || content.includes(`\`${otherSkill}\``))
+      ) {
+        addEdge(
+          `skill:${skill}`,
+          `skill:${otherSkill}`,
+          'skill_references_skill',
+          `Referenced in markdown body of ${skill}/SKILL.md`,
+        );
       }
     }
 
@@ -302,7 +395,12 @@ function auditGraph() {
     if (Array.isArray(list)) {
       for (const skill of list) {
         if (diskSkills.has(skill)) {
-          addEdge(`router:topic_map:${dom}`, `skill:${skill}`, 'router_selects_skill', `Registered in skill_topic_map.json under domain '${dom}'`);
+          addEdge(
+            `router:topic_map:${dom}`,
+            `skill:${skill}`,
+            'router_selects_skill',
+            `Registered in skill_topic_map.json under domain '${dom}'`,
+          );
         }
       }
     }
@@ -336,7 +434,9 @@ function auditGraph() {
 
   graph.circularDependencies = cycles;
   if (cycles.length > 0) {
-    warnings.push(`Detected ${cycles.length} potential cyclic references across hard skill dependencies`);
+    warnings.push(
+      `Detected ${cycles.length} potential cyclic references across hard skill dependencies`,
+    );
   }
 
   return {
@@ -353,7 +453,7 @@ function auditGraph() {
       issuesCount: issues.length,
       warningsCount: warnings.length,
       uninvokedSkillsCount: graph.orphans.uninvokedSkills.length,
-    }
+    },
   };
 }
 
@@ -385,7 +485,12 @@ if (require.main === module) {
   }
 
   const outCanonical = path.join(ROOT, 'benchmarks', 'artifacts', 'canonical_execution_graph.json');
-  const outComplete = path.join(ROOT, 'benchmarks', 'artifacts', 'complete_skill_dependency_graph.json');
+  const outComplete = path.join(
+    ROOT,
+    'benchmarks',
+    'artifacts',
+    'complete_skill_dependency_graph.json',
+  );
   fs.mkdirSync(path.dirname(outCanonical), { recursive: true });
   fs.writeFileSync(outCanonical, JSON.stringify(result, null, 2), 'utf8');
   fs.writeFileSync(outComplete, JSON.stringify(result, null, 2), 'utf8');

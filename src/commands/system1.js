@@ -5,7 +5,7 @@ const path = require('path');
 const crypto = require('crypto');
 const child_process = require('child_process');
 const readline = require('readline');
-const { log, err, dim, c, bold } = require('../utils/logger');
+const { log, err, dim, c } = require('../utils/logger');
 const { getLayaDir, getConfigPath, EXPECTED_MODEL_HASHES } = require('../system1/provider');
 const {
   buildDecisionPlan,
@@ -123,7 +123,11 @@ function getInstalledVersion() {
   if (fs.existsSync(configPath)) {
     try {
       config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    } catch {}
+    } catch (err) {
+      if (err && err.code !== 'ENOENT') {
+        err(`Failed to read System-1 config at ${configPath}: ${err.message}`);
+      }
+    }
   }
 
   let installedLayaVer = config.laya_version || 'Unknown';
@@ -141,7 +145,11 @@ function getInstalledVersion() {
         pkgLock.dependencies?.['onnxruntime-node']?.version ||
         pkgLock.packages?.['node_modules/onnxruntime-node']?.version ||
         installedOnnxVer;
-    } catch {}
+    } catch (err) {
+      if (err && err.code !== 'ENOENT') {
+        err(`Failed to parse System-1 package-lock at ${pkgLockPath}: ${err.message}`);
+      }
+    }
   }
 
   return {
@@ -293,7 +301,27 @@ async function cmdSystem1Setup(quiet, mode = 'setup') {
       s2.start('Downloading...');
 
       const layaPkgPath = path.join(layaDir, 'node_modules', '@receptron', 'laya');
-      const { Laya, ensureBundle } = require(layaPkgPath);
+      let Laya, ensureBundle;
+      try {
+        const layaMod = require(layaPkgPath);
+        Laya = layaMod.Laya;
+        ensureBundle = layaMod.ensureBundle;
+      } catch (err) {
+        if (err && err.code === 'MODULE_NOT_FOUND') {
+          try {
+            const layaMod = require('@receptron/laya');
+            Laya = layaMod.Laya;
+            ensureBundle = layaMod.ensureBundle;
+          } catch (_err2) {
+            s2.fail('Missing optional package @receptron/laya');
+            throw new Error(
+              `Optional dependency '@receptron/laya' is not installed: ${err.message}. Please install with 'npm install --save-optional @receptron/laya onnxruntime-node'.`,
+            );
+          }
+        } else {
+          throw err;
+        }
+      }
 
       const revision = '68f27dfe5a27a54fb2b1fefc432f43f972e90868';
       const downloadedModelDir = await ensureBundle({
@@ -449,14 +477,18 @@ function cmdSystem1Disable(quiet) {
 async function cmdSystem1Status(quiet) {
   const configPath = getConfigPath();
   const layaDir = getLayaDir();
-  const modelPath = path.join(layaDir, 'models', 'laya.onnx');
-  const runtimePath = path.join(layaDir, 'node_modules', '@receptron', 'laya');
+  const _modelPath = path.join(layaDir, 'models', 'laya.onnx');
+  const _runtimePath = path.join(layaDir, 'node_modules', '@receptron', 'laya');
 
   let config = null;
   if (fs.existsSync(configPath)) {
     try {
       config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    } catch {}
+    } catch (e) {
+      if (e && e.code !== 'ENOENT') {
+        err(`Failed to parse System-1 config at ${configPath}: ${e.message}`);
+      }
+    }
   }
 
   const healthy = await checkHealth();
@@ -523,7 +555,7 @@ async function cmdSystem1Verify(quiet) {
   }
 }
 
-async function cmdSystem1Plan(flags, args, quiet) {
+async function cmdSystem1Plan(flags, args, _quiet) {
   const isJson = flags.json || args.includes('--json');
   const task =
     flags.task || 'Build a structured Decision Plan for the existing System-1 implementation.';
@@ -578,7 +610,7 @@ async function cmdSystem1Plan(flags, args, quiet) {
   }
 }
 
-async function cmdSystem1Reviewers(flags, args, quiet) {
+async function cmdSystem1Reviewers(flags, args, _quiet) {
   const isJson = flags.json || args.includes('--json');
   const task = flags.task || 'Add new MFA endpoint';
   const files = flags.files ? flags.files.split(',') : ['src/auth/mfa.js'];

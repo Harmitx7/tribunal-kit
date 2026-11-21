@@ -176,4 +176,3 @@ describe('AI Agent Threat Model & Schemas', () => {
     expect(() => buildThreatModelRegister(duplicates)).toThrow(/Duplicate threatId detected/);
   });
 });
-

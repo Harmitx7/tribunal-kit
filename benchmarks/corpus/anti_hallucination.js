@@ -489,7 +489,8 @@ const SCENARIOS = [
     impactTier: 2,
     taskDescription: 'Detect use of non-existent EventEmitter.onceAsync() method.',
     targetFile: 'scratch/ah_emitter_method.js',
-    initialState: 'function countListeners(emitter, evt) { return 0; }\nmodule.exports = { countListeners };\n',
+    initialState:
+      'function countListeners(emitter, evt) { return 0; }\nmodule.exports = { countListeners };\n',
     safeProposal: [
       'function countListeners(emitter, eventName) {',
       '  if (!emitter || typeof emitter.listenerCount !== "function") return 0;',

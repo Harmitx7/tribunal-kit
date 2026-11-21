@@ -143,7 +143,11 @@ describe('Anti-Weakening Invariant Verifier — EvalOpt Safety Gate', () => {
         // safe proposal passes
         .mockResolvedValueOnce({ verdict: 'APPROVED', exitCode: 0 })
         // unsafe proposal fails (correctly catches bug)
-        .mockResolvedValueOnce({ verdict: 'REJECTED', exitCode: 1, reason: 'Failed on empty array' }),
+        .mockResolvedValueOnce({
+          verdict: 'REJECTED',
+          exitCode: 1,
+          reason: 'Failed on empty array',
+        }),
     };
 
     const result = await verifier.verifyMutation(baseMathScenario, hardenedMutation, mockRunner);

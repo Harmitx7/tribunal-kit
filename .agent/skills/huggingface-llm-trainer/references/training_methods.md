@@ -7,6 +7,7 @@ TRL (Transformer Reinforcement Learning) provides multiple training methods for 
 **What it is:** Standard instruction tuning with supervised learning on demonstration data.
 
 **When to use:**
+
 - Initial fine-tuning of base models on task-specific data
 - Teaching new capabilities or domains
 - Most common starting point for fine-tuning
@@ -14,6 +15,7 @@ TRL (Transformer Reinforcement Learning) provides multiple training methods for 
 **Dataset format:** Conversational format with "messages" field, OR text field, OR prompt/completion pairs
 
 **Example:**
+
 ```python
 from trl import SFTTrainer, SFTConfig
 
@@ -40,6 +42,7 @@ trainer.train()
 **What it is:** Alignment method that trains directly on preference pairs (chosen vs rejected responses) without requiring a reward model.
 
 **When to use:**
+
 - Aligning models to human preferences
 - Improving response quality after SFT
 - Have paired preference data (chosen/rejected responses)
@@ -47,6 +50,7 @@ trainer.train()
 **Dataset format:** Preference pairs with "chosen" and "rejected" fields
 
 **Example:**
+
 ```python
 from trl import DPOTrainer, DPOConfig
 
@@ -72,6 +76,7 @@ trainer.train()
 **What it is:** Online RL method that optimizes relative to group performance, useful for tasks with verifiable rewards.
 
 **When to use:**
+
 - Tasks with automatic reward signals (code execution, math verification)
 - Online learning scenarios
 - When DPO offline data is insufficient
@@ -79,6 +84,7 @@ trainer.train()
 **Dataset format:** Prompt-only format (model generates responses, reward computed online)
 
 **Example:**
+
 ```python
 # Use TRL maintained script
 hf_jobs("uv", {
@@ -101,6 +107,7 @@ hf_jobs("uv", {
 **What it is:** Train a reward model to score responses, used as a component in RLHF pipelines.
 
 **When to use:**
+
 - Building RLHF pipeline
 - Need automatic quality scoring
 - Creating reward signals for PPO training
@@ -111,32 +118,36 @@ hf_jobs("uv", {
 
 ## Method Selection Guide
 
-| Method | Complexity | Data Required | Use Case |
-|--------|-----------|---------------|----------|
-| **SFT** | Low | Demonstrations | Initial fine-tuning |
-| **DPO** | Medium | Paired preferences | Post-SFT alignment |
-| **GRPO** | Medium | Prompts + reward fn | Online RL with automatic rewards |
-| **Reward** | Medium | Paired preferences | Building RLHF pipeline |
+| Method     | Complexity | Data Required       | Use Case                         |
+| ---------- | ---------- | ------------------- | -------------------------------- |
+| **SFT**    | Low        | Demonstrations      | Initial fine-tuning              |
+| **DPO**    | Medium     | Paired preferences  | Post-SFT alignment               |
+| **GRPO**   | Medium     | Prompts + reward fn | Online RL with automatic rewards |
+| **Reward** | Medium     | Paired preferences  | Building RLHF pipeline           |
 
 ## Recommended Pipeline
 
 **For most use cases:**
+
 1. **Start with SFT** - Fine-tune base model on task data
 2. **Follow with DPO** - Align to preferences using paired data
 3. **Optional: GGUF conversion** - Deploy for local inference
 
 **For advanced RL scenarios:**
+
 1. **Start with SFT** - Fine-tune base model
 2. **Train reward model** - On preference data
 
 ## Dataset Format Reference
 
 For complete dataset format specifications, use:
+
 ```python
 hf_doc_fetch("https://huggingface.co/docs/trl/dataset_formats")
 ```
 
 Or validate your dataset:
+
 ```bash
 uv run https://huggingface.co/datasets/mcp-tools/skills/raw/main/dataset_inspector.py \
   --dataset your/dataset --split train

@@ -30,9 +30,38 @@ class ControlledWriteService {
       new ReviewExecutor({ repoRoot: options.workspaceRoot || process.cwd() });
     this.correctionEngine = options.correctionEngine || new AgentCorrectionEngine();
     this.workspaceRoot = options.workspaceRoot || process.cwd();
+    this.tokenTtlMs = options.tokenTtlMs !== undefined ? options.tokenTtlMs : 15 * 60 * 1000;
+    this.authorizedApprovers = Array.isArray(options.authorizedApprovers)
+      ? new Set(options.authorizedApprovers.map(a => a.trim().toLowerCase()))
+      : options.authorizedApprovers instanceof Set
+        ? options.authorizedApprovers
+        : null;
+    this.approvalSecret = options.approvalSecret || null;
 
     // In-memory store for write requests and tokens
     this.activeRequests = new Map();
+  }
+
+  _getTokenState(token, context = {}) {
+    if (!token || typeof token !== 'string') {
+      throw new Error('Invalid or expired token');
+    }
+    const state = this.activeRequests.get(token);
+    if (!state) {
+      throw new Error('Invalid or expired token');
+    }
+    if (this.tokenTtlMs > 0 && Date.now() - state.timestamp > this.tokenTtlMs) {
+      this.activeRequests.delete(token);
+      throw new Error('Invalid or expired token: Token expired');
+    }
+    if (state.request && state.request.sessionId) {
+      if (!context.sessionId || context.sessionId !== state.request.sessionId) {
+        throw new Error(
+          `Security Violation: Session mismatch. Token belongs to session "${state.request.sessionId}", but caller context provided "${context.sessionId || 'none'}".`,
+        );
+      }
+    }
+    return state;
   }
 
   _validateRequest(req) {
@@ -197,8 +226,7 @@ class ControlledWriteService {
   }
 
   previewWrite(token) {
-    const state = this.activeRequests.get(token);
-    if (!state) throw new Error('Invalid or expired token');
+    const state = this._getTokenState(token);
 
     return {
       files: state.request.files.map(f => ({ path: f.path, operation: f.operation })),
@@ -210,9 +238,8 @@ class ControlledWriteService {
     };
   }
 
-  approveWrite(token, approverId, signature) {
-    const state = this.activeRequests.get(token);
-    if (!state) throw new Error('Invalid or expired token');
+  approveWrite(token, approverId, signature, options = {}) {
+    const state = this._getTokenState(token, options);
 
     if (state.status !== 'HUMAN_APPROVAL_REQUIRED') {
       throw new Error('Approval not required or already approved/rejected');
@@ -224,7 +251,7 @@ class ControlledWriteService {
 
     const trimmedApprover = approverId.trim().toLowerCase();
     // Anti-Self-Authorization Invariant (Domain E/B): AI agents and automated callers cannot self-approve writes requiring human approval
-    if (
+    let isAgentApprover =
       trimmedApprover === 'ai' ||
       trimmedApprover === 'agent' ||
       trimmedApprover === 'mcp_client' ||
@@ -233,14 +260,48 @@ class ControlledWriteService {
       trimmedApprover === 'bot' ||
       trimmedApprover === 'unknown' ||
       trimmedApprover.startsWith('agent-') ||
-      trimmedApprover.startsWith('ai-')
-    ) {
-      throw new Error('Security Violation: AI agents and automated callers cannot self-approve writes requiring human approval.');
+      trimmedApprover.startsWith('ai-');
+
+    if (!isAgentApprover) {
+      try {
+        const { resolveAgent } = require('./canonical_registry');
+        if (resolveAgent(trimmedApprover, {}, this.workspaceRoot)) {
+          isAgentApprover = true;
+        }
+      } catch (_) {}
+    }
+
+    if (isAgentApprover) {
+      throw new Error(
+        'Security Violation: AI agents and automated callers cannot self-approve writes requiring human approval.',
+      );
+    }
+
+    if (this.authorizedApprovers && this.authorizedApprovers.size > 0) {
+      if (!this.authorizedApprovers.has(trimmedApprover)) {
+        throw new Error(
+          `Security Violation: Approver "${approverId}" is not in the authorized approvers allowlist.`,
+        );
+      }
     }
 
     if (state.requiresHumanApproval) {
       if (!signature || typeof signature !== 'string' || !signature.trim()) {
-        throw new Error('Security Violation: Human approval requires a valid, non-empty confirmation signature.');
+        throw new Error(
+          'Security Violation: Human approval requires a valid, non-empty confirmation signature.',
+        );
+      }
+      if (this.approvalSecret) {
+        const crypto = require('crypto');
+        const expectedSig = crypto
+          .createHmac('sha256', this.approvalSecret)
+          .update(`${token}:${trimmedApprover}:${state.proposalHash}`)
+          .digest('hex');
+        if (signature.trim() !== expectedSig) {
+          throw new Error(
+            'Security Violation: Cryptographic signature verification failed for human approval.',
+          );
+        }
       }
     }
 
@@ -254,9 +315,20 @@ class ControlledWriteService {
     return { status: state.status };
   }
 
-  async commitWrite(token) {
-    const state = this.activeRequests.get(token);
-    if (!state) throw new Error('Invalid or expired token');
+  generateApprovalSignature(token, approverId, context = {}) {
+    if (!this.approvalSecret) {
+      throw new Error('No approvalSecret configured on ControlledWriteService.');
+    }
+    const state = this._getTokenState(token, context);
+    const crypto = require('crypto');
+    return crypto
+      .createHmac('sha256', this.approvalSecret)
+      .update(`${token}:${approverId.trim().toLowerCase()}:${state.proposalHash}`)
+      .digest('hex');
+  }
+
+  async commitWrite(token, options = {}) {
+    const state = this._getTokenState(token, options);
 
     if (state.status !== 'PENDING_COMMIT') {
       throw new Error(`Cannot commit write in status '${state.status}': must be PENDING_COMMIT`);

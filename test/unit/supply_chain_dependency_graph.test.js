@@ -1,10 +1,6 @@
 'use strict';
 
-const {
-  DependencyGraph,
-  buildNpmDependencyGraph,
-  buildPurl,
-} = require('../../src/supply_chain');
+const { DependencyGraph, buildNpmDependencyGraph, buildPurl } = require('../../src/supply_chain');
 
 const fixtureData = require('../fixtures/supply_chain/supply_chain_dataset_v1.json');
 
@@ -18,7 +14,7 @@ describe('Dependency Graph & Transitive Exposure Engine', () => {
   test('buildNpmDependencyGraph correctly constructs DAG from lockfile v3', () => {
     const graph = buildNpmDependencyGraph(
       fixtureData.validPackageJson,
-      fixtureData.validLockfileJson
+      fixtureData.validLockfileJson,
     );
 
     const metrics = graph.getMetrics();
@@ -56,7 +52,7 @@ describe('Dependency Graph & Transitive Exposure Engine', () => {
   test('calculates transitive closure & blast radius', () => {
     const graph = buildNpmDependencyGraph(
       fixtureData.validPackageJson,
-      fixtureData.validLockfileJson
+      fixtureData.validLockfileJson,
     );
 
     const expressClosure = graph.getTransitiveClosure('express@4.18.2');
@@ -71,11 +67,10 @@ describe('Dependency Graph & Transitive Exposure Engine', () => {
   test('findDependencyChain locates root-to-leaf path', () => {
     const graph = buildNpmDependencyGraph(
       fixtureData.validPackageJson,
-      fixtureData.validLockfileJson
+      fixtureData.validLockfileJson,
     );
 
     const path = graph.findDependencyChain('ms@2.0.0');
     expect(path).toEqual(['express@4.18.2', 'debug@2.6.9', 'ms@2.0.0']);
   });
 });
-

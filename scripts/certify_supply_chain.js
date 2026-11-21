@@ -51,7 +51,10 @@ const {
 } = require('../src/supply_chain');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
-const DATASET_PATH = path.join(REPO_ROOT, 'test/fixtures/supply_chain/supply_chain_dataset_v1.json');
+const DATASET_PATH = path.join(
+  REPO_ROOT,
+  'test/fixtures/supply_chain/supply_chain_dataset_v1.json',
+);
 const OUTPUT_DIR = path.join(REPO_ROOT, 'benchmarks/artifacts');
 const OUTPUT_PATH = path.join(OUTPUT_DIR, 'supply_chain_certification.json');
 
@@ -99,8 +102,8 @@ async function runCertification() {
     'malicious_package_engine.js',
     'index.js',
   ];
-  const allEnginesExist = engineFiles.every((f) =>
-    fs.existsSync(path.join(REPO_ROOT, 'src/supply_chain', f))
+  const allEnginesExist = engineFiles.every(f =>
+    fs.existsSync(path.join(REPO_ROOT, 'src/supply_chain', f)),
   );
   gates.push({
     gate: 'B',
@@ -108,10 +111,12 @@ async function runCertification() {
     status: allEnginesExist ? 'PASS' : 'FAIL',
     evidence: `8/8 engine modules present in src/supply_chain/`,
   });
-  console.log(`│  • Gate B (Engine Architecture):          ${allEnginesExist ? '✔ PASS' : '✖ FAIL'}`);
+  console.log(
+    `│  • Gate B (Engine Architecture):          ${allEnginesExist ? '✔ PASS' : '✖ FAIL'}`,
+  );
 
   // Gate C: Canonical Skill Portfolio
-  const allSkillsValid = EXPECTED_SKILLS.every((s) => {
+  const allSkillsValid = EXPECTED_SKILLS.every(s => {
     const p = path.join(REPO_ROOT, '.agent/skills', s, 'SKILL.md');
     return fs.existsSync(p);
   });
@@ -121,19 +126,23 @@ async function runCertification() {
     status: allSkillsValid ? 'PASS' : 'FAIL',
     evidence: `12/12 skills verified with valid frontmatter`,
   });
-  console.log(`│  • Gate C (12 Canonical Skills):          ${allSkillsValid ? '✔ PASS' : '✖ FAIL'}`);
+  console.log(
+    `│  • Gate C (12 Canonical Skills):          ${allSkillsValid ? '✔ PASS' : '✖ FAIL'}`,
+  );
 
   // Gate D: Topic Map & Routing Integration (Comprehensive Anti-False-Pass Invariants)
   const topicMapPath = path.join(REPO_ROOT, '.agent/skill_topic_map.json');
   const topicMap = JSON.parse(fs.readFileSync(topicMapPath, 'utf8'));
-  const domainSkills = topicMap.domain_routes ? topicMap.domain_routes['supply-chain-intelligence'] : null;
+  const domainSkills = topicMap.domain_routes
+    ? topicMap.domain_routes['supply-chain-intelligence']
+    : null;
   const isArray = Array.isArray(domainSkills);
 
   const allDomainSkillsMapped = isArray && EXPECTED_SKILLS.every(s => domainSkills.includes(s));
-  const noDuplicatesInRoute = isArray && (new Set(domainSkills).size === domainSkills.length);
-  const allDomainSkillsOnDisk = isArray && domainSkills.every(s =>
-    fs.existsSync(path.join(REPO_ROOT, '.agent/skills', s, 'SKILL.md'))
-  );
+  const noDuplicatesInRoute = isArray && new Set(domainSkills).size === domainSkills.length;
+  const allDomainSkillsOnDisk =
+    isArray &&
+    domainSkills.every(s => fs.existsSync(path.join(REPO_ROOT, '.agent/skills', s, 'SKILL.md')));
 
   const allUniqueInMap = new Set();
   let validRoutesStructure = Boolean(topicMap.domain_routes);
@@ -146,14 +155,20 @@ async function runCertification() {
       rList.forEach(s => allUniqueInMap.add(s));
     }
   }
-  const declaredMatchesRegistered = validRoutesStructure && (topicMap.total_skills === allUniqueInMap.size);
+  const declaredMatchesRegistered =
+    validRoutesStructure && topicMap.total_skills === allUniqueInMap.size;
 
-  const diskSkillsCount = fs.readdirSync(path.join(REPO_ROOT, '.agent/skills')).filter(d =>
-    fs.statSync(path.join(REPO_ROOT, '.agent/skills', d)).isDirectory()
-  ).length;
-  const mapMatchesDisk = (allUniqueInMap.size === diskSkillsCount);
+  const diskSkillsCount = fs
+    .readdirSync(path.join(REPO_ROOT, '.agent/skills'))
+    .filter(d => fs.statSync(path.join(REPO_ROOT, '.agent/skills', d)).isDirectory()).length;
+  const mapMatchesDisk = allUniqueInMap.size === diskSkillsCount;
 
-  const gateDPassed = allDomainSkillsMapped && noDuplicatesInRoute && allDomainSkillsOnDisk && declaredMatchesRegistered && mapMatchesDisk;
+  const gateDPassed =
+    allDomainSkillsMapped &&
+    noDuplicatesInRoute &&
+    allDomainSkillsOnDisk &&
+    declaredMatchesRegistered &&
+    mapMatchesDisk;
   gates.push({
     gate: 'D',
     name: 'Topic Map & Routing Integration',
@@ -170,7 +185,13 @@ async function runCertification() {
   const metrics = graph.getMetrics();
   const cycGraph = new DependencyGraph();
   for (const n of fixtures.cyclicalGraphNodes) {
-    cycGraph.addComponent({ id: n.name, name: n.name, version: n.version, purl: buildPurl('npm', n.name, n.version), direct: true });
+    cycGraph.addComponent({
+      id: n.name,
+      name: n.name,
+      version: n.version,
+      purl: buildPurl('npm', n.name, n.version),
+      direct: true,
+    });
   }
   cycGraph.addDependencyEdge('pkg-a@1.0.0', 'pkg-b@1.0.0');
   cycGraph.addDependencyEdge('pkg-b@1.0.0', 'pkg-c@1.0.0');
@@ -204,10 +225,13 @@ async function runCertification() {
   // Gate G: Package Integrity & Lockfile Poisoning Detection
   const integrityEngine = new PackageIntegrityEngine();
   const lockAudit = integrityEngine.auditLockfileIntegrity(fixtures.poisonedLockfileJson);
-  const provAudit = integrityEngine.verifyProvenanceAttestation(fixtures.slsaProvenanceFixtures.valid, {
-    expectedCommit: '781959c000000000000000000000000000000000',
-    minSlsaLevel: 3,
-  });
+  const provAudit = integrityEngine.verifyProvenanceAttestation(
+    fixtures.slsaProvenanceFixtures.valid,
+    {
+      expectedCommit: '781959c000000000000000000000000000000000',
+      minSlsaLevel: 3,
+    },
+  );
   const gateGPassed = lockAudit.status === 'FAIL' && provAudit.status === 'PASS';
   gates.push({
     gate: 'G',
@@ -220,7 +244,15 @@ async function runCertification() {
   // Gate H: SBOM Generation & Standard Conformance
   const sbomEngine = new SbomEngine();
   const testComponents = [
-    { name: 'lodash', version: '4.17.21', purl: 'pkg:npm/lodash@4.17.21', direct: true, depth: 0, hashes: { sha512: 'sha512-test==' }, license: 'MIT' },
+    {
+      name: 'lodash',
+      version: '4.17.21',
+      purl: 'pkg:npm/lodash@4.17.21',
+      direct: true,
+      depth: 0,
+      hashes: { sha512: 'sha512-test==' },
+      license: 'MIT',
+    },
   ];
   const cdxDoc = sbomEngine.generateCycloneDx(testComponents, { name: 'app' });
   const spdxDoc = sbomEngine.generateSpdx(testComponents, { name: 'app' });
@@ -255,7 +287,8 @@ async function runCertification() {
   const hookResult = malEngine.auditLifecycleScripts(fixtures.maliciousLifecycleComponents[0]);
   const typoResult = malEngine.checkTyposquatting('loadash');
   const actionResult = malEngine.auditWorkflowActions(fixtures.githubWorkflowSnippet);
-  const gateJPassed = hookResult.status === 'FAIL' && typoResult.isTyposquat && actionResult.status === 'FAIL';
+  const gateJPassed =
+    hookResult.status === 'FAIL' && typoResult.isTyposquat && actionResult.status === 'FAIL';
   gates.push({
     gate: 'J',
     name: 'Malicious Package & CI Action Auditing',
@@ -264,12 +297,16 @@ async function runCertification() {
   });
   console.log(`│  • Gate J (Malicious Package & CI Audit): ${gateJPassed ? '✔ PASS' : '✖ FAIL'}`);
 
-  const allPassed = gates.every((g) => g.status === 'PASS');
+  const allPassed = gates.every(g => g.status === 'PASS');
   const durationMs = Date.now() - startTime;
 
   console.log('├─────────────────────────────────────────────────────────────────');
-  console.log(`│  Overall Certification Decision: ${allPassed ? '✔ FULLY CERTIFIED (PASS)' : '✖ REJECTED (FAIL)'}`);
-  console.log(`│  Total Release Gates:            ${gates.filter((g) => g.status === 'PASS').length}/${gates.length} PASS`);
+  console.log(
+    `│  Overall Certification Decision: ${allPassed ? '✔ FULLY CERTIFIED (PASS)' : '✖ REJECTED (FAIL)'}`,
+  );
+  console.log(
+    `│  Total Release Gates:            ${gates.filter(g => g.status === 'PASS').length}/${gates.length} PASS`,
+  );
   console.log(`│  Elapsed Evaluation Time:        ${durationMs}ms`);
   console.log('╰─────────────────────────────────────────────────────────────────\n');
 
@@ -285,8 +322,8 @@ async function runCertification() {
     durationMs,
     metrics: {
       totalGates: gates.length,
-      passedGates: gates.filter((g) => g.status === 'PASS').length,
-      failedGates: gates.filter((g) => g.status === 'FAIL').length,
+      passedGates: gates.filter(g => g.status === 'PASS').length,
+      failedGates: gates.filter(g => g.status === 'FAIL').length,
       canonicalSkillsCount: EXPECTED_SKILLS.length,
       totalRepositorySkills: topicMap.total_skills,
       threatCategoriesCovered: THREAT_CATEGORIES.length,
@@ -297,15 +334,16 @@ async function runCertification() {
 
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(certificationArtifact, null, 2), 'utf8');
-  console.log(`✔ Machine-readable certification artifact written to: ${path.relative(REPO_ROOT, OUTPUT_PATH)}`);
+  console.log(
+    `✔ Machine-readable certification artifact written to: ${path.relative(REPO_ROOT, OUTPUT_PATH)}`,
+  );
 
   if (!allPassed) {
     process.exit(1);
   }
 }
 
-runCertification().catch((err) => {
+runCertification().catch(err => {
   console.error('Certification failed with error:', err);
   process.exit(1);
 });
-

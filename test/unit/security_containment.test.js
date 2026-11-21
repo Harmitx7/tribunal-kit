@@ -69,40 +69,72 @@ describe('Security Containment & Boundary Hardening (Phase 2 TDD)', () => {
       expect(() => boundary.validateResourceId('foo/bar')).toThrow(/Invalid resource identifier/);
       expect(() => boundary.validateResourceId('foo\\bar')).toThrow(/Invalid resource identifier/);
       expect(() => boundary.validateResourceId('foo\0bar')).toThrow(/Invalid resource identifier/);
-      expect(() => boundary.validateResourceId('something.md')).toThrow(/Invalid resource identifier/);
+      expect(() => boundary.validateResourceId('something.md')).toThrow(
+        /Invalid resource identifier/,
+      );
       expect(() => boundary.validateResourceId('')).toThrow(/Invalid resource identifier/);
       expect(() => boundary.validateResourceId(' ')).toThrow(/Invalid resource identifier/);
     });
 
     it('validateBrowserUrl accepts public HTTP/HTTPS and rejects SSRF targets', () => {
-      expect(boundary.validateBrowserUrl('https://example.com/api').href).toBe('https://example.com/api');
-      expect(boundary.validateBrowserUrl('http://sub.domain.org/path?q=1').href).toBe('http://sub.domain.org/path?q=1');
+      expect(boundary.validateBrowserUrl('https://example.com/api').href).toBe(
+        'https://example.com/api',
+      );
+      expect(boundary.validateBrowserUrl('http://sub.domain.org/path?q=1').href).toBe(
+        'http://sub.domain.org/path?q=1',
+      );
 
       // Reject non-http(s) schemes
-      expect(() => boundary.validateBrowserUrl('file:///etc/passwd')).toThrow(/Unsupported URL scheme/);
-      expect(() => boundary.validateBrowserUrl('javascript:alert(1)')).toThrow(/Unsupported URL scheme/);
-      expect(() => boundary.validateBrowserUrl('chrome://settings')).toThrow(/Unsupported URL scheme/);
-      expect(() => boundary.validateBrowserUrl('data:text/html,evil')).toThrow(/Unsupported URL scheme/);
+      expect(() => boundary.validateBrowserUrl('file:///etc/passwd')).toThrow(
+        /Unsupported URL scheme/,
+      );
+      expect(() => boundary.validateBrowserUrl('javascript:alert(1)')).toThrow(
+        /Unsupported URL scheme/,
+      );
+      expect(() => boundary.validateBrowserUrl('chrome://settings')).toThrow(
+        /Unsupported URL scheme/,
+      );
+      expect(() => boundary.validateBrowserUrl('data:text/html,evil')).toThrow(
+        /Unsupported URL scheme/,
+      );
 
       // Reject loopback / localhost
-      expect(() => boundary.validateBrowserUrl('http://localhost:8080')).toThrow(/Prohibited network destination/);
-      expect(() => boundary.validateBrowserUrl('http://127.0.0.1:3000')).toThrow(/Prohibited network destination/);
-      expect(() => boundary.validateBrowserUrl('http://[::1]:8080')).toThrow(/Prohibited network destination/);
+      expect(() => boundary.validateBrowserUrl('http://localhost:8080')).toThrow(
+        /Prohibited network destination/,
+      );
+      expect(() => boundary.validateBrowserUrl('http://127.0.0.1:3000')).toThrow(
+        /Prohibited network destination/,
+      );
+      expect(() => boundary.validateBrowserUrl('http://[::1]:8080')).toThrow(
+        /Prohibited network destination/,
+      );
 
       // Reject cloud metadata & link-local
-      expect(() => boundary.validateBrowserUrl('http://169.254.169.254/latest/meta-data/')).toThrow(/Prohibited network destination/);
+      expect(() => boundary.validateBrowserUrl('http://169.254.169.254/latest/meta-data/')).toThrow(
+        /Prohibited network destination/,
+      );
 
       // Reject private RFC 1918 ranges
-      expect(() => boundary.validateBrowserUrl('http://10.0.0.1/admin')).toThrow(/Prohibited network destination/);
-      expect(() => boundary.validateBrowserUrl('http://192.168.1.1/router')).toThrow(/Prohibited network destination/);
-      expect(() => boundary.validateBrowserUrl('http://172.16.0.5/internal')).toThrow(/Prohibited network destination/);
+      expect(() => boundary.validateBrowserUrl('http://10.0.0.1/admin')).toThrow(
+        /Prohibited network destination/,
+      );
+      expect(() => boundary.validateBrowserUrl('http://192.168.1.1/router')).toThrow(
+        /Prohibited network destination/,
+      );
+      expect(() => boundary.validateBrowserUrl('http://172.16.0.5/internal')).toThrow(
+        /Prohibited network destination/,
+      );
 
       // Reject Chrome CDP debugging ports
-      expect(() => boundary.validateBrowserUrl('http://127.0.0.1:9222/json')).toThrow(/Prohibited network destination/);
+      expect(() => boundary.validateBrowserUrl('http://127.0.0.1:9222/json')).toThrow(
+        /Prohibited network destination/,
+      );
     });
 
     it('sanitizeErrorMessage removes sensitive unparsed file snippets', () => {
-      const fakeError = new SyntaxError('Unexpected token \'a\', "api_key=SECRET_TOKEN_XYZ"... is not valid JSON');
+      const fakeError = new SyntaxError(
+        'Unexpected token \'a\', "api_key=SECRET_TOKEN_XYZ"... is not valid JSON',
+      );
       const sanitized = boundary.sanitizeErrorMessage(fakeError);
       expect(sanitized).not.toContain('SECRET_TOKEN_XYZ');
       expect(sanitized).toContain('JSON parsing failed');
@@ -138,7 +170,9 @@ describe('Security Containment & Boundary Hardening (Phase 2 TDD)', () => {
         reason: 'test sibling bypass',
       };
 
-      await expect(service.requestWrite(req)).rejects.toThrow(/outside workspace root|Security Violation/i);
+      await expect(service.requestWrite(req)).rejects.toThrow(
+        /outside workspace root|Security Violation/i,
+      );
     });
 
     it('TransactionManager rejects sibling prefix collision prepareWrite and prepareDelete', () => {
@@ -169,7 +203,7 @@ describe('Security Containment & Boundary Hardening (Phase 2 TDD)', () => {
           id: 101,
           method: 'resources/read',
           params: { uri: 'tribunal://agent/../../../../sensitive' },
-        })
+        }),
       ).rejects.toThrow(/Invalid resource identifier|Security Violation/i);
     });
 
@@ -180,7 +214,7 @@ describe('Security Containment & Boundary Hardening (Phase 2 TDD)', () => {
           id: 102,
           method: 'resources/read',
           params: { uri: 'tribunal://skill/../../../../sensitive' },
-        })
+        }),
       ).rejects.toThrow(/Invalid resource identifier|Security Violation/i);
     });
 
@@ -191,7 +225,7 @@ describe('Security Containment & Boundary Hardening (Phase 2 TDD)', () => {
           id: 103,
           method: 'resources/read',
           params: { uri: 'tribunal://workflow/../../../../sensitive' },
-        })
+        }),
       ).rejects.toThrow(/Invalid resource identifier|Security Violation/i);
     });
 
@@ -202,7 +236,7 @@ describe('Security Containment & Boundary Hardening (Phase 2 TDD)', () => {
           id: 104,
           method: 'prompts/get',
           params: { name: '../../../../etc/passwd' },
-        })
+        }),
       ).rejects.toThrow(/Invalid resource identifier|Security Violation/i);
     });
   });
@@ -224,7 +258,9 @@ describe('Security Containment & Boundary Hardening (Phase 2 TDD)', () => {
         },
       });
 
-      expect(res.content[0].text).toMatch(/Swarm dispatch failed:.*(outside authorized workspace|Security Violation|Path traversal)/i);
+      expect(res.content[0].text).toMatch(
+        /Swarm dispatch failed:.*(outside authorized workspace|Security Violation|Path traversal)/i,
+      );
     });
 
     it('dispatch_swarm does not leak file contents on JSON parse error', async () => {
@@ -308,7 +344,9 @@ describe('Security Containment & Boundary Hardening (Phase 2 TDD)', () => {
       });
 
       expect(res.isError).toBe(true);
-      expect(res.content[0].text).toMatch(/outside authorized workspace|Security Violation|Invalid target/i);
+      expect(res.content[0].text).toMatch(
+        /outside authorized workspace|Security Violation|Invalid target/i,
+      );
     });
 
     it('tribunal_get_context rejects flag injection in target argument', async () => {
@@ -366,7 +404,6 @@ describe('Security Containment & Boundary Hardening (Phase 2 TDD)', () => {
         /Security Violation: Argument ".*" contains dangerous cmd\.exe metacharacters/,
       );
     });
-
 
     it('resolves binary executables to shell: false', () => {
       const res = resolveExecutable('node');

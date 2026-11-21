@@ -51,14 +51,17 @@ describe('WorktreeSandbox — Phase 1 Ephemeral Worktree Isolation', () => {
     const info = await sandbox.create();
 
     // Run node one-liner to print process.cwd() and process.env.TRIBUNAL_SANDBOX
-    const script = 'console.log(JSON.stringify({ cwd: process.cwd(), isSandbox: process.env.TRIBUNAL_SANDBOX }))';
+    const script =
+      'console.log(JSON.stringify({ cwd: process.cwd(), isSandbox: process.env.TRIBUNAL_SANDBOX }))';
     const result = await sandbox.runCommand('node', ['-e', script]);
 
     expect(result.exitCode).toBe(0);
     const parsed = JSON.parse(result.stdout.trim());
-    
+
     // Normalize paths for comparison (Windows casing / slashes)
-    expect(path.resolve(parsed.cwd).toLowerCase()).toBe(path.resolve(info.worktreePath).toLowerCase());
+    expect(path.resolve(parsed.cwd).toLowerCase()).toBe(
+      path.resolve(info.worktreePath).toLowerCase(),
+    );
     expect(parsed.isSandbox).toBe('1');
   });
 

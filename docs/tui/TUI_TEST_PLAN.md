@@ -9,6 +9,7 @@
 ## 1. Overview & Verification Strategy
 
 The Terminal UI overhaul must be backed by deterministic automated test gates that guarantee:
+
 1. Zero visual breakage across varying terminal column widths.
 2. Robustness in headless CI environments (`NO_COLOR=1`, `CI=1`, non-TTY streams).
 3. Complete protection against cursor locking or unhandled terminal corruptions.
@@ -40,6 +41,7 @@ The Terminal UI overhaul must be backed by deterministic automated test gates th
 ## 3. Concrete Test Cases to Add / Verify
 
 ### Test Group 1: Geometry & ANSI Length Invariants
+
 ```javascript
 test('stripAnsi correctly handles complex ANSI and TrueColor sequences', () => {
   const styled = '\x1b[38;2;225;75;45m\x1b[1mTribunal\x1b[0m \x1b[2K\x1b[?25lTest';
@@ -56,16 +58,19 @@ test('renderPanel produces identical visible length for top, mid, and bottom bor
 ```
 
 ### Test Group 2: Viewport Width Resilience (Narrow to Wide)
+
 - **40 columns:** Confirm zero horizontal text wrapping; borders collapse or wrap gracefully without breaking terminal line-ends.
 - **60 columns:** Confirm `renderReviewerGrid` collapses cleanly to single or double column without word collision.
 - **80 columns (Standard):** Confirm 2-column grid and panel symmetry.
 - **120+ columns (Wide):** Confirm 3-column grid and centered or bounded banner layout.
 
 ### Test Group 3: Non-TTY & CI Environment Gaps
+
 - `process.stdout.isTTY = false`: Banners and review grids must render as clean line-by-line text without braille spinner escape codes.
 - `NO_COLOR=1`: Output must contain zero `\x1b[` escape sequences. Status indicators must render with brackets (e.g. `[PASS]`, `[FAIL]`, `[WARN]`).
 
 ### Test Group 4: Command Regression Protection
+
 - `tk status` exits 0 and renders all active agents, workflows, skills, scripts, and IDE bridges.
 - `tk status --json` emits 100% valid, machine-readable JSON without any ANSI codes.
 - `tk rsi status` exits 0 and reports benchmark vault certification, circuit-breaker ratio, and daemon PID.

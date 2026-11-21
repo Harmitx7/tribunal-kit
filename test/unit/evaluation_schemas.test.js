@@ -57,7 +57,11 @@ describe('Evaluation Schemas & Contract Validation', () => {
     it('strictly rejects unallowed extra properties', () => {
       const res = validateEvaluationCase({ ...validCase, unexpectedExtraField: 123 });
       expect(res.valid).toBe(false);
-      expect(res.errors.some(e => e.message.includes('unexpectedExtraField') || e.message.includes('Unrecognized key'))).toBe(true);
+      expect(
+        res.errors.some(
+          e => e.message.includes('unexpectedExtraField') || e.message.includes('Unrecognized key'),
+        ),
+      ).toBe(true);
     });
   });
 
@@ -96,7 +100,8 @@ describe('Evaluation Schemas & Contract Validation', () => {
         verdict: 'FAIL',
         failureDetails: {
           category: 'AUTH_CRASH',
-          reason: 'Failed authenticating with token Bearer sk-ant-api03-abcdef1234567890abcdef1234567890 to database postgres://user:secret123@localhost/db',
+          reason:
+            'Failed authenticating with token Bearer sk-ant-api03-abcdef1234567890abcdef1234567890 to database postgres://user:secret123@localhost/db',
           sanitizedStack: 'Error at connect(apiKey: "sk-proj-999888777666555444333")',
         },
       };
@@ -104,7 +109,9 @@ describe('Evaluation Schemas & Contract Validation', () => {
       const res = validateEvaluationResult(resultWithSecret);
       expect(res.valid).toBe(true);
       expect(res.data.failureDetails.reason).not.toContain('secret123');
-      expect(res.data.failureDetails.reason).not.toContain('sk-ant-api03-abcdef1234567890abcdef1234567890');
+      expect(res.data.failureDetails.reason).not.toContain(
+        'sk-ant-api03-abcdef1234567890abcdef1234567890',
+      );
       expect(res.data.failureDetails.reason).toContain('[REDACTED_');
       expect(res.data.failureDetails.sanitizedStack).not.toContain('sk-proj-999888777666555444333');
     });

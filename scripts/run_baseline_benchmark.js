@@ -86,7 +86,9 @@ async function main() {
   const options = parseArgs();
   console.log('🏛️  Tribunal Kit — Sealed Benchmark Vault Baseline Runner');
   console.log('===========================================================');
-  console.log(`Execution Mode:  ${options.dryRun ? 'Dry-Run (Scratch Isolation)' : 'Git Worktree Sandbox'}`);
+  console.log(
+    `Execution Mode:  ${options.dryRun ? 'Dry-Run (Scratch Isolation)' : 'Git Worktree Sandbox'}`,
+  );
   console.log(`Runs / Scenario: ${options.runs}`);
   if (options.category) console.log(`Category Filter: ${options.category}`);
   console.log('-----------------------------------------------------------');
@@ -109,7 +111,9 @@ async function main() {
     }
   }
 
-  console.log(`Loaded ${activeScenarios.length} scenarios across ${Object.keys(stats.categories).length} categories.\n`);
+  console.log(
+    `Loaded ${activeScenarios.length} scenarios across ${Object.keys(stats.categories).length} categories.\n`,
+  );
 
   const scratchDir = path.resolve('./.tribunal/temp_baseline_scratch');
   if (options.dryRun) {

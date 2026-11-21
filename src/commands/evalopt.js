@@ -4,7 +4,7 @@
  * evalopt.js — EvalOpt Adversarial Red-Teaming & Scenario Fuzzing Command
  * =======================================================================
  * Loop 2 of the Asymmetric Dual-Loop Self-Improvement Engine.
- * 
+ *
  * Capabilities:
  * 1. Probes candidate implementations against 4 attack vectors (Boundary, Injection, Type, DoS).
  * 2. Enforces Anti-Weakening Invariants (safeProposal MUST pass, unsafeProposal MUST fail).
@@ -53,7 +53,9 @@ async function cmdEvalOpt(flags, processArgs, quiet = false) {
   if (flags.status) {
     helpers.banner(quiet);
     const candidates = loadCandidateScenarios(tribunalDest);
-    logger.log(`\n  ${logger.bold('Staged Adversarial Candidate Scenarios')} (${candidates.length} total)`);
+    logger.log(
+      `\n  ${logger.bold('Staged Adversarial Candidate Scenarios')} (${candidates.length} total)`,
+    );
     logger.dim('  ─────────────────────────────────────────────────────────');
 
     if (candidates.length === 0) {
@@ -96,15 +98,18 @@ async function cmdEvalOpt(flags, processArgs, quiet = false) {
 
   logger.log(`  ${logger.c('cyan', '⊘')} Starting EvalOpt Adversarial Red-Team Campaign`);
   logger.log(`  ${logger.c('cyan', '⊘')} Fuzz Depth: ${logger.bold(String(fuzzDepth))} per vector`);
-  logger.log(`  ${logger.c('cyan', '⊘')} Sandbox Isolation: ${logger.bold(useSandbox ? 'Enabled (Worktree)' : 'Direct')}`);
+  logger.log(
+    `  ${logger.c('cyan', '⊘')} Sandbox Isolation: ${logger.bold(useSandbox ? 'Enabled (Worktree)' : 'Direct')}`,
+  );
   logger.log('');
 
   // Filter target scenarios
   let targetScenarios = SCENARIOS;
   if (flags.target) {
     const matched = SCENARIOS.filter(
-      s => s.scenarioId.toLowerCase() === flags.target.toLowerCase() ||
-           s.targetFile.toLowerCase().includes(flags.target.toLowerCase()),
+      s =>
+        s.scenarioId.toLowerCase() === flags.target.toLowerCase() ||
+        s.targetFile.toLowerCase().includes(flags.target.toLowerCase()),
     );
     if (matched.length > 0) {
       targetScenarios = matched;
@@ -121,7 +126,9 @@ async function cmdEvalOpt(flags, processArgs, quiet = false) {
       sandbox = new WorktreeSandbox({ repoRoot: targetDir });
       await sandbox.create();
       runDir = sandbox.worktreePath;
-      logger.log(`  ${logger.c('green', '✔')} WorktreeSandbox active: ${logger.bold(sandbox.branch)}`);
+      logger.log(
+        `  ${logger.c('green', '✔')} WorktreeSandbox active: ${logger.bold(sandbox.branch)}`,
+      );
     } catch (e) {
       logger.warn(`  ⚠️ WorktreeSandbox creation bypassed: ${e.message}`);
       sandbox = null;
@@ -170,7 +177,7 @@ async function cmdEvalOpt(flags, processArgs, quiet = false) {
             stdio: 'pipe',
             shell: shouldRunInShell(vCmd.cmd),
           });
-          cmdRes = { exitCode: 0, stdout, stderr: '', verdict: 'APPROVED' };
+          cmdRes = { exitCode: 0, stdout, stderr: '', verdict: 'APPROVED', reason: '' };
         } catch (e) {
           cmdRes = {
             exitCode: e.status || 1,
@@ -185,7 +192,9 @@ async function cmdEvalOpt(flags, processArgs, quiet = false) {
     };
 
     for (const baseScenario of targetScenarios) {
-      logger.log(`  ${logger.c('cyan', '▶')} Red-teaming: ${logger.bold(baseScenario.scenarioId)} [${baseScenario.category}]`);
+      logger.log(
+        `  ${logger.c('cyan', '▶')} Red-teaming: ${logger.bold(baseScenario.scenarioId)} [${baseScenario.category}]`,
+      );
 
       const mutations = mutator.generateMutations(baseScenario, { depth: fuzzDepth });
       for (const mutation of mutations) {
@@ -244,7 +253,9 @@ async function cmdEvalOpt(flags, processArgs, quiet = false) {
   logger.log(`  ${logger.bold('━━━ Adversarial Resilience Matrix ━━━')}`);
   logger.log(`  Total Scenarios Probed:      ${logger.bold(String(totalTested))}`);
   logger.log(`  Invariants Certified:        ${logger.c('green', String(certifiedCount))}`);
-  logger.log(`  Vulnerabilities Bridged:     ${logger.c('yellow', String(bridgedVulnerabilities))}`);
+  logger.log(
+    `  Vulnerabilities Bridged:     ${logger.c('yellow', String(bridgedVulnerabilities))}`,
+  );
   logger.log(
     `  Adversarial Resilience:      ${logger.bold(resilienceRate >= 80 ? logger.c('green', `${resilienceRate.toFixed(1)}%`) : logger.c('red', `${resilienceRate.toFixed(1)}%`))}`,
   );

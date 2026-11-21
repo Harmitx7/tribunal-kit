@@ -23,7 +23,11 @@ function getNativeWebSocket() {
     return globalThis.WebSocket;
   if (typeof global !== 'undefined' && typeof global.WebSocket !== 'undefined')
     return global.WebSocket;
-  return null;
+  try {
+    return require('ws');
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -119,7 +123,8 @@ function createNodeWebSocket(wsUrl) {
     let buffer = head && head.length > 0 ? Buffer.from(head) : Buffer.alloc(0);
 
     socket.on('data', chunk => {
-      buffer = Buffer.concat([buffer, chunk]);
+      const dataChunk = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+      buffer = Buffer.concat([buffer, dataChunk]);
 
       while (buffer.length >= 2) {
         const b0 = buffer[0];
@@ -394,6 +399,7 @@ class CdpClient {
     let onLoad = null;
     let onRequestPaused = null;
     let onResponseReceived = null;
+    /** @type {any} */
     let securityViolation = null;
 
     // 3. Enable CDP Fetch domain for active request & redirect interception (fail closed)
@@ -402,7 +408,9 @@ class CdpClient {
         patterns: [{ requestStage: 'Request' }],
       });
     } catch (err) {
-      throw new Error(`Browser security error: Failed to enable CDP request interception (${err.message}).`);
+      throw new Error(
+        `Browser security error: Failed to enable CDP request interception (${err.message}).`,
+      );
     }
 
     onRequestPaused = async params => {

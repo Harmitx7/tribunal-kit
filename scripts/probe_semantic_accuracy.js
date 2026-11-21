@@ -25,14 +25,23 @@ const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ci_semantic_audit_'));
 
 try {
   // Setup repository files
-  fs.writeFileSync(path.join(tempDir, 'package.json'), JSON.stringify({
-    name: 'semantic-audit-fixture',
-    version: '1.0.0',
-    main: 'index.js'
-  }, null, 2));
+  fs.writeFileSync(
+    path.join(tempDir, 'package.json'),
+    JSON.stringify(
+      {
+        name: 'semantic-audit-fixture',
+        version: '1.0.0',
+        main: 'index.js',
+      },
+      null,
+      2,
+    ),
+  );
 
   // File 1: users.js (exports validate, unusedUserExport, formatDate)
-  fs.writeFileSync(path.join(tempDir, 'users.js'), `
+  fs.writeFileSync(
+    path.join(tempDir, 'users.js'),
+    `
 export function validate(user) {
   return Boolean(user && user.id);
 }
@@ -48,10 +57,13 @@ export function calculateRisk() {
 export function formatDate(d) {
   return "users_formatDate";
 }
-`);
+`,
+  );
 
   // File 2: payments.js (exports validate, processPayment, formatDate)
-  fs.writeFileSync(path.join(tempDir, 'payments.js'), `
+  fs.writeFileSync(
+    path.join(tempDir, 'payments.js'),
+    `
 export function validate(payment) {
   return Boolean(payment && payment.amount > 0);
 }
@@ -63,11 +75,14 @@ export function processPayment(payment) {
 export function formatDate(d) {
   return "payments_formatDate";
 }
-`);
+`,
+  );
 
   // File 3: service.js (Class D: Comment & string literal mention of calculateRisk)
   // Class A: Shadowed identifier
-  fs.writeFileSync(path.join(tempDir, 'service.js'), `
+  fs.writeFileSync(
+    path.join(tempDir, 'service.js'),
+    `
 // calculateRisk is deprecated and was used by legacy service
 const docString = "calculateRisk() will be removed in v2";
 
@@ -78,10 +93,13 @@ function doSomething() {
 }
 
 export { doSomething };
-`);
+`,
+  );
 
   // File 4: index.js (imports users.validate with alias, calls payments.validate and payments.formatDate)
-  fs.writeFileSync(path.join(tempDir, 'index.js'), `
+  fs.writeFileSync(
+    path.join(tempDir, 'index.js'),
+    `
 import { validate as checkUser } from './users.js';
 import { formatDate as formatPaymentDate } from './payments.js';
 import * as paymentModule from './payments.js';
@@ -99,7 +117,8 @@ export function main() {
   formatPaymentDate(new Date());
   config.unusedPaymentExport();
 }
-`);
+`,
+  );
 
   console.log('Temporary semantic audit fixture created at:', tempDir);
 
@@ -113,7 +132,9 @@ export function main() {
     console.log(`  - [${e.file}] ${e.name} (${e.classification})`);
   });
 
-  const unreferencedNames = new Set(deadCodeResult.unreferencedExports.map(e => `${e.name}@${e.file}`));
+  const unreferencedNames = new Set(
+    deadCodeResult.unreferencedExports.map(e => `${e.name}@${e.file}`),
+  );
 
   console.log('\n--- AUDITING FAILURE CLASSES ---');
 
@@ -122,9 +143,13 @@ export function main() {
   // Did token index find "unusedUserExport" in service.js (`const unusedUserExport = 42`) and mark users.js export as LIVE?
   const classA_IsReportedDead = unreferencedNames.has('unusedUserExport@users.js');
   console.log(`Failure Class A (Identifier Shadowing):`);
-  console.log(`  Target: users.js -> unusedUserExport (truly dead export, shadowed locally in service.js)`);
+  console.log(
+    `  Target: users.js -> unusedUserExport (truly dead export, shadowed locally in service.js)`,
+  );
   console.log(`  Reported as Dead? ${classA_IsReportedDead}`);
-  console.log(`  Defect: ${!classA_IsReportedDead ? 'FALSE NEGATIVE (Dead export considered live due to local shadow)' : 'None (Correctly identified as dead)'}`);
+  console.log(
+    `  Defect: ${!classA_IsReportedDead ? 'FALSE NEGATIVE (Dead export considered live due to local shadow)' : 'None (Correctly identified as dead)'}`,
+  );
 
   // Audit Failure Class B: Same-name symbols across modules
   // users.js exports formatDate (NEVER imported or called anywhere)
@@ -132,9 +157,13 @@ export function main() {
   // Expected: users.js formatDate SHOULD BE REPORTED DEAD!
   const classB_IsReportedDead = unreferencedNames.has('formatDate@users.js');
   console.log(`\nFailure Class B (Same-Name Symbols Across Modules):`);
-  console.log(`  Target: users.js -> formatDate (never imported, but payments.js has same-name formatDate used in index.js)`);
+  console.log(
+    `  Target: users.js -> formatDate (never imported, but payments.js has same-name formatDate used in index.js)`,
+  );
   console.log(`  Reported as Dead? ${classB_IsReportedDead}`);
-  console.log(`  Defect: ${!classB_IsReportedDead ? 'FALSE NEGATIVE (Dead export considered live because another module has same-name export in index.js)' : 'None (Correctly identified as dead)'}`);
+  console.log(
+    `  Defect: ${!classB_IsReportedDead ? 'FALSE NEGATIVE (Dead export considered live because another module has same-name export in index.js)' : 'None (Correctly identified as dead)'}`,
+  );
 
   // Audit Failure Class C: Property names / object members
   // config.unusedPaymentExport() in index.js
@@ -151,9 +180,13 @@ export function main() {
   // Expected: calculateRisk in users.js SHOULD BE DEAD!
   const classD_IsReportedDead = unreferencedNames.has('calculateRisk@users.js');
   console.log(`\nFailure Class D (Comments and String Literals):`);
-  console.log(`  Target: users.js -> calculateRisk (never executed, only in comment/string in service.js)`);
+  console.log(
+    `  Target: users.js -> calculateRisk (never executed, only in comment/string in service.js)`,
+  );
   console.log(`  Reported as Dead? ${classD_IsReportedDead}`);
-  console.log(`  Defect: ${!classD_IsReportedDead ? 'FALSE NEGATIVE (Dead export considered live due to comment/string literal match)' : 'None (Correctly identified as dead)'}`);
+  console.log(
+    `  Defect: ${!classD_IsReportedDead ? 'FALSE NEGATIVE (Dead export considered live due to comment/string literal match)' : 'None (Correctly identified as dead)'}`,
+  );
 
   // Audit Failure Class E: Aliased Imports
   // users.js exports validate. It is imported in index.js as `import { validate as checkUser } from './users.js'`
@@ -162,7 +195,9 @@ export function main() {
   console.log(`\nFailure Class E (Aliased Imports):`);
   console.log(`  Target: users.js -> validate (imported as checkUser)`);
   console.log(`  Reported as Dead? ${classE_IsReportedDead}`);
-  console.log(`  Defect: ${classE_IsReportedDead ? 'FALSE POSITIVE (Live export marked dead because import was aliased)' : 'None (Live export marked live)'}`);
+  console.log(
+    `  Defect: ${classE_IsReportedDead ? 'FALSE POSITIVE (Live export marked dead because import was aliased)' : 'None (Live export marked live)'}`,
+  );
 
   // Output full summary JSON
   const auditReport = {
@@ -172,7 +207,7 @@ export function main() {
       expected: 'UNREFERENCED_STATICALLY',
       actual: classA_IsReportedDead ? 'UNREFERENCED_STATICALLY' : 'REFERENCED',
       hasDefect: !classA_IsReportedDead,
-      category: 'False Negative'
+      category: 'False Negative',
     },
     classD_comments_strings: {
       symbol: 'calculateRisk',
@@ -180,7 +215,7 @@ export function main() {
       expected: 'UNREFERENCED_STATICALLY',
       actual: classD_IsReportedDead ? 'UNREFERENCED_STATICALLY' : 'REFERENCED',
       hasDefect: !classD_IsReportedDead,
-      category: 'False Negative'
+      category: 'False Negative',
     },
     classE_aliased_import: {
       symbol: 'validate',
@@ -188,12 +223,21 @@ export function main() {
       expected: 'REFERENCED',
       actual: classE_IsReportedDead ? 'UNREFERENCED_STATICALLY' : 'REFERENCED',
       hasDefect: classE_IsReportedDead,
-      category: 'False Positive'
-    }
+      category: 'False Positive',
+    },
   };
 
-  fs.writeFileSync(path.join(__dirname, '..', 'test', 'fixtures', 'codebase_intelligence_adversarial', 'phase16_semantic_audit_raw.json'), JSON.stringify(auditReport, null, 2));
-
+  fs.writeFileSync(
+    path.join(
+      __dirname,
+      '..',
+      'test',
+      'fixtures',
+      'codebase_intelligence_adversarial',
+      'phase16_semantic_audit_raw.json',
+    ),
+    JSON.stringify(auditReport, null, 2),
+  );
 } finally {
   // Clean up temp dir
   try {

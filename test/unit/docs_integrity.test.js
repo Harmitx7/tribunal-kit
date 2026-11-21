@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { getRegistrySummary } = require('../../src/execution/canonical_registry');
 
 describe('Phase 9 — Documentation Integrity & Developer Experience Validation', () => {
   const repoRoot = path.resolve(__dirname, '../..');
@@ -81,12 +82,13 @@ describe('Phase 9 — Documentation Integrity & Developer Experience Validation'
   });
 
   describe('4. Minimal supply-chain dependency contract verification', () => {
-    test('package.json has exactly 1 runtime dependency (zod)', () => {
+    test('package.json has approved runtime dependencies (zod, ws)', () => {
       const pkgPath = path.join(repoRoot, 'package.json');
       const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
       expect(pkg.dependencies).toBeDefined();
-      expect(Object.keys(pkg.dependencies)).toEqual(['zod']);
+      expect(Object.keys(pkg.dependencies).sort()).toEqual(['ws', 'zod']);
       expect(pkg.dependencies.zod).toBe('^4.6.7');
+      expect(pkg.dependencies.ws).toMatch(/^\^8\./);
     });
 
     test('SECURITY.md accurately reflects single production runtime dependency', () => {
@@ -156,6 +158,7 @@ describe('Phase 9 — Documentation Integrity & Developer Experience Validation'
 
   describe('6. Skill, agent, and workflow counts match reality', () => {
     test('actual counts match documented numbers', () => {
+      const summary = getRegistrySummary(repoRoot);
       const skillsCount = fs.readdirSync(path.join(repoRoot, '.agent', 'skills')).length;
       const agentsCount = fs
         .readdirSync(path.join(repoRoot, '.agent', 'agents'))
@@ -165,12 +168,15 @@ describe('Phase 9 — Documentation Integrity & Developer Experience Validation'
         .filter(f => f.endsWith('.md')).length;
 
       expect(skillsCount).toBe(398);
-      expect(agentsCount).toBe(60);
+      expect(agentsCount).toBe(summary.total);
       expect(workflowsCount).toBe(52);
 
       // Verify GETTING_STARTED.md uses these exact numbers
-      const gettingStarted = fs.readFileSync(path.join(repoRoot, 'docs', 'GETTING_STARTED.md'), 'utf8');
-      expect(gettingStarted).toContain('60 specialist agents');
+      const gettingStarted = fs.readFileSync(
+        path.join(repoRoot, 'docs', 'GETTING_STARTED.md'),
+        'utf8',
+      );
+      expect(gettingStarted).toContain(`${summary.total} specialist agents`);
       expect(gettingStarted).toContain('28 parallel reviewers');
       expect(gettingStarted).toContain('398 reusable skills');
       expect(gettingStarted).toContain('52 slash workflows');

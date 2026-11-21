@@ -2,10 +2,33 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.cmdStatus = cmdStatus;
+exports.countMarkdownAgents = countMarkdownAgents;
 
 const fs = require('fs');
 const path = require('path');
 const { color, bold, dim, RGB, GLYPHS, renderBanner, renderPanel } = require('../tui');
+
+function countMarkdownAgents(dir) {
+  if (!fs.existsSync(dir)) return 0;
+  let count = 0;
+  try {
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        count += countMarkdownAgents(fullPath);
+      } else if (entry.isFile()) {
+        const lower = entry.name.toLowerCase();
+        if (lower.endsWith('.md') && lower !== 'readme.md' && lower !== 'index.md') {
+          count++;
+        }
+      }
+    }
+  } catch {
+    return 0;
+  }
+  return count;
+}
 
 function cmdStatus(flags = {}, quiet = false) {
   const targetDir = flags.path ? path.resolve(flags.path) : process.cwd();
@@ -14,18 +37,22 @@ function cmdStatus(flags = {}, quiet = false) {
   const g = GLYPHS;
 
   const isInstalled = fs.existsSync(agentDest);
-  const agentsCount = isInstalled && fs.existsSync(path.join(agentDest, 'agents'))
-    ? fs.readdirSync(path.join(agentDest, 'agents')).filter(f => f.endsWith('.md')).length
-    : 0;
-  const workflowsCount = isInstalled && fs.existsSync(path.join(agentDest, 'workflows'))
-    ? fs.readdirSync(path.join(agentDest, 'workflows')).filter(f => f.endsWith('.md')).length
-    : 0;
-  const skillsCount = isInstalled && fs.existsSync(path.join(agentDest, 'skills'))
-    ? fs.readdirSync(path.join(agentDest, 'skills')).length
-    : 0;
-  const scriptsCount = isInstalled && fs.existsSync(path.join(agentDest, 'scripts'))
-    ? fs.readdirSync(path.join(agentDest, 'scripts')).filter(f => f.endsWith('.js')).length
-    : 0;
+  const agentsCount =
+    isInstalled && fs.existsSync(path.join(agentDest, 'agents'))
+      ? countMarkdownAgents(path.join(agentDest, 'agents'))
+      : 0;
+  const workflowsCount =
+    isInstalled && fs.existsSync(path.join(agentDest, 'workflows'))
+      ? fs.readdirSync(path.join(agentDest, 'workflows')).filter(f => f.endsWith('.md')).length
+      : 0;
+  const skillsCount =
+    isInstalled && fs.existsSync(path.join(agentDest, 'skills'))
+      ? fs.readdirSync(path.join(agentDest, 'skills')).length
+      : 0;
+  const scriptsCount =
+    isInstalled && fs.existsSync(path.join(agentDest, 'scripts'))
+      ? fs.readdirSync(path.join(agentDest, 'scripts')).filter(f => f.endsWith('.js')).length
+      : 0;
 
   const bridges = [
     { name: 'Cursor', file: '.cursorrules' },

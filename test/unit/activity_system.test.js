@@ -52,12 +52,24 @@ describe('Tribunal Activity Presentation System', () => {
     });
 
     test('maps unknown or colloquial event types to canonical states', () => {
-      expect(createEvent({ eventType: 'test_execution' }).eventType).toBe(ACTIVITY_STATES.TESTS_RUNNING);
-      expect(createEvent({ eventType: 'build_failed' }).eventType).toBe(ACTIVITY_STATES.VALIDATION_FAILED);
-      expect(createEvent({ eventType: 'check_passed', evidence: { ok: true } }).eventType).toBe(ACTIVITY_STATES.VALIDATION_PASSED);
-      expect(createEvent({ eventType: 'approval_gate' }).eventType).toBe(ACTIVITY_STATES.HUMAN_APPROVAL_REQUIRED);
-      expect(createEvent({ eventType: 'worker_blocked' }).eventType).toBe(ACTIVITY_STATES.OPERATION_BLOCKED);
-      expect(createEvent({ eventType: 'random_unknown_state' }).eventType).toBe(ACTIVITY_STATES.ANALYSIS_IN_PROGRESS);
+      expect(createEvent({ eventType: 'test_execution' }).eventType).toBe(
+        ACTIVITY_STATES.TESTS_RUNNING,
+      );
+      expect(createEvent({ eventType: 'build_failed' }).eventType).toBe(
+        ACTIVITY_STATES.VALIDATION_FAILED,
+      );
+      expect(createEvent({ eventType: 'check_passed', evidence: { ok: true } }).eventType).toBe(
+        ACTIVITY_STATES.VALIDATION_PASSED,
+      );
+      expect(createEvent({ eventType: 'approval_gate' }).eventType).toBe(
+        ACTIVITY_STATES.HUMAN_APPROVAL_REQUIRED,
+      );
+      expect(createEvent({ eventType: 'worker_blocked' }).eventType).toBe(
+        ACTIVITY_STATES.OPERATION_BLOCKED,
+      );
+      expect(createEvent({ eventType: 'random_unknown_state' }).eventType).toBe(
+        ACTIVITY_STATES.ANALYSIS_IN_PROGRESS,
+      );
     });
 
     test('handles missing or partial fields gracefully without crashing', () => {
@@ -101,7 +113,10 @@ describe('Tribunal Activity Presentation System', () => {
       const warnEvent = createEvent({
         eventType: ACTIVITY_STATES.WARNING_DETECTED,
         title: 'Deprecation Warning',
-        warning: { message: 'Node.js 18 will be EOL soon', impact: 'Upgrade to Node.js 22 recommended' },
+        warning: {
+          message: 'Node.js 18 will be EOL soon',
+          impact: 'Upgrade to Node.js 22 recommended',
+        },
       });
 
       const failEvent = createEvent({
@@ -138,7 +153,8 @@ describe('Tribunal Activity Presentation System', () => {
 
   describe('3. Sensitive Data & Secret Redaction', () => {
     test('redacts API keys, Bearer tokens, and JWTs in strings', () => {
-      const text = 'Connected with sk_live_abc1234567890 and Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.doNotLeakThisKey';
+      const text =
+        'Connected with sk_live_abc1234567890 and Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.doNotLeakThisKey';
       const redacted = redactSecrets(text);
       expect(redacted).not.toContain('sk_live_abc1234567890');
       expect(redacted).toContain('[REDACTED_API_KEY]');
@@ -147,7 +163,8 @@ describe('Tribunal Activity Presentation System', () => {
     });
 
     test('redacts database connection strings and AWS keys', () => {
-      const text = 'DATABASE_URL=postgres://admin:superSecretPassword@localhost:5432/mydb and AWS key AKIAIOSFODNN7EXAMPLE';
+      const text =
+        'DATABASE_URL=postgres://admin:superSecretPassword@localhost:5432/mydb and AWS key AKIAIOSFODNN7EXAMPLE';
       const redacted = redactSecrets(text);
       expect(redacted).not.toContain('superSecretPassword');
       expect(redacted).toContain('[REDACTED_DB_URL]');
@@ -202,8 +219,12 @@ describe('Tribunal Activity Presentation System', () => {
       });
 
       const output = renderMarkdown(event);
-      expect(output).toContain('› **Activated** `@resilience-reviewer` · Fault Tolerance & Error Resilience');
-      expect(output).toContain('  Audits network boundaries and fallback chains. Target: API route.');
+      expect(output).toContain(
+        '› **Activated** `@resilience-reviewer` · Fault Tolerance & Error Resilience',
+      );
+      expect(output).toContain(
+        '  Audits network boundaries and fallback chains. Target: API route.',
+      );
     });
 
     test('renders authoritative progress and pending counts', () => {
@@ -235,7 +256,11 @@ describe('Tribunal Activity Presentation System', () => {
       const event = createEvent({
         eventType: ACTIVITY_STATES.VALIDATION_FAILED,
         title: 'AST Contract Gate',
-        error: { message: 'Export mismatch in index.ts', code: 'CONTRACT_VIOLATION', suggestion: 'Export cmdUnderstand' },
+        error: {
+          message: 'Export mismatch in index.ts',
+          code: 'CONTRACT_VIOLATION',
+          suggestion: 'Export cmdUnderstand',
+        },
       });
 
       const output = renderMarkdown(event);
@@ -315,7 +340,9 @@ describe('Tribunal Activity Presentation System', () => {
 
     test('announceAgent produces context-aware headline and mandate', () => {
       const announcement = announceAgent('security-auditor', 'checkout payment route');
-      expect(announcement).toContain('› **Activated** `@security-auditor` · Application Security & OWASP Defense');
+      expect(announcement).toContain(
+        '› **Activated** `@security-auditor` · Application Security & OWASP Defense',
+      );
       expect(announcement).toContain('checkout payment route');
     });
 
@@ -344,10 +371,22 @@ describe('Tribunal Activity Presentation System', () => {
 
       tracker.start(null, 'Verifying 12 Codebase Intelligence test suites.');
       tracker.setPhase('Phase 14');
-      tracker.runningTests('test/unit/codebase_intelligence*.test.js', { current: 6, total: 12, unit: 'suites', isAuthoritative: true });
-      tracker.runningTests('test/unit/codebase_intelligence*.test.js', { current: 12, total: 12, unit: 'suites', isAuthoritative: true });
+      tracker.runningTests('test/unit/codebase_intelligence*.test.js', {
+        current: 6,
+        total: 12,
+        unit: 'suites',
+        isAuthoritative: true,
+      });
+      tracker.runningTests('test/unit/codebase_intelligence*.test.js', {
+        current: 12,
+        total: 12,
+        unit: 'suites',
+        isAuthoritative: true,
+      });
       tracker.passed('Codebase Intelligence Baseline Suites', { suites: 12, failed: 0 });
-      tracker.complete('All 12 suites verified.', { exitCode: 0 }, ['reports/phase14_baseline.json']);
+      tracker.complete('All 12 suites verified.', { exitCode: 0 }, [
+        'reports/phase14_baseline.json',
+      ]);
 
       expect(emitted).toHaveLength(5);
       expect(emitted[0].evt.eventType).toBe(ACTIVITY_STATES.OPERATION_STARTED);
@@ -371,8 +410,18 @@ describe('Tribunal Activity Presentation System', () => {
       });
 
       // Emitting same progress twice
-      const res1 = tracker.runningTests('jest', { current: 5, total: 10, unit: 'tests', isAuthoritative: true });
-      const res2 = tracker.runningTests('jest', { current: 5, total: 10, unit: 'tests', isAuthoritative: true });
+      const res1 = tracker.runningTests('jest', {
+        current: 5,
+        total: 10,
+        unit: 'tests',
+        isAuthoritative: true,
+      });
+      const res2 = tracker.runningTests('jest', {
+        current: 5,
+        total: 10,
+        unit: 'tests',
+        isAuthoritative: true,
+      });
 
       expect(res1.isDuplicate).toBe(false);
       expect(res2.isDuplicate).toBe(true);
@@ -391,12 +440,18 @@ describe('Tribunal Activity Presentation System', () => {
 
     test('handles blocked state and human approval gates', () => {
       const tracker = new ActivityTracker({ title: 'Gate Test' });
-      const blockedRes = tracker.blocked('Missing auth middleware context', 'Inspect src/middleware.ts');
+      const blockedRes = tracker.blocked(
+        'Missing auth middleware context',
+        'Inspect src/middleware.ts',
+      );
       expect(blockedRes.event.eventType).toBe(ACTIVITY_STATES.OPERATION_BLOCKED);
       expect(blockedRes.formatted).toContain('⛔ **Blocked**');
       expect(blockedRes.formatted).toContain('Remedy: Inspect src/middleware.ts');
 
-      const approvalRes = tracker.approvalRequired('Pre-Deploy Gate', 'Approve write to production?');
+      const approvalRes = tracker.approvalRequired(
+        'Pre-Deploy Gate',
+        'Approve write to production?',
+      );
       expect(approvalRes.event.eventType).toBe(ACTIVITY_STATES.HUMAN_APPROVAL_REQUIRED);
       expect(approvalRes.formatted).toContain('⏸ **Approval Required**');
     });
@@ -445,4 +500,3 @@ describe('Tribunal Activity Presentation System', () => {
     });
   });
 });
-

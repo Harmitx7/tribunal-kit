@@ -65,7 +65,7 @@ Reference Space using this pattern: https://huggingface.co/spaces/victor/ace-ste
 
 For model weights, let HF Hub re-download to local container disk on each cold start. With `HF_HUB_ENABLE_HF_TRANSFER=1` (set in the runtime by default) this is fast — typically much faster than streaming the same bytes through bucket I/O at request time.
 
-Bucket I/O is fine for occasional metadata reads (the feed pattern above) or saving user information. It is *not* fine as the path your model loader streams gigabytes through every cold start.
+Bucket I/O is fine for occasional metadata reads (the feed pattern above) or saving user information. It is _not_ fine as the path your model loader streams gigabytes through every cold start.
 
 ## Cache redirects
 

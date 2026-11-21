@@ -4,7 +4,8 @@ const { auditInteractiveStates } = require('../../src/design_intelligence/compon
 
 describe('UI Component State Engine (Unit)', () => {
   it('audits a compliant 5-state interactive target', () => {
-    const classStr = 'px-4 py-2 bg-primary hover:bg-primary-hover focus-visible:ring-2 active:scale-[0.98] disabled:opacity-50';
+    const classStr =
+      'px-4 py-2 bg-primary hover:bg-primary-hover focus-visible:ring-2 active:scale-[0.98] disabled:opacity-50';
     const audit = auditInteractiveStates('btn-primary', classStr);
 
     expect(audit.isCompliant).toBe(true);
@@ -27,4 +28,3 @@ describe('UI Component State Engine (Unit)', () => {
     expect(audit.hasDisabled).toBe(false);
   });
 });
-

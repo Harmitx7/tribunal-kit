@@ -23,7 +23,8 @@ function getFreePort() {
     srv.unref();
     srv.on('error', reject);
     srv.listen(0, '127.0.0.1', () => {
-      const port = srv.address().port;
+      const addr = srv.address();
+      const port = typeof addr === 'object' && addr ? addr.port : 0;
       srv.close(() => resolve(port));
     });
   });
@@ -53,16 +54,18 @@ process.on('SIGTERM', () => {
 
 /**
  * Launches an isolated headless Chrome instance.
- * @param {object} options
- * @param {number} options.port
- * @param {boolean} options.headless
- * @returns {Promise<{ port: number, process: any, close: Function }>}
+ * @param {object} [options]
+ * @param {number} [options.port]
+ * @param {boolean} [options.headless]
+ * @param {boolean} [options.useProxy]
+ * @param {boolean} [options.allowLoopback]
+ * @param {boolean} [options.allowPrivateNetwork]
+ * @param {Function} [options.dnsLookup]
+ * @param {number} [options.startupTimeoutMs]
+ * @returns {Promise<{ port: number, process: any, close: Function, proxy?: any }>}
  */
 async function launchBrowser(options = {}) {
-  const browserInfo = discovery.findBrowser();
-  if (!browserInfo) {
-    throw new Error('No supported browser (Google Chrome or Microsoft Edge) found on this machine');
-  }
+  const browserInfo = discovery.ensureBrowserAvailable();
 
   let port = options.port;
   if (!port) {

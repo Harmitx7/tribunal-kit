@@ -75,6 +75,7 @@
 ---
 
 <a id="table-of-contents"></a>
+
 ## 📑 Structured Directory & Index
 
 <table width="100%">
@@ -140,9 +141,11 @@
 ---
 
 <a id="overview"></a>
+
 ## 01 // Architecture & Core Invariants
 
 <a id="problem-solution"></a>
+
 ### What is Tribunal Kit?
 
 AI coding assistants hallucinate. They invent packages that do not exist on public package registries (**"slopsquatting"**), invoke deprecated framework APIs, emit unparameterized SQL queries, invent non-existent database columns, and repeat identical blunders across development sessions.
@@ -159,17 +162,18 @@ Compilers and linters catch these errors only **after** the code is already writ
 
 #### Problem vs. Solution Matrix
 
-| Threat Vector | Unprotected AI Agent Behavior | Tribunal Kit Verification Envelope |
-| :--- | :--- | :--- |
-| **Supply Chain / Slopsquatting** | Agent imports fictional npm/pip packages vulnerable to malicious namespace hijacking. | **`tk guardrail`** parses AST imports and checks package manifests before changes reach disk. |
-| **Cognitive Amnesia Loops** | Agent repeats the exact same rejected architectural blunder across subsequent sessions. | **`tk case` & `tk memory`** record rejections as binding legal precedents injected into future context. |
-| **Context Saturation & Hallucination** | Massive context dumps saturate the LLM window, causing hallucination spikes. | **`tk context`** extracts strict AST call-graphs and compresses payloads to bounded token budgets. |
-| **Late Failure Detection** | CI workflows and linters catch broken contracts hours later after code is merged. | **Stage-Partitioned Waves** run 28 reviewers in sub-second parallel passes prior to human gate. |
-| **Transitive Regressions** | Refactoring one service breaks distant consumers across the monorepo silently. | **`tk arch impact`** maps blast radiuses and transitive callers through graph extraction. |
+| Threat Vector                          | Unprotected AI Agent Behavior                                                           | Tribunal Kit Verification Envelope                                                                      |
+| :------------------------------------- | :-------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
+| **Supply Chain / Slopsquatting**       | Agent imports fictional npm/pip packages vulnerable to malicious namespace hijacking.   | **`tk guardrail`** parses AST imports and checks package manifests before changes reach disk.           |
+| **Cognitive Amnesia Loops**            | Agent repeats the exact same rejected architectural blunder across subsequent sessions. | **`tk case` & `tk memory`** record rejections as binding legal precedents injected into future context. |
+| **Context Saturation & Hallucination** | Massive context dumps saturate the LLM window, causing hallucination spikes.            | **`tk context`** extracts strict AST call-graphs and compresses payloads to bounded token budgets.      |
+| **Late Failure Detection**             | CI workflows and linters catch broken contracts hours later after code is merged.       | **Stage-Partitioned Waves** run 28 reviewers in sub-second parallel passes prior to human gate.         |
+| **Transitive Regressions**             | Refactoring one service breaks distant consumers across the monorepo silently.          | **`tk arch impact`** maps blast radiuses and transitive callers through graph extraction.               |
 
 ---
 
 <a id="core-capabilities"></a>
+
 ### Core Superpower Breakdown
 
 <div align="center">
@@ -240,6 +244,7 @@ Compilers and linters catch these errors only **after** the code is already writ
 ---
 
 <a id="architecture"></a>
+
 ### Dual-Engine Pipeline Execution
 
 Tribunal Kit employs a **dual-engine execution architecture**. Commands are first routed through the compiled native Rust binary (`tribunal-core`). If the binary is unavailable, uncompiled, or if the environment forces JavaScript (`TRIBUNAL_FORCE_JS=1`), execution seamlessly falls back to the modular JavaScript engine (`src/cli.js`).
@@ -292,15 +297,18 @@ flowchart TD
 ---
 
 <a id="quick-start"></a>
+
 ## 02 // Quick Start & Installation
 
 <a id="prerequisites"></a>
+
 ### Prerequisites
 
 - **Node.js:** `>= 18.0.0` (LTS recommended)
-- **Rust Toolchain:** *(Optional)* Precompiled binaries for Linux (x64, arm64), macOS (Apple Silicon, Intel), and Windows (x64, arm64) are distributed via optional dependencies. Cargo is only required if compiling from source.
+- **Rust Toolchain:** _(Optional)_ Precompiled binaries for Linux (x64, arm64), macOS (Apple Silicon, Intel), and Windows (x64, arm64) are distributed via optional dependencies. Cargo is only required if compiling from source.
 
 <a id="hardened-installation"></a>
+
 ### Hardened Installation (Zero-Lifecycle Scripts)
 
 Tribunal Kit enforces a **zero install-time lifecycle script** policy (`no preinstall, install, or postinstall` scripts in `package.json`). For high-security environments, you can safely invoke or install Tribunal Kit with npm script execution explicitly disabled:
@@ -314,6 +322,7 @@ npm install -g --ignore-scripts tribunal-kit@9.4.0
 ```
 
 <a id="step-by-step"></a>
+
 ### Step-by-Step Initialization
 
 #### Step 01: Scaffold the Governance Payload
@@ -345,6 +354,7 @@ npx tribunal-kit sync
 ```
 
 <a id="cli-adapters"></a>
+
 ### CLI Agent Adapters (`tk-adapt` / `tk adapt`)
 
 For developers using terminal-based AI coding agents, install native bridges with a single command:
@@ -363,6 +373,7 @@ npx tk-adapt gemini-cli # Google Gemini CLI (.gemini/rules/GEMINI.md)
 ```
 
 <a id="minimal-mode"></a>
+
 ### Minimal Installation Mode (`--minimal`)
 
 For resource-constrained setups or microservices, install the streamlined core payload (~21 core specialists, ~19 core skills):
@@ -374,6 +385,7 @@ npx tribunal-kit init --minimal
 ---
 
 <a id="cli-cockpit"></a>
+
 ## 03 // Command Cockpit & CLI Surface
 
 Both binary identifiers are registered: `tribunal-kit` and `tk`.
@@ -383,42 +395,44 @@ tk <command> [subcommand] [flags]
 ```
 
 <a id="complete-command-reference"></a>
+
 ### Complete Command Reference
 
-| Category | Command | Syntax & Subcommands | Operational Description |
-| :--- | :--- | :--- | :--- |
-| **Core Lifecycle** | `init` | `tk init [--force] [--minimal] [--dry-run]` | Initializes `.agent/` and scaffolds IDE bridges in target directory. |
-| | `status` | `tk status [--json] [--quiet]` | Displays high-density architecture cockpit and reviewer readiness. |
-| | `sync` | `tk sync` | Synchronizes IDE rule bridges (`.cursorrules`, `CLAUDE.md`, `AGENTS.md`). |
-| | `guardrail`| `tk guardrail [--file <path>] [--fix] [--json]` | Audits changes for phantom packages, broken links, and `// VERIFY` tags. |
-| | `update` | `tk update` | Upgrades installed `.agent/` directory to match the latest engine version. |
-| | `uninstall`| `tk uninstall [--dry-run]` | Removes `.agent/` folder with automated pre-removal backup archive. |
-| | `hook` | `tk hook` | Installs automated Git pre-push governance hook into `.git/hooks/`. |
-| **Architecture** | `validate` | `tk validate [--file <path>] [--schema <type>]` | Validates `.agent/` directory or checks JSON payloads against Serde schemas. |
-| | `arch` | `tk arch <map\|verify\|impact\|diff\|audit>` | Zero-Trust Architecture Intelligence and blast radius simulation. |
-| | `contract` | `tk contract <init\|verify\|list\|trace\|replay>` | AI behavioral contract testing, trace replay, and case-to-contract generation. |
-| | `graph` | `tk graph` | Builds and visualizes dependency architecture and module call graphs. |
-| | `impact-tier`| `tk impact-tier [--files <list>] [--lines <n>]` | Classifies change impact tier (0: Fast-Pass, 1: Express, 2: Audit, 3: Full). |
-| **Memory & Precedents** | `case` | `tk case <add\|search\|list\|show\|overrule>` | Supreme Court Case Law engine for recording mistake precedents. |
-| | `memory` | `tk memory <store\|recall\|gc\|stats\|export>` | 4-Type Taxonomy Persistent Memory engine (`semantic`, `procedural`, etc.). |
-| | `rsi` | `tk rsi <status\|run\|watch\|rollback\|freeze>` | Recursive Self-Improvement Engine with Write-Ahead Logging (WAL). |
-| | `evolve` | `tk evolve [--rounds <n>] [--strategy <type>]` | Asymmetric dual-loop prompt instruction auto-tuning against test suites. |
-| | `learn` | `tk learn` | Extracts recurring project idioms and coding conventions from git diffs. |
-| | `mutate` | `tk mutate [--target <file>]` | Mutation testing engine that injects faults to test test-suite reliability. |
-| **Agentic Workflows**| `marathon` | `tk marathon <init\|status\|next\|mark\|log>` | Long-running autonomous agent harness with session checkpointing. |
-| | `sdd` | `tk sdd <workspace\|brief\|diff>` | Subagent-Driven Development workspace isolation and task brief extraction. |
-| | `skill-intel`| `tk skill-intel <query> [--gate] [--contract]` | Autonomous skill discovery and 11-point skill creation gate. |
-| | `compile` | `tk compile [--skills <list>]` | Compresses skills and rules into a static Super-Prompt for CLI agents. |
-| | `context` | `tk context [--file <path>]` | Retrieves token-optimized context dossier with structural AST call-sites. |
-| | `align` | `tk align [--file <path>]` | Cleans AI outputs: strips decorative slop, removes excessive bulleting. |
-| **Web & Browser** | `browse` | `tk browse <url> [--json]` | Token-efficient web reader (<1.5k tokens) with IDPI prompt defense. |
-| | `audit-web`| `tk audit-web <url> [--json]` | Live browser accessibility, console errors, and Core Web Vitals auditor. |
-| | `compare-web`| `tk compare-web <url1> <url2>` | Visual regression differ for CI and release gating via CDP. |
-| | `deconstruct`| `tk deconstruct <url> --selector <sel>` | Reverse-engineers live DOM elements into modular React TSX components. |
-| | `heal` | `tk heal [--url <url>]` | Runtime Sentinel that catches uncaught browser errors and verifies live fixes. |
-| **Neural Expansion**| `system1` | `tk system1 <setup\|enable\|disable\|status>` | Optional local ONNX neural assessment engine for sub-ms impact tiering. |
+| Category                | Command       | Syntax & Subcommands                              | Operational Description                                                        |
+| :---------------------- | :------------ | :------------------------------------------------ | :----------------------------------------------------------------------------- |
+| **Core Lifecycle**      | `init`        | `tk init [--force] [--minimal] [--dry-run]`       | Initializes `.agent/` and scaffolds IDE bridges in target directory.           |
+|                         | `status`      | `tk status [--json] [--quiet]`                    | Displays high-density architecture cockpit and reviewer readiness.             |
+|                         | `sync`        | `tk sync`                                         | Synchronizes IDE rule bridges (`.cursorrules`, `CLAUDE.md`, `AGENTS.md`).      |
+|                         | `guardrail`   | `tk guardrail [--file <path>] [--fix] [--json]`   | Audits changes for phantom packages, broken links, and `// VERIFY` tags.       |
+|                         | `update`      | `tk update`                                       | Upgrades installed `.agent/` directory to match the latest engine version.     |
+|                         | `uninstall`   | `tk uninstall [--dry-run]`                        | Removes `.agent/` folder with automated pre-removal backup archive.            |
+|                         | `hook`        | `tk hook`                                         | Installs automated Git pre-push governance hook into `.git/hooks/`.            |
+| **Architecture**        | `validate`    | `tk validate [--file <path>] [--schema <type>]`   | Validates `.agent/` directory or checks JSON payloads against Serde schemas.   |
+|                         | `arch`        | `tk arch <map\|verify\|impact\|diff\|audit>`      | Zero-Trust Architecture Intelligence and blast radius simulation.              |
+|                         | `contract`    | `tk contract <init\|verify\|list\|trace\|replay>` | AI behavioral contract testing, trace replay, and case-to-contract generation. |
+|                         | `graph`       | `tk graph`                                        | Builds and visualizes dependency architecture and module call graphs.          |
+|                         | `impact-tier` | `tk impact-tier [--files <list>] [--lines <n>]`   | Classifies change impact tier (0: Fast-Pass, 1: Express, 2: Audit, 3: Full).   |
+| **Memory & Precedents** | `case`        | `tk case <add\|search\|list\|show\|overrule>`     | Supreme Court Case Law engine for recording mistake precedents.                |
+|                         | `memory`      | `tk memory <store\|recall\|gc\|stats\|export>`    | 4-Type Taxonomy Persistent Memory engine (`semantic`, `procedural`, etc.).     |
+|                         | `rsi`         | `tk rsi <status\|run\|watch\|rollback\|freeze>`   | Recursive Self-Improvement Engine with Write-Ahead Logging (WAL).              |
+|                         | `evolve`      | `tk evolve [--rounds <n>] [--strategy <type>]`    | Asymmetric dual-loop prompt instruction auto-tuning against test suites.       |
+|                         | `learn`       | `tk learn`                                        | Extracts recurring project idioms and coding conventions from git diffs.       |
+|                         | `mutate`      | `tk mutate [--target <file>]`                     | Mutation testing engine that injects faults to test test-suite reliability.    |
+| **Agentic Workflows**   | `marathon`    | `tk marathon <init\|status\|next\|mark\|log>`     | Long-running autonomous agent harness with session checkpointing.              |
+|                         | `sdd`         | `tk sdd <workspace\|brief\|diff>`                 | Subagent-Driven Development workspace isolation and task brief extraction.     |
+|                         | `skill-intel` | `tk skill-intel <query> [--gate] [--contract]`    | Autonomous skill discovery and 11-point skill creation gate.                   |
+|                         | `compile`     | `tk compile [--skills <list>]`                    | Compresses skills and rules into a static Super-Prompt for CLI agents.         |
+|                         | `context`     | `tk context [--file <path>]`                      | Retrieves token-optimized context dossier with structural AST call-sites.      |
+|                         | `align`       | `tk align [--file <path>]`                        | Cleans AI outputs: strips decorative slop, removes excessive bulleting.        |
+| **Web & Browser**       | `browse`      | `tk browse <url> [--json]`                        | Token-efficient web reader (<1.5k tokens) with IDPI prompt defense.            |
+|                         | `audit-web`   | `tk audit-web <url> [--json]`                     | Live browser accessibility, console errors, and Core Web Vitals auditor.       |
+|                         | `compare-web` | `tk compare-web <url1> <url2>`                    | Visual regression differ for CI and release gating via CDP.                    |
+|                         | `deconstruct` | `tk deconstruct <url> --selector <sel>`           | Reverse-engineers live DOM elements into modular React TSX components.         |
+|                         | `heal`        | `tk heal [--url <url>]`                           | Runtime Sentinel that catches uncaught browser errors and verifies live fixes. |
+| **Neural Expansion**    | `system1`     | `tk system1 <setup\|enable\|disable\|status>`     | Optional local ONNX neural assessment engine for sub-ms impact tiering.        |
 
 <a id="global-flags"></a>
+
 ### Global Execution Flags
 
 ```text
@@ -436,11 +450,13 @@ tk <command> [subcommand] [flags]
 ---
 
 <a id="reviewers"></a>
+
 ## 04 // The 28-Reviewer Verification Swarm
 
 When code is checked via `tk validate`, `/tribunal-full`, or git pre-push hooks, Tribunal Kit invokes **28 specialized domain reviewers**. To eliminate context window dilution, reviewers execute in three stage-partitioned waves.
 
 <a id="3-wave-execution-stage-partitioning"></a>
+
 ### 3-Wave Execution Stage Partitioning
 
 ```mermaid
@@ -498,25 +514,28 @@ graph TD
 ```
 
 <a id="reviewer-matrix"></a>
+
 ### Domain Activation Matrix
 
 Reviewers automatically adapt to the code under review. Unrelated reviewers auto-pass with `N/A`, maximizing pipeline throughput:
 
-| Target File / Context | Active Critical Reviewers |
-| :--- | :--- |
-| **REST / GraphQL API** | `logic`, `security`, `dependency`, `type-safety`, `sql`, `schema`, `resilience`, `auth-boundary` |
-| **React / Next.js Component**| `logic`, `frontend`, `accessibility`, `ui-ux`, `type-safety`, `review-animations`, `vitals` |
-| **Database Migration & Query**| `logic`, `security`, `sql`, `schema`, `db-latency`, `resilience` |
-| **AI / LLM Integration** | `logic`, `security`, `ai-code`, `dependency`, `cognitive-boundary` |
-| **Mobile (React Native / Expo)**| `mobile`, `logic`, `security`, `performance`, `accessibility`, `ui-ux` |
-| **CI/CD Workflow & Dockerfile**| `pipeline-checker`, `security`, `secrets-leak-guard`, `dependency` |
+| Target File / Context            | Active Critical Reviewers                                                                        |
+| :------------------------------- | :----------------------------------------------------------------------------------------------- |
+| **REST / GraphQL API**           | `logic`, `security`, `dependency`, `type-safety`, `sql`, `schema`, `resilience`, `auth-boundary` |
+| **React / Next.js Component**    | `logic`, `frontend`, `accessibility`, `ui-ux`, `type-safety`, `review-animations`, `vitals`      |
+| **Database Migration & Query**   | `logic`, `security`, `sql`, `schema`, `db-latency`, `resilience`                                 |
+| **AI / LLM Integration**         | `logic`, `security`, `ai-code`, `dependency`, `cognitive-boundary`                               |
+| **Mobile (React Native / Expo)** | `mobile`, `logic`, `security`, `performance`, `accessibility`, `ui-ux`                           |
+| **CI/CD Workflow & Dockerfile**  | `pipeline-checker`, `security`, `secrets-leak-guard`, `dependency`                               |
 
 ---
 
 <a id="ide-bridges"></a>
+
 ## 05 // Ecosystem, IDE Bridges & MCP Server
 
 <a id="ide-bridge-architecture"></a>
+
 ### IDE Bridge Architecture
 
 When `tk init` or `tk sync` runs, Tribunal Kit generates bridge files that hook directly into the system prompts of major AI coding environments:
@@ -537,6 +556,7 @@ Your Project Root
 ---
 
 <a id="mcp"></a>
+
 ### Model Context Protocol (MCP) Server
 
 Tribunal Kit provides a production-grade MCP server (`bin/mcp-server.js`) communicating over JSON-RPC 2.0 stdio:
@@ -569,23 +589,26 @@ Tribunal Kit provides a production-grade MCP server (`bin/mcp-server.js`) commun
 ---
 
 <a id="env-vars"></a>
+
 ### Environment Variables & Overrides
 
-| Environment Variable | Supported Values | Operational Impact |
-| :--- | :--- | :--- |
-| `TRIBUNAL_FORCE_JS` | `1`, `true` | Bypasses the compiled Rust binary and forces the pure JavaScript runtime. |
-| `TRIBUNAL_CORE_PATH` | `/absolute/path` | Overrides auto-detection with an explicit path to a compiled `tribunal-core` binary. |
-| `TK_SKIP_UPDATE_CHECK` | `1`, `true` | Disables automated npm registry update checks during `init` and `update`. |
-| `TK_AUTO_BUILD` | `1`, `true` | Automatically attempts to build the Rust core locally with `cargo build --release` if missing. |
+| Environment Variable   | Supported Values | Operational Impact                                                                             |
+| :--------------------- | :--------------- | :--------------------------------------------------------------------------------------------- |
+| `TRIBUNAL_FORCE_JS`    | `1`, `true`      | Bypasses the compiled Rust binary and forces the pure JavaScript runtime.                      |
+| `TRIBUNAL_CORE_PATH`   | `/absolute/path` | Overrides auto-detection with an explicit path to a compiled `tribunal-core` binary.           |
+| `TK_SKIP_UPDATE_CHECK` | `1`, `true`      | Disables automated npm registry update checks during `init` and `update`.                      |
+| `TK_AUTO_BUILD`        | `1`, `true`      | Automatically attempts to build the Rust core locally with `cargo build --release` if missing. |
 
 ---
 
 <a id="skills-standard"></a>
+
 ## 06 // Skills Corpus & Technical References
 
 Tribunal Kit includes a curated, schema-validated corpus of **398 modular engineering skills** located in `.agent/skills/`.
 
 <a id="18-section-governance-standard"></a>
+
 ### 18-Section Governance Standard
 
 All 398 skills adhere to a strict 18-section governance architecture designed to eliminate LLM ambiguity:
@@ -602,6 +625,7 @@ All 398 skills adhere to a strict 18-section governance architecture designed to
 ---
 
 <a id="domain-references"></a>
+
 ### Hybrid Domain Reference Specifications (Model C)
 
 To prevent LLM context saturation, deep technical domain standards are partitioned into **23 compact, zero-hallucination reference specifications** (<1,500 tokens each) under `.agent/references/`:
@@ -676,25 +700,31 @@ To prevent LLM context saturation, deep technical domain standards are partition
 ---
 
 <a id="security"></a>
+
 ## 07 // Security Architecture & Trust Boundaries
 
 <a id="centralized-containment-boundaryjs"></a>
+
 ### 1. Centralized Containment (`src/security/boundary.js`)
 
 All file interactions are mediated through `assertWithinRoot`. This function enforces:
+
 - **Lexical Containment:** Rejects any path resolving outside the project root via `path.relative`.
 - **Symlink Escape Protection:** Resolves realpaths via `fs.realpathSync.native` to ensure symlinks cannot point to sensitive host directories (`/etc`, `C:\Windows`).
 - **Null-Byte Injection Neutralization:** Rejects any string containing `\0`.
 
 <a id="ssrf-defense"></a>
+
 ### 2. SSRF & Cloud Metadata Defense
 
 The browser and web intelligence engine enforces strict outbound network policies via `validateBrowserUrl`:
+
 - **Cloud Metadata Protection:** Unconditionally blocks access to link-local and cloud metadata IPs (`169.254.169.254`, `fd00:ec2::254`).
 - **Private Subnet Isolation:** Blocks loopback (`127.0.0.0/8`, `::1`), RFC 1918 private subnets (`10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`), and Carrier-Grade NAT.
 - **Scheme & Port Restrictions:** Permits only `http:` and `https:`. Rejects sensitive administrative ports (`22`, `25`, `2375`, `6379`, `27017`).
 
 <a id="zero-deps"></a>
+
 ### 3. Supply-Chain Purity & Minimal Dependencies
 
 - **Minimal Production Dependencies:** Exactly 1 vetted production runtime dependency (`zod: "^4.6.7"` for deterministic schema validation and boundary guarantees). Zero extraneous dependencies or deep dependency trees.
@@ -703,20 +733,22 @@ The browser and web intelligence engine enforces strict outbound network policie
 - **Runtime Network Neutrality:** The CLI operates **100% offline** by default. It performs zero telemetry, zero analytics, and zero phone-home calls. The only network request is an optional npm version check during `init`, which is completely skippable via `--skip-update-check` or `TK_SKIP_UPDATE_CHECK=1`.
 
 <a id="permissions"></a>
+
 ### 4. Permissions & Blast-Radius Transparency
 
 Tribunal Kit maintains an evidence-backed capability inventory to ensure complete transparency regarding host interactions:
 
-| Domain | Scope | Active Boundary Enforcement |
-| :--- | :--- | :--- |
-| **Filesystem Read** | Workspace project files, manifests, and AST trees. | Read-only access confined to workspace root. |
-| **Filesystem Write** | `.agent/`, `.claude/`, `.gemini/`, `.cursor/` governance trees. | `assertWithinRoot` validates lexical paths and native symlink realpaths. |
-| **Subprocess Execution** | Local linters, test runners, git status. | Strictly array-based `child_process.spawnSync` without shell interpolation. |
-| **Network Egress** | Offline CLI. Audit browser strictly gated. | `validateBrowserUrl` blocks RFC 1918 subnets, cloud metadata (`169.254.169.254`), and loopback. |
+| Domain                   | Scope                                                           | Active Boundary Enforcement                                                                     |
+| :----------------------- | :-------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- |
+| **Filesystem Read**      | Workspace project files, manifests, and AST trees.              | Read-only access confined to workspace root.                                                    |
+| **Filesystem Write**     | `.agent/`, `.claude/`, `.gemini/`, `.cursor/` governance trees. | `assertWithinRoot` validates lexical paths and native symlink realpaths.                        |
+| **Subprocess Execution** | Local linters, test runners, git status.                        | Strictly array-based `child_process.spawnSync` without shell interpolation.                     |
+| **Network Egress**       | Offline CLI. Audit browser strictly gated.                      | `validateBrowserUrl` blocks RFC 1918 subnets, cloud metadata (`169.254.169.254`), and loopback. |
 
 > Complete line-by-line capability mappings are audited and maintained in [docs/security/CAPABILITY_INVENTORY.md](docs/security/CAPABILITY_INVENTORY.md).
 
 <a id="threat-model"></a>
+
 ### 5. Containment Trust Boundaries
 
 > [!WARNING]
@@ -725,9 +757,11 @@ Tribunal Kit maintains an evidence-backed capability inventory to ensure complet
 ---
 
 <a id="testing"></a>
+
 ## 08 // Local Compilation & Test Suites
 
 <a id="development-setup"></a>
+
 ### Development Setup
 
 ```bash
@@ -740,6 +774,7 @@ npm install
 ```
 
 <a id="test-commands--validation-suites"></a>
+
 ### Test Commands & Validation Suites
 
 ```bash
@@ -757,6 +792,7 @@ npm run test:all
 ```
 
 <a id="rust-core-compilation--benchmarking"></a>
+
 ### Rust Core Compilation & Benchmarking
 
 ```bash
@@ -770,6 +806,7 @@ npm run benchmark:rust
 ---
 
 <a id="repository-tree"></a>
+
 ## 09 // Repository Architecture
 
 ```text
@@ -794,7 +831,7 @@ tribunal-kit/
 │   ├── system1/                     # Optional local ONNX neural assessment provider
 │   └── tui/                         # Progress bars, reviewer grid matrix, banner
 ├── .agent/                          # Intelligence & Governance Payload
-│   ├── agents/                      # 60 specialist agents (28 reviewers)
+│   ├── agents/                      # 64 specialist agents (28 reviewers)
 │   ├── skills/                      # 398 schema-validated engineering skills
 │   ├── references/                  # 23 zero-hallucination domain specifications
 │   ├── workflows/                   # 52 audited slash-command workflows
@@ -813,6 +850,7 @@ tribunal-kit/
 ---
 
 <a id="troubleshooting"></a>
+
 ## 10 // Diagnostic & Troubleshooting Manual
 
 <table width="100%">
@@ -855,9 +893,11 @@ tribunal-kit/
 ---
 
 <a id="contributing"></a>
+
 ## 11 // Community & Responsible Disclosure
 
 <a id="contributing-guidelines"></a>
+
 ### Contributing Guidelines
 
 We welcome community contributions, including new specialist agents, skills, and Rust core optimizations.
@@ -878,6 +918,7 @@ We welcome community contributions, including new specialist agents, skills, and
 ---
 
 <a id="security-vulnerability-reporting"></a>
+
 ### Security Vulnerability Reporting
 
 If you discover a potential security vulnerability in Tribunal Kit, please do not open a public issue. Follow our [Responsible Disclosure Policy](SECURITY.md) and submit a private report via [GitHub Security Advisories](https://github.com/Harmitx7/tribunal-kit/security/advisories/new).
@@ -885,6 +926,7 @@ If you discover a potential security vulnerability in Tribunal Kit, please do no
 ---
 
 <a id="license"></a>
+
 ### License
 
 Tribunal Kit is open-source software licensed under the **[MIT License](LICENSE)**.

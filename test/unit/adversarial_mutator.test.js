@@ -61,10 +61,11 @@ describe('Adversarial Scenario Mutator — EvalOpt Loop 2', () => {
     });
 
     expect(mutations.length).toBeGreaterThanOrEqual(1);
-    const hasSqli = mutations.some(m =>
-      String(m.mutationPayload).includes("' OR '1'='1") ||
-      String(m.mutationPayload).includes('DROP TABLE') ||
-      m.category === ATTACK_CATEGORIES.SECURITY_INJECTIONS
+    const hasSqli = mutations.some(
+      m =>
+        String(m.mutationPayload).includes("' OR '1'='1") ||
+        String(m.mutationPayload).includes('DROP TABLE') ||
+        m.category === ATTACK_CATEGORIES.SECURITY_INJECTIONS,
     );
     expect(hasSqli).toBe(true);
 

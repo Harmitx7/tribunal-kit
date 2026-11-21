@@ -104,7 +104,15 @@ describe('PHASE 10 FINAL INTEGRATION & RELEASE CERTIFICATION WAR ROOM', () => {
       expect(typeof req.token).toBe('string');
 
       // Proves automated agent approver IDs are rejected
-      const bannedApprovers = ['ai', 'agent', 'mcp_client', 'automated', 'bot', 'agent-coder', 'ai-assistant'];
+      const bannedApprovers = [
+        'ai',
+        'agent',
+        'mcp_client',
+        'automated',
+        'bot',
+        'agent-coder',
+        'ai-assistant',
+      ];
       for (const badApprover of bannedApprovers) {
         expect(() => {
           service.approveWrite(req.token, badApprover, 'SIGNATURE_ANY');
@@ -112,7 +120,11 @@ describe('PHASE 10 FINAL INTEGRATION & RELEASE CERTIFICATION WAR ROOM', () => {
       }
 
       // Proves valid human engineer approval transitions state to PENDING_COMMIT
-      const approval = service.approveWrite(req.token, 'human-security-officer', 'SIGNATURE_CONFIRMED');
+      const approval = service.approveWrite(
+        req.token,
+        'human-security-officer',
+        'SIGNATURE_CONFIRMED',
+      );
       expect(approval.status).toBe('PENDING_COMMIT');
     });
   });
@@ -239,10 +251,10 @@ describe('PHASE 10 FINAL INTEGRATION & RELEASE CERTIFICATION WAR ROOM', () => {
       expect(aligned.startsWith('Sure!')).toBe(false);
     });
 
-    test('package.json has a semantic version and exactly 1 production dependency', () => {
+    test('package.json has a semantic version and approved production dependencies (zod, ws)', () => {
       expect(PKG.version).toMatch(/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/);
-      const deps = Object.keys(PKG.dependencies || {});
-      expect(deps).toEqual(['zod']);
+      const deps = Object.keys(PKG.dependencies || {}).sort();
+      expect(deps).toEqual(['ws', 'zod']);
     });
   });
 });

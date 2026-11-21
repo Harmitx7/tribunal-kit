@@ -6,12 +6,12 @@ The standard workflow in `SKILL.md` applies (create → build → iterate → ve
 
 ## Sub-references
 
-| When to read | File |
-|---|---|
-| CUDA/C++ extension handling — prebuilt wheels, startup-compile tricks, the dominant failure mode | `[3d-cuda-extensions.md](3d-cuda-extensions.md)` |
-| Output formats (GLB/OBJ/PLY/STL, splats), viewers, orientation, preprocessing, temp-file patterns | `[3d-outputs.md](3d-outputs.md)` |
-| Model selection details and per-family recipes (TRELLIS, Hunyuan3D, TripoSR, SF3D, …) | `[3d-models.md](3d-models.md)` |
-| Gaussian-splat deliverables (TripoSplat, LGM) — pure-PyTorch splat decode | `[3d-gsplat.md](3d-gsplat.md)` |
+| When to read                                                                                      | File                                             |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| CUDA/C++ extension handling — prebuilt wheels, startup-compile tricks, the dominant failure mode  | `[3d-cuda-extensions.md](3d-cuda-extensions.md)` |
+| Output formats (GLB/OBJ/PLY/STL, splats), viewers, orientation, preprocessing, temp-file patterns | `[3d-outputs.md](3d-outputs.md)`                 |
+| Model selection details and per-family recipes (TRELLIS, Hunyuan3D, TripoSR, SF3D, …)             | `[3d-models.md](3d-models.md)`                   |
+| Gaussian-splat deliverables (TripoSplat, LGM) — pure-PyTorch splat decode                         | `[3d-gsplat.md](3d-gsplat.md)`                   |
 
 ## What makes 3D Spaces different
 
@@ -22,17 +22,17 @@ Both points make **"duplicate the official Space, then edit"** beat "assemble fr
 
 ## Picking a model
 
-| Priority | Pick | Why | Reference |
-|---|---|---|---|
-| Best quality, PBR textures | **TRELLIS.2** | current quality bar; MIT; ≥24 GB (fits ZeroGPU large) | [`3d-models.md`](3d-models.md) |
-| Textured output, finetuning story | **Hunyuan3D-2.1** (2.0 for lighter/faster) | official training code → common finetune target; PBR paint stage; non-commercial license | [`3d-models.md`](3d-models.md) |
-| Speed / high-traffic / simplicity | **TripoSR** (untextured, MIT) or **SF3D** (textured, gated) | single forward pass, ~60s duration, tiny codebase | [`3d-models.md`](3d-models.md) |
-| Gaussians alongside mesh, multi-image input | **TRELLIS 1** | dual gaussian+mesh decoder; lighter than TRELLIS.2 | [`3d-models.md`](3d-models.md) |
-| Gaussian splats as the deliverable | **TripoSplat** (or LGM) | pure-PyTorch splat decode, no rasterizer needed; `gr.Model3D` renders splat `.ply` natively | [`3d-gsplat.md`](3d-gsplat.md) |
+| Priority                                    | Pick                                                        | Why                                                                                         | Reference                      |
+| ------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------ |
+| Best quality, PBR textures                  | **TRELLIS.2**                                               | current quality bar; MIT; ≥24 GB (fits ZeroGPU large)                                       | [`3d-models.md`](3d-models.md) |
+| Textured output, finetuning story           | **Hunyuan3D-2.1** (2.0 for lighter/faster)                  | official training code → common finetune target; PBR paint stage; non-commercial license    | [`3d-models.md`](3d-models.md) |
+| Speed / high-traffic / simplicity           | **TripoSR** (untextured, MIT) or **SF3D** (textured, gated) | single forward pass, ~60s duration, tiny codebase                                           | [`3d-models.md`](3d-models.md) |
+| Gaussians alongside mesh, multi-image input | **TRELLIS 1**                                               | dual gaussian+mesh decoder; lighter than TRELLIS.2                                          | [`3d-models.md`](3d-models.md) |
+| Gaussian splats as the deliverable          | **TripoSplat** (or LGM)                                     | pure-PyTorch splat decode, no rasterizer needed; `gr.Model3D` renders splat `.ply` natively | [`3d-gsplat.md`](3d-gsplat.md) |
 
 **Check gating and license in Phase 0, not at first build.** `stabilityai/stable-fast-3d` and `stable-point-aware-3d` are gated (`gated: auto`) — the user must have accepted the license and the Space needs `HF_TOKEN` as a secret; verify access with `hf repos info` / `HfApi().model_info()` up front. `tencent/Hunyuan3D-*` is ungated but **non-commercial** — flag before the Space goes public. TRELLIS/TripoSR/TripoSplat/LGM are MIT. Apple SHARP is research-only (`apple-amlr`).
 
-If the model isn't covered by a reference file (Direct3D, TripoSG, Step1X-3D, a new release…), proceed by analogy with the user's agreement: find its official/most-liked *working* Space, fetch its actual files, and apply the same analysis — never guess a 3D dependency stack from memory.
+If the model isn't covered by a reference file (Direct3D, TripoSG, Step1X-3D, a new release…), proceed by analogy with the user's agreement: find its official/most-liked _working_ Space, fetch its actual files, and apply the same analysis — never guess a 3D dependency stack from memory.
 
 ## Deployment path: duplicate vs build
 
@@ -47,7 +47,7 @@ api.duplicate_repo("tencent/Hunyuan3D-2", to_id=f"{username}/my-hunyuan3d",
                    exist_ok=True)
 ```
 
-(`duplicate_space` is the deprecated older name.) Confirm the source Space is currently RUNNING first (`hf spaces info <id> --expand runtime`) — a paused/broken source means bitrot. Duplication copies *files only*; pass `space_hardware=`/`space_secrets=` explicitly. Then `hf download <repo> --repo-type space --local-dir .`, make the minimal edits (checkpoint repo-id, title/README, UI trims), and push back with `hf upload ... --repo-type space`. **Resist rewriting working extension-handling code you don't fully understand** — sitecustomize patches, `ctypes.CDLL` preloads, autotune caches, and `zero.startup()` calls all look redundant until removed.
+(`duplicate_space` is the deprecated older name.) Confirm the source Space is currently RUNNING first (`hf spaces info <id> --expand runtime`) — a paused/broken source means bitrot. Duplication copies _files only_; pass `space_hardware=`/`space_secrets=` explicitly. Then `hf download <repo> --repo-type space --local-dir .`, make the minimal edits (checkpoint repo-id, title/README, UI trims), and push back with `hf upload ... --repo-type space`. **Resist rewriting working extension-handling code you don't fully understand** — sitecustomize patches, `ctypes.CDLL` preloads, autotune caches, and `zero.startup()` calls all look redundant until removed.
 
 **Build from source** (custom UI, shape-only trims, no live official Space): start from the TripoSR skeleton (the ~200-line app documented in [`3d-models.md`](3d-models.md) — the cleanest template), vendor the model library tree from the official Space or GitHub, and follow [`3d-cuda-extensions.md`](3d-cuda-extensions.md). Budget more debugging iterations than an image-model Space.
 
@@ -86,7 +86,7 @@ On top of the standard smoke test in `SKILL.md` §7:
    ```
 
 3. **Look at it in the browser once.** Orientation (upright? facing forward?), texture presence, viewer lighting — the failure modes a programmatic check can't catch ([`3d-outputs.md`](3d-outputs.md) → Orientation).
-4. Startup-time extension compiles fail *silently* (app still boots, feature degrades) — grep the run log from the top even when everything looks green. Failure checklist: bottom of [`3d-cuda-extensions.md`](3d-cuda-extensions.md).
+4. Startup-time extension compiles fail _silently_ (app still boots, feature degrades) — grep the run log from the top even when everything looks green. Failure checklist: bottom of [`3d-cuda-extensions.md`](3d-cuda-extensions.md).
 
 ## What to avoid
 

@@ -28,17 +28,35 @@ const DANGEROUS_SHELL_OPERATORS = [
 
 // Destructive command signatures
 const DESTRUCTIVE_COMMAND_PATTERNS = [
-  { pattern: /\brm\s+-(?:r|f|rf|fr)\s+(?:\/|\.\.|\*|[a-zA-Z]:\\)/i, label: 'Destructive recursive root/wildcard removal (rm -rf /)' },
-  { pattern: /\b(?:mkfs|format\s+[a-zA-Z]:|fdisk|dd\s+if=)/i, label: 'Raw filesystem formatting / disk overwriting' },
-  { pattern: /\b(?:chmod|chown)\s+(?:-R\s+)?777\b/i, label: 'Insecure permissive file permissions (777)' },
-  { pattern: /curl\s+[^\n|]+\|\s*(?:bash|sh|zsh|powershell|pwsh)/i, label: 'Unchecked curl-to-shell piping' },
-  { pattern: /\b(?:shutdown|reboot|poweroff|init\s+0)\b/i, label: 'System reboot/shutdown commands' },
+  {
+    pattern: /\brm\s+-(?:r|f|rf|fr)\s+(?:\/|\.\.|\*|[a-zA-Z]:\\)/i,
+    label: 'Destructive recursive root/wildcard removal (rm -rf /)',
+  },
+  {
+    pattern: /\b(?:mkfs|format\s+[a-zA-Z]:|fdisk|dd\s+if=)/i,
+    label: 'Raw filesystem formatting / disk overwriting',
+  },
+  {
+    pattern: /\b(?:chmod|chown)\s+(?:-R\s+)?777\b/i,
+    label: 'Insecure permissive file permissions (777)',
+  },
+  {
+    pattern: /curl\s+[^\n|]+\|\s*(?:bash|sh|zsh|powershell|pwsh)/i,
+    label: 'Unchecked curl-to-shell piping',
+  },
+  {
+    pattern: /\b(?:shutdown|reboot|poweroff|init\s+0)\b/i,
+    label: 'System reboot/shutdown commands',
+  },
   { pattern: /:(?:\(\)\s*\{[\s\S]*?\};:)/i, label: 'Fork bomb signature' },
 ];
 
 // Dangerous environment overrides
 const DANGEROUS_ENV_OVERRIDES = [
-  { pattern: /\b(?:LD_PRELOAD|LD_LIBRARY_PATH|NODE_OPTIONS|PYTHONPATH)\s*=/i, label: 'Dynamic linker/runtime hijack variable override' },
+  {
+    pattern: /\b(?:LD_PRELOAD|LD_LIBRARY_PATH|NODE_OPTIONS|PYTHONPATH)\s*=/i,
+    label: 'Dynamic linker/runtime hijack variable override',
+  },
 ];
 
 /**
@@ -106,9 +124,10 @@ function auditCommandSafety(commandLine, options = {}) {
     command: trimmed,
     violationCount: violations.length,
     violations,
-    remediation: violations.length > 0
-      ? 'Avoid raw shell chaining operators; use direct binary execution with static arguments.'
-      : 'None required.',
+    remediation:
+      violations.length > 0
+        ? 'Avoid raw shell chaining operators; use direct binary execution with static arguments.'
+        : 'None required.',
   };
 }
 
@@ -167,4 +186,3 @@ module.exports = {
   DANGEROUS_SHELL_OPERATORS,
   DESTRUCTIVE_COMMAND_PATTERNS,
 };
-

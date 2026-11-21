@@ -244,7 +244,10 @@ class WalTransactionManager {
       try {
         const journal = JSON.parse(fs.readFileSync(p, 'utf8'));
         if (journal.state === TX_STATES.BEGIN || journal.state === TX_STATES.PREPARE) {
-          const res = this.rollbackTransaction(journal.txId, 'Recovered dangling transaction on startup');
+          const res = this.rollbackTransaction(
+            journal.txId,
+            'Recovered dangling transaction on startup',
+          );
           recovered.push({ txId: journal.txId, state: res.state, recovered: true });
         }
       } catch (_) {}

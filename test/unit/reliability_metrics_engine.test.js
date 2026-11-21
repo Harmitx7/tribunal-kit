@@ -10,13 +10,13 @@ describe('Reliability Metrics Engine', () => {
   describe('Confusion Matrix & Classification Metrics', () => {
     it('computes standard binary confusion matrix and derived rates accurately', () => {
       const pairs = [
-        { predicted: true, actual: true },   // TP
-        { predicted: true, actual: true },   // TP
-        { predicted: true, actual: false },  // FP
+        { predicted: true, actual: true }, // TP
+        { predicted: true, actual: true }, // TP
+        { predicted: true, actual: false }, // FP
         { predicted: false, actual: false }, // TN
         { predicted: false, actual: false }, // TN
         { predicted: false, actual: false }, // TN
-        { predicted: false, actual: true },  // FN
+        { predicted: false, actual: true }, // FN
       ];
       const result = calculateConfusionMatrix(pairs, { positiveLabel: true });
 
@@ -115,7 +115,12 @@ describe('Reliability Metrics Engine', () => {
     });
 
     it('handles empty input gracefully', () => {
-      expect(calculateCohensKappa([])).toEqual({ kappa: 0, observedAgreement: 0, expectedAgreement: 0, sampleSize: 0 });
+      expect(calculateCohensKappa([])).toEqual({
+        kappa: 0,
+        observedAgreement: 0,
+        expectedAgreement: 0,
+        sampleSize: 0,
+      });
     });
 
     it('handles degenerate single-category consensus without division by zero', () => {

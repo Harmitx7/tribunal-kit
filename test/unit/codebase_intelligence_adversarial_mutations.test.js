@@ -30,7 +30,7 @@ describe('Phase 14C: Continuous Adversarial Mutations Regression Suite', () => {
   const repoRoot = path.resolve(__dirname, '../..');
   const mutationsPath = path.join(
     __dirname,
-    '../fixtures/codebase_intelligence_adversarial/adversarial_mutations_eval_dataset.json'
+    '../fixtures/codebase_intelligence_adversarial/adversarial_mutations_eval_dataset.json',
   );
 
   let dataset;
@@ -49,10 +49,10 @@ describe('Phase 14C: Continuous Adversarial Mutations Regression Suite', () => {
     fs.readFileSync(
       path.join(
         __dirname,
-        '../fixtures/codebase_intelligence_adversarial/adversarial_mutations_eval_dataset.json'
+        '../fixtures/codebase_intelligence_adversarial/adversarial_mutations_eval_dataset.json',
       ),
-      'utf8'
-    )
+      'utf8',
+    ),
   );
 
   for (const tc of rawData.cases) {
@@ -65,7 +65,9 @@ describe('Phase 14C: Continuous Adversarial Mutations Regression Suite', () => {
 
       // Verify delegated capabilities
       if (tc.expectedDelegatedCapabilities && tc.expectedDelegatedCapabilities.length > 0) {
-        expect(route.delegatedCapabilities).toEqual(expect.arrayContaining(tc.expectedDelegatedCapabilities));
+        expect(route.delegatedCapabilities).toEqual(
+          expect.arrayContaining(tc.expectedDelegatedCapabilities),
+        );
       } else {
         expect(route.delegatedCapabilities.length).toBe(0);
       }
@@ -94,7 +96,9 @@ describe('Phase 14C: Continuous Adversarial Mutations Regression Suite', () => {
 
       if (tc.category === 'prompt-injection-malicious') {
         expect(route.isUntrusted).toBe(true);
-        expect(route.safeQuery).not.toMatch(/<script>|ignore previous instructions|system override|drop table/i);
+        expect(route.safeQuery).not.toMatch(
+          /<script>|ignore previous instructions|system override|drop table/i,
+        );
       }
 
       if (tc.category === 'nonexistent-symbol') {
@@ -103,4 +107,3 @@ describe('Phase 14C: Continuous Adversarial Mutations Regression Suite', () => {
     });
   }
 });
-

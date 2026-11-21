@@ -98,7 +98,11 @@ describe('Codebase Intelligence End-to-End Workflow', () => {
     await runCodebaseIntelligence({ subcommand: 'trace', target: 'POST /mfa-verify', repoRoot });
     await runCodebaseIntelligence({ subcommand: 'dependencies', repoRoot });
     await runCodebaseIntelligence({ subcommand: 'relevant-files', target: 'auth', repoRoot });
-    await runCodebaseIntelligence({ subcommand: 'impact', target: 'src/security/boundary.js', repoRoot });
+    await runCodebaseIntelligence({
+      subcommand: 'impact',
+      target: 'src/security/boundary.js',
+      repoRoot,
+    });
     await runCodebaseIntelligence({ subcommand: 'dead-code', repoRoot });
     await runCodebaseIntelligence({ subcommand: 'onboard', repoRoot });
     await runCodebaseIntelligence({ subcommand: 'prepare', target: 'auth', repoRoot });

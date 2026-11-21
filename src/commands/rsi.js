@@ -17,11 +17,31 @@
 const fs = require('fs');
 const path = require('path');
 const { color, bold, dim, RGB, GLYPHS, renderBanner, renderPanel } = require('../tui');
+const logger = require('../utils/logger');
 const { MetaAssuranceEngine } = require('../evolution/meta_assurance');
 const { WatcherDaemon } = require('../evolution/watcher_daemon');
 const { WalTransactionManager } = require('../evolution/wal_transaction_manager');
 const { CoEvolutionEngine } = require('../evolution/coevolution_engine');
-const { getCorpusScenarios } = require('../../benchmarks/corpus/index');
+
+function getCorpusScenarios() {
+  try {
+    const corpusMod = require('../../benchmarks/corpus/index');
+    if (typeof corpusMod.getCorpusScenarios === 'function') {
+      return corpusMod.getCorpusScenarios();
+    }
+    return [];
+  } catch (err) {
+    if (
+      err &&
+      (err.code === 'MODULE_NOT_FOUND' ||
+        (err.message && err.message.includes('Cannot find module')))
+    ) {
+      return [];
+    }
+    throw err;
+  }
+}
+
 const { loadRejections } = require('../evolution/negative_memory');
 const { loadEvolutionProposals } = require('../evolution/engine');
 
@@ -53,15 +73,22 @@ async function cmdRsi(flags, processArgs = [], quiet = false) {
       // Check baseline report if exists
       const baselineReportPath = path.join(targetDir, '.tribunal', 'evals', 'baseline_report.json');
       let baselineReport = null;
-      if (fs.existsSync(baselineReportPath)) {
-        try {
+      try {
+        if (fs.existsSync(baselineReportPath)) {
           baselineReport = JSON.parse(fs.readFileSync(baselineReportPath, 'utf8'));
-        } catch {}
+        }
+      } catch (err) {
+        if (err && err.code === 'ENOENT') {
+          baselineReport = null;
+        } else {
+          logger.warn(
+            `Corrupted or unreadable baseline report at "${baselineReportPath}": ${err.message}`,
+          );
+          baselineReport = null;
+        }
       }
 
-      const baselineSummary = baselineReport
-        ? baselineReport.summary || baselineReport
-        : null;
+      const baselineSummary = baselineReport ? baselineReport.summary || baselineReport : null;
 
       const statusData = {
         vault: {
@@ -109,9 +136,10 @@ async function cmdRsi(flags, processArgs = [], quiet = false) {
         ? `${color(RGB.EMERALD, g.success)} ${bold(color(RGB.EMERALD, '[CERTIFIED]'))}`
         : `${color(RGB.AMBER, '⚠')} ${bold(color(RGB.AMBER, '[INITIALIZING]'))}`;
 
-      const circuitBadge = health.circuitState === 'CLOSED'
-        ? `${color(RGB.EMERALD, g.success)} ${bold(color(RGB.EMERALD, '[CLOSED · Healthy]'))}`
-        : `${color(RGB.ROSE, g.failure)} ${bold(color(RGB.ROSE, '[TRIPPED · Quarantine]'))}`;
+      const circuitBadge =
+        health.circuitState === 'CLOSED'
+          ? `${color(RGB.EMERALD, g.success)} ${bold(color(RGB.EMERALD, '[CLOSED · Healthy]'))}`
+          : `${color(RGB.ROSE, g.failure)} ${bold(color(RGB.ROSE, '[TRIPPED · Quarantine]'))}`;
 
       const watcherBadge = daemonStatus.running
         ? `${color(RGB.EMERALD, g.success)} ${bold(color(RGB.EMERALD, `[RUNNING · PID ${daemonStatus.pid}]`))}`
@@ -121,19 +149,29 @@ async function cmdRsi(flags, processArgs = [], quiet = false) {
         `  ${bold(color(RGB.WHITE, 'Benchmark Vault'))}         ${vaultBadge} ${dim(`(${scenarios.length} scenarios across 4 categories)`)}`,
       ];
       if (statusData.vault.safePassRate !== null) {
-        rsiLines.push(`    Safe Proposal Pass:     ${color(RGB.CYAN, (statusData.vault.safePassRate * 100).toFixed(1) + '%')}`);
-        rsiLines.push(`    Unsafe Proposal Leak:   ${color(RGB.CYAN, (statusData.vault.unsafeLeakRate * 100).toFixed(1) + '%')}`);
+        rsiLines.push(
+          `    Safe Proposal Pass:     ${color(RGB.CYAN, (statusData.vault.safePassRate * 100).toFixed(1) + '%')}`,
+        );
+        rsiLines.push(
+          `    Unsafe Proposal Leak:   ${color(RGB.CYAN, (statusData.vault.unsafeLeakRate * 100).toFixed(1) + '%')}`,
+        );
       }
       rsiLines.push('');
       rsiLines.push(`  ${bold(color(RGB.WHITE, 'Circuit Breaker'))}         ${circuitBadge}`);
-      rsiLines.push(`    Rollback Ratio:         ${color(RGB.CYAN, (health.rollbackRatio * 100).toFixed(1) + '%')} ${dim(`(${health.abortCount} aborts / ${health.windowCount} txs)`)}`);
+      rsiLines.push(
+        `    Rollback Ratio:         ${color(RGB.CYAN, (health.rollbackRatio * 100).toFixed(1) + '%')} ${dim(`(${health.abortCount} aborts / ${health.windowCount} txs)`)}`,
+      );
       if (health.quarantineReason) {
         rsiLines.push(`    Quarantine Note:        ${color(RGB.ROSE, health.quarantineReason)}`);
       }
       rsiLines.push('');
       rsiLines.push(`  ${bold(color(RGB.WHITE, 'Watcher Daemon'))}          ${watcherBadge}`);
-      rsiLines.push(`    Negative CBR Memory:    ${color(RGB.CYAN, String(rejections.length))} recorded attack vectors`);
-      rsiLines.push(`    Staged Proposals:       ${color(RGB.CYAN, String(pendingProposals.length))} awaiting Human Gate sign-off`);
+      rsiLines.push(
+        `    Negative CBR Memory:    ${color(RGB.CYAN, String(rejections.length))} recorded attack vectors`,
+      );
+      rsiLines.push(
+        `    Staged Proposals:       ${color(RGB.CYAN, String(pendingProposals.length))} awaiting Human Gate sign-off`,
+      );
 
       renderPanel('RSIE Autonomous Assurance Telemetry', rsiLines, {
         accessory: health.circuitState === 'CLOSED' ? '[NOMINAL]' : '[ALERT]',
@@ -148,13 +186,17 @@ async function cmdRsi(flags, processArgs = [], quiet = false) {
       const targetSkill = rawArgs[1] || flags.target || 'project-idioms';
       const rounds = Number(flags.rounds) || 1;
 
-      console.log(`  ${bold('🚀 Dispatching Co-Evolution Round for:')} ${color(RGB.CYAN, targetSkill)}`);
+      console.log(
+        `  ${bold('🚀 Dispatching Co-Evolution Round for:')} ${color(RGB.CYAN, targetSkill)}`,
+      );
 
       // Check circuit breaker first
       try {
         metaAssurance.assertMutationPermitted();
       } catch (err) {
-        console.error(`  ${color(RGB.ROSE, GLYPHS.failure)} ${bold('Cannot execute mutation:')} ${err.message}`);
+        console.error(
+          `  ${color(RGB.ROSE, GLYPHS.failure)} ${bold('Cannot execute mutation:')} ${err.message}`,
+        );
         return { error: err.message, status: 'BLOCKED' };
       }
 
@@ -178,17 +220,35 @@ async function cmdRsi(flags, processArgs = [], quiet = false) {
       }
 
       const corpus = getCorpusScenarios().slice(0, 5);
+      if (corpus.length === 0) {
+        const errorMsg =
+          'Benchmark corpus scenarios are not available in this installation. Please ensure benchmarks/corpus is present or provide local scenarios.';
+        if (flags.json) {
+          console.log(JSON.stringify({ verdict: 'BLOCKED', error: errorMsg }, null, 2));
+        } else {
+          console.error(
+            `\n    ${color(RGB.ROSE, '✖')} ${bold('Benchmark corpus unavailable:')} ${errorMsg}\n`,
+          );
+        }
+        return { verdict: 'BLOCKED', error: errorMsg };
+      }
       const result = await engine.executeRound(1, targetSkill, skillText, corpus);
 
       if (flags.json) {
         console.log(JSON.stringify(result, null, 2));
       } else {
-        console.log(`    Verdict:             ${result.verdict === 'SUCCESS' ? color(RGB.EMERALD, 'SUCCESS') : color(RGB.ROSE, 'FAILED')}`);
+        console.log(
+          `    Verdict:             ${result.verdict === 'SUCCESS' ? color(RGB.EMERALD, 'SUCCESS') : color(RGB.ROSE, 'FAILED')}`,
+        );
         console.log(`    Adversarial Probes:  ${result.adversarialFindings}`);
-        console.log(`    Rules Synthesized:   ${result.appliedRules ? result.appliedRules.length : 0}`);
+        console.log(
+          `    Rules Synthesized:   ${result.appliedRules ? result.appliedRules.length : 0}`,
+        );
         console.log(`    WAL Transaction:     ${color(RGB.CYAN, result.walTxId || 'none')}`);
         if (result.proposalId) {
-          console.log(`    Proposal Staged:     ${color(RGB.EMERALD, result.proposalId)} (Pending Human Gate)`);
+          console.log(
+            `    Proposal Staged:     ${color(RGB.EMERALD, result.proposalId)} (Pending Human Gate)`,
+          );
         }
         if (result.error) {
           console.log(`    Failure Reason:      ${color(RGB.ROSE, result.error)}`);
@@ -209,15 +269,21 @@ async function cmdRsi(flags, processArgs = [], quiet = false) {
         if (flags.json) {
           console.log(JSON.stringify(status, null, 2));
         } else {
-          console.log(`  Watcher Daemon Status: ${status.running ? color(RGB.EMERALD, `RUNNING (PID ${status.pid})`) : dim('STOPPED')}`);
+          console.log(
+            `  Watcher Daemon Status: ${status.running ? color(RGB.EMERALD, `RUNNING (PID ${status.pid})`) : dim('STOPPED')}`,
+          );
         }
         return status;
       }
 
       // Start daemon
       watcher.start();
-      console.log(`  ${color(RGB.EMERALD, GLYPHS.success)} ${bold('Watcher daemon started')} under PID ${process.pid}`);
-      console.log(`  ${dim('Surveillance active: polling Negative CBR and test telemetry every 5s.')}`);
+      console.log(
+        `  ${color(RGB.EMERALD, GLYPHS.success)} ${bold('Watcher daemon started')} under PID ${process.pid}`,
+      );
+      console.log(
+        `  ${dim('Surveillance active: polling Negative CBR and test telemetry every 5s.')}`,
+      );
       return { started: true, pid: process.pid };
     }
 
@@ -229,21 +295,29 @@ async function cmdRsi(flags, processArgs = [], quiet = false) {
       }
 
       const res = wal.rollbackTransaction(txId, 'Manual operator rollback via tk rsi rollback');
-      console.log(`  ${color(RGB.EMERALD, GLYPHS.success)} Rolled back transaction ${color(RGB.CYAN, txId)}: state=${res.state}`);
+      console.log(
+        `  ${color(RGB.EMERALD, GLYPHS.success)} Rolled back transaction ${color(RGB.CYAN, txId)}: state=${res.state}`,
+      );
       return res;
     }
 
     case 'unfreeze': {
-      const reason = flags.reason || rawArgs.slice(1).join(' ') || 'Manual operator audit and unfreeze';
+      const reason =
+        flags.reason || rawArgs.slice(1).join(' ') || 'Manual operator audit and unfreeze';
       const state = metaAssurance.resetCircuitBreaker(reason);
-      console.log(`  ${color(RGB.EMERALD, GLYPHS.success)} ${bold('Circuit Breaker RESET')}: state=${state.circuitState}`);
+      console.log(
+        `  ${color(RGB.EMERALD, GLYPHS.success)} ${bold('Circuit Breaker RESET')}: state=${state.circuitState}`,
+      );
       return state;
     }
 
     case 'freeze': {
-      const reason = flags.reason || rawArgs.slice(1).join(' ') || 'Manual operator emergency freeze';
+      const reason =
+        flags.reason || rawArgs.slice(1).join(' ') || 'Manual operator emergency freeze';
       const state = metaAssurance.tripCircuitBreaker(reason);
-      console.log(`  ${color(RGB.ROSE, GLYPHS.failure)} ${bold('Circuit Breaker TRIPPED')}: state=${state.circuitState} (Quarantine active)`);
+      console.log(
+        `  ${color(RGB.ROSE, GLYPHS.failure)} ${bold('Circuit Breaker TRIPPED')}: state=${state.circuitState} (Quarantine active)`,
+      );
       return state;
     }
 

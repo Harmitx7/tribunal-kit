@@ -4,11 +4,11 @@ The LTX family covers `LTX-Video` (0.9.x series), `LTX-2`, and `LTX-2.3`. All ta
 
 Diffusers support varies across versions:
 
-| Base model series         | Diffusers support                        | LoRA loading via diffusers? |
-|---------------------------|------------------------------------------|-----------------------------|
-| `Lightricks/LTX-Video` (0.9.x) | Yes — `LTXPipeline`, `LTXImageToVideoPipeline`, `LTXConditionPipeline` | Yes |
-| `Lightricks/LTX-2`        | Yes — `LTX2Pipeline` from `diffusers.pipelines.ltx2` | Yes (recent diffusers) |
-| `Lightricks/LTX-2.3`      | Partial — diffusers support is still limited overall, so the original `Lightricks/LTX-2.3` repo can still be used via the native path. Diffusers-converted variants exist at `dg845/LTX-2.3-Diffusers` and `dg845/LTX-2.3-Distilled-Diffusers`, supporting regular LoRAs via the standard pipelines, IC LoRAs via `LTX2InContextPipeline`, and HDR IC-LoRAs via `LTX2HDRPipeline` (PR #13572, merged 2026-05-15; needs `git+https://github.com/huggingface/diffusers`) | Yes on the diffusers variants — standard `load_lora_weights` + `set_adapters`. Native path still required for some configurations. |
+| Base model series              | Diffusers support                                                                                                                                                                                                                                                                                                                                                                                                                                                      | LoRA loading via diffusers?                                                                                                        |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `Lightricks/LTX-Video` (0.9.x) | Yes — `LTXPipeline`, `LTXImageToVideoPipeline`, `LTXConditionPipeline`                                                                                                                                                                                                                                                                                                                                                                                                 | Yes                                                                                                                                |
+| `Lightricks/LTX-2`             | Yes — `LTX2Pipeline` from `diffusers.pipelines.ltx2`                                                                                                                                                                                                                                                                                                                                                                                                                   | Yes (recent diffusers)                                                                                                             |
+| `Lightricks/LTX-2.3`           | Partial — diffusers support is still limited overall, so the original `Lightricks/LTX-2.3` repo can still be used via the native path. Diffusers-converted variants exist at `dg845/LTX-2.3-Diffusers` and `dg845/LTX-2.3-Distilled-Diffusers`, supporting regular LoRAs via the standard pipelines, IC LoRAs via `LTX2InContextPipeline`, and HDR IC-LoRAs via `LTX2HDRPipeline` (PR #13572, merged 2026-05-15; needs `git+https://github.com/huggingface/diffusers`) | Yes on the diffusers variants — standard `load_lora_weights` + `set_adapters`. Native path still required for some configurations. |
 
 When in doubt about LTX-2.3, check the LoRA's model card for an example snippet. If it imports from `ltx_video` or a native module rather than `diffusers`, use the native path.
 
@@ -16,13 +16,13 @@ When in doubt about LTX-2.3, check the LoRA's model card for an example snippet.
 
 > **Before using this table, verify against the base model's own card on the Hub.** This table is best-effort and can lag a recent release (LTX moves fast). The diffusers snippet on the base model's Hub page is source of truth. See `SKILL.md` Phase 2 for the procedure.
 
-| Task                    | Pipeline                          | Pretrained ID                                        |
-|-------------------------|-----------------------------------|------------------------------------------------------|
-| Text-to-video           | `LTXPipeline`                     | `Lightricks/LTX-Video`                               |
-| Image-to-video          | `LTXImageToVideoPipeline`         | `Lightricks/LTX-Video`                               |
-| Video-to-video / keyframes | `LTXConditionPipeline`         | `Lightricks/LTX-Video-0.9.5` or later                |
-| Spatial upscale         | `LTXLatentUpsamplePipeline`       | `Lightricks/ltxv-spatial-upscaler-0.9.8`             |
-| LTX-2 T2V/I2V           | `LTX2Pipeline`                    | `Lightricks/LTX-2`                                   |
+| Task                          | Pipeline                    | Pretrained ID                                                                                                 |
+| ----------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Text-to-video                 | `LTXPipeline`               | `Lightricks/LTX-Video`                                                                                        |
+| Image-to-video                | `LTXImageToVideoPipeline`   | `Lightricks/LTX-Video`                                                                                        |
+| Video-to-video / keyframes    | `LTXConditionPipeline`      | `Lightricks/LTX-Video-0.9.5` or later                                                                         |
+| Spatial upscale               | `LTXLatentUpsamplePipeline` | `Lightricks/ltxv-spatial-upscaler-0.9.8`                                                                      |
+| LTX-2 T2V/I2V                 | `LTX2Pipeline`              | `Lightricks/LTX-2`                                                                                            |
 | LTX-2.3 in-context (IC LoRAs) | `LTX2InContextPipeline`     | `dg845/LTX-2.3-Distilled-Diffusers` (preferred for demos; non-distilled `dg845/LTX-2.3-Diffusers` also works) |
 
 `LTXConditionPipeline` is the workhorse for V2V — it takes a `LTXVideoCondition` (or list of them) plus optional first-frame image, and produces a video conditioned on the input.
@@ -102,7 +102,7 @@ pipe = LTX2Pipeline.from_pretrained("Lightricks/LTX-2", torch_dtype=torch.bfloat
 
 LTX-2 supports a two-stage pipeline (base + latent upsample) for production quality. For a demo, the single-stage pipeline is usually sufficient and faster.
 
-**Don't default two-stage on for IC-LoRAs — check the card.** The common LTX-2.3 two-stage recipe runs stage 2 as an x2 latent-upsample + refine **with the IC-LoRA disabled** (`disable_lora()`), re-rendering on the bare base — which re-degrades exactly the LoRA-conditioned detail (text, identity). Whether two-stage is appropriate is per-LoRA, per the card: e.g. the *In/Out-painting* card explicitly says "both tasks use a two-stage pipeline," whereas the *Ingredients* card recommends a single-pass 30-step recipe and never mentions two stages. Single-stage is the safer demo default unless the card calls for two-stage.
+**Don't default two-stage on for IC-LoRAs — check the card.** The common LTX-2.3 two-stage recipe runs stage 2 as an x2 latent-upsample + refine **with the IC-LoRA disabled** (`disable_lora()`), re-rendering on the bare base — which re-degrades exactly the LoRA-conditioned detail (text, identity). Whether two-stage is appropriate is per-LoRA, per the card: e.g. the _In/Out-painting_ card explicitly says "both tasks use a two-stage pipeline," whereas the _Ingredients_ card recommends a single-pass 30-step recipe and never mentions two stages. Single-stage is the safer demo default unless the card calls for two-stage.
 
 ## Inference defaults
 
@@ -127,10 +127,10 @@ The native repo is a fallback when the diffusers path doesn't work, or for speci
 
 **The native repo depends on the model generation** — pick by the LoRA's base model (and what its card's snippet imports):
 
-| Base model | Native repo | Package(s) / import | Pipeline classes |
-|---|---|---|---|
-| `LTX-Video` (0.9.x) | `github.com/Lightricks/LTX-Video` | `ltx_video` | `from ltx_video.pipelines import LTXPipeline` |
-| `LTX-2`, `LTX-2.3` | `github.com/Lightricks/LTX-2` | `ltx-core` + `ltx-pipelines` (editable) | `ltx_pipelines.ic_lora.ICLoraPipeline`, `TI2VidOneStagePipeline`, … |
+| Base model          | Native repo                       | Package(s) / import                     | Pipeline classes                                                    |
+| ------------------- | --------------------------------- | --------------------------------------- | ------------------------------------------------------------------- |
+| `LTX-Video` (0.9.x) | `github.com/Lightricks/LTX-Video` | `ltx_video`                             | `from ltx_video.pipelines import LTXPipeline`                       |
+| `LTX-2`, `LTX-2.3`  | `github.com/Lightricks/LTX-2`     | `ltx-core` + `ltx-pipelines` (editable) | `ltx_pipelines.ic_lora.ICLoraPipeline`, `TI2VidOneStagePipeline`, … |
 
 For the 0.9.x series the pattern looks like:
 
@@ -152,14 +152,14 @@ When the LoRA's model card has a Python snippet using the native repo, copy its 
 
 For `LTX-2` / `LTX-2.3` (the `ltx-core` + `ltx-pipelines` repo), clone + `pip install -e packages/ltx-core packages/ltx-pipelines` at runtime in `app.py` and pin a commit. Three things bite on ZeroGPU:
 
-- **Native loader bypasses ZeroGPU virtualization → "No CUDA GPUs available" at startup.** The native safetensors loader does `safe_open(path, device="cuda")` and copies host→device inside safetensors' own C++ (`cudaMemcpy`), **bypassing `torch.Tensor.to`** — the call ZeroGPU patches to virtualize + pack module-scope weights. Nothing packs and module-scope placement raises *"No CUDA GPUs are available."* Fix: monkeypatch the loader to open on CPU then move with `.to`:
+- **Native loader bypasses ZeroGPU virtualization → "No CUDA GPUs available" at startup.** The native safetensors loader does `safe_open(path, device="cuda")` and copies host→device inside safetensors' own C++ (`cudaMemcpy`), **bypassing `torch.Tensor.to`** — the call ZeroGPU patches to virtualize + pack module-scope weights. Nothing packs and module-scope placement raises _"No CUDA GPUs are available."_ Fix: monkeypatch the loader to open on CPU then move with `.to`:
   ```python
   with safetensors.safe_open(shard, framework="pt", device="cpu") as f:
       value = f.get_tensor(name).to(device=device)   # torch path → ZeroGPU-virtualisable
   ```
   Also: patch attention to **SDPA** (FA3 crashes on Blackwell ZeroGPU), and **never call `torch.cuda.*` / `get_device_capability()` at module scope** (it poisons virtualization).
 - **Native two-stage pins two 22B transformers → offload-disk overflow.** `ICLoraPipeline` builds two independent `ModelLedger`s (stage-1 with the LoRA, stage-2 without), each loading its **own** full transformer. The CLI loads them sequentially, but ZeroGPU pins all weights at module scope, so enabling stage 2 pins **both** (~143G) and overflows the offload disk (`OSError: [Errno 28] No space left on device`, ~96G cap). For a demo: pin stage 1, then have stage 2 **reuse stage 1's pinned modules** (`for n in [...]: setattr(s2, n, getattr(s1, n))`) so only one transformer is resident (~71G).
-- **`ICLoraPipeline` is distilled-only.** Per the LTX-2 `ltx-pipelines` guide, IC-LoRA inference runs in distilled-only mode (fixed 8-step sigmas, no `num_inference_steps`/`guidance_scale`/`negative_prompt`); the docs do not describe non-distilled IC-LoRA or IC-LoRA + CFG/STG (guidance lives only on full-model pipelines like `TI2VidOneStagePipeline`, and in two-stage is stage-1-only). So if a card recommends a *non-distilled* recipe (e.g. 30 steps + guidance + STG on a `…-dev` base), there is no stock IC-LoRA pipeline for it — use the supported distilled `ICLoraPipeline` and note the recipe difference, or fall back to the diffusers `LTX2InContextPipeline` (which exposes steps/guidance).
+- **`ICLoraPipeline` is distilled-only.** Per the LTX-2 `ltx-pipelines` guide, IC-LoRA inference runs in distilled-only mode (fixed 8-step sigmas, no `num_inference_steps`/`guidance_scale`/`negative_prompt`); the docs do not describe non-distilled IC-LoRA or IC-LoRA + CFG/STG (guidance lives only on full-model pipelines like `TI2VidOneStagePipeline`, and in two-stage is stage-1-only). So if a card recommends a _non-distilled_ recipe (e.g. 30 steps + guidance + STG on a `…-dev` base), there is no stock IC-LoRA pipeline for it — use the supported distilled `ICLoraPipeline` and note the recipe difference, or fall back to the diffusers `LTX2InContextPipeline` (which exposes steps/guidance).
 
 ## IC-LoRAs (in-context conditioning)
 

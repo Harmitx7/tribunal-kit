@@ -60,32 +60,29 @@ const { findAgentDir } = require('./_utils');
  * Attempt native Rust context resolution for sub-15ms execution
  */
 function tryNativeContextBroker(repoPath, targetFile) {
-  if (process.env.TK_DISABLE_RUST === '1') return null;
+  if (process.env.TK_DISABLE_RUST === '1' || process.env.TRIBUNAL_FORCE_JS === '1') return null;
+  let bin = null;
+  try {
+    const { getBinaryPath } = require('./_utils');
+    bin = getBinaryPath();
+  } catch (_) {
+    return null;
+  }
+  if (!bin) return null;
 
-  const candidates = [
-    path.join(__dirname, '../../target/release/tribunal-core.exe'),
-    path.join(__dirname, '../../target/release/tribunal-core'),
-    path.join(__dirname, '../../target/debug/tribunal-core.exe'),
-    path.join(__dirname, '../../target/debug/tribunal-core'),
-    'tribunal-core',
-  ];
-
-  for (const bin of candidates) {
-    try {
-      if (bin.includes(path.sep) && !fs.existsSync(bin)) continue;
-      const args = ['context-broker', '--repo-path', repoPath];
-      if (targetFile) args.push('--target-file', targetFile);
-      const out = execFileSync(bin, args, {
-        encoding: 'utf8',
-        timeout: 2000,
-        stdio: ['ignore', 'pipe', 'ignore'],
-      });
-      if (out && out.trim().startsWith('{')) {
-        return JSON.parse(out);
-      }
-    } catch (_) {
-      // Continue to next candidate or fallback
+  try {
+    const args = ['context-broker', '--repo-path', repoPath];
+    if (targetFile) args.push('--target-file', targetFile);
+    const out = execFileSync(bin, args, {
+      encoding: 'utf8',
+      timeout: 30000,
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
+    if (out && out.trim().startsWith('{')) {
+      return JSON.parse(out);
     }
+  } catch (_) {
+    // fallback
   }
   return null;
 }

@@ -74,13 +74,15 @@ describe('Phase 11: Performance, Security, and Regression Hardening', () => {
     });
 
     test('deepClone and redactSecrets neutralize prototype pollution attempts', () => {
-      const maliciousPayload = JSON.parse('{"title":"Pollution Attempt","__proto__":{"polluted":"yes"},"constructor":{"prototype":{"injected":"yes"}}}');
+      const maliciousPayload = JSON.parse(
+        '{"title":"Pollution Attempt","__proto__":{"polluted":"yes"},"constructor":{"prototype":{"injected":"yes"}}}',
+      );
 
       const cloned = sanitizeActivityEvent(maliciousPayload);
 
       // Verify Object.prototype was NOT polluted
-      expect(({}).polluted).toBeUndefined();
-      expect(({}).injected).toBeUndefined();
+      expect({}.polluted).toBeUndefined();
+      expect({}.injected).toBeUndefined();
       expect(cloned.polluted).toBeUndefined();
     });
 
@@ -97,7 +99,8 @@ describe('Phase 11: Performance, Security, and Regression Hardening', () => {
   // ── 2. Expanded Secret Redaction & Diagnostic Safety ────────────────────────
   describe('2. Expanded Secret Redaction & Diagnostic Safety', () => {
     test('redacts basic authentication passwords in HTTP/HTTPS URLs', () => {
-      const input = 'Connecting to https://admin:SuperSecretP@ss123@api.internal.service/v1/metrics';
+      const input =
+        'Connecting to https://admin:SuperSecretP@ss123@api.internal.service/v1/metrics';
       const output = redactSecrets(input);
 
       expect(output).not.toContain('SuperSecretP@ss123');
@@ -136,7 +139,8 @@ describe('Phase 11: Performance, Security, and Regression Hardening', () => {
       const secretEvent = createActivityEvent({
         eventType: EVENT_TYPES.VALIDATION_FAILED,
         title: 'Authentication Failed with token ghp_12345678901234567890123456789012',
-        summary: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.doNotLeakThisSignature',
+        summary:
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.doNotLeakThisSignature',
         error: {
           message: 'Failed to authenticate with key sk-ant-api03-abcdef1234567890abcdef',
         },
@@ -211,7 +215,8 @@ describe('Phase 11: Performance, Security, and Regression Hardening', () => {
     });
 
     test('stripAnsi thoroughly removes complex 256-color, 24-bit RGB, and OSC escape codes', () => {
-      const ansiColored = '\u001b[38;2;255;100;50mRGB Color\u001b[0m and \u001b[31;1mBold Red\u001b[0m';
+      const ansiColored =
+        '\u001b[38;2;255;100;50mRGB Color\u001b[0m and \u001b[31;1mBold Red\u001b[0m';
       expect(stripAnsi(ansiColored)).toBe('RGB Color and Bold Red');
 
       const oscSequence = '\u001b]0;Spoofed Terminal Title\u0007Clean Output';
@@ -333,4 +338,3 @@ describe('Phase 11: Performance, Security, and Regression Hardening', () => {
     });
   });
 });
-

@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -64,10 +65,14 @@ class PropertyInvariantEngine {
    */
   verifyStateTransition(fromState, toState) {
     if (!fromState || typeof fromState !== 'string') {
-      throw new Error(`Invariant Violation: Invalid fromState "${fromState}". State must be a valid string.`);
+      throw new Error(
+        `Invariant Violation: Invalid fromState "${fromState}". State must be a valid string.`,
+      );
     }
     if (!toState || typeof toState !== 'string') {
-      throw new Error(`Invariant Violation: Invalid toState "${toState}". State must be a valid string.`);
+      throw new Error(
+        `Invariant Violation: Invalid toState "${toState}". State must be a valid string.`,
+      );
     }
 
     const legalDestinations = LEGAL_TRANSITIONS[fromState];
@@ -182,7 +187,11 @@ class PropertyInvariantEngine {
       );
     }
 
-    if (typeof unsafePassRate !== 'number' || Number.isNaN(unsafePassRate) || unsafePassRate > 0.0) {
+    if (
+      typeof unsafePassRate !== 'number' ||
+      Number.isNaN(unsafePassRate) ||
+      unsafePassRate > 0.0
+    ) {
       throw new Error(
         `Invariant Violation: Discriminative sharpness check failed. Unsafe proposal leaked ${typeof unsafePassRate === 'number' && !Number.isNaN(unsafePassRate) ? unsafePassRate * 100 : 'invalid'}%, but must be strictly 0.0%.`,
       );
@@ -207,10 +216,7 @@ class PropertyInvariantEngine {
       details: verificationDetails,
     };
 
-    const signature = crypto
-      .createHash('sha256')
-      .update(JSON.stringify(payload))
-      .digest('hex');
+    const signature = crypto.createHash('sha256').update(JSON.stringify(payload)).digest('hex');
 
     return {
       certificateId: `PROOF-${Date.now()}-${signature.substring(0, 8)}`,

@@ -2,7 +2,7 @@
 
 > **Authority**: Expo Official Documentation (`https://docs.expo.dev/router/introduction/`)  
 > **Applicable Domains**: Mobile Development, React Native, Cross-Platform Architecture  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -74,7 +74,7 @@ export function NavigationButton({ targetId }: { targetId: string }) {
     // Type-safe route navigation
     router.push({
       pathname: '/details/[id]',
-      params: { id: targetId }
+      params: { id: targetId },
     } as Href);
   };
 

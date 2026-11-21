@@ -57,11 +57,17 @@ try {
 
 // Gate 2: Phase 15 Baseline Checked
 console.log('[2/10] Verifying Phase 15 Certification Artifact...');
-const p15Path = path.join(REPO_ROOT, 'test/fixtures/codebase_intelligence_adversarial/phase15_certification_artifact.json');
+const p15Path = path.join(
+  REPO_ROOT,
+  'test/fixtures/codebase_intelligence_adversarial/phase15_certification_artifact.json',
+);
 if (fs.existsSync(p15Path)) {
   const p15 = JSON.parse(fs.readFileSync(p15Path, 'utf8'));
   console.log(`  ✓ Phase 15 artifact verified: verdict=${p15.verdict}`);
-  gates['P16-G2'] = { status: p15.verdict === 'RELEASE_READY' ? 'PASS' : 'FAIL', details: 'Phase 15 verified release ready' };
+  gates['P16-G2'] = {
+    status: p15.verdict === 'RELEASE_READY' ? 'PASS' : 'FAIL',
+    details: 'Phase 15 verified release ready',
+  };
 } else {
   gates['P16-G2'] = { status: 'FAIL', error: 'Phase 15 certification artifact missing' };
 }
@@ -69,20 +75,28 @@ if (fs.existsSync(p15Path)) {
 // Gate 3 & Gate 7: Semantic Accuracy Audit (Classes A - G)
 console.log('[3/10] Executing Semantic Accuracy Failure-Class Probe...');
 try {
-  const probeOutput = execSync('node scripts/probe_semantic_accuracy.js', { cwd: REPO_ROOT, encoding: 'utf8' });
-  const hasShadowingDefect = probeOutput.includes('Failure Class A') && probeOutput.includes('FALSE NEGATIVE');
-  const hasSameNameDefect = probeOutput.includes('Failure Class B') && probeOutput.includes('FALSE NEGATIVE');
-  const hasCommentDefect = probeOutput.includes('Failure Class D') && probeOutput.includes('FALSE NEGATIVE');
+  const probeOutput = execSync('node scripts/probe_semantic_accuracy.js', {
+    cwd: REPO_ROOT,
+    encoding: 'utf8',
+  });
+  const hasShadowingDefect =
+    probeOutput.includes('Failure Class A') && probeOutput.includes('FALSE NEGATIVE');
+  const hasSameNameDefect =
+    probeOutput.includes('Failure Class B') && probeOutput.includes('FALSE NEGATIVE');
+  const hasCommentDefect =
+    probeOutput.includes('Failure Class D') && probeOutput.includes('FALSE NEGATIVE');
 
   const probePass = !hasShadowingDefect && !hasSameNameDefect && !hasCommentDefect;
-  console.log(`  ✓ Semantic probe: Shadowing=${!hasShadowingDefect}, Same-Name=${!hasSameNameDefect}, Comments=${!hasCommentDefect}`);
+  console.log(
+    `  ✓ Semantic probe: Shadowing=${!hasShadowingDefect}, Same-Name=${!hasSameNameDefect}, Comments=${!hasCommentDefect}`,
+  );
   gates['P16-G3'] = {
     status: probePass ? 'PASS' : 'FAIL',
-    details: 'Investigated and resolved Failure Classes A, B, C, D, E, F, G'
+    details: 'Investigated and resolved Failure Classes A, B, C, D, E, F, G',
   };
   gates['P16-G7'] = {
     status: probePass ? 'PASS' : 'FAIL',
-    details: '0 false negatives across shadowing, same-name symbols, and comment interference'
+    details: '0 false negatives across shadowing, same-name symbols, and comment interference',
   };
 } catch (e) {
   gates['P16-G3'] = { status: 'FAIL', error: e.message };
@@ -90,25 +104,35 @@ try {
 }
 
 // Gate 4, 5, 6: Cross-Repository Generalization Evaluation
-console.log('[4/10] Executing Cross-Repository Generalization Runner across 6 Synthetic Fixtures...');
+console.log(
+  '[4/10] Executing Cross-Repository Generalization Runner across 6 Synthetic Fixtures...',
+);
 try {
-  const crossOutput = execSync('node scripts/cross_repo_eval_runner.js', { cwd: REPO_ROOT, encoding: 'utf8' });
-  const evalResultsPath = path.join(REPO_ROOT, 'test/fixtures/codebase_intelligence_adversarial/phase16_cross_repo_eval_results.json');
+  const crossOutput = execSync('node scripts/cross_repo_eval_runner.js', {
+    cwd: REPO_ROOT,
+    encoding: 'utf8',
+  });
+  const evalResultsPath = path.join(
+    REPO_ROOT,
+    'test/fixtures/codebase_intelligence_adversarial/phase16_cross_repo_eval_results.json',
+  );
   const evalResults = JSON.parse(fs.readFileSync(evalResultsPath, 'utf8'));
 
   const rate = evalResults.summary.passRate;
-  console.log(`  ✓ Cross-repo evaluation: ${evalResults.summary.passedChecks}/${evalResults.summary.totalChecks} checks passed (${rate})`);
+  console.log(
+    `  ✓ Cross-repo evaluation: ${evalResults.summary.passedChecks}/${evalResults.summary.totalChecks} checks passed (${rate})`,
+  );
   gates['P16-G4'] = {
     status: evalResults.summary.passedChecks === evalResults.summary.totalChecks ? 'PASS' : 'FAIL',
-    details: `17/17 cross-repository checks passed across 6 distinct architectural patterns`
+    details: `17/17 cross-repository checks passed across 6 distinct architectural patterns`,
   };
   gates['P16-G5'] = {
     status: 'PASS',
-    details: 'Ground truth independently established in 6 isolated synthetic fixtures'
+    details: 'Ground truth independently established in 6 isolated synthetic fixtures',
   };
   gates['P16-G6'] = {
     status: 'PASS',
-    details: '100% precision and recall on cross-repository dead-code assertions (FP=0, FN=0)'
+    details: '100% precision and recall on cross-repository dead-code assertions (FP=0, FN=0)',
   };
 } catch (e) {
   gates['P16-G4'] = { status: 'FAIL', error: e.message };
@@ -120,19 +144,24 @@ try {
 console.log('[5/10] Verifying Evidence Records & Calibration (Schema 2.0.0)...');
 const ci = new CodebaseIntelligence(REPO_ROOT);
 const deadRes = ci.deadCode();
-const evidenceValid = deadRes.evidenceRecords.every(r => r.schema_version === '2.0.0' && r.confidence);
+const evidenceValid = deadRes.evidenceRecords.every(
+  r => r.schema_version === '2.0.0' && r.confidence,
+);
 gates['P16-G8'] = {
   status: evidenceValid ? 'PASS' : 'FAIL',
-  details: `Evidence records strictly conform to Schema 2.0.0 with L1-L4 calibrated confidence`
+  details: `Evidence records strictly conform to Schema 2.0.0 with L1-L4 calibrated confidence`,
 };
 
 // Gate 9: Regression Gauntlet (17 Jest Suites)
 console.log('[6/10] Executing 17 Codebase Intelligence Jest Test Suites...');
 try {
-  execSync('npx jest test/unit/codebase_intelligence test/integration/codebase_intelligence --forceExit', {
-    cwd: REPO_ROOT,
-    stdio: 'ignore'
-  });
+  execSync(
+    'npx jest test/unit/codebase_intelligence test/integration/codebase_intelligence --forceExit',
+    {
+      cwd: REPO_ROOT,
+      stdio: 'ignore',
+    },
+  );
   console.log('  ✓ 17/17 Jest suites passed (327/327 tests)');
   gates['P16-G9'] = { status: 'PASS', details: '17/17 test suites, 327/327 tests passed green' };
 } catch (e) {
@@ -144,7 +173,10 @@ console.log('[7/10] Running Core Engine Test Suites...');
 try {
   execSync('npm run test:engines', { cwd: REPO_ROOT, stdio: 'ignore' });
   console.log('  ✓ 124/124 core engine tests passed');
-  gates['P16-G10'] = { status: 'PASS', details: '124/124 tests passed across cross-domain and outcome engines' };
+  gates['P16-G10'] = {
+    status: 'PASS',
+    details: '124/124 tests passed across cross-domain and outcome engines',
+  };
 } catch (e) {
   gates['P16-G10'] = { status: 'FAIL', error: 'Core engines test failed' };
 }
@@ -154,23 +186,25 @@ console.log('[8/10] Verifying Performance Bounds...');
 const t0 = performance.now();
 ci.deadCode();
 const dur = performance.now() - t0;
-console.log(`  • deadCode execution time: ${Math.round(dur)}ms (budget: < 2500ms, baseline: 2369ms)`);
+console.log(
+  `  • deadCode execution time: ${Math.round(dur)}ms (budget: < 2500ms, baseline: 2369ms)`,
+);
 gates['P16-G11'] = {
   status: dur < 2500 ? 'PASS' : 'FAIL',
-  details: `deadCode latency ${Math.round(dur)}ms well within budget (< 2500ms, ~3.3x speedup over pre-Phase 15)`
+  details: `deadCode latency ${Math.round(dur)}ms well within budget (< 2500ms, ~3.3x speedup over pre-Phase 15)`,
 };
 
 // Gate 12: Read-Only Safety
 gates['P16-G12'] = {
   status: 'PASS',
-  details: '100% in-memory static analysis; zero repository modifications during analysis'
+  details: '100% in-memory static analysis; zero repository modifications during analysis',
 };
 
 // Gate 13: Secret Redaction
 const sec = CodebaseIntelligence.resolveRoute('AKIAIOSFODNN7EXAMPLE trace flow');
 gates['P16-G13'] = {
   status: !sec.safeQuery.includes('AKIAIOSFODNN7EXAMPLE') ? 'PASS' : 'FAIL',
-  details: 'Universal secret redaction active on all inputs and outputs'
+  details: 'Universal secret redaction active on all inputs and outputs',
 };
 
 // Gate 14: Dual-Workspace Mirror Parity
@@ -183,20 +217,23 @@ const parity = hashInner === hashOuter;
 console.log(`  • Engine SHA-256 Parity: ${parity ? 'MATCH' : 'MISMATCH'} (${hashInner})`);
 gates['P16-G14'] = {
   status: parity ? 'PASS' : 'FAIL',
-  details: `100% SHA-256 match between canonical (${hashInner}) and outer mirror (${hashOuter})`
+  details: `100% SHA-256 match between canonical (${hashInner}) and outer mirror (${hashOuter})`,
 };
 
 // Gate 15: Scope Discipline
 gates['P16-G15'] = {
   status: 'PASS',
-  details: 'Zero unauthorized commits, tags, pushes, or package publications; working tree preserved'
+  details:
+    'Zero unauthorized commits, tags, pushes, or package publications; working tree preserved',
 };
 
 console.log('\n[10/10] Evaluating Release Readiness across All 15 Gates...\n');
 let allPass = true;
 for (const [gate, res] of Object.entries(gates)) {
   const icon = res.status === 'PASS' ? '✓' : '✗';
-  console.log(`  ${icon} Gate ${gate.padEnd(8)} ${res.status.padEnd(6)} — ${res.details || res.error}`);
+  console.log(
+    `  ${icon} Gate ${gate.padEnd(8)} ${res.status.padEnd(6)} — ${res.details || res.error}`,
+  );
   if (res.status !== 'PASS') allPass = false;
 }
 
@@ -220,19 +257,25 @@ const artifact = {
       passedChecks: 17,
       passRate: '100.0%',
       falsePositives: 0,
-      falseNegatives: 0
+      falseNegatives: 0,
     },
     performance: {
       deadCodeDurationMs: Math.round(dur),
       prePhase15BaselineMs: 2369,
       speedup: `${(2369 / dur).toFixed(1)}x`,
     },
-    engineHash: hashInner
-  }
+    engineHash: hashInner,
+  },
 };
 
-const artifactPath1 = path.join(REPO_ROOT, 'test/fixtures/codebase_intelligence_adversarial/phase16_certification_artifact.json');
-const artifactPath2 = path.join(OUTER_ROOT, 'test/fixtures/codebase_intelligence_adversarial/phase16_certification_artifact.json');
+const artifactPath1 = path.join(
+  REPO_ROOT,
+  'test/fixtures/codebase_intelligence_adversarial/phase16_certification_artifact.json',
+);
+const artifactPath2 = path.join(
+  OUTER_ROOT,
+  'test/fixtures/codebase_intelligence_adversarial/phase16_certification_artifact.json',
+);
 fs.writeFileSync(artifactPath1, JSON.stringify(artifact, null, 2));
 fs.writeFileSync(artifactPath2, JSON.stringify(artifact, null, 2));
 
@@ -241,4 +284,3 @@ console.log(`  • ${artifactPath1}`);
 console.log(`  • ${artifactPath2}\n`);
 
 process.exit(allPass ? 0 : 1);
-

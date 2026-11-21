@@ -34,7 +34,8 @@ const readline = require('readline');
 const { GREEN, YELLOW, CYAN, RED, BLUE, BOLD, DIM, RESET } = require('./_colors');
 
 // ── Shared Utilities ──────────────────────────────────────────────────────────
-const { findAgentDir } = require('./_utils');
+const { findAgentDir, assertWithinRoot } = require('./_utils');
+const { redactSecrets } = require('./secret_redactor');
 
 function getPaths(startDir = process.cwd()) {
   const agentDir = findAgentDir(startDir);
@@ -242,9 +243,9 @@ pattern: generator
 
 # Project Idioms — Auto-Evolved Skill
 
-> **Authority Level: ABSOLUTE**
-> These idioms were extracted from the developer's own code decisions.
-> They override generic agent defaults. Every agent MUST respect them.
+> **Authority Level: ADVISORY (Human-Reviewed)**
+> These idioms are advisory patterns learned from developer commits.
+> All rules require human approval before taking effect.
 
 ---
 
@@ -380,6 +381,7 @@ function detectLlmProvider() {
  */
 async function callLlmApi(prompt, provider, apiKey) {
   const timeout = 30000; // 30s max — skill evolution is non-blocking
+  const safePrompt = redactSecrets(prompt).text;
 
   function httpsPost(hostname, path, headers, body) {
     return new Promise((resolve, reject) => {
@@ -422,7 +424,7 @@ async function callLlmApi(prompt, provider, apiKey) {
         {
           model: 'claude-3-haiku-20240307', // Fastest/cheapest — idiom extraction
           max_tokens: 512,
-          messages: [{ role: 'user', content: prompt }],
+          messages: [{ role: 'user', content: safePrompt }],
         },
       );
       const json = JSON.parse(raw);
@@ -440,7 +442,7 @@ async function callLlmApi(prompt, provider, apiKey) {
         {
           model: 'gpt-4o-mini', // Cheapest capable model for YAML extraction
           max_tokens: 512,
-          messages: [{ role: 'user', content: prompt }],
+          messages: [{ role: 'user', content: safePrompt }],
           temperature: 0.1,
         },
       );
@@ -451,10 +453,13 @@ async function callLlmApi(prompt, provider, apiKey) {
     if (provider === 'gemini') {
       const raw = await httpsPost(
         'generativelanguage.googleapis.com',
-        `/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-        { 'Content-Type': 'application/json' },
+        '/v1beta/models/gemini-1.5-flash:generateContent',
         {
-          contents: [{ parts: [{ text: prompt }] }],
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey,
+        },
+        {
+          contents: [{ parts: [{ text: safePrompt }] }],
           generationConfig: { maxOutputTokens: 512, temperature: 0.1 },
         },
       );
@@ -582,7 +587,16 @@ async function cmdDigest(args) {
   const diffMode = args.includes('--head') ? 'head' : 'staged';
 
   const logArg = args.find(a => a.startsWith('--log='));
-  const logFile = logArg ? logArg.split('=').slice(1).join('=') : null;
+  const rawLogFile = logArg ? logArg.split('=').slice(1).join('=') : null;
+  let logFile = null;
+  if (rawLogFile) {
+    try {
+      logFile = assertWithinRoot(process.cwd(), rawLogFile);
+    } catch (err) {
+      console.log(`  ${RED}✖ Security Violation: ${err.message}${RESET}\n`);
+      return;
+    }
+  }
 
   const strategyArg = args.find(a => a.startsWith('--strategy='));
   const strategy = strategyArg ? strategyArg.split('=').slice(1).join('=') : 'balanced';
@@ -603,7 +617,8 @@ async function cmdDigest(args) {
       console.log(`  ${RED}✖ Log file not found: ${logFile}${RESET}\n`);
       return;
     }
-    const logText = fs.readFileSync(logFile, 'utf8');
+    const unredactedText = fs.readFileSync(logFile, 'utf8');
+    const logText = redactSecrets(unredactedText).text;
     rawTokens = countTokensEstimate(logText);
 
     console.log(`  ${DIM}[2/5] Extracting signals from log (Signal Detector)...${RESET}`);
@@ -639,7 +654,7 @@ async function cmdDigest(args) {
     deltaTokens = countTokensEstimate(delta);
   } else {
     console.log(`  ${DIM}[1/5] Fetching git diff (${diffMode})...${RESET}`);
-    rawDiff = getGitDiff(diffMode);
+    rawDiff = redactSecrets(getGitDiff(diffMode)).text;
     if (!rawDiff.trim()) {
       console.log(`  ${YELLOW}⚠ No diff found. Commit or stage changes first.${RESET}`);
       console.log(`  ${DIM}Tip: Use --head to diff against the last commit.${RESET}\n`);
@@ -794,12 +809,25 @@ async function cmdDigest(args) {
   }
 
   if (added > 0) {
-    log.total_idioms = merged.length;
-    const skillMd = renderSkillMd(merged, (log.cycles || []).length + 1);
-    const { skillDir, skillFile } = getPaths();
-    fs.mkdirSync(skillDir, { recursive: true });
-    fs.writeFileSync(skillFile, skillMd, 'utf8');
-    console.log(`  ${GREEN}✔ ${added} new idiom(s) added to SKILL.md${RESET}`);
+    const isApproved =
+      args.includes('--approved') ||
+      process.env.TRIBUNAL_APPROVE_IDIOMS === '1' ||
+      args.some(a => typeof a === 'string' && a.startsWith('--approval-token=HUMAN-APPROVED-'));
+
+    if (!isApproved) {
+      console.log(
+        `  ${YELLOW}⏸ Human Gate: Writing idioms to project-idioms/SKILL.md requires explicit approval (--approved or --approval-token=HUMAN-APPROVED-*).${RESET}`,
+      );
+      console.log(`  ${DIM}Proposed idioms staged in memory but NOT written to disk.${RESET}`);
+    } else {
+      log.total_idioms = merged.length;
+      const skillMd = renderSkillMd(merged, (log.cycles || []).length + 1);
+      const { skillDir, skillFile } = getPaths();
+      assertWithinRoot(process.cwd(), skillFile);
+      fs.mkdirSync(skillDir, { recursive: true });
+      fs.writeFileSync(skillFile, skillMd, 'utf8');
+      console.log(`  ${GREEN}✔ ${added} new idiom(s) added to SKILL.md${RESET}`);
+    }
   } else {
     console.log(`  ${DIM}  No new unique idioms added to SKILL.md.${RESET}`);
   }
@@ -987,6 +1015,10 @@ module.exports = {
   parseLlmYamlResponse,
   loadExistingIdioms,
   getPaths,
+  callLlmApi,
+  renderSkillMd,
+  cmdDigest,
+  detectLlmProvider,
 };
 
 if (require.main === module) {

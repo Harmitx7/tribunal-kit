@@ -142,8 +142,20 @@ function isPortOpen(port = 9222, host = '127.0.0.1') {
   });
 }
 
+function ensureBrowserAvailable() {
+  const browserInfo = module.exports.findBrowser();
+  if (!browserInfo) {
+    throw new Error(
+      'No compatible Chromium browser found. Google Chrome or Microsoft Edge is required for browser commands. ' +
+        'Please install Chrome/Edge or set CHROME_PATH or BROWSER_PATH environment variable to point to an executable.',
+    );
+  }
+  return browserInfo;
+}
+
 module.exports = {
   findBrowser,
+  ensureBrowserAvailable,
   findPinchTabBinary,
   isPortOpen,
   detectBrowserType,

@@ -1,6 +1,6 @@
 ---
 name: hf-cloud-serving-image-selection
-description: "Use when Pick the right serving container for a SageMaker model deployment and find its current image URI. Use this skill whenever about to deploy a model to a SageMaker endpoint and an image URI needs to be chosen — including when the user says \"deploy this LLM\", \"host this HuggingFace model\", \"serve this fine-tuned model\", \"deploy this embedding model\", \"host a reranker\", \"serve a sentence-transformers model\", or when about to hardcode any container URI in deployment code. HuggingFace-curated Deep Learning Containers are ALWAYS preferred: HuggingFace vLLM (LLMs and generative rerankers), HuggingFace vLLM-Omni (multimodal), TEI (embeddings/cross-encoder rerankers), HF Inference Toolkit (other transformers). Generic images (AWS vLLM, DJL-LMI, SGLang) are used only when no HuggingFace image is compatible — never merely because they carry a newer version. Never hardcode a container URI from memory and never default to TGI. Prevents stale-image failures and wrong-region URIs."
+description: 'Use when Pick the right serving container for a SageMaker model deployment and find its current image URI. Use this skill whenever about to deploy a model to a SageMaker endpoint and an image URI needs to be chosen — including when the user says "deploy this LLM", "host this HuggingFace model", "serve this fine-tuned model", "deploy this embedding model", "host a reranker", "serve a sentence-transformers model", or when about to hardcode any container URI in deployment code. HuggingFace-curated Deep Learning Containers are ALWAYS preferred: HuggingFace vLLM (LLMs and generative rerankers), HuggingFace vLLM-Omni (multimodal), TEI (embeddings/cross-encoder rerankers), HF Inference Toolkit (other transformers). Generic images (AWS vLLM, DJL-LMI, SGLang) are used only when no HuggingFace image is compatible — never merely because they carry a newer version. Never hardcode a container URI from memory and never default to TGI. Prevents stale-image failures and wrong-region URIs.'
 version: 6.0.0
 last-updated: 2026-09-29
 tools: Read, Grep, Glob, Bash, Edit, Write
@@ -8,45 +8,45 @@ scripts-binding:
   - .agent/scripts/lint_runner.js
   - .agent/scripts/verify_all.js
 inputs:
-  task: "string"
-  target_file: "string"
+  task: 'string'
+  target_file: 'string'
 outputs:
-  result: "string"
-  verification_status: "boolean"
+  result: 'string'
+  verification_status: 'boolean'
 trigger:
-  - "serving"
-  - "image"
-  - "selection"
+  - 'serving'
+  - 'image'
+  - 'selection'
 ---
 
 # Serving Image Selection
 
 ## Mandatory Pre-Flight Context Inspection
+
 Before reading, generating, or refactoring code in the `hf-cloud-serving-image-selection` domain, inspect these 5 critical parameters:
+
 1. **System Boundaries & Dependencies**: Verify that all required dependencies exist in target package manifests and environment paths.
 2. **Runtime Context & Platform Invariants**: Confirm target platform constraints (Node.js, Browser, Mobile OS, Edge runtime) before applying APIs.
 3. **Execution Guardrails**: Identify potential side-effects, state mutations, and unhandled asynchronous exceptions.
 4. **Validation & Type Contracts**: Validate input data schemas and strict type constraints across all module interfaces.
 5. **Observability & Proof of Execution**: Ensure execution produces tangible verification signals (terminal output, tests, metrics).
 
-
 ## Activation Boundaries
+
 - **Activate when:** Use when Pick the right serving container for a SageMaker model deployment and find its current image URI. Use this skill whenever about to deploy a model to a SageMaker endpoint and an image URI needs to be chosen — including when the user says "deploy this LLM", "host this HuggingFace model", "serve this fine-tuned model", "deploy this embedding model", "host a reranker", "serve a sentence-transformers model", or when about to hardcode any container URI in deployment code. HuggingFace-curated Deep Learning Containers are ALWAYS preferred: HuggingFace vLLM (LLMs and generative rerankers), HuggingFace vLLM-Omni (multimodal), TEI (embeddings/cross-encoder rerankers), HF Inference Toolkit (other transformers). Generic images (AWS vLLM, DJL-LMI, SGLang) are used only when no HuggingFace image is compatible — never merely because they carry a newer version. Never hardcode a container URI from memory and never default to TGI. Prevents stale-image failures and wrong-region URIs.
 - **DO NOT activate when:** The task falls outside the `hf-cloud-serving-image-selection` domain or is managed by a different dedicated specialist agent.
 
-
 ## 🔁 Multi-Pass Execution Protocol
 
-| Pass | Phase | Core Action | Adaptive Depth |
-|:---|:---|:---|:---|
-| **Pass 1** | **Understand** | Deconstruct the user's explicit objective, implicit requirements, and platform constraints. | Fast / Standard / Deep |
-| **Pass 2** | **Plan** | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls. | Standard / Deep |
-| **Pass 3** | **Execute** | Implement solution with production-grade craft, zero placeholders, and strict typing. | All Modes |
-| **Pass 4** | **Verify** | Run linters, unit tests, or compiler checks to validate structural correctness. | All Modes |
-| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep |
-| **Pass 6** | **Harden** | Eliminate discovered friction, optimize performance, and harden error boundaries. | Standard / Deep |
-| **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. | All Modes |
-
+| Pass       | Phase                | Core Action                                                                                     | Adaptive Depth         |
+| :--------- | :------------------- | :---------------------------------------------------------------------------------------------- | :--------------------- |
+| **Pass 1** | **Understand**       | Deconstruct the user's explicit objective, implicit requirements, and platform constraints.     | Fast / Standard / Deep |
+| **Pass 2** | **Plan**             | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls.   | Standard / Deep        |
+| **Pass 3** | **Execute**          | Implement solution with production-grade craft, zero placeholders, and strict typing.           | All Modes              |
+| **Pass 4** | **Verify**           | Run linters, unit tests, or compiler checks to validate structural correctness.                 | All Modes              |
+| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep        |
+| **Pass 6** | **Harden**           | Eliminate discovered friction, optimize performance, and harden error boundaries.               | Standard / Deep        |
+| **Pass 7** | **Quality Gate**     | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing.    | All Modes              |
 
 The serving container is the single thing most likely to break a SageMaker deployment that "looked correct on paper". Wrong container, stale tag, or the wrong AMI — all produce the same opaque `Failed to pass health check` error.
 
@@ -74,20 +74,20 @@ The example URLs use `763104351884` as the account ID for most regions. A few re
 
 ## Quick decision
 
-| Model | Container family | How to get the URI |
-|---|---|---|
-| HuggingFace text-generation LLM (Llama, Qwen, Mistral, etc.) | **HuggingFace vLLM** | AWS catalog → "HuggingFace vLLM Inference" (ECR repo `huggingface-vllm`) |
-| Same as above, multimodal | **HuggingFace vLLM-Omni** | AWS catalog → "HuggingFace vLLM-Omni Inference" (ECR repo `huggingface-vllm-omni`) |
-| HuggingFace embeddings | TEI | AWS catalog → "HuggingFace Text Embeddings Inference" |
-| Encoder / cross-encoder rerankers (BERT-family `*ForSequenceClassification`) | TEI | Same as embeddings |
-| **Generative rerankers** (causal-LM, e.g. Qwen3-Reranker) | HuggingFace vLLM | Same as text-generation LLMs — **not TEI**, see "Rerankers: TEI or vLLM?" |
-| Text-to-image / diffusion (Stable Diffusion, FLUX) | DJL Inference | AWS catalog → "DJL Inference" — **not** HF Inference Toolkit, see "Known-broken images" |
-| HuggingFace classifiers, NER, QA, summarization | HF Inference Toolkit (CPU) | AWS catalog → "HuggingFace PyTorch Inference"; GPU tags currently broken — see "Known-broken images" |
-| User specifically wants SGLang | HuggingFace SGLang | AWS catalog → "HuggingFace SGLang Inference" |
-| No compatible `huggingface-vllm` tag (verified incompatibility or region gap — see "Rule zero") | vLLM (AWS) | AWS catalog → "vLLM" section — fallback only, never for version freshness |
-| User specifically wants DJL-LMI | DJL Inference | AWS catalog → "DJL Inference" |
-| Amazon Nova | SageMaker JumpStart | Use JumpStart, not raw endpoint creation |
-| Custom inference code | BYOC | User provides URI |
+| Model                                                                                           | Container family           | How to get the URI                                                                                   |
+| ----------------------------------------------------------------------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------- |
+| HuggingFace text-generation LLM (Llama, Qwen, Mistral, etc.)                                    | **HuggingFace vLLM**       | AWS catalog → "HuggingFace vLLM Inference" (ECR repo `huggingface-vllm`)                             |
+| Same as above, multimodal                                                                       | **HuggingFace vLLM-Omni**  | AWS catalog → "HuggingFace vLLM-Omni Inference" (ECR repo `huggingface-vllm-omni`)                   |
+| HuggingFace embeddings                                                                          | TEI                        | AWS catalog → "HuggingFace Text Embeddings Inference"                                                |
+| Encoder / cross-encoder rerankers (BERT-family `*ForSequenceClassification`)                    | TEI                        | Same as embeddings                                                                                   |
+| **Generative rerankers** (causal-LM, e.g. Qwen3-Reranker)                                       | HuggingFace vLLM           | Same as text-generation LLMs — **not TEI**, see "Rerankers: TEI or vLLM?"                            |
+| Text-to-image / diffusion (Stable Diffusion, FLUX)                                              | DJL Inference              | AWS catalog → "DJL Inference" — **not** HF Inference Toolkit, see "Known-broken images"              |
+| HuggingFace classifiers, NER, QA, summarization                                                 | HF Inference Toolkit (CPU) | AWS catalog → "HuggingFace PyTorch Inference"; GPU tags currently broken — see "Known-broken images" |
+| User specifically wants SGLang                                                                  | HuggingFace SGLang         | AWS catalog → "HuggingFace SGLang Inference"                                                         |
+| No compatible `huggingface-vllm` tag (verified incompatibility or region gap — see "Rule zero") | vLLM (AWS)                 | AWS catalog → "vLLM" section — fallback only, never for version freshness                            |
+| User specifically wants DJL-LMI                                                                 | DJL Inference              | AWS catalog → "DJL Inference"                                                                        |
+| Amazon Nova                                                                                     | SageMaker JumpStart        | Use JumpStart, not raw endpoint creation                                                             |
+| Custom inference code                                                                           | BYOC                       | User provides URI                                                                                    |
 
 **HuggingFace-curated DLCs are mandatory when one is compatible (see "Rule zero").** `huggingface-vllm` is layered directly on the AWS vLLM DLC — **identical `SM_VLLM_*` env contract and the same cu130 AMI rule** — and adds current `transformers`, current `huggingface_hub` + `hf_xet` (avoids the XET-CDN 403 download failures older images hit), and HF performance defaults. It is also what SageMaker SDK v3 auto-routes to. The AWS `vllm` image is a compatibility escape hatch only; it usually shows a higher vLLM version than `huggingface-vllm`, and that is not a reason to pick it.
 
@@ -100,7 +100,7 @@ Full reasoning for each family in `references/model-to-image.md`.
 "Reranker" covers two very different architectures, and picking wrong wastes a full endpoint-creation cycle (~20 min) before TEI rejects the model:
 
 - **Encoder cross-encoders** (BAAI/bge-reranker-*, mixedbread, most `sentence-transformers` rerankers) — BERT-family models with a classification head. `config.json` has `architectures: [..ForSequenceClassification]` on a TEI-supported encoder type. → **TEI**.
-- **Generative rerankers** (Qwen/Qwen3-Reranker-*, and similar causal-LM judges) — decoder LLMs that score relevance via the logprob of a yes/no token. `config.json` has `architectures: [..ForCausalLM]`. → **HuggingFace vLLM**, deployed exactly like a text-generation LLM. TEI will load the architecture then reject the `classifier` model type (Qwen3 support in TEI is *embeddings-only*). Invocation pattern (raw completions API, `max_tokens=1`, logprobs scoring) is in `hf-cloud-sagemaker-production-defaults`.
+- **Generative rerankers** (Qwen/Qwen3-Reranker-*, and similar causal-LM judges) — decoder LLMs that score relevance via the logprob of a yes/no token. `config.json` has `architectures: [..ForCausalLM]`. → **HuggingFace vLLM**, deployed exactly like a text-generation LLM. TEI will load the architecture then reject the `classifier` model type (Qwen3 support in TEI is _embeddings-only_). Invocation pattern (raw completions API, `max_tokens=1`, logprobs scoring) is in `hf-cloud-sagemaker-production-defaults`.
 
 **Preflight before creating any resources** — one HTTP GET settles it:
 
@@ -110,7 +110,7 @@ curl -s https://huggingface.co/<model-id>/raw/main/config.json
 # "architectures": ["XLMRobertaForSequenceClassification"] → TEI
 ```
 
-For TEI also confirm the *(architecture, task)* pair: an architecture appearing in TEI's supported list means embeddings support, not necessarily classification/reranking support.
+For TEI also confirm the _(architecture, task)_ pair: an architecture appearing in TEI's supported list means embeddings support, not necessarily classification/reranking support.
 
 Heads-up: SageMaker SDK v3 (PR #5960) routes the `text-ranking` task to TEI **unconditionally** — correct for cross-encoders, wrong for generative rerankers. Don't treat the SDK's routing as evidence that TEI can serve a given reranker.
 
@@ -142,10 +142,10 @@ vLLM DLC images with **CUDA 13 or higher** (current default: `cu130`) require se
 
 Lookup table:
 
-| Tag contains | InferenceAmiVersion to pass |
-|---|---|
+| Tag contains        | InferenceAmiVersion to pass           |
+| ------------------- | ------------------------------------- |
 | `cu130` (or higher) | `al2-ami-sagemaker-inference-gpu-3-1` |
-| `cu129` or lower | (omit the flag; default AMI works) |
+| `cu129` or lower    | (omit the flag; default AMI works)    |
 
 Rule of thumb: if the vLLM tag you picked contains `cu130` or later, pass `--inference-ami-version al2-ami-sagemaker-inference-gpu-3-1` to `deploy.py`. If a future CUDA version (cu140+) needs a different AMI, add a row to the table when AWS publishes the new image.
 
@@ -157,23 +157,23 @@ Both images share the same contract: configuration as environment variables on t
 
 ### Required for every HuggingFace LLM deployment
 
-| Env var | Purpose | Notes |
-|---|---|---|
-| `SM_VLLM_MODEL` | HF model ID (e.g. `Qwen/Qwen3-0.6B`) or `/opt/ml/model` if loading from S3 | — |
-| `SM_VLLM_HOST` | **Must be `0.0.0.0`** | Otherwise vLLM binds localhost only, ping fails, container dies before logs. Top cause of mystery failures with this image. |
-| `SM_VLLM_TRUST_REMOTE_CODE` | Whether model artifacts may execute custom Python code | **Default `false`.** Set `true` only for a specific architecture that cannot load without its repository code, after reviewing and pinning those artifacts. Enabling it allows model-supplied code to run inside the container. |
-| `HUGGING_FACE_HUB_TOKEN` | HF token | Required for gated models. |
+| Env var                     | Purpose                                                                    | Notes                                                                                                                                                                                                                           |
+| --------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SM_VLLM_MODEL`             | HF model ID (e.g. `Qwen/Qwen3-0.6B`) or `/opt/ml/model` if loading from S3 | —                                                                                                                                                                                                                               |
+| `SM_VLLM_HOST`              | **Must be `0.0.0.0`**                                                      | Otherwise vLLM binds localhost only, ping fails, container dies before logs. Top cause of mystery failures with this image.                                                                                                     |
+| `SM_VLLM_TRUST_REMOTE_CODE` | Whether model artifacts may execute custom Python code                     | **Default `false`.** Set `true` only for a specific architecture that cannot load without its repository code, after reviewing and pinning those artifacts. Enabling it allows model-supplied code to run inside the container. |
+| `HUGGING_FACE_HUB_TOKEN`    | HF token                                                                   | Required for gated models.                                                                                                                                                                                                      |
 
 Stage production model artifacts in an account-controlled S3 bucket, pass their URI as `--model-s3-uri`, and use `SM_VLLM_MODEL=/opt/ml/model`. This avoids downloading or executing repository code at runtime. Use a Hub model ID only when runtime Hub access is explicitly required; keep `SM_VLLM_TRUST_REMOTE_CODE=false` unless that architecture requires reviewed custom code.
 
 ### Tuning (optional)
 
-| Env var | Purpose |
-|---|---|
-| `SM_VLLM_MAX_MODEL_LEN` | Max sequence length — set this; defaults can be wrong for fine-tunes |
-| `SM_VLLM_GPU_MEMORY_UTILIZATION` | Float 0.0–1.0, ~0.9 reasonable |
-| `SM_VLLM_TENSOR_PARALLEL_SIZE` | GPU count for multi-GPU instances |
-| `SM_VLLM_DTYPE` | `auto`, `bfloat16`, `float16` |
+| Env var                          | Purpose                                                              |
+| -------------------------------- | -------------------------------------------------------------------- |
+| `SM_VLLM_MAX_MODEL_LEN`          | Max sequence length — set this; defaults can be wrong for fine-tunes |
+| `SM_VLLM_GPU_MEMORY_UTILIZATION` | Float 0.0–1.0, ~0.9 reasonable                                       |
+| `SM_VLLM_TENSOR_PARALLEL_SIZE`   | GPU count for multi-GPU instances                                    |
+| `SM_VLLM_DTYPE`                  | `auto`, `bfloat16`, `float16`                                        |
 
 Any vLLM CLI flag works — uppercase, replace dashes with underscores, prepend `SM_VLLM_`.
 
@@ -181,12 +181,12 @@ Any vLLM CLI flag works — uppercase, replace dashes with underscores, prepend 
 
 Simpler env contract than vLLM:
 
-| Env var | Purpose | Required |
-|---|---|---|
-| `HF_MODEL_ID` | HF model ID (e.g. `BAAI/bge-large-en-v1.5`) or `/opt/ml/model` | Yes |
-| `HF_TOKEN` | HF auth token | Only for gated models |
-| `MAX_BATCH_TOKENS` | Max tokens per batch (default 16384) | No |
-| `MAX_CLIENT_BATCH_SIZE` | Max requests per client batch (default 32) | No |
+| Env var                 | Purpose                                                        | Required              |
+| ----------------------- | -------------------------------------------------------------- | --------------------- |
+| `HF_MODEL_ID`           | HF model ID (e.g. `BAAI/bge-large-en-v1.5`) or `/opt/ml/model` | Yes                   |
+| `HF_TOKEN`              | HF auth token                                                  | Only for gated models |
+| `MAX_BATCH_TOKENS`      | Max tokens per batch (default 16384)                           | No                    |
+| `MAX_CLIENT_BATCH_SIZE` | Max requests per client batch (default 32)                     | No                    |
 
 No host-binding to configure, no trust-remote-code flag. The architectures TEI supports (BERT, CamemBERT, RoBERTa, XLM-RoBERTa, NomicBert, JinaBert, JinaCodeBert, Mistral, Qwen2/3, Gemma2/3, ModernBert) are baked into the image.
 
@@ -194,11 +194,11 @@ No host-binding to configure, no trust-remote-code flag. The architectures TEI s
 
 Critical and easy to get wrong:
 
-| CUDA in image tag | Default AMI | With `al2-ami-sagemaker-inference-gpu-3-1` |
-|---|---|---|
-| cu124 / cu128 | g5, g6, p5 all work | (not needed) |
-| cu129 | g6, p5; g5 fails (driver mismatch → CannotStartContainerError) | expected to fix g5 (unverified) |
-| cu130+ | fails everywhere — AMI flag is mandatory | g5, g6, p5 all work (cu130-on-g5 verified June 2026) |
+| CUDA in image tag | Default AMI                                                    | With `al2-ami-sagemaker-inference-gpu-3-1`           |
+| ----------------- | -------------------------------------------------------------- | ---------------------------------------------------- |
+| cu124 / cu128     | g5, g6, p5 all work                                            | (not needed)                                         |
+| cu129             | g6, p5; g5 fails (driver mismatch → CannotStartContainerError) | expected to fix g5 (unverified)                      |
+| cu130+            | fails everywhere — AMI flag is mandatory                       | g5, g6, p5 all work (cu130-on-g5 verified June 2026) |
 
 The driver comes from the host AMI, not the instance family — so passing the gpu-3-1 AMI (which vLLM cu130 images require anyway) also makes `ml.g5.*` viable for cu129+ images.
 
@@ -246,9 +246,9 @@ $PRIVATE_URI = python scripts\mirror_image.py `
 
 ## Known-broken images (last checked July 2026)
 
-| Image | Defect | Use instead |
-|---|---|---|
-| `huggingface-pytorch-inference` **GPU** tags — all recent ones tested (PT 2.3–2.6, cu121/cu124, transformers 4.48–5.5.3) | `ImportError: libtorch_cuda.so: undefined symbol: ncclCommResume` at `import torch`. The NCCL bundled in the image is older than what torch links against — a packaging defect *inside the container*, on g5 **and** g6, regardless of AMI, model, or inference code. The MMS Java front-end keeps answering `/ping`, so the endpoint can reach InService while the Python worker crash-loops and serves nothing. | DJL Inference (bundles its own complete CUDA/NCCL stack) or BYOC. CPU tags are unaffected. |
+| Image                                                                                                                    | Defect                                                                                                                                                                                                                                                                                                                                                                                                            | Use instead                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `huggingface-pytorch-inference` **GPU** tags — all recent ones tested (PT 2.3–2.6, cu121/cu124, transformers 4.48–5.5.3) | `ImportError: libtorch_cuda.so: undefined symbol: ncclCommResume` at `import torch`. The NCCL bundled in the image is older than what torch links against — a packaging defect _inside the container_, on g5 **and** g6, regardless of AMI, model, or inference code. The MMS Java front-end keeps answering `/ping`, so the endpoint can reach InService while the Python worker crash-loops and serves nothing. | DJL Inference (bundles its own complete CUDA/NCCL stack) or BYOC. CPU tags are unaffected. |
 
 Re-check when AWS publishes new `huggingface-pytorch-inference` GPU tags — remove the row once a fixed image is confirmed.
 
@@ -258,29 +258,27 @@ Re-check when AWS publishes new `huggingface-pytorch-inference` GPU tags — rem
 
 ## Hub download time at first boot
 
-Loading the model from HF Hub happens *inside the container after the endpoint starts* — expect **5–15+ minutes** before InService even for small models, longer for multi-GB ones. A slow first boot is not a failure; don't tear down or re-diagnose before the deploy script's 30-minute wait expires.
+Loading the model from HF Hub happens _inside the container after the endpoint starts_ — expect **5–15+ minutes** before InService even for small models, longer for multi-GB ones. A slow first boot is not a failure; don't tear down or re-diagnose before the deploy script's 30-minute wait expires.
 
 For production or repeated deployments, pre-stage the weights in S3 and pass `--model-s3-uri` to `deploy.py` (the model then loads from `/opt/ml/model`) — faster, immune to Hub rate limits/outages, and no `HUGGING_FACE_HUB_TOKEN` needed at runtime.
 
 ## 🚨 Edge-Case & Failure Mode Matrix
 
-| Scenario | Risk | Production Mitigation |
-|:---|:---|:---|
-| **Empty or Null Inputs** | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers |
-| **Network Timeout / Latency** | Hanging operations or duplicate side-effects | Implement bounded abort controllers, exponential backoff, and idempotency keys |
-| **Concurrency / Race Conditions** | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls |
-| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection | Validate boundary payloads with Zod/Pydantic schemas prior to execution |
-| **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
-
+| Scenario                               | Risk                                                 | Production Mitigation                                                           |
+| :------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **Empty or Null Inputs**               | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers   |
+| **Network Timeout / Latency**          | Hanging operations or duplicate side-effects         | Implement bounded abort controllers, exponential backoff, and idempotency keys  |
+| **Concurrency / Race Conditions**      | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls          |
+| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection      | Validate boundary payloads with Zod/Pydantic schemas prior to execution         |
+| **Resource / Memory Saturation**       | OOM errors, frame drops, or memory leaks             | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
 
 ## 🤖 LLM-Specific Traps Table
 
-| Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
-|:---|:---|:---|
-| **Platform-Dependent Shell Commands** | Hardcoding $(cat ~/.cache/huggingface/token) or piping to jq | Use platform-agnostic token checks via env var HF_TOKEN and native JSON parsing |
-| **VRAM OOM Crash** | Loading 70B model weights on a consumer 16GB GPU without quantization | Calculate parameter bounds (fp16 = VRAM/2, Q4 = VRAM*2) and load with bitsandbytes/GGUF |
-| **Blocking Batch Generation** | Generating large batches synchronously without streaming or yield | Use TextIteratorStreamer or asynchronous generate workers to prevent request timeouts |
-
+| Anti-Pattern                          | What AI Commonly Does Wrong                                           | What Is Actually Correct                                                                |
+| :------------------------------------ | :-------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| **Platform-Dependent Shell Commands** | Hardcoding $(cat ~/.cache/huggingface/token) or piping to jq          | Use platform-agnostic token checks via env var HF_TOKEN and native JSON parsing         |
+| **VRAM OOM Crash**                    | Loading 70B model weights on a consumer 16GB GPU without quantization | Calculate parameter bounds (fp16 = VRAM/2, Q4 = VRAM*2) and load with bitsandbytes/GGUF |
+| **Blocking Batch Generation**         | Generating large batches synchronously without streaming or yield     | Use TextIteratorStreamer or asynchronous generate workers to prevent request timeouts   |
 
 ## 🏛️ Tribunal Verification & Guardrails
 
@@ -288,12 +286,15 @@ For production or repeated deployments, pre-stage the weights in S3 and pass `--
 **Slash Command:** `/review` or `/tribunal-full`
 
 ### 🔬 Evidence Standard (Tri-State Verification)
+
 Every finding, audit statement, or completion claim must classify its factual certainty:
+
 - **`[OBSERVED]`**: Directly confirmed in the codebase or verified via executed terminal command.
 - **`[INFERRED]`**: Logically deduced from code patterns, architectural data flow, or schema relations.
 - **`[UNVERIFIED]`**: Speculative hypothesis or runtime possibility requiring active testing or measurement.
 
 ### ✅ Pre-Flight Self-Audit Checklist
+
 ```
 ✅ Are model architectures and weights verified to fit within target hardware VRAM budgets?
 ✅ Are pipeline requests guarded with bounded timeouts and retry backoffs?
@@ -303,6 +304,8 @@ Every finding, audit statement, or completion claim must classify its factual ce
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
+
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.

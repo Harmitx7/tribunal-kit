@@ -45,7 +45,10 @@ function sanitizeSnippetSecrets(content) {
     .replace(/AKIA[0-9A-Z]{16}/g, '[REDACTED_AWS_KEY]')
     .replace(/ghp_[a-zA-Z0-9]{36}/g, '[REDACTED_GITHUB_TOKEN]')
     .replace(/eyJ[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]{10,}/g, '[REDACTED_JWT]')
-    .replace(/((?:password|secret|key|token|auth|bearer)\w*)\s*([:=])\s*['"][^'"]+['"]/gi, '$1 $2 "[REDACTED]"');
+    .replace(
+      /((?:password|secret|key|token|auth|bearer)\w*)\s*([:=])\s*['"][^'"]+['"]/gi,
+      '$1 $2 "[REDACTED]"',
+    );
 }
 
 /**
@@ -79,9 +82,10 @@ function resolveEvidenceRequests(requests = [], existingFiles = [], _repoRoot, o
   const maxSourceLines = options.maxSourceLines || DEFAULT_BUDGETS.maxSourceLines;
   const maxSourceBytes = options.maxSourceBytes || DEFAULT_BUDGETS.maxSourceBytes;
 
-  const budgetManager = options.budgetManager instanceof EvidenceRequestBudgetManager
-    ? options.budgetManager
-    : new EvidenceRequestBudgetManager(options);
+  const budgetManager =
+    options.budgetManager instanceof EvidenceRequestBudgetManager
+      ? options.budgetManager
+      : new EvidenceRequestBudgetManager(options);
 
   // Deterministically sort requests to avoid ordering anomalies
   const sortedReqs = [...requests].sort((a, b) => {
@@ -151,7 +155,10 @@ function resolveEvidenceRequests(requests = [], existingFiles = [], _repoRoot, o
 
     if (!containment.ok) {
       req.status = 'rejected';
-      req.rejection_reason = containment.error || containment.reason || 'Path containment check failed';
+      req.rejection_reason =
+        containment.error ||
+        /** @type {any} */ (containment).reason ||
+        'Path containment check failed';
       req.rejection_code = containment.code || 'ERR_PATH_CONTAINMENT';
       req.accounting.retrieval_duration_ms = Date.now() - startTime;
       req.accounting.remaining_budget = budgetManager.getRemainingTokens(reviewerId);
@@ -173,7 +180,11 @@ function resolveEvidenceRequests(requests = [], existingFiles = [], _repoRoot, o
     req.fingerprint = canonicalFingerprint;
 
     // 3. Central Budget, Deduplication & Loop Check
-    const budgetCheck = budgetManager.canExecute(reviewerId, normalizedTarget, canonicalFingerprint);
+    const budgetCheck = budgetManager.canExecute(
+      reviewerId,
+      normalizedTarget,
+      canonicalFingerprint,
+    );
     if (!budgetCheck.allowed) {
       req.status = budgetCheck.status || 'budget_exhausted';
       req.rejection_reason = budgetCheck.reason;
@@ -204,7 +215,11 @@ function resolveEvidenceRequests(requests = [], existingFiles = [], _repoRoot, o
     if (options.evidencePack && Array.isArray(options.evidencePack.records)) {
       packMatch = options.evidencePack.records.find(r => {
         // Match by evidence_id if requested
-        if (req.evidence_ids && req.evidence_ids.length > 0 && req.evidence_ids.includes(r.evidence_id)) {
+        if (
+          req.evidence_ids &&
+          req.evidence_ids.length > 0 &&
+          req.evidence_ids.includes(r.evidence_id)
+        ) {
           return true;
         }
         // Match by target path and optional symbol
@@ -344,7 +359,11 @@ function resolveEvidenceRequests(requests = [], existingFiles = [], _repoRoot, o
             byteCost = Buffer.byteLength(sliceContent, 'utf8');
             linesRetrieved = sliceContent.split(/\r?\n/).length;
 
-            const digest = crypto.createHash('sha256').update(sliceContent, 'utf8').digest('hex').slice(0, 12);
+            const digest = crypto
+              .createHash('sha256')
+              .update(sliceContent, 'utf8')
+              .digest('hex')
+              .slice(0, 12);
             const evidenceRecordId = `exp_${reviewerId}_${fingerprint.slice(0, 8)}`;
 
             const newItem = {
@@ -448,7 +467,8 @@ function resolveEvidenceRequests(requests = [], existingFiles = [], _repoRoot, o
  *   telemetry: Object,
  *   evidence_requests: Array<Object>,
  *   final_context_expansion: Object,
- *   roundsExecuted: number
+ *   roundsExecuted: number,
+ *   budget_manager?: Object
  * }>}
  */
 async function executeWithEvidenceRequests({
@@ -591,7 +611,11 @@ async function executeWithEvidenceRequests({
         // Inject new dynamic items into respective reviewers' context
         for (const item of newEvidenceItems) {
           const reqReviewer = item.requesting_reviewer;
-          if (reqReviewer && currentContextExpansion.contextMap && currentContextExpansion.contextMap[reqReviewer]) {
+          if (
+            reqReviewer &&
+            currentContextExpansion.contextMap &&
+            currentContextExpansion.contextMap[reqReviewer]
+          ) {
             currentContextExpansion.contextMap[reqReviewer].push(item);
           }
           if (currentContextExpansion.context) {

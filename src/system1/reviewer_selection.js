@@ -67,7 +67,9 @@ function validateReviewerSelection(selection, options = {}) {
           break;
         }
         if (!REVIEWER_ID_REGEX.test(item.trim())) {
-          errors.push(`Reviewer ID "${item}" in "${field}" contains invalid characters (must match /^[a-z0-9_-]+$/)`);
+          errors.push(
+            `Reviewer ID "${item}" in "${field}" contains invalid characters (must match /^[a-z0-9_-]+$/)`,
+          );
           break;
         }
         if (containsInjection(item)) {
@@ -94,7 +96,9 @@ function validateReviewerSelection(selection, options = {}) {
   if (selectedOptionalSet.size !== selection.selected_optional_reviewers.length) {
     errors.push('Duplicate reviewer IDs detected in selected_optional_reviewers');
   }
-  if (prunedSet.size !== (selection.pruned_optional_reviewers || selection.pruned_reviewers).length) {
+  if (
+    prunedSet.size !== (selection.pruned_optional_reviewers || selection.pruned_reviewers).length
+  ) {
     errors.push('Duplicate reviewer IDs detected in pruned_optional_reviewers');
   }
   if (selectedSet.size !== selection.selected_reviewers.length) {
@@ -121,8 +125,13 @@ function validateReviewerSelection(selection, options = {}) {
 
   // Invariant 4c: selected_reviewers must equal mandatory_reviewers union selected_optional_reviewers
   const expectedSelected = new Set([...mandatorySet, ...selectedOptionalSet]);
-  if (selectedSet.size !== expectedSelected.size || [...selectedSet].some(r => !expectedSelected.has(r))) {
-    errors.push('selected_reviewers does not match union of mandatory_reviewers and selected_optional_reviewers');
+  if (
+    selectedSet.size !== expectedSelected.size ||
+    [...selectedSet].some(r => !expectedSelected.has(r))
+  ) {
+    errors.push(
+      'selected_reviewers does not match union of mandatory_reviewers and selected_optional_reviewers',
+    );
   }
 
   // 5. Authoritative catalog validation
@@ -156,7 +165,9 @@ function validateReviewerSelection(selection, options = {}) {
   for (const r of allReasons) {
     const text = typeof r === 'string' ? r : r.reason || '';
     if (containsInjection(text)) {
-      errors.push(`Selection/pruning reason contains prompt-injection pattern: ${text.slice(0, 50)}`);
+      errors.push(
+        `Selection/pruning reason contains prompt-injection pattern: ${text.slice(0, 50)}`,
+      );
       break;
     }
   }
@@ -182,8 +193,13 @@ function validateReviewerSelection(selection, options = {}) {
  * @returns {Object} Validated ReviewerSelectionResult
  */
 function buildFallbackSelection(decisionPlan, reviewerCatalog, fallbackReason = 'Unknown failure') {
-  const catalog = Array.isArray(reviewerCatalog) && reviewerCatalog.length > 0 ? reviewerCatalog : DEFAULT_CATALOG;
-  const allCatalogNames = catalog.map(r => (typeof r === 'string' ? r : r.name || r.id)).filter(Boolean);
+  const catalog =
+    Array.isArray(reviewerCatalog) && reviewerCatalog.length > 0
+      ? reviewerCatalog
+      : DEFAULT_CATALOG;
+  const allCatalogNames = catalog
+    .map(r => (typeof r === 'string' ? r : r.name || r.id))
+    .filter(Boolean);
 
   const candidateNames = Array.from(
     new Set([
@@ -218,7 +234,9 @@ function buildFallbackSelection(decisionPlan, reviewerCatalog, fallbackReason = 
     pruned_optional_reviewers: [],
     pruned_reviewers: [], // Backward compatibility
     selected_reviewers: finalNames,
-    selection_reasons: finalNames.map(r => `${r}: selected via deterministic fallback (${fallbackReason})`),
+    selection_reasons: finalNames.map(
+      r => `${r}: selected via deterministic fallback (${fallbackReason})`,
+    ),
     pruning_reasons: [`Fallback activated due to error: ${fallbackReason}`],
     policy_constraints: ['FAIL_CLOSED_FULL_RETENTION'],
     policy_version: 1,
@@ -286,7 +304,8 @@ function dynamicReviewerSelection(decisionPlan, reviewerCatalog, options = {}) {
       .map(d => sanitizeString(d).toLowerCase())
       .filter(Boolean);
 
-    const planRisk = typeof decisionPlan.risk === 'string' ? decisionPlan.risk.toUpperCase() : 'LOW';
+    const planRisk =
+      typeof decisionPlan.risk === 'string' ? decisionPlan.risk.toUpperCase() : 'LOW';
     const planTier = typeof decisionPlan.tier === 'number' ? decisionPlan.tier : 1;
     const planAmbiguity =
       typeof decisionPlan.ambiguity === 'string' ? decisionPlan.ambiguity.toUpperCase() : 'LOW';
@@ -339,7 +358,9 @@ function dynamicReviewerSelection(decisionPlan, reviewerCatalog, options = {}) {
       mandatory.add('security-auditor');
       policyConstraints.push('HIGH_RISK_MANDATORY_SECURITY');
       if (!selectionReasons.some(r => r.startsWith('security-auditor:'))) {
-        selectionReasons.push('security-auditor: mandatory (high risk / security verification requirement)');
+        selectionReasons.push(
+          'security-auditor: mandatory (high risk / security verification requirement)',
+        );
       }
     }
 
@@ -359,7 +380,9 @@ function dynamicReviewerSelection(decisionPlan, reviewerCatalog, options = {}) {
         if (planDomains.includes(dom) && catalogMap.has(reviewer)) {
           mandatory.add(reviewer);
           if (!selectionReasons.some(r => r.startsWith(`${reviewer}:`))) {
-            selectionReasons.push(`${reviewer}: mandatory (Tier 3 specialist for active domain "${dom}")`);
+            selectionReasons.push(
+              `${reviewer}: mandatory (Tier 3 specialist for active domain "${dom}")`,
+            );
           }
         }
       }
@@ -449,7 +472,7 @@ function dynamicReviewerSelection(decisionPlan, reviewerCatalog, options = {}) {
     const resolved = new Set();
     const initiallySelected = [...mandatory, ...selectedOptional];
 
-    function resolveDeps(rName, isParentMandatory) {
+    const resolveDeps = (rName, isParentMandatory) => {
       if (resolved.has(rName)) return;
       if (resolving.has(rName)) {
         throw new Error(`Dependency cycle detected involving ${rName}`);
@@ -472,7 +495,9 @@ function dynamicReviewerSelection(decisionPlan, reviewerCatalog, options = {}) {
 
           if (isParentMandatory) {
             mandatory.add(normDep);
-            selectionReasons.push(`${normDep}: mandatory (dependency of mandatory reviewer ${rName})`);
+            selectionReasons.push(
+              `${normDep}: mandatory (dependency of mandatory reviewer ${rName})`,
+            );
           } else if (!mandatory.has(normDep)) {
             selectedOptional.add(normDep);
             selectionReasons.push(`${normDep}: selected (dependency of ${rName})`);
@@ -484,7 +509,7 @@ function dynamicReviewerSelection(decisionPlan, reviewerCatalog, options = {}) {
 
       resolving.delete(rName);
       resolved.add(rName);
-    }
+    };
 
     for (const r of initiallySelected) {
       resolveDeps(r, mandatory.has(r));
@@ -497,9 +522,13 @@ function dynamicReviewerSelection(decisionPlan, reviewerCatalog, options = {}) {
 
     // ─── 7. DETERMINISTIC CANONICAL NORMALIZATION ───
     const sortedMandatory = Array.from(mandatory).sort();
-    const sortedSelectedOptional = Array.from(selectedOptional).filter(r => !mandatory.has(r)).sort();
+    const sortedSelectedOptional = Array.from(selectedOptional)
+      .filter(r => !mandatory.has(r))
+      .sort();
     const sortedPruned = Array.from(pruned).sort();
-    const sortedSelected = Array.from(new Set([...sortedMandatory, ...sortedSelectedOptional])).sort();
+    const sortedSelected = Array.from(
+      new Set([...sortedMandatory, ...sortedSelectedOptional]),
+    ).sort();
 
     const sortedSelectionReasons = Array.from(new Set(selectionReasons)).sort();
     const sortedPruningReasons = Array.from(

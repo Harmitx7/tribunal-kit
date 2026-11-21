@@ -7,22 +7,87 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
 const { validateFinding } = require('./finding_schema');
 const { BOLD, RESET, RED, YELLOW, GREEN } = require('./_colors');
+const { assertWithinRoot } = require('./_utils');
 
 function main() {
   const args = process.argv.slice(2);
-  const inputPath = args.find(a => a.startsWith('--in='))?.split('=')[1];
-  const outPath = args.find(a => a.startsWith('--out='))?.split('=')[1];
-  const quarantinePath =
-    args.find(a => a.startsWith('--quarantine='))?.split('=')[1] || 'quarantined_findings.json';
+  const rawIn = args
+    .find(a => a.startsWith('--in='))
+    ?.split('=')
+    .slice(1)
+    .join('=');
+  const rawOut = args
+    .find(a => a.startsWith('--out='))
+    ?.split('=')
+    .slice(1)
+    .join('=');
+  const rawQuarantineArg = args
+    .find(a => a.startsWith('--quarantine='))
+    ?.split('=')
+    .slice(1)
+    .join('=');
+  const hasQuarantineArg = rawQuarantineArg !== undefined;
+  const rawQuarantine = rawQuarantineArg || 'quarantined_findings.json';
 
-  if (!inputPath || !outPath) {
+  const rawRoot = args
+    .find(
+      a =>
+        a.startsWith('--root=') ||
+        a.startsWith('--projectRoot=') ||
+        a.startsWith('--project-root=') ||
+        a.startsWith('--baseDir='),
+    )
+    ?.split('=')
+    .slice(1)
+    .join('=');
+
+  if (!rawIn || !rawOut) {
     console.log(
       RED +
-        'Usage: node findings_validator.js --in=<file> --out=<file> [--quarantine=<file>]' +
+        'Usage: node findings_validator.js --in=<file> --out=<file> [--quarantine=<file>] [--root=<dir>]' +
         RESET,
     );
+    process.exit(1);
+  }
+
+  // Reject lexical traversal (..) or null bytes in any path argument
+  const pathsToCheck = [rawIn, rawOut, rawQuarantine];
+  for (const p of pathsToCheck) {
+    if (typeof p !== 'string' || p.includes('\0')) {
+      console.error(RED + 'Security Violation: Null byte detected in path argument.' + RESET);
+      process.exit(1);
+    }
+    const normalized = p.replace(/\\/g, '/');
+    if (normalized.split('/').includes('..')) {
+      console.error(
+        RED +
+          `Security Violation: Path traversal detected. Target "${p}" contains forbidden parent directory reference.` +
+          RESET,
+      );
+      process.exit(1);
+    }
+  }
+
+  // Anchor path containment to projectRoot: explicit --root, or dirname(rawIn) if absolute, else process.cwd()
+  let projectRoot;
+  if (rawRoot) {
+    projectRoot = path.resolve(rawRoot);
+  } else if (path.isAbsolute(rawIn)) {
+    projectRoot = path.dirname(path.resolve(rawIn));
+  } else {
+    projectRoot = process.cwd();
+  }
+
+  let inputPath, outPath, quarantinePath;
+  try {
+    inputPath = assertWithinRoot(projectRoot, rawIn);
+    outPath = assertWithinRoot(projectRoot, rawOut);
+    quarantinePath = assertWithinRoot(projectRoot, rawQuarantine);
+  } catch (err) {
+    console.error(RED + `Security Violation: ${err.message}` + RESET);
     process.exit(1);
   }
 
@@ -46,7 +111,11 @@ function main() {
       JSON.stringify({ error: e.message, raw: fs.readFileSync(inputPath, 'utf8') }, null, 2),
     );
     fs.writeFileSync(outPath, JSON.stringify({ findings: [] }, null, 2));
-    process.exit(0);
+    if (hasQuarantineArg) {
+      process.exit(0);
+    } else {
+      process.exit(1);
+    }
   }
 
   const rawFindings = Array.isArray(data) ? data : data.findings || [];
@@ -141,6 +210,8 @@ function main() {
 
   console.log(GREEN + `Passed ${validFindings.length} valid findings to ${outPath}` + RESET);
 }
+
+module.exports = { main };
 
 if (require.main === module) {
   main();

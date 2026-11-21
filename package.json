@@ -81,6 +81,7 @@
     "src/",
     "hooks/",
     "plugins/",
+    "benchmarks/corpus/",
     ".agent/",
     "!.agent/history/**",
     "!.agent/.tribunal/**",
@@ -136,15 +137,14 @@
     "build": "npm run build:rust"
   },
   "devDependencies": {
-    "@receptron/laya": "^0.1.2",
     "eslint": "^9.1.1",
     "jest": "^30.4.2",
-    "onnxruntime-node": "^1.22.0",
     "prettier": "^3.2.5",
-    "typescript": "^5.4.5",
-    "ws": "^8.21.3"
+    "typescript": "^5.4.5"
   },
   "optionalDependencies": {
+    "@receptron/laya": "^0.1.2",
+    "onnxruntime-node": "^1.22.0",
     "@tribunal-kit/core-darwin-arm64": "^9.4.0",
     "@tribunal-kit/core-darwin-x64": "^9.4.0",
     "@tribunal-kit/core-linux-arm64": "^9.4.0",
@@ -169,6 +169,7 @@
     ]
   },
   "dependencies": {
+    "ws": "^8.21.3",
     "zod": "^4.6.7"
   }
 }

@@ -88,7 +88,7 @@ describe('SkillMutator — Loop 1 Bounded Procedural Rule Mutator', () => {
     const shortText = 'tiny text'; // Length 9
     const mutatorStrict = new SkillMutator({
       agentDir: tmpDir,
-      maxChangeRatio: 0.10, // Max 10% change
+      maxChangeRatio: 0.1, // Max 10% change
     });
 
     const findings = [{ category: 'SECURITY_INJECTIONS', payload: 'bad' }];
@@ -99,7 +99,8 @@ describe('SkillMutator — Loop 1 Bounded Procedural Rule Mutator', () => {
   });
 
   test('mutateSkill does not duplicate existing rules', () => {
-    const initialText = '# Skill\n\n- **Boundary Guard**: Explicitly guard against null, undefined, empty collections, and extreme bounds before accessing properties or performing numeric operations.\n';
+    const initialText =
+      '# Skill\n\n- **Boundary Guard**: Explicitly guard against null, undefined, empty collections, and extreme bounds before accessing properties or performing numeric operations.\n';
     const finding = { category: 'BOUNDARY_EXTREMA', payload: null };
 
     const result = mutator.mutateSkill(initialText, 'test-skill', [finding]);

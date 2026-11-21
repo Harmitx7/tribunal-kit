@@ -104,12 +104,18 @@ class TimelineStore {
     }
     // Reject lexical path traversal attempts
     if (runId.includes('..') || runId.includes('/') || runId.includes('\\')) {
-      throw new PathSecurityError(`Path security violation: Illegal directory traversal in runId "${runId}"`, 'ERR_PATH_TRAVERSAL');
+      throw new PathSecurityError(
+        `Path security violation: Illegal directory traversal in runId "${runId}"`,
+        'ERR_PATH_TRAVERSAL',
+      );
     }
     // Reject Windows reserved device names
     const baseName = runId.split('.')[0];
     if (WINDOWS_RESERVED_NAMES.test(baseName)) {
-      throw new PathSecurityError(`Path security violation: Illegal Windows reserved device name in runId "${runId}"`, 'ERR_PATH_RESERVED_NAME');
+      throw new PathSecurityError(
+        `Path security violation: Illegal Windows reserved device name in runId "${runId}"`,
+        'ERR_PATH_RESERVED_NAME',
+      );
     }
     const sanitized = runId.replace(/[^a-zA-Z0-9_-]/g, '_');
     const target = path.join(this.runsDir, `${sanitized}.json`);
@@ -137,7 +143,9 @@ class TimelineStore {
       }
 
       if (events.length >= MAX_EVENTS_PER_RUN) {
-        throw new Error(`Run "${runId}" has reached the maximum event capacity (${MAX_EVENTS_PER_RUN})`);
+        throw new Error(
+          `Run "${runId}" has reached the maximum event capacity (${MAX_EVENTS_PER_RUN})`,
+        );
       }
 
       const prevEvent = events.length > 0 ? events[events.length - 1] : null;
@@ -467,198 +475,236 @@ function recordReviewTimeline(params = {}) {
 
   try {
     // 1. REVIEW_STARTED
-    recordedEvents.push(store.appendEvent(runId, {
-      event_type: 'REVIEW_STARTED',
-      stage: 'INITIALIZATION',
-      source_component: 'review_executor',
-      summary: `Review run initiated: ${runId}`,
-      metadata: {
-        task: params.task || 'Review proposed change',
-        repo_root: store.workspace,
-      },
-    }));
+    recordedEvents.push(
+      store.appendEvent(runId, {
+        event_type: 'REVIEW_STARTED',
+        stage: 'INITIALIZATION',
+        source_component: 'review_executor',
+        summary: `Review run initiated: ${runId}`,
+        metadata: {
+          task: params.task || 'Review proposed change',
+          repo_root: store.workspace,
+        },
+      }),
+    );
 
     // 2. DECISION_PLAN_CREATED
     if (params.decisionPlan) {
-      recordedEvents.push(store.appendEvent(runId, {
-        event_type: 'DECISION_PLAN_CREATED',
-        stage: 'PLANNING',
-        source_component: 'decision_plan',
-        decision_refs: [params.decisionPlan.plan_id].filter(Boolean),
-        summary: `Decision Plan created: Tier ${params.decisionPlan.tier}`,
-        metadata: {
-          risk_tier: params.decisionPlan.tier,
-          risk_level: params.decisionPlan.risk || 'MEDIUM',
-          security_sensitive: Boolean(params.decisionPlan.security_sensitive),
-        },
-      }));
+      recordedEvents.push(
+        store.appendEvent(runId, {
+          event_type: 'DECISION_PLAN_CREATED',
+          stage: 'PLANNING',
+          source_component: 'decision_plan',
+          decision_refs: [params.decisionPlan.plan_id].filter(Boolean),
+          summary: `Decision Plan created: Tier ${params.decisionPlan.tier}`,
+          metadata: {
+            risk_tier: params.decisionPlan.tier,
+            risk_level: params.decisionPlan.risk || 'MEDIUM',
+            security_sensitive: Boolean(params.decisionPlan.security_sensitive),
+          },
+        }),
+      );
     }
 
     // 3. REVIEWER_SELECTED
     if (params.selection) {
-      recordedEvents.push(store.appendEvent(runId, {
-        event_type: 'REVIEWER_SELECTED',
-        stage: 'PLANNING',
-        source_component: 'reviewer_selection',
-        summary: `Selected ${(params.selection.selected_reviewers || []).length} reviewer(s)`,
-        metadata: {
-          selected: params.selection.selected_reviewers || [],
-          mandatory: params.selection.mandatory_reviewers || [],
-          pruned: params.selection.pruned_reviewers || [],
-        },
-      }));
+      recordedEvents.push(
+        store.appendEvent(runId, {
+          event_type: 'REVIEWER_SELECTED',
+          stage: 'PLANNING',
+          source_component: 'reviewer_selection',
+          summary: `Selected ${(params.selection.selected_reviewers || []).length} reviewer(s)`,
+          metadata: {
+            selected: params.selection.selected_reviewers || [],
+            mandatory: params.selection.mandatory_reviewers || [],
+            pruned: params.selection.pruned_reviewers || [],
+          },
+        }),
+      );
     }
 
     // 4. EVIDENCE_ADDED
     if (params.evidencePack) {
-      recordedEvents.push(store.appendEvent(runId, {
-        event_type: 'EVIDENCE_ADDED',
-        stage: 'CONTEXT_GATHERING',
-        source_component: 'evidence_pack',
-        evidence_refs: (params.evidencePack.records || []).map(r => r.id || r.evidence_id).slice(0, 50),
-        summary: `Evidence pack created: ${params.evidencePack.pack_id}`,
-        metadata: {
-          total_records: params.evidencePack.summary?.total_records || 0,
-          observed_count: params.evidencePack.summary?.observed_count || 0,
-          validated_count: params.evidencePack.summary?.validated_count || 0,
-        },
-      }));
+      recordedEvents.push(
+        store.appendEvent(runId, {
+          event_type: 'EVIDENCE_ADDED',
+          stage: 'CONTEXT_GATHERING',
+          source_component: 'evidence_pack',
+          evidence_refs: (params.evidencePack.records || [])
+            .map(r => r.id || r.evidence_id)
+            .slice(0, 50),
+          summary: `Evidence pack created: ${params.evidencePack.pack_id}`,
+          metadata: {
+            total_records: params.evidencePack.summary?.total_records || 0,
+            observed_count: params.evidencePack.summary?.observed_count || 0,
+            validated_count: params.evidencePack.summary?.validated_count || 0,
+          },
+        }),
+      );
     }
 
     // 5. Reviewer Executions
     if (Array.isArray(params.reviewResults)) {
       for (const res of params.reviewResults) {
-        const isTimeout = res.error && (res.error.includes('TIMEOUT') || res.error.includes('timed out'));
+        const isTimeout =
+          res.error && (res.error.includes('TIMEOUT') || res.error.includes('timed out'));
         const isError = res.verdict === 'ERROR' || res.error;
-        const eventType = isTimeout ? 'REVIEWER_TIMED_OUT' : (isError ? 'REVIEWER_FAILED' : 'REVIEWER_COMPLETED');
+        const eventType = isTimeout
+          ? 'REVIEWER_TIMED_OUT'
+          : isError
+            ? 'REVIEWER_FAILED'
+            : 'REVIEWER_COMPLETED';
         const status = isError ? 'ERROR' : 'SUCCESS';
-        const severity = isTimeout ? 'HIGH' : (isError ? 'HIGH' : 'LOW');
+        const severity = isTimeout ? 'HIGH' : isError ? 'HIGH' : 'LOW';
 
-        recordedEvents.push(store.appendEvent(runId, {
-          event_type: eventType,
-          stage: 'REVIEW_EXECUTION',
-          status,
-          severity,
-          source_component: res.reviewerId || 'reviewer',
-          summary: `Reviewer ${res.reviewerId || 'unknown'}: verdict ${res.verdict || status}`,
-          metadata: {
-            duration_ms: res.durationMs || 0,
-            findings_count: (res.findings || []).length,
-          },
-        }));
+        recordedEvents.push(
+          store.appendEvent(runId, {
+            event_type: eventType,
+            stage: 'REVIEW_EXECUTION',
+            status,
+            severity,
+            source_component: res.reviewerId || 'reviewer',
+            summary: `Reviewer ${res.reviewerId || 'unknown'}: verdict ${res.verdict || status}`,
+            metadata: {
+              duration_ms: res.durationMs || 0,
+              findings_count: (res.findings || []).length,
+            },
+          }),
+        );
       }
     }
 
     // 6. CONFIDENCE_ASSESSED
     if (params.confidenceAssessment) {
-      recordedEvents.push(store.appendEvent(runId, {
-        event_type: 'CONFIDENCE_ASSESSED',
-        stage: 'EVALUATION',
-        source_component: 'confidence_evaluator',
-        summary: `Confidence score: ${params.confidenceAssessment.score} (${params.confidenceAssessment.level})`,
-        metadata: {
-          score: params.confidenceAssessment.score,
-          level: params.confidenceAssessment.level,
-          review_depth: params.confidenceAssessment.review_depth,
-          uncalibrated_heuristic: true,
-        },
-      }));
+      recordedEvents.push(
+        store.appendEvent(runId, {
+          event_type: 'CONFIDENCE_ASSESSED',
+          stage: 'EVALUATION',
+          source_component: 'confidence_evaluator',
+          summary: `Confidence score: ${params.confidenceAssessment.score} (${params.confidenceAssessment.level})`,
+          metadata: {
+            score: params.confidenceAssessment.score,
+            level: params.confidenceAssessment.level,
+            review_depth: params.confidenceAssessment.review_depth,
+            uncalibrated_heuristic: true,
+          },
+        }),
+      );
 
       if (params.confidenceAssessment.escalated) {
-        recordedEvents.push(store.appendEvent(runId, {
-          event_type: 'REVIEW_DEPTH_ESCALATED',
-          stage: 'EVALUATION',
-          status: 'WARNING',
-          severity: 'MEDIUM',
-          source_component: 'confidence_evaluator',
-          summary: `Review depth escalated to ${params.confidenceAssessment.review_depth}`,
-          reason_codes: params.confidenceAssessment.reason_codes || [],
-        }));
+        recordedEvents.push(
+          store.appendEvent(runId, {
+            event_type: 'REVIEW_DEPTH_ESCALATED',
+            stage: 'EVALUATION',
+            status: 'WARNING',
+            severity: 'MEDIUM',
+            source_component: 'confidence_evaluator',
+            summary: `Review depth escalated to ${params.confidenceAssessment.review_depth}`,
+            reason_codes: params.confidenceAssessment.reason_codes || [],
+          }),
+        );
       }
     }
 
     // 7. VERIFICATION_COMPLETED
     if (params.verificationResults) {
-      recordedEvents.push(store.appendEvent(runId, {
-        event_type: 'VERIFICATION_COMPLETED',
-        stage: 'VERIFICATION',
-        status: params.verificationResults.passed ? 'SUCCESS' : 'ERROR',
-        severity: params.verificationResults.passed ? 'LOW' : 'HIGH',
-        source_component: 'verification_runner',
-        summary: `Deterministic verifiers: ${params.verificationResults.passed ? 'PASSED' : 'FAILED'}`,
-      }));
+      recordedEvents.push(
+        store.appendEvent(runId, {
+          event_type: 'VERIFICATION_COMPLETED',
+          stage: 'VERIFICATION',
+          status: params.verificationResults.passed ? 'SUCCESS' : 'ERROR',
+          severity: params.verificationResults.passed ? 'LOW' : 'HIGH',
+          source_component: 'verification_runner',
+          summary: `Deterministic verifiers: ${params.verificationResults.passed ? 'PASSED' : 'FAILED'}`,
+        }),
+      );
     }
 
     // 8. ANOMALY_DETECTED
     if (Array.isArray(params.anomalies)) {
       for (const anom of params.anomalies) {
-        recordedEvents.push(store.appendEvent(runId, {
-          event_type: 'ANOMALY_DETECTED',
-          stage: 'ANOMALY_AUDIT',
-          status: 'WARNING',
-          severity: anom.severity || 'MEDIUM',
-          source_component: 'anomaly_detector',
-          reason_codes: [anom.drift_category || 'DRIFT'].filter(Boolean),
-          summary: `Anomaly detected: ${anom.signal_name || anom.drift_category}`,
-          metadata: {
-            drift_category: anom.drift_category,
-            is_advisory_only: true,
-          },
-        }));
+        recordedEvents.push(
+          store.appendEvent(runId, {
+            event_type: 'ANOMALY_DETECTED',
+            stage: 'ANOMALY_AUDIT',
+            status: 'WARNING',
+            severity: anom.severity || 'MEDIUM',
+            source_component: 'anomaly_detector',
+            reason_codes: [anom.drift_category || 'DRIFT'].filter(Boolean),
+            summary: `Anomaly detected: ${anom.signal_name || anom.drift_category}`,
+            metadata: {
+              drift_category: anom.drift_category,
+              is_advisory_only: true,
+            },
+          }),
+        );
       }
     }
 
     // 9. GOVERNANCE_VERDICT_ISSUED
     if (params.aggregated) {
-      recordedEvents.push(store.appendEvent(runId, {
-        event_type: 'GOVERNANCE_VERDICT_ISSUED',
-        stage: 'GOVERNANCE',
-        status: params.aggregated.verdict === 'APPROVED' ? 'SUCCESS' : (params.aggregated.verdict === 'WARNING' ? 'WARNING' : 'ERROR'),
-        severity: params.aggregated.verdict === 'APPROVED' ? 'LOW' : 'HIGH',
-        source_component: 'verdict_aggregator',
-        summary: `Governance verdict issued: ${params.aggregated.verdict}`,
-        metadata: {
-          final_verdict: params.aggregated.verdict,
-          reason: params.aggregated.reason || '',
-        },
-      }));
+      recordedEvents.push(
+        store.appendEvent(runId, {
+          event_type: 'GOVERNANCE_VERDICT_ISSUED',
+          stage: 'GOVERNANCE',
+          status:
+            params.aggregated.verdict === 'APPROVED'
+              ? 'SUCCESS'
+              : params.aggregated.verdict === 'WARNING'
+                ? 'WARNING'
+                : 'ERROR',
+          severity: params.aggregated.verdict === 'APPROVED' ? 'LOW' : 'HIGH',
+          source_component: 'verdict_aggregator',
+          summary: `Governance verdict issued: ${params.aggregated.verdict}`,
+          metadata: {
+            final_verdict: params.aggregated.verdict,
+            reason: params.aggregated.reason || '',
+          },
+        }),
+      );
     }
 
     // 10. Human Gate Events (if authoritative)
     if (params.humanApproval) {
       if (params.humanApproval.required) {
-        recordedEvents.push(store.appendEvent(runId, {
-          event_type: 'HUMAN_APPROVAL_REQUIRED',
-          stage: 'HUMAN_GATE',
-          status: 'BLOCKED',
-          severity: 'HIGH',
-          source_component: 'human_gate',
-          summary: 'Human approval required before merge or deployment',
-        }));
+        recordedEvents.push(
+          store.appendEvent(runId, {
+            event_type: 'HUMAN_APPROVAL_REQUIRED',
+            stage: 'HUMAN_GATE',
+            status: 'BLOCKED',
+            severity: 'HIGH',
+            source_component: 'human_gate',
+            summary: 'Human approval required before merge or deployment',
+          }),
+        );
       }
       if (params.humanApproval.approved && params.humanApproval.approved_by) {
-        recordedEvents.push(store.appendEvent(runId, {
-          event_type: 'HUMAN_APPROVAL_RECORDED',
-          stage: 'HUMAN_GATE',
-          status: 'SUCCESS',
-          severity: 'LOW',
-          source_component: 'human_gate',
-          summary: `Human approval recorded by ${params.humanApproval.approved_by}`,
-          metadata: {
-            approved_by: params.humanApproval.approved_by,
-            confirmation_channel: params.humanApproval.confirmation_channel || 'cli_prompt',
-          },
-        }));
+        recordedEvents.push(
+          store.appendEvent(runId, {
+            event_type: 'HUMAN_APPROVAL_RECORDED',
+            stage: 'HUMAN_GATE',
+            status: 'SUCCESS',
+            severity: 'LOW',
+            source_component: 'human_gate',
+            summary: `Human approval recorded by ${params.humanApproval.approved_by}`,
+            metadata: {
+              approved_by: params.humanApproval.approved_by,
+              confirmation_channel: params.humanApproval.confirmation_channel || 'cli_prompt',
+            },
+          }),
+        );
       }
     }
 
     // 11. REVIEW_COMPLETED
-    recordedEvents.push(store.appendEvent(runId, {
-      event_type: 'REVIEW_COMPLETED',
-      stage: 'COMPLETION',
-      source_component: 'review_executor',
-      summary: `Review completed for run: ${runId}`,
-    }));
+    recordedEvents.push(
+      store.appendEvent(runId, {
+        event_type: 'REVIEW_COMPLETED',
+        stage: 'COMPLETION',
+        source_component: 'review_executor',
+        summary: `Review completed for run: ${runId}`,
+      }),
+    );
 
     return {
       success: true,

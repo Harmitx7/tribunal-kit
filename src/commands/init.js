@@ -1,9 +1,7 @@
 'use strict';
-const __importDefault =
-  (this && this.__importDefault) ||
-  function (mod) {
-    return mod && mod.__esModule ? mod : { default: mod };
-  };
+const __importDefault = function (mod) {
+  return mod && mod.__esModule ? mod : { default: mod };
+};
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.cmdInit = cmdInit;
 exports.generateIDEBridges = generateIDEBridges;
@@ -62,6 +60,9 @@ const CORE_SKILLS = new Set([
   'product-aware-heuristics',
   'web-design-guidelines',
 ]);
+
+exports.CORE_AGENTS = CORE_AGENTS;
+exports.CORE_SKILLS = CORE_SKILLS;
 
 async function cmdInit(flags, quiet = false) {
   if (flags.path && (typeof flags.path !== 'string' || flags.path.includes('\0'))) {
@@ -210,7 +211,7 @@ async function cmdInit(flags, quiet = false) {
   const isMinimal = flags.minimal || false;
   if (isMinimal) {
     (0, logger_1.log)(
-      `  ${(0, logger_1.c)('yellow', '⚡')} ${(0, logger_1.bold)('Minimal mode')} — installing core agents and skills only`,
+      `  ${(0, logger_1.c)('yellow', '⚡')} ${(0, logger_1.bold)('Minimal mode')} — installing ${CORE_AGENTS.size} core agents and ${CORE_SKILLS.size} core skills only`,
     );
     console.log();
   }
@@ -336,9 +337,9 @@ async function cmdInit(flags, quiet = false) {
               console.log();
               (0, logger_1.log)('  System-1 installation appears corrupted.');
             } else if (isUpdate) {
-              const { getTargetVersion, getInstalledVersion } = require('./system1');
-              const installed = getInstalledVersion();
-              const target = getTargetVersion();
+              const sys1 = require('./system1');
+              const installed = sys1.getInstalledVersion();
+              const target = sys1.getTargetVersion();
               console.log();
               (0, logger_1.log)('  System-1 installation detected.');
               (0, logger_1.log)('');

@@ -45,6 +45,7 @@ accelerate launch train.py
 With FSDP full-shard: a 7B model trains on 4×24GB GPUs that would OOM on any single one of them.
 
 **FSDP caveats** (from the [distributed training docs](https://sbert.net/docs/sentence_transformer/training/distributed.html)):
+
 - **Evaluators don't run under FSDP** as of writing: the eval hooks call `model.encode()` which FSDP-wrapped modules can't service mid-training. Plan to evaluate post-training on a single-GPU load of the final checkpoint instead, or train with DDP if you need mid-training evaluation.
 - **Layer wrapping must be specified**, e.g. `fsdp_config={"transformer_layer_cls_to_wrap": "BertLayer"}` (substitute the right layer class for your model: `BertLayer`, `LlamaDecoderLayer`, `Qwen2DecoderLayer`, etc.). Without this FSDP sharding can silently misbehave.
 - **Slower than DDP** for models that fit on a single GPU. Only reach for FSDP when you actually need the memory savings.
@@ -57,23 +58,23 @@ For `MultipleNegativesRankingLoss` and its variants, **batch size is a quality k
 
 The effective pool of in-batch negatives per anchor:
 
-| Setup | In-batch negatives per anchor |
-|---|---|
-| Single GPU, batch 64 | 63 |
-| 4× DDP, per-device batch 64 | 63 local only by default. 255 with `MultipleNegativesRankingLoss(model, gather_across_devices=True)` |
-| Single GPU, CachedMNRL, mini_batch 32, batch 256 | 255 |
-| 4× DDP, CachedMNRL, per-device 256 | 255 local. 1023 with `gather_across_devices=True` |
+| Setup                                            | In-batch negatives per anchor                                                                        |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| Single GPU, batch 64                             | 63                                                                                                   |
+| 4× DDP, per-device batch 64                      | 63 local only by default. 255 with `MultipleNegativesRankingLoss(model, gather_across_devices=True)` |
+| Single GPU, CachedMNRL, mini_batch 32, batch 256 | 255                                                                                                  |
+| 4× DDP, CachedMNRL, per-device 256               | 255 local. 1023 with `gather_across_devices=True`                                                    |
 
 For large corpora (retrieval), push toward 512+ effective negatives. For small, clean datasets (STS), 64 is plenty.
 
 ## Precision choice by GPU
 
-| GPU generation | Recommended |
-|---|---|
-| T4, V100, GTX 1xxx, RTX 2xxx | `fp16=True` |
-| RTX 3xxx, A10G, A100, L4 | `bf16=True` |
-| RTX 4xxx, H100, B200 | `bf16=True` (or fp8 on H100 via specific kernels, not default) |
-| Apple M-series / ROCm | MPS/ROCm support is variable. `fp16` or `fp32` most reliable |
+| GPU generation               | Recommended                                                    |
+| ---------------------------- | -------------------------------------------------------------- |
+| T4, V100, GTX 1xxx, RTX 2xxx | `fp16=True`                                                    |
+| RTX 3xxx, A10G, A100, L4     | `bf16=True`                                                    |
+| RTX 4xxx, H100, B200         | `bf16=True` (or fp8 on H100 via specific kernels, not default) |
+| Apple M-series / ROCm        | MPS/ROCm support is variable. `fp16` or `fp32` most reliable   |
 
 bf16 is more numerically stable and almost always preferred when available.
 
@@ -81,21 +82,22 @@ bf16 is more numerically stable and almost always preferred when available.
 
 Hugging Face Jobs requires a Pro/Team/Enterprise plan. Pricing is approximate and subject to change. See the [Jobs pricing page](https://huggingface.co/docs/huggingface_hub/guides/jobs).
 
-| Flavor | Memory | Typical use | Est. $/hr |
-|---|---|---|---|
-| `cpu-basic` | ~2 GB | Dataset prep, validation, hard-neg mining (small) | <$0.10 |
-| `cpu-upgrade` | ~4 GB | Same, slightly bigger | $0.10 |
-| `t4-small` | 16 GB | Demos, MiniLM/DistilBERT with small batches | ~$0.75 |
-| `t4-medium` | 16 GB | MiniLM / DistilBERT with larger batch | ~$1.50 |
-| `l4x1` | 24 GB | BERT-base, MPNet, ModernBERT-base | ~$2.50 |
-| `a10g-small` | 24 GB | BERT-base to BERT-large | ~$3.50 |
-| `a10g-large` | 48 GB | ModernBERT-large, Qwen3-0.6B | ~$5.00 |
-| `a10g-largex2` | 96 GB (2× 48GB) | Mid-size multi-GPU | ~$10 |
-| `a100-large` | 80 GB | Large models or big contrastive batches | ~$10-12 |
-| `h100` | 80 GB | Biggest single-GPU | ~$12 |
-| `h100x8` | 640 GB | LLM-scale distributed | ~$96 |
+| Flavor         | Memory          | Typical use                                       | Est. $/hr |
+| -------------- | --------------- | ------------------------------------------------- | --------- |
+| `cpu-basic`    | ~2 GB           | Dataset prep, validation, hard-neg mining (small) | <$0.10    |
+| `cpu-upgrade`  | ~4 GB           | Same, slightly bigger                             | $0.10     |
+| `t4-small`     | 16 GB           | Demos, MiniLM/DistilBERT with small batches       | ~$0.75    |
+| `t4-medium`    | 16 GB           | MiniLM / DistilBERT with larger batch             | ~$1.50    |
+| `l4x1`         | 24 GB           | BERT-base, MPNet, ModernBERT-base                 | ~$2.50    |
+| `a10g-small`   | 24 GB           | BERT-base to BERT-large                           | ~$3.50    |
+| `a10g-large`   | 48 GB           | ModernBERT-large, Qwen3-0.6B                      | ~$5.00    |
+| `a10g-largex2` | 96 GB (2× 48GB) | Mid-size multi-GPU                                | ~$10      |
+| `a100-large`   | 80 GB           | Large models or big contrastive batches           | ~$10-12   |
+| `h100`         | 80 GB           | Biggest single-GPU                                | ~$12      |
+| `h100x8`       | 640 GB          | LLM-scale distributed                             | ~$96      |
 
 Defaults by base model:
+
 - MiniLM / DistilBERT -> `t4-small`
 - BERT-base / MPNet / ModernBERT-base -> `a10g-small` or `l4x1`
 - BERT-large / ModernBERT-large -> `a10g-large`

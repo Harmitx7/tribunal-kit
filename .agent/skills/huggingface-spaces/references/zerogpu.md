@@ -29,7 +29,7 @@ import spaces      # FIRST
 import torch       # then this
 ```
 
-If something initializes CUDA before `import spaces`, the patch can't apply and you get `RuntimeError: CUDA has been initialized before importing the spaces package`. For libraries that eagerly init CUDA on import (e.g. `numba.cuda`, NeMo via numba), set the disable env *before* the import:
+If something initializes CUDA before `import spaces`, the patch can't apply and you get `RuntimeError: CUDA has been initialized before importing the spaces package`. For libraries that eagerly init CUDA on import (e.g. `numba.cuda`, NeMo via numba), set the disable env _before_ the import:
 
 ```python
 import os
@@ -98,11 +98,11 @@ def generate(prompt, steps, ..., progress=gr.Progress(track_tqdm=True)):
 
 Rough VRAM sizing:
 
-| Mode | Memory rule | 7B | 27B | 70B |
-|------|------------|------|------|------|
-| bf16 | `params × 2` GB | 14 GB ✓ large | 54 GB → xlarge | 140 GB → quant + xlarge |
-| int8 | `params × 1` GB | 7 GB ✓ large | 27 GB ✓ large | 70 GB → xlarge |
-| 4-bit (NF4 / int4) | `params × ~0.55` GB | 4 GB ✓ large | 15 GB ✓ large | 40 GB ✓ large |
+| Mode               | Memory rule         | 7B            | 27B            | 70B                     |
+| ------------------ | ------------------- | ------------- | -------------- | ----------------------- |
+| bf16               | `params × 2` GB     | 14 GB ✓ large | 54 GB → xlarge | 140 GB → quant + xlarge |
+| int8               | `params × 1` GB     | 7 GB ✓ large  | 27 GB ✓ large  | 70 GB → xlarge          |
+| 4-bit (NF4 / int4) | `params × ~0.55` GB | 4 GB ✓ large  | 15 GB ✓ large  | 40 GB ✓ large           |
 
 Numbers are for weights only; activations and KV cache add on top (significant for long context).
 
@@ -289,7 +289,7 @@ Only the repeated block is compiled, so the artifact is small and the same graph
 
 ### Footguns
 
-- **Construct the block identically in both Spaces.** The compiled graph's constant FQNs must line up with the serving module. If the block chooses kernels/norms via env var or import probe (e.g. a triton fused RMSNorm vs the pure-torch path), pin the *same* choice in compile and serving.
+- **Construct the block identically in both Spaces.** The compiled graph's constant FQNs must line up with the serving module. If the block chooses kernels/norms via env var or import probe (e.g. a triton fused RMSNorm vs the pure-torch path), pin the _same_ choice in compile and serving.
 - **Dynamic shapes.** `dynamic_shapes=None` bakes in the one resolution you captured. To serve variable sequence length / image size, pass `torch.export.Dim(...)` for those axes (e.g. `{"hidden_states": {1: torch.export.Dim("seq")}}`) — this is per-model tuning.
 - **Data-dependent inputs don't export.** A block taking per-sample python int lists (some double-stream blocks) can make `torch.export` refuse to make them dynamic — those stay eager. Single-stream blocks taking only packed tensors export cleanly.
 - **Custom kernels.** Ship a `config[.variant].json` with a `kernels` list (`repo_id` + `revision`); `aoti_blocks_load` calls `kernels.get_kernel(...)` before loading so the op is registered. (FA3 still won't run on sm_120 — see Attention backends.)
@@ -303,7 +303,7 @@ Only the repeated block is compiled, so the artifact is small and the same graph
 
 ## Local development
 
-**Do NOT** wrap `import spaces` in `try/except` with a no-op fallback. Off-ZeroGPU, the `spaces` package is *already* a true no-op — the heavyweight behavior is gated on `SPACES_ZERO_GPU=1`, set only on ZeroGPU. `@spaces.GPU` returns the undecorated function unchanged elsewhere. The Gradio base image installs `spaces` on every hardware tier, so a duplicate onto T4 / A10G / CPU works without code changes too.
+**Do NOT** wrap `import spaces` in `try/except` with a no-op fallback. Off-ZeroGPU, the `spaces` package is _already_ a true no-op — the heavyweight behavior is gated on `SPACES_ZERO_GPU=1`, set only on ZeroGPU. `@spaces.GPU` returns the undecorated function unchanged elsewhere. The Gradio base image installs `spaces` on every hardware tier, so a duplicate onto T4 / A10G / CPU works without code changes too.
 
 That said: **iterate ON the Space, not locally.** The Space environment (Python, torch, CUDA, drivers, env vars) differs from yours; passing local tests doesn't prove the Space works. Push early — even with the app not fully polished — and use the rung ladder ([`debugging.md`](debugging.md)) against the live URL.
 

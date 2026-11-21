@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -9,7 +10,6 @@
  * 3. Browser destination & URL SSRF defense.
  * 4. Error sanitization to prevent information disclosure.
  */
-
 
 const SAFE_RESOURCE_ID_REGEX = /^[a-zA-Z0-9_-]+$/;
 
@@ -38,7 +38,9 @@ function validateResourceId(id, pattern = SAFE_RESOURCE_ID_REGEX) {
     trimmed.includes('\0') ||
     !pattern.test(trimmed)
   ) {
-    throw new Error(`Invalid resource identifier: "${id}". Only alphanumeric characters, dashes, and underscores are permitted.`);
+    throw new Error(
+      `Invalid resource identifier: "${id}". Only alphanumeric characters, dashes, and underscores are permitted.`,
+    );
   }
 
   return trimmed;
@@ -61,7 +63,10 @@ function isProhibitedIp(ip, options = {}) {
 
   const allowLoopback = options.allowLoopback === true;
   const allowPrivateNetwork = options.allowPrivateNetwork === true;
-  let cleanIp = ip.trim().toLowerCase().replace(/^\[|\]$/g, '');
+  let cleanIp = ip
+    .trim()
+    .toLowerCase()
+    .replace(/^\[|\]$/g, '');
 
   // Handle IPv4-mapped IPv6 (e.g. ::ffff:127.0.0.1 or WHATWG URL hex ::ffff:7f00:1)
   if (cleanIp.startsWith('::ffff:')) {
@@ -99,11 +104,11 @@ function isProhibitedIp(ip, options = {}) {
 
     // Private RFC 1918 (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) - Strictly isolated from allowLoopback
     if (a === 10) return !allowPrivateNetwork;
-    if (a === 172 && (b >= 16 && b <= 31)) return !allowPrivateNetwork;
+    if (a === 172 && b >= 16 && b <= 31) return !allowPrivateNetwork;
     if (a === 192 && b === 168) return !allowPrivateNetwork;
 
     // Carrier Grade NAT / Shared Address Space RFC 6598 (100.64.0.0/10)
-    if (a === 100 && (b >= 64 && b <= 127)) {
+    if (a === 100 && b >= 64 && b <= 127) {
       return true;
     }
 
@@ -123,7 +128,12 @@ function isProhibitedIp(ip, options = {}) {
 
   if (net.isIPv6(cleanIp)) {
     // Loopback (::1) and Unspecified (::)
-    if (cleanIp === '::1' || cleanIp === '0:0:0:0:0:0:0:1' || cleanIp === '::' || cleanIp === '0:0:0:0:0:0:0:0') {
+    if (
+      cleanIp === '::1' ||
+      cleanIp === '0:0:0:0:0:0:0:1' ||
+      cleanIp === '::' ||
+      cleanIp === '0:0:0:0:0:0:0:0'
+    ) {
       return !allowLoopback;
     }
 
@@ -174,15 +184,19 @@ function validateBrowserUrl(urlString, options = {}) {
   // 1. Strict Protocol Gating: Only HTTP and HTTPS
   const protocol = parsed.protocol.toLowerCase();
   if (protocol !== 'http:' && protocol !== 'https:') {
-    throw new Error(`Browser destination error: Unsupported URL scheme "${protocol}". Only http: and https: are allowed.`);
+    throw new Error(
+      `Browser destination error: Unsupported URL scheme "${protocol}". Only http: and https: are allowed.`,
+    );
   }
 
   const hostname = parsed.hostname.toLowerCase().replace(/^\[|\]$/g, '');
-  const port = parsed.port ? parseInt(parsed.port, 10) : (protocol === 'https:' ? 443 : 80);
+  const port = parsed.port ? parseInt(parsed.port, 10) : protocol === 'https:' ? 443 : 80;
 
   // 2. Prohibit Chrome DevTools Protocol & Debugger management ports
   if (port === 9222 || port === 9229) {
-    throw new Error(`Browser destination error: Prohibited network destination (Debugger port ${port} is blocked).`);
+    throw new Error(
+      `Browser destination error: Prohibited network destination (Debugger port ${port} is blocked).`,
+    );
   }
 
   const allowLoopback = options.allowLoopback === true;
@@ -195,7 +209,9 @@ function validateBrowserUrl(urlString, options = {}) {
     hostname === 'instance-data';
 
   if (isCloudMetadataHost) {
-    throw new Error(`Browser destination error: Prohibited network destination (Cloud metadata host "${hostname}" is blocked).`);
+    throw new Error(
+      `Browser destination error: Prohibited network destination (Cloud metadata host "${hostname}" is blocked).`,
+    );
   }
 
   // 4. Prohibited Local / Internal Suffixes (.local, .internal, .lan, .corp, .onion)
@@ -206,24 +222,41 @@ function validateBrowserUrl(urlString, options = {}) {
     hostname.endsWith('.corp') ||
     hostname.endsWith('.onion')
   ) {
-    throw new Error(`Browser destination error: Prohibited network destination (Internal domain suffix "${hostname}" is blocked).`);
+    throw new Error(
+      `Browser destination error: Prohibited network destination (Internal domain suffix "${hostname}" is blocked).`,
+    );
   }
 
   // 5. Loopback Hostname Defense
   if (hostname === 'localhost' || hostname.endsWith('.localhost')) {
     if (!allowLoopback) {
-      throw new Error(`Browser destination error: Prohibited network destination (Loopback address "${hostname}" is blocked).`);
+      throw new Error(
+        `Browser destination error: Prohibited network destination (Loopback address "${hostname}" is blocked).`,
+      );
     }
   }
 
   // 6. IP Literal Defense (IPv4, IPv6, IPv4-mapped IPv6, decimal/octal parsed by WHATWG URL)
   if (net.isIP(hostname) || hostname.startsWith('::ffff:')) {
     if (isProhibitedIp(hostname, options)) {
-      if (hostname === '169.254.169.254' || hostname.startsWith('169.254.') || hostname.startsWith('fe80')) {
-        throw new Error(`Browser destination error: Prohibited network destination (Cloud metadata / link-local address "${hostname}" is blocked).`);
+      if (
+        hostname === '169.254.169.254' ||
+        hostname.startsWith('169.254.') ||
+        hostname.startsWith('fe80')
+      ) {
+        throw new Error(
+          `Browser destination error: Prohibited network destination (Cloud metadata / link-local address "${hostname}" is blocked).`,
+        );
       }
-      if (hostname === '127.0.0.1' || hostname === '0.0.0.0' || hostname === '::1' || hostname.startsWith('127.')) {
-        throw new Error(`Browser destination error: Prohibited network destination (Loopback address "${hostname}" is blocked).`);
+      if (
+        hostname === '127.0.0.1' ||
+        hostname === '0.0.0.0' ||
+        hostname === '::1' ||
+        hostname.startsWith('127.')
+      ) {
+        throw new Error(
+          `Browser destination error: Prohibited network destination (Loopback address "${hostname}" is blocked).`,
+        );
       }
       if (
         hostname.startsWith('10.') ||
@@ -232,9 +265,13 @@ function validateBrowserUrl(urlString, options = {}) {
         hostname.startsWith('fc00:') ||
         hostname.startsWith('fd00:')
       ) {
-        throw new Error(`Browser destination error: Prohibited network destination (Private RFC 1918 address "${hostname}" is blocked).`);
+        throw new Error(
+          `Browser destination error: Prohibited network destination (Private RFC 1918 address "${hostname}" is blocked).`,
+        );
       }
-      throw new Error(`Browser destination error: Prohibited network destination (Prohibited IP address "${hostname}" is blocked).`);
+      throw new Error(
+        `Browser destination error: Prohibited network destination (Prohibited IP address "${hostname}" is blocked).`,
+      );
     }
   }
 

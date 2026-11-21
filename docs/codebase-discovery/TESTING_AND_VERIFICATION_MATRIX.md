@@ -8,11 +8,11 @@
 
 ## Executed in this discovery
 
-| Command | Result | Scope |
-|---|---|---|
-| `node scripts/validate-payload.js` | PASS | 461 payload Markdown files |
-| `npx jest --runInBand --no-coverage test/unit/args.test.js test/unit/validate.test.js test/unit/mcp_server.test.js test/unit/system1_decision_engine.test.js` | PASS: 4 suites, 36 tests | CLI parsing, validation, MCP, System-1 decisions |
-| `git diff --check` | FAIL | pre-existing `scripts/sync-version.js:1` trailing whitespace |
+| Command                                                                                                                                                       | Result                   | Scope                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------------ |
+| `node scripts/validate-payload.js`                                                                                                                            | PASS                     | 461 payload Markdown files                                   |
+| `npx jest --runInBand --no-coverage test/unit/args.test.js test/unit/validate.test.js test/unit/mcp_server.test.js test/unit/system1_decision_engine.test.js` | PASS: 4 suites, 36 tests | CLI parsing, validation, MCP, System-1 decisions             |
+| `git diff --check`                                                                                                                                            | FAIL                     | pre-existing `scripts/sync-version.js:1` trailing whitespace |
 
 Full `npm test` was not run because it writes/replaces the repository `coverage/` artifact, contrary to this read-only audit. Rust tests/build similarly write under `target/`, so they were not run. Browser, real MCP client, adapters, install/uninstall, native binary and external integration tests remain unverified.
 

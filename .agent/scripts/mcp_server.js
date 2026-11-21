@@ -10,6 +10,7 @@
 const readline = require('readline');
 const { SYSCALL_MAP, executeSyscall } = require('./syscall_registry');
 const { appendEvent } = require('./session_logger');
+const { assertWithinRoot } = require('./_utils');
 
 class McpServer {
   constructor() {
@@ -20,6 +21,13 @@ class McpServer {
     });
 
     this.rl.on('line', line => {
+      if (line.length > 1048576) {
+        return this.sendError(
+          null,
+          -32600,
+          'Payload Too Large: Maximum stdin frame size is 1MB (1048576 bytes).',
+        );
+      }
       try {
         const req = JSON.parse(line);
         this.handleMessage(req);
@@ -120,19 +128,31 @@ class McpServer {
     );
 
     if (name === 'tribunal_dispatch_dag') {
-      const payloadFile = args.payloadFile;
-      if (!payloadFile) {
-        return this.sendError(req.id, -32602, 'Missing payloadFile argument');
+      const payloadFile = args && args.payloadFile;
+      if (!payloadFile || typeof payloadFile !== 'string') {
+        return this.sendError(req.id, -32602, 'Missing or invalid payloadFile argument');
+      }
+
+      let safePayloadPath;
+      try {
+        safePayloadPath = assertWithinRoot(process.cwd(), payloadFile);
+      } catch (pathErr) {
+        return this.sendError(req.id, -32602, `Path security violation: ${pathErr.message}`);
       }
 
       try {
         const { spawnSync } = require('child_process');
         const scriptPath = require('path').join(__dirname, 'swarm_dispatcher.js');
-        const result = spawnSync('node', [scriptPath, '--mode', 'dag', '--file', payloadFile], {
-          cwd: process.cwd(),
-          encoding: 'utf8',
-          timeout: 120000,
-        });
+        const result = spawnSync(
+          process.execPath,
+          [scriptPath, '--mode', 'dag', '--file', safePayloadPath],
+          {
+            cwd: process.cwd(),
+            encoding: 'utf8',
+            timeout: 120000,
+            shell: false,
+          },
+        );
 
         appendEvent(
           'ToolCompleted',
@@ -161,7 +181,17 @@ class McpServer {
     const prefix = 'tribunal_';
     if (name.startsWith(prefix)) {
       const syscall = name.substring(prefix.length);
-      const syscallArgs = args.args || [];
+      const syscallArgs = (args && args.args) || [];
+      if (syscallArgs.includes('--fix')) {
+        const token = (args && args.approvalToken) || (req.params && req.params.approvalToken);
+        if (!token || typeof token !== 'string' || !token.startsWith('HUMAN-APPROVED-')) {
+          return this.sendError(
+            req.id,
+            -32001,
+            'Approval Required: Mutating operations (--fix) require a verified human approval token.',
+          );
+        }
+      }
 
       const result = executeSyscall(syscall, syscallArgs);
 
@@ -200,4 +230,8 @@ class McpServer {
   }
 }
 
-const _server = new McpServer();
+if (require.main === module) {
+  new McpServer();
+}
+
+module.exports = { McpServer };

@@ -2,10 +2,7 @@
 
 const vm = require('node:vm');
 
-const {
-  generateMutants,
-  evaluateMutants,
-} = require('../../src/verification');
+const { generateMutants, evaluateMutants } = require('../../src/verification');
 
 describe('Mutation Testing & Test Effectiveness Engine', () => {
   const targetFunctionCode = `
@@ -33,7 +30,7 @@ function isEligible(age, isVip) {
 
   test('evaluateMutants detects SURVIVING mutants when test suite is weak', async () => {
     // Weak test: Only calls function without asserting return values!
-    const weakTestRunner = (mutatedCode) => {
+    const weakTestRunner = mutatedCode => {
       // Execute the function in an isolated context but assert nothing about edge cases
       const sandbox = {};
       vm.createContext(sandbox);
@@ -53,7 +50,7 @@ function isEligible(age, isVip) {
 
   test('evaluateMutants confirms all mutants KILLED when test suite has thorough assertions', async () => {
     // Strict test: Tests all edge cases and boundary conditions
-    const strictTestRunner = (mutatedCode) => {
+    const strictTestRunner = mutatedCode => {
       const sandbox = {};
       vm.createContext(sandbox);
       vm.runInContext(mutatedCode, sandbox, { timeout: 1000 });

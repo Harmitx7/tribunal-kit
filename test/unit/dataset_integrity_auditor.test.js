@@ -110,7 +110,9 @@ describe('Dataset Integrity Auditor & Benchmark Leakage Detector', () => {
             suiteId: 'suite-1',
             category: 'Security',
             taskDescription: 'Audit query string parameter sanitization in checkout handler',
-            inputFixture: { prompt: 'Audit query string parameter sanitization in checkout handler' },
+            inputFixture: {
+              prompt: 'Audit query string parameter sanitization in checkout handler',
+            },
             expected: { groundTruthLabel: 'VULNERABLE', labelProvenance: 'Human review' },
             severity: 'HIGH',
             determinism: 'DETERMINISTIC',
@@ -122,7 +124,9 @@ describe('Dataset Integrity Auditor & Benchmark Leakage Detector', () => {
             suiteId: 'suite-1',
             category: 'Security',
             taskDescription: 'Audit query string parameter sanitization in checkout handler',
-            inputFixture: { prompt: 'Audit query string parameter sanitization in checkout handler' },
+            inputFixture: {
+              prompt: 'Audit query string parameter sanitization in checkout handler',
+            },
             expected: { groundTruthLabel: 'SAFE', labelProvenance: 'Conflicting review' },
             severity: 'HIGH',
             determinism: 'DETERMINISTIC',
@@ -137,11 +141,13 @@ describe('Dataset Integrity Auditor & Benchmark Leakage Detector', () => {
 
     it('warns on severe class imbalance (> 4:1 ratio)', () => {
       const imbalancedCases = [
-        ...Array(10).fill(null).map((_, i) => ({
-          ...validBaseDataset.cases[0],
-          id: `CASE-POS-${i}`,
-          inputFixture: { prompt: `Unique positive prompt ${i}` },
-        })),
+        ...Array(10)
+          .fill(null)
+          .map((_, i) => ({
+            ...validBaseDataset.cases[0],
+            id: `CASE-POS-${i}`,
+            inputFixture: { prompt: `Unique positive prompt ${i}` },
+          })),
         {
           ...validBaseDataset.cases[1],
           id: 'CASE-NEG-01',
@@ -161,7 +167,9 @@ describe('Dataset Integrity Auditor & Benchmark Leakage Detector', () => {
           {
             id: 'TRAIN-101',
             taskDescription: 'Audit database connection pool timeout setting',
-            inputFixture: { prompt: 'Review maxPoolSize setting in postgres database configuration' },
+            inputFixture: {
+              prompt: 'Review maxPoolSize setting in postgres database configuration',
+            },
           },
         ],
       };
@@ -171,7 +179,9 @@ describe('Dataset Integrity Auditor & Benchmark Leakage Detector', () => {
           {
             id: 'EVAL-201',
             taskDescription: 'Audit database connection pool timeout setting',
-            inputFixture: { prompt: 'Review maxPoolSize setting in postgres database configuration' },
+            inputFixture: {
+              prompt: 'Review maxPoolSize setting in postgres database configuration',
+            },
           },
         ],
       };

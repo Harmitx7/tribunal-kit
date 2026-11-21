@@ -94,7 +94,10 @@ describe('Software Verification Schemas & Contracts', () => {
   });
 
   test('validates verification_cases_dataset_v1.json fixture against schema', () => {
-    const fixturePath = path.resolve(__dirname, '../fixtures/software_verification/verification_cases_dataset_v1.json');
+    const fixturePath = path.resolve(
+      __dirname,
+      '../fixtures/software_verification/verification_cases_dataset_v1.json',
+    );
     const dataset = JSON.parse(fs.readFileSync(fixturePath, 'utf8'));
 
     expect(dataset.cases.length).toBe(12);

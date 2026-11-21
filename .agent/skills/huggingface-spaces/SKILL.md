@@ -8,45 +8,45 @@ scripts-binding:
   - .agent/scripts/lint_runner.js
   - .agent/scripts/verify_all.js
 inputs:
-  task: "string"
-  target_file: "string"
+  task: 'string'
+  target_file: 'string'
 outputs:
-  result: "string"
-  verification_status: "boolean"
+  result: 'string'
+  verification_status: 'boolean'
 trigger:
-  - "huggingface"
-  - "spaces"
-  - "deploy"
+  - 'huggingface'
+  - 'spaces'
+  - 'deploy'
 ---
 
 # Hugging Face Spaces
 
 ## Mandatory Pre-Flight Context Inspection
+
 Before reading, generating, or refactoring code in the `huggingface-spaces` domain, inspect these 5 critical parameters:
+
 1. **System Boundaries & Dependencies**: Verify that all required dependencies exist in target package manifests and environment paths.
 2. **Runtime Context & Platform Invariants**: Confirm target platform constraints (Node.js, Browser, Mobile OS, Edge runtime) before applying APIs.
 3. **Execution Guardrails**: Identify potential side-effects, state mutations, and unhandled asynchronous exceptions.
 4. **Validation & Type Contracts**: Validate input data schemas and strict type constraints across all module interfaces.
 5. **Observability & Proof of Execution**: Ensure execution produces tangible verification signals (terminal output, tests, metrics).
 
-
 ## Activation Boundaries
+
 - **Activate when:** Use when Build, deploy, and maintain applications on Hugging Face Spaces — Gradio / Docker / Static SDKs, ZeroGPU and dedicated hardware, model loading, debugging, buckets, inference providers, community grants. Use whenever the user asks to create or host an app on Hugging Face, port code onto ZeroGPU, fix a Space that won't build or run, or otherwise work with `hf spaces …`, `@spaces.GPU`, Space README frontmatter, or the `spaces` Python package.
 - **DO NOT activate when:** The task falls outside the `huggingface-spaces` domain or is managed by a different dedicated specialist agent.
 
-
 ## 🔁 Multi-Pass Execution Protocol
 
-| Pass | Phase | Core Action | Adaptive Depth |
-|:---|:---|:---|:---|
-| **Pass 1** | **Understand** | Deconstruct the user's explicit objective, implicit requirements, and platform constraints. | Fast / Standard / Deep |
-| **Pass 2** | **Plan** | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls. | Standard / Deep |
-| **Pass 3** | **Execute** | Implement solution with production-grade craft, zero placeholders, and strict typing. | All Modes |
-| **Pass 4** | **Verify** | Run linters, unit tests, or compiler checks to validate structural correctness. | All Modes |
-| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep |
-| **Pass 6** | **Harden** | Eliminate discovered friction, optimize performance, and harden error boundaries. | Standard / Deep |
-| **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. | All Modes |
-
+| Pass       | Phase                | Core Action                                                                                     | Adaptive Depth         |
+| :--------- | :------------------- | :---------------------------------------------------------------------------------------------- | :--------------------- |
+| **Pass 1** | **Understand**       | Deconstruct the user's explicit objective, implicit requirements, and platform constraints.     | Fast / Standard / Deep |
+| **Pass 2** | **Plan**             | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls.   | Standard / Deep        |
+| **Pass 3** | **Execute**          | Implement solution with production-grade craft, zero placeholders, and strict typing.           | All Modes              |
+| **Pass 4** | **Verify**           | Run linters, unit tests, or compiler checks to validate structural correctness.                 | All Modes              |
+| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep        |
+| **Pass 6** | **Harden**           | Eliminate discovered friction, optimize performance, and harden error boundaries.               | Standard / Deep        |
+| **Pass 7** | **Quality Gate**     | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing.    | All Modes              |
 
 Hugging Face Spaces host machine-learning applications. There are 1M+ today; each Space is a git repo. This skill covers creating, building, debugging, and maintaining them.
 
@@ -72,7 +72,7 @@ A Space is a git repo with three possible SDKs:
 
 Static Spaces are free for everyone and need no hardware. **Gradio and Docker Spaces run on compute and require a paid plan to create** — PRO for personal accounts, Team or Enterprise for organizations — with one exception: **free personal accounts in good standing (verified email, account older than 30 days) can host up to 2 ZeroGPU Spaces.**
 
-So on a free account ZeroGPU is the *only* way to host a Gradio Space. `cpu-basic` is not the safe fallback it used to be — it is gated too.
+So on a free account ZeroGPU is the _only_ way to host a Gradio Space. `cpu-basic` is not the safe fallback it used to be — it is gated too.
 
 **ZeroGPU (`zero-a10g`)** — dynamic, per-request GPU allocation on NVIDIA RTX PRO 6000 Blackwell (sm_120). Two sizes: `large` (half MIG, 48 GB, 1× quota) and `xlarge` (full, 96 GB, 2× quota). Free for the Space creator; Space visitors consume their own daily quota (~5 min free / 40 min Pro / 60 min Enterprise). **Gradio-only**, **PyTorch-first**. Hosting caps per account: **2** free personal, **10** PRO, **50** Team / Enterprise org.
 
@@ -143,15 +143,15 @@ Always required:
 ```yaml
 ---
 title: ...
-emoji: 🚀                # pick something representative
-colorFrom: blue          # red|yellow|green|blue|indigo|purple|pink|gray (only these)
+emoji: 🚀 # pick something representative
+colorFrom: blue # red|yellow|green|blue|indigo|purple|pink|gray (only these)
 colorTo: indigo
-sdk: gradio              # gradio | docker | static
-sdk_version: 6.15.1      # latest stable unless you have a reason*
-app_file: app.py         # gradio only (docker / static use Dockerfile / index.html)
-short_description: ...   # ≤ 60 chars (server rejects longer)
-python_version: "3.12"   # ZeroGPU officially supports 3.10.13 and 3.12.12
-startup_duration_timeout: 30m   # default; bump to 1h for big LLMs / heavy downloads
+sdk: gradio # gradio | docker | static
+sdk_version: 6.15.1 # latest stable unless you have a reason*
+app_file: app.py # gradio only (docker / static use Dockerfile / index.html)
+short_description: ... # ≤ 60 chars (server rejects longer)
+python_version: '3.12' # ZeroGPU officially supports 3.10.13 and 3.12.12
+startup_duration_timeout: 30m # default; bump to 1h for big LLMs / heavy downloads
 ---
 ```
 
@@ -205,12 +205,11 @@ Short version:
 - **Static**: https://huggingface.co/docs/hub/spaces-sdks-static. For built SPAs, set `app_build_command: npm run build` and `app_file: src/index.html` in frontmatter.
 - **ZeroGPU specifics** (decorator semantics, sizing, AoTI, generators, concurrency, pickle / `gr.State` across the worker boundary): [`references/zerogpu.md`](references/zerogpu.md) — read this whenever the Space targets ZeroGPU.
 
-
 ## 6. Iterate on the Space, not locally
 
 Try to build a release candidate from the user quest locally and push it — then use the live URL as your test loop. The Space environment is the only one that matters; do not try to test locally. `python3 -m py_compile app.py` is the maximum local check worth doing before pushing.
 
-Push files with `hf upload <namespace>/<name> . --repo-type space`. **`--repo-type space` is required** — `hf upload` defaults to a *model* repo and will otherwise upload to (and silently create) a model repo of the same name. Add `--exclude "**/__pycache__/**"` so local bytecode caches aren't committed into the Space.
+Push files with `hf upload <namespace>/<name> . --repo-type space`. **`--repo-type space` is required** — `hf upload` defaults to a _model_ repo and will otherwise upload to (and silently create) a model repo of the same name. Add `--exclude "**/__pycache__/**"` so local bytecode caches aren't committed into the Space.
 
 Once pushed, pick the cheapest update mechanism for each change — hot-reload for pure Python edits, `hf upload` for code-only files hot-reload can't touch, full rebuild only when `requirements.txt` / `Dockerfile` / README frontmatter actually changed. Full ladder + footguns (hot-reload poisoning factory reboot, runtime.sha lag, etc.) in [`references/debugging.md`](references/debugging.md).
 
@@ -219,17 +218,21 @@ Once pushed, pick the cheapest update mechanism for each change — hot-reload f
 Don't trust `RUNNING` alone — the app can be running but broken. Four steps, in order:
 
 **A. Alive?** Stage + hardware:
+
 ```bash
 hf spaces info <ns>/<name> --expand runtime
 ```
 
 **B. Logs clean post-boot?** Read the run log to confirm startup finished without warnings or silent fallbacks:
+
 ```bash
 hf spaces logs <ns>/<name> --tail 200
 ```
+
 Look for model-load completion, no import warnings, no "falling back to CPU" / dtype downgrade messages, no `RUNNING` masking a half-broken app.
 
 **C. API actually responds.** With logs still tailing in another terminal (`hf spaces logs <ns>/<name> --follow`), call the endpoint:
+
 ```python
 from gradio_client import Client, handle_file
 import os
@@ -239,10 +242,12 @@ result = c.predict(..., api_name="/generate")
 ```
 
 **D. Sniff output AND logs.** HTTP 200 ≠ correct output. Check both:
+
 ```python
 head = open(result, "rb").read(16)
 # glTF / \x89PNG / RIFF…WEBP / RIFF…WAVE / [4:8]==b"ftyp" → png/jpg/webp/wav/mp4
 ```
+
 And look at the run log emitted during the call — silent fallbacks (model snapping to a different size, missing optional dep, dtype downgrade) only show up there.
 
 Full smoke-test patterns (streaming endpoints, OAuth-gated Spaces, `gr.Server` custom routes): [`references/debugging.md`](references/debugging.md).
@@ -272,37 +277,35 @@ If you solve an error that wasn't in the known-errors list, suggest the user PR 
 
 ## Reference index
 
-| When to read | File |
-|---|---|
-| **How ZeroGPU works** + correct patterns (decorator, sizing, pickle, generators, real-time, AoTI) | [`references/zerogpu.md`](references/zerogpu.md) |
-| **Iterate + debug**: logs, rung ladder, smoke testing (and dev mode + SSH as a last resort) | [`references/debugging.md`](references/debugging.md) |
-| **Error-string lookup** — the single place for all error symptoms (Spaces, ZeroGPU, Gradio, deps) | [`references/known-errors.md`](references/known-errors.md) |
-| Pinning deps, picking wheels, torch-family alignment | [`references/requirements.md`](references/requirements.md) |
-| `gr.Examples` (add when it makes sense), themes, custom HTML components, `gr.Server`, MCP server (`mcp_server=True`) | [`references/gradio.md`](references/gradio.md) |
-| Persistent storage, public bucket URLs | [`references/buckets.md`](references/buckets.md) |
-| Community grant requests (hardware the user can't pay for) | [`references/grants.md`](references/grants.md) |
-| Provider proxy (zero-VRAM big LLM via Cerebras / Fireworks / Together / etc.) | [`references/inference-providers.md`](references/inference-providers.md) |
-| **3D Spaces: generation, CUDA extensions, output formats, and model recipes (incl. gaussian splatting)** | [`references/3d-generation.md`](references/3d-generation.md) |
+| When to read                                                                                                         | File                                                                     |
+| -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **How ZeroGPU works** + correct patterns (decorator, sizing, pickle, generators, real-time, AoTI)                    | [`references/zerogpu.md`](references/zerogpu.md)                         |
+| **Iterate + debug**: logs, rung ladder, smoke testing (and dev mode + SSH as a last resort)                          | [`references/debugging.md`](references/debugging.md)                     |
+| **Error-string lookup** — the single place for all error symptoms (Spaces, ZeroGPU, Gradio, deps)                    | [`references/known-errors.md`](references/known-errors.md)               |
+| Pinning deps, picking wheels, torch-family alignment                                                                 | [`references/requirements.md`](references/requirements.md)               |
+| `gr.Examples` (add when it makes sense), themes, custom HTML components, `gr.Server`, MCP server (`mcp_server=True`) | [`references/gradio.md`](references/gradio.md)                           |
+| Persistent storage, public bucket URLs                                                                               | [`references/buckets.md`](references/buckets.md)                         |
+| Community grant requests (hardware the user can't pay for)                                                           | [`references/grants.md`](references/grants.md)                           |
+| Provider proxy (zero-VRAM big LLM via Cerebras / Fireworks / Together / etc.)                                        | [`references/inference-providers.md`](references/inference-providers.md) |
+| **3D Spaces: generation, CUDA extensions, output formats, and model recipes (incl. gaussian splatting)**             | [`references/3d-generation.md`](references/3d-generation.md)             |
 
 ## 🚨 Edge-Case & Failure Mode Matrix
 
-| Scenario | Risk | Production Mitigation |
-|:---|:---|:---|
-| **Empty or Null Inputs** | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers |
-| **Network Timeout / Latency** | Hanging operations or duplicate side-effects | Implement bounded abort controllers, exponential backoff, and idempotency keys |
-| **Concurrency / Race Conditions** | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls |
-| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection | Validate boundary payloads with Zod/Pydantic schemas prior to execution |
-| **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
-
+| Scenario                               | Risk                                                 | Production Mitigation                                                           |
+| :------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **Empty or Null Inputs**               | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers   |
+| **Network Timeout / Latency**          | Hanging operations or duplicate side-effects         | Implement bounded abort controllers, exponential backoff, and idempotency keys  |
+| **Concurrency / Race Conditions**      | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls          |
+| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection      | Validate boundary payloads with Zod/Pydantic schemas prior to execution         |
+| **Resource / Memory Saturation**       | OOM errors, frame drops, or memory leaks             | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
 
 ## 🤖 LLM-Specific Traps Table
 
-| Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
-|:---|:---|:---|
-| **Platform-Dependent Shell Commands** | Hardcoding $(cat ~/.cache/huggingface/token) or piping to jq | Use platform-agnostic token checks via env var HF_TOKEN and native JSON parsing |
-| **VRAM OOM Crash** | Loading 70B model weights on a consumer 16GB GPU without quantization | Calculate parameter bounds (fp16 = VRAM/2, Q4 = VRAM*2) and load with bitsandbytes/GGUF |
-| **Blocking Batch Generation** | Generating large batches synchronously without streaming or yield | Use TextIteratorStreamer or asynchronous generate workers to prevent request timeouts |
-
+| Anti-Pattern                          | What AI Commonly Does Wrong                                           | What Is Actually Correct                                                                |
+| :------------------------------------ | :-------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| **Platform-Dependent Shell Commands** | Hardcoding $(cat ~/.cache/huggingface/token) or piping to jq          | Use platform-agnostic token checks via env var HF_TOKEN and native JSON parsing         |
+| **VRAM OOM Crash**                    | Loading 70B model weights on a consumer 16GB GPU without quantization | Calculate parameter bounds (fp16 = VRAM/2, Q4 = VRAM*2) and load with bitsandbytes/GGUF |
+| **Blocking Batch Generation**         | Generating large batches synchronously without streaming or yield     | Use TextIteratorStreamer or asynchronous generate workers to prevent request timeouts   |
 
 ## 🏛️ Tribunal Verification & Guardrails
 
@@ -310,12 +313,15 @@ If you solve an error that wasn't in the known-errors list, suggest the user PR 
 **Slash Command:** `/review` or `/tribunal-full`
 
 ### 🔬 Evidence Standard (Tri-State Verification)
+
 Every finding, audit statement, or completion claim must classify its factual certainty:
+
 - **`[OBSERVED]`**: Directly confirmed in the codebase or verified via executed terminal command.
 - **`[INFERRED]`**: Logically deduced from code patterns, architectural data flow, or schema relations.
 - **`[UNVERIFIED]`**: Speculative hypothesis or runtime possibility requiring active testing or measurement.
 
 ### ✅ Pre-Flight Self-Audit Checklist
+
 ```
 ✅ Are model architectures and weights verified to fit within target hardware VRAM budgets?
 ✅ Are pipeline requests guarded with bounded timeouts and retry backoffs?
@@ -325,6 +331,8 @@ Every finding, audit statement, or completion claim must classify its factual ce
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
+
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.

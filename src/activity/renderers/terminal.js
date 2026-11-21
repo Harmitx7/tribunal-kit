@@ -10,7 +10,11 @@
 
 const { EVENT_TYPES, EVENT_VERBS, EVENT_GLYPHS, ASCII_GLYPHS } = require('../types');
 const { sanitizeActivityEvent } = require('../schema');
-const { resolveDetailLevel, DETAIL_LEVELS, shouldDisplayEvent } = require('../progressive_disclosure');
+const {
+  resolveDetailLevel,
+  DETAIL_LEVELS,
+  shouldDisplayEvent,
+} = require('../progressive_disclosure');
 
 let tuiTheme = null;
 try {
@@ -70,10 +74,10 @@ function renderTerminal(rawEvent, options = {}) {
   const noColor = Boolean(
     options.noColor ||
     process.env.NO_COLOR ||
-    (tuiTheme && !tuiTheme.hasColor && !options.forceColor)
+    (tuiTheme && !tuiTheme.hasColor && !options.forceColor),
   );
 
-  const isUtf = options.ascii ? false : (tuiTheme ? tuiTheme.isUtf8 : true);
+  const isUtf = options.ascii ? false : tuiTheme ? tuiTheme.isUtf8 : true;
   const glyphMap = isUtf ? EVENT_GLYPHS : ASCII_GLYPHS;
   const rawGlyph = glyphMap[event.eventType] || '›';
   const verb = EVENT_VERBS[event.eventType] || 'Notice';
@@ -83,11 +87,11 @@ function renderTerminal(rawEvent, options = {}) {
     if (noColor || !tuiTheme || !tuiTheme.color) return txt;
     return tuiTheme.color(rgb, txt);
   };
-  const bold = (txt) => {
+  const bold = txt => {
     if (noColor || !tuiTheme || !tuiTheme.bold) return txt;
     return tuiTheme.bold(txt);
   };
-  const dim = (txt) => {
+  const dim = txt => {
     if (noColor || !tuiTheme || !tuiTheme.dim) return txt;
     return tuiTheme.dim(txt);
   };
@@ -114,7 +118,9 @@ function renderTerminal(rawEvent, options = {}) {
   }
 
   if (detailLevel === DETAIL_LEVELS.DIAGNOSTIC) {
-    const timeBadge = event.timestamp ? ` ${dim(`[${event.timestamp.split('T')[1]?.slice(0, 8) || ''}]`)}` : '';
+    const timeBadge = event.timestamp
+      ? ` ${dim(`[${event.timestamp.split('T')[1]?.slice(0, 8) || ''}]`)}`
+      : '';
     const opBadge = event.operationId ? ` ${dim(`(${event.operationId})`)}` : '';
     header = `${header}${opBadge}${timeBadge}`;
   }
@@ -122,7 +128,11 @@ function renderTerminal(rawEvent, options = {}) {
   if (options.compact) {
     const metaParts = [];
     if (cleanSummary) metaParts.push(cleanSummary);
-    if (event.progress && event.progress.percentage !== undefined && event.progress.percentage !== null) {
+    if (
+      event.progress &&
+      event.progress.percentage !== undefined &&
+      event.progress.percentage !== null
+    ) {
       metaParts.push(`${event.progress.percentage}%`);
     }
     const metaStr = metaParts.length > 0 ? ` ${dim(`(${metaParts.join(' · ')})`)}` : '';
@@ -141,7 +151,9 @@ function renderTerminal(rawEvent, options = {}) {
       const pending = Math.max(0, p.total - p.current);
       const pct = p.percentage !== undefined && p.percentage !== null ? ` (${p.percentage}%)` : '';
       const unit = p.unit || 'steps';
-      lines.push(`  ${dim('Progress:')} ${p.current}/${p.total} ${unit}${pct} ${dim('·')} ${pending} pending`);
+      lines.push(
+        `  ${dim('Progress:')} ${p.current}/${p.total} ${unit}${pct} ${dim('·')} ${pending} pending`,
+      );
     } else if (p.percentage !== undefined && p.percentage !== null && p.isAuthoritative) {
       lines.push(`  ${dim('Progress:')} ${p.percentage}%`);
     } else if (!p.isAuthoritative) {
@@ -150,15 +162,25 @@ function renderTerminal(rawEvent, options = {}) {
   }
 
   if (event.evidence) {
-    const maxChars = detailLevel === DETAIL_LEVELS.ESSENTIAL ? 100 : (detailLevel === DETAIL_LEVELS.DIAGNOSTIC ? 500 : 200);
-    const rawEv = typeof event.evidence === 'string' ? event.evidence : JSON.stringify(event.evidence);
+    const maxChars =
+      detailLevel === DETAIL_LEVELS.ESSENTIAL
+        ? 100
+        : detailLevel === DETAIL_LEVELS.DIAGNOSTIC
+          ? 500
+          : 200;
+    const rawEv =
+      typeof event.evidence === 'string' ? event.evidence : JSON.stringify(event.evidence);
     const ev = sanitizeForTerminal(rawEv);
-    lines.push(`  ${dim('Evidence:')} ${ev.slice(0, maxChars)}${ev.length > maxChars ? '...' : ''}`);
+    lines.push(
+      `  ${dim('Evidence:')} ${ev.slice(0, maxChars)}${ev.length > maxChars ? '...' : ''}`,
+    );
   }
 
   if (event.warning) {
     const cleanWarn = sanitizeForTerminal(event.warning.message || '');
-    lines.push(`  ${colorize(STATE_COLORS[EVENT_TYPES.WARNING_DETECTED], 'Warning:')} ${cleanWarn}`);
+    lines.push(
+      `  ${colorize(STATE_COLORS[EVENT_TYPES.WARNING_DETECTED], 'Warning:')} ${cleanWarn}`,
+    );
   }
 
   if (event.error) {

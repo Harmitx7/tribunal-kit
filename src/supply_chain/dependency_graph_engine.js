@@ -75,7 +75,7 @@ class DependencyGraph {
     const cycles = [];
     const path = [];
 
-    const dfs = (node) => {
+    const dfs = node => {
       visited.add(node);
       recStack.add(node);
       path.push(node);
@@ -364,4 +364,3 @@ module.exports = {
   buildNpmDependencyGraph,
   buildPurl,
 };
-

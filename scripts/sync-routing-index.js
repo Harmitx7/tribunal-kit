@@ -38,13 +38,21 @@ function parseFrontmatter(content) {
     if (!line) continue;
     if (line.startsWith('- ') && currentKey) {
       if (!Array.isArray(result[currentKey])) result[currentKey] = [];
-      result[currentKey].push(line.slice(2).trim().replace(/^["']|["']$/g, ''));
+      result[currentKey].push(
+        line
+          .slice(2)
+          .trim()
+          .replace(/^["']|["']$/g, ''),
+      );
       continue;
     }
     const idx = line.indexOf(':');
     if (idx !== -1) {
       const key = line.slice(0, idx).trim();
-      const val = line.slice(idx + 1).trim().replace(/^["']|["']$/g, '');
+      const val = line
+        .slice(idx + 1)
+        .trim()
+        .replace(/^["']|["']$/g, '');
       currentKey = key;
       if (val === '') {
         result[key] = [];
@@ -62,7 +70,19 @@ function extractKeywords(text, name = '') {
     .replace(/[^a-z0-9_\s-]/g, ' ')
     .split(/\s+/)
     .filter(w => w.length > 2);
-  const stopWords = new Set(['the', 'and', 'for', 'with', 'from', 'all', 'any', 'that', 'this', 'are', 'was']);
+  const stopWords = new Set([
+    'the',
+    'and',
+    'for',
+    'with',
+    'from',
+    'all',
+    'any',
+    'that',
+    'this',
+    'are',
+    'was',
+  ]);
   return Array.from(new Set(words.filter(w => !stopWords.has(w)))).slice(0, 10);
 }
 
@@ -81,9 +101,9 @@ function syncRoutingIndex() {
   // 2. Slash Commands mapping
   const slashConfig = JSON.parse(fs.readFileSync(SLASH_COMMANDS_PATH, 'utf8'));
   const commandMap = new Map();
-  for (const cmd of (slashConfig.commands || [])) {
+  for (const cmd of slashConfig.commands || []) {
     commandMap.set(cmd.name.replace(/^\//, ''), cmd);
-    for (const a of (cmd.aliases || [])) {
+    for (const a of cmd.aliases || []) {
       commandMap.set(a.replace(/^\//, ''), cmd);
     }
   }
@@ -91,24 +111,40 @@ function syncRoutingIndex() {
   // 3. Specialist Registry mapping
   const specRegistry = JSON.parse(fs.readFileSync(SPECIALIST_REGISTRY_PATH, 'utf8'));
   const specialistMap = new Map();
-  for (const s of (specRegistry.specialists || [])) {
+  for (const s of specRegistry.specialists || []) {
     specialistMap.set(s.name, s);
   }
 
   // 4. Build Agents Index
-  const agentFiles = fs.readdirSync(AGENTS_DIR).filter(f => f.endsWith('.md')).sort();
+  const agentFiles = fs
+    .readdirSync(AGENTS_DIR)
+    .filter(f => f.endsWith('.md'))
+    .sort();
   const agents = agentFiles.map(file => {
     const name = file.replace('.md', '');
     const content = fs.readFileSync(path.join(AGENTS_DIR, file), 'utf8');
     const fm = parseFrontmatter(content);
     const spec = specialistMap.get(name) || {};
 
-    const domain = fm.domain || spec.domain || (name.includes('security') ? 'security' : name.includes('ui') ? 'frontend' : 'general');
-    const tier = (name === 'orchestrator' || name === 'logic-reviewer' || name === 'security-auditor' || name === 'project-planner') ? 'core' : 'specialized';
-    const description = fm.description || spec.description || `Autonomous specialist agent for ${name.replace(/-/g, ' ')}.`;
-    const triggerKeywords = Array.isArray(fm.trigger) && fm.trigger.length > 0
-      ? fm.trigger
-      : extractKeywords(description, name);
+    const domain =
+      fm.domain ||
+      spec.domain ||
+      (name.includes('security') ? 'security' : name.includes('ui') ? 'frontend' : 'general');
+    const tier =
+      name === 'orchestrator' ||
+      name === 'logic-reviewer' ||
+      name === 'security-auditor' ||
+      name === 'project-planner'
+        ? 'core'
+        : 'specialized';
+    const description =
+      fm.description ||
+      spec.description ||
+      `Autonomous specialist agent for ${name.replace(/-/g, ' ')}.`;
+    const triggerKeywords =
+      Array.isArray(fm.trigger) && fm.trigger.length > 0
+        ? fm.trigger
+        : extractKeywords(description, name);
 
     return {
       name,
@@ -122,7 +158,10 @@ function syncRoutingIndex() {
   });
 
   // 5. Build Workflows Index
-  const workflowFiles = fs.readdirSync(WORKFLOWS_DIR).filter(f => f.endsWith('.md')).sort();
+  const workflowFiles = fs
+    .readdirSync(WORKFLOWS_DIR)
+    .filter(f => f.endsWith('.md'))
+    .sort();
   const workflows = workflowFiles.map(file => {
     const name = file.replace('.md', '');
     const cmd = commandMap.get(name) || {};
@@ -132,8 +171,22 @@ function syncRoutingIndex() {
     const description = cmd.description || title;
     const commandName = cmd.name || `/${name}`;
 
-    const domain = name.includes('tribunal') ? 'tribunal' : name.includes('audit') ? 'audit' : 'general';
-    const tier = ['understand', 'tribunal-understand', 'generate', 'create', 'audit', 'plan', 'test'].includes(name) ? 'core' : 'specialized';
+    const domain = name.includes('tribunal')
+      ? 'tribunal'
+      : name.includes('audit')
+        ? 'audit'
+        : 'general';
+    const tier = [
+      'understand',
+      'tribunal-understand',
+      'generate',
+      'create',
+      'audit',
+      'plan',
+      'test',
+    ].includes(name)
+      ? 'core'
+      : 'specialized';
 
     const triggers = new Set([name, commandName.replace(/^\//, '')]);
     if (cmd.aliases) {
@@ -153,12 +206,15 @@ function syncRoutingIndex() {
   });
 
   // 6. Build Skills Index
-  const skillDirs = fs.readdirSync(SKILLS_DIR).filter(d => fs.statSync(path.join(SKILLS_DIR, d)).isDirectory()).sort();
+  const skillDirs = fs
+    .readdirSync(SKILLS_DIR)
+    .filter(d => fs.statSync(path.join(SKILLS_DIR, d)).isDirectory())
+    .sort();
   const skills = skillDirs.map(name => {
     const skillPath = path.join(SKILLS_DIR, name, 'SKILL.md');
     let description = `Skill pack for ${name.replace(/-/g, ' ')}.`;
     let triggerKeywords = [name.replace(/-/g, ' ')];
-    let domain = skillToDomain[name] || 'general';
+    const domain = skillToDomain[name] || 'general';
 
     if (fs.existsSync(skillPath)) {
       const content = fs.readFileSync(skillPath, 'utf8');
@@ -171,7 +227,15 @@ function syncRoutingIndex() {
       }
     }
 
-    const tier = ['clean-code', 'systematic-debugging', 'error-resilience', 'api-patterns', 'testing-patterns'].includes(name) ? 'core' : 'specialized';
+    const tier = [
+      'clean-code',
+      'systematic-debugging',
+      'error-resilience',
+      'api-patterns',
+      'testing-patterns',
+    ].includes(name)
+      ? 'core'
+      : 'specialized';
 
     return {
       name,
@@ -210,4 +274,3 @@ if (require.main === module) {
 }
 
 module.exports = { syncRoutingIndex };
-

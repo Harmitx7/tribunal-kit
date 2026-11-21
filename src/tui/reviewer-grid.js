@@ -5,7 +5,17 @@
  * Animates all 28 Tribunal reviewers running concurrently.
  */
 
-const { isTTY, hasColor, isUtf8, RGB, GLYPHS, color, dim, getColumns, visibleWidth } = require('./theme');
+const {
+  isTTY,
+  hasColor,
+  isUtf8,
+  RGB,
+  GLYPHS,
+  color,
+  dim,
+  getColumns,
+  visibleWidth,
+} = require('./theme');
 const { renderProgressBar } = require('./progress');
 
 const ALL_REVIEWERS = [

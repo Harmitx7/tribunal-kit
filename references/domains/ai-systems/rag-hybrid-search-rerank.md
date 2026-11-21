@@ -2,7 +2,7 @@
 
 > **Authority**: Modern Information Retrieval Standards & Dense/Sparse Hybrid Retrieval Architectures  
 > **Applicable Domains**: AI Systems, Vector Databases, Context Retrieval Pipelines  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -36,8 +36,8 @@ Where $k$ is a smoothing constant (standard: 60) and $r_m(d)$ is the 1-based ran
 from typing import Dict, List, Any
 
 def reciprocal_rank_fusion(
-    dense_results: List[Dict[str, Any]], 
-    sparse_results: List[Dict[str, Any]], 
+    dense_results: List[Dict[str, Any]],
+    sparse_results: List[Dict[str, Any]],
     k: int = 60
 ) -> List[Dict[str, Any]]:
     scores: Dict[str, float] = {}
@@ -90,5 +90,5 @@ def rerank_passages(query: str, candidate_chunks: List[str], top_n: int = 5) -> 
 - [ ] Hybrid search active (both vector similarity and BM25 full-text indexing enabled).
 - [ ] Reciprocal Rank Fusion applied with $k=60$.
 - [ ] Cross-encoder re-ranking stage limits context passed to LLM to top 3–5 items.
-- [ ] Document metadata filtered *before* vector distance calculation (pre-filtering via SQL/HNSW index).
+- [ ] Document metadata filtered _before_ vector distance calculation (pre-filtering via SQL/HNSW index).
 - [ ] System handles empty retrieval gracefully with fallback responses without hallucinatory generation.

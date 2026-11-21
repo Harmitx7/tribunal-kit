@@ -47,19 +47,23 @@ Building upon the canonical activity system, lifecycle state machines, context-a
 ## 2. API & Component Architecture
 
 ### `visibleWidth(text)` & `visibleLength(text)`
+
 Calculates the exact number of monospace terminal columns a string will occupy:
+
 ```javascript
 const { visibleWidth } = require('tribunal-kit/tui');
 
-visibleWidth('Standard ASCII');              // => 14
+visibleWidth('Standard ASCII'); // => 14
 visibleWidth('\x1b[92mColored Text\x1b[0m'); // => 12 (ANSI stripped)
-visibleWidth('Code 架构');                   // => 9 (5 ASCII + 4 for 2 CJK characters)
-visibleWidth('Launch 🚀 now');               // => 13 (11 ASCII + 2 for emoji)
-visibleWidth('test\u200B');                  // => 4 (zero-width space = 0)
+visibleWidth('Code 架构'); // => 9 (5 ASCII + 4 for 2 CJK characters)
+visibleWidth('Launch 🚀 now'); // => 13 (11 ASCII + 2 for emoji)
+visibleWidth('test\u200B'); // => 4 (zero-width space = 0)
 ```
 
 ### `sanitizeTerminal(input, options)`
+
 Sanitizes untrusted terminal inputs against ANSI injection, control character abuse, and secret leakage:
+
 ```javascript
 const { sanitizeTerminal } = require('tribunal-kit/tui');
 
@@ -77,28 +81,34 @@ sanitizeTerminal('Token: Bearer eyJhbGciOiJIUzI1Ni...ID');
 ```
 
 ### `renderPanel(title, lines, options)`
+
 Renders high-density, Neo-Brutalist bordered panels with precise geometric box alignment:
+
 ```javascript
 const { renderPanel, RGB } = require('tribunal-kit/tui');
 
-renderPanel('System Architecture', [
-  '• Components: 12 verified',
-  '• Blast Radius: Ring 1 (Low)',
-  '• Health Score: 98/100',
-], {
-  width: 50,
-  borderColor: RGB.SLATE_700,
-  titleColor: RGB.WHITE,
-  accessory: 'v9.3.0',
-});
+renderPanel(
+  'System Architecture',
+  ['• Components: 12 verified', '• Blast Radius: Ring 1 (Low)', '• Health Score: 98/100'],
+  {
+    width: 50,
+    borderColor: RGB.SLATE_700,
+    titleColor: RGB.WHITE,
+    accessory: 'v9.3.0',
+  },
+);
 ```
+
 **Features:**
+
 - Multi-line strings in lines are automatically split across separate bordered rows.
 - Overflowing lines and titles are cleanly truncated with `...` to protect box boundaries.
 - Responsive width calculation adapts to narrow console environments (`cols < 36`).
 
 ### `renderProgressBar(label, percentage, options)`
+
 Renders a telemetry-grounded ANSI progress bar:
+
 ```javascript
 const { renderProgressBar, RGB } = require('tribunal-kit/tui');
 
@@ -112,7 +122,9 @@ renderProgressBar('Scanning Files', null, { width: 30 });
 ```
 
 ### `renderReviewerGrid(completedCount)`
+
 Renders the 28-reviewer parallel execution matrix with responsive columns (3 columns on wide displays, 2 on medium, 1 on compact/mobile):
+
 ```javascript
 const { renderReviewerGrid } = require('tribunal-kit/tui');
 
@@ -130,6 +142,7 @@ tk validate --file payload.json --json
 ```
 
 **Output:**
+
 ```json
 {
   "valid": true,
@@ -140,6 +153,7 @@ tk validate --file payload.json --json
 ```
 
 If validation fails:
+
 ```json
 {
   "valid": false,
@@ -153,14 +167,13 @@ If validation fails:
 
 ## 4. Verification & Invariants Summary
 
-| Invariant | Implementation Mechanism | Verified In Suite |
-|---|---|---|
-| **Visible Column Parity** | `visibleWidth()` accounts for CJK & Emojis | `test/unit/cli_tui_phase8.test.js` |
-| **Control Code Defense** | `sanitizeTerminal()` strips `\x00-\x1F`, neutralizes `\r` | `test/unit/cli_tui_phase8.test.js` |
-| **Secret Redaction** | Pattern matching for Bearer tokens, JWTs, API keys | `test/unit/cli_tui_phase8.test.js` |
-| **Panel Box Alignment** | `innerWidth` padding with `visibleWidth` & multi-line split | `test/unit/cli_tui_phase8.test.js` |
-| **Telemetry Truthfulness** | Indeterminate states render `[unmetered]`, 99% cap | `test/unit/cli_tui_phase8.test.js` |
-| **NO_COLOR Adherence** | Plain text fallback when `NO_COLOR` is detected | `test/unit/cli_tui_phase8.test.js` |
-| **Clean JSON Output** | Suppresses banners & ANSI when `--json` flag is active | `test/unit/cli_tui_phase8.test.js` |
-| **Zero Hanging Timers** | Shimmer intervals use `.unref()` and handle `SIGINT` | `test/unit/tui.test.js` |
-
+| Invariant                  | Implementation Mechanism                                    | Verified In Suite                  |
+| -------------------------- | ----------------------------------------------------------- | ---------------------------------- |
+| **Visible Column Parity**  | `visibleWidth()` accounts for CJK & Emojis                  | `test/unit/cli_tui_phase8.test.js` |
+| **Control Code Defense**   | `sanitizeTerminal()` strips `\x00-\x1F`, neutralizes `\r`   | `test/unit/cli_tui_phase8.test.js` |
+| **Secret Redaction**       | Pattern matching for Bearer tokens, JWTs, API keys          | `test/unit/cli_tui_phase8.test.js` |
+| **Panel Box Alignment**    | `innerWidth` padding with `visibleWidth` & multi-line split | `test/unit/cli_tui_phase8.test.js` |
+| **Telemetry Truthfulness** | Indeterminate states render `[unmetered]`, 99% cap          | `test/unit/cli_tui_phase8.test.js` |
+| **NO_COLOR Adherence**     | Plain text fallback when `NO_COLOR` is detected             | `test/unit/cli_tui_phase8.test.js` |
+| **Clean JSON Output**      | Suppresses banners & ANSI when `--json` flag is active      | `test/unit/cli_tui_phase8.test.js` |
+| **Zero Hanging Timers**    | Shimmer intervals use `.unref()` and handle `SIGINT`        | `test/unit/tui.test.js`            |

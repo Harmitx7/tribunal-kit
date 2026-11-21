@@ -1,4 +1,5 @@
 ---
+name: memory-archivist
 description: A background agent that parses the Durable Session Log (.jsonl) to extract, verify, and persist Tribunal Instincts.
 type: agent
 version: 1.0.0

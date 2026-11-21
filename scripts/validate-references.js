@@ -28,8 +28,8 @@ if (!fs.existsSync(TARGET_SKILLS) || !fs.existsSync(TARGET_AGENTS_SKILLS)) {
   syncSkills();
 }
 
-let errors = [];
-let warnings = [];
+const errors = [];
+const warnings = [];
 let checkedSkills = 0;
 let checkedLinks = 0;
 let checkedRefs = 0;
@@ -40,9 +40,19 @@ console.log('\n╭─ Tribunal Reference & Skill Integrity Audit ─────
 if (!fs.existsSync(CANONICAL_SKILLS)) {
   errors.push(`Canonical skills directory missing: ${CANONICAL_SKILLS}`);
 } else {
-  const canonicalEntries = fs.readdirSync(CANONICAL_SKILLS).filter(d => fs.statSync(path.join(CANONICAL_SKILLS, d)).isDirectory());
-  const skillsEntries = fs.existsSync(TARGET_SKILLS) ? fs.readdirSync(TARGET_SKILLS).filter(d => fs.statSync(path.join(TARGET_SKILLS, d)).isDirectory()) : [];
-  const agentsEntries = fs.existsSync(TARGET_AGENTS_SKILLS) ? fs.readdirSync(TARGET_AGENTS_SKILLS).filter(d => fs.statSync(path.join(TARGET_AGENTS_SKILLS, d)).isDirectory()) : [];
+  const canonicalEntries = fs
+    .readdirSync(CANONICAL_SKILLS)
+    .filter(d => fs.statSync(path.join(CANONICAL_SKILLS, d)).isDirectory());
+  const skillsEntries = fs.existsSync(TARGET_SKILLS)
+    ? fs
+        .readdirSync(TARGET_SKILLS)
+        .filter(d => fs.statSync(path.join(TARGET_SKILLS, d)).isDirectory())
+    : [];
+  const agentsEntries = fs.existsSync(TARGET_AGENTS_SKILLS)
+    ? fs
+        .readdirSync(TARGET_AGENTS_SKILLS)
+        .filter(d => fs.statSync(path.join(TARGET_AGENTS_SKILLS, d)).isDirectory())
+    : [];
 
   for (const skill of canonicalEntries) {
     if (!skillsEntries.includes(skill)) {
@@ -68,13 +78,17 @@ if (!fs.existsSync(CANONICAL_SKILLS)) {
         const seenInRoute = new Set();
         for (const s of list) {
           if (seenInRoute.has(s)) {
-            errors.push(`Duplicate skill '${s}' found in domain route '${domain}' in .agent/skill_topic_map.json`);
+            errors.push(
+              `Duplicate skill '${s}' found in domain route '${domain}' in .agent/skill_topic_map.json`,
+            );
           }
           seenInRoute.add(s);
           registered.add(s);
 
           if (!canonicalSet.has(s)) {
-            errors.push(`Stale reference: Skill '${s}' in domain route '${domain}' does not exist on disk`);
+            errors.push(
+              `Stale reference: Skill '${s}' in domain route '${domain}' does not exist on disk`,
+            );
           }
         }
       }
@@ -86,10 +100,14 @@ if (!fs.existsSync(CANONICAL_SKILLS)) {
       }
 
       if (typeof map.total_skills === 'number' && map.total_skills !== registered.size) {
-        errors.push(`Declared total_skills (${map.total_skills}) does not match actual unique registered skills (${registered.size}) in .agent/skill_topic_map.json`);
+        errors.push(
+          `Declared total_skills (${map.total_skills}) does not match actual unique registered skills (${registered.size}) in .agent/skill_topic_map.json`,
+        );
       }
       if (registered.size !== canonicalEntries.length) {
-        errors.push(`Unique registered skills (${registered.size}) does not match canonical disk count (${canonicalEntries.length})`);
+        errors.push(
+          `Unique registered skills (${registered.size}) does not match canonical disk count (${canonicalEntries.length})`,
+        );
       }
     } catch (e) {
       errors.push(`Failed to parse .agent/skill_topic_map.json: ${e.message}`);
@@ -166,7 +184,9 @@ if (fs.existsSync(REFERENCES_DIR)) {
         const content = fs.readFileSync(full, 'utf8');
         const tokenEstimate = Math.round(content.length / 4);
         if (tokenEstimate > 2000) {
-          warnings.push(`Reference '${path.relative(ROOT, full)}' exceeds token budget (${tokenEstimate} tokens > 2000)`);
+          warnings.push(
+            `Reference '${path.relative(ROOT, full)}' exceeds token budget (${tokenEstimate} tokens > 2000)`,
+          );
         }
       }
     }

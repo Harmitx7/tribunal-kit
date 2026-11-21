@@ -4,7 +4,7 @@ General ZeroGPU rules live in [`zerogpu.md`](zerogpu.md); wheel-tag anatomy and 
 
 ## The core constraint: no nvcc at build time
 
-The ZeroGPU build container has **no CUDA toolkit and no GPU**. Any package that compiles CUDA at pip-install time (nvdiffrast, diff-gaussian-rasterization, torchmcubes, spconv-from-source, custom rasterizers, flash-attn sdist) **cannot be installed from `requirements.txt`** the normal way. At *runtime*, a CUDA toolkit is mounted at `/cuda-image/usr/local/cuda-13.0` (nvcc available once the app process is up), and the GPUs are RTX PRO 6000 Blackwell (**sm_120**).
+The ZeroGPU build container has **no CUDA toolkit and no GPU**. Any package that compiles CUDA at pip-install time (nvdiffrast, diff-gaussian-rasterization, torchmcubes, spconv-from-source, custom rasterizers, flash-attn sdist) **cannot be installed from `requirements.txt`** the normal way. At _runtime_, a CUDA toolkit is mounted at `/cuda-image/usr/local/cuda-13.0` (nvcc available once the app process is up), and the GPUs are RTX PRO 6000 Blackwell (**sm_120**).
 
 Every working 3D Space uses one of three strategies, in order of preference:
 
@@ -52,7 +52,7 @@ os.system("cd /home/user/app/hy3dpaint/DifferentiableRenderer && bash compile_me
 
 **CUDA extensions**, two variants seen in production:
 
-*At module import, no GPU attached* (TripoSR's torchmcubes before its wheel existed, SF3D's texture_baker). Compiling needs only nvcc/headers, not a GPU — but you **must force the arch list** since nvcc can't probe a device:
+_At module import, no GPU attached_ (TripoSR's torchmcubes before its wheel existed, SF3D's texture_baker). Compiling needs only nvcc/headers, not a GPU — but you **must force the arch list** since nvcc can't probe a device:
 
 ```python
 subprocess.run(
@@ -62,7 +62,7 @@ subprocess.run(
 )
 ```
 
-*Inside a one-shot `@spaces.GPU(duration=600)` setup function called at module import* (`trellis-community/TRELLIS`, `dylanebert/LGM-mini` — the latter for the ashawkey diff-gaussian-rasterization fork that has no wheel). The full pattern: point `CUDA_HOME` at `/cuda-image/usr/local/cuda-13.0`, silence torch's CUDA-version check (torch cu128 vs nvcc 13.0) via a `sitecustomize.py` that no-ops `torch.utils.cpp_extension._check_cuda_version`, `pip install --no-build-isolation --no-deps git+<repo>`, then preload `ctypes.CDLL(".../libcudart.so.13", mode=ctypes.RTLD_GLOBAL)`. Copy it verbatim from one of those Spaces; don't reinvent it.
+_Inside a one-shot `@spaces.GPU(duration=600)` setup function called at module import_ (`trellis-community/TRELLIS`, `dylanebert/LGM-mini` — the latter for the ashawkey diff-gaussian-rasterization fork that has no wheel). The full pattern: point `CUDA_HOME` at `/cuda-image/usr/local/cuda-13.0`, silence torch's CUDA-version check (torch cu128 vs nvcc 13.0) via a `sitecustomize.py` that no-ops `torch.utils.cpp_extension._check_cuda_version`, `pip install --no-build-isolation --no-deps git+<repo>`, then preload `ctypes.CDLL(".../libcudart.so.13", mode=ctypes.RTLD_GLOBAL)`. Copy it verbatim from one of those Spaces; don't reinvent it.
 
 JIT costs: slower cold starts, a burned GPU allocation (second variant), and breakage when the runtime image moves. Prefer wheels; when you do JIT-build, log clearly so failures are diagnosable from the run logs — **a failed `os.system("pip install ...")` does not kill the app**; it resurfaces later as an ImportError or a silently degraded feature.
 
@@ -74,13 +74,13 @@ Covered in [`requirements.md`](requirements.md) (flash_attn / xformers wheels, F
 
 Declared duration is billed against quota as requested (not actual runtime) and drives queue priority — declare honestly:
 
-| Task | duration |
-|---|---|
+| Task                                                                     | duration                                 |
+| ------------------------------------------------------------------------ | ---------------------------------------- |
 | Fast-tier single forward (TripoSR, SF3D), splat decode (TripoSplat, LGM) | default 60 (or lower for queue priority) |
-| Hunyuan3D shape-only | 40–60 |
-| TRELLIS / TRELLIS.2 generation; GLB extraction | 120 each |
-| Hunyuan3D shape + RGB texture | 90 |
-| Hunyuan3D-2.1 shape + PBR texture | 180 |
+| Hunyuan3D shape-only                                                     | 40–60                                    |
+| TRELLIS / TRELLIS.2 generation; GLB extraction                           | 120 each                                 |
+| Hunyuan3D shape + RGB texture                                            | 90                                       |
+| Hunyuan3D-2.1 shape + PBR texture                                        | 180                                      |
 
 Multi-stage pipelines: split stages into separate `@spaces.GPU` functions **only when the user can act between them** (TRELLIS's generate → re-extract-at-different-quality split). Otherwise one decorated function per user action — each GPU entry costs a queue pass and a pickle round-trip.
 

@@ -4,12 +4,12 @@ All cross-encoder evaluators live in `sentence_transformers.cross_encoder.evalua
 
 ## Choosing the right evaluator
 
-| Task | Evaluator |
-|---|---|
-| Rerank retrieval results (nDCG@k on BM25 top-N), fast default | `CrossEncoderNanoBEIREvaluator` |
-| Rerank with custom candidates per query | `CrossEncoderRerankingEvaluator` |
-| Binary / multi-class pair classification | `CrossEncoderClassificationEvaluator` |
-| Continuous pair scoring (STS-style) | `CrossEncoderCorrelationEvaluator` |
+| Task                                                          | Evaluator                             |
+| ------------------------------------------------------------- | ------------------------------------- |
+| Rerank retrieval results (nDCG@k on BM25 top-N), fast default | `CrossEncoderNanoBEIREvaluator`       |
+| Rerank with custom candidates per query                       | `CrossEncoderRerankingEvaluator`      |
+| Binary / multi-class pair classification                      | `CrossEncoderClassificationEvaluator` |
+| Continuous pair scoring (STS-style)                           | `CrossEncoderCorrelationEvaluator`    |
 
 Wrap multiple in `SequentialEvaluator` (from `sentence_transformers.base.evaluation`) to track them together:
 
@@ -66,6 +66,7 @@ Output key: `eval_{name}_ndcg@10`, `eval_{name}_map`, `eval_{name}_mrr@10`.
 ### `CrossEncoderClassificationEvaluator`
 
 Works for both binary (`num_labels=1`) and multi-class (`num_labels>=2`) cross-encoders. Branches internally:
+
 - `num_labels=1`: binary mode. Sweeps thresholds to report accuracy, F1, precision, recall, and **average_precision** (primary).
 - `num_labels>=2`: multi-class mode (e.g. NLI: entailment / neutral / contradiction). Reports **f1_macro** (primary), f1_micro, f1_weighted, and per-class precision / recall.
 
@@ -102,6 +103,7 @@ Output keys: `eval_{name}_spearman`, `eval_{name}_pearson`.
 ## Writing `metric_for_best_model`
 
 Pattern: `f"eval_{evaluator.primary_metric}"`. Inspect after construction: `print(evaluator.primary_metric)`. Common values:
+
 - `eval_NanoBEIR_R100_mean_ndcg@10`: `CrossEncoderNanoBEIREvaluator` default
 - `eval_{name}_ndcg@10`: `CrossEncoderRerankingEvaluator`
 - `eval_{name}_average_precision`: `CrossEncoderClassificationEvaluator` (binary, `num_labels=1`)

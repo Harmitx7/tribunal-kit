@@ -42,7 +42,7 @@ const {
   formatMs,
 } = require('./_colors');
 
-const { walkDir, SOURCE_EXTENSIONS, DEFAULT_SKIP_DIRS } = require('./_utils');
+const { walkDir, SOURCE_EXTENSIONS, DEFAULT_SKIP_DIRS, assertWithinRoot } = require('./_utils');
 
 // ── Security-specific source extensions (broader than default) ──────────────
 const SCAN_EXTENSIONS = new Set([...SOURCE_EXTENSIONS, '.py', '.go', '.java', '.rb']);
@@ -231,7 +231,13 @@ function scanDirectory(projectRoot, targetFiles) {
 
   if (targetFiles && targetFiles.length > 0) {
     for (const fpath of targetFiles) {
-      const absPath = path.isAbsolute(fpath) ? fpath : path.join(projectRoot, fpath);
+      let absPath;
+      try {
+        absPath = assertWithinRoot(projectRoot, fpath);
+      } catch (err) {
+        console.error(`  ${RED}❌ Path traversal rejected: ${fpath}${RESET}`);
+        continue;
+      }
       if (fs.existsSync(absPath) && fs.statSync(absPath).isFile()) {
         // FIX: Push individually instead of spread to avoid O(n²)
         const fileFindings = scanFile(absPath, projectRoot);
@@ -373,7 +379,8 @@ function main() {
   }
   console.log();
 
-  process.exit((bySeverity.critical || 0) > 0 ? 1 : 0);
+  const criticalHigh = (bySeverity.critical || 0) + (bySeverity.high || 0);
+  process.exit(criticalHigh > 0 ? 1 : 0);
 }
 
 // ━━━ Exports for testing & programmatic use ━━━

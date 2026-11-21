@@ -138,6 +138,123 @@ const REVIEWER_CATALOG = [
     expected_contribution:
       'Enforcement of architectural rule priorities, agent boundary containment, and compliance with master directives.',
   },
+  {
+    name: 'complexity-reviewer',
+    primary_domains: ['complexity', 'all'],
+    secondary_domains: ['backend', 'frontend'],
+    priority: 'medium',
+    overlap_group: 'code_quality',
+    expected_contribution:
+      'Cyclomatic complexity, deep nesting, god functions, and maintainability audits.',
+  },
+  {
+    name: 'test-coverage-reviewer',
+    primary_domains: ['test', 'coverage'],
+    secondary_domains: ['quality'],
+    priority: 'medium',
+    overlap_group: 'testing_strategy',
+    expected_contribution:
+      'Testing Trophy adherence, coverage gaps, flaky test pattern detection, and edge-case test completeness.',
+  },
+  {
+    name: 'visual-reviewer',
+    primary_domains: ['visual', 'frontend'],
+    secondary_domains: ['ui', 'css'],
+    priority: 'medium',
+    overlap_group: 'visual_design',
+    expected_contribution:
+      'Visual design consistency, spacing scales, design token compliance, and color contrast.',
+  },
+  {
+    name: 'interaction-reviewer',
+    primary_domains: ['interaction', 'frontend'],
+    secondary_domains: ['ui'],
+    priority: 'medium',
+    overlap_group: 'micro_interactions',
+    expected_contribution:
+      'Focus management, transition states, hover behavior, and keyboard event handlers.',
+  },
+  {
+    name: 'ux-reviewer',
+    primary_domains: ['ux', 'frontend'],
+    secondary_domains: ['product'],
+    priority: 'medium',
+    overlap_group: 'user_experience',
+    expected_contribution:
+      'Information architecture, user task flows, cognitive load, and feedback responsiveness.',
+  },
+  {
+    name: 'anti-pattern-reviewer',
+    primary_domains: ['anti_patterns', 'all'],
+    secondary_domains: ['architecture'],
+    priority: 'medium',
+    overlap_group: 'code_smells',
+    expected_contribution:
+      'Detection of canonical software anti-patterns, premature abstraction, and leaky abstractions.',
+  },
+  {
+    name: 'minimalist-reviewer',
+    primary_domains: ['minimalism', 'all'],
+    secondary_domains: ['architecture'],
+    priority: 'medium',
+    overlap_group: 'yagni_enforcement',
+    expected_contribution:
+      'Over-engineering detection, YAGNI enforcement, dead abstraction pruning, and diff reduction.',
+  },
+  {
+    name: 'product-reviewer',
+    primary_domains: ['product'],
+    secondary_domains: ['ux'],
+    priority: 'low',
+    overlap_group: 'product_heuristics',
+    expected_contribution:
+      'Product requirement adherence, user value validation, and business rule edge cases.',
+  },
+  {
+    name: 'vitals-reviewer',
+    primary_domains: ['web_vitals', 'performance'],
+    secondary_domains: ['frontend'],
+    priority: 'high',
+    overlap_group: 'web_performance',
+    expected_contribution:
+      'Core Web Vitals evaluation: Largest Contentful Paint (LCP), Cumulative Layout Shift (CLS), and Interaction to Next Paint (INP).',
+  },
+  {
+    name: 'agent-shield-auditor',
+    primary_domains: ['ai_security', 'security'],
+    secondary_domains: ['mcp', 'prompt'],
+    priority: 'critical',
+    overlap_group: 'agent_shield',
+    expected_contribution:
+      'Defends against prompt injection, MCP tool misuse, uncontrolled tool execution, and sandbox escapes.',
+  },
+  {
+    name: 'anti-slop-auditor',
+    primary_domains: ['frontend_quality', 'frontend'],
+    secondary_domains: ['ui'],
+    priority: 'high',
+    overlap_group: 'anti_slop',
+    expected_contribution:
+      'Enforces professional frontend engineering standards, rejecting generic AI boilerplate and ungrounded UI patterns.',
+  },
+  {
+    name: 'architecture-auditor',
+    primary_domains: ['architecture'],
+    secondary_domains: ['system_model', 'adr'],
+    priority: 'high',
+    overlap_group: 'architecture_drift',
+    expected_contribution:
+      'Audits code changes against ADRs and system architectural models, catching boundary violations and architecture drift.',
+  },
+  {
+    name: 'ai-code-reviewer',
+    primary_domains: ['ai', 'llm'],
+    secondary_domains: ['backend', 'security'],
+    priority: 'high',
+    overlap_group: 'ai_integration',
+    expected_contribution:
+      'Catches hallucinated LLM SDK parameters, streaming connection leaks, missing error traps, and runaway token loops.',
+  },
 ];
 
 /**
@@ -222,6 +339,9 @@ function detectRequiredDomains({
   }
   if (/\b(npm|yarn|pnpm|dependency|package|cve|vulnerability)\b/i.test(combined)) {
     domains.add('dependency');
+  }
+  if (/\b(ui|styling|style|css|animation|anim)\b/i.test(combined)) {
+    domains.add('ui');
   }
 
   // 3. Evidence signals

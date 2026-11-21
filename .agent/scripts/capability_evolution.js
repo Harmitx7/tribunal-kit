@@ -12,9 +12,6 @@
 
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
 const {
   MEMORY_TYPES,
   PROVENANCE_TYPES,

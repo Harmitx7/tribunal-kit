@@ -33,13 +33,15 @@ const CORE_AGENT_REGISTRY = Object.freeze({
   'frontend-specialist': {
     displayName: 'Frontend Specialist',
     domain: 'Interface Systems & React Architecture',
-    mandate: 'Ensures UI component hierarchy, client-server boundary separation, and accessible state.',
+    mandate:
+      'Ensures UI component hierarchy, client-server boundary separation, and accessible state.',
     category: 'frontend',
   },
   'react-specialist': {
     displayName: 'React Specialist',
     domain: 'Advanced React Architecture',
-    mandate: 'Audits hook lifecycles, re-render bottlenecks, server components, and concurrent mode.',
+    mandate:
+      'Audits hook lifecycles, re-render bottlenecks, server components, and concurrent mode.',
     category: 'frontend',
   },
   'vue-expert': {
@@ -63,25 +65,29 @@ const CORE_AGENT_REGISTRY = Object.freeze({
   'penetration-tester': {
     displayName: 'Penetration Tester',
     domain: 'Attack Surface & Threat Modeling',
-    mandate: 'Identifies exploit chains, privilege escalation vectors, and security perimeter gaps.',
+    mandate:
+      'Identifies exploit chains, privilege escalation vectors, and security perimeter gaps.',
     category: 'security',
   },
   'ai-code-reviewer': {
     displayName: 'AI Code Reviewer',
     domain: 'LLM Integration & Prompt Defense',
-    mandate: 'Defends against prompt injection, verifies token budgets, and validates model output.',
+    mandate:
+      'Defends against prompt injection, verifies token budgets, and validates model output.',
     category: 'security',
   },
   'resilience-reviewer': {
     displayName: 'Resilience Reviewer',
     domain: 'Fault Tolerance & Error Resilience',
-    mandate: 'Audits network boundaries, timeout wraps, error boundaries, and degradation fallbacks.',
+    mandate:
+      'Audits network boundaries, timeout wraps, error boundaries, and degradation fallbacks.',
     category: 'architecture',
   },
   'database-architect': {
     displayName: 'Database Architect',
     domain: 'Database Schema & Query Integrity',
-    mandate: 'Verifies migrations, query optimization, indexing strategy, and transactional consistency.',
+    mandate:
+      'Verifies migrations, query optimization, indexing strategy, and transactional consistency.',
     category: 'database',
   },
   'sql-pro': {
@@ -96,10 +102,11 @@ const CORE_AGENT_REGISTRY = Object.freeze({
     mandate: 'Pinpoints N+1 queries, missing composite indexes, and buffer cache misses.',
     category: 'database',
   },
-  'orchestrator': {
+  orchestrator: {
     displayName: 'Orchestrator',
     domain: 'Multi-Agent Coordination & Synthesis',
-    mandate: 'Decomposes cross-domain tasks, manages parallel worker waves, and synthesizes findings.',
+    mandate:
+      'Decomposes cross-domain tasks, manages parallel worker waves, and synthesizes findings.',
     category: 'coordination',
   },
   'agent-organizer': {
@@ -129,19 +136,22 @@ const CORE_AGENT_REGISTRY = Object.freeze({
   'logic-reviewer': {
     displayName: 'Logic Reviewer',
     domain: 'Core Logic & Business Invariants',
-    mandate: 'Verifies invariant constraints, edge conditions, state transitions, and off-by-one bugs.',
+    mandate:
+      'Verifies invariant constraints, edge conditions, state transitions, and off-by-one bugs.',
     category: 'quality',
   },
   'type-safety-reviewer': {
     displayName: 'Type Safety Reviewer',
     domain: 'Type Integrity & Schema Compliance',
-    mandate: 'Eliminates unsafe type assertions, validates runtime schemas, and verifies constraints.',
+    mandate:
+      'Eliminates unsafe type assertions, validates runtime schemas, and verifies constraints.',
     category: 'quality',
   },
   'performance-optimizer': {
     displayName: 'Performance Optimizer',
     domain: 'Runtime Efficiency & Resource Optimization',
-    mandate: 'Identifies latency bottlenecks, unneeded allocations, memory leaks, and blocking code.',
+    mandate:
+      'Identifies latency bottlenecks, unneeded allocations, memory leaks, and blocking code.',
     category: 'performance',
   },
   'throughput-optimizer': {
@@ -153,7 +163,8 @@ const CORE_AGENT_REGISTRY = Object.freeze({
   'vitals-reviewer': {
     displayName: 'Vitals Reviewer',
     domain: 'Core Web Vitals Optimization',
-    mandate: 'Optimizes Largest Contentful Paint, Cumulative Layout Shift, and Interaction to Next Paint.',
+    mandate:
+      'Optimizes Largest Contentful Paint, Cumulative Layout Shift, and Interaction to Next Paint.',
     category: 'performance',
   },
   'anti-pattern-reviewer': {
@@ -195,10 +206,11 @@ const CORE_AGENT_REGISTRY = Object.freeze({
   'code-archaeologist': {
     displayName: 'Code Archaeologist',
     domain: 'Legacy Codebase Archaeology',
-    mandate: 'Extracts undocumented constraints, historical intent, and refactoring migration paths.',
+    mandate:
+      'Extracts undocumented constraints, historical intent, and refactoring migration paths.',
     category: 'architecture',
   },
-  'debugger': {
+  debugger: {
     displayName: 'Debugger',
     domain: 'Systematic Bug Diagnosis',
     mandate: 'Traces execution flows, reproduces edge-case failures, and isolates root causes.',
@@ -227,7 +239,10 @@ class SkillAgentResolver {
       if (colonIdx > 0 && !line.startsWith(' ') && !line.startsWith('-')) {
         const key = line.slice(0, colonIdx).trim();
         let val = line.slice(colonIdx + 1).trim();
-        if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+        if (
+          (val.startsWith('"') && val.endsWith('"')) ||
+          (val.startsWith("'") && val.endsWith("'"))
+        ) {
           val = val.slice(1, -1);
         }
         result[key] = val;
@@ -284,15 +299,24 @@ class SkillAgentResolver {
           const content = fs.readFileSync(p, 'utf8');
           const meta = this._parseFrontmatter(content);
           const domain = meta.name
-            ? `${cleanName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')}`
+            ? `${cleanName
+                .split('-')
+                .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+                .join(' ')}`
             : cleanName;
           const desc = meta.description || 'Specialized engineering auditor.';
-          const firstSentence = desc.split(/\.\s+/)[0].replace(/^The Tribunal's\s+/i, '').trim();
+          const firstSentence = desc
+            .split(/\.\s+/)[0]
+            .replace(/^The Tribunal's\s+/i, '')
+            .trim();
           const mandate = firstSentence.endsWith('.') ? firstSentence : `${firstSentence}.`;
 
           const entry = {
             name: cleanName,
-            displayName: cleanName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' '),
+            displayName: cleanName
+              .split('-')
+              .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+              .join(' '),
             domain: domain.replace(/Reviewer$/i, 'Review'),
             mandate,
             category: 'custom',
@@ -359,8 +383,14 @@ class SkillAgentResolver {
 
           const entry = {
             name: cleanName,
-            displayName: cleanName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' '),
-            domain: cleanName.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' '),
+            displayName: cleanName
+              .split('-')
+              .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+              .join(' '),
+            domain: cleanName
+              .split('-')
+              .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+              .join(' '),
             mandate: cleanedDesc || 'Applies targeted engineering patterns.',
             category: 'skill',
             source: 'filesystem',
@@ -373,7 +403,10 @@ class SkillAgentResolver {
       }
     }
 
-    const humanized = cleanName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const humanized = cleanName
+      .split('-')
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
     const entry = {
       name: cleanName,
       displayName: humanized,

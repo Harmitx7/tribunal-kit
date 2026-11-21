@@ -12,7 +12,9 @@ function validateExecutableName(cmd) {
     throw new Error('Security Violation: Executable command must be a non-empty string.');
   }
   if (/[\0\r\n;&|<>`$]/.test(cmd)) {
-    throw new Error(`Security Violation: Disallowed metacharacters in executable command: "${cmd}".`);
+    throw new Error(
+      `Security Violation: Disallowed metacharacters in executable command: "${cmd}".`,
+    );
   }
   return cmd.trim();
 }
@@ -34,9 +36,10 @@ function validateProcessArgs(args, isBatch = false) {
     // When executing batch scripts on Windows, cmd.exe can interpret special characters
     // Double quotes are rejected to prevent BatBadBut (CVE-2024-24576) argument delimiter breakout
     if (isBatch && /[&|<>^%"]/.test(arg)) {
-      throw new Error(`Security Violation: Argument "${arg}" contains dangerous cmd.exe metacharacters.`);
+      throw new Error(
+        `Security Violation: Argument "${arg}" contains dangerous cmd.exe metacharacters.`,
+      );
     }
-
   }
   return args;
 }
@@ -91,7 +94,7 @@ function resolveExecutable(cmd) {
   return { command: sanitized, isBatch: false, needsShell: false };
 }
 
-function spawnAgent(agentCommand, proxyPort) {
+function spawnAgent(agentCommand, proxyPort, options = {}) {
   const proxyUrl = `http://localhost:${proxyPort}`;
 
   let command;
@@ -121,6 +124,13 @@ function spawnAgent(agentCommand, proxyPort) {
     ANTHROPIC_BASE_URL: proxyUrl,
   };
 
+  if (options && options.baseUrlEnv) {
+    env[options.baseUrlEnv] = proxyUrl;
+  }
+  if (process.env.TK_PROXY_BASE_URL_ENV) {
+    env[process.env.TK_PROXY_BASE_URL_ENV] = proxyUrl;
+  }
+
   const child = spawn(resolved.command, args, {
     stdio: 'inherit',
     env,
@@ -128,7 +138,9 @@ function spawnAgent(agentCommand, proxyPort) {
   });
 
   child.on('close', (code, signal) => {
-    console.log(`[Tribunal Proxy] ${resolved.command} exited with code ${code !== null ? code : signal}`);
+    console.log(
+      `[Tribunal Proxy] ${resolved.command} exited with code ${code !== null ? code : signal}`,
+    );
     if (code !== null) {
       process.exit(code);
     } else {

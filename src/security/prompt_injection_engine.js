@@ -18,13 +18,15 @@ const crypto = require('crypto');
 // Direct instruction smuggling regexes
 const DIRECT_SMUGGLER_PATTERNS = [
   {
-    pattern: /\b(?:ignore|disregard|forget|override)\s+(?:all\s+)?(?:(?:previous|prior|above|system)\s+)+(?:instructions|prompts|rules|guidelines|directives)\b/i,
+    pattern:
+      /\b(?:ignore|disregard|forget|override)\s+(?:all\s+)?(?:(?:previous|prior|above|system)\s+)+(?:instructions|prompts|rules|guidelines|directives)\b/i,
     category: 'INSTRUCTION_OVERRIDE',
     severity: 'CRITICAL',
     title: 'Direct Instruction Override Attempt',
   },
   {
-    pattern: /\b(?:you\s+are\s+now|act\s+as|pretend\s+to\s+be)\s+(?:an?\s+)?(?:unrestricted|jailbroken|dan|evil|god|developer|system\s+administrator)\b/i,
+    pattern:
+      /\b(?:you\s+are\s+now|act\s+as|pretend\s+to\s+be)\s+(?:an?\s+)?(?:unrestricted|jailbroken|dan|evil|god|developer|system\s+administrator)\b/i,
     category: 'PERSONA_HIJACKING',
     severity: 'CRITICAL',
     title: 'Adversarial Persona Hijacking',
@@ -42,13 +44,15 @@ const DIRECT_SMUGGLER_PATTERNS = [
     title: 'Hidden HTML Comment Directive',
   },
   {
-    pattern: /\b(?:new\s+system\s+directive|special\s+instructions\s+follow|administrative\s+override)\s*:/i,
+    pattern:
+      /\b(?:new\s+system\s+directive|special\s+instructions\s+follow|administrative\s+override)\s*:/i,
     category: 'SYSTEM_DIRECTIVE_SPOOFING',
     severity: 'HIGH',
     title: 'System Directive Spoofing Marker',
   },
   {
-    pattern: /\b(?:bypass\s+safety|disable\s+(?:safety\s+)?guardrails|ignore\s+tribunal|turn\s+off\s+all\s+filters)\b/i,
+    pattern:
+      /\b(?:bypass\s+safety|disable\s+(?:safety\s+)?guardrails|ignore\s+tribunal|turn\s+off\s+all\s+filters)\b/i,
     category: 'GUARDRAIL_BYPASS',
     severity: 'CRITICAL',
     title: 'Explicit Guardrail Bypass Request',
@@ -104,7 +108,9 @@ function normalizeObfuscatedText(text) {
   // Remove zero-width characters
   let clean = text.replace(ZERO_WIDTH_REGEX, '');
   // Normalize character-spaced words: match sequences of 2 or more single letters separated by a single space
-  clean = clean.replace(/(?:(?<=\s|^)[a-zA-Z] )+[a-zA-Z](?=\s|$)/g, match => match.replace(/ /g, ''));
+  clean = clean.replace(/(?:(?<=\s|^)[a-zA-Z] )+[a-zA-Z](?=\s|$)/g, match =>
+    match.replace(/ /g, ''),
+  );
   return clean;
 }
 
@@ -209,7 +215,8 @@ function scanForPromptInjection(text, options = {}) {
             codeSnippet: match[0],
           },
         ],
-        remediation: 'Isolate user text in passive data containers; drop instruction override directives.',
+        remediation:
+          'Isolate user text in passive data containers; drop instruction override directives.',
       });
       detectedCategories.add(item.category);
     }
@@ -255,7 +262,8 @@ function scanForPromptInjection(text, options = {}) {
             codeSnippet: match[0],
           },
         ],
-        remediation: 'Block rendering of external markdown images and sanitize sensitive query parameters.',
+        remediation:
+          'Block rendering of external markdown images and sanitize sensitive query parameters.',
       });
       detectedCategories.add(item.category);
     }

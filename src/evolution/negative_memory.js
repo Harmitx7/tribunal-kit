@@ -149,9 +149,12 @@ function isPreviouslyRejected(candidateEdit, rejections, threshold = 0.85) {
     return { rejected: false };
   }
 
-  const candidateContent = (typeof candidateEdit === 'string' ? candidateEdit : candidateEdit.content || '').trim();
+  const candidateContent = (
+    typeof candidateEdit === 'string' ? candidateEdit : candidateEdit.content || ''
+  ).trim();
   const candidateOp = typeof candidateEdit === 'object' ? candidateEdit.op || '' : '';
-  const candidateTarget = typeof candidateEdit === 'object' ? (candidateEdit.target || '').trim() : '';
+  const candidateTarget =
+    typeof candidateEdit === 'object' ? (candidateEdit.target || '').trim() : '';
 
   for (const r of rejections) {
     for (const pastEdit of r.edits || []) {

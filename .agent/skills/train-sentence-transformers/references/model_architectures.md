@@ -4,12 +4,12 @@ The `SentenceTransformer` class is a `torch.nn.Sequential` of modules. The commo
 
 ## The four architecture families
 
-| Family | Backbone | Pooling | Use case |
-|---|---|---|---|
-| **Encoder (bidirectional)** | BERT, RoBERTa, DeBERTa, MPNet, ModernBERT, XLM-R | `mean` (default) or `cls` | Short/medium text, general default |
-| **Decoder (causal LLM)** | Qwen, Llama, Mistral, Gemma | `lasttoken` | Long context, instruction-tunable, larger quality ceiling |
-| **Static embeddings** | `StaticEmbedding` module | N/A | CPU-only, <10MB, extremely fast |
-| **Multimodal / Router** | VLM backbones or composed encoders | depends | Text + image / audio / video |
+| Family                      | Backbone                                         | Pooling                   | Use case                                                  |
+| --------------------------- | ------------------------------------------------ | ------------------------- | --------------------------------------------------------- |
+| **Encoder (bidirectional)** | BERT, RoBERTa, DeBERTa, MPNet, ModernBERT, XLM-R | `mean` (default) or `cls` | Short/medium text, general default                        |
+| **Decoder (causal LLM)**    | Qwen, Llama, Mistral, Gemma                      | `lasttoken`               | Long context, instruction-tunable, larger quality ceiling |
+| **Static embeddings**       | `StaticEmbedding` module                         | N/A                       | CPU-only, <10MB, extremely fast                           |
+| **Multimodal / Router**     | VLM backbones or composed encoders               | depends                   | Text + image / audio / video                              |
 
 Below, each family with concrete setup.
 
@@ -38,6 +38,7 @@ model = SentenceTransformer(modules=[transformer, pooling, Normalize()])
 ```
 
 **Pooling modes**:
+
 - `mean` (default): average of token embeddings, masked to the attention mask. Strongest default.
 - `cls`: embedding of the `[CLS]` token. Works if the base was CLS-pretrained.
 - `max`: element-wise max across tokens. Rare.
@@ -76,6 +77,7 @@ Skipping `transformer_task="text-generation"` or `pooling_mode="lasttoken"` on a
 **Why last-token pooling:** causal attention means only the last token has seen the full sequence. Mean-pooling a causal model averages embeddings that only saw prefixes. The result doesn't represent the whole input.
 
 For training decoder bases:
+
 - Learning rate: typically `1e-4` or higher (not `2e-5` like encoders).
 - LoRA is almost always the right choice for >1B-param bases. See `../scripts/train_sentence_transformer_with_lora_example.py` (its docstring covers when to use, hyperparams, QLoRA for 7B+, and adapter sharing).
 
@@ -84,12 +86,14 @@ For training decoder bases:
 `StaticEmbedding` skips the transformer entirely. Each token maps to a pre-computed vector via a lookup table. No attention, no contextualization.
 
 **When to use:**
+
 - CPU inference, no GPU, browser / edge / on-device deployment.
 - Need <10MB model size.
 - Latency budget <1ms per embedding.
 - Have >1M training pairs (contextualization is replaced by per-token optimization, which takes data).
 
 **When NOT to use:**
+
 - Task needs contextual understanding (polysemy, syntax, long-range dependencies).
 - You have <100k training pairs. The model won't learn enough.
 

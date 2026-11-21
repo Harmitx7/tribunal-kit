@@ -1,4 +1,5 @@
 ---
+name: harness-manager
 description: Intercepts direct shell execution from agents, providing a secure, event-sourced Brain-Hands decoupling boundary.
 type: agent
 version: 1.0.0

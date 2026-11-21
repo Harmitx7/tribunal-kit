@@ -17,9 +17,7 @@ describe('Release Audit Verification & Counts', () => {
     const routingIndex = JSON.parse(fs.readFileSync(routingIndexPath, 'utf8'));
     const { summary } = routingIndex;
 
-    const agentFiles = fs
-      .readdirSync(path.join(agentDir, 'agents'))
-      .filter(f => f.endsWith('.md'));
+    const agentFiles = fs.readdirSync(path.join(agentDir, 'agents')).filter(f => f.endsWith('.md'));
     const workflowFiles = fs
       .readdirSync(path.join(agentDir, 'workflows'))
       .filter(f => f.endsWith('.md'));

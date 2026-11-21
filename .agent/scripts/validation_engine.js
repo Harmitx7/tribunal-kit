@@ -1646,7 +1646,7 @@ function generateCertificate(validationResult) {
     certificate_id: `CERT-${crypto.randomUUID ? crypto.randomUUID().slice(0, 8) : Date.now().toString(36)}`,
     issued_at: new Date().toISOString(),
     task: vr.task || 'Unknown',
-    environment: (globalThis.process?.['env']?.NODE_ENV) || 'development',
+    environment: globalThis.process?.['env']?.NODE_ENV || 'development',
     claims_verified: vr.verification_status ? vr.verification_status.verified : 0,
     claims_unverified: vr.verification_status ? vr.verification_status.unverified : 0,
     claims_disproved: vr.verification_status ? vr.verification_status.disproved : 0,
@@ -1792,7 +1792,6 @@ function getPhase8MetricsTracker() {
 // ============================================================================
 // EXPORTS
 // ============================================================================
-
 
 // Trusted statuses that only this engine can assign
 const TRUSTED_STATUSES = new Set(['VERIFIED', 'FIXED', 'REGRESSION-PROTECTED']);
@@ -2000,7 +1999,6 @@ function main() {
   console.log(`\nWritten validated findings to: ${outPath}`);
 }
 
-
 module.exports = {
   // Trust Boundary Authority
   TRUSTED_STATUSES,
@@ -2009,7 +2007,7 @@ module.exports = {
   runValidation,
   runSafeValidation,
   // Phase 8 Autonomous Engineering Validation
-// Constants
+  // Constants
   CLAIM_STATUS,
   CLAIM_CATEGORIES,
   EVIDENCE_QUALITY,
@@ -2079,6 +2077,9 @@ module.exports = {
   getPhase8MetricsTracker,
 };
 
-if (require.main === module || (require.main && path.basename(require.main.filename) === 'validation_engine.js')) {
+if (
+  require.main === module ||
+  (require.main && path.basename(require.main.filename) === 'validation_engine.js')
+) {
   main();
 }

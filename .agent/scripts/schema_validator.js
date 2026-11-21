@@ -12,6 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { assertWithinRoot } = require('./_utils');
 
 const { BOLD, RESET, BLUE, sectionHeader: header, ok, fail, warn, skip } = require('./_colors');
 
@@ -235,8 +236,14 @@ function main() {
   let issuesCount = 0;
 
   if (fileArg) {
+    let filepath;
+    try {
+      filepath = assertWithinRoot(projectRoot, fileArg);
+    } catch (err) {
+      fail(`Security Violation: ${err.message}`);
+      process.exit(1);
+    }
     console.log(header(`Validating: ${fileArg}`));
-    const filepath = path.isAbsolute(fileArg) ? fileArg : path.join(projectRoot, fileArg);
     let issues = [];
     if (filepath.endsWith('.prisma')) issues = validatePrisma(filepath);
     else if (filepath.endsWith('.sql')) issues = validateSqlMigration(filepath);

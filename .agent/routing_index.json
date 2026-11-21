@@ -1,8 +1,8 @@
 {
   "version": "9.4.0",
-  "last_updated": "2026-10-30",
+  "last_updated": "2026-11-19",
   "summary": {
-    "total_agents": 60,
+    "total_agents": 64,
     "total_workflows": 52,
     "total_skills": 398
   },
@@ -11,9 +11,7 @@
       "name": "accessibility-reviewer",
       "file": "agents/accessibility-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "frontend"
-      ],
+      "routing_domain": ["frontend"],
       "routing_tier": "specialized",
       "description": "Audits UI code against WCAG 2.2 AA and APCA criteria. Enforces accessible names, keyboard focus trapping, visible focus rings, and target size minimums. Activates on /tribunal-frontend and /tribunal-full.",
       "trigger_keywords": [
@@ -33,10 +31,7 @@
       "name": "agent-shield-auditor",
       "file": "agents/agent-shield-auditor.md",
       "type": "reviewer",
-      "routing_domain": [
-        "security",
-        "all"
-      ],
+      "routing_domain": ["security", "all"],
       "routing_tier": "specialized",
       "description": "Identifies prompt injection risks, MCP vulnerabilities, and reviews untrusted content.",
       "trigger_keywords": [
@@ -56,9 +51,7 @@
       "name": "ai-code-reviewer",
       "file": "agents/ai-code-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "ai"
-      ],
+      "routing_domain": ["ai"],
       "routing_tier": "specialized",
       "description": "Audits code that integrates LLM APIs for hallucinated model names, invented parameters, prompt injection vulnerabilities, missing streaming error handling, cost explosion patterns, missing rate limit handling, and context window overflow risks. Activates on /review-ai and /tribunal-full.",
       "trigger_keywords": [
@@ -78,9 +71,7 @@
       "name": "anti-pattern-reviewer",
       "file": "agents/anti-pattern-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Enforces visual originality and design quality. Systematically audits and blocks generic AI aesthetics, purple-primary clichés, radial mesh background blurs, identical bento-grid layouts, and uncustomized component library defaults. Activates on /tribunal-frontend and /tribunal-full.",
       "trigger_keywords": [
@@ -100,10 +91,7 @@
       "name": "anti-slop-auditor",
       "file": "agents/anti-slop-auditor.md",
       "type": "reviewer",
-      "routing_domain": [
-        "frontend",
-        "ui"
-      ],
+      "routing_domain": ["frontend", "ui"],
       "routing_tier": "specialized",
       "description": "Anti-Slop Enforcer. Audits frontend UI against generic clichés, forces Purpose-Gate validation, and reads Liveliness Dials.",
       "trigger_keywords": [
@@ -123,9 +111,7 @@
       "name": "api-architect",
       "file": "agents/api-architect.md",
       "type": "specialist",
-      "routing_domain": [
-        "backend"
-      ],
+      "routing_domain": ["backend"],
       "routing_tier": "specialized",
       "description": "Builder agent specializing in designing robust API contracts. Generates REST, GraphQL, and tRPC structures based on modern patterns (cursor pagination, RFC 9457 errors, versioning, idempotent design). Works closely with api-patterns and data-validation-schemas skills. Use when planning a new API or extending an existing one.",
       "trigger_keywords": [
@@ -142,13 +128,30 @@
       ]
     },
     {
+      "name": "api-contract-engineer",
+      "file": "agents/api-contract-engineer.md",
+      "type": "specialist",
+      "routing_domain": ["backend", "api", "architecture"],
+      "routing_tier": "specialized",
+      "description": "Specialist API and contract engineer performing strict schema validation, backward-compatibility analysis, breaking change detection, and API contract verification across OpenAPI, JSON Schema, REST, GraphQL, and RPC boundaries.",
+      "trigger_keywords": [
+        "api",
+        "contract",
+        "engineer",
+        "specialist",
+        "performing",
+        "strict",
+        "schema",
+        "validation",
+        "backward-compatibility",
+        "analysis"
+      ]
+    },
+    {
       "name": "architecture-auditor",
       "file": "agents/architecture-auditor.md",
       "type": "reviewer",
-      "routing_domain": [
-        "architecture",
-        "all"
-      ],
+      "routing_domain": ["architecture", "all"],
       "routing_tier": "specialized",
       "description": "Tribunal Wave 3 architectural reviewer. Audits Maker code diffs against the System Model (architecture.idx.json) and Architecture Decision Records (.agent/ADRs/). Catches boundary violations, architecture drift, circular dependencies, god services, and unauthorized trust boundary crossings. Keywords: architecture, drift, boundary, ADR, system model, audit.",
       "trigger_keywords": [
@@ -168,11 +171,7 @@
       "name": "backend-security-architect",
       "file": "agents/backend-security-architect.md",
       "type": "specialist",
-      "routing_domain": [
-        "backend",
-        "security",
-        "database"
-      ],
+      "routing_domain": ["backend", "security", "database"],
       "routing_tier": "specialized",
       "description": "EXPERIMENTAL consolidated domain reviewer for backend/security/database Tier 3 audits. Combines responsibilities of backend-specialist, security-auditor, database-architect, and sql-reviewer into a single focused review pass. DO NOT USE IN PRODUCTION — experiment only.",
       "trigger_keywords": [
@@ -192,9 +191,7 @@
       "name": "backend-specialist",
       "file": "agents/backend-specialist.md",
       "type": "specialist",
-      "routing_domain": [
-        "backend"
-      ],
+      "routing_domain": ["backend"],
       "routing_tier": "specialized",
       "description": "Node.js and TypeScript API architect. Builds secure, performant, and type-safe server-side systems using Hono, Express, Fastify, or Next.js Server Actions. Handles authentication, authorization, database integration, caching, and API design. Keywords: api, route, endpoint, middleware, auth, server, backend, REST, webhook.",
       "trigger_keywords": [
@@ -214,9 +211,7 @@
       "name": "cloud-engineer",
       "file": "agents/cloud-engineer.md",
       "type": "specialist",
-      "routing_domain": [
-        "devops"
-      ],
+      "routing_domain": ["devops"],
       "routing_tier": "specialized",
       "description": "Cloud infrastructure specialist. AWS + Docker + GitHub Actions Golden Path. Produces production-ready, security-hardened infrastructure code with Terraform, containerization, and CI/CD pipelines.",
       "trigger_keywords": [
@@ -236,9 +231,7 @@
       "name": "code-archaeologist",
       "file": "agents/code-archaeologist.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Legacy codebase analyst. Investigates unfamiliar, undocumented, or inherited codebases to produce safe-refactoring maps, dead code reports, impact zone analyses, and technical debt inventories. Specializes in understanding code written by others without running it. Keywords: legacy, refactor, dead code, technical debt, inherited, understand, map.",
       "trigger_keywords": [
@@ -258,9 +251,7 @@
       "name": "complexity-reviewer",
       "file": "agents/complexity-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Enforces the Dependency Ladder to prevent over-engineering. Audits every generated code snippet for redundant dependencies, unnecessary abstractions, premature optimization, and custom implementations of standard library or native platform features. Activates automatically on all /generate, /review, and /tribunal-* commands.",
       "trigger_keywords": [
@@ -277,12 +268,37 @@
       ]
     },
     {
+      "name": "concurrency-analyst",
+      "file": "agents/concurrency-analyst.md",
+      "type": "specialist",
+      "routing_domain": [
+        "architecture",
+        "backend",
+        "concurrency",
+        "performance",
+        "distributed-systems",
+        "all"
+      ],
+      "routing_tier": "specialized",
+      "description": "Specialist concurrency engineer and distributed systems architect analyzing concurrent execution, race conditions, synchronization primitives, resource contention, deadlocks, starvation, and asynchronous correctness to produce evidence-backed findings and deterministic remediation proposals.",
+      "trigger_keywords": [
+        "concurrency",
+        "analyst",
+        "specialist",
+        "engineer",
+        "distributed",
+        "systems",
+        "architect",
+        "analyzing",
+        "concurrent",
+        "execution"
+      ]
+    },
+    {
       "name": "database-architect",
       "file": "agents/database-architect.md",
       "type": "specialist",
-      "routing_domain": [
-        "database"
-      ],
+      "routing_domain": ["database"],
       "routing_tier": "specialized",
       "description": "Database schema designer and query optimizer. Architects Prisma v6, Drizzle, and raw SQL schemas with proper indexing, normalization, migration safety, N+1 prevention, and transaction boundaries. Handles PostgreSQL, SQLite, and serverless database patterns. Keywords: database, schema, prisma, drizzle, sql, query, migration, index.",
       "trigger_keywords": [
@@ -302,9 +318,7 @@
       "name": "db-latency-auditor",
       "file": "agents/db-latency-auditor.md",
       "type": "reviewer",
-      "routing_domain": [
-        "database"
-      ],
+      "routing_domain": ["database"],
       "routing_tier": "specialized",
       "description": "Database latency specialist. Audits SQL queries, ORM patterns (Prisma, Drizzle, Knex), and schema files for N+1 queries, missing LIMIT clauses, unindexed WHERE columns, SELECT * over-fetching, connection pool misconfiguration, overly wide transaction scopes, and missing field allowlists. Token-scoped to database files only. Activates on /tribunal-speed and /tribunal-full.",
       "trigger_keywords": [
@@ -324,9 +338,7 @@
       "name": "debugger",
       "file": "agents/debugger.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Systematic root-cause investigator. Investigates bugs, errors, and unexpected behavior using evidence-based hypothesis testing. No fix is suggested until the root cause is confirmed. Activates on /debug commands. Uses 4-phase methodology: Collect → Hypothesize → Test → Fix.",
       "trigger_keywords": [
@@ -346,9 +358,7 @@
       "name": "dependency-reviewer",
       "file": "agents/dependency-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "The Tribunal's package hallucination detector. Cross-references every import against package.json, flags fabricated npm/pip packages, catches supply chain risk patterns (typosquatting, abandoned packages), and verifies version pinning compatibility. Activates on /tribunal-backend, /tribunal-frontend, and /tribunal-full.",
       "trigger_keywords": [
@@ -368,9 +378,7 @@
       "name": "devops-engineer",
       "file": "agents/devops-engineer.md",
       "type": "specialist",
-      "routing_domain": [
-        "devops"
-      ],
+      "routing_domain": ["devops"],
       "routing_tier": "specialized",
       "description": "Infrastructure and CI/CD architect. Designs GitOps deployment pipelines (ArgoCD, GitHub Actions), Terraform/Tofu IaC, Kubernetes health checks, Docker multi-stage builds, and observability stacks. Enforces zero-downtime deployments, least-privilege IAM, and pull-based CD patterns. Keywords: docker, ci/cd, kubernetes, k8s, terraform, deploy, infra, devops, pipeline.",
       "trigger_keywords": [
@@ -390,9 +398,7 @@
       "name": "documentation-writer",
       "file": "agents/documentation-writer.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Technical documentation specialist. Produces JSDoc API docs, README files, OpenAPI 3.1 specs, Architecture Decision Records (ADRs), and inline code comments. Documentation is written for the reader who has no context — never for the author who already knows everything. Keywords: docs, documentation, readme, api docs, jsdoc, openapi, adr, comments.",
       "trigger_keywords": [
@@ -412,9 +418,7 @@
       "name": "explorer-agent",
       "file": "agents/explorer-agent.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Unknown codebase investigator. Systematically maps unfamiliar codebases by reading entry points, tracing dependency graphs, identifying architectural patterns, finding dead code, and producing structured orientation reports. Activate when encountering a new or unfamiliar codebase. Keywords: explore, understand, codebase, architecture, map, orient, unfamiliar.",
       "trigger_keywords": [
@@ -434,9 +438,7 @@
       "name": "frontend-reviewer",
       "file": "agents/frontend-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "frontend"
-      ],
+      "routing_domain": ["frontend"],
       "routing_tier": "specialized",
       "description": "Audits React and Next.js code for React 19 anti-patterns, illegal hook usage, Server/Client Component boundary violations, hydration mismatch risks, missing dependency arrays, state mutation, and accessibility violations. Activates on /tribunal-frontend and /tribunal-full.",
       "trigger_keywords": [
@@ -456,9 +458,7 @@
       "name": "frontend-specialist",
       "file": "agents/frontend-specialist.md",
       "type": "specialist",
-      "routing_domain": [
-        "frontend"
-      ],
+      "routing_domain": ["frontend"],
       "routing_tier": "specialized",
       "description": "React 19 and Next.js 15 App Router interface architect. Uses the UI Reasoning Engine to build performant, accessible, and product-tailored interfaces.",
       "trigger_keywords": [
@@ -478,9 +478,7 @@
       "name": "game-developer",
       "file": "agents/game-developer.md",
       "type": "specialist",
-      "routing_domain": [
-        "game"
-      ],
+      "routing_domain": ["game"],
       "routing_tier": "specialized",
       "description": "Game development router. Delegates to game-engineering-expert for technical game systems (physics, rendering, ECS, multiplayer) or game-design-expert for design principles (3Cs, game feel, progression loops). Keywords: game, unity, godot, unreal, phaser, pygame, physics, animation, collision, level design, game feel.",
       "trigger_keywords": [
@@ -500,10 +498,7 @@
       "name": "harness-manager",
       "file": "agents/harness-manager.md",
       "type": "specialist",
-      "routing_domain": [
-        "infrastructure",
-        "security"
-      ],
+      "routing_domain": ["infrastructure", "security"],
       "routing_tier": "specialized",
       "description": "Intercepts direct shell execution from agents, providing a secure, event-sourced Brain-Hands decoupling boundary.",
       "trigger_keywords": [
@@ -523,10 +518,7 @@
       "name": "human-gate-negotiator",
       "file": "agents/human-gate-negotiator.md",
       "type": "specialist",
-      "routing_domain": [
-        "governance",
-        "all"
-      ],
+      "routing_domain": ["governance", "all"],
       "routing_tier": "specialized",
       "description": "Prepares impact summaries and presents risks before human approval.",
       "trigger_keywords": [
@@ -546,9 +538,7 @@
       "name": "interaction-reviewer",
       "file": "agents/interaction-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "frontend"
-      ],
+      "routing_domain": ["frontend"],
       "routing_tier": "specialized",
       "description": "Validates interactive state feedback for buttons, links, inputs, and modals (`default`, `hover`, `active`, `disabled`, `focus-visible`), spring physics transitions, and micro-interactions. Activates on /tribunal-frontend and /tribunal-full.",
       "trigger_keywords": [
@@ -568,32 +558,27 @@
       "name": "kernel-scheduler",
       "file": "agents/kernel-scheduler.md",
       "type": "specialist",
-      "routing_domain": [
-        "orchestration",
-        "architecture"
-      ],
+      "routing_domain": ["orchestration", "architecture"],
       "routing_tier": "specialized",
-      "description": "An architectural orchestrator that translates complex human requests into a Directed Acyclic Graph (DAG) for parallel, staged execution.",
+      "description": "Resource governance and concurrency scheduler. Manages execution priority, worker thread/pool limits, token budgets, timeout constraints, and deadlock prevention for parallel multi-agent workloads.",
       "trigger_keywords": [
         "kernel",
         "scheduler",
-        "architectural",
-        "orchestrator",
-        "translates",
-        "complex",
-        "human",
-        "requests",
-        "into",
-        "directed"
+        "resource",
+        "governance",
+        "concurrency",
+        "manages",
+        "execution",
+        "priority",
+        "worker",
+        "thread"
       ]
     },
     {
       "name": "logic-reviewer",
       "file": "agents/logic-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "core",
       "description": "The Tribunal's primary hallucination catcher. Audits every generated code snippet for invented standard library methods, non-existent framework APIs, undefined variable access, impossible control flow, and fabricated LLM API parameters. Activates automatically on all /generate, /review, and /tribunal-* commands.",
       "trigger_keywords": [
@@ -613,10 +598,7 @@
       "name": "memory-archivist",
       "file": "agents/memory-archivist.md",
       "type": "specialist",
-      "routing_domain": [
-        "learning",
-        "memory"
-      ],
+      "routing_domain": ["learning", "memory"],
       "routing_tier": "specialized",
       "description": "A background agent that parses the Durable Session Log (.jsonl) to extract, verify, and persist Tribunal Instincts.",
       "trigger_keywords": [
@@ -636,9 +618,7 @@
       "name": "minimalist-reviewer",
       "file": "agents/minimalist-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Dedicated Minimal Change Governance reviewer persona for Tribunal-Kit. Mission: Determine whether the proposal solves the requested problem with the smallest correct, maintainable change. Evaluates implementation proposals against the 7-level Decision Order (NO_CHANGE to CREATE), Change Budget footprint, 0-100 Minimality Score, and 14 standardized Complexity Flags.",
       "trigger_keywords": [
@@ -658,9 +638,7 @@
       "name": "mobile-developer",
       "file": "agents/mobile-developer.md",
       "type": "specialist",
-      "routing_domain": [
-        "mobile"
-      ],
+      "routing_domain": ["mobile"],
       "routing_tier": "specialized",
       "description": "React Native and Expo expert. Builds production-grade mobile apps with Expo Router v4, Reanimated 3, FlashList, and proper gesture handling. Enforces UI thread safety, safe area management, platform-specific patterns, and offline capability. Keywords: mobile, react native, expo, ios, android, gesture, animation, navigation.",
       "trigger_keywords": [
@@ -680,9 +658,7 @@
       "name": "mobile-reviewer",
       "file": "agents/mobile-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "mobile"
-      ],
+      "routing_domain": ["mobile"],
       "routing_tier": "specialized",
       "description": "Audits React Native and Expo code for Reanimated UI-thread violations, JS bridge bottlenecks, FlatList/FlashList performance anti-patterns, memory leaks from unresolved listeners, safe area boundary cases, and platform-specific API misuse. Activates on /tribunal-mobile and /tribunal-full.",
       "trigger_keywords": [
@@ -702,9 +678,7 @@
       "name": "orchestrator",
       "file": "agents/orchestrator.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "core",
       "description": "Multi-domain coordinator for complex tasks spanning 2+ technical areas. Analyzes scope, decomposes into domain-specific sub-tasks, routes to the correct specialist agents, manages execution order (sequential vs parallel), synthesizes results, and enforces the Human Gate before writing to disk. Keywords: orchestrate, coordinate, multi-domain, complex, architect.",
       "trigger_keywords": [
@@ -721,12 +695,30 @@
       ]
     },
     {
+      "name": "patch-proposal-agent",
+      "file": "agents/patch-proposal-agent.md",
+      "type": "specialist",
+      "routing_domain": ["architecture", "backend", "frontend", "security", "all"],
+      "routing_tier": "specialized",
+      "description": "Specialist automated repair engineer analyzing verified defects, security vulnerabilities, and contract violations to produce minimal, structured, regression-safe code repair proposals. Operates strictly within the controlled runtime with mandatory human approval before committing changes.",
+      "trigger_keywords": [
+        "patch",
+        "proposal",
+        "agent",
+        "specialist",
+        "automated",
+        "repair",
+        "engineer",
+        "analyzing",
+        "verified",
+        "defects"
+      ]
+    },
+    {
       "name": "penetration-tester",
       "file": "agents/penetration-tester.md",
       "type": "specialist",
-      "routing_domain": [
-        "security"
-      ],
+      "routing_domain": ["security"],
       "routing_tier": "specialized",
       "description": "Offensive security analyst using MITRE ATT&CK methodology. Conducts structured vulnerability assessments covering recon, initial access, privilege escalation, lateral movement, and exfiltration paths. Produces actionable remediation reports. Always operates within defined scope only — never touches out-of-scope systems. Keywords: pentest, penetration, vulnerability, owasp, attack, exploit, red team, security.",
       "trigger_keywords": [
@@ -746,9 +738,7 @@
       "name": "performance-optimizer",
       "file": "agents/performance-optimizer.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Web and API performance specialist. Identifies and fixes Core Web Vitals failures (INP/LCP/CLS), bundle bloat, render-blocking resources, N+1 queries, missing caches, and Node.js event loop saturation. Evidence-first: measure before optimizing, verify after. Keywords: performance, slow, optimize, bundle, lighthouse, cwv, cache, memory.",
       "trigger_keywords": [
@@ -768,9 +758,7 @@
       "name": "performance-reviewer",
       "file": "agents/performance-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Audits code against 2026 Core Web Vitals targets (INP <200ms, LCP <2.5s, CLS <0.1), identifies render-blocking patterns, JavaScript bundle bloat, unoptimized image loading, excessive re-renders, memory leaks via uncleared side effects, and missing caching strategies. Activates on /tribunal-performance and /tribunal-full.",
       "trigger_keywords": [
@@ -790,9 +778,7 @@
       "name": "pipeline-reviewer",
       "file": "agents/pipeline-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "devops"
-      ],
+      "routing_domain": ["devops"],
       "routing_tier": "specialized",
       "description": "CI/CD Pipeline & Workflow Auditor. Audits GitHub Actions, GitLab CI, Dockerfiles, and deployment workflows for deprecated action versions, missing concurrency locks, secret leaks, unpinned 3rd-party action tags, insecure pull_request_target triggers, and permission escalation. Activates on /tribunal-cicd, /fix-ci, and /tribunal-full.",
       "trigger_keywords": [
@@ -812,23 +798,16 @@
       "name": "precedence-reviewer",
       "file": "agents/precedence-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": ">",
-      "trigger_keywords": [
-        "precedence",
-        "reviewer"
-      ]
+      "trigger_keywords": ["precedence", "reviewer"]
     },
     {
       "name": "product-manager",
       "file": "agents/product-manager.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Product requirements and feature scoping specialist. Writes structured PRDs, user stories with acceptance criteria, feature scope boundaries, success metrics, and tradeoff analyses. Facilitates clarity between business goals and technical execution. Keywords: product, feature, requirements, user story, prd, scope, stakeholder, roadmap.",
       "trigger_keywords": [
@@ -848,9 +827,7 @@
       "name": "product-owner",
       "file": "agents/product-owner.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Agile delivery and backlog management specialist. Manages sprint items, acceptance criteria, and stakeholder communication. Activate for backlog refinement, sprint planning, and user story writing. Keywords: sprint, backlog, story, epic, acceptance criteria, scrum, kanban, agile.",
       "trigger_keywords": [
@@ -870,9 +847,7 @@
       "name": "product-reviewer",
       "file": "agents/product-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Evaluates whether generated UI components align with category-specific product heuristics (SaaS Dashboards, DevTools, AI Interfaces, Marketing/Landing, Fintech, E-commerce). Activates on /tribunal-frontend and /tribunal-full.",
       "trigger_keywords": [
@@ -892,9 +867,7 @@
       "name": "project-planner",
       "file": "agents/project-planner.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "core",
       "description": "Strategic project planner. Analyzes requirements, identifies risks, decomposes goals into executable wave plans with dependency ordering, produces implementation_plan.md artifacts, and manages scope boundaries. Generates no code — only executable plans for human review. Keywords: plan, strategy, architecture, scope, requirements, roadmap, design.",
       "trigger_keywords": [
@@ -914,9 +887,7 @@
       "name": "qa-automation-engineer",
       "file": "agents/qa-automation-engineer.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Test automation architect. Designs Testing Trophy strategies (unit with Vitest, integration with RTL+MSW, E2E with Playwright), enforces behavior-driven test design, prevents brittle selector usage, and builds CI-integrated coverage gates. Keywords: test, spec, coverage, vitest, playwright, rtl, msw, jest, automation.",
       "trigger_keywords": [
@@ -933,12 +904,57 @@
       ]
     },
     {
+      "name": "refactoring-engineer",
+      "file": "agents/refactoring-engineer.md",
+      "type": "specialist",
+      "routing_domain": ["architecture", "backend", "frontend", "refactoring", "all"],
+      "routing_tier": "specialized",
+      "description": "Specialist refactoring architect analyzing existing code structures to produce minimal, behavior-preserving refactoring proposals, eliminating code smells, duplication, and excessive coupling while strictly preserving public contracts and runtime semantics.",
+      "trigger_keywords": [
+        "refactoring",
+        "engineer",
+        "specialist",
+        "architect",
+        "analyzing",
+        "existing",
+        "code",
+        "structures",
+        "produce",
+        "minimal"
+      ]
+    },
+    {
+      "name": "release-readiness-agent",
+      "file": "agents/release-readiness-agent.md",
+      "type": "specialist",
+      "routing_domain": [
+        "cicd",
+        "release-engineering",
+        "supply-chain",
+        "security",
+        "compliance",
+        "all"
+      ],
+      "routing_tier": "specialized",
+      "description": "Principal release engineer, software supply chain security auditor, CI/CD architect, and independent certification authority evaluating test integrity, build reproducibility, security gates, dependency invariants, and package release readiness.",
+      "trigger_keywords": [
+        "release",
+        "readiness",
+        "agent",
+        "principal",
+        "engineer",
+        "software",
+        "supply",
+        "chain",
+        "security",
+        "auditor"
+      ]
+    },
+    {
       "name": "resilience-reviewer",
       "file": "agents/resilience-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "backend"
-      ],
+      "routing_domain": ["backend"],
       "routing_tier": "specialized",
       "description": "The Tribunal's error handling and fault tolerance auditor. Audits every generated code snippet for swallowed errors, missing retries on network calls, missing circuit breakers, unhandled Promise rejections, lack of fallback chains, and missing React error boundaries. Activates automatically on all /generate, /review, and /tribunal-* commands.",
       "trigger_keywords": [
@@ -958,10 +974,7 @@
       "name": "schema-reviewer",
       "file": "agents/schema-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "backend",
-        "database"
-      ],
+      "routing_domain": ["backend", "database"],
       "routing_tier": "specialized",
       "description": "The Tribunal's input validation and boundary auditor. Audits every generated code snippet for missing API input validation, missing environment variable validation, raw usage of req.body, lack of Zod/Pydantic schemas, and client-only validation. Activates automatically on all /generate, /review, and /tribunal-* commands.",
       "trigger_keywords": [
@@ -981,11 +994,7 @@
       "name": "security-auditor",
       "file": "agents/security-auditor.md",
       "type": "reviewer",
-      "routing_domain": [
-        "backend",
-        "frontend",
-        "all"
-      ],
+      "routing_domain": ["backend", "frontend", "all"],
       "routing_tier": "core",
       "description": "OWASP 2025 security analyst. Audits code for injection vulnerabilities, broken authentication, insecure cryptography, SSRF, IDOR, supply chain risks, JWT algorithm bypass, missing rate limiting, and prompt injection in LLM integrations. Activates on /audit, /tribunal-backend, and /tribunal-full.",
       "trigger_keywords": [
@@ -1005,9 +1014,7 @@
       "name": "seo-specialist",
       "file": "agents/seo-specialist.md",
       "type": "specialist",
-      "routing_domain": [
-        "frontend"
-      ],
+      "routing_domain": ["frontend"],
       "routing_tier": "specialized",
       "description": "Next.js 15 SEO and GEO architect. Implements generateMetadata APIs, Schema.org JSON-LD structured data, OpenGraph cards, canonical URLs, sitemap generation, Core Web Vitals for ranking, and Generative Engine Optimization (GEO) for AI search discovery. Keywords: seo, metadata, sitemap, schema, opengraph, ranking, search, geo.",
       "trigger_keywords": [
@@ -1027,9 +1034,7 @@
       "name": "sql-reviewer",
       "file": "agents/sql-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "database"
-      ],
+      "routing_domain": ["database"],
       "routing_tier": "specialized",
       "description": "Audits SQL queries and ORM code for injection vulnerabilities, N+1 query patterns, missing indexes on WHERE/JOIN columns, dangerous raw query usage, transaction boundary errors, and missing EXPLAIN ANALYZE on complex queries. Activates on /tribunal-database and /tribunal-full.",
       "trigger_keywords": [
@@ -1049,9 +1054,7 @@
       "name": "supervisor-agent",
       "file": "agents/supervisor-agent.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Swarm supervisor for decomposing complex goals into parallel worker tasks, managing Fan-Out/Fan-In dispatch cycles, aggregating worker results, resolving conflicts, and synthesizing final deliverables. Commands workers via structured JSON contracts. Escalates to human only on BLOCKED or ERROR states after 3 retries.",
       "trigger_keywords": [
@@ -1068,48 +1071,10 @@
       ]
     },
     {
-      "name": "swarm-worker-contracts",
-      "file": "agents/swarm-worker-contracts.md",
-      "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
-      "routing_tier": "specialized",
-      "description": "Worker JSON contract definitions.",
-      "trigger_keywords": [
-        "swarm",
-        "worker",
-        "contracts",
-        "json",
-        "contract",
-        "definitions"
-      ]
-    },
-    {
-      "name": "swarm-worker-registry",
-      "file": "agents/swarm-worker-registry.md",
-      "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
-      "routing_tier": "specialized",
-      "description": "Worker contract validation, registry management.",
-      "trigger_keywords": [
-        "swarm",
-        "worker",
-        "registry",
-        "contract",
-        "validation",
-        "management"
-      ]
-    },
-    {
       "name": "system-architect",
       "file": "agents/system-architect.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Repository-grounded system design specialist. Reads the System Model (architecture.idx.json) before any design work. Produces Architecture Decision Records (ADRs) for all significant decisions. Capacity planning, scalability patterns, CAP theorem, microservices vs monolith decisions, failure analysis, and trade-off documentation. Keywords: architecture, system design, ADR, capacity, scalability, design, system model.",
       "trigger_keywords": [
@@ -1129,9 +1094,7 @@
       "name": "test-coverage-reviewer",
       "file": "agents/test-coverage-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Audits test suites for happy-path-only coverage, missing edge cases, brittle selectors, mutation testing gaps, improper mocking patterns, and test design that verifies implementation rather than behavior. Activates on /tribunal-full and /test commands.",
       "trigger_keywords": [
@@ -1151,9 +1114,7 @@
       "name": "test-engineer",
       "file": "agents/test-engineer.md",
       "type": "specialist",
-      "routing_domain": [
-        "all"
-      ],
+      "routing_domain": ["all"],
       "routing_tier": "specialized",
       "description": "Test design specialist for TDD, unit, and integration testing. Writes high-quality tests that actually catch bugs. Keywords: test, tdd, unit, integration, vitest, jest, mock, spec, assert.",
       "trigger_keywords": [
@@ -1170,12 +1131,30 @@
       ]
     },
     {
+      "name": "threat-modeler",
+      "file": "agents/threat-modeler.md",
+      "type": "specialist",
+      "routing_domain": ["security", "architecture", "all"],
+      "routing_tier": "specialized",
+      "description": "Specialist security architect performing structured threat modeling across trust boundaries, entry points, data flows, and attack surfaces using STRIDE and MITRE ATLAS methodologies. Produces prioritized mitigation proposals, identifies missing controls, and flags findings requiring independent verification.",
+      "trigger_keywords": [
+        "threat",
+        "modeler",
+        "specialist",
+        "security",
+        "architect",
+        "performing",
+        "structured",
+        "modeling",
+        "across",
+        "trust"
+      ]
+    },
+    {
       "name": "throughput-optimizer",
       "file": "agents/throughput-optimizer.md",
       "type": "specialist",
-      "routing_domain": [
-        "backend"
-      ],
+      "routing_domain": ["backend"],
       "routing_tier": "specialized",
       "description": "Node.js server throughput specialist. Audits server-side JavaScript/TypeScript for event-loop blocking (sync fs, large JSON.parse), serialized Promise chains (await in loops), memory leaks (global caches without TTL, uncleared intervals), missing Worker Thread offloading, streaming gaps, missing HTTP keep-alive, and unbuffered async iterators. Token-scoped to server files only. Activates on /tribunal-speed and /tribunal-full.",
       "trigger_keywords": [
@@ -1195,10 +1174,7 @@
       "name": "type-safety-reviewer",
       "file": "agents/type-safety-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "backend",
-        "frontend"
-      ],
+      "routing_domain": ["backend", "frontend"],
       "routing_tier": "specialized",
       "description": "Audits TypeScript code for unsafe any usage, unjustified type assertions, missing return types, unguarded property access, broken generic constraints, Zod parse vs cast confusion, and discriminated union exhaustiveness. Activates on /tribunal-backend, /tribunal-frontend, and /tribunal-full.",
       "trigger_keywords": [
@@ -1218,9 +1194,7 @@
       "name": "ui-ux-auditor",
       "file": "agents/ui-ux-auditor.md",
       "type": "reviewer",
-      "routing_domain": [
-        "frontend"
-      ],
+      "routing_domain": ["frontend"],
       "routing_tier": "specialized",
       "description": "Tribunal Supervisor for Premium Design Governance. Orchestrates the 6-agent UI review pipeline (UX, Visual, Interaction, Anti-Pattern, Product, Accessibility) and enforces WCAG 2.2 AA and the UI Reasoning Engine trace. Activates on /tribunal-frontend and /tribunal-full.",
       "trigger_keywords": [
@@ -1240,9 +1214,7 @@
       "name": "ui-visual-auditor",
       "file": "agents/ui-visual-auditor.md",
       "type": "reviewer",
-      "routing_domain": [
-        "frontend"
-      ],
+      "routing_domain": ["frontend"],
       "routing_tier": "specialized",
       "description": "Automated visual auditor that reviews rendered screenshots and DOM hierarchies for alignment, layout shifts, overflow, contrast, and responsive breakpoint reflow. Activates on /tribunal-ui and /tribunal-full.",
       "trigger_keywords": [
@@ -1262,9 +1234,7 @@
       "name": "ux-reviewer",
       "file": "agents/ux-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "frontend"
-      ],
+      "routing_domain": ["frontend"],
       "routing_tier": "specialized",
       "description": "Evaluates usability, scannability, cognitive safety, information architecture, and core UX laws (Fitts's Law, Hick's Law, Gestalt principles). Activates on /tribunal-frontend and /tribunal-full.",
       "trigger_keywords": [
@@ -1284,9 +1254,7 @@
       "name": "visual-reviewer",
       "file": "agents/visual-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "frontend"
-      ],
+      "routing_domain": ["frontend"],
       "routing_tier": "specialized",
       "description": "Evaluates visual rhythm, 8px grid alignment, typography scales (45ch–75ch line length, text-wrap balance), optical balance, and OKLCH color harmony. Activates on /tribunal-frontend and /tribunal-full.",
       "trigger_keywords": [
@@ -1306,9 +1274,7 @@
       "name": "vitals-reviewer",
       "file": "agents/vitals-reviewer.md",
       "type": "reviewer",
-      "routing_domain": [
-        "frontend"
-      ],
+      "routing_domain": ["frontend"],
       "routing_tier": "specialized",
       "description": "Frontend Core Web Vitals specialist. Audits React/Next.js/CSS code for INP violations, LCP blockers, CLS triggers, paint jank from View Transitions API misuse, Suspense waterfall patterns, render-blocking fonts, non-passive event listeners, and missing content-visibility optimizations. Token-scoped to UI files only (.tsx/.jsx/.css). Activates on /tribunal-speed and /tribunal-full.",
       "trigger_keywords": [
@@ -1333,13 +1299,7 @@
       "description": "Agent Context Format Distiller",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "acf",
-        "agent",
-        "context",
-        "format",
-        "distiller"
-      ]
+      "trigger_keywords": ["acf", "agent", "context", "format", "distiller"]
     },
     {
       "command": "/api-tester",
@@ -1348,13 +1308,7 @@
       "description": "Automated API Testing",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "api-tester",
-        "api",
-        "tester",
-        "automated",
-        "testing"
-      ]
+      "trigger_keywords": ["api-tester", "api", "tester", "automated", "testing"]
     },
     {
       "command": "/arch",
@@ -1363,12 +1317,7 @@
       "description": "Tribunal Architecture Intelligence",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "arch",
-        "tribunal",
-        "architecture",
-        "intelligence"
-      ]
+      "trigger_keywords": ["arch", "tribunal", "architecture", "intelligence"]
     },
     {
       "command": "/assimilate",
@@ -1377,11 +1326,7 @@
       "description": "ASSIMILATE (LEARNING PIPELINE)",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "assimilate",
-        "learning",
-        "pipeline"
-      ]
+      "trigger_keywords": ["assimilate", "learning", "pipeline"]
     },
     {
       "command": "/audit-live",
@@ -1390,14 +1335,7 @@
       "description": "Live Website Health & Accessibility Audit",
       "routing_domain": "audit",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "audit-live",
-        "audit",
-        "live",
-        "website",
-        "health",
-        "accessibility"
-      ]
+      "trigger_keywords": ["audit-live", "audit", "live", "website", "health", "accessibility"]
     },
     {
       "command": "/audit",
@@ -1426,12 +1364,7 @@
       "description": "Structured Idea Exploration",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "brainstorm",
-        "structured",
-        "idea",
-        "exploration"
-      ]
+      "trigger_keywords": ["brainstorm", "structured", "idea", "exploration"]
     },
     {
       "command": "/changelog",
@@ -1440,11 +1373,7 @@
       "description": "Git History to Changelog",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "changelog",
-        "git",
-        "history"
-      ]
+      "trigger_keywords": ["changelog", "git", "history"]
     },
     {
       "command": "/compare-web",
@@ -1490,14 +1419,7 @@
       "description": "AI Agent Behavioral Contract Testing & Trace Replay",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "contract",
-        "agent",
-        "behavioral",
-        "testing",
-        "trace",
-        "replay"
-      ]
+      "trigger_keywords": ["contract", "agent", "behavioral", "testing", "trace", "replay"]
     },
     {
       "command": "/create",
@@ -1544,11 +1466,7 @@
       "description": "Production Deployment",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "deploy",
-        "production",
-        "deployment"
-      ]
+      "trigger_keywords": ["deploy", "production", "deployment"]
     },
     {
       "command": "/enhance",
@@ -1576,14 +1494,7 @@
       "description": "Automated Pipeline Failure Resolution",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "fix-ci",
-        "fix",
-        "automated",
-        "pipeline",
-        "failure",
-        "resolution"
-      ]
+      "trigger_keywords": ["fix-ci", "fix", "automated", "pipeline", "failure", "resolution"]
     },
     {
       "command": "/fix",
@@ -1592,12 +1503,7 @@
       "description": "Automated Error Resolution",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "fix",
-        "automated",
-        "error",
-        "resolution"
-      ]
+      "trigger_keywords": ["fix", "automated", "error", "resolution"]
     },
     {
       "command": "/generate",
@@ -1626,11 +1532,7 @@
       "description": "HTOP (SYSCALL MONITOR)",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "htop",
-        "syscall",
-        "monitor"
-      ]
+      "trigger_keywords": ["htop", "syscall", "monitor"]
     },
     {
       "command": "/marathon",
@@ -1659,12 +1561,7 @@
       "description": "Safe Migration Execution",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "migrate",
-        "safe",
-        "migration",
-        "execution"
-      ]
+      "trigger_keywords": ["migrate", "safe", "migration", "execution"]
     },
     {
       "command": "/minimal",
@@ -1673,12 +1570,7 @@
       "description": "Minimal Change Governance Workflow",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "minimal",
-        "change",
-        "governance",
-        "workflow"
-      ]
+      "trigger_keywords": ["minimal", "change", "governance", "workflow"]
     },
     {
       "command": "/orchestrate",
@@ -1687,11 +1579,7 @@
       "description": "Multi-Agent Coordination",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "orchestrate",
-        "multi-agent",
-        "coordination"
-      ]
+      "trigger_keywords": ["orchestrate", "multi-agent", "coordination"]
     },
     {
       "command": "/performance-benchmarker",
@@ -1735,12 +1623,7 @@
       "description": "Strategic Implementation Planning",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "plan",
-        "strategic",
-        "implementation",
-        "planning"
-      ]
+      "trigger_keywords": ["plan", "strategic", "implementation", "planning"]
     },
     {
       "command": "/preview",
@@ -1749,12 +1632,7 @@
       "description": "Local Development Server",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "preview",
-        "local",
-        "development",
-        "server"
-      ]
+      "trigger_keywords": ["preview", "local", "development", "server"]
     },
     {
       "command": "/refactor",
@@ -1763,12 +1641,7 @@
       "description": "Dependency-Safe Structural Improvement",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "refactor",
-        "dependency-safe",
-        "structural",
-        "improvement"
-      ]
+      "trigger_keywords": ["refactor", "dependency-safe", "structural", "improvement"]
     },
     {
       "command": "/resume",
@@ -1777,10 +1650,7 @@
       "description": "RESUME WORKFLOW",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "resume",
-        "workflow"
-      ]
+      "trigger_keywords": ["resume", "workflow"]
     },
     {
       "command": "/review-ai",
@@ -1789,13 +1659,7 @@
       "description": "AI Integration Code Audit",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "review-ai",
-        "review",
-        "integration",
-        "code",
-        "audit"
-      ]
+      "trigger_keywords": ["review-ai", "review", "integration", "code", "audit"]
     },
     {
       "command": "/review",
@@ -1823,14 +1687,7 @@
       "description": "Subagent-Driven Development (SDD) with Tribunal Review Waves",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "sdd",
-        "subagent-driven",
-        "development",
-        "tribunal",
-        "review",
-        "waves"
-      ]
+      "trigger_keywords": ["sdd", "subagent-driven", "development", "tribunal", "review", "waves"]
     },
     {
       "command": "/session",
@@ -1839,11 +1696,7 @@
       "description": "Session State Management",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "session",
-        "state",
-        "management"
-      ]
+      "trigger_keywords": ["session", "state", "management"]
     },
     {
       "command": "/skill-enhancement-engine",
@@ -1868,13 +1721,7 @@
       "description": "Tribunal Skill Intelligence Engine",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "skill-intelligence",
-        "skill",
-        "intelligence",
-        "tribunal",
-        "engine"
-      ]
+      "trigger_keywords": ["skill-intelligence", "skill", "intelligence", "tribunal", "engine"]
     },
     {
       "command": "/status",
@@ -1956,13 +1803,7 @@
       "description": "TEAM MODE (DAG ORCHESTRATION)",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "team-mode",
-        "team",
-        "mode",
-        "dag",
-        "orchestration"
-      ]
+      "trigger_keywords": ["team-mode", "team", "mode", "dag", "orchestration"]
     },
     {
       "command": "/test",
@@ -1971,11 +1812,7 @@
       "description": "Test Generation & Execution",
       "routing_domain": "general",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "test",
-        "generation",
-        "execution"
-      ]
+      "trigger_keywords": ["test", "generation", "execution"]
     },
     {
       "command": "/tribunal-backend",
@@ -2004,14 +1841,7 @@
       "description": "Pipeline & Workflow Audit",
       "routing_domain": "tribunal",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tribunal-cicd",
-        "tribunal",
-        "cicd",
-        "pipeline",
-        "workflow",
-        "audit"
-      ]
+      "trigger_keywords": ["tribunal-cicd", "tribunal", "cicd", "pipeline", "workflow", "audit"]
     },
     {
       "command": "/tribunal-database",
@@ -2080,13 +1910,7 @@
       "description": "Mobile Code Audit",
       "routing_domain": "tribunal",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tribunal-mobile",
-        "tribunal",
-        "mobile",
-        "code",
-        "audit"
-      ]
+      "trigger_keywords": ["tribunal-mobile", "tribunal", "mobile", "code", "audit"]
     },
     {
       "command": "/tribunal-performance",
@@ -2131,13 +1955,7 @@
       "description": "Dedicated UI/UX Review Pipeline",
       "routing_domain": "tribunal",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tribunal-ui",
-        "tribunal",
-        "dedicated",
-        "review",
-        "pipeline"
-      ]
+      "trigger_keywords": ["tribunal-ui", "tribunal", "dedicated", "review", "pipeline"]
     },
     {
       "command": "/ui-ux-pro-max",
@@ -2146,13 +1964,7 @@
       "description": "Advanced UI/UX Design",
       "routing_domain": "general",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "ui-ux-pro-max",
-        "pro",
-        "max",
-        "advanced",
-        "design"
-      ]
+      "trigger_keywords": ["ui-ux-pro-max", "pro", "max", "advanced", "design"]
     },
     {
       "command": "/tribunal-understand",
@@ -2181,29 +1993,21 @@
       "description": "Use when implementing, optimizing, and timing 60fps/120fps 12 principles of animation animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "principles",
-        "animation"
-      ]
+      "trigger_keywords": ["principles", "animation"]
     },
     {
       "name": "60fps-animation",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps 60fps animation animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "animation"
-      ]
+      "trigger_keywords": ["animation"]
     },
     {
       "name": "accessible-animation",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps accessible animation animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "accessible",
-        "animation"
-      ]
+      "trigger_keywords": ["accessible", "animation"]
     },
     {
       "name": "acf",
@@ -2228,29 +2032,21 @@
       "description": "Responsive layout and adaptive interface engineering. Enforces content-driven breakpoints, container queries (@container), CSS Subgrid, horizontal overflow containment, and touch target minimums (>=44px).",
       "routing_domain": "ui-design-engineering",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "adapt"
-      ]
+      "trigger_keywords": ["adapt"]
     },
     {
       "name": "adr-generation",
       "description": "Use when executing, coordinating, planning, or reviewing adr generation agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "adr",
-        "generation"
-      ]
+      "trigger_keywords": ["adr", "generation"]
     },
     {
       "name": "advanced-rag-pipelines",
       "description": "Use when designing, implementing, auditing, and hardening advanced rag pipelines server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "advanced",
-        "rag"
-      ]
+      "trigger_keywords": ["advanced", "rag"]
     },
     {
       "name": "agent-behavioral-testing",
@@ -2341,9 +2137,7 @@
       "description": "Use when executing, coordinating, planning, or reviewing agent organizer agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "organizer"
-      ]
+      "trigger_keywords": ["organizer"]
     },
     {
       "name": "agent-recovery-and-resume-auditor",
@@ -2448,11 +2242,7 @@
       "description": "Use when defining, invoking, or auditing agent system calls and tool executions in Tribunal OS. Enforces schema validation, argument sandboxing, path normalization, timeout boundaries, and command whitelisting.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "syscall",
-        "guidelines",
-        "defining"
-      ]
+      "trigger_keywords": ["syscall", "guidelines", "defining"]
     },
     {
       "name": "agent-timeout-and-cancellation-auditor",
@@ -2487,30 +2277,21 @@
       "description": "Use when executing, coordinating, planning, or reviewing agentic patterns agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "agentic",
-        "patterns"
-      ]
+      "trigger_keywords": ["agentic", "patterns"]
     },
     {
       "name": "agentic-workflows-2026",
       "description": "Use when designing, implementing, auditing, and hardening agentic workflows 2026 server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "agentic"
-      ]
+      "trigger_keywords": ["agentic"]
     },
     {
       "name": "agentshield-security",
       "description": "Use when securing AI agents against prompt injection, untrusted repository content, rogue dependencies, credential exfiltration, and tool abuse. Covers sandboxing, input delimiters, and least-privilege tool execution.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "agentshield",
-        "security",
-        "agents"
-      ]
+      "trigger_keywords": ["agentshield", "security", "agents"]
     },
     {
       "name": "ai-agent-security-regression-tester",
@@ -2576,10 +2357,7 @@
       "description": "Use when auditing, pen-testing, hardening, and verifying code against ai prompt injection defense vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "prompt",
-        "defense"
-      ]
+      "trigger_keywords": ["prompt", "defense"]
     },
     {
       "name": "ai-security-control-verifier",
@@ -2628,41 +2406,28 @@
       "description": "Use when implementing, optimizing, and timing 60fps/120fps animation on scroll animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "animation",
-        "scroll"
-      ]
+      "trigger_keywords": ["animation", "scroll"]
     },
     {
       "name": "animation-systems",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps animation systems animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "animation"
-      ]
+      "trigger_keywords": ["animation"]
     },
     {
       "name": "antfu-conventions",
       "description": "Use when executing, coordinating, planning, or reviewing antfu conventions agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "antfu",
-        "conventions"
-      ]
+      "trigger_keywords": ["antfu", "conventions"]
     },
     {
       "name": "anti-slop-enforcement",
       "description": "Use when Tribunal extraction of the anti-slop rule sets. Enforces Purpose-Gates, Hard-Gates, and Liveliness Dials for UI engineering.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "anti",
-        "slop",
-        "enforcement",
-        "tribunal"
-      ]
+      "trigger_keywords": ["anti", "slop", "enforcement", "tribunal"]
     },
     {
       "name": "api-contract-testing",
@@ -2711,21 +2476,14 @@
       "description": "Use when designing, implementing, auditing, and hardening api patterns server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "api",
-        "patterns"
-      ]
+      "trigger_keywords": ["api", "patterns"]
     },
     {
       "name": "api-security-auditor",
       "description": "Use when designing, implementing, auditing, and hardening api security auditor server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "api",
-        "security",
-        "auditor"
-      ]
+      "trigger_keywords": ["api", "security", "auditor"]
     },
     {
       "name": "api-tester",
@@ -2750,28 +2508,21 @@
       "description": "Use when executing, coordinating, planning, or reviewing app builder agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "builder"
-      ]
+      "trigger_keywords": ["builder"]
     },
     {
       "name": "appflow-wireframe",
       "description": "Use when building, styling, optimizing, and auditing appflow wireframe components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "appflow",
-        "wireframe"
-      ]
+      "trigger_keywords": ["appflow", "wireframe"]
     },
     {
       "name": "apple-design",
       "description": "Use when building, styling, optimizing, and auditing apple design components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "apple"
-      ]
+      "trigger_keywords": ["apple"]
     },
     {
       "name": "arch",
@@ -2796,31 +2547,21 @@
       "description": "Use when executing, coordinating, planning, or reviewing architecture agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "system-design",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "architecture"
-      ]
+      "trigger_keywords": ["architecture"]
     },
     {
       "name": "architecture-drift",
       "description": "Use when executing, coordinating, planning, or reviewing architecture drift agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "system-design",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "architecture",
-        "drift"
-      ]
+      "trigger_keywords": ["architecture", "drift"]
     },
     {
       "name": "architecture-intelligence",
       "description": "Use when analyzing, extracting, verifying, diffing, or simulating blast radius and security trust boundaries for software architectures.",
       "routing_domain": "system-design",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "architecture",
-        "intelligence",
-        "analyzing",
-        "extracting"
-      ]
+      "trigger_keywords": ["architecture", "intelligence", "analyzing", "extracting"]
     },
     {
       "name": "architecture-mapping",
@@ -2891,9 +2632,7 @@
       "description": "Use when auditing, pen-testing, hardening, and verifying code against audit and fix vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "audit"
-      ]
+      "trigger_keywords": ["audit"]
     },
     {
       "name": "audit-live",
@@ -2918,11 +2657,7 @@
       "description": "Use when auditing, pen-testing, hardening, and verifying code against authentication best practices vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "authentication",
-        "best",
-        "practices"
-      ]
+      "trigger_keywords": ["authentication", "best", "practices"]
     },
     {
       "name": "automated-a11y-testing",
@@ -2943,197 +2678,133 @@
       "description": "Use when executing, coordinating, planning, or reviewing autonomous execution agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "autonomous",
-        "execution"
-      ]
+      "trigger_keywords": ["autonomous", "execution"]
     },
     {
       "name": "backend-alembic",
       "description": "Use when creating, reviewing, validating, and debugging Alembic database migrations. Covers migration DAGs, zero-downtime expand-and-contract migrations, branch heads, autogenerate limitations, and SQLite batch mode.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "backend",
-        "alembic",
-        "creating"
-      ]
+      "trigger_keywords": ["backend", "alembic", "creating"]
     },
     {
       "name": "backend-architecture-auditor",
       "description": "Use when auditing backend architecture, module boundaries, domain logic separation, coupling, and circular dependencies. Evaluates layered, hexagonal, modular monolith, and microservice designs against maintainability and scale.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "backend",
-        "architecture",
-        "auditor"
-      ]
+      "trigger_keywords": ["backend", "architecture", "auditor"]
     },
     {
       "name": "backend-mongodb",
       "description": "Use when analyzing, querying, designing, and hardening MongoDB schemas, indexes, and aggregation pipelines. Covers compound indexes, NoSQL injection prevention, schema validation, transaction boundaries, and projection safety.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "backend",
-        "mongodb",
-        "analyzing"
-      ]
+      "trigger_keywords": ["backend", "mongodb", "analyzing"]
     },
     {
       "name": "backend-mysql",
       "description": "Use when analyzing, optimizing, and securing MySQL and MariaDB databases. Covers InnoDB storage engine, composite index left-prefix rule, locking & deadlocks, transactions, connection pooling, and utf8mb4 collation.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "backend",
-        "mysql",
-        "analyzing"
-      ]
+      "trigger_keywords": ["backend", "mysql", "analyzing"]
     },
     {
       "name": "backend-performance-auditor",
       "description": "Use when auditing backend latency, throughput, memory consumption, and concurrency bottlenecks. Covers Node.js/Python event loop profiling, connection pool starvation, memory leaks, serialization overhead, and CPU hot paths.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "backend",
-        "performance",
-        "auditor"
-      ]
+      "trigger_keywords": ["backend", "performance", "auditor"]
     },
     {
       "name": "backend-postgresql",
       "description": "Use when analyzing, designing, optimizing, and securing PostgreSQL databases. Covers B-Tree/GIN/BRIN indexing, query plans (EXPLAIN ANALYZE), connection pooling with PgBouncer, transactions, MVCC, locking, and JSONB optimization.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "backend",
-        "postgresql",
-        "analyzing"
-      ]
+      "trigger_keywords": ["backend", "postgresql", "analyzing"]
     },
     {
       "name": "backend-redis",
       "description": "Use when analyzing, designing, and optimizing Redis usage for caching, distributed locking, rate limiting, session storage, and queues. Covers memory limits, eviction policies, atomic Lua scripts, TTL enforcement, and connection pooling.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "backend",
-        "redis",
-        "analyzing"
-      ]
+      "trigger_keywords": ["backend", "redis", "analyzing"]
     },
     {
       "name": "backend-security-expert",
       "description": "Use when designing, implementing, auditing, and hardening backend security expert server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "backend",
-        "security",
-        "expert"
-      ]
+      "trigger_keywords": ["backend", "security", "expert"]
     },
     {
       "name": "backend-sqlalchemy",
       "description": "Use when analyzing, writing, and optimizing SQLAlchemy 2.0+ ORM and Core code in Python. Covers modern select() syntax, async sessions, relationship loading strategies (selectinload, joinedload), session lifecycles, and N+1 prevention.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "backend",
-        "sqlalchemy",
-        "analyzing"
-      ]
+      "trigger_keywords": ["backend", "sqlalchemy", "analyzing"]
     },
     {
       "name": "backend-sqlite",
       "description": "Use when configuring, analyzing, and optimizing SQLite in backend, desktop, mobile, and embedded systems. Covers WAL mode, busy timeout, transaction concurrency, connection pooling singletons, and SQLite limitations.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "backend",
-        "sqlite",
-        "analyzing"
-      ]
+      "trigger_keywords": ["backend", "sqlite", "analyzing"]
     },
     {
       "name": "backend-testing-auditor",
       "description": "Use when auditing, designing, and hardening backend test suites (unit, integration, E2E, contract). Evaluates test isolation, database state management, flaky async assertions, boundary testing (null, 0, max), and regression prevention.",
       "routing_domain": "testing",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "backend",
-        "auditor"
-      ]
+      "trigger_keywords": ["backend", "auditor"]
     },
     {
       "name": "baseline-ui",
       "description": "Use when building, styling, optimizing, and auditing baseline ui components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "baseline"
-      ]
+      "trigger_keywords": ["baseline"]
     },
     {
       "name": "bash-linux",
       "description": "Use when configuring, automating, deploying, and debugging bash linux pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "bash",
-        "linux"
-      ]
+      "trigger_keywords": ["bash", "linux"]
     },
     {
       "name": "behavioral-modes",
       "description": "Use when executing, coordinating, planning, or reviewing behavioral modes agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "behavioral",
-        "modes"
-      ]
+      "trigger_keywords": ["behavioral", "modes"]
     },
     {
       "name": "better-colors",
       "description": "Modern OKLCH color science & perceptual contrast engine. Computes lightness deltas for WCAG AA compliance (delta L >= 0.45) and generates CSS Relative Color Syntax tokens.",
       "routing_domain": "ui-design-engineering",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "better",
-        "colors"
-      ]
+      "trigger_keywords": ["better", "colors"]
     },
     {
       "name": "better-typography",
       "description": "Fluid typography engineering & typographic hierarchy authority. Enforces CSS clamp() scales, optical line-length bounds (45ch-75ch), text-wrap balance, and font-display strategies.",
       "routing_domain": "ui-design-engineering",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "better",
-        "typography"
-      ]
+      "trigger_keywords": ["better", "typography"]
     },
     {
       "name": "better-ui",
       "description": "Enforces 2026 UI design engineering invariants: nested border radius formulas (R_outer = R_inner + Padding), multi-layer ambient shadows, tactile active-press feedback (active:scale-[0.98]), and OKLCH color palettes.",
       "routing_domain": "ui-design-engineering",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "better"
-      ]
+      "trigger_keywords": ["better"]
     },
     {
       "name": "bolder",
       "description": "Use when building, styling, optimizing, and auditing bolder components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "bolder"
-      ]
+      "trigger_keywords": ["bolder"]
     },
     {
       "name": "brainstorm",
@@ -3158,28 +2829,21 @@
       "description": "Use when executing, coordinating, planning, or reviewing brainstorming agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "brainstorming"
-      ]
+      "trigger_keywords": ["brainstorming"]
     },
     {
       "name": "browser-audit",
       "description": "Use when writing, maintaining, executing, and auditing browser audit test suites, assertions, mocks, and verification gates.",
       "routing_domain": "ui-design-engineering",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "browser",
-        "audit"
-      ]
+      "trigger_keywords": ["browser", "audit"]
     },
     {
       "name": "browser-native-ai",
       "description": "Use when designing, implementing, auditing, and hardening browser native ai server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "browser"
-      ]
+      "trigger_keywords": ["browser"]
     },
     {
       "name": "build-and-ci-supply-chain-auditor",
@@ -3200,9 +2864,7 @@
       "description": "Use when building, styling, optimizing, and auditing build primitive components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "primitive"
-      ]
+      "trigger_keywords": ["primitive"]
     },
     {
       "name": "building-native-ui",
@@ -3273,28 +2935,21 @@
       "description": "Use when configuring, automating, deploying, and debugging cicd pro pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "cicd",
-        "pro"
-      ]
+      "trigger_keywords": ["cicd", "pro"]
     },
     {
       "name": "clarify",
       "description": "Use when building, styling, optimizing, and auditing clarify components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "clarify"
-      ]
+      "trigger_keywords": ["clarify"]
     },
     {
       "name": "clean-code",
       "description": "Use when auditing, pen-testing, hardening, and verifying code against clean code vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "clean"
-      ]
+      "trigger_keywords": ["clean"]
     },
     {
       "name": "clickhouse-olap-engineering",
@@ -3315,18 +2970,14 @@
       "description": "Use when configuring, automating, deploying, and debugging cloud architect pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "system-design",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "architect"
-      ]
+      "trigger_keywords": ["architect"]
     },
     {
       "name": "cobejs",
       "description": "Use when executing, coordinating, planning, or reviewing cobejs agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "cobejs"
-      ]
+      "trigger_keywords": ["cobejs"]
     },
     {
       "name": "code-relevance-analysis",
@@ -3347,19 +2998,14 @@
       "description": "Use when auditing, pen-testing, hardening, and verifying code against code review checklist vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "review",
-        "checklist"
-      ]
+      "trigger_keywords": ["review", "checklist"]
     },
     {
       "name": "codebase-design",
       "description": "Use when executing, coordinating, planning, or reviewing codebase design agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "codebase"
-      ]
+      "trigger_keywords": ["codebase"]
     },
     {
       "name": "codebase-intelligence",
@@ -3383,29 +3029,21 @@
       "description": "Use when building, styling, optimizing, and auditing colorize components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "colorize"
-      ]
+      "trigger_keywords": ["colorize"]
     },
     {
       "name": "compact-landing",
       "description": "Use when building, styling, optimizing, and auditing compact landing components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "compact",
-        "landing"
-      ]
+      "trigger_keywords": ["compact", "landing"]
     },
     {
       "name": "company-logos",
       "description": "Use when building, styling, optimizing, and auditing company logos components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "company",
-        "logos"
-      ]
+      "trigger_keywords": ["company", "logos"]
     },
     {
       "name": "compare-web",
@@ -3472,20 +3110,14 @@
       "description": "Use when configuring, automating, deploying, and debugging config validator pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "config",
-        "validator"
-      ]
+      "trigger_keywords": ["config", "validator"]
     },
     {
       "name": "containerization-pro",
       "description": "Use when configuring, automating, deploying, and debugging containerization pro pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "containerization",
-        "pro"
-      ]
+      "trigger_keywords": ["containerization", "pro"]
     },
     {
       "name": "context",
@@ -3510,11 +3142,7 @@
       "description": "Use when designing, implementing, auditing, and hardening context engineering pro server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "context",
-        "engineering",
-        "pro"
-      ]
+      "trigger_keywords": ["context", "engineering", "pro"]
     },
     {
       "name": "contract",
@@ -3575,37 +3203,28 @@
       "description": "Structured UI/UX critic evaluating visual hierarchy, optical balance, typography line lengths, spatial grid alignment, and WCAG AA accessibility compliance.",
       "routing_domain": "ui-design-engineering",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "critique"
-      ]
+      "trigger_keywords": ["critique"]
     },
     {
       "name": "csharp-developer",
       "description": "Use when designing, implementing, auditing, and hardening csharp developer server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "csharp",
-        "developer"
-      ]
+      "trigger_keywords": ["csharp", "developer"]
     },
     {
       "name": "data-validation-schemas",
       "description": "Use when designing schemas, querying, indexing, optimizing, and securing data validation schemas databases and data models.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "validation"
-      ]
+      "trigger_keywords": ["validation"]
     },
     {
       "name": "database-design",
       "description": "Use when designing schemas, querying, indexing, optimizing, and securing database design databases and data models.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "database"
-      ]
+      "trigger_keywords": ["database"]
     },
     {
       "name": "database-indexing-tuning",
@@ -3714,9 +3333,7 @@
       "description": "Use when building, styling, optimizing, and auditing delight components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "delight"
-      ]
+      "trigger_keywords": ["delight"]
     },
     {
       "name": "dependency-confusion-and-registry-security-auditor",
@@ -3825,10 +3442,7 @@
       "description": "Use when configuring, automating, deploying, and debugging deployment procedures pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "deployment",
-        "procedures"
-      ]
+      "trigger_keywords": ["deployment", "procedures"]
     },
     {
       "name": "design-by-contract-auditor",
@@ -3849,40 +3463,28 @@
       "description": "Use when executing, coordinating, planning, or reviewing design lab agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "lab"
-      ]
+      "trigger_keywords": ["lab"]
     },
     {
       "name": "devops-engineer",
       "description": "Use when configuring, automating, deploying, and debugging devops engineer pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "devops",
-        "engineer"
-      ]
+      "trigger_keywords": ["devops", "engineer"]
     },
     {
       "name": "devops-incident-responder",
       "description": "Use when configuring, automating, deploying, and debugging devops incident responder pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "devops",
-        "incident",
-        "responder"
-      ]
+      "trigger_keywords": ["devops", "incident", "responder"]
     },
     {
       "name": "diagnosing-bugs",
       "description": "Use when executing, coordinating, planning, or reviewing diagnosing bugs agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "diagnosing",
-        "bugs"
-      ]
+      "trigger_keywords": ["diagnosing", "bugs"]
     },
     {
       "name": "differential-and-metamorphic-testing-auditor",
@@ -3903,40 +3505,28 @@
       "description": "Use when building, styling, optimizing, and auditing distill components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "distill"
-      ]
+      "trigger_keywords": ["distill"]
     },
     {
       "name": "documentation-templates",
       "description": "Use when executing, coordinating, planning, or reviewing documentation templates agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "documentation",
-        "templates"
-      ]
+      "trigger_keywords": ["documentation", "templates"]
     },
     {
       "name": "domain-modeling",
       "description": "Use when designing schemas, querying, indexing, optimizing, and securing domain modeling databases and data models.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "domain",
-        "modeling"
-      ]
+      "trigger_keywords": ["domain", "modeling"]
     },
     {
       "name": "duckdb-analytical-sql",
       "description": "Use when designing schemas, querying, indexing, optimizing, and securing duckdb analytical sql databases and data models.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "duckdb",
-        "analytical",
-        "sql"
-      ]
+      "trigger_keywords": ["duckdb", "analytical", "sql"]
     },
     {
       "name": "e2e-smoke-testing",
@@ -3957,29 +3547,21 @@
       "description": "Use when building, optimizing, and securing edge ai mobile mobile interfaces, native bridges, touch gestures, and offline states.",
       "routing_domain": "mobile",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "edge"
-      ]
+      "trigger_keywords": ["edge"]
     },
     {
       "name": "edge-computing",
       "description": "Use when designing, implementing, auditing, and hardening edge computing server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "edge",
-        "computing"
-      ]
+      "trigger_keywords": ["edge", "computing"]
     },
     {
       "name": "emil-design-eng",
       "description": "Use when executing, coordinating, planning, or reviewing emil design eng agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "emil",
-        "eng"
-      ]
+      "trigger_keywords": ["emil", "eng"]
     },
     {
       "name": "enhance",
@@ -4004,9 +3586,7 @@
       "description": "Use when designing, implementing, auditing, and hardening error resilience server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "resilience"
-      ]
+      "trigger_keywords": ["resilience"]
     },
     {
       "name": "evaluation-dataset-integrity-auditor",
@@ -4071,41 +3651,28 @@
       "description": "Use when building, optimizing, and securing expo router v4 mobile interfaces, native bridges, touch gestures, and offline states.",
       "routing_domain": "mobile",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "expo",
-        "router"
-      ]
+      "trigger_keywords": ["expo", "router"]
     },
     {
       "name": "extract-design-system",
       "description": "Use when building, styling, optimizing, and auditing extract design system components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "ui-design-engineering",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "extract",
-        "system"
-      ]
+      "trigger_keywords": ["extract", "system"]
     },
     {
       "name": "fabel-protocol",
       "description": "Use when executing, coordinating, planning, or reviewing fabel protocol agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "fabel",
-        "protocol"
-      ]
+      "trigger_keywords": ["fabel", "protocol"]
     },
     {
       "name": "failure-mode-analysis",
       "description": "Use when executing, coordinating, planning, or reviewing failure mode analysis agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "failure",
-        "mode",
-        "analysis"
-      ]
+      "trigger_keywords": ["failure", "mode", "analysis"]
     },
     {
       "name": "false-positive-false-negative-analyst",
@@ -4126,10 +3693,7 @@
       "description": "Use when designing, building, auditing, and securing FastAPI applications. Covers Pydantic v2 schemas, async def vs def threadpool mechanics, dependency injection security (Depends), BOLA/IDOR prevention, middleware, and OpenAPI documentation.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "fastapi",
-        "pro"
-      ]
+      "trigger_keywords": ["fastapi", "pro"]
     },
     {
       "name": "fix",
@@ -4172,30 +3736,21 @@
       "description": "Use when auditing, pen-testing, hardening, and verifying code against fixing accessibility vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "fixing",
-        "accessibility"
-      ]
+      "trigger_keywords": ["fixing", "accessibility"]
     },
     {
       "name": "fixing-metadata",
       "description": "Use when auditing, pen-testing, hardening, and verifying code against fixing metadata vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "fixing",
-        "metadata"
-      ]
+      "trigger_keywords": ["fixing", "metadata"]
     },
     {
       "name": "fixing-motion-performance",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps fixing motion performance animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "fixing",
-        "performance"
-      ]
+      "trigger_keywords": ["fixing", "performance"]
     },
     {
       "name": "flaky-test-diagnoser",
@@ -4230,10 +3785,7 @@
       "description": "Use when implementing, optimizing, and timing 60fps/120fps framer motion expert animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "framer",
-        "expert"
-      ]
+      "trigger_keywords": ["framer", "expert"]
     },
     {
       "name": "frontend-design",
@@ -4258,31 +3810,21 @@
       "description": "Use when auditing, pen-testing, hardening, and verifying code against frontend security expert vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "security",
-        "expert"
-      ]
+      "trigger_keywords": ["security", "expert"]
     },
     {
       "name": "game-design-expert",
       "description": "Use when executing, coordinating, planning, or reviewing game design expert agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "game",
-        "expert"
-      ]
+      "trigger_keywords": ["game", "expert"]
     },
     {
       "name": "game-engineering-expert",
       "description": "Use when executing, coordinating, planning, or reviewing game engineering expert agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "game",
-        "engineering",
-        "expert"
-      ]
+      "trigger_keywords": ["game", "engineering", "expert"]
     },
     {
       "name": "generate",
@@ -4307,141 +3849,98 @@
       "description": "Use when designing, implementing, auditing, and hardening generative ui expert server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "generative",
-        "expert"
-      ]
+      "trigger_keywords": ["generative", "expert"]
     },
     {
       "name": "geo-fundamentals",
       "description": "Use when executing, coordinating, planning, or reviewing geo fundamentals agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "geo",
-        "fundamentals"
-      ]
+      "trigger_keywords": ["geo", "fundamentals"]
     },
     {
       "name": "git-pro",
       "description": "Use when executing, coordinating, planning, or reviewing git pro agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "git",
-        "pro"
-      ]
+      "trigger_keywords": ["git", "pro"]
     },
     {
       "name": "github-operations",
       "description": "Use when executing, coordinating, planning, or reviewing github operations agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "github",
-        "operations"
-      ]
+      "trigger_keywords": ["github", "operations"]
     },
     {
       "name": "gpt-taste",
       "description": "Use when building, styling, optimizing, and auditing gpt taste components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gpt",
-        "taste"
-      ]
+      "trigger_keywords": ["gpt", "taste"]
     },
     {
       "name": "graph-engineering",
       "description": "Use when designing, compiling, and executing Directed Acyclic Graphs (DAGs) for multi-agent workflows, data pipelines, build systems, and dependency resolution. Enforces cycle detection, topological sorting, and parallel wave execution.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "graph",
-        "engineering",
-        "compiling"
-      ]
+      "trigger_keywords": ["graph", "engineering", "compiling"]
     },
     {
       "name": "gsap-core",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps gsap core animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap",
-        "core"
-      ]
+      "trigger_keywords": ["gsap", "core"]
     },
     {
       "name": "gsap-frameworks",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps gsap frameworks animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap",
-        "frameworks"
-      ]
+      "trigger_keywords": ["gsap", "frameworks"]
     },
     {
       "name": "gsap-performance",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps gsap performance animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap",
-        "performance"
-      ]
+      "trigger_keywords": ["gsap", "performance"]
     },
     {
       "name": "gsap-plugins",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps gsap plugins animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap",
-        "plugins"
-      ]
+      "trigger_keywords": ["gsap", "plugins"]
     },
     {
       "name": "gsap-react",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps gsap react animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap",
-        "react"
-      ]
+      "trigger_keywords": ["gsap", "react"]
     },
     {
       "name": "gsap-scrolltrigger",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps gsap scrolltrigger animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap",
-        "scrolltrigger"
-      ]
+      "trigger_keywords": ["gsap", "scrolltrigger"]
     },
     {
       "name": "gsap-timeline",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps gsap timeline animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap",
-        "timeline"
-      ]
+      "trigger_keywords": ["gsap", "timeline"]
     },
     {
       "name": "gsap-utils",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps gsap utils animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "gsap",
-        "utils"
-      ]
+      "trigger_keywords": ["gsap", "utils"]
     },
     {
       "name": "hallucination-detection-auditor",
@@ -4462,109 +3961,70 @@
       "description": "Use when building, styling, optimizing, and auditing harden components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "harden"
-      ]
+      "trigger_keywords": ["harden"]
     },
     {
       "name": "harness-protocol",
       "description": "Use when executing, coordinating, planning, or reviewing harness protocol agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "harness",
-        "protocol"
-      ]
+      "trigger_keywords": ["harness", "protocol"]
     },
     {
       "name": "hf-cli",
       "description": "Use when Hugging Face Hub CLI (`hf`) for downloading, uploading, and managing models, datasets, spaces, buckets, repos, papers, jobs, and more on the Hugging Face Hub. Use when: handling authentication; managing local cache; managing Hugging Face Buckets; running or scheduling jobs on Hugging Face infrastructure; managing Hugging Face repos; discussions and pull requests; browsing models, datasets and spaces; reading, searching, or browsing academic papers; managing collections; querying datasets; configuring spaces; setting up webhooks; or deploying and managing HF Inference Endpoints. Make sure to use this skill whenever the user mentions 'hf', 'huggingface', 'Hugging Face', 'huggingface-cli', or 'hugging face cli', or wants to do anything related to the Hugging Face ecosystem and to AI and ML in general. Also use for cloud storage needs like training checkpoints, data pipelines, or agent traces. Use even if the user doesn't explicitly ask for a CLI command. Replaces the deprecated `huggingface-cli`.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "cli",
-        "hugging",
-        "face",
-        "hub"
-      ]
+      "trigger_keywords": ["cli", "hugging", "face", "hub"]
     },
     {
       "name": "hf-cloud-aws-context-discovery",
-      "description": "Use when Discover the user's local AWS context (active profile, region, account ID, caller identity) at the start of any AWS task. Use this skill before any other AWS work — deploying to SageMaker, creating resources, calling AWS APIs, or anything that touches an AWS account. Use it especially when the user has not specified a region or profile explicitly, when they say things like \\\"use my AWS account\\\", \\\"deploy to AWS\\\", \\\"use my profile\\\", or when about to make any AWS CLI or SDK call. Never guess the region or account ID — always use this skill to read it from the local configuration first.",
+      "description": "Use when Discover the user''s local AWS context (active profile, region, account ID, caller identity) at the start of any AWS task. Use this skill before any other AWS work — deploying to SageMaker, creating resources, calling AWS APIs, or anything that touches an AWS account. Use it especially when the user has not specified a region or profile explicitly, when they say things like \"use my AWS account\", \"deploy to AWS\", \"use my profile\", or when about to make any AWS CLI or SDK call. Never guess the region or account ID — always use this skill to read it from the local configuration first.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "aws",
-        "context",
-        "discovery"
-      ]
+      "trigger_keywords": ["aws", "context", "discovery"]
     },
     {
       "name": "hf-cloud-python-env-setup",
-      "description": "Use when Set up an isolated Python environment for SageMaker / AWS work, with the right Python version and current boto3. Use this skill whenever Python code will be executed for a SageMaker deployment, training job, or any AWS automation — including when about to run `pip install`, when about to invoke `boto3`, when creating or activating a virtualenv, or when the user asks to \\\"set up the environment\\\". Never use system Python and never `pip install` into it. Always isolate. This skill prevents the most common failure modes: wrong Python version, dependency conflicts, and stale SDKs.",
+      "description": "Use when Set up an isolated Python environment for SageMaker / AWS work, with the right Python version and current boto3. Use this skill whenever Python code will be executed for a SageMaker deployment, training job, or any AWS automation — including when about to run `pip install`, when about to invoke `boto3`, when creating or activating a virtualenv, or when the user asks to \"set up the environment\". Never use system Python and never `pip install` into it. Always isolate. This skill prevents the most common failure modes: wrong Python version, dependency conflicts, and stale SDKs.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "python",
-        "env",
-        "setup"
-      ]
+      "trigger_keywords": ["python", "env", "setup"]
     },
     {
       "name": "hf-cloud-sagemaker-deployment-planner",
-      "description": "Use when Plan and coordinate the deployment of a model to Amazon SageMaker AI. Use this skill whenever the user wants to deploy, host, serve, or expose a model on SageMaker or AWS — including phrases like \\\"deploy a model\\\", \\\"host this LLM on AWS\\\", \\\"serve this embedding model\\\", \\\"deploy a reranker\\\", \\\"deploy a text-to-image / diffusion model\\\", \\\"host this for async inference\\\", \\\"create an endpoint\\\", \\\"serve my fine-tuned model\\\", or any request that involves making a model available for inference on AWS. Use this even when the user is vague (e.g. \\\"I just want to get this running on AWS, you figure it out\\\"). Works for text-generation LLMs, embedding models, rerankers, classifiers, text-to-image / diffusion models — picks the right serving stack and chooses between real-time and async inference. This is the entry-point skill for SageMaker deployment work — it asks clarifying questions, picks a deployment pathway, and coordinates the other deployment skills.",
+      "description": "Use when Plan and coordinate the deployment of a model to Amazon SageMaker AI. Use this skill whenever the user wants to deploy, host, serve, or expose a model on SageMaker or AWS — including phrases like \"deploy a model\", \"host this LLM on AWS\", \"serve this embedding model\", \"deploy a reranker\", \"deploy a text-to-image / diffusion model\", \"host this for async inference\", \"create an endpoint\", \"serve my fine-tuned model\", or any request that involves making a model available for inference on AWS. Use this even when the user is vague (e.g. \"I just want to get this running on AWS, you figure it out\"). Works for text-generation LLMs, embedding models, rerankers, classifiers, text-to-image / diffusion models — picks the right serving stack and chooses between real-time and async inference. This is the entry-point skill for SageMaker deployment work — it asks clarifying questions, picks a deployment pathway, and coordinates the other deployment skills.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "sagemaker",
-        "deployment",
-        "planner"
-      ]
+      "trigger_keywords": ["sagemaker", "deployment", "planner"]
     },
     {
       "name": "hf-cloud-sagemaker-iam-preflight",
       "description": "Use when Ensure a usable SageMaker execution role exists before deploying or training. Use this skill whenever about to create a SageMaker endpoint, model, training job, or any resource that requires an execution role. Use it especially when the user has not provided a role ARN explicitly, when scripts are about to call `iam:CreateRole`, or when an AccessDenied error mentions an IAM action. Never blindly call `iam:CreateRole` — always check for existing roles first. This skill prevents the most common SageMaker deployment failure: trying to create IAM resources from an SSO principal that has no IAM write permissions.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "sagemaker",
-        "iam",
-        "preflight"
-      ]
+      "trigger_keywords": ["sagemaker", "iam", "preflight"]
     },
     {
       "name": "hf-cloud-sagemaker-production-defaults",
       "description": "Use when Create a SageMaker endpoint (real-time, real-time scale-to-zero, or async) with autoscaling, CloudWatch alarms, and tagging enabled by default. Use this skill whenever about to create a SageMaker endpoint, write deployment code that calls `create_endpoint`, or finalize a deployment after the image URI and IAM role are known. Provides deploy.py for real-time endpoints, deploy_ic.py for real-time endpoints that scale to zero instances via inference components, and deploy_async.py for async endpoints (also scale-to-zero). This is the last step in the SageMaker deployment workflow. Never generate a bare `create_endpoint` call without these defaults — endpoints without autoscaling or alarms are demos, not deployments.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "sagemaker",
-        "production",
-        "defaults"
-      ]
+      "trigger_keywords": ["sagemaker", "production", "defaults"]
     },
     {
       "name": "hf-cloud-serving-image-selection",
-      "description": "Use when Pick the right serving container for a SageMaker model deployment and find its current image URI. Use this skill whenever about to deploy a model to a SageMaker endpoint and an image URI needs to be chosen — including when the user says \\\"deploy this LLM\\\", \\\"host this HuggingFace model\\\", \\\"serve this fine-tuned model\\\", \\\"deploy this embedding model\\\", \\\"host a reranker\\\", \\\"serve a sentence-transformers model\\\", or when about to hardcode any container URI in deployment code. HuggingFace-curated Deep Learning Containers are ALWAYS preferred: HuggingFace vLLM (LLMs and generative rerankers), HuggingFace vLLM-Omni (multimodal), TEI (embeddings/cross-encoder rerankers), HF Inference Toolkit (other transformers). Generic images (AWS vLLM, DJL-LMI, SGLang) are used only when no HuggingFace image is compatible — never merely because they carry a newer version. Never hardcode a container URI from memory and never default to TGI. Prevents stale-image failures and wrong-region URIs.",
+      "description": "Use when Pick the right serving container for a SageMaker model deployment and find its current image URI. Use this skill whenever about to deploy a model to a SageMaker endpoint and an image URI needs to be chosen — including when the user says \"deploy this LLM\", \"host this HuggingFace model\", \"serve this fine-tuned model\", \"deploy this embedding model\", \"host a reranker\", \"serve a sentence-transformers model\", or when about to hardcode any container URI in deployment code. HuggingFace-curated Deep Learning Containers are ALWAYS preferred: HuggingFace vLLM (LLMs and generative rerankers), HuggingFace vLLM-Omni (multimodal), TEI (embeddings/cross-encoder rerankers), HF Inference Toolkit (other transformers). Generic images (AWS vLLM, DJL-LMI, SGLang) are used only when no HuggingFace image is compatible — never merely because they carry a newer version. Never hardcode a container URI from memory and never default to TGI. Prevents stale-image failures and wrong-region URIs.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "serving",
-        "image",
-        "selection"
-      ]
+      "trigger_keywords": ["serving", "image", "selection"]
     },
     {
       "name": "hf-mem",
       "description": "Use when Hugging Face CLI to estimate the required memory to load Safetensors or GGUF model weights for inference from the Hugging Face Hub",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "mem",
-        "hugging",
-        "face",
-        "cli"
-      ]
+      "trigger_keywords": ["mem", "hugging", "face", "cli"]
     },
     {
       "name": "htop",
@@ -4589,222 +4049,140 @@
       "description": "Use when loading, evaluating, fine-tuning, and deploying huggingface best machine learning models, datasets, and inference pipelines.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "best"
-      ]
+      "trigger_keywords": ["huggingface", "best"]
     },
     {
       "name": "huggingface-community-evals",
       "description": "Use when Run evaluations for Hugging Face Hub models using inspect-ai and lighteval on local hardware. Use for backend selection, local GPU evals, and choosing between vLLM / Transformers / accelerate. Not for HF Jobs orchestration, model-card PRs, .eval_results publication, or community-evals automation.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "community",
-        "evals",
-        "run"
-      ]
+      "trigger_keywords": ["huggingface", "community", "evals", "run"]
     },
     {
       "name": "huggingface-datasets",
       "description": "Use when Use this skill for Hugging Face Dataset Viewer API workflows that fetch subset/split metadata, paginate rows, search text, apply filters, download parquet URLs, and read size or statistics.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "skill",
-        "hugging"
-      ]
+      "trigger_keywords": ["huggingface", "skill", "hugging"]
     },
     {
       "name": "huggingface-gradio",
       "description": "Use when Build Gradio web UIs and demos in Python. Use when creating or editing Gradio apps, components, event listeners, layouts, or chatbots.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "gradio",
-        "web"
-      ]
+      "trigger_keywords": ["huggingface", "gradio", "web"]
     },
     {
       "name": "huggingface-llm-trainer",
       "description": "Use when loading, evaluating, fine-tuning, and deploying huggingface llm trainer machine learning models, datasets, and inference pipelines.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "llm",
-        "trainer"
-      ]
+      "trigger_keywords": ["huggingface", "llm", "trainer"]
     },
     {
       "name": "huggingface-local-models",
       "description": "Use when Use to select models to run locally with llama.cpp and GGUF on CPU, Mac Metal, CUDA, or ROCm. Covers finding GGUFs, quant selection, running servers, exact GGUF file lookup, conversion, and OpenAI-compatible local serving.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "local",
-        "select"
-      ]
+      "trigger_keywords": ["huggingface", "local", "select"]
     },
     {
       "name": "huggingface-lora-space-builder",
       "description": "Use when Build and publish a Gradio demo on Hugging Face Spaces for a user-provided LoRA. Use when someone asks to create, generate, ship, or publish a Space, demo, Gradio app, or playground for a LoRA — including LoRAs for Qwen-Image, Qwen-Image-Edit, LTX-Video, Wan, FLUX, SDXL, or other diffusion base models. Also triggers when someone describes a LoRA they trained or hosts on the Hub and wants to share it. Covers picking the right base pipeline and `diffusers` inference recipe, designing a UI tailored to the LoRA's task and inputs (Union/multi-task control, edit, video, image, etc.), respecting model-card recommendations (trigger words, steps, guidance, LoRA scale, example inputs), and shipping to ZeroGPU hardware as a private Space by default.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "lora",
-        "space",
-        "builder"
-      ]
+      "trigger_keywords": ["huggingface", "lora", "space", "builder"]
     },
     {
       "name": "huggingface-paper-publisher",
       "description": "Use when Publish and manage research papers on Hugging Face Hub. Supports creating paper pages, linking papers to models/datasets, claiming authorship, and generating professional markdown-based research articles.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "paper",
-        "publisher",
-        "publish"
-      ]
+      "trigger_keywords": ["huggingface", "paper", "publisher", "publish"]
     },
     {
       "name": "huggingface-papers",
       "description": "Use when Look up and read Hugging Face paper pages in markdown, and use the papers API for structured metadata such as authors, linked models/datasets/spaces, Github repo and project page. Use when the user shares a Hugging Face paper page URL, an arXiv URL or ID, or asks to summarize, explain, or analyze an AI research paper.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "papers",
-        "look",
-        "read"
-      ]
+      "trigger_keywords": ["huggingface", "papers", "look", "read"]
     },
     {
       "name": "huggingface-spaces",
       "description": "Use when Build, deploy, and maintain applications on Hugging Face Spaces — Gradio / Docker / Static SDKs, ZeroGPU and dedicated hardware, model loading, debugging, buckets, inference providers, community grants. Use whenever the user asks to create or host an app on Hugging Face, port code onto ZeroGPU, fix a Space that won't build or run, or otherwise work with `hf spaces …`, `@spaces.GPU`, Space README frontmatter, or the `spaces` Python package.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "spaces",
-        "deploy"
-      ]
+      "trigger_keywords": ["huggingface", "spaces", "deploy"]
     },
     {
       "name": "huggingface-tool-builder",
       "description": "Use when Use this skill when the user wants to build tool/scripts or achieve a task where using data from the Hugging Face API would help. This is especially useful when chaining or combining API calls or the task will be repeated/automated. This Skill creates a reusable script to fetch, enrich or process data.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "tool",
-        "builder",
-        "skill"
-      ]
+      "trigger_keywords": ["huggingface", "tool", "builder", "skill"]
     },
     {
       "name": "huggingface-trackio",
       "description": "Use when Track and visualize ML training experiments with Trackio. Use when logging metrics during training (Python API), firing alerts for training diagnostics, or retrieving/analyzing logged metrics (CLI). Supports real-time dashboard visualization, alerts with webhooks, HF Space syncing, and JSON output for automation.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "trackio",
-        "track",
-        "visualize"
-      ]
+      "trigger_keywords": ["huggingface", "trackio", "track", "visualize"]
     },
     {
       "name": "huggingface-vision-trainer",
       "description": "Use when Trains and fine-tunes vision models for object detection (D-FINE, RT-DETR v2, DETR, YOLOS), image classification (timm models — MobileNetV3, MobileViT, ResNet, ViT/DINOv3 — plus any Transformers classifier), and SAM/SAM2 segmentation using Hugging Face Transformers on Hugging Face Jobs cloud GPUs. Covers COCO-format dataset preparation, Albumentations augmentation, mAP/mAR evaluation, accuracy metrics, SAM segmentation with bbox/point prompts, DiceCE loss, hardware selection, cost estimation, Trackio monitoring, and Hub persistence. Use when users mention training object detection, image classification, SAM, SAM2, segmentation, image matting, DETR, D-FINE, RT-DETR, ViT, timm, MobileNet, ResNet, bounding box models, or fine-tuning vision models on Hugging Face Jobs.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "vision",
-        "trainer",
-        "trains"
-      ]
+      "trigger_keywords": ["huggingface", "vision", "trainer", "trains"]
     },
     {
       "name": "huggingface-zerogpu",
       "description": "Use when AI demos and GPU compute with Gradio Spaces and Hugging Face Spaces ZeroGPU. Use when writing or reviewing code that uses `@spaces.GPU`, configuring `python_version` or `requirements.txt` for a ZeroGPU Space, or handling ZeroGPU-specific code constraints — pickle-based process isolation, `gr.State` semantics across the worker boundary, no `torch.compile` (use AoTI instead), CUDA wheel-only builds (no `nvcc` at build or runtime), large vs xlarge sizing, and dynamic duration callables. Make sure to use this skill whenever the user mentions ZeroGPU, `@spaces.GPU`, or the `spaces` Python package, or hits ZeroGPU-specific code errors like `PicklingError` across the worker boundary, `illegal duration`, or `flash-attn` wheel-build failures — even when the user does not explicitly ask for ZeroGPU coding guidance. Trigger on `import spaces` or `@spaces.GPU` in code.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "huggingface",
-        "zerogpu",
-        "demos",
-        "gpu"
-      ]
+      "trigger_keywords": ["huggingface", "zerogpu", "demos", "gpu"]
     },
     {
       "name": "human-gate-negotiation",
       "description": "Use when preparing structured impact reports and negotiating approval before executing high-risk, irreversible, or non-idempotent actions (production deploy, database migration, file deletion, permission grants).",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "human",
-        "gate",
-        "negotiation",
-        "preparing"
-      ]
+      "trigger_keywords": ["human", "gate", "negotiation", "preparing"]
     },
     {
       "name": "i18n-localization",
       "description": "Use when executing, coordinating, planning, or reviewing i18n localization agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "i18n",
-        "localization"
-      ]
+      "trigger_keywords": ["i18n", "localization"]
     },
     {
       "name": "impeccable",
       "description": "Use when building, styling, optimizing, and auditing impeccable components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "impeccable"
-      ]
+      "trigger_keywords": ["impeccable"]
     },
     {
       "name": "improve-codebase-architecture",
       "description": "Use when executing, coordinating, planning, or reviewing improve codebase architecture agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "improve",
-        "codebase",
-        "architecture"
-      ]
+      "trigger_keywords": ["improve", "codebase", "architecture"]
     },
     {
       "name": "improve-ui",
       "description": "Use when building, styling, optimizing, and auditing improve ui components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "improve"
-      ]
+      "trigger_keywords": ["improve"]
     },
     {
       "name": "intelligent-routing",
       "description": "Use when executing, coordinating, planning, or reviewing intelligent routing agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "intelligent",
-        "routing"
-      ]
+      "trigger_keywords": ["intelligent", "routing"]
     },
     {
       "name": "k6-performance-testing",
@@ -4825,20 +4203,14 @@
       "description": "Use when executing, coordinating, planning, or reviewing knowledge graph agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "knowledge",
-        "graph"
-      ]
+      "trigger_keywords": ["knowledge", "graph"]
     },
     {
       "name": "landing-page",
       "description": "Use when building, styling, optimizing, and auditing landing page components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "landing",
-        "page"
-      ]
+      "trigger_keywords": ["landing", "page"]
     },
     {
       "name": "license-compliance-and-policy-auditor",
@@ -4859,20 +4231,14 @@
       "description": "Use when auditing, pen-testing, hardening, and verifying code against lint and validate vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "lint",
-        "validate"
-      ]
+      "trigger_keywords": ["lint", "validate"]
     },
     {
       "name": "llm-engineering",
       "description": "Use when designing, implementing, auditing, and hardening llm engineering server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "llm",
-        "engineering"
-      ]
+      "trigger_keywords": ["llm", "engineering"]
     },
     {
       "name": "llm-eval-testing",
@@ -4921,11 +4287,7 @@
       "description": "Use when executing, coordinating, planning, or reviewing local first agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "offline",
-        "local",
-        "first"
-      ]
+      "trigger_keywords": ["offline", "local", "first"]
     },
     {
       "name": "local-first-architecture",
@@ -4950,10 +4312,7 @@
       "description": "Use when implementing, optimizing, and timing 60fps/120fps lottie animation animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "lottie",
-        "animation"
-      ]
+      "trigger_keywords": ["lottie", "animation"]
     },
     {
       "name": "malicious-package-and-typosquatting-auditor",
@@ -4992,20 +4351,14 @@
       "description": "Use when implementing, optimizing, and timing 60fps/120fps marquee loop animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "marquee",
-        "loop"
-      ]
+      "trigger_keywords": ["marquee", "loop"]
     },
     {
       "name": "masked-reveal",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps masked reveal animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "masked",
-        "reveal"
-      ]
+      "trigger_keywords": ["masked", "reveal"]
     },
     {
       "name": "mcp-and-tool-supply-chain-security-auditor",
@@ -5026,20 +4379,14 @@
       "description": "Use when executing, coordinating, planning, or reviewing mcp builder agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "mcp",
-        "builder"
-      ]
+      "trigger_keywords": ["mcp", "builder"]
     },
     {
       "name": "micro-interaction",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps micro interaction animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "micro",
-        "interaction"
-      ]
+      "trigger_keywords": ["micro", "interaction"]
     },
     {
       "name": "migrate",
@@ -5114,29 +4461,21 @@
       "description": "Use when executing, coordinating, planning, or reviewing monorepo management agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "monorepo",
-        "management"
-      ]
+      "trigger_keywords": ["monorepo", "management"]
     },
     {
       "name": "morphing-icons",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps morphing icons animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "morphing",
-        "icons"
-      ]
+      "trigger_keywords": ["morphing", "icons"]
     },
     {
       "name": "motion-engineering",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps motion engineering animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "engineering"
-      ]
+      "trigger_keywords": ["engineering"]
     },
     {
       "name": "multi-agent-partial-failure-auditor",
@@ -5199,22 +4538,14 @@
       "description": "Use when building, styling, optimizing, and auditing nextjs react expert components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "nextjs",
-        "react",
-        "expert"
-      ]
+      "trigger_keywords": ["nextjs", "react", "expert"]
     },
     {
       "name": "nodejs-best-practices",
       "description": "Use when designing, implementing, auditing, and hardening nodejs best practices server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "nodejs",
-        "best",
-        "practices"
-      ]
+      "trigger_keywords": ["nodejs", "best", "practices"]
     },
     {
       "name": "nosql-document-modeling",
@@ -5235,19 +4566,14 @@
       "description": "Use when executing, coordinating, planning, or reviewing observability agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "observability"
-      ]
+      "trigger_keywords": ["observability"]
     },
     {
       "name": "opentelemetry-observability",
       "description": "Use when configuring, automating, deploying, and debugging opentelemetry observability pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "opentelemetry",
-        "observability"
-      ]
+      "trigger_keywords": ["opentelemetry", "observability"]
     },
     {
       "name": "orchestrate",
@@ -5272,21 +4598,14 @@
       "description": "Use when implementing, optimizing, and timing 60fps/120fps page transition animation animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "page",
-        "transition",
-        "animation"
-      ]
+      "trigger_keywords": ["page", "transition", "animation"]
     },
     {
       "name": "parallel-agents",
       "description": "Use when executing, coordinating, planning, or reviewing parallel agents agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "parallel",
-        "agents"
-      ]
+      "trigger_keywords": ["parallel", "agents"]
     },
     {
       "name": "performance-benchmarker",
@@ -5311,10 +4630,7 @@
       "description": "Use when executing, coordinating, planning, or reviewing performance profiling agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "performance",
-        "profiling"
-      ]
+      "trigger_keywords": ["performance", "profiling"]
     },
     {
       "name": "pipeline",
@@ -5357,70 +4673,49 @@
       "description": "Use when executing, coordinating, planning, or reviewing plan writing agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "plan"
-      ]
+      "trigger_keywords": ["plan"]
     },
     {
       "name": "platform-engineer",
       "description": "Use when configuring, automating, deploying, and debugging platform engineer pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "platform",
-        "engineer"
-      ]
+      "trigger_keywords": ["platform", "engineer"]
     },
     {
       "name": "platform-engineering-opentofu",
       "description": "Use when configuring, automating, deploying, and debugging platform engineering opentofu pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "platform",
-        "engineering",
-        "opentofu"
-      ]
+      "trigger_keywords": ["platform", "engineering", "opentofu"]
     },
     {
       "name": "playwright-ai-e2e",
       "description": "Use when writing, maintaining, executing, and auditing playwright ai e2e test suites, assertions, mocks, and verification gates.",
       "routing_domain": "testing",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "playwright",
-        "e2e"
-      ]
+      "trigger_keywords": ["playwright", "e2e"]
     },
     {
       "name": "playwright-best-practices",
       "description": "Use when writing, maintaining, executing, and auditing playwright best practices test suites, assertions, mocks, and verification gates.",
       "routing_domain": "testing",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "playwright",
-        "best",
-        "practices"
-      ]
+      "trigger_keywords": ["playwright", "best", "practices"]
     },
     {
       "name": "polish",
       "description": "Use when building, styling, optimizing, and auditing polish components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "polish"
-      ]
+      "trigger_keywords": ["polish"]
     },
     {
       "name": "powershell-windows",
       "description": "Use when configuring, automating, deploying, and debugging powershell windows pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "powershell",
-        "windows"
-      ]
+      "trigger_keywords": ["powershell", "windows"]
     },
     {
       "name": "preview",
@@ -5445,10 +4740,7 @@
       "description": "Use when building, styling, optimizing, and auditing pricing page components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "pricing",
-        "page"
-      ]
+      "trigger_keywords": ["pricing", "page"]
     },
     {
       "name": "prisma-database-mastery",
@@ -5469,30 +4761,21 @@
       "description": "Use when building, styling, optimizing, and auditing product aware heuristics components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "product",
-        "aware",
-        "heuristics"
-      ]
+      "trigger_keywords": ["product", "aware", "heuristics"]
     },
     {
       "name": "progressive-blur",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps progressive blur animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "progressive",
-        "blur"
-      ]
+      "trigger_keywords": ["progressive", "blur"]
     },
     {
       "name": "project-idioms",
       "description": "Use when executing, coordinating, planning, or reviewing project idioms agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "idioms"
-      ]
+      "trigger_keywords": ["idioms"]
     },
     {
       "name": "prompt-injection-security-auditor",
@@ -5513,10 +4796,7 @@
       "description": "Use when writing, maintaining, executing, and auditing property based testing test suites, assertions, mocks, and verification gates.",
       "routing_domain": "testing",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "property",
-        "based"
-      ]
+      "trigger_keywords": ["property", "based"]
     },
     {
       "name": "property-based-testing-engineer",
@@ -5537,90 +4817,63 @@
       "description": "Use when designing, implementing, auditing, and hardening python patterns server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "python",
-        "patterns"
-      ]
+      "trigger_keywords": ["python", "patterns"]
     },
     {
       "name": "python-pro",
       "description": "Use when designing, implementing, auditing, and hardening python pro server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "python",
-        "pro"
-      ]
+      "trigger_keywords": ["python", "pro"]
     },
     {
       "name": "quieter",
       "description": "Use when building, styling, optimizing, and auditing quieter components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "quieter"
-      ]
+      "trigger_keywords": ["quieter"]
     },
     {
       "name": "react-doctor",
       "description": "Use when building, styling, optimizing, and auditing react doctor components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "react",
-        "doctor"
-      ]
+      "trigger_keywords": ["react", "doctor"]
     },
     {
       "name": "react-specialist",
       "description": "Use when building, styling, optimizing, and auditing react specialist components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "react",
-        "specialist"
-      ]
+      "trigger_keywords": ["react", "specialist"]
     },
     {
       "name": "readme-builder",
       "description": "Use when executing, coordinating, planning, or reviewing readme builder agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "readme",
-        "builder"
-      ]
+      "trigger_keywords": ["readme", "builder"]
     },
     {
       "name": "realtime-patterns",
       "description": "Use when designing, implementing, auditing, and hardening realtime patterns server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "realtime",
-        "patterns"
-      ]
+      "trigger_keywords": ["realtime", "patterns"]
     },
     {
       "name": "red-team-tactics",
       "description": "Use when auditing, pen-testing, hardening, and verifying code against red team tactics vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "red",
-        "team",
-        "tactics"
-      ]
+      "trigger_keywords": ["red", "team", "tactics"]
     },
     {
       "name": "redesign-skill",
       "description": "Use when building, styling, optimizing, and auditing redesign skill components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "redesign",
-        "skill"
-      ]
+      "trigger_keywords": ["redesign", "skill"]
     },
     {
       "name": "redis-caching-patterns",
@@ -5754,9 +5007,7 @@
       "description": "Audits and times UI micro-interactions, spring physics, and gesture transitions. Enforces <=300ms budgets, tactile active-press feedback, ease-out entry curves, and prefers-reduced-motion compliance.",
       "routing_domain": "ui-design-engineering",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "review"
-      ]
+      "trigger_keywords": ["review"]
     },
     {
       "name": "reviewer-agreement-analyzer",
@@ -5777,10 +5028,7 @@
       "description": "Use when designing, implementing, auditing, and hardening rust pro server logic, APIs, background jobs, and error boundaries.",
       "routing_domain": "backend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "rust",
-        "pro"
-      ]
+      "trigger_keywords": ["rust", "pro"]
     },
     {
       "name": "safe-data-backfill",
@@ -5833,31 +5081,21 @@
       "description": "Use when navigating, searching, and exploring large codebases efficiently. Enforces token-conscious search patterns: ripgrep-first, line-range viewing, symbol indexing, and strict bans on dumping entire directories or multi-thousand line files.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "semantic",
-        "filesystem",
-        "navigation",
-        "navigating"
-      ]
+      "trigger_keywords": ["semantic", "filesystem", "navigation", "navigating"]
     },
     {
       "name": "seo-fundamentals",
       "description": "Use when executing, coordinating, planning, or reviewing seo fundamentals agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "seo",
-        "fundamentals"
-      ]
+      "trigger_keywords": ["seo", "fundamentals"]
     },
     {
       "name": "server-management",
       "description": "Use when configuring, automating, deploying, and debugging server management pipelines, containers, servers, and cloud infrastructure.",
       "routing_domain": "devops",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "management"
-      ]
+      "trigger_keywords": ["management"]
     },
     {
       "name": "session",
@@ -5882,41 +5120,28 @@
       "description": "Use when searching, extracting, and synthesizing past conversation history and decision records. Prevents context amnesia without polluting current prompt budgets with massive raw transcripts.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "session",
-        "log",
-        "interrogation",
-        "searching"
-      ]
+      "trigger_keywords": ["session", "log", "interrogation", "searching"]
     },
     {
       "name": "shadcn-ui-expert",
       "description": "Use when building, styling, optimizing, and auditing shadcn ui expert components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "shadcn",
-        "expert"
-      ]
+      "trigger_keywords": ["shadcn", "expert"]
     },
     {
       "name": "shape",
       "description": "Use when building, styling, optimizing, and auditing shape components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "shape"
-      ]
+      "trigger_keywords": ["shape"]
     },
     {
       "name": "skill-creator",
       "description": "Use when executing, coordinating, planning, or reviewing skill creator agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "skill",
-        "creator"
-      ]
+      "trigger_keywords": ["skill", "creator"]
     },
     {
       "name": "skill-enhancement-engine",
@@ -5959,30 +5184,21 @@
       "description": "Use when building, styling, optimizing, and auditing soft skill components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "soft",
-        "skill"
-      ]
+      "trigger_keywords": ["soft", "skill"]
     },
     {
       "name": "sounds-on-the-web",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps sounds on the web animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "sounds",
-        "web"
-      ]
+      "trigger_keywords": ["sounds", "web"]
     },
     {
       "name": "sql-pro",
       "description": "Use when designing schemas, querying, indexing, optimizing, and securing sql pro databases and data models.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "sql",
-        "pro"
-      ]
+      "trigger_keywords": ["sql", "pro"]
     },
     {
       "name": "state-machine-verification-engineer",
@@ -6053,24 +5269,14 @@
       "description": "Use when decomposing complex epics into atomic subagent tasks, orchestrating parallel worker waves, isolating context, and synthesizing results with Tribunal reviews. Enforces out-of-band context and human gate approvals.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "subagent",
-        "driven",
-        "development",
-        "decomposing"
-      ]
+      "trigger_keywords": ["subagent", "driven", "development", "decomposing"]
     },
     {
       "name": "supabase-postgres-best-practices",
       "description": "Use when designing schemas, querying, indexing, optimizing, and securing supabase postgres best practices databases and data models.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "supabase",
-        "postgres",
-        "best",
-        "practices"
-      ]
+      "trigger_keywords": ["supabase", "postgres", "best", "practices"]
     },
     {
       "name": "super-prompt",
@@ -6109,10 +5315,7 @@
       "description": "Use when implementing, optimizing, and timing 60fps/120fps svg animation animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "svg",
-        "animation"
-      ]
+      "trigger_keywords": ["svg", "animation"]
     },
     {
       "name": "swarm",
@@ -6137,19 +5340,14 @@
       "description": "Use when building, optimizing, and securing swiftui expert mobile interfaces, native bridges, touch gestures, and offline states.",
       "routing_domain": "mobile",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "swiftui",
-        "expert"
-      ]
+      "trigger_keywords": ["swiftui", "expert"]
     },
     {
       "name": "swiss-design",
       "description": "Use when building, styling, optimizing, and auditing swiss design components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "swiss"
-      ]
+      "trigger_keywords": ["swiss"]
     },
     {
       "name": "system-design-pro",
@@ -6169,39 +5367,28 @@
       "description": "Use when executing, coordinating, planning, or reviewing systematic debugging agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "systematic"
-      ]
+      "trigger_keywords": ["systematic"]
     },
     {
       "name": "tailwind-patterns",
       "description": "Use when building, styling, optimizing, and auditing tailwind patterns components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tailwind",
-        "patterns"
-      ]
+      "trigger_keywords": ["tailwind", "patterns"]
     },
     {
       "name": "taste-skill",
       "description": "Use when building, styling, optimizing, and auditing taste skill components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "taste",
-        "skill"
-      ]
+      "trigger_keywords": ["taste", "skill"]
     },
     {
       "name": "tdd-workflow",
       "description": "Use when writing, maintaining, executing, and auditing tdd workflow test suites, assertions, mocks, and verification gates.",
       "routing_domain": "testing",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tdd",
-        "workflow"
-      ]
+      "trigger_keywords": ["tdd", "workflow"]
     },
     {
       "name": "team-mode",
@@ -6272,10 +5459,7 @@
       "description": "Use when writing, maintaining, executing, and auditing test result analyzer test suites, assertions, mocks, and verification gates.",
       "routing_domain": "testing",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "result",
-        "analyzer"
-      ]
+      "trigger_keywords": ["result", "analyzer"]
     },
     {
       "name": "test-suite-optimizer",
@@ -6310,81 +5494,56 @@
       "description": "Use when writing, maintaining, executing, and auditing testing patterns test suites, assertions, mocks, and verification gates.",
       "routing_domain": "testing",
       "routing_tier": "core",
-      "trigger_keywords": [
-        "patterns"
-      ]
+      "trigger_keywords": ["patterns"]
     },
     {
       "name": "thermo-nuclear-code-quality-review",
       "description": "Use when auditing, pen-testing, hardening, and verifying code against thermo nuclear code quality review vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "thermo",
-        "nuclear",
-        "quality",
-        "review"
-      ]
+      "trigger_keywords": ["thermo", "nuclear", "quality", "review"]
     },
     {
       "name": "thinking-protocol",
       "description": "Use when executing complex cognitive analysis, multi-step problem solving, architecture design, and adversarial evaluation. Enforces structured epistemic confidence levels (L1-L5), counterexample testing, and conciseness.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "thinking",
-        "protocol",
-        "complex"
-      ]
+      "trigger_keywords": ["thinking", "protocol", "complex"]
     },
     {
       "name": "to-spring-or-not-to-spring",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps to spring or not to spring animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "spring",
-        "not"
-      ]
+      "trigger_keywords": ["spring", "not"]
     },
     {
       "name": "train-sentence-transformers",
       "description": "Use when Train or fine-tune sentence-transformers models across `SentenceTransformer` (bi-encoder, dense or static embedding model for retrieval, similarity, clustering, classification, paraphrase mining, dedup, multimodal), `CrossEncoder` (reranker, pair scoring for two-stage retrieval / pair classification), `SparseEncoder` (SPLADE, sparse embedding model for learned-sparse retrieval), and `MultiVectorEncoder` (ColBERT / late-interaction, per-token embeddings scored with MaxSim). Covers loss selection, hard-negative mining, evaluators, distillation, LoRA, Matryoshka, and Hugging Face Hub publishing. Use for any sentence-transformers training task.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "train",
-        "sentence",
-        "transformers"
-      ]
+      "trigger_keywords": ["train", "sentence", "transformers"]
     },
     {
       "name": "transformers-js",
       "description": "Use when loading, evaluating, fine-tuning, and deploying transformers js machine learning models, datasets, and inference pipelines.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "transformers"
-      ]
+      "trigger_keywords": ["transformers"]
     },
     {
       "name": "transitions-dev",
       "description": "Use when implementing, optimizing, and timing 60fps/120fps transitions dev animations, transitions, gesture physics, and reduced-motion fallbacks.",
       "routing_domain": "motion",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "dev"
-      ]
+      "trigger_keywords": ["dev"]
     },
     {
       "name": "trend-researcher",
       "description": "Use when executing, coordinating, planning, or reviewing trend researcher agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "trend",
-        "researcher"
-      ]
+      "trigger_keywords": ["trend", "researcher"]
     },
     {
       "name": "tribunal-backend",
@@ -6481,12 +5640,7 @@
       "description": "Use when capturing, distilling, querying, and applying durable architectural lessons and failure post-mortems across sessions. Prevents repeated mistakes and resolves conflicting learned behaviors.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "tribunal",
-        "instincts",
-        "memory",
-        "capturing"
-      ]
+      "trigger_keywords": ["tribunal", "instincts", "memory", "capturing"]
     },
     {
       "name": "tribunal-mobile",
@@ -6565,29 +5719,21 @@
       "description": "Use when loading, evaluating, fine-tuning, and deploying trl training machine learning models, datasets, and inference pipelines.",
       "routing_domain": "huggingface",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "trl",
-        "training"
-      ]
+      "trigger_keywords": ["trl", "training"]
     },
     {
       "name": "typescript-advanced",
       "description": "Use when executing, coordinating, planning, or reviewing typescript advanced agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "typescript",
-        "advanced"
-      ]
+      "trigger_keywords": ["typescript", "advanced"]
     },
     {
       "name": "typeset",
       "description": "Use when building, styling, optimizing, and auditing typeset components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "typeset"
-      ]
+      "trigger_keywords": ["typeset"]
     },
     {
       "name": "ui-accessibility-engineer",
@@ -6667,12 +5813,7 @@
       "description": "Formulates bespoke art direction, visual theme presets, and authoritative Design Decision Records (DDR) prior to frontend implementation. Translates product category, user persona, and brand attributes into structured OKLCH palettes, spatial formulas, typography hierarchies, and strict anti-slop exclusions.",
       "routing_domain": "ui-design-engineering",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "design-director",
-        "art-direction",
-        "visual-direction",
-        "formulate-ddr"
-      ]
+      "trigger_keywords": ["design-director", "art-direction", "visual-direction", "formulate-ddr"]
     },
     {
       "name": "ui-design-quality-benchmark-engineer",
@@ -6788,10 +5929,7 @@
       "description": "Cognitive design loop establishing product identity, audience mental models, art direction presets, and structured Design Decision Records (DDR) before code generation.",
       "routing_domain": "ui-design-engineering",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "reasoning",
-        "engine"
-      ]
+      "trigger_keywords": ["reasoning", "engine"]
     },
     {
       "name": "ui-reference-analyst",
@@ -6822,20 +5960,14 @@
       "description": "Use when building, styling, optimizing, and auditing ui skill packs components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "skill",
-        "packs"
-      ]
+      "trigger_keywords": ["skill", "packs"]
     },
     {
       "name": "ui-skills-root",
       "description": "Use when building, styling, optimizing, and auditing ui skills root components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "skills",
-        "root"
-      ]
+      "trigger_keywords": ["skills", "root"]
     },
     {
       "name": "ui-typography-specialist",
@@ -6854,19 +5986,14 @@
       "description": "Use when building, styling, optimizing, and auditing ui ux pro max components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "pro",
-        "max"
-      ]
+      "trigger_keywords": ["pro", "max"]
     },
     {
       "name": "ui-ux-researcher",
       "description": "Use when building, styling, optimizing, and auditing ui ux researcher components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "researcher"
-      ]
+      "trigger_keywords": ["researcher"]
     },
     {
       "name": "ui-visual-critic",
@@ -6911,21 +6038,14 @@
       "description": "Use when designing schemas, querying, indexing, optimizing, and securing vector search pgvector databases and data models.",
       "routing_domain": "database",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "vector",
-        "search",
-        "pgvector"
-      ]
+      "trigger_keywords": ["vector", "search", "pgvector"]
     },
     {
       "name": "verification-before-completion",
       "description": "Use when executing, coordinating, planning, or reviewing verification before completion agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "before",
-        "completion"
-      ]
+      "trigger_keywords": ["before", "completion"]
     },
     {
       "name": "visual-regression-testing",
@@ -6946,91 +6066,63 @@
       "description": "Use when building, styling, optimizing, and auditing vue expert components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "vue",
-        "expert"
-      ]
+      "trigger_keywords": ["vue", "expert"]
     },
     {
       "name": "vulnerability-scanner",
       "description": "Use when auditing, pen-testing, hardening, and verifying code against vulnerability scanner vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "vulnerability",
-        "scanner"
-      ]
+      "trigger_keywords": ["vulnerability", "scanner"]
     },
     {
       "name": "web-accessibility-auditor",
       "description": "Audits interfaces against WCAG 2.2 AA and APCA criteria. Enforces 4.5:1 / 3:1 contrast ratios, visible :focus-visible rings, keyboard roving tab index, modal focus trapping, and ARIA semantics.",
       "routing_domain": "ui-design-engineering",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "web",
-        "accessibility",
-        "auditor"
-      ]
+      "trigger_keywords": ["web", "accessibility", "auditor"]
     },
     {
       "name": "web-design-guidelines",
       "description": "Use when auditing, pen-testing, hardening, and verifying code against web design guidelines vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "web",
-        "guidelines"
-      ]
+      "trigger_keywords": ["web", "guidelines"]
     },
     {
       "name": "web-quality-audit",
       "description": "Use when auditing, pen-testing, hardening, and verifying code against web quality audit vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "web",
-        "quality",
-        "audit"
-      ]
+      "trigger_keywords": ["web", "quality", "audit"]
     },
     {
       "name": "webapp-testing",
       "description": "Use when writing, maintaining, executing, and auditing webapp testing test suites, assertions, mocks, and verification gates.",
       "routing_domain": "testing",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "webapp"
-      ]
+      "trigger_keywords": ["webapp"]
     },
     {
       "name": "webgpu-performance",
       "description": "Use when executing, coordinating, planning, or reviewing webgpu performance agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "webgpu",
-        "performance"
-      ]
+      "trigger_keywords": ["webgpu", "performance"]
     },
     {
       "name": "whimsy-injector",
       "description": "Use when building, styling, optimizing, and auditing whimsy injector components, responsive layouts, design systems, and frontend state.",
       "routing_domain": "frontend",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "whimsy",
-        "injector"
-      ]
+      "trigger_keywords": ["whimsy", "injector"]
     },
     {
       "name": "workflow-optimizer",
       "description": "Use when executing, coordinating, planning, or reviewing workflow optimizer agent workflows, cognitive loops, and architecture standards.",
       "routing_domain": "meta",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "workflow",
-        "optimizer"
-      ]
+      "trigger_keywords": ["workflow", "optimizer"]
     },
     {
       "name": "zero-downtime-migrations",
@@ -7051,11 +6143,7 @@
       "description": "Use when auditing, pen-testing, hardening, and verifying code against zero trust passkeys vulnerabilities, injection vectors, and auth flaws.",
       "routing_domain": "security",
       "routing_tier": "specialized",
-      "trigger_keywords": [
-        "zero",
-        "trust",
-        "passkeys"
-      ]
+      "trigger_keywords": ["zero", "trust", "passkeys"]
     }
   ]
 }

@@ -47,9 +47,15 @@ describe('Confidence Calibration & Probabilistic Scoring Engine', () => {
     });
 
     it('throws on invalid probability values outside [0, 1]', () => {
-      expect(() => calculateBrierScore([{ probability: 1.5, outcome: 1 }])).toThrow(/Invalid probability/);
-      expect(() => calculateBrierScore([{ probability: -0.1, outcome: 1 }])).toThrow(/Invalid probability/);
-      expect(() => calculateBrierScore([{ probability: 'not-a-number', outcome: 1 }])).toThrow(/Invalid probability/);
+      expect(() => calculateBrierScore([{ probability: 1.5, outcome: 1 }])).toThrow(
+        /Invalid probability/,
+      );
+      expect(() => calculateBrierScore([{ probability: -0.1, outcome: 1 }])).toThrow(
+        /Invalid probability/,
+      );
+      expect(() => calculateBrierScore([{ probability: 'not-a-number', outcome: 1 }])).toThrow(
+        /Invalid probability/,
+      );
     });
   });
 
@@ -76,8 +82,8 @@ describe('Confidence Calibration & Probabilistic Scoring Engine', () => {
     it('detects UNDERCONFIDENT predictions when low confidence has high accuracy', () => {
       const predictions = [
         { confidence: 0.15, correct: true },
-        { confidence: 0.20, correct: true },
-        { confidence: 0.10, correct: true },
+        { confidence: 0.2, correct: true },
+        { confidence: 0.1, correct: true },
         { confidence: 0.25, correct: true }, // 100% accuracy at ~17.5% confidence
       ];
       const result = calculateExpectedCalibrationError(predictions, 5);
@@ -108,8 +114,12 @@ describe('Confidence Calibration & Probabilistic Scoring Engine', () => {
     });
 
     it('throws error on invalid confidence values in predictions', () => {
-      expect(() => calculateExpectedCalibrationError([{ confidence: -0.2, correct: true }])).toThrow(/Invalid confidence/);
-      expect(() => calculateExpectedCalibrationError([{ confidence: 2.0, correct: true }])).toThrow(/Invalid confidence/);
+      expect(() =>
+        calculateExpectedCalibrationError([{ confidence: -0.2, correct: true }]),
+      ).toThrow(/Invalid confidence/);
+      expect(() => calculateExpectedCalibrationError([{ confidence: 2.0, correct: true }])).toThrow(
+        /Invalid confidence/,
+      );
     });
   });
 });

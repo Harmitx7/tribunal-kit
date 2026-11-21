@@ -24,7 +24,7 @@ describe('Resource Guard, Backpressure & Deadlock Detector Engine', () => {
 
     // Releasing one slot drains queue
     guard.releaseSlot();
-    await new Promise((r) => setImmediate(r));
+    await new Promise(r => setImmediate(r));
     expect(t3Resolved).toBe(true);
     expect(guard.queue.length).toBe(0);
 

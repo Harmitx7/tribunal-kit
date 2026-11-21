@@ -1,10 +1,8 @@
 'use strict';
 
-const __importDefault =
-  (this && this.__importDefault) ||
-  function (mod) {
-    return mod && mod.__esModule ? mod : { default: mod };
-  };
+const __importDefault = function (mod) {
+  return mod && mod.__esModule ? mod : { default: mod };
+};
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.cmdArch = cmdArch;
 
@@ -119,7 +117,8 @@ async function cmdArch(flags = {}, rawArgv, quiet = false) {
 
     case 'impact': {
       const targetQuery =
-        positionals[0] || (rawArgv && rawArgv[4] && !rawArgv[4].startsWith('-') ? rawArgv[4] : null);
+        positionals[0] ||
+        (rawArgv && rawArgv[4] && !rawArgv[4].startsWith('-') ? rawArgv[4] : null);
       if (!targetQuery) {
         (0, logger_1.err)('Usage: tk arch impact <component-id-or-filepath>');
         process.exit(1);
@@ -167,9 +166,11 @@ async function cmdArch(flags = {}, rawArgv, quiet = false) {
 
     case 'diff': {
       const baseFile =
-        positionals[0] || (rawArgv && rawArgv[4] && !rawArgv[4].startsWith('-') ? rawArgv[4] : null);
+        positionals[0] ||
+        (rawArgv && rawArgv[4] && !rawArgv[4].startsWith('-') ? rawArgv[4] : null);
       const headFile =
-        positionals[1] || (rawArgv && rawArgv[5] && !rawArgv[5].startsWith('-') ? rawArgv[5] : null);
+        positionals[1] ||
+        (rawArgv && rawArgv[5] && !rawArgv[5].startsWith('-') ? rawArgv[5] : null);
       if (!baseFile || !headFile) {
         (0, logger_1.err)('Usage: tk arch diff <base-model.json> <head-model.json>');
         process.exit(1);

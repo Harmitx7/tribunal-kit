@@ -79,7 +79,7 @@ async function cmdValidate(flags, quiet = false) {
               !Array.isArray(parsed.dispatch_micro_workers) ||
               parsed.dispatch_micro_workers.length === 0
             ) {
-              throw new Error("dispatch_micro_workers must be a non-empty array");
+              throw new Error('dispatch_micro_workers must be a non-empty array');
             }
             for (let i = 0; i < parsed.dispatch_micro_workers.length; i++) {
               const w = parsed.dispatch_micro_workers[i];
@@ -137,7 +137,9 @@ async function cmdValidate(flags, quiet = false) {
           }),
         );
       } else {
-        console.error(`  ${color(RGB.ROSE, g.failure)} ${bold('Validation failed:')} ${err.message}`);
+        console.error(
+          `  ${color(RGB.ROSE, g.failure)} ${bold('Validation failed:')} ${err.message}`,
+        );
       }
       process.exit(1);
     }

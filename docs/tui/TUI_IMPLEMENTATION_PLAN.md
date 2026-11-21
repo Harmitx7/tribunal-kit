@@ -9,15 +9,16 @@
 ## 1. Dependency Analysis & Architecture Decision
 
 ### 1.1 Dependency Evaluation
+
 We evaluated popular external terminal libraries for Tribunal-Kit:
 
-| Library | Bundle Size / Dependencies | Cold Startup Impact | Suitability for Tribunal-Kit | Decision |
-| :--- | :--- | :--- | :--- | :--- |
-| **Ink** (React for CLI) | ~15MB / ~42 deps | +90ms - 140ms | ❌ Too heavy; violates zero-dependency ethos; slows CLI startup | **REJECTED** |
-| **Blessed** | ~2MB / ~12 deps | +45ms - 70ms | ❌ Unmaintained; leaks memory on exit; breaks Windows CMD | **REJECTED** |
-| **Rich / Textual** | Python runtime | N/A | ❌ Incompatible (Tribunal-Kit CLI core is Node.js + Rust) | **REJECTED** |
-| **Chalk / Picocolors** | 5-10KB / 1 dep | +2ms | ⚠️ Redundant; Tribunal-Kit already has native TrueColor engine | **REJECTED** |
-| **Native Zero-Dependency Enhanced TUI** | **0 dependencies** | **< 1ms** | ✅ Instant startup (<15ms); 100% control over platform parity | **RECOMMENDED** |
+| Library                                 | Bundle Size / Dependencies | Cold Startup Impact | Suitability for Tribunal-Kit                                    | Decision        |
+| :-------------------------------------- | :------------------------- | :------------------ | :-------------------------------------------------------------- | :-------------- |
+| **Ink** (React for CLI)                 | ~15MB / ~42 deps           | +90ms - 140ms       | ❌ Too heavy; violates zero-dependency ethos; slows CLI startup | **REJECTED**    |
+| **Blessed**                             | ~2MB / ~12 deps            | +45ms - 70ms        | ❌ Unmaintained; leaks memory on exit; breaks Windows CMD       | **REJECTED**    |
+| **Rich / Textual**                      | Python runtime             | N/A                 | ❌ Incompatible (Tribunal-Kit CLI core is Node.js + Rust)       | **REJECTED**    |
+| **Chalk / Picocolors**                  | 5-10KB / 1 dep             | +2ms                | ⚠️ Redundant; Tribunal-Kit already has native TrueColor engine  | **REJECTED**    |
+| **Native Zero-Dependency Enhanced TUI** | **0 dependencies**         | **< 1ms**           | ✅ Instant startup (<15ms); 100% control over platform parity   | **RECOMMENDED** |
 
 **Architectural Decision:** We will **NOT** add any external npm dependencies to `package.json`. The redesign will be implemented natively using Node.js standard libraries (`readline`, `process`, `child_process`, `fs`, `path`) and clean ANSI escape code sequencing.
 
@@ -71,6 +72,7 @@ tribunal-kit/src/tui/
 ## 4. Blast Radius: Files Targeted vs Files Untouched
 
 ### Files Targeted for Enhancement (Only After Approval)
+
 1. `src/tui/theme.js` — Add comprehensive ANSI-stripping utility (`stripAnsi`), terminal width auto-detection with fallback, and unified 16-color compatibility bridges.
 2. `src/tui/panel.js` — Fix the 2-character divider alignment bug; integrate `stripAnsi`.
 3. `src/tui/banner.js` — Add responsive spacing calculation that prevents wrapping at narrow widths.
@@ -81,6 +83,7 @@ tribunal-kit/src/tui/
 8. `test/unit/tui.test.js` — Add unit tests covering `panel.js` border alignment, `stripAnsi` correctness, narrow-width rendering, and `NO_COLOR` safety.
 
 ### Files That Remain Strictly Untouched
+
 - **Core Governance & Security:** `src/security/`, `src/intelligence/`, `src/synthesis/`, `src/system1/`
 - **Recursive Self-Improvement Backend Logic:** `src/evolution/`, `src/evaluation/`, `benchmarks/`
 - **Native Rust Code:** `crates/core/` (unless matching token updates are approved later)

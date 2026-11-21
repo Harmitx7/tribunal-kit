@@ -29,9 +29,11 @@ async function profile() {
   const heapAfterScan = process.memoryUsage().heapUsed;
   results.measurements.coldScan = {
     durationMs: Math.round(coldEnd - coldStart),
-    heapDeltaMB: Math.round((heapAfterScan - heapBefore) / 1024 / 1024 * 10) / 10,
+    heapDeltaMB: Math.round(((heapAfterScan - heapBefore) / 1024 / 1024) * 10) / 10,
   };
-  console.log(`  Cold scan: ${results.measurements.coldScan.durationMs}ms, +${results.measurements.coldScan.heapDeltaMB}MB heap`);
+  console.log(
+    `  Cold scan: ${results.measurements.coldScan.durationMs}ms, +${results.measurements.coldScan.heapDeltaMB}MB heap`,
+  );
 
   // 2. Warm scan (cached)
   console.log('2. Warm scan timing...');
@@ -116,13 +118,19 @@ async function profile() {
   results.measurements.routing = {
     totalQueries: routingQueries.length,
     totalMs: Math.round(routingTimes.reduce((a, b) => a + b, 0) * 100) / 100,
-    avgMs: Math.round(routingTimes.reduce((a, b) => a + b, 0) / routingTimes.length * 100) / 100,
+    avgMs: Math.round((routingTimes.reduce((a, b) => a + b, 0) / routingTimes.length) * 100) / 100,
     maxMs: Math.round(Math.max(...routingTimes) * 100) / 100,
     minMs: Math.round(Math.min(...routingTimes) * 100) / 100,
-    p50Ms: Math.round(routingTimes.sort((a, b) => a - b)[Math.floor(routingTimes.length * 0.5)] * 100) / 100,
-    p99Ms: Math.round(routingTimes.sort((a, b) => a - b)[Math.floor(routingTimes.length * 0.99)] * 100) / 100,
+    p50Ms:
+      Math.round(routingTimes.sort((a, b) => a - b)[Math.floor(routingTimes.length * 0.5)] * 100) /
+      100,
+    p99Ms:
+      Math.round(routingTimes.sort((a, b) => a - b)[Math.floor(routingTimes.length * 0.99)] * 100) /
+      100,
   };
-  console.log(`  Routing: avg=${results.measurements.routing.avgMs}ms, max=${results.measurements.routing.maxMs}ms, p99=${results.measurements.routing.p99Ms}ms`);
+  console.log(
+    `  Routing: avg=${results.measurements.routing.avgMs}ms, max=${results.measurements.routing.maxMs}ms, p99=${results.measurements.routing.p99Ms}ms`,
+  );
 
   // 5. Memory stability across repeated operations
   console.log('5. Memory stability...');
@@ -133,15 +141,17 @@ async function profile() {
     memSamples.push(process.memoryUsage().heapUsed);
   }
 
-  const memStartMB = Math.round(memSamples[0] / 1024 / 1024 * 10) / 10;
-  const memEndMB = Math.round(memSamples[memSamples.length - 1] / 1024 / 1024 * 10) / 10;
+  const memStartMB = Math.round((memSamples[0] / 1024 / 1024) * 10) / 10;
+  const memEndMB = Math.round((memSamples[memSamples.length - 1] / 1024 / 1024) * 10) / 10;
   results.measurements.memoryStability = {
     startHeapMB: memStartMB,
     endHeapMB: memEndMB,
     growthMB: Math.round((memEndMB - memStartMB) * 10) / 10,
-    samples: memSamples.map(m => Math.round(m / 1024 / 1024 * 10) / 10),
+    samples: memSamples.map(m => Math.round((m / 1024 / 1024) * 10) / 10),
   };
-  console.log(`  Memory: ${memStartMB}MB → ${memEndMB}MB (growth: ${results.measurements.memoryStability.growthMB}MB over 10 iterations)`);
+  console.log(
+    `  Memory: ${memStartMB}MB → ${memEndMB}MB (growth: ${results.measurements.memoryStability.growthMB}MB over 10 iterations)`,
+  );
 
   // 6. Architecture model size
   console.log('6. Model statistics...');
@@ -149,15 +159,25 @@ async function profile() {
   results.measurements.modelSize = {
     entities: (model.entities || []).length,
     relationships: (model.relationships || []).length,
-    files: (model.entities || []).filter(e => e.kind === 'source_file' || e.sources?.length > 0).length,
+    files: (model.entities || []).filter(e => e.kind === 'source_file' || e.sources?.length > 0)
+      .length,
     frameworks: (model.frameworks || []).length,
     datastores: (model.entities || []).filter(e => e.kind === 'datastore').length,
     routes: (model.entities || []).filter(e => e.kind === 'endpoint' || e.kind === 'route').length,
   };
-  console.log(`  Model: ${results.measurements.modelSize.entities} entities, ${results.measurements.modelSize.relationships} relationships`);
+  console.log(
+    `  Model: ${results.measurements.modelSize.entities} entities, ${results.measurements.modelSize.relationships} relationships`,
+  );
 
   // Write results
-  const outputPath = path.join(__dirname, '..', 'test', 'fixtures', 'codebase_intelligence_adversarial', 'phase15_performance_profile.json');
+  const outputPath = path.join(
+    __dirname,
+    '..',
+    'test',
+    'fixtures',
+    'codebase_intelligence_adversarial',
+    'phase15_performance_profile.json',
+  );
   require('fs').writeFileSync(outputPath, JSON.stringify(results, null, 2));
   console.log(`\nProfile written to: ${outputPath}`);
 
@@ -168,4 +188,3 @@ profile().catch(err => {
   console.error('Profile failed:', err);
   process.exit(1);
 });
-

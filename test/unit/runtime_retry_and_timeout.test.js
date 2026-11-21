@@ -45,7 +45,7 @@ describe('Bounded Retry, Exponential Backoff & Idempotency Engine', () => {
     });
 
     let calls = 0;
-    const result = await engine.execute(async (attempt) => {
+    const result = await engine.execute(async attempt => {
       calls++;
       if (calls < 2) {
         const err = new Error('read ECONNRESET');
@@ -73,7 +73,7 @@ describe('Bounded Retry, Exponential Backoff & Idempotency Engine', () => {
         const authErr = new Error('Invalid API key');
         authErr.status = 401;
         throw authErr;
-      })
+      }),
     ).rejects.toThrow('Invalid API key');
 
     expect(calls).toBe(1); // Did not retry
@@ -93,8 +93,8 @@ describe('Bounded Retry, Exponential Backoff & Idempotency Engine', () => {
           netErr.code = 'ECONNRESET';
           throw netErr;
         },
-        { isIdempotent: false }
-      )
+        { isIdempotent: false },
+      ),
     ).rejects.toThrow('Network blip');
 
     expect(calls).toBe(1); // Non-idempotent -> prohibited from retrying

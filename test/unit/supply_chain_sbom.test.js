@@ -112,4 +112,3 @@ describe('Software Bill of Materials (SBOM) Engine', () => {
     expect(diff.updated[0].toVersion).toBe('4.17.21');
   });
 });
-

@@ -35,8 +35,12 @@ function calculateConfusionMatrix(pairs, options = {}) {
   let fn = 0;
 
   for (const item of pairs) {
-    const isPredPos = item.predicted === positiveLabel || String(item.predicted).toLowerCase() === String(positiveLabel).toLowerCase();
-    const isActualPos = item.actual === positiveLabel || String(item.actual).toLowerCase() === String(positiveLabel).toLowerCase();
+    const isPredPos =
+      item.predicted === positiveLabel ||
+      String(item.predicted).toLowerCase() === String(positiveLabel).toLowerCase();
+    const isActualPos =
+      item.actual === positiveLabel ||
+      String(item.actual).toLowerCase() === String(positiveLabel).toLowerCase();
 
     if (isPredPos && isActualPos) tp++;
     else if (isPredPos && !isActualPos) fp++;
@@ -52,7 +56,7 @@ function calculateConfusionMatrix(pairs, options = {}) {
   const precision = precisionDenominator > 0 ? tp / precisionDenominator : 0;
   const recall = recallDenominator > 0 ? tp / recallDenominator : 0;
   const specificity = specificityDenominator > 0 ? tn / specificityDenominator : 0;
-  const f1 = (precision + recall) > 0 ? (2 * precision * recall) / (precision + recall) : 0;
+  const f1 = precision + recall > 0 ? (2 * precision * recall) / (precision + recall) : 0;
   const fpr = specificityDenominator > 0 ? fp / specificityDenominator : 0;
   const fnr = recallDenominator > 0 ? fn / recallDenominator : 0;
   const accuracy = total > 0 ? (tp + tn) / total : 0;
@@ -101,7 +105,10 @@ function calculateBrierScore(items) {
       throw new Error(`Invalid probability value: ${item.probability}. Must be in [0, 1].`);
     }
 
-    const actual = (item.outcome === 1 || item.outcome === true || String(item.outcome).toLowerCase() === 'true') ? 1 : 0;
+    const actual =
+      item.outcome === 1 || item.outcome === true || String(item.outcome).toLowerCase() === 'true'
+        ? 1
+        : 0;
     squaredDiffSum += Math.pow(prob - actual, 2);
     validCount++;
   }
@@ -170,8 +177,8 @@ function calculateExpectedCalibrationError(predictions, numBins = 10) {
     weightedEceSum += (b.count / n) * diff;
 
     // Diagnose calibration anomalies in high & low confidence brackets
-    if (avgConf >= 0.7 && (avgConf - accuracy) > 0.15) overconfidentBins++;
-    if (avgConf <= 0.4 && (accuracy - avgConf) > 0.15) underconfidentBins++;
+    if (avgConf >= 0.7 && avgConf - accuracy > 0.15) overconfidentBins++;
+    if (avgConf <= 0.4 && accuracy - avgConf > 0.15) underconfidentBins++;
 
     return {
       range: b.range,
@@ -207,7 +214,9 @@ function calculateCohensKappa(ratings) {
   }
 
   const n = ratings.length;
-  const categories = Array.from(new Set(ratings.flatMap(r => [String(r.raterA), String(r.raterB)])));
+  const categories = Array.from(
+    new Set(ratings.flatMap(r => [String(r.raterA), String(r.raterB)])),
+  );
 
   let agreeCount = 0;
   const countA = {};
@@ -274,11 +283,13 @@ function calculateFleissKappa(matrix) {
 
   // Compute p_j (proportion of all assignments to the j-th category)
   const categoryCounts = {};
-  allCategories.forEach(cat => { categoryCounts[cat] = 0; });
+  allCategories.forEach(cat => {
+    categoryCounts[cat] = 0;
+  });
 
   for (const row of matrix) {
     for (const cat of allCategories) {
-      categoryCounts[cat] += (row[cat] || 0);
+      categoryCounts[cat] += row[cat] || 0;
     }
   }
 

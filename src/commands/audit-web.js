@@ -11,15 +11,24 @@
 const fs = require('fs');
 const path = require('path');
 const { auditURL } = require('../browser');
+const { ensureBrowserAvailable } = require('../browser/discovery');
 const { codifyAuditViolations } = require('../browser/case_bridge');
 const { c } = require('../utils/logger');
-const { banner } = require('../utils/helpers');
+const { banner, extractPositionalArgs } = require('../utils/helpers');
 
-async function cmdAuditWeb(flags, processArgs, quiet = false) {
-  const url = processArgs[3] || flags.url;
+async function cmdAuditWeb(flags = {}, processArgs = process.argv, quiet = false) {
+  const positionals = extractPositionalArgs(processArgs, 'audit-web', ['--output', '-o', '--url']);
+  const url = flags.url || positionals[0];
 
   if (!url) {
     console.error(`  ${c('red', '✖ Error:')} Missing target URL. Usage: tk audit-web <url>`);
+    process.exit(1);
+  }
+
+  try {
+    ensureBrowserAvailable();
+  } catch (browserErr) {
+    console.error(`  ${c('red', '✖ Browser unavailable:')} ${browserErr.message}`);
     process.exit(1);
   }
 

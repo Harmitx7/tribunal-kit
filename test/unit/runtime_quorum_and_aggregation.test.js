@@ -85,7 +85,7 @@ describe('Multi-Agent Quorum & Partial Failure Engine', () => {
     ];
 
     const evalResult = engine.evaluateResults(results);
-    const dupFinding = evalResult.findings.find((f) => f.title.includes('Duplicate agent'));
+    const dupFinding = evalResult.findings.find(f => f.title.includes('Duplicate agent'));
     expect(dupFinding).toBeDefined();
     expect(dupFinding.category).toBe('QUORUM_FAILURE');
   });

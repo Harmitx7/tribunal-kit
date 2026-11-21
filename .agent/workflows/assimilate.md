@@ -1,6 +1,6 @@
 ---
 name: assimilate
-description: "Trigger the learning pipeline to extract, validate, and store Tribunal Instincts."
+description: 'Trigger the learning pipeline to extract, validate, and store Tribunal Instincts.'
 version: 1.1.0
 required-skills:
   - assimilate
@@ -20,6 +20,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before assimilating session logs into permanent engineering instincts:
+
 1. Confirm session log exists (`.agent/.tribunal/session.jsonl` or `.agent_session.json`).
 2. Verify read-only access to historical logs; prevent mutation of active session events.
 3. Require evidence-backed proof before persisting any candidate instinct.

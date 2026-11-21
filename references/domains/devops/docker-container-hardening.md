@@ -2,7 +2,7 @@
 
 > **Authority**: CIS Docker Benchmark & NIST SP 800-190  
 > **Applicable Domains**: Containerization, DevOps, Cloud Infrastructure  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -39,11 +39,14 @@ CMD ["dist/main.js"]
 ## 2. Mandatory Container Invariants
 
 ### 1. Zero Root Execution
+
 - ❌ **Forbidden**: Running application containers as `root` (UID 0). A container breakout under root compromises the host kernel.
 - ✅ **Required**: Explicitly create and switch to an unprivileged user (`USER node` or `USER nonroot`).
 
 ### 2. Immutable Read-Only Root Filesystem
+
 Configure orchestrators (Docker Compose / Kubernetes) to mount the container filesystem as read-only, providing temporary memory storage (`tmpfs`) exclusively for write locations:
+
 ```yaml
 services:
   api:
@@ -58,4 +61,5 @@ services:
 ```
 
 ### 3. Capability Dropping
+
 Drop all Linux kernel capabilities by default (`cap_drop: ALL`). If network binding to ports below 1024 is needed, use port 3000/8080 instead or grant only `CAP_NET_BIND_SERVICE`.

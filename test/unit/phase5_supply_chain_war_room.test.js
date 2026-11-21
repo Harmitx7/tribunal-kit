@@ -46,9 +46,9 @@ describe('PHASE 5 SUPPLY-CHAIN WAR ROOM — Dependency Forensics & Invariant Ver
     });
 
     test('Production runtime dependencies are strictly constrained', () => {
-      const deps = Object.keys(pkg.dependencies || {});
-      // Only zod is an approved runtime production dependency
-      expect(deps).toEqual(['zod']);
+      const deps = Object.keys(pkg.dependencies || {}).sort();
+      // Only audited zod and ws are approved runtime production dependencies
+      expect(deps).toEqual(['ws', 'zod']);
     });
   });
 
@@ -130,7 +130,8 @@ describe('PHASE 5 SUPPLY-CHAIN WAR ROOM — Dependency Forensics & Invariant Ver
   // ───────────────────────────────────────────────────────────────────────────
   describe('Domain A/K: Dependency Analyzer Statement-Anchor Invariant', () => {
     test('Import extraction regex distinguishes top-level imports from embedded string literals', () => {
-      const importRegex = /(?:^|[;\n\r{}])\s*(?:import|export)\s+.*?\s+from\s+["']([^"'.\r\n][^"'\r\n]*)["']/gm;
+      const importRegex =
+        /(?:^|[;\n\r{}])\s*(?:import|export)\s+.*?\s+from\s+["']([^"'.\r\n][^"'\r\n]*)["']/gm;
 
       const codeWithLiteral = [
         '// Valid imports:',
@@ -155,4 +156,3 @@ describe('PHASE 5 SUPPLY-CHAIN WAR ROOM — Dependency Forensics & Invariant Ver
     });
   });
 });
-

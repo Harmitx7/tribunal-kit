@@ -2,7 +2,7 @@
 
 > **Authority**: W3C WebAuthn Level 3 (`https://www.w3.org/TR/webauthn-3/`) & FIDO Alliance  
 > **Applicable Domains**: Security, Authentication, Zero-Trust Architecture  
-> **Status**: Verified Specification Reference  
+> **Status**: Verified Specification Reference
 
 ---
 
@@ -11,6 +11,7 @@
 WebAuthn establishes asymmetric public-key authentication between a Client (Browser/OS Authenticator) and a Relying Party (Server).
 
 ### Invariants:
+
 1. **Relying Party ID (RP ID)**: Must match the current domain or a registrable suffix (e.g. `auth.example.com` or `example.com`). It must never include schemes (`https://`) or ports (`:443`).
 2. **Challenge Entropy**: Cryptographically random byte buffer (minimum 32 bytes) generated server-side per ceremony, stored in transient session/cache with a tight TTL (maximum 120 seconds).
 3. **Origin Verification**: The server must verify that the `clientDataJSON.origin` matches the exact application URL (including scheme and port, e.g. `https://example.com`).

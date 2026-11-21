@@ -20,12 +20,12 @@ const { validateBrowserUrl } = require('../security/boundary');
  * High-level helper: browse a URL and return token-pruned semantic markdown.
  * Protected by IDPI scanning and strict token budgeting (< 4,000 bytes).
  * @param {string} url
- * @param {object} options
- * @returns {Promise<{ url: string, markdown: string, sandboxed: string, isClean: boolean, threatLevel: string }>}
+ * @param {object} [options]
+ * @returns {Promise<{ url: string, markdown: string, sandboxed: string, isClean: boolean, threatLevel: string, threats?: any[] }>}
  */
-async function browse(url, _options = {}) {
-  validateBrowserUrl(url, _options);
-  const browser = await launchBrowser(_options);
+async function browse(url, options = {}) {
+  validateBrowserUrl(url, options);
+  const browser = await launchBrowser(options);
   let client = null;
   let tab = null;
 
@@ -35,7 +35,7 @@ async function browse(url, _options = {}) {
     await client.connect(tab.webSocketDebuggerUrl);
     await client.initDomains();
 
-    await client.navigate(url, _options);
+    await client.navigate(url, options);
     const html = await client.getHTML();
 
     // 1. Scan for prompt injection

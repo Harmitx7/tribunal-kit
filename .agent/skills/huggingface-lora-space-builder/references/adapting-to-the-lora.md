@@ -14,17 +14,17 @@ The job of the demo is to translate between what the user has (a video, a photo,
 
 Sources, in order of usefulness:
 
-1. **The model card's example code snippet — for *parameters*.** If the README has a Python block showing how to call the LoRA, trust it for inference parameters: pipeline class, step count, guidance scale, true CFG, LoRA scale, dtype, resolution, negative prompt. Trust it for inputs: if it passes `image=...`, the demo takes an image; if it passes `image=...` and `mask_image=...`, the demo needs both.
+1. **The model card's example code snippet — for _parameters_.** If the README has a Python block showing how to call the LoRA, trust it for inference parameters: pipeline class, step count, guidance scale, true CFG, LoRA scale, dtype, resolution, negative prompt. Trust it for inputs: if it passes `image=...`, the demo takes an image; if it passes `image=...` and `mask_image=...`, the demo needs both.
 
-   **For *loading mechanics*, treat the snippet as a signal, not a directive.** Prefer the standard diffusers path: `pipe.load_lora_weights(repo_id, weight_name=...)`. This is the maintained, well-tested path that handles DoRA, rsLoRA, custom target modules, and most format variants when diffusers + PEFT are recent enough. If the model card uses something else — `PeftModel.from_pretrained(pipe.transformer, ...)`, `diffsynth_engine`, custom imports, manual state-dict surgery — that's a flag to investigate, not to copy.
+   **For _loading mechanics_, treat the snippet as a signal, not a directive.** Prefer the standard diffusers path: `pipe.load_lora_weights(repo_id, weight_name=...)`. This is the maintained, well-tested path that handles DoRA, rsLoRA, custom target modules, and most format variants when diffusers + PEFT are recent enough. If the model card uses something else — `PeftModel.from_pretrained(pipe.transformer, ...)`, `diffsynth_engine`, custom imports, manual state-dict surgery — that's a flag to investigate, not to copy.
 
    Reasons model card authors reach for non-standard loading paths often don't transfer: training-time conventions, environment quirks (older diffusers/PEFT versions, CPU offload patterns), or even malformed configs that pass silently in their setup but crash elsewhere. (Real example: an `adapter_config.json` with `task_type: "DIFFUSION"` works locally on some PEFT versions but crashes on current PEFT, because PEFT's `TaskType` enum only contains NLP tasks; diffusers' loader bypasses this validation by reading the safetensors directly.)
 
-   Custom inference paths absolutely *can* work on ZeroGPU when needed (LTX-2.3 native pipeline is a real example). But default to diffusers because it's the standard, current, maintained path. Only adopt the model card's loading approach if `load_lora_weights` demonstrably can't handle this LoRA — and when you do, port it to the ZeroGPU constraints (module-level `.to('cuda')`, no `enable_model_cpu_offload`).
+   Custom inference paths absolutely _can_ work on ZeroGPU when needed (LTX-2.3 native pipeline is a real example). But default to diffusers because it's the standard, current, maintained path. Only adopt the model card's loading approach if `load_lora_weights` demonstrably can't handle this LoRA — and when you do, port it to the ZeroGPU constraints (module-level `.to('cuda')`, no `enable_model_cpu_offload`).
 
 2. **Trigger words and prompt patterns.** "Use the trigger word X at the start of the prompt" → automatically prepend `X` to the user's prompt rather than asking them to type it. "Prompts should describe the scene as Y" → add prompt formatting examples or a placeholder. If the LoRA expects a structured input embedded in the prompt (like bounding-box coordinates or named regions), the UI should produce that structure for the user, not require them to type it.
 
-3. **Example media in the repo.** Example outputs tell you what the LoRA does. Example inputs tell you what the user has to provide. Example *paired* inputs+outputs (input video → output video, input image → output image) tell you the transformation. Lift these into `gr.Examples` so the user can click through them.
+3. **Example media in the repo.** Example outputs tell you what the LoRA does. Example inputs tell you what the user has to provide. Example _paired_ inputs+outputs (input video → output video, input image → output image) tell you the transformation. Lift these into `gr.Examples` so the user can click through them.
 
 4. **The model's task family.** A pose-conditioned model wants pose maps. A depth-conditioned model wants depth. An outpaint model wants padded frames with masked regions. Each implies preprocessing.
 
@@ -55,7 +55,7 @@ For each thing the LoRA expects as input, decide:
 ## Examples of the reasoning, applied
 
 **Pose-control video LoRA (V2V).**
-The model conditions on pose video. The user has a regular video. The demo takes a video, extracts pose, optionally takes an appearance reference image (for "the character looks like *this*, doing *that* motion"), runs inference, returns a video. The pose extraction is shown as a preview so the user knows what's being used. Aspect-ratio picker is irrelevant — the output matches the source.
+The model conditions on pose video. The user has a regular video. The demo takes a video, extracts pose, optionally takes an appearance reference image (for "the character looks like _this_, doing _that_ motion"), runs inference, returns a video. The pose extraction is shown as a preview so the user knows what's being used. Aspect-ratio picker is irrelevant — the output matches the source.
 
 **Outpaint video LoRA (V2V).**
 The model fills black-margined frames. The user has a video and wants it wider/taller. The demo takes a video, takes a target aspect ratio (dropdown: 16:9, 9:16, 1:1, etc.), pads frames with black bars to that aspect ratio, shows a preview of the padded first frame, runs inference. No appearance reference — the LoRA's job is to extend, not transform. If the LoRA's model card mentions that gamma correction helps for dark scenes, expose that as an Advanced toggle.
@@ -72,7 +72,7 @@ The model moves and resizes objects between two bounding boxes drawn on the imag
 **Identity-preserving I2V.**
 The model animates a character while preserving identity. The user has a still photo and a motion intent. The demo takes an image (the character), takes a prompt (the motion), runs inference. If the model also accepts a driving video for motion, expose that as an alternative input mode rather than a second mandatory input.
 
-The pattern in all of these: start from what the user *has* and what they *want*, and build the UI that bridges to what the model needs.
+The pattern in all of these: start from what the user _has_ and what they _want_, and build the UI that bridges to what the model needs.
 
 ## Things that change UI shape
 
@@ -94,13 +94,13 @@ Signals from the model card or the LoRA's behavior that should change the UI:
 
 ## When LoRA loading fails
 
-The right move when `pipe.load_lora_weights(...)` fails is to read the error and recognize the *category* of failure. Each category has a different fix path. Don't guess — different errors imply different things about whether the LoRA is salvageable on the diffusers path at all.
+The right move when `pipe.load_lora_weights(...)` fails is to read the error and recognize the _category_ of failure. Each category has a different fix path. Don't guess — different errors imply different things about whether the LoRA is salvageable on the diffusers path at all.
 
 **Don't preemptively call conversion utilities.** `load_lora_weights` already calls the appropriate converters internally for the formats it knows about. Calling `convert_state_dict_to_diffusers` or similar before there's an error is redundant in the common case and risky if you guess wrong — you can mangle a state dict that would have loaded fine.
 
 Failure categories:
 
-- **Config-validation failure** (errors mentioning `task_type`, `peft_type`, "Invalid task type", `PeftConfig`, or anything from `peft/config.py`): the safetensors weights themselves may be fine; `adapter_config.json` is the problem. Fix paths: pass `weight_name=` explicitly so `load_lora_weights` reads the safetensors directly without going through PEFT's strict config parser; or download the safetensors and load via state dict. Falling back to `PeftModel.from_pretrained` will *not* help — that path crashes on the same config.
+- **Config-validation failure** (errors mentioning `task_type`, `peft_type`, "Invalid task type", `PeftConfig`, or anything from `peft/config.py`): the safetensors weights themselves may be fine; `adapter_config.json` is the problem. Fix paths: pass `weight_name=` explicitly so `load_lora_weights` reads the safetensors directly without going through PEFT's strict config parser; or download the safetensors and load via state dict. Falling back to `PeftModel.from_pretrained` will _not_ help — that path crashes on the same config.
 
 - **Missing keys / unexpected keys** ("Loading adapter weights from state_dict led to missing keys" or "led to unexpected keys"): the state dict's key naming doesn't match what diffusers' loader expects. This often means the LoRA was trained with a non-diffusers convention (kohya, ComfyUI, OneTrainer, custom training scripts), or with custom target modules. Fix paths: try diffusers' built-in conversion utilities (`convert_state_dict_to_diffusers`, base-model-specific converters in `diffusers.loaders`); if those don't help, the format may not be supported yet — surface this clearly to the user rather than silently using a partial load.
 
@@ -108,6 +108,6 @@ Failure categories:
 
 - **OOM during load or first inference**: not really a loading failure — the LoRA loaded but the combined base + LoRA + activations don't fit. Fix paths involve `pipe.enable_vae_tiling()`, smaller resolutions, FP8/quantized base variants. Not in scope for this section.
 
-- **Missing keys for *some* weights only** (e.g. text encoder LoRA missing but transformer LoRA present): often a partial-coverage LoRA that only targets one component. May actually be intentional and may still work — generate a test image and see if the LoRA effect is present.
+- **Missing keys for _some_ weights only** (e.g. text encoder LoRA missing but transformer LoRA present): often a partial-coverage LoRA that only targets one component. May actually be intentional and may still work — generate a test image and see if the LoRA effect is present.
 
 When none of these fit and `load_lora_weights` simply doesn't work, falling back to a non-diffusers path becomes a real option. At that point the model card's snippet becomes more useful — but port it to ZeroGPU constraints (no `enable_model_cpu_offload`, module-level `.to('cuda')`, models on `cuda` outside `@spaces.GPU`).

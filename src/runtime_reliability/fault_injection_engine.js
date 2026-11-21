@@ -47,7 +47,7 @@ class FaultInjectionEngine {
     const rulesList = this.rules.get(target);
 
     if (rulesList && rulesList.length > 0) {
-      const activeRule = rulesList.find((r) => r.remainingCount > 0);
+      const activeRule = rulesList.find(r => r.remainingCount > 0);
 
       if (activeRule) {
         activeRule.remainingCount--;
@@ -97,7 +97,7 @@ class FaultInjectionEngine {
           }
           case 'DELAY': {
             const delayMs = activeRule.params.delayMs || 200;
-            await new Promise((res) => setTimeout(res, delayMs));
+            await new Promise(res => setTimeout(res, delayMs));
             break;
           }
           default:
@@ -119,7 +119,7 @@ class FaultInjectionEngine {
   }
 
   getInterceptCount(target) {
-    return this.interceptLog.filter((log) => log.target === target).length;
+    return this.interceptLog.filter(log => log.target === target).length;
   }
 }
 

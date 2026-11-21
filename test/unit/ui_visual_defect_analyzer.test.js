@@ -6,7 +6,11 @@ describe('UI Visual Defect Analyzer (Unit)', () => {
   it('detects hardcoded hex colors', () => {
     const code = '<div className="bg-[#1a1a1a] text-[#ffffff]">';
     const defects = analyzeVisualDefects(code);
-    expect(defects.some(d => d.category === 'SLOP_CLICHE_DETECTED' && d.id.startsWith('HEX_COLOR_FOUND'))).toBe(true);
+    expect(
+      defects.some(
+        d => d.category === 'SLOP_CLICHE_DETECTED' && d.id.startsWith('HEX_COLOR_FOUND'),
+      ),
+    ).toBe(true);
   });
 
   it('detects dangerous transition: all', () => {
@@ -42,8 +46,9 @@ describe('UI Visual Defect Analyzer (Unit)', () => {
       </div>
     `;
     const defects = analyzeVisualDefects(code);
-    const fatalOrCritical = defects.filter(d => d.severity === 'P0_FATAL' || d.severity === 'P1_CRITICAL');
+    const fatalOrCritical = defects.filter(
+      d => d.severity === 'P0_FATAL' || d.severity === 'P1_CRITICAL',
+    );
     expect(fatalOrCritical.length).toBe(0);
   });
 });
-

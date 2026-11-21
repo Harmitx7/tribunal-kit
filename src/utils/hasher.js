@@ -1,9 +1,7 @@
 'use strict';
-const __importDefault =
-  (this && this.__importDefault) ||
-  function (mod) {
-    return mod && mod.__esModule ? mod : { default: mod };
-  };
+const __importDefault = function (mod) {
+  return mod && mod.__esModule ? mod : { default: mod };
+};
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.generateManifest = generateManifest;
 exports.readManifest = readManifest;
@@ -39,6 +37,7 @@ async function hashFile(filePath) {
  */
 async function generateManifest(dir, baseDir) {
   if (!baseDir) baseDir = dir;
+  /** @type {Record<string, string>} */
   const manifest = {};
 
   if (!fs_1.default.existsSync(dir)) return manifest;

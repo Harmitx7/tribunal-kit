@@ -9,6 +9,7 @@
 ## 1. Brand Identity & Visual System
 
 ### 1.1 Signature Visual Elements
+
 1. **Brand Wordmark:**
    - **TrueColor / Unicode:**
      `  \x1b[48;2;225;75;45m\x1b[38;2;255;255;255m\x1b[1m TRIBUNAL-KIT \x1b[0m  v9.2.9  [Fortress Mode · Rust Core]`
@@ -59,18 +60,21 @@
 ### Detailed Component Contracts
 
 #### 1. `renderBanner(version, quiet, options)`
+
 - **Purpose:** Identifies the application, version, active engine (Rust Core / JS Core), and fortress governance mode.
 - **Rules:**
   - When `quiet` is true or process is in non-interactive stdout piping, output is suppressed or rendered as clean 1-line text to `stderr`.
   - Strip ANSI before calculating space count to guarantee zero overflow at any width.
 
 #### 2. `renderPanel(title, lines, options)` (Fixed Architecture)
+
 - **Purpose:** Encloses structured diagnostics, error dossiers, or summary tables in clean micro-borders.
 - **Bug Fix Incorporated:**
   - Header divider uses `├` (1 char) + `─` repeat (`innerWidth` chars) + `┤` (1 char), maintaining exact character-for-character parity with `╭` + `─` + `╮`.
   - ANSI stripping uses complete sequence regex `/\x1b\[[0-9;?]*[a-zA-Z]/g` to ensure accurate visual width calculations.
 
 #### 3. `renderReviewerGrid(completedCount, options)`
+
 - **Purpose:** Visualizes all 28 Tribunal reviewers running concurrently in an auto-responsive matrix.
 - **Width adaptation:**
   - Width ≥ 110 cols: 3 columns (10 rows).
@@ -78,6 +82,7 @@
   - Width < 72 cols: 1 column (compact list or single-line progress summary).
 
 #### 4. `ActionTree` (Timeline Architecture)
+
 - **Purpose:** Communicates progressive execution (e.g. `tk init`, `tk learn`) with connected vertical connector glyphs.
 - **Glyphs:**
   - Step initiation: `⏺` (`GLYPHS.bullet`)
@@ -88,6 +93,7 @@
   - Completion cap: `└──` (`GLYPHS.treeEnd`) with bold confirmation message.
 
 #### 5. `WizardPrompt` (Safe Interactive Selection)
+
 - **Purpose:** User selection without external heavy dependencies.
 - **Defects Addressed:**
   - Calculates terminal row height (`process.stdout.rows`). If options exceed viewport height, enables scrollable virtual windowing instead of throwing cursor above buffer.
@@ -99,15 +105,15 @@
 
 The interface must adapt deterministically across terminal widths and environments:
 
-| Environment / Width | Visual Adaptation Strategy |
-| :--- | :--- |
-| **Wide Viewport (≥ 120 × 40)** | Full multi-column layout; 3-column reviewer matrix; expansive side-by-side card panels; rich metadata pills. |
-| **Standard Viewport (80 × 24)** | Balanced 2-column reviewer matrix; panels capped at 76 columns; ActionTree indentation at 2 spaces. |
-| **Compact Viewport (60 × 20)** | Single-column reviewer matrix; panels collapse borders to clean indented blocks; long file paths truncate from left (`.../src/tui/wizard.js`). |
-| **Narrow / Mobile Viewport (40 × 12)** | All decorative borders stripped; single-line status pills; minimal essential text only. |
-| **Monochrome (`NO_COLOR=1`)** | All ANSI color codes stripped; brackets used for status: `[OK]`, `[WARN]`, `[FAIL]`; ASCII glyphs replace Unicode (`*`, `+`, `x`). |
-| **CI / Non-TTY (`!isTTY`)** | Spinners disabled; raw text emitted without cursor repositioning; stderr separation preserved for CLI pipes. |
-| **Windows Command Prompt (cmd.exe)** | Automatic ASCII fallback glyphs (`+`, `-`, `|`) if UTF-8 code page (65001) is not active. |
+| Environment / Width                    | Visual Adaptation Strategy                                                                                                                     |
+| :------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Wide Viewport (≥ 120 × 40)**         | Full multi-column layout; 3-column reviewer matrix; expansive side-by-side card panels; rich metadata pills.                                   |
+| **Standard Viewport (80 × 24)**        | Balanced 2-column reviewer matrix; panels capped at 76 columns; ActionTree indentation at 2 spaces.                                            |
+| **Compact Viewport (60 × 20)**         | Single-column reviewer matrix; panels collapse borders to clean indented blocks; long file paths truncate from left (`.../src/tui/wizard.js`). |
+| **Narrow / Mobile Viewport (40 × 12)** | All decorative borders stripped; single-line status pills; minimal essential text only.                                                        |
+| **Monochrome (`NO_COLOR=1`)**          | All ANSI color codes stripped; brackets used for status: `[OK]`, `[WARN]`, `[FAIL]`; ASCII glyphs replace Unicode (`*`, `+`, `x`).             |
+| **CI / Non-TTY (`!isTTY`)**            | Spinners disabled; raw text emitted without cursor repositioning; stderr separation preserved for CLI pipes.                                   |
+| **Windows Command Prompt (cmd.exe)**   | Automatic ASCII fallback glyphs (`+`, `-`, `                                                                                                   | `) if UTF-8 code page (65001) is not active. |
 
 ---
 

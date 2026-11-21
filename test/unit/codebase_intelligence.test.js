@@ -206,7 +206,8 @@ describe('Tribunal Codebase Intelligence Engine', () => {
 
   // 13. SECRET REDACTION
   test('13. createEvidenceRecord strips private keys, AWS tokens, and JWTs from claims', () => {
-    const rawClaim = 'Discovered token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-IDc and key AWS_SECRET_KEY=AKIAIOSFODNN7EXAMPLE';
+    const rawClaim =
+      'Discovered token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-IDc and key AWS_SECRET_KEY=AKIAIOSFODNN7EXAMPLE';
     const rec = createEvidenceRecord({
       claim: rawClaim,
       source_path: 'src/auth/jwt.js',
@@ -253,9 +254,17 @@ describe('Tribunal Codebase Intelligence Engine', () => {
 
     await runCodebaseIntelligence({ subcommand: 'overview', repoRoot });
     await runCodebaseIntelligence({ subcommand: 'trace', target: 'POST /mfa-verify', repoRoot });
-    await runCodebaseIntelligence({ subcommand: 'dependencies', target: 'src/security/boundary.js', repoRoot });
+    await runCodebaseIntelligence({
+      subcommand: 'dependencies',
+      target: 'src/security/boundary.js',
+      repoRoot,
+    });
     await runCodebaseIntelligence({ subcommand: 'relevant-files', target: 'oauth', repoRoot });
-    await runCodebaseIntelligence({ subcommand: 'impact', target: 'src/security/boundary.js', repoRoot });
+    await runCodebaseIntelligence({
+      subcommand: 'impact',
+      target: 'src/security/boundary.js',
+      repoRoot,
+    });
     await runCodebaseIntelligence({ subcommand: 'dead-code', repoRoot });
     await runCodebaseIntelligence({ subcommand: 'onboard', repoRoot });
 
@@ -268,11 +277,12 @@ describe('Tribunal Codebase Intelligence Engine', () => {
     const res = engine.prepare('migrate database auth table to include mfa_secret column');
 
     expect(res.subcommand).toBe('prepare');
-    expect(['READY_FOR_IMPLEMENTATION_REVIEW', 'READY_WITH_UNKNOWNS', 'BLOCKED']).toContain(res.readiness);
+    expect(['READY_FOR_IMPLEMENTATION_REVIEW', 'READY_WITH_UNKNOWNS', 'BLOCKED']).toContain(
+      res.readiness,
+    );
     expect(res.changeTargets.length).toBeGreaterThan(0);
     expect(res.verificationCommand).toBeDefined();
     expect(res.blastRadius).toBeDefined();
     expect(res.securityConcerns.length).toBeGreaterThan(0);
   });
 });
-

@@ -16,7 +16,10 @@ const path = require('path');
 const os = require('os');
 const { AdversarialMutator } = require('../../src/evaluation/adversarial_mutator');
 const { SCENARIOS } = require('../../src/evaluation/scenario_registry');
-const { CoEvolutionOrchestrator, parseCommandLine } = require('../../src/evolution/coevolution_orchestrator');
+const {
+  CoEvolutionOrchestrator,
+  parseCommandLine,
+} = require('../../src/evolution/coevolution_orchestrator');
 const { recordRejection } = require('../../src/evolution/negative_memory');
 
 describe('U-BCAE Audit Regression Suite', () => {
@@ -136,7 +139,8 @@ describe('U-BCAE Audit Regression Suite', () => {
       [
         {
           op: 'append',
-          content: '- [Co-Evolution Round 1]: Enforce strict input validation, parameterization, and boundary checks.',
+          content:
+            '- [Co-Evolution Round 1]: Enforce strict input validation, parameterization, and boundary checks.',
         },
       ],
       'Induced regression in security benchmark',

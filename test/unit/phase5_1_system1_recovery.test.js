@@ -2,7 +2,10 @@
 
 const system1 = require('../../src/system1');
 const { buildDecisionPlan, validateDecisionPlan } = require('../../src/system1/decision_plan');
-const { dynamicReviewerSelection, validateReviewerSelection } = require('../../src/system1/reviewer_selection');
+const {
+  dynamicReviewerSelection,
+  validateReviewerSelection,
+} = require('../../src/system1/reviewer_selection');
 const { progressiveContextExpansion } = require('../../src/system1/progressive_context');
 const { REVIEWER_CATALOG } = require('../../src/system1/reviewer_orchestrator');
 
@@ -59,9 +62,7 @@ describe('Phase 5.1: System-1 Dependency Repair & Capability Verification', () =
 
       expect(plan.tier).toBeGreaterThanOrEqual(2);
       expect(plan.risk).toBe('HIGH');
-      expect(plan.required_reviewers).toEqual(
-        expect.arrayContaining(['security-auditor']),
-      );
+      expect(plan.required_reviewers).toEqual(expect.arrayContaining(['security-auditor']));
 
       const validation = validateDecisionPlan(plan);
       expect(validation.valid).toBe(true);

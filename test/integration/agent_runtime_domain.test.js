@@ -47,7 +47,7 @@ describe('Agent Runtime Reliability & Recovery Domain Integration Tests', () => 
 
     expect(result.status).toBe('FAIL');
     expect(result.failedTasks).toBe(1);
-    expect(result.findings.some((f) => f.category === 'QUORUM_FAILURE')).toBe(true);
+    expect(result.findings.some(f => f.category === 'QUORUM_FAILURE')).toBe(true);
   });
 
   test('Optional reviewer failure with allowPartialResults permits PARTIAL status', async () => {

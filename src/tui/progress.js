@@ -8,14 +8,14 @@ const { RGB, GLYPHS, color, bold, dim } = require('./theme');
  *
  * @param {string} label Text label displayed to the left of the bar
  * @param {number|null} percentage Progress percentage (0–100), or null for unmetered
- * @param {object} options
- * @param {number} options.width Max width of the bar (defaults to 30)
- * @param {number[]} options.color RGB array for filled progress bar color
- * @param {number} options.labelWidth Minimum padded width for the label (defaults to 15)
- * @param {number} options.decimals Decimal places for percentage (defaults to 0)
- * @param {string} options.status Optional label for indeterminate state
- * @param {boolean} options.isTerminal Whether the underlying task is in a confirmed terminal state
- * @param {boolean} options.requireTerminalConfirmation If true, caps at 99% until confirmed complete
+ * @param {object} [options]
+ * @param {number} [options.width] Max width of the bar (defaults to 30)
+ * @param {number[]} [options.color] RGB array for filled progress bar color
+ * @param {number} [options.labelWidth] Minimum padded width for the label (defaults to 15)
+ * @param {number} [options.decimals] Decimal places for percentage (defaults to 0)
+ * @param {string} [options.status] Optional label for indeterminate state
+ * @param {boolean} [options.isTerminal] Whether the underlying task is in a confirmed terminal state
+ * @param {boolean} [options.requireTerminalConfirmation] If true, caps at 99% until confirmed complete
  */
 function renderProgressBar(label, percentage, options = {}) {
   const maxBarWidth = options.width || 30;

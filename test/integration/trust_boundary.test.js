@@ -212,7 +212,9 @@ describe('TRUST BOUNDARY — Backend Intelligence Pipeline', () => {
       expect(result.findings[0].status).not.toBe('VERIFIED');
       expect(result.findings[0].status).toBe('DETECTED');
       expect(result.findings[0]._original_status).toBe('VERIFIED');
-      expect(result.findings[0]._isolation_note).toMatch(/Status "VERIFIED" was demoted to DETECTED/);
+      expect(result.findings[0]._isolation_note).toMatch(
+        /Status "VERIFIED" was demoted to DETECTED/,
+      );
     });
 
     it('demotes LLM-assigned FIXED to DETECTED', () => {
@@ -246,7 +248,9 @@ describe('TRUST BOUNDARY — Backend Intelligence Pipeline', () => {
       const result = JSON.parse(fs.readFileSync(out, 'utf8'));
       expect(result.findings[0].status).toBe('DETECTED');
       expect(result.findings[0]._original_status).toBe('REGRESSION-PROTECTED');
-      expect(result.findings[0]._isolation_note).toMatch(/Status "REGRESSION-PROTECTED" was demoted to DETECTED/);
+      expect(result.findings[0]._isolation_note).toMatch(
+        /Status "REGRESSION-PROTECTED" was demoted to DETECTED/,
+      );
     });
   });
 

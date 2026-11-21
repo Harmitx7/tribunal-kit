@@ -90,7 +90,9 @@ function runBenchmark() {
   console.log(`[3] Duplicate Stream Suppression Efficiency:`);
   console.log(`    Total activations:  ${STREAM_COUNT}`);
   console.log(`    Announced count:    ${announcedCount} (initial announcement)`);
-  console.log(`    Suppressed count:   ${suppressedCount} (${Math.round(suppressedCount / STREAM_COUNT * 100)}% noise eliminated)`);
+  console.log(
+    `    Suppressed count:   ${suppressedCount} (${Math.round((suppressedCount / STREAM_COUNT) * 100)}% noise eliminated)`,
+  );
   console.log(`    Elapsed time:       ${(streamSec * 1000).toFixed(2)} ms\n`);
 
   // 4. Concurrent Multi-Operation Isolation Simulation
@@ -113,9 +115,13 @@ function runBenchmark() {
 
   console.log(`[4] Concurrent Operation Isolation (1,000 independent operations):`);
   console.log(`    Total operations:   ${CONCURRENT_OPS}`);
-  console.log(`    Announced count:    ${concurrentAnnounced} (100% correctly announced across isolated ops)`);
+  console.log(
+    `    Announced count:    ${concurrentAnnounced} (100% correctly announced across isolated ops)`,
+  );
   console.log(`    Elapsed time:       ${(concurSec * 1000).toFixed(2)} ms`);
-  console.log(`    Throughput:         ${Math.round(CONCURRENT_OPS / concurSec).toLocaleString()} ops/sec\n`);
+  console.log(
+    `    Throughput:         ${Math.round(CONCURRENT_OPS / concurSec).toLocaleString()} ops/sec\n`,
+  );
 
   console.log('================================================================');
   console.log(' Benchmark Completed Successfully');
@@ -123,4 +129,3 @@ function runBenchmark() {
 }
 
 runBenchmark();
-

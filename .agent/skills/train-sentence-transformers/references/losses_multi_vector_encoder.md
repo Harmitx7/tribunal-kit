@@ -6,12 +6,12 @@ Multi-vector models emit **one embedding per token** and score `(query, document
 
 ## Top-line decision table
 
-| You have | Use |
-|---|---|
-| `(anchor, positive)` or `(anchor, positive, negative)` triplets | `MultiVectorMultipleNegativesRankingLoss` |
-| Same, want effective batch size of 128+ | `CachedMultiVectorMultipleNegativesRankingLoss` |
-| Cross-encoder teacher scores, `(query, positive, negative, score_diff)` | `MultiVectorMarginMSELoss` |
-| Listwise distillation `(query, [doc_1..doc_N], scores)` | `MultiVectorDistillKLDivLoss` |
+| You have                                                                | Use                                             |
+| ----------------------------------------------------------------------- | ----------------------------------------------- |
+| `(anchor, positive)` or `(anchor, positive, negative)` triplets         | `MultiVectorMultipleNegativesRankingLoss`       |
+| Same, want effective batch size of 128+                                 | `CachedMultiVectorMultipleNegativesRankingLoss` |
+| Cross-encoder teacher scores, `(query, positive, negative, score_diff)` | `MultiVectorMarginMSELoss`                      |
+| Listwise distillation `(query, [doc_1..doc_N], scores)`                 | `MultiVectorDistillKLDivLoss`                   |
 
 Hard-negative mining is essential for competitive results, because random in-batch negatives leave a lot on the table for late-interaction models. See `dataset_formats.md` (Hard-negative mining section) and `../scripts/mine_hard_negatives.py`.
 

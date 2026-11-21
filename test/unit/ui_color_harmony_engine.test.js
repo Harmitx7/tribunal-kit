@@ -51,4 +51,3 @@ describe('UI Color Harmony Engine (Unit)', () => {
     expect(tokens.active).toContain('calc(l - 0.14)');
   });
 });
-

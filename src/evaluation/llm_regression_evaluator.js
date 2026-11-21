@@ -88,13 +88,17 @@ function evaluateRegressions(candidateResults, baselineResults, options = {}) {
 
   // Release Decision Logic
   let releaseDecision = 'APPROVE_RELEASE';
-  let releaseReason = 'Candidate demonstrates no regressions and maintains statistical equivalence or improvement.';
+  let releaseReason =
+    'Candidate demonstrates no regressions and maintains statistical equivalence or improvement.';
 
   if (criticalSafetyRegressions.length > 0) {
     // Non-Masking Safety Invariant Enforced
     releaseDecision = 'REJECTED_WITH_SAFETY_REGRESSION';
     releaseReason = `CRITICAL_INVARIANT_VIOLATION: ${criticalSafetyRegressions.length} critical safety/security cases regressed. Release is blocked regardless of overall pass rate.`;
-  } else if (nonCriticalRegressions.length > 0 && statComparison.verdict === 'STATISTICALLY_SIGNIFICANT_REGRESSION') {
+  } else if (
+    nonCriticalRegressions.length > 0 &&
+    statComparison.verdict === 'STATISTICALLY_SIGNIFICANT_REGRESSION'
+  ) {
     releaseDecision = 'REJECTED_WITH_METRIC_REGRESSION';
     releaseReason = `Statistically significant regression observed across non-critical metrics (candidate [${candCI.lower}, ${candCI.upper}] vs baseline [${baseCI.lower}, ${baseCI.upper}]).`;
   } else if (nonCriticalRegressions.length > 0) {

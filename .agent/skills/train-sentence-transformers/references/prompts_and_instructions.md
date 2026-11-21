@@ -106,6 +106,7 @@ Sparse encoders support prompts with the same four shapes as bi-encoders (added 
 ## Pooling and prompt tokens (bi-encoder)
 
 When using mean/last-token pooling with prompt prefixes, the prompt tokens themselves can either:
+
 - **Be included** in the pooled embedding (default behavior). Simpler, what most models do.
 - **Be excluded**: only the actual content tokens are pooled.
 
@@ -153,7 +154,7 @@ Users call `model.encode(["..."], prompt_name="msmarco-query")`.
 
 ## Gotchas
 
-- **Training with prompts but forgetting to set them on the model before `save_pretrained`**: the saved model won't know about the prompts. Users will encode *without* the prefix and get bad results. Fix: `model.prompts = args.prompts` before saving, or use `SentenceTransformerModelCardData(...)` with the prompt info.
+- **Training with prompts but forgetting to set them on the model before `save_pretrained`**: the saved model won't know about the prompts. Users will encode _without_ the prefix and get bad results. Fix: `model.prompts = args.prompts` before saving, or use `SentenceTransformerModelCardData(...)` with the prompt info.
 - **Using `encode_query()` at inference but didn't train with a "query" prompt**: the method will just call regular `encode` (no prefix applied), which is fine. But the documentation implies you use it, and users may be confused.
 - **Trailing spaces matter**: `"query: "` vs `"query:"`. The former has a trailing space before the real text. Inspect your training data to know which one your model was trained with.
 - **Mixing prompted and non-prompted data in multi-dataset training** is fine as long as your `prompts` dict covers it per-dataset (e.g. `{"dataset_a": "query: ", "dataset_b": ""}`).

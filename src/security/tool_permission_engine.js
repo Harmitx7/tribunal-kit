@@ -85,7 +85,11 @@ function auditToolPermissions(toolManifests, requestedCapabilities = [], options
       }
 
       // 3. Excessive grant detection (if requested capabilities are explicitly specified)
-      if (requestedCapabilities.length > 0 && !approvedCapabilities.has(cap) && !approvedCapabilities.has('*')) {
+      if (
+        requestedCapabilities.length > 0 &&
+        !approvedCapabilities.has(cap) &&
+        !approvedCapabilities.has('*')
+      ) {
         excessiveGrants.push({
           tool: name,
           capability: cap,
@@ -155,7 +159,8 @@ function detectConfusedDeputy(invocationRequest) {
     isConfusedDeputy: violations.length > 0,
     blocked: violations.length > 0,
     violations,
-    remediation: 'Require explicit Zone 0 human approval and isolate caller trust boundary before execution.',
+    remediation:
+      'Require explicit Zone 0 human approval and isolate caller trust boundary before execution.',
   };
 }
 
@@ -168,7 +173,9 @@ function detectConfusedDeputy(invocationRequest) {
  */
 function generateLeastPrivilegePolicy(toolManifests, permittedActions) {
   if (!Array.isArray(toolManifests) || !Array.isArray(permittedActions)) {
-    throw new Error('generateLeastPrivilegePolicy requires toolManifests and permittedActions arrays.');
+    throw new Error(
+      'generateLeastPrivilegePolicy requires toolManifests and permittedActions arrays.',
+    );
   }
 
   const allowedSet = new Set(permittedActions);
@@ -241,7 +248,8 @@ function auditMcpManifest(mcpConfig) {
             server: serverName,
             severity: 'HIGH',
             issue: `Hardcoded API credential found in server environment key "${k}".`,
-            remediation: 'Reference environment variables via $VAR instead of hardcoding secrets in config.',
+            remediation:
+              'Reference environment variables via $VAR instead of hardcoding secrets in config.',
           });
         }
       }
@@ -265,4 +273,3 @@ module.exports = {
   HIGH_RISK_CAPABILITIES,
   WILDCARD_PATTERNS,
 };
-

@@ -38,7 +38,10 @@ const {
 } = require('../src/verification');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
-const DATASET_PATH = path.join(REPO_ROOT, 'test/fixtures/software_verification/verification_cases_dataset_v1.json');
+const DATASET_PATH = path.join(
+  REPO_ROOT,
+  'test/fixtures/software_verification/verification_cases_dataset_v1.json',
+);
 const OUTPUT_DIR = path.join(REPO_ROOT, 'benchmarks/artifacts');
 const OUTPUT_PATH = path.join(OUTPUT_DIR, 'software_verification_certification.json');
 
@@ -55,14 +58,16 @@ async function runCertification() {
   for (const c of dataset.cases) {
     validateVerificationCase(c);
   }
-  console.log(`│  • Verification Dataset:     VALID (${dataset.cases.length} cases across 12 defect classes)`);
+  console.log(
+    `│  • Verification Dataset:     VALID (${dataset.cases.length} cases across 12 defect classes)`,
+  );
 
   // 2. Audit Design-by-Contract (DbC) Engine
   let contractPassed = false;
   try {
-    const fn = withContract((x) => x * 2, {
-      pre: [(x) => x > 0],
-      post: [(res) => res > 0],
+    const fn = withContract(x => x * 2, {
+      pre: [x => x > 0],
+      post: [res => res > 0],
     });
     const valid = fn(5) === 10;
     let threw = false;
@@ -75,21 +80,24 @@ async function runCertification() {
   } catch {
     contractPassed = false;
   }
-  console.log(`│  • Design-by-Contract:       ${contractPassed ? 'ENFORCED' : 'FAILED'} (Pre: PASS, Post: PASS, Invariant: PASS)`);
+  console.log(
+    `│  • Design-by-Contract:       ${contractPassed ? 'ENFORCED' : 'FAILED'} (Pre: PASS, Post: PASS, Invariant: PASS)`,
+  );
 
   // 3. Audit Property-Based Testing & Shrinking Engine
-  const propCheck = assertProperty(
-    [arb.integer({ min: -100, max: 100 })],
-    (x) => x + 0 === x,
-    { runs: 50, seed: 1337 }
+  const propCheck = assertProperty([arb.integer({ min: -100, max: 100 })], x => x + 0 === x, {
+    runs: 50,
+    seed: 1337,
+  });
+  const shrinkCheck = assertProperty([arb.integer({ min: 0, max: 200 })], x => x < 50, {
+    runs: 50,
+    seed: 42,
+  });
+  const propertyPassed =
+    propCheck.passed && !shrinkCheck.passed && shrinkCheck.shrunkCounterexample[0] === 50;
+  console.log(
+    `│  • Property-Based Testing:   ${propertyPassed ? 'ENFORCED' : 'FAILED'} (PRNG Invariant: PASS, Shrinker: PASS (shrunk to 50))`,
   );
-  const shrinkCheck = assertProperty(
-    [arb.integer({ min: 0, max: 200 })],
-    (x) => x < 50,
-    { runs: 50, seed: 42 }
-  );
-  const propertyPassed = propCheck.passed && !shrinkCheck.passed && shrinkCheck.shrunkCounterexample[0] === 50;
-  console.log(`│  • Property-Based Testing:   ${propertyPassed ? 'ENFORCED' : 'FAILED'} (PRNG Invariant: PASS, Shrinker: PASS (shrunk to 50))`);
 
   // 4. Audit State Machine Model Checking & Reachability Engine
   const fsmReport = verifyFsmCompleteness({
@@ -107,12 +115,17 @@ async function runCertification() {
     terminalStates: ['IDLE'],
     transitions: [],
   });
-  const fsmPassed = fsmReport.isComplete && !fsmOrphanReport.isComplete && fsmOrphanReport.unreachableStates.includes('ORPHAN');
-  console.log(`│  • State Machine Checker:    ${fsmPassed ? 'ENFORCED' : 'FAILED'} (Reachability: PASS, Deadlock Freedom: PASS)`);
+  const fsmPassed =
+    fsmReport.isComplete &&
+    !fsmOrphanReport.isComplete &&
+    fsmOrphanReport.unreachableStates.includes('ORPHAN');
+  console.log(
+    `│  • State Machine Checker:    ${fsmPassed ? 'ENFORCED' : 'FAILED'} (Reachability: PASS, Deadlock Freedom: PASS)`,
+  );
 
   // 5. Audit Mutation Testing & Kill-Score Engine
   const sampleCode = 'function isPositive(x) { if (x > 0) return true; return false; }';
-  const strictTest = (mutated) => {
+  const strictTest = mutated => {
     const sandbox = {};
     vm.createContext(sandbox);
     vm.runInContext(mutated, sandbox, { timeout: 1000 });
@@ -121,26 +134,30 @@ async function runCertification() {
   };
   const mutationReport = await evaluateMutants(sampleCode, strictTest);
   const mutationPassed = mutationReport.mutationScore === 1.0 && mutationReport.killedCount > 0;
-  console.log(`│  • Mutation Testing Engine:  ${mutationPassed ? 'ENFORCED' : 'FAILED'} (Kill Rate: ${mutationReport.mutationScore * 100}%, Mutants: ${mutationReport.totalMutants})`);
+  console.log(
+    `│  • Mutation Testing Engine:  ${mutationPassed ? 'ENFORCED' : 'FAILED'} (Kill Rate: ${mutationReport.mutationScore * 100}%, Mutants: ${mutationReport.totalMutants})`,
+  );
 
   // 6. Audit Differential & Metamorphic Testing Engine
   const diffCheck = runDifferentialTest(
-    (x) => x * 2,
-    (x) => x + x,
-    [[1], [5], [10], [-3]]
+    x => x * 2,
+    x => x + x,
+    [[1], [5], [10], [-3]],
   );
   const metaCheck = verifyMetamorphicRelation(
     Math.abs,
-    (i) => [i - 10],
+    i => [i - 10],
     {
       name: 'Idempotence',
       transformInput: ([x]) => [Math.abs(x)],
       relationCheck: (y1, y2) => y1 === y2,
     },
-    { runs: 20 }
+    { runs: 20 },
   );
   const differentialPassed = diffCheck.isEquivalent && metaCheck.relationHeld;
-  console.log(`│  • Differential & Meta-Test: ${differentialPassed ? 'ENFORCED' : 'FAILED'} (Differential: PASS, Metamorphic Idempotence: PASS)`);
+  console.log(
+    `│  • Differential & Meta-Test: ${differentialPassed ? 'ENFORCED' : 'FAILED'} (Differential: PASS, Metamorphic Idempotence: PASS)`,
+  );
 
   // 7. Audit Requirement Traceability
   const traceCheck = validateRequirementTrace({
@@ -152,7 +169,9 @@ async function runCertification() {
     status: 'VERIFIED',
   });
   const tracePassed = traceCheck.status === 'VERIFIED';
-  console.log(`│  • Requirement Traceability: ${tracePassed ? 'ENFORCED' : 'FAILED'} (Traceability: PASS, Invariant Link: PASS)`);
+  console.log(
+    `│  • Requirement Traceability: ${tracePassed ? 'ENFORCED' : 'FAILED'} (Traceability: PASS, Invariant Link: PASS)`,
+  );
 
   // Release Gates A - H
   const releaseGates = {
@@ -166,12 +185,16 @@ async function runCertification() {
     GateH_PerformanceAndFSM: fsmPassed ? 'MET' : 'UNMET',
   };
 
-  const allGatesPassed = Object.values(releaseGates).every((v) => v === 'MET');
+  const allGatesPassed = Object.values(releaseGates).every(v => v === 'MET');
   const elapsed = Date.now() - startTime;
 
   console.log('│');
-  console.log(`│  Release Gates Status:       ${allGatesPassed ? 'ALL GATES MET' : 'GATES FAILED'}`);
-  console.log(`│  Certification Verdict:      ${allGatesPassed ? 'RELEASE_READY_AND_CERTIFIED' : 'REJECTED'}`);
+  console.log(
+    `│  Release Gates Status:       ${allGatesPassed ? 'ALL GATES MET' : 'GATES FAILED'}`,
+  );
+  console.log(
+    `│  Certification Verdict:      ${allGatesPassed ? 'RELEASE_READY_AND_CERTIFIED' : 'REJECTED'}`,
+  );
   console.log(`│  Execution Duration:         ${elapsed}ms`);
   console.log('╰─────────────────────────────────────────────────────────────────────────\n');
 

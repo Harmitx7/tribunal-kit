@@ -17,7 +17,7 @@ npx tribunal-kit init
 
 This installs the `.agent/` intelligence payload into your project:
 
-- **60 specialist agents** — domain-specific coding guidelines
+- **64 specialist agents** — domain-specific coding guidelines
 - **28 parallel reviewers** — the Tribunal pipeline
 - **398 reusable skills** — deep knowledge packs for every framework
 - **52 slash workflows** — one-command operations

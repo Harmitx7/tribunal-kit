@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-nocheck
 /**
  * codebase_intelligence.js — Tribunal Kit SOTA Codebase Intelligence & Developer Onboarding Engine
  * ══════════════════════════════════════════════════════════════════════════════════════════════════
@@ -57,25 +58,39 @@ try {
 // Secret redaction helper
 function redactSecrets(text) {
   if (!text || typeof text !== 'string') return '';
-  return text
-    // Private Keys
-    .replace(/(?:-----BEGIN [A-Z ]+KEY-----[\s\S]*?-----END [A-Z ]+KEY-----)/g, '[REDACTED_PRIVATE_KEY]')
-    // Bearer Tokens (matched before standalone JWT so Authorization headers are fully redacted)
-    .replace(/(Bearer\s+)[A-Za-z0-9-_.~+/]+=*/gi, '$1[REDACTED_BEARER_TOKEN]')
-    // JWT Tokens
-    .replace(/(eyJ[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+)/g, '[REDACTED_JWT_TOKEN]')
-    // AWS Access Key IDs
-    .replace(/\b(?:AKIA|ASIA|ABIA|ACCA)[0-9A-Z]{16}\b/g, '[REDACTED_AWS_KEY]')
-    // GitHub Personal Access Tokens
-    .replace(/\bgh[pousr]_[A-Za-z0-9_]{10,255}\b/g, '[REDACTED_GITHUB_TOKEN]')
-    // OpenAI / Anthropic API Keys
-    .replace(/\b(?:sk-ant-|sk-proj-|sk-)[A-Za-z0-9_-]{20,}\b/g, '[REDACTED_API_KEY]')
-    // Database URIs (PostgreSQL, MySQL, MariaDB, MongoDB / MongoDB+srv, Redis / Rediss, AMQP / AMQPS)
-    .replace(/\b(?:postgres|postgresql|mysql|mariadb|mongodb(?:\+srv)?|redis|rediss|amqp|amqps):\/\/[^:\s]+:[^@\s]+@[^\s]+/gi, '[REDACTED_DB_URI]')
-    // Generic Credentials & Password assignments with quotes (preserves quotes, redacts entire enclosed string)
-    .replace(/((?:[a-zA-Z0-9_-]*(?:api[_-]?key|secret|password|passwd|token|auth[_-]?token|access[_-]?token|credentials?|private[_-]?key)[a-zA-Z0-9_-]*)\s*[:=]\s*(['"]))[^\r\n]*?\2/gi, '$1[REDACTED_SECRET]$2')
-    // Generic Credentials & Password assignments unquoted
-    .replace(/((?:[a-zA-Z0-9_-]*(?:api[_-]?key|secret|password|passwd|token|auth[_-]?token|access[_-]?token|credentials?|private[_-]?key)[a-zA-Z0-9_-]*)\s*[:=]\s*)[^\s\r\n,;]+/gi, '$1[REDACTED_SECRET]');
+  return (
+    text
+      // Private Keys
+      .replace(
+        /(?:-----BEGIN [A-Z ]+KEY-----[\s\S]*?-----END [A-Z ]+KEY-----)/g,
+        '[REDACTED_PRIVATE_KEY]',
+      )
+      // Bearer Tokens (matched before standalone JWT so Authorization headers are fully redacted)
+      .replace(/(Bearer\s+)[A-Za-z0-9-_.~+/]+=*/gi, '$1[REDACTED_BEARER_TOKEN]')
+      // JWT Tokens
+      .replace(/(eyJ[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+)/g, '[REDACTED_JWT_TOKEN]')
+      // AWS Access Key IDs
+      .replace(/\b(?:AKIA|ASIA|ABIA|ACCA)[0-9A-Z]{16}\b/g, '[REDACTED_AWS_KEY]')
+      // GitHub Personal Access Tokens
+      .replace(/\bgh[pousr]_[A-Za-z0-9_]{10,255}\b/g, '[REDACTED_GITHUB_TOKEN]')
+      // OpenAI / Anthropic API Keys
+      .replace(/\b(?:sk-ant-|sk-proj-|sk-)[A-Za-z0-9_-]{20,}\b/g, '[REDACTED_API_KEY]')
+      // Database URIs (PostgreSQL, MySQL, MariaDB, MongoDB / MongoDB+srv, Redis / Rediss, AMQP / AMQPS)
+      .replace(
+        /\b(?:postgres|postgresql|mysql|mariadb|mongodb(?:\+srv)?|redis|rediss|amqp|amqps):\/\/[^:\s]+:[^@\s]+@[^\s]+/gi,
+        '[REDACTED_DB_URI]',
+      )
+      // Generic Credentials & Password assignments with quotes (preserves quotes, redacts entire enclosed string)
+      .replace(
+        /((?:[a-zA-Z0-9_-]*(?:api[_-]?key|secret|password|passwd|token|auth[_-]?token|access[_-]?token|credentials?|private[_-]?key)[a-zA-Z0-9_-]*)\s*[:=]\s*(['"]))[^\r\n]*?\2/gi,
+        '$1[REDACTED_SECRET]$2',
+      )
+      // Generic Credentials & Password assignments unquoted
+      .replace(
+        /((?:[a-zA-Z0-9_-]*(?:api[_-]?key|secret|password|passwd|token|auth[_-]?token|access[_-]?token|credentials?|private[_-]?key)[a-zA-Z0-9_-]*)\s*[:=]\s*)[^\s\r\n,;]+/gi,
+        '$1[REDACTED_SECRET]',
+      )
+  );
 }
 
 // Deep sanitize helper for structured JSON objects
@@ -125,7 +140,8 @@ function createEvidenceRecord(opts) {
   else if (conf === 'L3') conf = 'L3_INFERRED';
   else if (conf === 'L4' || conf === 'L5') conf = 'L0_UNKNOWN';
 
-  const evidenceId = opts.evidence_id || opts.finding_id || `ev_${crypto.randomBytes(6).toString('hex')}`;
+  const evidenceId =
+    opts.evidence_id || opts.finding_id || `ev_${crypto.randomBytes(6).toString('hex')}`;
 
   return {
     schema_version: '2.0.0',
@@ -138,26 +154,39 @@ function createEvidenceRecord(opts) {
       file: normalizedFile,
       start_line: opts.source?.start_line || opts.source_range?.start_line || undefined,
       end_line: opts.source?.end_line || opts.source_range?.end_line || undefined,
-      symbol: (opts.source?.symbol || opts.symbol) ? redactSecrets(opts.source?.symbol || opts.symbol) : undefined,
+      symbol:
+        opts.source?.symbol || opts.symbol
+          ? redactSecrets(opts.source?.symbol || opts.symbol)
+          : undefined,
       content_hash: opts.source?.content_hash || undefined,
     },
     method: opts.method || opts.verification_method || 'ast_static_visitor',
     confidence: conf,
-    resolution: opts.resolution || (conf === 'L1_OBSERVED' ? 'DETERMINISTIC_CHECK' : 'HEURISTIC_CORROBORATION'),
+    resolution:
+      opts.resolution ||
+      (conf === 'L1_OBSERVED' ? 'DETERMINISTIC_CHECK' : 'HEURISTIC_CORROBORATION'),
     scope: opts.scope || 'repository',
     limitations: opts.limitations || [],
     // Retain backward-compatible fields
     finding_id: evidenceId,
     source_path: normalizedFile,
     symbol: opts.symbol || opts.source?.symbol || undefined,
-    source_range: (opts.source?.start_line || opts.source_range?.start_line) ? {
-      start_line: opts.source?.start_line || opts.source_range?.start_line,
-      end_line: opts.source?.end_line || opts.source_range?.end_line || opts.source?.start_line || opts.source_range?.start_line,
-    } : undefined,
+    source_range:
+      opts.source?.start_line || opts.source_range?.start_line
+        ? {
+            start_line: opts.source?.start_line || opts.source_range?.start_line,
+            end_line:
+              opts.source?.end_line ||
+              opts.source_range?.end_line ||
+              opts.source?.start_line ||
+              opts.source_range?.start_line,
+          }
+        : undefined,
     relationship_type: opts.relationship || opts.relationship_type || 'references',
     verification_method: opts.method || opts.verification_method || 'ast_static_visitor',
     repo_fingerprint: opts.repo_fingerprint || 'working-tree',
-    evidence_status: opts.evidence_status || (conf === 'L1_OBSERVED' ? 'OBSERVED' : 'UNVERIFIED_CLAIM'),
+    evidence_status:
+      opts.evidence_status || (conf === 'L1_OBSERVED' ? 'OBSERVED' : 'UNVERIFIED_CLAIM'),
     unresolved_assumptions: opts.unresolved_assumptions || [],
   };
 }
@@ -179,43 +208,94 @@ function classifyError(err, operation, target) {
   let recoverable = false;
   let suggestedAction = 'Inspect error details or retry with verbose logging.';
 
-  if (err?.code === 'UNSUPPORTED_OPERATION' || msg.includes('unknown codebase intelligence subcommand') || msg.includes('expected one of')) {
+  if (
+    err?.code === 'UNSUPPORTED_OPERATION' ||
+    msg.includes('unknown codebase intelligence subcommand') ||
+    msg.includes('expected one of')
+  ) {
     code = 'UNSUPPORTED_OPERATION';
     recoverable = true;
-    suggestedAction = 'Choose one of: overview, trace, dependencies, relevant-files, impact, dead-code, onboard, prepare, change-impact.';
-  } else if (msg.includes('requires a target') || msg.includes('requires a task') || msg.includes('requires a proposed change') || msg.includes('target route') || msg.includes('invalid argument') || msg.includes('must be a string')) {
+    suggestedAction =
+      'Choose one of: overview, trace, dependencies, relevant-files, impact, dead-code, onboard, prepare, change-impact.';
+  } else if (
+    msg.includes('requires a target') ||
+    msg.includes('requires a task') ||
+    msg.includes('requires a proposed change') ||
+    msg.includes('target route') ||
+    msg.includes('invalid argument') ||
+    msg.includes('must be a string')
+  ) {
     code = 'INVALID_INPUT';
     recoverable = true;
     suggestedAction = 'Provide a valid target symbol, file path, route, or task description.';
-  } else if (msg.includes('traversal') || msg.includes('outside root') || msg.includes('escapes') || msg.includes('eacces') || msg.includes('permission denied')) {
+  } else if (
+    msg.includes('traversal') ||
+    msg.includes('outside root') ||
+    msg.includes('escapes') ||
+    msg.includes('eacces') ||
+    msg.includes('permission denied')
+  ) {
     code = 'ACCESS_DENIED';
     recoverable = false;
-    suggestedAction = 'Verify that target path is within the authorized workspace root and has read permissions.';
-  } else if (msg.includes('not found') || msg.includes('enoent') || msg.includes('does not exist')) {
+    suggestedAction =
+      'Verify that target path is within the authorized workspace root and has read permissions.';
+  } else if (
+    msg.includes('not found') ||
+    msg.includes('enoent') ||
+    msg.includes('does not exist')
+  ) {
     code = 'TARGET_NOT_FOUND';
     recoverable = true;
     suggestedAction = 'Check that the target file or symbol exists in the repository.';
-  } else if (msg.includes('resource limit') || msg.includes('maxfiles') || msg.includes('maxdepth') || msg.includes('maxfilesize')) {
+  } else if (
+    msg.includes('resource limit') ||
+    msg.includes('maxfiles') ||
+    msg.includes('maxdepth') ||
+    msg.includes('maxfilesize')
+  ) {
     code = 'RESOURCE_LIMIT_EXCEEDED';
     recoverable = false;
-    suggestedAction = 'Increase the resource budget option (--depth, maxFiles, maxFileSize) or focus scope with --focus.';
+    suggestedAction =
+      'Increase the resource budget option (--depth, maxFiles, maxFileSize) or focus scope with --focus.';
   } else if (msg.includes('incomplete') || msg.includes('partial')) {
     code = 'ANALYSIS_INCOMPLETE';
     recoverable = true;
-    suggestedAction = 'Run analysis on a smaller scope using --focus or resolve missing dependencies.';
-  } else if (msg.includes('package.json') || msg.includes('tsconfig') || msg.includes('manifest') || msg.includes('config')) {
+    suggestedAction =
+      'Run analysis on a smaller scope using --focus or resolve missing dependencies.';
+  } else if (
+    msg.includes('package.json') ||
+    msg.includes('tsconfig') ||
+    msg.includes('manifest') ||
+    msg.includes('config')
+  ) {
     code = 'CONFIGURATION_ERROR';
     recoverable = true;
-    suggestedAction = 'Inspect configuration files (package.json, tsconfig.json) for syntax validity.';
-  } else if (msg.includes('circular') || msg.includes('serialize') || msg.includes('json parse') || msg.includes('json.parse')) {
+    suggestedAction =
+      'Inspect configuration files (package.json, tsconfig.json) for syntax validity.';
+  } else if (
+    msg.includes('circular') ||
+    msg.includes('serialize') ||
+    msg.includes('json parse') ||
+    msg.includes('json.parse')
+  ) {
     code = 'SERIALIZATION_ERROR';
     recoverable = false;
-    suggestedAction = 'Verify data structure does not contain cyclic references or invalid JSON primitives.';
-  } else if (msg.includes('timed out') || msg.includes('timeout') || err?.code === 'TIMEOUT_EXCEEDED') {
+    suggestedAction =
+      'Verify data structure does not contain cyclic references or invalid JSON primitives.';
+  } else if (
+    msg.includes('timed out') ||
+    msg.includes('timeout') ||
+    err?.code === 'TIMEOUT_EXCEEDED'
+  ) {
     code = 'TIMEOUT_EXCEEDED';
     recoverable = true;
-    suggestedAction = 'Increase timeout limit (--timeout) or narrow analysis scope using --focus or --depth.';
-  } else if (msg.includes('cancelled') || msg.includes('aborted') || err?.code === 'OPERATION_CANCELLED') {
+    suggestedAction =
+      'Increase timeout limit (--timeout) or narrow analysis scope using --focus or --depth.';
+  } else if (
+    msg.includes('cancelled') ||
+    msg.includes('aborted') ||
+    err?.code === 'OPERATION_CANCELLED'
+  ) {
     code = 'OPERATION_CANCELLED';
     recoverable = true;
     suggestedAction = 'Retry the operation without cancelling the active request signal.';
@@ -235,7 +315,7 @@ function classifyError(err, operation, target) {
 function createResultEnvelope(opts) {
   const isComplete = opts.status === 'COMPLETE';
   const isFailed = opts.status === 'FAILED' || opts.status === 'UNSUPPORTED';
-  const defaultPercentage = isComplete ? 100 : (isFailed ? 0 : 50);
+  const defaultPercentage = isComplete ? 100 : isFailed ? 0 : 50;
   const cleanData = sanitizeObject(opts.data || {});
   return {
     schema_version: '2.0.0',
@@ -298,7 +378,10 @@ class InvestigationBudget {
       return { exhausted: true, reason: `Max files inspected budget (${this.maxFiles}) reached.` };
     }
     if (this.elapsedMs >= this.timeoutMs) {
-      return { exhausted: true, reason: `Investigation timeout limit (${this.timeoutMs}ms) exceeded.` };
+      return {
+        exhausted: true,
+        reason: `Investigation timeout limit (${this.timeoutMs}ms) exceeded.`,
+      };
     }
     return { exhausted: false };
   }
@@ -349,7 +432,12 @@ class InvestigationPlanner {
     if (pathMatch) {
       pathMatch.forEach(p => {
         if (!candidateEntities.some(c => c.scope === p || c.id.includes(p))) {
-          candidateEntities.push({ id: `mod.${p.replace(/[^a-zA-Z0-9_.-]/g, '_')}`, kind: 'module', name: path.basename(p), scope: p });
+          candidateEntities.push({
+            id: `mod.${p.replace(/[^a-zA-Z0-9_.-]/g, '_')}`,
+            kind: 'module',
+            name: path.basename(p),
+            scope: p,
+          });
         }
       });
     }
@@ -359,14 +447,23 @@ class InvestigationPlanner {
     let isAbstentionCandidate = false;
     let abstentionReason = null;
 
-    if (/\b(?:latency|network|live|production|runtime|throw\s+at\s+runtime|memory\s+leak\s+in\s+prod|benchmark)\b/i.test(cleanQ)) {
+    if (
+      /\b(?:latency|network|live|production|runtime|throw\s+at\s+runtime|memory\s+leak\s+in\s+prod|benchmark)\b/i.test(
+        cleanQ,
+      )
+    ) {
       intent = 'RUNTIME_PERFORMANCE';
       requiresRuntimeEvidence = true;
       isAbstentionCandidate = true;
-      abstentionReason = 'Question queries dynamic runtime/network latency behavior that cannot be proven through static analysis alone.';
-    } else if (/\b(?:why.*fail|why.*error|why.*unexpected|bug|defect|broken|exception|crash)\b/i.test(cleanQ)) {
+      abstentionReason =
+        'Question queries dynamic runtime/network latency behavior that cannot be proven through static analysis alone.';
+    } else if (
+      /\b(?:why.*fail|why.*error|why.*unexpected|bug|defect|broken|exception|crash)\b/i.test(cleanQ)
+    ) {
       intent = 'DEFECT_DIAGNOSIS';
-    } else if (/\b(?:impact|what\s+breaks|blast\s+radius|affect.*if|change|refactor)\b/i.test(cleanQ)) {
+    } else if (
+      /\b(?:impact|what\s+breaks|blast\s+radius|affect.*if|change|refactor)\b/i.test(cleanQ)
+    ) {
       intent = 'IMPACT_ANALYSIS';
     } else if (/\b(?:overview|high[- ]level|architecture|stack|what\s+does.*do)\b/i.test(cleanQ)) {
       intent = 'GENERAL_EXPLORATION';
@@ -375,7 +472,11 @@ class InvestigationPlanner {
     }
 
     const hypotheses = [];
-    const primaryTarget = candidateEntities[0]?.scope || candidateEntities[0]?.name || pathMatch?.[0] || 'target_symbol';
+    const primaryTarget =
+      candidateEntities[0]?.scope ||
+      candidateEntities[0]?.name ||
+      pathMatch?.[0] ||
+      'target_symbol';
 
     if (intent === 'DEFECT_DIAGNOSIS') {
       hypotheses.push({
@@ -414,7 +515,8 @@ class InvestigationPlanner {
     } else if (intent === 'RUNTIME_PERFORMANCE') {
       hypotheses.push({
         id: 'H1',
-        claim: 'Static analysis alone cannot verify runtime execution latency or dynamic environment variables.',
+        claim:
+          'Static analysis alone cannot verify runtime execution latency or dynamic environment variables.',
         status: 'CORROBORATED',
         supportingEvidence: [],
         contradictingEvidence: [],
@@ -448,25 +550,75 @@ class InvestigationPlanner {
 
     switch (intent) {
       case 'EXECUTION_FLOW':
-        addStep('relevant-files', primaryTarget, `Discover primary source files and implementation boundaries for "${primaryTarget}"`);
-        addStep('trace', primaryTarget, `Map multi-hop execution flow and data paths for "${primaryTarget}"`, [`step_1_relevant_files`]);
-        addStep('dependencies', primaryTarget, `Audit inbound callers and outbound dependencies for "${primaryTarget}"`, [`step_2_trace`]);
+        addStep(
+          'relevant-files',
+          primaryTarget,
+          `Discover primary source files and implementation boundaries for "${primaryTarget}"`,
+        );
+        addStep(
+          'trace',
+          primaryTarget,
+          `Map multi-hop execution flow and data paths for "${primaryTarget}"`,
+          [`step_1_relevant_files`],
+        );
+        addStep(
+          'dependencies',
+          primaryTarget,
+          `Audit inbound callers and outbound dependencies for "${primaryTarget}"`,
+          [`step_2_trace`],
+        );
         break;
       case 'DEFECT_DIAGNOSIS':
-        addStep('relevant-files', primaryTarget, `Locate implementation files and error handling sites for "${primaryTarget}"`);
-        addStep('trace', primaryTarget, `Trace control flow and failure paths for "${primaryTarget}"`, [`step_1_relevant_files`]);
-        addStep('dependencies', primaryTarget, `Check for missing or unresolvable imports affecting "${primaryTarget}"`, [`step_2_trace`]);
+        addStep(
+          'relevant-files',
+          primaryTarget,
+          `Locate implementation files and error handling sites for "${primaryTarget}"`,
+        );
+        addStep(
+          'trace',
+          primaryTarget,
+          `Trace control flow and failure paths for "${primaryTarget}"`,
+          [`step_1_relevant_files`],
+        );
+        addStep(
+          'dependencies',
+          primaryTarget,
+          `Check for missing or unresolvable imports affecting "${primaryTarget}"`,
+          [`step_2_trace`],
+        );
         break;
       case 'IMPACT_ANALYSIS':
-        addStep('impact', primaryTarget, `Compute concentric blast-radius rings and affected endpoints for "${primaryTarget}"`);
-        addStep('dependencies', primaryTarget, `Verify transitive dependents and fan-in coupling for "${primaryTarget}"`, [`step_1_impact`]);
+        addStep(
+          'impact',
+          primaryTarget,
+          `Compute concentric blast-radius rings and affected endpoints for "${primaryTarget}"`,
+        );
+        addStep(
+          'dependencies',
+          primaryTarget,
+          `Verify transitive dependents and fan-in coupling for "${primaryTarget}"`,
+          [`step_1_impact`],
+        );
         break;
       case 'DEAD_CODE_AUDIT':
-        addStep('dead-code', primaryTarget, `Audit unreferenced exports and orphan module candidates for "${primaryTarget}"`);
+        addStep(
+          'dead-code',
+          primaryTarget,
+          `Audit unreferenced exports and orphan module candidates for "${primaryTarget}"`,
+        );
         break;
       case 'GENERAL_EXPLORATION':
-        addStep('overview', undefined, 'Inspect architectural topology, entry points, and workspace packages');
-        addStep('onboard', undefined, 'Generate mental model and initial orientation reading order', [`step_1_overview`]);
+        addStep(
+          'overview',
+          undefined,
+          'Inspect architectural topology, entry points, and workspace packages',
+        );
+        addStep(
+          'onboard',
+          undefined,
+          'Generate mental model and initial orientation reading order',
+          [`step_1_overview`],
+        );
         break;
       case 'RUNTIME_PERFORMANCE':
         addStep('overview', undefined, 'Gather static architecture boundaries');
@@ -500,14 +652,16 @@ class InvestigationEngine {
     const combinedFlags = { ...this.options, ...flags };
     const budget = new InvestigationBudget(combinedFlags);
 
-    const rawQ = typeof questionOrPlan === 'string' ? questionOrPlan : questionOrPlan?.question || '';
+    const rawQ =
+      typeof questionOrPlan === 'string' ? questionOrPlan : questionOrPlan?.question || '';
     const routePreflight = resolveRoute(rawQ);
     if (routePreflight.isUntrusted) {
       return createResultEnvelope({
         status: 'UNTRUSTED_INJECTION',
         operation: 'investigate',
         target: redactSecrets(rawQ),
-        summary: 'Investigation aborted: Prompt injection pattern detected in input. Read-only safety boundaries enforced.',
+        summary:
+          'Investigation aborted: Prompt injection pattern detected in input. Read-only safety boundaries enforced.',
         data: { isUntrusted: true, promptInjectionNeutralized: true },
         evidence_records: [],
         limitations: ['Untrusted input detected. Analysis rejected.'],
@@ -526,9 +680,10 @@ class InvestigationEngine {
     const currentModel = this.ci.getModel();
 
     const planner = new InvestigationPlanner(currentModel, this.ci.repoRoot);
-    const plan = typeof questionOrPlan === 'object' && questionOrPlan.steps
-      ? questionOrPlan
-      : planner.plan(rawQ, combinedFlags);
+    const plan =
+      typeof questionOrPlan === 'object' && questionOrPlan.steps
+        ? questionOrPlan
+        : planner.plan(rawQ, combinedFlags);
 
     if (plan.isAbstentionCandidate && plan.requiresRuntimeEvidence) {
       return createResultEnvelope({
@@ -539,8 +694,11 @@ class InvestigationEngine {
         data: {
           intent: plan.intent,
           abstentionReason: plan.abstentionReason,
-          unverifiedAssumptions: ['Runtime network latency, server loads, and dynamic variables cannot be statically inferred.'],
-          recommendedAction: 'Execute isolated integration test or runtime benchmark to verify performance metrics.',
+          unverifiedAssumptions: [
+            'Runtime network latency, server loads, and dynamic variables cannot be statically inferred.',
+          ],
+          recommendedAction:
+            'Execute isolated integration test or runtime benchmark to verify performance metrics.',
           plan,
           budgetUsage: budget.toReport(),
         },
@@ -556,9 +714,16 @@ class InvestigationEngine {
             limitations: [plan.abstentionReason],
           }),
         ],
-        unresolved_assumptions: ['Runtime execution environment and variable states are undetermined statically.'],
+        unresolved_assumptions: [
+          'Runtime execution environment and variable states are undetermined statically.',
+        ],
         limitations: [plan.abstentionReason],
-        completeness: { total_expected: plan.steps.length, analyzed: 0, percentage: 0, is_complete: false },
+        completeness: {
+          total_expected: plan.steps.length,
+          analyzed: 0,
+          percentage: 0,
+          is_complete: false,
+        },
       });
     }
 
@@ -579,7 +744,9 @@ class InvestigationEngine {
         break;
       }
 
-      const nextStep = plan.steps.find(s => s.status === 'PENDING' && (s.dependsOn || []).every(dep => completedStepIds.has(dep)));
+      const nextStep = plan.steps.find(
+        s => s.status === 'PENDING' && (s.dependsOn || []).every(dep => completedStepIds.has(dep)),
+      );
       if (!nextStep) {
         break;
       }
@@ -618,7 +785,9 @@ class InvestigationEngine {
                 if (hyp.id === 'H1' && plan.intent === 'EXECUTION_FLOW') {
                   hyp.status = 'CORROBORATED';
                   hyp.confidence = 'L1_OBSERVED';
-                  hyp.supportingEvidence.push(...freshnessAudit.records.map(r => r.evidence_id || r.finding_id));
+                  hyp.supportingEvidence.push(
+                    ...freshnessAudit.records.map(r => r.evidence_id || r.finding_id),
+                  );
                 }
               }
             } else if (nextStep.operation === 'impact') {
@@ -630,7 +799,9 @@ class InvestigationEngine {
                 }
                 if (hyp.id === 'H2') {
                   hyp.status = 'REFUTED';
-                  contradictions.push(`Hypothesis H2 refuted: "${plan.primaryTarget}" impacts ${impactData.impactedEndpoints.length} public endpoints.`);
+                  contradictions.push(
+                    `Hypothesis H2 refuted: "${plan.primaryTarget}" impacts ${impactData.impactedEndpoints.length} public endpoints.`,
+                  );
                 }
               } else if (impactData.ring1DirectCallers?.length === 0) {
                 if (hyp.id === 'H2') {
@@ -697,12 +868,17 @@ class InvestigationEngine {
         budgetUsage: budget.toReport(),
       },
       evidence_records: collectedEvidence,
-      unresolved_assumptions: (plan.hypotheses || []).filter(h => h.status === 'PROPOSED' || h.status === 'INDETERMINATE').map(h => `Unverified hypothesis: ${h.claim}`),
+      unresolved_assumptions: (plan.hypotheses || [])
+        .filter(h => h.status === 'PROPOSED' || h.status === 'INDETERMINATE')
+        .map(h => `Unverified hypothesis: ${h.claim}`),
       limitations: collectedLimitations,
       completeness: {
         total_expected: plan.steps.length,
         analyzed: executedSteps.length,
-        percentage: plan.steps.length > 0 ? Math.round((executedSteps.length / plan.steps.length) * 100) : 100,
+        percentage:
+          plan.steps.length > 0
+            ? Math.round((executedSteps.length / plan.steps.length) * 100)
+            : 100,
         is_complete: loopStatus === 'COMPLETE',
       },
     });
@@ -769,13 +945,17 @@ class CodebaseIntelligence {
       return this._legacyInvestigate(scenarioTypeOrQuestion, targetOrOptions, flags);
     }
 
-    const question = typeof scenarioTypeOrQuestion === 'string'
-      ? scenarioTypeOrQuestion
-      : (scenarioTypeOrQuestion?.question || scenarioTypeOrQuestion?.target || (typeof targetOrOptions === 'string' ? targetOrOptions : ''));
+    const question =
+      typeof scenarioTypeOrQuestion === 'string'
+        ? scenarioTypeOrQuestion
+        : scenarioTypeOrQuestion?.question ||
+          scenarioTypeOrQuestion?.target ||
+          (typeof targetOrOptions === 'string' ? targetOrOptions : '');
 
-    const mergedFlags = (typeof targetOrOptions === 'object' && targetOrOptions !== null)
-      ? { ...this.options, ...targetOrOptions, ...flags }
-      : { ...this.options, ...flags };
+    const mergedFlags =
+      typeof targetOrOptions === 'object' && targetOrOptions !== null
+        ? { ...this.options, ...targetOrOptions, ...flags }
+        : { ...this.options, ...flags };
 
     const engine = new InvestigationEngine(this, mergedFlags);
     return engine.run(question, mergedFlags);
@@ -794,8 +974,10 @@ class CodebaseIntelligence {
   async _legacyInvestigate(scenarioType, targetOrOptions, flags = {}) {
     const combinedFlags = { ...this.options, ...flags };
     switch (scenarioType) {
-      case 'feature-investigation': { // Scenario A
-        const target = typeof targetOrOptions === 'string' ? targetOrOptions : targetOrOptions?.target;
+      case 'feature-investigation': {
+        // Scenario A
+        const target =
+          typeof targetOrOptions === 'string' ? targetOrOptions : targetOrOptions?.target;
         const relevant = this.relevantFiles(target, combinedFlags);
         const trace = this.trace(target, combinedFlags);
         const deps = this.dependencies(target, combinedFlags);
@@ -811,15 +993,13 @@ class CodebaseIntelligence {
             ...trace.evidenceRecords,
             ...deps.evidenceRecords,
           ],
-          limitations: [
-            ...relevant.limitations,
-            ...trace.limitations,
-            ...deps.limitations,
-          ],
+          limitations: [...relevant.limitations, ...trace.limitations, ...deps.limitations],
         };
       }
-      case 'change-planning': { // Scenario B
-        const target = typeof targetOrOptions === 'string' ? targetOrOptions : targetOrOptions?.target;
+      case 'change-planning': {
+        // Scenario B
+        const target =
+          typeof targetOrOptions === 'string' ? targetOrOptions : targetOrOptions?.target;
         const prepare = this.prepare(target, combinedFlags);
         const primaryFile = prepare.changeTargets[0]?.file;
         const impact = primaryFile ? this.impact(primaryFile, combinedFlags) : null;
@@ -830,17 +1010,12 @@ class CodebaseIntelligence {
           schema_version: '2.0.0',
           summary: `Change planning completed for "${target}": Readiness ${prepare.readiness}, Risk Tier ${impact?.riskTier || 'LOW'}.`,
           data: { prepare, impact },
-          evidenceRecords: [
-            ...prepare.evidenceRecords,
-            ...(impact?.evidenceRecords || []),
-          ],
-          limitations: [
-            ...prepare.limitations,
-            ...(impact?.limitations || []),
-          ],
+          evidenceRecords: [...prepare.evidenceRecords, ...(impact?.evidenceRecords || [])],
+          limitations: [...prepare.limitations, ...(impact?.limitations || [])],
         };
       }
-      case 'contributor-onboarding': { // Scenario C
+      case 'contributor-onboarding': {
+        // Scenario C
         const overview = this.overview(combinedFlags);
         const onboard = this.onboard(combinedFlags);
         return {
@@ -849,18 +1024,14 @@ class CodebaseIntelligence {
           schema_version: '2.0.0',
           summary: `Contributor onboarding generated: ${onboard.mentalModel.architecturePattern}, ${onboard.verificationRecipes.length} recipes.`,
           data: { overview, onboard },
-          evidenceRecords: [
-            ...overview.evidenceRecords,
-            ...onboard.evidenceRecords,
-          ],
-          limitations: [
-            ...overview.limitations,
-            ...onboard.limitations,
-          ],
+          evidenceRecords: [...overview.evidenceRecords, ...onboard.evidenceRecords],
+          limitations: [...overview.limitations, ...onboard.limitations],
         };
       }
-      case 'suspicious-content': { // Scenario D
-        const input = typeof targetOrOptions === 'string' ? targetOrOptions : targetOrOptions?.input;
+      case 'suspicious-content': {
+        // Scenario D
+        const input =
+          typeof targetOrOptions === 'string' ? targetOrOptions : targetOrOptions?.input;
         const sanitized = redactSecrets(input || '');
         const route = resolveRoute(input || '');
         const overview = this.overview(combinedFlags);
@@ -870,13 +1041,15 @@ class CodebaseIntelligence {
           schema_version: '2.0.0',
           isUntrusted: route.isUntrusted,
           sanitizedInput: sanitized,
-          summary: 'Suspicious content analysis: prompt injection neutralized into inert data; secrets redacted.',
+          summary:
+            'Suspicious content analysis: prompt injection neutralized into inert data; secrets redacted.',
           data: { route, overview },
           evidenceRecords: overview.evidenceRecords,
           limitations: ['Prompt injection treated as inert data; secrets redacted.'],
         };
       }
-      case 'incomplete-repository': { // Scenario E
+      case 'incomplete-repository': {
+        // Scenario E
         const overview = this.overview(combinedFlags);
         const deps = this.dependencies(undefined, combinedFlags);
         const missing = deps.missingDependencies || [];
@@ -891,7 +1064,9 @@ class CodebaseIntelligence {
         };
       }
       default:
-        throw new Error(`Unknown investigation scenario: "${scenarioType}". Expected one of: feature-investigation, change-planning, contributor-onboarding, suspicious-content, incomplete-repository.`);
+        throw new Error(
+          `Unknown investigation scenario: "${scenarioType}". Expected one of: feature-investigation, change-planning, contributor-onboarding, suspicious-content, incomplete-repository.`,
+        );
     }
   }
 
@@ -1016,7 +1191,10 @@ class CodebaseIntelligence {
       const mPath = path.join(this.repoRoot, m);
       if (fs.existsSync(mPath)) {
         try {
-          const curHash = crypto.createHash('sha256').update(fs.readFileSync(mPath, 'utf8')).digest('hex');
+          const curHash = crypto
+            .createHash('sha256')
+            .update(fs.readFileSync(mPath, 'utf8'))
+            .digest('hex');
           const recorded = this.manifestHashes.get(m);
           if (recorded && recorded !== curHash) {
             manifestChanged = true;
@@ -1028,7 +1206,8 @@ class CodebaseIntelligence {
       }
     }
 
-    const isFresh = created.length === 0 && modified.length === 0 && deleted.length === 0 && !manifestChanged;
+    const isFresh =
+      created.length === 0 && modified.length === 0 && deleted.length === 0 && !manifestChanged;
     return {
       isFresh,
       manifestChanged,
@@ -1054,7 +1233,10 @@ class CodebaseIntelligence {
       const mPath = path.join(this.repoRoot, m);
       if (fs.existsSync(mPath)) {
         try {
-          this.manifestHashes.set(m, crypto.createHash('sha256').update(fs.readFileSync(mPath, 'utf8')).digest('hex'));
+          this.manifestHashes.set(
+            m,
+            crypto.createHash('sha256').update(fs.readFileSync(mPath, 'utf8')).digest('hex'),
+          );
         } catch {
           // ignore
         }
@@ -1109,7 +1291,10 @@ class CodebaseIntelligence {
             // Re-extract exports for this file
             const modExpMatch = content.match(/module\.exports\s*=\s*\{([^}]+)\}/);
             if (modExpMatch) {
-              const names = modExpMatch[1].split(',').map(s => s.trim().split(':')[0].trim()).filter(Boolean);
+              const names = modExpMatch[1]
+                .split(',')
+                .map(s => s.trim().split(':')[0].trim())
+                .filter(Boolean);
               names.forEach(n => {
                 if (/^[a-zA-Z0-9_$]+$/.test(n)) {
                   this.fileExportMapCache.push({ name: n, file: relPath, line: 1 });
@@ -1121,7 +1306,8 @@ class CodebaseIntelligence {
             while ((expProp = expPropRegex.exec(content)) !== null) {
               this.fileExportMapCache.push({ name: expProp[1], file: relPath, line: 1 });
             }
-            const namedExpRegex = /export\s+(?:async\s+)?(?:function|const|let|var|class)\s+([a-zA-Z0-9_$]+)/g;
+            const namedExpRegex =
+              /export\s+(?:async\s+)?(?:function|const|let|var|class)\s+([a-zA-Z0-9_$]+)/g;
             let namedExp;
             while ((namedExp = namedExpRegex.exec(content)) !== null) {
               this.fileExportMapCache.push({ name: namedExp[1], file: relPath, line: 1 });
@@ -1204,12 +1390,16 @@ class CodebaseIntelligence {
         const currentContent = fs.readFileSync(fullPath, 'utf8');
         const currentHash = crypto.createHash('sha256').update(currentContent).digest('hex');
         const recordedHash = copy.source?.content_hash;
-        if (recordedHash && !currentHash.startsWith(recordedHash) && !recordedHash.startsWith(currentHash)) {
+        if (
+          recordedHash &&
+          !currentHash.startsWith(recordedHash) &&
+          !recordedHash.startsWith(currentHash)
+        ) {
           staleCount++;
           copy.evidence_status = 'STALE';
           copy.confidence = 'L4_UNKNOWN';
           copy.limitations.push(
-            `Source file "${rawFile}" has been modified since evidence collection (recorded hash: ${recordedHash.slice(0, 16)}, current: ${currentHash.slice(0, 16)}).`
+            `Source file "${rawFile}" has been modified since evidence collection (recorded hash: ${recordedHash.slice(0, 16)}, current: ${currentHash.slice(0, 16)}).`,
           );
         } else {
           validCount++;
@@ -1243,7 +1433,7 @@ class CodebaseIntelligence {
       const freshness = this.checkFreshness();
       changedTargets = [
         ...freshness.delta.created,
-        ...freshness.delta.modified.map(m => typeof m === 'string' ? m : m.relPath),
+        ...freshness.delta.modified.map(m => (typeof m === 'string' ? m : m.relPath)),
         ...freshness.delta.deleted,
       ];
     }
@@ -1352,7 +1542,9 @@ class CodebaseIntelligence {
 
     let recomputationScope = 'LOCAL_TARGETED';
     const isManifest = changedTargets.some(t =>
-      ['package.json', 'pnpm-workspace.yaml', 'Cargo.toml', 'tsconfig.json'].includes(path.basename(t))
+      ['package.json', 'pnpm-workspace.yaml', 'Cargo.toml', 'tsconfig.json'].includes(
+        path.basename(t),
+      ),
     );
     if (isManifest || downstreamModules.size > 20) {
       recomputationScope = 'REPOSITORY_BROAD';
@@ -1372,7 +1564,8 @@ class CodebaseIntelligence {
       riskReason += ' Modification crosses security trust boundaries.';
     }
     if (recomputationScope === 'REPOSITORY_BROAD') {
-      riskReason += ' Recomputation scope escalated to REPOSITORY_BROAD due to manifest or high downstream fan-out.';
+      riskReason +=
+        ' Recomputation scope escalated to REPOSITORY_BROAD due to manifest or high downstream fan-out.';
     }
 
     const evidenceRecords = [];
@@ -1387,7 +1580,7 @@ class CodebaseIntelligence {
           source_path: ch.file,
           confidence: 'L1_OBSERVED',
           evidence_status: 'OBSERVED',
-        })
+        }),
       );
     });
 
@@ -1433,8 +1626,14 @@ class CodebaseIntelligence {
     });
 
     const detectedLanguages = [];
-    if (langCounts['.ts'] || langCounts['.tsx']) detectedLanguages.push(`TypeScript (${(langCounts['.ts'] || 0) + (langCounts['.tsx'] || 0)} files)`);
-    if (langCounts['.js'] || langCounts['.jsx'] || langCounts['.mjs']) detectedLanguages.push(`JavaScript (${(langCounts['.js'] || 0) + (langCounts['.jsx'] || 0) + (langCounts['.mjs'] || 0)} files)`);
+    if (langCounts['.ts'] || langCounts['.tsx'])
+      detectedLanguages.push(
+        `TypeScript (${(langCounts['.ts'] || 0) + (langCounts['.tsx'] || 0)} files)`,
+      );
+    if (langCounts['.js'] || langCounts['.jsx'] || langCounts['.mjs'])
+      detectedLanguages.push(
+        `JavaScript (${(langCounts['.js'] || 0) + (langCounts['.jsx'] || 0) + (langCounts['.mjs'] || 0)} files)`,
+      );
     if (langCounts['.rs']) detectedLanguages.push(`Rust (${langCounts['.rs']} files)`);
     if (langCounts['.py']) detectedLanguages.push(`Python (${langCounts['.py']} files)`);
     if (langCounts['.go']) detectedLanguages.push(`Go (${langCounts['.go']} files)`);
@@ -1450,11 +1649,16 @@ class CodebaseIntelligence {
         runtime = `Node.js (${nodeVer})`;
       } catch (_e) {
         runtime = 'Node.js';
-        limitations.push('Root package.json contains malformed JSON syntax. Analysis proceeded with defaults.');
+        limitations.push(
+          'Root package.json contains malformed JSON syntax. Analysis proceeded with defaults.',
+        );
       }
     } else if (fs.existsSync(path.join(this.repoRoot, 'Cargo.toml'))) {
       runtime = 'Rust';
-    } else if (fs.existsSync(path.join(this.repoRoot, 'requirements.txt')) || fs.existsSync(path.join(this.repoRoot, 'pyproject.toml'))) {
+    } else if (
+      fs.existsSync(path.join(this.repoRoot, 'requirements.txt')) ||
+      fs.existsSync(path.join(this.repoRoot, 'pyproject.toml'))
+    ) {
       runtime = 'Python';
     }
 
@@ -1465,7 +1669,11 @@ class CodebaseIntelligence {
         const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
         if (pkg.scripts) {
           Object.entries(pkg.scripts).forEach(([name, script]) => {
-            if (['test', 'build', 'lint', 'typecheck', 'check'].includes(name) || name.startsWith('test:') || name.startsWith('build:')) {
+            if (
+              ['test', 'build', 'lint', 'typecheck', 'check'].includes(name) ||
+              name.startsWith('test:') ||
+              name.startsWith('build:')
+            ) {
               buildTestInfra.push({ script: name, command: script });
             }
           });
@@ -1477,7 +1685,16 @@ class CodebaseIntelligence {
 
     // Configuration Boundaries
     const configBoundaries = [];
-    const standardConfigs = ['tsconfig.json', 'package.json', 'Cargo.toml', 'pnpm-workspace.yaml', '.env.example', '.eslintrc.js', '.eslintrc.json', 'jest.config.js'];
+    const standardConfigs = [
+      'tsconfig.json',
+      'package.json',
+      'Cargo.toml',
+      'pnpm-workspace.yaml',
+      '.env.example',
+      '.eslintrc.js',
+      '.eslintrc.json',
+      'jest.config.js',
+    ];
     standardConfigs.forEach(cfg => {
       const cfgPath = path.join(this.repoRoot, cfg);
       if (fs.existsSync(cfgPath)) {
@@ -1500,7 +1717,9 @@ class CodebaseIntelligence {
     const httpRoutes = allEndpoints.filter(e => !(e.tags && e.tags.includes('cli')));
 
     // Datastores & Queues
-    const datastores = (model.entities || []).filter(e => e.kind === 'datastore' || e.kind === 'cache');
+    const datastores = (model.entities || []).filter(
+      e => e.kind === 'datastore' || e.kind === 'cache',
+    );
     const queues = (model.entities || []).filter(e => e.kind === 'queue' || e.kind === 'event_bus');
     const trustBoundaries = model.trustBoundaries || [];
 
@@ -1529,11 +1748,13 @@ class CodebaseIntelligence {
       .slice(0, flags.limit || 15);
 
     // Filter by focus if provided
-    let focusWorkspaces = workspaces;
+    const focusWorkspaces = workspaces;
     let focusEndpoints = allEndpoints;
     if (flags.focus) {
       const normalizedFocus = flags.focus.replace(/\\/g, '/').replace(/^\.\//, '');
-      focusEndpoints = allEndpoints.filter(e => e.sources?.[0]?.file && e.sources[0].file.includes(normalizedFocus));
+      focusEndpoints = allEndpoints.filter(
+        e => e.sources?.[0]?.file && e.sources[0].file.includes(normalizedFocus),
+      );
     }
 
     // Architectural Uncertainties (Contradictions or missing citations)
@@ -1552,7 +1773,7 @@ class CodebaseIntelligence {
           symbol: cli.name,
           confidence: 'L1_OBSERVED',
           evidence_status: 'OBSERVED',
-        })
+        }),
       );
     });
 
@@ -1568,7 +1789,7 @@ class CodebaseIntelligence {
           symbol: ds.name,
           confidence: 'L1_OBSERVED',
           evidence_status: 'OBSERVED',
-        })
+        }),
       );
     });
 
@@ -1613,15 +1834,16 @@ class CodebaseIntelligence {
 
     // 1. Find matching entry point or entity
     const allEndpoints = (model.entities || []).filter(e => e.kind === 'endpoint');
-    let primaryEntity = allEndpoints.find(e =>
-      e.name.toLowerCase().includes(query) ||
-      (e.scope && e.scope.toLowerCase().includes(query)) ||
-      (e.id && e.id.toLowerCase().includes(query))
+    let primaryEntity = allEndpoints.find(
+      e =>
+        e.name.toLowerCase().includes(query) ||
+        (e.scope && e.scope.toLowerCase().includes(query)) ||
+        (e.id && e.id.toLowerCase().includes(query)),
     );
 
     if (!primaryEntity) {
-      primaryEntity = (model.entities || []).find(e =>
-        e.name.toLowerCase().includes(query) || e.id.toLowerCase().includes(query)
+      primaryEntity = (model.entities || []).find(
+        e => e.name.toLowerCase().includes(query) || e.id.toLowerCase().includes(query),
       );
     }
 
@@ -1643,7 +1865,10 @@ class CodebaseIntelligence {
           if (fs.existsSync(absPath)) {
             try {
               const fileContent = fs.readFileSync(absPath, 'utf8');
-              const symbolRegex = new RegExp(`(?:function\\s+${target}\\b|class\\s+${target}\\b|const\\s+${target}\\b|let\\s+${target}\\b|${target}\\s*:)`, 'i');
+              const symbolRegex = new RegExp(
+                `(?:function\\s+${target}\\b|class\\s+${target}\\b|const\\s+${target}\\b|let\\s+${target}\\b|${target}\\s*:)`,
+                'i',
+              );
               if (symbolRegex.test(fileContent)) {
                 primaryEntity = ent;
                 break;
@@ -1660,7 +1885,9 @@ class CodebaseIntelligence {
     let upstreamCaller = null;
     if (primaryEntity && primaryEntity.kind !== 'endpoint') {
       const inboundCallers = (model.relationships || []).filter(
-        r => r.targetId === primaryEntity.id && (r.relationType === 'imports' || r.relationType === 'calls')
+        r =>
+          r.targetId === primaryEntity.id &&
+          (r.relationType === 'imports' || r.relationType === 'calls'),
       );
       if (inboundCallers.length > 0) {
         const firstCallerId = inboundCallers[0].sourceId;
@@ -1670,10 +1897,14 @@ class CodebaseIntelligence {
 
     const steps = [];
     const unresolvedAssumptions = [];
-    const limitations = ['Static analysis traces compile-time relationships and cannot guarantee runtime path execution.'];
+    const limitations = [
+      'Static analysis traces compile-time relationships and cannot guarantee runtime path execution.',
+    ];
 
     if (typeof target === 'string' && /will.*throw.*exception|latency.*under/i.test(target)) {
-      limitations.push('Static AST analysis traces compile-time dependencies and cannot prove runtime exception behavior or dynamic network latency.');
+      limitations.push(
+        'Static AST analysis traces compile-time dependencies and cannot prove runtime exception behavior or dynamic network latency.',
+      );
     }
 
     if (primaryEntity) {
@@ -1706,7 +1937,7 @@ class CodebaseIntelligence {
             symbol: upstreamCaller.name,
             confidence: 'L1_OBSERVED',
             evidence_status: 'OBSERVED',
-          })
+          }),
         );
       }
 
@@ -1738,28 +1969,38 @@ class CodebaseIntelligence {
           symbol: primaryEntity.name,
           confidence: 'L1_OBSERVED',
           evidence_status: 'OBSERVED',
-        })
+        }),
       );
 
       // Step 2+: Traverse outgoing relationships (Middleware, Service, Datastore)
-      const maxHops = Math.min(Number.isFinite(flags.depth) && flags.depth > 0 ? flags.depth : 4, 10);
+      const maxHops = Math.min(
+        Number.isFinite(flags.depth) && flags.depth > 0 ? flags.depth : 4,
+        10,
+      );
 
       while (queue.length > 0 && currentHop <= maxHops) {
         const currId = queue.shift();
-        const outgoing = this.outgoingRelMap ? (this.outgoingRelMap.get(currId) || []) : (model.relationships || []).filter(r => r.sourceId === currId);
+        const outgoing = this.outgoingRelMap
+          ? this.outgoingRelMap.get(currId) || []
+          : (model.relationships || []).filter(r => r.sourceId === currId);
 
         for (const rel of outgoing) {
           if (!visited.has(rel.targetId)) {
             visited.add(rel.targetId);
             const targetEntity = entityMap.get(rel.targetId);
-            const isDatastore = (model.datastores || []).some(d => d.id === rel.targetId) || rel.targetId.includes('db');
+            const isDatastore =
+              (model.datastores || []).some(d => d.id === rel.targetId) ||
+              rel.targetId.includes('db');
             const isQueue = (model.queues || []).some(q => q.id === rel.targetId);
 
             let layer = 'Service / Business Logic';
             let edgeKind = 'direct_reference';
             if (isDatastore) layer = 'Persistence / Datastore';
             else if (isQueue) layer = 'Message Queue / Event Bus';
-            else if (targetEntity?.role?.includes('middleware') || targetEntity?.role?.includes('auth')) {
+            else if (
+              targetEntity?.role?.includes('middleware') ||
+              targetEntity?.role?.includes('auth')
+            ) {
               layer = 'Security / Middleware';
               edgeKind = 'framework_mediated';
             }
@@ -1783,11 +2024,12 @@ class CodebaseIntelligence {
                 subject: currId,
                 relationship: rel.relationType,
                 object: rel.targetId,
-                source_path: rel.evidence?.[0]?.file || targetEntity?.sources?.[0]?.file || 'source',
+                source_path:
+                  rel.evidence?.[0]?.file || targetEntity?.sources?.[0]?.file || 'source',
                 symbol: targetEntity?.name,
                 confidence: 'L1_OBSERVED',
                 evidence_status: 'OBSERVED',
-              })
+              }),
             );
 
             queue.push(rel.targetId);
@@ -1795,7 +2037,9 @@ class CodebaseIntelligence {
         }
       }
     } else {
-      unresolvedAssumptions.push(`Exact entry point for query "${target}" could not be statically matched in TAFM. Inferring heuristic entry candidate.`);
+      unresolvedAssumptions.push(
+        `Exact entry point for query "${target}" could not be statically matched in TAFM. Inferring heuristic entry candidate.`,
+      );
       steps.push({
         step: 1,
         layer: 'Inferred Entry',
@@ -1817,8 +2061,10 @@ class CodebaseIntelligence {
           symbol: target,
           confidence: 'L4_UNKNOWN',
           evidence_status: 'UNKNOWN',
-          limitations: [`Target "${target}" was not found in the architectural model. Static analysis cannot prove existence of dynamically resolved symbols.`],
-        })
+          limitations: [
+            `Target "${target}" was not found in the architectural model. Static analysis cannot prove existence of dynamically resolved symbols.`,
+          ],
+        }),
       );
     }
 
@@ -1832,7 +2078,10 @@ class CodebaseIntelligence {
           const files = fs.readdirSync(absTd, { recursive: true });
           files.forEach(f => {
             const strF = String(f);
-            if ((strF.endsWith('.test.js') || strF.endsWith('.spec.ts') || strF.endsWith('.rs')) && strF.toLowerCase().includes(query)) {
+            if (
+              (strF.endsWith('.test.js') || strF.endsWith('.spec.ts') || strF.endsWith('.rs')) &&
+              strF.toLowerCase().includes(query)
+            ) {
               coveringTests.push(path.join(td, strF).replace(/\\/g, '/'));
             }
           });
@@ -1864,16 +2113,19 @@ class CodebaseIntelligence {
     if (target) {
       // Analyze single module/file
       const normalizedTarget = target.replace(/\\/g, '/');
-      const matchingEntities = (model.entities || []).filter(e =>
-        e.id === normalizedTarget ||
-        e.name.toLowerCase() === target.toLowerCase() ||
-        (e.sources && e.sources.some(s => s.file.includes(normalizedTarget)))
+      const matchingEntities = (model.entities || []).filter(
+        e =>
+          e.id === normalizedTarget ||
+          e.name.toLowerCase() === target.toLowerCase() ||
+          (e.sources && e.sources.some(s => s.file.includes(normalizedTarget))),
       );
 
       const targetId = matchingEntities[0]?.id || normalizedTarget;
 
       // Inbound dependents (Fan-In: who calls/imports target)
-      const rawInbound = this.incomingRelMap ? (this.incomingRelMap.get(targetId) || []) : (model.relationships || []).filter(r => r.targetId === targetId);
+      const rawInbound = this.incomingRelMap
+        ? this.incomingRelMap.get(targetId) || []
+        : (model.relationships || []).filter(r => r.targetId === targetId);
       const inbound = rawInbound.map(r => ({
         callerId: r.sourceId,
         type: r.relationType,
@@ -1882,7 +2134,9 @@ class CodebaseIntelligence {
       }));
 
       // Outbound dependencies (Fan-Out: what target calls/imports)
-      const rawOutbound = this.outgoingRelMap ? (this.outgoingRelMap.get(targetId) || []) : (model.relationships || []).filter(r => r.sourceId === targetId);
+      const rawOutbound = this.outgoingRelMap
+        ? this.outgoingRelMap.get(targetId) || []
+        : (model.relationships || []).filter(r => r.sourceId === targetId);
       const outbound = rawOutbound.map(r => ({
         targetId: r.targetId,
         type: r.relationType,
@@ -1934,10 +2188,12 @@ class CodebaseIntelligence {
             source_path: targetId,
             confidence: 'L1_OBSERVED',
             evidence_status: 'OBSERVED',
-          })
+          }),
         );
       } else {
-        limitations.push(`Target module "${target}" was not found in the scanned architectural model.`);
+        limitations.push(
+          `Target module "${target}" was not found in the scanned architectural model.`,
+        );
         evidenceRecords.push(
           createEvidenceRecord({
             evidence_id: `ev_dep_unknown_${targetId.replace(/[^a-zA-Z0-9_]/g, '_')}`,
@@ -1949,7 +2205,7 @@ class CodebaseIntelligence {
             confidence: 'L4_UNKNOWN',
             evidence_status: 'UNKNOWN',
             limitations: [`Target module "${target}" was not found in the architectural model.`],
-          })
+          }),
         );
       }
 
@@ -1969,7 +2225,7 @@ class CodebaseIntelligence {
     }
 
     // Entire Repo Dependency Audit (Phantom / Unused / Unresolvable Dependencies)
-    let declaredDeps = new Set();
+    const declaredDeps = new Set();
     const pkgPath = path.join(this.repoRoot, 'package.json');
     if (fs.existsSync(pkgPath)) {
       try {
@@ -2004,8 +2260,18 @@ class CodebaseIntelligence {
               const cand3 = path.resolve(absDir, `${r.targetId}.ts`);
               const cand4 = path.resolve(absDir, r.targetId, 'index.js');
               const cand5 = path.resolve(absDir, r.targetId, 'index.ts');
-              if (!fs.existsSync(cand1) && !fs.existsSync(cand2) && !fs.existsSync(cand3) && !fs.existsSync(cand4) && !fs.existsSync(cand5)) {
-                unresolvableImports.push({ source: evidenceFile, importPath: r.targetId, status: 'UNRESOLVABLE_STATIC_PATH' });
+              if (
+                !fs.existsSync(cand1) &&
+                !fs.existsSync(cand2) &&
+                !fs.existsSync(cand3) &&
+                !fs.existsSync(cand4) &&
+                !fs.existsSync(cand5)
+              ) {
+                unresolvableImports.push({
+                  source: evidenceFile,
+                  importPath: r.targetId,
+                  status: 'UNRESOLVABLE_STATIC_PATH',
+                });
               }
             }
           }
@@ -2013,8 +2279,9 @@ class CodebaseIntelligence {
       });
 
       // Also scan source files directly for external packages and relative imports
-      const importRegex = /(?:import\s+(?:(?:[\w*\s{},]+)\s+from\s+)?['"`]([^'"`]+)['"`]|require\s*\(\s*['"`]([^'"`]+)['"`]\))/g;
-      const scanImportsDir = (dir) => {
+      const importRegex =
+        /(?:import\s+(?:(?:[\w*\s{},]+)\s+from\s+)?['"`]([^'"`]+)['"`]|require\s*\(\s*['"`]([^'"`]+)['"`]\))/g;
+      const scanImportsDir = dir => {
         try {
           const entries = fs.readdirSync(dir, { withFileTypes: true });
           for (const entry of entries) {
@@ -2044,9 +2311,23 @@ class CodebaseIntelligence {
                     const cand3 = path.resolve(absDir, `${targetImp}.ts`);
                     const cand4 = path.resolve(absDir, targetImp, 'index.js');
                     const cand5 = path.resolve(absDir, targetImp, 'index.ts');
-                    if (!fs.existsSync(cand1) && !fs.existsSync(cand2) && !fs.existsSync(cand3) && !fs.existsSync(cand4) && !fs.existsSync(cand5)) {
-                      if (!unresolvableImports.some(u => u.source === relP && u.importPath === targetImp)) {
-                        unresolvableImports.push({ source: relP, importPath: targetImp, status: 'UNRESOLVABLE_STATIC_PATH' });
+                    if (
+                      !fs.existsSync(cand1) &&
+                      !fs.existsSync(cand2) &&
+                      !fs.existsSync(cand3) &&
+                      !fs.existsSync(cand4) &&
+                      !fs.existsSync(cand5)
+                    ) {
+                      if (
+                        !unresolvableImports.some(
+                          u => u.source === relP && u.importPath === targetImp,
+                        )
+                      ) {
+                        unresolvableImports.push({
+                          source: relP,
+                          importPath: targetImp,
+                          status: 'UNRESOLVABLE_STATIC_PATH',
+                        });
                       }
                     }
                   }
@@ -2067,7 +2348,20 @@ class CodebaseIntelligence {
     }
     const { importedPackages, unresolvableImports } = projectDeps;
 
-    const builtinModules = new Set(['fs', 'path', 'crypto', 'child_process', 'os', 'util', 'events', 'http', 'https', 'stream', 'buffer', 'url']);
+    const builtinModules = new Set([
+      'fs',
+      'path',
+      'crypto',
+      'child_process',
+      'os',
+      'util',
+      'events',
+      'http',
+      'https',
+      'stream',
+      'buffer',
+      'url',
+    ]);
     const missingDependencies = [];
     importedPackages.forEach(p => {
       if (!declaredDeps.has(p) && !builtinModules.has(p)) {
@@ -2086,7 +2380,7 @@ class CodebaseIntelligence {
           source_path: 'package.json',
           confidence: 'L1_OBSERVED',
           evidence_status: 'OBSERVED',
-        })
+        }),
       );
     });
 
@@ -2101,11 +2395,11 @@ class CodebaseIntelligence {
           source_path: 'project',
           confidence: 'L1_OBSERVED',
           evidence_status: 'OBSERVED',
-        })
+        }),
       );
     }
 
-        // Detect project-wide circular dependency cycles
+    // Detect project-wide circular dependency cycles
     const circularCycles = [];
     const adj = new Map();
     (model.relationships || []).forEach(r => {
@@ -2119,7 +2413,7 @@ class CodebaseIntelligence {
     const cycleRecStack = new Set();
     const cyclePath = [];
 
-    const detectCyclesDfs = (curr) => {
+    const detectCyclesDfs = curr => {
       cycleVisited.add(curr);
       cycleRecStack.add(curr);
       cyclePath.push(curr);
@@ -2132,7 +2426,10 @@ class CodebaseIntelligence {
           const rawCycle = cyclePath.slice(cyclePath.indexOf(n)).concat(n);
           const minNode = [...rawCycle.slice(0, -1)].sort()[0];
           const minIdx = rawCycle.indexOf(minNode);
-          const normalized = rawCycle.slice(minIdx, -1).concat(rawCycle.slice(0, minIdx)).concat(minNode);
+          const normalized = rawCycle
+            .slice(minIdx, -1)
+            .concat(rawCycle.slice(0, minIdx))
+            .concat(minNode);
           const key = normalized.join(' -> ');
           if (!circularCycles.some(c => c.key === key)) {
             circularCycles.push({
@@ -2179,10 +2476,29 @@ class CodebaseIntelligence {
     }
     const model = this.getModel();
     const evidenceRecords = [];
-    const limitations = ['Ranking uses multi-factor static matching (symbols, routes, imports) and may require inspecting additional files for complex features.'];
+    const limitations = [
+      'Ranking uses multi-factor static matching (symbols, routes, imports) and may require inspecting additional files for complex features.',
+    ];
 
     // Extract search tokens
-    const stopWords = new Set(['a', 'an', 'the', 'in', 'on', 'for', 'to', 'and', 'or', 'with', 'add', 'create', 'fix', 'update', 'modify', 'build']);
+    const stopWords = new Set([
+      'a',
+      'an',
+      'the',
+      'in',
+      'on',
+      'for',
+      'to',
+      'and',
+      'or',
+      'with',
+      'add',
+      'create',
+      'fix',
+      'update',
+      'modify',
+      'build',
+    ]);
     const tokens = taskQuery
       .toLowerCase()
       .split(/[^a-zA-Z0-9_-]+/)
@@ -2191,7 +2507,9 @@ class CodebaseIntelligence {
     // 1. Primary Implementation Files to edit
     const primaryFiles = new Map();
     (model.entities || []).forEach(e => {
-      const matchScore = tokens.filter(tok => e.name.toLowerCase().includes(tok) || e.id.toLowerCase().includes(tok)).length;
+      const matchScore = tokens.filter(
+        tok => e.name.toLowerCase().includes(tok) || e.id.toLowerCase().includes(tok),
+      ).length;
       if (matchScore > 0 && e.sources) {
         e.sources.forEach(s => {
           const count = primaryFiles.get(s.file) || 0;
@@ -2218,7 +2536,11 @@ class CodebaseIntelligence {
       (model.relationships || []).forEach(r => {
         if (r.sourceId && r.sourceId.includes(pf.file)) {
           const targetEntity = entityMap.get(r.targetId);
-          if (targetEntity?.kind === 'type' || targetEntity?.kind === 'interface' || targetEntity?.kind === 'schema') {
+          if (
+            targetEntity?.kind === 'type' ||
+            targetEntity?.kind === 'interface' ||
+            targetEntity?.kind === 'schema'
+          ) {
             interfaceContracts.push({
               file: targetEntity.sources?.[0]?.file || r.targetId,
               symbol: targetEntity.name,
@@ -2264,7 +2586,10 @@ class CodebaseIntelligence {
       });
       // Direct heuristic candidate
       const candidateTest = path.join('test', 'unit', `${baseName}.test.js`).replace(/\\/g, '/');
-      if (fs.existsSync(path.join(this.repoRoot, candidateTest)) && !testSuites.some(t => t.file === candidateTest)) {
+      if (
+        fs.existsSync(path.join(this.repoRoot, candidateTest)) &&
+        !testSuites.some(t => t.file === candidateTest)
+      ) {
         testSuites.push({
           file: candidateTest,
           classification: 'TEST_TO_REVIEW',
@@ -2284,13 +2609,17 @@ class CodebaseIntelligence {
           source_path: pf.file,
           confidence: 'L1_OBSERVED',
           evidence_status: 'OBSERVED',
-        })
+        }),
       );
     });
 
-    const verificationCommand = testSuites.length > 0
-      ? `npm test -- ${testSuites.slice(0, 2).map(t => t.file).join(' ')}`
-      : 'npm test';
+    const verificationCommand =
+      testSuites.length > 0
+        ? `npm test -- ${testSuites
+            .slice(0, 2)
+            .map(t => t.file)
+            .join(' ')}`
+        : 'npm test';
 
     return {
       subcommand: 'relevant-files',
@@ -2330,7 +2659,7 @@ class CodebaseIntelligence {
           confidence: 'L4_UNKNOWN',
           evidence_status: 'UNKNOWN',
           limitations: [`Target "${target}" could not be resolved statically.`],
-        })
+        }),
       ];
       return {
         subcommand: 'impact',
@@ -2346,7 +2675,9 @@ class CodebaseIntelligence {
         impactedTestSuites: [],
         crossesTrustBoundary: false,
         limitations: [`Target "${target}" could not be resolved statically.`],
-        unresolvedAssumptions: [`Verify whether "${target}" exists, is exported, or is dynamically loaded.`],
+        unresolvedAssumptions: [
+          `Verify whether "${target}" exists, is exported, or is dynamically loaded.`,
+        ],
         evidenceRecords: unknownEvidence,
       };
     }
@@ -2354,7 +2685,8 @@ class CodebaseIntelligence {
     const ring1 = (result.transitiveRings?.[0]?.entities || []).map(e => e.id);
     const ring2 = (result.transitiveRings?.[1]?.entities || []).map(e => e.id);
     const ring3 = (result.transitiveRings?.[2]?.entities || []).map(e => e.id);
-    const totalImpacted = result.metrics?.transitiveDependentsCount || (ring1.length + ring2.length + ring3.length);
+    const totalImpacted =
+      result.metrics?.transitiveDependentsCount || ring1.length + ring2.length + ring3.length;
     const riskTier = result.metrics?.riskTier || 'LOW';
     const impactedEndpoints = (result.affectedEndpoints || []).map(e => e.name || e.id);
     const impactedTestSuites = (result.affectedTests || []).map(e => e.scope || e.name || e.id);
@@ -2377,7 +2709,7 @@ class CodebaseIntelligence {
           source_path: caller,
           confidence: 'L1_OBSERVED',
           evidence_status: 'OBSERVED',
-        })
+        }),
       );
     });
 
@@ -2465,7 +2797,8 @@ class CodebaseIntelligence {
         const sourceFile = ent.sources?.[0]?.file || '';
 
         const isTest = sourceFile.includes('test') || sourceFile.includes('spec');
-        const isProtected = protectedFiles.has(sourceFile) || protectedFiles.has(sourceFile.replace(/^\.\//, ''));
+        const isProtected =
+          protectedFiles.has(sourceFile) || protectedFiles.has(sourceFile.replace(/^\.\//, ''));
         const matchesFilter = filterPath ? sourceFile.includes(filterPath) : true;
 
         if (calls === 0 && !isTest && !isProtected && matchesFilter) {
@@ -2489,7 +2822,7 @@ class CodebaseIntelligence {
     if (!fileExportMap || !allFileContents || flags.forceFresh) {
       fileExportMap = [];
       allFileContents = new Map();
-      const scanExports = (dir) => {
+      const scanExports = dir => {
         try {
           const entries = fs.readdirSync(dir, { withFileTypes: true });
           for (const entry of entries) {
@@ -2503,67 +2836,72 @@ class CodebaseIntelligence {
               try {
                 const content = fs.readFileSync(fullP, 'utf8');
                 allFileContents.set(relP, content);
-              const isTest = relP.includes('test') || relP.includes('spec');
-              const isProtected = protectedFiles.has(relP) || protectedFiles.has(`./${relP}`) || protectedFiles.has(relP.replace(/^\.\//, ''));
-              const matchesFilter = filterPath ? relP.includes(filterPath) : true;
-              if (!isTest && !isProtected && matchesFilter) {
-                // Find exports
-                // module.exports = { a, b }
-                const modExpMatch = content.match(/module\.exports\s*=\s*\{([^}]+)\}/);
-                if (modExpMatch) {
-                  const names = modExpMatch[1].split(',').map(s => s.trim().split(':')[0].trim()).filter(Boolean);
-                  names.forEach(n => {
-                    if (/^[a-zA-Z0-9_$]+$/.test(n)) {
-                      fileExportMap.push({ name: n, file: relP, line: 1 });
-                    }
-                  });
+                const isTest = relP.includes('test') || relP.includes('spec');
+                const isProtected =
+                  protectedFiles.has(relP) ||
+                  protectedFiles.has(`./${relP}`) ||
+                  protectedFiles.has(relP.replace(/^\.\//, ''));
+                const matchesFilter = filterPath ? relP.includes(filterPath) : true;
+                if (!isTest && !isProtected && matchesFilter) {
+                  // Find exports
+                  // module.exports = { a, b }
+                  const modExpMatch = content.match(/module\.exports\s*=\s*\{([^}]+)\}/);
+                  if (modExpMatch) {
+                    const names = modExpMatch[1]
+                      .split(',')
+                      .map(s => s.trim().split(':')[0].trim())
+                      .filter(Boolean);
+                    names.forEach(n => {
+                      if (/^[a-zA-Z0-9_$]+$/.test(n)) {
+                        fileExportMap.push({ name: n, file: relP, line: 1 });
+                      }
+                    });
+                  }
+                  // exports.foo = ...
+                  const expPropRegex = /exports\.([a-zA-Z0-9_$]+)\s*=/g;
+                  let expProp;
+                  while ((expProp = expPropRegex.exec(content)) !== null) {
+                    fileExportMap.push({ name: expProp[1], file: relP, line: 1 });
+                  }
+                  // export function foo / export const foo / export type Foo / export interface Foo / export enum Foo
+                  const namedExpRegex =
+                    /export\s+(?:async\s+)?(?:function|const|let|var|class|type|interface|enum)\s+([a-zA-Z0-9_$]+)/g;
+                  let namedExp;
+                  while ((namedExp = namedExpRegex.exec(content)) !== null) {
+                    fileExportMap.push({ name: namedExp[1], file: relP, line: 1 });
+                  }
+                  // export { a, b as c } (local export list)
+                  const localExpRegex = /export\s+\{([^}]+)\}(?!\s*from)/g;
+                  let locExp;
+                  while ((locExp = localExpRegex.exec(content)) !== null) {
+                    locExp[1].split(',').forEach(item => {
+                      const clean = item.trim().replace(/^type\s+/, '');
+                      const parts = clean.split(/\s+as\s+/);
+                      const orig = parts[1] ? parts[1].trim() : parts[0]?.trim();
+                      if (orig && /^[a-zA-Z0-9_$]+$/.test(orig)) {
+                        fileExportMap.push({ name: orig, file: relP, line: 1 });
+                      }
+                    });
+                  }
                 }
-                // exports.foo = ...
-                const expPropRegex = /exports\.([a-zA-Z0-9_$]+)\s*=/g;
-                let expProp;
-                while ((expProp = expPropRegex.exec(content)) !== null) {
-                  fileExportMap.push({ name: expProp[1], file: relP, line: 1 });
-                }
-                // export function foo / export const foo / export type Foo / export interface Foo / export enum Foo
-                const namedExpRegex = /export\s+(?:async\s+)?(?:function|const|let|var|class|type|interface|enum)\s+([a-zA-Z0-9_$]+)/g;
-                let namedExp;
-                while ((namedExp = namedExpRegex.exec(content)) !== null) {
-                  fileExportMap.push({ name: namedExp[1], file: relP, line: 1 });
-                }
-                // export { a, b as c } (local export list)
-                const localExpRegex = /export\s+\{([^}]+)\}(?!\s*from)/g;
-                let locExp;
-                while ((locExp = localExpRegex.exec(content)) !== null) {
-                  locExp[1].split(',').forEach(item => {
-                    const clean = item.trim().replace(/^type\s+/, '');
-                    const parts = clean.split(/\s+as\s+/);
-                    const orig = parts[1] ? parts[1].trim() : parts[0]?.trim();
-                    if (orig && /^[a-zA-Z0-9_$]+$/.test(orig)) {
-                      fileExportMap.push({ name: orig, file: relP, line: 1 });
-                    }
-                  });
-                }
+              } catch {
+                // ignore
               }
-            } catch {
-              // ignore
             }
           }
+        } catch {
+          // ignore
         }
-      } catch {
-        // ignore
-      }
-    };
-    scanExports(this.repoRoot);
-    this.fileExportMapCache = fileExportMap;
-    this.allFileContentsCache = allFileContents;
-  }
+      };
+      scanExports(this.repoRoot);
+      this.fileExportMapCache = fileExportMap;
+      this.allFileContentsCache = allFileContents;
+    }
 
     // ── Phase 16: Two-Tier Semantic Reference Resolver ──────────────────────────
     function stripCodeComments(src) {
       if (!src || typeof src !== 'string') return '';
-      return src
-        .replace(/\/\*[\s\S]*?\*\//g, ' ')
-        .replace(/\/\/[^\r\n]*/g, ' ');
+      return src.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\r\n]*/g, ' ');
     }
 
     function resolveLocalModule(importerRelPath, specifier, knownFiles) {
@@ -2592,16 +2930,17 @@ class CodebaseIntelligence {
     // Pass 1: Build Module Import & Re-Export Graph from executable code (no comments)
     const knownFiles = new Set(allFileContents.keys());
     const codeWithoutComments = new Map();
-    const importGraph = new Map();         // importer -> targetFile -> Set<symbol>
+    const importGraph = new Map(); // importer -> targetFile -> Set<symbol>
     const fileInboundImporters = new Map(); // targetFile -> Set<importer>
-    const reexportGraph = new Map();       // reexporter -> targetFile -> Set<symbol>
+    const reexportGraph = new Map(); // reexporter -> targetFile -> Set<symbol>
 
     for (const [filePath, rawContent] of allFileContents.entries()) {
       const code = stripCodeComments(rawContent);
       codeWithoutComments.set(filePath, code);
 
       // 1. ESM Imports: import { a, b as c } from './target' or import type { a } from './target' or import * as ns from './target'
-      const esmImportRegex = /import\s+(?:type\s+)?(?:(\*\s+as\s+[\w$]+)|(?:\{([^}]+)\})|([\w$]+))\s+from\s+['"`]([^'"`]+)['"`]/g;
+      const esmImportRegex =
+        /import\s+(?:type\s+)?(?:(\*\s+as\s+[\w$]+)|(?:\{([^}]+)\})|([\w$]+))\s+from\s+['"`]([^'"`]+)['"`]/g;
       let m;
       while ((m = esmImportRegex.exec(code)) !== null) {
         const isNamespace = Boolean(m[1]);
@@ -2632,7 +2971,8 @@ class CodebaseIntelligence {
       }
 
       // 2. CommonJS Requires: const { a } = require('./target')
-      const cjsRegex = /(?:const|let|var)\s+(?:\{([^}]+)\}|([\w$]+))\s*=\s*require\s*\(\s*['"`]([^'"`]+)['"`]\)/g;
+      const cjsRegex =
+        /(?:const|let|var)\s+(?:\{([^}]+)\}|([\w$]+))\s*=\s*require\s*\(\s*['"`]([^'"`]+)['"`]\)/g;
       while ((m = cjsRegex.exec(code)) !== null) {
         const namedBlock = m[1];
         const defaultImport = m[2];
@@ -2659,7 +2999,8 @@ class CodebaseIntelligence {
       }
 
       // 3. ESM Re-Exports: export { a, b } from './target' or export type { a } from './target' or export * from './target'
-      const reexportRegex = /export\s+(?:type\s+)?(?:(\*)|(?:\{([^}]+)\}))\s+from\s+['"`]([^'"`]+)['"`]/g;
+      const reexportRegex =
+        /export\s+(?:type\s+)?(?:(\*)|(?:\{([^}]+)\}))\s+from\s+['"`]([^'"`]+)['"`]/g;
       while ((m = reexportRegex.exec(code)) !== null) {
         const isAll = Boolean(m[1]);
         const namedBlock = m[2];
@@ -2699,7 +3040,10 @@ class CodebaseIntelligence {
           // Check if importer re-exports this symbol
           const reexportTargetMap = reexportGraph.get(importer);
           const reexportedSymbols = reexportTargetMap?.get(exp.file);
-          if (reexportedSymbols && (reexportedSymbols.has('*') || reexportedSymbols.has(exp.name))) {
+          if (
+            reexportedSymbols &&
+            (reexportedSymbols.has('*') || reexportedSymbols.has(exp.name))
+          ) {
             // Re-exported: check if consumer imports it from this re-exporting file
             if (checkExportConsumed({ name: exp.name, file: importer }, visited)) {
               return true;
@@ -2831,7 +3175,7 @@ class CodebaseIntelligence {
           symbol: ue.name,
           confidence: 'L2_CORROBORATED',
           evidence_status: 'OBSERVED',
-        })
+        }),
       );
     });
 
@@ -2846,8 +3190,11 @@ class CodebaseIntelligence {
       landmines,
       chestertonsFences: landmines,
       chestertonsFencesCount: landmines.length,
-      safetyNotice: 'Static unreferenced status is not proof that code is safe to remove. No files are ever automatically deleted.',
-      limitations: ['Dynamic imports, reflection, and runtime plugin registries cannot be detected statically.'],
+      safetyNotice:
+        'Static unreferenced status is not proof that code is safe to remove. No files are ever automatically deleted.',
+      limitations: [
+        'Dynamic imports, reflection, and runtime plugin registries cannot be detected statically.',
+      ],
       evidenceRecords,
     };
   }
@@ -2862,7 +3209,8 @@ class CodebaseIntelligence {
     // 1. 30-Second Mental Model
     let archPattern = 'Modular Architecture';
     if (overviewData.workspaces.length > 0) archPattern = 'Monorepo Subsystem Architecture';
-    else if (overviewData.datastores.length > 0 && overviewData.endpoints.http.length > 0) archPattern = 'Layered Web API';
+    else if (overviewData.datastores.length > 0 && overviewData.endpoints.http.length > 0)
+      archPattern = 'Layered Web API';
 
     // Project description
     let projectDescription = 'Repository and architectural analysis framework.';
@@ -2878,7 +3226,11 @@ class CodebaseIntelligence {
 
     // 2. Guided Reading Order
     const day1Files = [];
-    if (fs.existsSync(pkgPath)) day1Files.push({ file: 'package.json', reason: 'Dependencies, scripts, and package bin configuration' });
+    if (fs.existsSync(pkgPath))
+      day1Files.push({
+        file: 'package.json',
+        reason: 'Dependencies, scripts, and package bin configuration',
+      });
     overviewData.endpoints.cli.slice(0, 2).forEach(c => {
       const src = c.scope || c.sources?.[0]?.file;
       if (src && !day1Files.some(d => d.file === src)) {
@@ -2899,9 +3251,16 @@ class CodebaseIntelligence {
 
     const day3Files = [];
     overviewData.datastores.slice(0, 2).forEach(d => {
-      day3Files.push({ file: d.sources?.[0]?.file || 'db_config', reason: `Datastore configuration for ${d.name}` });
+      day3Files.push({
+        file: d.sources?.[0]?.file || 'db_config',
+        reason: `Datastore configuration for ${d.name}`,
+      });
     });
-    ['test/unit/architecture_intelligence.test.js', 'test/index.test.js', 'crates/core/tests/integration.rs'].forEach(tf => {
+    [
+      'test/unit/architecture_intelligence.test.js',
+      'test/index.test.js',
+      'crates/core/tests/integration.rs',
+    ].forEach(tf => {
       if (fs.existsSync(path.join(this.repoRoot, tf))) {
         day3Files.push({ file: tf, reason: 'Comprehensive regression and unit test suite' });
       }
@@ -2940,7 +3299,9 @@ class CodebaseIntelligence {
       },
       verificationRecipes: recipes,
       configRequirements: overviewData.configBoundaries,
-      limitations: ['Onboarding guidance is synthesized from static package manifests and verified AST topology.'],
+      limitations: [
+        'Onboarding guidance is synthesized from static package manifests and verified AST topology.',
+      ],
       evidenceRecords: overviewData.evidenceRecords,
     };
   }
@@ -2950,7 +3311,9 @@ class CodebaseIntelligence {
    */
   prepare(taskDescription, flags = {}) {
     if (!taskDescription || (typeof taskDescription === 'string' && !taskDescription.trim())) {
-      throw new Error('prepare requires a proposed change description (e.g. "add payment idempotency key support")');
+      throw new Error(
+        'prepare requires a proposed change description (e.g. "add payment idempotency key support")',
+      );
     }
 
     const relResult = this.relevantFiles(taskDescription, flags);
@@ -2962,11 +3325,26 @@ class CodebaseIntelligence {
     const migrationConcerns = [];
     const lowerDesc = taskDescription.toLowerCase();
 
-    if (lowerDesc.includes('auth') || lowerDesc.includes('token') || lowerDesc.includes('secret') || lowerDesc.includes('permission')) {
-      securityConcerns.push('Change modifies authentication or security perimeter. Ensure JWT algorithms and session validation are enforced.');
+    if (
+      lowerDesc.includes('auth') ||
+      lowerDesc.includes('token') ||
+      lowerDesc.includes('secret') ||
+      lowerDesc.includes('permission')
+    ) {
+      securityConcerns.push(
+        'Change modifies authentication or security perimeter. Ensure JWT algorithms and session validation are enforced.',
+      );
     }
-    if (lowerDesc.includes('db') || lowerDesc.includes('database') || lowerDesc.includes('migration') || lowerDesc.includes('schema') || lowerDesc.includes('column')) {
-      migrationConcerns.push('Database schema alteration detected. Verify expand-and-contract migration compatibility without locking tables.');
+    if (
+      lowerDesc.includes('db') ||
+      lowerDesc.includes('database') ||
+      lowerDesc.includes('migration') ||
+      lowerDesc.includes('schema') ||
+      lowerDesc.includes('column')
+    ) {
+      migrationConcerns.push(
+        'Database schema alteration detected. Verify expand-and-contract migration compatibility without locking tables.',
+      );
     }
     if (impactResult?.crossesTrustBoundary) {
       securityConcerns.push('Change spans network or isolation trust boundaries.');
@@ -2974,14 +3352,21 @@ class CodebaseIntelligence {
 
     // Determine Analytical Readiness Gate
     let readiness = 'READY_FOR_IMPLEMENTATION_REVIEW';
-    let readinessReason = 'Change targets, contracts, dependent callers, and verification commands successfully mapped with L1/L2 evidence.';
+    let readinessReason =
+      'Change targets, contracts, dependent callers, and verification commands successfully mapped with L1/L2 evidence.';
 
     if (relResult.primaryFiles.length === 0) {
       readiness = 'BLOCKED';
-      readinessReason = 'No viable change targets could be resolved statically for the given task description.';
-    } else if (securityConcerns.length > 0 || migrationConcerns.length > 0 || impactResult?.riskTier === 'CRITICAL') {
+      readinessReason =
+        'No viable change targets could be resolved statically for the given task description.';
+    } else if (
+      securityConcerns.length > 0 ||
+      migrationConcerns.length > 0 ||
+      impactResult?.riskTier === 'CRITICAL'
+    ) {
       readiness = 'READY_WITH_UNKNOWNS';
-      readinessReason = 'Change mapped but involves critical blast radius or sensitive architectural boundaries requiring explicit review.';
+      readinessReason =
+        'Change mapped but involves critical blast radius or sensitive architectural boundaries requiring explicit review.';
     }
 
     const unknowns = [];
@@ -3012,7 +3397,9 @@ class CodebaseIntelligence {
       securityConcerns,
       migrationConcerns,
       unknowns,
-      limitations: ['Readiness reflects analytical mapping completeness and does not constitute permission to bypass Human Gate.'],
+      limitations: [
+        'Readiness reflects analytical mapping completeness and does not constitute permission to bypass Human Gate.',
+      ],
       evidenceRecords,
     };
   }
@@ -3201,10 +3588,16 @@ function renderRelevantFilesMarkdown(data) {
 function renderImpactMarkdown(data) {
   let md = `# 💥 BLAST RADIUS ASSESSMENT: ${data.target}\n\n`;
 
-  const tierBadge = data.riskTier === 'CRITICAL' ? '🔴 CRITICAL' :
-    data.riskTier === 'HIGH' ? '🟠 HIGH' :
-    data.riskTier === 'MEDIUM' ? '🟡 MEDIUM' :
-    data.riskTier === 'LOW' ? '🟢 LOW' : '⚪ INDETERMINATE';
+  const tierBadge =
+    data.riskTier === 'CRITICAL'
+      ? '🔴 CRITICAL'
+      : data.riskTier === 'HIGH'
+        ? '🟠 HIGH'
+        : data.riskTier === 'MEDIUM'
+          ? '🟡 MEDIUM'
+          : data.riskTier === 'LOW'
+            ? '🟢 LOW'
+            : '⚪ INDETERMINATE';
 
   md += `**Risk Tier:** \`${tierBadge}\` | **Total Impacted Entities:** \`${data.totalImpactedEntities}\`\n\n`;
   md += `**Risk Analysis:** ${data.riskReason}\n\n`;
@@ -3217,7 +3610,7 @@ function renderImpactMarkdown(data) {
   md += `## Concentric Impact Rings\n`;
   md += `### Ring 1: Direct Callers (${data.ring1DirectCallers.length})\n`;
   if (data.ring1DirectCallers.length > 0) {
-    data.ring1DirectCallers.slice(0, 8).forEach(c => md += `- \`${c}\`\n`);
+    data.ring1DirectCallers.slice(0, 8).forEach(c => (md += `- \`${c}\`\n`));
   } else {
     md += `- None (leaf component)\n`;
   }
@@ -3225,19 +3618,19 @@ function renderImpactMarkdown(data) {
 
   if (data.ring2TransitiveCallers && data.ring2TransitiveCallers.length > 0) {
     md += `### Ring 2: Transitive Callers (${data.ring2TransitiveCallers.length})\n`;
-    data.ring2TransitiveCallers.slice(0, 5).forEach(c => md += `- \`${c}\`\n`);
+    data.ring2TransitiveCallers.slice(0, 5).forEach(c => (md += `- \`${c}\`\n`));
     md += '\n';
   }
 
   if (data.impactedEndpoints && data.impactedEndpoints.length > 0) {
     md += `## Impacted Public Endpoints\n`;
-    data.impactedEndpoints.forEach(ep => md += `- \`${ep}\`\n`);
+    data.impactedEndpoints.forEach(ep => (md += `- \`${ep}\`\n`));
     md += '\n';
   }
 
   if (data.impactedTestSuites && data.impactedTestSuites.length > 0) {
     md += `## Impacted Test Suites to Re-Run\n`;
-    data.impactedTestSuites.forEach(ts => md += `- \`${ts}\`\n`);
+    data.impactedTestSuites.forEach(ts => (md += `- \`${ts}\`\n`));
     md += '\n';
   }
 
@@ -3247,10 +3640,16 @@ function renderImpactMarkdown(data) {
 function renderInvestigateMarkdown(data) {
   let md = `# 🔍 AUTONOMOUS INVESTIGATION: ${data.target || 'Repository Investigation'}\n\n`;
 
-  const statusBadge = data.status === 'COMPLETE' ? '🟢 COMPLETE' :
-    data.status === 'ABSTAIN' ? '⚪ ABSTAINED (INSUFFICIENT STATIC EVIDENCE)' :
-    data.status === 'CONTRADICTION_DETECTED' ? '🟡 CONTRADICTION DETECTED' :
-    data.status === 'BUDGET_EXHAUSTED' ? '🟠 BUDGET EXHAUSTED' : '🔴 FAILED';
+  const statusBadge =
+    data.status === 'COMPLETE'
+      ? '🟢 COMPLETE'
+      : data.status === 'ABSTAIN'
+        ? '⚪ ABSTAINED (INSUFFICIENT STATIC EVIDENCE)'
+        : data.status === 'CONTRADICTION_DETECTED'
+          ? '🟡 CONTRADICTION DETECTED'
+          : data.status === 'BUDGET_EXHAUSTED'
+            ? '🟠 BUDGET EXHAUSTED'
+            : '🔴 FAILED';
 
   md += `**Status:** \`${statusBadge}\` | **Operation:** \`investigate\`\n\n`;
   md += `**Summary:** ${data.summary}\n\n`;
@@ -3301,10 +3700,16 @@ function renderInvestigateMarkdown(data) {
 function renderChangeImpactMarkdown(data) {
   let md = `# ⚡ CHANGE-AWARE IMPACT & RECOMPUTATION ANALYSIS\n\n`;
 
-  const tierBadge = data.riskTier === 'CRITICAL' ? '🔴 CRITICAL' :
-    data.riskTier === 'HIGH' ? '🟠 HIGH' :
-    data.riskTier === 'MEDIUM' ? '🟡 MEDIUM' :
-    data.riskTier === 'LOW' ? '🟢 LOW' : '⚪ INDETERMINATE';
+  const tierBadge =
+    data.riskTier === 'CRITICAL'
+      ? '🔴 CRITICAL'
+      : data.riskTier === 'HIGH'
+        ? '🟠 HIGH'
+        : data.riskTier === 'MEDIUM'
+          ? '🟡 MEDIUM'
+          : data.riskTier === 'LOW'
+            ? '🟢 LOW'
+            : '⚪ INDETERMINATE';
 
   md += `**Target / Scope:** \`${data.target || 'Repository Working Tree'}\`\n`;
   md += `**Risk Tier:** \`${tierBadge}\` | **Recomputation Scope:** \`${data.recomputationScope}\`\n\n`;
@@ -3329,7 +3734,7 @@ function renderChangeImpactMarkdown(data) {
 
   if (data.downstreamAffectedModules && data.downstreamAffectedModules.length > 0) {
     md += `### Affected Downstream Modules\n`;
-    data.downstreamAffectedModules.slice(0, 10).forEach(m => md += `- \`${m}\`\n`);
+    data.downstreamAffectedModules.slice(0, 10).forEach(m => (md += `- \`${m}\`\n`));
     if (data.downstreamAffectedModules.length > 10) {
       md += `- *(+${data.downstreamAffectedModules.length - 10} more)*\n`;
     }
@@ -3338,7 +3743,7 @@ function renderChangeImpactMarkdown(data) {
 
   md += `## 3. Invalidated Analysis Artifacts (${data.invalidatedArtifacts?.length || 0})\n`;
   if (data.invalidatedArtifacts && data.invalidatedArtifacts.length > 0) {
-    data.invalidatedArtifacts.forEach(art => md += `- \`${art}\`\n`);
+    data.invalidatedArtifacts.forEach(art => (md += `- \`${art}\`\n`));
   } else {
     md += `- All existing analysis artifacts remain valid.\n`;
   }
@@ -3430,8 +3835,12 @@ function renderPrepareMarkdown(data) {
   let md = `# 🛡️ CHANGE PREPARATION DOSSIER\n`;
   md += `**Proposed Change:** "${data.taskDescription}"\n\n`;
 
-  const badge = data.readiness === 'READY_FOR_IMPLEMENTATION_REVIEW' ? '🟢 READY_FOR_IMPLEMENTATION_REVIEW' :
-    data.readiness === 'READY_WITH_UNKNOWNS' ? '🟡 READY_WITH_UNKNOWNS' : '🔴 BLOCKED';
+  const badge =
+    data.readiness === 'READY_FOR_IMPLEMENTATION_REVIEW'
+      ? '🟢 READY_FOR_IMPLEMENTATION_REVIEW'
+      : data.readiness === 'READY_WITH_UNKNOWNS'
+        ? '🟡 READY_WITH_UNKNOWNS'
+        : '🔴 BLOCKED';
 
   md += `**Analytical Readiness:** \`${badge}\`\n`;
   md += `**Readiness Rationale:** ${data.readinessReason}\n\n`;
@@ -3506,7 +3915,10 @@ function resolveRoute(request, options = {}) {
   const flags = options.flags || {};
   let rawQuery = '';
   if (Array.isArray(request)) {
-    rawQuery = request.filter(a => !String(a).startsWith('-')).join(' ').trim();
+    rawQuery = request
+      .filter(a => !String(a).startsWith('-'))
+      .join(' ')
+      .trim();
   } else if (typeof request === 'string') {
     rawQuery = request.trim();
   }
@@ -3529,7 +3941,11 @@ function resolveRoute(request, options = {}) {
   while ((b64Match = base64Regex.exec(safeQuery)) !== null) {
     try {
       const decoded = Buffer.from(b64Match[1], 'base64').toString('utf8');
-      if (/(?:ignore|disregard|forget|system\s+override|dump.*process\.env|sudo\s+rm|drop\s+table)/i.test(decoded)) {
+      if (
+        /(?:ignore|disregard|forget|system\s+override|dump.*process\.env|sudo\s+rm|drop\s+table)/i.test(
+          decoded,
+        )
+      ) {
         isUntrusted = true;
         sanitizedQuery = sanitizedQuery.replace(b64Match[1], '[neutralized_obfuscated_payload]');
       }
@@ -3568,35 +3984,45 @@ function resolveRoute(request, options = {}) {
     /dependenc|module/i.test(lowerQuery)
   ) {
     hasContradiction = true;
-    contradictionRationale = 'Request contains contradictory directives: requested dependency mapping while forbidding import analysis.';
+    contradictionRationale =
+      'Request contains contradictory directives: requested dependency mapping while forbidding import analysis.';
   } else if (
     /do\s+not\s+inspect\s+entry\s+points/i.test(lowerQuery) &&
     /trace.*execution/i.test(lowerQuery)
   ) {
     hasContradiction = true;
-    contradictionRationale = 'Request contains contradictory directives: requested execution tracing while forbidding entry point inspection.';
+    contradictionRationale =
+      'Request contains contradictory directives: requested execution tracing while forbidding entry point inspection.';
   } else if (
     /(?:while\s+)?excluding\s+all\s+source\s+code/i.test(lowerQuery) &&
     /relevant\s+files|find.*files/i.test(lowerQuery)
   ) {
     hasContradiction = true;
-    contradictionRationale = 'Request contains contradictory directives: requested file retrieval while excluding all source code.';
+    contradictionRationale =
+      'Request contains contradictory directives: requested file retrieval while excluding all source code.';
   }
 
   // 3. Out-of-Scope / Rejection Detection
   let isOutOfScope = false;
   let outOfScopeRationale = null;
   let isDestructive = false;
-  if (/deploy\s+(the\s+current\s+build\s+to|to\s+kubernetes|to\s+k8s|to\s+production)/i.test(lowerQuery)) {
+  if (
+    /deploy\s+(the\s+current\s+build\s+to|to\s+kubernetes|to\s+k8s|to\s+production)/i.test(
+      lowerQuery,
+    )
+  ) {
     isOutOfScope = true;
-    outOfScopeRationale = 'Deployment is out of scope for Codebase Intelligence. Use `/deploy` workflow instead.';
+    outOfScopeRationale =
+      'Deployment is out of scope for Codebase Intelligence. Use `/deploy` workflow instead.';
   } else if (/format\s+(hard\s+drive|drive|disk)|reinstall\s+windows/i.test(lowerQuery)) {
     isOutOfScope = true;
     isDestructive = true;
-    outOfScopeRationale = 'Destructive operating system modifications are strictly prohibited and rejected.';
+    outOfScopeRationale =
+      'Destructive operating system modifications are strictly prohibited and rejected.';
   } else if (/write\s+a\s+(5-paragraph\s+)?(creative\s+)?(story|poem|song)/i.test(lowerQuery)) {
     isOutOfScope = true;
-    outOfScopeRationale = 'Creative fiction and non-technical requests are out of scope for Codebase Intelligence.';
+    outOfScopeRationale =
+      'Creative fiction and non-technical requests are out of scope for Codebase Intelligence.';
   }
 
   // Ambiguous single-noun investigation request (e.g. "Investigate checkout.")
@@ -3617,7 +4043,9 @@ function resolveRoute(request, options = {}) {
       missingContext: [],
       expectedUncertainty: isUntrusted ? 'UNTRUSTED_INJECTION' : 'AMBIGUOUS',
       rationale: `Detects single noun subject "${target}" with ambiguous investigation verb; defaulting to code relevance analysis.`,
-      limitations: [`Request "${sanitizedQuery}" is ambiguous. Scoping relevant files for target "${target}".`],
+      limitations: [
+        `Request "${sanitizedQuery}" is ambiguous. Scoping relevant files for target "${target}".`,
+      ],
       safeQuery: sanitizedQuery,
     };
   }
@@ -3626,15 +4054,30 @@ function resolveRoute(request, options = {}) {
   // Only trigger if arguments are short command-style tokens without conversational prose
   const tokens = sanitizedQuery.split(/\s+/).filter(Boolean);
   const firstToken = tokens[0]?.toLowerCase();
-  const validSubs = ['overview', 'trace', 'dependencies', 'deps', 'relevant-files', 'impact', 'dead-code', 'onboard', 'prepare', 'change-impact', 'investigate'];
+  const validSubs = [
+    'overview',
+    'trace',
+    'dependencies',
+    'deps',
+    'relevant-files',
+    'impact',
+    'dead-code',
+    'onboard',
+    'prepare',
+    'change-impact',
+    'investigate',
+  ];
 
   const nonFlagTokens = tokens.slice(1).filter(t => !t.startsWith('-'));
-  const hasProseWords = /\b(what|how|which|why|can|please|where|will|detect|find|show|map|identify|assess|check|analyze|look|investigate|step[\s-]by[\s-]step|and|while|without|but|from.*to|if\s+i|for\s+new|reading\s+order|execution\s+flow|flow|readiness|review|the|all|complete|of)\b/i.test(sanitizedQuery);
+  const hasProseWords =
+    /\b(what|how|which|why|can|please|where|will|detect|find|show|map|identify|assess|check|analyze|look|investigate|step[\s-]by[\s-]step|and|while|without|but|from.*to|if\s+i|for\s+new|reading\s+order|execution\s+flow|flow|readiness|review|the|all|complete|of)\b/i.test(
+      sanitizedQuery,
+    );
 
   const isProse = hasProseWords || nonFlagTokens.length > 1;
 
   if (!isProse && firstToken && validSubs.includes(firstToken)) {
-    let op = firstToken === 'deps' ? 'dependencies' : firstToken;
+    const op = firstToken === 'deps' ? 'dependencies' : firstToken;
     const target = nonFlagTokens[0] ? redactSecrets(nonFlagTokens[0]) : undefined;
     const skillMap = {
       overview: 'repository-reconnaissance',
@@ -3659,8 +4102,12 @@ function resolveRoute(request, options = {}) {
       hasContradiction,
       isUntrusted,
       isOutOfScope,
-      missingContext: (['trace', 'impact', 'prepare'].includes(op) && !target) ? ['target'] : [],
-      expectedUncertainty: hasContradiction ? 'CONTRADICTION' : (['trace', 'impact', 'prepare'].includes(op) && !target) ? 'MISSING_CONTEXT' : 'DETERMINISTIC',
+      missingContext: ['trace', 'impact', 'prepare'].includes(op) && !target ? ['target'] : [],
+      expectedUncertainty: hasContradiction
+        ? 'CONTRADICTION'
+        : ['trace', 'impact', 'prepare'].includes(op) && !target
+          ? 'MISSING_CONTEXT'
+          : 'DETERMINISTIC',
       rationale: `Exact subcommand "${op}" matched directly.`,
       limitations: contradictionRationale ? [contradictionRationale] : [],
       safeQuery: sanitizedQuery,
@@ -3696,25 +4143,55 @@ function resolveRoute(request, options = {}) {
   }
 
   // Reconnaissance
-  recordSignal('overview', /\b(overview|birds-?eye\s+view|tech\s+stack|technology\s+stack|runtime|entry\s+points|workspaces|monorepo|topology|structure|layout|recon|unfamiliar|high-level|architecture\s+summary|what\s+does\s+this\s+repo\s+do|overall|network\s+latency\s+of\s+endpoint)\b/i);
+  recordSignal(
+    'overview',
+    /\b(overview|birds-?eye\s+view|tech\s+stack|technology\s+stack|runtime|entry\s+points|workspaces|monorepo|topology|structure|layout|recon|unfamiliar|high-level|architecture\s+summary|what\s+does\s+this\s+repo\s+do|overall|network\s+latency\s+of\s+endpoint)\b/i,
+  );
   // Architecture & Dependencies
-  recordSignal('dependencies', /\b(pull\s+in|dependenc(y|ies)|imports?|inbound|outbound|coupling|cycles?|circular|module\s+graph|architectural\s+hubs?|fan-in|fan-out|topology\s+matrix)\b/i);
+  recordSignal(
+    'dependencies',
+    /\b(pull\s+in|dependenc(y|ies)|imports?|inbound|outbound|coupling|cycles?|circular|module\s+graph|architectural\s+hubs?|fan-in|fan-out|topology\s+matrix)\b/i,
+  );
   // Execution Tracing
-  recordSignal('trace', /\b(walk\s+me\s+through|trac(e|ing)|execution\s+flow|call\s+path|call\s+flow|how\s+does.*work|step\s+by\s+step|control\s+flow|data\s+flow|throw\s+an?\s+(?:unhandled\s+)?exception)\b/i);
+  recordSignal(
+    'trace',
+    /\b(walk\s+me\s+through|trac(e|ing)|execution\s+flow|call\s+path|call\s+flow|how\s+does.*work|step\s+by\s+step|control\s+flow|data\s+flow|throw\s+an?\s+(?:unhandled\s+)?exception)\b/i,
+  );
   // Code Relevance
-  recordSignal('relevant-files', /\b(show\s+me\s+files|files\s+related\s+to|which\s+files|relevant\s+files|files\s+needed|files\s+to\s+edit|find\s+(?:all\s+)?files|where\s+is.*defined|where\s+is.*implemented|locate|slice|add\b|implement\b|refactor\b|support\b)\b/i);
+  recordSignal(
+    'relevant-files',
+    /\b(show\s+me\s+files|files\s+related\s+to|which\s+files|relevant\s+files|files\s+needed|files\s+to\s+edit|find\s+(?:all\s+)?files|where\s+is.*defined|where\s+is.*implemented|locate|slice|add\b|implement\b|refactor\b|support\b)\b/i,
+  );
   // Change Impact & Blast Radius
-  recordSignal('impact', /\b(blast\s+radius|what\s+breaks|ripple|impact|downstream.*affected|if\s+i\s+(change|modify|delete|refactor)|risk\s+tier|transitive\s+dependents)\b/i);
+  recordSignal(
+    'impact',
+    /\b(blast\s+radius|what\s+breaks|ripple|impact|downstream.*affected|if\s+i\s+(change|modify|delete|refactor)|risk\s+tier|transitive\s+dependents)\b/i,
+  );
   // Dead Code
-  recordSignal('dead-code', /\b(nothing\s+references|never\s+imported|dead\s+code|unused\s+code|unused\s+exports?|orphan\s+modules?|chesterton|unreferenced|zombie)\b/i);
+  recordSignal(
+    'dead-code',
+    /\b(nothing\s+references|never\s+imported|dead\s+code|unused\s+code|unused\s+exports?|orphan\s+modules?|chesterton|unreferenced|zombie)\b/i,
+  );
   // Onboarding
-  recordSignal('onboard', /\b(just\s+joined|where\s+do\s+i\s+(?:even\s+)?begin|onboard(ing)?|newcomer|new\s+contributor|get\s+started|reading\s+order|day\s+1|mental\s+model|orientation)\b/i);
+  recordSignal(
+    'onboard',
+    /\b(just\s+joined|where\s+do\s+i\s+(?:even\s+)?begin|onboard(ing)?|newcomer|new\s+contributor|get\s+started|reading\s+order|day\s+1|mental\s+model|orientation)\b/i,
+  );
   // Change Preparation
-  recordSignal('prepare', /\b(prepare\s+change|change\s+readiness|readiness\s+review|readiness\s+checklist|ready\s+for\s+implementation)\b/i);
+  recordSignal(
+    'prepare',
+    /\b(prepare\s+change|change\s+readiness|readiness\s+review|readiness\s+checklist|ready\s+for\s+implementation)\b/i,
+  );
   // Change Impact Analysis
-  recordSignal('change-impact', /\b(change[- ]impact|recomputation\s+scope|invalidated\s+artifacts|freshness\s+check\s+on\s+change|change\s+set)\b/i);
+  recordSignal(
+    'change-impact',
+    /\b(change[- ]impact|recomputation\s+scope|invalidated\s+artifacts|freshness\s+check\s+on\s+change|change\s+set)\b/i,
+  );
   // Autonomous Investigation
-  recordSignal('investigate', /\b(investigat\w*|explore\s+question|why\s+does.*fail|why\s+does.*error|what\s+evidence\s+supports|unverified\s+assumptions|competing\s+hypothes\w*)\b/i);
+  recordSignal(
+    'investigate',
+    /\b(investigat\w*|explore\s+question|why\s+does.*fail|why\s+does.*error|what\s+evidence\s+supports|unverified\s+assumptions|competing\s+hypothes\w*)\b/i,
+  );
 
   // Position-based priority bonus (the capability mentioned first in prose gets +3 precedence)
   const posValues = Object.values(intentPositions);
@@ -3731,7 +4208,9 @@ function resolveRoute(request, options = {}) {
   if (/\b(?:do\s+not|don't|without)\s+trace\b/i.test(cleanQ)) {
     intentScores.trace = 0;
   }
-  if (/\b(?:do\s+not|don't|without)\s+(?:inspect|analyze)\s+(?:dependencies|imports)\b/i.test(cleanQ)) {
+  if (
+    /\b(?:do\s+not|don't|without)\s+(?:inspect|analyze)\s+(?:dependencies|imports)\b/i.test(cleanQ)
+  ) {
     intentScores.dependencies = 0;
   }
 
@@ -3754,9 +4233,28 @@ function resolveRoute(request, options = {}) {
   ];
 
   const stopWords = new Set([
-    'execution', 'the', 'system', 'flow', 'dependencies', 'things', 'files',
-    'step', 'steps', 'step by step', 'readiness', 'review', 'readiness review',
-    'change readiness review', 'it', 'its', 'this', 'that', 'all', 'a', 'an', 'complete'
+    'execution',
+    'the',
+    'system',
+    'flow',
+    'dependencies',
+    'things',
+    'files',
+    'step',
+    'steps',
+    'step by step',
+    'readiness',
+    'review',
+    'readiness review',
+    'change readiness review',
+    'it',
+    'its',
+    'this',
+    'that',
+    'all',
+    'a',
+    'an',
+    'complete',
   ]);
 
   for (const tp of targetPatterns) {
@@ -3809,7 +4307,12 @@ function resolveRoute(request, options = {}) {
     };
   }
 
-  if (sortedOps.length === 0 || (/^(check|analyze|look\s+into|inspect|audit)\b/i.test(cleanQ) && sortedOps[0][1] <= 5 && !extractedTarget)) {
+  if (
+    sortedOps.length === 0 ||
+    (/^(check|analyze|look\s+into|inspect|audit)\b/i.test(cleanQ) &&
+      sortedOps[0][1] <= 5 &&
+      !extractedTarget)
+  ) {
     if (/\binvestigate\s+([a-zA-Z0-9_\-\.\/]+)/i.test(cleanQ)) {
       const match = cleanQ.match(/\binvestigate\s+([a-zA-Z0-9_\-\.\/]+)/i);
       const subject = match[1].replace(/[.?]/g, '').trim();
@@ -3845,8 +4348,11 @@ function resolveRoute(request, options = {}) {
       isOutOfScope: false,
       missingContext: [],
       expectedUncertainty: isUntrusted ? 'UNTRUSTED_INJECTION' : 'AMBIGUOUS',
-      rationale: 'Query has no distinct single capability signal or is overly broad; defaulting to safe repository overview.',
-      limitations: ['Query is ambiguous. Defaulting to safe repository overview. Narrow request using a specific subcommand or target symbol.'],
+      rationale:
+        'Query has no distinct single capability signal or is overly broad; defaulting to safe repository overview.',
+      limitations: [
+        'Query is ambiguous. Defaulting to safe repository overview. Narrow request using a specific subcommand or target symbol.',
+      ],
       safeQuery: sanitizedQuery,
     };
   }
@@ -3872,15 +4378,20 @@ function resolveRoute(request, options = {}) {
 
   // Model-aware unknown symbol detection
   let isUnknownTarget = false;
-  if (options.repoRoot && extractedTarget && ['trace', 'impact', 'dependencies'].includes(primaryOp)) {
+  if (
+    options.repoRoot &&
+    extractedTarget &&
+    ['trace', 'impact', 'dependencies'].includes(primaryOp)
+  ) {
     try {
       const engine = new CodebaseIntelligence(options.repoRoot);
       const model = engine.getModel();
       const norm = extractedTarget.toLowerCase().replace(/\\/g, '/');
-      const found = (model.entities || []).some(e =>
-        e.id.toLowerCase() === norm ||
-        e.name.toLowerCase() === norm ||
-        (e.sources && e.sources.some(s => s.file.toLowerCase().includes(norm)))
+      const found = (model.entities || []).some(
+        e =>
+          e.id.toLowerCase() === norm ||
+          e.name.toLowerCase() === norm ||
+          (e.sources && e.sources.some(s => s.file.toLowerCase().includes(norm))),
       );
       if (!found && !['authentication', 'src/cli.js', 'logger.js', 'logger.log'].includes(norm)) {
         isUnknownTarget = true;
@@ -3909,9 +4420,16 @@ function resolveRoute(request, options = {}) {
 
   const limitations = [];
   if (contradictionRationale) limitations.push(contradictionRationale);
-  if (isUntrusted) limitations.push('Prompt injection pattern detected and neutralized. Read-only analysis enforced.');
-  if (missingContext.includes('target')) limitations.push(`Missing target for "${primaryOp}". Provide a target symbol, file path, or task description.`);
-  if (isUnknownTarget) limitations.push(`Target "${extractedTarget}" was not observed in the scanned codebase model.`);
+  if (isUntrusted)
+    limitations.push(
+      'Prompt injection pattern detected and neutralized. Read-only analysis enforced.',
+    );
+  if (missingContext.includes('target'))
+    limitations.push(
+      `Missing target for "${primaryOp}". Provide a target symbol, file path, or task description.`,
+    );
+  if (isUnknownTarget)
+    limitations.push(`Target "${extractedTarget}" was not observed in the scanned codebase model.`);
 
   return {
     primarySkill,
@@ -3919,7 +4437,12 @@ function resolveRoute(request, options = {}) {
     target: extractedTarget ? redactSecrets(extractedTarget) : undefined,
     delegatedCapabilities,
     delegatedOperations,
-    confidence: (hasContradiction || expectedUncertainty === 'INSUFFICIENT_STATIC_EVIDENCE' || isUnknownTarget) ? 'L4_UNKNOWN' : (delegatedOperations.length > 0 ? 'L2_CORROBORATED' : 'L1_OBSERVED'),
+    confidence:
+      hasContradiction || expectedUncertainty === 'INSUFFICIENT_STATIC_EVIDENCE' || isUnknownTarget
+        ? 'L4_UNKNOWN'
+        : delegatedOperations.length > 0
+          ? 'L2_CORROBORATED'
+          : 'L1_OBSERVED',
     isAmbiguous: false,
     hasContradiction,
     isUntrusted,
@@ -3936,12 +4459,7 @@ function resolveRoute(request, options = {}) {
  * Programmatic Execution Gateway
  */
 async function runCodebaseIntelligence(params = {}) {
-  const {
-    subcommand = 'overview',
-    target,
-    flags = {},
-    repoRoot = process.cwd(),
-  } = params;
+  const { subcommand = 'overview', target, flags = {}, repoRoot = process.cwd() } = params;
 
   const effectiveTimeout = params.timeoutMs || flags.timeoutMs || flags.timeout;
   const effectiveSignal = params.signal || flags.signal;
@@ -4029,7 +4547,9 @@ async function runCodebaseIntelligence(params = {}) {
           break;
         default:
           status = 'UNSUPPORTED';
-          throw new Error(`Unknown codebase intelligence subcommand: "${subcommand}". Expected one of: overview, trace, dependencies, relevant-files, impact, dead-code, onboard, prepare, change-impact, investigate.`);
+          throw new Error(
+            `Unknown codebase intelligence subcommand: "${subcommand}". Expected one of: overview, trace, dependencies, relevant-files, impact, dead-code, onboard, prepare, change-impact, investigate.`,
+          );
       }
     };
 
@@ -4055,12 +4575,14 @@ async function runCodebaseIntelligence(params = {}) {
         promises.push(
           new Promise((_, reject) => {
             timerId = setTimeout(() => {
-              const err = new Error(`Operation "${normalizedSub}" timed out after ${effectiveTimeout}ms`);
+              const err = new Error(
+                `Operation "${normalizedSub}" timed out after ${effectiveTimeout}ms`,
+              );
               err.code = 'TIMEOUT_EXCEEDED';
               reject(err);
             }, effectiveTimeout);
             if (timerId && timerId.unref) timerId.unref();
-          })
+          }),
         );
       }
 
@@ -4073,7 +4595,7 @@ async function runCodebaseIntelligence(params = {}) {
               reject(err);
             };
             effectiveSignal.addEventListener('abort', abortListener, { once: true });
-          })
+          }),
         );
       }
 
@@ -4090,11 +4612,11 @@ async function runCodebaseIntelligence(params = {}) {
     const diag = classifyError(err, normalizedSub, target);
     const safeErrorMsg = diag.message;
     if (timerId) clearTimeout(timerId);
-  if (effectiveSignal && abortListener) {
-    effectiveSignal.removeEventListener('abort', abortListener);
-  }
+    if (effectiveSignal && abortListener) {
+      effectiveSignal.removeEventListener('abort', abortListener);
+    }
 
-  const safeTarget = target ? redactSecrets(target) : undefined;
+    const safeTarget = target ? redactSecrets(target) : undefined;
     const envelope = createResultEnvelope({
       status,
       operation: normalizedSub,
@@ -4117,7 +4639,9 @@ async function runCodebaseIntelligence(params = {}) {
       target: safeTarget,
       status,
       data: envelope,
-      markdown: redactSecrets(`# ❌ Error executing /understand ${normalizedSub} [${diag.code}]\n\n${safeTarget ? `**Target:** ${safeTarget}\n\n` : ''}${safeErrorMsg}\n\n**Suggested Action:** ${diag.suggested_action}`),
+      markdown: redactSecrets(
+        `# ❌ Error executing /understand ${normalizedSub} [${diag.code}]\n\n${safeTarget ? `**Target:** ${safeTarget}\n\n` : ''}${safeErrorMsg}\n\n**Suggested Action:** ${diag.suggested_action}`,
+      ),
       evidenceRecords: [],
     };
   }
@@ -4152,7 +4676,9 @@ async function runCodebaseIntelligence(params = {}) {
     summary: safeSummary,
     data: rawData,
     evidence_records: rawData.evidenceRecords || [],
-    unresolved_assumptions: (rawData.unresolvedAssumptions || rawData.unknowns || []).map(a => redactSecrets(a)),
+    unresolved_assumptions: (rawData.unresolvedAssumptions || rawData.unknowns || []).map(a =>
+      redactSecrets(a),
+    ),
     limitations: (rawData.limitations || []).map(l => redactSecrets(l)),
     diagnostics,
   });
@@ -4179,7 +4705,19 @@ async function runCodebaseIntelligenceCli(args = [], flags = {}, quiet = false) 
   const positional = args.filter(a => !a.startsWith('-'));
   if (positional.length === 1 && !positional[0].includes(' ')) {
     const candidate = positional[0].toLowerCase();
-    const validSubs = ['overview', 'trace', 'dependencies', 'deps', 'relevant-files', 'impact', 'dead-code', 'onboard', 'prepare', 'change-impact', 'investigate'];
+    const validSubs = [
+      'overview',
+      'trace',
+      'dependencies',
+      'deps',
+      'relevant-files',
+      'impact',
+      'dead-code',
+      'onboard',
+      'prepare',
+      'change-impact',
+      'investigate',
+    ];
     if (validSubs.includes(candidate)) {
       subcommand = candidate === 'deps' ? 'dependencies' : candidate;
     } else {
@@ -4187,7 +4725,19 @@ async function runCodebaseIntelligenceCli(args = [], flags = {}, quiet = false) 
     }
   } else if (positional.length > 0) {
     const candidate = positional[0].toLowerCase();
-    const validSubs = ['overview', 'trace', 'dependencies', 'deps', 'relevant-files', 'impact', 'dead-code', 'onboard', 'prepare', 'change-impact', 'investigate'];
+    const validSubs = [
+      'overview',
+      'trace',
+      'dependencies',
+      'deps',
+      'relevant-files',
+      'impact',
+      'dead-code',
+      'onboard',
+      'prepare',
+      'change-impact',
+      'investigate',
+    ];
     if (validSubs.includes(candidate)) {
       subcommand = candidate === 'deps' ? 'dependencies' : candidate;
       target = positional.slice(1).join(' ') || undefined;

@@ -73,7 +73,7 @@ function writeFileSyncAtomic(filePath, data, encoding = 'utf8') {
     dir,
     `.${path.basename(filePath)}.${process.pid}.${Date.now()}.${randomSuffix}.tmp`,
   );
-  fs.writeFileSync(tmpPath, data, encoding);
+  fs.writeFileSync(tmpPath, data, { encoding: /** @type {BufferEncoding} */ (encoding) });
   try {
     try {
       fs.renameSync(tmpPath, filePath);
@@ -152,16 +152,18 @@ function getActiveEvolutionsPath(agentDir) {
 
 /**
  * Ingests a verified outcome and produces a candidate proposal
- * @param {Object} outcome
- * @param {string} outcome.source - Verified source origin
- * @param {string} outcome.target - Allowed evolution target
- * @param {string} outcome.current_behavior
- * @param {string} outcome.proposed_change
- * @param {string} outcome.evidence - Concrete supporting evidence
+ * @param {Object} [outcome]
+ * @param {string} [outcome.source] - Verified source origin
+ * @param {string} [outcome.target] - Allowed evolution target
+ * @param {string} [outcome.current_behavior]
+ * @param {string} [outcome.observed_behavior]
+ * @param {string} [outcome.proposed_change]
+ * @param {string} [outcome.evidence] - Concrete supporting evidence
+ * @param {string} [outcome.supporting_evidence]
  * @param {string} [outcome.evidence_type] - Hierarchy level
  * @param {string} [outcome.risk]
  * @param {Object} [outcome.previous_state] - For rollback
- * @param {string} [candidateId] - Optional explicit ID
+ * @param {string|null} [candidateId] - Optional explicit ID
  * @returns {Object} Candidate object
  */
 function createCandidateFromOutcome(outcome = {}, candidateId = null) {

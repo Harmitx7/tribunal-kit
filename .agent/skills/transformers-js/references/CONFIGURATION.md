@@ -30,22 +30,22 @@ console.log(env.version); // e.g., '4.x'
 interface TransformersEnvironment {
   // Version info
   version: string;
-  
+
   // Backend configuration
   backends: {
     onnx: Partial<ONNXEnv>;
   };
-  
+
   // Remote model settings
   allowRemoteModels: boolean;
   remoteHost: string;
   remotePathTemplate: string;
-  
+
   // Local model settings
   allowLocalModels: boolean;
   localModelPath: string;
   useFS: boolean;
-  
+
   // Cache settings
   useBrowserCache: boolean;
   useFSCache: boolean;
@@ -122,6 +122,7 @@ env.localModelPath = '/path/to/models/';
 ```
 
 **Default values:**
+
 - Browser: `allowLocalModels = false`, `localModelPath = '/models/'`
 - Node.js: `allowLocalModels = true`, `localModelPath = '/models/'`
 
@@ -156,7 +157,10 @@ env.allowLocalModels = true;
 env.localModelPath = '/app/models/';
 env.allowRemoteModels = false; // Offline mode
 
-const classifier = await pipeline('sentiment-analysis', 'Xenova/distilbert-base-uncased-finetuned-sst-2-english');
+const classifier = await pipeline(
+  'sentiment-analysis',
+  'Xenova/distilbert-base-uncased-finetuned-sst-2-english',
+);
 ```
 
 ## Cache Configuration
@@ -197,6 +201,7 @@ env.cacheDir = null;
 ```
 
 For comprehensive caching documentation including:
+
 - Browser Cache API details and storage limits
 - Node.js filesystem cache structure and management
 - Custom cache implementations (Redis, database, S3)
@@ -243,6 +248,7 @@ env.backends.onnx.wasm.wasmPaths = '/static/wasm/';
 ```
 
 **Required files:**
+
 - `ort-wasm.wasm` - Main WASM binary
 - `ort-wasm-simd.wasm` - SIMD-enabled WASM binary
 - `ort-wasm-threaded.wasm` - Multi-threaded WASM binary
@@ -283,6 +289,7 @@ env.logLevel = LogLevel.INFO;
 ```
 
 Common values:
+
 - `LogLevel.DEBUG`
 - `LogLevel.INFO`
 - `LogLevel.WARNING`
@@ -301,7 +308,7 @@ import { env } from '@huggingface/transformers';
 // Fast iteration with caching
 env.allowRemoteModels = true;
 env.useBrowserCache = true; // Browser
-env.useFSCache = true;      // Node.js
+env.useFSCache = true; // Node.js
 env.cacheDir = './.cache';
 ```
 
@@ -365,8 +372,6 @@ env.localModelPath = './test-fixtures/models/';
 env.useFSCache = false;
 ```
 
-
-
 ## Environment Best Practices
 
 ### 1. Configure Early
@@ -425,7 +430,7 @@ console.log('Transformers.js Configuration:', {
   localModelPath: env.localModelPath,
   cacheDir: env.cacheDir,
   useFSCache: env.useFSCache,
-  useBrowserCache: env.useBrowserCache
+  useBrowserCache: env.useBrowserCache,
 });
 ```
 

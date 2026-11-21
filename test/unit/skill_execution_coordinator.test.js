@@ -84,8 +84,10 @@ describe('Phase 6 & 7 — Multi-Skill Orchestration & Zero Silent Abandonment', 
         { skillName: 'security-auditor', isRequired: true, prerequisites: ['non-existent-prereq'] },
       ];
 
-      await expect(coordinator.executeSequence(plan, async () => ({ valid: true }))).rejects.toThrow(
-        /Execution halted: Required skill 'security-auditor' blocked by missing prerequisite/
+      await expect(
+        coordinator.executeSequence(plan, async () => ({ valid: true })),
+      ).rejects.toThrow(
+        /Execution halted: Required skill 'security-auditor' blocked by missing prerequisite/,
       );
 
       const record = coordinator.executionRecords.get('security-auditor');
@@ -101,7 +103,7 @@ describe('Phase 6 & 7 — Multi-Skill Orchestration & Zero Silent Abandonment', 
         { skillName: 'error-resilience', isRequired: true },
       ];
 
-      const result = await coordinator.executeParallel(skills, async (name) => {
+      const result = await coordinator.executeParallel(skills, async name => {
         return { valid: true, skill: name, passedChecks: 5 };
       });
 
@@ -116,16 +118,14 @@ describe('Phase 6 & 7 — Multi-Skill Orchestration & Zero Silent Abandonment', 
 
   describe('Eliminating Silent Failures & Zero Abandonment', () => {
     test('never marks a failed required skill as completed', async () => {
-      const plan = [
-        { skillName: 'vulnerability-scanner', isRequired: true },
-      ];
+      const plan = [{ skillName: 'vulnerability-scanner', isRequired: true }];
 
       const executor = async () => {
         throw new Error('Critical vulnerability scan error');
       };
 
       await expect(coordinator.executeSequence(plan, executor)).rejects.toThrow(
-        /Critical vulnerability scan error/
+        /Critical vulnerability scan error/,
       );
 
       const record = coordinator.executionRecords.get('vulnerability-scanner');
@@ -138,9 +138,7 @@ describe('Phase 6 & 7 — Multi-Skill Orchestration & Zero Silent Abandonment', 
     });
 
     test('times out hanging skills without hanging the process', async () => {
-      const plan = [
-        { skillName: 'slow-auditor', isRequired: true },
-      ];
+      const plan = [{ skillName: 'slow-auditor', isRequired: true }];
 
       const executor = async () => {
         return new Promise(resolve => {
@@ -162,7 +160,7 @@ describe('Phase 6 & 7 — Multi-Skill Orchestration & Zero Silent Abandonment', 
         { skillName: 'parallel-slow-ok', isRequired: false },
       ];
 
-      const executor = jest.fn(async (skill) => {
+      const executor = jest.fn(async skill => {
         if (skill === 'parallel-ok') return { valid: true, ok: 1 };
         if (skill === 'parallel-fail-req') throw new Error('Critical explosion');
         if (skill === 'parallel-slow-ok') {
@@ -171,8 +169,9 @@ describe('Phase 6 & 7 — Multi-Skill Orchestration & Zero Silent Abandonment', 
         }
       });
 
-      await expect(coordinator.executeParallel(skills, executor))
-        .rejects.toThrow(/Required parallel skill 'parallel-fail-req' failed: Critical explosion/);
+      await expect(coordinator.executeParallel(skills, executor)).rejects.toThrow(
+        /Required parallel skill 'parallel-fail-req' failed: Critical explosion/,
+      );
 
       // Invariant: All skills must reach terminal state!
       const recOk = coordinator.executionRecords.get('parallel-ok');
@@ -201,4 +200,3 @@ describe('Phase 6 & 7 — Multi-Skill Orchestration & Zero Silent Abandonment', 
     });
   });
 });
-

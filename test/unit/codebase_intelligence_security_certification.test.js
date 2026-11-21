@@ -47,8 +47,10 @@ describe('Phase 5 — Security Boundary Audit: Secret Redaction Matrix', () => {
     },
     {
       type: 'JWT Token',
-      secret: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-      payload: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+      secret:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+      payload:
+        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
     },
     {
       type: 'PostgreSQL Connection URI',
@@ -58,7 +60,8 @@ describe('Phase 5 — Security Boundary Audit: Secret Redaction Matrix', () => {
     {
       type: 'MongoDB+srv Connection URI',
       secret: 'mongo_ultra_secret_pw',
-      payload: 'mongodb+srv://clusteradmin:mongo_ultra_secret_pw@cluster0.abcde.mongodb.net/production',
+      payload:
+        'mongodb+srv://clusteradmin:mongo_ultra_secret_pw@cluster0.abcde.mongodb.net/production',
     },
     {
       type: 'Generic Quoted Password with Spaces',
@@ -188,17 +191,27 @@ describe('Phase 5 — Static Analysis & Evidence Integrity (Negative Tests)', ()
 
   test('Completeness metrics accurately reflect execution status and limitations', async () => {
     // Complete operation
-    const compRes = await runCodebaseIntelligence({ subcommand: 'overview', repoRoot: FIXTURE_DIR });
+    const compRes = await runCodebaseIntelligence({
+      subcommand: 'overview',
+      repoRoot: FIXTURE_DIR,
+    });
     expect(compRes.data.completeness.is_complete).toBe(true);
     expect(compRes.data.completeness.percentage).toBe(100);
 
     // Failed operation
-    const failRes = await runCodebaseIntelligence({ subcommand: 'trace', target: '', repoRoot: FIXTURE_DIR });
+    const failRes = await runCodebaseIntelligence({
+      subcommand: 'trace',
+      target: '',
+      repoRoot: FIXTURE_DIR,
+    });
     expect(failRes.data.completeness.is_complete).toBe(false);
     expect(failRes.data.completeness.percentage).toBe(0);
 
     // Unsupported operation
-    const unsupRes = await runCodebaseIntelligence({ subcommand: 'bogus_sub', repoRoot: FIXTURE_DIR });
+    const unsupRes = await runCodebaseIntelligence({
+      subcommand: 'bogus_sub',
+      repoRoot: FIXTURE_DIR,
+    });
     expect(unsupRes.data.completeness.is_complete).toBe(false);
     expect(unsupRes.data.completeness.percentage).toBe(0);
   });
@@ -226,31 +239,72 @@ describe('Phase 5 — Filesystem & Read-Only Guarantees (Zero-Mutation Audit)', 
   }
 
   const scenarios = [
-    { name: 'Normal execution (all 8 ops)', action: async () => {
-      await runCodebaseIntelligence({ subcommand: 'overview', repoRoot: FIXTURE_DIR });
-      await runCodebaseIntelligence({ subcommand: 'trace', target: 'POST /checkout', repoRoot: FIXTURE_DIR });
-      await runCodebaseIntelligence({ subcommand: 'dependencies', repoRoot: FIXTURE_DIR });
-      await runCodebaseIntelligence({ subcommand: 'relevant-files', target: 'auth', repoRoot: FIXTURE_DIR });
-      await runCodebaseIntelligence({ subcommand: 'impact', target: 'service/checkout.js', repoRoot: FIXTURE_DIR });
-      await runCodebaseIntelligence({ subcommand: 'dead-code', repoRoot: FIXTURE_DIR });
-      await runCodebaseIntelligence({ subcommand: 'onboard', repoRoot: FIXTURE_DIR });
-      await runCodebaseIntelligence({ subcommand: 'prepare', target: 'add feature', repoRoot: FIXTURE_DIR });
-    }},
-    { name: 'Invalid operation', action: async () => {
-      await runCodebaseIntelligence({ subcommand: 'totally-invalid-operation-name', repoRoot: FIXTURE_DIR });
-    }},
-    { name: 'Missing target on required operation', action: async () => {
-      await runCodebaseIntelligence({ subcommand: 'trace', repoRoot: FIXTURE_DIR });
-      await runCodebaseIntelligence({ subcommand: 'impact', repoRoot: FIXTURE_DIR });
-      await runCodebaseIntelligence({ subcommand: 'prepare', repoRoot: FIXTURE_DIR });
-    }},
-    { name: 'Attempted traversal or inaccessible target', action: async () => {
-      await runCodebaseIntelligence({ subcommand: 'impact', target: '../../../../etc/passwd', repoRoot: FIXTURE_DIR });
-    }},
-    { name: 'Dead code analysis (confirming 0 unlinks)', action: async () => {
-      const res = await runCodebaseIntelligence({ subcommand: 'dead-code', repoRoot: FIXTURE_DIR });
-      expect(res.status).toBe('COMPLETE');
-    }},
+    {
+      name: 'Normal execution (all 8 ops)',
+      action: async () => {
+        await runCodebaseIntelligence({ subcommand: 'overview', repoRoot: FIXTURE_DIR });
+        await runCodebaseIntelligence({
+          subcommand: 'trace',
+          target: 'POST /checkout',
+          repoRoot: FIXTURE_DIR,
+        });
+        await runCodebaseIntelligence({ subcommand: 'dependencies', repoRoot: FIXTURE_DIR });
+        await runCodebaseIntelligence({
+          subcommand: 'relevant-files',
+          target: 'auth',
+          repoRoot: FIXTURE_DIR,
+        });
+        await runCodebaseIntelligence({
+          subcommand: 'impact',
+          target: 'service/checkout.js',
+          repoRoot: FIXTURE_DIR,
+        });
+        await runCodebaseIntelligence({ subcommand: 'dead-code', repoRoot: FIXTURE_DIR });
+        await runCodebaseIntelligence({ subcommand: 'onboard', repoRoot: FIXTURE_DIR });
+        await runCodebaseIntelligence({
+          subcommand: 'prepare',
+          target: 'add feature',
+          repoRoot: FIXTURE_DIR,
+        });
+      },
+    },
+    {
+      name: 'Invalid operation',
+      action: async () => {
+        await runCodebaseIntelligence({
+          subcommand: 'totally-invalid-operation-name',
+          repoRoot: FIXTURE_DIR,
+        });
+      },
+    },
+    {
+      name: 'Missing target on required operation',
+      action: async () => {
+        await runCodebaseIntelligence({ subcommand: 'trace', repoRoot: FIXTURE_DIR });
+        await runCodebaseIntelligence({ subcommand: 'impact', repoRoot: FIXTURE_DIR });
+        await runCodebaseIntelligence({ subcommand: 'prepare', repoRoot: FIXTURE_DIR });
+      },
+    },
+    {
+      name: 'Attempted traversal or inaccessible target',
+      action: async () => {
+        await runCodebaseIntelligence({
+          subcommand: 'impact',
+          target: '../../../../etc/passwd',
+          repoRoot: FIXTURE_DIR,
+        });
+      },
+    },
+    {
+      name: 'Dead code analysis (confirming 0 unlinks)',
+      action: async () => {
+        const res = await runCodebaseIntelligence({
+          subcommand: 'dead-code',
+          repoRoot: FIXTURE_DIR,
+        });
+        expect(res.status).toBe('COMPLETE');
+      },
+    },
   ];
 
   for (const sc of scenarios) {

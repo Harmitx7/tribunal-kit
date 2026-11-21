@@ -19,81 +19,98 @@ const SUPPORTED_SCHEMA_VERSIONS = ['1.0.0'];
 /**
  * Schema for an individual evaluation case within a benchmark suite.
  */
-const EvaluationCaseSchema = z.object({
-  id: z.string().min(1, 'Evaluation case must possess a unique id.'),
-  schemaVersion: z.enum(SUPPORTED_SCHEMA_VERSIONS, {
-    errorMap: () => ({ message: 'Unsupported schemaVersion. Supported: 1.0.0' }),
-  }),
-  suiteId: z.string().min(1, 'suiteId is required.'),
-  category: z.string().min(1, 'category is required.'),
-  taskDescription: z.string().min(1, 'taskDescription is required.'),
-  inputFixture: z.object({
-    prompt: z.string().optional(),
-    targetFile: z.string().optional(),
-    codeSnippet: z.string().optional(),
-    context: z.record(z.unknown()).optional(),
-  }),
-  expected: z.object({
-    groundTruthLabel: z.string().min(1, 'groundTruthLabel is required.'),
-    labelProvenance: z.string().min(1, 'labelProvenance is required.'),
-    requiredProperties: z.array(z.string()).optional(),
-    forbiddenBehaviors: z.array(z.string()).optional(),
-  }),
-  severity: z.enum(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'INFO']).default('MEDIUM'),
-  determinism: z.enum(['DETERMINISTIC', 'STOCHASTIC']).default('DETERMINISTIC'),
-  timeoutMs: z.number().positive().default(10000),
-  metadata: z.record(z.unknown()).optional(),
-}).strict();
+const EvaluationCaseSchema = z
+  .object({
+    id: z.string().min(1, 'Evaluation case must possess a unique id.'),
+    schemaVersion: z.enum(SUPPORTED_SCHEMA_VERSIONS, {
+      errorMap: () => ({ message: 'Unsupported schemaVersion. Supported: 1.0.0' }),
+    }),
+    suiteId: z.string().min(1, 'suiteId is required.'),
+    category: z.string().min(1, 'category is required.'),
+    taskDescription: z.string().min(1, 'taskDescription is required.'),
+    inputFixture: z.object({
+      prompt: z.string().optional(),
+      targetFile: z.string().optional(),
+      codeSnippet: z.string().optional(),
+      context: z.record(z.unknown()).optional(),
+    }),
+    expected: z.object({
+      groundTruthLabel: z.string().min(1, 'groundTruthLabel is required.'),
+      labelProvenance: z.string().min(1, 'labelProvenance is required.'),
+      requiredProperties: z.array(z.string()).optional(),
+      forbiddenBehaviors: z.array(z.string()).optional(),
+    }),
+    severity: z.enum(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'INFO']).default('MEDIUM'),
+    determinism: z.enum(['DETERMINISTIC', 'STOCHASTIC']).default('DETERMINISTIC'),
+    timeoutMs: z.number().positive().default(10000),
+    metadata: z.record(z.unknown()).optional(),
+  })
+  .strict();
 
 /**
  * Schema for an individual evaluation execution result.
  */
-const EvaluationResultSchema = z.object({
-  caseId: z.string().min(1, 'caseId is required.'),
-  candidateId: z.string().min(1, 'candidateId is required.'),
-  baselineId: z.string().optional(),
-  schemaVersion: z.enum(SUPPORTED_SCHEMA_VERSIONS, {
-    errorMap: () => ({ message: 'Unsupported schemaVersion. Supported: 1.0.0' }),
-  }),
-  timestamp: z.string().datetime({ offset: true }).or(z.string().regex(/^\d{4}-\d{2}-\d{2}T/)),
-  status: z.enum(['COMPLETED', 'TIMED_OUT', 'CRASHED', 'BLOCKED']),
-  verdict: z.enum(['PASS', 'FAIL', 'INCONCLUSIVE']),
-  actualOutput: z.unknown().optional(),
-  metrics: z.object({
-    durationMs: z.number().nonnegative(),
-    tokensUsed: z.number().nonnegative().optional(),
-    confidence: z.number().min(0).max(1).or(z.string()).optional(),
-    errorMargin: z.number().nonnegative().optional(),
-  }).passthrough(),
-  evidence: z.array(
-    z.object({
-      type: z.enum(['DETERMINISTIC_CHECK', 'STATIC_PROOF', 'INFERRED_CLAIM']),
-      source: z.string().min(1),
-      verified: z.boolean(),
-      hash: z.string().optional(),
-    })
-  ).default([]),
-  failureDetails: z.object({
-    category: z.string(),
-    reason: z.string(),
-    sanitizedStack: z.string().optional(),
-  }).optional(),
-}).strict();
+const EvaluationResultSchema = z
+  .object({
+    caseId: z.string().min(1, 'caseId is required.'),
+    candidateId: z.string().min(1, 'candidateId is required.'),
+    baselineId: z.string().optional(),
+    schemaVersion: z.enum(SUPPORTED_SCHEMA_VERSIONS, {
+      errorMap: () => ({ message: 'Unsupported schemaVersion. Supported: 1.0.0' }),
+    }),
+    timestamp: z
+      .string()
+      .datetime({ offset: true })
+      .or(z.string().regex(/^\d{4}-\d{2}-\d{2}T/)),
+    status: z.enum(['COMPLETED', 'TIMED_OUT', 'CRASHED', 'BLOCKED']),
+    verdict: z.enum(['PASS', 'FAIL', 'INCONCLUSIVE']),
+    actualOutput: z.unknown().optional(),
+    metrics: z
+      .object({
+        durationMs: z.number().nonnegative(),
+        tokensUsed: z.number().nonnegative().optional(),
+        confidence: z.number().min(0).max(1).or(z.string()).optional(),
+        errorMargin: z.number().nonnegative().optional(),
+      })
+      .passthrough(),
+    evidence: z
+      .array(
+        z.object({
+          type: z.enum(['DETERMINISTIC_CHECK', 'STATIC_PROOF', 'INFERRED_CLAIM']),
+          source: z.string().min(1),
+          verified: z.boolean(),
+          hash: z.string().optional(),
+        }),
+      )
+      .default([]),
+    failureDetails: z
+      .object({
+        category: z.string(),
+        reason: z.string(),
+        sanitizedStack: z.string().optional(),
+      })
+      .optional(),
+  })
+  .strict();
 
 /**
  * Schema for an entire evaluation dataset file.
  */
-const EvaluationDatasetSchema = z.object({
-  schemaVersion: z.enum(SUPPORTED_SCHEMA_VERSIONS),
-  datasetId: z.string().min(1),
-  version: z.string().min(1),
-  name: z.string().min(1),
-  description: z.string().min(1),
-  checksum: z.string().optional(),
-  split: z.enum(['train', 'validation', 'held_out_eval']).default('held_out_eval'),
-  cases: z.array(EvaluationCaseSchema).min(1, 'Dataset must contain at least one evaluation case.'),
-  metadata: z.record(z.unknown()).optional(),
-}).strict();
+const EvaluationDatasetSchema = z
+  .object({
+    schemaVersion: z.enum(SUPPORTED_SCHEMA_VERSIONS),
+    datasetId: z.string().min(1),
+    version: z.string().min(1),
+    name: z.string().min(1),
+    description: z.string().min(1),
+    checksum: z.string().optional(),
+    split: z.enum(['train', 'validation', 'held_out_eval']).default('held_out_eval'),
+    cases: z
+      .array(EvaluationCaseSchema)
+      .min(1, 'Dataset must contain at least one evaluation case.'),
+    metadata: z.record(z.unknown()).optional(),
+  })
+  .strict();
 
 /**
  * Validates an evaluation case against EvaluationCaseSchema.

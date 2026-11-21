@@ -13,11 +13,7 @@
  */
 
 const path = require('path');
-const {
-  loadRejections,
-  isPreviouslyRejected,
-  normalizedSimilarity,
-} = require('./negative_memory');
+const { loadRejections, isPreviouslyRejected, normalizedSimilarity } = require('./negative_memory');
 
 const DEFAULT_CHANGE_BUDGET = Object.freeze({
   maxChangeRatio: 0.25,
@@ -35,7 +31,8 @@ class SkillMutator {
    */
   constructor(options = {}) {
     this.agentDir = path.resolve(options.agentDir || path.join(process.cwd(), '.agent'));
-    this.similarityThreshold = options.similarityThreshold || DEFAULT_CHANGE_BUDGET.similarityThreshold;
+    this.similarityThreshold =
+      options.similarityThreshold || DEFAULT_CHANGE_BUDGET.similarityThreshold;
     this.maxChangeRatio = options.maxChangeRatio || DEFAULT_CHANGE_BUDGET.maxChangeRatio;
     this.maxRules = options.maxRules || DEFAULT_CHANGE_BUDGET.maxRules;
   }
@@ -140,7 +137,8 @@ class SkillMutator {
 
     // 2. Append or inject into procedural rules section
     let mutatedText = originalText;
-    const headerPattern = /(##\s*(?:Procedural Rules|Guidelines|Instructions|Defensive Guardrails))/i;
+    const headerPattern =
+      /(##\s*(?:Procedural Rules|Guidelines|Instructions|Defensive Guardrails))/i;
 
     const rulesBlock = appliedRules.join('\n');
     if (headerPattern.test(mutatedText)) {

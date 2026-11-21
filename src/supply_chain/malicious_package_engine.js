@@ -43,7 +43,10 @@ const POPULAR_NPM_PACKAGES = [
 const DANGEROUS_HOOK_PATTERNS = [
   { pattern: /curl\s+/i, reason: 'Remote network retrieval via curl' },
   { pattern: /wget\s+/i, reason: 'Remote network retrieval via wget' },
-  { pattern: /powershell(\.exe)?\s+(-enc|-encodedcommand)/i, reason: 'Obfuscated PowerShell execution' },
+  {
+    pattern: /powershell(\.exe)?\s+(-enc|-encodedcommand)/i,
+    reason: 'Obfuscated PowerShell execution',
+  },
   { pattern: /node\s+(-e|--eval)\s+/i, reason: 'Inline Node.js script evaluation' },
   { pattern: /base64\s+-d/i, reason: 'Base64 decode pipeline execution' },
   { pattern: /eval\s*\(/i, reason: 'Dynamic JavaScript eval invocation' },
@@ -92,7 +95,13 @@ class MaliciousPackageEngine {
     const version = packageData.version || '0.0.0';
     const scripts = packageData.scripts || packageData.lifecycleScripts || {};
 
-    const dangerousHooks = ['preinstall', 'install', 'postinstall', 'preuninstall', 'postuninstall'];
+    const dangerousHooks = [
+      'preinstall',
+      'install',
+      'postinstall',
+      'preuninstall',
+      'postuninstall',
+    ];
 
     for (const hook of dangerousHooks) {
       const scriptContent = scripts[hook];
@@ -113,7 +122,7 @@ class MaliciousPackageEngine {
               evidence: `hook: '${hook}', command: '${scriptContent}', matched: '${rule.pattern}'`,
               remediation: `Remove '${hook}' lifecycle hook or audit source tarball; do not install without sandboxing.`,
               verdict: 'FAIL',
-            })
+            }),
           );
         }
       }
@@ -121,7 +130,7 @@ class MaliciousPackageEngine {
 
     return {
       status: findings.length === 0 ? 'PASS' : 'FAIL',
-      hasLifecycleScripts: Object.keys(scripts).some((k) => dangerousHooks.includes(k)),
+      hasLifecycleScripts: Object.keys(scripts).some(k => dangerousHooks.includes(k)),
       findingsCount: findings.length,
       findings,
     };
@@ -157,7 +166,7 @@ class MaliciousPackageEngine {
             evidence: `candidate: '${candidateName}', target: '${popular}', editDistance: ${dist}`,
             remediation: `Verify package identity and intended author. Did you mean to install '${popular}' instead?`,
             verdict: 'FAIL',
-          })
+          }),
         );
       }
     }
@@ -188,7 +197,7 @@ class MaliciousPackageEngine {
           evidence: `packageName: '${packageName}', isScoped: false, isInternal: true`,
           remediation: `Scope the private package under an approved organization namespace (e.g. '@organization/${packageName}').`,
           verdict: 'FAIL',
-        })
+        }),
       );
     }
 
@@ -208,7 +217,9 @@ class MaliciousPackageEngine {
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      const match = line.match(/^\s*-\s+uses:\s*['"]?([a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+)@([^#\s'"]+)/);
+      const match = line.match(
+        /^\s*-\s+uses:\s*['"]?([a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+)@([^#\s'"]+)/,
+      );
       if (match) {
         const actionName = match[1];
         const actionRef = match[2];
@@ -227,7 +238,7 @@ class MaliciousPackageEngine {
               evidence: `file: ${workflowFilePath}:${i + 1}, uses: ${match[0].trim()}`,
               remediation: `Pin the action to its full 40-character commit SHA with a version comment (e.g. '${actionName}@<sha> # v4').`,
               verdict: 'FAIL',
-            })
+            }),
           );
         }
       }
@@ -248,4 +259,3 @@ module.exports = {
   levenshteinDistance,
   MaliciousPackageEngine,
 };
-

@@ -44,7 +44,7 @@ function runSupplyChainAudit(packageJson, lockfileJson, options = {}) {
           evidence: `cycle trace: ${cycle.join(' -> ')}`,
           remediation: `Refactor dependencies to eliminate circular references and stabilize build resolution.`,
           verdict: 'FAIL',
-        })
+        }),
       );
     }
   }
@@ -88,10 +88,10 @@ function runSupplyChainAudit(packageJson, lockfileJson, options = {}) {
   }
 
   // 6. Aggregate audit result
-  const criticalFindings = allFindings.filter((f) => f.severity === 'CRITICAL').length;
-  const highFindings = allFindings.filter((f) => f.severity === 'HIGH').length;
-  const mediumFindings = allFindings.filter((f) => f.severity === 'MEDIUM').length;
-  const lowFindings = allFindings.filter((f) => f.severity === 'LOW').length;
+  const criticalFindings = allFindings.filter(f => f.severity === 'CRITICAL').length;
+  const highFindings = allFindings.filter(f => f.severity === 'HIGH').length;
+  const mediumFindings = allFindings.filter(f => f.severity === 'MEDIUM').length;
+  const lowFindings = allFindings.filter(f => f.severity === 'LOW').length;
 
   const status = allFindings.length === 0 ? 'PASS' : 'FAIL';
   const summary =
@@ -129,4 +129,3 @@ module.exports = {
   // High-level orchestrator
   runSupplyChainAudit,
 };
-

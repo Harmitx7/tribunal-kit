@@ -10,8 +10,12 @@ describe('LLM Regression Evaluator & Non-Masking Safety Invariant', () => {
       // BUT case "SEC-001" (CRITICAL) passed in baseline and failed in candidate!
       const baselineResults = [
         { caseId: 'SEC-001', verdict: 'PASS', severity: 'CRITICAL' },
-        ...Array(13).fill(null).map((_, i) => ({ caseId: `NORM-${i}`, verdict: 'PASS', severity: 'LOW' })),
-        ...Array(6).fill(null).map((_, i) => ({ caseId: `FAIL-${i}`, verdict: 'FAIL', severity: 'LOW' })),
+        ...Array(13)
+          .fill(null)
+          .map((_, i) => ({ caseId: `NORM-${i}`, verdict: 'PASS', severity: 'LOW' })),
+        ...Array(6)
+          .fill(null)
+          .map((_, i) => ({ caseId: `FAIL-${i}`, verdict: 'FAIL', severity: 'LOW' })),
       ];
 
       const candidateResults = [
@@ -21,8 +25,12 @@ describe('LLM Regression Evaluator & Non-Masking Safety Invariant', () => {
           severity: 'CRITICAL',
           failureDetails: { reason: 'SQL injection slipped through' },
         },
-        ...Array(13).fill(null).map((_, i) => ({ caseId: `NORM-${i}`, verdict: 'PASS', severity: 'LOW' })),
-        ...Array(6).fill(null).map((_, i) => ({ caseId: `FAIL-${i}`, verdict: 'PASS', severity: 'LOW' })), // Improved 6 cases!
+        ...Array(13)
+          .fill(null)
+          .map((_, i) => ({ caseId: `NORM-${i}`, verdict: 'PASS', severity: 'LOW' })),
+        ...Array(6)
+          .fill(null)
+          .map((_, i) => ({ caseId: `FAIL-${i}`, verdict: 'PASS', severity: 'LOW' })), // Improved 6 cases!
       ];
 
       const report = evaluateRegressions(candidateResults, baselineResults);
@@ -34,7 +42,7 @@ describe('LLM Regression Evaluator & Non-Masking Safety Invariant', () => {
       expect(report.criticalSafetyRegressions[0].caseId).toBe('SEC-001');
       // Verify aggregate improvement didn't mask the failure
       expect(report.metrics.candidate.passRate).toBe(0.95);
-      expect(report.metrics.baseline.passRate).toBe(0.70);
+      expect(report.metrics.baseline.passRate).toBe(0.7);
     });
 
     it('approves candidate when there are zero regressions and matching/improving pass rate', () => {
@@ -59,17 +67,21 @@ describe('LLM Regression Evaluator & Non-Masking Safety Invariant', () => {
 
     it('flags statistically significant metric regression across non-critical cases', () => {
       // 50 cases: baseline has 45 passes (90%), candidate has 20 passes (40%), all LOW severity
-      const baselineResults = Array(50).fill(null).map((_, i) => ({
-        caseId: `CASE-${i}`,
-        verdict: i < 45 ? 'PASS' : 'FAIL',
-        severity: 'LOW',
-      }));
+      const baselineResults = Array(50)
+        .fill(null)
+        .map((_, i) => ({
+          caseId: `CASE-${i}`,
+          verdict: i < 45 ? 'PASS' : 'FAIL',
+          severity: 'LOW',
+        }));
 
-      const candidateResults = Array(50).fill(null).map((_, i) => ({
-        caseId: `CASE-${i}`,
-        verdict: i < 20 ? 'PASS' : 'FAIL',
-        severity: 'LOW',
-      }));
+      const candidateResults = Array(50)
+        .fill(null)
+        .map((_, i) => ({
+          caseId: `CASE-${i}`,
+          verdict: i < 20 ? 'PASS' : 'FAIL',
+          severity: 'LOW',
+        }));
 
       const report = evaluateRegressions(candidateResults, baselineResults);
       expect(report.safetyInvariantHeld).toBe(true);
@@ -79,17 +91,21 @@ describe('LLM Regression Evaluator & Non-Masking Safety Invariant', () => {
 
     it('conditionally approves with warning when non-critical regressions are small and bounds overlap', () => {
       // Baseline 10 cases: 9 pass. Candidate 10 cases: 8 pass (1 non-critical regression)
-      const baselineResults = Array(10).fill(null).map((_, i) => ({
-        caseId: `CASE-${i}`,
-        verdict: i < 9 ? 'PASS' : 'FAIL',
-        severity: 'LOW',
-      }));
+      const baselineResults = Array(10)
+        .fill(null)
+        .map((_, i) => ({
+          caseId: `CASE-${i}`,
+          verdict: i < 9 ? 'PASS' : 'FAIL',
+          severity: 'LOW',
+        }));
 
-      const candidateResults = Array(10).fill(null).map((_, i) => ({
-        caseId: `CASE-${i}`,
-        verdict: i < 8 ? 'PASS' : 'FAIL',
-        severity: 'LOW',
-      }));
+      const candidateResults = Array(10)
+        .fill(null)
+        .map((_, i) => ({
+          caseId: `CASE-${i}`,
+          verdict: i < 8 ? 'PASS' : 'FAIL',
+          severity: 'LOW',
+        }));
 
       const report = evaluateRegressions(candidateResults, baselineResults);
       expect(report.safetyInvariantHeld).toBe(true);

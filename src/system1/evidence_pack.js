@@ -76,7 +76,9 @@ function sanitizeEvidenceText(text) {
     .replace(/]]>/g, ']]&gt;')
     .replace(/<\/?repository_evidence>/gi, match => match.replace('<', '&lt;').replace('>', '&gt;'))
     .replace(/<\/?fact>/gi, match => match.replace('<', '&lt;').replace('>', '&gt;'))
-    .replace(/<\/?system_instructions>/gi, match => match.replace('<', '&lt;').replace('>', '&gt;'));
+    .replace(/<\/?system_instructions>/gi, match =>
+      match.replace('<', '&lt;').replace('>', '&gt;'),
+    );
 }
 
 /**
@@ -103,7 +105,9 @@ function computeSha256(content) {
  * @returns {string}
  */
 function computeEvidenceId({ kind, source, source_range, source_digest, claim = '' }) {
-  const normKind = String(kind || 'unknown').toLowerCase().trim();
+  const normKind = String(kind || 'unknown')
+    .toLowerCase()
+    .trim();
   const normSource = normalizePath(String(source || '')).trim();
 
   let rangeStr = '';
@@ -118,7 +122,8 @@ function computeEvidenceId({ kind, source, source_range, source_digest, claim = 
 
   const normDigest = String(source_digest || '').trim();
   // For unverified reviewer claims that lack source digests, bind to the normalized claim text
-  const claimBinding = normKind === EVIDENCE_KINDS.REVIEWER_CLAIM ? `:${claim.trim().slice(0, 100)}` : '';
+  const claimBinding =
+    normKind === EVIDENCE_KINDS.REVIEWER_CLAIM ? `:${claim.trim().slice(0, 100)}` : '';
 
   const canonicalKey = `${normKind}|${normSource}|${rangeStr}|${normDigest}${claimBinding}`;
   const hash = crypto.createHash('sha256').update(canonicalKey, 'utf8').digest('hex').slice(0, 16);
@@ -155,7 +160,11 @@ function canonicalizeRecord(record) {
  * @param {string} [workingTreeFingerprint]
  * @returns {string}
  */
-function computePackFingerprint(records, decisionPlanFingerprint = '', workingTreeFingerprint = '') {
+function computePackFingerprint(
+  records,
+  decisionPlanFingerprint = '',
+  workingTreeFingerprint = '',
+) {
   const sortedRecords = [...records].sort((a, b) => a.evidence_id.localeCompare(b.evidence_id));
   const canonicalEntries = sortedRecords.map(canonicalizeRecord);
   const payload = [
@@ -170,10 +179,12 @@ function computePackFingerprint(records, decisionPlanFingerprint = '', workingTr
 /**
  * Creates and normalizes an individual Evidence Record.
  *
- * @param {Object} options
- * @param {string} options.kind - from EVIDENCE_KINDS
- * @param {string} options.claim - statement supported by evidence
- * @param {string} options.source - repository path or tool source
+ * @param {Object} [options]
+ * @param {string} [options.kind] - from EVIDENCE_KINDS
+ * @param {string} [options.claim] - statement supported by evidence
+ * @param {string} [options.source] - repository path or tool source
+ * @param {string} [options.evidence_id] - explicit evidence ID
+ * @param {number} [options.created_at] - timestamp
  * @param {Object|string|null} [options.source_range] - line range or symbol name
  * @param {string} [options.source_digest] - SHA-256 digest of source
  * @param {string} [options.producer] - generator of the record
@@ -185,7 +196,9 @@ function computePackFingerprint(records, decisionPlanFingerprint = '', workingTr
  * @returns {Object} Validated EvidenceRecord
  */
 function createEvidenceRecord(options = {}) {
-  const repoRoot = options.repoRoot ? resolveCanonicalRoot(options.repoRoot) : resolveCanonicalRoot(process.cwd());
+  const repoRoot = options.repoRoot
+    ? resolveCanonicalRoot(options.repoRoot)
+    : resolveCanonicalRoot(process.cwd());
   const kind = String(options.kind || EVIDENCE_KINDS.FILE_SNIPPET).trim();
   const rawSource = String(options.source || '').trim();
   const producer = String(options.producer || 'system1:evidence_pack').trim();
@@ -243,7 +256,9 @@ function createEvidenceRecord(options = {}) {
     const hasValidVerification =
       options.verification &&
       options.verification.valid === true &&
-      ['sha256_match', 'ast_parse', 'test_exit_code', 'schema_validation'].includes(options.verification.method);
+      ['sha256_match', 'ast_parse', 'test_exit_code', 'schema_validation'].includes(
+        options.verification.method,
+      );
     if (!hasValidVerification || !TRUSTED_PRODUCERS.has(producer)) {
       trustStatus = TRUST_STATUS.OBSERVED;
     }
@@ -254,20 +269,24 @@ function createEvidenceRecord(options = {}) {
   }
 
   // Construct stable identifier
-  const evidenceId = options.evidence_id || computeEvidenceId({
-    kind,
-    source: normalizedSource,
-    source_range: options.source_range,
-    source_digest: sourceDigest,
-    claim: options.claim,
-  });
+  const evidenceId =
+    options.evidence_id ||
+    computeEvidenceId({
+      kind,
+      source: normalizedSource,
+      source_range: options.source_range,
+      source_digest: sourceDigest,
+      claim: options.claim,
+    });
 
   // Construct verification record
   const verification = {
     method: options.verification?.method || (sourceDigest ? 'sha256_match' : 'none'),
     verified_at: options.verification?.verified_at || Date.now(),
     valid: trustStatus !== TRUST_STATUS.INVALID && trustStatus !== TRUST_STATUS.STALE,
-    details: options.verification?.details || (isPathContained ? 'Integrity and containment verified.' : 'Path containment violation.'),
+    details:
+      options.verification?.details ||
+      (isPathContained ? 'Integrity and containment verified.' : 'Path containment violation.'),
   };
 
   const estimatedTokens = estimateTokens(cleanSnippet || options.claim || 50);
@@ -289,7 +308,9 @@ function createEvidenceRecord(options = {}) {
       estimated_tokens: estimatedTokens,
       is_mandatory: Boolean(options.metadata?.is_mandatory),
       language: options.metadata?.language || '',
-      tags: Array.isArray(options.metadata?.tags) ? options.metadata.tags.map(String).slice(0, 10) : [],
+      tags: Array.isArray(options.metadata?.tags)
+        ? options.metadata.tags.map(String).slice(0, 10)
+        : [],
       score: typeof options.metadata?.score === 'number' ? options.metadata.score : 1.0,
     },
   };
@@ -307,10 +328,16 @@ function validateEvidenceRecord(record) {
   }
 
   if (record.schema_version !== EVIDENCE_PACK_SCHEMA_VERSION) {
-    errors.push(`Invalid schema_version: expected ${EVIDENCE_PACK_SCHEMA_VERSION}, got ${record.schema_version}`);
+    errors.push(
+      `Invalid schema_version: expected ${EVIDENCE_PACK_SCHEMA_VERSION}, got ${record.schema_version}`,
+    );
   }
 
-  if (!record.evidence_id || typeof record.evidence_id !== 'string' || !record.evidence_id.startsWith('ev_')) {
+  if (
+    !record.evidence_id ||
+    typeof record.evidence_id !== 'string' ||
+    !record.evidence_id.startsWith('ev_')
+  ) {
     errors.push(`Invalid evidence_id format: ${record.evidence_id}`);
   }
 
@@ -332,7 +359,9 @@ function validateEvidenceRecord(record) {
     (record.producer.startsWith('reviewer:') || record.producer.startsWith('llm:')) &&
     record.trust_status === TRUST_STATUS.VALIDATED
   ) {
-    errors.push(`Security violation: Reviewer producer "${record.producer}" cannot assign VALIDATED trust status`);
+    errors.push(
+      `Security violation: Reviewer producer "${record.producer}" cannot assign VALIDATED trust status`,
+    );
   }
 
   // Security invariant: Path traversal check
@@ -341,7 +370,10 @@ function validateEvidenceRecord(record) {
   }
 
   // Schema invariant: metadata must be an object if provided
-  if (record.metadata !== undefined && (typeof record.metadata !== 'object' || record.metadata === null)) {
+  if (
+    record.metadata !== undefined &&
+    (typeof record.metadata !== 'object' || record.metadata === null)
+  ) {
     errors.push('Record metadata must be an object if provided');
   }
 
@@ -352,7 +384,9 @@ function validateEvidenceRecord(record) {
       typeof record.source_range.end_line === 'number' &&
       record.source_range.start_line > record.source_range.end_line
     ) {
-      errors.push(`Invalid source_range: start_line (${record.source_range.start_line}) > end_line (${record.source_range.end_line})`);
+      errors.push(
+        `Invalid source_range: start_line (${record.source_range.start_line}) > end_line (${record.source_range.end_line})`,
+      );
     }
   }
 
@@ -380,7 +414,9 @@ function validateEvidencePack(pack, options = {}) {
   }
 
   if (pack.schema_version !== EVIDENCE_PACK_SCHEMA_VERSION) {
-    errors.push(`Invalid pack schema_version: expected ${EVIDENCE_PACK_SCHEMA_VERSION}, got ${pack.schema_version}`);
+    errors.push(
+      `Invalid pack schema_version: expected ${EVIDENCE_PACK_SCHEMA_VERSION}, got ${pack.schema_version}`,
+    );
   }
 
   if (!pack.pack_id || typeof pack.pack_id !== 'string') {
@@ -393,7 +429,9 @@ function validateEvidencePack(pack, options = {}) {
   }
 
   if (pack.records.length > MAX_PACK_RECORDS) {
-    errors.push(`Evidence Pack exceeds maximum record limit (${pack.records.length} > ${MAX_PACK_RECORDS})`);
+    errors.push(
+      `Evidence Pack exceeds maximum record limit (${pack.records.length} > ${MAX_PACK_RECORDS})`,
+    );
   }
 
   // Check expected pack fingerprint against external trust reference
@@ -401,7 +439,9 @@ function validateEvidencePack(pack, options = {}) {
     options.expectedPackFingerprint &&
     pack.pack_fingerprint !== options.expectedPackFingerprint
   ) {
-    errors.push(`Expected pack fingerprint mismatch: expected ${options.expectedPackFingerprint}, got ${pack.pack_fingerprint || '(none)'}`);
+    errors.push(
+      `Expected pack fingerprint mismatch: expected ${options.expectedPackFingerprint}, got ${pack.pack_fingerprint || '(none)'}`,
+    );
   }
 
   // Check decision plan fingerprint if expected
@@ -409,7 +449,9 @@ function validateEvidencePack(pack, options = {}) {
     options.expectedDecisionPlanFingerprint &&
     pack.decision_plan_fingerprint !== options.expectedDecisionPlanFingerprint
   ) {
-    errors.push(`Decision Plan fingerprint mismatch: expected ${options.expectedDecisionPlanFingerprint}, got ${pack.decision_plan_fingerprint || '(none)'}`);
+    errors.push(
+      `Decision Plan fingerprint mismatch: expected ${options.expectedDecisionPlanFingerprint}, got ${pack.decision_plan_fingerprint || '(none)'}`,
+    );
   }
 
   // Check working tree fingerprint if expected
@@ -417,7 +459,9 @@ function validateEvidencePack(pack, options = {}) {
     options.expectedWorkingTreeFingerprint &&
     pack.working_tree_fingerprint !== options.expectedWorkingTreeFingerprint
   ) {
-    errors.push(`Working tree fingerprint mismatch: expected ${options.expectedWorkingTreeFingerprint}, got ${pack.working_tree_fingerprint || '(none)'}`);
+    errors.push(
+      `Working tree fingerprint mismatch: expected ${options.expectedWorkingTreeFingerprint}, got ${pack.working_tree_fingerprint || '(none)'}`,
+    );
   }
 
   // Check repoRoot containment if expected
@@ -425,7 +469,9 @@ function validateEvidencePack(pack, options = {}) {
     const expectedRoot = resolveCanonicalRoot(options.repoRoot);
     const actualRoot = pack.repo_root ? resolveCanonicalRoot(pack.repo_root) : '';
     if (actualRoot !== expectedRoot) {
-      errors.push(`Repository root mismatch: expected ${expectedRoot}, got ${actualRoot || '(none)'}`);
+      errors.push(
+        `Repository root mismatch: expected ${expectedRoot}, got ${actualRoot || '(none)'}`,
+      );
     }
   }
 
@@ -437,7 +483,9 @@ function validateEvidencePack(pack, options = {}) {
     const record = pack.records[idx];
     const recVal = validateEvidenceRecord(record);
     if (!recVal.valid) {
-      errors.push(`Record [${idx}] (${record?.evidence_id || 'unknown'}): ${recVal.errors.join('; ')}`);
+      errors.push(
+        `Record [${idx}] (${record?.evidence_id || 'unknown'}): ${recVal.errors.join('; ')}`,
+      );
     }
 
     if (record && record.evidence_id) {
@@ -456,7 +504,9 @@ function validateEvidencePack(pack, options = {}) {
   }
 
   if (totalBytes > MAX_TOTAL_PACK_BYTES) {
-    errors.push(`Total Evidence Pack payload exceeds size boundary (${totalBytes} > ${MAX_TOTAL_PACK_BYTES} bytes)`);
+    errors.push(
+      `Total Evidence Pack payload exceeds size boundary (${totalBytes} > ${MAX_TOTAL_PACK_BYTES} bytes)`,
+    );
   }
 
   // Validate canonical pack fingerprint
@@ -467,7 +517,9 @@ function validateEvidencePack(pack, options = {}) {
       pack.working_tree_fingerprint,
     );
     if (computed !== pack.pack_fingerprint) {
-      errors.push(`Pack fingerprint integrity violation: computed ${computed}, expected ${pack.pack_fingerprint}`);
+      errors.push(
+        `Pack fingerprint integrity violation: computed ${computed}, expected ${pack.pack_fingerprint}`,
+      );
     }
   } else {
     errors.push('Missing required pack_fingerprint');
@@ -497,10 +549,14 @@ function validateEvidencePack(pack, options = {}) {
  * @returns {Object} Canonical Evidence Pack
  */
 function createEvidencePack(options = {}) {
-  const repoRoot = options.repoRoot ? resolveCanonicalRoot(options.repoRoot) : resolveCanonicalRoot(process.cwd());
+  const repoRoot = options.repoRoot
+    ? resolveCanonicalRoot(options.repoRoot)
+    : resolveCanonicalRoot(process.cwd());
   const decisionPlan = options.decisionPlan || {};
   const rawFiles = options.files || decisionPlan.files || [];
-  const files = (Array.isArray(rawFiles) ? rawFiles : typeof rawFiles === 'string' ? rawFiles.split(',') : [])
+  const files = (
+    Array.isArray(rawFiles) ? rawFiles : typeof rawFiles === 'string' ? rawFiles.split(',') : []
+  )
     .map(f => (typeof f === 'string' ? f.trim() : ''))
     .filter(Boolean);
 
@@ -582,7 +638,9 @@ function createEvidencePack(options = {}) {
   }
 
   // 4. Stable canonical sorting by evidence_id
-  const sortedRecords = Array.from(recordMap.values()).sort((a, b) => a.evidence_id.localeCompare(b.evidence_id));
+  const sortedRecords = Array.from(recordMap.values()).sort((a, b) =>
+    a.evidence_id.localeCompare(b.evidence_id),
+  );
 
   // 5. Compute working tree fingerprint
   const workingTreeDigestPayload = sortedRecords
@@ -593,7 +651,11 @@ function createEvidencePack(options = {}) {
   const workingTreeFingerprint = computeSha256(workingTreeDigestPayload || repoRoot);
 
   const decisionPlanFingerprint = decisionPlan.fingerprint || decisionPlan.plan_fingerprint || '';
-  const packFingerprint = computePackFingerprint(sortedRecords, decisionPlanFingerprint, workingTreeFingerprint);
+  const packFingerprint = computePackFingerprint(
+    sortedRecords,
+    decisionPlanFingerprint,
+    workingTreeFingerprint,
+  );
   const packId = `ep_${packFingerprint.slice(0, 16)}`;
 
   // 6. Summary metrics
@@ -646,7 +708,9 @@ function createEvidencePack(options = {}) {
  * @returns {{ fresh: boolean, totalChecked: number, staleCount: number, staleRecordIds: string[] }}
  */
 function checkEvidenceFreshness(pack, repoRoot) {
-  const root = repoRoot ? resolveCanonicalRoot(repoRoot) : pack.repo_root || resolveCanonicalRoot(process.cwd());
+  const root = repoRoot
+    ? resolveCanonicalRoot(repoRoot)
+    : pack.repo_root || resolveCanonicalRoot(process.cwd());
   const staleRecordIds = [];
   let checkedCount = 0;
 
@@ -697,7 +761,11 @@ function checkEvidenceFreshness(pack, repoRoot) {
   }
 
   // Synchronize pack summary metrics with active trust states
-  let obs = 0, val = 0, unv = 0, stl = 0, inv = 0;
+  let obs = 0,
+    val = 0,
+    unv = 0,
+    stl = 0,
+    inv = 0;
   for (const r of pack.records) {
     if (r.trust_status === TRUST_STATUS.OBSERVED) obs++;
     else if (r.trust_status === TRUST_STATUS.VALIDATED) val++;
@@ -734,8 +802,7 @@ function filterEvidenceForReviewer(pack, reviewerId, reviewerSpec, contextBudget
     return [];
   }
 
-  const catalogEntry =
-    reviewerSpec ||
+  const catalogEntry = reviewerSpec ||
     REVIEWER_CATALOG.find(r => r.name === reviewerId) || {
       name: reviewerId,
       primary_domains: ['logic'],
@@ -748,8 +815,14 @@ function filterEvidenceForReviewer(pack, reviewerId, reviewerSpec, contextBudget
   ]);
   if (domains.size === 0) domains.add('logic');
 
-  const maxItems = typeof contextBudget.max_items === 'number' && contextBudget.max_items > 0 ? contextBudget.max_items : 15;
-  const maxTokens = typeof contextBudget.max_tokens === 'number' && contextBudget.max_tokens > 0 ? contextBudget.max_tokens : 4000;
+  const maxItems =
+    typeof contextBudget.max_items === 'number' && contextBudget.max_items > 0
+      ? contextBudget.max_items
+      : 15;
+  const maxTokens =
+    typeof contextBudget.max_tokens === 'number' && contextBudget.max_tokens > 0
+      ? contextBudget.max_tokens
+      : 4000;
 
   // Domain relevance evaluation function
   function isRecordRelevant(record) {
@@ -757,7 +830,10 @@ function filterEvidenceForReviewer(pack, reviewerId, reviewerSpec, contextBudget
     if (record.metadata?.is_mandatory) return true;
 
     // 2. Reject stale and invalid records from reviewer consumption
-    if (record.trust_status === TRUST_STATUS.INVALID || record.trust_status === TRUST_STATUS.STALE) {
+    if (
+      record.trust_status === TRUST_STATUS.INVALID ||
+      record.trust_status === TRUST_STATUS.STALE
+    ) {
       return false;
     }
 
@@ -769,17 +845,34 @@ function filterEvidenceForReviewer(pack, reviewerId, reviewerSpec, contextBudget
     // 4. Domain-specific relevance matching
     switch (record.kind) {
       case EVIDENCE_KINDS.SECURITY_POLICY:
-        return domains.has('security') || reviewerId.includes('security') || reviewerId.includes('logic');
+        return (
+          domains.has('security') || reviewerId.includes('security') || reviewerId.includes('logic')
+        );
 
       case EVIDENCE_KINDS.CONFIGURATION:
-        return domains.has('dependency') || domains.has('cicd') || domains.has('backend') || domains.has('all');
+        return (
+          domains.has('dependency') ||
+          domains.has('cicd') ||
+          domains.has('backend') ||
+          domains.has('all')
+        );
 
       case EVIDENCE_KINDS.TEST_COVERAGE:
       case EVIDENCE_KINDS.TEST_RESULT:
-        return domains.has('test') || domains.has('logic') || reviewerId.includes('test') || reviewerId.includes('logic');
+        return (
+          domains.has('test') ||
+          domains.has('logic') ||
+          reviewerId.includes('test') ||
+          reviewerId.includes('logic')
+        );
 
       case EVIDENCE_KINDS.DEPENDENCY:
-        return domains.has('dependency') || domains.has('security') || domains.has('backend') || domains.has('frontend');
+        return (
+          domains.has('dependency') ||
+          domains.has('security') ||
+          domains.has('backend') ||
+          domains.has('frontend')
+        );
 
       case EVIDENCE_KINDS.AST_SYMBOL:
       case EVIDENCE_KINDS.FILE_SNIPPET:

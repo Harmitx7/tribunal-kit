@@ -47,7 +47,7 @@ describe('Hierarchical Cancellation Context & Timeout Propagation', () => {
     const ctx = new CancellationContext({ timeoutMs: 30 });
     expect(ctx.isCancelled()).toBe(false);
 
-    await new Promise((res) => setTimeout(res, 50));
+    await new Promise(res => setTimeout(res, 50));
 
     expect(ctx.isCancelled()).toBe(true);
     expect(ctx.getCategory()).toBe('TIMEOUT');
@@ -59,7 +59,7 @@ describe('Hierarchical Cancellation Context & Timeout Propagation', () => {
     let hookExecuted = false;
     let receivedReason = null;
 
-    ctx.onCancel((reason) => {
+    ctx.onCancel(reason => {
       hookExecuted = true;
       receivedReason = reason;
     });

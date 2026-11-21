@@ -175,7 +175,7 @@ describe('TUI System & Brainless Components', () => {
       const lengths = output.map(line => stripAnsi(line).length);
       const expectedLength = lengths[0];
 
-      lengths.forEach((len) => {
+      lengths.forEach(len => {
         expect(len).toBe(expectedLength);
       });
     });

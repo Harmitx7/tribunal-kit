@@ -174,7 +174,7 @@ Response: [dumped user table rows]
 ## Hand-Off & Coordination
 
 - Hand off OWASP vulnerability fixes to `@security-auditor`.
-- Hand off SQL injection fixes to `@database-architect` or `@sql-pro`.
+- Hand off SQL injection fixes to `@database-architect` (with `sql-pro` skill).
 - Hand off input sanitization and schema validation issues to `@schema-reviewer`.
 
 ---

@@ -159,6 +159,7 @@ The 6 concepts explored below provide genuinely distinct visual identities, info
 ## 3. Comparative Evaluation & Scoring Matrix
 
 Each concept is scored on an objective 1–10 scale across 8 rigorous criteria:
+
 1. **Visual Impact:** Immediate "wow factor" and premium feel.
 2. **Professional Appearance:** Conveys enterprise engineering rigor vs looking like a toy.
 3. **Readability:** Rapid scannability of diagnostic findings and warnings.
@@ -170,39 +171,39 @@ Each concept is scored on an objective 1–10 scale across 8 rigorous criteria:
 
 ### Scoring Table
 
-| Criteria (Weight) | Concept A: Command Center | Concept B: Cyber Intel | Concept C: Minimalist | Concept D: Dashboard | Concept E: Editorial | Concept F: Adaptive Hybrid |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Visual Impact (15%)** | 8.8 | 8.5 | 7.5 | 8.7 | 7.2 | **9.6** |
-| **Professional Appearance (15%)** | 9.0 | 7.8 | 9.2 | 8.4 | 9.4 | **9.5** |
-| **Readability (15%)** | 8.2 | 7.4 | 9.5 | 8.6 | 9.1 | **9.2** |
-| **Usability (15%)** | 8.4 | 7.6 | 8.8 | 8.9 | 7.8 | **9.4** |
-| **Terminal Compatibility (10%)** | 8.0 | 7.5 | 9.8 | 7.6 | 9.0 | **9.5** |
-| **Feasibility (10%)** | 8.2 | 7.9 | 9.6 | 7.5 | 8.8 | **9.2** |
-| **Maintainability (10%)** | 8.0 | 7.6 | 9.4 | 7.4 | 8.6 | **9.3** |
-| **Brand Distinctiveness (10%)** | 8.5 | 8.8 | 7.0 | 8.0 | 8.2 | **9.6** |
-| **WEIGHTED TOTAL (100%)** | **8.42** | **7.88** | **8.63** | **8.25** | **8.47** | **9.43** |
+| Criteria (Weight)                 | Concept A: Command Center | Concept B: Cyber Intel | Concept C: Minimalist | Concept D: Dashboard | Concept E: Editorial | Concept F: Adaptive Hybrid |
+| :-------------------------------- | :-----------------------: | :--------------------: | :-------------------: | :------------------: | :------------------: | :------------------------: |
+| **Visual Impact (15%)**           |            8.8            |          8.5           |          7.5          |         8.7          |         7.2          |          **9.6**           |
+| **Professional Appearance (15%)** |            9.0            |          7.8           |          9.2          |         8.4          |         9.4          |          **9.5**           |
+| **Readability (15%)**             |            8.2            |          7.4           |          9.5          |         8.6          |         9.1          |          **9.2**           |
+| **Usability (15%)**               |            8.4            |          7.6           |          8.8          |         8.9          |         7.8          |          **9.4**           |
+| **Terminal Compatibility (10%)**  |            8.0            |          7.5           |          9.8          |         7.6          |         9.0          |          **9.5**           |
+| **Feasibility (10%)**             |            8.2            |          7.9           |          9.6          |         7.5          |         8.8          |          **9.2**           |
+| **Maintainability (10%)**         |            8.0            |          7.6           |          9.4          |         7.4          |         8.6          |          **9.3**           |
+| **Brand Distinctiveness (10%)**   |            8.5            |          8.8           |          7.0          |         8.0          |         8.2          |          **9.6**           |
+| **WEIGHTED TOTAL (100%)**         |         **8.42**          |        **7.88**        |       **8.63**        |       **8.25**       |       **8.47**       |          **9.43**          |
 
 ---
 
 ## 4. Concept Scoring Rationale & Ranking
 
 1. **Rank 1: Concept F — Adaptive Hybrid Architecture (Score: 9.43 / 10)**  
-   *Why it wins:* It does not commit the cardinal sin of forcing a heavy dashboard onto a simple 1-second CLI command (`tk case list`), nor does it reduce a rich multi-agent telemetry workflow (`tk rsi status`, `tk marathon`) to a boring stream of plain text. It leverages Tribunal-Kit's existing strengths (the Brainless flame palette, shimmer wave, and action tree) while standardizing them into an ultra-clean, zero-dependency design system that gracefully scales down to monochrome and CI environments.
+   _Why it wins:_ It does not commit the cardinal sin of forcing a heavy dashboard onto a simple 1-second CLI command (`tk case list`), nor does it reduce a rich multi-agent telemetry workflow (`tk rsi status`, `tk marathon`) to a boring stream of plain text. It leverages Tribunal-Kit's existing strengths (the Brainless flame palette, shimmer wave, and action tree) while standardizing them into an ultra-clean, zero-dependency design system that gracefully scales down to monochrome and CI environments.
 
 2. **Rank 2: Concept C — Premium Minimalist Developer Tool (Score: 8.63 / 10)**  
-   *Why it ranked high:* Superior terminal compatibility, blazing speed, and timeless aesthetics. However, it lacks the multi-agent mission-control presence needed for complex workflows like the 28-reviewer swarm and Recursive Self-Improvement Engine (RSIE).
+   _Why it ranked high:_ Superior terminal compatibility, blazing speed, and timeless aesthetics. However, it lacks the multi-agent mission-control presence needed for complex workflows like the 28-reviewer swarm and Recursive Self-Improvement Engine (RSIE).
 
 3. **Rank 3: Concept E — Editorial Engineering Dossier (Score: 8.47 / 10)**  
-   *Why it ranked high:* Exceptional for static audit reports and compliance exports, but lacks dynamic feedback (spinners, interactive wizards, live matrices).
+   _Why it ranked high:_ Exceptional for static audit reports and compliance exports, but lacks dynamic feedback (spinners, interactive wizards, live matrices).
 
 4. **Rank 4: Concept A — Dark Command Center (Score: 8.42 / 10)**  
-   *Why it ranked high:* Visually striking and dense, but difficult to reflow cleanly on standard 80×24 or narrow 60-column mobile SSH terminals.
+   _Why it ranked high:_ Visually striking and dense, but difficult to reflow cleanly on standard 80×24 or narrow 60-column mobile SSH terminals.
 
 5. **Rank 5: Concept D — Modern Command-Line Dashboard (Score: 8.25 / 10)**  
-   *Why it ranked middle:* Great visual card layout, but border overhead consumes too much horizontal space for deeply nested code diffs and audit logs.
+   _Why it ranked middle:_ Great visual card layout, but border overhead consumes too much horizontal space for deeply nested code diffs and audit logs.
 
 6. **Rank 6: Concept B — Cyber Intelligence Terminal (Score: 7.88 / 10)**  
-   *Why it ranked lowest:* Tends toward aesthetic gimmicks that can distract developers during real debugging sessions and carries higher risk of visual fatigue.
+   _Why it ranked lowest:_ Tends toward aesthetic gimmicks that can distract developers during real debugging sessions and carries higher risk of visual fatigue.
 
 ---
 
@@ -211,6 +212,7 @@ Each concept is scored on an objective 1–10 scale across 8 rigorous criteria:
 **We formally recommend Concept F (Adaptive Hybrid Architecture).**
 
 Concept F builds directly on Tribunal-Kit's existing strengths while resolving its architectural gaps:
+
 1. Reconciles `src/utils/logger.js` and `src/tui/theme.js` into a unified tokens-based presentation layer.
 2. Fixes the border alignment defect in `panel.js`.
 3. Adds robust ANSI-safe text width calculations and terminal resize protection.

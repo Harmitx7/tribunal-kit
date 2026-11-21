@@ -18,13 +18,14 @@ let isPathContained;
 try {
   ({ isPathContained } = require('../../src/utils/path_containment'));
 } catch {
-  isPathContained = function(canonicalRoot, canonicalTarget, options = {}) {
+  isPathContained = function (canonicalRoot, canonicalTarget, options = {}) {
     const rel = path.relative(canonicalRoot, canonicalTarget);
     if (rel === '') return Boolean(options.allowRoot);
     if (path.isAbsolute(rel)) return false;
     if (rel === '..' || rel.startsWith('..' + path.sep) || rel.startsWith('../')) return false;
     const rootWithSep = canonicalRoot.endsWith(path.sep) ? canonicalRoot : canonicalRoot + path.sep;
-    const targetNorm = process.platform === 'win32' ? canonicalTarget.toLowerCase() : canonicalTarget;
+    const targetNorm =
+      process.platform === 'win32' ? canonicalTarget.toLowerCase() : canonicalTarget;
     const rootNorm = process.platform === 'win32' ? rootWithSep.toLowerCase() : rootWithSep;
     return targetNorm.startsWith(rootNorm);
   };
@@ -68,12 +69,14 @@ function verifyEvidence(evidence, repoRoot = process.cwd()) {
   // Realpath symlink escape guard if file exists
   if (fs.existsSync(resolvedFile)) {
     try {
-      const realRoot = typeof fs.realpathSync.native === 'function'
-        ? fs.realpathSync.native(normalizedRepo)
-        : fs.realpathSync(normalizedRepo);
-      const realFile = typeof fs.realpathSync.native === 'function'
-        ? fs.realpathSync.native(resolvedFile)
-        : fs.realpathSync(resolvedFile);
+      const realRoot =
+        typeof fs.realpathSync.native === 'function'
+          ? fs.realpathSync.native(normalizedRepo)
+          : fs.realpathSync(normalizedRepo);
+      const realFile =
+        typeof fs.realpathSync.native === 'function'
+          ? fs.realpathSync.native(resolvedFile)
+          : fs.realpathSync(resolvedFile);
       if (!isPathContained(realRoot, realFile, { allowRoot: false })) {
         return { verified: false, reason: `Path traversal detected: ${parsed.file}` };
       }

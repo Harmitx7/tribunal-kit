@@ -870,7 +870,8 @@ function analyzeTask(taskQuery, agentDir, options = {}) {
     solution_shape: outcomeOptimization.solution_shape,
     early_validations: outcomeOptimization.early_validations,
     anti_slop_audit: outcomeOptimization.architecture_audit,
-    phase10_metrics: outcomeOptimization.phase10_metrics,    risks: considerations.risks,
+    phase10_metrics: outcomeOptimization.phase10_metrics,
+    risks: considerations.risks,
     failure_modes: considerations.failure_modes,
     quality_attributes: considerations.quality_attributes,
     skills: skillsList,
@@ -1419,6 +1420,9 @@ module.exports = {
   getPhase10MetricsTracker,
 };
 
-if (require.main === module || (require.main && path.basename(require.main.filename) === 'skill_intelligence.js')) {
+if (
+  require.main === module ||
+  (require.main && path.basename(require.main.filename) === 'skill_intelligence.js')
+) {
   main();
 }

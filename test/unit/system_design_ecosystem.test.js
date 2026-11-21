@@ -139,7 +139,7 @@ describe('System Design Ecosystem: Quantitative Calculation Logic', () => {
 
   test('Pareto 80/20 rule sizes cache accurately', () => {
     const dailyReadGb = 500;
-    const cacheFraction = 0.20;
+    const cacheFraction = 0.2;
     const safetyBuffer = 1.25;
 
     const requiredRamGb = dailyReadGb * cacheFraction * safetyBuffer;
@@ -153,11 +153,11 @@ describe('System Design Ecosystem: Quantitative Calculation Logic', () => {
 
     // Serial composite
     const serialTotal = serviceAvail * dbAvail * authAvail;
-    expect(parseFloat(serialTotal.toFixed(4))).toBe(0.9970); // Drops to 99.7%
+    expect(parseFloat(serialTotal.toFixed(4))).toBe(0.997); // Drops to 99.7%
 
     // Parallel redundancy: 1 - (1 - A1) * (1 - A2)
-    const node1 = 0.990; // 99%
-    const node2 = 0.990;
+    const node1 = 0.99; // 99%
+    const node2 = 0.99;
     const parallelTotal = 1 - (1 - node1) * (1 - node2);
     expect(parseFloat(parallelTotal.toFixed(4))).toBe(0.9999); // Rises to 99.99%
   });
@@ -167,12 +167,12 @@ describe('System Design Ecosystem: Quantitative Calculation Logic', () => {
     const w = 2;
     const r = 2;
 
-    const isStrong = (w + r) > n;
+    const isStrong = w + r > n;
     expect(isStrong).toBe(true);
 
     const staleReadW = 1;
     const staleReadR = 1;
-    expect((staleReadW + staleReadR) > n).toBe(false); // Eventual consistency
+    expect(staleReadW + staleReadR > n).toBe(false); // Eventual consistency
   });
 });
 

@@ -2,7 +2,7 @@
 
 > **Authority**: Node.js Official Runtime Documentation (`https://nodejs.org/api/`)  
 > **Applicable Domains**: Backend Engineering, Node.js Runtimes, High-Throughput APIs  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -32,6 +32,7 @@ Node.js event loop runs single-threaded libuv execution across deterministic pha
 ```
 
 ### Microtask Queue Precedence:
+
 1. `process.nextTick()`: Drains completely before any Promise microtask or next loop phase. Overuse causes I/O starvation.
 2. `Promise.then()` / `await` / `queueMicrotask()`: Drains after `nextTick` queue empties.
 
@@ -57,6 +58,7 @@ export async function compressAndArchive(sourcePath: string, destPath: string): 
 ```
 
 ### Backpressure Rule
+
 When authoring custom `Transform` or `Writable` streams, check the return value of `stream.write(chunk)`. If `false`, buffer limit (`highWaterMark`) has been reached; wait for the `'drain'` event before resuming writes.
 
 ---
@@ -78,7 +80,7 @@ const pbkdf2Async = promisify(pbkdf2);
 
 async function hashConcurrent(payloads: string[]): Promise<string[]> {
   return Promise.all(
-    payloads.map(p => pbkdf2Async(p, 'salt', 100000, 64, 'sha512').then(b => b.toString('hex')))
+    payloads.map(p => pbkdf2Async(p, 'salt', 100000, 64, 'sha512').then(b => b.toString('hex'))),
   );
 }
 ```

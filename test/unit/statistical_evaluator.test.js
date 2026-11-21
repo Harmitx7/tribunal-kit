@@ -46,7 +46,7 @@ describe('StatisticalEvaluator & Wilson Score Confidence Intervals', () => {
 
   describe('compareIntervals', () => {
     test('Detects statistically significant improvement when candidate lower > baseline upper', () => {
-      const baseline = { lower: 0.40, upper: 0.60 };
+      const baseline = { lower: 0.4, upper: 0.6 };
       const candidate = { lower: 0.65, upper: 0.85 };
       const res = compareIntervals(baseline, candidate);
 
@@ -55,8 +55,8 @@ describe('StatisticalEvaluator & Wilson Score Confidence Intervals', () => {
     });
 
     test('Detects statistically significant regression when baseline lower > candidate upper', () => {
-      const baseline = { lower: 0.70, upper: 0.90 };
-      const candidate = { lower: 0.30, upper: 0.50 };
+      const baseline = { lower: 0.7, upper: 0.9 };
+      const candidate = { lower: 0.3, upper: 0.5 };
       const res = compareIntervals(baseline, candidate);
 
       expect(res.improved).toBe(false);
@@ -64,8 +64,8 @@ describe('StatisticalEvaluator & Wilson Score Confidence Intervals', () => {
     });
 
     test('Reports INCONCLUSIVE when confidence intervals overlap', () => {
-      const baseline = { lower: 0.50, upper: 0.75 };
-      const candidate = { lower: 0.60, upper: 0.85 };
+      const baseline = { lower: 0.5, upper: 0.75 };
+      const candidate = { lower: 0.6, upper: 0.85 };
       const res = compareIntervals(baseline, candidate);
 
       expect(res.improved).toBe(false);

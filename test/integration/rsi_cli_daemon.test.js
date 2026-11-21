@@ -98,11 +98,7 @@ describe('RSIE CLI & Autonomous Daemon Integration', () => {
 
   test('tk rsi run is blocked when frozen, and succeeds when healthy', async () => {
     // 1. Freeze
-    await cmdRsi(
-      { path: tmpDir, reason: 'Block test' },
-      ['node', 'tk', 'rsi', 'freeze'],
-      true,
-    );
+    await cmdRsi({ path: tmpDir, reason: 'Block test' }, ['node', 'tk', 'rsi', 'freeze'], true);
 
     // 2. Attempt run while frozen
     const blockedRes = await cmdRsi(
@@ -114,11 +110,7 @@ describe('RSIE CLI & Autonomous Daemon Integration', () => {
     expect(blockedRes.error).toContain('RSIE Self-Quarantine Active');
 
     // 3. Unfreeze
-    await cmdRsi(
-      { path: tmpDir },
-      ['node', 'tk', 'rsi', 'unfreeze'],
-      true,
-    );
+    await cmdRsi({ path: tmpDir }, ['node', 'tk', 'rsi', 'unfreeze'], true);
 
     // 4. Run succeeds
     const runRes = await cmdRsi(
@@ -134,11 +126,7 @@ describe('RSIE CLI & Autonomous Daemon Integration', () => {
 
   test('tk rsi watch starts and stops daemon lifecycle cleanly', async () => {
     // 1. Start watch daemon
-    const startRes = await cmdRsi(
-      { path: tmpDir },
-      ['node', 'tk', 'rsi', 'watch'],
-      true,
-    );
+    const startRes = await cmdRsi({ path: tmpDir }, ['node', 'tk', 'rsi', 'watch'], true);
     expect(startRes.started).toBe(true);
     expect(startRes.pid).toBe(process.pid);
 

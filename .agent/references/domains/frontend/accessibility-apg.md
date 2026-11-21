@@ -2,7 +2,7 @@
 
 > **Authority**: W3C Web Accessibility Initiative (`https://www.w3.org/WAI/ARIA/apg/`)  
 > **Applicable Domains**: Frontend UI/UX, Component Primitives, Accessibility  
-> **Status**: Verified W3C Standard  
+> **Status**: Verified W3C Standard
 
 ---
 
@@ -22,7 +22,12 @@ When creating an overlay dialog or modal, the following behaviors are **mandator
 
 1. **Role & Labeling**:
    ```html
-   <div role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-desc">
+   <div
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="dialog-title"
+     aria-describedby="dialog-desc"
+   >
      <h2 id="dialog-title">Delete Project</h2>
      <p id="dialog-desc">This action cannot be undone.</p>
      ...
@@ -42,21 +47,15 @@ When creating an overlay dialog or modal, the following behaviors are **mandator
 ## 3. Disclosure & Accordion Pattern
 
 For collapsibles, drawers, and accordions:
+
 ```html
 <!-- Trigger button MUST have aria-expanded and aria-controls -->
-<button 
-  type="button" 
-  aria-expanded="false" 
-  aria-controls="section-content-1"
-  id="section-header-1"
->
+<button type="button" aria-expanded="false" aria-controls="section-content-1" id="section-header-1">
   Billing History
 </button>
 
 <!-- Target container MUST match ID -->
-<div id="section-content-1" role="region" aria-labelledby="section-header-1" hidden>
-  ...
-</div>
+<div id="section-content-1" role="region" aria-labelledby="section-header-1" hidden>...</div>
 ```
 
 - When expanded: update `aria-expanded="true"` and remove `hidden`.

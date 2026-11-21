@@ -26,21 +26,19 @@ Examples:
 };
 
 const arg = process.argv[2];
-if (arg === "--help") {
+if (arg === '--help') {
   showHelp();
   process.exit(0);
 }
 
-const limit = arg ?? "3";
+const limit = arg ?? '3';
 if (!/^\d+$/.test(limit)) {
-  console.error("Error: limit must be a number");
+  console.error('Error: limit must be a number');
   process.exit(1);
 }
 
 const token = process.env.HF_TOKEN;
-const headers: Record<string, string> = token
-  ? { Authorization: `Bearer ${token}` }
-  : {};
+const headers: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
 
 const url = `https://huggingface.co/api/models?limit=${limit}`;
 

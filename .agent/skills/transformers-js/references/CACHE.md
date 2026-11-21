@@ -58,6 +58,7 @@ const classifier = await pipeline('sentiment-analysis');
 ### Cache Location
 
 Browser caches are stored in:
+
 - **Chrome/Edge**: `Cache Storage` in DevTools → Application tab → Cache storage
 - **Firefox**: `about:cache` → Storage
 - **Safari**: Web Inspector → Storage tab
@@ -116,6 +117,7 @@ const classifier = await pipeline('sentiment-analysis');
 ### Default Cache Location
 
 **Default behavior:**
+
 - Cache directory: `./.cache` (relative to where Node.js process runs)
 - Full default path: `~/.cache/huggingface/` when using Hugging Face tools
 
@@ -164,7 +166,7 @@ interface CacheInterface {
    * Check if a URL is cached
    */
   match(url: string): Promise<Response | undefined>;
-  
+
   /**
    * Store a URL and its response
    */
@@ -187,24 +189,24 @@ class S3Cache {
 
   async match(url) {
     const key = this.urlToKey(url);
-    
+
     try {
       const command = new GetObjectCommand({
         Bucket: this.bucket,
-        Key: key
+        Key: key,
       });
       const response = await this.s3.send(command);
-      
+
       // Convert stream to buffer
       const chunks = [];
       for await (const chunk of response.Body) {
         chunks.push(chunk);
       }
       const body = Buffer.concat(chunks);
-      
+
       return new Response(body, {
         status: 200,
-        headers: JSON.parse(response.Metadata.headers || '{}')
+        headers: JSON.parse(response.Metadata.headers || '{}'),
       });
     } catch (error) {
       if (error.name === 'NoSuchKey') return undefined;
@@ -222,9 +224,9 @@ class S3Cache {
       Bucket: this.bucket,
       Key: key,
       Body: body,
-      Metadata: { headers }
+      Metadata: { headers },
     });
-    
+
     await this.s3.send(command);
   }
 
@@ -277,8 +279,8 @@ if (process.env.NODE_ENV === 'production') {
 import { env } from '@huggingface/transformers';
 
 env.allowRemoteModels = true;
-env.useFSCache = true;         // Node.js
-env.useBrowserCache = true;    // Browser
+env.useFSCache = true; // Node.js
+env.useBrowserCache = true; // Browser
 env.cacheDir = './.cache';
 ```
 
@@ -335,5 +337,6 @@ Transformers.js provides flexible caching options:
 6. Pre-download models for production deployments
 
 For more configuration options, see:
+
 - [Configuration Reference](./CONFIGURATION.md)
 - [Pipeline Options](./PIPELINE_OPTIONS.md)

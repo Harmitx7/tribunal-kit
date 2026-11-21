@@ -106,4 +106,3 @@ describe('Tool Permission & Least-Privilege Engine', () => {
     expect(audit.findings.some(f => f.issue.includes('Hardcoded API credential'))).toBe(true);
   });
 });
-

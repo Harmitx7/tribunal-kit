@@ -20,12 +20,7 @@ const DRIFT_CATEGORIES = Object.freeze([
   'VERIFICATION_DRIFT',
 ]);
 
-const ANOMALY_SEVERITIES = Object.freeze([
-  'LOW',
-  'MEDIUM',
-  'HIGH',
-  'CRITICAL',
-]);
+const ANOMALY_SEVERITIES = Object.freeze(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
 
 const ANOMALY_STATUSES = Object.freeze([
   'DETECTED',
@@ -34,29 +29,22 @@ const ANOMALY_STATUSES = Object.freeze([
   'CONFIRMED',
 ]);
 
-const COMPARISON_TYPES = Object.freeze([
-  'FIXTURE',
-  'COHORT',
-  'AGGREGATE',
-]);
+const COMPARISON_TYPES = Object.freeze(['FIXTURE', 'COHORT', 'AGGREGATE']);
 
-const STATISTICAL_METHODS = Object.freeze([
-  'ROBUST_Z_SCORE',
-  'RATE_SHIFT',
-  'DISCRETE_INVARIANT',
-]);
+const STATISTICAL_METHODS = Object.freeze(['ROBUST_Z_SCORE', 'RATE_SHIFT', 'DISCRETE_INVARIANT']);
 
-const TOKEN_SOURCES = Object.freeze([
-  'TOKENIZER',
-  'PROVIDER',
-  'ESTIMATED',
-  'UNAVAILABLE',
-]);
+const TOKEN_SOURCES = Object.freeze(['TOKENIZER', 'PROVIDER', 'ESTIMATED', 'UNAVAILABLE']);
 
 const RISK_LEVELS = Object.freeze(['LOW', 'MEDIUM', 'HIGH']);
 const CONFIDENCE_LEVELS = Object.freeze(['HIGH', 'MEDIUM', 'LOW', 'INSUFFICIENT']);
 const REVIEW_DEPTHS = Object.freeze(['STANDARD', 'EXPANDED', 'DEEP', 'INSUFFICIENT_EVIDENCE']);
-const GOVERNANCE_VERDICTS = Object.freeze(['APPROVED', 'WARNING', 'REJECTED', 'ERROR', 'NEEDS_REVIEW']);
+const GOVERNANCE_VERDICTS = Object.freeze([
+  'APPROVED',
+  'WARNING',
+  'REJECTED',
+  'ERROR',
+  'NEEDS_REVIEW',
+]);
 
 const MIN_BASELINE_SAMPLES = 5;
 const MAX_RECORDS_STORED = 500;
@@ -83,8 +71,12 @@ function canonicalStringify(val, seen = new WeakSet()) {
   if (Array.isArray(val)) {
     return '[' + val.map(item => canonicalStringify(item, seen)).join(',') + ']';
   }
-  const keys = Object.keys(val).filter(k => k !== 'record_hash' && val[k] !== undefined).sort();
-  return '{' + keys.map(k => JSON.stringify(k) + ':' + canonicalStringify(val[k], seen)).join(',') + '}';
+  const keys = Object.keys(val)
+    .filter(k => k !== 'record_hash' && val[k] !== undefined)
+    .sort();
+  return (
+    '{' + keys.map(k => JSON.stringify(k) + ':' + canonicalStringify(val[k], seen)).join(',') + '}'
+  );
 }
 
 /**
@@ -104,7 +96,9 @@ function computeSafeRepoId(repoRootOrName) {
     return 'repo_unknown';
   }
   const normalized = repoRootOrName.trim().toLowerCase().replace(/\\/g, '/');
-  return 'repo_' + crypto.createHash('sha256').update(normalized, 'utf8').digest('hex').slice(0, 16);
+  return (
+    'repo_' + crypto.createHash('sha256').update(normalized, 'utf8').digest('hex').slice(0, 16)
+  );
 }
 
 /**
@@ -126,13 +120,28 @@ function validateCrossRunRecord(raw) {
   }
 
   // Identifiers
-  if (typeof raw.record_id !== 'string' || !raw.record_id.startsWith('crr_') || raw.record_id.length > MAX_STRING_LENGTH) {
-    return { ok: false, error: 'Invalid record_id: must start with crr_ and not exceed maximum length' };
+  if (
+    typeof raw.record_id !== 'string' ||
+    !raw.record_id.startsWith('crr_') ||
+    raw.record_id.length > MAX_STRING_LENGTH
+  ) {
+    return {
+      ok: false,
+      error: 'Invalid record_id: must start with crr_ and not exceed maximum length',
+    };
   }
-  if (typeof raw.review_run_id !== 'string' || !raw.review_run_id.trim() || raw.review_run_id.length > MAX_STRING_LENGTH) {
+  if (
+    typeof raw.review_run_id !== 'string' ||
+    !raw.review_run_id.trim() ||
+    raw.review_run_id.length > MAX_STRING_LENGTH
+  ) {
     return { ok: false, error: 'Invalid review_run_id' };
   }
-  if (typeof raw.safe_repo_id !== 'string' || !raw.safe_repo_id.trim() || raw.safe_repo_id.length > MAX_STRING_LENGTH) {
+  if (
+    typeof raw.safe_repo_id !== 'string' ||
+    !raw.safe_repo_id.trim() ||
+    raw.safe_repo_id.length > MAX_STRING_LENGTH
+  ) {
     return { ok: false, error: 'Invalid safe_repo_id' };
   }
 
@@ -178,7 +187,14 @@ function validateCrossRunRecord(raw) {
     return { ok: false, error: 'Missing or invalid findings_summary object' };
   }
   const fs = raw.findings_summary;
-  for (const field of ['total_count', 'critical_count', 'high_count', 'medium_count', 'low_count', 'unverified_count']) {
+  for (const field of [
+    'total_count',
+    'critical_count',
+    'high_count',
+    'medium_count',
+    'low_count',
+    'unverified_count',
+  ]) {
     if (typeof fs[field] !== 'number' || !Number.isFinite(fs[field]) || fs[field] < 0) {
       return { ok: false, error: `findings_summary.${field} must be a non-negative finite number` };
     }
@@ -189,7 +205,13 @@ function validateCrossRunRecord(raw) {
     return { ok: false, error: 'Missing or invalid evidence_summary object' };
   }
   const es = raw.evidence_summary;
-  for (const field of ['total_records', 'observed_count', 'validated_count', 'unverified_count', 'stale_count']) {
+  for (const field of [
+    'total_records',
+    'observed_count',
+    'validated_count',
+    'unverified_count',
+    'stale_count',
+  ]) {
     if (typeof es[field] !== 'number' || !Number.isFinite(es[field]) || es[field] < 0) {
       return { ok: false, error: `evidence_summary.${field} must be a non-negative finite number` };
     }
@@ -201,13 +223,22 @@ function validateCrossRunRecord(raw) {
   }
   const ca = raw.confidence_assessment;
   if (typeof ca.score !== 'number' || !Number.isFinite(ca.score) || ca.score < 0 || ca.score > 1) {
-    return { ok: false, error: 'confidence_assessment.score must be a finite number between 0.0 and 1.0' };
+    return {
+      ok: false,
+      error: 'confidence_assessment.score must be a finite number between 0.0 and 1.0',
+    };
   }
   if (!CONFIDENCE_LEVELS.includes(ca.level)) {
-    return { ok: false, error: `confidence_assessment.level must be one of: ${CONFIDENCE_LEVELS.join(', ')}` };
+    return {
+      ok: false,
+      error: `confidence_assessment.level must be one of: ${CONFIDENCE_LEVELS.join(', ')}`,
+    };
   }
   if (!REVIEW_DEPTHS.includes(ca.review_depth)) {
-    return { ok: false, error: `confidence_assessment.review_depth must be one of: ${REVIEW_DEPTHS.join(', ')}` };
+    return {
+      ok: false,
+      error: `confidence_assessment.review_depth must be one of: ${REVIEW_DEPTHS.join(', ')}`,
+    };
   }
 
   // Governance outcome
@@ -215,7 +246,10 @@ function validateCrossRunRecord(raw) {
     return { ok: false, error: 'Missing or invalid governance_outcome object' };
   }
   if (!GOVERNANCE_VERDICTS.includes(raw.governance_outcome.final_verdict)) {
-    return { ok: false, error: `governance_outcome.final_verdict must be one of: ${GOVERNANCE_VERDICTS.join(', ')}` };
+    return {
+      ok: false,
+      error: `governance_outcome.final_verdict must be one of: ${GOVERNANCE_VERDICTS.join(', ')}`,
+    };
   }
 
   // Resources
@@ -229,14 +263,20 @@ function validateCrossRunRecord(raw) {
     }
   }
   if (!TOKEN_SOURCES.includes(res.token_measurement_source)) {
-    return { ok: false, error: `resources.token_measurement_source must be one of: ${TOKEN_SOURCES.join(', ')}` };
+    return {
+      ok: false,
+      error: `resources.token_measurement_source must be one of: ${TOKEN_SOURCES.join(', ')}`,
+    };
   }
 
   // Cryptographic seal check if record_hash is present
   if (raw.record_hash) {
     const expectedHash = computeRecordHash(raw);
     if (raw.record_hash !== expectedHash) {
-      return { ok: false, error: 'Cryptographic record_hash mismatch (possible tampering detected)' };
+      return {
+        ok: false,
+        error: 'Cryptographic record_hash mismatch (possible tampering detected)',
+      };
     }
   }
 
@@ -280,10 +320,16 @@ function validateAnomalyRecord(raw) {
   }
 
   if (!COMPARISON_TYPES.includes(raw.comparability.comparison_type)) {
-    return { ok: false, error: `comparability.comparison_type must be one of: ${COMPARISON_TYPES.join(', ')}` };
+    return {
+      ok: false,
+      error: `comparability.comparison_type must be one of: ${COMPARISON_TYPES.join(', ')}`,
+    };
   }
 
-  if (typeof raw.comparability.baseline_sample_size !== 'number' || raw.comparability.baseline_sample_size < 0) {
+  if (
+    typeof raw.comparability.baseline_sample_size !== 'number' ||
+    raw.comparability.baseline_sample_size < 0
+  ) {
     return { ok: false, error: 'comparability.baseline_sample_size must be a non-negative number' };
   }
 
@@ -326,12 +372,16 @@ function createCrossRunRecord(params = {}) {
     review_run_id,
     safe_repo_id,
     timestamp,
-    fixture_id: params.fixture_id ? String(params.fixture_id).slice(0, MAX_STRING_LENGTH) : undefined,
+    fixture_id: params.fixture_id
+      ? String(params.fixture_id).slice(0, MAX_STRING_LENGTH)
+      : undefined,
 
     decision: {
       plan_id: params.decision?.plan_id || `plan_${hex.slice(0, 4)}`,
       risk_tier: typeof params.decision?.risk_tier === 'number' ? params.decision.risk_tier : 1,
-      risk_level: RISK_LEVELS.includes(params.decision?.risk_level) ? params.decision.risk_level : 'LOW',
+      risk_level: RISK_LEVELS.includes(params.decision?.risk_level)
+        ? params.decision.risk_level
+        : 'LOW',
       security_sensitive: Boolean(params.decision?.security_sensitive),
       files_count: Math.max(0, parseInt(params.decision?.files_count, 10) || 0),
       lines_changed: Math.max(0, parseInt(params.decision?.lines_changed, 10) || 0),
@@ -342,8 +392,12 @@ function createCrossRunRecord(params = {}) {
       platform: process.platform,
       tribunal_version: '9.2.8',
       policy_hash: params.environment?.policy_hash || 'policy_default_v1',
-      model_id: params.environment?.model_id ? String(params.environment.model_id).slice(0, 100) : undefined,
-      prompt_version: params.environment?.prompt_version ? String(params.environment.prompt_version).slice(0, 50) : undefined,
+      model_id: params.environment?.model_id
+        ? String(params.environment.model_id).slice(0, 100)
+        : undefined,
+      prompt_version: params.environment?.prompt_version
+        ? String(params.environment.prompt_version).slice(0, 50)
+        : undefined,
     },
 
     reviewers: {
@@ -372,15 +426,22 @@ function createCrossRunRecord(params = {}) {
       unverified_count: Math.max(0, parseInt(params.evidence_summary?.unverified_count, 10) || 0),
       stale_count: Math.max(0, parseInt(params.evidence_summary?.stale_count, 10) || 0),
       requests_count: Math.max(0, parseInt(params.evidence_summary?.requests_count, 10) || 0),
-      requests_fulfilled: Math.max(0, parseInt(params.evidence_summary?.requests_fulfilled, 10) || 0),
+      requests_fulfilled: Math.max(
+        0,
+        parseInt(params.evidence_summary?.requests_fulfilled, 10) || 0,
+      ),
     },
 
     confidence_assessment: {
       assessment_id: params.confidence_assessment?.assessment_id || `conf_${hex.slice(0, 4)}`,
-      score: typeof params.confidence_assessment?.score === 'number' && Number.isFinite(params.confidence_assessment.score)
-        ? Math.max(0, Math.min(1, parseFloat(params.confidence_assessment.score.toFixed(4))))
-        : 1.0,
-      level: CONFIDENCE_LEVELS.includes(params.confidence_assessment?.level) ? params.confidence_assessment.level : 'HIGH',
+      score:
+        typeof params.confidence_assessment?.score === 'number' &&
+        Number.isFinite(params.confidence_assessment.score)
+          ? Math.max(0, Math.min(1, parseFloat(params.confidence_assessment.score.toFixed(4))))
+          : 1.0,
+      level: CONFIDENCE_LEVELS.includes(params.confidence_assessment?.level)
+        ? params.confidence_assessment.level
+        : 'HIGH',
       review_depth: REVIEW_DEPTHS.includes(params.confidence_assessment?.review_depth)
         ? params.confidence_assessment.review_depth
         : 'STANDARD',
@@ -388,7 +449,10 @@ function createCrossRunRecord(params = {}) {
       reason_codes: Array.isArray(params.confidence_assessment?.reason_codes)
         ? [...params.confidence_assessment.reason_codes]
         : [],
-      escalation_rounds: Math.max(0, parseInt(params.confidence_assessment?.escalation_rounds, 10) || 0),
+      escalation_rounds: Math.max(
+        0,
+        parseInt(params.confidence_assessment?.escalation_rounds, 10) || 0,
+      ),
     },
 
     governance_outcome: {
@@ -396,7 +460,9 @@ function createCrossRunRecord(params = {}) {
         ? params.governance_outcome.final_verdict
         : 'APPROVED',
       requires_human_approval: Boolean(params.governance_outcome?.requires_human_approval),
-      human_override: params.governance_outcome?.human_override ? Boolean(params.governance_outcome.human_override) : undefined,
+      human_override: params.governance_outcome?.human_override
+        ? Boolean(params.governance_outcome.human_override)
+        : undefined,
     },
 
     resources: {

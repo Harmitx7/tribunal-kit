@@ -5,6 +5,7 @@
 ## Why Hub Push is Required
 
 When running on Hugging Face Jobs:
+
 - Environment is temporary
 - All files deleted on job completion
 - No local disk persistence
@@ -55,11 +56,11 @@ dataset = load_dataset("trl-lib/Capybara", split="train")
 config = SFTConfig(
     output_dir="my-model",
     num_train_epochs=3,
-    
+
     # ✅ CRITICAL: Hub push configuration
     push_to_hub=True,
     hub_model_id="myusername/my-trained-model",
-    
+
     # Optional: Push strategy
     push_to_hub_model_id="myusername/my-trained-model",
     push_to_hub_organization=None,
@@ -111,7 +112,7 @@ SFTConfig(
     output_dir="my-model",
     push_to_hub=True,
     hub_model_id="username/my-model",
-    
+
     # Checkpoint configuration
     save_strategy="steps",
     save_steps=100,              # Save every 100 steps
@@ -120,6 +121,7 @@ SFTConfig(
 ```
 
 **Benefits:**
+
 - Resume training if job fails
 - Compare checkpoint performance
 - Use intermediate models
@@ -188,11 +190,13 @@ api.create_repo(
 ### Repository Naming
 
 **Valid names:**
+
 - `username/my-model`
 - `username/model-name`
 - `organization/model-name`
 
 **Invalid names:**
+
 - `model-name` (missing username)
 - `username/model name` (spaces not allowed)
 - `username/MODEL` (uppercase discouraged)
@@ -204,6 +208,7 @@ api.create_repo(
 **Cause:** HF_TOKEN not provided or invalid
 
 **Solutions:**
+
 1. Verify `secrets={"HF_TOKEN": "$HF_TOKEN"}` in job config
 2. Check you're logged in: `hf auth whoami`
 3. Re-login: `hf auth login`
@@ -213,6 +218,7 @@ api.create_repo(
 **Cause:** No write access to repository
 
 **Solutions:**
+
 1. Check repository namespace matches your username
 2. Verify you're a member of organization (if using org namespace)
 3. Check repository isn't private (if accessing org repo)
@@ -222,6 +228,7 @@ api.create_repo(
 **Cause:** Repository doesn't exist and auto-creation failed
 
 **Solutions:**
+
 1. Manually create repository first
 2. Check repository name format
 3. Verify namespace exists
@@ -231,6 +238,7 @@ api.create_repo(
 **Cause:** Network issues or Hub unavailable
 
 **Solutions:**
+
 1. Training continues but final push fails
 2. Checkpoints may be saved
 3. Re-run push manually after job completes
@@ -238,6 +246,7 @@ api.create_repo(
 ### Issue: Model saved but not visible
 
 **Possible causes:**
+
 1. Repository is private—check https://huggingface.co/username
 2. Wrong namespace—verify `hub_model_id` matches login
 3. Push still in progress—wait a few minutes
@@ -279,6 +288,7 @@ hf_jobs("logs", {"job_id": "your-job-id"})
 ```
 
 **Look for:**
+
 ```
 Pushing model to username/model-name...
 Upload file pytorch_model.bin: 100%
@@ -308,21 +318,21 @@ print(f"✅ Dataset loaded: {len(dataset)} examples")
 # Configure with comprehensive Hub settings
 config = SFTConfig(
     output_dir="qwen-capybara-sft",
-    
+
     # Hub configuration
     push_to_hub=True,
     hub_model_id="myusername/qwen-capybara-sft",
     hub_strategy="checkpoint",  # Push checkpoints
-    
+
     # Checkpoint configuration
     save_strategy="steps",
     save_steps=100,
     save_total_limit=3,
-    
+
     # Training settings
     num_train_epochs=3,
     per_device_train_batch_size=4,
-    
+
     # Logging
     logging_steps=10,
     logging_first_step=True,

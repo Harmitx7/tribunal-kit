@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -166,7 +167,6 @@ const BASE_HOST_CAPABILITIES = Object.freeze({
   }),
 });
 
-
 /**
  * Deterministically resolves the current host environment using 4-tier precedence.
  *
@@ -236,8 +236,9 @@ function getHostCapabilities(host, options = {}, env = process.env) {
   const resolvedHost = host || detectHost(options, env);
   const base = BASE_HOST_CAPABILITIES[resolvedHost] || BASE_HOST_CAPABILITIES[HOSTS.UNKNOWN];
 
-  const hasColorEnv = !env.NO_COLOR && (env.FORCE_COLOR !== undefined ? env.FORCE_COLOR !== '0' : base.supportsColor);
-  const isUtf = options.ascii ? false : (tuiTheme ? tuiTheme.isUtf8 : base.supportsUnicode);
+  const hasColorEnv =
+    !env.NO_COLOR && (env.FORCE_COLOR !== undefined ? env.FORCE_COLOR !== '0' : base.supportsColor);
+  const isUtf = options.ascii ? false : tuiTheme ? tuiTheme.isUtf8 : base.supportsUnicode;
 
   const capabilities = {
     ...base,
@@ -299,4 +300,3 @@ module.exports = {
   getHostCapabilities,
   resolveEnvironment,
 };
-

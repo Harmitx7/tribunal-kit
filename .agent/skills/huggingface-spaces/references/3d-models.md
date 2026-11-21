@@ -6,10 +6,10 @@ Per-family deployment recipes for mesh-generation models, distilled from the liv
 
 The TRELLIS family covers `microsoft/TRELLIS-image-large` (TRELLIS 1, ~1.2B) and `microsoft/TRELLIS.2-4B` (TRELLIS.2). Both are image-to-3D. Both are MIT licensed and ungated — no token needed to download weights.
 
-| Variant | Model repo | Output | VRAM | Official Space (working reference) |
-|---|---|---|---|---|
+| Variant   | Model repo                                                                   | Output                                           | VRAM   | Official Space (working reference)             |
+| --------- | ---------------------------------------------------------------------------- | ------------------------------------------------ | ------ | ---------------------------------------------- |
 | TRELLIS 1 | `microsoft/TRELLIS-image-large` (mirror: `JeffreyXiang/TRELLIS-image-large`) | Gaussians + mesh → textured GLB, gaussian `.ply` | ~16 GB | `trellis-community/TRELLIS` (ZeroGPU, running) |
-| TRELLIS.2 | `microsoft/TRELLIS.2-4B` | High-fidelity PBR-textured GLB | ≥24 GB | `microsoft/TRELLIS.2` (ZeroGPU, running) |
+| TRELLIS.2 | `microsoft/TRELLIS.2-4B`                                                     | High-fidelity PBR-textured GLB                   | ≥24 GB | `microsoft/TRELLIS.2` (ZeroGPU, running)       |
 
 There is no usable pip package (`trellis-3d` on PyPI ships only the pure-Python tree without the CUDA extensions or real dependency set; nothing exists for TRELLIS.2). **Both official Spaces vendor the library source (`trellis/` or `trellis2/`) directly in the Space repo.** Deploying means duplicating the official Space or copying its tree — not `pip install`.
 
@@ -66,7 +66,7 @@ GPU functions in the official Space: `@spaces.GPU(duration=120)` on generation (
 
 ### TRELLIS 1 recipe (JIT-compile strategy)
 
-The `trellis-community/TRELLIS` Space demonstrates the other viable strategy: compile nvdiffrast + diff-gaussian-rasterization **at first boot on a GPU worker**, inside `@spaces.GPU(duration=600)`, using the nvcc that ZeroGPU mounts at runtime (`/cuda-image/usr/local/cuda-13.0`). Its requirements.txt (torch 2.8.0, `spconv-cu120==2.3.6`, `xformers`, `rembg`, no python_version pin → 3.10) installs everything that *can* come from PyPI; the JIT step handles the rest with:
+The `trellis-community/TRELLIS` Space demonstrates the other viable strategy: compile nvdiffrast + diff-gaussian-rasterization **at first boot on a GPU worker**, inside `@spaces.GPU(duration=600)`, using the nvcc that ZeroGPU mounts at runtime (`/cuda-image/usr/local/cuda-13.0`). Its requirements.txt (torch 2.8.0, `spconv-cu120==2.3.6`, `xformers`, `rembg`, no python_version pin → 3.10) installs everything that _can_ come from PyPI; the JIT step handles the rest with:
 
 - `TORCH_CUDA_ARCH_LIST="12.0"` (Blackwell — nvcc can't probe a GPU that isn't attached yet)
 - a `sitecustomize.py` that no-ops `torch.utils.cpp_extension._check_cuda_version` (torch built for cu128, nvcc is 13.0)
@@ -103,13 +103,13 @@ If the finetuned repo is private, pass the token via env (`HF_TOKEN` Space secre
 
 Two groups in this file. The **fast tier** (TripoSR, SF3D, SPAR3D): single-forward-pass image-to-mesh, seconds per generation, small VRAM, simple codebases — pick when the user wants a snappy demo, a high-traffic public Space (short `@spaces.GPU` durations = less quota per click and better queue priority), or can accept lower fidelity than TRELLIS.2. And **Hunyuan3D-2/2.1** (Tencent): two-stage — a flow-matching DiT generates the shape, then an optional multiview-diffusion "Paint" stage textures it — pick when the user wants textured output and TRELLIS.2 doesn't fit, or when they finetuned a Hunyuan3D DiT (the 2.1 release includes official training code, so finetuned shape checkpoints are common).
 
-| Model | Repo | Output | License / gating | Official Space |
-|---|---|---|---|---|
-| TripoSR | `stabilityai/TripoSR` | untextured mesh (OBJ + GLB) | **MIT, ungated** | `stabilityai/TripoSR` (ZeroGPU, running) |
-| Stable Fast 3D (SF3D) | `stabilityai/stable-fast-3d` | UV-unwrapped **textured** GLB | stabilityai-ai-community, **gated (auto)** | `stabilityai/stable-fast-3d` (ZeroGPU, running) |
-| SPAR3D | `stabilityai/stable-point-aware-3d` | textured GLB + editable point cloud | stabilityai-ai-community, **gated (auto)** | `stabilityai/stable-point-aware-3d` (dedicated L4, **currently BUILD_ERROR** — reference code only) |
-| Hunyuan3D-2.0 | `tencent/Hunyuan3D-2` (subfolder `hunyuan3d-dit-v2-0`; also `-mini`, `-mv`) | GLB, RGB-textured (Paint 2.0) | tencent-hunyuan-community, **ungated, non-commercial** | `tencent/Hunyuan3D-2` (ZeroGPU, running) |
-| Hunyuan3D-2.1 | `tencent/Hunyuan3D-2.1` (subfolder `hunyuan3d-dit-v2-1`) | GLB, **PBR**-textured (Paint 2.1) | tencent-hunyuan-community, **ungated, non-commercial** | `tencent/Hunyuan3D-2.1` (ZeroGPU, **paused** — code is still the reference) |
+| Model                 | Repo                                                                        | Output                              | License / gating                                       | Official Space                                                                                      |
+| --------------------- | --------------------------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| TripoSR               | `stabilityai/TripoSR`                                                       | untextured mesh (OBJ + GLB)         | **MIT, ungated**                                       | `stabilityai/TripoSR` (ZeroGPU, running)                                                            |
+| Stable Fast 3D (SF3D) | `stabilityai/stable-fast-3d`                                                | UV-unwrapped **textured** GLB       | stabilityai-ai-community, **gated (auto)**             | `stabilityai/stable-fast-3d` (ZeroGPU, running)                                                     |
+| SPAR3D                | `stabilityai/stable-point-aware-3d`                                         | textured GLB + editable point cloud | stabilityai-ai-community, **gated (auto)**             | `stabilityai/stable-point-aware-3d` (dedicated L4, **currently BUILD_ERROR** — reference code only) |
+| Hunyuan3D-2.0         | `tencent/Hunyuan3D-2` (subfolder `hunyuan3d-dit-v2-0`; also `-mini`, `-mv`) | GLB, RGB-textured (Paint 2.0)       | tencent-hunyuan-community, **ungated, non-commercial** | `tencent/Hunyuan3D-2` (ZeroGPU, running)                                                            |
+| Hunyuan3D-2.1         | `tencent/Hunyuan3D-2.1` (subfolder `hunyuan3d-dit-v2-1`)                    | GLB, **PBR**-textured (Paint 2.1)   | tencent-hunyuan-community, **ungated, non-commercial** | `tencent/Hunyuan3D-2.1` (ZeroGPU, **paused** — code is still the reference)                         |
 
 **Licenses and gating matter here.** The two Stability models are `gated: auto` — the deploying user must accept the license on the model page, and the Space needs their `HF_TOKEN` as a secret to download weights at startup; if the gate isn't accepted, `from_pretrained` fails with 401 at build — check before publishing. The Hunyuan models are ungated (no token needed) but the community license restricts commercial use — surface that before the user flips a Space public. TripoSR is MIT and needs nothing.
 
@@ -191,7 +191,7 @@ os.system("cd /home/user/app/hy3dpaint/DifferentiableRenderer && bash compile_me
 
 The cp310 wheel means Python 3.10 — pin `python_version: "3.10"` explicitly when duplicating so a runtime default bump can't break it.
 
-**Requirements notes (2.1)** — fully pinned; the non-obvious entries: `--extra-index-url https://download.blender.org/pypi/` + `bpy==4.0` (Blender-as-pip; installs headless with no display setup — see [`3d-outputs.md`](3d-outputs.md) → Headless Blender — though the Space's OBJ→GLB conversion actually runs on trimesh+pygltflib); `realesrgan==0.3.0` + `basicsr==1.4.2` (texture upscaling — needs the Space's `torchvision_fix.py` shim, applied at the top of `gradio_app.py` *and* again before the texgen import, because basicsr imports the removed `torchvision.transforms.functional_tensor`); `cupy-cuda12x`, `pymeshlab`, `xatlas`, `open3d`, `trimesh`, `pygltflib` (mesh stack); **no torch pin**; `pydantic==2.10.6` (gradio compat).
+**Requirements notes (2.1)** — fully pinned; the non-obvious entries: `--extra-index-url https://download.blender.org/pypi/` + `bpy==4.0` (Blender-as-pip; installs headless with no display setup — see [`3d-outputs.md`](3d-outputs.md) → Headless Blender — though the Space's OBJ→GLB conversion actually runs on trimesh+pygltflib); `realesrgan==0.3.0` + `basicsr==1.4.2` (texture upscaling — needs the Space's `torchvision_fix.py` shim, applied at the top of `gradio_app.py` _and_ again before the texgen import, because basicsr imports the removed `torchvision.transforms.functional_tensor`); `cupy-cuda12x`, `pymeshlab`, `xatlas`, `open3d`, `trimesh`, `pygltflib` (mesh stack); **no torch pin**; `pydantic==2.10.6` (gradio compat).
 
 **Model loading** (module level):
 

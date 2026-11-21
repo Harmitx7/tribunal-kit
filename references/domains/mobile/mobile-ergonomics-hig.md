@@ -2,7 +2,7 @@
 
 > **Authority**: Apple Human Interface Guidelines & Google Material 3 Design  
 > **Applicable Domains**: Mobile UI/UX, React Native, SwiftUI  
-> **Status**: Verified Industry Standard  
+> **Status**: Verified Industry Standard
 
 ---
 
@@ -10,18 +10,17 @@
 
 Touch interfaces require deliberate spatial tolerance to prevent mis-clicks:
 
-| Platform | Minimum Touch Target | Minimum Spacing Between Targets |
-|:---|:---:|:---:|
-| **Apple iOS (HIG)** | `44 × 44 pt` | `8 pt` |
-| **Android (Material 3)**| `48 × 48 dp` | `8 dp` |
+| Platform                 | Minimum Touch Target | Minimum Spacing Between Targets |
+| :----------------------- | :------------------: | :-----------------------------: |
+| **Apple iOS (HIG)**      |     `44 × 44 pt`     |             `8 pt`              |
+| **Android (Material 3)** |     `48 × 48 dp`     |             `8 dp`              |
 
 ### The Touch Expansion HitSlop Technique
+
 When visual design requires an icon smaller than 44pt (e.g. 24x24pt close icon), expand the touchable hit box without mutating visual layout:
+
 ```tsx
-<TouchableOpacity 
-  hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-  onPress={handleClose}
->
+<TouchableOpacity hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }} onPress={handleClose}>
   <CloseIcon width={20} height={20} />
 </TouchableOpacity>
 ```
@@ -41,22 +40,24 @@ export function ScreenContainer({ children }: { children: React.ReactNode }) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[
-      styles.container, 
-      { 
-        paddingTop: insets.top, 
-        paddingBottom: insets.bottom,
-        paddingLeft: insets.left,
-        paddingRight: insets.right
-      }
-    ]}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+        },
+      ]}
+    >
       {children}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFFFF' }
+  container: { flex: 1, backgroundColor: '#FFFFFF' },
 });
 ```
 

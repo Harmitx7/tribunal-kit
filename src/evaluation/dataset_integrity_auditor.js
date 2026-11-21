@@ -86,7 +86,9 @@ function auditDatasetIntegrity(dataset, options = {}) {
 
     // Check Ground Truth Provenance
     if (!c.expected?.labelProvenance || c.expected.labelProvenance.trim().length < 3) {
-      violations.push(`MISSING_LABEL_PROVENANCE: Case "${c.id}" lacks descriptive label provenance.`);
+      violations.push(
+        `MISSING_LABEL_PROVENANCE: Case "${c.id}" lacks descriptive label provenance.`,
+      );
     }
 
     const label = String(c.expected?.groundTruthLabel || 'UNKNOWN');
@@ -108,11 +110,11 @@ function auditDatasetIntegrity(dataset, options = {}) {
         const isConflict = caseA.label !== caseB.label;
         if (isConflict) {
           violations.push(
-            `CONTRADICTORY_NEAR_DUPLICATE: Cases "${caseA.id}" and "${caseB.id}" have similarity ${similarity.toFixed(2)} but contradictory labels ("${caseA.label}" vs "${caseB.label}").`
+            `CONTRADICTORY_NEAR_DUPLICATE: Cases "${caseA.id}" and "${caseB.id}" have similarity ${similarity.toFixed(2)} but contradictory labels ("${caseA.label}" vs "${caseB.label}").`,
           );
         } else {
           warnings.push(
-            `NEAR_DUPLICATE_CASE: Cases "${caseA.id}" and "${caseB.id}" exhibit high token similarity (${similarity.toFixed(2)}). Consider pruning.`
+            `NEAR_DUPLICATE_CASE: Cases "${caseA.id}" and "${caseB.id}" exhibit high token similarity (${similarity.toFixed(2)}). Consider pruning.`,
           );
         }
         duplicatesDetected.push({ caseA: caseA.id, caseB: caseB.id, similarity });
@@ -130,7 +132,7 @@ function auditDatasetIntegrity(dataset, options = {}) {
 
     if (imbalanceRatio > 4.0) {
       warnings.push(
-        `SEVERE_CLASS_IMBALANCE: Imbalance ratio is ${imbalanceRatio.toFixed(1)}:1 (${JSON.stringify(labelCounts)}). Metrics may skew.`
+        `SEVERE_CLASS_IMBALANCE: Imbalance ratio is ${imbalanceRatio.toFixed(1)}:1 (${JSON.stringify(labelCounts)}). Metrics may skew.`,
       );
     }
   }
@@ -157,7 +159,12 @@ function auditDatasetIntegrity(dataset, options = {}) {
  */
 function checkPartitionLeakage(evalDataset, trainDataset, threshold = 0.85) {
   const violations = [];
-  if (!evalDataset || !trainDataset || !Array.isArray(evalDataset.cases) || !Array.isArray(trainDataset.cases)) {
+  if (
+    !evalDataset ||
+    !trainDataset ||
+    !Array.isArray(evalDataset.cases) ||
+    !Array.isArray(trainDataset.cases)
+  ) {
     return { leaked: false, violations: [] };
   }
 
@@ -167,12 +174,14 @@ function checkPartitionLeakage(evalDataset, trainDataset, threshold = 0.85) {
   }));
 
   for (const evalCase of evalDataset.cases) {
-    const eTokens = tokenize((evalCase.inputFixture?.prompt || '') + ' ' + (evalCase.taskDescription || ''));
+    const eTokens = tokenize(
+      (evalCase.inputFixture?.prompt || '') + ' ' + (evalCase.taskDescription || ''),
+    );
     for (const tCase of trainTokens) {
       const sim = jaccardSimilarity(eTokens, tCase.tokens);
       if (sim >= threshold) {
         violations.push(
-          `BENCHMARK_LEAKAGE: Eval case "${evalCase.id}" leaks from training case "${tCase.id}" with similarity ${sim.toFixed(2)}.`
+          `BENCHMARK_LEAKAGE: Eval case "${evalCase.id}" leaks from training case "${tCase.id}" with similarity ${sim.toFixed(2)}.`,
         );
       }
     }

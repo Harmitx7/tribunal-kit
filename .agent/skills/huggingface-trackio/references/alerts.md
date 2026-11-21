@@ -19,11 +19,11 @@ trackio.alert(
 
 ### Alert Levels
 
-| Level | Usage |
-|-------|-------|
-| `trackio.AlertLevel.INFO` | Informational milestones (checkpoints saved, eval completed) |
-| `trackio.AlertLevel.WARN` | Potential issues (loss plateau, low accuracy, high gradient norm) |
-| `trackio.AlertLevel.ERROR` | Critical failures (NaN loss, divergence, OOM) |
+| Level                      | Usage                                                             |
+| -------------------------- | ----------------------------------------------------------------- |
+| `trackio.AlertLevel.INFO`  | Informational milestones (checkpoints saved, eval completed)      |
+| `trackio.AlertLevel.WARN`  | Potential issues (loss plateau, low accuracy, high gradient norm) |
+| `trackio.AlertLevel.ERROR` | Critical failures (NaN loss, divergence, OOM)                     |
 
 ### Webhook Support
 
@@ -48,6 +48,7 @@ trackio.alert(
 ```
 
 Environment variables:
+
 - `TRACKIO_WEBHOOK_URL` — global webhook URL
 - `TRACKIO_WEBHOOK_MIN_LEVEL` — minimum level for webhook delivery (`info`, `warn`, `error`)
 
@@ -153,6 +154,7 @@ trackio get metric --project hyperparam-sweep --run run-1 --metric loss --around
 ### 4. React and Iterate
 
 Based on alerts:
+
 - **ERROR alerts** → stop the run, adjust hyperparameters, relaunch
 - **WARN alerts** → inspect metrics with `trackio get snapshot ...`, decide whether to intervene
 - **INFO alerts** → note progress, continue monitoring

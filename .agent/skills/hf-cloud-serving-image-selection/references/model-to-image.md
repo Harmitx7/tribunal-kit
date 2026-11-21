@@ -5,25 +5,25 @@ Consult this **before** writing deployment code that hardcodes an image URI.
 The canonical source for AWS Deep Learning Container image URIs is:
 **https://aws.github.io/deep-learning-containers/reference/available_images/**
 
-This page is AWS-maintained and lists every published image family with example URIs, tags, CUDA versions, and platform (SageMaker vs EC2/ECS/EKS). Read URIs from there directly — substitute `<region>` with the user's region and pass to `deploy.py --image-uri`. The doc below explains *which* family to pick for which use case; the URI itself comes from the AWS page.
+This page is AWS-maintained and lists every published image family with example URIs, tags, CUDA versions, and platform (SageMaker vs EC2/ECS/EKS). Read URIs from there directly — substitute `<region>` with the user's region and pass to `deploy.py --image-uri`. The doc below explains _which_ family to pick for which use case; the URI itself comes from the AWS page.
 
 ## Decision summary
 
-| Model family | Container | Source |
-|---|---|---|
-| HuggingFace text-generation LLMs (Llama, Qwen, Mistral, Mixtral, DeepSeek, Phi, Gemma, GPT-OSS, etc.) | **HuggingFace vLLM DLC** | AWS catalog → "HuggingFace vLLM Inference" |
-| Same as above, multimodal (vision-language, audio, any-to-any) | **HuggingFace vLLM-Omni DLC** | AWS catalog → "HuggingFace vLLM-Omni Inference" |
-| Same family, when NO `huggingface-vllm` tag is compatible (verified) or the region has none | AWS vLLM DLC (fallback — never for version freshness) | AWS catalog → "vLLM" |
-| Same family, alternative serving stack | DJL-LMI | AWS catalog → "DJL Inference" |
-| HuggingFace embeddings + encoder cross-encoder rerankers | **TEI DLC** | AWS catalog → "HuggingFace Text Embeddings Inference" |
-| Generative rerankers (causal-LM, e.g. Qwen3-Reranker) | **HuggingFace vLLM DLC** | Same as text-generation LLMs — see "Generative rerankers" below |
-| HuggingFace classifiers, NER, QA, summarization | HF Inference Toolkit (CPU; GPU tags broken as of July 2026 — see SKILL.md "Known-broken images") | AWS catalog → "HuggingFace PyTorch Inference" |
-| HuggingFace-curated SGLang build | HuggingFace SGLang | AWS catalog → "HuggingFace SGLang Inference" |
-| SGLang (without HF wrapper) | SGLang | AWS catalog → "SGLang" |
-| Amazon Nova (Lite, Micro, Pro) | SageMaker JumpStart | Use JumpStart deployment, not raw endpoint creation |
-| Stable Diffusion / diffusion / image generation | **DJL Inference** | AWS catalog → "DJL Inference" — not the HF Inference Toolkit (GPU tags broken, see below); StabilityAI DLC exists but is stale |
-| Inferentia / Trainium hardware | NeuronX variants | AWS catalog → search for "NeuronX" |
-| Custom inference code | BYOC | User provides URI |
+| Model family                                                                                          | Container                                                                                        | Source                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| HuggingFace text-generation LLMs (Llama, Qwen, Mistral, Mixtral, DeepSeek, Phi, Gemma, GPT-OSS, etc.) | **HuggingFace vLLM DLC**                                                                         | AWS catalog → "HuggingFace vLLM Inference"                                                                                     |
+| Same as above, multimodal (vision-language, audio, any-to-any)                                        | **HuggingFace vLLM-Omni DLC**                                                                    | AWS catalog → "HuggingFace vLLM-Omni Inference"                                                                                |
+| Same family, when NO `huggingface-vllm` tag is compatible (verified) or the region has none           | AWS vLLM DLC (fallback — never for version freshness)                                            | AWS catalog → "vLLM"                                                                                                           |
+| Same family, alternative serving stack                                                                | DJL-LMI                                                                                          | AWS catalog → "DJL Inference"                                                                                                  |
+| HuggingFace embeddings + encoder cross-encoder rerankers                                              | **TEI DLC**                                                                                      | AWS catalog → "HuggingFace Text Embeddings Inference"                                                                          |
+| Generative rerankers (causal-LM, e.g. Qwen3-Reranker)                                                 | **HuggingFace vLLM DLC**                                                                         | Same as text-generation LLMs — see "Generative rerankers" below                                                                |
+| HuggingFace classifiers, NER, QA, summarization                                                       | HF Inference Toolkit (CPU; GPU tags broken as of July 2026 — see SKILL.md "Known-broken images") | AWS catalog → "HuggingFace PyTorch Inference"                                                                                  |
+| HuggingFace-curated SGLang build                                                                      | HuggingFace SGLang                                                                               | AWS catalog → "HuggingFace SGLang Inference"                                                                                   |
+| SGLang (without HF wrapper)                                                                           | SGLang                                                                                           | AWS catalog → "SGLang"                                                                                                         |
+| Amazon Nova (Lite, Micro, Pro)                                                                        | SageMaker JumpStart                                                                              | Use JumpStart deployment, not raw endpoint creation                                                                            |
+| Stable Diffusion / diffusion / image generation                                                       | **DJL Inference**                                                                                | AWS catalog → "DJL Inference" — not the HF Inference Toolkit (GPU tags broken, see below); StabilityAI DLC exists but is stale |
+| Inferentia / Trainium hardware                                                                        | NeuronX variants                                                                                 | AWS catalog → search for "NeuronX"                                                                                             |
+| Custom inference code                                                                                 | BYOC                                                                                             | User provides URI                                                                                                              |
 
 ## Why vLLM, not TGI
 
@@ -45,6 +45,7 @@ Deploy generative rerankers exactly like a vLLM LLM deployment (`SM_VLLM_*` env 
 This is the default for **every** vLLM deployment, not a suggestion. The AWS vLLM repo further down is strictly a compatibility escape hatch.
 
 URI pattern (from AWS catalog → "HuggingFace vLLM Inference"):
+
 ```
 763104351884.dkr.ecr.<region>.amazonaws.com/huggingface-vllm:<version>-transformers<tv>-gpu-py<py>-cu<cuda>-ubuntu22.04
 ```
@@ -58,6 +59,7 @@ For multimodal models (vision-language, audio, any-to-any) use the sibling `hugg
 ## AWS vLLM DLC (fallback only)
 
 Use **only** when no `huggingface-vllm` tag is compatible with the model (a verified architecture/feature gap, not an assumed one) or the target region has no `huggingface-vllm` tag at all. This repo usually lists a **newer vLLM version** than `huggingface-vllm` — that alone is never a reason to pick it. If you are reading this section because the version number here is higher, go back to `huggingface-vllm`. URI pattern (from AWS catalog):
+
 ```
 763104351884.dkr.ecr.<region>.amazonaws.com/vllm:<version>-gpu-py<py>-cu<cuda>-ubuntu22.04-sagemaker
 ```
@@ -78,6 +80,7 @@ Two variants:
 - Repo `tei-cpu` — CPU build
 
 Pick by instance type:
+
 - `ml.g*`, `ml.p*`, `ml.inf*` → `tei` (GPU)
 - `ml.c*`, `ml.m*`, `ml.t*` → `tei-cpu` (CPU)
 
@@ -87,7 +90,7 @@ CPU embeddings are dramatically cheaper than GPU and often fast enough — `ml.c
 
 TEI bakes architecture support into the image. The current upstream version supports BERT, CamemBERT, RoBERTa, XLM-RoBERTa, NomicBert, JinaBert, JinaCodeBert, Mistral, Qwen2/3, Gemma2/3, ModernBert. The AWS-published DLC sometimes lags upstream by months — if a recent architecture isn't supported, mirror the upstream image from `ghcr.io/huggingface/text-embeddings-inference:<version>` using `scripts/mirror_image.py` and pass the result to `deploy.py --image-uri` directly.
 
-**Support is per (architecture, task), not per architecture.** Qwen3 appearing in the list means Qwen3 *embeddings*; TEI 1.8.x rejects Qwen3 with a classification head ("`classifier` model type is not supported"). Before picking TEI for a reranker, check the model's `config.json`: `architectures` ending in `ForSequenceClassification` on a BERT-family encoder is TEI territory; `ForCausalLM` means it's a generative reranker → vLLM (see above).
+**Support is per (architecture, task), not per architecture.** Qwen3 appearing in the list means Qwen3 _embeddings_; TEI 1.8.x rejects Qwen3 with a classification head ("`classifier` model type is not supported"). Before picking TEI for a reranker, check the model's `config.json`: `architectures` ending in `ForSequenceClassification` on a BERT-family encoder is TEI territory; `ForCausalLM` means it's a generative reranker → vLLM (see above).
 
 For environment variable configuration of TEI, see the SKILL.md.
 

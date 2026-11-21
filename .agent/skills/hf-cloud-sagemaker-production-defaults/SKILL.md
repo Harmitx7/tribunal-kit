@@ -1,6 +1,6 @@
 ---
 name: hf-cloud-sagemaker-production-defaults
-description: "Use when Create a SageMaker endpoint (real-time, real-time scale-to-zero, or async) with autoscaling, CloudWatch alarms, and tagging enabled by default. Use this skill whenever about to create a SageMaker endpoint, write deployment code that calls `create_endpoint`, or finalize a deployment after the image URI and IAM role are known. Provides deploy.py for real-time endpoints, deploy_ic.py for real-time endpoints that scale to zero instances via inference components, and deploy_async.py for async endpoints (also scale-to-zero). This is the last step in the SageMaker deployment workflow. Never generate a bare `create_endpoint` call without these defaults — endpoints without autoscaling or alarms are demos, not deployments."
+description: 'Use when Create a SageMaker endpoint (real-time, real-time scale-to-zero, or async) with autoscaling, CloudWatch alarms, and tagging enabled by default. Use this skill whenever about to create a SageMaker endpoint, write deployment code that calls `create_endpoint`, or finalize a deployment after the image URI and IAM role are known. Provides deploy.py for real-time endpoints, deploy_ic.py for real-time endpoints that scale to zero instances via inference components, and deploy_async.py for async endpoints (also scale-to-zero). This is the last step in the SageMaker deployment workflow. Never generate a bare `create_endpoint` call without these defaults — endpoints without autoscaling or alarms are demos, not deployments.'
 version: 6.0.0
 last-updated: 2026-09-29
 tools: Read, Grep, Glob, Bash, Edit, Write
@@ -8,45 +8,45 @@ scripts-binding:
   - .agent/scripts/lint_runner.js
   - .agent/scripts/verify_all.js
 inputs:
-  task: "string"
-  target_file: "string"
+  task: 'string'
+  target_file: 'string'
 outputs:
-  result: "string"
-  verification_status: "boolean"
+  result: 'string'
+  verification_status: 'boolean'
 trigger:
-  - "sagemaker"
-  - "production"
-  - "defaults"
+  - 'sagemaker'
+  - 'production'
+  - 'defaults'
 ---
 
 # SageMaker Production Defaults
 
 ## Mandatory Pre-Flight Context Inspection
+
 Before reading, generating, or refactoring code in the `hf-cloud-sagemaker-production-defaults` domain, inspect these 5 critical parameters:
+
 1. **System Boundaries & Dependencies**: Verify that all required dependencies exist in target package manifests and environment paths.
 2. **Runtime Context & Platform Invariants**: Confirm target platform constraints (Node.js, Browser, Mobile OS, Edge runtime) before applying APIs.
 3. **Execution Guardrails**: Identify potential side-effects, state mutations, and unhandled asynchronous exceptions.
 4. **Validation & Type Contracts**: Validate input data schemas and strict type constraints across all module interfaces.
 5. **Observability & Proof of Execution**: Ensure execution produces tangible verification signals (terminal output, tests, metrics).
 
-
 ## Activation Boundaries
+
 - **Activate when:** Use when Create a SageMaker endpoint (real-time, real-time scale-to-zero, or async) with autoscaling, CloudWatch alarms, and tagging enabled by default. Use this skill whenever about to create a SageMaker endpoint, write deployment code that calls `create_endpoint`, or finalize a deployment after the image URI and IAM role are known. Provides deploy.py for real-time endpoints, deploy_ic.py for real-time endpoints that scale to zero instances via inference components, and deploy_async.py for async endpoints (also scale-to-zero). This is the last step in the SageMaker deployment workflow. Never generate a bare `create_endpoint` call without these defaults — endpoints without autoscaling or alarms are demos, not deployments.
 - **DO NOT activate when:** The task falls outside the `hf-cloud-sagemaker-production-defaults` domain or is managed by a different dedicated specialist agent.
 
-
 ## 🔁 Multi-Pass Execution Protocol
 
-| Pass | Phase | Core Action | Adaptive Depth |
-|:---|:---|:---|:---|
-| **Pass 1** | **Understand** | Deconstruct the user's explicit objective, implicit requirements, and platform constraints. | Fast / Standard / Deep |
-| **Pass 2** | **Plan** | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls. | Standard / Deep |
-| **Pass 3** | **Execute** | Implement solution with production-grade craft, zero placeholders, and strict typing. | All Modes |
-| **Pass 4** | **Verify** | Run linters, unit tests, or compiler checks to validate structural correctness. | All Modes |
-| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep |
-| **Pass 6** | **Harden** | Eliminate discovered friction, optimize performance, and harden error boundaries. | Standard / Deep |
-| **Pass 7** | **Quality Gate** | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing. | All Modes |
-
+| Pass       | Phase                | Core Action                                                                                     | Adaptive Depth         |
+| :--------- | :------------------- | :---------------------------------------------------------------------------------------------- | :--------------------- |
+| **Pass 1** | **Understand**       | Deconstruct the user's explicit objective, implicit requirements, and platform constraints.     | Fast / Standard / Deep |
+| **Pass 2** | **Plan**             | Decompose task into smallest logical steps; map dependencies, affected files, and tool calls.   | Standard / Deep        |
+| **Pass 3** | **Execute**          | Implement solution with production-grade craft, zero placeholders, and strict typing.           | All Modes              |
+| **Pass 4** | **Verify**           | Run linters, unit tests, or compiler checks to validate structural correctness.                 | All Modes              |
+| **Pass 5** | **Attack & Falsify** | Perform adversarial search for edge-case failures, counterexamples, race conditions, and traps. | Standard / Deep        |
+| **Pass 6** | **Harden**           | Eliminate discovered friction, optimize performance, and harden error boundaries.               | Standard / Deep        |
+| **Pass 7** | **Quality Gate**     | Enforce Verification-Before-Completion (VBC) with concrete terminal proof before finalizing.    | All Modes              |
 
 The difference between a demo endpoint and one you can leave running is: it scales with traffic, it tells you when it breaks, and you can debug it later. This skill makes those three the default rather than optional extras.
 
@@ -105,15 +105,15 @@ Note: TEI deployments **do not** need `--inference-ami-version`. That flag is vL
 
 Where each value comes from:
 
-| Parameter | Source |
-|---|---|
-| `--image-uri` | `hf-cloud-serving-image-selection` — agent reads from the AWS DLC catalog page |
-| `--inference-ami-version` | `hf-cloud-serving-image-selection` — required for vLLM tags containing cu130+ |
-| `--role-arn` | `hf-cloud-sagemaker-iam-preflight` (`check_role.py`) |
-| `--region` | `hf-cloud-aws-context-discovery` |
-| `--instance-type` | User input or planner recommendation |
-| `--env` | Model-specific; see `hf-cloud-serving-image-selection` for required `SM_VLLM_*` vars |
-| `--model-s3-uri` | Preferred for production — S3 URI of the pinned model artifact extracted to `/opt/ml/model`; omit only for the Hub-at-runtime exception |
+| Parameter                 | Source                                                                                                                                  |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `--image-uri`             | `hf-cloud-serving-image-selection` — agent reads from the AWS DLC catalog page                                                          |
+| `--inference-ami-version` | `hf-cloud-serving-image-selection` — required for vLLM tags containing cu130+                                                           |
+| `--role-arn`              | `hf-cloud-sagemaker-iam-preflight` (`check_role.py`)                                                                                    |
+| `--region`                | `hf-cloud-aws-context-discovery`                                                                                                        |
+| `--instance-type`         | User input or planner recommendation                                                                                                    |
+| `--env`                   | Model-specific; see `hf-cloud-serving-image-selection` for required `SM_VLLM_*` vars                                                    |
+| `--model-s3-uri`          | Preferred for production — S3 URI of the pinned model artifact extracted to `/opt/ml/model`; omit only for the Hub-at-runtime exception |
 
 The script creates resources in order with error handling, waits for `InService` (up to 30 min), surfaces failure reasons, registers autoscaling and alarms, and prints a summary including the teardown command. Outputs a JSON blob on stdout with endpoint/config/model names for downstream scripting.
 
@@ -249,15 +249,15 @@ python scripts/deploy_ic.py \
 
 ### How it differs from deploy.py
 
-| Piece | Model-based (`deploy.py`) | Component-based (`deploy_ic.py`) |
-|---|---|---|
-| Execution role | on the Model | on the **endpoint config** (`ExecutionRoleArn`) |
-| Model reference | `ProductionVariants[].ModelName` | `InferenceComponent.Specification.ModelName`; the variant has no `ModelName` |
-| Instance floor | `InitialInstanceCount`, min 1 | `ManagedInstanceScaling {Status: ENABLED, MinInstanceCount: 0}` |
-| Scaling target | `endpoint/<ep>/variant/AllTraffic`, `sagemaker:variant:DesiredInstanceCount` | `inference-component/<ic>`, `sagemaker:inference-component:DesiredCopyCount` |
-| Scaling metric | `SageMakerVariantInvocationsPerInstance` (20/min) | `SageMakerInferenceComponentConcurrentRequestsPerCopyHighResolution` (5 concurrent/copy) |
-| Wake from zero | not applicable | step policy + `NoCapacityInvocationFailures` alarm |
-| Invocation | endpoint name | endpoint name **plus** `InferenceComponentName` |
+| Piece           | Model-based (`deploy.py`)                                                    | Component-based (`deploy_ic.py`)                                                         |
+| --------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Execution role  | on the Model                                                                 | on the **endpoint config** (`ExecutionRoleArn`)                                          |
+| Model reference | `ProductionVariants[].ModelName`                                             | `InferenceComponent.Specification.ModelName`; the variant has no `ModelName`             |
+| Instance floor  | `InitialInstanceCount`, min 1                                                | `ManagedInstanceScaling {Status: ENABLED, MinInstanceCount: 0}`                          |
+| Scaling target  | `endpoint/<ep>/variant/AllTraffic`, `sagemaker:variant:DesiredInstanceCount` | `inference-component/<ic>`, `sagemaker:inference-component:DesiredCopyCount`             |
+| Scaling metric  | `SageMakerVariantInvocationsPerInstance` (20/min)                            | `SageMakerInferenceComponentConcurrentRequestsPerCopyHighResolution` (5 concurrent/copy) |
+| Wake from zero  | not applicable                                                               | step policy + `NoCapacityInvocationFailures` alarm                                       |
+| Invocation      | endpoint name                                                                | endpoint name **plus** `InferenceComponentName`                                          |
 
 `InferenceAmiVersion` still belongs on the variant, and it coexists with `ManagedInstanceScaling` (verified on `cu130` + `ml.g5.xlarge`).
 
@@ -267,16 +267,16 @@ Four pieces make zero work, and all four are required. Target tracking cannot le
 
 `Qwen/Qwen3-0.6B` from the Hub, `ml.g5.xlarge`, `us-east-1`, July 2026:
 
-| Step | Time |
-|---|---|
-| Endpoint `InService` (it starts empty, no model loads) | 4 min |
-| Component `InService` (Hub download + vLLM boot + CUDA graphs) | +6 min |
-| Idle to 0 copies | 11 min after the last request |
-| 0 copies to 0 instances | +12 min |
-| First request at zero → HTTP 400 `has no capacity` | immediate |
-| `NoCapacityInvocationFailures` alarm → ALARM | +67 s |
-| Step policy raises desired copies and instances to 1 | +1 min 42 s |
-| HTTP 200 | **+9 min 24 s** |
+| Step                                                           | Time                          |
+| -------------------------------------------------------------- | ----------------------------- |
+| Endpoint `InService` (it starts empty, no model loads)         | 4 min                         |
+| Component `InService` (Hub download + vLLM boot + CUDA graphs) | +6 min                        |
+| Idle to 0 copies                                               | 11 min after the last request |
+| 0 copies to 0 instances                                        | +12 min                       |
+| First request at zero → HTTP 400 `has no capacity`             | immediate                     |
+| `NoCapacityInvocationFailures` alarm → ALARM                   | +67 s                         |
+| Step policy raises desired copies and instances to 1           | +1 min 42 s                   |
+| HTTP 200                                                       | **+9 min 24 s**               |
 
 Scale-in is not tunable through this skill: Application Auto Scaling creates the AlarmLow itself with a 10 s period and 90 evaluation periods, so 15 minutes of idle datapoints are required before it fires.
 
@@ -343,9 +343,11 @@ python scripts/deploy_async.py \
 ```
 
 Required extras over `deploy.py`:
+
 - `--output-s3-uri` — where async results land (results are not returned synchronously)
 
 Optional async-specific flags:
+
 - `--failure-s3-uri` — separate path for failed invocations
 - `--success-sns-topic`, `--error-sns-topic` — get notified when async results are ready or fail
 - `--min-capacity 0` (the default) — scale to zero between batches
@@ -364,6 +366,7 @@ Both are needed. Target-tracking alone cannot transition from zero (it can't div
 ### Async alarms
 
 The script creates three CloudWatch alarms:
+
 - `ApproximateBacklogSize > 50` — queue is building faster than capacity can drain it
 - `InvocationsFailed > 5` — repeated processing failures
 - `HasBacklogWithoutCapacity` — drives the wake-from-zero policy (not a notification alarm; its action is the step-scaling policy, not the SNS topic)
@@ -395,16 +398,16 @@ Teardown works the same as real-time: `python3 scripts/teardown.py <endpoint-nam
 
 ## Defaults at a glance
 
-| Setting | Default | Override |
-|---|---|---|
-| Initial instance count | 1 | `--initial-instance-count` |
-| Autoscaling min / max | 1 / 4 | `--min-capacity`, `--max-capacity` |
-| Autoscaling target | 20 invocations/min/instance | `--target-invocations-per-instance` |
-| Data capture | disabled (opt-in) | `--enable-data-capture` |
-| CloudWatch alarms | 3 alarms | `--no-alarms` |
-| SNS notification | none (alarms created but won't notify) | `--sns-alarm-topic <arn>` |
-| Environment tag | `dev` | `--environment` |
-| InferenceAmiVersion | none (SageMaker default) | `--inference-ami-version` (REQUIRED for vLLM CUDA 13+) |
+| Setting                | Default                                | Override                                               |
+| ---------------------- | -------------------------------------- | ------------------------------------------------------ |
+| Initial instance count | 1                                      | `--initial-instance-count`                             |
+| Autoscaling min / max  | 1 / 4                                  | `--min-capacity`, `--max-capacity`                     |
+| Autoscaling target     | 20 invocations/min/instance            | `--target-invocations-per-instance`                    |
+| Data capture           | disabled (opt-in)                      | `--enable-data-capture`                                |
+| CloudWatch alarms      | 3 alarms                               | `--no-alarms`                                          |
+| SNS notification       | none (alarms created but won't notify) | `--sns-alarm-topic <arn>`                              |
+| Environment tag        | `dev`                                  | `--environment`                                        |
+| InferenceAmiVersion    | none (SageMaker default)               | `--inference-ami-version` (REQUIRED for vLLM CUDA 13+) |
 
 Not defaulted (user-specific input needed): VPC config, KMS key, multi-variant, async inference.
 
@@ -437,7 +440,7 @@ Always tell the user about the teardown command after the deployment summary. Us
 
 **`CannotStartContainerError` + no CloudWatch logs ever created** — the InferenceAmiVersion problem. If the image tag contains `cu130` or later and you didn't pass `--inference-ami-version al2-ami-sagemaker-inference-gpu-3-1`, this is the cause. See `hf-cloud-serving-image-selection`. Do NOT chase images, IAM roles, env vars, or instance types — the failure signature is identical for many other things but the cause here is the AMI.
 
-**"Failed to pass ping health check"** — the container *did* start and produced logs, but `/ping` isn't responding. Check CloudWatch at `/aws/sagemaker/Endpoints/<endpoint-name>`. Usually: wrong image for model architecture, missing HF token, or OOM.
+**"Failed to pass ping health check"** — the container _did_ start and produced logs, but `/ping` isn't responding. Check CloudWatch at `/aws/sagemaker/Endpoints/<endpoint-name>`. Usually: wrong image for model architecture, missing HF token, or OOM.
 
 **"Container failed to start" (with logs present)** — entrypoint ran, then exited. Check CloudWatch. Common: missing required env vars (`SM_VLLM_MODEL`, `SM_VLLM_HOST`, `SM_VLLM_TRUST_REMOTE_CODE`), wrong `ModelDataUrl` format, unreadable model artifacts.
 
@@ -447,7 +450,7 @@ Always tell the user about the teardown command after the deployment summary. Us
 
 **InService, but invocations time out / async outputs never appear** — dead Python worker behind a live MMS front-end. Run the log scan from "InService is not success" above; the traceback in CloudWatch is the real error.
 
-**`403 Forbidden` downloading weights from HF Hub during startup** — the container's bundled `huggingface_hub` predates HF's XET CDN auth. Add `--env HF_HUB_ENABLE_HF_TRANSFER=0`, or pre-stage the weights in S3. Note: this can *mask* a deeper failure (the worker may still crash after the download succeeds) — re-check logs after fixing it.
+**`403 Forbidden` downloading weights from HF Hub during startup** — the container's bundled `huggingface_hub` predates HF's XET CDN auth. Add `--env HF_HUB_ENABLE_HF_TRANSFER=0`, or pre-stage the weights in S3. Note: this can _mask_ a deeper failure (the worker may still crash after the download succeeds) — re-check logs after fixing it.
 
 **Diagnostic rule**: when failures look identical across multiple configurations (different images, roles, instance types) and **no logs are ever produced**, the cause is almost always below the container — host AMI, networking, account-level — not the deployment config. Stop iterating on config; check the AMI version and account state.
 
@@ -463,23 +466,21 @@ Don't retry blindly. The script prints the specific `FailureReason` from `descri
 
 ## 🚨 Edge-Case & Failure Mode Matrix
 
-| Scenario | Risk | Production Mitigation |
-|:---|:---|:---|
-| **Empty or Null Inputs** | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers |
-| **Network Timeout / Latency** | Hanging operations or duplicate side-effects | Implement bounded abort controllers, exponential backoff, and idempotency keys |
-| **Concurrency / Race Conditions** | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls |
-| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection | Validate boundary payloads with Zod/Pydantic schemas prior to execution |
-| **Resource / Memory Saturation** | OOM errors, frame drops, or memory leaks | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
-
+| Scenario                               | Risk                                                 | Production Mitigation                                                           |
+| :------------------------------------- | :--------------------------------------------------- | :------------------------------------------------------------------------------ |
+| **Empty or Null Inputs**               | Unhandled exception or unexpected rendering collapse | Enforce fallback guards, optional chaining, and explicit empty state handlers   |
+| **Network Timeout / Latency**          | Hanging operations or duplicate side-effects         | Implement bounded abort controllers, exponential backoff, and idempotency keys  |
+| **Concurrency / Race Conditions**      | Stale state overwrite or inconsistent data mutations | Use atomic transactions, mutex locking, or cancel-on-resubmit controls          |
+| **Invalid Schema / Malformed Payload** | Downstream runtime errors or security injection      | Validate boundary payloads with Zod/Pydantic schemas prior to execution         |
+| **Resource / Memory Saturation**       | OOM errors, frame drops, or memory leaks             | Clean up listeners, cancel active timers, and enforce pagination/virtualization |
 
 ## 🤖 LLM-Specific Traps Table
 
-| Anti-Pattern | What AI Commonly Does Wrong | What Is Actually Correct |
-|:---|:---|:---|
-| **Platform-Dependent Shell Commands** | Hardcoding $(cat ~/.cache/huggingface/token) or piping to jq | Use platform-agnostic token checks via env var HF_TOKEN and native JSON parsing |
-| **VRAM OOM Crash** | Loading 70B model weights on a consumer 16GB GPU without quantization | Calculate parameter bounds (fp16 = VRAM/2, Q4 = VRAM*2) and load with bitsandbytes/GGUF |
-| **Blocking Batch Generation** | Generating large batches synchronously without streaming or yield | Use TextIteratorStreamer or asynchronous generate workers to prevent request timeouts |
-
+| Anti-Pattern                          | What AI Commonly Does Wrong                                           | What Is Actually Correct                                                                |
+| :------------------------------------ | :-------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| **Platform-Dependent Shell Commands** | Hardcoding $(cat ~/.cache/huggingface/token) or piping to jq          | Use platform-agnostic token checks via env var HF_TOKEN and native JSON parsing         |
+| **VRAM OOM Crash**                    | Loading 70B model weights on a consumer 16GB GPU without quantization | Calculate parameter bounds (fp16 = VRAM/2, Q4 = VRAM*2) and load with bitsandbytes/GGUF |
+| **Blocking Batch Generation**         | Generating large batches synchronously without streaming or yield     | Use TextIteratorStreamer or asynchronous generate workers to prevent request timeouts   |
 
 ## 🏛️ Tribunal Verification & Guardrails
 
@@ -487,12 +488,15 @@ Don't retry blindly. The script prints the specific `FailureReason` from `descri
 **Slash Command:** `/review` or `/tribunal-full`
 
 ### 🔬 Evidence Standard (Tri-State Verification)
+
 Every finding, audit statement, or completion claim must classify its factual certainty:
+
 - **`[OBSERVED]`**: Directly confirmed in the codebase or verified via executed terminal command.
 - **`[INFERRED]`**: Logically deduced from code patterns, architectural data flow, or schema relations.
 - **`[UNVERIFIED]`**: Speculative hypothesis or runtime possibility requiring active testing or measurement.
 
 ### ✅ Pre-Flight Self-Audit Checklist
+
 ```
 ✅ Are model architectures and weights verified to fit within target hardware VRAM budgets?
 ✅ Are pipeline requests guarded with bounded timeouts and retry backoffs?
@@ -502,6 +506,8 @@ Every finding, audit statement, or completion claim must classify its factual ce
 ```
 
 ### 🛑 Verification-Before-Completion (VBC) Protocol
+
 **CRITICAL:** You must follow a strict "evidence-based closeout" state machine.
+
 - ❌ **Forbidden:** Declaring a task complete because the output "looks correct."
 - ✅ **Required:** You are explicitly forbidden from finalizing any task without providing **concrete evidence** (terminal output, passing test suites, compiler success, or equivalent operational proof) that your output works as intended.

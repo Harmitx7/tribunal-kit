@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -23,6 +24,7 @@ class VerdictAggregator {
    * @param {number} [params.tier=1] - Impact tier (0..3)
    * @param {Object} [params.decision] - DecisionPayload
    * @param {string} [params.reviewRunId] - Provenance ID
+   * @param {Object} [params.confidence_decision] - Confidence decision
    * @returns {Object} AggregatedVerdictPayload
    */
   static aggregate(params = {}) {

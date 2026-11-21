@@ -220,7 +220,11 @@ function main() {
   let detected = 0;
 
   for (const [name, adapter] of Object.entries(ADAPTERS)) {
-    const matchesTarget = !targetAgent || name === targetAgent || name.startsWith(targetAgent) || targetAgent === name.replace('-code', '').replace('-cli', '');
+    const matchesTarget =
+      !targetAgent ||
+      name === targetAgent ||
+      name.startsWith(targetAgent) ||
+      targetAgent === name.replace('-code', '').replace('-cli', '');
     if (!matchesTarget) continue;
 
     const isDetected = adapter.detect();

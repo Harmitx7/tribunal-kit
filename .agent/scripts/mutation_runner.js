@@ -11,6 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { assertWithinRoot } = require('./_utils');
 
 // ── Mutation Definitions ──────────────────────────────────────────────────────
 const MUTATIONS = [
@@ -178,7 +179,17 @@ function parseCliArgs(argv) {
 
 // ── Main Engine ───────────────────────────────────────────────────────────────
 function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
-  targetFile = path.resolve(fileToMutate);
+  if (!fileToMutate || typeof fileToMutate !== 'string' || fileToMutate.startsWith('-')) {
+    console.error(`ERROR: Invalid target file: ${fileToMutate}`);
+    process.exit(1);
+  }
+
+  try {
+    targetFile = assertWithinRoot(process.cwd(), fileToMutate);
+  } catch (err) {
+    console.error(`Security Violation: ${err.message}`);
+    process.exit(1);
+  }
 
   if (!fs.existsSync(targetFile)) {
     console.error(`ERROR: File not found: ${targetFile}`);
@@ -187,6 +198,7 @@ function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
 
   originalContent = fs.readFileSync(targetFile, 'utf-8');
   backupPath = targetFile + '.bak';
+  assertWithinRoot(process.cwd(), backupPath);
   fs.writeFileSync(backupPath, originalContent, 'utf-8');
 
   console.log(`\n━━━ Tribunal Mutation Engine v2.1 ━━━`);
@@ -195,8 +207,27 @@ function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
   console.log(`Max/type:     ${maxMutantsPerType}`);
   console.log(`\nExecuting baseline test run...`);
 
+  if (!testCommand || typeof testCommand !== 'string') {
+    console.error(`ERROR: Invalid test command: ${testCommand}`);
+    safeRestore();
+    process.exit(1);
+  }
+  const SHELL_META_REGEX = /[;&|><$\\%^!"()\r\n]/;
+  if (SHELL_META_REGEX.test(testCommand)) {
+    console.error(
+      `Security Violation: Shell metacharacters detected in test command: ${testCommand}`,
+    );
+    safeRestore();
+    process.exit(1);
+  }
+
   const cmdArgs = testCommand.trim().split(/\s+/);
   const cmd = cmdArgs.shift();
+  if (!cmd || cmd.startsWith('-')) {
+    console.error(`ERROR: Invalid executable in test command: ${cmd}`);
+    safeRestore();
+    process.exit(1);
+  }
   const baseline = spawnSync(cmd, cmdArgs, { shell: false, stdio: 'pipe' });
   if (baseline.status !== 0) {
     console.error(`ERROR: Baseline test failed! Fix your tests before mutating.`);
@@ -291,17 +322,25 @@ function runMutationTesting(fileToMutate, testCommand, maxMutantsPerType) {
   process.exit(score < 80 ? 1 : 0);
 }
 
-// ── Entry Point ───────────────────────────────────────────────────────────────
-const { fileToMutate, testCommand, maxMutants } = parseCliArgs(process.argv);
+// ── Exports & Entry Point ─────────────────────────────────────────────────────
+module.exports = {
+  runMutationTesting,
+  parseCliArgs,
+  safeRestore,
+};
 
-if (!fileToMutate || !testCommand) {
-  console.log(`Usage: node mutation_runner.js <target_file> [--max-mutants N] <test_command>`);
-  console.log(`\nExamples:`);
-  console.log(`  node mutation_runner.js src/math.js "npx jest src/math.test.js"`);
-  console.log(
-    `  node mutation_runner.js src/auth.js --max-mutants 10 "npx jest test/auth.test.js"`,
-  );
-  process.exit(1);
+if (require.main === module) {
+  const { fileToMutate, testCommand, maxMutants } = parseCliArgs(process.argv);
+
+  if (!fileToMutate || !testCommand) {
+    console.log(`Usage: node mutation_runner.js <target_file> [--max-mutants N] <test_command>`);
+    console.log(`\nExamples:`);
+    console.log(`  node mutation_runner.js src/math.js "npx jest src/math.test.js"`);
+    console.log(
+      `  node mutation_runner.js src/auth.js --max-mutants 10 "npx jest test/auth.test.js"`,
+    );
+    process.exit(1);
+  }
+
+  runMutationTesting(fileToMutate, testCommand, maxMutants);
 }
-
-runMutationTesting(fileToMutate, testCommand, maxMutants);

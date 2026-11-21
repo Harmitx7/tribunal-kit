@@ -41,22 +41,41 @@ class FailureClassifier {
     if (error.name === 'AbortError' || message.includes('abort') || message.includes('cancelled')) {
       return 'CANCELLED';
     }
-    if (message.includes('tool_timeout') || message.includes('timed out') || message.includes('deadline exceeded')) {
+    if (
+      message.includes('tool_timeout') ||
+      message.includes('timed out') ||
+      message.includes('deadline exceeded')
+    ) {
       return 'TIMEOUT';
     }
 
     // 3. State Machine & Integrity
-    if (error.name === 'IllegalStateTransitionError' || message.includes('corrupted checkpoint') || message.includes('state transition')) {
+    if (
+      error.name === 'IllegalStateTransitionError' ||
+      message.includes('corrupted checkpoint') ||
+      message.includes('state transition')
+    ) {
       return 'STATE_INTEGRITY_FAILURE';
     }
 
     // 4. Rate Limiting (HTTP 429)
-    if (status === 429 || message.includes('rate limit') || message.includes('too many requests') || message.includes('429')) {
+    if (
+      status === 429 ||
+      message.includes('rate limit') ||
+      message.includes('too many requests') ||
+      message.includes('429')
+    ) {
       return 'RATE_LIMITED';
     }
 
     // 5. Authentication & Authorization (HTTP 401, 403)
-    if (status === 401 || status === 403 || message.includes('unauthorized') || message.includes('forbidden') || message.includes('invalid api key')) {
+    if (
+      status === 401 ||
+      status === 403 ||
+      message.includes('unauthorized') ||
+      message.includes('forbidden') ||
+      message.includes('invalid api key')
+    ) {
       return 'AUTHORIZATION_FAILURE';
     }
 
@@ -77,32 +96,63 @@ class FailureClassifier {
     }
 
     // 7. Schema & Invalid Input
-    if (error.name === 'ZodError' || message.includes('validation error') || message.includes('invalid input') || status === 400) {
+    if (
+      error.name === 'ZodError' ||
+      message.includes('validation error') ||
+      message.includes('invalid input') ||
+      status === 400
+    ) {
       return 'INVALID_INPUT';
     }
 
     // 8. Malformed Output / JSON Syntax
-    if (error instanceof SyntaxError || message.includes('unexpected token') || message.includes('invalid json') || message.includes('malformed output')) {
+    if (
+      error instanceof SyntaxError ||
+      message.includes('unexpected token') ||
+      message.includes('invalid json') ||
+      message.includes('malformed output')
+    ) {
       return 'MALFORMED_OUTPUT';
     }
 
     // 9. Model Internal Errors (HTTP 500 from provider)
-    if ((status === 500 && (message.includes('model') || message.includes('openai') || message.includes('anthropic') || message.includes('gemini'))) || message.includes('content filter') || message.includes('safety system')) {
+    if (
+      (status === 500 &&
+        (message.includes('model') ||
+          message.includes('openai') ||
+          message.includes('anthropic') ||
+          message.includes('gemini'))) ||
+      message.includes('content filter') ||
+      message.includes('safety system')
+    ) {
       return 'MODEL_FAILURE';
     }
 
     // 10. Resource Exhaustion
-    if (message.includes('out of memory') || message.includes('heap limit') || message.includes('queue saturated') || message.includes('token budget exceeded')) {
+    if (
+      message.includes('out of memory') ||
+      message.includes('heap limit') ||
+      message.includes('queue saturated') ||
+      message.includes('token budget exceeded')
+    ) {
       return 'RESOURCE_EXHAUSTED';
     }
 
     // 11. Missing External Dependencies
-    if (code === 'enoent' || message.includes('command not found') || message.includes('mcp server unavailable')) {
+    if (
+      code === 'enoent' ||
+      message.includes('command not found') ||
+      message.includes('mcp server unavailable')
+    ) {
       return 'DEPENDENCY_UNAVAILABLE';
     }
 
     // 12. Tool Failure
-    if (message.includes('tool failed') || message.includes('subprocess exited with code') || message.includes('execution error')) {
+    if (
+      message.includes('tool failed') ||
+      message.includes('subprocess exited with code') ||
+      message.includes('execution error')
+    ) {
       return 'TOOL_FAILURE';
     }
 

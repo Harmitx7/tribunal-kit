@@ -26,7 +26,8 @@ describe('UI Design Adversarial Stress Scenarios (Unit)', () => {
   });
 
   it('Scenario 3: flags mobile table blowout lacking overflow-x-auto', () => {
-    const snippet = '<div className="w-full"><table><thead><tr><th>Metric</th></tr></thead></table></div>';
+    const snippet =
+      '<div className="w-full"><table><thead><tr><th>Metric</th></tr></thead></table></div>';
     const defects = analyzeVisualDefects(snippet);
     const tableDefect = defects.find(d => d.id.startsWith('TABLE_MISSING_OVERFLOW'));
     expect(tableDefect).toBeDefined();
@@ -97,4 +98,3 @@ describe('UI Design Adversarial Stress Scenarios (Unit)', () => {
     expect(critical.length).toBe(0);
   });
 });
-

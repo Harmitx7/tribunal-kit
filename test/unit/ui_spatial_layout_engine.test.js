@@ -43,4 +43,3 @@ describe('UI Spatial Layout Engine (Unit)', () => {
     expect(clampExpr).toMatch(/^clamp\(1rem, .+rem \+ .+vw, 2rem\)$/);
   });
 });
-

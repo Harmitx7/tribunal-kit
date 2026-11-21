@@ -11,24 +11,11 @@ const crypto = require('crypto');
 
 const CONFIDENCE_SCHEMA_VERSION = 1;
 
-const CONFIDENCE_STATUSES = Object.freeze([
-  'EVALUATED',
-  'INSUFFICIENT_EVIDENCE',
-]);
+const CONFIDENCE_STATUSES = Object.freeze(['EVALUATED', 'INSUFFICIENT_EVIDENCE']);
 
-const CONFIDENCE_LEVELS = Object.freeze([
-  'HIGH',
-  'MEDIUM',
-  'LOW',
-  'INSUFFICIENT',
-]);
+const CONFIDENCE_LEVELS = Object.freeze(['HIGH', 'MEDIUM', 'LOW', 'INSUFFICIENT']);
 
-const REVIEW_DEPTHS = Object.freeze([
-  'STANDARD',
-  'EXPANDED',
-  'DEEP',
-  'INSUFFICIENT_EVIDENCE',
-]);
+const REVIEW_DEPTHS = Object.freeze(['STANDARD', 'EXPANDED', 'DEEP', 'INSUFFICIENT_EVIDENCE']);
 
 const NEXT_ACTIONS = Object.freeze([
   'CONTINUE',
@@ -107,7 +94,10 @@ function validateConfidenceAssessment(raw) {
   }
 
   // Assessment ID
-  if (typeof raw.assessment_id !== 'string' || !/^conf_[a-zA-Z0-9_-]{4,64}$/.test(raw.assessment_id)) {
+  if (
+    typeof raw.assessment_id !== 'string' ||
+    !/^conf_[a-zA-Z0-9_-]{4,64}$/.test(raw.assessment_id)
+  ) {
     return { ok: false, error: 'Invalid assessment_id format' };
   }
 
@@ -208,27 +198,57 @@ class ConfidenceEscalationBudgetManager {
   constructor(options = {}) {
     this.maxRounds = Math.min(
       HARD_CEILINGS.maxRounds,
-      Math.max(1, typeof options.maxRounds === 'number' ? options.maxRounds : DEFAULT_ESCALATION_BUDGET.maxRounds),
+      Math.max(
+        1,
+        typeof options.maxRounds === 'number'
+          ? options.maxRounds
+          : DEFAULT_ESCALATION_BUDGET.maxRounds,
+      ),
     );
     this.maxAdditionalReviewers = Math.min(
       HARD_CEILINGS.maxAdditionalReviewers,
-      Math.max(0, typeof options.maxAdditionalReviewers === 'number' ? options.maxAdditionalReviewers : DEFAULT_ESCALATION_BUDGET.maxAdditionalReviewers),
+      Math.max(
+        0,
+        typeof options.maxAdditionalReviewers === 'number'
+          ? options.maxAdditionalReviewers
+          : DEFAULT_ESCALATION_BUDGET.maxAdditionalReviewers,
+      ),
     );
     this.maxAdditionalRequests = Math.min(
       HARD_CEILINGS.maxAdditionalRequests,
-      Math.max(0, typeof options.maxAdditionalRequests === 'number' ? options.maxAdditionalRequests : DEFAULT_ESCALATION_BUDGET.maxAdditionalRequests),
+      Math.max(
+        0,
+        typeof options.maxAdditionalRequests === 'number'
+          ? options.maxAdditionalRequests
+          : DEFAULT_ESCALATION_BUDGET.maxAdditionalRequests,
+      ),
     );
     this.maxTokens = Math.min(
       HARD_CEILINGS.maxTokens,
-      Math.max(1, typeof options.maxTokens === 'number' ? options.maxTokens : DEFAULT_ESCALATION_BUDGET.maxTokens),
+      Math.max(
+        1,
+        typeof options.maxTokens === 'number'
+          ? options.maxTokens
+          : DEFAULT_ESCALATION_BUDGET.maxTokens,
+      ),
     );
     this.timeoutMs = Math.min(
       HARD_CEILINGS.timeoutMs,
-      Math.max(1, typeof options.timeoutMs === 'number' ? options.timeoutMs : DEFAULT_ESCALATION_BUDGET.timeoutMs),
+      Math.max(
+        1,
+        typeof options.timeoutMs === 'number'
+          ? options.timeoutMs
+          : DEFAULT_ESCALATION_BUDGET.timeoutMs,
+      ),
     );
     this.maxRetriesPerIssue = Math.min(
       HARD_CEILINGS.maxRetriesPerIssue,
-      Math.max(1, typeof options.maxRetriesPerIssue === 'number' ? options.maxRetriesPerIssue : DEFAULT_ESCALATION_BUDGET.maxRetriesPerIssue),
+      Math.max(
+        1,
+        typeof options.maxRetriesPerIssue === 'number'
+          ? options.maxRetriesPerIssue
+          : DEFAULT_ESCALATION_BUDGET.maxRetriesPerIssue,
+      ),
     );
 
     this.currentRound = 0;

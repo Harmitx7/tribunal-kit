@@ -185,4 +185,3 @@ module.exports = {
   scanForDataLeakage,
   sanitizeTrace,
 };
-

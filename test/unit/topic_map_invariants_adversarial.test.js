@@ -45,7 +45,9 @@ function validateTopicMapInventory(topicMapData, diskSkillsList) {
       registered.add(skill);
 
       if (!canonicalSet.has(skill)) {
-        errors.push(`Stale reference: Skill '${skill}' in domain route '${domain}' does not exist on disk`);
+        errors.push(
+          `Stale reference: Skill '${skill}' in domain route '${domain}' does not exist on disk`,
+        );
       }
     }
   }
@@ -56,26 +58,33 @@ function validateTopicMapInventory(topicMapData, diskSkillsList) {
     }
   }
 
-  if (typeof topicMapData.total_skills === 'number' && topicMapData.total_skills !== registered.size) {
-    errors.push(`Declared total_skills (${topicMapData.total_skills}) does not match unique registered skills (${registered.size})`);
+  if (
+    typeof topicMapData.total_skills === 'number' &&
+    topicMapData.total_skills !== registered.size
+  ) {
+    errors.push(
+      `Declared total_skills (${topicMapData.total_skills}) does not match unique registered skills (${registered.size})`,
+    );
   }
 
   if (registered.size !== diskSkillsList.length) {
-    errors.push(`Unique registered skills (${registered.size}) does not match disk skills count (${diskSkillsList.length})`);
+    errors.push(
+      `Unique registered skills (${registered.size}) does not match disk skills count (${diskSkillsList.length})`,
+    );
   }
 
   return {
     valid: errors.length === 0,
     errors,
-    totalRegistered: registered.size
+    totalRegistered: registered.size,
   };
 }
 
 describe('Phase 2.0: Topic Map & Inventory Invariant Adversarial Challenge', () => {
   const realTopicMap = JSON.parse(fs.readFileSync(TOPIC_MAP_PATH, 'utf8'));
-  const realDiskSkills = fs.readdirSync(SKILLS_DIR).filter(d =>
-    fs.statSync(path.join(SKILLS_DIR, d)).isDirectory()
-  );
+  const realDiskSkills = fs
+    .readdirSync(SKILLS_DIR)
+    .filter(d => fs.statSync(path.join(SKILLS_DIR, d)).isDirectory());
 
   test('Baseline canonical inventory passes all strict invariants', () => {
     const res = validateTopicMapInventory(realTopicMap, realDiskSkills);
@@ -107,7 +116,9 @@ describe('Phase 2.0: Topic Map & Inventory Invariant Adversarial Challenge', () 
 
     const res = validateTopicMapInventory(cloned, realDiskSkills);
     expect(res.valid).toBe(false);
-    expect(res.errors.some(e => e.includes("Skill 'agent-organizer' on disk is not registered"))).toBe(true);
+    expect(
+      res.errors.some(e => e.includes("Skill 'agent-organizer' on disk is not registered")),
+    ).toBe(true);
   });
 
   // Scenario 3: Deleted canonical skill
@@ -126,7 +137,9 @@ describe('Phase 2.0: Topic Map & Inventory Invariant Adversarial Challenge', () 
 
     const res = validateTopicMapInventory(cloned, realDiskSkills);
     expect(res.valid).toBe(false);
-    expect(res.errors.some(e => e.includes("Stale reference: Skill 'ghost-phantom-skill-cve'"))).toBe(true);
+    expect(
+      res.errors.some(e => e.includes("Stale reference: Skill 'ghost-phantom-skill-cve'")),
+    ).toBe(true);
   });
 
   // Scenario 5: Duplicated inventory entry in route
@@ -156,7 +169,9 @@ describe('Phase 2.0: Topic Map & Inventory Invariant Adversarial Challenge', () 
 
     const res = validateTopicMapInventory(cloned, realDiskSkills);
     expect(res.valid).toBe(false);
-    expect(res.errors.some(e => e.includes('Declared total_skills (9999) does not match'))).toBe(true);
+    expect(res.errors.some(e => e.includes('Declared total_skills (9999) does not match'))).toBe(
+      true,
+    );
   });
 
   // Scenario 8: Domain-specific inventory verification
@@ -173,7 +188,7 @@ describe('Phase 2.0: Topic Map & Inventory Invariant Adversarial Challenge', () 
       'agent-fault-injection-engineer',
       'agent-execution-safety-auditor',
       'agent-runtime-deadlock-and-liveness-auditor',
-      'agent-runtime-regression-auditor'
+      'agent-runtime-regression-auditor',
     ];
 
     const cloned = JSON.parse(JSON.stringify(realTopicMap));
@@ -188,4 +203,3 @@ describe('Phase 2.0: Topic Map & Inventory Invariant Adversarial Challenge', () 
     expect(hasAllExpected).toBe(false); // Detected!
   });
 });
-

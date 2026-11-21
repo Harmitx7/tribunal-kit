@@ -22,11 +22,13 @@ const crypto = require('crypto');
 const { execSync } = require('child_process');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-const { runCodebaseIntelligence, CodebaseIntelligence } = require('../../.agent/scripts/codebase_intelligence');
+const {
+  runCodebaseIntelligence,
+  CodebaseIntelligence,
+} = require('../../.agent/scripts/codebase_intelligence');
 const { handleRequest } = require('../../bin/mcp-server');
 
 describe('Phase 8: Architecture Integrity & Cross-Module Consistency Certification', () => {
-
   // ── 1. ARCHITECTURE DEPENDENCY MAP & DAG ────────────────────────────────────
   test('A1: Core intelligence modules form a clean acyclic dependency graph', () => {
     const modules = [
@@ -54,8 +56,12 @@ describe('Phase 8: Architecture Integrity & Cross-Module Consistency Certificati
     }
 
     // ArchitectureExtractor & ArchitectureVerifier must be leaf modules
-    expect(graph['.agent/scripts/architecture_extractor.js'].every(d => d.includes('_colors'))).toBe(true);
-    expect(graph['.agent/scripts/architecture_verifier.js'].every(d => d.includes('_colors'))).toBe(true);
+    expect(
+      graph['.agent/scripts/architecture_extractor.js'].every(d => d.includes('_colors')),
+    ).toBe(true);
+    expect(graph['.agent/scripts/architecture_verifier.js'].every(d => d.includes('_colors'))).toBe(
+      true,
+    );
 
     // CodebaseIntelligence coordinates extractors and verifiers
     const ciDeps = graph['.agent/scripts/codebase_intelligence.js'];
@@ -105,7 +111,12 @@ describe('Phase 8: Architecture Integrity & Cross-Module Consistency Certificati
 
   // ── 3. EVIDENCE RECORD SEMANTICS & CONFIDENCE LABELS ───────────────────────
   test('A3: Evidence records strictly adhere to standard confidence enum and static semantics', async () => {
-    const validConfidences = new Set(['L1_OBSERVED', 'L2_CORROBORATED', 'L3_INFERRED', 'L0_UNKNOWN']);
+    const validConfidences = new Set([
+      'L1_OBSERVED',
+      'L2_CORROBORATED',
+      'L3_INFERRED',
+      'L0_UNKNOWN',
+    ]);
 
     const res = await runCodebaseIntelligence({
       subcommand: 'trace',
@@ -130,7 +141,9 @@ describe('Phase 8: Architecture Integrity & Cross-Module Consistency Certificati
     }
 
     // Static limitation must be explicitly recorded
-    expect(res.data.limitations.some(l => l.includes('cannot guarantee runtime path execution'))).toBe(true);
+    expect(
+      res.data.limitations.some(l => l.includes('cannot guarantee runtime path execution')),
+    ).toBe(true);
   });
 
   // ── 4. CLI AND MCP OPERATIONAL PARITY ───────────────────────────────────────
@@ -207,7 +220,7 @@ describe('Phase 8: Architecture Integrity & Cross-Module Consistency Certificati
             target: '../../../../etc/passwd',
           },
         },
-      })
+      }),
     ).rejects.toThrow('Path traversal detected');
 
     // Focus directory outside root
@@ -294,13 +307,28 @@ describe('Phase 8: Architecture Integrity & Cross-Module Consistency Certificati
     }
 
     const parityPairs = [
-      ['tribunal-kit/.agent/scripts/codebase_intelligence.js', '.agent/scripts/codebase_intelligence.js'],
-      ['tribunal-kit/.agent/scripts/architecture_extractor.js', '.agent/scripts/architecture_extractor.js'],
-      ['tribunal-kit/.agent/scripts/blast_radius_engine.js', '.agent/scripts/blast_radius_engine.js'],
-      ['tribunal-kit/.agent/scripts/architecture_verifier.js', '.agent/scripts/architecture_verifier.js'],
+      [
+        'tribunal-kit/.agent/scripts/codebase_intelligence.js',
+        '.agent/scripts/codebase_intelligence.js',
+      ],
+      [
+        'tribunal-kit/.agent/scripts/architecture_extractor.js',
+        '.agent/scripts/architecture_extractor.js',
+      ],
+      [
+        'tribunal-kit/.agent/scripts/blast_radius_engine.js',
+        '.agent/scripts/blast_radius_engine.js',
+      ],
+      [
+        'tribunal-kit/.agent/scripts/architecture_verifier.js',
+        '.agent/scripts/architecture_verifier.js',
+      ],
       ['tribunal-kit/.agent/scripts/context_compiler.js', '.agent/scripts/context_compiler.js'],
       ['tribunal-kit/.agent/workflows/understand.md', '.agent/workflows/understand.md'],
-      ['tribunal-kit/.agent/skills/codebase-intelligence/SKILL.md', '.agent/skills/codebase-intelligence/SKILL.md'],
+      [
+        'tribunal-kit/.agent/skills/codebase-intelligence/SKILL.md',
+        '.agent/skills/codebase-intelligence/SKILL.md',
+      ],
       ['tribunal-kit/.agent/config/slash-commands.json', '.agent/config/slash-commands.json'],
       ['tribunal-kit/.agent/skill_topic_map.json', '.agent/skill_topic_map.json'],
     ];
@@ -320,5 +348,4 @@ describe('Phase 8: Architecture Integrity & Cross-Module Consistency Certificati
       expect(innerHash).toBe(outerHash);
     }
   });
-
 });

@@ -1,7 +1,7 @@
 ---
-title: {{TITLE}}
-authors: {{AUTHORS}}
-date: {{DATE}}
+title: { { TITLE } }
+authors: { { AUTHORS } }
+date: { { DATE } }
 arxiv:
 tags: [machine-learning, deep-learning]
 ---
@@ -10,7 +10,7 @@ tags: [machine-learning, deep-learning]
 
 **{{AUTHORS}}**
 
-*{{DATE}}*
+_{{DATE}}_
 
 ---
 
@@ -23,6 +23,7 @@ tags: [machine-learning, deep-learning]
 ## 1. Introduction
 
 Provide background and motivation for your research. Explain:
+
 - What problem are you addressing?
 - Why is it important?
 - What is novel about your approach?
@@ -34,6 +35,7 @@ Describe the real-world context and importance of the problem.
 ### 1.2 Contributions
 
 List the main contributions of your work:
+
 1. First contribution
 2. Second contribution
 3. Third contribution
@@ -43,6 +45,7 @@ List the main contributions of your work:
 ## 2. Related Work
 
 Survey previous research relevant to your work. Organize by:
+
 - Different approaches to the problem
 - Complementary methods
 - Alternative solutions
@@ -90,6 +93,7 @@ Explain how the model is trained.
 ### 4.4 Implementation Details
 
 Provide reproducibility information:
+
 - Hyperparameters
 - Hardware requirements
 - Software dependencies
@@ -126,10 +130,10 @@ Present and analyze your findings.
 
 Report primary experimental results.
 
-| Model | Dataset | Metric | Score |
-|-------|---------|--------|-------|
-| Baseline | Dataset A | Accuracy | 0.85 |
-| Ours | Dataset A | Accuracy | 0.92 |
+| Model    | Dataset   | Metric   | Score |
+| -------- | --------- | -------- | ----- |
+| Baseline | Dataset A | Accuracy | 0.85  |
+| Ours     | Dataset A | Accuracy | 0.92  |
 
 ### 6.2 Ablation Studies
 

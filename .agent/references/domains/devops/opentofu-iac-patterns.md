@@ -2,7 +2,7 @@
 
 > **Authority**: OpenTofu Project (Linux Foundation) & HashiCorp Configuration Language (HCL)  
 > **Applicable Domains**: Platform Engineering, Cloud Infrastructure, OpenTofu / Terraform  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -11,6 +11,7 @@
 State files contain raw infrastructure topology, IP addresses, and potentially decrypted secrets.
 
 ### Mandatory Remote Backend Standard (AWS S3 + DynamoDB):
+
 ```hcl
 terraform {
   required_version = ">= 1.7.0"
@@ -31,6 +32,7 @@ terraform {
   }
 }
 ```
+
 - **Encryption**: Bucket server-side encryption must be enabled (`encrypt = true`).
 - **State Locking**: DynamoDB lock table is mandatory to prevent simultaneous write race conditions.
 
@@ -66,10 +68,11 @@ output "db_endpoint" {
 ## 3. Idempotency & Lifecycle Rules
 
 Prevent accidental destruction of production state stores:
+
 ```hcl
 resource "aws_db_instance" "primary" {
   # ... configuration ...
-  
+
   lifecycle {
     prevent_destroy = true
     ignore_changes  = [tags["LastUpdated"]]

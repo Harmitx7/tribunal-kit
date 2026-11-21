@@ -194,7 +194,8 @@ describe('Phase 9: Cross-Environment Compatibility & Integration Hardening', () 
       ],
       error: {
         message: 'Non-fatal warning',
-        stack: 'Error: Non-fatal\n  at check (/app/check.js:10:5)\n  at run (/app/run.js:20:8)\n  at main (/app/main.js:5:2)',
+        stack:
+          'Error: Non-fatal\n  at check (/app/check.js:10:5)\n  at run (/app/run.js:20:8)\n  at main (/app/main.js:5:2)',
       },
     };
 
@@ -230,7 +231,8 @@ describe('Phase 9: Cross-Environment Compatibility & Integration Hardening', () 
       evidence: ['Found key sk-proj-1234567890abcdef1234567890 in config'],
       error: {
         message: 'Failed to authenticate with token ghp_1234567890abcdef1234567890',
-        suggestion: 'Rotate secret Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-ID immediately',
+        suggestion:
+          'Rotate secret Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-ID immediately',
       },
     };
 

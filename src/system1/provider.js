@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
+const logger = require('../utils/logger');
 
 const EXPECTED_MODEL_HASHES = {
   'laya.onnx': 'a874eb254b58b0fcb1e7ad56fbb188c29d64e08c9a46b689433e1f52c66dba1e',
@@ -27,7 +28,14 @@ function verifyModelFileHash(filePath, expectedHash) {
     const buffer = fs.readFileSync(filePath);
     hash.update(buffer);
     const actual = hash.digest('hex');
-    const verified = (actual.toLowerCase() === expectedHash.toLowerCase());
+    const verified = actual.toLowerCase() === expectedHash.toLowerCase();
+
+    if (!verified) {
+      logger.warn(
+        `Model file at "${filePath}" is corrupted or modified (SHA-256 hash mismatch). ` +
+          `Expected: ${expectedHash}, computed: ${actual}. Run 'tk system1 download --force' or 'tk system1 install' to repair.`,
+      );
+    }
 
     _modelHashCache.set(filePath, {
       mtimeMs: stat.mtimeMs,
@@ -36,7 +44,14 @@ function verifyModelFileHash(filePath, expectedHash) {
     });
 
     return verified;
-  } catch {
+  } catch (err) {
+    if (err && err.code === 'ENOENT') {
+      return false;
+    }
+    logger.warn(
+      `Model file at "${filePath}" could not be read (${err.message}). ` +
+        `Run 'tk system1 download --force' or 'tk system1 install' to repair.`,
+    );
     return false;
   }
 }
@@ -93,9 +108,56 @@ class System1Provider {
 
     const layaPkgPath = path.join(this.layaDir, 'node_modules', '@receptron', 'laya');
     try {
-      const { Laya } = require(layaPkgPath);
-      this.Laya = Laya;
+      let mod = null;
+      try {
+        mod = require(layaPkgPath);
+      } catch (err) {
+        if (
+          err &&
+          (err.code === 'MODULE_NOT_FOUND' ||
+            err.code === 'ERR_REQUIRE_ESM' ||
+            (err.message && err.message.includes('Unexpected token')))
+        ) {
+          try {
+            const { pathToFileURL } = require('url');
+            const entryPath = path.join(layaPkgPath, 'dist', 'index.js');
+            if (fs.existsSync(entryPath)) {
+              mod = await import(pathToFileURL(entryPath).href);
+            }
+          } catch (_) {}
+          if (!mod) {
+            try {
+              mod = await import('@receptron/laya');
+            } catch (_) {}
+          }
+        } else {
+          throw err;
+        }
+      }
+
+      if (!mod || !mod.Laya) {
+        /** @type {any} */
+        const notFoundErr = new Error("Cannot find module '@receptron/laya'");
+        notFoundErr.code = 'MODULE_NOT_FOUND';
+        throw notFoundErr;
+      }
+      this.Laya = mod.Laya;
     } catch (error) {
+      if (
+        error &&
+        (error.code === 'MODULE_NOT_FOUND' ||
+          error.code === 'ERR_REQUIRE_ESM' ||
+          (error.message &&
+            (error.message.includes('Unexpected token') ||
+              error.message.includes('Cannot find module'))))
+      ) {
+        /** @type {any} */
+        const customErr = new Error(
+          `Optional dependency '@receptron/laya' is not installed or available. System-1 classification will degrade to heuristic mode. Install it via 'npm install --save-optional @receptron/laya onnxruntime-node' or run 'tk system1 install'.`,
+        );
+        customErr.code = 'MODULE_NOT_FOUND';
+        throw customErr;
+      }
       throw new Error(`Failed to load @receptron/laya from ${layaPkgPath}: ${error.message}`);
     }
   }
@@ -123,11 +185,18 @@ class System1Provider {
     const modelPath = path.join(this.layaDir, 'models', 'laya.onnx');
     if (!this.config?.mocked && !process.env.TK_MOCK_LAYA_DOWNLOAD) {
       if (!verifyModelFileHash(modelPath, EXPECTED_MODEL_HASHES['laya.onnx'])) {
-        throw new Error(`System-1 model integrity check failed: SHA-256 hash mismatch for ${modelPath}`);
+        throw new Error(
+          `System-1 model integrity check failed: SHA-256 hash mismatch for ${modelPath}`,
+        );
       }
       const dataPath = path.join(this.layaDir, 'models', 'laya.onnx.data');
-      if (fs.existsSync(dataPath) && !verifyModelFileHash(dataPath, EXPECTED_MODEL_HASHES['laya.onnx.data'])) {
-        throw new Error(`System-1 model data integrity check failed: SHA-256 hash mismatch for ${dataPath}`);
+      if (
+        fs.existsSync(dataPath) &&
+        !verifyModelFileHash(dataPath, EXPECTED_MODEL_HASHES['laya.onnx.data'])
+      ) {
+        throw new Error(
+          `System-1 model data integrity check failed: SHA-256 hash mismatch for ${dataPath}`,
+        );
       }
     }
 

@@ -239,7 +239,9 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
         method: 'tools/call',
         params: { name: 'get_tribunal_agent', arguments: { name: '../../etc/passwd' } },
       };
-      await expect(handleRequest(req)).rejects.toThrow(/Invalid agent name: path traversal detected/);
+      await expect(handleRequest(req)).rejects.toThrow(
+        /Invalid agent name: path traversal detected/,
+      );
     });
 
     test('get_tribunal_skill rejects path traversal attempts with security RpcError', async () => {
@@ -249,7 +251,9 @@ describe('SAFETY: Input Sanitization & Boundary Enforcement', () => {
         method: 'tools/call',
         params: { name: 'get_tribunal_skill', arguments: { name: '../../../etc/shadow' } },
       };
-      await expect(handleRequest(req)).rejects.toThrow(/Invalid skill name: path traversal detected/);
+      await expect(handleRequest(req)).rejects.toThrow(
+        /Invalid skill name: path traversal detected/,
+      );
     });
   });
 
@@ -561,12 +565,15 @@ describe('REPRODUCIBILITY: Stable Manifests & Version Metadata', () => {
     expect(lockVersion).toBe(pkg.version);
   });
 
-  test('optionalDependencies versions are in sync with package.json version', async () => {
+  test('optionalDependencies versions are valid and internal cores match package.json version', async () => {
     const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
     const expectedVersion = `^${pkg.version}`;
 
-    for (const [_name, version] of Object.entries(pkg.optionalDependencies || {})) {
-      expect(version).toBe(expectedVersion);
+    for (const [name, version] of Object.entries(pkg.optionalDependencies || {})) {
+      expect(typeof version).toBe('string');
+      if (name.startsWith('@tribunal-kit/')) {
+        expect(version).toBe(expectedVersion);
+      }
     }
   });
 

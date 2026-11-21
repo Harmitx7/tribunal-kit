@@ -21,7 +21,7 @@ const SHIM_FILES = [
   'skill_intelligence.js',
   'validation_engine.js',
   'verification_auditor.js',
-  'visual_audit.js'
+  'visual_audit.js',
 ];
 
 describe('Phase 3 — Script Forwarding Shims Behavioral Parity', () => {
@@ -51,13 +51,16 @@ describe('Phase 3 — Script Forwarding Shims Behavioral Parity', () => {
     let err = null;
     let out = '';
     try {
-      out = cp.execSync(`node "${shimPath}" --help`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] });
+      out = cp.execSync(`node "${shimPath}" --help`, {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+      });
     } catch (e) {
       err = e;
     }
 
     // Either exit 0 or normal error (e.g. missing input file), but NEVER ReferenceError
-    const combinedOutput = (err ? (err.stderr || err.stdout || '') : out);
+    const combinedOutput = err ? err.stderr || err.stdout || '' : out;
     expect(combinedOutput).not.toMatch(/ReferenceError/);
   });
 
@@ -67,14 +70,16 @@ describe('Phase 3 — Script Forwarding Shims Behavioral Parity', () => {
       let err = null;
       let out = '';
       try {
-        out = cp.execSync(`node "${shimPath}" --help`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] });
+        out = cp.execSync(`node "${shimPath}" --help`, {
+          encoding: 'utf8',
+          stdio: ['pipe', 'pipe', 'pipe'],
+        });
       } catch (e) {
         err = e;
       }
-      const combined = (err ? (err.stderr || err.stdout || '') : out);
+      const combined = err ? err.stderr || err.stdout || '' : out;
       expect(combined).not.toMatch(/ReferenceError/);
       expect(combined).not.toMatch(/SyntaxError/);
     }
   });
 });
-

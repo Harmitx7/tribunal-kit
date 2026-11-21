@@ -5,18 +5,21 @@ Leaderboards rotate every few months. Don't trust any hardcoded "best" pick. Dis
 ## Discovery commands
 
 **[BI]**:
+
 ```bash
 hf models list --filter sentence-transformers --sort downloads --limit 20
 hf models list --filter sentence-transformers --sort trending  --limit 20
 ```
 
 **[CE]**:
+
 ```bash
 hf models list --filter sentence-transformers --filter text-ranking --sort downloads --limit 20
 hf models list --filter sentence-transformers --filter text-ranking --sort trending  --limit 20
 ```
 
 **[SPARSE]**:
+
 ```bash
 hf models list --filter sentence-transformers --filter sparse-encoder --sort downloads --limit 20
 hf models list --filter sentence-transformers --filter sparse-encoder --sort trending  --limit 20

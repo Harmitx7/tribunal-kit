@@ -1108,7 +1108,7 @@ const ANTI_PATTERNS = {
  * @param {Object} [requirements]
  * @returns {Array<Object>} Detected anti-patterns with context
  */
-function detectAntiPatterns(taskQuery, requirements) {
+function detectAntiPatterns(taskQuery, _requirements) {
   const q = (taskQuery || '').toLowerCase();
   const detected = [];
   const detectedKeys = new Set();
@@ -1178,7 +1178,7 @@ function scoreCandidate(patternKey, pattern, requirements, constraints) {
   let score = 0;
   const reasons = [];
   const risks = [];
-  const q = (requirements.raw_task || '').toLowerCase();
+  const _q = (requirements.raw_task || '').toLowerCase();
   const allConstraints = (constraints && constraints.constraints) || [];
 
   // Scale matching
@@ -1294,7 +1294,7 @@ function scoreCandidate(patternKey, pattern, requirements, constraints) {
  * @param {Array} [considerations]
  * @returns {Object} Architecture candidates with scores
  */
-function generateCandidates(requirements, constraints, considerations) {
+function generateCandidates(requirements, constraints, _considerations) {
   const scored = [];
 
   for (const [key, pattern] of Object.entries(ARCHITECTURE_PATTERNS)) {
@@ -1753,7 +1753,7 @@ function analyzeDecisionSensitivity(candidates, tradeoffs, requirements) {
  * @param {Object} requirements
  * @returns {Array<Object>} Breakpoints
  */
-function identifyBreakpoints(candidate, requirements) {
+function identifyBreakpoints(candidate, _requirements) {
   const breakpoints = [];
   const patternKey = candidate.pattern || '';
 
@@ -1825,7 +1825,7 @@ function identifyBreakpoints(candidate, requirements) {
 /**
  * Analyze build vs buy decisions for common components.
  */
-function analyzeBuildVsBuy(taskQuery, requirements) {
+function analyzeBuildVsBuy(taskQuery, _requirements) {
   const q = (taskQuery || '').toLowerCase();
   const decisions = [];
 
@@ -1900,7 +1900,7 @@ function analyzeBuildVsBuy(taskQuery, requirements) {
 /**
  * Analyze data architecture requirements.
  */
-function analyzeDataArchitecture(taskQuery, requirements) {
+function analyzeDataArchitecture(taskQuery, _requirements) {
   const q = (taskQuery || '').toLowerCase();
   const analysis = {
     consistency_model: 'UNKNOWN',
@@ -2037,7 +2037,7 @@ function analyzeCommunicationPatterns(taskQuery) {
 /**
  * Analyze security architecture.
  */
-function analyzeSecurityArchitecture(taskQuery, requirements) {
+function analyzeSecurityArchitecture(taskQuery, _requirements) {
   const q = (taskQuery || '').toLowerCase();
   const analysis = {
     trust_boundaries: [],
@@ -2099,7 +2099,7 @@ function analyzeSecurityArchitecture(taskQuery, requirements) {
 /**
  * Analyze cost architecture for a candidate.
  */
-function analyzeCostArchitecture(candidate, constraints) {
+function analyzeCostArchitecture(candidate, _constraints) {
   const patternKey = candidate.pattern || '';
   const costDrivers = {
     compute: 'UNKNOWN',
@@ -2450,7 +2450,7 @@ function generateADR(params) {
 /**
  * Generate a machine-readable architecture graph.
  */
-function generateArchitectureGraph(candidate, requirements, securityAnalysis) {
+function generateArchitectureGraph(candidate, requirements, _securityAnalysis) {
   const patternKey = candidate.pattern || '';
   const nodes = [];
   const edges = [];
@@ -2631,7 +2631,7 @@ function classifyArchitectureReversibility(decisionType) {
 function assessArchitectureConfidence(requirements) {
   const confidence = {};
   const constraints = (requirements && requirements.constraints) || [];
-  const unknowns = (requirements && requirements.unknowns) || [];
+  const _unknowns = (requirements && requirements.unknowns) || [];
 
   confidence.database = constraints.some(c => c.category === 'technology') ? 'KNOWN' : 'ESTIMATED';
   confidence.traffic = constraints.some(c => c.category === 'scale' || c.category === 'performance')
@@ -2733,8 +2733,8 @@ function detectArchitecturalDrift(implementation, adr) {
   if (!implementation || !adr) return drifts;
 
   // Check for unauthorized dependencies
-  const implDeps = implementation.dependencies || [];
-  const adrDeps = (adr.decision && adr.decision.rationale) || [];
+  const _implDeps = implementation.dependencies || [];
+  const _adrDeps = (adr.decision && adr.decision.rationale) || [];
 
   // Check for new direct database access bypassing intended boundaries
   if (implementation.direct_db_access_from_unauthorized_layer) {

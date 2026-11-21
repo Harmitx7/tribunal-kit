@@ -108,4 +108,3 @@ describe('Supply Chain Intelligence Schemas & Invariant Contracts', () => {
     expect(auditResult.scannedComponentsCount).toBe(42);
   });
 });
-

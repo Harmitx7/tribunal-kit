@@ -1,7 +1,7 @@
 ---
-title: {{TITLE}}
-authors: {{AUTHORS}}
-date: {{DATE}}
+title: { { TITLE } }
+authors: { { AUTHORS } }
+date: { { DATE } }
 arxiv:
 layout: arxiv
 ---
@@ -12,7 +12,7 @@ layout: arxiv
 
 **{{AUTHORS}}**
 
-*Submitted to arXiv: {{DATE}}*
+_Submitted to arXiv: {{DATE}}_
 
 </div>
 
@@ -48,11 +48,11 @@ Discussion of relevant prior work in subarea 2.
 
 Table comparing existing methods:
 
-| Method | Year | Approach | Limitation |
-|--------|------|----------|------------|
-| Method A [1] | 2020 | Description | Issue |
-| Method B [2] | 2021 | Description | Issue |
-| Method C [3] | 2023 | Description | Issue |
+| Method       | Year | Approach    | Limitation |
+| ------------ | ---- | ----------- | ---------- |
+| Method A [1] | 2020 | Description | Issue      |
+| Method B [2] | 2021 | Description | Issue      |
+| Method C [3] | 2023 | Description | Issue      |
 
 ## III. METHODOLOGY
 
@@ -136,12 +136,12 @@ where $\sigma$ is the activation function, $W^{(l)}$ is the weight matrix, and $
 
 **TABLE I: MAIN RESULTS**
 
-| Method | Dataset A | Dataset B | Dataset C | Average |
-|--------|-----------|-----------|-----------|---------|
-| Baseline 1 [4] | 82.3 | 78.5 | 80.1 | 80.3 |
-| Baseline 2 [5] | 85.7 | 82.1 | 83.9 | 83.9 |
-| Baseline 3 [6] | 88.1 | 85.3 | 86.7 | 86.7 |
-| **Ours** | **91.2** | **88.9** | **90.1** | **90.1** |
+| Method         | Dataset A | Dataset B | Dataset C | Average  |
+| -------------- | --------- | --------- | --------- | -------- |
+| Baseline 1 [4] | 82.3      | 78.5      | 80.1      | 80.3     |
+| Baseline 2 [5] | 85.7      | 82.1      | 83.9      | 83.9     |
+| Baseline 3 [6] | 88.1      | 85.3      | 86.7      | 86.7     |
+| **Ours**       | **91.2**  | **88.9**  | **90.1**  | **90.1** |
 
 Our method achieves state-of-the-art performance across all three benchmarks, with an average improvement of 3.4 percentage points over the previous best method.
 
@@ -149,12 +149,12 @@ Our method achieves state-of-the-art performance across all three benchmarks, wi
 
 **TABLE II: ABLATION STUDY RESULTS**
 
-| Configuration | Dataset A | Δ |
-|---------------|-----------|---|
-| Full Model | 91.2 | - |
-| w/o Component A | 88.7 | -2.5 |
-| w/o Component B | 89.4 | -1.8 |
-| w/o Component C | 90.5 | -0.7 |
+| Configuration   | Dataset A | Δ    |
+| --------------- | --------- | ---- |
+| Full Model      | 91.2      | -    |
+| w/o Component A | 88.7      | -2.5 |
+| w/o Component B | 89.4      | -1.8 |
+| w/o Component C | 90.5      | -0.7 |
 
 The ablation study demonstrates that all components contribute to the final performance, with Component A having the largest impact.
 
@@ -168,12 +168,12 @@ The ablation study demonstrates that all components contribute to the final perf
 
 **TABLE III: COMPUTATIONAL REQUIREMENTS**
 
-| Method | Parameters | FLOPs | Inference (ms) |
-|--------|------------|-------|----------------|
-| Baseline 1 [4] | 50M | 10G | 8.2 |
-| Baseline 2 [5] | 100M | 25G | 15.7 |
-| Baseline 3 [6] | 200M | 50G | 28.3 |
-| **Ours** | **80M** | **18G** | **12.1** |
+| Method         | Parameters | FLOPs   | Inference (ms) |
+| -------------- | ---------- | ------- | -------------- |
+| Baseline 1 [4] | 50M        | 10G     | 8.2            |
+| Baseline 2 [5] | 100M       | 25G     | 15.7           |
+| Baseline 3 [6] | 200M       | 50G     | 28.3           |
+| **Ours**       | **80M**    | **18G** | **12.1**       |
 
 Our method achieves superior performance while maintaining reasonable computational costs.
 
@@ -217,17 +217,17 @@ The authors thank [acknowledgments]. This work was supported by [funding sources
 
 ## REFERENCES
 
-[1] Author A et al., "Paper Title," *Conference Name*, 2020.
+[1] Author A et al., "Paper Title," _Conference Name_, 2020.
 
-[2] Author B et al., "Paper Title," *Journal Name*, vol. X, no. Y, pp. Z-W, 2021.
+[2] Author B et al., "Paper Title," _Journal Name_, vol. X, no. Y, pp. Z-W, 2021.
 
-[3] Author C et al., "Paper Title," *arXiv preprint arXiv:XXXX.XXXXX*, 2023.
+[3] Author C et al., "Paper Title," _arXiv preprint arXiv:XXXX.XXXXX_, 2023.
 
-[4] Author D et al., "Baseline 1 Paper," *Conference*, 2019.
+[4] Author D et al., "Baseline 1 Paper," _Conference_, 2019.
 
-[5] Author E et al., "Baseline 2 Paper," *Conference*, 2021.
+[5] Author E et al., "Baseline 2 Paper," _Conference_, 2021.
 
-[6] Author F et al., "Baseline 3 Paper," *Conference*, 2023.
+[6] Author F et al., "Baseline 3 Paper," _Conference_, 2023.
 
 ---
 
@@ -245,15 +245,15 @@ Supplementary experimental results.
 
 Complete list of hyperparameters used in all experiments:
 
-| Hyperparameter | Value | Description |
-|----------------|-------|-------------|
-| Learning rate | $10^{-4}$ | Initial learning rate |
-| Batch size | 32 | Training batch size |
-| Epochs | 100 | Number of training epochs |
-| Optimizer | AdamW | Optimization algorithm |
-| Weight decay | 0.01 | L2 regularization coefficient |
-| Warmup steps | 1000 | LR warmup duration |
-| Dropout | 0.1 | Dropout probability |
+| Hyperparameter | Value     | Description                   |
+| -------------- | --------- | ----------------------------- |
+| Learning rate  | $10^{-4}$ | Initial learning rate         |
+| Batch size     | 32        | Training batch size           |
+| Epochs         | 100       | Number of training epochs     |
+| Optimizer      | AdamW     | Optimization algorithm        |
+| Weight decay   | 0.01      | L2 regularization coefficient |
+| Warmup steps   | 1000      | LR warmup duration            |
+| Dropout        | 0.1       | Dropout probability           |
 
 ---
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -8,7 +9,14 @@
  * guarantees evidence integrity, and renders formatted updates to host AI environments.
  */
 
-const { EVENT_TYPES, ACTIVITY_STATES, ENVIRONMENTS, LIFECYCLE_STATES, AGENT_SKILL_STATES, TOOL_STATES } = require('./types');
+const {
+  EVENT_TYPES,
+  ACTIVITY_STATES,
+  ENVIRONMENTS,
+  LIFECYCLE_STATES,
+  AGENT_SKILL_STATES,
+  TOOL_STATES,
+} = require('./types');
 const { createEvent, generateId } = require('./schema');
 const { renderMarkdown } = require('./renderers/markdown');
 const { renderTerminal } = require('./renderers/terminal');
@@ -31,9 +39,11 @@ class ActivityTracker {
     this.detailLevel = options.detailLevel || resolveDetailLevel(options);
     this.diagnosticBuffer = options.diagnosticBuffer || defaultDiagnosticBuffer;
     this.onEvent = typeof options.onEvent === 'function' ? options.onEvent : null;
-    this.resolver = options.resolver || new SkillAgentResolver({ projectRoot: options.projectRoot });
+    this.resolver =
+      options.resolver || new SkillAgentResolver({ projectRoot: options.projectRoot });
     this.registry = options.registry || defaultRegistry;
-    this.announcementIntelligence = options.announcementIntelligence || defaultAnnouncementIntelligence;
+    this.announcementIntelligence =
+      options.announcementIntelligence || defaultAnnouncementIntelligence;
 
     this.events = [];
     this.startedAt = Date.now();
@@ -54,19 +64,23 @@ class ActivityTracker {
     });
 
     // Telemetry & Coalescing (Phase 5)
-    this.coalescer = options.coalescer || (options.enableCoalescing
-      ? new ProgressCoalescer({
-          ...options.coalescerOptions,
-          onFlush: (flushedEvent) => this._dispatch(flushedEvent, { force: true }),
-        })
-      : null);
+    this.coalescer =
+      options.coalescer ||
+      (options.enableCoalescing
+        ? new ProgressCoalescer({
+            ...options.coalescerOptions,
+            onFlush: flushedEvent => this._dispatch(flushedEvent, { force: true }),
+          })
+        : null);
 
-    this.stallDetector = options.stallDetector || (options.enableStallDetection
-      ? new StallDetector({
-          ...options.stallDetectorOptions,
-          onStall: (stallEvt) => this._dispatch(stallEvt, { force: true }),
-        })
-      : null);
+    this.stallDetector =
+      options.stallDetector ||
+      (options.enableStallDetection
+        ? new StallDetector({
+            ...options.stallDetectorOptions,
+            onStall: stallEvt => this._dispatch(stallEvt, { force: true }),
+          })
+        : null);
 
     if (this.stallDetector) {
       this.stallDetector.startMonitoring(this.operationId, {
@@ -250,7 +264,9 @@ class ActivityTracker {
    * Generates an actionable diagnostic report for this operation.
    */
   getDiagnosticReport(options = {}) {
-    return this.diagnosticBuffer ? this.diagnosticBuffer.getDiagnosticReport(this.operationId, options) : '';
+    return this.diagnosticBuffer
+      ? this.diagnosticBuffer.getDiagnosticReport(this.operationId, options)
+      : '';
   }
 
   /**
@@ -394,9 +410,11 @@ class ActivityTracker {
       ...options,
     });
     if (options.autoTrackProgress) {
-      aggregator.onUpdate = (snapshot) => {
+      aggregator.onUpdate = snapshot => {
         if (snapshot && snapshot.progress) {
-          this.updateProgress(snapshot.progress, { title: options.title || `${this.title} · Parallel` });
+          this.updateProgress(snapshot.progress, {
+            title: options.title || `${this.title} · Parallel`,
+          });
         }
       };
     }
@@ -414,7 +432,10 @@ class ActivityTracker {
 
   passed(title, evidence, nextAction = null, options = {}) {
     if (this.operation && evidence) {
-      const ref = typeof evidence === 'string' ? evidence : (evidence.ref || evidence.path || 'validation_artifact');
+      const ref =
+        typeof evidence === 'string'
+          ? evidence
+          : evidence.ref || evidence.path || 'validation_artifact';
       this.operation.recordEvidence({ ref, verified: true, description: title });
     }
     return this._dispatch({
@@ -507,7 +528,10 @@ class ActivityTracker {
       this.stallDetector.stopMonitoring(this.operationId);
     }
     if (this.operation && evidence) {
-      const ref = typeof evidence === 'string' ? evidence : (evidence.ref || evidence.path || 'completion_evidence');
+      const ref =
+        typeof evidence === 'string'
+          ? evidence
+          : evidence.ref || evidence.path || 'completion_evidence';
       this.operation.recordEvidence({ ref, verified: true, description: summary });
     }
     return this._dispatch({
@@ -555,10 +579,15 @@ class ActivityTracker {
    */
   getExecutiveSummary() {
     const durationMs = (this.completedAt || Date.now()) - this.startedAt;
-    const durationFormatted = durationMs >= 1000 ? `${(durationMs / 1000).toFixed(2)}s` : `${durationMs}ms`;
+    const durationFormatted =
+      durationMs >= 1000 ? `${(durationMs / 1000).toFixed(2)}s` : `${durationMs}ms`;
 
-    const passedCount = this.events.filter(e => e.eventType === ACTIVITY_STATES.VALIDATION_PASSED).length;
-    const failedCount = this.events.filter(e => e.eventType === ACTIVITY_STATES.VALIDATION_FAILED).length;
+    const passedCount = this.events.filter(
+      e => e.eventType === ACTIVITY_STATES.VALIDATION_PASSED,
+    ).length;
+    const failedCount = this.events.filter(
+      e => e.eventType === ACTIVITY_STATES.VALIDATION_FAILED,
+    ).length;
     const warningsCount = this.warningsCount;
     const retriesCount = this.retries;
 

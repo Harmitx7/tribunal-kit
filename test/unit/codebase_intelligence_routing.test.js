@@ -3,7 +3,10 @@
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-const { CodebaseIntelligence, runCodebaseIntelligenceCli } = require('../../.agent/scripts/codebase_intelligence');
+const {
+  CodebaseIntelligence,
+  runCodebaseIntelligenceCli,
+} = require('../../.agent/scripts/codebase_intelligence');
 const { cmdUnderstand } = require('../../src/commands/understand');
 
 describe('Phase 12: Codebase Intelligence Skill Architecture Integration & Routing Certification', () => {
@@ -54,7 +57,11 @@ describe('Phase 12: Codebase Intelligence Skill Architecture Integration & Routi
     });
 
     test('routes /tribunal-understand relevant-files authentication to code-relevance-analysis', async () => {
-      const res = await cmdUnderstand({}, ['tribunal-understand', 'relevant-files', 'authentication'], true);
+      const res = await cmdUnderstand(
+        {},
+        ['tribunal-understand', 'relevant-files', 'authentication'],
+        true,
+      );
       expect(res.operation).toBe('relevant-files');
       expect(res.status).toBe('COMPLETE');
       expect(res.data.primaryFiles).toBeDefined();
@@ -62,7 +69,11 @@ describe('Phase 12: Codebase Intelligence Skill Architecture Integration & Routi
     });
 
     test('routes /tribunal-understand impact OAuth authentication to change-impact-analysis', async () => {
-      const res = await cmdUnderstand({}, ['tribunal-understand', 'impact', 'OAuth authentication'], true);
+      const res = await cmdUnderstand(
+        {},
+        ['tribunal-understand', 'impact', 'OAuth authentication'],
+        true,
+      );
       expect(res.operation).toBe('impact');
       expect(res.status).toBe('COMPLETE');
       expect(res.data.target).toBe('OAuth authentication');
@@ -86,7 +97,11 @@ describe('Phase 12: Codebase Intelligence Skill Architecture Integration & Routi
     });
 
     test('routes /tribunal-understand prepare authentication to change preparation', async () => {
-      const res = await cmdUnderstand({}, ['tribunal-understand', 'prepare', 'authentication'], true);
+      const res = await cmdUnderstand(
+        {},
+        ['tribunal-understand', 'prepare', 'authentication'],
+        true,
+      );
       expect(res.operation).toBe('prepare');
       expect(res.status).toBe('COMPLETE');
       expect(res.data.readiness).toBeDefined();
@@ -194,7 +209,7 @@ describe('Phase 12: Codebase Intelligence Skill Architecture Integration & Routi
       'execution-flow-tracing',
       'code-relevance-analysis',
       'change-impact-analysis',
-      'evidence-backed-onboarding'
+      'evidence-backed-onboarding',
     ];
 
     test('all 7 skills exist in canonical .agent/skills/ directory with valid frontmatter', () => {
@@ -220,7 +235,10 @@ describe('Phase 12: Codebase Intelligence Skill Architecture Integration & Routi
         expect(fs.existsSync(mirror1)).toBe(true);
         expect(fs.existsSync(mirror2)).toBe(true);
 
-        const hCanonical = crypto.createHash('sha256').update(fs.readFileSync(canonical)).digest('hex');
+        const hCanonical = crypto
+          .createHash('sha256')
+          .update(fs.readFileSync(canonical))
+          .digest('hex');
         const hMirror1 = crypto.createHash('sha256').update(fs.readFileSync(mirror1)).digest('hex');
         const hMirror2 = crypto.createHash('sha256').update(fs.readFileSync(mirror2)).digest('hex');
 
@@ -257,7 +275,7 @@ describe('Phase 12: Codebase Intelligence Skill Architecture Integration & Routi
     test('secret redaction: synthetic secrets in queries are strictly redacted across output', async () => {
       const secretToken = 'ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
       const secretUri = 'postgresql://admin:superSecretP@ssword123@localhost/prod';
-      
+
       const res = await engine.execute('trace', `auth ${secretToken} ${secretUri}`, {});
       expect(res.markdown).not.toContain(secretToken);
       expect(res.markdown).not.toContain('superSecretP@ssword123');

@@ -1,7 +1,7 @@
 {
   "name": "tribunal-kit",
   "version": "9.4.0",
-  "description": "The governance layer for AI coding agents. 52 specialists, 28 parallel reviewers, 235 skills, Rust core. Anti-hallucination enforcement for any AI agent.",
+  "description": "The governance layer for AI coding agents. 64 specialists, 28 parallel reviewers, 398 skills, Rust core. Anti-hallucination enforcement for any AI agent.",
   "author": "Harmitx7",
   "homepage": "https://github.com/Harmitx7/tribunal-kit",
   "license": "MIT",
@@ -11,9 +11,7 @@
       "system_prompt": "system-prompt.md",
       "mcp_server": {
         "command": "node",
-        "args": [
-          "bin/mcp-server.js"
-        ],
+        "args": ["bin/mcp-server.js"],
         "transport": "stdio"
       },
       "slash_commands": "slash-commands.json"
@@ -25,11 +23,7 @@
       "auto_review_gate",
       "specialist_routing"
     ],
-    "permissions": [
-      "read_files",
-      "write_files",
-      "execute_commands"
-    ]
+    "permissions": ["read_files", "write_files", "execute_commands"]
   },
   "adapters": {
     "claude-code": {
@@ -66,7 +60,7 @@
     }
   },
   "specialists": {
-    "total": 60,
+    "total": 64,
     "reviewers": 28,
     "registry": "specialist-registry.json"
   },
@@ -90,13 +84,7 @@
       "epistemic_check": true,
       "verify_imports": true,
       "verify_api_calls": true,
-      "confidence_levels": [
-        "L1",
-        "L2",
-        "L3",
-        "L4",
-        "L5"
-      ]
+      "confidence_levels": ["L1", "L2", "L3", "L4", "L5"]
     },
     "socratic_gate": {
       "tier_0_bypass": true,

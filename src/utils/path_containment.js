@@ -39,12 +39,18 @@ class PathSecurityError extends Error {
  */
 function validateLexicalPath(candidate, options = {}) {
   if (typeof candidate !== 'string') {
-    throw new PathSecurityError('Path security violation: Path must be a non-empty string', 'ERR_INVALID_PATH_TYPE');
+    throw new PathSecurityError(
+      'Path security violation: Path must be a non-empty string',
+      'ERR_INVALID_PATH_TYPE',
+    );
   }
 
   // Null byte injection check
   if (candidate.includes('\0')) {
-    throw new PathSecurityError('Path security violation: Null byte detected in path', 'ERR_NULL_BYTE');
+    throw new PathSecurityError(
+      'Path security violation: Null byte detected in path',
+      'ERR_NULL_BYTE',
+    );
   }
 
   const trimmed = candidate.trim();
@@ -54,28 +60,43 @@ function validateLexicalPath(candidate, options = {}) {
 
   // Windows drive letters: "C:", "C:\", "C:/", "c:foo"
   if (/^[a-zA-Z]:/.test(trimmed)) {
-    throw new PathSecurityError('Path security violation: Windows drive-letter path is forbidden', 'ERR_ABSOLUTE_PATH');
+    throw new PathSecurityError(
+      'Path security violation: Windows drive-letter path is forbidden',
+      'ERR_ABSOLUTE_PATH',
+    );
   }
 
   // UNC and extended-length namespaces: \\, //, \\?\, \\.\, //?/, //./
   if (/^[/\\]{2}/.test(trimmed)) {
-    throw new PathSecurityError('Path security violation: UNC or device namespace path is forbidden', 'ERR_UNC_PATH');
+    throw new PathSecurityError(
+      'Path security violation: UNC or device namespace path is forbidden',
+      'ERR_UNC_PATH',
+    );
   }
 
   // Leading slashes (Unix absolute or root-relative)
   if (trimmed.startsWith('/') || trimmed.startsWith('\\')) {
-    throw new PathSecurityError('Path security violation: Absolute path is forbidden', 'ERR_ABSOLUTE_PATH');
+    throw new PathSecurityError(
+      'Path security violation: Absolute path is forbidden',
+      'ERR_ABSOLUTE_PATH',
+    );
   }
 
   // URL schemes: http:, https:, file:, etc.
   if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
-    throw new PathSecurityError('Path security violation: URL scheme detected in path', 'ERR_URL_SCHEME');
+    throw new PathSecurityError(
+      'Path security violation: URL scheme detected in path',
+      'ERR_URL_SCHEME',
+    );
   }
 
   // Shell command metacharacters if strict
   if (options.strictChars) {
     if (/[;&|$%`]/.test(trimmed)) {
-      throw new PathSecurityError('Path security violation: Shell metacharacters detected in path', 'ERR_ILLEGAL_CHARS');
+      throw new PathSecurityError(
+        'Path security violation: Shell metacharacters detected in path',
+        'ERR_ILLEGAL_CHARS',
+      );
     }
   }
 
@@ -86,17 +107,26 @@ function validateLexicalPath(candidate, options = {}) {
   const segments = normalized.split('/');
   for (const seg of segments) {
     if (seg === '..') {
-      throw new PathSecurityError('Path security violation: Parent directory traversal (..) is forbidden', 'ERR_PARENT_TRAVERSAL');
+      throw new PathSecurityError(
+        'Path security violation: Parent directory traversal (..) is forbidden',
+        'ERR_PARENT_TRAVERSAL',
+      );
     }
     if (WINDOWS_RESERVED_DEVICE_REGEX.test(seg)) {
-      throw new PathSecurityError(`Path security violation: Windows reserved device name forbidden (${seg})`, 'ERR_RESERVED_DEVICE');
+      throw new PathSecurityError(
+        `Path security violation: Windows reserved device name forbidden (${seg})`,
+        'ERR_RESERVED_DEVICE',
+      );
     }
   }
 
   // Posix normalization check
   const cleaned = path.posix.normalize(normalized);
   if (cleaned === '..' || cleaned.startsWith('../') || path.posix.isAbsolute(cleaned)) {
-    throw new PathSecurityError('Path security violation: Path escapes repository root', 'ERR_PARENT_TRAVERSAL');
+    throw new PathSecurityError(
+      'Path security violation: Path escapes repository root',
+      'ERR_PARENT_TRAVERSAL',
+    );
   }
 
   return cleaned === '.' ? '' : cleaned;
@@ -112,7 +142,10 @@ const canonicalRootCache = new Map();
  */
 function resolveCanonicalRoot(rootPath) {
   if (typeof rootPath !== 'string' || !rootPath.trim()) {
-    throw new PathSecurityError('Path security violation: Invalid repository root directory', 'ERR_INVALID_ROOT');
+    throw new PathSecurityError(
+      'Path security violation: Invalid repository root directory',
+      'ERR_INVALID_ROOT',
+    );
   }
   const resolved = path.resolve(rootPath);
   if (canonicalRootCache.has(resolved)) {
@@ -121,9 +154,10 @@ function resolveCanonicalRoot(rootPath) {
   let real = resolved;
   try {
     if (fs.existsSync(resolved)) {
-      real = typeof fs.realpathSync.native === 'function'
-        ? fs.realpathSync.native(resolved)
-        : fs.realpathSync(resolved);
+      real =
+        typeof fs.realpathSync.native === 'function'
+          ? fs.realpathSync.native(resolved)
+          : fs.realpathSync(resolved);
     }
   } catch (_e) {
     // Return resolved if filesystem check fails (e.g. synthetic test environments)
@@ -183,6 +217,7 @@ function isPathContained(canonicalRoot, canonicalTarget, options = {}) {
  * @param {boolean} [options.allowRoot=false]
  * @param {boolean} [options.mustExist=false]
  * @param {boolean} [options.strictChars=false]
+ * @param {boolean} [options.allowAbsolute=true]
  * @returns {{
  *   canonicalRoot: string,
  *   resolvedPath: string,
@@ -199,12 +234,18 @@ function assertContainedPath(candidatePath, rootPath, options = {}) {
   const allowAbsolute = options.allowAbsolute !== false;
 
   if (typeof candidatePath !== 'string') {
-    throw new PathSecurityError('Path security violation: Path must be a non-empty string', 'ERR_INVALID_PATH_TYPE');
+    throw new PathSecurityError(
+      'Path security violation: Path must be a non-empty string',
+      'ERR_INVALID_PATH_TYPE',
+    );
   }
 
   // Null byte injection check
   if (candidatePath.includes('\0')) {
-    throw new PathSecurityError('Path security violation: Null byte detected in path', 'ERR_NULL_BYTE');
+    throw new PathSecurityError(
+      'Path security violation: Null byte detected in path',
+      'ERR_NULL_BYTE',
+    );
   }
 
   const trimmed = candidatePath.trim();
@@ -219,7 +260,10 @@ function assertContainedPath(candidatePath, rootPath, options = {}) {
 
   if (path.isAbsolute(trimmed)) {
     if (!allowAbsolute) {
-      throw new PathSecurityError('Path security violation: Absolute path is forbidden', 'ERR_ABSOLUTE_PATH');
+      throw new PathSecurityError(
+        'Path security violation: Absolute path is forbidden',
+        'ERR_ABSOLUTE_PATH',
+      );
     }
 
     // Check individual path segments of the absolute path for '..' and reserved devices
@@ -227,10 +271,16 @@ function assertContainedPath(candidatePath, rootPath, options = {}) {
     const segments = normalizedAbs.split('/');
     for (const seg of segments) {
       if (seg === '..') {
-        throw new PathSecurityError('Path security violation: Parent directory traversal (..) is forbidden', 'ERR_PARENT_TRAVERSAL');
+        throw new PathSecurityError(
+          'Path security violation: Parent directory traversal (..) is forbidden',
+          'ERR_PARENT_TRAVERSAL',
+        );
       }
       if (WINDOWS_RESERVED_DEVICE_REGEX.test(seg)) {
-        throw new PathSecurityError(`Path security violation: Windows reserved device name forbidden (${seg})`, 'ERR_RESERVED_DEVICE');
+        throw new PathSecurityError(
+          `Path security violation: Windows reserved device name forbidden (${seg})`,
+          'ERR_RESERVED_DEVICE',
+        );
       }
     }
 
@@ -240,7 +290,10 @@ function assertContainedPath(candidatePath, rootPath, options = {}) {
     const relClean = validateLexicalPath(trimmed, { strictChars });
 
     if (relClean === '' && !allowRoot) {
-      throw new PathSecurityError('Path security violation: Root directory access is not permitted', 'ERR_ROOT_ACCESS');
+      throw new PathSecurityError(
+        'Path security violation: Root directory access is not permitted',
+        'ERR_ROOT_ACCESS',
+      );
     }
 
     // 3. Resolve Candidate Path against Canonical Root
@@ -249,7 +302,10 @@ function assertContainedPath(candidatePath, rootPath, options = {}) {
 
   // Lexical containment check against canonicalRoot
   if (!isPathContained(canonicalRoot, resolvedCandidate, { allowRoot })) {
-    throw new PathSecurityError('Path security violation: Candidate path escapes repository root', 'ERR_PATH_TRAVERSAL');
+    throw new PathSecurityError(
+      'Path security violation: Candidate path escapes repository root',
+      'ERR_PATH_TRAVERSAL',
+    );
   }
 
   // 4. Filesystem Canonical Realpath & Symlink Verification
@@ -262,13 +318,17 @@ function assertContainedPath(candidatePath, rootPath, options = {}) {
     isExisting = true;
 
     // Resolve realpath
-    canonicalPath = typeof fs.realpathSync.native === 'function'
-      ? fs.realpathSync.native(resolvedCandidate)
-      : fs.realpathSync(resolvedCandidate);
+    canonicalPath =
+      typeof fs.realpathSync.native === 'function'
+        ? fs.realpathSync.native(resolvedCandidate)
+        : fs.realpathSync(resolvedCandidate);
 
     // Verify canonical path is contained in canonicalRoot
     if (!isPathContained(canonicalRoot, canonicalPath, { allowRoot })) {
-      throw new PathSecurityError('Path security violation: Target realpath escapes repository root (symlink traversal)', 'ERR_SYMLINK_ESCAPE');
+      throw new PathSecurityError(
+        'Path security violation: Target realpath escapes repository root (symlink traversal)',
+        'ERR_SYMLINK_ESCAPE',
+      );
     }
   } catch (err) {
     if (err instanceof PathSecurityError) {
@@ -288,17 +348,24 @@ function assertContainedPath(candidatePath, rootPath, options = {}) {
         while (curr && curr !== path.dirname(curr)) {
           try {
             if (fs.existsSync(curr)) {
-              const canonicalAncestor = typeof fs.realpathSync.native === 'function'
-                ? fs.realpathSync.native(curr)
-                : fs.realpathSync(curr);
+              const canonicalAncestor =
+                typeof fs.realpathSync.native === 'function'
+                  ? fs.realpathSync.native(curr)
+                  : fs.realpathSync(curr);
 
               if (!isPathContained(canonicalRoot, canonicalAncestor, { allowRoot: true })) {
-                throw new PathSecurityError('Path security violation: Parent directory resolves outside repository root (symlink traversal)', 'ERR_SYMLINK_PARENT_ESCAPE');
+                throw new PathSecurityError(
+                  'Path security violation: Parent directory resolves outside repository root (symlink traversal)',
+                  'ERR_SYMLINK_PARENT_ESCAPE',
+                );
               }
 
               const aStat = fs.statSync(curr);
               if (!aStat.isDirectory()) {
-                throw new PathSecurityError('Path security violation: Parent path component is not a directory', 'ERR_NOT_A_DIRECTORY');
+                throw new PathSecurityError(
+                  'Path security violation: Parent path component is not a directory',
+                  'ERR_NOT_A_DIRECTORY',
+                );
               }
               break;
             }
@@ -313,7 +380,10 @@ function assertContainedPath(candidatePath, rootPath, options = {}) {
       canonicalPath = resolvedCandidate;
     } else {
       // EACCES, EPERM, or unexpected filesystem error
-      throw new PathSecurityError(`Path security violation: Filesystem verification failed (${err.message})`, 'ERR_FS_ERROR');
+      throw new PathSecurityError(
+        `Path security violation: Filesystem verification failed (${err.message})`,
+        'ERR_FS_ERROR',
+      );
     }
   }
 
@@ -399,9 +469,10 @@ function assertWithinRoot(root, targetPath, options = {}) {
   if (checkSymlinks && fs.existsSync(resolvedTarget)) {
     try {
       const realRoot = resolveCanonicalRoot(resolvedRoot);
-      const realTarget = typeof fs.realpathSync.native === 'function'
-        ? fs.realpathSync.native(resolvedTarget)
-        : fs.realpathSync(resolvedTarget);
+      const realTarget =
+        typeof fs.realpathSync.native === 'function'
+          ? fs.realpathSync.native(resolvedTarget)
+          : fs.realpathSync(resolvedTarget);
 
       if (!isPathContained(realRoot, realTarget, { allowRoot: true })) {
         throw new Error(

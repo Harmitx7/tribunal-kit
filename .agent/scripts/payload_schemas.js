@@ -122,8 +122,14 @@ const SwarmPayloadSchema = z.object({
 const DAGTaskSchema = z
   .object({
     id: z.string().min(1, 'task id must be a non-empty string'),
-    agent: z.string().optional(),
-    target_agent: z.string().optional(),
+    agent: z
+      .string()
+      .regex(/^[a-z0-9-]+$/, 'Agent identifier must be lowercase alphanumeric with dashes')
+      .optional(),
+    target_agent: z
+      .string()
+      .regex(/^[a-z0-9-]+$/, 'Agent identifier must be lowercase alphanumeric with dashes')
+      .optional(),
     goal: z.string().optional(),
     task_description: z.string().optional(),
     deps: z.array(z.string()).optional().default([]),
@@ -136,7 +142,10 @@ const DAGTaskSchema = z
 
 const DAGPayloadSchema = z
   .object({
-    tasks: z.array(DAGTaskSchema).min(1, 'tasks must contain at least 1 task'),
+    tasks: z
+      .array(DAGTaskSchema)
+      .min(1, 'tasks must contain at least 1 task')
+      .max(50, 'tasks cannot exceed maximum of 50'),
   })
   .strict();
 
@@ -187,4 +196,3 @@ module.exports = {
   validatePayload,
   validatePayloadOrThrow,
 };
-

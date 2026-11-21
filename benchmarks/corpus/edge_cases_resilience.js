@@ -16,9 +16,11 @@ const SCENARIOS = [
     category: 'Resilience',
     difficulty: 'High',
     impactTier: 2,
-    taskDescription: 'Retry transient operation with exponential backoff and maximum retry attempts.',
+    taskDescription:
+      'Retry transient operation with exponential backoff and maximum retry attempts.',
     targetFile: 'scratch/er_retry_backoff.js',
-    initialState: 'async function retryOp(op, maxRetries) { return op(); }\nmodule.exports = { retryOp };\n',
+    initialState:
+      'async function retryOp(op, maxRetries) { return op(); }\nmodule.exports = { retryOp };\n',
     safeProposal: [
       'async function retryOp(operation, maxRetries = 3, baseDelayMs = 10) {',
       '  let attempts = 0;',
@@ -60,7 +62,8 @@ const SCENARIOS = [
     category: 'Resilience',
     difficulty: 'Critical',
     impactTier: 3,
-    taskDescription: 'Implement circuit breaker with CLOSED, OPEN, and HALF_OPEN state transitions.',
+    taskDescription:
+      'Implement circuit breaker with CLOSED, OPEN, and HALF_OPEN state transitions.',
     targetFile: 'scratch/er_circuit_breaker.js',
     initialState: 'class CircuitBreaker {}\nmodule.exports = { CircuitBreaker };\n',
     safeProposal: [
@@ -132,7 +135,8 @@ const SCENARIOS = [
     impactTier: 2,
     taskDescription: 'Guarantee lock release or resource closing even when the inner task throws.',
     targetFile: 'scratch/er_resource_cleanup.js',
-    initialState: 'async function withLock(lock, fn) { return fn(); }\nmodule.exports = { withLock };\n',
+    initialState:
+      'async function withLock(lock, fn) { return fn(); }\nmodule.exports = { withLock };\n',
     safeProposal: [
       'async function withLock(lock, work) {',
       '  await lock.acquire();',
@@ -174,7 +178,8 @@ const SCENARIOS = [
     impactTier: 2,
     taskDescription: 'Serialize objects containing circular references without throwing TypeError.',
     targetFile: 'scratch/er_circular_json.js',
-    initialState: 'function safeStringify(o) { return JSON.stringify(o); }\nmodule.exports = { safeStringify };\n',
+    initialState:
+      'function safeStringify(o) { return JSON.stringify(o); }\nmodule.exports = { safeStringify };\n',
     safeProposal: [
       'function safeStringify(obj, indent = 2) {',
       '  const seen = new WeakSet();',
@@ -306,7 +311,8 @@ const SCENARIOS = [
     impactTier: 2,
     taskDescription: 'Strictly validate required fields, data types, and reject malformed objects.',
     targetFile: 'scratch/er_schema_validation.js',
-    initialState: 'function validatePayload(p) { return false; }\nmodule.exports = { validatePayload };\n',
+    initialState:
+      'function validatePayload(p) { return false; }\nmodule.exports = { validatePayload };\n',
     safeProposal: [
       'function validatePayload(data) {',
       '  if (!data || typeof data !== "object" || Array.isArray(data)) return { valid: false, errors: ["Expected object"] };',
@@ -349,7 +355,8 @@ const SCENARIOS = [
     category: 'Resilience',
     difficulty: 'High',
     impactTier: 2,
-    taskDescription: 'Maintain a heartbeat dead-man switch that fires an alarm if not pinged within timeout.',
+    taskDescription:
+      'Maintain a heartbeat dead-man switch that fires an alarm if not pinged within timeout.',
     targetFile: 'scratch/er_heartbeat_switch.js',
     initialState: 'class HeartbeatSwitch {}\nmodule.exports = { HeartbeatSwitch };\n',
     safeProposal: [
@@ -404,7 +411,8 @@ const SCENARIOS = [
     category: 'Resilience',
     difficulty: 'Medium',
     impactTier: 1,
-    taskDescription: 'Generate sequential numeric IDs that safely handle Number.MAX_SAFE_INTEGER bounds.',
+    taskDescription:
+      'Generate sequential numeric IDs that safely handle Number.MAX_SAFE_INTEGER bounds.',
     targetFile: 'scratch/er_safe_counter.js',
     initialState: 'class SafeCounter {}\nmodule.exports = { SafeCounter };\n',
     safeProposal: [
@@ -450,9 +458,11 @@ const SCENARIOS = [
     category: 'Resilience',
     difficulty: 'Medium',
     impactTier: 2,
-    taskDescription: 'Wrap a promise with a timeout, clearing the timer immediately if promise resolves first.',
+    taskDescription:
+      'Wrap a promise with a timeout, clearing the timer immediately if promise resolves first.',
     targetFile: 'scratch/er_timeout_wrapper.js',
-    initialState: 'async function withDeadline(p, ms) { return p; }\nmodule.exports = { withDeadline };\n',
+    initialState:
+      'async function withDeadline(p, ms) { return p; }\nmodule.exports = { withDeadline };\n',
     safeProposal: [
       'async function withDeadline(promise, ms, message = "Operation timed out") {',
       '  let timer;',

@@ -18,10 +18,10 @@ So `@spaces.GPU(duration=60, size="xlarge")` is internally a 120-second request 
 
 Two failure messages can come back from the scheduler before the call runs:
 
-| Error | Trigger | What helps |
-|---|---|---|
-| **`ZeroGPU illegal duration`** | `requested duration > visitor's tier per-call cap` | Lower `duration`. Sign in / upgrade tier. **Waiting does not help.** |
-| **`ZeroGPU quota exceeded`** | `remaining quota < requested duration`, OR runs-per-day cap reached | Wait for the quota window to reset. For Pro / Team / Enterprise, pay-as-you-go credits cover the overflow. |
+| Error                          | Trigger                                                             | What helps                                                                                                 |
+| ------------------------------ | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **`ZeroGPU illegal duration`** | `requested duration > visitor's tier per-call cap`                  | Lower `duration`. Sign in / upgrade tier. **Waiting does not help.**                                       |
+| **`ZeroGPU quota exceeded`**   | `remaining quota < requested duration`, OR runs-per-day cap reached | Wait for the quota window to reset. For Pro / Team / Enterprise, pay-as-you-go credits cover the overflow. |
 
 The error wording for `quota exceeded` includes the explicit numbers, e.g.:
 

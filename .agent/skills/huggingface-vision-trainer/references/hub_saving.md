@@ -1,6 +1,7 @@
 # Saving Vision Models to Hugging Face Hub
 
 ## Contents
+
 - Why Hub Push is Required
 - Required Configuration (TrainingArguments, job config)
 - Complete Example
@@ -24,6 +25,7 @@
 ## Why Hub Push is Required
 
 When running on Hugging Face Jobs:
+
 - Environment is temporary
 - All files deleted on job completion
 - No local disk persistence
@@ -180,6 +182,7 @@ image_processor.push_to_hub(
 ```
 
 **Why this matters:**
+
 - Models need specific image preprocessing (resizing, normalization)
 - Image processor contains critical configuration
 - Without it, model cannot be used for inference
@@ -203,6 +206,7 @@ TrainingArguments(
 ```
 
 **Benefits:**
+
 - Resume training if job fails
 - Compare checkpoint performance
 - Use intermediate models
@@ -248,13 +252,14 @@ trainer.push_to_hub()
 ```
 
 **Without label mappings:**
+
 - Model outputs will be numeric IDs only
 - No human-readable class names
 - Difficult to interpret results
 
 ## Authentication Methods
 
-For a complete guide on token types, `$HF_TOKEN` automatic replacement, `secrets` vs `env` differences, and security best practices, see the `hugging-face-jobs` skill → *Token Usage Guide*.
+For a complete guide on token types, `$HF_TOKEN` automatic replacement, `secrets` vs `env` differences, and security best practices, see the `hugging-face-jobs` skill → _Token Usage Guide_.
 
 **Recommended:** Always pass tokens via `secrets` (encrypted server-side):
 
@@ -297,16 +302,19 @@ api.create_repo(
 ### Repository Naming
 
 **Valid names:**
+
 - `username/detr-cppe5`
 - `username/yolos-object-detector`
 - `organization/custom-detector`
 
 **Invalid names:**
+
 - `detector-name` (missing username)
 - `username/detector name` (spaces not allowed)
 - `username/DETECTOR` (uppercase discouraged)
 
 **Recommended naming:**
+
 - Include model architecture: `detr-`, `yolos-`, `deta-`
 - Include dataset: `-cppe5`, `-coco`, `-voc`
 - Be descriptive: `detr-resnet50-cppe5` > `model1`
@@ -318,6 +326,7 @@ api.create_repo(
 **Cause:** HF_TOKEN not provided, invalid, or not authenticated before Trainer init
 
 **Solutions:**
+
 1. Verify `secrets={"HF_TOKEN": "$HF_TOKEN"}` in job config
 2. Verify script calls `login(token=hf_token)` AND sets `training_args.hub_token = hf_token` BEFORE creating the `Trainer`
 3. Check you're logged in locally: `hf auth whoami`
@@ -330,6 +339,7 @@ api.create_repo(
 **Cause:** No write access to repository
 
 **Solutions:**
+
 1. Check repository namespace matches your username
 2. Verify you're a member of organization (if using org namespace)
 3. Check repository isn't private (if accessing org repo)
@@ -339,6 +349,7 @@ api.create_repo(
 **Cause:** Repository doesn't exist and auto-creation failed
 
 **Solutions:**
+
 1. Manually create repository first
 2. Check repository name format
 3. Verify namespace exists
@@ -348,6 +359,7 @@ api.create_repo(
 **Cause:** Network issues or Hub unavailable
 
 **Solutions:**
+
 1. Training continues but final push fails
 2. Checkpoints may be saved
 3. Re-run push manually after job completes
@@ -355,6 +367,7 @@ api.create_repo(
 ### Issue: Model loads but inference fails
 
 **Possible causes:**
+
 1. Image processor not saved—verify it's pushed separately
 2. Label mappings missing—check config.json has id2label
 3. Wrong image size—verify image processor matches training config
@@ -362,6 +375,7 @@ api.create_repo(
 ### Issue: Model saved but not visible
 
 **Possible causes:**
+
 1. Repository is private—check https://huggingface.co/username
 2. Wrong namespace—verify `hub_model_id` matches login
 3. Push still in progress—wait a few minutes
@@ -412,6 +426,7 @@ hf_jobs("logs", {"job_id": "your-job-id"})
 ```
 
 **Look for:**
+
 ```
 Pushing model to username/detector-name...
 Upload file pytorch_model.bin: 100%
@@ -422,7 +437,7 @@ Pushing image processor...
 
 ## Example: Full Production Setup
 
-```python
+````python
 # production_detector.py
 # /// script
 # dependencies = [
@@ -555,7 +570,7 @@ print(f"")
 print(f"processor = AutoImageProcessor.from_pretrained('{HUB_MODEL_ID}')")
 print(f"model = AutoModelForObjectDetection.from_pretrained('{HUB_MODEL_ID}')")
 print(f"```")
-```
+````
 
 **Submit:**
 
@@ -611,6 +626,7 @@ for score, label, box in zip(results["scores"], results["labels"], results["boxe
 **Without `push_to_hub=True` and `secrets={"HF_TOKEN": "$HF_TOKEN"}`, all training results are permanently lost.**
 
 **For object detection, also remember to:**
+
 1. Save the image processor separately
 2. Configure label mappings (id2label, label2id)
 3. Include appropriate model card metadata

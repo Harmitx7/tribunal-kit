@@ -3,6 +3,21 @@ const path = require('path');
 const crypto = require('crypto');
 const { evaluateAllSkills } = require('./skill_quality_engine');
 const { parseContract } = require('./skill_contract_engine');
+const { assertWithinRoot } = require('./_utils');
+
+let validateResourceId;
+try {
+  ({ validateResourceId } = require('../../src/security/boundary'));
+} catch {
+  validateResourceId = id => {
+    if (typeof id !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(id)) {
+      throw new Error(
+        `Invalid resource identifier: "${id}". Only alphanumeric characters, dashes, and underscores are permitted.`,
+      );
+    }
+    return id;
+  };
+}
 
 const AGENT_DIR = path.join(__dirname, '..');
 const QUALITY_REPORT_PATH = path.join(AGENT_DIR, '../phase17/skill_quality_report.json');
@@ -82,14 +97,19 @@ function planRemediations() {
 }
 
 function createPreChangeSnapshot(plan) {
+  validateResourceId(plan.remediation_id);
+  validateResourceId(plan.skill_id);
+
   const skillDir = path.join(AGENT_DIR, 'skills', plan.skill_id);
   const skillFile = path.join(skillDir, 'SKILL.md');
+  assertWithinRoot(path.join(AGENT_DIR, 'skills'), skillFile);
   if (!fs.existsSync(skillFile)) throw new Error('Skill file missing');
 
   const content = fs.readFileSync(skillFile, 'utf8');
   const hash = generateHash(content);
 
   const snapshotDir = path.join(SNAPSHOTS_DIR, plan.remediation_id);
+  assertWithinRoot(SNAPSHOTS_DIR, snapshotDir);
   fs.mkdirSync(snapshotDir, { recursive: true });
 
   fs.writeFileSync(path.join(snapshotDir, 'SKILL.md'), content);
@@ -220,6 +240,16 @@ function applyRemediation(planId) {
 
   plan.status = 'APPLIED';
   savePlans(plans);
+
+  const snapshotMetaFile = path.join(SNAPSHOTS_DIR, planId, 'meta.json');
+  if (fs.existsSync(snapshotMetaFile)) {
+    try {
+      const metaObj = JSON.parse(fs.readFileSync(snapshotMetaFile, 'utf8'));
+      metaObj.after_hash = afterHash;
+      fs.writeFileSync(snapshotMetaFile, JSON.stringify(metaObj, null, 2));
+    } catch {}
+  }
+
   appendHistory({
     remediation_id: planId,
     skill_id: plan.skill_id,
@@ -238,27 +268,47 @@ function applyRemediation(planId) {
 }
 
 function rollbackRemediation(planId) {
+  validateResourceId(planId);
   const plans = loadPlans();
   const plan = plans[planId];
   if (!plan) throw new Error('Plan not found');
+
+  validateResourceId(plan.skill_id);
 
   if (plan.status !== 'APPLIED') throw new Error('Only APPLIED plans can be rolled back');
 
   const snapshotMetaFile = path.join(SNAPSHOTS_DIR, planId, 'meta.json');
   const snapshotSkillFile = path.join(SNAPSHOTS_DIR, planId, 'SKILL.md');
+  assertWithinRoot(SNAPSHOTS_DIR, snapshotMetaFile);
+  assertWithinRoot(SNAPSHOTS_DIR, snapshotSkillFile);
 
-  if (!fs.existsSync(snapshotMetaFile)) throw new Error('Snapshot missing');
+  if (!fs.existsSync(snapshotMetaFile) || !fs.existsSync(snapshotSkillFile)) {
+    throw new Error('Snapshot missing');
+  }
 
   const meta = JSON.parse(fs.readFileSync(snapshotMetaFile, 'utf8'));
   const currentSkillFile = path.join(AGENT_DIR, 'skills', plan.skill_id, 'SKILL.md');
+  assertWithinRoot(path.join(AGENT_DIR, 'skills'), currentSkillFile);
 
   const currentContent = fs.readFileSync(currentSkillFile, 'utf8');
   const currentHash = generateHash(currentContent);
 
-  // We should verify we own the change, but for simple rollback, if currentHash != afterHash we might have conflict.
-  // Actually, we can just look up history.
+  // Verify SHA-256 hash comparison during rollback
+  if (meta.after_hash && currentHash !== meta.after_hash) {
+    throw new Error(
+      `Rollback integrity violation: Current file SHA-256 (${currentHash}) does not match expected post-remediation SHA-256 (${meta.after_hash}). File was modified out-of-band.`,
+    );
+  }
 
-  fs.writeFileSync(currentSkillFile, fs.readFileSync(snapshotSkillFile, 'utf8'));
+  const snapshotContent = fs.readFileSync(snapshotSkillFile, 'utf8');
+  const snapshotHash = generateHash(snapshotContent);
+  if (meta.hash && snapshotHash !== meta.hash) {
+    throw new Error(
+      `Rollback integrity violation: Snapshot file SHA-256 (${snapshotHash}) does not match metadata hash (${meta.hash}). Snapshot corrupted.`,
+    );
+  }
+
+  fs.writeFileSync(currentSkillFile, snapshotContent);
 
   plan.status = 'ROLLED_BACK';
   savePlans(plans);

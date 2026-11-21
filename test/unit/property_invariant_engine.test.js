@@ -44,9 +44,7 @@ describe('PropertyInvariantEngine — Mathematical Invariant Verification', () =
       expect(() => engine.verifyStateTransition('UNKNOWN_STATE', 'VALIDATING')).toThrow(
         /Unknown state/,
       );
-      expect(() => engine.verifyStateTransition(null, 'VALIDATING')).toThrow(
-        /Invalid fromState/,
-      );
+      expect(() => engine.verifyStateTransition(null, 'VALIDATING')).toThrow(/Invalid fromState/);
     });
   });
 

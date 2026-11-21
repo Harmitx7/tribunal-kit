@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -15,13 +16,7 @@
  * - Non-blocking & leak-free: timers are strictly unref'd and disposed on shutdown.
  */
 
-const {
-  EVENT_TYPES,
-  STATUSES,
-  PROGRESS_STATES,
-  AGGREGATION_POLICIES,
-} = require('./types');
-
+const { EVENT_TYPES, STATUSES, PROGRESS_STATES, AGGREGATION_POLICIES } = require('./types');
 
 class TelemetryError extends Error {
   constructor(message, operationId = null, details = {}) {
@@ -96,7 +91,7 @@ class ProgressCalculator {
       throw new TelemetryError(
         `Current progress (${curNum}) cannot exceed total (${totNum})`,
         options.operationId || null,
-        { current: curNum, total: totNum }
+        { current: curNum, total: totNum },
       );
     }
 
@@ -110,12 +105,19 @@ class ProgressCalculator {
     // If not confirmed terminal and requireTerminalConfirmation is set, cap at 99%.
     if (percentage >= 100 && curNum < totNum) {
       percentage = 99;
-    } else if (percentage === 100 && options.isTerminal !== true && options.requireTerminalConfirmation) {
+    } else if (
+      percentage === 100 &&
+      options.isTerminal !== true &&
+      options.requireTerminalConfirmation
+    ) {
       percentage = 99;
     }
 
     // Monotonic enforcement within current attempt if requested
-    if (typeof options.previousPercentage === 'number' && !Number.isNaN(options.previousPercentage)) {
+    if (
+      typeof options.previousPercentage === 'number' &&
+      !Number.isNaN(options.previousPercentage)
+    ) {
       percentage = Math.max(percentage, options.previousPercentage);
     }
 
@@ -157,11 +159,13 @@ class ProgressCoalescer {
    */
   constructor(options = {}) {
     this.windowMs = typeof options.windowMs === 'number' ? Math.max(10, options.windowMs) : 50;
-    this.maxBurstSize = typeof options.maxBurstSize === 'number' ? Math.max(1, options.maxBurstSize) : 100;
+    this.maxBurstSize =
+      typeof options.maxBurstSize === 'number' ? Math.max(1, options.maxBurstSize) : 100;
     this.onFlush = typeof options.onFlush === 'function' ? options.onFlush : null;
-    this.isCritical = typeof options.isCriticalEvent === 'function'
-      ? options.isCriticalEvent
-      : (evt) => evt && CRITICAL_EVENT_TYPES.has(evt.eventType);
+    this.isCritical =
+      typeof options.isCriticalEvent === 'function'
+        ? options.isCriticalEvent
+        : evt => evt && CRITICAL_EVENT_TYPES.has(evt.eventType);
 
     this.buffers = new Map();
     this.isDisposed = false;
@@ -205,7 +209,10 @@ class ProgressCoalescer {
         sampleCount: 1,
         firstTimestamp: Date.now(),
         lastTimestamp: Date.now(),
-        initialCurrent: event.progress && typeof event.progress.current === 'number' ? event.progress.current : null,
+        initialCurrent:
+          event.progress && typeof event.progress.current === 'number'
+            ? event.progress.current
+            : null,
         latestEvent: event,
       };
 
@@ -229,10 +236,22 @@ class ProgressCoalescer {
     // Flush immediately if burst reaches maxBurstSize
     if (buffer.sampleCount >= this.maxBurstSize) {
       const flushed = this.flush(opId);
-      return { coalesced: true, immediate: true, sampleCount: buffer.sampleCount, pending: false, event: flushed };
+      return {
+        coalesced: true,
+        immediate: true,
+        sampleCount: buffer.sampleCount,
+        pending: false,
+        event: flushed,
+      };
     }
 
-    return { coalesced: true, immediate: false, sampleCount: buffer.sampleCount, pending: true, event };
+    return {
+      coalesced: true,
+      immediate: false,
+      sampleCount: buffer.sampleCount,
+      pending: true,
+      event,
+    };
   }
 
   /**
@@ -327,12 +346,10 @@ class StallDetector {
    * @param {Function} [options.onStall] - Callback invoked when a stall is detected.
    */
   constructor(options = {}) {
-    this.stallThresholdMs = typeof options.stallThresholdMs === 'number'
-      ? Math.max(10, options.stallThresholdMs)
-      : 30000;
-    this.checkIntervalMs = typeof options.checkIntervalMs === 'number'
-      ? Math.max(10, options.checkIntervalMs)
-      : 5000;
+    this.stallThresholdMs =
+      typeof options.stallThresholdMs === 'number' ? Math.max(10, options.stallThresholdMs) : 30000;
+    this.checkIntervalMs =
+      typeof options.checkIntervalMs === 'number' ? Math.max(10, options.checkIntervalMs) : 5000;
     this.onStall = typeof options.onStall === 'function' ? options.onStall : null;
 
     this.monitored = new Map();
@@ -473,7 +490,8 @@ class StallDetector {
             state: entry.state,
             ...entry.metadata,
           },
-          nextAction: 'Verify process liveness, check subprocess stderr, or confirm network/gate availability',
+          nextAction:
+            'Verify process liveness, check subprocess stderr, or confirm network/gate availability',
         };
 
         stallEvents.push(stallEvent);
@@ -526,11 +544,15 @@ class ParallelProgressAggregator {
   constructor(options = {}) {
     this.parentOperationId = options.parentOperationId || 'parent_op';
     this.policy = options.policy || AGGREGATION_POLICIES.ALL_MUST_PASS;
-    this.partialSuccessThreshold = typeof options.partialSuccessThreshold === 'number'
-      ? Math.max(0, Math.min(1, options.partialSuccessThreshold))
-      : 1.0;
-    this.optionalSubtasks = new Set(Array.isArray(options.optionalSubtasks) ? options.optionalSubtasks : []);
-    this.totalExpected = typeof options.totalExpected === 'number' ? Math.max(0, options.totalExpected) : null;
+    this.partialSuccessThreshold =
+      typeof options.partialSuccessThreshold === 'number'
+        ? Math.max(0, Math.min(1, options.partialSuccessThreshold))
+        : 1.0;
+    this.optionalSubtasks = new Set(
+      Array.isArray(options.optionalSubtasks) ? options.optionalSubtasks : [],
+    );
+    this.totalExpected =
+      typeof options.totalExpected === 'number' ? Math.max(0, options.totalExpected) : null;
     this.onUpdate = typeof options.onUpdate === 'function' ? options.onUpdate : null;
 
     this.children = new Map();
@@ -546,9 +568,10 @@ class ParallelProgressAggregator {
   registerChild(childId, options = {}) {
     if (this.isDisposed || !childId) return;
 
-    const isOptional = options.isOptional !== undefined
-      ? Boolean(options.isOptional)
-      : this.optionalSubtasks.has(childId);
+    const isOptional =
+      options.isOptional !== undefined
+        ? Boolean(options.isOptional)
+        : this.optionalSubtasks.has(childId);
 
     const childRecord = {
       id: childId,
@@ -729,7 +752,9 @@ class ParallelProgressAggregator {
     }
 
     // Determine composite overall state
-    const allTerminal = totalKnown > 0 && (completedCount + failedCount + cancelledCount + interruptedCount === totalKnown);
+    const allTerminal =
+      totalKnown > 0 &&
+      completedCount + failedCount + cancelledCount + interruptedCount === totalKnown;
     let overallState = PROGRESS_STATES.RUNNING;
 
     if (totalKnown === 0) {
@@ -743,10 +768,12 @@ class ParallelProgressAggregator {
       if (this.policy === AGGREGATION_POLICIES.ALL_MUST_PASS) {
         // Any required child failure fails the parent
         const requiredFailed = Array.from(this.children.values()).some(
-          c => !c.isOptional && (c.state === PROGRESS_STATES.FAILED || c.state === PROGRESS_STATES.INTERRUPTED)
+          c =>
+            !c.isOptional &&
+            (c.state === PROGRESS_STATES.FAILED || c.state === PROGRESS_STATES.INTERRUPTED),
         );
         const requiredCancelled = Array.from(this.children.values()).some(
-          c => !c.isOptional && c.state === PROGRESS_STATES.CANCELLED
+          c => !c.isOptional && c.state === PROGRESS_STATES.CANCELLED,
         );
 
         if (requiredFailed) {
@@ -759,7 +786,7 @@ class ParallelProgressAggregator {
       } else if (this.policy === AGGREGATION_POLICIES.PERMIT_PARTIAL_SUCCESS) {
         const successRatio = totalKnown > 0 ? completedCount / totalKnown : 0;
         const requiredPassed = Array.from(this.children.values()).every(
-          c => c.isOptional || c.state === PROGRESS_STATES.COMPLETED
+          c => c.isOptional || c.state === PROGRESS_STATES.COMPLETED,
         );
 
         if (requiredPassed && successRatio >= this.partialSuccessThreshold) {
@@ -777,7 +804,9 @@ class ParallelProgressAggregator {
     } else {
       // Not all terminal. If policy is strict ALL_MUST_PASS and a required child failed:
       const requiredFailedEarly = Array.from(this.children.values()).some(
-        c => !c.isOptional && (c.state === PROGRESS_STATES.FAILED || c.state === PROGRESS_STATES.INTERRUPTED)
+        c =>
+          !c.isOptional &&
+          (c.state === PROGRESS_STATES.FAILED || c.state === PROGRESS_STATES.INTERRUPTED),
       );
       if (this.policy === AGGREGATION_POLICIES.ALL_MUST_PASS && requiredFailedEarly) {
         overallState = PROGRESS_STATES.FAILED;

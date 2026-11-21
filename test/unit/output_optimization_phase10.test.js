@@ -236,12 +236,24 @@ describe('Phase 10: Progressive Disclosure, Diagnostic Intelligence, and Output 
     });
 
     test('classifies failure categories accurately and provides actionable suggestions', () => {
-      expect(classifyFailure({ code: 'EACCES', message: 'permission denied' })).toBe(FAILURE_CATEGORIES.PERMISSION_ERROR);
-      expect(classifyFailure({ code: 'ETIMEDOUT', message: 'connection timed out' })).toBe(FAILURE_CATEGORIES.TIMEOUT_OR_STALL);
-      expect(classifyFailure({ message: 'Jest: 2 tests failed' })).toBe(FAILURE_CATEGORIES.TEST_FAILURE);
-      expect(classifyFailure({ code: 'MODULE_NOT_FOUND', message: 'Cannot find module "zod"' })).toBe(FAILURE_CATEGORIES.DEPENDENCY_FAILURE);
-      expect(classifyFailure({ message: 'Validation failed on schema' })).toBe(FAILURE_CATEGORIES.VALIDATION_FAILURE);
-      expect(classifyFailure({ message: 'Unexpected internal crash' })).toBe(FAILURE_CATEGORIES.INTERNAL_ERROR);
+      expect(classifyFailure({ code: 'EACCES', message: 'permission denied' })).toBe(
+        FAILURE_CATEGORIES.PERMISSION_ERROR,
+      );
+      expect(classifyFailure({ code: 'ETIMEDOUT', message: 'connection timed out' })).toBe(
+        FAILURE_CATEGORIES.TIMEOUT_OR_STALL,
+      );
+      expect(classifyFailure({ message: 'Jest: 2 tests failed' })).toBe(
+        FAILURE_CATEGORIES.TEST_FAILURE,
+      );
+      expect(
+        classifyFailure({ code: 'MODULE_NOT_FOUND', message: 'Cannot find module "zod"' }),
+      ).toBe(FAILURE_CATEGORIES.DEPENDENCY_FAILURE);
+      expect(classifyFailure({ message: 'Validation failed on schema' })).toBe(
+        FAILURE_CATEGORIES.VALIDATION_FAILURE,
+      );
+      expect(classifyFailure({ message: 'Unexpected internal crash' })).toBe(
+        FAILURE_CATEGORIES.INTERNAL_ERROR,
+      );
     });
 
     test('generates an actionable diagnostic report with root cause and remedy', () => {
@@ -262,7 +274,8 @@ describe('Phase 10: Progressive Disclosure, Diagnostic Intelligence, and Output 
           code: 'ETIMEDOUT',
           message: 'Connection timed out after 5000ms',
           suggestion: 'Check database firewall rules and restart proxy daemon',
-          stack: 'Error: Connection timed out\n    at TCPConnectWrap.afterConnect (node:net:1606:16)',
+          stack:
+            'Error: Connection timed out\n    at TCPConnectWrap.afterConnect (node:net:1606:16)',
         },
       });
 
@@ -280,7 +293,11 @@ describe('Phase 10: Progressive Disclosure, Diagnostic Intelligence, and Output 
     test('exports diagnostics in structured JSON format', () => {
       const buffer = new DiagnosticBuffer();
       const opId = 'op-export-json';
-      buffer.record({ operationId: opId, eventType: EVENT_TYPES.OPERATION_STARTED, title: 'Export Test' });
+      buffer.record({
+        operationId: opId,
+        eventType: EVENT_TYPES.OPERATION_STARTED,
+        title: 'Export Test',
+      });
 
       const exportedJson = buffer.exportDiagnostics(opId, 'json');
       const parsed = JSON.parse(exportedJson);
@@ -291,7 +308,11 @@ describe('Phase 10: Progressive Disclosure, Diagnostic Intelligence, and Output 
 
     test('cleans up diagnostic records explicitly', () => {
       const buffer = new DiagnosticBuffer();
-      buffer.record({ operationId: 'op-clear', eventType: EVENT_TYPES.OPERATION_STARTED, title: 'To Clear' });
+      buffer.record({
+        operationId: 'op-clear',
+        eventType: EVENT_TYPES.OPERATION_STARTED,
+        title: 'To Clear',
+      });
       expect(buffer.getDiagnostics('op-clear').events.length).toBe(1);
 
       buffer.clear('op-clear');
@@ -323,7 +344,9 @@ describe('Phase 10: Progressive Disclosure, Diagnostic Intelligence, and Output 
       expect(res.pagination.shown).toBe(10);
       expect(res.pagination.omitted).toBe(35);
       expect(res.pagination.isTruncated).toBe(true);
-      expect(res.pagination.notice).toContain('... and 35 more verified findings; use --verbose to view all (retained in diagnostics: op-audit-99)');
+      expect(res.pagination.notice).toContain(
+        '... and 35 more verified findings; use --verbose to view all (retained in diagnostics: op-audit-99)',
+      );
     });
 
     test('boundString bounds text preserving head and tail', () => {
@@ -361,21 +384,26 @@ describe('Phase 10: Progressive Disclosure, Diagnostic Intelligence, and Output 
   // ── 4. High-Information Completion Summaries ────────────────────────────────
   describe('4. High-Information Completion Summaries', () => {
     test('formats a completed summary with high information density', () => {
-      const summary = formatCompletionSummary({
-        title: 'Full Repository Security Scan',
-        status: STATUSES.COMPLETED,
-        durationMs: 2450,
-        attempted: ['Static AST scan', 'Dependency CVE audit', 'Secret leak detector'],
-        changed: ['package-lock.json', '.agent/case_law.json'],
-        succeeded: ['Zero critical vulnerabilities', 'All package signatures verified'],
-        verified: ['OWASP Top 10 compliance', 'Dependency tree sanitized'],
-        warnings: ['Lodash 4.17.15 deprecation warning'],
-        artifacts: ['reports/security.json', 'reports/sbom.json'],
-        diagnosticsRef: 'op-sec-101',
-      }, { environment: ENVIRONMENTS.MARKDOWN });
+      const summary = formatCompletionSummary(
+        {
+          title: 'Full Repository Security Scan',
+          status: STATUSES.COMPLETED,
+          durationMs: 2450,
+          attempted: ['Static AST scan', 'Dependency CVE audit', 'Secret leak detector'],
+          changed: ['package-lock.json', '.agent/case_law.json'],
+          succeeded: ['Zero critical vulnerabilities', 'All package signatures verified'],
+          verified: ['OWASP Top 10 compliance', 'Dependency tree sanitized'],
+          warnings: ['Lodash 4.17.15 deprecation warning'],
+          artifacts: ['reports/security.json', 'reports/sbom.json'],
+          diagnosticsRef: 'op-sec-101',
+        },
+        { environment: ENVIRONMENTS.MARKDOWN },
+      );
 
       expect(summary).toContain('✔ **Completed** · Full Repository Security Scan (2.45s)');
-      expect(summary).toContain('Attempted: Static AST scan, Dependency CVE audit, Secret leak detector');
+      expect(summary).toContain(
+        'Attempted: Static AST scan, Dependency CVE audit, Secret leak detector',
+      );
       expect(summary).toContain('Changed: package-lock.json, .agent/case_law.json');
       expect(summary).toContain('Succeeded:');
       expect(summary).toContain('✔ Zero critical vulnerabilities');
@@ -388,13 +416,16 @@ describe('Phase 10: Progressive Disclosure, Diagnostic Intelligence, and Output 
     });
 
     test('INVARIANT: Failed operation never produces a success badge', () => {
-      const summary = formatCompletionSummary({
-        title: 'Database Migration',
-        status: STATUSES.FAILED,
-        durationMs: 820,
-        failed: ['Relation "orders" does not exist in target database'],
-        diagnosticsRef: 'op-db-fail',
-      }, { environment: ENVIRONMENTS.MARKDOWN });
+      const summary = formatCompletionSummary(
+        {
+          title: 'Database Migration',
+          status: STATUSES.FAILED,
+          durationMs: 820,
+          failed: ['Relation "orders" does not exist in target database'],
+          diagnosticsRef: 'op-db-fail',
+        },
+        { environment: ENVIRONMENTS.MARKDOWN },
+      );
 
       expect(summary).toContain('✖ **Failed** · Database Migration (820ms)');
       expect(summary).not.toContain('Completed');
@@ -403,12 +434,15 @@ describe('Phase 10: Progressive Disclosure, Diagnostic Intelligence, and Output 
     });
 
     test('INVARIANT: Cancelled operation produces cancelled badge', () => {
-      const summary = formatCompletionSummary({
-        title: 'Long Running Crawl',
-        status: STATUSES.CANCELLED,
-        durationMs: 1500,
-        attempted: ['Page indexing'],
-      }, { environment: ENVIRONMENTS.MARKDOWN });
+      const summary = formatCompletionSummary(
+        {
+          title: 'Long Running Crawl',
+          status: STATUSES.CANCELLED,
+          durationMs: 1500,
+          attempted: ['Page indexing'],
+        },
+        { environment: ENVIRONMENTS.MARKDOWN },
+      );
 
       expect(summary).toContain('⊘ **Cancelled** · Long Running Crawl (1.50s)');
     });
@@ -513,7 +547,10 @@ describe('Phase 10: Progressive Disclosure, Diagnostic Intelligence, and Output 
         evidence: 'Verified OK',
       });
 
-      const jsonStr = renderStructured(event, { detailLevel: DETAIL_LEVELS.EXPANDED, pretty: false });
+      const jsonStr = renderStructured(event, {
+        detailLevel: DETAIL_LEVELS.EXPANDED,
+        pretty: false,
+      });
       const parsed = JSON.parse(jsonStr);
       expect(parsed.eventType).toBe(EVENT_TYPES.VALIDATION_PASSED);
       expect(parsed._detailLevel).toBe('expanded');

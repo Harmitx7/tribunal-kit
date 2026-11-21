@@ -37,13 +37,13 @@ trackio.finish()
 
 ### Key Functions
 
-| Function | Purpose |
-|----------|---------|
-| `trackio.init(...)` | Start a new tracking run |
+| Function            | Purpose                                         |
+| ------------------- | ----------------------------------------------- |
+| `trackio.init(...)` | Start a new tracking run                        |
 | `trackio.log(dict)` | Log metrics (called repeatedly during training) |
-| `trackio.finish()` | Finalize run and ensure all metrics are saved |
-| `trackio.show()` | Launch the local dashboard |
-| `trackio.sync(...)` | Sync local project to HF Space |
+| `trackio.finish()`  | Finalize run and ensure all metrics are saved   |
+| `trackio.show()`    | Launch the local dashboard                      |
+| `trackio.sync(...)` | Sync local project to HF Space                  |
 
 ## trackio.init() Parameters
 
@@ -77,6 +77,7 @@ trackio.show()
 ```
 
 Or from terminal:
+
 ```bash
 trackio show --project my-project
 ```
@@ -144,6 +145,7 @@ trackio.finish()
 ## What Gets Logged
 
 With TRL/Transformers integration, trackio automatically captures:
+
 - Training loss
 - Learning rate
 - Eval metrics
@@ -198,13 +200,15 @@ trackio.init(
 Embed Space dashboards in websites with query parameters:
 
 ```html
-<iframe 
-  src="https://username-trackio.hf.space/?project=my-project&metrics=train_loss,val_loss&sidebar=hidden" 
-  style="width:1600px; height:500px; border:0;">
+<iframe
+  src="https://username-trackio.hf.space/?project=my-project&metrics=train_loss,val_loss&sidebar=hidden"
+  style="width:1600px; height:500px; border:0;"
+>
 </iframe>
 ```
 
 Query parameters:
+
 - `project`: Filter to specific project
 - `metrics`: Comma-separated metric names to show
 - `sidebar`: `hidden` or `collapsed`

@@ -56,6 +56,7 @@ hf jobs uv run \
 ```
 
 Syntax gotchas:
+
 - Command order is `hf jobs uv run`, **not** `hf jobs run uv`.
 - Flags (`--flavor`, `--timeout`, `--secrets`) go **before** the script URL.
 - `--secrets` (plural), not `--secret`.
@@ -77,22 +78,22 @@ args = SentenceTransformerTrainingArguments(
 
 Why each matters:
 
-| Argument | Why |
-|---|---|
-| `push_to_hub=True` | The Jobs container is destroyed after the job finishes. Without Hub push, all weights are lost. |
-| `hub_model_id` | Required to identify the destination repo. |
-| `hub_strategy="every_save"` | Default, but worth being deliberate about on Jobs: each checkpoint is pushed as it's written, so a timeout leaves all completed checkpoints on the Hub. `"end"` only pushes once `trainer.train()` returns, so a timeout loses everything. |
-| `save_strategy="steps"` + `save_steps=0.1` | Checkpoints must actually be saved for `hub_strategy="every_save"` to push them. Fractional `0.1` = save every 10% of training, auto-scales with dataset size. |
+| Argument                                   | Why                                                                                                                                                                                                                                        |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `push_to_hub=True`                         | The Jobs container is destroyed after the job finishes. Without Hub push, all weights are lost.                                                                                                                                            |
+| `hub_model_id`                             | Required to identify the destination repo.                                                                                                                                                                                                 |
+| `hub_strategy="every_save"`                | Default, but worth being deliberate about on Jobs: each checkpoint is pushed as it's written, so a timeout leaves all completed checkpoints on the Hub. `"end"` only pushes once `trainer.train()` returns, so a timeout loses everything. |
+| `save_strategy="steps"` + `save_steps=0.1` | Checkpoints must actually be saved for `hub_strategy="every_save"` to push them. Fractional `0.1` = save every 10% of training, auto-scales with dataset size.                                                                             |
 
 ## Secrets
 
 Secrets are environment variables injected into the Jobs container. They never appear in logs and are not part of the script.
 
-| Secret | Required when |
-|---|---|
-| `HF_TOKEN` | Always, for Hub push. Also covers Trackio auth. |
-| `WANDB_API_KEY` | Using `report_to="wandb"`. |
-| `MLFLOW_TRACKING_URI`, `MLFLOW_TRACKING_TOKEN` | Using MLflow with a remote server. |
+| Secret                                         | Required when                                   |
+| ---------------------------------------------- | ----------------------------------------------- |
+| `HF_TOKEN`                                     | Always, for Hub push. Also covers Trackio auth. |
+| `WANDB_API_KEY`                                | Using `report_to="wandb"`.                      |
+| `MLFLOW_TRACKING_URI`, `MLFLOW_TRACKING_TOKEN` | Using MLflow with a remote server.              |
 
 The `$HF_TOKEN` syntax in the job config references the value from your local environment at submission time. The literal string `$HF_TOKEN` is replaced with your token's value. Never hardcode tokens in the script itself.
 

@@ -11,6 +11,7 @@ Common issues and solutions when training with TRL on Hugging Face Jobs.
 **Solution:**
 
 **Option A: Provide eval_dataset (recommended)**
+
 ```python
 # Create train/eval split
 dataset_split = dataset.train_test_split(test_size=0.1, seed=42)
@@ -28,6 +29,7 @@ trainer = SFTTrainer(
 ```
 
 **Option B: Disable evaluation**
+
 ```python
 trainer = SFTTrainer(
     model="Qwen/Qwen2.5-0.5B",
@@ -41,6 +43,7 @@ trainer = SFTTrainer(
 ```
 
 **Prevention:**
+
 - Always create train/eval split for better monitoring
 - Use `dataset.train_test_split(test_size=0.1, seed=42)`
 - Check example scripts: `scripts/train_sft_example.py` includes proper eval setup
@@ -50,12 +53,14 @@ trainer = SFTTrainer(
 **Problem:** Job terminates before training completes, all progress lost.
 
 **Solutions:**
+
 - Increase timeout parameter (e.g., `"timeout": "4h"`)
 - Reduce `num_train_epochs` or use smaller dataset slice
 - Use smaller model or enable LoRA/PEFT to speed up training
 - Add 20-30% buffer to estimated time for loading/saving overhead
 
 **Prevention:**
+
 - Always start with a quick demo run to estimate timing
 - Use `scripts/estimate_cost.py` to get time estimates
 - Monitor first runs closely via Trackio or logs
@@ -65,6 +70,7 @@ trainer = SFTTrainer(
 **Problem:** Training completes but model doesn't appear on Hub - all work lost.
 
 **Check:**
+
 - [ ] `push_to_hub=True` in training config
 - [ ] `hub_model_id` specified with username (e.g., `"username/model-name"`)
 - [ ] `secrets={"HF_TOKEN": "$HF_TOKEN"}` in job submission
@@ -79,6 +85,7 @@ trainer = SFTTrainer(
 **Problem:** Job fails with CUDA out of memory error.
 
 **Solutions (in order of preference):**
+
 1. **Reduce batch size:** Lower `per_device_train_batch_size` (try 4 → 2 → 1)
 2. **Increase gradient accumulation:** Raise `gradient_accumulation_steps` to maintain effective batch size
 3. **Disable evaluation:** Remove `eval_dataset` and `eval_strategy` (saves ~40% memory, good for demos)
@@ -88,6 +95,7 @@ trainer = SFTTrainer(
 7. **Use smaller model:** Try a smaller variant (e.g., 0.5B instead of 3B)
 
 **Memory guidelines:**
+
 - T4 (16GB): <1B models with LoRA
 - A10G (24GB): 1-3B models with LoRA, <1B full fine-tune
 - A100 (40GB/80GB): 7B+ models with LoRA, 3B full fine-tune
@@ -99,6 +107,7 @@ trainer = SFTTrainer(
 **Cause:** TRL config classes use `max_length`, not `max_seq_length`.
 
 **Solution:**
+
 ```python
 # ✅ CORRECT - TRL uses max_length
 SFTConfig(max_length=512)
@@ -115,17 +124,22 @@ SFTConfig(max_seq_length=512)
 **Problem:** Training fails with dataset format errors or missing fields.
 
 **Solutions:**
+
 1. **Check format documentation:**
+
    ```python
    hf_doc_fetch("https://huggingface.co/docs/trl/dataset_formats")
    ```
 
 2. **Validate dataset before training:**
+
    ```bash
    uv run https://huggingface.co/datasets/mcp-tools/skills/raw/main/dataset_inspector.py \
      --dataset <dataset-name> --split train
    ```
+
    Or via hf_jobs:
+
    ```python
    hf_jobs("uv", {
        "script": "https://huggingface.co/datasets/mcp-tools/skills/raw/main/dataset_inspector.py",
@@ -147,7 +161,9 @@ SFTConfig(max_seq_length=512)
 **Problem:** Job fails with "ModuleNotFoundError" or import errors.
 
 **Solutions:**
+
 1. **Add PEP 723 header with dependencies:**
+
    ```python
    # /// script
    # dependencies = [
@@ -173,7 +189,9 @@ SFTConfig(max_seq_length=512)
 **Problem:** Job fails with authentication or permission errors when pushing to Hub.
 
 **Solutions:**
+
 1. **Verify authentication:**
+
    ```python
    mcp__huggingface__hf_whoami()  # Check who's authenticated
    ```
@@ -184,6 +202,7 @@ SFTConfig(max_seq_length=512)
    - Token must not be "read-only"
 
 3. **Verify token in job:**
+
    ```python
    "secrets": {"HF_TOKEN": "$HF_TOKEN"}  # Must be in job config
    ```
@@ -198,12 +217,14 @@ SFTConfig(max_seq_length=512)
 **Problem:** Job shows "pending" or "starting" for extended period.
 
 **Solutions:**
+
 - Check Jobs dashboard for status: https://huggingface.co/jobs
 - Verify hardware availability (some GPU types may have queues)
 - Try different hardware flavor if one is heavily utilized
 - Check for account billing issues (Jobs requires paid plan)
 
 **Typical startup times:**
+
 - CPU jobs: 10-30 seconds
 - GPU jobs: 30-90 seconds
 - If >3 minutes: likely queued or stuck
@@ -213,6 +234,7 @@ SFTConfig(max_seq_length=512)
 **Problem:** Training runs but loss stays flat or doesn't improve.
 
 **Solutions:**
+
 1. **Check learning rate:** May be too low (try 2e-5 to 5e-5) or too high (try 1e-6)
 2. **Verify dataset quality:** Inspect examples to ensure they're reasonable
 3. **Check model size:** Very small models may not have capacity for task
@@ -224,6 +246,7 @@ SFTConfig(max_seq_length=512)
 **Problem:** Cannot see training logs or progress.
 
 **Solutions:**
+
 1. **Wait 30-60 seconds:** Initial logs can be delayed
 2. **Check logs via MCP tool:**
    ```python
@@ -240,7 +263,9 @@ SFTConfig(max_seq_length=512)
 **Problem:** Cannot resume from checkpoint or checkpoint not saved.
 
 **Solutions:**
+
 1. **Enable checkpoint saving:**
+
    ```python
    SFTConfig(
        save_strategy="steps",
@@ -264,11 +289,13 @@ SFTConfig(max_seq_length=512)
 If issues persist:
 
 1. **Check TRL documentation:**
+
    ```python
    hf_doc_search("your issue", product="trl")
    ```
 
 2. **Check Jobs documentation:**
+
    ```python
    hf_doc_fetch("https://huggingface.co/docs/huggingface_hub/guides/jobs")
    ```

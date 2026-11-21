@@ -8,14 +8,14 @@ Choosing a loss means (a) pick a base loss (contrastive, regression, distillatio
 
 ## Top-line decision table
 
-| You have | Use |
-|---|---|
+| You have                                             | Use                                                               |
+| ---------------------------------------------------- | ----------------------------------------------------------------- |
 | `(anchor, positive)` or triplet, SPLADE architecture | `SpladeLoss(loss=SparseMultipleNegativesRankingLoss(model), ...)` |
-| Same, want effective batch size of 256+ | `CachedSpladeLoss(...)` |
-| `(text1, text2, score)` labeled pairs | `SparseCoSENTLoss` or `SparseCosineSimilarityLoss` |
-| Distillation from cross-encoder teacher | `SparseMarginMSELoss` |
-| Listwise distillation | `SparseDistillKLDivLoss` |
-| Explicit triplet | `SparseTripletLoss` |
+| Same, want effective batch size of 256+              | `CachedSpladeLoss(...)`                                           |
+| `(text1, text2, score)` labeled pairs                | `SparseCoSENTLoss` or `SparseCosineSimilarityLoss`                |
+| Distillation from cross-encoder teacher              | `SparseMarginMSELoss`                                             |
+| Listwise distillation                                | `SparseDistillKLDivLoss`                                          |
+| Explicit triplet                                     | `SparseTripletLoss`                                               |
 
 ## The core wrapper: `SpladeLoss`
 

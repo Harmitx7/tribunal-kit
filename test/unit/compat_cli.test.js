@@ -42,10 +42,14 @@ describe('Phase 8 — Compatibility, API Stability & Cross-Platform Reliability'
     });
 
     test('tk memory recall empty query returns valid JSON structure', () => {
-      const res = spawnSync(process.execPath, [wrapperBin, 'memory', 'recall', 'test_compat_query'], {
-        cwd: repoRoot,
-        encoding: 'utf8',
-      });
+      const res = spawnSync(
+        process.execPath,
+        [wrapperBin, 'memory', 'recall', 'test_compat_query'],
+        {
+          cwd: repoRoot,
+          encoding: 'utf8',
+        },
+      );
       // Exit code 0 and stdout is valid JSON with action: recall
       expect(res.status).toBe(0);
       const parsed = JSON.parse(res.stdout.trim());
@@ -61,7 +65,7 @@ describe('Phase 8 — Compatibility, API Stability & Cross-Platform Reliability'
         {
           cwd: repoRoot,
           encoding: 'utf8',
-        }
+        },
       );
       expect(res.status).toBe(0);
       const parsed = JSON.parse(res.stdout.trim());
@@ -76,7 +80,7 @@ describe('Phase 8 — Compatibility, API Stability & Cross-Platform Reliability'
         {
           cwd: repoRoot,
           encoding: 'utf8',
-        }
+        },
       );
       expect(res.status).toBe(0);
       const parsed = JSON.parse(res.stdout.trim());
@@ -91,7 +95,7 @@ describe('Phase 8 — Compatibility, API Stability & Cross-Platform Reliability'
         {
           cwd: repoRoot,
           encoding: 'utf8',
-        }
+        },
       );
       expect(resBefore.status).toBe(0);
       const parsedBefore = JSON.parse(resBefore.stdout.trim());
@@ -104,7 +108,7 @@ describe('Phase 8 — Compatibility, API Stability & Cross-Platform Reliability'
         {
           cwd: repoRoot,
           encoding: 'utf8',
-        }
+        },
       );
       expect(resAfter.status).toBe(0);
       const parsedAfter = JSON.parse(resAfter.stdout.trim());

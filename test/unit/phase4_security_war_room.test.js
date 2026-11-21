@@ -79,7 +79,9 @@ describe('PHASE 4 SECURITY WAR ROOM — Zero-Trust & Invariant Verification', ()
       // 2. Missing or blank signature must be rejected
       expect(() => {
         service.approveWrite(res.token, 'human_alice', '');
-      }).toThrow(/Security Violation: Human approval requires a valid, non-empty confirmation signature/i);
+      }).toThrow(
+        /Security Violation: Human approval requires a valid, non-empty confirmation signature/i,
+      );
 
       // 3. Legitimate human operator with valid signature succeeds
       const approved = service.approveWrite(res.token, 'human_alice', 'SIG_APPROVED_BY_ALICE');
@@ -100,7 +102,9 @@ describe('PHASE 4 SECURITY WAR ROOM — Zero-Trust & Invariant Verification', ()
       };
 
       const res = await handleRequest(req);
-      expect(res.content[0].text).toMatch(/Security Violation: Human approval via MCP requires explicit approverId/i);
+      expect(res.content[0].text).toMatch(
+        /Security Violation: Human approval via MCP requires explicit approverId/i,
+      );
     });
   });
 

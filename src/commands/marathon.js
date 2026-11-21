@@ -1,9 +1,7 @@
 'use strict';
-const __importDefault =
-  (this && this.__importDefault) ||
-  function (mod) {
-    return mod && mod.__esModule ? mod : { default: mod };
-  };
+const __importDefault = function (mod) {
+  return mod && mod.__esModule ? mod : { default: mod };
+};
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.cmdMarathon = cmdMarathon;
 const fs_1 = __importDefault(require('fs'));
@@ -62,7 +60,9 @@ async function cmdMarathon(flags, processArgs, quiet = false) {
       stdio: 'inherit',
       cwd: targetDir,
     });
-  } catch {
-    process.exit(1);
+  } catch (err) {
+    (0, logger_1.err)(`Marathon harness execution failed: ${err.message || err}`);
+    const exitCode = typeof err.code === 'number' && err.code !== 0 ? err.code : 1;
+    process.exit(exitCode);
   }
 }

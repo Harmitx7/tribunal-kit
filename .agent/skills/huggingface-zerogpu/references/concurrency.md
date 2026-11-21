@@ -76,4 +76,4 @@ def predict(text):
     return model.generate(**tokens)
 ```
 
-The "no mutable global state" rule targets *writes* from handlers, not reads. A handler that only reads from a global is concurrency-safe.
+The "no mutable global state" rule targets _writes_ from handlers, not reads. A handler that only reads from a global is concurrency-safe.

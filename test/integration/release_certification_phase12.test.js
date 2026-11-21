@@ -36,7 +36,6 @@ const {
 } = kit;
 
 describe('Phase 12: End-to-End Release Certification (Scenarios A - N)', () => {
-
   // ── Scenario A: Successful Execution ───────────────────────────────────────
   test('Scenario A: Successful execution with authoritative progress and verified completion summary', () => {
     const tracker = new ActivityTracker({
@@ -57,16 +56,21 @@ describe('Phase 12: End-to-End Release Certification (Scenarios A - N)', () => {
     // Step 3: Authoritative progress
     const progRes = tracker.updateProgress(
       { current: 5, total: 10, isAuthoritative: true, unit: 'migrations' },
-      { title: 'Applying database migrations', phase: 'Execution' }
+      { title: 'Applying database migrations', phase: 'Execution' },
     );
     expect(progRes.event.progress.percentage).toBe(50);
 
     // Step 4: Verification pass with authoritative evidence
-    const verifyRes = tracker.passed('Database Schema Consistency', { appliedMigrations: 10, checksum: 'a1b2c3d4' });
+    const verifyRes = tracker.passed('Database Schema Consistency', {
+      appliedMigrations: 10,
+      checksum: 'a1b2c3d4',
+    });
     expect(verifyRes.formatted).toContain('✔ **Verified** · Database Schema Consistency');
 
     // Step 5: Completed
-    tracker.complete('All migrations applied cleanly', { checksum: 'a1b2c3d4' }, ['docs/migrations.md']);
+    tracker.complete('All migrations applied cleanly', { checksum: 'a1b2c3d4' }, [
+      'docs/migrations.md',
+    ]);
     expect(tracker.getStatus()).toBe(LIFECYCLE_STATES.COMPLETED);
 
     // Final summary check
@@ -91,7 +95,9 @@ describe('Phase 12: End-to-End Release Certification (Scenarios A - N)', () => {
     expect(() => assertValidActivityEvent(malformed)).toThrow();
 
     // Invariant rejection on progress overflow
-    expect(() => createActivityEvent({ progress: { current: 15, total: 10, isAuthoritative: true } })).toThrow();
+    expect(() =>
+      createActivityEvent({ progress: { current: 15, total: 10, isAuthoritative: true } }),
+    ).toThrow();
 
     // Ensure tracker does not report completion for invalid operations
     const tracker = new ActivityTracker({ title: 'Validation Safeguard' });
@@ -110,9 +116,14 @@ describe('Phase 12: End-to-End Release Certification (Scenarios A - N)', () => {
     const runtimeError = new Error('Gateway connection timeout: 504 Gateway Timeout');
     runtimeError.code = 'ETIMEDOUT';
 
-    const failRes = tracker.failed('Payment Gateway Invocation', runtimeError, 'Check API credentials and retry', {
-      terminal: true,
-    });
+    const failRes = tracker.failed(
+      'Payment Gateway Invocation',
+      runtimeError,
+      'Check API credentials and retry',
+      {
+        terminal: true,
+      },
+    );
 
     expect(tracker.getStatus()).toBe(LIFECYCLE_STATES.FAILED);
     expect(failRes.formatted).toContain('✖ **Failed**');
@@ -151,12 +162,12 @@ describe('Phase 12: End-to-End Release Certification (Scenarios A - N)', () => {
   });
 
   // ── Scenario E: Timeout ────────────────────────────────────────────────────
-  test('Scenario E: Stall detector identifies idle operation and dispatches warning/failure', (done) => {
+  test('Scenario E: Stall detector identifies idle operation and dispatches warning/failure', done => {
     let triggered = false;
     const detector = new StallDetector({
       stallThresholdMs: 30,
       checkIntervalMs: 10,
-      onStall: (stallEvt) => {
+      onStall: stallEvt => {
         triggered = true;
       },
     });
@@ -178,7 +189,11 @@ describe('Phase 12: End-to-End Release Certification (Scenarios A - N)', () => {
     tracker.passed('Unit Tests Passed', { passed: 10, failed: 0 });
 
     tracker.runningTests('Combined Test Suite', { current: 15, total: 20, isAuthoritative: true });
-    tracker.failed('E2E Browser Tests', new Error('Timeout waiting for selector "#submit"'), 'Inspect DOM fixture');
+    tracker.failed(
+      'E2E Browser Tests',
+      new Error('Timeout waiting for selector "#submit"'),
+      'Inspect DOM fixture',
+    );
 
     const summary = tracker.getExecutiveSummary();
     expect(summary.passedCount).toBe(1);
@@ -218,7 +233,10 @@ describe('Phase 12: End-to-End Release Certification (Scenarios A - N)', () => {
 
   // ── Scenario H: Large Result & Bounded Output ──────────────────────────────
   test('Scenario H: Output limits are enforced without corrupting structured responses or hiding errors', () => {
-    const massiveList = Array.from({ length: 500 }, (_, i) => ({ id: `item_${i}`, value: `data_${i}` }));
+    const massiveList = Array.from({ length: 500 }, (_, i) => ({
+      id: `item_${i}`,
+      value: `data_${i}`,
+    }));
     const bounded = boundArray(massiveList, { maxItems: 10, diagnosticRef: 'op-large-query' });
 
     expect(bounded.pagination.shown).toBe(10);
@@ -235,7 +253,7 @@ describe('Phase 12: End-to-End Release Certification (Scenarios A - N)', () => {
   // ── Scenario I: Secret-Bearing Error ───────────────────────────────────────
   test('Scenario I: Sensitive credentials redacted across renderers and diagnostic buffers', () => {
     const sensitiveError = new Error(
-      'Database connection failed to postgres://postgres:SecretSuperPass@db.internal:5432/prod with Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY'
+      'Database connection failed to postgres://postgres:SecretSuperPass@db.internal:5432/prod with Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.wJalrXUtnFEMIK7MDENGbPxRfiCYEXAMPLEKEY',
     );
 
     const tracker = new ActivityTracker({ title: 'Secure Migration' });
@@ -279,7 +297,9 @@ describe('Phase 12: End-to-End Release Certification (Scenarios A - N)', () => {
     tracker2.updateProgress({ current: 2, total: 10, isAuthoritative: true });
 
     tracker1.passed('Task A Schema Validated', { valid: true });
-    tracker2.failed('Task B CSS Linting', new Error('Parse error'), 'Fix syntax', { terminal: true });
+    tracker2.failed('Task B CSS Linting', new Error('Parse error'), 'Fix syntax', {
+      terminal: true,
+    });
 
     expect(tracker1.getStatus()).toBe(LIFECYCLE_STATES.RUNNING);
     expect(tracker2.getStatus()).toBe(LIFECYCLE_STATES.FAILED);
@@ -351,8 +371,8 @@ describe('Phase 12: End-to-End Release Certification (Scenarios A - N)', () => {
 
     // 2. ESM import from package exports via Node subprocess
     const esmCheckCommand = `node --input-type=module -e "import { ActivityTracker, renderMarkdown, deepClone, activity } from './src/esm/index.mjs'; if (typeof ActivityTracker !== 'function' || typeof renderMarkdown !== 'function' || typeof deepClone !== 'function' || typeof activity !== 'object') process.exit(1);"`;
-    expect(() => execSync(esmCheckCommand, { cwd: path.resolve(__dirname, '../..'), stdio: 'pipe' })).not.toThrow();
+    expect(() =>
+      execSync(esmCheckCommand, { cwd: path.resolve(__dirname, '../..'), stdio: 'pipe' }),
+    ).not.toThrow();
   });
-
 });
-

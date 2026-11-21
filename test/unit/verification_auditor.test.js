@@ -1,4 +1,7 @@
-const { validateSkillSchema, auditPostExecution } = require('../../.agent/scripts/verification_auditor');
+const {
+  validateSkillSchema,
+  auditPostExecution,
+} = require('../../.agent/scripts/verification_auditor');
 
 describe('verification_auditor - Phase 5/6 Verification', () => {
   const dummySkill = {

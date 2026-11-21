@@ -81,8 +81,8 @@ class McpResponseOptimizer {
     if (options.prioritizeSeverity) {
       const severityRank = { critical: 4, high: 3, medium: 2, low: 1, info: 0 };
       itemsToSlice = [...arr].sort((a, b) => {
-        const rankA = a && a.severity ? (severityRank[a.severity.toLowerCase()] || 0) : 0;
-        const rankB = b && b.severity ? (severityRank[b.severity.toLowerCase()] || 0) : 0;
+        const rankA = a && a.severity ? severityRank[a.severity.toLowerCase()] || 0 : 0;
+        const rankB = b && b.severity ? severityRank[b.severity.toLowerCase()] || 0 : 0;
         return rankB - rankA;
       });
     }
@@ -97,7 +97,8 @@ class McpResponseOptimizer {
         returned: limit,
         remaining: total - limit,
         hasMore: true,
-        retrievalHint: options.retrievalHint || 'Specify higher limit parameter to retrieve full results',
+        retrievalHint:
+          options.retrievalHint || 'Specify higher limit parameter to retrieve full results',
       },
     };
   }
@@ -147,7 +148,11 @@ class McpResponseOptimizer {
     let sanitizedData = shouldRedact ? redactSecrets(data) : data;
 
     if (options.maxArrayLength && Array.isArray(sanitizedData)) {
-      const bounded = McpResponseOptimizer.boundArray(sanitizedData, options.maxArrayLength, options);
+      const bounded = McpResponseOptimizer.boundArray(
+        sanitizedData,
+        options.maxArrayLength,
+        options,
+      );
       if (bounded._pagination && bounded._pagination.truncated) {
         sanitizedData = {
           items: bounded.items,
@@ -157,9 +162,7 @@ class McpResponseOptimizer {
     }
 
     // Serialize to text
-    const text = compact
-      ? JSON.stringify(sanitizedData)
-      : JSON.stringify(sanitizedData, null, 2);
+    const text = compact ? JSON.stringify(sanitizedData) : JSON.stringify(sanitizedData, null, 2);
 
     const response = {
       content: [
@@ -237,7 +240,8 @@ class McpResponseOptimizer {
     const baselineBytes = Buffer.byteLength(baselineText, 'utf8');
     const optimizedBytes = Buffer.byteLength(optimizedText, 'utf8');
     const bytesSaved = Math.max(0, baselineBytes - optimizedBytes);
-    const reductionPercent = baselineBytes > 0 ? Number(((bytesSaved / baselineBytes) * 100).toFixed(2)) : 0;
+    const reductionPercent =
+      baselineBytes > 0 ? Number(((bytesSaved / baselineBytes) * 100).toFixed(2)) : 0;
 
     const baselineTokens = Math.ceil(baselineText.length / 4);
     const optimizedTokens = Math.ceil(optimizedText.length / 4);
@@ -312,4 +316,3 @@ module.exports = {
   measurePayload: McpResponseOptimizer.measurePayload,
   boundArray: McpResponseOptimizer.boundArray,
 };
-

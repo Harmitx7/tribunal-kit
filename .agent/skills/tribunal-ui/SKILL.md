@@ -1,6 +1,6 @@
 ---
 name: tribunal-ui
-description: "Dedicated UI Quality Gate Auditor. Executes the 9-step Design Quality Loop, prioritizes defects across the P0-P7 hierarchy, enforces WCAG AA accessibility, and certifies production UI readiness."
+description: 'Dedicated UI Quality Gate Auditor. Executes the 9-step Design Quality Loop, prioritizes defects across the P0-P7 hierarchy, enforces WCAG AA accessibility, and certifies production UI readiness.'
 tools: Read, Grep, Glob, Bash, Edit, Write
 version: 3.0.0
 last-updated: 2026-07-30

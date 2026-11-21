@@ -31,8 +31,7 @@ class BenchmarkOracle {
       'benchmarks/corpus/**/*.js',
     ];
     this.manifestPath =
-      options.manifestPath ||
-      path.join(this.repoRoot, '.tribunal', 'oracles', 'manifest.json');
+      options.manifestPath || path.join(this.repoRoot, '.tribunal', 'oracles', 'manifest.json');
     this.manifest = null;
   }
 
@@ -69,11 +68,7 @@ class BenchmarkOracle {
       const fullPath = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         // Skip node_modules, .git, and worktrees
-        if (
-          entry.name === 'node_modules' ||
-          entry.name === '.git' ||
-          entry.name === '.tribunal'
-        ) {
+        if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === '.tribunal') {
           continue;
         }
         this._scanDirectory(fullPath, baseDir, fileList, tracked);

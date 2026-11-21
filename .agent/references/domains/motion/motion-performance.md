@@ -2,7 +2,7 @@
 
 > **Authority**: W3C Web Animations API (WAAPI), Google Chrome Rendering Team & WCAG 2.1  
 > **Applicable Domains**: Motion Engineering, 60fps Animation, Accessibility  
-> **Status**: Verified Specification Reference  
+> **Status**: Verified Specification Reference
 
 ---
 
@@ -19,7 +19,9 @@ JavaScript ──> Style Recalculation ──> Layout ──> Paint ──> Comp
 ```
 
 ### The Fast Path: Composite-Only Properties
+
 Only two CSS properties skip both Layout and Paint entirely and run purely on the GPU composite thread:
+
 1. `transform` (`translate3d`, `scale`, `rotate`)
 2. `opacity`
 
@@ -52,6 +54,7 @@ requestAnimationFrame(() => {
 Accessible motion is not optional. Users with vestibular disorders can experience nausea, dizziness, or migraines from parallax or large-scale interface motion.
 
 ### Universal Reduced-Motion Guardrail:
+
 ```css
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -66,6 +69,7 @@ Accessible motion is not optional. Users with vestibular disorders can experienc
 ```
 
 In JavaScript/GSAP:
+
 ```javascript
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 if (prefersReduced) {

@@ -64,7 +64,7 @@ describe('Phase 4.2: Connection-Time Enforcement Gap Investigation', () => {
     // In Phase 4.1:
     // When Chrome connects, it sends the HTTP request to the server.
     // The server receives the request!
-    
+
     // Let's create an HTTP client request simulating Chrome's TCP/HTTP behavior
     const targetUrl = `http://127.0.0.1:${serverPort}/internal/admin/action`;
 
@@ -82,7 +82,7 @@ describe('Phase 4.2: Connection-Time Enforcement Gap Investigation', () => {
       const req = http.get(targetUrl, res => {
         // 2. The server responded! Now Chrome CDP emits Network.responseReceived
         const netListeners = client.eventListeners.get('Network.responseReceived') || [];
-        
+
         // Simulating CDP Network.responseReceived with remoteIPAddress from socket
         const cdpEvent = {
           requestId: 'req-1',
@@ -96,10 +96,12 @@ describe('Phase 4.2: Connection-Time Enforcement Gap Investigation', () => {
         };
 
         // If Phase 4.1 listener is registered, execute it:
-        Promise.all(netListeners.map(fn => fn(cdpEvent))).then(() => {
-          res.resume(); // drain response
-          resolve();
-        }).catch(reject);
+        Promise.all(netListeners.map(fn => fn(cdpEvent)))
+          .then(() => {
+            res.resume(); // drain response
+            resolve();
+          })
+          .catch(reject);
       });
       req.on('error', reject);
     });
@@ -110,7 +112,7 @@ describe('Phase 4.2: Connection-Time Enforcement Gap Investigation', () => {
     // Did the server receive the request?
     expect(receivedRequests.length).toBe(1);
     expect(receivedRequests[0].url).toBe('/internal/admin/action');
-    
+
     // This confirms: The server RECEIVED and processed the HTTP GET request!
     // Even though Network.responseReceived detected the violation afterwards,
     // the network packet was already transmitted to the destination.

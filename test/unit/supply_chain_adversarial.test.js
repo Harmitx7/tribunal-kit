@@ -18,8 +18,8 @@ describe('Supply Chain Adversarial & Robustness Verification', () => {
       name: 'polluter',
       version: '1.0.0',
       packages: {
-        '__proto__': { name: 'polluted', resolved: 'http://evil.com' },
-        'constructor': { name: 'constructor-attack' },
+        __proto__: { name: 'polluted', resolved: 'http://evil.com' },
+        constructor: { name: 'constructor-attack' },
       },
     };
 
@@ -110,12 +110,11 @@ describe('Supply Chain Adversarial & Robustness Verification', () => {
       minSeverity: 'CRITICAL',
     });
 
-    const critInAll = auditAll.findings.filter((f) => f.severity === 'CRITICAL').length;
-    const critInFiltered = auditCritOnly.findings.filter((f) => f.severity === 'CRITICAL').length;
+    const critInAll = auditAll.findings.filter(f => f.severity === 'CRITICAL').length;
+    const critInFiltered = auditCritOnly.findings.filter(f => f.severity === 'CRITICAL').length;
 
     // Delta Critical must be exactly 0
     expect(critInAll - critInFiltered).toBe(0);
     expect(critInAll).toBe(1);
   });
 });
-

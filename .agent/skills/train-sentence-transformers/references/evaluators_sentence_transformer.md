@@ -4,18 +4,18 @@ All bi-encoder evaluators live in `sentence_transformers.sentence_transformer.ev
 
 ## Choosing the right evaluator
 
-| Task | Evaluator |
-|---|---|
-| Retrieval (nDCG, MRR, Recall), fast default | `NanoBEIREvaluator` |
-| Retrieval on your own corpus / qrels | `InformationRetrievalEvaluator` |
-| STS / continuous similarity | `EmbeddingSimilarityEvaluator` |
-| Binary classification | `BinaryClassificationEvaluator` |
-| Triplet accuracy | `TripletEvaluator` |
-| Reranking (from retrieval candidates) | `RerankingEvaluator` |
-| MSE vs. teacher (distillation) | `MSEEvaluator`, `MSEEvaluatorFromDataFrame` |
-| Paraphrase mining | `ParaphraseMiningEvaluator` |
-| Translation (cross-lingual alignment) | `TranslationEvaluator` |
-| Label accuracy (classification during training) | `LabelAccuracyEvaluator` |
+| Task                                            | Evaluator                                   |
+| ----------------------------------------------- | ------------------------------------------- |
+| Retrieval (nDCG, MRR, Recall), fast default     | `NanoBEIREvaluator`                         |
+| Retrieval on your own corpus / qrels            | `InformationRetrievalEvaluator`             |
+| STS / continuous similarity                     | `EmbeddingSimilarityEvaluator`              |
+| Binary classification                           | `BinaryClassificationEvaluator`             |
+| Triplet accuracy                                | `TripletEvaluator`                          |
+| Reranking (from retrieval candidates)           | `RerankingEvaluator`                        |
+| MSE vs. teacher (distillation)                  | `MSEEvaluator`, `MSEEvaluatorFromDataFrame` |
+| Paraphrase mining                               | `ParaphraseMiningEvaluator`                 |
+| Translation (cross-lingual alignment)           | `TranslationEvaluator`                      |
+| Label accuracy (classification during training) | `LabelAccuracyEvaluator`                    |
 
 Wrap multiple evaluators in `SequentialEvaluator` to track all of them together:
 
@@ -122,6 +122,7 @@ For a `SoftmaxLoss`-trained classifier head. Reports accuracy on held-out data.
 ## Writing `metric_for_best_model`
 
 Pattern: `f"eval_{evaluator.primary_metric}"`. Inspect after construction: `print(evaluator.primary_metric)`. Common values:
+
 - `eval_NanoBEIR_mean_cosine_ndcg@10`: `NanoBEIREvaluator`
 - `eval_sts-dev_spearman_cosine`: `EmbeddingSimilarityEvaluator(name="sts-dev")`
 - `eval_{name}_cosine_ndcg@10`: `InformationRetrievalEvaluator(name=...)`

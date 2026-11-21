@@ -1,6 +1,5 @@
 'use strict';
 
-
 const DEFAULT_SENSITIVE_PATTERNS = [
   /\.env.*/i,
   /credentials/i,
@@ -82,7 +81,11 @@ class WritePolicyEngine {
     return {
       action: policy,
       reasons,
-      requiresHumanApproval: policy === 'DENY' || hasCritical || (decision && decision.tier >= 3),
+      requiresHumanApproval:
+        policy === 'DENY' ||
+        hasCritical ||
+        (decision && decision.tier >= 3) ||
+        Boolean(request.requiresHumanApproval),
     };
   }
 }

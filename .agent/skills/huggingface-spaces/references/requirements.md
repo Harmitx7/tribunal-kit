@@ -6,12 +6,12 @@ Rules for what to pin, what to leave alone, where to source CUDA wheels, and whi
 
 The Gradio SDK base image already installs these on every hardware tier — listing them in `requirements.txt` causes resolution failures or, worse, lets pip silently drift the runtime out of compatibility:
 
-| Package | Pinning rules |
-|---|---|
-| `gradio` | Don't list. Locked by `sdk_version:` in README frontmatter; pinning here is ignored or breaks. |
-| `spaces` | Don't list. Platform-pinned; a user pin always loses. |
-| `huggingface_hub` | Don't list by default. Pin only as a workaround for old `gradio<5` that imports the removed `HfFolder` symbol (see [`known-errors.md`](known-errors.md)). |
-| `torch` | **Pinnable, but only within `{2.8.0, 2.9.1, 2.10.0, 2.11.0}`.** Anything outside causes `CONFIG_ERROR: torch version in requirements.txt is not compatible`. Default is to leave unpinned (runtime preinstalls 2.11), but pinning is appropriate when (a) a specific version is known-good for your model, (b) you're matching a CUDA-extension wheel's `torch2.X` tag, or (c) a dep would otherwise drag torch outside the supported set. When you pin torch, also pin `torchvision` / `torchaudio` to the matching minor — see the "Torch-family side-car drift" section below. |
+| Package           | Pinning rules                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `gradio`          | Don't list. Locked by `sdk_version:` in README frontmatter; pinning here is ignored or breaks.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `spaces`          | Don't list. Platform-pinned; a user pin always loses.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `huggingface_hub` | Don't list by default. Pin only as a workaround for old `gradio<5` that imports the removed `HfFolder` symbol (see [`known-errors.md`](known-errors.md)).                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `torch`           | **Pinnable, but only within `{2.8.0, 2.9.1, 2.10.0, 2.11.0}`.** Anything outside causes `CONFIG_ERROR: torch version in requirements.txt is not compatible`. Default is to leave unpinned (runtime preinstalls 2.11), but pinning is appropriate when (a) a specific version is known-good for your model, (b) you're matching a CUDA-extension wheel's `torch2.X` tag, or (c) a dep would otherwise drag torch outside the supported set. When you pin torch, also pin `torchvision` / `torchaudio` to the matching minor — see the "Torch-family side-car drift" section below. |
 
 ## What to list
 
@@ -75,19 +75,19 @@ Wheels live at `wheels/<cell>/<wheel>`. A **cell** encodes torch × CUDA × Pyth
 
 Current cells (12):
 
-| torch | CUDA | Python cells available |
-|---|---|---|
-| 2.8.0 (`pt28`) | 12.8 | cp310, cp311, cp312 |
-| 2.9.1 (`pt291`) | 12.8 | cp310 |
+| torch            | CUDA        | Python cells available       |
+| ---------------- | ----------- | ---------------------------- |
+| 2.8.0 (`pt28`)   | 12.8        | cp310, cp311, cp312          |
+| 2.9.1 (`pt291`)  | 12.8        | cp310                        |
 | 2.10.0 (`pt210`) | 12.8 / 13.0 | cp310 (cu128), cp312 (cu130) |
-| 2.11.0 (`pt211`) | 13.0 | cp312, cp313 |
-| 2.12.0 (`pt212`) | 13.0 | cp310, cp311, cp312, cp313 |
+| 2.11.0 (`pt211`) | 13.0        | cp312, cp313                 |
+| 2.12.0 (`pt212`) | 13.0        | cp310, cp311, cp312, cp313   |
 
 ### Picking a cell
 
 1. **Match `cp<pyver>` to your `python_version:`.** The wheels are cp-ABI-specific — a `cp310` wheel needs Python 3.10, `cp312` needs 3.12, etc. (`flash_attn` now ships cp310 **through** cp313, so this is a free choice, not a forced pin to 3.10 as in older versions of this doc.)
 2. **The wheels are torch-minor-tolerant.** The `flash_attn` / `xformers` filenames encode no torch version, so a `pt212-cu130-cp310` wheel runs fine on the live torch-2.11 cp310 runtime. `flash_attn` ships cp310 through cp313, so the Python choice is free. Pick the highest-torch cell for your Python version unless you've pinned an older torch — then match it (torch 2.8 → a `pt28-cu128-cp3XX` cell).
-3. **Copy the *exact* filename from the cell you pick.** The `xformers` build hash differs across cells (`0.0.34+3da0fc92…` on the cu130 / torch≥2.10 cells, `0.0.34+41531cee…` on the cu128 / torch 2.8–2.9 cells). Don't hardcode one filename across cells — list the cell (`hf download --repo-type dataset multimodalart/zerogpu-blackwell-wheels --include "wheels/<cell>/*"` or the Hub file browser) and copy what's there.
+3. **Copy the _exact_ filename from the cell you pick.** The `xformers` build hash differs across cells (`0.0.34+3da0fc92…` on the cu130 / torch≥2.10 cells, `0.0.34+41531cee…` on the cu128 / torch 2.8–2.9 cells). Don't hardcode one filename across cells — list the cell (`hf download --repo-type dataset multimodalart/zerogpu-blackwell-wheels --include "wheels/<cell>/*"` or the Hub file browser) and copy what's there.
 
 Reference by direct URL in `requirements.txt`:
 
@@ -99,14 +99,14 @@ https://huggingface.co/datasets/multimodalart/zerogpu-blackwell-wheels/resolve/m
 
 Each package's version is constant across cells; only the `cp`/torch/CUDA tags in the filename change. The "instead of" column is the runtime workaround to avoid — the wheel is the clean path.
 
-| Package | Instead of | Version + caveats |
-|---|---|---|
-| `flash_attn` | committing a `flash_attn/` stub package; `sys.modules["flash_attn"] = …` injection | **2.8.3** (default) or **2.7.4.post1** (repos that pin `flash-attn<2.8`). Ships **cp310–cp313**. Needs `einops` for `flash_attn.layers.rotary`. Built `FLASH_ATTN_CUDA_ARCHS=120` (sm_120 only). This is FlashAttention-**2** — FA3/FA4 do **not** run on sm_120 (no TMEM); see [`zerogpu.md`](zerogpu.md) → Attention backends. Its real `flash_attn_2_cuda` also satisfies xformers' `flash_attn_gpu` probe. |
-| `xformers` | an MEA→SDPA monkey-patch shim; a Cutlass-force shim | **0.0.34** (`Requires: torch>=2.10`). **Build hash differs per cell** — copy the exact filename. Auto-dispatch picks FA2 (`fa2F`) on sm_120; classic Cutlass / FA3 reject sm_120 but auto-dispatch never selects them. |
-| `pytorch3d` | a runtime `pip install git+…pytorch3d.git` inside `@spaces.GPU` | **0.7.9**. Needs `numpy`, `iopath`, `fvcore` listed. No torch pin in metadata; loads cleanly on torch 2.11. |
-| `nvdiffrast` | a runtime build with `TORCH_CUDA_ARCH_LIST=12.0` | **0.4.0**. Needs `numpy`. `RasterizeGLContext` is a deprecation alias for `RasterizeCudaContext` — no headless-GL footgun. |
-| `diff_gaussian_rasterization` | a runtime build from `graphdeco-inria/diff-gaussian-rasterization.git` | **Upstream Inria API only** (returns 2-tuple `(color, radii)`). Does NOT match the ashawkey fork (4-tuple incl. alpha+depth) used by `ashawkey/LGM`, `dylanebert/LGM-mini`, etc. Forks need their own wheel. |
-| `torchmcubes` | a runtime `pip install git+…torchmcubes.git` | **0.1.0**. **sm_120 only** (no fatbin for older archs). Works on ZeroGPU / Blackwell; not portable to a dedicated T4 / L4 / A10G Space. |
+| Package                       | Instead of                                                                         | Version + caveats                                                                                                                                                                                                                                                                                                                                                                                              |
+| ----------------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `flash_attn`                  | committing a `flash_attn/` stub package; `sys.modules["flash_attn"] = …` injection | **2.8.3** (default) or **2.7.4.post1** (repos that pin `flash-attn<2.8`). Ships **cp310–cp313**. Needs `einops` for `flash_attn.layers.rotary`. Built `FLASH_ATTN_CUDA_ARCHS=120` (sm_120 only). This is FlashAttention-**2** — FA3/FA4 do **not** run on sm_120 (no TMEM); see [`zerogpu.md`](zerogpu.md) → Attention backends. Its real `flash_attn_2_cuda` also satisfies xformers' `flash_attn_gpu` probe. |
+| `xformers`                    | an MEA→SDPA monkey-patch shim; a Cutlass-force shim                                | **0.0.34** (`Requires: torch>=2.10`). **Build hash differs per cell** — copy the exact filename. Auto-dispatch picks FA2 (`fa2F`) on sm_120; classic Cutlass / FA3 reject sm_120 but auto-dispatch never selects them.                                                                                                                                                                                         |
+| `pytorch3d`                   | a runtime `pip install git+…pytorch3d.git` inside `@spaces.GPU`                    | **0.7.9**. Needs `numpy`, `iopath`, `fvcore` listed. No torch pin in metadata; loads cleanly on torch 2.11.                                                                                                                                                                                                                                                                                                    |
+| `nvdiffrast`                  | a runtime build with `TORCH_CUDA_ARCH_LIST=12.0`                                   | **0.4.0**. Needs `numpy`. `RasterizeGLContext` is a deprecation alias for `RasterizeCudaContext` — no headless-GL footgun.                                                                                                                                                                                                                                                                                     |
+| `diff_gaussian_rasterization` | a runtime build from `graphdeco-inria/diff-gaussian-rasterization.git`             | **Upstream Inria API only** (returns 2-tuple `(color, radii)`). Does NOT match the ashawkey fork (4-tuple incl. alpha+depth) used by `ashawkey/LGM`, `dylanebert/LGM-mini`, etc. Forks need their own wheel.                                                                                                                                                                                                   |
+| `torchmcubes`                 | a runtime `pip install git+…torchmcubes.git`                                       | **0.1.0**. **sm_120 only** (no fatbin for older archs). Works on ZeroGPU / Blackwell; not portable to a dedicated T4 / L4 / A10G Space.                                                                                                                                                                                                                                                                        |
 
 ### Pattern
 
@@ -122,7 +122,7 @@ https://huggingface.co/datasets/multimodalart/zerogpu-blackwell-wheels/resolve/m
 
 ```yaml
 # README frontmatter — pin Python to match the wheel cell's cp tag
-python_version: "3.10"
+python_version: '3.10'
 ```
 
 **Do not** install these from `@spaces.GPU` startup. A `subprocess.check_call` pip-install at first GPU acquire is strictly worse than the wheel URL — slower cold start, eats `duration` budget, breaks reproducibility, and the build sometimes exceeds the `@spaces.GPU(duration=1500)` cap.
@@ -141,12 +141,12 @@ Three options, in preference order:
 flash_attn-2.8.3+cu130torch2.12cxx11abiFALSE-cp310-cp310-linux_x86_64.whl
 ```
 
-| Tag | Meaning |
-|---|---|
-| `cu130` | CUDA major version (13.0) |
-| `torch2.12` | torch major.minor the wheel was compiled against |
-| `cxx11abiFALSE` | C++ stdlib ABI choice (`TRUE` or `FALSE`) |
-| `cp310-cp310` | CPython version (3.10) |
+| Tag             | Meaning                                          |
+| --------------- | ------------------------------------------------ |
+| `cu130`         | CUDA major version (13.0)                        |
+| `torch2.12`     | torch major.minor the wheel was compiled against |
+| `cxx11abiFALSE` | C++ stdlib ABI choice (`TRUE` or `FALSE`)        |
+| `cp310-cp310`   | CPython version (3.10)                           |
 
 ABI / symbol mismatches at any of these → `ImportError` on first import. Pin `torch` to match `torch2.X`. Set `python_version:` to match `cp3XX`.
 

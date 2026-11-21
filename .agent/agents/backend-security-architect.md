@@ -3,6 +3,10 @@ name: backend-security-architect
 description: 'EXPERIMENTAL consolidated domain reviewer for backend/security/database Tier 3 audits. Combines responsibilities of backend-specialist, security-auditor, database-architect, and sql-reviewer into a single focused review pass. DO NOT USE IN PRODUCTION — experiment only.'
 version: 0.1.0-experimental
 last-updated: 2026-09-28
+status: experimental
+tier: experimental
+experimental: true
+opt_in_required: true
 skills:
   - clean-code
   - backend-security-expert

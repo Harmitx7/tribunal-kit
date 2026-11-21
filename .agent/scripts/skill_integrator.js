@@ -24,13 +24,13 @@ const { CYAN, GREEN, YELLOW, RED, BOLD, RESET } = require('./_colors');
 
 const REPORT_FILE = 'skill-integration-report.md';
 
-const { findAgentDir } = require('./_utils');
+const { findAgentDir, assertWithinRoot } = require('./_utils');
 
 const CORE_META_MAPPINGS = {
-  'arch': '.agent/scripts/architecture_intelligence.js',
-  'assimilate': '.agent/scripts/skill_evolution.js',
-  'htop': '.agent/scripts/syscall_registry.js',
-  'resume': '.agent/scripts/session_manager.js',
+  arch: '.agent/scripts/architecture_intelligence.js',
+  assimilate: '.agent/scripts/skill_evolution.js',
+  htop: '.agent/scripts/syscall_registry.js',
+  resume: '.agent/scripts/session_manager.js',
   'skill-enhancement-engine': 'scripts/skill_enhancement_engine.js',
   'team-mode': '.agent/scripts/swarm_dispatcher.js',
 };
@@ -55,6 +55,7 @@ function getAssociatedScript(skillDir, scriptsDir) {
 
   // 2. Explicit check: does the SKILL.md define 'scripts-binding:' or 'script:' in its frontmatter?
   const skillMd = path.join(skillDir, 'SKILL.md');
+  const workspaceRoot = path.dirname(path.dirname(scriptsDir));
   if (fs.existsSync(skillMd)) {
     try {
       const content = fs.readFileSync(skillMd, 'utf8');
@@ -67,8 +68,15 @@ function getAssociatedScript(skillDir, scriptsDir) {
           const lines = sbMatch[1].split('\n').filter(l => l.trim().startsWith('- '));
           for (const l of lines) {
             const sPath = l.replace(/^[\s-]*\s*/, '').trim();
-            if (sPath && fs.existsSync(path.resolve(sPath))) {
-              return sPath.replace(/\\/g, '/');
+            if (sPath) {
+              try {
+                const contained = assertWithinRoot(workspaceRoot, sPath);
+                if (fs.existsSync(contained)) {
+                  return path.relative(workspaceRoot, contained).replace(/\\/g, '/');
+                }
+              } catch {
+                // Escaped root — ignore
+              }
             }
           }
         }
@@ -76,8 +84,15 @@ function getAssociatedScript(skillDir, scriptsDir) {
         const scriptMatch = frontmatter.match(/(?:^|\n)script:\s*([^\n]+)/);
         if (scriptMatch) {
           const sPath = scriptMatch[1].trim();
-          if (sPath && fs.existsSync(path.resolve(sPath))) {
-            return sPath.replace(/\\/g, '/');
+          if (sPath) {
+            try {
+              const contained = assertWithinRoot(workspaceRoot, sPath);
+              if (fs.existsSync(contained)) {
+                return path.relative(workspaceRoot, contained).replace(/\\/g, '/');
+              }
+            } catch {
+              // Escaped root — ignore
+            }
           }
         }
       }
@@ -87,8 +102,13 @@ function getAssociatedScript(skillDir, scriptsDir) {
   }
 
   // 3. Fallback to platform meta-mappings
-  if (CORE_META_MAPPINGS[skillName] && fs.existsSync(path.resolve(CORE_META_MAPPINGS[skillName]))) {
-    return CORE_META_MAPPINGS[skillName];
+  if (CORE_META_MAPPINGS[skillName]) {
+    try {
+      const contained = assertWithinRoot(workspaceRoot, CORE_META_MAPPINGS[skillName]);
+      if (fs.existsSync(contained)) {
+        return path.relative(workspaceRoot, contained).replace(/\\/g, '/');
+      }
+    } catch {}
   }
 
   return null;
@@ -129,7 +149,12 @@ function verifyScript(scriptPathStr, workspaceRoot) {
    * Verify a mapped script exists on disk and has valid syntax.
    * Returns { valid: boolean, message: string }.
    */
-  const fullPath = path.resolve(workspaceRoot, scriptPathStr);
+  let fullPath;
+  try {
+    fullPath = assertWithinRoot(workspaceRoot, scriptPathStr);
+  } catch (err) {
+    return { valid: false, message: `Path security violation: ${err.message}` };
+  }
 
   if (!fs.existsSync(fullPath)) {
     return { valid: false, message: `File not found: ${fullPath}` };

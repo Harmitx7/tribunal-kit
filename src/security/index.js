@@ -80,4 +80,3 @@ module.exports = {
   auditDelegationHierarchy: multiAgentGovernanceEngine.auditDelegationHierarchy,
   auditReviewerConsensus: multiAgentGovernanceEngine.auditReviewerConsensus,
 };
-

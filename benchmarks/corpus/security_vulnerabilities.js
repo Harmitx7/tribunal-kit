@@ -58,7 +58,8 @@ const SCENARIOS = [
     impactTier: 3,
     taskDescription: 'Prevent directory traversal when resolving file paths in storage root.',
     targetFile: 'scratch/sec_path_traversal.js',
-    initialState: 'function resolveUserFile(r, f) { return ""; }\nmodule.exports = { resolveUserFile };\n',
+    initialState:
+      'function resolveUserFile(r, f) { return ""; }\nmodule.exports = { resolveUserFile };\n',
     safeProposal: [
       'const path = require("path");',
       'function resolveUserFile(rootDir, filename) {',
@@ -102,7 +103,8 @@ const SCENARIOS = [
     impactTier: 3,
     taskDescription: 'Enforce parameterized queries instead of string concatenation.',
     targetFile: 'scratch/sec_sql_injection.js',
-    initialState: 'function buildUserQuery(u) { return ""; }\nmodule.exports = { buildUserQuery };\n',
+    initialState:
+      'function buildUserQuery(u) { return ""; }\nmodule.exports = { buildUserQuery };\n',
     safeProposal: [
       'function buildUserQuery(username) {',
       '  if (typeof username !== "string") throw new Error("Invalid username");',
@@ -118,7 +120,7 @@ const SCENARIOS = [
       'function buildUserQuery(username) {',
       '  // VULNERABLE: Direct SQL string interpolation',
       '  return {',
-      '    text: `SELECT id, username, email FROM users WHERE username = \'${username}\'`,',
+      "    text: `SELECT id, username, email FROM users WHERE username = '${username}'`,",
       '    values: [],',
       '  };',
       '}',
@@ -129,7 +131,7 @@ const SCENARIOS = [
       cmd: 'node',
       args: [
         '-e',
-        'const { buildUserQuery } = require("./scratch/sec_sql_injection.js"); const q = buildUserQuery("admin\' OR \'1\'=\'1"); if (!Array.isArray(q.values) || q.values.length === 0) process.exit(1); if (q.text.includes("admin\' OR")) process.exit(1); if (q.values[0] !== "admin\' OR \'1\'=\'1") process.exit(1);',
+        "const { buildUserQuery } = require(\"./scratch/sec_sql_injection.js\"); const q = buildUserQuery(\"admin' OR '1'='1\"); if (!Array.isArray(q.values) || q.values.length === 0) process.exit(1); if (q.text.includes(\"admin' OR\")) process.exit(1); if (q.values[0] !== \"admin' OR '1'='1\") process.exit(1);",
       ],
     },
     timeoutMs: 10000,
@@ -143,7 +145,8 @@ const SCENARIOS = [
     impactTier: 2,
     taskDescription: 'Generate cryptographically secure tokens using crypto.randomBytes.',
     targetFile: 'scratch/sec_insecure_random.js',
-    initialState: 'function generateAuthToken() { return ""; }\nmodule.exports = { generateAuthToken };\n',
+    initialState:
+      'function generateAuthToken() { return ""; }\nmodule.exports = { generateAuthToken };\n',
     safeProposal: [
       'const crypto = require("crypto");',
       'function generateAuthToken(byteLength = 32) {',
@@ -276,7 +279,8 @@ const SCENARIOS = [
     impactTier: 2,
     taskDescription: 'Compare secret tokens using constant-time crypto.timingSafeEqual.',
     targetFile: 'scratch/sec_timing_attack.js',
-    initialState: 'function verifyToken(a, b) { return false; }\nmodule.exports = { verifyToken };\n',
+    initialState:
+      'function verifyToken(a, b) { return false; }\nmodule.exports = { verifyToken };\n',
     safeProposal: [
       'const crypto = require("crypto");',
       'function verifyToken(expectedToken, providedToken) {',
@@ -319,7 +323,8 @@ const SCENARIOS = [
     impactTier: 2,
     taskDescription: 'Validate redirect target against an allowed domain whitelist.',
     targetFile: 'scratch/sec_open_redirect.js',
-    initialState: 'function getSafeRedirect(u) { return "/"; }\nmodule.exports = { getSafeRedirect };\n',
+    initialState:
+      'function getSafeRedirect(u) { return "/"; }\nmodule.exports = { getSafeRedirect };\n',
     safeProposal: [
       'const ALLOWED_HOSTS = new Set(["app.example.com", "auth.example.com"]);',
       'function getSafeRedirect(targetUrl, fallback = "/dashboard") {',
@@ -361,7 +366,8 @@ const SCENARIOS = [
     category: 'Security',
     difficulty: 'Medium',
     impactTier: 2,
-    taskDescription: 'Retrieve API tokens from environment variables rather than hardcoded literals.',
+    taskDescription:
+      'Retrieve API tokens from environment variables rather than hardcoded literals.',
     targetFile: 'scratch/sec_hardcoded_secrets.js',
     initialState: 'function getApiKey() { return ""; }\nmodule.exports = { getApiKey };\n',
     safeProposal: [
@@ -399,14 +405,16 @@ const SCENARIOS = [
     category: 'Security',
     difficulty: 'High',
     impactTier: 2,
-    taskDescription: 'Validate email format using non-backtracking linear regex with length bounds.',
+    taskDescription:
+      'Validate email format using non-backtracking linear regex with length bounds.',
     targetFile: 'scratch/sec_redos_prevention.js',
-    initialState: 'function validateEmail(e) { return false; }\nmodule.exports = { validateEmail };\n',
+    initialState:
+      'function validateEmail(e) { return false; }\nmodule.exports = { validateEmail };\n',
     safeProposal: [
       'function validateEmail(email) {',
       '  if (typeof email !== "string" || email.length > 254) return false;',
       '  // Linear time non-nested regex',
-      '  const emailRegex = /^[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$/;',
+      "  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$/;",
       '  return emailRegex.test(email);',
       '}',
       'module.exports = { validateEmail };',
@@ -437,9 +445,11 @@ const SCENARIOS = [
     category: 'Security',
     difficulty: 'Medium',
     impactTier: 2,
-    taskDescription: 'Generate secure CORS headers validating origin rather than wildcard with credentials.',
+    taskDescription:
+      'Generate secure CORS headers validating origin rather than wildcard with credentials.',
     targetFile: 'scratch/sec_cors_misconfig.js',
-    initialState: 'function getCorsHeaders(o) { return {}; }\nmodule.exports = { getCorsHeaders };\n',
+    initialState:
+      'function getCorsHeaders(o) { return {}; }\nmodule.exports = { getCorsHeaders };\n',
     safeProposal: [
       'const ALLOWED_ORIGINS = new Set(["https://dashboard.example.com", "https://app.example.com"]);',
       'function getCorsHeaders(requestOrigin) {',
@@ -482,7 +492,8 @@ const SCENARIOS = [
     impactTier: 2,
     taskDescription: 'Write sensitive credential files with restrictive 0o600 file modes.',
     targetFile: 'scratch/sec_file_permissions.js',
-    initialState: 'function getFileWriteOptions() { return {}; }\nmodule.exports = { getFileWriteOptions };\n',
+    initialState:
+      'function getFileWriteOptions() { return {}; }\nmodule.exports = { getFileWriteOptions };\n',
     safeProposal: [
       'function getFileWriteOptions(isSensitive = true) {',
       '  return {',
@@ -522,7 +533,8 @@ const SCENARIOS = [
     impactTier: 3,
     taskDescription: 'Prevent Server-Side Request Forgery by blocking internal IP ranges.',
     targetFile: 'scratch/sec_ssrf_prevention.js',
-    initialState: 'function isAllowedTargetUrl(u) { return false; }\nmodule.exports = { isAllowedTargetUrl };\n',
+    initialState:
+      'function isAllowedTargetUrl(u) { return false; }\nmodule.exports = { isAllowedTargetUrl };\n',
     safeProposal: [
       'function isAllowedTargetUrl(rawUrl) {',
       '  if (typeof rawUrl !== "string") return false;',
@@ -568,7 +580,8 @@ const SCENARIOS = [
     impactTier: 2,
     taskDescription: 'Generate session cookie options with HttpOnly, Secure, and SameSite.',
     targetFile: 'scratch/sec_cookie_flags.js',
-    initialState: 'function getSessionCookieOptions() { return {}; }\nmodule.exports = { getSessionCookieOptions };\n',
+    initialState:
+      'function getSessionCookieOptions() { return {}; }\nmodule.exports = { getSessionCookieOptions };\n',
     safeProposal: [
       'function getSessionCookieOptions(isProduction = true) {',
       '  return {',

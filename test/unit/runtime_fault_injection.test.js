@@ -1,9 +1,6 @@
 'use strict';
 
-const {
-  FaultInjectionEngine,
-  RetryAndTimeoutEngine,
-} = require('../../src/runtime_reliability');
+const { FaultInjectionEngine, RetryAndTimeoutEngine } = require('../../src/runtime_reliability');
 
 describe('In-Process Deterministic Fault Injection & Chaos Engine', () => {
   let faultEngine;
@@ -19,9 +16,9 @@ describe('In-Process Deterministic Fault Injection & Chaos Engine', () => {
   test('Injects synthetic timeout fault', async () => {
     faultEngine.addRule('callModel', { type: 'TIMEOUT' });
 
-    await expect(
-      faultEngine.intercept('callModel', async () => 'real result')
-    ).rejects.toThrow('Injected timeout');
+    await expect(faultEngine.intercept('callModel', async () => 'real result')).rejects.toThrow(
+      'Injected timeout',
+    );
 
     expect(faultEngine.getInterceptCount('callModel')).toBe(1);
   });
@@ -32,9 +29,9 @@ describe('In-Process Deterministic Fault Injection & Chaos Engine', () => {
       params: { code: 'ECONNRESET' },
     });
 
-    await expect(
-      faultEngine.intercept('fetchDependency', async () => 'payload')
-    ).rejects.toThrow('Injected connection reset');
+    await expect(faultEngine.intercept('fetchDependency', async () => 'payload')).rejects.toThrow(
+      'Injected connection reset',
+    );
   });
 
   test('Injects synthetic HTTP 429 rate limit with Retry-After', async () => {
@@ -57,7 +54,7 @@ describe('In-Process Deterministic Fault Injection & Chaos Engine', () => {
     faultEngine.addRule('parseOutput', { type: 'MALFORMED' });
 
     await expect(
-      faultEngine.intercept('parseOutput', async () => '{"valid": true}')
+      faultEngine.intercept('parseOutput', async () => '{"valid": true}'),
     ).rejects.toThrow(SyntaxError);
   });
 

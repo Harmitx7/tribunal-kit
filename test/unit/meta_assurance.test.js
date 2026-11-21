@@ -9,10 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const {
-  MetaAssuranceEngine,
-  CIRCUIT_STATES,
-} = require('../../src/evolution/meta_assurance');
+const { MetaAssuranceEngine, CIRCUIT_STATES } = require('../../src/evolution/meta_assurance');
 const { WalTransactionManager } = require('../../src/evolution/wal_transaction_manager');
 
 describe('MetaAssuranceEngine — Autonomous Governance & Circuit Breaker', () => {

@@ -15,14 +15,9 @@
 
 const path = require('path');
 const { spawnSync } = require('child_process');
-const {
-  formatActivity,
-} = require('../src/activity');
+const { formatActivity } = require('../src/activity');
 
-const {
-  serializeResponse,
-  formatErrorResponse,
-} = require('../src/mcp/response_optimizer');
+const { serializeResponse, formatErrorResponse } = require('../src/mcp/response_optimizer');
 
 const PKG = require(path.resolve(__dirname, '../package.json'));
 
@@ -49,11 +44,13 @@ async function withToolTimeout(fn, timeoutMs) {
 
 // --- DSH Guard: Loop Detection ---
 class ToolRepeatGuard {
-  constructor() {
+  constructor(options = {}) {
+    this.maxWindow = options.maxWindow || 20;
     this.history = new Map();
+    this.callHistory = [];
   }
 
-  observe(toolName, argsObj) {
+  canonicalizeArgs(argsObj) {
     const seen = new WeakSet();
     const canonicalize = (obj, depth = 0) => {
       if (depth > 10) return '[MaxDepth]';
@@ -77,24 +74,104 @@ class ToolRepeatGuard {
       return obj;
     };
 
-    let canonicalArgs = '{}';
     try {
-      canonicalArgs = JSON.stringify(canonicalize(argsObj) || {});
+      return JSON.stringify(canonicalize(argsObj) || {});
     } catch {
-      canonicalArgs = '{}';
+      return '{}';
     }
+  }
+
+  detectCycles() {
+    const history = this.callHistory;
+    const len = history.length;
+    // Check cycle periods from 2 to 5 (e.g., A-B-A-B is period 2; A-B-C-A-B-C is period 3)
+    for (let period = 2; period <= 5; period++) {
+      if (len < period * 2) continue;
+
+      // Extract candidate cycle from the tail
+      const candidate = history.slice(len - period);
+      // Ensure the candidate isn't just identical elements (which is handled by consecutive check)
+      const allIdentical = candidate.every(item => item === candidate[0]);
+      if (allIdentical) continue;
+
+      // Count how many consecutive repetitions of this candidate pattern appear at tail
+      let repetitions = 0;
+      let pos = len;
+      while (pos >= period) {
+        let match = true;
+        for (let i = 0; i < period; i++) {
+          if (history[pos - period + i] !== candidate[i]) {
+            match = false;
+            break;
+          }
+        }
+        if (match) {
+          repetitions++;
+          pos -= period;
+        } else {
+          break;
+        }
+      }
+
+      // If pattern repeats 2 or more times (e.g. A-B-A-B is 2 repetitions of period 2)
+      if (repetitions >= 2) {
+        return {
+          detected: true,
+          period,
+          repetitions,
+          pattern: candidate.map(k => k.split('::')[0]),
+        };
+      }
+    }
+
+    return { detected: false };
+  }
+
+  observe(toolName, argsObj) {
+    const canonicalArgs = this.canonicalizeArgs(argsObj);
     const key = `${toolName || 'unknown'}::${canonicalArgs}`;
 
-    const currentCount = (this.history.get(key) || 0) + 1;
-    this.history.clear();
-    this.history.set(key, currentCount);
+    // Add to sliding call history
+    this.callHistory.push(key);
+    while (this.callHistory.length > this.maxWindow) {
+      const evicted = this.callHistory.shift();
+      const count = this.history.get(evicted);
+      if (count !== undefined) {
+        if (count <= 1) {
+          this.history.delete(evicted);
+        } else {
+          this.history.set(evicted, count - 1);
+        }
+      }
+    }
 
-    if (currentCount === 3) {
+    // Maintain window frequency map
+    const windowCount = (this.history.get(key) || 0) + 1;
+    this.history.set(key, windowCount);
+
+    // 1. Check for identical consecutive calls at tail (A -> A -> A)
+    let consecutiveCount = 0;
+    for (let i = this.callHistory.length - 1; i >= 0; i--) {
+      if (this.callHistory[i] === key) {
+        consecutiveCount++;
+      } else {
+        break;
+      }
+    }
+
+    if (consecutiveCount === 3) {
       return 'SYSTEM NOTIFICATION: You are repeating the exact same tool call with identical arguments. Carefully analyze the previous result before calling again: if the task is not complete, try a different approach or different arguments instead of repeating the call.';
     }
-    if (currentCount >= 5) {
-      return `SYSTEM NOTIFICATION: Repeated tool call detected:\n- tool: ${toolName}\n- consecutive_calls: ${currentCount}\n- arguments: ${canonicalArgs}\nThe repeated calls are not making progress. Do not call this tool with these exact arguments again. Inspect the latest result and choose a different action, different arguments, or finish the task.`;
+    if (consecutiveCount >= 5) {
+      return `SYSTEM NOTIFICATION: Repeated tool call detected:\n- tool: ${toolName}\n- consecutive_calls: ${consecutiveCount}\n- arguments: ${canonicalArgs}\nThe repeated calls are not making progress. Do not call this tool with these exact arguments again. Inspect the latest result and choose a different action, different arguments, or finish the task.`;
     }
+
+    // 2. Check for alternating / cyclic repeat loops (A -> B -> A -> B)
+    const cycle = this.detectCycles();
+    if (cycle.detected) {
+      return `SYSTEM NOTIFICATION: Alternating / cyclic tool call loop detected (${cycle.repetitions} repetitions of pattern [${cycle.pattern.join(' -> ')}]). You are alternating between identical tool calls without making progress. Stop repeating this sequence, review the current workspace state, and choose a different action.`;
+    }
+
     return null;
   }
 }
@@ -103,7 +180,11 @@ const repeatGuard = new ToolRepeatGuard();
 // Instantiate ControlledWriteService for MCP
 const { ControlledWriteService } = require('../src/execution/controlled_write_service');
 const controlledWriteService = new ControlledWriteService({ workspaceRoot: process.cwd() });
-const { assertWithinRoot, validateResourceId, sanitizeErrorMessage } = require('../src/security/boundary');
+const {
+  assertWithinRoot,
+  validateResourceId,
+  sanitizeErrorMessage,
+} = require('../src/security/boundary');
 
 // Instantiate CorrectionRunEngine
 const { CorrectionRunEngine } = require('../src/execution/correction_run_engine');
@@ -291,15 +372,24 @@ async function handleRequest(req) {
     if (uri.startsWith('tribunal://agent/')) {
       const name = uri.replace('tribunal://agent/', '');
       validateResourceId(name);
-      filePath = assertWithinRoot(path.join(agentDir, 'agents'), path.join(agentDir, 'agents', `${name}.md`));
+      filePath = assertWithinRoot(
+        path.join(agentDir, 'agents'),
+        path.join(agentDir, 'agents', `${name}.md`),
+      );
     } else if (uri.startsWith('tribunal://skill/')) {
       const name = uri.replace('tribunal://skill/', '');
       validateResourceId(name);
-      filePath = assertWithinRoot(path.join(agentDir, 'skills'), path.join(agentDir, 'skills', name, 'SKILL.md'));
+      filePath = assertWithinRoot(
+        path.join(agentDir, 'skills'),
+        path.join(agentDir, 'skills', name, 'SKILL.md'),
+      );
     } else if (uri.startsWith('tribunal://workflow/')) {
       const name = uri.replace('tribunal://workflow/', '');
       validateResourceId(name);
-      filePath = assertWithinRoot(path.join(agentDir, 'workflows'), path.join(agentDir, 'workflows', `${name}.md`));
+      filePath = assertWithinRoot(
+        path.join(agentDir, 'workflows'),
+        path.join(agentDir, 'workflows', `${name}.md`),
+      );
     } else {
       throw new Error(`Security Violation: Invalid or unsupported resource URI: ${uri}`);
     }
@@ -431,12 +521,16 @@ async function handleRequest(req) {
         },
         {
           name: 'tribunal_approve_write',
-          description: 'Approve a transaction requiring human approval with explicit approver ID and signature.',
+          description:
+            'Approve a transaction requiring human approval with explicit approver ID and signature.',
           inputSchema: {
             type: 'object',
             properties: {
               token: { type: 'string', description: 'Write transaction token' },
-              approverId: { type: 'string', description: 'Identity of the human approver (AI agents cannot self-approve)' },
+              approverId: {
+                type: 'string',
+                description: 'Identity of the human approver (AI agents cannot self-approve)',
+              },
               signature: { type: 'string', description: 'Human confirmation approval signature' },
             },
             required: ['token', 'approverId', 'signature'],
@@ -908,7 +1002,10 @@ async function handleRequest(req) {
               },
               title: { type: 'string', description: 'Crisp title or headline' },
               summary: { type: 'string', description: 'Concise 1-2 sentence context or mandate' },
-              agent: { type: 'string', description: 'Optional agent name (e.g. resilience-reviewer)' },
+              agent: {
+                type: 'string',
+                description: 'Optional agent name (e.g. resilience-reviewer)',
+              },
               skill: { type: 'string', description: 'Optional skill name (e.g. error-resilience)' },
               domain: { type: 'string', description: 'Optional domain focus' },
               current: { type: 'number', description: 'Authoritative completed count' },
@@ -1033,17 +1130,15 @@ async function handleRequest(req) {
 
         if (!approverId) {
           return formatErrorResponse(
-            new Error('Security Violation: Human approval via MCP requires explicit approverId (AI clients cannot self-approve).'),
+            new Error(
+              'Security Violation: Human approval via MCP requires explicit approverId (AI clients cannot self-approve).',
+            ),
             { prefix: 'Approve error' },
           );
         }
 
         try {
-          const result = controlledWriteService.approveWrite(
-            token,
-            approverId,
-            signature,
-          );
+          const result = controlledWriteService.approveWrite(token, approverId, signature);
           return serializeResponse(result, { compact: req.params?.arguments?.compact });
         } catch (e) {
           return formatErrorResponse(e, { prefix: 'Approve error' });
@@ -1095,7 +1190,7 @@ async function handleRequest(req) {
               content: [
                 {
                   type: 'text',
-                  text: 'Security Violation: Invalid target argument: target cannot start with \'-\'',
+                  text: "Security Violation: Invalid target argument: target cannot start with '-'",
                 },
               ],
               isError: true,
@@ -1107,7 +1202,7 @@ async function handleRequest(req) {
               content: [
                 {
                   type: 'text',
-                  text: 'Security Violation: Invalid compareWith argument: argument cannot start with \'-\'',
+                  text: "Security Violation: Invalid compareWith argument: argument cannot start with '-'",
                 },
               ],
               isError: true,
@@ -1179,12 +1274,15 @@ async function handleRequest(req) {
 
       if (toolName === 'tk_format_activity') {
         const args = req.params?.arguments || {};
-        const progress = (args.current !== undefined && args.total !== undefined) ? {
-          current: args.current,
-          total: args.total,
-          unit: args.unit || 'steps',
-          isAuthoritative: true,
-        } : null;
+        const progress =
+          args.current !== undefined && args.total !== undefined
+            ? {
+                current: args.current,
+                total: args.total,
+                unit: args.unit || 'steps',
+                isAuthoritative: true,
+              }
+            : null;
 
         const eventPayload = {
           eventType: args.state,
@@ -1237,7 +1335,9 @@ async function handleRequest(req) {
           });
 
           if (asJson) {
-            const resp = serializeResponse(result.data, { compact: req.params?.arguments?.compact });
+            const resp = serializeResponse(result.data, {
+              compact: req.params?.arguments?.compact,
+            });
             if (result.status === 'FAILED' || result.status === 'UNSUPPORTED') {
               resp.isError = true;
             }
@@ -1412,7 +1512,10 @@ async function handleRequest(req) {
           const { auditURL, codifyAuditViolations } = require('../src/browser');
           const report = await auditURL(url);
           const codified = codifyAuditViolations(report);
-          return serializeResponse({ report, codified }, { compact: req.params?.arguments?.compact });
+          return serializeResponse(
+            { report, codified },
+            { compact: req.params?.arguments?.compact },
+          );
         } catch (e) {
           return formatErrorResponse(e, { prefix: 'Audit & codify error' });
         }
@@ -1470,11 +1573,9 @@ async function handleRequest(req) {
           }
 
           if (mode === 'dag') {
-            const { DAGPayloadSchema, validatePayload } = require(path.join(
-              agentDir,
-              'scripts',
-              'payload_schemas.js',
-            ));
+            const { DAGPayloadSchema, validatePayload } = require(
+              path.join(agentDir, 'scripts', 'payload_schemas.js'),
+            );
             const val = validatePayload(_payloadData, DAGPayloadSchema);
             if (!val.valid) {
               const errMsgs = val.errors
@@ -1560,7 +1661,6 @@ async function handleRequest(req) {
         }
       }
 
-
       if (toolName === 'validate_payload') {
         const payloadStr = req.params?.arguments?.payload;
         const schemaType = req.params?.arguments?.schemaType;
@@ -1610,9 +1710,10 @@ async function handleRequest(req) {
           }
 
           const validatedData = validatePayloadOrThrow(payloadData, schema);
-          const formattedPayload = req.params?.arguments?.compact === false
-            ? JSON.stringify(validatedData, null, 2)
-            : JSON.stringify(validatedData);
+          const formattedPayload =
+            req.params?.arguments?.compact === false
+              ? JSON.stringify(validatedData, null, 2)
+              : JSON.stringify(validatedData);
           return {
             content: [
               {
@@ -1622,7 +1723,8 @@ async function handleRequest(req) {
             ],
           };
         } catch (e) {
-          const prefix = e instanceof SyntaxError ? 'Invalid JSON payload' : 'Payload validation failed';
+          const prefix =
+            e instanceof SyntaxError ? 'Invalid JSON payload' : 'Payload validation failed';
           return formatErrorResponse(e, { prefix });
         }
       }
@@ -1796,7 +1898,6 @@ async function handleRequest(req) {
         const text = fs.readFileSync(skillPath, 'utf8');
         return { content: [{ type: 'text', text: stripBoilerplate(text) }] };
       }
-
 
       if (toolName === 'get_sparse_context') {
         const task = req.params?.arguments?.task;
@@ -2158,20 +2259,19 @@ function stopServer() {
   }
 }
 
-// Auto-start when executed directly or not in test environment
-if (require.main === module || process.env.NODE_ENV !== 'test') {
+// Auto-start when executed directly as CLI script or non-module
+if (require.main === module || (process.env.NODE_ENV !== 'test' && !module.parent)) {
   startServer();
 }
 
-if (process.env.NODE_ENV === 'test') {
-  module.exports = {
-    handleRequest,
-    processSingleRequest,
-    handleLineInput,
-    stripBoilerplate,
-    runTribunalAudit,
-    startServer,
-    stopServer,
-    ToolRepeatGuard,
-  };
-}
+module.exports = {
+  handleRequest,
+  processSingleRequest,
+  handleLineInput,
+  stripBoilerplate,
+  runTribunalAudit,
+  startServer,
+  stopServer,
+  ToolRepeatGuard,
+  repeatGuard,
+};

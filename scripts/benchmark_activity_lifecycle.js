@@ -69,7 +69,10 @@ function runBenchmark() {
   console.log(`    Throughput:    ${regOpsPerSec.toLocaleString()} ops/sec\n`);
 
   // 3. Monotonic Progress Updates
-  const op = new OperationRecord({ operationId: 'op_prog_bench', status: LIFECYCLE_STATES.RUNNING });
+  const op = new OperationRecord({
+    operationId: 'op_prog_bench',
+    status: LIFECYCLE_STATES.RUNNING,
+  });
   const startProg = process.hrtime.bigint();
   const PROG_ROUNDS = 20000;
   for (let i = 0; i < PROG_ROUNDS; i++) {
@@ -108,7 +111,9 @@ function runBenchmark() {
   const simDurationSec = Number(endSim - startSim) / 1e9;
   const simOpsPerSec = Math.round(SIM_OPERATIONS / simDurationSec);
 
-  console.log(`[4] Full Operational Lifecycle Simulation (Register -> Agent -> Tool -> Progress -> Evidence -> Complete):`);
+  console.log(
+    `[4] Full Operational Lifecycle Simulation (Register -> Agent -> Tool -> Progress -> Evidence -> Complete):`,
+  );
   console.log(`    Total operations: ${SIM_OPERATIONS}`);
   console.log(`    Elapsed time:     ${(simDurationSec * 1000).toFixed(2)} ms`);
   console.log(`    Throughput:       ${simOpsPerSec.toLocaleString()} ops/sec\n`);
@@ -122,7 +127,7 @@ function runBenchmark() {
   console.log(`    Completed total:  ${cleanupRes.completedCount}`);
   console.log(`    Evicted count:    ${cleanupRes.evictedCount}`);
   console.log(`    Active count:     ${cleanupRes.activeCount}`);
-  console.log(`    Heap used:        ${Math.round(memAfter / 1024 / 1024 * 100) / 100} MB\n`);
+  console.log(`    Heap used:        ${Math.round((memAfter / 1024 / 1024) * 100) / 100} MB\n`);
 
   console.log('================================================================');
   console.log(' Benchmark Completed Successfully');

@@ -32,7 +32,7 @@ describe('Software Verification & Formal Methods Domain — End-to-End Integrati
     expect(requirement.status).toBe('VERIFIED');
 
     // 2. Design-by-Contract: Safe Order Creation
-    let orderDb = [];
+    const orderDb = [];
     const createOrder = withContract(
       (orderId, amount) => {
         const order = { orderId, amount, status: 'CREATED' };
@@ -44,10 +44,8 @@ describe('Software Verification & Formal Methods Domain — End-to-End Integrati
           (id, amt) => typeof id === 'string' && id.length > 0,
           (id, amt) => typeof amt === 'number' && amt > 0,
         ],
-        post: [
-          (order) => order.status === 'CREATED' && order.amount > 0,
-        ],
-      }
+        post: [order => order.status === 'CREATED' && order.amount > 0],
+      },
     );
 
     const validOrder = createOrder('ORD-101', 49.99);
@@ -56,7 +54,7 @@ describe('Software Verification & Formal Methods Domain — End-to-End Integrati
 
     // 3. Property-Based Invariant: Tax Calculation Monotonicity
     // Invariant: amount1 <= amount2 implies tax(amount1) <= tax(amount2)
-    const calculateTax = (amt) => Math.round(amt * 0.08 * 100) / 100;
+    const calculateTax = amt => Math.round(amt * 0.08 * 100) / 100;
     const propertyResult = assertProperty(
       [arb.integer({ min: 1, max: 1000 }), arb.integer({ min: 1, max: 1000 })],
       (amt1, amt2) => {
@@ -64,7 +62,7 @@ describe('Software Verification & Formal Methods Domain — End-to-End Integrati
         const larger = Math.max(amt1, amt2);
         return calculateTax(smaller) <= calculateTax(larger);
       },
-      { runs: 50, seed: 42 }
+      { runs: 50, seed: 42 },
     );
     expect(propertyResult.passed).toBe(true);
 
@@ -74,12 +72,16 @@ describe('Software Verification & Formal Methods Domain — End-to-End Integrati
       initialState: 'CREATED',
       terminalStates: ['SHIPPED', 'CANCELLED'],
       transitions: [
-        { from: 'CREATED', event: 'PAY', to: 'PAID', action: (ctx) => ({ ...ctx, isPaid: true }) },
+        { from: 'CREATED', event: 'PAY', to: 'PAID', action: ctx => ({ ...ctx, isPaid: true }) },
         { from: 'CREATED', event: 'CANCEL', to: 'CANCELLED' },
         { from: 'PAID', event: 'SHIP', to: 'SHIPPED' },
       ],
       invariants: [
-        { state: 'SHIPPED', check: (ctx) => ctx.isPaid === true, message: 'Cannot ship unpaid order' },
+        {
+          state: 'SHIPPED',
+          check: ctx => ctx.isPaid === true,
+          message: 'Cannot ship unpaid order',
+        },
       ],
     };
 
@@ -93,7 +95,7 @@ describe('Software Verification & Formal Methods Domain — End-to-End Integrati
 
     // 5. Mutation Testing: Check Test Assertion Effectiveness
     const discountCode = 'function discount(amt) { if (amt > 50) return amt * 0.9; return amt; }';
-    const strictRunner = (mutated) => {
+    const strictRunner = mutated => {
       const sandbox = {};
       vm.createContext(sandbox);
       vm.runInContext(mutated, sandbox, { timeout: 1000 });
@@ -111,9 +113,9 @@ describe('Software Verification & Formal Methods Domain — End-to-End Integrati
 
     // 6. Differential Testing & Metamorphic Verification
     const diffReport = runDifferentialTest(
-      (x) => Math.floor(x),
-      (x) => Math.floor(x),
-      [[1.5], [2.9], [-0.5], [10.0]]
+      x => Math.floor(x),
+      x => Math.floor(x),
+      [[1.5], [2.9], [-0.5], [10.0]],
     );
     expect(diffReport.isEquivalent).toBe(true);
 

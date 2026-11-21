@@ -30,13 +30,19 @@ describe('Phase 4 — Slash Command Dispatch & Contract Integrity', () => {
   const commands = slashConfig.commands || [];
 
   const diskSkills = new Set(
-    fs.readdirSync(SKILLS_DIR).filter(d => fs.statSync(path.join(SKILLS_DIR, d)).isDirectory())
+    fs.readdirSync(SKILLS_DIR).filter(d => fs.statSync(path.join(SKILLS_DIR, d)).isDirectory()),
   );
   const diskAgents = new Set(
-    fs.readdirSync(AGENTS_DIR).filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''))
+    fs
+      .readdirSync(AGENTS_DIR)
+      .filter(f => f.endsWith('.md'))
+      .map(f => f.replace('.md', '')),
   );
   const diskWorkflows = new Set(
-    fs.readdirSync(WORKFLOWS_DIR).filter(f => f.endsWith('.md')).map(f => f.replace('.md', ''))
+    fs
+      .readdirSync(WORKFLOWS_DIR)
+      .filter(f => f.endsWith('.md'))
+      .map(f => f.replace('.md', '')),
   );
 
   const specConfig = JSON.parse(fs.readFileSync(SPECIALIST_REGISTRY_PATH, 'utf8'));
@@ -68,7 +74,7 @@ describe('Phase 4 — Slash Command Dispatch & Contract Integrity', () => {
     const seenAliases = new Set();
 
     for (const cmd of commands) {
-      for (const alias of (cmd.aliases || [])) {
+      for (const alias of cmd.aliases || []) {
         expect(alias.startsWith('/')).toBe(true);
         expect(canonicalNames.has(alias)).toBe(false);
         expect(seenAliases.has(alias)).toBe(false);
@@ -77,7 +83,7 @@ describe('Phase 4 — Slash Command Dispatch & Contract Integrity', () => {
     }
   });
 
-  describe.each(commands)('Command Contract: %s', (cmd) => {
+  describe.each(commands)('Command Contract: %s', cmd => {
     const canonicalName = cmd.name;
     const baseName = canonicalName.replace(/^\//, '');
 
@@ -114,7 +120,7 @@ describe('Phase 4 — Slash Command Dispatch & Contract Integrity', () => {
         // Referenced agents must exist on disk and in specialist registry
         const agentRefs = content.match(/@\[([a-zA-Z0-9_-]+)\]/g) || [];
         for (const ref of agentRefs) {
-          const aName = ref.replace('@[' , '').replace(']', '');
+          const aName = ref.replace('@[', '').replace(']', '');
           expect(diskAgents.has(aName)).toBe(true);
           expect(registeredSpecialists.has(aName)).toBe(true);
         }
@@ -122,4 +128,3 @@ describe('Phase 4 — Slash Command Dispatch & Contract Integrity', () => {
     });
   });
 });
-

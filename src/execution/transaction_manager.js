@@ -6,6 +6,59 @@ const crypto = require('crypto');
 const { assertWithinRoot } = require('../security/boundary');
 
 /**
+ * Validates that no ancestor directory segment between workspace root and target is a symlink.
+ * @param {string} workspaceRoot
+ * @param {string} targetPath
+ */
+function assertNoSymlinkAncestors(workspaceRoot, targetPath) {
+  const canonicalRoot = path.resolve(workspaceRoot);
+  const resolvedTarget = path.resolve(targetPath);
+  const rel = path.relative(canonicalRoot, resolvedTarget);
+
+  if (rel.startsWith('..') || path.isAbsolute(rel)) {
+    throw new Error(
+      `Security Violation: Target "${targetPath}" escapes workspace root "${workspaceRoot}".`,
+    );
+  }
+
+  const parts = rel.split(path.sep);
+  let curr = canonicalRoot;
+
+  for (let i = 0; i < parts.length - 1; i++) {
+    curr = path.join(curr, parts[i]);
+    if (fs.existsSync(curr)) {
+      const st = fs.lstatSync(curr);
+      if (st.isSymbolicLink()) {
+        throw new Error(
+          `Security Violation: Symlink directory traversal detected at "${parts[i]}". Symlink parent directories are strictly prohibited.`,
+        );
+      }
+    }
+  }
+}
+
+/**
+ * Atomically writes and fsyncs JSON data to physical storage for durable WAL records.
+ * @param {string} filePath
+ * @param {any} data
+ */
+function writeAndSyncJson(filePath, data) {
+  const json = JSON.stringify(data, null, 2);
+  const fd = fs.openSync(
+    filePath,
+    fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_TRUNC,
+    0o666,
+  );
+  try {
+    const buf = Buffer.from(json, 'utf8');
+    fs.writeSync(fd, buf, 0, buf.length, 0);
+    fs.fsyncSync(fd);
+  } finally {
+    fs.closeSync(fd);
+  }
+}
+
+/**
  * Phase 2B: Transaction Manager
  * Implements a production-grade multi-file transaction engine (WAL) for Tribunal Kit.
  * Lifecycle: PREPARE -> VALIDATE -> COMMIT / ROLLBACK
@@ -70,9 +123,10 @@ class TransactionManager {
     if (fs.existsSync(this.walPath)) fs.unlinkSync(this.walPath);
   }
 
-  recover() {
+  recover(options = {}) {
+    const force = Boolean(options && options.force);
     if (this._isLocked()) {
-      if (this._isStaleLock()) {
+      if (force || this._isStaleLock()) {
         // Stale lock detected, try recovering
         if (fs.existsSync(this.walPath)) {
           let wal;
@@ -85,7 +139,8 @@ class TransactionManager {
             this._applyUndoLog();
           } else {
             // Transaction committed before crash; clean up undo and wal
-            if (fs.existsSync(this.undoDir)) fs.rmSync(this.undoDir, { recursive: true, force: true });
+            if (fs.existsSync(this.undoDir))
+              fs.rmSync(this.undoDir, { recursive: true, force: true });
             if (fs.existsSync(this.walPath)) fs.unlinkSync(this.walPath);
           }
         } else if (fs.existsSync(this.undoDir)) {
@@ -96,6 +151,25 @@ class TransactionManager {
         throw new Error(
           'Active transaction lock found. Cannot safely recover while another process holds the lock.',
         );
+      }
+    } else {
+      // No active lock, but leftover WAL or undo directory exists (crash during un-locked cleanup or orphan recovery)
+      if (fs.existsSync(this.walPath) || fs.existsSync(this.undoDir)) {
+        let wal = null;
+        if (fs.existsSync(this.walPath)) {
+          try {
+            wal = JSON.parse(fs.readFileSync(this.walPath, 'utf8'));
+          } catch (_) {
+            wal = null;
+          }
+        }
+        if (!wal || wal.state !== 'COMMITTED') {
+          this._applyUndoLog();
+        } else {
+          if (fs.existsSync(this.undoDir))
+            fs.rmSync(this.undoDir, { recursive: true, force: true });
+          if (fs.existsSync(this.walPath)) fs.unlinkSync(this.walPath);
+        }
       }
     }
   }
@@ -177,7 +251,11 @@ class TransactionManager {
             assertWithinRoot(this.workspace, real);
           }
         } catch (e) {
-          if (e.message.includes('Security Violation') || e.message.includes('Path security violation')) throw e;
+          if (
+            e.message.includes('Security Violation') ||
+            e.message.includes('Path security violation')
+          )
+            throw e;
         }
         const backupName = `backup_${i}_${path.basename(op.path)}`;
         const backupPath = path.join(this.undoDir, backupName);
@@ -188,11 +266,7 @@ class TransactionManager {
       }
     }
 
-    fs.writeFileSync(
-      path.join(this.undoDir, 'mapping.json'),
-      JSON.stringify(mapping, null, 2),
-      'utf8',
-    );
+    writeAndSyncJson(path.join(this.undoDir, 'mapping.json'), mapping);
 
     const wal = {
       id: this.activeTxId,
@@ -200,7 +274,7 @@ class TransactionManager {
       timestamp: new Date().toISOString(),
       operations: this.operations.map(op => ({ action: op.action, path: op.path })),
     };
-    fs.writeFileSync(this.walPath, JSON.stringify(wal, null, 2), 'utf8');
+    writeAndSyncJson(this.walPath, wal);
   }
 
   commit() {
@@ -210,18 +284,56 @@ class TransactionManager {
     try {
       for (const op of this.operations) {
         assertWithinRoot(this.workspace, op.path);
+        assertNoSymlinkAncestors(this.workspace, op.path);
+
         if (op.action === 'WRITE') {
           const dir = path.dirname(op.path);
           if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
           assertWithinRoot(this.workspace, dir);
+          assertNoSymlinkAncestors(this.workspace, dir);
+
+          // Fail-closed against writing through symlinks (TOCTOU protection)
           if (fs.existsSync(op.path)) {
             const lstat = fs.lstatSync(op.path);
             if (lstat.isSymbolicLink()) {
-              const real = fs.realpathSync(op.path);
-              assertWithinRoot(this.workspace, real);
+              throw new Error(
+                `Security Violation: Symlink write target forbidden: "${op.path}". Direct writes through symlinks are prohibited.`,
+              );
             }
           }
-          fs.writeFileSync(op.path, op.data, op.encoding);
+
+          // Handle-bound file open with O_NOFOLLOW
+          const openFlags =
+            fs.constants.O_WRONLY |
+            fs.constants.O_CREAT |
+            fs.constants.O_TRUNC |
+            (fs.constants.O_NOFOLLOW || 0);
+
+          let fd = null;
+          try {
+            fd = fs.openSync(op.path, openFlags, 0o666);
+            const fstat = fs.fstatSync(fd);
+            if (!fstat.isFile()) {
+              throw new Error(`Security Violation: Target "${op.path}" is not a regular file.`);
+            }
+
+            // Post-open verification: Verify canonical target did not escape workspace root (junction/symlink defense)
+            const canonicalTarget =
+              typeof fs.realpathSync.native === 'function'
+                ? fs.realpathSync.native(op.path)
+                : fs.realpathSync(op.path);
+            assertWithinRoot(this.workspace, canonicalTarget);
+
+            const buf = Buffer.isBuffer(op.data)
+              ? op.data
+              : Buffer.from(op.data, op.encoding || 'utf8');
+            fs.writeSync(fd, buf, 0, buf.length, 0);
+            fs.fsyncSync(fd); // Flush to physical storage for transaction durability
+          } finally {
+            if (fd !== null) {
+              fs.closeSync(fd);
+            }
+          }
         } else if (op.action === 'DELETE') {
           if (fs.existsSync(op.path)) {
             const lstat = fs.lstatSync(op.path);
@@ -236,7 +348,7 @@ class TransactionManager {
 
       const wal = JSON.parse(fs.readFileSync(this.walPath, 'utf8'));
       wal.state = 'COMMITTED';
-      fs.writeFileSync(this.walPath, JSON.stringify(wal, null, 2), 'utf8');
+      writeAndSyncJson(this.walPath, wal);
 
       fs.rmSync(this.undoDir, { recursive: true, force: true });
       fs.unlinkSync(this.walPath);

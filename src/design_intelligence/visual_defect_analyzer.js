@@ -37,7 +37,8 @@ function analyzeVisualDefects(content = '', options = {}) {
         category: 'COMPONENT_INCONSISTENCY',
         line: lineNum,
         message: `Unbounded "transition: all" detected on line ${lineNum}.`,
-        remedy: 'Specify explicit animated properties (e.g. transition: transform 150ms ease, opacity 150ms ease).',
+        remedy:
+          'Specify explicit animated properties (e.g. transition: transform 150ms ease, opacity 150ms ease).',
       });
     }
 
@@ -61,7 +62,8 @@ function analyzeVisualDefects(content = '', options = {}) {
         category: 'ACCESSIBILITY_BARRIER',
         line: lineNum,
         message: `Removed default outline without visible focus indicator on line ${lineNum}.`,
-        remedy: 'Add focus-visible custom outline ring (e.g. outline: 2px solid var(--ring); outline-offset: 2px).',
+        remedy:
+          'Add focus-visible custom outline ring (e.g. outline: 2px solid var(--ring); outline-offset: 2px).',
       });
     }
 
@@ -73,28 +75,33 @@ function analyzeVisualDefects(content = '', options = {}) {
         category: 'SLOP_CLICHE_DETECTED',
         line: lineNum,
         message: `Generic AI purple/violet gradient cliché detected on line ${lineNum}.`,
-        remedy: 'Adopt bespoke brand palette using OKLCH and subtle ambient depth instead of generic purple mesh.',
+        remedy:
+          'Adopt bespoke brand palette using OKLCH and subtle ambient depth instead of generic purple mesh.',
       });
     }
 
     // 6. Table without overflow-x-auto
-    if (/<table\b/i.test(line) && !content.includes('overflow-x-auto') && !content.includes('overflow-x: auto')) {
+    if (
+      /<table\b/i.test(line) &&
+      !content.includes('overflow-x-auto') &&
+      !content.includes('overflow-x: auto')
+    ) {
       defects.push({
         id: `TABLE_MISSING_OVERFLOW_${lineNum}`,
         severity: 'P1_CRITICAL',
         category: 'MAJOR_LAYOUT_COLLAPSE',
         line: lineNum,
         message: `Table element lacking horizontal overflow containment on line ${lineNum}.`,
-        remedy: 'Wrap <table> in a container with "overflow-x-auto" to prevent mobile viewport blowout.',
+        remedy:
+          'Wrap <table> in a container with "overflow-x-auto" to prevent mobile viewport blowout.',
       });
     }
   }
 
   // Parse and validate each defect
-  return defects.map((d) => VisualDefectSchema.parse(d));
+  return defects.map(d => VisualDefectSchema.parse(d));
 }
 
 module.exports = {
   analyzeVisualDefects,
 };
-

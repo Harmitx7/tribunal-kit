@@ -20,10 +20,11 @@ scripts-binding:
   - .agent/scripts/architecture_diff.js
   - .agent/scripts/architecture_health.js
   - .agent/scripts/architecture_visualizer.js
----`
+---`,
   },
   'assimilate.md': {
-    target: /^---[\r\n]+name: assimilate[\r\n]+description: ['"]Trigger the learning pipeline[^\n]*[\r\n]+version: 1.1.0[\r\n]+---/m,
+    target:
+      /^---[\r\n]+name: assimilate[\r\n]+description: ['"]Trigger the learning pipeline[^\n]*[\r\n]+version: 1.1.0[\r\n]+---/m,
     replacement: `---
 name: assimilate
 description: "Trigger the learning pipeline to extract, validate, and store Tribunal Instincts."
@@ -35,10 +36,11 @@ required-skills:
 scripts-binding:
   - .agent/scripts/memory_archivist.js
   - .agent/scripts/engineering_memory.js
----`
+---`,
   },
   'htop.md': {
-    target: /^---[\r\n]+name: htop[\r\n]+description: ['"]Inspect active agent[^\n]*[\r\n]+version: 1.0.0[\r\n]+---/m,
+    target:
+      /^---[\r\n]+name: htop[\r\n]+description: ['"]Inspect active agent[^\n]*[\r\n]+version: 1.0.0[\r\n]+---/m,
     replacement: `---
 name: htop
 description: "Inspect active agent execution metrics, task telemetry, and syscall status."
@@ -49,10 +51,11 @@ required-skills:
 scripts-binding:
   - .agent/scripts/session_logger.js
   - .agent/scripts/harness_manager.js
----`
+---`,
   },
   'resume.md': {
-    target: /^---[\r\n]+name: resume[\r\n]+description: ['"]Resume a recoverable[^\n]*[\r\n]+version: 1.1.0[\r\n]+---/m,
+    target:
+      /^---[\r\n]+name: resume[\r\n]+description: ['"]Resume a recoverable[^\n]*[\r\n]+version: 1.1.0[\r\n]+---/m,
     replacement: `---
 name: resume
 description: "Resume a recoverable Tribunal Kit session from the durable event log."
@@ -62,10 +65,11 @@ required-skills:
   - agent-recovery-and-resume-auditor
 scripts-binding:
   - .agent/scripts/session_manager.js
----`
+---`,
   },
   'team-mode.md': {
-    target: /^---[\r\n]+name: team-mode[\r\n]+description: ['"]Enable dynamic multi-agent[^\n]*[\r\n]+version: 1.1.0[\r\n]+---/m,
+    target:
+      /^---[\r\n]+name: team-mode[\r\n]+description: ['"]Enable dynamic multi-agent[^\n]*[\r\n]+version: 1.1.0[\r\n]+---/m,
     replacement: `---
 name: team-mode
 description: "Enable dynamic multi-agent task execution, DAG routing, and parallel reviews."
@@ -77,7 +81,7 @@ required-skills:
   - swarm
 scripts-binding:
   - .agent/scripts/swarm_dispatcher.js
----`
+---`,
   },
   'understand.md': {
     target: /^---[\r\n]+description: Codebase Intelligence[^\n]*[\r\n]+---/m,
@@ -97,8 +101,8 @@ scripts-binding:
   - .agent/scripts/architecture_mapper.js
   - .agent/scripts/blast_radius_engine.js
   - .agent/scripts/trace_engine.js
----`
-  }
+---`,
+  },
 };
 
 for (const [file, conf] of Object.entries(updates)) {
@@ -113,4 +117,3 @@ for (const [file, conf] of Object.entries(updates)) {
   console.log('Successfully updated ' + file);
 }
 console.log('All 6 workflows updated successfully.');
-

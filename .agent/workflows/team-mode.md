@@ -1,6 +1,6 @@
 ---
 name: team-mode
-description: "Enable dynamic multi-agent task execution, DAG routing, and parallel reviews."
+description: 'Enable dynamic multi-agent task execution, DAG routing, and parallel reviews.'
 version: 1.1.0
 required-skills:
   - team-mode
@@ -20,6 +20,7 @@ $ARGUMENTS
 ## Mandatory Pre-Flight Context Inspection
 
 Before dispatching multi-agent team mode:
+
 1. Validate subagent payload contracts with `swarm_dispatcher.js`.
 2. Inspect task boundaries to guarantee worker files do not overlap.
 3. Enforce context window budgets: pass scoped `context_summary` per worker.

@@ -57,20 +57,9 @@ const EVENT_STAGES = Object.freeze([
   'COMPLETION',
 ]);
 
-const EVENT_STATUSES = Object.freeze([
-  'INFO',
-  'SUCCESS',
-  'WARNING',
-  'ERROR',
-  'BLOCKED',
-]);
+const EVENT_STATUSES = Object.freeze(['INFO', 'SUCCESS', 'WARNING', 'ERROR', 'BLOCKED']);
 
-const EVENT_SEVERITIES = Object.freeze([
-  'LOW',
-  'MEDIUM',
-  'HIGH',
-  'CRITICAL',
-]);
+const EVENT_SEVERITIES = Object.freeze(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
 
 const EVIDENCE_TRUST_STATES = Object.freeze([
   'OBSERVED',
@@ -100,8 +89,12 @@ function canonicalStringify(val, seen = new WeakSet()) {
   if (Array.isArray(val)) {
     return '[' + val.map(item => canonicalStringify(item, seen)).join(',') + ']';
   }
-  const keys = Object.keys(val).filter(k => k !== 'integrity_hash' && val[k] !== undefined).sort();
-  return '{' + keys.map(k => JSON.stringify(k) + ':' + canonicalStringify(val[k], seen)).join(',') + '}';
+  const keys = Object.keys(val)
+    .filter(k => k !== 'integrity_hash' && val[k] !== undefined)
+    .sort();
+  return (
+    '{' + keys.map(k => JSON.stringify(k) + ':' + canonicalStringify(val[k], seen)).join(',') + '}'
+  );
 }
 
 /**
@@ -118,7 +111,10 @@ function computeEventHash(event) {
  */
 function validateTimelineEvent(raw) {
   if (!isPlainObject(raw)) {
-    return { ok: false, error: 'Event must be a non-null plain object (prototype pollution protected)' };
+    return {
+      ok: false,
+      error: 'Event must be a non-null plain object (prototype pollution protected)',
+    };
   }
 
   if (raw.schema_version !== TIMELINE_SCHEMA_VERSION) {
@@ -126,11 +122,22 @@ function validateTimelineEvent(raw) {
   }
 
   // Identifiers
-  if (typeof raw.event_id !== 'string' || !raw.event_id.startsWith('evt_') || raw.event_id.length > MAX_STRING_LENGTH) {
-    return { ok: false, error: 'Invalid event_id: must start with evt_ and not exceed maximum length' };
+  if (
+    typeof raw.event_id !== 'string' ||
+    !raw.event_id.startsWith('evt_') ||
+    raw.event_id.length > MAX_STRING_LENGTH
+  ) {
+    return {
+      ok: false,
+      error: 'Invalid event_id: must start with evt_ and not exceed maximum length',
+    };
   }
 
-  if (typeof raw.review_run_id !== 'string' || !raw.review_run_id.trim() || raw.review_run_id.length > MAX_STRING_LENGTH) {
+  if (
+    typeof raw.review_run_id !== 'string' ||
+    !raw.review_run_id.trim() ||
+    raw.review_run_id.length > MAX_STRING_LENGTH
+  ) {
     return { ok: false, error: 'Invalid review_run_id' };
   }
 
@@ -173,12 +180,20 @@ function validateTimelineEvent(raw) {
     return { ok: false, error: `severity must be one of: ${EVENT_SEVERITIES.join(', ')}` };
   }
 
-  if (typeof raw.source_component !== 'string' || !raw.source_component.trim() || raw.source_component.length > MAX_STRING_LENGTH) {
+  if (
+    typeof raw.source_component !== 'string' ||
+    !raw.source_component.trim() ||
+    raw.source_component.length > MAX_STRING_LENGTH
+  ) {
     return { ok: false, error: 'Invalid source_component' };
   }
 
   // Summary
-  if (typeof raw.summary !== 'string' || !raw.summary.trim() || raw.summary.length > MAX_STRING_LENGTH) {
+  if (
+    typeof raw.summary !== 'string' ||
+    !raw.summary.trim() ||
+    raw.summary.length > MAX_STRING_LENGTH
+  ) {
     return { ok: false, error: 'summary must be a non-empty string within bounds' };
   }
 
@@ -221,7 +236,8 @@ function validateTimelineEvent(raw) {
     ) {
       return {
         ok: false,
-        error: 'HUMAN_APPROVAL_RECORDED event requires authoritative approval metadata (approved_by and confirmation_channel)',
+        error:
+          'HUMAN_APPROVAL_RECORDED event requires authoritative approval metadata (approved_by and confirmation_channel)',
       };
     }
   }
@@ -230,7 +246,10 @@ function validateTimelineEvent(raw) {
   if (raw.integrity_hash) {
     const expectedHash = computeEventHash(raw);
     if (raw.integrity_hash !== expectedHash) {
-      return { ok: false, error: 'Cryptographic integrity_hash mismatch (event tampering or corruption detected)' };
+      return {
+        ok: false,
+        error: 'Cryptographic integrity_hash mismatch (event tampering or corruption detected)',
+      };
     }
   }
 
@@ -248,9 +267,10 @@ function createTimelineEvent(params = {}) {
 
   // Default prev_hash to 64 zeros for first event, or inherit supplied prev_hash
   const defaultPrevHash = sequence === 1 ? '0'.repeat(64) : '0'.repeat(64);
-  const prev_hash = (typeof params.prev_hash === 'string' && /^[0-9a-f]{64}$/.test(params.prev_hash))
-    ? params.prev_hash
-    : defaultPrevHash;
+  const prev_hash =
+    typeof params.prev_hash === 'string' && /^[0-9a-f]{64}$/.test(params.prev_hash)
+      ? params.prev_hash
+      : defaultPrevHash;
 
   const event = {
     schema_version: TIMELINE_SCHEMA_VERSION,
@@ -265,10 +285,18 @@ function createTimelineEvent(params = {}) {
     status: EVENT_STATUSES.includes(params.status) ? params.status : 'INFO',
     severity: EVENT_SEVERITIES.includes(params.severity) ? params.severity : 'LOW',
     source_component: String(params.source_component || 'system').slice(0, MAX_STRING_LENGTH),
-    reason_codes: Array.isArray(params.reason_codes) ? params.reason_codes.map(r => String(r).slice(0, 100)) : [],
-    evidence_refs: Array.isArray(params.evidence_refs) ? params.evidence_refs.map(r => String(r).slice(0, 100)) : [],
-    decision_refs: Array.isArray(params.decision_refs) ? params.decision_refs.map(r => String(r).slice(0, 100)) : [],
-    correlation_refs: Array.isArray(params.correlation_refs) ? params.correlation_refs.map(r => String(r).slice(0, 100)) : [],
+    reason_codes: Array.isArray(params.reason_codes)
+      ? params.reason_codes.map(r => String(r).slice(0, 100))
+      : [],
+    evidence_refs: Array.isArray(params.evidence_refs)
+      ? params.evidence_refs.map(r => String(r).slice(0, 100))
+      : [],
+    decision_refs: Array.isArray(params.decision_refs)
+      ? params.decision_refs.map(r => String(r).slice(0, 100))
+      : [],
+    correlation_refs: Array.isArray(params.correlation_refs)
+      ? params.correlation_refs.map(r => String(r).slice(0, 100))
+      : [],
     summary: String(params.summary || 'Review event').slice(0, MAX_STRING_LENGTH),
     metadata: isPlainObject(params.metadata) ? { ...params.metadata } : {},
     integrity_hash: '',
@@ -290,11 +318,22 @@ function createTimelineEvent(params = {}) {
  */
 function validateTimeline(events) {
   if (!Array.isArray(events)) {
-    return { ok: false, error: 'Timeline must be an array of events', completeness: 'CORRUPTED', has_integrity_failure: true };
+    return {
+      ok: false,
+      error: 'Timeline must be an array of events',
+      completeness: 'CORRUPTED',
+      has_integrity_failure: true,
+    };
   }
 
   if (events.length === 0) {
-    return { ok: true, events: [], completeness: 'EMPTY', has_sequence_gap: false, has_integrity_failure: false };
+    return {
+      ok: true,
+      events: [],
+      completeness: 'EMPTY',
+      has_sequence_gap: false,
+      has_integrity_failure: false,
+    };
   }
 
   const validated = [];

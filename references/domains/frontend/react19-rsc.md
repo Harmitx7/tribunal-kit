@@ -2,7 +2,7 @@
 
 > **Authority**: React Official Documentation (`https://react.dev/`) & Next.js 15 App Router  
 > **Applicable Domains**: Frontend Architecture, React 19, Next.js  
-> **Status**: Verified Production Specification  
+> **Status**: Verified Production Specification
 
 ---
 
@@ -10,14 +10,15 @@
 
 In React 19 and modern frameworks, components are **Server Components by default**.
 
-| Dimension | Server Components (Default) | Client Components (`'use client'`) |
-|:---|:---|:---|
-| **Execution** | Server only (zero client bundle JS) | Server (prerender) + Client (hydration) |
-| **Data Access** | Direct access to database, secrets, internal APIs | Browser fetch calls via API routes or Server Actions |
+| Dimension         | Server Components (Default)                          | Client Components (`'use client'`)                     |
+| :---------------- | :--------------------------------------------------- | :----------------------------------------------------- |
+| **Execution**     | Server only (zero client bundle JS)                  | Server (prerender) + Client (hydration)                |
+| **Data Access**   | Direct access to database, secrets, internal APIs    | Browser fetch calls via API routes or Server Actions   |
 | **Interactivity** | No event handlers (`onClick`), no hooks (`useState`) | Full DOM events, state, hooks, browser APIs (`window`) |
-| **Directives** | None needed (implicit) | Must start with `'use client'` at the very top of file |
+| **Directives**    | None needed (implicit)                               | Must start with `'use client'` at the very top of file |
 
 ### Composition Rule:
+
 Pass Server Components as `children` into Client Components. Never import a Server Component directly into a Client Component module!
 
 ```tsx
@@ -36,6 +37,7 @@ export function ModalShell({ children }: { children: React.ReactNode }) {
 Server Actions are asynchronous functions marked with `'use server'` that execute on the server and can be invoked from client forms or event handlers.
 
 ### Action Contract with `useActionState`:
+
 ```tsx
 'use client';
 
@@ -45,10 +47,9 @@ import { updateProfile } from '@/actions/profile';
 type ActionState = { error?: string; success?: boolean };
 
 export function ProfileForm() {
-  const [state, formAction, isPending] = useActionState<ActionState, FormData>(
-    updateProfile,
-    { success: false }
-  );
+  const [state, formAction, isPending] = useActionState<ActionState, FormData>(updateProfile, {
+    success: false,
+  });
 
   return (
     <form action={formAction}>
@@ -67,5 +68,6 @@ export function ProfileForm() {
 ## 3. Hydration Invariants
 
 Hydration errors occur when the initial HTML rendered by the server diverges from the first render pass on the client.
+
 - ❌ **Forbidden**: Using browser-only values in initial component state (`window.innerWidth`, `localStorage.getItem()`, non-deterministic `new Date()` without formatting).
 - ✅ **Required**: Defer client-only checks to `useEffect` or wrap them in `<Suspense>` with explicit fallback skeletons.

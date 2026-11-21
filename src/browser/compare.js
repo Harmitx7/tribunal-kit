@@ -15,10 +15,11 @@ const { validateBrowserUrl } = require('../security/boundary');
  * Compares two URLs visually.
  * @param {string} url1
  * @param {string} url2
- * @param {object} options
- * @param {number} options.maxDiffPercent (default 1.0)
- * @param {number} options.width (default 1280)
- * @param {number} options.height (default 800)
+ * @param {object} [options]
+ * @param {number} [options.maxDiffPercent=1.0]
+ * @param {number} [options.width=1280]
+ * @param {number} [options.height=800]
+ * @param {boolean} [options.allowLoopback]
  * @returns {Promise<object>}
  */
 async function compareURLs(url1, url2, options = {}) {

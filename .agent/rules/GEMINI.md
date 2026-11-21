@@ -77,7 +77,7 @@ Every code or design request activates an agent. This is not optional.
 | Domain                                                  | Primary Agent / Skill       |
 | ------------------------------------------------------- | --------------------------- |
 | API / server / backend                                  | `backend-specialist`        |
-| API contract design / REST / GraphQL                    | `api-architect`             |
+| API contract design / REST / GraphQL                    | `backend-specialist`        |
 | C# / .NET / Blazor                                      | `csharp-developer`          |
 | Python / FastAPI / Django                               | `python-pro`                |
 | Database / schema / SQL                                 | `database-architect`        |
@@ -179,11 +179,11 @@ Communicate internal operations, verification checks, and state transitions usin
 - **Cancelled**: `⊘ **Cancelled** · [Operation Title]` (with `Reason: [cause]`)
 
 **Evidence Integrity Invariants:**
+
 - Never fabricate test counts, exit codes, elapsed times, or completion percentages.
 - When progress telemetry is unmetered or awaiting execution, report `Status: In progress (unmetered)` or `Awaiting execution result`.
 - Never claim success without authoritative verification evidence.
 - Distinguish planned actions from executed and verified outcomes.
-
 
 ### Anti-Hallucination Protocol (Non-Negotiable)
 
@@ -241,15 +241,15 @@ The Human Gate is never skipped. No code is written to a file without explicit u
 
 **Reviewer assignment by domain:**
 
-| Code type             | Reviewers                                                                                           |
-| --------------------- | --------------------------------------------------------------------------------------------------- |
-| Backend/API           | logic + security + dependency + type-safety + resilience + schema + complexity-reviewer             |
-| Frontend/React        | logic + security + frontend + type-safety + ui-ux-auditor + review-animations + complexity-reviewer |
-| Database/SQL          | logic + security + sql + schema + complexity-reviewer                                               |
-| Mobile/Cross-platform | logic + security + mobile-reviewer + type-safety + complexity-reviewer                              |
-| CI/CD / DevOps        | pipeline-reviewer + security + dependency + resilience + complexity-reviewer                        |
-| Any domain            | + performance (if optimization)                                                                     |
-| Before merge          | /tribunal-full (all 28 reviewers)                                                                   |
+| Code type             | Reviewers                                                                                                    |
+| --------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Backend/API           | logic + security + dependency + type-safety + resilience + schema + complexity-reviewer                      |
+| Frontend/React        | logic + security + frontend + type-safety + accessibility-reviewer + anti-slop-auditor + complexity-reviewer |
+| Database/SQL          | logic + security + sql + schema + complexity-reviewer                                                        |
+| Mobile/Cross-platform | logic + security + mobile-reviewer + type-safety + complexity-reviewer                                       |
+| CI/CD / DevOps        | pipeline-reviewer + security + dependency + resilience + complexity-reviewer                                 |
+| Any domain            | + performance (if optimization)                                                                              |
+| Before merge          | /tribunal-full (all 28 reviewers)                                                                            |
 
 ---
 

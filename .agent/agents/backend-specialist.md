@@ -235,7 +235,7 @@ app.post('/auth/login', async c => {
 
 ## Hand-Off & Coordination
 
-- Hand off database schema migrations and raw SQL query tuning to `@database-architect` or `@sql-pro`.
+- Hand off database schema migrations and raw SQL query tuning to `@database-architect` (with `sql-pro` skill).
 - Hand off OWASP penetration testing and auth vulnerability reviews to `@security-auditor`.
 - Hand off client-side API consumption hooks to `@frontend-specialist`.
 

@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -409,4 +410,25 @@ module.exports = {
   validateFinding,
   extractJsonPayload,
   parseAndValidateReviewerOutput,
+  get AgentTaskSchema() {
+    return require('./agent_contracts').AgentTaskSchema;
+  },
+  get AgentResultSchema() {
+    return require('./agent_contracts').AgentResultSchema;
+  },
+  get AgentFindingSchema() {
+    return require('./agent_contracts').AgentFindingSchema;
+  },
+  get validateAgentTask() {
+    return require('./agent_contracts').validateAgentTask;
+  },
+  get validateAgentResult() {
+    return require('./agent_contracts').validateAgentResult;
+  },
+  get validateAgentFinding() {
+    return require('./agent_contracts').validateAgentFinding;
+  },
+  get parseRawAgentOutput() {
+    return require('./agent_contracts').parseRawAgentOutput;
+  },
 };

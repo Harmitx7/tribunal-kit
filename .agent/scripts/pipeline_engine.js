@@ -331,14 +331,14 @@ function planPhase(task, files = [], agentDir = null) {
     tokenBudget = getTokenBudget(impactClassification.tier);
   } catch {
     impactClassification = {
-      tier: 1,
-      score: 0.2,
-      maxReviewers: 1,
-      requireGate: false,
+      tier: 3,
+      score: 1.0,
+      maxReviewers: 28,
+      requireGate: true,
       fastPass: false,
     };
-    socraticGatePolicy = { shouldBlock: false, reason: 'Fallback evaluation' };
-    tokenBudget = { tier: 1, maxTokens: 2000, maxReviewers: 1 };
+    socraticGatePolicy = { shouldBlock: true, reason: 'Fail-closed fallback: evaluation error' };
+    tokenBudget = { tier: 3, maxTokens: 8000, maxReviewers: 28 };
   }
 
   // 6. Minimal Change Governance Gate

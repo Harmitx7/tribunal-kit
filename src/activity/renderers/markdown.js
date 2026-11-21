@@ -16,11 +16,7 @@
  * - Cross-environment security against HTML/Markdown prompt injection
  */
 
-const {
-  EVENT_TYPES,
-  EVENT_VERBS,
-  EVENT_GLYPHS,
-} = require('../types');
+const { EVENT_TYPES, EVENT_VERBS, EVENT_GLYPHS } = require('../types');
 
 const { sanitizeActivityEvent } = require('../schema');
 const {
@@ -98,11 +94,25 @@ function renderMarkdown(rawEvent, options = {}) {
   const verb = treatment.verb;
 
   // Clean strings of any ANSI codes that might have leaked from subprocess/terminal logs
-  const cleanTitle = escapeHtmlTags(stripAnsi(event.title || '')).replace(/[\r\n]+/g, ' ').trim();
+  const cleanTitle = escapeHtmlTags(stripAnsi(event.title || ''))
+    .replace(/[\r\n]+/g, ' ')
+    .trim();
   const cleanSummary = event.summary ? escapeHtmlTags(stripAnsi(event.summary)) : null;
-  const cleanDomain = event.domain ? escapeHtmlTags(stripAnsi(event.domain)).replace(/[\r\n]+/g, ' ').trim() : null;
-  const cleanAgent = event.agent ? stripAnsi(event.agent).replace(/[`\r\n]/g, '').trim() : null;
-  const cleanSkill = event.skill ? stripAnsi(event.skill).replace(/[`\r\n]/g, '').trim() : null;
+  const cleanDomain = event.domain
+    ? escapeHtmlTags(stripAnsi(event.domain))
+        .replace(/[\r\n]+/g, ' ')
+        .trim()
+    : null;
+  const cleanAgent = event.agent
+    ? stripAnsi(event.agent)
+        .replace(/[`\r\n]/g, '')
+        .trim()
+    : null;
+  const cleanSkill = event.skill
+    ? stripAnsi(event.skill)
+        .replace(/[`\r\n]/g, '')
+        .trim()
+    : null;
 
   // ── 1. Header Line ────────────────────────────────────────────────────────
   let header = '';
@@ -110,19 +120,25 @@ function renderMarkdown(rawEvent, options = {}) {
   if (event.eventType === EVENT_TYPES.AGENT_ACTIVATED && cleanAgent) {
     const domainPart = cleanDomain
       ? ` · ${cleanDomain}`
-      : (cleanTitle && cleanTitle !== 'Operational Event' ? ` · ${cleanTitle}` : '');
+      : cleanTitle && cleanTitle !== 'Operational Event'
+        ? ` · ${cleanTitle}`
+        : '';
     header = `${glyph} **${verb}** \`@${cleanAgent}\`${domainPart}`;
   } else if (event.eventType === EVENT_TYPES.SKILL_ACTIVATED && cleanSkill) {
     const domainPart = cleanDomain ? ` · ${cleanDomain}` : '';
     header = `${glyph} **${verb}** \`skill:${cleanSkill}\`${domainPart}`;
-  } else if (event.eventType === EVENT_TYPES.TOOL_EXECUTING || event.eventType === EVENT_TYPES.TOOL_EXECUTION_STARTED) {
+  } else if (
+    event.eventType === EVENT_TYPES.TOOL_EXECUTING ||
+    event.eventType === EVENT_TYPES.TOOL_EXECUTION_STARTED
+  ) {
     const toolTitle = cleanTitle.startsWith('Tool: ')
       ? cleanTitle.replace(/^Tool:\s*/, '')
       : cleanTitle;
     const phasePart = event.phase ? `[${stripAnsi(event.phase)}] ` : '';
     header = `${glyph} **${verb}** · ${phasePart}${toolTitle}`;
   } else if (
-    (event.eventType === EVENT_TYPES.RETRY_STARTED || event.eventType === EVENT_TYPES.RETRY_IN_PROGRESS) &&
+    (event.eventType === EVENT_TYPES.RETRY_STARTED ||
+      event.eventType === EVENT_TYPES.RETRY_IN_PROGRESS) &&
     event.attempt
   ) {
     const maxPart = event.maxAttempts ? ` of ${event.maxAttempts}` : '';
@@ -133,7 +149,9 @@ function renderMarkdown(rawEvent, options = {}) {
   }
 
   if (detailLevel === DETAIL_LEVELS.DIAGNOSTIC) {
-    const timeBadge = event.timestamp ? ` [${event.timestamp.split('T')[1]?.slice(0, 8) || ''}]` : '';
+    const timeBadge = event.timestamp
+      ? ` [${event.timestamp.split('T')[1]?.slice(0, 8) || ''}]`
+      : '';
     const opBadge = event.operationId ? ` \`(${event.operationId})\`` : '';
     header = `${header}${opBadge}${timeBadge}`;
   }
@@ -142,7 +160,11 @@ function renderMarkdown(rawEvent, options = {}) {
   if (options.compact) {
     const metaParts = [];
     if (cleanSummary) metaParts.push(cleanSummary);
-    if (event.progress && event.progress.percentage !== undefined && event.progress.percentage !== null) {
+    if (
+      event.progress &&
+      event.progress.percentage !== undefined &&
+      event.progress.percentage !== null
+    ) {
       metaParts.push(`${event.progress.percentage}%`);
     }
     const metaStr = metaParts.length > 0 ? ` (${metaParts.join(' · ')})` : '';
@@ -163,10 +185,13 @@ function renderMarkdown(rawEvent, options = {}) {
       const pending = Math.max(0, p.total - p.current);
       const pct = p.percentage !== undefined && p.percentage !== null ? ` (${p.percentage}%)` : '';
       const unit = p.unit || 'steps';
-      const barPart = options.progressBar && p.percentage !== undefined && p.percentage !== null
-        ? `${formatProgressBar(p.percentage, 8)} `
-        : '';
-      lines.push(`  Progress: ${barPart}${p.current}/${p.total} ${unit}${pct} · ${pending} pending`);
+      const barPart =
+        options.progressBar && p.percentage !== undefined && p.percentage !== null
+          ? `${formatProgressBar(p.percentage, 8)} `
+          : '';
+      lines.push(
+        `  Progress: ${barPart}${p.current}/${p.total} ${unit}${pct} · ${pending} pending`,
+      );
     } else if (p.percentage !== undefined && p.percentage !== null && p.isAuthoritative) {
       const barPart = options.progressBar ? `${formatProgressBar(p.percentage, 8)} ` : '';
       lines.push(`  Progress: ${barPart}${p.percentage}%`);
@@ -196,15 +221,21 @@ function renderMarkdown(rawEvent, options = {}) {
   // ── 4. Authoritative Verification Evidence ────────────────────────────────
   if (event.evidence) {
     const defaultMaxInline = detailLevel === DETAIL_LEVELS.ESSENTIAL ? 2 : 4;
-    const maxInline = typeof options.maxInlineEvidence === 'number' ? options.maxInlineEvidence : defaultMaxInline;
+    const maxInline =
+      typeof options.maxInlineEvidence === 'number' ? options.maxInlineEvidence : defaultMaxInline;
     const hostAllowsHtml = options.capabilities ? options.capabilities.supportsHtml : true;
-    const allowDisclosure = options.progressiveDisclosure !== false && options.allowHtml !== false && hostAllowsHtml;
+    const allowDisclosure =
+      options.progressiveDisclosure !== false && options.allowHtml !== false && hostAllowsHtml;
 
     if (typeof event.evidence === 'string') {
       const cleanEv = stripAnsi(event.evidence);
-      const boundedEv = detailLevel === DETAIL_LEVELS.DIAGNOSTIC
-        ? cleanEv
-        : boundString(cleanEv, { maxLength: detailLevel === DETAIL_LEVELS.ESSENTIAL ? 500 : 2000, diagnosticRef: event.operationId }).text;
+      const boundedEv =
+        detailLevel === DETAIL_LEVELS.DIAGNOSTIC
+          ? cleanEv
+          : boundString(cleanEv, {
+              maxLength: detailLevel === DETAIL_LEVELS.ESSENTIAL ? 500 : 2000,
+              diagnosticRef: event.operationId,
+            }).text;
       const formattedEv = options.shortenPaths ? formatCompactPath(boundedEv) : boundedEv;
       lines.push(`  Evidence: ${formattedEv}`);
     } else if (Array.isArray(event.evidence)) {
@@ -227,30 +258,59 @@ function renderMarkdown(rawEvent, options = {}) {
             lines.push(`    - ${stripAnsi(rawItem)}`);
           });
           const remainingItems = event.evidence.slice(2);
-          const maxInDisclosure = detailLevel === DETAIL_LEVELS.ESSENTIAL ? 5 : (detailLevel === DETAIL_LEVELS.DIAGNOSTIC ? 100 : 20);
+          const maxInDisclosure =
+            detailLevel === DETAIL_LEVELS.ESSENTIAL
+              ? 5
+              : detailLevel === DETAIL_LEVELS.DIAGNOSTIC
+                ? 100
+                : 20;
           const boundedRemaining = remainingItems.slice(0, maxInDisclosure);
-          const extraLines = boundedRemaining.map(item => `  - ${stripAnsi(typeof item === 'object' ? JSON.stringify(item) : item)}`);
+          const extraLines = boundedRemaining.map(
+            item => `  - ${stripAnsi(typeof item === 'object' ? JSON.stringify(item) : item)}`,
+          );
           if (remainingItems.length > maxInDisclosure) {
-            extraLines.push(`  - ... and ${remainingItems.length - maxInDisclosure} more verified findings (retained in diagnostics${event.operationId ? `: ${event.operationId}` : ''})`);
+            extraLines.push(
+              `  - ... and ${remainingItems.length - maxInDisclosure} more verified findings (retained in diagnostics${event.operationId ? `: ${event.operationId}` : ''})`,
+            );
           }
           const extraItemsStr = extraLines.join('\n');
-          lines.push(formatDisclosure(`... and ${event.evidence.length - 2} more verified findings`, extraItemsStr, true));
+          lines.push(
+            formatDisclosure(
+              `... and ${event.evidence.length - 2} more verified findings`,
+              extraItemsStr,
+              true,
+            ),
+          );
         } else {
           lines.push(`  Evidence:`);
-          const bounded = boundArray(event.evidence, { maxItems: maxInline, diagnosticRef: event.operationId });
+          const bounded = boundArray(event.evidence, {
+            maxItems: maxInline,
+            diagnosticRef: event.operationId,
+          });
           bounded.items.forEach(item => {
             const rawItem = typeof item === 'object' ? JSON.stringify(item) : String(item);
             lines.push(`    - ${stripAnsi(rawItem)}`);
           });
-          lines.push(`    - ${bounded.pagination.notice || `... and ${event.evidence.length - maxInline} more verified findings`}`);
+          lines.push(
+            `    - ${bounded.pagination.notice || `... and ${event.evidence.length - maxInline} more verified findings`}`,
+          );
         }
       }
     } else if (typeof event.evidence === 'object') {
       const entries = Object.entries(event.evidence);
       if (entries.length > 0) {
-        const previewLimit = detailLevel === DETAIL_LEVELS.ESSENTIAL ? 3 : (detailLevel === DETAIL_LEVELS.DIAGNOSTIC ? 10 : 5);
-        const preview = entries.slice(0, previewLimit).map(([k, v]) => `${k}=${stripAnsi(typeof v === 'object' ? JSON.stringify(v) : v)}`).join(' · ');
-        const extraNote = entries.length > previewLimit ? ` · ... (+${entries.length - previewLimit} fields)` : '';
+        const previewLimit =
+          detailLevel === DETAIL_LEVELS.ESSENTIAL
+            ? 3
+            : detailLevel === DETAIL_LEVELS.DIAGNOSTIC
+              ? 10
+              : 5;
+        const preview = entries
+          .slice(0, previewLimit)
+          .map(([k, v]) => `${k}=${stripAnsi(typeof v === 'object' ? JSON.stringify(v) : v)}`)
+          .join(' · ');
+        const extraNote =
+          entries.length > previewLimit ? ` · ... (+${entries.length - previewLimit} fields)` : '';
         lines.push(`  Evidence: ${preview}${extraNote}`);
       }
     }
@@ -276,7 +336,8 @@ function renderMarkdown(rawEvent, options = {}) {
 
     // Progressive disclosure for multiline stack or detailed traces
     const hostAllowsHtml = options.capabilities ? options.capabilities.supportsHtml : true;
-    const allowDisclosure = options.progressiveDisclosure !== false && options.allowHtml !== false && hostAllowsHtml;
+    const allowDisclosure =
+      options.progressiveDisclosure !== false && options.allowHtml !== false && hostAllowsHtml;
 
     if (event.error.stack) {
       const cleanStack = stripAnsi(event.error.stack).trim();
@@ -285,7 +346,9 @@ function renderMarkdown(rawEvent, options = {}) {
         lines.push(`  Diagnostic Stack:`);
         lines.push(`\`\`\`text\n${cleanStack}\n\`\`\``);
       } else if (allowDisclosure && stackLines.length > 3) {
-        lines.push(formatDisclosure('Diagnostic Stack Trace', `\`\`\`text\n${cleanStack}\n\`\`\``, true));
+        lines.push(
+          formatDisclosure('Diagnostic Stack Trace', `\`\`\`text\n${cleanStack}\n\`\`\``, true),
+        );
       } else if (stackLines.length > 1) {
         lines.push(`  Stack: ${stackLines[0]}`);
       }

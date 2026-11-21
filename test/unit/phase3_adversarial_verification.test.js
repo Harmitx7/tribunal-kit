@@ -18,8 +18,16 @@ const { handleRequest } = require('../../bin/mcp-server');
 const { ControlledWriteService } = require('../../src/execution/controlled_write_service');
 const TransactionManager = require('../../src/execution/transaction_manager');
 const { executeSyscall } = require('../../.agent/scripts/syscall_registry');
-const { DAGTaskSchema, DAGPayloadSchema, validatePayload } = require('../../.agent/scripts/payload_schemas');
-const { resolveExecutable, validateExecutableName, validateProcessArgs } = require('../../bin/spawn-agent');
+const {
+  DAGTaskSchema,
+  DAGPayloadSchema,
+  validatePayload,
+} = require('../../.agent/scripts/payload_schemas');
+const {
+  resolveExecutable,
+  validateExecutableName,
+  validateProcessArgs,
+} = require('../../bin/spawn-agent');
 const { terminateProcessTree } = require('../../src/browser/launcher');
 const {
   createEvolutionProposal,
@@ -154,7 +162,9 @@ describe('Tribunal Kit — Phase 3 Adversarial Security Verification Suite', () 
       });
 
       // Must be blocked by assertWithinRoot
-      expect(res.content[0].text).toMatch(/Path traversal detected|escapes authorized root|Swarm dispatch failed/);
+      expect(res.content[0].text).toMatch(
+        /Path traversal detected|escapes authorized root|Swarm dispatch failed/,
+      );
       expect(res.content[0].text).not.toContain('SENSITIVE_KEY_999');
     });
 
@@ -201,7 +211,11 @@ describe('Tribunal Kit — Phase 3 Adversarial Security Verification Suite', () 
 
       const val = validatePayload({ tasks: [maliciousTask] }, DAGPayloadSchema);
       expect(val.valid).toBe(false);
-      expect(val.errors.some(e => e.message.includes('unrecognized_keys') || e.code === 'unrecognized_keys')).toBe(true);
+      expect(
+        val.errors.some(
+          e => e.message.includes('unrecognized_keys') || e.code === 'unrecognized_keys',
+        ),
+      ).toBe(true);
     });
 
     test('executeSyscall rejects non-whitelisted syscall operations', () => {
@@ -225,7 +239,9 @@ describe('Tribunal Kit — Phase 3 Adversarial Security Verification Suite', () 
       for (const args of maliciousArgs) {
         const res = executeSyscall('security_scan', args);
         expect(res.exitCode).toBe(1);
-        expect(res.stderr).toMatch(/Security Exception: (Unsafe shell metacharacters|Invalid arguments)/);
+        expect(res.stderr).toMatch(
+          /Security Exception: (Unsafe shell metacharacters|Invalid arguments)/,
+        );
       }
     });
 
@@ -305,20 +321,25 @@ describe('Tribunal Kit — Phase 3 Adversarial Security Verification Suite', () 
       '..\\..\\..\\outside.js',
     ];
 
-    test.each(maliciousTargets)('rejects malicious target in tribunal_get_context: %s', async target => {
-      const res = await handleRequest({
-        jsonrpc: '2.0',
-        id: 601,
-        method: 'tools/call',
-        params: {
-          name: 'tribunal_get_context',
-          arguments: { target },
-        },
-      });
+    test.each(maliciousTargets)(
+      'rejects malicious target in tribunal_get_context: %s',
+      async target => {
+        const res = await handleRequest({
+          jsonrpc: '2.0',
+          id: 601,
+          method: 'tools/call',
+          params: {
+            name: 'tribunal_get_context',
+            arguments: { target },
+          },
+        });
 
-      expect(res.isError).toBe(true);
-      expect(res.content[0].text).toMatch(/cannot start with '-'|outside authorized workspace|Security Violation/);
-    });
+        expect(res.isError).toBe(true);
+        expect(res.content[0].text).toMatch(
+          /cannot start with '-'|outside authorized workspace|Security Violation/,
+        );
+      },
+    );
 
     test('rejects flag injection in compareWith argument', async () => {
       const res = await handleRequest({
@@ -426,7 +447,9 @@ describe('Tribunal Kit — Phase 3 Adversarial Security Verification Suite', () 
       ];
 
       for (const args of dangerousArgs) {
-        expect(() => validateProcessArgs(args, true)).toThrow(/contains dangerous cmd\.exe metacharacters/);
+        expect(() => validateProcessArgs(args, true)).toThrow(
+          /contains dangerous cmd\.exe metacharacters/,
+        );
       }
     });
 
@@ -488,9 +511,9 @@ describe('Tribunal Kit — Phase 3 Adversarial Security Verification Suite', () 
       );
 
       // 4. Approve
-      expect(() => approveEvolutionProposal(traversalId, 'admin', path.join(workspace, '.agent'))).toThrow(
-        /Invalid resource identifier/,
-      );
+      expect(() =>
+        approveEvolutionProposal(traversalId, 'admin', path.join(workspace, '.agent')),
+      ).toThrow(/Invalid resource identifier/);
     });
 
     test('TK-PART-01: sddDiff and sddBrief reject option injection and path traversal', () => {

@@ -6,13 +6,13 @@ Welcome to the **Tribunal Kit** technical documentation. This directory contains
 
 ## 📚 Core Guides & Developer Documentation
 
-| Guide | Description | Target Audience |
-| :--- | :--- | :--- |
-| [**`GETTING_STARTED.md`**](GETTING_STARTED.md) | Initial setup, CLI installation, IDE bridge generation (`.cursorrules`, `.windsurfrules`, etc.), and first audit run. | All Users & Developers |
-| [**`MCP_GUIDE.md`**](MCP_GUIDE.md) | Model Context Protocol (MCP) server setup (Protocol 2024-11-05), tools, resources, and IDE client integration. | AI Agents, Tool Integrators |
-| [**`AUTHORING_GUIDE.md`**](AUTHORING_GUIDE.md) | Best practices and schema validation rules for authoring new Tribunal Skills and specialist personas. | Skill Authors & Maintainers |
-| [**`SKILL_INTELLIGENCE_ENGINE.md`**](SKILL_INTELLIGENCE_ENGINE.md) | Autonomous 4-tier skill intelligence engine: discovery, composition, 7-check gating, and empirical verification. | Core Engineers & Architects |
-| [**`API_REFERENCE.md`**](API_REFERENCE.md) | Typed programmatic Node.js API (CommonJS & ESM) documentation for CLI commands and engine integration. | Library & SDK Consumers |
+| Guide                                                              | Description                                                                                                           | Target Audience             |
+| :----------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------- | :-------------------------- |
+| [**`GETTING_STARTED.md`**](GETTING_STARTED.md)                     | Initial setup, CLI installation, IDE bridge generation (`.cursorrules`, `.windsurfrules`, etc.), and first audit run. | All Users & Developers      |
+| [**`MCP_GUIDE.md`**](MCP_GUIDE.md)                                 | Model Context Protocol (MCP) server setup (Protocol 2024-11-05), tools, resources, and IDE client integration.        | AI Agents, Tool Integrators |
+| [**`AUTHORING_GUIDE.md`**](AUTHORING_GUIDE.md)                     | Best practices and schema validation rules for authoring new Tribunal Skills and specialist personas.                 | Skill Authors & Maintainers |
+| [**`SKILL_INTELLIGENCE_ENGINE.md`**](SKILL_INTELLIGENCE_ENGINE.md) | Autonomous 4-tier skill intelligence engine: discovery, composition, 7-check gating, and empirical verification.      | Core Engineers & Architects |
+| [**`API_REFERENCE.md`**](API_REFERENCE.md)                         | Typed programmatic Node.js API (CommonJS & ESM) documentation for CLI commands and engine integration.                | Library & SDK Consumers     |
 
 ---
 

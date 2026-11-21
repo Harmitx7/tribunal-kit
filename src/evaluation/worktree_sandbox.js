@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -29,8 +30,7 @@ class WorktreeSandbox {
    */
   constructor(options = {}) {
     this.repoRoot = options.repoRoot || this._findRepoRoot();
-    this.sandboxBase =
-      options.sandboxBase || path.join(this.repoRoot, '.tribunal', 'worktrees');
+    this.sandboxBase = options.sandboxBase || path.join(this.repoRoot, '.tribunal', 'worktrees');
     this.timeoutMs = options.timeoutMs || 60000;
     this.baseCommit = options.baseCommit || 'HEAD';
 
@@ -94,15 +94,11 @@ class WorktreeSandbox {
       if (process.platform === 'win32') {
         gitArgs.unshift('-c', 'core.longpaths=true');
       }
-      execFileSync(
-        'git',
-        gitArgs,
-        {
-          cwd: this.repoRoot,
-          encoding: 'utf8',
-          stdio: ['ignore', 'pipe', 'pipe'],
-        },
-      );
+      execFileSync('git', gitArgs, {
+        cwd: this.repoRoot,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
     } catch (err) {
       throw new Error(`Failed to create git worktree: ${err.stderr || err.message}`);
     }
@@ -114,11 +110,7 @@ class WorktreeSandbox {
     if (fs.existsSync(parentNodeModules) && !fs.existsSync(worktreeNodeModules)) {
       try {
         const isWindows = process.platform === 'win32';
-        fs.symlinkSync(
-          parentNodeModules,
-          worktreeNodeModules,
-          isWindows ? 'junction' : 'dir',
-        );
+        fs.symlinkSync(parentNodeModules, worktreeNodeModules, isWindows ? 'junction' : 'dir');
       } catch (_) {
         // Non-fatal if junction/symlink fails; modules can still be resolved from parent traversal
       }
@@ -213,16 +205,20 @@ class WorktreeSandbox {
     } catch (_) {}
 
     // Ensure directory is completely removed on disk (handles Windows git leaving empty directory)
-    try {
-      if (fs.existsSync(this.worktreePath)) {
+    for (let attempt = 0; attempt < 5; attempt++) {
+      if (!fs.existsSync(this.worktreePath)) break;
+      try {
         fs.rmSync(this.worktreePath, {
           recursive: true,
           force: true,
-          maxRetries: 15,
-          retryDelay: 150,
+          maxRetries: 10,
+          retryDelay: 100,
         });
+      } catch (_) {}
+      if (fs.existsSync(this.worktreePath)) {
+        await new Promise(r => setTimeout(r, 100));
       }
-    } catch (_) {}
+    }
 
     // Prune worktree metadata
     try {

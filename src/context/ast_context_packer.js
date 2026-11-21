@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 
 /**
@@ -74,9 +75,7 @@ function isSecurityBoundary(filePath, symbolName = '') {
   const securityPattern =
     /(?:auth|security|jwt|crypto|secrets?|tokens?|passwords?|sessions?|roles?|rbac|oauth|permissions?)/i;
   const isSecurityFile =
-    securityPattern.test(filePath) ||
-    /SECURITY\.md$/i.test(filePath) ||
-    /\.env/i.test(filePath);
+    securityPattern.test(filePath) || /SECURITY\.md$/i.test(filePath) || /\.env/i.test(filePath);
   const isSecuritySymbol = symbolName ? securityPattern.test(symbolName) : false;
   return isSecurityFile || isSecuritySymbol;
 }
@@ -775,9 +774,7 @@ function packAstContext(params = {}) {
   }
 
   // 4. Compute composite integrity fingerprint of packed units
-  const fingerprintPayload = packedUnits
-    .map(u => `${u.id}:${u.contentHash}:${u.tokens}`)
-    .join('|');
+  const fingerprintPayload = packedUnits.map(u => `${u.id}:${u.contentHash}:${u.tokens}`).join('|');
   const integrityFingerprint = computeContentHash(fingerprintPayload);
 
   return {

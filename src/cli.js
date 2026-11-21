@@ -11,48 +11,95 @@ exports.main = main;
 
 // ── Lazy Command Exports (Programmatic API parity with ESM & index.d.ts) ──
 exports.cmdInit = (flags, quiet) => loadCmd('./commands/init', 'cmdInit')(flags, quiet);
-exports.cmdUpdate = (flags) => loadCmd('./commands/update', 'cmdUpdate')(flags);
+exports.cmdUpdate = flags => loadCmd('./commands/update', 'cmdUpdate')(flags);
 exports.cmdStatus = (flags, quiet) => loadCmd('./commands/status', 'cmdStatus')(flags, quiet);
 exports.cmdLearn = (flags, quiet) => loadCmd('./commands/learn', 'cmdLearn')(flags, quiet);
 exports.cmdCase = (flags, argv, quiet) => loadCmd('./commands/case', 'cmdCase')(flags, argv, quiet);
-exports.cmdHook = (flags) => loadCmd('./commands/hook', 'cmdHook')(flags);
+exports.cmdHook = flags => loadCmd('./commands/hook', 'cmdHook')(flags);
 exports.cmdGraph = (flags, quiet) => loadCmd('./commands/graph', 'cmdGraph')(flags, quiet);
 exports.cmdArch = (flags, argv, quiet) => loadCmd('./commands/arch', 'cmdArch')(flags, argv, quiet);
 exports.cmdMutate = (flags, argv) => loadCmd('./commands/mutate', 'cmdMutate')(flags, argv);
 exports.cmdContext = (flags, argv) => loadCmd('./commands/context', 'cmdContext')(flags, argv);
 exports.cmdSync = () => loadCmd('./commands/sync', 'cmdSync')();
-exports.cmdAlign = (flags, argv, quiet) => loadCmd('./commands/align', 'cmdAlign')(flags, argv, quiet);
-exports.alignText = (text) => loadCmd('./commands/align', 'alignText')(text);
-exports.cmdMarathon = (flags, argv, quiet) => loadCmd('./commands/marathon', 'cmdMarathon')(flags, argv, quiet);
+exports.cmdAlign = (flags, argv, quiet) =>
+  loadCmd('./commands/align', 'cmdAlign')(flags, argv, quiet);
+exports.alignText = text => loadCmd('./commands/align', 'alignText')(text);
+exports.cmdMarathon = (flags, argv, quiet) =>
+  loadCmd('./commands/marathon', 'cmdMarathon')(flags, argv, quiet);
 exports.cmdMinimal = (flags, quiet) => loadCmd('./commands/minimal', 'cmdMinimal')(flags, quiet);
 exports.cmdCompile = (flags, quiet) => loadCmd('./commands/compile', 'cmdCompile')(flags, quiet);
-exports.cmdUninstall = (flags, quiet) => loadCmd('./commands/uninstall', 'cmdUninstall')(flags, quiet);
-exports.cmdMemory = (flags, argv, quiet) => loadCmd('./commands/memory', 'cmdMemory')(flags, argv, quiet);
-exports.cmdOptimizeSkill = (flags, argv, quiet) => loadCmd('./commands/optimize', 'cmdOptimizeSkill')(flags, argv, quiet);
-exports.cmdEvalOpt = (flags, argv, quiet) => loadCmd('./commands/evalopt', 'cmdEvalOpt')(flags, argv, quiet);
-exports.cmdEvolve = (flags, argv, quiet) => loadCmd('./commands/evolve', 'cmdEvolve')(flags, argv, quiet);
-exports.cmdGuardrail = (flags, argv, quiet) => loadCmd('./commands/guardrail', 'cmdGuardrail')(flags, argv, quiet);
+exports.cmdUninstall = (flags, quiet) =>
+  loadCmd('./commands/uninstall', 'cmdUninstall')(flags, quiet);
+exports.cmdMemory = (flags, argv, quiet) =>
+  loadCmd('./commands/memory', 'cmdMemory')(flags, argv, quiet);
+exports.cmdOptimizeSkill = (flags, argv, quiet) =>
+  loadCmd('./commands/optimize', 'cmdOptimizeSkill')(flags, argv, quiet);
+exports.cmdEvalOpt = (flags, argv, quiet) =>
+  loadCmd('./commands/evalopt', 'cmdEvalOpt')(flags, argv, quiet);
+exports.cmdEvolve = (flags, argv, quiet) =>
+  loadCmd('./commands/evolve', 'cmdEvolve')(flags, argv, quiet);
+exports.cmdGuardrail = (flags, argv, quiet) =>
+  loadCmd('./commands/guardrail', 'cmdGuardrail')(flags, argv, quiet);
 exports.cmdRsi = (flags, argv, quiet) => loadCmd('./commands/rsi', 'cmdRsi')(flags, argv, quiet);
-exports.cmdContract = (flags, argv, quiet) => loadCmd('./commands/contract', 'cmdContract')(flags, argv, quiet);
-exports.cmdValidate = (flags, argv, quiet) => loadCmd('./commands/validate', 'cmdValidate')(flags, argv, quiet);
+exports.cmdContract = (flags, argv, quiet) =>
+  loadCmd('./commands/contract', 'cmdContract')(flags, argv, quiet);
+exports.cmdValidate = (flags, argv, quiet) =>
+  loadCmd('./commands/validate', 'cmdValidate')(flags, argv, quiet);
 exports.cmdMinContext = (argv, quiet) => loadCmd('./commands/native', 'cmdMinContext')(argv, quiet);
-exports.cmdDagSchedule = (argv, quiet) => loadCmd('./commands/native', 'cmdDagSchedule')(argv, quiet);
-exports.cmdContextCompress = (argv, quiet) => loadCmd('./commands/native', 'cmdContextCompress')(argv, quiet);
-exports.cmdOptimizeStep = (argv, quiet) => loadCmd('./commands/native', 'cmdOptimizeStep')(argv, quiet);
+exports.cmdDagSchedule = (argv, quiet) =>
+  loadCmd('./commands/native', 'cmdDagSchedule')(argv, quiet);
+exports.cmdContextCompress = (argv, quiet) =>
+  loadCmd('./commands/native', 'cmdContextCompress')(argv, quiet);
+exports.cmdOptimizeStep = (argv, quiet) =>
+  loadCmd('./commands/native', 'cmdOptimizeStep')(argv, quiet);
 exports.cmdImpactTier = (argv, quiet) => loadCmd('./commands/native', 'cmdImpactTier')(argv, quiet);
-exports.cmdContextRank = (flags, argv, quiet) => loadCmd('./commands/context', 'cmdContextRank')(flags, argv, quiet);
-exports.cmdSystem1 = (flags, argv, quiet) => loadCmd('./commands/system1', 'cmdSystem1')(flags, argv, quiet);
-exports.cmdBrowse = (flags, argv, quiet) => loadCmd('./commands/browse', 'cmdBrowse')(flags, argv, quiet);
-exports.cmdAuditWeb = (flags, argv, quiet) => loadCmd('./commands/audit-web', 'cmdAuditWeb')(flags, argv, quiet);
-exports.cmdCompareWeb = (flags, argv, quiet) => loadCmd('./commands/compare-web', 'cmdCompareWeb')(flags, argv, quiet);
-exports.cmdDeconstruct = (flags, argv, quiet) => loadCmd('./commands/deconstruct', 'cmdDeconstruct')(flags, argv, quiet);
+exports.cmdContextRank = (flags, argv, quiet) =>
+  loadCmd('./commands/context', 'cmdContextRank')(flags, argv, quiet);
+exports.cmdSystem1 = (flags, argv, quiet) =>
+  loadCmd('./commands/system1', 'cmdSystem1')(flags, argv, quiet);
+exports.cmdBrowse = (flags, argv, quiet) =>
+  loadCmd('./commands/browse', 'cmdBrowse')(flags, argv, quiet);
+exports.cmdAuditWeb = (flags, argv, quiet) =>
+  loadCmd('./commands/audit-web', 'cmdAuditWeb')(flags, argv, quiet);
+exports.cmdCompareWeb = (flags, argv, quiet) =>
+  loadCmd('./commands/compare-web', 'cmdCompareWeb')(flags, argv, quiet);
+exports.cmdDeconstruct = (flags, argv, quiet) =>
+  loadCmd('./commands/deconstruct', 'cmdDeconstruct')(flags, argv, quiet);
 exports.cmdHeal = (flags, argv, quiet) => loadCmd('./commands/heal', 'cmdHeal')(flags, argv, quiet);
-exports.cmdReview = (flags, argv, quiet) => loadCmd('./commands/review', 'cmdReview')(flags, argv, quiet);
+exports.cmdReview = (flags, argv, quiet) =>
+  loadCmd('./commands/review', 'cmdReview')(flags, argv, quiet);
 exports.cmdSdd = (flags, argv, quiet) => loadCmd('./commands/sdd', 'cmdSdd')(flags, argv, quiet);
-exports.cmdSkillIntel = (flags, argv, quiet) => loadCmd('./commands/skill-intelligence', 'cmdSkillIntel')(flags, argv, quiet);
-exports.cmdActivity = (flags, argv, quiet) => loadCmd('./commands/activity', 'cmdActivity')(flags, argv, quiet);
-exports.cmdUnderstand = (flags, argv, quiet) => loadCmd('./commands/understand', 'cmdUnderstand')(flags, argv, quiet);
-
+exports.cmdSkillIntel = (flags, argv, quiet) =>
+  loadCmd('./commands/skill-intelligence', 'cmdSkillIntel')(flags, argv, quiet);
+exports.cmdActivity = (flags, argv, quiet) =>
+  loadCmd('./commands/activity', 'cmdActivity')(flags, argv, quiet);
+async function cmdAdapt(subArgs = []) {
+  const path = require('path');
+  const child_process = require('child_process');
+  const adapterScript = path.resolve(__dirname, '..', 'bin', 'adapter-install.js');
+  return new Promise((resolve, reject) => {
+    const child = child_process.fork(adapterScript, subArgs, { stdio: 'inherit' });
+    child.on('error', err => {
+      (0, logger_1.err)(`Failed to execute adapter script: ${err.message || err}`);
+      process.exitCode = 1;
+      reject(err);
+    });
+    child.on('close', (code, signal) => {
+      if (signal) {
+        process.exitCode = 128 + 15;
+        resolve({ code: 128 + 15, signal });
+      } else if (code !== 0) {
+        process.exitCode = code || 1;
+        resolve({ code: code || 1 });
+      } else {
+        resolve({ code: 0 });
+      }
+    });
+  });
+}
+exports.cmdAdapt = cmdAdapt;
+exports.cmdUnderstand = (flags, argv, quiet) =>
+  loadCmd('./commands/understand', 'cmdUnderstand')(flags, argv, quiet);
 
 let _activityCache = null;
 function getActivity() {
@@ -213,10 +260,8 @@ function cmdHelp(quiet = false) {
   (0, helpers_1.banner)(quiet);
   const { color, bold, dim, RGB } = require('./tui');
 
-  const cmd = (name, desc) =>
-    `    ${color(RGB.CYAN, name.padEnd(16))} ${dim(desc)}`;
-  const opt = (flag, desc) =>
-    `    ${color(RGB.AMBER, flag.padEnd(24))} ${dim(desc)}`;
+  const cmd = (name, desc) => `    ${color(RGB.CYAN, name.padEnd(16))} ${dim(desc)}`;
+  const opt = (flag, desc) => `    ${color(RGB.AMBER, flag.padEnd(24))} ${dim(desc)}`;
   const ex = s => `    ${color(RGB.FLAME, '▸')} ${color(RGB.WHITE, s)}`;
   const section = (title, icon = '✦') => {
     console.log();
@@ -270,11 +315,22 @@ function cmdHelp(quiet = false) {
   console.log(opt('--quiet', 'Suppress all non-essential output'));
   console.log(opt('--verbose', 'Show detailed debug logging'));
   console.log(opt('--dry-run', 'Preview actions without writing disk changes'));
-  console.log(opt('--minimal', 'Install core agents & skills only (~21 specialists)'));
+  let coreAgentCount = 21;
+  try {
+    const { CORE_AGENTS } = require('./commands/init');
+    if (CORE_AGENTS && CORE_AGENTS.size) coreAgentCount = CORE_AGENTS.size;
+  } catch {
+    // fallback default
+  }
+  console.log(
+    opt('--minimal', `Install core agents & skills only (~${coreAgentCount} specialists)`),
+  );
   console.log(opt('--version, -v', 'Print installed package version'));
 
   section('Aliases & Shortcuts', '❯');
-  console.log(`    ${color(RGB.CYAN, 'tk')}            ${dim('Shorthand for tribunal-kit (e.g., tk status, tk rsi)')}`);
+  console.log(
+    `    ${color(RGB.CYAN, 'tk')}            ${dim('Shorthand for tribunal-kit (e.g., tk status, tk rsi)')}`,
+  );
 
   section('Key Examples', '💡');
   console.log(ex('tk status'));
@@ -470,7 +526,6 @@ async function runWithUpdateCheck(command, flags) {
     }
     case 'intelligence':
     case 'cases':
-    case 'case':
     case 'similar':
     case 'failures':
     case 'risk':
@@ -482,8 +537,13 @@ async function runWithUpdateCheck(command, flags) {
     case 'policy-proposals': {
       const { cmdIntelligence } = require('./commands/intelligence');
       const realArgs = process.argv.slice(2).filter(a => !a.startsWith('-'));
-      // The command is the first non-flag arg; the sub-args are subsequent
-      await cmdIntelligence(command, realArgs.slice(1));
+      let sub = command;
+      let subArgs = realArgs.slice(1);
+      if (command === 'intelligence') {
+        sub = subArgs[0] || 'cases';
+        subArgs = subArgs.slice(1);
+      }
+      await cmdIntelligence(sub, subArgs);
       break;
     }
     case 'browse': {
@@ -529,11 +589,8 @@ async function runWithUpdateCheck(command, flags) {
     }
     case 'adapt':
     case 'tk-adapt': {
-      const path = require('path');
-      const child_process = require('child_process');
-      const adapterScript = path.resolve(__dirname, '..', 'bin', 'adapter-install.js');
       const subArgs = process.argv.slice(3);
-      child_process.fork(adapterScript, subArgs, { stdio: 'inherit' });
+      await cmdAdapt(subArgs);
       break;
     }
     case 'activity': {

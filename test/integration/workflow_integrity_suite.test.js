@@ -25,11 +25,16 @@ const SPECIALIST_REGISTRY_PATH = path.join(ROOT, '.agent', 'config', 'specialist
 describe('Universal Workflow Integrity Suite (All 52 Workflows)', () => {
   const workflowFiles = fs.readdirSync(WORKFLOWS_DIR).filter(f => f.endsWith('.md'));
   const diskSkills = new Set(fs.readdirSync(SKILLS_DIR));
-  const diskAgents = new Set(fs.readdirSync(AGENTS_DIR).filter(f => f.endsWith('.md')).map(f => f.replace('.md', '')));
+  const diskAgents = new Set(
+    fs
+      .readdirSync(AGENTS_DIR)
+      .filter(f => f.endsWith('.md'))
+      .map(f => f.replace('.md', '')),
+  );
 
   const slashConfig = JSON.parse(fs.readFileSync(SLASH_COMMANDS_PATH, 'utf8'));
   const registeredCommands = new Set();
-  for (const cmd of (slashConfig.commands || [])) {
+  for (const cmd of slashConfig.commands || []) {
     registeredCommands.add(cmd.name.replace(/^\//, ''));
     (cmd.aliases || []).forEach(a => registeredCommands.add(a.replace(/^\//, '')));
   }
@@ -41,7 +46,7 @@ describe('Universal Workflow Integrity Suite (All 52 Workflows)', () => {
     expect(workflowFiles.length).toBe(52);
   });
 
-  describe.each(workflowFiles)('Workflow Contract: %s', (file) => {
+  describe.each(workflowFiles)('Workflow Contract: %s', file => {
     const baseName = file.replace('.md', '');
     const content = fs.readFileSync(path.join(WORKFLOWS_DIR, file), 'utf8');
 
@@ -66,7 +71,7 @@ describe('Universal Workflow Integrity Suite (All 52 Workflows)', () => {
     it('references only valid, existing agents registered in specialist-registry.json', () => {
       const explicitAgentRefs = content.match(/@\[([a-zA-Z0-9_-]+)\]/g) || [];
       for (const ref of explicitAgentRefs) {
-        const agentName = ref.replace('@[' , '').replace(']', '');
+        const agentName = ref.replace('@[', '').replace(']', '');
         expect(diskAgents.has(agentName)).toBe(true);
         expect(registeredSpecialists.has(agentName)).toBe(true);
       }
@@ -74,10 +79,9 @@ describe('Universal Workflow Integrity Suite (All 52 Workflows)', () => {
 
     it('contains bounded execution, completion, or error protocols', () => {
       // Must contain structured phase headers, failure rules, or verification checks
-      const hasStructure = 
+      const hasStructure =
         /Phase\s+\d+|Step\s+\d+|Verification|Error Recovery|BLOCKED|Rules|Usage/i.test(content);
       expect(hasStructure).toBe(true);
     });
   });
 });
-

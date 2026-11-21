@@ -1,10 +1,6 @@
 'use strict';
 
-const {
-  createPRNG,
-  arb,
-  assertProperty,
-} = require('../../src/verification');
+const { createPRNG, arb, assertProperty } = require('../../src/verification');
 
 describe('Property-Based Testing & Shrinking Engine', () => {
   test('createPRNG produces 100% deterministic sequence from same seed', () => {
@@ -36,11 +32,10 @@ describe('Property-Based Testing & Shrinking Engine', () => {
 
   test('assertProperty verifies universal invariant holding across 100 runs', () => {
     // Invariant: Addition commutativity: a + b === b + a
-    const result = assertProperty(
-      [arb.integer(), arb.integer()],
-      (a, b) => a + b === b + a,
-      { runs: 100, seed: 999 }
-    );
+    const result = assertProperty([arb.integer(), arb.integer()], (a, b) => a + b === b + a, {
+      runs: 100,
+      seed: 999,
+    });
 
     expect(result.passed).toBe(true);
     expect(result.runsCompleted).toBe(100);
@@ -48,11 +43,10 @@ describe('Property-Based Testing & Shrinking Engine', () => {
 
   test('assertProperty catches counterexample and automatically shrinks to minimal input', () => {
     // Flawed property: All integers are < 42
-    const result = assertProperty(
-      [arb.integer({ min: 0, max: 500 })],
-      (x) => x < 42,
-      { runs: 100, seed: 101 }
-    );
+    const result = assertProperty([arb.integer({ min: 0, max: 500 })], x => x < 42, {
+      runs: 100,
+      seed: 101,
+    });
 
     expect(result.passed).toBe(false);
     expect(result.counterexample).toBeDefined();
@@ -65,7 +59,7 @@ describe('Property-Based Testing & Shrinking Engine', () => {
     const result = assertProperty(
       [arb.array(arb.integer()), arb.array(arb.integer())],
       (arr1, arr2) => arr1.concat(arr2).length === arr1.length + arr2.length,
-      { runs: 50, seed: 777 }
+      { runs: 50, seed: 777 },
     );
 
     expect(result.passed).toBe(true);

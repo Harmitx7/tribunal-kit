@@ -25,10 +25,7 @@ const {
   createCacheEntry,
   validateCacheEntry,
 } = require('./repository_cache_contract');
-const {
-  PathSecurityError,
-  assertContainedPath,
-} = require('../utils/path_containment');
+const { PathSecurityError, assertContainedPath } = require('../utils/path_containment');
 
 const WINDOWS_RESERVED_NAMES = /^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?$/i;
 const DEFAULT_MAX_ENTRIES = 1000;
@@ -52,7 +49,10 @@ function acquireCacheLock(locksDir, timeoutMs = 15000, staleThresholdMs = 15000)
     try {
       const fd = fs.openSync(lockPath, 'wx');
       try {
-        const meta = Buffer.from(JSON.stringify({ pid: process.pid, createdAt: Date.now() }), 'utf8');
+        const meta = Buffer.from(
+          JSON.stringify({ pid: process.pid, createdAt: Date.now() }),
+          'utf8',
+        );
         fs.writeSync(fd, meta, 0, meta.length, 0);
       } finally {
         fs.closeSync(fd);
@@ -91,10 +91,15 @@ function acquireCacheLock(locksDir, timeoutMs = 15000, staleThresholdMs = 15000)
           }
 
           if (shouldEvict) {
-            try { fs.unlinkSync(lockPath); } catch (_) {}
+            try {
+              fs.unlinkSync(lockPath);
+            } catch (_) {}
             const fd = fs.openSync(lockPath, 'wx');
             try {
-              const meta = Buffer.from(JSON.stringify({ pid: process.pid, createdAt: Date.now() }), 'utf8');
+              const meta = Buffer.from(
+                JSON.stringify({ pid: process.pid, createdAt: Date.now() }),
+                'utf8',
+              );
               fs.writeSync(fd, meta, 0, meta.length, 0);
             } finally {
               fs.closeSync(fd);
@@ -125,7 +130,10 @@ function acquireCacheLock(locksDir, timeoutMs = 15000, staleThresholdMs = 15000)
       fs.unlinkSync(lockPath);
       const fd = fs.openSync(lockPath, 'wx');
       try {
-        const meta = Buffer.from(JSON.stringify({ pid: process.pid, createdAt: Date.now() }), 'utf8');
+        const meta = Buffer.from(
+          JSON.stringify({ pid: process.pid, createdAt: Date.now() }),
+          'utf8',
+        );
         fs.writeSync(fd, meta, 0, meta.length, 0);
       } finally {
         fs.closeSync(fd);
@@ -155,7 +163,7 @@ function writeFileSyncAtomic(filePath, data, encoding = 'utf8') {
     dir,
     `.${path.basename(filePath)}.${process.pid}.${Date.now()}.${crypto.randomBytes(4).toString('hex')}.tmp`,
   );
-  fs.writeFileSync(tmpPath, data, encoding);
+  fs.writeFileSync(tmpPath, data, { encoding: /** @type {BufferEncoding} */ (encoding) });
   fs.renameSync(tmpPath, filePath);
 }
 
@@ -176,17 +184,20 @@ function computeFileContentDigest(filePath) {
 
 class RepositoryIntelligenceCache {
   /**
-   * @param {object} options
-   * @param {string} options.workspace - Workspace root directory
+   * @param {object} [options]
+   * @param {string} [options.workspace] - Workspace root directory
    * @param {string} [options.cacheDir] - Custom cache storage directory
    * @param {number} [options.maxEntries=1000]
    * @param {number} [options.maxStorageBytes=52428800]
    * @param {number} [options.maxPayloadBytes=2097152]
    * @param {number} [options.lruMemoryLimit=200]
+   * @param {number} [options.lruMemoryBytes=10485760]
    */
   constructor(options = {}) {
     if (!options.workspace || typeof options.workspace !== 'string') {
-      throw new Error('RepositoryIntelligenceCache requires options.workspace as a non-empty string');
+      throw new Error(
+        'RepositoryIntelligenceCache requires options.workspace as a non-empty string',
+      );
     }
 
     this.workspace = path.resolve(options.workspace);
@@ -239,7 +250,8 @@ class RepositoryIntelligenceCache {
     }
 
     while (
-      (this._lruCache.size >= this.lruMemoryLimit || (this._lruMemoryBytes + size) > this.lruMemoryBytes) &&
+      (this._lruCache.size >= this.lruMemoryLimit ||
+        this._lruMemoryBytes + size > this.lruMemoryBytes) &&
       this._lruCache.size > 0
     ) {
       const oldestKey = this._lruCache.keys().next().value;
@@ -272,13 +284,24 @@ class RepositoryIntelligenceCache {
       throw new Error('Invalid cacheKey');
     }
     // Reject lexical path traversal attempts
-    if (cacheKey.includes('..') || cacheKey.includes('/') || cacheKey.includes('\\') || cacheKey.includes('\0')) {
-      throw new PathSecurityError(`Path security violation: Illegal directory traversal in cacheKey "${cacheKey}"`, 'ERR_PATH_TRAVERSAL');
+    if (
+      cacheKey.includes('..') ||
+      cacheKey.includes('/') ||
+      cacheKey.includes('\\') ||
+      cacheKey.includes('\0')
+    ) {
+      throw new PathSecurityError(
+        `Path security violation: Illegal directory traversal in cacheKey "${cacheKey}"`,
+        'ERR_PATH_TRAVERSAL',
+      );
     }
     // Reject Windows reserved device names
     const baseName = cacheKey.split('.')[0];
     if (WINDOWS_RESERVED_NAMES.test(baseName)) {
-      throw new PathSecurityError(`Path security violation: Illegal Windows reserved device name in cacheKey "${cacheKey}"`, 'ERR_PATH_RESERVED_NAME');
+      throw new PathSecurityError(
+        `Path security violation: Illegal Windows reserved device name in cacheKey "${cacheKey}"`,
+        'ERR_PATH_RESERVED_NAME',
+      );
     }
     const target = path.join(this.entriesDir, `${cacheKey}.json`);
     assertContainedPath(target, this.workspace, { allowAbsolute: true });
@@ -338,10 +361,14 @@ class RepositoryIntelligenceCache {
           };
         } else {
           // Unlink invalid entry on reconstruction
-          try { fs.unlinkSync(filePath); } catch (_) {}
+          try {
+            fs.unlinkSync(filePath);
+          } catch (_) {}
         }
       } catch (_) {
-        try { fs.unlinkSync(filePath); } catch (_) {}
+        try {
+          fs.unlinkSync(filePath);
+        } catch (_) {}
       }
     }
 
@@ -382,9 +409,16 @@ class RepositoryIntelligenceCache {
       }
 
       // Sort LRU: oldest last_accessed_at first
-      entries.sort((a, b) => Date.parse(a.last_accessed_at || a.created_at) - Date.parse(b.last_accessed_at || b.created_at));
+      entries.sort(
+        (a, b) =>
+          Date.parse(a.last_accessed_at || a.created_at) -
+          Date.parse(b.last_accessed_at || b.created_at),
+      );
 
-      while ((totalCount > this.maxEntries || totalBytes > this.maxStorageBytes) && entries.length > 0) {
+      while (
+        (totalCount > this.maxEntries || totalBytes > this.maxStorageBytes) &&
+        entries.length > 0
+      ) {
         const victim = entries.shift();
         const victimPath = path.join(this.entriesDir, `${victim.cache_key}.json`);
         try {
@@ -395,7 +429,7 @@ class RepositoryIntelligenceCache {
 
         this._lruCache.delete(victim.cache_key);
         delete idx.entries[victim.cache_key];
-        totalBytes -= (victim.size_bytes || 0);
+        totalBytes -= victim.size_bytes || 0;
         totalCount -= 1;
         this._metrics.evictions += 1;
       }
@@ -438,7 +472,11 @@ class RepositoryIntelligenceCache {
     }
 
     // Verify dependency digests if provided in options or entry
-    if (Array.isArray(entry.dependency_digests) && entry.dependency_digests.length > 0 && Array.isArray(options.dependencyPaths)) {
+    if (
+      Array.isArray(entry.dependency_digests) &&
+      entry.dependency_digests.length > 0 &&
+      Array.isArray(options.dependencyPaths)
+    ) {
       for (const depPath of options.dependencyPaths) {
         const fullDepPath = path.resolve(this.workspace, depPath);
         if (!fs.existsSync(fullDepPath)) {
@@ -506,7 +544,9 @@ class RepositoryIntelligenceCache {
         if (stat.size > this.maxPayloadBytes) {
           this._metrics.corrupt_rejections += 1;
           this._metrics.misses += 1;
-          try { fs.unlinkSync(filePath); } catch (_) {}
+          try {
+            fs.unlinkSync(filePath);
+          } catch (_) {}
           return {
             hit: false,
             reason: 'OVERSIZED_PAYLOAD',
@@ -522,7 +562,9 @@ class RepositoryIntelligenceCache {
         if (!validation.valid) {
           this._metrics.corrupt_rejections += 1;
           this._metrics.misses += 1;
-          try { fs.unlinkSync(filePath); } catch (_) {}
+          try {
+            fs.unlinkSync(filePath);
+          } catch (_) {}
           return { hit: false, reason: 'CORRUPT_ENTRY', error: validation.error };
         }
 
@@ -564,9 +606,11 @@ class RepositoryIntelligenceCache {
    */
   getArtifact(artifactType, relativePath, options = {}) {
     try {
-      const contentDigest = options.content_digest || (options.autoDigest && options.workspace
-        ? computeFileContentDigest(path.resolve(options.workspace, relativePath))
-        : '');
+      const contentDigest =
+        options.content_digest ||
+        (options.autoDigest && options.workspace
+          ? computeFileContentDigest(path.resolve(options.workspace, relativePath))
+          : '');
 
       const cacheKey = computeCacheKey({
         artifact_type: artifactType,
@@ -605,7 +649,9 @@ class RepositoryIntelligenceCache {
       const byteSize = Buffer.byteLength(serialized, 'utf8');
 
       if (byteSize > this.maxPayloadBytes) {
-        throw new Error(`Serialized entry exceeds maximum allowed payload limit (${this.maxPayloadBytes} bytes)`);
+        throw new Error(
+          `Serialized entry exceeds maximum allowed payload limit (${this.maxPayloadBytes} bytes)`,
+        );
       }
 
       writeFileSyncAtomic(filePath, serialized, 'utf8');
@@ -682,8 +728,10 @@ class RepositoryIntelligenceCache {
       const entries = Object.values(idx.entries || {});
 
       for (const e of entries) {
-        const matches = e.relative_path === normalized ||
-          (process.platform === 'win32' && e.relative_path.toLowerCase() === normalized.toLowerCase());
+        const matches =
+          e.relative_path === normalized ||
+          (process.platform === 'win32' &&
+            e.relative_path.toLowerCase() === normalized.toLowerCase());
         if (matches) {
           const filePath = path.join(this.entriesDir, `${e.cache_key}.json`);
           try {
@@ -745,7 +793,7 @@ class RepositoryIntelligenceCache {
    */
   getMetrics() {
     const totalRequests = this._metrics.hits + this._metrics.misses;
-    const hitRate = totalRequests > 0 ? (this._metrics.hits / totalRequests) : 0;
+    const hitRate = totalRequests > 0 ? this._metrics.hits / totalRequests : 0;
 
     return {
       ...this._metrics,

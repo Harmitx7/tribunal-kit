@@ -193,8 +193,16 @@ describe('Phase 2: Activity Intelligence & State Tracking Engine', () => {
 
     test('manages parent-child operation relationships', () => {
       const parent = registry.register({ operationId: 'op_parent_1', title: 'Parent Pipeline' });
-      const child1 = registry.register({ operationId: 'op_child_1', parentOperationId: 'op_parent_1', title: 'Child 1' });
-      const child2 = registry.register({ operationId: 'op_child_2', parentOperationId: 'op_parent_1', title: 'Child 2' });
+      const child1 = registry.register({
+        operationId: 'op_child_1',
+        parentOperationId: 'op_parent_1',
+        title: 'Child 1',
+      });
+      const child2 = registry.register({
+        operationId: 'op_child_2',
+        parentOperationId: 'op_parent_1',
+        title: 'Child 2',
+      });
 
       expect(child1.parentOperationId).toBe('op_parent_1');
       expect(child2.parentOperationId).toBe('op_parent_1');
@@ -206,10 +214,22 @@ describe('Phase 2: Activity Intelligence & State Tracking Engine', () => {
     });
 
     test('lists active vs completed operations accurately', () => {
-      const opActive1 = registry.register({ operationId: 'op_act_1', status: LIFECYCLE_STATES.RUNNING });
-      const opActive2 = registry.register({ operationId: 'op_act_2', status: LIFECYCLE_STATES.WAITING });
-      const opDone1 = registry.register({ operationId: 'op_done_1', status: LIFECYCLE_STATES.RUNNING });
-      const opDone2 = registry.register({ operationId: 'op_done_2', status: LIFECYCLE_STATES.RUNNING });
+      const opActive1 = registry.register({
+        operationId: 'op_act_1',
+        status: LIFECYCLE_STATES.RUNNING,
+      });
+      const opActive2 = registry.register({
+        operationId: 'op_act_2',
+        status: LIFECYCLE_STATES.WAITING,
+      });
+      const opDone1 = registry.register({
+        operationId: 'op_done_1',
+        status: LIFECYCLE_STATES.RUNNING,
+      });
+      const opDone2 = registry.register({
+        operationId: 'op_done_2',
+        status: LIFECYCLE_STATES.RUNNING,
+      });
 
       opDone1.transitionTo(LIFECYCLE_STATES.COMPLETED);
       opDone2.transitionTo(LIFECYCLE_STATES.CANCELLED);
@@ -321,7 +341,10 @@ describe('Phase 2: Activity Intelligence & State Tracking Engine', () => {
     });
 
     test('allows progress reset when an explicit retry begins (attempt increment)', () => {
-      const op = registry.register({ operationId: 'op_prog_retry_reset', status: LIFECYCLE_STATES.RUNNING });
+      const op = registry.register({
+        operationId: 'op_prog_retry_reset',
+        status: LIFECYCLE_STATES.RUNNING,
+      });
       op.setProgress({ current: 8, total: 10 });
 
       // Trigger retry
@@ -368,7 +391,12 @@ describe('Phase 2: Activity Intelligence & State Tracking Engine', () => {
       const op = registry.register({ operationId: 'op_skill_1' });
 
       op.recordSkill('resilience-reviewer', AGENT_SKILL_STATES.ACTIVATED, 'Circuit breaker check');
-      op.recordSkill('resilience-reviewer', AGENT_SKILL_STATES.FAILED, 'Timeout', new Error('Circuit broken'));
+      op.recordSkill(
+        'resilience-reviewer',
+        AGENT_SKILL_STATES.FAILED,
+        'Timeout',
+        new Error('Circuit broken'),
+      );
 
       expect(op.activeSkill.state).toBe('failed');
       expect(op.activeSkill.error).toContain('Circuit broken');
@@ -440,7 +468,10 @@ describe('Phase 2: Activity Intelligence & State Tracking Engine', () => {
     });
 
     test('preserves multi-attempt failure history across retries', () => {
-      const op = registry.register({ operationId: 'op_retry_history', status: LIFECYCLE_STATES.RUNNING });
+      const op = registry.register({
+        operationId: 'op_retry_history',
+        status: LIFECYCLE_STATES.RUNNING,
+      });
 
       // Attempt 1 fails
       op.error = { message: 'Database lock timeout', code: 'LOCK_TIMEOUT' };
@@ -541,8 +572,14 @@ describe('Phase 2: Activity Intelligence & State Tracking Engine', () => {
     });
 
     test('supports concurrent independent operations without cross-talk', async () => {
-      const opA = registry.register({ operationId: 'op_concur_A', status: LIFECYCLE_STATES.RUNNING });
-      const opB = registry.register({ operationId: 'op_concur_B', status: LIFECYCLE_STATES.RUNNING });
+      const opA = registry.register({
+        operationId: 'op_concur_A',
+        status: LIFECYCLE_STATES.RUNNING,
+      });
+      const opB = registry.register({
+        operationId: 'op_concur_B',
+        status: LIFECYCLE_STATES.RUNNING,
+      });
 
       const taskA = opA.executeSerialized(async () => {
         opA.setProgress({ current: 5, total: 10 });

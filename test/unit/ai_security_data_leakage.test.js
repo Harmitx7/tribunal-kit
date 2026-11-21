@@ -38,7 +38,8 @@ describe('Data Leakage & Canary Token Auditor', () => {
   });
 
   test('detects unredacted API key patterns and integrates with secret_redactor', () => {
-    const secretPayload = 'Here is the OpenAI key: sk-proj-abcdef1234567890abcdef1234567890 for API calls.';
+    const secretPayload =
+      'Here is the OpenAI key: sk-proj-abcdef1234567890abcdef1234567890 for API calls.';
     const result = scanForDataLeakage(secretPayload);
 
     expect(result.leaksDetected).toBe(true);
@@ -69,4 +70,3 @@ describe('Data Leakage & Canary Token Auditor', () => {
     expect(JSON.stringify(sanitized)).not.toContain(canary);
   });
 });
-
