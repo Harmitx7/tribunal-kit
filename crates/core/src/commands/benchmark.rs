@@ -72,7 +72,7 @@ pub fn run_benchmark(skills_dir: &str, repo_path: &str, publish: bool) -> Result
     report.integrity_hash = hasher
         .finalize()
         .iter()
-        .map(|b| format!("{:02x}", b))
+        .map(|b| format!("{b:02x}"))
         .collect::<String>();
 
     let out_json = serde_json::to_string_pretty(&report)?;
@@ -85,11 +85,7 @@ pub fn run_benchmark(skills_dir: &str, repo_path: &str, publish: bool) -> Result
 
         println!(
             "{}",
-            format!(
-                "✅ Benchmark published to .tribunal/benchmarks/{}",
-                file_name
-            )
-            .bright_green()
+            format!("✅ Benchmark published to .tribunal/benchmarks/{file_name}").bright_green()
         );
         println!("Integrity Hash: {}", report.integrity_hash.bright_yellow());
     }

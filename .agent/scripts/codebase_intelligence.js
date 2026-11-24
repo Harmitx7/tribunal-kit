@@ -82,12 +82,12 @@ function redactSecrets(text) {
       )
       // Generic Credentials & Password assignments with quotes (preserves quotes, redacts entire enclosed string)
       .replace(
-        /((?:[a-zA-Z0-9_-]*(?:api[_-]?key|secret|password|passwd|token|auth[_-]?token|access[_-]?token|credentials?|private[_-]?key)[a-zA-Z0-9_-]*)\s*[:=]\s*(['"]))[^\r\n]*?\2/gi,
+        /((?<![a-zA-Z0-9_-])[a-zA-Z0-9_-]*(?:api[_-]?key|secret|password|passwd|token|auth[_-]?token|access[_-]?token|credentials?|private[_-]?key)[a-zA-Z0-9_-]*\s*[:=]\s*(['"]))[^\r\n]*?\2/gi,
         '$1[REDACTED_SECRET]$2',
       )
       // Generic Credentials & Password assignments unquoted
       .replace(
-        /((?:[a-zA-Z0-9_-]*(?:api[_-]?key|secret|password|passwd|token|auth[_-]?token|access[_-]?token|credentials?|private[_-]?key)[a-zA-Z0-9_-]*)\s*[:=]\s*)[^\s\r\n,;]+/gi,
+        /((?<![a-zA-Z0-9_-])[a-zA-Z0-9_-]*(?:api[_-]?key|secret|password|passwd|token|auth[_-]?token|access[_-]?token|credentials?|private[_-]?key)[a-zA-Z0-9_-]*\s*[:=]\s*)[^\s\r\n,;]+/gi,
         '$1[REDACTED_SECRET]',
       )
   );

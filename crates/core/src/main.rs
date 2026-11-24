@@ -701,11 +701,11 @@ async fn cmd_purge(skills_dir: &str, dry_run: bool) -> Result<()> {
 async fn cmd_ast_extract(file: &str) -> Result<()> {
     match commands::ast_extractor::extract_ast(file) {
         Ok(json_output) => {
-            println!("{}", json_output);
+            println!("{json_output}");
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ AST extraction failed: {:#}", e);
+            eprintln!("✖ AST extraction failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -742,11 +742,11 @@ async fn cmd_fitness(skills_dir: &str, skill: Option<&str>, repo_path: &str) -> 
     if let Some(skill_path) = skill {
         match commands::fitness_scorer::score_skill(skill_path) {
             Ok(json_output) => {
-                println!("{}", json_output);
+                println!("{json_output}");
                 Ok(())
             }
             Err(e) => {
-                eprintln!("✖ Fitness scoring failed: {:#}", e);
+                eprintln!("✖ Fitness scoring failed: {e:#}");
                 std::process::exit(1);
             }
         }
@@ -760,14 +760,14 @@ async fn cmd_fitness(skills_dir: &str, skill: Option<&str>, repo_path: &str) -> 
                     eprintln!("\n{}", "⚡ Skill Fitness Scoring Complete".bold());
                     eprintln!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
                     eprintln!("  Total Skills Scored: {}", total.to_string().bold());
-                    eprintln!("  Average Fitness:     {:.3}", avg);
+                    eprintln!("  Average Fitness:     {avg:.3}");
                     eprintln!("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
                 }
-                println!("{}", json_output);
+                println!("{json_output}");
                 Ok(())
             }
             Err(e) => {
-                eprintln!("✖ Fitness scoring failed: {:#}", e);
+                eprintln!("✖ Fitness scoring failed: {e:#}");
                 std::process::exit(1);
             }
         }
@@ -777,11 +777,11 @@ async fn cmd_fitness(skills_dir: &str, skill: Option<&str>, repo_path: &str) -> 
 async fn cmd_telemetry_record(event_json: &str, repo_path: &str) -> Result<()> {
     match commands::telemetry::record_dispatch(event_json, repo_path) {
         Ok(json_output) => {
-            println!("{}", json_output);
+            println!("{json_output}");
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ Telemetry record failed: {:#}", e);
+            eprintln!("✖ Telemetry record failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -790,11 +790,11 @@ async fn cmd_telemetry_record(event_json: &str, repo_path: &str) -> Result<()> {
 async fn cmd_telemetry_summary(repo_path: &str) -> Result<()> {
     match commands::telemetry::summarize_telemetry(repo_path) {
         Ok(json_output) => {
-            println!("{}", json_output);
+            println!("{json_output}");
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ Telemetry summary failed: {:#}", e);
+            eprintln!("✖ Telemetry summary failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -807,11 +807,11 @@ async fn cmd_resolve_skills(skills_dir: &str, skills_str: &str) -> Result<()> {
         .collect();
     match commands::skill_resolver::resolve_skills(skills_dir, &requested) {
         Ok(json_output) => {
-            println!("{}", json_output);
+            println!("{json_output}");
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ Skill resolution failed: {:#}", e);
+            eprintln!("✖ Skill resolution failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -823,15 +823,15 @@ async fn cmd_heatmap(repo_path: &str) -> Result<()> {
             // we can parse it and print the ANSI
             if let Ok(v) = serde_json::from_str::<serde_json::Value>(&json_output) {
                 if let Some(ansi) = v["ansi_output"].as_str() {
-                    println!("{}", ansi);
+                    println!("{ansi}");
                     return Ok(());
                 }
             }
-            println!("{}", json_output);
+            println!("{json_output}");
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ Heatmap generation failed: {:#}", e);
+            eprintln!("✖ Heatmap generation failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -840,11 +840,11 @@ async fn cmd_heatmap(repo_path: &str) -> Result<()> {
 async fn cmd_pollinate(skills_dir: &str) -> Result<()> {
     match commands::pollinator::pollinate_skills(skills_dir) {
         Ok(json_output) => {
-            println!("{}", json_output);
+            println!("{json_output}");
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ Pollination failed: {:#}", e);
+            eprintln!("✖ Pollination failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -853,11 +853,11 @@ async fn cmd_pollinate(skills_dir: &str) -> Result<()> {
 async fn cmd_leaderboard(skills_dir: &str, repo_path: &str, limit: usize) -> Result<()> {
     match commands::leaderboard::render_leaderboard(skills_dir, repo_path, limit) {
         Ok(output) => {
-            println!("{}", output);
+            println!("{output}");
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ Leaderboard generation failed: {:#}", e);
+            eprintln!("✖ Leaderboard generation failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -867,12 +867,12 @@ async fn cmd_benchmark(skills_dir: &str, repo_path: &str, publish: bool) -> Resu
     match commands::benchmark::run_benchmark(skills_dir, repo_path, publish) {
         Ok(json_output) => {
             if !publish {
-                println!("{}", json_output);
+                println!("{json_output}");
             }
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ Benchmark generation failed: {:#}", e);
+            eprintln!("✖ Benchmark generation failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -885,7 +885,7 @@ async fn cmd_genome(skills_dir: &str, repo_path: &str) -> Result<()> {
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ Genome generation failed: {:#}", e);
+            eprintln!("✖ Genome generation failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -894,11 +894,11 @@ async fn cmd_genome(skills_dir: &str, repo_path: &str) -> Result<()> {
 async fn cmd_graph(path: &str) -> Result<()> {
     match commands::graph::generate_graph(path) {
         Ok(json_output) => {
-            println!("{}", json_output);
+            println!("{json_output}");
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ Graph generation failed: {:#}", e);
+            eprintln!("✖ Graph generation failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -912,18 +912,18 @@ async fn cmd_impact_tier(files_str: &str, lines: usize, task: &str) -> Result<()
     };
     let res = commands::impact_tier::classify_impact(&files, lines, task);
     let json = serde_json::to_string_pretty(&res)?;
-    println!("{}", json);
+    println!("{json}");
     Ok(())
 }
 
 async fn cmd_context_broker(repo_path: &str, target_file: Option<&str>) -> Result<()> {
     match commands::context_broker::resolve_context(repo_path, target_file) {
         Ok(json_output) => {
-            println!("{}", json_output);
+            println!("{json_output}");
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ Context broker failed: {:#}", e);
+            eprintln!("✖ Context broker failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -932,11 +932,11 @@ async fn cmd_context_broker(repo_path: &str, target_file: Option<&str>) -> Resul
 async fn cmd_dag_schedule(tasks_json: &str) -> Result<()> {
     match commands::dag_scheduler::schedule_dag(tasks_json) {
         Ok(json_output) => {
-            println!("{}", json_output);
+            println!("{json_output}");
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ DAG scheduling failed: {:#}", e);
+            eprintln!("✖ DAG scheduling failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -945,11 +945,11 @@ async fn cmd_dag_schedule(tasks_json: &str) -> Result<()> {
 async fn cmd_context_compress(file: &str, max_lines: Option<usize>) -> Result<()> {
     match commands::context_compress::compress_context(file, max_lines) {
         Ok(json_output) => {
-            println!("{}", json_output);
+            println!("{json_output}");
             Ok(())
         }
         Err(e) => {
-            eprintln!("✖ Context compression failed: {:#}", e);
+            eprintln!("✖ Context compression failed: {e:#}");
             std::process::exit(1);
         }
     }
@@ -1038,7 +1038,7 @@ async fn cmd_init(
             .as_millis();
         let backup_dir = agent_dest
             .join(".backups")
-            .join(format!("backup-{}", timestamp));
+            .join(format!("backup-{timestamp}"));
         tokio::fs::create_dir_all(&backup_dir).await?;
 
         let subdirs = [
@@ -1144,14 +1144,10 @@ async fn cmd_init(
             "Initializing Anti-Hallucination Barrier",
             Some(&target.display().to_string()),
         );
-        tree.branch(&format!("{} Core Specialists active in registry", agents));
+        tree.branch(&format!("{agents} Core Specialists active in registry"));
+        tree.branch(&format!("{skills} Agentic Skills mapped via lazy routing"));
         tree.branch(&format!(
-            "{} Agentic Skills mapped via lazy routing",
-            skills
-        ));
-        tree.branch(&format!(
-            "{} Workflows and {} enforcement scripts installed",
-            workflows, scripts
+            "{workflows} Workflows and {scripts} enforcement scripts installed"
         ));
         tree.branch("IDE Bridges synthesized (.cursorrules, .windsurfrules, CLAUDE.md)");
         tree.complete(&format!(
@@ -1214,7 +1210,7 @@ async fn cmd_validate(file: Option<&str>, schema: Option<&SchemaType>) -> Result
         Some(file_path) => {
             let content = tokio::fs::read_to_string(file_path)
                 .await
-                .with_context(|| format!("Failed to read file: {}", file_path))?;
+                .with_context(|| format!("Failed to read file: {file_path}"))?;
 
             let resolved_schema_name: String;
             match schema {
@@ -1260,7 +1256,7 @@ async fn cmd_validate(file: Option<&str>, schema: Option<&SchemaType>) -> Result
                 }
                 None => {
                     let value: serde_json::Value = serde_json::from_str(&content)
-                        .with_context(|| format!("File is not valid JSON: {}", file_path))?;
+                        .with_context(|| format!("File is not valid JSON: {file_path}"))?;
                     if value.get("dispatch_micro_workers").is_some() {
                         let _parsed: MicroWorkerPayload = serde_json::from_value(value)
                             .with_context(|| {
@@ -1324,7 +1320,7 @@ async fn cmd_validate(file: Option<&str>, schema: Option<&SchemaType>) -> Result
                         eprintln!(
                             "{} {}",
                             "✔".green(),
-                            format!("Valid JSON payload: {}", file_path).bold()
+                            format!("Valid JSON payload: {file_path}").bold()
                         );
                         resolved_schema_name = "JSON (generic)".to_string();
                     }
@@ -1347,7 +1343,7 @@ async fn cmd_validate(file: Option<&str>, schema: Option<&SchemaType>) -> Result
 async fn cmd_min_context(file: &str, max_lines: Option<usize>) -> Result<()> {
     let content = tokio::fs::read_to_string(file)
         .await
-        .with_context(|| format!("Failed to read file for minification: {}", file))?;
+        .with_context(|| format!("Failed to read file for minification: {file}"))?;
 
     let original_lines = content.lines().count();
     let mut minified_lines: Vec<&str> = content
@@ -1501,7 +1497,7 @@ async fn cmd_status(path: &str, json: bool, quiet: bool) -> Result<()> {
     if installed {
         let agents_dir = agent_dir.join("agents");
         for reviewer in &known_reviewers {
-            let reviewer_file = agents_dir.join(format!("{}.md", reviewer));
+            let reviewer_file = agents_dir.join(format!("{reviewer}.md"));
             if reviewer_file.exists() {
                 reviewers_ready += 1;
             }
@@ -1555,25 +1551,22 @@ async fn cmd_status(path: &str, json: bool, quiet: bool) -> Result<()> {
                 "│  ◆ {:>11}:  {:>3}  {}",
                 "Memories".cyan(),
                 mem_total,
-                format!(
-                    "({}S {}P {}E {}W | ~{}tok)",
-                    mem_sem, mem_proc, mem_ep, mem_work, mem_tokens
-                )
-                .dimmed()
+                format!("({mem_sem}S {mem_proc}P {mem_ep}E {mem_work}W | ~{mem_tokens}tok)")
+                    .dimmed()
             );
             eprintln!("│");
             eprintln!("│  ─── IDE Bridges ───");
             for line in &bridge_lines {
-                eprintln!("{}", line);
+                eprintln!("{line}");
             }
             eprintln!("│");
             eprintln!("│  ◆ {:>11}:  ~{} tokens", "Context".cyan(), context_tokens);
             let readiness_color = if reviewers_ready == total_reviewers {
-                format!("{}/{} ready", reviewers_ready, total_reviewers)
+                format!("{reviewers_ready}/{total_reviewers} ready")
                     .green()
                     .to_string()
             } else {
-                format!("{}/{} ready", reviewers_ready, total_reviewers)
+                format!("{reviewers_ready}/{total_reviewers} ready")
                     .yellow()
                     .to_string()
             };
@@ -1727,12 +1720,10 @@ async fn sync_ide_bridges(target: &std::path::Path, agent_dir: &std::path::Path)
     );
 
     let cursor_rules = format!(
-        "# Tribunal Kit — Cursor Bridge\n# Auto-generated by tribunal-kit sync. Do not edit manually.\n# Source: .agent/rules/GEMINI.md\n\n{}",
-        rules_content
+        "# Tribunal Kit — Cursor Bridge\n# Auto-generated by tribunal-kit sync. Do not edit manually.\n# Source: .agent/rules/GEMINI.md\n\n{rules_content}"
     );
     let windsurf_rules = format!(
-        "# Tribunal Kit — Windsurf Bridge\n# Auto-generated by tribunal-kit sync. Do not edit manually.\n# Source: .agent/rules/GEMINI.md\n\n{}",
-        rules_content
+        "# Tribunal Kit — Windsurf Bridge\n# Auto-generated by tribunal-kit sync. Do not edit manually.\n# Source: .agent/rules/GEMINI.md\n\n{rules_content}"
     );
     let gemini_settings = serde_json::json!({
         "rules": [
@@ -1743,21 +1734,17 @@ async fn sync_ide_bridges(target: &std::path::Path, agent_dir: &std::path::Path)
         "workflows": { "directory": "../.agent/workflows" }
     });
     let gemini_md = format!(
-        "---\ntrigger: always_on\n---\n\n# Tribunal Kit — Gemini Bridge\n# Auto-generated by tribunal-kit sync.\n\n{}",
-        rules_content
+        "---\ntrigger: always_on\n---\n\n# Tribunal Kit — Gemini Bridge\n# Auto-generated by tribunal-kit sync.\n\n{rules_content}"
     );
     let copilot_instructions = format!(
-        "# Tribunal Kit — Copilot Bridge\n# Auto-generated by tribunal-kit sync.\n\n{}",
-        rules_content
+        "# Tribunal Kit — Copilot Bridge\n# Auto-generated by tribunal-kit sync.\n\n{rules_content}"
     );
     let claude_rules = format!(
-        "# Tribunal Kit \u{2014} Claude Bridge\n# Auto-generated by tribunal-kit sync.\n# Source: .agent/rules/GEMINI.md\n\n{}",
-        rules_content
+        "# Tribunal Kit \u{2014} Claude Bridge\n# Auto-generated by tribunal-kit sync.\n# Source: .agent/rules/GEMINI.md\n\n{rules_content}"
     );
 
     let codex_rules = format!(
-        "# Tribunal Kit — Codex Bridge\n# Auto-generated by tribunal-kit sync.\n# Source: .agent/rules/GEMINI.md\n\n{}",
-        rules_content
+        "# Tribunal Kit — Codex Bridge\n# Auto-generated by tribunal-kit sync.\n# Source: .agent/rules/GEMINI.md\n\n{rules_content}"
     );
 
     // Fire ALL bridge writes concurrently
@@ -2214,12 +2201,10 @@ async fn generate_ide_bridges(
 
     // Build all content strings (zero-cost, just formatting)
     let cursor_rules = format!(
-        "# Tribunal Kit — Cursor Bridge\n# Auto-generated by tribunal-kit init. Do not edit manually.\n# Source: .agent/rules/GEMINI.md\n\n{}",
-        rules_content
+        "# Tribunal Kit — Cursor Bridge\n# Auto-generated by tribunal-kit init. Do not edit manually.\n# Source: .agent/rules/GEMINI.md\n\n{rules_content}"
     );
     let windsurf_rules = format!(
-        "# Tribunal Kit — Windsurf Bridge\n# Auto-generated by tribunal-kit init. Do not edit manually.\n# Source: .agent/rules/GEMINI.md\n\n{}",
-        rules_content
+        "# Tribunal Kit — Windsurf Bridge\n# Auto-generated by tribunal-kit init. Do not edit manually.\n# Source: .agent/rules/GEMINI.md\n\n{rules_content}"
     );
     let gemini_settings = serde_json::json!({
         "rules": [
@@ -2230,20 +2215,16 @@ async fn generate_ide_bridges(
         "workflows": { "directory": "../.agent/workflows" }
     });
     let gemini_md = format!(
-        "---\ntrigger: always_on\n---\n\n# Tribunal Kit — Gemini Bridge\n# Auto-generated by tribunal-kit init.\n\n{}",
-        rules_content
+        "---\ntrigger: always_on\n---\n\n# Tribunal Kit — Gemini Bridge\n# Auto-generated by tribunal-kit init.\n\n{rules_content}"
     );
     let copilot_instructions = format!(
-        "# Tribunal Kit — Copilot Bridge\n# Auto-generated by tribunal-kit init.\n\n{}",
-        rules_content
+        "# Tribunal Kit — Copilot Bridge\n# Auto-generated by tribunal-kit init.\n\n{rules_content}"
     );
     let claude_rules = format!(
-        "# Tribunal Kit \u{2014} Claude Bridge\n# Auto-generated by tribunal-kit init.\n# Source: .agent/rules/GEMINI.md\n\n{}",
-        rules_content
+        "# Tribunal Kit \u{2014} Claude Bridge\n# Auto-generated by tribunal-kit init.\n# Source: .agent/rules/GEMINI.md\n\n{rules_content}"
     );
     let codex_rules = format!(
-        "# Tribunal Kit \u{2014} Codex Bridge\n# Auto-generated by tribunal-kit init.\n# Source: .agent/rules/GEMINI.md\n\n{}",
-        rules_content
+        "# Tribunal Kit \u{2014} Codex Bridge\n# Auto-generated by tribunal-kit init.\n# Source: .agent/rules/GEMINI.md\n\n{rules_content}"
     );
 
     // Fire ALL bridge writes concurrently via tokio::join!
@@ -2273,7 +2254,7 @@ async fn generate_ide_bridges(
 async fn cmd_optimize_step(skill_path: &str, edits_json: &str, budget: u32) -> Result<()> {
     match commands::optimize::optimize_skill_step(skill_path, edits_json, budget) {
         Ok(report) => {
-            println!("{}", report);
+            println!("{report}");
             Ok(())
         }
         Err(e) => {

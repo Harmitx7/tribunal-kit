@@ -5,13 +5,13 @@ use std::path::{Component, Path, PathBuf};
 pub fn strip_verbatim_prefix(path: &Path) -> PathBuf {
     let s = path.to_string_lossy();
     if let Some(stripped) = s.strip_prefix(r"\\?\UNC\") {
-        PathBuf::from(format!(r"\\{}", stripped))
+        PathBuf::from(format!(r"\\{stripped}"))
     } else if let Some(stripped) = s.strip_prefix(r"\\?\unc\") {
-        PathBuf::from(format!(r"\\{}", stripped))
+        PathBuf::from(format!(r"\\{stripped}"))
     } else if let Some(stripped) = s.strip_prefix("//?/UNC/") {
-        PathBuf::from(format!("//{}", stripped))
+        PathBuf::from(format!("//{stripped}"))
     } else if let Some(stripped) = s.strip_prefix("//?/unc/") {
-        PathBuf::from(format!("//{}", stripped))
+        PathBuf::from(format!("//{stripped}"))
     } else if let Some(stripped) = s.strip_prefix(r"\\?\") {
         PathBuf::from(stripped)
     } else if let Some(stripped) = s.strip_prefix("//?/") {
@@ -63,9 +63,7 @@ pub fn assert_within_root(root: &Path, target: &Path) -> Result<PathBuf> {
             Component::ParentDir => {
                 if !normalized.pop() {
                     return Err(anyhow!(
-                        "Path security violation: Path traversal detected. Target '{:?}' escapes root '{:?}'",
-                        target,
-                        root
+                        "Path security violation: Path traversal detected. Target '{target:?}' escapes root '{root:?}'"
                     ));
                 }
             }
@@ -87,23 +85,96 @@ pub fn assert_within_root(root: &Path, target: &Path) -> Result<PathBuf> {
         let root_prefix = if root_str.ends_with('\\') {
             root_str
         } else {
-            format!("{}\\", root_str)
+            format!("{root_str}\\")
         };
-        if norm_str != root_prefix.trim_end_matches('\\') && !norm_str.starts_with(&root_prefix) {
+        let raw_root_str = strip_verbatim_prefix(root)
+            .to_string_lossy()
+            .to_lowercase()
+            .replace('/', "\\");
+        let raw_prefix = if raw_root_str.ends_with('\\') {
+            raw_root_str
+        } else {
+            format!("{raw_root_str}\\")
+        };
+        let canon_norm_str = if normalized.exists() {
+            strip_verbatim_prefix(
+                &normalized
+                    .canonicalize()
+                    .unwrap_or_else(|_| normalized.clone()),
+            )
+            .to_string_lossy()
+            .to_lowercase()
+            .replace('/', "\\")
+        } else if let Some(parent) = normalized.parent() {
+            if parent.exists() {
+                let canon_parent = strip_verbatim_prefix(
+                    &parent
+                        .canonicalize()
+                        .unwrap_or_else(|_| parent.to_path_buf()),
+                );
+                let full = if let Some(file_name) = normalized.file_name() {
+                    canon_parent.join(file_name)
+                } else {
+                    canon_parent
+                };
+                full.to_string_lossy().to_lowercase().replace('/', "\\")
+            } else {
+                norm_str.clone()
+            }
+        } else {
+            norm_str.clone()
+        };
+
+        let is_contained = norm_str == root_prefix.trim_end_matches('\\')
+            || norm_str.starts_with(&root_prefix)
+            || norm_str == raw_prefix.trim_end_matches('\\')
+            || norm_str.starts_with(&raw_prefix)
+            || canon_norm_str == root_prefix.trim_end_matches('\\')
+            || canon_norm_str.starts_with(&root_prefix)
+            || canon_norm_str == raw_prefix.trim_end_matches('\\')
+            || canon_norm_str.starts_with(&raw_prefix);
+
+        if !is_contained {
             return Err(anyhow!(
-                "Path security violation: Path traversal detected. Target '{:?}' escapes root '{:?}'",
-                target,
-                root
+                "Path security violation: Path traversal detected. Target '{target:?}' escapes root '{root:?}'"
             ));
         }
     }
     #[cfg(not(windows))]
     {
-        if !normalized.starts_with(&canonical_root) {
+        let raw_root = strip_verbatim_prefix(root);
+        let canon_normalized = if normalized.exists() {
+            strip_verbatim_prefix(
+                &normalized
+                    .canonicalize()
+                    .unwrap_or_else(|_| normalized.clone()),
+            )
+        } else if let Some(parent) = normalized.parent() {
+            if parent.exists() {
+                let canon_parent = strip_verbatim_prefix(
+                    &parent
+                        .canonicalize()
+                        .unwrap_or_else(|_| parent.to_path_buf()),
+                );
+                if let Some(file_name) = normalized.file_name() {
+                    canon_parent.join(file_name)
+                } else {
+                    canon_parent
+                }
+            } else {
+                normalized.clone()
+            }
+        } else {
+            normalized.clone()
+        };
+
+        if !normalized.starts_with(&canonical_root)
+            && !normalized.starts_with(&raw_root)
+            && !canon_normalized.starts_with(&canonical_root)
+            && !canon_normalized.starts_with(&raw_root)
+        {
             return Err(anyhow!(
-                "Path security violation: Path traversal detected. Target '{:?}' escapes root '{:?}'",
-                target,
-                root
+                "Path security violation: Path traversal detected. Target '{target:?}' escapes root '{root:?}'"
             ));
         }
     }
@@ -127,25 +198,34 @@ pub fn assert_within_root(root: &Path, target: &Path) -> Result<PathBuf> {
                 let root_prefix = if root_str.ends_with('\\') {
                     root_str
                 } else {
-                    format!("{}\\", root_str)
+                    format!("{root_str}\\")
+                };
+                let raw_root_str = strip_verbatim_prefix(root)
+                    .to_string_lossy()
+                    .to_lowercase()
+                    .replace('/', "\\");
+                let raw_prefix = if raw_root_str.ends_with('\\') {
+                    raw_root_str
+                } else {
+                    format!("{raw_root_str}\\")
                 };
                 if real_str != root_prefix.trim_end_matches('\\')
                     && !real_str.starts_with(&root_prefix)
+                    && real_str != raw_prefix.trim_end_matches('\\')
+                    && !real_str.starts_with(&raw_prefix)
                 {
                     return Err(anyhow!(
-                        "Path security violation: Symlink target '{:?}' escapes root '{:?}'",
-                        real_target,
-                        canonical_root
+                        "Path security violation: Symlink target '{real_target:?}' escapes root '{canonical_root:?}'"
                     ));
                 }
             }
             #[cfg(not(windows))]
             {
-                if !real_target.starts_with(&canonical_root) {
+                let raw_root = strip_verbatim_prefix(root);
+                if !real_target.starts_with(&canonical_root) && !real_target.starts_with(&raw_root)
+                {
                     return Err(anyhow!(
-                        "Path security violation: Symlink target '{:?}' escapes root '{:?}'",
-                        real_target,
-                        canonical_root
+                        "Path security violation: Symlink target '{real_target:?}' escapes root '{canonical_root:?}'"
                     ));
                 }
             }
@@ -159,15 +239,12 @@ pub fn assert_within_root(root: &Path, target: &Path) -> Result<PathBuf> {
 pub fn validate_git_revision(rev: &str, param_name: &str) -> Result<()> {
     if rev.is_empty() {
         return Err(anyhow!(
-            "Security Violation: Missing required git revision for {}",
-            param_name
+            "Security Violation: Missing required git revision for {param_name}"
         ));
     }
     if rev.starts_with('-') {
         return Err(anyhow!(
-            "Security Violation: Invalid {} git revision '{}': cannot start with hyphen (option injection)",
-            param_name,
-            rev
+            "Security Violation: Invalid {param_name} git revision '{rev}': cannot start with hyphen (option injection)"
         ));
     }
     if rev.contains(|c: char| {
@@ -184,9 +261,7 @@ pub fn validate_git_revision(rev: &str, param_name: &str) -> Result<()> {
             || c == '>'
     }) {
         return Err(anyhow!(
-            "Security Violation: Invalid {} git revision '{}': disallowed metacharacters",
-            param_name,
-            rev
+            "Security Violation: Invalid {param_name} git revision '{rev}': disallowed metacharacters"
         ));
     }
     Ok(())

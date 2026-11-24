@@ -79,9 +79,9 @@ pub fn resolve_context(repo_path: &str, target_file: Option<&str>) -> Result<Str
         target_file.unwrap_or("Global Workspace")
     ));
     if let Some(ext) = target_ext {
-        snapshot_lines.push(format!("Target Extension: .{}", ext));
+        snapshot_lines.push(format!("Target Extension: .{ext}"));
     }
-    snapshot_lines.push(format!("Active Governance Rules: {}", rules_matched));
+    snapshot_lines.push(format!("Active Governance Rules: {rules_matched}"));
 
     for rule in &rules {
         snapshot_lines.push(format!("--- Rule: {} ---", rule.name));
