@@ -8,6 +8,12 @@ const { assertWithinRoot } = require('../utils/path_containment');
 const { BlastRadiusEngine } = require('../../.agent/scripts/blast_radius_engine');
 const { paths } = require('./intent_context');
 
+function canonicalRealpath(targetPath) {
+  return typeof fs.realpathSync.native === 'function'
+    ? fs.realpathSync.native(targetPath)
+    : fs.realpathSync(targetPath);
+}
+
 /**
  * Capture bounded Git evidence. The optional architecture model must describe this snapshot.
  * @param {string} root
@@ -18,7 +24,7 @@ const { paths } = require('./intent_context');
 function collectWorkspaceEvidence(root, targets, topology = {}, deadline = Infinity) {
   let cwd;
   try {
-    cwd = fs.realpathSync(root);
+    cwd = canonicalRealpath(root);
   } catch {
     return null;
   }
@@ -52,8 +58,12 @@ function collectWorkspaceEvidence(root, targets, topology = {}, deadline = Infin
   ];
   const split = value => value.split('\0').filter(Boolean);
   try {
-    if (path.relative(cwd, fs.realpathSync(git(['rev-parse', '--show-toplevel']).trim())))
-      return null;
+    const toplevel = canonicalRealpath(git(['rev-parse', '--show-toplevel']).trim());
+    const mismatch =
+      process.platform === 'win32'
+        ? cwd.toLowerCase() !== toplevel.toLowerCase()
+        : path.relative(cwd, toplevel) !== '';
+    if (mismatch) return null;
     const baseDigest = git(['rev-parse', 'HEAD']).trim();
     const tracked = split(git(['diff', '--no-renames', '--name-only', '-z', 'HEAD', '--']));
     const untrackedArgs = ['ls-files', '--others', '--exclude-standard', '-z'];

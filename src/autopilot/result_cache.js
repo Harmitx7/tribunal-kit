@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const { createHash } = require('node:crypto');
 const { z } = require('zod');
 const { walkRepository } = require('../../.agent/scripts/architecture_extractor');
-const { assertWithinRoot } = require('../utils/path_containment');
+const { assertWithinRoot, resolveCanonicalRoot } = require('../utils/path_containment');
 const {
   computeCacheKey,
   computePayloadDigest,
@@ -60,7 +60,7 @@ function createResultCache(root, configuration) {
   let repositoryId;
   function key(capabilityId, targetScope, repoStateHash, sourceHash) {
     if (!sourceHash) return null;
-    repositoryId ||= computeRepositoryId(fs.realpathSync(root));
+    repositoryId ||= computeRepositoryId(resolveCanonicalRoot(root));
     return computeCacheKey({
       artifact_type: 'SAFE_DERIVED_METADATA',
       repository_id: repositoryId,

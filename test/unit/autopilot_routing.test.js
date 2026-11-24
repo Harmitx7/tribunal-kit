@@ -186,3 +186,62 @@ test('workspace adapter binds tracked and untracked evidence to Git state', () =
     fs.rmSync(repo, { recursive: true, force: true });
   }
 });
+
+test('workspace adapter normalizes Windows short paths and symlink aliases via native realpath', () => {
+  const base = fs.mkdtempSync(path.join(os.tmpdir(), 'autopilot-canonical-'));
+  const repo = path.join(base, 'repo');
+  const alias = path.join(base, 'alias-repo');
+  const git = (...args) => execFileSync('git', ['-C', repo, ...args], { stdio: 'ignore' });
+  try {
+    fs.mkdirSync(repo);
+    git('init');
+    fs.writeFileSync(path.join(repo, 'app.js'), 'module.exports = 1;\n');
+    git('add', '--', 'app.js');
+    git(
+      '-c',
+      'user.name=Fixture',
+      '-c',
+      'user.email=fixture@example.invalid',
+      '-c',
+      'commit.gpgsign=false',
+      'commit',
+      '-m',
+      'Fixture',
+    );
+    if (process.platform === 'win32') {
+      const lowerDriveRepo = repo[0].toLowerCase() + repo.slice(1);
+      expect(collectWorkspaceEvidence(lowerDriveRepo, ['app.js'])).toMatchObject({
+        fresh: true,
+        observedPaths: ['app.js'],
+      });
+    }
+    if (typeof fs.realpathSync.native === 'function') {
+      const nativeSpy = jest.spyOn(fs.realpathSync, 'native');
+      try {
+        expect(collectWorkspaceEvidence(repo, ['app.js'])).toMatchObject({
+          fresh: true,
+          observedPaths: ['app.js'],
+        });
+        expect(nativeSpy).toHaveBeenCalledWith(repo);
+        expect(nativeSpy.mock.calls.length).toBeGreaterThanOrEqual(2);
+      } finally {
+        nativeSpy.mockRestore();
+      }
+    }
+    let linked = false;
+    try {
+      fs.symlinkSync(repo, alias, process.platform === 'win32' ? 'junction' : 'dir');
+      linked = true;
+    } catch (err) {
+      if (err?.code !== 'EPERM') throw err;
+    }
+    if (linked) {
+      expect(collectWorkspaceEvidence(alias, ['app.js'])).toMatchObject({
+        fresh: true,
+        observedPaths: ['app.js'],
+      });
+    }
+  } finally {
+    fs.rmSync(base, { recursive: true, force: true });
+  }
+});
