@@ -1,10 +1,10 @@
 ---
 version: 2.0.0
-source_file: 'crates/core/src/commands/context_compress.rs'
-source_hash: 'e4fbcb117402c82b'
-interface_hash: '609c7c37428121cc'
-last_synced: '2026-10-31'
-domain_layer: 'Command / Dispatch Layer'
+source_file: "crates/core/src/commands/context_compress.rs"
+source_hash: "a9a3d4eb3954165d"
+interface_hash: "609c7c37428121cc"
+last_synced: "2026-11-24"
+domain_layer: "Command / Dispatch Layer"
 associated_skills:
   - rust-pro
   - context-engineering-pro
@@ -14,10 +14,8 @@ associated_tests:
 ---
 
 <!-- AI_QUICK_INJECT_START -->
-
 > [!TIP]
 > **AI Prompt Injection Card (Copy into future prompts touching this file):**
->
 > ```yaml
 > Target: crates/core/src/commands/context_compress.rs (Command / Dispatch Layer)
 > Role: Core logic for context_compress.rs.
@@ -25,31 +23,28 @@ associated_tests:
 > Inbound Callers: 12 active consumer sites.
 > Invariant Check: Verify test passing before merge: npm test
 > ```
-
 <!-- AI_QUICK_INJECT_END -->
 
 # 🧭 FILE DOSSIER: `context_compress.rs`
+`crates/core/src/commands/context_compress.rs` • **Command / Dispatch Layer** • **Hash:** `a9a3d4eb3954165d`
 
-`crates/core/src/commands/context_compress.rs` • **Command / Dispatch Layer** • **Hash:** `e4fbcb117402c82b`
-
-| Freshness                         | Blast Radius   | Exports Count | Test Coverage | Primary Callers                      |
-| :-------------------------------- | :------------- | :------------ | :------------ | :----------------------------------- |
-| 🟢 **Fresh** (`e4fbcb117402c82b`) | **12 Callers** | **1 Symbols** | ⚠️ Unlinked   | `.agent/scripts/guardrail_engine.js` |
+| Freshness | Blast Radius | Exports Count | Test Coverage | Primary Callers |
+| :--- | :--- | :--- | :--- | :--- |
+| 🟢 **Fresh** (`a9a3d4eb3954165d`) | **12 Callers** | **1 Symbols** | ⚠️ Unlinked | `.agent/scripts/guardrail_engine.js` |
 
 ---
 
 ## ⚡ 30-Second Mental Model
-
 > **Mission:** Implements command / dispatch layer responsibilities for `crates/core/src/commands/context_compress.rs`, exposing verified interfaces to callers while adhering to Tribunal safety standards.
 
 ---
 
 ## 📋 Public API & Type Contract Matrix
 
-| Symbol             | Kind       | Signature                                                                              | Location |
-| :----------------- | :--------- | :------------------------------------------------------------------------------------- | :------- |
-| `compress_context` | `function` | `pub fn compress_context(file_path: &str, max_lines: Option<usize>) -> Result<String>` | Line 16  |
-| `CompressResult`   | `struct`   | `pub struct CompressResult`                                                            | Line 7   |
+| Symbol | Kind | Signature | Location |
+| :--- | :--- | :--- | :--- |
+| `compress_context` | `function` | `pub fn compress_context(file_path: &str, max_lines: Option<usize>) -> Result<String>` | Line 16 |
+| `CompressResult` | `struct` | `pub struct CompressResult` | Line 7 |
 
 ---
 
@@ -87,21 +82,20 @@ graph LR
 ```
 
 ### Inbound Consumer Sites
-
-| Caller File                              | Line Snippet                                                                                           | Vector           |
-| :--------------------------------------- | :----------------------------------------------------------------------------------------------------- | :--------------- |
-| `.agent/scripts/guardrail_engine.js:509` | `const requiredMods = ['context_broker', 'dag_scheduler', 'context_compress'];`                        | Direct Import    |
-| `CHANGELOG.md:311`                       | `- **Context Ranking & Compression**: Upgraded `src/context/ranker.js`and`context_compress.context.`   | Symbol Reference |
-| `CHANGELOG.md:904`                       | `- **Native Context Compression Engine**: Developed `tribunal-core context-compress` (`crates/core/sr` | Symbol Reference |
-| `crates/core/src/commands/mod.rs:5`      | `pub mod context_compress;`                                                                            | Symbol Reference |
-| `crates/core/src/main.rs:631`            | `cmd_context_compress(&file, max_lines).await`                                                         | Symbol Reference |
-| `crates/core/src/main.rs:945`            | `async fn cmd_context_compress(file: &str, max_lines: Option<usize>) -> Result<()> {`                  | Symbol Reference |
-| `crates/core/src/main.rs:946`            | `match commands::context_compress::compress_context(file, max_lines) {`                                | Symbol Reference |
-| `test/unit/context_compiler.test.js:19`  | `const targetFile = path.resolve(__dirname, '../../crates/core/src/commands/context_compress.rs');`    | Symbol Reference |
-| `test/unit/context_compiler.test.js:118` | `const outPath = path.resolve(workspaceRoot, 'docs/context/context_compress.context.md');`             | Symbol Reference |
-| `test/unit/context_compiler.test.js:143` | `const targetFile = 'crates/core/src/commands/context_compress.rs';`                                   | Symbol Reference |
-| `.aider.conf.yml:25652`                  | `tk understand trace "compress_context"`                                                               | Symbol Reference |
-| `test/unit/context_compiler.test.js:32`  | `expect(exportNames).toContain('compress_context');`                                                   | Symbol Reference |
+| Caller File | Line Snippet | Vector |
+| :--- | :--- | :--- |
+| `.agent/scripts/guardrail_engine.js:504` | `const requiredMods = ['context_broker', 'dag_scheduler', 'context_compress'];` | Direct Import |
+| `CHANGELOG.md:326` | `- **Context Ranking & Compression**: Upgraded `src/context/ranker.js` and `context_compress.context.` | Symbol Reference |
+| `CHANGELOG.md:919` | `- **Native Context Compression Engine**: Developed `tribunal-core context-compress` (`crates/core/sr` | Symbol Reference |
+| `crates/core/src/commands/mod.rs:5` | `pub mod context_compress;` | Symbol Reference |
+| `crates/core/src/main.rs:631` | `cmd_context_compress(&file, max_lines).await` | Symbol Reference |
+| `crates/core/src/main.rs:945` | `async fn cmd_context_compress(file: &str, max_lines: Option<usize>) -> Result<()> {` | Symbol Reference |
+| `crates/core/src/main.rs:946` | `match commands::context_compress::compress_context(file, max_lines) {` | Symbol Reference |
+| `test/unit/context_compiler.test.js:19` | `const targetFile = path.resolve(__dirname, '../../crates/core/src/commands/context_compress.rs');` | Symbol Reference |
+| `test/unit/context_compiler.test.js:118` | `const outPath = path.resolve(workspaceRoot, 'docs/context/context_compress.context.md');` | Symbol Reference |
+| `test/unit/context_compiler.test.js:143` | `const targetFile = 'crates/core/src/commands/context_compress.rs';` | Symbol Reference |
+| `.agent/skills/codebase-intelligence/SKILL.md:139` | `tk understand trace "compress_context"` | Symbol Reference |
+| `test/unit/context_compiler.test.js:32` | `expect(exportNames).toContain('compress_context');` | Symbol Reference |
 
 ---
 
@@ -111,7 +105,7 @@ graph LR
 > **Line 58:** `if is_code && trimmed.starts_with("//") && !trimmed.contains("// VERIFY") {`
 
 > [!CAUTION]
-> **Line 116:** `writeln!(file, "  // VERIFY: keep this comment").unwrap();`
+> **Line 115:** `writeln!(file, "  // VERIFY: keep this comment").unwrap();`
 
 ---
 

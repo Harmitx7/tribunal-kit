@@ -29,11 +29,11 @@ jobs:
             artifact: tribunal-core-win-arm64.exe
             binary: tribunal-core.exe
           - target: x86_64-apple-darwin
-            os: macos-14
+            os: macos-latest
             artifact: tribunal-core-darwin-x64
             binary: tribunal-core
           - target: aarch64-apple-darwin
-            os: macos-14
+            os: macos-latest
             artifact: tribunal-core-darwin-arm64
             binary: tribunal-core
           - target: x86_64-unknown-linux-gnu
