@@ -19,7 +19,7 @@ impl ShimmerSpinner {
         let signal_clone = stop_signal.clone();
 
         if !caps.is_tty || !caps.has_color {
-            eprintln!("  · {} ({})", verb, details);
+            eprintln!("  · {verb} ({details})");
             return Self {
                 stop_signal,
                 handle: None,
@@ -47,15 +47,11 @@ impl ShimmerSpinner {
                 };
 
                 let dot = caps.color(Rgb::FLAME, "·");
-                let timer_text =
-                    caps.color(Rgb::ZINC_500, &format!("({:.1}s · {})", elapsed, details));
+                let timer_text = caps.color(Rgb::ZINC_500, &format!("({elapsed:.1}s · {details})"));
                 let spin_colored = caps.color(Rgb::FLAME, spinner_char);
 
                 // Clear current line and write in-place
-                eprint!(
-                    "\r\x1b[2K  {} {} {} {}",
-                    dot, spin_colored, shimmer_verb, timer_text
-                );
+                eprint!("\r\x1b[2K  {dot} {spin_colored} {shimmer_verb} {timer_text}");
                 let _ = io::stderr().flush();
 
                 frame = frame.wrapping_add(1);
@@ -103,7 +99,7 @@ fn render_shimmer_text(text: &str, frame: usize) -> String {
         let g = (105.0 + intensity * 123.0) as u8;
         let b = (74.0 + intensity * 140.0) as u8;
 
-        out.push_str(&format!("\x1b[38;2;{};{};{}m\x1b[1m{}\x1b[0m", r, g, b, c));
+        out.push_str(&format!("\x1b[38;2;{r};{g};{b}m\x1b[1m{c}\x1b[0m"));
     }
 
     out

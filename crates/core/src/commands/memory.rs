@@ -131,7 +131,7 @@ fn now_iso8601() -> String {
     let secs = duration.as_secs();
     // Simple UTC timestamp: seconds since epoch → readable format
     // For a production system you'd use chrono, but we avoid the dependency
-    format!("{}Z", secs)
+    format!("{secs}Z")
 }
 
 fn epoch_secs_from_iso(ts: &str) -> u64 {
@@ -561,8 +561,7 @@ pub fn generate_projection(index: &MemoryIndex) -> String {
         .count();
 
     md.push_str(&format!(
-        "> Entries: {} | Semantic: {} | Procedural: {} | Episodic: {} | Working: {}\n\n",
-        total, semantic_count, procedural_count, episodic_count, working_count
+        "> Entries: {total} | Semantic: {semantic_count} | Procedural: {procedural_count} | Episodic: {episodic_count} | Working: {working_count}\n\n"
     ));
 
     // SEMANTIC section
@@ -756,14 +755,12 @@ mod tests {
     fn test_all_four_types_accepted() {
         for type_str in &["episodic", "semantic", "procedural", "working"] {
             let json = format!(
-                r#"{{"id":1,"memory_type":"{}","content":"test","tags":[],"created_at":"0Z","last_accessed":"0Z","access_count":0,"token_estimate":1,"source":"manual"}}"#,
-                type_str
+                r#"{{"id":1,"memory_type":"{type_str}","content":"test","tags":[],"created_at":"0Z","last_accessed":"0Z","access_count":0,"token_estimate":1,"source":"manual"}}"#
             );
             let result: Result<MemoryEntry, _> = serde_json::from_str(&json);
             assert!(
                 result.is_ok(),
-                "Memory type '{}' should be accepted",
-                type_str
+                "Memory type '{type_str}' should be accepted"
             );
         }
     }
@@ -778,8 +775,7 @@ mod tests {
         let est = estimate_tokens(text);
         assert!(
             est > 10 && est < 25,
-            "Token estimate {} should be between 10 and 25",
-            est
+            "Token estimate {est} should be between 10 and 25"
         );
     }
 
@@ -817,7 +813,7 @@ mod tests {
             store_entry(
                 &mut index,
                 MemoryType::Semantic,
-                format!("Memory about database number {}", i),
+                format!("Memory about database number {i}"),
                 vec!["database".to_string()],
                 MemorySource::Manual,
                 None,
@@ -891,9 +887,7 @@ mod tests {
 
         assert!(
             s_score > w_score,
-            "Semantic ({}) should score higher than Working ({})",
-            s_score,
-            w_score
+            "Semantic ({s_score}) should score higher than Working ({w_score})"
         );
     }
 

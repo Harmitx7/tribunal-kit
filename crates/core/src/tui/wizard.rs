@@ -22,7 +22,7 @@ impl<'a> WizardPrompt<'a> {
         let g = self.caps.glyphs();
         let prefix = self.caps.color(Rgb::AMBER, "?");
         let bold_q = self.caps.bold(question);
-        eprintln!("  {} {}", prefix, bold_q);
+        eprintln!("  {prefix} {bold_q}");
 
         for opt in options {
             let check = if opt.selected {
@@ -39,7 +39,7 @@ impl<'a> WizardPrompt<'a> {
 
             let detail_colored = self.caps.color(Rgb::ZINC_600, opt.detail);
 
-            eprintln!("    {} {} {}", check, label_colored, detail_colored);
+            eprintln!("    {check} {label_colored} {detail_colored}");
         }
 
         let hint = "[Space] Toggle · [Enter] Confirm · [A] Select All";

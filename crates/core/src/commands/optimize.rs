@@ -94,7 +94,7 @@ pub fn optimize_skill_step(skill_path: &str, edits_json: &str, budget: u32) -> R
 
     let base_skill_content = if path.exists() {
         fs::read_to_string(path)
-            .with_context(|| format!("Failed to read skill file: {}", skill_path))?
+            .with_context(|| format!("Failed to read skill file: {skill_path}"))?
     } else {
         String::new()
     };
@@ -244,7 +244,7 @@ pub fn optimize_skill_step(skill_path: &str, edits_json: &str, budget: u32) -> R
 
     if applied_count > 0 {
         fs::write(path, &final_content)
-            .with_context(|| format!("Failed to write updated skill file to {}", skill_path))?;
+            .with_context(|| format!("Failed to write updated skill file to {skill_path}"))?;
     }
 
     let report_json = serde_json::json!({

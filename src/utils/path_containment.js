@@ -454,12 +454,43 @@ function assertWithinRoot(root, targetPath, options = {}) {
 
   const resolvedRoot = path.resolve(root);
   const resolvedTarget = path.resolve(resolvedRoot, targetPath);
+  const canonicalRoot = resolveCanonicalRoot(resolvedRoot);
+
+  let isContained =
+    isPathContained(resolvedRoot, resolvedTarget, { allowRoot: true }) ||
+    isPathContained(canonicalRoot, resolvedTarget, { allowRoot: true });
+
+  if (!isContained) {
+    try {
+      let canonicalTarget = null;
+      if (fs.existsSync(resolvedTarget)) {
+        canonicalTarget =
+          typeof fs.realpathSync.native === 'function'
+            ? fs.realpathSync.native(resolvedTarget)
+            : fs.realpathSync(resolvedTarget);
+      } else {
+        const parentDir = path.dirname(resolvedTarget);
+        if (fs.existsSync(parentDir)) {
+          const canonicalParent =
+            typeof fs.realpathSync.native === 'function'
+              ? fs.realpathSync.native(parentDir)
+              : fs.realpathSync(parentDir);
+          canonicalTarget = path.join(canonicalParent, path.basename(resolvedTarget));
+        }
+      }
+
+      if (
+        canonicalTarget &&
+        (isPathContained(resolvedRoot, canonicalTarget, { allowRoot: true }) ||
+          isPathContained(canonicalRoot, canonicalTarget, { allowRoot: true }))
+      ) {
+        isContained = true;
+      }
+    } catch (_) {}
+  }
 
   // Use centralized lexical containment
-  if (
-    !isPathContained(resolvedRoot, resolvedTarget, { allowRoot: true }) &&
-    !isPathContained(resolveCanonicalRoot(resolvedRoot), resolvedTarget, { allowRoot: true })
-  ) {
+  if (!isContained) {
     throw new Error(
       `Path security violation: Security Violation: Path traversal detected. Target "${targetPath}" escapes authorized root "${root}".`,
     );

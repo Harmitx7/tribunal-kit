@@ -6,7 +6,7 @@ use std::path::Path;
 pub fn pollinate_skills(skills_dir: &str) -> Result<String> {
     let dir = Path::new(skills_dir);
     if !dir.exists() || !dir.is_dir() {
-        anyhow::bail!("Skills directory not found: {}", skills_dir);
+        anyhow::bail!("Skills directory not found: {skills_dir}");
     }
 
     // Map of domain -> list of traps
@@ -61,10 +61,8 @@ pub fn pollinate_skills(skills_dir: &str) -> Result<String> {
                             updated_content.push('\n');
                         }
                         updated_content.push_str("\n## Epistemic Traps\n\n");
-                    } else {
-                        if !updated_content.ends_with('\n') {
-                            updated_content.push('\n');
-                        }
+                    } else if !updated_content.ends_with('\n') {
+                        updated_content.push('\n');
                     }
 
                     for trap in new_traps.iter() {

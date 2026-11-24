@@ -208,7 +208,7 @@ fn compute_coverage(body: &str) -> (f64, Vec<String>) {
         if body_lower.contains(CRITICAL_SECTIONS_LOWER[idx]) {
             found += 1;
         } else {
-            missing.push(format!("Missing section: {}", section));
+            missing.push(format!("Missing section: {section}"));
         }
     }
 
@@ -317,7 +317,7 @@ fn compute_section_depth(body: &str) -> f64 {
 pub fn score_skill(skill_path: &str) -> Result<String> {
     let path = Path::new(skill_path);
     let content = fs::read_to_string(path)
-        .with_context(|| format!("Failed to read skill file: {}", skill_path))?;
+        .with_context(|| format!("Failed to read skill file: {skill_path}"))?;
 
     let skill_name = path
         .parent()
@@ -388,7 +388,7 @@ pub fn score_skill_content(skill_name: &str, content: &str) -> FitnessReport {
 pub fn score_all_skills(skills_dir: &str, repo_path: &str) -> Result<String> {
     let skills_path = Path::new(skills_dir);
     if !skills_path.exists() || !skills_path.is_dir() {
-        anyhow::bail!("Skills directory not found: {}", skills_dir);
+        anyhow::bail!("Skills directory not found: {skills_dir}");
     }
 
     let mut reports: Vec<FitnessReport> = Vec::new();
@@ -396,7 +396,7 @@ pub fn score_all_skills(skills_dir: &str, repo_path: &str) -> Result<String> {
 
     // Phase 1: Read all skills and group by domain
     let entries = fs::read_dir(skills_path)
-        .with_context(|| format!("Failed to read skills directory: {}", skills_dir))?;
+        .with_context(|| format!("Failed to read skills directory: {skills_dir}"))?;
 
     for entry in entries.flatten() {
         if !entry.path().is_dir() {
@@ -456,7 +456,7 @@ pub fn score_all_skills(skills_dir: &str, repo_path: &str) -> Result<String> {
                 recommendations.push("Low trap density: Add LLM anti-pattern traps".to_string());
             }
             if dedup_score < 0.3 {
-                recommendations.push(format!("High duplication detected in domain '{}'", domain));
+                recommendations.push(format!("High duplication detected in domain '{domain}'"));
             }
 
             let composite_fitness = 0.25 * coverage_score

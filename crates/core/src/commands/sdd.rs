@@ -37,20 +37,20 @@ pub fn find_repo_root() -> Result<PathBuf> {
 pub fn sdd_workspace(plan_file: &str) -> Result<PathBuf> {
     let plan_path = Path::new(plan_file);
     if !plan_path.exists() {
-        return Err(anyhow!("No such plan file: {}", plan_file));
+        return Err(anyhow!("No such plan file: {plan_file}"));
     }
 
     let file_stem = plan_path
         .file_stem()
         .and_then(|s| s.to_str())
-        .ok_or_else(|| anyhow!("Cannot derive workspace name from: {}", plan_file))?;
+        .ok_or_else(|| anyhow!("Cannot derive workspace name from: {plan_file}"))?;
 
     let repo_root = find_repo_root()?;
     let base = repo_root.join(".tribunal").join("sdd");
     let workspace = base.join(file_stem);
 
     fs::create_dir_all(&workspace)
-        .with_context(|| format!("Failed to create workspace at {:?}", workspace))?;
+        .with_context(|| format!("Failed to create workspace at {workspace:?}"))?;
 
     // Self-ignoring gitignore in .tribunal/sdd so plans never leak to git status
     let gitignore_path = base.join(".gitignore");
@@ -62,7 +62,7 @@ pub fn sdd_workspace(plan_file: &str) -> Result<PathBuf> {
 }
 
 fn is_matching_task_heading(heading_text: &str, task_num: u32) -> bool {
-    let prefix = format!("task {}", task_num);
+    let prefix = format!("task {task_num}");
     let lower = heading_text.to_lowercase();
     if lower == prefix {
         return true;
@@ -84,9 +84,7 @@ fn resolve_safe_out_file(plan_path: &Path, out_file: &str) -> Result<PathBuf> {
     match crate::commands::security::assert_within_root(&repo_root, target) {
         Ok(resolved) => Ok(resolved),
         Err(e) => {
-            if plan_dir.exists()
-                && crate::commands::security::assert_within_root(plan_dir, target).is_ok()
-            {
+            if plan_dir.exists() {
                 crate::commands::security::assert_within_root(plan_dir, target)
             } else {
                 Err(e)
@@ -99,17 +97,17 @@ fn resolve_safe_out_file(plan_path: &Path, out_file: &str) -> Result<PathBuf> {
 pub fn sdd_brief(plan_file: &str, task_num: u32, out_file: Option<&str>) -> Result<PathBuf> {
     let plan_path = Path::new(plan_file);
     if !plan_path.exists() {
-        return Err(anyhow!("Plan file not found: {}", plan_file));
+        return Err(anyhow!("Plan file not found: {plan_file}"));
     }
 
     let content = fs::read_to_string(plan_path)
-        .with_context(|| format!("Failed to read plan file: {}", plan_file))?;
+        .with_context(|| format!("Failed to read plan file: {plan_file}"))?;
 
     let target_out = match out_file {
         Some(path) => resolve_safe_out_file(plan_path, path)?,
         None => {
             let ws = sdd_workspace(plan_file)?;
-            ws.join(format!("task-{}-brief.md", task_num))
+            ws.join(format!("task-{task_num}-brief.md"))
         }
     };
 
@@ -143,10 +141,7 @@ pub fn sdd_brief(plan_file: &str, task_num: u32, out_file: Option<&str>) -> Resu
 
     if extracted_lines.is_empty() {
         return Err(anyhow!(
-            "Task {} not found in {} (no heading matching 'Task {}')",
-            task_num,
-            plan_file,
-            task_num
+            "Task {task_num} not found in {plan_file} (no heading matching 'Task {task_num}')"
         ));
     }
 
@@ -156,7 +151,7 @@ pub fn sdd_brief(plan_file: &str, task_num: u32, out_file: Option<&str>) -> Resu
     }
 
     fs::write(&target_out, &brief_content)
-        .with_context(|| format!("Failed to write task brief to {:?}", target_out))?;
+        .with_context(|| format!("Failed to write task brief to {target_out:?}"))?;
 
     Ok(target_out)
 }
@@ -175,7 +170,7 @@ pub fn sdd_diff(
             let ws = sdd_workspace(plan_file)?;
             let short_base = if base.len() > 7 { &base[..7] } else { base };
             let short_head = if head.len() > 7 { &head[..7] } else { head };
-            ws.join(format!("review-{}..{}.diff", short_base, short_head))
+            ws.join(format!("review-{short_base}..{short_head}.diff"))
         }
     };
 
@@ -189,12 +184,12 @@ pub fn sdd_diff(
             "--verify",
             "--quiet",
             "--",
-            &format!("{}^{{commit}}", base),
+            &format!("{base}^{{commit}}"),
         ])
         .output()
         .context("Failed to run git rev-parse for base")?;
     if !verify_base.status.success() {
-        return Err(anyhow!("Invalid BASE git revision: {}", base));
+        return Err(anyhow!("Invalid BASE git revision: {base}"));
     }
 
     let verify_head = Command::new("git")
@@ -203,16 +198,16 @@ pub fn sdd_diff(
             "--verify",
             "--quiet",
             "--",
-            &format!("{}^{{commit}}", head),
+            &format!("{head}^{{commit}}"),
         ])
         .output()
         .context("Failed to run git rev-parse for head")?;
     if !verify_head.status.success() {
-        return Err(anyhow!("Invalid HEAD git revision: {}", head));
+        return Err(anyhow!("Invalid HEAD git revision: {head}"));
     }
 
     // git log --oneline -- base..head
-    let range = format!("{}..{}", base, head);
+    let range = format!("{base}..{head}");
     let log_out = Command::new("git")
         .args(["log", "--oneline", "--", &range])
         .output()
@@ -234,8 +229,7 @@ pub fn sdd_diff(
     let diff_str = String::from_utf8_lossy(&diff_out.stdout);
 
     let package = format!(
-        "# Review package: {}..{}\n\n## Commits\n{}\n\n## Files changed\n{}\n\n## Diff\n{}\n",
-        base, head, log_str, stat_str, diff_str
+        "# Review package: {base}..{head}\n\n## Commits\n{log_str}\n\n## Files changed\n{stat_str}\n\n## Diff\n{diff_str}\n"
     );
 
     if let Some(parent) = target_out.parent() {
@@ -243,7 +237,7 @@ pub fn sdd_diff(
     }
 
     fs::write(&target_out, &package)
-        .with_context(|| format!("Failed to write review package to {:?}", target_out))?;
+        .with_context(|| format!("Failed to write review package to {target_out:?}"))?;
 
     Ok(target_out)
 }

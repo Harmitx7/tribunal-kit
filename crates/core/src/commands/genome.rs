@@ -20,9 +20,7 @@ pub fn generate_genome_svg(skills_dir: &str, repo_path: &str) -> Result<String> 
 
     let mut svg = String::new();
     svg.push_str(&format!(
-        r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}" style="background-color: #0f172a; font-family: sans-serif;">"#,
-        width = svg_width,
-        height = svg_height
+        r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {svg_width} {svg_height}" width="{svg_width}" height="{svg_height}" style="background-color: #0f172a; font-family: sans-serif;">"#
     ));
 
     svg.push_str(r##"
@@ -55,8 +53,7 @@ pub fn generate_genome_svg(skills_dir: &str, repo_path: &str) -> Result<String> 
         for target in &node.co_requires {
             if let Some(&(x2, y2)) = node_positions.get(target) {
                 svg.push_str(&format!(
-                    r##"<line x1="{}" y1="{}" x2="{}" y2="{}" stroke="#334155" stroke-width="1.5" marker-end="url(#arrowhead)" opacity="0.6" />"##,
-                    x1, y1, x2, y2
+                    r##"<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#334155" stroke-width="1.5" marker-end="url(#arrowhead)" opacity="0.6" />"##
                 ));
             }
         }
@@ -65,8 +62,7 @@ pub fn generate_genome_svg(skills_dir: &str, repo_path: &str) -> Result<String> 
         if let Some(target) = &node.supersedes {
             if let Some(&(x2, y2)) = node_positions.get(target) {
                 svg.push_str(&format!(
-                    r##"<line x1="{}" y1="{}" x2="{}" y2="{}" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)" opacity="0.8" />"##,
-                    x1, y1, x2, y2
+                    r##"<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead)" opacity="0.8" />"##
                 ));
             }
         }
@@ -75,8 +71,7 @@ pub fn generate_genome_svg(skills_dir: &str, repo_path: &str) -> Result<String> 
         for target in &node.conflicts_with {
             if let Some(&(x2, y2)) = node_positions.get(target) {
                 svg.push_str(&format!(
-                    r##"<line x1="{}" y1="{}" x2="{}" y2="{}" stroke="#ef4444" stroke-width="1" opacity="0.5" />"##,
-                    x1, y1, x2, y2
+                    r##"<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#ef4444" stroke-width="1" opacity="0.5" />"##
                 ));
             }
         }
@@ -99,8 +94,7 @@ pub fn generate_genome_svg(skills_dir: &str, repo_path: &str) -> Result<String> 
         };
 
         svg.push_str(&format!(
-            r##"<circle cx="{}" cy="{}" r="6" fill="{}" stroke="#1e293b" stroke-width="2" />"##,
-            x, y, color
+            r##"<circle cx="{x}" cy="{y}" r="6" fill="{color}" stroke="#1e293b" stroke-width="2" />"##
         ));
 
         // Label

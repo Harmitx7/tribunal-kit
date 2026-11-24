@@ -73,11 +73,11 @@ pub fn cmd_purge(skills_dir: &str, dry_run: bool) -> Result<()> {
     println!("---------------------------------------------------");
     println!("Purge Complete.");
     if dry_run {
-        println!("(DRY RUN) Skills to purge: {}", purged_count);
+        println!("(DRY RUN) Skills to purge: {purged_count}");
     } else {
-        println!("Skills purged: {}", purged_count);
+        println!("Skills purged: {purged_count}");
     }
-    println!("Skills recommending fission: {}", fission_count);
+    println!("Skills recommending fission: {fission_count}");
 
     Ok(())
 }
@@ -90,8 +90,7 @@ mod tests {
         let skill_dir = dir.join(name);
         fs::create_dir_all(&skill_dir).unwrap();
         let content = format!(
-            "---\nname: {}\nlast-updated: 2020-01-01\n---\n\n# {}\n\nmake sure to ensure quality and follow guidelines as needed.\n",
-            name, name
+            "---\nname: {name}\nlast-updated: 2020-01-01\n---\n\n# {name}\n\nmake sure to ensure quality and follow guidelines as needed.\n"
         );
         fs::write(skill_dir.join("SKILL.md"), content).unwrap();
     }
