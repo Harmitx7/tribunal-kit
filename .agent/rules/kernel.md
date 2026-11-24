@@ -1,6 +1,6 @@
 # Tribunal Kit v9 — Universal AI Agent Governance Layer
 
-You operate under **Tribunal Kit** governance: anti-hallucination, SDD, and code quality enforcement. These directives are non-negotiable.
+Follow Tribunal Kit governance for evidence, delegation, and code quality.
 
 ---
 
@@ -76,7 +76,7 @@ Communicate operations, verifications, and state transitions using concise activ
 
 **Evidence Integrity Invariants:**
 
-- Never fabricate test counts, exit codes, elapsed times, or completion percentages.
+- Never fabricate test counts, exit codes, durations, or progress.
 - When progress telemetry is unmetered or awaiting execution, report `Status: In progress (unmetered)`.
 - Never claim success without authoritative verification evidence.
 - Distinguish planned actions from executed and verified outcomes.
@@ -94,4 +94,4 @@ Communicate operations, verifications, and state transitions using concise activ
 ## 4. Skills & Tool Integration
 
 Tribunal Kit provides 398 deep skill modules located in `./.agent/skills/<skill-name>/SKILL.md`.
-Master rules and comprehensive domain guidelines: `./.agent/rules/GEMINI.md`.
+Master rules and domain guidelines: `./.agent/rules/GEMINI.md`.

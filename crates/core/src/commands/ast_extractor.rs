@@ -39,7 +39,7 @@ pub struct AstExtractionResult {
 pub fn extract_ast(file_path: &str) -> Result<String> {
     let path = Path::new(file_path);
     if !path.exists() || !path.is_file() {
-        anyhow::bail!("File not found: {}", file_path);
+        anyhow::bail!("File not found: {file_path}");
     }
 
     let source_text = fs::read_to_string(path).context("Failed to read file")?;

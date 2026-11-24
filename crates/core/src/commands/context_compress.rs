@@ -16,7 +16,7 @@ pub struct CompressResult {
 pub fn compress_context(file_path: &str, max_lines: Option<usize>) -> Result<String> {
     let path = Path::new(file_path);
     let raw_content = fs::read_to_string(path)
-        .with_context(|| format!("Failed to read file for compression: {}", file_path))?;
+        .with_context(|| format!("Failed to read file for compression: {file_path}"))?;
 
     let original_bytes = raw_content.len();
     let is_code = path.extension().is_some_and(|ext| {
@@ -67,8 +67,7 @@ pub fn compress_context(file_path: &str, max_lines: Option<usize>) -> Result<Str
             let omitted = lines.len() - limit;
             lines.truncate(limit);
             lines.push(format!(
-                "// ... [Truncated {} lines for agent context optimization]",
-                omitted
+                "// ... [Truncated {omitted} lines for agent context optimization]"
             ));
         }
     }
@@ -136,7 +135,7 @@ mod tests {
         ));
         let mut file = File::create(&file_path).unwrap();
         for i in 1..=20 {
-            writeln!(file, "Line {}", i).unwrap();
+            writeln!(file, "Line {i}").unwrap();
         }
         drop(file);
 

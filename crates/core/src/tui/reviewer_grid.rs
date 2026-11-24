@@ -91,14 +91,14 @@ pub fn render_reviewer_grid(caps: &TermCaps, completed_count: usize) {
                 caps.color(Rgb::ZINC_500, name)
             };
 
-            let item_str = format!("{} {}", icon, name_colored);
+            let item_str = format!("{icon} {name_colored}");
             let raw_len = 2 + name.chars().count();
             let pad = col_width.saturating_sub(raw_len);
 
             line.push_str(&item_str);
             line.push_str(&" ".repeat(pad));
         }
-        eprintln!("{}", line);
+        eprintln!("{line}");
     }
 
     eprintln!(

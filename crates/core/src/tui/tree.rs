@@ -32,12 +32,9 @@ impl<'a> ActionTree<'a> {
             let open_paren = self.caps.color(Rgb::ZINC_600, "(");
             let colored_target = self.caps.color(Rgb::CYAN, t);
             let close_paren = self.caps.color(Rgb::ZINC_600, ")");
-            eprintln!(
-                "  {} {}{}{}{}",
-                bullet, colored_verb, open_paren, colored_target, close_paren
-            );
+            eprintln!("  {bullet} {colored_verb}{open_paren}{colored_target}{close_paren}");
         } else {
-            eprintln!("  {} {}", bullet, colored_verb);
+            eprintln!("  {bullet} {colored_verb}");
         }
 
         if self.stagger_ms > 0 {
@@ -50,7 +47,7 @@ impl<'a> ActionTree<'a> {
         let g = self.caps.glyphs();
         let branch_glyph = self.caps.color(Rgb::ZINC_600, g.branch);
         let colored_msg = self.caps.color(Rgb::ZINC_400, message);
-        eprintln!("    {} {}", branch_glyph, colored_msg);
+        eprintln!("    {branch_glyph} {colored_msg}");
 
         if self.stagger_ms > 0 {
             thread::sleep(Duration::from_millis(self.stagger_ms));
@@ -65,9 +62,9 @@ impl<'a> ActionTree<'a> {
 
         if let Some(d) = detail {
             let colored_detail = self.caps.color(Rgb::ZINC_500, d);
-            eprintln!("    {} {} {}", check, colored_title, colored_detail);
+            eprintln!("    {check} {colored_title} {colored_detail}");
         } else {
-            eprintln!("    {} {}", check, colored_title);
+            eprintln!("    {check} {colored_title}");
         }
 
         if self.stagger_ms > 0 {
@@ -80,7 +77,7 @@ impl<'a> ActionTree<'a> {
         let g = self.caps.glyphs();
         let warn = self.caps.color(Rgb::AMBER, g.warning);
         let colored_msg = self.caps.color(Rgb::AMBER, message);
-        eprintln!("    {} {}", warn, colored_msg);
+        eprintln!("    {warn} {colored_msg}");
     }
 
     /// Print error item: ✖ Message
@@ -88,7 +85,7 @@ impl<'a> ActionTree<'a> {
         let g = self.caps.glyphs();
         let err = self.caps.color(Rgb::ROSE, g.failure);
         let colored_msg = self.caps.color(Rgb::ROSE, message);
-        eprintln!("    {} {}", err, colored_msg);
+        eprintln!("    {err} {colored_msg}");
     }
 
     /// Print completion message: ✔ Summary
@@ -98,7 +95,7 @@ impl<'a> ActionTree<'a> {
         let bold_msg = self.caps.bold(message);
         let colored = self.caps.color(Rgb::WHITE, &bold_msg);
         eprintln!();
-        eprintln!("  {} {}", check, colored);
+        eprintln!("  {check} {colored}");
         eprintln!();
     }
 }

@@ -63,9 +63,8 @@ pub struct TelemetrySummary {
 fn ensure_telemetry_dir(repo_path: &str) -> Result<std::path::PathBuf> {
     let telemetry_dir = Path::new(repo_path).join(".tribunal").join("telemetry");
     if !telemetry_dir.exists() {
-        fs::create_dir_all(&telemetry_dir).with_context(|| {
-            format!("Failed to create telemetry directory: {:?}", telemetry_dir)
-        })?;
+        fs::create_dir_all(&telemetry_dir)
+            .with_context(|| format!("Failed to create telemetry directory: {telemetry_dir:?}"))?;
     }
     Ok(telemetry_dir)
 }
@@ -89,10 +88,10 @@ pub fn record_dispatch(event_json: &str, repo_path: &str) -> Result<String> {
         .create(true)
         .append(true)
         .open(&log_path)
-        .with_context(|| format!("Failed to open dispatch log: {:?}", log_path))?;
+        .with_context(|| format!("Failed to open dispatch log: {log_path:?}"))?;
 
     let line = serde_json::to_string(&event)?;
-    writeln!(file, "{}", line)?;
+    writeln!(file, "{line}")?;
 
     let result = serde_json::json!({
         "success": true,
@@ -126,7 +125,7 @@ pub fn summarize_telemetry(repo_path: &str) -> Result<String> {
     }
 
     let file = fs::File::open(&log_path)
-        .with_context(|| format!("Failed to open dispatch log: {:?}", log_path))?;
+        .with_context(|| format!("Failed to open dispatch log: {log_path:?}"))?;
     let reader = std::io::BufReader::new(file);
 
     let mut events: Vec<DispatchEvent> = Vec::new();

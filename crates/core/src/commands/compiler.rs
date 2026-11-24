@@ -39,13 +39,13 @@ pub fn cmd_compile(skills_dir: &str, target_skills_raw: &str) -> Result<()> {
     }
 
     // Output the YAML to stdout
-    println!("{}", compiled_yaml);
+    println!("{compiled_yaml}");
 
     Ok(())
 }
 
 fn compress_skill_markdown(markdown: &str, skill_name: &str) -> String {
-    let mut out = format!("    - name: {}\n", skill_name);
+    let mut out = format!("    - name: {skill_name}\n");
 
     let mut in_traps = false;
     let mut in_rules = false;
@@ -81,14 +81,14 @@ fn compress_skill_markdown(markdown: &str, skill_name: &str) -> String {
         if in_traps {
             if trimmed.starts_with("- ❌") || trimmed.starts_with("- ") {
                 let clean = trimmed.trim_start_matches("- ").replace("\"", "\\\"");
-                traps_block.push_str(&format!("        - \"{}\"\n", clean));
+                traps_block.push_str(&format!("        - \"{clean}\"\n"));
                 has_traps = true;
             }
         } else if in_rules
             && (trimmed.starts_with(|c: char| c.is_ascii_digit()) || trimmed.starts_with("- "))
         {
             let clean = trimmed.replace("\"", "\\\"");
-            rules_block.push_str(&format!("        - \"{}\"\n", clean));
+            rules_block.push_str(&format!("        - \"{clean}\"\n"));
             has_rules = true;
         }
     }

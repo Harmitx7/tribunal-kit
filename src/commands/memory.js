@@ -32,6 +32,7 @@ const MAX_ENTRIES = 500;
 const EPISODIC_TTL_DAYS = 30;
 
 function acquireLock(agentDest) {
+  fs_1.default.mkdirSync(getMemoryDir(agentDest), { recursive: true });
   const lockPath = getIndexPath(agentDest) + '.lock';
   const maxRetries = 10;
   for (let i = 0; i < maxRetries; i++) {

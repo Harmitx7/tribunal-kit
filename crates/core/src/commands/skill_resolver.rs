@@ -209,7 +209,7 @@ fn detect_domain_from_name(name: &str) -> String {
 pub fn build_skill_graph_internal(skills_dir: &str) -> Result<SkillGraph> {
     let skills_path = Path::new(skills_dir);
     if !skills_path.exists() || !skills_path.is_dir() {
-        anyhow::bail!("Skills directory not found: {}", skills_dir);
+        anyhow::bail!("Skills directory not found: {skills_dir}");
     }
 
     let mut nodes: Vec<SkillNode> = Vec::new();
@@ -218,7 +218,7 @@ pub fn build_skill_graph_internal(skills_dir: &str) -> Result<SkillGraph> {
     let mut edges_conflicts = 0usize;
 
     let entries = fs::read_dir(skills_path)
-        .with_context(|| format!("Failed to read skills directory: {}", skills_dir))?;
+        .with_context(|| format!("Failed to read skills directory: {skills_dir}"))?;
 
     for entry in entries.flatten() {
         if !entry.path().is_dir() {
@@ -287,7 +287,7 @@ pub fn resolve_skills(skills_dir: &str, requested_skills: &[String]) -> Result<S
         if let Some(pro_skill) = supersedes_map.get(skill) {
             // A pro skill supersedes this basic one
             if node_map.contains_key(pro_skill) {
-                superseded.push(format!("{} → superseded by {}", skill, pro_skill));
+                superseded.push(format!("{skill} → superseded by {pro_skill}"));
                 effective_requests.push(pro_skill.clone());
                 continue;
             }
@@ -310,7 +310,7 @@ pub fn resolve_skills(skills_dir: &str, requested_skills: &[String]) -> Result<S
                 let target_dep = if let Some(pro) = supersedes_map.get(dep) {
                     if node_map.contains_key(pro) {
                         if !superseded.iter().any(|s| s.starts_with(dep)) {
-                            superseded.push(format!("{} → superseded by {}", dep, pro));
+                            superseded.push(format!("{dep} → superseded by {pro}"));
                         }
                         pro
                     } else {
@@ -371,10 +371,7 @@ mod tests {
     fn create_skill(dir: &Path, name: &str, frontmatter: &str) {
         let skill_dir = dir.join(name);
         fs::create_dir_all(&skill_dir).unwrap();
-        let content = format!(
-            "---\n{}\n---\n\n# {}\n\nSome content here.\n",
-            frontmatter, name
-        );
+        let content = format!("---\n{frontmatter}\n---\n\n# {name}\n\nSome content here.\n");
         fs::write(skill_dir.join("SKILL.md"), content).unwrap();
     }
 

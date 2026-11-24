@@ -164,7 +164,7 @@ impl TermCaps {
             format!("{}{}\x1b[0m", rgb.to_fg_ansi(), text)
         } else {
             // Basic 16-color ANSI fallback
-            format!("\x1b[96m{}\x1b[0m", text)
+            format!("\x1b[96m{text}\x1b[0m")
         }
     }
 
@@ -172,7 +172,7 @@ impl TermCaps {
         if !self.has_color {
             text.to_string()
         } else {
-            format!("\x1b[1m{}\x1b[0m", text)
+            format!("\x1b[1m{text}\x1b[0m")
         }
     }
 
@@ -180,7 +180,7 @@ impl TermCaps {
         if !self.has_color {
             text.to_string()
         } else {
-            format!("\x1b[90m{}\x1b[0m", text)
+            format!("\x1b[90m{text}\x1b[0m")
         }
     }
 }

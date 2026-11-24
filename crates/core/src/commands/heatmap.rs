@@ -103,7 +103,7 @@ mod tests {
         let event2 = r#"{"timestamp":"2026-10-25T10:01:00Z","agent_name":"backend-specialist","outcome":"FAILED","duration_ms":180}"#;
         fs::write(
             telemetry_dir.join("dispatch.jsonl"),
-            format!("{}\n{}\n", event1, event2),
+            format!("{event1}\n{event2}\n"),
         )
         .unwrap();
 

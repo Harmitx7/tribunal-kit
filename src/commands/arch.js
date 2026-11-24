@@ -90,7 +90,9 @@ async function cmdArch(flags = {}, rawArgv, quiet = false) {
         const { ArchitectureExtractor } = require(
           path_1.default.join(scriptsDir, 'architecture_extractor.js'),
         );
-        new ArchitectureExtractor(targetDir).scan().save();
+        const extractor = new ArchitectureExtractor(targetDir);
+        extractor.scan();
+        extractor.save();
       }
       const model = JSON.parse(fs_1.default.readFileSync(modelFile, 'utf8'));
       const { ArchitectureVerifier } = require(
@@ -210,7 +212,9 @@ async function cmdArch(flags = {}, rawArgv, quiet = false) {
         const { ArchitectureExtractor } = require(
           path_1.default.join(scriptsDir, 'architecture_extractor.js'),
         );
-        new ArchitectureExtractor(targetDir).scan().save();
+        const extractor = new ArchitectureExtractor(targetDir);
+        extractor.scan();
+        extractor.save();
       }
       const model = JSON.parse(fs_1.default.readFileSync(modelFile, 'utf8'));
       const { ArchitectureHealthAuditor } = require(
