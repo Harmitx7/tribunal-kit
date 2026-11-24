@@ -1,10 +1,10 @@
 'use strict';
 
-const path = require('path');
-const { extractConcepts } = require('./concept_extractor');
-const { generateConsiderations } = require('./consideration_engine');
+const _path = require('path');
+const { extractConcepts: _extractConcepts } = require('./concept_extractor');
+const { generateConsiderations: _generateConsiderations } = require('./consideration_engine');
 
-function evaluateCoverage(conceptData, discoveredSkills, allSkillsList) {
+function evaluateCoverage(conceptData, discoveredSkills, _allSkillsList) {
   const activeSkillNames = new Set(
     (discoveredSkills.mandatory || [])
       .concat(discoveredSkills.recommended || [])

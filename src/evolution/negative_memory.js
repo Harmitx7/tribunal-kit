@@ -10,7 +10,10 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { assertWithinRoot, validateResourceId } = require('../security/boundary');
+const {
+  assertWithinRoot: _assertWithinRoot,
+  validateResourceId: _validateResourceId,
+} = require('../security/boundary');
 
 /**
  * Computes Levenshtein distance between two strings.
@@ -152,15 +155,15 @@ function isPreviouslyRejected(candidateEdit, rejections, threshold = 0.85) {
   const candidateContent = (
     typeof candidateEdit === 'string' ? candidateEdit : candidateEdit.content || ''
   ).trim();
-  const candidateOp = typeof candidateEdit === 'object' ? candidateEdit.op || '' : '';
-  const candidateTarget =
+  const _candidateOp = typeof candidateEdit === 'object' ? candidateEdit.op || '' : '';
+  const _candidateTarget =
     typeof candidateEdit === 'object' ? (candidateEdit.target || '').trim() : '';
 
   for (const r of rejections) {
     for (const pastEdit of r.edits || []) {
       const pastContent = (typeof pastEdit === 'string' ? pastEdit : pastEdit.content || '').trim();
-      const pastOp = typeof pastEdit === 'object' ? pastEdit.op || '' : '';
-      const pastTarget = typeof pastEdit === 'object' ? (pastEdit.target || '').trim() : '';
+      const _pastOp = typeof pastEdit === 'object' ? pastEdit.op || '' : '';
+      const _pastTarget = typeof pastEdit === 'object' ? (pastEdit.target || '').trim() : '';
 
       // Direct exact match
       if (candidateContent === pastContent) {

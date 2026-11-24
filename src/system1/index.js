@@ -25,6 +25,7 @@ const {
 } = require('./evidence_engine');
 const {
   evaluateDecision,
+  planAutopilot,
   resolveMonotonicImpactTier,
   HIGH_RISK_PATTERNS,
   HIGH_RISK_EXTENSIONS,
@@ -75,6 +76,14 @@ module.exports = {
 
   // Capability 2: Decision Engine
   evaluateDecision,
+  planAutopilot,
+  collectWorkspaceEvidence(root, targets, topology) {
+    return require('../autopilot/workspace_evidence').collectWorkspaceEvidence(
+      root,
+      targets,
+      topology,
+    );
+  },
   resolveMonotonicImpactTier,
   HIGH_RISK_PATTERNS,
   HIGH_RISK_EXTENSIONS,

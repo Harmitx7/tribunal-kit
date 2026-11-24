@@ -3,9 +3,9 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { loadSkills } = require('./context_broker');
-const { classifySkill } = require('./skill_behavior_classifier');
-const { parseContract } = require('./skill_contract_engine');
+const { loadSkills: _loadSkills } = require('./context_broker');
+const { classifySkill: _classifySkill } = require('./skill_behavior_classifier');
+const { parseContract: _parseContract } = require('./skill_contract_engine');
 
 // ─── Constants & State Enums ────────────────────────────────────────────────
 const EVIDENCE_TRUST_LEVELS = {
@@ -129,7 +129,7 @@ function promoteEvidence(
   testSpecification,
   reviewPackage,
   executionResult,
-  skillRaw = {},
+  _skillRaw = {},
   options = {},
 ) {
   const skillId = testSpecification.skill_id;
@@ -436,7 +436,7 @@ function evaluateClaimStates(
 }
 
 // ─── Skill Certification Evaluation (Sections 7-8) ──────────────────────────
-function evaluateSkillCertification(skillName, claims, claimStates, options = {}) {
+function evaluateSkillCertification(skillName, claims, claimStates, _options = {}) {
   const isReferenceOnly =
     skillName.includes('principles') ||
     skillName === 'apple-design' ||

@@ -251,7 +251,7 @@ export function run(): UserProfile {
       );
 
       const ci = new CodebaseIntelligence(projDir);
-      const fullModel1 = ci._rebuildModelFull();
+      const _fullModel1 = ci._rebuildModelFull();
 
       // Mutation: add a comment only
       fs.writeFileSync(

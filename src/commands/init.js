@@ -224,25 +224,22 @@ async function cmdInit(flags, quiet = false) {
   );
 
   try {
-    let filterFunc = isMinimal
-      ? (name, parentDir, isDir) => {
-          const parentName = path_1.default.basename(parentDir);
-          if (isDir) {
-            if (parentName === 'skills') return CORE_SKILLS.has(name);
-            return true;
-          }
-          if (parentName === 'agents') return CORE_AGENTS.has(name);
-          return true;
-        }
-      : null;
+    const payloadFilter = (name, parentDir, isDir) => {
+      if (parentDir === agentSrc && name === 'history') return false;
+      if (!isMinimal) return true;
+      const parentName = path_1.default.basename(parentDir);
+      if (isDir && parentName === 'skills') return CORE_SKILLS.has(name);
+      if (!isDir && parentName === 'agents') return CORE_AGENTS.has(name);
+      return true;
+    };
+    let filterFunc = payloadFilter;
 
     if (incremental && diff) {
       const addedSet = new Set(diff.added);
       const changedSet = new Set(diff.changed);
-      const baseFilter = filterFunc;
       filterFunc = (name, parentDir, isDir) => {
+        if (!payloadFilter(name, parentDir, isDir)) return false;
         if (isDir) return true;
-        if (baseFilter && !baseFilter(name, parentDir, isDir)) return false;
 
         const relativePath = path_1.default
           .relative(agentSrc, path_1.default.join(parentDir, name))

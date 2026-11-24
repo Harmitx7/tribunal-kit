@@ -20,7 +20,7 @@ const path = require('path');
 const {
   validateEvaluationDataset,
   auditDatasetIntegrity,
-  calculateConfusionMatrix,
+  calculateConfusionMatrix: _calculateConfusionMatrix,
   calculateBrierScore,
   calculateExpectedCalibrationError,
   calculateCohensKappa,

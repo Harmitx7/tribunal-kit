@@ -46,16 +46,16 @@ const { ConflictResolver } = require('../../src/execution/conflict_resolver');
 const { ControlledWriteService, ReviewExecutor } = require('../../src/execution');
 const {
   validatePatchProposal,
-  safeValidatePatchProposal,
+  safeValidatePatchProposal: _safeValidatePatchProposal,
   validatePatchChange,
   isDestructivePatch,
   proposalToWriteRequest,
-  PatchProposalSchema,
-  PatchChangeSchema,
+  PatchProposalSchema: _PatchProposalSchema,
+  PatchChangeSchema: _PatchChangeSchema,
   parseRawAgentOutput,
-  CHANGE_TYPES,
-  PATCH_FORMATS,
-  PROPOSAL_STATUSES,
+  CHANGE_TYPES: _CHANGE_TYPES,
+  PATCH_FORMATS: _PATCH_FORMATS,
+  PROPOSAL_STATUSES: _PROPOSAL_STATUSES,
 } = require('../../src/execution/agent_contracts');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');

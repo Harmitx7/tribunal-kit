@@ -73,6 +73,8 @@ exports.cmdSkillIntel = (flags, argv, quiet) =>
   loadCmd('./commands/skill-intelligence', 'cmdSkillIntel')(flags, argv, quiet);
 exports.cmdActivity = (flags, argv, quiet) =>
   loadCmd('./commands/activity', 'cmdActivity')(flags, argv, quiet);
+exports.cmdCockpit = (flags, argv, quiet) =>
+  loadCmd('./commands/cockpit', 'cmdCockpit')(flags, argv, quiet);
 async function cmdAdapt(subArgs = []) {
   const path = require('path');
   const child_process = require('child_process');
@@ -100,6 +102,7 @@ async function cmdAdapt(subArgs = []) {
 exports.cmdAdapt = cmdAdapt;
 exports.cmdUnderstand = (flags, argv, quiet) =>
   loadCmd('./commands/understand', 'cmdUnderstand')(flags, argv, quiet);
+exports.cmdAutopilot = argv => loadCmd('./commands/autopilot', 'cmdAutopilot')(argv);
 
 let _activityCache = null;
 function getActivity() {
@@ -272,6 +275,8 @@ function cmdHelp(quiet = false) {
   section('Core Lifecycle & Platform', '⚡');
   console.log(cmd('init', 'Install .agent/ into current workspace'));
   console.log(cmd('status', 'Display high-density architecture cockpit'));
+  console.log(cmd('cockpit', 'Interactive real-time TUI swarm monitor dashboard'));
+  console.log(cmd('autopilot', 'Plan scoped work or run bounded repository inspection'));
   console.log(cmd('update', 'Re-install to upgrade to latest engine'));
   console.log(cmd('sync', 'Synchronize IDE bridge files (.cursorrules, etc.)'));
   console.log(cmd('guardrail', 'Validate .agent/ integrity & detect drift'));
@@ -405,6 +410,10 @@ async function runWithUpdateCheck(command, flags) {
     case 'tribunal-understand': {
       const cmdUnderstand = loadCmd('./commands/understand', 'cmdUnderstand');
       await cmdUnderstand(flags, process.argv, quiet);
+      break;
+    }
+    case 'autopilot': {
+      await loadCmd('./commands/autopilot', 'cmdAutopilot')(process.argv);
       break;
     }
     case 'mutate': {
@@ -596,6 +605,13 @@ async function runWithUpdateCheck(command, flags) {
     case 'activity': {
       const cmdActivity = loadCmd('./commands/activity', 'cmdActivity');
       await cmdActivity(flags, process.argv, quiet);
+      break;
+    }
+    case 'cockpit':
+    case 'tui':
+    case 'monitor': {
+      const cmdCockpit = loadCmd('./commands/cockpit', 'cmdCockpit');
+      await cmdCockpit(flags, process.argv, quiet);
       break;
     }
     case 'help':

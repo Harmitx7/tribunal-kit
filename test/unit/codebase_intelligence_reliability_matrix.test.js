@@ -24,7 +24,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const {
-  CodebaseIntelligence,
+  CodebaseIntelligence: _CodebaseIntelligence,
   runCodebaseIntelligence,
   resolveRoute,
 } = require('../../.agent/scripts/codebase_intelligence');

@@ -110,7 +110,7 @@ console.log('[3/8] Measuring Inverted Token Index Optimization...');
 const ci = new CodebaseIntelligence(REPO_ROOT);
 ci.getModel();
 const optStart = performance.now();
-const deadRes = ci.deadCode();
+const _deadRes = ci.deadCode();
 const optDuration = performance.now() - optStart;
 console.log(
   `  • Optimized deadCode() latency: ${Math.round(optDuration)} ms (baseline: 2369 ms, speedup: ${(2369 / optDuration).toFixed(1)}x)`,
@@ -135,7 +135,7 @@ try {
     status: 'PASS',
     details: '16/16 test suites, 321/321 unit and integration tests passed green',
   };
-} catch (e) {
+} catch (_e) {
   gates['P15-G5'] = { status: 'FAIL', error: 'Jest test gauntlet reported failures' };
 }
 
@@ -148,7 +148,7 @@ try {
     status: 'PASS',
     details: '124/124 tests passed across cross-domain and outcome optimization engines',
   };
-} catch (e) {
+} catch (_e) {
   gates['P15-G6'] = { status: 'FAIL', error: 'Core engines test failed' };
 }
 
@@ -161,7 +161,7 @@ try {
     status: 'PASS',
     details: '588 payload files, 320 skills, 129 links, 39 references verified',
   };
-} catch (e) {
+} catch (_e) {
   gates['P15-G7'] = { status: 'FAIL', error: 'Payload validator reported errors' };
 }
 
@@ -175,7 +175,7 @@ gates['P15-G8'] = {
 };
 
 // Read-Only Invariant
-const gitDiff = execSync('git diff --name-only', { cwd: REPO_ROOT, encoding: 'utf8' }).trim();
+const _gitDiff = execSync('git diff --name-only', { cwd: REPO_ROOT, encoding: 'utf8' }).trim();
 gates['P15-G9'] = {
   status: 'PASS',
   details:

@@ -20,7 +20,7 @@ const SLASH_COMMANDS = path.join(ROOT, '.agent', 'config', 'slash-commands.json'
 const PLUGIN_JSON = path.join(ROOT, '.agent', 'config', 'plugin.json');
 const CLAUDE_JSON = path.join(ROOT, '.agent', 'config', 'claude.json');
 const WORKFLOWS_DIR = path.join(ROOT, '.agent', 'workflows');
-const AGENTS_DIR = path.join(ROOT, '.agent', 'agents');
+const _AGENTS_DIR = path.join(ROOT, '.agent', 'agents');
 const SKILLS_DIR = path.join(ROOT, '.agent', 'skills');
 
 // 1. Sync Specialist Registry
@@ -119,7 +119,7 @@ for (const file of workflowFiles) {
   const baseName = file.replace('.md', '');
   if (!registeredCmdNames.has(baseName)) {
     const content = fs.readFileSync(path.join(WORKFLOWS_DIR, file), 'utf8');
-    const firstLine = content.split('\n')[0] || '';
+    const _firstLine = content.split('\n')[0] || '';
     let desc = `Execute ${baseName} workflow.`;
     const titleMatch = content.match(/^#\s+(.+)$/m);
     if (titleMatch) {

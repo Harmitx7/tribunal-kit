@@ -133,7 +133,7 @@ function detectConfusedDeputy(invocationRequest) {
     throw new Error('detectConfusedDeputy requires an invocationRequest object.');
   }
 
-  const { callerRole, toolName, toolArgs, hasHumanSignoff = false } = invocationRequest;
+  const { callerRole, toolName, toolArgs: _toolArgs, hasHumanSignoff = false } = invocationRequest;
   const isHighRisk = HIGH_RISK_CAPABILITIES.includes(toolName);
   const isLowPrivilegeCaller = callerRole === 'untrusted_guest' || callerRole === 'repo_ingestor';
 

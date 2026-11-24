@@ -1,16 +1,16 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
+const _fs = require('fs');
+const _path = require('path');
 const {
   EVIDENCE_TRUST_LEVELS,
-  CLAIM_STATUS,
-  CERTIFICATION_LEVELS,
-  REPEATABILITY,
+  CLAIM_STATUS: _CLAIM_STATUS,
+  CERTIFICATION_LEVELS: _CERTIFICATION_LEVELS,
+  REPEATABILITY: _REPEATABILITY,
   appendLedgerEvent,
   readLedgerEvents,
   checkSourceFreshness,
-  LEDGER_PATH,
+  LEDGER_PATH: _LEDGER_PATH,
 } = require('../../.agent/scripts/skill_certification_engine');
 
 describe('skill_certification_engine Unit Tests', () => {

@@ -19,9 +19,9 @@ const {
   stripAnsi,
   renderPanel,
   renderProgressBar,
-  renderReviewerGrid,
+  renderReviewerGrid: _renderReviewerGrid,
   GLYPHS,
-  RGB,
+  RGB: _RGB,
 } = require('../../src/tui');
 
 const logger = require('../../src/utils/logger');

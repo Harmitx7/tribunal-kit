@@ -8,7 +8,7 @@
 
 const {
   PropertyInvariantEngine,
-  LEGAL_TRANSITIONS,
+  LEGAL_TRANSITIONS: _LEGAL_TRANSITIONS,
 } = require('../../src/evaluation/property_invariant_engine');
 
 describe('PropertyInvariantEngine — Mathematical Invariant Verification', () => {

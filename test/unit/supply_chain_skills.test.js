@@ -9,11 +9,11 @@ const {
   SbomEngine,
   LicenseComplianceEngine,
   DependencyGraph,
-  runSupplyChainAudit,
+  runSupplyChainAudit: _runSupplyChainAudit,
   computeSriHash,
   verifySriHash,
-  normalizeSpdxLicense,
-  buildPurl,
+  normalizeSpdxLicense: _normalizeSpdxLicense,
+  buildPurl: _buildPurl,
 } = require('../../src/supply_chain');
 
 const fixtureData = require('../fixtures/supply_chain/supply_chain_dataset_v1.json');

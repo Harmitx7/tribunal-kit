@@ -319,7 +319,7 @@ describe('Stage 2.1: Human Approval Gate & Mutation Security Audit', () => {
     writeService.approveWrite(token, 'admin_user', 'sig_valid');
 
     // Simulate commit failure by sabotaging txManager.commit to throw midway
-    const originalCommit = writeService.txManager.commit.bind(writeService.txManager);
+    const _originalCommit = writeService.txManager.commit.bind(writeService.txManager);
     writeService.txManager.commit = () => {
       // Modify first file on disk directly to simulate midway failure during file writing loop
       fs.writeFileSync(

@@ -11,7 +11,7 @@
  */
 
 const {
-  McpResponseOptimizer,
+  McpResponseOptimizer: _McpResponseOptimizer,
   serializeResponse,
   measurePayload,
   estimateTokens,

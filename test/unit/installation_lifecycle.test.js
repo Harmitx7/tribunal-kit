@@ -1,6 +1,6 @@
 'use strict';
 
-const path = require('path');
+const _path = require('path');
 const pkg = require('../../package.json');
 
 describe('npm Installation & Packaging Hardening', () => {

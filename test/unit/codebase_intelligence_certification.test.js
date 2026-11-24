@@ -33,12 +33,12 @@
 
 const path = require('path');
 const fs = require('fs');
-const { execSync } = require('child_process');
+const { execSync: _execSync } = require('child_process');
 const {
   CodebaseIntelligence,
   runCodebaseIntelligence,
   createEvidenceRecord,
-  createResultEnvelope,
+  createResultEnvelope: _createResultEnvelope,
   redactSecrets,
 } = require('../../.agent/scripts/codebase_intelligence');
 

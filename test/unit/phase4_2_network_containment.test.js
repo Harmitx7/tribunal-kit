@@ -328,7 +328,7 @@ describe('Phase 4.2: Network-Level SSRF Containment & Egress Proxy Verification'
     });
 
     await new Promise(resolve => redirectingServer.listen(0, '127.0.0.1', resolve));
-    const redirectPort = redirectingServer.address().port;
+    const _redirectPort = redirectingServer.address().port;
 
     try {
       // Step 1: Follow request through proxy to redirected target

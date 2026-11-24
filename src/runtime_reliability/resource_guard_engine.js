@@ -35,8 +35,7 @@ class ResourceGuardEngine {
       const err = new Error(
         `Task queue capacity exceeded (${this.maxQueueDepth}). System applying backpressure load-shedding.`,
       );
-      err.failureCategory = 'RESOURCE_EXHAUSTED';
-      throw err;
+      throw Object.assign(err, { failureCategory: 'RESOURCE_EXHAUSTED' });
     }
 
     if (this.activeTaskCount < this.maxConcurrency) {
@@ -78,8 +77,7 @@ class ResourceGuardEngine {
       const err = new Error(
         `Token budget of ${this.tokenBudget} exceeded (consumed: ${this.consumedTokens}).`,
       );
-      err.failureCategory = 'RESOURCE_EXHAUSTED';
-      throw err;
+      throw Object.assign(err, { failureCategory: 'RESOURCE_EXHAUSTED' });
     }
   }
 

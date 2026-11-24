@@ -7,13 +7,13 @@
 const {
   validateAgentTask,
   safeValidateAgentTask,
-  validateAgentResult,
-  safeValidateAgentResult,
+  validateAgentResult: _validateAgentResult,
+  safeValidateAgentResult: _safeValidateAgentResult,
   validateAgentFinding,
   parseRawAgentOutput,
-  AgentTaskSchema,
-  AgentResultSchema,
-  AgentFindingSchema,
+  AgentTaskSchema: _AgentTaskSchema,
+  AgentResultSchema: _AgentResultSchema,
+  AgentFindingSchema: _AgentFindingSchema,
 } = require('../../src/execution/agent_contracts');
 
 describe('Stage 2: Agent Contracts & Structured Validation', () => {

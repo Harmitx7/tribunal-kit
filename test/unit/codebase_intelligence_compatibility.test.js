@@ -18,12 +18,12 @@ const fs = require('fs');
 const path = require('path');
 const cp = require('child_process');
 const {
-  CodebaseIntelligence,
+  CodebaseIntelligence: _CodebaseIntelligence,
   runCodebaseIntelligence,
-  runCodebaseIntelligenceCli,
-  createResultEnvelope,
+  runCodebaseIntelligenceCli: _runCodebaseIntelligenceCli,
+  createResultEnvelope: _createResultEnvelope,
   createEvidenceRecord,
-  redactSecrets,
+  redactSecrets: _redactSecrets,
 } = require('../../.agent/scripts/codebase_intelligence');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');

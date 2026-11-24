@@ -24,7 +24,7 @@ const {
   promoteCandidate,
   rollbackCandidate,
 } = require('../../src/system1/evolution_pipeline');
-const cjsRoot = require('../../src/cli');
+const _cjsRoot = require('../../src/cli');
 
 describe('Tribunal Autonomous Assurance & Unknown Failure Discovery', () => {
   let tmpRoot;

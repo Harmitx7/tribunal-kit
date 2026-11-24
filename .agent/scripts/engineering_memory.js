@@ -330,7 +330,7 @@ function validateApplicability(memoryRecord, currentContext = {}) {
   const taskText = (currentContext.task || currentContext.query || '').toLowerCase();
   const currentTechs = (currentContext.technologies || []).map(t => t.toLowerCase());
   const currentScale = (currentContext.scale || 'standard').toLowerCase();
-  const currentWorkload = (currentContext.workload || 'balanced').toLowerCase();
+  const _currentWorkload = (currentContext.workload || 'balanced').toLowerCase();
 
   // 2. Negative Applicability Triggers ("not_applicable_when")
   const notWhen = memoryRecord.applicability.not_applicable_when || [];
@@ -501,7 +501,7 @@ function evaluateMemoryStaleness(memoryRecord, envContext = {}) {
 function evaluateMemoryHypothesisWithCurrentEvidence(
   memoryRecord,
   currentEvidence = {},
-  currentContext = {},
+  _currentContext = {},
 ) {
   if (!memoryRecord) throw new Error('Memory record required');
 

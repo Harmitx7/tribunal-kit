@@ -23,7 +23,7 @@ const { wilsonScoreInterval, compareIntervals } = require('./statistical_evaluat
  * @param {number} [options.regressionTolerance=0.0] - Allowed drop in non-critical pass rate
  * @returns {object} Comprehensive regression report
  */
-function evaluateRegressions(candidateResults, baselineResults, options = {}) {
+function evaluateRegressions(candidateResults, baselineResults, _options = {}) {
   if (!Array.isArray(candidateResults) || !Array.isArray(baselineResults)) {
     throw new Error('evaluateRegressions requires candidateResults and baselineResults arrays.');
   }

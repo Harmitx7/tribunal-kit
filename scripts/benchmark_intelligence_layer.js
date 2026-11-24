@@ -16,7 +16,7 @@ const { CaseBasedReasoningEngine } = require('../src/intelligence/cbr_engine');
 async function runBenchmark() {
   console.log('--- Tribunal Intelligence Performance Benchmark ---');
 
-  const mem = new CaseMemory();
+  const _mem = new CaseMemory();
   const idx = new CaseIndexer();
   const cbr = new CaseBasedReasoningEngine();
 
@@ -39,14 +39,14 @@ async function runBenchmark() {
 
   // 2. Similarity Search Benchmark
   const startSim = process.hrtime.bigint();
-  const simResult = cbr.similarity.findSimilar({ files: ['src/index.js'], impactTier: 3 });
+  const _simResult = cbr.similarity.findSimilar({ files: ['src/index.js'], impactTier: 3 });
   const endSim = process.hrtime.bigint();
   const simMs = Number(endSim - startSim) / 1e6;
   console.log(`[P99] Similarity Search across index: ${simMs.toFixed(2)}ms`);
 
   // 3. Review Plan Generation Benchmark
   const startPlan = process.hrtime.bigint();
-  const plan = cbr.generateReviewPlan({ files: ['src/index.js'], impactTier: 1 });
+  const _plan = cbr.generateReviewPlan({ files: ['src/index.js'], impactTier: 1 });
   const endPlan = process.hrtime.bigint();
   const planMs = Number(endPlan - startPlan) / 1e6;
   console.log(`[P99] Review Plan Generation: ${planMs.toFixed(2)}ms`);

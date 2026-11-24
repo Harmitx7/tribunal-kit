@@ -2,17 +2,17 @@
 
 const {
   TRUST_LEVELS,
-  CERT_STATES,
+  CERT_STATES: _CERT_STATES,
   VALID_TRANSITIONS,
   transition,
   createEvidenceRecord,
   isCircularEvidence,
   isStaleEvidence,
   deduplicateEvidence,
-  discoverEvidenceForSkill,
-  generateCertificationScenarios,
+  discoverEvidenceForSkill: _discoverEvidenceForSkill,
+  generateCertificationScenarios: _generateCertificationScenarios,
   classifyRepeatability,
-  acquireEvidenceForSkill,
+  acquireEvidenceForSkill: _acquireEvidenceForSkill,
   selectPilot,
   MIN_REPETITIONS,
 } = require('../../.agent/scripts/skill_evidence_acquisition_engine');

@@ -1,5 +1,7 @@
 'use strict';
 
+const { estimateTokens } = require('./token_estimate');
+
 /**
  * Tribunal-Kit MCP Response Optimizer & Structured Output Intelligence (Phase 6)
  *
@@ -26,27 +28,7 @@ class McpResponseOptimizer {
    * @returns {Object} { characterCount, byteLength, estimatedTokens, estimationMethod }
    */
   static estimateTokens(input) {
-    let str = '';
-    if (typeof input === 'string') {
-      str = input;
-    } else if (input !== null && input !== undefined) {
-      try {
-        str = JSON.stringify(input);
-      } catch {
-        str = String(input);
-      }
-    }
-
-    const characterCount = str.length;
-    const byteLength = Buffer.byteLength(str, 'utf8');
-    const estimatedTokens = Math.ceil(characterCount / 4);
-
-    return {
-      characterCount,
-      byteLength,
-      estimatedTokens,
-      estimationMethod: 'heuristic (1 token ≈ 4 characters)',
-    };
+    return estimateTokens(input);
   }
 
   /**

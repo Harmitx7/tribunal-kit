@@ -1,7 +1,7 @@
 'use strict';
 
 const {
-  ART_DIRECTION_PRESETS,
+  ART_DIRECTION_PRESETS: _ART_DIRECTION_PRESETS,
   resolveArtDirection,
   buildDesignDecisionRecord,
 } = require('../../src/design_intelligence/art_direction_engine');

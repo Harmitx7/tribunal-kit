@@ -1,10 +1,10 @@
 'use strict';
 
 const fs = require('fs');
-const path = require('path');
+const _path = require('path');
 const {
   promoteEvidence,
-  checkSourceFreshness,
+  checkSourceFreshness: _checkSourceFreshness,
   readLedgerEvents,
   REPEATABILITY,
 } = require('../../.agent/scripts/skill_certification_engine');

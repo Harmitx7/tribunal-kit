@@ -179,7 +179,19 @@ const repeatGuard = new ToolRepeatGuard();
 
 // Instantiate ControlledWriteService for MCP
 const { ControlledWriteService } = require('../src/execution/controlled_write_service');
-const controlledWriteService = new ControlledWriteService({ workspaceRoot: process.cwd() });
+const controlledWriteService = new ControlledWriteService({
+  workspaceRoot: process.env.TRIBUNAL_AUTOPILOT_ROOT || process.cwd(),
+  requireSignedApproval: true,
+  approvalPublicKey: process.env.TRIBUNAL_WRITE_APPROVAL_PUBLIC_KEY,
+  authorizedApprovers: (process.env.TRIBUNAL_WRITE_APPROVERS || '').split(',').map(id => id.trim()).filter(Boolean),
+});
+let autopilotService;
+function getAutopilotService() {
+  autopilotService ||= require('../src/autopilot/service').createAutopilotService({
+    root: process.env.TRIBUNAL_AUTOPILOT_ROOT || process.cwd(),
+  });
+  return autopilotService;
+}
 const {
   assertWithinRoot,
   validateResourceId,
@@ -473,6 +485,37 @@ async function handleRequest(req) {
   if (req.method === 'tools/list') {
     return {
       tools: [
+        {
+          name: 'tribunal_autopilot_plan',
+          description: 'Plan scoped capabilities against the current workspace.',
+          inputSchema: {
+            type: 'object', additionalProperties: false, required: ['task'],
+            properties: {
+              task: { type: 'string', minLength: 1, maxLength: 4096 },
+              targets: { type: 'array', maxItems: 6, items: { type: 'string', minLength: 1, maxLength: 256 } },
+              turnId: { type: 'string', maxLength: 128, pattern: '^[\\w.-]+$' },
+              budget: { type: 'object', additionalProperties: false, properties: {
+                capabilities: { type: 'integer', minimum: 0, maximum: 6 },
+                tokens: { type: 'integer', minimum: 0, maximum: 2000 },
+                milliseconds: { type: 'integer', minimum: 0, maximum: 30000 },
+              } },
+            },
+          },
+        },
+        {
+          name: 'tribunal_autopilot_execute',
+          description: 'Execute eligible bounded inspections using a server-issued Autopilot plan ID.',
+          inputSchema: { type: 'object', additionalProperties: false, required: ['planId'], properties: {
+            planId: { type: 'string', format: 'uuid' },
+          } },
+        },
+        {
+          name: 'tribunal_autopilot_cancel',
+          description: 'Cancel a pending or active Autopilot plan.',
+          inputSchema: { type: 'object', additionalProperties: false, required: ['planId'], properties: {
+            planId: { type: 'string', format: 'uuid' },
+          } },
+        },
         {
           name: 'tribunal_request_write',
           description: 'Request a repository mutation. Generates a preview and token.',
@@ -1084,6 +1127,15 @@ async function handleRequest(req) {
     const reminder = repeatGuard.observe(toolName, argsObj);
 
     const executeTool = async () => {
+      if (toolName === 'tribunal_autopilot_plan') {
+        return serializeResponse(getAutopilotService().plan(req.params?.arguments));
+      }
+      if (toolName === 'tribunal_autopilot_execute') {
+        return serializeResponse(await getAutopilotService().execute(req.params?.arguments));
+      }
+      if (toolName === 'tribunal_autopilot_cancel') {
+        return serializeResponse(getAutopilotService().cancel(req.params?.arguments));
+      }
       if (toolName === 'tribunal_request_write') {
         const files = req.params?.arguments?.files;
         const reason = req.params?.arguments?.reason;

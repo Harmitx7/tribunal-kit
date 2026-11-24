@@ -87,7 +87,7 @@ async function benchmarkParallelReviewers(count, simulatedLatencyMs = 20) {
   // 1. Measure Sequential Execution (concurrency = 1)
   const seqExecutor = new ReviewExecutor({ provider, maxConcurrency: 1 });
   const seqStart = performance.now();
-  const seqRes = await seqExecutor.executeReview({
+  const _seqRes = await seqExecutor.executeReview({
     reviewers: selected,
     code: '+ const x = 1;',
     task: 'Benchmark concurrency',

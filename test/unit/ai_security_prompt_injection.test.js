@@ -4,7 +4,7 @@ const {
   scanForPromptInjection,
   wrapUntrustedContent,
   detectIndirectInjection,
-  normalizeObfuscatedText,
+  normalizeObfuscatedText: _normalizeObfuscatedText,
 } = require('../../src/security');
 
 describe('Prompt Injection & Smuggling Defense Engine', () => {

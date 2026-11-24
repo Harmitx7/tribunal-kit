@@ -25,7 +25,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 const { getCorpusWithValidation } = require('../benchmarks/corpus/index');
 const { wilsonScoreInterval } = require('../src/evaluation/statistical_evaluator');
-const { BenchmarkOracle } = require('../src/evaluation/benchmark_oracle');
+const { BenchmarkOracle: _BenchmarkOracle } = require('../src/evaluation/benchmark_oracle');
 const { EvaluationRunner } = require('../src/evaluation/evaluation_runner');
 
 function parseArgs() {

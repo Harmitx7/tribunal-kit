@@ -27,6 +27,7 @@ const {
 const { collectAndRankEvidence } = require('./evidence_engine');
 const { evaluateBrowserRequirement } = require('./browser_intelligence');
 const { orchestrateReviewers } = require('./reviewer_orchestrator');
+const { buildIntentContext, verifyInline } = require('../autopilot/intent_context');
 
 /**
  * @param {Record<string, any>} [options]
@@ -492,8 +493,45 @@ function evaluateDecision(options = {}) {
   };
 }
 
+/**
+ * Produce an unsigned recommendation from user intent and a trusted workspace snapshot.
+ * @param {Record<string, any>} [input]
+ */
+function planAutopilot(input = {}) {
+  const request = input && typeof input === 'object' ? input : {};
+  const context = buildIntentContext(request, resolveMonotonicImpactTier);
+  const { mode, tier, scope, reason } = context;
+  const empty = { mode, tier, scope, nodes: [], requirements: [] };
+  if (mode === 'discuss') return { ...empty, status: 'noop', reason };
+  if (tier === null) return { ...empty, status: 'inspection-needed', reason };
+  if (tier === 0)
+    return {
+      ...empty,
+      status: 'noop',
+      reason: 'tier-zero',
+      inlineVerification: verifyInline(context),
+    };
+  const { containScope, digest, rank } = require('../autopilot/relevance_engine');
+  if (!containScope(context))
+    return {
+      ...empty,
+      scope: [],
+      status: 'inspection-needed',
+      reason: 'scope-outside-root',
+    };
+  const ranked = rank(context, request.budget, request.classifierHint);
+  return {
+    ...empty,
+    ...ranked,
+    status: mode === 'plan' ? 'preview' : 'proposal',
+    contextDigest: digest(context),
+    signals: context.signals,
+  };
+}
+
 module.exports = {
   evaluateDecision,
+  planAutopilot,
   resolveMonotonicImpactTier,
   HIGH_RISK_PATTERNS,
   HIGH_RISK_EXTENSIONS,

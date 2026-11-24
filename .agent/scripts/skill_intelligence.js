@@ -148,12 +148,12 @@ const {
   OUTCOME_INVARIANT,
   REQUIREMENT_SOURCES,
   REQUIREMENT_CATEGORIES,
-  REQUIREMENT_PRIORITY: PHASE10_REQUIREMENT_PRIORITY,
+  REQUIREMENT_PRIORITY: _PHASE10_REQUIREMENT_PRIORITY,
   COMPLEXITY_BUDGETS,
-  ASSUMPTION_STATUS,
-  REVERSIBILITY_LEVELS: PHASE10_REVERSIBILITY_LEVELS,
-  CAPABILITY_DEPTH,
-  REASONING_DEPTH,
+  ASSUMPTION_STATUS: _ASSUMPTION_STATUS,
+  REVERSIBILITY_LEVELS: _PHASE10_REVERSIBILITY_LEVELS,
+  CAPABILITY_DEPTH: _CAPABILITY_DEPTH,
+  REASONING_DEPTH: _REASONING_DEPTH,
   discoverRequirements,
   evaluateComplexityBudget,
   auditArchitectureJustification,
@@ -513,7 +513,7 @@ function discoverSkills(taskQuery, agentDir, options = {}) {
   };
 }
 
-function generateVerificationPlan(conceptData, considerations, coverageData) {
+function generateVerificationPlan(conceptData, _considerations, _coverageData) {
   const plan = [];
   for (const c of conceptData.all_concepts || []) {
     switch (c.id) {
@@ -1015,7 +1015,7 @@ function evaluateCreationGate(needDescription, agentDir) {
           checks.find(c => c.name === 'Capability gap confirmed')?.detail ||
           'Genuine capability gap',
       });
-    } catch (e) {}
+    } catch (_e) {}
   }
 
   return {

@@ -537,7 +537,7 @@ class SwarmOrchestrator {
   /**
    * Deterministic reviewer execution mapping domain specialists to real static validators.
    */
-  async invokeReviewer(worker, timeout) {
+  async invokeReviewer(worker, _timeout) {
     const agentName = worker.agent || worker.target_agent || 'general-reviewer';
     const agentLower = String(agentName).toLowerCase();
     const files = Array.isArray(worker.files || worker.files_attached)

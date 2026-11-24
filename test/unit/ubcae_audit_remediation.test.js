@@ -70,7 +70,7 @@ describe('U-BCAE Audit Regression Suite', () => {
   });
 
   test('DEFECT-07/08: CLI correctly parses --harness and --harness-cmd', () => {
-    const { cmdHelp } = require('../../src/cli');
+    const { cmdHelp: _cmdHelp } = require('../../src/cli');
     // We can directly test parseArgs behavior by inspecting how flags are collected
     // In cli.js, parseArgs is an internal helper; let's test cmdEvolve harness resolution
     const { cmdEvolve } = require('../../src/commands/evolve');

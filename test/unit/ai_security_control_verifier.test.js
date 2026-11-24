@@ -4,10 +4,10 @@ const {
   SecurityControlSchema,
   assertWithinRoot,
   isProhibitedIp,
-  scanForPromptInjection,
-  auditCommandSafety,
-  auditToolPermissions,
-  scanForDataLeakage,
+  scanForPromptInjection: _scanForPromptInjection,
+  auditCommandSafety: _auditCommandSafety,
+  auditToolPermissions: _auditToolPermissions,
+  scanForDataLeakage: _scanForDataLeakage,
   auditReviewerConsensus,
 } = require('../../src/security');
 

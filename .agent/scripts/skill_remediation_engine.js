@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { evaluateAllSkills } = require('./skill_quality_engine');
-const { parseContract } = require('./skill_contract_engine');
+const { parseContract: _parseContract } = require('./skill_contract_engine');
 const { assertWithinRoot } = require('./_utils');
 
 let validateResourceId;

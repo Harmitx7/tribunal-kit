@@ -2,7 +2,7 @@
 
 const {
   executeResilientWorkflow,
-  FaultInjectionEngine,
+  FaultInjectionEngine: _FaultInjectionEngine,
   ResourceGuardEngine,
 } = require('../../src/runtime_reliability');
 

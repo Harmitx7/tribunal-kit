@@ -1,6 +1,6 @@
 {
   "name": "tribunal-kit",
-  "description": "Enterprise-grade governance layer and anti-hallucination engine for AI coding agents: 58 specialists, 28 parallel reviewers, Rust core, Subagent-Driven Development (SDD), and strict TDD workflows.",
+  "description": "Tribunal Kit governance with a UserPromptSubmit hook for scoped Autopilot planning, the Rust core, and review workflows.",
   "version": "9.0.0",
   "author": {
     "name": "Harmitx7",

@@ -5,7 +5,7 @@ const {
   generateTestSpecification,
   prepareReviewPackage,
   approveSpecification,
-  calculateTestQualityScore,
+  calculateTestQualityScore: _calculateTestQualityScore,
   REVIEW_STATES,
   TEST_TYPES,
 } = require('../../.agent/scripts/skill_test_authoring_engine');

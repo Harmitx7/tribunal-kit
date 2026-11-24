@@ -78,6 +78,57 @@ export interface DecisionOptions {
 }
 
 export function evaluateDecision(options?: DecisionOptions): DecisionPayload;
+export interface AutopilotRequest {
+  task: string;
+  turnId?: string;
+  classifierHint?: { version: 1; rankedCapabilityIds: string[] };
+  targets?: string[];
+  workspace?: WorkspaceEvidence;
+  budget?: { capabilities?: number; tokens?: number; milliseconds?: number };
+}
+export interface WorkspaceEvidence {
+  root: string;
+  fresh: boolean;
+  baseDigest: string;
+  workingTreeDigest: string;
+  touchedPaths?: string[];
+  observedPaths?: string[];
+  topologyPaths?: string[];
+  blastPaths?: string[];
+  blastRisk?: Record<string, 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'>;
+  diff?: string;
+}
+export interface AutopilotPlan {
+  mode: 'discuss' | 'plan' | 'implement' | 'modify' | 'debug';
+  tier: number | null;
+  scope: string[];
+  status: 'noop' | 'inspection-needed' | 'preview' | 'proposal';
+  reason?: string;
+  inlineVerification?: 'pending' | 'single-color-declaration-checked';
+  nodes: {
+    id: string;
+    operationId: string;
+    scope: string[];
+    requires: string[];
+    required: true;
+    rationale: string;
+    verification: string[];
+    estimatedCost: { tokens: number; milliseconds: number };
+    announcementSuppressed: boolean;
+  }[];
+  requirements: string[];
+  deferred?: string[];
+  estimates?: { tokens: number; milliseconds: number };
+  contextDigest?: string;
+  manifestDigest?: string;
+  signals?: Record<string, string[]>;
+}
+export function planAutopilot(request?: AutopilotRequest): AutopilotPlan;
+export function collectWorkspaceEvidence(
+  root: string,
+  targets: string[],
+  topology?: { model?: object; workingTreeDigest?: string },
+): WorkspaceEvidence | null;
 export function resolveMonotonicImpactTier(options?: any): number;
 export const HIGH_RISK_PATTERNS: RegExp;
 export const HIGH_RISK_EXTENSIONS: RegExp;

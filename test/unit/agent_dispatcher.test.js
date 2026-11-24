@@ -7,7 +7,7 @@
 const { AgentDispatcher, validateDag } = require('../../src/execution/agent_dispatcher');
 const { AgentRuntime } = require('../../src/execution/agent_runtime');
 const { ProviderAdapter } = require('../../src/execution/provider_adapter');
-const { EvidenceBus } = require('../../src/execution/evidence_bus');
+const { EvidenceBus: _EvidenceBus } = require('../../src/execution/evidence_bus');
 const path = require('path');
 
 describe('Stage 2: AgentDispatcher DAG Orchestration', () => {

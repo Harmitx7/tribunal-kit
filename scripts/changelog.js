@@ -174,17 +174,22 @@ function main() {
     return;
   }
 
-  // Write or prepend to CHANGELOG.md
-  const header = `# Changelog\n\nAll notable changes to Tribunal Kit are documented here.\nFormat follows [Keep a Changelog](https://keepachangelog.com/).\n\n`;
-
+  // Write or insert into CHANGELOG.md preserving canonical header and badges
   let existing = '';
   if (fs.existsSync(CHANGELOG_PATH)) {
     existing = fs.readFileSync(CHANGELOG_PATH, 'utf8');
-    // Remove existing header
-    existing = existing.replace(/^# Changelog[\s\S]*?(?=## )/, '');
   }
 
-  const full = header + changelog + existing;
+  const firstReleaseIdx = existing.search(/^## \[/m);
+  let full = '';
+  if (firstReleaseIdx !== -1) {
+    const preamble = existing.slice(0, firstReleaseIdx);
+    const releases = existing.slice(firstReleaseIdx);
+    full = preamble + changelog + releases;
+  } else {
+    const header = `# 🏛️ Tribunal Kit — Changelog\n\nAll notable changes to **Tribunal Kit** are documented here.\nFormat follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).\n\n`;
+    full = header + changelog + existing;
+  }
   fs.writeFileSync(CHANGELOG_PATH, full, 'utf8');
 
   console.log(`  ✔ CHANGELOG.md updated — v${version} (${commits.length} commits)`);

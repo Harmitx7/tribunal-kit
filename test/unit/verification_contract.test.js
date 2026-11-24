@@ -69,7 +69,7 @@ describe('Design-by-Contract (DbC) Engine', () => {
       },
       {
         pre: [amount => amount > 0, amount => amount <= balance],
-        post: [(newBal, amount) => newBal >= 0],
+        post: [(newBal, _amount) => newBal >= 0],
         invariants: [() => balance >= 0],
       },
     );

@@ -11,7 +11,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { spawnSync } = require('child_process');
+const { spawnSync: _spawnSync } = require('child_process');
 
 const boundary = require('../../src/security/boundary');
 const { handleRequest } = require('../../bin/mcp-server');
@@ -19,7 +19,7 @@ const { ControlledWriteService } = require('../../src/execution/controlled_write
 const TransactionManager = require('../../src/execution/transaction_manager');
 const { executeSyscall } = require('../../.agent/scripts/syscall_registry');
 const {
-  DAGTaskSchema,
+  DAGTaskSchema: _DAGTaskSchema,
   DAGPayloadSchema,
   validatePayload,
 } = require('../../.agent/scripts/payload_schemas');
@@ -35,7 +35,7 @@ const {
   saveEvolutionProposal,
   approveEvolutionProposal,
 } = require('../../src/evolution/engine');
-const { sddDiff, sddBrief } = require('../../src/commands/sdd');
+const { sddDiff, sddBrief: _sddBrief } = require('../../src/commands/sdd');
 
 describe('Tribunal Kit — Phase 3 Adversarial Security Verification Suite', () => {
   let tmpRoot;

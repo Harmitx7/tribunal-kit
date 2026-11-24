@@ -235,7 +235,7 @@ export function log(msg: string): void;
 export function ok(msg: string): void;
 
 /** Log a warning message with ⚠ prefix. */
-export function warn(msg: string): void;
+export function warn(msg: string, options?: { stderr?: boolean }): void;
 
 /** Log an error message with ✖ prefix (always shown). */
 export function err(msg: string): void;
@@ -360,6 +360,10 @@ export function main(): Promise<void>;
  * Executes codebase intelligence exploration, feature tracing, dependency analysis,
  * impact assessment, dead-code detection, onboarding, and change preparation.
  */
+export function cmdAutopilot(argv?: string[]): Promise<{
+  plan: import('./system1').AutopilotPlan & { planId?: string };
+  result?: { status: string };
+}>;
 export function cmdUnderstand(
   flags?: CliFlags,
   argv?: string[] | string,

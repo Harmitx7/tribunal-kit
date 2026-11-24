@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const {
-  getExecutionStateStore,
+  getExecutionStateStore: _getExecutionStateStore,
   STATE_STATUS,
   ExecutionStateStore,
 } = require('../../.agent/scripts/engineering_memory');

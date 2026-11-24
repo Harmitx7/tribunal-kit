@@ -461,7 +461,7 @@ function buildEvidenceGraph(requirements, claims, evidence) {
  * @param {Object} [architecture]
  * @returns {Array<Object>} Test specifications
  */
-function generateTests(claims, architecture) {
+function generateTests(claims, _architecture) {
   const tests = [];
 
   for (const claim of claims || []) {
@@ -625,7 +625,7 @@ function generateProperties(claims) {
  * @param {Object} [architecture]
  * @returns {Array<Object>} Adversarial tests
  */
-function generateAdversarialTests(claims, architecture) {
+function generateAdversarialTests(claims, _architecture) {
   const tests = [];
 
   for (const claim of claims || []) {
@@ -1375,7 +1375,7 @@ function checkConformance(implementation, adr) {
     };
   }
 
-  const decision = adr.decision || {};
+  const _decision = adr.decision || {};
 
   // Check required capabilities
   const requiredCaps = (adr.context && adr.context.functional_requirements) || [];
@@ -1680,7 +1680,7 @@ const MAX_REPAIR_FILES = 5;
  * @param {Object} implementation
  * @returns {Object} Repair result
  */
-function attemptRepair(failure, implementation) {
+function attemptRepair(failure, _implementation) {
   if (!failure) return { status: REPAIR_STATUS.FAILED, reason: 'No failure provided' };
 
   // Root cause analysis

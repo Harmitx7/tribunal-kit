@@ -39,12 +39,12 @@ const { ConflictResolver } = require('../../src/execution/conflict_resolver');
 const { ControlledWriteService, ReviewExecutor } = require('../../src/execution');
 const {
   validateApiContractFinding,
-  ApiContractFindingSchema,
+  ApiContractFindingSchema: _ApiContractFindingSchema,
   parseRawAgentOutput,
-  CONTRACT_TYPES,
-  REQUEST_RESPONSE_COMPONENTS,
+  CONTRACT_TYPES: _CONTRACT_TYPES,
+  REQUEST_RESPONSE_COMPONENTS: _REQUEST_RESPONSE_COMPONENTS,
   COMPATIBILITY_CLASSIFICATIONS,
-  CONTRACT_VIOLATION_STATUSES,
+  CONTRACT_VIOLATION_STATUSES: _CONTRACT_VIOLATION_STATUSES,
 } = require('../../src/execution/agent_contracts');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');

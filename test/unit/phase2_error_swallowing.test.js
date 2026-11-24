@@ -74,11 +74,11 @@ describe('Phase 2 (#7, #9, #14, #22, #26) — Error Swallowing Elimination', () 
     warnSpy.mockRestore();
   });
 
-  test('#22 — verifyModelFileHash logs clear warning when model file has hash mismatch', () => {
+  test('#22 — verifyModelFileHash reports a hash mismatch on stderr', () => {
     const modelFile = path.join(tmpRoot, 'test_model.onnx');
     fs.writeFileSync(modelFile, 'mock model content buffer', 'utf8');
 
-    const warnSpy = jest.spyOn(logger, 'warn').mockImplementation(() => {});
+    const warnSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
     const verified = verifyModelFileHash(
       modelFile,

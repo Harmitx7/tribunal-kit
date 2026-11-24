@@ -2,7 +2,7 @@
 
 const {
   classifyRepeatability,
-  executeSandboxed,
+  executeSandboxed: _executeSandboxed,
   MIN_REPETITIONS,
 } = require('../../.agent/scripts/skill_evidence_acquisition_engine');
 

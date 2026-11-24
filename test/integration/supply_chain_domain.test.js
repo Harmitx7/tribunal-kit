@@ -1,6 +1,10 @@
 'use strict';
 
-const { runSupplyChainAudit, SbomEngine, THREAT_CATEGORIES } = require('../../src/supply_chain');
+const {
+  runSupplyChainAudit,
+  SbomEngine,
+  THREAT_CATEGORIES: _THREAT_CATEGORIES,
+} = require('../../src/supply_chain');
 
 const fixtureData = require('../fixtures/supply_chain/supply_chain_dataset_v1.json');
 

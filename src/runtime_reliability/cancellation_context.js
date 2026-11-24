@@ -17,9 +17,11 @@ class CancellationContext {
    * @param {Object} [options]
    * @param {CancellationContext} [options.parent]
    * @param {number} [options.timeoutMs]
+   * @param {object} [options.envelope]
    */
   constructor(options = {}) {
     this.parent = options.parent || null;
+    this.envelope = options.envelope || null;
     this.children = new Set();
     this.controller = new AbortController();
     this.cancelled = false;
@@ -120,8 +122,8 @@ class CancellationContext {
   /**
    * Spawn a child context with optional deadline constraint.
    */
-  createChild(timeoutMs = null) {
-    return new CancellationContext({ parent: this, timeoutMs });
+  createChild(timeoutMs = null, envelope = this.envelope) {
+    return new CancellationContext({ parent: this, timeoutMs, envelope });
   }
 
   /**

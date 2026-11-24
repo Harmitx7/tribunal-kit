@@ -1,7 +1,7 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
+const _fs = require('fs');
+const _path = require('path');
 const engine = require('../../.agent/scripts/skill_coverage_expansion_engine');
 
 describe('Phase 24 — Coverage Gap Analysis Unit Tests', () => {

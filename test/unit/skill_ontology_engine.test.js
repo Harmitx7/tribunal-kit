@@ -1,7 +1,7 @@
 const {
   loadOntology,
   validateOntology,
-  getHierarchyCompatibility,
+  getHierarchyCompatibility: _getHierarchyCompatibility,
   getSpecificity,
 } = require('../../.agent/scripts/skill_ontology_engine');
 

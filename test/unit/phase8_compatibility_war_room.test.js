@@ -101,7 +101,7 @@ describe('PHASE 8 COMPATIBILITY & CROSS-PLATFORM WAR ROOM', () => {
       expect(fs.existsSync(cjsPath)).toBe(true);
 
       // Check all declared binaries
-      for (const [binName, binRel] of Object.entries(PKG.bin)) {
+      for (const [_binName, binRel] of Object.entries(PKG.bin)) {
         const binFile = path.resolve(repoRoot, binRel);
         expect(fs.existsSync(binFile)).toBe(true);
       }

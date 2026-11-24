@@ -20,11 +20,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const os = require('os');
+const _os = require('os');
 const crypto = require('crypto');
 const {
   CodebaseIntelligence,
-  runCodebaseIntelligence,
+  runCodebaseIntelligence: _runCodebaseIntelligence,
 } = require('../../.agent/scripts/codebase_intelligence');
 
 const repoRoot = path.resolve(__dirname, '../..');

@@ -444,8 +444,8 @@ async function main() {
   try {
     const ci = new CodebaseIntelligence(REPO_ROOT);
     const t0 = Date.now();
-    const overview = ci.overview();
-    const deps = ci.dependencies();
+    const _overview = ci.overview();
+    const _deps = ci.dependencies();
     const elapsed = Date.now() - t0;
 
     if (elapsed >= 2500) {

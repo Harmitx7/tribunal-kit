@@ -1,4 +1,4 @@
-const { createFixture } = require('../../.agent/scripts/skill_fixture_engine');
+const { createFixture: _createFixture } = require('../../.agent/scripts/skill_fixture_engine');
 
 describe('Skill Bootstrap Pipeline', () => {
   it('1. Bootstraps cleanly without hanging', () => {

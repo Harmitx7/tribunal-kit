@@ -19,13 +19,13 @@
 const fs = require('fs');
 const path = require('path');
 const semver = require('semver');
-const { execSync } = require('child_process');
+const { execSync: _execSync } = require('child_process');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const {
   runCodebaseIntelligence,
-  runCodebaseIntelligenceCli,
-  createResultEnvelope,
+  runCodebaseIntelligenceCli: _runCodebaseIntelligenceCli,
+  createResultEnvelope: _createResultEnvelope,
   createEvidenceRecord,
 } = require('../../.agent/scripts/codebase_intelligence');
 const { cmdUnderstand } = require('../../src/commands/understand');

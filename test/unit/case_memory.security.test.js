@@ -16,7 +16,7 @@ const {
 
 describe('Tribunal Intelligence Security Audit', () => {
   test('Historical history poisoning failed to bypass deterministic safety requirements', () => {
-    const mem = new CaseMemory();
+    const _mem = new CaseMemory();
     const orch = new AdaptiveReviewerOrchestrator();
 
     const mockSafetyPayload = {

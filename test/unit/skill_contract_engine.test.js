@@ -1,14 +1,14 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
+const _fs = require('fs');
+const _path = require('path');
 const {
   parseContract,
   validateContract,
   normalizeContract,
   scoreCompleteness,
   diffContracts,
-  reconcileWithRegistry,
+  reconcileWithRegistry: _reconcileWithRegistry,
 } = require('../../.agent/scripts/skill_contract_engine');
 
 describe('Skill Contract Engine', () => {

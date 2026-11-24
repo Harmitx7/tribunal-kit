@@ -1,7 +1,7 @@
-const fs = require('fs');
+const _fs = require('fs');
 const path = require('path');
 const { loadSkills } = require('./context_broker');
-const { parseContract } = require('./skill_contract_engine');
+const { parseContract: _parseContract } = require('./skill_contract_engine');
 
 function classifySkill(skillName, skillRaw) {
   const reasons = [];
@@ -11,7 +11,7 @@ function classifySkill(skillName, skillRaw) {
 
   // We look for evidence in the skill contract or metadata
   const content = skillRaw?.content || '';
-  const triggers = skillRaw?.triggers || [];
+  const _triggers = skillRaw?.triggers || [];
 
   if (
     skillName.includes('routing') ||

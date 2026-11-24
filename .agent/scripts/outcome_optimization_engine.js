@@ -33,8 +33,8 @@
  *  18. Quality of Consideration Internal Telemetry
  */
 
-const fs = require('fs');
-const path = require('path');
+const _fs = require('fs');
+const _path = require('path');
 
 // ============================================================================
 // 1. CONSTANTS & INVARIANTS
@@ -377,7 +377,7 @@ const ARCHITECTURAL_OPTION_TEMPLATES = [
  * @param {Object} [context]
  * @returns {Array<Object>} Discovered requirements
  */
-function discoverRequirements(taskQuery, context = {}) {
+function discoverRequirements(taskQuery, _context = {}) {
   const q = (taskQuery || '').toLowerCase();
   const reqs = [];
 
@@ -551,7 +551,7 @@ function discoverRequirements(taskQuery, context = {}) {
  * @param {Array<Object>} requirements
  * @returns {Object} Complexity budget evaluation
  */
-function evaluateComplexityBudget(taskQuery, requirements = []) {
+function evaluateComplexityBudget(taskQuery, _requirements = []) {
   const q = (taskQuery || '').toLowerCase();
 
   // Trivial or purely static/frontend task
@@ -636,7 +636,7 @@ function evaluateComplexityBudget(taskQuery, requirements = []) {
  * @param {Array<Object>} proposedComponents
  * @returns {Object} Architecture audit result
  */
-function auditArchitectureJustification(taskQuery, complexityBudget, proposedComponents = []) {
+function auditArchitectureJustification(taskQuery, complexityBudget, _proposedComponents = []) {
   const q = (taskQuery || '').toLowerCase();
   const unjustified = [];
   const justified = [];
@@ -814,7 +814,7 @@ function auditArchitectureJustification(taskQuery, complexityBudget, proposedCom
  * @param {Array<Object>} justifiedComponents
  * @returns {Array<Object>} EDR records
  */
-function generateDecisionRecords(taskQuery, requirements = [], justifiedComponents = []) {
+function generateDecisionRecords(taskQuery, _requirements = [], _justifiedComponents = []) {
   const q = (taskQuery || '').toLowerCase();
   const records = [];
 
@@ -1032,12 +1032,12 @@ function analyzeAssumptionsAndUnknowns(taskQuery) {
  */
 function buildSolutionShape({
   taskQuery,
-  requirements,
+  requirements: _requirements,
   complexityBudget,
   decisionRecords,
   assumptions,
   unknowns,
-  crossDomainAnalysis,
+  crossDomainAnalysis: _crossDomainAnalysis,
 }) {
   const q = (taskQuery || '').toLowerCase();
   const implementationOrder = [];
@@ -1145,7 +1145,11 @@ function buildSolutionShape({
  * @param {Array<Object>} requirements
  * @returns {Object} Multi-objective evaluation and regressions
  */
-function verifyOutcomeAndRegressions(baselineMetrics = {}, currentMetrics = {}, requirements = []) {
+function verifyOutcomeAndRegressions(
+  baselineMetrics = {},
+  currentMetrics = {},
+  _requirements = [],
+) {
   const evaluations = [];
   const regressions = [];
 
@@ -1269,7 +1273,7 @@ function getPhase10MetricsTracker() {
  * @param {Object} complexityBudget
  * @returns {Object} Categorized skills and capability depth evaluations
  */
-function evaluateSkillSelection(discoveredSkills = [], requirements = [], complexityBudget = {}) {
+function evaluateSkillSelection(discoveredSkills = [], _requirements = [], complexityBudget = {}) {
   const isMinimal =
     complexityBudget.budget === COMPLEXITY_BUDGETS.MINIMAL ||
     complexityBudget.budget === COMPLEXITY_BUDGETS.LOW;

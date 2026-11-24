@@ -20,12 +20,12 @@ const path = require('path');
 const crypto = require('crypto');
 const os = require('os');
 const {
-  CodebaseIntelligence,
+  CodebaseIntelligence: _CodebaseIntelligence,
   runCodebaseIntelligence,
-  runCodebaseIntelligenceCli,
-  createEvidenceRecord,
-  createResultEnvelope,
-  redactSecrets,
+  runCodebaseIntelligenceCli: _runCodebaseIntelligenceCli,
+  createEvidenceRecord: _createEvidenceRecord,
+  createResultEnvelope: _createResultEnvelope,
+  redactSecrets: _redactSecrets,
 } = require('../../.agent/scripts/codebase_intelligence');
 
 const FIXTURES_ROOT = path.resolve(__dirname, '../fixtures/codebase_intelligence_adversarial');

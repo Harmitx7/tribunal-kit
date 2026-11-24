@@ -12,10 +12,10 @@
  */
 
 const {
-  renderMarkdown,
-  renderPlainText,
-  renderStructured,
-  createActivityEvent,
+  renderMarkdown: _renderMarkdown,
+  renderPlainText: _renderPlainText,
+  renderStructured: _renderStructured,
+  createActivityEvent: _createActivityEvent,
   redactSecrets,
   deepClone,
   ActivityTracker,

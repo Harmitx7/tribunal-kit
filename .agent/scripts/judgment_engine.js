@@ -276,7 +276,7 @@ const REVERSIBILITY_LEVELS = {
  * @param {Object} [context]
  * @returns {Object} Reversibility report
  */
-function classifyReversibility(decisionDescription, context = {}) {
+function classifyReversibility(decisionDescription, _context = {}) {
   const text = (decisionDescription || '').toLowerCase();
 
   if (/(?:delete|drop table|truncate|destroy|purge|wipe|remove customer|permanent)/i.test(text)) {
@@ -476,7 +476,7 @@ function detectRequirementConflicts(requirements) {
  * @param {Object} [context]
  * @returns {Array<Object>} Counterfactual stress findings
  */
-function runCounterfactualAnalysis(task, context = {}) {
+function runCounterfactualAnalysis(task, _context = {}) {
   const t = (task || '').toLowerCase();
   const counterfactuals = [];
 
@@ -693,11 +693,11 @@ function evaluateEscalation(task, context = {}) {
 function evaluateJudgmentState(input = {}) {
   const {
     task,
-    evidence = [],
+    evidence: _evidence = [],
     uncertainties = [],
-    outcomeContract,
+    outcomeContract: _outcomeContract,
     auditReport,
-    tradeoffs = [],
+    tradeoffs: _tradeoffs = [],
     contradictions = [],
   } = input;
 

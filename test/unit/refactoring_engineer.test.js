@@ -41,7 +41,7 @@ const {
 } = require('../../src/execution/canonical_registry');
 const { AgentRuntime } = require('../../src/execution/agent_runtime');
 const { ProviderAdapter } = require('../../src/execution/provider_adapter');
-const { EvidenceBus } = require('../../src/execution/evidence_bus');
+const { EvidenceBus: _EvidenceBus } = require('../../src/execution/evidence_bus');
 const { ConflictResolver } = require('../../src/execution/conflict_resolver');
 const { ControlledWriteService, ReviewExecutor } = require('../../src/execution');
 const {
@@ -50,9 +50,9 @@ const {
   validateRefactoringChange,
   isBehaviorPreservingProposal,
   refactoringToWriteRequest,
-  RefactoringProposalSchema,
-  RefactoringChangeSchema,
-  REFACTORING_CATEGORIES,
+  RefactoringProposalSchema: _RefactoringProposalSchema,
+  RefactoringChangeSchema: _RefactoringChangeSchema,
+  REFACTORING_CATEGORIES: _REFACTORING_CATEGORIES,
 } = require('../../src/execution/agent_contracts');
 
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
@@ -326,7 +326,7 @@ describe('Stage 3.4: Refactoring Engineer Specialist Persona & Runtime Verificat
     expect(isBehaviorPreservingProposal(valid)).toBe(true);
 
     // Disallowed disguised bugfix category
-    const bugfix = {
+    const _bugfix = {
       ...valid,
       refactoringCategory: 'OTHER',
       title: 'Fix edge-case null pointer bugfix',
@@ -1058,8 +1058,10 @@ module.exports = { calculateArea };
           targetFile: 'src/db/query_builder.js',
           sourceRange: '30-90',
           existingContext: 'let sql = "SELECT * FROM " + table;\nif (where) { sql += ... }',
+          /* eslint-disable no-template-curly-in-string */
           proposedReplacement:
             'const whereClause = buildWhere(where);\nconst sql = `SELECT * FROM ${table}${whereClause}`;',
+          /* eslint-enable no-template-curly-in-string */
           reason: 'Isolate clause construction logic.',
           evidence: 'High cyclomatic complexity at line 45.',
         },

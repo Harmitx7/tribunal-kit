@@ -12,8 +12,8 @@
  *   - Task Completion vs Outcome Completion Distinction
  */
 
-const fs = require('fs');
-const path = require('path');
+const _fs = require('fs');
+const _path = require('path');
 const {
   evaluateMateriality,
   checkMinimumSufficientEngineering,
@@ -249,7 +249,7 @@ function generateOutcomeContract(
  * @param {Object} [context]
  * @returns {Array<Object>} Detected tradeoffs with net assessments
  */
-function detectTradeoffs(decisionsOrSkills, context = {}) {
+function detectTradeoffs(decisionsOrSkills, _context = {}) {
   const inputs = Array.isArray(decisionsOrSkills)
     ? decisionsOrSkills.join(' ')
     : String(decisionsOrSkills);
@@ -399,7 +399,7 @@ function detectTradeoffs(decisionsOrSkills, context = {}) {
  * @param {Object} [options]
  * @returns {Object} Comprehensive outcome audit report
  */
-function auditOutcome(outcomeContract, executionEvidence = {}, options = {}) {
+function auditOutcome(outcomeContract, executionEvidence = {}, _options = {}) {
   const contract = outcomeContract || {};
   const evidence = executionEvidence || {};
   const codeDiff = (evidence.code_diff || '').toLowerCase();

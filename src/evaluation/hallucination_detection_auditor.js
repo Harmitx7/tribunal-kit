@@ -17,8 +17,8 @@
  *    - UNVERIFIABLE: Cannot be resolved deterministically from available repo files.
  */
 
-const fs = require('fs');
-const path = require('path');
+const _fs = require('fs');
+const _path = require('path');
 const { verifyEvidence } = require('../../.agent/scripts/evidence_verifier');
 
 // Known hallucinated/ghost package patterns commonly fabricated by LLMs

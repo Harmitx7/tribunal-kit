@@ -152,7 +152,7 @@ function createPredictionRecord(params = {}) {
  * @param {Object} architectureContext
  * @returns {Object} Blast radius report
  */
-function analyzeBlastRadius(failureHypothesis, architectureContext = {}) {
+function analyzeBlastRadius(failureHypothesis, _architectureContext = {}) {
   const fText =
     `${failureHypothesis.title || failureHypothesis.prediction || ''} ${failureHypothesis.reason || ''}`.toLowerCase();
   let tier = BLAST_RADIUS_TIERS.COMPONENT;
@@ -261,7 +261,7 @@ function analyzeBlastRadius(failureHypothesis, architectureContext = {}) {
  * @param {Object} context
  * @returns {Array<Object>} Causal failure chains
  */
-function buildFailureChains(taskQuery, context = {}) {
+function buildFailureChains(taskQuery, _context = {}) {
   const q = (taskQuery || '').toLowerCase();
   const chains = [];
 
@@ -384,7 +384,7 @@ function buildFailureChains(taskQuery, context = {}) {
 /**
  * Simulates external dependency faults (Section 8).
  */
-function simulateDependencyFailures(taskQuery, context = {}) {
+function simulateDependencyFailures(taskQuery, _context = {}) {
   const predictions = [];
   const q = taskQuery.toLowerCase();
 
@@ -433,7 +433,7 @@ function simulateDependencyFailures(taskQuery, context = {}) {
 /**
  * Simulates concurrency and race conditions (Section 9).
  */
-function simulateConcurrencyRisks(taskQuery, context = {}) {
+function simulateConcurrencyRisks(taskQuery, _context = {}) {
   const predictions = [];
   const q = taskQuery.toLowerCase();
 
@@ -493,7 +493,7 @@ function simulateConcurrencyRisks(taskQuery, context = {}) {
 /**
  * Simulates retry amplification and thundering herds (Section 10).
  */
-function simulateRetryAmplification(taskQuery, context = {}) {
+function simulateRetryAmplification(taskQuery, _context = {}) {
   const predictions = [];
   const q = taskQuery.toLowerCase();
 
@@ -526,7 +526,7 @@ function simulateRetryAmplification(taskQuery, context = {}) {
 /**
  * Simulates database failure and slow-DB degradation (Section 12).
  */
-function simulateDatabaseFailures(taskQuery, context = {}) {
+function simulateDatabaseFailures(taskQuery, _context = {}) {
   const predictions = [];
   const q = taskQuery.toLowerCase();
 
@@ -577,7 +577,7 @@ function simulateDatabaseFailures(taskQuery, context = {}) {
 /**
  * Simulates queue and messaging faults (Section 11).
  */
-function simulateQueueFailures(taskQuery, context = {}) {
+function simulateQueueFailures(taskQuery, _context = {}) {
   const predictions = [];
   const q = taskQuery.toLowerCase();
 
@@ -611,7 +611,7 @@ function simulateQueueFailures(taskQuery, context = {}) {
 /**
  * Simulates cache failures and availability dependencies (Section 13).
  */
-function simulateCacheFailures(taskQuery, context = {}) {
+function simulateCacheFailures(taskQuery, _context = {}) {
   const predictions = [];
   const q = taskQuery.toLowerCase();
 
@@ -707,7 +707,7 @@ function simulateCapacityAndQueueing(taskQuery, context = {}) {
 /**
  * Simulates latency budget and tail latency (Section 16).
  */
-function simulateLatencyBudget(taskQuery, context = {}) {
+function simulateLatencyBudget(taskQuery, _context = {}) {
   const predictions = [];
   const q = taskQuery.toLowerCase();
 
@@ -735,7 +735,7 @@ function simulateLatencyBudget(taskQuery, context = {}) {
 /**
  * Security Pre-Mortem (Section 17).
  */
-function runSecurityPreMortem(taskQuery, context = {}) {
+function runSecurityPreMortem(taskQuery, _context = {}) {
   const predictions = [];
   const q = taskQuery.toLowerCase();
 
@@ -800,7 +800,7 @@ function runSecurityPreMortem(taskQuery, context = {}) {
 /**
  * AI & Agent Pre-Mortem (Section 18).
  */
-function runAgentPreMortem(taskQuery, context = {}) {
+function runAgentPreMortem(taskQuery, _context = {}) {
   const predictions = [];
   const q = taskQuery.toLowerCase();
 
@@ -853,7 +853,7 @@ function runAgentPreMortem(taskQuery, context = {}) {
 /**
  * Cost Pre-Mortem (Section 19).
  */
-function runCostPreMortem(taskQuery, context = {}) {
+function runCostPreMortem(taskQuery, _context = {}) {
   const predictions = [];
   const q = taskQuery.toLowerCase();
 
@@ -890,7 +890,7 @@ function runCostPreMortem(taskQuery, context = {}) {
 /**
  * Deployment & Version Skew Pre-Mortem (Section 20 & 21).
  */
-function simulateDeploymentAndRecovery(taskQuery, context = {}) {
+function simulateDeploymentAndRecovery(taskQuery, _context = {}) {
   const predictions = [];
   const q = taskQuery.toLowerCase();
 
@@ -1054,7 +1054,7 @@ function detectUnsupportedClaims(text) {
  * @param {Object} context
  * @returns {Object} Selected simulation level
  */
-function determineSimulationLevel(taskQuery, predictions = [], context = {}) {
+function determineSimulationLevel(taskQuery, predictions = [], _context = {}) {
   const q = taskQuery.toLowerCase();
 
   // Simple static changes (markdown, css, typo)
@@ -1119,7 +1119,7 @@ function determineSimulationLevel(taskQuery, predictions = [], context = {}) {
  * @param {Object} options
  * @returns {Object} Structured pre-mortem report conforming to Section 38 Output Contract
  */
-function runPreMortem(taskQuery, context = {}, options = {}) {
+function runPreMortem(taskQuery, context = {}, _options = {}) {
   const predictions = [
     ...simulateDependencyFailures(taskQuery, context),
     ...simulateConcurrencyRisks(taskQuery, context),
@@ -1215,7 +1215,7 @@ function runPreMortem(taskQuery, context = {}, options = {}) {
 function comparePredictionsWithObserved(predictions = [], empiricalEvidence = {}, options = {}) {
   const results = [];
   const testResults = empiricalEvidence.test_results || [];
-  const benchmarkResults = empiricalEvidence.benchmark_results || {};
+  const _benchmarkResults = empiricalEvidence.benchmark_results || {};
 
   let verifiedCount = 0;
   let disprovedCount = 0;
@@ -1258,7 +1258,7 @@ function comparePredictionsWithObserved(predictions = [], empiricalEvidence = {}
               status: TRUST_STATES.VERIFIED,
               confidence: 'HIGH',
             });
-          } catch (e) {}
+          } catch (_e) {}
         }
       } else {
         // Test passed cleanly under stress, disproving the failure mode
@@ -1356,13 +1356,13 @@ function main() {
   const args = process.argv.slice(2);
   let query = '';
   let json = false;
-  let archFile = null;
+  let _archFile = null;
   let verifyFile = null;
 
   for (let i = 0; i < args.length; i++) {
     const a = args[i];
     if (a === '--json') json = true;
-    else if (a === '--architecture' && i + 1 < args.length) archFile = args[++i];
+    else if (a === '--architecture' && i + 1 < args.length) _archFile = args[++i];
     else if (a === '--verify' && i + 1 < args.length) verifyFile = args[++i];
     else if (!a.startsWith('-') && !query) query = a;
   }

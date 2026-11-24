@@ -24,7 +24,7 @@ const { execSync } = require('child_process');
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const {
   runCodebaseIntelligence,
-  CodebaseIntelligence,
+  CodebaseIntelligence: _CodebaseIntelligence,
 } = require('../../.agent/scripts/codebase_intelligence');
 const { handleRequest } = require('../../bin/mcp-server');
 

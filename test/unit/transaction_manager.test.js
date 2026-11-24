@@ -21,7 +21,7 @@ describe('TransactionManager', () => {
   afterEach(() => {
     try {
       fs.rmSync(workspace, { recursive: true, force: true });
-    } catch (e) {}
+    } catch (_e) {}
   });
 
   describe('Basic Lifecycle', () => {
