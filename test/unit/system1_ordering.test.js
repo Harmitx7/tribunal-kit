@@ -124,10 +124,13 @@ describe('System-1 Laya Pre-Load Integrity Boundary', () => {
       };
     });
 
-    // Suppress expected error
-    jest.spyOn(process, 'exitCode', 'set').mockImplementation(() => {});
-
-    await cmdSystem1([], ['node', 'cli.js', 'enable'], true);
+    const originalExitCode = process.exitCode;
+    try {
+      await cmdSystem1([], ['node', 'cli.js', 'enable'], true);
+      expect(process.exitCode).toBe(1);
+    } finally {
+      process.exitCode = originalExitCode;
+    }
 
     expect(events).toEqual(['npm_ci', 'downloadCompleted', 'checksumStarted', 'checksumCompleted']);
 

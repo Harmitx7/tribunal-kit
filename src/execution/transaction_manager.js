@@ -96,15 +96,10 @@ class TransactionManager {
       if (fs.existsSync(mapPath)) {
         const mapping = JSON.parse(fs.readFileSync(mapPath, 'utf8'));
         for (const [realPath, backupName] of Object.entries(mapping)) {
-          assertWithinRoot(this.workspace, realPath);
-          if (fs.existsSync(realPath)) {
-            try {
-              const lstat = fs.lstatSync(realPath);
-              if (lstat.isSymbolicLink()) {
-                const real = fs.realpathSync(realPath);
-                assertWithinRoot(this.workspace, real);
-              }
-            } catch (_) {}
+          assertWithinRoot(this.workspace, realPath, { checkSymlinks: false });
+          assertNoSymlinkAncestors(this.workspace, realPath);
+          if (fs.lstatSync(realPath, { throwIfNoEntry: false })?.isSymbolicLink()) {
+            continue;
           }
           if (backupName === '__DELETED__') {
             if (fs.existsSync(realPath)) fs.unlinkSync(realPath);

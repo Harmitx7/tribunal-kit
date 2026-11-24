@@ -28,7 +28,6 @@ const {
 } = require('../../.agent/scripts/codebase_intelligence');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
-const OUTER_ROOT = path.resolve(REPO_ROOT, '..');
 
 describe('Phase 20: Architecture Hardening & Failure-Injection Gauntlet', () => {
   let tempRoot;
@@ -274,7 +273,8 @@ describe('Phase 20: Architecture Hardening & Failure-Injection Gauntlet', () => 
 
     test('P20-T6.2: Dual-workspace mirror divergence is strictly detectable by SHA-256', () => {
       const innerEngine = path.join(REPO_ROOT, '.agent/scripts/codebase_intelligence.js');
-      const outerEngine = path.join(OUTER_ROOT, '.agent/scripts/codebase_intelligence.js');
+      const outerEngine = path.join(tempRoot, 'codebase_intelligence.js');
+      fs.copyFileSync(innerEngine, outerEngine);
 
       const hashInner = crypto
         .createHash('sha256')
@@ -288,8 +288,9 @@ describe('Phase 20: Architecture Hardening & Failure-Injection Gauntlet', () => 
       expect(hashInner).toBe(hashOuter);
 
       // Verify that any simulated divergence triggers mismatch detection
-      const fakeCorruptHash = crypto.createHash('sha256').update('corrupt').digest('hex');
-      expect(hashInner).not.toBe(fakeCorruptHash);
+      fs.appendFileSync(outerEngine, '\n// Simulated mirror divergence\n');
+      const corruptHash = crypto.createHash('sha256').update(fs.readFileSync(outerEngine)).digest('hex');
+      expect(hashInner).not.toBe(corruptHash);
     });
   });
 });

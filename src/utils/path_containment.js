@@ -444,18 +444,28 @@ function assertWithinRoot(root, targetPath, options = {}) {
     throw new Error('Security Violation: Null byte detected in path.');
   }
 
+  const normalized = targetPath.replace(/\\/g, '/');
+  if (
+    (/^[a-z]:/i.test(normalized) && !path.isAbsolute(targetPath)) ||
+    (targetPath.includes('\\') && normalized.split('/').includes('..'))
+  ) {
+    throw new Error('Path security violation: Invalid drive or traversal segment in target path.');
+  }
+
   const resolvedRoot = path.resolve(root);
   const resolvedTarget = path.resolve(resolvedRoot, targetPath);
 
   // Use centralized lexical containment
-  if (!isPathContained(resolvedRoot, resolvedTarget, { allowRoot: true })) {
+  if (
+    !isPathContained(resolvedRoot, resolvedTarget, { allowRoot: true }) &&
+    !isPathContained(resolveCanonicalRoot(resolvedRoot), resolvedTarget, { allowRoot: true })
+  ) {
     throw new Error(
       `Path security violation: Security Violation: Path traversal detected. Target "${targetPath}" escapes authorized root "${root}".`,
     );
   }
 
   // Windows device name checks on segments
-  const normalized = targetPath.replace(/\\/g, '/');
   for (const seg of normalized.split('/')) {
     if (WINDOWS_RESERVED_DEVICE_REGEX.test(seg)) {
       throw new Error(
