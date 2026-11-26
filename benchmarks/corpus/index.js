@@ -23,7 +23,7 @@
  * - timeoutMs: number
  */
 
-const path = require('path');
+const _path = require('path');
 
 const REQUIRED_FIELDS = [
   'scenarioId',

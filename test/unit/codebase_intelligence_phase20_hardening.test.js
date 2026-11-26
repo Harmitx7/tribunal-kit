@@ -24,7 +24,7 @@ const {
   CodebaseIntelligence,
   resolveRoute,
   runCodebaseIntelligence,
-  redactSecrets,
+  redactSecrets: _redactSecrets,
 } = require('../../.agent/scripts/codebase_intelligence');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
@@ -253,11 +253,11 @@ describe('Phase 20: Architecture Hardening & Failure-Injection Gauntlet', () => 
       }
       // Check exports
       if (pkg.exports) {
-        for (const [subpath, target] of Object.entries(pkg.exports)) {
+        for (const [_subpath, target] of Object.entries(pkg.exports)) {
           if (typeof target === 'string') {
             expect(fs.existsSync(path.join(REPO_ROOT, target))).toBe(true);
           } else if (typeof target === 'object') {
-            for (const [expKey, expTarget] of Object.entries(target)) {
+            for (const [_expKey, expTarget] of Object.entries(target)) {
               expect(fs.existsSync(path.join(REPO_ROOT, expTarget))).toBe(true);
             }
           }
@@ -265,7 +265,7 @@ describe('Phase 20: Architecture Hardening & Failure-Injection Gauntlet', () => 
       }
       // Check bin
       if (pkg.bin) {
-        for (const [binName, binPath] of Object.entries(pkg.bin)) {
+        for (const [_binName, binPath] of Object.entries(pkg.bin)) {
           expect(fs.existsSync(path.join(REPO_ROOT, binPath))).toBe(true);
         }
       }

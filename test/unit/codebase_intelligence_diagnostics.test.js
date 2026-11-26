@@ -16,12 +16,12 @@
 
 const fs = require('fs');
 const path = require('path');
-const os = require('os');
+const _os = require('os');
 const {
   runCodebaseIntelligence,
-  runCodebaseIntelligenceCli,
+  runCodebaseIntelligenceCli: _runCodebaseIntelligenceCli,
   classifyError,
-  createResultEnvelope,
+  createResultEnvelope: _createResultEnvelope,
 } = require('../../.agent/scripts/codebase_intelligence');
 const { handleRequest } = require('../../bin/mcp-server');
 

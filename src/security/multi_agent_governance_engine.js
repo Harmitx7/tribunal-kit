@@ -94,7 +94,7 @@ function auditDelegationHierarchy(rootNode) {
  * @param {object} [options]
  * @returns {object} Consensus triage result
  */
-function auditReviewerConsensus(reviewerReports, options = {}) {
+function auditReviewerConsensus(reviewerReports, _options = {}) {
   if (!Array.isArray(reviewerReports)) {
     throw new Error('auditReviewerConsensus expects an array of reviewer report objects.');
   }

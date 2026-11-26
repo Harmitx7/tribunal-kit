@@ -63,7 +63,7 @@ async function profile() {
     const opStart = performance.now();
     try {
       await ci.execute(op.name, op.target);
-    } catch (e) {
+    } catch (_e) {
       // Some operations may throw for missing targets, that's OK
     }
     const opEnd = performance.now();

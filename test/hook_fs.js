@@ -16,7 +16,7 @@ function record(p) {
   }
 }
 
-fs.readFileSync = function (p, options) {
+fs.readFileSync = function (p, _options) {
   record(p);
   return originalReadFileSync.apply(this, arguments);
 };
@@ -26,7 +26,7 @@ fs.existsSync = function (p) {
   return originalExistsSync.apply(this, arguments);
 };
 
-fs.readdirSync = function (p, options) {
+fs.readdirSync = function (p, _options) {
   record(p);
   return originalReaddirSync.apply(this, arguments);
 };

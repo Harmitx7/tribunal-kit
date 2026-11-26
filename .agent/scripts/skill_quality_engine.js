@@ -1,8 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 const { loadSkills } = require('./context_broker');
-const { parseContract, validateContract } = require('./skill_contract_engine');
-const { loadOntology, getHierarchyCompatibility } = require('./skill_ontology_engine');
+const {
+  parseContract: _parseContract,
+  validateContract: _validateContract,
+} = require('./skill_contract_engine');
+const {
+  loadOntology,
+  getHierarchyCompatibility: _getHierarchyCompatibility,
+} = require('./skill_ontology_engine');
 
 const WEIGHTS = {
   contract: 10,
@@ -20,7 +26,7 @@ const WEIGHTS = {
 };
 
 function calculateSkillQuality(skillName, skillRaw, ontology) {
-  const score = 0;
+  const _score = 0;
   const dimensions = {};
   const findings = [];
   const recommendations = [];
@@ -28,12 +34,12 @@ function calculateSkillQuality(skillName, skillRaw, ontology) {
   // 1. Contract Integrity (10%)
   // Since we load the skill through context_broker, we can try to parse its SKILL.md.
   // Actually, context_broker already parses some fields. We should load it from file for full contract.
-  let contractValid = true;
+  let _contractValid = true;
   let contractScore = 100;
 
   if (!skillRaw || !skillRaw.name) {
     contractScore = 0;
-    contractValid = false;
+    _contractValid = false;
     findings.push(
       createFinding(
         'CON-001',

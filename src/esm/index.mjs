@@ -159,6 +159,9 @@ export async function cmdImpactTier(argv, quiet) {
 export async function cmdUnderstand(flags, argv, quiet) {
   return loadCommand('../commands/understand.js', 'cmdUnderstand', flags, argv, quiet);
 }
+export async function cmdAutopilot(argv) {
+  return loadCommand('../commands/autopilot.js', 'cmdAutopilot', argv);
+}
 
 export async function cmdArch(flags, argv, quiet) {
   return loadCommand('../commands/arch.js', 'cmdArch', flags, argv, quiet);

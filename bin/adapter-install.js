@@ -23,7 +23,7 @@ const ADAPTERS = {
     detect: () => commandExists('claude'),
     rulesFile: '.claude/CLAUDE.md',
     description: 'Claude Code CLI',
-    setup: (projectRoot, _globalMode) => {
+    setup: (projectRoot, globalMode) => {
       const rulesDir = path.join(projectRoot, '.claude');
       ensureDir(rulesDir);
       const source = path.join(__dirname, '..', '.claude', 'CLAUDE.md');
@@ -36,7 +36,7 @@ const ADAPTERS = {
         fs.copyFileSync(source, rootTarget);
       }
       // Also install MCP server config
-      installMcpConfig(projectRoot, 'claude');
+      installMcpConfig(projectRoot, 'claude', globalMode);
     },
   },
 
@@ -80,7 +80,7 @@ const ADAPTERS = {
     detect: () => commandExists('gemini'),
     rulesFile: '.gemini/rules/GEMINI.md',
     description: 'Google Gemini CLI',
-    setup: projectRoot => {
+    setup: (projectRoot, globalMode) => {
       const geminiDir = path.join(projectRoot, '.gemini', 'rules');
       ensureDir(geminiDir);
       const systemPrompt = fs.readFileSync(
@@ -90,7 +90,7 @@ const ADAPTERS = {
       fs.writeFileSync(path.join(geminiDir, 'GEMINI.md'), systemPrompt);
       console.log(`  ✓ Wrote ${path.join(geminiDir, 'GEMINI.md')}`);
       // Also install MCP config
-      installMcpConfig(projectRoot, 'gemini');
+      installMcpConfig(projectRoot, 'gemini', globalMode);
     },
   },
 
@@ -155,7 +155,7 @@ function ensureDir(dirPath) {
   }
 }
 
-function installMcpConfig(projectRoot, target) {
+function installMcpConfig(projectRoot, target, globalMode) {
   let configPath;
   if (target === 'claude') {
     configPath = path.join(projectRoot, '.claude', 'mcp.json');
@@ -186,7 +186,11 @@ function installMcpConfig(projectRoot, target) {
   existing.mcpServers['tribunal-kit'] = {
     command: 'node',
     args: [path.join(__dirname, '..', 'bin', 'mcp-server.js')],
-    env: { NODE_ENV: 'production' },
+    env: {
+      ...existing.mcpServers['tribunal-kit']?.env,
+      NODE_ENV: 'production',
+      ...(!globalMode && { TRIBUNAL_AUTOPILOT_ROOT: projectRoot }),
+    },
   };
 
   fs.writeFileSync(configPath, JSON.stringify(existing, null, 2));

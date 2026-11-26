@@ -24,13 +24,13 @@ const {
   createActivityEvent,
   ActivityTracker,
   SkillAgentResolver,
-  CORE_AGENT_REGISTRY,
+  CORE_AGENT_REGISTRY: _CORE_AGENT_REGISTRY,
   ANNOUNCEMENT_DECISIONS,
   ANNOUNCEMENT_REASONS,
-  AnnouncementDeduplicator,
+  AnnouncementDeduplicator: _AnnouncementDeduplicator,
   AnnouncementIntelligence,
-  defaultAnnouncementIntelligence,
-  renderMarkdown,
+  defaultAnnouncementIntelligence: _defaultAnnouncementIntelligence,
+  renderMarkdown: _renderMarkdown,
 } = require('../../src/activity');
 
 describe('Phase 4: Context-Aware Agent & Skill Announcements', () => {

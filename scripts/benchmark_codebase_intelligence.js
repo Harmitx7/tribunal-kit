@@ -27,7 +27,7 @@ const os = require('os');
 const { performance } = require('perf_hooks');
 const {
   CodebaseIntelligence,
-  runCodebaseIntelligence,
+  runCodebaseIntelligence: _runCodebaseIntelligence,
 } = require('../.agent/scripts/codebase_intelligence');
 
 // ANSI Colors
@@ -117,7 +117,7 @@ function generateSyntheticRepository(targetDir, fileCount = 100, seed = 42) {
 
   for (let m = 0; m < moduleCount; m++) {
     const modDir = moduleDirs[m];
-    const modRel = path.relative(targetDir, modDir).replace(/\\/g, '/');
+    const _modRel = path.relative(targetDir, modDir).replace(/\\/g, '/');
 
     for (let f = 0; f < filesPerModule; f++) {
       const fileName = `service_${f}.js`;
@@ -346,7 +346,7 @@ async function runFullBenchmark(profiles = [100, 1000]) {
 if (require.main === module) {
   const targetCount = parseInt(process.argv[2], 10) || 100;
   runFullBenchmark([targetCount])
-    .then(res => {
+    .then(_res => {
       console.log(bold('✓ Benchmark Completed Successfully.'));
     })
     .catch(err => {

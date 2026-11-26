@@ -21,24 +21,24 @@ const fs = require('fs');
 const path = require('path');
 const {
   scanForPromptInjection,
-  wrapUntrustedContent,
-  detectIndirectInjection,
+  wrapUntrustedContent: _wrapUntrustedContent,
+  detectIndirectInjection: _detectIndirectInjection,
   auditToolPermissions,
   detectConfusedDeputy,
-  generateLeastPrivilegePolicy,
-  auditMcpManifest,
+  generateLeastPrivilegePolicy: _generateLeastPrivilegePolicy,
+  auditMcpManifest: _auditMcpManifest,
   generateCanary,
   scanForDataLeakage,
-  sanitizeTrace,
+  sanitizeTrace: _sanitizeTrace,
   auditCommandSafety,
   auditPathContainment,
-  validateDryRunFidelity,
+  validateDryRunFidelity: _validateDryRunFidelity,
   auditDelegationHierarchy,
   auditReviewerConsensus,
   buildThreatModelRegister,
-  ThreatRecordSchema,
-  SecurityControlSchema,
-  PolicyAuditFindingSchema,
+  ThreatRecordSchema: _ThreatRecordSchema,
+  SecurityControlSchema: _SecurityControlSchema,
+  PolicyAuditFindingSchema: _PolicyAuditFindingSchema,
 } = require('../src/security');
 const { evaluateRegressions } = require('../src/evaluation/llm_regression_evaluator');
 const { EvaluationDatasetSchema } = require('../src/evaluation/evaluation_schemas');

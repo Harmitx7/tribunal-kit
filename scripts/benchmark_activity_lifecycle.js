@@ -16,7 +16,7 @@ const {
   AGENT_SKILL_STATES,
   TOOL_STATES,
   canTransition,
-  assertValidTransition,
+  assertValidTransition: _assertValidTransition,
   OperationRegistry,
   OperationRecord,
 } = require('../src/activity');
@@ -119,7 +119,7 @@ function runBenchmark() {
   console.log(`    Throughput:       ${simOpsPerSec.toLocaleString()} ops/sec\n`);
 
   // 5. Memory Footprint and Retention Cleanup
-  const memBefore = process.memoryUsage().heapUsed;
+  const _memBefore = process.memoryUsage().heapUsed;
   const cleanupRes = simRegistry.cleanup({ maxCompleted: 500, ttlMs: 1000000 });
   const memAfter = process.memoryUsage().heapUsed;
 

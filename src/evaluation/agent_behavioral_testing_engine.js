@@ -12,9 +12,9 @@
  * 4. Explicit verdicts: PASS, FAIL, INCONCLUSIVE, BLOCKED, NOT_RUN
  */
 
-const { execFileSync } = require('child_process');
+const { execFileSync: _execFileSync } = require('child_process');
 const path = require('path');
-const fs = require('fs');
+const _fs = require('fs');
 const { validateEvaluationCase, validateEvaluationResult } = require('./evaluation_schemas');
 
 class AgentBehavioralTestingEngine {

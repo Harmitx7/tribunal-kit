@@ -546,7 +546,7 @@ const INTERACTION_RULES = [
 /**
  * Normalize a concept identifier for matching against interaction rules.
  */
-function normalizeConceptId(id) {
+function _normalizeConceptId(id) {
   return (id || '')
     .toLowerCase()
     .replace(/-/g, '_')
@@ -709,7 +709,7 @@ function discoverInteractions(tokens) {
  * @param {string} taskQuery
  * @returns {Array<Object>} Inferred interactions
  */
-function discoverInferredInteractions(tokens, taskQuery) {
+function discoverInferredInteractions(tokens, _taskQuery) {
   const inferred = [];
   const seen = new Set();
 
@@ -1183,7 +1183,7 @@ function analyzeResourceContention(tokens) {
  * @param {string} taskQuery
  * @returns {Object} Security boundary analysis
  */
-function analyzeSecurityBoundaries(tokens, taskQuery) {
+function analyzeSecurityBoundaries(tokens, _taskQuery) {
   const concerns = [];
 
   if (tokens.has('multi_tenancy')) {
@@ -1709,7 +1709,7 @@ function getPhase9MetricsTracker() {
  * @param {Object} [options]
  * @returns {Object} Full cross-domain analysis
  */
-function runCrossDomainAnalysis(taskQuery, conceptData, options = {}) {
+function runCrossDomainAnalysis(taskQuery, conceptData, _options = {}) {
   const q = (taskQuery || '').trim();
   const tracker = getPhase9MetricsTracker();
   tracker.record('tasks_analyzed');

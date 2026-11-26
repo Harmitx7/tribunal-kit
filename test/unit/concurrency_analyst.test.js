@@ -48,7 +48,7 @@ const path = require('path');
 const os = require('os');
 const {
   resolveAgent,
-  listAllAgents,
+  listAllAgents: _listAllAgents,
   getRegistrySummary,
 } = require('../../src/execution/canonical_registry');
 const { AgentRuntime } = require('../../src/execution/agent_runtime');
@@ -65,8 +65,8 @@ const {
 const {
   validateConcurrencyFinding,
   safeValidateConcurrencyFinding,
-  ConcurrencyFindingSchema,
-  CONCURRENCY_CATEGORIES,
+  ConcurrencyFindingSchema: _ConcurrencyFindingSchema,
+  CONCURRENCY_CATEGORIES: _CONCURRENCY_CATEGORIES,
   parseRawAgentOutput,
 } = require('../../src/execution/agent_contracts');
 
@@ -398,7 +398,7 @@ describe('Stage 3.5: Concurrency Analyst Specialist Persona & Runtime Verificati
       }
     }
 
-    const counter = new InsecureSharedCounter();
+    const _counter = new InsecureSharedCounter();
     const finding = {
       findingId: 'CONC-STATE-001',
       title: 'Unsynchronized Shared Mutable Counter',
@@ -975,7 +975,7 @@ describe('Stage 3.5: Concurrency Analyst Specialist Persona & Runtime Verificati
 
     // Release both workers simultaneously after both have read current balance
     lockDeferred.resolve();
-    const [res1, res2] = await Promise.all([p1, p2]);
+    const [_res1, _res2] = await Promise.all([p1, p2]);
 
     // Observed result: Without synchronization, both withdraw 80 leading to negative balance (data race)
     // Expected invariant: Total balance must never drop below 0. Concurrency analyst flags this pattern.

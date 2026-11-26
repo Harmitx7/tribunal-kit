@@ -8,7 +8,7 @@
 
 const {
   ReviewExecutor,
-  runWithBoundedConcurrency,
+  runWithBoundedConcurrency: _runWithBoundedConcurrency,
 } = require('../../src/execution/review_executor');
 const { ProviderAdapter } = require('../../src/execution/provider_adapter');
 const { parseAndValidateReviewerOutput } = require('../../src/execution/schemas');

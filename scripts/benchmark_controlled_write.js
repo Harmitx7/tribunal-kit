@@ -1,7 +1,7 @@
-const path = require('path');
+const _path = require('path');
 const { performance } = require('perf_hooks');
-const crypto = require('crypto');
-const fs = require('fs');
+const _crypto = require('crypto');
+const _fs = require('fs');
 
 const { ControlledWriteService } = require('../src/execution/controlled_write_service');
 
@@ -55,7 +55,7 @@ async function runBenchmark() {
 
       const start = performance.now();
       try {
-        const res = await service.requestWrite(req, { dryRun: true });
+        const _res = await service.requestWrite(req, { dryRun: true });
         const end = performance.now();
         results[key].push(end - start);
       } catch (err) {
@@ -88,7 +88,7 @@ async function runBenchmark() {
     const start = performance.now();
     try {
       await service.requestWrite(req, { dryRun: true });
-    } catch (e) {}
+    } catch (_e) {}
     rejectTimes.push(performance.now() - start);
   }
   console.log(`  Rejection P50: ${calculatePercentile(rejectTimes, 50)} ms`);

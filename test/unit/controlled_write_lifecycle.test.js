@@ -100,7 +100,7 @@ describe('ControlledWriteService & TransactionManager Lifecycle Invariants (Phas
     fs.writeFileSync(tx.walPath, '{ corrupted json', 'utf8');
 
     // Simulate stale lock recovery
-    const stats = fs.statSync(tx.lockPath);
+    const _stats = fs.statSync(tx.lockPath);
     const oldTime = new Date(Date.now() - 20000);
     fs.utimesSync(tx.lockPath, oldTime, oldTime);
 

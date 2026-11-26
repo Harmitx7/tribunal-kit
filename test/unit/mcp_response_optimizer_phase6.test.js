@@ -15,7 +15,7 @@
  */
 
 const {
-  McpResponseOptimizer,
+  McpResponseOptimizer: _McpResponseOptimizer,
   serializeResponse,
   formatErrorResponse,
   estimateTokens,

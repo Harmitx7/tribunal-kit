@@ -49,6 +49,7 @@ function main() {
     'Tribunal Kit Master Governance is active.',
     'You are operating under the Tribunal Anti-Hallucination & Subagent-Driven Development (SDD) protocol.',
     'Enforce: Iron Law of TDD (Red-Green-Refactor), 28-Specialist Review Waves, Out-of-Band Context Isolation, and Zero Placeholders.',
+    'Tribunal Autopilot planning is available through tribunal_autopilot_plan, with explicit repository-relative targets for change requests.',
     '',
     rules,
     '</EXTREMELY_IMPORTANT>',

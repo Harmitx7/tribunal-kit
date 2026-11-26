@@ -11,8 +11,8 @@ const {
   extractTestableClaims,
   detectCircularity,
   calculateTestQualityScore,
-  parseContract,
-  classifySkill,
+  parseContract: _parseContract,
+  classifySkill: _classifySkill,
 } = require('./skill_test_authoring_engine');
 
 // ─── Constants & Priority Model (Section 8) ──────────────────────────────────
@@ -166,7 +166,7 @@ function prioritizeClaims(claims = []) {
 }
 
 // ─── Section 9-11: Author Independent Expansion Test ─────────────────────────
-function authorExpansionTest(skillName, claim, testType = 'POSITIVE', options = {}) {
+function authorExpansionTest(skillName, claim, testType = 'POSITIVE', _options = {}) {
   const agentDir = path.resolve(__dirname, '..');
   const skillFile = path.join(agentDir, 'skills', skillName, 'SKILL.md');
   const content = fs.existsSync(skillFile) ? fs.readFileSync(skillFile, 'utf8') : '';
@@ -310,7 +310,7 @@ function authorExpansionTest(skillName, claim, testType = 'POSITIVE', options = 
 }
 
 // ─── Section 12: Review Gate ──────────────────────────────────────────────────
-function reviewExpansionTest(test, reviewerName, options = {}) {
+function reviewExpansionTest(test, reviewerName, _options = {}) {
   const isSecurity = test.risk === 'CRITICAL';
 
   if (isSecurity) {
@@ -350,7 +350,7 @@ function reviewExpansionTest(test, reviewerName, options = {}) {
 }
 
 // ─── Section 13: Sandboxed Execution with Repeatability ───────────────────────
-function executeExpansionTest(test, options = {}) {
+function executeExpansionTest(test, _options = {}) {
   if (test.review.status !== 'APPROVED') {
     throw new Error(`Cannot execute test with status '${test.review.status}'. Must be 'APPROVED'`);
   }
@@ -470,7 +470,7 @@ function recalculateCertification(skillId, claims, currentClaimStates, options =
 }
 
 // ─── Section 20: Selection Artifact ───────────────────────────────────────────
-function selectExpansionCorpus(options = {}) {
+function selectExpansionCorpus(_options = {}) {
   const wave1Skills = [
     'api-patterns',
     'geo-fundamentals',

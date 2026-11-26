@@ -37,13 +37,13 @@ class AdaptiveReviewerOrchestrator {
       return baseline;
     }
 
-    const { selected, rejected, coverage } = baseline;
-    const { impactTier, files, categories } = query;
+    const { selected, rejected, coverage: _coverage } = baseline;
+    const { impactTier: _impactTier, files: _files, categories: _categories } = query;
 
     // 2. Fetch Performance Intelligence
     // Retrieve historical effectiveness of selected reviewers
     const adaptiveSelected = [];
-    const safetyRequiredNames = new Set(selected.map(r => r.reviewer));
+    const _safetyRequiredNames = new Set(selected.map(r => r.reviewer));
 
     for (const reviewer of selected) {
       const stats = this.performanceStore.getReviewerStats(reviewer.reviewer);

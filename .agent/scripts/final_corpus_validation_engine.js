@@ -161,7 +161,7 @@ function validateEvidenceLineageGraph(
 }
 
 // ─── 3. Source Freshness Validation ──────────────────────────────────────────
-function validateSourceFreshness(skills = [], evidenceRegistry = [], agentDir = null) {
+function validateSourceFreshness(_skills = [], evidenceRegistry = [], agentDir = null) {
   const baseDir = agentDir || path.resolve(__dirname, '..', 'skills');
   const staleRecords = [];
 

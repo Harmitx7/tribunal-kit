@@ -15,15 +15,15 @@
 
 const path = require('path');
 const fs = require('fs');
-const crypto = require('crypto');
+const _crypto = require('crypto');
 const {
   CodebaseIntelligence,
-  runCodebaseIntelligence,
-  runCodebaseIntelligenceCli,
+  runCodebaseIntelligence: _runCodebaseIntelligence,
+  runCodebaseIntelligenceCli: _runCodebaseIntelligenceCli,
   resolveRoute,
-  createEvidenceRecord,
+  createEvidenceRecord: _createEvidenceRecord,
 } = require('../../.agent/scripts/codebase_intelligence');
-const { cmdUnderstand } = require('../../src/commands/understand');
+const { cmdUnderstand: _cmdUnderstand } = require('../../src/commands/understand');
 
 describe('Phase 13: Adversarial Integration & Autonomous Routing Optimization', () => {
   const repoRoot = path.resolve(__dirname, '../..');

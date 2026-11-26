@@ -16,7 +16,7 @@ const {
   renderPlainText,
   renderStructured,
   EVENT_TYPES,
-  STATUSES,
+  STATUSES: _STATUSES,
 } = require('../src/activity');
 
 function runBenchmark() {

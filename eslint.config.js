@@ -59,6 +59,12 @@ module.exports = [
     },
   },
   {
+    files: ['benchmarks/corpus/**/*.js'],
+    rules: {
+      'no-template-curly-in-string': 'off',
+    },
+  },
+  {
     files: ['plugins/opencode/**/*.js', '**/*.mjs'],
     languageOptions: {
       ecmaVersion: 'latest',

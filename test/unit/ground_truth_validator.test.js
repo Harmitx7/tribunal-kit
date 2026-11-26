@@ -1,6 +1,6 @@
 const {
   verifyChecksum,
-  evaluateDataset,
+  evaluateDataset: _evaluateDataset,
 } = require('../../.agent/scripts/routing_evaluation_engine');
 
 describe('Ground Truth Validator', () => {

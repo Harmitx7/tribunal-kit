@@ -1,6 +1,6 @@
 const {
   observeExecution,
-  hashObservation,
+  hashObservation: _hashObservation,
 } = require('../../.agent/scripts/skill_observation_engine');
 
 describe('Skill Observation Engine', () => {

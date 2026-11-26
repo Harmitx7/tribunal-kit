@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
+const _fs = require('fs');
+const _path = require('path');
 const {
   generateHash,
-  simulateRemediation,
+  simulateRemediation: _simulateRemediation,
 } = require('../../.agent/scripts/skill_remediation_engine');
 
 describe('Skill Remediation Engine Unit Tests', () => {

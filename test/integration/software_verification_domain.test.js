@@ -12,7 +12,7 @@ const {
   createFsmInstance,
   evaluateMutants,
   runDifferentialTest,
-  verifyMetamorphicRelation,
+  verifyMetamorphicRelation: _verifyMetamorphicRelation,
   validateVerificationResult,
 } = require('../../src/verification');
 
@@ -41,7 +41,7 @@ describe('Software Verification & Formal Methods Domain — End-to-End Integrati
       },
       {
         pre: [
-          (id, amt) => typeof id === 'string' && id.length > 0,
+          (id, _amt) => typeof id === 'string' && id.length > 0,
           (id, amt) => typeof amt === 'number' && amt > 0,
         ],
         post: [order => order.status === 'CREATED' && order.amount > 0],

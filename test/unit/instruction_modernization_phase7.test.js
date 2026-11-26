@@ -20,7 +20,7 @@ const fs = require('fs');
 const path = require('path');
 const {
   validateWorkflows,
-  validateHostInstructions,
+  validateHostInstructions: _validateHostInstructions,
   validateSkillRegistry,
   runAllValidations,
   EXPECTED_REVIEWER_COUNT,

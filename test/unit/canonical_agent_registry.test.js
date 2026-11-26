@@ -7,7 +7,7 @@ const {
   listAllAgents,
   listProductionAgents,
   listReviewers,
-  listSpecialists,
+  listSpecialists: _listSpecialists,
   resolveAgent,
   getRegistrySummary,
   GHOST_AGENT_REPLACEMENTS,
@@ -18,7 +18,7 @@ const { resolveReviewerSpec } = require('../../src/execution/reviewer_registry')
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
 const AGENTS_DIR = path.join(REPO_ROOT, '.agent', 'agents');
 const PLUGIN_JSON_PATH = path.join(REPO_ROOT, '.agent', 'config', 'plugin.json');
-const REGISTRY_PATH = path.join(REPO_ROOT, '.agent', 'config', 'specialist-registry.json');
+const _REGISTRY_PATH = path.join(REPO_ROOT, '.agent', 'config', 'specialist-registry.json');
 const SWARM_DISPATCHER_PATH = path.join(REPO_ROOT, '.agent', 'scripts', 'swarm_dispatcher.js');
 
 describe('STAGE 1: Canonical Agent Registry & Architectural Validation', () => {

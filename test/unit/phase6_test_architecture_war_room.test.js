@@ -16,9 +16,12 @@ const path = require('path');
 const os = require('os');
 const { ControlledWriteService } = require('../../src/execution/controlled_write_service');
 const { CaseMemory } = require('../../src/intelligence/case_memory');
-const { redactSecrets, redactFinding } = require('../../.agent/scripts/secret_redactor');
+const {
+  redactSecrets: _redactSecrets,
+  redactFinding,
+} = require('../../.agent/scripts/secret_redactor');
 const { enforceOutputIsolation } = require('../../.agent/scripts/validation_engine');
-const { PackageIntegrityEngine } = require('../../src/supply_chain');
+const { PackageIntegrityEngine: _PackageIntegrityEngine } = require('../../src/supply_chain');
 
 describe('PHASE 6 TEST ARCHITECTURE & MUTATION WAR ROOM', () => {
   let tmpDir;

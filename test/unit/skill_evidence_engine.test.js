@@ -1,6 +1,6 @@
 const {
   CONFIDENCE_MODEL,
-  gatherEvidenceInventory,
+  gatherEvidenceInventory: _gatherEvidenceInventory,
 } = require('../../.agent/scripts/skill_evidence_engine');
 
 describe('Skill Evidence Engine', () => {

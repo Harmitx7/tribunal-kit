@@ -1,6 +1,6 @@
 'use strict';
 
-const path = require('path');
+const _path = require('path');
 const { extractConcepts } = require('./concept_extractor');
 
 function generateConsiderations(conceptResultOrQuery, agentDir) {

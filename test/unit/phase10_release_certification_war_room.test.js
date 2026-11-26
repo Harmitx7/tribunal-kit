@@ -23,7 +23,7 @@ const { correlateFindings } = require('../../.agent/scripts/cross_agent_correlat
 const { redactFinding } = require('../../.agent/scripts/secret_redactor');
 const { validateLexicalPath, PathSecurityError } = require('../../src/utils/path_containment');
 const { generateIDEBridges } = require('../../src/commands/init');
-const { getBinaryPath, RUST_COMMANDS } = require('../../bin/wrapper');
+const { getBinaryPath, RUST_COMMANDS: _RUST_COMMANDS } = require('../../bin/wrapper');
 
 describe('PHASE 10 FINAL INTEGRATION & RELEASE CERTIFICATION WAR ROOM', () => {
   let tmpDir;

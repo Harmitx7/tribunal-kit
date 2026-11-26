@@ -63,6 +63,7 @@ function normalizePosixPath(filePath) {
 }
 
 function walkRepository(dir, rootDir = dir, results = [], depth = 0, options = {}) {
+  if (options.sourceOnly) options.assertWithinRoot(rootDir, dir);
   if (!fs.existsSync(dir)) return results;
   const maxDepth = options.maxDepth || 25;
   const maxFiles = options.maxFiles || 10000;
@@ -715,8 +716,10 @@ class ArchitectureExtractor {
     this.initDefaultTrustBoundaries();
 
     // Detect Monorepo Workspaces & CLI Entry Points
-    this.detectWorkspaces();
-    this.detectCliEntryPoints();
+    if (!effectiveOpts.sourceOnly) {
+      this.detectWorkspaces();
+      this.detectCliEntryPoints();
+    }
 
     // Pass 1: Extract module entities and file contents
     const maxFileSize = effectiveOpts.maxFileSize || 1048576; // 1 MB default
@@ -729,6 +732,7 @@ class ArchitectureExtractor {
       let content;
       let stat;
       try {
+        if (effectiveOpts.sourceOnly) effectiveOpts.assertWithinRoot(this.repoRoot, file.fullPath);
         stat = fs.statSync(file.fullPath);
         if (stat.size > maxFileSize) {
           this.registerEntity({

@@ -541,7 +541,7 @@ describe('Security Containment & Boundary Hardening (Phase 2 TDD)', () => {
         expect(() => {
           tx.prepareWrite('link_to_external/pwned.txt', 'evil');
         }).toThrow(/Security Violation: Path traversal detected|Symlink target.*escapes/);
-      } catch (err) {
+      } catch (_err) {
         // On Windows without Developer Mode, creating symlinks requires admin privilege.
         // If symlinks cannot be created, lexical boundary is tested.
       } finally {

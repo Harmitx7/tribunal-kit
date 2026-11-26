@@ -528,7 +528,7 @@ function loadSkills(agentDir) {
   let responsibilities = {};
   try {
     responsibilities = require('../../phase14/baseline/responsibility.json');
-  } catch (e) {}
+  } catch (_e) {}
 
   const skillsDir = path.join(agentDir, 'skills');
   if (!fs.existsSync(skillsDir)) return [];
@@ -819,7 +819,7 @@ function scoreSkill(skill, task, fileExts, taskTokens) {
       score += specificity * 2;
       signals.concept.push(`specificity:${specificity}`);
     }
-  } catch (e) {
+  } catch (_e) {
     // Ontology engine might not be loaded yet during tests
   }
 

@@ -4,12 +4,12 @@ const fs = require('fs');
 const path = require('path');
 const {
   validateEvaluationDataset,
-  validateEvaluationResult,
+  validateEvaluationResult: _validateEvaluationResult,
   calculateConfusionMatrix,
   calculateBrierScore,
   calculateExpectedCalibrationError,
-  calculateCohensKappa,
-  calculateFleissKappa,
+  calculateCohensKappa: _calculateCohensKappa,
+  calculateFleissKappa: _calculateFleissKappa,
   auditDatasetIntegrity,
   auditFindingsForHallucinations,
   evaluateRegressions,

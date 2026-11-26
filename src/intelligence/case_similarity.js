@@ -29,7 +29,7 @@ class CaseSimilarity {
     if (!query) return [];
 
     const hitScores = new Map(); // caseId -> score tracking object
-    const { impactTier, files = [], categories = [] } = query;
+    const { impactTier, files = [], categories: _categories = [] } = query;
 
     const trackHit = (caseId, signalName, weight) => {
       if (!hitScores.has(caseId)) {

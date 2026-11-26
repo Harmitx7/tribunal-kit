@@ -9,7 +9,7 @@
  */
 
 const fs = require('fs');
-const path = require('path');
+const _path = require('path');
 const { spawnSync } = require('child_process');
 const { assertWithinRoot } = require('./_utils');
 

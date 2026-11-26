@@ -17,12 +17,12 @@ const path = require('path');
 const cp = require('child_process');
 const crypto = require('crypto');
 const {
-  CodebaseIntelligence,
+  CodebaseIntelligence: _CodebaseIntelligence,
   runCodebaseIntelligence,
-  runCodebaseIntelligenceCli,
+  runCodebaseIntelligenceCli: _runCodebaseIntelligenceCli,
   createEvidenceRecord,
-  createResultEnvelope,
-  redactSecrets,
+  createResultEnvelope: _createResultEnvelope,
+  redactSecrets: _redactSecrets,
 } = require('../../.agent/scripts/codebase_intelligence');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');

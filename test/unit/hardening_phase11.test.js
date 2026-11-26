@@ -15,9 +15,9 @@
 
 const {
   EVENT_TYPES,
-  STATUSES,
+  STATUSES: _STATUSES,
   LIFECYCLE_STATES,
-  ENVIRONMENTS,
+  ENVIRONMENTS: _ENVIRONMENTS,
   createActivityEvent,
   sanitizeActivityEvent,
   redactSecrets,
@@ -26,11 +26,11 @@ const {
   renderPlainText,
   renderStructured,
   ActivityTracker,
-  OperationRecord,
-  OperationRegistry,
+  OperationRecord: _OperationRecord,
+  OperationRegistry: _OperationRegistry,
   DiagnosticBuffer,
-  boundArray,
-  boundString,
+  boundArray: _boundArray,
+  boundString: _boundString,
   boundObject,
   stripAnsi,
 } = require('../../src/activity');

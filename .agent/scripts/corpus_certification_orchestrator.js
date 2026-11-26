@@ -9,7 +9,7 @@ const { parseContract } = require('./skill_contract_engine');
 const { classifySkill } = require('./skill_behavior_classifier');
 const { extractTestableClaims } = require('./skill_test_authoring_engine');
 const certEngine = require('./skill_certification_engine');
-const expansionEngine = require('./skill_coverage_expansion_engine');
+const _expansionEngine = require('./skill_coverage_expansion_engine');
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 const ELIGIBILITY_CLASSES = {
@@ -60,7 +60,7 @@ const PILOT_SKILLS = [
 // ─── Section 6: Eligibility Classification ────────────────────────────────────
 function classifyCorpusEligibility(skillName, skillRaw = {}) {
   const content = skillRaw.content || '';
-  const triggers = skillRaw.triggers || [];
+  const _triggers = skillRaw.triggers || [];
   const name = skillName.toLowerCase();
 
   // 1. Human-required boundary check
@@ -384,7 +384,7 @@ function selectWave(waveNumber = 1, inventory = [], options = {}) {
 }
 
 // ─── Section 27-28: Wave Snapshots & Atomicity ───────────────────────────────
-function createWaveSnapshot(currentCertificationSnapshot, options = {}) {
+function createWaveSnapshot(currentCertificationSnapshot, _options = {}) {
   return {
     snapshot_hash: crypto
       .createHash('sha256')

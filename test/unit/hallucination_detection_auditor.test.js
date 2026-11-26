@@ -4,8 +4,8 @@ const path = require('path');
 const {
   auditClaim,
   auditFindingsForHallucinations,
-  KNOWN_GHOST_PACKAGES,
-  INVENTED_STDLIB_METHODS,
+  KNOWN_GHOST_PACKAGES: _KNOWN_GHOST_PACKAGES,
+  INVENTED_STDLIB_METHODS: _INVENTED_STDLIB_METHODS,
 } = require('../../src/evaluation/hallucination_detection_auditor');
 
 const REPO_ROOT = path.resolve(__dirname, '../..');

@@ -4,7 +4,7 @@ const {
   ComponentSchema,
   AdvisorySchema,
   ProvenanceSchema,
-  SbomSchema,
+  SbomSchema: _SbomSchema,
   LicensePolicySchema,
   SupplyChainFindingSchema,
   SupplyChainAuditResultSchema,

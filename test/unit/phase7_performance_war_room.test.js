@@ -21,7 +21,7 @@ const path = require('path');
 const os = require('os');
 const {
   correlateFindings,
-  shouldCorrelate,
+  shouldCorrelate: _shouldCorrelate,
 } = require('../../.agent/scripts/cross_agent_correlator');
 const { ReviewExecutor } = require('../../src/execution/review_executor');
 const { CaseMemory } = require('../../src/intelligence/case_memory');
@@ -129,7 +129,7 @@ describe('PHASE 7 PERFORMANCE & RESOURCE EFFICIENCY WAR ROOM', () => {
         this.provider = 'synthetic-test-provider';
       }
 
-      async sendReviewPrompt(request = {}) {
+      async sendReviewPrompt(_request = {}) {
         await new Promise(resolve => setTimeout(resolve, this.delayMs));
         return {
           text: JSON.stringify({

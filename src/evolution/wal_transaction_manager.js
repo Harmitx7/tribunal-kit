@@ -20,7 +20,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { assertWithinRoot, validateResourceId } = require('../security/boundary');
+const { assertWithinRoot: _assertWithinRoot, validateResourceId } = require('../security/boundary');
 
 const TX_STATES = Object.freeze({
   BEGIN: 'BEGIN',

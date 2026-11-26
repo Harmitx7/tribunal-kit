@@ -12,7 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { BenchmarkOracle } = require('../../src/evaluation/benchmark_oracle');
-const { WorktreeSandbox } = require('../../src/evaluation/worktree_sandbox');
+const { WorktreeSandbox: _WorktreeSandbox } = require('../../src/evaluation/worktree_sandbox');
 
 describe('BenchmarkOracle — Anti-Eval-Hacking Integrity Verifier', () => {
   let tmpDir;

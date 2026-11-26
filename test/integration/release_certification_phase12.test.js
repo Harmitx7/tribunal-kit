@@ -20,19 +20,19 @@ const {
   renderPlainText,
   renderStructured,
   stripAnsi,
-  redactSecrets,
-  deepClone,
+  redactSecrets: _redactSecrets,
+  deepClone: _deepClone,
   boundArray,
   boundString,
-  boundObject,
+  boundObject: _boundObject,
   DiagnosticBuffer,
   StallDetector,
-  HOSTS,
+  HOSTS: _HOSTS,
   ENVIRONMENTS,
   LIFECYCLE_STATES,
-  ACTIVITY_STATES,
-  PROGRESS_STATES,
-  TOOL_STATES,
+  ACTIVITY_STATES: _ACTIVITY_STATES,
+  PROGRESS_STATES: _PROGRESS_STATES,
+  TOOL_STATES: _TOOL_STATES,
 } = kit;
 
 describe('Phase 12: End-to-End Release Certification (Scenarios A - N)', () => {
@@ -167,7 +167,7 @@ describe('Phase 12: End-to-End Release Certification (Scenarios A - N)', () => {
     const detector = new StallDetector({
       stallThresholdMs: 30,
       checkIntervalMs: 10,
-      onStall: stallEvt => {
+      onStall: _stallEvt => {
         triggered = true;
       },
     });

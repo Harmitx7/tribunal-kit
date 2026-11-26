@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const {
   ControlledWriteService,
-  computeSha256,
+  computeSha256: _computeSha256,
 } = require('../../src/execution/controlled_write_service');
 
 describe('ControlledWriteService', () => {

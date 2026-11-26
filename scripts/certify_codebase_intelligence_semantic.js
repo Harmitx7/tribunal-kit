@@ -108,7 +108,7 @@ console.log(
   '[4/10] Executing Cross-Repository Generalization Runner across 6 Synthetic Fixtures...',
 );
 try {
-  const crossOutput = execSync('node scripts/cross_repo_eval_runner.js', {
+  const _crossOutput = execSync('node scripts/cross_repo_eval_runner.js', {
     cwd: REPO_ROOT,
     encoding: 'utf8',
   });
@@ -164,7 +164,7 @@ try {
   );
   console.log('  ✓ 17/17 Jest suites passed (327/327 tests)');
   gates['P16-G9'] = { status: 'PASS', details: '17/17 test suites, 327/327 tests passed green' };
-} catch (e) {
+} catch (_e) {
   gates['P16-G9'] = { status: 'FAIL', error: 'Jest test gauntlet reported failures' };
 }
 
@@ -177,7 +177,7 @@ try {
     status: 'PASS',
     details: '124/124 tests passed across cross-domain and outcome engines',
   };
-} catch (e) {
+} catch (_e) {
   gates['P16-G10'] = { status: 'FAIL', error: 'Core engines test failed' };
 }
 

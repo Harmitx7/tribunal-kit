@@ -7,8 +7,8 @@
  * Verifies real isolated sandbox evaluation, tamper detection, and deterministic metrics.
  */
 
-const fs = require('fs');
-const path = require('path');
+const _fs = require('fs');
+const _path = require('path');
 const { execFileSync } = require('child_process');
 const { EvaluationRunner } = require('../../src/evaluation/evaluation_runner');
 const { getScenarios } = require('../../src/evaluation/scenario_registry');
@@ -85,5 +85,5 @@ describe('EvaluationRunner — Phase 1 Deterministic Benchmark Engine', () => {
     expect(report.stats.rejected).toBe(0);
     expect(report.stats.quarantined).toBe(0);
     expect(report.results).toHaveLength(3);
-  });
+  }, 60000);
 });

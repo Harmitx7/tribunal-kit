@@ -287,7 +287,7 @@ function buildNpmDependencyGraph(packageJson, lockfileJson) {
       const declaredDeps = meta.dependencies || {};
       for (const [depName] of Object.entries(declaredDeps)) {
         // Find matching child in packages
-        for (const [candidatePath, candidateKey] of keyToPurlMap.entries()) {
+        for (const [_candidatePath, candidateKey] of keyToPurlMap.entries()) {
           const candidateName = candidateKey.split('@')[0];
           if (candidateName === depName) {
             graph.addDependencyEdge(parentKey, candidateKey);

@@ -79,12 +79,12 @@ describe('WorktreeSandbox — Phase 1 Ephemeral Worktree Isolation', () => {
 
   test('withSandbox automatically cleans up worktree even on unhandled exception', async () => {
     let capturedPath = null;
-    let capturedBranch = null;
+    let _capturedBranch = null;
 
     await expect(
       WorktreeSandbox.withSandbox({ repoRoot }, async sb => {
         capturedPath = sb.worktreePath;
-        capturedBranch = sb.branch;
+        _capturedBranch = sb.branch;
         expect(fs.existsSync(capturedPath)).toBe(true);
         throw new Error('Simulated sandbox failure during evaluation');
       }),

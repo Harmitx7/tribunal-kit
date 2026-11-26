@@ -12,7 +12,7 @@
 
 const {
   EVENT_TYPES,
-  AGENT_SKILL_STATES,
+  AGENT_SKILL_STATES: _AGENT_SKILL_STATES,
   createActivityEvent,
   SkillAgentResolver,
   AnnouncementIntelligence,

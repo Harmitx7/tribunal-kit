@@ -13,7 +13,7 @@
  *   - Skill Telemetry & Improvement Proposals
  */
 
-const fs = require('fs');
+const _fs = require('fs');
 const path = require('path');
 
 /**
@@ -237,7 +237,7 @@ function auditPostExecution(taskIntelligenceOrQuery, executionEvidence, options 
  * @param {string} [agentDir] - Agent directory
  * @returns {Object} Skill improvement proposal
  */
-function generateImprovementProposal(targetSkillOrGap, context = {}, agentDir) {
+function generateImprovementProposal(targetSkillOrGap, context = {}, _agentDir) {
   const isExistingSkill = Boolean(context.existingSkill);
   const gapName = context.gap || targetSkillOrGap;
 

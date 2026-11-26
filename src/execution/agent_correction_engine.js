@@ -54,7 +54,7 @@ class AgentCorrectionEngine {
    * Phase 5E: Generates an enhanced correction plan for a specific finding.
    * Provides bounded objectives and verification criteria.
    */
-  generateEnhancedPlan(finding, proposalContext) {
+  generateEnhancedPlan(finding, _proposalContext) {
     if (!finding) throw new Error('Missing finding to generate enhanced plan');
 
     // Abstracted plan generation logic

@@ -7,7 +7,10 @@ const { loadSkills } = require('./context_broker');
 const { classifySkill } = require('./skill_behavior_classifier');
 const { parseContract } = require('./skill_contract_engine');
 const { createFixture } = require('./skill_fixture_engine');
-const { observeExecution, hashObservation } = require('./skill_observation_engine');
+const {
+  observeExecution,
+  hashObservation: _hashObservation,
+} = require('./skill_observation_engine');
 
 // ─── Constants & Metadata ───────────────────────────────────────────────────
 const TESTABILITY = {

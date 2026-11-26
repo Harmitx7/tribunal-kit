@@ -14,26 +14,26 @@
  */
 
 const {
-  SCHEMA_VERSION,
+  SCHEMA_VERSION: _SCHEMA_VERSION,
   EVENT_TYPES,
   STATUSES,
-  DEFAULT_EVENT_STATUS,
+  DEFAULT_EVENT_STATUS: _DEFAULT_EVENT_STATUS,
   ActivityValidationError,
   validateActivityEvent,
   assertValidActivityEvent,
   createActivityEvent,
-  sanitizeActivityEvent,
-  redactSecrets,
+  sanitizeActivityEvent: _sanitizeActivityEvent,
+  redactSecrets: _redactSecrets,
   MarkdownRenderer,
   renderMarkdown,
   TerminalRenderer,
-  renderTerminal,
+  renderTerminal: _renderTerminal,
   PlainTextRenderer,
   renderPlainText,
   StructuredRenderer,
   renderStructured,
-  renderActivity,
-  formatActivity,
+  renderActivity: _renderActivity,
+  formatActivity: _formatActivity,
 } = require('../../src/activity');
 
 describe('Phase 1: Canonical Activity Contract & Renderer Foundation', () => {

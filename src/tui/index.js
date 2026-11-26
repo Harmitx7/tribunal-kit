@@ -28,4 +28,10 @@ module.exports = {
   announceAgent: activity.announceAgent,
   announceSkill: activity.announceSkill,
   ActivityTracker: activity.ActivityTracker,
+  get renderCockpitFrame() {
+    return require('../commands/cockpit').renderCockpitFrame;
+  },
+  get cmdCockpit() {
+    return require('../commands/cockpit').cmdCockpit;
+  },
 };

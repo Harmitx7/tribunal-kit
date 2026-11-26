@@ -421,7 +421,7 @@ function runCrossRepoEvaluation() {
 
       const ci = new CodebaseIntelligence(fix.root);
       const deadResult = ci.deadCode();
-      const overviewResult = ci.overview();
+      const _overviewResult = ci.overview();
 
       const foundDead = new Set(deadResult.unreferencedExports.map(e => `${e.name}@${e.file}`));
       const fixtureReport = {

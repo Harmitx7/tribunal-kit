@@ -1,8 +1,8 @@
 'use strict';
 
-const fs = require('fs');
+const _fs = require('fs');
 const path = require('path');
-const os = require('os');
+const _os = require('os');
 
 describe('TK-007: Skill Evolution Security Hardening', () => {
   const scriptsDir = path.resolve(__dirname, '../../.agent/scripts');

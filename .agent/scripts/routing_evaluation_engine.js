@@ -1,5 +1,5 @@
 const fs = require('fs');
-const path = require('path');
+const _path = require('path');
 const crypto = require('crypto');
 const { broker } = require('./context_broker');
 
@@ -20,7 +20,7 @@ function verifyChecksum(dataset) {
   }
 }
 
-function evaluateDataset(filePath, mode = 'phase15') {
+function evaluateDataset(filePath, _mode = 'phase15') {
   const raw = fs.readFileSync(filePath, 'utf8');
   const dataset = JSON.parse(raw);
   verifyChecksum(dataset);
@@ -91,7 +91,7 @@ function evaluateDataset(filePath, mode = 'phase15') {
         try {
           const { getHierarchyCompatibility } = require('./skill_ontology_engine');
           hierarchy = getHierarchyCompatibility(decisionSkill, expectedPrimary);
-        } catch (e) {
+        } catch (_e) {
           hierarchy = 'WRONG';
         }
 

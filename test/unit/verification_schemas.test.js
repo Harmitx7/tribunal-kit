@@ -3,10 +3,10 @@
 const fs = require('fs');
 const path = require('path');
 const {
-  VerificationCaseSchema,
-  VerificationResultSchema,
-  InvariantRecordSchema,
-  RequirementTraceSchema,
+  VerificationCaseSchema: _VerificationCaseSchema,
+  VerificationResultSchema: _VerificationResultSchema,
+  InvariantRecordSchema: _InvariantRecordSchema,
+  RequirementTraceSchema: _RequirementTraceSchema,
   validateVerificationCase,
   validateVerificationResult,
   validateInvariantRecord,

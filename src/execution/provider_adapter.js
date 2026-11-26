@@ -363,21 +363,21 @@ class ProviderAdapter {
   async _sleep(ms, signal) {
     if (ms <= 0) return;
     return new Promise((resolve, reject) => {
-      let timer;
+      const timer = setTimeout(() => {
+        if (signal) signal.removeEventListener('abort', onAbort);
+        resolve();
+      }, ms);
       const onAbort = () => {
         clearTimeout(timer);
         reject(new Error('LLM_ABORTED: Request was cancelled by caller signal.'));
       };
       if (signal) {
         if (signal.aborted) {
+          clearTimeout(timer);
           return reject(new Error('LLM_ABORTED: Request was cancelled by caller signal.'));
         }
         signal.addEventListener('abort', onAbort, { once: true });
       }
-      timer = setTimeout(() => {
-        if (signal) signal.removeEventListener('abort', onAbort);
-        resolve();
-      }, ms);
     });
   }
 

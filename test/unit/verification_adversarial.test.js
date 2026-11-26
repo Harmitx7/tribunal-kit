@@ -10,7 +10,7 @@ const {
   arb,
   verifyFsmCompleteness,
   createFsmInstance,
-  generateMutants,
+  generateMutants: _generateMutants,
   evaluateMutants,
   runDifferentialTest,
   verifyMetamorphicRelation,

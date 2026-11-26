@@ -2,7 +2,7 @@
 
 const crypto = require('crypto');
 const fs = require('fs');
-const path = require('path');
+const _path = require('path');
 const { assertWithinRoot } = require('../security/boundary');
 const TransactionManager = require('./transaction_manager');
 const { WritePolicyEngine } = require('./write_policy_engine');
@@ -37,6 +37,8 @@ class ControlledWriteService {
         ? options.authorizedApprovers
         : null;
     this.approvalSecret = options.approvalSecret || null;
+    this.requireSignedApproval = options.requireSignedApproval === true;
+    this.approvalPublicKey = options.approvalPublicKey || null;
 
     // In-memory store for write requests and tokens
     this.activeRequests = new Map();
@@ -94,12 +96,23 @@ class ControlledWriteService {
   _computeProposalHash(files) {
     // Sort files by path for deterministic hash
     const sorted = [...files].sort((a, b) => a.path.localeCompare(b.path));
-    const parts = sorted.map(f => `${f.path}:${f.operation}:${computeSha256(f.content || '')}`);
-    return computeSha256(parts.join('|'));
+    return computeSha256(JSON.stringify(sorted.map(f => [
+      f.path, f.operation, computeSha256(f.content || ''), f.expectedHash || null,
+    ])));
   }
 
   async requestWrite(req, options = {}) {
+    if (this.requireSignedApproval) {
+      req = { ...req, files: req.files?.map(file => ({ ...file })) };
+    }
     this._validateRequest(req);
+    if (this.requireSignedApproval) {
+      for (const file of req.files) {
+        if (file.operation !== 'CREATE') {
+          file.expectedHash = computeSha256(fs.readFileSync(file.fullPath));
+        }
+      }
+    }
     const dryRun = options.dryRun || false;
 
     const filePaths = req.files.map(f => f.path);
@@ -157,7 +170,7 @@ class ControlledWriteService {
     const isApproved = verdict.verdict === 'APPROVED' || verdict.verdict === 'WARNING';
 
     let status = isApproved ? 'PENDING_COMMIT' : 'REJECTED';
-    let requiresHumanApproval = policyResult.requiresHumanApproval;
+    let requiresHumanApproval = this.requireSignedApproval || policyResult.requiresHumanApproval;
 
     if (status === 'REJECTED') {
       requiresHumanApproval = false; // Cannot approve a rejected AI review
@@ -170,7 +183,7 @@ class ControlledWriteService {
       correction = this.correctionEngine.generateCorrection(req, verdict, policyResult);
     }
 
-    const token = `tok_${crypto.randomBytes(8).toString('hex')}`;
+    const token = `tok_${crypto.randomBytes(24).toString('hex')}`;
     const txId = `tx_${crypto.randomBytes(8).toString('hex')}`;
 
     const state = {
@@ -235,10 +248,25 @@ class ControlledWriteService {
       approvalRequirements: state.requiresHumanApproval ? 'HUMAN_APPROVAL_REQUIRED' : 'NONE',
       verdict: state.verdict.verdict,
       findings: state.verdict.findings || [],
+      ...(this.requireSignedApproval && {
+        approval: {
+          algorithm: 'ed25519',
+          proposalHash: state.proposalHash,
+          requestHash: state.provenance.requestHash,
+          files: state.request.files.map(file => ({
+            path: file.path, operation: file.operation,
+            contentHash: computeSha256(file.content || ''),
+            preimageHash: file.expectedHash || null,
+          })),
+        },
+      }),
     };
   }
 
   approveWrite(token, approverId, signature, options = {}) {
+    if (this.requireSignedApproval && (!this.approvalPublicKey || !this.authorizedApprovers?.size)) {
+      throw new Error('Authenticated human approval is unavailable.');
+    }
     const state = this._getTokenState(token, options);
 
     if (state.status !== 'HUMAN_APPROVAL_REQUIRED') {
@@ -291,13 +319,25 @@ class ControlledWriteService {
           'Security Violation: Human approval requires a valid, non-empty confirmation signature.',
         );
       }
-      if (this.approvalSecret) {
+      if (this.requireSignedApproval) {
+        const key = crypto.createPublicKey(this.approvalPublicKey);
+        const message = Buffer.from(JSON.stringify([
+          token, trimmedApprover, state.proposalHash, state.provenance.requestHash, state.policyResult.action,
+        ]));
+        if (key.asymmetricKeyType !== 'ed25519' || !/^[A-Za-z0-9+/]{86}==$/.test(signature.trim()) ||
+            !crypto.verify(null, message, key, Buffer.from(signature.trim(), 'base64'))) {
+          throw new Error('Security Violation: Cryptographic signature verification failed for human approval.');
+        }
+      } else if (this.approvalSecret) {
         const crypto = require('crypto');
         const expectedSig = crypto
           .createHmac('sha256', this.approvalSecret)
           .update(`${token}:${trimmedApprover}:${state.proposalHash}`)
           .digest('hex');
-        if (signature.trim() !== expectedSig) {
+        const provided = signature.trim();
+        if (!/^[0-9a-f]{64}$/.test(provided) || !crypto.timingSafeEqual(
+          Buffer.from(provided, 'hex'), Buffer.from(expectedSig, 'hex'),
+        )) {
           throw new Error(
             'Security Violation: Cryptographic signature verification failed for human approval.',
           );
@@ -316,7 +356,7 @@ class ControlledWriteService {
   }
 
   generateApprovalSignature(token, approverId, context = {}) {
-    if (!this.approvalSecret) {
+    if (this.requireSignedApproval || !this.approvalSecret) {
       throw new Error('No approvalSecret configured on ControlledWriteService.');
     }
     const state = this._getTokenState(token, context);
@@ -333,6 +373,10 @@ class ControlledWriteService {
     if (state.status !== 'PENDING_COMMIT') {
       throw new Error(`Cannot commit write in status '${state.status}': must be PENDING_COMMIT`);
     }
+    if (this.requireSignedApproval && (!state.humanApproval ||
+        this.policyEngine.evaluate(state.request, state.decision).action !== state.policyResult.action)) {
+      throw new Error('Authenticated approval is missing or write policy changed.');
+    }
 
     // TOCTOU Protection
     // 1. Verify hash binds
@@ -348,6 +392,12 @@ class ControlledWriteService {
 
       // Prepare
       for (const f of state.request.files) {
+        const currentPath = assertWithinRoot(this.workspaceRoot, f.path);
+        if (currentPath !== f.fullPath) throw new Error('Write target changed since preview.');
+        if (f.operation !== 'CREATE' && f.expectedHash) {
+          const actual = computeSha256(fs.readFileSync(currentPath));
+          if (actual !== f.expectedHash) throw new Error(`CONFLICT: Hash mismatch for ${f.path}`);
+        }
         if (f.operation === 'CREATE') {
           if (fs.existsSync(f.fullPath)) {
             throw new Error(`CONFLICT: File already exists: ${f.path}`);
@@ -356,12 +406,6 @@ class ControlledWriteService {
         } else if (f.operation === 'MODIFY') {
           if (!fs.existsSync(f.fullPath)) {
             throw new Error(`CONFLICT: File does not exist: ${f.path}`);
-          }
-          if (f.expectedHash) {
-            const actual = computeSha256(fs.readFileSync(f.fullPath, 'utf8'));
-            if (actual !== f.expectedHash) {
-              throw new Error(`CONFLICT: Hash mismatch for ${f.path}`);
-            }
           }
           this.txManager.prepareWrite(f.path, f.content);
         } else if (f.operation === 'DELETE') {

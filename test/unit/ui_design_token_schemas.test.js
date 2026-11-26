@@ -3,10 +3,10 @@
 const {
   OklchColorSchema,
   ColorPaletteSchema,
-  FluidTypographyScaleSchema,
+  FluidTypographyScaleSchema: _FluidTypographyScaleSchema,
   SpatialGeometrySchema,
   InteractiveStateContractSchema,
-  DesignDecisionRecordSchema,
+  DesignDecisionRecordSchema: _DesignDecisionRecordSchema,
   VisualDefectSchema,
   DesignBenchmarkResultSchema,
 } = require('../../src/design_intelligence/design_token_schemas');

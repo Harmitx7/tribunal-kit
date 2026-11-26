@@ -16,9 +16,9 @@
  */
 
 const {
-  validateBrowserUrl,
+  validateBrowserUrl: _validateBrowserUrl,
   validateBrowserUrlAsync,
-  isProhibitedIp,
+  isProhibitedIp: _isProhibitedIp,
 } = require('../../src/security/boundary');
 const { CdpClient } = require('../../src/browser/cdp');
 
@@ -125,9 +125,9 @@ describe('Phase 4.1: DNS Failure Modes & Rebinding Investigation', () => {
   describe('DNS Rebinding Gap: Node validation vs Chrome Connection', () => {
     test('BEHAVIOR AUDIT: Does CDP Fetch.requestPaused detect connection-time DNS rebinding?', async () => {
       // Step 1: Preflight DNS returns public IP (93.184.216.34)
-      let dnsCallCount = 0;
+      let _dnsCallCount = 0;
       const rebindingDns = async () => {
-        dnsCallCount++;
+        _dnsCallCount++;
         // First call (Node.js pre-flight): returns safe public IP
         return [{ address: '93.184.216.34', family: 4 }];
       };

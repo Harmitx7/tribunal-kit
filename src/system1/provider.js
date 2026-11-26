@@ -34,6 +34,7 @@ function verifyModelFileHash(filePath, expectedHash) {
       logger.warn(
         `Model file at "${filePath}" is corrupted or modified (SHA-256 hash mismatch). ` +
           `Expected: ${expectedHash}, computed: ${actual}. Run 'tk system1 download --force' or 'tk system1 install' to repair.`,
+        { stderr: true },
       );
     }
 
@@ -51,6 +52,7 @@ function verifyModelFileHash(filePath, expectedHash) {
     logger.warn(
       `Model file at "${filePath}" could not be read (${err.message}). ` +
         `Run 'tk system1 download --force' or 'tk system1 install' to repair.`,
+      { stderr: true },
     );
     return false;
   }

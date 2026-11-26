@@ -22,7 +22,7 @@ const { InvariantVerifier } = require('../evaluation/invariant_verifier');
 const { WorktreeSandbox } = require('../evaluation/worktree_sandbox');
 const {
   recordAdversarialFinding,
-  stageCandidateScenario,
+  stageCandidateScenario: _stageCandidateScenario,
 } = require('../evaluation/coevolution_bridge');
 const {
   loadRejections,
@@ -129,7 +129,7 @@ class CoEvolutionOrchestrator {
     }
 
     const agentDest = path.join(this.repoRoot, '.agent');
-    const tribunalDest = path.join(this.repoRoot, '.tribunal');
+    const _tribunalDest = path.join(this.repoRoot, '.tribunal');
     const skillPath = path.join(agentDest, 'skills', this.targetSkill, 'SKILL.md');
 
     if (!fs.existsSync(skillPath)) {
@@ -436,16 +436,16 @@ class CoEvolutionOrchestrator {
    *
    * @param {number} round
    * @param {string} runDir
-   * @param {string} harnessCmd
+   * @param {string} _harnessCmd
    * @returns {Promise<object>}
    */
-  async _executeHardeningWave(round, runDir, harnessCmd) {
+  async _executeHardeningWave(round, runDir, _harnessCmd) {
     const agentDest = path.join(runDir, '.agent');
     const runSkillPath = path.join(agentDest, 'skills', this.targetSkill, 'SKILL.md');
     let currentContent = fs.existsSync(runSkillPath) ? fs.readFileSync(runSkillPath, 'utf8') : '';
 
     const rejections = loadRejections(agentDest, this.targetSkill);
-    const negativeConstraints = formatNegativeConstraints(rejections, 3);
+    const _negativeConstraints = formatNegativeConstraints(rejections, 3);
 
     // Apply incremental procedural hardening rule
     const ruleToAdd = `\n- [Co-Evolution Round ${round}]: Enforce strict input validation, parameterization, and boundary checks.\n`;

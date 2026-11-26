@@ -2,7 +2,7 @@
 
 const {
   generateCanary,
-  registerCanary,
+  registerCanary: _registerCanary,
   clearCanaries,
   getActiveCanaries,
   scanForDataLeakage,

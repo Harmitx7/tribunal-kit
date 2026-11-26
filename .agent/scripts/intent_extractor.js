@@ -127,4 +127,21 @@ function extractIntent(task) {
   };
 }
 
-module.exports = { extractIntent };
+function classifySpeechAct(task) {
+  const request = task.trim().replace(/^(?:please\s+|(?:can|could|would) you\s+)/i, '');
+  if (/^(?:plan|design|architect|(?:outline|draft|create|write) (?:a |the )?plan)\b/i.test(request))
+    return 'plan';
+  if (/\?$/.test(request) && !/^(?:can|could|would) you\s+/i.test(task.trim())) return 'discuss';
+  const verb = /^([a-z]+)\b/i.exec(request)?.[1]?.toLowerCase();
+  if (ACTIONS[verb] === 'implement' || verb === 'add') return 'implement';
+  if (ACTIONS[verb] === 'fix' || /^(?:diagnose|troubleshoot)$/.test(verb)) return 'debug';
+  if (
+    ACTIONS[verb] === 'optimize' ||
+    /^(?:change|update|modify|refactor|remove|rename|edit)$/.test(verb)
+  ) {
+    return 'modify';
+  }
+  return 'discuss';
+}
+
+module.exports = { extractIntent, classifySpeechAct };

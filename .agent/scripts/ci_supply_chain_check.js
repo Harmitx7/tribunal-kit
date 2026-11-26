@@ -44,7 +44,7 @@ function checkWorkflows(workflowsDir) {
           });
           continue;
         }
-        const [actionName, commitSha] = parts;
+        const [_actionName, commitSha] = parts;
         if (!SHA40_REGEX.test(commitSha)) {
           violations.push({
             file,

@@ -45,7 +45,7 @@ describe('Bounded Retry, Exponential Backoff & Idempotency Engine', () => {
     });
 
     let calls = 0;
-    const result = await engine.execute(async attempt => {
+    const result = await engine.execute(async _attempt => {
       calls++;
       if (calls < 2) {
         const err = new Error('read ECONNRESET');

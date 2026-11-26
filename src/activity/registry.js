@@ -9,11 +9,24 @@
  * and bounded in-memory retention with time-to-live expiration.
  */
 
-const { LIFECYCLE_STATES, AGENT_SKILL_STATES, TOOL_STATES, STATUSES } = require('./types');
+const {
+  LIFECYCLE_STATES,
+  AGENT_SKILL_STATES: _AGENT_SKILL_STATES,
+  TOOL_STATES,
+  STATUSES: _STATUSES,
+} = require('./types');
 
-const { canTransition, assertValidTransition, isTerminalState } = require('./lifecycle');
+const {
+  canTransition: _canTransition,
+  assertValidTransition,
+  isTerminalState,
+} = require('./lifecycle');
 
-const { generateId, createActivityEvent, ActivityValidationError } = require('./schema');
+const {
+  generateId,
+  createActivityEvent,
+  ActivityValidationError: _ActivityValidationError,
+} = require('./schema');
 
 class ActivityProgressError extends Error {
   constructor(message, operationId = null, details = {}) {
@@ -681,7 +694,7 @@ class OperationRegistry {
    */
   query(filters = {}) {
     const results = [];
-    const now = Date.now();
+    const _now = Date.now();
 
     for (const record of this.operations.values()) {
       if (filters.status && record.status !== filters.status) {

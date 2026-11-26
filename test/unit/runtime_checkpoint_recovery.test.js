@@ -5,7 +5,7 @@ const path = require('path');
 const os = require('os');
 const {
   CheckpointRecoveryEngine,
-  computeCheckpointHash,
+  computeCheckpointHash: _computeCheckpointHash,
 } = require('../../src/runtime_reliability');
 
 const fixtureData = require('../fixtures/agent_runtime/runtime_dataset_v1.json');

@@ -25,7 +25,7 @@ const {
   TelemetryError,
   CRITICAL_EVENT_TYPES,
   ActivityTracker,
-  createActivityEvent,
+  createActivityEvent: _createActivityEvent,
 } = require('../../src/activity');
 
 describe('Phase 5: Live Progress & Execution Telemetry', () => {

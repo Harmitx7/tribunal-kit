@@ -211,7 +211,7 @@ describe('Stage 2.1: Provider Compatibility Matrix', () => {
 
   describe('5. Local / Ollama Provider Protocol', () => {
     test('dispatches to Ollama endpoint and normalizes output', async () => {
-      serverHandler = (req, res, body) => {
+      serverHandler = (req, res, _body) => {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(
           JSON.stringify({
@@ -236,7 +236,7 @@ describe('Stage 2.1: Provider Compatibility Matrix', () => {
 
   describe('6. Local / vLLM Provider Protocol', () => {
     test('dispatches to vLLM endpoint and normalizes output', async () => {
-      serverHandler = (req, res, body) => {
+      serverHandler = (req, res, _body) => {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(
           JSON.stringify({
@@ -339,7 +339,7 @@ describe('Stage 2.1: Provider Compatibility Matrix', () => {
     });
 
     test('cooperative cancellation cleanly cancels running HTTP request', async () => {
-      serverHandler = (req, res) => {
+      serverHandler = (_req, _res) => {
         // Intentionally hold connection without responding
       };
 

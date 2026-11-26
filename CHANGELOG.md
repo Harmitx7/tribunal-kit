@@ -1,23 +1,8 @@
-# Changelog
-
-All notable changes to Tribunal Kit are documented here.
-Format follows [Keep a Changelog](https://keepachangelog.com/).
-
-## [9.5.0] — 2026-11-21
-
-### 🐛 Bug Fixes
-
-- support optional ML dependencies and synchronize platform manifests in version scripts (`2789a79`)
-
-### 🔧 Chores
-
-- complete Phase 1-5 stabilization and hardening (`27a8839`)
-
 # 🏛️ Tribunal Kit — Changelog
 
 [![Keep a Changelog](https://img.shields.io/badge/Changelog-Keep%20a%20Changelog%20v1.1.0-blue.svg?style=flat-square)](https://keepachangelog.com/)
 [![SemVer](https://img.shields.io/badge/SemVer-2.0.0-green.svg?style=flat-square)](https://semver.org/)
-[![Specialists](https://img.shields.io/badge/Specialists-60-cyan.svg?style=flat-square)](#)
+[![Specialists](https://img.shields.io/badge/Specialists-64-cyan.svg?style=flat-square)](#)
 [![Reviewers](https://img.shields.io/badge/Reviewers-28-emerald.svg?style=flat-square)](#)
 [![Skills Corpus](https://img.shields.io/badge/Corpus-398%20Skills-teal.svg?style=flat-square)](#)
 [![Workflows](https://img.shields.io/badge/Workflows-52%20Audited-indigo.svg?style=flat-square)](#)
@@ -26,6 +11,55 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 All notable changes to **Tribunal Kit** are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and adheres to [Semantic Versioning](https://semver.org/).
+
+## [9.5.0] — 2026-11-21 — 🛡️ Full-Spectrum Stabilization, Packaging Remediation & Autonomous Governance Hardening
+
+> [!IMPORTANT]
+> **Release 9.5.0** delivers full-spectrum repository stabilization, packaging hygiene, and governance hardening across Tribunal Kit:
+>
+> 1. **Packaging, Entrypoint & Version Lifecycle Remediation (Waves 1–5):** Synchronizes multi-platform release manifests across npm, Cargo (`crates/core/Cargo.toml`), and host extensions. Decouples heavyweight ML dependencies (`@huggingface/transformers`, `@xenova/transformers`, `onnxruntime-node`) into optional runtimes, and strips local runtime telemetry and ephemeral worktrees from packaged distribution tarballs.
+> 2. **Specialist Agent Ecosystem Expansion (64 Specialists Total):** Expands the verified specialist agent corpus from 60 to 64 with four new dedicated specialists (`api-contract-engineer`, `concurrency-analyst`, `patch-proposal-agent`, `refactoring-engineer`, `release-readiness-agent`, `threat-modeler`) registered with bidirectional parity in `specialist-registry.json`.
+> 3. **Operation Zero-Excuse System Integrity Enforcement (Phases 1–5):** Eliminates false-pass conditions across test suites and domain certifiers (`certify_ai_reliability.js`, `certify_agent_runtime.js`, `certify_supply_chain.js`), replaces dynamic `new Function` execution with isolated `node:vm` sandboxed contexts (zero ESLint `no-new-func` suppressions), and enforces strict bidirectional disk-to-route invariants across all 398 skills.
+> 4. **Containment & Runtime Durability Hardening:** Hardens subprocess parameter array containment against shell injection on Windows and Unix hosts, verifies tamper-evident Write-Ahead Logging (WAL) state rollback under simulated power crashes, and enforces realpath canonicalization guarding against symlink TOCTOU attacks.
+
+### Security & Hardening
+
+- **Subprocess Shell Injection & Parameter Containment:** Hardened `runners_security.js` and `windows_shell_security.js` with strict array-based argument passing and metacharacter containment, neutralizing shell command injection vectors (`&`, `;`, `|`, `` ` ``, `$()`) across Windows and Unix platforms.
+- **Node.js VM Sandboxed Execution Contexts:** Eliminated `eval` and `new Function` dynamic code execution across mutation and property verification engines, replacing them with isolated, timeout-guarded `node:vm` execution contexts (`createContext` + `runInContext`) with zero ESLint suppression comments.
+- **Non-Bypassable Socratic Gate Security Invariants:** Enforced strict fail-closed validation on Tier-3 architectural, schema, and security mutations in `socratic_gate_security.js`, preventing automated workflows from bypassing human approval gates on high-risk boundaries.
+- **Symlink TOCTOU & Durability Hardening:** Implemented realpath canonicalization and atomic boundary verification in `symlink_toctou_and_durability.js` to guard against time-of-check to time-of-use (TOCTOU) file redirection and traversal attacks.
+- **Fail-Closed Domain Certifier Verification:** Repaired `certify_ai_reliability.js`, `certify_agent_runtime.js`, and `certify_supply_chain.js` to dynamically evaluate gates and strictly enforce non-zero exit codes on any failed verification check or regression, eliminating false-pass anomalies.
+- **Tamper-Evident WAL Crash Recovery:** Verified Write-Ahead Logging (`wal_crash_fault_injection.test.js`) under abrupt simulated process terminations and power interruptions, proving 100% deterministic journal rollback and state preservation.
+
+### Added
+
+- **Six Dedicated Specialist Agents (64 Total Specialists):**
+  - `api-contract-engineer`: Strict schema validation, backward-compatibility analysis, breaking change detection, and API contract verification across OpenAPI, JSON Schema, REST, GraphQL, and RPC boundaries.
+  - `concurrency-analyst`: Thread safety, deadlock prevention, race condition auditing, and resource contention modeling.
+  - `patch-proposal-agent`: Minimal diff generation, semantic patch synthesis, and regression risk analysis for autonomous remediations.
+  - `refactoring-engineer`: AST-driven safe refactoring, code smell eradication, interface extraction, and complexity reduction without behavioral drift.
+  - `release-readiness-agent`: Automated go/no-go release auditing, pre-flight verification, packaging checks, and artifact integrity validation.
+  - `threat-modeler`: STRIDE analysis, attack surface mapping, trust boundary verification, and privilege escalation auditing.
+- **System Graph & Registry Parity Auditing:**
+  - `scripts/audit_system_graph.js`: Automated system graph validator auditing skills, workflows, agents, and configuration registries for broken edges, missing references, and cycles (`canonical_execution_graph.json`).
+  - `scripts/sync_registries_and_commands.js`: Synchronizer guaranteeing 100% bidirectional parity across `specialist-registry.json`, `slash-commands.json`, `plugin.json`, and `claude.json`.
+- **Comprehensive Adversarial & Unit Test Suites:** Added extensive unit suites in `test/unit/` covering `refactoring_engineer.test.js`, `release_readiness_agent.test.js`, `threat_modeler.test.js`, `wal_crash_fault_injection.test.js`, `scheduler_fairness.test.js`, `supply_chain_security.test.js`, `socratic_gate_security.test.js`, and `topic_map_invariants_adversarial.test.js`.
+
+### Changed
+
+- **Optional Machine Learning Runtimes:** Decoupled heavyweight machine learning packages (`@huggingface/transformers`, `@xenova/transformers`, `onnxruntime-node`) into lazy-loaded optional dependencies in System-1 neural providers, eliminating build breaks and installation failures on unsupported host architectures.
+- **Deterministic Multi-Platform Version Lifecycle:** Upgraded `scripts/apply-version.js` and `scripts/sync-version.js` to synchronize version numbers across 15 target files—including npm platform wrappers (`npm/packages/core-*/package.json`), Cargo manifests (`crates/core/Cargo.toml`, `Cargo.lock`), plugin manifests (`plugins/core-plugin.json`), and Gemini extension manifests (`plugins/gemini/extension.json`)—without requiring Rust cross-compilation during version bumps.
+- **Topic Map Invariant Architecture:** Replaced naive numeric threshold assertions (`>= 377`, `>= 365`) with 5 strict structural invariants enforcing disk-to-route bidirectional equality, zero phantom skills, and zero duplicate registrations across all 398 verified skills.
+- **Master Rules & IDE Bridge Alignment:** Synchronized master governance directives across `.agent/rules/GEMINI.md`, `AGENTS.md`, `CLAUDE.md`, and `.github/copilot-instructions.md`.
+
+### Fixed
+
+- **Changelog Header & Prepend Formatting:** Resolved document structure corruption and duplicate header metadata caused by automated versioning scripts, restoring the canonical Keep a Changelog document structure.
+- **Jest Worktree Test Discovery Leak:** Configured `"testPathIgnorePatterns": ["/node_modules/", "/.tribunal/"]` in `package.json`, preventing Jest from crawling ephemeral worktree artifacts and test fixtures inside `.tribunal/`.
+- **Specialist & Slash Command Registry Drift:** Reconciled discrepancies in `specialist-registry.json` (registering 8 previously omitted canonical specialists) and `slash-commands.json` (mapping all 52 workflows to 55 primary commands and 4 aliases).
+- **Workflow Protocol Robustness:** Hardened `assimilate.md`, `resume.md`, and `team-mode.md` with explicit phase transitions, failure recovery paths, and blocked state protocols.
+
+---
 
 ## [9.4.0] — 2026-10-30 — 🏛️ Canonical Activity Intelligence & 🧠 Autonomous Architecture Cognition — Release Certification & Production Readiness
 

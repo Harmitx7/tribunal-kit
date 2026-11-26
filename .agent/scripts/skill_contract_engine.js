@@ -1,7 +1,7 @@
 'use strict';
 
 const fs = require('fs');
-const path = require('path');
+const _path = require('path');
 
 /**
  * Very lightweight recursive YAML parser for the Canonical Skill Contract.

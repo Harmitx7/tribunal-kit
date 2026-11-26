@@ -9,8 +9,8 @@ const {
   calculateConfusionMatrix,
   calculateBrierScore,
   calculateExpectedCalibrationError,
-  calculateCohensKappa,
-  calculateFleissKappa,
+  calculateCohensKappa: _calculateCohensKappa,
+  calculateFleissKappa: _calculateFleissKappa,
 } = require('../../src/evaluation/reliability_metrics_engine');
 const { auditClaim } = require('../../src/evaluation/hallucination_detection_auditor');
 const { evaluateRegressions } = require('../../src/evaluation/llm_regression_evaluator');

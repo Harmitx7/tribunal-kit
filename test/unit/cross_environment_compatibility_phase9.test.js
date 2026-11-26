@@ -17,22 +17,22 @@
 
 const {
   formatActivity,
-  announceAgent,
-  announceSkill,
-  renderActivity,
+  announceAgent: _announceAgent,
+  announceSkill: _announceSkill,
+  renderActivity: _renderActivity,
   createActivityEvent,
   EVENT_TYPES,
-  STATUSES,
+  STATUSES: _STATUSES,
   ENVIRONMENTS,
   HOSTS,
-  BASE_HOST_CAPABILITIES,
+  BASE_HOST_CAPABILITIES: _BASE_HOST_CAPABILITIES,
   detectHost,
   getHostCapabilities,
   resolveEnvironment,
 } = require('../../src/activity');
 
 const {
-  McpResponseOptimizer,
+  McpResponseOptimizer: _McpResponseOptimizer,
   formatActivityResponse,
 } = require('../../src/mcp/response_optimizer');
 

@@ -5,7 +5,7 @@ const fs = require('fs');
 const crypto = require('crypto');
 const {
   CodebaseIntelligence,
-  runCodebaseIntelligenceCli,
+  runCodebaseIntelligenceCli: _runCodebaseIntelligenceCli,
 } = require('../../.agent/scripts/codebase_intelligence');
 const { cmdUnderstand } = require('../../src/commands/understand');
 

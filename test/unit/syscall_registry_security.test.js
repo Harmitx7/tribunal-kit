@@ -1,6 +1,6 @@
 'use strict';
 
-const path = require('path');
+const _path = require('path');
 const { executeSyscall } = require('../../.agent/scripts/syscall_registry');
 
 describe('TK-SEC-008: Syscall Registry Security & Hardening', () => {

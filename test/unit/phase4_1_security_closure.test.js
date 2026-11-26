@@ -16,7 +16,7 @@
  */
 
 const {
-  validateBrowserUrl,
+  validateBrowserUrl: _validateBrowserUrl,
   validateBrowserUrlAsync,
   isProhibitedIp,
 } = require('../../src/security/boundary');

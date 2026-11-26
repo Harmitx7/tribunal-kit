@@ -2,7 +2,7 @@
 
 const crypto = require('crypto');
 const fs = require('fs');
-const path = require('path');
+const _path = require('path');
 const {
   promoteEvidence,
   REPEATABILITY,

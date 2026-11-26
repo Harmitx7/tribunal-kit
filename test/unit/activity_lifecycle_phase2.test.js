@@ -19,18 +19,18 @@ const {
   LIFECYCLE_STATES,
   AGENT_SKILL_STATES,
   TOOL_STATES,
-  STATUSES,
-  EVENT_TYPES,
+  STATUSES: _STATUSES,
+  EVENT_TYPES: _EVENT_TYPES,
   IllegalStateTransitionError,
   canTransition,
   assertValidTransition,
   isTerminalState,
   getLegalNextStates,
   ActivityProgressError,
-  OperationRecord,
+  OperationRecord: _OperationRecord,
   OperationRegistry,
   ActivityTracker,
-  createActivityEvent,
+  createActivityEvent: _createActivityEvent,
 } = require('../../src/activity');
 
 describe('Phase 2: Activity Intelligence & State Tracking Engine', () => {
@@ -214,11 +214,11 @@ describe('Phase 2: Activity Intelligence & State Tracking Engine', () => {
     });
 
     test('lists active vs completed operations accurately', () => {
-      const opActive1 = registry.register({
+      const _opActive1 = registry.register({
         operationId: 'op_act_1',
         status: LIFECYCLE_STATES.RUNNING,
       });
-      const opActive2 = registry.register({
+      const _opActive2 = registry.register({
         operationId: 'op_act_2',
         status: LIFECYCLE_STATES.WAITING,
       });

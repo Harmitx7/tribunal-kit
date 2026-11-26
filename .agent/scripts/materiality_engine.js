@@ -137,7 +137,7 @@ function evaluateMateriality(considerations = [], taskQuery = '', conceptData = 
 function checkMinimumSufficientEngineering(
   taskQuery = '',
   proposedSkillsOrComponents = [],
-  context = {},
+  _context = {},
 ) {
   const q = (taskQuery || '').toLowerCase();
   const isSimpleTask =
@@ -214,7 +214,7 @@ function checkMinimumSufficientEngineering(
  * @param {Object} [conceptData]
  * @returns {Object} Outcome budget
  */
-function determineOutcomeBudget(taskQuery = '', conceptData = {}) {
+function determineOutcomeBudget(taskQuery = '', _conceptData = {}) {
   const q = (taskQuery || '').toLowerCase();
   const isSimple =
     LOW_COMPLEXITY_TRIGGERS.some(r => r.test(q)) &&

@@ -407,7 +407,7 @@ class InvestigationPlanner {
     this.repoRoot = repoRoot;
   }
 
-  plan(question, options = {}) {
+  plan(question, _options = {}) {
     const cleanQ = redactSecrets(String(question || '').trim());
     if (!cleanQ) {
       throw new Error('Investigation planner requires a non-empty question or topic.');
@@ -1494,7 +1494,7 @@ class CodebaseIntelligence {
         } else {
           try {
             const content = fs.readFileSync(fullPath, 'utf8');
-            const hash = crypto.createHash('sha256').update(content).digest('hex');
+            const _hash = crypto.createHash('sha256').update(content).digest('hex');
             const stripped = content
               .replace(/\/\*[\s\S]*?\*\//g, ' ')
               .replace(/\/\/[^\r\n]*/g, ' ')
@@ -2470,7 +2470,7 @@ class CodebaseIntelligence {
   /**
    * 4. RELEVANT-FILES: Multi-Factor Ranked File Checklist
    */
-  relevantFiles(taskQuery, flags = {}) {
+  relevantFiles(taskQuery, _flags = {}) {
     if (!taskQuery || (typeof taskQuery === 'string' && !taskQuery.trim())) {
       throw new Error('relevant-files requires a task description (e.g. "add OAuth login")');
     }
@@ -3912,7 +3912,7 @@ function renderPrepareMarkdown(data) {
  * @returns {Object} Deterministic Route Decision Object
  */
 function resolveRoute(request, options = {}) {
-  const flags = options.flags || {};
+  const _flags = options.flags || {};
   let rawQuery = '';
   if (Array.isArray(request)) {
     rawQuery = request

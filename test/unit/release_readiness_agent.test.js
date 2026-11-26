@@ -12,15 +12,15 @@ const path = require('path');
 const {
   resolveAgent,
   listAllAgents,
-  getRegistrySummary,
+  getRegistrySummary: _getRegistrySummary,
 } = require('../../src/execution/canonical_registry');
 const {
   RELEASE_READINESS_CATEGORIES,
-  RELEASE_GATE_STATUSES,
+  RELEASE_GATE_STATUSES: _RELEASE_GATE_STATUSES,
   RELEASE_VERDICTS,
-  RELEASE_FINDING_STATUSES,
-  ReleaseReadinessFindingSchema,
-  ReleaseReadinessReportSchema,
+  RELEASE_FINDING_STATUSES: _RELEASE_FINDING_STATUSES,
+  ReleaseReadinessFindingSchema: _ReleaseReadinessFindingSchema,
+  ReleaseReadinessReportSchema: _ReleaseReadinessReportSchema,
   validateReleaseReadinessFinding,
   safeValidateReleaseReadinessFinding,
   validateReleaseReadinessReport,

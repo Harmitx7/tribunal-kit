@@ -15,18 +15,18 @@
 const {
   EVENT_TYPES,
   STATUSES,
-  LIFECYCLE_STATES,
+  LIFECYCLE_STATES: _LIFECYCLE_STATES,
   createActivityEvent,
-  formatActivity,
+  formatActivity: _formatActivity,
   renderMarkdown,
-  renderTerminal,
-  renderPlainText,
-  renderStructured,
-  ActivityTracker,
+  renderTerminal: _renderTerminal,
+  renderPlainText: _renderPlainText,
+  renderStructured: _renderStructured,
+  ActivityTracker: _ActivityTracker,
   DETAIL_LEVELS,
   shouldDisplayEvent,
   formatCompletionSummary,
-  defaultDiagnosticBuffer,
+  defaultDiagnosticBuffer: _defaultDiagnosticBuffer,
 } = require('../src/activity');
 
 function estimateTokens(text) {

@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
-const { execSync } = require('child_process');
+const { execSync: _execSync } = require('child_process');
 const { assertWithinRoot } = require('./_utils');
 
 let validateResourceId;

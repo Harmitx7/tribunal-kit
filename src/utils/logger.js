@@ -74,11 +74,13 @@ function ok(msg) {
   }
 }
 
-function warn(msg) {
+function warn(msg, { stderr = false } = {}) {
   if (!quiet) {
     const glyph = (theme.GLYPHS && theme.GLYPHS.warning) || '⚠';
     const tag = hasColor() ? c('yellow', glyph) : glyph;
-    console.log(`  ${tag}  ${theme.sanitizeTerminal(msg)}`);
+    const message = `  ${tag}  ${theme.sanitizeTerminal(msg)}`;
+    if (stderr) console.error(message);
+    else console.log(message);
   }
 }
 

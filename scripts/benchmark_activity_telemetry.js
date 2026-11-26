@@ -18,7 +18,7 @@ const {
   ProgressCoalescer,
   StallDetector,
   ParallelProgressAggregator,
-  createActivityEvent,
+  createActivityEvent: _createActivityEvent,
 } = require('../src/activity');
 
 function runBenchmark() {

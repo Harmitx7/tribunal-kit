@@ -3,8 +3,8 @@
 const {
   ACTIVITY_STATES,
   ACTIVITY_VERBS,
-  ACTIVITY_GLYPHS,
-  ENVIRONMENTS,
+  ACTIVITY_GLYPHS: _ACTIVITY_GLYPHS,
+  ENVIRONMENTS: _ENVIRONMENTS,
   createEvent,
   normalizeProgress,
   redactSecrets,
@@ -406,7 +406,7 @@ describe('Tribunal Activity Presentation System', () => {
       const emitted = [];
       const tracker = new ActivityTracker({
         title: 'Deduplication Test',
-        onEvent: (evt, formatted) => emitted.push(evt),
+        onEvent: (evt, _formatted) => emitted.push(evt),
       });
 
       // Emitting same progress twice

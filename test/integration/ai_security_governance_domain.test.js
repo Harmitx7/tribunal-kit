@@ -4,14 +4,14 @@ const path = require('path');
 const {
   scanForPromptInjection,
   wrapUntrustedContent,
-  detectIndirectInjection,
-  auditToolPermissions,
+  detectIndirectInjection: _detectIndirectInjection,
+  auditToolPermissions: _auditToolPermissions,
   detectConfusedDeputy,
   auditCommandSafety,
   auditPathContainment,
   scanForDataLeakage,
   generateCanary,
-  auditDelegationHierarchy,
+  auditDelegationHierarchy: _auditDelegationHierarchy,
   auditReviewerConsensus,
 } = require('../../src/security');
 const { evaluateRegressions } = require('../../src/evaluation/llm_regression_evaluator');
@@ -39,7 +39,7 @@ describe('AI Agent Security & Governance Domain — End-to-End Pipeline Integrat
 
     // 3. Canary Token Injection for leakage tracking
     const canaryToken = generateCanary('CANARY_PIPELINE');
-    const promptWithCanary = `${isolatedContent}\nInternal context token: ${canaryToken}`;
+    const _promptWithCanary = `${isolatedContent}\nInternal context token: ${canaryToken}`;
 
     // 4. Model Reasoning produces a tool invocation request
     // Low privilege caller attempts to invoke shell execution sink

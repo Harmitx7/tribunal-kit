@@ -126,7 +126,7 @@ describe('Platform Download & Multi-Agent Installation Audit', () => {
     expect(pluginJson.plugins[0].source).toBe('./');
   });
 
-  test('hooks.json has valid SessionStart structure without invalid matcher', () => {
+  test('hooks.json registers command hooks for session start and prompt submission', () => {
     const hooksPath = path.join(repoRoot, 'hooks', 'hooks.json');
     expect(fs.existsSync(hooksPath)).toBe(true);
     const hooksJson = JSON.parse(fs.readFileSync(hooksPath, 'utf8'));
@@ -135,8 +135,16 @@ describe('Platform Download & Multi-Agent Installation Audit', () => {
     expect(hooksJson.hooks.SessionStart).toBeDefined();
     const sessionStart = hooksJson.hooks.SessionStart[0];
     expect(sessionStart.matcher).toBeUndefined();
-    expect(sessionStart.type).toBe('command');
-    expect(sessionStart.command).toContain('session-start.js');
+    expect(sessionStart.hooks[0]).toMatchObject({
+      type: 'command',
+      command: expect.stringContaining('session-start.js'),
+    });
+    const promptSubmit = hooksJson.hooks.UserPromptSubmit[0];
+    expect(promptSubmit.matcher).toBeUndefined();
+    expect(promptSubmit.hooks[0]).toMatchObject({
+      type: 'command',
+      command: expect.stringContaining('autopilot-prompt.js'),
+    });
   });
 
   test('skills directory exists at root and matches .agent/skills count', () => {

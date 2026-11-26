@@ -234,7 +234,7 @@ function scanDirectory(projectRoot, targetFiles) {
       let absPath;
       try {
         absPath = assertWithinRoot(projectRoot, fpath);
-      } catch (err) {
+      } catch (_err) {
         console.error(`  ${RED}❌ Path traversal rejected: ${fpath}${RESET}`);
         continue;
       }

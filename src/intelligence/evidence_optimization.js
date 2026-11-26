@@ -43,7 +43,7 @@ class EvidenceOptimization {
     };
 
     // 2. Classify costs and historical value
-    const cheapTypes = new Set(['changed_symbol', 'previous_finding']);
+    const _cheapTypes = new Set(['changed_symbol', 'previous_finding']);
     const expensiveTypes = new Set(['configuration', 'historical_memory', 'relevant_test']);
 
     // 3. Scan the raw items and re-classify based on intelligence

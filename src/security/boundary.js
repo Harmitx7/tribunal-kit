@@ -90,7 +90,7 @@ function isProhibitedIp(ip, options = {}) {
     if (parts.length !== 4 || parts.some(n => isNaN(n) || n < 0 || n > 255)) {
       return true; // Malformed IPv4 is prohibited
     }
-    const [a, b, c, d] = parts;
+    const [a, b, c, _d] = parts;
 
     // Loopback (127.0.0.0/8) & "This host on this network" (0.0.0.0/8)
     if (a === 127 || a === 0) {

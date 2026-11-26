@@ -8,7 +8,7 @@ const {
   ProviderAdapter,
   scrubSecrets,
   isTransientError,
-  sendHttpRequest,
+  sendHttpRequest: _sendHttpRequest,
 } = require('../../src/execution/provider_adapter');
 const http = require('http');
 

@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
+const _fs = require('fs');
+const _path = require('path');
 const {
-  planRemediations,
-  simulateRemediation,
-  applyRemediation,
-  rollbackRemediation,
+  planRemediations: _planRemediations,
+  simulateRemediation: _simulateRemediation,
+  applyRemediation: _applyRemediation,
+  rollbackRemediation: _rollbackRemediation,
 } = require('../../.agent/scripts/skill_remediation_engine');
 
 describe('Skill Remediation Rollback Tests', () => {

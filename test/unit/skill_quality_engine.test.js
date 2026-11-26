@@ -1,6 +1,6 @@
 const {
   calculateSkillQuality,
-  assertSkillQuality,
+  assertSkillQuality: _assertSkillQuality,
   compareQualitySnapshots,
 } = require('../../.agent/scripts/skill_quality_engine');
 

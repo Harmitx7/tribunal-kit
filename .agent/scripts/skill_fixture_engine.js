@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const crypto = require('crypto');
+const _crypto = require('crypto');
 const { assertWithinRoot } = require('./_utils');
 
 let validateResourceId;
@@ -33,7 +33,7 @@ function createFixture(skillId) {
       try {
         assertWithinRoot(tmpBase, tmpDir);
         fs.rmSync(tmpDir, { recursive: true, force: true });
-      } catch (e) {}
+      } catch (_e) {}
     },
   };
 }
