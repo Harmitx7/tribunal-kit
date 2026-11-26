@@ -145,7 +145,7 @@
     "typescript": "^5.4.5"
   },
   "optionalDependencies": {
-    "@receptron/laya": "^0.1.2",
+    "@receptron/laya": "^0.2.0",
     "onnxruntime-node": "^1.22.0",
     "@tribunal-kit/core-darwin-arm64": "^9.5.0",
     "@tribunal-kit/core-darwin-x64": "^9.5.0",
